@@ -15,10 +15,10 @@ const FIXTURES: Fx[] = [
   { id: "Q5",  question: "כיצד יש לפרש חוזה לאחר תיקון מס׳ 3 לחוק החוזים?", prior_sonnet: "completed", existing_run_id: "681e9887-5417-4b08-acc1-37e1a7b31f2b" },
   { id: "Q6",  question: "האם כישלון מערכתי באכיפת פרוטקשן יכול להקים טענה למחדל של המדינה?", prior_sonnet: "failed",    existing_run_id: "6f5d39b7-3279-49a7-bc08-149827f03c36" },
   { id: "Q7",  question: "מהם התנאים לצו מניעה זמני?", prior_sonnet: "completed", existing_run_id: "4e385f3f-e83f-4e8d-98d6-b476aa1181dd" },
-  { id: "Q8",  question: "מה מעמד חופש הביטוי מול פגיעה בשם טוב?", prior_sonnet: "failed" },
-  { id: "Q9",  question: "מה ההבדל בין תביעה נגזרת לתביעה ייצוגית בהפרת חובת אמונים?", prior_sonnet: "completed" },
-  { id: "Q10", question: "כיצד בתי משפט מאזנים בין ביטחון המדינה לזכויות יסוד?", prior_sonnet: "failed" },
-  { id: "Q11", question: "מהן מגבלות השימוש במידע ביומטרי במגזר הציבורי?", prior_sonnet: "completed" },
+  { id: "Q8",  question: "מה מעמד חופש הביטוי מול פגיעה בשם טוב?", prior_sonnet: "failed",    existing_run_id: "4d5605ae-8c9c-4704-ba2a-33d973ee9c99" },
+  { id: "Q9",  question: "מה ההבדל בין תביעה נגזרת לתביעה ייצוגית בהפרת חובת אמונים?", prior_sonnet: "completed", existing_run_id: "0508c761-0476-4ba5-b089-0f7c7e31ddb7" },
+  { id: "Q10", question: "כיצד בתי משפט מאזנים בין ביטחון המדינה לזכויות יסוד?", prior_sonnet: "failed",    existing_run_id: "98495a88-08ed-439d-9efe-b2ead6a8a983" },
+  { id: "Q11", question: "מהן מגבלות השימוש במידע ביומטרי במגזר הציבורי?", prior_sonnet: "completed", existing_run_id: "37b95950-c703-4331-9c86-b1df4921bb34" },
 ];
 
 async function trigger(question: string) {
