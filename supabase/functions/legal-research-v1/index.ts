@@ -604,6 +604,7 @@ async function handle(req: Request): Promise<Response> {
   let drafterOpusCompare: Awaited<ReturnType<typeof runDrafterV2>> | null = null;
   const wantsFull = compareModel === "full" || compareModel === "full+claude";
   const wantsClaude = compareModel === "full+claude";
+  const wantsSonnetOnly = compareModel === "sonnet";
   if (wantsFull) {
     try {
       drafterFullCompare = await runDrafterV2(
@@ -622,7 +623,7 @@ async function handle(req: Request): Promise<Response> {
       console.error("[lrv1] drafter_v2_full_compare failed", e);
     }
   }
-  if (wantsClaude) {
+  if (wantsClaude || wantsSonnetOnly) {
     try {
       drafterSonnetCompare = await runDrafterV2(
         question,
@@ -640,6 +641,8 @@ async function handle(req: Request): Promise<Response> {
     } catch (e) {
       console.error("[lrv1] drafter_v2_sonnet_compare failed", e);
     }
+  }
+  if (wantsClaude) {
     try {
       drafterOpusCompare = await runDrafterV2(
         question,
