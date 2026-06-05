@@ -1370,7 +1370,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
               : `${party1} נגד ${party2}`;
             console.log(`[case-law] Party-name search: "${searchQuery}" (rawParty1="${rawParty1}", party1="${party1}", party2="${party2}", caseType=${userCaseTypeNorm ?? 'none'})`);
 
-            const partySearchResp = await fetch("https://api.perplexity.ai/chat/completions", {
+            const _partySearchOriginal = await fetch("https://api.perplexity.ai/chat/completions", {
               method: "POST",
               headers: {
                 Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
