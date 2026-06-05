@@ -42,6 +42,124 @@ function normalizeDatabaseName(urls: unknown, fallback: unknown): string {
   return "";
 }
 import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES } from "../_shared/caseTypePrefixes.ts";
+import {
+  TRUSTED_LEGAL,
+  TRUSTED_PUB,
+  countTrustedCitations,
+  untrustedHosts,
+} from "../_shared/trustedHosts.ts";
+
+// ── Tier-2 open-web fallback (flag-gated) ──────────────────────────────────
+// Tier-1 = existing call with `search_domain_filter` (high-authority legal
+// sources). Tier-2 = single retry with the SAME prompt but no domain filter,
+// then post-hoc trust gate over TRUSTED_LEGAL ∪ TRUSTED_PUB.
+//
+// Fires only when Tier-1 returns zero trusted citations. Off by default;
+// flip `CITATION_CHAT_OPENWEB_FALLBACK=on` to enable.
+const OPENWEB_FALLBACK_ON =
+  (Deno.env.get("CITATION_CHAT_OPENWEB_FALLBACK") || "").toLowerCase() === "on";
+
+interface PplxRunResult {
+  resp: Response | null;        // last response (Tier-2 if it fired & helped, else Tier-1)
+  tier: "tier1" | "tier2_openweb_fallback";
+  tier1_trusted: number;
+  tier2_fired: boolean;
+  tier2_trusted: number;
+  tier2_dropped_hosts: string[];
+}
+
+/**
+ * Run a Perplexity chat-completions call with optional Tier-2 open-web
+ * fallback. `tier1Body` must include the existing `search_domain_filter`.
+ * The caller still parses the returned Response exactly as before.
+ *
+ * Tier-2 keeps the same model/temperature/messages/max_tokens — only the
+ * `search_domain_filter` is stripped.
+ */
+async function perplexityWithFallback(
+  apiKey: string,
+  tier1Body: Record<string, unknown>,
+  logTag: string,
+): Promise<PplxRunResult> {
+  const result: PplxRunResult = {
+    resp: null,
+    tier: "tier1",
+    tier1_trusted: 0,
+    tier2_fired: false,
+    tier2_trusted: 0,
+    tier2_dropped_hosts: [],
+  };
+
+  const t1 = await fetch("https://api.perplexity.ai/chat/completions", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify(tier1Body),
+  });
+  result.resp = t1;
+
+  if (!OPENWEB_FALLBACK_ON || !t1.ok) {
+    if (OPENWEB_FALLBACK_ON) {
+      console.log(`[pplx-fallback:${logTag}] tier1 not ok (${t1.status}); skipping fallback`);
+    }
+    return result;
+  }
+
+  // Peek at citations without consuming the caller's stream.
+  let t1Json: Record<string, unknown> | null = null;
+  try {
+    const cloned = t1.clone();
+    t1Json = await cloned.json();
+  } catch {
+    return result;
+  }
+  const t1Cit = (t1Json?.citations as unknown) ?? [];
+  result.tier1_trusted = countTrustedCitations(t1Cit, TRUSTED_LEGAL);
+
+  if (result.tier1_trusted > 0) {
+    console.log(
+      `[pplx-fallback:${logTag}] tier1_trusted=${result.tier1_trusted} → no fallback`,
+    );
+    return result;
+  }
+
+  // Tier-2: same body without `search_domain_filter`.
+  const { search_domain_filter: _ignored, ...t2Body } = tier1Body as Record<string, unknown>;
+  result.tier2_fired = true;
+  console.log(`[pplx-fallback:${logTag}] tier1 returned 0 trusted citations → firing tier2`);
+  const t2 = await fetch("https://api.perplexity.ai/chat/completions", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify(t2Body),
+  });
+  if (!t2.ok) {
+    console.log(`[pplx-fallback:${logTag}] tier2 http ${t2.status} → keeping tier1`);
+    return result;
+  }
+  let t2Json: Record<string, unknown> | null = null;
+  try {
+    const cloned = t2.clone();
+    t2Json = await cloned.json();
+  } catch {
+    return result;
+  }
+  const t2Cit = (t2Json?.citations as unknown) ?? [];
+  const gate = [...TRUSTED_LEGAL, ...TRUSTED_PUB];
+  result.tier2_trusted = countTrustedCitations(t2Cit, gate);
+  result.tier2_dropped_hosts = untrustedHosts(t2Cit, gate);
+  console.log(
+    `[pplx-fallback:${logTag}] tier2_trusted=${result.tier2_trusted} dropped=${
+      JSON.stringify(result.tier2_dropped_hosts)
+    }`,
+  );
+
+  if (result.tier2_trusted > 0) {
+    result.resp = t2;
+    result.tier = "tier2_openweb_fallback";
+  }
+  return result;
+}
+
+
 
 // ── פ"ד volume → plausible decision-year window (Rule 18) ──
 // Add entries opportunistically; unknown volumes skip the check. Ranges are
