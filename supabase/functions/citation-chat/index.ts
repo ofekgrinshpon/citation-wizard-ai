@@ -42,6 +42,124 @@ function normalizeDatabaseName(urls: unknown, fallback: unknown): string {
   return "";
 }
 import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES } from "../_shared/caseTypePrefixes.ts";
+import {
+  TRUSTED_LEGAL,
+  TRUSTED_PUB,
+  countTrustedCitations,
+  untrustedHosts,
+} from "../_shared/trustedHosts.ts";
+
+// ── Tier-2 open-web fallback (flag-gated) ──────────────────────────────────
+// Tier-1 = existing call with `search_domain_filter` (high-authority legal
+// sources). Tier-2 = single retry with the SAME prompt but no domain filter,
+// then post-hoc trust gate over TRUSTED_LEGAL ∪ TRUSTED_PUB.
+//
+// Fires only when Tier-1 returns zero trusted citations. Off by default;
+// flip `CITATION_CHAT_OPENWEB_FALLBACK=on` to enable.
+const OPENWEB_FALLBACK_ON =
+  (Deno.env.get("CITATION_CHAT_OPENWEB_FALLBACK") || "").toLowerCase() === "on";
+
+interface PplxRunResult {
+  resp: Response | null;        // last response (Tier-2 if it fired & helped, else Tier-1)
+  tier: "tier1" | "tier2_openweb_fallback";
+  tier1_trusted: number;
+  tier2_fired: boolean;
+  tier2_trusted: number;
+  tier2_dropped_hosts: string[];
+}
+
+/**
+ * Run a Perplexity chat-completions call with optional Tier-2 open-web
+ * fallback. `tier1Body` must include the existing `search_domain_filter`.
+ * The caller still parses the returned Response exactly as before.
+ *
+ * Tier-2 keeps the same model/temperature/messages/max_tokens — only the
+ * `search_domain_filter` is stripped.
+ */
+async function perplexityWithFallback(
+  apiKey: string,
+  tier1Body: Record<string, unknown>,
+  logTag: string,
+): Promise<PplxRunResult> {
+  const result: PplxRunResult = {
+    resp: null,
+    tier: "tier1",
+    tier1_trusted: 0,
+    tier2_fired: false,
+    tier2_trusted: 0,
+    tier2_dropped_hosts: [],
+  };
+
+  const t1 = await fetch("https://api.perplexity.ai/chat/completions", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify(tier1Body),
+  });
+  result.resp = t1;
+
+  if (!OPENWEB_FALLBACK_ON || !t1.ok) {
+    if (OPENWEB_FALLBACK_ON) {
+      console.log(`[pplx-fallback:${logTag}] tier1 not ok (${t1.status}); skipping fallback`);
+    }
+    return result;
+  }
+
+  // Peek at citations without consuming the caller's stream.
+  let t1Json: Record<string, unknown> | null = null;
+  try {
+    const cloned = t1.clone();
+    t1Json = await cloned.json();
+  } catch {
+    return result;
+  }
+  const t1Cit = (t1Json?.citations as unknown) ?? [];
+  result.tier1_trusted = countTrustedCitations(t1Cit, TRUSTED_LEGAL);
+
+  if (result.tier1_trusted > 0) {
+    console.log(
+      `[pplx-fallback:${logTag}] tier1_trusted=${result.tier1_trusted} → no fallback`,
+    );
+    return result;
+  }
+
+  // Tier-2: same body without `search_domain_filter`.
+  const { search_domain_filter: _ignored, ...t2Body } = tier1Body as Record<string, unknown>;
+  result.tier2_fired = true;
+  console.log(`[pplx-fallback:${logTag}] tier1 returned 0 trusted citations → firing tier2`);
+  const t2 = await fetch("https://api.perplexity.ai/chat/completions", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify(t2Body),
+  });
+  if (!t2.ok) {
+    console.log(`[pplx-fallback:${logTag}] tier2 http ${t2.status} → keeping tier1`);
+    return result;
+  }
+  let t2Json: Record<string, unknown> | null = null;
+  try {
+    const cloned = t2.clone();
+    t2Json = await cloned.json();
+  } catch {
+    return result;
+  }
+  const t2Cit = (t2Json?.citations as unknown) ?? [];
+  const gate = [...TRUSTED_LEGAL, ...TRUSTED_PUB];
+  result.tier2_trusted = countTrustedCitations(t2Cit, gate);
+  result.tier2_dropped_hosts = untrustedHosts(t2Cit, gate);
+  console.log(
+    `[pplx-fallback:${logTag}] tier2_trusted=${result.tier2_trusted} dropped=${
+      JSON.stringify(result.tier2_dropped_hosts)
+    }`,
+  );
+
+  if (result.tier2_trusted > 0) {
+    result.resp = t2;
+    result.tier = "tier2_openweb_fallback";
+  }
+  return result;
+}
+
+
 
 // ── פ"ד volume → plausible decision-year window (Rule 18) ──
 // Add entries opportunistically; unknown volumes skip the check. Ranges are
@@ -1074,19 +1192,13 @@ serve(async (req) => {
             const fullCaseRef = `${caseType} ${caseNum}`;
             const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. חשוב מאוד: בדוק קודם כל האם פסק הדין פורסם בפד"י (פסקי דין של בית המשפט העליון). חפש את מספר התיק יחד עם המילה "פ"ד" וכרך. רק אם וידאת שהוא לא מופיע בפד"י, ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. ענה בעברית בלבד.`;
 
-            const perplexityResp = await fetch("https://api.perplexity.ai/chat/completions", {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                model: "sonar-pro",
-                search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
-                messages: [
-                  {
-                    role: "system",
-                    content: `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
+            const caseSearchBody: Record<string, unknown> = {
+              model: "sonar-pro",
+              search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
+              messages: [
+                {
+                  role: "system",
+                  content: `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
 טיפ חיפוש: ב-https://lite.takdin.co.il/search-results מוצגים בעמוד אחד שמות הצדדים, מספר התיק, בית המשפט, תאריך פסק הדין ופרסום בפ"ד — חפש שם קודם כדי לאתר את כל הנתונים במקום אחד.
 חשוב ביותר: עדיפות ראשונה היא לבדוק פרסום בפד"י (פסקי דין). רוב פסקי הדין של בית המשפט העליון פורסמו בפד"י. אל תסתמך רק על מאגרי מידע אלקטרוניים - חפש במיוחד אם יש ציון "פ"ד" עם כרך ועמוד.
 סמן isPublished: false רק אם חיפשת במפורש פרסום בפד"י ווידאת שהוא לא קיים.
@@ -1095,11 +1207,17 @@ serve(async (req) => {
 שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
 confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות רבים, "low" אם יש ספק או מקור יחיד.
 חשוב: שדה year/date חייב להיות תאריך/שנת מתן פסק הדין על ידי בית המשפט, ולא שנת הוצאת כרך פ"ד.`,
-                  },
-                  { role: "user", content: query },
-                ],
-              }),
-            });
+                },
+                { role: "user", content: query },
+              ],
+            };
+            const caseSearchRun = await perplexityWithFallback(
+              PERPLEXITY_API_KEY,
+              caseSearchBody,
+              `case-number:${fullCaseRef}`,
+            );
+            const perplexityResp = caseSearchRun.resp!;
+            console.log(`[case-law] tier=${caseSearchRun.tier} tier1_trusted=${caseSearchRun.tier1_trusted} tier2_fired=${caseSearchRun.tier2_fired} tier2_trusted=${caseSearchRun.tier2_trusted} dropped=${JSON.stringify(caseSearchRun.tier2_dropped_hosts)}`);
 
             if (perplexityResp.ok) {
               const pData = await perplexityResp.json();
@@ -1252,19 +1370,13 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
               : `${party1} נגד ${party2}`;
             console.log(`[case-law] Party-name search: "${searchQuery}" (rawParty1="${rawParty1}", party1="${party1}", party2="${party2}", caseType=${userCaseTypeNorm ?? 'none'})`);
 
-            const partySearchResp = await fetch("https://api.perplexity.ai/chat/completions", {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                model: "sonar-pro",
-                search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
-                messages: [
-                  {
-                    role: "system",
-                    content: `אתה עוזר מחקר משפטי ישראלי. מצא את כל פסקי הדין הרלוונטיים בין הצדדים שניתנו.
+            const partySearchBody: Record<string, unknown> = {
+              model: "sonar-pro",
+              search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
+              messages: [
+                {
+                  role: "system",
+                  content: `אתה עוזר מחקר משפטי ישראלי. מצא את כל פסקי הדין הרלוונטיים בין הצדדים שניתנו.
 טיפ חיפוש: ב-https://lite.takdin.co.il/search-results מופיעים בעמוד אחד שמות הצדדים ומספר התיק — חפש שם כדי לאתר את הצדדים והדוקט.
 חשוב: בערכי המחרוזות בתוך ה-JSON, השתמש אך ורק בגרשיים עבריים (״ U+05F4) או בגרש (׳ U+05F3) במקום במירכאות כפולות (") — למשל "פד״י" במקום "פד"י", "פ״ד" במקום "פ"ד", "ע״א" במקום "ע"א". מירכאות כפולות בתוך ערך מחרוזת ישברו את ה-JSON.
 כללים:
@@ -1278,49 +1390,55 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
 - ⚠️ קריטי לגבי פרסום בפ"ד: סמן isPublished=true ומלא padi_volume/padi_part/padi_page/year אך ורק אם ראית את הציון "פ"ד <כרך> <עמוד>" יחד עם מספר התיק המדויק במקור מהימן (nevo.co.il, supreme.court.gov.il, court.gov.il, psakdin.co.il). אסור להסיק כרך/עמוד/שנה מתוצאות takdin/lite.takdin — שם המידע מעורבב בין תיקים סמוכים. אם אינך בטוח, החזר isPublished=false ו-padi_volume/padi_part/padi_page/year ריקים.
 - חובה לכלול source_url לכל תוצאה — הקישור המדויק שממנו לקחת את שמות הצדדים והדוקט. ללא source_url התוצאה תיפסל.
 - אם לא נמצאו תוצאות, החזר {"results":[]}`,
-                  },
-                  {
-                    role: "user",
-                    content: userCaseTypeNorm
-                      ? `מצא את פסק הדין הישראלי מסוג ${userCaseTypeNorm} שבו ${party1} הוא צד א׳ ו-${party2} הוא צד ב׳. כלול את מספר התיק המלא, בית המשפט, תאריך פסק הדין המדויק (DD.MM.YYYY) ושם המאגר (תקדין/נבו/פדאור). חפש קודם ב-lite.takdin.co.il.`
-                      : `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}. כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפ״ד.`,
-                  },
-                ],
-                response_format: {
-                  type: "json_schema",
-                  json_schema: {
-                    schema: {
-                      type: "object",
-                      properties: {
-                        results: {
-                          type: "array",
-                          items: {
-                            type: "object",
-                            properties: {
-                              found: { type: "boolean" },
-                              caseType: { type: "string" },
-                              caseNumber: { type: "string" },
-                              party1: { type: "string" },
-                              party2: { type: "string" },
-                              date: { type: "string" },
-                              court: { type: "string" },
-                              isPublished: { type: "boolean" },
-                              padi_volume: { type: "string" },
-                              padi_part: { type: "string" },
-                              padi_page: { type: "string" },
-                              databaseName: { type: "string" },
-                              year: { type: "string" },
-                              source_url: { type: "string" },
-                            },
+                },
+                {
+                  role: "user",
+                  content: userCaseTypeNorm
+                    ? `מצא את פסק הדין הישראלי מסוג ${userCaseTypeNorm} שבו ${party1} הוא צד א׳ ו-${party2} הוא צד ב׳. כלול את מספר התיק המלא, בית המשפט, תאריך פסק הדין המדויק (DD.MM.YYYY) ושם המאגר (תקדין/נבו/פדאור). חפש קודם ב-lite.takdin.co.il.`
+                    : `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}. כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפ״ד.`,
+                },
+              ],
+              response_format: {
+                type: "json_schema",
+                json_schema: {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      results: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            found: { type: "boolean" },
+                            caseType: { type: "string" },
+                            caseNumber: { type: "string" },
+                            party1: { type: "string" },
+                            party2: { type: "string" },
+                            date: { type: "string" },
+                            court: { type: "string" },
+                            isPublished: { type: "boolean" },
+                            padi_volume: { type: "string" },
+                            padi_part: { type: "string" },
+                            padi_page: { type: "string" },
+                            databaseName: { type: "string" },
+                            year: { type: "string" },
+                            source_url: { type: "string" },
                           },
                         },
                       },
-                      required: ["results"],
                     },
+                    required: ["results"],
                   },
                 },
-              }),
-            });
+              },
+            };
+            const partySearchRun = await perplexityWithFallback(
+              PERPLEXITY_API_KEY,
+              partySearchBody,
+              `party:${searchQuery}`,
+            );
+            const partySearchResp = partySearchRun.resp!;
+            console.log(`[case-law] party tier=${partySearchRun.tier} tier1_trusted=${partySearchRun.tier1_trusted} tier2_fired=${partySearchRun.tier2_fired} tier2_trusted=${partySearchRun.tier2_trusted} dropped=${JSON.stringify(partySearchRun.tier2_dropped_hosts)}`);
 
             if (partySearchResp.ok) {
               const psData = await partySearchResp.json();
