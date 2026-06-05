@@ -1370,19 +1370,13 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
               : `${party1} נגד ${party2}`;
             console.log(`[case-law] Party-name search: "${searchQuery}" (rawParty1="${rawParty1}", party1="${party1}", party2="${party2}", caseType=${userCaseTypeNorm ?? 'none'})`);
 
-            const _partySearchOriginal = await fetch("https://api.perplexity.ai/chat/completions", {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                model: "sonar-pro",
-                search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
-                messages: [
-                  {
-                    role: "system",
-                    content: `אתה עוזר מחקר משפטי ישראלי. מצא את כל פסקי הדין הרלוונטיים בין הצדדים שניתנו.
+            const partySearchBody: Record<string, unknown> = {
+              model: "sonar-pro",
+              search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
+              messages: [
+                {
+                  role: "system",
+                  content: `אתה עוזר מחקר משפטי ישראלי. מצא את כל פסקי הדין הרלוונטיים בין הצדדים שניתנו.
 טיפ חיפוש: ב-https://lite.takdin.co.il/search-results מופיעים בעמוד אחד שמות הצדדים ומספר התיק — חפש שם כדי לאתר את הצדדים והדוקט.
 חשוב: בערכי המחרוזות בתוך ה-JSON, השתמש אך ורק בגרשיים עבריים (״ U+05F4) או בגרש (׳ U+05F3) במקום במירכאות כפולות (") — למשל "פד״י" במקום "פד"י", "פ״ד" במקום "פ"ד", "ע״א" במקום "ע"א". מירכאות כפולות בתוך ערך מחרוזת ישברו את ה-JSON.
 כללים:
@@ -1396,49 +1390,55 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
 - ⚠️ קריטי לגבי פרסום בפ"ד: סמן isPublished=true ומלא padi_volume/padi_part/padi_page/year אך ורק אם ראית את הציון "פ"ד <כרך> <עמוד>" יחד עם מספר התיק המדויק במקור מהימן (nevo.co.il, supreme.court.gov.il, court.gov.il, psakdin.co.il). אסור להסיק כרך/עמוד/שנה מתוצאות takdin/lite.takdin — שם המידע מעורבב בין תיקים סמוכים. אם אינך בטוח, החזר isPublished=false ו-padi_volume/padi_part/padi_page/year ריקים.
 - חובה לכלול source_url לכל תוצאה — הקישור המדויק שממנו לקחת את שמות הצדדים והדוקט. ללא source_url התוצאה תיפסל.
 - אם לא נמצאו תוצאות, החזר {"results":[]}`,
-                  },
-                  {
-                    role: "user",
-                    content: userCaseTypeNorm
-                      ? `מצא את פסק הדין הישראלי מסוג ${userCaseTypeNorm} שבו ${party1} הוא צד א׳ ו-${party2} הוא צד ב׳. כלול את מספר התיק המלא, בית המשפט, תאריך פסק הדין המדויק (DD.MM.YYYY) ושם המאגר (תקדין/נבו/פדאור). חפש קודם ב-lite.takdin.co.il.`
-                      : `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}. כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפ״ד.`,
-                  },
-                ],
-                response_format: {
-                  type: "json_schema",
-                  json_schema: {
-                    schema: {
-                      type: "object",
-                      properties: {
-                        results: {
-                          type: "array",
-                          items: {
-                            type: "object",
-                            properties: {
-                              found: { type: "boolean" },
-                              caseType: { type: "string" },
-                              caseNumber: { type: "string" },
-                              party1: { type: "string" },
-                              party2: { type: "string" },
-                              date: { type: "string" },
-                              court: { type: "string" },
-                              isPublished: { type: "boolean" },
-                              padi_volume: { type: "string" },
-                              padi_part: { type: "string" },
-                              padi_page: { type: "string" },
-                              databaseName: { type: "string" },
-                              year: { type: "string" },
-                              source_url: { type: "string" },
-                            },
+                },
+                {
+                  role: "user",
+                  content: userCaseTypeNorm
+                    ? `מצא את פסק הדין הישראלי מסוג ${userCaseTypeNorm} שבו ${party1} הוא צד א׳ ו-${party2} הוא צד ב׳. כלול את מספר התיק המלא, בית המשפט, תאריך פסק הדין המדויק (DD.MM.YYYY) ושם המאגר (תקדין/נבו/פדאור). חפש קודם ב-lite.takdin.co.il.`
+                    : `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}. כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפ״ד.`,
+                },
+              ],
+              response_format: {
+                type: "json_schema",
+                json_schema: {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      results: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            found: { type: "boolean" },
+                            caseType: { type: "string" },
+                            caseNumber: { type: "string" },
+                            party1: { type: "string" },
+                            party2: { type: "string" },
+                            date: { type: "string" },
+                            court: { type: "string" },
+                            isPublished: { type: "boolean" },
+                            padi_volume: { type: "string" },
+                            padi_part: { type: "string" },
+                            padi_page: { type: "string" },
+                            databaseName: { type: "string" },
+                            year: { type: "string" },
+                            source_url: { type: "string" },
                           },
                         },
                       },
-                      required: ["results"],
                     },
+                    required: ["results"],
                   },
                 },
-              }),
-            });
+              },
+            };
+            const partySearchRun = await perplexityWithFallback(
+              PERPLEXITY_API_KEY,
+              partySearchBody,
+              `party:${searchQuery}`,
+            );
+            const partySearchResp = partySearchRun.resp!;
+            console.log(`[case-law] party tier=${partySearchRun.tier} tier1_trusted=${partySearchRun.tier1_trusted} tier2_fired=${partySearchRun.tier2_fired} tier2_trusted=${partySearchRun.tier2_trusted} dropped=${JSON.stringify(partySearchRun.tier2_dropped_hosts)}`);
 
             if (partySearchResp.ok) {
               const psData = await partySearchResp.json();
