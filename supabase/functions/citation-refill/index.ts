@@ -162,13 +162,8 @@ Deno.serve(async (req) => {
       "החזר אך ורק את הציטוט המתוקן בשורה אחת, מלא ככל האפשר על פי כללי האזכור האחיד.",
     ].filter(Boolean).join("\n");
 
-    const pplxRes = await fetch("https://api.perplexity.ai/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${pplxKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const callPplx = async (useAllowlist: boolean) => {
+      const reqBody: Record<string, unknown> = {
         model: "sonar-pro",
         messages: [
           { role: "system", content: systemPrompt },
@@ -176,17 +171,76 @@ Deno.serve(async (req) => {
         ],
         temperature: 0.1,
         max_tokens: 400,
-        search_domain_filter: ALLOWED_DOMAINS,
-      }),
-    });
+      };
+      if (useAllowlist) reqBody.search_domain_filter = ALLOWED_DOMAINS;
+      const r = await fetch("https://api.perplexity.ai/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${pplxKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reqBody),
+      });
+      if (!r.ok) {
+        const t = await r.text().catch(() => "");
+        return { ok: false as const, status: r.status, detail: t.slice(0, 300) };
+      }
+      const j = await r.json();
+      const content: string = j?.choices?.[0]?.message?.content ?? "";
+      const cits: string[] = Array.isArray(j?.citations) ? j.citations : [];
+      return { ok: true as const, content, citations: cits };
+    };
 
-    if (!pplxRes.ok) {
-      const txt = await pplxRes.text().catch(() => "");
-      return json({ error: "perplexity_failed", status: pplxRes.status, detail: txt.slice(0, 300) }, 502);
+    const tier1 = await callPplx(true);
+    if (!tier1.ok) {
+      return json({ error: "perplexity_failed", status: tier1.status, detail: tier1.detail }, 502);
     }
-    const pplxJson = await pplxRes.json();
-    const raw: string = pplxJson?.choices?.[0]?.message?.content ?? "";
-    const citations: string[] = Array.isArray(pplxJson?.citations) ? pplxJson.citations : [];
+
+    // Telemetry: did Tier-1 yield anything useful?
+    const tier1Trusted = countTrustedCitations(tier1.citations);
+    const tier1HasContent = !!(tier1.content || "").trim();
+
+    let raw = tier1.content;
+    let citations = tier1.citations;
+    let tier: "tier1" | "tier2_openweb_fallback" = "tier1";
+    let tier2Fired = false;
+    let tier2Trusted = 0;
+    let tier2Dropped: string[] = [];
+
+    const fallbackFlag = (Deno.env.get("CITATION_REFILL_OPENWEB_FALLBACK") ?? "").trim().toLowerCase();
+    const fallbackOn = ["on", "true", "1", "enabled"].includes(fallbackFlag);
+
+    // Tier-1 considered "failed" if it returned no trusted citations or no content.
+    if (fallbackOn && (!tier1HasContent || tier1Trusted === 0)) {
+      tier2Fired = true;
+      const tier2 = await callPplx(false);
+      if (tier2.ok) {
+        tier2Trusted = countTrustedCitations(tier2.citations);
+        tier2Dropped = untrustedHosts(tier2.citations);
+        // Trust-gate the citations. For docket inputs, require at least one
+        // trusted URL that contains the exact docket — kills look-alikes.
+        const trustedCits = (tier2.citations || []).filter((u) => isTrustedHost(u));
+        const docketAnchorOk = inputDocket
+          ? trustedCits.some((u) => urlContainsDocket(u, inputDocket))
+          : trustedCits.length > 0;
+        if (docketAnchorOk && (tier2.content || "").trim()) {
+          raw = tier2.content;
+          citations = trustedCits;
+          tier = "tier2_openweb_fallback";
+        }
+      }
+    }
+
+    console.log(JSON.stringify({
+      fn: "citation-refill",
+      tier,
+      tier1_trusted: tier1Trusted,
+      tier2_fired: tier2Fired,
+      tier2_trusted: tier2Trusted,
+      tier2_dropped_hosts: tier2Dropped,
+      docket_only: docketOnly,
+    }));
+
 
     // Clean: strip leading list markers, code fences, surrounding quotes,
     // collapse whitespace, take first non-empty line.
