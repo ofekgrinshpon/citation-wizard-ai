@@ -1241,13 +1241,15 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                 { role: "user", content: query },
               ],
             };
+            const docketAnchor = extractDocket(fullCaseRef);
             const caseSearchRun = await perplexityWithFallback(
               PERPLEXITY_API_KEY,
               caseSearchBody,
               `case-number:${fullCaseRef}`,
+              docketAnchor ? { docketAnchor: { num: docketAnchor.num, year: docketAnchor.year } } : undefined,
             );
             const perplexityResp = caseSearchRun.resp!;
-            console.log(`[case-law] tier=${caseSearchRun.tier} tier1_trusted=${caseSearchRun.tier1_trusted} tier2_fired=${caseSearchRun.tier2_fired} tier2_trusted=${caseSearchRun.tier2_trusted} dropped=${JSON.stringify(caseSearchRun.tier2_dropped_hosts)}`);
+            console.log(`[case-law] tier=${caseSearchRun.tier} tier1_trusted=${caseSearchRun.tier1_trusted} tier2_fired=${caseSearchRun.tier2_fired} tier2_trusted=${caseSearchRun.tier2_trusted} docket_anchor_ok=${caseSearchRun.docket_anchor_ok} dropped=${JSON.stringify(caseSearchRun.tier2_dropped_hosts)}`);
 
             if (perplexityResp.ok) {
               const pData = await perplexityResp.json();
@@ -1262,7 +1264,39 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
               if (jsonMatch) {
                 try {
                   let parsed = JSON.parse(jsonMatch[0]);
-                  
+
+                  // ── Party-source agreement check (kills adjacent-case contamination) ──
+                  // If parties were returned, verify ≥1 appears in title/snippet of a
+                  // search-result URL that contains the input docket. Otherwise the
+                  // model is likely parroting a louder neighbor (e.g. 5819/24 text
+                  // returned for a 4769/24 query). Drop the parties on mismatch.
+                  let partyMismatch = false;
+                  if (docketAnchor && parsed.found && parsed.party1 && parsed.party2) {
+                    const searchResults: Array<Record<string, unknown>> = Array.isArray(pData.search_results)
+                      ? pData.search_results : [];
+                    const anchored = searchResults.filter((r) =>
+                      typeof r.url === "string" && urlContainsDocket(r.url, docketAnchor),
+                    );
+                    if (anchored.length > 0) {
+                      const norm = (s: unknown) =>
+                        (typeof s === "string" ? s : "").replace(/\s+/g, " ").trim();
+                      const haystack = anchored
+                        .map((r) => `${norm(r.title)} ${norm(r.snippet)}`)
+                        .join(" \u2014 ");
+                      const p1 = norm(parsed.party1);
+                      const p2 = norm(parsed.party2);
+                      const p1Hit = p1.length >= 3 && haystack.includes(p1);
+                      const p2Hit = p2.length >= 3 && haystack.includes(p2);
+                      if (!p1Hit && !p2Hit) {
+                        partyMismatch = true;
+                        console.log(`[case-law] party_mismatch=true for ${fullCaseRef} — model parties not found in any docket-anchored source. Dropping parties.`);
+                        parsed.party1 = "";
+                        parsed.party2 = "";
+                        parsed.confidence = "low";
+                      }
+                    }
+                  }
+
                   // ── Secondary verification: if Perplexity says not published, double-check with a focused query ──
                   if (parsed.found && !parsed.isPublished) {
                     console.log(`[case-law] First search says unpublished for ${fullCaseRef}, running verification search...`);
@@ -1298,12 +1332,31 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                         if (vJson) {
                           const vParsed = JSON.parse(vJson[0]);
                           if (vParsed.isPublished && vParsed.padi_volume && vParsed.padi_volume.trim() !== "") {
-                            console.log(`[case-law] Verification found פד"י publication! Overriding.`);
-                            parsed.isPublished = true;
-                            parsed.padi_volume = vParsed.padi_volume;
-                            parsed.padi_part = vParsed.padi_part || parsed.padi_part;
-                            parsed.padi_page = vParsed.padi_page || parsed.padi_page;
-                            parsed.confidence = "high";
+                            // ── Sanity-check the override before accepting ──
+                            // 1. The volume must be in PADI_VOLUME_YEAR_RANGES.
+                            // 2. The decision year (from parsed) must fall within
+                            //    that window (±2y already baked into the ranges).
+                            // 3. ≥1 trusted citation URL must contain the docket.
+                            const vol = String(vParsed.padi_volume).trim();
+                            const range = PADI_VOLUME_YEAR_RANGES[vol];
+                            const decisionYearStr = String(parsed.year || "").trim()
+                              || (String(parsed.date || "").match(/(\d{4})/)?.[1] ?? "");
+                            const decisionYear = decisionYearStr ? parseInt(decisionYearStr, 10) : NaN;
+                            const yearOk = !range || (Number.isFinite(decisionYear)
+                              && decisionYear >= range[0] - 2 && decisionYear <= range[1] + 2);
+                            const docketOk = !docketAnchor
+                              || anyUrlContainsDocket(vData.citations, docketAnchor);
+                            const volKnown = !!range; // unknown vol → don't trust the override
+                            if (yearOk && docketOk && volKnown) {
+                              console.log(`[case-law] Verification found פד"י publication! Overriding.`);
+                              parsed.isPublished = true;
+                              parsed.padi_volume = vParsed.padi_volume;
+                              parsed.padi_part = vParsed.padi_part || parsed.padi_part;
+                              parsed.padi_page = vParsed.padi_page || parsed.padi_page;
+                              parsed.confidence = "high";
+                            } else {
+                              console.log(`[case-law] padi_override_rejected vol=${vol} year=${decisionYearStr} vol_known=${volKnown} year_ok=${yearOk} docket_ok=${docketOk}`);
+                            }
                           }
                         }
                       }
@@ -1315,6 +1368,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   // Reconcile decision date/year for published cases (Rule 18).
                   // First-pass `date`/`year` is often the volume's print year or fabricated.
                   await reconcilePublishedDate(PERPLEXITY_API_KEY, caseType, caseNum, parsed);
+
 
 
                   // Normalize databaseName from Perplexity citation URLs (lite.takdin → תקדין,
