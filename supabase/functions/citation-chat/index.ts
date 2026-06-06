@@ -1272,19 +1272,26 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                 try {
                   let parsed = JSON.parse(jsonMatch[0]);
 
-                  // ── Party-source agreement check (kills adjacent-case contamination) ──
-                  // If parties were returned, verify ≥1 appears in title/snippet of a
-                  // search-result URL that contains the input docket. Otherwise the
-                  // model is likely parroting a louder neighbor (e.g. 5819/24 text
-                  // returned for a 4769/24 query). Drop the parties on mismatch.
+                  // ── Strict party-source agreement check (kills adjacent-case / cited-precedent contamination) ──
+                  // The Perplexity snippet for a Supreme Court PDF often excerpts a paragraph
+                  // *inside* the judgment that cites a different precedent — so the loose
+                  // "party1 OR party2 anywhere in snippet" rule can accept parties from a
+                  // cited neighbor instead of the actual caption. We require either:
+                  //   (a) BOTH parties present in the anchored title+snippet  → "both", or
+                  //   (b) one party adjacent (≤40 chars) to a caption marker
+                  //       (נ׳ / נ' / נגד / העותרים / המשיבים / המערערים / המבקשים) → "caption_marker"
+                  // Otherwise drop the parties and render explicit [חסר: שמות צדדים].
                   let partyMismatch = false;
+                  let partyVerification: "both" | "caption_marker" | "insufficient_snippet" | "no_anchor" | "n/a" = "n/a";
                   if (docketAnchor && parsed.found && parsed.party1 && parsed.party2) {
                     const searchResults: Array<Record<string, unknown>> = Array.isArray(pData.search_results)
                       ? pData.search_results : [];
                     const anchored = searchResults.filter((r) =>
                       typeof r.url === "string" && urlContainsDocket(r.url, docketAnchor),
                     );
-                    if (anchored.length > 0) {
+                    if (anchored.length === 0) {
+                      partyVerification = "no_anchor";
+                    } else {
                       const norm = (s: unknown) =>
                         (typeof s === "string" ? s : "").replace(/\s+/g, " ").trim();
                       const haystack = anchored
@@ -1294,15 +1301,34 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                       const p2 = norm(parsed.party2);
                       const p1Hit = p1.length >= 3 && haystack.includes(p1);
                       const p2Hit = p2.length >= 3 && haystack.includes(p2);
-                      if (!p1Hit && !p2Hit) {
+
+                      // Caption-marker proximity check: a party token within ~40 chars of a caption marker.
+                      const CAPTION_MARKERS = ["נ׳", "נ'", "נגד", "העותרים", "המשיבים", "המערערים", "המבקשים"];
+                      const nearMarker = (party: string): boolean => {
+                        if (party.length < 3) return false;
+                        const idx = haystack.indexOf(party);
+                        if (idx < 0) return false;
+                        const windowStart = Math.max(0, idx - 40);
+                        const windowEnd = Math.min(haystack.length, idx + party.length + 40);
+                        const win = haystack.slice(windowStart, windowEnd);
+                        return CAPTION_MARKERS.some((m) => win.includes(m));
+                      };
+
+                      if (p1Hit && p2Hit) {
+                        partyVerification = "both";
+                      } else if (nearMarker(p1) || nearMarker(p2)) {
+                        partyVerification = "caption_marker";
+                      } else {
+                        partyVerification = "insufficient_snippet";
                         partyMismatch = true;
-                        console.log(`[case-law] party_mismatch=true for ${fullCaseRef} — model parties not found in any docket-anchored source. Dropping parties.`);
+                        console.log(`[case-law] party_verification=insufficient_snippet for ${fullCaseRef} — anchored snippet does not contain both parties nor caption-marker proximity. Dropping parties (will render [חסר: שמות צדדים]).`);
                         parsed.party1 = "";
                         parsed.party2 = "";
                         parsed.confidence = "low";
                       }
                     }
                   }
+                  console.log(`[case-law] party_verification=${partyVerification} party_mismatch=${partyMismatch} docket_anchor_via=${docketAnchorVia ?? 'n/a'} for ${fullCaseRef}`);
 
                   // ── Secondary verification: if Perplexity says not published, double-check with a focused query ──
                   if (parsed.found && !parsed.isPublished) {
