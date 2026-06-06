@@ -54,3 +54,36 @@ Unset `CITATION_CHAT_OPENWEB_FALLBACK`. No code revert needed.
 ## Untouched
 
 `legal-qa`, `legal-research-v1`, `citation-refill`, `bibliography-lookup`, `case-law-search`, citation engine (`citationEngine.ts`/`citationResolver.ts`), article validator, React app.
+
+---
+
+# Addendum — Tier-2 fallback in `citation-refill` (footnote section)
+
+Shipped: flag-gated, off by default. Independent flag, independent rollout.
+
+## Flag
+
+- `CITATION_REFILL_OPENWEB_FALLBACK` env var on `citation-refill`. `"on" | "true" | "1" | "enabled"` (trimmed/case-insensitive) enables Tier-2; anything else disables it.
+
+## Behaviour
+
+- Tier-1 unchanged: same `sonar-pro` call with `search_domain_filter = ALLOWED_DOMAINS`.
+- Tier-2 fires only when Tier-1 returns no trusted citations OR no content.
+- Tier-2 retries the SAME prompt without `search_domain_filter`, then trust-gates citations against `TRUSTED_LEGAL ∪ TRUSTED_PUB`.
+- **Docket-anchor gate (refill-specific)**: if the input has a docket, at least one TRUSTED Tier-2 citation URL must literally contain that docket (`urlContainsDocket`) — otherwise Tier-2 is discarded and Tier-1's (empty) result stands. This protects against Barak-style near-neighbor substitution that the citation-chat plan worried about.
+- For non-docket inputs (bibliographic refill), trust gate alone is enough.
+
+## Validators preserved
+
+- `urlContainsDocket` party-anchor check still runs on the final accepted output.
+- Docket-change rejection still runs (model cannot silently substitute one docket for another).
+- Sanitised-input fallback on `verified: false` unchanged.
+
+## Telemetry
+
+Per-request console log line includes:
+`tier`, `tier1_trusted`, `tier2_fired`, `tier2_trusted`, `tier2_dropped_hosts`, `docket_only`.
+
+## Rollback
+
+Unset `CITATION_REFILL_OPENWEB_FALLBACK`. No code revert needed.
