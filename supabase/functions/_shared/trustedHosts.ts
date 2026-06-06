@@ -119,28 +119,137 @@ export function extractDocket(
   return { full: `${m[2]}/${m[3]}`, num: m[2], year: m[3] };
 }
 
-export function urlContainsDocket(
+/**
+ * Telemetry channel for which encoding satisfied the docket-anchor gate.
+ *  - plain                     → NUM/YY (or -, _, %2F variants), any host
+ *  - supreme_hebrew_verdicts   → /HebrewVerdicts/YY/<sec>/<first>/… path
+ *                                (supreme.court.gov.il + supremedecisions)
+ *  - supreme_net_verdicts      → /YYYY-X-NUM-… NetVerdicts path
+ *  - supreme_filename          → YY{first}{second}.<ext> filename token
+ *  - none                      → no match
+ */
+export type DocketAnchorVia =
+  | "plain"
+  | "supreme_hebrew_verdicts"
+  | "supreme_net_verdicts"
+  | "supreme_filename"
+  | "none";
+
+const SUPREME_HOSTS = ["supreme.court.gov.il", "supremedecisions.court.gov.il"];
+
+function isSupremeHost(host: string | null): boolean {
+  if (!host) return false;
+  return SUPREME_HOSTS.some((d) => host === d || host.endsWith("." + d));
+}
+
+/**
+ * Encode docket NUM into Supreme Court's internal 6-digit form.
+ * Rule (verified against 13 real (docket,URL) pairs in reports/):
+ *   D6 = leftpad(NUM, 5, '0') + '0'
+ *   firstHalf  = D6.slice(0,3)   secondHalf = D6.slice(3,6)
+ * E.g. 8987 → "089870" → first="089" sec="870"; 4769 → "047690" → "047"/"690".
+ * NUM up to 5 digits supported (observed up to 18615).
+ */
+function supremeEncodeNum(numStr: string): { first: string; second: string } | null {
+  if (!/^\d{1,5}$/.test(numStr)) return null;
+  const d6 = numStr.padStart(5, "0") + "0";
+  return { first: d6.slice(0, 3), second: d6.slice(3, 6) };
+}
+
+/** Normalize an arbitrary year string to {yy, yyyy} candidates. */
+function yearForms(yearStr: string): { yy: string; yyyy: string } | null {
+  if (!/^\d{2,4}$/.test(yearStr)) return null;
+  if (yearStr.length === 4) return { yy: yearStr.slice(2), yyyy: yearStr };
+  if (yearStr.length === 2) {
+    const n = parseInt(yearStr, 10);
+    // Supreme e-filing started ~1990s. Treat <70 as 20YY, else 19YY.
+    const yyyy = (n < 70 ? 2000 + n : 1900 + n).toString();
+    return { yy: yearStr, yyyy };
+  }
+  const yyyy = yearStr.padStart(4, "0");
+  return { yy: yyyy.slice(2), yyyy };
+}
+
+/**
+ * Returns the channel by which `url` references `docket`, or "none".
+ * Plain channel works on any host. Supreme encodings are gated to
+ * supreme.court.gov.il / supremedecisions.court.gov.il to avoid
+ * false positives elsewhere.
+ */
+export function urlContainsDocketVia(
   url: unknown,
   docket: { num: string; year: string },
-): boolean {
-  if (typeof url !== "string" || !url) return false;
+): { ok: boolean; via: DocketAnchorVia } {
+  if (typeof url !== "string" || !url) return { ok: false, via: "none" };
+  let host: string | null = null;
+  try { host = new URL(url).hostname.toLowerCase(); } catch { host = null; }
+
   let decoded = url;
   try { decoded = decodeURIComponent(url); } catch { /* keep raw */ }
   const u = decoded.toLowerCase();
   const { num, year } = docket;
-  const patterns = [
-    `${num}/${year}`,
-    `${num}-${year}`,
-    `${num}_${year}`,
-    `${num}%2f${year}`,
-  ];
-  return patterns.some((p) => u.includes(p));
+
+  // Channel 1: plain NUM/YY (after URL-decode, %2F became /).
+  const plainPatterns = [`${num}/${year}`, `${num}-${year}`, `${num}_${year}`];
+  if (plainPatterns.some((p) => u.includes(p))) return { ok: true, via: "plain" };
+
+  // Supreme-only channels below.
+  if (!isSupremeHost(host)) return { ok: false, via: "none" };
+
+  const enc = supremeEncodeNum(num);
+  const yf = yearForms(year);
+  if (!enc || !yf) return { ok: false, via: "none" };
+
+  const { first, second } = enc;
+  const { yy, yyyy } = yf;
+
+  // Channel 2: HebrewVerdicts path. Separators may be `/` or `\` after decode.
+  const hvRe = new RegExp(
+    `hebrewverdicts[\\/\\\\]${yy}[\\/\\\\]${second}[\\/\\\\]${first}[\\/\\\\]`,
+    "i",
+  );
+  if (hvRe.test(u)) return { ok: true, via: "supreme_hebrew_verdicts" };
+
+  // Channel 3: filename YY{first}{second} (8 digits) followed by . or _.
+  const fn = `${yy}${first}${second}`;
+  const fnRe = new RegExp(`(?:^|[^0-9])${fn}(?=[._])`, "i");
+  if (fnRe.test(u)) return { ok: true, via: "supreme_filename" };
+
+  // Channel 4: NetVerdicts. Pattern: /YYYY-<digits>-NUM-<digits>-
+  const numEsc = num.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const nvRe = new RegExp(
+    `netverdicts[\\/\\\\][^?]*[\\/\\\\-]${yyyy}-\\d+-${numEsc}-`,
+    "i",
+  );
+  if (nvRe.test(u)) return { ok: true, via: "supreme_net_verdicts" };
+
+  return { ok: false, via: "none" };
+}
+
+/** Backward-compatible boolean wrapper. */
+export function urlContainsDocket(
+  url: unknown,
+  docket: { num: string; year: string },
+): boolean {
+  return urlContainsDocketVia(url, docket).ok;
+}
+
+/** First non-"none" via among the urls, else "none". */
+export function anyUrlContainsDocketVia(
+  urls: unknown,
+  docket: { num: string; year: string },
+): DocketAnchorVia {
+  if (!Array.isArray(urls)) return "none";
+  for (const u of urls) {
+    const r = urlContainsDocketVia(u, docket);
+    if (r.ok) return r.via;
+  }
+  return "none";
 }
 
 export function anyUrlContainsDocket(
   urls: unknown,
   docket: { num: string; year: string },
 ): boolean {
-  if (!Array.isArray(urls)) return false;
-  return urls.some((u) => urlContainsDocket(u, docket));
+  return anyUrlContainsDocketVia(urls, docket) !== "none";
 }
