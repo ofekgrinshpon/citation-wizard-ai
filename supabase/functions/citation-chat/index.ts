@@ -1256,7 +1256,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
               docketAnchor ? { docketAnchor: { num: docketAnchor.num, year: docketAnchor.year } } : undefined,
             );
             const perplexityResp = caseSearchRun.resp!;
-            console.log(`[case-law] tier=${caseSearchRun.tier} tier1_trusted=${caseSearchRun.tier1_trusted} tier2_fired=${caseSearchRun.tier2_fired} tier2_trusted=${caseSearchRun.tier2_trusted} docket_anchor_ok=${caseSearchRun.docket_anchor_ok} dropped=${JSON.stringify(caseSearchRun.tier2_dropped_hosts)}`);
+            console.log(`[case-law] tier=${caseSearchRun.tier} tier1_trusted=${caseSearchRun.tier1_trusted} tier2_fired=${caseSearchRun.tier2_fired} tier2_trusted=${caseSearchRun.tier2_trusted} docket_anchor_ok=${caseSearchRun.docket_anchor_ok} docket_anchor_via=${caseSearchRun.docket_anchor_via} dropped=${JSON.stringify(caseSearchRun.tier2_dropped_hosts)}`);
 
             if (perplexityResp.ok) {
               const pData = await perplexityResp.json();
