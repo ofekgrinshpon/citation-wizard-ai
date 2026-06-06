@@ -174,13 +174,15 @@ async function perplexityWithFallback(
             try { const h = new URL(u).hostname.toLowerCase(); return h === d || h.endsWith("." + d); } catch { return false; }
           }))
       : [];
-    result.docket_anchor_ok = trustedCits.some((u) => urlContainsDocket(u, opts.docketAnchor!));
+    const via = anyUrlContainsDocketVia(trustedCits, opts.docketAnchor!);
+    result.docket_anchor_via = via;
+    result.docket_anchor_ok = via !== "none";
   }
 
   console.log(
     `[pplx-fallback:${logTag}] tier2_trusted=${result.tier2_trusted} dropped=${
       JSON.stringify(result.tier2_dropped_hosts)
-    } docket_anchor_ok=${result.docket_anchor_ok}`,
+    } docket_anchor_ok=${result.docket_anchor_ok} docket_anchor_via=${result.docket_anchor_via}`,
   );
 
   // Accept Tier-2 only if trusted AND (no docket required OR docket-anchored).
