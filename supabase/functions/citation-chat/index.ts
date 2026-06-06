@@ -1328,7 +1328,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                       }
                     }
                   }
-                  console.log(`[case-law] party_verification=${partyVerification} party_mismatch=${partyMismatch} docket_anchor_via=${docketAnchorVia ?? 'n/a'} for ${fullCaseRef}`);
+                  console.log(`[case-law] party_verification=${partyVerification} party_mismatch=${partyMismatch} for ${fullCaseRef}`);
 
                   // ── Secondary verification: if Perplexity says not published, double-check with a focused query ──
                   if (parsed.found && !parsed.isPublished) {
