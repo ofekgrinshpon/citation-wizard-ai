@@ -24,6 +24,8 @@ import {
   countTrustedCitations,
   isTrustedHost,
   untrustedHosts,
+  extractDocket as sharedExtractDocket,
+  urlContainsDocket as sharedUrlContainsDocket,
 } from "../_shared/trustedHosts.ts";
 
 const corsHeaders = {
