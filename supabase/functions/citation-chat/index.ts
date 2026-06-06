@@ -49,7 +49,10 @@ import {
   untrustedHosts,
   extractDocket,
   urlContainsDocket,
+  urlContainsDocketVia,
   anyUrlContainsDocket,
+  anyUrlContainsDocketVia,
+  type DocketAnchorVia,
 } from "../_shared/trustedHosts.ts";
 
 // ── Tier-2 open-web fallback (flag-gated) ──────────────────────────────────
