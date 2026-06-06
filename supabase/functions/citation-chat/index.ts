@@ -105,6 +105,7 @@ async function perplexityWithFallback(
     tier2_trusted: 0,
     tier2_dropped_hosts: [],
     docket_anchor_ok: opts?.docketAnchor ? false : null,
+    docket_anchor_via: "none",
   };
 
   const t1 = await fetch("https://api.perplexity.ai/chat/completions", {
