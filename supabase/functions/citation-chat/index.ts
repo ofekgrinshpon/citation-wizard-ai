@@ -57,7 +57,9 @@ import {
 // Fires only when Tier-1 returns zero trusted citations. Off by default;
 // flip `CITATION_CHAT_OPENWEB_FALLBACK=on` to enable.
 const OPENWEB_FALLBACK_ON =
-  (Deno.env.get("CITATION_CHAT_OPENWEB_FALLBACK") || "").toLowerCase() === "on";
+  ["on", "true", "1", "enabled"].includes(
+    (Deno.env.get("CITATION_CHAT_OPENWEB_FALLBACK") || "").trim().toLowerCase(),
+  );
 
 interface PplxRunResult {
   resp: Response | null;        // last response (Tier-2 if it fired & helped, else Tier-1)
@@ -1100,10 +1102,12 @@ serve(async (req) => {
     let caseLawHint = "";
     let caseLawOverrideLabel: string | null = null;
     const classMatch = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
-    const isCaseLaw = classMatch && /פסיקה/.test(classMatch[1]);
     
     // ── Check if this is a disambiguation selection (skip Perplexity) ──
     const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(userInput);
+
+    const caseNumberMatch = userInput.match(CASE_DOCKET_RE);
+    const isCaseLaw = Boolean((classMatch && /פסיקה/.test(classMatch[1])) || caseNumberMatch);
 
     // Extract embedded data blob (carried over from a prior party-search disambiguation list)
     let selectionDataBlob: Record<string, unknown> | null = null;
@@ -1118,8 +1122,6 @@ serve(async (req) => {
         }
       }
     }
-
-    const caseNumberMatch = userInput.match(CASE_DOCKET_RE);
 
     // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern
     const cleanedForParty = userInput
