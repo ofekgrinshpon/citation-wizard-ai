@@ -71,6 +71,7 @@ interface PplxRunResult {
   tier2_fired: boolean;
   tier2_trusted: number;
   tier2_dropped_hosts: string[];
+  docket_anchor_ok: boolean | null; // null = not applicable (no docket passed)
 }
 
 /**
@@ -80,11 +81,17 @@ interface PplxRunResult {
  *
  * Tier-2 keeps the same model/temperature/messages/max_tokens — only the
  * `search_domain_filter` is stripped.
+ *
+ * If `opts.dockedAnchor` is provided, Tier-2 is additionally required to
+ * yield ≥1 trusted URL whose path contains the exact docket. This kills
+ * adjacent-case contamination (e.g. neighboring docket 5819/24 hijacking a
+ * search for 4769/24).
  */
 async function perplexityWithFallback(
   apiKey: string,
   tier1Body: Record<string, unknown>,
   logTag: string,
+  opts?: { docketAnchor?: { num: string; year: string } },
 ): Promise<PplxRunResult> {
   const result: PplxRunResult = {
     resp: null,
@@ -93,6 +100,7 @@ async function perplexityWithFallback(
     tier2_fired: false,
     tier2_trusted: 0,
     tier2_dropped_hosts: [],
+    docket_anchor_ok: opts?.docketAnchor ? false : null,
   };
 
   const t1 = await fetch("https://api.perplexity.ai/chat/completions", {
@@ -151,15 +159,32 @@ async function perplexityWithFallback(
   const gate = [...TRUSTED_LEGAL, ...TRUSTED_PUB];
   result.tier2_trusted = countTrustedCitations(t2Cit, gate);
   result.tier2_dropped_hosts = untrustedHosts(t2Cit, gate);
+
+  // Docket-anchor gate: ≥1 TRUSTED url must contain the input docket.
+  if (opts?.docketAnchor) {
+    const trustedCits = Array.isArray(t2Cit)
+      ? (t2Cit as unknown[]).filter((u) =>
+          typeof u === "string" &&
+          gate.some((d) => {
+            try { const h = new URL(u).hostname.toLowerCase(); return h === d || h.endsWith("." + d); } catch { return false; }
+          }))
+      : [];
+    result.docket_anchor_ok = trustedCits.some((u) => urlContainsDocket(u, opts.docketAnchor!));
+  }
+
   console.log(
     `[pplx-fallback:${logTag}] tier2_trusted=${result.tier2_trusted} dropped=${
       JSON.stringify(result.tier2_dropped_hosts)
-    }`,
+    } docket_anchor_ok=${result.docket_anchor_ok}`,
   );
 
-  if (result.tier2_trusted > 0) {
+  // Accept Tier-2 only if trusted AND (no docket required OR docket-anchored).
+  const anchorOk = result.docket_anchor_ok !== false; // null or true both ok
+  if (result.tier2_trusted > 0 && anchorOk) {
     result.resp = t2;
     result.tier = "tier2_openweb_fallback";
+  } else if (result.tier2_trusted > 0 && !anchorOk) {
+    console.log(`[pplx-fallback:${logTag}] tier2 discarded — no trusted URL contains docket ${opts!.docketAnchor!.num}/${opts!.docketAnchor!.year}`);
   }
   return result;
 }
