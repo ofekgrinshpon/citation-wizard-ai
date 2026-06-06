@@ -1,89 +1,54 @@
-# Plan — Tier-2 open-web fallback in `citation-chat` (Variant B)
+# Fix Tier-2 hallucinations in footnote (citation-chat) path
 
-Shipped: flag-gated, off by default.
+## Problem (from logs for בג"ץ 4769/24)
 
-## Source hierarchy (intentional, do not collapse)
+Tier-2 fired correctly and returned trusted citations — but the model returned parties from **בג"ץ 5819/24** (a louder neighbor) instead of 4769/24. Across 5 retries the parties shifted: `התנועה למען איכות השלטון נ' שר הביטחון` → `מכון ברנדייס נ' היועצת המשפטית` → `התנועה לאיכות השלטון נ' שר המשפטים`. One run also fabricated a `פ"ד מב(4) 868` publication for a 2024 case.
 
-- **Tier 1** = current behaviour with `search_domain_filter` over high-authority Israeli legal/court/database sources only. Unchanged.
-- **Tier 2** = single retry with the SAME prompt minus `search_domain_filter`, then post-hoc trust gate over `TRUSTED_LEGAL ∪ TRUSTED_PUB`. Fires only when Tier-1 returns zero trusted citations. Never invoked when Tier-1 succeeds — preserves source authority and avoids near-neighbor substitution (e.g. Barak title drift seen in the experiment).
-- **No Tier 3.** Open web without trust gate is rejected for production.
+Root causes, in order of impact:
 
-## Flag
+1. **No docket-anchor gate** in `citation-chat` tier-2 (refill has one, footnotes don't).
+2. **Adjacent-case contamination**: search results for 4769/24 are dominated by 5819/24; the model copies the louder neighbor's text even when the correct URL is in the citation list.
+3. **Verification-search override** has no sanity check — it accepted a `פ"ד מב/4/868` claim for a 2024 case.
 
-- `CITATION_CHAT_OPENWEB_FALLBACK` env var on the `citation-chat` function. `"on"` enables Tier-2; anything else (including unset) disables it. Default = off, so the deploy is behaviour-identical to today until the flag is flipped.
+## Changes
 
-## Trust gate
+### A. Docket-anchor gate in `citation-chat` tier-2 (parity with refill)
 
-`supabase/functions/_shared/trustedHosts.ts`:
-- `TRUSTED_LEGAL` — nevo, court.gov.il + subdomains, supremedecisions, takdin/lite.takdin, psakdin, din.org.il, knesset.gov.il, reshumot.gov.il, gov.il.
-- `TRUSTED_PUB` — curated academic/policy hosts: TAU/HUJI/BIU/Haifa/IDC/Colman/Mishpat faculty & journals, IDI, NLI, knesset publishing subdomains, SSRN.
-- Explicit exclusions: Wikipedia, Scribd, img.mako.co.il, a7.org, lawprofsforum, law-firm blogs, podcasts.
-- `isTrustedHost`, `countTrustedCitations`, `untrustedHosts` helpers.
+In `perplexityWithFallback` (citation-chat/index.ts ~L81–162), add an optional `dockedAnchor?: { num: string; year: string }` parameter. When provided, after trust-gating Tier-2 citations, require at least one trusted URL to contain `num/year` (or `num-year`, `num_year`, `num%2fyear`). If not, **discard Tier-2** and keep Tier-1 (which was empty → caller falls back as before). Log a new telemetry field `docket_anchor_ok`.
 
-## Wired call sites in `citation-chat/index.ts`
+Extract `urlContainsDocket` from `citation-refill/index.ts` into `_shared/trustedHosts.ts` so both functions use the same matcher.
 
-Wrapped with `perplexityWithFallback`:
-1. Case-number search (`sonar-pro`, allowlist).
-2. Party-name search (`sonar-pro`, allowlist).
+Threading: the case-number path (~L1219) already has `fullCaseRef`; parse the docket once and pass it into the helper.
 
-Deliberately NOT wrapped (kept strictly Tier-1):
-- `verifyDecisionDate` — already-identified case, must not pull academic substitutes.
-- PADI publication re-verification (both call sites) — same reason; near-neighbor substitution is exactly what we're avoiding.
+### B. Party-source agreement check (kills 5819/24 contamination)
 
-Out of scope (currently no allowlist, already open-web with no trust gate — separate decision):
-- Legislation / regulation / book / article free-form searches.
+After the model returns party names for a case-number lookup, run a cheap server-side check:
+- Take the docket-anchored URL (the trusted citation whose URL contains the input docket).
+- Fetch the page snippet that Perplexity already returned in `search_results[].snippet` for THAT URL (no extra HTTP — it's in the response).
+- Verify the model's `party1` OR `party2` appears (substring, whitespace-normalized) in either the title or snippet of the anchored result.
+- If neither party appears in the anchored source's title/snippet, mark the result as **unverified**: keep the docket, drop the parties (`[חסר: שמות צדדים]`), and log `party_mismatch=true`.
 
-## Validators preserved
+This is the same pattern the stack-overflow note suggests: cross-validate the extracted parties against the source text where the docket actually appears.
 
-- Case-law `pub-guard` (year-vs-docket, trusted-pub URL check, halfPub) still runs over any Tier-2 result.
-- `reconcilePublishedDate` still runs.
-- Party-lock + spacing instructions still injected.
-- No relaxation of the existing JSON validation paths.
+### C. Sanity-check the פ"ד-publication verification override (~L1219 area, "Verification found פד\"י")
 
-## Telemetry
+Before accepting an `isPublished=true` override, require:
+- `padi_volume` is in `PADI_VOLUME_YEAR_RANGES` (already in the file at L169).
+- The case's decision year falls within that volume's plausible window (with the existing generous ±2y).
+- At least one trusted citation URL contains the docket (reuse the helper from A).
 
-Per-request console logs include:
-- `tier` (`tier1` | `tier2_openweb_fallback`)
-- `tier1_trusted`, `tier2_fired`, `tier2_trusted`
-- `tier2_dropped_hosts` (untrusted hosts the gate refused to admit)
+If any check fails: discard the override, keep `isPublished=false`, log `padi_override_rejected` with the reason. This kills the `מב/4/868` for 2024 hallucination.
 
-## Rollback
+### D. Telemetry
 
-Unset `CITATION_CHAT_OPENWEB_FALLBACK`. No code revert needed.
+Add to the existing `[case-law]` log line: `docket_anchor_ok`, `party_mismatch`, `padi_override_rejected`. No new env var; the existing `CITATION_CHAT_OPENWEB_FALLBACK=on` flag remains the master switch.
 
-## Untouched
+## Out of scope
 
-`legal-qa`, `legal-research-v1`, `citation-refill`, `bibliography-lookup`, `case-law-search`, citation engine (`citationEngine.ts`/`citationResolver.ts`), article validator, React app.
-
----
-
-# Addendum — Tier-2 fallback in `citation-refill` (footnote section)
-
-Shipped: flag-gated, off by default. Independent flag, independent rollout.
-
-## Flag
-
-- `CITATION_REFILL_OPENWEB_FALLBACK` env var on `citation-refill`. `"on" | "true" | "1" | "enabled"` (trimmed/case-insensitive) enables Tier-2; anything else disables it.
-
-## Behaviour
-
-- Tier-1 unchanged: same `sonar-pro` call with `search_domain_filter = ALLOWED_DOMAINS`.
-- Tier-2 fires only when Tier-1 returns no trusted citations OR no content.
-- Tier-2 retries the SAME prompt without `search_domain_filter`, then trust-gates citations against `TRUSTED_LEGAL ∪ TRUSTED_PUB`.
-- **Docket-anchor gate (refill-specific)**: if the input has a docket, at least one TRUSTED Tier-2 citation URL must literally contain that docket (`urlContainsDocket`) — otherwise Tier-2 is discarded and Tier-1's (empty) result stands. This protects against Barak-style near-neighbor substitution that the citation-chat plan worried about.
-- For non-docket inputs (bibliographic refill), trust gate alone is enough.
-
-## Validators preserved
-
-- `urlContainsDocket` party-anchor check still runs on the final accepted output.
-- Docket-change rejection still runs (model cannot silently substitute one docket for another).
-- Sanitised-input fallback on `verified: false` unchanged.
-
-## Telemetry
-
-Per-request console log line includes:
-`tier`, `tier1_trusted`, `tier2_fired`, `tier2_trusted`, `tier2_dropped_hosts`, `docket_only`.
+- No prompt rewrites. The model is already told to use the exact docket; the fix is server-side verification, not better prompting.
+- No new HTTP fetches. We use only the `search_results[]` snippets Perplexity already returns.
+- `citation-refill` is unchanged — it already has the docket-anchor gate.
 
 ## Rollback
 
-Unset `CITATION_REFILL_OPENWEB_FALLBACK`. No code revert needed.
+Unset `CITATION_CHAT_OPENWEB_FALLBACK` — Tier-1-only behavior is preserved. The party-agreement check and פ"ד sanity check are cheap and safe to keep on unconditionally, but I can gate them behind a second flag if you prefer.
