@@ -1415,12 +1415,18 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   const hasValidDate = parsed.date && !/^0+\.0+\.0+$/.test(parsed.date) && parsed.date.trim() !== "";
                   const hasValidParties = parsed.party1 && parsed.party1.trim() !== "" && parsed.party2 && parsed.party2.trim() !== "";
                   const hasValidPublication = (parsed.isPublished && parsed.padi_volume && parsed.padi_volume.trim() !== "") || (!parsed.isPublished && parsed.databaseName && parsed.databaseName.trim() !== "");
-                  const dataIsUsable = parsed.found && hasValidParties && (hasValidDate || hasValidPublication);
+                  // Treat anchor-verified-but-parties-dropped as usable so we render [חסר: שמות צדדים]
+                  // rather than silently hiding the citation behind a wrong fallback.
+                  const dataIsUsable = parsed.found && (hasValidParties || partyMismatch) && (hasValidDate || hasValidPublication);
                   
                   if (dataIsUsable) {
                     let details = `\n\n══ נתוני פסק דין שנמצאו בחיפוש ══\n`;
                     details += `תיק: ${fullCaseRef}\n`;
-                    if (hasValidParties) details += `צדדים: **${parsed.party1}** נ' **${parsed.party2}**\n`;
+                    if (hasValidParties) {
+                      details += `צדדים: **${parsed.party1}** נ' **${parsed.party2}**\n`;
+                    } else if (partyMismatch) {
+                      details += `צדדים: [חסר: שמות צדדים]\n`;
+                    }
                     if (parsed.court) details += `בית משפט: ${parsed.court}\n`;
                     if (parsed.isPublished && parsed.padi_volume && parsed.padi_volume.trim() !== "") {
                       caseLawOverrideLabel = "פסיקה (דפוס)";
