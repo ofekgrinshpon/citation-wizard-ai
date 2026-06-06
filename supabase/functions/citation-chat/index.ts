@@ -75,6 +75,7 @@ interface PplxRunResult {
   tier2_trusted: number;
   tier2_dropped_hosts: string[];
   docket_anchor_ok: boolean | null; // null = not applicable (no docket passed)
+  docket_anchor_via: DocketAnchorVia; // "none" when not applicable or no match
 }
 
 /**
