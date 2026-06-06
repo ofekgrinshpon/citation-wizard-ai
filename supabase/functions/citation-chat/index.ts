@@ -47,6 +47,9 @@ import {
   TRUSTED_PUB,
   countTrustedCitations,
   untrustedHosts,
+  extractDocket,
+  urlContainsDocket,
+  anyUrlContainsDocket,
 } from "../_shared/trustedHosts.ts";
 
 // ── Tier-2 open-web fallback (flag-gated) ──────────────────────────────────
