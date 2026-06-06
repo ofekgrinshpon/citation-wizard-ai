@@ -101,3 +101,46 @@ export function untrustedHosts(
   }
   return out;
 }
+
+/**
+ * Shared docket parser/matcher. Accepts dockets like "4769/24", "4769-24",
+ * with ASCII or Hebrew quotes between case-type letters. Returns the bare
+ * {num, year} pair (the two segments URL fragments typically use).
+ */
+const DOCKET_RE_SHARED =
+  /([א-ת]{1,4}(?:["״׳']?[א-ת]?)?)\s*(\d{1,6})\s*[\/\-\u2013]\s*(\d{2,4})/;
+
+export function extractDocket(
+  s: unknown,
+): { full: string; num: string; year: string } | null {
+  if (typeof s !== "string" || !s) return null;
+  const m = s.match(DOCKET_RE_SHARED);
+  if (!m) return null;
+  return { full: `${m[2]}/${m[3]}`, num: m[2], year: m[3] };
+}
+
+export function urlContainsDocket(
+  url: unknown,
+  docket: { num: string; year: string },
+): boolean {
+  if (typeof url !== "string" || !url) return false;
+  let decoded = url;
+  try { decoded = decodeURIComponent(url); } catch { /* keep raw */ }
+  const u = decoded.toLowerCase();
+  const { num, year } = docket;
+  const patterns = [
+    `${num}/${year}`,
+    `${num}-${year}`,
+    `${num}_${year}`,
+    `${num}%2f${year}`,
+  ];
+  return patterns.some((p) => u.includes(p));
+}
+
+export function anyUrlContainsDocket(
+  urls: unknown,
+  docket: { num: string; year: string },
+): boolean {
+  if (!Array.isArray(urls)) return false;
+  return urls.some((u) => urlContainsDocket(u, docket));
+}
