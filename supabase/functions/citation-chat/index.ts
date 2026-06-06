@@ -57,7 +57,9 @@ import {
 // Fires only when Tier-1 returns zero trusted citations. Off by default;
 // flip `CITATION_CHAT_OPENWEB_FALLBACK=on` to enable.
 const OPENWEB_FALLBACK_ON =
-  (Deno.env.get("CITATION_CHAT_OPENWEB_FALLBACK") || "").toLowerCase() === "on";
+  ["on", "true", "1", "enabled"].includes(
+    (Deno.env.get("CITATION_CHAT_OPENWEB_FALLBACK") || "").trim().toLowerCase(),
+  );
 
 interface PplxRunResult {
   resp: Response | null;        // last response (Tier-2 if it fired & helped, else Tier-1)
