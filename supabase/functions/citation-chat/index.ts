@@ -49,7 +49,10 @@ import {
   untrustedHosts,
   extractDocket,
   urlContainsDocket,
+  urlContainsDocketVia,
   anyUrlContainsDocket,
+  anyUrlContainsDocketVia,
+  type DocketAnchorVia,
 } from "../_shared/trustedHosts.ts";
 
 // ── Tier-2 open-web fallback (flag-gated) ──────────────────────────────────
@@ -72,6 +75,7 @@ interface PplxRunResult {
   tier2_trusted: number;
   tier2_dropped_hosts: string[];
   docket_anchor_ok: boolean | null; // null = not applicable (no docket passed)
+  docket_anchor_via: DocketAnchorVia; // "none" when not applicable or no match
 }
 
 /**
@@ -101,6 +105,7 @@ async function perplexityWithFallback(
     tier2_trusted: 0,
     tier2_dropped_hosts: [],
     docket_anchor_ok: opts?.docketAnchor ? false : null,
+    docket_anchor_via: "none",
   };
 
   const t1 = await fetch("https://api.perplexity.ai/chat/completions", {
@@ -169,13 +174,15 @@ async function perplexityWithFallback(
             try { const h = new URL(u).hostname.toLowerCase(); return h === d || h.endsWith("." + d); } catch { return false; }
           }))
       : [];
-    result.docket_anchor_ok = trustedCits.some((u) => urlContainsDocket(u, opts.docketAnchor!));
+    const via = anyUrlContainsDocketVia(trustedCits, opts.docketAnchor!);
+    result.docket_anchor_via = via;
+    result.docket_anchor_ok = via !== "none";
   }
 
   console.log(
     `[pplx-fallback:${logTag}] tier2_trusted=${result.tier2_trusted} dropped=${
       JSON.stringify(result.tier2_dropped_hosts)
-    } docket_anchor_ok=${result.docket_anchor_ok}`,
+    } docket_anchor_ok=${result.docket_anchor_ok} docket_anchor_via=${result.docket_anchor_via}`,
   );
 
   // Accept Tier-2 only if trusted AND (no docket required OR docket-anchored).
@@ -1249,7 +1256,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
               docketAnchor ? { docketAnchor: { num: docketAnchor.num, year: docketAnchor.year } } : undefined,
             );
             const perplexityResp = caseSearchRun.resp!;
-            console.log(`[case-law] tier=${caseSearchRun.tier} tier1_trusted=${caseSearchRun.tier1_trusted} tier2_fired=${caseSearchRun.tier2_fired} tier2_trusted=${caseSearchRun.tier2_trusted} docket_anchor_ok=${caseSearchRun.docket_anchor_ok} dropped=${JSON.stringify(caseSearchRun.tier2_dropped_hosts)}`);
+            console.log(`[case-law] tier=${caseSearchRun.tier} tier1_trusted=${caseSearchRun.tier1_trusted} tier2_fired=${caseSearchRun.tier2_fired} tier2_trusted=${caseSearchRun.tier2_trusted} docket_anchor_ok=${caseSearchRun.docket_anchor_ok} docket_anchor_via=${caseSearchRun.docket_anchor_via} dropped=${JSON.stringify(caseSearchRun.tier2_dropped_hosts)}`);
 
             if (perplexityResp.ok) {
               const pData = await perplexityResp.json();
