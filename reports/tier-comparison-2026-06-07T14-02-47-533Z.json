@@ -1,0 +1,2000 @@
+{
+  "rows": [
+    {
+      "fx": {
+        "id": "case-8987-22",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 8987/22",
+        "gold": {
+          "docket": "8987/22",
+          "parties": null
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F22%2F870%2F089%2Fe07&fileName=22089870.E07&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג״ץ 8987/22 התנועה למען איכות השלטון בישראל נ׳ הכנסת",
+        "docket_ok": true,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F22%2F870%2F089%2Fe07&fileName=22089870.E07&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 8987/22 התנועה למען איכות השלטון בישראל נ' הכנסת",
+        "docket_ok": true,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-5819-24",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 5819/24",
+        "gold": {
+          "docket": "5819/24",
+          "parties": null
+        },
+        "neighbors": [
+          "4769/24"
+        ]
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5819-24/he/5819-24.docx",
+        "host": "www.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 5819/24 התנועה למען איכות השלטון בישראל נ' שר הביטחון ואח'",
+        "docket_ok": true,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=NetVerdicts%2F2025%2F11%2F25%2F2024-0-5819-47-2&fileName=e5a3b5b49a010000090037f6afb111f4&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג״ץ 5819/24 התנועה למען איכות השלטון בישראל נ׳ שר הביטחון (19.11.2025)",
+        "docket_ok": true,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-4769-24",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 4769/24",
+        "gold": {
+          "docket": "4769/24",
+          "parties": [
+            "משמר הדמוקרטיה הישראלית",
+            "ועדת השרים לענייני חקיקה"
+          ]
+        },
+        "neighbors": [
+          "5819/24"
+        ]
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=NetVerdicts%2F2025%2F6%2F26%2F2024-0-4769-16-2&fileName=6ea6c17ca96746bea829eca62c845357&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 4769/24 משמר הדמוקרטיה הישראלית נ' ועדת השרים לענייני חקיקה ואח'",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "insufficient_snippet",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=NetVerdicts%2F2025%2F6%2F26%2F2024-0-4769-16-2&fileName=6ea6c17ca96746bea829eca62c845357&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 4769/24 משמר הדמוקרטיה הישראלית נ' ועדת השרים לענייני חקיקה (אר\"ש 26.6.2025)",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "insufficient_snippet",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-6821-93",
+        "type": "caselaw_supreme",
+        "query": "בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+        "gold": {
+          "docket": "6821/93",
+          "parties": [
+            "בנק המזרחי המאוחד",
+            "מגדל כפר שיתופי"
+          ]
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C05%2F930%2F045%2Fa08&fileName=05045930.a08&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי, פ\"ד מט(4) 221 (1995)",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "both",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://he.afiklaw.com/caselaw/4390",
+        "host": "he.afiklaw.com",
+        "host_class": "other",
+        "trusted_tier2": false,
+        "citation": "ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי, פ\"ד מט(4) 221",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "both",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-5100-94",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 5100/94 ועד הציבורי נגד עינויים נ' ממשלת ישראל",
+        "gold": {
+          "docket": "5100/94",
+          "parties": [
+            "הוועד הציבורי נגד עינויים",
+            "ממשלת ישראל"
+          ]
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F17%2F900%2F101%2Fv12&fileName=17101900.V12&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 5100/94 הוועד הציבורי נגד עינויים בישראל נ' ממשלת ישראל, פ\"ד נג(4) 817 (1999)",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "both",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F94%2F000%2F051%2Fn15&fileName=94051000_n15.txt&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 5100/94 הוועד הציבורי נגד עינויים בישראל נ' ממשלת ישראל",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "both",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-769-02",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 769/02 הוועד הציבורי נגד עינויים נ' ממשלת ישראל",
+        "gold": {
+          "docket": "769/02",
+          "parties": [
+            "הוועד הציבורי נגד עינויים",
+            "ממשלת ישראל"
+          ]
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_12_769-02.pdf&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 769/02 הוועד הציבורי נגד עינויים בישראל נ' ממשלת ישראל (טרם פורסם, 14.12.2006)",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "caption_marker",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_12_769-02.pdf&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 769/02 הוועד הציבורי נגד עינויים בישראל נ' ממשלת ישראל",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "caption_marker",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-73-53",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 73/53 קול העם נ' שר הפנים",
+        "gold": {
+          "docket": "73/53",
+          "parties": [
+            "קול העם",
+            "שר הפנים"
+          ]
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F94%2F260%2F061%2FA01&fileName=94061260_A01.txt&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 73/53 חברת \"קול העם\" בע\"מ נ' שר הפנים, פ\"ד ז 871 (1953)",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "both",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://globalfreedomofexpression.columbia.edu/wp-content/uploads/2016/03/5300073.pdf",
+        "host": "globalfreedomofexpression.columbia.edu",
+        "host_class": "random_pdf",
+        "trusted_tier2": false,
+        "citation": "בג\"ץ 73/53 חברת \"קול העם\" בע\"מ נ' שר הפנים, פ\"ד ז 871",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "caption_marker",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-3267-97",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 3267/97 רובינשטיין נ' שר הביטחון",
+        "gold": {
+          "docket": "3267/97",
+          "parties": [
+            "רובינשטיין",
+            "שר הביטחון"
+          ]
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F12%2F460%2F071%2FB24&fileName=12071460.B24&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 3267/97 רובינשטיין נ' שר הביטחון, פ\"ד נב(5) 481 (1998)",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "both",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F97%2F670%2F032%2FA11&fileName=97032670_A11.txt&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג״ץ 3267/97 רובינשטיין נ׳ שר הביטחון, פ״ד נב(5) 481 (1998)",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "insufficient_snippet",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-6427-02",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 6427/02 התנועה לאיכות השלטון נ' הכנסת",
+        "gold": {
+          "docket": "6427/02",
+          "parties": [
+            "התנועה לאיכות השלטון",
+            "הכנסת"
+          ]
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F02%2F270%2F064%2FA22&fileName=02064270.A22&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 6427/02 התנועה למען איכות השלטון בישראל נ' הכנסת, פ\"ד סא(1) 619 (2006)",
+        "docket_ok": true,
+        "parties_ok": false,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "insufficient_snippet",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://www.cwj.org.il/ru/node/191",
+        "host": "www.cwj.org.il",
+        "host_class": "other",
+        "trusted_tier2": false,
+        "citation": "בג\"ץ 6427/02 התנועה לאיכות השלטון בישראל נ' הכנסת, פ\"ד סא(1) 619 (2005)",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "both",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-1715-97",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות נ' שר האוצר",
+        "gold": {
+          "docket": "1715/97",
+          "parties": [
+            "לשכת מנהלי ההשקעות",
+            "שר האוצר"
+          ]
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97%2F150%2F017%2Fa15&fileName=97017150.a15&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות בישראל נ' שר האוצר, פ\"ד נא(4) 367",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "insufficient_snippet",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97%2F150%2F017%2Fa15&fileName=97017150.a15&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות בישראל נ' שר האוצר, פ\"ד נא(4) 367",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "insufficient_snippet",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-910-86",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 910/86 רסלר נ' שר הביטחון",
+        "gold": {
+          "docket": "910/86",
+          "parties": [
+            "רסלר",
+            "שר הביטחון"
+          ]
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F97%2F670%2F032%2FA11&fileName=97032670_A11.txt&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 910/86 רסלר נ' שר הביטחון, פ\"ד מב(2) 441 (1988)",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "both",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://www.dyoma.co.il/images/Documents%20-%20articles/HCJ%20910%2086,%20Ressler.pdf",
+        "host": "www.dyoma.co.il",
+        "host_class": "random_pdf",
+        "trusted_tier2": false,
+        "citation": "בג\"ץ 910/86 רסלר נ' שר הביטחון, פ\"ד מב(2) 441 (1988)",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "insufficient_snippet",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-2257-04",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 2257/04 חדאש-תע\"ל נ' יו\"ר ועדת הבחירות המרכזית",
+        "gold": {
+          "docket": "2257/04",
+          "parties": null
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "בג\"ץ 2257/04 חדאש-תע\"ל נ' יו\"ר ועדת הבחירות המרכזית",
+        "docket_ok": true,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-2257-04",
+        "host": "www.psakdin.co.il",
+        "host_class": "database",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 2257/04 חד\"ש-תע\"ל נ' יו\"ר ועדת הבחירות המרכזית לכנסת ה-17 (8.8.2004)",
+        "docket_ok": true,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-5555-18",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 5555/18 חסון נ' הכנסת",
+        "gold": {
+          "docket": "5555/18",
+          "parties": [
+            "חסון",
+            "הכנסת"
+          ]
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F23%2F190%2F051%2Fm17&fileName=23051190.M17&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ' כנסת ישראל (8.7.2021)",
+        "docket_ok": true,
+        "parties_ok": false,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "caption_marker",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F18%2F550%2F055%2Fv36&fileName=18055550.V36&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ' כנסת ישראל, פ\"ד כ\"ח בתמוז התשפ\"א (8.7.2021)",
+        "docket_ok": true,
+        "parties_ok": false,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "insufficient_snippet",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-9132-07",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 9132/07 אלבסיוני נ' ראש הממשלה",
+        "gold": {
+          "docket": "9132/07",
+          "parties": null
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F06%2F610%2F032%2Fn06&fileName=06032610_n06.txt&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 9132/07 גבר אלבסיוני אחמד נ' ראש הממשלה (30.1.2008)",
+        "docket_ok": true,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "http://www.hamoked.org.il/document.php?dID=9862",
+        "host": "www.hamoked.org.il",
+        "host_class": "other",
+        "trusted_tier2": false,
+        "citation": "בג\"ץ 9132/07 אלבסיוני נ' ראש הממשלה",
+        "docket_ok": true,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-18615-22",
+        "type": "caselaw_supreme",
+        "query": "ע\"א 18615/22",
+        "gold": {
+          "docket": "18615/22",
+          "parties": null
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "ע\"א 18615/22",
+        "docket_ok": true,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C15%5C190%5C009%5Cm29&fileName=15009190_m29.txt&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "ע\"א 18615/22",
+        "docket_ok": true,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-1234-25",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 1234/25",
+        "gold": {
+          "docket": "1234/25",
+          "parties": null
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F23%2F340%2F012%2Fg01&fileName=23012340.G01&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 1234/23",
+        "docket_ok": false,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://www.idi.org.il/media/30289/the-30-most-important-supreme-court-rulings-and-decisions-in-the-field-of-public-law-in-2025.pdf",
+        "host": "www.idi.org.il",
+        "host_class": "random_pdf",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 1234/25",
+        "docket_ok": true,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-7777-24",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 7777/24",
+        "gold": {
+          "docket": "7777/24",
+          "parties": null
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "בג״ץ 7777/24",
+        "docket_ok": true,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://img.mako.co.il/2025/11/19/fvvfav.pdf",
+        "host": "img.mako.co.il",
+        "host_class": "news",
+        "trusted_tier2": false,
+        "citation": "בג\"ץ 7777/24",
+        "docket_ok": true,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "case-3003-23",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 3003/23",
+        "gold": {
+          "docket": "3003/23",
+          "parties": null
+        },
+        "neighbors": [
+          "3002/23",
+          "3004/23"
+        ]
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "בג\"ץ 3003/23",
+        "docket_ok": true,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F18%2F030%2F030%2Fk08&fileName=18030030.K08&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג״ץ 3003/18 יש דין – מתנדבים לזכויות האדם נ׳ ראש המטה הכללי של צה״ל",
+        "docket_ok": false,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "same"
+    },
+    {
+      "fx": {
+        "id": "case-6298-07",
+        "type": "caselaw_supreme",
+        "query": "בג\"ץ 6298/07 רסלר נ' כנסת ישראל",
+        "gold": {
+          "docket": "6298/07",
+          "parties": [
+            "רסלר",
+            "כנסת ישראל"
+          ]
+        },
+        "neighbors": [
+          "910/86"
+        ]
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C980%5C062%5Cn18&fileName=07062980_n18.txt&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 6298/07 רסלר נ' כנסת ישראל, פ\"ד סה(3) 1 (2012)",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "insufficient_snippet",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C980%5C062%5Cn18&fileName=07062980_n18.txt&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 6298/07 רסלר נ' כנסת ישראל, פ\"ד סה(3) 1 (2012)",
+        "docket_ok": true,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "insufficient_snippet",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "art-barak-shofet",
+        "type": "literature",
+        "query": "אהרן ברק שופט בחברה דמוקרטית",
+        "gold": {
+          "title": "שופט בחברה דמוקרטית",
+          "author": "אהרן ברק",
+          "pub_year": null
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/2062-2.aspx",
+        "host": "library.mevaker.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "אהרן ברק, שופט בחברה דמוקרטית (2004)",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": true,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://www.nli.org.il/he/books/NNL_ALEPH990023929880205171/NLI",
+        "host": "www.nli.org.il",
+        "host_class": "other",
+        "trusted_tier2": true,
+        "citation": "אהרן ברק, *שופט בחברה דמוקרטית* (חיפה: הוצאת הספרים של אוניברסיטת חיפה, 2004).",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": true,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "art-medina-mishpatim",
+        "type": "literature",
+        "query": "ברק מדינה זכויות אדם משפטים",
+        "gold": {
+          "author": "ברק מדינה",
+          "journal": "משפטים"
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H10-04-2005_8-52-15_kvod1.pdf",
+        "host": "m.knesset.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "מדינה, ברק, \"זכויות אדם\", משפטים",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": true,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://cris.huji.ac.il/en/publications/%D7%93%D7%99%D7%A0%D7%99-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%94%D7%90%D7%93%D7%9D-%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C/",
+        "host": "cris.huji.ac.il",
+        "host_class": "academic",
+        "trusted_tier2": true,
+        "citation": "מדינה, ברק, דיני זכויות האדם בישראל, צפרירים: נבו, התשע״ז 2016.",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": false,
+        "pub_ok": null,
+        "missing_fields": [
+          "journal"
+        ],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "art-mautner-iuney",
+        "type": "literature",
+        "query": "מנחם מאוטנר ירידת הפורמליזם עיוני משפט",
+        "gold": {
+          "author": "מנחם מאוטנר",
+          "journal": "עיוני משפט",
+          "title": "ירידת הפורמליזם ועליית הערכים במשפט הישראלי"
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://www.gov.il/BlobFolder/reports/roots_1950_1/he/roots-1950-1.pdf",
+        "host": "www.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "מנחם מאוטנר, \"ירידת הפורמליזם ועליית הערכים במשפט הישראלי\", עיוני משפט יז(3) 503 (1993).",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": true,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://cris.tau.ac.il/en/publications/%D7%99%D7%A8%D7%99%D7%93%D7%AA-%D7%94%D7%A4%D7%95%D7%A8%D7%9E%D7%9C%D7%99%D7%96%D7%9D-%D7%95%D7%A2%D7%9C%D7%99%D7%99%D7%AA-%D7%94%D7%A2%D7%A8%D7%9B%D7%99%D7%9D-%D7%91%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99-2/",
+        "host": "cris.tau.ac.il",
+        "host_class": "academic",
+        "trusted_tier2": true,
+        "citation": "מנחם מאוטנר, ירידת הפורמליזם ועליית הערכים במשפט הישראלי, עיוני משפט י״ז 503 (1992)",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": true,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "art-kremnitzer-praklit",
+        "type": "literature",
+        "query": "מרדכי קרמניצר הפרקליט",
+        "gold": {
+          "author": "מרדכי קרמניצר",
+          "journal": "הפרקליט"
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C20%5C940%5C046%5Ce07&fileName=20046940.E07&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "מרדכי קרמניצר, \"קריטריונים לקביעת ממצאים עובדתיים והתערבות ערכאת ערעור בממצאים המתייחסים למהימנות של עדים\", *הפרקליט* לה 407, 411 (התשמ\"ד).",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": true,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://www.idi.org.il/staff/1308",
+        "host": "www.idi.org.il",
+        "host_class": "other",
+        "trusted_tier2": true,
+        "citation": "מרדכי קרמניצר, \"הפרקליט\"",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": true,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "art-gavison-mehkarei",
+        "type": "literature",
+        "query": "רות גביזון מחקרי משפט",
+        "gold": {
+          "author": "רות גביזון",
+          "journal": "מחקרי משפט"
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H21-11-2004_11-30-31_pratiutkatzar.doc",
+        "host": "m.knesset.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "רות גביזון, \"הזכות לפרטיות ולכבוד\", מחקרי משפט יג (תשנ\"ו) 27.",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": true,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://lawforum.org.il/events/%D7%A2%D7%A8%D7%91-%D7%A2%D7%99%D7%95%D7%9F-%D7%91%D7%A1%D7%99%D7%9E%D7%9F-%D7%94%D7%92%D7%95%D7%AA%D7%94-%D7%A9%D7%9C-%D7%A4%D7%A8%D7%95%D7%A4-%D7%A8%D7%95%D7%AA-%D7%92%D7%91%D7%99%D7%96%D7%95/",
+        "host": "lawforum.org.il",
+        "host_class": "other",
+        "trusted_tier2": false,
+        "citation": "רִות גַּבִּיזוֹן, \"המקור\"",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": false,
+        "pub_ok": null,
+        "missing_fields": [
+          "author",
+          "journal"
+        ],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "noisy-partial-1",
+        "type": "noisy",
+        "query": "פסק דין על חוק הלאום",
+        "gold": {
+          "docket": null
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C18%2F550%2F055%2Fv36&fileName=18055550.V36&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 5555/18",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F18%2F550%2F055%2Fv36&fileName=18055550.V36&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 5555/18 ח\"כ אכרם חסון ואח' נ' כנסת ישראל (8.7.2021)",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "noisy-partial-2",
+        "type": "noisy",
+        "query": "בג\"ץ /24 משמר הדמוקרטיה",
+        "gold": {
+          "parties": [
+            "משמר הדמוקרטיה"
+          ]
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision3545-11-25/he/3545-11-25.docx",
+        "host": "www.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 33366-09-24 משמר הדמוקרטיה הישראלית נ' ...; בג\"ץ 34183-10-24 משמר הדמוקרטיה הישראלית נ' ...",
+        "docket_ok": null,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [
+          "party2"
+        ],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "insufficient_snippet",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://main.knesset.gov.il/About/Departments/LDResponses/21.10.25%2012.pdf",
+        "host": "main.knesset.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 4769/24 משמר הדמוקרטיה הישראלית נ' ועדת השרים לענייני חקיקה",
+        "docket_ok": null,
+        "parties_ok": true,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "insufficient_snippet",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "noisy-partial-3",
+        "type": "noisy",
+        "query": "ועדת השרים לחקיקה עתירה 2025",
+        "gold": {
+          "pub_year": "2025"
+        }
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://fs.knesset.gov.il/25/Plenum/25_ptm_9961313.doc",
+        "host": "fs.knesset.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "ועדת השרים לחקיקה, עתירה (2025)",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": true,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://www.gov.il/he/Departments/publicbodies/ministerial_committee_on_legislation",
+        "host": "www.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג״ץ ועדת השרים לענייני חקיקה (עתירה 2025)",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": true,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "materially_better"
+    },
+    {
+      "fx": {
+        "id": "noisy-partial-4",
+        "type": "noisy",
+        "query": "פסיקה אחרונה איכות השלטון",
+        "gold": {}
+      },
+      "A": {
+        "variant": "A",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F23%2F580%2F056%2Fv31&fileName=23056580.V31&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ' הכנסת, פסק-דין",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "B": {
+        "variant": "B",
+        "found": false,
+        "selected_url": null,
+        "host": null,
+        "host_class": "unknown",
+        "trusted_tier2": false,
+        "citation": "",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": [
+          "pplx_error: pplx 400: {\"error\":{\"message\":\"Validation error: search_domain_filters has a max length of 20\",\"type\":\"invalid_search_domain_filter\",\"code\":400}}",
+          "tier2_gate:untrusted_host"
+        ]
+      },
+      "C": {
+        "variant": "C",
+        "found": true,
+        "selected_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F23%2F980%2F061%2Ft68&fileName=23061980.T68.SUM&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "host_class": "official",
+        "trusted_tier2": true,
+        "citation": "בג\"ץ 6198/23 התנועה למען איכות השלטון בישראל נ' שר הביטחון",
+        "docket_ok": null,
+        "parties_ok": null,
+        "article_ok": null,
+        "pub_ok": null,
+        "missing_fields": [],
+        "fp_near_neighbor": false,
+        "docket_anchor_via": "n/a",
+        "party_verification": "n/a",
+        "notes": []
+      },
+      "cls": "materially_better"
+    }
+  ],
+  "buckets": {
+    "materially_better": 27,
+    "slightly_better": 0,
+    "same": 1,
+    "same_but_noisier": 0,
+    "worse": 0,
+    "false_positive": 0
+  },
+  "bFP": 0,
+  "cFP": 0,
+  "cMatBetterWhereBFailed": 27,
+  "cAddsCorrectFields": 23,
+  "recommendation": "C materially beats B. Do not enable open web by default. Propose a separate admin/diagnostic Tier-3 design (follow-up task)."
+}
