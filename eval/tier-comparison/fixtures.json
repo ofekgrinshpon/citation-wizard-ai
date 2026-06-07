@@ -1,0 +1,180 @@
+{
+  "$comment": "Diagnostic-only test set for A/B/C tier comparison. 28 entries. gold fields are best-known truth; null means unknown — those rows still test found/host/FP but skip the field check.",
+  "fixtures": [
+    {
+      "id": "case-8987-22",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 8987/22",
+      "gold": { "docket": "8987/22", "parties": null }
+    },
+    {
+      "id": "case-5819-24",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 5819/24",
+      "gold": { "docket": "5819/24", "parties": null },
+      "neighbors": ["4769/24"]
+    },
+    {
+      "id": "case-4769-24",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 4769/24",
+      "gold": {
+        "docket": "4769/24",
+        "parties": ["משמר הדמוקרטיה הישראלית", "ועדת השרים לענייני חקיקה"]
+      },
+      "neighbors": ["5819/24"]
+    },
+    {
+      "id": "case-6821-93",
+      "type": "caselaw_supreme",
+      "query": "בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+      "gold": { "docket": "6821/93", "parties": ["בנק המזרחי המאוחד", "מגדל כפר שיתופי"] }
+    },
+    {
+      "id": "case-5100-94",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 5100/94 ועד הציבורי נגד עינויים נ' ממשלת ישראל",
+      "gold": { "docket": "5100/94", "parties": ["הוועד הציבורי נגד עינויים", "ממשלת ישראל"] }
+    },
+    {
+      "id": "case-769-02",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 769/02 הוועד הציבורי נגד עינויים נ' ממשלת ישראל",
+      "gold": { "docket": "769/02", "parties": ["הוועד הציבורי נגד עינויים", "ממשלת ישראל"] }
+    },
+    {
+      "id": "case-73-53",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 73/53 קול העם נ' שר הפנים",
+      "gold": { "docket": "73/53", "parties": ["קול העם", "שר הפנים"] }
+    },
+    {
+      "id": "case-3267-97",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 3267/97 רובינשטיין נ' שר הביטחון",
+      "gold": { "docket": "3267/97", "parties": ["רובינשטיין", "שר הביטחון"] }
+    },
+    {
+      "id": "case-6427-02",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 6427/02 התנועה לאיכות השלטון נ' הכנסת",
+      "gold": { "docket": "6427/02", "parties": ["התנועה לאיכות השלטון", "הכנסת"] }
+    },
+    {
+      "id": "case-1715-97",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות נ' שר האוצר",
+      "gold": { "docket": "1715/97", "parties": ["לשכת מנהלי ההשקעות", "שר האוצר"] }
+    },
+    {
+      "id": "case-910-86",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 910/86 רסלר נ' שר הביטחון",
+      "gold": { "docket": "910/86", "parties": ["רסלר", "שר הביטחון"] }
+    },
+    {
+      "id": "case-2257-04",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 2257/04 חדאש-תע\"ל נ' יו\"ר ועדת הבחירות המרכזית",
+      "gold": { "docket": "2257/04", "parties": null }
+    },
+    {
+      "id": "case-5555-18",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 5555/18 חסון נ' הכנסת",
+      "gold": { "docket": "5555/18", "parties": ["חסון", "הכנסת"] }
+    },
+    {
+      "id": "case-9132-07",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 9132/07 אלבסיוני נ' ראש הממשלה",
+      "gold": { "docket": "9132/07", "parties": null }
+    },
+    {
+      "id": "case-18615-22",
+      "type": "caselaw_supreme",
+      "query": "ע\"א 18615/22",
+      "gold": { "docket": "18615/22", "parties": null }
+    },
+    {
+      "id": "case-1234-25",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 1234/25",
+      "gold": { "docket": "1234/25", "parties": null }
+    },
+    {
+      "id": "case-7777-24",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 7777/24",
+      "gold": { "docket": "7777/24", "parties": null }
+    },
+    {
+      "id": "case-3003-23",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 3003/23",
+      "gold": { "docket": "3003/23", "parties": null },
+      "neighbors": ["3002/23", "3004/23"]
+    },
+    {
+      "id": "case-6298-07",
+      "type": "caselaw_supreme",
+      "query": "בג\"ץ 6298/07 רסלר נ' כנסת ישראל",
+      "gold": { "docket": "6298/07", "parties": ["רסלר", "כנסת ישראל"] },
+      "neighbors": ["910/86"]
+    },
+    {
+      "id": "art-barak-shofet",
+      "type": "literature",
+      "query": "אהרן ברק שופט בחברה דמוקרטית",
+      "gold": { "title": "שופט בחברה דמוקרטית", "author": "אהרן ברק", "pub_year": null }
+    },
+    {
+      "id": "art-medina-mishpatim",
+      "type": "literature",
+      "query": "ברק מדינה זכויות אדם משפטים",
+      "gold": { "author": "ברק מדינה", "journal": "משפטים" }
+    },
+    {
+      "id": "art-mautner-iuney",
+      "type": "literature",
+      "query": "מנחם מאוטנר ירידת הפורמליזם עיוני משפט",
+      "gold": { "author": "מנחם מאוטנר", "journal": "עיוני משפט", "title": "ירידת הפורמליזם ועליית הערכים במשפט הישראלי" }
+    },
+    {
+      "id": "art-kremnitzer-praklit",
+      "type": "literature",
+      "query": "מרדכי קרמניצר הפרקליט",
+      "gold": { "author": "מרדכי קרמניצר", "journal": "הפרקליט" }
+    },
+    {
+      "id": "art-gavison-mehkarei",
+      "type": "literature",
+      "query": "רות גביזון מחקרי משפט",
+      "gold": { "author": "רות גביזון", "journal": "מחקרי משפט" }
+    },
+    {
+      "id": "noisy-partial-1",
+      "type": "noisy",
+      "query": "פסק דין על חוק הלאום",
+      "gold": { "docket": null }
+    },
+    {
+      "id": "noisy-partial-2",
+      "type": "noisy",
+      "query": "בג\"ץ /24 משמר הדמוקרטיה",
+      "gold": { "parties": ["משמר הדמוקרטיה"] }
+    },
+    {
+      "id": "noisy-partial-3",
+      "type": "noisy",
+      "query": "ועדת השרים לחקיקה עתירה 2025",
+      "gold": { "pub_year": "2025" }
+    },
+    {
+      "id": "noisy-partial-4",
+      "type": "noisy",
+      "query": "פסיקה אחרונה איכות השלטון",
+      "gold": {}
+    }
+  ]
+}
