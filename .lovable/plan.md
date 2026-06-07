@@ -1,54 +1,78 @@
-# Fix Tier-2 hallucinations in footnote (citation-chat) path
+# Diagnostic Experiment: Tier-1 vs Tier-2 Curated vs Open Web (C)
 
-## Problem (from logs for בג"ץ 4769/24)
+Goal: determine whether a hypothetical fully-open-web Tier-3 would materially beat the current Tier-2 curated fallback, or only add noise. **No production code changes.** Outputs are diagnostic-only.
 
-Tier-2 fired correctly and returned trusted citations — but the model returned parties from **בג"ץ 5819/24** (a louder neighbor) instead of 4769/24. Across 5 retries the parties shifted: `התנועה למען איכות השלטון נ' שר הביטחון` → `מכון ברנדייס נ' היועצת המשפטית` → `התנועה לאיכות השלטון נ' שר המשפטים`. One run also fabricated a `פ"ד מב(4) 868` publication for a 2024 case.
+## Constraints (locked)
 
-Root causes, in order of impact:
+- No changes to `citation-chat`, `citation-refill`, `_shared/trustedHosts.ts`, validators, prompts, or the trust gate.
+- Variant C must never produce user-facing citations; it runs in an isolated script and writes to a report file only.
+- No new env flag in production functions. The script uses its own Perplexity key from env.
 
-1. **No docket-anchor gate** in `citation-chat` tier-2 (refill has one, footnotes don't).
-2. **Adjacent-case contamination**: search results for 4769/24 are dominated by 5819/24; the model copies the louder neighbor's text even when the correct URL is in the citation list.
-3. **Verification-search override** has no sanity check — it accepted a `פ"ד מב/4/868` claim for a 2024 case.
+## Scope of work
 
-## Changes
+1. **Add a diagnostic-only script** at `scripts/tier-comparison-experiment.ts` (Deno, run via `deno run -A`). It:
+   - Loads the 25–30 source test set from a new `eval/tier-comparison/fixtures.json`.
+   - For each source, runs three independent Perplexity queries:
+     - **A. Tier-1 allowlist** — `search_domain_filter` = current Tier-1 official allowlist (subset of `TRUSTED_HOSTS`).
+     - **B. Tier-2 curated** — `search_domain_filter` = full Tier-2 trusted-host list, plus post-hoc trust gate + docket-anchor gate + strict party verification (reuses the exact predicates from `_shared/trustedHosts.ts` and the matcher logic from `citation-chat/index.ts`, imported, not duplicated).
+     - **C. Open web** — no `search_domain_filter`, no trust gate. Result is classified but never promoted.
+   - Extracts: selected URL, host, host classification (official / academic / database / news / blog / wiki / random-PDF), canonical citation, docket, parties, article title/author, publication details, missing fields.
+   - Cross-checks each variant's output against a `gold` field in the fixture (docket, parties, title/author, pub details).
+   - Flags false positives and near-neighbor substitutions (e.g. 4769/24 → 5819/24) using a small adjacency check on docket numbers in the fixture.
+   - Classifies C vs B per case: `materially_better | slightly_better | same | same_but_noisier | worse | false_positive`.
 
-### A. Docket-anchor gate in `citation-chat` tier-2 (parity with refill)
+2. **Fixtures** at `eval/tier-comparison/fixtures.json` — 25–30 entries:
+   - 14 from the previous experiment set (carry over from existing eval fixtures).
+   - 5–7 newer/obscure Supreme Court dockets.
+   - 5 Israeli academic articles (משפטים, עיוני משפט, הפרקליט, מחקרי משפט, דין ודברים).
+   - 3–5 noisy/partial queries (truncated names, missing year, ambiguous docket).
+   - Explicit near-neighbor pairs incl. **בג"ץ 4769/24 vs 5819/24**, plus 1–2 more adjacent pairs.
+   - Each entry: `{ id, query, type, gold: { docket?, parties?, title?, author?, pub_year?, journal?, volume?, page? }, neighbors?: string[] }`.
 
-In `perplexityWithFallback` (citation-chat/index.ts ~L81–162), add an optional `dockedAnchor?: { num: string; year: string }` parameter. When provided, after trust-gating Tier-2 citations, require at least one trusted URL to contain `num/year` (or `num-year`, `num_year`, `num%2fyear`). If not, **discard Tier-2** and keep Tier-1 (which was empty → caller falls back as before). Log a new telemetry field `docket_anchor_ok`.
+3. **Report** written to `reports/tier-comparison-<timestamp>.md` and `.json`:
+   - Per-source table with all required columns (found, URL, host, trusted-under-Tier-2, host class, canonical citation, docket OK, parties OK, article OK, pub-details OK, missing fields, FP/near-neighbor, C-vs-B usefulness, C-vs-B completeness, C-introduced-untrusted).
+   - Aggregate counts per classification bucket.
+   - Acceptance verdict computed from the rules below.
+   - Recommendation block (one of the two specified outcomes).
 
-Extract `urlContainsDocket` from `citation-refill/index.ts` into `_shared/trustedHosts.ts` so both functions use the same matcher.
+4. **Acceptance logic** (encoded in the script):
+   - Pass for Tier-3 consideration **only if**: C has ≥4 `materially_better` cases where B failed, AND C false-positive rate ≤ B false-positive rate + small epsilon, AND C contributes additional *correct* fields (not just extra URLs) in those wins.
+   - Otherwise recommendation = "Keep Tier-2 curated only. Do not implement open-web Tier-3."
+   - If pass: recommendation = "Do not enable open web by default. Propose admin/diagnostic Tier-3 design (separate doc, follow-up task)."
 
-Threading: the case-number path (~L1219) already has `fullCaseRef`; parse the docket once and pass it into the helper.
+## Files to add (all diagnostic, no prod imports changed)
 
-### B. Party-source agreement check (kills 5819/24 contamination)
+- `scripts/tier-comparison-experiment.ts`
+- `eval/tier-comparison/fixtures.json`
+- `eval/tier-comparison/README.md` (how to run, how to read the report)
+- `reports/.gitkeep` already exists; outputs land in `reports/`.
 
-After the model returns party names for a case-number lookup, run a cheap server-side check:
-- Take the docket-anchored URL (the trusted citation whose URL contains the input docket).
-- Fetch the page snippet that Perplexity already returned in `search_results[].snippet` for THAT URL (no extra HTTP — it's in the response).
-- Verify the model's `party1` OR `party2` appears (substring, whitespace-normalized) in either the title or snippet of the anchored result.
-- If neither party appears in the anchored source's title/snippet, mark the result as **unverified**: keep the docket, drop the parties (`[חסר: שמות צדדים]`), and log `party_mismatch=true`.
+## Files read but **not modified**
 
-This is the same pattern the stack-overflow note suggests: cross-validate the extracted parties against the source text where the docket actually appears.
+- `supabase/functions/_shared/trustedHosts.ts` (import predicates)
+- `supabase/functions/citation-chat/index.ts` (lift docket-anchor + strict-party matcher logic into the script via copy, not edit, to avoid coupling — small duplication is acceptable for a one-off diagnostic)
 
-### C. Sanity-check the פ"ד-publication verification override (~L1219 area, "Verification found פד\"י")
+## How to run
 
-Before accepting an `isPublished=true` override, require:
-- `padi_volume` is in `PADI_VOLUME_YEAR_RANGES` (already in the file at L169).
-- The case's decision year falls within that volume's plausible window (with the existing generous ±2y).
-- At least one trusted citation URL contains the docket (reuse the helper from A).
+```text
+PERPLEXITY_API_KEY=... deno run -A scripts/tier-comparison-experiment.ts \
+  --fixtures eval/tier-comparison/fixtures.json \
+  --out reports/
+```
 
-If any check fails: discard the override, keep `isPublished=false`, log `padi_override_rejected` with the reason. This kills the `מב/4/868` for 2024 hallucination.
+Runtime budget: 3 Perplexity calls × ~30 sources ≈ 90 calls. Sequential with small concurrency (4) to stay polite. Expect ~3–6 minutes.
 
-### D. Telemetry
+## Deliverable
 
-Add to the existing `[case-law]` log line: `docket_anchor_ok`, `party_mismatch`, `padi_override_rejected`. No new env var; the existing `CITATION_CHAT_OPENWEB_FALLBACK=on` flag remains the master switch.
+After running, I post:
+- The markdown report (or a tight summary + link to the file).
+- The aggregate verdict.
+- The recommendation (one of the two specified).
+- **Stop.** No production changes proposed in this turn regardless of outcome.
 
 ## Out of scope
 
-- No prompt rewrites. The model is already told to use the exact docket; the fix is server-side verification, not better prompting.
-- No new HTTP fetches. We use only the `search_results[]` snippets Perplexity already returns.
-- `citation-refill` is unchanged — it already has the docket-anchor gate.
-
-## Rollback
-
-Unset `CITATION_CHAT_OPENWEB_FALLBACK` — Tier-1-only behavior is preserved. The party-agreement check and פ"ד sanity check are cheap and safe to keep on unconditionally, but I can gate them behind a second flag if you prefer.
+- Any change to `citation-chat`, `citation-refill`, trust gate, validators, prompts.
+- Building a real Tier-3 path.
+- Admin UI for diagnostic results.
+- News / Mako / blog admission anywhere in prod.
