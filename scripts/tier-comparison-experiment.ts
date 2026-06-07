@@ -394,11 +394,20 @@ function classify(b: VariantResult, c: VariantResult, fx: Fixture): string {
 const CONCURRENCY = 3;
 const rows: { fx: Fixture; A: VariantResult; B: VariantResult; C: VariantResult; cls: string }[] = [];
 
+// Tier-1 narrow allowlist mirrors citation-chat production (~6 domains).
+const TIER1_FILTER = [
+  "nevo.co.il", "court.gov.il", "supreme.court.gov.il",
+  "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il",
+];
+
 async function processOne(fx: Fixture) {
   console.error(`[run] ${fx.id} :: ${fx.query.slice(0, 60)}`);
+  // A: Tier-1 narrow allowlist (matches production tier-1 calls).
+  // B: open web + post-hoc Tier-2 trust gate (matches production tier-2 fallback).
+  // C: open web, no gate.
   const [a, bRaw, c] = await Promise.all([
-    runVariant("A", fx, [...TRUSTED_LEGAL]),
-    runVariant("B", fx, [...TRUSTED_LEGAL, ...TRUSTED_PUB]),
+    runVariant("A", fx, TIER1_FILTER),
+    runVariant("B", fx, null),
     runVariant("C", fx, null),
   ]);
   const b = applyTier2Gate(bRaw, fx);
