@@ -40,17 +40,42 @@ const CardShell: React.FC<{ children: React.ReactNode; caption: string }> = ({ c
 
 const VerifiedSources: React.FC = () => {
   const frame = useCurrentFrame();
-  const items = [
-    "ספר החוקים — סעיף 8(ב)",
-    "פס״ד עליון 0000/00",
-    "ועדת חוקה, חוק ומשפט",
-    "מאמר אקדמי — כתב עת",
-    "תקנות 0000",
+  const items: { tag: string; tagBg: string; tagColor: string; text: string }[] = [
+    {
+      tag: "פסיקה",
+      tagBg: "#E6F5F0",
+      tagColor: COLORS.teal,
+      text: 'בג"ץ 5016/96 חורב נ\' שר התחבורה, פ"ד נא(4) 1 (1997).',
+    },
+    {
+      tag: "חוק יסוד",
+      tagBg: "#E6F0FA",
+      tagColor: COLORS.blueDeep,
+      text: 'חוק־יסוד: כבוד האדם וחירותו, ס"ח התשנ"ב 150.',
+    },
+    {
+      tag: "חקיקה",
+      tagBg: "#E6F0FA",
+      tagColor: COLORS.blueDeep,
+      text: 'חוק העונשין, התשל"ז–1977, ס"ח 226.',
+    },
+    {
+      tag: "פסיקה",
+      tagBg: "#E6F5F0",
+      tagColor: COLORS.teal,
+      text: 'ע"א 4628/93 מדינת ישראל נ\' אפרופים שיכון ויזום, פ"ד מט(2) 265 (1995).',
+    },
+    {
+      tag: "מאמר",
+      tagBg: "#F1F4F7",
+      tagColor: COLORS.mutedDeep,
+      text: 'מנאל תותרי-ג\'ובראן "צדק במרחב המשפט הפרטי" עיוני משפט מא 417 (2019).',
+    },
   ];
   return (
     <CardShell caption="מקורות משפטיים מאומתים">
-      <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-        {items.map((t, i) => {
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        {items.map((it, i) => {
           const tick = interpolate(frame - 20 - i * 6, [0, 14], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
           return (
             <div
@@ -58,8 +83,8 @@ const VerifiedSources: React.FC = () => {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 18,
-                padding: "18px 22px",
+                gap: 14,
+                padding: "16px 18px",
                 background: "#F7F9FC",
                 borderRadius: 12,
                 border: "1px solid #E5EAF0",
@@ -68,9 +93,9 @@ const VerifiedSources: React.FC = () => {
             >
               <span
                 style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 18,
+                  width: 32,
+                  height: 32,
+                  borderRadius: 16,
                   background: tick > 0.2 ? COLORS.teal : "#E5EAF0",
                   display: "flex",
                   alignItems: "center",
@@ -78,15 +103,39 @@ const VerifiedSources: React.FC = () => {
                   color: "white",
                   fontFamily: '"Heebo"',
                   fontWeight: 800,
+                  fontSize: 16,
                   transform: `scale(${0.5 + tick * 0.5})`,
+                  flexShrink: 0,
                 }}
               >
                 ✓
               </span>
-              <span style={{ flex: 1, fontFamily: '"Heebo"', fontSize: 22, fontWeight: 600, color: COLORS.cardInk }}>
-                {t}
+              <span
+                style={{
+                  fontFamily: '"Heebo"',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: it.tagColor,
+                  background: it.tagBg,
+                  padding: "4px 10px",
+                  borderRadius: 999,
+                  flexShrink: 0,
+                }}
+              >
+                {it.tag}
               </span>
-              <span style={{ fontFamily: '"Heebo"', fontSize: 14, color: COLORS.mutedDeep }}>מאומת</span>
+              <span
+                style={{
+                  flex: 1,
+                  fontFamily: '"Heebo"',
+                  fontSize: 17,
+                  fontWeight: 500,
+                  color: COLORS.cardInk,
+                  lineHeight: 1.4,
+                }}
+              >
+                {it.text}
+              </span>
             </div>
           );
         })}
@@ -260,14 +309,16 @@ const Dashboard: React.FC = () => {
   );
 };
 
+const DASH_EXTRA = 15; // +0.5s on "פחות חיפוש. יותר חשיבה משפטית."
+
 export const Benefits: React.FC = () => (
   <Stage>
     <Sequence from={0} durationInFrames={BEAT}><VerifiedSources /></Sequence>
     <Sequence from={BEAT} durationInFrames={BEAT}><Footnoted /></Sequence>
     <Sequence from={BEAT * 2} durationInFrames={BEAT}><Citation /></Sequence>
-    <Sequence from={BEAT * 3} durationInFrames={BEAT}><Dashboard /></Sequence>
+    <Sequence from={BEAT * 3} durationInFrames={BEAT + DASH_EXTRA}><Dashboard /></Sequence>
   </Stage>
 );
 
-export const BENEFITS_DURATION = BEAT * 4;
+export const BENEFITS_DURATION = BEAT * 4 + DASH_EXTRA;
 export { VerifiedSources, Citation };
