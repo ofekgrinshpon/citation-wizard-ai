@@ -74,7 +74,7 @@ const VerifiedSources: React.FC = () => {
   ];
   return (
     <CardShell caption="מקורות משפטיים מאומתים">
-      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
         {items.map((it, i) => {
           const tick = interpolate(frame - 20 - i * 6, [0, 14], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
           return (
@@ -83,19 +83,19 @@ const VerifiedSources: React.FC = () => {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 14,
-                padding: "16px 18px",
+                gap: 18,
+                padding: "22px 24px",
                 background: "#F7F9FC",
-                borderRadius: 12,
+                borderRadius: 14,
                 border: "1px solid #E5EAF0",
                 direction: "rtl",
               }}
             >
               <span
                 style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 16,
+                  width: 42,
+                  height: 42,
+                  borderRadius: 21,
                   background: tick > 0.2 ? COLORS.teal : "#E5EAF0",
                   display: "flex",
                   alignItems: "center",
@@ -103,7 +103,7 @@ const VerifiedSources: React.FC = () => {
                   color: "white",
                   fontFamily: '"Heebo"',
                   fontWeight: 800,
-                  fontSize: 16,
+                  fontSize: 22,
                   transform: `scale(${0.5 + tick * 0.5})`,
                   flexShrink: 0,
                 }}
@@ -113,11 +113,11 @@ const VerifiedSources: React.FC = () => {
               <span
                 style={{
                   fontFamily: '"Heebo"',
-                  fontSize: 12,
+                  fontSize: 16,
                   fontWeight: 700,
                   color: it.tagColor,
                   background: it.tagBg,
-                  padding: "4px 10px",
+                  padding: "6px 14px",
                   borderRadius: 999,
                   flexShrink: 0,
                 }}
@@ -128,10 +128,10 @@ const VerifiedSources: React.FC = () => {
                 style={{
                   flex: 1,
                   fontFamily: '"Heebo"',
-                  fontSize: 17,
+                  fontSize: 21,
                   fontWeight: 500,
                   color: COLORS.cardInk,
-                  lineHeight: 1.4,
+                  lineHeight: 1.45,
                 }}
               >
                 {it.text}
