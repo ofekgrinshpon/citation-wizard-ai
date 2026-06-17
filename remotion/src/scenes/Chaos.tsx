@@ -5,7 +5,7 @@ import { COLORS } from "../theme";
 
 const SHORT = 26;
 const LONG = 41; // +0.5s @ 30fps
-const BG = "15,42,71"; // matches MainVideo background #0F2A47
+const BG = "68,178,242"; // matches MainVideo background #44b2f2
 
 const Vignette: React.FC<{ caption: string; children: React.ReactNode; warn?: boolean }> = ({
   caption,
