@@ -8,21 +8,21 @@ export const Stage: React.FC<{ children: React.ReactNode; light?: boolean }> = (
 }) => {
   const frame = useCurrentFrame();
   const drift = Math.sin(frame / 120) * 30;
-  const bg = light ? COLORS.light : COLORS.ink;
+  const bg = light ? COLORS.light : "#44b2f2";
   return (
     <AbsoluteFill style={{ background: bg, overflow: "hidden", direction: "rtl" }}>
       {!light && (
         <AbsoluteFill
           style={{
-            background: `radial-gradient(circle at ${50 + drift}% ${30 - drift / 2}%, ${COLORS.inkLine} 0%, ${COLORS.ink} 55%, ${COLORS.inkDeep} 100%)`,
+            background: `radial-gradient(circle at ${50 + drift}% ${30 - drift / 2}%, rgba(255,255,255,0.18) 0%, rgba(68,178,242,0) 55%, rgba(30,111,168,0.35) 100%)`,
           }}
         />
       )}
       {/* hairline grid */}
       <AbsoluteFill
         style={{
-          opacity: light ? 0.05 : 0.07,
-          backgroundImage: `linear-gradient(${light ? "#0B1220" : "#F1F4F7"} 1px, transparent 1px), linear-gradient(90deg, ${light ? "#0B1220" : "#F1F4F7"} 1px, transparent 1px)`,
+          opacity: light ? 0.05 : 0.08,
+          backgroundImage: `linear-gradient(${light ? "#0B1220" : "#FFFFFF"} 1px, transparent 1px), linear-gradient(90deg, ${light ? "#0B1220" : "#FFFFFF"} 1px, transparent 1px)`,
           backgroundSize: "120px 120px",
           backgroundPosition: `${drift}px ${-drift}px`,
         }}
@@ -36,7 +36,7 @@ export const Stage: React.FC<{ children: React.ReactNode; light?: boolean }> = (
             height: 900,
             right: -200 + drift,
             top: 400 + drift,
-            background: `radial-gradient(circle, ${COLORS.blue}22 0%, transparent 60%)`,
+            background: `radial-gradient(circle, rgba(255,255,255,0.25) 0%, transparent 60%)`,
             filter: "blur(40px)",
           }}
         />

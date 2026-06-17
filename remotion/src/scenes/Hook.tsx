@@ -21,10 +21,10 @@ export const Hook: React.FC = () => {
         const s = spring({ frame: frame - delay, fps, config: { damping: 18, stiffness: 120 } });
         const col = i % 3;
         const row = Math.floor(i / 3);
-        const x = 80 + col * 280 + (row % 2) * 40;
-        const y = 120 + row * 150;
+        const x = 60 + col * 380 + (row % 2) * 50;
+        const y = 80 + row * 200;
         const rot = (i % 2 === 0 ? -1 : 1) * (2 + (i % 4));
-        const opacity = interpolate(s, [0, 1], [0, 0.55 + (i % 5) * 0.05]);
+        const opacity = interpolate(s, [0, 1], [0, 0.65 + (i % 5) * 0.05]);
         return (
           <div
             key={i}
@@ -32,30 +32,30 @@ export const Hook: React.FC = () => {
               position: "absolute",
               left: x,
               top: y - (1 - s) * 60,
-              width: 260,
-              height: 130,
+              width: 360,
+              height: 180,
               background: "#0F1A2D",
               border: `1px solid ${COLORS.inkLine}`,
-              borderTop: `3px solid ${COLORS.blueDeep}`,
-              borderRadius: 6,
-              padding: 14,
+              borderTop: `4px solid ${COLORS.blueDeep}`,
+              borderRadius: 8,
+              padding: 20,
               opacity,
               transform: `rotate(${rot}deg)`,
-              boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
+              boxShadow: "0 14px 36px rgba(11,18,32,0.45)",
               direction: "rtl",
             }}
           >
-            <div style={{ display: "flex", gap: 4, marginBottom: 10 }}>
-              <span style={{ width: 8, height: 8, borderRadius: 4, background: "#E15B5B" }} />
-              <span style={{ width: 8, height: 8, borderRadius: 4, background: "#E0A23C" }} />
-              <span style={{ width: 8, height: 8, borderRadius: 4, background: COLORS.teal }} />
+            <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+              <span style={{ width: 11, height: 11, borderRadius: 6, background: "#E15B5B" }} />
+              <span style={{ width: 11, height: 11, borderRadius: 6, background: "#E0A23C" }} />
+              <span style={{ width: 11, height: 11, borderRadius: 6, background: COLORS.teal }} />
             </div>
             <div
               style={{
                 fontFamily: '"Heebo", sans-serif',
-                fontSize: 18,
-                color: COLORS.muted,
-                fontWeight: 500,
+                fontSize: 24,
+                color: COLORS.light,
+                fontWeight: 700,
                 direction: "rtl",
                 textAlign: "right",
               }}
@@ -64,20 +64,20 @@ export const Hook: React.FC = () => {
             </div>
             <div
               style={{
-                marginTop: 12,
-                height: 4,
+                marginTop: 16,
+                height: 6,
                 width: "70%",
                 background: COLORS.inkLine,
-                borderRadius: 2,
+                borderRadius: 3,
               }}
             />
             <div
               style={{
-                marginTop: 6,
-                height: 4,
+                marginTop: 8,
+                height: 6,
                 width: "50%",
                 background: COLORS.inkLine,
-                borderRadius: 2,
+                borderRadius: 3,
               }}
             />
           </div>
@@ -87,9 +87,10 @@ export const Hook: React.FC = () => {
       {/* darken overlay over tabs */}
       <AbsoluteFill
         style={{
-          background: "linear-gradient(180deg, transparent 0%, rgba(11,18,32,0.4) 50%, rgba(11,18,32,0.95) 100%)",
+          background: "linear-gradient(180deg, transparent 0%, rgba(11,32,60,0.35) 50%, rgba(11,32,60,0.85) 100%)",
         }}
       />
+
 
       {/* headline */}
       <div style={{ position: "absolute", right: 80, bottom: 320, width: 920 }}>
