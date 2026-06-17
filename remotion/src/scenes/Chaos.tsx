@@ -3,7 +3,9 @@ import { useCurrentFrame, AbsoluteFill, Sequence, interpolate, spring, useVideoC
 import { Stage, HebrewLine } from "../components/Stage";
 import { COLORS } from "../theme";
 
-const BEAT = 26;
+const SHORT = 26;
+const LONG = 41; // +0.5s @ 30fps
+const BG = "15,42,71"; // matches MainVideo background #0F2A47
 
 const Vignette: React.FC<{ caption: string; children: React.ReactNode; warn?: boolean }> = ({
   caption,
@@ -82,9 +84,9 @@ const PdfFan: React.FC = () => {
   );
 };
 
-const Footnotes: React.FC = () => {
+const Footnotes: React.FC<{ duration: number }> = ({ duration }) => {
   const frame = useCurrentFrame();
-  const scroll = interpolate(frame, [0, BEAT], [0, -800]);
+  const scroll = interpolate(frame, [0, duration], [0, -800]);
   return (
     <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
       <div
@@ -108,14 +110,14 @@ const Footnotes: React.FC = () => {
           </div>
         ))}
       </div>
-      <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(11,18,32,1) 0%, transparent 20%, transparent 70%, rgba(11,18,32,1) 100%)" }} />
+      <AbsoluteFill style={{ background: `linear-gradient(180deg, rgba(${BG},1) 0%, transparent 20%, transparent 70%, rgba(${BG},1) 100%)` }} />
     </div>
   );
 };
 
-const Article: React.FC = () => {
+const Article: React.FC<{ duration: number }> = ({ duration }) => {
   const frame = useCurrentFrame();
-  const scroll = interpolate(frame, [0, BEAT], [0, -600]);
+  const scroll = interpolate(frame, [0, duration], [0, -600]);
   return (
     <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
       <div style={{ position: "absolute", right: 140, top: 180 + scroll, width: 800, direction: "rtl" }}>
@@ -135,15 +137,15 @@ const Article: React.FC = () => {
           );
         })}
       </div>
-      <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(11,18,32,1) 0%, transparent 20%, transparent 70%, rgba(11,18,32,1) 100%)" }} />
+      <AbsoluteFill style={{ background: `linear-gradient(180deg, rgba(${BG},1) 0%, transparent 20%, transparent 70%, rgba(${BG},1) 100%)` }} />
     </div>
   );
 };
 
-const CitationCheck: React.FC = () => {
+const CitationCheck: React.FC<{ duration: number }> = ({ duration }) => {
   const frame = useCurrentFrame();
   const pulse = 0.5 + 0.5 * Math.sin(frame / 2);
-  const typed = Math.floor(interpolate(frame, [4, BEAT], [0, 38], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
+  const typed = Math.floor(interpolate(frame, [4, duration], [0, 38], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
   const text = "בג״ץ 0000/00 פלוני נ׳ אלמוני (אר״ש 0000)";
   return (
     <div style={{ position: "absolute", inset: 0 }}>
@@ -154,7 +156,7 @@ const CitationCheck: React.FC = () => {
           top: 700,
           width: 920,
           padding: 32,
-          background: "#0F1A2D",
+          background: "#163558",
           border: `1px solid ${COLORS.inkLine}`,
           borderRadius: 12,
           direction: "rtl",
@@ -200,31 +202,36 @@ const CitationCheck: React.FC = () => {
   );
 };
 
+const D1 = LONG;   // עוד פסיקה
+const D2 = SHORT;  // עוד הערת שוליים
+const D3 = LONG;   // עוד מאמר
+const D4 = LONG;   // ועוד בדיקה...
+
 export const Chaos: React.FC = () => {
   return (
     <Stage>
-      <Sequence from={0} durationInFrames={BEAT}>
+      <Sequence from={0} durationInFrames={D1}>
         <Vignette caption="עוד פסיקה">
           <PdfFan />
         </Vignette>
       </Sequence>
-      <Sequence from={BEAT} durationInFrames={BEAT}>
+      <Sequence from={D1} durationInFrames={D2}>
         <Vignette caption="עוד הערת שוליים">
-          <Footnotes />
+          <Footnotes duration={D2} />
         </Vignette>
       </Sequence>
-      <Sequence from={BEAT * 2} durationInFrames={BEAT}>
+      <Sequence from={D1 + D2} durationInFrames={D3}>
         <Vignette caption="עוד מאמר">
-          <Article />
+          <Article duration={D3} />
         </Vignette>
       </Sequence>
-      <Sequence from={BEAT * 3} durationInFrames={BEAT}>
+      <Sequence from={D1 + D2 + D3} durationInFrames={D4}>
         <Vignette caption="ועוד בדיקה אם המקור בכלל נכון" warn>
-          <CitationCheck />
+          <CitationCheck duration={D4} />
         </Vignette>
       </Sequence>
     </Stage>
   );
 };
 
-export const CHAOS_DURATION = BEAT * 4;
+export const CHAOS_DURATION = D1 + D2 + D3 + D4;
