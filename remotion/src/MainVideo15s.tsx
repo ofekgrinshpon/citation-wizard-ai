@@ -22,7 +22,7 @@ const BenefitWrap: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 );
 
 export const MainVideo15s: React.FC = () => (
-  <AbsoluteFill style={{ background: "#0F2A47" }}>
+  <AbsoluteFill style={{ background: "#44b2f2" }}>
     <TransitionSeries>
       <TransitionSeries.Sequence durationInFrames={HOOK}>
         <Hook />
