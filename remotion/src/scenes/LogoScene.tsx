@@ -1,7 +1,8 @@
 import React from "react";
-import { useCurrentFrame, spring, useVideoConfig, interpolate, Img, staticFile } from "remotion";
+import { useCurrentFrame, spring, useVideoConfig, interpolate, Img } from "remotion";
 import { Stage, HebrewLine } from "../components/Stage";
 import { COLORS } from "../theme";
+import relexLogo from "../assets/relex-logo.png";
 
 export const LogoScene: React.FC = () => {
   const frame = useCurrentFrame();
@@ -49,7 +50,7 @@ export const LogoScene: React.FC = () => {
               overflow: "hidden",
             }}
           >
-            <Img src={staticFile("images/relex-logo.png")} style={{ width: "92%", height: "92%", objectFit: "contain" }} />
+            <Img src={relexLogo} style={{ width: "92%", height: "92%", objectFit: "contain" }} />
             <div
               style={{
                 position: "absolute",
