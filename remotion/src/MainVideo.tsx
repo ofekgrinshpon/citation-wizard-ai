@@ -18,7 +18,7 @@ export const MAIN_DURATION =
 
 export const MainVideo: React.FC = () => {
   return (
-    <AbsoluteFill style={{ background: "#0B1220" }}>
+    <AbsoluteFill style={{ background: "#0F2A47" }}>
       <TransitionSeries>
         <TransitionSeries.Sequence durationInFrames={HOOK}>
           <Hook />
