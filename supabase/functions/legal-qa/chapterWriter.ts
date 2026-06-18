@@ -15,6 +15,7 @@
 //   No source search — synthesize from already-written body chapters.
 // =========================================================================
 
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import {
   profileForFlowTag,
   buildChapterQuery,
