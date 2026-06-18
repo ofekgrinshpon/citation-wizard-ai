@@ -65,6 +65,8 @@ export interface CitationValidationResult {
   template: string;
   /** The rule set details (null if unknown type) */
   ruleSet: CitationRuleSet | null;
+  /** The source type actually used for validation (may differ from input after inference) */
+  effectiveSourceType?: SourceType;
 }
 
 /**
