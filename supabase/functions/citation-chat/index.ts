@@ -601,6 +601,93 @@ async function verifyBiblioAuthor(
   }
 }
 
+// Cross-type biblio fallback: when the chosen branch (book/article) finds nothing,
+// run a generic biblio search that lets Perplexity classify journal/article_in_book/book
+// and build the matching hint. Reuses anchorTitleInSources for safety.
+async function fallbackBiblioSearch(
+  apiKey: string,
+  query: string,
+  preferKind: "book" | "article",
+): Promise<{ hint: string; kind: string } | null> {
+  try {
+    const resp = await fetch("https://api.perplexity.ai/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "sonar-pro",
+        messages: [
+          {
+            role: "system",
+            content: `אתה עוזר מחקר משפטי ישראלי. החזר JSON בלבד.
+חפש את המקור הביבליוגרפי המתאים (ספר, מאמר בכתב עת, או מאמר שפורסם בתוך ספר/אסופה).
+הפורמט:
+{"found":true,"kind":"journal"|"article_in_book"|"book","author":"שם המחבר/ים","title":"שם המקור","journalName":"","bookTitle":"","bookAuthor":"","volume":"","notebook":"","firstPage":"","editor":"","year":0,"hebrewYear":""}
+אם לא מצאת מקור מפורש — החזר {"found":false}. אל תנחש.
+שמות ללא תארים (פרופ', ד"ר, עו"ד, שופט).`,
+          },
+          {
+            role: "user",
+            content: `מצא את המקור הביבליוגרפי הישראלי המתאים ל: "${query}". העדף סוג ${preferKind === "book" ? "ספר" : "מאמר"}, אך אם זה למעשה סוג אחר — ציין את הסוג הנכון.`,
+          },
+        ],
+      }),
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const text = data.choices?.[0]?.message?.content || "";
+    const jm = text.match(/\{[\s\S]*\}/);
+    if (!jm) return null;
+    let p: any;
+    try {
+      p = JSON.parse(jm[0].replace(/([\u0590-\u05FF])"([\u0590-\u05FF])/g, "$1\u05F4$2"));
+    } catch { return null; }
+    if (!p?.found || !p?.title) return null;
+    const anchor = anchorTitleInSources(p.title, data.citations, data.search_results, { authorHint: p.author || p.bookAuthor });
+    if (!anchor.anchored) {
+      console.log(`[fallback] title_anchored=false for "${query}"`);
+      return null;
+    }
+    const kind: string = p.kind === "journal" || p.kind === "article_in_book" || p.kind === "book" ? p.kind : preferKind;
+    let details = "";
+    if (kind === "book") {
+      details = `\n\n══ נתוני ספר שנמצאו בחיפוש (fallback) ══\n`;
+      details += `מחבר: ${p.author || "[חסר — לא אומת מול מקור]"}\n`;
+      details += `שם הספר: ${p.title}\n`;
+      if (p.year) details += `שנה לועזית: ${p.year}\n`;
+      if (p.hebrewYear && !p.year) details += `שנה עברית: ${p.hebrewYear}\n`;
+      if (p.editor) details += `עורך: ${p.editor}\n`;
+      details += `══ עיצוב אזכור לפי כלל 23. סמן [חסר:...] לשדות חסרים. אל תמציא. ══`;
+    } else if (kind === "article_in_book") {
+      details = `\n\n══ נתוני מאמר בספר שנמצאו בחיפוש (fallback) ══\n`;
+      details += `מחבר המאמר: ${p.author || "[חסר — לא אומת מול מקור]"}\n`;
+      details += `שם המאמר: ${p.title}\n`;
+      if (p.bookAuthor) details += `מחבר הספר: ${p.bookAuthor}\n`;
+      if (p.bookTitle) details += `שם הספר: ${p.bookTitle}\n`;
+      if (p.editor) details += `עורך: ${p.editor}\n`;
+      if (p.volume) details += `כרך: ${p.volume}\n`;
+      if (p.firstPage) details += `עמוד ראשון: ${p.firstPage}\n`;
+      if (p.year) details += `שנה: ${p.year}\n`;
+      details += `══ עיצוב אזכור לפי כלל 24.11. סמן [חסר:...] לשדות חסרים. אל תמציא. ══`;
+    } else {
+      details = `\n\n══ נתוני מאמר שנמצאו בחיפוש (fallback) ══\n`;
+      details += `מחבר: ${p.author || "[חסר — לא אומת מול מקור]"}\n`;
+      details += `שם מאמר: ${p.title}\n`;
+      if (p.journalName) details += `כתב עת: ${p.journalName}\n`;
+      if (p.volume) details += `כרך: ${p.volume}\n`;
+      if (p.notebook) details += `חוברת: ${p.notebook}\n`;
+      if (p.firstPage) details += `עמוד ראשון: ${p.firstPage}\n`;
+      if (p.year) details += `שנה: ${p.year}\n`;
+      if (p.hebrewYear && !p.year) details += `שנה עברית: ${p.hebrewYear}\n`;
+      details += `══ עיצוב אזכור לפי כלל 24. סמן [חסר:...] לשדות חסרים. אל תמציא. ══`;
+    }
+    return { hint: details, kind };
+  } catch (e) {
+    console.error("[fallback] biblio search error:", e);
+    return null;
+  }
+}
+
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
