@@ -493,17 +493,24 @@ export function validateAIResponse(
     }
   }
 
-  const engineKey = ENGINE_KEY_MAP[sourceType];
-  const extractedFields = extractFieldsFromResponse(response, sourceType);
+  // Infer the actual rendered type from the citation line so we don't validate
+  // an article output against book rules (or vice versa) when the upstream
+  // sourceType disagrees with what was actually rendered.
+  const citationLine = getCitationLine(response);
+  const effectiveType = inferSourceTypeFromCitation(citationLine, sourceType);
+  const effectiveRuleSet = getRuleSet(effectiveType) || ruleSet;
+
+  const engineKey = ENGINE_KEY_MAP[effectiveType] || ENGINE_KEY_MAP[sourceType];
+  const extractedFields = extractFieldsFromResponse(response, effectiveType);
   const missingFields = validateCitation(engineKey, extractedFields);
 
   return {
     isComplete: missingFields.length === 0,
     missingFields,
-    primaryRule: ruleSet.primaryRule,
-    ruleTitle: ruleSet.ruleTitle,
-    template: ruleSet.template,
-    ruleSet,
+    primaryRule: effectiveRuleSet.primaryRule,
+    ruleTitle: effectiveRuleSet.ruleTitle,
+    template: effectiveRuleSet.template,
+    ruleSet: effectiveRuleSet,
   };
 }
 
