@@ -350,6 +350,193 @@ async function reconcilePublishedDate(
   }
 }
 
+// ── Bibliographic title/author anchoring (for article + book branches) ──
+// Mirrors the docket-anchor gate used for caselaw. Prevents Perplexity from
+// returning a hallucinated author when no actual source confirms the title.
+
+const BIBLIO_TRUSTED_DOMAINS = [
+  "nevo.co.il",
+  "law.tau.ac.il",
+  "law.huji.ac.il",
+  "law.biu.ac.il",
+  "tau.ac.il",
+  "huji.ac.il",
+  "biu.ac.il",
+  "idc.ac.il",
+  "runi.ac.il",
+  "colman.ac.il",
+  "ono.ac.il",
+  "openu.ac.il",
+  "books.google.com",
+  "scholar.google.com",
+  "jstor.org",
+  "ssrn.com",
+  "academia.edu",
+  "researchgate.net",
+  "he.wikipedia.org",
+  "wikipedia.org",
+  "takdin.co.il",
+  "lite.takdin.co.il",
+  "kotar.cet.ac.il",
+  "magnespress.co.il",
+  "hebrewbooks.org",
+];
+
+function normalizeHe(s: string): string {
+  return (s || "")
+    .toLowerCase()
+    .replace(/[\u0591-\u05C7]/g, "") // niqqud
+    .replace(/[״"׳'`.,:;!?(){}\[\]–—\-_*\/\\<>]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function decodeUrlSafe(u: string): string {
+  try { return decodeURIComponent(u); } catch { return u; }
+}
+
+// Quote-aware title extraction: prefers content inside Hebrew quotes if present
+// (e.g. אזכור the article title inside `"..."`). Falls back to the full query.
+function extractTitleCandidate(raw: string): string {
+  const quoted = raw.match(/[״"]([^"״]{6,})[״"]/);
+  if (quoted && quoted[1]) return quoted[1];
+  return raw;
+}
+
+function anchorTitleInSources(
+  rawTitle: string,
+  citations: unknown,
+  searchResults: unknown,
+): { anchored: boolean; anchorUrls: string[]; sample: string } {
+  const title = extractTitleCandidate(rawTitle);
+  const norm = normalizeHe(title);
+  const tokens = norm.split(" ").filter((t) => t.length >= 2);
+  if (tokens.length < 2) return { anchored: false, anchorUrls: [], sample: "" };
+  const windows: string[] = [];
+  for (const k of [Math.min(6, tokens.length), 4, 3]) {
+    for (let i = 0; i + k <= tokens.length; i++) {
+      const w = tokens.slice(i, i + k).join(" ");
+      if (w.length >= 10) windows.push(w);
+    }
+  }
+  if (windows.length === 0) windows.push(tokens.join(" "));
+  const urls: string[] = Array.isArray(citations)
+    ? (citations as unknown[]).filter((u) => typeof u === "string") as string[]
+    : [];
+  const sr = Array.isArray(searchResults) ? (searchResults as Array<Record<string, unknown>>) : [];
+  const hits = new Set<string>();
+  let sample = "";
+  for (const u of urls) {
+    const dec = normalizeHe(decodeUrlSafe(u));
+    if (windows.some((w) => dec.includes(w))) {
+      hits.add(u);
+      if (!sample) sample = u;
+    }
+  }
+  for (const r of sr) {
+    const url = typeof r.url === "string" ? r.url : "";
+    const blob = normalizeHe([
+      typeof r.title === "string" ? r.title : "",
+      typeof r.snippet === "string" ? r.snippet : "",
+      decodeUrlSafe(url),
+    ].join(" "));
+    if (windows.some((w) => blob.includes(w))) {
+      if (url) hits.add(url);
+      if (!sample && typeof r.snippet === "string") sample = r.snippet;
+    }
+  }
+  return { anchored: hits.size > 0, anchorUrls: [...hits], sample };
+}
+
+function authorAppearsInSources(
+  author: string,
+  citations: unknown,
+  searchResults: unknown,
+): boolean {
+  const a = normalizeHe(author);
+  if (a.length < 2) return false;
+  // Use last name (or full short author) for matching
+  const parts = a.split(" ").filter(Boolean);
+  const lastName = parts[parts.length - 1] || a;
+  const probes = Array.from(new Set([a, lastName].filter((p) => p.length >= 2)));
+  const urls: string[] = Array.isArray(citations)
+    ? (citations as unknown[]).filter((u) => typeof u === "string") as string[]
+    : [];
+  const sr = Array.isArray(searchResults) ? (searchResults as Array<Record<string, unknown>>) : [];
+  for (const u of urls) {
+    const dec = normalizeHe(decodeUrlSafe(u));
+    if (probes.some((p) => dec.includes(p))) return true;
+  }
+  for (const r of sr) {
+    const blob = normalizeHe([
+      typeof r.title === "string" ? r.title : "",
+      typeof r.snippet === "string" ? r.snippet : "",
+      decodeUrlSafe(typeof r.url === "string" ? r.url : ""),
+    ].join(" "));
+    if (probes.some((p) => blob.includes(p))) return true;
+  }
+  return false;
+}
+
+function authorsAgree(a: string, b: string): boolean {
+  const na = normalizeHe(a);
+  const nb = normalizeHe(b);
+  if (!na || !nb) return false;
+  if (na === nb) return true;
+  // Last-name agreement (Israeli academic authors are usually single)
+  const lastA = na.split(" ").pop() || "";
+  const lastB = nb.split(" ").pop() || "";
+  if (lastA && lastA === lastB) return true;
+  if (na.includes(nb) || nb.includes(na)) return true;
+  return false;
+}
+
+// Focused single-call cross-check: ask Perplexity strictly for the author of
+// the given title, on the same trusted domain set. Used to confirm/reject the
+// first call's author. Returns "" on failure or low confidence.
+async function verifyBiblioAuthor(
+  apiKey: string,
+  kind: "article" | "book",
+  title: string,
+): Promise<{ author: string; citations: unknown; search_results: unknown } | null> {
+  try {
+    const kindHe = kind === "article" ? "המאמר" : "הספר";
+    const resp = await fetch("https://api.perplexity.ai/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "sonar-pro",
+        search_domain_filter: BIBLIO_TRUSTED_DOMAINS,
+        messages: [
+          {
+            role: "system",
+            content: `אתה עוזר מחקר משפטי. החזר JSON בלבד: {"author":"שם המחבר/ים","confidence":"high"|"low"}.\nציין את המחבר רק אם מצאת מקור מפורש המייחס לו את ${kindHe} הזה. אם לא בטוח — החזר {"author":"","confidence":"low"}.`,
+          },
+          {
+            role: "user",
+            content: `מי המחבר של ${kindHe} "${extractTitleCandidate(title)}"? ציין שם פרטי + משפחה ללא תארים.`,
+          },
+        ],
+      }),
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const content = data.choices?.[0]?.message?.content || "";
+    const jm = content.match(/\{[\s\S]*\}/);
+    if (!jm) return null;
+    const parsed = JSON.parse(
+      jm[0].replace(/([\u0590-\u05FF])"([\u0590-\u05FF])/g, "$1\u05F4$2"),
+    );
+    const author = parsed.author ? String(parsed.author).trim() : "";
+    const conf = parsed.confidence ? String(parsed.confidence).toLowerCase() : "low";
+    if (!author || conf !== "high") return { author: "", citations: data.citations, search_results: data.search_results };
+    return { author, citations: data.citations, search_results: data.search_results };
+  } catch (e) {
+    console.error(`[${kind}] verifyBiblioAuthor error:`, e);
+    return null;
+  }
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
