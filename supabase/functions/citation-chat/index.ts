@@ -95,7 +95,7 @@ async function perplexityWithFallback(
   apiKey: string,
   tier1Body: Record<string, unknown>,
   logTag: string,
-  opts?: { docketAnchor?: { num: string; year: string } },
+  opts?: { docketAnchor?: { num: string; year: string }; forceOpenWebFallback?: boolean },
 ): Promise<PplxRunResult> {
   const result: PplxRunResult = {
     resp: null,
@@ -115,8 +115,9 @@ async function perplexityWithFallback(
   });
   result.resp = t1;
 
-  if (!OPENWEB_FALLBACK_ON || !t1.ok) {
-    if (OPENWEB_FALLBACK_ON) {
+  const fallbackEnabled = OPENWEB_FALLBACK_ON || opts?.forceOpenWebFallback === true;
+  if (!fallbackEnabled || !t1.ok) {
+    if (fallbackEnabled) {
       console.log(`[pplx-fallback:${logTag}] tier1 not ok (${t1.status}); skipping fallback`);
     }
     return result;
@@ -133,17 +134,39 @@ async function perplexityWithFallback(
   const t1Cit = (t1Json?.citations as unknown) ?? [];
   result.tier1_trusted = countTrustedCitations(t1Cit, TRUSTED_LEGAL);
 
-  if (result.tier1_trusted > 0) {
+  // Tier-1 docket-anchor check. If a docket was provided and Tier-1 has
+  // trusted citations but NONE anchor the docket, escalate to Tier-2 — the
+  // trusted hits are about other cases (adjacent-docket contamination).
+  let tier1DocketAnchored = true;
+  if (opts?.docketAnchor) {
+    const t1TrustedUrls = Array.isArray(t1Cit)
+      ? (t1Cit as unknown[]).filter((u) =>
+          typeof u === "string" &&
+          TRUSTED_LEGAL.some((d) => {
+            try { const h = new URL(u).hostname.toLowerCase(); return h === d || h.endsWith("." + d); } catch { return false; }
+          }))
+      : [];
+    tier1DocketAnchored = anyUrlContainsDocketVia(t1TrustedUrls, opts.docketAnchor).ok;
+  }
+
+  if (result.tier1_trusted > 0 && tier1DocketAnchored) {
     console.log(
-      `[pplx-fallback:${logTag}] tier1_trusted=${result.tier1_trusted} → no fallback`,
+      `[pplx-fallback:${logTag}] tier1_trusted=${result.tier1_trusted} tier1_docket_anchored=${tier1DocketAnchored} → no fallback`,
     );
     return result;
+  }
+  if (result.tier1_trusted > 0 && !tier1DocketAnchored) {
+    console.log(
+      `[pplx-fallback:${logTag}] tier1_trusted=${result.tier1_trusted} but NO trusted url anchors docket ${opts!.docketAnchor!.num}/${opts!.docketAnchor!.year} → firing tier2`,
+    );
   }
 
   // Tier-2: same body without `search_domain_filter`.
   const { search_domain_filter: _ignored, ...t2Body } = tier1Body as Record<string, unknown>;
   result.tier2_fired = true;
-  console.log(`[pplx-fallback:${logTag}] tier1 returned 0 trusted citations → firing tier2`);
+  if (result.tier1_trusted === 0) {
+    console.log(`[pplx-fallback:${logTag}] tier1 returned 0 trusted citations → firing tier2`);
+  }
   const t2 = await fetch("https://api.perplexity.ai/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
