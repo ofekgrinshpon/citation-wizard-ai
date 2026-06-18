@@ -2485,6 +2485,12 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                   console.error("[book] Failed to parse JSON:", e);
                   bookHint = `\n\n══ חיפוש ספר ══\nלא נמצאו נתונים מאומתים עבור "${bookQuery}".\nחובה להשתמש ב-[חסר:...] עבור שדות חסרים.\n══`;
                 }
+                // ── Cross-type fallback: book → article search ──
+                if (!bookHint || /חיפוש ספר ══\nלא נמצאו/.test(bookHint)) {
+                  const fb = await fallbackBiblioSearch(PERPLEXITY_API_KEY, bookQuery, "article");
+                  console.log(`[book] fallback=article hit=${!!fb} kind=${fb?.kind || "none"}`);
+                  if (fb) { bookHint = fb.hint; }
+                }
               }
             } else {
               console.error("[book] Perplexity search failed:", bookResp?.status);
@@ -2661,6 +2667,18 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                   console.error("[article] Failed to parse JSON:", e);
                   articleHint = `\n\n══ חיפוש מאמר ══\nלא נמצאו נתונים מאומתים עבור "${articleQuery}".\nחובה להשתמש ב-[חסר:...] עבור שדות חסרים.\n══`;
                 }
+                // ── Cross-type fallback: article → book search ──
+                if (!articleHint || /חיפוש מאמר ══\nלא נמצאו/.test(articleHint)) {
+                  const fb = await fallbackBiblioSearch(PERPLEXITY_API_KEY, articleQuery, "book");
+                  console.log(`[article] fallback=book hit=${!!fb} kind=${fb?.kind || "none"}`);
+                  if (fb) { articleHint = fb.hint; }
+                }
+              }
+            } else {
+              console.error("[article] Perplexity search failed:", artResp?.status);
+            }
+          }
+        }
               }
             } else {
               console.error("[article] Perplexity search failed:", artResp?.status);
