@@ -1051,7 +1051,8 @@ const Index = () => {
                           try {
                             const newLabel = SOURCE_TYPE_LABELS[newType];
                             const engineHint = buildEnginePromptHint(newType);
-                            const reclassifiedPrompt = `[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n${engineHint}[כלל רלוונטי: ${getEngineRuleReference(newType)}]\n${rawInput}`;
+                            // IMPORTANT: include [סיווג אוטומטי: ...] so the backend routes to the right Perplexity branch
+                            const reclassifiedPrompt = `[סיווג אוטומטי: ${newLabel}]\n[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n${engineHint}[כלל רלוונטי: ${getEngineRuleReference(newType)}]\n${rawInput}`;
                             const reply = await callAPI(reclassifiedPrompt, messages.slice(0, i));
                             setMessages((prev) => {
                               const updated = [...prev];
