@@ -2374,7 +2374,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
               PERPLEXITY_API_KEY,
               {
                 model: "sonar-pro",
-                search_domain_filter: BIBLIO_TRUSTED_DOMAINS,
+                // Open web — no domain filter. Recall first; title-anchor + author cross-check enforce safety.
                 messages: [
                   {
                     role: "system",
@@ -2394,8 +2394,8 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                 ],
               },
               "book",
-              { forceOpenWebFallback: true },
             );
+
             const bookResp = bookRun.resp;
 
             if (bookResp && bookResp.ok) {
