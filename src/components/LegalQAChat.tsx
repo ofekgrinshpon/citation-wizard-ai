@@ -142,6 +142,20 @@ interface QAResult {
     totalDurationMs?: number;
   };
   noCoverage?: boolean;
+  /** D4 academic chapters: ranked source pool that grounded the chapter. */
+  sourcesUsed?: Array<{
+    rank: number;
+    title: string;
+    url: string | null;
+    source_type: string;
+    display_citation: string | null;
+    snippet?: string | null;
+  }>;
+  chapterMeta?: {
+    flowTag?: string;
+    profile?: string | null;
+    sourceCount?: number;
+  };
 }
 
 type TaskMode = "research" | "legal_source_search" | "case_summary" | "academic_writing";
@@ -178,6 +192,8 @@ interface ChapterData {
    *  combined "הערות שוליים" section. Backend already uses continuous
    *  global numbering across chapters. */
   footnotes?: Footnote[];
+  /** D4: ranked academic source pool that grounded this chapter. */
+  sourcesUsed?: QAResult["sourcesUsed"];
 }
 
 interface AcademicSession {
@@ -1749,6 +1765,10 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
               ? qaResult.footnotes_count
               : (qaResult.footnotes?.length ?? 0),
           footnotes: qaResult.footnotes ?? [],
+          // D4: persist the academic source pool that grounded this chapter.
+          ...(qaResult.sourcesUsed && qaResult.sourcesUsed.length > 0
+            ? { sourcesUsed: qaResult.sourcesUsed }
+            : {}),
         };
         setChapters(updatedChapters);
         updateWizardStep("checkpoint");
@@ -1873,13 +1893,18 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       return;
     }
     if (role === "abstract") {
-      // Abstract is pure synthesis — no retrieval pipeline. Still available.
+      // Abstract is pure synthesis — no retrieval pipeline.
       handleAcademicSubmit("write_chapter", { isAbstract: true });
       return;
     }
-    // D1: body / introduction / conclusion all route through the offline
-    // chapter engine. Block at the UI so we never even hit the 503.
-    toast.info(CHAPTER_OFFLINE_TITLE);
+    // D4: body / introduction / conclusion now live — route to chapterWriter.
+    const step =
+      role === "introduction"
+        ? "write_introduction"
+        : role === "conclusion"
+          ? "write_conclusion"
+          : "write_chapter";
+    handleAcademicSubmit(step);
   };
 
   const advanceToNextChapter = () => {
