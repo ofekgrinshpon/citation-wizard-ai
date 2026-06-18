@@ -82,15 +82,13 @@ export function createSseStream(): { response: Response; sink: SseSink } {
   return { response, sink };
 }
 
-// ─── Call legal-research-v1 in sources_only mode (smoke / service-role) ──
-
 // ─── In-process academic source search ──────────────────────────────────
 // Hybrid: local legal-document corpus (text search) + Perplexity scholarship
 // fallback. Mirrors the suggest_topics reality-check engine but tuned by
 // the chapter profile (which source classes to include, foreign allowed,
 // max sources / max foreign).
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+
 
 const CHAPTER_PPLX_DOMAINS_HE: string[] = [
   "nevo.co.il",
