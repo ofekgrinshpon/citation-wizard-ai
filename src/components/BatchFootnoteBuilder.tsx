@@ -162,7 +162,8 @@ export function BatchFootnoteBuilder({}: BatchProps) {
         const reordered = [...prev];
         const [removed] = reordered.splice(dragItem.current!, 1);
         reordered.splice(dragOverItem.current!, 0, removed);
-        return reordered.map((c, i) => ({ ...c, id: i + 1 }));
+        const renumbered = reordered.map((c, i) => ({ ...c, id: i + 1 }));
+        return applyRepeatCitationRules(renumbered);
       });
     }
     dragItem.current = null;
