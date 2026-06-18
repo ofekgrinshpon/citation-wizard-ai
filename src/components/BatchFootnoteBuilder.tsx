@@ -273,20 +273,21 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       const content = await runSingleCitation(cell.input, cell.sourceTypeOverride);
       const detected = detectSourceType(normalizeAbbreviations(cell.input));
       const hasWarning = /\[חסר:/.test(content) || /⚠️/.test(content);
-      setCells((prev) =>
-        prev.map((c) =>
+      setCells((prev) => {
+        const updated = prev.map((c) =>
           c.id === id
             ? {
                 ...c,
                 output: content,
-                status: hasWarning ? "warning" : "valid",
+                status: hasWarning ? ("warning" as const) : ("valid" as const),
                 warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
                 detectedType: detected,
                 approved: false,
               }
             : c
-        )
-      );
+        );
+        return applyRepeatCitationRules(updated);
+      });
     } catch {
       setCells((prev) =>
         prev.map((c) => (c.id === id ? { ...c, status: "error", output: null } : c))
