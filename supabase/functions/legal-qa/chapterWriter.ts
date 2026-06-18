@@ -288,22 +288,23 @@ async function fetchChapterSources(opts: {
 const ACADEMIC_TONE_RULES = `כללי טון אקדמי (טיעוני):
 - השתמש בפועלים טיעוניים: "פרק זה טוען", "ייטען כי", "המסקנה היא". אסור להשתמש בפועלים תיאוריים-פסיביים ("אסקור", "אבחן", "אציג").
 - כל קביעה עובדתית/דוקטרינרית חייבת להיתמך במקור מתוך "מאגר המקורות לפרק זה" בלבד.
-- ציין הפניות בגוף הטקסט כ-[S<rank>] (לדוגמה [S3]) ולא כהערות שוליים. אסור להמציא מקור שאינו ברשימה.
-- שמור על עברית אקדמית, משפטים תחומים, פסקאות של 4-7 שורות.
+- ציין הפניות בגוף הטקסט כ-[S<rank>] (לדוגמה [S3]). אסור להמציא מקור שאינו ברשימה. המערכת תמיר את הסימונים האלה למספרי הערות שוליים רציפים — אל תכתוב הערות שוליים בעצמך.
+- כל פסקה עניינית חייבת לכלול לפחות סימון [S<rank>] אחד; אותו מקור יכול לחזור מספר פעמים.
+- שמור על עברית אקדמית, משפטים תחומים, פסקאות של 5-8 משפטים.
 - אין לכלול את כותרת הפרק בפסקה הראשונה — היא תוזרק על-ידי המערכת.`;
 
 function flowTagGuidance(flowTag: string): string {
   if (/הדין\s+המצוי/.test(flowTag)) {
-    return `מיקוד הפרק (הדין המצוי): פירוט החקיקה הרלוונטית, פסיקה מנחה ומחייבת, וההסדר הנורמטיבי הקיים. הצג את הדין כפי שהוא, לפני שתעבור לניתוח ביקורתי.`;
+    return `מיקוד הפרק (הדין המצוי): בנה את הפרק לפי הרצף — חקיקה רלוונטית → פסיקה מנחה → פסיקה מחייבת → ההסדר הנורמטיבי שמצטייר → פסקת מעבר. הצג את הדין כפי שהוא, לפני שתעבור לניתוח ביקורתי.`;
   }
   if (/ניתוח\s+ביקורתי|ביקורתי/.test(flowTag)) {
-    return `מיקוד הפרק (ניתוח ביקורתי): בחן את הדין המצוי באמצעות עמדות מלומדים, סתירות פנימיות, וכשלים פרקטיים. הצג טיעון משלך ולא רק סקירה.`;
+    return `מיקוד הפרק (ניתוח ביקורתי): רצף — הצגת הקושי → עמדות מלומדים תומכות → עמדות חולקות → סתירות פנימיות/כשלים פרקטיים → טיעון משלך. הצג עמדה ולא רק סקירה.`;
   }
   if (/משפט\s+משווה|השוואתי/.test(flowTag)) {
-    return `מיקוד הפרק (משפט משווה): בחר 2-3 שיטות משפט זרות רלוונטיות, הצג כיצד הן מסדירות את הסוגיה, והסק לקח ישים לדין הישראלי.`;
+    return `מיקוד הפרק (משפט משווה): בחר 2-3 שיטות משפט זרות רלוונטיות, לכל אחת פסקה ייעודית (הקשר → ההסדר → ביקורת), וסיים בפסקת לקח ישים לדין הישראלי.`;
   }
   if (/הדין\s+הראוי|נורמטיב/.test(flowTag)) {
-    return `מיקוד הפרק (הדין הראוי): הצע מודל נורמטיבי חלופי, בסס אותו על דוחות ועדה וספרות מלומדים, והתמודד עם טיעוני נגד צפויים.`;
+    return `מיקוד הפרק (הדין הראוי): רצף — כשלי הדין המצוי → עקרונות מנחים → המודל המוצע → התמודדות עם טיעוני נגד → המלצה מעשית.`;
   }
   return `מיקוד הפרק: כתוב טיעון ממוקד שמשרת את שאלת המחקר ואת התזה.`;
 }
@@ -319,11 +320,12 @@ function buildChapterSystemPrompt(opts: {
   paperMemoryDeltas?: unknown[];
   footnoteOffset?: number;
 }): string {
-  const sourcesBlock = opts.sources.length === 0
-    ? "(לא אותרו מקורות חיצוניים — כתוב את הפרק על-בסיס ידע משפטי כללי וסמן אזורים שדורשים אימות בתג ⚠️)"
+  const hasSources = opts.sources.length > 0;
+  const sourcesBlock = !hasSources
+    ? "(לא אותרו מקורות חיצוניים — כתוב את הפרק על-בסיס ידע משפטי כללי. אל תשתמש בסימוני [S<rank>] כלל.)"
     : opts.sources
         .map((s) => {
-          const cit = s.display_citation || s.title || "(ללא ציטוט)";
+          const cit = s.title || s.display_citation || "(ללא כותרת)";
           const url = s.url ? ` — ${s.url}` : "";
           return `[S${s.rank}] ${cit}${url}`;
         })
@@ -338,6 +340,10 @@ function buildChapterSystemPrompt(opts: {
   const memoryBlock = Array.isArray(opts.paperMemoryDeltas) && opts.paperMemoryDeltas.length > 0
     ? `\n\n=== זיכרון מצטבר מפרקים קודמים (Paper Memory) ===\n${JSON.stringify(opts.paperMemoryDeltas).slice(0, 3000)}`
     : "";
+
+  const citationRule = hasSources
+    ? `- ציין הפניות בגוף הטקסט כ-[S<rank>] מתוך הרשימה לעיל. כל פסקה עניינית חייבת לכלול לפחות סימון אחד.`
+    : `- אל תשתמש בסימוני [S<rank>] כלל בפרק זה (אין מאגר מקורות).`;
 
   return `אתה חוקר משפטי אקדמי בכיר. אתה כותב פרק אחד בעבודה סמינריונית בעברית.
 
@@ -358,13 +364,83 @@ ${sourcesBlock}
 ${priorBlock}${memoryBlock}
 
 הנחיות פלט:
-- אורך מטרה: 800-1400 מילים.
-- מבנה: 3-6 פסקאות גוף + פסקת סיכום קצרה שמובילה לפרק הבא.
-- כל פסקה חייבת לכלול לפחות [S<rank>] אחד מהרשימה לעיל, אלא אם זו פסקת מעבר.
+- אורך מטרה: 1100-1600 מילים. אל תפסיק לפני שהגעת ל-1100 מילים לפחות.
+- מבנה: 5-8 פסקאות גוף + פסקת סיכום קצרה שמובילה לפרק הבא. כל פסקה 5-8 משפטים.
+${citationRule}
 - אל תחזור על תוכן מפרקים קודמים — בנה עליהם.
-- אל תכלול הערות שוליים, ביבליוגרפיה, או כותרת ראשית — רק את גוף הפרק.
+- אל תכלול הערות שוליים, ביבליוגרפיה, או כותרת ראשית — רק את גוף הפרק. המערכת תבנה את הערות השוליים מסימוני [S<rank>].
 
 כתוב את הפרק עכשיו.`;
+}
+
+// ─── Footnote post-processing ───────────────────────────────────────────
+// Convert in-text [S<rank>] markers to sequential superscript footnote
+// numbers (continuing from footnoteOffset), and build the matching
+// Footnote[] in academic-search style: title + url only.
+
+const SUP_DIGITS = "⁰¹²³⁴⁵⁶⁷⁸⁹";
+function toSuperscript(n: number): string {
+  return String(n).split("").map((d) => SUP_DIGITS[Number(d)] ?? d).join("");
+}
+
+interface BuiltFootnote {
+  number: number;
+  citation: string;
+  source_type: string;
+  url?: string;
+  source: "local" | "perplexity";
+}
+
+function postProcessChapterFootnotes(
+  rawText: string,
+  sources: SourceForPrompt[],
+  footnoteOffset: number,
+): { text: string; footnotes: BuiltFootnote[] } {
+  if (sources.length === 0) {
+    // Strip any stray [S<n>] markers the model produced anyway.
+    return { text: rawText.replace(/\s*\[S\d+\]/g, ""), footnotes: [] };
+  }
+  const sourceByRank = new Map<number, SourceForPrompt>(
+    sources.map((s) => [s.rank, s]),
+  );
+  // Assign numbers by first appearance.
+  const rankToNumber = new Map<number, number>();
+  const orderedRanks: number[] = [];
+  const markerRe = /\[S(\d+)\]/g;
+  let m: RegExpExecArray | null;
+  while ((m = markerRe.exec(rawText)) !== null) {
+    const rank = Number(m[1]);
+    if (!sourceByRank.has(rank)) continue;
+    if (rankToNumber.has(rank)) continue;
+    rankToNumber.set(rank, footnoteOffset + orderedRanks.length + 1);
+    orderedRanks.push(rank);
+  }
+  // Replace markers with superscript numbers.
+  const text = rawText.replace(/\[S(\d+)\]/g, (_, d) => {
+    const rank = Number(d);
+    const num = rankToNumber.get(rank);
+    if (!num) return ""; // unknown rank → drop marker silently
+    return toSuperscript(num);
+  });
+  // Build footnotes — academic-search shape: title + url only.
+  const footnotes: BuiltFootnote[] = orderedRanks.map((rank) => {
+    const s = sourceByRank.get(rank)!;
+    const isPerplexity = s.url ? !/nevo|court\.gov\.il|knesset|main\.knesset|takdin|psakdin/.test(s.url) && !s.display_citation : false;
+    // Heuristic: local-DB sources have a display_citation; the rest came from Perplexity.
+    const source: "local" | "perplexity" = s.display_citation ? "local" : "perplexity";
+    return {
+      number: rankToNumber.get(rank)!,
+      citation: (s.title || s.display_citation || "(ללא כותרת)").trim(),
+      source_type: s.source_type || "",
+      url: s.url || undefined,
+      source,
+    };
+  });
+  return { text, footnotes };
+}
+
+function countWords(text: string): number {
+  return (text.trim().match(/\S+/g) || []).length;
 }
 
 function buildSimpleSynthesisPrompt(opts: {
@@ -568,11 +644,12 @@ export async function runChapterWrite(req: WriteChapterRequest): Promise<Respons
           ? "כתוב את המבוא עכשיו."
           : "כתוב את הסיכום והמסקנות עכשיו.";
 
+      const isChapter = req.academicStep === "write_chapter";
       const stream = await streamChapterToSse({
         systemPrompt,
         userPrompt,
         sink,
-        maxTokens: req.academicStep === "write_chapter" ? 4096 : 3072,
+        maxTokens: isChapter ? 6500 : 3072,
       });
 
       if (!stream.ok || stream.text.trim().length < 50) {
@@ -587,23 +664,65 @@ export async function runChapterWrite(req: WriteChapterRequest): Promise<Respons
         return;
       }
 
+      let combinedRaw = stream.text;
+
+      // ── One-shot continuation if the chapter came in too short. ──
+      if (isChapter && countWords(combinedRaw) < 850) {
+        await sink.send("stage", {
+          stage: "expanding",
+          status: "running",
+          label: "הפרק קצר מהמטרה — מרחיב אותו",
+        });
+        const continuationPrompt =
+          `המשך מהמקום שעצרת. הוסף 2-3 פסקאות נוספות שמרחיבות את הניתוח ומעמיקות בטיעון. ` +
+          `אל תחזור על מה שכבר נכתב. השתמש רק במקורות מהמאגר וסמן [S<rank>] בכל קביעה עובדתית. ` +
+          `אל תכתוב כותרות ואל תכתוב הערות שוליים.\n\n` +
+          `=== הטיוטה עד כה ===\n${combinedRaw}`;
+        const cont = await streamChapterToSse({
+          systemPrompt,
+          userPrompt: continuationPrompt,
+          sink,
+          maxTokens: 3500,
+        });
+        if (cont.ok && cont.text.trim().length > 40) {
+          combinedRaw = combinedRaw.trimEnd() + "\n\n" + cont.text.trimStart();
+        }
+        await sink.send("stage", { stage: "expanding", status: "done", label: "ההרחבה הושלמה" });
+      }
+
+      // ── Convert [S<rank>] markers → numbered footnotes (title + url only). ──
+      const footnoteOffset = typeof req.footnoteOffset === "number" ? req.footnoteOffset : 0;
+      const processed = isChapter
+        ? postProcessChapterFootnotes(combinedRaw, sources, footnoteOffset)
+        : { text: combinedRaw, footnotes: [] as BuiltFootnote[] };
+
+      const finalWordCount = countWords(processed.text);
+      const lowLength = isChapter && finalWordCount < 700;
+      const lowGrounding = isChapter && sources.length === 0;
+
       await sink.send("stage", { stage: "writing", status: "done", label: "הפרק נכתב" });
 
       await sink.send("final", {
         status: 200,
         body: {
-          answer: stream.text,
-          footnotes: [],
+          answer: processed.text,
+          footnotes: processed.footnotes,
+          footnotes_count: processed.footnotes.length,
+          footnote_offset_applied: footnoteOffset,
           source_urls: sources.map((s) => s.url).filter(Boolean),
           sourcesUsed: sources,
           chapterMeta: {
             flowTag: outlineChapter?.flowTag || "",
             profile: profile?.kind || null,
             sourceCount: sources.length,
+            wordCount: finalWordCount,
+            lowLength,
+            lowGrounding,
           },
         },
       });
       await sink.close();
+
     } catch (e) {
       console.error("[chapterWriter] pipeline threw:", e instanceof Error ? e.message : e);
       try {
