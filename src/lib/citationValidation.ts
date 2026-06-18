@@ -194,7 +194,7 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
     if (journalMatch) fields.journalName = journalMatch[1];
     const volMatch = response.match(/\*\*[^*]+\*\*\s+([א-ת]+|\d+)/);
     if (volMatch) fields.volume = volMatch[1];
-    const pageMatch = response.match(/\*\*[^*]+\*\*\s+(?:[א-ת]+|\d+)\s+(\d+)/);
+    const pageMatch = response.match(/\*\*[^*]+\*\*\s+(?:[א-ת]+|\d+)\s*(?:\([^)]+\))?\s+(\d+)/);
     if (pageMatch) fields.firstPage = pageMatch[1];
     const yearMatch = response.match(/\((\d{4})\)/);
     if (yearMatch) fields.year = yearMatch[1];

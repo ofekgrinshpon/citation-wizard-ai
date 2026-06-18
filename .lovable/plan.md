@@ -1,43 +1,42 @@
-## הבעיה
+## Problem
 
-ב-`BatchFootnoteBuilder` יש שני שלבים:
+For the citation `שחר ליפשיץ "שלילת אבהות בהסכמה" משפטים נא(1) 231 (2021).` the validator falsely reports:
+`⚠️ חסרים 1 רכיבי חובה: עמוד תחילת המאמר`
 
-1. **שלב טיוטה (Phase 1 – draftAllCells)** — מציג כל מקור עם הציטוט המלא שחזר מ-`citation-chat`. בכוונה תחילה לא מופעלים כללי חזרה (`שם`, `שם, בס׳ 2`, `לעיל ה"ש`). זה מה שאת/ה רואה במסך הביקורת.
-2. **שלב סופי (Phase 2 – finalizeApproved → applyRepeatCitationRules)** — רק אחרי "אשר הכל" רצה הפונקציה שמזהה מקור חוזר וממירה אותו ל-`שם, בס׳ 2.` (שורות 882–944).
+even though page `231` is present.
 
-לכן בדוגמה שלך:
-- `סעיף 3 לחוק יסוד: משק המדינה` → ציטוט מלא
-- `סעיף 2 לחוק יסוד: משק המדינה` → ציטוט מלא (זהה כמעט)
+## Root cause
 
-במסך הביקורת הופיעו שני ציטוטים מלאים, ורק אחרי "אשר" הופעל הכלל והשני הומר ל-`שם, בס׳ 2.`.
+In `src/lib/citationValidation.ts` (article branch, lines ~195–198), the firstPage regex is:
 
-## התוכנית
+```
+/\*\*[^*]+\*\*\s+(?:[א-ת]+|\d+)\s+(\d+)/
+```
 
-להחיל את כללי החזרה כבר במסך הביקורת, כדי שמה שהמשתמש רואה יהיה זהה לפלט הסופי.
+It assumes `**Journal** Volume PAGE`, with whitespace right after the volume token. But per כלל 24.6 the volume can be immediately followed by a חוברת in parentheses with no space, e.g. `**משפטים** נא(1) 231`. The `\s+` after the volume token fails to match, so `firstPage` is never extracted and the validator reports it as missing.
 
-### שינויים
+The volume regex has the same gap — it captures `נא` correctly here only because `(` is not in `[א-ת]|\d`, but pure-digit volumes followed by `(` would also stop at the paren, which is fine. The real fix is just the firstPage regex.
 
-**`src/components/BatchFootnoteBuilder.tsx`**
+## Fix
 
-1. אחרי שלב הטיוטה (סוף `draftAllCells`, אחרי ה-`setCells` הגדול בשורה 225), להריץ `applyRepeatCitationRules` על התוצאות לפני המעבר ל-`review`. כלומר במקום `setCells(prev => prev.map(...))` ואז `setPhase("review")`, לבנות `nextCells`, להריץ דרך `applyRepeatCitationRules(nextCells)` ולשמור אותם.
-2. אותו דבר ב-`regenerateOne` (שורות 260–294): אחרי שעדכנו תא בודד, להריץ מחדש את כללי החזרה על כל המערך (כי שינוי בתא אחד משפיע על תאים מאוחרים יותר).
-3. אותו דבר ב-`handleReviewOutputChange`, `handleReviewSourceTypeChange`, וב-drag-and-drop של סדר התאים — בכל פעם שמשתנה תוכן/סדר, להריץ מחדש את כללי החזרה כדי שהתצוגה תישאר עקבית.
-4. ב-`finalizeApproved` (שורה 338) להשאיר את הקריאה ל-`applyRepeatCitationRules` כדי שהשמירה ל-DB תהיה על הפלט המנורמל (no-op כשהוא כבר זהה).
+Update the article-branch regexes in `extractFieldsFromResponse` (`src/lib/citationValidation.ts`, ~lines 195–198) to allow an optional `(חוברת)` between the volume and the first page, with optional whitespace around it:
 
-### נקודה עדינה
+```ts
+const volMatch = response.match(/\*\*[^*]+\*\*\s+([א-ת]+|\d+)/);
+if (volMatch) fields.volume = volMatch[1];
 
-`applyRepeatCitationRules` משתמשת ב-`extractCitationOnly(cell.output)` כדי לחלץ את הציטוט הנקי לפני ההשוואה — זה כבר עובד על פלט טיוטה, אז אין צורך בשינוי שם. הסיבה היחידה שזה לא רץ קודם הייתה ההערה בשורה 192 ("No repeat-citation rules" בכוונה).
+const pageMatch = response.match(
+  /\*\*[^*]+\*\*\s+(?:[א-ת]+|\d+)\s*(?:\([^)]+\))?\s+(\d+)/
+);
+if (pageMatch) fields.firstPage = pageMatch[1];
+```
 
-### קצוות
+This keeps the existing behavior for plain `Volume Page` cases and additionally handles `Volume(חוברת) Page`.
 
-- אם המשתמש עורך ידנית את הציטוט המוצג ל-`שם.` ואז עורך עוד תא, ה-rerun ידרוס את העריכה הידנית. אפשרות: לדלג על תאים שהמשתמש עדיין לא אישר כבר עם output ידני. בשלב ראשון נריץ rerun מלא תמיד — זה גם המודל הנוכחי אחרי finalize.
-- לא נוגעים בלוגיקת `applyRepeatCitationRules` עצמה — היא נכונה (כך הופק `שם, בס׳ 2.` במסך הסופי).
+## Verification
 
-### אימות
+After the change, the example citation should validate cleanly (no "missing first page" warning), and existing cases like `**משפטים** מד 7 (2014)` should continue to pass. No other code paths change.
 
-- להזין `סעיף 3 לחוק יסוד: משק המדינה` ואז `סעיף 2 לחוק יסוד: משק המדינה`.
-- במסך הביקורת התא השני צריך להופיע מיד כ-`שם, בס׳ 2.` ולא כציטוט מלא.
-- לערוך את התא הראשון לחוק אחר → התא השני אמור לחזור לציטוט מלא אוטומטית.
-- finalize לא משנה כלום (התצוגה כבר תואמת).
+## Files
 
-**קבצים:** `src/components/BatchFootnoteBuilder.tsx` בלבד.
+- `src/lib/citationValidation.ts` (single regex tweak in the article branch)
