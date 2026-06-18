@@ -403,35 +403,90 @@ function extractTitleCandidate(raw: string): string {
   return raw;
 }
 
+function hostnameOf(u: string): string {
+  try { return new URL(u).hostname.toLowerCase(); } catch { return ""; }
+}
+
+function isTrustedBiblioHost(u: string): boolean {
+  const h = hostnameOf(u);
+  if (!h) return false;
+  if (BIBLIO_TRUSTED_DOMAINS.some((d) => h === d || h.endsWith("." + d))) return true;
+  // Treat any Israeli academic/government host as trusted-ish
+  if (/\.ac\.il$/.test(h) || /\.gov\.il$/.test(h)) return true;
+  return false;
+}
+
 function anchorTitleInSources(
   rawTitle: string,
   citations: unknown,
   searchResults: unknown,
-): { anchored: boolean; anchorUrls: string[]; sample: string } {
+  opts?: { authorHint?: string },
+): {
+  anchored: boolean;
+  anchorUrls: string[];
+  trustedAnchorUrls: string[];
+  quality: "strong" | "weak" | "none";
+  sample: string;
+} {
   const title = extractTitleCandidate(rawTitle);
   const norm = normalizeHe(title);
   const tokens = norm.split(" ").filter((t) => t.length >= 2);
-  if (tokens.length < 2) return { anchored: false, anchorUrls: [], sample: "" };
-  const windows: string[] = [];
-  for (const k of [Math.min(6, tokens.length), 4, 3]) {
+  if (tokens.length < 2) {
+    return { anchored: false, anchorUrls: [], trustedAnchorUrls: [], quality: "none", sample: "" };
+  }
+  // Build strong (5+ contiguous tokens) and weak (3-4 token) windows separately
+  const strongWindows: string[] = [];
+  const weakWindows: string[] = [];
+  for (const k of [Math.min(7, tokens.length), 6, 5]) {
+    if (k < 5) continue;
     for (let i = 0; i + k <= tokens.length; i++) {
       const w = tokens.slice(i, i + k).join(" ");
-      if (w.length >= 10) windows.push(w);
+      if (w.length >= 12) strongWindows.push(w);
     }
   }
-  if (windows.length === 0) windows.push(tokens.join(" "));
+  for (const k of [4, 3]) {
+    if (tokens.length < k) continue;
+    for (let i = 0; i + k <= tokens.length; i++) {
+      const w = tokens.slice(i, i + k).join(" ");
+      if (w.length >= 8) weakWindows.push(w);
+    }
+  }
+  if (strongWindows.length === 0 && weakWindows.length === 0) weakWindows.push(tokens.join(" "));
+
+  const authorNorm = normalizeHe(opts?.authorHint || "");
+  const authorLast = authorNorm.split(" ").filter(Boolean).pop() || "";
+
   const urls: string[] = Array.isArray(citations)
     ? (citations as unknown[]).filter((u) => typeof u === "string") as string[]
     : [];
   const sr = Array.isArray(searchResults) ? (searchResults as Array<Record<string, unknown>>) : [];
-  const hits = new Set<string>();
+
+  const strongHits = new Set<string>();
+  const weakHits = new Set<string>();
   let sample = "";
-  for (const u of urls) {
-    const dec = normalizeHe(decodeUrlSafe(u));
-    if (windows.some((w) => dec.includes(w))) {
-      hits.add(u);
-      if (!sample) sample = u;
+
+  const consider = (url: string, blob: string, snippet?: string) => {
+    const hasStrong = strongWindows.some((w) => blob.includes(w));
+    if (hasStrong) {
+      if (url) strongHits.add(url);
+      if (!sample && snippet) sample = snippet;
+      return;
     }
+    const hasWeak = weakWindows.some((w) => blob.includes(w));
+    if (hasWeak) {
+      // Promote weak to strong if author last-name co-occurs
+      const promoted = authorLast.length >= 2 && blob.includes(authorLast);
+      if (promoted) {
+        if (url) strongHits.add(url);
+      } else if (url) {
+        weakHits.add(url);
+      }
+      if (!sample && snippet) sample = snippet;
+    }
+  };
+
+  for (const u of urls) {
+    consider(u, normalizeHe(decodeUrlSafe(u)), u);
   }
   for (const r of sr) {
     const url = typeof r.url === "string" ? r.url : "";
@@ -440,12 +495,20 @@ function anchorTitleInSources(
       typeof r.snippet === "string" ? r.snippet : "",
       decodeUrlSafe(url),
     ].join(" "));
-    if (windows.some((w) => blob.includes(w))) {
-      if (url) hits.add(url);
-      if (!sample && typeof r.snippet === "string") sample = r.snippet;
-    }
+    consider(url, blob, typeof r.snippet === "string" ? r.snippet : url);
   }
-  return { anchored: hits.size > 0, anchorUrls: [...hits], sample };
+
+  const allHits = new Set<string>([...strongHits, ...weakHits]);
+  const trusted = [...allHits].filter(isTrustedBiblioHost);
+  const quality: "strong" | "weak" | "none" =
+    strongHits.size > 0 ? "strong" : weakHits.size > 0 ? "weak" : "none";
+  return {
+    anchored: allHits.size > 0,
+    anchorUrls: [...allHits],
+    trustedAnchorUrls: trusted,
+    quality,
+    sample,
+  };
 }
 
 function authorAppearsInSources(
@@ -506,7 +569,8 @@ async function verifyBiblioAuthor(
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "sonar-pro",
-        search_domain_filter: BIBLIO_TRUSTED_DOMAINS,
+        // Open web — no domain filter. We rely on title-anchor + cross-check for safety.
+
         messages: [
           {
             role: "system",
@@ -2310,7 +2374,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
               PERPLEXITY_API_KEY,
               {
                 model: "sonar-pro",
-                search_domain_filter: BIBLIO_TRUSTED_DOMAINS,
+                // Open web — no domain filter. Recall first; title-anchor + author cross-check enforce safety.
                 messages: [
                   {
                     role: "system",
@@ -2330,8 +2394,8 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                 ],
               },
               "book",
-              { forceOpenWebFallback: true },
             );
+
             const bookResp = bookRun.resp;
 
             if (bookResp && bookResp.ok) {
@@ -2350,7 +2414,11 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                       bookParsed.bookTitle || bookQuery,
                       bookCitations,
                       bookSearchResults,
+                      { authorHint: bookParsed.author },
                     );
+                    const totalCitations = Array.isArray(bookCitations) ? bookCitations.length : 0;
+                    const onlyUntrustedSingleHit =
+                      anchor.anchored && totalCitations <= 1 && anchor.trustedAnchorUrls.length === 0;
                     let authorConfirmed = false;
                     if (!anchor.anchored) {
                       console.log(`[book] title_anchored=false — dropping all model-supplied fields for "${bookQuery}"`);
@@ -2368,17 +2436,29 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                       const verify = await verifyBiblioAuthor(PERPLEXITY_API_KEY, "book", bookParsed.bookTitle || bookQuery);
                       const agrees = verify && verify.author && authorsAgree(bookParsed.author, verify.author);
                       const inVerify = verify && authorAppearsInSources(bookParsed.author, verify.citations, verify.search_results);
-                      authorConfirmed = !!(inSource || (agrees && (inSource || inVerify)));
-                      console.log(`[book] author_check title_anchored=true author_in_source=${inSource} verify_author=${verify?.author || ""} agrees=${!!agrees} in_verify=${!!inVerify} confirmed=${authorConfirmed}`);
+                      // Stronger requirement when anchor is weak OR only one untrusted citation exists
+                      const needStrict = anchor.quality === "weak" || onlyUntrustedSingleHit;
+                      authorConfirmed = needStrict
+                        ? !!(agrees && (inSource || inVerify))
+                        : !!(inSource || (agrees && (inSource || inVerify)));
+                      console.log(`[book] author_check anchor_quality=${anchor.quality} trusted_anchors=${anchor.trustedAnchorUrls.length} strict=${needStrict} in_source=${inSource} verify="${verify?.author || ""}" agrees=${!!agrees} in_verify=${!!inVerify} confirmed=${authorConfirmed}`);
                       if (!authorConfirmed) {
                         console.log(`[book] author_dropped first="${bookParsed.author}" verify="${verify?.author || ""}"`);
-                        bookParsed.author = "";
+                        // Prefer a high-confidence different author that appears in our sources
+                        if (verify && verify.author && authorAppearsInSources(verify.author, bookCitations, bookSearchResults)) {
+                          console.log(`[book] author_replaced with verify="${verify.author}"`);
+                          bookParsed.author = verify.author;
+                          authorConfirmed = true;
+                        } else {
+                          bookParsed.author = "";
+                        }
                       }
                     } else if (bookParsed.isInstitutional) {
                       authorConfirmed = authorAppearsInSources(bookParsed.author || "", bookCitations, bookSearchResults);
                       if (!authorConfirmed) bookParsed.author = "";
                     }
-                    console.log(`[book] decision tier=${bookRun.tier} title_anchored=${anchor.anchored} author_confirmed=${authorConfirmed}`);
+                    console.log(`[book] decision tier=${bookRun.tier} title_anchored=${anchor.anchored} anchor_quality=${anchor.quality} trusted_anchors=${anchor.trustedAnchorUrls.length} author_confirmed=${authorConfirmed}`);
+
                     console.log(`[book] Found: ${bookParsed.bookTitle}, author=${bookParsed.author || '?'}, year=${bookParsed.year || '?'}`);
                     let details = `\n\n══ נתוני ספר שנמצאו בחיפוש ══\n`;
                     if (bookParsed.author) details += `מחבר: ${bookParsed.author}\n`;
@@ -2455,14 +2535,13 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
               PERPLEXITY_API_KEY,
               {
                 model: "sonar-pro",
-                search_domain_filter: BIBLIO_TRUSTED_DOMAINS,
+                // Open web — no domain filter. Recall first; title-anchor + author cross-check enforce safety.
                 messages: [
                   { role: "system", content: articleSystemPrompt + `\nאל תנחש מחבר — אם אינך מוצא מקור מפורש המייחס את המאמר למחבר כלשהו, החזר {"found":false}.` },
                   { role: "user", content: articleSearchPrompt },
                 ],
               },
               "article",
-              { forceOpenWebFallback: true },
             );
             const artResp = artRun.resp;
 
@@ -2482,7 +2561,11 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                       art.articleTitle || articleQuery,
                       artCitations,
                       artSearchResults,
+                      { authorHint: art.author },
                     );
+                    const totalCitations = Array.isArray(artCitations) ? artCitations.length : 0;
+                    const onlyUntrustedSingleHit =
+                      anchor.anchored && totalCitations <= 1 && anchor.trustedAnchorUrls.length === 0;
                     let authorConfirmed = false;
                     if (!anchor.anchored) {
                       console.log(`[article] title_anchored=false — dropping all model-supplied fields for "${articleQuery}"`);
@@ -2501,8 +2584,11 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                       const verify = await verifyBiblioAuthor(PERPLEXITY_API_KEY, "article", art.articleTitle || articleQuery);
                       const agrees = verify && verify.author && authorsAgree(art.author, verify.author);
                       const inVerify = verify && authorAppearsInSources(art.author, verify.citations, verify.search_results);
-                      authorConfirmed = !!(inSource || (agrees && (inSource || inVerify)));
-                      console.log(`[article] author_check title_anchored=true author_in_source=${inSource} verify_author=${verify?.author || ""} agrees=${!!agrees} in_verify=${!!inVerify} confirmed=${authorConfirmed}`);
+                      const needStrict = anchor.quality === "weak" || onlyUntrustedSingleHit;
+                      authorConfirmed = needStrict
+                        ? !!(agrees && (inSource || inVerify))
+                        : !!(inSource || (agrees && (inSource || inVerify)));
+                      console.log(`[article] author_check anchor_quality=${anchor.quality} trusted_anchors=${anchor.trustedAnchorUrls.length} strict=${needStrict} in_source=${inSource} verify="${verify?.author || ""}" agrees=${!!agrees} in_verify=${!!inVerify} confirmed=${authorConfirmed}`);
                       if (!authorConfirmed) {
                         console.log(`[article] author_dropped first="${art.author}" verify="${verify?.author || ""}"`);
                         // If verify returned a high-confidence different author that IS in sources, prefer it
@@ -2515,7 +2601,8 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                         }
                       }
                     }
-                    console.log(`[article] decision tier=${artRun.tier} title_anchored=${anchor.anchored} author_confirmed=${authorConfirmed}`);
+                    console.log(`[article] decision tier=${artRun.tier} title_anchored=${anchor.anchored} anchor_quality=${anchor.quality} trusted_anchors=${anchor.trustedAnchorUrls.length} author_confirmed=${authorConfirmed}`);
+
                     console.log(`[article] Found: ${art.articleTitle}, author=${art.author || '?'}, journal=${art.journalName || ''}, book=${art.bookTitle || ''}`);
 
                     if (art.type === "article_in_book" || isArticleInBook) {
