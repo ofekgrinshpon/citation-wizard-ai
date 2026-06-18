@@ -350,7 +350,7 @@ const Index = () => {
       const validation = validateAIResponse(reply, sourceType as SourceType);
       let finalReply = reply;
       if (!validation.isComplete && validation.missingFields.length > 0) {
-        const summary = getMissingFieldsSummary(sourceType as SourceType, validation.missingFields);
+        const summary = getMissingFieldsSummary(validation.effectiveSourceType ?? (sourceType as SourceType), validation.missingFields);
         if (summary && !/⚠️/.test(reply)) {
           finalReply = `${reply}\n⚠️ ${summary}`;
         }
@@ -406,7 +406,7 @@ const Index = () => {
       const validation = validateAIResponse(reply, sourceType as SourceType);
       let finalReply = reply;
       if (!validation.isComplete && validation.missingFields.length > 0) {
-        const summary = getMissingFieldsSummary(sourceType as SourceType, validation.missingFields);
+        const summary = getMissingFieldsSummary(validation.effectiveSourceType ?? (sourceType as SourceType), validation.missingFields);
         if (summary && !/⚠️/.test(reply)) {
           finalReply = `${reply}\n⚠️ ${summary}`;
         }
@@ -656,7 +656,7 @@ const Index = () => {
       const validation = validateAIResponse(reply, effectiveSourceType);
       let finalReply = reply;
       if (!validation.isComplete && validation.missingFields.length > 0) {
-        const summary = getMissingFieldsSummary(effectiveSourceType, validation.missingFields);
+        const summary = getMissingFieldsSummary(validation.effectiveSourceType ?? effectiveSourceType, validation.missingFields);
         if (summary && !/⚠️/.test(reply)) {
           finalReply = `${reply}\n⚠️ ${summary}`;
         }
