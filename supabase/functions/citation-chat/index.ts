@@ -2740,6 +2740,11 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     });
     content = fixHebrewYearPrefix(content);
     content = normalizeArticleYearByRule2492(content);
+    // Strip persona/preamble openings if the model regresses
+    content = content.replace(
+      /^\s*(?:["'״׳]?\s*)?(העוזר[^\n]*|המערכת[^\n]*מזהה[^\n]*|מכיוון שמדובר[^\n]*|אני\s+(?:מזהה|מבין|מבחין)[^\n]*|שלב\s*\d+[^\n]*)\n+/u,
+      "",
+    );
 
     // Post-response safety net: if the AI returned a refusal/non-meaningful answer,
     // automatically refund the credit so the user isn't charged for an unusable result.
