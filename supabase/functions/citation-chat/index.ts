@@ -95,7 +95,7 @@ async function perplexityWithFallback(
   apiKey: string,
   tier1Body: Record<string, unknown>,
   logTag: string,
-  opts?: { docketAnchor?: { num: string; year: string } },
+  opts?: { docketAnchor?: { num: string; year: string }; forceOpenWebFallback?: boolean },
 ): Promise<PplxRunResult> {
   const result: PplxRunResult = {
     resp: null,
@@ -115,8 +115,9 @@ async function perplexityWithFallback(
   });
   result.resp = t1;
 
-  if (!OPENWEB_FALLBACK_ON || !t1.ok) {
-    if (OPENWEB_FALLBACK_ON) {
+  const fallbackEnabled = OPENWEB_FALLBACK_ON || opts?.forceOpenWebFallback === true;
+  if (!fallbackEnabled || !t1.ok) {
+    if (fallbackEnabled) {
       console.log(`[pplx-fallback:${logTag}] tier1 not ok (${t1.status}); skipping fallback`);
     }
     return result;
@@ -133,17 +134,39 @@ async function perplexityWithFallback(
   const t1Cit = (t1Json?.citations as unknown) ?? [];
   result.tier1_trusted = countTrustedCitations(t1Cit, TRUSTED_LEGAL);
 
-  if (result.tier1_trusted > 0) {
+  // Tier-1 docket-anchor check. If a docket was provided and Tier-1 has
+  // trusted citations but NONE anchor the docket, escalate to Tier-2 — the
+  // trusted hits are about other cases (adjacent-docket contamination).
+  let tier1DocketAnchored = true;
+  if (opts?.docketAnchor) {
+    const t1TrustedUrls = Array.isArray(t1Cit)
+      ? (t1Cit as unknown[]).filter((u) =>
+          typeof u === "string" &&
+          TRUSTED_LEGAL.some((d) => {
+            try { const h = new URL(u).hostname.toLowerCase(); return h === d || h.endsWith("." + d); } catch { return false; }
+          }))
+      : [];
+    tier1DocketAnchored = anyUrlContainsDocketVia(t1TrustedUrls, opts.docketAnchor) !== "none";
+  }
+
+  if (result.tier1_trusted > 0 && tier1DocketAnchored) {
     console.log(
-      `[pplx-fallback:${logTag}] tier1_trusted=${result.tier1_trusted} → no fallback`,
+      `[pplx-fallback:${logTag}] tier1_trusted=${result.tier1_trusted} tier1_docket_anchored=${tier1DocketAnchored} → no fallback`,
     );
     return result;
+  }
+  if (result.tier1_trusted > 0 && !tier1DocketAnchored) {
+    console.log(
+      `[pplx-fallback:${logTag}] tier1_trusted=${result.tier1_trusted} but NO trusted url anchors docket ${opts!.docketAnchor!.num}/${opts!.docketAnchor!.year} → firing tier2`,
+    );
   }
 
   // Tier-2: same body without `search_domain_filter`.
   const { search_domain_filter: _ignored, ...t2Body } = tier1Body as Record<string, unknown>;
   result.tier2_fired = true;
-  console.log(`[pplx-fallback:${logTag}] tier1 returned 0 trusted citations → firing tier2`);
+  if (result.tier1_trusted === 0) {
+    console.log(`[pplx-fallback:${logTag}] tier1 returned 0 trusted citations → firing tier2`);
+  }
   const t2 = await fetch("https://api.perplexity.ai/chat/completions", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
@@ -1253,7 +1276,9 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
               PERPLEXITY_API_KEY,
               caseSearchBody,
               `case-number:${fullCaseRef}`,
-              docketAnchor ? { docketAnchor: { num: docketAnchor.num, year: docketAnchor.year } } : undefined,
+              docketAnchor
+                ? { docketAnchor: { num: docketAnchor.num, year: docketAnchor.year }, forceOpenWebFallback: true }
+                : { forceOpenWebFallback: true },
             );
             const perplexityResp = caseSearchRun.resp!;
             console.log(`[case-law] tier=${caseSearchRun.tier} tier1_trusted=${caseSearchRun.tier1_trusted} tier2_fired=${caseSearchRun.tier2_fired} tier2_trusted=${caseSearchRun.tier2_trusted} docket_anchor_ok=${caseSearchRun.docket_anchor_ok} docket_anchor_via=${caseSearchRun.docket_anchor_via} dropped=${JSON.stringify(caseSearchRun.tier2_dropped_hosts)}`);
@@ -1283,52 +1308,86 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   // Otherwise drop the parties and render explicit [חסר: שמות צדדים].
                   let partyMismatch = false;
                   let partyVerification: "both" | "caption_marker" | "insufficient_snippet" | "no_anchor" | "n/a" = "n/a";
-                  if (docketAnchor && parsed.found && parsed.party1 && parsed.party2) {
+                  let docketAnchored = false;
+                  if (docketAnchor) {
+                    // Anchor against BOTH structured search_results AND raw citation URLs.
+                    // Some sonar-pro responses populate only `citations` (no
+                    // `search_results`), and previously that left the guard inert.
                     const searchResults: Array<Record<string, unknown>> = Array.isArray(pData.search_results)
                       ? pData.search_results : [];
-                    const anchored = searchResults.filter((r) =>
+                    const citationUrls: string[] = Array.isArray(pData.citations)
+                      ? (pData.citations as unknown[]).filter((u): u is string => typeof u === "string")
+                      : [];
+                    const anchoredResults = searchResults.filter((r) =>
                       typeof r.url === "string" && urlContainsDocket(r.url, docketAnchor),
                     );
-                    if (anchored.length === 0) {
-                      partyVerification = "no_anchor";
-                    } else {
-                      const norm = (s: unknown) =>
-                        (typeof s === "string" ? s : "").replace(/\s+/g, " ").trim();
-                      const haystack = anchored
-                        .map((r) => `${norm(r.title)} ${norm(r.snippet)}`)
-                        .join(" \u2014 ");
-                      const p1 = norm(parsed.party1);
-                      const p2 = norm(parsed.party2);
-                      const p1Hit = p1.length >= 3 && haystack.includes(p1);
-                      const p2Hit = p2.length >= 3 && haystack.includes(p2);
+                    const anchoredCitationUrls = citationUrls.filter((u) =>
+                      urlContainsDocket(u, docketAnchor),
+                    );
+                    docketAnchored = anchoredResults.length > 0 || anchoredCitationUrls.length > 0;
 
-                      // Caption-marker proximity check: a party token within ~40 chars of a caption marker.
-                      const CAPTION_MARKERS = ["נ׳", "נ'", "נגד", "העותרים", "המשיבים", "המערערים", "המבקשים"];
-                      const nearMarker = (party: string): boolean => {
-                        if (party.length < 3) return false;
-                        const idx = haystack.indexOf(party);
-                        if (idx < 0) return false;
-                        const windowStart = Math.max(0, idx - 40);
-                        const windowEnd = Math.min(haystack.length, idx + party.length + 40);
-                        const win = haystack.slice(windowStart, windowEnd);
-                        return CAPTION_MARKERS.some((m) => win.includes(m));
-                      };
-
-                      if (p1Hit && p2Hit) {
-                        partyVerification = "both";
-                      } else if (nearMarker(p1) || nearMarker(p2)) {
-                        partyVerification = "caption_marker";
-                      } else {
-                        partyVerification = "insufficient_snippet";
+                    if (parsed.found && parsed.party1 && parsed.party2) {
+                      if (anchoredResults.length === 0) {
+                        // No anchored snippet → we cannot ground the parties against
+                        // the actual case page. Treat as a hard mismatch and drop
+                        // every model-supplied fact that depends on the source set
+                        // (parties, court, date, publication, database name).
+                        partyVerification = "no_anchor";
                         partyMismatch = true;
-                        console.log(`[case-law] party_verification=insufficient_snippet for ${fullCaseRef} — anchored snippet does not contain both parties nor caption-marker proximity. Dropping parties (will render [חסר: שמות צדדים]).`);
+                        console.log(`[case-law] party_verification=no_anchor for ${fullCaseRef} — no search_result URL contains the docket (citations_anchored=${anchoredCitationUrls.length}). Dropping parties + date + court + isPublished + databaseName.`);
                         parsed.party1 = "";
                         parsed.party2 = "";
                         parsed.confidence = "low";
+                        parsed.date = "";
+                        parsed.court = "";
+                        parsed.isPublished = false;
+                        parsed.padi_volume = "";
+                        parsed.padi_part = "";
+                        parsed.padi_page = "";
+                        parsed.databaseName = "";
+                      } else {
+                        const norm = (s: unknown) =>
+                          (typeof s === "string" ? s : "").replace(/\s+/g, " ").trim();
+                        const haystack = anchoredResults
+                          .map((r) => `${norm(r.title)} ${norm(r.snippet)}`)
+                          .join(" \u2014 ");
+                        const p1 = norm(parsed.party1);
+                        const p2 = norm(parsed.party2);
+                        const p1Hit = p1.length >= 3 && haystack.includes(p1);
+                        const p2Hit = p2.length >= 3 && haystack.includes(p2);
+
+                        // Caption-marker proximity check: a party token within ~40 chars of a caption marker.
+                        const CAPTION_MARKERS = ["נ׳", "נ'", "נגד", "העותרים", "המשיבים", "המערערים", "המבקשים"];
+                        const nearMarker = (party: string): boolean => {
+                          if (party.length < 3) return false;
+                          const idx = haystack.indexOf(party);
+                          if (idx < 0) return false;
+                          const windowStart = Math.max(0, idx - 40);
+                          const windowEnd = Math.min(haystack.length, idx + party.length + 40);
+                          const win = haystack.slice(windowStart, windowEnd);
+                          return CAPTION_MARKERS.some((m) => win.includes(m));
+                        };
+
+                        if (p1Hit && p2Hit) {
+                          partyVerification = "both";
+                        } else if (nearMarker(p1) || nearMarker(p2)) {
+                          partyVerification = "caption_marker";
+                        } else {
+                          partyVerification = "insufficient_snippet";
+                          partyMismatch = true;
+                          console.log(`[case-law] party_verification=insufficient_snippet for ${fullCaseRef} — anchored snippet does not contain both parties nor caption-marker proximity. Dropping parties (will render [חסר: שמות צדדים]).`);
+                          parsed.party1 = "";
+                          parsed.party2 = "";
+                          parsed.confidence = "low";
+                        }
                       }
+                    } else if (!docketAnchored) {
+                      // No parties returned AND no anchored URL — log it so we can
+                      // distinguish from clean "model said nothing" misses.
+                      partyVerification = "no_anchor";
                     }
                   }
-                  console.log(`[case-law] party_verification=${partyVerification} party_mismatch=${partyMismatch} for ${fullCaseRef}`);
+                  console.log(`[case-law] party_verification=${partyVerification} party_mismatch=${partyMismatch} docket_anchored=${docketAnchored} for ${fullCaseRef}`);
 
                   // ── Secondary verification: if Perplexity says not published, double-check with a focused query ──
                   if (parsed.found && !parsed.isPublished) {
