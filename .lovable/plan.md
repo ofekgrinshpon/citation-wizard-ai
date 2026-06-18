@@ -1,41 +1,42 @@
-## Why article/book is currently too narrow
+## Two fixes in `supabase/functions/citation-chat/index.ts`
 
-Two stacked filters are clamping recall harder than intended:
+### 1. Kill the "העוזר המשפטי מבין/מזהה ..." preamble
 
-1. **Tier-1 `search_domain_filter = BIBLIO_TRUSTED_DOMAINS`** — a ~25-host allowlist (mostly university law faculties + a few aggregators). Real Israeli legal scholarship lives in many places this list doesn't cover: specific journal sites (`din-online.info`, `iyunei-mishpat`, `mishpatim` subdomains, `colman.ac.il/research`, `hapraklit`, `mishpat-vmimshal`), publisher pages, Open Access PDFs, faculty SSRN mirrors, blog series (ICON-S-IL, ההסדרה), `gov.il` reports, news/opinion pieces for newspaper-article citations.
-2. **Tier-2 open-web is gated by `TRUSTED_LEGAL ∪ TRUSTED_PUB`** in `perplexityWithFallback`. That allowlist was designed for caselaw (Nevo, supremedecisions, takdin, court.gov.il…). Academic article hits on, say, `tau.ac.il/~author/paper.pdf` or `ssrn.com/abstract=…` may not be in it, so Tier-2 returns are silently discarded and we fall back to the Tier-1 result anyway. Net effect: the "fallback" rarely actually helps for biblio.
+The model still opens answers with a persona sentence because the system prompt tells it to refer to itself by name ("העוזר המשפטי האוטומטי") and the "forbidden phrasing" example actually *uses* the phrase, which reinforces it.
 
-The safety mechanism we built last turn (`anchorTitleInSources` + `verifyBiblioAuthor` + `authorAppearsInSources`) is what actually prevents hallucinations. It works regardless of which host the citation lives on. So the domain allowlist is no longer load-bearing for safety — it's mostly load-bearing for *cutting recall*.
+**Changes to `SYSTEM_PROMPT`:**
+- Remove the two instructions telling the model to call itself "העוזר המשפטי האוטומטי" (in the persona section and in סגנון תקשורת).
+- Replace the "פלט שגוי" example so it no longer literally contains the forbidden sentence (the model parrots examples). Use a generic placeholder description instead of a quoted bad sentence.
+- Add an explicit rule: "אסור לפתוח את הפלט במשפט הסבר/זיהוי/הקדמה כלשהי. הפלט חייב להתחיל ישירות באזכור עצמו."
 
-## Plan: open up biblio search, keep the safety net
+**Server-side safety net (post-processing):**
+Before returning the assistant reply, strip any leading line that matches `/^\s*(העוזר המשפטי[^\n]*|המערכת[^\n]*מזהה[^\n]*|מכיוון שמדובר[^\n]*)\n+/` (one pass, only at the very start). This guarantees a clean opening even if the model regresses.
 
-Out of scope: caselaw branches, legislation/regulation branches, `legal-research-v1`, UI.
+### 2. Cross-type biblio fallback so "שחר ליפשיץ שלילת אבהות כהסכמה" works
 
-### 1. Drop the Tier-1 domain filter for articles/books
-- Article and book Perplexity calls run on full open web from the start, still on `sonar-pro`.
-- Remove `search_domain_filter: BIBLIO_TRUSTED_DOMAINS` from both bodies.
-- Remove the `forceOpenWebFallback`/Tier-2 call for these two branches — it becomes a no-op once Tier-1 is already open web. (One call instead of two = faster + cheaper, same recall.)
+Today the branches are siloed: pick "ספר" → only `bookSearchQuery` runs; if Perplexity returns `{found:false}` (as in the logs), the user gets nothing actionable. Same for "מאמר". The query above is genuinely a chapter-in-book, so neither branch alone reliably finds it.
 
-### 2. Keep BIBLIO_TRUSTED_DOMAINS as a *preference signal*, not a *filter*
-- Use the list only inside `verifyBiblioAuthor` and inside the author-cross-check to **prefer** matches from those hosts when scoring. If anchor hits exist on a trusted host, we treat `author_confirmed` as stronger; if anchor hits only exist on weaker hosts (random blogs, content farms), we still accept but log `anchor_quality=weak`.
-- Concretely: extend `anchorTitleInSources` to return `{anchored, anchorUrls, trustedAnchorUrls}` and use `trustedAnchorUrls.length > 0` as a "high-confidence" flag in logs, without blocking on it.
+**Changes:**
 
-### 3. Tighten the safety net to compensate for the wider search
-Wider search = more chance of catching the *wrong* paper with a similar title. So strengthen anchoring:
-- **Stricter title match in `anchorTitleInSources`**: require either (a) a contiguous 5+ Hebrew-word window from the title to appear, or (b) a 3-word window AND the author's last name in the same snippet/URL. Today the threshold is 3-word windows alone.
-- **Require explicit confirmation when title anchor is weak**: if the only anchor is a 3-word window (no last-name co-occurrence), force `verifyBiblioAuthor` to anchor on its own citations too. If neither agrees, drop the author.
-- **Reject one-result wonders**: if Tier-1 returns only a single citation and that citation is from a content-farm host (not in BIBLIO_TRUSTED_DOMAINS and not a `.ac.il` / `.gov.il` / known publisher), require `verifyBiblioAuthor` agreement before accepting any field.
+a. **Book branch — fallback to article-style search.** When the book Perplexity call returns `{found:false}` *or* the title-anchor gate drops everything, immediately run the article search prompt (journal OR article-in-book schema) on the same `bookQuery`. If that hits and anchors, build the article hint instead of the book hint.
 
-### 4. Apply the same opening up to legislation/regulation (optional, ask before doing)
-The legislation/regulation branches use `sonar` with their own narrow filters. Same logic applies — but they were not in scope for the bug report, so I'd leave them unless you confirm.
+b. **Article branch — fallback to book-style search.** Symmetrically: when the article call returns `{found:false}` *or* the anchor gate fails, run the book search prompt; if it hits and anchors, build a book hint.
 
-### Files
-- `supabase/functions/citation-chat/index.ts` — biblio helper block and the two branches.
+c. **Generic biblio classifier as the fallback prompt.** Instead of duplicating the existing prompts, add one helper `searchBiblioAny(query)` that asks Perplexity (sonar-pro, open web) to return one of:
+   ```json
+   {"found":true,"kind":"journal|article_in_book|book","author":"...","title":"...","journalName":"...","bookTitle":"...","bookAuthor":"...","volume":"...","firstPage":"...","year":0,"hebrewYear":"...","editor":"..."}
+   ```
+   Reuse the existing title-anchor + `verifyBiblioAuthor` guardrails on the result. Each branch calls this helper as its fallback and routes the result into the matching `bookHint` / `articleHint` formatter (the article-in-book formatter already exists at ~line 2608).
+
+d. **Telemetry:** log `[book] fallback=article hit=true/false` and `[article] fallback=book hit=true/false` plus the chosen `kind`.
+
+### Out of scope
+- Caselaw, legislation, regulation branches.
+- Client-side classifier UI (no change to how the user picks "ספר" vs "מאמר" — the fallback runs server-side after the chosen branch fails).
+- The `[חסר: ...]` rendering and rule-24.7.1/24.9 warnings (those are correct behavior when data is genuinely missing).
 
 ### Verification
-- Re-run the מאוטנר article: should now find it on the open web (likely `law.tau.ac.il` or SSRN), title-anchor on a 5-word window, author cross-check passes, returns מנחם מאוטנר.
-- Re-run a deliberately obscure / nonsense title: anchor fails → `[חסר: מחבר]`, no hallucination.
-- Re-run a previously-working query (something on a faculty page) to confirm no regression.
-
-### Question for you
-Do you want me to **also** open up legislation/regulation the same way in this same change, or keep that scoped to a follow-up?
+- Re-run `שחר ליפשיץ שלילת אבהות כהסכמה` as ספר → expect logs `[book] found=false → fallback=article` and a populated chapter-in-book citation.
+- Re-run same query as מאמר → expect `[article] found=false → fallback=book` with the same final citation.
+- Re-run any caselaw query → unchanged.
+- Confirm replies no longer start with "העוזר המשפטי מבין/מזהה ...".
