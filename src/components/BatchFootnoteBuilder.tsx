@@ -298,9 +298,10 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
   // Per-cell handlers used by the review card.
   const handleReviewOutputChange = useCallback((id: number, value: string) => {
-    setCells((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, output: value, approved: false } : c))
-    );
+    setCells((prev) => {
+      const updated = prev.map((c) => (c.id === id ? { ...c, output: value, approved: false } : c));
+      return applyRepeatCitationRules(updated);
+    });
   }, []);
 
   const handleReviewSourceTypeChange = useCallback((id: number, t: SourceType) => {
