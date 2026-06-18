@@ -403,35 +403,90 @@ function extractTitleCandidate(raw: string): string {
   return raw;
 }
 
+function hostnameOf(u: string): string {
+  try { return new URL(u).hostname.toLowerCase(); } catch { return ""; }
+}
+
+function isTrustedBiblioHost(u: string): boolean {
+  const h = hostnameOf(u);
+  if (!h) return false;
+  if (BIBLIO_TRUSTED_DOMAINS.some((d) => h === d || h.endsWith("." + d))) return true;
+  // Treat any Israeli academic/government host as trusted-ish
+  if (/\.ac\.il$/.test(h) || /\.gov\.il$/.test(h)) return true;
+  return false;
+}
+
 function anchorTitleInSources(
   rawTitle: string,
   citations: unknown,
   searchResults: unknown,
-): { anchored: boolean; anchorUrls: string[]; sample: string } {
+  opts?: { authorHint?: string },
+): {
+  anchored: boolean;
+  anchorUrls: string[];
+  trustedAnchorUrls: string[];
+  quality: "strong" | "weak" | "none";
+  sample: string;
+} {
   const title = extractTitleCandidate(rawTitle);
   const norm = normalizeHe(title);
   const tokens = norm.split(" ").filter((t) => t.length >= 2);
-  if (tokens.length < 2) return { anchored: false, anchorUrls: [], sample: "" };
-  const windows: string[] = [];
-  for (const k of [Math.min(6, tokens.length), 4, 3]) {
+  if (tokens.length < 2) {
+    return { anchored: false, anchorUrls: [], trustedAnchorUrls: [], quality: "none", sample: "" };
+  }
+  // Build strong (5+ contiguous tokens) and weak (3-4 token) windows separately
+  const strongWindows: string[] = [];
+  const weakWindows: string[] = [];
+  for (const k of [Math.min(7, tokens.length), 6, 5]) {
+    if (k < 5) continue;
     for (let i = 0; i + k <= tokens.length; i++) {
       const w = tokens.slice(i, i + k).join(" ");
-      if (w.length >= 10) windows.push(w);
+      if (w.length >= 12) strongWindows.push(w);
     }
   }
-  if (windows.length === 0) windows.push(tokens.join(" "));
+  for (const k of [4, 3]) {
+    if (tokens.length < k) continue;
+    for (let i = 0; i + k <= tokens.length; i++) {
+      const w = tokens.slice(i, i + k).join(" ");
+      if (w.length >= 8) weakWindows.push(w);
+    }
+  }
+  if (strongWindows.length === 0 && weakWindows.length === 0) weakWindows.push(tokens.join(" "));
+
+  const authorNorm = normalizeHe(opts?.authorHint || "");
+  const authorLast = authorNorm.split(" ").filter(Boolean).pop() || "";
+
   const urls: string[] = Array.isArray(citations)
     ? (citations as unknown[]).filter((u) => typeof u === "string") as string[]
     : [];
   const sr = Array.isArray(searchResults) ? (searchResults as Array<Record<string, unknown>>) : [];
-  const hits = new Set<string>();
+
+  const strongHits = new Set<string>();
+  const weakHits = new Set<string>();
   let sample = "";
-  for (const u of urls) {
-    const dec = normalizeHe(decodeUrlSafe(u));
-    if (windows.some((w) => dec.includes(w))) {
-      hits.add(u);
-      if (!sample) sample = u;
+
+  const consider = (url: string, blob: string, snippet?: string) => {
+    const hasStrong = strongWindows.some((w) => blob.includes(w));
+    if (hasStrong) {
+      if (url) strongHits.add(url);
+      if (!sample && snippet) sample = snippet;
+      return;
     }
+    const hasWeak = weakWindows.some((w) => blob.includes(w));
+    if (hasWeak) {
+      // Promote weak to strong if author last-name co-occurs
+      const promoted = authorLast.length >= 2 && blob.includes(authorLast);
+      if (promoted) {
+        if (url) strongHits.add(url);
+      } else if (url) {
+        weakHits.add(url);
+      }
+      if (!sample && snippet) sample = snippet;
+    }
+  };
+
+  for (const u of urls) {
+    consider(u, normalizeHe(decodeUrlSafe(u)), u);
   }
   for (const r of sr) {
     const url = typeof r.url === "string" ? r.url : "";
@@ -440,12 +495,20 @@ function anchorTitleInSources(
       typeof r.snippet === "string" ? r.snippet : "",
       decodeUrlSafe(url),
     ].join(" "));
-    if (windows.some((w) => blob.includes(w))) {
-      if (url) hits.add(url);
-      if (!sample && typeof r.snippet === "string") sample = r.snippet;
-    }
+    consider(url, blob, typeof r.snippet === "string" ? r.snippet : url);
   }
-  return { anchored: hits.size > 0, anchorUrls: [...hits], sample };
+
+  const allHits = new Set<string>([...strongHits, ...weakHits]);
+  const trusted = [...allHits].filter(isTrustedBiblioHost);
+  const quality: "strong" | "weak" | "none" =
+    strongHits.size > 0 ? "strong" : weakHits.size > 0 ? "weak" : "none";
+  return {
+    anchored: allHits.size > 0,
+    anchorUrls: [...allHits],
+    trustedAnchorUrls: trusted,
+    quality,
+    sample,
+  };
 }
 
 function authorAppearsInSources(
