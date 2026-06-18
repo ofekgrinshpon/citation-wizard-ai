@@ -513,6 +513,7 @@ export function validateAIResponse(
     ruleTitle: effectiveRuleSet.ruleTitle,
     template: effectiveRuleSet.template,
     ruleSet: effectiveRuleSet,
+    effectiveSourceType: effectiveType,
   };
 }
 
