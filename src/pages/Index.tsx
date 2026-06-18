@@ -524,9 +524,13 @@ const Index = () => {
     // Step 1: Normalize abbreviations
     const normalized = normalizeAbbreviations(rawText);
 
-    // Step 2: Detect source type
-    const sourceType = detectSourceType(normalized);
+    // Step 2: Detect source type — hybrid regex + Gemini classifier
+    const resolved = await resolveSourceType(normalized);
+    const sourceType = resolved.sourceType;
     const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
+    if (resolved.source === "llm" && resolved.llm) {
+      console.log(`[classifier] LLM override → ${sourceType} (${resolved.llm.confidence}): ${resolved.llm.reason}`);
+    }
 
     // Build enhanced prompt with classification info + engine hints
     let prompt = normalized;
