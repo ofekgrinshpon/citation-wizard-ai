@@ -2451,36 +2451,78 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
 אם לא מצאת, החזר {"found":false}.
 חשוב: שמות ללא תארים (פרופ', ד"ר, עו"ד). כרך כמו במקור (אותיות עבריות או מספרים).`;
 
-            const artResp = await fetch("https://api.perplexity.ai/chat/completions", {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                model: "sonar",
+            const artRun = await perplexityWithFallback(
+              PERPLEXITY_API_KEY,
+              {
+                model: "sonar-pro",
+                search_domain_filter: BIBLIO_TRUSTED_DOMAINS,
                 messages: [
-                  { role: "system", content: articleSystemPrompt },
+                  { role: "system", content: articleSystemPrompt + `\nאל תנחש מחבר — אם אינך מוצא מקור מפורש המייחס את המאמר למחבר כלשהו, החזר {"found":false}.` },
                   { role: "user", content: articleSearchPrompt },
                 ],
-              }),
-            });
+              },
+              "article",
+              { forceOpenWebFallback: true },
+            );
+            const artResp = artRun.resp;
 
-            if (artResp.ok) {
+            if (artResp && artResp.ok) {
               const artData = await artResp.json();
               const artContent = artData.choices?.[0]?.message?.content || "";
+              const artCitations = artData.citations;
+              const artSearchResults = artData.search_results;
               console.log(`[article] Perplexity raw response: ${artContent.substring(0, 300)}`);
               const artJsonMatch = artContent.match(/\{[\s\S]*?\}/);
               if (artJsonMatch) {
                 try {
                   const art = JSON.parse(artJsonMatch[0]);
                   if (art.found && art.articleTitle && (art.author || art.journalName || art.bookTitle)) {
+                    // ── Title-anchor gate ──
+                    const anchor = anchorTitleInSources(
+                      art.articleTitle || articleQuery,
+                      artCitations,
+                      artSearchResults,
+                    );
+                    let authorConfirmed = false;
+                    if (!anchor.anchored) {
+                      console.log(`[article] title_anchored=false — dropping all model-supplied fields for "${articleQuery}"`);
+                      art.author = "";
+                      art.bookAuthor = "";
+                      art.year = "";
+                      art.hebrewYear = "";
+                      art.journalName = "";
+                      art.volume = "";
+                      art.notebook = "";
+                      art.firstPage = "";
+                      art.editor = "";
+                      art.bookTitle = art.bookTitle || "";
+                    } else if (art.author) {
+                      const inSource = authorAppearsInSources(art.author, artCitations, artSearchResults);
+                      const verify = await verifyBiblioAuthor(PERPLEXITY_API_KEY, "article", art.articleTitle || articleQuery);
+                      const agrees = verify && verify.author && authorsAgree(art.author, verify.author);
+                      const inVerify = verify && authorAppearsInSources(art.author, verify.citations, verify.search_results);
+                      authorConfirmed = !!(inSource || (agrees && (inSource || inVerify)));
+                      console.log(`[article] author_check title_anchored=true author_in_source=${inSource} verify_author=${verify?.author || ""} agrees=${!!agrees} in_verify=${!!inVerify} confirmed=${authorConfirmed}`);
+                      if (!authorConfirmed) {
+                        console.log(`[article] author_dropped first="${art.author}" verify="${verify?.author || ""}"`);
+                        // If verify returned a high-confidence different author that IS in sources, prefer it
+                        if (verify && verify.author && authorAppearsInSources(verify.author, artCitations, artSearchResults)) {
+                          console.log(`[article] author_replaced with verify="${verify.author}"`);
+                          art.author = verify.author;
+                          authorConfirmed = true;
+                        } else {
+                          art.author = "";
+                        }
+                      }
+                    }
+                    console.log(`[article] decision tier=${artRun.tier} title_anchored=${anchor.anchored} author_confirmed=${authorConfirmed}`);
                     console.log(`[article] Found: ${art.articleTitle}, author=${art.author || '?'}, journal=${art.journalName || ''}, book=${art.bookTitle || ''}`);
 
                     if (art.type === "article_in_book" || isArticleInBook) {
                       // Article in book hint
                       let details = `\n\n══ נתוני מאמר בספר שנמצאו בחיפוש ══\n`;
                       if (art.author) details += `מחבר המאמר: ${art.author}\n`;
+                      else details += `מחבר המאמר: [חסר — לא אומת מול מקור]\n`;
                       details += `שם המאמר: ${art.articleTitle}\n`;
                       if (art.bookAuthor) details += `מחבר הספר: ${art.bookAuthor}\n`;
                       if (art.bookTitle) details += `שם הספר: ${art.bookTitle}\n`;
@@ -2489,12 +2531,13 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                       if (art.editor) details += `עורך: ${art.editor}\n`;
                       if (art.year) details += `שנה: ${art.year}\n`;
                       if (art.sameAuthor) details += `מחבר זהה: כן (לפי כלל 24.11 – אין לחזור על שם המחבר לפני שם הספר)\n`;
-                      details += `══ השתמש בנתונים אלו לעיצוב אזכור לפי כלל 24.11. סמן [חסר:...] רק לשדות שאינם מופיעים. ══`;
+                      details += `══ השתמש בנתונים אלו לעיצוב אזכור לפי כלל 24.11. אם המחבר ריק או מסומן [חסר...], אל תמציא מחבר — סמן [חסר: מחבר]. סמן [חסר:...] לכל שדה שאינו מופיע. ══`;
                       articleHint = details;
                     } else {
                       // Journal / newspaper hint
                       let details = `\n\n══ נתוני מאמר שנמצאו בחיפוש ══\n`;
                       if (art.author) details += `מחבר: ${art.author}\n`;
+                      else details += `מחבר: [חסר — לא אומת מול מקור]\n`;
                       details += `שם מאמר: ${art.articleTitle}\n`;
                       if (art.journalName) details += `כתב עת: ${art.journalName}\n`;
                       if (art.volume) details += `כרך: ${art.volume}\n`;
@@ -2520,7 +2563,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                         details += `הנחיה: עיתון יומי — שם כתב העת מודגש עם נקודתיים לפני שם החלק: **שם:חלק**\n`;
                       }
 
-                      details += `══ השתמש בנתונים אלו לעיצוב אזכור לפי כלל 24. סמן [חסר:...] רק לשדות שאינם מופיעים. ══`;
+                      details += `══ השתמש בנתונים אלו לעיצוב אזכור לפי כלל 24. אם המחבר ריק או מסומן [חסר...], אל תמציא מחבר — סמן [חסר: מחבר]. סמן [חסר:...] לכל שדה שאינו מופיע. ══`;
                       articleHint = details;
                     }
                   } else {
@@ -2533,7 +2576,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                 }
               }
             } else {
-              console.error("[article] Perplexity search failed:", artResp.status);
+              console.error("[article] Perplexity search failed:", artResp?.status);
             }
           }
         }
