@@ -92,3 +92,15 @@ Client renders chapter + shows the source pool that grounded it
 1. Credit cost per chapter generation (search + write)?
 2. Should the "low grounding" path block generation or proceed with a warning? (Plan currently: proceed + warn.)
 3. Should foreign-language search be capped (e.g. max 5 English sources) to keep the prompt small?
+
+---
+
+## D4 Implementation Notes (build delivered)
+
+- Chapter engine 503 short-circuit removed.
+- `_shared/chapterSourceProfile.ts` (flow-tag → profile + Hebrew query builder + outline parser).
+- `legal-qa/chapterWriter.ts` (SSE pipeline: stage `sources` → stage `writing` → `draft_delta` stream → `final`).
+- Credit costs: write_chapter=8, write_introduction=5, write_conclusion=5 (refundable on explicit AI failure; not on partial chapters).
+- Source search runs in-process (Postgres `search_legal_chunks_text` + Perplexity fallback with academic-domain filters: Israeli for HE-only profiles, Israeli+foreign for comparative/normative). Switched away from legal-research-v1 HTTP smoke mode because that endpoint always backgrounds (returns 202 + run_id) and can't be awaited inline.
+- Intro / conclusion run the same pipeline but skip the search stage (synthesize from prior chapter contents).
+- Client persists `sourcesUsed` on `ChapterData`; visible-panel render is still TODO (panel data is now available).
