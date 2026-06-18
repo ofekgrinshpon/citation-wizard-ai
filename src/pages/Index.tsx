@@ -18,6 +18,7 @@ import { useProjects } from "@/hooks/useProjects";
 import { useActivityLog } from "@/hooks/useActivityLog";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
 import { validateAIResponse, buildEnginePromptHint, getEngineRuleReference, getMissingFieldsSummary } from "@/lib/citationValidation";
+import { resolveSourceType } from "@/lib/sourceTypeClassifier";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
 import {
@@ -349,7 +350,7 @@ const Index = () => {
       const validation = validateAIResponse(reply, sourceType as SourceType);
       let finalReply = reply;
       if (!validation.isComplete && validation.missingFields.length > 0) {
-        const summary = getMissingFieldsSummary(sourceType as SourceType, validation.missingFields);
+        const summary = getMissingFieldsSummary(validation.effectiveSourceType ?? (sourceType as SourceType), validation.missingFields);
         if (summary && !/⚠️/.test(reply)) {
           finalReply = `${reply}\n⚠️ ${summary}`;
         }
@@ -405,7 +406,7 @@ const Index = () => {
       const validation = validateAIResponse(reply, sourceType as SourceType);
       let finalReply = reply;
       if (!validation.isComplete && validation.missingFields.length > 0) {
-        const summary = getMissingFieldsSummary(sourceType as SourceType, validation.missingFields);
+        const summary = getMissingFieldsSummary(validation.effectiveSourceType ?? (sourceType as SourceType), validation.missingFields);
         if (summary && !/⚠️/.test(reply)) {
           finalReply = `${reply}\n⚠️ ${summary}`;
         }
@@ -523,9 +524,13 @@ const Index = () => {
     // Step 1: Normalize abbreviations
     const normalized = normalizeAbbreviations(rawText);
 
-    // Step 2: Detect source type
-    const sourceType = detectSourceType(normalized);
+    // Step 2: Detect source type — hybrid regex + Gemini classifier
+    const resolved = await resolveSourceType(normalized);
+    const sourceType = resolved.sourceType;
     const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
+    if (resolved.source === "llm" && resolved.llm) {
+      console.log(`[classifier] LLM override → ${sourceType} (${resolved.llm.confidence}): ${resolved.llm.reason}`);
+    }
 
     // Build enhanced prompt with classification info + engine hints
     let prompt = normalized;
@@ -651,7 +656,7 @@ const Index = () => {
       const validation = validateAIResponse(reply, effectiveSourceType);
       let finalReply = reply;
       if (!validation.isComplete && validation.missingFields.length > 0) {
-        const summary = getMissingFieldsSummary(effectiveSourceType, validation.missingFields);
+        const summary = getMissingFieldsSummary(validation.effectiveSourceType ?? effectiveSourceType, validation.missingFields);
         if (summary && !/⚠️/.test(reply)) {
           finalReply = `${reply}\n⚠️ ${summary}`;
         }
@@ -1046,7 +1051,8 @@ const Index = () => {
                           try {
                             const newLabel = SOURCE_TYPE_LABELS[newType];
                             const engineHint = buildEnginePromptHint(newType);
-                            const reclassifiedPrompt = `[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n${engineHint}[כלל רלוונטי: ${getEngineRuleReference(newType)}]\n${rawInput}`;
+                            // IMPORTANT: include [סיווג אוטומטי: ...] so the backend routes to the right Perplexity branch
+                            const reclassifiedPrompt = `[סיווג אוטומטי: ${newLabel}]\n[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n${engineHint}[כלל רלוונטי: ${getEngineRuleReference(newType)}]\n${rawInput}`;
                             const reply = await callAPI(reclassifiedPrompt, messages.slice(0, i));
                             setMessages((prev) => {
                               const updated = [...prev];

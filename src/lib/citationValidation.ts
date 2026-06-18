@@ -65,6 +65,8 @@ export interface CitationValidationResult {
   template: string;
   /** The rule set details (null if unknown type) */
   ruleSet: CitationRuleSet | null;
+  /** The source type actually used for validation (may differ from input after inference) */
+  effectiveSourceType?: SourceType;
 }
 
 /**
@@ -363,6 +365,33 @@ function getCitationLine(response: string): string {
     .find(line => line && !/^📐/.test(line) && !/^⚠️/.test(line)) || response.trim();
 }
 
+const JOURNAL_NAME_RE = /משפטים|עיוני משפט|הפרקליט|מחקרי משפט|דין ודברים|משפט וממשל|משפט ועסקים|חוקים|תיאוריה וביקורת|המשפט|עלי משפט|מאזני משפט|רפואה ומשפט|ביטחון סוציאלי|הארת דין|משפט וצבא/;
+
+/**
+ * Infer the actual rendered citation type from its text. Used to stop the
+ * validator from running book rules (23.x) against an article output and vice
+ * versa when the upstream sourceType disagrees with what was rendered.
+ */
+export function inferSourceTypeFromCitation(
+  citationLine: string,
+  fallback: SourceType,
+): SourceType {
+  if (!citationLine) return fallback;
+  // article-in-book: explicit "בתוך" connector
+  if (/"\s*בתוך\s+/.test(citationLine) || /"\s+בתוך\s+/.test(citationLine)) {
+    return "article_in_book";
+  }
+  // journal article: quoted title + journal-ish token + volume + page + (year)
+  const hasQuotedTitle = /["'״׳][^"'״׳\n]{2,}["'״׳]/.test(citationLine);
+  const hasYear = /\(\s*\d{4}\s*\)/.test(citationLine);
+  const hasJournalName = JOURNAL_NAME_RE.test(citationLine);
+  const hasVolumePage = /["'״׳]\s+[^,(]{2,}?\s+[\u05D0-\u05EAא-ת0-9]+(?:\(\d+\))?\s+\d+\s*\(\d{4}\)/.test(citationLine);
+  if (hasQuotedTitle && hasYear && (hasJournalName || hasVolumePage)) {
+    return "article";
+  }
+  return fallback;
+}
+
 type OtherSubtype = "knesset" | "provisional_council";
 
 const OTHER_MISSING_FIELD_LABELS: Record<string, string> = {
@@ -466,17 +495,25 @@ export function validateAIResponse(
     }
   }
 
-  const engineKey = ENGINE_KEY_MAP[sourceType];
-  const extractedFields = extractFieldsFromResponse(response, sourceType);
+  // Infer the actual rendered type from the citation line so we don't validate
+  // an article output against book rules (or vice versa) when the upstream
+  // sourceType disagrees with what was actually rendered.
+  const citationLine = getCitationLine(response);
+  const effectiveType = inferSourceTypeFromCitation(citationLine, sourceType);
+  const effectiveRuleSet = getRuleSet(effectiveType) || ruleSet;
+
+  const engineKey = ENGINE_KEY_MAP[effectiveType] || ENGINE_KEY_MAP[sourceType];
+  const extractedFields = extractFieldsFromResponse(response, effectiveType);
   const missingFields = validateCitation(engineKey, extractedFields);
 
   return {
     isComplete: missingFields.length === 0,
     missingFields,
-    primaryRule: ruleSet.primaryRule,
-    ruleTitle: ruleSet.ruleTitle,
-    template: ruleSet.template,
-    ruleSet,
+    primaryRule: effectiveRuleSet.primaryRule,
+    ruleTitle: effectiveRuleSet.ruleTitle,
+    template: effectiveRuleSet.template,
+    ruleSet: effectiveRuleSet,
+    effectiveSourceType: effectiveType,
   };
 }
 
