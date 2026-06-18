@@ -2535,14 +2535,13 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
               PERPLEXITY_API_KEY,
               {
                 model: "sonar-pro",
-                search_domain_filter: BIBLIO_TRUSTED_DOMAINS,
+                // Open web — no domain filter. Recall first; title-anchor + author cross-check enforce safety.
                 messages: [
                   { role: "system", content: articleSystemPrompt + `\nאל תנחש מחבר — אם אינך מוצא מקור מפורש המייחס את המאמר למחבר כלשהו, החזר {"found":false}.` },
                   { role: "user", content: articleSearchPrompt },
                 ],
               },
               "article",
-              { forceOpenWebFallback: true },
             );
             const artResp = artRun.resp;
 
@@ -2562,7 +2561,11 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                       art.articleTitle || articleQuery,
                       artCitations,
                       artSearchResults,
+                      { authorHint: art.author },
                     );
+                    const totalCitations = Array.isArray(artCitations) ? artCitations.length : 0;
+                    const onlyUntrustedSingleHit =
+                      anchor.anchored && totalCitations <= 1 && anchor.trustedAnchorUrls.length === 0;
                     let authorConfirmed = false;
                     if (!anchor.anchored) {
                       console.log(`[article] title_anchored=false — dropping all model-supplied fields for "${articleQuery}"`);
@@ -2581,8 +2584,11 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                       const verify = await verifyBiblioAuthor(PERPLEXITY_API_KEY, "article", art.articleTitle || articleQuery);
                       const agrees = verify && verify.author && authorsAgree(art.author, verify.author);
                       const inVerify = verify && authorAppearsInSources(art.author, verify.citations, verify.search_results);
-                      authorConfirmed = !!(inSource || (agrees && (inSource || inVerify)));
-                      console.log(`[article] author_check title_anchored=true author_in_source=${inSource} verify_author=${verify?.author || ""} agrees=${!!agrees} in_verify=${!!inVerify} confirmed=${authorConfirmed}`);
+                      const needStrict = anchor.quality === "weak" || onlyUntrustedSingleHit;
+                      authorConfirmed = needStrict
+                        ? !!(agrees && (inSource || inVerify))
+                        : !!(inSource || (agrees && (inSource || inVerify)));
+                      console.log(`[article] author_check anchor_quality=${anchor.quality} trusted_anchors=${anchor.trustedAnchorUrls.length} strict=${needStrict} in_source=${inSource} verify="${verify?.author || ""}" agrees=${!!agrees} in_verify=${!!inVerify} confirmed=${authorConfirmed}`);
                       if (!authorConfirmed) {
                         console.log(`[article] author_dropped first="${art.author}" verify="${verify?.author || ""}"`);
                         // If verify returned a high-confidence different author that IS in sources, prefer it
@@ -2595,7 +2601,8 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                         }
                       }
                     }
-                    console.log(`[article] decision tier=${artRun.tier} title_anchored=${anchor.anchored} author_confirmed=${authorConfirmed}`);
+                    console.log(`[article] decision tier=${artRun.tier} title_anchored=${anchor.anchored} anchor_quality=${anchor.quality} trusted_anchors=${anchor.trustedAnchorUrls.length} author_confirmed=${authorConfirmed}`);
+
                     console.log(`[article] Found: ${art.articleTitle}, author=${art.author || '?'}, journal=${art.journalName || ''}, book=${art.bookTitle || ''}`);
 
                     if (art.type === "article_in_book" || isArticleInBook) {
