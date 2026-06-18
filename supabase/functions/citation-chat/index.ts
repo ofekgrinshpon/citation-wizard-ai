@@ -2679,12 +2679,6 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
             }
           }
         }
-              }
-            } else {
-              console.error("[article] Perplexity search failed:", artResp?.status);
-            }
-          }
-        }
       } catch (e) {
         console.error("[article] search error:", e);
       }
