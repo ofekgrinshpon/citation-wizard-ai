@@ -19,8 +19,16 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { runChapterWrite } from "./chapterWriter.ts";
 
 const RESEARCH_MODE = "research";
+
+// Credit costs for chapter-class writes (D4: live).
+const CHAPTER_CREDIT_COSTS = {
+  write_chapter: 8,
+  write_introduction: 5,
+  write_conclusion: 5,
+} as const;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -314,13 +322,8 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
         { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
-    if (isChapterClassWrite) {
-      console.log(`[offline] academic chapter engine offline — short-circuit 503 (step=${academicStep})`);
-      return new Response(
-        JSON.stringify({ error: "academic_chapter_engine_offline", message: "כתיבת פרקים בשדרוג. חוזרת בקרוב." }),
-        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
+    // Chapter-class writes are now LIVE (D4): handled by chapterWriter.
+    // (Old 503 short-circuit removed.)
     if (taskMode === "pleading_analysis") {
       console.log("[offline] pleading_analysis engine offline — short-circuit 503");
       return new Response(
@@ -343,6 +346,8 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     let creditCost = 0;
     if (isAcademicSubModeFree) {
       creditCost = 0;
+    } else if (isChapterClassWrite) {
+      creditCost = CHAPTER_CREDIT_COSTS[academicStep as keyof typeof CHAPTER_CREDIT_COSTS] ?? 8;
     } else if (taskMode === "case_summary") {
       creditCost = 5 + (hasGroundingDoc ? 2 : 0);
     } else {
@@ -425,6 +430,75 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     );
 
     const t0 = Date.now();
+
+    // =====================================================================
+    // LIVE PATH 0 — Chapter-class writes (write_chapter / write_introduction
+    // / write_conclusion). Streams SSE: stage, draft_delta, final.
+    // For write_chapter, the academic source-search engine (sources_only via
+    // legal-research-v1) is invoked first and the ranked pool is fed into
+    // the chapter prompt as the required citation pool.
+    // =====================================================================
+    if (isChapterClassWrite) {
+      const runId = crypto.randomUUID();
+      const previousChapters = Array.isArray(body.previousChapters)
+        ? (body.previousChapters as Array<{ title?: unknown; content?: unknown }>)
+            .map((c) => ({ title: String(c?.title ?? ""), content: String(c?.content ?? "") }))
+            .filter((c) => c.title.length > 0)
+        : [];
+      const chapterTitle = typeof body.chapterTitle === "string" ? body.chapterTitle : "";
+      const chapterIndex = typeof body.chapterIndex === "number" ? body.chapterIndex : 0;
+      const researchQuestion = typeof body.researchQuestion === "string"
+        ? body.researchQuestion
+        : (question || "");
+      const outline = typeof body.outline === "string" ? body.outline : "";
+      const paperMemoryDeltas = Array.isArray(body.paperMemoryDeltas)
+        ? (body.paperMemoryDeltas as unknown[])
+        : undefined;
+      const footnoteOffset = typeof body.footnoteOffset === "number" ? body.footnoteOffset : 0;
+      const conclusionContent = typeof body.conclusionContent === "string"
+        ? body.conclusionContent
+        : undefined;
+
+      // Pre-insert qa_logs marker so the client can resume by runId.
+      try {
+        await adminClient.from("qa_logs").insert({
+          id: runId,
+          user_id: user.id,
+          question: (chapterTitle || researchQuestion).substring(0, 500),
+          answer: null,
+          footnotes: [],
+          task_mode: taskMode,
+          project_id: typeof bodyProjectId === "string" ? bodyProjectId : null,
+          local_footnotes_count: 0,
+          perplexity_footnotes_count: 0,
+          total_footnotes: 0,
+          metadata: {
+            academic_step: academicStep,
+            checkpoint: "running",
+            run_id: runId,
+            chapter_index: chapterIndex,
+            chapter_title: chapterTitle,
+          },
+        });
+      } catch (preInsertErr) {
+        console.error("Failed to pre-insert qa_logs row for chapter write:", preInsertErr);
+      }
+
+      return runChapterWrite({
+        academicStep: academicStep as "write_chapter" | "write_introduction" | "write_conclusion",
+        researchQuestion,
+        outline,
+        chapterTitle,
+        chapterIndex,
+        previousChapters,
+        paperMemoryDeltas,
+        footnoteOffset,
+        conclusionContent,
+        userId: user.id,
+        projectId: typeof bodyProjectId === "string" ? bodyProjectId : null,
+        runId,
+      });
+    }
 
     // =====================================================================
     // LIVE PATH 1 — Academic sub-modes (suggest_topics / validate_question / propose_outline)
