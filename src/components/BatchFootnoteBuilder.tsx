@@ -162,7 +162,8 @@ export function BatchFootnoteBuilder({}: BatchProps) {
         const reordered = [...prev];
         const [removed] = reordered.splice(dragItem.current!, 1);
         reordered.splice(dragOverItem.current!, 0, removed);
-        return reordered.map((c, i) => ({ ...c, id: i + 1 }));
+        const renumbered = reordered.map((c, i) => ({ ...c, id: i + 1 }));
+        return applyRepeatCitationRules(renumbered);
       });
     }
     dragItem.current = null;
@@ -222,25 +223,26 @@ export function BatchFootnoteBuilder({}: BatchProps) {
         if (r.status === "fulfilled") resultMap.set(r.value.cellId, r.value.content);
       }
 
-      setCells((prev) =>
-        prev.map((c) => {
+      setCells((prev) => {
+        const updated = prev.map((c) => {
           if (!c.input.trim() || c.status === "verified") return c;
           const content = resultMap.get(c.id);
           if (content === undefined) {
-            return { ...c, status: "error", output: null };
+            return { ...c, status: "error" as const, output: null };
           }
           const detected = detectSourceType(normalizeAbbreviations(c.input));
           const hasWarning = /\[חסר:/.test(content) || /⚠️/.test(content);
           return {
             ...c,
             output: content,
-            status: hasWarning ? "warning" : "valid",
+            status: hasWarning ? ("warning" as const) : ("valid" as const),
             warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
             detectedType: detected,
             approved: false,
           };
-        })
-      );
+        });
+        return applyRepeatCitationRules(updated);
+      });
 
       setPhase("review");
 
@@ -271,20 +273,21 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       const content = await runSingleCitation(cell.input, cell.sourceTypeOverride);
       const detected = detectSourceType(normalizeAbbreviations(cell.input));
       const hasWarning = /\[חסר:/.test(content) || /⚠️/.test(content);
-      setCells((prev) =>
-        prev.map((c) =>
+      setCells((prev) => {
+        const updated = prev.map((c) =>
           c.id === id
             ? {
                 ...c,
                 output: content,
-                status: hasWarning ? "warning" : "valid",
+                status: hasWarning ? ("warning" as const) : ("valid" as const),
                 warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
                 detectedType: detected,
                 approved: false,
               }
             : c
-        )
-      );
+        );
+        return applyRepeatCitationRules(updated);
+      });
     } catch {
       setCells((prev) =>
         prev.map((c) => (c.id === id ? { ...c, status: "error", output: null } : c))
@@ -295,9 +298,10 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
   // Per-cell handlers used by the review card.
   const handleReviewOutputChange = useCallback((id: number, value: string) => {
-    setCells((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, output: value, approved: false } : c))
-    );
+    setCells((prev) => {
+      const updated = prev.map((c) => (c.id === id ? { ...c, output: value, approved: false } : c));
+      return applyRepeatCitationRules(updated);
+    });
   }, []);
 
   const handleReviewSourceTypeChange = useCallback((id: number, t: SourceType) => {
