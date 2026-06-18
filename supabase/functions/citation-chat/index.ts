@@ -569,7 +569,8 @@ async function verifyBiblioAuthor(
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "sonar-pro",
-        search_domain_filter: BIBLIO_TRUSTED_DOMAINS,
+        // Open web — no domain filter. We rely on title-anchor + cross-check for safety.
+
         messages: [
           {
             role: "system",
