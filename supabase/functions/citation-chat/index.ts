@@ -2495,6 +2495,18 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
               if (bookJsonMatch) {
                 try {
                   const bookParsed = JSON.parse(bookJsonMatch[0]);
+                  // ── Journal-clue guard: Perplexity sometimes returns "book" for journal articles.
+                  // If the publisher / journalName / bookTitle hints at a journal, treat as unusable
+                  // and let the cross-type fallback (article search) take over.
+                  const journalRe = /כתב.?עת|משפטים|עיוני\s+משפט|הפרקליט|משפט\s+וממשל|דין\s+ודברים|מחקרי\s+משפט|תיאוריה\s+וביקורת|עלי\s+משפט|מאזני\s+משפט|חוקים|המשפט/;
+                  const looksLikeJournal =
+                    (bookParsed?.publisher && journalRe.test(String(bookParsed.publisher))) ||
+                    (bookParsed?.journalName && String(bookParsed.journalName).length > 0) ||
+                    (bookParsed?.bookTitle && journalRe.test(String(bookParsed.bookTitle)));
+                  if (looksLikeJournal) {
+                    console.log(`[book] journal clue detected in book response → forcing article fallback. publisher="${bookParsed?.publisher || ""}"`);
+                    bookParsed.found = false;
+                  }
                   if (bookParsed.found && bookParsed.bookTitle && (bookParsed.author || bookParsed.year)) {
                     // ── Title-anchor gate ──
                     const anchor = anchorTitleInSources(
