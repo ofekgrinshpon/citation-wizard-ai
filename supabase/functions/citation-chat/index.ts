@@ -146,7 +146,7 @@ async function perplexityWithFallback(
             try { const h = new URL(u).hostname.toLowerCase(); return h === d || h.endsWith("." + d); } catch { return false; }
           }))
       : [];
-    tier1DocketAnchored = anyUrlContainsDocketVia(t1TrustedUrls, opts.docketAnchor).ok;
+    tier1DocketAnchored = anyUrlContainsDocketVia(t1TrustedUrls, opts.docketAnchor) !== "none";
   }
 
   if (result.tier1_trusted > 0 && tier1DocketAnchored) {
