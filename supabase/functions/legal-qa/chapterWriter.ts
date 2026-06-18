@@ -83,87 +83,205 @@ export function createSseStream(): { response: Response; sink: SseSink } {
 
 // ─── Call legal-research-v1 in sources_only mode (smoke / service-role) ──
 
+// ─── In-process academic source search ──────────────────────────────────
+// Hybrid: local legal-document corpus (text search) + Perplexity scholarship
+// fallback. Mirrors the suggest_topics reality-check engine but tuned by
+// the chapter profile (which source classes to include, foreign allowed,
+// max sources / max foreign).
+
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+
+const CHAPTER_PPLX_DOMAINS_HE: string[] = [
+  "nevo.co.il",
+  "supreme.court.gov.il",
+  "supremedecisions.court.gov.il",
+  "takdin.co.il",
+  "psakdin.co.il",
+  "din.org.il",
+  "idi.org.il",
+  "law.tau.ac.il",
+  "huji.ac.il",
+  "biu.ac.il",
+  "haifa.ac.il",
+];
+
+const CHAPTER_PPLX_DOMAINS_FOREIGN: string[] = [
+  "ssrn.com",
+  "papers.ssrn.com",
+  "scholar.google.com",
+  "jstor.org",
+  "heinonline.org",
+  "cambridge.org",
+  "oxford.com",
+  "oup.com",
+  "harvardlawreview.org",
+  "yalelawjournal.org",
+  "law.cornell.edu",
+];
+
 async function fetchChapterSources(opts: {
   question: string;
   userId: string;
   profile: ChapterSourceProfile;
   projectId: string | null;
 }): Promise<{ sources: SourceForPrompt[]; runId: string | null; errored: boolean }> {
-  const url = `${Deno.env.get("SUPABASE_URL")}/functions/v1/legal-research-v1`;
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const admin = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+  const out: SourceForPrompt[] = [];
+  let errored = false;
+
+  // Stage 1 — local DB text search.
   try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${serviceKey}`,
-        "x-smoke-mode": "1",
-      },
-      body: JSON.stringify({
-        question: opts.question,
-        mode: "sources_only",
-        smoke_user_id: opts.userId,
-        project_id: opts.projectId,
-      }),
-    });
-    if (!res.ok) {
-      console.warn(`[chapterWriter] sources_only HTTP ${res.status}`);
-      return { sources: [], runId: null, errored: true };
-    }
-    const payload = await res.json();
-    const rawSources: any[] = Array.isArray(payload?.sources) ? payload.sources : [];
-
-    // Profile-based filtering: caller chose what kinds to keep.
-    const filtered = rawSources.filter((s) => {
-      const t = String(s?.source_type || "").toLowerCase();
-      const isLegislation = /legislation|statute|חקיקה|primary_statute/.test(t);
-      const isCaseLaw = /case|פסיק|caselaw|binding|persuasive/.test(t);
-      const isScholarship = /scholar|article|book|מאמר|ספר/.test(t);
-      const isReport = /report|legislative_history|government/.test(t);
-      if (isLegislation && !opts.profile.includeLegislation) return false;
-      if (isCaseLaw && !opts.profile.includeCaseLaw) return false;
-      if (isScholarship && !opts.profile.includeScholarship) return false;
-      if (isReport && !opts.profile.includeReports) return false;
-      return true;
-    });
-
-    // Foreign-language cap (titles outside Hebrew script).
-    const isForeign = (s: any) => {
-      const txt = `${s?.title || ""} ${s?.display_citation || ""}`;
-      const hebrewChars = (txt.match(/[\u0590-\u05FF]/g) || []).length;
-      return hebrewChars < 3;
-    };
-    if (!opts.profile.allowForeign) {
-      for (let i = filtered.length - 1; i >= 0; i--) {
-        if (isForeign(filtered[i])) filtered.splice(i, 1);
-      }
-    } else if (opts.profile.maxForeign > 0) {
-      let foreignKept = 0;
-      for (let i = 0; i < filtered.length; i++) {
-        if (isForeign(filtered[i])) {
-          foreignKept++;
-          if (foreignKept > opts.profile.maxForeign) {
-            filtered.splice(i, 1);
-            i--;
-          }
-        }
+    // deno-lint-ignore no-explicit-any
+    const { data } = await admin.rpc("search_legal_chunks_text", {
+      search_query: opts.question.slice(0, 400),
+      match_count: 12,
+    }) as { data: any[] | null };
+    if (Array.isArray(data)) {
+      for (const row of data) {
+        const sourceType = String(row?.source_type || "").toLowerCase();
+        const isLegislation = /legislation|statute|חקיקה/.test(sourceType);
+        const isCaseLaw = /case|caselaw|פסיק/.test(sourceType);
+        const isScholarship = /scholar|article|book|מאמר|ספר/.test(sourceType);
+        const isReport = /report|legislative_history|government/.test(sourceType);
+        if (isLegislation && !opts.profile.includeLegislation) continue;
+        if (isCaseLaw && !opts.profile.includeCaseLaw) continue;
+        if (isScholarship && !opts.profile.includeScholarship) continue;
+        if (isReport && !opts.profile.includeReports) continue;
+        out.push({
+          rank: out.length + 1,
+          title: String(row?.document_title || ""),
+          url: typeof row?.source_url === "string" ? row.source_url : null,
+          source_type: String(row?.source_type || ""),
+          display_citation: typeof row?.document_citation === "string" ? row.document_citation : null,
+          snippet: typeof row?.chunk_content === "string" ? row.chunk_content.slice(0, 280) : null,
+        });
+        if (out.length >= opts.profile.maxSources) break;
       }
     }
-
-    const trimmed = filtered.slice(0, opts.profile.maxSources).map((s, i) => ({
-      rank: i + 1,
-      title: String(s?.title || ""),
-      url: typeof s?.url === "string" ? s.url : null,
-      source_type: String(s?.source_type || ""),
-      display_citation: typeof s?.display_citation === "string" ? s.display_citation : null,
-      snippet: typeof s?.snippet === "string" ? s.snippet : null,
-    }));
-
-    return { sources: trimmed, runId: typeof payload?.run_id === "string" ? payload.run_id : null, errored: false };
   } catch (e) {
-    console.error("[chapterWriter] sources_only call threw:", e instanceof Error ? e.message : e);
-    return { sources: [], runId: null, errored: true };
+    console.warn("[chapterWriter] local search failed:", e instanceof Error ? e.message : e);
+    errored = true;
   }
+
+  // Stage 2 — Perplexity fallback. Triggered when local hits are sparse OR
+  // the chapter explicitly asks for foreign scholarship.
+  const PPLX_KEY = Deno.env.get("PERPLEXITY_API_KEY");
+  const wantForeign = opts.profile.allowForeign && opts.profile.maxForeign > 0;
+  const needMore = out.length < Math.max(4, Math.floor(opts.profile.maxSources / 2));
+  if (PPLX_KEY && (wantForeign || needMore)) {
+    try {
+      const domainFilter = wantForeign
+        ? [...CHAPTER_PPLX_DOMAINS_FOREIGN, ...CHAPTER_PPLX_DOMAINS_HE]
+        : [...CHAPTER_PPLX_DOMAINS_HE];
+      const langHint = wantForeign
+        ? "Israeli + foreign academic sources (English and Hebrew)"
+        : "Israeli legal sources (Hebrew)";
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 18000);
+      const pRes = await fetch("https://api.perplexity.ai/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${PPLX_KEY}`, "Content-Type": "application/json" },
+        signal: ctrl.signal,
+        body: JSON.stringify({
+          model: "sonar",
+          messages: [
+            {
+              role: "system",
+              content:
+                "You find authoritative legal sources for an Israeli academic legal paper. Return STRICT JSON only.",
+            },
+            {
+              role: "user",
+              content: `Find up to 8 high-quality ${langHint} for the following chapter focus. Each source MUST be a real, citable work — statute, case, scholarly article, book, or government/committee report.\n\nFocus:\n${opts.question}\n\nReturn JSON with key "sources": array of {title, source_type (one of: legislation, caselaw, article, book, report), why_relevant}.`,
+            },
+          ],
+          search_domain_filter: domainFilter,
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "sources",
+              schema: {
+                type: "object",
+                properties: {
+                  sources: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        title: { type: "string" },
+                        source_type: { type: "string" },
+                        why_relevant: { type: "string" },
+                      },
+                      required: ["title", "source_type"],
+                    },
+                  },
+                },
+                required: ["sources"],
+              },
+            },
+          },
+        }),
+      });
+      clearTimeout(timer);
+      if (pRes.ok) {
+        const pj = await pRes.json();
+        const content = pj?.choices?.[0]?.message?.content || "";
+        const citations: string[] = Array.isArray(pj?.citations) ? pj.citations : [];
+        try {
+          const parsed = JSON.parse(content);
+          const rawSources: any[] = Array.isArray(parsed?.sources) ? parsed.sources : [];
+          let added = 0;
+          let foreignAdded = 0;
+          for (let i = 0; i < rawSources.length; i++) {
+            if (out.length >= opts.profile.maxSources) break;
+            const s = rawSources[i];
+            const t = String(s?.source_type || "").toLowerCase();
+            const isLegislation = /legislation|statute|חקיקה/.test(t);
+            const isCaseLaw = /case|caselaw|פסיק/.test(t);
+            const isScholarship = /scholar|article|book|מאמר|ספר/.test(t);
+            const isReport = /report|government/.test(t);
+            if (isLegislation && !opts.profile.includeLegislation) continue;
+            if (isCaseLaw && !opts.profile.includeCaseLaw) continue;
+            if (isScholarship && !opts.profile.includeScholarship) continue;
+            if (isReport && !opts.profile.includeReports) continue;
+            const title = String(s?.title || "").trim();
+            if (!title) continue;
+            const url = citations[i] || null;
+            const hebChars = (title.match(/[\u0590-\u05FF]/g) || []).length;
+            const isForeign = hebChars < 3;
+            if (isForeign) {
+              if (!opts.profile.allowForeign) continue;
+              if (foreignAdded >= opts.profile.maxForeign) continue;
+              foreignAdded++;
+            }
+            out.push({
+              rank: out.length + 1,
+              title,
+              url,
+              source_type: String(s?.source_type || ""),
+              display_citation: null,
+              snippet: typeof s?.why_relevant === "string" ? s.why_relevant.slice(0, 280) : null,
+            });
+            added++;
+          }
+          if (added === 0) {
+            console.log("[chapterWriter] perplexity returned 0 usable sources after profile filter");
+          }
+        } catch (parseErr) {
+          console.warn("[chapterWriter] perplexity JSON parse failed:", parseErr instanceof Error ? parseErr.message : parseErr);
+        }
+      } else {
+        console.warn("[chapterWriter] perplexity HTTP", pRes.status);
+      }
+    } catch (e) {
+      console.warn("[chapterWriter] perplexity failed:", e instanceof Error ? e.message : e);
+    }
+  }
+
+  return { sources: out.slice(0, opts.profile.maxSources), runId: null, errored };
 }
 
 // ─── Prompt composers ───────────────────────────────────────────────────
