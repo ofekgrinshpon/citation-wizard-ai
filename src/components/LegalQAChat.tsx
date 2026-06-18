@@ -2760,7 +2760,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
               const hasContent = !!chapters[currentChapter]?.content;
               // D1: body / introduction / conclusion route to the offline
               // chapter engine — show maintenance card instead of the write CTA.
-              const isOfflineChapter = role === "body" || role === "introduction" || role === "conclusion";
+              const isOfflineChapter = false; // D4: chapter engine is live
 
               const writeButtonLabel = isAbstract
                 ? (hasContent ? "ייצר תקציר מחדש" : "ייצר תקציר")
