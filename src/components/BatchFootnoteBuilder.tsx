@@ -223,25 +223,26 @@ export function BatchFootnoteBuilder({}: BatchProps) {
         if (r.status === "fulfilled") resultMap.set(r.value.cellId, r.value.content);
       }
 
-      setCells((prev) =>
-        prev.map((c) => {
+      setCells((prev) => {
+        const updated = prev.map((c) => {
           if (!c.input.trim() || c.status === "verified") return c;
           const content = resultMap.get(c.id);
           if (content === undefined) {
-            return { ...c, status: "error", output: null };
+            return { ...c, status: "error" as const, output: null };
           }
           const detected = detectSourceType(normalizeAbbreviations(c.input));
           const hasWarning = /\[חסר:/.test(content) || /⚠️/.test(content);
           return {
             ...c,
             output: content,
-            status: hasWarning ? "warning" : "valid",
+            status: hasWarning ? ("warning" as const) : ("valid" as const),
             warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
             detectedType: detected,
             approved: false,
           };
-        })
-      );
+        });
+        return applyRepeatCitationRules(updated);
+      });
 
       setPhase("review");
 
