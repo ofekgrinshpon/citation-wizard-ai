@@ -2414,7 +2414,11 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                       bookParsed.bookTitle || bookQuery,
                       bookCitations,
                       bookSearchResults,
+                      { authorHint: bookParsed.author },
                     );
+                    const totalCitations = Array.isArray(bookCitations) ? bookCitations.length : 0;
+                    const onlyUntrustedSingleHit =
+                      anchor.anchored && totalCitations <= 1 && anchor.trustedAnchorUrls.length === 0;
                     let authorConfirmed = false;
                     if (!anchor.anchored) {
                       console.log(`[book] title_anchored=false — dropping all model-supplied fields for "${bookQuery}"`);
@@ -2432,17 +2436,29 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                       const verify = await verifyBiblioAuthor(PERPLEXITY_API_KEY, "book", bookParsed.bookTitle || bookQuery);
                       const agrees = verify && verify.author && authorsAgree(bookParsed.author, verify.author);
                       const inVerify = verify && authorAppearsInSources(bookParsed.author, verify.citations, verify.search_results);
-                      authorConfirmed = !!(inSource || (agrees && (inSource || inVerify)));
-                      console.log(`[book] author_check title_anchored=true author_in_source=${inSource} verify_author=${verify?.author || ""} agrees=${!!agrees} in_verify=${!!inVerify} confirmed=${authorConfirmed}`);
+                      // Stronger requirement when anchor is weak OR only one untrusted citation exists
+                      const needStrict = anchor.quality === "weak" || onlyUntrustedSingleHit;
+                      authorConfirmed = needStrict
+                        ? !!(agrees && (inSource || inVerify))
+                        : !!(inSource || (agrees && (inSource || inVerify)));
+                      console.log(`[book] author_check anchor_quality=${anchor.quality} trusted_anchors=${anchor.trustedAnchorUrls.length} strict=${needStrict} in_source=${inSource} verify="${verify?.author || ""}" agrees=${!!agrees} in_verify=${!!inVerify} confirmed=${authorConfirmed}`);
                       if (!authorConfirmed) {
                         console.log(`[book] author_dropped first="${bookParsed.author}" verify="${verify?.author || ""}"`);
-                        bookParsed.author = "";
+                        // Prefer a high-confidence different author that appears in our sources
+                        if (verify && verify.author && authorAppearsInSources(verify.author, bookCitations, bookSearchResults)) {
+                          console.log(`[book] author_replaced with verify="${verify.author}"`);
+                          bookParsed.author = verify.author;
+                          authorConfirmed = true;
+                        } else {
+                          bookParsed.author = "";
+                        }
                       }
                     } else if (bookParsed.isInstitutional) {
                       authorConfirmed = authorAppearsInSources(bookParsed.author || "", bookCitations, bookSearchResults);
                       if (!authorConfirmed) bookParsed.author = "";
                     }
-                    console.log(`[book] decision tier=${bookRun.tier} title_anchored=${anchor.anchored} author_confirmed=${authorConfirmed}`);
+                    console.log(`[book] decision tier=${bookRun.tier} title_anchored=${anchor.anchored} anchor_quality=${anchor.quality} trusted_anchors=${anchor.trustedAnchorUrls.length} author_confirmed=${authorConfirmed}`);
+
                     console.log(`[book] Found: ${bookParsed.bookTitle}, author=${bookParsed.author || '?'}, year=${bookParsed.year || '?'}`);
                     let details = `\n\n══ נתוני ספר שנמצאו בחיפוש ══\n`;
                     if (bookParsed.author) details += `מחבר: ${bookParsed.author}\n`;
