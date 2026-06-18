@@ -644,11 +644,12 @@ export async function runChapterWrite(req: WriteChapterRequest): Promise<Respons
           ? "כתוב את המבוא עכשיו."
           : "כתוב את הסיכום והמסקנות עכשיו.";
 
+      const isChapter = req.academicStep === "write_chapter";
       const stream = await streamChapterToSse({
         systemPrompt,
         userPrompt,
         sink,
-        maxTokens: req.academicStep === "write_chapter" ? 4096 : 3072,
+        maxTokens: isChapter ? 6500 : 3072,
       });
 
       if (!stream.ok || stream.text.trim().length < 50) {
@@ -663,23 +664,65 @@ export async function runChapterWrite(req: WriteChapterRequest): Promise<Respons
         return;
       }
 
+      let combinedRaw = stream.text;
+
+      // ── One-shot continuation if the chapter came in too short. ──
+      if (isChapter && countWords(combinedRaw) < 850) {
+        await sink.send("stage", {
+          stage: "expanding",
+          status: "running",
+          label: "הפרק קצר מהמטרה — מרחיב אותו",
+        });
+        const continuationPrompt =
+          `המשך מהמקום שעצרת. הוסף 2-3 פסקאות נוספות שמרחיבות את הניתוח ומעמיקות בטיעון. ` +
+          `אל תחזור על מה שכבר נכתב. השתמש רק במקורות מהמאגר וסמן [S<rank>] בכל קביעה עובדתית. ` +
+          `אל תכתוב כותרות ואל תכתוב הערות שוליים.\n\n` +
+          `=== הטיוטה עד כה ===\n${combinedRaw}`;
+        const cont = await streamChapterToSse({
+          systemPrompt,
+          userPrompt: continuationPrompt,
+          sink,
+          maxTokens: 3500,
+        });
+        if (cont.ok && cont.text.trim().length > 40) {
+          combinedRaw = combinedRaw.trimEnd() + "\n\n" + cont.text.trimStart();
+        }
+        await sink.send("stage", { stage: "expanding", status: "done", label: "ההרחבה הושלמה" });
+      }
+
+      // ── Convert [S<rank>] markers → numbered footnotes (title + url only). ──
+      const footnoteOffset = typeof req.footnoteOffset === "number" ? req.footnoteOffset : 0;
+      const processed = isChapter
+        ? postProcessChapterFootnotes(combinedRaw, sources, footnoteOffset)
+        : { text: combinedRaw, footnotes: [] as BuiltFootnote[] };
+
+      const finalWordCount = countWords(processed.text);
+      const lowLength = isChapter && finalWordCount < 700;
+      const lowGrounding = isChapter && sources.length === 0;
+
       await sink.send("stage", { stage: "writing", status: "done", label: "הפרק נכתב" });
 
       await sink.send("final", {
         status: 200,
         body: {
-          answer: stream.text,
-          footnotes: [],
+          answer: processed.text,
+          footnotes: processed.footnotes,
+          footnotes_count: processed.footnotes.length,
+          footnote_offset_applied: footnoteOffset,
           source_urls: sources.map((s) => s.url).filter(Boolean),
           sourcesUsed: sources,
           chapterMeta: {
             flowTag: outlineChapter?.flowTag || "",
             profile: profile?.kind || null,
             sourceCount: sources.length,
+            wordCount: finalWordCount,
+            lowLength,
+            lowGrounding,
           },
         },
       });
       await sink.close();
+
     } catch (e) {
       console.error("[chapterWriter] pipeline threw:", e instanceof Error ? e.message : e);
       try {
