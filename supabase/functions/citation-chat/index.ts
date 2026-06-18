@@ -1276,7 +1276,9 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
               PERPLEXITY_API_KEY,
               caseSearchBody,
               `case-number:${fullCaseRef}`,
-              docketAnchor ? { docketAnchor: { num: docketAnchor.num, year: docketAnchor.year } } : undefined,
+              docketAnchor
+                ? { docketAnchor: { num: docketAnchor.num, year: docketAnchor.year }, forceOpenWebFallback: true }
+                : { forceOpenWebFallback: true },
             );
             const perplexityResp = caseSearchRun.resp!;
             console.log(`[case-law] tier=${caseSearchRun.tier} tier1_trusted=${caseSearchRun.tier1_trusted} tier2_fired=${caseSearchRun.tier2_fired} tier2_trusted=${caseSearchRun.tier2_trusted} docket_anchor_ok=${caseSearchRun.docket_anchor_ok} docket_anchor_via=${caseSearchRun.docket_anchor_via} dropped=${JSON.stringify(caseSearchRun.tier2_dropped_hosts)}`);
