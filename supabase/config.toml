@@ -15,8 +15,6 @@ project_id = "ioktiqcffungtlsmlkcv"
     verify_jwt = false
   [functions.convert-doc]
     verify_jwt = false
-  [functions.document-check]
-    verify_jwt = false
   [functions.embed-legal-source]
     verify_jwt = false
   [functions.fetch-apify-dataset]
