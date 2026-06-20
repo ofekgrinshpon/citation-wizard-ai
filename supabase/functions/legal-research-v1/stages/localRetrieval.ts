@@ -178,8 +178,61 @@ interface ClueLookupDiag {
   matched_document_ids: string[];
   matched_titles: string[];
   matched_chunk_id?: string;
-  status: "ok" | "empty" | "error" | "timeout";
+  status: "ok" | "empty" | "error" | "timeout" | "skipped_low_signal";
   error?: string;
+  // Confidence-guard diagnostics (statute / regulation clues only; dockets bypass).
+  raw_clue?: string;
+  normalized_clue?: string;
+  body_after_head_strip?: string;
+  candidate_title_tokens?: string[];     // raw output of titleTokens(), may include short tokens
+  title_tokens_for_ilike?: string[];     // tokens actually used in ilike chain; length>=3, count>=2
+  exact_lookup_skipped?: boolean;
+  skipped_reason?: "too_short" | "body_too_short" | "too_few_tokens" | "single_token";
+}
+
+// Heads stripped (single pass, case-exact, anchored at start) for body-length guard.
+// No domain stopwords — purely structural prefixes.
+const LEGAL_HEADS = ["חוק-יסוד", "חוק יסוד", "חוק", "פקודת", "פקודה", "תקנות"];
+export function stripLegalHead(s: string): string {
+  for (const h of LEGAL_HEADS) {
+    if (s.startsWith(h)) return s.slice(h.length).trimStart();
+  }
+  return s;
+}
+
+export interface GuardResult {
+  raw_clue: string;
+  normalized_clue: string;
+  body_after_head_strip: string;
+  candidate_title_tokens: string[];
+  title_tokens_for_ilike: string[];
+  exact_lookup_skipped: boolean;
+  skipped_reason?: "too_short" | "body_too_short" | "too_few_tokens" | "single_token";
+}
+
+// Generic confidence guard for exact_authority lookups (statute/regulation only).
+// Dockets are not passed through this guard.
+export function applyExactAuthorityGuard(raw: string): GuardResult {
+  const raw_clue = String(raw ?? "");
+  const normalized_clue = raw_clue.trim().replace(/\s+/g, " ");
+  const body_after_head_strip = stripLegalHead(normalized_clue);
+  const candidate_title_tokens = titleTokens(normalized_clue);
+  const title_tokens_for_ilike = candidate_title_tokens.filter((t) => t.length >= 3);
+
+  const base: GuardResult = {
+    raw_clue, normalized_clue, body_after_head_strip,
+    candidate_title_tokens, title_tokens_for_ilike: [],
+    exact_lookup_skipped: true,
+  };
+  if (normalized_clue.length < 10) return { ...base, skipped_reason: "too_short" };
+  if (body_after_head_strip.length < 4) return { ...base, skipped_reason: "body_too_short" };
+  if (title_tokens_for_ilike.length < 2) {
+    return {
+      ...base,
+      skipped_reason: title_tokens_for_ilike.length === 1 ? "single_token" : "too_few_tokens",
+    };
+  }
+  return { ...base, title_tokens_for_ilike, exact_lookup_skipped: false };
 }
 
 async function exactAuthorityLookup(
@@ -204,7 +257,7 @@ async function exactAuthorityLookup(
   try {
     for (const cl of clues) {
       const primary = cl.law_name || cl.docket || cl.search_terms[0];
-      if (!primary || primary.length < 6) continue;
+      if (!primary) continue;
       const cleaned = primary.replace(/[%_]/g, " ").slice(0, 120);
       const diag: ClueLookupDiag = {
         clue_kind: cl.kind, clue_source: cl.source,
@@ -220,17 +273,30 @@ async function exactAuthorityLookup(
         .select("id,title,citation,source_type,source_url,metadata")
         .limit(perQueryLimit);
       if (cl.kind === "docket") {
-        // Docket: keep substring OR match.
+        // Docket: keep substring OR match. Bypasses confidence guard by design.
+        if (cleaned.length < 4) { diag.status = "skipped_low_signal"; diag.exact_lookup_skipped = true; diags.push(diag); continue; }
         const pat = `%${cleaned}%`;
         q = q.or(`title.ilike.${pat},citation.ilike.${pat}`);
       } else {
-        // Statute / regulation: tokenized AND across title (handles parenthetical
-        // canonical names like "חוק החוזים (תרופות בשל הפרת חוזה)").
-        const toks = titleTokens(cleaned);
-        if (!toks.length) continue;
-        for (const t of toks) q = q.ilike("title", `%${t}%`);
-        diag.title_match_query = toks.join(" AND ");
+        // Statute / regulation: confidence guard before issuing any title ilike.
+        const guard = applyExactAuthorityGuard(cleaned);
+        diag.raw_clue = guard.raw_clue;
+        diag.normalized_clue = guard.normalized_clue;
+        diag.body_after_head_strip = guard.body_after_head_strip;
+        diag.candidate_title_tokens = guard.candidate_title_tokens;
+        diag.title_tokens_for_ilike = guard.title_tokens_for_ilike;
+        diag.exact_lookup_skipped = guard.exact_lookup_skipped;
+        if (guard.exact_lookup_skipped) {
+          diag.skipped_reason = guard.skipped_reason;
+          diag.status = "skipped_low_signal";
+          diag.title_match_query = "";
+          diags.push(diag);
+          continue;
+        }
+        for (const t of guard.title_tokens_for_ilike) q = q.ilike("title", `%${t}%`);
+        diag.title_match_query = guard.title_tokens_for_ilike.join(" AND ");
       }
+
       if (allowedTypes) q = q.in("source_type", allowedTypes);
       const r = (await Promise.race([q, timer])) as
         | { data: Array<{ id: string; title: string; citation: string; source_type: string; source_url: string | null; metadata: Record<string, unknown> }> | null; error: { message?: string } | null }

@@ -53,6 +53,24 @@ export interface PoolResult {
 }
 
 const MAX_VECTOR_PER_CLAIM = 2;
+const MIN_TRUSTED_PERPLEXITY = 10;
+
+// Trusted-Perplexity predicate uses ONLY fields already attached by
+// perplexityRetrieval.ts: numeric `score` and `metadata.classified_source_class`.
+// No new classifier; if neither signal qualifies, the candidate is not reserved.
+const TRUSTED_PPLX_CLASSES = new Set([
+  "official_primary",
+  "legislation",
+  "court_case",
+  "government_report",
+  "scholarship",
+]);
+function isTrustedPerplexity(c: Candidate): boolean {
+  if (c.retrieval_method !== "perplexity") return false;
+  if (typeof c.score === "number" && c.score >= 0.9) return true;
+  const cls = (c.metadata?.classified_source_class as string | undefined) ?? "";
+  return TRUSTED_PPLX_CLASSES.has(cls);
+}
 
 export function buildCandidatePool(all: Candidate[]): PoolResult {
   const seenDoc = new Set<string>();
@@ -78,10 +96,13 @@ export function buildCandidatePool(all: Candidate[]): PoolResult {
   const out: Candidate[] = [];
   let dedup_drops = 0;
 
-  for (const c of sorted) {
+  // Shared admission routine — runs the existing dedup/vector-cap checks and pushes into `out`.
+  // Returns true if admitted.
+  const tryAdmit = (c: Candidate): boolean => {
+    if (out.length >= CAPS.MAX_CANDIDATES) return false;
     if (c.retrieval_method === "vector") {
       const n = vectorPerClaim.get(c.claim_id) ?? 0;
-      if (n >= MAX_VECTOR_PER_CLAIM) { dedup_drops++; continue; }
+      if (n >= MAX_VECTOR_PER_CLAIM) { dedup_drops++; return false; }
     }
     const docId = c.document_id ? `doc:${c.document_id}` : "";
     const url = normUrl(c.source_url);
@@ -92,11 +113,11 @@ export function buildCandidatePool(all: Candidate[]): PoolResult {
     const dk = dkKey ? `dk:${dkKey}` : "";
     const ttKey = `tt:${c.role}:${normTitle(c.title)}`;
 
-    if (docId && seenDoc.has(docId)) { dedup_drops++; continue; }
-    if (urlKey && seenUrl.has(urlKey)) { dedup_drops++; continue; }
-    if (stK && seenStatute.has(stK)) { dedup_drops++; continue; }
-    if (dk && seenDocket.has(dk)) { dedup_drops++; continue; }
-    if (seenTitle.has(ttKey)) { dedup_drops++; continue; }
+    if (docId && seenDoc.has(docId)) { dedup_drops++; return false; }
+    if (urlKey && seenUrl.has(urlKey)) { dedup_drops++; return false; }
+    if (stK && seenStatute.has(stK)) { dedup_drops++; return false; }
+    if (dk && seenDocket.has(dk)) { dedup_drops++; return false; }
+    if (seenTitle.has(ttKey)) { dedup_drops++; return false; }
 
     if (docId) seenDoc.add(docId);
     if (urlKey) seenUrl.add(urlKey);
@@ -107,8 +128,30 @@ export function buildCandidatePool(all: Candidate[]): PoolResult {
       vectorPerClaim.set(c.claim_id, (vectorPerClaim.get(c.claim_id) ?? 0) + 1);
     }
     out.push(c);
+    return true;
+  };
+
+  // Pass A: reserve up to MIN_TRUSTED_PERPLEXITY slots for trusted Perplexity candidates,
+  // walked in the same global score-sorted order. Quality-gated only — no blind top-N.
+  let reserved = 0;
+  const reservedIds = new Set<string>();
+  for (const c of sorted) {
+    if (reserved >= MIN_TRUSTED_PERPLEXITY) break;
+    if (!isTrustedPerplexity(c)) continue;
+    if (tryAdmit(c)) {
+      reservedIds.add(c.candidate_id);
+      reserved++;
+    }
+  }
+
+  // Pass B: existing tier-priority fill. Already-admitted candidates fall out via dedup sets
+  // (by document_id / url / title). Track candidate_id explicitly for items without those keys.
+  for (const c of sorted) {
+    if (reservedIds.has(c.candidate_id)) continue;
+    tryAdmit(c);
     if (out.length >= CAPS.MAX_CANDIDATES) break;
   }
+
 
   const counts = {
     by_origin: {} as Record<string, number>,
