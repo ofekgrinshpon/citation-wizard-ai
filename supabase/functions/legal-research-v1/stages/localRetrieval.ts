@@ -257,7 +257,7 @@ async function exactAuthorityLookup(
   try {
     for (const cl of clues) {
       const primary = cl.law_name || cl.docket || cl.search_terms[0];
-      if (!primary || primary.length < 6) continue;
+      if (!primary) continue;
       const cleaned = primary.replace(/[%_]/g, " ").slice(0, 120);
       const diag: ClueLookupDiag = {
         clue_kind: cl.kind, clue_source: cl.source,
@@ -273,17 +273,30 @@ async function exactAuthorityLookup(
         .select("id,title,citation,source_type,source_url,metadata")
         .limit(perQueryLimit);
       if (cl.kind === "docket") {
-        // Docket: keep substring OR match.
+        // Docket: keep substring OR match. Bypasses confidence guard by design.
+        if (cleaned.length < 4) { diag.status = "skipped_low_signal"; diag.exact_lookup_skipped = true; diags.push(diag); continue; }
         const pat = `%${cleaned}%`;
         q = q.or(`title.ilike.${pat},citation.ilike.${pat}`);
       } else {
-        // Statute / regulation: tokenized AND across title (handles parenthetical
-        // canonical names like "חוק החוזים (תרופות בשל הפרת חוזה)").
-        const toks = titleTokens(cleaned);
-        if (!toks.length) continue;
-        for (const t of toks) q = q.ilike("title", `%${t}%`);
-        diag.title_match_query = toks.join(" AND ");
+        // Statute / regulation: confidence guard before issuing any title ilike.
+        const guard = applyExactAuthorityGuard(cleaned);
+        diag.raw_clue = guard.raw_clue;
+        diag.normalized_clue = guard.normalized_clue;
+        diag.body_after_head_strip = guard.body_after_head_strip;
+        diag.candidate_title_tokens = guard.candidate_title_tokens;
+        diag.title_tokens_for_ilike = guard.title_tokens_for_ilike;
+        diag.exact_lookup_skipped = guard.exact_lookup_skipped;
+        if (guard.exact_lookup_skipped) {
+          diag.skipped_reason = guard.skipped_reason;
+          diag.status = "skipped_low_signal";
+          diag.title_match_query = "";
+          diags.push(diag);
+          continue;
+        }
+        for (const t of guard.title_tokens_for_ilike) q = q.ilike("title", `%${t}%`);
+        diag.title_match_query = guard.title_tokens_for_ilike.join(" AND ");
       }
+
       if (allowedTypes) q = q.in("source_type", allowedTypes);
       const r = (await Promise.race([q, timer])) as
         | { data: Array<{ id: string; title: string; citation: string; source_type: string; source_url: string | null; metadata: Record<string, unknown> }> | null; error: { message?: string } | null }
