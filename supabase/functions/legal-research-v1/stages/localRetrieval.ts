@@ -178,8 +178,61 @@ interface ClueLookupDiag {
   matched_document_ids: string[];
   matched_titles: string[];
   matched_chunk_id?: string;
-  status: "ok" | "empty" | "error" | "timeout";
+  status: "ok" | "empty" | "error" | "timeout" | "skipped_low_signal";
   error?: string;
+  // Confidence-guard diagnostics (statute / regulation clues only; dockets bypass).
+  raw_clue?: string;
+  normalized_clue?: string;
+  body_after_head_strip?: string;
+  candidate_title_tokens?: string[];     // raw output of titleTokens(), may include short tokens
+  title_tokens_for_ilike?: string[];     // tokens actually used in ilike chain; length>=3, count>=2
+  exact_lookup_skipped?: boolean;
+  skipped_reason?: "too_short" | "body_too_short" | "too_few_tokens" | "single_token";
+}
+
+// Heads stripped (single pass, case-exact, anchored at start) for body-length guard.
+// No domain stopwords — purely structural prefixes.
+const LEGAL_HEADS = ["חוק-יסוד", "חוק יסוד", "חוק", "פקודת", "פקודה", "תקנות"];
+export function stripLegalHead(s: string): string {
+  for (const h of LEGAL_HEADS) {
+    if (s.startsWith(h)) return s.slice(h.length).trimStart();
+  }
+  return s;
+}
+
+export interface GuardResult {
+  raw_clue: string;
+  normalized_clue: string;
+  body_after_head_strip: string;
+  candidate_title_tokens: string[];
+  title_tokens_for_ilike: string[];
+  exact_lookup_skipped: boolean;
+  skipped_reason?: "too_short" | "body_too_short" | "too_few_tokens" | "single_token";
+}
+
+// Generic confidence guard for exact_authority lookups (statute/regulation only).
+// Dockets are not passed through this guard.
+export function applyExactAuthorityGuard(raw: string): GuardResult {
+  const raw_clue = String(raw ?? "");
+  const normalized_clue = raw_clue.trim().replace(/\s+/g, " ");
+  const body_after_head_strip = stripLegalHead(normalized_clue);
+  const candidate_title_tokens = titleTokens(normalized_clue);
+  const title_tokens_for_ilike = candidate_title_tokens.filter((t) => t.length >= 3);
+
+  const base: GuardResult = {
+    raw_clue, normalized_clue, body_after_head_strip,
+    candidate_title_tokens, title_tokens_for_ilike: [],
+    exact_lookup_skipped: true,
+  };
+  if (normalized_clue.length < 10) return { ...base, skipped_reason: "too_short" };
+  if (body_after_head_strip.length < 4) return { ...base, skipped_reason: "body_too_short" };
+  if (title_tokens_for_ilike.length < 2) {
+    return {
+      ...base,
+      skipped_reason: title_tokens_for_ilike.length === 1 ? "single_token" : "too_few_tokens",
+    };
+  }
+  return { ...base, title_tokens_for_ilike, exact_lookup_skipped: false };
 }
 
 async function exactAuthorityLookup(
