@@ -776,6 +776,7 @@ export type Database = {
         Args: { payload: Json }
         Returns: number
       }
+      cleanup_email_unsubscribe_tokens: { Args: never; Returns: number }
       compute_verified_source_identity: {
         Args: {
           _full_citation: string
