@@ -63,7 +63,7 @@ export interface PlannerStageResult {
 }
 
 function plannerUserMessage(analyzer: AnalyzerOutput, question: string): string {
-  const payload = {
+  const payload: Record<string, unknown> = {
     question_he: question,
     legal_area: analyzer.legal_area,
     answer_type: analyzer.answer_type,
@@ -74,8 +74,12 @@ function plannerUserMessage(analyzer: AnalyzerOutput, question: string): string 
       is_black_letter: c.is_black_letter,
     })),
   };
+  if (analyzer.interpretation_note) {
+    payload.interpretation_note = analyzer.interpretation_note;
+  }
   return `ניתוח הטענות:\n${JSON.stringify(payload, null, 2)}\n\nצור שאילתות מחקר.`;
 }
+
 
 export async function runQueryPlanner(
   question: string,
