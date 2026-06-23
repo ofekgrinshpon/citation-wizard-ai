@@ -80,14 +80,25 @@ export function validateAnalyzer(raw: unknown): ValidationResult<AnalyzerOutput>
     claims.push({ claim_id, text_he, required_roles, is_black_letter, reason });
   });
 
+  const interpretation_note = isStr(r.interpretation_note)
+    ? (r.interpretation_note as string).trim()
+    : undefined;
+
   return {
     ok: errors.length === 0,
-    value: { confidence, legal_area, answer_type, claims },
+    value: {
+      confidence,
+      legal_area,
+      answer_type,
+      claims,
+      ...(interpretation_note ? { interpretation_note } : {}),
+    },
     errors,
     truncated_claims_count,
     truncated_queries_count: 0,
   };
 }
+
 
 // ─── Planner ────────────────────────────────────────────────────────────────
 export function validatePlanner(
