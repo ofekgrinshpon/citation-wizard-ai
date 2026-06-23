@@ -11,6 +11,7 @@ import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
 import { useOffice } from "@/hooks/useOffice";
 import { insertCitationAsFootnote } from "@/lib/wordInsertion";
 import type { SourceType } from "@/data/abbreviations";
+import { normalizeHebrewNumberRanges } from "@/lib/hebrewNumberRange";
 
 interface Message {
   role: "user" | "assistant";
