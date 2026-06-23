@@ -154,7 +154,7 @@ function pruneTurnsForStorage(turns: Turn[]): Turn[] {
   });
 }
 
-function safeWriteTurns(turns: Turn[]) {
+function safeWriteTurns(storageKey: string, turns: Turn[]) {
   try {
     let toWrite = pruneTurnsForStorage(turns);
     let serialized = JSON.stringify(toWrite);
@@ -162,7 +162,7 @@ function safeWriteTurns(turns: Turn[]) {
       toWrite = toWrite.slice(1);
       serialized = JSON.stringify(toWrite);
     }
-    sessionStorage.setItem(TURNS_STORAGE_KEY, serialized);
+    sessionStorage.setItem(storageKey, serialized);
   } catch { /* ignore quota */ }
 }
 
