@@ -559,6 +559,8 @@ const Index = () => {
     const isBillSource = sourceType === "bill" || (sourceType === "basic_law" && /הצעת/.test(rawText));
     const hasExplicitBillType = /הכנסת|הממשלה/.test(rawText);
     if (isBillSource && !hasExplicitBillType) {
+      setLoading(false);
+      setLoadingMessage(null);
       setPendingBillType({ rawText, normalized, sourceType: sourceType as SourceType, sourceLabel, newMessages });
       return;
     }
@@ -567,18 +569,19 @@ const Index = () => {
     const isTreatySource = sourceType === "treaty";
     const hasExplicitTreatyType = /נפתחה לחתימה|נחתמה ב|רב[- ]?צדדית|דו[- ]?צדדית/.test(rawText);
     if (isTreatySource && !hasExplicitTreatyType) {
+      setLoading(false);
+      setLoadingMessage(null);
       setPendingTreatyType({ rawText, normalized, sourceType: sourceType as SourceType, sourceLabel, newMessages });
       return;
     }
 
-    // Show searching message for case law queries
+    // Update loading message based on query type (loading was already turned on optimistically)
     const isCaseLawQuery = sourceType === "case_law_published" || sourceType === "case_law_database";
     if (isCaseLawQuery) {
       setLoadingMessage("🔍 מחפש פרטי פסק דין...");
     } else {
       setLoadingMessage(null);
     }
-    setLoading(true);
 
     try {
       const fullRawInput = buildFullRawInput(rawText, messages);
