@@ -11,6 +11,7 @@ import { ChevronDown, Paperclip, X, FileText, Trash2, ArrowUp, Loader2, Check, C
 import { toast } from "sonner";
 import { renderAnswerMarkdown } from "@/lib/legalQa/renderAnswerMarkdown";
 import { copyPlainText } from "@/lib/clipboard";
+import { normalizeHebrewNumberRanges } from "@/lib/hebrewNumberRange";
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
@@ -499,7 +500,7 @@ export function LegalResearchV1Panel() {
                               const sep = isLast ? "." : ";";
                               return (
                                 <div key={idx}>
-                                  <span>{s.title}{sep}</span>
+                                  <span>{normalizeHebrewNumberRanges(s.title)}{sep}</span>
                                   {s.url ? (
                                     <>
                                       {" "}
@@ -521,7 +522,7 @@ export function LegalResearchV1Panel() {
                       ) : (
                         <>
                           <span className="font-medium">{fn.number}.</span>{" "}
-                          <span>{fn.title}</span>
+                          <span>{normalizeHebrewNumberRanges(fn.title)}</span>
                           {fn.url ? (
                             <>
                               {" — "}
