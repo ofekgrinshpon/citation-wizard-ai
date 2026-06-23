@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { normalizeHebrewNumberRanges } from "@/lib/hebrewNumberRange";
 
 interface CitationRecord {
   id: string;
@@ -70,9 +71,11 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
       )
     : citations;
 
-  /** Extract only the citation line, stripping rules, warnings, labels */
+  /** Extract only the citation line, stripping rules, warnings, labels.
+   *  Applies Rule 1.10 normalization so cached rows render correctly. */
   const extractCitationOnly = (text: string) => {
-    const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
+    const normalized = normalizeHebrewNumberRanges(text);
+    const lines = normalized.split("\n").map(l => l.trim()).filter(Boolean);
     const citationLines = lines.filter(line =>
       !line.startsWith("📐") &&
       !line.startsWith("⚠️") &&
@@ -83,7 +86,7 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
       !/^מכיוון ש/.test(line) &&
       !/^הנוסחה ל/.test(line)
     );
-    return citationLines.length > 0 ? citationLines[citationLines.length - 1] : text;
+    return citationLines.length > 0 ? citationLines[citationLines.length - 1] : normalized;
   };
 
   /** Convert markdown bold/italic to HTML */
