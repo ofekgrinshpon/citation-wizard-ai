@@ -103,6 +103,25 @@ export const DOCTRINE_SYNONYMS: DoctrineSynonymEntry[] = [
       "צפיות הנזק",
     ],
   },
+  {
+    // British Mandate-era ordinance continuity.
+    // Trigger: פקודה / דבר המלך / חקיקה appearing near מנדטורי / המנדט
+    // (within ~30 chars). Narrow on purpose — won't fire on
+    // "הוראה מנדטורית" / "נורמה מנדטורית" (binding-norm reading).
+    id: "mandate_era_ordinance_continuity",
+    trigger: /(פקוד[הת]|דבר\s*המלך|חקיקה)[^\n]{0,30}?(מנדטורי(?:ת|ים|ות)?|המנדט)/u,
+    synonyms: [
+      "חקיקה מנדטורית",
+      "המשך תחולת חקיקה מנדטורית",
+      "פקודת סדרי השלטון והמשפט",
+      "סעיף 11 לפקודת סדרי השלטון והמשפט",
+      "נוסח חדש",
+      "פקודת מס הכנסה [נוסח חדש]",
+      "פקודת מס הכנסה [נוסח חדש] תשכ\"א-1961",
+      "Income Tax Ordinance 1947",
+    ],
+  },
+
 ];
 
 export interface ExpandedTerms {
