@@ -80,14 +80,25 @@ export function validateAnalyzer(raw: unknown): ValidationResult<AnalyzerOutput>
     claims.push({ claim_id, text_he, required_roles, is_black_letter, reason });
   });
 
+  const interpretation_note = isStr(r.interpretation_note)
+    ? (r.interpretation_note as string).trim()
+    : undefined;
+
   return {
     ok: errors.length === 0,
-    value: { confidence, legal_area, answer_type, claims },
+    value: {
+      confidence,
+      legal_area,
+      answer_type,
+      claims,
+      ...(interpretation_note ? { interpretation_note } : {}),
+    },
     errors,
     truncated_claims_count,
     truncated_queries_count: 0,
   };
 }
+
 
 // ─── Planner ────────────────────────────────────────────────────────────────
 export function validatePlanner(
@@ -160,6 +171,11 @@ export const ANALYZER_TOOL_PARAMETERS: Record<string, unknown> = {
     confidence: { type: "number", minimum: 0, maximum: 1 },
     legal_area: { type: "string" },
     answer_type: { type: "string", enum: [...ANSWER_TYPES] },
+    interpretation_note: {
+      type: "string",
+      description:
+        "Optional free-text note (Hebrew) recording how the analyzer disambiguated a key legal term in the user's question. Emit only when a disambiguation rule from the system prompt actually fired. Example: 'מנדטורי פורש כפקודה מתקופת המנדט הבריטי'.",
+    },
     claims: {
       type: "array",
       minItems: 1,
@@ -183,6 +199,7 @@ export const ANALYZER_TOOL_PARAMETERS: Record<string, unknown> = {
   required: ["confidence", "legal_area", "answer_type", "claims"],
   additionalProperties: false,
 };
+
 
 export const PLANNER_TOOL_PARAMETERS: Record<string, unknown> = {
   type: "object",

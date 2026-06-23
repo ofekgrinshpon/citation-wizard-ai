@@ -45,7 +45,11 @@ const SYSTEM_PROMPT = `אתה מתכנן שאילתות מחקר משפטי. ה�
 - factual_report ו־government_report מיועדים לדו"חות ולא לחוקים או פסקי דין.
 - expected_source_type חייב להתאים ל־role: statute/regulation עבור חקיקה ותקנות, case עבור פסיקה, academic עבור scholarship, report עבור דו"חות.
 
+כללי דיסאמביגואציה (interpretation_note):
+- אם הניתוח כולל interpretation_note שמסמן פרשנות "פקודה מתקופת המנדט הבריטי" / "Mandate-era ordinance" / המשך תחולת חקיקה מנדטורית — חובה לייצר לפחות שאילתה אחת שמכילה במפורש מונחים מההקשר ההיסטורי/המשכיותי, לדוגמה: "המנדט הבריטי", "נוסח חדש", "Income Tax Ordinance 1947", "המשך תחולת חקיקה מנדטורית", "סעיף 11 לפקודת סדרי השלטון והמשפט", או "פקודת מס הכנסה [נוסח חדש] תשכ\"א-1961". אל תסתפק בשאילתות שמחפשות תקנות עזר או הוראות מינהליות בלבד.
+
 החזר את התוצאה רק דרך הקריאה לכלי emit_research_queries.`;
+
 
 export interface PlannerStageResult {
   result: ValidationResult<PlannerOutput>;
@@ -59,7 +63,7 @@ export interface PlannerStageResult {
 }
 
 function plannerUserMessage(analyzer: AnalyzerOutput, question: string): string {
-  const payload = {
+  const payload: Record<string, unknown> = {
     question_he: question,
     legal_area: analyzer.legal_area,
     answer_type: analyzer.answer_type,
@@ -70,8 +74,12 @@ function plannerUserMessage(analyzer: AnalyzerOutput, question: string): string 
       is_black_letter: c.is_black_letter,
     })),
   };
+  if (analyzer.interpretation_note) {
+    payload.interpretation_note = analyzer.interpretation_note;
+  }
   return `ניתוח הטענות:\n${JSON.stringify(payload, null, 2)}\n\nצור שאילתות מחקר.`;
 }
+
 
 export async function runQueryPlanner(
   question: string,
