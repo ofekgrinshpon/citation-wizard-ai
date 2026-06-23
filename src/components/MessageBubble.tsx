@@ -33,7 +33,12 @@ interface MessageBubbleProps {
   onSelectOption?: (optionText: string) => void;
 }
 
-export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent, onSelectOption }: MessageBubbleProps) {
+export function MessageBubble({ msg: rawMsg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent, onSelectOption }: MessageBubbleProps) {
+  // Rule 1.10 safety net: enforce Hebrew number-range order on display/copy,
+  // including cached messages produced before the server-side fix.
+  const msg: Message = rawMsg.role === "assistant"
+    ? { ...rawMsg, content: normalizeHebrewNumberRanges(rawMsg.content) }
+    : rawMsg;
   const isUser = msg.role === "user";
   const { isOfficeAddin, hasDocumentAccess } = useOffice();
   const [isEditing, setIsEditing] = useState(false);
