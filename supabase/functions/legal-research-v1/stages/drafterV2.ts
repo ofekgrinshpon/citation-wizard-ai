@@ -27,6 +27,7 @@ import {
   type StructuredValidation,
 } from "./structuredValidation.ts";
 import { buildFootnotedAnswer } from "./footnoteBuilder.ts";
+import { normalizeHebrewNumberRanges } from "../../_shared/hebrewNumberRange.ts";
 
 const SYSTEM_PROMPT_V2 = `אתה משפטן/ית ישראלי/ת הכותב/ת מענה משפטי־מחקרי מדויק, בהיר ומבוסס מקורות בעברית, בהיקף המתאים לשאלה. התשובה מיועדת למשפטן/ית, סטודנט/ית למשפטים או חוקר/ת משפט, ולכן עליה לשלב עומק משפטי עם ניסוח טבעי וברור — לא כתיבה פרקטית מדי, ולא סגנון אקדמי מתורגם או מנופח.
 
@@ -525,6 +526,13 @@ export async function runDrafterV2(
 
   const built = buildFootnotedAnswer(parsed.draft, inputSources);
 
+  // Rule 1.10 — Hebrew number ranges must be written high→low in source order.
+  const answer_markdown = normalizeHebrewNumberRanges(built.answer_markdown);
+  const footnotes = built.footnotes.map((fn) => ({
+    ...fn,
+    text: normalizeHebrewNumberRanges(fn.text),
+  }));
+
   return {
     ok: true,
     ms: Date.now() - t_total,
@@ -534,9 +542,9 @@ export async function runDrafterV2(
     escalated,
     sources_passed,
     sources_used: built.used_sources.length,
-    answer_markdown: built.answer_markdown,
+    answer_markdown,
     used_sources: built.used_sources,
-    footnotes: built.footnotes,
+    footnotes,
     stage_runs,
     structured_validation: parsed.report,
     builder_report: built.builder_report,
