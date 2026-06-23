@@ -34,6 +34,96 @@ const MAX_PERSISTED_TURNS = 5;
 const MAX_PERSISTED_BYTES = 1_000_000; // ~1 MB sessionStorage budget
 const SCROLL_BOTTOM_THRESHOLD_PX = 80;
 
+type Origin = "local_db" | "perplexity";
+type Support = "direct" | "partial";
+type GroupKey =
+  | "primary_statute"
+  | "binding_case_law"
+  | "persuasive_case_law"
+  | "scholarship"
+  | "legislative_history"
+  | "government_report"
+  | "other";
+
+const GROUP_ORDER: GroupKey[] = [
+  "primary_statute",
+  "binding_case_law",
+  "persuasive_case_law",
+  "scholarship",
+  "legislative_history",
+  "government_report",
+  "other",
+];
+
+const GROUP_LABEL: Record<GroupKey, string> = {
+  primary_statute: "חקיקה ראשית ותקנות",
+  binding_case_law: "פסיקה מחייבת",
+  persuasive_case_law: "פסיקה משכנעת",
+  scholarship: "ספרות אקדמית",
+  legislative_history: "הליכי חקיקה",
+  government_report: "דוחות ממשלתיים",
+  other: "אחר",
+};
+
+const ROLE_LABEL: Record<string, string> = {
+  primary_statute: "חקיקה ראשית",
+  regulation: "תקנות",
+  binding_case_law: "פסיקה מחייבת",
+  persuasive_case_law: "פסיקה משכנעת",
+  scholarship: "ספרות אקדמית",
+  government_report: "דו״ח ממשלתי",
+  factual_report: "דו״ח עובדתי",
+};
+
+interface SourceResult {
+  rank: number;
+  title: string;
+  url: string | null;
+  source_type: string;
+  role: string;
+  origin: Origin;
+  support: Support;
+  role_match: boolean;
+  reason: string;
+  supported_claim_ids: string[];
+  snippet: string | null;
+  display_citation: string | null;
+  tier?: "recommended" | "additional";
+  url_validation_state?: "ok" | "unreachable" | "unverified";
+  url_status?: string;
+  url_unreachable?: boolean;
+}
+
+interface SourcesOnlyResponse {
+  mode: "sources_only";
+  question: string;
+  run_id: string;
+  sources: SourceResult[];
+  groups: Record<GroupKey, SourceResult[]>;
+  additional_sources?: SourceResult[];
+  additional_groups?: Partial<Record<GroupKey, SourceResult[]>>;
+  summary: {
+    total_candidates: number;
+    verified: number;
+    usable: number;
+    dropped: number;
+    local_count: number;
+    perplexity_count: number;
+    additional_count?: number;
+    url_checks_failed?: number;
+    url_checks_unverified?: number;
+  };
+  debug?: Record<string, unknown>;
+}
+
+function fmtElapsed(ms: number) {
+  const s = Math.floor(ms / 1000);
+  const mm = String(Math.floor(s / 60)).padStart(2, "0");
+  const ss = String(s % 60).padStart(2, "0");
+  return `${mm}:${ss}`;
+}
+
+
 type TurnStatus = "running" | "done" | "error";
 
 interface Turn {
