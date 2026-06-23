@@ -373,9 +373,11 @@ async function handle(req: Request): Promise<Response> {
       confidence: analyzer.confidence,
       legal_area: analyzer.legal_area,
       answer_type: analyzer.answer_type,
+      interpretation_note: analyzer.interpretation_note ?? null,
       schema_valid: analyzerStage.result.ok,
       ms: analyzerStage.stage_runs.reduce((s, r) => s + r.ms, 0),
     },
+
     planner: {
       model_initial: plannerStage.model_initial,
       model_final: plannerStage.model_final,
