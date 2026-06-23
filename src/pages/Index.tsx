@@ -521,8 +521,24 @@ const Index = () => {
     const PINPOINT_RE = /(?:סעיף|ס['׳']|פסקה|פס['׳']|עמ['׳']|לפסק\s+דינ[וה]\s+של|בעמ['׳']|שם,|פיסקה|השופט[ת]?\s|הנשיא[ה]?\s)/;
     if (!subscription.loading && subscription.isLimitReached) return;
 
-    // Step 1: Normalize abbreviations
+    // Step 1: Normalize abbreviations (sync)
     const normalized = normalizeAbbreviations(rawText);
+
+    // Show normalization info to user if text was changed
+    if (normalized !== rawText) {
+      toast.info("קיצורים תוקנו אוטומטית לפורמט תקני", { duration: 3000 });
+    }
+
+    // Optimistically render the user bubble + loading state IMMEDIATELY,
+    // before the async LLM classifier call, so the UI feels responsive.
+    setInput("");
+    const newMessages: Message[] = [
+      ...messages,
+      { role: "user", content: rawText.replace(/\[בחירת תוצאה\]\s*/g, '') },
+    ];
+    setMessages(newMessages);
+    setLoadingMessage("🔎 מזהה סוג מקור...");
+    setLoading(true);
 
     // Step 2: Detect source type — hybrid regex + Gemini classifier
     const resolved = await resolveSourceType(normalized);
@@ -539,22 +555,12 @@ const Index = () => {
       prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
     }
 
-    // Show normalization info to user if text was changed
-    if (normalized !== rawText) {
-      toast.info("קיצורים תוקנו אוטומטית לפורמט תקני", { duration: 3000 });
-    }
-
-    setInput("");
-    const newMessages: Message[] = [
-      ...messages,
-      { role: "user", content: rawText.replace(/\[בחירת תוצאה\]\s*/g, '') },
-    ];
-    setMessages(newMessages);
-
     // Check if this is a bill and user didn't specify הכנסת or הממשלה
     const isBillSource = sourceType === "bill" || (sourceType === "basic_law" && /הצעת/.test(rawText));
     const hasExplicitBillType = /הכנסת|הממשלה/.test(rawText);
     if (isBillSource && !hasExplicitBillType) {
+      setLoading(false);
+      setLoadingMessage(null);
       setPendingBillType({ rawText, normalized, sourceType: sourceType as SourceType, sourceLabel, newMessages });
       return;
     }
@@ -563,18 +569,19 @@ const Index = () => {
     const isTreatySource = sourceType === "treaty";
     const hasExplicitTreatyType = /נפתחה לחתימה|נחתמה ב|רב[- ]?צדדית|דו[- ]?צדדית/.test(rawText);
     if (isTreatySource && !hasExplicitTreatyType) {
+      setLoading(false);
+      setLoadingMessage(null);
       setPendingTreatyType({ rawText, normalized, sourceType: sourceType as SourceType, sourceLabel, newMessages });
       return;
     }
 
-    // Show searching message for case law queries
+    // Update loading message based on query type (loading was already turned on optimistically)
     const isCaseLawQuery = sourceType === "case_law_published" || sourceType === "case_law_database";
     if (isCaseLawQuery) {
       setLoadingMessage("🔍 מחפש פרטי פסק דין...");
     } else {
       setLoadingMessage(null);
     }
-    setLoading(true);
 
     try {
       const fullRawInput = buildFullRawInput(rawText, messages);
