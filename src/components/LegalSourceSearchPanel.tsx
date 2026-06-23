@@ -285,10 +285,30 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
     }, POLL_INTERVAL_MS);
   };
 
-  // Hydrate from sessionStorage (turns + legacy migration). Runs once.
+  // One-time cleanup of legacy unscoped keys from before per-project scoping.
   useEffect(() => {
+    try { sessionStorage.removeItem(TURNS_STORAGE_KEY_LEGACY_GLOBAL); } catch { /* ignore */ }
+    try { sessionStorage.removeItem(RESUME_STORAGE_KEY_LEGACY); } catch { /* ignore */ }
+  }, []);
+
+  // Project-scoped hydration. Runs whenever the active project changes:
+  // 1. Cancel any in-flight polling for the previous project.
+  // 2. Reset in-memory turn/stage state.
+  // 3. Hydrate from the new project's sessionStorage key (if any), then enable persistence.
+  // If no project id is available yet, stay empty and do not hydrate or persist.
+  useEffect(() => {
+    stopAll();
+    setCurrentStage(null);
+    setCompletedStages([]);
+    setElapsed(0);
+    setTurns([]);
+    setQuestion("");
+    hydratedForProjectRef.current = null;
+
+    if (!projectId) return;
+
     try {
-      const raw = sessionStorage.getItem(TURNS_STORAGE_KEY);
+      const raw = sessionStorage.getItem(turnsKeyFor(projectId));
       if (raw) {
         const parsed = JSON.parse(raw) as Turn[];
         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -298,33 +318,13 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
             startProgress(tail.startedAt);
             pollJob(tail.id);
           }
-          // Consume legacy key if still around.
-          try { sessionStorage.removeItem(RESUME_STORAGE_KEY_LEGACY); } catch { /* ignore */ }
-          hydratedRef.current = true;
-          return;
         }
-      }
-      // Legacy migration path.
-      const legacy = sessionStorage.getItem(RESUME_STORAGE_KEY_LEGACY);
-      if (legacy) {
-        const parsed = JSON.parse(legacy) as { jobId?: string; startedAt?: number };
-        if (parsed?.jobId) {
-          const migrated: Turn = {
-            id: parsed.jobId,
-            question: "",
-            status: "running",
-            startedAt: parsed.startedAt ?? Date.now(),
-          };
-          setTurns([migrated]);
-          startProgress(migrated.startedAt);
-          pollJob(migrated.id);
-        }
-        try { sessionStorage.removeItem(RESUME_STORAGE_KEY_LEGACY); } catch { /* ignore */ }
       }
     } catch { /* ignore */ }
-    hydratedRef.current = true;
+
+    hydratedForProjectRef.current = projectId;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [projectId]);
 
   // Hydrate from history sidebar click — reset panel to a single completed turn.
   useEffect(() => {
