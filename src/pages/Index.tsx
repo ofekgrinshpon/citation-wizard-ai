@@ -521,8 +521,24 @@ const Index = () => {
     const PINPOINT_RE = /(?:סעיף|ס['׳']|פסקה|פס['׳']|עמ['׳']|לפסק\s+דינ[וה]\s+של|בעמ['׳']|שם,|פיסקה|השופט[ת]?\s|הנשיא[ה]?\s)/;
     if (!subscription.loading && subscription.isLimitReached) return;
 
-    // Step 1: Normalize abbreviations
+    // Step 1: Normalize abbreviations (sync)
     const normalized = normalizeAbbreviations(rawText);
+
+    // Show normalization info to user if text was changed
+    if (normalized !== rawText) {
+      toast.info("קיצורים תוקנו אוטומטית לפורמט תקני", { duration: 3000 });
+    }
+
+    // Optimistically render the user bubble + loading state IMMEDIATELY,
+    // before the async LLM classifier call, so the UI feels responsive.
+    setInput("");
+    const newMessages: Message[] = [
+      ...messages,
+      { role: "user", content: rawText.replace(/\[בחירת תוצאה\]\s*/g, '') },
+    ];
+    setMessages(newMessages);
+    setLoadingMessage("🔎 מזהה סוג מקור...");
+    setLoading(true);
 
     // Step 2: Detect source type — hybrid regex + Gemini classifier
     const resolved = await resolveSourceType(normalized);
@@ -538,18 +554,6 @@ const Index = () => {
       const engineHint = buildEnginePromptHint(sourceType);
       prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
     }
-
-    // Show normalization info to user if text was changed
-    if (normalized !== rawText) {
-      toast.info("קיצורים תוקנו אוטומטית לפורמט תקני", { duration: 3000 });
-    }
-
-    setInput("");
-    const newMessages: Message[] = [
-      ...messages,
-      { role: "user", content: rawText.replace(/\[בחירת תוצאה\]\s*/g, '') },
-    ];
-    setMessages(newMessages);
 
     // Check if this is a bill and user didn't specify הכנסת or הממשלה
     const isBillSource = sourceType === "bill" || (sourceType === "basic_law" && /הצעת/.test(rawText));
