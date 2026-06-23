@@ -2,7 +2,7 @@
 // Keep the two files in sync. See that file for the rule's rationale.
 
 const HEBREW_LETTER_RE = /[\u05D0-\u05EA]/;
-const RANGE_RE = /(?<![\d./\\\-–−])(\d{1,4})\s*([\-–−])\s*(\d{1,4})(?![\d./\\\-–−])/g;
+const RANGE_RE = /(?<![\d\-–−])(?<!\d\.)(\d{1,4})\s*([\-–−])\s*(\d{1,4})(?![\d\-–−])(?!\.\d)/g;
 
 function normalizeParagraph(paragraph: string): string {
   if (!HEBREW_LETTER_RE.test(paragraph)) return paragraph;

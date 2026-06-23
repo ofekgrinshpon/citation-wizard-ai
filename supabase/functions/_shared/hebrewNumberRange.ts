@@ -14,7 +14,7 @@ const HEBREW_LETTER_RE = /[\u05D0-\u05EA]/;
 // num <sep> num where sep is hyphen / en-dash / minus, optional spaces.
 // Negative look-around prevents matching inside dates like 15-03-2024 or
 // decimals like 1.5-2.5 and avoids touching things like "1882-1904-1920".
-const RANGE_RE = /(?<![\d./\\\-–−])(\d{1,4})\s*([\-–−])\s*(\d{1,4})(?![\d./\\\-–−])/g;
+const RANGE_RE = /(?<![\d\-–−])(?<!\d\.)(\d{1,4})\s*([\-–−])\s*(\d{1,4})(?![\d\-–−])(?!\.\d)/g;
 
 // Skip ranges that look like a date fragment dd-mm-yyyy or yyyy-mm-dd.
 // Conservative: only skip exact 4-digit year split.
