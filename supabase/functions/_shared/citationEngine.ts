@@ -19,7 +19,7 @@
 export const GENERAL_RULES = {
   "1.1": { title: "מבנה אזכור כללי", description: "כל אזכור כולל את רכיבי המקור בסדר קבוע, ומסתיים בנקודה." },
   "1.9": { title: "הפרדה בפסיק", description: "פסיק להפרדה בין מספרים/מילים עוקבות שאינן ניתנות להבחנה אחרת." },
-  "1.10": { title: "טווחי מספרים", description: "בעברית: טווח מימין לשמאל." },
+  "1.10": { title: "טווחי מספרים", description: "בעברית: טווח מימין לשמאל (אכיפה: hebrewNumberRange.ts → normalizeHebrewNumberRanges)." },
 } as const;
 
 // ─── Interfaces ──────────────────────────────────────────────────

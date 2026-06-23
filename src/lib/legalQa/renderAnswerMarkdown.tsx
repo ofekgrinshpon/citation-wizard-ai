@@ -1,13 +1,16 @@
 import { ReactNode } from "react";
+import { normalizeHebrewNumberRanges } from "@/lib/hebrewNumberRange";
 
 /**
  * Render answer markdown with **bold** segments converted to <strong>.
  * Preserves all other characters (newlines handled by whitespace-pre-wrap on parent).
  * Unmatched ** are rendered as literal text.
+ * Also enforces Rule 1.10 (Hebrew number ranges high→low) on display, so
+ * cached answers from before the server-side fix also display correctly.
  */
 export function renderAnswerMarkdown(text: string): ReactNode[] {
   const parts: ReactNode[] = [];
-  let remaining = text;
+  let remaining = normalizeHebrewNumberRanges(text);
   let key = 0;
 
   while (remaining.length > 0) {
