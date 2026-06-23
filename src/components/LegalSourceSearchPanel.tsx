@@ -29,7 +29,8 @@ const POLL_INTERVAL_MS = 2_000;
 const SOFT_NOTICE_1_MS = 120_000;
 const SOFT_NOTICE_2_MS = 240_000;
 const RESUME_STORAGE_KEY_LEGACY = "legal-source-search:active_job";
-const TURNS_STORAGE_KEY = "legal-source-search:turns";
+const TURNS_STORAGE_KEY_LEGACY_GLOBAL = "legal-source-search:turns";
+const turnsKeyFor = (projectId: string) => `legal-source-search:turns:${projectId}`;
 const MAX_PERSISTED_TURNS = 5;
 const MAX_PERSISTED_BYTES = 1_000_000; // ~1 MB sessionStorage budget
 const SCROLL_BOTTOM_THRESHOLD_PX = 80;
@@ -153,7 +154,7 @@ function pruneTurnsForStorage(turns: Turn[]): Turn[] {
   });
 }
 
-function safeWriteTurns(turns: Turn[]) {
+function safeWriteTurns(storageKey: string, turns: Turn[]) {
   try {
     let toWrite = pruneTurnsForStorage(turns);
     let serialized = JSON.stringify(toWrite);
@@ -161,7 +162,7 @@ function safeWriteTurns(turns: Turn[]) {
       toWrite = toWrite.slice(1);
       serialized = JSON.stringify(toWrite);
     }
-    sessionStorage.setItem(TURNS_STORAGE_KEY, serialized);
+    sessionStorage.setItem(storageKey, serialized);
   } catch { /* ignore quota */ }
 }
 
@@ -183,17 +184,21 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
   const startRef = useRef<number>(0);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const hydratedRef = useRef(false);
+  const hydratedForProjectRef = useRef<string | null>(null);
 
   const activeTurn = turns[turns.length - 1];
   const loading = activeTurn?.status === "running";
   const jobId = loading ? activeTurn?.id ?? null : null;
 
-  // Persist turns on every change (skip the very first hydrate pass).
+  const projectId = currentProject?.id ?? null;
+
+  // Persist turns on every change, but only after hydration for this project completed,
+  // and only when a real project id exists. Never persist under a shared/no-project bucket.
   useEffect(() => {
-    if (!hydratedRef.current) return;
-    safeWriteTurns(turns);
-  }, [turns]);
+    if (!projectId) return;
+    if (hydratedForProjectRef.current !== projectId) return;
+    safeWriteTurns(turnsKeyFor(projectId), turns);
+  }, [turns, projectId]);
 
   // Auto-scroll to bottom when near bottom.
   useEffect(() => {
@@ -280,10 +285,30 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
     }, POLL_INTERVAL_MS);
   };
 
-  // Hydrate from sessionStorage (turns + legacy migration). Runs once.
+  // One-time cleanup of legacy unscoped keys from before per-project scoping.
   useEffect(() => {
+    try { sessionStorage.removeItem(TURNS_STORAGE_KEY_LEGACY_GLOBAL); } catch { /* ignore */ }
+    try { sessionStorage.removeItem(RESUME_STORAGE_KEY_LEGACY); } catch { /* ignore */ }
+  }, []);
+
+  // Project-scoped hydration. Runs whenever the active project changes:
+  // 1. Cancel any in-flight polling for the previous project.
+  // 2. Reset in-memory turn/stage state.
+  // 3. Hydrate from the new project's sessionStorage key (if any), then enable persistence.
+  // If no project id is available yet, stay empty and do not hydrate or persist.
+  useEffect(() => {
+    stopAll();
+    setCurrentStage(null);
+    setCompletedStages([]);
+    setElapsed(0);
+    setTurns([]);
+    setQuestion("");
+    hydratedForProjectRef.current = null;
+
+    if (!projectId) return;
+
     try {
-      const raw = sessionStorage.getItem(TURNS_STORAGE_KEY);
+      const raw = sessionStorage.getItem(turnsKeyFor(projectId));
       if (raw) {
         const parsed = JSON.parse(raw) as Turn[];
         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -293,33 +318,13 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
             startProgress(tail.startedAt);
             pollJob(tail.id);
           }
-          // Consume legacy key if still around.
-          try { sessionStorage.removeItem(RESUME_STORAGE_KEY_LEGACY); } catch { /* ignore */ }
-          hydratedRef.current = true;
-          return;
         }
-      }
-      // Legacy migration path.
-      const legacy = sessionStorage.getItem(RESUME_STORAGE_KEY_LEGACY);
-      if (legacy) {
-        const parsed = JSON.parse(legacy) as { jobId?: string; startedAt?: number };
-        if (parsed?.jobId) {
-          const migrated: Turn = {
-            id: parsed.jobId,
-            question: "",
-            status: "running",
-            startedAt: parsed.startedAt ?? Date.now(),
-          };
-          setTurns([migrated]);
-          startProgress(migrated.startedAt);
-          pollJob(migrated.id);
-        }
-        try { sessionStorage.removeItem(RESUME_STORAGE_KEY_LEGACY); } catch { /* ignore */ }
       }
     } catch { /* ignore */ }
-    hydratedRef.current = true;
+
+    hydratedForProjectRef.current = projectId;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [projectId]);
 
   // Hydrate from history sidebar click — reset panel to a single completed turn.
   useEffect(() => {
@@ -434,7 +439,9 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
     setTurns([]);
     setCurrentStage(null);
     setCompletedStages([]);
-    try { sessionStorage.removeItem(TURNS_STORAGE_KEY); } catch { /* ignore */ }
+    if (projectId) {
+      try { sessionStorage.removeItem(turnsKeyFor(projectId)); } catch { /* ignore */ }
+    }
   };
 
   const sendDisabled = loading || question.trim().length < 5;
