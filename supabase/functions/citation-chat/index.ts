@@ -54,6 +54,7 @@ import {
   anyUrlContainsDocketVia,
   type DocketAnchorVia,
 } from "../_shared/trustedHosts.ts";
+import { normalizeHebrewNumberRanges } from "../_shared/hebrewNumberRange.ts";
 
 // ── Tier-2 open-web fallback (flag-gated) ──────────────────────────────────
 // Tier-1 = existing call with `search_domain_filter` (high-authority legal
@@ -2851,6 +2852,8 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     });
     content = fixHebrewYearPrefix(content);
     content = normalizeArticleYearByRule2492(content);
+    // Rule 1.10: Hebrew number ranges must be high→low (renders low on the right in RTL).
+    content = normalizeHebrewNumberRanges(content);
     // Strip persona/preamble openings if the model regresses
     content = content.replace(
       /^\s*(?:["'״׳]?\s*)?(העוזר[^\n]*|המערכת[^\n]*מזהה[^\n]*|מכיוון שמדובר[^\n]*|אני\s+(?:מזהה|מבין|מבחין)[^\n]*|שלב\s*\d+[^\n]*)\n+/u,
