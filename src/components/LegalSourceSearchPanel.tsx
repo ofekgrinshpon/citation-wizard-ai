@@ -29,7 +29,8 @@ const POLL_INTERVAL_MS = 2_000;
 const SOFT_NOTICE_1_MS = 120_000;
 const SOFT_NOTICE_2_MS = 240_000;
 const RESUME_STORAGE_KEY_LEGACY = "legal-source-search:active_job";
-const TURNS_STORAGE_KEY = "legal-source-search:turns";
+const TURNS_STORAGE_KEY_LEGACY_GLOBAL = "legal-source-search:turns";
+const turnsKeyFor = (projectId: string) => `legal-source-search:turns:${projectId}`;
 const MAX_PERSISTED_TURNS = 5;
 const MAX_PERSISTED_BYTES = 1_000_000; // ~1 MB sessionStorage budget
 const SCROLL_BOTTOM_THRESHOLD_PX = 80;
