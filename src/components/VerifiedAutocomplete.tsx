@@ -86,28 +86,69 @@ export function VerifiedAutocomplete({
         return;
       }
 
-      // Split into individual words for better partial matching
-      // e.g. "חוק יסוד הכנסת" needs to match "חוק-יסוד: הכנסת"
-      const words = value.toLowerCase().split(/[\s\-:]+/).filter(w => w.length >= 2);
+      // Small Hebrew noise list — do NOT include legally meaningful tokens
+      // like חוק, יסוד, משפט, תקנות, פקודה, נוסח.
+      const STOPWORDS = new Set(["של", "על", "את", "עם", "אל", "כי", "או", "גם"]);
 
-      // Also check if input contains a case number pattern (e.g., "1514/01" or "1514")
-      const caseNumberParts = value.match(/\d+(?:\/\d+)?/g) || [];
+      // Sanitize tokens before interpolating into a PostgREST .or() filter.
+      // Strip commas, parens, quotes, %/_ wildcards, backslashes and other
+      // characters that would break the filter syntax or leak wildcards.
+      const sanitize = (t: string) =>
+        t.replace(/["״׳'`\\,()%_*]/g, "").trim();
 
-      const allTerms = [...words, ...caseNumberParts].filter(t => t.length >= 2);
-      // Strip quotes and special chars that break PostgREST or() filters
-      const uniqueTerms = Array.from(new Set(allTerms)).map(t => t.replace(/["״׳'\\,()]/g, '')).filter(t => t.length >= 2);
+      // Word tokens (Hebrew/English text), split on whitespace and common punctuation
+      const rawWords = value
+        .toLowerCase()
+        .split(/[\s\-:;.,"'״׳`()\[\]{}]+/)
+        .map(sanitize)
+        .filter((w) => w.length >= 2 && !STOPWORDS.has(w) && !/^\d+(?:\/\d+)?$/.test(w));
 
-      const orConditions = uniqueTerms.flatMap(w => [
-        `search_text.ilike.%${w}%`,
-        `source_name.ilike.%${w}%`,
-        `full_citation.ilike.%${w}%`,
-      ]).join(',');
+      // Case-number style numeric tokens (e.g. "5658/23", "1514")
+      const caseNumberParts = (value.match(/\d+(?:\/\d+)?/g) || [])
+        .map(sanitize)
+        .filter((t) => t.length >= 1);
 
-      const { data } = await supabase
+      const uniqueWords = Array.from(new Set(rawWords));
+      const uniqueNumbers = Array.from(new Set(caseNumberParts));
+
+      if (uniqueWords.length === 0 && uniqueNumbers.length === 0) {
+        setSuggestions([]);
+        setIsOpen(false);
+        return;
+      }
+
+      let query = supabase
         .from("verified_sources")
         .select("id, source_name, full_citation, source_type, year, volume, page, metadata")
-        .eq("verification_status", "verified")
-        .or(orConditions)
+        .eq("verification_status", "verified");
+
+      // AND across words (chained .or() groups), OR across columns within a word.
+      for (const w of uniqueWords) {
+        query = query.or(
+          [
+            `search_text.ilike.%${w}%`,
+            `source_name.ilike.%${w}%`,
+            `full_citation.ilike.%${w}%`,
+          ].join(","),
+        );
+      }
+
+      // Numeric/case-number tokens: single OR group (alternatives, not required AND).
+      if (uniqueNumbers.length > 0) {
+        query = query.or(
+          uniqueNumbers
+            .flatMap((n) => [
+              `search_text.ilike.%${n}%`,
+              `source_name.ilike.%${n}%`,
+              `full_citation.ilike.%${n}%`,
+            ])
+            .join(","),
+        );
+      }
+
+      const { data } = await query
+        .order("usage_count", { ascending: false, nullsFirst: false })
+        .order("source_name", { ascending: true })
         .limit(8);
 
       if (data && data.length > 0) {
