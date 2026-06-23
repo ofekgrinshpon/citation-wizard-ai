@@ -28,7 +28,11 @@ const STAGES: Array<{ key: string; label: string }> = [
 const POLL_INTERVAL_MS = 2_000;
 const SOFT_NOTICE_1_MS = 120_000;
 const SOFT_NOTICE_2_MS = 240_000;
-const RESUME_STORAGE_KEY = "legal-source-search:active_job";
+const RESUME_STORAGE_KEY_LEGACY = "legal-source-search:active_job";
+const TURNS_STORAGE_KEY = "legal-source-search:turns";
+const MAX_PERSISTED_TURNS = 5;
+const MAX_PERSISTED_BYTES = 1_000_000; // ~1 MB sessionStorage budget
+const SCROLL_BOTTOM_THRESHOLD_PX = 80;
 
 type Origin = "local_db" | "perplexity";
 type Support = "direct" | "partial";
@@ -85,7 +89,6 @@ interface SourceResult {
   snippet: string | null;
   display_citation: string | null;
   tier?: "recommended" | "additional";
-  // URL liveness validation (sources_only mode, perplexity-origin only).
   url_validation_state?: "ok" | "unreachable" | "unverified";
   url_status?: string;
   url_unreachable?: boolean;
@@ -97,7 +100,6 @@ interface SourcesOnlyResponse {
   run_id: string;
   sources: SourceResult[];
   groups: Record<GroupKey, SourceResult[]>;
-  // Optional — older history rows won't have these.
   additional_sources?: SourceResult[];
   additional_groups?: Partial<Record<GroupKey, SourceResult[]>>;
   summary: {
@@ -121,6 +123,48 @@ function fmtElapsed(ms: number) {
   return `${mm}:${ss}`;
 }
 
+
+type TurnStatus = "running" | "done" | "error";
+
+interface Turn {
+  id: string;
+  question: string;
+  status: TurnStatus;
+  result?: SourcesOnlyResponse;
+  error?: string;
+  startedAt: number;
+}
+
+function genTurnId(): string {
+  try {
+    if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
+  } catch { /* ignore */ }
+  return `tmp_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+}
+
+function pruneTurnsForStorage(turns: Turn[]): Turn[] {
+  // Keep at most MAX_PERSISTED_TURNS, strip `debug` from non-tail results to save space.
+  const trimmed = turns.slice(-MAX_PERSISTED_TURNS);
+  return trimmed.map((t, idx) => {
+    const isTail = idx === trimmed.length - 1;
+    if (isTail || !t.result) return t;
+    const { debug: _debug, ...rest } = t.result;
+    return { ...t, result: rest as SourcesOnlyResponse };
+  });
+}
+
+function safeWriteTurns(turns: Turn[]) {
+  try {
+    let toWrite = pruneTurnsForStorage(turns);
+    let serialized = JSON.stringify(toWrite);
+    while (serialized.length > MAX_PERSISTED_BYTES && toWrite.length > 1) {
+      toWrite = toWrite.slice(1);
+      serialized = JSON.stringify(toWrite);
+    }
+    sessionStorage.setItem(TURNS_STORAGE_KEY, serialized);
+  } catch { /* ignore quota */ }
+}
+
 interface LegalSourceSearchPanelProps {
   externalResult?: { question: string; payload: SourcesOnlyResponse } | null;
   onConsumeExternalResult?: () => void;
@@ -129,29 +173,37 @@ interface LegalSourceSearchPanelProps {
 export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult }: LegalSourceSearchPanelProps = {}) {
   const { currentProject } = useProjects();
   const [question, setQuestion] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [turns, setTurns] = useState<Turn[]>([]);
   const [currentStage, setCurrentStage] = useState<string | null>(null);
   const [completedStages, setCompletedStages] = useState<string[]>([]);
   const [elapsed, setElapsed] = useState(0);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<SourcesOnlyResponse | null>(null);
-  const [jobId, setJobId] = useState<string | null>(null);
-
-  // Hydrate from history click
-  useEffect(() => {
-    if (externalResult?.payload) {
-      setResult(externalResult.payload);
-      setQuestion(externalResult.question || "");
-      setLoading(false);
-      setError(null);
-      onConsumeExternalResult?.();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [externalResult]);
 
   const progressTimerRef = useRef<number | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const startRef = useRef<number>(0);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const hydratedRef = useRef(false);
+
+  const activeTurn = turns[turns.length - 1];
+  const loading = activeTurn?.status === "running";
+  const jobId = loading ? activeTurn?.id ?? null : null;
+
+  // Persist turns on every change (skip the very first hydrate pass).
+  useEffect(() => {
+    if (!hydratedRef.current) return;
+    safeWriteTurns(turns);
+  }, [turns]);
+
+  // Auto-scroll to bottom when near bottom.
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const distance = el.scrollHeight - (el.scrollTop + el.clientHeight);
+    if (distance <= SCROLL_BOTTOM_THRESHOLD_PX) {
+      bottomRef.current?.scrollIntoView({ block: "end" });
+    }
+  }, [turns, currentStage, completedStages, elapsed]);
 
   useEffect(() => {
     return () => {
@@ -169,18 +221,6 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
       window.clearInterval(pollTimerRef.current);
       pollTimerRef.current = null;
     }
-  };
-
-  const clearResume = () => {
-    try { sessionStorage.removeItem(RESUME_STORAGE_KEY); } catch { /* ignore */ }
-  };
-
-  const handleCancel = () => {
-    stopAll();
-    setLoading(false);
-    setJobId(null);
-    clearResume();
-    setError("הבקשה בוטלה. הפעלת חיפוש חדשה תפתח עבודה חדשה.");
   };
 
   const startProgress = (startedAt?: number) => {
@@ -223,16 +263,16 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
           stopAll();
           setCurrentStage(null);
           setCompletedStages(STAGES.map((s) => s.key));
-          setResult(row.result as SourcesOnlyResponse);
-          setLoading(false);
-          setJobId(null);
-          clearResume();
+          setTurns((prev) =>
+            prev.map((t) => (t.id === jid ? { ...t, status: "done", result: row.result } : t)),
+          );
         } else if (row.status === "error") {
           stopAll();
-          setLoading(false);
-          setJobId(null);
-          clearResume();
-          setError(row.error || "אירעה שגיאה בעיבוד הבקשה.");
+          setTurns((prev) =>
+            prev.map((t) =>
+              t.id === jid ? { ...t, status: "error", error: row.error || "אירעה שגיאה בעיבוד הבקשה." } : t,
+            ),
+          );
         }
       } catch (e) {
         console.warn("[lss poll threw]", e);
@@ -240,33 +280,107 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
     }, POLL_INTERVAL_MS);
   };
 
-  // Resume-on-mount
+  // Hydrate from sessionStorage (turns + legacy migration). Runs once.
   useEffect(() => {
     try {
-      const raw = sessionStorage.getItem(RESUME_STORAGE_KEY);
-      if (!raw) return;
-      const parsed = JSON.parse(raw) as { jobId: string; startedAt: number };
-      if (!parsed?.jobId) return;
-      setJobId(parsed.jobId);
-      setLoading(true);
-      setError(null);
-      setResult(null);
-      startProgress(parsed.startedAt);
-      pollJob(parsed.jobId);
+      const raw = sessionStorage.getItem(TURNS_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Turn[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setTurns(parsed);
+          const tail = parsed[parsed.length - 1];
+          if (tail.status === "running") {
+            startProgress(tail.startedAt);
+            pollJob(tail.id);
+          }
+          // Consume legacy key if still around.
+          try { sessionStorage.removeItem(RESUME_STORAGE_KEY_LEGACY); } catch { /* ignore */ }
+          hydratedRef.current = true;
+          return;
+        }
+      }
+      // Legacy migration path.
+      const legacy = sessionStorage.getItem(RESUME_STORAGE_KEY_LEGACY);
+      if (legacy) {
+        const parsed = JSON.parse(legacy) as { jobId?: string; startedAt?: number };
+        if (parsed?.jobId) {
+          const migrated: Turn = {
+            id: parsed.jobId,
+            question: "",
+            status: "running",
+            startedAt: parsed.startedAt ?? Date.now(),
+          };
+          setTurns([migrated]);
+          startProgress(migrated.startedAt);
+          pollJob(migrated.id);
+        }
+        try { sessionStorage.removeItem(RESUME_STORAGE_KEY_LEGACY); } catch { /* ignore */ }
+      }
     } catch { /* ignore */ }
+    hydratedRef.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Hydrate from history sidebar click — reset panel to a single completed turn.
+  useEffect(() => {
+    if (externalResult?.payload) {
+      stopAll();
+      setCurrentStage(null);
+      setCompletedStages([]);
+      setTurns([
+        {
+          id: genTurnId(),
+          question: externalResult.question || "",
+          status: "done",
+          result: externalResult.payload,
+          startedAt: Date.now(),
+        },
+      ]);
+      setQuestion("");
+      onConsumeExternalResult?.();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [externalResult]);
+
+  const handleCancel = () => {
+    if (!activeTurn || activeTurn.status !== "running") return;
+    const tailId = activeTurn.id;
+    stopAll();
+    setTurns((prev) =>
+      prev.map((t) =>
+        t.id === tailId
+          ? { ...t, status: "error", error: "הבקשה בוטלה. הפעלת חיפוש חדשה תפתח עבודה חדשה." }
+          : t,
+      ),
+    );
+  };
 
   const handleSubmit = async () => {
     const q = question.trim();
     if (q.length < 5) {
-      setError("השאלה קצרה מדי. נסו לפרט יותר.");
+      // Surface as an error on a transient turn-less notice: append an error turn so user sees feedback.
+      setTurns((prev) => [
+        ...prev,
+        {
+          id: genTurnId(),
+          question: q,
+          status: "error",
+          error: "השאלה קצרה מדי. נסו לפרט יותר.",
+          startedAt: Date.now(),
+        },
+      ]);
       return;
     }
-    setError(null);
-    setResult(null);
-    setLoading(true);
-    startProgress();
+    if (loading) return;
+
+    const placeholderId = genTurnId();
+    const startedAt = Date.now();
+    setTurns((prev) => [
+      ...prev,
+      { id: placeholderId, question: q, status: "running", startedAt },
+    ]);
+    setQuestion("");
+    startProgress(startedAt);
 
     try {
       const { data, error: invokeErr } = await supabase.functions.invoke<{
@@ -282,23 +396,28 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
       });
       if (invokeErr || !data?.job_id) {
         stopAll();
-        setLoading(false);
-        setError(invokeErr?.message || "לא הצלחנו לפתוח את הבקשה.");
+        setTurns((prev) =>
+          prev.map((t) =>
+            t.id === placeholderId
+              ? { ...t, status: "error", error: invokeErr?.message || "לא הצלחנו לפתוח את הבקשה." }
+              : t,
+          ),
+        );
         return;
       }
-      setJobId(data.job_id);
-      try {
-        sessionStorage.setItem(
-          RESUME_STORAGE_KEY,
-          JSON.stringify({ jobId: data.job_id, startedAt: startRef.current }),
-        );
-      } catch { /* ignore */ }
-      pollJob(data.job_id);
+      const realId = data.job_id;
+      setTurns((prev) =>
+        prev.map((t) => (t.id === placeholderId ? { ...t, id: realId } : t)),
+      );
+      pollJob(realId);
     } catch (e) {
       stopAll();
-      setLoading(false);
       const msg = e instanceof Error ? e.message : String(e);
-      setError(msg || "שגיאה לא ידועה.");
+      setTurns((prev) =>
+        prev.map((t) =>
+          t.id === placeholderId ? { ...t, status: "error", error: msg || "שגיאה לא ידועה." } : t,
+        ),
+      );
     }
   };
 
@@ -312,76 +431,88 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
   const handleClearAll = () => {
     if (loading) return;
     setQuestion("");
-    setResult(null);
-    setError(null);
+    setTurns([]);
+    setCurrentStage(null);
+    setCompletedStages([]);
+    try { sessionStorage.removeItem(TURNS_STORAGE_KEY); } catch { /* ignore */ }
   };
 
   const sendDisabled = loading || question.trim().length < 5;
-  const debug = (result?.debug ?? {}) as Record<string, unknown>;
-  const hasContentToClear = question.trim().length > 0 || !!result || !!error;
+  const hasContentToClear = question.trim().length > 0 || turns.length > 0;
 
   return (
     <div className="flex flex-col h-full min-h-0" dir="rtl">
-      <div className="flex-1 min-h-0 overflow-y-auto space-y-4 pb-4">
-        {loading && (
-          <div className="space-y-3 animate-fade-in">
-            <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-3">
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">מחפש מקורות…</span>
-                <span>{fmtElapsed(elapsed)}</span>
-              </div>
-              <ol className="space-y-2">
-                {STAGES.map((stage) => {
-                  const isDone = completedStages.includes(stage.key);
-                  const isActive = !isDone && currentStage === stage.key;
-                  return (
-                    <li key={stage.key} className="flex items-center gap-2.5 text-sm">
-                      <span className="flex w-5 h-5 items-center justify-center shrink-0">
-                        {isDone ? (
-                          <Check className="w-4 h-4 text-primary" />
-                        ) : isActive ? (
-                          <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                        ) : (
-                          <span className="w-3.5 h-3.5 rounded-full border border-border" />
-                        )}
-                      </span>
-                      <span className={isDone ? "text-foreground" : isActive ? "text-foreground font-medium" : "text-muted-foreground"}>
-                        {stage.label}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ol>
-              {elapsed < SOFT_NOTICE_1_MS && (
-                <p className="text-xs text-muted-foreground">לרוב זה לוקח כדקה–שתיים</p>
-              )}
-              {elapsed >= SOFT_NOTICE_1_MS && elapsed < SOFT_NOTICE_2_MS && (
-                <p className="text-xs text-muted-foreground">עדיין עובד…</p>
-              )}
-              {elapsed >= SOFT_NOTICE_2_MS && (
-                <p className="text-xs text-muted-foreground">עדיין עובד ברקע, אפשר להמתין או לבטל</p>
-              )}
-              {jobId && (
-                <div className="flex justify-end pt-1">
-                  <Button onClick={handleCancel} variant="ghost" size="sm" className="h-7 px-2 text-xs">
-                    בטל
-                  </Button>
+      <div ref={scrollContainerRef} className="flex-1 min-h-0 overflow-y-auto space-y-6 pb-4">
+        {turns.map((turn, idx) => {
+          const isTail = idx === turns.length - 1;
+          const debug = (turn.result?.debug ?? {}) as Record<string, unknown>;
+          return (
+            <div key={turn.id} className="space-y-3">
+              {turn.question ? <UserQueryBubble question={turn.question} /> : null}
+
+              {turn.status === "running" && isTail && (
+                <div className="space-y-3 animate-fade-in">
+                  <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-3">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span className="font-medium text-foreground">מחפש מקורות…</span>
+                      <span>{fmtElapsed(elapsed)}</span>
+                    </div>
+                    <ol className="space-y-2">
+                      {STAGES.map((stage) => {
+                        const isDone = completedStages.includes(stage.key);
+                        const isActive = !isDone && currentStage === stage.key;
+                        return (
+                          <li key={stage.key} className="flex items-center gap-2.5 text-sm">
+                            <span className="flex w-5 h-5 items-center justify-center shrink-0">
+                              {isDone ? (
+                                <Check className="w-4 h-4 text-primary" />
+                              ) : isActive ? (
+                                <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                              ) : (
+                                <span className="w-3.5 h-3.5 rounded-full border border-border" />
+                              )}
+                            </span>
+                            <span className={isDone ? "text-foreground" : isActive ? "text-foreground font-medium" : "text-muted-foreground"}>
+                              {stage.label}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ol>
+                    {elapsed < SOFT_NOTICE_1_MS && (
+                      <p className="text-xs text-muted-foreground">לרוב זה לוקח כדקה–שתיים</p>
+                    )}
+                    {elapsed >= SOFT_NOTICE_1_MS && elapsed < SOFT_NOTICE_2_MS && (
+                      <p className="text-xs text-muted-foreground">עדיין עובד…</p>
+                    )}
+                    {elapsed >= SOFT_NOTICE_2_MS && (
+                      <p className="text-xs text-muted-foreground">עדיין עובד ברקע, אפשר להמתין או לבטל</p>
+                    )}
+                    {jobId && (
+                      <div className="flex justify-end pt-1">
+                        <Button onClick={handleCancel} variant="ghost" size="sm" className="h-7 px-2 text-xs">
+                          בטל
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                  <SourceSkeleton />
                 </div>
               )}
+
+              {turn.status === "error" && (
+                <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
+                  {turn.error || "אירעה שגיאה."}
+                </div>
+              )}
+
+              {turn.status === "done" && turn.result && (
+                <SourceResultsView result={turn.result} debug={debug} />
+              )}
             </div>
-            <SourceSkeleton />
-          </div>
-        )}
-
-        {error && !loading && (
-          <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
-            {error}
-          </div>
-        )}
-
-        {result && !loading && (
-          <SourceResultsView result={result} debug={debug} />
-        )}
+          );
+        })}
+        <div ref={bottomRef} />
       </div>
 
       {/* Composer */}
@@ -422,6 +553,16 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
             </button>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function UserQueryBubble({ question }: { question: string }) {
+  return (
+    <div className="flex justify-start">
+      <div className="max-w-[85%] rounded-2xl bg-primary/10 border border-primary/20 px-3.5 py-2 text-sm leading-relaxed text-foreground whitespace-pre-wrap break-words">
+        {question}
       </div>
     </div>
   );
