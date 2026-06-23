@@ -46,7 +46,15 @@ export interface AnalyzerOutput {
   legal_area: string;
   answer_type: AnswerType;
   claims: Claim[];
+  /**
+   * Optional free-text note from the analyzer recording how it disambiguated
+   * a key term in the user's question (e.g. "מנדטורי פורש כפקודה מתקופת המנדט
+   * הבריטי"). Surfaced into planning debug metadata and passed to the query
+   * planner so it can bias query generation accordingly.
+   */
+  interpretation_note?: string;
 }
+
 
 export interface Query {
   claim_id: string;
