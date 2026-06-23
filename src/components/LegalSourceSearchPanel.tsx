@@ -439,7 +439,9 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
     setTurns([]);
     setCurrentStage(null);
     setCompletedStages([]);
-    try { sessionStorage.removeItem(TURNS_STORAGE_KEY); } catch { /* ignore */ }
+    if (projectId) {
+      try { sessionStorage.removeItem(turnsKeyFor(projectId)); } catch { /* ignore */ }
+    }
   };
 
   const sendDisabled = loading || question.trim().length < 5;
