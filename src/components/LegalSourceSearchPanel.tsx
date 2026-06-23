@@ -184,17 +184,21 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
   const startRef = useRef<number>(0);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const hydratedRef = useRef(false);
+  const hydratedForProjectRef = useRef<string | null>(null);
 
   const activeTurn = turns[turns.length - 1];
   const loading = activeTurn?.status === "running";
   const jobId = loading ? activeTurn?.id ?? null : null;
 
-  // Persist turns on every change (skip the very first hydrate pass).
+  const projectId = currentProject?.id ?? null;
+
+  // Persist turns on every change, but only after hydration for this project completed,
+  // and only when a real project id exists. Never persist under a shared/no-project bucket.
   useEffect(() => {
-    if (!hydratedRef.current) return;
-    safeWriteTurns(turns);
-  }, [turns]);
+    if (!projectId) return;
+    if (hydratedForProjectRef.current !== projectId) return;
+    safeWriteTurns(turnsKeyFor(projectId), turns);
+  }, [turns, projectId]);
 
   // Auto-scroll to bottom when near bottom.
   useEffect(() => {
