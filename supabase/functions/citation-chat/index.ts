@@ -354,7 +354,85 @@ async function reconcilePublishedDate(
   }
 }
 
-// ── Bibliographic title/author anchoring (for article + book branches) ──
+// ── Old-docket retry (pre-electronic era, year < 1995) ──
+// Triggered only when the standard Tier-1/Tier-2 case-number search returns
+// a Perplexity payload whose results don't anchor the docket. Re-asks
+// Perplexity with the docket forced into a quoted phrase, an explicit
+// "old Supreme Court case" context, and an expanded trusted-host set that
+// includes pre-electronic-era mirrors (versa.cardozo, he.wikipedia,
+// padi.gov.il). Acceptance still requires that the docket appears literally
+// in the URL/title/snippet of a trusted result.
+async function retryOldSupremeDocket(
+  apiKey: string,
+  caseType: string,
+  caseNum: string,
+  yearStr: string,
+): Promise<Record<string, unknown> | null> {
+  const fullCaseRef = `${caseType} ${caseNum}`;
+  const docket = extractDocket(fullCaseRef);
+  if (!docket) return null;
+  try {
+    const query = `אנא מצא את פסק הדין הישראלי הישן ${fullCaseRef} (משנת ${yearStr}). חפש את הצירוף המדויק "${caseType} ${caseNum}" בכל מאגרי הפסיקה הישראליים ובמקורות אקדמיים, כולל ויקיפדיה העברית ומאגרי תרגום של בית המשפט העליון (כגון Versa של אוניברסיטת קרדוזו). ציין במדויק: 1) שמות הצדדים (שם משפחה בלבד לאנשים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) בית המשפט (בית המשפט העליון), 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. אל תמציא נתונים — אם אינך בטוח, סמן שדה כריק. ענה בעברית בלבד.`;
+    const body: Record<string, unknown> = {
+      model: "sonar-pro",
+      messages: [
+        {
+          role: "system",
+          content: `אתה עוזר מחקר משפטי המתמחה בפסיקה ישראלית ישנה (לפני 1995). החזר JSON בלבד בפורמט:\n{"found":true/false,"party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY","confidence":"high/low"}\nרוב פסקי הדין של בית המשפט העליון מלפני 1995 פורסמו בפד"י — בדוק זאת היטב.`,
+        },
+        { role: "user", content: query },
+      ],
+    };
+    const resp = await fetch("https://api.perplexity.ai/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (!resp.ok) {
+      console.log(`[case-law:old-retry] http ${resp.status}`);
+      return null;
+    }
+    const data = await resp.json();
+    const content = data.choices?.[0]?.message?.content || "";
+    console.log(`[case-law:old-retry] sources for ${fullCaseRef}:`, JSON.stringify({
+      citations: data.citations ?? null,
+      search_results: data.search_results ?? null,
+    }));
+    console.log(`[case-law:old-retry] raw content:`, content);
+
+    // Anchor gate: ≥1 trusted (legal + pub + old-mirrors) URL/title/snippet
+    // must contain the literal docket.
+    const trustedSet = [...TRUSTED_LEGAL, ...TRUSTED_PUB, ...TRUSTED_OLD_SUPREME_MIRRORS];
+    const searchResults: Array<Record<string, unknown>> = Array.isArray(data.search_results) ? data.search_results : [];
+    const citations: string[] = Array.isArray(data.citations)
+      ? (data.citations as unknown[]).filter((u): u is string => typeof u === "string")
+      : [];
+    const urlAnchored = citations.some((u) => isTrustedHost(u, trustedSet) && urlContainsDocket(u, docket));
+    const snippetAnchored = searchResults.some((r) => {
+      if (typeof r.url !== "string" || !isTrustedHost(r.url, trustedSet)) return false;
+      return urlContainsDocket(r.url, docket)
+        || textContainsDocket(r.title, docket)
+        || textContainsDocket(r.snippet, docket);
+    });
+    if (!urlAnchored && !snippetAnchored) {
+      console.log(`[case-law:old-retry] no trusted source anchors docket ${docket.num}/${docket.year} → discarding`);
+      return null;
+    }
+
+    const jm = content.match(/\{[\s\S]*\}/);
+    if (!jm) return null;
+    const parsed = JSON.parse(jm[0]);
+    if (!parsed?.found || !parsed.party1 || !parsed.party2) {
+      console.log(`[case-law:old-retry] anchored but parsed missing parties → discarding`);
+      return null;
+    }
+    console.log(`[case-law:old-retry] accepted: parties=${parsed.party1} / ${parsed.party2}`);
+    return parsed;
+  } catch (e) {
+    console.error(`[case-law:old-retry] error:`, e);
+    return null;
+  }
+}
 // Mirrors the docket-anchor gate used for caselaw. Prevents Perplexity from
 // returning a hallucinated author when no actual source confirms the title.
 
