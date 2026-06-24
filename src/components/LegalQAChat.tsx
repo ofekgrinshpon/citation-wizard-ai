@@ -866,11 +866,12 @@ interface LegalQAChatProps {
     | { question: string; result: QAResult; taskMode: "research" | "case_summary" | "academic_writing" }
     | { question: string; sourcesPayload: any; taskMode: "legal_source_search" }
     | null;
+  onConsumeExternalResult?: () => void;
   academicResumeSignal?: number;
   academicResumeFallback?: { question: string; result: QAResult } | null;
 }
 
-export function LegalQAChat({ onResultSaved, externalResult, academicResumeSignal, academicResumeFallback }: LegalQAChatProps = {}) {
+export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalResult, academicResumeSignal, academicResumeFallback }: LegalQAChatProps = {}) {
   const { currentProject } = useProjects();
   const projectId = currentProject?.id;
 
