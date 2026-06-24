@@ -875,6 +875,17 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
   const { currentProject } = useProjects();
   const projectId = currentProject?.id;
 
+  // Stable-identity prop for LegalSourceSearchPanel. Without this, every parent
+  // render produces a new object literal and re-triggers the panel's hydration
+  // effect, which would re-apply a stale history result after a project switch.
+  const sourceSearchExternal = useMemo(
+    () =>
+      externalResult && externalResult.taskMode === "legal_source_search"
+        ? { question: externalResult.question, payload: externalResult.sourcesPayload }
+        : null,
+    [externalResult],
+  );
+
   const [question, setQuestion] = useState("");
   const [result, setResult] = useState<QAResult | null>(null);
   const [reviewOpen, setReviewOpen] = useState(false);
