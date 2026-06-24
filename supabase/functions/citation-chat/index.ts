@@ -1827,6 +1827,33 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   }
                   console.log(`[case-law] party_verification=${partyVerification} party_mismatch=${partyMismatch} docket_anchored=${docketAnchored} for ${fullCaseRef}`);
 
+                  // ── Old-docket retry for pre-electronic-era Supreme Court cases ──
+                  // When the standard search couldn't anchor the docket (parties were
+                  // dropped), try once more with a stronger query and broader trusted
+                  // mirrors (versa.cardozo, he.wikipedia, padi.gov.il). Only fires for
+                  // years < 1995 to keep modern-case protection intact.
+                  if (!docketAnchored && docketAnchor) {
+                    const yNum = parseInt(docketAnchor.year.length === 2
+                      ? (parseInt(docketAnchor.year, 10) < 70 ? `20${docketAnchor.year}` : `19${docketAnchor.year}`)
+                      : docketAnchor.year, 10);
+                    if (Number.isFinite(yNum) && yNum < 1995) {
+                      console.log(`[case-law] firing old-docket retry for ${fullCaseRef} (year=${yNum})`);
+                      const retryParsed = await retryOldSupremeDocket(
+                        PERPLEXITY_API_KEY,
+                        caseType,
+                        caseNum,
+                        String(yNum),
+                      );
+                      if (retryParsed) {
+                        parsed = retryParsed;
+                        partyMismatch = false;
+                        partyVerification = "both";
+                        docketAnchored = true;
+                      }
+                    }
+                  }
+
+
                   // ── Secondary verification: if Perplexity says not published, double-check with a focused query ──
                   if (parsed.found && !parsed.isPublished) {
                     console.log(`[case-law] First search says unpublished for ${fullCaseRef}, running verification search...`);
