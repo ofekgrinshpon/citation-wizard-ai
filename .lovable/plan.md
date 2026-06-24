@@ -1,56 +1,83 @@
-## Problem
+## What you saw
 
-Clicking a history item in חיפוש מקורות hydrates the panel correctly, but switching to a different project still shows the same result. The Phase 1 per-project reset/hydration works in isolation, but it is being overridden every render by a stale `externalResult`.
+You typed `ע"א 248/86` into אזכור אחיד and got back:
 
-## Root cause (three reinforcing bugs)
+```
+ע"א 248/86 [חסר: שם המערער/העותר] נ' [חסר: שם המשיב] ([חסר: שם מאגר] [חסר: תאריך מלא])
+```
 
-1. **Parent never clears `qaExternalResult`.** `src/pages/Index.tsx` sets `qaExternalResult` when a history item is clicked (lines 1225/1227) but never resets it. When the user clicks another project, the value is still in state.
+That looks like Perplexity failed completely. It didn't. The case **was** found — its parties, date, and database were almost certainly returned in the JSON. The pipeline then **deliberately blanked them out** because of a guard that, in this specific case, fires a false positive.
 
-2. **`onConsumeExternalResult` is not wired.** `LegalSourceSearchPanel` calls `onConsumeExternalResult?.()` after hydrating, but `LegalQAChat` (line 2946) does not pass that prop, so the call is a no-op. Index's `qaExternalResult` therefore stays truthy indefinitely.
+## Why this happens (technical)
 
-3. **New object identity on every render re-triggers the hydration effect.** `LegalQAChat` builds a fresh literal `{ question, payload: externalResult.sourcesPayload }` inline (lines 2947–2951). The child's effect has deps `[externalResult]`, so it fires on every parent render and re-applies the stale historical turn — which is exactly what clobbers the project-switch reset.
+`citation-chat/index.ts` runs the Perplexity case-law search restricted to a trusted domain set:
 
-Net effect: project-switch effect in the panel clears turns → parent re-renders with a new-identity `externalResult` literal → child effect re-hydrates the old historical turn → user sees the previous project's history item under the new project.
+```
+nevo.co.il, court.gov.il, supreme.court.gov.il,
+takdin.co.il, lite.takdin.co.il, psakdin.co.il
+```
 
-## Fix (frontend only, scope: 3 files)
+After Perplexity responds, it runs a **docket-anchor guard** (`urlContainsDocket` in `supabase/functions/_shared/trustedHosts.ts`) that requires at least one returned `search_result.url` to reference the docket via one of these channels:
 
-### `src/pages/Index.tsx`
-- Add a `useEffect` keyed on `currentProject?.id` that calls `setQaExternalResult(null)` whenever the active project changes. Use a ref to skip the very first run so the initial project id resolution does not wipe a value set by the same click.
-- Pass a new `onConsumeExternalResult={() => setQaExternalResult(null)}` callback down to `LegalQAChat`.
+1. **plain** — URL path contains literal `248/86`, `248-86`, or `248_86`
+2. **supreme_hebrew_verdicts** — `/HebrewVerdicts/86/870/089/…` (Supreme Court e-filing encoding)
+3. **supreme_filename** — filename token `86089870.<ext>`
+4. **supreme_net_verdicts** — `/NetVerdicts/.../1986-X-248-…`
 
-### `src/components/LegalQAChat.tsx`
-- Accept `onConsumeExternalResult?: () => void` in `LegalQAChatProps` and thread it through.
-- Replace the inline object literal with a `useMemo` so the prop passed to `LegalSourceSearchPanel` keeps stable identity until `externalResult` itself changes:
-  ```ts
-  const sourceSearchExternal = useMemo(
-    () => externalResult && externalResult.taskMode === "legal_source_search"
-      ? { question: externalResult.question, payload: externalResult.sourcesPayload }
-      : null,
-    [externalResult],
-  );
-  ```
-- Pass `onConsumeExternalResult` through to `LegalSourceSearchPanel`.
+If **no** returned URL matches, the code (line 1676 in `citation-chat/index.ts`) blanks out party1, party2, date, court, isPublished, padi_volume/part/page, databaseName, then renders the `[חסר: …]` placeholders.
 
-### `src/components/LegalSourceSearchPanel.tsx`
-- Add an `appliedExternalRef = useRef<unknown>(null)` and, inside the existing `externalResult` effect, early-return when `externalResult === appliedExternalRef.current`. Set the ref to the current `externalResult` right before calling `setTurns(...)` and `onConsumeExternalResult?.()`. This makes the effect idempotent against accidental identity churn from any future parent change.
-- Order guarantee: the project-id effect (which resets turns) and the external-result effect can both fire in the same render; the ref guard plus the parent's clear-on-project-change ensure the historical turn does not get re-applied to the new project.
+For **ע"א 248/86** (decided 1989, a 1986-filing Supreme Court appeal):
 
-## What stays unchanged
+- The case predates Supreme Court electronic publication. There is no `supreme.court.gov.il` or `supremedecisions.court.gov.il` page for it, so channels 2–4 are not reachable.
+- Perplexity's actual hits are typically `nevo.co.il/psika_word/elyon/…doc` (or `…pdf`). Nevo's URLs use an **opaque internal slug** — the literal string `248/86` is **not in the URL path**. So channel 1 also misses.
+- Result: `anchoredResults.length === 0` → entire payload is nulled out → user sees the empty-placeholder citation.
 
-- Backend, payload shape, search/polling logic, turn storage key scheme, UI rendering structure, history sidebar behavior, autocomplete.
-- No Phase 2 follow-up-context work.
-- No changes to `LegalResearchV1Panel` or non-source-search task modes (the parent's clear-on-project-change applies to all task modes, which is the correct behavior — a project switch already invalidates a stale historical pin regardless of mode).
+Other sources that do mention `248/86` literally (versa.cardozo, Hebrew Wikipedia, IDI commentary, journal articles, faculty syllabi, padi.gov.il scans, פסקדין mirrors) are filtered out **before** the guard ever runs, by `search_domain_filter`.
+
+So this is a structural blind spot for **pre-electronic-era Supreme Court cases (filed before ~1995)**, not a bug in Perplexity or in your query.
+
+## Proposed minimal fix
+
+One narrow change to the docket-anchor guard, plus one optional follow-up. Backend only. No schema changes. No prompt rewrites.
+
+### 1. Snippet-anchor fallback for trusted hosts (`trustedHosts.ts` + `citation-chat/index.ts`)
+
+Currently the guard accepts a result **only if the URL itself** references the docket. Extend it so that, **for results already on a trusted domain**, a result also counts as anchored when the **snippet or title** contains the literal docket (`248/86`, `248-86`, or `248_86`, after Unicode normalization).
+
+This is safe because:
+
+- The search was already filtered to trusted legal databases — we're not opening the door to blogs/news.
+- A trusted-host result whose snippet repeats the exact docket is, in practice, the same case page rendered through a slug-style URL.
+- It does not weaken modern-case protection: those still have URL-level docket matches, which take precedence.
+
+Concretely, add a `titleOrSnippetContainsDocket(text, docket)` helper next to `urlContainsDocket`, then in `citation-chat/index.ts` (around line 1660) treat a result as anchored when EITHER the URL matches OR (the host is in the trusted set AND the snippet/title contains the docket literal).
+
+### 2. (Optional, only if step 1 is not enough) Add a small allowlist of pre-electronic-era mirrors
+
+For Supreme Court cases with `year < 1995`, allow the `search_domain_filter` to also include `versa.cardozo.yu.edu` and `padi.gov.il`. These are recognized academic / official mirrors for old Supreme Court judgments. Strictly gated to old-year cases so modern cases continue to use the existing strict filter.
+
+I'd hold off on step 2 until we confirm step 1 alone resolves ע"א 248/86 and similar.
+
+## What I won't touch
+
+- The verified_sources autocomplete (unrelated; this came up in a previous turn).
+- The Perplexity prompt itself — the search is already correct.
+- The trusted-host list for modern cases.
+- The party-verification sub-guard (`partyVerification: "both" | "caption_marker" | …`). It runs **after** the docket-anchor passes and is correct in its own scope.
+- The legal-research / source-search pipeline (different code path).
 
 ## Validation
 
-Manual:
-1. Click a חיפוש מקורות history item in project A → result shows.
-2. Switch to project B from sidebar → panel resets to empty (or to project B's persisted turns), no leftover historical turn.
-3. Switch back to project A → project A's persisted turns hydrate normally.
-4. Click a history item, then click the same item again → still hydrates (identity changes because parent re-sets state).
-5. Run a fresh search in project B after the switch → works, persists under project B's key only.
+After implementing step 1, re-run:
 
-## Risks
+- `ע"א 248/86` → should now render full citation with parties, date, פד"י reference.
+- `ע"א 1554/95` (קסטנבאום) → should still render correctly (URL-anchored, unchanged path).
+- `בג"ץ 6427/02` (התנועה לאיכות השלטון) → unchanged.
+- A made-up docket like `ע"א 99999/86` → should still produce `[חסר: …]` (no trusted-host result will mention it).
 
-- Clearing `qaExternalResult` on project switch also affects non-source-search task modes (research, case summary, academic). This matches the desired Phase 1 contract ("project switch resets transient hydration"), but worth confirming. If a mode needs to survive a project switch, we'd add a per-mode opt-out later.
-- The "skip first run" ref in Index must be set before any effect that could clear `qaExternalResult`; otherwise a history click that also changes `currentProject` could wipe its own payload. The skip-first-render ref handles this.
+## Files touched (step 1 only)
+
+- `supabase/functions/_shared/trustedHosts.ts` — add `titleOrSnippetContainsDocket` (or extend `urlContainsDocketVia` with an additional `snippet` channel).
+- `supabase/functions/citation-chat/index.ts` — change the anchor check around line 1660 to also accept snippet-anchored trusted-host results; log the new `via=trusted_snippet` channel for telemetry.
+
+Shall I proceed with step 1?
