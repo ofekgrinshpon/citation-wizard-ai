@@ -45,6 +45,7 @@ import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES } from "../_sha
 import {
   TRUSTED_LEGAL,
   TRUSTED_PUB,
+  TRUSTED_OLD_SUPREME_MIRRORS,
   countTrustedCitations,
   isTrustedHost,
   untrustedHosts,
