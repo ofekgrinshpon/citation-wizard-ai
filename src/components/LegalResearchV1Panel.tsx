@@ -397,6 +397,11 @@ export function LegalResearchV1Panel() {
     <div className="flex flex-col h-full min-h-0" dir="rtl">
       {/* ── Top region: loading / error / result (scrollable) ── */}
       <div className="flex-1 min-h-0 overflow-y-auto space-y-4 pb-4">
+        {!loading && !error && !result && (
+          <div className="flex flex-col items-center justify-center h-full py-12 text-center">
+            <div className="mb-4"><ReLexLogo size={56} /></div>
+          </div>
+        )}
         {loading && (
           <div className="space-y-3 animate-fade-in">
             <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-3">
