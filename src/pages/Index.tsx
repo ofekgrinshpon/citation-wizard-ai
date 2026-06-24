@@ -139,6 +139,19 @@ const Index = () => {
   const [academicResumeSignal, setAcademicResumeSignal] = useState<number>(0);
   const [academicResumeFallback, setAcademicResumeFallback] = useState<{ question: string; result: any } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Clear any pinned history result when the active project changes, so a
+  // historical result from project A does not bleed into project B.
+  const lastProjectIdRef = useRef<string | null | undefined>(undefined);
+  useEffect(() => {
+    if (lastProjectIdRef.current === undefined) {
+      lastProjectIdRef.current = projectId ?? null;
+      return;
+    }
+    if (lastProjectIdRef.current !== (projectId ?? null)) {
+      lastProjectIdRef.current = projectId ?? null;
+      setQaExternalResult(null);
+    }
+  }, [projectId]);
   const chatEndRef = useRef<HTMLDivElement>(null);
   
   
@@ -899,6 +912,7 @@ const Index = () => {
           <LegalQAChat
             onResultSaved={() => setQaRefreshKey(k => k + 1)}
             externalResult={qaExternalResult}
+            onConsumeExternalResult={() => setQaExternalResult(null)}
             academicResumeSignal={academicResumeSignal}
             academicResumeFallback={academicResumeFallback}
           />

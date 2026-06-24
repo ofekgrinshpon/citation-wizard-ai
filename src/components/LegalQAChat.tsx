@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -866,13 +866,25 @@ interface LegalQAChatProps {
     | { question: string; result: QAResult; taskMode: "research" | "case_summary" | "academic_writing" }
     | { question: string; sourcesPayload: any; taskMode: "legal_source_search" }
     | null;
+  onConsumeExternalResult?: () => void;
   academicResumeSignal?: number;
   academicResumeFallback?: { question: string; result: QAResult } | null;
 }
 
-export function LegalQAChat({ onResultSaved, externalResult, academicResumeSignal, academicResumeFallback }: LegalQAChatProps = {}) {
+export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalResult, academicResumeSignal, academicResumeFallback }: LegalQAChatProps = {}) {
   const { currentProject } = useProjects();
   const projectId = currentProject?.id;
+
+  // Stable-identity prop for LegalSourceSearchPanel. Without this, every parent
+  // render produces a new object literal and re-triggers the panel's hydration
+  // effect, which would re-apply a stale history result after a project switch.
+  const sourceSearchExternal = useMemo(
+    () =>
+      externalResult && externalResult.taskMode === "legal_source_search"
+        ? { question: externalResult.question, payload: externalResult.sourcesPayload }
+        : null,
+    [externalResult],
+  );
 
   const [question, setQuestion] = useState("");
   const [result, setResult] = useState<QAResult | null>(null);
@@ -2944,11 +2956,8 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         {!isAcademic && taskMode === "legal_source_search" && (
           <div className="h-full flex flex-col py-4">
             <LegalSourceSearchPanel
-              externalResult={
-                externalResult && externalResult.taskMode === "legal_source_search"
-                  ? { question: externalResult.question, payload: externalResult.sourcesPayload }
-                  : null
-              }
+              externalResult={sourceSearchExternal}
+              onConsumeExternalResult={onConsumeExternalResult}
             />
           </div>
         )}

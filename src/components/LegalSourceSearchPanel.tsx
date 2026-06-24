@@ -185,6 +185,7 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const hydratedForProjectRef = useRef<string | null>(null);
+  const appliedExternalRef = useRef<unknown>(null);
 
   const activeTurn = turns[turns.length - 1];
   const loading = activeTurn?.status === "running";
@@ -327,23 +328,26 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
   }, [projectId]);
 
   // Hydrate from history sidebar click — reset panel to a single completed turn.
+  // Guarded by appliedExternalRef so repeated parent renders with a new object
+  // identity but the same payload do not re-clobber project-switch resets.
   useEffect(() => {
-    if (externalResult?.payload) {
-      stopAll();
-      setCurrentStage(null);
-      setCompletedStages([]);
-      setTurns([
-        {
-          id: genTurnId(),
-          question: externalResult.question || "",
-          status: "done",
-          result: externalResult.payload,
-          startedAt: Date.now(),
-        },
-      ]);
-      setQuestion("");
-      onConsumeExternalResult?.();
-    }
+    if (!externalResult?.payload) return;
+    if (appliedExternalRef.current === externalResult) return;
+    appliedExternalRef.current = externalResult;
+    stopAll();
+    setCurrentStage(null);
+    setCompletedStages([]);
+    setTurns([
+      {
+        id: genTurnId(),
+        question: externalResult.question || "",
+        status: "done",
+        result: externalResult.payload,
+        startedAt: Date.now(),
+      },
+    ]);
+    setQuestion("");
+    onConsumeExternalResult?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [externalResult]);
 

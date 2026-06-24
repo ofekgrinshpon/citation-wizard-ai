@@ -1,106 +1,56 @@
+## Problem
 
-## Phase 1 — Chat-like turns in `LegalSourceSearchPanel` (frontend only)
+Clicking a history item in חיפוש מקורות hydrates the panel correctly, but switching to a different project still shows the same result. The Phase 1 per-project reset/hydration works in isolation, but it is being overridden every render by a stale `externalResult`.
 
-No backend, prompt, scoring, or `citation-chat` changes. No `prior_turn` payload.
+## Root cause (three reinforcing bugs)
 
-## Existing state that gets replaced or wrapped
+1. **Parent never clears `qaExternalResult`.** `src/pages/Index.tsx` sets `qaExternalResult` when a history item is clicked (lines 1225/1227) but never resets it. When the user clicks another project, the value is still in state.
 
-In `src/components/LegalSourceSearchPanel.tsx` today:
+2. **`onConsumeExternalResult` is not wired.** `LegalSourceSearchPanel` calls `onConsumeExternalResult?.()` after hydrating, but `LegalQAChat` (line 2946) does not pass that prop, so the call is a no-op. Index's `qaExternalResult` therefore stays truthy indefinitely.
 
-- `result: SourcesOnlyResponse | null`
-- `error: string | null`
-- `jobId: string | null`
-- `loading: boolean`
-- `currentStage`, `completedStages`, `elapsed` (live progress for the in-flight job)
-- `RESUME_STORAGE_KEY = "legal-source-search:active_job"` (sessionStorage)
-- `externalResult` prop hydration effect
+3. **New object identity on every render re-triggers the hydration effect.** `LegalQAChat` builds a fresh literal `{ question, payload: externalResult.sourcesPayload }` inline (lines 2947–2951). The child's effect has deps `[externalResult]`, so it fires on every parent render and re-applies the stale historical turn — which is exactly what clobbers the project-switch reset.
 
-After Phase 1:
+Net effect: project-switch effect in the panel clears turns → parent re-renders with a new-identity `externalResult` literal → child effect re-hydrates the old historical turn → user sees the previous project's history item under the new project.
 
-- New canonical state:
+## Fix (frontend only, scope: 3 files)
+
+### `src/pages/Index.tsx`
+- Add a `useEffect` keyed on `currentProject?.id` that calls `setQaExternalResult(null)` whenever the active project changes. Use a ref to skip the very first run so the initial project id resolution does not wipe a value set by the same click.
+- Pass a new `onConsumeExternalResult={() => setQaExternalResult(null)}` callback down to `LegalQAChat`.
+
+### `src/components/LegalQAChat.tsx`
+- Accept `onConsumeExternalResult?: () => void` in `LegalQAChatProps` and thread it through.
+- Replace the inline object literal with a `useMemo` so the prop passed to `LegalSourceSearchPanel` keeps stable identity until `externalResult` itself changes:
   ```ts
-  type TurnStatus = "running" | "done" | "error";
-  type Turn = {
-    id: string;             // job_id when known, else local uuid placeholder
-    question: string;
-    status: TurnStatus;
-    result?: SourcesOnlyResponse;
-    error?: string;
-    startedAt: number;
-  };
-  const [turns, setTurns] = useState<Turn[]>([]);
+  const sourceSearchExternal = useMemo(
+    () => externalResult && externalResult.taskMode === "legal_source_search"
+      ? { question: externalResult.question, payload: externalResult.sourcesPayload }
+      : null,
+    [externalResult],
+  );
   ```
-- `result`, `error`, `jobId`, `loading` are removed as independent state. They are derived from the last turn:
-  - `activeTurn = turns[turns.length - 1]`
-  - `loading = activeTurn?.status === "running"`
-  - `jobId = activeTurn?.status === "running" ? activeTurn.id : null`
-- `currentStage`, `completedStages`, `elapsed` stay as-is — they describe the single in-flight job, which is always the tail turn. They reset whenever a new running turn is appended.
-- `question` (composer textarea) stays as a separate input-only state; it is cleared after submit so the user bubble shows it instead.
+- Pass `onConsumeExternalResult` through to `LegalSourceSearchPanel`.
 
-## Polling / resume with the turns array
+### `src/components/LegalSourceSearchPanel.tsx`
+- Add an `appliedExternalRef = useRef<unknown>(null)` and, inside the existing `externalResult` effect, early-return when `externalResult === appliedExternalRef.current`. Set the ref to the current `externalResult` right before calling `setTurns(...)` and `onConsumeExternalResult?.()`. This makes the effect idempotent against accidental identity churn from any future parent change.
+- Order guarantee: the project-id effect (which resets turns) and the external-result effect can both fire in the same render; the ref guard plus the parent's clear-on-project-change ensure the historical turn does not get re-applied to the new project.
 
-`pollJob(jid)` updates the tail turn instead of top-level state:
+## What stays unchanged
 
-- On status `done`: `setTurns(prev => prev.map(t => t.id === jid ? { ...t, status: "done", result } : t))`, stop timers, clear sessionStorage tail-job marker.
-- On status `error`: same shape with `status: "error", error`.
-- Stage updates (`current_stage`, `completed_stages`) keep updating the existing refs/state; they always describe the tail running turn.
+- Backend, payload shape, search/polling logic, turn storage key scheme, UI rendering structure, history sidebar behavior, autocomplete.
+- No Phase 2 follow-up-context work.
+- No changes to `LegalResearchV1Panel` or non-source-search task modes (the parent's clear-on-project-change applies to all task modes, which is the correct behavior — a project switch already invalidates a stale historical pin regardless of mode).
 
-`handleSubmit`:
+## Validation
 
-1. Push a placeholder turn `{ id: tempId, question, status: "running", startedAt: now }`.
-2. Call `legal-research-v1`. On success, replace the placeholder's `id` with `data.job_id`. On invoke error, flip the placeholder to `status: "error"`.
-3. Clear the composer textarea after the turn is pushed (so the bubble shows the query, not the input).
-
-Resume-on-mount:
-
-- Read the new key (see below). If the persisted tail turn is `running`, restore the full `turns` array, call `startProgress(turn.startedAt)`, and `pollJob(turn.id)`.
-- If the tail turn is `done`/`error`, just restore `turns` for display, no polling.
-
-`handleCancel`: flips the tail turn from `running` to `error` with the existing cancel message; stops timers; clears the sessionStorage key. Other turns are untouched.
-
-## sessionStorage key + migration
-
-- New key: `legal-source-search:turns`.
-- Value: JSON array of `Turn`, capped to the last 5 entries (FIFO drop).
-- Written on every `setTurns` via a single `useEffect([turns])`.
-- Migration from old key `legal-source-search:active_job` (one read, then delete):
-  - On mount, if new key is empty and old key holds `{ jobId, startedAt }`, synthesize a single running turn `{ id: jobId, question: "", status: "running", startedAt }` and resume polling. Question text is unknown for legacy in-flight jobs; the bubble renders an em-dash placeholder until poll resolves (then we discard the bubble's question or leave it blank — acceptable for one-time migration).
-  - Always `sessionStorage.removeItem(old key)` after the read, regardless of whether it was used.
-
-## UI rendering structure
-
-Inside the existing scroll container (`flex-1 min-h-0 overflow-y-auto`):
-
-```
-{turns.map(turn => (
-  <div key={turn.id} className="space-y-2">
-    <UserQueryBubble question={turn.question} />        // right-aligned RTL pill
-    {turn.status === "running" && <StageTracker ... />} // existing stages + skeleton
-    {turn.status === "error"   && <ErrorCard text={turn.error} />}
-    {turn.status === "done"    && turn.result && (
-       <SourceResultsView result={turn.result} debug={turn.result.debug ?? {}} />
-    )}
-  </div>
-))}
-<div ref={bottomRef} />
-```
-
-- `UserQueryBubble` is a small local component (no new file) using existing tokens (`bg-primary/10`, `rounded-2xl`, `px-3 py-2`, `text-sm`, `max-w-[80%]`, `ms-auto`).
-- Stage tracker, skeleton, error card, and `SourceResultsView` are the existing JSX, just moved inside the per-turn map and bound to the tail running turn for live state.
-- Auto-scroll: `useEffect(() => bottomRef.current?.scrollIntoView({ block: "end" }), [turns, currentStage, completedStages, elapsed])`.
-- Composer position, send/cancel/clear buttons, send-disabled logic: unchanged.
-- `handleClearAll`: `setTurns([])`, clears composer, clears new sessionStorage key, plus existing `setError(null)` removal (no longer needed since error lives on the turn).
-- `externalResult` effect: sets `turns` to `[{ id: uuid, question: externalResult.question, status: "done", result: externalResult.payload, startedAt: Date.now() }]`. Same single-panel feel as today.
+Manual:
+1. Click a חיפוש מקורות history item in project A → result shows.
+2. Switch to project B from sidebar → panel resets to empty (or to project B's persisted turns), no leftover historical turn.
+3. Switch back to project A → project A's persisted turns hydrate normally.
+4. Click a history item, then click the same item again → still hydrates (identity changes because parent re-sets state).
+5. Run a fresh search in project B after the switch → works, persists under project B's key only.
 
 ## Risks
 
-- Stale-closure bugs in `pollJob`: today the poller closes over `setResult`. We need `setTurns(prev => ...)` updaters and to read the tail turn via functional updates so concurrent renders don't drop status transitions.
-- `currentStage` / `completedStages` reset timing: if a new turn is submitted while the previous is still running (shouldn't happen because send is disabled, but the cancel-then-submit path exists), make sure the stage refs are cleared in `startProgress` before the new poll starts.
-- Legacy resume key with unknown question text: the migration turn shows an empty bubble for one cycle. Acceptable; documented above.
-- sessionStorage size: 5 turns × full `SourcesOnlyResponse` could be large. Mitigation: when persisting, store the full `result` only for the tail turn; for older turns persist `result` minus `debug` (debug can be heavy). If still oversized, drop the oldest turn until under ~1 MB.
-- Auto-scroll fighting the user scrolling up to read older results: scroll to bottom only when the user is already near the bottom (threshold check on `scrollTop + clientHeight` vs `scrollHeight`), otherwise skip.
-- History sidebar behavior is preserved (single-turn reset), but users may now expect follow-ups after opening a historical run. That's fine — submitting a new query from that state simply appends; nothing about Phase 1 prevents it, and no `prior_turn` is sent yet so semantics are unchanged.
-
-## Out of scope (deferred to Phase 2)
-
-- `prior_turn` payload, queryPlanner-only prompt change, feature flag, analyzer changes, verifier/ranker changes, `citation-chat` changes, DB schema changes.
+- Clearing `qaExternalResult` on project switch also affects non-source-search task modes (research, case summary, academic). This matches the desired Phase 1 contract ("project switch resets transient hydration"), but worth confirming. If a mode needs to survive a project switch, we'd add a per-mode opt-out later.
+- The "skip first run" ref in Index must be set before any effect that could clear `qaExternalResult`; otherwise a history click that also changes `currentProject` could wipe its own payload. The skip-first-render ref handles this.
