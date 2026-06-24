@@ -1657,9 +1657,24 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     const citationUrls: string[] = Array.isArray(pData.citations)
                       ? (pData.citations as unknown[]).filter((u): u is string => typeof u === "string")
                       : [];
-                    const anchoredResults = searchResults.filter((r) =>
-                      typeof r.url === "string" && urlContainsDocket(r.url, docketAnchor),
-                    );
+                    // A result counts as anchored if (a) its URL references
+                    // the docket via any encoded channel, OR (b) the URL is
+                    // on a trusted legal host AND the title/snippet contains
+                    // the literal docket. Branch (b) closes a blind spot for
+                    // pre-electronic-era Supreme Court cases (filed before
+                    // ~1995): nevo/takdin serve them via opaque slug URLs
+                    // that never include "NUM/YY" in the path, so URL-only
+                    // anchoring blanks the result even when the case page
+                    // itself is correct.
+                    const anchoredResults = searchResults.filter((r) => {
+                      if (typeof r.url !== "string") return false;
+                      if (urlContainsDocket(r.url, docketAnchor)) return true;
+                      if (!isTrustedHost(r.url, TRUSTED_LEGAL)) return false;
+                      return (
+                        textContainsDocket(r.title, docketAnchor) ||
+                        textContainsDocket(r.snippet, docketAnchor)
+                      );
+                    });
                     const anchoredCitationUrls = citationUrls.filter((u) =>
                       urlContainsDocket(u, docketAnchor),
                     );
