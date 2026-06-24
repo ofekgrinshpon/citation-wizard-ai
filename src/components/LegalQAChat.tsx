@@ -2968,7 +2968,7 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
 
           <div className="flex flex-col items-center justify-center h-full py-12 text-center">
             <div className="mb-4"><ReLexLogo size={56} /></div>
-            <h2 className="text-foreground text-lg font-bold mb-2">העוזר המשפטי</h2>
+            <h2 className="text-foreground text-lg font-bold mb-2">{"\n"}</h2>
 
             <p className="text-muted-foreground text-sm">
               {uploadedFiles.length > 0
