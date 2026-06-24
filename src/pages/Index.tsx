@@ -912,6 +912,7 @@ const Index = () => {
           <LegalQAChat
             onResultSaved={() => setQaRefreshKey(k => k + 1)}
             externalResult={qaExternalResult}
+            onConsumeExternalResult={() => setQaExternalResult(null)}
             academicResumeSignal={academicResumeSignal}
             academicResumeFallback={academicResumeFallback}
           />
