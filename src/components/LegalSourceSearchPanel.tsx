@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { ReLexLogo } from "@/components/ReLexLogo";
 import { useProjects } from "@/hooks/useProjects";
 import { Button } from "@/components/ui/button";
 import {
@@ -454,6 +455,11 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
   return (
     <div className="flex flex-col h-full min-h-0" dir="rtl">
       <div ref={scrollContainerRef} className="flex-1 min-h-0 overflow-y-auto space-y-6 pb-4">
+        {turns.length === 0 && !loading && (
+          <div className="flex flex-col items-center justify-center h-full py-12 text-center">
+            <div className="mb-4"><ReLexLogo size={56} /></div>
+          </div>
+        )}
         {turns.map((turn, idx) => {
           const isTail = idx === turns.length - 1;
           const debug = (turn.result?.debug ?? {}) as Record<string, unknown>;
