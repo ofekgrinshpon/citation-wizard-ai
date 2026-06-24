@@ -2956,11 +2956,8 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
         {!isAcademic && taskMode === "legal_source_search" && (
           <div className="h-full flex flex-col py-4">
             <LegalSourceSearchPanel
-              externalResult={
-                externalResult && externalResult.taskMode === "legal_source_search"
-                  ? { question: externalResult.question, payload: externalResult.sourcesPayload }
-                  : null
-              }
+              externalResult={sourceSearchExternal}
+              onConsumeExternalResult={onConsumeExternalResult}
             />
           </div>
         )}
