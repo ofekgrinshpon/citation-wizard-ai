@@ -433,8 +433,11 @@ async function retryOldSupremeDocket(
     return null;
   }
 }
+
+// ── Bibliographic title/author anchoring (for article + book branches) ──
 // Mirrors the docket-anchor gate used for caselaw. Prevents Perplexity from
 // returning a hallucinated author when no actual source confirms the title.
+
 
 const BIBLIO_TRUSTED_DOMAINS = [
   "nevo.co.il",
