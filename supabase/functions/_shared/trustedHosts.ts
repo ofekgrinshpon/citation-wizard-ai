@@ -234,6 +234,37 @@ export function urlContainsDocket(
   return urlContainsDocketVia(url, docket).ok;
 }
 
+/**
+ * Snippet/title anchor — accepts the literal docket `NUM/YY`, `NUM-YY`, or
+ * `NUM_YY` anywhere in the text (after Unicode normalization). Use this only
+ * for results already known to be on a trusted host (callers must gate),
+ * since plain text matches on untrusted sources are easy to fake.
+ *
+ * Also recognizes a 4-digit year form (`NUM/YYYY`) so old Supreme Court
+ * docs that spell out the year in prose still anchor.
+ */
+export function textContainsDocket(
+  text: unknown,
+  docket: { num: string; year: string },
+): boolean {
+  if (typeof text !== "string" || !text) return false;
+  const t = text.normalize("NFKC");
+  const { num, year } = docket;
+  const yf = yearForms(year);
+  const years = yf ? Array.from(new Set([year, yf.yy, yf.yyyy])) : [year];
+  for (const y of years) {
+    if (!y) continue;
+    if (
+      t.includes(`${num}/${y}`) ||
+      t.includes(`${num}-${y}`) ||
+      t.includes(`${num}_${y}`)
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /** First non-"none" via among the urls, else "none". */
 export function anyUrlContainsDocketVia(
   urls: unknown,
