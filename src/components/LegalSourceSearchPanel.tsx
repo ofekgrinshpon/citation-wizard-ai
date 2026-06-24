@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { ReLexLogo } from "@/components/ReLexLogo";
 import { useProjects } from "@/hooks/useProjects";
 import { Button } from "@/components/ui/button";
 import {
