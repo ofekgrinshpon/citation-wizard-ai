@@ -61,6 +61,18 @@ export const TRUSTED_PUB: readonly string[] = [
   "ssrn.com",
 ];
 
+/**
+ * Pre-electronic-era Supreme Court mirrors (cases filed before ~1995).
+ * Used ONLY by the old-docket retry path, never by the default Tier-1/Tier-2
+ * gate, and acceptance still requires that the docket appears literally in
+ * the URL, title, or snippet. Keeps modern-case protection unchanged.
+ */
+export const TRUSTED_OLD_SUPREME_MIRRORS: readonly string[] = [
+  "versa.cardozo.yu.edu",
+  "he.wikipedia.org",
+  "padi.gov.il",
+];
+
 export function hostOf(url: unknown): string | null {
   if (typeof url !== "string" || !url) return null;
   try {
