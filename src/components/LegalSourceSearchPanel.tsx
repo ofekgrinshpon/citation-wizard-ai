@@ -185,6 +185,7 @@ export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const hydratedForProjectRef = useRef<string | null>(null);
+  const appliedExternalRef = useRef<unknown>(null);
 
   const activeTurn = turns[turns.length - 1];
   const loading = activeTurn?.status === "running";
