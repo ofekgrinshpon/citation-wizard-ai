@@ -11,6 +11,15 @@ import {
   SourceRole,
   StageRun,
 } from "../lib/types.ts";
+import {
+  accumulateHygieneCounts,
+  emptyHygieneCounts,
+  evaluatePerplexityHygiene,
+  isReportOnlyMode,
+  normalizePerplexitySourceType,
+  type PplxHygiene,
+  type PplxHygieneCounts,
+} from "./perplexityHygiene.ts";
 
 const PPLX_TIMEOUT_MS = 25_000;
 
