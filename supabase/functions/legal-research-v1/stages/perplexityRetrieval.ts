@@ -314,11 +314,16 @@ interface PplxResultRow {
   extracted_followup_terms?: string[];
   role_corrected_from?: SourceRole;
   role_corrected_to?: SourceRole;
+  hygiene?: PplxHygiene;
+  hygiene_enforced?: boolean;          // true when action was applied (default mode)
+  raw_pplx_source_type?: string;
+  normalized_source_type?: string;
 }
 
 function processRaw(
   query: Query,
   raw: PplxSource[],
+  hygieneCounts: PplxHygieneCounts,
 ): {
   admitted: Candidate[];
   rows: PplxResultRow[];
@@ -327,6 +332,7 @@ function processRaw(
   const admitted: Candidate[] = [];
   const rows: PplxResultRow[] = [];
   const followupTerms = new Set<string>();
+  const reportOnly = hygieneCounts.report_only_mode;
   for (const s of raw) {
     const title = (s.title || "").trim();
     const url = (s.url || "").trim();
@@ -360,11 +366,46 @@ function processRaw(
       });
       continue;
     }
+
+    // ── Phase-1 hygiene gate ────────────────────────────────────────────────
+    const hygiene = evaluatePerplexityHygiene({ url, title, snippet: s.snippet });
+    accumulateHygieneCounts(hygieneCounts, hygiene);
+    const wouldExclude = hygiene.hygiene_action === "exclude";
+    if (wouldExclude) hygieneCounts.would_exclude_in_report_only += reportOnly ? 1 : 0;
+
+    if (!reportOnly && hygiene.hygiene_action === "exclude") {
+      rows.push({
+        title, url, domain, classified_source_class: cls,
+        admitted_to_candidate_pool: false,
+        drop_reason: `hygiene:${hygiene.hygiene_reasons.join(",") || "exclude"}`,
+        hygiene, hygiene_enforced: true,
+      });
+      continue;
+    }
+
+    // Source-type normalization (conservative — preserve raw).
+    const rawSt = String(s.source_type ?? "").trim();
+    const st = normalizePerplexitySourceType(rawSt, cls);
+
+    // Use normalized URL when hygiene fixed an obvious typo (hhttps://…).
+    const effectiveUrl = hygiene.url_normalized && hygiene.url_status === "fixed"
+      ? hygiene.url_normalized
+      : url;
+
+    let baseScore = cls === "official_primary" || cls === "legislation" ? 0.95 : 0.75;
+    // Bad hygiene caps the score at 0.5 (per approved plan).
+    const downgrade = !reportOnly && hygiene.hygiene_action === "downgrade";
+    if (downgrade && baseScore > 0.5) baseScore = 0.5;
+
     rows.push({
       title, url, domain, classified_source_class: cls,
       admitted_to_candidate_pool: true,
       role_corrected_from: corrected_from,
       role_corrected_to: corrected_from ? effectiveRole : undefined,
+      hygiene,
+      hygiene_enforced: !reportOnly && hygiene.hygiene_action !== "keep",
+      raw_pplx_source_type: rawSt,
+      normalized_source_type: st.normalized,
     });
     admitted.push({
       candidate_id: crypto.randomUUID(),
@@ -373,15 +414,23 @@ function processRaw(
       origin: "perplexity",
       retrieval_method: "perplexity",
       title,
-      source_type: s.source_type || query.expected_source_type || "other",
-      source_url: url,
+      // Conservative: never pass through raw PPLX strings as Candidate.source_type;
+      // use normalized value. Raw is preserved in metadata.
+      source_type: st.normalized,
+      source_url: effectiveUrl,
       snippet: s.snippet ?? null,
       query_he: query.query_he,
-      score: cls === "official_primary" || cls === "legislation" ? 0.95 : 0.75,
+      score: baseScore,
       expected_source_type: query.expected_source_type,
       metadata: {
         domain, classified_source_class: cls,
         role_corrected_from: corrected_from,
+        pplx_hygiene: hygiene,
+        raw_pplx_source_type: rawSt,
+        source_type_normalized: st.was_normalized,
+        ...(query.metadata?.required_anchor_id
+          ? { required_anchor_id: query.metadata.required_anchor_id }
+          : {}),
       },
     });
   }
