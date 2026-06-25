@@ -72,7 +72,17 @@ function fmtElapsed(ms: number) {
   return `${mm}:${ss}`;
 }
 
-export function LegalResearchV1Panel() {
+interface LegalResearchV1PanelProps {
+  externalResult?:
+    | { question: string; payload: { answer: string; footnotes: Footnote[] } }
+    | null;
+  onConsumeExternalResult?: () => void;
+}
+
+export function LegalResearchV1Panel({
+  externalResult,
+  onConsumeExternalResult,
+}: LegalResearchV1PanelProps = {}) {
   const { currentProject } = useProjects();
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
