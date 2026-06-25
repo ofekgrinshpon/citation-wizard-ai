@@ -63,6 +63,10 @@ export interface Query {
   targets: QueryTarget[];
   expected_source_type: ExpectedSourceType;
   reason: string;
+  // Optional non-schema metadata (e.g. required_anchor_id). Validated planner
+  // output never includes this; the index pipeline appends required-anchor
+  // queries that carry metadata so retrieval/verifier/drafter can trace them.
+  metadata?: Record<string, unknown>;
 }
 
 export interface PlannerOutput {
