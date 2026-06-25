@@ -55,9 +55,42 @@ export interface PoolResult {
 const MAX_VECTOR_PER_CLAIM = 2;
 const MIN_TRUSTED_PERPLEXITY = 10;
 
-// Trusted-Perplexity predicate uses ONLY fields already attached by
-// perplexityRetrieval.ts: numeric `score` and `metadata.classified_source_class`.
-// No new classifier; if neither signal qualifies, the candidate is not reserved.
+// Trusted-Perplexity predicate.
+//
+// Per the approved Phase-1 plan:
+// - classified_source_class alone must NOT qualify a candidate for trusted
+//   reservation.
+// - Trusted reservation requires good hygiene (action=keep), a valid/specific
+//   URL shape, and meaningful body/snippet.
+// - Bad hygiene either excludes (handled upstream) or caps the score to 0.5
+//   (handled upstream); here we simply refuse to reserve such candidates.
+function isTrustedPerplexity(c: Candidate): boolean {
+  if (c.retrieval_method !== "perplexity") return false;
+  const meta = (c.metadata ?? {}) as Record<string, unknown>;
+  const hygiene = meta.pplx_hygiene as
+    | {
+        hygiene_action?: string;
+        body_status?: string;
+        landing_page_status?: string;
+        title_status?: string;
+        url_status?: string;
+      }
+    | undefined;
+  // Without explicit hygiene metadata we cannot trust the candidate — refuse.
+  if (!hygiene) return false;
+  if (hygiene.hygiene_action !== "keep") return false;
+  if (hygiene.body_status !== "has_body") return false;
+  if (hygiene.title_status !== "valid") return false;
+  if (hygiene.url_status !== "valid" && hygiene.url_status !== "fixed") return false;
+  if (hygiene.landing_page_status === "generic_index") return false;
+  // Within trusted-hygiene candidates, require either a high score OR a
+  // recognised authoritative class (so we still favour primary law/case
+  // pages, but never on the class signal alone).
+  if (typeof c.score === "number" && c.score >= 0.9) return true;
+  const cls = (meta.classified_source_class as string | undefined) ?? "";
+  return TRUSTED_PPLX_CLASSES.has(cls);
+}
+
 const TRUSTED_PPLX_CLASSES = new Set([
   "official_primary",
   "legislation",
@@ -65,12 +98,6 @@ const TRUSTED_PPLX_CLASSES = new Set([
   "government_report",
   "scholarship",
 ]);
-function isTrustedPerplexity(c: Candidate): boolean {
-  if (c.retrieval_method !== "perplexity") return false;
-  if (typeof c.score === "number" && c.score >= 0.9) return true;
-  const cls = (c.metadata?.classified_source_class as string | undefined) ?? "";
-  return TRUSTED_PPLX_CLASSES.has(cls);
-}
 
 export function buildCandidatePool(all: Candidate[]): PoolResult {
   const seenDoc = new Set<string>();
