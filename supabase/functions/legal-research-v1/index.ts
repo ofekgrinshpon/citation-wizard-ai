@@ -430,12 +430,39 @@ async function handle(req: Request): Promise<Response> {
     });
   }
 
+  // ─── Required anchors — append deterministic primary-source queries ───────
+  // Registry-driven. Triggered today only when the analyzer recorded an
+  // interpretation_note that matches a registry pattern (e.g. Mandate-era).
+  const requiredAnchors = resolveRequiredAnchors(analyzer);
+  const anchorQueries = requiredAnchors.length > 0
+    ? buildRequiredAnchorQueries(analyzer, requiredAnchors)
+    : [];
+  const allQueries = [...planner!.queries, ...anchorQueries];
+  const requiredAnchorsMeta = {
+    enabled: true,
+    count: requiredAnchors.length,
+    anchors: requiredAnchors.map((a) => ({
+      anchor_id: a.anchor_id,
+      description: a.description,
+      anchor_type: a.anchor_type,
+      target: a.target,
+      query_count: a.suggested_queries.length,
+    })),
+    queries_emitted: anchorQueries.map((q) => ({
+      claim_id: q.claim_id,
+      role: q.role,
+      query_he: q.query_he,
+      targets: q.targets,
+      required_anchor_id: (q.metadata as Record<string, unknown> | undefined)?.required_anchor_id,
+    })),
+  };
+
   // ─── P3: Retrieval (local DB + Perplexity) ───────────────────────────────
   await markStage("retrieval");
   const tRetrieval = Date.now();
   const [local, pplx] = await Promise.all([
-    runLocalRetrieval(admin, planner!.queries, { question, claims: analyzer.claims }),
-    runPerplexityRetrieval(planner!.queries),
+    runLocalRetrieval(admin, allQueries, { question, claims: analyzer.claims }),
+    runPerplexityRetrieval(allQueries),
   ]);
   stage_runs.push(...local.stage_runs, ...pplx.stage_runs);
   const pool = buildCandidatePool([...local.candidates, ...pplx.candidates]);
