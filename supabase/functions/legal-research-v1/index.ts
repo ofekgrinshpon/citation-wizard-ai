@@ -19,6 +19,7 @@ import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { runVerifier } from "./stages/verifier.ts";
 import { runDrafter } from "./stages/drafter.ts";
 import { runDrafterV2 } from "./stages/drafterV2.ts";
+import { evaluateAnswerStyle } from "./stages/answerStyleGate.ts";
 import {
   buildRequiredAnchorQueries,
   computeRequiredAnchorStatuses,
@@ -771,6 +772,15 @@ async function handle(req: Request): Promise<Response> {
     quality_warning: drafter.quality_warning,
     missing_anchor_caveat_injected: drafter.missing_anchor_caveat_injected ?? false,
     missing_anchor_descriptions: drafter.missing_anchor_descriptions ?? [],
+    // Phase C — report-only answer-style gate (no automatic retry).
+    answer_style_report: drafter.ok
+      ? evaluateAnswerStyle({
+          answer: drafter.answer_markdown,
+          draft: drafter.structured_draft ?? null,
+          footnotes: drafter.footnotes,
+          inputSources: drafter.input_sources ?? [],
+        })
+      : null,
   };
 
   const requiredAnchorsRuntime = {

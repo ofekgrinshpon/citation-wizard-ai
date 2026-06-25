@@ -95,6 +95,23 @@ const SYSTEM_PROMPT_V2 = `אתה משפטן/ית ישראלי/ת הכותב/ת �
 - אל תמציא צירופים סביב סמכות מנהלית. כתוב "הבטחה מנהלית", "הרשות המוסמכת", "בעל הסמכות" — לא "הבטחה מנהירת סמכויות", לא "המשרוק", לא ניסוחים דומים שאינם קיימים בעברית משפטית.
 - העדף עברית משפטית פשוטה ונכונה על פני ניסוח מרשים-לכאורה. אל תשתמש בביטויים כמו "מום פרשני", "שווה לנקוט", "משקל תקף נמוך יותר" וכיו"ב — בחר במונח מקובל ("פגם פרשני", "ראוי לנקוט", "משקל נמוך יותר") או נסח מחדש.
 
+חוזה ראיות וכיול ודאות (חובה — גובר על נטייה לכתיבה החלטית):
+- לכל מקור בשדה "support" מצוין direct או partial. כתוב בהתאם:
+  • direct — מותר לנסח את הטענה הספציפית שאותו מקור תומך בה בצורה ברורה.
+  • partial / mixed / generic_index — חובה ניסוח זהיר. אל תקבע מסקנה גורפת על בסיס כזה.
+- טענות מן הסוגים הבאים אסור להציגן בלשון חזקה אלא אם יש להן תמיכה direct ספציפית באותם מקורות: המלצות רחבות לרפורמה או קודיפיקציה, קביעות חוקתיות, קביעות על "השפעה מעשית" רחבה בפועל, קביעות על המגמה הכוללת של הפסיקה, וקביעות "המקורות מוכיחים".
+- לטענות בעלות תמיכה חלקית או מעורבת, השתמש בניסוחים זהירים בלבד: "מן המקורות עולה בזהירות כי", "ניתן להצביע על", "אפשר לטעון כי", "המקורות מצביעים על מגמה", "אין במקורות שאותרו כדי לבסס מסקנה נחרצת".
+- אל תשתמש בלשון חזקה כגון "מכאן נובע", "ברור כי", "הדבר מחייב", "המסקנה היא", "יש לקבוע", "המקורות מוכיחים" — אלא אם יש תמיכה direct ספציפית.
+
+סגנון עברי משפטי נקי (חובה):
+- כתוב בעברית משפטית טבעית ומקובלת. העדף ניסוח משפטי ברור על מילים פסבדו-אקדמיות שאינן קיימות.
+- אל תכתוב את הצורות השגויות הבאות: "פוקודה" (הצורה הנכונה: "פקודה"), "המסקנהיות", "כלים עיליים", "הדין הפרשני האקטיבי", "כלי עובדני".
+
+כותרות והערות שוליים מורכבות:
+- צמצם משמעותית כותרות. אל תיצור heading לכל פסקה. מספר פסקאות באותו נושא בדרך כלל אינן זקוקות לכותרת.
+- העדף source_ref אחד מדויק לפסקה. שניים — רק כשבאמת נדרש. שלוש — רק כאשר כל אחד מהמקורות באמת תורם משהו שונה (חוק + פסיקה + ספרות).
+- הימנע מ"מרק מקורות" — אל תצרף שלושה מקורות לפסקה רק כדי "לחזק" אותה.
+
 זכור: אם תכניס סימן עילי כלשהו לתוך text, התשובה תיפסל.`;
 
 
@@ -161,6 +178,9 @@ function buildUserMessage(
     lines.push(`title: ${s.title}`);
     if (s.url) lines.push(`url: ${s.url}`);
     lines.push(`source_type: ${s.source_type} | role: ${s.role} | support: ${s.best_support}`);
+    if (s.best_support === "partial") {
+      lines.push(`hint: תמיכה חלקית בלבד — נסח טענה זו בלשון זהירה (ראה חוזה הראיות במערכת ההנחיות).`);
+    }
     if (s.supported_points.length) {
       lines.push(`supported_points:`);
       for (const p of s.supported_points) lines.push(`  • ${p}`);
@@ -215,6 +235,12 @@ const BROKEN_HEBREW_DENYLIST = [
   "מום פרשני",
   "שווה לנקוט",
   "משקל תקף נמוך יותר",
+  // Phase B additions — observed bad phrases.
+  "פוקודה",
+  "המסקנהיות",
+  "כלים עיליים",
+  "הדין הפרשני האקטיבי",
+  "כלי עובדני",
 ];
 
 // V2.1e — wrong official names. Canonical: "חוק-יסוד: כבוד האדם וחירותו".
@@ -334,6 +360,10 @@ export interface DrafterV2Result {
   error?: string;
   raw_text?: string;
   structured_validation: StructuredValidation;
+  /** Parsed structured draft (used by the answer-style report-only gate). */
+  structured_draft?: import("./structuredValidation.ts").StructuredDraft | null;
+  /** Input sources actually passed to the drafter (display titles applied). */
+  input_sources?: DrafterInputSource[];
   builder_report?: ReturnType<typeof buildFootnotedAnswer>["builder_report"];
   quality_warning?: QualityWarning;
   usage?: { input_tokens?: number; output_tokens?: number };
@@ -567,6 +597,8 @@ export async function runDrafterV2(
     footnotes,
     stage_runs,
     structured_validation: parsed.report,
+    structured_draft: parsed.draft,
+    input_sources: inputSources,
     builder_report: built.builder_report,
     quality_warning: computeQualityWarning(answer_markdown, {
       question,

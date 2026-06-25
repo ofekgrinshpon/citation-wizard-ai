@@ -190,7 +190,13 @@ const DRAFTER_TOOL_PARAMETERS: Record<string, unknown> = {
 export interface DrafterInputSource {
   ref: string;
   candidate_id: string;
+  /** Safe display title — used by drafter prompt + footnote renderer. */
   title: string;
+  /** Raw upstream title — debug only, never user-facing. */
+  raw_title: string;
+  /** Display-title hygiene status (see displayTitleHygiene.ts). */
+  title_status: "ok" | "fallback_junk_meta" | "fallback_truncated" | "fallback_empty" | "fallback_generic";
+  title_hygiene_reasons: string[];
   url: string | null;
   source_type: string;
   role: string;
@@ -205,6 +211,8 @@ interface RawDraft {
   answer_markdown?: unknown;
   used_sources?: unknown;
 }
+
+import { computeDisplayTitle } from "./displayTitleHygiene.ts";
 
 export function buildInputSources(
   candidates: Candidate[],
@@ -231,10 +239,19 @@ export function buildInputSources(
     const supported_points = Array.from(
       new Set(vs.flatMap((v) => v.supported_points).filter((p) => !!p)),
     ).slice(0, 6);
+    const dt = computeDisplayTitle({
+      title: c.title,
+      url: c.source_url ?? null,
+      source_type: c.source_type,
+      origin: c.origin,
+    });
     out.push({
       ref: `s${n++}`,
       candidate_id: c.candidate_id,
-      title: c.title,
+      title: dt.display_title,
+      raw_title: dt.raw_title,
+      title_status: dt.title_status,
+      title_hygiene_reasons: dt.title_hygiene_reasons,
       url: c.source_url ?? null,
       source_type: c.source_type,
       role: c.role,
@@ -254,6 +271,9 @@ export function buildInputSources(
           ref: ch.ref, // e.g. u1p3
           candidate_id: `user:${d.id}:p${ch.page}`,
           title,
+          raw_title: title,
+          title_status: "ok",
+          title_hygiene_reasons: [],
           url: d.signed_url,
           source_type: "user_document",
           role: "user_document",
