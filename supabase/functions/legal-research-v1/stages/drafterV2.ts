@@ -576,5 +576,7 @@ export async function runDrafterV2(
         .slice(0, 20000),
     }),
     usage: lastUsage,
+    missing_anchor_caveat_injected: missingAnchors.length > 0,
+    missing_anchor_descriptions: missingAnchors.map((a) => a.description),
   };
 }
