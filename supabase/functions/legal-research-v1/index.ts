@@ -19,7 +19,6 @@ import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { runVerifier } from "./stages/verifier.ts";
 import { runDrafter } from "./stages/drafter.ts";
 import { runDrafterV2 } from "./stages/drafterV2.ts";
-import { buildInputSources } from "./stages/drafter.ts";
 import { evaluateAnswerStyle } from "./stages/answerStyleGate.ts";
 import {
   buildRequiredAnchorQueries,
