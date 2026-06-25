@@ -360,6 +360,10 @@ export interface DrafterV2Result {
   error?: string;
   raw_text?: string;
   structured_validation: StructuredValidation;
+  /** Parsed structured draft (used by the answer-style report-only gate). */
+  structured_draft?: import("./structuredValidation.ts").StructuredDraft | null;
+  /** Input sources actually passed to the drafter (display titles applied). */
+  input_sources?: DrafterInputSource[];
   builder_report?: ReturnType<typeof buildFootnotedAnswer>["builder_report"];
   quality_warning?: QualityWarning;
   usage?: { input_tokens?: number; output_tokens?: number };
