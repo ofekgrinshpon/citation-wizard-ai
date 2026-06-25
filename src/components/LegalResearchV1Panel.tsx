@@ -199,7 +199,10 @@ export function LegalResearchV1Panel({
   };
 
   // Resume-on-mount: if a job was active in this tab, keep polling it.
+  // Skip when a history-replay payload is being injected — the cached result
+  // must win over any leftover session job state.
   useEffect(() => {
+    if (externalResult) return;
     try {
       const raw = sessionStorage.getItem(RESUME_STORAGE_KEY);
       if (!raw) return;
@@ -216,6 +219,31 @@ export function LegalResearchV1Panel({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // History replay: hydrate cached V1 answer/footnotes from the sidebar.
+  useEffect(() => {
+    if (!externalResult) return;
+    stopAll();
+    clearResume();
+    setLoading(false);
+    setError(null);
+    setJobId(null);
+    setCurrentStage(null);
+    setCompletedStages([]);
+    setElapsed(0);
+    setFiles([]);
+    setQuestion(externalResult.question);
+    setResult({
+      answer: externalResult.payload?.answer ?? "",
+      footnotes: Array.isArray(externalResult.payload?.footnotes)
+        ? externalResult.payload.footnotes
+        : [],
+      used_sources: [],
+      debug: {},
+    });
+    onConsumeExternalResult?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [externalResult]);
 
 
   const handleAddFiles = (incoming: FileList | File[] | null) => {
