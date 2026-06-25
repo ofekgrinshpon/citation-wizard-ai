@@ -615,6 +615,19 @@ async function handle(req: Request): Promise<Response> {
 
 
   await markStage("drafter");
+  // Pre-compute required-anchor statuses (before drafter; used set is empty
+  // here — recomputed post-drafter for the final debug record).
+  const usableIdSet = new Set(verifier.usable.map((u) => u.candidate_id));
+  const preDraftAnchorStatuses = computeRequiredAnchorStatuses({
+    anchors: requiredAnchors,
+    candidates: pool.candidates,
+    usableIds: usableIdSet,
+    verdicts: verifier.verdicts,
+    usedCandidateIds: new Set(),
+  });
+  const missingForCaveat = pickMissingAnchors(preDraftAnchorStatuses)
+    .map((s) => ({ description: s.description }));
+
   // V2.1c is the default drafter (structured blocks + deterministic
   // footnoteBuilder). The legacy Markdown baseline `runDrafter` remains
   // imported for easy revert — re-point this call to `runDrafter(...)` and
@@ -624,9 +637,23 @@ async function handle(req: Request): Promise<Response> {
     analyzer.claims,
     pool.candidates,
     { usable: verifier.usable, verdicts: verifier.verdicts },
-    { userDocs: attachmentResult.documents, useAsSource },
+    {
+      userDocs: attachmentResult.documents,
+      useAsSource,
+      missingRequiredAnchors: missingForCaveat,
+    },
   );
   stage_runs.push(...drafter.stage_runs);
+
+  // Re-compute statuses post-drafter to reflect citation outcome.
+  const usedIdSetForAnchors = new Set(drafter.used_sources.map((u) => u.candidate_id));
+  const requiredAnchorStatuses = computeRequiredAnchorStatuses({
+    anchors: requiredAnchors,
+    candidates: pool.candidates,
+    usableIds: usableIdSet,
+    verdicts: verifier.verdicts,
+    usedCandidateIds: usedIdSetForAnchors,
+  });
 
   // Harness-only: when x-drafter-v2-compare-models is set, re-run drafterV2
   // additional times against the *same* input pack (same candidates, same
