@@ -116,11 +116,15 @@ function classifyLanding(u: URL): PplxLandingStatus {
   // Numeric ID segments of length >= 4 anywhere in the path.
   if (/\/\d{4,}\b/.test(path)) return "specific_document";
   // A clear unique slug + digit tail (e.g. /pages/incident.aspx?rid=7596) — covered by search check.
-  // Path with >=3 segments where the last is long and non-trivial.
+  // Path with >=3 segments where the last is long AND contains digits or
+  // mixed case (camelCase/PascalCase IDs). All-lowercase snake_case words
+  // are explicitly NOT treated as "specific" — the user flagged this as the
+  // common landing-page shape (e.g. /state_audit_reports).
   const segments = path.split("/").filter(Boolean);
   if (segments.length >= 3) {
     const last = segments[segments.length - 1];
-    if (last.length >= 12 && !/^(index|home|main|page|list)/i.test(last)) {
+    const hasMixedCase = /[a-z]/.test(last) && /[A-Z]/.test(last);
+    if (last.length >= 12 && hasMixedCase && !/^(index|home|main|page|list)/i.test(last)) {
       return "specific_document";
     }
   }
