@@ -178,6 +178,9 @@ function buildUserMessage(
     lines.push(`title: ${s.title}`);
     if (s.url) lines.push(`url: ${s.url}`);
     lines.push(`source_type: ${s.source_type} | role: ${s.role} | support: ${s.best_support}`);
+    if (s.best_support === "partial") {
+      lines.push(`hint: תמיכה חלקית בלבד — נסח טענה זו בלשון זהירה (ראה חוזה הראיות במערכת ההנחיות).`);
+    }
     if (s.supported_points.length) {
       lines.push(`supported_points:`);
       for (const p of s.supported_points) lines.push(`  • ${p}`);
