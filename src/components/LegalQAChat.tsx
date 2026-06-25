@@ -867,6 +867,7 @@ interface LegalQAChatProps {
   externalResult?:
     | { question: string; result: QAResult; taskMode: "research" | "case_summary" | "academic_writing" }
     | { question: string; sourcesPayload: any; taskMode: "legal_source_search" }
+    | { question: string; v1Payload: { answer: string; footnotes: any[] }; taskMode: "research" }
     | null;
   onConsumeExternalResult?: () => void;
   academicResumeSignal?: number;
@@ -882,8 +883,17 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
   // effect, which would re-apply a stale history result after a project switch.
   const sourceSearchExternal = useMemo(
     () =>
-      externalResult && externalResult.taskMode === "legal_source_search"
+      externalResult && externalResult.taskMode === "legal_source_search" && "sourcesPayload" in externalResult
         ? { question: externalResult.question, payload: externalResult.sourcesPayload }
+        : null,
+    [externalResult],
+  );
+
+  // Stable-identity prop for LegalResearchV1Panel history replay.
+  const legalResearchV1External = useMemo(
+    () =>
+      externalResult && "v1Payload" in externalResult
+        ? { question: externalResult.question, payload: externalResult.v1Payload }
         : null,
     [externalResult],
   );
@@ -1078,6 +1088,16 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
     if (externalResult.taskMode === "legal_source_search") {
       setQuestion(externalResult.question);
       setTaskMode("legal_source_search");
+      return;
+    }
+    // legal-research-v1 history replay: the V1 panel owns its own `result`
+    // state, so we only switch the UI mode and prefill the question. The
+    // cached answer is forwarded via `legalResearchV1External` -> panel prop.
+    // Never set `result` here (legacy QAResult shape would not match) and
+    // never let this path fall through to the legacy legal-qa invoke.
+    if ("v1Payload" in externalResult) {
+      setQuestion(externalResult.question);
+      setTaskMode("research");
       return;
     }
     setQuestion(externalResult.question);
@@ -2951,7 +2971,10 @@ export function LegalQAChat({ onResultSaved, externalResult, onConsumeExternalRe
         {/* ── Non-academic empty state ── */}
         {!isAcademic && taskMode === "research" && (
           <div className="h-full flex flex-col py-4">
-            <LegalResearchV1Panel />
+            <LegalResearchV1Panel
+              externalResult={legalResearchV1External}
+              onConsumeExternalResult={onConsumeExternalResult}
+            />
           </div>
         )}
 

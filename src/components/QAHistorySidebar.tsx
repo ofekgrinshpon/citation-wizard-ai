@@ -35,6 +35,9 @@ interface Props {
 
 const MODE_LABELS: Record<string, { label: string; icon: typeof Search }> = {
   research: { label: "מחקר", icon: Search },
+  // legal-research-v1 telemetry writes this distinct task_mode but the UI mode
+  // shown to the user is still "מחקר". Map it so the badge renders correctly.
+  legal_research_v1: { label: "מחקר", icon: Search },
   legal_source_search: { label: "חיפוש מקורות", icon: BookMarked },
   case_summary: { label: "סיכום", icon: BookOpen },
   academic_writing: { label: "כתיבה אקדמית", icon: GraduationCap },
@@ -101,6 +104,20 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
         : (fn && !Array.isArray(fn) && typeof fn === "object" && (fn as any).__sources_only === true ? (fn as any) : null);
     if (sourcesEnvelope) {
       onLoadResult(log.question, sourcesEnvelope.payload ?? sourcesEnvelope, "legal_source_search");
+      return;
+    }
+    // legal-research-v1 history rows: pass through the raw answer + footnotes
+    // in a dedicated envelope so the V1 panel can hydrate without going through
+    // the legacy QAResult mapper (which would clobber the Footnote shape).
+    if (log.task_mode === "legal_research_v1") {
+      const v1Envelope = {
+        __legal_research_v1: true,
+        payload: {
+          answer: log.answer,
+          footnotes: Array.isArray(fn) ? (fn as any[]) : [],
+        },
+      } as any;
+      onLoadResult(log.question, v1Envelope, "legal_research_v1");
       return;
     }
     const isCaseSummaryEnvelope = fn && !Array.isArray(fn) && typeof fn === "object" && fn.__case_summary === true;
