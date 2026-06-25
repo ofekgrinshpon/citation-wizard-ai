@@ -83,9 +83,12 @@ function looksTruncated(t: string): boolean {
   const words = trimmed.split(/\s+/);
   if (words.length < 2) return false;
   const last = words[words.length - 1];
-  // Short trailing Hebrew fragment without standard endings (ת/ם/ן/ה/י are
-  // common endings — if absent, more likely a cut).
-  if (last.length <= 4 && !/[\u05EA\u05DD\u05DF\u05D4\u05D9]$/.test(last)) return true;
+  // Common Hebrew word endings — if the last word ends with one of these
+  // AND is reasonably long, it's probably a complete word. Otherwise it
+  // looks like a mid-word truncation (e.g. "הישרא" missing final "לי").
+  // Endings list: ה ת ם ן י ו ך (very common) and final-form letters ץ ף.
+  const COMMON_END = /[\u05D4\u05EA\u05DD\u05DF\u05D9\u05D5\u05DA\u05E5\u05E3]$/;
+  if (last.length <= 6 && !COMMON_END.test(last)) return true;
   return false;
 }
 
