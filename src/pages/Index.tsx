@@ -134,6 +134,7 @@ const Index = () => {
   const [qaExternalResult, setQaExternalResult] = useState<
     | { question: string; result: any; taskMode: "research" | "case_summary" | "academic_writing" }
     | { question: string; sourcesPayload: any; taskMode: "legal_source_search" }
+    | { question: string; v1Payload: { answer: string; footnotes: any[] }; taskMode: "research" }
     | null
   >(null);
   const [academicResumeSignal, setAcademicResumeSignal] = useState<number>(0);
@@ -1237,8 +1238,23 @@ const Index = () => {
                     setAcademicResumeSignal(Date.now());
                   } else if (taskMode === "legal_source_search") {
                     setQaExternalResult({ question, sourcesPayload: result, taskMode: "legal_source_search" });
+                  } else if (
+                    taskMode === "legal_research_v1" &&
+                    result && typeof result === "object" && (result as any).__legal_research_v1
+                  ) {
+                    setQaExternalResult({
+                      question,
+                      v1Payload: (result as any).payload,
+                      taskMode: "research",
+                    });
                   } else {
-                    setQaExternalResult({ question, result, taskMode: taskMode as "research" | "case_summary" | "academic_writing" });
+                    // Defensive: coerce any unknown/legacy task_mode to "research"
+                    // so we never hand the chat an unrenderable mode string.
+                    const known = ["research", "case_summary", "academic_writing"] as const;
+                    const safeMode = (known as readonly string[]).includes(taskMode)
+                      ? (taskMode as "research" | "case_summary" | "academic_writing")
+                      : "research";
+                    setQaExternalResult({ question, result, taskMode: safeMode });
                   }
                 }}
               />
