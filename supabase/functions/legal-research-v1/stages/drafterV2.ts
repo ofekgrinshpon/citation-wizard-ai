@@ -597,6 +597,8 @@ export async function runDrafterV2(
     footnotes,
     stage_runs,
     structured_validation: parsed.report,
+    structured_draft: parsed.draft,
+    input_sources: inputSources,
     builder_report: built.builder_report,
     quality_warning: computeQualityWarning(answer_markdown, {
       question,
