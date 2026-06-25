@@ -551,9 +551,11 @@ export async function runPerplexityRetrieval(
       query_ms: [], total_wall_ms: 0, total_sum_ms: 0,
       rate_limit_count: 0, retry_count: 0,
       fallback_to_sequential: false, merge_order_preserved: true,
+      hygiene_counts: emptyHygieneCounts(isReportOnlyMode()),
     };
   }
   const targets = queries.filter((q) => q.targets.includes("perplexity"));
+  const hygieneCounts = emptyHygieneCounts(isReportOnlyMode());
 
   // Bounded-concurrency worker pool. Preserves original order in results
   // by indexing the input array; merge below walks indices in order.
@@ -563,7 +565,7 @@ export async function runPerplexityRetrieval(
     while (true) {
       const i = next++;
       if (i >= targets.length) return;
-      results[i] = await runOneQuery(targets[i], i);
+      results[i] = await runOneQuery(targets[i], i, hygieneCounts);
     }
   }
   const workerCount = Math.max(1, Math.min(concurrency_limit, targets.length));
@@ -608,5 +610,6 @@ export async function runPerplexityRetrieval(
     retry_count: 0,
     fallback_to_sequential: false,
     merge_order_preserved,
+    hygiene_counts: hygieneCounts,
   };
 }
