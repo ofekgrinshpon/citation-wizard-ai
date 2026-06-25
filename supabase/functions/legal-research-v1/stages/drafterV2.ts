@@ -131,12 +131,23 @@ function buildUserMessage(
   sources: DrafterInputSource[],
   userDocs: UserDocument[],
   useAsSource: boolean,
+  missingAnchors: Array<{ description: string }>,
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
   lines.push(
     "מסגרת התשובה חייבת להישאר נאמנה לשאלה כפי שנשאלה. אם המקורות עוסקים בנושא סמוך אך לא זהה — ציין זאת במפורש ואל תחליף את שאלת המשתמש.",
   );
+  if (missingAnchors.length > 0) {
+    lines.push("");
+    lines.push(
+      "הערה משפטית חשובה: עוגן ראשוני הבא נדרש לתשובה מלאה אך לא נמצא במקורות שסופקו לך:",
+    );
+    for (const a of missingAnchors) lines.push(`  • ${a.description}`);
+    lines.push(
+      "בתשובתך, ציין במפורש שהעוגן הזה אינו בידיך וכי ניתוח ההמשכיות/החוקיות המלא דורש עיון בו, במקום להניח ממנו מסקנות חיוביות.",
+    );
+  }
   lines.push("");
   lines.push("טענות (לשימוש פנימי בלבד — אל תזכיר מזהי טענות בשום text):");
   for (const cl of claims) {
@@ -326,6 +337,9 @@ export interface DrafterV2Result {
   builder_report?: ReturnType<typeof buildFootnotedAnswer>["builder_report"];
   quality_warning?: QualityWarning;
   usage?: { input_tokens?: number; output_tokens?: number };
+  // Debug: whether the missing-required-anchor caveat instruction was injected.
+  missing_anchor_caveat_injected?: boolean;
+  missing_anchor_descriptions?: string[];
   schema_failure_reason?:
     | "no_tool_call"
     | "json_parse"
@@ -352,6 +366,11 @@ export async function runDrafterV2(
     // "anthropic" calls the Anthropic Messages API directly with the same
     // structured-output schema; the rest of the pipeline is identical.
     provider?: "openai" | "anthropic";
+    // Required-anchor caveat (Phase-1 minimal): when one or more declared
+    // legal anchors did not reach the verifier or were not effectively
+    // supported, append a single instruction to the user message telling
+    // the drafter to caveat the answer instead of inferring around them.
+    missingRequiredAnchors?: Array<{ description: string }>;
   },
 ): Promise<DrafterV2Result> {
   const t_total = Date.now();
@@ -407,7 +426,8 @@ export async function runDrafterV2(
     };
   }
 
-  const userMsg = buildUserMessage(question, claims, inputSources, userDocs, useAsSource);
+  const missingAnchors = opts?.missingRequiredAnchors ?? [];
+  const userMsg = buildUserMessage(question, claims, inputSources, userDocs, useAsSource, missingAnchors);
   const tool = {
     name: "emit_structured_draft",
     description: "Emit the Hebrew legal answer as structured blocks. Code adds footnote markers.",
@@ -556,5 +576,7 @@ export async function runDrafterV2(
         .slice(0, 20000),
     }),
     usage: lastUsage,
+    missing_anchor_caveat_injected: missingAnchors.length > 0,
+    missing_anchor_descriptions: missingAnchors.map((a) => a.description),
   };
 }

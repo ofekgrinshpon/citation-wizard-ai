@@ -11,6 +11,15 @@ import {
   SourceRole,
   StageRun,
 } from "../lib/types.ts";
+import {
+  accumulateHygieneCounts,
+  emptyHygieneCounts,
+  evaluatePerplexityHygiene,
+  isReportOnlyMode,
+  normalizePerplexitySourceType,
+  type PplxHygiene,
+  type PplxHygieneCounts,
+} from "./perplexityHygiene.ts";
 
 const PPLX_TIMEOUT_MS = 25_000;
 
@@ -305,11 +314,16 @@ interface PplxResultRow {
   extracted_followup_terms?: string[];
   role_corrected_from?: SourceRole;
   role_corrected_to?: SourceRole;
+  hygiene?: PplxHygiene;
+  hygiene_enforced?: boolean;          // true when action was applied (default mode)
+  raw_pplx_source_type?: string;
+  normalized_source_type?: string;
 }
 
 function processRaw(
   query: Query,
   raw: PplxSource[],
+  hygieneCounts: PplxHygieneCounts,
 ): {
   admitted: Candidate[];
   rows: PplxResultRow[];
@@ -318,6 +332,7 @@ function processRaw(
   const admitted: Candidate[] = [];
   const rows: PplxResultRow[] = [];
   const followupTerms = new Set<string>();
+  const reportOnly = hygieneCounts.report_only_mode;
   for (const s of raw) {
     const title = (s.title || "").trim();
     const url = (s.url || "").trim();
@@ -351,11 +366,46 @@ function processRaw(
       });
       continue;
     }
+
+    // ── Phase-1 hygiene gate ────────────────────────────────────────────────
+    const hygiene = evaluatePerplexityHygiene({ url, title, snippet: s.snippet });
+    accumulateHygieneCounts(hygieneCounts, hygiene);
+    const wouldExclude = hygiene.hygiene_action === "exclude";
+    if (wouldExclude) hygieneCounts.would_exclude_in_report_only += reportOnly ? 1 : 0;
+
+    if (!reportOnly && hygiene.hygiene_action === "exclude") {
+      rows.push({
+        title, url, domain, classified_source_class: cls,
+        admitted_to_candidate_pool: false,
+        drop_reason: `hygiene:${hygiene.hygiene_reasons.join(",") || "exclude"}`,
+        hygiene, hygiene_enforced: true,
+      });
+      continue;
+    }
+
+    // Source-type normalization (conservative — preserve raw).
+    const rawSt = String(s.source_type ?? "").trim();
+    const st = normalizePerplexitySourceType(rawSt, cls);
+
+    // Use normalized URL when hygiene fixed an obvious typo (hhttps://…).
+    const effectiveUrl = hygiene.url_normalized && hygiene.url_status === "fixed"
+      ? hygiene.url_normalized
+      : url;
+
+    let baseScore = cls === "official_primary" || cls === "legislation" ? 0.95 : 0.75;
+    // Bad hygiene caps the score at 0.5 (per approved plan).
+    const downgrade = !reportOnly && hygiene.hygiene_action === "downgrade";
+    if (downgrade && baseScore > 0.5) baseScore = 0.5;
+
     rows.push({
       title, url, domain, classified_source_class: cls,
       admitted_to_candidate_pool: true,
       role_corrected_from: corrected_from,
       role_corrected_to: corrected_from ? effectiveRole : undefined,
+      hygiene,
+      hygiene_enforced: !reportOnly && hygiene.hygiene_action !== "keep",
+      raw_pplx_source_type: rawSt,
+      normalized_source_type: st.normalized,
     });
     admitted.push({
       candidate_id: crypto.randomUUID(),
@@ -364,15 +414,23 @@ function processRaw(
       origin: "perplexity",
       retrieval_method: "perplexity",
       title,
-      source_type: s.source_type || query.expected_source_type || "other",
-      source_url: url,
+      // Conservative: never pass through raw PPLX strings as Candidate.source_type;
+      // use normalized value. Raw is preserved in metadata.
+      source_type: st.normalized,
+      source_url: effectiveUrl,
       snippet: s.snippet ?? null,
       query_he: query.query_he,
-      score: cls === "official_primary" || cls === "legislation" ? 0.95 : 0.75,
+      score: baseScore,
       expected_source_type: query.expected_source_type,
       metadata: {
         domain, classified_source_class: cls,
         role_corrected_from: corrected_from,
+        pplx_hygiene: hygiene,
+        raw_pplx_source_type: rawSt,
+        source_type_normalized: st.was_normalized,
+        ...(query.metadata?.required_anchor_id
+          ? { required_anchor_id: query.metadata.required_anchor_id }
+          : {}),
       },
     });
   }
@@ -407,6 +465,7 @@ export interface PerplexityRetrievalResult {
   retry_count: number;
   fallback_to_sequential: boolean;
   merge_order_preserved: boolean;
+  hygiene_counts: PplxHygieneCounts;
 }
 
 interface PerQueryWorkResult {
@@ -420,9 +479,10 @@ interface PerQueryWorkResult {
 async function runOneQuery(
   q: Query,
   index: number,
+  hygieneCounts: PplxHygieneCounts,
 ): Promise<PerQueryWorkResult> {
   const first = await callPerplexity(q);
-  const { admitted, rows, followupTerms } = processRaw(q, first.raw);
+  const { admitted, rows, followupTerms } = processRaw(q, first.raw, hygieneCounts);
   const allCandidates: Candidate[] = [...admitted];
   let totalMs = first.ms;
   let followupAdmitted = 0;
@@ -434,7 +494,7 @@ async function runOneQuery(
     const second = await callPerplexity(q, `${term} ${q.query_he}`.slice(0, 200));
     totalMs += second.ms;
     if (second.http === 429) rate_limited = true;
-    const second_p = processRaw(q, second.raw);
+    const second_p = processRaw(q, second.raw, hygieneCounts);
     allCandidates.push(...second_p.admitted);
     followupAdmitted = second_p.admitted.length;
     for (const r of second_p.rows) {
@@ -491,9 +551,11 @@ export async function runPerplexityRetrieval(
       query_ms: [], total_wall_ms: 0, total_sum_ms: 0,
       rate_limit_count: 0, retry_count: 0,
       fallback_to_sequential: false, merge_order_preserved: true,
+      hygiene_counts: emptyHygieneCounts(isReportOnlyMode()),
     };
   }
   const targets = queries.filter((q) => q.targets.includes("perplexity"));
+  const hygieneCounts = emptyHygieneCounts(isReportOnlyMode());
 
   // Bounded-concurrency worker pool. Preserves original order in results
   // by indexing the input array; merge below walks indices in order.
@@ -503,7 +565,7 @@ export async function runPerplexityRetrieval(
     while (true) {
       const i = next++;
       if (i >= targets.length) return;
-      results[i] = await runOneQuery(targets[i], i);
+      results[i] = await runOneQuery(targets[i], i, hygieneCounts);
     }
   }
   const workerCount = Math.max(1, Math.min(concurrency_limit, targets.length));
@@ -548,5 +610,6 @@ export async function runPerplexityRetrieval(
     retry_count: 0,
     fallback_to_sequential: false,
     merge_order_preserved,
+    hygiene_counts: hygieneCounts,
   };
 }

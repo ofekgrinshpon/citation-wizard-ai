@@ -19,6 +19,12 @@ import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { runVerifier } from "./stages/verifier.ts";
 import { runDrafter } from "./stages/drafter.ts";
 import { runDrafterV2 } from "./stages/drafterV2.ts";
+import {
+  buildRequiredAnchorQueries,
+  computeRequiredAnchorStatuses,
+  pickMissingAnchors,
+  resolveRequiredAnchors,
+} from "./stages/requiredAnchors.ts";
 import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
 import { StageRun } from "./lib/types.ts";
@@ -424,12 +430,39 @@ async function handle(req: Request): Promise<Response> {
     });
   }
 
+  // ─── Required anchors — append deterministic primary-source queries ───────
+  // Registry-driven. Triggered today only when the analyzer recorded an
+  // interpretation_note that matches a registry pattern (e.g. Mandate-era).
+  const requiredAnchors = resolveRequiredAnchors(analyzer);
+  const anchorQueries = requiredAnchors.length > 0
+    ? buildRequiredAnchorQueries(analyzer, requiredAnchors)
+    : [];
+  const allQueries = [...planner!.queries, ...anchorQueries];
+  const requiredAnchorsMeta = {
+    enabled: true,
+    count: requiredAnchors.length,
+    anchors: requiredAnchors.map((a) => ({
+      anchor_id: a.anchor_id,
+      description: a.description,
+      anchor_type: a.anchor_type,
+      target: a.target,
+      query_count: a.suggested_queries.length,
+    })),
+    queries_emitted: anchorQueries.map((q) => ({
+      claim_id: q.claim_id,
+      role: q.role,
+      query_he: q.query_he,
+      targets: q.targets,
+      required_anchor_id: (q.metadata as Record<string, unknown> | undefined)?.required_anchor_id,
+    })),
+  };
+
   // ─── P3: Retrieval (local DB + Perplexity) ───────────────────────────────
   await markStage("retrieval");
   const tRetrieval = Date.now();
   const [local, pplx] = await Promise.all([
-    runLocalRetrieval(admin, planner!.queries, { question, claims: analyzer.claims }),
-    runPerplexityRetrieval(planner!.queries),
+    runLocalRetrieval(admin, allQueries, { question, claims: analyzer.claims }),
+    runPerplexityRetrieval(allQueries),
   ]);
   stage_runs.push(...local.stage_runs, ...pplx.stage_runs);
   const pool = buildCandidatePool([...local.candidates, ...pplx.candidates]);
@@ -470,6 +503,7 @@ async function handle(req: Request): Promise<Response> {
       retry_count: pplx.retry_count,
       fallback_to_sequential: pplx.fallback_to_sequential,
       merge_order_preserved: pplx.merge_order_preserved,
+      hygiene_counts: pplx.hygiene_counts,
     },
     pool: {
       found: pool.found,
@@ -535,7 +569,7 @@ async function handle(req: Request): Promise<Response> {
       stage_runs,
       planning: planningMeta,
       claims: analyzer.claims,
-      queries: planner!.queries,
+      queries: allQueries,
       retrieval: retrievalMeta,
       candidates: pool.candidates,
       dropped_sources: pplx.dropped,
@@ -561,7 +595,7 @@ async function handle(req: Request): Promise<Response> {
         stage_runs,
         planning: planningMeta,
         claims: analyzer.claims,
-        queries: planner!.queries,
+        queries: allQueries,
         retrieval: retrievalMeta,
         candidates: pool.candidates,
         dropped_sources: pplx.dropped,
@@ -581,6 +615,19 @@ async function handle(req: Request): Promise<Response> {
 
 
   await markStage("drafter");
+  // Pre-compute required-anchor statuses (before drafter; used set is empty
+  // here — recomputed post-drafter for the final debug record).
+  const usableIdSet = new Set(verifier.usable.map((u) => u.candidate_id));
+  const preDraftAnchorStatuses = computeRequiredAnchorStatuses({
+    anchors: requiredAnchors,
+    candidates: pool.candidates,
+    usableIds: usableIdSet,
+    verdicts: verifier.verdicts,
+    usedCandidateIds: new Set(),
+  });
+  const missingForCaveat = pickMissingAnchors(preDraftAnchorStatuses)
+    .map((s) => ({ description: s.description }));
+
   // V2.1c is the default drafter (structured blocks + deterministic
   // footnoteBuilder). The legacy Markdown baseline `runDrafter` remains
   // imported for easy revert — re-point this call to `runDrafter(...)` and
@@ -590,9 +637,23 @@ async function handle(req: Request): Promise<Response> {
     analyzer.claims,
     pool.candidates,
     { usable: verifier.usable, verdicts: verifier.verdicts },
-    { userDocs: attachmentResult.documents, useAsSource },
+    {
+      userDocs: attachmentResult.documents,
+      useAsSource,
+      missingRequiredAnchors: missingForCaveat,
+    },
   );
   stage_runs.push(...drafter.stage_runs);
+
+  // Re-compute statuses post-drafter to reflect citation outcome.
+  const usedIdSetForAnchors = new Set(drafter.used_sources.map((u) => u.candidate_id));
+  const requiredAnchorStatuses = computeRequiredAnchorStatuses({
+    anchors: requiredAnchors,
+    candidates: pool.candidates,
+    usableIds: usableIdSet,
+    verdicts: verifier.verdicts,
+    usedCandidateIds: usedIdSetForAnchors,
+  });
 
   // Harness-only: when x-drafter-v2-compare-models is set, re-run drafterV2
   // additional times against the *same* input pack (same candidates, same
@@ -708,6 +769,13 @@ async function handle(req: Request): Promise<Response> {
     builder_report: drafter.builder_report,
     schema_failure_reason: drafter.schema_failure_reason,
     quality_warning: drafter.quality_warning,
+    missing_anchor_caveat_injected: drafter.missing_anchor_caveat_injected ?? false,
+    missing_anchor_descriptions: drafter.missing_anchor_descriptions ?? [],
+  };
+
+  const requiredAnchorsRuntime = {
+    ...requiredAnchorsMeta,
+    statuses: requiredAnchorStatuses,
   };
 
   const finalAnswer = drafter.ok ? drafter.answer_markdown : STUB_ANSWER;
@@ -730,12 +798,13 @@ async function handle(req: Request): Promise<Response> {
       stage_runs,
       planning: planningMeta,
       claims: analyzer.claims,
-      queries: planner!.queries,
+      queries: allQueries,
       retrieval: retrievalMeta,
       candidates: pool.candidates,
       dropped_sources: pplx.dropped,
       verifier: verifierMeta,
       drafter: drafterMeta,
+      required_anchors: requiredAnchorsRuntime,
       drafter_v2_full_compare: drafterFullCompare
         ? {
             ok: drafterFullCompare.ok,
@@ -827,12 +896,13 @@ async function handle(req: Request): Promise<Response> {
       stage_runs,
       planning: planningMeta,
       claims: analyzer.claims,
-      queries: planner!.queries,
+      queries: allQueries,
       retrieval: retrievalMeta,
       candidates: pool.candidates,
       dropped_sources: pplx.dropped,
       verifier: verifierMeta,
       drafter: drafterMeta,
+      required_anchors: requiredAnchorsRuntime,
     },
   });
   }; // end runPipeline
