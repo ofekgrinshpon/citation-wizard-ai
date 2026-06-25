@@ -219,6 +219,10 @@ export function evaluatePerplexityHygiene(input: PplxHygieneInput): PplxHygiene 
   } else if (title_status === "too_short" && body_status !== "has_body") {
     hygiene_action = "exclude";
     reasons.push("exclude_short_title_no_body");
+  } else if (title_status === "suspicious" && body_status === "empty_body") {
+    // URL-slug title + empty body → strong "fabricated landing page" signal.
+    hygiene_action = "exclude";
+    reasons.push("exclude_slug_title_empty_body");
   } else if (
     body_status === "empty_body" &&
     landing_page_status === "generic_index" &&
