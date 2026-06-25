@@ -131,12 +131,23 @@ function buildUserMessage(
   sources: DrafterInputSource[],
   userDocs: UserDocument[],
   useAsSource: boolean,
+  missingAnchors: Array<{ description: string }>,
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
   lines.push(
     "מסגרת התשובה חייבת להישאר נאמנה לשאלה כפי שנשאלה. אם המקורות עוסקים בנושא סמוך אך לא זהה — ציין זאת במפורש ואל תחליף את שאלת המשתמש.",
   );
+  if (missingAnchors.length > 0) {
+    lines.push("");
+    lines.push(
+      "הערה משפטית חשובה: עוגן ראשוני הבא נדרש לתשובה מלאה אך לא נמצא במקורות שסופקו לך:",
+    );
+    for (const a of missingAnchors) lines.push(`  • ${a.description}`);
+    lines.push(
+      "בתשובתך, ציין במפורש שהעוגן הזה אינו בידיך וכי ניתוח ההמשכיות/החוקיות המלא דורש עיון בו, במקום להניח ממנו מסקנות חיוביות.",
+    );
+  }
   lines.push("");
   lines.push("טענות (לשימוש פנימי בלבד — אל תזכיר מזהי טענות בשום text):");
   for (const cl of claims) {
