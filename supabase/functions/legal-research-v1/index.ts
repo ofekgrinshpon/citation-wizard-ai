@@ -503,6 +503,7 @@ async function handle(req: Request): Promise<Response> {
       retry_count: pplx.retry_count,
       fallback_to_sequential: pplx.fallback_to_sequential,
       merge_order_preserved: pplx.merge_order_preserved,
+      hygiene_counts: pplx.hygiene_counts,
     },
     pool: {
       found: pool.found,
