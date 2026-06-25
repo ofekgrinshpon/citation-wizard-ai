@@ -896,12 +896,13 @@ async function handle(req: Request): Promise<Response> {
       stage_runs,
       planning: planningMeta,
       claims: analyzer.claims,
-      queries: planner!.queries,
+      queries: allQueries,
       retrieval: retrievalMeta,
       candidates: pool.candidates,
       dropped_sources: pplx.dropped,
       verifier: verifierMeta,
       drafter: drafterMeta,
+      required_anchors: requiredAnchorsRuntime,
     },
   });
   }; // end runPipeline
