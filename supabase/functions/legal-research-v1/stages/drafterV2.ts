@@ -337,6 +337,9 @@ export interface DrafterV2Result {
   builder_report?: ReturnType<typeof buildFootnotedAnswer>["builder_report"];
   quality_warning?: QualityWarning;
   usage?: { input_tokens?: number; output_tokens?: number };
+  // Debug: whether the missing-required-anchor caveat instruction was injected.
+  missing_anchor_caveat_injected?: boolean;
+  missing_anchor_descriptions?: string[];
   schema_failure_reason?:
     | "no_tool_call"
     | "json_parse"
