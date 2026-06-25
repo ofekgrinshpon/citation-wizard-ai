@@ -232,6 +232,12 @@ const BROKEN_HEBREW_DENYLIST = [
   "מום פרשני",
   "שווה לנקוט",
   "משקל תקף נמוך יותר",
+  // Phase B additions — observed bad phrases.
+  "פוקודה",
+  "המסקנהיות",
+  "כלים עיליים",
+  "הדין הפרשני האקטיבי",
+  "כלי עובדני",
 ];
 
 // V2.1e — wrong official names. Canonical: "חוק-יסוד: כבוד האדם וחירותו".
