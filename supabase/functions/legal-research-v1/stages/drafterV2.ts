@@ -366,6 +366,11 @@ export async function runDrafterV2(
     // "anthropic" calls the Anthropic Messages API directly with the same
     // structured-output schema; the rest of the pipeline is identical.
     provider?: "openai" | "anthropic";
+    // Required-anchor caveat (Phase-1 minimal): when one or more declared
+    // legal anchors did not reach the verifier or were not effectively
+    // supported, append a single instruction to the user message telling
+    // the drafter to caveat the answer instead of inferring around them.
+    missingRequiredAnchors?: Array<{ description: string }>;
   },
 ): Promise<DrafterV2Result> {
   const t_total = Date.now();
