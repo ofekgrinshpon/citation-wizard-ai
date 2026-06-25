@@ -1185,6 +1185,34 @@ function sanitizeHallucinatedPublicationData(
   return sanitized;
 }
 
+/**
+ * Ensure case-law citation lines end with a trailing period (אזכור אחיד —
+ * הערת שוליים מסתיימת בנקודה). Scoped to lines that look like case citations
+ * (contain ` נ' ` / ` נ׳ ` / ` נ" ` between parties). Skips lines that already
+ * end with `.`, `?`, `!`, `…`, or `:`, and skips the rule indicator line
+ * (starts with `📐`). Collapses ` .` to `.`.
+ */
+function ensureCitationTrailingPeriod(text: string): string {
+  if (!text) return text;
+  const lines = text.split("\n");
+  const partyRe = /\s[נN]['׳״"\u2018\u2019\u05F3]\s/;
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i];
+    const trimmed = raw.replace(/\s+$/, "");
+    if (!trimmed) continue;
+    if (trimmed.startsWith("📐")) continue;
+    if (!partyRe.test(trimmed)) continue;
+    // Collapse stray " ." → "."
+    let fixed = trimmed.replace(/\s+\.$/u, ".");
+    const last = fixed[fixed.length - 1];
+    if (last !== "." && last !== "?" && last !== "!" && last !== "…" && last !== ":") {
+      fixed = fixed + ".";
+    }
+    if (fixed !== raw) lines[i] = fixed;
+  }
+  return lines.join("\n");
+}
+
 const SYSTEM_PROMPT = `אתה מומחה לכללי האזכור האחיד בכתיבה המשפטית בישראל (מהדורת 2021). תפקידך הוא לקבל טקסט משפטי גולמי, לזהות בתוכו הפניות למקורות, ולהמיר אותן להערות שוליים תקניות ומדויקות לפי הכללים. אל תתייחס לעצמך בגוף ראשון או בכינוי כלשהו — אל תכתוב "אני", "העוזר", "המערכת" וכד'.
 
 ═══════════════════════════════════════════════
@@ -2980,6 +3008,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     content = normalizeArticleYearByRule2492(content);
     // Rule 1.10: Hebrew number ranges must be high→low (renders low on the right in RTL).
     content = normalizeHebrewNumberRanges(content);
+    content = ensureCitationTrailingPeriod(content);
     // Strip persona/preamble openings if the model regresses
     content = content.replace(
       /^\s*(?:["'״׳]?\s*)?(העוזר[^\n]*|המערכת[^\n]*מזהה[^\n]*|מכיוון שמדובר[^\n]*|אני\s+(?:מזהה|מבין|מבחין)[^\n]*|שלב\s*\d+[^\n]*)\n+/u,
