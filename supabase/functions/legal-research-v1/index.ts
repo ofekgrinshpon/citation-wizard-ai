@@ -769,6 +769,13 @@ async function handle(req: Request): Promise<Response> {
     builder_report: drafter.builder_report,
     schema_failure_reason: drafter.schema_failure_reason,
     quality_warning: drafter.quality_warning,
+    missing_anchor_caveat_injected: drafter.missing_anchor_caveat_injected ?? false,
+    missing_anchor_descriptions: drafter.missing_anchor_descriptions ?? [],
+  };
+
+  const requiredAnchorsRuntime = {
+    ...requiredAnchorsMeta,
+    statuses: requiredAnchorStatuses,
   };
 
   const finalAnswer = drafter.ok ? drafter.answer_markdown : STUB_ANSWER;
