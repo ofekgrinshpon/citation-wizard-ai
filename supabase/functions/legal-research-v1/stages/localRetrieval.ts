@@ -605,7 +605,12 @@ export async function runLocalRetrieval(
           query_he: q.query_he,
           score: ((m.similarity ?? 0) as number) * weight,
           expected_source_type: q.expected_source_type,
-          metadata: meta,
+          metadata: {
+            ...meta,
+            ...(q.metadata?.required_anchor_id
+              ? { required_anchor_id: q.metadata.required_anchor_id }
+              : {}),
+          },
         });
         kept++;
       };
