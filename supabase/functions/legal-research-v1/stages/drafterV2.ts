@@ -426,7 +426,8 @@ export async function runDrafterV2(
     };
   }
 
-  const userMsg = buildUserMessage(question, claims, inputSources, userDocs, useAsSource);
+  const missingAnchors = opts?.missingRequiredAnchors ?? [];
+  const userMsg = buildUserMessage(question, claims, inputSources, userDocs, useAsSource, missingAnchors);
   const tool = {
     name: "emit_structured_draft",
     description: "Emit the Hebrew legal answer as structured blocks. Code adds footnote markers.",
