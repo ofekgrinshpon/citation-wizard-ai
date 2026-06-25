@@ -479,9 +479,10 @@ interface PerQueryWorkResult {
 async function runOneQuery(
   q: Query,
   index: number,
+  hygieneCounts: PplxHygieneCounts,
 ): Promise<PerQueryWorkResult> {
   const first = await callPerplexity(q);
-  const { admitted, rows, followupTerms } = processRaw(q, first.raw);
+  const { admitted, rows, followupTerms } = processRaw(q, first.raw, hygieneCounts);
   const allCandidates: Candidate[] = [...admitted];
   let totalMs = first.ms;
   let followupAdmitted = 0;
@@ -493,7 +494,7 @@ async function runOneQuery(
     const second = await callPerplexity(q, `${term} ${q.query_he}`.slice(0, 200));
     totalMs += second.ms;
     if (second.http === 429) rate_limited = true;
-    const second_p = processRaw(q, second.raw);
+    const second_p = processRaw(q, second.raw, hygieneCounts);
     allCandidates.push(...second_p.admitted);
     followupAdmitted = second_p.admitted.length;
     for (const r of second_p.rows) {
