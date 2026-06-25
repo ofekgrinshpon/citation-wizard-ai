@@ -465,6 +465,7 @@ export interface PerplexityRetrievalResult {
   retry_count: number;
   fallback_to_sequential: boolean;
   merge_order_preserved: boolean;
+  hygiene_counts: PplxHygieneCounts;
 }
 
 interface PerQueryWorkResult {
