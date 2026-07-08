@@ -607,7 +607,70 @@ export async function runDrafterV2(
     };
   }
 
+  // ── Truncation guard (drafterV2-only) ────────────────────────────────────
+  // Run a cheap deterministic completeness check on the parsed draft. If the
+  // model closed mid-word / mid-clause, retry once with a larger budget on
+  // the same model; only escalate to MODEL_FULL if that retry still fails.
+  // Skipped when the caller forces a specific model / suppresses escalation
+  // (harness runs) and skipped for the anthropic provider (its token limits
+  // are handled elsewhere and it hasn't shown this failure mode).
+  let completeness = checkCompleteness(parsed.draft);
+  const completeness_initial = completeness;
+  let truncation_retry: DrafterV2Result["truncation_retry"] = {
+    attempted: false,
+    same_model_retry: false,
+    escalated_to_full: false,
+    retry_ms: 0,
+    reasons_initial: completeness_initial.reasons,
+  };
+
+  if (completeness.truncated && !skipEscalation && provider === "openai") {
+    const t_retry = Date.now();
+    truncation_retry.attempted = true;
+
+    // Retry #1 — same model, larger output budget.
+    truncation_retry.same_model_retry = true;
+    let retryResp = await tryOne(
+      initialModel,
+      "drafter_v2.truncation_retry",
+      DRAFTER_V2_BUDGET_RETRY,
+    );
+    let retryParsed = validateStructuredDraft(retryResp.data, allowedRefs);
+    if (retryParsed.draft) {
+      resp = retryResp;
+      parsed = retryParsed;
+      modelUsed = initialModel;
+      maxTokensUsed = DRAFTER_V2_BUDGET_RETRY;
+      completeness = checkCompleteness(parsed.draft);
+    }
+
+    // Retry #2 (escalation) — only if same-model retry failed schema OR
+    // still shows a strong truncation signal.
+    const stillTruncated = !retryParsed.draft
+      || checkCompleteness(retryParsed.draft).truncated;
+    if (stillTruncated) {
+      truncation_retry.escalated_to_full = true;
+      const escResp = await tryOne(
+        MODEL_FULL,
+        "drafter_v2.truncation_escalated",
+        DRAFTER_V2_BUDGET_RETRY,
+      );
+      const escParsed = validateStructuredDraft(escResp.data, allowedRefs);
+      if (escParsed.draft) {
+        resp = escResp;
+        parsed = escParsed;
+        modelUsed = MODEL_FULL;
+        escalated = true;
+        maxTokensUsed = DRAFTER_V2_BUDGET_RETRY;
+        completeness = checkCompleteness(parsed.draft);
+      }
+    }
+
+    truncation_retry.retry_ms = Date.now() - t_retry;
+  }
+
   const built = buildFootnotedAnswer(parsed.draft, inputSources);
+
 
   // Rule 1.10 — Hebrew number ranges must be written high→low in source order.
   const answer_markdown = normalizeHebrewNumberRanges(built.answer_markdown);
