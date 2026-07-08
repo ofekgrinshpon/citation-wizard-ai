@@ -72,6 +72,38 @@ export function resolveRequiredAnchors(analyzer: AnalyzerOutput): RequiredAnchor
   return out;
 }
 
+/**
+ * Build docket-anchored-judgment anchors from a free-text source (the user's
+ * question, typically). One anchor per unique docket. These flow through
+ * exactly the same anchor plumbing as interpretation-note anchors.
+ */
+export function buildDocketAnchors(text: string): RequiredAnchor[] {
+  const dockets = detectDockets(text);
+  return dockets.map<RequiredAnchor>((d) => ({
+    anchor_id: `docket:${d.docket_id}`,
+    trigger: { kind: "docket", docket: d },
+    anchor_type: "binding_case_law",
+    description: `פסק הדין בעניין ${d.prefix_he} ${d.number} עצמו`,
+    // Prefer Hebrew canonical + gershayim variants; append English + number-only for breadth.
+    suggested_queries: uniqueOrdered([
+      `${d.prefix_he} ${d.number}`,
+      `${d.prefix_he.replace(/"/g, "״")} ${d.number}`,
+      ...(d.prefix_en ? [`${d.prefix_en} ${d.number}`] : []),
+      `${d.prefix_he} ${d.number.replace(/\//g, "-")}`,
+    ]),
+    target: "both",
+    is_docket_anchor: true,
+    docket_variants: d.variants,
+  }));
+}
+
+function uniqueOrdered<T>(xs: T[]): T[] {
+  const seen = new Set<T>();
+  const out: T[] = [];
+  for (const x of xs) if (!seen.has(x)) { seen.add(x); out.push(x); }
+  return out;
+}
+
 // Pick the original claim most appropriate to attach the anchor to, instead of
 // inventing claim_id="REQ" which downstream stages don't expect.
 function pickHostClaim(analyzer: AnalyzerOutput, anchor: RequiredAnchor): string {
