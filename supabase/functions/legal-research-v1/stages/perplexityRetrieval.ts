@@ -397,6 +397,25 @@ function processRaw(
     const downgrade = !reportOnly && hygiene.hygiene_action === "downgrade";
     if (downgrade && baseScore > 0.5) baseScore = 0.5;
 
+    // Docket-anchor: mark docket_match when title/snippet/url contains any
+    // variant. Boost score slightly so the exact ruling outranks adjacent cases.
+    const qMeta = (query.metadata ?? {}) as Record<string, unknown>;
+    const isDocketAnchor = qMeta.is_docket_anchor === true;
+    const docketVariants: string[] = Array.isArray(qMeta.docket_variants)
+      ? (qMeta.docket_variants as string[]) : [];
+    let docket_match = false;
+    if (isDocketAnchor) {
+      const hay = `${title}\n${s.snippet ?? ""}\n${effectiveUrl}`;
+      const hayLower = hay.toLowerCase();
+      for (const v of docketVariants) {
+        if (v.length < 4) continue;
+        if (/^[A-Za-z]/.test(v)) {
+          if (hayLower.includes(v.toLowerCase())) { docket_match = true; break; }
+        } else if (hay.includes(v)) { docket_match = true; break; }
+      }
+    }
+    if (docket_match) baseScore = Math.min(1, baseScore + 0.05);
+
     rows.push({
       title, url, domain, classified_source_class: cls,
       admitted_to_candidate_pool: true,
@@ -428,6 +447,7 @@ function processRaw(
         pplx_hygiene: hygiene,
         raw_pplx_source_type: rawSt,
         source_type_normalized: st.was_normalized,
+        ...(docket_match ? { docket_match: true } : {}),
         ...(query.metadata?.required_anchor_id
           ? { required_anchor_id: query.metadata.required_anchor_id }
           : {}),
