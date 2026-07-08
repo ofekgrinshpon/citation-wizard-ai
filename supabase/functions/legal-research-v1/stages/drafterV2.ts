@@ -387,6 +387,21 @@ export interface DrafterV2Result {
     | "unknown_source_refs"
     | "forbidden_markers_in_text"
     | "no_usable_candidates";
+  // ── Truncation guard telemetry (drafterV2-only, additive) ─────────────
+  /** Completeness report on the final draft that was rendered. */
+  completeness?: CompletenessReport;
+  /** Completeness report on the very first draft (before any retry). */
+  completeness_initial?: CompletenessReport;
+  /** Retry accounting for the truncation guard. */
+  truncation_retry?: {
+    attempted: boolean;
+    same_model_retry: boolean;
+    escalated_to_full: boolean;
+    retry_ms: number;
+    reasons_initial: string[];
+  };
+  /** `max_completion_tokens` value on the final successful call. */
+  max_completion_tokens_used?: number;
 }
 
 export async function runDrafterV2(
