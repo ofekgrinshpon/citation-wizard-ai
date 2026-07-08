@@ -28,6 +28,15 @@ import {
 } from "./structuredValidation.ts";
 import { buildFootnotedAnswer } from "./footnoteBuilder.ts";
 import { normalizeHebrewNumberRanges } from "../../_shared/hebrewNumberRange.ts";
+import { checkCompleteness, type CompletenessReport } from "./completenessCheck.ts";
+
+// drafterV2-only output-token budgets. Reasoning models (gpt-5 family) burn
+// most tokens on hidden reasoning; the default gateway cap has been observed
+// to cut Hebrew answers mid-word. These values reserve enough room for
+// reasoning + a structured JSON tool call for a long legal answer.
+const DRAFTER_V2_BUDGET_INITIAL = 8000;
+const DRAFTER_V2_BUDGET_RETRY = 16000;
+
 
 const SYSTEM_PROMPT_V2 = `אתה משפטן/ית ישראלי/ת הכותב/ת מענה משפטי־מחקרי מדויק, בהיר ומבוסס מקורות בעברית, בהיקף המתאים לשאלה. התשובה מיועדת למשפטן/ית, סטודנט/ית למשפטים או חוקר/ת משפט, ולכן עליה לשלב עומק משפטי עם ניסוח טבעי וברור — לא כתיבה פרקטית מדי, ולא סגנון אקדמי מתורגם או מנופח.
 
