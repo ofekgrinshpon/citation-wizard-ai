@@ -12,8 +12,79 @@ import {
   MODEL_FULL,
   MODEL_MINI,
   PlannerOutput,
+  Query,
   StageRun,
 } from "../lib/types.ts";
+
+// Step 2 (latency): planner query fanout cap.
+// Env `LR_PLANNER_QUERY_CAP` (integer). When >0, cap the number of ordinary
+// planner queries emitted for retrieval. Applied AFTER schema validation and
+// BEFORE the orchestrator appends deterministic required-anchor queries, so
+// anchor queries are exempt by construction.
+// Default 0 = disabled = today's behavior byte-for-byte.
+function readPlannerCap(): number {
+  try {
+    const raw = (globalThis as { Deno?: { env?: { get(k: string): string | undefined } } })
+      .Deno?.env?.get("LR_PLANNER_QUERY_CAP");
+    if (!raw) return 0;
+    const n = parseInt(raw, 10);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  } catch {
+    return 0;
+  }
+}
+
+export interface QueryCapReport {
+  enabled: boolean;
+  cap: number;
+  queries_before_cap: number;
+  queries_after_cap: number;
+  dropped_count: number;
+  dropped_queries: Array<{
+    claim_id: string;
+    role: string;
+    query_he: string;
+    reason: "over_cap";
+  }>;
+  claims_preserved: number;
+  claims_total: number;
+}
+
+/**
+ * Cap ordinary planner queries. Guarantees:
+ *   1. Never touches required-anchor queries (they aren't here yet).
+ *   2. Preserves at least 1 query per claim (first-seen wins) up to cap.
+ *   3. Beyond that, keeps original planner order.
+ *   4. Returns an ordered kept-list identical to the input order for downstream determinism.
+ */
+export function applyQueryCap(
+  queries: Query[],
+  cap: number,
+): { kept: Query[]; dropped: Query[] } {
+  if (cap <= 0 || queries.length <= cap) {
+    return { kept: [...queries], dropped: [] };
+  }
+  const firstByClaim = new Map<string, number>();
+  queries.forEach((q, i) => {
+    if (!firstByClaim.has(q.claim_id)) firstByClaim.set(q.claim_id, i);
+  });
+  const priorityIdx = Array.from(firstByClaim.values()).sort((a, b) => a - b);
+  const takenIdx = new Set<number>();
+  for (const i of priorityIdx) {
+    if (takenIdx.size >= cap) break;
+    takenIdx.add(i);
+  }
+  for (let i = 0; i < queries.length && takenIdx.size < cap; i++) {
+    takenIdx.add(i);
+  }
+  const kept: Query[] = [];
+  const dropped: Query[] = [];
+  for (let i = 0; i < queries.length; i++) {
+    if (takenIdx.has(i)) kept.push(queries[i]);
+    else dropped.push(queries[i]);
+  }
+  return { kept, dropped };
+}
 
 const SYSTEM_PROMPT = `אתה מתכנן שאילתות מחקר משפטי. הקלט: ניתוח טענות (claims) של שאלה משפטית בעברית.
 המטרה: ליצור שאילתות חיפוש קונקרטיות בעברית עבור כל טענה וכל תפקיד מקור נדרש.
@@ -60,7 +131,50 @@ export interface PlannerStageResult {
   stage_runs: StageRun[];
   raw_text_initial: string;
   raw_text_final: string;
+  cap_report: QueryCapReport;
 }
+
+function buildCapReport(
+  before: Query[],
+  kept: Query[],
+  dropped: Query[],
+  cap: number,
+): QueryCapReport {
+  const claimsTotal = new Set(before.map((q) => q.claim_id)).size;
+  const claimsPreserved = new Set(kept.map((q) => q.claim_id)).size;
+  return {
+    enabled: cap > 0,
+    cap,
+    queries_before_cap: before.length,
+    queries_after_cap: kept.length,
+    dropped_count: dropped.length,
+    dropped_queries: dropped.map((q) => ({
+      claim_id: q.claim_id,
+      role: q.role,
+      query_he: q.query_he,
+      reason: "over_cap" as const,
+    })),
+    claims_preserved: claimsPreserved,
+    claims_total: claimsTotal,
+  };
+}
+
+function applyCapToValidated(
+  validated: ValidationResult<PlannerOutput>,
+  cap: number,
+): { validated: ValidationResult<PlannerOutput>; report: QueryCapReport } {
+  const before = validated.value?.queries ?? [];
+  if (cap <= 0 || before.length <= cap) {
+    return { validated, report: buildCapReport(before, before, [], cap) };
+  }
+  const { kept, dropped } = applyQueryCap(before, cap);
+  const capped: ValidationResult<PlannerOutput> = {
+    ...validated,
+    value: validated.value ? { ...validated.value, queries: kept } : validated.value,
+  };
+  return { validated: capped, report: buildCapReport(before, kept, dropped, cap) };
+}
+
 
 function plannerUserMessage(analyzer: AnalyzerOutput, question: string): string {
   const payload: Record<string, unknown> = {
@@ -84,6 +198,7 @@ function plannerUserMessage(analyzer: AnalyzerOutput, question: string): string 
 export async function runQueryPlanner(
   question: string,
   analyzer: AnalyzerOutput,
+  opts?: { capOverride?: number },
 ): Promise<PlannerStageResult> {
   const knownClaimIds = analyzer.claims.map((c) => c.claim_id);
   const userMsg = plannerUserMessage(analyzer, question);
@@ -91,6 +206,7 @@ export async function runQueryPlanner(
   const stage_runs: StageRun[] = [];
 
   const t0 = Date.now();
+
   const first = await callOpenAIJsonTool<unknown>({
     model: MODEL_MINI,
     system: SYSTEM_PROMPT,
@@ -110,10 +226,13 @@ export async function runQueryPlanner(
 
   let validated = validatePlanner(first.data, knownClaimIds);
   const reasons = plannerEscalationReasons(validated.ok, validated.value, analyzer);
+  const cap = opts?.capOverride ?? readPlannerCap();
+
 
   if (reasons.length === 0) {
+    const applied = applyCapToValidated(validated, cap);
     return {
-      result: validated,
+      result: applied.validated,
       model_initial: MODEL_MINI,
       model_final: MODEL_MINI,
       escalated: false,
@@ -121,6 +240,7 @@ export async function runQueryPlanner(
       stage_runs,
       raw_text_initial: first.raw_text,
       raw_text_final: first.raw_text,
+      cap_report: applied.report,
     };
   }
 
@@ -145,9 +265,10 @@ export async function runQueryPlanner(
     escalated: true,
   });
   validated = validatePlanner(retry.data, knownClaimIds);
+  const applied = applyCapToValidated(validated, cap);
 
   return {
-    result: validated,
+    result: applied.validated,
     model_initial: MODEL_MINI,
     model_final: MODEL_FULL,
     escalated: true,
@@ -155,5 +276,7 @@ export async function runQueryPlanner(
     stage_runs,
     raw_text_initial: first.raw_text,
     raw_text_final: retry.raw_text,
+    cap_report: applied.report,
   };
 }
+
