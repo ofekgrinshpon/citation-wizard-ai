@@ -635,7 +635,7 @@ async function handle(req: Request): Promise<Response> {
     usedCandidateIds: new Set(),
   });
   const missingForCaveat = pickMissingAnchors(preDraftAnchorStatuses)
-    .map((s) => ({ description: s.description }));
+    .map((s) => ({ description: s.description, is_docket: s.is_docket_anchor }));
 
   // V2.1c is the default drafter (structured blocks + deterministic
   // footnoteBuilder). The legacy Markdown baseline `runDrafter` remains
