@@ -490,7 +490,11 @@ export async function runDrafterV2(
 
   let lastUsage: { input_tokens?: number; output_tokens?: number } | undefined;
 
-  const tryOne = async (model: string, stage: string) => {
+  const tryOne = async (
+    model: string,
+    stage: string,
+    maxCompletionTokens?: number,
+  ) => {
     const t0 = Date.now();
     let data: unknown = null;
     let raw_text = "";
@@ -521,6 +525,7 @@ export async function runDrafterV2(
         system: SYSTEM_PROMPT_V2,
         user: userMsg,
         tool,
+        maxCompletionTokens,
       });
       data = resp.data;
       raw_text = resp.raw_text;
@@ -534,7 +539,7 @@ export async function runDrafterV2(
       model,
       ms: Date.now() - t0,
       ok: !!data,
-      escalated: stage === "drafter_v2.escalated",
+      escalated: stage === "drafter_v2.escalated" || stage === "drafter_v2.truncation_escalated",
       parse_error,
       http_status,
       http_error,
@@ -545,7 +550,9 @@ export async function runDrafterV2(
   const initialModel = forceModel ?? MODEL_MINI;
   let modelUsed = initialModel;
   let escalated = false;
-  let resp = await tryOne(initialModel, "drafter_v2.initial");
+  let maxTokensUsed: number | undefined = DRAFTER_V2_BUDGET_INITIAL;
+  let resp = await tryOne(initialModel, "drafter_v2.initial", DRAFTER_V2_BUDGET_INITIAL);
+
 
   let parsed = validateStructuredDraft(resp.data, allowedRefs);
   let schema_failure_reason: DrafterV2Result["schema_failure_reason"];
