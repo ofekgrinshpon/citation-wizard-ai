@@ -122,7 +122,7 @@ export function checkCompleteness(draft: StructuredDraft): CompletenessReport {
   const tokens = coreEnd.split(/\s+/).filter(Boolean);
   const lastToken = tokens[tokens.length - 1] ?? "";
   // Trim any trailing punctuation off the token before comparing.
-  const cleanToken = lastToken.replace(/[.,;:!?׃״׳)\]\}"'׳״»”’-–—]+$/u, "");
+  const cleanToken = lastToken.replace(/[.,;:!?׃״׳)\]\}"'»”’\-–—]+$/u, "");
 
   if (cleanToken && HEBREW_FRAGMENT_TOKENS.has(cleanToken)) {
     signals.push({
