@@ -226,7 +226,8 @@ export async function runQueryPlanner(
 
   let validated = validatePlanner(first.data, knownClaimIds);
   const reasons = plannerEscalationReasons(validated.ok, validated.value, analyzer);
-  const cap = readPlannerCap();
+  const cap = opts?.capOverride ?? readPlannerCap();
+
 
   if (reasons.length === 0) {
     const applied = applyCapToValidated(validated, cap);
