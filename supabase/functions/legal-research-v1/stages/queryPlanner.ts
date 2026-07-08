@@ -198,6 +198,7 @@ function plannerUserMessage(analyzer: AnalyzerOutput, question: string): string 
 export async function runQueryPlanner(
   question: string,
   analyzer: AnalyzerOutput,
+  opts?: { capOverride?: number },
 ): Promise<PlannerStageResult> {
   const knownClaimIds = analyzer.claims.map((c) => c.claim_id);
   const userMsg = plannerUserMessage(analyzer, question);
@@ -205,6 +206,7 @@ export async function runQueryPlanner(
   const stage_runs: StageRun[] = [];
 
   const t0 = Date.now();
+
   const first = await callOpenAIJsonTool<unknown>({
     model: MODEL_MINI,
     system: SYSTEM_PROMPT,
