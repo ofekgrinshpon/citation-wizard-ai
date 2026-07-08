@@ -130,6 +130,17 @@ export interface DroppedSource {
 export const SUPPORT_LEVELS = ["direct", "partial", "tangential", "unrelated"] as const;
 export type SupportLevel = typeof SUPPORT_LEVELS[number];
 
+// Optional diagnostic sub-classification of a verdict, used by the deterministic
+// post-verdict subject-identity pass (verifier.ts). Additive: absence is fine.
+export const SUPPORT_SUBTYPES = [
+  "exact_subject",
+  "same_domain",
+  "analogical",
+  "background",
+  "wrong_subject",
+] as const;
+export type SupportSubtype = typeof SUPPORT_SUBTYPES[number];
+
 export interface Verdict {
   candidate_id: string;
   claim_id: string;
@@ -137,6 +148,7 @@ export interface Verdict {
   role_match: boolean;
   supported_points: string[];
   reason: string;
+  support_subtype?: SupportSubtype;
 }
 
 export interface DroppedCandidate {

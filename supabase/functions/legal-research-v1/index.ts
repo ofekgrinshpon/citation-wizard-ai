@@ -545,6 +545,8 @@ async function handle(req: Request): Promise<Response> {
     rate_limit_count: verifier.rate_limit_count,
     retry_count: verifier.retry_count,
     fallback_to_sequential: verifier.fallback_to_sequential,
+    demotions: verifier.demotions,
+    demotions_by_rule: verifier.demotions_by_rule,
   };
 
   // ─── Sources-only short-circuit (skip drafter) ───────────────────────────
