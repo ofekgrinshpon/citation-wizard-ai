@@ -21,6 +21,7 @@ import { runDrafter } from "./stages/drafter.ts";
 import { runDrafterV2 } from "./stages/drafterV2.ts";
 import { evaluateAnswerStyle } from "./stages/answerStyleGate.ts";
 import {
+  buildDocketAnchors,
   buildRequiredAnchorQueries,
   computeRequiredAnchorStatuses,
   pickMissingAnchors,
