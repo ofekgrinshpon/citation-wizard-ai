@@ -538,7 +538,23 @@ export async function runLocalRetrieval(
       const roleAcceptsExact =
         q.role === "primary_statute" || q.role === "regulation" ||
         q.role === "binding_case_law" || q.role === "persuasive_case_law";
+
+      // Docket-anchor synthetic clues: the anchor carries all string variants
+      // (Hebrew canonical, gershayim, no-quote, English, dash-separated),
+      // some of which DOCKET_RE cannot parse from q.query_he alone. Emit one
+      // docket clue per variant so exactAuthorityLookup can ILIKE all of them.
+      const qMeta = (q.metadata ?? {}) as Record<string, unknown>;
+      const isDocketAnchor = qMeta.is_docket_anchor === true;
+      const docketVariants = Array.isArray(qMeta.docket_variants)
+        ? (qMeta.docket_variants as string[]) : [];
+      const anchorDocketClues: ExactClue[] = isDocketAnchor
+        ? docketVariants
+            .filter((v) => v && v.length >= 4)
+            .map((v) => ({ kind: "docket" as const, source: "planner_query" as const, docket: v, search_terms: [v] }))
+        : [];
+
       const clues = dedupeClues([
+        ...anchorDocketClues,
         ...plannerClues,
         ...(roleAcceptsExact ? [...questionClues, ...claimClues] : []),
       ]);
