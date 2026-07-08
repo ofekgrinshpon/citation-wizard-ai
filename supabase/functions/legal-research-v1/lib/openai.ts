@@ -58,6 +58,12 @@ export async function callOpenAIJsonTool<T>(opts: {
   // on the interface for future compatibility but currently a no-op.
   void opts.reasoningEffort;
 
+  if (typeof opts.maxCompletionTokens === "number" && opts.maxCompletionTokens > 0) {
+    body.max_completion_tokens = Math.floor(opts.maxCompletionTokens);
+  }
+
+
+
   let resp: Response;
   try {
     resp = await fetch(GATEWAY_URL, {
