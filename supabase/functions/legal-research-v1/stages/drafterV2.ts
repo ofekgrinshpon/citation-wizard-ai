@@ -706,5 +706,9 @@ export async function runDrafterV2(
     usage: lastUsage,
     missing_anchor_caveat_injected: missingAnchors.length > 0,
     missing_anchor_descriptions: missingAnchors.map((a) => a.description),
+    completeness,
+    completeness_initial,
+    truncation_retry,
+    max_completion_tokens_used: maxTokensUsed,
   };
 }
