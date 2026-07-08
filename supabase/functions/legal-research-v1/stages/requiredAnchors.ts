@@ -174,12 +174,20 @@ export function computeRequiredAnchorStatuses(args: {
     direct: 4, partial: 3, tangential: 2, unrelated: 1, none: 0,
   };
   return anchors.map((a) => {
-    const anchorCands = candidates.filter((c) =>
+    const isDocket = !!a.is_docket_anchor;
+    const anchorCandsAll = candidates.filter((c) =>
       ((c.metadata as Record<string, unknown> | undefined)?.required_anchor_id as string | undefined)
         === a.anchor_id ||
       // Backup: anchor queries we appended have a recognizable reason via query_he matches.
       a.suggested_queries.includes(c.query_he)
     );
+    // For docket anchors, only docket-matched candidates count as "the
+    // judgment itself". Adjacent / same-doctrine cases are tracked but
+    // cannot satisfy the anchor.
+    const anchorCands = isDocket
+      ? anchorCandsAll.filter((c) =>
+          ((c.metadata as Record<string, unknown> | undefined)?.docket_match) === true)
+      : anchorCandsAll;
     const candidate_ids = anchorCands.map((c) => c.candidate_id);
     const reached_verifier = anchorCands.some((c) => usableIds.has(c.candidate_id));
     let verified_support: RequiredAnchorStatus["verified_support"] = "none";
@@ -192,9 +200,15 @@ export function computeRequiredAnchorStatuses(args: {
       }
     }
     const cited = anchorCands.some((c) => usedCandidateIds.has(c.candidate_id));
+
+    // Docket-anchor extra constraint: verified_support must be direct|partial
+    // to count as verified/cited. Otherwise collapse the status down.
+    const supportOk = !isDocket ||
+      verified_support === "direct" || verified_support === "partial";
+
     let status: RequiredAnchorStatus["status"];
-    if (cited) status = "cited";
-    else if (reached_verifier) status = "verified_unused";
+    if (cited && supportOk) status = "cited";
+    else if (reached_verifier && supportOk) status = "verified_unused";
     else if (anchorCands.length > 0) status = "retrieved_unverified";
     else status = "missing";
 
@@ -202,12 +216,13 @@ export function computeRequiredAnchorStatuses(args: {
       anchor_id: a.anchor_id,
       description: a.description,
       anchor_type: a.anchor_type,
+      is_docket_anchor: isDocket,
       emitted: true,
       queries: a.suggested_queries,
       candidate_ids,
       reached_verifier,
       verified_support,
-      cited,
+      cited: cited && supportOk,
       status,
     };
   });
