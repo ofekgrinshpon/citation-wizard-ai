@@ -433,9 +433,12 @@ async function handle(req: Request): Promise<Response> {
   }
 
   // ─── Required anchors — append deterministic primary-source queries ───────
-  // Registry-driven. Triggered today only when the analyzer recorded an
-  // interpretation_note that matches a registry pattern (e.g. Mandate-era).
-  const requiredAnchors = resolveRequiredAnchors(analyzer);
+  // Interpretation-note anchors (registry-driven, e.g. Mandate-era) +
+  // docket-anchored-judgment anchors (deterministic from the question text
+  // — force retrieval of the specific ruling the user asked about).
+  const noteAnchors = resolveRequiredAnchors(analyzer);
+  const docketAnchors = buildDocketAnchors(question);
+  const requiredAnchors = [...noteAnchors, ...docketAnchors];
   const anchorQueries = requiredAnchors.length > 0
     ? buildRequiredAnchorQueries(analyzer, requiredAnchors)
     : [];
@@ -447,6 +450,7 @@ async function handle(req: Request): Promise<Response> {
       anchor_id: a.anchor_id,
       description: a.description,
       anchor_type: a.anchor_type,
+      is_docket_anchor: !!a.is_docket_anchor,
       target: a.target,
       query_count: a.suggested_queries.length,
     })),
@@ -456,6 +460,7 @@ async function handle(req: Request): Promise<Response> {
       query_he: q.query_he,
       targets: q.targets,
       required_anchor_id: (q.metadata as Record<string, unknown> | undefined)?.required_anchor_id,
+      is_docket_anchor: (q.metadata as Record<string, unknown> | undefined)?.is_docket_anchor === true,
     })),
   };
 
