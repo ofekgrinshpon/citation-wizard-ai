@@ -9,20 +9,32 @@
 // anchor is missing.
 
 import type { AnalyzerOutput, Candidate, Query, SourceRole } from "../lib/types.ts";
+import { detectDockets, type DocketRef } from "./docketDetection.ts";
 
 export interface RequiredAnchor {
   anchor_id: string;
-  trigger: { kind: "interpretation_note"; pattern: RegExp };
+  trigger:
+    | { kind: "interpretation_note"; pattern: RegExp }
+    | { kind: "docket"; docket: DocketRef };
   anchor_type: SourceRole;
   description: string;          // short description for drafter caveat.
   suggested_queries: string[];  // Hebrew (+ optional English) — one Query per item.
   target: "local_db" | "perplexity" | "both";
+  /**
+   * Docket anchors have a much stricter satisfaction rule: only a candidate
+   * whose title/snippet/url contains the exact docket (metadata.docket_match
+   * === true) may satisfy the anchor. Adjacent / same-doctrine cases do not.
+   */
+  is_docket_anchor?: boolean;
+  /** Full docket variants (for retrieval-side string matching). */
+  docket_variants?: string[];
 }
 
 export interface RequiredAnchorStatus {
   anchor_id: string;
   description: string;
   anchor_type: SourceRole;
+  is_docket_anchor: boolean;
   emitted: boolean;
   queries: string[];
   candidate_ids: string[];
