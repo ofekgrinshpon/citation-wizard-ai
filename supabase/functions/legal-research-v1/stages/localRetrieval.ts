@@ -315,7 +315,12 @@ async function exactAuthorityLookup(
           source_type: d.source_type,
           source_url: d.source_url ?? null,
           chunk_content: null,
-          metadata: d.metadata || {},
+          metadata: {
+            ...(d.metadata || {}),
+            // Docket clue matched by title/citation ILIKE → the row *contains*
+            // the docket by construction, so flag it for downstream trust.
+            ...(cl.kind === "docket" ? { docket_match: true } : {}),
+          },
           similarity: cl.kind === "statute_section" ? 1.0 : 0.9,
         };
         collected.push(row);
