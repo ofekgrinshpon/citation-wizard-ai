@@ -569,7 +569,8 @@ export async function runDrafterV2(
 
     escalated = true;
     modelUsed = MODEL_FULL;
-    resp = await tryOne(MODEL_FULL, "drafter_v2.escalated");
+    maxTokensUsed = DRAFTER_V2_BUDGET_RETRY;
+    resp = await tryOne(MODEL_FULL, "drafter_v2.escalated", DRAFTER_V2_BUDGET_RETRY);
     parsed = validateStructuredDraft(resp.data, allowedRefs);
     if (!resp.data) {
       schema_failure_reason = resp.parse_error ? "json_parse" : "no_tool_call";
@@ -582,6 +583,7 @@ export async function runDrafterV2(
       schema_failure_reason = undefined;
     }
   }
+
 
   if (!parsed.draft) {
     return {
