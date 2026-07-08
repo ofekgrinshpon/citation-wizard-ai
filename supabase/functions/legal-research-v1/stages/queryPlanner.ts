@@ -131,7 +131,50 @@ export interface PlannerStageResult {
   stage_runs: StageRun[];
   raw_text_initial: string;
   raw_text_final: string;
+  cap_report: QueryCapReport;
 }
+
+function buildCapReport(
+  before: Query[],
+  kept: Query[],
+  dropped: Query[],
+  cap: number,
+): QueryCapReport {
+  const claimsTotal = new Set(before.map((q) => q.claim_id)).size;
+  const claimsPreserved = new Set(kept.map((q) => q.claim_id)).size;
+  return {
+    enabled: cap > 0,
+    cap,
+    queries_before_cap: before.length,
+    queries_after_cap: kept.length,
+    dropped_count: dropped.length,
+    dropped_queries: dropped.map((q) => ({
+      claim_id: q.claim_id,
+      role: q.role,
+      query_he: q.query_he,
+      reason: "over_cap" as const,
+    })),
+    claims_preserved: claimsPreserved,
+    claims_total: claimsTotal,
+  };
+}
+
+function applyCapToValidated(
+  validated: ValidationResult<PlannerOutput>,
+  cap: number,
+): { validated: ValidationResult<PlannerOutput>; report: QueryCapReport } {
+  const before = validated.value?.queries ?? [];
+  if (cap <= 0 || before.length <= cap) {
+    return { validated, report: buildCapReport(before, before, [], cap) };
+  }
+  const { kept, dropped } = applyQueryCap(before, cap);
+  const capped: ValidationResult<PlannerOutput> = {
+    ...validated,
+    value: validated.value ? { ...validated.value, queries: kept } : validated.value,
+  };
+  return { validated: capped, report: buildCapReport(before, kept, dropped, cap) };
+}
+
 
 function plannerUserMessage(analyzer: AnalyzerOutput, question: string): string {
   const payload: Record<string, unknown> = {
