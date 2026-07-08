@@ -1,0 +1,1847 @@
+{
+  "cap": 12,
+  "fired_at": "2026-07-08T20:44:26.151Z",
+  "per_fixture": [
+    {
+      "fx_id": "R1_MandateIncomeTax",
+      "total_ms_off": 183007,
+      "total_ms_on": 162993,
+      "delta_ms": 20014,
+      "planner_ms_off": 53571,
+      "planner_ms_on": 55726,
+      "queries_off": 16,
+      "queries_on": 12,
+      "cap_enabled": true,
+      "cap": 12,
+      "queries_before_cap_on": 16,
+      "dropped_count_on": 4,
+      "claims_preserved_on": 5,
+      "claims_total_on": 5,
+      "anchor_count_off": 1,
+      "anchor_count_on": 1,
+      "anchor_queries_off": 3,
+      "anchor_queries_on": 3,
+      "anchors_preserved_1to1": true,
+      "candidates_off": 16,
+      "candidates_on": 8,
+      "usable_off": 15,
+      "usable_on": 4,
+      "dropped_off": 1,
+      "dropped_on": 4,
+      "used_sources_off": 12,
+      "used_sources_on": 4,
+      "used_sources_overlap": 0,
+      "answer_len_off": 3021,
+      "answer_len_on": 3098,
+      "footnotes_off": 10,
+      "footnotes_on": 5,
+      "ok_off": true,
+      "ok_on": true,
+      "dropped_queries_on": [
+        {
+          "role": "government_report",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "דו\"חות מדיניות / משרד האוצר או שירותי הכנסת על מודלים ליישום רפורמה בחקיקת מס (נוסח חדש לעומת חקיקה מקיפה) כולל ניתוח יתרונות וחסרונות; חיפוש: \"דו\"ח\" \"נוסח חדש\" \"קודיפיקציה\" \"רפורמה בהכנסות\""
+        },
+        {
+          "role": "persuasive_case_law",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "פסיקות של בתי משפט מחוזיים או שלום שהתמודדו עם בעיות פרקטיות של תיקוני מעבר וחלות הוראות חדשות במקום הוראות מנדטוריות; חיפוש: \"בית משפט מחוזי\" \"פקודת מס הכנסה\" \"הסדרי מעבר\" \"נוסח חדש\""
+        },
+        {
+          "role": "factual_report",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "דו\"חות ועדת הכנסת / מסמכי ועדת הכלכלה / דו\"חות מבקר המדינה שמתעדים צעדים פרקטיים שננקטו בעת רפורמות מס קודמות (דוגמאות של שלבי חקיקה ושימוע); חיפוש: \"דו\"ח ועדת הכלכלה\" \"רפורמה במס\" \"דו\"ח מבקר המדינה\" \"תיקון מעבר\""
+        },
+        {
+          "role": "scholarship",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "מאמרים על עיצוב הפרוצדורה המומלצת לרפורמות חקיקתיות: שיתוף גורמים, שלבי חקיקה, שימוע ציבורי והערכת השפעה כלכלית, עם דוגמאות מתחום המיסוי בישראל ובחו\"ל; חיפוש: \"שימוע ציבורי\" \"הערכת השפעה רגולטורית\" \"רפורמה חקיקתית\" \"מס\""
+        }
+      ]
+    },
+    {
+      "fx_id": "R2_NationStateBGHC",
+      "total_ms_off": 171004,
+      "total_ms_on": 169159,
+      "delta_ms": 1845,
+      "planner_ms_off": 41849,
+      "planner_ms_on": 46290,
+      "queries_off": 11,
+      "queries_on": 12,
+      "cap_enabled": true,
+      "cap": 12,
+      "queries_before_cap_on": 13,
+      "dropped_count_on": 1,
+      "claims_preserved_on": 5,
+      "claims_total_on": 5,
+      "anchor_count_off": 1,
+      "anchor_count_on": 1,
+      "anchor_queries_off": 4,
+      "anchor_queries_on": 4,
+      "anchors_preserved_1to1": true,
+      "candidates_off": 14,
+      "candidates_on": 17,
+      "usable_off": 6,
+      "usable_on": 4,
+      "dropped_off": 8,
+      "dropped_on": 13,
+      "used_sources_off": 5,
+      "used_sources_on": 4,
+      "used_sources_overlap": 0,
+      "answer_len_off": 1605,
+      "answer_len_on": 2354,
+      "footnotes_off": 5,
+      "footnotes_on": 6,
+      "ok_off": true,
+      "ok_on": true,
+      "dropped_queries_on": [
+        {
+          "role": "persuasive_case_law",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "פסקי דין מחוזיים או החלטות שיפוטיות שהסתמכו על או אתגרו את ניתוח בג\"ץ 5555/18 בקשר לזכויות מיעוטים או לדעות מיעוט בפסק הדין 'התייחסות ל-מדינת הלאום' פסקי דין ציטוט"
+        }
+      ]
+    },
+    {
+      "fx_id": "R3_CaseLawDocket",
+      "total_ms_off": 163238,
+      "total_ms_on": 118935,
+      "delta_ms": 44303,
+      "planner_ms_off": 51513,
+      "planner_ms_on": 39028,
+      "queries_off": 12,
+      "queries_on": 11,
+      "cap_enabled": true,
+      "cap": 12,
+      "queries_before_cap_on": 11,
+      "dropped_count_on": 0,
+      "claims_preserved_on": 4,
+      "claims_total_on": 4,
+      "anchor_count_off": 1,
+      "anchor_count_on": 1,
+      "anchor_queries_off": 4,
+      "anchor_queries_on": 4,
+      "anchors_preserved_1to1": false,
+      "candidates_off": 18,
+      "candidates_on": 12,
+      "usable_off": 10,
+      "usable_on": 0,
+      "dropped_off": 8,
+      "dropped_on": 12,
+      "used_sources_off": 7,
+      "used_sources_on": 0,
+      "used_sources_overlap": 0,
+      "answer_len_off": 2991,
+      "answer_len_on": 82,
+      "footnotes_off": 9,
+      "footnotes_on": 0,
+      "ok_off": true,
+      "ok_on": false,
+      "dropped_queries_on": []
+    },
+    {
+      "fx_id": "R4_StatutoryInterp",
+      "total_ms_off": 251737,
+      "total_ms_on": 147202,
+      "delta_ms": 104535,
+      "planner_ms_off": 40411,
+      "planner_ms_on": 36486,
+      "queries_off": 13,
+      "queries_on": 12,
+      "cap_enabled": true,
+      "cap": 12,
+      "queries_before_cap_on": 15,
+      "dropped_count_on": 3,
+      "claims_preserved_on": 4,
+      "claims_total_on": 4,
+      "anchor_count_off": 1,
+      "anchor_count_on": 1,
+      "anchor_queries_off": 4,
+      "anchor_queries_on": 4,
+      "anchors_preserved_1to1": true,
+      "candidates_off": 14,
+      "candidates_on": 11,
+      "usable_off": 5,
+      "usable_on": 2,
+      "dropped_off": 9,
+      "dropped_on": 9,
+      "used_sources_off": 5,
+      "used_sources_on": 2,
+      "used_sources_overlap": 0,
+      "answer_len_off": 2835,
+      "answer_len_on": 3070,
+      "footnotes_off": 4,
+      "footnotes_on": 3,
+      "ok_off": true,
+      "ok_on": true,
+      "dropped_queries_on": [
+        {
+          "role": "binding_case_law",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "רע\"א 6339/97 רוקר בית המשפט העליון 'תום הלב' רשימת שיקולים שופטיים נימוקים כיצד יש לבחון הפרת תום הלב"
+        },
+        {
+          "role": "persuasive_case_law",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "פסקי דין מחוזיים לאחר רוקר 'תום הלב' רשימת שיקולים קריטריונים 'בחינת הפרת תום הלב' גורמים ששוקלו על ידי בתי המשפט"
+        },
+        {
+          "role": "scholarship",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "מאמרים פרקים בספרים 'שיקולים בבחינת תום הלב' 'רשימת שיקולים' ניתוח שיפוטי-אקדמי לאחר רוקר מאמר בעיוני משפט או משפטים"
+        }
+      ]
+    },
+    {
+      "fx_id": "R5_RecentAmendment",
+      "total_ms_off": 154574,
+      "total_ms_on": 113807,
+      "delta_ms": 40767,
+      "planner_ms_off": 50270,
+      "planner_ms_on": 51907,
+      "queries_off": 14,
+      "queries_on": 12,
+      "cap_enabled": true,
+      "cap": 12,
+      "queries_before_cap_on": 18,
+      "dropped_count_on": 6,
+      "claims_preserved_on": 5,
+      "claims_total_on": 5,
+      "anchor_count_off": 0,
+      "anchor_count_on": 0,
+      "anchor_queries_off": 0,
+      "anchor_queries_on": 0,
+      "anchors_preserved_1to1": true,
+      "candidates_off": 10,
+      "candidates_on": 4,
+      "usable_off": 1,
+      "usable_on": 0,
+      "dropped_off": 9,
+      "dropped_on": 4,
+      "used_sources_off": 1,
+      "used_sources_on": 0,
+      "used_sources_overlap": 0,
+      "answer_len_off": 3287,
+      "answer_len_on": 82,
+      "footnotes_off": 1,
+      "footnotes_on": 0,
+      "ok_off": true,
+      "ok_on": false,
+      "dropped_queries_on": [
+        {
+          "role": "factual_report",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "דו\"ח בדיקה מקצועי של משרד המשפטים/המשרד לביטחון פנים/המשטרה על בעיות מעשיות במערכת המעצר שלפני 2020 שהצדיקו את תיקון 87 — נתונים על משך מעצר, הליכים חסרים ומקרי פגיעה בזכויות"
+        },
+        {
+          "role": "scholarship",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "מאמרים אקדמיים וניתוחים משפטיים על הרקע החקיקתי של תיקון 87 לחוק סדר הדין הפלילי — דיון בבעיות ציבוריות ושיפוטיות, והערכת שיקולי המדיניות שהוצגו בדיונים הפרלמנטריים"
+        },
+        {
+          "role": "binding_case_law",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "פסקי דין של בית המשפט העליון לפני 2020 שהתייחסו לבעיות סדרתיות במעצר (הגבלות זמן, חובת נימוק, חלופות) שהוזכרו בדיוני תיקון 87 לחוק סדר הדין הפלילי"
+        },
+        {
+          "role": "government_report",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "דו\"חות מעקב משרד המשפטים/המשטרה על יישום תיקון 87 מאז 2020 — הנחיות להוראות מעבר, נתוני אכיפה ושינוי בהליכים הפרוצדורליים בקרב רשויות האכיפה"
+        },
+        {
+          "role": "binding_case_law",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "החלטות בית המשפט העליון מאז 2020 העוסקות ביישום הוראות המעבר של תיקון 87 ובהשפעתו על עצורים שנעצרו לפני כניסת התיקון לתוקף"
+        },
+        {
+          "role": "factual_report",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "דו\"חות ונתוני משטרה/מינהל הסטטיסטיקה על השפעות מעשיות של תיקון 87 (2020) — שינויים במספר העצורים, משך החזקה במעצר ושימוש בחלופות (מעקב אלקטרוני, ערבויות) מאז התיקון"
+        }
+      ]
+    },
+    {
+      "fx_id": "R6_ReformCodification",
+      "total_ms_off": 146123,
+      "total_ms_on": 164328,
+      "delta_ms": -18205,
+      "planner_ms_off": 36064,
+      "planner_ms_on": 38579,
+      "queries_off": 15,
+      "queries_on": 12,
+      "cap_enabled": true,
+      "cap": 12,
+      "queries_before_cap_on": 13,
+      "dropped_count_on": 1,
+      "claims_preserved_on": 4,
+      "claims_total_on": 4,
+      "anchor_count_off": 0,
+      "anchor_count_on": 0,
+      "anchor_queries_off": 0,
+      "anchor_queries_on": 0,
+      "anchors_preserved_1to1": true,
+      "candidates_off": 8,
+      "candidates_on": 9,
+      "usable_off": 4,
+      "usable_on": 4,
+      "dropped_off": 4,
+      "dropped_on": 5,
+      "used_sources_off": 4,
+      "used_sources_on": 4,
+      "used_sources_overlap": 0,
+      "answer_len_off": 3628,
+      "answer_len_on": 2593,
+      "footnotes_off": 5,
+      "footnotes_on": 5,
+      "ok_off": true,
+      "ok_on": true,
+      "dropped_queries_on": [
+        {
+          "role": "government_report",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "משרד המשפטים דוח יישום 'הצעת חוק דיני ממונות' תקופת מעבר חקיקה מיוחדת השפעה על חוקים קיימים הנחיות אכיפה דו\"ח יישום"
+        }
+      ]
+    },
+    {
+      "fx_id": "R7_AcademicHeavy",
+      "total_ms_off": 83024,
+      "total_ms_on": 113156,
+      "delta_ms": -30132,
+      "planner_ms_off": 29407,
+      "planner_ms_on": 30152,
+      "queries_off": 11,
+      "queries_on": 10,
+      "cap_enabled": true,
+      "cap": 12,
+      "queries_before_cap_on": 10,
+      "dropped_count_on": 0,
+      "claims_preserved_on": 4,
+      "claims_total_on": 4,
+      "anchor_count_off": 0,
+      "anchor_count_on": 0,
+      "anchor_queries_off": 0,
+      "anchor_queries_on": 0,
+      "anchors_preserved_1to1": true,
+      "candidates_off": 3,
+      "candidates_on": 7,
+      "usable_off": 0,
+      "usable_on": 3,
+      "dropped_off": 3,
+      "dropped_on": 4,
+      "used_sources_off": 0,
+      "used_sources_on": 3,
+      "used_sources_overlap": 0,
+      "answer_len_off": 82,
+      "answer_len_on": 2782,
+      "footnotes_off": 0,
+      "footnotes_on": 5,
+      "ok_off": false,
+      "ok_on": true,
+      "dropped_queries_on": []
+    },
+    {
+      "fx_id": "R8_InsufficientSources",
+      "total_ms_off": 165859,
+      "total_ms_on": 158536,
+      "delta_ms": 7323,
+      "planner_ms_off": 64361,
+      "planner_ms_on": 59853,
+      "queries_off": 16,
+      "queries_on": 12,
+      "cap_enabled": true,
+      "cap": 12,
+      "queries_before_cap_on": 17,
+      "dropped_count_on": 5,
+      "claims_preserved_on": 5,
+      "claims_total_on": 5,
+      "anchor_count_off": 0,
+      "anchor_count_on": 0,
+      "anchor_queries_off": 0,
+      "anchor_queries_on": 0,
+      "anchors_preserved_1to1": true,
+      "candidates_off": 11,
+      "candidates_on": 9,
+      "usable_off": 7,
+      "usable_on": 2,
+      "dropped_off": 4,
+      "dropped_on": 7,
+      "used_sources_off": 7,
+      "used_sources_on": 2,
+      "used_sources_overlap": 0,
+      "answer_len_off": 4415,
+      "answer_len_on": 3061,
+      "footnotes_off": 9,
+      "footnotes_on": 3,
+      "ok_off": true,
+      "ok_on": true,
+      "dropped_queries_on": [
+        {
+          "role": "regulation",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "הנחיות המפקח על הבנקים/בנק ישראל למוסדות בנקאיים לגבי קוסטדי, שמירה וניהול נכסים דיגיטליים 'הנחיות המפקח על הבנקים' 'קוסטדי' 'נכסים דיגיטליים' תקנות/הנחיות"
+        },
+        {
+          "role": "scholarship",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "מאמרים משפטיים על רגולציה בנקאית של שירותי קוסטדי ושמירת נכסים דיגיטליים עבור בנקים בישראל השפעות רגולטוריות ואחריות משפטית 'בנק ישראל' 'NFT' 'קוסטדי' מאמר"
+        },
+        {
+          "role": "binding_case_law",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "בית המשפט העליון פסקי דין על סכסוכים בין רשום בטאבו לבין מחזיק בזכויות חיצוניות/חוזיות פסקי דין 'סכסוכים בין בעל רשום למחזיק זכות חיצונית' טאבו בעלות"
+        },
+        {
+          "role": "government_report",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "דו\"ח משרד האוצר, רשות ניירות ערך או רשויות המס על ההשלכות הפרקטיות והרגולטוריות של טוקניזציה של נכסים כולל היבטי מס, הלבנת הון ואכיפה 'טוקניזציה' 'מקרקעין' דו\"ח"
+        },
+        {
+          "role": "scholarship",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "מאמרים ונתחים אקדמיים/שירותי מיקרו־דו\"חות על הסיכונים האזרחיים והפליליים בטוקניזציה מקרקעין: הלבנת הון, אכיפה, סכסוכים וטיפול בבעלות רשומה לעומת זכויות דיגיטליות 'NFT' 'הלבנת הון' 'מקרקעין' מאמר"
+        }
+      ]
+    },
+    {
+      "fx_id": "D_R2_NationStateBGHC",
+      "total_ms_off": 147394,
+      "total_ms_on": 176855,
+      "delta_ms": -29461,
+      "planner_ms_off": 40353,
+      "planner_ms_on": 43869,
+      "queries_off": 13,
+      "queries_on": 11,
+      "cap_enabled": true,
+      "cap": 12,
+      "queries_before_cap_on": 11,
+      "dropped_count_on": 0,
+      "claims_preserved_on": 4,
+      "claims_total_on": 4,
+      "anchor_count_off": 1,
+      "anchor_count_on": 1,
+      "anchor_queries_off": 4,
+      "anchor_queries_on": 4,
+      "anchors_preserved_1to1": true,
+      "candidates_off": 13,
+      "candidates_on": 13,
+      "usable_off": 4,
+      "usable_on": 6,
+      "dropped_off": 9,
+      "dropped_on": 7,
+      "used_sources_off": 4,
+      "used_sources_on": 5,
+      "used_sources_overlap": 0,
+      "answer_len_off": 2159,
+      "answer_len_on": 1799,
+      "footnotes_off": 4,
+      "footnotes_on": 6,
+      "ok_off": true,
+      "ok_on": true,
+      "dropped_queries_on": []
+    },
+    {
+      "fx_id": "D_R3_Rotman",
+      "total_ms_off": 154574,
+      "total_ms_on": 131990,
+      "delta_ms": 22584,
+      "planner_ms_off": 38109,
+      "planner_ms_on": 44264,
+      "queries_off": 11,
+      "queries_on": 11,
+      "cap_enabled": true,
+      "cap": 12,
+      "queries_before_cap_on": 11,
+      "dropped_count_on": 0,
+      "claims_preserved_on": 4,
+      "claims_total_on": 4,
+      "anchor_count_off": 1,
+      "anchor_count_on": 1,
+      "anchor_queries_off": 4,
+      "anchor_queries_on": 4,
+      "anchors_preserved_1to1": false,
+      "candidates_off": 15,
+      "candidates_on": 2,
+      "usable_off": 5,
+      "usable_on": 1,
+      "dropped_off": 10,
+      "dropped_on": 1,
+      "used_sources_off": 5,
+      "used_sources_on": 1,
+      "used_sources_overlap": 0,
+      "answer_len_off": 2768,
+      "answer_len_on": 2165,
+      "footnotes_off": 7,
+      "footnotes_on": 1,
+      "ok_off": true,
+      "ok_on": true,
+      "dropped_queries_on": []
+    },
+    {
+      "fx_id": "D_District_Tax",
+      "total_ms_off": 156461,
+      "total_ms_on": 133838,
+      "delta_ms": 22623,
+      "planner_ms_off": 40279,
+      "planner_ms_on": 42151,
+      "queries_off": 13,
+      "queries_on": 12,
+      "cap_enabled": true,
+      "cap": 12,
+      "queries_before_cap_on": 16,
+      "dropped_count_on": 4,
+      "claims_preserved_on": 5,
+      "claims_total_on": 5,
+      "anchor_count_off": 1,
+      "anchor_count_on": 1,
+      "anchor_queries_off": 3,
+      "anchor_queries_on": 3,
+      "anchors_preserved_1to1": true,
+      "candidates_off": 8,
+      "candidates_on": 6,
+      "usable_off": 1,
+      "usable_on": 1,
+      "dropped_off": 7,
+      "dropped_on": 5,
+      "used_sources_off": 1,
+      "used_sources_on": 1,
+      "used_sources_overlap": 0,
+      "answer_len_off": 2386,
+      "answer_len_on": 2432,
+      "footnotes_off": 1,
+      "footnotes_on": 1,
+      "ok_off": true,
+      "ok_on": true,
+      "dropped_queries_on": [
+        {
+          "role": "binding_case_law",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "ע\"מ 39040-12-21 משמעות מעשית החלטת בית המשפט השלכות על דיווח חבות מס השבת מס ואכיפה נגד נישום פסק דין הסבר מעשי"
+        },
+        {
+          "role": "government_report",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "דו\"ח רשות המיסים או הנחיות פנימיות של רשות המיסים לגבי סיווג הכנסות והנחיות דיווח 'הנחיות רשות המיסים סיווג הכנסה'"
+        },
+        {
+          "role": "scholarship",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "מאמרים מקצועיים על ההשלכות הפרקטיות של סיווג הכנסות לצורכי מס השפעה על תכנון מס, דיווח, קיום תשלומי מס והחזרי מס"
+        },
+        {
+          "role": "factual_report",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "פרוטוקול דיון ו/או הודעות רשם בתי המשפט ע\"מ 39040-12-21 סטטוס הליך האם פסק הדין חלוט האם נרשם ערעור חדשות משפטיות על המעמד הפרוצדורלי"
+        }
+      ]
+    }
+  ],
+  "off_raw": [
+    {
+      "fx_id": "R1_MandateIncomeTax",
+      "arm": "off",
+      "ok": true,
+      "run_id": "0987a791-ac76-43e5-85ef-29744499f740",
+      "total_ms": 183007,
+      "planner_ms": 53571,
+      "planner_escalated": false,
+      "queries_emitted": 16,
+      "queries_before_cap": 16,
+      "queries_after_cap": 16,
+      "cap_enabled": false,
+      "cap": 0,
+      "dropped_count": 0,
+      "dropped_queries": [],
+      "claims_preserved": 5,
+      "claims_total": 5,
+      "anchor_count": 1,
+      "anchor_queries": 3,
+      "anchor_ids": [
+        "mandate_continuity_s11"
+      ],
+      "anchor_statuses": [
+        {
+          "anchor_id": "mandate_continuity_s11",
+          "cited": true,
+          "is_docket": false
+        }
+      ],
+      "candidates": 16,
+      "verifier_usable": [
+        "03410b1a-85c5-4ed9-9ea2-90bc46c74455",
+        "1ad3e5ca-1ad6-4cab-9d00-0f9feb756cb0",
+        "2d0f752e-bf16-467c-89c7-a1ed102d6c3e",
+        "38d43d2a-a7f2-4ce7-a546-ccdd548b41bb",
+        "700e835f-c4cb-47d3-87f8-210f2a5fb727",
+        "956cbb0d-d1ab-45de-8f94-9f055402bd15",
+        "a46889c8-f20b-4b2c-af06-c5777619dc88",
+        "b013d10f-749d-482e-b26d-5929c754724b",
+        "b0ddbe4c-7aca-469f-b470-8a9a97eac6f8",
+        "b2cbe490-6aeb-4170-a364-ede48ef88554",
+        "b741da4f-4e97-4e3f-86d7-379be91d517a",
+        "c18d6f33-1902-4786-9db0-54cead402086",
+        "d8cdf943-a755-4427-82ff-b908fccb4bfd",
+        "f45e06a7-c724-4b5f-b63a-2644b3d75862",
+        "ffd12292-6184-48f7-b548-e47104dc7a95"
+      ],
+      "verifier_dropped": [
+        "13c5d35d-bc0b-4b2a-beff-0a0ae304f0f1"
+      ],
+      "used_sources": [
+        "03410b1a-85c5-4ed9-9ea2-90bc46c74455",
+        "2d0f752e-bf16-467c-89c7-a1ed102d6c3e",
+        "38d43d2a-a7f2-4ce7-a546-ccdd548b41bb",
+        "700e835f-c4cb-47d3-87f8-210f2a5fb727",
+        "a46889c8-f20b-4b2c-af06-c5777619dc88",
+        "b013d10f-749d-482e-b26d-5929c754724b",
+        "b0ddbe4c-7aca-469f-b470-8a9a97eac6f8",
+        "b2cbe490-6aeb-4170-a364-ede48ef88554",
+        "b741da4f-4e97-4e3f-86d7-379be91d517a",
+        "c18d6f33-1902-4786-9db0-54cead402086",
+        "f45e06a7-c724-4b5f-b63a-2644b3d75862",
+        "ffd12292-6184-48f7-b548-e47104dc7a95"
+      ],
+      "answer_len": 3021,
+      "answer_preview": "**מסקנה תמציתית**\n\nפקודת מס הכנסה, ששורשיה בפקודה מנדטורית ושהותאמה מאז על ידי חקיקה ותקנות, ממשיכה להתקיים במשפט הישראלי ונמצאת בשימוש יישומי ובפסיקה עכשווית.¹\n\n**מעמד משפטי עכשווי — המשכיות ונוסח חדש**\n\nבית המשפט והגוף המבצעי ממשיכים להפעיל את הפקודה כגוף חקיקתי מעשי: בפסיקה עכשווית מופיעה הפקודה במפורש בנוסח חדש, והחוקרים והפרקטיקה מייחסים לה המשך תוקף פונקציונלי.¹\n\nהמשכיות זו נתמכת במסגרת החוק",
+      "footnote_count": 10
+    },
+    {
+      "fx_id": "R2_NationStateBGHC",
+      "arm": "off",
+      "ok": true,
+      "run_id": "852f3b23-1de3-4000-8284-4513624058a3",
+      "total_ms": 171004,
+      "planner_ms": 41849,
+      "planner_escalated": false,
+      "queries_emitted": 11,
+      "queries_before_cap": 11,
+      "queries_after_cap": 11,
+      "cap_enabled": false,
+      "cap": 0,
+      "dropped_count": 0,
+      "dropped_queries": [],
+      "claims_preserved": 4,
+      "claims_total": 4,
+      "anchor_count": 1,
+      "anchor_queries": 4,
+      "anchor_ids": [
+        "docket:bagatz-5555-18"
+      ],
+      "anchor_statuses": [
+        {
+          "anchor_id": "docket:bagatz-5555-18",
+          "cited": true,
+          "is_docket": true
+        }
+      ],
+      "candidates": 14,
+      "verifier_usable": [
+        "17a47e32-13e9-496b-8620-434d4e7966f3",
+        "19366535-62ba-4c8a-97e5-04197eab88a6",
+        "5f41460f-441a-4eba-8a09-18248a75e8b2",
+        "68e0c5c8-9065-44e9-806f-80a364269d97",
+        "b6f79b30-7cef-41a8-8361-c000c705e68e",
+        "c6625245-aeee-4046-8b23-136d75c5edc7"
+      ],
+      "verifier_dropped": [
+        "12a40545-69ca-451a-a9e3-4a51eca0bb22",
+        "2752cec2-ede6-463b-9c20-c165e8845313",
+        "28a6422a-ada2-4df8-865f-bf1e32e9f417",
+        "9e8abf2d-9092-4035-9ce4-b96e38f21ab1",
+        "b5c349d6-1a7d-4e22-b360-dab98a8fb8bf",
+        "c7134d50-83a7-4b50-a58d-b47a11f451c3",
+        "d9965212-41aa-48f8-8eef-1347c59325d9",
+        "fd3665fd-c34a-4cc3-a9e3-c88e7c21bff8"
+      ],
+      "used_sources": [
+        "17a47e32-13e9-496b-8620-434d4e7966f3",
+        "19366535-62ba-4c8a-97e5-04197eab88a6",
+        "5f41460f-441a-4eba-8a09-18248a75e8b2",
+        "68e0c5c8-9065-44e9-806f-80a364269d97",
+        "c6625245-aeee-4046-8b23-136d75c5edc7"
+      ],
+      "answer_len": 1605,
+      "answer_preview": "**תמצית ההכרעה**\n\nבית המשפט העליון דחה את העתירות שהוגשו נגד חוק יסוד: 'ישראל — מדינת הלאום של העם היהודי' במסגרת בג\"ץ 5555/18; העתירות נדחו והחוק לא בוטל בפסק‑דין זה.¹\n\n**אמצעי סעד שננקטו**\n\nהסעד המעשי שניתן בפסק‑דין היה דחיית העתירות; במסגרת ההחלטה לא נתקבל צו לביטול חלקי או כולל של החוק באותו הליך.¹\n\n**עיקרי הנימוקים המשפטיים שבהם הסתמך בית המשפט**\n\nמהפסק‑דין עולה כי בית המשפט בחן את מעמדו של ח",
+      "footnote_count": 5
+    },
+    {
+      "fx_id": "R3_CaseLawDocket",
+      "arm": "off",
+      "ok": true,
+      "run_id": "31e0e834-77fa-4091-9d0f-388284112320",
+      "total_ms": 163238,
+      "planner_ms": 51513,
+      "planner_escalated": false,
+      "queries_emitted": 12,
+      "queries_before_cap": 12,
+      "queries_after_cap": 12,
+      "cap_enabled": false,
+      "cap": 0,
+      "dropped_count": 0,
+      "dropped_queries": [],
+      "claims_preserved": 4,
+      "claims_total": 4,
+      "anchor_count": 1,
+      "anchor_queries": 4,
+      "anchor_ids": [
+        "docket:aa-8622-07"
+      ],
+      "anchor_statuses": [
+        {
+          "anchor_id": "docket:aa-8622-07",
+          "cited": true,
+          "is_docket": true
+        }
+      ],
+      "candidates": 18,
+      "verifier_usable": [
+        "09c62f92-6db2-45ed-b99f-507a92c8b05a",
+        "10bf00ab-7401-4ffc-b2fe-a3fd8884bf72",
+        "24cd25df-7a8e-446b-80f5-eaa1f143056d",
+        "3e5f51df-0d4b-4b40-91f9-ff31e1c2c7aa",
+        "4ad45eeb-4fe0-4830-90a0-4fec00027e8d",
+        "5408e4b1-4147-42c7-a91a-8113b89567a9",
+        "c6fe025a-5d5c-482b-b4e5-8665416a3268",
+        "d07c8a33-fe1b-46d6-95d7-839cb8603fc6",
+        "e2a19a5f-13c9-4db8-85d3-404d13ff621f",
+        "f374259c-ab41-431f-bb8f-82042ebe35f2"
+      ],
+      "verifier_dropped": [
+        "0e75cbf7-0bd0-46d2-835d-3ed84e86b243",
+        "340171ba-256a-438a-b2fd-431f090f1e60",
+        "575b40c5-d3ab-4c35-bca5-5295c6d8a21c",
+        "609f5ee1-80e8-4d70-90a9-a69aff73b8f1",
+        "7ab80036-d678-4778-a269-32ae4462c1f3",
+        "884285f6-935c-4ddb-8098-f7ebd71f5a25",
+        "9fd3dc81-15e6-4fd8-a434-b2d5d46d2c53",
+        "d876b357-312a-4c81-a33a-99471f570367"
+      ],
+      "used_sources": [
+        "10bf00ab-7401-4ffc-b2fe-a3fd8884bf72",
+        "24cd25df-7a8e-446b-80f5-eaa1f143056d",
+        "3e5f51df-0d4b-4b40-91f9-ff31e1c2c7aa",
+        "c6fe025a-5d5c-482b-b4e5-8665416a3268",
+        "d07c8a33-fe1b-46d6-95d7-839cb8603fc6",
+        "e2a19a5f-13c9-4db8-85d3-404d13ff621f",
+        "f374259c-ab41-431f-bb8f-82042ebe35f2"
+      ],
+      "answer_len": 2991,
+      "answer_preview": "**תקציר המסקנה**\n\nמן המקורות שציטטו את רוטמן (בעיקר בפסקי דין מאוחרים ובפרשנות) עולה בזהירות כי בית המשפט לא ראה ב\"ייעוד מקרקעין להפקעה\" אוטומטית כהפקעה בפועל; ייעוד הוא בדרך כלל צעד מנהלי שבקדמת ההליך של ההפקעה, אך הוא עלול, בתנאים מסוימים של סופיות וכוונה ממשית של הרשות, ליצור זכויות או ציפיות שניתנות להגנה משפטית ולפיצוי.¹\n\n**מה נקבע בעא 8622/07 לגבי מעמד הייעוד להפקעה**\n\nבהסתמך על האזכורים של ",
+      "footnote_count": 9
+    },
+    {
+      "fx_id": "R4_StatutoryInterp",
+      "arm": "off",
+      "ok": true,
+      "run_id": "d4083f67-ea7e-47fa-a5be-21a2e40df3d3",
+      "total_ms": 251737,
+      "planner_ms": 40411,
+      "planner_escalated": false,
+      "queries_emitted": 13,
+      "queries_before_cap": 13,
+      "queries_after_cap": 13,
+      "cap_enabled": false,
+      "cap": 0,
+      "dropped_count": 0,
+      "dropped_queries": [],
+      "claims_preserved": 4,
+      "claims_total": 4,
+      "anchor_count": 1,
+      "anchor_queries": 4,
+      "anchor_ids": [
+        "docket:raa-6339-97"
+      ],
+      "anchor_statuses": [
+        {
+          "anchor_id": "docket:raa-6339-97",
+          "cited": false,
+          "is_docket": true
+        }
+      ],
+      "candidates": 14,
+      "verifier_usable": [
+        "1766ac74-e467-4142-aadf-321df06c0b75",
+        "62ed00b2-c924-43cb-bf5e-c88afcaff0ff",
+        "a2b07f5b-1fed-46d6-bed1-2e0755f2025f",
+        "ad02a514-f9a3-400e-a80c-d4352953c0d9",
+        "b5a55a0c-1d3e-4d2f-9e49-f0d70c332823"
+      ],
+      "verifier_dropped": [
+        "30465ca6-039f-4faf-b7bf-0ddba6b6ab39",
+        "53da9d4f-7fcd-462c-9649-e4e8e00c31b1",
+        "56b67f57-dd51-4134-9e35-c7b0d235b550",
+        "69a7fa21-8aa5-4bcf-bdc7-b706d827a0f6",
+        "9b9b763d-9334-42aa-835c-32d6048b1120",
+        "c6bdce9d-b56a-42d9-a3d7-c554db902205",
+        "cacf8d38-be74-447f-96cf-4947b2a55a73",
+        "dd5684fd-9742-48b3-af10-31c98c39b1f3",
+        "fbc841a3-9bbf-4d4f-b2b4-7625820c9c3b"
+      ],
+      "used_sources": [
+        "1766ac74-e467-4142-aadf-321df06c0b75",
+        "62ed00b2-c924-43cb-bf5e-c88afcaff0ff",
+        "a2b07f5b-1fed-46d6-bed1-2e0755f2025f",
+        "ad02a514-f9a3-400e-a80c-d4352953c0d9",
+        "b5a55a0c-1d3e-4d2f-9e49-f0d70c332823"
+      ],
+      "answer_len": 2835,
+      "answer_preview": "**הקדמה**\n\nלא אותר פסק הדין עצמו במקורות שעברו אימות; לכן לא ניתן לקבוע בביטחון את ההלכה שנפסקה בו.\n\nסעיף 39 לחוק החוזים (חלק כללי) קובע כי בקיום חיוב הנובע מחוזה יש לנהוג בדרך מקובלת ובתום לב, והוראה זו חלה גם על השימוש בזכות הנובעת מחוזה; הסעיף משקע את חובת תום הלב במסגרת פרק קיום החוזה אך אינו מפרט סעדי משנה.¹\n\n**המשמעות הנורמטיבית: אובייקטיביות מול סובייקטיביות**\n\nנוסח הסעיף — 'דרך מקובלת ובתו",
+      "footnote_count": 4
+    },
+    {
+      "fx_id": "R5_RecentAmendment",
+      "arm": "off",
+      "ok": true,
+      "run_id": "52aa88b8-9900-416b-a7a7-47cb2efd6659",
+      "total_ms": 154574,
+      "planner_ms": 50270,
+      "planner_escalated": false,
+      "queries_emitted": 14,
+      "queries_before_cap": 14,
+      "queries_after_cap": 14,
+      "cap_enabled": false,
+      "cap": 0,
+      "dropped_count": 0,
+      "dropped_queries": [],
+      "claims_preserved": 4,
+      "claims_total": 4,
+      "anchor_count": 0,
+      "anchor_queries": 0,
+      "anchor_ids": [],
+      "anchor_statuses": [],
+      "candidates": 10,
+      "verifier_usable": [
+        "85df488d-6974-494b-b391-d33d681bc05d"
+      ],
+      "verifier_dropped": [
+        "3d24e966-305a-48a0-bec2-9e10dcc90109",
+        "4ddd6b58-b8cc-47bf-82d0-0672b14fb87d",
+        "5455695a-45c9-4911-b8bf-71a85004f764",
+        "77d4d5dc-ae6f-442a-8321-a7ae94e644c8",
+        "9161c097-fbc1-40f4-a136-b363d0e80bd1",
+        "c8ad1c07-58b0-4b8e-ab13-ee642c65b064",
+        "ce6234bf-b530-421f-bda6-4d448949d717",
+        "f0ada3ad-3ce6-4e14-af8d-01c60386f962",
+        "f1af2080-ff46-43e9-8aa6-3e9b4db97a02"
+      ],
+      "used_sources": [
+        "85df488d-6974-494b-b391-d33d681bc05d"
+      ],
+      "answer_len": 3287,
+      "answer_preview": "**מענה תמציתי**\n\nעם חומר המקורות שסופק לי איני יכול לפרט באופן קונקרטי אילו סעיפים בחוק סדר הדין הפלילי (נוסח חדש) שונו בתיקון מספר 87 (2020) ואינו ניתן כאן נוסח הסעיפים לאחר התיקון; המקור היחיד שבידי הוא פסק‑דין של בית המשפט העליון שמתייחס לעקרונות מעצר ושחרור ולא לטקסט החקיקתי של התיקון.¹\n\n**מגבלות המקורות ומה שניתן להסיק בזהירות**\n\nהמשאב היחיד שהוצג הוא פסק‑דין עליון שמשקף קווים עקרוניים פרשניי",
+      "footnote_count": 1
+    },
+    {
+      "fx_id": "R6_ReformCodification",
+      "arm": "off",
+      "ok": true,
+      "run_id": "2f2e35da-f568-4263-a676-1f9014dc1424",
+      "total_ms": 146123,
+      "planner_ms": 36064,
+      "planner_escalated": false,
+      "queries_emitted": 15,
+      "queries_before_cap": 15,
+      "queries_after_cap": 15,
+      "cap_enabled": false,
+      "cap": 0,
+      "dropped_count": 0,
+      "dropped_queries": [],
+      "claims_preserved": 5,
+      "claims_total": 5,
+      "anchor_count": 0,
+      "anchor_queries": 0,
+      "anchor_ids": [],
+      "anchor_statuses": [],
+      "candidates": 8,
+      "verifier_usable": [
+        "b3b26dde-b9a2-4d37-b11a-2fa7e2b9ee64",
+        "e746afe6-16bd-42b1-b98c-f2d4207091f2",
+        "f5f80c77-ce40-4fb6-918f-0cf3aaa6c05b",
+        "f6cf7907-1594-4707-b904-a8d102827a7c"
+      ],
+      "verifier_dropped": [
+        "3997d711-ab52-4d29-88bd-c5d78cb58de8",
+        "5732a248-6586-462e-bfab-c68071bc8b5c",
+        "9ad273b4-e36b-41d0-bcf0-eb678917deac",
+        "b6fc6389-50ae-4b02-86f5-8afe6e05dc09"
+      ],
+      "used_sources": [
+        "b3b26dde-b9a2-4d37-b11a-2fa7e2b9ee64",
+        "e746afe6-16bd-42b1-b98c-f2d4207091f2",
+        "f5f80c77-ce40-4fb6-918f-0cf3aaa6c05b",
+        "f6cf7907-1594-4707-b904-a8d102827a7c"
+      ],
+      "answer_len": 3628,
+      "answer_preview": "**מענה תמציתי על מצב הקודיפיקציה ומחלוקות עיקריות**\n\nבהסתמך על המקורות שסופקו, אין ראיה במקורות אלה כי חוק דיני ממונות (הקודקס האזרחי) הונח לכנסת ונמצא בשלב חקיקה סופי; המידע הקיים מצביע על הצעות מבנה ודיונים עיוניים בהצעת קודיפיקציה, לצד פסקי־דין המבהירים את המתחים המוסדיים בין שופט למחוקק שתיתכן בעת קידום רפורמה נורמטיבית נרחבת.¹\n\n**מצב חקיקה נוכחי**\n\nהמקור המרכזי העוסק במתווה קודיפיקציה הוא מאמ",
+      "footnote_count": 5
+    },
+    {
+      "fx_id": "R7_AcademicHeavy",
+      "arm": "off",
+      "ok": false,
+      "run_id": "c33e0c7e-9eda-4143-a74f-77e10e9c616f",
+      "error": "no_usable_candidates",
+      "total_ms": 83024,
+      "planner_ms": 29407,
+      "planner_escalated": false,
+      "queries_emitted": 11,
+      "queries_before_cap": 11,
+      "queries_after_cap": 11,
+      "cap_enabled": false,
+      "cap": 0,
+      "dropped_count": 0,
+      "dropped_queries": [],
+      "claims_preserved": 4,
+      "claims_total": 4,
+      "anchor_count": 0,
+      "anchor_queries": 0,
+      "anchor_ids": [],
+      "anchor_statuses": [],
+      "candidates": 3,
+      "verifier_usable": [],
+      "verifier_dropped": [
+        "22b3d67a-1176-4f60-899e-edd641b3f375",
+        "6fbbb27e-7d46-41ba-b245-15a018f12899",
+        "c6f82470-6f3f-4b25-9b50-2b74c8738630"
+      ],
+      "used_sources": [],
+      "answer_len": 82,
+      "answer_preview": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+      "footnote_count": 0
+    },
+    {
+      "fx_id": "R8_InsufficientSources",
+      "arm": "off",
+      "ok": true,
+      "run_id": "f2b765f0-9a63-4370-90ee-c794aefc9756",
+      "total_ms": 165859,
+      "planner_ms": 64361,
+      "planner_escalated": false,
+      "queries_emitted": 16,
+      "queries_before_cap": 16,
+      "queries_after_cap": 16,
+      "cap_enabled": false,
+      "cap": 0,
+      "dropped_count": 0,
+      "dropped_queries": [],
+      "claims_preserved": 5,
+      "claims_total": 5,
+      "anchor_count": 0,
+      "anchor_queries": 0,
+      "anchor_ids": [],
+      "anchor_statuses": [],
+      "candidates": 11,
+      "verifier_usable": [
+        "2a7eb074-c890-4488-b0b0-8f9f2527a10e",
+        "608eb84b-8c38-4ab8-b5dd-923c3b0b0b39",
+        "6438dcad-7ae1-4d66-bbdc-3e5974723772",
+        "d3e500ee-91bc-4f25-841a-06c91d90babe",
+        "dd555b4a-0ae7-4058-8fe2-a14ff26953ca",
+        "fa2b0052-ce9f-4887-a8b9-68247289b4dc",
+        "fe491a89-a525-4ff5-954f-e7f4ac9feca6"
+      ],
+      "verifier_dropped": [
+        "4514e4d2-21da-4edf-b950-c8973b54eff9",
+        "87a433b3-9f90-4b3d-8658-902575c87f45",
+        "bce04e4e-193d-4bfb-99bc-9504476da815",
+        "e2a72fca-c4b9-4801-972d-f694ddb07dcf"
+      ],
+      "used_sources": [
+        "2a7eb074-c890-4488-b0b0-8f9f2527a10e",
+        "608eb84b-8c38-4ab8-b5dd-923c3b0b0b39",
+        "6438dcad-7ae1-4d66-bbdc-3e5974723772",
+        "d3e500ee-91bc-4f25-841a-06c91d90babe",
+        "dd555b4a-0ae7-4058-8fe2-a14ff26953ca",
+        "fa2b0052-ce9f-4887-a8b9-68247289b4dc",
+        "fe491a89-a525-4ff5-954f-e7f4ac9feca6"
+      ],
+      "answer_len": 4415,
+      "answer_preview": "**מענה תמציתי והיקף המענה**\n\nהמענה הבא נשען אך ורק על המסמכים שסופקו; לא נמצא בהם מענה רגולטורי מפורש לשימוש ב‑NFT לצורך העברת זכויות מקרקעין, ולכן המסקנות הן זהירות ונגזרות מעקרונות ורגולציות מקבילות שנכללו במקורות.\n\n**האם העברת בעלות באמצעות NFT מעבירה בעלות במקרקעין ורישום בטאבו (שאלה C1)?**\n\nאין במקורות חומר מפורש שקובע ש‑NFT כגורם קריפטוגרפי יחידי יוצר העברת בעלות על מקרקעין המוכרת בפני מערכת",
+      "footnote_count": 9
+    },
+    {
+      "fx_id": "D_R2_NationStateBGHC",
+      "arm": "off",
+      "ok": true,
+      "run_id": "0d645ab9-350a-4181-a3dd-9c1225e37519",
+      "total_ms": 147394,
+      "planner_ms": 40353,
+      "planner_escalated": false,
+      "queries_emitted": 13,
+      "queries_before_cap": 13,
+      "queries_after_cap": 13,
+      "cap_enabled": false,
+      "cap": 0,
+      "dropped_count": 0,
+      "dropped_queries": [],
+      "claims_preserved": 4,
+      "claims_total": 4,
+      "anchor_count": 1,
+      "anchor_queries": 4,
+      "anchor_ids": [
+        "docket:bagatz-5555-18"
+      ],
+      "anchor_statuses": [
+        {
+          "anchor_id": "docket:bagatz-5555-18",
+          "cited": true,
+          "is_docket": true
+        }
+      ],
+      "candidates": 13,
+      "verifier_usable": [
+        "14ffb90c-0908-4577-8560-f8060c59eeff",
+        "87ed1ae5-4bf0-4982-abd8-75bd97bfdf74",
+        "b60c460a-facb-420e-b7a4-6da33d9f287d",
+        "f35c96d6-c2ca-4226-90cc-3a4d02f3bf13"
+      ],
+      "verifier_dropped": [
+        "24f8c966-9701-4168-83df-ef8ec5776f41",
+        "41771e48-e409-450f-a67d-035ccb621168",
+        "69fa20a0-ab1b-42b6-9d42-0fd567a692c9",
+        "6a7e4a15-b7a1-416b-800b-f75e3752c557",
+        "78b96362-0106-4a72-8631-14374304293d",
+        "94edba56-ecfd-4772-83cc-d770d96edcd6",
+        "a5af50ca-5dc7-47bc-8836-705be81db873",
+        "f6f86e7e-ad26-4728-afb0-fe3758d28a1a",
+        "f912df59-5262-4138-8f8b-0e5dd27161cb"
+      ],
+      "used_sources": [
+        "14ffb90c-0908-4577-8560-f8060c59eeff",
+        "87ed1ae5-4bf0-4982-abd8-75bd97bfdf74",
+        "b60c460a-facb-420e-b7a4-6da33d9f287d",
+        "f35c96d6-c2ca-4226-90cc-3a4d02f3bf13"
+      ],
+      "answer_len": 2159,
+      "answer_preview": "**תקציר ההכרעה**\n\nבית המשפט העליון דחה את העתירות שהוקדמו נגד חוק‑יסוד: 'ישראל — מדינת הלאום של העם היהודי' בסוגיית בג\"ץ 5555/18; ההכרעה לא ביטלה את החוק ולא העניקה סעד מבטל נגדו.¹\n\n**פרשנות של הסעיפים המרכזיים בחוק היסוד**\n\nבג\"ץ פירש את נוסחיו של החוק כפסקאות המגדירות זהות לאומית ומסרים עקרוניים של המדינה, ולא כהוראות המעניקות אוטומטית זכות־יתר חקיקתית או סמכות חוקה מופרזת שתבטל אחריות לשמירה על ",
+      "footnote_count": 4
+    },
+    {
+      "fx_id": "D_R3_Rotman",
+      "arm": "off",
+      "ok": true,
+      "run_id": "a43bb448-04e3-466c-8bea-e2605577cf36",
+      "total_ms": 154574,
+      "planner_ms": 38109,
+      "planner_escalated": false,
+      "queries_emitted": 11,
+      "queries_before_cap": 11,
+      "queries_after_cap": 11,
+      "cap_enabled": false,
+      "cap": 0,
+      "dropped_count": 0,
+      "dropped_queries": [],
+      "claims_preserved": 4,
+      "claims_total": 4,
+      "anchor_count": 1,
+      "anchor_queries": 4,
+      "anchor_ids": [
+        "docket:aa-8622-07"
+      ],
+      "anchor_statuses": [
+        {
+          "anchor_id": "docket:aa-8622-07",
+          "cited": true,
+          "is_docket": true
+        }
+      ],
+      "candidates": 15,
+      "verifier_usable": [
+        "10276bd6-2edd-4094-8489-eed482989ea9",
+        "2e11461b-0723-44e4-bc15-1ce5faacba59",
+        "8b0d0b85-dbf6-49fe-9396-5d8ec5bd11c1",
+        "9af53112-9156-4246-ac47-c63437329253",
+        "c3dafc80-d1cf-4452-930b-5a9f2e6f7c07"
+      ],
+      "verifier_dropped": [
+        "1f55777d-06df-4421-bdc7-e7aa6ed43eb1",
+        "24d48058-280e-4675-86b3-87a8001ee7ec",
+        "2c753586-1657-426e-8961-7bbe1b03ac3a",
+        "3cd8ead6-d93a-4088-ad1d-761864c63216",
+        "5a8cc256-e89d-45bd-915e-1b63f79bdcac",
+        "5c65e6fd-f328-4cbf-b088-308b8e52c7c4",
+        "72584349-9521-4ac7-b0a7-0c2fd7f98363",
+        "c35b0150-c86d-4852-9b60-cd32c53d1443",
+        "cb92aae0-8bac-4e0e-917e-23ef86d05b3c",
+        "eb79cdbf-d5ca-4673-a0d9-4722962cfeb7"
+      ],
+      "used_sources": [
+        "10276bd6-2edd-4094-8489-eed482989ea9",
+        "2e11461b-0723-44e4-bc15-1ce5faacba59",
+        "8b0d0b85-dbf6-49fe-9396-5d8ec5bd11c1",
+        "9af53112-9156-4246-ac47-c63437329253",
+        "c3dafc80-d1cf-4452-930b-5a9f2e6f7c07"
+      ],
+      "answer_len": 2768,
+      "answer_preview": "**תקציר ההכרעה כבתיאור בפסיקה המצטטת את רוטמן**\n\nהשאלה מה נקבע בע\"א 8622/07 רוטמן נ' מע\"צ נענית כאן על־ידי הפנייה לפסקי דין מאוחרים המצטטים ודן בעקרונות שנקשרו לעתירה. מן ההתייחסויות בפסיקה העדכנית עולה בזהירות כי בית המשפט הדגיש שאין ייעוד תכנוני או ציון לקרקע כ\"להפקעה\" במסמך תכנוני מצד עצמו מקנה חלום לזכות לפיצוי מיידי; יש לבחון האם נוצרה פגיעה ממשית בזכות הקניינית או בנכסי השימוש של הבעלים, כלו",
+      "footnote_count": 7
+    },
+    {
+      "fx_id": "D_District_Tax",
+      "arm": "off",
+      "ok": true,
+      "run_id": "cdfbf6cd-9aa5-43b1-917b-daac575d6e34",
+      "total_ms": 156461,
+      "planner_ms": 40279,
+      "planner_escalated": false,
+      "queries_emitted": 13,
+      "queries_before_cap": 13,
+      "queries_after_cap": 13,
+      "cap_enabled": false,
+      "cap": 0,
+      "dropped_count": 0,
+      "dropped_queries": [],
+      "claims_preserved": 5,
+      "claims_total": 5,
+      "anchor_count": 1,
+      "anchor_queries": 3,
+      "anchor_ids": [
+        "docket:am-39040-12-21"
+      ],
+      "anchor_statuses": [
+        {
+          "anchor_id": "docket:am-39040-12-21",
+          "cited": true,
+          "is_docket": true
+        }
+      ],
+      "candidates": 8,
+      "verifier_usable": [
+        "0934fa22-f419-4545-a6ea-1b0f3b3ee431"
+      ],
+      "verifier_dropped": [
+        "02cdfbca-e30d-42d5-9cf2-bf58c3be4d1e",
+        "30d4d027-6a24-4cee-9907-a9ef5fbc3c41",
+        "4e04dc95-6514-4a00-af57-fda56c14ee7a",
+        "82c2bb4c-9b5d-42d9-a389-20530845ffe7",
+        "97513e52-6c8c-4b4f-8a05-0ad6f0b258cb",
+        "d6ba9b84-0dc3-4a30-8422-8815d33ff0d5",
+        "fe666164-a62f-46b8-a92e-c65a8771ad04"
+      ],
+      "used_sources": [
+        "0934fa22-f419-4545-a6ea-1b0f3b3ee431"
+      ],
+      "answer_len": 2386,
+      "answer_preview": "**עיקרי הפסיקה ומשמעות מעשית — ע\"מ 39040-12-21**\n\nזהו פסק הדין שבית המשפט המחוזי בבאר־שבע, השופטת יעל ייטב, הוציא בערעור על החלטה לפסול את ספריו של המערער ולסווג את הכנסתו בהתאם לסעיף 152(ב) לפקודת מס הכנסה; המסמך שניתן לצפייה ברשות הציבור מהווה את המקור המרכזי שנבדק כאן.¹\n\nהכרעת מהות לגבי סיווג ההכנסה: על‑פי התקציר הציבורי של פסק הדין שבסוף עיון, בית המשפט דן בסוגיית סיווג ההכנסה בהקשר של סעיף 15",
+      "footnote_count": 1
+    }
+  ],
+  "on_raw": [
+    {
+      "fx_id": "R1_MandateIncomeTax",
+      "arm": "on",
+      "ok": true,
+      "run_id": "92947e8d-6660-4b03-a712-30184bc4bd60",
+      "total_ms": 162993,
+      "planner_ms": 55726,
+      "planner_escalated": false,
+      "queries_emitted": 12,
+      "queries_before_cap": 16,
+      "queries_after_cap": 12,
+      "cap_enabled": true,
+      "cap": 12,
+      "dropped_count": 4,
+      "dropped_queries": [
+        {
+          "role": "government_report",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "דו\"חות מדיניות / משרד האוצר או שירותי הכנסת על מודלים ליישום רפורמה בחקיקת מס (נוסח חדש לעומת חקיקה מקיפה) כולל ניתוח יתרונות וחסרונות; חיפוש: \"דו\"ח\" \"נוסח חדש\" \"קודיפיקציה\" \"רפורמה בהכנסות\""
+        },
+        {
+          "role": "persuasive_case_law",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "פסיקות של בתי משפט מחוזיים או שלום שהתמודדו עם בעיות פרקטיות של תיקוני מעבר וחלות הוראות חדשות במקום הוראות מנדטוריות; חיפוש: \"בית משפט מחוזי\" \"פקודת מס הכנסה\" \"הסדרי מעבר\" \"נוסח חדש\""
+        },
+        {
+          "role": "factual_report",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "דו\"חות ועדת הכנסת / מסמכי ועדת הכלכלה / דו\"חות מבקר המדינה שמתעדים צעדים פרקטיים שננקטו בעת רפורמות מס קודמות (דוגמאות של שלבי חקיקה ושימוע); חיפוש: \"דו\"ח ועדת הכלכלה\" \"רפורמה במס\" \"דו\"ח מבקר המדינה\" \"תיקון מעבר\""
+        },
+        {
+          "role": "scholarship",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "מאמרים על עיצוב הפרוצדורה המומלצת לרפורמות חקיקתיות: שיתוף גורמים, שלבי חקיקה, שימוע ציבורי והערכת השפעה כלכלית, עם דוגמאות מתחום המיסוי בישראל ובחו\"ל; חיפוש: \"שימוע ציבורי\" \"הערכת השפעה רגולטורית\" \"רפורמה חקיקתית\" \"מס\""
+        }
+      ],
+      "claims_preserved": 5,
+      "claims_total": 5,
+      "anchor_count": 1,
+      "anchor_queries": 3,
+      "anchor_ids": [
+        "mandate_continuity_s11"
+      ],
+      "anchor_statuses": [
+        {
+          "anchor_id": "mandate_continuity_s11",
+          "cited": true,
+          "is_docket": false
+        }
+      ],
+      "candidates": 8,
+      "verifier_usable": [
+        "551b7581-e729-4417-b146-4b3eb6788b44",
+        "57700e3a-6b54-4527-bb3d-97a8c52635d1",
+        "a5250a4c-2911-4a10-a641-ee052b51c674",
+        "b68f27b2-07a3-425d-b236-795c6c53308c"
+      ],
+      "verifier_dropped": [
+        "3875a0bb-bb19-454d-8594-93a08b28d8f5",
+        "9c352753-2399-4dc5-b060-8f9bd90ba6d9",
+        "b116be61-c976-4505-a2c7-7d794ba6d363",
+        "d325629a-6abb-46ef-b6b2-918c6578042f"
+      ],
+      "used_sources": [
+        "551b7581-e729-4417-b146-4b3eb6788b44",
+        "57700e3a-6b54-4527-bb3d-97a8c52635d1",
+        "a5250a4c-2911-4a10-a641-ee052b51c674",
+        "b68f27b2-07a3-425d-b236-795c6c53308c"
+      ],
+      "answer_len": 3098,
+      "answer_preview": "**מסקנה תמציתית**\n\nבקצרה: פקודת מס הכנסה ממשיכה לשמש בחקיקה הישראלית כבסיס משפטי מרכזי בתחום המיסים — היא מצויה בנוסח המכונה \"פקודת מס הכנסה (נוסח חדש)\" ומשמשת כחקיקה תקפה, כפי שמאשר יישומה בפסק דין מחוזי שהזכיר במפורש את הנוסח החדש וסעיף 152(ב).¹\n\n**האם הוקם \"נוסח חדש\" והאם הוראות בוטלו או הוחלפו**\n\nברור כי קיימת בגוף החקיקה הגרסה המכונה \"נוסח חדש\" של פקודת מס הכנסה, שעידנה ונקלטה בפורום המדיני ל",
+      "footnote_count": 5
+    },
+    {
+      "fx_id": "R2_NationStateBGHC",
+      "arm": "on",
+      "ok": true,
+      "run_id": "d0e428bd-b17d-483f-987f-dd32993e2041",
+      "total_ms": 169159,
+      "planner_ms": 46290,
+      "planner_escalated": false,
+      "queries_emitted": 12,
+      "queries_before_cap": 13,
+      "queries_after_cap": 12,
+      "cap_enabled": true,
+      "cap": 12,
+      "dropped_count": 1,
+      "dropped_queries": [
+        {
+          "role": "persuasive_case_law",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "פסקי דין מחוזיים או החלטות שיפוטיות שהסתמכו על או אתגרו את ניתוח בג\"ץ 5555/18 בקשר לזכויות מיעוטים או לדעות מיעוט בפסק הדין 'התייחסות ל-מדינת הלאום' פסקי דין ציטוט"
+        }
+      ],
+      "claims_preserved": 5,
+      "claims_total": 5,
+      "anchor_count": 1,
+      "anchor_queries": 4,
+      "anchor_ids": [
+        "docket:bagatz-5555-18"
+      ],
+      "anchor_statuses": [
+        {
+          "anchor_id": "docket:bagatz-5555-18",
+          "cited": true,
+          "is_docket": true
+        }
+      ],
+      "candidates": 17,
+      "verifier_usable": [
+        "790e397b-6d40-41f7-bb21-a16e95efbe09",
+        "b63e9d21-49ea-4ba8-a7c0-cf7ae4fd7690",
+        "c0fe1439-237c-4860-b932-c5485e91465e",
+        "c11f7bf0-096b-4715-994e-e98ac28be61b"
+      ],
+      "verifier_dropped": [
+        "011a5148-5052-4489-9de7-312c2e003faa",
+        "05dd3d1a-9edd-47c7-bbbf-4fdb7b90ca2e",
+        "0db0f16a-3b07-4662-93f1-bcbd52403831",
+        "26c58345-762b-463b-addd-7bbc2e343746",
+        "3f1a21ff-97d0-4f5d-877d-8ffb92836a63",
+        "501938b6-34b4-4b0b-981e-b78f66a63fc8",
+        "6af9734c-0a77-4a9c-9445-8120d5f936ea",
+        "700a8134-7123-4bb0-9c19-858649fb537a",
+        "7077e26d-04ff-450b-9c1f-c191a06fbff1",
+        "b3be4343-c2f9-4bdc-8937-2295490b1d7c",
+        "c5e7b0e1-7409-4413-8f44-66788686e6e3",
+        "d0b8e49e-86d2-483e-bd22-832acf47a41c",
+        "e5d17c27-322d-4424-a7be-ae31ade712bc"
+      ],
+      "used_sources": [
+        "790e397b-6d40-41f7-bb21-a16e95efbe09",
+        "b63e9d21-49ea-4ba8-a7c0-cf7ae4fd7690",
+        "c0fe1439-237c-4860-b932-c5485e91465e",
+        "c11f7bf0-096b-4715-994e-e98ac28be61b"
+      ],
+      "answer_len": 2354,
+      "answer_preview": "**תמצית ההכרעה**\n\nבג\"ץ 5555/18 דן בעתירות נגד חוק יסוד: \"ישראל — מדינת הלאום של העם היהודי\". מן פסק הדין עולה כי בית המשפט דחה את העתירות והשאיר את החוק בעינו, כלומר לא ביטל אותו כלא חוקתי; יחד־עם זאת בית המשפט נמנע מהכרעה רחבה שתהפוך לפסילת חוק כמוצא אחרון.¹\n\n**יחס החוק לזכויות יסוד וביקורת שיפוטית**\n\nבפסק הדין ניכרת הימנעות ממתן הכרעה פרסומית על חסינות מוחלטת של חוק היסוד לעומת חקיקה אחרת; בית ה",
+      "footnote_count": 6
+    },
+    {
+      "fx_id": "R3_CaseLawDocket",
+      "arm": "on",
+      "ok": false,
+      "run_id": "137e59a8-25a1-42f7-baed-f348131dc309",
+      "error": "no_usable_candidates",
+      "total_ms": 118935,
+      "planner_ms": 39028,
+      "planner_escalated": false,
+      "queries_emitted": 11,
+      "queries_before_cap": 11,
+      "queries_after_cap": 11,
+      "cap_enabled": true,
+      "cap": 12,
+      "dropped_count": 0,
+      "dropped_queries": [],
+      "claims_preserved": 4,
+      "claims_total": 4,
+      "anchor_count": 1,
+      "anchor_queries": 4,
+      "anchor_ids": [
+        "docket:aa-8622-07"
+      ],
+      "anchor_statuses": [
+        {
+          "anchor_id": "docket:aa-8622-07",
+          "cited": false,
+          "is_docket": true
+        }
+      ],
+      "candidates": 12,
+      "verifier_usable": [],
+      "verifier_dropped": [
+        "1a0d14f3-2d0e-4c5b-828e-bdd1e7337637",
+        "2a6de0d4-bdea-457f-bc52-ebd8c98324a8",
+        "2aa7c614-d6f1-43a7-b59f-53324f1a2a67",
+        "546cac31-cdc4-4117-b29e-9f4c9b873e1d",
+        "62c140e5-3f08-4c16-a28c-fb2e6fc77df1",
+        "6c0447e0-9fec-4c7e-82a0-1c4f3fc032ea",
+        "6eecac09-2b2e-429c-ac84-7d865560af3e",
+        "75c77565-f03d-4b83-b340-c3e6b9ce10bb",
+        "9ce5250b-31b1-47ff-a4a1-232a867cc69d",
+        "be6a7c01-235c-4ae1-8994-cf20e58fffcf",
+        "d5acb8c2-a202-454c-9a55-1227e922029e",
+        "d81b16fc-dcf1-4152-8270-24f3737bab16"
+      ],
+      "used_sources": [],
+      "answer_len": 82,
+      "answer_preview": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+      "footnote_count": 0
+    },
+    {
+      "fx_id": "R4_StatutoryInterp",
+      "arm": "on",
+      "ok": true,
+      "run_id": "102033bc-9b6d-4bdc-a2e7-f450d3b2bb21",
+      "total_ms": 147202,
+      "planner_ms": 36486,
+      "planner_escalated": false,
+      "queries_emitted": 12,
+      "queries_before_cap": 15,
+      "queries_after_cap": 12,
+      "cap_enabled": true,
+      "cap": 12,
+      "dropped_count": 3,
+      "dropped_queries": [
+        {
+          "role": "binding_case_law",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "רע\"א 6339/97 רוקר בית המשפט העליון 'תום הלב' רשימת שיקולים שופטיים נימוקים כיצד יש לבחון הפרת תום הלב"
+        },
+        {
+          "role": "persuasive_case_law",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "פסקי דין מחוזיים לאחר רוקר 'תום הלב' רשימת שיקולים קריטריונים 'בחינת הפרת תום הלב' גורמים ששוקלו על ידי בתי המשפט"
+        },
+        {
+          "role": "scholarship",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "מאמרים פרקים בספרים 'שיקולים בבחינת תום הלב' 'רשימת שיקולים' ניתוח שיפוטי-אקדמי לאחר רוקר מאמר בעיוני משפט או משפטים"
+        }
+      ],
+      "claims_preserved": 4,
+      "claims_total": 4,
+      "anchor_count": 1,
+      "anchor_queries": 4,
+      "anchor_ids": [
+        "docket:raa-6339-97"
+      ],
+      "anchor_statuses": [
+        {
+          "anchor_id": "docket:raa-6339-97",
+          "cited": false,
+          "is_docket": true
+        }
+      ],
+      "candidates": 11,
+      "verifier_usable": [
+        "6c497cb4-1a5e-42b1-9395-52970182d7bc",
+        "8b95d29b-0ab1-4660-80db-99ad5473c17b"
+      ],
+      "verifier_dropped": [
+        "1669c908-a856-4c9b-8f38-d1a591e506fb",
+        "1f69019b-7ed0-4667-ab2f-e3c6bfdef5ae",
+        "2123153a-0f53-4075-901f-2a408eb3cb20",
+        "7328b627-b234-4e4b-b7fe-0e1301f4f985",
+        "7a5bcec3-2c1a-4b23-82bb-398501b93680",
+        "a4bddde7-41a8-4021-a5b4-e41ed4dc8fb0",
+        "a6881314-3eb9-423b-8a68-6450dfa9aafb",
+        "c1ec2a18-ca6b-4282-9387-4083bc2cd523",
+        "d2d59d16-26f1-4589-a66f-0b82f2ce34dc"
+      ],
+      "used_sources": [
+        "6c497cb4-1a5e-42b1-9395-52970182d7bc",
+        "8b95d29b-0ab1-4660-80db-99ad5473c17b"
+      ],
+      "answer_len": 3070,
+      "answer_preview": "לא אותר פסק הדין עצמו במקורות שעברו אימות; לכן לא ניתן לקבוע בביטחון את ההלכה שנפסקה בו. לפי נוסח סעיף 39 לחוק החוזים (חלק כללי), המושרש בדבר \"בדרך מקובלת ובתום לב\", דרישת תום הלב משולבת עם רף של התנהגות מקובלת; משמעותה הנורמטיבית אינה מצטמצמת לייצוג פנימי בלבד ולעת ובעונה אחת נושאת מטען אובייקטיבי שניתן לבחון ביחס לנורמות המקובלות בענף או ביחס להיקף הזכויות והחובות החוזיות.¹\n\n**משמעות נורמטיבית ש",
+      "footnote_count": 3
+    },
+    {
+      "fx_id": "R5_RecentAmendment",
+      "arm": "on",
+      "ok": false,
+      "run_id": "78bcc91a-464f-41ad-a9b3-e92d3099a788",
+      "error": "no_usable_candidates",
+      "total_ms": 113807,
+      "planner_ms": 51907,
+      "planner_escalated": false,
+      "queries_emitted": 12,
+      "queries_before_cap": 18,
+      "queries_after_cap": 12,
+      "cap_enabled": true,
+      "cap": 12,
+      "dropped_count": 6,
+      "dropped_queries": [
+        {
+          "role": "factual_report",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "דו\"ח בדיקה מקצועי של משרד המשפטים/המשרד לביטחון פנים/המשטרה על בעיות מעשיות במערכת המעצר שלפני 2020 שהצדיקו את תיקון 87 — נתונים על משך מעצר, הליכים חסרים ומקרי פגיעה בזכויות"
+        },
+        {
+          "role": "scholarship",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "מאמרים אקדמיים וניתוחים משפטיים על הרקע החקיקתי של תיקון 87 לחוק סדר הדין הפלילי — דיון בבעיות ציבוריות ושיפוטיות, והערכת שיקולי המדיניות שהוצגו בדיונים הפרלמנטריים"
+        },
+        {
+          "role": "binding_case_law",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "פסקי דין של בית המשפט העליון לפני 2020 שהתייחסו לבעיות סדרתיות במעצר (הגבלות זמן, חובת נימוק, חלופות) שהוזכרו בדיוני תיקון 87 לחוק סדר הדין הפלילי"
+        },
+        {
+          "role": "government_report",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "דו\"חות מעקב משרד המשפטים/המשטרה על יישום תיקון 87 מאז 2020 — הנחיות להוראות מעבר, נתוני אכיפה ושינוי בהליכים הפרוצדורליים בקרב רשויות האכיפה"
+        },
+        {
+          "role": "binding_case_law",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "החלטות בית המשפט העליון מאז 2020 העוסקות ביישום הוראות המעבר של תיקון 87 ובהשפעתו על עצורים שנעצרו לפני כניסת התיקון לתוקף"
+        },
+        {
+          "role": "factual_report",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "דו\"חות ונתוני משטרה/מינהל הסטטיסטיקה על השפעות מעשיות של תיקון 87 (2020) — שינויים במספר העצורים, משך החזקה במעצר ושימוש בחלופות (מעקב אלקטרוני, ערבויות) מאז התיקון"
+        }
+      ],
+      "claims_preserved": 5,
+      "claims_total": 5,
+      "anchor_count": 0,
+      "anchor_queries": 0,
+      "anchor_ids": [],
+      "anchor_statuses": [],
+      "candidates": 4,
+      "verifier_usable": [],
+      "verifier_dropped": [
+        "78c2aae1-0227-4c18-9474-f97436860e71",
+        "7abdda70-7ad4-4075-8a73-63083a007b00",
+        "8bd3e33a-1d2e-4938-ab4e-b4fc0d3385ab",
+        "adea5b43-5be5-4f5e-b611-5ebffba57879"
+      ],
+      "used_sources": [],
+      "answer_len": 82,
+      "answer_preview": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+      "footnote_count": 0
+    },
+    {
+      "fx_id": "R6_ReformCodification",
+      "arm": "on",
+      "ok": true,
+      "run_id": "1eca38c8-3820-4eb7-ad0b-cfc66bac2102",
+      "total_ms": 164328,
+      "planner_ms": 38579,
+      "planner_escalated": false,
+      "queries_emitted": 12,
+      "queries_before_cap": 13,
+      "queries_after_cap": 12,
+      "cap_enabled": true,
+      "cap": 12,
+      "dropped_count": 1,
+      "dropped_queries": [
+        {
+          "role": "government_report",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "משרד המשפטים דוח יישום 'הצעת חוק דיני ממונות' תקופת מעבר חקיקה מיוחדת השפעה על חוקים קיימים הנחיות אכיפה דו\"ח יישום"
+        }
+      ],
+      "claims_preserved": 4,
+      "claims_total": 4,
+      "anchor_count": 0,
+      "anchor_queries": 0,
+      "anchor_ids": [],
+      "anchor_statuses": [],
+      "candidates": 9,
+      "verifier_usable": [
+        "14af0904-0a15-48bd-a23a-65ada6eaa593",
+        "29da2ec1-497f-41a6-b5a6-935c38b22685",
+        "2d1980fc-8ba9-481c-a79f-e9d1d53a0108",
+        "cc982fa1-1081-4863-83ac-f174c4a84494"
+      ],
+      "verifier_dropped": [
+        "4e754722-d177-443f-a88e-d035bf0649f6",
+        "569a04a0-95bc-47aa-b530-073106543a55",
+        "6af28e94-8571-4c20-92f5-071bc350044c",
+        "afd708e0-095d-4cfc-87cc-364e9d80f309",
+        "b9760588-1b77-49d0-99a7-36c4a79d11aa"
+      ],
+      "used_sources": [
+        "14af0904-0a15-48bd-a23a-65ada6eaa593",
+        "29da2ec1-497f-41a6-b5a6-935c38b22685",
+        "2d1980fc-8ba9-481c-a79f-e9d1d53a0108",
+        "cc982fa1-1081-4863-83ac-f174c4a84494"
+      ],
+      "answer_len": 2593,
+      "answer_preview": "**מצב הצעת החוק דיני ממונות (הקודקס האזרחי) כיום**\n\nאין במקורות שסופקו טיוטת חוק רשמית, החלטת ממשלה, או תיעוד פרלמנטרי המאשר את הסטטוס הפרוצדורלי הנוכחי של 'הצעת חוק דיני ממונות (הקודקס האזרחי)'. המשאבים שמוצעים מדברים ברובם ברמה דוקטרינרית על קודיפיקציה והשפעות חקיקה על דיני החוזים והחיובים, אך אינם מציינים אם נוסחה הצעה סופית, הונחה לקריאה בכנסת או מה שלב ההליכים בו היא נמצאת.\n\n**עקרונות ומובנים",
+      "footnote_count": 5
+    },
+    {
+      "fx_id": "R7_AcademicHeavy",
+      "arm": "on",
+      "ok": true,
+      "run_id": "e3183186-c728-4615-bd14-656742fa68d8",
+      "total_ms": 113156,
+      "planner_ms": 30152,
+      "planner_escalated": false,
+      "queries_emitted": 10,
+      "queries_before_cap": 10,
+      "queries_after_cap": 10,
+      "cap_enabled": true,
+      "cap": 12,
+      "dropped_count": 0,
+      "dropped_queries": [],
+      "claims_preserved": 4,
+      "claims_total": 4,
+      "anchor_count": 0,
+      "anchor_queries": 0,
+      "anchor_ids": [],
+      "anchor_statuses": [],
+      "candidates": 7,
+      "verifier_usable": [
+        "6c7b5dff-1c03-45b9-8046-ab29345f9644",
+        "cf87cd75-f776-4d79-b6e0-234c854e691d",
+        "da23304e-0788-4436-a8f0-80b3f98f29de"
+      ],
+      "verifier_dropped": [
+        "19d61384-aadd-4a33-85d3-89ba851199e4",
+        "40947277-db6a-4d8a-b0fe-f63ee988c5db",
+        "b9c5827a-0839-4532-a9b0-9173e77a83b8",
+        "eaf32eb8-6517-45cd-a19e-6dc91c9cbbf3"
+      ],
+      "used_sources": [
+        "6c7b5dff-1c03-45b9-8046-ab29345f9644",
+        "cf87cd75-f776-4d79-b6e0-234c854e691d",
+        "da23304e-0788-4436-a8f0-80b3f98f29de"
+      ],
+      "answer_len": 2782,
+      "answer_preview": "**תמצית ממצאים**\n\nלא מצאתי במקורות שסופקו עבודה של פרופסור דניאל פרידמן ולכן אין ביכולתי לתאר במפורש את ביקורתו המילולית או לזקק נוסחאות שהוא ניסח. ניתוחי תמיכה שניתנים כאן מבוססים על מאמר ביקורתי תיאורטי ורלוונטי וכן על פסקי-דין המתייחסים להטלת חוסר תום לב במשא ומתן; יש להתייחס אליהם זהירות כמקבילים תיאורטיים ולא כתחליף לעמדות פרידמן עצמן.\n\n**עקרונות ביקורת תיאורטית שנמצאו במקורות**\n\nמחקר אקדמי מ",
+      "footnote_count": 5
+    },
+    {
+      "fx_id": "R8_InsufficientSources",
+      "arm": "on",
+      "ok": true,
+      "run_id": "ea656efc-dc40-4ad8-873b-f364b90e935c",
+      "total_ms": 158536,
+      "planner_ms": 59853,
+      "planner_escalated": false,
+      "queries_emitted": 12,
+      "queries_before_cap": 17,
+      "queries_after_cap": 12,
+      "cap_enabled": true,
+      "cap": 12,
+      "dropped_count": 5,
+      "dropped_queries": [
+        {
+          "role": "regulation",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "הנחיות המפקח על הבנקים/בנק ישראל למוסדות בנקאיים לגבי קוסטדי, שמירה וניהול נכסים דיגיטליים 'הנחיות המפקח על הבנקים' 'קוסטדי' 'נכסים דיגיטליים' תקנות/הנחיות"
+        },
+        {
+          "role": "scholarship",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "מאמרים משפטיים על רגולציה בנקאית של שירותי קוסטדי ושמירת נכסים דיגיטליים עבור בנקים בישראל השפעות רגולטוריות ואחריות משפטית 'בנק ישראל' 'NFT' 'קוסטדי' מאמר"
+        },
+        {
+          "role": "binding_case_law",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "בית המשפט העליון פסקי דין על סכסוכים בין רשום בטאבו לבין מחזיק בזכויות חיצוניות/חוזיות פסקי דין 'סכסוכים בין בעל רשום למחזיק זכות חיצונית' טאבו בעלות"
+        },
+        {
+          "role": "government_report",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "דו\"ח משרד האוצר, רשות ניירות ערך או רשויות המס על ההשלכות הפרקטיות והרגולטוריות של טוקניזציה של נכסים כולל היבטי מס, הלבנת הון ואכיפה 'טוקניזציה' 'מקרקעין' דו\"ח"
+        },
+        {
+          "role": "scholarship",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "מאמרים ונתחים אקדמיים/שירותי מיקרו־דו\"חות על הסיכונים האזרחיים והפליליים בטוקניזציה מקרקעין: הלבנת הון, אכיפה, סכסוכים וטיפול בבעלות רשומה לעומת זכויות דיגיטליות 'NFT' 'הלבנת הון' 'מקרקעין' מאמר"
+        }
+      ],
+      "claims_preserved": 5,
+      "claims_total": 5,
+      "anchor_count": 0,
+      "anchor_queries": 0,
+      "anchor_ids": [],
+      "anchor_statuses": [],
+      "candidates": 9,
+      "verifier_usable": [
+        "176d8ed2-89b3-43b8-98e9-262ffdaf7d2a",
+        "2e7b793e-c59c-448b-932f-cb423db930d6"
+      ],
+      "verifier_dropped": [
+        "6fa5a9dc-2f9b-47d4-b43f-310738c04514",
+        "6fad2079-541d-4ff7-95d3-e47071dbbc19",
+        "879869d4-de42-4b5c-852d-abd4d038dbab",
+        "91fce402-7326-4ba0-b823-fcb815860b12",
+        "b3f28040-5622-4c46-bbd1-783894c6c705",
+        "c205336a-b511-4887-ba07-9fceae3e23f3",
+        "d0caee10-8228-4933-baea-c5ce13430940"
+      ],
+      "used_sources": [
+        "176d8ed2-89b3-43b8-98e9-262ffdaf7d2a",
+        "2e7b793e-c59c-448b-932f-cb423db930d6"
+      ],
+      "answer_len": 3061,
+      "answer_preview": "**מסקנה עקרונית**\n\nעל פי המקורות שבידי, אין עדות ש־NFT בפני עצמו יכול לשנות את הרישום הקנייני במרשם המקרקעין (הטאבו); טוקניזציה באמצעות NFT יכולה ליצור זכויות חוזיות או יחסי נאמנות בין הצדדים, אך לא מעבירה בהכרח זכויות רשומות כלפי שלישי אלא אם בוצע רישום מתאים במרשם.¹\n\n**היבט קנייני — העברת בעלות בטאבו באמצעות NFT**\n\nהמקור שעוסק בזכויות רשומות בטאבו מדגיש את עליונות הרישום ומשמעותו הקניינית, ולכן ",
+      "footnote_count": 3
+    },
+    {
+      "fx_id": "D_R2_NationStateBGHC",
+      "arm": "on",
+      "ok": true,
+      "run_id": "ec047b74-4f26-49a2-80e3-115972751f98",
+      "total_ms": 176855,
+      "planner_ms": 43869,
+      "planner_escalated": false,
+      "queries_emitted": 11,
+      "queries_before_cap": 11,
+      "queries_after_cap": 11,
+      "cap_enabled": true,
+      "cap": 12,
+      "dropped_count": 0,
+      "dropped_queries": [],
+      "claims_preserved": 4,
+      "claims_total": 4,
+      "anchor_count": 1,
+      "anchor_queries": 4,
+      "anchor_ids": [
+        "docket:bagatz-5555-18"
+      ],
+      "anchor_statuses": [
+        {
+          "anchor_id": "docket:bagatz-5555-18",
+          "cited": true,
+          "is_docket": true
+        }
+      ],
+      "candidates": 13,
+      "verifier_usable": [
+        "5b907e1c-0895-4eb3-89a2-31ffde6bab26",
+        "5ce0f406-8653-479e-8f55-368a9521e271",
+        "9881c659-66dd-4e7f-9b7b-08321f646799",
+        "a14ca7f6-dd21-49d6-8793-f4c9f8d65331",
+        "a544ec13-5a39-4257-bdf4-21e4d64b7ed6",
+        "e6a26038-8fcf-4e08-842a-feed18df251c"
+      ],
+      "verifier_dropped": [
+        "15f2789f-5662-4685-b8f5-d302df8b8600",
+        "35c68620-9d74-4da1-833d-e373195f6706",
+        "5f527fb9-022b-40d1-ad9f-f1555311523d",
+        "6c16ad19-7398-418a-aa6d-f3fd4331fa6d",
+        "8630ce65-6a93-4737-943c-adfd4005975c",
+        "fae8c763-4501-47cd-adf1-34c37c89a8ec",
+        "ff2b6f6c-3110-4de2-9574-10cc14b6e421"
+      ],
+      "used_sources": [
+        "5ce0f406-8653-479e-8f55-368a9521e271",
+        "9881c659-66dd-4e7f-9b7b-08321f646799",
+        "a14ca7f6-dd21-49d6-8793-f4c9f8d65331",
+        "a544ec13-5a39-4257-bdf4-21e4d64b7ed6",
+        "e6a26038-8fcf-4e08-842a-feed18df251c"
+      ],
+      "answer_len": 1799,
+      "answer_preview": "**מסקנה תמציתית**\n\nבג\"ץ 5555/18 — העתירות נגד חוק היסוד \"ישראל — מדינת הלאום של העם היהודי\" נדחו על‑ידי בית המשפט העליון; בפסק‑הדין לא בוטל ולא צונזר החוק במישור החוקתי.¹\n\n**עיקרי הנימוקים ביחס לזהות לאומית וזכויות היסוד**\n\nמהמקורות עולה בזהירות כי בית המשפט התייחס ל'זהות הלאומית‑יהודית' כאינדיקייטור תכליתי־פרשני שיש לאזן מול זכויות יסוד ועקרון השוויון, ובבחינה הזו נמנעה פסילה של החוק והעדפה ניתנה",
+      "footnote_count": 6
+    },
+    {
+      "fx_id": "D_R3_Rotman",
+      "arm": "on",
+      "ok": true,
+      "run_id": "b868425e-81a2-43b1-9098-b245c7376149",
+      "total_ms": 131990,
+      "planner_ms": 44264,
+      "planner_escalated": false,
+      "queries_emitted": 11,
+      "queries_before_cap": 11,
+      "queries_after_cap": 11,
+      "cap_enabled": true,
+      "cap": 12,
+      "dropped_count": 0,
+      "dropped_queries": [],
+      "claims_preserved": 4,
+      "claims_total": 4,
+      "anchor_count": 1,
+      "anchor_queries": 4,
+      "anchor_ids": [
+        "docket:aa-8622-07"
+      ],
+      "anchor_statuses": [
+        {
+          "anchor_id": "docket:aa-8622-07",
+          "cited": false,
+          "is_docket": true
+        }
+      ],
+      "candidates": 2,
+      "verifier_usable": [
+        "eac18554-b126-4d4d-856c-87c7ad418953"
+      ],
+      "verifier_dropped": [
+        "ed81cf19-a5e3-4b56-a525-687e4a7d6580"
+      ],
+      "used_sources": [
+        "eac18554-b126-4d4d-856c-87c7ad418953"
+      ],
+      "answer_len": 2165,
+      "answer_preview": "**מענה ותמצית ראשונית**\n\nלא אותר פסק הדין עצמו במקורות שעברו אימות; לכן לא ניתן לקבוע בביטחון את ההלכה שנפסקה בו.\n\nבהיעדר הגדרה ברורה של פסק הדין המבוקש, ניתן אך ורק להציג בצורה זהירה את השאלות המשפטיות שעשויות לעלות בפועל כאשר נדונה סוגיית ייעוד מקרקעין להפקעה, ולהצביע על נקודות פארסה בפסיקה המקבילה שעשויות להיות רלוונטיות כמסגרת אנליטית.\n\n**שאלה C1 — מה המשמעות החוקית האפשרית של ייעוד להפקעה?**\n",
+      "footnote_count": 1
+    },
+    {
+      "fx_id": "D_District_Tax",
+      "arm": "on",
+      "ok": true,
+      "run_id": "6da581ce-0ba9-49c0-9509-5d1a39a37243",
+      "total_ms": 133838,
+      "planner_ms": 42151,
+      "planner_escalated": false,
+      "queries_emitted": 12,
+      "queries_before_cap": 16,
+      "queries_after_cap": 12,
+      "cap_enabled": true,
+      "cap": 12,
+      "dropped_count": 4,
+      "dropped_queries": [
+        {
+          "role": "binding_case_law",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "ע\"מ 39040-12-21 משמעות מעשית החלטת בית המשפט השלכות על דיווח חבות מס השבת מס ואכיפה נגד נישום פסק דין הסבר מעשי"
+        },
+        {
+          "role": "government_report",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "דו\"ח רשות המיסים או הנחיות פנימיות של רשות המיסים לגבי סיווג הכנסות והנחיות דיווח 'הנחיות רשות המיסים סיווג הכנסה'"
+        },
+        {
+          "role": "scholarship",
+          "reason": "over_cap",
+          "claim_id": "C4",
+          "query_he": "מאמרים מקצועיים על ההשלכות הפרקטיות של סיווג הכנסות לצורכי מס השפעה על תכנון מס, דיווח, קיום תשלומי מס והחזרי מס"
+        },
+        {
+          "role": "factual_report",
+          "reason": "over_cap",
+          "claim_id": "C5",
+          "query_he": "פרוטוקול דיון ו/או הודעות רשם בתי המשפט ע\"מ 39040-12-21 סטטוס הליך האם פסק הדין חלוט האם נרשם ערעור חדשות משפטיות על המעמד הפרוצדורלי"
+        }
+      ],
+      "claims_preserved": 5,
+      "claims_total": 5,
+      "anchor_count": 1,
+      "anchor_queries": 3,
+      "anchor_ids": [
+        "docket:am-39040-12-21"
+      ],
+      "anchor_statuses": [
+        {
+          "anchor_id": "docket:am-39040-12-21",
+          "cited": true,
+          "is_docket": true
+        }
+      ],
+      "candidates": 6,
+      "verifier_usable": [
+        "55d4c653-ba6c-43f1-8fe5-bb561dc0db3d"
+      ],
+      "verifier_dropped": [
+        "6b969fb5-501c-46b4-883f-8abc379ad348",
+        "8cde12ac-2e2f-4b87-9e7b-8b06417fcd5c",
+        "8d944119-d9ed-485e-aafa-b9443eaf53cd",
+        "c2d63f4c-921f-4eca-bd9d-a2001d26cc7b",
+        "defa9186-6790-427b-8368-847a8de999e3"
+      ],
+      "used_sources": [
+        "55d4c653-ba6c-43f1-8fe5-bb561dc0db3d"
+      ],
+      "answer_len": 2432,
+      "answer_preview": "**תמצית ההכרעה וזיהוי הפסק דין**\n\nבפסק דינו של בית המשפט המחוזי בבאר שבע בתיק ע\"מ 39040-12-21, שניתן על־ידי השופטת יעל ייטב, עסק בית המשפט בערעור על החלטה שנגעה לפסילת ספריו של המערער ובקביעת הכנסתו במסגרת צו לפי סעיף 152(ב) לפקודת מס הכנסה.¹\n\nמהמקור שסופק עולה במפורש כי מדובר בהכרעה בנוגע לסיווג הכנסה ובקביעת ההכנסה בצו לפי סעיף 152(ב); עם זאת לתיאור זה יש תמיכה חלקית בלבד במקור שסופק, ולא נכללו ",
+      "footnote_count": 1
+    }
+  ],
+  "summary": {
+    "count": 11,
+    "total_ms_off_median": 156461,
+    "total_ms_on_median": 147202,
+    "total_ms_off_mean": 161545,
+    "total_ms_on_mean": 144618,
+    "anchors_all_preserved": false,
+    "any_ok_regression": true,
+    "mean_used_sources_overlap": 0
+  }
+}
