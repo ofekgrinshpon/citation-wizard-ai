@@ -393,12 +393,16 @@ async function handle(req: Request): Promise<Response> {
       escalation_reason: plannerStage.escalation_reasons,
       schema_valid: plannerStage.result.ok,
       ms: plannerStage.stage_runs.reduce((s, r) => s + r.ms, 0),
+      // Step 2 (latency): query fanout cap. `enabled=false` = flag-off / baseline.
+      query_cap: plannerStage.cap_report,
+      dropped_queries: plannerStage.cap_report.dropped_queries,
     },
     claims_count: analyzer.claims.length,
     queries_count: planner?.queries.length ?? 0,
     truncated_claims_count: analyzerStage.result.truncated_claims_count,
     truncated_queries_count: plannerStage.result.truncated_queries_count,
   };
+
 
   if (!plannerOk) {
     const planning_error = {
