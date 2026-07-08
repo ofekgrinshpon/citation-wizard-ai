@@ -24,6 +24,10 @@ export async function callOpenAIJsonTool<T>(opts: {
   tool: JsonToolSchema;
   // optional: reasoning effort, defaults to none for mini, "medium" for full
   reasoningEffort?: "minimal" | "low" | "medium" | "high";
+  // optional: cap the completion token budget (reasoning + visible output).
+  // Passed through as `max_completion_tokens` — correct field for the gpt-5
+  // family on the Lovable AI Gateway.
+  maxCompletionTokens?: number;
 }): Promise<ToolCallResult<T>> {
   const apiKey = Deno.env.get("LOVABLE_API_KEY");
   if (!apiKey) {
