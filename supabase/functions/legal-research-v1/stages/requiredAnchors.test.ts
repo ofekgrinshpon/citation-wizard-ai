@@ -171,7 +171,7 @@ Deno.test("computeRequiredAnchorStatuses — docket anchor: docket_match + direc
     claim_id: "C1",
     role: "binding_case_law" as const,
     origin: "local_db" as const,
-    retrieval_method: "exact_authority" as const,
+    retrieval_method: "text" as const,
     title: 'בג"ץ 5555/18 עדאלה',
     source_type: "supreme_court_il",
     query_he: anchors[0].suggested_queries[0],
