@@ -15,8 +15,10 @@ import {
   MODEL_MINI,
   StageRun,
   SUPPORT_LEVELS,
+  SUPPORT_SUBTYPES,
   SourceRole,
   SupportLevel,
+  SupportSubtype,
   UsableCandidate,
   Verdict,
 } from "../lib/types.ts";
@@ -38,19 +40,30 @@ const SYSTEM_PROMPT = `אתה מאמת מקורות משפטי (Source Verifier)
 
 ערכי support מותרים: direct, partial, tangential, unrelated.
 
-הגדרות:
-- direct: המקור עוסק ישירות בטענה ויכול לשמש בסיס לכתיבה (סעיף חוק רלוונטי, פסק דין על אותה דוקטרינה, מאמר שעוסק מפורשות בנושא).
-- partial: עוסק בנושא הקרוב או באספקט מסוים של הטענה, שמיש כתמיכה משלימה.
-- tangential: נוגע רק בשולי הנושא (אזכור צדדי, רקע רחב, מקור על תחום סמוך).
-- unrelated: לא קשור לטענה כלל (גם אם הכותרת נראית דומה).
+הגדרות (זהות סובייקטיבית — subject identity — היא המבחן העיקרי):
+- direct: המקור עוסק *ישירות* בסובייקט הספציפי של הטענה — אותו חוק/פקודה, אותה דוקטרינה, אותו פסק דין, אותו סעיף, או אותה סוגיה עובדתית. חפיפת מילות מפתח או שיוך לאותו תחום משפט אינה מספיקה ל-direct.
+- partial: עוסק בסובייקט קרוב או באספקט מסוים של הטענה, שמיש כתמיכה משלימה (למשל: אותו תחום משפטי אך חוק אחר; אותה דוקטרינה בהקשר מקביל; מקור המסביר את הרקע הכללי).
+- tangential: נוגע רק בשולי הנושא (אזכור צדדי, רקע רחב, מקור על תחום סמוך, דף נחיתה של כתב עת ללא תוכן ממוקד).
+- unrelated: לא קשור לטענה כלל, גם אם הכותרת נראית דומה, גם אם קיימת חפיפת מילים.
 
-כללים:
-- חוק (primary_statute) יכול לתמוך ישירות בכלל משפטי "ספרי" (black-letter).
-- פסיקה (binding_case_law / persuasive_case_law) יכולה לתמוך בדוקטרינה וביישומה.
+כללי סיווג נוקשים:
+- חוק/פקודה אחר מזה שבטענה = לא direct. לדוגמה: טענה על "פקודת מס הכנסה" ומקור על "פקודת הראיות (נוסח חדש)" אינם באותו סובייקט → tangential לכל היותר; support_subtype: "wrong_subject".
+- הרחבה דוקטרינרית או אנלוגית = partial לכל היותר, לא direct. לדוגמה: טענה על התפתחות פסיקתית של דיני מס ומקור על החלת דין מנדטורי בשטחי יו"ש → אנלוגי בלבד; support_subtype: "analogical".
+- תקנות/חוק בתחום סמוך אך שונה = לא direct. לדוגמה: טענה על זכויות לפי פקודת מס הכנסה ומקור על תקנות ביטוח לאומי (ביטוח סיעוד) → סובייקט אחר; support_subtype: "wrong_subject".
+- דף נחיתה, אינדקס של כתב עת, עמוד מוסדי כללי, או מקור ללא תוכן ממוקד = לא direct גם אם התחום כללי מתאים; support_subtype: "background".
+- אם ה-reason שלך אומר שהמקור *אינו עוסק* בנושא הטענה (למשל "אינו מקור לפקודת המס עצמה", "does not address"), אסור לסמן direct — יש להוריד ל-partial לכל היותר.
+
+תפקידי מקור:
+- חוק (primary_statute) יכול לתמוך ישירות בכלל משפטי "ספרי" (black-letter) — אם זה אותו חוק/סעיף.
+- פסיקה (binding_case_law / persuasive_case_law) יכולה לתמוך בדוקטרינה וביישומה — אם אותה דוקטרינה, אותו סובייקט.
 - ספרות (scholarship) מסבירה דוקטרינה אך אינה תחליף לחוק/פסיקה כשנדרש דין מהותי.
 - דו"חות (factual_report / government_report) מתאימים לרקע עובדתי, לא לכלל משפטי בפני עצמם.
-- דחה (unrelated) מועמדי exact_authority "רועשים": אם הכותרת והקטע אינם נוגעים לטענה, גם אם השם דמה — לדוגמה "החוק העותומני על האגודות", "חוק אמנת האג", תקנות גמלאות לשרים, חוקי אמנת חברות בינלאומיות וכד' כאשר הטענה היא על פיצוי מוסכם / סעיף 15 לחוק החוזים תרופות.
-- בטענות על "השתק פלוגתא" / "מעשה בית דין" / issue preclusion: מועמדים העוסקים ב"השתק מחמת מצג" / promissory estoppel / estoppel by representation הם unrelated אלא אם הטענה מציינת מפורשות הבטחה/מצג/הסתמכות.
+- דחה (unrelated) מועמדי exact_authority "רועשים": אם הכותרת והקטע אינם נוגעים לטענה — לדוגמה "החוק העותומני על האגודות", "חוק אמנת האג", תקנות גמלאות לשרים כאשר הטענה היא על פיצוי מוסכם.
+- בטענות על "השתק פלוגתא" / "מעשה בית דין" / issue preclusion: מועמדים העוסקים ב"השתק מחמת מצג" / promissory estoppel הם unrelated אלא אם הטענה מציינת מפורשות הבטחה/מצג/הסתמכות.
+
+שדות פלט:
+- support: אחד מהערכים לעיל.
+- support_subtype (אופציונלי, מומלץ): "exact_subject" (אותו חוק/סעיף/דוקטרינה בדיוק) | "same_domain" (תחום זהה אך חוק/סוגיה אחרים) | "analogical" (הקבלה דוקטרינרית/אנלוגית) | "background" (רקע כללי, דף נחיתה, סקירה) | "wrong_subject" (סובייקט אחר לחלוטין).
 - supported_points: 1–3 נקודות קצרות בעברית המסבירות *מה* בדיוק תומך (ריק אם unrelated).
 - reason: משפט קצר בעברית המסביר את ההחלטה, ובפרט עבור tangential/unrelated — מדוע נדחה.
 
@@ -68,6 +81,12 @@ const VERIFIER_TOOL_PARAMETERS: Record<string, unknown> = {
           candidate_id: { type: "string" },
           claim_id: { type: "string" },
           support: { type: "string", enum: [...SUPPORT_LEVELS] },
+          support_subtype: {
+            type: "string",
+            enum: [...SUPPORT_SUBTYPES],
+            description:
+              "Optional subject-identity sub-classification. Use wrong_subject for a different statute/case/doctrine; analogical for a parallel doctrine; background for landing pages or generic overviews.",
+          },
           supported_points: {
             type: "array",
             items: { type: "string" },
@@ -88,6 +107,7 @@ interface RawVerdict {
   candidate_id?: unknown;
   claim_id?: unknown;
   support?: unknown;
+  support_subtype?: unknown;
   supported_points?: unknown;
   reason?: unknown;
 }
@@ -95,6 +115,148 @@ interface RawVerdict {
 function pairKey(candidate_id: string, claim_id: string): string {
   return `${candidate_id}::${claim_id}`;
 }
+
+// ─── Subject-identity strictness (Phase 1) ─────────────────────────────────
+// Deterministic post-verdict pass. Applies after the model returns and before
+// verdicts feed into aggregation. Never *promotes* — only demotes.
+export type DemotionRule =
+  | "wrong_subject"
+  | "analogical"
+  | "background"
+  | "self_contradiction"
+  | "landing_page";
+
+export interface DemotionEvent {
+  candidate_id: string;
+  claim_id: string;
+  from: SupportLevel;
+  to: SupportLevel;
+  rule: DemotionRule;
+  reason_excerpt: string;
+}
+
+const SELF_CONTRADICTION_PATTERNS: RegExp[] = [
+  /אינ[הו]\s*(?:ה)?\s*(?:מקור|עוסק|מתייחס|נוגע)/,
+  /לא\s+עוסק/,
+  /לא\s+מתייחס/,
+  /לא\s+נוגע/,
+  /not\s+about/i,
+  /does\s+not\s+address/i,
+  /does\s+not\s+discuss/i,
+  /unrelated\s+to/i,
+  /off[-\s]topic/i,
+];
+
+const LANDING_SNIPPET_MIN = 120;
+
+function isSelfContradictory(reason: string): boolean {
+  if (!reason) return false;
+  return SELF_CONTRADICTION_PATTERNS.some((re) => re.test(reason));
+}
+
+function isLandingPage(cand: Candidate | undefined): boolean {
+  if (!cand) return false;
+  const snip = (cand.snippet || "").trim();
+  return snip.length < LANDING_SNIPPET_MIN;
+}
+
+/**
+ * Enforce subject-identity strictness. Returns a possibly-modified verdict and
+ * the demotion event that fired (if any). Order matters — the strictest rule
+ * that applies wins:
+ *   1. wrong_subject → unrelated
+ *   2. self_contradiction (direct only) → partial
+ *   3. landing_page (direct only) → partial
+ *   4. analogical (direct only) → partial
+ *   5. background (direct only) → partial
+ *
+ * Never promotes; already-tangential/unrelated verdicts pass through
+ * untouched (except for wrong_subject which always forces unrelated).
+ */
+export function enforceSubjectIdentity(
+  verdict: Verdict,
+  cand: Candidate | undefined,
+): { verdict: Verdict; demotion: DemotionEvent | null } {
+  const from = verdict.support;
+  const excerpt = (verdict.reason || "").slice(0, 200);
+
+  // Rule 1: wrong_subject forces unrelated regardless of current support.
+  if (verdict.support_subtype === "wrong_subject" && from !== "unrelated") {
+    return {
+      verdict: { ...verdict, support: "unrelated" },
+      demotion: {
+        candidate_id: verdict.candidate_id,
+        claim_id: verdict.claim_id,
+        from,
+        to: "unrelated",
+        rule: "wrong_subject",
+        reason_excerpt: excerpt,
+      },
+    };
+  }
+
+  // Rules 2–5 only demote direct → partial.
+  if (from !== "direct") return { verdict, demotion: null };
+
+  if (isSelfContradictory(verdict.reason)) {
+    return {
+      verdict: { ...verdict, support: "partial" },
+      demotion: {
+        candidate_id: verdict.candidate_id,
+        claim_id: verdict.claim_id,
+        from,
+        to: "partial",
+        rule: "self_contradiction",
+        reason_excerpt: excerpt,
+      },
+    };
+  }
+
+  if (isLandingPage(cand)) {
+    return {
+      verdict: { ...verdict, support: "partial" },
+      demotion: {
+        candidate_id: verdict.candidate_id,
+        claim_id: verdict.claim_id,
+        from,
+        to: "partial",
+        rule: "landing_page",
+        reason_excerpt: excerpt,
+      },
+    };
+  }
+
+  if (verdict.support_subtype === "analogical") {
+    return {
+      verdict: { ...verdict, support: "partial" },
+      demotion: {
+        candidate_id: verdict.candidate_id,
+        claim_id: verdict.claim_id,
+        from,
+        to: "partial",
+        rule: "analogical",
+        reason_excerpt: excerpt,
+      },
+    };
+  }
+
+  if (verdict.support_subtype === "background") {
+    return {
+      verdict: { ...verdict, support: "partial" },
+      demotion: {
+        candidate_id: verdict.candidate_id,
+        claim_id: verdict.claim_id,
+        from,
+        to: "partial",
+        rule: "background",
+        reason_excerpt: excerpt,
+      },
+    };
+  }
+
+  return { verdict, demotion: null };
+}
+
 
 function validateBatchVerdicts(
   raw: unknown,
@@ -133,6 +295,10 @@ function validateBatchVerdicts(
       ? (v.supported_points as unknown[]).filter((p): p is string => typeof p === "string" && p.length > 0).slice(0, 3)
       : [];
     const reason = typeof v.reason === "string" ? v.reason : "";
+    const support_subtype = typeof v.support_subtype === "string" &&
+        (SUPPORT_SUBTYPES as readonly string[]).includes(v.support_subtype)
+      ? (v.support_subtype as SupportSubtype)
+      : undefined;
     seen.add(key);
     verdicts.push({
       candidate_id,
@@ -141,6 +307,7 @@ function validateBatchVerdicts(
       role_match: false, // filled in by caller
       supported_points,
       reason,
+      ...(support_subtype ? { support_subtype } : {}),
     });
   }
   const missing: string[] = [];
@@ -237,6 +404,9 @@ export interface VerifierResult {
   rate_limit_count: number;
   retry_count: number;
   fallback_to_sequential: boolean;
+  // Phase 1: subject-identity strictness telemetry.
+  demotions: DemotionEvent[];
+  demotions_by_rule: Record<DemotionRule, number>;
 }
 
 interface Batch {
@@ -354,6 +524,7 @@ export async function runVerifier(
   interface BatchOutcome {
     stage_runs: StageRun[];
     verdicts: Verdict[];
+    demotions: DemotionEvent[];
     meta: { label: string; claim_ids: string[]; candidates: number; escalated: boolean; ms: number };
     errors: Array<{ claim_id: string; reason: string }>;
     per_claim_ms: Record<string, number>;
@@ -373,6 +544,7 @@ export async function runVerifier(
     const out: BatchOutcome = {
       stage_runs: [],
       verdicts: [],
+      demotions: [],
       meta: {
         label: batch.label,
         claim_ids: batch.claims.map((c) => c.claim_id),
@@ -455,7 +627,11 @@ export async function runVerifier(
       const cand = candById.get(v.candidate_id);
       const claim = claimsById.get(v.claim_id);
       if (cand && claim) v.role_match = rolesMatch(cand.role, claim.required_roles);
-      out.verdicts.push(v);
+      // Subject-identity strictness: deterministically demote sources that are
+      // conceptually/analogically related but not on the claim's actual subject.
+      const enforced = enforceSubjectIdentity(v, cand);
+      if (enforced.demotion) out.demotions.push(enforced.demotion);
+      out.verdicts.push(enforced.verdict);
     }
     for (const missingKey of parsed.missing) {
       const [candidate_id, claim_id] = missingKey.split("::");
@@ -506,6 +682,7 @@ export async function runVerifier(
             slots[i] = {
               stage_runs: [],
               verdicts: [],
+              demotions: [],
               meta: {
                 label: batches[i].label,
                 claim_ids: batches[i].claims.map((c) => c.claim_id),
@@ -561,6 +738,7 @@ export async function runVerifier(
   let merge_order_preserved = true;
   let escalated_batches = 0;
   const batch_ms_arr: number[] = [];
+  const allDemotions: DemotionEvent[] = [];
   for (let i = 0; i < batches.length; i++) {
     const s = slots[i];
     if (!s) {
@@ -570,6 +748,7 @@ export async function runVerifier(
     if (s.meta.label !== batches[i].label) merge_order_preserved = false;
     stage_runs.push(...s.stage_runs);
     allVerdicts.push(...s.verdicts);
+    allDemotions.push(...s.demotions);
     errors.push(...s.errors);
     for (const cid of s.escalated_claim_ids) escalated_claims.push(cid);
     for (const [k, v] of Object.entries(s.per_claim_ms)) per_claim_ms[k] = v;
@@ -667,5 +846,10 @@ export async function runVerifier(
     rate_limit_count,
     retry_count,
     fallback_to_sequential,
+    demotions: allDemotions,
+    demotions_by_rule: allDemotions.reduce((acc, d) => {
+      acc[d.rule] = (acc[d.rule] ?? 0) + 1;
+      return acc;
+    }, { wrong_subject: 0, analogical: 0, background: 0, self_contradiction: 0, landing_page: 0 } as Record<DemotionRule, number>),
   };
 }
