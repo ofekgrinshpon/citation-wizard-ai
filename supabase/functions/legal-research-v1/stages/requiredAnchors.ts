@@ -9,20 +9,32 @@
 // anchor is missing.
 
 import type { AnalyzerOutput, Candidate, Query, SourceRole } from "../lib/types.ts";
+import { detectDockets, type DocketRef } from "./docketDetection.ts";
 
 export interface RequiredAnchor {
   anchor_id: string;
-  trigger: { kind: "interpretation_note"; pattern: RegExp };
+  trigger:
+    | { kind: "interpretation_note"; pattern: RegExp }
+    | { kind: "docket"; docket: DocketRef };
   anchor_type: SourceRole;
   description: string;          // short description for drafter caveat.
   suggested_queries: string[];  // Hebrew (+ optional English) — one Query per item.
   target: "local_db" | "perplexity" | "both";
+  /**
+   * Docket anchors have a much stricter satisfaction rule: only a candidate
+   * whose title/snippet/url contains the exact docket (metadata.docket_match
+   * === true) may satisfy the anchor. Adjacent / same-doctrine cases do not.
+   */
+  is_docket_anchor?: boolean;
+  /** Full docket variants (for retrieval-side string matching). */
+  docket_variants?: string[];
 }
 
 export interface RequiredAnchorStatus {
   anchor_id: string;
   description: string;
   anchor_type: SourceRole;
+  is_docket_anchor: boolean;
   emitted: boolean;
   queries: string[];
   candidate_ids: string[];
@@ -57,6 +69,38 @@ export function resolveRequiredAnchors(analyzer: AnalyzerOutput): RequiredAnchor
       out.push(a);
     }
   }
+  return out;
+}
+
+/**
+ * Build docket-anchored-judgment anchors from a free-text source (the user's
+ * question, typically). One anchor per unique docket. These flow through
+ * exactly the same anchor plumbing as interpretation-note anchors.
+ */
+export function buildDocketAnchors(text: string): RequiredAnchor[] {
+  const dockets = detectDockets(text);
+  return dockets.map<RequiredAnchor>((d) => ({
+    anchor_id: `docket:${d.docket_id}`,
+    trigger: { kind: "docket", docket: d },
+    anchor_type: "binding_case_law",
+    description: `פסק הדין בעניין ${d.prefix_he} ${d.number} עצמו`,
+    // Prefer Hebrew canonical + gershayim variants; append English + number-only for breadth.
+    suggested_queries: uniqueOrdered([
+      `${d.prefix_he} ${d.number}`,
+      `${d.prefix_he.replace(/"/g, "״")} ${d.number}`,
+      ...(d.prefix_en ? [`${d.prefix_en} ${d.number}`] : []),
+      `${d.prefix_he} ${d.number.replace(/\//g, "-")}`,
+    ]),
+    target: "both",
+    is_docket_anchor: true,
+    docket_variants: d.variants,
+  }));
+}
+
+function uniqueOrdered<T>(xs: T[]): T[] {
+  const seen = new Set<T>();
+  const out: T[] = [];
+  for (const x of xs) if (!seen.has(x)) { seen.add(x); out.push(x); }
   return out;
 }
 
@@ -103,7 +147,12 @@ export function buildRequiredAnchorQueries(
         reason: `required_anchor:${a.anchor_id}`,
         // Non-schema metadata; downstream stages that propagate Query
         // unchanged (retrieval) preserve it for tracing.
-        metadata: { required_anchor_id: a.anchor_id },
+        metadata: {
+          required_anchor_id: a.anchor_id,
+          ...(a.is_docket_anchor
+            ? { is_docket_anchor: true, docket_variants: a.docket_variants ?? [] }
+            : {}),
+        },
       } as Query & { metadata: Record<string, unknown> });
     }
   }
@@ -125,12 +174,20 @@ export function computeRequiredAnchorStatuses(args: {
     direct: 4, partial: 3, tangential: 2, unrelated: 1, none: 0,
   };
   return anchors.map((a) => {
-    const anchorCands = candidates.filter((c) =>
+    const isDocket = !!a.is_docket_anchor;
+    const anchorCandsAll = candidates.filter((c) =>
       ((c.metadata as Record<string, unknown> | undefined)?.required_anchor_id as string | undefined)
         === a.anchor_id ||
       // Backup: anchor queries we appended have a recognizable reason via query_he matches.
       a.suggested_queries.includes(c.query_he)
     );
+    // For docket anchors, only docket-matched candidates count as "the
+    // judgment itself". Adjacent / same-doctrine cases are tracked but
+    // cannot satisfy the anchor.
+    const anchorCands = isDocket
+      ? anchorCandsAll.filter((c) =>
+          ((c.metadata as Record<string, unknown> | undefined)?.docket_match) === true)
+      : anchorCandsAll;
     const candidate_ids = anchorCands.map((c) => c.candidate_id);
     const reached_verifier = anchorCands.some((c) => usableIds.has(c.candidate_id));
     let verified_support: RequiredAnchorStatus["verified_support"] = "none";
@@ -143,9 +200,15 @@ export function computeRequiredAnchorStatuses(args: {
       }
     }
     const cited = anchorCands.some((c) => usedCandidateIds.has(c.candidate_id));
+
+    // Docket-anchor extra constraint: verified_support must be direct|partial
+    // to count as verified/cited. Otherwise collapse the status down.
+    const supportOk = !isDocket ||
+      verified_support === "direct" || verified_support === "partial";
+
     let status: RequiredAnchorStatus["status"];
-    if (cited) status = "cited";
-    else if (reached_verifier) status = "verified_unused";
+    if (cited && supportOk) status = "cited";
+    else if (reached_verifier && supportOk) status = "verified_unused";
     else if (anchorCands.length > 0) status = "retrieved_unverified";
     else status = "missing";
 
@@ -153,12 +216,13 @@ export function computeRequiredAnchorStatuses(args: {
       anchor_id: a.anchor_id,
       description: a.description,
       anchor_type: a.anchor_type,
+      is_docket_anchor: isDocket,
       emitted: true,
       queries: a.suggested_queries,
       candidate_ids,
       reached_verifier,
       verified_support,
-      cited,
+      cited: cited && supportOk,
       status,
     };
   });

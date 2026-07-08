@@ -315,7 +315,12 @@ async function exactAuthorityLookup(
           source_type: d.source_type,
           source_url: d.source_url ?? null,
           chunk_content: null,
-          metadata: d.metadata || {},
+          metadata: {
+            ...(d.metadata || {}),
+            // Docket clue matched by title/citation ILIKE → the row *contains*
+            // the docket by construction, so flag it for downstream trust.
+            ...(cl.kind === "docket" ? { docket_match: true } : {}),
+          },
           similarity: cl.kind === "statute_section" ? 1.0 : 0.9,
         };
         collected.push(row);
@@ -533,7 +538,23 @@ export async function runLocalRetrieval(
       const roleAcceptsExact =
         q.role === "primary_statute" || q.role === "regulation" ||
         q.role === "binding_case_law" || q.role === "persuasive_case_law";
+
+      // Docket-anchor synthetic clues: the anchor carries all string variants
+      // (Hebrew canonical, gershayim, no-quote, English, dash-separated),
+      // some of which DOCKET_RE cannot parse from q.query_he alone. Emit one
+      // docket clue per variant so exactAuthorityLookup can ILIKE all of them.
+      const qMeta = (q.metadata ?? {}) as Record<string, unknown>;
+      const isDocketAnchor = qMeta.is_docket_anchor === true;
+      const docketVariants = Array.isArray(qMeta.docket_variants)
+        ? (qMeta.docket_variants as string[]) : [];
+      const anchorDocketClues: ExactClue[] = isDocketAnchor
+        ? docketVariants
+            .filter((v) => v && v.length >= 4)
+            .map((v) => ({ kind: "docket" as const, source: "planner_query" as const, docket: v, search_terms: [v] }))
+        : [];
+
       const clues = dedupeClues([
+        ...anchorDocketClues,
         ...plannerClues,
         ...(roleAcceptsExact ? [...questionClues, ...claimClues] : []),
       ]);
@@ -591,6 +612,17 @@ export async function runLocalRetrieval(
         const key = `${method}:${m.document_id}`;
         if (seenInQuery.has(key)) return;
         seenInQuery.add(key);
+        // Docket-anchor: mark docket_match when the row's title/snippet/url
+        // contains any of the docket string variants (already true for rows
+        // from a docket clue; also flag text/vector rows that happen to hit).
+        let docket_match = meta.docket_match === true;
+        if (isDocketAnchor && !docket_match) {
+          const hay = `${m.document_title}\n${m.chunk_content ?? ""}\n${m.source_url ?? ""}`;
+          for (const v of docketVariants) {
+            if (v.length < 4) continue;
+            if (hay.includes(v)) { docket_match = true; break; }
+          }
+        }
         candidates.push({
           candidate_id: crypto.randomUUID(),
           claim_id: q.claim_id,
@@ -603,10 +635,13 @@ export async function runLocalRetrieval(
           source_url: m.source_url ?? null,
           snippet: (m.chunk_content || "").slice(0, 400),
           query_he: q.query_he,
-          score: ((m.similarity ?? 0) as number) * weight,
+          // Small docket-match boost so exact-holding rows sort above adjacent
+          // cases inside the same tier at pool time.
+          score: ((m.similarity ?? 0) as number) * weight + (docket_match ? 0.05 : 0),
           expected_source_type: q.expected_source_type,
           metadata: {
             ...meta,
+            ...(docket_match ? { docket_match: true } : {}),
             ...(q.metadata?.required_anchor_id
               ? { required_anchor_id: q.metadata.required_anchor_id }
               : {}),

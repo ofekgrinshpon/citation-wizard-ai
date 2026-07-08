@@ -157,21 +157,33 @@ function buildUserMessage(
   sources: DrafterInputSource[],
   userDocs: UserDocument[],
   useAsSource: boolean,
-  missingAnchors: Array<{ description: string }>,
+  missingAnchors: Array<{ description: string; is_docket?: boolean }>,
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
   lines.push(
     "מסגרת התשובה חייבת להישאר נאמנה לשאלה כפי שנשאלה. אם המקורות עוסקים בנושא סמוך אך לא זהה — ציין זאת במפורש ואל תחליף את שאלת המשתמש.",
   );
-  if (missingAnchors.length > 0) {
+  const missingDocketAnchors = missingAnchors.filter((a) => a.is_docket);
+  const missingNonDocketAnchors = missingAnchors.filter((a) => !a.is_docket);
+  if (missingNonDocketAnchors.length > 0) {
     lines.push("");
     lines.push(
       "הערה משפטית חשובה: עוגן ראשוני הבא נדרש לתשובה מלאה אך לא נמצא במקורות שסופקו לך:",
     );
-    for (const a of missingAnchors) lines.push(`  • ${a.description}`);
+    for (const a of missingNonDocketAnchors) lines.push(`  • ${a.description}`);
     lines.push(
       "בתשובתך, ציין במפורש שהעוגן הזה אינו בידיך וכי ניתוח ההמשכיות/החוקיות המלא דורש עיון בו, במקום להניח ממנו מסקנות חיוביות.",
+    );
+  }
+  if (missingDocketAnchors.length > 0) {
+    lines.push("");
+    lines.push(
+      "הערה קריטית — פסק הדין הספציפי שהמשתמש שאל עליו לא אותר במקורות שעברו אימות:",
+    );
+    for (const a of missingDocketAnchors) lines.push(`  • ${a.description}`);
+    lines.push(
+      'עליך לכלול בגוף התשובה, במפורש ובלשון כמעט זהה, את המשפט הבא: "לא אותר פסק הדין עצמו במקורות שעברו אימות; לכן לא ניתן לקבוע בביטחון את ההלכה שנפסקה בו." אין להציג מקורות רקע או פסיקה סמוכה כאילו הם ההלכה שנפסקה בתיק הספציפי הזה. מותר לתאר את ההקשר המשפטי הכללי בזהירות, אך לא לייחס לתיק ספציפי קביעות שאין להן תמיכה ישירה במקורות שסופקו.',
     );
   }
   lines.push("");
@@ -424,7 +436,7 @@ export async function runDrafterV2(
     // legal anchors did not reach the verifier or were not effectively
     // supported, append a single instruction to the user message telling
     // the drafter to caveat the answer instead of inferring around them.
-    missingRequiredAnchors?: Array<{ description: string }>;
+    missingRequiredAnchors?: Array<{ description: string; is_docket?: boolean }>;
   },
 ): Promise<DrafterV2Result> {
   const t_total = Date.now();

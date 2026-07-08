@@ -92,3 +92,132 @@ Deno.test("computeRequiredAnchorStatuses reports cited when in usedSources", () 
   assertEquals(statuses[0].status, "cited");
   assertEquals(statuses[0].verified_support, "direct");
 });
+
+// ─── Docket-anchored-judgment anchors ────────────────────────────────────
+
+import { buildDocketAnchors } from "./requiredAnchors.ts";
+
+const caseAnalyzer = {
+  confidence: 0.8,
+  legal_area: "משפט חוקתי",
+  answer_type: "doctrinal_explanation" as const,
+  claims: [
+    {
+      claim_id: "C1",
+      text_he: "פסק הדין",
+      required_roles: ["binding_case_law" as const],
+      is_black_letter: false,
+      reason: "",
+    },
+  ],
+};
+
+Deno.test("buildDocketAnchors — Hebrew bagatz emits anchor with variants", () => {
+  const anchors = buildDocketAnchors('מהי ההלכה בבג"ץ 5555/18?');
+  assertEquals(anchors.length, 1);
+  const a = anchors[0];
+  assertEquals(a.anchor_id, "docket:bagatz-5555-18");
+  assertEquals(a.is_docket_anchor, true);
+  assertEquals(a.anchor_type, "binding_case_law");
+  assertEquals(a.target, "both");
+  // suggested_queries include Hebrew canonical, gershayim, English, dash form
+  const qs = a.suggested_queries;
+  if (!qs.some((q) => q.includes('בג"ץ'))) throw new Error("no canonical HE");
+  if (!qs.some((q) => q.includes("HCJ"))) throw new Error("no english alias");
+});
+
+Deno.test("buildRequiredAnchorQueries — docket queries carry docket_variants metadata", () => {
+  const anchors = buildDocketAnchors('בג"ץ 5555/18');
+  const queries = buildRequiredAnchorQueries(caseAnalyzer, anchors);
+  assertEquals(queries.length > 0, true);
+  for (const q of queries) {
+    assertEquals(q.role, "binding_case_law");
+    const meta = (q as { metadata?: Record<string, unknown> }).metadata ?? {};
+    assertEquals(meta.is_docket_anchor, true);
+    assertEquals(Array.isArray(meta.docket_variants), true);
+  }
+});
+
+Deno.test("computeRequiredAnchorStatuses — docket anchor: adjacent case does NOT satisfy", () => {
+  const anchors = buildDocketAnchors('בג"ץ 5555/18');
+  // Adjacent case: same claim/role/query, but no docket_match flag.
+  const cand = {
+    candidate_id: "c-adj",
+    claim_id: "C1",
+    role: "binding_case_law" as const,
+    origin: "local_db" as const,
+    retrieval_method: "text" as const,
+    title: 'בג"ץ 1234/22 אחר',
+    source_type: "caselaw",
+    query_he: anchors[0].suggested_queries[0],
+    score: 0.9,
+    metadata: { required_anchor_id: anchors[0].anchor_id }, // NO docket_match
+  };
+  const statuses = computeRequiredAnchorStatuses({
+    anchors,
+    candidates: [cand],
+    usableIds: new Set(["c-adj"]),
+    verdicts: [{ candidate_id: "c-adj", support: "direct" }],
+    usedCandidateIds: new Set(["c-adj"]),
+  });
+  assertEquals(statuses[0].status, "missing"); // no docket_match candidates
+  assertEquals(statuses[0].cited, false);
+});
+
+Deno.test("computeRequiredAnchorStatuses — docket anchor: docket_match + direct → cited", () => {
+  const anchors = buildDocketAnchors('בג"ץ 5555/18');
+  const cand = {
+    candidate_id: "c-hit",
+    claim_id: "C1",
+    role: "binding_case_law" as const,
+    origin: "local_db" as const,
+    retrieval_method: "text" as const,
+    title: 'בג"ץ 5555/18 עדאלה',
+    source_type: "supreme_court_il",
+    query_he: anchors[0].suggested_queries[0],
+    score: 0.95,
+    metadata: {
+      required_anchor_id: anchors[0].anchor_id,
+      docket_match: true,
+    },
+  };
+  const statuses = computeRequiredAnchorStatuses({
+    anchors,
+    candidates: [cand],
+    usableIds: new Set(["c-hit"]),
+    verdicts: [{ candidate_id: "c-hit", support: "direct" }],
+    usedCandidateIds: new Set(["c-hit"]),
+  });
+  assertEquals(statuses[0].status, "cited");
+  assertEquals(statuses[0].cited, true);
+  assertEquals(statuses[0].is_docket_anchor, true);
+});
+
+Deno.test("computeRequiredAnchorStatuses — docket anchor: docket_match + tangential → missing (support gate)", () => {
+  const anchors = buildDocketAnchors('בג"ץ 5555/18');
+  const cand = {
+    candidate_id: "c-weak",
+    claim_id: "C1",
+    role: "binding_case_law" as const,
+    origin: "perplexity" as const,
+    retrieval_method: "perplexity" as const,
+    title: 'בג"ץ 5555/18 rehash blog post',
+    source_type: "other",
+    query_he: anchors[0].suggested_queries[0],
+    score: 0.7,
+    metadata: {
+      required_anchor_id: anchors[0].anchor_id,
+      docket_match: true,
+    },
+  };
+  const statuses = computeRequiredAnchorStatuses({
+    anchors,
+    candidates: [cand],
+    usableIds: new Set(),
+    verdicts: [{ candidate_id: "c-weak", support: "tangential" }],
+    usedCandidateIds: new Set(),
+  });
+  // reached_verifier=false → retrieved_unverified
+  assertEquals(statuses[0].status, "retrieved_unverified");
+  assertEquals(pickMissingAnchors(statuses).length, 1);
+});
