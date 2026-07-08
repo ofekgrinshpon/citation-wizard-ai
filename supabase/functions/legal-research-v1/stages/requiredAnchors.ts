@@ -147,7 +147,12 @@ export function buildRequiredAnchorQueries(
         reason: `required_anchor:${a.anchor_id}`,
         // Non-schema metadata; downstream stages that propagate Query
         // unchanged (retrieval) preserve it for tracing.
-        metadata: { required_anchor_id: a.anchor_id },
+        metadata: {
+          required_anchor_id: a.anchor_id,
+          ...(a.is_docket_anchor
+            ? { is_docket_anchor: true, docket_variants: a.docket_variants ?? [] }
+            : {}),
+        },
       } as Query & { metadata: Record<string, unknown> });
     }
   }
