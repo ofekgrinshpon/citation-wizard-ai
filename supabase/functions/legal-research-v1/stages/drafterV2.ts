@@ -28,6 +28,15 @@ import {
 } from "./structuredValidation.ts";
 import { buildFootnotedAnswer } from "./footnoteBuilder.ts";
 import { normalizeHebrewNumberRanges } from "../../_shared/hebrewNumberRange.ts";
+import { checkCompleteness, type CompletenessReport } from "./completenessCheck.ts";
+
+// drafterV2-only output-token budgets. Reasoning models (gpt-5 family) burn
+// most tokens on hidden reasoning; the default gateway cap has been observed
+// to cut Hebrew answers mid-word. These values reserve enough room for
+// reasoning + a structured JSON tool call for a long legal answer.
+const DRAFTER_V2_BUDGET_INITIAL = 8000;
+const DRAFTER_V2_BUDGET_RETRY = 16000;
+
 
 const SYSTEM_PROMPT_V2 = `אתה משפטן/ית ישראלי/ת הכותב/ת מענה משפטי־מחקרי מדויק, בהיר ומבוסס מקורות בעברית, בהיקף המתאים לשאלה. התשובה מיועדת למשפטן/ית, סטודנט/ית למשפטים או חוקר/ת משפט, ולכן עליה לשלב עומק משפטי עם ניסוח טבעי וברור — לא כתיבה פרקטית מדי, ולא סגנון אקדמי מתורגם או מנופח.
 
@@ -378,6 +387,21 @@ export interface DrafterV2Result {
     | "unknown_source_refs"
     | "forbidden_markers_in_text"
     | "no_usable_candidates";
+  // ── Truncation guard telemetry (drafterV2-only, additive) ─────────────
+  /** Completeness report on the final draft that was rendered. */
+  completeness?: CompletenessReport;
+  /** Completeness report on the very first draft (before any retry). */
+  completeness_initial?: CompletenessReport;
+  /** Retry accounting for the truncation guard. */
+  truncation_retry?: {
+    attempted: boolean;
+    same_model_retry: boolean;
+    escalated_to_full: boolean;
+    retry_ms: number;
+    reasons_initial: string[];
+  };
+  /** `max_completion_tokens` value on the final successful call. */
+  max_completion_tokens_used?: number;
 }
 
 export async function runDrafterV2(
@@ -466,7 +490,11 @@ export async function runDrafterV2(
 
   let lastUsage: { input_tokens?: number; output_tokens?: number } | undefined;
 
-  const tryOne = async (model: string, stage: string) => {
+  const tryOne = async (
+    model: string,
+    stage: string,
+    maxCompletionTokens?: number,
+  ) => {
     const t0 = Date.now();
     let data: unknown = null;
     let raw_text = "";
@@ -497,6 +525,7 @@ export async function runDrafterV2(
         system: SYSTEM_PROMPT_V2,
         user: userMsg,
         tool,
+        maxCompletionTokens,
       });
       data = resp.data;
       raw_text = resp.raw_text;
@@ -510,7 +539,7 @@ export async function runDrafterV2(
       model,
       ms: Date.now() - t0,
       ok: !!data,
-      escalated: stage === "drafter_v2.escalated",
+      escalated: stage === "drafter_v2.escalated" || stage === "drafter_v2.truncation_escalated",
       parse_error,
       http_status,
       http_error,
@@ -521,7 +550,9 @@ export async function runDrafterV2(
   const initialModel = forceModel ?? MODEL_MINI;
   let modelUsed = initialModel;
   let escalated = false;
-  let resp = await tryOne(initialModel, "drafter_v2.initial");
+  let maxTokensUsed: number | undefined = DRAFTER_V2_BUDGET_INITIAL;
+  let resp = await tryOne(initialModel, "drafter_v2.initial", DRAFTER_V2_BUDGET_INITIAL);
+
 
   let parsed = validateStructuredDraft(resp.data, allowedRefs);
   let schema_failure_reason: DrafterV2Result["schema_failure_reason"];
@@ -538,7 +569,8 @@ export async function runDrafterV2(
 
     escalated = true;
     modelUsed = MODEL_FULL;
-    resp = await tryOne(MODEL_FULL, "drafter_v2.escalated");
+    maxTokensUsed = DRAFTER_V2_BUDGET_RETRY;
+    resp = await tryOne(MODEL_FULL, "drafter_v2.escalated", DRAFTER_V2_BUDGET_RETRY);
     parsed = validateStructuredDraft(resp.data, allowedRefs);
     if (!resp.data) {
       schema_failure_reason = resp.parse_error ? "json_parse" : "no_tool_call";
@@ -551,6 +583,7 @@ export async function runDrafterV2(
       schema_failure_reason = undefined;
     }
   }
+
 
   if (!parsed.draft) {
     return {
@@ -574,7 +607,70 @@ export async function runDrafterV2(
     };
   }
 
+  // ── Truncation guard (drafterV2-only) ────────────────────────────────────
+  // Run a cheap deterministic completeness check on the parsed draft. If the
+  // model closed mid-word / mid-clause, retry once with a larger budget on
+  // the same model; only escalate to MODEL_FULL if that retry still fails.
+  // Skipped when the caller forces a specific model / suppresses escalation
+  // (harness runs) and skipped for the anthropic provider (its token limits
+  // are handled elsewhere and it hasn't shown this failure mode).
+  let completeness = checkCompleteness(parsed.draft);
+  const completeness_initial = completeness;
+  let truncation_retry: DrafterV2Result["truncation_retry"] = {
+    attempted: false,
+    same_model_retry: false,
+    escalated_to_full: false,
+    retry_ms: 0,
+    reasons_initial: completeness_initial.reasons,
+  };
+
+  if (completeness.truncated && !skipEscalation && provider === "openai") {
+    const t_retry = Date.now();
+    truncation_retry.attempted = true;
+
+    // Retry #1 — same model, larger output budget.
+    truncation_retry.same_model_retry = true;
+    let retryResp = await tryOne(
+      initialModel,
+      "drafter_v2.truncation_retry",
+      DRAFTER_V2_BUDGET_RETRY,
+    );
+    let retryParsed = validateStructuredDraft(retryResp.data, allowedRefs);
+    if (retryParsed.draft) {
+      resp = retryResp;
+      parsed = retryParsed;
+      modelUsed = initialModel;
+      maxTokensUsed = DRAFTER_V2_BUDGET_RETRY;
+      completeness = checkCompleteness(parsed.draft);
+    }
+
+    // Retry #2 (escalation) — only if same-model retry failed schema OR
+    // still shows a strong truncation signal.
+    const stillTruncated = !retryParsed.draft
+      || checkCompleteness(retryParsed.draft).truncated;
+    if (stillTruncated) {
+      truncation_retry.escalated_to_full = true;
+      const escResp = await tryOne(
+        MODEL_FULL,
+        "drafter_v2.truncation_escalated",
+        DRAFTER_V2_BUDGET_RETRY,
+      );
+      const escParsed = validateStructuredDraft(escResp.data, allowedRefs);
+      if (escParsed.draft) {
+        resp = escResp;
+        parsed = escParsed;
+        modelUsed = MODEL_FULL;
+        escalated = true;
+        maxTokensUsed = DRAFTER_V2_BUDGET_RETRY;
+        completeness = checkCompleteness(parsed.draft);
+      }
+    }
+
+    truncation_retry.retry_ms = Date.now() - t_retry;
+  }
+
   const built = buildFootnotedAnswer(parsed.draft, inputSources);
+
 
   // Rule 1.10 — Hebrew number ranges must be written high→low in source order.
   const answer_markdown = normalizeHebrewNumberRanges(built.answer_markdown);
@@ -610,5 +706,9 @@ export async function runDrafterV2(
     usage: lastUsage,
     missing_anchor_caveat_injected: missingAnchors.length > 0,
     missing_anchor_descriptions: missingAnchors.map((a) => a.description),
+    completeness,
+    completeness_initial,
+    truncation_retry,
+    max_completion_tokens_used: maxTokensUsed,
   };
 }
