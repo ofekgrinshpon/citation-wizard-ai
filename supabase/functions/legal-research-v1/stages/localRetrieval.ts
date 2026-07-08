@@ -612,6 +612,17 @@ export async function runLocalRetrieval(
         const key = `${method}:${m.document_id}`;
         if (seenInQuery.has(key)) return;
         seenInQuery.add(key);
+        // Docket-anchor: mark docket_match when the row's title/snippet/url
+        // contains any of the docket string variants (already true for rows
+        // from a docket clue; also flag text/vector rows that happen to hit).
+        let docket_match = meta.docket_match === true;
+        if (isDocketAnchor && !docket_match) {
+          const hay = `${m.document_title}\n${m.chunk_content ?? ""}\n${m.source_url ?? ""}`;
+          for (const v of docketVariants) {
+            if (v.length < 4) continue;
+            if (hay.includes(v)) { docket_match = true; break; }
+          }
+        }
         candidates.push({
           candidate_id: crypto.randomUUID(),
           claim_id: q.claim_id,
@@ -624,10 +635,13 @@ export async function runLocalRetrieval(
           source_url: m.source_url ?? null,
           snippet: (m.chunk_content || "").slice(0, 400),
           query_he: q.query_he,
-          score: ((m.similarity ?? 0) as number) * weight,
+          // Small docket-match boost so exact-holding rows sort above adjacent
+          // cases inside the same tier at pool time.
+          score: ((m.similarity ?? 0) as number) * weight + (docket_match ? 0.05 : 0),
           expected_source_type: q.expected_source_type,
           metadata: {
             ...meta,
+            ...(docket_match ? { docket_match: true } : {}),
             ...(q.metadata?.required_anchor_id
               ? { required_anchor_id: q.metadata.required_anchor_id }
               : {}),
