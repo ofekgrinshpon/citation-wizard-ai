@@ -224,10 +224,12 @@ export async function runQueryPlanner(
 
   let validated = validatePlanner(first.data, knownClaimIds);
   const reasons = plannerEscalationReasons(validated.ok, validated.value, analyzer);
+  const cap = readPlannerCap();
 
   if (reasons.length === 0) {
+    const applied = applyCapToValidated(validated, cap);
     return {
-      result: validated,
+      result: applied.validated,
       model_initial: MODEL_MINI,
       model_final: MODEL_MINI,
       escalated: false,
@@ -235,6 +237,7 @@ export async function runQueryPlanner(
       stage_runs,
       raw_text_initial: first.raw_text,
       raw_text_final: first.raw_text,
+      cap_report: applied.report,
     };
   }
 
@@ -259,9 +262,10 @@ export async function runQueryPlanner(
     escalated: true,
   });
   validated = validatePlanner(retry.data, knownClaimIds);
+  const applied = applyCapToValidated(validated, cap);
 
   return {
-    result: validated,
+    result: applied.validated,
     model_initial: MODEL_MINI,
     model_final: MODEL_FULL,
     escalated: true,
@@ -269,5 +273,7 @@ export async function runQueryPlanner(
     stage_runs,
     raw_text_initial: first.raw_text,
     raw_text_final: retry.raw_text,
+    cap_report: applied.report,
   };
 }
+
