@@ -436,7 +436,7 @@ export async function runDrafterV2(
     // legal anchors did not reach the verifier or were not effectively
     // supported, append a single instruction to the user message telling
     // the drafter to caveat the answer instead of inferring around them.
-    missingRequiredAnchors?: Array<{ description: string }>;
+    missingRequiredAnchors?: Array<{ description: string; is_docket?: boolean }>;
   },
 ): Promise<DrafterV2Result> {
   const t_total = Date.now();
