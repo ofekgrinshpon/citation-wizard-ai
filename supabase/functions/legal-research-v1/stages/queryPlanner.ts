@@ -62,48 +62,6 @@ export interface PlannerStageResult {
   stage_runs: StageRun[];
   raw_text_initial: string;
   raw_text_final: string;
-  cap_report: QueryCapReport;
-}
-
-function buildCapReport(
-  before: Query[],
-  kept: Query[],
-  dropped: Query[],
-  cap: number,
-): QueryCapReport {
-  const claimsTotal = new Set(before.map((q) => q.claim_id)).size;
-  const claimsPreserved = new Set(kept.map((q) => q.claim_id)).size;
-  return {
-    enabled: cap > 0,
-    cap,
-    queries_before_cap: before.length,
-    queries_after_cap: kept.length,
-    dropped_count: dropped.length,
-    dropped_queries: dropped.map((q) => ({
-      claim_id: q.claim_id,
-      role: q.role,
-      query_he: q.query_he,
-      reason: "over_cap" as const,
-    })),
-    claims_preserved: claimsPreserved,
-    claims_total: claimsTotal,
-  };
-}
-
-function applyCapToValidated(
-  validated: ValidationResult<PlannerOutput>,
-  cap: number,
-): { validated: ValidationResult<PlannerOutput>; report: QueryCapReport } {
-  const before = validated.value?.queries ?? [];
-  if (cap <= 0 || before.length <= cap) {
-    return { validated, report: buildCapReport(before, before, [], cap) };
-  }
-  const { kept, dropped } = applyQueryCap(before, cap);
-  const capped: ValidationResult<PlannerOutput> = {
-    ...validated,
-    value: validated.value ? { ...validated.value, queries: kept } : validated.value,
-  };
-  return { validated: capped, report: buildCapReport(before, kept, dropped, cap) };
 }
 
 
@@ -129,7 +87,6 @@ function plannerUserMessage(analyzer: AnalyzerOutput, question: string): string 
 export async function runQueryPlanner(
   question: string,
   analyzer: AnalyzerOutput,
-  opts?: { capOverride?: number },
 ): Promise<PlannerStageResult> {
   const knownClaimIds = analyzer.claims.map((c) => c.claim_id);
   const userMsg = plannerUserMessage(analyzer, question);
@@ -157,13 +114,10 @@ export async function runQueryPlanner(
 
   let validated = validatePlanner(first.data, knownClaimIds);
   const reasons = plannerEscalationReasons(validated.ok, validated.value, analyzer);
-  const cap = opts?.capOverride ?? readPlannerCap();
-
 
   if (reasons.length === 0) {
-    const applied = applyCapToValidated(validated, cap);
     return {
-      result: applied.validated,
+      result: validated,
       model_initial: MODEL_MINI,
       model_final: MODEL_MINI,
       escalated: false,
@@ -171,7 +125,6 @@ export async function runQueryPlanner(
       stage_runs,
       raw_text_initial: first.raw_text,
       raw_text_final: first.raw_text,
-      cap_report: applied.report,
     };
   }
 
@@ -196,10 +149,9 @@ export async function runQueryPlanner(
     escalated: true,
   });
   validated = validatePlanner(retry.data, knownClaimIds);
-  const applied = applyCapToValidated(validated, cap);
 
   return {
-    result: applied.validated,
+    result: validated,
     model_initial: MODEL_MINI,
     model_final: MODEL_FULL,
     escalated: true,
@@ -207,7 +159,7 @@ export async function runQueryPlanner(
     stage_runs,
     raw_text_initial: first.raw_text,
     raw_text_final: retry.raw_text,
-    cap_report: applied.report,
   };
 }
+
 
