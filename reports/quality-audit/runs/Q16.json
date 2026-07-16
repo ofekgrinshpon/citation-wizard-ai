@@ -1,0 +1,41 @@
+{
+  "id": "Q16",
+  "category": "mixed_sources",
+  "query": "מהם המבחנים לסיווג יחסי עובד-מעביד בפסיקת בית הדין הארצי לעבודה, וכיצד הם משפיעים על חבות המעביד להפרשות פנסיוניות?",
+  "run_id": "3a1fbfd0-f0c2-46c8-aa47-562c86cb4838",
+  "ok": false,
+  "total_ms": 96370,
+  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "footnotes": [],
+  "used_sources": [],
+  "required_anchors": {
+    "count": 0,
+    "anchors": [],
+    "enabled": true,
+    "statuses": [],
+    "queries_emitted": []
+  },
+  "verifier": {
+    "counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 2,
+        "tangential": 3
+      },
+      "by_role_match": {
+        "true": 5,
+        "false": 0
+      }
+    },
+    "dropped_count": 5
+  },
+  "completeness": null,
+  "truncation_retry": null,
+  "drafter_version": "v2.1c",
+  "footnote_count": 0,
+  "sources_used": 0,
+  "unique_source_count": 0,
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": []
+}

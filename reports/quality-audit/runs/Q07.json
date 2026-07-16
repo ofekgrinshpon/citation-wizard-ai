@@ -1,0 +1,231 @@
+{
+  "id": "Q07",
+  "category": "mandate_ordinance",
+  "query": "האם פקודת הנזיקין [נוסח חדש] היא הנוסח המחייב היום, ומה מעמדה של הפקודה המנדטורית המקורית משנת 1944?",
+  "run_id": "a8bc4408-2545-468f-8588-9ea082e71d3b",
+  "ok": true,
+  "total_ms": 118113,
+  "answer": "**מסקנה תמציתית**\n\nאין במקורות שאותרו כדי לקבוע באופן נחרץ ש'פקודת הנזיקין [נוסח חדש]' מהווה נוסח מחייב ובלעדי בכל מקרה; עם זאת, בפרקטיקה הציטוטית נהוג להתייחס לנוסחים המעודכנים של חוקים ופקודות כאל הטקסט המחייב לצורך פרשנות ויישום, ואילו השאלה אם הוראה מנדטורית ממשיכה לחול תלויה בבדיקה של היחס בינה לבין חקיקה מאוחרת ופסיקה רלוונטית.¹\n\nמעמדה של הפקודה המנדטורית משנת 1944 הוא סוגיית בין־תחומית: היא חלק מן ההיסטוריה החקיקתית ולפעמים ממשיכה להוות מקור הוראה אם לא בוטלה במפורש או לא הוחלפה על ידי חקיקה מאוחרת; עם זאת, פסיקה עכשווית דנתה בעקרונות המשך תוקנן של הוראות מנדטוריות לאחר חקיקה מאוחרת והציגה קווים מנחים כיצד לקבוע האם הוראה מנדטורית נותרה תקפה או נפסקה מעצם חקיקת חוק מאוחר.²\n\nההבחנות המהותיות בין 'נוסח ישן' של פקודה מנדטורית לבין 'נוסח חדש' משתנות לפי הסעיפים והשינויים שנעשו; בדרך כלל 'נוסח חדש' מכיל קונסולידציה וניסוח מודרני ולעתים תיקונים מהותיים או דרכי סעד שונות — ולכן בהפניה בפסיקה ובכתיבה נוהגים לצטט את הנוסח המעודכן כטקסט המחייב, ובמקביל לציין את ההיסטוריה החוקתית והמשפטית כאשר הפרשנות או היישום תלויים בנוסח המקורי.³\n\nבשורה פרקטית: בבדיקה משפטית יש לאמת מהו הנוסח הרשמי והעדכני המופיע ברישומי החקיקה והפסיקה, לבדוק אם חקיקה מאוחרת ביטלה או שינתה הוראות מנדטוריות, ולהשתמש בנוסח המעודכן לציטוט שוטף — אך להזכיר את הטקסט המנדטורי ושרשרת התיקונים כשההכרעה מצריכה התייחסות להיסטוריה הפרשנית.⁴\n\nלסיכום: אין בתשובות המקורות שאותרו כדי להכריע באופן גורף בכל עניין פרטי; נקיטת נוסח מעודכן כ'מחייב' היא פרקטיקה מקובלת, ומעמדה של הפקודה המנדטורית של 1944 נקבעת בהתאם לקשר שבין הוראותיה לבין חקיקה מאוחרת ופסיקה רלוונטית.",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "הרוקחים [נוסח חדש], התשמ\"א-1981; יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7596&businessType=1",
+          "title": "הרוקחים [נוסח חדש], התשמ\"א-1981",
+          "source_type": "knesset_research"
+        },
+        {
+          "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
+          "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין; מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1374-23-%d7%97%d7%90%d7%92%d7%a8-%d7%a0%d7%95%d7%a8%d7%99-%d7%9c%d7%93%d7%a8-%d7%a6%d7%95%d7%a3-%d7%a0-%d7%9e%d7%a4%d7%a7%d7%93-%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a6%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/690",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח); הרוקחים [נוסח חדש], התשמ\"א-1981; מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
+          "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7596&businessType=1",
+          "title": "הרוקחים [נוסח חדש], התשמ\"א-1981",
+          "source_type": "knesset_research"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/690",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין; יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1374-23-%d7%97%d7%90%d7%92%d7%a8-%d7%a0%d7%95%d7%a8%d7%99-%d7%9c%d7%93%d7%a8-%d7%a6%d7%95%d7%a3-%d7%a0-%d7%9e%d7%a4%d7%a7%d7%93-%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a6%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
+          "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7596&businessType=1",
+      "title": "הרוקחים [נוסח חדש], התשמ\"א-1981",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "knesset_research",
+      "candidate_id": "0e694791-7938-4d00-80f7-94ab796ed76e"
+    },
+    {
+      "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
+      "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "6d1fcaa8-deb6-4be4-8d47-a7fc2b538fed"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1374-23-%d7%97%d7%90%d7%92%d7%a8-%d7%a0%d7%95%d7%a8%d7%99-%d7%9c%d7%93%d7%a8-%d7%a6%d7%95%d7%a3-%d7%a0-%d7%9e%d7%a4%d7%a7%d7%93-%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a6%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "bb2faf9e-5cfa-420e-85bd-8ce1acfbf057"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/690",
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "f8b545a7-de40-4184-81d0-bb387d352f58"
+    }
+  ],
+  "required_anchors": {
+    "count": 1,
+    "anchors": [
+      {
+        "target": "both",
+        "anchor_id": "mandate_continuity_s11",
+        "anchor_type": "primary_statute",
+        "description": "סעיף 11 לפקודת סדרי השלטון והמשפט, תש\"ח-1948 (נורמת ההמשכיות של חקיקה מתקופת המנדט)",
+        "query_count": 3,
+        "is_docket_anchor": false
+      }
+    ],
+    "enabled": true,
+    "statuses": [
+      {
+        "cited": true,
+        "status": "cited",
+        "emitted": true,
+        "queries": [
+          "פקודת סדרי השלטון והמשפט, תש\"ח-1948, סעיף 11",
+          "סעיף 11 לפקודת סדרי השלטון והמשפט",
+          "Law and Administration Ordinance 1948 section 11"
+        ],
+        "anchor_id": "mandate_continuity_s11",
+        "anchor_type": "primary_statute",
+        "description": "סעיף 11 לפקודת סדרי השלטון והמשפט, תש\"ח-1948 (נורמת ההמשכיות של חקיקה מתקופת המנדט)",
+        "candidate_ids": [
+          "17198e26-0fbb-43c5-8e21-94e6962706ee",
+          "9bce81e2-149c-4628-9fb6-211415f6bb2d",
+          "f3b08aa3-3bac-451f-8647-211d1ea5a155",
+          "8bfa0de2-f9fa-43de-ad4b-482266fff9b2",
+          "bb2faf9e-5cfa-420e-85bd-8ce1acfbf057"
+        ],
+        "is_docket_anchor": false,
+        "reached_verifier": true,
+        "verified_support": "partial"
+      }
+    ],
+    "queries_emitted": [
+      {
+        "role": "primary_statute",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "פקודת סדרי השלטון והמשפט, תש\"ח-1948, סעיף 11",
+        "is_docket_anchor": false,
+        "required_anchor_id": "mandate_continuity_s11"
+      },
+      {
+        "role": "primary_statute",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "סעיף 11 לפקודת סדרי השלטון והמשפט",
+        "is_docket_anchor": false,
+        "required_anchor_id": "mandate_continuity_s11"
+      },
+      {
+        "role": "primary_statute",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "Law and Administration Ordinance 1948 section 11",
+        "is_docket_anchor": false,
+        "required_anchor_id": "mandate_continuity_s11"
+      }
+    ]
+  },
+  "verifier": {
+    "counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 4,
+        "unrelated": 7,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 11,
+        "false": 0
+      }
+    },
+    "dropped_count": 7
+  },
+  "completeness": {
+    "reasons": [],
+    "signals": [],
+    "truncated": false,
+    "last_block_kind": "paragraph",
+    "last_block_excerpt": "…היא פרקטיקה מקובלת, ומעמדה של הפקודה המנדטורית של 1944 נקבעת בהתאם לקשר שבין הוראותיה לבין חקיקה מאוחרת ופסיקה רלוונטית."
+  },
+  "truncation_retry": {
+    "retry_ms": 0,
+    "attempted": false,
+    "reasons_initial": [],
+    "same_model_retry": false,
+    "escalated_to_full": false
+  },
+  "drafter_version": "v2.1c",
+  "footnote_count": 4,
+  "sources_used": 4,
+  "unique_source_count": 4,
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": []
+}

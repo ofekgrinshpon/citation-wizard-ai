@@ -1,0 +1,41 @@
+{
+  "id": "Q18",
+  "category": "anchor_preservation",
+  "query": "צטט מילולית את סעיף 1 לחוק יסוד: כבוד האדם וחירותו, והפנה למקור רשמי.",
+  "run_id": "c9002071-3974-41bb-bb71-7cb24d68ab97",
+  "ok": false,
+  "total_ms": 61686,
+  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "footnotes": [],
+  "used_sources": [],
+  "required_anchors": {
+    "count": 0,
+    "anchors": [],
+    "enabled": true,
+    "statuses": [],
+    "queries_emitted": []
+  },
+  "verifier": {
+    "counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 0,
+        "false": 0
+      }
+    },
+    "dropped_count": 0
+  },
+  "completeness": null,
+  "truncation_retry": null,
+  "drafter_version": "v2.1c",
+  "footnote_count": 0,
+  "sources_used": 0,
+  "unique_source_count": 0,
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": []
+}
