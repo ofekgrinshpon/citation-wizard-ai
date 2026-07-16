@@ -1,18 +1,18 @@
 {
-  "audit_version": "v1",
+  "audit_version": "v1-recompute",
   "golden_set_version": "draft-2",
   "fixtures_total": 18,
-  "errors": 0,
-  "objective_hard_fails": 18,
-  "ran_at": "2026-07-16T09:12:24.282Z",
+  "stubs": 5,
+  "objective_hard_fails": 6,
+  "ran_at": "2026-07-16T09:14:37.809Z",
   "per_question": [
     {
       "id": "Q01",
       "category": "docket_holding",
       "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
       "run_id": "2c28969e-6c99-45e9-b713-a2b8e1322a04",
-      "test_intent": null,
       "ok": true,
+      "stub": false,
       "total_ms": 145903,
       "prose_length": 2276,
       "footnote_count": 8,
@@ -28,20 +28,11 @@
         "true": 12,
         "false": 0
       },
-      "completeness": {
-        "reasons": [],
-        "signals": [],
-        "truncated": false,
-        "last_block_kind": "paragraph",
-        "last_block_excerpt": "… הדין שפורסם (s1). המקורות הנוספים העוסקים בסביבה החוקתית והחברתית מספקים פרשנות והקשר, אך אינם תחליף לטקסט ההכרעה עצמו."
-      },
-      "truncation_retry": {
-        "retry_ms": 0,
-        "attempted": false,
-        "reasons_initial": [],
-        "same_model_retry": false,
-        "escalated_to_full": false
-      },
+      "verifier_dropped_count": 3,
+      "completeness_truncated": false,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": false,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -55,26 +46,24 @@
         ],
         "missing_required_primary": [],
         "forbidden_hits": [],
-        "caveat_present": false,
+        "caveat_present": true,
         "fabricated_citations": 0,
-        "truncated_severely": true,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
-      "hard_fail_objective": true,
-      "hard_fail_reasons": [
-        "severe_truncation"
-      ],
-      "answer_preview": "**ממצא עיקרי**\n\nבג\"ץ 6298/07 (רסלר נ' כנסת ישראל) דן והכריע בשאלת חוקתיותו של \"חוק דחיית שירות לתלמידי ישיבות\" (חוק טל). המסמך הרשמי של פסק הדין הוא המקור העיקרי להכרעה זו.¹\n\nמניין המקורות שסופקו עולה בזהירות כי בפסק הדין התקבלה הכרעה מהותית ביחס לחוק; עם זאת הקבצים שבידי כאן תומכים חלקית בלבד בפרטי נוסח ההכרעה ולכן אין להוציא מסקנה גורפת ללא עיון בטקסט המלא של פסק הדין.²\n\n**העילות והנימוקים שנבדקו בפסק הדין**\n\nאחד המישרים המרכזיים שבג\"ץ בחן הוא שאלת הפגיעה בכלל השוויון: האם מתן דחיית שירות אוטו"
+      "hard_fail_objective": false,
+      "hard_fail_reasons": [],
+      "answer_preview": "**ממצא עיקרי**\n\nבג\"ץ 6298/07 (רסלר נ' כנסת ישראל) דן והכריע בשאלת חוקתיותו של \"חוק דחיית שירות לתלמידי ישיבות\" (חוק טל). המסמך הרשמי של פסק הדין הוא המקור העיקרי להכרעה זו.¹\n\nמניין המקורות שסופקו עולה בזהירות כי בפסק הדין התקבלה הכרעה מהותית ביחס לחוק; עם זאת הקבצים שבידי כאן תומכים חלקית בלבד בפרטי נוסח ההכרעה ולכן אין להוציא מסקנה גורפת ללא עיון בטקסט המלא של פסק הדין.²\n\n**העילות והנימוקים שנבדק"
     },
     {
       "id": "Q02",
       "category": "docket_holding_missing_source_test",
       "query": "מה נקבע בע\"מ (מחוזי ת\"א) 61908-05-19 בעניין סיווג הכנסה כהכנסת עבודה או הכנסת עסק?",
       "run_id": "88f1a0ae-aafb-4f92-b2dc-53015ebfe2db",
-      "test_intent": "missing_primary_source. פסקי דין מחוזיים ספציפיים לרוב אינם מאונדקסים היטב. הבדיקה כאן היא האם המערכת מזהה שהיא לא מצאה את פסק הדין ומסרבת להסיק את ההכרעה, ולא האם היא מצליחה לאתר אותו.",
       "ok": true,
+      "stub": false,
       "total_ms": 86292,
       "prose_length": 2010,
       "footnote_count": 3,
@@ -90,20 +79,11 @@
         "true": 9,
         "false": 0
       },
-      "completeness": {
-        "reasons": [],
-        "signals": [],
-        "truncated": false,
-        "last_block_kind": "paragraph",
-        "last_block_excerpt": "…ט פסק הדין ניתן לפרט את הכרעת השופטים, המבחנים שנקבעו בדיוק, העובדות המהותיות שהמשכו את המסקנה והמשמעות הפרקטית המחייבת."
-      },
-      "truncation_retry": {
-        "retry_ms": 0,
-        "attempted": false,
-        "reasons_initial": [],
-        "same_model_retry": false,
-        "escalated_to_full": false
-      },
+      "verifier_dropped_count": 7,
+      "completeness_truncated": false,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": false,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -111,34 +91,30 @@
             "required": "פסק הדין המחוזי הספציפי — אם וכאשר מאותר",
             "hit_in_used_sources": false,
             "ratio_used": 0.29,
-            "hit_in_body": false,
+            "hit_in_body": true,
             "ratio_body": 0.57
           }
         ],
-        "missing_required_primary": [
-          "פסק הדין המחוזי הספציפי — אם וכאשר מאותר"
-        ],
+        "missing_required_primary": [],
         "forbidden_hits": [],
-        "caveat_present": false,
+        "caveat_present": true,
         "fabricated_citations": 0,
-        "truncated_severely": true,
+        "truncated_severely": false,
         "q02_invented_holding": false,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
-      "hard_fail_objective": true,
-      "hard_fail_reasons": [
-        "severe_truncation"
-      ],
-      "answer_preview": "לא סופק בפנינו טקסט או הפניה לפסק דין מע\"מ (מחוזי ת\"א) 61908-05-19, ולכן אין אפשרות לקבוע באופן ודאי מה הוחלט בו בנוגע לסיווג הכנסה כ'הכנסת עבודה' או 'הכנסת עסק'.\n\n**מה שניתן לקבוע בהתבסס על המקורות שניתנו**\n\nהמקור s1 אינו פסק דין זה; הוא פסק דין של בית המשפט המחוזי בבאר־שבע העוסק בערעור על החלטת פקיד השומה לפסול ספרי נישום ולקבוע את הכנסתו בהוראת צו על פי סעיף 152(ב) לפקודת מס הכנסה. המקור מצביע באופן חלקי על סוגיות של מעבר מסטטוס שכיר לפתיחת עסק והשפעתן על קביעת ההכנסה, אך אינו מהווה תמיכה ישי"
+      "hard_fail_objective": false,
+      "hard_fail_reasons": [],
+      "answer_preview": "לא סופק בפנינו טקסט או הפניה לפסק דין מע\"מ (מחוזי ת\"א) 61908-05-19, ולכן אין אפשרות לקבוע באופן ודאי מה הוחלט בו בנוגע לסיווג הכנסה כ'הכנסת עבודה' או 'הכנסת עסק'.\n\n**מה שניתן לקבוע בהתבסס על המקורות שניתנו**\n\nהמקור s1 אינו פסק דין זה; הוא פסק דין של בית המשפט המחוזי בבאר־שבע העוסק בערעור על החלטת פקיד השומה לפסול ספרי נישום ולקבוע את הכנסתו בהוראת צו על פי סעיף 152(ב) לפקודת מס הכנסה. המקור מצביע "
     },
     {
       "id": "Q03",
       "category": "statutory_interpretation",
       "query": "מהי הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה, ומהם התנאים המצטברים?",
       "run_id": "981b90a4-6ed2-4f61-aeee-335bd4b6ec29",
-      "test_intent": null,
       "ok": false,
+      "stub": true,
       "total_ms": 103808,
       "prose_length": 82,
       "footnote_count": 0,
@@ -154,8 +130,11 @@
         "true": 10,
         "false": 0
       },
-      "completeness": null,
-      "truncation_retry": null,
+      "verifier_dropped_count": 10,
+      "completeness_truncated": null,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": null,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -173,15 +152,14 @@
         "forbidden_hits": [],
         "caveat_present": false,
         "fabricated_citations": 0,
-        "truncated_severely": null,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
       "hard_fail_objective": true,
       "hard_fail_reasons": [
-        "missing_required_primary:סעיף 32(9) לפקודת מס הכנסה [נוסח חדש]",
-        "drafter_ok_false"
+        "stub_response_p5_never_ran"
       ],
       "answer_preview": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
     },
@@ -190,8 +168,8 @@
       "category": "statutory_interpretation",
       "query": "מהו היקף חובת הגילוי של דירקטור לפי סעיפים 254–256 לחוק החברות, בעסקה עם בעל עניין?",
       "run_id": "a6f47b5d-96e0-49bb-97b2-9b7caad84d18",
-      "test_intent": null,
       "ok": true,
+      "stub": false,
       "total_ms": 114461,
       "prose_length": 3109,
       "footnote_count": 6,
@@ -207,20 +185,11 @@
         "true": 10,
         "false": 0
       },
-      "completeness": {
-        "reasons": [],
-        "signals": [],
-        "truncated": false,
-        "last_block_kind": "paragraph",
-        "last_block_excerpt": "…עוד מהווים המגן הפרקטי המרכזי. עם זאת, המסקנות הן זהירות וחלקיות תוך הסתמכות על הדיונים במקורות ולא על נוסח חקיקה מפורש."
-      },
-      "truncation_retry": {
-        "retry_ms": 0,
-        "attempted": false,
-        "reasons_initial": [],
-        "same_model_retry": false,
-        "escalated_to_full": false
-      },
+      "verifier_dropped_count": 6,
+      "completeness_truncated": false,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": false,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -234,26 +203,24 @@
         ],
         "missing_required_primary": [],
         "forbidden_hits": [],
-        "caveat_present": false,
+        "caveat_present": true,
         "fabricated_citations": 0,
-        "truncated_severely": true,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
-      "hard_fail_objective": true,
-      "hard_fail_reasons": [
-        "severe_truncation"
-      ],
-      "answer_preview": "**חובת הגילוי של דירקטור בעסקה עם בעל עניין — עיקרי המסקנות**\n\nלתשובת השאלה יש לגשת בזהירות: המקורות שסופקו אינם נוסח הסעיפים עצמם אלא מאמרים וניתוחים משפטיים שמצביעים על ההיבטים המרכזיים. על כן הניסוח להלן הוא מסקנה זהירה המבוססת על הדיונים במקורות ולא על נוסח חקיקה מלא.\n\nמהמקורות עולה בזהירות כי סעיפים 256–254 לחוק החברות מכירים בחובה עקרונית של דירקטור לדווח על ניגוד עניינים בעסקה עם בעל עניין; חובה זו מכוונת להבטיח שהגוף המחליט בעריכת החברה ידוע בטבע העניין ובמידת ההשפעה של המעורבות האישית ש"
+      "hard_fail_objective": false,
+      "hard_fail_reasons": [],
+      "answer_preview": "**חובת הגילוי של דירקטור בעסקה עם בעל עניין — עיקרי המסקנות**\n\nלתשובת השאלה יש לגשת בזהירות: המקורות שסופקו אינם נוסח הסעיפים עצמם אלא מאמרים וניתוחים משפטיים שמצביעים על ההיבטים המרכזיים. על כן הניסוח להלן הוא מסקנה זהירה המבוססת על הדיונים במקורות ולא על נוסח חקיקה מלא.\n\nמהמקורות עולה בזהירות כי סעיפים 256–254 לחוק החברות מכירים בחובה עקרונית של דירקטור לדווח על ניגוד עניינים בעסקה עם בעל עניין;"
     },
     {
       "id": "Q05",
       "category": "amendment_history",
       "query": "מהם השינויים המרכזיים בתיקון 154 לחוק סדר הדין הפלילי, ומתי נכנס לתוקף?",
       "run_id": "4bbcdeb1-f33c-4b40-818f-816c5a232df4",
-      "test_intent": null,
       "ok": true,
+      "stub": false,
       "total_ms": 100662,
       "prose_length": 1514,
       "footnote_count": 1,
@@ -269,20 +236,11 @@
         "true": 6,
         "false": 0
       },
-      "completeness": {
-        "reasons": [],
-        "signals": [],
-        "truncated": false,
-        "last_block_kind": "paragraph",
-        "last_block_excerpt": "…י לקבל את נוסח הסעיפים, תאריך כניסה לתוקף והוראות המעבר. המסמך שסופק מהווה רק רקע מחקרי ולא תחליף למסמכי החקיקה הרשמיים."
-      },
-      "truncation_retry": {
-        "retry_ms": 0,
-        "attempted": false,
-        "reasons_initial": [],
-        "same_model_retry": false,
-        "escalated_to_full": false
-      },
+      "verifier_dropped_count": 5,
+      "completeness_truncated": false,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": false,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -307,25 +265,22 @@
         "forbidden_hits": [],
         "caveat_present": false,
         "fabricated_citations": 0,
-        "truncated_severely": true,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
-      "hard_fail_objective": true,
-      "hard_fail_reasons": [
-        "missing_required_primary:דברי הסבר להצעת החוק",
-        "severe_truncation"
-      ],
-      "answer_preview": "**תיקון מס' 154 לחוק סדר הדין הפלילי — מה שניתן לקבוע על‑פי המקור הזמין**\n\nמסקנה מרכזית: מן המסמך של הכנסת שסופק כאן לא ניתן לזהות במלואו את נוסח הסעיפים שתוקנו בתיקון מס' 154, את התאריכים המדויקים לכניסת התיקון לתוקף, או את הוראות המעבר המלאות. המסמך מהווה דוח מחקרי תומך חלקית בלבד ולא תחליף לנוסח החוק המתוקן או לפרסום הרשמי.¹\n\nמה שניתן לאתר במסמך: הדוח דן, בין היתר, בסוגיות הקשורות לסגירת תיקים בהסדר ובאופי ההליך שבאמצעותו נסגר תיק בהסדר. הוא מציין שסגירת תיקים בהסדר היא הליך מעין שיפוטי וכי ה"
+      "hard_fail_objective": false,
+      "hard_fail_reasons": [],
+      "answer_preview": "**תיקון מס' 154 לחוק סדר הדין הפלילי — מה שניתן לקבוע על‑פי המקור הזמין**\n\nמסקנה מרכזית: מן המסמך של הכנסת שסופק כאן לא ניתן לזהות במלואו את נוסח הסעיפים שתוקנו בתיקון מס' 154, את התאריכים המדויקים לכניסת התיקון לתוקף, או את הוראות המעבר המלאות. המסמך מהווה דוח מחקרי תומך חלקית בלבד ולא תחליף לנוסח החוק המתוקן או לפרסום הרשמי.¹\n\nמה שניתן לאתר במסמך: הדוח דן, בין היתר, בסוגיות הקשורות לסגירת תיקים "
     },
     {
       "id": "Q06",
       "category": "amendment_history",
       "query": "מהו השינוי שהוכנס בתיקון מס' 8 לחוק סדר הדין הפלילי (סמכויות אכיפה - מעצרים) לגבי סעיף 21 (מעצר עד תום ההליכים), ומתי נכנס לתוקף?",
       "run_id": "e9fefd53-6ba7-4add-b011-c548437383cc",
-      "test_intent": null,
       "ok": true,
+      "stub": false,
       "total_ms": 115762,
       "prose_length": 1494,
       "footnote_count": 1,
@@ -341,20 +296,11 @@
         "true": 10,
         "false": 0
       },
-      "completeness": {
-        "reasons": [],
-        "signals": [],
-        "truncated": false,
-        "last_block_kind": "paragraph",
-        "last_block_excerpt": "…ת מעבר יש לעיין בפרסומי הרשות המחוקקת (הרשומות) או בצווי מטעם הרשות האחראית; המידע שדרוש לכך אינו מופיע במקור שסופק כאן."
-      },
-      "truncation_retry": {
-        "retry_ms": 0,
-        "attempted": false,
-        "reasons_initial": [],
-        "same_model_retry": false,
-        "escalated_to_full": false
-      },
+      "verifier_dropped_count": 9,
+      "completeness_truncated": false,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": false,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -379,25 +325,22 @@
         "forbidden_hits": [],
         "caveat_present": true,
         "fabricated_citations": 0,
-        "truncated_severely": true,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
-      "hard_fail_objective": true,
-      "hard_fail_reasons": [
-        "missing_required_primary:התיקון הספציפי הרלוונטי",
-        "severe_truncation"
-      ],
-      "answer_preview": "**עיקרי השינוי בתיקון מס׳ 8**\n\nמה שנוסף בתיקון מס׳ 8 לסעיף 21 בחוק סדר הדין הפלילי (סמכויות אכיפה – מעצרים) הוא דרישה פורמלית שהדיון הראשון לפי סעיף 15 יתקיים בנוכחות העצור ולא בדרך של היוועדות חזותית; כמו כן נקבע שמנה בית המשפט לא יורה על מעצר עד תום ההליכים אלא אם התקיים לכל הפחות דיון אחד מהותי לפי סעיף 21 בנוכחות העצור באולם; בחוק גם מוגדר מהו \"דיון מהותי\" — לרבות דיון שבו נשמעת טענה לגבי די הראיות, עילת המעצר, חלופת המעצר או דיון שבו ניתנה הסכמת הצדדים למעצר עד תום ההליכים.¹\n\nמשמעותה המשפטי"
+      "hard_fail_objective": false,
+      "hard_fail_reasons": [],
+      "answer_preview": "**עיקרי השינוי בתיקון מס׳ 8**\n\nמה שנוסף בתיקון מס׳ 8 לסעיף 21 בחוק סדר הדין הפלילי (סמכויות אכיפה – מעצרים) הוא דרישה פורמלית שהדיון הראשון לפי סעיף 15 יתקיים בנוכחות העצור ולא בדרך של היוועדות חזותית; כמו כן נקבע שמנה בית המשפט לא יורה על מעצר עד תום ההליכים אלא אם התקיים לכל הפחות דיון אחד מהותי לפי סעיף 21 בנוכחות העצור באולם; בחוק גם מוגדר מהו \"דיון מהותי\" — לרבות דיון שבו נשמעת טענה לגבי די ה"
     },
     {
       "id": "Q07",
       "category": "mandate_ordinance",
       "query": "האם פקודת הנזיקין [נוסח חדש] היא הנוסח המחייב היום, ומה מעמדה של הפקודה המנדטורית המקורית משנת 1944?",
       "run_id": "a8bc4408-2545-468f-8588-9ea082e71d3b",
-      "test_intent": null,
       "ok": true,
+      "stub": false,
       "total_ms": 118113,
       "prose_length": 1538,
       "footnote_count": 4,
@@ -413,26 +356,17 @@
         "true": 11,
         "false": 0
       },
-      "completeness": {
-        "reasons": [],
-        "signals": [],
-        "truncated": false,
-        "last_block_kind": "paragraph",
-        "last_block_excerpt": "…היא פרקטיקה מקובלת, ומעמדה של הפקודה המנדטורית של 1944 נקבעת בהתאם לקשר שבין הוראותיה לבין חקיקה מאוחרת ופסיקה רלוונטית."
-      },
-      "truncation_retry": {
-        "retry_ms": 0,
-        "attempted": false,
-        "reasons_initial": [],
-        "same_model_retry": false,
-        "escalated_to_full": false
-      },
+      "verifier_dropped_count": 7,
+      "completeness_truncated": false,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": false,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
           {
             "required": "פקודת הנזיקין [נוסח חדש]",
-            "hit_in_used_sources": false,
+            "hit_in_used_sources": true,
             "ratio_used": 0.5,
             "hit_in_body": true,
             "ratio_body": 1
@@ -449,24 +383,22 @@
         "forbidden_hits": [],
         "caveat_present": false,
         "fabricated_citations": 0,
-        "truncated_severely": true,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
-      "hard_fail_objective": true,
-      "hard_fail_reasons": [
-        "severe_truncation"
-      ],
-      "answer_preview": "**מסקנה תמציתית**\n\nאין במקורות שאותרו כדי לקבוע באופן נחרץ ש'פקודת הנזיקין [נוסח חדש]' מהווה נוסח מחייב ובלעדי בכל מקרה; עם זאת, בפרקטיקה הציטוטית נהוג להתייחס לנוסחים המעודכנים של חוקים ופקודות כאל הטקסט המחייב לצורך פרשנות ויישום, ואילו השאלה אם הוראה מנדטורית ממשיכה לחול תלויה בבדיקה של היחס בינה לבין חקיקה מאוחרת ופסיקה רלוונטית.¹\n\nמעמדה של הפקודה המנדטורית משנת 1944 הוא סוגיית בין־תחומית: היא חלק מן ההיסטוריה החקיקתית ולפעמים ממשיכה להוות מקור הוראה אם לא בוטלה במפורש או לא הוחלפה על ידי חק"
+      "hard_fail_objective": false,
+      "hard_fail_reasons": [],
+      "answer_preview": "**מסקנה תמציתית**\n\nאין במקורות שאותרו כדי לקבוע באופן נחרץ ש'פקודת הנזיקין [נוסח חדש]' מהווה נוסח מחייב ובלעדי בכל מקרה; עם זאת, בפרקטיקה הציטוטית נהוג להתייחס לנוסחים המעודכנים של חוקים ופקודות כאל הטקסט המחייב לצורך פרשנות ויישום, ואילו השאלה אם הוראה מנדטורית ממשיכה לחול תלויה בבדיקה של היחס בינה לבין חקיקה מאוחרת ופסיקה רלוונטית.¹\n\nמעמדה של הפקודה המנדטורית משנת 1944 הוא סוגיית בין־תחומית: היא"
     },
     {
       "id": "Q08",
       "category": "mandate_ordinance",
       "query": "מה מעמדה של פקודת המשטרה [נוסח חדש] התשל\"א-1971 ביחס לפקודת המשטרה המנדטורית משנת 1926, ומהי משמעות ההוראה בדבר המשכיות?",
       "run_id": "ccf75cd2-0181-4930-865b-72d0356e31e0",
-      "test_intent": null,
       "ok": true,
+      "stub": false,
       "total_ms": 148676,
       "prose_length": 3578,
       "footnote_count": 8,
@@ -482,20 +414,11 @@
         "true": 10,
         "false": 0
       },
-      "completeness": {
-        "reasons": [],
-        "signals": [],
-        "truncated": false,
-        "last_block_kind": "paragraph",
-        "last_block_excerpt": "…תשל״א‑1971, לבדוק פסיקה רלוונטית ופרקטיקה אכיפהית, ולבחון האם קיימת סתירה מהותית המפעילה את כלל הקדימות של חקיקה מאוחרת."
-      },
-      "truncation_retry": {
-        "retry_ms": 0,
-        "attempted": false,
-        "reasons_initial": [],
-        "same_model_retry": false,
-        "escalated_to_full": false
-      },
+      "verifier_dropped_count": 4,
+      "completeness_truncated": false,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": false,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -509,26 +432,24 @@
         ],
         "missing_required_primary": [],
         "forbidden_hits": [],
-        "caveat_present": false,
+        "caveat_present": true,
         "fabricated_citations": 0,
-        "truncated_severely": true,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
-      "hard_fail_objective": true,
-      "hard_fail_reasons": [
-        "severe_truncation"
-      ],
-      "answer_preview": "**מסקנה תקצירית**\n\nבאופן כללי, מן המקורות שאותרו לא ניתן לקבוע באופן גורף כי פקודת המשטרה [נוסח חדש], התשל״א‑1971 ביטלה במלואה את פקודת המשטרה המנדטורית מ‑1926; ההשפעה נקבעת לפי הנוסח הספציפי של הפקודה החדשה והוראות המשכיות הכלליות שבמסגרת החוקית (ובפרט הוראות המשכיות הכלולות בפקודת סדרי השלטון והמשפט).¹\n\n**היקף ההחלפה או הביטול בין הפקודות**\n\nיש להבחין בין שלוש מצבים משפטיים: ביטול מפורש על‑ידי הוראה בחקיקה החדשה; חלופה חלקית שבה הוראות חדשות מחליפות סעיפים מסוימים בעוד שאחרות נשארות בתוקף; ואי"
+      "hard_fail_objective": false,
+      "hard_fail_reasons": [],
+      "answer_preview": "**מסקנה תקצירית**\n\nבאופן כללי, מן המקורות שאותרו לא ניתן לקבוע באופן גורף כי פקודת המשטרה [נוסח חדש], התשל״א‑1971 ביטלה במלואה את פקודת המשטרה המנדטורית מ‑1926; ההשפעה נקבעת לפי הנוסח הספציפי של הפקודה החדשה והוראות המשכיות הכלליות שבמסגרת החוקית (ובפרט הוראות המשכיות הכלולות בפקודת סדרי השלטון והמשפט).¹\n\n**היקף ההחלפה או הביטול בין הפקודות**\n\nיש להבחין בין שלוש מצבים משפטיים: ביטול מפורש על‑ידי ה"
     },
     {
       "id": "Q09",
       "category": "academic_doctrine",
       "query": "מהי דוקטרינת \"הבטלות היחסית\" במשפט המנהלי הישראלי, ומיהם המלומדים והפסיקה המרכזיים בפיתוחה?",
       "run_id": "09184c17-abd4-43a1-8a60-ff73120f91b1",
-      "test_intent": null,
       "ok": false,
+      "stub": true,
       "total_ms": 97200,
       "prose_length": 82,
       "footnote_count": 0,
@@ -544,8 +465,11 @@
         "true": 6,
         "false": 0
       },
-      "completeness": null,
-      "truncation_retry": null,
+      "verifier_dropped_count": 6,
+      "completeness_truncated": null,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": null,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -563,15 +487,14 @@
         "forbidden_hits": [],
         "caveat_present": false,
         "fabricated_citations": 0,
-        "truncated_severely": null,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
       "hard_fail_objective": true,
       "hard_fail_reasons": [
-        "missing_required_primary:פסק דין מכונן (למשל בג\"ץ 2911/94 באקי או פסיקה מקבילה)",
-        "drafter_ok_false"
+        "stub_response_p5_never_ran"
       ],
       "answer_preview": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
     },
@@ -580,8 +503,8 @@
       "category": "academic_doctrine",
       "query": "מהי גישת אהרן ברק בע\"א 4628/93 מדינת ישראל נ' אפרופים לפרשנות חוזים, וכיצד ביקר אותה דניאל פרידמן?",
       "run_id": "2256c173-cbf9-47b3-9357-f88204fbcde6",
-      "test_intent": null,
       "ok": true,
+      "stub": false,
       "total_ms": 122377,
       "prose_length": 2645,
       "footnote_count": 5,
@@ -597,20 +520,11 @@
         "true": 9,
         "false": 0
       },
-      "completeness": {
-        "reasons": [],
-        "signals": [],
-        "truncated": false,
-        "last_block_kind": "paragraph",
-        "last_block_excerpt": "… שיפוטי רחב יותר; פסיקה מאוחרת וספרות מעידות על תגובת נגד מסוימת שמבקשת לשמר הבחנה פרשנית ברורה ולחזק את הוודאות החוזית."
-      },
-      "truncation_retry": {
-        "retry_ms": 0,
-        "attempted": false,
-        "reasons_initial": [],
-        "same_model_retry": false,
-        "escalated_to_full": false
-      },
+      "verifier_dropped_count": 6,
+      "completeness_truncated": false,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": false,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -624,26 +538,24 @@
         ],
         "missing_required_primary": [],
         "forbidden_hits": [],
-        "caveat_present": false,
+        "caveat_present": true,
         "fabricated_citations": 0,
-        "truncated_severely": true,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
-      "hard_fail_objective": true,
-      "hard_fail_reasons": [
-        "severe_truncation"
-      ],
-      "answer_preview": "**גישת אהרן ברק בפרשת \"אפרופים\"**\n\nבפסק‑דין המוכר הידוע כ\"אפרופים\" שאותו הכריע אהרן ברק, ניכר אימוץ של גישת פרשנות הקשרית ותכליתית: הטקסט החוזי אינו נקלט בבידוד אלא בפריזמה של נסיבות כריתתו, מטרת ההסכם והמשמעות הסבירה של המילים. יחד עם זאת, הפסק‑דין מדגיש קריאה אובייקטיבית־סבירה של השפה החוזית ודוחה גישה המכפיפה את הפרשנות אך ורק לכוונת הצדדים הסובייקטיבית.¹\n\nהכללים שהודגשו בפסק‑דין זה כוללים העדפת השפה הפורמלית של ההסכם כמניע ראשון לפרשנות, אך קריאה זו נבחנת תמיד לאור ההקשר הכולל — נסיבות הכרית"
+      "hard_fail_objective": false,
+      "hard_fail_reasons": [],
+      "answer_preview": "**גישת אהרן ברק בפרשת \"אפרופים\"**\n\nבפסק‑דין המוכר הידוע כ\"אפרופים\" שאותו הכריע אהרן ברק, ניכר אימוץ של גישת פרשנות הקשרית ותכליתית: הטקסט החוזי אינו נקלט בבידוד אלא בפריזמה של נסיבות כריתתו, מטרת ההסכם והמשמעות הסבירה של המילים. יחד עם זאת, הפסק‑דין מדגיש קריאה אובייקטיבית־סבירה של השפה החוזית ודוחה גישה המכפיפה את הפרשנות אך ורק לכוונת הצדדים הסובייקטיבית.¹\n\nהכללים שהודגשו בפסק‑דין זה כוללים העדפ"
     },
     {
       "id": "Q11",
       "category": "thin_corpus",
       "query": "האם קיימת פסיקה ישראלית מחייבת בנוגע לאחריות מפעילי בורסות קריפטו מקומיות כלפי משתמשים לאחר פריצת סייבר?",
       "run_id": "94896348-886b-4744-b06c-d08b582bf082",
-      "test_intent": null,
       "ok": true,
+      "stub": false,
       "total_ms": 127718,
       "prose_length": 2274,
       "footnote_count": 3,
@@ -659,20 +571,11 @@
         "true": 8,
         "false": 0
       },
-      "completeness": {
-        "reasons": [],
-        "signals": [],
-        "truncated": false,
-        "last_block_kind": "paragraph",
-        "last_block_excerpt": "…דכניות והנחיות מקצועיות בענף הביטחון הסייבר ובשוק ההון — מקורות אלה אינם נכללים בחומר שסופק כאן ולכן לא נבדקו בתשובה זו."
-      },
-      "truncation_retry": {
-        "retry_ms": 0,
-        "attempted": false,
-        "reasons_initial": [],
-        "same_model_retry": false,
-        "escalated_to_full": false
-      },
+      "verifier_dropped_count": 6,
+      "completeness_truncated": false,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": false,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -688,24 +591,22 @@
         "forbidden_hits": [],
         "caveat_present": true,
         "fabricated_citations": 0,
-        "truncated_severely": true,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
-      "hard_fail_objective": true,
-      "hard_fail_reasons": [
-        "severe_truncation"
-      ],
-      "answer_preview": "תשובה תמציתית: על־פי המקורות שסופקו, אין בישראל פסיקה של ערכאה עליונה הקובעת באופן גורף וחלקי־כללי כי מפעילי בורסות קריפטו מקומיות הם אחראים באופן אוטומטי כלפי משתמשים בעקבות פריצות סייבר.\n\n**היקף העיון והעקרונות המשפטיים הרלוונטיים**\n\nפסיקת בית המשפט העליון המסופקת בעניין דניאל וגנר נוגעת לעקרונות חובת הזהירות והרשלנות ומנסחת מבחנים מתודולוגיים לבחינת קיומה של חובת זהירות בהקשרים חדשים; מבחנים אלה ניתנים להשלכה אנלוגית על שירותים מקוונים ופלטפורמות.¹\n\nפסק הדין באלכסנדר אורן בעמ' דן אף הוא בשאלת"
+      "hard_fail_objective": false,
+      "hard_fail_reasons": [],
+      "answer_preview": "תשובה תמציתית: על־פי המקורות שסופקו, אין בישראל פסיקה של ערכאה עליונה הקובעת באופן גורף וחלקי־כללי כי מפעילי בורסות קריפטו מקומיות הם אחראים באופן אוטומטי כלפי משתמשים בעקבות פריצות סייבר.\n\n**היקף העיון והעקרונות המשפטיים הרלוונטיים**\n\nפסיקת בית המשפט העליון המסופקת בעניין דניאל וגנר נוגעת לעקרונות חובת הזהירות והרשלנות ומנסחת מבחנים מתודולוגיים לבחינת קיומה של חובת זהירות בהקשרים חדשים; מבחנים אל"
     },
     {
       "id": "Q12",
       "category": "thin_corpus",
       "query": "מהי אחריותו של דירקטור בחברה פרטית לגילויי מידע על שימוש במערכות AI גנרטיביות בתהליכי קבלת החלטות?",
       "run_id": "f3e72a13-d7cd-4fa1-a1c1-e963e91598d4",
-      "test_intent": null,
       "ok": true,
+      "stub": false,
       "total_ms": 129941,
       "prose_length": 2553,
       "footnote_count": 1,
@@ -721,20 +622,11 @@
         "true": 10,
         "false": 0
       },
-      "completeness": {
-        "reasons": [],
-        "signals": [],
-        "truncated": false,
-        "last_block_kind": "paragraph",
-        "last_block_excerpt": "…סיקה רלוונטיות בדיני פרטיות, רגולציה טכנולוגית והנחיות רגולטוריות ספציפיות לפני קבלת מסקנה מחייבת או המלצה פרקטית נוספת."
-      },
-      "truncation_retry": {
-        "retry_ms": 0,
-        "attempted": false,
-        "reasons_initial": [],
-        "same_model_retry": false,
-        "escalated_to_full": false
-      },
+      "verifier_dropped_count": 9,
+      "completeness_truncated": false,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": false,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -750,27 +642,26 @@
           "חוק החברות, סעיפים כלליים על חובת זהירות"
         ],
         "forbidden_hits": [],
-        "caveat_present": false,
+        "caveat_present": true,
         "fabricated_citations": 0,
-        "truncated_severely": true,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
       "hard_fail_objective": true,
       "hard_fail_reasons": [
-        "missing_required_primary:חוק החברות, סעיפים כלליים על חובת זהירות",
-        "severe_truncation"
+        "all_required_primary_missing"
       ],
-      "answer_preview": "**אחריות דירקטור לגבי גילוי שימוש במערכות AI — מסקנה מקוצרת**\n\nבקצרה: דירקטור בחברה פרטית עלול להיות חייב בגילוי ובנקיטת צעדי פיקוח כאשר שימוש במערכות AI גנרטיביות משפיע באופן מהותי על תהליכי קבלת ההחלטות של החברה; אולם המסקנה הזאת צריכה להיאמר בזהירות משום שהמקורות שסופקו תומכים בכך באופן חלקי בלבד ולא דנים במפרט הרגולטורי המלא של כל סוגי המחויבויות.¹\n\n**האם השימוש ב‑AI הוא 'עניין מהותי' המחייב גילוי (תגובה ל־C1)**\n\nהגדרת \"עניין מהותי\" נבחנת לפי השאלה האם השימוש במערכת AI משנה או משפיע על שיקול"
+      "answer_preview": "**אחריות דירקטור לגבי גילוי שימוש במערכות AI — מסקנה מקוצרת**\n\nבקצרה: דירקטור בחברה פרטית עלול להיות חייב בגילוי ובנקיטת צעדי פיקוח כאשר שימוש במערכות AI גנרטיביות משפיע באופן מהותי על תהליכי קבלת ההחלטות של החברה; אולם המסקנה הזאת צריכה להיאמר בזהירות משום שהמקורות שסופקו תומכים בכך באופן חלקי בלבד ולא דנים במפרט הרגולטורי המלא של כל סוגי המחויבויות.¹\n\n**האם השימוש ב‑AI הוא 'עניין מהותי' המחייב ג"
     },
     {
       "id": "Q13",
       "category": "practical_implications",
       "query": "מה חייב מעסיק לעשות כאשר עובד/ת מגיש/ה תלונה על הטרדה מינית במקום העבודה, ומהי מסגרת הזמנים לפי התקנות?",
       "run_id": "736ceb4f-027a-4a5c-890a-04756f328abc",
-      "test_intent": null,
       "ok": true,
+      "stub": false,
       "total_ms": 105007,
       "prose_length": 415,
       "footnote_count": 1,
@@ -786,38 +677,21 @@
         "true": 10,
         "false": 0
       },
-      "completeness": {
-        "reasons": [
-          "no_final_punct(ends with 'ע')"
-        ],
-        "signals": [
-          {
-            "code": "no_final_punct",
-            "detail": "ends with 'ע'",
-            "strength": "weak"
-          }
-        ],
-        "truncated": false,
-        "last_block_kind": "list_item",
-        "last_block_excerpt": "קבלת תלונה ורישום פורמלי — יש לקבל את הטענות בכל צורה סבירה (כתבית/בע"
-      },
-      "truncation_retry": {
-        "retry_ms": 0,
-        "attempted": false,
-        "reasons_initial": [
-          "no_final_punct(ends with 'ע')"
-        ],
-        "same_model_retry": false,
-        "escalated_to_full": false
-      },
+      "verifier_dropped_count": 6,
+      "completeness_truncated": false,
+      "completeness_reasons": [
+        "no_final_punct(ends with 'ע')"
+      ],
+      "truncation_retry_attempted": false,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
           {
             "required": "חוק למניעת הטרדה מינית התשנ\"ח-1998",
-            "hit_in_used_sources": false,
+            "hit_in_used_sources": true,
             "ratio_used": 0.5,
-            "hit_in_body": false,
+            "hit_in_body": true,
             "ratio_body": 0.5
           },
           {
@@ -828,31 +702,26 @@
             "ratio_body": 0.38
           }
         ],
-        "missing_required_primary": [
-          "חוק למניעת הטרדה מינית התשנ\"ח-1998"
-        ],
+        "missing_required_primary": [],
         "forbidden_hits": [],
         "caveat_present": false,
         "fabricated_citations": 0,
-        "truncated_severely": true,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
-      "hard_fail_objective": true,
-      "hard_fail_reasons": [
-        "missing_required_primary:חוק למניעת הטרדה מינית התשנ\"ח-1998",
-        "severe_truncation"
-      ],
-      "answer_preview": "**חובות המעסיק בעת קבלת תלונה על הטרדה מינית**\n\nבעת קבלת תלונה על הטרדה מינית על המעסיק לפעול מידית: לקבל את התלונה ולתעדה, לנקוט צעדי ביניים להבטחת בטיחות המתלונן/ת ומניעת המשך התנהגות פוגענית, לפתוח בבדיקה פנימית או חקירה ולמנות חוקר/ת בלתי תלוי/ה כאשר בלבול ניגוד עניינים או מעורבות של בכירים מקשה על תהליך הוגן.¹\n\n**צעדים מעשיים מיידיים**\n\n- קבלת תלונה ורישום פורמלי — יש לקבל את הטענות בכל צורה סבירה (כתבית/בע"
+      "hard_fail_objective": false,
+      "hard_fail_reasons": [],
+      "answer_preview": "**חובות המעסיק בעת קבלת תלונה על הטרדה מינית**\n\nבעת קבלת תלונה על הטרדה מינית על המעסיק לפעול מידית: לקבל את התלונה ולתעדה, לנקוט צעדי ביניים להבטחת בטיחות המתלונן/ת ומניעת המשך התנהגות פוגענית, לפתוח בבדיקה פנימית או חקירה ולמנות חוקר/ת בלתי תלוי/ה כאשר בלבול ניגוד עניינים או מעורבות של בכירים מקשה על תהליך הוגן.¹\n\n**צעדים מעשיים מיידיים**\n\n- קבלת תלונה ורישום פורמלי — יש לקבל את הטענות בכל צורה "
     },
     {
       "id": "Q14",
       "category": "practical_implications",
       "query": "מהן חובות הדיווח של נותן שירותי מטבע (ChP) לפי חוק איסור הלבנת הון והצו החל עליו, ומהם מועדי הדיווח?",
       "run_id": "e14bc8e3-443c-400b-ac35-55d22a7d13fe",
-      "test_intent": null,
       "ok": false,
+      "stub": true,
       "total_ms": 70844,
       "prose_length": 82,
       "footnote_count": 0,
@@ -868,8 +737,11 @@
         "true": 0,
         "false": 0
       },
-      "completeness": null,
-      "truncation_retry": null,
+      "verifier_dropped_count": 0,
+      "completeness_truncated": null,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": null,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -895,15 +767,14 @@
         "forbidden_hits": [],
         "caveat_present": false,
         "fabricated_citations": 0,
-        "truncated_severely": null,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
       "hard_fail_objective": true,
       "hard_fail_reasons": [
-        "missing_required_primary:חוק איסור הלבנת הון התש\"ס-2000|צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע) התשע\"ד-2014",
-        "drafter_ok_false"
+        "stub_response_p5_never_ran"
       ],
       "answer_preview": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
     },
@@ -912,8 +783,8 @@
       "category": "mixed_sources",
       "query": "מהו המסגרת הרגולטורית להנפקת אסימונים דיגיטליים בישראל, בהתבסס על חקיקה, פסיקה וספרות?",
       "run_id": "3ca5d6f7-d701-4792-9167-3dfdef06fa73",
-      "test_intent": null,
       "ok": true,
+      "stub": false,
       "total_ms": 135329,
       "prose_length": 3180,
       "footnote_count": 5,
@@ -929,20 +800,11 @@
         "true": 12,
         "false": 0
       },
-      "completeness": {
-        "reasons": [],
-        "signals": [],
-        "truncated": false,
-        "last_block_kind": "paragraph",
-        "last_block_excerpt": "…ת AML מפורטות או השלכות מס מדויקות) יש להיעזר במקורות חקיקתיים, בהנחיות רגולטוריות ובפסיקה שלא נכללו בחומרים שסופקו כאן."
-      },
-      "truncation_retry": {
-        "retry_ms": 0,
-        "attempted": false,
-        "reasons_initial": [],
-        "same_model_retry": false,
-        "escalated_to_full": false
-      },
+      "verifier_dropped_count": 9,
+      "completeness_truncated": false,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": false,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -955,7 +817,7 @@
           },
           {
             "required": "דוחות ועדת נאור / רשות ניירות ערך על אסימונים",
-            "hit_in_used_sources": false,
+            "hit_in_used_sources": true,
             "ratio_used": 0.5,
             "hit_in_body": true,
             "ratio_body": 0.63
@@ -963,26 +825,24 @@
         ],
         "missing_required_primary": [],
         "forbidden_hits": [],
-        "caveat_present": false,
+        "caveat_present": true,
         "fabricated_citations": 0,
-        "truncated_severely": true,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
-      "hard_fail_objective": true,
-      "hard_fail_reasons": [
-        "severe_truncation"
-      ],
-      "answer_preview": "**מענה מרכזי**\n\nהתשובה הקלאסית היא שאין בשלב זה בישראל מסגרת רגולטורית כוללת ודקה לגבי הנפקת אסימונים דיגיטליים; הסופיות תלויה בסיווג העובדתי־כלכלי של האסימון ובפעולות שבוצעו סביבו, והמקורות שברשותנו מצביעים על אי־בהירות ועל צורך בהכרעות פרשניות ורגולטוריות נוספות.¹\n\n**האם אסימונים דיגיטליים הם 'נייר ערך' או נכס פיננסי?**\n\nהמאמרים שברשותנו מדגישים שהשאלה פתוחה ותלויה בפרשנות ההגדרה הקיימת של 'נייר ערך' במשפט הישראלי; יש בכתיבה טיעונים לפיהם חלק מהאסימונים עשויים לעמוד בגדר עסקאות השקעה המצריכות "
+      "hard_fail_objective": false,
+      "hard_fail_reasons": [],
+      "answer_preview": "**מענה מרכזי**\n\nהתשובה הקלאסית היא שאין בשלב זה בישראל מסגרת רגולטורית כוללת ודקה לגבי הנפקת אסימונים דיגיטליים; הסופיות תלויה בסיווג העובדתי־כלכלי של האסימון ובפעולות שבוצעו סביבו, והמקורות שברשותנו מצביעים על אי־בהירות ועל צורך בהכרעות פרשניות ורגולטוריות נוספות.¹\n\n**האם אסימונים דיגיטליים הם 'נייר ערך' או נכס פיננסי?**\n\nהמאמרים שברשותנו מדגישים שהשאלה פתוחה ותלויה בפרשנות ההגדרה הקיימת של 'נייר"
     },
     {
       "id": "Q16",
       "category": "mixed_sources",
       "query": "מהם המבחנים לסיווג יחסי עובד-מעביד בפסיקת בית הדין הארצי לעבודה, וכיצד הם משפיעים על חבות המעביד להפרשות פנסיוניות?",
       "run_id": "3a1fbfd0-f0c2-46c8-aa47-562c86cb4838",
-      "test_intent": null,
       "ok": false,
+      "stub": true,
       "total_ms": 96370,
       "prose_length": 82,
       "footnote_count": 0,
@@ -998,8 +858,11 @@
         "true": 5,
         "false": 0
       },
-      "completeness": null,
-      "truncation_retry": null,
+      "verifier_dropped_count": 5,
+      "completeness_truncated": null,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": null,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -1025,15 +888,14 @@
         "forbidden_hits": [],
         "caveat_present": false,
         "fabricated_citations": 0,
-        "truncated_severely": null,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
       "hard_fail_objective": true,
       "hard_fail_reasons": [
-        "missing_required_primary:פסיקת בית הדין הארצי לעבודה על מבחני יחסי עובד-מעביד (למשל דב\"ע נג/3-30 חסון, סרוסי, ואח')|צו הרחבה פנסיה חובה",
-        "drafter_ok_false"
+        "stub_response_p5_never_ran"
       ],
       "answer_preview": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
     },
@@ -1042,8 +904,8 @@
       "category": "overclaim_trap",
       "query": "האם בית משפט ישראלי יכיר תמיד בהסכם ממון שנחתם לפני נישואין כמחייב?",
       "run_id": "a20fc1f8-f836-44e1-9843-3f5bef2b75f3",
-      "test_intent": null,
       "ok": true,
+      "stub": false,
       "total_ms": 170397,
       "prose_length": 1665,
       "footnote_count": 4,
@@ -1059,20 +921,11 @@
         "true": 7,
         "false": 0
       },
-      "completeness": {
-        "reasons": [],
-        "signals": [],
-        "truncated": false,
-        "last_block_kind": "paragraph",
-        "last_block_excerpt": "…ות עריכתו והשלכותיו על טובת המשפחה; במצבים של ספק או קושי עובדתי, הפסיקה מאפשרת התערבות שתקבע את מידת המחייבות של ההסכם."
-      },
-      "truncation_retry": {
-        "retry_ms": 0,
-        "attempted": false,
-        "reasons_initial": [],
-        "same_model_retry": false,
-        "escalated_to_full": false
-      },
+      "verifier_dropped_count": 4,
+      "completeness_truncated": false,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": false,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -1088,24 +941,22 @@
         "forbidden_hits": [],
         "caveat_present": false,
         "fabricated_citations": 0,
-        "truncated_severely": true,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": null,
         "q18_verbatim_section_1": null
       },
-      "hard_fail_objective": true,
-      "hard_fail_reasons": [
-        "severe_truncation"
-      ],
-      "answer_preview": "**מסקנה קצרה**\n\nלא — בתי המשפט בישראל אינם מכירים תמיד באופן אוטומטי בהסכם ממון שנחתם לפני הנישואין. הסכמי ממון יכולים להיות תקפים ומחייבים, אך תוקפם נבחן על פי המסגרת החוקית והפסיקה.¹\n\n**המסגרת החוקית והיחס של הפסיקה**\n\nהסדרת יחסי הממון בין בני זוג ועקרונות איזון המשאבים מהווים את המסגרת הנורמטיבית שבה נבחנים הסכמי ממון; הפסיקה מכירה בזכות בני זוג להסדיר שיתופי רכוש, אך מפנה את שאלת התוקף לבחינה בהתאם להוראות החוק ותכליותיו.¹\n\nבעיקרו של דבר, פסיקה חותכת צפויה לאכוף הסכם ממון אם הוא עומד במסגרת "
+      "hard_fail_objective": false,
+      "hard_fail_reasons": [],
+      "answer_preview": "**מסקנה קצרה**\n\nלא — בתי המשפט בישראל אינם מכירים תמיד באופן אוטומטי בהסכם ממון שנחתם לפני הנישואין. הסכמי ממון יכולים להיות תקפים ומחייבים, אך תוקפם נבחן על פי המסגרת החוקית והפסיקה.¹\n\n**המסגרת החוקית והיחס של הפסיקה**\n\nהסדרת יחסי הממון בין בני זוג ועקרונות איזון המשאבים מהווים את המסגרת הנורמטיבית שבה נבחנים הסכמי ממון; הפסיקה מכירה בזכות בני זוג להסדיר שיתופי רכוש, אך מפנה את שאלת התוקף לבחינה "
     },
     {
       "id": "Q18",
       "category": "anchor_preservation",
       "query": "צטט מילולית את סעיף 1 לחוק יסוד: כבוד האדם וחירותו, והפנה למקור רשמי.",
       "run_id": "c9002071-3974-41bb-bb71-7cb24d68ab97",
-      "test_intent": null,
       "ok": false,
+      "stub": true,
       "total_ms": 61686,
       "prose_length": 82,
       "footnote_count": 0,
@@ -1121,8 +972,11 @@
         "true": 0,
         "false": 0
       },
-      "completeness": null,
-      "truncation_retry": null,
+      "verifier_dropped_count": 0,
+      "completeness_truncated": null,
+      "completeness_reasons": [],
+      "truncation_retry_attempted": null,
+      "required_anchors_count": 0,
       "missing_anchor_caveat_injected": false,
       "checks": {
         "required_primary": [
@@ -1140,17 +994,14 @@
         "forbidden_hits": [],
         "caveat_present": false,
         "fabricated_citations": 0,
-        "truncated_severely": null,
+        "truncated_severely": false,
         "q02_invented_holding": null,
         "q18_official_source": false,
         "q18_verbatim_section_1": false
       },
       "hard_fail_objective": true,
       "hard_fail_reasons": [
-        "missing_required_primary:נוסח מחייב מהכנסת (main.knesset.gov.il) או מספר החוקים / רשומות",
-        "q18_no_official_source",
-        "q18_no_verbatim_section_1_text",
-        "drafter_ok_false"
+        "stub_response_p5_never_ran"
       ],
       "answer_preview": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
     }
