@@ -1,97 +1,112 @@
-# Fix: stale mode wiring + V1 history replay
+# Legal Research v1 — Quality Audit Plan
 
-## Root cause (confirmed)
+Goal: Before resuming latency optimization, diagnose whether the current product-quality blocker is **legal grounding**, **drafter writing**, **citation trust**, **overclaiming from partial sources**, or **missing primary sources**.
 
-- `legal-research-v1/lib/telemetry.ts` writes rows with `task_mode: "legal_research_v1"`.
-- `QAHistorySidebar.handleClick` forwards `log.task_mode || "research"` to `onLoadResult`.
-- `Index.tsx` (line 1241) casts the string into `qaExternalResult.taskMode` as `"research" | "case_summary" | "academic_writing"` — but the actual string is `"legal_research_v1"`.
-- `LegalQAChat.tsx` (line 1085) does `setTaskMode(externalResult.taskMode)`. Since `"legal_research_v1"` is not in the rendered switch (`research` / `legal_source_search` / `academic_writing` / `case_summary`), no panel mounts. The next submit falls through to the legacy `legal-qa` invoke path → returns the intentional 503 `engine_offline`.
-- The V1 panel also currently ignores any cached payload, so even after we normalize the mode the user lands on an empty panel.
+No code changes. No new flags. No model changes. Pipeline runs as-is.
 
-## Implementation plan (frontend only)
+---
 
-### 1. `src/components/QAHistorySidebar.tsx`
+## 1. Golden set construction (18 questions)
 
-- Add `legal_research_v1` to `MODE_LABELS` mapped to `{ label: "מחקר", icon: Search }` so the history badge keeps reading "מחקר".
-- In `handleClick`, when `log.task_mode === "legal_research_v1"`:
-  - Build a dedicated envelope and call:
-    ```ts
-    onLoadResult(
-      log.question,
-      {
-        __legal_research_v1: true,
-        payload: {
-          answer: log.answer,
-          footnotes: Array.isArray(log.footnotes) ? log.footnotes : [],
-        },
-      } as any,
-      "legal_research_v1",
-    );
-    return;
-    ```
-  - This bypasses the existing `Array.isArray(fn).map(...)` mapper which rewrites footnotes into the legacy `{citation, source_type}` shape and would clobber the V1 Footnote shape (`{number, title, url, sources}`).
-- Leave the `legal_source_search` and case-summary branches untouched.
+Assembled from real Israeli-law research shapes, extending the existing R1–R8 + D_* fixtures. Target 18 questions across 8 categories:
 
-### 2. `src/pages/Index.tsx`
+| # | Category | Example shape |
+|---|---|---|
+| Q1 | Specific docket / case holding | "What did the Supreme Court hold in [docket X] regarding Y?" |
+| Q2 | Specific docket / case holding | District-level docket with narrower holding |
+| Q3 | Statutory interpretation | Meaning of a defined term in a specific statute section |
+| Q4 | Statutory interpretation | Scope of a duty under a statute + regulations |
+| Q5 | Legislative amendment / history | Recent amendment: what changed and when |
+| Q6 | Legislative amendment / history | Older amendment chain across two decades |
+| Q7 | Mandate-era ordinance / continuity | Is the ordinance still in force? What replaced it? |
+| Q8 | Mandate-era ordinance / continuity | Continuity + modern reinterpretation |
+| Q9 | Academic doctrine | Named doctrine, its author, and current status |
+| Q10 | Academic doctrine | Doctrinal debate between two schools |
+| Q11 | Thin-corpus / insufficient sources | Niche question with little published material |
+| Q12 | Thin-corpus / insufficient sources | Emerging area with no binding authority yet |
+| Q13 | Practical legal implications | "What must a party do if…" |
+| Q14 | Practical legal implications | Compliance-facing question with deadlines |
+| Q15 | Mixed statute + case + scholarship | Question that requires all three source types |
+| Q16 | Mixed statute + case + scholarship | Cross-domain (e.g., tax + corporate) |
+| Q17 | Overclaim trap | Question phrased to invite an unsupported general rule |
+| Q18 | Anchor preservation | Requires a specific docket/section verbatim |
 
-- Extend the `qaExternalResult` state union with a third variant:
-  ```ts
-  | { question: string; v1Payload: { answer: string; footnotes: any[] }; taskMode: "research" }
-  ```
-- In the `onLoadResult` handler (lines 1234–1243):
-  - If `taskMode === "legal_research_v1"` and `result?.__legal_research_v1`:
-    `setQaExternalResult({ question, v1Payload: result.payload, taskMode: "research" })`.
-  - **Defensive normalization**: if `taskMode` is none of `academic_writing | legal_source_search | research | case_summary`, coerce to `"research"` before storing, so legacy/unknown rows can't poison chat state again.
+Reuse R1/R5/R8 and D_R2/D_R3/D_District_Tax where they fit the categories to preserve continuity with prior validation runs.
 
-### 3. `src/components/LegalQAChat.tsx`
+## 2. Per-question rubric (defined before running)
 
-- Extend `LegalQAChatProps.externalResult` union with the new V1 variant.
-- Add a memoized `legalResearchV1External` (mirroring the existing `sourceSearchExternal` pattern) so identity is stable across parent renders:
-  ```ts
-  const legalResearchV1External = useMemo(
-    () =>
-      externalResult && "v1Payload" in externalResult
-        ? { question: externalResult.question, payload: externalResult.v1Payload }
-        : null,
-    [externalResult],
-  );
-  ```
-- In the external-result effect (lines 1076–1086):
-  - If the variant is the V1 one: `setQuestion(externalResult.question); setTaskMode("research"); return;` — do **not** set `result` (the legacy `QAResult` shape doesn't fit) and do **not** invoke `legal-qa`.
-  - Treat existing `"research"` taskMode the same way (the legacy chat path never had a "research" UI tab — research is already owned by the V1 panel today).
-- Pass `externalResult={legalResearchV1External}` and `onConsumeExternalResult={onConsumeExternalResult}` to `<LegalResearchV1Panel />` at line 2954.
+For each question we pre-write:
 
-### 4. `src/components/LegalResearchV1Panel.tsx`
+- **Required primary source(s)** — specific statute section, docket number, or ordinance.
+- **Acceptable secondary sources** — recognized commentaries, scholarship, government explanatory memoranda.
+- **Forbidden / off-topic sources** — news blogs, unrelated jurisdictions, marketing content, foreign law when not asked.
+- **Key legal conclusion** — the one-sentence answer a competent lawyer would give.
+- **Required caveat** — what the answer must disclose if sources are partial or contested.
 
-- Add props:
-  ```ts
-  interface Props {
-    externalResult?: { question: string; payload: { answer: string; footnotes: Footnote[] } } | null;
-    onConsumeExternalResult?: () => void;
-  }
-  ```
-- Add a `useEffect([externalResult])` that, when a non-null externalResult is passed:
-  - `stopAll(); clearResume();`
-  - `setLoading(false); setError(null); setJobId(null);`
-  - `setQuestion(externalResult.question);`
-  - `setResult({ answer: externalResult.payload.answer, footnotes: externalResult.payload.footnotes ?? [], used_sources: [], debug: {} });`
-  - Call `onConsumeExternalResult?.()` so the parent clears `qaExternalResult` and a subsequent project switch / new submit isn't blocked.
-- Make the resume-on-mount effect (lines 192–208) a no-op when `externalResult` is provided on mount, so a cached history payload always wins over a leftover `sessionStorage` job.
+Stored as `reports/quality-audit/golden-set.json` (one entry per question, machine-readable) plus a human `golden-set.md`.
 
-## Acceptance check (manual, after switching to build mode)
+## 3. Execution
 
-1. Click a V1 row → UI switches to the V1 panel, badge says "מחקר", question fills in, cached answer + footnotes render.
-2. Network tab shows **no** POST to `legal-qa`. No 503 toast.
-3. Switching projects clears the pinned V1 result (existing `lastProjectIdRef` effect already handles this via `setQaExternalResult(null)`).
-4. Clicking a legacy `research` / `case_summary` row keeps working unchanged.
+- Run each question through the deployed `legal-research-v1` edge function, `mode: "legal-research"`, no flags, no headers.
+- Capture: final answer, `used_sources`, verifier usable/dropped counts, planner queries, runtime.
+- Store raw per-run artifacts under `reports/quality-audit/runs/<qid>.json`.
 
-## Out of scope (explicitly not touched)
+## 4. Scoring (0–3 per axis, per question)
 
-- `supabase/functions/legal-qa/` (the 503 short-circuit stays as-is).
-- `supabase/functions/legal-research-v1/` and its telemetry schema.
-- `LegalSourceSearchPanel` / `citation-chat` / pipeline logic.
-- No backend deploys required.
+| Axis | 0 | 1 | 2 | 3 |
+|---|---|---|---|---|
+| Legal grounding / accuracy | wrong law | partly wrong | correct but shallow | correct + precise |
+| Usefulness / directness | evasive | tangential | answers the question | answers + actionable |
+| Writing quality | unreadable | rough | clear | publishable |
+| Citation trust | fabricated / wrong | weak / secondary only | correct with gaps | correct primary + secondary |
+| Overclaim risk | severe overclaim | some overclaim | mostly hedged | correctly hedged |
 
-## Risk / fallback
+Human review by the user (or a designated reviewer). Scores recorded in `reports/quality-audit/scores.csv`.
 
-The only non-trivial bit is shape compatibility of `log.footnotes` with `LegalResearchV1Panel`'s `Footnote` type. Confirmed in `supabase/functions/legal-research-v1/lib/types.ts:165` and `drafterV2.ts:531` that footnotes are persisted as `{number, title, url, source_type?, sources?}` — exactly what the panel expects. If a legacy row predates that shape, the renderer at lines 494–550 still survives because it null-checks `fn.sources` and `fn.url`.
+## 5. Classification
+
+Each answer gets one label:
+
+- **product-ready** — all axes ≥2, grounding=3, no overclaim.
+- **acceptable with polish** — grounding ≥2, no citation fabrication, minor writing/hedging issues.
+- **fail** — grounding ≤1, or fabricated citation, or severe overclaim, or missing required primary source.
+
+## 6. Blocker attribution
+
+For every non-product-ready answer, tag the *dominant* failure cause (single choice):
+
+- retrieval / grounding (right law never reached the drafter)
+- drafter writing (facts were present, prose was weak)
+- citation trust (citations wrong, mismatched, or fabricated)
+- overclaiming from partial sources
+- missing primary sources (retrieval reached secondary but not primary)
+- other (free-text)
+
+Aggregate counts → the top systemic blocker.
+
+## 7. Deliverables
+
+- `reports/quality-audit/golden-set.md` + `.json`
+- `reports/quality-audit/runs/*.json`
+- `reports/quality-audit/scores.csv`
+- `reports/quality-audit/summary.md` — distribution of labels, top blocker, representative failure examples, recommended next investigation (not fixes).
+
+## Out of scope for this plan
+
+- No code changes to the pipeline.
+- No new flags, headers, or telemetry fields.
+- No model swaps.
+- No latency work.
+- No fixes — diagnosis only. Fix planning happens after the summary is reviewed.
+
+## Technical notes
+
+- Runs are triggered via the existing smoke-run harness pattern used in prior A/Bs, minus any experimental headers. A thin runner script `scripts/legal-research-v1-quality-audit.ts` iterates the golden set, calls the edge function, and writes raw artifacts. No pipeline code is touched.
+- Scoring is manual; the runner only collects raw outputs and mechanical metrics (runtime, used_sources count, verifier counts, anchor-URL presence for anchored questions).
+- Golden-set anchors reuse URL normalization from the Step 2 URL-based analysis so anchor-preservation checks stay consistent.
+
+## Approval checkpoint
+
+After you approve this plan I will:
+1. Draft the 18-question golden set + rubric and share for your review before any runs.
+2. Only after you sign off on the golden set, execute the runs and produce `summary.md`.
