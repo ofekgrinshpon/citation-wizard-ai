@@ -395,9 +395,6 @@ async function handle(req: Request): Promise<Response> {
       escalation_reason: plannerStage.escalation_reasons,
       schema_valid: plannerStage.result.ok,
       ms: plannerStage.stage_runs.reduce((s, r) => s + r.ms, 0),
-      // Step 2 (latency): query fanout cap. `enabled=false` = flag-off / baseline.
-      query_cap: plannerStage.cap_report,
-      dropped_queries: plannerStage.cap_report.dropped_queries,
     },
     claims_count: analyzer.claims.length,
     queries_count: planner?.queries.length ?? 0,
