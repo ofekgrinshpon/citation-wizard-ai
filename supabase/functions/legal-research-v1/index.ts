@@ -350,14 +350,10 @@ async function handle(req: Request): Promise<Response> {
 
   // ─── P2: Research Query Planner ──────────────────────────────────────────
   await markStage("planner");
-  // Smoke-only header override for A/B validation of Step 2 latency cap.
-  // Mirrors x-verifier-force-split pattern. Production requests never send it.
-  const headerCapRaw = req.headers.get("x-planner-query-cap");
-  const headerCap = headerCapRaw ? parseInt(headerCapRaw, 10) : NaN;
-  const capOverride = Number.isFinite(headerCap) && headerCap > 0 ? headerCap : undefined;
   let plannerStage;
   try {
-    plannerStage = await runQueryPlanner(question, analyzer, { capOverride });
+    plannerStage = await runQueryPlanner(question, analyzer);
+
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
 
@@ -399,9 +395,6 @@ async function handle(req: Request): Promise<Response> {
       escalation_reason: plannerStage.escalation_reasons,
       schema_valid: plannerStage.result.ok,
       ms: plannerStage.stage_runs.reduce((s, r) => s + r.ms, 0),
-      // Step 2 (latency): query fanout cap. `enabled=false` = flag-off / baseline.
-      query_cap: plannerStage.cap_report,
-      dropped_queries: plannerStage.cap_report.dropped_queries,
     },
     claims_count: analyzer.claims.length,
     queries_count: planner?.queries.length ?? 0,
