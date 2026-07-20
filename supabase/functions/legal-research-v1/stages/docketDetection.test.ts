@@ -64,6 +64,14 @@ Deno.test("detectDockets — multiple dockets deduped by id", () => {
   assertEquals(ids, ["aa-8622-07", "bagatz-5555-18"]);
 });
 
+Deno.test("detectDockets — Hebrew עה\"ס (administrative high court)", () => {
+  const d = detectDockets('עה"ס 3913/23 כהן נ\' היועצת המשפטית לממשלה');
+  assertEquals(d.length, 1);
+  assertEquals(d[0].docket_id, "ahas-3913-23");
+  assertEquals(d[0].prefix_he, 'עה"ס');
+  assert(d[0].variants.includes('עה"ס 3913/23'));
+});
+
 Deno.test("detectDockets — no false positive on bare number", () => {
   const d = detectDockets("סעיף 5 לחוק 5555");
   assertEquals(d.length, 0);

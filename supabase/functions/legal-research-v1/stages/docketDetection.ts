@@ -35,6 +35,7 @@ const PREFIX_TABLE: PrefixDef[] = [
   { slug: "rap", canonicalHe: 'רע"פ', he: ['רע"פ', "רע״פ"], en: ["LCrimA"] },
   { slug: "aam", canonicalHe: 'עע"מ', he: ['עע"מ', "עע״מ"], en: ["AAA"] },
   { slug: "am", canonicalHe: 'ע"מ', he: ['ע"מ', "ע״מ"] },
+  { slug: "ahas", canonicalHe: 'עה"ס', he: ['עה"ס', "עה״ס", "עהס"], en: ["HCJAdmin"] },
   { slug: "dna", canonicalHe: 'דנ"א', he: ['דנ"א', "דנ״א"], en: ["FH"] },
   { slug: "dnp", canonicalHe: 'דנ"פ', he: ['דנ"פ', "דנ״פ"] },
   { slug: "bshp", canonicalHe: 'בש"פ', he: ['בש"פ', "בש״פ"] },
