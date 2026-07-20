@@ -118,13 +118,24 @@ async function extractPdf(bytes: Uint8Array): Promise<string[]> {
 }
 
 async function extractDocx(bytes: Uint8Array): Promise<string> {
-  const result = await mammoth.extractRawText({
-    arrayBuffer: bytes.buffer.slice(
-      bytes.byteOffset,
-      bytes.byteOffset + bytes.byteLength,
-    ) as ArrayBuffer,
-  });
-  return String(result?.value ?? "").replace(/\s+\n/g, "\n").trim();
+  // Copy into a fresh, standalone ArrayBuffer so mammoth's internal
+  // option detector reliably sees an ArrayBuffer instance across the
+  // Deno/npm bridge. Older code used `bytes.buffer.slice(...)` which
+  // in the Deno npm shim can hand back an object that mammoth fails
+  // to recognize, throwing "Could not find file in options".
+  const copy = new Uint8Array(bytes.byteLength);
+  copy.set(bytes);
+  try {
+    const result = await mammoth.extractRawText({ arrayBuffer: copy.buffer });
+    return String(result?.value ?? "").replace(/\s+\n/g, "\n").trim();
+  } catch (e) {
+    // Fallback path: some Deno/npm builds of mammoth prefer a Node-style
+    // buffer. Uint8Array is buffer-shaped and works with recent mammoth.
+    const msg = e instanceof Error ? e.message : String(e);
+    if (!/find file in options|arrayBuffer/i.test(msg)) throw e;
+    const result = await mammoth.extractRawText({ buffer: copy });
+    return String(result?.value ?? "").replace(/\s+\n/g, "\n").trim();
+  }
 }
 
 async function buildSignedUrl(
