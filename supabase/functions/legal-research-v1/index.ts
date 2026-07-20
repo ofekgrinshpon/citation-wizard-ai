@@ -244,9 +244,14 @@ async function handle(req: Request): Promise<Response> {
   // Wrap the whole pipeline so it runs in the background.
   const runPipeline = async (): Promise<Response> => {
 
+  // Detect any docket references early so attachment extraction can raise
+  // per-file caps when the user uploads the actual judgment.
+  const docketAnchors = buildDocketAnchors(question);
+  const docketVariants = docketAnchors.flatMap((a) => a.docket_variants ?? []);
+
   // ─── P1.5: Extract attachments (PDF/DOCX) ────────────────────────────────
   const attachmentResult = attachments.length > 0
-    ? await extractAttachments(admin, user.id, attachments)
+    ? await extractAttachments(admin, user.id, attachments, { priorityDockets: docketVariants })
     : { documents: [], total_chars: 0, global_truncated: false, errors: [], ms: 0 };
   if (attachments.length > 0) {
     stage_runs.push({
@@ -440,7 +445,7 @@ async function handle(req: Request): Promise<Response> {
   // docket-anchored-judgment anchors (deterministic from the question text
   // — force retrieval of the specific ruling the user asked about).
   const noteAnchors = resolveRequiredAnchors(analyzer);
-  const docketAnchors = buildDocketAnchors(question);
+  // docketAnchors already computed before attachment extraction.
   const requiredAnchors = [...noteAnchors, ...docketAnchors];
   const anchorQueries = requiredAnchors.length > 0
     ? buildRequiredAnchorQueries(analyzer, requiredAnchors)
@@ -636,6 +641,7 @@ async function handle(req: Request): Promise<Response> {
     usableIds: usableIdSet,
     verdicts: verifier.verdicts,
     usedCandidateIds: new Set(),
+    userDocs: attachmentResult.documents,
   });
   const missingForCaveat = pickMissingAnchors(preDraftAnchorStatuses)
     .map((s) => ({ description: s.description, is_docket: s.is_docket_anchor }));
@@ -665,6 +671,7 @@ async function handle(req: Request): Promise<Response> {
     usableIds: usableIdSet,
     verdicts: verifier.verdicts,
     usedCandidateIds: usedIdSetForAnchors,
+    userDocs: attachmentResult.documents,
   });
 
   // Harness-only: when x-drafter-v2-compare-models is set, re-run drafterV2

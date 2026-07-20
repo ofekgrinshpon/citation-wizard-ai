@@ -221,3 +221,57 @@ Deno.test("computeRequiredAnchorStatuses — docket anchor: docket_match + tange
   assertEquals(statuses[0].status, "retrieved_unverified");
   assertEquals(pickMissingAnchors(statuses).length, 1);
 });
+
+Deno.test("computeRequiredAnchorStatuses — user-uploaded judgment satisfies docket anchor", () => {
+  const anchors = buildDocketAnchors('בג"ץ 5555/18');
+  const userDoc = {
+    id: "u1",
+    file_name: 'בג"ץ 5555/18.pdf',
+    mime_type: "application/pdf",
+    storage_path: "user/research/5555-18.pdf",
+    signed_url: null,
+    chunks: [{ ref: "u1p1", page: 1, text: 'בג"ץ 5555/18 עדאלה' }],
+    total_chars: 100,
+    truncated: false,
+    docket_match: true,
+    matched_dockets: ["bagatz-5555-18"],
+  };
+  const statuses = computeRequiredAnchorStatuses({
+    anchors,
+    candidates: [],
+    usableIds: new Set(),
+    verdicts: [],
+    usedCandidateIds: new Set(),
+    userDocs: [userDoc],
+  });
+  assertEquals(statuses[0].status, "cited");
+  assertEquals(statuses[0].verified_support, "direct");
+  assertEquals(statuses[0].cited, true);
+  assertEquals(statuses[0].candidate_ids.includes("u1p1"), true);
+});
+
+Deno.test("computeRequiredAnchorStatuses — user doc without matching docket does not satisfy anchor", () => {
+  const anchors = buildDocketAnchors('בג"ץ 5555/18');
+  const userDoc = {
+    id: "u1",
+    file_name: "some-other-case.pdf",
+    mime_type: "application/pdf",
+    storage_path: "user/research/other.pdf",
+    signed_url: null,
+    chunks: [{ ref: "u1p1", page: 1, text: 'ע"א 1234/22' }],
+    total_chars: 100,
+    truncated: false,
+    docket_match: false,
+    matched_dockets: [],
+  };
+  const statuses = computeRequiredAnchorStatuses({
+    anchors,
+    candidates: [],
+    usableIds: new Set(),
+    verdicts: [],
+    usedCandidateIds: new Set(),
+    userDocs: [userDoc],
+  });
+  assertEquals(statuses[0].status, "missing");
+  assertEquals(statuses[0].cited, false);
+});
