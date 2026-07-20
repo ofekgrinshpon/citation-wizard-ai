@@ -8,6 +8,7 @@
 import { extractText, getDocumentProxy } from "npm:unpdf@0.12.1";
 import mammoth from "npm:mammoth@1.8.0";
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { detectDockets } from "../stages/docketDetection.ts";
 
 export const ATTACHMENT_LIMITS = {
   MAX_FILES: 5,
@@ -19,6 +20,14 @@ export const ATTACHMENT_LIMITS = {
   PER_FILE_TIMEOUT_MS: 15_000,
   TOTAL_TIMEOUT_MS: 45_000,
   SIGNED_URL_TTL_SEC: 300,
+} as const;
+
+// When a file is identified as a user-supplied judgment for a docket in the
+// query, we raise per-file limits so the holding is not truncated mid-sentence.
+const DOCKET_MATCH_LIMITS = {
+  MAX_CHARS_PER_FILE: 36_000,
+  MAX_CHUNKS_PER_FILE: 12,
+  CHUNK_CHARS: 1_800,
 } as const;
 
 export interface AttachmentInput {
@@ -45,6 +54,10 @@ export interface UserDocument {
   chunks: UserDocChunk[];
   total_chars: number;
   truncated: boolean;
+  /** True when the file's name or content matches a docket referenced in the query. */
+  docket_match?: boolean;
+  /** Docket ids (e.g. "aam-3913-23") that matched this file. */
+  matched_dockets?: string[];
   error?: string;
 }
 
@@ -104,11 +117,14 @@ async function extractPdf(bytes: Uint8Array): Promise<string[]> {
   return pages.map((p) => (p ?? "").replace(/\s+\n/g, "\n").trim());
 }
 
-async function extractDocx(bytes: Uint8Array): Promise<string[]> {
-  const result = await mammoth.extractRawText({ arrayBuffer: bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) });
-  const text = String(result?.value ?? "");
-  // DOCX has no real "pages"; chunk into ~1800-char blocks treated as pages.
-  return chunkText(text, ATTACHMENT_LIMITS.CHUNK_CHARS, ATTACHMENT_LIMITS.MAX_CHUNKS_PER_FILE);
+async function extractDocx(bytes: Uint8Array): Promise<string> {
+  const result = await mammoth.extractRawText({
+    arrayBuffer: bytes.buffer.slice(
+      bytes.byteOffset,
+      bytes.byteOffset + bytes.byteLength,
+    ) as ArrayBuffer,
+  });
+  return String(result?.value ?? "").replace(/\s+\n/g, "\n").trim();
 }
 
 async function buildSignedUrl(
@@ -126,16 +142,43 @@ async function buildSignedUrl(
   }
 }
 
+/** Case-insensitive check whether a string contains any of the docket variants. */
+export function textMatchesDockets(text: string, variants: string[]): boolean {
+  if (!text || variants.length === 0) return false;
+  const lower = text.toLowerCase();
+  for (const v of variants) {
+    if (v.length < 3) continue; // avoid false positives from tiny fragments
+    if (/^[a-z]/.test(v)) {
+      if (lower.includes(v.toLowerCase())) return true;
+    } else if (text.includes(v)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** Detect which docket ids matched the given text.
+ *
+ * Uses the canonical docket detector so the returned ids exactly match the
+ * `docket_id` field on `DocketRef` (e.g. "bagatz-5555-18").
+ */
+export function matchedDocketIds(text: string, _variants: string[]): string[] {
+  if (!text) return [];
+  return detectDockets(text).map((d) => d.docket_id);
+}
+
 export async function extractAttachments(
   admin: SupabaseClient,
   userId: string,
   attachments: AttachmentInput[],
+  opts?: { priorityDockets?: string[] },
 ): Promise<AttachmentExtractionResult> {
   const t0 = Date.now();
   const documents: UserDocument[] = [];
   const errors: AttachmentExtractionResult["errors"] = [];
   let totalChars = 0;
   let globalTruncated = false;
+  const priorityDockets = opts?.priorityDockets ?? [];
 
   const slice = attachments.slice(0, ATTACHMENT_LIMITS.MAX_FILES);
   const userPrefix = `${userId}/research/`;
@@ -185,20 +228,39 @@ export async function extractAttachments(
       const bytes = new Uint8Array(arrBuf);
 
       let rawPages: string[];
+      let rawDocxText = "";
       if (att.mime_type === "application/pdf") {
         rawPages = await withTimeout(extractPdf(bytes), ATTACHMENT_LIMITS.PER_FILE_TIMEOUT_MS, "pdf");
       } else {
-        rawPages = await withTimeout(extractDocx(bytes), ATTACHMENT_LIMITS.PER_FILE_TIMEOUT_MS, "docx");
+        rawDocxText = await withTimeout(extractDocx(bytes), ATTACHMENT_LIMITS.PER_FILE_TIMEOUT_MS, "docx");
+        rawPages = chunkText(rawDocxText, ATTACHMENT_LIMITS.CHUNK_CHARS, Infinity);
       }
 
-      // Apply per-file caps.
+      // Determine whether this file is a user-supplied judgment for a docket
+      // referenced in the query. We check the file name and the extracted
+      // text before applying caps so we can keep more of the ruling.
+      const fileNameHit = textMatchesDockets(att.file_name, priorityDockets);
+      const textHit = rawPages.some((p) => textMatchesDockets(p, priorityDockets));
+      const isDocketMatch = fileNameHit || textHit;
+      const matchedDockets = isDocketMatch
+        ? [
+          ...new Set([
+            ...(fileNameHit ? matchedDocketIds(att.file_name, priorityDockets) : []),
+            ...rawPages.flatMap((p) => matchedDocketIds(p, priorityDockets)),
+          ]),
+        ]
+        : [];
+
+      const limits = isDocketMatch ? DOCKET_MATCH_LIMITS : ATTACHMENT_LIMITS;
+
+      // Apply per-file caps (using the selected limits).
       let usedChars = 0;
       const remainingGlobal = ATTACHMENT_LIMITS.MAX_CHARS_TOTAL - totalChars;
-      for (let p = 0; p < rawPages.length && doc.chunks.length < ATTACHMENT_LIMITS.MAX_CHUNKS_PER_FILE; p++) {
+      for (let p = 0; p < rawPages.length && doc.chunks.length < limits.MAX_CHUNKS_PER_FILE; p++) {
         let pageText = (rawPages[p] || "").trim();
         if (!pageText) continue;
 
-        const fileBudget = ATTACHMENT_LIMITS.MAX_CHARS_PER_FILE - usedChars;
+        const fileBudget = limits.MAX_CHARS_PER_FILE - usedChars;
         const globalBudget = remainingGlobal - usedChars;
         const budget = Math.min(fileBudget, globalBudget);
         if (budget <= 50) {
@@ -221,6 +283,8 @@ export async function extractAttachments(
       doc.total_chars = usedChars;
       totalChars += usedChars;
       doc.signed_url = await buildSignedUrl(admin, att.storage_path);
+      doc.docket_match = isDocketMatch;
+      doc.matched_dockets = matchedDockets;
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       doc.error = msg;

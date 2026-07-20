@@ -9,6 +9,7 @@
 // anchor is missing.
 
 import type { AnalyzerOutput, Candidate, Query, SourceRole } from "../lib/types.ts";
+import type { UserDocument } from "../lib/attachments.ts";
 import { detectDockets, type DocketRef } from "./docketDetection.ts";
 
 export interface RequiredAnchor {
@@ -161,15 +162,17 @@ export function buildRequiredAnchorQueries(
 
 // After retrieval/verifier/drafter, compute the status of each required anchor
 // by inspecting candidates (tagged via metadata.required_anchor_id from the
-// originating Query), verifier verdicts/usable, and the drafter's used set.
+// originating Query), verifier verdicts/usable, the drafter's used set, and
+// any user-uploaded documents that match a docket anchor.
 export function computeRequiredAnchorStatuses(args: {
   anchors: RequiredAnchor[];
   candidates: Candidate[];
   usableIds: Set<string>;
   verdicts: Array<{ candidate_id: string; support: string }>;
   usedCandidateIds: Set<string>;
+  userDocs?: UserDocument[];
 }): RequiredAnchorStatus[] {
-  const { anchors, candidates, usableIds, verdicts, usedCandidateIds } = args;
+  const { anchors, candidates, usableIds, verdicts, usedCandidateIds, userDocs } = args;
   const supportRank: Record<string, number> = {
     direct: 4, partial: 3, tangential: 2, unrelated: 1, none: 0,
   };
@@ -206,8 +209,21 @@ export function computeRequiredAnchorStatuses(args: {
     const supportOk = !isDocket ||
       verified_support === "direct" || verified_support === "partial";
 
+    // User-uploaded judgment override: if the user uploaded a document whose
+    // content matches this docket, treat the anchor as satisfied directly.
+    const docketId = isDocket && a.trigger.kind === "docket" ? a.trigger.docket.docket_id : null;
+    const matchingUserDocs = isDocket && docketId
+      ? (userDocs ?? []).filter((d) =>
+          d.docket_match === true && (d.matched_dockets ?? []).includes(docketId))
+      : [];
+    const userDocRefs = matchingUserDocs.flatMap((d) => d.chunks.map((ch) => ch.ref));
+
     let status: RequiredAnchorStatus["status"];
-    if (cited && supportOk) status = "cited";
+    if (matchingUserDocs.length > 0) {
+      // User-supplied judgment satisfies the anchor; no caveat needed.
+      status = "cited";
+      verified_support = "direct";
+    } else if (cited && supportOk) status = "cited";
     else if (reached_verifier && supportOk) status = "verified_unused";
     else if (anchorCands.length > 0) status = "retrieved_unverified";
     else status = "missing";
@@ -219,10 +235,10 @@ export function computeRequiredAnchorStatuses(args: {
       is_docket_anchor: isDocket,
       emitted: true,
       queries: a.suggested_queries,
-      candidate_ids,
+      candidate_ids: [...candidate_ids, ...userDocRefs],
       reached_verifier,
       verified_support,
-      cited: cited && supportOk,
+      cited: status === "cited",
       status,
     };
   });
