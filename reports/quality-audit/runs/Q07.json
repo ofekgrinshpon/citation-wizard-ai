@@ -2,84 +2,122 @@
   "id": "Q07",
   "category": "mandate_ordinance",
   "query": "האם פקודת הנזיקין [נוסח חדש] היא הנוסח המחייב היום, ומה מעמדה של הפקודה המנדטורית המקורית משנת 1944?",
-  "run_id": "a8bc4408-2545-468f-8588-9ea082e71d3b",
+  "run_id": "0aeb0d60-1eef-44b7-a2b1-e8022dfa9d0e",
   "ok": true,
-  "total_ms": 118113,
-  "answer": "**מסקנה תמציתית**\n\nאין במקורות שאותרו כדי לקבוע באופן נחרץ ש'פקודת הנזיקין [נוסח חדש]' מהווה נוסח מחייב ובלעדי בכל מקרה; עם זאת, בפרקטיקה הציטוטית נהוג להתייחס לנוסחים המעודכנים של חוקים ופקודות כאל הטקסט המחייב לצורך פרשנות ויישום, ואילו השאלה אם הוראה מנדטורית ממשיכה לחול תלויה בבדיקה של היחס בינה לבין חקיקה מאוחרת ופסיקה רלוונטית.¹\n\nמעמדה של הפקודה המנדטורית משנת 1944 הוא סוגיית בין־תחומית: היא חלק מן ההיסטוריה החקיקתית ולפעמים ממשיכה להוות מקור הוראה אם לא בוטלה במפורש או לא הוחלפה על ידי חקיקה מאוחרת; עם זאת, פסיקה עכשווית דנתה בעקרונות המשך תוקנן של הוראות מנדטוריות לאחר חקיקה מאוחרת והציגה קווים מנחים כיצד לקבוע האם הוראה מנדטורית נותרה תקפה או נפסקה מעצם חקיקת חוק מאוחר.²\n\nההבחנות המהותיות בין 'נוסח ישן' של פקודה מנדטורית לבין 'נוסח חדש' משתנות לפי הסעיפים והשינויים שנעשו; בדרך כלל 'נוסח חדש' מכיל קונסולידציה וניסוח מודרני ולעתים תיקונים מהותיים או דרכי סעד שונות — ולכן בהפניה בפסיקה ובכתיבה נוהגים לצטט את הנוסח המעודכן כטקסט המחייב, ובמקביל לציין את ההיסטוריה החוקתית והמשפטית כאשר הפרשנות או היישום תלויים בנוסח המקורי.³\n\nבשורה פרקטית: בבדיקה משפטית יש לאמת מהו הנוסח הרשמי והעדכני המופיע ברישומי החקיקה והפסיקה, לבדוק אם חקיקה מאוחרת ביטלה או שינתה הוראות מנדטוריות, ולהשתמש בנוסח המעודכן לציטוט שוטף — אך להזכיר את הטקסט המנדטורי ושרשרת התיקונים כשההכרעה מצריכה התייחסות להיסטוריה הפרשנית.⁴\n\nלסיכום: אין בתשובות המקורות שאותרו כדי להכריע באופן גורף בכל עניין פרטי; נקיטת נוסח מעודכן כ'מחייב' היא פרקטיקה מקובלת, ומעמדה של הפקודה המנדטורית של 1944 נקבעת בהתאם לקשר שבין הוראותיה לבין חקיקה מאוחרת ופסיקה רלוונטית.",
+  "total_ms": 161210,
+  "answer": "**מענה תמציתי**\n\nבקצרה: יש בסיס ראייתי ממשי לכך שבפרקטיקה המוסדית והשיפוטית יש להפנות לנוסח המוכר כ\"פקודת הנזיקין [נוסח חדש]\" כאל הטקסט החקיקתי המעשי. יחד עם זאת, יש להבחין בין מעמד פרקטי־מוסדי לבין מצב של ביטול פורמלי של הנוסח המנדטורי; המסקנה צריכה להנוסח בזהירות ולא בלשון מוחלטת.¹\n\n**האם הנוסח החדש הוא הנוסח המחייב היום?**\n\nהמסמכים המוסדיים מצביעים על שימוש ברור בנוסח החדש כמוקד ההתייחסות בחקיקה ובשינויים; כך למשל מסמכי כנסת מפנים במפורש לסעיפים ב'נוסח החדש'. על כן בפרקטיקה החקיקתית והמנהלית נהוג להתייחס לנוסח החדש כאל הנוסח המחייב ליישום ותיקון.²\n\n**מעמדה של הפקודה המנדטורית משנת 1944**\n\nהפקודה המנדטורית משנת 1944 היא המקור ההיסטורי של דיני הנזיקין בישראל והיא נותרה חלק ממאגר החקיקה שקיבל המשך תוקף עם הקמת המדינה בהתאם לכללי המשכיות (פקודת סדרי השלטון והמשפט). עם זאת, על פי גישות חוקתיות־פרשניות וספרות מקצועית, ולפי המעשה הפרקטי של התקנת נוסח חדש, אין לה מעמד של טקסט נפרד המחייב במקרים שבהם הוחלף במפורש או שסותר על ידי חקיקה מאוחרת יותר.³\n\n**איך מתמודדים במקרה של סתירה בין הנוסחים?**\n\nהכלל המנחה הוא שחקיקה מאוחרת או תיקון מפורש גובר על הוראות מוקדמות שאינן מותאמות לה; מסמכי הכנסת והפסיקה מעידים שבמקרים מעשיים הערכאות והמוסדות מפנים לנוסח החדש. יחד עם זאת, גרסת 1944 ממשיכה לשרת ככלי פרשני והיסטורי כאשר קיימת אי־בהירות או שיש צורך בקונטקסט היסטורי לפרשנות, אך שימוש כזה הוא בדרך כלל משני ולא כדי להעניק מעמד על־חוקי לנוסח הישן.⁴\n\n**כיצד לצטט את הפקודה בעבודת מחקר או במעשה בית דין?**\n\nבעבודת מחקר ובמעמד בית‑דין יש לצטט קודם כל את 'פקודת הנזיקין [נוסח חדש]' כאשר מדובר בהוראות הנוהגות היום; אם ההיסטוריה החקיקתית או ניסוח המקור רלוונטיים לפרשנות, ראוי לציין גם את 'פקודת הנזיקין, 1944' ולהדגיש את מערכת התיקונים/החלפת הנוסח. יש להקפיד על כללי הציטוט המקובלים במוסד או במערכת המשפטיים.⁵\n\nהמלצה מעשית סופית: בציטוט מעשי הצבע על הנוסח שבו מצוטטים הסעיפים (\"נוסח חדש\" כולל מס׳ ושנה של עדכון, במידת הצורך) והוסף אזכור היסטורי של נוסח 1944 רק כאשר יש לו משמעות פרשנית; כשהעניין רגיש משפטית — הסבר בקצרה מדוע נחזית הסתמכות על אחד הנוסחים או על שניהם יחד.",
   "footnotes": [
     {
       "url": null,
-      "title": "הרוקחים [נוסח חדש], התשמ\"א-1981; יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+      "title": "מסמך מאתר אתר הכנסת; מסמך מאתר אתר ממשלתי (gov.il); פקודת הנזיקין [נוסח חדש]",
       "number": 1,
       "sources": [
         {
-          "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7596&businessType=1",
-          "title": "הרוקחים [נוסח חדש], התשמ\"א-1981",
-          "source_type": "knesset_research"
+          "url": "https://fs.knesset.gov.il/15/law/15_lst_545298.doc",
+          "title": "מסמך מאתר אתר הכנסת",
+          "source_type": "other"
         },
         {
-          "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
-          "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
-          "source_type": "journal_article"
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/3&fileName=SV3_9_8252-13.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://nevo.co.il/law_html/law00/73015.htm",
+          "title": "פקודת הנזיקין [נוסח חדש]",
+          "source_type": "other"
         }
       ],
       "source_type": "compound"
     },
     {
       "url": null,
-      "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין; מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+      "title": "מסמך מאתר אתר הכנסת; מסמכי חקיקה של הכנסת – פקודת הנזיקין [נוסח חדש]; הצעת חוק הנזיקים האזרחיים (אחריות המדינה) (תיקון מס' 8)",
       "number": 2,
       "sources": [
         {
-          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1374-23-%d7%97%d7%90%d7%92%d7%a8-%d7%a0%d7%95%d7%a8%d7%99-%d7%9c%d7%93%d7%a8-%d7%a6%d7%95%d7%a3-%d7%a0-%d7%9e%d7%a4%d7%a7%d7%93-%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a6%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-          "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין",
-          "source_type": "caselaw"
+          "url": "https://fs.knesset.gov.il/15/law/15_lst_545298.doc",
+          "title": "מסמך מאתר אתר הכנסת",
+          "source_type": "other"
         },
         {
-          "url": "https://lawjournal.huji.ac.il/article/12/690",
-          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
-          "source_type": "journal_article"
+          "url": "https://fs.knesset.gov.il/7/law/7_lsr_210279.pdf",
+          "title": "מסמכי חקיקה של הכנסת – פקודת הנזיקין [נוסח חדש]",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/%5C18%5CCommittees%5C18_cs_bg_329818.doc",
+          "title": "הצעת חוק הנזיקים האזרחיים (אחריות המדינה) (תיקון מס' 8)",
+          "source_type": "other"
         }
       ],
       "source_type": "compound"
     },
     {
       "url": null,
-      "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח); הרוקחים [נוסח חדש], התשמ\"א-1981; מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+      "title": "פקודת סדרי השלטון והמשפט, תש\"ח–1948; בין שני עולמות; יצחק קלינגהופר, הערות לחקיקה: קביעת היזקקות – חובה למינוח אנגלי בנוסח חדש של חוק מנדטורי",
       "number": 3,
       "sources": [
         {
-          "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
-          "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
-          "source_type": "journal_article"
+          "url": "https://fs.knesset.gov.il/0/law/0_lsr_312670.pdf",
+          "title": "פקודת סדרי השלטון והמשפט, תש\"ח–1948",
+          "source_type": "other"
         },
         {
-          "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7596&businessType=1",
-          "title": "הרוקחים [נוסח חדש], התשמ\"א-1981",
-          "source_type": "knesset_research"
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Page.aspx?nBookID=17149763&nTocEntryID=17422093&nPageID=17300713",
+          "title": "בין שני עולמות",
+          "source_type": "academic"
         },
         {
-          "url": "https://lawjournal.huji.ac.il/article/12/690",
-          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
-          "source_type": "journal_article"
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/11.%20%D7%99%D7%A6%D7%97%D7%A7%20%D7%A7%D7%9C%D7%99%D7%A0%D7%92%D7%94%D7%95%D7%A4%D7%A8%20-%20'%D7%94%D7%A2%D7%A8%D7%95%D7%AA%20%D7%9C%D7%97%D7%A7%D7%99%D7%A7%D7%94,%20%D7%A7%D7%91%D7%99%D7%A2%D7%AA%20%D7%94%D7%99%D7%96%D7%A7%D7%A7%D7%ות%20-%20חובה%20למינוח%20אנגלי%20בנוסח%20חדש%20של%20חוק%20מנדטורי.pdf",
+          "title": "יצחק קלינגהופר, הערות לחקיקה: קביעת היזקקות – חובה למינוח אנגלי בנוסח חדש של חוק מנדטורי",
+          "source_type": "academic"
         }
       ],
       "source_type": "compound"
     },
     {
       "url": null,
-      "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין; יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+      "title": "מסמך מאתר אתר הכנסת; בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין; פקודת סדרי השלטון והמשפט, תש\"ח–1948",
       "number": 4,
       "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/15/law/15_lst_545298.doc",
+          "title": "מסמך מאתר אתר הכנסת",
+          "source_type": "other"
+        },
         {
           "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1374-23-%d7%97%d7%90%d7%92%d7%a8-%d7%a0%d7%95%d7%a8%d7%99-%d7%9c%d7%93%d7%a8-%d7%a6%d7%95%d7%a3-%d7%a0-%d7%9e%d7%a4%d7%a7%d7%93-%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a6%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
           "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין",
           "source_type": "caselaw"
         },
         {
-          "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
-          "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
-          "source_type": "journal_article"
+          "url": "https://fs.knesset.gov.il/0/law/0_lsr_312670.pdf",
+          "title": "פקודת סדרי השלטון והמשפט, תש\"ח–1948",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "כללי ציטוט והנחיות לכתיבת עבודה - המרכז האקדמי רמת גן; פקודת הנזיקין [נוסח חדש]; מסמכי חקיקה של הכנסת – פקודת הנזיקין [נוסח חדש]",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.mishpat.ac.il/%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA-%D7%9C%D7%A8%D7%99%D7%A9%D7%95%D7%9D-%D7%91%D7%99%D7%91%D7%9C%D7%99%D7%95%D7%92%D7%A8%D7%A4%D7%99/",
+          "title": "כללי ציטוט והנחיות לכתיבת עבודה - המרכז האקדמי רמת גן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://nevo.co.il/law_html/law00/73015.htm",
+          "title": "פקודת הנזיקין [נוסח חדש]",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/7/law/7_lsr_210279.pdf",
+          "title": "מסמכי חקיקה של הכנסת – פקודת הנזיקין [נוסח חדש]",
+          "source_type": "other"
         }
       ],
       "source_type": "compound"
@@ -87,36 +125,84 @@
   ],
   "used_sources": [
     {
-      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7596&businessType=1",
-      "title": "הרוקחים [נוסח חדש], התשמ\"א-1981",
+      "url": "https://fs.knesset.gov.il/15/law/15_lst_545298.doc",
+      "title": "מסמך מאתר אתר הכנסת",
       "number": 1,
-      "origin": "local_db",
-      "source_type": "knesset_research",
-      "candidate_id": "0e694791-7938-4d00-80f7-94ab796ed76e"
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f92dc423-e524-49b5-b677-66a1f2efb52e"
     },
     {
-      "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
-      "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/3&fileName=SV3_9_8252-13.pdf&type=2",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
       "number": 1,
       "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "6d1fcaa8-deb6-4be4-8d47-a7fc2b538fed"
+      "source_type": "supreme_court_il",
+      "candidate_id": "74a635f0-79dc-4b7d-b68d-6247c9d97aa3"
+    },
+    {
+      "url": "https://nevo.co.il/law_html/law00/73015.htm",
+      "title": "פקודת הנזיקין [נוסח חדש]",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "5ece41ca-f0a5-4308-942f-1828b752c1d9"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/7/law/7_lsr_210279.pdf",
+      "title": "מסמכי חקיקה של הכנסת – פקודת הנזיקין [נוסח חדש]",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "026b79b4-3a0a-4722-8b53-6af7fbca00b5"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/%5C18%5CCommittees%5C18_cs_bg_329818.doc",
+      "title": "הצעת חוק הנזיקים האזרחיים (אחריות המדינה) (תיקון מס' 8)",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "ce585f6e-b846-4e05-bd4d-eb2f6748355a"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/0/law/0_lsr_312670.pdf",
+      "title": "פקודת סדרי השלטון והמשפט, תש\"ח–1948",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a26a862e-56ed-488f-b19b-53e6e894187b"
+    },
+    {
+      "url": "https://kotar.cet.ac.il/kotarapp/index/Page.aspx?nBookID=17149763&nTocEntryID=17422093&nPageID=17300713",
+      "title": "בין שני עולמות",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "87d686b3-7ac9-469b-a139-45dd066f9f3a"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/11.%20%D7%99%D7%A6%D7%97%D7%A7%20%D7%A7%D7%9C%D7%99%D7%A0%D7%92%D7%94%D7%95%D7%A4%D7%A8%20-%20'%D7%94%D7%A2%D7%A8%D7%95%D7%AA%20%D7%9C%D7%97%D7%A7%D7%99%D7%A7%D7%94,%20%D7%A7%D7%91%D7%99%D7%A2%D7%AA%20%D7%94%D7%99%D7%96%D7%A7%D7%A7%D7%ות%20-%20חובה%20למינוח%20אנגלי%20בנוסח%20חדש%20של%20חוק%20מנדטורי.pdf",
+      "title": "יצחק קלינגהופר, הערות לחקיקה: קביעת היזקקות – חובה למינוח אנגלי בנוסח חדש של חוק מנדטורי",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "fd7b89c0-661c-45a5-a765-0b8f0750bfcc"
     },
     {
       "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1374-23-%d7%97%d7%90%d7%92%d7%a8-%d7%a0%d7%95%d7%a8%d7%99-%d7%9c%d7%93%d7%a8-%d7%a6%d7%95%d7%a3-%d7%a0-%d7%9e%d7%a4%d7%a7%d7%93-%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a6%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
       "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין",
-      "number": 2,
+      "number": 4,
       "origin": "local_db",
       "source_type": "caselaw",
-      "candidate_id": "bb2faf9e-5cfa-420e-85bd-8ce1acfbf057"
+      "candidate_id": "8726f57d-c633-4d79-8761-91d82bc2acfe"
     },
     {
-      "url": "https://lawjournal.huji.ac.il/article/12/690",
-      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
-      "number": 2,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "f8b545a7-de40-4184-81d0-bb387d352f58"
+      "url": "https://www.mishpat.ac.il/%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA-%D7%9C%D7%A8%D7%99%D7%A9%D7%95%D7%9D-%D7%91%D7%99%D7%91%D7%9C%D7%99%D7%95%D7%92%D7%A8%D7%A4%D7%99/",
+      "title": "כללי ציטוט והנחיות לכתיבת עבודה - המרכז האקדמי רמת גן",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "0b7144b3-fd44-446a-9365-3cdd5dc5c30c"
     }
   ],
   "required_anchors": {
@@ -146,11 +232,12 @@
         "anchor_type": "primary_statute",
         "description": "סעיף 11 לפקודת סדרי השלטון והמשפט, תש\"ח-1948 (נורמת ההמשכיות של חקיקה מתקופת המנדט)",
         "candidate_ids": [
-          "17198e26-0fbb-43c5-8e21-94e6962706ee",
-          "9bce81e2-149c-4628-9fb6-211415f6bb2d",
-          "f3b08aa3-3bac-451f-8647-211d1ea5a155",
-          "8bfa0de2-f9fa-43de-ad4b-482266fff9b2",
-          "bb2faf9e-5cfa-420e-85bd-8ce1acfbf057"
+          "a26a862e-56ed-488f-b19b-53e6e894187b",
+          "bb101ab5-750c-418e-b4ea-3946b246aa43",
+          "d7222d14-0a0b-42fb-b6f7-709e366ab5c2",
+          "2840e114-8cfb-4ff7-914b-be36c3199a77",
+          "8726f57d-c633-4d79-8761-91d82bc2acfe",
+          "240e56e3-077c-4ca3-9314-3cdf3938c584"
         ],
         "is_docket_anchor": false,
         "reached_verifier": true,
@@ -196,24 +283,24 @@
   "verifier": {
     "counts": {
       "by_support": {
-        "direct": 0,
-        "partial": 4,
-        "unrelated": 7,
-        "tangential": 0
+        "direct": 1,
+        "partial": 17,
+        "unrelated": 2,
+        "tangential": 3
       },
       "by_role_match": {
-        "true": 11,
+        "true": 23,
         "false": 0
       }
     },
-    "dropped_count": 7
+    "dropped_count": 5
   },
   "completeness": {
     "reasons": [],
     "signals": [],
     "truncated": false,
     "last_block_kind": "paragraph",
-    "last_block_excerpt": "…היא פרקטיקה מקובלת, ומעמדה של הפקודה המנדטורית של 1944 נקבעת בהתאם לקשר שבין הוראותיה לבין חקיקה מאוחרת ופסיקה רלוונטית."
+    "last_block_excerpt": "…ח 1944 רק כאשר יש לו משמעות פרשנית; כשהעניין רגיש משפטית — הסבר בקצרה מדוע נחזית הסתמכות על אחד הנוסחים או על שניהם יחד."
   },
   "truncation_retry": {
     "retry_ms": 0,
@@ -223,9 +310,9 @@
     "escalated_to_full": false
   },
   "drafter_version": "v2.1c",
-  "footnote_count": 4,
-  "sources_used": 4,
-  "unique_source_count": 4,
+  "footnote_count": 5,
+  "sources_used": 10,
+  "unique_source_count": 10,
   "missing_anchor_caveat_injected": false,
   "missing_anchor_descriptions": []
 }

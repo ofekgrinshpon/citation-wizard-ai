@@ -2,12 +2,126 @@
   "id": "Q03",
   "category": "statutory_interpretation",
   "query": "מהי הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה, ומהם התנאים המצטברים?",
-  "run_id": "981b90a4-6ed2-4f61-aeee-335bd4b6ec29",
-  "ok": false,
-  "total_ms": 103808,
-  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
-  "footnotes": [],
-  "used_sources": [],
+  "run_id": "c1a898d8-b9eb-4a45-a828-3b5daaadea72",
+  "ok": true,
+  "total_ms": 132006,
+  "answer": "**הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה**\n\nבקווים כללים: המונח \"בעל שליטה\" בהקשר של הוראות מס המחייבות התייחסות לסעיף 32(9) מפורש לפי משמעותו שבאותו סעיף; צוים וכללים של רשות המסים מפנים במפורש לפרשנות זו כשמגדירים מי נחשב בעל שליטה בהקשרים שונים של דיני המס.¹\n\nבפסיקה ובפרשנות היישומית — חוזר מס הכנסה מצטט את פסק‑דינו של בית המשפט העליון בעא/ב\"ש 6357/90 שלם נ' שלם, וקובע בפרשנותה כי ההגדרה עשויה לכלול גם מי שבן או בת זוגו מחזיקים בזכויות בשיעור הקבוע בסעיף, אף אם אותו אדם עצמו אינו מחזיק בזכויות באופן ישיר.²\n\n**התנאים המצטברים — מרכיבים פרשניים ונקודות בדיקה**\n\n- החזקה בזכויות בשיעור הקבוע בסעיף — מבחן כמותי או קו־עוגן סטטוטורי: ההגדרה מתייחסת להחזקה של זכויות בהיקף שנקבע בסעיף 32(9) וכפי שמפורש במסמכי רשות המסים; בפועל יש לבחון האם נחזקה הזכויות בפועל או דרך נישומים קשורים.³\n- כוח להשפיע על השימוש בהכנסה והשתתפות בשליטה ניהולית — מבחן איכותי: במסמך פרשני נדונה החשיבות של כוח מעשי להורות על השימוש בהכנסה או להשפיע על החלטות ניהוליות כמרכיב בהכרעת היותו של אדם בעל שליטה.⁴\n- החזקה ישירה או עקיפה וכלילת זכויות בני‑זוג — היקף ההחזקה הנבחן כולל גם זכויות הנמצאות בידי בן/בת הזוג של הנשאל, בהתאם לפרשנות הפסיקה שהודגמה בעקרון שלם נ' שלם.⁵\n\nיש להדגיש שהאלמנטים הללו מתפרשים בדרך כלל כמרכיבים המצטברים שיש לבחון בקונקרטיקה: גם הימצאות של שיעור זכויות משמעותי וגם הימצאות כוח מעשי לשליטה תחזקנה את ההסקה כי מדובר ב'בעל שליטה'.⁵\n\nהיבטים פירושיים שנדונים בפרשנות ובפסיקה כוללים הבחנה בין החזקה ישירה לעקיפה, בין השפעה כלכלית לבין שליטה ניהולית, והשאלה מתי זכויות של בן/בת זוג ייחשבו כמרחיבות את מעמדו של האדם. מקורות שסופקו מעלים את סוגיית כוח ההוראה על שימוש בהכנסה כמבחן רלוונטי, אך אינם כוללים נוסח מדויק של כל מבחני המשנה או דיון פסיקתי מלא ומתמשך בכל המצבים האפשריים.⁵\n\nדוגמאות מעשיות: החומר שסופק מצטט בפירוש את שלם נ' שלם כאקזמפלאר מרכזי שבו הושם דגש על הכללת זכויות בן/בת הזוג במסגרת ההגדרה; מקורות נוספים או פסקי‑דין ספציפיים אחרים לא נכללו בחומר שסופק ולכן לא ניתן להציג כאן מקרים משפטיים נוספים מתועדים מתוך אותם מסמכים.²\n\nמגבלות וסיכום קצר: על־פי החומר שסופק, ההגדרה של \"בעל שליטה\" מתייחסת להגדרה הסטטוטורית שבסעיף 32(9) והפרשנות היישומית כוללת גם כלילת זכויות בני‑זוג וכיסוי של היבטים כמותיים (היקף זכויות) ואיכותיים (כוח מעשי להשפיע). עם זאת, החומר המוצג כאן מצטמצם בצד הדיון הפסיקתי המפורט ובנוסח המלא של הסעיף; לקביעה סופית בענייני עובדות יש לבחון את נוסח סעיף 32(9) עצמו ואת הפסיקה וההלכה הרלוונטיים במלואם.",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "צו מס הכנסה (קביעת סכומים ששולמו לבעל שליטה כהכנסה), תשמ\"ו-1986; כללי מס הכנסה (הקלות מס בהקצאת מניות לעובדים), תשס\"ג-2003",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/255_390.htm",
+          "title": "צו מס הכנסה (קביעת סכומים ששולמו לבעל שליטה כהכנסה), תשמ\"ו-1986",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/999_096.htm",
+          "title": "כללי מס הכנסה (הקלות מס בהקצאת מניות לעובדים), תשס\"ג-2003",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-14-2002/he/Policy_IncomeTaxInst_hoz14-2002.pdf",
+      "title": "חוזר מס הכנסה 14/2002 - שלם נ' שלם",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-14-2002/he/Policy_IncomeTaxInst_hoz14-2002.pdf",
+          "title": "חוזר מס הכנסה 14/2002 - שלם נ' שלם",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "חוזר מס הכנסה 14/2002 - שלם נ' שלם; כללי מס הכנסה (הקלות מס בהקצאת מניות לעובדים), תשס\"ג-2003",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-14-2002/he/Policy_IncomeTaxInst_hoz14-2002.pdf",
+          "title": "חוזר מס הכנסה 14/2002 - שלם נ' שלם",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/999_096.htm",
+          "title": "כללי מס הכנסה (הקלות מס בהקצאת מניות לעובדים), תשס\"ג-2003",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://netanya.ac.il/gur/data/AGUDA/law/yearb/taxes/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA%20%D7%A1%D7%A2%D7%99%D7%A4%D7%99%20%D7%97%D7%95%D7%A7%20%D7%9E%D7%99%D7%A1%D7%99%D7%9D.doc",
+      "title": "פרשנות סעיפים – הכנה למבחן (מסמך לימודי)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://netanya.ac.il/gur/data/AGUDA/law/yearb/taxes/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA%20%D7%A1%D7%A2%D7%99%D7%A4%D7%99%20%D7%97%D7%95%D7%A7%20%D7%9E%D7%99%D7%A1%D7%99%D7%9D.doc",
+          "title": "פרשנות סעיפים – הכנה למבחן (מסמך לימודי)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "חוזר מס הכנסה 14/2002 - שלם נ' שלם; פרשנות סעיפים – הכנה למבחן (מסמך לימודי)",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-14-2002/he/Policy_IncomeTaxInst_hoz14-2002.pdf",
+          "title": "חוזר מס הכנסה 14/2002 - שלם נ' שלם",
+          "source_type": "other"
+        },
+        {
+          "url": "https://netanya.ac.il/gur/data/AGUDA/law/yearb/taxes/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA%20%D7%A1%D7%A2%D7%99%D7%A4%D7%99%20%D7%97%D7%95%D7%A7%20%D7%9E%D7%99%D7%A1%D7%99%D7%9D.doc",
+          "title": "פרשנות סעיפים – הכנה למבחן (מסמך לימודי)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/255_390.htm",
+      "title": "צו מס הכנסה (קביעת סכומים ששולמו לבעל שליטה כהכנסה), תשמ\"ו-1986",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "9d25ed39-708f-460a-8320-33508ca2526c"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/999_096.htm",
+      "title": "כללי מס הכנסה (הקלות מס בהקצאת מניות לעובדים), תשס\"ג-2003",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "baeb8d8c-096c-4519-a828-79b528228a52"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-14-2002/he/Policy_IncomeTaxInst_hoz14-2002.pdf",
+      "title": "חוזר מס הכנסה 14/2002 - שלם נ' שלם",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a6e853e3-103a-4bef-9c15-f994512de123"
+    },
+    {
+      "url": "https://netanya.ac.il/gur/data/AGUDA/law/yearb/taxes/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA%20%D7%A1%D7%A2%D7%99%D7%A4%D7%99%20%D7%97%D7%95%D7%A7%20%D7%9E%D7%99%D7%A1%D7%99%D7%9D.doc",
+      "title": "פרשנות סעיפים – הכנה למבחן (מסמך לימודי)",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "77ef256f-b6a2-41a0-8933-9efa28d29048"
+    }
+  ],
   "required_anchors": {
     "count": 0,
     "anchors": [],
@@ -18,24 +132,36 @@
   "verifier": {
     "counts": {
       "by_support": {
-        "direct": 0,
-        "partial": 0,
+        "direct": 1,
+        "partial": 3,
         "unrelated": 9,
         "tangential": 1
       },
       "by_role_match": {
-        "true": 10,
-        "false": 0
+        "true": 13,
+        "false": 1
       }
     },
     "dropped_count": 10
   },
-  "completeness": null,
-  "truncation_retry": null,
+  "completeness": {
+    "reasons": [],
+    "signals": [],
+    "truncated": false,
+    "last_block_kind": "paragraph",
+    "last_block_excerpt": "… ובנוסח המלא של הסעיף; לקביעה סופית בענייני עובדות יש לבחון את נוסח סעיף 32(9) עצמו ואת הפסיקה וההלכה הרלוונטיים במלואם."
+  },
+  "truncation_retry": {
+    "retry_ms": 0,
+    "attempted": false,
+    "reasons_initial": [],
+    "same_model_retry": false,
+    "escalated_to_full": false
+  },
   "drafter_version": "v2.1c",
-  "footnote_count": 0,
-  "sources_used": 0,
-  "unique_source_count": 0,
+  "footnote_count": 5,
+  "sources_used": 4,
+  "unique_source_count": 4,
   "missing_anchor_caveat_injected": false,
   "missing_anchor_descriptions": []
 }

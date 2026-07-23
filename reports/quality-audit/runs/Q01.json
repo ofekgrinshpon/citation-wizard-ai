@@ -2,220 +2,176 @@
   "id": "Q01",
   "category": "docket_holding",
   "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
-  "run_id": "2c28969e-6c99-45e9-b713-a2b8e1322a04",
+  "run_id": "01c3132b-108a-4270-95da-be02df9569cb",
   "ok": true,
-  "total_ms": 145903,
-  "answer": "**ממצא עיקרי**\n\nבג\"ץ 6298/07 (רסלר נ' כנסת ישראל) דן והכריע בשאלת חוקתיותו של \"חוק דחיית שירות לתלמידי ישיבות\" (חוק טל). המסמך הרשמי של פסק הדין הוא המקור העיקרי להכרעה זו.¹\n\nמניין המקורות שסופקו עולה בזהירות כי בפסק הדין התקבלה הכרעה מהותית ביחס לחוק; עם זאת הקבצים שבידי כאן תומכים חלקית בלבד בפרטי נוסח ההכרעה ולכן אין להוציא מסקנה גורפת ללא עיון בטקסט המלא של פסק הדין.²\n\n**העילות והנימוקים שנבדקו בפסק הדין**\n\nאחד המישרים המרכזיים שבג\"ץ בחן הוא שאלת הפגיעה בכלל השוויון: האם מתן דחיית שירות אוטומטית לתלמידי ישיבות יוצר הפליה בלתי מידתית ביחס לאוכלוסיות אחרות החייבות בגיוס.³\n\nבית המשפט בחן את מידתיות המגבלות שמוטלות באמצעות החוק — כלומר האם המטרה הציבורית מצדיקה את הפגיעה בזכויות הפרט וכמה רחב או צר צריך להיות תחום הדחיות. ניתוח זה נעשה על רקע דיונים תיאורטיים בכלי המידתיות ושיקול משקל הזכויות מול האינטרס הציבורי.³\n\nנסקרו גם טענות בהקשר של האצלת סמכויות וחוסר בהירות בהגדרת המסגרת המבצעית של הסעד — בקשות שבהן נטען כי החוק מעניק רישות נרחב מדי לגורמים ביצועיים ללא קווים ברורים ותשתית עובדתית מספיקה.²\n\n**הסעד שניתן וההשלכות המיידיות**\n\nמהפסק עצמו (s1) יוצא כי בית המשפט לא התעלם מהצורך במענה פרקטי למצב היסודי שנוצר בשל קיומו של החוק, וכי פסק הדין כלל הכרעה שנגעה גם לסעד ולצורת היישום. לאור מגבלות התמיכה במסמכים הנוספים יש להיוועץ בטקסט המלא לפרטי נוסח הסעד (למשל האם ניתנה פסילה מוחלטת, פסילה חלקית, או השהיית ביטול).⁴\n\nברמה המעשית, המקורות המשניים מצביעים כי הכרעת בג\"ץ העוררה דיון ציבורי־חקיקתי על המשך יישום ההסדרים והובילה להתדיינויות נוספות ולבחינה מחדש של המסגרת החוקתית והחקיקתית סביב דחיית שירות תלמידי ישיבות.⁵\n\n**השלכות בטווח הבינוני והארוך**\n\nבבחינה רחבה יותר, הספרות והפסקאות שהתמקדו בנושא מציינות כי החלטת בג\"ץ בתיק זה השפיעה על הוויכוח החוקתי־מוסדי בנוגע לסטטוס־קוּו ולמעמדה של הכנסת מול ביהמ\"ש, וכן עוררה עיון על הצורך בתשתית עובדתית וחקיקה ברורה במקרים שבהם נוגעת החקיקה לאוטונומיה של קבוצות חברתיות.⁶\n\nמספר מחקרים ומאמרים חוקרתיים דנו בהמשך ההשפעה של הפסיקה על המגזר החרדי וביחסי דת־ומדינה, וכן על השימוש בכלי המידתיות בעת בחינת חוקים מסוג זה; ההערכה בספרות אינה אחידה ויש ויכוח על מידת השינוי שיש לזקוף לזכותו של הפסיקה.⁷\n\nלסיכום מעשי: לקבלת נוסח מילולי ומדויק של הממצאים, נימוקי בית המשפט והסעד שניתן יש לעיין ישירות בפסק הדין שפורסם (s1). המקורות הנוספים העוסקים בסביבה החוקתית והחברתית מספקים פרשנות והקשר, אך אינם תחליף לטקסט ההכרעה עצמו.⁸",
+  "total_ms": 157534,
+  "answer": "**מסקנה מרכזית**\n\nבתיק בג\"ץ 6298/07 רסלר נ' כנסת ישראל בית המשפט קבע כי \"חוק דחיית שירות לתלמידי ישיבות\" (\"חוק טל\") אינו עומד בתנאי פסקת ההגבלה וכי הסדריו פוגעים בזכות לשוויון; כתוצאה מכך נקבע כי ההסדר איננו חוקתי.¹\n\nנימוקי ההכרעה התבססו על מבחן המידתיות ופיצולו: בית המשפט מצא שההגבלה על השוויון אינה מותאמת להשגת המטרה המוצהרת, אינה הכרחית ופוגעת באופן בלתי מידתי בזכויות המעורבות; בהכרעה הוטחה ביקורת על כך שהחוק יצר מנגנונים שהנציחו מצב בלתי שוויוני ולא הובילו למימוש תכליותיו.²\n\nבית המשפט הדגיש את חשיבות עקרון השוויון בבחינת חקיקה המשפיעה על שירות מילואים ושירות סדיר, וראה בחקיקה זו פגם מהותי (תכליתי ומבני) שהופך אותה לבלתי עומדת ביסודות ההגבלה החוקתית.¹\n\nסעד שניתן בפסיקה לא היה פסילה מיידית ופרויקטית של כל היבט בפועל אלא הכרעה שהסדר החוקתי עצמו אינו עומד והבחנה שלא להאריך אותו; בפועל ההכרעה הובילה לכך שלא ניתנה תוקף להארכות נוספות והחוק פקע באוגוסט 2012.³\n\nההשלכות הפרקטיות והחקיקתיות כללו הפסקת הארכת תוקפו של חוק טל ופגיעה ביכולת להמשיך את ההסדר באותו נוסח; בשנים שלאחר מכן נערכו דיונים ונסיונות חקיקה שונים במטרה לשנות, להחליף או להסדיר מחדש את המשך הסדרה לגיוס תלמידי ישיבות, והדיווחים הממשלתיים וכנסתיים מציינים ניסיונות אלה והוויכוח על מידת השינויים שהושגו.⁴\n\nיש לציין כי בפסיקה ובכתיבה האקדמית ניתנו פרשנויות שונות לגודל ההשפעה של ההחלטה ולמבעים הדוגמטיים שבה; בין השאר נדונה דעת מיעוט וניתוח אקדמי של נימוקי השופטים, שאלות אלה נדונות בספרות המקצועית.⁵",
   "footnotes": [
     {
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
-      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "url": null,
+      "title": "פסק-דין בתיק בג\"ץ 6298/07; תיקון חוק הגיוס – שילוב תלמידי ישיבות",
       "number": 1,
       "sources": [
         {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
-          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
-          "source_type": "supreme_court_il"
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "פסק-דין בתיק בג\"ץ 6298/07",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+          "source_type": "other"
         }
       ],
-      "source_type": "supreme_court_il"
+      "source_type": "compound"
     },
     {
       "url": null,
-      "title": "מסמך מאתר אתר ממשלתי (gov.il); על בשלות וחוקתיות",
+      "title": "פסק-דין בתיק בג\"ץ 6298/07; תיקון חוק הגיוס – שילוב תלמידי ישיבות; פס\"ד בג\"ץ 6198/23 - Gov.il",
       "number": 2,
       "sources": [
         {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
-          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
-          "source_type": "supreme_court_il"
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "פסק-דין בתיק בג\"ץ 6298/07",
+          "source_type": "other"
         },
         {
-          "url": "https://lawjournal.huji.ac.il/article/12/1063",
-          "title": "על בשלות וחוקתיות",
-          "source_type": "journal_article"
+          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/spokesmenmessage250624/he/%D7%A4%D7%A1%D7%93%20%D7%91%D7%92%D7%A5%206198-23%20-%20%D7%92%D7%99%D7%95%D7%A3%20%D7%AA%D7%9C%D7%9E%D7%99%D7%93%D7%99%20%D7%94%D7%99%D7%A9%D7%99%D7%91%D7%95%D7%AA%20%D7%95%D7%9E%D7%99%D7%9E%D7%ון%20ה%מוסדות%20ה%תורניים.docx",
+          "title": "פס\"ד בג\"ץ 6198/23 - Gov.il",
+          "source_type": "other"
         }
       ],
       "source_type": "compound"
     },
     {
       "url": null,
-      "title": "מסמך מאתר אתר ממשלתי (gov.il); על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+      "title": "החלטה בתיק בג\"ץ 6298/07; פס\"ד בג\"ץ 6198/23 - Gov.il; ציר זמן: גיוס תלמידי ישיבות",
       "number": 3,
       "sources": [
         {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
-          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
-          "source_type": "supreme_court_il"
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
         },
         {
-          "url": "https://lawjournal.huji.ac.il/article/12/1550",
-          "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
-          "source_type": "journal_article"
+          "url": "https://www.gov.il/BlobFolder/news/spokesmenmessage250624/he/%D7%A4%D7%A1%D7%93%20%D7%91%D7%92%D7%A5%206198-23%20-%20%D7%92%D7%99%D7%95%D7%A3%20%D7%AA%D7%9C%D7%9E%D7%99%D7%93%D7%99%20%D7%94%D7%99%D7%A9%D7%99%D7%91%D7%95%D7%AA%20%D7%95%D7%9E%D7%99%D7%9E%D7%ון%20ה%מוסדות%20ה%תורניים.docx",
+          "title": "פס\"ד בג\"ץ 6198/23 - Gov.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://m.knesset.gov.il/activity/committees/foreignaffairs/legislationdocs/securityservice21_1.pdf",
+          "title": "ציר זמן: גיוס תלמידי ישיבות",
+          "source_type": "other"
         }
       ],
       "source_type": "compound"
     },
     {
       "url": null,
-      "title": "מסמך מאתר אתר ממשלתי (gov.il); בג\"ץ 5819-24 התנועה למען איכות השלטון בישראל נ׳ שר הביטחון פסק דין",
+      "title": "ציר זמן: גיוס תלמידי ישיבות; מסמך מאתר אתר הכנסת; מסמך מאתר אתר ממשלתי (gov.il)",
       "number": 4,
       "sources": [
         {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
-          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
-          "source_type": "supreme_court_il"
+          "url": "https://m.knesset.gov.il/activity/committees/foreignaffairs/legislationdocs/securityservice21_1.pdf",
+          "title": "ציר זמן: גיוס תלמידי ישיבות",
+          "source_type": "other"
         },
         {
-          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5819-24-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-          "title": "בג\"ץ 5819-24 התנועה למען איכות השלטון בישראל נ׳ שר הביטחון פסק דין",
-          "source_type": "caselaw"
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/dcbe8d55-f7f7-e411-80c8-00155d010977/2_dcbe8d55-f7f7-e411-80c8-00155d010977_11_9853.pdf",
+          "title": "מסמך מאתר אתר הכנסת",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision8987-22/he/%D7%A4%D7%A1%D7%93%208987-22.docx",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
         }
       ],
       "source_type": "compound"
     },
     {
-      "url": null,
-      "title": "\"הגג התעופף\" – ציורים של דת ומדינה בפסיקתה של השופטת אילה פרוקצ&#8217;יה | שולמית אלמוג (כרך יח); בג\"ץ 5819-24 התנועה למען איכות השלטון בישראל נ׳ שר הביטחון פסק דין",
+      "url": "https://cris.biu.ac.il/en/publications/%D7%94%D7%AA%D7%A4%D7%A8-%D7%94%D7%A8%D7%92%D7%99%D7%A9-%D7%A9%D7%9C-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA-%D7%91%D7%92%D7%A5-629807-%D7%A8%D7%A1%D7%9C%D7%A8-%D7%A0-%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%91%D7%A2%D7%A0%D7%99%D7%99-2/",
+      "title": "מסמך מאתר אתר אקדמי (cris.biu.ac.il)",
       "number": 5,
       "sources": [
         {
-          "url": "https://runilawreview.org/2014/08/31/vol18-almog/",
-          "title": "\"הגג התעופף\" – ציורים של דת ומדינה בפסיקתה של השופטת אילה פרוקצ&#8217;יה | שולמית אלמוג (כרך יח)",
-          "source_type": "journal_article"
-        },
-        {
-          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5819-24-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-          "title": "בג\"ץ 5819-24 התנועה למען איכות השלטון בישראל נ׳ שר הביטחון פסק דין",
-          "source_type": "caselaw"
+          "url": "https://cris.biu.ac.il/en/publications/%D7%94%D7%AA%D7%A4%D7%A8-%D7%94%D7%A8%D7%92%D7%99%D7%A9-%D7%A9%D7%9C-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA-%D7%91%D7%92%D7%A5-629807-%D7%A8%D7%A1%D7%9C%D7%A8-%D7%A0-%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%91%D7%A2%D7%A0%D7%99%D7%99-2/",
+          "title": "מסמך מאתר אתר אקדמי (cris.biu.ac.il)",
+          "source_type": "other"
         }
       ],
-      "source_type": "compound"
-    },
-    {
-      "url": null,
-      "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"; מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
-      "number": 6,
-      "sources": [
-        {
-          "url": "https://lawjournal.huji.ac.il/article/12/1930",
-          "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
-          "source_type": "journal_article"
-        },
-        {
-          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_3b568f65476147a5b5282e9b0226732c.pdf",
-          "title": "מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
-          "source_type": "journal_article"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": null,
-      "title": "הנעת שינוי חברתי בתחומי האוטונומיה של המגזר החרדי על ידי בית המשפט העליון – תקווה חלולה בגרסה ישראלית; \"הגג התעופף\" – ציורים של דת ומדינה בפסיקתה של השופטת אילה פרוקצ&#8217;יה | שולמית אלמוג (כרך יח)",
-      "number": 7,
-      "sources": [
-        {
-          "url": "https://lawjournal.huji.ac.il/article/12/1574",
-          "title": "הנעת שינוי חברתי בתחומי האוטונומיה של המגזר החרדי על ידי בית המשפט העליון – תקווה חלולה בגרסה ישראלית",
-          "source_type": "journal_article"
-        },
-        {
-          "url": "https://runilawreview.org/2014/08/31/vol18-almog/",
-          "title": "\"הגג התעופף\" – ציורים של דת ומדינה בפסיקתה של השופטת אילה פרוקצ&#8217;יה | שולמית אלמוג (כרך יח)",
-          "source_type": "journal_article"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": null,
-      "title": "מסמך מאתר אתר ממשלתי (gov.il); הנעת שינוי חברתי בתחומי האוטונומיה של המגזר החרדי על ידי בית המשפט העליון – תקווה חלולה בגרסה ישראלית; מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
-      "number": 8,
-      "sources": [
-        {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
-          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
-          "source_type": "supreme_court_il"
-        },
-        {
-          "url": "https://lawjournal.huji.ac.il/article/12/1574",
-          "title": "הנעת שינוי חברתי בתחומי האוטונומיה של המגזר החרדי על ידי בית המשפט העליון – תקווה חלולה בגרסה ישראלית",
-          "source_type": "journal_article"
-        },
-        {
-          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_3b568f65476147a5b5282e9b0226732c.pdf",
-          "title": "מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
-          "source_type": "journal_article"
-        }
-      ],
-      "source_type": "compound"
+      "source_type": "other"
     }
   ],
   "used_sources": [
     {
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
-      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+      "title": "פסק-דין בתיק בג\"ץ 6298/07",
       "number": 1,
-      "origin": "local_db",
-      "source_type": "supreme_court_il",
-      "candidate_id": "9b9428c0-8b49-4905-bc96-18c64f7c6240"
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "8dab708a-41a1-43f7-a5cc-4bc5bcd4865f"
     },
     {
-      "url": "https://lawjournal.huji.ac.il/article/12/1063",
-      "title": "על בשלות וחוקתיות",
+      "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a96d77ab-71d9-4a60-9682-319f66308d49"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/spokesmenmessage250624/he/%D7%A4%D7%A1%D7%93%20%D7%91%D7%92%D7%A5%206198-23%20-%20%D7%92%D7%99%D7%95%D7%A3%20%D7%AA%D7%9C%D7%9E%D7%99%D7%93%D7%99%20%D7%94%D7%99%D7%A9%D7%99%D7%91%D7%95%D7%AA%20%D7%95%D7%9E%D7%99%D7%9E%D7%ון%20ה%מוסדות%20ה%תורניים.docx",
+      "title": "פס\"ד בג\"ץ 6198/23 - Gov.il",
       "number": 2,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "be56dcd7-b192-4cfa-9710-a6489fe13064"
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "44b02b49-3443-40b6-945b-5a22999b4bfe"
     },
     {
-      "url": "https://lawjournal.huji.ac.il/article/12/1550",
-      "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07",
       "number": 3,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "c6b3b7d0-6a43-4e9e-ba91-56d6b98a4031"
-    },
-    {
-      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5819-24-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "title": "בג\"ץ 5819-24 התנועה למען איכות השלטון בישראל נ׳ שר הביטחון פסק דין",
-      "number": 4,
-      "origin": "local_db",
+      "origin": "perplexity",
       "source_type": "caselaw",
-      "candidate_id": "ca2dfca3-5914-4715-bd45-5d1ea1d4a6a5"
+      "candidate_id": "3870de20-20a3-4c75-b294-ed0c9b455330"
     },
     {
-      "url": "https://runilawreview.org/2014/08/31/vol18-almog/",
-      "title": "\"הגג התעופף\" – ציורים של דת ומדינה בפסיקתה של השופטת אילה פרוקצ&#8217;יה | שולמית אלמוג (כרך יח)",
+      "url": "https://m.knesset.gov.il/activity/committees/foreignaffairs/legislationdocs/securityservice21_1.pdf",
+      "title": "ציר זמן: גיוס תלמידי ישיבות",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "72e0f4ec-61b2-41ad-b1e7-278c362556b3"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/dcbe8d55-f7f7-e411-80c8-00155d010977/2_dcbe8d55-f7f7-e411-80c8-00155d010977_11_9853.pdf",
+      "title": "מסמך מאתר אתר הכנסת",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "fef0776c-d13d-48ab-b2f6-6f22a4685810"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision8987-22/he/%D7%A4%D7%A1%D7%93%208987-22.docx",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "7a7b9c3f-ad3f-4036-973a-eb2c543e2daa"
+    },
+    {
+      "url": "https://cris.biu.ac.il/en/publications/%D7%94%D7%AA%D7%A4%D7%A8-%D7%94%D7%A8%D7%92%D7%99%D7%A9-%D7%A9%D7%9C-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA-%D7%91%D7%92%D7%A5-629807-%D7%A8%D7%A1%D7%9C%D7%A8-%D7%A0-%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%91%D7%A2%D7%A0%D7%99%D7%99-2/",
+      "title": "מסמך מאתר אתר אקדמי (cris.biu.ac.il)",
       "number": 5,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "1b5e713f-0b49-4744-9634-16ba80d2aca8"
-    },
-    {
-      "url": "https://lawjournal.huji.ac.il/article/12/1930",
-      "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
-      "number": 6,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "b96e4472-0f5e-4188-a874-0f956fc75b5b"
-    },
-    {
-      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_3b568f65476147a5b5282e9b0226732c.pdf",
-      "title": "מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
-      "number": 6,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "0c208321-c08e-4e46-8c84-1591a75d68bc"
-    },
-    {
-      "url": "https://lawjournal.huji.ac.il/article/12/1574",
-      "title": "הנעת שינוי חברתי בתחומי האוטונומיה של המגזר החרדי על ידי בית המשפט העליון – תקווה חלולה בגרסה ישראלית",
-      "number": 7,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "d77dc7ae-2a7a-481e-bbb2-95a82bd7ed09"
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a5619056-f9f3-4595-9483-c46f4ff8a8e4"
     }
   ],
   "required_anchors": {
@@ -246,17 +202,20 @@
         "anchor_type": "binding_case_law",
         "description": "פסק הדין בעניין בג\"ץ 6298/07 עצמו",
         "candidate_ids": [
-          "9b9428c0-8b49-4905-bc96-18c64f7c6240",
-          "ca2dfca3-5914-4715-bd45-5d1ea1d4a6a5",
-          "d77dc7ae-2a7a-481e-bbb2-95a82bd7ed09",
-          "be56dcd7-b192-4cfa-9710-a6489fe13064",
-          "1b5e713f-0b49-4744-9634-16ba80d2aca8",
-          "873bb884-fe24-44a5-bdd0-2ae960bc91de",
-          "c6b3b7d0-6a43-4e9e-ba91-56d6b98a4031"
+          "a96d77ab-71d9-4a60-9682-319f66308d49",
+          "8dab708a-41a1-43f7-a5cc-4bc5bcd4865f",
+          "3870de20-20a3-4c75-b294-ed0c9b455330",
+          "07987f16-bf8e-4e64-821d-a05c2e882852",
+          "bf71b4d5-db0b-4156-b4dc-503b28cd383a",
+          "fa2a88ed-0df7-4309-aa08-840f1cd70dd5",
+          "f7f63d1b-f89b-454d-8921-78ff87f3379c",
+          "32a5410e-d226-470e-9ac6-73501fd7017a",
+          "f46e318c-694b-4da8-be64-98fa62f6bf50",
+          "399720e2-a7ea-4c98-a566-5ee3a36af415"
         ],
         "is_docket_anchor": true,
         "reached_verifier": true,
-        "verified_support": "partial"
+        "verified_support": "direct"
       }
     ],
     "queries_emitted": [
@@ -309,24 +268,24 @@
   "verifier": {
     "counts": {
       "by_support": {
-        "direct": 0,
-        "partial": 9,
-        "unrelated": 3,
-        "tangential": 0
+        "direct": 6,
+        "partial": 12,
+        "unrelated": 2,
+        "tangential": 2
       },
       "by_role_match": {
-        "true": 12,
-        "false": 0
+        "true": 21,
+        "false": 1
       }
     },
-    "dropped_count": 3
+    "dropped_count": 4
   },
   "completeness": {
     "reasons": [],
     "signals": [],
     "truncated": false,
     "last_block_kind": "paragraph",
-    "last_block_excerpt": "… הדין שפורסם (s1). המקורות הנוספים העוסקים בסביבה החוקתית והחברתית מספקים פרשנות והקשר, אך אינם תחליף לטקסט ההכרעה עצמו."
+    "last_block_excerpt": "…ההחלטה ולמבעים הדוגמטיים שבה; בין השאר נדונה דעת מיעוט וניתוח אקדמי של נימוקי השופטים, שאלות אלה נדונות בספרות המקצועית."
   },
   "truncation_retry": {
     "retry_ms": 0,
@@ -336,7 +295,7 @@
     "escalated_to_full": false
   },
   "drafter_version": "v2.1c",
-  "footnote_count": 8,
+  "footnote_count": 5,
   "sources_used": 8,
   "unique_source_count": 8,
   "missing_anchor_caveat_injected": false,

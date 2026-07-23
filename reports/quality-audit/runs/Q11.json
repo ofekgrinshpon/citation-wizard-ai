@@ -2,51 +2,112 @@
   "id": "Q11",
   "category": "thin_corpus",
   "query": "האם קיימת פסיקה ישראלית מחייבת בנוגע לאחריות מפעילי בורסות קריפטו מקומיות כלפי משתמשים לאחר פריצת סייבר?",
-  "run_id": "94896348-886b-4744-b06c-d08b582bf082",
+  "run_id": "b60302b6-2fb2-46dd-9aa8-bcd576a33608",
   "ok": true,
-  "total_ms": 127718,
-  "answer": "תשובה תמציתית: על־פי המקורות שסופקו, אין בישראל פסיקה של ערכאה עליונה הקובעת באופן גורף וחלקי־כללי כי מפעילי בורסות קריפטו מקומיות הם אחראים באופן אוטומטי כלפי משתמשים בעקבות פריצות סייבר.\n\n**היקף העיון והעקרונות המשפטיים הרלוונטיים**\n\nפסיקת בית המשפט העליון המסופקת בעניין דניאל וגנר נוגעת לעקרונות חובת הזהירות והרשלנות ומנסחת מבחנים מתודולוגיים לבחינת קיומה של חובת זהירות בהקשרים חדשים; מבחנים אלה ניתנים להשלכה אנלוגית על שירותים מקוונים ופלטפורמות.¹\n\nפסק הדין באלכסנדר אורן בעמ' דן אף הוא בשאלת חובת הזהירות ביחס לשירותים ומכשירים מסחריים, ומדגיש כי שאלת ההטלה של חובת זהירות היא תלוית נסיבות וכוללת בחינה של הצפיות והסטנדרטים המקצועיים הרלוונטיים.²\n\nמן שני המקורות ניתן בזהירות להסיק כי אמנם יש מסגרת דוקטרינלית — מבחני זהירות, תאוריות של ציפייה והכרעה תלויית נסיבות — אך אין בהם הכרעה ספציפית בנוגע למפעילי בורסות קריפטו לאחר פריצות סייבר.³\n\n**מענה מפורש לפי הנושאים שביקשת**\n\nלגבי סוגי האחריות (חוזית, נזיקית, חובת גילוי/הגנה על הצרכן, אי־כשרות מעשה/הונאה): אין במקורות שסופקו הכרעה מחייבת המגדירה באופן מואר את משכה וסוגה של אחריות כלפי משתמשי בורסה קריפטו. עם זאת, מבחני חובת הזהירות בפסיקה עשויים לתמוך בטענה לרשלנות אזרחית בתנאים מסוימים, בעוד שסוגיות חוזיות וצרכניות יישענו על ההסכמים שבין הצדדים ועל חקיקה/אכיפה נפרדת.³\n\nלגבי חובת פיצוי ושיקום והיקף הפיצוי: המקורות הנבדקים אינם קובעים כללים ספציפיים האם יש לפצות בשווי שוק של מטבעות קריפטו אבודים, האם הפיצוי יינתן במטבעות עצמם או בכסף מזומן, או האם חלות פטורים והגבלות רגולטוריות ייחודיות בנושא זה.\n\nלגבי יישום עקרונות כלליים של אחריות בסייבר: הפסיקה הכללית על חובת הזהירות והרשלנות מספקת מסגרת אנלוגית שניתן להפעילה על אירועי אבטחת מידע ופלטפורמות מקוונות, אך שימוש באנלוגיה זו תלוי בעובדות הקונקרטיות — ניתן להעריך לפי מידת הסבירות להתרחשות הנזק, קרבת היחסים המשפטית, סטנדרט הזהירות המקובל בענף ואמצעי האבטחה שננקטו.³\n\nמסקנה מעשית קצרה: בהיעדר פסיקה עליונה ספציפית לבורסות קריפטו, העתירות/תביעות נגד מפעילי בורסות בגין פריצות ייכשלו או ינצחו על בסיס בחינה עובדית־חוקתית של הנסיבות, ההסכמים, הסטנדרטים המקצועיים ואמצעי האבטחה שננקטו, תוך שימוש במבחני חובת הזהירות המפותחים בפסיקה הכללית.³\n\nהמלצה מחקרית: כדי לקבוע תמונה מעודכנת וסופית יש לבדוק פסקי דין מאוחרים יותר, הוראות רגולטוריות עדכניות והנחיות מקצועיות בענף הביטחון הסייבר ובשוק ההון — מקורות אלה אינם נכללים בחומר שסופק כאן ולכן לא נבדקו בתשובה זו.",
+  "total_ms": 137515,
+  "answer": "**מסקנה עיקרית**\n\nעל‑פי המסמכים והמאמרים שסופקו לבחינה אין במקורות אלה פסיקה של בית המשפט העליון או של ערכאות מחייבות המכריעה באופן מפורש על אחריות מפעילי בורסות קריפטו מקומיות כלפי משתמשים בעקבות פריצת סייבר.¹\n\n**שאלה C1 — האם קיימת פסיקה מחייבת?**\n\nמהחומר שסופק עולה כי הנושאים הובאו לדיון בדוחות ובמאמרים משפטיים אך לא זוהו בפנייתנו פסקי דין מחייבים הקובעים אחריות כזו; המקורות הם דיווחים וניתוחים שאין בהם החלטות שיפוטיות מחייבות.²\n\n**שאלה C2 — חקיקה ותקנות החלות על בורסות קריפטו**\n\nבמקורות המסופקים לא נמצא חוק או תקנה שאמורה במפורש למתן חובת פיצוי או אחריות ישירה של בורסות קריפטו כלפי משתמשים במקרה של פריצה; עם זאת קיימת תשתית רגולטורית ודיון מדינתי לגבי אסדרה רחבה יותר של נכסים דיגיטליים, וכן הוראות דיווח מס/מיסים (טופס מדווח) המוזכרות בדוחות.³\n\n**שאלה C3 — הנחיות ופעילות של רשויות רגולטוריות**\n\nרשויות כגון רשות ניירות ערך ובנק ישראל פרסמו דוחות ודפי מידע העוסקים באסדרת נכסים דיגיטליים ובהמלצות למדיניות; אלה עוסקות בהמלצות, ניתוחים והסבר לציבור ולא בהכרח מהווים החלטות אכיפה או פירוש מחייב של חובות אחריות ספציפיות לאחר פריצה לפי המסמכים שנבדקו.⁴\n\n**שאלה C4 — החלת דוקטרינות נזיקיות וחוזיות על מפעילי פלטפורמות דיגיטליות**\n\nהספרות המסופקת מציעה מסגרות תיאורטיות וניתוחים בנוגע ליישום דוקטרינות כגון רשלנות, הפרת חוזה או חובת נאמנות ביחס לפלטפורמות פיננסיות דיגיטליות, אך במקורות אלה לא מצאנו דוגמאות של הלכה שיפוטית מוחלטת שמיישמת דוקטרינות אלה על בורסות קריפטו לאחר פריצות סייבר.⁵\n\nהערה פרקטית: הממצא לעיל מבוסס אך ורק על אוסף המסמכים שסופקו; הוא לא מוחלט לגבי כל הפסיקה והרגולציה בישראל. לקבלת מענה סופי יש לבדוק מאגרי פסיקה ופרוטוקולי אכיפה עדכניים של רשויות הרגולציה והיועצים המשפטיים הרלוונטיים.",
   "footnotes": [
     {
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_3_3521-11.pdf&type=2",
-      "title": "ע\"א 3521-11 - עו\"ד דניאל וגנר נ. מזל עבדי",
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); מטבעות קריפטוגרפיים: אתגרים מושגיים, משפטיים ורגולטיביים; מסמך מאתר אתר ממשלתי (gov.il)",
       "number": 1,
       "sources": [
         {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_3_3521-11.pdf&type=2",
-          "title": "ע\"א 3521-11 - עו\"ד דניאל וגנר נ. מזל עבדי",
-          "source_type": "supreme_court_il"
-        }
-      ],
-      "source_type": "supreme_court_il"
-    },
-    {
-      "url": "https://www.toledano.co.il/%d7%a2%d7%90-8553-19-%d7%90%d7%9c%d7%9b%d7%a1%d7%a0%d7%93%d7%a8-%d7%90%d7%95%d7%a8%d7%9f-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%99%d7%94%d7%95%d7%93%d7%99%d7%aa-%d7%9b%d7%94%d7%9f-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "title": "ע\"א 8553/19 אלכסנדר אורן בע\"מ נ׳ יהודית כהן פסק דין (17.11.2020)",
-      "number": 2,
-      "sources": [
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
         {
-          "url": "https://www.toledano.co.il/%d7%a2%d7%90-8553-19-%d7%90%d7%9c%d7%9b%d7%a1%d7%a0%d7%93%d7%a8-%d7%90%d7%95%d7%a8%d7%9f-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%99%d7%94%d7%95%d7%93%d7%99%d7%aa-%d7%9b%d7%94%d7%9f-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-          "title": "ע\"א 8553/19 אלכסנדר אורן בע\"מ נ׳ יהודית כהן פסק דין (17.11.2020)",
-          "source_type": "caselaw"
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2023/06/din16-yovel.pdf",
+          "title": "מטבעות קריפטוגרפיים: אתגרים מושגיים, משפטיים ורגולטיביים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
         }
       ],
-      "source_type": "caselaw"
+      "source_type": "compound"
     },
     {
       "url": null,
-      "title": "ע\"א 3521-11 - עו\"ד דניאל וגנר נ. מזל עבדי; ע\"א 8553/19 אלכסנדר אורן בע\"מ נ׳ יהודית כהן פסק דין (17.11.2020)",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); מטבעות קריפטוגרפיים: אתגרים מושגיים, משפטיים ורגולטיביים",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2023/06/din16-yovel.pdf",
+          "title": "מטבעות קריפטוגרפיים: אתגרים מושגיים, משפטיים ורגולטיביים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); מסמך מאתר אתר ממשלתי (gov.il); מסמך מאתר אתר ממשלתי (gov.il)",
       "number": 3,
       "sources": [
         {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_3_3521-11.pdf&type=2",
-          "title": "ע\"א 3521-11 - עו\"ד דניאל וגנר נ. מזל עבדי",
-          "source_type": "supreme_court_il"
+          "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
         },
         {
-          "url": "https://www.toledano.co.il/%d7%a2%d7%90-8553-19-%d7%90%d7%9c%d7%9b%d7%a1%d7%a0%d7%93%d7%a8-%d7%90%d7%95%d7%a8%d7%9f-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%99%d7%94%d7%95%d7%93%d7%99%d7%aa-%d7%9b%d7%94%d7%9f-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-          "title": "ע\"א 8553/19 אלכסנדר אורן בע\"מ נ׳ יהודית כהן פסק דין (17.11.2020)",
-          "source_type": "caselaw"
+          "url": "https://www.gov.il/he/service/reporting-cryptocurrency-activity",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); מסמך מאתר boi.org.il; מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.boi.org.il/information/bank-paymnts/financial-education/campaigns/cryptoreg/",
+          "title": "מסמך מאתר boi.org.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מטבעות קריפטוגרפיים: אתגרים מושגיים, משפטיים ורגולטיביים; השקעה בנכסים דיגיטליים ומטבעות קריפטוגרפיים – מיפוי וסקירה",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2023/06/din16-yovel.pdf",
+          "title": "מטבעות קריפטוגרפיים: אתגרים מושגיים, משפטיים ורגולטיביים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://coller.m.tau.ac.il/sites/coller.tau.ac.il/files/media_server/Recanati/management/newsletter/amiram.pdf",
+          "title": "השקעה בנכסים דיגיטליים ומטבעות קריפטוגרפיים – מיפוי וסקירה",
+          "source_type": "other"
         }
       ],
       "source_type": "compound"
@@ -54,20 +115,52 @@
   ],
   "used_sources": [
     {
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_3_3521-11.pdf&type=2",
-      "title": "ע\"א 3521-11 - עו\"ד דניאל וגנר נ. מזל עבדי",
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
       "number": 1,
-      "origin": "local_db",
-      "source_type": "supreme_court_il",
-      "candidate_id": "5c0d8b43-44ea-444c-8be0-daa5716c2f40"
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "35af07e6-047d-4ade-bae4-49c3d32dd4b0"
     },
     {
-      "url": "https://www.toledano.co.il/%d7%a2%d7%90-8553-19-%d7%90%d7%9c%d7%9b%d7%a1%d7%a0%d7%93%d7%a8-%d7%90%d7%95%d7%a8%d7%9f-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%99%d7%94%d7%95%d7%93%d7%99%d7%aa-%d7%9b%d7%94%d7%9f-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "title": "ע\"א 8553/19 אלכסנדר אורן בע\"מ נ׳ יהודית כהן פסק דין (17.11.2020)",
-      "number": 2,
-      "origin": "local_db",
-      "source_type": "caselaw",
-      "candidate_id": "113d877d-c0c6-4b05-b4eb-b13c9b111ad5"
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2023/06/din16-yovel.pdf",
+      "title": "מטבעות קריפטוגרפיים: אתגרים מושגיים, משפטיים ורגולטיביים",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "5673a72e-6225-4478-be60-b487eebdeef3"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "4b7002c0-a86e-43d9-ab67-a8cd7e5c1c16"
+    },
+    {
+      "url": "https://www.gov.il/he/service/reporting-cryptocurrency-activity",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "5134412e-1f4e-4030-98e7-89b1c84a8b85"
+    },
+    {
+      "url": "https://www.boi.org.il/information/bank-paymnts/financial-education/campaigns/cryptoreg/",
+      "title": "מסמך מאתר boi.org.il",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "627ca034-5166-4e5e-a52a-e3121f43ac24"
+    },
+    {
+      "url": "https://coller.m.tau.ac.il/sites/coller.tau.ac.il/files/media_server/Recanati/management/newsletter/amiram.pdf",
+      "title": "השקעה בנכסים דיגיטליים ומטבעות קריפטוגרפיים – מיפוי וסקירה",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "1dfbd7c6-8394-45ce-b9e3-9b2c1b1bbc27"
     }
   ],
   "required_anchors": {
@@ -81,23 +174,23 @@
     "counts": {
       "by_support": {
         "direct": 0,
-        "partial": 2,
-        "unrelated": 5,
-        "tangential": 1
+        "partial": 6,
+        "unrelated": 9,
+        "tangential": 3
       },
       "by_role_match": {
-        "true": 8,
+        "true": 18,
         "false": 0
       }
     },
-    "dropped_count": 6
+    "dropped_count": 12
   },
   "completeness": {
     "reasons": [],
     "signals": [],
     "truncated": false,
     "last_block_kind": "paragraph",
-    "last_block_excerpt": "…דכניות והנחיות מקצועיות בענף הביטחון הסייבר ובשוק ההון — מקורות אלה אינם נכללים בחומר שסופק כאן ולכן לא נבדקו בתשובה זו."
+    "last_block_excerpt": "…ה בישראל. לקבלת מענה סופי יש לבדוק מאגרי פסיקה ופרוטוקולי אכיפה עדכניים של רשויות הרגולציה והיועצים המשפטיים הרלוונטיים."
   },
   "truncation_retry": {
     "retry_ms": 0,
@@ -107,9 +200,9 @@
     "escalated_to_full": false
   },
   "drafter_version": "v2.1c",
-  "footnote_count": 3,
-  "sources_used": 2,
-  "unique_source_count": 2,
+  "footnote_count": 5,
+  "sources_used": 6,
+  "unique_source_count": 6,
   "missing_anchor_caveat_injected": false,
   "missing_anchor_descriptions": []
 }
