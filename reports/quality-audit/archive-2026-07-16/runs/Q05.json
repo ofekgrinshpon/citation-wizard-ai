@@ -1,0 +1,76 @@
+{
+  "id": "Q05",
+  "category": "amendment_history",
+  "query": "מהם השינויים המרכזיים בתיקון 154 לחוק סדר הדין הפלילי, ומתי נכנס לתוקף?",
+  "run_id": "4bbcdeb1-f33c-4b40-818f-816c5a232df4",
+  "ok": true,
+  "total_ms": 100662,
+  "answer": "**תיקון מס' 154 לחוק סדר הדין הפלילי — מה שניתן לקבוע על‑פי המקור הזמין**\n\nמסקנה מרכזית: מן המסמך של הכנסת שסופק כאן לא ניתן לזהות במלואו את נוסח הסעיפים שתוקנו בתיקון מס' 154, את התאריכים המדויקים לכניסת התיקון לתוקף, או את הוראות המעבר המלאות. המסמך מהווה דוח מחקרי תומך חלקית בלבד ולא תחליף לנוסח החוק המתוקן או לפרסום הרשמי.¹\n\nמה שניתן לאתר במסמך: הדוח דן, בין היתר, בסוגיות הקשורות לסגירת תיקים בהסדר ובאופי ההליך שבאמצעותו נסגר תיק בהסדר. הוא מציין שסגירת תיקים בהסדר היא הליך מעין שיפוטי וכי הסדרים כאלה עשויים לכלול תנאים כמו תשלום קנס ותשלום פיצוי לנפגע העבירה. תיאור זה מספק רקע פרקטי שיכול להיות רלוונטי ליישום כללים בסדר הדין הפלילי.¹\n\nחסר במקור זה: המסמך אינו מפרט את הסעיפים הספציפיים שתוקנו בתיקון 154, אינו מביא נוסח חדש של הוראות קיימות, ואינו מציין תאריך כניסה לתוקף או נוסחי הוראות מעבר מפורשים. לגבי שאלת חלות התיקון על הליכים שנפתחו טרם כניסתו — הדוח עשוי להצביע על הרלוונטיות של נושא זה אך אינו קובע כללי יישום או רטרואקטיביות.¹\n\nהשלכות משפטיות כלליות בנסיבות של שינויי סדר דין: באופן עקרוני, שינויים בסדר הדין עלולים להשפיע על סמכויות בתי המשפט, זכויות הנאשם והליכי הראיות, והיישום המעשי תלוי בנוסח הוראות המעבר; עם זאת, אין במקור שסופק כדי לקבוע באופן חד משמעי איזו השפעה מעשית חלה בנדון ולא ניתן לנסח מסקנות מחייבות בלי עיון בנוסח החוק ותוספת הוראות המעבר.¹\n\nהמלצה מעשית: יש לעיין בנוסח תיקון מס' 154 כפי שפורסם ברשומות ובמאגרי החקיקה של הכנסת ובמסמכי הליווי הרשמיים כדי לקבל את נוסח הסעיפים, תאריך כניסה לתוקף והוראות המעבר. המסמך שסופק מהווה רק רקע מחקרי ולא תחליף למסמכי החקיקה הרשמיים.",
+  "footnotes": [
+    {
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6719&businessType=1",
+      "title": "מסמך מאתר אתר הכנסת",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6719&businessType=1",
+          "title": "מסמך מאתר אתר הכנסת",
+          "source_type": "knesset_research"
+        }
+      ],
+      "source_type": "knesset_research"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6719&businessType=1",
+      "title": "מסמך מאתר אתר הכנסת",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "knesset_research",
+      "candidate_id": "aca9bc93-3528-4532-ac25-f40cce09aa92"
+    }
+  ],
+  "required_anchors": {
+    "count": 0,
+    "anchors": [],
+    "enabled": true,
+    "statuses": [],
+    "queries_emitted": []
+  },
+  "verifier": {
+    "counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 1,
+        "unrelated": 4,
+        "tangential": 1
+      },
+      "by_role_match": {
+        "true": 6,
+        "false": 0
+      }
+    },
+    "dropped_count": 5
+  },
+  "completeness": {
+    "reasons": [],
+    "signals": [],
+    "truncated": false,
+    "last_block_kind": "paragraph",
+    "last_block_excerpt": "…י לקבל את נוסח הסעיפים, תאריך כניסה לתוקף והוראות המעבר. המסמך שסופק מהווה רק רקע מחקרי ולא תחליף למסמכי החקיקה הרשמיים."
+  },
+  "truncation_retry": {
+    "retry_ms": 0,
+    "attempted": false,
+    "reasons_initial": [],
+    "same_model_retry": false,
+    "escalated_to_full": false
+  },
+  "drafter_version": "v2.1c",
+  "footnote_count": 1,
+  "sources_used": 1,
+  "unique_source_count": 1,
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": []
+}

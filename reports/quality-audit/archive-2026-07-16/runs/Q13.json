@@ -1,0 +1,86 @@
+{
+  "id": "Q13",
+  "category": "practical_implications",
+  "query": "מה חייב מעסיק לעשות כאשר עובד/ת מגיש/ה תלונה על הטרדה מינית במקום העבודה, ומהי מסגרת הזמנים לפי התקנות?",
+  "run_id": "736ceb4f-027a-4a5c-890a-04756f328abc",
+  "ok": true,
+  "total_ms": 105007,
+  "answer": "**חובות המעסיק בעת קבלת תלונה על הטרדה מינית**\n\nבעת קבלת תלונה על הטרדה מינית על המעסיק לפעול מידית: לקבל את התלונה ולתעדה, לנקוט צעדי ביניים להבטחת בטיחות המתלונן/ת ומניעת המשך התנהגות פוגענית, לפתוח בבדיקה פנימית או חקירה ולמנות חוקר/ת בלתי תלוי/ה כאשר בלבול ניגוד עניינים או מעורבות של בכירים מקשה על תהליך הוגן.¹\n\n**צעדים מעשיים מיידיים**\n\n- קבלת תלונה ורישום פורמלי — יש לקבל את הטענות בכל צורה סבירה (כתבית/בע",
+  "footnotes": [
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA_%D7%94%D7%98%D7%A8%D7%93%D7%94_%D7%9E%D7%99%D7%A0%D7%99%D7%AA_(%D7%97%D7%95%D7%91%D7%95%D7%AA_%D7%9E%D7%A2%D7%A1%D7%99%D7%A7)",
+      "title": "תקנות למניעת הטרדה מינית (חובות מעסיק)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA_%D7%94%D7%98%D7%A8%D7%93%D7%94_%D7%9E%D7%99%D7%A0%D7%99%D7%AA_(%D7%97%D7%95%D7%91%D7%95%D7%AA_%D7%9E%D7%A2%D7%A1%D7%99%D7%A7)",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעסיק)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "israeli_law"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA_%D7%94%D7%98%D7%A8%D7%93%D7%94_%D7%9E%D7%99%D7%A0%D7%99%D7%AA_(%D7%97%D7%95%D7%91%D7%95%D7%AA_%D7%9E%D7%A2%D7%A1%D7%99%D7%A7)",
+      "title": "תקנות למניעת הטרדה מינית (חובות מעסיק)",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "israeli_law",
+      "candidate_id": "9f25bf37-1d3d-46f8-8a55-64262cec666d"
+    }
+  ],
+  "required_anchors": {
+    "count": 0,
+    "anchors": [],
+    "enabled": true,
+    "statuses": [],
+    "queries_emitted": []
+  },
+  "verifier": {
+    "counts": {
+      "by_support": {
+        "direct": 1,
+        "partial": 3,
+        "unrelated": 6,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 10,
+        "false": 0
+      }
+    },
+    "dropped_count": 6
+  },
+  "completeness": {
+    "reasons": [
+      "no_final_punct(ends with 'ע')"
+    ],
+    "signals": [
+      {
+        "code": "no_final_punct",
+        "detail": "ends with 'ע'",
+        "strength": "weak"
+      }
+    ],
+    "truncated": false,
+    "last_block_kind": "list_item",
+    "last_block_excerpt": "קבלת תלונה ורישום פורמלי — יש לקבל את הטענות בכל צורה סבירה (כתבית/בע"
+  },
+  "truncation_retry": {
+    "retry_ms": 0,
+    "attempted": false,
+    "reasons_initial": [
+      "no_final_punct(ends with 'ע')"
+    ],
+    "same_model_retry": false,
+    "escalated_to_full": false
+  },
+  "drafter_version": "v2.1c",
+  "footnote_count": 1,
+  "sources_used": 1,
+  "unique_source_count": 1,
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": []
+}
