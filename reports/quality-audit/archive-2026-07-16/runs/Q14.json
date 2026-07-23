@@ -1,0 +1,41 @@
+{
+  "id": "Q14",
+  "category": "practical_implications",
+  "query": "מהן חובות הדיווח של נותן שירותי מטבע (ChP) לפי חוק איסור הלבנת הון והצו החל עליו, ומהם מועדי הדיווח?",
+  "run_id": "e14bc8e3-443c-400b-ac35-55d22a7d13fe",
+  "ok": false,
+  "total_ms": 70844,
+  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "footnotes": [],
+  "used_sources": [],
+  "required_anchors": {
+    "count": 0,
+    "anchors": [],
+    "enabled": true,
+    "statuses": [],
+    "queries_emitted": []
+  },
+  "verifier": {
+    "counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 0,
+        "false": 0
+      }
+    },
+    "dropped_count": 0
+  },
+  "completeness": null,
+  "truncation_retry": null,
+  "drafter_version": "v2.1c",
+  "footnote_count": 0,
+  "sources_used": 0,
+  "unique_source_count": 0,
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": []
+}

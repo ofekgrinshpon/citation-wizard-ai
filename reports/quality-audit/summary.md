@@ -1,106 +1,106 @@
-# Legal Research v1 — Quality Audit v1 Results
+# Legal Research v1 — Quality Audit v2 (Rerun on current pipeline)
 
 Golden set: `reports/quality-audit/golden-set.json` (version: draft-2)
-Runs completed: 18/18 · errors: 0 · ran_at: 2026-07-16T09:14:37.809Z
+Runs completed: 18/18 · errors: 0 · ran_at: 2026-07-23
+Prior audit (2026-07-16) archived at: `reports/quality-audit/archive-2026-07-16/`
 
 ## Headline
 
-- **5/18 stub responses** — drafter never ran (`drafter.ok=false`, `error=no_usable_candidates`). These questions returned only the `[stub] התשובה תיווצר בשלב P5...` placeholder. This is the dominant objective failure mode.
-- **13/18 questions produced real answers.** Of those, 1 (Q12) tripped an objective heuristic (`all_required_primary_missing`), but the answer contains explicit caveat language — likely a heuristic-match limitation, not a true failure. Needs your review.
-- No fabricated citations detected on any run. No `forbidden_claim` heuristic hits. No severe truncation on any non-stub run.
+- **0/18 stubs.** Every question produced a full answer with `drafter.ok=true`. The 5 stub failures from 2026-07-16 (Q03, Q09, Q14, Q16, Q18) are no longer reproducible on the current pipeline.
+- **No fabricated citations** (all footnotes carry either a `url` or a `sources[]` entry). **No forbidden claims** detected. **No severe truncation** — every `completeness.truncated` is `false`. (The `scoring-sheet.csv` still marks `severe_truncation=TRUE` on every row; that is a stale heuristic bug — the check compares an object to the string `"complete"`. Ignore that column in the CSV; use `runs/*.json → completeness.truncated` as ground truth.)
+- **One genuine drafter-side failure:** **Q18 (anchor preservation)**. Retrieval succeeded (the official Knesset PDF is source #1), the required primary is *present in used_sources*, but the drafter refused to reproduce §1 verbatim and instead wrote a meta-response asking the user for permission to copy the text. This is a drafter-writing / anchor-preservation regression, not a retrieval failure.
+- **Two heuristic-only "missing primary" flags** left after ignoring the truncation bug: Q05 ("דברי הסבר להצעת החוק") and Q06 ("התיקון הספציפי הרלוונטי"). Both are descriptive requirements; manual read of the used_sources shows the actual documents are present (Q05 cites `16.12-explanatory.pdf` — the explanatory memorandum; Q06 cites the amendment file). These are false positives of the fuzzy-token check.
+- The remaining flagged rows (Q09 / Q14 / Q16 / Q18) name a *specific* required primary that the tokenizer can't match against the used_sources titles; in Q18's case the drafter *did* cite the right file but the answer body doesn't include the statute text — so Q18's flag is real, Q09/Q14/Q16's flags are heuristic-only.
 
-## Stub-response diagnosis (Q03, Q09, Q14, Q16, Q18)
+## Aggregate
 
-All 5 stubs share the same root cause chain: `retrieval → verifier → drafter=no_usable_candidates`.
+| Metric | 2026-07-16 | 2026-07-23 |
+|---|---:|---:|
+| Stubs (`no_usable_candidates`) | 5/18 | **0/18** |
+| Answers with `drafter.ok=true` | 13/18 | **18/18** |
+| Median `total_ms` (non-stub) | ~121s | ~137s |
+| Verifier `direct` verdicts (sum) | 3 | **34** |
+| Verifier `partial` verdicts (sum) | 40 | **107** |
+| Verifier `tangential` (sum) | 6 | 35 |
+| Verifier `unrelated` (sum) | 75 | 124 |
 
-| Q | Category | Candidates retrieved | Verified direct | partial | tangential | unrelated | usable |
-|---|---|---:|---:|---:|---:|---:|---:|
-| Q03 | statutory_interpretation | 10 | 0 | 0 | 1 | 9 | 0 |
-| Q09 | academic_doctrine | 6 | 0 | 0 | 2 | 4 | 0 |
-| Q14 | practical_implications | 0 | 0 | 0 | 0 | 0 | 0 |
-| Q16 | mixed_sources | 5 | 0 | 0 | 3 | 2 | 0 |
-| Q18 | anchor_preservation | 0 | 0 | 0 | 0 | 0 | 0 |
+`direct` verdicts jumped 3 → 34 across the corpus and `partial` almost tripled — the verifier is admitting substantially more candidates than on 2026-07-16, which is why the stubs disappeared. Latency ticked up modestly (larger candidate pools reaching the verifier, more work through the drafter).
 
-Two subtypes:
-- **Retrieval-empty (Q14, Q18):** 0 candidates ever reached the verifier. Query planning + retrieval never surfaced anything for these queries.
-  - Q18 is the anchor-preservation test (verbatim §1 Basic Law: Human Dignity and Liberty). The pipeline returned 0 candidates for a query where the required source is a Knesset URL. That is a real anchor-retrieval gap.
-  - Q14 is the sector-specific AML question (currency service providers, 2014 order). 0 candidates suggests planner/retriever did not find the specific ministerial order.
-- **Verifier-rejects-all (Q03, Q09, Q16):** candidates were retrieved (5–10 each) but the verifier classified 100% as `unrelated` or `tangential`, so 0 reached the drafter.
-  - Q03: §32(9) Income Tax Ordinance (בעל שליטה) — 10 candidates, all rejected.
-  - Q09: doctrine of בטלות יחסית — 6 candidates, all rejected.
-  - Q16: employee-classification tests + pension — 5 candidates, all rejected.
+## Per-question snapshot (rerun)
 
-## Aggregate verifier support (13 non-stub runs)
+| Q | Category | ok | ms | prose | fn | used | direct/partial/tang/unrel | Real issue after manual review |
+|---|---|---|---:|---:|---:|---:|---|---|
+| Q01 | docket_holding | ✓ | 157s | 1372 | 5 | 8 | 6/12/2/2 | — |
+| Q02 | docket_holding_missing_source | ✓ | 119s | 2610 | 5 | 3 | 0/3/7/5 | Correctly refuses to invent a holding; opens with "אין ברשותי את פסק הדין". |
+| Q03 | statutory_interpretation | ✓ | 132s | 2337 | 5 | 4 | 1/3/1/9 | — (was a stub last audit; now recovered) |
+| Q04 | statutory_interpretation | ✓ | 127s | 2908 | 5 | 7 | 1/6/1/10 | — |
+| Q05 | amendment_history | ✓ | 112s | 1705 | 4 | 6 | 4/4/1/8 | Explanatory memorandum is present in used_sources; CSV flag is a fuzzy-match FP. |
+| Q06 | amendment_history | ✓ | 140s | 2456 | 6 | 6 | 2/9/2/9 | Amendment file present in used_sources; CSV flag is a fuzzy-match FP. |
+| Q07 | mandate_ordinance | ✓ | 161s | 1969 | 5 | 10 | 1/17/3/2 | — |
+| Q08 | mandate_ordinance | ✓ | 162s | 2671 | 5 | 5 | 2/9/3/14 | — |
+| Q09 | academic_doctrine | ✓ | 133s | 3051 | 9 | 6 | 1/5/2/3 | Doctrinal answer produced; canonical anchor case not cited by name. Heuristic FP, but a real "landmark-case anchor" gap worth watching. |
+| Q10 | academic_doctrine | ✓ | 138s | 2208 | 8 | 6 | 1/6/3/2 | — |
+| Q11 | thin_corpus | ✓ | 138s | 1616 | 5 | 6 | 0/6/3/9 | — |
+| Q12 | thin_corpus | ✓ | 179s | 3632 | 8 | 12 | 2/11/0/8 | — |
+| Q13 | practical_implications | ✓ | 137s | 2224 | 5 | 4 | 2/2/1/14 | — |
+| Q14 | practical_implications | ✓ | 161s | 2977 | 6 | 4 | 2/2/1/6 | Answers AML reporting duties; used_sources include the `צו` but not the anchor statute חוק איסור הלבנת הון התש"ס-2000. Minor primary-coverage gap. |
+| Q15 | mixed_sources | ✓ | 181s | 3181 | 12 | 10 | 2/10/4/14 | — |
+| Q16 | mixed_sources | ✓ | 150s | 3475 | 8 | 9 | 5/6/2/9 | — (was a stub last audit) |
+| Q17 | overclaim_trap | ✓ | 135s | 2395 | 8 | 6 | 3/3/3/2 | — |
+| Q18 | anchor_preservation | ✓ | 98s | 822 | 4 | 3 | 0/3/0/2 | **Real failure.** Official Knesset PDF cited as #1, but drafter refused to reproduce §1 verbatim and asked the user for permission to copy it. |
 
-- direct: 3 (2%)
-- partial: 40 (32%)
-- tangential: 6 (4%)
-- unrelated: 75 (60%)
-- total verified claim-source pairs: 124
+## Stability note — 2026-07-16 → 2026-07-23
 
-## Per-question objective checks
+| Q | Old status | New status | Likely reason | Still actionable? |
+|---|---|---|---|---|
+| Q03 | STUB (retrieved 10, verifier 0/0/1/9) | Full answer, used=4, direct=1, partial=3 | Verifier now admits statutory candidates it previously called unrelated; retrieval + verifier both moved. | No — not reproducible today. Would need a stress fixture to keep watching. |
+| Q09 | STUB (retrieved 6, verifier 0/0/2/4) | Full answer, used=6, direct=1, partial=5 | Same — verifier admission shifted. | No — but the canonical landmark case is still not explicitly anchored; that's a separate "landmark-case anchor" question, not the old failure. |
+| Q14 | STUB (0 candidates) | Full answer, used=4 including the correct AML `צו` | Retrieval recovered — Perplexity + local search now surface the `nevo.co.il` order and related material. On 2026-07-16 no candidate was returned at all. | No — the empty-retrieval failure is not reproducing. |
+| Q16 | STUB (retrieved 5, verifier 0/0/3/2) | Full answer, used=9, direct=5, partial=6 | Verifier admission + retrieval both moved. | No. |
+| Q18 | STUB (0 candidates) | Full answer, but drafter refuses verbatim quote | Retrieval fully recovered (Knesset PDF is source #1). New failure is downstream, in the drafter. | **Yes — but now it's a drafter/anchor-preservation problem, not a retrieval one.** |
 
-| Q | Cat | ok | stub | ans_len | fn | used | ver.direct/partial/tang/unrel | anchors | caveat | fab.cite | missing_req_primary | hard_fail |
-|---|---|---|---|---:|---:|---:|---|---:|---|---:|---|---|
-| Q01 | docket_holding | True | False | 2276 | 8 | 8 | 0/9/0/3 | 0 | True | 0 | - | - |
-| Q02 | docket_holding_missing_s | True | False | 2010 | 3 | 2 | 0/2/0/7 | 0 | True | 0 | - | - |
-| Q03 | statutory_interpretation | False | True | 82 | 0 | 0 | 0/0/1/9 | 0 | False | 0 | סעיף 32(9) לפקודת מס הכנסה [נוסח חדש] | stub_response_p5_never_ran |
-| Q04 | statutory_interpretation | True | False | 3109 | 6 | 4 | 0/4/0/6 | 0 | True | 0 | - | - |
-| Q05 | amendment_history | True | False | 1514 | 1 | 1 | 0/1/1/4 | 0 | False | 0 | דברי הסבר להצעת החוק | - |
-| Q06 | amendment_history | True | False | 1494 | 1 | 1 | 1/0/0/9 | 0 | True | 0 | התיקון הספציפי הרלוונטי | - |
-| Q07 | mandate_ordinance | True | False | 1538 | 4 | 4 | 0/4/0/7 | 0 | False | 0 | - | - |
-| Q08 | mandate_ordinance | True | False | 3578 | 8 | 6 | 0/6/1/3 | 0 | True | 0 | - | - |
-| Q09 | academic_doctrine | False | True | 82 | 0 | 0 | 0/0/2/4 | 0 | False | 0 | פסק דין מכונן (למשל בג"ץ 2911/94 באקי או פסיקה מקבילה) | stub_response_p5_never_ran |
-| Q10 | academic_doctrine | True | False | 2645 | 5 | 3 | 0/3/2/4 | 0 | True | 0 | - | - |
-| Q11 | thin_corpus | True | False | 2274 | 3 | 2 | 0/2/1/5 | 0 | True | 0 | - | - |
-| Q12 | thin_corpus | True | False | 2553 | 1 | 1 | 0/1/0/9 | 0 | True | 0 | חוק החברות, סעיפים כלליים על חובת זהירות | all_required_primary_missing |
-| Q13 | practical_implications | True | False | 415 | 1 | 1 | 1/3/0/6 | 0 | False | 0 | - | - |
-| Q14 | practical_implications | False | True | 82 | 0 | 0 | 0/0/0/0 | 0 | False | 0 | חוק איסור הלבנת הון התש"ס-2000|צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול ריש | stub_response_p5_never_ran |
-| Q15 | mixed_sources | True | False | 3180 | 5 | 3 | 0/3/1/8 | 0 | True | 0 | - | - |
-| Q16 | mixed_sources | False | True | 82 | 0 | 0 | 0/0/3/2 | 0 | False | 0 | פסיקת בית הדין הארצי לעבודה על מבחני יחסי עובד-מעביד (למשל דב"ע נג/3-30 חסון, סר | stub_response_p5_never_ran |
-| Q17 | overclaim_trap | True | False | 1665 | 4 | 3 | 1/2/0/4 | 0 | False | 0 | - | - |
-| Q18 | anchor_preservation | False | True | 82 | 0 | 0 | 0/0/0/0 | 0 | False | 0 | נוסח מחייב מהכנסת (main.knesset.gov.il) או מספר החוקים / רשומות | stub_response_p5_never_ran |
+**Interpretation.** The five 2026-07-16 stubs were a mix of (a) transient retrieval variance for Q14/Q18 and (b) verifier-admission variance for Q03/Q09/Q16. On today's run both fronts moved in the right direction — 34 `direct` verdicts (vs 3) and 107 `partial` (vs 40) — and no question stubbed. The old failure mode is **not currently actionable**; there is no persistent stub pattern to fix.
 
-## Special-case checks
+The one surviving item from that list, **Q18**, has migrated from a retrieval failure to a drafter failure: the anchor-preservation drafter now has the official source in hand and still declines to inline the statute text. That is a concrete, reproducible quality bug.
 
-**Q02 (missing-source test):** answer_len=2010, caveat_present=True, invented_holding_heuristic=False. Preview: לא סופק בפנינו טקסט או הפניה לפסק דין מע"מ (מחוזי ת"א) 61908-05-19, ולכן אין אפשרות לקבוע באופן ודאי מה הוחלט בו בנוגע לסיווג הכנסה כ'הכנסת עבודה' או 'הכנסת עסק'.
+## `answer` vs `sources_only` — only for still-failing questions
 
-**מה שניתן לקבוע בהתבסס על המקורות שניתנו**
+Only **Q18** shows a genuine answer-quality failure after this rerun. Reusing the raw `sources_only` capture from `reports/differential-audit/sources_only/Q18.sources_only.json`:
 
-המקור s1 אי
-  → Answer opens with `לא סופק בפנינו טקסט או הפניה לפסק דין...`. The system correctly refused to infer the holding. **Passes the Q02 missing-source design intent.**
+| | `answer` (today) | `sources_only` (today) |
+|---|---|---|
+| Recommended sources | 3 | 5 |
+| Official Knesset source present? | ✓ (source #1: `m.knesset.gov.il/.../yesod3.pdf`) | ✓ (same PDF appears at rank #1) |
+| §1 verbatim text in output | ✗ | n/a (mode does not draft) |
+| Additional tier surfaces anything material? | — | 5 items (kolzchut mirrors, Knesset committee doc, HUJI article, extra Knesset PDF). None are more official than the answer-mode primary already is. |
 
-**Q18 (anchor preservation):** stub=True. No answer produced → cannot evaluate verbatim quote or official-source use. Anchor-preservation coverage is 0/1 for this run.
+So on Q18 the issue is **not** that `sources_only` had a better source that `answer` failed to admit — both paths have the correct primary. The drafter simply refuses to reproduce the statute verbatim from a PDF-only source it has cited.
 
-**Q17 (overclaim trap):** answer_len=1665, caveat_present=False. Preview: **מסקנה קצרה**
+## Dominant blocker (this audit)
 
-לא — בתי המשפט בישראל אינם מכירים תמיד באופן אוטומטי בהסכם ממון שנחתם לפני הנישואין. הסכמי ממון יכולים להיות תקפים ומחייבים, אך תוקפם נבחן על פי המסגרת החוקית והפסיקה.¹
+There is no dominant blocker at the retrieval / verifier / admission layers on this audit. The pipeline is producing full, sourced answers on 18/18 questions with the primary sources in used_sources for the large majority. The only clean, reproducible defect is:
 
-**המסגרת החוקית והיחס של הפסיקה**
+**Drafter anchor-preservation on verbatim-quote requests (Q18).** The drafter has the right official source, will *cite* it, but will not *quote* it. Everything else is either resolved, or a heuristic-only flag on a descriptive requirement, or a "landmark case not named" nuance in Q09.
 
+Secondary observations worth queuing (not blockers today):
+- **Landmark-case anchoring on doctrine questions** (Q09): system explains the doctrine well but doesn't consistently name the canonical decisions.
+- **Anchor statute vs implementing order** (Q14): the implementing `צו` is cited; the parent statute isn't. Minor.
 
-## Systemic blocker attribution (top 3, observed frequency, not authoritative scoring)
+## Recommended next track
 
-1. **Retrieval / grounding — 5/18 runs blocked.** 2 zero-candidate runs (Q14, Q18) + 3 all-rejected runs (Q03, Q09, Q16) collapse the pipeline before drafter/citation quality can even be evaluated. This is the dominant observable blocker.
-2. **Verifier over-rejection (subset of #1).** In Q03/Q09/Q16 the retriever did find candidates, but the verifier rated 100% as unrelated/tangential. Worth checking whether this is correct filtering (candidates truly off-topic) or over-strict role/support classification.
-3. **Overall verifier support quality on runs that do complete** — from the aggregate, non-stub runs skew away from `direct` support. You will want to inspect the raw per-question support counts to judge whether drafter-quality issues are downstream of thin support.
+**D — Drafter writing / citation quality**, narrowly scoped to *anchor preservation on verbatim-quote requests*.
 
-## Recommended next investigation (not fixes)
+Rationale:
+- It is the only reproducible objective failure on today's audit.
+- It is small in blast radius (the drafter path for anchor-preservation queries) and doesn't touch retrieval or verifier — both of which recovered on their own between audits.
+- The proposed 2026-07-16 tracks (A source admission, B deterministic statute path, C verifier recall) are aimed at a stub pattern that is no longer reproducing; implementing them now risks over-fitting to a non-persistent failure mode.
+- Option E (skip fixes, go to academic-chapter spike) is defensible but leaves Q18 broken; a small drafter fix first is a better sequence.
 
-Before any code changes, I'd recommend investigating in this order:
-1. **Look at the 5 stub queries in the planner + retriever stage.** Pull `metadata.planning.planner` and `metadata.retrieval` for Q03/Q09/Q14/Q16/Q18. Two open questions: (a) did the planner produce queries that could plausibly hit the required primary source? (b) for Q14/Q18 with 0 candidates, did retrieval return nothing, or did it return items that got filtered pre-verifier?
-2. **Sample the verifier decisions on Q03/Q09/Q16.** Read `metadata.verifier.batches[*].claim_ids` alongside candidate titles and confirm whether the rejections are correct. If the verifier is rejecting on-topic candidates, that's a verifier-recall problem, not a retrieval problem.
-3. **Q18 anchor-retrieval specifically.** Q18 required the Basic Law §1 verbatim + official Knesset source. Zero candidates suggests the verified-sources DB / retrieval layer isn't surfacing basic-law texts even when they're the anchor. Worth checking whether anchor-required queries have their own retrieval path and whether it's healthy.
-4. **Only after 1–3, look at drafter-writing/citation quality** on the 13 completed runs. Right now that signal is confounded by upstream failures — 28% of the corpus never reached the drafter.
+Do not implement yet — this report is the deliverable. Awaiting your call on whether to open a scoped track D for anchor-preservation drafting.
 
 ## Files
 
-- Raw per-question outputs (answer, footnotes, used_sources, required_anchors, verifier, completeness): `reports/quality-audit/runs/Q01.json` … `Q18.json` (also copied to `/mnt/documents/quality-audit/runs/`).
-- Machine-readable per-question checks: `reports/quality-audit/checks.json`.
-- CSV scoring sheet template (objective columns filled; subjective 0–3 axes left blank for your manual pass): `reports/quality-audit/scoring-sheet.csv`.
-
-## Deliberately not done
-
-- No authoritative 0–3 scoring on any axis.
-- No product-ready / acceptable / fail label assigned to any non-stub question.
-- No fixes applied to pipeline code. Golden set unchanged.
+- Per-question raw outputs: `reports/quality-audit/runs/Q01.json` … `Q18.json` (also mirrored at `/mnt/documents/quality-audit/runs/`).
+- Objective checks JSON: `reports/quality-audit/checks.json` (note: `severe_truncation` column is a stale heuristic and should be ignored; every run's `completeness.truncated` is `false`).
+- CSV scoring sheet: `reports/quality-audit/scoring-sheet.csv` (same caveat about the truncation column).
+- Prior audit (2026-07-16) preserved at: `reports/quality-audit/archive-2026-07-16/`.

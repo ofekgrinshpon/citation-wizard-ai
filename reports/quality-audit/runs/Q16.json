@@ -2,12 +2,250 @@
   "id": "Q16",
   "category": "mixed_sources",
   "query": "מהם המבחנים לסיווג יחסי עובד-מעביד בפסיקת בית הדין הארצי לעבודה, וכיצד הם משפיעים על חבות המעביד להפרשות פנסיוניות?",
-  "run_id": "3a1fbfd0-f0c2-46c8-aa47-562c86cb4838",
-  "ok": false,
-  "total_ms": 96370,
-  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
-  "footnotes": [],
-  "used_sources": [],
+  "run_id": "80fddcc3-73e5-42de-a8b1-da0628f0264d",
+  "ok": true,
+  "total_ms": 149664,
+  "answer": "**מבחנים לסיווג יחסי עובד‑מעביד**\n\nבתי הדין לעבודה ובית המשפט נוקטים במבחן מעורב רב‑גורמי (multi‑factor/totality test) בבואם לקבוע האם אדם הוא 'עובד' או 'עצמאי' — כלומר בוחנים מכלול נסיבות העשייה במקום העבודה ולא מסתמכים על תווית חיצונית בלבד.¹\n\nמבחן השליטה והריבונות של המעביד: נבדק עד כמה המעביד קובע את סדרי העבודה, שיטות הביצוע, שעות העבודה, ופיקוח יומיומי; שליטה מעשית זו משקפת יחסי היררכיה ויכולה להעיד על מערכת עובד‑מעביד.²\n\nמבחן ההשתלבות/אינטגרציה בעסק: נבחן עד כמה העבודה שהאדם מבצע מהווה חלק אינטגרלי מפעילות העסק; השתלבות גבוהה בעסק נחשבת לעתים גורם דומיננטי בקביעת מעמד העובד.²\n\nתלות כלכלית וקביעות ההעסקה: נבדקת תלותו של המבצע בהכנסתו מהמעסיק (האם ההכנסה ממקור יחיד ומהווה פרנסתו) וכן משך וקביעות היחסים — עבודות קבועות וארוכות משקלן גדול יותר בשיקול.²\n\nשיטת השכר, זמינות וספקי ציוד: פרמטרים כמו קבלת שכר לפי שעת עבודה או לפי פרויקט, חובת זמינות, מי מספק כלים וחומרי גלם, והאם יש עלות ניהול והוצאות — כל אלה מסייעים להבחין בין עובד לבין עצמאי.²\n\nתווית חוזית ואוטונומיה פורמלית: ההסכמות החוזיות חשובות אך אינן מכריעות; בתי הדין מתייחסים לכוונת הצדדים אך יבחינו בפועל במידה שבה המציאות סותרת את תווית ה'קבלן' שניתנה בחוזה.³\n\n**איזון המשקלים ובחינת המכלול**\n\nהבחינה היא מכלולית: אף שאין נוסחה מתמטית, בתי הדין מאזנים את המבחנים ביחס לעובדות המקרה; במקרים שונים יכול גורם בודד להכריע רק אם משקלו מהותי וחד‑משמעי בהינתן המכלול.¹\n\nמגמת פרשנות: בפסיקה ניכרת נטייה להעניק משקל מיוחד להשתלבות בעסק, אך אין חזקה אוטומטית שקובעת את המעמד לכל מקרה — יש להיזהר מניסוח גורף זה, והמשקל הסופי נקבע בהתאם לנסיבות הפרטניות.²\n\n**השלכות הסיווג על חובת הפרשות פנסיוניות**\n\nהמעמד כ'עובד' מול 'עצמאי' הוא קובע לגבי חובת המעביד להפריש דמי פנסיה ומענקי סוציאליים: כאשר הסיווג מעלה שמדובר בעובד, המעסיק עלול להתחייב בהפרשות חודשיות כנדרש על‑פי משק החיוב הרלוונטי (כולל חובת ניכוי ופיצוי כפי שקבוע בהסדרים הרלוונטיים).⁴\n\nמקורות החובה וההיקף: בספרות ובפרקטיקה מצוין כי החבות לגביי הפרשות נשענת על חוקים, תקנות והסכמים קולקטיביים — הפרשה סדירה מבוססת על ההסדר החל; משך המעסיק והיקף ההשתתפות נקבעים לפי אותם כללים והליכים אכיפה.⁵\n\nהטלת חבות רטרואקטיבית: במקרים שבהם נמצא שסווג עובד כשגוי כ'עצמאי', רשויות ואמות משפטיות יכולות לחייב את המעביד בתשלומים רטרואקטיביים לשיקום זכויות (הפרשות, ריבית, וקנסות אפשריים) — הדו\"ח של מבקר המדינה מצביע במפורש על יכולות גבייה וחוסר אכיפה בתחום זה.⁴\n\n**הליכים, סנקציות ושיקולים בקביעת היקף החבות**\n\nהליכים פרקטיים: עובדים פונים באמצעות מינהל הסדרה ואכיפה במשרד העבודה או בהליכים בתיק בבית הדין לעבודה; תקנות סדרי הדין מסדירות את ההליכים והאמצעים שישמשו לבירור תביעות אי‑הפרשה ובקשת פיצוי.⁶\n\nסנקציות ואמצעי אכיפה: בתי הדין והרשויות יכולים לצוות תשלום הפרשות מצטברות, ריבית, קנסות מנהליים ולעיתים צעדי שיקום זכויות; דו\"ח מבקר המדינה מדגיש גם כישורים לאכוף גבייה והצורך בנקיטת צעדים תקדימיים.⁴\n\nגורמי משקל בקביעת היקף החבות: בבחינת גובה התחייבות המעביד נשקלת תום‑לבו והאמינות של ההסכמות עם העובד, עד כמה המציאות מעידה על עצמאות מעשית בפועל, והאם הצדדים הגיעו להסכמה ברורה — הספרות והמאמרים על תום הלב מציינים שהיבטים אלה משפיעים על ההיקף והטון של החיוב, אם כי מסקנות אלו הן בגדר הערכה תיאורטית ולא תמיד ניתנות לקביעת כלל יחיד.⁷\n\nמקרים בולטים ודוגמה יישומית: בפסיקה בארצי צוינו תיקי מבחן שבהם נבחנה השתלבות בעסק והוחלט לטובת הכרת עמדה כ'עובד' — אלה ממחישים כיצד שילוב מבחני השליטה, ההשתלבות והקביעות מוביל לחבות של המעביד גם בדיעבד.¹\n\nסיכום מעשי קצר: בעת מחלוקת יש להציג לבית הדין תמונת עובדות מלאה המתעדת שליטה, אינטגרציה, תלות וכיו\"ב; אם ייקבע כי היתה העסקה שהצריכה הפרשות, המעביד עלול להיחשב כחייב תשלום רטרואקטיבי ולקבל סנקציות לפי הדין והתקנות הרלוונטיות.⁸",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "מסמך מאתר psakdin.co.il; דנג\"ץ 10007-09 - יולנדה גלוטן נ. בית הדין הארצי לעבודה",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%9C%D7%95%D7%99%D7%94-%D7%A0%27-%D7%A4%D7%A8%D7%95%D7%98%D7%95%D7%A7%D7%95%D7%9C-%D7%A9%D7%A8%D7%95%D7%AA%D7%99-%D7%9E%D7%A9%D7%A8%D7%93-1993-%D7%91%D7%A2%22%D7%9E",
+          "title": "מסמך מאתר psakdin.co.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/1&fileName=SV1_12_10007-09.pdf&type=2",
+          "title": "דנג\"ץ 10007-09 - יולנדה גלוטן נ. בית הדין הארצי לעבודה",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר psakdin.co.il; מיהו עובד: מבחני הסף",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%9C%D7%95%D7%99%D7%94-%D7%A0%27-%D7%A4%D7%A8%D7%95%D7%98%D7%95%D7%A7%D7%95%D7%9C-%D7%A9%D7%A8%D7%95%D7%AA%D7%99-%D7%9E%D7%A9%D7%A8%D7%93-1993-%D7%91%D7%A2%22%D7%9E",
+          "title": "מסמך מאתר psakdin.co.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+          "title": "מיהו עובד: מבחני הסף",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר psakdin.co.il; דנג\"ץ 10007-09 - יולנדה גלוטן נ. בית הדין הארצי לעבודה; מיהו עובד: מבחני הסף",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%9C%D7%95%D7%99%D7%94-%D7%A0%27-%D7%A4%D7%A8%D7%95%D7%98%D7%95%D7%A7%D7%95%D7%9C-%D7%A9%D7%A8%D7%95%D7%AA%D7%99-%D7%9E%D7%A9%D7%A8%D7%93-1993-%D7%91%D7%A2%22%D7%9E",
+          "title": "מסמך מאתר psakdin.co.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/1&fileName=SV1_12_10007-09.pdf&type=2",
+          "title": "דנג\"ץ 10007-09 - יולנדה גלוטן נ. בית הדין הארצי לעבודה",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+          "title": "מיהו עובד: מבחני הסף",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "דוח ממשלתי מתוך מבקר המדינה; מינהל הסדרה ואכיפה – זרוע העבודה",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.mevaker.gov.il/he/publication/Pages/70a.aspx",
+          "title": "דוח ממשלתי מתוך מבקר המדינה",
+          "source_type": "government_report"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/general/labor_enforcement",
+          "title": "מינהל הסדרה ואכיפה – זרוע העבודה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מינהל הסדרה ואכיפה – זרוע העבודה; תקנות בית הדין לעבודה (סדרי דין); דוח ממשלתי מתוך מבקר המדינה",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/departments/general/labor_enforcement",
+          "title": "מינהל הסדרה ואכיפה – זרוע העבודה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%AA_%D7%94%D7%93%D7%99%D7%9F_%D7%9C%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A1%D7%93%D7%A8%D7%99_%D7%93%D7%99%D7%9F)",
+          "title": "תקנות בית הדין לעבודה (סדרי דין)",
+          "source_type": "israeli_law"
+        },
+        {
+          "url": "https://www.mevaker.gov.il/he/publication/Pages/70a.aspx",
+          "title": "דוח ממשלתי מתוך מבקר המדינה",
+          "source_type": "government_report"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מינהל הסדרה ואכיפה – זרוע העבודה; תקנות בית הדין לעבודה (סדרי דין)",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/departments/general/labor_enforcement",
+          "title": "מינהל הסדרה ואכיפה – זרוע העבודה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%AA_%D7%94%D7%93%D7%99%D7%9F_%D7%9C%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A1%D7%93%D7%A8%D7%99_%D7%93%D7%99%D7%9F)",
+          "title": "תקנות בית הדין לעבודה (סדרי דין)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "דיני עבודה: כרך ראשון; עקרון תום הלב במשפט העבודה; תום לב ביחסי עבודה",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/book/12345",
+          "title": "דיני עבודה: כרך ראשון",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://law.haifa.ac.il/images/files/faculty/students_articles/haifa_law_review/vol4/karniyal.pdf",
+          "title": "עקרון תום הלב במשפט העבודה",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://www.tau.ac.il/law/Research/Docs/Article-TomLev-Work.pdf",
+          "title": "תום לב ביחסי עבודה",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "דנג\"ץ 10007-09 - יולנדה גלוטן נ. בית הדין הארצי לעבודה; דוח ממשלתי מתוך מבקר המדינה; תקנות בית הדין לעבודה (סדרי דין)",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/1&fileName=SV1_12_10007-09.pdf&type=2",
+          "title": "דנג\"ץ 10007-09 - יולנדה גלוטן נ. בית הדין הארצי לעבודה",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://www.mevaker.gov.il/he/publication/Pages/70a.aspx",
+          "title": "דוח ממשלתי מתוך מבקר המדינה",
+          "source_type": "government_report"
+        },
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%AA_%D7%94%D7%93%D7%99%D7%9F_%D7%9C%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A1%D7%93%D7%A8%D7%99_%D7%93%D7%99%D7%9F)",
+          "title": "תקנות בית הדין לעבודה (סדרי דין)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%9C%D7%95%D7%99%D7%94-%D7%A0%27-%D7%A4%D7%A8%D7%95%D7%98%D7%95%D7%A7%D7%95%D7%9C-%D7%A9%D7%A8%D7%95%D7%AA%D7%99-%D7%9E%D7%A9%D7%A8%D7%93-1993-%D7%91%D7%A2%22%D7%9E",
+      "title": "מסמך מאתר psakdin.co.il",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a1287074-b250-4096-850b-08723ac94848"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/1&fileName=SV1_12_10007-09.pdf&type=2",
+      "title": "דנג\"ץ 10007-09 - יולנדה גלוטן נ. בית הדין הארצי לעבודה",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "87738ee0-6baf-4056-aa93-1d0155f5b9d7"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+      "title": "מיהו עובד: מבחני הסף",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "c91734d9-e199-461a-a202-ded07f07ae31"
+    },
+    {
+      "url": "https://www.mevaker.gov.il/he/publication/Pages/70a.aspx",
+      "title": "דוח ממשלתי מתוך מבקר המדינה",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "government_report",
+      "candidate_id": "32df3f0c-f8b6-404b-88e8-4ace06a04dcf"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/general/labor_enforcement",
+      "title": "מינהל הסדרה ואכיפה – זרוע העבודה",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "546e8e02-9676-40c0-a6df-e64d2b635749"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%AA_%D7%94%D7%93%D7%99%D7%9F_%D7%9C%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A1%D7%93%D7%A8%D7%99_%D7%93%D7%99%D7%9F)",
+      "title": "תקנות בית הדין לעבודה (סדרי דין)",
+      "number": 5,
+      "origin": "local_db",
+      "source_type": "israeli_law",
+      "candidate_id": "0e3c04f0-f3e9-4dcd-a675-970df278a90c"
+    },
+    {
+      "url": "https://www.nevo.co.il/book/12345",
+      "title": "דיני עבודה: כרך ראשון",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "2a8c93fa-7027-4571-8c09-91b02ce36b1b"
+    },
+    {
+      "url": "https://law.haifa.ac.il/images/files/faculty/students_articles/haifa_law_review/vol4/karniyal.pdf",
+      "title": "עקרון תום הלב במשפט העבודה",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "265b931d-0bf7-462b-a82b-08c874a2285e"
+    },
+    {
+      "url": "https://www.tau.ac.il/law/Research/Docs/Article-TomLev-Work.pdf",
+      "title": "תום לב ביחסי עבודה",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "4c73d6ec-b9fa-4d85-a877-b46c7fb5464c"
+    }
+  ],
   "required_anchors": {
     "count": 0,
     "anchors": [],
@@ -18,24 +256,36 @@
   "verifier": {
     "counts": {
       "by_support": {
-        "direct": 0,
-        "partial": 0,
-        "unrelated": 2,
-        "tangential": 3
+        "direct": 5,
+        "partial": 6,
+        "unrelated": 9,
+        "tangential": 2
       },
       "by_role_match": {
-        "true": 5,
+        "true": 22,
         "false": 0
       }
     },
-    "dropped_count": 5
+    "dropped_count": 11
   },
-  "completeness": null,
-  "truncation_retry": null,
+  "completeness": {
+    "reasons": [],
+    "signals": [],
+    "truncated": false,
+    "last_block_kind": "paragraph",
+    "last_block_excerpt": "…ייקבע כי היתה העסקה שהצריכה הפרשות, המעביד עלול להיחשב כחייב תשלום רטרואקטיבי ולקבל סנקציות לפי הדין והתקנות הרלוונטיות."
+  },
+  "truncation_retry": {
+    "retry_ms": 0,
+    "attempted": false,
+    "reasons_initial": [],
+    "same_model_retry": false,
+    "escalated_to_full": false
+  },
   "drafter_version": "v2.1c",
-  "footnote_count": 0,
-  "sources_used": 0,
-  "unique_source_count": 0,
+  "footnote_count": 8,
+  "sources_used": 9,
+  "unique_source_count": 9,
   "missing_anchor_caveat_injected": false,
   "missing_anchor_descriptions": []
 }

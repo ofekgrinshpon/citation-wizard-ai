@@ -2,33 +2,272 @@
   "id": "Q12",
   "category": "thin_corpus",
   "query": "מהי אחריותו של דירקטור בחברה פרטית לגילויי מידע על שימוש במערכות AI גנרטיביות בתהליכי קבלת החלטות?",
-  "run_id": "f3e72a13-d7cd-4fa1-a1c1-e963e91598d4",
+  "run_id": "85dd2989-1adc-43ca-b0b9-1cc1d309257c",
   "ok": true,
-  "total_ms": 129941,
-  "answer": "**אחריות דירקטור לגבי גילוי שימוש במערכות AI — מסקנה מקוצרת**\n\nבקצרה: דירקטור בחברה פרטית עלול להיות חייב בגילוי ובנקיטת צעדי פיקוח כאשר שימוש במערכות AI גנרטיביות משפיע באופן מהותי על תהליכי קבלת ההחלטות של החברה; אולם המסקנה הזאת צריכה להיאמר בזהירות משום שהמקורות שסופקו תומכים בכך באופן חלקי בלבד ולא דנים במפרט הרגולטורי המלא של כל סוגי המחויבויות.¹\n\n**האם השימוש ב‑AI הוא 'עניין מהותי' המחייב גילוי (תגובה ל־C1)**\n\nהגדרת \"עניין מהותי\" נבחנת לפי השאלה האם השימוש במערכת AI משנה או משפיע על שיקולים בסיסיים של החברה — לדוגמה החלטות שיקבעו מדיניות עסקית, תנאי שוק, סיכון פיננסי או אחריות רגולטורית. אם המערכת מכתיבה או משנה תוצאה באופן שמשפיע על שיקול הדעת ההנהלי או תוצאות כלכליות מהותיות, ניתן לטעון בזהירות כי חובת הנאמנות וחובת הזהירות מחייבות דיווח לוועדת הדירקטוריון ולבעלי המניות או לפחות דיון פנימי מטרתי.¹\n\n**היבטי פרטיות ורגולציה חיצונית (תגובה ל‑C2)**\n\nשאלת חובות נוספות בגין עיבוד נתונים אישיים (למשל הדרישה להערכות השפעה, דיווח על אירועי אבטחה או גילוי לרשויות ו/או ללקוחות) אינה מטופלת במקורות שסופקו. באופן כללי, כאשר מערכת AI מעבדת נתונים אישיים עלולות לחול חובות רגולטוריות חיצוניות שלא יוכלו להיפתר רק באמצעות דיווח פנימי; השלכות אלה תלויות במסגרת דיני הפרטיות והרגולציה החלה, ולכן יש לפנות לבחינה ספציפית של מקורות רגולטוריים המתאימים.¹\n\n**סנקציות ואחריות משפטית על חוסר גילוי או פיקוח כושל (תגובה ל‑C3)**\n\nאפשרויות האכיפה כוללות תביעות אזרחיות (לרבות תביעה נגזרת מטעם החברה אם נגרם נזק כתוצאה מהפרת חובות הדירקטור), צעדים מנהליים על‑ידי רגולטורים רלוונטיים, ואמצעים משמעתיים כלפי דירקטורים. היקף ואופי האחריות האישית ייקבעו לפי הוכחת פגם בחובת הזהירות או הנאמנות, קשר סיבתי לנזק ונסיבות הקונקרטיות (ידע, מודעות, כמות ושלב הדיווח). יש לנסח מסקנות אלה בזהירות כיוון שהמקורות שסופקו תומכים בעקרונות דיני התאגידים באופן חלקי בלבד.¹\n\n**סטנדרטים נדרשים של פיקוח וניהול בעת הטמעת AI (תגובה ל‑C4)**\n\nברמת העקרון, נדרש לדירקטור לקדם מנגנוני ניהול סיכונים המתאימים לאופי הטכנולוגיה ולממדי השימוש: הערכות סיכון כתובות, תיעוד תהליכי קבלת החלטות שבהם מעורב ה‑AI, אימות/וולידציה של מודלים, ביקורת עצמאית או מומחים חיצוניים, ונהלים להשבה/הסבר של החלטות במידת הצורך. קיומם של מנגנונים אלה עשוי לשמש ראיה למילוי חובת הזהירות ולהפחית סיכון לאחריות אישית, ואילו היעדרם מגביר את הסיכון לתביעות ולסנקציות — טענה הנתמכת במקורות שסופקו באופן חלקי בלבד.¹\n\nהגבלות וצעדים מומלצים: המסקנות לעיל נחלקות בין דוקטרינה תאגידית כללית לבין חובות רגולטוריות ספציפיות; המקור שקיימנו מספק רק תשתית דוקטרינית חלקית ולכן מומלץ לבדוק חקיקה, תקנות ופסיקה רלוונטיות בדיני פרטיות, רגולציה טכנולוגית והנחיות רגולטוריות ספציפיות לפני קבלת מסקנה מחייבת או המלצה פרקטית נוספת.",
+  "total_ms": 178864,
+  "answer": "מענה קצר ומרכזי: מן המקורות שאותרו ניתן להצביע בזהירות כי קיים תמרור ברור של חובת גילוי מצד דירקטור כאשר שימוש במערכות AI גנרטיביות משפיע באופן מהותי על קבלת החלטות של החברה; חובת הגילוי נטועה במסגרת חובת האמון ודברי דין תאגידיים הנוגעים למהותיות ודיווח, אך היקפה המדויק תלוי בנסיבות המקרה ובאיפיון המהותיות הרלוונטית.¹\n\n**האם קיימת חובת גילוי כלפי הדירקטוריון, בעלי מניות והחברה עצמה?**\n\nמסגרת היסוד: חוק החברות והדוקטרינה של חובת האמון מטילים על נושא־משרה חובת גילוי לגבי עניינים מהותיים; כאשר שימוש ב‑AI משנה או משפיע מהותית על שיקוליהם של מקבלי החלטות, ההפרה עלולה להיחשב הפרת חובת האמון. עם זאת, המקורות אינם קובעים כלל אוטומטי ודורשים בחינה נסיבתית של מהותיות ומידע רלוונטי.¹\n\n**מה היקף ומאפייני המידע שיש לגלות; כיצד להגדיר מהותיות בהקשר AI?**\n\nאיזה מידע עשוי להיות רלוונטי: פרטי קיום השימוש ב‑AI, תיאור תכלית השימוש ותפקודו בתהליך קבלת ההחלטות, אופי המודלים (למשל 'קופסה שחורה' מול מודלים ניתנים להסבר), סיכונים תפעוליים ופרטיותיים, מקור ויחסי תלות בנתונים וספקים חיצוניים — אלה היבטים שהדו\"חות הממשלתיים והבנקאיים מזהירים כרגישיים להערכת סיכונים ושקיפות.²\n\nהגדרת מהותיות: לפי הספרות והדוקטרינה התאגידית, מהותיות נקבעת לפי האם המידע סביר שהיה משנה את התנהגות המשקיע או מקבל ההחלטות הרלבנטי; בקונטקסט AI יש לבחון הגודל והיקף ההשפעה על תוצאות עסקיות, חשיפות רגולטוריות, ואמינות תהליכים פנימיים — מבחן נסיבתי שמובא בספרות על מהותיות ויישומו ל‑AI.³\n\n**האם עיבוד מידע אישי מחייב גילוי נפרד לפי חוק הגנת הפרטיות?**\n\nחובות פרטיות חלות: חוק הגנת הפרטיות מטיל חובות על מחזיקי מאגרי מידע ובין היתר על דרישות שקיפות, מינוי ממונה על הגנת הפרטיות ונקיטת אמצעי הגנה בעיבוד מידע אישי; כאשר מערכות AI מעבדות מידע אישי של נתינים, יש לעמוד בדרישות אלה ולעודד גילוי ביחס לאופן ועקרונות העיבוד.⁴\n\nהבחנה מעשית: חלק מההנחיות המקצועיות שניתנו לקהלי יעד ספציפיים מדגימות דרישות שקיפות (למשל הדרישה של לשכת עורכי הדין לגילוי אודות מערכת ושאילתה בשימוש), אך מסמך זה עוסק במקצוע עו\"ד ואינו מהווה נורמה קונקרטית לכלל החברות הפרטיות; הוא ראוי כהדגמה לפרקטיקה המתגבשת, לא כצו־חוק המוחל על כלל המקרים.⁵\n\n**חובות גילוי ודיווח כלפי משקיעים, רואי חשבון ובעלי עניין חיצוניים**\n\nהבחנה בין ציבורי לפרטי: תקנות ניירות ערך ודוחות תקופתיים קובעות סטנדרטים דיווחיים לחברות ציבוריות; חוזר רשות החברות ודרישות מבקרים מקצועיים מדגישים כי רואי חשבון ושם הרגולטור מצפים לדווח על סיכונים מהותיים. לחברה פרטית אין את אותם דגשים פורמליים של דיווח ציבורי, אך חובות גילוי מהותי כלפי משקיעים פרטיים ורואי חשבון עשויות לנבוע מתחומי האמון והדרישות הבקרתיות והראייתיות.⁶\n\n**אחריות אישית של דירקטור במקרה של גילוי לקוי או מטעה; הגנות אפשריות**\n\nאחריות אזרחית ומשמעתית: הפרת חובות הגילוי עלולה להיחשב הפרת חובת האמון ולפתוח תביעה אזרחית נגד דירקטור לפי הוראות חוק החברות; הדין התאגידי וספרות ההגנה דנים בתנאים להטלת חבות אישית ובמנגנוני פטור או פיצוי (כלל היסוד הוא בחינת מידע, שיקולי זהירות ותיעוד הפעולה).⁷\n\nגבולות פליליים והתיחום במקורות: אין במקורות שסופקו כדי לקבוע באופן חד־משמעי קיומה של חבות פלילית ספציפית הנובעת מגילוי לקוי בתחום ה‑AI; סוגיות פליליות תלויות בחקיקה ספציפית ובמקרים שבהם הפרה מעידה על עבירות בדין הפלילי — מסקנות כאלה דורשות בחינה נרחבת מעבר למקורות הנוכחיים.\n\nהגנות פרקטיות של דירקטורים: מנגנוני הגנה מקובלים כוללים תיעוד החלטתי מפורט והצבעה בדירקטוריון, הצמדות ל'שיקול דעת עסקי' סביר ולמדיניות בקרה פנימית, קבלת ייעוץ מקצועי חיצוני (טכני‑חוקי/פרטיות/ביטוח), ומנגנוני דיווח פנימיים בזמן — צעדים אלה מופיעים כדרכי הפחתת סיכון בהלכות ובספרות על אמצעי זהירות.⁸\n\nהמלצות סיכום ליישום מיידי (קצרות ומעשיות): רשמו וגלו כל החלטה עיקרית שהושפעה מ‑AI כאשר יש סיכון מהותי; הגדירו מדיניות גילוי פנימית (מי מדווח, מתי ומה חושפים); בדקו עמידה בחוק הגנת הפרטיות ומינו ממונה אם נדרש; קבלו חוות‑דעת טכנולוגית ומשפטית לפני הטמעה של מערכות שמשפיעות על תהליכי החלטה קריטיים.⁸",
   "footnotes": [
     {
-      "url": "https://runilawreview.org/2024/01/24/vol29-nadel-bombach/",
-      "title": "להעריך מחדש את סעד ההערכה | איתמר נדל ויצחק בומבך (כרך כט)",
+      "url": null,
+      "title": "חוק החברות, תשנ\"ט-1999; יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח); What You Don’t Know Can Hurt You: Materiality and the Artificial Intelligence Disclosure Problem",
       "number": 1,
       "sources": [
         {
-          "url": "https://runilawreview.org/2024/01/24/vol29-nadel-bombach/",
-          "title": "להעריך מחדש את סעד ההערכה | איתמר נדל ויצחק בומבך (כרך כט)",
+          "url": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+          "title": "חוק החברות, תשנ\"ט-1999",
+          "source_type": "other"
+        },
+        {
+          "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
+          "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4321900",
+          "title": "What You Don’t Know Can Hurt You: Materiality and the Artificial Intelligence Disclosure Problem",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "דו\"ח ביניים: בינה מלאכותית בסקטור הפיננסי; בינה מלאכותית בסקטור הפיננסי; What You Don’t Know Can Hurt You: Materiality and the Artificial Intelligence Disclosure Problem",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/reports/report-06-11-24/he/ArtificialIntelligenceReport2.pdf",
+          "title": "דו\"ח ביניים: בינה מלאכותית בסקטור הפיננסי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.boi.org.il/media/rh0bejl4/aireport.pdf",
+          "title": "בינה מלאכותית בסקטור הפיננסי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4321900",
+          "title": "What You Don’t Know Can Hurt You: Materiality and the Artificial Intelligence Disclosure Problem",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "What You Don’t Know Can Hurt You: Materiality and the Artificial Intelligence Disclosure Problem; יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4321900",
+          "title": "What You Don’t Know Can Hurt You: Materiality and the Artificial Intelligence Disclosure Problem",
+          "source_type": "other"
+        },
+        {
+          "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
+          "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
           "source_type": "journal_article"
         }
       ],
-      "source_type": "journal_article"
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק הגנת הפרטיות; פרטיות מותאמת אישית",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%92%D7%A0%D7%AA_%D7%94%D7%A4%D7%A8%D7%98%D7%99%D7%95%D7%AA",
+          "title": "חוק הגנת הפרטיות",
+          "source_type": "israeli_law"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_c91f68ec3687445594412610e508adfd.pdf",
+          "title": "פרטיות מותאמת אישית",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/generalpage/ai_info_law/he/%D7%92%D7%99%D7%9C%D7%95%D7%99%20%D7%93%D7%A2%D7%AA%20%D7%91%D7%A2%D7%A0%D7%99%D7%99%D7%9F%20%D7%A9%D7%99%D7%9E%D7%95%D7%A9%20%D7%91%D7%91%D7%99%D7%A0%D7%94%20%D7%9E%D7%9C%D7%90%D7%9B%D7%95%D7%AA%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%AA%20%D7%A2%D7%95%D7%A8%D7%9B%D7%99%20%D7%94%D7%93%D7%99%D7%9F%20(2024).pdf",
+      "title": "גילוי דעת מקדים בעניין שימוש בבינה מלאכותית (AI) בעבודת עורכי הדין",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/ai_info_law/he/%D7%92%D7%99%D7%9C%D7%95%D7%99%20%D7%93%D7%A2%D7%AA%20%D7%91%D7%A2%D7%A0%D7%99%D7%99%D7%9F%20%D7%A9%D7%99%D7%9E%D7%95%D7%A9%20%D7%91%D7%91%D7%99%D7%A0%D7%94%20%D7%9E%D7%9C%D7%90%D7%9B%D7%95%D7%AA%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%AA%20%D7%A2%D7%95%D7%A8%D7%9B%D7%99%20%D7%94%D7%93%D7%99%D7%9F%20(2024).pdf",
+          "title": "גילוי דעת מקדים בעניין שימוש בבינה מלאכותית (AI) בעבודת עורכי הדין",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "תקנות ניירות ערך (דוחות תקופתיים ומיידיים), תש\"ל-1970; אישור דוחות כספיים רבעוניים – חוזר רשות החברות; What You Don’t Know Can Hurt You: Materiality and the Artificial Intelligence Disclosure Problem",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/308_014.htm",
+          "title": "תקנות ניירות ערך (דוחות תקופתיים ומיידיים), תש\"ל-1970",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/directory-5-1/he/files_directory-collector_directory-5-1.pdf",
+          "title": "אישור דוחות כספיים רבעוניים – חוזר רשות החברות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4321900",
+          "title": "What You Don’t Know Can Hurt You: Materiality and the Artificial Intelligence Disclosure Problem",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק החברות, תשנ\"ט-1999; פטור מחבות בגין הפרת חובת זהירות | אסף חמדני ושרון חנס (כרך כד(2)); שם הוורד: אמצעי זהירות ושיקול-דעת עסקי של נושא-משרה | עמיר ליכט (כרך יט)",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+          "title": "חוק החברות, תשנ\"ט-1999",
+          "source_type": "other"
+        },
+        {
+          "url": "https://runilawreview.org/2022/09/08/vol24-hamdani-hannes/",
+          "title": "פטור מחבות בגין הפרת חובת זהירות | אסף חמדני ושרון חנס (כרך כד(2))",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://runilawreview.org/2015/06/25/volume19_licht/",
+          "title": "שם הוורד: אמצעי זהירות ושיקול-דעת עסקי של נושא-משרה | עמיר ליכט (כרך יט)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "שם הוורד: אמצעי זהירות ושיקול-דעת עסקי של נושא-משרה | עמיר ליכט (כרך יט); פטור מחבות בגין הפרת חובת זהירות | אסף חמדני ושרון חנס (כרך כד(2)); גילוי דעת מקדים בעניין שימוש בבינה מלאכותית (AI) בעבודת עורכי הדין",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://runilawreview.org/2015/06/25/volume19_licht/",
+          "title": "שם הוורד: אמצעי זהירות ושיקול-דעת עסקי של נושא-משרה | עמיר ליכט (כרך יט)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://runilawreview.org/2022/09/08/vol24-hamdani-hannes/",
+          "title": "פטור מחבות בגין הפרת חובת זהירות | אסף חמדני ושרון חנס (כרך כד(2))",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/ai_info_law/he/%D7%92%D7%99%D7%9C%D7%95%D7%99%20%D7%93%D7%A2%D7%AA%20%D7%91%D7%A2%D7%A0%D7%99%D7%99%D7%9F%20%D7%A9%D7%99%D7%9E%D7%95%D7%A9%20%D7%91%D7%91%D7%99%D7%A0%D7%94%20%D7%9E%D7%9C%D7%90%D7%9B%D7%95%D7%AA%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%AA%20%D7%A2%D7%95%D7%A8%D7%9B%D7%99%20%D7%94%D7%93%D7%99%D7%9F%20(2024).pdf",
+          "title": "גילוי דעת מקדים בעניין שימוש בבינה מלאכותית (AI) בעבודת עורכי הדין",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
     }
   ],
   "used_sources": [
     {
-      "url": "https://runilawreview.org/2024/01/24/vol29-nadel-bombach/",
-      "title": "להעריך מחדש את סעד ההערכה | איתמר נדל ויצחק בומבך (כרך כט)",
+      "url": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+      "title": "חוק החברות, תשנ\"ט-1999",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "143bb154-e370-496e-8e1c-baae5c802eb1"
+    },
+    {
+      "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
+      "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
       "number": 1,
       "origin": "local_db",
       "source_type": "journal_article",
-      "candidate_id": "fdb147a7-17c1-4ef7-9c3a-be46b2c5cd0a"
+      "candidate_id": "bc647ba9-1451-43b7-9454-5eb5de0492b5"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4321900",
+      "title": "What You Don’t Know Can Hurt You: Materiality and the Artificial Intelligence Disclosure Problem",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "caf74e92-8076-4f35-8222-d6d0e627eebb"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/reports/report-06-11-24/he/ArtificialIntelligenceReport2.pdf",
+      "title": "דו\"ח ביניים: בינה מלאכותית בסקטור הפיננסי",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "b7e57847-0ad2-4ff9-a75f-58f45adce857"
+    },
+    {
+      "url": "https://www.boi.org.il/media/rh0bejl4/aireport.pdf",
+      "title": "בינה מלאכותית בסקטור הפיננסי",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "3b5bd984-f6d6-4f84-b1da-53798e60f42f"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%92%D7%A0%D7%AA_%D7%94%D7%A4%D7%A8%D7%98%D7%99%D7%95%D7%AA",
+      "title": "חוק הגנת הפרטיות",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "israeli_law",
+      "candidate_id": "bc536444-0d39-46c6-92e7-f6e71ac2c29e"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_c91f68ec3687445594412610e508adfd.pdf",
+      "title": "פרטיות מותאמת אישית",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "424c323a-2b17-45ca-8fac-133d41de36b8"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/generalpage/ai_info_law/he/%D7%92%D7%99%D7%9C%D7%95%D7%99%20%D7%93%D7%A2%D7%AA%20%D7%91%D7%A2%D7%A0%D7%99%D7%99%D7%9F%20%D7%A9%D7%99%D7%9E%D7%95%D7%A9%20%D7%91%D7%91%D7%99%D7%A0%D7%94%20%D7%9E%D7%9C%D7%90%D7%9B%D7%95%D7%AA%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%AA%20%D7%A2%D7%95%D7%A8%D7%9B%D7%99%20%D7%94%D7%93%D7%99%D7%9F%20(2024).pdf",
+      "title": "גילוי דעת מקדים בעניין שימוש בבינה מלאכותית (AI) בעבודת עורכי הדין",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "7f050d8e-200d-4855-8a40-b8e4eef5dec5"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/308_014.htm",
+      "title": "תקנות ניירות ערך (דוחות תקופתיים ומיידיים), תש\"ל-1970",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e51df43f-1b99-4267-8b8f-1553e288aadd"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/directory-5-1/he/files_directory-collector_directory-5-1.pdf",
+      "title": "אישור דוחות כספיים רבעוניים – חוזר רשות החברות",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "cea60bcc-ea1b-4a58-b688-35297f1aed1a"
+    },
+    {
+      "url": "https://runilawreview.org/2022/09/08/vol24-hamdani-hannes/",
+      "title": "פטור מחבות בגין הפרת חובת זהירות | אסף חמדני ושרון חנס (כרך כד(2))",
+      "number": 7,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "4cb473a3-5f71-4cf4-ba7f-4d1b9c9b4950"
+    },
+    {
+      "url": "https://runilawreview.org/2015/06/25/volume19_licht/",
+      "title": "שם הוורד: אמצעי זהירות ושיקול-דעת עסקי של נושא-משרה | עמיר ליכט (כרך יט)",
+      "number": 7,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "e85b971c-917a-4199-b6a7-9979dabfb2b6"
     }
   ],
   "required_anchors": {
@@ -41,24 +280,24 @@
   "verifier": {
     "counts": {
       "by_support": {
-        "direct": 0,
-        "partial": 1,
-        "unrelated": 9,
+        "direct": 2,
+        "partial": 11,
+        "unrelated": 8,
         "tangential": 0
       },
       "by_role_match": {
-        "true": 10,
+        "true": 21,
         "false": 0
       }
     },
-    "dropped_count": 9
+    "dropped_count": 8
   },
   "completeness": {
     "reasons": [],
     "signals": [],
     "truncated": false,
     "last_block_kind": "paragraph",
-    "last_block_excerpt": "…סיקה רלוונטיות בדיני פרטיות, רגולציה טכנולוגית והנחיות רגולטוריות ספציפיות לפני קבלת מסקנה מחייבת או המלצה פרקטית נוספת."
+    "last_block_excerpt": "…הגנת הפרטיות ומינו ממונה אם נדרש; קבלו חוות‑דעת טכנולוגית ומשפטית לפני הטמעה של מערכות שמשפיעות על תהליכי החלטה קריטיים."
   },
   "truncation_retry": {
     "retry_ms": 0,
@@ -68,9 +307,9 @@
     "escalated_to_full": false
   },
   "drafter_version": "v2.1c",
-  "footnote_count": 1,
-  "sources_used": 1,
-  "unique_source_count": 1,
+  "footnote_count": 8,
+  "sources_used": 12,
+  "unique_source_count": 12,
   "missing_anchor_caveat_injected": false,
   "missing_anchor_descriptions": []
 }

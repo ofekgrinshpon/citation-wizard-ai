@@ -2,12 +2,224 @@
   "id": "Q09",
   "category": "academic_doctrine",
   "query": "מהי דוקטרינת \"הבטלות היחסית\" במשפט המנהלי הישראלי, ומיהם המלומדים והפסיקה המרכזיים בפיתוחה?",
-  "run_id": "09184c17-abd4-43a1-8a60-ff73120f91b1",
-  "ok": false,
-  "total_ms": 97200,
-  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
-  "footnotes": [],
-  "used_sources": [],
+  "run_id": "227bfe86-4d55-4756-be85-bcc3001024de",
+  "ok": true,
+  "total_ms": 132909,
+  "answer": "**הגדרה ותכלית של דוקטרינת \"הבטלות היחסית\"**\n\nהבטלות יחסית היא דוקטרינה בדיני המנהלים שמבדילה בין פגם פרוצדורלי או מהותי שצורם בהחלטה מינהלית לבין התוצאה המידית של הכרזה על בטלותה; לפי הדוקטרינה השופט יכול להכיר בקיומו של ליקוי אך להימנע מביטול מוחלט של ההחלטה או להטיל הגבלות וסעדים חלופיים במקום זאת, מתוך שיקול של מידתיות, תוצאתיות והגנה על אינטרס הציבור וצדדים שלישיים.¹\n\n**קריטריונים ובדיקות שמפתחו בתי המשפט ופרשנים**\n\n- חומרת הליקוי — האם הפגם פוגע באופן יסודי בתוקף ההחלטה או שמדובר בפגם טכני שניתן לתקנו וללא פגיעה מהותית בהתוצאה; שיקול זה נחשב מרכזי בהבחנה בין בטלות מוחלטת לבטלות יחסית.²\n- כוננות המפעיל / תום לב מול רשלנות — בתי המשפט בוחנים אם המנהל פעל בתום לב או בנזקק רשלני, כאשר מידה של כוונה פסולה או הפרה גסה מייצרת דחיפה לעבר ביטול מוחלט.¹\n- אינטרס ציבורי והסתמכות של צדדים שלישיים —יש לשקול את הפגיעה באינטרס הציבורי ובזכויות של צדדים שלישיים שהסתמכו על ההחלטה; הסתמכות משמעותית עלולה להצדיק השארת ההחלטה בעינה זמנית או שימוש בסעדים מותנים.³\n- חלוף זמן ושיקולי יציבות סיבוכית — חלוף זמן משמעותי או קיומם של פעולות שבוצעו בהתבסס על ההחלטה מקשים על ביטול מוחלט ויכולים להטות את האיזון כלפי ריפוי.²\n- אפשרות לריפוי ומידתיות הסעד — האם ניתן להשיג תיקון באמצעות סעד מצומצם, דחיית תחולה, השעיה חלקית או פיצוי במקום ביטול מלא; שאלת המידתיות מנחה את בחירת הסעד.⁴\n\n**השלכות פרקטיות לגבי סוגי הסעדים**\n\nהכרה בבטלות יחסית משנה את נקודת המוצא של בתי המשפט לגבי הסעד: במקום חזקת בטלות מוחלטת של החלטה מנהלית נפתחות אפשרויות נוספות כגון ביטול פרוספקטיבי או דחיית תחולה, השעיה של ההשפעה, מתן צווים מותנים או סעדים חלופיים שהופכים את ההכרה בפגם לסעד מותאם.⁵\n\nבחינת השפעה על זכויות צדדים שלישיים ופיצוי — כאשר מוכרת בטלות יחסית בתי המשפט נוטים לשקול מנגנוני פיצוי או סעד עקיף כדי לתקן עוול מבלי לנתק את ההשלכות הממשיות של ההחלטה על צדדים חפים מפשע; ניתוח זה מופיע בדיונים על סעדים עקיפים ומדיניות פיצוי נגד פעולות מנהליות.⁶\n\nהשארת ההחלטה בעינה עד בירור והעדפה של סעד מצומצם — במקרים מסוימים מטעמים של יציבות ציבורית או אינטרס ציבורי ייעשה שימוש בסעד זמני או מותנה המאפשר את המשך קיום ההחלטה עד לבירור מלא, או בפסק דין שיחליט על הפרוצדורה לתיקון במקום ביטול אוטומטי.²\n\n**מלומדים ופסיקה מרכזיים בפיתוח הדוקטרינה**\n\nבין המלומדים שזוהו כתרמו לדיון התיאורטי והמעשי על הבטלות היחסית ניתן למנות דפנה ברק־ארז, שכתבה על הבחנה זו והציגה אותה כדוקטרינה של שיקול־דעת שיפוטי, וכן אהרן ברק שדנו כתביו בתורת הסעדים יכולים להתייחס לשאלות של פרוספקטיביות והשעיית השפעת פסיקה.⁴\n\nהפסיקה המנהלית והצעקתית של בתי המשפט העליונים בישראל היא המקור המעשי שבו הדוקטרינה נבחנה ופותחה; מקורות וסקרים משפטיים שנבדקו מנתחים פסקי‑דין מובילים ומציגים יישומים פרקטיים של הבטלות יחסית וסעדים חלופיים.⁷\n\nבנוסף קיימת ספרות משלימה על סעדים חברתיים וסעדים חלופיים שנותנת מסגרת לחשיבה פרקטית על אופן יישום הדוקטרינה במשפט מנהלי וכלכלי; מחקרים אלה מספקים כלים להערכת מידתיות וסדר העדיפויות בהענקת סעד.⁸\n\nהערה שיטתית על גבולות המקורות: חלק מהמקורות שנבדקו עוסקים בעיקר בתורת הסעדים הכללית או בהקשרים חוזיים; קובעי עקרונות אלה ניתנים ליישום בהקשר מנהלי באופן אנלוגי אך יש לנהוג בזהירות פרשנית ולא להכליל מסקנות חוזיות או חוקתיות לכל המישורים ללא בדיקה אמפירית של הפסיקה המנהלית הרלוונטית.⁹",
+  "footnotes": [
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+      "title": "בטלות יחסית ושיקול דעת שיפוטי",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "academic"
+    },
+    {
+      "url": null,
+      "title": "בטלות יחסית ושיקול דעת שיפוטי; דלות הסעדים ההגבליים",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://law.haifa.ac.il/images/documents/The%20Dearth%20of%20Antitrust%20Sanctions.pdf",
+          "title": "דלות הסעדים ההגבליים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בטלות יחסית ושיקול דעת שיפוטי; החיפוש אחר \"סעדים חברתיים\"",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/Law/maasei%20mishpat/Issue4/7.pdf",
+          "title": "החיפוש אחר \"סעדים חברתיים\"",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בטלות יחסית ושיקול דעת שיפוטי; על תורת הסעדים החוקתיים",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/pzqbm43b/barak.pdf",
+          "title": "על תורת הסעדים החוקתיים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "על תורת הסעדים החוקתיים; החיפוש אחר \"סעדים חברתיים\"; ביטול חוזה בעקבות הפרתו",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.runi.ac.il/media/pzqbm43b/barak.pdf",
+          "title": "על תורת הסעדים החוקתיים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/Law/maasei%20mishpat/Issue4/7.pdf",
+          "title": "החיפוש אחר \"סעדים חברתיים\"",
+          "source_type": "other"
+        },
+        {
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Book.aspx?nBookID=96726316",
+          "title": "ביטול חוזה בעקבות הפרתו",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר אקדמי (taulawreview.sites.tau.ac.il); החיפוש אחר \"סעדים חברתיים\"",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_5af46bb80ac243b4a2ab7d4622677b97.pdf",
+          "title": "מסמך מאתר אתר אקדמי (taulawreview.sites.tau.ac.il)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/Law/maasei%20mishpat/Issue4/7.pdf",
+          "title": "החיפוש אחר \"סעדים חברתיים\"",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בטלות יחסית ושיקול דעת שיפוטי; מסמך מאתר אתר אקדמי (taulawreview.sites.tau.ac.il)",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_5af46bb80ac243b4a2ab7d4622677b97.pdf",
+          "title": "מסמך מאתר אתר אקדמי (taulawreview.sites.tau.ac.il)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "החיפוש אחר \"סעדים חברתיים\"; דלות הסעדים ההגבליים",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/Law/maasei%20mishpat/Issue4/7.pdf",
+          "title": "החיפוש אחר \"סעדים חברתיים\"",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/images/documents/The%20Dearth%20of%20Antitrust%20Sanctions.pdf",
+          "title": "דלות הסעדים ההגבליים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "על תורת הסעדים החוקתיים; ביטול חוזה בעקבות הפרתו",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://www.runi.ac.il/media/pzqbm43b/barak.pdf",
+          "title": "על תורת הסעדים החוקתיים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Book.aspx?nBookID=96726316",
+          "title": "ביטול חוזה בעקבות הפרתו",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+      "title": "בטלות יחסית ושיקול דעת שיפוטי",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "97c4735d-3c07-4902-ae87-eb40277af9f6"
+    },
+    {
+      "url": "https://law.haifa.ac.il/images/documents/The%20Dearth%20of%20Antitrust%20Sanctions.pdf",
+      "title": "דלות הסעדים ההגבליים",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f6e2c50a-b2c7-426f-8da0-71da59ca9623"
+    },
+    {
+      "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/Law/maasei%20mishpat/Issue4/7.pdf",
+      "title": "החיפוש אחר \"סעדים חברתיים\"",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d188a8a6-13b6-478c-bd0b-42f3d4fa24fd"
+    },
+    {
+      "url": "https://www.runi.ac.il/media/pzqbm43b/barak.pdf",
+      "title": "על תורת הסעדים החוקתיים",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "fa4d18f7-a15b-4a9a-8b27-f3035b4311ad"
+    },
+    {
+      "url": "https://kotar.cet.ac.il/kotarapp/index/Book.aspx?nBookID=96726316",
+      "title": "ביטול חוזה בעקבות הפרתו",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "89449269-ef7b-4cd6-9d95-59dc3f3addf7"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_5af46bb80ac243b4a2ab7d4622677b97.pdf",
+      "title": "מסמך מאתר אתר אקדמי (taulawreview.sites.tau.ac.il)",
+      "number": 6,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "a50ca7da-6621-429a-997f-ba57e0a2fb19"
+    }
+  ],
   "required_anchors": {
     "count": 0,
     "anchors": [],
@@ -18,24 +230,36 @@
   "verifier": {
     "counts": {
       "by_support": {
-        "direct": 0,
-        "partial": 0,
-        "unrelated": 4,
+        "direct": 1,
+        "partial": 5,
+        "unrelated": 3,
         "tangential": 2
       },
       "by_role_match": {
-        "true": 6,
+        "true": 11,
         "false": 0
       }
     },
-    "dropped_count": 6
+    "dropped_count": 5
   },
-  "completeness": null,
-  "truncation_retry": null,
+  "completeness": {
+    "reasons": [],
+    "signals": [],
+    "truncated": false,
+    "last_block_kind": "paragraph",
+    "last_block_excerpt": "… יש לנהוג בזהירות פרשנית ולא להכליל מסקנות חוזיות או חוקתיות לכל המישורים ללא בדיקה אמפירית של הפסיקה המנהלית הרלוונטית."
+  },
+  "truncation_retry": {
+    "retry_ms": 0,
+    "attempted": false,
+    "reasons_initial": [],
+    "same_model_retry": false,
+    "escalated_to_full": false
+  },
   "drafter_version": "v2.1c",
-  "footnote_count": 0,
-  "sources_used": 0,
-  "unique_source_count": 0,
+  "footnote_count": 9,
+  "sources_used": 6,
+  "unique_source_count": 6,
   "missing_anchor_caveat_injected": false,
   "missing_anchor_descriptions": []
 }
