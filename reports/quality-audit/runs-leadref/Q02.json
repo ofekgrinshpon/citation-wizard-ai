@@ -1,0 +1,120 @@
+{
+  "id": "Q02",
+  "category": "docket_holding_missing_source_test",
+  "query": "מה נקבע בע\"מ (מחוזי ת\"א) 61908-05-19 בעניין סיווג הכנסה כהכנסת עבודה או הכנסת עסק?",
+  "run_id": "b180e082-7dad-4e10-a23b-d32c6cb99336",
+  "ok": true,
+  "total_ms": 148461,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "case_holding",
+    "reason": "no_case_source"
+  },
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "answer": "**תשובה תמציתית**\n\nלא נמצאה בידינו העתק של פסק‑הדין בע\"מ (מחוזי ת״א) 61908‑05‑19 בתוך המקורות שסופקו; לכן אין בידי לציין במדויק מה נקבע בתיק זה לגבי סיווג ההכנסה כ'הכנסת עבודה' או כ'הכנסה מעסק'.\n\n**מסגרת חוקית רלוונטית שאפשר להפעיל במקרה של חוסר־טקסט**\n\nבנוגע להגדרת סוגי ההכנסה והמשמעויות החוקיות של סיווגם, פקודת מס הכנסה קובעת הבחנה בין הכנסת עבודה לבין הכנסה מעסק או משלח יד, ובפרט סעיף 2 מתאר את ההבחנה הכללית; בנוסף, סעיפים הנוגעים לניכוי במקור, דיווח וניהול פנקסים (כלליים בסדרי עניין זה) מופיעים בסעיפים 170–164 של הפקודה.¹\n\n**אמות מידה ומבחנים שנדונים בספרות ובפרשנות החקיקתית**\n\nהספרות המשפטית שמסופקת מצביעה בזהירות על כך שהבחנה בין עובד לעצמאי נבחנת באמצעות מבחנים עובדתיים ותפקודיים — בין היתר מבחן התלות והפיקוח של המועסק כלפי המעסיק, אופי ומשך הקשר וההשתלבות בארגון, אופן התגמול והסיכון הכלכלי, וכן קיומה של הסכמת עבודה פורמלית; ממצאים אלה מוצגים כמסגרת אנליטית ולא ככלל חקוק מחייב.²\n\n**השלכות מעשיות של סיווג (באופן כללי, על פי החקיקה והספרות)**\n\nבהתאם להוראות שצוינו בפקודת מס הכנסה ובהסברים בספרות, סיווג כהכנסת עבודה מייצר בדרך כלל חובת ניכוי במקור על‑ידי המעסיק ודיווח שוטף על שכר; לעומת זאת סיווג כהכנסת עסק מחייב את המוטב לנהל פנקסים ולהגיש דוחות ולשלם מסיווה עצמאי, כאשר משמעות פרקטית נוספת נוגעת לניכויים המותרים ולאופן חישוב התשלום והדיווח; יש לנסח מסקנות אלה בזהירות משום שהפרטים המדויקים תלוים בנסיבות המקרה ובהוראות החקיקה המלאות.³\n\nלא ניתן להעריך מתוך החומרים שסופקו האם בפסק‑דין המדובר ניתנה הכרעה בעלת משקל תקדيمي רחב או שמא הדגש ניתן לנסיבות עובדתיות וסטטוטוריות ייחודיות של המקרה; בהקשר חוות‑דעתי וספרותי נעשה דגש על אופיים העובדתי והמקרה־ספציפי של הכרעות מסוג זה.⁴\n\nמסקנה מעשית: כדי לדעת מה בדיוק נקבע בתיק 61908‑05‑19 ולבחון את השלכותיו הפרטניות, יש לעיין בטקסט המלא של פסק‑הדין. החומר שסופק כאן משמש למסגרת משפטית כללית בלבד ולא מהווה תחליף לניתוח פסק‑דין ספציפי שאינו מובא בתוך המקורות.",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961; פקודת מס הכנסה (נוסח חדש), תשכ\"א-1961 – סעיף 2",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/law/17/law/1701_1.doc",
+          "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/7d3d2b38-7fbe-4a0e-9a62-2f4ec8b1c8c8/2_7d3d2b38-7fbe-4a0e-9a62-2f4ec8b1c8c8_11_14569.pdf",
+          "title": "פקודת מס הכנסה (נוסח חדש), תשכ\"א-1961 – סעיף 2",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בין עובד לעצמאי בדיני מס הכנסה; פקודת מס הכנסה (נוסח חדש), תשכ\"א-1961 – סעיף 2",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://cris.biu.ac.il/en/publications/employee-versus-independent-contractor-for-tax-purposes/",
+          "title": "בין עובד לעצמאי בדיני מס הכנסה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/7d3d2b38-7fbe-4a0e-9a62-2f4ec8b1c8c8/2_7d3d2b38-7fbe-4a0e-9a62-2f4ec8b1c8c8_11_14569.pdf",
+          "title": "פקודת מס הכנסה (נוסח חדש), תשכ\"א-1961 – סעיף 2",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961; פקודת מס הכנסה (נוסח חדש), תשכ\"א-1961 – סעיף 2; בין עובד לעצמאי בדיני מס הכנסה",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/law/17/law/1701_1.doc",
+          "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/7d3d2b38-7fbe-4a0e-9a62-2f4ec8b1c8c8/2_7d3d2b38-7fbe-4a0e-9a62-2f4ec8b1c8c8_11_14569.pdf",
+          "title": "פקודת מס הכנסה (נוסח חדש), תשכ\"א-1961 – סעיף 2",
+          "source_type": "other"
+        },
+        {
+          "url": "https://cris.biu.ac.il/en/publications/employee-versus-independent-contractor-for-tax-purposes/",
+          "title": "בין עובד לעצמאי בדיני מס הכנסה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://cris.biu.ac.il/en/publications/employee-versus-independent-contractor-for-tax-purposes/",
+      "title": "בין עובד לעצמאי בדיני מס הכנסה",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://cris.biu.ac.il/en/publications/employee-versus-independent-contractor-for-tax-purposes/",
+          "title": "בין עובד לעצמאי בדיני מס הכנסה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://fs.knesset.gov.il/law/17/law/1701_1.doc",
+      "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "2344eedc-7384-4090-a661-d6d7a971980e"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/7d3d2b38-7fbe-4a0e-9a62-2f4ec8b1c8c8/2_7d3d2b38-7fbe-4a0e-9a62-2f4ec8b1c8c8_11_14569.pdf",
+      "title": "פקודת מס הכנסה (נוסח חדש), תשכ\"א-1961 – סעיף 2",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "1b5b8b10-8e6a-423b-9ee1-cec6beef1d47"
+    },
+    {
+      "url": "https://cris.biu.ac.il/en/publications/employee-versus-independent-contractor-for-tax-purposes/",
+      "title": "בין עובד לעצמאי בדיני מס הכנסה",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "b834dfc3-55ea-4412-b392-969e7e4381bd"
+    }
+  ],
+  "quality_warning": null
+}

@@ -646,6 +646,9 @@ async function handle(req: Request): Promise<Response> {
   });
   const missingForCaveat = pickMissingAnchors(preDraftAnchorStatuses)
     .map((s) => ({ description: s.description, is_docket: s.is_docket_anchor }));
+  const requiredAnchorCandidateIds = new Set<string>(
+    preDraftAnchorStatuses.flatMap((s) => s.candidate_ids ?? []),
+  );
 
   // V2.1c is the default drafter (structured blocks + deterministic
   // footnoteBuilder). The legacy Markdown baseline `runDrafter` remains
@@ -661,6 +664,7 @@ async function handle(req: Request): Promise<Response> {
       useAsSource,
       missingRequiredAnchors: missingForCaveat,
       answerIntent: analyzer.answer_intent,
+      requiredAnchorCandidateIds,
     },
   );
   stage_runs.push(...drafter.stage_runs);
@@ -795,6 +799,7 @@ async function handle(req: Request): Promise<Response> {
     quality_warning: drafter.quality_warning,
     missing_anchor_caveat_injected: drafter.missing_anchor_caveat_injected ?? false,
     missing_anchor_descriptions: drafter.missing_anchor_descriptions ?? [],
+    lead_ref: drafter.lead_ref ?? null,
     // Truncation guard telemetry (drafterV2-only, additive).
     completeness: drafter.completeness,
     completeness_initial: drafter.completeness_initial,

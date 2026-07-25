@@ -1,0 +1,177 @@
+{
+  "id": "Q17",
+  "category": "overclaim_trap",
+  "query": "האם בית משפט ישראלי יכיר תמיד בהסכם ממון שנחתם לפני נישואין כמחייב?",
+  "run_id": "c5b7a1b6-6796-4b46-ba7c-3c78b921d825",
+  "ok": true,
+  "total_ms": 162513,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "answer": "**מענה מרכזי**\n\nלא — הסכם ממון שנחתם לפני הנישואין אינו מוכר תמיד אוטומטית כמחייב; בדין הישראלי הוא עלול להתחייב בין הצדדים אך הכרת בית המשפט בתוקפו ובאכיפתו תלויה בעמידה בדרישות החוק ובבחינה שיפוטית של תקינות ההסכם והנסיבות.¹\n\n**דרישות פורמליות ועקרונות ההכרה**\n\nמהמקורות עולה בזהירות כי הכרה בתוקפו של הסכם ממון טרום‑נישואין מותנית בעמידה בדרישות החוק ובפרשנותה של הפסיקה; באופן מעשי הפסיקה והכתיבה המשפטית מדגישות כי ההסכם צריך להיות מתועד ובשפה ברורה, חתום על ידי הצדדים, ולהיות תואם הוראות חוק יחסי ממון והוראות משלימות הרלוונטיות.²\n\n**נסיבות שבהן בית המשפט עלול לסרב לאכוף או לבטל את ההסכם**\n\n- כפייה או חוסר הסכמה חופשית של אחד הצדדים — בית המשפט יבחן אם ההסכמה ניתנה מרצון חופשי או תחת לחץ.³\n- הונאה או חוסר גילוי מהותי של עובדות רלוונטיות — אם צד הסתיר נכסים או נתונים מהותיים, השופט עשוי לדחות או לבטל את ההסכם.³\n- אי‑שקילות קיצונית בתמורות או בתוצאות ההסכם המעמידה צד במצב בלתי סביר ביחס לאחר — פסיקה וניתוחים משפטיים משקלים פערים מהותיים אלה בבחינת תוקף ואכיפה.²\n- שינוי נסיבות חמור מאז כריתת ההסכם שעשוי להצדיק התערבות שיפוטית בשים לב לאיזון המשאבים ולנסיבות המערכתיות של המשפחה.⁴\n\nהפסיקה הרלוונטית מורה כי בתי המשפט בוחנים גם נתונים עובדיים כגון הערכת נכסים סביב מועד הנישואין וההתרחשות הכלכלית של הצדדים, ולכן שאלה מעשית של אכיפה תלויה בנסיבות הפרטניות של המקרה.⁵\n\n**השפעה על זכויות צד שלישי**\n\nמהמקורות ניתן להצביע בזהירות כי סעיפים בהסכם ממון שאמורים לפגוע בזכויות חוקיות של צד ג׳, ובפרט זכויות מוגנות של ילדים (כגון חובת מזונות), לא יתקבלו בעין יפה; בתי המשפט ישקלו את זכויות הצד השלישי והמסגרת החוקית הרלוונטית בעת הכרעה על אכיפה.⁶\n\nמסקנה מעשית קצרה: הסכם ממון טרום‑נישואין אינו מחייב תמיד במובן של אכיפה אוטומטית; כדי למקסם את סיכויי הכרת בית המשפט יש להקפיד על תיעוד ברור, גילוי מלא של נכסים ונסיבות, ניסוח מאוזן והיעזרות ביעוץ משפטי לפני חתימה.³",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis; דנ\"א 1516-95 מרום רינה נ׳ היועץ המשפטי לממשלה פסק דין",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.ssrn.com/abstract=",
+          "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%93%d7%a0%d7%90-1516-95-%d7%9e%d7%a8%d7%95%d7%9d-%d7%a8%d7%99%d7%a0%d7%94-%d7%a0-%d7%94%d7%99%d7%95%d7%a2%d7%a5-%d7%94%d7%9e%d7%a9%d7%a4%d7%98%d7%99-%d7%9c%d7%9e%d7%9e%d7%a9%d7%9c%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "דנ\"א 1516-95 מרום רינה נ׳ היועץ המשפטי לממשלה פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis; הסכמי ממון לפני נישואין: תוקף, אישור ופרשנות שיפוטית; בע\"מ 48399-09-24 פלוני נ׳ פלוני פסק דין",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.ssrn.com/abstract=",
+          "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.jstor.org/",
+          "title": "הסכמי ממון לפני נישואין: תוקף, אישור ופרשנות שיפוטית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%a2%d7%9e-48399-09-24-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בע\"מ 48399-09-24 פלוני נ׳ פלוני פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis; הסכמי ממון לפני נישואין: תוקף, אישור ופרשנות שיפוטית",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.ssrn.com/abstract=",
+          "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.jstor.org/",
+          "title": "הסכמי ממון לפני נישואין: תוקף, אישור ופרשנות שיפוטית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis; בג\"ץ 5416-09 - פלוני נ. פלוני",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.ssrn.com/abstract=",
+          "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/3&fileName=SG3_11_5416-09.pdf&type=2",
+          "title": "בג\"ץ 5416-09 - פלוני נ. פלוני",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בג\"ץ 5416-09 - פלוני נ. פלוני; דנ\"א 1516-95 מרום רינה נ׳ היועץ המשפטי לממשלה פסק דין",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/3&fileName=SG3_11_5416-09.pdf&type=2",
+          "title": "בג\"ץ 5416-09 - פלוני נ. פלוני",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%93%d7%a0%d7%90-1516-95-%d7%9e%d7%a8%d7%95%d7%9d-%d7%a8%d7%99%d7%a0%d7%94-%d7%a0-%d7%94%d7%99%d7%95%d7%a2%d7%a5-%d7%94%d7%9e%d7%a9%d7%a4%d7%98%d7%99-%d7%9c%d7%9e%d7%9e%d7%a9%d7%9c%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "דנ\"א 1516-95 מרום רינה נ׳ היועץ המשפטי לממשלה פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis; בע\"מ 48399-09-24 פלוני נ׳ פלוני פסק דין",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.ssrn.com/abstract=",
+          "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%a2%d7%9e-48399-09-24-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בע\"מ 48399-09-24 פלוני נ׳ פלוני פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.ssrn.com/abstract=",
+      "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e14b9255-2a7c-44a5-bb13-b6e6c52ae8d3"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%93%d7%a0%d7%90-1516-95-%d7%9e%d7%a8%d7%95%d7%9d-%d7%a8%d7%99%d7%a0%d7%94-%d7%a0-%d7%94%d7%99%d7%95%d7%a2%d7%a5-%d7%94%d7%9e%d7%a9%d7%a4%d7%98%d7%99-%d7%9c%d7%9e%d7%9e%d7%a9%d7%9c%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "דנ\"א 1516-95 מרום רינה נ׳ היועץ המשפטי לממשלה פסק דין",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "8c06106c-0543-4752-bf08-3adaf2b13a64"
+    },
+    {
+      "url": "https://www.jstor.org/",
+      "title": "הסכמי ממון לפני נישואין: תוקף, אישור ופרשנות שיפוטית",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "10c72c70-af74-46c2-bea3-fc1aefdcbaaf"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%a2%d7%9e-48399-09-24-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בע\"מ 48399-09-24 פלוני נ׳ פלוני פסק דין",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "8b2f855d-d208-4a1c-a12c-0862fe3a14f7"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/3&fileName=SG3_11_5416-09.pdf&type=2",
+      "title": "בג\"ץ 5416-09 - פלוני נ. פלוני",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "a23561d8-5000-4750-b3d3-e70327a8e4ae"
+    }
+  ],
+  "quality_warning": null
+}

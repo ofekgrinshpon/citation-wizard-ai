@@ -130,6 +130,8 @@ const SYSTEM_PROMPT_V2 = `אתה משפטן/ית ישראלי/ת הכותב/ת �
    • case_holding — כאשר פסק הדין הספציפי מופיע במקורות המאומתים, נסח את ההלכה/הרציו של אותו תיק ישירות. כאשר פסק הדין עצמו חסר (וקיים בלוק "הערה קריטית" על עוגן חסר), פעל לפי אותו בלוק — אל תייחס לתיק הספציפי קביעות שאינן במקורות שסופקו. אין לגזור מהרמז הזה, כשלעצמו, לא סירוב ולא ביטחון — עצם השאלה על תיק ספציפי היא שקובעת את הצורה.
    • analysis / comparison — התנהג כרגיל, אך הטה את המבנה בהתאם (דיון רציף מול השוואה מובנית).
 
+מקור מוביל (lead_ref) — אם הודעת המשתמש כוללת שורת "lead_ref: sN", זהו המקור הסמכותי שמוביל את התשובה. פתח ממנו: בפסק דין — ההחזקה וההנמקה; בחוק/תקנה — לשון ההוראה, ההגדרה או החובה. מקורות המסומנים תחת "secondary_refs" משמשים רק לניואנס, הקשר, ביקורת או הרחבה, ואינם מחליפים את המקור המוביל. כאשר אין שורת lead_ref — התנהג כרגיל.
+
 חשוב: השאלה מה מותר לומר בביטחון ומתי חובה להסתייג ממשיכה להיגזר מהמקורות בפועל ומ"חוזה הראיות" למעלה — לא מ-answer_intent. הרמז הזה משפיע על *הפורמט*, לא על *רמת הוודאות*.
 
 זכור: אם תכניס סימן עילי כלשהו לתוך text, התשובה תיפסל.`;
@@ -170,6 +172,7 @@ function buildUserMessage(
   useAsSource: boolean,
   missingAnchors: Array<{ description: string; is_docket?: boolean }>,
   answerIntent?: AnswerIntent,
+  leadRef?: string | null,
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
@@ -207,9 +210,14 @@ function buildUserMessage(
     lines.push("");
     lines.push(`מבנה מבוקש (רמז פורמט): ${answerIntent.output_shape}`);
   }
+
+  const leadSource = leadRef ? sources.find((s) => s.ref === leadRef) : undefined;
+  const secondary = leadSource ? sources.filter((s) => s.ref !== leadRef) : sources;
+
   lines.push("");
   lines.push(`מקורות זמינים (${sources.length}) — השתמש אך ורק במזהים האלה ב-source_refs:`);
-  for (const s of sources) {
+
+  const renderSource = (s: DrafterInputSource) => {
     lines.push("---");
     lines.push(`ref: ${s.ref}`);
     lines.push(`title: ${s.title}`);
@@ -223,6 +231,18 @@ function buildUserMessage(
       for (const p of s.supported_points) lines.push(`  • ${p}`);
     }
     if (s.snippet) lines.push(`snippet: ${s.snippet}`);
+  };
+
+  if (leadSource) {
+    lines.push(`lead_ref: ${leadSource.ref}`);
+    renderSource(leadSource);
+    if (secondary.length > 0) {
+      lines.push("");
+      lines.push(`secondary_refs (${secondary.length}):`);
+      for (const s of secondary) renderSource(s);
+    }
+  } else {
+    for (const s of sources) renderSource(s);
   }
   if (!useAsSource && userDocs.some((d) => d.chunks.length > 0)) {
     lines.push("");
@@ -240,6 +260,114 @@ function buildUserMessage(
     "החזר אובייקט {blocks: [...]} דרך הכלי emit_structured_draft. זכור: אסור סימני הערות שוליים בתוך text — הקוד מוסיף אותם דטרמיניסטית לפי source_refs.",
   );
   return lines.join("\n");
+}
+
+export interface LeadRefSelection {
+  ref: string | null;
+  reason: string;
+  shape: string;
+}
+
+function selectLeadRef(
+  answerIntent: AnswerIntent | undefined,
+  sources: DrafterInputSource[],
+  requiredAnchorCandidateIds: Set<string>,
+  hasMissingDocketAnchor: boolean,
+): LeadRefSelection {
+  const shape = answerIntent?.output_shape ?? "unknown";
+  if (hasMissingDocketAnchor) {
+    return { ref: null, reason: "skipped_missing_docket_anchor", shape };
+  }
+  if (shape !== "case_holding" && shape !== "definition" && shape !== "quote") {
+    return { ref: null, reason: "shape_not_eligible", shape };
+  }
+  const scoreOf = (s: DrafterInputSource): number => {
+    let n = 0;
+    if (requiredAnchorCandidateIds.has(s.candidate_id)) n += 100;
+    if (s.best_support === "direct") n += 10;
+    n += Math.min((s.snippet?.length ?? 0) / 100, 5);
+    return n;
+  };
+  const pick = (pool: DrafterInputSource[]): DrafterInputSource | null =>
+    pool.length ? [...pool].sort((a, b) => scoreOf(b) - scoreOf(a))[0] : null;
+
+  // source_type strings from candidates include: caselaw, supreme_court_il,
+  // israeli_law, other, journal_article, ... Roles are the more reliable
+  // normalized signal (primary_statute, regulation, binding_case_law,
+  // persuasive_case_law, scholarship, ...). We use roles primarily and fall
+  // back to source_type patterns when the role bucket is empty.
+  const isCaseType = (t: string) =>
+    t === "caselaw" || t === "supreme_court_il" || t === "case";
+  const isStatuteType = (t: string) =>
+    t === "israeli_law" || t === "statute" || t === "regulation";
+
+  if (shape === "case_holding") {
+    const cases = sources.filter(
+      (s) =>
+        s.role === "binding_case_law" ||
+        s.role === "persuasive_case_law" ||
+        isCaseType(s.source_type),
+    );
+    if (cases.length === 0) return { ref: null, reason: "no_case_source", shape };
+    const req = cases.filter((s) => requiredAnchorCandidateIds.has(s.candidate_id));
+    if (req.length > 0) {
+      const chosen = pick(req)!;
+      return { ref: chosen.ref, reason: "required_anchor_case", shape };
+    }
+    const binding = cases.filter((s) => s.role === "binding_case_law");
+    const pool = binding.length ? binding : cases;
+    const chosen = pick(pool);
+    if (!chosen) return { ref: null, reason: "no_eligible_case", shape };
+    return {
+      ref: chosen.ref,
+      reason: binding.length ? "binding_case_law" : "best_case",
+      shape,
+    };
+  }
+
+  if (shape === "definition") {
+    const primary = sources.filter(
+      (s) =>
+        s.role === "primary_statute" ||
+        s.role === "regulation" ||
+        isStatuteType(s.source_type),
+    );
+    if (primary.length === 0) return { ref: null, reason: "no_statute_source", shape };
+    const req = primary.filter((s) => requiredAnchorCandidateIds.has(s.candidate_id));
+    if (req.length > 0) {
+      return { ref: pick(req)!.ref, reason: "required_anchor_statute", shape };
+    }
+    const primaryRole = primary.filter(
+      (s) => s.role === "primary_statute" || s.role === "regulation",
+    );
+    const pool = primaryRole.length ? primaryRole : primary;
+    const chosen = pick(pool);
+    if (!chosen) return { ref: null, reason: "no_eligible_statute", shape };
+    return {
+      ref: chosen.ref,
+      reason: primaryRole.length ? "primary_statute" : "best_statute",
+      shape,
+    };
+  }
+
+  // quote — official/primary source that actually carries a snippet.
+  const primary = sources.filter(
+    (s) =>
+      s.role === "primary_statute" ||
+      s.role === "regulation" ||
+      s.role === "binding_case_law" ||
+      isStatuteType(s.source_type) ||
+      isCaseType(s.source_type),
+  );
+  const withSnippet = primary.filter((s) => (s.snippet ?? "").length >= 50);
+  if (withSnippet.length === 0) return { ref: null, reason: "no_official_snippet", shape };
+  const req = withSnippet.filter((s) => requiredAnchorCandidateIds.has(s.candidate_id));
+  const chosen = req.length ? pick(req)! : pick(withSnippet)!;
+  return {
+    ref: chosen.ref,
+    reason: req.length ? "required_anchor_official" : "official_source_with_snippet",
+    shape,
+  };
 }
 
 export interface QualityWarningHit {
@@ -406,6 +534,8 @@ export interface DrafterV2Result {
   usage?: { input_tokens?: number; output_tokens?: number };
   // Debug: whether the missing-required-anchor caveat instruction was injected.
   missing_anchor_caveat_injected?: boolean;
+  /** Lead-source selection telemetry (Phase-1 lead_ref patch). */
+  lead_ref?: LeadRefSelection;
   missing_anchor_descriptions?: string[];
   schema_failure_reason?:
     | "no_tool_call"
@@ -458,6 +588,10 @@ export async function runDrafterV2(
     // per-shape and per-posture rules that reference it. Backwards
     // compatible: omit → drafter falls back to prior behavior.
     answerIntent?: AnswerIntent;
+    // Narrow lead-source signal: candidate_ids that satisfy a required anchor
+    // (docket or non-docket). Used deterministically to select `lead_ref` for
+    // case_holding / definition / quote shapes only. Backwards compatible.
+    requiredAnchorCandidateIds?: Set<string>;
   },
 ): Promise<DrafterV2Result> {
   const t_total = Date.now();
@@ -514,7 +648,23 @@ export async function runDrafterV2(
   }
 
   const missingAnchors = opts?.missingRequiredAnchors ?? [];
-  const userMsg = buildUserMessage(question, claims, inputSources, userDocs, useAsSource, missingAnchors, opts?.answerIntent);
+  const requiredAnchorCandidateIds = opts?.requiredAnchorCandidateIds ?? new Set<string>();
+  const leadSelection = selectLeadRef(
+    opts?.answerIntent,
+    inputSources,
+    requiredAnchorCandidateIds,
+    missingAnchors.some((a) => a.is_docket),
+  );
+  const userMsg = buildUserMessage(
+    question,
+    claims,
+    inputSources,
+    userDocs,
+    useAsSource,
+    missingAnchors,
+    opts?.answerIntent,
+    leadSelection.ref,
+  );
   const tool = {
     name: "emit_structured_draft",
     description: "Emit the Hebrew legal answer as structured blocks. Code adds footnote markers.",
@@ -738,6 +888,7 @@ export async function runDrafterV2(
     }),
     usage: lastUsage,
     missing_anchor_caveat_injected: missingAnchors.length > 0,
+    lead_ref: leadSelection,
     missing_anchor_descriptions: missingAnchors.map((a) => a.description),
     completeness,
     completeness_initial,

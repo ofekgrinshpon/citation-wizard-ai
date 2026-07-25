@@ -1,0 +1,110 @@
+{
+  "id": "Q01",
+  "category": "docket_holding",
+  "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
+  "run_id": "6af40946-e381-4858-a17d-7b6f3f90b8eb",
+  "ok": true,
+  "total_ms": 204151,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "lead_ref": {
+    "ref": "s3",
+    "shape": "case_holding",
+    "reason": "required_anchor_case"
+  },
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "answer": "**החלטת בג\"ץ 6298/07 — עיקר ההחזקה**\n\nבבג\"ץ 6298/07 (רסלר נ' כנסת ישראל) קבע בית המשפט העליון כי נוסח ההארכה של \"חוק דחיית שירות לתלמידי ישיבות\" (חוק טל, נוסח 2007) אינו עומד בתנאי חוק‑יסוד: כבוד האדם וחירותו ביחס להבטחת השוויון; ההסדר נבחן ונדחתה מידתיותו כחריג כללי לחובת־שירות.¹\n\nהנימוק הפרשני־חוקתי המרכזי בפסק‑הדין התמקד במבחני המידתיות: בית המשפט מצא כי ההסדר כשל בתכליתיות ובאמצעים ביחס למטרה שנטענה — לא הוצגו תוצאות תקפות וניכרות של תקופת הניסיון שיצדיקו המשך הסדר חריג זה, ובשל כך ההגבלות על עקרון השוויון לא נחשבו למידותיות.¹\n\nבנוגע לסעד, פסק־הדין הורה על פסילת נוסח ההארכה החקיקתי והכריז על בטלותו. מאחר שמדובר היה בהוראת שעה שתוכננה לפקוע בקרוב, בית המשפט לא נתן הארכת תקופת תוקף נוספת אלא השאיר את הטיפול בהסדר לידי המחוקק; בינתיים חלים דיני הגיוס הכלליים.²\n\nהחלטת בג\"ץ שיקפה שינוי איזון ביחס להיתרים שניתנו בעבר לעקרון ה\"ניסוי\" כבסיס להסדר חריג: בפסק‑דין זה בית המשפט הדגיש כי ממצאי תקופת הניסיון עצמם הם שקובעים את המשך ההצדקה להחרגה, וכי היעדר אפקטיביות מחליש את עוצמת ההצדקה להמשך ההסדר. לצד זאת נרשמה מחלוקת שיפוטית בדבר היקף שיקול הדעת שצריך להינתן למחוקק בעניינים אלה.³\n\nהמסקנה המעוגנת במסמכים שסופקו היא כי בג\"ץ פסל את הארכת חוק טל משנת 2007 על יסוד פגיעה בשוויון ומחדלי מידתיות; עם זאת המקורות המצורפים מספקים תמיכה חלקית ולכן לפירוט מלא יש לעיין בטקסט המלא של פסק‑הדין ובמסמכים החקיקתיים הנלווים.¹",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "בג\"ץ 6298/07; נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+          "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בג\"ץ 6298/07; תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו); שיקול דעת שיפוטי: העידן השלישי",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+          "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1365",
+          "title": "שיקול דעת שיפוטי: העידן השלישי",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+      "title": "בג\"ץ 6298/07",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f3e31c7d-78f6-4c64-92d7-a894b29a1a6a"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "920118d3-0d04-405e-b2a9-b3be8c0c4796"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "c032f478-eebc-4d4c-9152-02dea90d2eab"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1365",
+      "title": "שיקול דעת שיפוטי: העידן השלישי",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "d0b417b8-b751-4e13-8dbc-ad8b457683f4"
+    }
+  ],
+  "quality_warning": null
+}
