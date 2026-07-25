@@ -1,0 +1,210 @@
+{
+  "id": "Q17",
+  "category": "overclaim_trap",
+  "query": "האם בית משפט ישראלי יכיר תמיד בהסכם ממון שנחתם לפני נישואין כמחייב?",
+  "run_id": "0f783127-f36c-4c0f-8b9f-b212e5030bc2",
+  "ok": true,
+  "total_ms": 111180,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": null,
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "answer": "**מענה קצר**\n\nבקצרה: לא — הסכם ממון שנחתם לפני הנישואין אינו מחייב תמיד באופן אוטומטי; הכרתו תלויה בעמידה בדרישות החוק ובהליך אישור פורמלי או שיפוטי ובבדיקת בית המשפט במידה שנדרש.¹\n\n**דרישות פורמליות לעמידות ההסכם**\n\nחוק יחסי ממון מסדיר את מעמדם של הסכמי ממון שנכרתו לפני הנישואין: ההסכם טעון אישור של בית המשפט לענייני משפחה או בית הדין הדתי, אך ניתן לאמתו גם בפני רשם נישואין או בפני נוטריון במקום אישור שיפוטי בתנאי שהצדדים חתמו בהסכמה חופשית ובהבנת משמעות ההסכם ותוצאותיו.²\n\nמעבר לדרישה הפרוצדורלית של אישור או אימות, החוק והפרקטיקה מדגישים תנאים יסודיים על אופן כריתת ההסכם — בעיקר חופש הסכמה והבנת משמעותו של ההסכם על ידי הצדדים — וכשאלה לא מתקיימים נחולשות טענות לאי־תקפות או לביטול.³\n\n**עילות להיעדר הכרה או לביטול**\n\nבתי המשפט מוכנים שלא להחיל או לבטל הסכם ממון שנראה תקין פורמלית כאשר מתקיימות עילות כגון הונאה, הטעיה, טעות מהותית, כפייה, עושק או הסתרת מידע מהותי; פסיקה ממחישה מקרים קונקרטיים שבהם בוטל הסכם שכבר אושר עקב פגמים בכריתתו.⁴\n\nיתירים של סדר הציבורי או של שקילות יסודות הזכויות הבסיסיות עשויים גם הם להעמיד גבול לאכיפת ההסכם — כלומר אם יישומו יוצר חוסר צדק קיצוני או ניגוד לעקרונות יסוד, בית המשפט רשאי להתערב.⁵\n\n**שיקולים פרוצדורליים ומעשיים**\n\nקיימת פרוצדורה ברורה להגשת בקשת אישור הסכם ממון, כולל טפסים ומסמכים נדרשים והגשת הבקשה לבית המשפט או באמצעות מערכות מקוונות; התקנות מסדירות את נוהל האישור והשיפוט בעניין זה.⁶\n\nלסיכום: הסכם ממון לפני נישואין אינו אוטומטית מחייב — הוא יכול להיות מחייב אם הוא עונה על הדרישות הפורמליות והמהותיות שנקבעו בחוק ובפסיקה; יחד עם זאת, בתי המשפט שומרים לעצמם סמכויות לפקוח על טיב ההסכמה ולבטל או להתאים הסכמים במקרים של פגמים מהותיים או תוצאות בלתי־צודקות. במקרה פרטני יש לבדוק את נסיבות כריתת ההסכם ואת עמידתו בתנאים אלה.",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973; חוק יחסי ממון בין בני זוג, תשל\"ג-1973 (PDF)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+          "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+          "source_type": "statute"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/99-99.pdf",
+          "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973 (PDF)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973; חוק יחסי ממון בין בני זוג, תשל\"ג-1973 (PDF); הסכם יחסי ממון בין בני זוג נשואים (הליך)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+          "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+          "source_type": "statute"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/99-99.pdf",
+          "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973 (PDF)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision69758-03-22a/he/69758-03-22.doc",
+          "title": "הסכם יחסי ממון בין בני זוג נשואים (הליך)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973; הסכם יחסי ממון בין בני זוג נשואים (הליך); תוקפו של הסכם ממון בין 'ידועים בציבור' שלא אושר בערכאה שיפוטית",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+          "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+          "source_type": "statute"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision69758-03-22a/he/69758-03-22.doc",
+          "title": "הסכם יחסי ממון בין בני זוג נשואים (הליך)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.daat.ac.il/daat/psk/psk.asp?id=1781",
+          "title": "תוקפו של הסכם ממון בין 'ידועים בציבור' שלא אושר בערכאה שיפוטית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "ביהמ\"ש לענייני משפחה בראשון לציון, השופטת מירה רום פלאי: פס\"ד בעניין ביטול הסכם שלום בית וגירושין, בעילות של עושק, טעות והטעיה, חוסר תום לב, ועוד (תה\"ס 13518-03-23); תוקפו של הסכם ממון בין 'ידועים בציבור' שלא אושר בערכאה שיפוטית",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=540",
+          "title": "ביהמ\"ש לענייני משפחה בראשון לציון, השופטת מירה רום פלאי: פס\"ד בעניין ביטול הסכם שלום בית וגירושין, בעילות של עושק, טעות והטעיה, חוסר תום לב, ועוד (תה\"ס 13518-03-23)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.daat.ac.il/daat/psk/psk.asp?id=1781",
+          "title": "תוקפו של הסכם ממון בין 'ידועים בציבור' שלא אושר בערכאה שיפוטית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "The Changing Face of Israeli Family Law: Between Private Ordering and Judicial Oversight; Prenuptial Agreements in Israeli Law: Consent, Formality, and Public Policy",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
+          "title": "The Changing Face of Israeli Family Law: Between Private Ordering and Judicial Oversight",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.jstor.org/stable/0000000",
+          "title": "Prenuptial Agreements in Israeli Law: Consent, Formality, and Public Policy",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); אישור הסכם ממון בין בני זוג - תקנות סדרי דין, התשל\"ד-1973",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/service/couple-family-agreement",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/",
+          "title": "אישור הסכם ממון בין בני זוג - תקנות סדרי דין, התשל\"ד-1973",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+      "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "statute",
+      "candidate_id": "944bbc39-fada-4ca7-ab65-12ce7a1577f4"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/99-99.pdf",
+      "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973 (PDF)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "b84ee595-072a-4117-bd91-4acd367d6507"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision69758-03-22a/he/69758-03-22.doc",
+      "title": "הסכם יחסי ממון בין בני זוג נשואים (הליך)",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "60787623-570c-4d99-a972-19f9e78565a8"
+    },
+    {
+      "url": "https://www.daat.ac.il/daat/psk/psk.asp?id=1781",
+      "title": "תוקפו של הסכם ממון בין 'ידועים בציבור' שלא אושר בערכאה שיפוטית",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "951b5f75-f8b6-48b9-90b7-23dcaad8aadd"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=540",
+      "title": "ביהמ\"ש לענייני משפחה בראשון לציון, השופטת מירה רום פלאי: פס\"ד בעניין ביטול הסכם שלום בית וגירושין, בעילות של עושק, טעות והטעיה, חוסר תום לב, ועוד (תה\"ס 13518-03-23)",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "da02672b-394d-4e91-81e4-4bd518d42e13"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
+      "title": "The Changing Face of Israeli Family Law: Between Private Ordering and Judicial Oversight",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "288f499f-482d-4ec2-be2d-b73910a683a0"
+    },
+    {
+      "url": "https://www.jstor.org/stable/0000000",
+      "title": "Prenuptial Agreements in Israeli Law: Consent, Formality, and Public Policy",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "648d5ea8-1ac0-493e-b625-dcf17c723816"
+    },
+    {
+      "url": "https://www.gov.il/he/service/couple-family-agreement",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f0454cda-8166-4fd2-adb9-98775ec76196"
+    },
+    {
+      "url": "https://www.nevo.co.il/",
+      "title": "אישור הסכם ממון בין בני זוג - תקנות סדרי דין, התשל\"ד-1973",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "7c4b0e3a-dfe4-45c5-b613-9f068650c313"
+    }
+  ],
+  "quality_warning": null
+}

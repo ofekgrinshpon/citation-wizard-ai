@@ -1,0 +1,773 @@
+[
+  {
+    "id": "Q01",
+    "category": "docket_holding",
+    "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
+    "run_id": "7ad479b3-3575-454c-80e6-17a727ba0db8",
+    "ok": true,
+    "total_ms": 152871,
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "lead_ref": null,
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "answer": "**בג\"ץ 6298/07 רסלר נ' כנסת ישראל — סיכום ההכרעה**\n\nבית המשפט העליון קבע כי \"חוק דחיית שירות לתלמידי ישיבות\" (חוק טל) אינו חוקתי иניתן פסק דין המבשר על אי־חוקתיותו של החוק.¹\n\nהיסוד העיקרי לאי־החוקתיות נקשר בפגיעה בעקרון השוויון, הנגזר ממעמד חוק־היסוד של כבוד האדם וחירותו; בית המשפט מצא כי פגיעה זו לא הותרה לפי פסקת ההגבלה, ובחינת המידתיות הובילה למסקנה שאין להסדר כדי לעמוד במגבלות החוק היסודיות.²\n\nבבחינת מידתיות ההסדר התייחס הפסק־דין גם לנתונים אמפיריים על אופן יישום החוק: מהמקורות עולה בזהירות כי דו\"חות ובחינות ביצוע הראו יישום חלקי וכשלי של מנגנונים כמו 'שנת ההכרעה' והסללה לשירות אזרחי, נתון ששימש להערכת אי־התאמת האמצעי למטרה.³\n\nלגבי הסעד, הוכר היותו של החוק בלתי־חוקתי, ובפועל ננקטה נוסחת בטלות מושהית/הדרגתית שמקשרת את הפסק לחדלון־התוקף של החוק; מקוריה של הכרעה זו מפורטים בפרסומים ובסיכומים של ההחלטה, תוך שמקורות תיאורטיים מצביעים על אפשרות שימוש בסעדים מושהים בהקשרים חוקתיים.⁴\n\nסיכום קצר: בג\"ץ 6298/07 הכריע כי חוק טל אינו חוקתי בעיקר בשל פגיעה בשוויון וכבוד האדם אשר אינה עומדת במבחני פסקת ההגבלה; ההכרעה נשענה בין היתר על נתונים אמפיריים על כשל ביישום, והסעד כולו נגזר לצורת בטלות מושהית בהתאם לנסיבות המקרה.",
+    "footnotes": [
+      {
+        "url": null,
+        "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות; החלטה בתיק בג\"ץ 6298/07; בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+            "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+            "title": "החלטה בתיק בג\"ץ 6298/07",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%D7%A5-'%D7%97%D7%95%D7%A7-%D7%98%D7%9C'-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
+            "title": "בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות; בג\"ץ 6298/07 – פסק-דין (טקסט מלא); רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+            "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+            "source_type": "other"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+            "title": "בג\"ץ 6298/07 – פסק-דין (טקסט מלא)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1527",
+            "title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "בג\"ץ 6298/07 – פסק-דין (טקסט מלא); יישום חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם (חוק טל); מסמך מאתר אתר הכנסת",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+            "title": "בג\"ץ 6298/07 – פסק-דין (טקסט מלא)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/globaldocs/MMM/a74c6b58-e9f7-e411-80c8-00155d010977/2_a74c6b58-e9f7-e411-80c8-00155d010977_11_9068.pdf",
+            "title": "יישום חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם (חוק טל)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/globaldocs/MMM/dcbe8d55-f7f7-e411-80c8-00155d010977/2_dcbe8d55-f7f7-e411-80c8-00155d010977_11_9853.pdf",
+            "title": "מסמך מאתר אתר הכנסת",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "החלטה בתיק בג\"ץ 6298/07; בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו; על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+            "title": "החלטה בתיק בג\"ץ 6298/07",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%D7%A5-'%D7%97%D7%95%D7%A7-%D7%98%D7%9C'-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
+            "title": "בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
+            "source_type": "other"
+          },
+          {
+            "url": "https://runilawreview.org/2017/11/22/vol20_barak/",
+            "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+        "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "f156e8fb-4c17-4535-8528-debdcb9a0ed2"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+        "title": "החלטה בתיק בג\"ץ 6298/07",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "d72bc4e9-f793-478b-9afe-21941161d008"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%D7%A5-'%D7%97%D7%95%D7%A7-%D7%98%D7%9C'-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
+        "title": "בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "a56093bb-acf9-41de-a539-dc77caffaa5e"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+        "title": "בג\"ץ 6298/07 – פסק-דין (טקסט מלא)",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "06d04a45-2143-4f58-b408-cc7d50cf4e2d"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1527",
+        "title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+        "number": 2,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "12f1f727-be8a-40a4-951b-81fc565803ac"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/globaldocs/MMM/a74c6b58-e9f7-e411-80c8-00155d010977/2_a74c6b58-e9f7-e411-80c8-00155d010977_11_9068.pdf",
+        "title": "יישום חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם (חוק טל)",
+        "number": 3,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "d9391bc0-15ea-4df5-949b-caff72efac19"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/globaldocs/MMM/dcbe8d55-f7f7-e411-80c8-00155d010977/2_dcbe8d55-f7f7-e411-80c8-00155d010977_11_9853.pdf",
+        "title": "מסמך מאתר אתר הכנסת",
+        "number": 3,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "20e2d767-bd57-4cc0-87c5-0df7f5d9693b"
+      },
+      {
+        "url": "https://runilawreview.org/2017/11/22/vol20_barak/",
+        "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+        "number": 4,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "9bf2656f-09f0-424f-9f4a-a260bd55014c"
+      }
+    ],
+    "quality_warning": null
+  },
+  {
+    "id": "Q02",
+    "category": "docket_holding_missing_source_test",
+    "query": "מה נקבע בע\"מ (מחוזי ת\"א) 61908-05-19 בעניין סיווג הכנסה כהכנסת עבודה או הכנסת עסק?",
+    "run_id": "81304c18-0dcc-411c-a14d-ff5c35755c7e",
+    "ok": true,
+    "total_ms": 96805,
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "lead_ref": null,
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "answer": "**תקציר ההכרעה**\n\nעל פי הסניפט שסופק, ע״מ (מחוזי ת״א) 61908‑05‑19 הוא פסק‑דין העוסק במבחנה ובהבחנה בין הכנסה מעבודה לבין הכנסה מעסק לצורכי מס. עם זאת, מהחומר שסופק לא חולצה בלשון מפורשת ההחזקה הסופית של בית המשפט בשאלה האם הכנסה מסוימת הוכרה בשייכות לקטגוריית 'שכיר' או 'עצמאי', ולכן אין בידי המקורות שסופקו כדי לצטט כאן הכרעה מפורשת ומוחלטת בעניין הסיווג עצמו.¹\n\n**מבחנים וקריטריונים שנדונו בהקשר זה**\n\n- מבחן גורמי המציאות המרובה: בית המשפט דן במבחן רב‑גורמי שבו שוקלים כמה סימנים יחד — למשל שיעור השליטה והפיקוח על אופן הביצוע, מידת התלות הכלכלית של המבצע במזמין, ואופי ההתמורה ושיטת התשלום.²\n- סיכון כלכלי ואחריות עסקית: נבחנת שאלת מי נושא בסיכון העסקי (הפסדים, הוצאות) והאם המבצע משקיע במשאבים ובציוד — אינדיקטור המצביע לכיוון עסק עצמאי.²\n- חופש החלפה וזכות להטלת כוח אדם: בוחנים האם הפרט רשאי להחליף מבצעים/עובדים ולעבוד עבור מזמינים אחרים — ביטוי לעצמאות תפעולית.²\n- שיטת התשלום והסדרי השכר: תשלום שכר חודשי קבוע ותנאי ניכוי מדברים בעד יחסי עובד‑מעסיק, בעוד תשלום לפי מלאי, עמלה או חשבונית תומך בסיווג כעסק.²\n- הסדרים חוזיים, משך ושליטה ניהולית: סעיפי חוזה המעידים על יחסי כפיפות, שעות עבודה מסודרות או היקף בלעדיות מחזקים סיווג כשכיר; הסדרים פתוחים וחוזים שיתופיים תומכים בעצמאות.²\n\n**החלת הקריטריונים על עובדות המקרה בפסק‑דין זה**\n\nהסניפט שסופק אינו מכיל את תמצית העובדות המפורטת או את הנימוקים המלאים של בית המשפט ביחס ליישום מבחני הסיווג במעשה. לפיכך איני יכול לפרט במדויק אילו עובדות ספציפיות הוחזקו כקריטיות בהחלטת ע״מ 61908‑05‑19.¹\n\nלצורך השוואה: בפסקי דין מחוזיים אחרים שנדונו בהקשר דומה הודגשו כגורמים מעשיים שיקבעו את המעמד — סידור שעות ועבורת ניהול הסמכויות (סודרנות/פיקוח), נטל הסיכון הכלכלי, שיטת התשלום (שכר/עמלה), בעלות על אמצעים וכלים, וחופש לקיחת עבודות חיצוניות. ממצאיהם של פסקי דין אלו מסייעים לפרש את סוג השיקולים שהנחו את בית המשפט בע״מ 61908‑05‑19, אך אינם מחליפים את קריאת הטקסט המלא של ההחלטה.³\n\n**השלכות מעשיות של סיווג זה**\n\nמבחינה מעשית, סיווג ההכנסה משפיע על חבות המס, חובות ניכוי ותשלומים לביטוח הלאומי, ועל הסכנות של פסילת ספרים וקיבוע הכנסה בצו על‑פי סעיף 152(ב) לפקודת מס הכנסה. בסניפט של פסק‑דין אחר שהוצג בחומר מופיעים בהירות וקונקרטיות לגבי השלכות אלה (פסילת ספרים וקביעת הכנסה בצו), ולפיכך ניתן לראות שההכרעה בסיווג עשויה לגרור השלכות מסיות מהותיות.⁴\n\nמאחר שהחומר המסופק אינו כולל את הנוסח המלא של ע״מ 61908‑05‑19, למי שזקוק ליישום מעשי או לעיון בהשלכות מדויקות מומלץ לעיין בטקסט המלא של פסק‑הדין ולברר האם קבע בית המשפט סיווג מפורש וכן מהם הסעדים שנפסקו.¹",
+    "footnotes": [
+      {
+        "url": "https://www.nevo.co.il/",
+        "title": "ע\"מ (מחוזי ת\"א) 61908-05-19",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/",
+            "title": "ע\"מ (מחוזי ת\"א) 61908-05-19",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "other"
+      },
+      {
+        "url": null,
+        "title": "ע\"מ (מחוזי ת\"א) 61908-05-19; רע\"א 1662/20 יוסף מוסיוף נ׳ חברת יהלומי אלול בע\"מ פסק דין (19.04.2020)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/",
+            "title": "ע\"מ (מחוזי ת\"א) 61908-05-19",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1662-20-%d7%99%d7%95%d7%a1%d7%a3-%d7%9e%d7%95%d7%a1%d7%99%d7%95%d7%a3-%d7%a0-%d7%97%d7%91%d7%a8%d7%aa-%d7%99%d7%94%d7%9c%d7%95%d7%9e%d7%99-%d7%90%d7%9c%d7%95%d7%9c-%d7%91%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "רע\"א 1662/20 יוסף מוסיוף נ׳ חברת יהלומי אלול בע\"מ פסק דין (19.04.2020)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1662-20-%d7%99%d7%95%d7%a1%d7%a3-%d7%9e%d7%95%d7%a1%d7%99%d7%95%d7%a3-%d7%a0-%d7%97%d7%91%d7%a8%d7%aa-%d7%99%d7%94%d7%9c%d7%95%d7%9e%d7%99-%d7%90%d7%9c%d7%95%d7%9c-%d7%91%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 1662/20 יוסף מוסיוף נ׳ חברת יהלומי אלול בע\"מ פסק דין (19.04.2020)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1662-20-%d7%99%d7%95%d7%a1%d7%a3-%d7%9e%d7%95%d7%a1%d7%99%d7%95%d7%a3-%d7%a0-%d7%97%d7%91%d7%a8%d7%aa-%d7%99%d7%94%d7%9c%d7%95%d7%9e%d7%99-%d7%90%d7%9c%d7%95%d7%9c-%d7%91%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "רע\"א 1662/20 יוסף מוסיוף נ׳ חברת יהלומי אלול בע\"מ פסק דין (19.04.2020)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": null,
+        "title": "בית המשפט המחוזי ב\"ש, השופטת יעל ייטב: פסק דין בערעור על החלטה לפסילת ספריו של המערער וקביעת הכנסתו בצו ע\"פ סעיף 152(ב) לפקודת מס הכנסה (ע\"מ 39040-12-21); ע\"מ (מחוזי ת\"א) 61908-05-19",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+            "title": "בית המשפט המחוזי ב\"ש, השופטת יעל ייטב: פסק דין בערעור על החלטה לפסילת ספריו של המערער וקביעת הכנסתו בצו ע\"פ סעיף 152(ב) לפקודת מס הכנסה (ע\"מ 39040-12-21)",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.nevo.co.il/",
+            "title": "ע\"מ (מחוזי ת\"א) 61908-05-19",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://www.nevo.co.il/",
+        "title": "ע\"מ (מחוזי ת\"א) 61908-05-19",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "3f9c6cb9-8b1b-4e0e-947d-a1ea8be508df"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1662-20-%d7%99%d7%95%d7%a1%d7%a3-%d7%9e%d7%95%d7%a1%d7%99%d7%95%d7%a3-%d7%a0-%d7%97%d7%91%d7%a8%d7%aa-%d7%99%d7%94%d7%9c%d7%95%d7%9e%d7%99-%d7%90%d7%9c%d7%95%d7%9c-%d7%91%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 1662/20 יוסף מוסיוף נ׳ חברת יהלומי אלול בע\"מ פסק דין (19.04.2020)",
+        "number": 2,
+        "origin": "local_db",
+        "source_type": "caselaw",
+        "candidate_id": "6a9254dd-6585-44e0-bfcb-d6dec5238973"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+        "title": "בית המשפט המחוזי ב\"ש, השופטת יעל ייטב: פסק דין בערעור על החלטה לפסילת ספריו של המערער וקביעת הכנסתו בצו ע\"פ סעיף 152(ב) לפקודת מס הכנסה (ע\"מ 39040-12-21)",
+        "number": 4,
+        "origin": "local_db",
+        "source_type": "caselaw",
+        "candidate_id": "3f81c720-ef36-4896-893a-e269ad25f726"
+      }
+    ],
+    "quality_warning": null
+  },
+  {
+    "id": "Q03",
+    "category": "statutory_interpretation",
+    "query": "מהי הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה, ומהם התנאים המצטברים?",
+    "run_id": "2097164e-b34a-4d04-8428-753ba695ed32",
+    "ok": true,
+    "total_ms": 98901,
+    "answer_intent": {
+      "output_shape": "definition"
+    },
+    "lead_ref": null,
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "answer": "**הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה**\n\nהמקור החוקי להגדרת המושג הוא סעיף 32(9) לפקודת מס הכנסה. נוסח הפקודה קובע מי ייחשב \"בעל שליטה\" למטרות הוראות הניכויים והמיסוי; להלן הבאת מרכיבי ההגדרה כפי שהם מופיעים בנוסח החוק וסיכום שלהם באופן מבני.¹\n\n- אחזקה ישירה — החזקת זכויות (מניות, זכויות הצבעה וכדומה) באופן ישיר על שם האדם עצמו.¹\n- אחזקה עקיפה — החזקת זכויות בעקיפין דרך ישויות אחרות (חברות, נאמנויות, שותפויות וכיו\"ב) שתוצאותיהן המקנות לאותו אדם את שליטת ההחלטות או את הזכויות הכלכליות הנלוות.¹\n- זכות להשפעה או שליטה בפועל — יכולת לקבוע מדיניות החברה או להשפיע על החלטות מרכזיות דרך זכויות הצבעה, הסכמים בין בעלי עניין, מינוי דירקטורים או מנגנוני בקרה אחרים; ההיבט הזה נבחן יחד עם אחזקות החזקה (הם מצטברים).¹\n- ממד האחוזים והיחסיות — ההגדרה מתייחסת לאופי ואמצעי האחיזה בזכויות (ישירה/עקיפה), כאשר שיקול כמו חלק יחסי מהזכויות או מספר השותפים בחברה הנשלטת עשויים להשפיע על ההבחנה אם אדם מהווה \"בעל שליטה\"; מבחני האחוזים מצויים בנוסח החוק ובהוראות יישום.²\n\nצו מס הכנסה (קביעת סכומים ששולמו לבעל שליטה כהכנסה), תשמ\"ו‑1986, מיישם ומבהיר היבטים פרקטיים של ההגדרה: בין היתר הוא מפנה לנוסח סעיף 32(9) ומציג כללים לגבי חברות נשלטות בידי מספר שותפים (לדוגמה: חברות הנשלטות בידי לא יותר מחמישה בני אדם) והשלכות מס על תשלומים לחבר שהוא בעל שליטה.³\n\nמבחינה דוקטרינלית יש להיתייחס לשני עקרונות חשובים שנובעים מנוסח החוק ובצו היישום: ראשית, המרכיבים הנזכרים (אחזקה ישירה/עקיפה, יכולת להשפעה/מינוי, חלק יחסי בזכויות) נבחנים במצטבר ולא כל אחד מהם בנפרד יקבע בהכרח מעמד של \"בעל שליטה\"; שנית, לנסיבות ההחזקות העקיפות ולסכמי בעלי העניין יש תפקיד מכריע בקביעת התוצאה בפועל — כך שהבחינה תלויה בעובדות המקרה ובהוראות היישום בצו.²\n\nהשלכות פרקטיות עיקריות: קביעת מעמדו של אדם כ\"בעל שליטה\" משפיעה על סיווג תשלומים, חובת ניכוי מס במקור והטיפול בדיווחים; בצורך בפירוט או במקרים מורכבים יש לעיין בנוסח סעיף 32(9) שבפקודה ובצו היישום (s1, s2), וכן במקורות נוספים כמו הנחיות רשות המסים ופסיקה רלוונטית שלא נכללו כאן.²",
+    "footnotes": [
+      {
+        "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+        "title": "פקודת מס הכנסה",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+            "title": "פקודת מס הכנסה",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "other"
+      },
+      {
+        "url": null,
+        "title": "פקודת מס הכנסה; צו מס הכנסה (קביעת סכומים ששולמו לבעל שליטה כהכנסה), תשמ\"ו-1986",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+            "title": "פקודת מס הכנסה",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law01/255_390.htm",
+            "title": "צו מס הכנסה (קביעת סכומים ששולמו לבעל שליטה כהכנסה), תשמ\"ו-1986",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.nevo.co.il/law_html/law01/255_390.htm",
+        "title": "צו מס הכנסה (קביעת סכומים ששולמו לבעל שליטה כהכנסה), תשמ\"ו-1986",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law01/255_390.htm",
+            "title": "צו מס הכנסה (קביעת סכומים ששולמו לבעל שליטה כהכנסה), תשמ\"ו-1986",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "other"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+        "title": "פקודת מס הכנסה",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "9b776fba-5782-441e-b5d1-44a6e7ea1e40"
+      },
+      {
+        "url": "https://www.nevo.co.il/law_html/law01/255_390.htm",
+        "title": "צו מס הכנסה (קביעת סכומים ששולמו לבעל שליטה כהכנסה), תשמ\"ו-1986",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "60815cdf-bad9-4207-acc4-293167718a9e"
+      }
+    ],
+    "quality_warning": null
+  },
+  {
+    "id": "Q17",
+    "category": "overclaim_trap",
+    "query": "האם בית משפט ישראלי יכיר תמיד בהסכם ממון שנחתם לפני נישואין כמחייב?",
+    "run_id": "0f783127-f36c-4c0f-8b9f-b212e5030bc2",
+    "ok": true,
+    "total_ms": 111180,
+    "answer_intent": {
+      "output_shape": "analysis"
+    },
+    "lead_ref": null,
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "answer": "**מענה קצר**\n\nבקצרה: לא — הסכם ממון שנחתם לפני הנישואין אינו מחייב תמיד באופן אוטומטי; הכרתו תלויה בעמידה בדרישות החוק ובהליך אישור פורמלי או שיפוטי ובבדיקת בית המשפט במידה שנדרש.¹\n\n**דרישות פורמליות לעמידות ההסכם**\n\nחוק יחסי ממון מסדיר את מעמדם של הסכמי ממון שנכרתו לפני הנישואין: ההסכם טעון אישור של בית המשפט לענייני משפחה או בית הדין הדתי, אך ניתן לאמתו גם בפני רשם נישואין או בפני נוטריון במקום אישור שיפוטי בתנאי שהצדדים חתמו בהסכמה חופשית ובהבנת משמעות ההסכם ותוצאותיו.²\n\nמעבר לדרישה הפרוצדורלית של אישור או אימות, החוק והפרקטיקה מדגישים תנאים יסודיים על אופן כריתת ההסכם — בעיקר חופש הסכמה והבנת משמעותו של ההסכם על ידי הצדדים — וכשאלה לא מתקיימים נחולשות טענות לאי־תקפות או לביטול.³\n\n**עילות להיעדר הכרה או לביטול**\n\nבתי המשפט מוכנים שלא להחיל או לבטל הסכם ממון שנראה תקין פורמלית כאשר מתקיימות עילות כגון הונאה, הטעיה, טעות מהותית, כפייה, עושק או הסתרת מידע מהותי; פסיקה ממחישה מקרים קונקרטיים שבהם בוטל הסכם שכבר אושר עקב פגמים בכריתתו.⁴\n\nיתירים של סדר הציבורי או של שקילות יסודות הזכויות הבסיסיות עשויים גם הם להעמיד גבול לאכיפת ההסכם — כלומר אם יישומו יוצר חוסר צדק קיצוני או ניגוד לעקרונות יסוד, בית המשפט רשאי להתערב.⁵\n\n**שיקולים פרוצדורליים ומעשיים**\n\nקיימת פרוצדורה ברורה להגשת בקשת אישור הסכם ממון, כולל טפסים ומסמכים נדרשים והגשת הבקשה לבית המשפט או באמצעות מערכות מקוונות; התקנות מסדירות את נוהל האישור והשיפוט בעניין זה.⁶\n\nלסיכום: הסכם ממון לפני נישואין אינו אוטומטית מחייב — הוא יכול להיות מחייב אם הוא עונה על הדרישות הפורמליות והמהותיות שנקבעו בחוק ובפסיקה; יחד עם זאת, בתי המשפט שומרים לעצמם סמכויות לפקוח על טיב ההסכמה ולבטל או להתאים הסכמים במקרים של פגמים מהותיים או תוצאות בלתי־צודקות. במקרה פרטני יש לבדוק את נסיבות כריתת ההסכם ואת עמידתו בתנאים אלה.",
+    "footnotes": [
+      {
+        "url": null,
+        "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973; חוק יחסי ממון בין בני זוג, תשל\"ג-1973 (PDF)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+            "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+            "source_type": "statute"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/99-99.pdf",
+            "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973 (PDF)",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973; חוק יחסי ממון בין בני זוג, תשל\"ג-1973 (PDF); הסכם יחסי ממון בין בני זוג נשואים (הליך)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+            "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+            "source_type": "statute"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/99-99.pdf",
+            "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973 (PDF)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision69758-03-22a/he/69758-03-22.doc",
+            "title": "הסכם יחסי ממון בין בני זוג נשואים (הליך)",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973; הסכם יחסי ממון בין בני זוג נשואים (הליך); תוקפו של הסכם ממון בין 'ידועים בציבור' שלא אושר בערכאה שיפוטית",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+            "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+            "source_type": "statute"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision69758-03-22a/he/69758-03-22.doc",
+            "title": "הסכם יחסי ממון בין בני זוג נשואים (הליך)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.daat.ac.il/daat/psk/psk.asp?id=1781",
+            "title": "תוקפו של הסכם ממון בין 'ידועים בציבור' שלא אושר בערכאה שיפוטית",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "ביהמ\"ש לענייני משפחה בראשון לציון, השופטת מירה רום פלאי: פס\"ד בעניין ביטול הסכם שלום בית וגירושין, בעילות של עושק, טעות והטעיה, חוסר תום לב, ועוד (תה\"ס 13518-03-23); תוקפו של הסכם ממון בין 'ידועים בציבור' שלא אושר בערכאה שיפוטית",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=540",
+            "title": "ביהמ\"ש לענייני משפחה בראשון לציון, השופטת מירה רום פלאי: פס\"ד בעניין ביטול הסכם שלום בית וגירושין, בעילות של עושק, טעות והטעיה, חוסר תום לב, ועוד (תה\"ס 13518-03-23)",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.daat.ac.il/daat/psk/psk.asp?id=1781",
+            "title": "תוקפו של הסכם ממון בין 'ידועים בציבור' שלא אושר בערכאה שיפוטית",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "The Changing Face of Israeli Family Law: Between Private Ordering and Judicial Oversight; Prenuptial Agreements in Israeli Law: Consent, Formality, and Public Policy",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
+            "title": "The Changing Face of Israeli Family Law: Between Private Ordering and Judicial Oversight",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.jstor.org/stable/0000000",
+            "title": "Prenuptial Agreements in Israeli Law: Consent, Formality, and Public Policy",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "מסמך מאתר אתר ממשלתי (gov.il); אישור הסכם ממון בין בני זוג - תקנות סדרי דין, התשל\"ד-1973",
+        "number": 6,
+        "sources": [
+          {
+            "url": "https://www.gov.il/he/service/couple-family-agreement",
+            "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.nevo.co.il/",
+            "title": "אישור הסכם ממון בין בני זוג - תקנות סדרי דין, התשל\"ד-1973",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+        "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "statute",
+        "candidate_id": "944bbc39-fada-4ca7-ab65-12ce7a1577f4"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/99-99.pdf",
+        "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973 (PDF)",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "b84ee595-072a-4117-bd91-4acd367d6507"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision69758-03-22a/he/69758-03-22.doc",
+        "title": "הסכם יחסי ממון בין בני זוג נשואים (הליך)",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "60787623-570c-4d99-a972-19f9e78565a8"
+      },
+      {
+        "url": "https://www.daat.ac.il/daat/psk/psk.asp?id=1781",
+        "title": "תוקפו של הסכם ממון בין 'ידועים בציבור' שלא אושר בערכאה שיפוטית",
+        "number": 3,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "951b5f75-f8b6-48b9-90b7-23dcaad8aadd"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=540",
+        "title": "ביהמ\"ש לענייני משפחה בראשון לציון, השופטת מירה רום פלאי: פס\"ד בעניין ביטול הסכם שלום בית וגירושין, בעילות של עושק, טעות והטעיה, חוסר תום לב, ועוד (תה\"ס 13518-03-23)",
+        "number": 4,
+        "origin": "local_db",
+        "source_type": "caselaw",
+        "candidate_id": "da02672b-394d-4e91-81e4-4bd518d42e13"
+      },
+      {
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
+        "title": "The Changing Face of Israeli Family Law: Between Private Ordering and Judicial Oversight",
+        "number": 5,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "288f499f-482d-4ec2-be2d-b73910a683a0"
+      },
+      {
+        "url": "https://www.jstor.org/stable/0000000",
+        "title": "Prenuptial Agreements in Israeli Law: Consent, Formality, and Public Policy",
+        "number": 5,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "648d5ea8-1ac0-493e-b625-dcf17c723816"
+      },
+      {
+        "url": "https://www.gov.il/he/service/couple-family-agreement",
+        "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "number": 6,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "f0454cda-8166-4fd2-adb9-98775ec76196"
+      },
+      {
+        "url": "https://www.nevo.co.il/",
+        "title": "אישור הסכם ממון בין בני זוג - תקנות סדרי דין, התשל\"ד-1973",
+        "number": 6,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "7c4b0e3a-dfe4-45c5-b613-9f068650c313"
+      }
+    ],
+    "quality_warning": null
+  },
+  {
+    "id": "Q18",
+    "category": "anchor_preservation",
+    "query": "צטט מילולית את סעיף 1 לחוק יסוד: כבוד האדם וחירותו, והפנה למקור רשמי.",
+    "run_id": "388def17-fdce-401c-9cb1-81822310cdb2",
+    "ok": true,
+    "total_ms": 101383,
+    "answer_intent": {
+      "output_shape": "quote"
+    },
+    "lead_ref": null,
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "answer": "עקרונות יסוד (תיקון מס' 1): 1. זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.¹\n\nמקור רשמי שבו מפורסם הנוסח: פרסום הכנסת — קובץ חקיקה של הכנסת הזמין בכתובת https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf.¹\n\nעדכניות: הציטוט מובא כאן כפי שנכלל בפרסום הכנסת שמצוין לעיל (s1). במסמכים הנוספים ברשימת המקורות מופיע תיעוד לתיקון סח 1454, התשנ\"ד המוזכר במסמך (s3). אין במקורות שסופקו כדי לקבוע בצורה נחרצת האם נוספו תיקונים נוספים מאז פרסום קובץ החקיקה המצוטט; אם נדרשת ודאות מלאה לגבי הגרסה המעודכנת יש להשוות לפרסום הרשמי המעודכן של הכנסת.²",
+    "footnotes": [
+      {
+        "url": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו (כפי שמופיע בפרסום הכנסת)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+            "title": "חוק-יסוד: כבוד האדם וחירותו (כפי שמופיע בפרסום הכנסת)",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "other"
+      },
+      {
+        "url": null,
+        "title": "חוק-יסוד: כבוד האדם וחירותו (כפי שמופיע בפרסום הכנסת); חוק יסוד - כבוד האדם וחירותו",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+            "title": "חוק-יסוד: כבוד האדם וחירותו (כפי שמופיע בפרסום הכנסת)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+            "title": "חוק יסוד - כבוד האדם וחירותו",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו (כפי שמופיע בפרסום הכנסת)",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "06273e76-9325-4a2f-8231-6a6c7e1fb4cb"
+      },
+      {
+        "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+        "title": "חוק יסוד - כבוד האדם וחירותו",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "2e53e4a7-81da-476e-89fc-6806b51f7ec5"
+      }
+    ],
+    "quality_warning": null
+  },
+  {
+    "id": "BGZ5555",
+    "category": "case_holding_smoke",
+    "query": "מה נקבע בבג\"ץ 5555/18 בעניין חוק-יסוד: הלאום? נסח את ההלכה שנפסקה.",
+    "run_id": "06e62216-963b-4cb7-b63a-00c9346d69c7",
+    "ok": true,
+    "total_ms": 111509,
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "lead_ref": null,
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "answer": "**מסקנה עיקרית של בג\"ץ 5555/18**\n\nבית המשפט העליון (בג\"ץ 5555/18, ח\\'כ אכרם חסון נ׳ כנסת ישראל) דחה את העתירות שביקשו לבטל את חוק‑יסוד: ישראל — מדינת הלאום של העם היהודי; במקום ביטול פסקה כי יש לפרש את הוראות החוק בפרשנות מקיימת.¹\n\nהכרעה זו ניתנה בהחלטה שניתנה ביום 8.7.2021 ועוסקת בשאלת תוקפו ועקרונות פרשנותו של חוק היסוד הנידון.¹\n\n**נוסח ההלכה שנפסק**\n\nהכלל המשפטי שנקבע על־ידי בית המשפט: אין מקום להורות על בטלותו של חוק‑יסוד זה; יש לפרשו בפרשנות מקיימת.²\n\n**היקף הסעד שניתן**\n\nבפועל בית המשפט דחה את העתירות לנטילת תוקף החוק ולא הורה על ביטול של הוראה בחוק; בנוסף נתן הוראה פרשנית — לפרש את הוראות החוק בפרשנות מקיימת במקום להורות על בטלותו.³\n\n**חוזקה תקדימית והיקף יישום**\n\nמאחר שמדובר בפסק‑דין של בית המשפט העליון, הכרעתו מהווה החלטת על שתחייב ערכאות נמוכות בהקשרים רלוונטיים; עם זאת קיימת ספרות אקדמית וניתוחים פרשניים המגבילים את היקפה המעשי של ההלכה וטועים עליה כעל הכרעה פרשנית יותר מאשר על פורץ דרך שמסירה מחיוביות קונקרטיים — לפיכך ראוי להפעיל את ההלכה בזהירות בעת הרחבה לתחומים מהותיים חדשים.⁴\n\n**ציטוט מרכזי מן ההכרעה**\n\n\"אין מקום להורות על בטלותו של חוק‑יסוד: ישראל – מדינת הלאום של העם היהודי, אלא יש לפרשו פרשנות מקיימת.\".²",
+    "footnotes": [
+      {
+        "url": null,
+        "title": "תקציר בג״ץ 5555/18 (חוק יסוד: הלאום); בג\"ץ 5555/18",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+            "title": "תקציר בג״ץ 5555/18 (חוק יסוד: הלאום)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+            "title": "בג\"ץ 5555/18",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+        "title": "תקציר בג״ץ 5555/18 (חוק יסוד: הלאום)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+            "title": "תקציר בג״ץ 5555/18 (חוק יסוד: הלאום)",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "other"
+      },
+      {
+        "url": null,
+        "title": "תקציר בג״ץ 5555/18 (חוק יסוד: הלאום); בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+            "title": "תקציר בג״ץ 5555/18 (חוק יסוד: הלאום)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "בג\"ץ 5555/18; פרשנות תכליתית החותרת תחת התכלית: על מעמדם של דברי ההסבר בחוק ובפסיקה; גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+            "title": "בג\"ץ 5555/18",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.taulawreview.sites.tau.ac.il/mv",
+            "title": "פרשנות תכליתית החותרת תחת התכלית: על מעמדם של דברי ההסבר בחוק ובפסיקה",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1937",
+            "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+        "title": "תקציר בג״ץ 5555/18 (חוק יסוד: הלאום)",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "f193811e-9754-441c-bac3-20f88201bc5e"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+        "title": "בג\"ץ 5555/18",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "b6e17a24-8844-41cf-bddd-31b80f62d899"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+        "number": 3,
+        "origin": "local_db",
+        "source_type": "caselaw",
+        "candidate_id": "6b257f14-6f1e-46b2-9249-22b390dd4eaf"
+      },
+      {
+        "url": "https://www.taulawreview.sites.tau.ac.il/mv",
+        "title": "פרשנות תכליתית החותרת תחת התכלית: על מעמדם של דברי ההסבר בחוק ובפסיקה",
+        "number": 4,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "dcc8eb2f-e339-4328-ba8d-a101fb330c44"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1937",
+        "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+        "number": 4,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "5899a8df-d6f8-44ed-96ca-5a30784341a9"
+      }
+    ],
+    "quality_warning": null
+  }
+]

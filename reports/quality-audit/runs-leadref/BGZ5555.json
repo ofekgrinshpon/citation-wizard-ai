@@ -1,0 +1,132 @@
+{
+  "id": "BGZ5555",
+  "category": "case_holding_smoke",
+  "query": "מה נקבע בבג\"ץ 5555/18 בעניין חוק-יסוד: הלאום? נסח את ההלכה שנפסקה.",
+  "run_id": "06e62216-963b-4cb7-b63a-00c9346d69c7",
+  "ok": true,
+  "total_ms": 111509,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "lead_ref": null,
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "answer": "**מסקנה עיקרית של בג\"ץ 5555/18**\n\nבית המשפט העליון (בג\"ץ 5555/18, ח\\'כ אכרם חסון נ׳ כנסת ישראל) דחה את העתירות שביקשו לבטל את חוק‑יסוד: ישראל — מדינת הלאום של העם היהודי; במקום ביטול פסקה כי יש לפרש את הוראות החוק בפרשנות מקיימת.¹\n\nהכרעה זו ניתנה בהחלטה שניתנה ביום 8.7.2021 ועוסקת בשאלת תוקפו ועקרונות פרשנותו של חוק היסוד הנידון.¹\n\n**נוסח ההלכה שנפסק**\n\nהכלל המשפטי שנקבע על־ידי בית המשפט: אין מקום להורות על בטלותו של חוק‑יסוד זה; יש לפרשו בפרשנות מקיימת.²\n\n**היקף הסעד שניתן**\n\nבפועל בית המשפט דחה את העתירות לנטילת תוקף החוק ולא הורה על ביטול של הוראה בחוק; בנוסף נתן הוראה פרשנית — לפרש את הוראות החוק בפרשנות מקיימת במקום להורות על בטלותו.³\n\n**חוזקה תקדימית והיקף יישום**\n\nמאחר שמדובר בפסק‑דין של בית המשפט העליון, הכרעתו מהווה החלטת על שתחייב ערכאות נמוכות בהקשרים רלוונטיים; עם זאת קיימת ספרות אקדמית וניתוחים פרשניים המגבילים את היקפה המעשי של ההלכה וטועים עליה כעל הכרעה פרשנית יותר מאשר על פורץ דרך שמסירה מחיוביות קונקרטיים — לפיכך ראוי להפעיל את ההלכה בזהירות בעת הרחבה לתחומים מהותיים חדשים.⁴\n\n**ציטוט מרכזי מן ההכרעה**\n\n\"אין מקום להורות על בטלותו של חוק‑יסוד: ישראל – מדינת הלאום של העם היהודי, אלא יש לפרשו פרשנות מקיימת.\".²",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "תקציר בג״ץ 5555/18 (חוק יסוד: הלאום); בג\"ץ 5555/18",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+          "title": "תקציר בג״ץ 5555/18 (חוק יסוד: הלאום)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+          "title": "בג\"ץ 5555/18",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+      "title": "תקציר בג״ץ 5555/18 (חוק יסוד: הלאום)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+          "title": "תקציר בג״ץ 5555/18 (חוק יסוד: הלאום)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "תקציר בג״ץ 5555/18 (חוק יסוד: הלאום); בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+          "title": "תקציר בג״ץ 5555/18 (חוק יסוד: הלאום)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בג\"ץ 5555/18; פרשנות תכליתית החותרת תחת התכלית: על מעמדם של דברי ההסבר בחוק ובפסיקה; גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+          "title": "בג\"ץ 5555/18",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/mv",
+          "title": "פרשנות תכליתית החותרת תחת התכלית: על מעמדם של דברי ההסבר בחוק ובפסיקה",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1937",
+          "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+      "title": "תקציר בג״ץ 5555/18 (חוק יסוד: הלאום)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f193811e-9754-441c-bac3-20f88201bc5e"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+      "title": "בג\"ץ 5555/18",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "b6e17a24-8844-41cf-bddd-31b80f62d899"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "6b257f14-6f1e-46b2-9249-22b390dd4eaf"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/mv",
+      "title": "פרשנות תכליתית החותרת תחת התכלית: על מעמדם של דברי ההסבר בחוק ובפסיקה",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "dcc8eb2f-e339-4328-ba8d-a101fb330c44"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1937",
+      "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "5899a8df-d6f8-44ed-96ca-5a30784341a9"
+    }
+  ],
+  "quality_warning": null
+}
