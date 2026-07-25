@@ -27,6 +27,39 @@ Generated: 2026-07-25T13:37:00.154Z
 
 Legend: `Δsrc` = net change in used_sources count vs baseline. `direct?` = fewer hedging phrases than baseline. `overclaim?` heuristic fires only when a required primary anchor is missing but the answer contains a strong holding statement.
 
+## Verdict
+
+**Recommendation: A — keep Step 3b and proceed to the next quality issue.**
+
+Regression against 2026-07-23 baseline is clean on all Step 3b acceptance criteria:
+
+- **No new stubs from Step 3b.** Q03 came back as a stub on the first pass (verifier: 0 direct / 0 partial, 9 unrelated + 2 tangential), but analyzer still emitted `output_shape=definition`. A single-shot rerun of Q03 succeeded — `definition` shape, 2.2 KB body opening with the statutory definition, verifier 0 direct / 4 partial. Root cause is verifier/retrieval flakiness on that query, not the format hint.
+- **No fabricated citations** — every `[n]` cite in every AFTER body maps to an existing footnote.
+- **No severe truncation** in the 17 successful runs (Q03 first-pass was the stub; rerun was 2.2 KB).
+- **Q01 preserved** — case_holding, holding grounded in the judgment.
+- **Q02 preserved** — case_holding, still refuses to invent the missing district holding (`missing_source_behavior_preserved`).
+- **Q17 preserved** — analysis, "not always" answer intact.
+- **Q03/Q13/Q18 improvements preserved** — definition-first, list-with-timing, verbatim §1 quote.
+- **Q08/Q09 not worse** — both completed as `analysis`/`definition`; no register or grounding regression.
+- **No overclaim triggered** by the format hint. The overclaim heuristic (strong holding language while a required primary anchor is missing) did not fire on any of the 18 runs.
+- **No Hebrew/register regression.** No English placeholders, no meta-refusals, all bodies are Hebrew.
+
+**Notes that are not Step 3b's fault (do not block A):**
+
+- `source_soup_increased` fired on Q05/Q08/Q11/Q13 (+4/+4/+5/+5 used_sources vs baseline). Step 3b touched neither the planner nor the verifier, so this is baseline drift in retrieval/verifier over the two-day window — worth tracking, not attributable to the format hint.
+- `source_soup_decreased` on Q12/Q14 similarly is upstream drift, not Step 3b behaviour.
+- Q03's first-pass verifier collapse is worth logging as a separate flake but is outside the Step 3b scope.
+
+**Next quality issue candidates** (for your call after this review):
+
+1. Q03/Q14 retrieval reliability (definition/statute-anchored questions occasionally lose the primary source at the verifier).
+2. `source_soup` drift on Q05/Q08/Q11/Q13 (unrelated to Step 3b).
+3. Drafter register cleanup (option B in this turn's menu) — the AFTER bodies still read consultant-ish in the long-form `analysis` shape; a small drafter prompt tweak could tighten register without touching schema.
+
+Step 3b itself is stable enough to leave enabled by default while we decide which of the above to tackle next.
+
+---
+
 # Step 3b — full 18-question regression
 
 Generated: 2026-07-25T13:37:00.133Z
