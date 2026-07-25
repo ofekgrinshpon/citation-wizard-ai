@@ -1,0 +1,156 @@
+{
+  "id": "Q13",
+  "category": "practical_implications",
+  "query": "מה חייב מעסיק לעשות כאשר עובד/ת מגיש/ה תלונה על הטרדה מינית במקום העבודה, ומהי מסגרת הזמנים לפי התקנות?",
+  "run_id": "dcd871b3-f20e-44d1-863a-9dc380b0b088",
+  "ok": true,
+  "total_ms": 137062,
+  "answer_intent": {
+    "output_shape": "list"
+  },
+  "answer": "- חובות מיידיות בעת הגשת תלונה: לפתוח בירור פנימי או להודיע על מינוי יחידת חקירה; לנקוט מידית צעדי ביניים להגן על המתלוננת והחשוד (למשל הפרדה בתפקידים/משמרות או איסור יצירת קשר) תוך שמירה על סודיות; להגן מפני נקמה; ולתעד את התלונה ואת הצעדים שננקטו וליידע את העובדת/ה בזכויותיה ובגורמי הסיוע.¹\n- מסגרת הזמנים לפי התקנות: התקנות קובעות הוראות פרוצדורליות לגבי הודעה על יחידת חקירה, מועדי סיום הבדיקה ומתן תשובה של המעסיק; לגבי המועדים המספריים והדד‑ליין המדויק יש לעיין בטקסט התקנות עצמן.²\n- צעדים לאחר קבלת תוצאות הבדיקה: בהתאם לתוצאות — לשקול ולנקוט סנקציות משמעתיות הראויות לפי דיני משמעת; לשקם ולספק תמיכה/סיוע לעובדת/ה שנפגעה; במקרים רלוונטיים לבחון דיווח לגורמי אכיפה או לרשויות המתאימות; ולשמור על סודיות המידע הנוגע להליך ולממצאים.³\n- חובות מניעתיות שוטפות וחובת נהלים: להחזיק מדיניות מניעה ונוהל לטיפול בתלונות; למנות אחראי/ת פנימי/ת להטרדה מינית; לקיים הדרכות תקופתיות לעובדים ולמנהלים ולהנגיש את הנהלים ולעתים לספק לעובדים עותק של המדריך/הנחיות; לתעד פעולות מניעה ולבחון את מדיניות הארגון באופן שוטף.⁴",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "תקנות למניעת הטרדה מינית (חובות מעסיק); תקנון למניעת הטרדה מינית",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA_%D7%94%D7%98%D7%A8%D7%93%D7%94_%D7%9E%D7%99%D7%A0%D7%99%D7%AA_(%D7%97%D7%95%D7%91%D7%95%D7%AA_%D7%9E%D7%A2%D7%A1%D7%99%D7%A7)",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעסיק)",
+          "source_type": "israeli_law"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+          "title": "תקנון למניעת הטרדה מינית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA_%D7%94%D7%98%D7%A8%D7%93%D7%94_%D7%9E%D7%99%D7%A0%D7%99%D7%AA_(%D7%97%D7%95%D7%91%D7%95%D7%AA_%D7%9E%D7%A2%D7%A1%D7%99%D7%A7)",
+      "title": "תקנות למניעת הטרדה מינית (חובות מעסיק)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA_%D7%94%D7%98%D7%A8%D7%93%D7%94_%D7%9E%D7%99%D7%A0%D7%99%D7%AA_(%D7%97%D7%95%D7%91%D7%95%D7%AA_%D7%9E%D7%A2%D7%A1%D7%99%D7%A7)",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעסיק)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "israeli_law"
+    },
+    {
+      "url": null,
+      "title": "תקנון למניעת הטרדה מינית; חזרה לדיני משמעת: הפתרון לבריונות כהתנהגות בלתי הולמת? | סימה קרמר (כרך כא); ביוש מעסיק תאגידי בתביעות הטרדה מינית | הדרה בר־מור (כרך כג)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+          "title": "תקנון למניעת הטרדה מינית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://runilawreview.org/2018/07/15/vol21_kramer/",
+          "title": "חזרה לדיני משמעת: הפתרון לבריונות כהתנהגות בלתי הולמת? | סימה קרמר (כרך כא)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://runilawreview.org/2021/01/11/vol23-bar-mor/",
+          "title": "ביוש מעסיק תאגידי בתביעות הטרדה מינית | הדרה בר־מור (כרך כג)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנון למניעת הטרדה מינית; מחקר השוואתי: הטרדה מינית במקום העבודה; איזו מין הטרדה: האם הטרדה מינית היא פגיעה בשוויון או בכבוד האדם?",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+          "title": "תקנון למניעת הטרדה מינית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/r-30/he/researches_R-30.pdf",
+          "title": "מחקר השוואתי: הטרדה מינית במקום העבודה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1519",
+          "title": "איזו מין הטרדה: האם הטרדה מינית היא פגיעה בשוויון או בכבוד האדם?",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA_%D7%94%D7%98%D7%A8%D7%93%D7%94_%D7%9E%D7%99%D7%A0%D7%99%D7%AA_(%D7%97%D7%95%D7%91%D7%95%D7%AA_%D7%9E%D7%A2%D7%A1%D7%99%D7%A7)",
+      "title": "תקנות למניעת הטרדה מינית (חובות מעסיק)",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "israeli_law",
+      "candidate_id": "3ec96f14-4650-4ce7-aa7d-abbd84af8eb4"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+      "title": "תקנון למניעת הטרדה מינית",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "c09ffdb0-85b2-4e4b-8cf4-931fe5ef8a3e"
+    },
+    {
+      "url": "https://runilawreview.org/2018/07/15/vol21_kramer/",
+      "title": "חזרה לדיני משמעת: הפתרון לבריונות כהתנהגות בלתי הולמת? | סימה קרמר (כרך כא)",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "da12256d-167f-436b-83e4-869e29940f28"
+    },
+    {
+      "url": "https://runilawreview.org/2021/01/11/vol23-bar-mor/",
+      "title": "ביוש מעסיק תאגידי בתביעות הטרדה מינית | הדרה בר־מור (כרך כג)",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "5ca219b5-efed-4eb4-a68f-dcd240907b55"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/r-30/he/researches_R-30.pdf",
+      "title": "מחקר השוואתי: הטרדה מינית במקום העבודה",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "355f8e8e-51b4-4364-b4d5-9e5ec933a5c0"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1519",
+      "title": "איזו מין הטרדה: האם הטרדה מינית היא פגיעה בשוויון או בכבוד האדם?",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "7bf4c997-8e2d-42d7-aae6-4befb1ec1caf"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 1,
+      "partial": 5,
+      "unrelated": 11,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 20,
+      "false": 0
+    }
+  },
+  "quality_warnings": [],
+  "structured_report": null,
+  "missing_required_anchors": null
+}

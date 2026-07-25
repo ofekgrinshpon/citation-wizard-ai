@@ -1,0 +1,236 @@
+{
+  "id": "Q01",
+  "category": "docket_holding",
+  "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
+  "run_id": "f99bb1df-8df5-4b98-a634-6b819cbe1aea",
+  "ok": true,
+  "total_ms": 157606,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "answer": "**הכרעה עיקרית**\n\nבג\"ץ בתיק רסלר נ' כנסת ישראל קבע כי חוק דחיית שירות לתלמידי ישיבות (\"חוק טל\") פוגע בזכות היסוד לשוויון ונמצא בלתי חוקתי, אך בית המשפט לא הורה על ביטול מיידי של ההוראה בהתחשב באופיה ובמסגרת הזמן שנקבעה להסדר.¹\n\n**נימוקים מרכזיים**\n\nמרכז טיעוני בית המשפט היה הבחינה בשאלה האם ההסדר פוגע בשוויון והאם הפגיעה מותרת לפי מבחן המידתיות; המבחן המידתי שימש כלי מרכזי להערכת הלגיטימיות של ההסדר החוקתי.²\n\nבית המשפט בחן גם את השאלות של כבוד האדם וגבולות סמכות המחוקק כאשר הוא יוצר פטור או דחייה קבוצתית מהחובה לשירות ביטחון; חלק מהניתוח התייחס לאופיו הזמני של הסדר ולשאלה האם תקופת ניסוי עשויה להצדיק פגיעה שנראית מפלה בשלב הראשוני.³\n\n**הסעד וההשלכות המיידיות**\n\nהסעד שניתן כלל דחיית הכרעה על ביטול מיידי של ההוראות והכרה במהלך המעבר: בית המשפט דחה את העתירה לביטול החלטת הכנסת בדבר הארכת תוקפו של החוק ואפשר הארכה של חמש עשרה חודשים לצורך יישום והיערכות, ועדכן כי הערכת מידתיות ההסדר תיעשה לאחר פקיעת תקופת ההארכה.⁴\n\nמשכך, ההשפעה המעשית המיידית של הפסיקה הייתה שמצב ההסדרים נשאר על כנו לתקופת המעבר שנקבעה, במקום ביטול מיידי של החוק או של הוראותיו.⁵\n\n**התפתחויות ומעקב אחרי הפסיקה**\n\nמהמקורות עולה כי ההכרעה עוררה דיון ציבורי־פוליטי ואקדמי נרחב סביב יחס המדינה למגזר החרדי ולחובת השירות, וכי במסמכים ממשלתיים פורמליים הובעה ההכרה שהחוק אינו חוקתי ויש מגבלות על הארכת תוקפו מעבר למועד שנקבע.⁶\n\nבנוסף, יש תיעוד של דעות מבחינה פנימית בפסק הדין ובספרות (דעת מיעוט וניתוחים משפטיים) המדגישים כי בג\"ץ הימנע מלהכריע סופית במידתיות ההסדר עד לחלוף תקופת המעבר, ולכן משמעותה המלאה של ההכרעה התבררה רק בהמשך המהלכים הפוליטיים והחקיקתיים.³\n\nסייג והבהרה: תשובה זו נבנתה אך ורק על בסיס המסמכים שסופקו לך (פסק הדין עצמו, תמציות ממשלתיות ומאמרים אקדמיים). אם תרצה/י ציטוטים מדויקים מתוך פסק הדין הרשמי או פירוט של טיעונים בודדים מן הכרעת בית המשפט, אוכל להוציאם מן המסמך הרשמי המצורף במקורות.",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "החלטה בתיק בג\"ץ 6298/07; תיקון חוק הגיוס – שילוב תלמידי ישיבות; מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "החלטה בתיק בג\"ץ 6298/07; על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה; מסמך מאתר psakdin.co.il",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1550",
+          "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%A0%D7%AA%D7%9F-%D7%90%D7%95%D7%A8%D7%9B%D7%94-%D7%A9%D7%9C-%D7%97%D7%9E%D7%99%D7%A9%D7%94-%D7%A2%D7%A9%D7%A8-%D7%97%D7%95%D7%93%D7%A9%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%97%D7%95%D7%A7-%D7%98%D7%9C",
+          "title": "מסמך מאתר psakdin.co.il",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "החלטה בתיק בג\"ץ 6298/07; מסמך מאתר אתר אקדמי (cris.biu.ac.il); מסמך מאתר psakdin.co.il",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://cris.biu.ac.il/en/publications/%D7%94%D7%AA%D7%A4%D7%A8-%D7%94%D7%A8%D7%92%D7%99%D7%A9-%D7%A9%D7%9C-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA-%D7%91%D7%92%D7%A5-629807-%D7%A8%D7%A1%D7%9C%D7%A8-%D7%A0-%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%91%D7%A2%D7%A0%D7%99%D7%99-2/",
+          "title": "מסמך מאתר אתר אקדמי (cris.biu.ac.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%A0%D7%AA%D7%9F-%D7%90%D7%95%D7%A8%D7%9B%D7%94-%D7%A9%D7%9C-%D7%97%D7%9E%D7%99%D7%A9%D7%94-%D7%A2%D7%A9%D7%A8-%D7%97%D7%95%D7%93%D7%A9%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%97%D7%95%D7%A7-%D7%98%D7%9C",
+          "title": "מסמך מאתר psakdin.co.il",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר psakdin.co.il; החלטה בתיק בג\"ץ 6298/07; מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%A0%D7%AA%D7%9F-%D7%90%D7%95%D7%A8%D7%9B%D7%94-%D7%A9%D7%9C-%D7%97%D7%9E%D7%99%D7%A9%D7%94-%D7%A2%D7%A9%D7%A8-%D7%97%D7%95%D7%93%D7%A9%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%97%D7%95%D7%A7-%D7%98%D7%9C",
+          "title": "מסמך מאתר psakdin.co.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר psakdin.co.il; מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%A0%D7%AA%D7%9F-%D7%90%D7%95%D7%A8%D7%9B%D7%94-%D7%A9%D7%9C-%D7%97%D7%9E%D7%99%D7%A9%D7%94-%D7%A2%D7%A9%D7%A8-%D7%97%D7%95%D7%93%D7%A9%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%97%D7%95%D7%A7-%D7%98%D7%9C",
+          "title": "מסמך מאתר psakdin.co.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "הנעת שינוי חברתי בתחומי האוטונומיה של המגזר החרדי על ידי בית המשפט העליון – תקווה חלולה בגרסה ישראלית; בית המשפט העליון - Gov.il; מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1574",
+          "title": "הנעת שינוי חברתי בתחומי האוטונומיה של המגזר החרדי על ידי בית המשפט העליון – תקווה חלולה בגרסה ישראלית",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/spokeman_messeges_1209_17/he/1877-14_0.pdf",
+          "title": "בית המשפט העליון - Gov.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_3b568f65476147a5b5282e9b0226732c.pdf",
+          "title": "מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "caselaw",
+      "candidate_id": "6434ea36-abe0-4c37-ad8e-2d07191feaa8"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "5e84fca7-4789-41fd-8ed1-2f99a24eaa6c"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "763dce6c-d7df-4a0b-9fe7-02ba9bbbfdeb"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1550",
+      "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "0e1e0e4e-a174-4749-9656-1a444fb5ba45"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%A0%D7%AA%D7%9F-%D7%90%D7%95%D7%A8%D7%9B%D7%94-%D7%A9%D7%9C-%D7%97%D7%9E%D7%99%D7%A9%D7%94-%D7%A2%D7%A9%D7%A8-%D7%97%D7%95%D7%93%D7%A9%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%97%D7%95%D7%A7-%D7%98%D7%9C",
+      "title": "מסמך מאתר psakdin.co.il",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "022b9b38-2566-4bf8-b43d-10dabd512748"
+    },
+    {
+      "url": "https://cris.biu.ac.il/en/publications/%D7%94%D7%AA%D7%A4%D7%A8-%D7%94%D7%A8%D7%92%D7%99%D7%A9-%D7%A9%D7%9C-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA-%D7%91%D7%92%D7%A5-629807-%D7%A8%D7%A1%D7%9C%D7%A8-%D7%A0-%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%91%D7%A2%D7%A0%D7%99%D7%99-2/",
+      "title": "מסמך מאתר אתר אקדמי (cris.biu.ac.il)",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "004ea7d6-42b9-49f4-a4ab-b04ca77100f8"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1574",
+      "title": "הנעת שינוי חברתי בתחומי האוטונומיה של המגזר החרדי על ידי בית המשפט העליון – תקווה חלולה בגרסה ישראלית",
+      "number": 6,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "528464ee-18c6-42cd-9873-f1fbea407722"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/spokeman_messeges_1209_17/he/1877-14_0.pdf",
+      "title": "בית המשפט העליון - Gov.il",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "3a69f7e8-dd8b-41dc-a0fc-4f4ab56a2aaf"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_3b568f65476147a5b5282e9b0226732c.pdf",
+      "title": "מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
+      "number": 6,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "26332b96-83c6-4398-afd5-cbe84d8a661a"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 2,
+      "partial": 12,
+      "unrelated": 5,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 22,
+      "false": 0
+    }
+  },
+  "quality_warnings": [],
+  "structured_report": null,
+  "missing_required_anchors": null
+}
