@@ -8,6 +8,7 @@ import { callOpenAIJsonTool } from "../lib/openai.ts";
 import { callAnthropicJsonTool } from "../lib/anthropic.ts";
 import type { UserDocument } from "../lib/attachments.ts";
 import {
+  AnswerIntent,
   Candidate,
   Claim,
   Footnote,
