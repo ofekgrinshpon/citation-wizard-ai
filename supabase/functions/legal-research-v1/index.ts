@@ -659,6 +659,7 @@ async function handle(req: Request): Promise<Response> {
       userDocs: attachmentResult.documents,
       useAsSource,
       missingRequiredAnchors: missingForCaveat,
+      answerIntent: analyzer.answer_intent,
     },
   );
   stage_runs.push(...drafter.stage_runs);
