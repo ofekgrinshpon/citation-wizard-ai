@@ -2,58 +2,57 @@
   "id": "Q01",
   "category": "docket_holding",
   "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
-  "run_id": "7ad479b3-3575-454c-80e6-17a727ba0db8",
+  "run_id": "c7cdc432-bd97-4c8b-ad51-3c8eb3793ccb",
   "ok": true,
-  "total_ms": 152871,
+  "total_ms": 118661,
   "answer_intent": {
     "output_shape": "case_holding"
   },
-  "lead_ref": null,
+  "lead_ref": {
+    "ref": null,
+    "shape": "case_holding",
+    "reason": "no_case_source"
+  },
   "missing_anchor_caveat_injected": false,
   "missing_anchor_descriptions": [],
-  "answer": "**בג\"ץ 6298/07 רסלר נ' כנסת ישראל — סיכום ההכרעה**\n\nבית המשפט העליון קבע כי \"חוק דחיית שירות לתלמידי ישיבות\" (חוק טל) אינו חוקתי иניתן פסק דין המבשר על אי־חוקתיותו של החוק.¹\n\nהיסוד העיקרי לאי־החוקתיות נקשר בפגיעה בעקרון השוויון, הנגזר ממעמד חוק־היסוד של כבוד האדם וחירותו; בית המשפט מצא כי פגיעה זו לא הותרה לפי פסקת ההגבלה, ובחינת המידתיות הובילה למסקנה שאין להסדר כדי לעמוד במגבלות החוק היסודיות.²\n\nבבחינת מידתיות ההסדר התייחס הפסק־דין גם לנתונים אמפיריים על אופן יישום החוק: מהמקורות עולה בזהירות כי דו\"חות ובחינות ביצוע הראו יישום חלקי וכשלי של מנגנונים כמו 'שנת ההכרעה' והסללה לשירות אזרחי, נתון ששימש להערכת אי־התאמת האמצעי למטרה.³\n\nלגבי הסעד, הוכר היותו של החוק בלתי־חוקתי, ובפועל ננקטה נוסחת בטלות מושהית/הדרגתית שמקשרת את הפסק לחדלון־התוקף של החוק; מקוריה של הכרעה זו מפורטים בפרסומים ובסיכומים של ההחלטה, תוך שמקורות תיאורטיים מצביעים על אפשרות שימוש בסעדים מושהים בהקשרים חוקתיים.⁴\n\nסיכום קצר: בג\"ץ 6298/07 הכריע כי חוק טל אינו חוקתי בעיקר בשל פגיעה בשוויון וכבוד האדם אשר אינה עומדת במבחני פסקת ההגבלה; ההכרעה נשענה בין היתר על נתונים אמפיריים על כשל ביישום, והסעד כולו נגזר לצורת בטלות מושהית בהתאם לנסיבות המקרה.",
+  "answer": "**החזקה מרכזית של בג\"ץ 6298/07**\n\nבג\"ץ 6298/07 (רסלר נ' כנסת ישראל) דן בשאלת חוקתיותו של חוק דחיית שירות לתלמידי ישיבות (חוק טל). מן המסמכים שבידי עולה בזהירות כי בפסק‑דין זה נבחנה התאמת ההסדר לדרישות חוק‑יסוד: כבוד האדם וחירותו, ובית המשפט מצא שההסדר יוצר פגיעה בשוויון שאינה עומדת בתנאי פסקת ההגבלה.¹\n\nהבחנה לגבי מידתיות: בפסק‑הדין נמתחה ביקורת על אי‑עמידה במבחני המידתיות. נקבע/הודגש כי החוק לא הוכיח כי ננקטו אמצעים מספקים לאיזון הפגיעה — ובייחוד לא הוצגו מנגנונים אפקטיביים לשילוב המוטבים בשירות הצבאי ובהשתלבות תעסוקתית כך שהפגיעה בקבוצות אחרות תהיה מצומצמת ונחוצה.²\n\nהסעד והתחולה: בפסיקה הורה בית המשפט שלא להאריך את הוראות החוק במתכונתן הנוכחית, תוך השארת התחולה עד מועד סופי כדי לאפשר למחוקק לעצב חלופה. במסמכי הכנסת ובטקסטים הנלווים צוין במפורש כי החוק לא יוארך ותוקפו יפוג ביום 01.08.2012.³\n\nעקרון ביקורת שיפוטית ביחס לשיקולי ביטחון: בפסק‑הדין נרמז וקוים כללי מתן מרחב שיקול דעת למחוקק בענייני גיוס וביטחון, אולם הובהר גם שמרחב זה אינו מעניק חותמת אוטומטית הנוטלת משיקולי השוויון את כוחם; שיקולי ביטחון כלליים לא מהווים הצדקה מספיקה לפגיעה מערכתית ונרחבת בזכויות של קבוצות אחרות.²\n\nמסקנה קצרה: ניתן להצביע על ההחזקה כי החוק במתכונתו הנדונה הותקף על יסוד פגיעה בשוויון ואי־עמידה בתנאי פסקת ההגבלה, ושבית המשפט העניק למחוקק חלון תפעולי תיקוני במקום ביטול מידי מוחלט; עם זאת הניסוח והיקף הטענות בפסיקה צריכים להיקרא על‑ידי עיון בפסק‑הדין המלא.",
   "footnotes": [
     {
       "url": null,
-      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות; החלטה בתיק בג\"ץ 6298/07; בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); החלטה בתיק בג\"ץ 6298/07",
       "number": 1,
       "sources": [
         {
-          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
-          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
-          "source_type": "other"
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
         },
         {
           "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
           "title": "החלטה בתיק בג\"ץ 6298/07",
-          "source_type": "other"
-        },
-        {
-          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%D7%A5-'%D7%97%D7%95%D7%A7-%D7%98%D7%9C'-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
-          "title": "בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
-          "source_type": "other"
+          "source_type": "caselaw"
         }
       ],
       "source_type": "compound"
     },
     {
       "url": null,
-      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות; בג\"ץ 6298/07 – פסק-דין (טקסט מלא); רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+      "title": "החלטה בתיק בג\"ץ 6298/07; מסמך מאתר אתר ממשלתי (gov.il); רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
       "number": 2,
       "sources": [
         {
-          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
-          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
-          "source_type": "other"
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
         },
         {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
-          "title": "בג\"ץ 6298/07 – פסק-דין (טקסט מלא)",
-          "source_type": "other"
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
         },
         {
-          "url": "https://lawjournal.huji.ac.il/article/12/1527",
-          "title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+          "url": "https://lawjournal.huji.ac.il/article/12/1930",
+          "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
           "source_type": "journal_article"
         }
       ],
@@ -61,46 +60,18 @@
     },
     {
       "url": null,
-      "title": "בג\"ץ 6298/07 – פסק-דין (טקסט מלא); יישום חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם (חוק טל); מסמך מאתר אתר הכנסת",
+      "title": "החלטה בתיק בג\"ץ 6298/07; תיקון חוק הגיוס – שילוב תלמידי ישיבות",
       "number": 3,
-      "sources": [
-        {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
-          "title": "בג\"ץ 6298/07 – פסק-דין (טקסט מלא)",
-          "source_type": "other"
-        },
-        {
-          "url": "https://fs.knesset.gov.il/globaldocs/MMM/a74c6b58-e9f7-e411-80c8-00155d010977/2_a74c6b58-e9f7-e411-80c8-00155d010977_11_9068.pdf",
-          "title": "יישום חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם (חוק טל)",
-          "source_type": "other"
-        },
-        {
-          "url": "https://fs.knesset.gov.il/globaldocs/MMM/dcbe8d55-f7f7-e411-80c8-00155d010977/2_dcbe8d55-f7f7-e411-80c8-00155d010977_11_9853.pdf",
-          "title": "מסמך מאתר אתר הכנסת",
-          "source_type": "other"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": null,
-      "title": "החלטה בתיק בג\"ץ 6298/07; בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו; על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
-      "number": 4,
       "sources": [
         {
           "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
           "title": "החלטה בתיק בג\"ץ 6298/07",
-          "source_type": "other"
+          "source_type": "caselaw"
         },
         {
-          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%D7%A5-'%D7%97%D7%95%D7%A7-%D7%98%D7%9C'-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
-          "title": "בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
+          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
           "source_type": "other"
-        },
-        {
-          "url": "https://runilawreview.org/2017/11/22/vol20_barak/",
-          "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
-          "source_type": "journal_article"
         }
       ],
       "source_type": "compound"
@@ -108,68 +79,36 @@
   ],
   "used_sources": [
     {
-      "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
-      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
       "number": 1,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "f156e8fb-4c17-4535-8528-debdcb9a0ed2"
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "525e5a7e-27c4-4311-af66-a788a84807ae"
     },
     {
       "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
       "title": "החלטה בתיק בג\"ץ 6298/07",
       "number": 1,
       "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "d72bc4e9-f793-478b-9afe-21941161d008"
+      "source_type": "caselaw",
+      "candidate_id": "67f5a199-a9dd-431a-a3bb-65d837cefff3"
     },
     {
-      "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%D7%A5-'%D7%97%D7%95%D7%A7-%D7%98%D7%9C'-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
-      "title": "בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
-      "number": 1,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "a56093bb-acf9-41de-a539-dc77caffaa5e"
-    },
-    {
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
-      "title": "בג\"ץ 6298/07 – פסק-דין (טקסט מלא)",
-      "number": 2,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "06d04a45-2143-4f58-b408-cc7d50cf4e2d"
-    },
-    {
-      "url": "https://lawjournal.huji.ac.il/article/12/1527",
-      "title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+      "url": "https://lawjournal.huji.ac.il/article/12/1930",
+      "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
       "number": 2,
       "origin": "local_db",
       "source_type": "journal_article",
-      "candidate_id": "12f1f727-be8a-40a4-951b-81fc565803ac"
+      "candidate_id": "8ce7d003-2d6d-44eb-b897-ec108d4b6cdd"
     },
     {
-      "url": "https://fs.knesset.gov.il/globaldocs/MMM/a74c6b58-e9f7-e411-80c8-00155d010977/2_a74c6b58-e9f7-e411-80c8-00155d010977_11_9068.pdf",
-      "title": "יישום חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם (חוק טל)",
+      "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
       "number": 3,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "d9391bc0-15ea-4df5-949b-caff72efac19"
-    },
-    {
-      "url": "https://fs.knesset.gov.il/globaldocs/MMM/dcbe8d55-f7f7-e411-80c8-00155d010977/2_dcbe8d55-f7f7-e411-80c8-00155d010977_11_9853.pdf",
-      "title": "מסמך מאתר אתר הכנסת",
-      "number": 3,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "20e2d767-bd57-4cc0-87c5-0df7f5d9693b"
-    },
-    {
-      "url": "https://runilawreview.org/2017/11/22/vol20_barak/",
-      "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
-      "number": 4,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "9bf2656f-09f0-424f-9f4a-a260bd55014c"
+      "candidate_id": "5f2097e3-b5f7-4ec3-8516-562a7e2b17be"
     }
   ],
   "quality_warning": null
