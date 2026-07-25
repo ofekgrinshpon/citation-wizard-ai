@@ -41,32 +41,23 @@ export interface Claim {
   reason: string;
 }
 
+// Lightweight output-shape hint emitted by the analyzer. This is a *format*
+// signal only. Confidence/caveat behaviour stays with the existing downstream
+// evidence (missingRequiredAnchors, verifier support, snippet coverage).
 export const OUTPUT_SHAPES = [
-  "verbatim_quote",
-  "definition_elements",
-  "enumerate_duties",
-  "timeframe_table",
+  "quote",
+  "definition",
+  "list",
+  "timeline",
   "case_holding",
-  "doctrinal_explanation",
-  "application",
+  "analysis",
   "comparison",
-  "insufficient_source_response",
-  "other",
+  "unknown",
 ] as const;
 export type OutputShape = typeof OUTPUT_SHAPES[number];
 
-export const CONFIDENCE_POSTURES = [
-  "direct_if_primary_present",
-  "cautious_if_partial",
-  "refuse_specific_holding_if_primary_missing",
-] as const;
-export type ConfidencePosture = typeof CONFIDENCE_POSTURES[number];
-
 export interface AnswerIntent {
   output_shape: OutputShape;
-  must_include: string[];
-  must_avoid: string[];
-  confidence_posture: ConfidencePosture;
 }
 
 export interface AnalyzerOutput {

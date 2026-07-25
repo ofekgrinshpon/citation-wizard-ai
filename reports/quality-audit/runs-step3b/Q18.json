@@ -1,0 +1,101 @@
+{
+  "id": "Q18",
+  "category": "anchor_preservation",
+  "query": "צטט מילולית את סעיף 1 לחוק יסוד: כבוד האדם וחירותו, והפנה למקור רשמי.",
+  "run_id": "7d038961-e1c6-4b18-a184-a5c22447d38a",
+  "ok": true,
+  "total_ms": 141740,
+  "answer_intent": {
+    "output_shape": "quote"
+  },
+  "answer": "**ציטוט סעיף 1 לחוק-יסוד: כבוד האדם וחירותו**\n\n1. זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.¹\n\nמקור רשמי לנוסח זה: המסמך הרשמי של הכנסת שבו מפורסם 'חוק יסוד - כבוד האדם וחירותו' והכולל את נוסח הסעיף כפי שניתן לעיל.¹\n\nהציטוט לעיל מתייחס לסעיף 1, הנכלל תחת הכותרת 'עקרונות יסוד'; סעיף 1א ('מטרה') מופיע בנוסח בנפרד ולא מהווה חלק מטקסט סעיף 1.²\n\nנמצאו גם הצעות לתיקון נוסח (הצעות חוק), אך מסמכים אלה אינם מהווים נוסח מחייב; הנוסח המחייב הוא זה המופיע במסמכי הכנסת הרשמיים שהוזכרו לעיל.³",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "חוק יסוד - כבוד האדם וחירותו; חוק-יסוד: כבוד האדם וחירותו",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+          "title": "חוק יסוד - כבוד האדם וחירותו",
+          "source_type": "other"
+        },
+        {
+          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+          "title": "חוק-יסוד: כבוד האדם וחירותו",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "title": "חוק-יסוד: כבוד האדם וחירותו",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+          "title": "חוק-יסוד: כבוד האדם וחירותו",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "הצעת חוק יסוד: כבוד האדם וחירותו; חוק יסוד - כבוד האדם וחירותו",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf",
+          "title": "הצעת חוק יסוד: כבוד האדם וחירותו",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+          "title": "חוק יסוד - כבוד האדם וחירותו",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+      "title": "חוק יסוד - כבוד האדם וחירותו",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "7c6a4cc4-fb77-40e5-9e12-b9fe6e05ade7"
+    },
+    {
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "title": "חוק-יסוד: כבוד האדם וחירותו",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e93792d2-7811-4c07-8267-5d2b31a1a31c"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf",
+      "title": "הצעת חוק יסוד: כבוד האדם וחירותו",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "61c95f1c-1bae-4e87-b8db-1471a0f3bb91"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 2,
+      "partial": 1,
+      "unrelated": 0,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 3,
+      "false": 0
+    }
+  }
+}

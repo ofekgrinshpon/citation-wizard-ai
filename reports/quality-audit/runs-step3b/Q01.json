@@ -1,0 +1,184 @@
+{
+  "id": "Q01",
+  "category": "docket_holding",
+  "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
+  "run_id": "07d70a01-e6d0-4798-b2d9-2be4792ba83e",
+  "ok": true,
+  "total_ms": 198553,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "answer": "**סיכום ההכרעה**\n\nבג\"ץ 6298/07 (רסלר נ' כנסת ישראל) הכריע בשאלת חוקתיותו של \"חוק דחיית שירות לתלמידי ישיבות\" (חוק טל) וקבע במסגרת הבדיקה שהחוק אינו עומד בדרישות החוקתיות הנדרשות; פסק‑דין זה עולה מהמקור הרשמי ומהפרסומים התקציריים של ההחלטה.¹\n\n**טעמים ועקרונות משפטיים שהנחו את ההכרעה**\n\nבית המשפט שקל במפורש את המתחים בין חובת שירות במטרה של הגנה וביטחון לבין עקרונות השוויון ושמירת כבוד האדם; הנימוקים כללו בחינה של הפגיעה בזכות לשוויון והערכת מידתיות המגבלות שהטיל המחוקק.²\n\nהדיון בפסק‑הדין התבסס גם על היקף ההסדר שנקבע בחוק טל — כלומר האופן שבו קבע המחוקק מנגנוני דחייה, חלופות של שירות אזרחי ובקרת המימוש — ובחינה האם מנגנונים אלה מספקים מענה הולם למשקלים הציבוריים והחוקתיים שהועלו.³\n\nבהקשר התיאורטי‑פרשני ניכר שימוש בעקרון המידתיות כמדד מרכזי: בית המשפט בדק את התאמת האמצעים למטרה, הצורך בפגיעה בזכויות והיחס בין הפגיעה לתועלת הציבורית, ומצא כי האיזון שנטל המחוקק אינו עומד בבדיקת המידתיות כפי שנקבעה בפסיקה ובספרות המשפטית שצוינה בפסק‑דין.²\n\n**סעד שניתן בפסק‑דין**\n\nבג\"ץ הצביע על תוצאות בדיקת החוקתיות והורה על פגיעה בתוקפו של ההסדר החוקי; בפסיקה הופיעו הוראות המשקפות את הפסילה/הכרזה כי החוק אינו עומד בדרישות החוקתיות, וכן הדיון בסעד מעיד שהנושא של עיכוב ביצוע ותיקון חקיקה הובא בפני בית המשפט.⁴\n\n**השלכות מעשיות והמשך ההתפתחויות**\n\nלאחר פסק‑הדין נרשמו המשכים פרלמנטריים ומנהליים: דו\"חות של הכנסת ומחקרי יישום עקבו אחר השפעות החוק וצעדי האכיפה, ומסמכי רקע מפורטים בחרו להתייחס לפסיקה ולניסיונות לתקן או לשנות את ההסדרים לגבי שילוב תלמידי ישיבות בגיוס/שירות אזרחי.⁵\n\nעם זאת, יש להדגיש שהמקורות שברשותנו תומכים באופן חלקי בפרטים ההיסטוריים והפרשניים; לפרטים מדויקים של נוסחי הפסק‑דין, הנוסח הסופי של הסעד והתאריכים המדויקים יש לעיין בטקסט המלא של פסק‑הדין והרשומות הפרלמנטריות המצוטטות במקורות.",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "בג\"ץ 6298/07 – פסק דין; החלטה בתיק בג\"ץ 6298/07; תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07 – פסק דין",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בג\"ץ 6298/07 – פסק דין; על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07 – פסק דין",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1550",
+          "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם; בג\"ץ 6298/07 – פסק דין",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.knesset.gov.il/committees/heb/docs/bikoret19.pdf",
+          "title": "חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07 – פסק דין",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בג\"ץ 6298/07 – פסק דין; החלטה בתיק בג\"ץ 6298/07",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07 – פסק דין",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "יישום חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם (חוק טל); יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים; תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/a74c6b58-e9f7-e411-80c8-00155d010977/2_a74c6b58-e9f7-e411-80c8-00155d010977_11_9068.pdf",
+          "title": "יישום חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם (חוק טל)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/465-36.aspx",
+          "title": "יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+      "title": "בג\"ץ 6298/07 – פסק דין",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d258dc59-e5cc-4c99-85be-2dfb71300365"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "caselaw",
+      "candidate_id": "58ea603b-5966-41fd-84e2-454d5c2dba2b"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "23881004-ead3-4a7b-af89-7f1c46d790dd"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1550",
+      "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "ec62df1a-5ad1-4b27-989a-52d4a7592d44"
+    },
+    {
+      "url": "https://www.knesset.gov.il/committees/heb/docs/bikoret19.pdf",
+      "title": "חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "2a138682-9ad2-4c44-8eed-ca2187ac2035"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/a74c6b58-e9f7-e411-80c8-00155d010977/2_a74c6b58-e9f7-e411-80c8-00155d010977_11_9068.pdf",
+      "title": "יישום חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם (חוק טל)",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e4b6b113-717e-4832-883e-166b9b309b93"
+    },
+    {
+      "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/465-36.aspx",
+      "title": "יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f5f04b23-266e-48d5-a4c3-769f7c70f72a"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 0,
+      "partial": 13,
+      "unrelated": 5,
+      "tangential": 4
+    },
+    "by_role_match": {
+      "true": 18,
+      "false": 4
+    }
+  }
+}
