@@ -614,7 +614,23 @@ export async function runDrafterV2(
   }
 
   const missingAnchors = opts?.missingRequiredAnchors ?? [];
-  const userMsg = buildUserMessage(question, claims, inputSources, userDocs, useAsSource, missingAnchors, opts?.answerIntent);
+  const requiredAnchorCandidateIds = opts?.requiredAnchorCandidateIds ?? new Set<string>();
+  const leadSelection = selectLeadRef(
+    opts?.answerIntent,
+    inputSources,
+    requiredAnchorCandidateIds,
+    missingAnchors.some((a) => a.is_docket),
+  );
+  const userMsg = buildUserMessage(
+    question,
+    claims,
+    inputSources,
+    userDocs,
+    useAsSource,
+    missingAnchors,
+    opts?.answerIntent,
+    leadSelection.ref,
+  );
   const tool = {
     name: "emit_structured_draft",
     description: "Emit the Hebrew legal answer as structured blocks. Code adds footnote markers.",
