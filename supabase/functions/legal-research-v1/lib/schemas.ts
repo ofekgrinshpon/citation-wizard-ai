@@ -243,6 +243,31 @@ export const ANALYZER_TOOL_PARAMETERS: Record<string, unknown> = {
         additionalProperties: false,
       },
     },
+    answer_intent: {
+      type: "object",
+      description:
+        "Optional structured intent guiding the drafter. Emit whenever the user's phrasing implies a specific output shape (verbatim quote, definition/elements, list of duties, timeframe table, case holding, insufficient-source refusal, etc.). Backwards-compatible: omit if genuinely unclear.",
+      properties: {
+        output_shape: { type: "string", enum: [...OUTPUT_SHAPES] },
+        must_include: {
+          type: "array",
+          items: { type: "string" },
+          maxItems: 8,
+          description:
+            "1–4 concrete items the user explicitly asked for (e.g. 'ציטוט של סעיף 1', 'לוחות זמנים לדיווח').",
+        },
+        must_avoid: {
+          type: "array",
+          items: { type: "string" },
+          maxItems: 8,
+          description:
+            "Anti-patterns for this question (e.g. 'אל תבקש הרשאה נוספת מהמשתמש', 'אל תישאר ברמת עקרונות').",
+        },
+        confidence_posture: { type: "string", enum: [...CONFIDENCE_POSTURES] },
+      },
+      required: ["output_shape", "confidence_posture"],
+      additionalProperties: false,
+    },
   },
   required: ["confidence", "legal_area", "answer_type", "claims"],
   additionalProperties: false,
