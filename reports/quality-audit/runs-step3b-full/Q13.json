@@ -1,0 +1,245 @@
+{
+  "id": "Q13",
+  "category": "practical_implications",
+  "query": "מה חייב מעסיק לעשות כאשר עובד/ת מגיש/ה תלונה על הטרדה מינית במקום העבודה, ומהי מסגרת הזמנים לפי התקנות?",
+  "run_id": "7dadc8cf-bb46-4c4f-9bae-f399b7523e44",
+  "ok": true,
+  "total_ms": 213422,
+  "answer_intent": {
+    "output_shape": "list"
+  },
+  "answer": "- קבלת התלונה ומנגנון פנימי: המעסיק/ה חייב/ת לפעול כך שתקום דרך יעילה להגשת תלונה במקום העבודה ולקבל את התלונה ללא דיחוי, כדי לאפשר טיפול יעיל בה.¹\n- ניהול בירור: יש לערוך בירור מהיר, יסודי ונייטרלי של התלונה, הכולל איסוף ראיות, בירור טענות הצדדים וסיכום תוצאות הבירור — ובמהלכו לנסח המלצות או מסקנות שישמשו להחלטת המעסיק/ה על צעדים מנהליים או משמעתיים בהתאם לממצאים.²\n- אמצעי הגנה מידיים: במידת הצורך יש לנקוט מיד באמצעים להגנה על המתלונן/ת ולמניעת המשך הטרדה — למשל הפרדה בין הצדדים, שינוי סידורי עבודה זמני, איסור יצירת קשר או סידור זמני חלופי — מבלי להמתין לתוצאות הבירור הסופי כאשר קיים צורך מיידי בבטיחות.³\n- שמירה על סודיות והגנה מפני נקמה: המעסיק/ה ומקבלי התלונה מחויבים לשמור, ככל הניתן ובהיקף הנדרש לטיפול, על סודיות פרטי המתלונן/ת והמעורבים ולהגן על המתלונן/ת מפני נקיטת צעדי נקמה; פרטים יימסרו רק אם נחוצים לטיפול או אם הדבר מחייב לפי דין.⁴\n- דיווח וסיכום הבירור: עם תום הבירור יוגש מסמך סיכום בכתב עם מסקנות והמלצות למעסיק/ה; המעסיק/ה יחליט על המשך הטיפול וידווח לצדדים על המסקנות והצעדים שננקטו ככל שהדבר ייטיב את המשך הטיפול.⁵\n- מסגרת זמנים לפי תקנות והנחיות: במסמכים רשמיים משוקף לוח זמנים שנקשר ליישום התקנות — הבירור ייעשה בתוך כשבועיים; לאחריו תוגש דוח מסכם בתוך שלושה ימים; והמעסיק/ה אמור/ה לקבל החלטה בעניין המשך הטיפול בתוך שבעה ימים; יש לשים לב כי תקנות והנחיות קובעות גם כללי הארכה וסייגים.⁶\n- השלכות של חוסר טיפול הולם: אם המעסיק/ה לא ינקט את הצעדים הנדרשים או יטפל באופן בלתי הוגן, קיימת חשיפה לאחריות אזרחית — לרבות חיוב בפיצוי לפי הוראות החוק למניעת הטרדה מינית — וכן חשיפה לסנקציות מנהליות ומשמעתיות בהתאם לנסיבות.⁷\n- המלצות פרקטיות קצרות: למעסיק/ה רצוי למנות אחראי/ת לנושא, לפרסם לעובדים את דרכי ההגשה ולוחות הזמנים הנהוגים במקום העבודה, ולוודא שהנוהל שומר על סודיות ומגן מפני נקמה.⁸",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "חוק למניעת הטרדה מינית, התשנ\"ח-1998; חוק למניעת הטרדה מינית, תשנ\"ח-1998",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.btl.gov.il/Laws1/02_0131_000000.pdf",
+          "title": "חוק למניעת הטרדה מינית, התשנ\"ח-1998",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72507.htm",
+          "title": "חוק למניעת הטרדה מינית, תשנ\"ח-1998",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק למניעת הטרדה מינית, התשנ\"ח-1998; תקנון לחוק למניעת הטרדה מינית ומותאם לשירות המדינה",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.btl.gov.il/Laws1/02_0131_000000.pdf",
+          "title": "חוק למניעת הטרדה מינית, התשנ\"ח-1998",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/sexual_harassment_regulations/he/sexual-harassment-regulations.pdf",
+          "title": "תקנון לחוק למניעת הטרדה מינית ומותאם לשירות המדינה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק למניעת הטרדה מינית, התשנ\"ח-1998; תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.btl.gov.il/Laws1/02_0131_000000.pdf",
+          "title": "חוק למניעת הטרדה מינית, התשנ\"ח-1998",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.btl.gov.il/Laws1/02_0131_100000.pdf",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); תקנון לחוק למניעת הטרדה מינית ומותאם לשירות המדינה",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.police.gov.il/menifa/02.06.02.20_2.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/sexual_harassment_regulations/he/sexual-harassment-regulations.pdf",
+          "title": "תקנון לחוק למניעת הטרדה מינית ומותאם לשירות המדינה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנון לחוק למניעת הטרדה מינית ומותאם לשירות המדינה; מניעה וטיפול בהטרדה ופגיעה מינית בין צוותים",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/sexual_harassment_regulations/he/sexual-harassment-regulations.pdf",
+          "title": "תקנון לחוק למניעת הטרדה מינית ומותאם לשירות המדינה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/publicsharing/mk-22052022/he/files_invitation-to-tender_mk_22052022.pdf",
+          "title": "מניעה וטיפול בהטרדה ופגיעה מינית בין צוותים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "יישום החוק למניעת הטרדה מינית - מבקר המדינה; תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2020/70b/2020-70b-102-Hatrada.pdf",
+          "title": "יישום החוק למניעת הטרדה מינית - מבקר המדינה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.btl.gov.il/Laws1/02_0131_100000.pdf",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק למניעת הטרדה מינית, תשנ\"ח-1998 – סעיף 6; חוק למניעת הטרדה מינית, התשנ\"ח-1998",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_2806492.docx",
+          "title": "חוק למניעת הטרדה מינית, תשנ\"ח-1998 – סעיף 6",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.btl.gov.il/Laws1/02_0131_000000.pdf",
+          "title": "חוק למניעת הטרדה מינית, התשנ\"ח-1998",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנון למניעת הטרדה מינית; מניעה וטיפול בהטרדה ופגיעה מינית בין צוותים",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+          "title": "תקנון למניעת הטרדה מינית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/publicsharing/mk-22052022/he/files_invitation-to-tender_mk_22052022.pdf",
+          "title": "מניעה וטיפול בהטרדה ופגיעה מינית בין צוותים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.btl.gov.il/Laws1/02_0131_000000.pdf",
+      "title": "חוק למניעת הטרדה מינית, התשנ\"ח-1998",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "53dd64b0-e2f7-4e88-a6b7-aa0f8ecd0d2b"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/72507.htm",
+      "title": "חוק למניעת הטרדה מינית, תשנ\"ח-1998",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "cae3f3ba-d005-42b5-98db-e442e9027a5f"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/generalpage/sexual_harassment_regulations/he/sexual-harassment-regulations.pdf",
+      "title": "תקנון לחוק למניעת הטרדה מינית ומותאם לשירות המדינה",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "830d538e-caf0-42eb-b472-85c0f97d834a"
+    },
+    {
+      "url": "https://www.btl.gov.il/Laws1/02_0131_100000.pdf",
+      "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f8f1603f-4343-4b49-adb7-6809addba895"
+    },
+    {
+      "url": "https://www.police.gov.il/menifa/02.06.02.20_2.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d53eecc0-85eb-49fc-a8d0-273a817e4c37"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/publicsharing/mk-22052022/he/files_invitation-to-tender_mk_22052022.pdf",
+      "title": "מניעה וטיפול בהטרדה ופגיעה מינית בין צוותים",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d6a720c4-158c-432b-8e21-736b3f7e486c"
+    },
+    {
+      "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2020/70b/2020-70b-102-Hatrada.pdf",
+      "title": "יישום החוק למניעת הטרדה מינית - מבקר המדינה",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "0eda7a4d-2847-4da0-b4e9-97fefee2f2f6"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_2806492.docx",
+      "title": "חוק למניעת הטרדה מינית, תשנ\"ח-1998 – סעיף 6",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "1d4a395a-5013-497f-9ea4-7d2ed3e29d29"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+      "title": "תקנון למניעת הטרדה מינית",
+      "number": 8,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "7839faea-e6e3-4e61-816a-3e4b5616d38a"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 1,
+      "partial": 8,
+      "unrelated": 7,
+      "tangential": 4
+    },
+    "by_role_match": {
+      "true": 20,
+      "false": 0
+    }
+  },
+  "missing_required_anchors": null
+}
