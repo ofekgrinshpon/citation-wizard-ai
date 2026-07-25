@@ -481,6 +481,11 @@ export async function runDrafterV2(
     // supported, append a single instruction to the user message telling
     // the drafter to caveat the answer instead of inferring around them.
     missingRequiredAnchors?: Array<{ description: string; is_docket?: boolean }>;
+    // Optional analyzer-emitted answer intent. Rendered into the user message
+    // as a compact "Answer Intent" block; the drafter system prompt has
+    // per-shape and per-posture rules that reference it. Backwards
+    // compatible: omit → drafter falls back to prior behavior.
+    answerIntent?: AnswerIntent;
   },
 ): Promise<DrafterV2Result> {
   const t_total = Date.now();
