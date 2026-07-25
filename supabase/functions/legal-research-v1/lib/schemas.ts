@@ -7,8 +7,6 @@ import {
   AnswerIntent,
   CAPS,
   Claim,
-  CONFIDENCE_POSTURES,
-  ConfidencePosture,
   EXPECTED_SOURCE_TYPES,
   OUTPUT_SHAPES,
   OutputShape,
