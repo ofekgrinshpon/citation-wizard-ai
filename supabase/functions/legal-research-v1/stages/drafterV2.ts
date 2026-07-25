@@ -291,8 +291,23 @@ function selectLeadRef(
   const pick = (pool: DrafterInputSource[]): DrafterInputSource | null =>
     pool.length ? [...pool].sort((a, b) => scoreOf(b) - scoreOf(a))[0] : null;
 
+  // source_type strings from candidates include: caselaw, supreme_court_il,
+  // israeli_law, other, journal_article, ... Roles are the more reliable
+  // normalized signal (primary_statute, regulation, binding_case_law,
+  // persuasive_case_law, scholarship, ...). We use roles primarily and fall
+  // back to source_type patterns when the role bucket is empty.
+  const isCaseType = (t: string) =>
+    t === "caselaw" || t === "supreme_court_il" || t === "case";
+  const isStatuteType = (t: string) =>
+    t === "israeli_law" || t === "statute" || t === "regulation";
+
   if (shape === "case_holding") {
-    const cases = sources.filter((s) => s.source_type === "case");
+    const cases = sources.filter(
+      (s) =>
+        s.role === "binding_case_law" ||
+        s.role === "persuasive_case_law" ||
+        isCaseType(s.source_type),
+    );
     if (cases.length === 0) return { ref: null, reason: "no_case_source", shape };
     const req = cases.filter((s) => requiredAnchorCandidateIds.has(s.candidate_id));
     if (req.length > 0) {
@@ -312,9 +327,16 @@ function selectLeadRef(
 
   if (shape === "definition") {
     const primary = sources.filter(
-      (s) => s.source_type === "statute" || s.source_type === "regulation",
+      (s) =>
+        s.role === "primary_statute" ||
+        s.role === "regulation" ||
+        isStatuteType(s.source_type),
     );
     if (primary.length === 0) return { ref: null, reason: "no_statute_source", shape };
+    const req = primary.filter((s) => requiredAnchorCandidateIds.has(s.candidate_id));
+    if (req.length > 0) {
+      return { ref: pick(req)!.ref, reason: "required_anchor_statute", shape };
+    }
     const primaryRole = primary.filter(
       (s) => s.role === "primary_statute" || s.role === "regulation",
     );
@@ -330,12 +352,22 @@ function selectLeadRef(
 
   // quote — official/primary source that actually carries a snippet.
   const primary = sources.filter(
-    (s) => s.source_type === "statute" || s.source_type === "regulation" || s.source_type === "case",
+    (s) =>
+      s.role === "primary_statute" ||
+      s.role === "regulation" ||
+      s.role === "binding_case_law" ||
+      isStatuteType(s.source_type) ||
+      isCaseType(s.source_type),
   );
   const withSnippet = primary.filter((s) => (s.snippet ?? "").length >= 50);
   if (withSnippet.length === 0) return { ref: null, reason: "no_official_snippet", shape };
-  const chosen = pick(withSnippet)!;
-  return { ref: chosen.ref, reason: "official_source_with_snippet", shape };
+  const req = withSnippet.filter((s) => requiredAnchorCandidateIds.has(s.candidate_id));
+  const chosen = req.length ? pick(req)! : pick(withSnippet)!;
+  return {
+    ref: chosen.ref,
+    reason: req.length ? "required_anchor_official" : "official_source_with_snippet",
+    shape,
+  };
 }
 
 export interface QualityWarningHit {
