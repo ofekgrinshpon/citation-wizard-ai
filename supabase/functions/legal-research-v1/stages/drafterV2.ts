@@ -502,6 +502,8 @@ export interface DrafterV2Result {
   usage?: { input_tokens?: number; output_tokens?: number };
   // Debug: whether the missing-required-anchor caveat instruction was injected.
   missing_anchor_caveat_injected?: boolean;
+  /** Lead-source selection telemetry (Phase-1 lead_ref patch). */
+  lead_ref?: LeadRefSelection;
   missing_anchor_descriptions?: string[];
   schema_failure_reason?:
     | "no_tool_call"
