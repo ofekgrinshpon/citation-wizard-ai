@@ -700,6 +700,7 @@ async function handle(req: Request): Promise<Response> {
           useAsSource,
           forceModel: "openai/gpt-5",
           skipEscalation: true,
+          answerIntent: analyzer.answer_intent,
         },
       );
     } catch (e) {
