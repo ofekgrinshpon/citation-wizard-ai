@@ -799,6 +799,7 @@ async function handle(req: Request): Promise<Response> {
     quality_warning: drafter.quality_warning,
     missing_anchor_caveat_injected: drafter.missing_anchor_caveat_injected ?? false,
     missing_anchor_descriptions: drafter.missing_anchor_descriptions ?? [],
+    lead_ref: drafter.lead_ref ?? null,
     // Truncation guard telemetry (drafterV2-only, additive).
     completeness: drafter.completeness,
     completeness_initial: drafter.completeness_initial,
