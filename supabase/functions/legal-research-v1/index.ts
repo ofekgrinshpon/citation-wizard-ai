@@ -720,6 +720,7 @@ async function handle(req: Request): Promise<Response> {
           forceModel: "claude-sonnet-4-5",
           skipEscalation: true,
           provider: "anthropic",
+          answerIntent: analyzer.answer_intent,
         },
       );
     } catch (e) {
