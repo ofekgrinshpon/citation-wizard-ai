@@ -89,6 +89,8 @@ export function validateAnalyzer(raw: unknown): ValidationResult<AnalyzerOutput>
     ? (r.interpretation_note as string).trim()
     : undefined;
 
+  const answer_intent = parseAnswerIntent(r.answer_intent);
+
   return {
     ok: errors.length === 0,
     value: {
@@ -97,10 +99,51 @@ export function validateAnalyzer(raw: unknown): ValidationResult<AnalyzerOutput>
       answer_type,
       claims,
       ...(interpretation_note ? { interpretation_note } : {}),
+      ...(answer_intent ? { answer_intent } : {}),
     },
     errors,
     truncated_claims_count,
     truncated_queries_count: 0,
+  };
+}
+
+// Parse the optional analyzer answer_intent. Tolerant by design: if the model
+// omits it or emits an unusable shape, return undefined so validateAnalyzer
+// stays ok. Enum values are coerced to safe defaults; arrays are clamped to
+// strings and capped at 8 items each. Requires output_shape + confidence_posture
+// to be present as strings — otherwise the whole object is dropped.
+function parseAnswerIntent(raw: unknown): AnswerIntent | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const r = raw as Record<string, unknown>;
+
+  const shapeRaw = r.output_shape;
+  const postureRaw = r.confidence_posture;
+  if (typeof shapeRaw !== "string" || typeof postureRaw !== "string") {
+    return undefined;
+  }
+
+  const output_shape: OutputShape =
+    (OUTPUT_SHAPES as readonly string[]).includes(shapeRaw)
+      ? (shapeRaw as OutputShape)
+      : "other";
+  const confidence_posture: ConfidencePosture =
+    (CONFIDENCE_POSTURES as readonly string[]).includes(postureRaw)
+      ? (postureRaw as ConfidencePosture)
+      : "cautious_if_partial";
+
+  const toStrArr = (x: unknown): string[] => {
+    if (!Array.isArray(x)) return [];
+    return x
+      .filter((v): v is string => typeof v === "string" && v.trim().length > 0)
+      .map((s) => s.trim())
+      .slice(0, 8);
+  };
+
+  return {
+    output_shape,
+    must_include: toStrArr(r.must_include),
+    must_avoid: toStrArr(r.must_avoid),
+    confidence_posture,
   };
 }
 
