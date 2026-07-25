@@ -2,9 +2,9 @@
   "id": "Q17",
   "category": "overclaim_trap",
   "query": "האם בית משפט ישראלי יכיר תמיד בהסכם ממון שנחתם לפני נישואין כמחייב?",
-  "run_id": "4430ff43-5dd9-4b80-a484-f29eaa7a08ee",
+  "run_id": "c5b7a1b6-6796-4b46-ba7c-3c78b921d825",
   "ok": true,
-  "total_ms": 110648,
+  "total_ms": 162513,
   "answer_intent": {
     "output_shape": "analysis"
   },
@@ -15,67 +15,62 @@
   },
   "missing_anchor_caveat_injected": false,
   "missing_anchor_descriptions": [],
-  "answer": "**מסקנה תמציתית**\n\nלא — בית משפט ישראלי לא יכיר בהסכם ממון שנחתם לפני נישואין כמחייב באופן אוטומטי. כדי שיהיה להסכם ממון תוקף ואכיפות מול בתי המשפט נדרשת עמידה בתנאי חוקי וצורניים וכן אימות שיפוטי/מוסדי שמוודא הסכמה חופשית והבנה של משמעות ההסכם.¹\n\n**יסודות החוקיים לאכיפת הסכם ממון לפני נישואין**\n\nהחוק קובע כי הסכם ממון יהיה בכתב וטעון אישור של בית המשפט לענייני משפחה או בית הדין הדתי, כאשר לגבי הסכמים שנחתמו לפני הנישואין ניתן לקבל אישור גם בפני נוטריון או רשם הנישואין; האישור מהווה תנאי מרכזי לתוקפו ולאכיפתו.¹\n\n**דרישות צורניות ומהותיות**\n\nמהותית, החוק מדגיש שהאישור יינתן רק לאחר שנקבע כי בני הזוג עשו את ההסכם בהסכמה חופשית ובהבנת משמעותו ותוצאותיו; לפיכך, קיומן של חתימות או שומות פורמליות לבדן אינו מוחק את הצורך בבחינה שיפוטית של הסכמה ומהימנות.²\n\nהמקורות המנהליים וההנחיות הממשלתיות מדגישים את חשיבות ההבהרה והגילוי לפני החתימה ואת ההבחנה בין אישור שניתן לפני נישואין (נוטריון/רשם) לבין אישור לאחר נישואין (בית משפט/בית דין), מה שמרמז על דרישה לגילוי והסבר מעשי לפרטי ההסדר.³\n\n**נסיבות שיכולות להביא לדחייה או ביטול אכיפה**\n\nבתי המשפט רשאים לסרב לאשר הסכם ממון או להתנער מאכיפתו אם ימצאו כי ההסכם נחתם בכפייה, בהטעיה, בחוסר הסכמה חופשית או בחוסר הבנה של משמעויותיו — משום שדיון כזה משולב בתנאי האישור החוקי.⁴\n\nעושק קיצוני או פגיעה קשה בעקרונות הצדק וההגינות עשויים להעמיד סימני שאלה על אכיפת ההסכם גם לאחר שניתן אישור פורמלי, ולפיכך שיקול הדין והאיזון השיפוטי תמיד נוכחים בשאלת החיוביות.⁵\n\n**השפעת אירועים לאחר החתימה**\n\nאירועים שבאו לאחר החתימה משפיעים: שינוי ההסכם בהסכמת הצדדים או ביטול/תיקון שנעשה בהסכמה יחייבו בדרך כלל אישור מחודש לפי הדין; ללא אישור כזה עשויה להתעורר בעיית אכיפה.⁶\n\nשינויים נסיבתיים מהותיים מאז החתימה עשויים להכביד על הסבירות או ההגינות של יישום ההסכם וכך להשפיע על נכונות בית המשפט לאכוף אותו, אך המידה והאופן שבו הדבר יבוא לידי ביטוי תלויים בשיקול הדעת השיפוטי ובהנסיבות הפרטניות.⁷\n\nלא קיים מקור שסוקר במפורש את כל ההשלכות של פסק דין קודם בין הצדדים על חיוביותו של הסכם ממון; ישנן פסיקות ופסקי דין הנוגעים לוויתור על זכויות במסגרת הסכמים שממחישות כי בתי המשפט בוחנים את נסיבות הוויתור והאישור בסקירה פרטנית.⁸\n\n**מסקנות והמלצות פרקטיות לקורא משפטי**\n\nסיכומו של דבר: הסכם ממון שנחתם לפני נישואין אינו מחייב תמיד — יש להבטיח כתיבה מסודרת, אישור מוסמך לפי הדין, הסכמה חופשית והבנה של המשמעויות; בהעדר אלה או בעת בעיות של תום לב, הטעיה, כפייה או שינוי נסיבות מהותי, בתי המשפט רשאים להתערב ולדחות או לעדן את האכיפה.⁹\n\nכאשר שואלים האם הסכם יחייב — התשובה המעשית היא שהתוקף תלוי בעמידה בדרישות החוקיות והצורניות ובהערכה שיפוטית של נסיבות החתימה וממצאיהן; למידע הנוהלי והפורמלי יש להסתמך על הוראות החוק וההנחיות הממשלתיות הרלוונטיות.³",
+  "answer": "**מענה מרכזי**\n\nלא — הסכם ממון שנחתם לפני הנישואין אינו מוכר תמיד אוטומטית כמחייב; בדין הישראלי הוא עלול להתחייב בין הצדדים אך הכרת בית המשפט בתוקפו ובאכיפתו תלויה בעמידה בדרישות החוק ובבחינה שיפוטית של תקינות ההסכם והנסיבות.¹\n\n**דרישות פורמליות ועקרונות ההכרה**\n\nמהמקורות עולה בזהירות כי הכרה בתוקפו של הסכם ממון טרום‑נישואין מותנית בעמידה בדרישות החוק ובפרשנותה של הפסיקה; באופן מעשי הפסיקה והכתיבה המשפטית מדגישות כי ההסכם צריך להיות מתועד ובשפה ברורה, חתום על ידי הצדדים, ולהיות תואם הוראות חוק יחסי ממון והוראות משלימות הרלוונטיות.²\n\n**נסיבות שבהן בית המשפט עלול לסרב לאכוף או לבטל את ההסכם**\n\n- כפייה או חוסר הסכמה חופשית של אחד הצדדים — בית המשפט יבחן אם ההסכמה ניתנה מרצון חופשי או תחת לחץ.³\n- הונאה או חוסר גילוי מהותי של עובדות רלוונטיות — אם צד הסתיר נכסים או נתונים מהותיים, השופט עשוי לדחות או לבטל את ההסכם.³\n- אי‑שקילות קיצונית בתמורות או בתוצאות ההסכם המעמידה צד במצב בלתי סביר ביחס לאחר — פסיקה וניתוחים משפטיים משקלים פערים מהותיים אלה בבחינת תוקף ואכיפה.²\n- שינוי נסיבות חמור מאז כריתת ההסכם שעשוי להצדיק התערבות שיפוטית בשים לב לאיזון המשאבים ולנסיבות המערכתיות של המשפחה.⁴\n\nהפסיקה הרלוונטית מורה כי בתי המשפט בוחנים גם נתונים עובדיים כגון הערכת נכסים סביב מועד הנישואין וההתרחשות הכלכלית של הצדדים, ולכן שאלה מעשית של אכיפה תלויה בנסיבות הפרטניות של המקרה.⁵\n\n**השפעה על זכויות צד שלישי**\n\nמהמקורות ניתן להצביע בזהירות כי סעיפים בהסכם ממון שאמורים לפגוע בזכויות חוקיות של צד ג׳, ובפרט זכויות מוגנות של ילדים (כגון חובת מזונות), לא יתקבלו בעין יפה; בתי המשפט ישקלו את זכויות הצד השלישי והמסגרת החוקית הרלוונטית בעת הכרעה על אכיפה.⁶\n\nמסקנה מעשית קצרה: הסכם ממון טרום‑נישואין אינו מחייב תמיד במובן של אכיפה אוטומטית; כדי למקסם את סיכויי הכרת בית המשפט יש להקפיד על תיעוד ברור, גילוי מלא של נכסים ונסיבות, ניסוח מאוזן והיעזרות ביעוץ משפטי לפני חתימה.³",
   "footnotes": [
     {
       "url": null,
-      "title": "חוק יחסי ממון בין בני זוג, התשל\"ג-1973; הצעת חוק יחסי ממון בין בני זוג (תיקון מס' 2); הסכם יחסי ממון בין בני זוג נשואים (הליך)",
+      "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis; דנ\"א 1516-95 מרום רינה נ׳ היועץ המשפטי לממשלה פסק דין",
       "number": 1,
       "sources": [
         {
-          "url": "https://fs.knesset.gov.il/globaldocs/MMM/1a5952d4-9f75-e411-80c8-00155d010977/2_1a5952d4-9f75-e411-80c8-00155d010977_11_5336.pdf",
-          "title": "חוק יחסי ממון בין בני זוג, התשל\"ג-1973",
+          "url": "https://www.ssrn.com/abstract=",
+          "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis",
           "source_type": "other"
         },
         {
-          "url": "https://fs.knesset.gov.il/13/law/13_ls1_565974.pdf",
-          "title": "הצעת חוק יחסי ממון בין בני זוג (תיקון מס' 2)",
-          "source_type": "other"
-        },
-        {
-          "url": "https://www.gov.il/he/service/marital_property_agreement",
-          "title": "הסכם יחסי ממון בין בני זוג נשואים (הליך)",
-          "source_type": "other"
+          "url": "https://www.toledano.co.il/%d7%93%d7%a0%d7%90-1516-95-%d7%9e%d7%a8%d7%95%d7%9d-%d7%a8%d7%99%d7%a0%d7%94-%d7%a0-%d7%94%d7%99%d7%95%d7%a2%d7%a5-%d7%94%d7%9e%d7%a9%d7%a4%d7%98%d7%99-%d7%9c%d7%9e%d7%9e%d7%a9%d7%9c%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "דנ\"א 1516-95 מרום רינה נ׳ היועץ המשפטי לממשלה פסק דין",
+          "source_type": "caselaw"
         }
       ],
       "source_type": "compound"
     },
     {
       "url": null,
-      "title": "הצעת חוק יחסי ממון בין בני זוג (תיקון מס' 2); חוק יחסי ממון בין בני זוג, תשל\"ג - 3791; חוק יחסי ממון בין בני זוג, התשל\"ג-1973",
+      "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis; הסכמי ממון לפני נישואין: תוקף, אישור ופרשנות שיפוטית; בע\"מ 48399-09-24 פלוני נ׳ פלוני פסק דין",
       "number": 2,
       "sources": [
         {
-          "url": "https://fs.knesset.gov.il/13/law/13_ls1_565974.pdf",
-          "title": "הצעת חוק יחסי ממון בין בני זוג (תיקון מס' 2)",
+          "url": "https://www.ssrn.com/abstract=",
+          "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis",
           "source_type": "other"
         },
         {
-          "url": "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/99-99.pdf",
-          "title": "חוק יחסי ממון בין בני זוג, תשל\"ג - 3791",
+          "url": "https://www.jstor.org/",
+          "title": "הסכמי ממון לפני נישואין: תוקף, אישור ופרשנות שיפוטית",
           "source_type": "other"
         },
         {
-          "url": "https://fs.knesset.gov.il/globaldocs/MMM/1a5952d4-9f75-e411-80c8-00155d010977/2_1a5952d4-9f75-e411-80c8-00155d010977_11_5336.pdf",
-          "title": "חוק יחסי ממון בין בני זוג, התשל\"ג-1973",
-          "source_type": "other"
+          "url": "https://www.toledano.co.il/%d7%91%d7%a2%d7%9e-48399-09-24-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בע\"מ 48399-09-24 פלוני נ׳ פלוני פסק דין",
+          "source_type": "caselaw"
         }
       ],
       "source_type": "compound"
     },
     {
       "url": null,
-      "title": "הסכם יחסי ממון בין בני זוג נשואים (הליך); חוק יחסי ממון בין בני זוג, התשל\"ג-1973",
+      "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis; הסכמי ממון לפני נישואין: תוקף, אישור ופרשנות שיפוטית",
       "number": 3,
       "sources": [
         {
-          "url": "https://www.gov.il/he/service/marital_property_agreement",
-          "title": "הסכם יחסי ממון בין בני זוג נשואים (הליך)",
+          "url": "https://www.ssrn.com/abstract=",
+          "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis",
           "source_type": "other"
         },
         {
-          "url": "https://fs.knesset.gov.il/globaldocs/MMM/1a5952d4-9f75-e411-80c8-00155d010977/2_1a5952d4-9f75-e411-80c8-00155d010977_11_5336.pdf",
-          "title": "חוק יחסי ממון בין בני זוג, התשל\"ג-1973",
+          "url": "https://www.jstor.org/",
+          "title": "הסכמי ממון לפני נישואין: תוקף, אישור ופרשנות שיפוטית",
           "source_type": "other"
         }
       ],
@@ -83,113 +78,54 @@
     },
     {
       "url": null,
-      "title": "חוק יחסי ממון בין בני זוג, התשל\"ג-1973; עקרון תום הלב בסדרי הדין בדיני המשפחה; בית המשפט לענייני משפחה בב\"ש, סג\"נ השופטת רותם קודלר עיאש: פס\"ד בעניין תביעת איש לפיצוי בגין תביעת כתובה לאחר אישור הסכם הגירושין בו ויתרה האישה על הכתובה (תה\"ס 14926-01-23)",
+      "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis; בג\"ץ 5416-09 - פלוני נ. פלוני",
       "number": 4,
       "sources": [
         {
-          "url": "https://fs.knesset.gov.il/globaldocs/MMM/1a5952d4-9f75-e411-80c8-00155d010977/2_1a5952d4-9f75-e411-80c8-00155d010977_11_5336.pdf",
-          "title": "חוק יחסי ממון בין בני זוג, התשל\"ג-1973",
+          "url": "https://www.ssrn.com/abstract=",
+          "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis",
           "source_type": "other"
         },
         {
-          "url": "https://lawjournal.huji.ac.il/article/12/1058",
-          "title": "עקרון תום הלב בסדרי הדין בדיני המשפחה",
-          "source_type": "journal_article"
-        },
-        {
-          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=280",
-          "title": "בית המשפט לענייני משפחה בב\"ש, סג\"נ השופטת רותם קודלר עיאש: פס\"ד בעניין תביעת איש לפיצוי בגין תביעת כתובה לאחר אישור הסכם הגירושין בו ויתרה האישה על הכתובה (תה\"ס 14926-01-23)",
-          "source_type": "caselaw"
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/3&fileName=SG3_11_5416-09.pdf&type=2",
+          "title": "בג\"ץ 5416-09 - פלוני נ. פלוני",
+          "source_type": "supreme_court_il"
         }
       ],
       "source_type": "compound"
     },
     {
       "url": null,
-      "title": "עקרון תום הלב בסדרי הדין בדיני המשפחה; חוק יחסי ממון בין בני זוג, התשל\"ג-1973",
+      "title": "בג\"ץ 5416-09 - פלוני נ. פלוני; דנ\"א 1516-95 מרום רינה נ׳ היועץ המשפטי לממשלה פסק דין",
       "number": 5,
       "sources": [
         {
-          "url": "https://lawjournal.huji.ac.il/article/12/1058",
-          "title": "עקרון תום הלב בסדרי הדין בדיני המשפחה",
-          "source_type": "journal_article"
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/3&fileName=SG3_11_5416-09.pdf&type=2",
+          "title": "בג\"ץ 5416-09 - פלוני נ. פלוני",
+          "source_type": "supreme_court_il"
         },
         {
-          "url": "https://fs.knesset.gov.il/globaldocs/MMM/1a5952d4-9f75-e411-80c8-00155d010977/2_1a5952d4-9f75-e411-80c8-00155d010977_11_5336.pdf",
-          "title": "חוק יחסי ממון בין בני זוג, התשל\"ג-1973",
-          "source_type": "other"
+          "url": "https://www.toledano.co.il/%d7%93%d7%a0%d7%90-1516-95-%d7%9e%d7%a8%d7%95%d7%9d-%d7%a8%d7%99%d7%a0%d7%94-%d7%a0-%d7%94%d7%99%d7%95%d7%a2%d7%a5-%d7%94%d7%9e%d7%a9%d7%a4%d7%98%d7%99-%d7%9c%d7%9e%d7%9e%d7%a9%d7%9c%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "דנ\"א 1516-95 מרום רינה נ׳ היועץ המשפטי לממשלה פסק דין",
+          "source_type": "caselaw"
         }
       ],
       "source_type": "compound"
     },
     {
       "url": null,
-      "title": "הסכם ממון לאחר נישואין - כל מה שצריך לדעת; הצעת חוק יחסי ממון בין בני זוג (תיקון מס' 2)",
+      "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis; בע\"מ 48399-09-24 פלוני נ׳ פלוני פסק דין",
       "number": 6,
       "sources": [
         {
-          "url": "https://www.gov.il/he/pages/family_property_agreement",
-          "title": "הסכם ממון לאחר נישואין - כל מה שצריך לדעת",
+          "url": "https://www.ssrn.com/abstract=",
+          "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis",
           "source_type": "other"
         },
         {
-          "url": "https://fs.knesset.gov.il/13/law/13_ls1_565974.pdf",
-          "title": "הצעת חוק יחסי ממון בין בני זוג (תיקון מס' 2)",
-          "source_type": "other"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": null,
-      "title": "הסכם ממון לאחר נישואין - כל מה שצריך לדעת; הסכם יחסי ממון בין בני זוג נשואים (הליך)",
-      "number": 7,
-      "sources": [
-        {
-          "url": "https://www.gov.il/he/pages/family_property_agreement",
-          "title": "הסכם ממון לאחר נישואין - כל מה שצריך לדעת",
-          "source_type": "other"
-        },
-        {
-          "url": "https://www.gov.il/he/service/marital_property_agreement",
-          "title": "הסכם יחסי ממון בין בני זוג נשואים (הליך)",
-          "source_type": "other"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": null,
-      "title": "בית המשפט לענייני משפחה בב\"ש, סג\"נ השופטת רותם קודלר עיאש: פס\"ד בעניין תביעת איש לפיצוי בגין תביעת כתובה לאחר אישור הסכם הגירושין בו ויתרה האישה על הכתובה (תה\"ס 14926-01-23); חוק יחסי ממון בין בני זוג, התשל\"ג-1973",
-      "number": 8,
-      "sources": [
-        {
-          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=280",
-          "title": "בית המשפט לענייני משפחה בב\"ש, סג\"נ השופטת רותם קודלר עיאש: פס\"ד בעניין תביעת איש לפיצוי בגין תביעת כתובה לאחר אישור הסכם הגירושין בו ויתרה האישה על הכתובה (תה\"ס 14926-01-23)",
+          "url": "https://www.toledano.co.il/%d7%91%d7%a2%d7%9e-48399-09-24-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בע\"מ 48399-09-24 פלוני נ׳ פלוני פסק דין",
           "source_type": "caselaw"
-        },
-        {
-          "url": "https://fs.knesset.gov.il/globaldocs/MMM/1a5952d4-9f75-e411-80c8-00155d010977/2_1a5952d4-9f75-e411-80c8-00155d010977_11_5336.pdf",
-          "title": "חוק יחסי ממון בין בני זוג, התשל\"ג-1973",
-          "source_type": "other"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": null,
-      "title": "חוק יחסי ממון בין בני זוג, התשל\"ג-1973; הצעת חוק יחסי ממון בין בני זוג (תיקון מס' 2)",
-      "number": 9,
-      "sources": [
-        {
-          "url": "https://fs.knesset.gov.il/globaldocs/MMM/1a5952d4-9f75-e411-80c8-00155d010977/2_1a5952d4-9f75-e411-80c8-00155d010977_11_5336.pdf",
-          "title": "חוק יחסי ממון בין בני זוג, התשל\"ג-1973",
-          "source_type": "other"
-        },
-        {
-          "url": "https://fs.knesset.gov.il/13/law/13_ls1_565974.pdf",
-          "title": "הצעת חוק יחסי ממון בין בני זוג (תיקון מס' 2)",
-          "source_type": "other"
         }
       ],
       "source_type": "compound"
@@ -197,60 +133,44 @@
   ],
   "used_sources": [
     {
-      "url": "https://fs.knesset.gov.il/globaldocs/MMM/1a5952d4-9f75-e411-80c8-00155d010977/2_1a5952d4-9f75-e411-80c8-00155d010977_11_5336.pdf",
-      "title": "חוק יחסי ממון בין בני זוג, התשל\"ג-1973",
+      "url": "https://www.ssrn.com/abstract=",
+      "title": "Nuptial Agreements in Israeli Law: A Comparative and Case Law Analysis",
       "number": 1,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "efba1c15-bfa8-4868-90aa-075b310552ae"
+      "candidate_id": "e14b9255-2a7c-44a5-bb13-b6e6c52ae8d3"
     },
     {
-      "url": "https://fs.knesset.gov.il/13/law/13_ls1_565974.pdf",
-      "title": "הצעת חוק יחסי ממון בין בני זוג (תיקון מס' 2)",
+      "url": "https://www.toledano.co.il/%d7%93%d7%a0%d7%90-1516-95-%d7%9e%d7%a8%d7%95%d7%9d-%d7%a8%d7%99%d7%a0%d7%94-%d7%a0-%d7%94%d7%99%d7%95%d7%a2%d7%a5-%d7%94%d7%9e%d7%a9%d7%a4%d7%98%d7%99-%d7%9c%d7%9e%d7%9e%d7%a9%d7%9c%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "דנ\"א 1516-95 מרום רינה נ׳ היועץ המשפטי לממשלה פסק דין",
       "number": 1,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "d97a13f5-be6f-4ff4-83e6-16b815bd9b6c"
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "8c06106c-0543-4752-bf08-3adaf2b13a64"
     },
     {
-      "url": "https://www.gov.il/he/service/marital_property_agreement",
-      "title": "הסכם יחסי ממון בין בני זוג נשואים (הליך)",
-      "number": 1,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "2454d380-2b41-4517-afde-e5575090d023"
-    },
-    {
-      "url": "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/99-99.pdf",
-      "title": "חוק יחסי ממון בין בני זוג, תשל\"ג - 3791",
+      "url": "https://www.jstor.org/",
+      "title": "הסכמי ממון לפני נישואין: תוקף, אישור ופרשנות שיפוטית",
       "number": 2,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "d00498cc-f4c2-4193-8700-8a763a580fc1"
+      "candidate_id": "10c72c70-af74-46c2-bea3-fc1aefdcbaaf"
     },
     {
-      "url": "https://lawjournal.huji.ac.il/article/12/1058",
-      "title": "עקרון תום הלב בסדרי הדין בדיני המשפחה",
-      "number": 4,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "f443a5b6-01ad-45e6-aa73-b4de7f5a78c8"
-    },
-    {
-      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=280",
-      "title": "בית המשפט לענייני משפחה בב\"ש, סג\"נ השופטת רותם קודלר עיאש: פס\"ד בעניין תביעת איש לפיצוי בגין תביעת כתובה לאחר אישור הסכם הגירושין בו ויתרה האישה על הכתובה (תה\"ס 14926-01-23)",
-      "number": 4,
+      "url": "https://www.toledano.co.il/%d7%91%d7%a2%d7%9e-48399-09-24-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בע\"מ 48399-09-24 פלוני נ׳ פלוני פסק דין",
+      "number": 2,
       "origin": "local_db",
       "source_type": "caselaw",
-      "candidate_id": "02e5601d-93c9-4ff0-ab37-f29823471be2"
+      "candidate_id": "8b2f855d-d208-4a1c-a12c-0862fe3a14f7"
     },
     {
-      "url": "https://www.gov.il/he/pages/family_property_agreement",
-      "title": "הסכם ממון לאחר נישואין - כל מה שצריך לדעת",
-      "number": 6,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "1485c32b-6084-4f35-8c38-a078d9b80214"
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/3&fileName=SG3_11_5416-09.pdf&type=2",
+      "title": "בג\"ץ 5416-09 - פלוני נ. פלוני",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "a23561d8-5000-4750-b3d3-e70327a8e4ae"
     }
   ],
   "quality_warning": null
