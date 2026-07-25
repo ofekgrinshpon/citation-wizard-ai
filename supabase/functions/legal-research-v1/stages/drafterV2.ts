@@ -181,6 +181,7 @@ function buildUserMessage(
   userDocs: UserDocument[],
   useAsSource: boolean,
   missingAnchors: Array<{ description: string; is_docket?: boolean }>,
+  answerIntent?: AnswerIntent,
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
