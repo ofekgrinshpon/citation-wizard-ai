@@ -215,6 +215,26 @@ function buildUserMessage(
   for (const cl of claims) {
     lines.push(`- (${cl.claim_id}) ${cl.text_he}`);
   }
+  if (answerIntent) {
+    lines.push("");
+    lines.push("כוונת תשובה (מהאנליזר) — מחייבת:");
+    lines.push(`- מבנה נדרש: ${answerIntent.output_shape}`);
+    lines.push(
+      `- חובה לכלול: ${
+        answerIntent.must_include.length > 0
+          ? answerIntent.must_include.join("; ")
+          : "—"
+      }`,
+    );
+    lines.push(
+      `- להימנע מ: ${
+        answerIntent.must_avoid.length > 0
+          ? answerIntent.must_avoid.join("; ")
+          : "—"
+      }`,
+    );
+    lines.push(`- מדיניות ביטחון: ${answerIntent.confidence_posture}`);
+  }
   lines.push("");
   lines.push(`מקורות זמינים (${sources.length}) — השתמש אך ורק במזהים האלה ב-source_refs:`);
   for (const s of sources) {
