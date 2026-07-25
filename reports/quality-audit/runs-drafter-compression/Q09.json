@@ -1,0 +1,244 @@
+{
+  "id": "Q09",
+  "category": "academic_doctrine",
+  "query": "מהי דוקטרינת \"הבטלות היחסית\" במשפט המנהלי הישראלי, ומיהם המלומדים והפסיקה המרכזיים בפיתוחה?",
+  "run_id": "3fd256fa-b2b8-4c43-9743-0b70629f0f69",
+  "ok": true,
+  "total_ms": 107493,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "answer": "**הגדרה ובסיס משפטי**\n\nבעקרון, דוקטרינת הבטלות היחסית מצביעה על כך שהכרזת בטלות של אקט מנהלי אינה תמיד מחלישה את כל תוצאותיו ללא יוצא מן הכלל; יש לבחון את היקף ומשקל הפגם והנסיבות הספציפיות של ההליך כדי לקבוע האם וטווח ההשפעה של הבטלות. מן המקורות עולה תיאור של הבטלות כקטגוריה יחסית, שמבדילה בין פגם חמור ויסודי שיחייב אבחנה קרובה לבין פגמים שבנסיבות מסוימות יטופלו בעזרת איזונים ושימור תוצאות חלקיות.¹\n\nהיתרון המושגי של הבטלות היחסית הוא שהיא מאפשרת לנטרל פגמים מהותיים כשהם קיימים, מבלי לגרום לנזקים בלתי-נדרשים לאינטרסים ציבוריים או לפרטים כאשר המעשים המינהליים נשארים ברי-תיקון או כשיש ריסון אינטרסים מנוגדים. גישה זו מייצרת כלים גמישים יותר מן ההגדרה של \"בטלות מוחלטת\" ומדגישה את משקל הנסיבות והאיזונים המשפטיים בקביעת הסעד המתאים.²\n\n**הבחנה בין הבטלות יחסית למנגנוני בקרה אחרים**\n\nהבטלות היחסית אינה זהה לפסילת סמכות באופן מוחלט; היא מתייחסת לאפקט הניתן לפשרה בין ההכרה באי-לגיטימיות של הפעולה לבין האפשרות לשמר חלק מתוצאותיה או למתן סעד מותאם במקום ביטול גורף. המקורות מדגישים את ההבחנה בין חוסר סמכות או חריגה מסמכות לבין טעויות בדין, ומציינים כי מעשית ההכרעה האם נעניק ביטול מלא או פתרון מתון תלויה בסיווג הפגם ובנסיבות העניין.³\n\n**קריטריונים ובחינות שנוקטים בתי המשפט**\n\nהמקורות מצביעים על כמה מדדים שמכריעים בשאלה האם להביע בטלות יחסית: חומרת ומהותיות הפגם; האם הפגם נוגע בזכויות יסוד או במנגנון סמכותי מרכזי; אופיו של ההליך (טיפולי/אדמיניסטרטיבי); והיקף הנזק שנגרם למעוניין.⁴\n\nבנוסף נזכרים שיקולים תכליתיים לאזן את ההכרעה: עמדת הנפגע (תלות ביזיקין או במעמדם), פוטנציאל תיקון של ההחלטה או יכולת שימור חלקים תקינים, אינטרס הציבור בשמירה על יציבות סבירה של החלטות מנהליות, ומידת הפגיעה בסדר הציבורי. בנוגע לכל שיקול יש לבחון את הכובד והמשקל היחסי שלו בנסיבות המקרה.⁴\n\n**השלכות פרקטיות וסעדיות של ההבחנה**\n\nהכרה בהבטלות יחסית משפיעה ישירות בסוגי והיקפי הסעד שיכולים להינתן: שימור חלקים תקינים של החלטה פגומה; מתן הנחיות תיקון או חיזוק הליך במקום ביטול מלא; והשעיית הכרזת הבטלות כמכשיר למתן איזון בין אי-לגיטימיות לבין אינטרסים ציבוריים ועבשיים.⁵\n\nמקורות מסוימים טוענים בזהירות כי השופט רשאי לגזור אפקטים זמןיים שונים על ההחלטה (למשל גבולות תוקף לאחור או החלת החלטה מרגע מסוים), וכי בחירת הסעד צריכה להישען על איזון בין תיקון הפגם לבין הפגיעה בזכויות של צדדים שלישיים וביציבות מנהלית. דיון זה מופיע בשיח התיאורטי ובפסיקה המודרנית כדרך להתמודד עם בתיור ההשלכות המעשיות של גילוי פגמים.⁵\n\nדוגמה יישומית: בפסק דין נדון היקפה של הזכות לייצוג בוועדות טיפול והערכה, שם בית המשפט ציין במפורש שהזכות היא יחסית ויש לשקול פתרונות מאוזנים במקום ביטול גורף של החלטות הוועדה, תוך הפנייה להלכות מקדימות בהקשר דומה.⁶\n\n**מלומדים ופסקי-דין מרכזיים בפיתוח הדוקטרינה**\n\n- יצחק זמיר, הסמכות המינהלית (כרך ב), דיון יסודי על דוקטרינת הבטלות היחסית ומגבלות הסעד בעניינים מנהליים.⁷\n- דפנה ברק־ארז, \"הבטלות היחסית במשפט המינהלי: על מחירן של זכויות\" — פרק מרכזי המספק סקירה ביקורתית ותרומה תיאורטית להבנת ההשלכות על זכויות ועקרונות מנהליים.⁸\n- מאמרים ועבודות שהתמקדו בהגדרה וביישום של המושג ובהבחנה בין פגם סמכותי לטעות בדין — קיבלו ביטוי בכתבים שהמחקר המקצועי והאקדמי פרסם, והם מהווים מקורות יסוד לדיון התיאורטי.⁴\n- פסק דין בו נדונה הבטלות יחסית בהקשר הזכות לייצוג בוועדות טיפול והערכה, שבו נדגישו פתרונות איזון במקום ביטול מוחלט של החלטות הוועדה.⁶\n- עבודות העוסקות בכלים סעדיים מתונים כגון השעיית הכרזת הבטלות ותנאים למתן סעד איזוני — מהוות השלמה לדיון התיאורטי ומועדות זהירותית לגבי ההשלכות הפרקטיות.⁹",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "בטלות יחסית ושיקול דעת שיפוטי; במקום בטלות יחסית; הבטלות היחסית במשפט המינהלי: על מחירן של זכויות",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+          "title": "במקום בטלות יחסית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+          "title": "הבטלות היחסית במשפט המינהלי: על מחירן של זכויות",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "במקום בטלות יחסית; בטלות יחסית ושיקול דעת שיפוטי",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+          "title": "במקום בטלות יחסית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/923",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בטלות יחסית ושיקול דעת שיפוטי; בטלות יחסית ושיקול דעת שיפוטי",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/923",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בטלות יחסית ושיקול דעת שיפוטי; במקום בטלות יחסית; בטלות יחסית ושיקול דעת שיפוטי",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+          "title": "במקום בטלות יחסית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/923",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בטלות יחסית ושיקול דעת שיפוטי; הסמכות המינהלית; השעיית הכרזת הבטלות",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/923",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yeara/hebrewtrial/examnotes/99-313-notebook-2012-anat-gush-chalav.doc",
+          "title": "הסמכות המינהלית",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/2-marzel.pdf",
+          "title": "השעיית הכרזת הבטלות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+      "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+          "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yeara/hebrewtrial/examnotes/99-313-notebook-2012-anat-gush-chalav.doc",
+      "title": "הסמכות המינהלית",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yeara/hebrewtrial/examnotes/99-313-notebook-2012-anat-gush-chalav.doc",
+          "title": "הסמכות המינהלית",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "academic"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+      "title": "הבטלות היחסית במשפט המינהלי: על מחירן של זכויות",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+          "title": "הבטלות היחסית במשפט המינהלי: על מחירן של זכויות",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "academic"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/2-marzel.pdf",
+      "title": "השעיית הכרזת הבטלות",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/2-marzel.pdf",
+          "title": "השעיית הכרזת הבטלות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+      "title": "בטלות יחסית ושיקול דעת שיפוטי",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "c2519e59-0379-46a1-9db5-88ac00e059af"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+      "title": "במקום בטלות יחסית",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "9cd747e9-dd9b-4946-babd-648df22c9c9a"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+      "title": "הבטלות היחסית במשפט המינהלי: על מחירן של זכויות",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "f0953ead-77a2-4400-839e-914bf480ea09"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/923",
+      "title": "בטלות יחסית ושיקול דעת שיפוטי",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "6fa7285f-3434-41b8-a072-44e2f8bf5883"
+    },
+    {
+      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yeara/hebrewtrial/examnotes/99-313-notebook-2012-anat-gush-chalav.doc",
+      "title": "הסמכות המינהלית",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "870de437-eca9-445c-8060-311def73d0a3"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/2-marzel.pdf",
+      "title": "השעיית הכרזת הבטלות",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "1ec0d8f1-7277-4cb0-98e3-0befcabc8376"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+      "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+      "number": 6,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "b4ecbfab-58a5-497f-838b-6e48e94c98d4"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 6,
+      "partial": 2,
+      "unrelated": 2,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 10,
+      "false": 0
+    }
+  },
+  "quality_warnings": [],
+  "structured_report": null,
+  "missing_required_anchors": null
+}
