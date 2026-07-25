@@ -1,0 +1,245 @@
+{
+  "id": "Q13",
+  "category": "practical_implications",
+  "query": "מה חייב מעסיק לעשות כאשר עובד/ת מגיש/ה תלונה על הטרדה מינית במקום העבודה, ומהי מסגרת הזמנים לפי התקנות?",
+  "run_id": "3a428dfc-fcf9-4ed7-b139-5522994a2eb0",
+  "ok": true,
+  "total_ms": 163329,
+  "answer_intent": {
+    "must_avoid": [
+      "אל תתן ייעוץ מינהלי מותאם למקרה פרטי ללא פרטי תצהיר",
+      "אל תבצע השערות עובדתיות חד־משמעיות על מקרה שלא תואר"
+    ],
+    "must_include": [
+      "רשימת חובות המעסיק כאשר מוגשת תלונה על הטרדה מינית",
+      "מסגרת זמנים לפי התקנות (מועדי התחלה/סיום/דיווח)"
+    ],
+    "output_shape": "enumerate_duties",
+    "confidence_posture": "direct_if_primary_present"
+  },
+  "answer": "להלן פירוט החובות והצעדים שעל מעסיק לנקוט כאשר מוגשת תלונה על הטרדה מינית במקום העבודה, ובהתאם למסמכי החוק והתקנות הספציפיים שנמסרו.\n\n**חובות עקרוניות של המעסיק**\n\n- חובת המניעה: חובת המעסיק לנקוט אמצעים סבירים למניעת הטרדה מינית ולהימנע מהתנכלות במסגרת יחסי העבודה.¹\n- חובת מינוי ותקנון: מינוי אחראי/ת לטיפול והגדרת נהלים ברורים להגשת תלונה, וכן הבאת התקנון לידי העובדים ותלייתו במקום בולט.²\n- חובת תגובה מהירה: המעסיק חייב לפעול מבלי דיחוי בחקירת התלונה ולקבל החלטה על פי סיכומו והמלצות האחראי/ת.³\n- חובת הודעה מנומקת בכתב: לאחר קבלת החלטה יש למסור הודעה מנומקת בכתב למתלונן/ת, לנאשם/ת ולממונים הרלוונטיים.⁴\n- חובת שמירה על סודיות והימנעות מהתנכלות: המעסיק חייב להגן על סודיות הנבדק/ת ולהגן על המתלונן/ת מפני נקיטת צעדי נקם או התנכלות.³\n- חובת נקיטת אמצעים מיידיים להגנה: במידת הצורך יש לנקוט צעדים זמניים (הפרדה, שינוי משמרות, השעיה זמנית וכדומה) כדי להגן על המתלונן/ת עד להחלטה.³\n- חובת תיעוד וביצוע ההחלטה: תיעוד כל שלבי הטיפול, קבלת ההמלצות ופעולות ביצוע; המעסיק חייב לבצע את החלטתו מבלי דיחוי.³\n\n**צעדים פרוצדורליים מעשיים — רצף מומלץ לפי התקנות**\n\n- קבלה ורישום התלונה: קבלת התלונה לערוץ הייעודי, רישומה ותיעודה אצל האחראי/ת המיועד/ת.³\n- מינוי חוקר/ועדה או הפניה לגורם חקירה מוסמך: קבלת סיכום והמלצות מהאחראי/ת והפעלת חקירה פנימית או הפניה לגורם חיצוני לפי הנהלים.⁵\n- פתיחה מידית של בירור: יש להיערך לחקירה מבלי דיחוי, לאסוף ראיות רלוונטיות ולשמוע מעורבים ועדים בהתאם לצורך.³\n- נקיטת אמצעי הגנה מיידיים למתלונן/ת: יש לשקול וליישם צעדים זמניים להבטחת בטחון המתלונן/ת עד להכרעה.²\n- החלטה וביצועה: קבלת החלטה על סמך הממצאים והמלצות האחראי/ת, וביצועה בלא דיחוי כולל מסירת הודעה מנומקת בכתב.⁴\n- תיעוד סופי והפקת מסקנות מניעה: רישום ההליכים והתוצאות, והטמעת צעדי מניעה ותיקון נדרשים במידת הצורך.³\n\n**מסגרת הזמנים לפי התקנות**\n\n- התחלת הטיפול והבירור: על המעסיק לפעול מבלי דיחוי ולפתוח בבירור מיד עם קבלת התלונה.³\n- קבלת החלטה: התקנות קובעות כי המעסיק יחליט בלא דיחוי ובתוך תקופה שלא תעלה על שבעה ימי עבודה מרגע קבלת סיכומו והמלצות האחראי/ת.⁴\n- מסירת הודעה מנומקת בכתב: לאחר קבלת ההחלטה יש למסור הודעה מנומקת בכתב למתלונן/ת, לנאשם/ת ולאחראי/ת; יש לפעול מיידית לביצוע ההחלטה.⁴\n- הערה לגבי נהלים ספציפיים: במוסדות הציבוריים קיימים תקנונים ונוהלים משולבים (לדוגמה נוהלי שירות המדינה) שמפרטים דרכי הגשה וסמכויות — מסמכים אלה תומכים בחובה הפרוצדורלית אך תמיכתם במועד מדויק עלולה להיות חלקית.⁶\n\n**השלכות משפטיות במקרה של אי-עמידה בחובות**\n\nאי־עמידה בחובות המעסיק עלולה להביא לאחריות אזרחית — תביעות לפיצויים על נזק ועוגמת נפש — ולסנקציות מנהליות; החוק והפסיקה מספקים מסלולים שונים לתביעת פיצויים ולבדיקת נטל הראיה נגד המעסיק.⁷\n\nבמקרים שבהם הוכח שהמעסיק לא פעל בהתאם לחובותיו (למשל לא חקר, לא נקט צעדי הגנה או לא מנע התנכלות), יכול להיווצר בסיס לחבות אזרחית ולפיצוי; לפי פסיקה רלוונטית הנטל על המעביד עשוי לעבור והוא נבחן ביחס לפעולות שננקטו.⁸\n\nהבחנה חשובה: חלק מהמסמכים שמהם נשאבו הנחיות פרוצדורליות מיועדים לשירות הציבורי וכוללים הוראות משלימות; במקרה פרטי יש לבדוק את התקנון החולש על מקום העבודה המדויק.⁶\n\nאם תרצה, אוכל לסכם עבורך טקסט דוגמת הודעה מנומקת בכתב או תבנית רישום תלונה בהתאם לעקרונות שלעיל — לצורך זה יש לספק פרטי רקע פורמליים והבהרות עובדתיות; אין בכך ייעוץ מותאם למקרה פרטי ללא תצהיר מפורט.",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "חוק למניעת הטרדה מינית; תקנון למניעת הטרדה מינית",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA_%D7%94%D7%98%D7%A8%D7%93%D7%94_%D7%9E%D7%99%D7%A0%D7%99%D7%AA",
+          "title": "חוק למניעת הטרדה מינית",
+          "source_type": "israeli_law"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+          "title": "תקנון למניעת הטרדה מינית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+      "title": "תקנון למניעת הטרדה מינית",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+          "title": "תקנון למניעת הטרדה מינית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998; תקנון למניעת הטרדה מינית",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72508.htm",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+          "title": "תקנון למניעת הטרדה מינית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/72508.htm",
+      "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72508.htm",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998; תקנון למניעת הטרדה מינית; הטרדה מינית זה אסור!",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72508.htm",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+          "title": "תקנון למניעת הטרדה מינית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.btl.gov.il/Publications/booklet/hebrew_booklet/Documents/hatradaminit.pdf",
+          "title": "הטרדה מינית זה אסור!",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנון לחוק למניעת הטרדה מינית התשנ\"ח-1998 ומותאם לשירות המדינה; מניעה וטיפול במקרי הטרדות מיניות בשירות המדינה",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/sexual_harassment_regulations/he/sexual-harassment-regulations.pdf",
+          "title": "תקנון לחוק למניעת הטרדה מינית התשנ\"ח-1998 ומותאם לשירות המדינה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://openscholar.huji.ac.il/sites/default/files/clinicallec/files/report1.pdf",
+          "title": "מניעה וטיפול במקרי הטרדות מיניות בשירות המדינה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק למניעת הטרדה מינית; התעמרות בעבודה: בין פסיכולוגיה למשפט, בין חקיקה לפסיקה | אורית קמיר (כרך כא); מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA_%D7%94%D7%98%D7%A8%D7%93%D7%94_%D7%9E%D7%99%D7%A0%D7%99%D7%AA",
+          "title": "חוק למניעת הטרדה מינית",
+          "source_type": "israeli_law"
+        },
+        {
+          "url": "https://runilawreview.org/2017/12/13/vol21_kamir/",
+          "title": "התעמרות בעבודה: בין פסיכולוגיה למשפט, בין חקיקה לפסיקה | אורית קמיר (כרך כא)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_6_1758-11.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); התעמרות בעבודה: בין פסיכולוגיה למשפט, בין חקיקה לפסיקה | אורית קמיר (כרך כא)",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_6_1758-11.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://runilawreview.org/2017/12/13/vol21_kamir/",
+          "title": "התעמרות בעבודה: בין פסיכולוגיה למשפט, בין חקיקה לפסיקה | אורית קמיר (כרך כא)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA_%D7%94%D7%98%D7%A8%D7%93%D7%94_%D7%9E%D7%99%D7%A0%D7%99%D7%AA",
+      "title": "חוק למניעת הטרדה מינית",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "israeli_law",
+      "candidate_id": "f549ffcf-6b23-4d3b-a0a0-48baf82072a7"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+      "title": "תקנון למניעת הטרדה מינית",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "5a8fdf92-cedb-4c5d-a7d5-9298c5a340c8"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/72508.htm",
+      "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d7236888-1566-4e4b-a2f8-dff39be0a24c"
+    },
+    {
+      "url": "https://www.btl.gov.il/Publications/booklet/hebrew_booklet/Documents/hatradaminit.pdf",
+      "title": "הטרדה מינית זה אסור!",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "8194b960-1ea5-45d9-b7f4-e669949c3f82"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/generalpage/sexual_harassment_regulations/he/sexual-harassment-regulations.pdf",
+      "title": "תקנון לחוק למניעת הטרדה מינית התשנ\"ח-1998 ומותאם לשירות המדינה",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "12dd9a8a-52d5-43fa-a135-9d5b61859f49"
+    },
+    {
+      "url": "https://openscholar.huji.ac.il/sites/default/files/clinicallec/files/report1.pdf",
+      "title": "מניעה וטיפול במקרי הטרדות מיניות בשירות המדינה",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "fc7871c0-8d3a-4227-a54d-7aaa1fbd2fdf"
+    },
+    {
+      "url": "https://runilawreview.org/2017/12/13/vol21_kamir/",
+      "title": "התעמרות בעבודה: בין פסיכולוגיה למשפט, בין חקיקה לפסיקה | אורית קמיר (כרך כא)",
+      "number": 7,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "46bf05cb-e97e-4552-82ec-da61e89eb429"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_6_1758-11.pdf&type=2",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 7,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "548796d0-539c-4612-8668-36ceadaafe35"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 3,
+      "partial": 6,
+      "unrelated": 4,
+      "tangential": 2
+    },
+    "by_role_match": {
+      "true": 15,
+      "false": 0
+    }
+  }
+}
