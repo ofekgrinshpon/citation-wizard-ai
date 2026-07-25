@@ -1,0 +1,296 @@
+{
+  "id": "Q09",
+  "category": "academic_doctrine",
+  "query": "מהי דוקטרינת \"הבטלות היחסית\" במשפט המנהלי הישראלי, ומיהם המלומדים והפסיקה המרכזיים בפיתוחה?",
+  "run_id": "bf4c2f5f-1578-442e-a34d-a1d60908cc27",
+  "ok": true,
+  "total_ms": 117696,
+  "answer_intent": {
+    "output_shape": "definition"
+  },
+  "answer": "**הגדרה עקרונית**\n\nדוקטרינת הבטלות היחסית במשפט המנהלי מקובלת כתפיסה שבה פגם מנהלי לא מחייב בהכרח השמדה מלאה של המעשה המנהלי; במקום זאת בוחן השופט את נסיבות המקרה ושוקל האם להתנות, להשעות או להגביל את הסעד של ביטול, ו/או לתת אפקט רטרואקטיבי או עתידי לצו הבטלות על פי שיקולים כמו חומרת הפגם, פגיעה בצדדים והאינטרס הציבורי.¹\n\n**הבחנה בין בטלות מוחלטת לבטלות יחסית**\n\nבטלות מוחלטת היא הכרעה שהמעשה חסר תוקף מעיקרו מיום שנעשה; היא אינה מותירה מקום להליכים משלימים כדי להשאיר את ההשפעה. לעומת זאת, הבטלות היחסית אינה קובעת אוטומטית השמדה מלאה של ההשפעות והסעד נתון לשיקול שיפוטי — קביעת הטיב והיקף התוצאה עשויה לכלול השעיה של ההשפעה, כפיה על תיקון או אישור חלקי של המעשה על בסיס שיקולים מעשיים וציבוריים.²\n\n**הקריטריונים והבחינות השיפוטיות המרכזיות**\n\n- חומרת הליקוי ומהותו: האם מדובר בליקוי פרוצדורלי טכני או בליקוי מהותי הפוגע בסמכות המוסמכת; ליקוי מהותי מקדם בדרך כלל הכרעה לכיוון בטלות אך גם כאן לא בהכרח מחייב ביטול מוחלט.³\n- הסתמכות ופגיעה בצדדים שלישיים: משקל ההסתמכות של מי שנפגע/נהנה מהמעשה — פגיעה קשה בזכויות צדדים שלישיים עשויה להטות את מאזני השיקול נגד ביטול רטרואקטיבי.⁴\n- אינטרס הציבור ויעילות מנהלית: יש לשקלל את טובת הציבור והתוצאות המעשיות של ביטול פעולות מנהליות (למשל פגיעה בשירותים ציבוריים או בהמשכיות של מדיניות).⁵\n- איחור בתביעה ועמידה לסעד (laches): איחור בלתי סביר בפניה לבית המשפט או התנהגות שמונעת ממתקבל ההחלטה לטעון נגדיה עלולים להפחית את הסיכוי לקבלת צו ביטול רטרואקטיבי.⁵\n- שיקולי צדק והכרעת סעד הוגן: השופט יבחן האם מתן סעד של ביטול ישרת את הצדק בנסיבות העניין, ואם יש סעדים חלופיים פחות פוגעניים (השעיה, תיקון או הצהרת אי-תוקף לעתיד).⁶\n\n**השלכות מעשיות של ההכרה בבטלות יחסית**\n\nהכרה בבטלות יחסית משנה את אופיו של הסעד: במקום ביטול רטרואקטיבי מוחלט, בית המשפט יכול להורות על השעיה של תוקף הפסקה או על הצהרת אי-תקפות בעלת השפעה מיידית לעתיד בלבד, לצורך איזון בין תיקון הליקוי לבין שמירת יציבות מנהלית.⁷\n\nאפשרות לאישרור או לתיקון: דוקטרינה זו מותירה פתוחה אפשרות שאישור או תיקון שנעשה על ידי הרשות או גורם מוסמך ימנעו את הסעד הקיצוני של השמדה, כל עוד התיקון מכסה את הליקוי ומעמיד מחדש את ההחלטה במסגרת הסמכות.⁴\n\nהשפעה על זכויות צדדים שלישיים והגנות פרוצדורליות: הכרה בבטלות יחסית מחזקת את ההכרה בצורך להגן על ציפיות מוצדקות של גופים פרטיים ושלישיים ומגבילה סעד שפוגע בזכויותיהם בלי פיצוי או פתרון חלופי.⁴\n\nמגבלות פרוצדורליות והתחייבויות של המערכת המשפטית: בדרך פרקטית פועל הכלל להגבלת ביטול רטרואקטיבי כאשר הדין, עקרונות ההגינות או צרכי היעילות הציבורית דורשים מנגנוני הבטחה כגון מועד כניסת הסעד, מכסות להשגה או הקלות מעבר.⁵\n\n**מלומדים ופסיקה מרכזיים בפיתוח הדוקטרינה**\n\n- פסק הדין 'גניים נ' מדינת ישראל' — נוסח פסיקה המציג במפורש את תורת הבטלות היחסית ומשלב מבחנים של מהות הפגם, חומרתו, הנזק וטובת הציבור.⁸\n- פורז — דוגמה מוסקית למשטר ההשעיה או התנייה של הסעד המבטל; דיוני השעיית סעד ותיחומה מובאים בהכרעות ובניתוחי ההלכה על הסעדים.⁹\n- דפנה ברק־ארז — כתיבה מערכתית על בטלות יחסית ושיקול דעת שיפוטי, שבה נטענים הקריטריונים לשיקול תועלות ונזקים; יש לנסח מסקנות הנגזרות ממאמריה בזהירות ביחס להיקף התיאוריה.¹⁰\n- יצחק זמיר — תרומה תאורטית ומעשית להבנת יחסי סמכות וסעד במשפט המנהלי, כולל ניתוחים הנוגעים לאפשרויות אישור ותיקון של מעשים מנהליים.¹¹\n\nסיכום והערת מסגרת: מן המקורות עולה כי הבטלות יחסית אינה חוקה חדשה של הדין אלא מגמה פרקטית־שיפוטית המעניקה לשופט גמישות בתכלול הסעד בהתאם לנסיבות, תוך איזון בין כיבוד חוק וסמכות לבין הגנה על ציפיות צדדים והאינטרס הציבורי. מקורות אלה עוסקים במישרין בדוקטרינה; אין במקורות שאותרו כדי לקבוע נוסחה סופית אחת המחייבת בכל מקרה, ולפיכך הטיעונים לגבי קריטריונים מסוימים צריכים להישמע בזהירות.²",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "במקום בטלות יחסית; מסמך מאתר psakdin.co.il; הזכות המינהלית",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+          "title": "במקום בטלות יחסית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%92%D7%A0%D7%99%D7%99%D7%9D-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+          "title": "מסמך מאתר psakdin.co.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/16_03.pdf",
+          "title": "הזכות המינהלית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר psakdin.co.il; השעיית הכרזת הבטלות; במקום בטלות יחסית",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%92%D7%A0%D7%99%D7%99%D7%9D-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+          "title": "מסמך מאתר psakdin.co.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/2-marzel.pdf",
+          "title": "השעיית הכרזת הבטלות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+          "title": "במקום בטלות יחסית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר psakdin.co.il; במקום בטלות יחסית",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%92%D7%A0%D7%99%D7%99%D7%9D-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+          "title": "מסמך מאתר psakdin.co.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+          "title": "במקום בטלות יחסית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר psakdin.co.il; הזכות המינהלית",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%92%D7%A0%D7%99%D7%99%D7%9D-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+          "title": "מסמך מאתר psakdin.co.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/16_03.pdf",
+          "title": "הזכות המינהלית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר psakdin.co.il; השעיית הכרזת הבטלות",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%92%D7%A0%D7%99%D7%99%D7%9D-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+          "title": "מסמך מאתר psakdin.co.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/2-marzel.pdf",
+          "title": "השעיית הכרזת הבטלות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "במקום בטלות יחסית; הזכות המינהלית; בטלות יחסית ושיקול דעת שיפוטי",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+          "title": "במקום בטלות יחסית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/16_03.pdf",
+          "title": "הזכות המינהלית",
+          "source_type": "other"
+        },
+        {
+          "url": "http://lawjournal.huji.ac.il/article/12/923",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "השעיית הכרזת הבטלות; על תורת הסעדים החוקתיים | אהרן ברק (כרך כ); מסמך מאתר psakdin.co.il",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/2-marzel.pdf",
+          "title": "השעיית הכרזת הבטלות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://runilawreview.org/2017/11/22/vol20_barak/",
+          "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%92%D7%A0%D7%99%D7%99%D7%9D-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+          "title": "מסמך מאתר psakdin.co.il",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%92%D7%A0%D7%99%D7%99%D7%9D-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+      "title": "מסמך מאתר psakdin.co.il",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%92%D7%A0%D7%99%D7%99%D7%9D-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+          "title": "מסמך מאתר psakdin.co.il",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://runilawreview.org/2017/11/22/vol20_barak/",
+      "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://runilawreview.org/2017/11/22/vol20_barak/",
+          "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    },
+    {
+      "url": null,
+      "title": "בטלות יחסית ושיקול דעת שיפוטי; משפט מנהלי - ביבליוגרפיה/חומר קריאה",
+      "number": 10,
+      "sources": [
+        {
+          "url": "http://lawjournal.huji.ac.il/article/12/923",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://netanya.ac.il/gur/data/AGUDA/law/yearb/managers/%D7%A1%D7%99%D7%9C%D7%91%D7%95%D7%A1%20%D7%95%D7%97%D7%95%D7%9E%D7%A8%20%D7%94%D7%A7%D7%A8%D7%99%D7%90%D7%94%20%D7%A9%D7%99%D7%A2%D7%95%D7%A8%D7%99%D7%9D%20%D7%95%D7%9C%D7%AA%D7%A8%D7%92%D7%95%D7%9C%D7%99%D7%9D%20-%20%D7%A1%D7%9E%D7%A1%D7%98%D7%A8%20%D7%90.doc",
+          "title": "משפט מנהלי - ביבליוגרפיה/חומר קריאה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/07-zamir.pdf",
+      "title": "דיני חוזי מנהליי : ענ של המשפט המנהלי ?",
+      "number": 11,
+      "sources": [
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/07-zamir.pdf",
+          "title": "דיני חוזי מנהליי : ענ של המשפט המנהלי ?",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+      "title": "במקום בטלות יחסית",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a9c75fbd-d4b9-480c-ae58-5f2dfbaa5f00"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%92%D7%A0%D7%99%D7%99%D7%9D-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+      "title": "מסמך מאתר psakdin.co.il",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "0ced8df7-d804-45a6-82ad-648b946ce19e"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/16_03.pdf",
+      "title": "הזכות המינהלית",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "2a3d16cf-5794-476a-8046-617a3281d30d"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/2-marzel.pdf",
+      "title": "השעיית הכרזת הבטלות",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "7b81f4db-a171-4b98-8137-60cc12bad68b"
+    },
+    {
+      "url": "http://lawjournal.huji.ac.il/article/12/923",
+      "title": "בטלות יחסית ושיקול דעת שיפוטי",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "a8cfd7e6-dfa4-4407-a404-48b43494d865"
+    },
+    {
+      "url": "https://runilawreview.org/2017/11/22/vol20_barak/",
+      "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+      "number": 7,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "320a308c-fc4c-4c44-b82f-692939a08cad"
+    },
+    {
+      "url": "https://netanya.ac.il/gur/data/AGUDA/law/yearb/managers/%D7%A1%D7%99%D7%9C%D7%91%D7%95%D7%A1%20%D7%95%D7%97%D7%95%D7%9E%D7%A8%20%D7%94%D7%A7%D7%A8%D7%99%D7%90%D7%94%20%D7%A9%D7%99%D7%A2%D7%95%D7%A8%D7%99%D7%9D%20%D7%95%D7%9C%D7%AA%D7%A8%D7%92%D7%95%D7%9C%D7%99%D7%9D%20-%20%D7%A1%D7%9E%D7%A1%D7%98%D7%A8%20%D7%90.doc",
+      "title": "משפט מנהלי - ביבליוגרפיה/חומר קריאה",
+      "number": 10,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "8e939685-fc0d-4130-abac-029e7daa6bad"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/07-zamir.pdf",
+      "title": "דיני חוזי מנהליי : ענ של המשפט המנהלי ?",
+      "number": 11,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "77800fe5-a5b5-4eb3-b4ff-675290fa394a"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 6,
+      "partial": 2,
+      "unrelated": 5,
+      "tangential": 2
+    },
+    "by_role_match": {
+      "true": 15,
+      "false": 0
+    }
+  },
+  "missing_required_anchors": null
+}

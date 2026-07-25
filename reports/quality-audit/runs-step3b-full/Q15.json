@@ -1,0 +1,273 @@
+{
+  "id": "Q15",
+  "category": "mixed_sources",
+  "query": "מהו המסגרת הרגולטורית להנפקת אסימונים דיגיטליים בישראל, בהתבסס על חקיקה, פסיקה וספרות?",
+  "run_id": "0ec3e3e5-69c9-4626-8fd2-941496beacac",
+  "ok": true,
+  "total_ms": 151924,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "answer": "**המסגרת הרגולטורית להנפקת אסימונים דיגיטליים בישראל**\n\nבקצרה: אין בישראל מסגרת אחת וחד־משמעית שמסדירה את כל הנפקת האסימונים הדיגיטליים; הרגולציה כיום מורכבת ממקטעים של דינים קיימים — דיני ניירות ערך כאשר אסימון מזוהה כנייר ערך, חובת זהות ודיווח לפי כללי איסור הלבנת הון לנכסים וירטואליים, וכללי מס (באשר למע״מ וטיפול במסים אחרים) — וכן יוזמות רגולטוריות ותזכירים שמבקשים להבהיר היבטים אלה.¹\n\n**האם אסימון דיגיטלי הוא \"נייר ערך\"?**\n\nאין היגד חד־משמעי בפסיקה או בחקיקה הישראלית שקובע באופן גורף כי כל אסימון דיגיטלי הוא נייר ערך; רשויות ומחקר מקצועי מצביעים על חוסר בהירות ומציעים גישה של הבחנה עובדתי־מהותית (מבחני תוכן/מטרה של ההצעה והשקעה לציפייה לתשואה) במקום הכרעה אוטומטית.²\n\n**חובות רגולטוריות כאשר אסימון מזוהה כנייר ערך**\n\nאם אסימון ייחשב לנייר ערך יחולו עליו, באופן עקרוני, הוראות חוק ניירות ערך הנוגעות לפרסום תשקיף, הרישום והרשאות לשיווק הצעות לציבור — ובהתאם לאופי ההנפקה יידרשו אישורים והיתרי פרסום כפי שמוסברים במסגרת הפעולה הרגולטורית של הרשות לניירות ערך.³\n\n**רגולציה על ספקי שירותים בתחום האסימונים (פלטפורמות, קוסטודיאנים, ארנקים)**\n\nספקי שירותים שפעילותם נוגעת לנכסים דיגיטליים מופנים למסלולי רישום וצייתנות רגולטורית: הדוחות והרפורמות שהציגה הממשלה ורשות ניירות ערך מדגישים דרישות רישום, פיקוח וציות לנושאים פיננסיים ותפעוליים, כאשר הפרקטיקה הרגולטורית עדיין מתגבשת ומותאמת לכל קטגוריית נותן שירות.⁴\n\n**חובות מניעת הלבנת הון ומימון טרור (AML/CFT)**\n\nחובות AML/CFT חלות על פעילות בתחום המטבעות הווירטואליים; המסמך הציבורי והחוזרים מציינים במפורש חובת זיהוי, דיווח וניהול רישומים עבור נותני שירות בנכס וירטואלי, והמסמכים המאוחרים מצביעים גם על צורך בחקיקה והגדרות פורמליות של \"נכס דיגיטלי\" לשם יישום אפקטיבי של דרישות אלה.⁵\n\n**מיסים, מע״מ ומעמד תשלומים**\n\nהטיפול המסי באסימונים תלוי באופי העסקה והתיעוד המסחרי: חוק מע״מ מספק את המסגרת לבחינת האם עסקה הקשורה לאסימונים מהווה אספקת טובין או שירותים החייבת במע״מ, ופסקי דין בתחום המע״מ מספקים מבחנים פרשניים רלוונטיים; עם זאת מקורות ממשלתיים מצביעים על הצורך בהבהרה חקיקתית לגבי מעמדו של נכס דיגיטלי לצורכי מס ולגבי השאלה אם אסימונים מהווים אמצעי תשלום בסמכות רגולטורית כגון בנק ישראל.⁶\n\n**מגבלות, נקודות פתוחות והמלצות מעשיות קצרות**\n\nמהמקורות עולה בזהירות כי המצב כיום הוא מבוזר וענפי: קיים כיסוי חלקי באמצעות חוקי ניירות ערך, דיני AML/CFT וחוק המס, אך אין קודיפיקציה מקיפה ואחידה; תזכירי חקיקה ותשקיפים רגולטוריים שנחשפו לאחרונה מצביעים על מגמה לבסס הגדרות ודרישות רישוי נוספות — אך אין במקורות כדי להסיק מסקנה מחייבת אחת על מכלול החובות או על יישום אחיד בפועל.⁷",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "דו\"ח אסדרת תחום - Gov; professional-docs_2025-12-22-professional-docs.pdf",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+          "title": "דו\"ח אסדרת תחום - Gov",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/2025-12-22-professional-docs/he/professional-docs_2025-12-22-professional-docs.pdf",
+          "title": "professional-docs_2025-12-22-professional-docs.pdf",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "דו\"ח אסדרת תחום - Gov; האם ב-ICOs מונפקים ניירות ערך? על אסדרה של אסימונים דיגיטליים שמנפיקות חברות; דוח הערכת רגולציה - רשות ניירות ערך",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+          "title": "דו\"ח אסדרת תחום - Gov",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1793",
+          "title": "האם ב-ICOs מונפקים ניירות ערך? על אסדרה של אסימונים דיגיטליים שמנפיקות חברות",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-63a2db729e575/reportr13225.pdf",
+          "title": "דוח הערכת רגולציה - רשות ניירות ערך",
+          "source_type": "government_report"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "רשות ניירות ערך דוחות כספיים 2024; תקנות ניירות ערך (דואר אלקטרוני מאובטח); דו\"ח אסדרת תחום - Gov",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-63b3dc4fa5dd2/FinancialReport2024.pdf",
+          "title": "רשות ניירות ערך דוחות כספיים 2024",
+          "source_type": "government_report"
+        },
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%A0%D7%99%D7%99%D7%A8%D7%95%D7%AA_%D7%A2%D7%A8%D7%9A_(%D7%93%D7%95%D7%90%D7%A8_%D7%90%D7%9C%D7%A7%D7%98%D7%A8%D7%95%D7%A0%D7%99_%D7%9E%D7%90%D7%95%D7%91%D7%98%D7%97)",
+          "title": "תקנות ניירות ערך (דואר אלקטרוני מאובטח)",
+          "source_type": "israeli_law"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+          "title": "דו\"ח אסדרת תחום - Gov",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "Weekly Economic Review / Periodic Review (28.11.2022); דו\"ח אסדרת תחום - Gov; רשות ניירות ערך דוחות כספיים 2024",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/periodic-review-28112022/he/weekly_economic_review_periodic-review-28112022.pdf",
+          "title": "Weekly Economic Review / Periodic Review (28.11.2022)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+          "title": "דו\"ח אסדרת תחום - Gov",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-63b3dc4fa5dd2/FinancialReport2024.pdf",
+          "title": "רשות ניירות ערך דוחות כספיים 2024",
+          "source_type": "government_report"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "הערות הציבור: מסמך להתייחסות בנושא פעילות במטבעות וירטואליים; professional-docs_2025-12-22-professional-docs.pdf; איסור הלבנת הון: חידושים מקומיים ומגמות גלובליות | עידו באום (כרך י)",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/publicsharing/public-participation-005/he/public_participation_travel_rule_p.pdf",
+          "title": "הערות הציבור: מסמך להתייחסות בנושא פעילות במטבעות וירטואליים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/2025-12-22-professional-docs/he/professional-docs_2025-12-22-professional-docs.pdf",
+          "title": "professional-docs_2025-12-22-professional-docs.pdf",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_6.pdf",
+          "title": "איסור הלבנת הון: חידושים מקומיים ומגמות גלובליות | עידו באום (כרך י)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק מס ערך מוסף; ע\"א 9333-02 - מנהל מס ערך מוסף טבריה נ. אבו סאלח חוסין; professional-docs_2025-12-22-professional-docs.pdf",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%9E%D7%A1_%D7%A2%D7%A8%D7%9A_%D7%9E%D7%95%D7%A1%D7%A3",
+          "title": "חוק מס ערך מוסף",
+          "source_type": "israeli_law"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/1&fileName=SD1_2_9333-02.pdf&type=2",
+          "title": "ע\"א 9333-02 - מנהל מס ערך מוסף טבריה נ. אבו סאלח חוסין",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/2025-12-22-professional-docs/he/professional-docs_2025-12-22-professional-docs.pdf",
+          "title": "professional-docs_2025-12-22-professional-docs.pdf",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "professional-docs_2025-12-22-professional-docs.pdf; דו\"ח אסדרת תחום - Gov; דוח הערכת רגולציה - רשות ניירות ערך",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/2025-12-22-professional-docs/he/professional-docs_2025-12-22-professional-docs.pdf",
+          "title": "professional-docs_2025-12-22-professional-docs.pdf",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+          "title": "דו\"ח אסדרת תחום - Gov",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-63a2db729e575/reportr13225.pdf",
+          "title": "דוח הערכת רגולציה - רשות ניירות ערך",
+          "source_type": "government_report"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+      "title": "דו\"ח אסדרת תחום - Gov",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "4c468c48-b256-4f7c-9f90-caceff05b799"
+    },
+    {
+      "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/2025-12-22-professional-docs/he/professional-docs_2025-12-22-professional-docs.pdf",
+      "title": "professional-docs_2025-12-22-professional-docs.pdf",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "96ddbe2b-6976-400a-b3f5-651ce0c9cd4f"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1793",
+      "title": "האם ב-ICOs מונפקים ניירות ערך? על אסדרה של אסימונים דיגיטליים שמנפיקות חברות",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "b1e71c2f-6003-47b1-95a5-602749d9a03a"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-63a2db729e575/reportr13225.pdf",
+      "title": "דוח הערכת רגולציה - רשות ניירות ערך",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "government_report",
+      "candidate_id": "95bd3813-df0b-49c4-bc81-d0f94363d73c"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-63b3dc4fa5dd2/FinancialReport2024.pdf",
+      "title": "רשות ניירות ערך דוחות כספיים 2024",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "government_report",
+      "candidate_id": "3f114c21-bf95-46cf-9656-fd7064dd7dbc"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%A0%D7%99%D7%99%D7%A8%D7%95%D7%AA_%D7%A2%D7%A8%D7%9A_(%D7%93%D7%95%D7%90%D7%A8_%D7%90%D7%9C%D7%A7%D7%98%D7%A8%D7%95%D7%A0%D7%99_%D7%9E%D7%90%D7%95%D7%91%D7%98%D7%97)",
+      "title": "תקנות ניירות ערך (דואר אלקטרוני מאובטח)",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "israeli_law",
+      "candidate_id": "920377e0-bebe-441e-90e6-d46e932990ab"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/periodic-review-28112022/he/weekly_economic_review_periodic-review-28112022.pdf",
+      "title": "Weekly Economic Review / Periodic Review (28.11.2022)",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "80c060b4-990a-46f7-9672-9057de59daaa"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/publicsharing/public-participation-005/he/public_participation_travel_rule_p.pdf",
+      "title": "הערות הציבור: מסמך להתייחסות בנושא פעילות במטבעות וירטואליים",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a2783bde-7718-48a9-b466-6f58883ffc13"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_6.pdf",
+      "title": "איסור הלבנת הון: חידושים מקומיים ומגמות גלובליות | עידו באום (כרך י)",
+      "number": 5,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "d229455c-3207-45b6-a3a1-065a02d5214d"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%9E%D7%A1_%D7%A2%D7%A8%D7%9A_%D7%9E%D7%95%D7%A1%D7%A3",
+      "title": "חוק מס ערך מוסף",
+      "number": 6,
+      "origin": "local_db",
+      "source_type": "israeli_law",
+      "candidate_id": "b05881a0-81f6-495b-bdb7-1f6d69b0469c"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/1&fileName=SD1_2_9333-02.pdf&type=2",
+      "title": "ע\"א 9333-02 - מנהל מס ערך מוסף טבריה נ. אבו סאלח חוסין",
+      "number": 6,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "ccab533c-c837-44a5-999b-f607294d6f74"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 2,
+      "partial": 9,
+      "unrelated": 12,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 26,
+      "false": 0
+    }
+  },
+  "missing_required_anchors": null
+}

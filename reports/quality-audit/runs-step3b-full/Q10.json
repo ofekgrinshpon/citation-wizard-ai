@@ -1,0 +1,180 @@
+{
+  "id": "Q10",
+  "category": "academic_doctrine",
+  "query": "מהי גישת אהרן ברק בע\"א 4628/93 מדינת ישראל נ' אפרופים לפרשנות חוזים, וכיצד ביקר אותה דניאל פרידמן?",
+  "run_id": "23313f9b-5cc8-455f-8ef4-b5d1a10ddab9",
+  "ok": true,
+  "total_ms": 130211,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "answer": "**גישת השופט אהרן ברק בפסק‑דין ע\"א 4628/93 — תקציר**\n\nבפסק‑דין ע\"א 4628/93 (הלכת אפרופים) בולטת גישה הוליסטית־תכליתית לפרשנות חוזים: הטקסט נבחן בתוך ההקשר הרחב של הנסיבות והתכלית שבשמה הוסכם החוזה, והפרשנות אינה נאצלת לטקסט לבדו אלא שוקלת מדיניות ותכלית יחד עם משמעות לשונית.¹\n\nמן הפסיקה עולה בזהירות כי ברק אינו מבליע את הטקסט לגמרי; הוא יוצר היררכיה פרשנית שבה המשמעות הלשונית היא נקודת פתיחה, אך הקשר ותכלית יכולים להטות את הבחירה הפרשנית כאשר פרשנויות מילוליות אינן מספקות או כאשר הן מניבוּת תוצאה בלתי סבירה ביחס למטרת ההסדר.²\n\nהפסק‑דין דן גם בגבולות השימוש בראיות חיצוניות: השימוש בעדויות חוץ‑טקסטואליות—כפי שעולה בהחלטה—מותר כשנחוץ כדי לגלות את תכלית ההסכם או כדי למנוע תוצאה אבסורדית, אך יש להגבילו כדי לא לשחוק את ודאות השפה החוזית.³\n\n**עקרונות דוקטריניים מרכזיים הנגזרים מההלכה**\n\n- העדפת פרשנות הוליסטית: פירוש המבוסס על שילוב טקסט, הקשר ותכלית במקום גישה טקסטואלית צרה.²\n- היררכיה פרשנית מעשית: משמעות לשונית היא נקודת פתיחה אך אינה מכרעת אם ההקשר והתכלית מצביעים אחרת.¹\n- שימוש מפוקח בראיות חיצוניות: ראיות חוץ‑טקסטואליות מקובלות לצורך הבהרת תכלית או מניעת תוצאה בלתי סבירה, אך יש להן תפקיד משלימי ולא מוחלט.³\n- כלל 'נגד המנסח' והעדפות סותרות: בפשרות בין פרשנויות שקולות יש מקום לשקלול נורמות עזר כגון העדפת פרשנות נגד המנסח—נקודה שנדונה בספרות כהשלמה לדוקטרינה של ברק.⁴\n\n**ביקורת דניאל פרידמן על גישת ברק — תמצית הטענות ומה שמסמכים מאפיינים**\n\nלפי הניתוחים המתועדים במקורות שסופקו, ביקורתו של דניאל פרידמן מתמקדת בטענות הכוללות חשש מהרחבת כוח שיפוטי ונטייה ל'שיפוטיות' — כלומר, לפעולה שיפוטית שבה בית‑המשפט מעורב בפיתוח תוצאות בעלות נטיה פוליטית או מדיניות במקום לשמש פרשן שולי של הסכם בין צדדים.⁵\n\nפרידמן, כפי שמשתקף בסקירות ובניתוחים האקדמיים הצוברים את טיעוניו, מעלה גם ביקורת על חוסר בהירות נורמטיבית: גישה תכליתית רחבה עלולה להשאיר שופטים עם שדה שיקול רחב מדי ולפגוע בוודאות החוזית ובתחום הפעולה של המחוקק והרשות המבצעת.⁵\n\nהביקורת של פרידמן מוצגת ונבחנת במאמרים ובניתוחים עיוניים שמפנים אליו; בין המסמכים שדנים בטענות אלו וברקען מופיעים הפניות בספרות שמצוטטת כאן כמשקפת את עמדותיו ותגובות כלפי הרחבת השיפוט.⁵\n\n**השוואה ותמצית השלכות מעשיות — ברק מול המודל הממוזג/האלטרנטיבי של פרידמן**\n\nבטווח הקצר, גישת ברק (הוליסטית‑תכליתית) מקדמת גמישות פרשנית המאפשרת התאמת פרשנות לתכלית ולהקשר החברתי‑כלכלי של החוזה, אך במקביל עלולה להפחית וודאות חוזית ולייצר תוצאות תלויות בשיקול דעת שיפוטי רחב יותר.³\n\nעמדות פרידמן מדגישות את הסכנה שבהרחבת כוח השיפוט: מודל שבו השופט מצמצם את מרחב ה'יצירה' ועמידת הדגש על כללים ברורים עשוי לטפח ודאות, להגביל התערבות שיפוטית ולשמור על חלוקת הסמכויות בין רשויות.⁵\n\nבהשלכות לפרקטיקה בית‑המשפט: אימוץ מלא של גישת ברק מגדיל את הצורך בבירור נסיבות ההתקשרות ובדיונים על תכלית ומדיניות, בעוד שמודל משקף‑מגבלות (כפי שמבקריו מבקשים) עשוי לצמצם בירורים חוץ‑מילוליים ולמקד הכרעות במשמעות לשונית ובכללים פורמליים יותר.²\n\nבסיכום, המקורות המוצגים מצביעים על מתחרה־מתוח בין שני ערכים: גמישות ותכליתיות מול ודאות והגבלת כוח שיפוטי. מן החומרים שסופקו ייתכן להצביע על מגמות ועמדות, אך אין בהם כדי להחליף ניתוח פרטני של כל תיק או לקבוע מסקנה שיפוטית גורפת מעבר למה שנידון בפסיקה ובספרות.⁶",
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+      "title": "ע\"א 4628/93 הלכת אפרופים",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+          "title": "ע\"א 4628/93 הלכת אפרופים",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": null,
+      "title": "ע\"א 4628/93 הלכת אפרופים; מסמך מאתר אתר אקדמי (cris.tau.ac.il)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+          "title": "ע\"א 4628/93 הלכת אפרופים",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://cris.tau.ac.il/en/publications/%D7%AA%D7%9B%D7%9C%D7%99%D7%95%D7%AA-%D7%93%D7%99%D7%A0%D7%99-%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D-%D7%91%D7%90%D7%99%D7%96%D7%95-%D7%93%D7%A8%D7%9A-%D7%A2%D7%9C%D7%99%D7%A0%D7%95-%D7%9C%D7%9C%D7%9B%D7%AA-%D7%9B%D7%A9%D7%97%D7%A9%D7%95%D7%91-%D7%9C%D7%A0%D7%95-%D7%9C%D7%90%D7%9F-%D7%A0%D7%92%D7%99-2/",
+          "title": "מסמך מאתר אתר אקדמי (cris.tau.ac.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "ע\"א 4628/93 הלכת אפרופים; עוד על פירוש והשלמה של חוזים (Further Thoughts on Contract Interpretation and Supplementation)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+          "title": "ע\"א 4628/93 הלכת אפרופים",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2393646",
+          "title": "עוד על פירוש והשלמה של חוזים (Further Thoughts on Contract Interpretation and Supplementation)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "העצמה , שוויון ופרשנות; ע\"א 4628/93 הלכת אפרופים",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/12/%D7%93%D7%A4%D7%A0%D7%94-%D7%91%D7%A8%D7%A7-%D7%90%D7%A8%D7%96.pdf",
+          "title": "העצמה , שוויון ופרשנות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+          "title": "ע\"א 4628/93 הלכת אפרופים",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "כיצד הצליחה ועדת החוקה בכנסת השתים-עשרה במקום שבו נכשלו אחרים: דגשים והרהורים לגבי העתיד | אוריאל לין ושלומי לויה (כרך יד); מה קרה כאן למן שנות השבעים?",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://runilawreview.org/2012/10/31/volume14_lin_loya/",
+          "title": "כיצד הצליחה ועדת החוקה בכנסת השתים-עשרה במקום שבו נכשלו אחרים: דגשים והרהורים לגבי העתיד | אוריאל לין ושלומי לויה (כרך יד)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_f501087107fd42cd9209067d9f4193b6.pdf",
+          "title": "מה קרה כאן למן שנות השבעים?",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "ע\"א 4628/93 הלכת אפרופים; מה קרה כאן למן שנות השבעים?",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+          "title": "ע\"א 4628/93 הלכת אפרופים",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_f501087107fd42cd9209067d9f4193b6.pdf",
+          "title": "מה קרה כאן למן שנות השבעים?",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+      "title": "ע\"א 4628/93 הלכת אפרופים",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "9208d292-37ab-49fe-b840-f3989c35eaf8"
+    },
+    {
+      "url": "https://cris.tau.ac.il/en/publications/%D7%AA%D7%9B%D7%9C%D7%99%D7%95%D7%AA-%D7%93%D7%99%D7%A0%D7%99-%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D-%D7%91%D7%90%D7%99%D7%96%D7%95-%D7%93%D7%A8%D7%9A-%D7%A2%D7%9C%D7%99%D7%A0%D7%95-%D7%9C%D7%9C%D7%9B%D7%AA-%D7%9B%D7%A9%D7%97%D7%A9%D7%95%D7%91-%D7%9C%D7%A0%D7%95-%D7%9C%D7%90%D7%9F-%D7%A0%D7%92%D7%99-2/",
+      "title": "מסמך מאתר אתר אקדמי (cris.tau.ac.il)",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "dad2e789-89c7-4647-aa9a-7bbf19398c57"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2393646",
+      "title": "עוד על פירוש והשלמה של חוזים (Further Thoughts on Contract Interpretation and Supplementation)",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f969e74d-269f-496a-a33f-3828b1bc6310"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/12/%D7%93%D7%A4%D7%A0%D7%94-%D7%91%D7%A8%D7%A7-%D7%90%D7%A8%D7%96.pdf",
+      "title": "העצמה , שוויון ופרשנות",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "08272669-008d-4aaf-927b-7ad592c01400"
+    },
+    {
+      "url": "https://runilawreview.org/2012/10/31/volume14_lin_loya/",
+      "title": "כיצד הצליחה ועדת החוקה בכנסת השתים-עשרה במקום שבו נכשלו אחרים: דגשים והרהורים לגבי העתיד | אוריאל לין ושלומי לויה (כרך יד)",
+      "number": 5,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "ccadbc4f-07a6-4bf4-b551-a5ea52a84934"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_f501087107fd42cd9209067d9f4193b6.pdf",
+      "title": "מה קרה כאן למן שנות השבעים?",
+      "number": 5,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "26c20236-8b7a-4b5c-aaff-06e2c01606f7"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 0,
+      "partial": 8,
+      "unrelated": 4,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 12,
+      "false": 0
+    }
+  },
+  "missing_required_anchors": null
+}

@@ -1,0 +1,234 @@
+{
+  "id": "Q12",
+  "category": "thin_corpus",
+  "query": "מהי אחריותו של דירקטור בחברה פרטית לגילויי מידע על שימוש במערכות AI גנרטיביות בתהליכי קבלת החלטות?",
+  "run_id": "5117eb2f-6fbb-4728-b0e6-6f7517ebe261",
+  "ok": true,
+  "total_ms": 157331,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "answer": "**מסקנה מרכזית**\n\nעל בסיס המקורות שסופקו אין במסמכים האלה ראיה של חובת גילוי מפורשת בחוק החברות שבאופן אוטומטי מחייבת גילוי על שימוש במערכות AI גנרטיביות. יחד עם זאת, דוחות ממשלתיים והנחיות מגזריות מדגישים דרישה גוברת לשקיפות, לבדיקות נאותות ולתיעוד כשמשתמשים ב‑AI, ובפרט במגזר הפיננסי — ועומדים כציפייה רגולטורית מעשית שהדירקטוריון יידע ויפקח.\n\nדו\"חות בין‑משרדיים ודוחות סקירה רשמיים מציעים קווים מנחים ברורים לניהול סיכונים, לשקיפות ולתיעוד החלטות אוטומטיות, ומהווים בסיס למדיניות רגולטורית שצפויה להטיל דרישות חובתיות במקרים ספציפיים.¹\n\n**חובת הזהירות והדרישה לקבלת החלטה מיודעת**\n\nמן הספרות המשפטית עולה בזהירות כי כלל 'ההחלטה מיודעת' מחזק את חובת הזהירות של דירקטורים: משמעותה היא כי לפני קבלת החלטות אסטרטגיות עליהם ליזום ולאסוף מידע רלוונטי, להבין את הממדים העיקריים של הסיכון ולהפעיל שיקול דעת עסקי מסודר ביחס לנתונים ולכלים שנמצאים בבסיס ההכרעה.²\n\nביישום על כלים גנרטיביים, הדרישה לקבלת החלטה מיודעת עשויה לכלול למידה של גבולות המערכת, בדיקת אמינות ופיצוי הטיות, הערכת סיכונים משפטיים ואתיים, ובחירת נהלי בקרה; אי‑גילוי מהותי של מידע על מגבלות או סיכונים שידעו או שהיה על הדירקטור לדעתם — עלול להוות בסיס לטענה להפרת חובת זהירות/נאמנות, בנסיבות שבהן ההשמטה הייתה מהותית ופגעה בקבלת ההחלטה.³\n\n**סיכונים ואחריות במקרה של נזק**\n\nאם שימוש לא‑גילוי או גילוי מטעה לגבי שימוש ב‑AI יגרמו נזק לחברה או לבעלי מניות, הסיכונים הפרקטיים לדירקטור כוללים תביעות נגזרות על הפרת חובת זהירות/נאמנות, דרישה לפיצוי אישי במצבים של רשלנות או פעולה בניגוד לאינטרס החברה, וכן סנקציות רגולטוריות במקרה של הפרת כללי פרטיות או חובת דיווח רלוונטית.⁴\n\n**חובות רגולטוריות אחרות — פרטיות וצרכנות**\n\nהמסמכים הממשלתיים וההנחיות המקצועיות מצביעים בזהירות על כך שתיקון לחוק הגנת הפרטיות וסמכויות הרשות להגנת הפרטיות מחזקות את הצורך בביצוע בדיקות השפעה על פרטיות, בתיעוד עיבוד נתונים ובהשקיפות כלפי הרשויות והנפגעים הפוטנציאליים בעת שימוש ב‑AI.⁵\n\nבמקביל, ההמלצות בענף הצרכנות ובהנחיות למפקחים במגזר הפיננסי מדברות על גילוי והסברים לגבי החלטות אוטומטיות במקום בו החלטה משפיעה על זכויות צרכנים או גורמת לסיכון משמעותי; מעמדם של מסמכים אלה הוא הנחיית מדיניות שיכולה להשפיע על היקף החובה המוטלת על חברות ודירקטורים.⁶\n\n**המלצות ניהוליות ונהלי governance פרקטיים**\n\nלהקטנת סיכונים ולמילוי חובות הדירקטורים מומלץ לאמץ מדיניות תאגידית ברורה ל‑AI: מדיניות ברמת הדירקטוריון, מנגנוני דיווח פנימיים, רישום מערכות AI, בדיקות נאותות טרום יישום, והערכת סיכונים שוטפת.⁷\n\nצעדים מעשיים כוללים תיעוד החלטות שבהן הושפעו מתוצרים של AI, ביצוע בדיקות אמינות ובחינות להשפעות פרטיות (DPIA), נהלי אימות/וולידציה של מודלים, ביקורות חיצוניות לפי צורך, הכשרות לחברי הדירקטוריון והנהלה, והגדרת סף גילוי פנימי וחיצוני (לרשויות ולבעלי עניין) שאם הוא נפרץ יצריך גילוי מפורש.⁷\n\nלסיכום מעשי: לאור היעדר חובת גילוי מפורשת בחומר שסופק והיענות ההמלצות הרגולטוריות והניהוליות, רצוי כי דירקטורים ינקוטו בגישה פרואקטיבית — ללמוד את המערכות, לדרוש בדיקות נאותות, לתעד ולגילוי במקרים מהותיים, וליישם מדיניות פנימית ברורה שתקטין סיכון משפטי, רגולטורי ותדמיתי.",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "הודעה משותפת - צוות AI - Gov.il; מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/reports/report_0014/he/04_10_2024_word.docx",
+          "title": "הודעה משותפת - צוות AI - Gov.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/ai_report/he/AI_report.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "עלייתו של שיקול הדעת העסקי ונפילתה של חובת הזהירות של דירקטורים; כלל שיקול הדעת העסקי והדרישה לקבל החלטה 'מיודעת'; הדירקטוריון: תיאוריה, ראיות ומדיניות / Board Independence and Refreshment: Theory, Evidence and Policy",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://cris.tau.ac.il/en/publications/%D7%A2%D7%9C%D7%99%D7%99%D7%AA%D7%95-%D7%A9%D7%9C-%D7%A9%D7%99%D7%A7%D7%95%D7%9C-%D7%94%D7%93%D7%A2%D7%AA-%D7%94%D7%A2%D7%A1%D7%A7%D7%99-%D7%95%D7%A0%D7%A4%D7%99%D7%9C%D7%AA%D7%94-%D7%A9%D7%9C-%D7%97%D7%95%D7%91%D7%AA-%D7%94%D7%96%D7%94%D7%99%D7%A8%D7%95%D7%AA-%D7%A9%D7%9C-%D7%93%D7%99%D7%A8%D7%A7%D7%98%D7%95%D7%A8%D7%99%D7%9D/",
+          "title": "עלייתו של שיקול הדעת העסקי ונפילתה של חובת הזהירות של דירקטורים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-12/%D7%9B%D7%9C%D7%9C%20%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%94%D7%93%D7%A2%D7%AA%20%D7%94%D7%A2%D7%99%D7%A1%D7%A7%D7%99%20%D7%95%D7%94%D7%93%D7%A8%D7%99%D7%A9%D7%94%20%D7%9C%D7%A7%D7%91%D7%9C%20%D7%94%D7%97%D7%9C%D7%98%D7%94%20''%D7%9E%D7%99%D7%95%D7%93%D7%A2%D7%AA''%20-%20%D7%A8%D7%95%D7%AA%20%D7%A8%D7%95%D7%A0%D7%9F%20%D7%95%D7%A9%D7%99%D7%A8%20%D7%90%D7%A9%D7%9B%D7%95%D7%9C.pdf",
+          "title": "כלל שיקול הדעת העסקי והדרישה לקבל החלטה 'מיודעת'",
+          "source_type": "other"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3265975",
+          "title": "הדירקטוריון: תיאוריה, ראיות ומדיניות / Board Independence and Refreshment: Theory, Evidence and Policy",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "עלייתו של שיקול הדעת העסקי ונפילתה של חובת הזהירות של דירקטורים; כלל שיקול הדעת העסקי והדרישה לקבל החלטה 'מיודעת'",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://cris.tau.ac.il/en/publications/%D7%A2%D7%9C%D7%99%D7%99%D7%AA%D7%95-%D7%A9%D7%9C-%D7%A9%D7%99%D7%A7%D7%95%D7%9C-%D7%94%D7%93%D7%A2%D7%AA-%D7%94%D7%A2%D7%A1%D7%A7%D7%99-%D7%95%D7%A0%D7%A4%D7%99%D7%9C%D7%AA%D7%94-%D7%A9%D7%9C-%D7%97%D7%95%D7%91%D7%AA-%D7%94%D7%96%D7%94%D7%99%D7%A8%D7%95%D7%AA-%D7%A9%D7%9C-%D7%93%D7%99%D7%A8%D7%A7%D7%98%D7%95%D7%A8%D7%99%D7%9D/",
+          "title": "עלייתו של שיקול הדעת העסקי ונפילתה של חובת הזהירות של דירקטורים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-12/%D7%9B%D7%9C%D7%9C%20%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%94%D7%93%D7%A2%D7%AA%20%D7%94%D7%A2%D7%99%D7%A1%D7%A7%D7%99%20%D7%95%D7%94%D7%93%D7%A8%D7%99%D7%A9%D7%94%20%D7%9C%D7%A7%D7%91%D7%9C%20%D7%94%D7%97%D7%9C%D7%98%D7%94%20''%D7%9E%D7%99%D7%95%D7%93%D7%A2%D7%AA''%20-%20%D7%A8%D7%95%D7%AA%20%D7%A8%D7%95%D7%A0%D7%9F%20%D7%95%D7%A9%D7%99%D7%A8%20%D7%90%D7%A9%D7%9B%D7%95%D7%9C.pdf",
+          "title": "כלל שיקול הדעת העסקי והדרישה לקבל החלטה 'מיודעת'",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "הודעה משותפת - צוות AI - Gov.il; מסמך מאתר אתר ממשלתי (gov.il); עלייתו של שיקול הדעת העסקי ונפילתה של חובת הזהירות של דירקטורים",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/reports/report_0014/he/04_10_2024_word.docx",
+          "title": "הודעה משותפת - צוות AI - Gov.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/ai_report/he/AI_report.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://cris.tau.ac.il/en/publications/%D7%A2%D7%9C%D7%99%D7%99%D7%AA%D7%95-%D7%A9%D7%9C-%D7%A9%D7%99%D7%A7%D7%95%D7%9C-%D7%94%D7%93%D7%A2%D7%AA-%D7%94%D7%A2%D7%A1%D7%A7%D7%99-%D7%95%D7%A0%D7%A4%D7%99%D7%9C%D7%AA%D7%94-%D7%A9%D7%9C-%D7%97%D7%95%D7%91%D7%AA-%D7%94%D7%96%D7%94%D7%99%D7%A8%D7%95%D7%AA-%D7%A9%D7%9C-%D7%93%D7%99%D7%A8%D7%A7%D7%98%D7%95%D7%A8%D7%99%D7%9D/",
+          "title": "עלייתו של שיקול הדעת העסקי ונפילתה של חובת הזהירות של דירקטורים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תחולת הוראות חוק הגנת הפרטיות על מערכות בינה מלאכותית; מדריך | תיקון מס' 13 לחוק הגנת הפרטיות; הודעה משותפת - צוות AI - Gov.il",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/rfp/ai_reg/he/ai_regu_draft.pdf",
+          "title": "תחולת הוראות חוק הגנת הפרטיות על מערכות בינה מלאכותית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/reports/guide_tikon13_professional/he/tikun%2013%20_170825.pdf",
+          "title": "מדריך | תיקון מס' 13 לחוק הגנת הפרטיות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/reports/report_0014/he/04_10_2024_word.docx",
+          "title": "הודעה משותפת - צוות AI - Gov.il",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/ai_report/he/AI_report.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/news/ai_report/he/AI_report.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "הודעה משותפת - צוות AI - Gov.il; מסמך מאתר אתר ממשלתי (gov.il); מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/reports/report_0014/he/04_10_2024_word.docx",
+          "title": "הודעה משותפת - צוות AI - Gov.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/ai_report/he/AI_report.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://harhayeda.gov.il/technological-guides/responsible-ai/",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.gov.il/BlobFolder/reports/report_0014/he/04_10_2024_word.docx",
+      "title": "הודעה משותפת - צוות AI - Gov.il",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "fa29c8e4-d929-40e3-95d5-2f3cbadb962e"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/ai_report/he/AI_report.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "415b0fab-c4e2-49c8-b91a-236f82758186"
+    },
+    {
+      "url": "https://cris.tau.ac.il/en/publications/%D7%A2%D7%9C%D7%99%D7%99%D7%AA%D7%95-%D7%A9%D7%9C-%D7%A9%D7%99%D7%A7%D7%95%D7%9C-%D7%94%D7%93%D7%A2%D7%AA-%D7%94%D7%A2%D7%A1%D7%A7%D7%99-%D7%95%D7%A0%D7%A4%D7%99%D7%9C%D7%AA%D7%94-%D7%A9%D7%9C-%D7%97%D7%95%D7%91%D7%AA-%D7%94%D7%96%D7%94%D7%99%D7%A8%D7%95%D7%AA-%D7%A9%D7%9C-%D7%93%D7%99%D7%A8%D7%A7%D7%98%D7%95%D7%A8%D7%99%D7%9D/",
+      "title": "עלייתו של שיקול הדעת העסקי ונפילתה של חובת הזהירות של דירקטורים",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d1dba45f-f51a-4ed6-a4ad-f687fdcbd90d"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-12/%D7%9B%D7%9C%D7%9C%20%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%94%D7%93%D7%A2%D7%AA%20%D7%94%D7%A2%D7%99%D7%A1%D7%A7%D7%99%20%D7%95%D7%94%D7%93%D7%A8%D7%99%D7%A9%D7%94%20%D7%9C%D7%A7%D7%91%D7%9C%20%D7%94%D7%97%D7%9C%D7%98%D7%94%20''%D7%9E%D7%99%D7%95%D7%93%D7%A2%D7%AA''%20-%20%D7%A8%D7%95%D7%AA%20%D7%A8%D7%95%D7%A0%D7%9F%20%D7%95%D7%A9%D7%99%D7%A8%20%D7%90%D7%A9%D7%9B%D7%95%D7%9C.pdf",
+      "title": "כלל שיקול הדעת העסקי והדרישה לקבל החלטה 'מיודעת'",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "da99f3a6-157d-4758-9e4a-72e402c021e8"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3265975",
+      "title": "הדירקטוריון: תיאוריה, ראיות ומדיניות / Board Independence and Refreshment: Theory, Evidence and Policy",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f127cc10-5a5d-4682-bc7d-00f5a2bc2246"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/rfp/ai_reg/he/ai_regu_draft.pdf",
+      "title": "תחולת הוראות חוק הגנת הפרטיות על מערכות בינה מלאכותית",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "6dfaa51f-595c-41b8-b6c0-2b52d3f7e1dd"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/reports/guide_tikon13_professional/he/tikun%2013%20_170825.pdf",
+      "title": "מדריך | תיקון מס' 13 לחוק הגנת הפרטיות",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d36db5f4-6cff-4037-94be-126d4ff160f1"
+    },
+    {
+      "url": "https://harhayeda.gov.il/technological-guides/responsible-ai/",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a6443a99-126f-4585-b45c-e5863c964dad"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 3,
+      "partial": 5,
+      "unrelated": 13,
+      "tangential": 1
+    },
+    "by_role_match": {
+      "true": 22,
+      "false": 0
+    }
+  },
+  "missing_required_anchors": null
+}

@@ -1,0 +1,250 @@
+{
+  "id": "Q05",
+  "category": "amendment_history",
+  "query": "מהם השינויים המרכזיים בתיקון 154 לחוק סדר הדין הפלילי, ומתי נכנס לתוקף?",
+  "run_id": "be3bf23e-0668-4f88-95a6-db77ddec71e4",
+  "ok": true,
+  "total_ms": 129691,
+  "answer_intent": {
+    "output_shape": "list"
+  },
+  "answer": "- שינוי מהותי במסירת תשובת הנאשם: תיקון 154 מחייב את בית המשפט לשאול את הנאשם על כל עובדה שבכתב האישום בנפרד, והנאשם מתבקש להודות או לכפור בכל עובדה בפני עצמה — שינוי מהותי במנוחת התשובה שלא אפשר תיוג כללי בלבד.¹\n- הגנות ותנאים נלווים לתשובה: התיקון קובע זכות לעיון בחומר החקירה וברשימת החומר לפני מתן התשובה, וכן עניין של יכולת לתקן את תשובת הנאשם בתנאים שיפורטו; הוראות אלה נועדו לאזן בין חובת ההבהרה לפרטיות והגינות ההליך.¹\n- שינויים פרוצדורליים נוספים שנזכרו בנוסח החוק: במסמכי התזכיר והנוסח מופיעות הצעות לשינוי הסדרי ברירת הקנס (המרה לעבירות מסוג \"ברירת משפט\") ולתאמות אחרות בפרוצדורה הפלילית; אלה מצביעות על הרחבת השינויים שמעבר לנסח התשובה.²\n- הוראות כניסה לתוקף ופרקי מעבר — תמונת המצב מן החומרים: בנוסחי חקיקה רגילים (ובמפורש בנוסח התיקון) מצויה הוראה על מועדי כניסה לתוקף ותקופת מעבר, אך בסכר החומרים שסופקו לא נמצא בפירוש תאריך כניסה מדויק אחד שהובא כאן; מסמכים רשמיים מציינים כי סעיפים מעשיים אלה נכללים בנוסח והם מדריכים את תחולת התיקון.³\n- מחלוקות על תחולה ורטרואקטיביות: לפחות פסק‑דין מחוזי אחד דן בתחולת תיקון 154 ושאלת הרטרואקטיביות שלו, ובכך ניכרת השאלה האם וכיצד החל התיקון לגבי מקרים שקדמו לפרסומו; דיון זה ממחיש שיישום התיקון עלול לעורר טענות תחולה ולקבל הכרעות שיפוטיות ספציפיות.⁴\n- הצורך בתקנות והנחיות ביצועיות: נוסח התיקון כולל סמכויות ורמזים להנפקת תקנות והנחיות ליישום נהלים (לדוגמה להסדרת עיון בחומר החקירה ולמנגנון תיקון תשובות); מסמכים ממשלתיים ונוהלי משרד המשפטים מצביעים בדרך כלל על צורך בהנחיות יישום, ואגף הסניגוריה פרסם עמדות הנוגעות להשפעות מעשיות על זכויות נחקרים.⁵\n- השפעה מעשית ופסיקה ראשונית: מהמקטעים שנמצאו עולה כי בתי משפט כבר נדרשו לפרש את תחולת התיקון (במחוזי בנצרת) ושהציבור המקצועי (למשל הסניגוריה הציבורית) הצביע על השלכות על נהלי חקירה וזכויות הנאשם; עם זאת אין בספר החומרים כאן די כדי לטעון לקיומה של הלכה על-מנתה או לשינוי פסיקתי גורף — יש לצפות לפרשנות מצטברת בבתי המשפט ככל שיוכנסו סעיפים לתוקף ויתבהרו התקנות.⁶\n- המלצת פעולה מעשית למנהלי הליכים ופרקליטים: יש לעיין באופן מדויק בנוסח הסופי של תיקון 154 ובסעיפי הכניסה לתוקף ובתקנות הנלוות בטרם ננקטים צעדים פרוצדורליים (ולבדוק אם ליחידות אכיפה הונחו נהלים חדשים), משום שהשינוי בתשובת הנאשם עלול להשפיע על טקטיקות הגנה והליך העיון בחומר החקירה.⁷",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "הצעת חוק סדר הדין הפלילי (תיקון מס' ... ) – מסמך רקע/הסבר לוועדה; נוסח הצעת חוק/נוסח מעודכן – תיקון לחוק סדר הדין הפלילי",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/18/Committees/18_cs_bg_333314.doc",
+          "title": "הצעת חוק סדר הדין הפלילי (תיקון מס' ... ) – מסמך רקע/הסבר לוועדה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/%5C18%5CCommittees%5C18_cs_bg_329085.doc",
+          "title": "נוסח הצעת חוק/נוסח מעודכן – תיקון לחוק סדר הדין הפלילי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "הצעת חוק סדר הדין הפלילי (תיקון מס' 154); תזכיר ברירות משפט סופי ספטמבר 2015",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_lst_5275365.docx",
+          "title": "הצעת חוק סדר הדין הפלילי (תיקון מס' 154)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.tazkirim.gov.il/sfc/servlet.shepherd/version/download/0683Y000009E3HHQA0",
+          "title": "תזכיר ברירות משפט סופי ספטמבר 2015",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "הצעת חוק/חוק כנסת (PDF); דברי הסבר - Gov.il; הצעת חוק סדר הדין הפלילי (תיקון מס' 154)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_ls1_5099190.pdf",
+          "title": "הצעת חוק/חוק כנסת (PDF)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/16122020/he/16.12-explanatory.pdf",
+          "title": "דברי הסבר - Gov.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_lst_5275365.docx",
+          "title": "הצעת חוק סדר הדין הפלילי (תיקון מס' 154)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/legalinfo/law2458-12-19/he/2458-12-19.pdf",
+      "title": "בית המשפט המחוזי בנצרת בשבתו כבית-משפט לעניינים מנהליים – פסק דין בתיק מס' 2458-12-19",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/law2458-12-19/he/2458-12-19.pdf",
+          "title": "בית המשפט המחוזי בנצרת בשבתו כבית-משפט לעניינים מנהליים – פסק דין בתיק מס' 2458-12-19",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": null,
+      "title": "הצעת חוק סדר הדין הפלילי (תיקון מס' 154); מסמך מאתר אתר ממשלתי (gov.il); עמדה בנוגע לחוק חקירת חשודים",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_lst_5275365.docx",
+          "title": "הצעת חוק סדר הדין הפלילי (תיקון מס' 154)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/adm-dep-stock-3/he/files_hanhayat_ProsecutorsCriminalProcedureOffenses44.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/pdo_14/he/public_defeder_stand_suspect_investigation.pdf",
+          "title": "עמדה בנוגע לחוק חקירת חשודים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בית המשפט המחוזי בנצרת בשבתו כבית-משפט לעניינים מנהליים – פסק דין בתיק מס' 2458-12-19; עמדה בנוגע לחוק חקירת חשודים; חוקים בקצרה – חוק סדר הדין הפלילי / זכויות נאשמים בהליך הפלילי",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/law2458-12-19/he/2458-12-19.pdf",
+          "title": "בית המשפט המחוזי בנצרת בשבתו כבית-משפט לעניינים מנהליים – פסק דין בתיק מס' 2458-12-19",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/pdo_14/he/public_defeder_stand_suspect_investigation.pdf",
+          "title": "עמדה בנוגע לחוק חקירת חשודים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.huji.ac.il/sites/default/files/law/files/akifamaatzarimyl.pdf",
+          "title": "חוקים בקצרה – חוק סדר הדין הפלילי / זכויות נאשמים בהליך הפלילי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "נוסח הצעת חוק/נוסח מעודכן – תיקון לחוק סדר הדין הפלילי; הצעת חוק סדר הדין הפלילי (תיקון מס' 154); מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/%5C18%5CCommittees%5C18_cs_bg_329085.doc",
+          "title": "נוסח הצעת חוק/נוסח מעודכן – תיקון לחוק סדר הדין הפלילי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_lst_5275365.docx",
+          "title": "הצעת חוק סדר הדין הפלילי (תיקון מס' 154)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/adm-dep-stock-3/he/files_hanhayat_ProsecutorsCriminalProcedureOffenses44.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://fs.knesset.gov.il/18/Committees/18_cs_bg_333314.doc",
+      "title": "הצעת חוק סדר הדין הפלילי (תיקון מס' ... ) – מסמך רקע/הסבר לוועדה",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a21202db-9db2-4985-849d-75789e5e24d6"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/%5C18%5CCommittees%5C18_cs_bg_329085.doc",
+      "title": "נוסח הצעת חוק/נוסח מעודכן – תיקון לחוק סדר הדין הפלילי",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "cfa5a997-e6cc-4099-a690-705e6dc9801c"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_lst_5275365.docx",
+      "title": "הצעת חוק סדר הדין הפלילי (תיקון מס' 154)",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e2eeb60e-ab4e-45c4-bed5-9b3b81e5412e"
+    },
+    {
+      "url": "https://www.tazkirim.gov.il/sfc/servlet.shepherd/version/download/0683Y000009E3HHQA0",
+      "title": "תזכיר ברירות משפט סופי ספטמבר 2015",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "18921e38-43ce-4473-ae76-b39e63d4585a"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_ls1_5099190.pdf",
+      "title": "הצעת חוק/חוק כנסת (PDF)",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "404ac08f-de92-43ec-85d4-1f3fd3d46992"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/16122020/he/16.12-explanatory.pdf",
+      "title": "דברי הסבר - Gov.il",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "dcae5ae5-c6bb-4a66-9e68-7b67ecdd63b2"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/legalinfo/law2458-12-19/he/2458-12-19.pdf",
+      "title": "בית המשפט המחוזי בנצרת בשבתו כבית-משפט לעניינים מנהליים – פסק דין בתיק מס' 2458-12-19",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "caselaw",
+      "candidate_id": "7ec8759c-9eaf-4c3f-9f85-dd803a023e54"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/generalpage/adm-dep-stock-3/he/files_hanhayat_ProsecutorsCriminalProcedureOffenses44.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "bfcec369-d8a2-4234-9c5f-f3239f0f3c8c"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/pdo_14/he/public_defeder_stand_suspect_investigation.pdf",
+      "title": "עמדה בנוגע לחוק חקירת חשודים",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "91645a8b-ab3a-4ea6-aceb-406f5efc652f"
+    },
+    {
+      "url": "https://law.huji.ac.il/sites/default/files/law/files/akifamaatzarimyl.pdf",
+      "title": "חוקים בקצרה – חוק סדר הדין הפלילי / זכויות נאשמים בהליך הפלילי",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "62fa1dcc-2c55-4fde-8856-2c9054ac6dc2"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 4,
+      "partial": 8,
+      "unrelated": 6,
+      "tangential": 7
+    },
+    "by_role_match": {
+      "true": 20,
+      "false": 5
+    }
+  },
+  "missing_required_anchors": null
+}

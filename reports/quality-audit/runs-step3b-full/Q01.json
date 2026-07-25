@@ -1,0 +1,159 @@
+{
+  "id": "Q01",
+  "category": "docket_holding",
+  "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
+  "run_id": "162ed35d-f098-4ef8-99b7-930d1f2ab1ec",
+  "ok": true,
+  "total_ms": 213793,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "answer": "**הכרעת בג\"ץ 6298/07 — עיקרי ההלכה**\n\nבג\"ץ 6298/07 (רסלר נ' כנסת ישראל) דן בחוקתיות 'חוק דחיית שירות לתלמידי ישיבות (חוק טל)' והכריע כי ההסדר שבחוק פוגע בעקרון השוויון ושאלות הפוגעות בפסקת ההגבלה עומדות בליבת המחלוקת.¹\n\nבית המשפט מצא שהתוצאה היא פגיעה קבוצתית שאינה נובעת מ'שונות רלוונטית' המספקת הצדקה חוקתית להבחנה, ובחן את שאלות המידתיות של פסקת ההגבלה — המסקנה הייתה כי ההבחנה לא עמדה בבחינות ההצדקה והמידתיות שנדרשות כדי להצדיק פגיעה בעקרון השוויון.²\n\nכסעד בפסק הדין הורה בית המשפט שלא לאפשר המשכה של ההסדרה על בסיס אותו נוסח; בפועל, כאשר תוקפו הזמני של החוק פקע הוא לא הופרח וההסדר הוכר כבטל עם פקיעתו.³\n\nמבחינה מעשית, נוסח החוק קבע תקופת תוקף מוגבלת (חמש שנים), ועל כן ההכרעה של בג\"ץ וההחלטה שלא להאריך את תוקפו גרמו לכך שההסדר המקורי לדחיית שירות חדל להתקיים; יחד עם זאת, סוגיית דחיית שירות תלמידי ישיבות המשיכה להידון ולהשפיע בפסיקה ובהליכים מאוחרים.⁴\n\nסיכום: בית המשפט קבע כי חוק טל חרג ממגבלות פסקת ההגבלה ופגע בשוויון באופן שהניא את ההסדר מלהישאר בתוקף לאחר תום התקופה שנקבעה בחוק. עם זאת, ההשלכות המעשיות של ההכרעה המשיכו להתגלגל בפסיקה ובהתלבטויות החקיקתיות שלא נסקרו כאן בפירוט.",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "החלטה בתיק בג\"ץ 6298/07; פסיקתו של הנשיא גרוניס לאור התאוריה החוקתית",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/l1_1.pdf",
+          "title": "פסיקתו של הנשיא גרוניס לאור התאוריה החוקתית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); חרדים לביטחון המדינה: מתווה מותאם לגיוס חרדים ומבט מחודש בזכות לשוויון (כרך נה); פסיקתו של הנשיא גרוניס לאור התאוריה החוקתית",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1982",
+          "title": "חרדים לביטחון המדינה: מתווה מותאם לגיוס חרדים ומבט מחודש בזכות לשוויון (כרך נה)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/l1_1.pdf",
+          "title": "פסיקתו של הנשיא גרוניס לאור התאוריה החוקתית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); החלטה בתיק בג\"ץ 6298/07",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם, תשס\"ב-2002; פסק דין 5658-23; מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/999_152.htm",
+          "title": "חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם, תשס\"ב-2002",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5658-23/he/5658-23%20%D7%A4%D7%A1%D7%A7%20%D7%93%D7%99%D7%9F.docx",
+          "title": "פסק דין 5658-23",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "caselaw",
+      "candidate_id": "7d6997ce-6da1-40d1-aea2-154517f19033"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/l1_1.pdf",
+      "title": "פסיקתו של הנשיא גרוניס לאור התאוריה החוקתית",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "8b37aee8-36dc-43a4-8bcd-4ffacfa7c374"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "0001fdbb-8df0-412c-a7bb-1aaf890fc196"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1982",
+      "title": "חרדים לביטחון המדינה: מתווה מותאם לגיוס חרדים ומבט מחודש בזכות לשוויון (כרך נה)",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "090ca2d1-4ded-4038-b9bf-bc05a59ff197"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/999_152.htm",
+      "title": "חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם, תשס\"ב-2002",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "35385e00-89c4-4d66-85c7-4dcf473dab69"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5658-23/he/5658-23%20%D7%A4%D7%A1%D7%A7%20%D7%93%D7%99%D7%9F.docx",
+      "title": "פסק דין 5658-23",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "073c45d9-3209-45bf-9e8e-c647034307b2"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 2,
+      "partial": 4,
+      "unrelated": 6,
+      "tangential": 8
+    },
+    "by_role_match": {
+      "true": 20,
+      "false": 0
+    }
+  },
+  "missing_required_anchors": null
+}

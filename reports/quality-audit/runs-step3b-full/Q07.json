@@ -1,0 +1,297 @@
+{
+  "id": "Q07",
+  "category": "mandate_ordinance",
+  "query": "האם פקודת הנזיקין [נוסח חדש] היא הנוסח המחייב היום, ומה מעמדה של הפקודה המנדטורית המקורית משנת 1944?",
+  "run_id": "72196cca-b3c8-4f16-b8c3-04efc7b929dd",
+  "ok": true,
+  "total_ms": 133431,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "answer": "**מסקנה קצרה**\n\nקצרה: מן המקורות שנמסרו עולה בזהירות כי פקודת הנזיקין המופיעה כ\"פקודת הנזיקין [נוסח חדש]\" היא הטקסט הרשמי המפורסם הרלוונטי בימינו (עם ציון תחילת חלוף הנוסח החדש ב‑1.10.1968); יחד עם זאת מעמדה ביחס ל'פקודה המנדטורית' ולשאלת החלפתה המוחלטת דורש בדיקה פרשנית של סמכויות ההוצאה, ההיסטוריה החקיקתית ופסיקה נוגעת בדבר.¹\n\n**מעמד פורמלי של \"נוסח חדש\"**\n\nמבחינה פורמלית, המנגנון של הוצאת \"נוסח חדש\" מבוסס על הוראות שנוגעות להסדרת נוסחים וחיבורים של חקיקה; במסמכים הרשמיים מוסבר שיישום המנגנון נעשה לפי ההוראות הקבועות ולפרקטיקה של משרד המשפטים בעת עריכת נוסח חדש או משולב.²\n\nהטקסט המפורסם של פקודת הנזיקין [נוסח חדש] עצמו פורסם ומוצג כטקסט החקיקה הרשמי, כולל ציון מועד תחילתו (1.10.1968), ולכן מבחינת עיון ויישום שוטף הוא הנוסח המודפס והמפורסם שנמצא בשימוש רשמי.³\n\n**מעמדה של הפקודה המנדטורית משנת 1944**\n\nהיסטורית, פקודות מנדטוריות כמו זו מ‑1944 היו מקור יסוד לדיני הנזיקין בתחילת המדינה, אך העברתם אל המציאות החוקתית והחקיקתית של מדינת ישראל נעשתה בשלבים שכוללים קליטה, פרשנות והחלפה או התאמה על‑ידי חקיקה מתמשכת ומסמכי \"נוסח חדש\".⁴\n\nהאם הפקודה המנדטורית בוטלה פורמלית או נשארה כטקסט נפרד תלוי במעשים המשפטיים והחקיקתיים שננקטו: בתי משפט ודיונים פרשניים קבעו כללים מתי חקיקה מאוחרת 'מסתירה' או מחליפה תקנות ופקודות קודמות, כך שהשאלה מיוחסת ליחס בין הנוסח החדש לבין טקסט המקור והאם ננקטו ביטולים או שינויים מפורשים.⁵\n\n**הבחנה בין קונסולידציה טכנית לשינוי מהותי**\n\nהמסקנות המחקריות והחקיקתיות שמוצגות במקורות מצביעות כי אי־אפשר להניח מראש שהנוסח החדש הוא רק קונסולידציה טכנית: מחקרים מקצועיים מצביעים על התאמות דוקטרינליות שנעשו בנוסח החדש, ולעתים הצעות חוק עוסקות בהבהרה או בהרחבה של סמכויות שקוימו בפסיקה.⁶\n\nלפיכך בכל מחלוקת פרשנית שבה נחוץ לברר האם נוסח קביל שינה מהותית — יש לבחון את הטקסט המפורסם, תיקוני חקיקה והסמכות שנטלו להוציא את הנוסח, וכן את התעודה הפרשנית (הצעות חוק, מסמכי נימוק, ופסקי דין רלוונטיים).⁶\n\n**אופן הציטוט והפרקטיקה השיפוטית**\n\nהפרקטיקה המקצועית והשיפוטית בישראל מצטטת ברוב המקרים את ה'נוסח החדש' כשם רשמי של הפקודה; כך עולה מציטוטים בפסיקה ובמאמרים מקצועיים שבהם מצורפת התוספת '(נוסח חדש)' כשהפקודה מובאת.⁷\n\nמכאן שבפועל עיון בפסיקה וכתבי טענות ימצא התייחסות ישירה ל'נוסח החדש' כמקור החקיקה המעשי, בעוד שהפקודה המנדטורית העתיקה תופיע בעיקר כעוגן היסטורי או כטקסט שיש להשוות אליו במקרים של פירוש היסטורי.⁸\n\n**השלכות מעשיות וממלצות לפרקטיקה**\n\nלמעשה מעשי: בעת עיון, ציטוט או הגשה בעניין נזיקין יש להביא את פקודת הנזיקין כפי מופיעה ב'נוסח חדש' כטקסט המעשי והמחייב לצרכי פרשנות וסעד; במקביל, כאשר עולה שאלה היסטורית או כשקיימת מחלוקת האם נוסח חדש שינה נורמה מהותית — יש להתעמק בהיסטוריה החקיקתית, בהצעת החוק ובפסיקה הרלוונטית.⁹\n\nלסיכום: יש להניח שה'נוסח החדש' הוא הנוסח הממומש והמעשי של פקודת הנזיקין כיום, אך השאלה האם הוא 'החליף' את הפקודה המנדטורית בכל מובן פרשני אינה אוטומטית — היא מצריכה בחינה של טקסטים, סמכויות הוצאה ותיקוני חקיקה, וברוב המקרים תיעשה בהסתמכות על נוסח החדש יחד עם בדיקה היסטורית בעת הצורך.¹⁰",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "פקודת הנזיקין [נוסח חדש]; מבוא לפקודה / מסמך כנסת",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/73015.htm",
+          "title": "פקודת הנזיקין [נוסח חדש]",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289970.PDF",
+          "title": "מבוא לפקודה / מסמך כנסת",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מבוא לפקודה / מסמך כנסת; מדריך לניסוח חקיקה",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289970.PDF",
+          "title": "מבוא לפקודה / מסמך כנסת",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/guide/legislation-documents/he/NisuahHakika0608190921.pdf",
+          "title": "מדריך לניסוח חקיקה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/73015.htm",
+      "title": "פקודת הנזיקין [נוסח חדש]",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/73015.htm",
+          "title": "פקודת הנזיקין [נוסח חדש]",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "בין שני עולמות — מורשת המשפט המנדטורי במדינת ישראל בראשיתה; המשפט המנדטורי ומורשתו",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Page.aspx?nBookID=17149763&nTocEntryID=17422093&nPageID=17300161",
+          "title": "בין שני עולמות — מורשת המשפט המנדטורי במדינת ישראל בראשיתה",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://www.tau.ac.il/law/likhovski/Between%20Two%20Worlds.doc",
+          "title": "המשפט המנדטורי ומורשתו",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1374-23-%d7%97%d7%90%d7%92%d7%a8-%d7%a0%d7%95%d7%a8%d7%99-%d7%9c%d7%93%d7%a8-%d7%a6%d7%95%d7%a3-%d7%a0-%d7%9e%d7%a4%d7%a7%d7%93-%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a6%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1374-23-%d7%97%d7%90%d7%92%d7%a8-%d7%a0%d7%95%d7%a8%d7%99-%d7%9c%d7%93%d7%a8-%d7%a6%d7%95%d7%a3-%d7%a0-%d7%9e%d7%a4%d7%a7%d7%93-%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a6%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": null,
+      "title": "חצי יובל לפקודת הנזיקין האזרחייס — בעיות ומגמות; הצעת חוק פקודת הנזיקין [נוסח חדש] (תיקון - פיצויים עונשיים)",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-05-3-564.pdf",
+          "title": "חצי יובל לפקודת הנזיקין האזרחייס — בעיות ומגמות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/15/law/15_lst_545298.doc",
+          "title": "הצעת חוק פקודת הנזיקין [נוסח חדש] (תיקון - פיצויים עונשיים)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "ע\"א 7606/19 מגה קמעונאות בע\"מ נ׳ הלמן אלדובי קופות פנביה וגמל בע\"מ פס\"ד פסק דין (08.08.2022); מסמך מאתר hapraklit.co.il; הרוקחים [נוסח חדש], התשמ\"א-1981",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-7606-19-%d7%9e%d7%92%d7%94-%d7%a7%d7%9e%d7%a2%d7%95%d7%a0%d7%90%d7%95%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%94%d7%9c%d7%9e%d7%9f-%d7%90%d7%9c%d7%93%d7%95%d7%91%d7%99-%d7%a7%d7%95%d7%a4/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 7606/19 מגה קמעונאות בע\"מ נ׳ הלמן אלדובי קופות פנביה וגמל בע\"מ פס\"ד פסק דין (08.08.2022)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/9_rodas_nd.pdf",
+          "title": "מסמך מאתר hapraklit.co.il",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7596&businessType=1",
+          "title": "הרוקחים [נוסח חדש], התשמ\"א-1981",
+          "source_type": "knesset_research"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "ע\"א 7606/19 מגה קמעונאות בע\"מ נ׳ הלמן אלדובי קופות פנביה וגמל בע\"מ פס\"ד פסק דין (08.08.2022); בין שני עולמות — מורשת המשפט המנדטורי במדינת ישראל בראשיתה",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-7606-19-%d7%9e%d7%92%d7%94-%d7%a7%d7%9e%d7%a2%d7%95%d7%a0%d7%90%d7%95%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%94%d7%9c%d7%9e%d7%9f-%d7%90%d7%9c%d7%93%d7%95%d7%91%d7%99-%d7%a7%d7%95%d7%a4/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 7606/19 מגה קמעונאות בע\"מ נ׳ הלמן אלדובי קופות פנביה וגמל בע\"מ פס\"ד פסק דין (08.08.2022)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Page.aspx?nBookID=17149763&nTocEntryID=17422093&nPageID=17300161",
+          "title": "בין שני עולמות — מורשת המשפט המנדטורי במדינת ישראל בראשיתה",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "פקודת הנזיקין [נוסח חדש]; הצעת חוק פקודת הנזיקין [נוסח חדש] (תיקון - פיצויים עונשיים); חצי יובל לפקודת הנזיקין האזרחייס — בעיות ומגמות",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/73015.htm",
+          "title": "פקודת הנזיקין [נוסח חדש]",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/15/law/15_lst_545298.doc",
+          "title": "הצעת חוק פקודת הנזיקין [נוסח חדש] (תיקון - פיצויים עונשיים)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-05-3-564.pdf",
+          "title": "חצי יובל לפקודת הנזיקין האזרחייס — בעיות ומגמות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "פקודת הנזיקין [נוסח חדש]; בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין",
+      "number": 10,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/73015.htm",
+          "title": "פקודת הנזיקין [נוסח חדש]",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1374-23-%d7%97%d7%90%d7%92%d7%a8-%d7%a0%d7%95%d7%a8%d7%99-%d7%9c%d7%93%d7%a8-%d7%a6%d7%95%d7%a3-%d7%a0-%d7%9e%d7%a4%d7%a7%d7%93-%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a6%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/73015.htm",
+      "title": "פקודת הנזיקין [נוסח חדש]",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "48f5d5c6-56be-43b1-9c45-514b94da062b"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289970.PDF",
+      "title": "מבוא לפקודה / מסמך כנסת",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "8033ac55-8f33-4b7c-878e-af33b055fe4e"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/guide/legislation-documents/he/NisuahHakika0608190921.pdf",
+      "title": "מדריך לניסוח חקיקה",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "73a1dd23-55eb-4be0-ad58-42a2235a6300"
+    },
+    {
+      "url": "https://kotar.cet.ac.il/kotarapp/index/Page.aspx?nBookID=17149763&nTocEntryID=17422093&nPageID=17300161",
+      "title": "בין שני עולמות — מורשת המשפט המנדטורי במדינת ישראל בראשיתה",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "60e91760-0260-4fc4-8546-3504ba020568"
+    },
+    {
+      "url": "https://www.tau.ac.il/law/likhovski/Between%20Two%20Worlds.doc",
+      "title": "המשפט המנדטורי ומורשתו",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "bfa3fc64-7953-477c-abe7-4fc2fc728168"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1374-23-%d7%97%d7%90%d7%92%d7%a8-%d7%a0%d7%95%d7%a8%d7%99-%d7%9c%d7%93%d7%a8-%d7%a6%d7%95%d7%a3-%d7%a0-%d7%9e%d7%a4%d7%a7%d7%93-%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a6%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין",
+      "number": 5,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "a8258517-2622-49f0-8fa3-e1c28095080d"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-05-3-564.pdf",
+      "title": "חצי יובל לפקודת הנזיקין האזרחייס — בעיות ומגמות",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f73d3122-8d8a-4946-ac91-00285cee3c27"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/15/law/15_lst_545298.doc",
+      "title": "הצעת חוק פקודת הנזיקין [נוסח חדש] (תיקון - פיצויים עונשיים)",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "1179f42b-e27e-461c-a107-e3f7c33423b3"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-7606-19-%d7%9e%d7%92%d7%94-%d7%a7%d7%9e%d7%a2%d7%95%d7%a0%d7%90%d7%95%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%94%d7%9c%d7%9e%d7%9f-%d7%90%d7%9c%d7%93%d7%95%d7%91%d7%99-%d7%a7%d7%95%d7%a4/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "ע\"א 7606/19 מגה קמעונאות בע\"מ נ׳ הלמן אלדובי קופות פנביה וגמל בע\"מ פס\"ד פסק דין (08.08.2022)",
+      "number": 7,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "d8be4efa-3b48-4886-b0f6-1e31afe4d743"
+    },
+    {
+      "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/9_rodas_nd.pdf",
+      "title": "מסמך מאתר hapraklit.co.il",
+      "number": 7,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "fd156695-8162-4040-be12-e5c7842ebd6e"
+    },
+    {
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7596&businessType=1",
+      "title": "הרוקחים [נוסח חדש], התשמ\"א-1981",
+      "number": 7,
+      "origin": "local_db",
+      "source_type": "knesset_research",
+      "candidate_id": "5c0a55fb-1e14-432d-aa01-c3fc96aacd32"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 5,
+      "partial": 6,
+      "unrelated": 12,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 24,
+      "false": 2
+    }
+  },
+  "missing_required_anchors": null
+}
