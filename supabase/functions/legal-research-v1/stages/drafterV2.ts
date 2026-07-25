@@ -554,6 +554,10 @@ export async function runDrafterV2(
     // per-shape and per-posture rules that reference it. Backwards
     // compatible: omit → drafter falls back to prior behavior.
     answerIntent?: AnswerIntent;
+    // Narrow lead-source signal: candidate_ids that satisfy a required anchor
+    // (docket or non-docket). Used deterministically to select `lead_ref` for
+    // case_holding / definition / quote shapes only. Backwards compatible.
+    requiredAnchorCandidateIds?: Set<string>;
   },
 ): Promise<DrafterV2Result> {
   const t_total = Date.now();
