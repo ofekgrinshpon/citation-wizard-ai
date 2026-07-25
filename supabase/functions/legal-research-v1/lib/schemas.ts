@@ -4,9 +4,14 @@
 import {
   ANSWER_TYPES,
   AnalyzerOutput,
+  AnswerIntent,
   CAPS,
   Claim,
+  CONFIDENCE_POSTURES,
+  ConfidencePosture,
   EXPECTED_SOURCE_TYPES,
+  OUTPUT_SHAPES,
+  OutputShape,
   PlannerOutput,
   QUERY_TARGETS,
   Query,
@@ -84,6 +89,8 @@ export function validateAnalyzer(raw: unknown): ValidationResult<AnalyzerOutput>
     ? (r.interpretation_note as string).trim()
     : undefined;
 
+  const answer_intent = parseAnswerIntent(r.answer_intent);
+
   return {
     ok: errors.length === 0,
     value: {
@@ -92,10 +99,51 @@ export function validateAnalyzer(raw: unknown): ValidationResult<AnalyzerOutput>
       answer_type,
       claims,
       ...(interpretation_note ? { interpretation_note } : {}),
+      ...(answer_intent ? { answer_intent } : {}),
     },
     errors,
     truncated_claims_count,
     truncated_queries_count: 0,
+  };
+}
+
+// Parse the optional analyzer answer_intent. Tolerant by design: if the model
+// omits it or emits an unusable shape, return undefined so validateAnalyzer
+// stays ok. Enum values are coerced to safe defaults; arrays are clamped to
+// strings and capped at 8 items each. Requires output_shape + confidence_posture
+// to be present as strings — otherwise the whole object is dropped.
+function parseAnswerIntent(raw: unknown): AnswerIntent | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const r = raw as Record<string, unknown>;
+
+  const shapeRaw = r.output_shape;
+  const postureRaw = r.confidence_posture;
+  if (typeof shapeRaw !== "string" || typeof postureRaw !== "string") {
+    return undefined;
+  }
+
+  const output_shape: OutputShape =
+    (OUTPUT_SHAPES as readonly string[]).includes(shapeRaw)
+      ? (shapeRaw as OutputShape)
+      : "other";
+  const confidence_posture: ConfidencePosture =
+    (CONFIDENCE_POSTURES as readonly string[]).includes(postureRaw)
+      ? (postureRaw as ConfidencePosture)
+      : "cautious_if_partial";
+
+  const toStrArr = (x: unknown): string[] => {
+    if (!Array.isArray(x)) return [];
+    return x
+      .filter((v): v is string => typeof v === "string" && v.trim().length > 0)
+      .map((s) => s.trim())
+      .slice(0, 8);
+  };
+
+  return {
+    output_shape,
+    must_include: toStrArr(r.must_include),
+    must_avoid: toStrArr(r.must_avoid),
+    confidence_posture,
   };
 }
 
@@ -194,6 +242,31 @@ export const ANALYZER_TOOL_PARAMETERS: Record<string, unknown> = {
         required: ["claim_id", "text_he", "required_roles", "is_black_letter", "reason"],
         additionalProperties: false,
       },
+    },
+    answer_intent: {
+      type: "object",
+      description:
+        "Optional structured intent guiding the drafter. Emit whenever the user's phrasing implies a specific output shape (verbatim quote, definition/elements, list of duties, timeframe table, case holding, insufficient-source refusal, etc.). Backwards-compatible: omit if genuinely unclear.",
+      properties: {
+        output_shape: { type: "string", enum: [...OUTPUT_SHAPES] },
+        must_include: {
+          type: "array",
+          items: { type: "string" },
+          maxItems: 8,
+          description:
+            "1–4 concrete items the user explicitly asked for (e.g. 'ציטוט של סעיף 1', 'לוחות זמנים לדיווח').",
+        },
+        must_avoid: {
+          type: "array",
+          items: { type: "string" },
+          maxItems: 8,
+          description:
+            "Anti-patterns for this question (e.g. 'אל תבקש הרשאה נוספת מהמשתמש', 'אל תישאר ברמת עקרונות').",
+        },
+        confidence_posture: { type: "string", enum: [...CONFIDENCE_POSTURES] },
+      },
+      required: ["output_shape", "confidence_posture"],
+      additionalProperties: false,
     },
   },
   required: ["confidence", "legal_area", "answer_type", "claims"],

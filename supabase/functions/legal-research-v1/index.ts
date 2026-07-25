@@ -389,6 +389,7 @@ async function handle(req: Request): Promise<Response> {
       legal_area: analyzer.legal_area,
       answer_type: analyzer.answer_type,
       interpretation_note: analyzer.interpretation_note ?? null,
+      answer_intent: analyzer.answer_intent ?? null,
       schema_valid: analyzerStage.result.ok,
       ms: analyzerStage.stage_runs.reduce((s, r) => s + r.ms, 0),
     },
@@ -659,6 +660,7 @@ async function handle(req: Request): Promise<Response> {
       userDocs: attachmentResult.documents,
       useAsSource,
       missingRequiredAnchors: missingForCaveat,
+      answerIntent: analyzer.answer_intent,
     },
   );
   stage_runs.push(...drafter.stage_runs);
@@ -699,6 +701,7 @@ async function handle(req: Request): Promise<Response> {
           useAsSource,
           forceModel: "openai/gpt-5",
           skipEscalation: true,
+          answerIntent: analyzer.answer_intent,
         },
       );
     } catch (e) {
@@ -718,6 +721,7 @@ async function handle(req: Request): Promise<Response> {
           forceModel: "claude-sonnet-4-5",
           skipEscalation: true,
           provider: "anthropic",
+          answerIntent: analyzer.answer_intent,
         },
       );
     } catch (e) {
@@ -737,6 +741,7 @@ async function handle(req: Request): Promise<Response> {
           forceModel: "claude-opus-4-1",
           skipEscalation: true,
           provider: "anthropic",
+          answerIntent: analyzer.answer_intent,
         },
       );
     } catch (e) {

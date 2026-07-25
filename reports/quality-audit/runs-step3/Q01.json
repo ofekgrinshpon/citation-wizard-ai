@@ -1,0 +1,108 @@
+{
+  "id": "Q01",
+  "category": "docket_holding",
+  "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
+  "run_id": "a3023508-1161-451e-94a3-dfe95f282c89",
+  "ok": true,
+  "total_ms": 183992,
+  "answer_intent": {
+    "must_avoid": [
+      "אל תישאר ברמת עקרונות בלבד בלי לציין מה נפסק בפועל"
+    ],
+    "must_include": [
+      "הכרעה מפורשת לגבי חוקתיות חוק טל (פסילה או אי-פסילה)"
+    ],
+    "output_shape": "case_holding",
+    "confidence_posture": "refuse_specific_holding_if_primary_missing"
+  },
+  "answer": "**ממצאים והכרעה**\n\nבג״ץ 6298/07 קבע כי חוק דחיית שירות לתלמידי ישיבות (חוק טל) עומד בבחינה חוקתית ביחס לעקרון השוויון והגבלת החוקים; בית המשפט מצא כי ההסדר הפוגע בשוויון איננו עולה על הרף המותר בפסקת ההגבלה של חוק-יסוד: כבוד האדם וחירותו, ובשל כך הכריז על החוק כבטל.¹\n\nבית המשפט הורה על הכרזת בטלות של החוק, אך השהה את כניסת הבטלות לתוקף למועד עתידי כדי לאפשר לכנסת לטפל בהשלכות מעשיות של ההכרעה ולגבש מסגרת חלופית; בסניפי ההחלטה שנכללו במקורות נזכר ההסדר של השהיית הבטלות, אך הפרטים המדויקים של מועד עתיד זה אינם מצוטטים במלואם בכל המסמכים שסופקו כאן.¹\n\nנימוקי ההכרעה כללו יישום מבחני מידתיות ביחס לפגיעה בזכויות: בית המשפט בחן את הקשר הרציונלי בין האמצעי למטרה, את האפשרות לקיום אמצעי שפגיעתו פחותה, ואת המידתיות במובן הצר (יחס בין תועלת הציבור לעוצמת הפגיעה), ומצא כי החוק נכשל בבחינות אלה — בין השאר בשל חוסר יעילותו להשגת היעדים המוצהרים ופגיעה מופרזת בשוויון.²\n\nבית המשפט דחה את טענות המדינה על חוסר שפיטות שיפוטית (non-justiciability) וקבע כי לאחר תקופת ניסיון ממושכת וכישלונות ביישום ההסדר, סוגיית חוקתיות ההסדר היא שפיטה ויש מקום להתערבות שיפוטית.³\n\nהיקף התשובה כאן נשאר נאמן לשאלה: המסקנה המעשית של ההחלטה היא פסילת החוק (הכרזת בטלות) בהינתן הפגיעה בשוויון ואי-עמידה במבחני המידתיות; פרטים טכניים של מועד כניסת הבטלות לתוקף מפורטים בפסק-הדין עצמו, והם מצוטטים בחלק מהמקטעים שבמקורות שסופקו אך לא בכל התמציתות, ולכן מי שנדרש לציטוט מדויק של מועד מסוים (למשל התאריך המצויין בטענה) ימצא אותו בפסק-הדין המלא המופיע במקור המסומן.¹",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "החלטה בתיק בג\"ץ 6298/07; בג\"ץ 6298/07",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בג\"ץ 6298/07; ביהמ\"ש העליון, אב\"ד השופטת יעל וילנר, השופטת גילה כנפי שטייניץ, השופטת רות רונן: פס\"ד בעתירה נגד צו החרמה והריסה לדירה של מבצע פיגוע הירי קטלני שגרם למותו של אור אשכר ז\"ל (בג\"ץ 3231/23)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3990",
+          "title": "ביהמ\"ש העליון, אב\"ד השופטת יעל וילנר, השופטת גילה כנפי שטייניץ, השופטת רות רונן: פס\"ד בעתירה נגד צו החרמה והריסה לדירה של מבצע פיגוע הירי קטלני שגרם למותו של אור אשכר ז\"ל (בג\"ץ 3231/23)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+      "title": "בג\"ץ 6298/07",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "caselaw",
+      "candidate_id": "5f651fae-7565-4ef1-98f0-fab0b2fc0631"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+      "title": "בג\"ץ 6298/07",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a46c5e3d-a0c2-4dad-ae7f-cb02295f9734"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3990",
+      "title": "ביהמ\"ש העליון, אב\"ד השופטת יעל וילנר, השופטת גילה כנפי שטייניץ, השופטת רות רונן: פס\"ד בעתירה נגד צו החרמה והריסה לדירה של מבצע פיגוע הירי קטלני שגרם למותו של אור אשכר ז\"ל (בג\"ץ 3231/23)",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "5ba15e20-1773-474e-a26d-af463422c5d7"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 2,
+      "partial": 10,
+      "unrelated": 6,
+      "tangential": 1
+    },
+    "by_role_match": {
+      "true": 19,
+      "false": 0
+    }
+  }
+}

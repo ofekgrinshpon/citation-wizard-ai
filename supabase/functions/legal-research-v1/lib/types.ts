@@ -41,6 +41,34 @@ export interface Claim {
   reason: string;
 }
 
+export const OUTPUT_SHAPES = [
+  "verbatim_quote",
+  "definition_elements",
+  "enumerate_duties",
+  "timeframe_table",
+  "case_holding",
+  "doctrinal_explanation",
+  "application",
+  "comparison",
+  "insufficient_source_response",
+  "other",
+] as const;
+export type OutputShape = typeof OUTPUT_SHAPES[number];
+
+export const CONFIDENCE_POSTURES = [
+  "direct_if_primary_present",
+  "cautious_if_partial",
+  "refuse_specific_holding_if_primary_missing",
+] as const;
+export type ConfidencePosture = typeof CONFIDENCE_POSTURES[number];
+
+export interface AnswerIntent {
+  output_shape: OutputShape;
+  must_include: string[];
+  must_avoid: string[];
+  confidence_posture: ConfidencePosture;
+}
+
 export interface AnalyzerOutput {
   confidence: number;
   legal_area: string;
@@ -53,6 +81,13 @@ export interface AnalyzerOutput {
    * planner so it can bias query generation accordingly.
    */
   interpretation_note?: string;
+  /**
+   * Optional structured "answer intent" emitted by the analyzer in the same
+   * LLM call (no extra call). The drafter uses it to pick output shape,
+   * confidence posture, and required inclusions/avoidances. Backwards
+   * compatible: absent → drafter falls back to prior behavior.
+   */
+  answer_intent?: AnswerIntent;
 }
 
 

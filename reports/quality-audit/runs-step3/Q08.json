@@ -1,0 +1,238 @@
+{
+  "id": "Q08",
+  "category": "mandate_ordinance",
+  "query": "מה מעמדה של פקודת המשטרה [נוסח חדש] התשל\"א-1971 ביחס לפקודת המשטרה המנדטורית משנת 1926, ומהי משמעות ההוראה בדבר המשכיות?",
+  "run_id": "f2964945-3e7d-4049-b33c-671b6c9affe3",
+  "ok": true,
+  "total_ms": 134659,
+  "answer_intent": {
+    "must_avoid": [
+      "אל תמצא הלכות שאינן מגובות בפסיקה מחייבת",
+      "אל תציג מסקנות עובדתיות ללא ציון תלות במקורות"
+    ],
+    "must_include": [
+      "האם ה-1971 מחליף/מבטל את ה-1926",
+      "הסבר משמעות הוראת ההמשכיות",
+      "כללים לפרשנות וסמכות במקרה של סתירה"
+    ],
+    "output_shape": "doctrinal_explanation",
+    "confidence_posture": "direct_if_primary_present"
+  },
+  "answer": "**האם פקודת המשטרה [נוסח חדש] תשל\"א‑1971 מחליפה או מבטלת את פקודה המנדטורית מ‑1926?**\n\nבמובן הפרקטי והמשפטי, נוסח חדש של פקודת המשטרה משנת תשל\"א‑1971 הוא ההסדרה החוקית הרלוונטית והעיקרית לשאלת סמכויות ואכיפה היום; עם זאת, לא מדובר בהצהרת ביטול פורמאלית של כל הטקסט המנדטורי. הוראות ישנות המשיכו לחיות בתוקפן כל עוד לא הוברר שחל עליהן סתירה מפורשת או משתמעת להתקנות החדשות או לכללי היסוד של המשפט הישראלי.¹\n\nהמשמעות המעשית היא שכאשר נוסח 1971 מותיר או מאמץ נוסח פועל/הליך שנמצא בפקודה המנדטורית, אותו נוסח ממשיך להיות מקור תקף עד שיחוקה או יפורש אחרת; אולם על פי עיקרון כללי כי דין חדש גובר על דין ישן בסתירה, הוראה של 1971 שתיכנס בסתירה להוראה מ‑1926 תגבר ותהווה הדין המחייב.²\n\n**מה פירוש הוראת ההמשכיות בפרשנות מעשית?**\n\nהמונח 'המשכיות' בחוק מתפרש במספר אופנים: כהמשך תוקף של הוראות ספציפיות (כלומר ההוראה הישנה נותרת בתוקף עד אשר בוטלה/שונתה), כהפניה לפרשנות היסטורית או פרוצדורלית (המחמירה או המסבירה את אופן היישום), וכהשארת נהלים מנהליים או תקנות קיימות שלא נערכו מחדש בחקיקה החדשה. הבחנה בין אופנים אלה נעשית לפי ניסוח הוראת ההמשכיות, ההקשר החקיקתי ונוסח ההוראה עצמה.³\n\nהנחיות היועץ המשפטי לממשלה מציעות קריטריונים פרשניים מעשיים לשאלת טבע המשכיות — למשל האם הוראה נועדה להיות מחייבת או מנחה, והאם היא תלויה במסגרת מוסדית שהשתנתה — ולכן פירוש 'המשכיות' מחייב בחינה טקסטואלית והקשרית ולא קביעת כלל כולל למקרה כללי.⁴\n\n**כללים לפרשנות וסמכות במקרה של סתירה בין הוראות מנדטוריות להוראות 1971**\n\nראשית יש לנסות לפי כללי פרשנות רגילים להשלים ולפרש הוראות כך שיתקיימו שניהן, אלא אם ברור שאינן מתיישבות. אם הסגה לא ניתנת — הדין המאוחר גובר; כלומר הוראה ברורה בפקודת המשטרה [נוסח חדש] תבטל או תשנה אפקטיבית הוראה מ‑1926 בשטח שבו יש סתירה.¹\n\nבתי המשפט פועלים לגישור ונזקקים לעתים להסתמך על נוסח 1971, על הוראות המשכיות ועל פסיקה מפרטת כדי לקבוע מהי ההוראה המעודכנת בפועל; במקרה מעשי יתחשב השופט גם במטרת הסדר, בהשלכות מעשיות ובטעם כי חקיקה חדשה צריכה לשאת משקל רב בפרשנות פעולות ביצוע ואכיפה.⁵\n\n**השלכות מעשיות לאכיפה, סמכויות שוטרים והליך שיפוטי**\n\nבחיי היומיום סמכויות רבות של המשטרה מוארגנות ומופעלות על בסיס נוסח 1971; דוגמא ספציפית שנוסח 1971 מבהיר היא ההקצאה של חקירות שוטרים לגורם חיצוני (המחלקה לחקירת שוטרים), וכן ניסוח תפקידי המשטרה וסמכויותיה שחלקן נותרו בהמשך מהסדרים קודמים אך באות לידי ביטוי דרך הנוסח החדש.⁶\n\nיש הוראות פרוצדורליות והתנהגותיות (למשל נהלי חיפוש, מעצר ודיווח) שמקורותיהן במורשת המנדטורית וייתכן שהן עדיין משפיעות על אכיפה מפורטת; כדי לזהות הוראות שכאלו יש לבצע השוואה טקסטואלית בין נוסח 1926 לבין הסעיפים המקבילים ב‑1971 וכן לבחון התקנות והכללים המעשיים שמפרשים ומיישמים את הסמכויות.⁷\n\nלסיכום מעשי: יש להניח שה‑1971 הוא המסמך השולט, אך המשכיות הוראות מ‑1926 נשארת רלוונטית עד להסרה או שינוי ברור; בקיאות טקסטואלית והשימוש בכללי פרשנות שיועץ המשפטי ממליץ עליהם נחוצות כדי לקבוע במצב קונקרטי איזו הוראה מחייבת ומהי המשמעות המעשית של מקור מנדטורי שבאופן פורמלי 'ממשיך' לתוך המשפט הישראלי.⁸",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "פקודת המשטרה [נוסח חדש], תשל\"א-1971; פקודת סדרי השלטון והמשפט, תש\"ח-1948",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72952.htm",
+          "title": "פקודת המשטרה [נוסח חדש], תשל\"א-1971",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/73184.htm",
+          "title": "פקודת סדרי השלטון והמשפט, תש\"ח-1948",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "פקודת המשטרה [נוסח חדש], תשל\"א-1971; מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72952.htm",
+          "title": "פקודת המשטרה [נוסח חדש], תשל\"א-1971",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_3_10141-09.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "הנחיות היועץ המשפטי לממשלה – משפט חוקתי: חקיקה; פקודת המשטרה [נוסח חדש], תשל\"א-1971",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/guide/legislation-documents/he/23100.pdf",
+          "title": "הנחיות היועץ המשפטי לממשלה – משפט חוקתי: חקיקה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72952.htm",
+          "title": "פקודת המשטרה [נוסח חדש], תשל\"א-1971",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/guide/legislation-documents/he/23100.pdf",
+      "title": "הנחיות היועץ המשפטי לממשלה – משפט חוקתי: חקיקה",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/guide/legislation-documents/he/23100.pdf",
+          "title": "הנחיות היועץ המשפטי לממשלה – משפט חוקתי: חקיקה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); הנחיות היועץ המשפטי לממשלה – משפט חוקתי: חקיקה",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_3_10141-09.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/guide/legislation-documents/he/23100.pdf",
+          "title": "הנחיות היועץ המשפטי לממשלה – משפט חוקתי: חקיקה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "פקודת המשטרה [נוסח חדש], תשל\"א-1971; מסמך מאתר אתר ממשלתי (gov.il); כללי המשטרה (הענקת סמכות לבעלי תפקידים), תשנ\"ב-1992",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72952.htm",
+          "title": "פקודת המשטרה [נוסח חדש], תשל\"א-1971",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_3_10141-09.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72960.htm",
+          "title": "כללי המשטרה (הענקת סמכות לבעלי תפקידים), תשנ\"ב-1992",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "פקודת סדר הדין הפלילי (מעצר וחיפוש); כללי המשטרה (הענקת סמכות לבעלי תפקידים), תשנ\"ב-1992",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%A4%D7%A7%D7%95%D7%93%D7%AA_%D7%A1%D7%93%D7%A8_%D7%94%D7%93%D7%99%D7%9F_%D7%94%D7%A4%D7%9C%D7%99%D7%9C%D7%99_(%D7%9E%D7%A2%D7%A6%D7%A8_%D7%95%D7%97%D7%99%D7%A4%D7%95%D7%A9)",
+          "title": "פקודת סדר הדין הפלילי (מעצר וחיפוש)",
+          "source_type": "israeli_law"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72960.htm",
+          "title": "כללי המשטרה (הענקת סמכות לבעלי תפקידים), תשנ\"ב-1992",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "הנחיות היועץ המשפטי לממשלה – משפט חוקתי: חקיקה; מסמך מאתר אתר הכנסת",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/guide/legislation-documents/he/23100.pdf",
+          "title": "הנחיות היועץ המשפטי לממשלה – משפט חוקתי: חקיקה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_1351087.pdf",
+          "title": "מסמך מאתר אתר הכנסת",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/72952.htm",
+      "title": "פקודת המשטרה [נוסח חדש], תשל\"א-1971",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "67ac5fc5-5ae5-469a-b575-042d03f28f90"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/73184.htm",
+      "title": "פקודת סדרי השלטון והמשפט, תש\"ח-1948",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "66e3588d-3773-46db-818b-00a497fe242a"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_3_10141-09.pdf&type=2",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "70417f32-fd53-4a49-a98e-af3e624a8f44"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/guide/legislation-documents/he/23100.pdf",
+      "title": "הנחיות היועץ המשפטי לממשלה – משפט חוקתי: חקיקה",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "47c2ea38-8107-41b0-82c0-e5610dbbd50b"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/72960.htm",
+      "title": "כללי המשטרה (הענקת סמכות לבעלי תפקידים), תשנ\"ב-1992",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "7ed96ffb-9f2f-412d-826c-f776a5995481"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%A4%D7%A7%D7%95%D7%93%D7%AA_%D7%A1%D7%93%D7%A8_%D7%94%D7%93%D7%99%D7%9F_%D7%94%D7%A4%D7%9C%D7%99%D7%9C%D7%99_(%D7%9E%D7%A2%D7%A6%D7%A8_%D7%95%D7%97%D7%99%D7%A4%D7%95%D7%A9)",
+      "title": "פקודת סדר הדין הפלילי (מעצר וחיפוש)",
+      "number": 7,
+      "origin": "local_db",
+      "source_type": "israeli_law",
+      "candidate_id": "2b11bcee-1fce-45de-b0ea-ac1a953224ec"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_1351087.pdf",
+      "title": "מסמך מאתר אתר הכנסת",
+      "number": 8,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "beae38f1-b9aa-438b-a425-7f13ca01db38"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 3,
+      "partial": 20,
+      "unrelated": 3,
+      "tangential": 2
+    },
+    "by_role_match": {
+      "true": 28,
+      "false": 0
+    }
+  }
+}

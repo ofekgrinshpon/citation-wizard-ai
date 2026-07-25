@@ -1,0 +1,360 @@
+{
+  "id": "Q14",
+  "category": "practical_implications",
+  "query": "מהן חובות הדיווח של נותן שירותי מטבע (ChP) לפי חוק איסור הלבנת הון והצו החל עליו, ומהם מועדי הדיווח?",
+  "run_id": "cab0c2fc-8f8b-46e9-81b7-4a2260823200",
+  "ok": true,
+  "total_ms": 177484,
+  "answer_intent": {
+    "must_avoid": [
+      "אל תישאר ברמת עקרונות בלבד",
+      "אל תציין סכומים/תקופות מפורשים ללא ציון מקורות מפורשים"
+    ],
+    "must_include": [
+      "סוגי הדיווחים (לדוגמה: דיווח על פעולה חשודה, דיווחי סף/עסקות במזומן)",
+      "מועדי הדיווח (מתי יש לדווח/‘ללא דיחוי’ או תקופות אחרות)",
+      "אל מי מדווחים (הרשות/יחידה המוסמכת)"
+    ],
+    "output_shape": "enumerate_duties",
+    "confidence_posture": "direct_if_primary_present"
+  },
+  "answer": "**חובות דיווח של נותן שירותי מטבע (ChP) — תמצית**\n\nלפי הצו והתקנות המיוחדות לנותני שירותי מטבע, נותן שירותי מטבע מוכר כחייב בכפיפות לחובות זיהוי, דיווח וניהול רשומות שמטרתן מניעת הלבנת הון ומימון טרור; החובה מוסמכת במסגרת חוק איסור הלבנת הון. חלק מההוראות הפרטניות (לרבות מועדי דיווח פיקוחיים ודרכי העברה) מפורטות בצווים ובתקנות המתאימים.¹\n\n**סוגי דיווחים ומקרים מניעים לדיווח**\n\n- דיווח על פעולה חשודה או בלתי רגילה — חובת דיווח לגבי פעולות שמעלות חשש להלבנת הון או מימון טרור; הצו וההנחיות המיישמות מקשרים בין חובת זיהוי המתרחשת במסגרת הבדיקה לבין חובת הדיווח הפנימית והחיצונית.²\n- דיווחי סף / דיווח על עסקאות במזומן או לפי גודל פעולה — קיימת חובת דיווח לגבי פעולות העומדות מעל ספים כספיים (דיווח לפי גודל פעולה או לפי מזומן) כפי שמופיע במסמכים פרוצדורליים וטיוטות חקיקה; נוסח הסף והיישום עשויים להיקבע בצו או בהנחיה נלוות.³\n- דיווחים עובדתיים/אוטומטיים לפי סוג פעולה — יש מודלים של דיווח עובדתי אוטומטי לגבי פעולות מסוגים ספציפיים (כגון החלפה/המרת מזומנים מעל סף שנדון בהודעות רשמיות), אך הגדרות הפרקטיקה נקבעות בצווים/הנחיות של גוף המפקח.⁴\n- דיווח על הכנסת או הוצאת כספים חוצה־גבולות — קיים מנגנון דיווח מיוחד על הכנסת/הוצאת כספים לישראל או ממנה; מועד וזמני ההגשה מוסדרים בתקנות המתאימות.⁵\n\n**מועדי דיווח — מסגרות כלליות וחריגים מפורשים**\n\n- הסמכת המועדים — התקנות קובעות שמראש הרשות ייקבעו את מועדי הדיווח; התקנות הקשורות למאגר המידע קובעות תקופות דיווח מינימליות שונות בין תאגידים בנקאיים לשאר הגופים הכלולים בתוספת.⁶\n- מועדי דיווח תקופתיים/מבוססי־סף — לפי התקנות, דיווח על פעולות רגילות יועבר לגבי תקופת דיווח שלא תפחת מיום עבודה אחד לגבי תאגידים בנקאיים ומחודש אחד לגבי שאר הגופים המנויים בתוספת השלישית; משמעות חלוקת המועדים החלה גם על דיווחים המבוססים על ספים שבצו/בהוראות נלוות.⁷\n- דיווח על הכנסת/הוצאת כספים — תקנות דיווח הגבילו דיווח במועד הכניסה לישראל; אם אין פקיד מכס במקום, חלה אפשרות לשליחה בדואר רשום בתוך 72 שעות.⁸\n- דיווח על פעולות חשודות — המקורות שאותרו מזהים חובת דיווח על פעולה בלתי רגילה אך אינם מפרטים בכל מקור מועד אחיד של 'ללא דיחוי' לכל המקרים; התקנות והצו מסמיכים את הרשות לקבוע נוהלי מועד, ופירוטים פרקטיים עשויים להופיע בהנחיות ביצוע של הרשות.⁹\n\n**חובות משנה המשפיעות על הדיווח והזמן לנקיטת פעולה**\n\n- חובת זיהוי והיכרות עם הלקוח (CDD) — בחקיקה הייחודית לנותני שירותי מטבע מופיעה דרישה לבצע צעדי זהות, בדיקת רקע ובדיקה בהתאם לסיכון טרום נקיטת דיווח; צעדי CDD משפיעים על היכולת והמועד לקבוע חשד ולדווח.¹⁰\n- שמירת רישומים וניהול נהלים פנימיים — נותן שירותי מטבע מחויב לנהל רישומים מתאימים, למנות ממונה על מניעת הלבנת הון ולהתקין נהלי דיווח פנימיים ובקרה; דרישות אלה תומכות ביכולת הכנת דיווחים וקביעת מועדים פנימיים.¹⁰\n- איסור על 'tipping‑off' — הצו והתקנות אוסרים על הודעה ללקוח או לגורם שלישי שתביא לחשיפת העובדה שנעשה דיווח או נחקר חשד, ועל כן יש להגביל תקשורת חיצונית אחרי זיהוי חשד.¹⁰\n- מגבלות פרטיות והגנת מידע — חוק הגנת הפרטיות מהווה רקע מחייב בנוגע לסודיות ועיבוד מידע אישי; עם זאת, המקורות שאותרו אינם מציינים במפורש הוראת חוק נפרדת המעניקה חסינות מדעית מלאה למדווחים במסגרת צו נותני שירותי מטבע.¹¹\n\n**נמען הדיווח ונהלי העברה**\n\n- הנמען המבצעי והטכני של דיווחים — הדיווחים לגבי הלבנת הון מועברים לערוץ/מאגר המידע המוסמך שהוקם לפי סעיפי החוק ולפי הוראות התקנות; יש לעקוב אחרי הנחיות ראש הרשות לגבי אופן ההעברה.⁶\n- ערוצי דיווח ושירותים ממסדיים — עמודי שירות ממשלתיים/משרדתיים מציינים את הערוצים שבהם נותני שירותים פיננסיים יגישו דיווחים בפועל; יש לעיין בערוצים הרשמיים של הרשות הרלבנטית לצורך ביצוע הדיווח.¹²\n- הגנות על המדווח — המקורות שציינו איסור על 'tipping‑off' ומדיניות סודיות; עם זאת, אין במקורות שאותרו ניסוח מפורש המעניק חיסון פלילי או אזרחי אוטומטי למדווחים, ולכן יש לבדוק הוראות נוספות בצו/בחוק ובנוהל הפרקטי של הרשות.¹¹\n\nמסקנה מעשית קצרה: נותן שירותי מטבע חייב בקיום מערך זהוי ונהלים פנימיים, בדיווח על פעולות חשודות והעברת דיווחים על פי ספים ותקופות שנקבעות בצו/תקנות; מועדי הדיווח נקבעים בידי ראש הרשות כאשר התקנות קובעות תקרות מינימום (יום עבודה לתאגידים בנקאיים ומחודש אחד לשאר הגופים שבתוֹספת), וקיימים חריגים מפורשים כמו דיווח על הכנסת/הוצאת כספים. מאחר שחלק מהפרטים הפרוצדורליים (ספים מדויקים, נהלים טכניים וחסינות חוקית מפורשת) מפורטים בצווים, בהנחיות הרשות ובמסמכים נלווים, מומלץ לעיין בנוסח המלא של הצו/התקנות ובאתר הרשות לצורך היערכות פרקטית.¹³",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "תקנות איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע), התשע״ט-2018; צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע); חוק איסור הלבנת הון, התש״ס-2000",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/999_000.htm",
+          "title": "תקנות איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע), התשע״ט-2018",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/999_001.htm",
+          "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawPrimary.aspx?ItemID=1000145",
+          "title": "חוק איסור הלבנת הון, התש״ס-2000",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע); מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/999_001.htm",
+          "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/orders-aml-msb-pamphlet/he/professional-docs_orders_aml_msb_pamphlet.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "20_cs_bg_391991.docx; צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/20/Committees/20_cs_bg_391991.docx",
+          "title": "20_cs_bg_391991.docx",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/999_001.htm",
+          "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "צו נגיד בנק ישראל בדבר הלבנת הון; מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.boi.org.il/publications/pressreleases/%D7%A6%D7%95-%D7%A0%D7%92%D7%99%D7%93-%D7%91%D7%A0%D7%A7-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%91%D7%93%D7%91%D7%A8-%D7%94%D7%9C%D7%91%D7%A0%D7%AA-%D7%94%D7%95%D7%9F/",
+          "title": "צו נגיד בנק ישראל בדבר הלבנת הון",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/orders-aml-msb-pamphlet/he/professional-docs_orders_aml_msb_pamphlet.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנות איסור הלבנת הון (דרכי דיווח על כספים בעת הכניסה לישראל... ); צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע)",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/017m1_005.htm",
+          "title": "תקנות איסור הלבנת הון (דרכי דיווח על כספים בעת הכניסה לישראל... )",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/999_001.htm",
+          "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח... ); איסור הלבנת הון (דרכים ומועדים להעברת דיווח של תאגידים בנקאיים והגופים האחרים), התשס״א-2001",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/moj-regulations-aml/he/legal-docs_moj_regulations_aml.doc",
+          "title": "תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח... )",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/Halban15.pdf",
+          "title": "איסור הלבנת הון (דרכים ומועדים להעברת דיווח של תאגידים בנקאיים והגופים האחרים), התשס״א-2001",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/moj-regulations-aml/he/legal-docs_moj_regulations_aml.doc",
+      "title": "תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח... )",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/moj-regulations-aml/he/legal-docs_moj_regulations_aml.doc",
+          "title": "תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח... )",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/017m1_005.htm",
+      "title": "תקנות איסור הלבנת הון (דרכי דיווח על כספים בעת הכניסה לישראל... )",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/017m1_005.htm",
+          "title": "תקנות איסור הלבנת הון (דרכי דיווח על כספים בעת הכניסה לישראל... )",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח... )",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/orders-aml-msb-pamphlet/he/professional-docs_orders_aml_msb_pamphlet.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/moj-regulations-aml/he/legal-docs_moj_regulations_aml.doc",
+          "title": "תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח... )",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנות איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע), התשע״ט-2018; צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע)",
+      "number": 10,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/999_000.htm",
+          "title": "תקנות איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע), התשע״ט-2018",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/999_001.htm",
+          "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק הגנת הפרטיות, תשמ\"א-1981; צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע)",
+      "number": 11,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_4704176.pdf",
+          "title": "חוק הגנת הפרטיות, תשמ\"א-1981",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/999_001.htm",
+          "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); איסור הלבנת הון (דרכים ומועדים להעברת דיווח של תאגידים בנקאיים והגופים האחרים), התשס״א-2001",
+      "number": 12,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/service/provides-financial-services",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/Halban15.pdf",
+          "title": "איסור הלבנת הון (דרכים ומועדים להעברת דיווח של תאגידים בנקאיים והגופים האחרים), התשס״א-2001",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנות איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע), התשע״ט-2018; תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח... ); מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 13,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/999_000.htm",
+          "title": "תקנות איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע), התשע״ט-2018",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/moj-regulations-aml/he/legal-docs_moj_regulations_aml.doc",
+          "title": "תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח... )",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/he/service/provides-financial-services",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/999_000.htm",
+      "title": "תקנות איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע), התשע״ט-2018",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "40dfdc86-309d-4357-afa0-db56dfc478a8"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/999_001.htm",
+      "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "1ea7c95b-499a-4347-8412-62689119978f"
+    },
+    {
+      "url": "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawPrimary.aspx?ItemID=1000145",
+      "title": "חוק איסור הלבנת הון, התש״ס-2000",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f4a4b6e6-c930-4494-8117-f58d187b4afe"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/orders-aml-msb-pamphlet/he/professional-docs_orders_aml_msb_pamphlet.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "6015be6e-644b-4c8d-9f05-fc49820a3600"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/20/Committees/20_cs_bg_391991.docx",
+      "title": "20_cs_bg_391991.docx",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "53b53d86-3c9e-4da3-a995-20d6625c7543"
+    },
+    {
+      "url": "https://www.boi.org.il/publications/pressreleases/%D7%A6%D7%95-%D7%A0%D7%92%D7%99%D7%93-%D7%91%D7%A0%D7%A7-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%91%D7%93%D7%91%D7%A8-%D7%94%D7%9C%D7%91%D7%A0%D7%AA-%D7%94%D7%95%D7%9F/",
+      "title": "צו נגיד בנק ישראל בדבר הלבנת הון",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "5a7fa18f-bf03-4e33-a639-b0a07e666932"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/017m1_005.htm",
+      "title": "תקנות איסור הלבנת הון (דרכי דיווח על כספים בעת הכניסה לישראל... )",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f172b980-4da5-4936-a9d3-d483e17daa00"
+    },
+    {
+      "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/moj-regulations-aml/he/legal-docs_moj_regulations_aml.doc",
+      "title": "תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח... )",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "c67e3d1b-2f6b-42af-9306-dbbe0c7fc1ca"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/Halban15.pdf",
+      "title": "איסור הלבנת הון (דרכים ומועדים להעברת דיווח של תאגידים בנקאיים והגופים האחרים), התשס״א-2001",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "01aa024a-869b-4440-8897-6f4ad67f7757"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_4704176.pdf",
+      "title": "חוק הגנת הפרטיות, תשמ\"א-1981",
+      "number": 11,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "b55819bf-3e3e-4125-a087-82931ab526c6"
+    },
+    {
+      "url": "https://www.gov.il/he/service/provides-financial-services",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 12,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "19bc9a4a-9f77-4b7c-a54a-5c79a1b78375"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 4,
+      "partial": 10,
+      "unrelated": 9,
+      "tangential": 2
+    },
+    "by_role_match": {
+      "true": 25,
+      "false": 0
+    }
+  }
+}
