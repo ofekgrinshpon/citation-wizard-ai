@@ -1,0 +1,111 @@
+{
+  "id": "Q13",
+  "category": "practical_implications",
+  "query": "מה חייב מעסיק לעשות כאשר עובד/ת מגיש/ה תלונה על הטרדה מינית במקום העבודה, ומהי מסגרת הזמנים לפי התקנות?",
+  "run_id": "9eb82ef5-1a6e-4eae-bffc-f3e0a7b50ce2",
+  "ok": true,
+  "total_ms": 174478,
+  "answer_intent": {
+    "output_shape": "list"
+  },
+  "answer": "תמצית מענה: לפי התקנות למניעת הטרדה מינית במקום העבודה, על המעסיק קמה חובת קיום מנגנון לקבלת תלונות וטיפול בהן; להלן התשובות המסודרות לשאלות הספציפיות שנשאלו.\n\n- חובת פתיחת בדיקה פנימית: התקנונים קובעים שמקום העבודה חייב לאפשר הגשת תלונה ולקיים הליך טיפול בתלונה; תלונה בעל־פה יש לרשום ולהחתים. משמעות זאת מעשית היא שחובה על המעסיק להפעיל בדיקה או הליך פנימי להתייחסות לטענות המועלות, ולא להשאיר את התלונה ללא מענה פורמלי.¹\n- צעדי מגן מידיים: התקנות מחייבות את המעסיק לנקוט אמצעי מניעה והגנה במטרה למנוע המשך הטרדה ולהבטיח המשך עבודה תקין. הטקסט המובא אינו מפרט ברשומה זו רשימת אמצעים מוחלטת; לכן יש לנקוט אמצעים מידיים סבירים בהתאם לנסיבות ולנוהל הפנימי של המעסיק, תוך שמירה על איזון בין הגנה על המתלוננת/מתלונן לבין זכויות המעורבים.²\n- חובות נוהליות וארגוניות: התקנות מחייבות קיום נוהל לקבלת תלונה (כולל אפשרות להגיש בכתב או בעל־פה ורישום תלונה בעל־פה), הבהרת חובות הממונה והעובד, ותיעוד התלונה. מהמגמה התקנונית נובע שיש למנות גורם מטפל או איש קשר פנימי, לשמור על תיעוד מסודר של קבלות ותהליכים, ולהודיע למתלוננת/מתלונן על רישום קובלנה וטיפול בה — ובנוסף יש חובת מניעת התנכלות כלפי מי שמגיש תלונה.¹\n- מסגרת זמנים לפי התקנות: התקנונים המוצגים כאן קובעים חובת רישום וטיפול בתלונה וחובת מענה פרוצדורלי, אך במקטעים שסופקו לא נמצאו במפורש מועד מספרי אחיד לאישור קבלת התלונה, להשלים חקירה פנימית או לעדכון המתלוננת/מתלונן בתוצאות. מסקנה מעשית היא שיש להקצות במסגרת נוהל פנימי מועדים סבירים לעדכון ואישור קבלה, ולפעול בדברי דחיפות; אם קיימים סעיפי זמנים מדויקים בטקסט המלא של התקנות הם לא נכללו בסניפטים שסופקו כאן.³",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "תקנון החוק למניעת הטרדה מינית; תקנון למניעת הטרדה מינית; תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.btl.gov.il/Publications/booklet/hebrew_booklet/Documents/takanonhatrada.pdf",
+          "title": "תקנון החוק למניעת הטרדה מינית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+          "title": "תקנון למניעת הטרדה מינית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72508.htm",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998; תקנון החוק למניעת הטרדה מינית",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72508.htm",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.btl.gov.il/Publications/booklet/hebrew_booklet/Documents/takanonhatrada.pdf",
+          "title": "תקנון החוק למניעת הטרדה מינית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנון החוק למניעת הטרדה מינית; תקנון למניעת הטרדה מינית",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.btl.gov.il/Publications/booklet/hebrew_booklet/Documents/takanonhatrada.pdf",
+          "title": "תקנון החוק למניעת הטרדה מינית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+          "title": "תקנון למניעת הטרדה מינית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.btl.gov.il/Publications/booklet/hebrew_booklet/Documents/takanonhatrada.pdf",
+      "title": "תקנון החוק למניעת הטרדה מינית",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d75bf563-6dc0-42d5-8db6-792a5f1f5d1a"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+      "title": "תקנון למניעת הטרדה מינית",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "b46fd61b-f1b3-414f-886d-e05d409cfe60"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/72508.htm",
+      "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a7da96da-1cec-4d27-ba15-74e56f194ac9"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 3,
+      "partial": 2,
+      "unrelated": 7,
+      "tangential": 1
+    },
+    "by_role_match": {
+      "true": 13,
+      "false": 0
+    }
+  }
+}
