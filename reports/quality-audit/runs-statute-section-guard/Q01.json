@@ -1,0 +1,114 @@
+{
+  "id": "Q01",
+  "category": "docket_holding",
+  "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
+  "run_id": "3aef8d42-a933-498f-b739-9a2a90d2eb44",
+  "ok": true,
+  "total_ms": 125541,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "lead_ref": {
+    "ref": "s6",
+    "shape": "case_holding",
+    "reason": "required_anchor_case"
+  },
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "required_anchors": [
+    {
+      "anchor_id": "docket:bagatz-6298-07",
+      "description": "פסק הדין בעניין בג\"ץ 6298/07 עצמו",
+      "is_statute_section_anchor": false,
+      "is_docket_anchor": true,
+      "status": "cited",
+      "verified_support": "direct"
+    }
+  ],
+  "answer": "**החזקת בית המשפט בתיק בג\"ץ 6298/07**\n\nבית המשפט העליון קבע בפסק־דין בתיק בג\"ץ 6298/07 כי חוק דחיית שירות לתלמידי ישיבות (חוק טל) אינו עומד בדרישות החוקתיות: ההסדר פוגע בזכות לשוויון הנגזרת מחוק‑יסוד: כבוד האדם וחירותו ולכן אינו עומד במבחני פסקת ההגבלה והמידתיות.¹\n\nבהנמקה מהותית בדבר המידתיות קבע בית המשפט כי לאורך הזמן ההסדר לא השיג את התכלית המוצהרת — לא נרשם שיפור מהותי בשילובם של תלמידי ישיבות בשירות הממלכתי/הצבאי, והחרגת קבוצה זו הפכה להסדר מתמשך שאינו סביר ומוגבל במידת הנדרש כדי להצדיק פגיעה בשוויון.¹\n\nכפועל של ההכרעה מהותית זו ביטל בית המשפט את תוקפו של החוק וכיוון שלא ראוי להאריך את תחולתו מעבר לתקופה החוקית שנקבעה; בכך השאיר את הכדור בידי המחוקק לגבש מסגרת חלופית להסדרת הנושא.¹\n\nבפסק הדין הדגיש בית המשפט גם כי עקרון השוויון נכלל במסגרת ערכי חוק‑יסוד: כבוד האדם וחירותו וכי שיעמד לביקורת שיפוטית חוקתית, הכוללת בדיקת תכלית ראויה ומידתיות של הפגיעה בזכויות היסוד.²\n\nלנוחיות העיון, נוסח מלא של פסק‑הדין זמין בפרסומי בית המשפט; בנוסף, מסמכי רקע של הכנסת וסקרי היסטוריה וניתוח עוסקים בהתפתחות מערך דחיות השירות ובהשלכות ההחלטה על המדיניות הציבורית.³",
+  "footnotes": [
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": null,
+      "title": "החלטה בתיק בג\"ץ 6298/07; חוק-יסוד: כבוד האדם וחירותו (נוסח משולב/סרוק)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+          "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח משולב/סרוק)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בג\"ץ 6298/07 – פסק דין; הסדר דחיית שירות צבאי לתלמידי ישיבה – רקע היסטורי 2002-1948",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07 – פסק דין",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/f6627626-ef7c-e811-80e2-00155d0a9876/2_f6627626-ef7c-e811-80e2-00155d0a9876_11_10610.pdf",
+          "title": "הסדר דחיית שירות צבאי לתלמידי ישיבה – רקע היסטורי 2002-1948",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "caselaw",
+      "candidate_id": "c548b4c6-a38d-4810-82d8-cd324afef5bb"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+      "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח משולב/סרוק)",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "760c8cee-65de-4419-b968-e72e72f0d96b"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+      "title": "בג\"ץ 6298/07 – פסק דין",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "cc019c42-8ac9-4f3e-949a-9ba8868bc0c9"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/f6627626-ef7c-e811-80e2-00155d0a9876/2_f6627626-ef7c-e811-80e2-00155d0a9876_11_10610.pdf",
+      "title": "הסדר דחיית שירות צבאי לתלמידי ישיבה – רקע היסטורי 2002-1948",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "6fedd51d-ad97-40cc-8a56-2dfae9abbca4"
+    }
+  ]
+}

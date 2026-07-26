@@ -1,0 +1,491 @@
+[
+  {
+    "id": "Q01",
+    "category": "docket_holding",
+    "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
+    "run_id": "3aef8d42-a933-498f-b739-9a2a90d2eb44",
+    "ok": true,
+    "total_ms": 125541,
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "lead_ref": {
+      "ref": "s6",
+      "shape": "case_holding",
+      "reason": "required_anchor_case"
+    },
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "required_anchors": [
+      {
+        "anchor_id": "docket:bagatz-6298-07",
+        "description": "פסק הדין בעניין בג\"ץ 6298/07 עצמו",
+        "is_statute_section_anchor": false,
+        "is_docket_anchor": true,
+        "status": "cited",
+        "verified_support": "direct"
+      }
+    ],
+    "answer": "**החזקת בית המשפט בתיק בג\"ץ 6298/07**\n\nבית המשפט העליון קבע בפסק־דין בתיק בג\"ץ 6298/07 כי חוק דחיית שירות לתלמידי ישיבות (חוק טל) אינו עומד בדרישות החוקתיות: ההסדר פוגע בזכות לשוויון הנגזרת מחוק‑יסוד: כבוד האדם וחירותו ולכן אינו עומד במבחני פסקת ההגבלה והמידתיות.¹\n\nבהנמקה מהותית בדבר המידתיות קבע בית המשפט כי לאורך הזמן ההסדר לא השיג את התכלית המוצהרת — לא נרשם שיפור מהותי בשילובם של תלמידי ישיבות בשירות הממלכתי/הצבאי, והחרגת קבוצה זו הפכה להסדר מתמשך שאינו סביר ומוגבל במידת הנדרש כדי להצדיק פגיעה בשוויון.¹\n\nכפועל של ההכרעה מהותית זו ביטל בית המשפט את תוקפו של החוק וכיוון שלא ראוי להאריך את תחולתו מעבר לתקופה החוקית שנקבעה; בכך השאיר את הכדור בידי המחוקק לגבש מסגרת חלופית להסדרת הנושא.¹\n\nבפסק הדין הדגיש בית המשפט גם כי עקרון השוויון נכלל במסגרת ערכי חוק‑יסוד: כבוד האדם וחירותו וכי שיעמד לביקורת שיפוטית חוקתית, הכוללת בדיקת תכלית ראויה ומידתיות של הפגיעה בזכויות היסוד.²\n\nלנוחיות העיון, נוסח מלא של פסק‑הדין זמין בפרסומי בית המשפט; בנוסף, מסמכי רקע של הכנסת וסקרי היסטוריה וניתוח עוסקים בהתפתחות מערך דחיות השירות ובהשלכות ההחלטה על המדיניות הציבורית.³",
+    "footnotes": [
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+        "title": "החלטה בתיק בג\"ץ 6298/07",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+            "title": "החלטה בתיק בג\"ץ 6298/07",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": null,
+        "title": "החלטה בתיק בג\"ץ 6298/07; חוק-יסוד: כבוד האדם וחירותו (נוסח משולב/סרוק)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+            "title": "החלטה בתיק בג\"ץ 6298/07",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+            "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח משולב/סרוק)",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "בג\"ץ 6298/07 – פסק דין; הסדר דחיית שירות צבאי לתלמידי ישיבה – רקע היסטורי 2002-1948",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+            "title": "בג\"ץ 6298/07 – פסק דין",
+            "source_type": "other"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/globaldocs/MMM/f6627626-ef7c-e811-80e2-00155d0a9876/2_f6627626-ef7c-e811-80e2-00155d0a9876_11_10610.pdf",
+            "title": "הסדר דחיית שירות צבאי לתלמידי ישיבה – רקע היסטורי 2002-1948",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+        "title": "החלטה בתיק בג\"ץ 6298/07",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "caselaw",
+        "candidate_id": "c548b4c6-a38d-4810-82d8-cd324afef5bb"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח משולב/סרוק)",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "760c8cee-65de-4419-b968-e72e72f0d96b"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+        "title": "בג\"ץ 6298/07 – פסק דין",
+        "number": 3,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "cc019c42-8ac9-4f3e-949a-9ba8868bc0c9"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/globaldocs/MMM/f6627626-ef7c-e811-80e2-00155d0a9876/2_f6627626-ef7c-e811-80e2-00155d0a9876_11_10610.pdf",
+        "title": "הסדר דחיית שירות צבאי לתלמידי ישיבה – רקע היסטורי 2002-1948",
+        "number": 3,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "6fedd51d-ad97-40cc-8a56-2dfae9abbca4"
+      }
+    ]
+  },
+  {
+    "id": "Q02",
+    "category": "docket_holding_missing_source_test",
+    "query": "מה נקבע בע\"מ (מחוזי ת\"א) 61908-05-19 בעניין סיווג הכנסה כהכנסת עבודה או הכנסת עסק?",
+    "run_id": "8d29d730-c2eb-45d1-8a44-4fc45ace4873",
+    "ok": true,
+    "total_ms": 114261,
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "lead_ref": {
+      "ref": "s1",
+      "shape": "case_holding",
+      "reason": "binding_case_law"
+    },
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "required_anchors": [],
+    "answer": "**זמינות החומר והתייחסות ראשונית**\n\nאין ברשימת המקורות שסופקה את פסק‑הדין ע\"מ (מחוזי ת\"א) 61908‑05‑19; לא נמסר כאן טקסט של החלטה זו ולכן אין בידי להציג מה נקבע בפסק‑דין המדובר. המקור המוביל שסופק לעיון הוא פסיקת עליון (s1) שנוגעת לסיווג הכנסות לפי סעיף 2 של פקודת מס הכנסה; להלן סיכום ההלכה והעקרונות הרלוונטיים מתוך המקורות שסופקו.\n\n**החזקה מרכזית בפסיקת בית המשפט העליון (s1)**\n\nב‑s1 קבע בית המשפט העליון כי ההבחנה בין 'הכנסת עבודה' לפי סעיף 2(2) של פקודת מס הכנסה לבין 'הכנסה מעסק או משלח יד' לפי סעיף 2(1) נבחנת על יסוד לשון הסעיפים ותכליתם: תשלומים שמקורם בשכר או בתמורה לעבודה עלולים להיכלל בהגדרת הכנסת עבודה גם אם צורתם אינה שכר קבוע (לדוגמה תשר), משום שיש להתבונן בעובדה האם התשלום נובע מהעבודה עצמה או מהפעלת עסק עצמאי.¹\n\n**הבסיס הנורמטיבי והעיקרון הפרשני**\n\nמהמקור עולה כי הבסיס להבחנה הוא לשון סעיף 2 של פקודת מס הכנסה ופרשנותה על ידי בית המשפט העליון: סעיף 2(2) מתמקד בהכנסות שמקורן בעבודה או בהשתכרות מעבודה, בעוד שסעיף 2(1) מדבר על רווח מעסק או משלח יד; יש לבחון את מהות המקור הכלכלי של ההכנסה כדי לקבוע לאיזו קטגוריה היא משתייכת.¹\n\n**מבחנים ואינדיקציות שמנחים את ההבחנה (מהפסיקה והרקע)**\n\n- מקור ותכלית התשלום: האם התשלום מהווה תמורה ישירה על עבודה שבוצעה (מוטה לעבר הכנסת עבודה) או תוצאה של פעילות עסקית עצמאית (מוטה לעבר הכנסה מעסק).¹\n- אופי יחס העבודה: תלות כלכלית ושליטת המעביד, דרגות פיקוח והנחיה, ועצמאות ארגונית — מעורבות מעבידית וברב־מקרים מצביעות לכיוון הכנסת עבודה.¹\n- רציפות והיקף הפעילות: אם מדובר בפעילות סדירה ורציפה שמייצרת הכנסה קבועה זה תומך בסיווג כלפי עבודה; פעילות לא סדירה או חד‑פעמית עשויה לתמוך בסיווג כפעילות עסקית, בהתאם לנסיבות.²\n- סיכון עסקי והשקעה הונית: נטילת סיכון מסחרי, השקעת הון ותשואות על סיכון משקפות לעתים מבנה עסקי ולא יחסי שכר.³\n- קיומם של לקוחות והדרך שבה התקבל התשלום (ממעביד ישיר או מלקוחות/ציבור): כאשר התשלום מגיע ישירות ממעביד וביישום יחסי עובד‑מעביד זה מצביע לכיוון הכנסת עבודה; כאשר התשלום תלוי בגביית לקוחות וניהול קשרי לקוחות, זה עשוי להעיד על עסק עצמאי.²\n\nאמירה זהירה על המבחנים: ההנחיות לעיל נגזרות מהלכי‑דעת ופסקי‑דין שמפורטים ב‑s1 ובהקשר הרחב של הדיון בספרות (s2 מספקת רק תמיכה חלקית); אין בכך כדי לקבוע רשימת מבחנים סופית או להחליף את בחינת הנסיבות הממשיות בכל מקרה.²\n\nבמובן זה — ולעניין שאלתך המקורית — לא ניתן לקבוע אילו מבחנים או איזונים הוחלו בפועל בפסק‑דין המחוזי ע\"מ 61908‑05‑19 כי טקסט פסק‑דין זה לא נכלל בחומרים שסופקו.\n\nמשמעות מקדמית ומשקל שכנועי: פסיקה עליונה כמו s1 מהווה הוראת יסוד המחייבת את הערכת סיווג ההכנסה על ידי בתי המשפט המחוזיים; קביעותיה מהוות מסגרת פרשנית שיש להתיישב עמה בכל מבחן סיווג הכנסה. לגבי שאלת חידוש דוקטרינרי או הבחנות ייחודיות בפסק‑דין המחוזי הספציפי — אין בידי מידע לסמן כי נוצר שינוי עקרוני, מפני שההחלטה המחוזית לא נמסרה כאן.¹",
+    "footnotes": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_5_5967-10.pdf&type=2",
+        "title": "דנג\"ץ 5967-10 - המוסד לביטוח לאומי נ. אסתר כהן",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_5_5967-10.pdf&type=2",
+            "title": "דנג\"ץ 5967-10 - המוסד לביטוח לאומי נ. אסתר כהן",
+            "source_type": "supreme_court_il"
+          }
+        ],
+        "source_type": "supreme_court_il"
+      },
+      {
+        "url": null,
+        "title": "דנג\"ץ 5967-10 - המוסד לביטוח לאומי נ. אסתר כהן; מסמך מאתר hapraklit.co.il",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_5_5967-10.pdf&type=2",
+            "title": "דנג\"ץ 5967-10 - המוסד לביטוח לאומי נ. אסתר כהן",
+            "source_type": "supreme_court_il"
+          },
+          {
+            "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/hadari.pdf",
+            "title": "מסמך מאתר hapraklit.co.il",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/hadari.pdf",
+        "title": "מסמך מאתר hapraklit.co.il",
+        "number": 3,
+        "sources": [
+          {
+            "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/hadari.pdf",
+            "title": "מסמך מאתר hapraklit.co.il",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_5_5967-10.pdf&type=2",
+        "title": "דנג\"ץ 5967-10 - המוסד לביטוח לאומי נ. אסתר כהן",
+        "number": 1,
+        "origin": "local_db",
+        "source_type": "supreme_court_il",
+        "candidate_id": "903307be-23cc-40ed-af3d-e1cc1aef9dff"
+      },
+      {
+        "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/hadari.pdf",
+        "title": "מסמך מאתר hapraklit.co.il",
+        "number": 2,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "ccad0c57-ca14-4284-ae20-ad15821204b1"
+      }
+    ]
+  },
+  {
+    "id": "Q03",
+    "category": "statutory_interpretation",
+    "query": "מהי הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה, ומהם התנאים המצטברים?",
+    "run_id": "3a7f79eb-2051-4f69-8b7b-ad6924dbef9d",
+    "ok": false,
+    "total_ms": 78989,
+    "answer_intent": {
+      "output_shape": "definition"
+    },
+    "lead_ref": null,
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "required_anchors": [],
+    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+    "footnotes": [],
+    "used_sources": []
+  },
+  {
+    "id": "Q18",
+    "category": "anchor_preservation",
+    "query": "צטט מילולית את סעיף 1 לחוק יסוד: כבוד האדם וחירותו, והפנה למקור רשמי.",
+    "run_id": "abfc6405-6139-4a5f-9f0e-0ed82bb424f9",
+    "ok": true,
+    "total_ms": 72713,
+    "answer_intent": {
+      "output_shape": "quote"
+    },
+    "lead_ref": {
+      "ref": "s1",
+      "shape": "quote",
+      "reason": "official_source_with_snippet"
+    },
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "required_anchors": [],
+    "answer": "**ציטוט — סעיף 1 לחוק-יסוד: כבוד האדם וחירותו**\n\nחוק-יסוד: כבוד האדם וחירותו — עקרונות יסוד (תיקון מס' 1) 1. זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.¹\n\nהפניה למקור רשמי: נוסח הסעיף מופיע בעמוד החוק באתר הכנסת ובקובץ ה‑PDF הרשמי של הכנסת.²",
+    "footnotes": [
+      {
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "title": "חוק-יסוד: כבוד האדם וחירותו",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "other"
+      },
+      {
+        "url": null,
+        "title": "אתר הכנסת – חוק-יסוד: כבוד האדם וחירותו; חוק-יסוד: כבוד האדם וחירותו",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://main.knesset.gov.il/law/Pages/Law.aspx?lawid=200",
+            "title": "אתר הכנסת – חוק-יסוד: כבוד האדם וחירותו",
+            "source_type": "other"
+          },
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "title": "חוק-יסוד: כבוד האדם וחירותו",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "cac25bc7-100b-43e7-9840-b0e36b9d4347"
+      },
+      {
+        "url": "https://main.knesset.gov.il/law/Pages/Law.aspx?lawid=200",
+        "title": "אתר הכנסת – חוק-יסוד: כבוד האדם וחירותו",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "000aedf2-7bb3-47b0-a048-862f4d96852e"
+      }
+    ]
+  },
+  {
+    "id": "BGZ5555",
+    "category": "case_holding_smoke",
+    "query": "מה נקבע בבג\"ץ 5555/18 בעניין חוק-יסוד: הלאום? נסח את ההלכה שנפסקה.",
+    "run_id": "8555eb48-5b8c-446c-8b99-8ac741c38247",
+    "ok": true,
+    "total_ms": 102196,
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "lead_ref": {
+      "ref": "s2",
+      "shape": "case_holding",
+      "reason": "required_anchor_case"
+    },
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "required_anchors": [
+      {
+        "anchor_id": "docket:bagatz-5555-18",
+        "description": "פסק הדין בעניין בג\"ץ 5555/18 עצמו",
+        "is_statute_section_anchor": false,
+        "is_docket_anchor": true,
+        "status": "cited",
+        "verified_support": "partial"
+      }
+    ],
+    "answer": "**ההלכה המרכזית שנקשרה בבג\"צ 5555/18**\n\nמן הדברים בפסיקה בבג\"צ 5555/18 ניתן בזהירות להצביע על הלכה מרכזית לפיה בית המשפט נשא בגישה מצמצמת כלפי פסילת הוראות שעניינן זהות לאומית בתוך חוק-יסוד: הלאום, וקבע כי יש להפעיל רף ביקורת שיפוטית מחמיר בטרם ייאמר כי הוראת חוק יסוד עומדת בסתירה כזו ליסודות חוקתיים אחרים כך שיש לפסול אותה.¹\n\n**נימוקי ה-ratio decidendi**\n\nבית המשפט הנמיך באופן זה את מידת ההתערבות השיפוטית תוך שהסתמך בפרשנותו על בחינת תכלית החקיקה ודברי ההסבר של המחוקק כמרכיב חשוב בקביעת משמעות ההוראות; ההבחנה בין הכרה בזהות לאומית לבין פגיעה בזכויות הוסדרה על ידי איזון תכליתי ולא על ידי פסילה אוטומטית.²\n\nעוד נמקה החלוקה בין סמכות המחוקק לבין סמכות בית המשפט באמצעות הדגשה כי חוקי יסוד, בשל טבעם ומהותם, מציבים שאלות של משקל ומדיניות שקביעתן על ידי הרשות המחוקקת מייתרת התערבות שיפוטית אלא אם מתקיים רף חריג של פגיעה קיצונית בעקרונות יסוד כגון שוויון; מסקנה זו נשענת על טיעונים דוקטרינליים שנדונו בפסק הדין וביישומם לעניין סעיפי חוק-יסוד העוסקים בזהות ושוויון.³\n\n**היקף ההלכה וחובת היישום על בתי משפט אחרים**\n\nההלכה שנקשרה בתיק הוצגה בהקשר עובדתי ומשפטי מסוים, ולכן יש לנהוג בה בזהירות לפני הכללה גורפת: מדובר בהנחיה פרשנית ועקרונית שנושאה הרחב עשוי להשפיע על הלכות עתידיות, אך המשקל המכריע של הפסיקה נמצא בהקשר העובדתי והנימוקי של כל תיק.⁴\n\nעם זאת, ככלל מנהלי-דוקטרינלי, ההלכה יכולה לשמש כבולען מובהק לדיון עתידי על חוקי יסוד וכבר צוינה בפסיקה ובפרשנות מאוחרת יותר כאשר בתי משפט אחרים בחנו את היקף הביקורת השיפוטית על חקיקות מעין אלה; גם במקרה זה יש לראותה כמסגרת פרשנית מחייבת במידה מותנית ולא כהגדרה אוטומטית של פסילת חקיקה.⁵\n\nאם תרצה שאצטט במדויק את קטע ההכרעה שבו נוסחה ההלכה או את נוסח הסעיף/הפסיקה, אפשר להביא ציטוט ישיר מתוך פסק הדין כפי שהוא מופיע במסמך הפסק-דין.⁶",
+    "footnotes": [
+      {
+        "url": null,
+        "title": "בג\"ץ 5555/18; בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021); יעקב בן-משה, \"על חוסר הסבירות הקיצוני של בג\"ץ\"",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+            "title": "בג\"ץ 5555/18",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/18/5Yaacov%20Ben-Shemesh.pdf",
+            "title": "יעקב בן-משה, \"על חוסר הסבירות הקיצוני של בג\"ץ\"",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021); פרשנות תכליתית החותרת תחת התכלית: על מעמדם של דברי ההסבר בחוק ובפסיקה",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.taulawreview.sites.tau.ac.il/mv",
+            "title": "פרשנות תכליתית החותרת תחת התכלית: על מעמדם של דברי ההסבר בחוק ובפסיקה",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021); סעיף 7 לחוק יסוד הלאום – האם ניתן ליישב את המחלוקת; מסמך מאתר אתר אקדמי (law.biu.ac.il)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.runi.ac.il/media/vsxlq4wj/law-of-nationality.pdf",
+            "title": "סעיף 7 לחוק יסוד הלאום – האם ניתן ליישב את המחלוקת",
+            "source_type": "other"
+          },
+          {
+            "url": "https://law.biu.ac.il/sites/law/files/shared/segel/%D7%A9%D7%97%D7%A8-%D7%9C%D7%99%D7%A4%D7%A9%D7%יץ-%D7%ל%אום%20מול%20סבירות.pdf",
+            "title": "מסמך מאתר אתר אקדמי (law.biu.ac.il)",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "בג\"ץ 5555/18; יעקב בן-משה, \"על חוסר הסבירות הקיצוני של בג\"ץ\"",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+            "title": "בג\"ץ 5555/18",
+            "source_type": "other"
+          },
+          {
+            "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/18/5Yaacov%20Ben-Shemesh.pdf",
+            "title": "יעקב בן-משה, \"על חוסר הסבירות הקיצוני של בג\"ץ\"",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "בג\"ץ 8492/22 נביל הילאל ג'בריל מנסור נ׳ מפקד כוחות צה\"ל בגדה המערבית פסק דין; בג\"ץ 5555/18",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8492-22-%d7%a0%d7%91%d7%99%d7%9c-%d7%94%d7%99%d7%9c%d7%90%d7%9c-%d7%92%d7%91%d7%a8%d7%99%d7%9c-%d7%9e%d7%a0%d7%a1%d7%95%d7%a8-%d7%a0-%d7%9e%d7%a4%d7%a7%d7%93-%d7%9b%d7%95%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 8492/22 נביל הילאל ג'בריל מנסור נ׳ מפקד כוחות צה\"ל בגדה המערבית פסק דין",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+            "title": "בג\"ץ 5555/18",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+        "number": 6,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+        "title": "בג\"ץ 5555/18",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "546851c3-4c25-4fa7-926e-208fba41d324"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+        "number": 1,
+        "origin": "local_db",
+        "source_type": "caselaw",
+        "candidate_id": "b663d960-c59f-4ac3-a07f-45c5fbee4400"
+      },
+      {
+        "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/18/5Yaacov%20Ben-Shemesh.pdf",
+        "title": "יעקב בן-משה, \"על חוסר הסבירות הקיצוני של בג\"ץ\"",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "a6028c4e-9fa9-4506-bfa8-4884b747ae06"
+      },
+      {
+        "url": "https://www.taulawreview.sites.tau.ac.il/mv",
+        "title": "פרשנות תכליתית החותרת תחת התכלית: על מעמדם של דברי ההסבר בחוק ובפסיקה",
+        "number": 2,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "632652a5-68f4-4c9f-b0e0-4c0972c30a74"
+      },
+      {
+        "url": "https://www.runi.ac.il/media/vsxlq4wj/law-of-nationality.pdf",
+        "title": "סעיף 7 לחוק יסוד הלאום – האם ניתן ליישב את המחלוקת",
+        "number": 3,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "a55a2902-a506-4d6e-a503-28439a5e861a"
+      },
+      {
+        "url": "https://law.biu.ac.il/sites/law/files/shared/segel/%D7%A9%D7%97%D7%A8-%D7%9C%D7%99%D7%A4%D7%A9%D7%יץ-%D7%ל%אום%20מול%20סבירות.pdf",
+        "title": "מסמך מאתר אתר אקדמי (law.biu.ac.il)",
+        "number": 3,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "eca3bc4a-d087-4612-a8eb-04cb14ca9b8d"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8492-22-%d7%a0%d7%91%d7%99%d7%9c-%d7%94%d7%99%d7%9c%d7%90%d7%9c-%d7%92%d7%91%d7%a8%d7%99%d7%9c-%d7%9e%d7%a0%d7%a1%d7%95%d7%a8-%d7%a0-%d7%9e%d7%a4%d7%a7%d7%93-%d7%9b%d7%95%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 8492/22 נביל הילאל ג'בריל מנסור נ׳ מפקד כוחות צה\"ל בגדה המערבית פסק דין",
+        "number": 5,
+        "origin": "local_db",
+        "source_type": "caselaw",
+        "candidate_id": "9f210154-334f-4630-9fcb-92929145aa05"
+      }
+    ]
+  }
+]

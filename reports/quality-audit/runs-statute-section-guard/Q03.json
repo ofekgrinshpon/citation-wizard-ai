@@ -1,0 +1,18 @@
+{
+  "id": "Q03",
+  "category": "statutory_interpretation",
+  "query": "מהי הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה, ומהם התנאים המצטברים?",
+  "run_id": "3a7f79eb-2051-4f69-8b7b-ad6924dbef9d",
+  "ok": false,
+  "total_ms": 78989,
+  "answer_intent": {
+    "output_shape": "definition"
+  },
+  "lead_ref": null,
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "required_anchors": [],
+  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "footnotes": [],
+  "used_sources": []
+}
