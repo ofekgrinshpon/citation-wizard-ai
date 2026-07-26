@@ -187,6 +187,9 @@ export function buildRequiredAnchorQueries(
           ...(a.is_docket_anchor
             ? { is_docket_anchor: true, docket_variants: a.docket_variants ?? [] }
             : {}),
+          ...(a.is_statute_section_anchor
+            ? { is_statute_section_anchor: true, statute_section_ref_id: a.statute_section_ref?.ref_id }
+            : {}),
         },
       } as Query & { metadata: Record<string, unknown> });
     }
