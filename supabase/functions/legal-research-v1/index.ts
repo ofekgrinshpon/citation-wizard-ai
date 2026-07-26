@@ -648,7 +648,11 @@ async function handle(req: Request): Promise<Response> {
     userDocs: attachmentResult.documents,
   });
   const missingForCaveat = pickMissingAnchors(preDraftAnchorStatuses)
-    .map((s) => ({ description: s.description, is_docket: s.is_docket_anchor }));
+    .map((s) => ({
+      description: s.description,
+      is_docket: s.is_docket_anchor,
+      is_statute_section: !!s.is_statute_section_anchor,
+    }));
   const requiredAnchorCandidateIds = new Set<string>(
     preDraftAnchorStatuses.flatMap((s) => s.candidate_ids ?? []),
   );
