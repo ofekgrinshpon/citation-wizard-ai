@@ -1,0 +1,106 @@
+{
+  "id": "BGZ5555",
+  "category": "case_holding_smoke",
+  "query": "מה נקבע בבג\"ץ 5555/18 בעניין חוק-יסוד: הלאום? נסח את ההלכה שנפסקה.",
+  "run_id": "594547c3-4480-4436-96f0-35c8ec784ba7",
+  "ok": true,
+  "total_ms": 125405,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "lead_ref": {
+    "ref": "s5",
+    "shape": "case_holding",
+    "reason": "required_anchor_case"
+  },
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "required_anchors": [
+    {
+      "anchor_id": "docket:bagatz-5555-18",
+      "description": "פסק הדין בעניין בג\"ץ 5555/18 עצמו",
+      "is_statute_section_anchor": false,
+      "is_docket_anchor": true,
+      "status": "cited",
+      "verified_support": "partial"
+    }
+  ],
+  "answer": "**ההלכה בבג\"ץ 5555/18**\n\nתמצית ההכרעה: בית המשפט העליון דחה את העתירות נגד \"חוק-יסוד: ישראל — מדינת הלאום של העם היהודי\" ולא הורה על בטלותו של החוק בנסיבות התיק.¹\n\nגבולות הביקורת השיפוטית: מהפסיקה עולה בזהירות כי בית המשפט סייג את היקף הביקורת על חוקי-יסוד כמגבילה יותר מביקורת רגילה — ובמקרה זה נקבע כי רק במקרים חריפים של פגיעה אנושה בגרעין הבסיסי של אופיה של המדינה יהא מקום לפסול חוק-יסוד; בנסיבות העתירה נמצא כי תנאי 'קיצון' זה לא התקיים.¹\n\nפרשנות בהרמוניה עם זכויות יסוד: ההחלטה קובעת כי יש לפרש את הוראות החוק בצורה שתתאים לעקרונות היסוד ולזכויות המוכרות במשפט, לרבות עקרון השוויון, וכי אין מקום לשלול את אופיה הדמוקרטי של המדינה על יסוד נוסח החוק.²\n\nמעמד השפה הערבית: החוק העניק לשפה הערבית \"מעמד מיוחד\" במקום הסטטוס הקודם; בית המשפט הדגיש בשל כך כי יש לפרש וליישם הוראה זו באופן שאינו מפחית את השימוש והנגישות לשפה הערבית בשירותים ומוסדות ציבוריים בפועל.³\n\nסעיף הקידום של ההתיישבות (סעיף 7): בית המשפט קיבל כי סעיף 7 מעגן ערך של קידום התיישבות יהודית, אך מן הפסיקה עולה בזהירות כי הוראה זו אינה מהווה רשות להפליה או לפגיעה בשוויון ויש ליישם אותה בהתאם להלכות הקיימות האוסרות הפליה בחלוקת משאבים ציבוריים ובהתיישבות.³\n\nמסקנה מתמצתת: ההלכה שנקבעה בבג\"ץ 5555/18 מצדדת בגישה מתונה — דחיית העתירות תוך שמירה על עקרון הפרשנות ההרמונית וההבהרה כי סמכות הביקורת השיפוטית על חוקי-יסוד מצומצמת ולרוב תתממש רק בנסיבות חריפות במיוחד.¹",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "תקציר בג\"ץ 5555-18; בג\"ץ 5555/18",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555-18",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+          "title": "בג\"ץ 5555/18",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555-18",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555-18",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "חוק יסוד: ישראל מדינת הלאום של העם היהודי; תקציר בג\"ץ 5555-18",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod18.pdf",
+          "title": "חוק יסוד: ישראל מדינת הלאום של העם היהודי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555-18",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555-18",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "59d61d71-2ce6-4cb5-b186-36c3b14ff6a0"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+      "title": "בג\"ץ 5555/18",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "8416f07d-3f8d-4d19-8f70-5c7cd724f104"
+    },
+    {
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod18.pdf",
+      "title": "חוק יסוד: ישראל מדינת הלאום של העם היהודי",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "203c66fe-23b8-4aba-a5b6-7b6150b11b94"
+    }
+  ]
+}

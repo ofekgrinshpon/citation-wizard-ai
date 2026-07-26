@@ -1,0 +1,119 @@
+{
+  "id": "Q01",
+  "category": "docket_holding",
+  "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
+  "run_id": "8b88c6c2-50b5-48dc-ae4c-0fefa7ac5eb1",
+  "ok": true,
+  "total_ms": 122367,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "lead_ref": {
+    "ref": "s3",
+    "shape": "case_holding",
+    "reason": "required_anchor_case"
+  },
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "required_anchors": [
+    {
+      "anchor_id": "docket:bagatz-6298-07",
+      "description": "פסק הדין בעניין בג\"ץ 6298/07 עצמו",
+      "is_statute_section_anchor": false,
+      "is_docket_anchor": true,
+      "status": "cited",
+      "verified_support": "direct"
+    }
+  ],
+  "answer": "**עיקרי ההכרעה בבג\"ץ 6298/07**\n\nבג\"ץ 6298/07 רסלר נ' כנסת ישראל קבע כי חוק דחיית שירות לתלמידי ישיבות (חוק טל) אינו חוקתי: החוק פוגע בעקרון השוויון ואינו עומד בדרישות המידתיות הקבועות בפסקת ההגבלה של חוק יסוד: כבוד האדם וחירותו.¹\n\nסעד והוראת בית המשפט כללו הכרזה על בטלותו של החוק/אי־הארכת תוקפו לאחר המועד שנקבע, תוך קריאה למחוקק לעצב הסדר חלופי שעומד בדרישות החוקתיות.²\n\nבהנמקה הדגיש בית המשפט כי בחינת מידתיות כללה גם בדיקה עובדית של ישימותו ותוצאותיו של הסדר דחיית השירות; בית המשפט מצא כי החוק לא השיג את תכליותיו (הגדלת גיוס ושילוב תלמידי ישיבות), וממצאי היישום החזיקו בתפקיד מחמיר בבחינת הפגיעה בשוויון.¹\n\nמסגרת הבדיקה שאליה פנה בית המשפט הייתה נורמטיבית: עקרון השוויון נבחן כנגזר מכבוד האדם, והחוק נבחן לפי פסקת ההגבלה — בדיקת תכלית ראויה ואמצעי מידתי (מבחן המידתיות) כפי שנעשה בפסיקה המתמשכת בדיני זכויות.³\n\nמענה זה מוגבל לממצאי ההכרעה בבג\"ץ 6298/07 כפי שהתבארו במקורות המסופקים; אם ברצונך ציטוטים מדויקים מתוך פסק־הדין או התייחסות לעמדות מיעוט ודעת הרוב, אוכל להרחיב ולהביא פרטים מדויקים נוספים.",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "החלטה בתיק בג\"ץ 6298/07; בג\"ץ 6298/07 רסלר נ' כנסת ישראל – פסק דין",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%A7-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07 רסלר נ' כנסת ישראל – פסק דין",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בג\"ץ 6298/07 רסלר נ' כנסת ישראל – פסק דין; בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07 רסלר נ' כנסת ישראל – פסק דין",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%A7-%27%D7%97%D7%95%D7%A7-%D7%98%D7%9C%27-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
+          "title": "בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "החלטה בתיק בג\"ץ 6298/07; ביהמ\"ש העליון, אב\"ד השופטת יעל וילנר, השופטת גילה כנפי שטייניץ, השופטת רות רונן: פס\"ד בעתירה נגד צו החרמה והריסה לדירה של מבצע פיגוע הירי קטלני שגרם למותו של אור אשכר ז\"ל (בג\"ץ 3231/23)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%A7-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3990",
+          "title": "ביהמ\"ש העליון, אב\"ד השופטת יעל וילנר, השופטת גילה כנפי שטייניץ, השופטת רות רונן: פס\"ד בעתירה נגד צו החרמה והריסה לדירה של מבצע פיגוע הירי קטלני שגרם למותו של אור אשכר ז\"ל (בג\"ץ 3231/23)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%A7-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "caselaw",
+      "candidate_id": "2d7cceef-9b08-4422-8a48-b2ec40203454"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+      "title": "בג\"ץ 6298/07 רסלר נ' כנסת ישראל – פסק דין",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "c4f357b4-06c5-4107-93dc-7ce4d2a3601a"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%A7-%27%D7%97%D7%95%D7%A7-%D7%98%D7%9C%27-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
+      "title": "בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "caselaw",
+      "candidate_id": "8298b194-4470-4572-9583-3497295b66e1"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3990",
+      "title": "ביהמ\"ש העליון, אב\"ד השופטת יעל וילנר, השופטת גילה כנפי שטייניץ, השופטת רות רונן: פס\"ד בעתירה נגד צו החרמה והריסה לדירה של מבצע פיגוע הירי קטלני שגרם למותו של אור אשכר ז\"ל (בג\"ץ 3231/23)",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "d8cd5ddf-cf1c-4c07-a078-2b4d695fd80a"
+    }
+  ]
+}

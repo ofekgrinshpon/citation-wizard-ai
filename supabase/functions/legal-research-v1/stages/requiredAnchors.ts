@@ -11,12 +11,18 @@
 import type { AnalyzerOutput, Candidate, Query, SourceRole } from "../lib/types.ts";
 import type { UserDocument } from "../lib/attachments.ts";
 import { detectDockets, type DocketRef } from "./docketDetection.ts";
+import {
+  candidateSatisfiesStatuteSection,
+  detectStatuteSections,
+  type StatuteSectionRef,
+} from "./statuteSectionDetection.ts";
 
 export interface RequiredAnchor {
   anchor_id: string;
   trigger:
     | { kind: "interpretation_note"; pattern: RegExp }
-    | { kind: "docket"; docket: DocketRef };
+    | { kind: "docket"; docket: DocketRef }
+    | { kind: "statute_section"; ref: StatuteSectionRef };
   anchor_type: SourceRole;
   description: string;          // short description for drafter caveat.
   suggested_queries: string[];  // Hebrew (+ optional English) — one Query per item.
@@ -29,6 +35,12 @@ export interface RequiredAnchor {
   is_docket_anchor?: boolean;
   /** Full docket variants (for retrieval-side string matching). */
   docket_variants?: string[];
+  /**
+   * Statute-section anchors: satisfied only when a candidate's title matches
+   * the statute AND its snippet contains the specific section marker.
+   */
+  is_statute_section_anchor?: boolean;
+  statute_section_ref?: StatuteSectionRef;
 }
 
 export interface RequiredAnchorStatus {
@@ -36,6 +48,7 @@ export interface RequiredAnchorStatus {
   description: string;
   anchor_type: SourceRole;
   is_docket_anchor: boolean;
+  is_statute_section_anchor?: boolean;
   emitted: boolean;
   queries: string[];
   candidate_ids: string[];
@@ -98,6 +111,27 @@ export function buildDocketAnchors(text: string): RequiredAnchor[] {
   }));
 }
 
+/**
+ * Build statute-section anchors from free text (the user's question). An
+ * anchor is created only when the text names a registered statute AND at
+ * least one `סעיף N...` marker. These anchors are strictly satisfied — only
+ * candidates whose title matches the statute AND whose snippet contains the
+ * section marker count.
+ */
+export function buildStatuteSectionAnchors(text: string): RequiredAnchor[] {
+  const refs = detectStatuteSections(text);
+  return refs.map<RequiredAnchor>((r) => ({
+    anchor_id: `statute_section:${r.ref_id}`,
+    trigger: { kind: "statute_section", ref: r },
+    anchor_type: "primary_statute",
+    description: `הנוסח המחייב של ${r.section_display} ל${r.statute_title_he}`,
+    suggested_queries: r.suggested_queries,
+    target: "both",
+    is_statute_section_anchor: true,
+    statute_section_ref: r,
+  }));
+}
+
 function uniqueOrdered<T>(xs: T[]): T[] {
   const seen = new Set<T>();
   const out: T[] = [];
@@ -153,6 +187,9 @@ export function buildRequiredAnchorQueries(
           ...(a.is_docket_anchor
             ? { is_docket_anchor: true, docket_variants: a.docket_variants ?? [] }
             : {}),
+          ...(a.is_statute_section_anchor
+            ? { is_statute_section_anchor: true, statute_section_ref_id: a.statute_section_ref?.ref_id }
+            : {}),
         },
       } as Query & { metadata: Record<string, unknown> });
     }
@@ -178,19 +215,28 @@ export function computeRequiredAnchorStatuses(args: {
   };
   return anchors.map((a) => {
     const isDocket = !!a.is_docket_anchor;
+    const isStatuteSection = !!a.is_statute_section_anchor;
     const anchorCandsAll = candidates.filter((c) =>
       ((c.metadata as Record<string, unknown> | undefined)?.required_anchor_id as string | undefined)
         === a.anchor_id ||
       // Backup: anchor queries we appended have a recognizable reason via query_he matches.
       a.suggested_queries.includes(c.query_he)
     );
-    // For docket anchors, only docket-matched candidates count as "the
-    // judgment itself". Adjacent / same-doctrine cases are tracked but
-    // cannot satisfy the anchor.
-    const anchorCands = isDocket
-      ? anchorCandsAll.filter((c) =>
-          ((c.metadata as Record<string, unknown> | undefined)?.docket_match) === true)
-      : anchorCandsAll;
+    // Docket: only docket-matched candidates count.
+    // Statute-section: only candidates whose title matches the statute AND
+    //   whose snippet contains the section marker count.
+    let anchorCands = anchorCandsAll;
+    if (isDocket) {
+      anchorCands = anchorCandsAll.filter((c) =>
+        ((c.metadata as Record<string, unknown> | undefined)?.docket_match) === true);
+    } else if (isStatuteSection && a.statute_section_ref) {
+      const ref = a.statute_section_ref;
+      anchorCands = anchorCandsAll.filter((c) =>
+        candidateSatisfiesStatuteSection(
+          { title: c.title, snippet: c.snippet, url: c.source_url },
+          ref,
+        ));
+    }
     const candidate_ids = anchorCands.map((c) => c.candidate_id);
     const reached_verifier = anchorCands.some((c) => usableIds.has(c.candidate_id));
     let verified_support: RequiredAnchorStatus["verified_support"] = "none";
@@ -204,13 +250,11 @@ export function computeRequiredAnchorStatuses(args: {
     }
     const cited = anchorCands.some((c) => usedCandidateIds.has(c.candidate_id));
 
-    // Docket-anchor extra constraint: verified_support must be direct|partial
-    // to count as verified/cited. Otherwise collapse the status down.
-    const supportOk = !isDocket ||
+    // Strict anchors (docket, statute-section) require direct|partial support.
+    const supportOk = (!isDocket && !isStatuteSection) ||
       verified_support === "direct" || verified_support === "partial";
 
-    // User-uploaded judgment override: if the user uploaded a document whose
-    // content matches this docket, treat the anchor as satisfied directly.
+    // User-uploaded judgment override (docket anchors only).
     const docketId = isDocket && a.trigger.kind === "docket" ? a.trigger.docket.docket_id : null;
     const matchingUserDocs = isDocket && docketId
       ? (userDocs ?? []).filter((d) =>
@@ -220,7 +264,6 @@ export function computeRequiredAnchorStatuses(args: {
 
     let status: RequiredAnchorStatus["status"];
     if (matchingUserDocs.length > 0) {
-      // User-supplied judgment satisfies the anchor; no caveat needed.
       status = "cited";
       verified_support = "direct";
     } else if (cited && supportOk) status = "cited";
@@ -233,6 +276,7 @@ export function computeRequiredAnchorStatuses(args: {
       description: a.description,
       anchor_type: a.anchor_type,
       is_docket_anchor: isDocket,
+      is_statute_section_anchor: isStatuteSection,
       emitted: true,
       queries: a.suggested_queries,
       candidate_ids: [...candidate_ids, ...userDocRefs],

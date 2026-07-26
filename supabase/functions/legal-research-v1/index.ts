@@ -23,6 +23,7 @@ import { evaluateAnswerStyle } from "./stages/answerStyleGate.ts";
 import {
   buildDocketAnchors,
   buildRequiredAnchorQueries,
+  buildStatuteSectionAnchors,
   computeRequiredAnchorStatuses,
   pickMissingAnchors,
   resolveRequiredAnchors,
@@ -447,7 +448,8 @@ async function handle(req: Request): Promise<Response> {
   // — force retrieval of the specific ruling the user asked about).
   const noteAnchors = resolveRequiredAnchors(analyzer);
   // docketAnchors already computed before attachment extraction.
-  const requiredAnchors = [...noteAnchors, ...docketAnchors];
+  const statuteSectionAnchors = buildStatuteSectionAnchors(question);
+  const requiredAnchors = [...noteAnchors, ...docketAnchors, ...statuteSectionAnchors];
   const anchorQueries = requiredAnchors.length > 0
     ? buildRequiredAnchorQueries(analyzer, requiredAnchors)
     : [];
@@ -460,6 +462,7 @@ async function handle(req: Request): Promise<Response> {
       description: a.description,
       anchor_type: a.anchor_type,
       is_docket_anchor: !!a.is_docket_anchor,
+      is_statute_section_anchor: !!a.is_statute_section_anchor,
       target: a.target,
       query_count: a.suggested_queries.length,
     })),
@@ -645,7 +648,11 @@ async function handle(req: Request): Promise<Response> {
     userDocs: attachmentResult.documents,
   });
   const missingForCaveat = pickMissingAnchors(preDraftAnchorStatuses)
-    .map((s) => ({ description: s.description, is_docket: s.is_docket_anchor }));
+    .map((s) => ({
+      description: s.description,
+      is_docket: s.is_docket_anchor,
+      is_statute_section: !!s.is_statute_section_anchor,
+    }));
   const requiredAnchorCandidateIds = new Set<string>(
     preDraftAnchorStatuses.flatMap((s) => s.candidate_ids ?? []),
   );
