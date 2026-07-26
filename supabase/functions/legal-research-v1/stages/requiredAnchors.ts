@@ -111,6 +111,27 @@ export function buildDocketAnchors(text: string): RequiredAnchor[] {
   }));
 }
 
+/**
+ * Build statute-section anchors from free text (the user's question). An
+ * anchor is created only when the text names a registered statute AND at
+ * least one `סעיף N...` marker. These anchors are strictly satisfied — only
+ * candidates whose title matches the statute AND whose snippet contains the
+ * section marker count.
+ */
+export function buildStatuteSectionAnchors(text: string): RequiredAnchor[] {
+  const refs = detectStatuteSections(text);
+  return refs.map<RequiredAnchor>((r) => ({
+    anchor_id: `statute_section:${r.ref_id}`,
+    trigger: { kind: "statute_section", ref: r },
+    anchor_type: "primary_statute",
+    description: `הנוסח המחייב של ${r.section_display} ל${r.statute_title_he}`,
+    suggested_queries: r.suggested_queries,
+    target: "both",
+    is_statute_section_anchor: true,
+    statute_section_ref: r,
+  }));
+}
+
 function uniqueOrdered<T>(xs: T[]): T[] {
   const seen = new Set<T>();
   const out: T[] = [];
