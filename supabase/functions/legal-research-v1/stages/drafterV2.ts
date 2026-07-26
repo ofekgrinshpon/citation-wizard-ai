@@ -697,6 +697,7 @@ export async function runDrafterV2(
     inputSources,
     requiredAnchorCandidateIds,
     missingAnchors.some((a) => a.is_docket),
+    missingAnchors.some((a) => a.is_statute_section),
   );
   const userMsg = buildUserMessage(
     question,
