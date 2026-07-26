@@ -11,6 +11,11 @@
 import type { AnalyzerOutput, Candidate, Query, SourceRole } from "../lib/types.ts";
 import type { UserDocument } from "../lib/attachments.ts";
 import { detectDockets, type DocketRef } from "./docketDetection.ts";
+import {
+  candidateSatisfiesStatuteSection,
+  detectStatuteSections,
+  type StatuteSectionRef,
+} from "./statuteSectionDetection.ts";
 
 export interface RequiredAnchor {
   anchor_id: string;
