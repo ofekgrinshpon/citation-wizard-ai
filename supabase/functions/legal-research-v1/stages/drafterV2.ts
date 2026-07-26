@@ -170,7 +170,7 @@ function buildUserMessage(
   sources: DrafterInputSource[],
   userDocs: UserDocument[],
   useAsSource: boolean,
-  missingAnchors: Array<{ description: string; is_docket?: boolean }>,
+  missingAnchors: Array<{ description: string; is_docket?: boolean; is_statute_section?: boolean }>,
   answerIntent?: AnswerIntent,
   leadRef?: string | null,
 ): string {
@@ -180,7 +180,11 @@ function buildUserMessage(
     "מסגרת התשובה חייבת להישאר נאמנה לשאלה כפי שנשאלה. אם המקורות עוסקים בנושא סמוך אך לא זהה — ציין זאת במפורש ואל תחליף את שאלת המשתמש.",
   );
   const missingDocketAnchors = missingAnchors.filter((a) => a.is_docket);
-  const missingNonDocketAnchors = missingAnchors.filter((a) => !a.is_docket);
+  const missingStatuteSectionAnchors = missingAnchors.filter((a) => a.is_statute_section);
+  const missingNonDocketAnchors = missingAnchors.filter((a) => !a.is_docket && !a.is_statute_section);
+  const shape = answerIntent?.output_shape;
+  const statuteRefusalActive =
+    missingStatuteSectionAnchors.length > 0 && (shape === "definition" || shape === "quote");
   if (missingNonDocketAnchors.length > 0) {
     lines.push("");
     lines.push(
@@ -200,6 +204,23 @@ function buildUserMessage(
     lines.push(
       'עליך לכלול בגוף התשובה, במפורש ובלשון כמעט זהה, את המשפט הבא: "לא אותר פסק הדין עצמו במקורות שעברו אימות; לכן לא ניתן לקבוע בביטחון את ההלכה שנפסקה בו." אין להציג מקורות רקע או פסיקה סמוכה כאילו הם ההלכה שנפסקה בתיק הספציפי הזה. מותר לתאר את ההקשר המשפטי הכללי בזהירות, אך לא לייחס לתיק ספציפי קביעות שאין להן תמיכה ישירה במקורות שסופקו.',
     );
+  }
+  if (statuteRefusalActive) {
+    lines.push("");
+    lines.push(
+      "הערה קריטית — נוסח החוק הספציפי שנתבקש (הגדרה/ציטוט) לא אותר במקורות שעברו אימות:",
+    );
+    for (const a of missingStatuteSectionAnchors) lines.push(`  • ${a.description}`);
+    lines.push(
+      'עליך לכלול בגוף התשובה, במפורש ובלשון כמעט זהה, את המשפט הבא: "לא אותר במקורות שעברו אימות נוסח מוסמך של הסעיף המבוקש; לכן לא ניתן להביא את ההגדרה או הציטוט המחייב." אין לגזור את ההגדרה, את התנאים המצטברים או את הציטוט המבוקש מסעיפים אחרים, מחוזרים מנהליים, מהצעות חוק, ממאמרים או ממקורות משניים סמוכים. מותר להזכיר בקצרה את ההקשר הרגולטורי שהמקורות המשניים חושפים, אך אין להציג פרטים כמותיים (סכומים, סֵפים, אחוזים) או רשימת תנאים ולייחס אותם לסעיף המבוקש.',
+    );
+  } else if (missingStatuteSectionAnchors.length > 0) {
+    // Non-definition/quote shape — softer note.
+    lines.push("");
+    lines.push(
+      "הערה: נוסח הסעיפים הבאים לא אותר במקורות שעברו אימות, ולכן אין לייחס להם קביעות כמותיות או ניסוחיות מדויקות:",
+    );
+    for (const a of missingStatuteSectionAnchors) lines.push(`  • ${a.description}`);
   }
   lines.push("");
   lines.push("טענות (לשימוש פנימי בלבד — אל תזכיר מזהי טענות בשום text):");
