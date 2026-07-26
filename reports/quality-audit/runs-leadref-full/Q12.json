@@ -1,0 +1,294 @@
+{
+  "id": "Q12",
+  "category": "thin_corpus",
+  "query": "מהי אחריותו של דירקטור בחברה פרטית לגילויי מידע על שימוש במערכות AI גנרטיביות בתהליכי קבלת החלטות?",
+  "run_id": "9ffced9a-f835-42ee-98ad-e97e253aae73",
+  "ok": true,
+  "total_ms": 155540,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "missing_required_anchors": null,
+  "answer": "**מסקנה תקצירית**\n\nבנסיבות של חברה פרטית, מן המקורות שעלו עולה בזהירות כי חובת הדירקטור לפעול בתום לב ובזהירות מקצועית מחייבת מודעות וסיכול סיכונים בשימוש ב‑AI גנרטיבי והצגת מסקנות אלה בפני הנהלת החברה/הדירקטוריון; עם זאת, אין במקורות שסופקו נוסח מפורש המחייב גילוי חיצוני אוניברסלי של שימוש ב‑AI על חברות פרטיות כלליות.\n\nבאשר לחובת הגילוי הפנימית: חובת הנאמנות וטובת החברה כפי שמשתקפת בספרות על דיני החברות מחייבות לדאוג לטובת החברה הכוללת ולערוך איזון אינטרסים, ולכן קיים בסיס תיאורטי המחייב דיווח ופיקוח פנימי על טכנולוגיות משמעותיות שמשפיעות על קבלת החלטות תאגידית.¹\n\nתמיכה מעשית ברעיון זה כלפי ממשל פנימי ניתנת במסמכים העוסקים בממשל תאגידי ו‑AI, שממליצים על מדיניות AI ארגונית, תיעוד החלטות, פיקוח אנושי ונהלים ברורים לאישור, הגבלה או איסור שימוש בכלי AI ככל שהן משפיעות על החלטות עסקיות מהותיות.²\n\nהיבטי פרטיות ודרישות גילוי חיצוני: מסמכי מדיניות והנחיות פרטיות מצביעים בזהירות שהוראות חוקי הגנת הפרטיות חלות על מערכות AI שמאחסנות או מעבדות מידע אישי וכי מידע שנגזר על‑ידי AI עלול להיחשב כמידע המוגן; משמעות הדבר היא כי כשהשימוש ב‑AI מערב עיבוד מידע אישי יחולו חובות של יידוע, מטרה מוגדרת וצמצום שימוש לפי מסגרת הפרטיות.³\n\nעם זאת, מן המקורות לא נראה שיש דרישה רגולטורית כוללת החלה על כל חברה פרטית לחשוף באופן חיצוני שימוש ב‑AI בהיקף גורף; בתחום הפיננסי יש המלצות מפורטות להידוק דרכי בדיקה, דיווח ושקיפות כלפי רגולטורים, אך אלה מתייחסות בעיקר לסקטור מפוקח.⁴\n\nהיקף האחריות במקרה נזק: ההטלה האזרחית או רגולטורית של אחריות על דירקטור תלויה בבחינת קיומה של רשלנות בפיקוח, קיומו של קשר סיבתי בין הזנחה לנזק והיקפו. בספרות נמצאות הדרישות הסטנדרטיות להוכחת רשלנות רגולטורית כגון אחריות של הרשות או הגוף הפוגע, קשר סיבתי והיקף הנזק; בפרקטיקה תיעוד של הערכות סיכונים ונוהלי פיקוח מפחית את סיכוי ההטלה.⁵\n\n**אמצעי ממשל תאגידי ופרקטיקות מומלצות**\n\n- מדיניות ארגונית ברורה ל‑AI: מסמך מדיניות הכולל הגדרת תחומים מאושרים/אסורים, קריטריונים לאישור שימוש ותהליכי אחריות פנימית.²\n- תסקירי השפעה על פרטיות (PIA) ועיצוב לפרטיות (privacy by design) לפני הטמעה של מערכות שמעבדות מידע אישי.⁶\n- מנגנוני תיעוד ודיווח פנימיים: רישום שימוש, החלטות שהושפעו מה‑AI, מקורות נתונים והסברים למדיניות ההחלטה לצורך ביקורת פנימית וחיצונית עתידית.⁷\n- מינוי בעלי תפקידים וועדות: מינוי גורמים אחראיים על ניהול סיכוני AI (למשל ממונה פרטיות או ועדת סיכון טכנולוגית) שיכולים לפקח על עמידה במדיניות ולדווח לדירקטוריון.⁸\n- בדיקות, הערכות חיצוניות ושקיפות לרגולטורים בסקטורים מפוקחים: ביצוע בדיקות נאותות, הערכות של גורמי מומחה חיצוניים ודיווח מבוקר לגורמי פיקוח במגזרים כמו בנקאות ושוק ההון.⁹\n\nמנקודת מבט ניהולית־מעשית, על דירקטור להבטיח כי הוא מקבל מידע מהותי על יישומי AI (כולל סיכונים, מדיניות צמצום וממצאי תסקירים) כדי למלא חובות זהירות ונאמנות; תיעוד גילוי כזה בפני הדירקטוריון מפחית סיכונים עתידיים של הטלת אחריות.⁷\n\nהגבלות המקורות והמלצה מעשית: המקורות שסופקו מתמקדים בעיקר בהנחיות פרטיות, מדיניות ואתגרי ממשל, וכן בדוחי סקטור פיננסי; הם אינם כוללים נוסחים חקיקתיים של דיני החברות המחייבים גילוי בפרט של שימוש ב‑AI בתוך חברות פרטיות. לכן, לצורך החלטה מחייבת משפטית יש לפנות לייעוץ משפטי מותאם ובחינת חוקי החברות, דיני ניירות ערך וחקיקה ספציפית בתחום ה‑AI שלא נכללה כאן.¹⁰",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "הבעלות על הפירמה וסייגיה - נושים, עובדים, אלמנות ויתומים בדיני החברות; מינוי דירקטורים: תיאוריה, ראיות, מדיניות",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1253",
+          "title": "הבעלות על הפירמה וסייגיה - נושים, עובדים, אלמנות ויתומים בדיני החברות",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1860",
+          "title": "מינוי דירקטורים: תיאוריה, ראיות, מדיניות",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://esgblog.runi.ac.il/post/ai-governance",
+      "title": "הבינה המלאכותית לא תנהל את עצמה: על ממשל תאגידי בעידן ה-AI",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://esgblog.runi.ac.il/post/ai-governance",
+          "title": "הבינה המלאכותית לא תנהל את עצמה: על ממשל תאגידי בעידן ה-AI",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); תחולת הוראות חוק הגנת הפרטיות על מערכות בינה מלאכותית; הגנת הפרטיות - Gov.il",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/guide/data_security_guide/he/%D7%94%D7%9E%D7%93%D7%A8%D7%99%D7%9A%20%D7%94%D7%9E%D7%9C%D7%90%20%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D%20%D7%AA%D7%A7%D7%A0%D7%95%D7%AA%20%D7%90%D7%91%D7%98%D7%97%D7%AA%20%D7%9E%D7%99%D7%93%D7%A2%20%E2%80%93PDF%20%D7%9C%D7%94%D7%93%D7%A4%D7%A1%D7%94_1.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/rfp/ai_reg/he/ai_regu_draft.pdf",
+          "title": "תחולת הוראות חוק הגנת הפרטיות על מערכות בינה מלאכותית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/privacy-protection-nice-to-meet-you/he/privacy-protection-nice-to-meet-you.pdf",
+          "title": "הגנת הפרטיות - Gov.il",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "פרסום דוח ביניים להערות הציבור בנושא בינה מלאכותית בסקטור הפיננסי; בינה מלאכותית בסקטור הפיננסי",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/reports/report-06-11-24/he/ArtificialIntelligenceReport2.pdf",
+          "title": "פרסום דוח ביניים להערות הציבור בנושא בינה מלאכותית בסקטור הפיננסי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.boi.org.il/media/rh0bejl4/aireport.pdf",
+          "title": "בינה מלאכותית בסקטור הפיננסי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); בינה מלאכותית בסקטור הפיננסי; פרסום דוח ביניים להערות הציבור בנושא בינה מלאכותית בסקטור הפיננסי",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1886",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.boi.org.il/media/rh0bejl4/aireport.pdf",
+          "title": "בינה מלאכותית בסקטור הפיננסי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/reports/report-06-11-24/he/ArtificialIntelligenceReport2.pdf",
+          "title": "פרסום דוח ביניים להערות הציבור בנושא בינה מלאכותית בסקטור הפיננסי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.boi.org.il/media/rh0bejl4/aireport.pdf",
+      "title": "בינה מלאכותית בסקטור הפיננסי",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.boi.org.il/media/rh0bejl4/aireport.pdf",
+          "title": "בינה מלאכותית בסקטור הפיננסי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "הבינה המלאכותית לא תנהל את עצמה: על ממשל תאגידי בעידן ה-AI; בינה מלאכותית בסקטור הפיננסי",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://esgblog.runi.ac.il/post/ai-governance",
+          "title": "הבינה המלאכותית לא תנהל את עצמה: על ממשל תאגידי בעידן ה-AI",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.boi.org.il/media/rh0bejl4/aireport.pdf",
+          "title": "בינה מלאכותית בסקטור הפיננסי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בינה מלאכותית בסקטור הפיננסי; מינוי דירקטורים: תיאוריה, ראיות, מדיניות",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://www.boi.org.il/media/rh0bejl4/aireport.pdf",
+          "title": "בינה מלאכותית בסקטור הפיננסי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1860",
+          "title": "מינוי דירקטורים: תיאוריה, ראיות, מדיניות",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "פרסום דוח ביניים להערות הציבור בנושא בינה מלאכותית בסקטור הפיננסי; הצוות הבין-משרדי לבחינת שימושי בינה מלאכותית במגזר הפיננסי פרסם דוח ביניים",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/reports/report-06-11-24/he/ArtificialIntelligenceReport2.pdf",
+          "title": "פרסום דוח ביניים להערות הציבור בנושא בינה מלאכותית בסקטור הפיננסי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.boi.org.il/publications/pressreleases/05-11-24/",
+          "title": "הצוות הבין-משרדי לבחינת שימושי בינה מלאכותית במגזר הפיננסי פרסם דוח ביניים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תחולת הוראות חוק הגנת הפרטיות על מערכות בינה מלאכותית; הבעלות על הפירמה וסייגיה - נושים, עובדים, אלמנות ויתומים בדיני החברות",
+      "number": 10,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/rfp/ai_reg/he/ai_regu_draft.pdf",
+          "title": "תחולת הוראות חוק הגנת הפרטיות על מערכות בינה מלאכותית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1253",
+          "title": "הבעלות על הפירמה וסייגיה - נושים, עובדים, אלמנות ויתומים בדיני החברות",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1253",
+      "title": "הבעלות על הפירמה וסייגיה - נושים, עובדים, אלמנות ויתומים בדיני החברות",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "aff80fbd-3b4d-4d4b-ae3e-710a48353373"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1860",
+      "title": "מינוי דירקטורים: תיאוריה, ראיות, מדיניות",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "163cc505-0311-4ce6-9ea4-471c11ba02a9"
+    },
+    {
+      "url": "https://esgblog.runi.ac.il/post/ai-governance",
+      "title": "הבינה המלאכותית לא תנהל את עצמה: על ממשל תאגידי בעידן ה-AI",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e3f5dcac-2a26-4c95-918e-5ef6e437a76e"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/guide/data_security_guide/he/%D7%94%D7%9E%D7%93%D7%A8%D7%99%D7%9A%20%D7%94%D7%9E%D7%9C%D7%90%20%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D%20%D7%AA%D7%A7%D7%A0%D7%95%D7%AA%20%D7%90%D7%91%D7%98%D7%97%D7%AA%20%D7%9E%D7%99%D7%93%D7%A2%20%E2%80%93PDF%20%D7%9C%D7%94%D7%93%D7%A4%D7%A1%D7%94_1.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e6a0ceb2-62c2-45e3-bc27-f737f4dff717"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/rfp/ai_reg/he/ai_regu_draft.pdf",
+      "title": "תחולת הוראות חוק הגנת הפרטיות על מערכות בינה מלאכותית",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "5530e3b7-b551-459b-b086-3958339bca19"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/generalpage/privacy-protection-nice-to-meet-you/he/privacy-protection-nice-to-meet-you.pdf",
+      "title": "הגנת הפרטיות - Gov.il",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "26c74e4a-8969-497d-b250-4314d0ede6d1"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/reports/report-06-11-24/he/ArtificialIntelligenceReport2.pdf",
+      "title": "פרסום דוח ביניים להערות הציבור בנושא בינה מלאכותית בסקטור הפיננסי",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "9a196eb0-d535-4d4b-97ff-0547e43fa0aa"
+    },
+    {
+      "url": "https://www.boi.org.il/media/rh0bejl4/aireport.pdf",
+      "title": "בינה מלאכותית בסקטור הפיננסי",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e0f33fc4-c138-4440-a0a5-ef12b3b9bedb"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1886",
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+      "number": 5,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "1481b205-f6c3-4132-bcf2-d269ac35eadf"
+    },
+    {
+      "url": "https://www.boi.org.il/publications/pressreleases/05-11-24/",
+      "title": "הצוות הבין-משרדי לבחינת שימושי בינה מלאכותית במגזר הפיננסי פרסם דוח ביניים",
+      "number": 9,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "488eaaf0-0fce-4783-b40d-f0d4fbf2baca"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 3,
+      "partial": 8,
+      "unrelated": 4,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 18,
+      "false": 0
+    }
+  }
+}

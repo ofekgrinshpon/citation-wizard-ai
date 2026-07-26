@@ -1,0 +1,133 @@
+{
+  "id": "Q06",
+  "category": "amendment_history",
+  "query": "מהו השינוי שהוכנס בתיקון מס' 8 לחוק סדר הדין הפלילי (סמכויות אכיפה - מעצרים) לגבי סעיף 21 (מעצר עד תום ההליכים), ומתי נכנס לתוקף?",
+  "run_id": "6ac7af3e-3e49-450a-8340-38d1ef6e2e8f",
+  "ok": true,
+  "total_ms": 90893,
+  "answer_intent": {
+    "output_shape": "list"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "list",
+    "reason": "shape_not_eligible"
+  },
+  "missing_required_anchors": null,
+  "answer": "- מהות השינוי — מן התזכיר הרשמי עולה בזהירות כי בתיקון מס׳ 8 הוכנסה לחוק המעצרים תוספת שנמסרה במסמכים כסעיף/סעיף־משנה חדש המסומן בתיעוד כ-61(ג); מסמכים רשמיים אחרים מפנים להשפעה זו על נוסח סעיף 21, ובפרט לסעיף 21(א)(1)(ג).¹\n- השלכות תוכןיות על סעיף 21 — המקורות מצביעים בזהירות על כך שהתוספת נוגעת לקריטריונים שמצדיקים \"מעצר עד תום ההליכים\" ושכוללים היבטים של החזקה או מסוכנות; מעבר לכך אין בסניפטים שסופקו טקסט חקיקתי מלא שמאפשר לשחזר מילולית את הנוסח החדש של כל הסעיף מבלי לעיין בנוסח המשולב/הרשמי.²\n- מועד כניסת התיקון לתוקף — התזכיר מציין כי התיקון אושר בכנסת בתאריך 27.3.11; עם זאת, לפי דברי חקיקה רשמיים שנלווּ לתיקון נקבע במפורש כי התיקון ייכנס לתוקף לאחר פרסומו ברשומות ובאתר המשטרה, כלומר לא נכנס לתוקף אוטומטית במועד אישורו אלא במועד הפרסום שנקבע.³\n- הערת הגבלה ושיקוף מקורות — המסקנות לעיל נסמכות על מסמכים רשמיים ותזכירי חקיקה שסופקו (תמיכה חלקית); לנוסח המלא והמילולי של סעיף 21 לאחר התיקון יש לעיין בנוסח המשולב או בטקסט הרשמי כפי שפורסם ברשומות/בנוסח החוק המשולב כדי להשיג ניסוח מדויק ומלא של הסעיף לאחר תיקון מס׳ 8.⁴",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "תזכיר/מסמך רשמי על תיקון מס' 8 לחוק המעצרים; עמדה בנוגע לחוק חקירת חשודים (2012)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.tazkirim.gov.il/sfc/servlet.shepherd/version/download/0683Y000009E46QQAS",
+          "title": "תזכיר/מסמך רשמי על תיקון מס' 8 לחוק המעצרים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/pdo_14/he/public_defeder_stand_suspect_investigation.pdf",
+          "title": "עמדה בנוגע לחוק חקירת חשודים (2012)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "עמדה בנוגע לחוק חקירת חשודים (2012); חוק סדר הדין הפלילי [נוסח משולב]",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/pdo_14/he/public_defeder_stand_suspect_investigation.pdf",
+          "title": "עמדה בנוגע לחוק חקירת חשודים (2012)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/10/law/10_lsr_311020.PDF",
+          "title": "חוק סדר הדין הפלילי [נוסח משולב]",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תזכיר/מסמך רשמי על תיקון מס' 8 לחוק המעצרים; הצעת חוק / דברי חקיקה - אתר הכנסת",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.tazkirim.gov.il/sfc/servlet.shepherd/version/download/0683Y000009E46QQAS",
+          "title": "תזכיר/מסמך רשמי על תיקון מס' 8 לחוק המעצרים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_ls2_1443135.pdf",
+          "title": "הצעת חוק / דברי חקיקה - אתר הכנסת",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/10/law/10_lsr_311020.PDF",
+      "title": "חוק סדר הדין הפלילי [נוסח משולב]",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/10/law/10_lsr_311020.PDF",
+          "title": "חוק סדר הדין הפלילי [נוסח משולב]",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.tazkirim.gov.il/sfc/servlet.shepherd/version/download/0683Y000009E46QQAS",
+      "title": "תזכיר/מסמך רשמי על תיקון מס' 8 לחוק המעצרים",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "fa7b7e04-4c35-419e-8b9b-1cd1e0423069"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/pdo_14/he/public_defeder_stand_suspect_investigation.pdf",
+      "title": "עמדה בנוגע לחוק חקירת חשודים (2012)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "6dc4275b-4f79-49dc-b765-ffbd6cb9ef1d"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/10/law/10_lsr_311020.PDF",
+      "title": "חוק סדר הדין הפלילי [נוסח משולב]",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "5146c0c3-4a01-4562-a9b1-0b0e9adf4cc5"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_ls2_1443135.pdf",
+      "title": "הצעת חוק / דברי חקיקה - אתר הכנסת",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "11d16eb5-e346-46af-85ba-e453061edc34"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 0,
+      "partial": 5,
+      "unrelated": 1,
+      "tangential": 1
+    },
+    "by_role_match": {
+      "true": 7,
+      "false": 0
+    }
+  }
+}

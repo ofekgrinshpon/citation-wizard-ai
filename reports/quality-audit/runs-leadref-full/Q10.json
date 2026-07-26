@@ -1,0 +1,244 @@
+{
+  "id": "Q10",
+  "category": "academic_doctrine",
+  "query": "מהי גישת אהרן ברק בע\"א 4628/93 מדינת ישראל נ' אפרופים לפרשנות חוזים, וכיצד ביקר אותה דניאל פרידמן?",
+  "run_id": "175be27e-fd0a-4238-919a-a277b23fbe49",
+  "ok": true,
+  "total_ms": 148910,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "missing_required_anchors": null,
+  "answer": "**גישת אהרן ברק בפסק‑דין \"אפרופים\" — תקציר**\n\nבפסק‑דין ע״א 4628/93 (הידוע בכינוי 'אפרופים') ניסח ראש בית‑המשפט גישה פרשנית שמוטה לכיוון תכליתי והקשרי: פרשנות החוזה אינה מוגבלת לטקסט בלבד, ובית‑המשפט צריך לשקול גם את נסיבות כריתת ההסכם וכוונת הצדדים בעת פירוש הוראותיו; יחד עם זאת הפסק‑דין מבחין בין תהליך הפרשנות לבין השלמת פרטים חסרים וכרוך בשיקול התערבות שיפוטית מוגדר.¹\n\n**הכללים הפרשניים והנימוקים בפסק‑דין**\n\nברק מדגיש העדפה לפרשנות תכליתית־הקשרית: פירוש צריך לשרת את תכלית ההסכם ולבחון את המשמעות שעליה הצדדים ככל הנראה הסכימו מתוך הטקסט ובהתאם לנסיבות הכריתה.²\n\nהפסק‑דין מקבל שימוש בראיות חיצוניות (נסיבות כריתת החוזה) כאמצעי לגילוי כוונת הצדדים, אך מדגיש גבול בין דלות כוונה מתוך ההקשר לבין מילוי חסר — כלומר הפרשנות חותרת לחשוף את ההסכמה הקיימת בעוד שההשלמה מטילה על בית‑המשפט תפקיד יצירתי יותר.³\n\nלגבי מבחנים פרשניים קונקרטיים כגון 'מבחן האדם הסביר' — במקורות שסופקו אין ניסוח חד־משמעי המייחד את מבחן זה כעקרון שבדקדוק בפסק‑דין זה; יש לציין כי הדיון נוקט בשפה של נורמליזציה והסקת משמעויות מההקשר, אך קביעות טכניות לגבי ניסוח מבחני משנה מצריכות עיון מדויק בטקסט המלא של פסק‑הדין.⁴\n\n**ביקורת דניאל פרידמן על הגישה**\n\nדניאל פרידמן פירסם ביקורת נוקבת על גישת ברק בפרשנות ההסכמים. הביקורת מתמקדת בהטענה כי נטייה תכליתית־הקשרית מקלה על התערבות שיפוטית־מכרעת בתוכן החוזה ואף מרחיבה את שיקול הדעת של בית‑המשפט במקום להניח את משקל ההכרעה לצדדים.⁵\n\nפרידמן מדגיש גם סיכונים של חוסר בהירות שיטתית ופגיעה בביטחון החוזי: כאשר פרשנות פועלת ברמת תכלית רחבה ללא כללים פרשניים ברורים, נוצרת אי־ודאות לגבי מהות ההסכמות והציפיות של הצדדים והופך קשה לצפות תוצאות משפטיות מראש.⁶\n\n**השפעה על הפסיקה והספרות מאז ואופני התגובה לביקורת**\n\nהוויכוח סביב 'אפרופים' והביקורת של פרידמן המשיך להעסיק שופטים ומבקרים אקדמיים. כתבים ודיעות משפטיות דנים בנכונותה של הגישה ובמשמעותה לפרקטיקה השיפוטית, כאשר חלק מהמחקרים בוחנים האם וכיצד יש להגביל את היקף הפרשנות התכליתית.⁷\n\nמכמה מחקרים עולה בזהירות כי הגישה התכליתית לא נעלמה אף לאחר שינויים חקיקתיים ודיונים ביקורתיים; יש הטוענים כי התיקונים לחוק החוזים לא ביטלו את הנטייה להיעזר בנסיבות ובפרשנות תכליתית, אך הוויכוח הוביל גם לבקשות להבהיר גבולות ולנסח כללים פרשניים מאפשרים יותר.⁸\n\nלסיכום: מתוך המקורות שאותרו עולה תמונה שבה ברק אימץ גישה הקשרית‑תכליתית לפרשנות חוזים עם הבחנה בין פרשנות להשלמה, ופרידמן ביקר גישה זו כאמורה להרחיב את שיקול הדעת השיפוטי ולפגוע בביטחון החוזי; המחלוקת נמשכת בספרות ובפסיקה, כאשר יש התייחסויות שתומכות בחלקים מהגישה אך גם קריאות להגבילה ולהבהיר כללים.",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "ע\"א 4628/93 הלכת אפרופים; ע\"א 4628/93",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+          "title": "ע\"א 4628/93 הלכת אפרופים",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "http://www.nevo.co.il/Psika_word/elyon/PADI-NH-2-265-L.doc",
+          "title": "ע\"א 4628/93",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "ע\"א 4628/93 הלכת אפרופים; בית המשפט המחוזי ת\"א-יפו, אב\"ד סג\"נ השופט שאול שוחט, השופטת עינת רביד, השופט נפתלי שילה: פסק דין שעניינו פרשנות הסכם גירושין ביחס למועד העברת שווי מחצית הדירה (עמ\"ש 59681-02-24)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+          "title": "ע\"א 4628/93 הלכת אפרופים",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=680",
+          "title": "בית המשפט המחוזי ת\"א-יפו, אב\"ד סג\"נ השופט שאול שוחט, השופטת עינת רביד, השופט נפתלי שילה: פסק דין שעניינו פרשנות הסכם גירושין ביחס למועד העברת שווי מחצית הדירה (עמ\"ש 59681-02-24)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "ע\"א 4628/93 הלכת אפרופים; בית המשפט המחוזי ת\"א-יפו, אב\"ד סג\"נ השופט שאול שוחט, השופטת עינת רביד, השופט נפתלי שילה: פסק דין שעניינו פרשנות הסכם גירושין ביחס למועד העברת שווי מחצית הדירה (עמ\"ש 59681-02-24); מקור אקדמי מתוך אתר אקדמי (kotar.cet.ac.il)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+          "title": "ע\"א 4628/93 הלכת אפרופים",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=680",
+          "title": "בית המשפט המחוזי ת\"א-יפו, אב\"ד סג\"נ השופט שאול שוחט, השופטת עינת רביד, השופט נפתלי שילה: פסק דין שעניינו פרשנות הסכם גירושין ביחס למועד העברת שווי מחצית הדירה (עמ\"ש 59681-02-24)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=101372393&nTocEntryID=101376575",
+          "title": "מקור אקדמי מתוך אתר אקדמי (kotar.cet.ac.il)",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "ע\"א 4628/93 הלכת אפרופים; מסמך מאתר אתר אקדמי (hamishpat.colman.ac.il)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+          "title": "ע\"א 4628/93 הלכת אפרופים",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://hamishpat.colman.ac.il/?cat=94",
+          "title": "מסמך מאתר אתר אקדמי (hamishpat.colman.ac.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר אקדמי (hamishpat.colman.ac.il); הערכה מחודשת של הילכת אפרופים - פסקדין",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://hamishpat.colman.ac.il/?cat=94",
+          "title": "מסמך מאתר אתר אקדמי (hamishpat.colman.ac.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%94%D7%A2%D7%A8%D7%9B%D7%94-%D7%9E%D7%97%D7%95%D7%93%D7%A9%D7%AA-%D7%A9%D7%9C-%D7%94%D7%99%D7%9C%D7%9B%D7%AA-%D7%90%D7%A4%D7%A8%D7%95%D7%A4%D7%99%D7%9D",
+          "title": "הערכה מחודשת של הילכת אפרופים - פסקדין",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר אקדמי (hamishpat.colman.ac.il); אפרופים עדיין כאן",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://hamishpat.colman.ac.il/?cat=94",
+          "title": "מסמך מאתר אתר אקדמי (hamishpat.colman.ac.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://cris.huji.ac.il/en/publications/%D7%90%D7%A4%D7%A8%D7%95%D7%A4%D7%99%D7%9D-%D7%A2%D7%93%D7%99%D7%99%D7%9F-%D7%9B%D7%90%D7%9F/",
+          "title": "אפרופים עדיין כאן",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "הערכה מחודשת של הילכת אפרופים - פסקדין; מקור אקדמי מתוך אתר אקדמי (kotar.cet.ac.il)",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%94%D7%A2%D7%A8%D7%9B%D7%94-%D7%9E%D7%97%D7%95%D7%93%D7%A9%D7%AA-%D7%A9%D7%9C-%D7%94%D7%99%D7%9C%D7%9B%D7%AA-%D7%90%D7%A4%D7%A8%D7%95%D7%A4%D7%99%D7%9D",
+          "title": "הערכה מחודשת של הילכת אפרופים - פסקדין",
+          "source_type": "other"
+        },
+        {
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=101372393&nTocEntryID=101376575",
+          "title": "מקור אקדמי מתוך אתר אקדמי (kotar.cet.ac.il)",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "אפרופים עדיין כאן; הערכה מחודשת של הילכת אפרופים - פסקדין; מקור אקדמי מתוך אתר אקדמי (kotar.cet.ac.il)",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://cris.huji.ac.il/en/publications/%D7%90%D7%A4%D7%A8%D7%95%D7%A4%D7%99%D7%9D-%D7%A2%D7%93%D7%99%D7%99%D7%9F-%D7%9B%D7%90%D7%9F/",
+          "title": "אפרופים עדיין כאן",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%94%D7%A2%D7%A8%D7%9B%D7%94-%D7%9E%D7%97%D7%95%D7%93%D7%A9%D7%AA-%D7%A9%D7%9C-%D7%94%D7%99%D7%9C%D7%9B%D7%AA-%D7%90%D7%A4%D7%A8%D7%95%D7%A4%D7%99%D7%9D",
+          "title": "הערכה מחודשת של הילכת אפרופים - פסקדין",
+          "source_type": "other"
+        },
+        {
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=101372393&nTocEntryID=101376575",
+          "title": "מקור אקדמי מתוך אתר אקדמי (kotar.cet.ac.il)",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+      "title": "ע\"א 4628/93 הלכת אפרופים",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "9d0e2c84-9fd2-4447-9ceb-36d337fb626b"
+    },
+    {
+      "url": "http://www.nevo.co.il/Psika_word/elyon/PADI-NH-2-265-L.doc",
+      "title": "ע\"א 4628/93",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "8aacf7ac-2cbe-4417-a4a8-dc6f6c549b11"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=680",
+      "title": "בית המשפט המחוזי ת\"א-יפו, אב\"ד סג\"נ השופט שאול שוחט, השופטת עינת רביד, השופט נפתלי שילה: פסק דין שעניינו פרשנות הסכם גירושין ביחס למועד העברת שווי מחצית הדירה (עמ\"ש 59681-02-24)",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "4e0eb0ce-3c45-46da-9bb6-865fbf37f821"
+    },
+    {
+      "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=101372393&nTocEntryID=101376575",
+      "title": "מקור אקדמי מתוך אתר אקדמי (kotar.cet.ac.il)",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "d8441349-934b-475d-b8a7-1eabf94bc08b"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/?cat=94",
+      "title": "מסמך מאתר אתר אקדמי (hamishpat.colman.ac.il)",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "47bde214-271f-46d3-a061-9fc3c09e234b"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Document/%D7%94%D7%A2%D7%A8%D7%9B%D7%94-%D7%9E%D7%97%D7%95%D7%93%D7%A9%D7%AA-%D7%A9%D7%9C-%D7%94%D7%99%D7%9C%D7%9B%D7%AA-%D7%90%D7%A4%D7%A8%D7%95%D7%A4%D7%99%D7%9D",
+      "title": "הערכה מחודשת של הילכת אפרופים - פסקדין",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "46f39721-0c2d-426f-842d-800e8f3b17e9"
+    },
+    {
+      "url": "https://cris.huji.ac.il/en/publications/%D7%90%D7%A4%D7%A8%D7%95%D7%A4%D7%99%D7%9D-%D7%A2%D7%93%D7%99%D7%99%D7%9F-%D7%9B%D7%90%D7%9F/",
+      "title": "אפרופים עדיין כאן",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "6a8167c4-1920-4d9d-b1f2-416a592275fd"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 1,
+      "partial": 9,
+      "unrelated": 3,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 13,
+      "false": 0
+    }
+  }
+}

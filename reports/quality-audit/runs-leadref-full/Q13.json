@@ -1,0 +1,262 @@
+{
+  "id": "Q13",
+  "category": "practical_implications",
+  "query": "מה חייב מעסיק לעשות כאשר עובד/ת מגיש/ה תלונה על הטרדה מינית במקום העבודה, ומהי מסגרת הזמנים לפי התקנות?",
+  "run_id": "5a3ebf5e-0a04-4d4d-b153-474a03c48405",
+  "ok": true,
+  "total_ms": 153307,
+  "answer_intent": {
+    "output_shape": "list"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "list",
+    "reason": "shape_not_eligible"
+  },
+  "missing_required_anchors": null,
+  "answer": "המעסיק מחויב לקבל תלונה על הטרדה מינית ולהשיב עליה בפרוצדורה מסודרת: התקנות והפסיקה מחייבות פתיחה בבירור או נקיטת צעדים אחרים, וקביעת מסלולי טיפול מוחלטים ומידיים בהתאם לממצאים.¹\n\n- קבלת תלונה ופתיחת בירור — המעסיק חייב לקבל כל תלונה המוגשת במקום העבודה וליזום בירור או לנקוט צעדים אחרים; התקנות מחייבות שמול כל תלונה יינתן מענה פרוצדורלי ולא יילקח בה מדחייה בלתי סבירה.²\n- צעדים מידיים וביניים (interim measures) — על המעסיק, בלא דיחוי, לנקוט צעדים מתאימים כגון מתן הוראות לעובדים המעורבים, הפרדה זמנית או הרחקת האחזק מהמתלונן, אמצעים למניעת נקמה ושמירה על פרטיות המתלונן ככל שהדבר מעשי; המטרה היא להגן על המתלונן ולאפשר בירור הוגן.³\n- מהלך הבירור שפורט בתקנות — הבירור יינוהל על ידי האחראי או בודק שמונה בהתאם לנוהל; יש לשמוע את המתלונן, את הנילון ולעדים, לאפשר זכות הגנה לנילון ולתעד את הליך הבירור; בתום הבירור יוגש סיכום בכתב לאחראי ולמעסיק.⁴\n- מסגרת זמנים לפי התקנות והמסמכים הנלווים — לאחר קבלת סיכום האחראי המעסיק יחליט, בלא דיחוי ובתוך תקופה שלא תעלה על שבעה ימי עבודה, על הפעלת הסמכויות שבידיו; התקנות מחייבות גם הגשת סיכום בכתב בסיום הבירור; דו\"ח מבקר המדינה מתאר מסגרת פרוצדורלית נוספת (בירור בתוך כשבועיים, דוח סיכום בתוך שלושה ימים וקבלת החלטה בתוך שבעה ימים), אך מדובר בדיווח בקרה שיש לנסחו בזהירות כהמלצה פרוצדורלית.⁵\n- תוצאות וסילוב הליכים לאחר סיום הבירור — המעסיק נדרש להחליט על אמצעים בהתאם לממצאים, כגון נקיטת הליכים משמעתיים או צעדים מתקנים אחרים, לשמור תיעוד על הבירור ולמסור הודעה מנומקת בכתב למתלונן ולנילון; הפסיקה מדגישה חובת המעסיק לפעול ביעילות ובתכליתיות לתיקון ההפרעה.⁶\n\nהערה פרוצדורלית ומגבלות המקורות: חלק מהמסמכים שסופקו הם תקנונים, חוברות המלצה ודוחות בקרה שמפרטים נהלים ופרקטיקות (למשל תקנון שירות המדינה, חוברות הדרכה ודוח מבקר); יש להתבסס על נוסחי התקנות עצמם כעוֹגֶן החוקי, ולשמור על ההמלצות כהשלמה פרוצדורלית במקרה הצורך.⁷",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998; בית הדין לעבודה – תמצית פסק דין 32518-02-20",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72508.htm",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Files/32518-02-20.pdf",
+          "title": "בית הדין לעבודה – תמצית פסק דין 32518-02-20",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998; תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998, תקנה 7; בית הדין לעבודה – תמצית פסק דין 32518-02-20",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72508.htm",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72507.htm",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998, תקנה 7",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Files/32518-02-20.pdf",
+          "title": "בית הדין לעבודה – תמצית פסק דין 32518-02-20",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998, תקנה 7; רשומות / נוסח בנושא טיפול בתלונות הטרדה מינית; חושפים חשופים: ההליך המשפטי של חושפי שחיתות בבית הדין לעבודה בראי המשפט הטיפולי",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72507.htm",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998, תקנה 7",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/20/Committees/20_cs_bg_490086.doc",
+          "title": "רשומות / נוסח בנושא טיפול בתלונות הטרדה מינית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/5fc83c_3583de254c274b6fbe8d2b21b1ea8adc.pdf",
+          "title": "חושפים חשופים: ההליך המשפטי של חושפי שחיתות בבית הדין לעבודה בראי המשפט הטיפולי",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "רשומות / נוסח בנושא טיפול בתלונות הטרדה מינית; תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998; תקנון לחוק למניעת הטרדה מינית התשנ\"ח-1998 ומותאם לשירות המדינה",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/20/Committees/20_cs_bg_490086.doc",
+          "title": "רשומות / נוסח בנושא טיפול בתלונות הטרדה מינית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/sexual_harassment_regulations/he/sexual-harassment-regulations.pdf",
+          "title": "תקנון לחוק למניעת הטרדה מינית התשנ\"ח-1998 ומותאם לשירות המדינה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998, תקנה 7; תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998; יישום החוק למניעת הטרדה מינית – מבקר המדינה",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72507.htm",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998, תקנה 7",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998",
+          "source_type": "other"
+        },
+        {
+          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2020/70b/2020-70b-102-Hatrada.pdf",
+          "title": "יישום החוק למניעת הטרדה מינית – מבקר המדינה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998, תקנה 7; תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998; בית הדין לעבודה – תמצית פסק דין 32518-02-20",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72507.htm",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998, תקנה 7",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+          "title": "תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Files/32518-02-20.pdf",
+          "title": "בית הדין לעבודה – תמצית פסק דין 32518-02-20",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנון לחוק למניעת הטרדה מינית התשנ\"ח-1998 ומותאם לשירות המדינה; הטרדה מינית זה אסור!; יישום החוק למניעת הטרדה מינית – מבקר המדינה",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/sexual_harassment_regulations/he/sexual-harassment-regulations.pdf",
+          "title": "תקנון לחוק למניעת הטרדה מינית התשנ\"ח-1998 ומותאם לשירות המדינה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.btl.gov.il/Publications/booklet/hebrew_booklet/Documents/HtrdaMINIT2023.pdf",
+          "title": "הטרדה מינית זה אסור!",
+          "source_type": "other"
+        },
+        {
+          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2020/70b/2020-70b-102-Hatrada.pdf",
+          "title": "יישום החוק למניעת הטרדה מינית – מבקר המדינה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/72508.htm",
+      "title": "תקנות למניעת הטרדה מינית (חובות מעסיק), תשנ\"ח-1998",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "027bb45e-9bca-4645-8b6e-463308b9dd92"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Files/32518-02-20.pdf",
+      "title": "בית הדין לעבודה – תמצית פסק דין 32518-02-20",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "54d09368-7bbf-4f2a-b7ce-28894558840a"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/72507.htm",
+      "title": "תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998, תקנה 7",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "b80ba261-3bc3-4c9c-a4ac-ad604de20b71"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/20/Committees/20_cs_bg_490086.doc",
+      "title": "רשומות / נוסח בנושא טיפול בתלונות הטרדה מינית",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "137e39a9-bb87-48b3-baab-e3ee3bc1f150"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/5fc83c_3583de254c274b6fbe8d2b21b1ea8adc.pdf",
+      "title": "חושפים חשופים: ההליך המשפטי של חושפי שחיתות בבית הדין לעבודה בראי המשפט הטיפולי",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "7b83f3f1-c77e-4a16-bb46-4c3f8ea2105c"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/anti_harassment/he/%D7%AA%D7%A7%D7%A0%D7%95%D7%9F%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%98%D7%A8%D7%93%D7%94%20%D7%9E%D7%99%D7%A0%D7%99%D7%AA%20%D7%91%D7%A2%D7%91%D7%A8%D7%99%D7%AA.pdf",
+      "title": "תקנות למניעת הטרדה מינית (חובות מעביד), תשנ\"ח-1998",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "bba3b847-298d-4fa7-a4d7-7ddc6437e69e"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/generalpage/sexual_harassment_regulations/he/sexual-harassment-regulations.pdf",
+      "title": "תקנון לחוק למניעת הטרדה מינית התשנ\"ח-1998 ומותאם לשירות המדינה",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "17d13db5-c1d0-4bbc-bf50-6ff8627a06e3"
+    },
+    {
+      "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2020/70b/2020-70b-102-Hatrada.pdf",
+      "title": "יישום החוק למניעת הטרדה מינית – מבקר המדינה",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a4b07d79-04bc-4afb-bb45-dc1786c013e9"
+    },
+    {
+      "url": "https://www.btl.gov.il/Publications/booklet/hebrew_booklet/Documents/HtrdaMINIT2023.pdf",
+      "title": "הטרדה מינית זה אסור!",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "8b929b3d-d67a-4f28-9fec-b1a9795b4aa4"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 6,
+      "partial": 6,
+      "unrelated": 8,
+      "tangential": 1
+    },
+    "by_role_match": {
+      "true": 21,
+      "false": 0
+    }
+  }
+}

@@ -1,0 +1,342 @@
+{
+  "id": "Q15",
+  "category": "mixed_sources",
+  "query": "מהו המסגרת הרגולטורית להנפקת אסימונים דיגיטליים בישראל, בהתבסס על חקיקה, פסיקה וספרות?",
+  "run_id": "a32034e3-3fcc-4578-8467-2e7404b3c833",
+  "ok": true,
+  "total_ms": 169322,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "missing_required_anchors": null,
+  "answer": "**המסגרת הרגולטורית להנפקת אסימונים דיגיטליים בישראל**\n\nבשורה התמציתית: ההנפקה של אסימונים דיגיטליים בישראל אינה תחום בלתי מרוסן — תכליתה המשפטית של ההצעה (האם היא מהווה נייר ערך) וקיומן של התחייבויות חוזיות הן הגורמות המכריעות בקביעת החובה לעמוד בחוקי ניירות ערך ובדרישות התשקיף; במקביל תחומי רגולציה אחרים — מנגנוני AML/KYC, הבנק המרכזי וגורמי מיסוי — נוגעים לפעילות בפועל, והאכיפה והמדיניות הציבורית בתחום נמצאות בתהליך פיתוח ממוקד. יש להציג מסקנות אלה בזהירות ביחס לנוסחי החקיקה, הדוחות והמסקנות המפעליות שנכללו במקורות שסופקו.¹\n\n**האם אסימונים עשויים להיחשב 'ניירות ערך'?**\n\nהמסגרת המשפטית הישראלית המרכזית הקובעת חובות לגבי הצעה לציבור היא חוק ניירות ערך, שקובע איסור על הצעת ניירות ערך לציבור ללא תשקיף מורשה; לפיכך, העניין הממשי הוא האם נתון טוקן תפקיד שמבחינה עובדתית ומשפטית ייחשב לנייר ערך. מאחר שמקורות רשמיים ומחקריים שסופקו תומכים בכך באופן חלקי, ראוי להבחין כאן בזהירות בין מבחנים עובדאיים (תכלית ההשקעה וציפייה לרווח, אופי ההתחייבות החוזית, תלות במאמצי הנהלה לניצול הרווח) לבין מסקנה אוטומטית שיש להחיל על כל אסימון.²\n\nמהמקורות עולה בזהירות כי הוועדה הממשלתית והספרות החוקרת מציעות לבחון את תכונות הטוקן על פי קריטריונים פונקציונליים — במיוחד אם ההנפקה מהווה גיוס הון ממשקיעים שמצפים לרווח או אם הקונה מקבל זכות כלכלית אופיינית לנייר ערך; במקרים כאלה עשויות לחול חובות תשקיף ודיווח.³\n\n**רגולטורים רלוונטיים וסמכויותיהם**\n\nרשות ניירות ערך היא הרשות המרכזית בכל הנוגע להנפקת ניירות ערך, תביעת חובת התשקיף והפעלת סמכויות פיקוח ואכיפה ביחס להצעות לציבור — דבר המתואר בדוחות ובפרסומים של הרשות. בנוסף, הבנק המרכזי מעורב בנושאי מערכות תשלום ויציבות פיננסית ויש לו פרסומים והנחיות בנושא מטבעות דיגיטליים; דוחות ממשלתיים ובחינות מדיניות מצביעים גם על מעורבות גורמי ממשל נוספים (לרבות סוגיות מיסוי ופיקוח פיננסי) שראוי להתייחס אליהן בשיקול רגולטורי כולל.⁴\n\n**AML, KYC ורישוי פלטפורמות**\n\nהבקרה על מניעת הלבנת הון וזיהוי לקוח חלה על גופים המספקים שירותים פיננסיים, ובפרקטיקה הממלכתית והאקדמית הממליצה נכללות דרישות AML/KYC גם בפלטפורמות להנפקה ובמסחר באסימונים וכן בשליחת דיווחים לרשויות המתאימות; דוח מבקר המדינה והספרות המקצועית מדגישים פערים בביצוע ובדיווח וממליצים לחזק מנגנוני ציות וביקורת פנימית בפלטפורמות.⁵\n\n**חובות גילוי, תשקיף ואיסורי גיוס לציבור**\n\nחוק ניירות ערך ותקנותיו קובעים כללים לגבי חובת פרסום תשקיף והחובה שלא להציע ניירות ערך לציבור ללא תשקיף מאושר; אם טוקן ייחשב כנייר ערך על־פי המבחנים העובדתיים, חלות עליו חובות גילוי ותשקיף ושיקולי רישום למסחר בדומה לכל הנפקה רגילה — מסקנה שיש לנוסחה בזהירות על בסיס חקיקה ופרשנויות רשמיות.⁶\n\nבמקורות נידונו גם דרכי רגולציה חלופית והיתכנות לפטורים או לכללי היקף (למשל הגבלות היצע, רישום שונה או התאמת דרישות הגילוי) — אך תמיכה לכך בספרות ובדוחות היא חלקית ודורשת ניתוח מקרה־מקרה והחלטות רגולטוריות ספציפיות.⁷\n\n**אכיפה, פרקטיקה וחשיפות סיכונים**\n\nהפרקטיקה באכיפה בישראל עדיין מתפתחת: דוח מבקר המדינה מצא ליקויי דיווח ואכיפה בתחום המטבעות הדיגיטליים והמליץ על חיזוק מנגנוני בקרה ודיווח; רשות ניירות ערך פרסמה דוחות ותעדי מדיניות שעוסקים בסיכונים עבור משקיעים ופעילות פיקוחית כלפי שחקני שוק רלוונטיים. משכך, מנפיקים ומשקיעים נדרשים להיערך לסיכון מנהלי ורגולטורי משמעותי, גם כאשר גבולות החובתיות אינם תמיד חדים.⁸\n\nהספרות והדוחות ממליצים באופן עקבי על צעדי ציות פרקטיים: לבצע מבחן משפטי על אופיו של הטוקן לפני ההנפקה; להיערך לפרסום גילוי נרחב ככל שהרקע מצביע על אופיו ההשקעני; להטמיע נהלי AML/KYC ונהלים לניהול סיכונים; וליזום מגעים רגולטוריים מוקדמים במידת הצורך.⁹\n\n**מסקנה וצעדים מעשיים ממוקדים למנפיקים ומשקיעים**\n\nמסקנה מעשית מקובצת: ראשית, יש לבצע ניתוח עובדתי־משפטי של כל טוקן כדי לקבוע האם הוא עשוי להיחשב נייר ערך; שנית, אם מתקבלת סבירות כזו — יש להכין תשקיף או לבחון היטב פטורים ואלטרנטיבות רגולטוריות; שלישית, ליישם מדיניות AML/KYC ונהלי ניהול סיכונים; רביעית, להתייעץ עם הרגולטורים ולתעד צעדי ציות כדי לצמצם סיכון אכיפה. המלצות אלו נשענות על דוחות הוועדה הממשלתית, על ההוראות שבחוק ניירות ערך ועל ניתוחי סיכון ודיווח שנכללו בספרות ובדוחות הציבוריים — אך יש לנסח כל החלטה בהתאם לנסיבות המקרה ולייעוץ משפטי פרטני.¹⁰",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "חוק ניירות ערך, תשכ\"ח-1968; הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי; דוח מבקר המדינה – מטבעות דיגיטליים",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/6/law/6_lsr_210358.PDF",
+          "title": "חוק ניירות ערך, תשכ\"ח-1968",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+          "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2024/2024.11-75A-PartB/2024.11-75A-PartB-201-Digital-currency-Taktzir.pdf",
+          "title": "דוח מבקר המדינה – מטבעות דיגיטליים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק ניירות ערך, תשכ\"ח-1968; הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי; האם ב-ICOs מונפקים ניירות ערך? על אסדרה של אסימונים דיגיטליים שמנפיקות חברות",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/6/law/6_lsr_210358.PDF",
+          "title": "חוק ניירות ערך, תשכ\"ח-1968",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+          "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1793",
+          "title": "האם ב-ICOs מונפקים ניירות ערך? על אסדרה של אסימונים דיגיטליים שמנפיקות חברות",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי; האם ב-ICOs מונפקים ניירות ערך? על אסדרה של אסימונים דיגיטליים שמנפיקות חברות",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+          "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1793",
+          "title": "האם ב-ICOs מונפקים ניירות ערך? על אסדרה של אסימונים דיגיטליים שמנפיקות חברות",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "רשות ניירות ערך - דוח שנתי 2020; פרסומי הרשות לניירות ערך; מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/24/SecondaryLaw/24_scl_rp_599164.pdf",
+          "title": "רשות ניירות ערך - דוח שנתי 2020",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.boi.org.il/information/bank-paymnts/financial-education/campaigns/cryptoreg/%D7%A4%D7%99%D7%A7%D7%95%D7%97-%D7%A8%D7%A9%D7%95%D7%AA-%D7%A0%D7%99%D7%99%D7%A8%D7%95%D7%AA-%D7%A2%D7%A8%D7%9A/",
+          "title": "פרסומי הרשות לניירות ערך",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/periodic-review-28112022/he/weekly_economic_review_periodic-review-28112022.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "דוח מבקר המדינה – מטבעות דיגיטליים; השקעה בנכסים דיגיטליים ומטבעות קריפטוגרפיים – מיפוי וסקירה",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2024/2024.11-75A-PartB/2024.11-75A-PartB-201-Digital-currency-Taktzir.pdf",
+          "title": "דוח מבקר המדינה – מטבעות דיגיטליים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://coller.m.tau.ac.il/sites/coller.tau.ac.il/files/media_server/Recanati/management/newsletter/amiram.pdf",
+          "title": "השקעה בנכסים דיגיטליים ומטבעות קריפטוגרפיים – מיפוי וסקירה",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק ניירות ערך, תשכ\"ח-1968; תקנות ניירות ערך (דוחות תקופתיים ומיידיים), תש\"ל-1970; הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/6/law/6_lsr_210358.PDF",
+          "title": "חוק ניירות ערך, תשכ\"ח-1968",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/308_014.htm",
+          "title": "תקנות ניירות ערך (דוחות תקופתיים ומיידיים), תש\"ל-1970",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+          "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי; תקנות ניירות ערך (דוחות תקופתיים ומיידיים), תש\"ל-1970; הוועדה לבחינת דרישות הגילוי בדוחות עיתיים ומיידיים – דוח ביניים",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+          "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/308_014.htm",
+          "title": "תקנות ניירות ערך (דוחות תקופתיים ומיידיים), תש\"ל-1970",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-6253f4f00241c/interimReport.pdf",
+          "title": "הוועדה לבחינת דרישות הגילוי בדוחות עיתיים ומיידיים – דוח ביניים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "דוח מבקר המדינה – מטבעות דיגיטליים; רשות ניירות ערך - דוח שנתי 2020; הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2024/2024.11-75A-PartB/2024.11-75A-PartB-201-Digital-currency-Taktzir.pdf",
+          "title": "דוח מבקר המדינה – מטבעות דיגיטליים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/24/SecondaryLaw/24_scl_rp_599164.pdf",
+          "title": "רשות ניירות ערך - דוח שנתי 2020",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+          "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי; השקעה בנכסים דיגיטליים ומטבעות קריפטוגרפיים – מיפוי וסקירה; חובת פרסום תשקיף כקו ההגנה של ציבור המשקיעים",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+          "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://coller.m.tau.ac.il/sites/coller.tau.ac.il/files/media_server/Recanati/management/newsletter/amiram.pdf",
+          "title": "השקעה בנכסים דיגיטליים ומטבעות קריפטוגרפיים – מיפוי וסקירה",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2019/01/%D7%95%D7%A1%D7%A8%D7%9E%D7%9F-%D7%95%D7%A6%D7%A4%D7%A0%D7%AA-%D7%9E%D7%96%D7%A8-%D7%9C%D7%99%D7%99%D7%A1%D7%98-%D7%97%D7%95%D7%91%D7%AA-%D7%A4%D7%A8%D7%A1%D7%95%D7%9D-%D7%AA%D7%A9%D7%A7%D7%99%D7%A3-%D7%9B%D7%A7%D7%95-%D7%ההגנה-לציבור-המשקיעים-converted-1.pdf",
+          "title": "חובת פרסום תשקיף כקו ההגנה של ציבור המשקיעים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי; חוק ניירות ערך, תשכ\"ח-1968; השקעה בנכסים דיגיטליים ומטבעות קריפטוגרפיים – מיפוי וסקירה",
+      "number": 10,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+          "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/6/law/6_lsr_210358.PDF",
+          "title": "חוק ניירות ערך, תשכ\"ח-1968",
+          "source_type": "other"
+        },
+        {
+          "url": "https://coller.m.tau.ac.il/sites/coller.tau.ac.il/files/media_server/Recanati/management/newsletter/amiram.pdf",
+          "title": "השקעה בנכסים דיגיטליים ומטבעות קריפטוגרפיים – מיפוי וסקירה",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://fs.knesset.gov.il/6/law/6_lsr_210358.PDF",
+      "title": "חוק ניירות ערך, תשכ\"ח-1968",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "6bd0dfde-eeaf-44e2-8aa9-afa11b2b3766"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+      "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים – דוח סופי",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "5c27ca97-7315-426d-89b4-06d7287f9e45"
+    },
+    {
+      "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2024/2024.11-75A-PartB/2024.11-75A-PartB-201-Digital-currency-Taktzir.pdf",
+      "title": "דוח מבקר המדינה – מטבעות דיגיטליים",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "c0496ab9-df6e-464e-aae1-f2a25cc2c9c5"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1793",
+      "title": "האם ב-ICOs מונפקים ניירות ערך? על אסדרה של אסימונים דיגיטליים שמנפיקות חברות",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "e6d995a9-fa49-453c-96c1-c0f3ce792752"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/24/SecondaryLaw/24_scl_rp_599164.pdf",
+      "title": "רשות ניירות ערך - דוח שנתי 2020",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "225d4161-5444-461d-8f55-ac6ca25d5db1"
+    },
+    {
+      "url": "https://www.boi.org.il/information/bank-paymnts/financial-education/campaigns/cryptoreg/%D7%A4%D7%99%D7%A7%D7%95%D7%97-%D7%A8%D7%A9%D7%95%D7%AA-%D7%A0%D7%99%D7%99%D7%A8%D7%95%D7%AA-%D7%A2%D7%A8%D7%9A/",
+      "title": "פרסומי הרשות לניירות ערך",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "6f6bf23a-8c4e-46e0-8b46-8156f8d63371"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/periodic-review-28112022/he/weekly_economic_review_periodic-review-28112022.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "6165f456-1fd6-4436-a9e4-07d027f9e887"
+    },
+    {
+      "url": "https://coller.m.tau.ac.il/sites/coller.tau.ac.il/files/media_server/Recanati/management/newsletter/amiram.pdf",
+      "title": "השקעה בנכסים דיגיטליים ומטבעות קריפטוגרפיים – מיפוי וסקירה",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "5d71cbce-1c8c-435a-8615-e52dc1851f7a"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/308_014.htm",
+      "title": "תקנות ניירות ערך (דוחות תקופתיים ומיידיים), תש\"ל-1970",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "08c11819-c9f7-46e3-b11b-88af0172a4cd"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-6253f4f00241c/interimReport.pdf",
+      "title": "הוועדה לבחינת דרישות הגילוי בדוחות עיתיים ומיידיים – דוח ביניים",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d3be7966-b8c6-4d7b-8ef8-136fbbb99a20"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2019/01/%D7%95%D7%A1%D7%A8%D7%9E%D7%9F-%D7%95%D7%A6%D7%A4%D7%A0%D7%AA-%D7%9E%D7%96%D7%A8-%D7%9C%D7%99%D7%99%D7%A1%D7%98-%D7%97%D7%95%D7%91%D7%AA-%D7%A4%D7%A8%D7%A1%D7%95%D7%9D-%D7%AA%D7%A9%D7%A7%D7%99%D7%A3-%D7%9B%D7%A7%D7%95-%D7%ההגנה-לציבור-המשקיעים-converted-1.pdf",
+      "title": "חובת פרסום תשקיף כקו ההגנה של ציבור המשקיעים",
+      "number": 9,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "3d0218bc-75e6-4b33-8dd3-20484537195f"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 2,
+      "partial": 12,
+      "unrelated": 12,
+      "tangential": 2
+    },
+    "by_role_match": {
+      "true": 28,
+      "false": 0
+    }
+  }
+}

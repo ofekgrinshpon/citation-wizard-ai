@@ -1,0 +1,314 @@
+{
+  "id": "Q04",
+  "category": "statutory_interpretation",
+  "query": "מהו היקף חובת הגילוי של דירקטור לפי סעיפים 254–256 לחוק החברות, בעסקה עם בעל עניין?",
+  "run_id": "f5c8d229-2624-4ca5-95c5-1c90252304b0",
+  "ok": true,
+  "total_ms": 150295,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "missing_required_anchors": null,
+  "answer": "במוקד: לפי הוראות חוק החברות חובת הגילוי של בעל עניין נוגעת לנושאי משרה (כולל דירקטורים) — הם חייבים לגלות לחברה, בלא דיחוי, את מהות ענינם האישי, לרבות כל עובדה או מסמך מהותי הנוגעים לכך. חובת הגילוי היא אלמנט מרכזי של חובת האמון ואיסור ניגוד העניינים בחוק.¹\n\n**מי חייב, מתי וכיצד — דרישות פרוצדורליות**\n\nמי חייב: הגילוי חלה על \"נושאי משרה\" בחברה; בהקשר המעשי זה כולל דירקטור/ית המודע/ת לעניין אישי העשוי להשפיע על החלטות החברה.¹\n\nמתי: החוק קובע גילוי ללא דיחוי. פירושו הפרקטי, לפי נוסח החוק ולפי הספרות הפרשנית, הוא שיש להודיע על העניין מיד עם היוודע הנושא, ובעת קרבת ההחלטה הרלוונטית — לא להמתין עד לאחר קבלת ההחלטה.²\n\nכיצד: הדין מטיל חובה להעביר מידע מהותי לחברה; בהתאם לפרשנות בספרות, פירוט זה כולל מסירה של עובדות ומסמכים מהותיים והקפדה על רישום מתאים ברשומות/פרוטוקול הדיון כאשר העניין נדון. גבולות צורת הגילוי (כתב מול הודעה בע.³\n\n**תכולת הגילוי — מה יש לגלות?**\n\nהבסיס החוקי מצומצם: יש לגלות \"את מהות ענינו האישי, לרבות כל עובדה או מסמך מהותיים\". נוסח זה מהווה משב רוח כללי המכוון לגילוי דברים שיעניקו לחברה ולדירקטורים האחרים את היכולת להעריך את היקף וקיומו של ניגוד עניינים.⁴\n\nמהות תכולה מעשית: הספרות מפרשת את הדרישה כך שהיא עשויה לכלול זהות הצדדים המעורבים או הצד השלישי הקרוב לעסקה, היקף ההחזקה או הזיקה (כולל חברות שבשליטת הדירקטור), הערכה כספית גסה של היקף העסקה או הסכום המשוער, וטיב הקשר (אישי/מקצועי/משפחתי). פרשנות זו מבוססת על קריאת ההוראה החוקתית בשילוב עם דיונים בפרקטיקה ובספרות המחקרית.⁵\n\nגבולות ותשובות לשאלות נוספות: אין בחוק ניסוח מפורש שמחייב גילוי של שיקולים פנימיים, עמדות חלופיות או הצעות חלופיות שהדירקטור שקל; הספרות מצביעה בזהירות על אפשרות שיש להפיק מידע שכזה אם הוא מהותי להערכת ההשפעה על החלטת החברה, אך דרישה שיטתית לכך חסרה בלשון החוק וראוי להתייחס אליה בזהירות פרשנית.⁶\n\n**השלכות פרוצדורליות של הגילוי — השתתפות בדיון והליך אישור**\n\nעקרונית הגילוי מהווה תנאי לשיקול דעת תקין של הדירקטוריון/האגף המחליט; עם זאת החוק קובע בעיקר את חובת הגילוי ולא מפרט באופן מלא בכל המקרים מנגנון־ברירת השתתפות או איסורים אוטומטיים. מאחר שחובת האמון ואיסור ניגוד העניינים עדיין עומדים בתוקף, הפרקטיקה והספרות נוטות לראות בגילוי יסוד שהולך לצד חובות נוספות של נייטרליות והימנעות בהצבעה במקרים הולמים.⁷\n\nאישור העסקה: הספרות והדיון הדרשתי מצביעים כי אישור העסקה על ידי הדירקטוריון או על ידי האסיפה הכללית עשוי להסדיר צד פרוצדורלי של העסקה ולהקטין את סיכוני המעשה הנוגד, אך לא ניתן להניח באופן גורף שאישור כזה מוחק תמיד את כל אחריות — התוצאות התלויות בפרטי המקרה, בטוהר ההליך, בשקיפות הגילוי ובמידת הנזק שנגרם.⁸\n\n**השלכות משפטיות של אי־גילוי או גילוי לקוי**\n\nהפרת חובת הגילוי עלולה לגרור מספר תוצאות: אפשרות לפעולות לביטול העסקה או לתביעת התקוממות על ידי החברה/בעלי מניות, חבות נזיקית כלפי החברה בגין הנזקים שנגרמו, וכן חבות כלפי נושים במקרה של פגיעה במצב התקין. הדין המקורי וקביעות ספרותיות מצביעות גם על אפשרות של סנקציות מנהליות או אכיפה פלילית במקרים מסוימים, לפי חומרת ההפרה והוראות חוק נוספות.⁹\n\nהערכה פרקטית: האם ואיך תיפעל תשובה זו תלויה בנסיבות — קיומה של טענה להטיית ההליך, חבויות נוספות (למשל ניצול הזדמנות עסקית), ונסיבות ההודעה או ההסדרה שלאחר מעשה כולם מכתיבים את ההשלכה המשפטית בפועל.¹⁰\n\n**חריגים ודרכי תיקון/rיפוי**\n\nריפוי בדיעבד: הספרות מסמנת מספר מסלולים שנדונים כדרכי ריפוי — אישור בדיעבד על־ידי הדירקטוריון או האסיפה הכללית, היתר מבית המשפט, ופעמים שבהן גילוי בכתב לאחר המעשה עשוי לצמצם את הנזקים הפרוצדורליים. עם זאת, האם ריפוי כזה \"מרפא\" את ההפרה מבחינה משפטית אינו חד־משמעי ותלוי בעמידה בתנאים של שקיפות מלאה, אי־ניצול לטובת הדירקטור ונכונות לתקן נזקים.¹¹\n\nמגבלות מעשיות: חלק מההצעות בספרות כוללות גם מגבלות על היקף הריפוי — למשל שבהעדר גילוי מהותי בזמן ההחלטה או במקרה של הונאה מכוונת אישור בדיעבד עשוי שלא להסיט חבות משפטית. כמו כן, סוגיית גישת ראיות פנימיות ותכתובות של דירקטורים נבחנת במשנה זהירות בבית המשפט בישראל, ולכן לא כל צעד תיקון פורמלי ליד המועד יספיק בהכרח לריפוי מלא.¹²\n\nסיכום מעשי קצר: הדין מקדיש משקל משפטי משמעותי לחובת הגילוי — יש לגלות באופן מידי מהות ענין אישי ולהביא את המידע המהותי לידיעת החברה ולרישום הולם; תכולת הגילוי נרחבת בפרקטיקה אך יש להבחין בין מה שמצווה החוק לשלול לבין פרשנות ספרותית שמפרטת מרכיבים נוספים; ריפוי בדיעבד קיים אך תלוי בנסיבות.²",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "חוק החברות, התשנ״ט–1999; חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+          "title": "חוק החברות, התשנ״ט–1999",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+          "title": "חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק החברות, התשנ״ט–1999; עניין אישי של בעל שליטה במיזוג החברה",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+          "title": "חוק החברות, התשנ״ט–1999",
+          "source_type": "other"
+        },
+        {
+          "url": "https://hethcenter.colman.ac.il/2025/03/04/%D7%A2%D7%A0%D7%99%D7%99%D7%9F-%D7%90%D7%99%D7%A9%D7%99-%D7%A9%D7%9C-%D7%91%D7%A2%D7%9C-%D7%A9%D7%9C%D7%99%D7%98%D7%94-%D7%91%D7%9E%D7%99%D7%96%D7%95%D7%92-%D7%94%D7%97%D7%91%D7%A8%D7%94/",
+          "title": "עניין אישי של בעל שליטה במיזוג החברה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך; מסמך מאתר אתר אקדמי (taulawreview.sites.tau.ac.il); עניין אישי של בעל שליטה במיזוג החברה",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+          "title": "חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_12d6c3c24be5492cb65edd6a47154ebe.pdf",
+          "title": "מסמך מאתר אתר אקדמי (taulawreview.sites.tau.ac.il)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://hethcenter.colman.ac.il/2025/03/04/%D7%A2%D7%A0%D7%99%D7%99%D7%9F-%D7%90%D7%99%D7%A9%D7%99-%D7%A9%D7%9C-%D7%91%D7%A2%D7%9C-%D7%A9%D7%9C%D7%99%D7%98%D7%94-%D7%91%D7%9E%D7%99%D7%96%D7%95%D7%92-%D7%94%D7%97%D7%91%D7%A8%D7%94/",
+          "title": "עניין אישי של בעל שליטה במיזוג החברה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+      "title": "חוק החברות, התשנ״ט–1999",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+          "title": "חוק החברות, התשנ״ט–1999",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "עניין אישי של בעל שליטה במיזוג החברה; \"החזקה\" ו \"רכישה\" בחוק החברות",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://hethcenter.colman.ac.il/2025/03/04/%D7%A2%D7%A0%D7%99%D7%99%D7%9F-%D7%90%D7%99%D7%A9%D7%99-%D7%A9%D7%9C-%D7%91%D7%A2%D7%9C-%D7%A9%D7%9C%D7%99%D7%98%D7%94-%D7%91%D7%9E%D7%99%D7%96%D7%95%D7%92-%D7%94%D7%97%D7%91%D7%A8%D7%94/",
+          "title": "עניין אישי של בעל שליטה במיזוג החברה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2020/05/%D7%94%D7%97%D7%96%D7%A7%D7%94-%D7%95%D7%A8%D7%9B%D7%99%D7%A9%D7%94-%D7%91%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA-%D7%A2%D7%A8%D7%9F-%D7%A8%D7%95%D7%96%D7%9E%D7%9F.pdf",
+          "title": "\"החזקה\" ו \"רכישה\" בחוק החברות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://hethcenter.colman.ac.il/2025/03/04/%D7%A2%D7%A0%D7%99%D7%99%D7%9F-%D7%90%D7%99%D7%A9%D7%99-%D7%A9%D7%9C-%D7%91%D7%A2%D7%9C-%D7%A9%D7%9C%D7%99%D7%98%D7%94-%D7%91%D7%9E%D7%99%D7%96%D7%95%D7%92-%D7%94%D7%97%D7%91%D7%A8%D7%94/",
+      "title": "עניין אישי של בעל שליטה במיזוג החברה",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://hethcenter.colman.ac.il/2025/03/04/%D7%A2%D7%A0%D7%99%D7%99%D7%9F-%D7%90%D7%99%D7%A9%D7%99-%D7%A9%D7%9C-%D7%91%D7%A2%D7%9C-%D7%A9%D7%9C%D7%99%D7%98%D7%94-%D7%91%D7%9E%D7%99%D7%96%D7%95%D7%92-%D7%94%D7%97%D7%91%D7%A8%D7%94/",
+          "title": "עניין אישי של בעל שליטה במיזוג החברה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך; יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+          "title": "חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך",
+          "source_type": "other"
+        },
+        {
+          "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
+          "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "אחריות דירקטוריון בגין חלוקה אסורה; מסמך מאתר אתר אקדמי (netanya.ac.il)",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://www.runi.ac.il/media/30ipndep/eckstein-hahn.pdf",
+          "title": "אחריות דירקטוריון בגין חלוקה אסורה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%97__%D7%9E%D7%A0%D7%92%D7%A0%D7%95%D7%A0%D7%99%D7%9D_%D7%9E%D7%91%D7%A0%D7%99%D7%99%D7%9D_%D7%9C%D7%A4%D7%AA%D7%A8%D7%95%D7%9F_%D7%91%D7%A2%D7%99%D7%99%D7%AA_%D7%94%D7%A0%D7%A6%D7%99%D7%ג.doc",
+          "title": "מסמך מאתר אתר אקדמי (netanya.ac.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך; אחריות דירקטוריון בגין חלוקה אסורה; \"החזקה\" ו \"רכישה\" בחוק החברות",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+          "title": "חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/30ipndep/eckstein-hahn.pdf",
+          "title": "אחריות דירקטוריון בגין חלוקה אסורה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2020/05/%D7%94%D7%97%D7%96%D7%A7%D7%94-%D7%95%D7%A8%D7%9B%D7%99%D7%A9%D7%94-%D7%91%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA-%D7%A2%D7%A8%D7%9F-%D7%A8%D7%95%D7%96%D7%9E%D7%9F.pdf",
+          "title": "\"החזקה\" ו \"רכישה\" בחוק החברות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
+      "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+      "number": 10,
+      "sources": [
+        {
+          "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
+          "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר אקדמי (netanya.ac.il); יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח); \"החזקה\" ו \"רכישה\" בחוק החברות",
+      "number": 11,
+      "sources": [
+        {
+          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%97__%D7%9E%D7%A0%D7%92%D7%A0%D7%95%D7%A0%D7%99%D7%9D_%D7%9E%D7%91%D7%A0%D7%99%D7%99%D7%9D_%D7%9C%D7%A4%D7%AA%D7%A8%D7%95%D7%9F_%D7%91%D7%A2%D7%99%D7%99%D7%AA_%D7%94%D7%A0%D7%A6%D7%99%D7%ג.doc",
+          "title": "מסמך מאתר אתר אקדמי (netanya.ac.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
+          "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2020/05/%D7%94%D7%97%D7%96%D7%A7%D7%94-%D7%95%D7%A8%D7%9B%D7%99%D7%A9%D7%94-%D7%91%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA-%D7%A2%D7%A8%D7%9F-%D7%A8%D7%95%D7%96%D7%9E%D7%9F.pdf",
+          "title": "\"החזקה\" ו \"רכישה\" בחוק החברות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר אקדמי (taulawreview.sites.tau.ac.il); עניין אישי של בעל שליטה במיזוג החברה",
+      "number": 12,
+      "sources": [
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_12d6c3c24be5492cb65edd6a47154ebe.pdf",
+          "title": "מסמך מאתר אתר אקדמי (taulawreview.sites.tau.ac.il)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://hethcenter.colman.ac.il/2025/03/04/%D7%A2%D7%A0%D7%99%D7%99%D7%9F-%D7%90%D7%99%D7%A9%D7%99-%D7%A9%D7%9C-%D7%91%D7%A2%D7%9C-%D7%A9%D7%9C%D7%99%D7%98%D7%94-%D7%91%D7%9E%D7%99%D7%96%D7%95%D7%92-%D7%94%D7%97%D7%91%D7%A8%D7%94/",
+          "title": "עניין אישי של בעל שליטה במיזוג החברה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+      "title": "חוק החברות, התשנ״ט–1999",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "340b249f-f550-4260-b6ae-75451eb23484"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+      "title": "חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "83c742e1-5216-4526-9f92-546d9b612ef9"
+    },
+    {
+      "url": "https://hethcenter.colman.ac.il/2025/03/04/%D7%A2%D7%A0%D7%99%D7%99%D7%9F-%D7%90%D7%99%D7%A9%D7%99-%D7%A9%D7%9C-%D7%91%D7%A2%D7%9C-%D7%A9%D7%9C%D7%99%D7%98%D7%94-%D7%91%D7%9E%D7%99%D7%96%D7%95%D7%92-%D7%94%D7%97%D7%91%D7%A8%D7%94/",
+      "title": "עניין אישי של בעל שליטה במיזוג החברה",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "8ca72ba8-4f8b-4c65-8f92-c4d737190943"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_12d6c3c24be5492cb65edd6a47154ebe.pdf",
+      "title": "מסמך מאתר אתר אקדמי (taulawreview.sites.tau.ac.il)",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "8dca3b04-9dee-4ca7-a7e2-0522e519e3c8"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2020/05/%D7%94%D7%97%D7%96%D7%A7%D7%94-%D7%95%D7%A8%D7%9B%D7%99%D7%A9%D7%94-%D7%91%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA-%D7%A2%D7%A8%D7%9F-%D7%A8%D7%95%D7%96%D7%9E%D7%9F.pdf",
+      "title": "\"החזקה\" ו \"רכישה\" בחוק החברות",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "ba216b2c-e1e4-496d-a8dd-29b5fae47ce9"
+    },
+    {
+      "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
+      "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+      "number": 7,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "b8a89c33-031f-41fe-ae63-a0d49d69b63e"
+    },
+    {
+      "url": "https://www.runi.ac.il/media/30ipndep/eckstein-hahn.pdf",
+      "title": "אחריות דירקטוריון בגין חלוקה אסורה",
+      "number": 8,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "3f3aa080-f58a-47c2-a9be-a98fca6dc4c4"
+    },
+    {
+      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%97__%D7%9E%D7%A0%D7%92%D7%A0%D7%95%D7%A0%D7%99%D7%9D_%D7%9E%D7%91%D7%A0%D7%99%D7%99%D7%9D_%D7%9C%D7%A4%D7%AA%D7%A8%D7%95%D7%9F_%D7%91%D7%A2%D7%99%D7%99%D7%AA_%D7%94%D7%A0%D7%A6%D7%99%D7%ג.doc",
+      "title": "מסמך מאתר אתר אקדמי (netanya.ac.il)",
+      "number": 8,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f5fb5b54-c17f-448d-9c95-1deada183d01"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 2,
+      "partial": 7,
+      "unrelated": 8,
+      "tangential": 2
+    },
+    "by_role_match": {
+      "true": 19,
+      "false": 0
+    }
+  }
+}
