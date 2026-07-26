@@ -215,19 +215,28 @@ export function computeRequiredAnchorStatuses(args: {
   };
   return anchors.map((a) => {
     const isDocket = !!a.is_docket_anchor;
+    const isStatuteSection = !!a.is_statute_section_anchor;
     const anchorCandsAll = candidates.filter((c) =>
       ((c.metadata as Record<string, unknown> | undefined)?.required_anchor_id as string | undefined)
         === a.anchor_id ||
       // Backup: anchor queries we appended have a recognizable reason via query_he matches.
       a.suggested_queries.includes(c.query_he)
     );
-    // For docket anchors, only docket-matched candidates count as "the
-    // judgment itself". Adjacent / same-doctrine cases are tracked but
-    // cannot satisfy the anchor.
-    const anchorCands = isDocket
-      ? anchorCandsAll.filter((c) =>
-          ((c.metadata as Record<string, unknown> | undefined)?.docket_match) === true)
-      : anchorCandsAll;
+    // Docket: only docket-matched candidates count.
+    // Statute-section: only candidates whose title matches the statute AND
+    //   whose snippet contains the section marker count.
+    let anchorCands = anchorCandsAll;
+    if (isDocket) {
+      anchorCands = anchorCandsAll.filter((c) =>
+        ((c.metadata as Record<string, unknown> | undefined)?.docket_match) === true);
+    } else if (isStatuteSection && a.statute_section_ref) {
+      const ref = a.statute_section_ref;
+      anchorCands = anchorCandsAll.filter((c) =>
+        candidateSatisfiesStatuteSection(
+          { title: c.title, snippet: c.snippet, url: c.source_url },
+          ref,
+        ));
+    }
     const candidate_ids = anchorCands.map((c) => c.candidate_id);
     const reached_verifier = anchorCands.some((c) => usableIds.has(c.candidate_id));
     let verified_support: RequiredAnchorStatus["verified_support"] = "none";
@@ -241,13 +250,11 @@ export function computeRequiredAnchorStatuses(args: {
     }
     const cited = anchorCands.some((c) => usedCandidateIds.has(c.candidate_id));
 
-    // Docket-anchor extra constraint: verified_support must be direct|partial
-    // to count as verified/cited. Otherwise collapse the status down.
-    const supportOk = !isDocket ||
+    // Strict anchors (docket, statute-section) require direct|partial support.
+    const supportOk = (!isDocket && !isStatuteSection) ||
       verified_support === "direct" || verified_support === "partial";
 
-    // User-uploaded judgment override: if the user uploaded a document whose
-    // content matches this docket, treat the anchor as satisfied directly.
+    // User-uploaded judgment override (docket anchors only).
     const docketId = isDocket && a.trigger.kind === "docket" ? a.trigger.docket.docket_id : null;
     const matchingUserDocs = isDocket && docketId
       ? (userDocs ?? []).filter((d) =>
@@ -257,7 +264,6 @@ export function computeRequiredAnchorStatuses(args: {
 
     let status: RequiredAnchorStatus["status"];
     if (matchingUserDocs.length > 0) {
-      // User-supplied judgment satisfies the anchor; no caveat needed.
       status = "cited";
       verified_support = "direct";
     } else if (cited && supportOk) status = "cited";
@@ -270,6 +276,7 @@ export function computeRequiredAnchorStatuses(args: {
       description: a.description,
       anchor_type: a.anchor_type,
       is_docket_anchor: isDocket,
+      is_statute_section_anchor: isStatuteSection,
       emitted: true,
       queries: a.suggested_queries,
       candidate_ids: [...candidate_ids, ...userDocRefs],
