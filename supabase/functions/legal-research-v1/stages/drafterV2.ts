@@ -294,10 +294,14 @@ function selectLeadRef(
   sources: DrafterInputSource[],
   requiredAnchorCandidateIds: Set<string>,
   hasMissingDocketAnchor: boolean,
+  hasMissingStatuteSectionAnchor: boolean,
 ): LeadRefSelection {
   const shape = answerIntent?.output_shape ?? "unknown";
   if (hasMissingDocketAnchor) {
     return { ref: null, reason: "skipped_missing_docket_anchor", shape };
+  }
+  if (hasMissingStatuteSectionAnchor && (shape === "definition" || shape === "quote")) {
+    return { ref: null, reason: "skipped_missing_statute_section_anchor", shape };
   }
   if (shape !== "case_holding" && shape !== "definition" && shape !== "quote") {
     return { ref: null, reason: "shape_not_eligible", shape };
