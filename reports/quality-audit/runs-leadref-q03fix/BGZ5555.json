@@ -1,0 +1,149 @@
+{
+  "id": "BGZ5555",
+  "category": "case_holding_smoke",
+  "query": "מה נקבע בבג\"ץ 5555/18 בעניין חוק-יסוד: הלאום? נסח את ההלכה שנפסקה.",
+  "run_id": "60257c50-f8e3-4f5b-a0a4-34b498d4a97f",
+  "ok": true,
+  "total_ms": 160404,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "lead_ref": {
+    "ref": "s8",
+    "shape": "case_holding",
+    "reason": "required_anchor_case"
+  },
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "answer": "**ההלכה בבג\"ץ 5555/18**\n\nבית המשפט העליון (כבג\"ץ) דחה את העתירות שהתנגדו לחוק‑יסוד: ישראל — מדינת הלאום של העם היהודי; ברוב ההרכב נדחו הקריאות לביטול החוק וקבעו כי לכנסת סמכות מכוננת לחוקק חוק־יסוד מסוג זה, ובנסיבות המקרה לא נמצא שימוש לרעה בסמכות שמצדיק ביטול ההוראות.¹\n\nבאותו פסק דין הוכרה באופן עקרוני סמכות שיפוטית מצומצמת לבית המשפט להתערב ולבטל תיקוני חוקי־יסוד במקרים קיצוניים שבהם חריגה מהותית בסמכות המכוננת מובילה לשלילה מהותית של זהותה היהודית והדמוקרטית של המדינה; עם זאת נקבע כי תנאי הקיצוניות והתכלית המחייבת התערבות לא התקיימו במקרה הנדון.²\n\nפסק הדין קבע כללים פרשניים: הוראות חוק־היסוד יש לפרשם בהרמוניה עם עקרונות היסוד של המדינה וכפי שמעוגנים בחוק־יסוד: כבוד האדם וחירותו; לפיכך עקרון השוויון ממשיך לחול כעיקרון חוקתי מחייב ולשמש מסגרת לבחינת חוקיות יישום הוראות חוק־הלאום.³\n\nבהתייחס להוראות ספציפיות בחוק־היסוד — כגון קביעות לגבי לשון המדינה, סמלים והדגשת זיקה יהודית והזכות להתיישבות — בית המשפט הבהיר כי הוראות אלה לא מהוות היתר להפליה פסולה כלפי מיעוטים ויש ליישמן בכפיפות לעקרון השוויון ולכבוד האדם; לגבי מעמדה של השפה הערבית נקבעה ההגדרה כ'מעמד מיוחד' מבלי שהוראה זו תגרוע מזכויות שניתנות כיום, ודורשת מימוש חקיקתי ופרשני נוסף.⁴\n\nלסיכום מעשתי: ההלכה המהותית של בג\"ץ 5555/18 כוללת הכרה בסמכותה של הכנסת לחקיקת חוקי‑יסוד המכוננים, הכרה בעקרון של סמכות שיפוטית מצומצמת להתערבות במצבים חריגים בלבד, והנחיה לפרש את חוק‑היסוד של הלאום תוך שמירה על זכויות יסוד כגון כבוד האדם והשוויון; בהליך הספציפי נדחו העתירות ולא בוטל החוק.⁵",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "בג\"ץ 5555/18 חסון נ' הכנסת; בג\"ץ 5555/18",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
+          "title": "בג\"ץ 5555/18 חסון נ' הכנסת",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+          "title": "בג\"ץ 5555/18",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
+      "title": "בג\"ץ 5555/18 חסון נ' הכנסת",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
+          "title": "בג\"ץ 5555/18 חסון נ' הכנסת",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "בג\"ץ 5555/18 חסון נ' הכנסת; חוק-יסוד: כבוד האדם וחירותו (נוסח רשמי באתר הכנסת)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
+          "title": "בג\"ץ 5555/18 חסון נ' הכנסת",
+          "source_type": "other"
+        },
+        {
+          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+          "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח רשמי באתר הכנסת)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בג\"ץ 5555/18 חסון נ' הכנסת; חוק-יסוד: ישראל – מדינת הלאום של העם היהודי (נוסח מלא)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
+          "title": "בג\"ץ 5555/18 חסון נ' הכנסת",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/20/law/20_lst_313350.docx",
+          "title": "חוק-יסוד: ישראל – מדינת הלאום של העם היהודי (נוסח מלא)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בג\"ץ 5555/18 חסון נ' הכנסת; תקציר בג\"ץ 5555-18",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
+          "title": "בג\"ץ 5555/18 חסון נ' הכנסת",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555-18",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
+      "title": "בג\"ץ 5555/18 חסון נ' הכנסת",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "c8da82b1-6709-4513-9401-310178be46be"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+      "title": "בג\"ץ 5555/18",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "ab8238fd-a6c5-41c5-ae0f-59b57d24baf6"
+    },
+    {
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח רשמי באתר הכנסת)",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "bb8391ef-316e-496d-9a76-2a71bbd92084"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/20/law/20_lst_313350.docx",
+      "title": "חוק-יסוד: ישראל – מדינת הלאום של העם היהודי (נוסח מלא)",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "25763724-ea60-45d3-9a51-5202b634e326"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555-18",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "07f22831-51c9-493f-8fce-bf452c533fd5"
+    }
+  ],
+  "quality_warning": null
+}

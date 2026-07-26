@@ -1,0 +1,504 @@
+[
+  {
+    "id": "Q01",
+    "category": "docket_holding",
+    "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
+    "run_id": "66c010f6-dec0-4dad-a232-39316547e060",
+    "ok": true,
+    "total_ms": 141901,
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "lead_ref": {
+      "ref": "s9",
+      "shape": "case_holding",
+      "reason": "required_anchor_case"
+    },
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "answer": "**הכרעת בג\"ץ 6298/07 רסלר נ' כנסת ישראל — עיקרי ההחלטה**\n\nבית המשפט העליון בבג\"ץ 6298/07 קיבל את העתירות ביחס לחוק דחיית שירות לתלמידי ישיבות (הנקרא 'חוק טל') והכריז על ההסדר כבלתי חוקתי; ההחלטה הביאה למעשה לביטול מעמדה החוקי של ההוראה שנדונה.¹\n\nהיסוד המשפטי להכרעה היה בחינת החוק לפי פסקת ההגבלה של חוק‑יסוד: כבוד האדם וחירותו. בית המשפט בחן האם הפגיעה בזכויות נובעת מחוק ההולם את ערכיה של המדינה, האם נועדה לתכלית ראויה, והאם היא במידה שאינה עולה על הנדרש; מצא כי התנאים המצטברים של פסקת ההגבלה אינם מתקיימים ביחס להוראת החוק המדוברת.²\n\nבמרכז הנימוקים עמדה פגיעה בשוויון בנטל — כלומר בהוראת החוק שהעניקה דחיות ופטורים סלקטיביים לתלמידי ישיבות באופן שיצר העמסה בלתי שווה של חובת השירות על שאר האזרחים; פגיעה זו הוערכה כבלתי מידתית ביחס לערכי חוק‑היסוד.²\n\nבית המשפט לא הסתפק בבחינה הפרשנית בלבד אלא שקל את המסמכים והנתונים העובדתיים שהוצגו על יישום ההסדר. על פי נתונים ודיווחים רשמיים (דוחות יישום וניתוח ההסדר) נמצא כי החוק יושם באופן חלקי וכי ההסדר לא השיג במידה מספקת את יעדיו של שילוב רב יותר של חרדים בשירות ביטחון או אזרחי; ממצא עובדתי זה חיזק את מסקנת היעדר המידתיות.³\n\nסעד ההכרעה היה הכרזה על אי‑חוקתיות וביטול הסמכות להמשיך ולהפעיל את ההסדר כפי שנקבע בחוק; בית המשפט הטביע כי כל פתרון חקיקתי חלופי יצטרך לעמוד בדרישות השוויון והמבחנים המידתיים שנקבעו בחוק‑היסוד.¹\n\nההחלטה הדגישה גם את האיזון בין מרחב השיקול של הכנסת בסוגיות ביטחוניות ובגיוס לבין סמכות הביקורת השיפוטית: הכנסת נהנית מרזרבה משמעותית בסוגיות מדיניות ציבורית, אך כאשר הפגיעה בזכויות יסוד ובשוויון אינה מידתית בית המשפט רשאי להתערב ולבטל חקיקה.²\n\nסיכום מקוצר: בפסק‑דין זה קבע בית המשפט כי חוק טל פוגע בשוויון בנטל ובזכויות המוגנות בחוק‑יסוד, שהפגיעה אינה עומדת במבחני פסקת ההגבלה, וכי לכן החוק אינו חוקתי; ממצא העובדה של כישלון היישום שימש חיזוק לנימוק המידתיות.⁴",
+    "footnotes": [
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+        "title": "החלטה בתיק בג\"ץ 6298/07",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+            "title": "החלטה בתיק בג\"ץ 6298/07",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "other"
+      },
+      {
+        "url": null,
+        "title": "החלטה בתיק בג\"ץ 6298/07; חוק-יסוד: כבוד האדם וחירותו",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+            "title": "החלטה בתיק בג\"ץ 6298/07",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+            "title": "חוק-יסוד: כבוד האדם וחירותו",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "החלטה בתיק בג\"ץ 6298/07; יישום חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם (חוק טל); יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+            "title": "החלטה בתיק בג\"ץ 6298/07",
+            "source_type": "other"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/globaldocs/MMM/a74c6b58-e9f7-e411-80c8-00155d010977/2_a74c6b58-e9f7-e411-80c8-00155d010977_11_9068.pdf",
+            "title": "יישום חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם (חוק טל)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/465-36.aspx",
+            "title": "יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "החלטה בתיק בג\"ץ 6298/07; יישום חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם (חוק טל); חוק-יסוד: כבוד האדם וחירותו",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+            "title": "החלטה בתיק בג\"ץ 6298/07",
+            "source_type": "other"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/globaldocs/MMM/a74c6b58-e9f7-e411-80c8-00155d010977/2_a74c6b58-e9f7-e411-80c8-00155d010977_11_9068.pdf",
+            "title": "יישום חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם (חוק טל)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+            "title": "חוק-יסוד: כבוד האדם וחירותו",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+        "title": "החלטה בתיק בג\"ץ 6298/07",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "85de9043-ba21-44e0-8f53-e578dfc23eb6"
+      },
+      {
+        "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+        "title": "חוק-יסוד: כבוד האדם וחירותו",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "491e39cd-7244-4b31-b0c5-6cf5d0cb8ad3"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/globaldocs/MMM/a74c6b58-e9f7-e411-80c8-00155d010977/2_a74c6b58-e9f7-e411-80c8-00155d010977_11_9068.pdf",
+        "title": "יישום חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם (חוק טל)",
+        "number": 3,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "a60077da-38c9-45e5-b7b9-9e0600920747"
+      },
+      {
+        "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/465-36.aspx",
+        "title": "יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים",
+        "number": 3,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "1106d433-18f6-4b85-8ec7-fd3a24bfd187"
+      }
+    ],
+    "quality_warning": null
+  },
+  {
+    "id": "Q03",
+    "category": "statutory_interpretation",
+    "query": "מהי הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה, ומהם התנאים המצטברים?",
+    "run_id": "1bfab7d2-12c3-4d46-b78b-eaef1c51dc12",
+    "ok": true,
+    "total_ms": 90872,
+    "answer_intent": {
+      "output_shape": "definition"
+    },
+    "lead_ref": {
+      "ref": "s2",
+      "shape": "definition",
+      "reason": "primary_statute"
+    },
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "answer": "**הגדרת \"בעל שליטה\" לפי סעיף 32(9) לפקודת מס הכנסה**\n\nבחומר שברשותי רשות המסים מפרשת את ההגדרה הרלוונטית בהקשר סעיף 32(9) באופן מקדים: \"החזקה היא במישרין או בעקיפין, לבד או יחד עם אחר, ב-25% לפחות באחד או יותר מסוג כלשהו של אמצעי השליטה.\".¹\n\nמכאן ניתנים המאפיינים המעשיים שמרכיבים את מעמד 'בעל שליטה' לפי פרשנות זו: החזקה במישרין או בעקיפין; החזקה לבד או יחד עם אחרים; ועמידה בסף של שיעור מחזיקה של לפחות 25% באחד או יותר מאמצעי השליטה המפורטים. יש להבין אלמנטים אלה כמצטברים ביחס לסעיף.²\n\nהבחנה בין החזקה במישרין לבין החזקה בעקיפין מובאת במפורש במסמכי ההנחיה — רשות המסים קובעת שניתן להיחשב כבעל שליטה גם דרך שרשרת החזקה בעקיפין. עם זאת, כללי שיוך, חיבור החזקות ופרטי חישוב האחוזים נחקרים ומתוקנים במסגרת הנחיות מקצועיות ותקנות נלוות; בחקיקה מינהלית ופיקוחית קיימות הוראות משלימות המגדירות מנגנוני אכיפה והסדרת שיעורים בפועל.³\n\nבנוסף, ספרות וסיכומי פסיקה מצביעים על מבחנים משלימים שנמצאים בפסקי דין ובהערכות משפטיות: בתי משפט וניתוחי מקרים בוחנים לעתים שליטה מעשית שאינה רק פורמלית, הסכמים פרטיים בין בעלי עניין ושיקולים של זיקה משפחתית או כלכלית שיכולים להרחיב או לצמצם את מעמדו של אדם כ'בעל שליטה'. מאמרי סקירה מצביעים על מקרים ידועים שבהם נבחנו שיקולים אלה ככלי פרשני לצד ההגדרה החוקית.⁴\n\nסיכום מעשי: לפי החומר המנחה העיקרי, כדי להיחשב כבעל שליטה על-פי סעיף 32(9) נדרשת החזקה (מישרית או עקיפה), לבד או יחד, ושיעור מחזקה של לפחות 25% באחד או יותר מאמצעי השליטה; פירוטי שיוך, חישוב האחוזים ויישום מעשי מוסדרים באמצעות חוזרי רשות המסים, תקנות וספרות פסיקתית שמרחיבים את פרשנות ההגדרה במצבים מורכבים.⁵",
+    "footnotes": [
+      {
+        "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-08-2018/he/Policy_IncomeTaxProfessionalInst_hoz_08_2018_acc.pdf",
+        "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-08-2018/he/Policy_IncomeTaxProfessionalInst_hoz_08_2018_acc.pdf",
+            "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "other"
+      },
+      {
+        "url": null,
+        "title": "מסמך מאתר אתר ממשלתי (gov.il); 25_scl_r_4418264.docx",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-08-2018/he/Policy_IncomeTaxProfessionalInst_hoz_08_2018_acc.pdf",
+            "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/25/SecondaryLaw/25_scl_r_4418264.docx",
+            "title": "25_scl_r_4418264.docx",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "מסמך מאתר אתר ממשלתי (gov.il); חוק הפיקוח על שירותים פיננסיים (ביטוח)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-08-2018/he/Policy_IncomeTaxProfessionalInst_hoz_08_2018_acc.pdf",
+            "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A4%D7%99%D7%A7%D7%95%D7%97_%D7%A2%D7%9C_%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D_%D7%A4%D7%99%D7%A0%D7%A0%D7%A1%D7%99%D7%99%D7%9D_(%D7%91%D7%99%D7%98%D7%95%D7%97)",
+            "title": "חוק הפיקוח על שירותים פיננסיים (ביטוח)",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://runilawreview.org/2025/06/30/vol31-levi/",
+        "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://runilawreview.org/2025/06/30/vol31-levi/",
+            "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      },
+      {
+        "url": null,
+        "title": "מסמך מאתר אתר ממשלתי (gov.il); עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-08-2018/he/Policy_IncomeTaxProfessionalInst_hoz_08_2018_acc.pdf",
+            "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://runilawreview.org/2025/06/30/vol31-levi/",
+            "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-08-2018/he/Policy_IncomeTaxProfessionalInst_hoz_08_2018_acc.pdf",
+        "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "756a4fe2-3a12-4025-9807-0bd2e8665102"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/25/SecondaryLaw/25_scl_r_4418264.docx",
+        "title": "25_scl_r_4418264.docx",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "26ad20f0-aa65-4a73-aa7b-ac40294c3f66"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A4%D7%99%D7%A7%D7%95%D7%97_%D7%A2%D7%9C_%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D_%D7%A4%D7%99%D7%A0%D7%A0%D7%A1%D7%99%D7%99%D7%9D_(%D7%91%D7%99%D7%98%D7%95%D7%97)",
+        "title": "חוק הפיקוח על שירותים פיננסיים (ביטוח)",
+        "number": 3,
+        "origin": "local_db",
+        "source_type": "israeli_law",
+        "candidate_id": "084d8fff-a372-44a7-a228-b7c31130283b"
+      },
+      {
+        "url": "https://runilawreview.org/2025/06/30/vol31-levi/",
+        "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+        "number": 4,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "89123852-fd64-4884-b053-371daf422921"
+      }
+    ],
+    "quality_warning": null
+  },
+  {
+    "id": "Q18",
+    "category": "anchor_preservation",
+    "query": "צטט מילולית את סעיף 1 לחוק יסוד: כבוד האדם וחירותו, והפנה למקור רשמי.",
+    "run_id": "ed8a2583-31d1-4fff-8d30-541063c88eb5",
+    "ok": true,
+    "total_ms": 83216,
+    "answer_intent": {
+      "output_shape": "quote"
+    },
+    "lead_ref": {
+      "ref": "s1",
+      "shape": "quote",
+      "reason": "official_source_with_snippet"
+    },
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "answer": "להלן הציטוט המילולי של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו, כפי שמופיע בנוסח המשולב הרשמי:\n\nסעיף 1: זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין.¹\n\nהאם לצטט את נוסח החוק המקורי מיום החקיקה או את נוסח הקונסולידציה המעודכן: מן המקורות עולה בזהירות כי כאשר הכוונה היא להציג את הדין כפי שהוא בתוקף כיום ראוי לצטט את הנוסח המשולב המעודכן; לעומת זאת, אם המטרה היא להציג את נוסח החוק כפי שנחקק ביום החקיקה יש לחזור אל פרסומי הכנסת והרשומות המקוריות ולצטט את נוסח ההחוק המקורי.²\n\nהפניה למקור רשמי לאימות הציטוט: מסמך ה‑PDF של אתר הכנסת המכיל את נוסח החוק המעודכן (נוסח משולב) מהווה מקור רשמי לציטוט המילולי שנעשה לעיל; בנוסף מאגר החקיקה של הכנסת ומאגר החקיקה של משרד המשפטים מפורסמים כאתרים רשמיים שבהם ניתן לאמת נוסחים מקוריים והיסטוריית תיקונים.²",
+    "footnotes": [
+      {
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו (PDF)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "title": "חוק-יסוד: כבוד האדם וחירותו (PDF)",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "other"
+      },
+      {
+        "url": null,
+        "title": "חוק-יסוד: כבוד האדם וחירותו (PDF); הכנסת – מאגר החקיקה: חוק־יסוד: כבוד האדם וחירותו; משרד המשפטים – מאגר החקיקה",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "title": "חוק-יסוד: כבוד האדם וחירותו (PDF)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://main.knesset.gov.il/",
+            "title": "הכנסת – מאגר החקיקה: חוק־יסוד: כבוד האדם וחירותו",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.gov.il/",
+            "title": "משרד המשפטים – מאגר החקיקה",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו (PDF)",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "d32c04b7-cd9e-46dc-8da8-bd907ba2b5b7"
+      },
+      {
+        "url": "https://main.knesset.gov.il/",
+        "title": "הכנסת – מאגר החקיקה: חוק־יסוד: כבוד האדם וחירותו",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "45f5eb0b-1d25-4612-bc24-4966e00c7b74"
+      },
+      {
+        "url": "https://www.gov.il/",
+        "title": "משרד המשפטים – מאגר החקיקה",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "8f558ef0-5afa-4cd2-9303-92b34fb69f09"
+      }
+    ],
+    "quality_warning": null
+  },
+  {
+    "id": "BGZ5555",
+    "category": "case_holding_smoke",
+    "query": "מה נקבע בבג\"ץ 5555/18 בעניין חוק-יסוד: הלאום? נסח את ההלכה שנפסקה.",
+    "run_id": "60257c50-f8e3-4f5b-a0a4-34b498d4a97f",
+    "ok": true,
+    "total_ms": 160404,
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "lead_ref": {
+      "ref": "s8",
+      "shape": "case_holding",
+      "reason": "required_anchor_case"
+    },
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "answer": "**ההלכה בבג\"ץ 5555/18**\n\nבית המשפט העליון (כבג\"ץ) דחה את העתירות שהתנגדו לחוק‑יסוד: ישראל — מדינת הלאום של העם היהודי; ברוב ההרכב נדחו הקריאות לביטול החוק וקבעו כי לכנסת סמכות מכוננת לחוקק חוק־יסוד מסוג זה, ובנסיבות המקרה לא נמצא שימוש לרעה בסמכות שמצדיק ביטול ההוראות.¹\n\nבאותו פסק דין הוכרה באופן עקרוני סמכות שיפוטית מצומצמת לבית המשפט להתערב ולבטל תיקוני חוקי־יסוד במקרים קיצוניים שבהם חריגה מהותית בסמכות המכוננת מובילה לשלילה מהותית של זהותה היהודית והדמוקרטית של המדינה; עם זאת נקבע כי תנאי הקיצוניות והתכלית המחייבת התערבות לא התקיימו במקרה הנדון.²\n\nפסק הדין קבע כללים פרשניים: הוראות חוק־היסוד יש לפרשם בהרמוניה עם עקרונות היסוד של המדינה וכפי שמעוגנים בחוק־יסוד: כבוד האדם וחירותו; לפיכך עקרון השוויון ממשיך לחול כעיקרון חוקתי מחייב ולשמש מסגרת לבחינת חוקיות יישום הוראות חוק־הלאום.³\n\nבהתייחס להוראות ספציפיות בחוק־היסוד — כגון קביעות לגבי לשון המדינה, סמלים והדגשת זיקה יהודית והזכות להתיישבות — בית המשפט הבהיר כי הוראות אלה לא מהוות היתר להפליה פסולה כלפי מיעוטים ויש ליישמן בכפיפות לעקרון השוויון ולכבוד האדם; לגבי מעמדה של השפה הערבית נקבעה ההגדרה כ'מעמד מיוחד' מבלי שהוראה זו תגרוע מזכויות שניתנות כיום, ודורשת מימוש חקיקתי ופרשני נוסף.⁴\n\nלסיכום מעשתי: ההלכה המהותית של בג\"ץ 5555/18 כוללת הכרה בסמכותה של הכנסת לחקיקת חוקי‑יסוד המכוננים, הכרה בעקרון של סמכות שיפוטית מצומצמת להתערבות במצבים חריגים בלבד, והנחיה לפרש את חוק‑היסוד של הלאום תוך שמירה על זכויות יסוד כגון כבוד האדם והשוויון; בהליך הספציפי נדחו העתירות ולא בוטל החוק.⁵",
+    "footnotes": [
+      {
+        "url": null,
+        "title": "בג\"ץ 5555/18 חסון נ' הכנסת; בג\"ץ 5555/18",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
+            "title": "בג\"ץ 5555/18 חסון נ' הכנסת",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+            "title": "בג\"ץ 5555/18",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
+        "title": "בג\"ץ 5555/18 חסון נ' הכנסת",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
+            "title": "בג\"ץ 5555/18 חסון נ' הכנסת",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "other"
+      },
+      {
+        "url": null,
+        "title": "בג\"ץ 5555/18 חסון נ' הכנסת; חוק-יסוד: כבוד האדם וחירותו (נוסח רשמי באתר הכנסת)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
+            "title": "בג\"ץ 5555/18 חסון נ' הכנסת",
+            "source_type": "other"
+          },
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח רשמי באתר הכנסת)",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "בג\"ץ 5555/18 חסון נ' הכנסת; חוק-יסוד: ישראל – מדינת הלאום של העם היהודי (נוסח מלא)",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
+            "title": "בג\"ץ 5555/18 חסון נ' הכנסת",
+            "source_type": "other"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/20/law/20_lst_313350.docx",
+            "title": "חוק-יסוד: ישראל – מדינת הלאום של העם היהודי (נוסח מלא)",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": null,
+        "title": "בג\"ץ 5555/18 חסון נ' הכנסת; תקציר בג\"ץ 5555-18",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
+            "title": "בג\"ץ 5555/18 חסון נ' הכנסת",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+            "title": "תקציר בג\"ץ 5555-18",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
+        "title": "בג\"ץ 5555/18 חסון נ' הכנסת",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "c8da82b1-6709-4513-9401-310178be46be"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+        "title": "בג\"ץ 5555/18",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "ab8238fd-a6c5-41c5-ae0f-59b57d24baf6"
+      },
+      {
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח רשמי באתר הכנסת)",
+        "number": 3,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "bb8391ef-316e-496d-9a76-2a71bbd92084"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/20/law/20_lst_313350.docx",
+        "title": "חוק-יסוד: ישראל – מדינת הלאום של העם היהודי (נוסח מלא)",
+        "number": 4,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "25763724-ea60-45d3-9a51-5202b634e326"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+        "title": "תקציר בג\"ץ 5555-18",
+        "number": 5,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "07f22831-51c9-493f-8fce-bf452c533fd5"
+      }
+    ],
+    "quality_warning": null
+  }
+]

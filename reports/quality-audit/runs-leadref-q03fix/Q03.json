@@ -1,0 +1,136 @@
+{
+  "id": "Q03",
+  "category": "statutory_interpretation",
+  "query": "מהי הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה, ומהם התנאים המצטברים?",
+  "run_id": "1bfab7d2-12c3-4d46-b78b-eaef1c51dc12",
+  "ok": true,
+  "total_ms": 90872,
+  "answer_intent": {
+    "output_shape": "definition"
+  },
+  "lead_ref": {
+    "ref": "s2",
+    "shape": "definition",
+    "reason": "primary_statute"
+  },
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "answer": "**הגדרת \"בעל שליטה\" לפי סעיף 32(9) לפקודת מס הכנסה**\n\nבחומר שברשותי רשות המסים מפרשת את ההגדרה הרלוונטית בהקשר סעיף 32(9) באופן מקדים: \"החזקה היא במישרין או בעקיפין, לבד או יחד עם אחר, ב-25% לפחות באחד או יותר מסוג כלשהו של אמצעי השליטה.\".¹\n\nמכאן ניתנים המאפיינים המעשיים שמרכיבים את מעמד 'בעל שליטה' לפי פרשנות זו: החזקה במישרין או בעקיפין; החזקה לבד או יחד עם אחרים; ועמידה בסף של שיעור מחזיקה של לפחות 25% באחד או יותר מאמצעי השליטה המפורטים. יש להבין אלמנטים אלה כמצטברים ביחס לסעיף.²\n\nהבחנה בין החזקה במישרין לבין החזקה בעקיפין מובאת במפורש במסמכי ההנחיה — רשות המסים קובעת שניתן להיחשב כבעל שליטה גם דרך שרשרת החזקה בעקיפין. עם זאת, כללי שיוך, חיבור החזקות ופרטי חישוב האחוזים נחקרים ומתוקנים במסגרת הנחיות מקצועיות ותקנות נלוות; בחקיקה מינהלית ופיקוחית קיימות הוראות משלימות המגדירות מנגנוני אכיפה והסדרת שיעורים בפועל.³\n\nבנוסף, ספרות וסיכומי פסיקה מצביעים על מבחנים משלימים שנמצאים בפסקי דין ובהערכות משפטיות: בתי משפט וניתוחי מקרים בוחנים לעתים שליטה מעשית שאינה רק פורמלית, הסכמים פרטיים בין בעלי עניין ושיקולים של זיקה משפחתית או כלכלית שיכולים להרחיב או לצמצם את מעמדו של אדם כ'בעל שליטה'. מאמרי סקירה מצביעים על מקרים ידועים שבהם נבחנו שיקולים אלה ככלי פרשני לצד ההגדרה החוקית.⁴\n\nסיכום מעשי: לפי החומר המנחה העיקרי, כדי להיחשב כבעל שליטה על-פי סעיף 32(9) נדרשת החזקה (מישרית או עקיפה), לבד או יחד, ושיעור מחזקה של לפחות 25% באחד או יותר מאמצעי השליטה; פירוטי שיוך, חישוב האחוזים ויישום מעשי מוסדרים באמצעות חוזרי רשות המסים, תקנות וספרות פסיקתית שמרחיבים את פרשנות ההגדרה במצבים מורכבים.⁵",
+  "footnotes": [
+    {
+      "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-08-2018/he/Policy_IncomeTaxProfessionalInst_hoz_08_2018_acc.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-08-2018/he/Policy_IncomeTaxProfessionalInst_hoz_08_2018_acc.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); 25_scl_r_4418264.docx",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-08-2018/he/Policy_IncomeTaxProfessionalInst_hoz_08_2018_acc.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/25/SecondaryLaw/25_scl_r_4418264.docx",
+          "title": "25_scl_r_4418264.docx",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); חוק הפיקוח על שירותים פיננסיים (ביטוח)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-08-2018/he/Policy_IncomeTaxProfessionalInst_hoz_08_2018_acc.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A4%D7%99%D7%A7%D7%95%D7%97_%D7%A2%D7%9C_%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D_%D7%A4%D7%99%D7%A0%D7%A0%D7%A1%D7%99%D7%99%D7%9D_(%D7%91%D7%99%D7%98%D7%95%D7%97)",
+          "title": "חוק הפיקוח על שירותים פיננסיים (ביטוח)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://runilawreview.org/2025/06/30/vol31-levi/",
+      "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://runilawreview.org/2025/06/30/vol31-levi/",
+          "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-08-2018/he/Policy_IncomeTaxProfessionalInst_hoz_08_2018_acc.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://runilawreview.org/2025/06/30/vol31-levi/",
+          "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-08-2018/he/Policy_IncomeTaxProfessionalInst_hoz_08_2018_acc.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "756a4fe2-3a12-4025-9807-0bd2e8665102"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/SecondaryLaw/25_scl_r_4418264.docx",
+      "title": "25_scl_r_4418264.docx",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "26ad20f0-aa65-4a73-aa7b-ac40294c3f66"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A4%D7%99%D7%A7%D7%95%D7%97_%D7%A2%D7%9C_%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D_%D7%A4%D7%99%D7%A0%D7%A0%D7%A1%D7%99%D7%99%D7%9D_(%D7%91%D7%99%D7%98%D7%95%D7%97)",
+      "title": "חוק הפיקוח על שירותים פיננסיים (ביטוח)",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "israeli_law",
+      "candidate_id": "084d8fff-a372-44a7-a228-b7c31130283b"
+    },
+    {
+      "url": "https://runilawreview.org/2025/06/30/vol31-levi/",
+      "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "89123852-fd64-4884-b053-371daf422921"
+    }
+  ],
+  "quality_warning": null
+}
