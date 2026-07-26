@@ -1,0 +1,177 @@
+{
+  "id": "Q01",
+  "category": "docket_holding",
+  "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
+  "run_id": "6cf897f2-91a3-4b74-b723-8fc2f7535b00",
+  "ok": true,
+  "total_ms": 151692,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "lead_ref": {
+    "ref": "s5",
+    "shape": "case_holding",
+    "reason": "required_anchor_case"
+  },
+  "missing_required_anchors": null,
+  "answer": "**הכרעת בית המשפט — עיקר המסקנה**\n\nבג\"ץ 6298/07 קבע כי חוק דחיית שירות לתלמידי ישיבות (חוק טל), אשר נקבע לתקופה קצובה, לא יעמוד בעינו מבחינה חוקתית בדמותו שנבחן בתיק והתוצאה היא כי דינו של המשטר החוקתי שנקבע בו נפגע ודינו בטלות לפי ההכרעה שניתנה בתיק.¹\n\n**נימוקים משפטיים מרכזיים**\n\nהחלטת בית המשפט נשענה על חשיבות עקרון השוויון ביחס לחלוקת נטל השירות הממלכתי; בית המשפט מצא כי ההסדר שיצר החוק מעניק דרגות הפטור והטבות קיומיות לסקטור מסוים באופן שפוגע בהיקף השוויוני של החובה לצאת לשירות ביטחוני וזאת במבחני מידתיות והגנה על כבוד האדם והחירות.²\n\nבמסגרת שינון מבחני המידתיות בדק בית המשפט האם המגבלות וההחרגות שבחוק מוצדקות ביחס למטרות שהציגה הכנסת, וכיהן גם בהקשר של סמכות החקיקה ותפקידה של הכנסת בקביעת מדיניות גיוס — כשהשקלול בין האינטרסים הציבוריים לזכויות הפרט הוביל למסקנה כי החוק כפי שנוסח אינו ראוי לשימור.³\n\n**הסעד שניתן על ידי בית המשפט**\n\nמההכרעה נובע סעד של הכרזה על בטלותו של חוק דחיית שירות לתלמידי ישיבות במתכונתו שנבחנה בתיק; במסגרת החלטת בית המשפט נקבע גם כי הכנסת לא תוכל להאריך את תוקפו של אותו חוק כפי שהיה נהוג עד כה.⁴\n\n**השלכות מעשיות וחוקיות לאחר ההחלטה**\n\nהמסמכים של ועדות הכנסת ושל מכון המחקר של הכנסת שבאו לאחר ההכרעה מעידים כי הפסיקה הובילה לדיונים ויוזמות חקיקתיות שנועדו להתאים או להחליף את הסדר החוקי, כולל דיונים על תיקונים ומנגנונים חלופיים לגיוס תלמידי ישיבות; אף־על־פי כן, מהמקורות שסופקו כאן לא עולה כי הייתה פסיקה מאוחרת שהפכה או ביטלה את עקרונות ההכרעה עצמה.⁵\n\nאם תרצה, אוכל לצטט את נוסח ההכרעה המרכזי מפסק‑הדין או להציג את קטעי הנימוקים החוקתיים הרלוונטיים מההחלטה המלאה.",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "החלטה בתיק בג\"ץ 6298/07; בג\"ץ 6298/07",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "החלטה בתיק בג\"ץ 6298/07; מסמך מאתר אתר אקדמי (law.tau.ac.il)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.tau.ac.il/Law&Social_Change/Judg&Ref",
+          "title": "מסמך מאתר אתר אקדמי (law.tau.ac.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "החלטה בתיק בג\"ץ 6298/07; ועדת החוץ והביטחון – מסמך על גיוס תלמידי ישיבות וחוק דחיית שירות",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "other"
+        },
+        {
+          "url": "https://main.knesset.gov.il/Activity/committees/ForeignAffairs/LegislationDocs/yish-6.pdf",
+          "title": "ועדת החוץ והביטחון – מסמך על גיוס תלמידי ישיבות וחוק דחיית שירות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "החלטה בתיק בג\"ץ 6298/07; תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות; גיוס תלמידי ישיבות לצה\"ל וחוק דחיית שירות לתלמידי ישיבות; מסמך מאתר אתר אקדמי (law.tau.ac.il)",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/dcbe8d55-f7f7-e411-80c8-00155d010977/2_dcbe8d55-f7f7-e411-80c8-00155d010977_11_9853.pdf",
+          "title": "גיוס תלמידי ישיבות לצה\"ל וחוק דחיית שירות לתלמידי ישיבות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.tau.ac.il/Law&Social_Change/Judg&Ref",
+          "title": "מסמך מאתר אתר אקדמי (law.tau.ac.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "0af1650d-e8d7-491c-ac57-93fc5b544754"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+      "title": "בג\"ץ 6298/07",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a40a50ab-5a8d-4e7c-b533-042e839fb4d6"
+    },
+    {
+      "url": "https://law.tau.ac.il/Law&Social_Change/Judg&Ref",
+      "title": "מסמך מאתר אתר אקדמי (law.tau.ac.il)",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "b072734b-4c5c-42ed-a656-f205ab7352a9"
+    },
+    {
+      "url": "https://main.knesset.gov.il/Activity/committees/ForeignAffairs/LegislationDocs/yish-6.pdf",
+      "title": "ועדת החוץ והביטחון – מסמך על גיוס תלמידי ישיבות וחוק דחיית שירות",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "317cd02d-49d0-4990-95cd-1b9d658b84e9"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "042baefe-a2ad-43cb-97bc-0f4b1a0f57c9"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/dcbe8d55-f7f7-e411-80c8-00155d010977/2_dcbe8d55-f7f7-e411-80c8-00155d010977_11_9853.pdf",
+      "title": "גיוס תלמידי ישיבות לצה\"ל וחוק דחיית שירות לתלמידי ישיבות",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "791ddc06-5331-4804-9390-9f61b6bc7e9c"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 1,
+      "partial": 6,
+      "unrelated": 7,
+      "tangential": 2
+    },
+    "by_role_match": {
+      "true": 12,
+      "false": 4
+    }
+  }
+}

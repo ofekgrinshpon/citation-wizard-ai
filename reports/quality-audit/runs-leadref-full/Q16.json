@@ -1,0 +1,283 @@
+{
+  "id": "Q16",
+  "category": "mixed_sources",
+  "query": "מהם המבחנים לסיווג יחסי עובד-מעביד בפסיקת בית הדין הארצי לעבודה, וכיצד הם משפיעים על חבות המעביד להפרשות פנסיוניות?",
+  "run_id": "564ad1f8-2472-4e6e-9a27-6a7eea3dfea8",
+  "ok": true,
+  "total_ms": 154076,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "missing_required_anchors": null,
+  "answer": "**מבחנים מרכזיים לסיווג יחסי עובד–מעביד**\n\nבית הדין הארצי לעבודה ובתי המשפט נוקטים בגישה מצטברת: הם בוחנים מכלול נסיבות המקרה במקום הסתמכות על תווית החוזה בלבד, ומשקללים מספר מבחנים עובדיים כדי לקבוע האם קיים יחסי עובד ולא יחסי קבלנות.¹\n\n- פיקוח ושליטה (control): בחינה האם המעסיק קובע את אופן ביצוע העבודה, שעותיה, מקום ביצועה והנחיות מקצועיות — מרכיב חשוב אך לא בלעדי.²\n- אינטגרציה (integration): עד כמה העבודה משולבת בפעילות השוטפת של המעסיק — ככל שהעובד מהותי לפעילות העסקית וכפוף ללוחות זמנים של המעסיק, כך הדבר תומך בסיווג כעובד.³\n- תלות כלכלית ואמצעי פרנסתו: האם המבצע תלוי כלכלית במעסיק (מקור הכנסה עיקרי), מי נושא בעלויות ובכלים, והאם קיימת אפשרות להעסקת עובדים אחרים במקומו.²\n- צורת התשלום ותדירותו: שכר קבוע, שכר לפי שעות או דמי עבודה שחוזרים בעיתות קרובות בדרך כלל תואמים יחסי עובד; תשלום פר פרויקט בעצמאות כלכלית תומך בקבלנות.³\n\nהמדיניות הפסיקתית שמה דגש על ניתוח מצטבר של אותם גורמים — אף אחד מהם איננו מכריע לבדו; בתי הדין מעריכים את מכלול הראיות העובדתיות ולא מקבלים תוויות חוזיות ככריע.⁴\n\n**השלכות הסיווג על חובת ההפרשות הפנסיוניות**\n\nהכרעה כי מתקיים יחסי עובד מובילה בהלכה ובהפרקטיקה לכך שעל המעביד לעמוד בהתחייבויות המשיקים לסטטוס עובד — בין היתר חובת דיווח והשתתפות במנגנונים סוציאליים וריטיינרים המיועדים לעובדים, לרבות מנגנוני חסכון ופנסיה הנמצאים תחת רגולציה של גופים פיננסיים.⁵\n\nמבחינה מעשית, הכרה כעובד משמעותה כי המעביד עשוי להידרש לבצע הפרשות ומסים שנקבעים בחוק או בהסדרי קיבוצי/חוזי (הסכמי פנסיה, קרנות פנסיה וגמל), וכן לעמוד בחובות דיווח שנוגעות לזכויות פרישה — כאשר היקפן ותנאיה תלויים במסגרת החוקית והחוזית החלה על ענף המקרה.⁶\n\nהמקורות שסופקו אינם כוללים צו חקיקה ספציפי המפרט כאן במפורש את שיעורי ההפרשה או יתרת ההליכים המנהלתיים; לכן יש להיזהר מנסוח מחייב לגבי שיעורי חבות מדויקים ללא עיון בחקיקה ובהסכמים החלים על המקרה הספציפי.\n\n**התיישנות, חבות רטרואקטיבית וסייגים פרוצדורליים**\n\nכאשר מסווגים בפועל מבוצעת בדיעבד הכרעה כי העובד הוא עובד ולא קבלן, בתי הדין יכולים להורות על תשלומי הפרשות רטרואקטיביות והשלמת הטבות לעובד — אך היקף הסעד והקבילות ייקבעו על פי נסיבות המקרה והכללים הפרוצדורליים הרלוונטיים.⁷\n\nאין במקורות שסופקו נוסח מפורש האומר מהו משך התקופות שבלשון ההתיישנות יחולו לגבי תביעות להפרשות פנסיוניות, או פירוט קנסות ואמצעי אכיפה מדויקים; שאלות אלה תלויות בדיני התיישנות, בחוקים ספציפיים החלים על קרנות הפנסיה ובפסיקה ענפית שאינה נכללה כאן.\n\n**צעדים מעשיים להפחתת סיכון מסווג שגוי וחובת פרשות**\n\n- ניסוח חוזי שירות מדויק וזכירה כי תווית החוזה אינה קובעת לבדה — יש לעצב את החוזה כך שישקף את המצב העובדתי האמיתי ולא ייצור סתירות בין המעשה לצורה.²\n- תיעוד שוטף של אופי העבודה בפועל (שעות, הוראות מקצועיות, שימוש בכלים של המעסיק, משימות ואינטגרציה) כדי שיהיה בסיס עובדתי בתיק במקרה של בדיקה שיפוטית.³\n- ביצוע בדיקות נאותות תקופתיות וייעוץ משפטי לפני מתן תחומי אחריות חדשים או העסקת קבלנים, ובמקרים מתחלפים — בחינת תלות כלכלית ואפשרויות תחלופת כוח אדם.⁸\n- תהליכי דיווח ותיקון מוקדם: שמירה על רישום דיווחים מקיפים למוסדות הרלוונטיים ופעולה לדיווח ותיקון במועד (למשל בעת פרישה או שינוי מעמד), תוך שימוש בהנחיות דיווח רשמיות ככל שהן חלות.⁹\n\nהמלצה מעשית סופית: יש לנהל מדיניות הפרשה ודיווח מונעת המבוססת על בדיקה עובדתית לפני חתימת חוזים ושינויי תפקידים, ולגבות את ההחלטות בתיעוד משפטי־עסקי שיכול לשרת בהגנה נגד תביעות רטרואקטיביות.¹⁰",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "מיהו עובד: מבחני הסף; מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); עובד או קבלן",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1911",
+          "title": "מיהו עובד: מבחני הסף",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+          "title": "עובד או קבלן",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); עובד או קבלן",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+          "title": "עובד או קבלן",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); מיהו עובד: מבחני הסף",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1911",
+          "title": "מיהו עובד: מבחני הסף",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בג\"ץ 7793-05 - אוניברסיטת בר-אילן נ. בית הדין הארצי לעבודה ירושלים; מיהו עובד: מבחני הסף",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_1_7793-05.pdf&type=2",
+          "title": "בג\"ץ 7793-05 - אוניברסיטת בר-אילן נ. בית הדין הארצי לעבודה ירושלים",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1911",
+          "title": "מיהו עובד: מבחני הסף",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מיהו עובד: מבחני הסף; חוק הפיקוח על שירותים פיננסיים (ביטוח)",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1911",
+          "title": "מיהו עובד: מבחני הסף",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A4%D7%99%D7%A7%D7%95%D7%97_%D7%A2%D7%9C_%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D_%D7%A4%D7%99%D7%A0%D7%A0%D7%A1%D7%99%D7%99%D7%9D_(%D7%91%D7%99%D7%98%D7%95%D7%97)",
+          "title": "חוק הפיקוח על שירותים פיננסיים (ביטוח)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "עובד או קבלן; חוק הפיקוח על שירותים פיננסיים (ביטוח)",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+          "title": "עובד או קבלן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A4%D7%99%D7%A7%D7%95%D7%97_%D7%A2%D7%9C_%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D_%D7%A4%D7%99%D7%A0%D7%A0%D7%A1%D7%99%D7%99%D7%9D_(%D7%91%D7%99%D7%98%D7%95%D7%97)",
+          "title": "חוק הפיקוח על שירותים פיננסיים (ביטוח)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "בג\"ץ 7793-05 - אוניברסיטת בר-אילן נ. בית הדין הארצי לעבודה ירושלים; בג\"ץ 2883/20 אברהם נתיב נ׳ בית הדין הארצי לעבודה פסק דין (29.06.2020)",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_1_7793-05.pdf&type=2",
+          "title": "בג\"ץ 7793-05 - אוניברסיטת בר-אילן נ. בית הדין הארצי לעבודה ירושלים",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2883-20-%d7%90%d7%91%d7%a8%d7%94%d7%9d-%d7%a0%d7%aa%d7%99%d7%91-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6%d7%99-%d7%9c%d7%a2%d7%91%d7%95%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 2883/20 אברהם נתיב נ׳ בית הדין הארצי לעבודה פסק דין (29.06.2020)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "עובד או קבלן; ליאור זמר ונטע נדיב משפט העבודה בישראל ודין האיחוד האירופי: בין חשיפה להשפעה 521 (כרך ט\"ו)",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+          "title": "עובד או קבלן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%9C%D7%99%D7%90%D7%95%D7%A8-%D7%96%D7%9E%D7%A8-%D7%95%D7%A0%D7%98%D7%A2-%D7%A0%D7%93%D7%99%D7%91-521.pdf",
+          "title": "ליאור זמר ונטע נדיב משפט העבודה בישראל ודין האיחוד האירופי: בין חשיפה להשפעה 521 (כרך ט\"ו)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "הודעה על פרישה מעבודה (טופס 161 חדש); חוק הפיקוח על שירותים פיננסיים (ביטוח)",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/service/notice-of-retirement",
+          "title": "הודעה על פרישה מעבודה (טופס 161 חדש)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A4%D7%99%D7%A7%D7%95%D7%97_%D7%A2%D7%9C_%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D_%D7%A4%D7%99%D7%A0%D7%A0%D7%A1%D7%99%D7%99%D7%9D_(%D7%91%D7%99%D7%98%D7%95%D7%97)",
+          "title": "חוק הפיקוח על שירותים פיננסיים (ביטוח)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); הודעה על פרישה מעבודה (טופס 161 חדש)",
+      "number": 10,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/he/service/notice-of-retirement",
+          "title": "הודעה על פרישה מעבודה (טופס 161 חדש)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1911",
+      "title": "מיהו עובד: מבחני הסף",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "fc852539-ee56-4108-a01f-64785460c270"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "704b0b81-295c-4fe4-8194-5c3c195dc3f0"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+      "title": "עובד או קבלן",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "0e5aef0e-6029-4cb5-a16d-e1af07a37962"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_1_7793-05.pdf&type=2",
+      "title": "בג\"ץ 7793-05 - אוניברסיטת בר-אילן נ. בית הדין הארצי לעבודה ירושלים",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "067064a1-4ad2-44da-8628-3e3382a506b2"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A4%D7%99%D7%A7%D7%95%D7%97_%D7%A2%D7%9C_%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D_%D7%A4%D7%99%D7%A0%D7%A0%D7%A1%D7%99%D7%99%D7%9D_(%D7%91%D7%99%D7%98%D7%95%D7%97)",
+      "title": "חוק הפיקוח על שירותים פיננסיים (ביטוח)",
+      "number": 5,
+      "origin": "local_db",
+      "source_type": "israeli_law",
+      "candidate_id": "ad9ed40a-49ea-4af4-8c6c-caafa4c691a6"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2883-20-%d7%90%d7%91%d7%a8%d7%94%d7%9d-%d7%a0%d7%aa%d7%99%d7%91-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6%d7%99-%d7%9c%d7%a2%d7%91%d7%95%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 2883/20 אברהם נתיב נ׳ בית הדין הארצי לעבודה פסק דין (29.06.2020)",
+      "number": 7,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "a9c0a910-db9c-4591-8bca-caab6a697864"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%9C%D7%99%D7%90%D7%95%D7%A8-%D7%96%D7%9E%D7%A8-%D7%95%D7%A0%D7%98%D7%A2-%D7%A0%D7%93%D7%99%D7%91-521.pdf",
+      "title": "ליאור זמר ונטע נדיב משפט העבודה בישראל ודין האיחוד האירופי: בין חשיפה להשפעה 521 (כרך ט\"ו)",
+      "number": 8,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "730f8659-eb9c-4d89-b3b0-94883c138a1e"
+    },
+    {
+      "url": "https://www.gov.il/he/service/notice-of-retirement",
+      "title": "הודעה על פרישה מעבודה (טופס 161 חדש)",
+      "number": 9,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "41e06a61-be8e-41cf-9621-d34e3dec8b5c"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 3,
+      "partial": 5,
+      "unrelated": 12,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 20,
+      "false": 0
+    }
+  }
+}

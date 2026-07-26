@@ -1,0 +1,390 @@
+{
+  "id": "Q14",
+  "category": "practical_implications",
+  "query": "מהן חובות הדיווח של נותן שירותי מטבע (ChP) לפי חוק איסור הלבנת הון והצו החל עליו, ומהם מועדי הדיווח?",
+  "run_id": "525b30ec-4222-4f2e-9b11-adee4a764b2b",
+  "ok": true,
+  "total_ms": 160206,
+  "answer_intent": {
+    "output_shape": "list"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "list",
+    "reason": "shape_not_eligible"
+  },
+  "missing_required_anchors": null,
+  "answer": "**חובות דיווח של נותן שירותי מטבע (ChP) — מסגרת משפטית**\n\nהחובות הדיווחיות של נותני שירותי מטבע מעוגנות בחוק איסור הלבנת הון ובצו הייחודי לנותני שירותי מטבע; הצו מפרט ספים, שדות דיווח ומנגנוני ניהול רישומים. חובות אלה כוללות דיווח על חשד להלבנת הון/מימון טרור, דיווחים תקופתיים על עסקאות מעל סף ודיוח על הכנסת/הוצאת כספים חוצי‑גבול.¹\n\n- סוגי דיווחים שמוטלים על נותן שירותי מטבע — עיקרי ההתחייבויות: דיווח על פעולה בלתי רגילה או חשד (דיווח חשד), דיוח על פעולות מעל ספים כספיים שנקבעו בצו (לדוגמה הודעה על מתן שירותי מטבע בסכום מעל חמש מאות אלף שקלים ועל פעולות במזומן/המחאות נוסעים/ניכיון במטבע חוץ מעל חמישים אלף שקלים), ודיווח על הכנסת/הוצאת כספים חוצי‑גבול כפי שקבוע בחוק ובצו.²\n- מועדי דיווח מרכזיים: לפי תקנה 13 לצו התקנות יש להגיש דיווח לרשות בתוך שבעה ימים ממועד ביצוע הפעולה או קבלת השירות; דיווח על פעולה בלתי רגילה מצוּיי כי ייעשה מיד ובסמוך ככל שניתן למועד האירוע; בנוסף קיימים מועדי דיווח תקופתיים (חודשי) — עבור גופים שונים נקבעו מועדים מותאמים, לרבות הוראות מיוחדות לתאגידים בנקאיים ולגופים המנויים בתוספת השלישית.³\n- מה נדרש בתוכן ההודעה — שדות ומבנה: הצו מפרט שדות דיווח מחייבים, לרבות פרטי נותן השירות, פרטי מקבל/ה השירות, תיאור המעשה או הסיבה לחשד ונתוני זיהוי רלוונטיים; הוראות נוספות ומבנה הקבצים מפורטים במסמכי הנחיה ונוהל דיווח מקוון שמגדירים פורמט קובץ ושדות חובה.⁴\n- ערוצי דיווח וממשק טכני: ההנחיות והנוהלים של הרשות מתארים העברה מקוונת של דיווחים לפי נוהל התחברות ייעודי ומבנה קבצים מוגדר; בעבר נקבעו פורמטים מגנטיים תקופתיים, וכיום נוהלי הרשות מכוונים לדיווח מקוון דרך הפורטל/ממשק שנקבע.⁵\n- איסור הודעה ללקוח (no‑tipping‑off) ובדיקות נוספות: בצו ובהנחיות נזכר עקרון המניעה של הודעה ללקוח בדבר קיומו של דיווח או חקירה; הנחיות אף מורות כי אם ביצוע בדיקות נוספות עשוי לחשוף דיווח קיים, ניתן להימנע מביצוען וליידע את הרשות בהתאם להנחיות.⁶\n- שמירת רישומים ותקופת שמירה: הצווים מחייבים שמירת תכתובות עסקיות וכל מסמך הקשור בפעולה שעליה דווח, ובמקרים מפורשים הם קובעים שמירת הדיווח עצמו ומסמכים נלווים לתקופה של חמש שנים מיום ביצוע הפעולה.⁷\n- מנגנוני דיווח פנימיים ותזמון תקופתי: הרשות מציינת כי דיווח תקופתי יוגש אחת לחודש וכי על כל נותן שירות לקבוע יום דיווח קבוע (היום צריך להיות יום עבודה ברשות); לניהול פנימי יש להגדיר נהלים לטיפול בדיווח מיד עם קבלתו ולזיהוי ניסיונות לבצע פעולות חשודות.⁸\n- השלכות ואמצעי אכיפה על אי־מילוי חובות דיווח: החוק והצו קובעים אמצעי אכיפה שכוללים ענישה פלילית (בהסדרי החוק מופיעות עונשים לרבות עונשי מאסר וקנסות על הפרת חובת דיווח), וכן סמכויות מנהליות ואפשרות לחילוט נכסים; קיימת פסיקה שמדגימה יישום סנקציות בענייני הלבנת הון.⁹\n- הערת זהירות ופעולה מומלצת: חלק מהפרטים המעשיים (פורמטים טכניים, נהלי חיבור ופירוט מועדי טיפול פנימיים של הרשות) מתוארים במסמכי הנחיה ובטיוטות הוראה ולכן יש לעיין בצו‑העדכני ובהנחיות הרשות הרלבנטיות לצורך יישום מעשי מדויק.¹⁰",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "חוק איסור הלבנת הון, תש\"ס-2000; חוק איסור הלבנת הון, תש\"ס-2000",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/74345.htm",
+          "title": "חוק איסור הלבנת הון, תש\"ס-2000",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/money_laundering_law/he/LegalInfo_money_laundering_law-file1.pdf",
+          "title": "חוק איסור הלבנת הון, תש\"ס-2000",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע); צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע); חוק איסור הלבנת הון, תש\"ס-2000",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa-order-msb-od/he/regulatory-docs_impa_order_msb_od.doc",
+          "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/154372.htm",
+          "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/74345.htm",
+          "title": "חוק איסור הלבנת הון, תש\"ס-2000",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "תקנות איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע); הנחיות הרשות לאיסור הלבנת הון ומימון טרור לדיווחי נותני שירותי מטבע ונותני שירותי אשראי; תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח של תאגידים בנקאיים ...)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/500_028.htm",
+          "title": "תקנות איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa_guidelines_msb.pdf",
+          "title": "הנחיות הרשות לאיסור הלבנת הון ומימון טרור לדיווחי נותני שירותי מטבע ונותני שירותי אשראי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/moj-regulations-aml/he/legal-docs_moj_regulations_aml.doc",
+          "title": "תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח של תאגידים בנקאיים ...)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע); מסמך מאתר אתר ממשלתי (gov.il); הנחיות הרשות לדיווח חברי בורסה לפי צו איסור הלבנת הון",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/154372.htm",
+          "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa-regulations-trust/he/regulatory-docs_impa_regulations_trust.doc",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa-guidelines-stock/he/regulatory-docs_impa_guidelines_stock.pdf",
+          "title": "הנחיות הרשות לדיווח חברי בורסה לפי צו איסור הלבנת הון",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); הנחיות הרשות לדיווח חברי בורסה לפי צו איסור הלבנת הון; הנחיות לדיווחים רגילים ובלתי רגילים",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa-regulations-trust/he/regulatory-docs_impa_regulations_trust.doc",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa-guidelines-stock/he/regulatory-docs_impa_guidelines_stock.pdf",
+          "title": "הנחיות הרשות לדיווח חברי בורסה לפי צו איסור הלבנת הון",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa-instructions-msb-2015/he/regulatory-docs_impa_instructions_msb_2015.pdf",
+          "title": "הנחיות לדיווחים רגילים ובלתי רגילים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים ...), תשע\"א-2010; טיוטת הוראה לחברות התשלומים בנושא ניהול סיכוני הלבנת הון; מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/bursa_regulations/he/%D7%A6%D7%95%20%D7%90%D7%99%D7%A1%D7%95%D7%A8%20%D7%94%D7%9C%D7%91%D7%A0%D7%AA%20%D7%94%D7%95%D7%9F%20(%D7%97%D7%95%D7%91%D7%95%D7%AA%20%D7%96%D7%99%D7%94%D7%95%D7%99,%20%D7%93%D7%99%D7%95%D7%95%D7%97%20%D7%95%D7%A0%D7%99%D7%94%D7%95%D7%9C%20%D7%A8%D7%99%D7%A9%D7%95%D7%9E%D7%99%D7%9D%20%D7%A9%D7%9C%20%D7%97%D7%91%D7%A8%20%D7%91%D7%95%D7%A8%D7%A1%D7%94%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%9C%D7%91%D7%A0%D7%AA%20%D7%94%D7%95%D7%9F%20%D7%95%D7%9E%D7%99%D7%9E%D7%95%D7%9F%20%D7%98%D7%A8%D7%95%D7%A8),%20%D7%AA%D7%A9%D7%A2_%D7%90-2010.pdf",
+          "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים ...), תשע\"א-2010",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/news-14-06-26/he/draft-directive.pdf",
+          "title": "טיוטת הוראה לחברות התשלומים בנושא ניהול סיכוני הלבנת הון",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-62862c0f8638c/management-preventing-money-laundering.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של מנהל תיקים למניעת הלבנת הון ומימון טרור); צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים ...), תשע\"א-2010; צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע)",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa_order_portfolio/he/regulatory-docs_impa_order_portfolio.doc",
+          "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של מנהל תיקים למניעת הלבנת הון ומימון טרור)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/bursa_regulations/he/%D7%A6%D7%95%20%D7%90%D7%99%D7%A1%D7%95%D7%A8%20%D7%94%D7%9C%D7%91%D7%A0%D7%AA%20%D7%94%D7%95%D7%9F%20(%D7%97%D7%95%D7%91%D7%95%D7%AA%20%D7%96%D7%99%D7%94%D7%95%D7%99,%20%D7%93%D7%99%D7%95%D7%95%D7%97%20%D7%95%D7%A0%D7%99%D7%94%D7%95%D7%9C%20%D7%A8%D7%99%D7%A9%D7%95%D7%9E%D7%99%D7%9D%20%D7%A9%D7%9C%20%D7%97%D7%91%D7%A8%20%D7%91%D7%95%D7%A8%D7%A1%D7%94%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%9C%D7%91%D7%A0%D7%AA%20%D7%94%D7%95%D7%9F%20%D7%95%D7%9E%D7%99%D7%9E%D7%95%D7%9F%20%D7%98%D7%A8%D7%95%D7%A8),%20%D7%AA%D7%A9%D7%A2_%D7%90-2010.pdf",
+          "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים ...), תשע\"א-2010",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/154372.htm",
+          "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "הנחיות לדיווחים רגילים ובלתי רגילים; תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח של תאגידים בנקאיים ...); הנחיות הרשות לאיסור הלבנת הון ומימון טרור לדיווחי נותני שירותי מטבע ונותני שירותי אשראי",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa-instructions-msb-2015/he/regulatory-docs_impa_instructions_msb_2015.pdf",
+          "title": "הנחיות לדיווחים רגילים ובלתי רגילים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/moj-regulations-aml/he/legal-docs_moj_regulations_aml.doc",
+          "title": "תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח של תאגידים בנקאיים ...)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa_guidelines_msb.pdf",
+          "title": "הנחיות הרשות לאיסור הלבנת הון ומימון טרור לדיווחי נותני שירותי מטבע ונותני שירותי אשראי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "חוק איסור הלבנת הון, תש\"ס-2000; חוק איסור הלבנת הון, התש\"ס-2000; ע\"א 6180/20 ד\"ר משה וינברג ושות' נ׳ מדינת ישראל פסק דין (13.06.2021)",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/money_laundering_law/he/LegalInfo_money_laundering_law-file1.pdf",
+          "title": "חוק איסור הלבנת הון, תש\"ס-2000",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/0c3d76e0-1d5d-e511-80d7-00155d0a1439/2_0c3d76e0-1d5d-e511-80d7-00155d0a1439_11_14036.pdf",
+          "title": "חוק איסור הלבנת הון, התש\"ס-2000",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-6180-20-%d7%93%d7%a8-%d7%9e%d7%a9%d7%94-%d7%95%d7%99%d7%a0%d7%91%d7%a8%d7%92-%d7%95%d7%a9%d7%95%d7%aa-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 6180/20 ד\"ר משה וינברג ושות' נ׳ מדינת ישראל פסק דין (13.06.2021)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "הנחיות הרשות לאיסור הלבנת הון ומימון טרור לדיווחי נותני שירותי מטבע ונותני שירותי אשראי; מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 10,
+      "sources": [
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa_guidelines_msb.pdf",
+          "title": "הנחיות הרשות לאיסור הלבנת הון ומימון טרור לדיווחי נותני שירותי מטבע ונותני שירותי אשראי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2022/2022.5/2022.5-101-Halbanat-Hon.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/74345.htm",
+      "title": "חוק איסור הלבנת הון, תש\"ס-2000",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "259d9403-a0ef-4f42-9a38-3e3e7afbf607"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/legalinfo/money_laundering_law/he/LegalInfo_money_laundering_law-file1.pdf",
+      "title": "חוק איסור הלבנת הון, תש\"ס-2000",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "49df368c-ea54-49a9-a01d-087e5cc8d201"
+    },
+    {
+      "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa-order-msb-od/he/regulatory-docs_impa_order_msb_od.doc",
+      "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע)",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "df5f0652-3a4d-4657-ae77-50192726e884"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/154372.htm",
+      "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע)",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e56ba519-6c3d-436a-9460-27c4c373e929"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/500_028.htm",
+      "title": "תקנות איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותן שירותי מטבע)",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "c061117b-272f-4f96-87d1-a326e50de7bc"
+    },
+    {
+      "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa_guidelines_msb.pdf",
+      "title": "הנחיות הרשות לאיסור הלבנת הון ומימון טרור לדיווחי נותני שירותי מטבע ונותני שירותי אשראי",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "5fbb9905-f2a2-45dc-bdb4-b710e23982e4"
+    },
+    {
+      "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/moj-regulations-aml/he/legal-docs_moj_regulations_aml.doc",
+      "title": "תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח של תאגידים בנקאיים ...)",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d7f8820b-cc89-41d2-acb7-f72e720fa59b"
+    },
+    {
+      "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa-regulations-trust/he/regulatory-docs_impa_regulations_trust.doc",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "b7bad5b0-45d2-4a9f-8c9e-f50282d212fe"
+    },
+    {
+      "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa-guidelines-stock/he/regulatory-docs_impa_guidelines_stock.pdf",
+      "title": "הנחיות הרשות לדיווח חברי בורסה לפי צו איסור הלבנת הון",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "420ebac8-a764-4d5f-a3f6-d1b414460a59"
+    },
+    {
+      "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa-instructions-msb-2015/he/regulatory-docs_impa_instructions_msb_2015.pdf",
+      "title": "הנחיות לדיווחים רגילים ובלתי רגילים",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "5017f62b-8a7e-440e-96bb-e20f91dc8a9c"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/bursa_regulations/he/%D7%A6%D7%95%20%D7%90%D7%99%D7%A1%D7%95%D7%A8%20%D7%94%D7%9C%D7%91%D7%A0%D7%AA%20%D7%94%D7%95%D7%9F%20(%D7%97%D7%95%D7%91%D7%95%D7%AA%20%D7%96%D7%99%D7%94%D7%95%D7%99,%20%D7%93%D7%99%D7%95%D7%95%D7%97%20%D7%95%D7%A0%D7%99%D7%94%D7%95%D7%9C%20%D7%A8%D7%99%D7%A9%D7%95%D7%9E%D7%99%D7%9D%20%D7%A9%D7%9C%20%D7%97%D7%91%D7%A8%20%D7%91%D7%95%D7%A8%D7%A1%D7%94%20%D7%9C%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%94%D7%9C%D7%91%D7%A0%D7%AA%20%D7%94%D7%95%D7%9F%20%D7%95%D7%9E%D7%99%D7%9E%D7%95%D7%9F%20%D7%98%D7%A8%D7%95%D7%A8),%20%D7%AA%D7%A9%D7%A2_%D7%90-2010.pdf",
+      "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים ...), תשע\"א-2010",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "7c149e8d-0936-4eb3-a97b-9d0bdb48beb2"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/news-14-06-26/he/draft-directive.pdf",
+      "title": "טיוטת הוראה לחברות התשלומים בנושא ניהול סיכוני הלבנת הון",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "72e0dedf-7ef3-4a07-a973-af83c06c5c19"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-62862c0f8638c/management-preventing-money-laundering.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "ddb5a4f6-0c6a-4fde-8a6b-c662c5ae4698"
+    },
+    {
+      "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/impa_order_portfolio/he/regulatory-docs_impa_order_portfolio.doc",
+      "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של מנהל תיקים למניעת הלבנת הון ומימון טרור)",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "810c35a8-a713-49da-9589-4cfc2e5fdf6c"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/0c3d76e0-1d5d-e511-80d7-00155d0a1439/2_0c3d76e0-1d5d-e511-80d7-00155d0a1439_11_14036.pdf",
+      "title": "חוק איסור הלבנת הון, התש\"ס-2000",
+      "number": 9,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "eb8ea359-f2c1-481c-86ae-f18ff69ddb59"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-6180-20-%d7%93%d7%a8-%d7%9e%d7%a9%d7%94-%d7%95%d7%99%d7%a0%d7%91%d7%a8%d7%92-%d7%95%d7%a9%d7%95%d7%aa-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "ע\"א 6180/20 ד\"ר משה וינברג ושות' נ׳ מדינת ישראל פסק דין (13.06.2021)",
+      "number": 9,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "f67df4aa-4eb8-4398-88f5-2f0cd90aa72d"
+    },
+    {
+      "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2022/2022.5/2022.5-101-Halbanat-Hon.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 10,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "457c4a80-ca47-4b0a-b5ab-6e58ba42c963"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 7,
+      "partial": 16,
+      "unrelated": 3,
+      "tangential": 4
+    },
+    "by_role_match": {
+      "true": 29,
+      "false": 1
+    }
+  }
+}

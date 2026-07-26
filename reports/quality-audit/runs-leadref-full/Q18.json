@@ -1,0 +1,123 @@
+{
+  "id": "Q18",
+  "category": "anchor_preservation",
+  "query": "צטט מילולית את סעיף 1 לחוק יסוד: כבוד האדם וחירותו, והפנה למקור רשמי.",
+  "run_id": "bf37f566-2175-4008-8e7a-7c7ecfb30b86",
+  "ok": true,
+  "total_ms": 133488,
+  "answer_intent": {
+    "output_shape": "quote"
+  },
+  "lead_ref": {
+    "ref": "s1",
+    "shape": "quote",
+    "reason": "official_source_with_snippet"
+  },
+  "missing_required_anchors": null,
+  "answer": "\"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהפניה למקור הרשמי שבו מפורסם הנוסח: פרסום רשמי של 'חוק יסוד: כבוד האדם וחירותו — נוסח רשמי' (קובץ PDF) הזמין בפרסום הרשמי של החקיקה: https://fs.knesset.gov.il/7/law/7_ls1_290307.PDF.¹\n\nלצורך אימות האם נוסח החוק עודכן מאז הפרסום המצוטט: קיימת מהדורה מאוחדת ומעודכנת של נוסח החוק באתר הכנסת המסומנת כ'מעודכן ל-13.5.2020' (קובץ PDF), מומלץ לעיין בה להשוואת נוסחים.²\n\nתקנות ותיקונים נלווים: קיים פרסום המכיל נוסח של סעיף 1א בחוק-היסוד, וכן מספר מסמכים המציגים הצעות לתיקון — מסמכים אלה תומכים באופן חלקי בלבד כשאלותיהם הן האם נוסחים מאושרים שונו; לפיכך יש להתייחס אליהם בזהירות ולבדוק את הפרסום המאוחד/הרשמי בעת אימות סופי של הנוסח.³",
+  "footnotes": [
+    {
+      "url": "https://fs.knesset.gov.il/7/law/7_ls1_290307.PDF",
+      "title": "חוק יסוד: כבוד האדם וחירותו — נוסח רשמי (כפי שמופיע בפרסום הרשמי)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/7/law/7_ls1_290307.PDF",
+          "title": "חוק יסוד: כבוד האדם וחירותו — נוסח רשמי (כפי שמופיע בפרסום הרשמי)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח מעודכן ל-13.5.2020)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+          "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח מעודכן ל-13.5.2020)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "חוק יסוד: כבוד האדם וחירותו — נוסח רשמי (תיקון/פרסום רשמי); 20_lst_519565.docx; 25_lst_1384965.pdf",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+          "title": "חוק יסוד: כבוד האדם וחירותו — נוסח רשמי (תיקון/פרסום רשמי)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/20/law/20_lst_519565.docx",
+          "title": "20_lst_519565.docx",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_lst_1384965.pdf",
+          "title": "25_lst_1384965.pdf",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://fs.knesset.gov.il/7/law/7_ls1_290307.PDF",
+      "title": "חוק יסוד: כבוד האדם וחירותו — נוסח רשמי (כפי שמופיע בפרסום הרשמי)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "08b54451-60bf-46f4-95f4-02726f7ef4a5"
+    },
+    {
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח מעודכן ל-13.5.2020)",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "567250b9-1d7f-495f-9311-d545efde85ba"
+    },
+    {
+      "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+      "title": "חוק יסוד: כבוד האדם וחירותו — נוסח רשמי (תיקון/פרסום רשמי)",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "1b3b963d-ef0c-458c-9398-69d206961e65"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/20/law/20_lst_519565.docx",
+      "title": "20_lst_519565.docx",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "ddf45c0a-938f-4db5-be8e-7eda33d14187"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_lst_1384965.pdf",
+      "title": "25_lst_1384965.pdf",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "baf1a7d0-c642-4a63-8ece-71cd37a6d3f6"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 2,
+      "partial": 5,
+      "unrelated": 0,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 7,
+      "false": 0
+    }
+  }
+}

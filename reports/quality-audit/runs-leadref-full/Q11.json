@@ -1,0 +1,203 @@
+{
+  "id": "Q11",
+  "category": "thin_corpus",
+  "query": "האם קיימת פסיקה ישראלית מחייבת בנוגע לאחריות מפעילי בורסות קריפטו מקומיות כלפי משתמשים לאחר פריצת סייבר?",
+  "run_id": "1ee35e6d-0c60-429f-acce-8eed134b3a20",
+  "ok": true,
+  "total_ms": 176602,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "missing_required_anchors": null,
+  "answer": "**מענה קצר — האם קיימת פסיקה מחייבת?**\n\nמהבחינה הפרקטית: על פי המקורות שסופקו אין התראה של בתי המשפט הישראליים — ובכלל זה בית המשפט העליון — שפורסמה כאן כאמור פסיקה מחייבת שהתייחסה במפורש לאחריות משפטית של מפעילי בורסות קריפטו מקומיות כלפי משתמשים בעקבות פריצות סייבר. המסמכים הכלולים ברשימה הם דוחות והנחיות רגולטוריות ולא פסקי דין, ולכן אינם מהווים תחליף לפסיקה מחייבת בתחום זה.¹\n\nקיים גוף מוסדר של עבודה רגולטורית ודו\"חות ממשלתיים המלמדים על כוונה להסדרה של שירותים במטבעות וירטואליים ולהכללתם בהגדרות של \"נותן שירות בנכס פיננסי\"; מסמכים אלה מצביעים על כיסוי רגולטורי אפשרי של פעולות קנייה, שמירה וניהול נכסים דיגיטליים, אך הם אינם מקיימים חובת אבטחה אזרחית מפורשת או תקדימית משפטית הקובעת חבות פעולה/רשלנות בגין פריצות. יש לנקוט זהירות בניסוח מסקנות כיוון שמדובר בתמיכה חלקית בלבד במסמכים רגולטוריים ולא בחקיקה עוצרת־פסיקה.²\n\nאין במקורות שסופקו פסקי-דין מעשה או הלכות שהוכחו כהוראות מחייבות להטיל אחריות על מפעילי בורסות קריפטו לאחר פריצה. יחד עם זאת, המסמכים הרלוונטיים מדגישים כי פעילות של שמירה וניהול נכסים דיגיטליים עשויה להיחשב כפעילות פיננסית וחייבת בפיקוח רגולטורי — עובדה שיכולה להיות בעלת השפעה מעשית על הסטנדרט המצופה מבורסות אם תשולב בהחלטות שיפוטיות עתידיות.³\n\nלמרות העדר פסיקה יש בסיס להשקפה שניתן יהיה להשליך לעניין זה דוקטרינות נזיקיות ומוסריות מן המשפט האזרחי הכללי: להטלת חבות נזיקית יידרשו, בדרך־כלל, הוכחת חובת זהירות מתאימה (דין החייב לנקוט שיפוי מקצועי), פגם/הפרת חובה, נזק ממוני שניתן למדידה, וקשר סיבתי עובדתי ומשפטי בין הפגם לנזק. דרישות אלה ותנאי ההוכחה מפורטים באופן אנליטי בספרות הנזיקין ושירותים פיננסיים, ומשמעותן היא שבמקרה של בורסה קריפטו התביעה תצטרך להראות גם מהו הסטנדרט המקצועי המצופה וכי הסטנדרט הופרה.⁴\n\nחשוב להבחין בין מקורות רגולטוריים שונים: בנק ישראל פרסם הנחיות ומסמכים המגדירים מי הוא \"נותן שירות במטבע וירטואלי\" ומציינים חובות של AML/KYC ואף כללי רישוי ועקרונות לפעילות במטבעות יציבים; דוחות ממשלתיים מעידים על ניסיון להרחיב את מסגרת האכיפה והפיקוח בתחום. מסמכים אלה מהווים הנהגה ניהולית שמשפיעה על ההבנה של חובות הפעילות אך אינם מהווים הלכה של בית משפט.⁵\n\nמסקנה מעשית קצרה: נכון לפי המקורות שסופקו — אין כאן פסיקה מחייבת ספציפית על אחריות מפעילי בורסות קריפטו בגין פריצות סייבר. עם זאת, עומק ההסדרה הרגולטורית וההכרה בשירותי שמירה וניהול נכסים דיגיטליים כמערכת פיננסית מציבים קרקע משפטית שבה תביעות נזיקיות/חוזיות בעתיד ייבחנו לפי יסודות החובה, הסטנדרט המקצועי, דרישות רגולטוריות והוכחת קשר סיבתי; מומלץ לעקוב אחרי הנחיות ופרסומים רגולטוריים ופסקי דין עתידיים.⁶",
+  "footnotes": [
+    {
+      "url": null,
+      "title": "דו\"ח אסדרת תחום - Gov; מסמך מאתר boi.org.il",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+          "title": "דו\"ח אסדרת תחום - Gov",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.boi.org.il/information/bank-paymnts/financial-education/campaigns/cryptoreg/",
+          "title": "מסמך מאתר boi.org.il",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "דו\"ח אסדרת תחום - Gov; הסדרת אפשרות ללקוחות המערכת הבנקאית בישראל להמיר ולהפקיד מטבעות יציבים; העקרונות לפעילות \"מטבעות דיגיטליים יציבים\" בישראל - עדכון",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+          "title": "דו\"ח אסדרת תחום - Gov",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_9969262.pdf",
+          "title": "הסדרת אפשרות ללקוחות המערכת הבנקאית בישראל להמיר ולהפקיד מטבעות יציבים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://boi.org.il/publications/pressreleases/55310/",
+          "title": "העקרונות לפעילות \"מטבעות דיגיטליים יציבים\" בישראל - עדכון",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "דו\"ח אסדרת תחום - Gov; מסמך מאתר boi.org.il",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+          "title": "דו\"ח אסדרת תחום - Gov",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.boi.org.il/media/xd4ogua1/h2748.pdf",
+          "title": "מסמך מאתר boi.org.il",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.tau.ac.il/law/members/porat-ariel/nezikin6-8-12.pdf",
+      "title": "[PDF] נזיקין 6-8-12",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.tau.ac.il/law/members/porat-ariel/nezikin6-8-12.pdf",
+          "title": "[PDF] נזיקין 6-8-12",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "מסמך מאתר boi.org.il; מסמך מאתר boi.org.il; העקרונות לפעילות \"מטבעות דיגיטליים יציבים\" בישראל - עדכון",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.boi.org.il/media/xd4ogua1/h2748.pdf",
+          "title": "מסמך מאתר boi.org.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.boi.org.il/media/gowlecij/111606.pdf",
+          "title": "מסמך מאתר boi.org.il",
+          "source_type": "other"
+        },
+        {
+          "url": "https://boi.org.il/publications/pressreleases/55310/",
+          "title": "העקרונות לפעילות \"מטבעות דיגיטליים יציבים\" בישראל - עדכון",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "דו\"ח אסדרת תחום - Gov; [PDF] נזיקין 6-8-12",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+          "title": "דו\"ח אסדרת תחום - Gov",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.tau.ac.il/law/members/porat-ariel/nezikin6-8-12.pdf",
+          "title": "[PDF] נזיקין 6-8-12",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+      "title": "דו\"ח אסדרת תחום - Gov",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "19c63f3b-7a55-4a8d-b971-630b7410c74f"
+    },
+    {
+      "url": "https://www.boi.org.il/information/bank-paymnts/financial-education/campaigns/cryptoreg/",
+      "title": "מסמך מאתר boi.org.il",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "816cb681-e44b-4b96-90ef-8f20dfc8e95f"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_9969262.pdf",
+      "title": "הסדרת אפשרות ללקוחות המערכת הבנקאית בישראל להמיר ולהפקיד מטבעות יציבים",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "3a0cce2d-f4c1-40ab-8bd7-d3eac6d1a660"
+    },
+    {
+      "url": "https://boi.org.il/publications/pressreleases/55310/",
+      "title": "העקרונות לפעילות \"מטבעות דיגיטליים יציבים\" בישראל - עדכון",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "15c3cd92-fc73-43b4-98f3-0c4b099944f6"
+    },
+    {
+      "url": "https://www.boi.org.il/media/xd4ogua1/h2748.pdf",
+      "title": "מסמך מאתר boi.org.il",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "eb1bba01-f661-4e02-a0e0-a3440d77a017"
+    },
+    {
+      "url": "https://www.tau.ac.il/law/members/porat-ariel/nezikin6-8-12.pdf",
+      "title": "[PDF] נזיקין 6-8-12",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "1a1bae5d-9ba1-4118-8561-55e610f4a861"
+    },
+    {
+      "url": "https://www.boi.org.il/media/gowlecij/111606.pdf",
+      "title": "מסמך מאתר boi.org.il",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "68437e36-3d1f-410b-8e59-04770a727fdd"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 0,
+      "partial": 7,
+      "unrelated": 8,
+      "tangential": 4
+    },
+    "by_role_match": {
+      "true": 19,
+      "false": 0
+    }
+  }
+}
