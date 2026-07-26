@@ -625,7 +625,7 @@ export async function runDrafterV2(
     // legal anchors did not reach the verifier or were not effectively
     // supported, append a single instruction to the user message telling
     // the drafter to caveat the answer instead of inferring around them.
-    missingRequiredAnchors?: Array<{ description: string; is_docket?: boolean }>;
+    missingRequiredAnchors?: Array<{ description: string; is_docket?: boolean; is_statute_section?: boolean }>;
     // Optional analyzer-emitted answer intent. Rendered into the user message
     // as a compact "Answer Intent" block; the drafter system prompt has
     // per-shape and per-posture rules that reference it. Backwards
