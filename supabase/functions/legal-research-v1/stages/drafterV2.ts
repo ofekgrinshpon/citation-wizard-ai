@@ -292,21 +292,35 @@ function selectLeadRef(
     pool.length ? [...pool].sort((a, b) => scoreOf(b) - scoreOf(a))[0] : null;
 
   // source_type strings from candidates include: caselaw, supreme_court_il,
-  // israeli_law, other, journal_article, ... Roles are the more reliable
-  // normalized signal (primary_statute, regulation, binding_case_law,
-  // persuasive_case_law, scholarship, ...). We use roles primarily and fall
-  // back to source_type patterns when the role bucket is empty.
+  // israeli_law, other, journal_article, ... Roles are useful but not always
+  // reliable — the planner sometimes stamps `primary_statute` on any candidate
+  // returned to a primary_statute query, including journal articles. We
+  // therefore use source_type as a VETO: a scholarship / journal / news /
+  // user_document source can never be a lead for definition / case_holding /
+  // quote shapes, even if the role tag says otherwise.
   const isCaseType = (t: string) =>
     t === "caselaw" || t === "supreme_court_il" || t === "case";
   const isStatuteType = (t: string) =>
     t === "israeli_law" || t === "statute" || t === "regulation";
+  // Source-type veto: types that are definitively NOT primary/official law
+  // and must never be selected as a lead for the eligible shapes.
+  const isNonOfficialType = (t: string) =>
+    t === "journal_article" ||
+    t === "article" ||
+    t === "scholarship" ||
+    t === "news" ||
+    t === "blog" ||
+    t === "user_document";
+  const officialOnly = sources.filter((s) => !isNonOfficialType(s.source_type));
 
   if (shape === "case_holding") {
-    const cases = sources.filter(
+    const cases = officialOnly.filter(
       (s) =>
-        s.role === "binding_case_law" ||
-        s.role === "persuasive_case_law" ||
-        isCaseType(s.source_type),
+        isCaseType(s.source_type) ||
+        // Role fallback ONLY when source_type is neutral ("other"), never for
+        // clearly-statutory types.
+        ((s.role === "binding_case_law" || s.role === "persuasive_case_law") &&
+          s.source_type === "other"),
     );
     if (cases.length === 0) return { ref: null, reason: "no_case_source", shape };
     const req = cases.filter((s) => requiredAnchorCandidateIds.has(s.candidate_id));
@@ -326,38 +340,42 @@ function selectLeadRef(
   }
 
   if (shape === "definition") {
-    const primary = sources.filter(
+    const primary = officialOnly.filter(
       (s) =>
-        s.role === "primary_statute" ||
-        s.role === "regulation" ||
-        isStatuteType(s.source_type),
+        isStatuteType(s.source_type) ||
+        // Role fallback ONLY when source_type is neutral ("other"). Prevents
+        // journal articles / caselaw tagged primary_statute from leading a
+        // definition answer.
+        ((s.role === "primary_statute" || s.role === "regulation") &&
+          s.source_type === "other"),
     );
     if (primary.length === 0) return { ref: null, reason: "no_statute_source", shape };
     const req = primary.filter((s) => requiredAnchorCandidateIds.has(s.candidate_id));
     if (req.length > 0) {
       return { ref: pick(req)!.ref, reason: "required_anchor_statute", shape };
     }
-    const primaryRole = primary.filter(
-      (s) => s.role === "primary_statute" || s.role === "regulation",
-    );
-    const pool = primaryRole.length ? primaryRole : primary;
+    // Prefer sources whose source_type is explicitly statutory over the
+    // role-only fallback ("other" with primary_statute role).
+    const strong = primary.filter((s) => isStatuteType(s.source_type));
+    const pool = strong.length ? strong : primary;
     const chosen = pick(pool);
     if (!chosen) return { ref: null, reason: "no_eligible_statute", shape };
     return {
       ref: chosen.ref,
-      reason: primaryRole.length ? "primary_statute" : "best_statute",
+      reason: strong.length ? "primary_statute" : "primary_statute_role_fallback",
       shape,
     };
   }
 
   // quote — official/primary source that actually carries a snippet.
-  const primary = sources.filter(
+  const primary = officialOnly.filter(
     (s) =>
-      s.role === "primary_statute" ||
-      s.role === "regulation" ||
-      s.role === "binding_case_law" ||
       isStatuteType(s.source_type) ||
-      isCaseType(s.source_type),
+      isCaseType(s.source_type) ||
+      ((s.role === "primary_statute" ||
+        s.role === "regulation" ||
+        s.role === "binding_case_law") &&
+        s.source_type === "other"),
   );
   const withSnippet = primary.filter((s) => (s.snippet ?? "").length >= 50);
   if (withSnippet.length === 0) return { ref: null, reason: "no_official_snippet", shape };
