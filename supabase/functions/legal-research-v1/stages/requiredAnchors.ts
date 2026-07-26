@@ -21,7 +21,8 @@ export interface RequiredAnchor {
   anchor_id: string;
   trigger:
     | { kind: "interpretation_note"; pattern: RegExp }
-    | { kind: "docket"; docket: DocketRef };
+    | { kind: "docket"; docket: DocketRef }
+    | { kind: "statute_section"; ref: StatuteSectionRef };
   anchor_type: SourceRole;
   description: string;          // short description for drafter caveat.
   suggested_queries: string[];  // Hebrew (+ optional English) — one Query per item.
@@ -34,6 +35,12 @@ export interface RequiredAnchor {
   is_docket_anchor?: boolean;
   /** Full docket variants (for retrieval-side string matching). */
   docket_variants?: string[];
+  /**
+   * Statute-section anchors: satisfied only when a candidate's title matches
+   * the statute AND its snippet contains the specific section marker.
+   */
+  is_statute_section_anchor?: boolean;
+  statute_section_ref?: StatuteSectionRef;
 }
 
 export interface RequiredAnchorStatus {
@@ -41,6 +48,7 @@ export interface RequiredAnchorStatus {
   description: string;
   anchor_type: SourceRole;
   is_docket_anchor: boolean;
+  is_statute_section_anchor?: boolean;
   emitted: boolean;
   queries: string[];
   candidate_ids: string[];
