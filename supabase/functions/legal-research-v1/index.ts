@@ -23,6 +23,7 @@ import { evaluateAnswerStyle } from "./stages/answerStyleGate.ts";
 import {
   buildDocketAnchors,
   buildRequiredAnchorQueries,
+  buildStatuteSectionAnchors,
   computeRequiredAnchorStatuses,
   pickMissingAnchors,
   resolveRequiredAnchors,
