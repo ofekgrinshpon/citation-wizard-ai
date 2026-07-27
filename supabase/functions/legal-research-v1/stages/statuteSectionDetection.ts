@@ -266,3 +266,21 @@ export function candidateHasDirectStatuteSectionText(
   const anyOk = anyTerms.length === 0 || anyTerms.some((term) => hay.includes(normalizeForDirectText(term)));
   return allOk && anyOk;
 }
+
+/**
+ * Canonical statutory-section text registry — used exclusively by the
+ * deterministic `quote` path so the drafter never paraphrases official
+ * statutory wording. Additive/narrow on purpose: only sections whose exact
+ * wording is stable and vetted are registered. When a `quote` request lands
+ * on a section not registered here, the drafter must refuse rather than
+ * regenerate the text.
+ */
+const STATUTE_SECTION_CANONICAL_TEXT: Record<string, string> = {
+  "basic_law_dignity-s1":
+    "זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.",
+};
+
+export function getStatuteSectionCanonicalText(ref: StatuteSectionRef): string | null {
+  return STATUTE_SECTION_CANONICAL_TEXT[ref.ref_id] ?? null;
+}
+

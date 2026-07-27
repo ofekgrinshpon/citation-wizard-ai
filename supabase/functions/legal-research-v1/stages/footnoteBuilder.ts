@@ -100,7 +100,13 @@ export function buildFootnotedAnswer(
       title: distinct.length === 1
         ? distinct[0].title
         : distinct.map((s) => s.title).join("; "),
-      url: distinct.length === 1 ? distinct[0].url : null,
+      // Footnote hygiene: even for compound footnotes, expose the first
+      // sub-source URL as the top-level URL so downstream consumers/reports
+      // never render `None`/`null`. Full per-source URL list remains in
+      // `source_inputs`/`sources`.
+      url: distinct.length === 1
+        ? distinct[0].url
+        : (distinct.find((s) => s.url)?.url ?? null),
       source_type: distinct.length === 1 ? distinct[0].source_type : "compound",
       source_candidate_ids: distinct.map((s) => s.candidate_id),
       source_inputs: distinct,

@@ -660,6 +660,25 @@ async function handle(req: Request): Promise<Response> {
     preDraftAnchorStatuses.flatMap((s) => s.candidate_ids ?? []),
   );
 
+  // Satisfied statute-section anchors (verified_support === "direct") — used
+  // by the drafter's deterministic canonical-quote path so statutory wording
+  // is never paraphrased. Correlate the status list with the original
+  // RequiredAnchor entries to recover the StatuteSectionRef.
+  const anchorRefById = new Map<string, typeof requiredAnchors[number]>();
+  for (const a of requiredAnchors) anchorRefById.set(a.anchor_id, a);
+  const satisfiedStatuteSectionAnchors = preDraftAnchorStatuses
+    .filter((s) => s.is_statute_section_anchor && s.verified_support === "direct")
+    .map((s) => {
+      const anchor = anchorRefById.get(s.anchor_id);
+      if (!anchor?.statute_section_ref) return null;
+      return {
+        description: s.description,
+        ref: anchor.statute_section_ref,
+        candidate_ids: s.candidate_ids ?? [],
+      };
+    })
+    .filter((x): x is NonNullable<typeof x> => x !== null);
+
   // V2.1c is the default drafter (structured blocks + deterministic
   // footnoteBuilder). The legacy Markdown baseline `runDrafter` remains
   // imported for easy revert — re-point this call to `runDrafter(...)` and
@@ -675,6 +694,7 @@ async function handle(req: Request): Promise<Response> {
       missingRequiredAnchors: missingForCaveat,
       answerIntent: analyzer.answer_intent,
       requiredAnchorCandidateIds,
+      satisfiedStatuteSectionAnchors,
     },
   );
   stage_runs.push(...drafter.stage_runs);

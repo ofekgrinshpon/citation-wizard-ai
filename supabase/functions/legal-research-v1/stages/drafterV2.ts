@@ -31,6 +31,10 @@ import {
 import { buildFootnotedAnswer } from "./footnoteBuilder.ts";
 import { normalizeHebrewNumberRanges } from "../../_shared/hebrewNumberRange.ts";
 import { checkCompleteness, type CompletenessReport } from "./completenessCheck.ts";
+import {
+  getStatuteSectionCanonicalText,
+  type StatuteSectionRef,
+} from "./statuteSectionDetection.ts";
 
 // drafterV2-only output-token budgets. Reasoning models (gpt-5 family) burn
 // most tokens on hidden reasoning; the default gateway cap has been observed
@@ -131,7 +135,7 @@ const SYSTEM_PROMPT_V2 = `אתה משפטן/ית ישראלי/ת הכותב/ת �
    • case_holding — כאשר פסק הדין הספציפי מופיע במקורות המאומתים, נסח את ההלכה/הרציו של אותו תיק ישירות. כאשר פסק הדין עצמו חסר (וקיים בלוק "הערה קריטית" על עוגן חסר), פעל לפי אותו בלוק — אל תייחס לתיק הספציפי קביעות שאינן במקורות שסופקו. אין לגזור מהרמז הזה, כשלעצמו, לא סירוב ולא ביטחון — עצם השאלה על תיק ספציפי היא שקובעת את הצורה.
    • analysis / comparison — התנהג כרגיל, אך הטה את המבנה בהתאם (דיון רציף מול השוואה מובנית).
 
-מקור מוביל (lead_ref) — אם הודעת המשתמש כוללת שורת "lead_ref: sN", זהו המקור הסמכותי שמוביל את התשובה. פתח ממנו: בפסק דין — ההחזקה וההנמקה; בחוק/תקנה — לשון ההוראה, ההגדרה או החובה. מקורות המסומנים תחת "secondary_refs" משמשים רק לניואנס, הקשר, ביקורת או הרחבה, ואינם מחליפים את המקור המוביל. כאשר אין שורת lead_ref — התנהג כרגיל.
+מקור מוביל (lead_ref) — אם הודעת המשתמש כוללת שורת "lead_ref: sN", זהו המקור הסמכותי שמוביל את התשובה. פתח ממנו: בפסק דין — ההחזקה וההנמקה; בחוק/תקנה — לשון ההוראה, ההגדרה או החובה. מקורות המסומנים תחת "secondary_refs" משמשים רק לניואנס, הקשר, ביקורת או הרחבה, ואינם מחליפים את המקור המוביל. חשוב: כאשר output_shape הוא case_holding וקיים lead_ref — הבלוק הראשון שמנסח את ההלכה או את הרציו של פסק הדין חייב לכלול את lead_ref ב-source_refs (לבדו או כמקור הראשון); אין להסתפק במקורות רקע/חקיקה כתמיכה יחידה למשפט ההלכה. כאשר אין שורת lead_ref — התנהג כרגיל.
 
 חשוב: השאלה מה מותר לומר בביטחון ומתי חובה להסתייג ממשיכה להיגזר מהמקורות בפועל ומ"חוזה הראיות" למעלה — לא מ-answer_intent. הרמז הזה משפיע על *הפורמט*, לא על *רמת הוודאות*.
 
@@ -442,6 +446,36 @@ function buildStatuteSectionLimitationDraft(
   };
 }
 
+/**
+ * Deterministic verbatim-quote draft for statute-section anchors whose
+ * canonical text is registered in {@link getStatuteSectionCanonicalText}.
+ * Bypasses the LLM entirely so the model can never paraphrase or distort
+ * statutory wording. When canonical text is unavailable, callers must fall
+ * back to {@link buildStatuteSectionLimitationDraft} instead of asking the
+ * model to reproduce the quote.
+ */
+function buildStatuteSectionCanonicalQuoteDraft(args: {
+  canonicalText: string;
+  description: string;
+  sourceRef: string;
+}): StructuredDraft {
+  const { canonicalText, description, sourceRef } = args;
+  return {
+    blocks: [
+      {
+        kind: "paragraph",
+        text: `${description} (נוסח מילולי): "${canonicalText}"`,
+        source_refs: [sourceRef],
+      },
+      {
+        kind: "paragraph",
+        text: "הציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.",
+        source_refs: [sourceRef],
+      },
+    ],
+  };
+}
+
 export interface QualityWarning {
   buckets: string[];
   hit_count: number;
@@ -658,6 +692,16 @@ export async function runDrafterV2(
     // (docket or non-docket). Used deterministically to select `lead_ref` for
     // case_holding / definition / quote shapes only. Backwards compatible.
     requiredAnchorCandidateIds?: Set<string>;
+    // Satisfied statute-section anchors (verified_support === "direct").
+    // Used by the deterministic quote path: when shape === "quote" and a
+    // registered canonical text exists for the anchor, the drafter bypasses
+    // the LLM and emits the exact statutory wording. When no canonical text
+    // is registered, the drafter refuses instead of paraphrasing.
+    satisfiedStatuteSectionAnchors?: Array<{
+      description: string;
+      ref: StatuteSectionRef;
+      candidate_ids: string[];
+    }>;
   },
 ): Promise<DrafterV2Result> {
   const t_total = Date.now();
@@ -771,6 +815,73 @@ export async function runDrafterV2(
       schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
     };
   }
+
+  // Deterministic canonical-quote branch. When the analyzer asks for a
+  // verbatim `quote` and a statute-section anchor is satisfied at
+  // `direct` support, we never let the LLM regenerate the statutory text —
+  // it must be byte-faithful. If canonical text is registered for the
+  // anchor, we emit it deterministically; if not, we refuse instead of
+  // paraphrasing.
+  const satisfiedStatuteSectionAnchors = opts?.satisfiedStatuteSectionAnchors ?? [];
+  if (shape === "quote" && satisfiedStatuteSectionAnchors.length > 0) {
+    for (const anchor of satisfiedStatuteSectionAnchors) {
+      const canonical = getStatuteSectionCanonicalText(anchor.ref);
+      const anchorSource =
+        inputSources.find((s) =>
+          anchor.candidate_ids.includes(s.candidate_id) &&
+          (leadSelection.ref ? s.ref === leadSelection.ref : true)
+        ) ??
+        inputSources.find((s) => anchor.candidate_ids.includes(s.candidate_id));
+      if (!anchorSource) continue;
+      const t0 = Date.now();
+      const draft = canonical
+        ? buildStatuteSectionCanonicalQuoteDraft({
+            canonicalText: canonical,
+            description: anchor.description,
+            sourceRef: anchorSource.ref,
+          })
+        : buildStatuteSectionLimitationDraft(
+            [{ description: anchor.description, is_statute_section: true }],
+            [anchorSource.ref],
+          );
+      const validation = validateStructuredDraft(draft, allowedRefs);
+      const built = validation.draft
+        ? buildFootnotedAnswer(validation.draft, inputSources)
+        : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined };
+      const answer = built.answer_markdown;
+      return {
+        ok: validation.report.ok,
+        ms: Date.now() - t_total,
+        model_initial: forceModel ?? MODEL_MINI,
+        model_final: forceModel ?? MODEL_MINI,
+        provider,
+        escalated: false,
+        sources_passed,
+        sources_used: built.used_sources.length,
+        answer_markdown: answer,
+        used_sources: built.used_sources,
+        footnotes: built.footnotes,
+        stage_runs: [{
+          stage: canonical
+            ? "drafter_v2_statute_section_canonical_quote"
+            : "drafter_v2_statute_section_quote_refusal",
+          model: "deterministic",
+          ms: Date.now() - t0,
+          ok: validation.report.ok,
+        }],
+        structured_validation: validation.report,
+        structured_draft: validation.draft,
+        input_sources: inputSources,
+        builder_report: built.builder_report,
+        quality_warning: computeQualityWarning(answer, { question }),
+        missing_anchor_caveat_injected: !canonical,
+        lead_ref: leadSelection,
+        missing_anchor_descriptions: canonical ? [] : [anchor.description],
+        schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
+      };
+    }
+  }
+
 
   const userMsg = buildUserMessage(
     question,

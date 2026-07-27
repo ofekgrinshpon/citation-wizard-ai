@@ -1,0 +1,29 @@
+{
+  "id": "Q03",
+  "query": "מהי הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה, ומהם התנאים המצטברים?",
+  "run_id": "8ee666c7-f78d-422a-a87b-3b3bd1f6b008",
+  "ok": true,
+  "shape": "definition",
+  "lead_ref": {
+    "ref": null,
+    "shape": "definition",
+    "reason": "skipped_missing_statute_section_anchor"
+  },
+  "caveat": true,
+  "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 32(9) לפקודת מס הכנסה; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹",
+  "footnotes": [
+    {
+      "url": "https://fs.knesset.gov.il/%5C6%5Claw%5C6_lsr_208758.PDF",
+      "title": "חוק לתיקון פקודת מס הכנסה (מס' 13), תשכ\"ח-1968",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/%5C6%5Claw%5C6_lsr_208758.PDF",
+          "title": "חוק לתיקון פקודת מס הכנסה (מס' 13), תשכ\"ח-1968",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    }
+  ]
+}
