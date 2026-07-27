@@ -2,14 +2,14 @@
   "id": "Q01",
   "category": "docket_holding",
   "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
-  "run_id": "d1988f45-c303-431b-af99-ccf108bd6a99",
+  "run_id": "ddfeb580-8de7-4d5b-be68-d54e1bce1ef6",
   "ok": true,
-  "total_ms": 245519,
+  "total_ms": 308788,
   "answer_intent": {
     "output_shape": "case_holding"
   },
   "lead_ref": {
-    "ref": "s5",
+    "ref": "s6",
     "shape": "case_holding",
     "reason": "required_anchor_case"
   },
@@ -25,86 +25,94 @@
       "verified_support": "direct"
     }
   ],
-  "answer": "**עיקר ההחלטה בבג\"ץ 6298/07**\n\nבג\"ץ 6298/07 דן בחוקתיותו של חוק דחיית שירות לתלמידי ישיבות (חוק טל). בית המשפט מצא כי הנטען על פיו ההסדר, במתכונתו והארכותיו, אינו עומד בדרישות החוקתיות שנקבעו במסגרת חקיקת היסוד, ובכך עוררה ההכרעה שאלות יסודיות בנוגע למידתיות המגבלות והגנה על עקרון השוויון; יחד עם זאת הותרה הארכה זמנית מוגבלת במטרה לאפשר למחוקק להתערב ולגבש הסדר חלופי.¹\n\nבהעמדת הביקורת המקצועית ניצבה זכות השוויון כעמוד התווך של הבדיקה; בית המשפט ניתח את עניין החוק במסגרת פסקת ההגבלה של חוקי היסוד ובחן שאלות של קשר רציונלי בין המטרה לאמצעי, אפשרות אמצעי שפגיעתו פחותה, וכן מידתיות במובן הצר.²\n\nבמהלך הדיון הוצגו גם נתונים ומסמכי רקע מן הכנסת וממרכז המחקר, אשר הדגימו את היקפי הגיוס והשירות האזרחי בקרב קבוצת תלמידי הישיבות ואת מגבלות היישום של ההסדר; מסמכים אלה שימשו כרקע עובדתי לבחינת מידתיות ההגבלה.³\n\nבאשר לסעד — פסק הדין אסר על הארכה בלתי-מוגבלת של תוקפו של החוק והותירו את ההסדר במצב זמני בלבד: בית המשפט אפשר הארכה של תקופה מוגדרת (חמישה-עשר חודשים) כדי לאפשר למחוקק לפעול, אך הצביע כי אין מקום להשאיר את ההסדר בתוקף ללא שינוי קבוע והותיר לקריאה למחוקק לעצב חלופה חוקית.⁴\n\nלסיכום: בג\"ץ פסל את המשך קיומו של ההסדר כפי שנוהל עד אז בלא תיקון חוקתי או חקיקתי מהותי, נתן פתרון זמני כדי לתת למחוקק זמן פעולה, וקרא למחוקק לגבש הסדר חלופי שנבחן ביחס לעקרונות השוויון והמידתיות.",
+  "answer": "**ההכרעה המרכזית**\n\nבג\"ץ בתיק 6298/07 (רסלר נ׳ כנסת ישראל) קבע כי חוק דחיית שירות לתלמידי ישיבות (חוק טל), בנוסחו ובהארכותיו, פוגע בזכות השוויון הנגזרת מחוק‑יסוד: כבוד האדם וחירותו; על‑בסיס כך נקבע כי דינו של החוק להתבטל.¹\n\n**מניעי ההחלטה ביחס למידתיות ושוויון**\n\nבית המשפט מצא כי ההסדר לא עמד במבחני המידתיות: ההגבלה לשוויון לא קודמה על ידי אמצעי הממוזער לפגיעה באופן מספק ולא הושגה התמורה הציבורית המצופה מבחינת הגדלת הגיוס או שירות אזרחי של תלמידי ישיבות.²\n\nבחינת מידתיות זו נשענה על נתונים ומידע אמפירי לגבי יישום ההסדר ועל ניתוח ההשפעה הנצפית מאז אישור ההסדרים הראשוניים, כך שנסיבות העובדה השתנו מאז ימי ההחלטות הזמניות שקיבלו על עצמן להעניק הארכה נוכח אופיין הנסיוני.³\n\n**הסעד שנפסק וההשלכות הפרקטיות**\n\nבית המשפט פסק ביטול של החוק, אך קבע שהבטלות תיכנס לתוקף בהשהיה — כלומר דחיית הביטול עד תום תקופת ההארכה שנקבעה בחוק, במטרה לאפשר למחוקק לעצב הסדר חלופי ולמנוע פגיעה פתאומית בביטחון הציבור או בהסדרי גיוס שנמצאים בעבודה.⁴\n\n**בסיס דוקטרינרי והקשר לפסיקה קודמת**\n\nההכרעה נשענה על דוקטרינת השוויון כזכות חוקתית הנגזרת מעקרון כבוד האדם וכן על סמכותה של הביקורת השיפוטית לבחון מידתיות של הגבלות על זכות זו; בפסק הדין הוזכרו גם השפעות של שינוי נסיבות ומידע מצטבר מאז ההלכות וההחלטות הזמניות הקודמות, ונמסרה עמדת בית המשפט ביחס למתווה האיזון בין דרישות השוויון ושיקולי מדיניות ציבורית.⁵\n\nסיכום קצר: בבסיס הפסק — החלטת בית המשפט העליון היא לפסול את חוק טל בנוסחו ובהארכותיו כבלתי־חוקתי בגין פגיעה בלתי־מידתית בשוויון, תוך מתן השהיה בפרקטיקה של הביטול כדי לאפשר התערבות מחוקקת חלופית; תיאור ההנמקות והראיות מפורט בפסק הדין עצמו.",
   "footnotes": [
     {
       "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
-      "title": "החלטה בתיק בג\"ץ 6298/07; בג\"ץ 6298/07 – פסק-דין; מסמך מאתר psakdin.co.il",
+      "title": "החלטה בתיק בג\"ץ 6298/07",
       "number": 1,
       "sources": [
         {
           "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
           "title": "החלטה בתיק בג\"ץ 6298/07",
           "source_type": "caselaw"
-        },
-        {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
-          "title": "בג\"ץ 6298/07 – פסק-דין",
-          "source_type": "other"
-        },
-        {
-          "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%A0%D7%AA%D7%9F-%D7%90%D7%95%D7%A8%D7%9B%D7%94-%D7%A9%D7%9C-%D7%97%D7%9E%D7%99%D7%A9%D7%94-%D7%A2%D7%A9%D7%A8-%D7%97%D7%95%D7%93%D7%A9%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%97%D7%95%D7%A7-%D7%98%D7%9C",
-          "title": "מסמך מאתר psakdin.co.il",
-          "source_type": "other"
         }
       ],
-      "source_type": "compound"
+      "source_type": "caselaw"
     },
     {
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
-      "title": "בג\"ץ 6298/07 – פסק-דין; החלטה בתיק בג\"ץ 6298/07",
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07; בג\"ץ 6298/07 - פסק דין (טקסט מלא)",
       "number": 2,
       "sources": [
-        {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
-          "title": "בג\"ץ 6298/07 – פסק-דין",
-          "source_type": "other"
-        },
         {
           "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
           "title": "החלטה בתיק בג\"ץ 6298/07",
           "source_type": "caselaw"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07 - פסק דין (טקסט מלא)",
+          "source_type": "other"
         }
       ],
       "source_type": "compound"
     },
     {
-      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_5540738.pdf",
-      "title": "גיוס ופטור מגיוס לגברים בקבוצות אוכלוסייה שונות - הסדרים ונתונים; מסמך מאתר אתר הכנסת",
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07; חייבי גיוס בני 18 ושיעורי גיוס לפי קבוצות אוכלוסייה – עדכון; תיקון חוק הגיוס – שילוב תלמידי ישיבות",
       "number": 3,
       "sources": [
         {
-          "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_5540738.pdf",
-          "title": "גיוס ופטור מגיוס לגברים בקבוצות אוכלוסייה שונות - הסדרים ונתונים",
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/2e7046f7-7df2-ee11-8162-005056aa4246/2_2e7046f7-7df2-ee11-8162-005056aa4246_11_20527.pdf",
+          "title": "חייבי גיוס בני 18 ושיעורי גיוס לפי קבוצות אוכלוסייה – עדכון",
           "source_type": "other"
         },
         {
-          "url": "https://fs.knesset.gov.il/globaldocs/MMM/dcbe8d55-f7f7-e411-80c8-00155d010977/2_dcbe8d55-f7f7-e411-80c8-00155d010977_11_9853.pdf",
-          "title": "מסמך מאתר אתר הכנסת",
+          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
           "source_type": "other"
         }
       ],
       "source_type": "compound"
     },
     {
-      "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%A0%D7%AA%D7%9F-%D7%90%D7%95%D7%A8%D7%9B%D7%94-%D7%A9%D7%9C-%D7%97%D7%9E%D7%99%D7%A9%D7%94-%D7%A2%D7%A9%D7%A8-%D7%97%D7%95%D7%93%D7%A9%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%97%D7%95%D7%A7-%D7%98%D7%9C",
-      "title": "מסמך מאתר psakdin.co.il; מסמך מאתר אתר הכנסת; החלטה בתיק בג\"ץ 6298/07",
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07; מסמך מאתר אתר הכנסת",
       "number": 4,
       "sources": [
         {
-          "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%A0%D7%AA%D7%9F-%D7%90%D7%95%D7%A8%D7%9B%D7%94-%D7%A9%D7%9C-%D7%97%D7%9E%D7%99%D7%A9%D7%94-%D7%A2%D7%A9%D7%A8-%D7%97%D7%95%D7%93%D7%A9%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%97%D7%95%D7%A7-%D7%98%D7%9C",
-          "title": "מסמך מאתר psakdin.co.il",
-          "source_type": "other"
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "caselaw"
         },
         {
           "url": "https://fs.knesset.gov.il/20/law/20_ls1_308913.pdf",
           "title": "מסמך מאתר אתר הכנסת",
           "source_type": "other"
-        },
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07; שיקול דעת שיפוטי: העידן השלישי",
+      "number": 5,
+      "sources": [
         {
           "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
           "title": "החלטה בתיק בג\"ץ 6298/07",
           "source_type": "caselaw"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1365",
+          "title": "שיקול דעת שיפוטי: העידן השלישי",
+          "source_type": "journal_article"
         }
       ],
       "source_type": "compound"
@@ -117,39 +125,31 @@
       "number": 1,
       "origin": "perplexity",
       "source_type": "caselaw",
-      "candidate_id": "68d52bf9-5c3f-41eb-bdca-b2ba44bcd9dd"
+      "candidate_id": "80f3ac60-90c7-4f0f-b46a-6da10083117c"
     },
     {
       "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
-      "title": "בג\"ץ 6298/07 – פסק-דין",
-      "number": 1,
+      "title": "בג\"ץ 6298/07 - פסק דין (טקסט מלא)",
+      "number": 2,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "efa81248-0af3-4a91-a857-98675900cf5f"
+      "candidate_id": "1ed095ea-b14e-4609-89b2-aca418429cb2"
     },
     {
-      "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%A0%D7%AA%D7%9F-%D7%90%D7%95%D7%A8%D7%9B%D7%94-%D7%A9%D7%9C-%D7%97%D7%9E%D7%99%D7%A9%D7%94-%D7%A2%D7%A9%D7%A8-%D7%97%D7%95%D7%93%D7%A9%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%97%D7%95%D7%A7-%D7%98%D7%9C",
-      "title": "מסמך מאתר psakdin.co.il",
-      "number": 1,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "08bcc9d6-ffed-41fe-8778-ea4f0f3a1c56"
-    },
-    {
-      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_5540738.pdf",
-      "title": "גיוס ופטור מגיוס לגברים בקבוצות אוכלוסייה שונות - הסדרים ונתונים",
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/2e7046f7-7df2-ee11-8162-005056aa4246/2_2e7046f7-7df2-ee11-8162-005056aa4246_11_20527.pdf",
+      "title": "חייבי גיוס בני 18 ושיעורי גיוס לפי קבוצות אוכלוסייה – עדכון",
       "number": 3,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "070c4cee-6aee-4a0c-a690-565b7e57a3be"
+      "candidate_id": "34d76495-0244-4403-98fc-83718f51e78a"
     },
     {
-      "url": "https://fs.knesset.gov.il/globaldocs/MMM/dcbe8d55-f7f7-e411-80c8-00155d010977/2_dcbe8d55-f7f7-e411-80c8-00155d010977_11_9853.pdf",
-      "title": "מסמך מאתר אתר הכנסת",
+      "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
       "number": 3,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "64068be8-b0eb-4df3-bf2a-9721880cce03"
+      "candidate_id": "511e85ab-df04-49a0-87c4-e25fb18d3e45"
     },
     {
       "url": "https://fs.knesset.gov.il/20/law/20_ls1_308913.pdf",
@@ -157,7 +157,15 @@
       "number": 4,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "78effc60-4fc0-4904-9624-b64f4070578d"
+      "candidate_id": "28209476-d4e6-4437-b2be-19b837b195fa"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1365",
+      "title": "שיקול דעת שיפוטי: העידן השלישי",
+      "number": 5,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "b7158dfd-e899-463b-a60a-e76e168d3b99"
     }
   ]
 }

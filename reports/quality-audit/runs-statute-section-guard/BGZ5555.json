@@ -2,14 +2,14 @@
   "id": "BGZ5555",
   "category": "case_holding_smoke",
   "query": "מה נקבע בבג\"ץ 5555/18 בעניין חוק-יסוד: הלאום? נסח את ההלכה שנפסקה.",
-  "run_id": "22fad65b-7c11-4143-822e-3e3a5f4e0ac4",
+  "run_id": "a8499500-2904-4bfc-9056-79c285e8061a",
   "ok": true,
-  "total_ms": 236685,
+  "total_ms": 305353,
   "answer_intent": {
     "output_shape": "case_holding"
   },
   "lead_ref": {
-    "ref": "s2",
+    "ref": "s5",
     "shape": "case_holding",
     "reason": "required_anchor_case"
   },
@@ -25,47 +25,65 @@
       "verified_support": "direct"
     }
   ],
-  "answer": "**הלכה עיקרית**\n\nבג\"ץ דחה את העתירות ובדעת רוב קבע כי אין מקום להורות על בטלותו של חוק‑יסוד: ישראל — מדינת הלאום של העם היהודי.¹\n\nבדעת הרוב הובעה תזה של הגבלה בסמכות השיפוטית ביחס לחוקי יסוד: בית המשפט יכול לעיין בהתאמת הוראה בחוק‑יסוד לערכים היסודיים של המשטר, אך סמכות זו מצומצמת וראיות יוצאות דופן נדרשות כדי להצדיק ביטול.²\n\nהרכב הרוב קבע כי החוק בנוסחו הקיים לא חוצה את הרף הקיצוני הנדרש לפסילת הוראה בחוק‑יסוד, וכי לא הוכח שהחוק שולל את אופייה הדמוקרטי של המדינה או את עקרון השוויון במובנו הליבתי.³\n\nנקבע עיקרון פרשני מחייב של הרמוניה חוקתית: יש לפרש את חוק‑היסוד: הלאום ביחד עם שאר חוקי היסוד — ובפרט עם חוק‑היסוד: כבוד האדם וחירותו — במטרה למנוע פרשנויות שהולכות להפליה פסולה או לגריעה מההגנות החוקתיות.⁴\n\nפסק‑הדין התייחס גם ליישום פרשני במבחנים ספציפיים: סעיף 7 של חוק‑היסוד (עידוד התיישבות) אינו מהווה היתר להדרה או להקצאה מפלה, וסעיף 4 (מעמד מיוחד לשפה הערבית) מחייב מתן משמעות מעשית לשימוש בערבית ואינו מצדיק פגיעה שרירותית בזכויות.⁵\n\n**נסוח הלכה שניתן**\n\nהלכה: בדעת רוב פסק בית המשפט העליון כי חוק‑יסוד: ישראל — מדינת הלאום של העם היהודי אינו בטל; לבית המשפט רשאית קיימת סמכות מצומצמת וחריגה לבחון הוראות של חוקי יסוד ולבטלן רק בתנאים קיצוניים של פגיעה מהותית בליבת אופייתה היהודית‑דמוקרטית של המדינה, כשבמקרה נבדק לא הוצהר רף זה ועקב כך נדחתה בקשת הביטול; בנוסף, יש לפרש את החוק בהרמוניה עם חוקי היסוד המגינים על זכויות.²\n\nהיקף יישום ההלכה והאיזון בין עקרונותיה יישארו פתוחים ליישום ולדיון בהליכים עתידיים.",
+  "answer": "**הלכה — בג\"ץ 5555/18**\n\nבית המשפט העליון דחה את העתירות שהוגשו נגד חוק-יסוד: ישראל — מדינת הלאום של העם היהודי וקבע בדעת רוב כי אין מקום להורות על בטלותו של חוק-היסוד או על פסילת הוראותיו.¹\n\nבפסק הדין נדונה גם שאלת היקף הביקורת השיפוטית על חוקי-יסוד; בית המשפט ציין כי אם ביקורת כזו תתקיים, היא תעמוד רק במצבים קיצוניים של פגיעה אנושה בליבת מאפייניה של המדינה כיהודית ודמוקרטית או בשימוש לרעה בסמכות המכוננת. רף זה לא נמצא בנסיבות המקרים שנדונו, ומשכך העתירות נדחו.²\n\nנקבע כי יש לפרש את חוק-היסוד באופן הרמוני ביחס לחוקי-יסוד אחרים, ובפרט ביחס להגנות של חוק-יסוד: כבוד האדם וחירותו; מהלכה זו נגזרת ההבנה כי חוק-היסוד אינו מהווה מתן הסמכה כללית להפליה, והשמירה על עקרון השוויון נשמרת ממקורות חוקתיים אחרים.¹\n\nהוראת השפה שבסעיף ארבע של חוק-היסוד פורשה כך שהענקת מעמד מיוחד לערבית אינה נועדה לפגוע במעמד שימוש קיים או בזכויות נרכשות בשפה הערבית. בית המשפט הבהיר כי יש ליישם את הסעיף באופן שיבטיח המשך נגישות ולשוניות נאותה במרחב הציבורי.³\n\nבית המשפט נמנע מ'קריאה מכוננת' — כלומר, לא הכניס הוראות חדשות של שוויון לתוך נוסח החוק ואינו מתקנן את ניסוחו היסודי; המענה לשינוי נוסח או להוספת הוראות מכוננות הושאר בזירה המחוקקת והפוליטית.⁴\n\nלסיכום ההלכה: העתירות נדחו והחוק נשאר בעינו; נקבע רף גבוה לביקורת שיפוטית על חוקי-יסוד, הוטל דגש על פרשנות הרמונית כלפי זכויות ולשון, ומלאכת התאמות מהותיות הושארה למחוקק.⁵",
   "footnotes": [
     {
-      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
-      "title": "תקציר בג\"ץ 5555-18",
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555/18",
       "number": 1,
       "sources": [
         {
-          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
-          "title": "תקציר בג\"ץ 5555-18",
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555/18",
           "source_type": "other"
         }
       ],
       "source_type": "other"
     },
     {
-      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
-      "title": "תקציר בג\"ץ 5555-18; בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555/18; תקציר בג\"ץ 5555-18 (PDF)",
       "number": 2,
       "sources": [
         {
-          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
-          "title": "תקציר בג\"ץ 5555-18",
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555/18",
           "source_type": "other"
         },
         {
-          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-          "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
-          "source_type": "caselaw"
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555-18 (PDF)",
+          "source_type": "other"
         }
       ],
       "source_type": "compound"
     },
     {
-      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
-      "title": "תקציר בג\"ץ 5555-18; בג\"ץ 5555/18",
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555/18; חוק יסוד: ישראל – מדינת הלאום של העם היהודי",
       "number": 3,
       "sources": [
         {
-          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
-          "title": "תקציר בג\"ץ 5555-18",
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555/18",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/18/law/18_lst_202768.doc",
+          "title": "חוק יסוד: ישראל – מדינת הלאום של העם היהודי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555/18; בג\"ץ 5555/18",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555/18",
           "source_type": "other"
         },
         {
@@ -77,41 +95,23 @@
       "source_type": "compound"
     },
     {
-      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
-      "title": "תקציר בג\"ץ 5555-18; רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
-      "number": 4,
-      "sources": [
-        {
-          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
-          "title": "תקציר בג\"ץ 5555-18",
-          "source_type": "other"
-        },
-        {
-          "url": "https://lawjournal.huji.ac.il/article/12/1930",
-          "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
-          "source_type": "journal_article"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021); חוק-יסוד: ישראל – מדינת הלאום של העם היהודי; תקציר בג\"ץ 5555-18",
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555/18; תקציר בג\"ץ 5555-18 (PDF); בג\"ץ 5555/18",
       "number": 5,
       "sources": [
         {
-          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-          "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
-          "source_type": "caselaw"
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555/18",
+          "source_type": "other"
         },
         {
-          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%99%D7%A9%D7%A8%D7%90%D7%9C_%E2%80%93_%D7%9E%D7%93%D7%99%D7%A0%D7%AA_%D7%94%D7%9C%D7%90%D7%95%D7%9D_%D7%A9%D7%9C_%D7%94%D7%A2%D7%9D_%D7%94%D7%99%D7%94%D7%95%D7%93%D7%99",
-          "title": "חוק-יסוד: ישראל – מדינת הלאום של העם היהודי",
-          "source_type": "israeli_law"
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555-18 (PDF)",
+          "source_type": "other"
         },
         {
-          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
-          "title": "תקציר בג\"ץ 5555-18",
+          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+          "title": "בג\"ץ 5555/18",
           "source_type": "other"
         }
       ],
@@ -120,44 +120,36 @@
   ],
   "used_sources": [
     {
-      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
-      "title": "תקציר בג\"ץ 5555-18",
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555/18",
       "number": 1,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "f7b423b3-45ec-4c42-9265-cda1a716ead8"
+      "candidate_id": "d04b11a4-0120-41ef-9e40-977880d9fa58"
     },
     {
-      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555-18 (PDF)",
       "number": 2,
-      "origin": "local_db",
-      "source_type": "caselaw",
-      "candidate_id": "c4444604-f4bc-4565-b1c6-f5499bfa0fbc"
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "2908fa93-d1e0-43a4-8d14-ae355c67f6b9"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/18/law/18_lst_202768.doc",
+      "title": "חוק יסוד: ישראל – מדינת הלאום של העם היהודי",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "38b9e5b5-b7ef-4a44-a10c-077045f89c72"
     },
     {
       "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
       "title": "בג\"ץ 5555/18",
-      "number": 3,
+      "number": 4,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "65dddc50-bd6d-4ac1-9617-af01a26fb906"
-    },
-    {
-      "url": "https://lawjournal.huji.ac.il/article/12/1930",
-      "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
-      "number": 4,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "3c123183-9c61-4ee8-afaa-e994242a294b"
-    },
-    {
-      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%99%D7%A9%D7%A8%D7%90%D7%9C_%E2%80%93_%D7%9E%D7%93%D7%99%D7%A0%D7%AA_%D7%94%D7%9C%D7%90%D7%95%D7%9D_%D7%A9%D7%9C_%D7%94%D7%A2%D7%9D_%D7%94%D7%99%D7%94%D7%95%D7%93%D7%99",
-      "title": "חוק-יסוד: ישראל – מדינת הלאום של העם היהודי",
-      "number": 5,
-      "origin": "local_db",
-      "source_type": "israeli_law",
-      "candidate_id": "ddab2cfa-b7cc-4a0d-af5f-5aa8140a2449"
+      "candidate_id": "c56a65d7-6f89-4c01-a161-ac8ba74e8de4"
     }
   ]
 }

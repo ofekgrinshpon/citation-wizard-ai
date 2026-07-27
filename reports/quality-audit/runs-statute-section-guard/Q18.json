@@ -2,9 +2,9 @@
   "id": "Q18",
   "category": "anchor_preservation",
   "query": "צטט מילולית את סעיף 1 לחוק יסוד: כבוד האדם וחירותו, והפנה למקור רשמי.",
-  "run_id": "a3775347-6be5-4840-a11a-2a02683792d0",
+  "run_id": "365545bc-a385-4b4e-93a2-3a30d0a18233",
   "ok": true,
-  "total_ms": 106120,
+  "total_ms": 213012,
   "answer_intent": {
     "output_shape": "quote"
   },
