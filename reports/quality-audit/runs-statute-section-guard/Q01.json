@@ -2,14 +2,14 @@
   "id": "Q01",
   "category": "docket_holding",
   "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
-  "run_id": "8b88c6c2-50b5-48dc-ae4c-0fefa7ac5eb1",
+  "run_id": "3b804313-13aa-46f9-9b79-49d91fa29107",
   "ok": true,
-  "total_ms": 122367,
+  "total_ms": 234367,
   "answer_intent": {
     "output_shape": "case_holding"
   },
   "lead_ref": {
-    "ref": "s3",
+    "ref": "s2",
     "shape": "case_holding",
     "reason": "required_anchor_case"
   },
@@ -22,24 +22,29 @@
       "is_statute_section_anchor": false,
       "is_docket_anchor": true,
       "status": "cited",
-      "verified_support": "direct"
+      "verified_support": "partial"
     }
   ],
-  "answer": "**עיקרי ההכרעה בבג\"ץ 6298/07**\n\nבג\"ץ 6298/07 רסלר נ' כנסת ישראל קבע כי חוק דחיית שירות לתלמידי ישיבות (חוק טל) אינו חוקתי: החוק פוגע בעקרון השוויון ואינו עומד בדרישות המידתיות הקבועות בפסקת ההגבלה של חוק יסוד: כבוד האדם וחירותו.¹\n\nסעד והוראת בית המשפט כללו הכרזה על בטלותו של החוק/אי־הארכת תוקפו לאחר המועד שנקבע, תוך קריאה למחוקק לעצב הסדר חלופי שעומד בדרישות החוקתיות.²\n\nבהנמקה הדגיש בית המשפט כי בחינת מידתיות כללה גם בדיקה עובדית של ישימותו ותוצאותיו של הסדר דחיית השירות; בית המשפט מצא כי החוק לא השיג את תכליותיו (הגדלת גיוס ושילוב תלמידי ישיבות), וממצאי היישום החזיקו בתפקיד מחמיר בבחינת הפגיעה בשוויון.¹\n\nמסגרת הבדיקה שאליה פנה בית המשפט הייתה נורמטיבית: עקרון השוויון נבחן כנגזר מכבוד האדם, והחוק נבחן לפי פסקת ההגבלה — בדיקת תכלית ראויה ואמצעי מידתי (מבחן המידתיות) כפי שנעשה בפסיקה המתמשכת בדיני זכויות.³\n\nמענה זה מוגבל לממצאי ההכרעה בבג\"ץ 6298/07 כפי שהתבארו במקורות המסופקים; אם ברצונך ציטוטים מדויקים מתוך פסק־הדין או התייחסות לעמדות מיעוט ודעת הרוב, אוכל להרחיב ולהביא פרטים מדויקים נוספים.",
+  "answer": "**עיקרי ההכרעה**\n\nבג״ץ 6298/07 (רסלר נ׳ כנסת ישראל) דן בחוקתיות \"חוק דחיית שירות לתלמידי ישיבות (הוראת שעה)\", המכונה \"חוק טל\"; בפסק הדין התקבלה ברוב הכרזה על אי־חוקתיותו וביטולו, כאשר הרוב נימק את הכרעתו בעיקר בהשפעת ההסדר על עקרון השוויון וביישומו של מבחן פסקת ההגבלה.¹\n\nהרציונל של הרוב התמקד בכך שההסדר מבחין בין תלמידי הישיבות ובין יתר בני הגיל ביחס לחובת השירות, ובבחינת מידתיות — כולל קשר סיבתי רציונלי למטרה ואמצעים שפגיעתם פחותה — נמצאה חריגה שאינה עומדת בדרישות אלה; המקורות מצביעים על כישלון ההסדר במבחני המידתיות.²\n\nעוגן עובדתי מרכזי בהחלטת הרוב היה נתוני היישום בפועל: הודגם כי מנגנוני \"שנת ההכרעה\" והחלופות כמו שירות אזרחי לא הובילו לשילוב משמעותי או להשגת התכליות שבגינן נחקק הסדר ההוראת שעה; נתונים אלה שימשו בסיס לעיגון המסקנה בדבר היעדר תוחלת ממשית להמשך ההסדר במתכונתו.²\n\nלגבי הסעד בית המשפט קבע שלא להאריך את תוקף החוק מעבר למועד פקיעתו הקבוע, ובפועל נמנע מביטול מיידי שיפגע בתקופת התחולה שנותרה — צורת הסעד השאירה מרחב פעולה למחוקק לגיבוש הסדר חלופי במקום הארכת ההוראת שעה.¹\n\nבפסק הדין הופיעו דעות מיעוט, וביניהן שיקולים של ריסון שיפוטי וכשירות מוסדית (אשר הצביעו על הצורך להשאיר את ההכרעה בידי המחוקק ולא לפסול את החוק), וטענות אלה נדחו על ידי רוב בית המשפט; המקורות מציינים את מחלוקת הדעות בהקשר זה.³\n\nמובהר כי התמצית לעיל מתייחסת במפורש להכרעת בג״ץ 6298/07 כפי שמצוטטת ומוסמכת במקורות שסופקו, ולא להחליף את הנושא בעיון אחר או בהשלכות חורגות שלא מובאות שם.",
   "footnotes": [
     {
       "url": null,
-      "title": "החלטה בתיק בג\"ץ 6298/07; בג\"ץ 6298/07 רסלר נ' כנסת ישראל – פסק דין",
+      "title": "החלטה בתיק בג\"ץ 6298/07; מסמך מאתר אתר ממשלתי (gov.il); בג\"ץ 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
       "number": 1,
       "sources": [
         {
-          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%A7-6298-07",
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
           "title": "החלטה בתיק בג\"ץ 6298/07",
-          "source_type": "caselaw"
+          "source_type": "other"
         },
         {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
-          "title": "בג\"ץ 6298/07 רסלר נ' כנסת ישראל – פסק דין",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%D7%A5-'%D7%97%D7%95%D7%A7-%D7%98%D7%9C'-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
+          "title": "בג\"ץ 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
           "source_type": "other"
         }
       ],
@@ -47,36 +52,46 @@
     },
     {
       "url": null,
-      "title": "בג\"ץ 6298/07 רסלר נ' כנסת ישראל – פסק דין; בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); החלטה בתיק בג\"ץ 6298/07; תיקון חוק הגיוס – שילוב תלמידי ישיבות",
       "number": 2,
       "sources": [
         {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
-          "title": "בג\"ץ 6298/07 רסלר נ' כנסת ישראל – פסק דין",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
           "source_type": "other"
         },
         {
-          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%A7-%27%D7%97%D7%95%D7%A7-%D7%98%D7%9C%27-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
-          "title": "בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
-          "source_type": "caselaw"
+          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+          "source_type": "other"
         }
       ],
       "source_type": "compound"
     },
     {
       "url": null,
-      "title": "החלטה בתיק בג\"ץ 6298/07; ביהמ\"ש העליון, אב\"ד השופטת יעל וילנר, השופטת גילה כנפי שטייניץ, השופטת רות רונן: פס\"ד בעתירה נגד צו החרמה והריסה לדירה של מבצע פיגוע הירי קטלני שגרם למותו של אור אשכר ז\"ל (בג\"ץ 3231/23)",
+      "title": "שיקול דעת שיפוטי: העידן השלישי; שיקול דעת שיפוטי : העידן השלישי; החלטה בתיק בג\"ץ 6298/07",
       "number": 3,
       "sources": [
         {
-          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%A7-6298-07",
-          "title": "החלטה בתיק בג\"ץ 6298/07",
-          "source_type": "caselaw"
+          "url": "https://lawjournal.huji.ac.il/article/12/1365",
+          "title": "שיקול דעת שיפוטי: העידן השלישי",
+          "source_type": "journal_article"
         },
         {
-          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3990",
-          "title": "ביהמ\"ש העליון, אב\"ד השופטת יעל וילנר, השופטת גילה כנפי שטייניץ, השופטת רות רונן: פס\"ד בעתירה נגד צו החרמה והריסה לדירה של מבצע פיגוע הירי קטלני שגרם למותו של אור אשכר ז\"ל (בג\"ץ 3231/23)",
-          "source_type": "caselaw"
+          "url": "https://lawjournal.huji.ac.il/article/12/232",
+          "title": "שיקול דעת שיפוטי : העידן השלישי",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "other"
         }
       ],
       "source_type": "compound"
@@ -84,36 +99,52 @@
   ],
   "used_sources": [
     {
-      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%A7-6298-07",
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
       "title": "החלטה בתיק בג\"ץ 6298/07",
       "number": 1,
       "origin": "perplexity",
-      "source_type": "caselaw",
-      "candidate_id": "2d7cceef-9b08-4422-8a48-b2ec40203454"
+      "source_type": "other",
+      "candidate_id": "db4d5c01-6045-47bd-a947-c4e252f79c81"
     },
     {
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
-      "title": "בג\"ץ 6298/07 רסלר נ' כנסת ישראל – פסק דין",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "973d26fe-548c-4b1c-ad2a-c5d3a81c37ea"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%D7%A5-'%D7%97%D7%95%D7%A7-%D7%98%D7%9C'-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
+      "title": "בג\"ץ 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
       "number": 1,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "c4f357b4-06c5-4107-93dc-7ce4d2a3601a"
+      "candidate_id": "067e0c05-fe85-40bb-b950-ce0e7b5f01ff"
     },
     {
-      "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%A7-%27%D7%97%D7%95%D7%A7-%D7%98%D7%9C%27-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
-      "title": "בג\"ץ: 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
+      "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
       "number": 2,
       "origin": "perplexity",
-      "source_type": "caselaw",
-      "candidate_id": "8298b194-4470-4572-9583-3497295b66e1"
+      "source_type": "other",
+      "candidate_id": "5ed106d6-7a42-4047-9fb6-07dc846873a5"
     },
     {
-      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3990",
-      "title": "ביהמ\"ש העליון, אב\"ד השופטת יעל וילנר, השופטת גילה כנפי שטייניץ, השופטת רות רונן: פס\"ד בעתירה נגד צו החרמה והריסה לדירה של מבצע פיגוע הירי קטלני שגרם למותו של אור אשכר ז\"ל (בג\"ץ 3231/23)",
+      "url": "https://lawjournal.huji.ac.il/article/12/1365",
+      "title": "שיקול דעת שיפוטי: העידן השלישי",
       "number": 3,
       "origin": "local_db",
-      "source_type": "caselaw",
-      "candidate_id": "d8cd5ddf-cf1c-4c07-a078-2b4d695fd80a"
+      "source_type": "journal_article",
+      "candidate_id": "dc0931dc-76e6-4651-bc43-37f139c23795"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/232",
+      "title": "שיקול דעת שיפוטי : העידן השלישי",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "753d3b71-d4ae-4cf6-bb8e-07804f8588f7"
     }
   ]
 }

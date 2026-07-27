@@ -128,6 +128,12 @@ function buildSectionVariants(section: string): string[] {
   if (base) {
     out.add(base[0]);
     out.add(`סעיף ${base[0]}`);
+    // Israeli statute typesetting frequently renders sections as "N. text"
+    // (a numbered heading) rather than the word "סעיף". Accept that form —
+    // safe because the outer predicate still requires the candidate title
+    // to match the specific statute.
+    out.add(`${base[0]}. `);
+    out.add(`\n${base[0]}.`);
   }
   return [...out];
 }
