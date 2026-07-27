@@ -832,6 +832,43 @@ export async function runDrafterV2(
     !canonicalQuoteRefs.some((ref) => a.anchor_id === `statute_section:${ref.ref_id}`)
   );
   const requiredAnchorCandidateIds = opts?.requiredAnchorCandidateIds ?? new Set<string>();
+
+  // Defensive docket guard: for case_holding, if the question contains a
+  // docket pattern and no case source in the input pool matches that docket,
+  // treat as a missing docket anchor even when the required-anchor pipeline
+  // did not register it. This prevents `best_case` fallback from citing an
+  // unrelated ruling as the "leading source" when the user asked about a
+  // specific case.
+  const requestedDockets: DocketRef[] = shape === "case_holding"
+    ? detectDockets(question)
+    : [];
+  const unmatchedRequestedDockets: DocketRef[] = requestedDockets.filter((d) => {
+    // Already surfaced as a missing required anchor — leave existing handling.
+    const anchorId = `docket:${d.docket_id}`;
+    if (missingAnchors.some((a) => (a as { anchor_id?: string }).anchor_id === anchorId)) {
+      return true;
+    }
+    // Consider matched if any input source (case-type or user doc) mentions
+    // the docket in its title/snippet/url.
+    return !inputSources.some((s) =>
+      candidateMatchesDocket(
+        { title: s.title, snippet: s.snippet, url: s.url },
+        [d],
+      )
+    );
+  });
+  const synthesizedDocketMissing = unmatchedRequestedDockets
+    .filter((d) => !missingAnchors.some((a) => a.is_docket && a.description.includes(d.number)))
+    .map((d) => ({
+      anchor_id: `docket:${d.docket_id}`,
+      description: `${d.prefix_he} ${d.number}`,
+      is_docket: true,
+      is_statute_section: false,
+    }));
+  if (synthesizedDocketMissing.length > 0) {
+    missingAnchors.push(...synthesizedDocketMissing);
+  }
+
   const statuteSectionLimitationActive =
     missingAnchors.some((a) => a.is_statute_section) &&
     (shape === "definition" || shape === "quote");
