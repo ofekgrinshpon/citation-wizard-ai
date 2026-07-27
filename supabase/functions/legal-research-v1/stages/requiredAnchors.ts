@@ -231,7 +231,14 @@ export function computeRequiredAnchorStatuses(args: {
         ((c.metadata as Record<string, unknown> | undefined)?.docket_match) === true);
     } else if (isStatuteSection && a.statute_section_ref) {
       const ref = a.statute_section_ref;
-      anchorCands = anchorCandsAll.filter((c) =>
+      // Statute-section anchors: evaluate the strict title+section predicate
+      // over ALL candidates, not only those originating from the anchor's
+      // suggested queries. Official primary sources are frequently retrieved
+      // via ordinary planner queries and would otherwise be missed. The
+      // predicate itself (title must match the statute AND snippet must
+      // contain the section marker) keeps adjacent policy PDFs / articles /
+      // wrong statutes out — so Q03-style regressions are prevented.
+      anchorCands = candidates.filter((c) =>
         candidateSatisfiesStatuteSection(
           { title: c.title, snippet: c.snippet, url: c.source_url },
           ref,
