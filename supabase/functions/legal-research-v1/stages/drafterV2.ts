@@ -37,6 +37,7 @@ import {
   getStatuteSectionCanonicalText,
   type StatuteSectionRef,
 } from "./statuteSectionDetection.ts";
+import { detectDockets, candidateMatchesDocket, type DocketRef } from "./docketDetection.ts";
 
 // drafterV2-only output-token budgets. Reasoning models (gpt-5 family) burn
 // most tokens on hidden reasoning; the default gateway cap has been observed
