@@ -300,3 +300,26 @@ export function computeRequiredAnchorStatuses(args: {
 export function pickMissingAnchors(statuses: RequiredAnchorStatus[]): RequiredAnchorStatus[] {
   return statuses.filter((s) => s.status === "missing" || s.status === "retrieved_unverified");
 }
+
+/**
+ * Drafter-facing limitation guard. Generic anchor status remains evidence-only
+ * (`direct`/`partial`/etc.), but definition/quote requests for a specific
+ * statute section require the actual section text. A partial statute-section
+ * hit is useful telemetry, not enough authority to draft a statutory
+ * definition or verbatim quote.
+ */
+export function pickAnchorsRequiringDrafterLimitation(
+  statuses: RequiredAnchorStatus[],
+  outputShape?: string,
+): RequiredAnchorStatus[] {
+  const baseMissing = pickMissingAnchors(statuses);
+  const needsDirectSectionText = outputShape === "definition" || outputShape === "quote";
+  if (!needsDirectSectionText) return baseMissing;
+
+  const strictStatuteMisses = statuses.filter((s) =>
+    s.is_statute_section_anchor === true && s.verified_support !== "direct");
+
+  const byId = new Map<string, RequiredAnchorStatus>();
+  for (const s of [...baseMissing, ...strictStatuteMisses]) byId.set(s.anchor_id, s);
+  return [...byId.values()];
+}
