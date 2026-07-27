@@ -122,3 +122,9 @@ Deno.test("normalizePerplexitySourceType: known canonical preserved", () => {
   assertEquals(n.normalized, "caselaw");
   assertEquals(n.was_normalized, false);
 });
+
+Deno.test("normalizePerplexitySourceType: legal_db court_case class maps to caselaw", () => {
+  const n = normalizePerplexitySourceType("legal_db", "court_case");
+  assertEquals(n.normalized, "caselaw");
+  assertEquals(n.was_normalized, true);
+});
