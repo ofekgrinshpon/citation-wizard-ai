@@ -1,0 +1,289 @@
+{
+  "id": "Q07",
+  "category": "mandate_ordinance",
+  "query": "האם פקודת הנזיקין [נוסח חדש] היא הנוסח המחייב היום, ומה מעמדה של הפקודה המנדטורית המקורית משנת 1944?",
+  "run_id": "a3c57380-8130-4071-a720-103049b0fa27",
+  "ok": true,
+  "total_ms": 277887,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "anchor_status": {
+    "direct": 0,
+    "partial": 0,
+    "missing": 0,
+    "entries": []
+  },
+  "missing_required_anchors": null,
+  "answer": "**מסקנה תמציתית**\n\nמן המקורות עולה בזהירות כי פקודת הנזיקין המצוינת כ\"פקודת הנזיקין [נוסח חדש]\" מוכרת בפסיקה ובחקיקה כטקסט שעליו מתבססים כיום פרשנות ויישום דיני הנזיקין; לפקודה יש הצהרת תחולה מובהקת לגבי תחילת נוסחה ב-1 באוקטובר 1968, ובית המשפט נעזר בנוסח זה בפסיקות קונקרטיות.¹\n\n**מעמדה של הפקודה המנדטורית המקורית (1944)**\n\nהפקודה המנדטורית המקורית לא נמחקה אוטומטית עם קום המדינה: סעיף 11 לפקודת סדרי השלטון והמשפט קובע שהדין שהיה קיים בתקופת המנדט נשמר, ככל שאינו סותר חקיקה חדשה, וממילא הטקסט המנדטורי המשיך להוות יסוד משפטי עד שנעשה בו שינוי או תיקון בהליכי החקיקה של הרשות הישראלית.²\n\n**קונסולידציה מול שינוי מהותי של הנוסח החדש**\n\nבספרות מתוארת מחלוקת בין שתי גישות: חלק מהכותבים רואים את ה'נוסח החדש' כקונסולידציה טכנית המאחדת ונוקתה ניסוחית בלבד, ואחרים דנים באפשרות שקיימים שינויים מהותיים בסעיפים מסוימים; האבחנה היא עניין פרשני שיש לבדוק לפי נוסח הסעיף, ההיסטוריה התיקונית והפסיקה הרלוונטית.³\n\nמהבחינה הפסיקתית, בתי המשפט מפנים ומיישמים בפועל את הנוסח החדש: יש פסקי-דין שבהם נוסח זה שימש כמקור הדין בהסבר וביישום של סעיפים מסוימים (למשל בפרשנות סעיף 41 ובדיון בתחולת סעיף 8), עובדה התומכת במעמדו הפרקטי של הנוסח.⁴\n\n**כיצד לבדוק ולציין את הפקודה בהליך משפטי**\n\nלמטרת אימות וטקסט מחייב יש לפנות למאגר החקיקה הרשמי; מדריך משרד המשפטים וקבצי הנחיה לציטוט ממליצים לציין את החקיקה במינה המלאה, לרבות ההערה \"נוסח חדש\" כאשר היא מופיעה בטקסט המפורסם.⁵\n\nבפרקטיקה של ציטוט יש לנקוט בנוסחה אחידה: לציין את שם החיקוק, שנתו או תאריך פרסום רלוונטי, והמקום בו מופיע הטקסט המודפס או המאגרים הרשמיים; כאשר יש חשיבות להיסטוריה התיקונית יש להביא גם עותק/אזכור של נוסח 1944 או תאריכי תיקונים על פי כללי הציטוט המקובלים.⁶\n\nהמלצות פרקטיות קצרות: בדקו קודם במאגר הרשמי (gov.il) את הנוסח המחייב; בצעו אזכור גם של \"נוסח חדש\" ותאריך תחילתו במקרה של הפקודה הזו; ואם נטען שינוי מהותי יש להביא את ההיסטוריה התיקונית והפסיקה שתומכת בכך.⁷",
+  "footnotes": [
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/73015.htm",
+      "title": "פקודת הנזיקין [נוסח חדש]; רע\"א 7002/17; הצעת חוק פקודת הנזיקין [נוסח חדש] (תיקון - פיצויים עונשיים)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/73015.htm",
+          "title": "פקודת הנזיקין [נוסח חדש]",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C17%5C020%5C070%5Ce02&fileName=17070020.E02&type=4",
+          "title": "רע\"א 7002/17",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/15/law/15_lst_545298.doc",
+          "title": "הצעת חוק פקודת הנזיקין [נוסח חדש] (תיקון - פיצויים עונשיים)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/73184.htm",
+      "title": "פקודת סדרי השלטון והמשפט, תש\"ח-1948; פקודת נזיקים אזרחיים (תיקון), 1947",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/73184.htm",
+          "title": "פקודת סדרי השלטון והמשפט, תש\"ח-1948",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/0/law/0_lsr_562456.PDF",
+          "title": "פקודת נזיקים אזרחיים (תיקון), 1947",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/",
+      "title": "מקור אקדמי מתוך אתר אקדמי (lawjournal.huji.ac.il); נוסח חדש וקונסולידציה בדין הישראלי; נוסח חדש של פקודת הנזיקין: האם שינוי מהותי?",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/",
+          "title": "מקור אקדמי מתוך אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://lawjournal.tau.ac.il/",
+          "title": "נוסח חדש וקונסולידציה בדין הישראלי",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://www.nevo.co.il/",
+          "title": "נוסח חדש של פקודת הנזיקין: האם שינוי מהותי?",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C17%5C020%5C070%5Ce02&fileName=17070020.E02&type=4",
+      "title": "רע\"א 7002/17; רע\"א 5142/23",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C17%5C020%5C070%5Ce02&fileName=17070020.E02&type=4",
+          "title": "רע\"א 7002/17",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/civil_department_0407/he/s-a-guidelines_514223.pdf",
+          "title": "רע\"א 5142/23",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/he/service/laws_as_enacted_in_the_national_legislation_database",
+      "title": "החוקים כפי שנחקקו במאגר החקיקה הלאומי; מדריך לניסוח חקיקה",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/service/laws_as_enacted_in_the_national_legislation_database",
+          "title": "החוקים כפי שנחקקו במאגר החקיקה הלאומי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/guide/legislation-documents/he/NisuahHakika0608190921.pdf",
+          "title": "מדריך לניסוח חקיקה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yeara/israelitrial/%D7%A6%D7%99%D7%98%D7%95%D7%98%20%D7%90%D7%97%D7%99%D7%93.doc",
+      "title": "ציטוט אחיד.doc; מסמך מאתר אתר אקדמי (tau.ac.il)",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yeara/israelitrial/%D7%A6%D7%99%D7%98%D7%95%D7%98%20%D7%90%D7%97%D7%99%D7%93.doc",
+          "title": "ציטוט אחיד.doc",
+          "source_type": "other"
+        },
+        {
+          "url": "https://tau.ac.il/law/IZKUR3/izkur2021html-2.htm",
+          "title": "מסמך מאתר אתר אקדמי (tau.ac.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/he/service/laws_as_enacted_in_the_national_legislation_database",
+      "title": "החוקים כפי שנחקקו במאגר החקיקה הלאומי; פקודת הנזיקין [נוסח חדש]; מקור אקדמי מתוך אתר אקדמי (lawjournal.huji.ac.il)",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/service/laws_as_enacted_in_the_national_legislation_database",
+          "title": "החוקים כפי שנחקקו במאגר החקיקה הלאומי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/73015.htm",
+          "title": "פקודת הנזיקין [נוסח חדש]",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/",
+          "title": "מקור אקדמי מתוך אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/73015.htm",
+      "title": "פקודת הנזיקין [נוסח חדש]",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "676d0d90-defd-434f-8e03-fdee9f739ba1"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C17%5C020%5C070%5Ce02&fileName=17070020.E02&type=4",
+      "title": "רע\"א 7002/17",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "123bf556-782d-47c4-8c50-da5338d2bc1e"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/15/law/15_lst_545298.doc",
+      "title": "הצעת חוק פקודת הנזיקין [נוסח חדש] (תיקון - פיצויים עונשיים)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "b815d09c-2137-4bcc-a50b-1f14fadf2cf2"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/73184.htm",
+      "title": "פקודת סדרי השלטון והמשפט, תש\"ח-1948",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "2a50a7f8-ad9c-4805-abd8-05661f3cc425"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/0/law/0_lsr_562456.PDF",
+      "title": "פקודת נזיקים אזרחיים (תיקון), 1947",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "280e29cd-a3cf-43bf-8775-7bff373cbf9c"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/",
+      "title": "מקור אקדמי מתוך אתר אקדמי (lawjournal.huji.ac.il)",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "8e23e6e3-8888-4d4d-999d-dacc3f22b7fe"
+    },
+    {
+      "url": "https://lawjournal.tau.ac.il/",
+      "title": "נוסח חדש וקונסולידציה בדין הישראלי",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "c8a61479-bf0b-4c9b-b0bf-1da90454bd27"
+    },
+    {
+      "url": "https://www.nevo.co.il/",
+      "title": "נוסח חדש של פקודת הנזיקין: האם שינוי מהותי?",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "8cd2afba-c7a0-4e88-ae1d-6a435268f382"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/civil_department_0407/he/s-a-guidelines_514223.pdf",
+      "title": "רע\"א 5142/23",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "149b350d-fb2a-4ad2-af0d-d6e1e3c9cbab"
+    },
+    {
+      "url": "https://www.gov.il/he/service/laws_as_enacted_in_the_national_legislation_database",
+      "title": "החוקים כפי שנחקקו במאגר החקיקה הלאומי",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "6abe55b1-b70c-4b3a-a8ea-6977c836ab15"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/guide/legislation-documents/he/NisuahHakika0608190921.pdf",
+      "title": "מדריך לניסוח חקיקה",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a1380082-6efb-445b-87a6-a5891bfc66db"
+    },
+    {
+      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yeara/israelitrial/%D7%A6%D7%99%D7%98%D7%95%D7%98%20%D7%90%D7%97%D7%99%D7%93.doc",
+      "title": "ציטוט אחיד.doc",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "073b6456-dc46-4c70-acda-817d2a86a964"
+    },
+    {
+      "url": "https://tau.ac.il/law/IZKUR3/izkur2021html-2.htm",
+      "title": "מסמך מאתר אתר אקדמי (tau.ac.il)",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "46226743-6be4-4eab-914e-9e65cb1f5cb4"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 7,
+      "partial": 7,
+      "unrelated": 12,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 25,
+      "false": 1
+    }
+  }
+}

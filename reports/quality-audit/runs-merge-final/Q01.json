@@ -1,0 +1,208 @@
+{
+  "id": "Q01",
+  "category": "docket_holding",
+  "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
+  "run_id": "f62dfe77-cdd3-4390-be31-6e569944ab10",
+  "ok": true,
+  "total_ms": 284053,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "lead_ref": {
+    "ref": "s8",
+    "shape": "case_holding",
+    "reason": "required_anchor_case"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "anchor_status": {
+    "direct": 0,
+    "partial": 0,
+    "missing": 0,
+    "entries": []
+  },
+  "missing_required_anchors": null,
+  "answer": "**החזקה מרכזית של בג\"ץ 6298/07**\n\nבג\"ץ 6298/07 (רסלר נ' כנסת ישראל) קבע כי חוק דחיית שירות לתלמידי ישיבות — \"חוק טל\" — במתכונתו לא יוארך ותוקפו יפוג; ההכרעה מצאה שההסדר הקיים פוגע בשוויון וכי אין לאשר את המשך הארכתו בנוסח הקיים.¹\n\nהנימוקים המשפטיים המרכזיים התמקדו בהתנגשות בין עקרון השוויון וחובת השירות הצבאי/החובה האזרחית: בית המשפט מצא כי ההסדר יוצר הפליה בין תלמידי ישיבות לבין המשרתים לפי הכללים הרגילים, והעריך כי ההצדקות שהוצגו לחוסר השוויון אינן עומדות במבחן המידתיות והצורך הציבורי.²\n\nלעניין הסעד, בית המשפט לא נתן ביטול מיידי וללא תקופת מעבר אלא קבע שלא יינתן אישור להארכת תוקפו של החוק במתכונתו, והטיל מועד לפקיעת ההסדר. בפסק-הדין צוינה פקיעת התוקף בתאריך הראשון באוגוסט שנת 2012, תוך מתן תקופת יישום/מעבר שנזכרה במסמכים כארכה של כ־חמישה עשר חודשים.³\n\nההשלכות המעשיות כללו נקיטת צעדים חקיקתיים ותיקונים שנועדו להגיב לפקיעת התוקף: במסמכי הכנסת נרשם כי תוקף ההסדר יפוג וכי נערכו מהלכים חקיקתיים בעקבות ההחלטה; במקביל עוררה ההכרעה דיון ציבורי ומשפטי רחב שזכה לניתוח בספרות המחקרית.⁴\n\nלקריאה מפורטת בנימוקים, בהחזקות המלאות ובנסיבות ההליך יש לעיין בפסק הדין הרשמי ובדברי בית המשפט כפי שתועדו בפרסומים הרשמיים.⁵",
+  "footnotes": [
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5819-24-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5819-24 התנועה למען איכות השלטון בישראל נ׳ שר הביטחון פסק דין; בג\"ץ 6298/07; בג\"ץ ביטל את חוק טל- החלטה צודקת אך חסרה",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5819-24-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5819-24 התנועה למען איכות השלטון בישראל נ׳ שר הביטחון פסק דין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%91%D7%99%D7%98%D7%9C-%D7%90%D7%AA-%D7%97%D7%95%D7%A7-%D7%98%D7%9C-%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%A6%D7%95%D7%93%D7%A7%D7%AA-%D7%90%D7%9A-%D7%97%D7%A1%D7%A8%D7%94",
+          "title": "בג\"ץ ביטל את חוק טל- החלטה צודקת אך חסרה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%91%D7%99%D7%98%D7%9C-%D7%90%D7%AA-%D7%97%D7%95%D7%A7-%D7%98%D7%9C-%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%A6%D7%95%D7%93%D7%A7%D7%AA-%D7%90%D7%9A-%D7%97%D7%A1%D7%A8%D7%94",
+      "title": "בג\"ץ ביטל את חוק טל- החלטה צודקת אך חסרה; בג\"ץ התנועה לאיכות השלטון בישראל נ' הכנסת (חוק טל); התפר הרגיש של החברה הישראלית בעקבות בג\"ץ 6298/07 רסלר נ' הכנסת",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%91%D7%99%D7%98%D7%9C-%D7%90%D7%AA-%D7%97%D7%95%D7%A7-%D7%98%D7%9C-%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%A6%D7%95%D7%93%D7%A7%D7%AA-%D7%90%D7%9A-%D7%97%D7%A1%D7%A8%D7%94",
+          "title": "בג\"ץ ביטל את חוק טל- החלטה צודקת אך חסרה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7חלטה-בתיק-בג%22ץ-6427-02",
+          "title": "בג\"ץ התנועה לאיכות השלטון בישראל נ' הכנסת (חוק טל)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://cris.biu.ac.il/en/publications/%D7%94%D7%AA%D7%A4%D7%A8-%D7%94%D7%A8%D7%92%D7%99%D7%A9-%D7%A9%D7%9C-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA-%D7%91%D7%92%D7%A5-629807-%D7%A8%D7%A1%D7%9C%D7%A8-%D7%A0-%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%91%D7%A2%D7%A0%D7%99%D7%99-2/",
+          "title": "התפר הרגיש של החברה הישראלית בעקבות בג\"ץ 6298/07 רסלר נ' הכנסת",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות; מסמך מאתר psakdin.co.il",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%A0%D7%AA%D7%9F-%D7%90%D7%95%D7%A8%D7%9B%D7%94-%D7%A9%D7%9C-%D7%97%D7%9E%D7%99%D7%A9%D7%94-%D7%A2%D7%A9%D7%A8-%D7%97%D7%95%D7%93%D7%A9%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%97%D7%95%D7%A7-%D7%98%D7%9C",
+          "title": "מסמך מאתר psakdin.co.il",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/20/law/20_ls1_308913.pdf",
+      "title": "מסמך מאתר אתר הכנסת; תיקון חוק הגיוס – שילוב תלמידי ישיבות; התפר הרגיש של החברה הישראלית בעקבות בג\"ץ 6298/07 רסלר נ' הכנסת",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/20/law/20_ls1_308913.pdf",
+          "title": "מסמך מאתר אתר הכנסת",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://cris.biu.ac.il/en/publications/%D7%94%D7%AA%D7%A4%D7%A8-%D7%94%D7%A8%D7%92%D7%99%D7%A9-%D7%A9%D7%9C-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA-%D7%91%D7%92%D7%A5-629807-%D7%A8%D7%A1%D7%9C%D7%A8-%D7%A0-%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%91%D7%A2%D7%A0%D7%99%D7%99-2/",
+          "title": "התפר הרגיש של החברה הישראלית בעקבות בג\"ץ 6298/07 רסלר נ' הכנסת",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+      "title": "בג\"ץ 6298/07",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "בג\"ץ 6298/07",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5819-24-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5819-24 התנועה למען איכות השלטון בישראל נ׳ שר הביטחון פסק דין",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "eda72982-310d-41dc-a5ce-601ab75dcd75"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+      "title": "בג\"ץ 6298/07",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "3a4ea015-3332-4563-89fb-3ef5b53fc22d"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%91%D7%99%D7%98%D7%9C-%D7%90%D7%AA-%D7%97%D7%95%D7%A7-%D7%98%D7%9C-%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%A6%D7%95%D7%93%D7%A7%D7%AA-%D7%90%D7%9A-%D7%97%D7%A1%D7%A8%D7%94",
+      "title": "בג\"ץ ביטל את חוק טל- החלטה צודקת אך חסרה",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "c6c21e9b-9027-42f6-9de9-dd895ba2b09c"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7חלטה-בתיק-בג%22ץ-6427-02",
+      "title": "בג\"ץ התנועה לאיכות השלטון בישראל נ' הכנסת (חוק טל)",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "caselaw",
+      "candidate_id": "e72dcbdb-8200-4ee4-8a1f-47d3a6c2cae0"
+    },
+    {
+      "url": "https://cris.biu.ac.il/en/publications/%D7%94%D7%AA%D7%A4%D7%A8-%D7%94%D7%A8%D7%92%D7%99%D7%A9-%D7%A9%D7%9C-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA-%D7%91%D7%92%D7%A5-629807-%D7%A8%D7%A1%D7%9C%D7%A8-%D7%A0-%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%91%D7%A2%D7%A0%D7%99%D7%99-2/",
+      "title": "התפר הרגיש של החברה הישראלית בעקבות בג\"ץ 6298/07 רסלר נ' הכנסת",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "6f105719-129c-4e83-b3fe-51fc76cd2a47"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "9a9278cc-3553-4ef3-800b-a1ef5fcabc34"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%A0%D7%AA%D7%9F-%D7%90%D7%95%D7%A8%D7%9B%D7%94-%D7%A9%D7%9C-%D7%97%D7%9E%D7%99%D7%A9%D7%94-%D7%A2%D7%A9%D7%A8-%D7%97%D7%95%D7%93%D7%A9%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%97%D7%95%D7%A7-%D7%98%D7%9C",
+      "title": "מסמך מאתר psakdin.co.il",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "5b647cd9-483d-4623-b77b-a552d96a0432"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/20/law/20_ls1_308913.pdf",
+      "title": "מסמך מאתר אתר הכנסת",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "4bf4da07-d353-4329-a11f-7974f5dd8e2d"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 2,
+      "partial": 7,
+      "unrelated": 8,
+      "tangential": 6
+    },
+    "by_role_match": {
+      "true": 23,
+      "false": 0
+    }
+  }
+}

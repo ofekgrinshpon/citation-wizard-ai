@@ -1,0 +1,229 @@
+{
+  "id": "Q10",
+  "category": "academic_doctrine",
+  "query": "מהי גישת אהרן ברק בע\"א 4628/93 מדינת ישראל נ' אפרופים לפרשנות חוזים, וכיצד ביקר אותה דניאל פרידמן?",
+  "run_id": "3b7965ea-38be-483b-8ce4-d8bcbd67d9b6",
+  "ok": true,
+  "total_ms": 174723,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "anchor_status": {
+    "direct": 0,
+    "partial": 0,
+    "missing": 0,
+    "entries": []
+  },
+  "missing_required_anchors": null,
+  "answer": "**גישת אהרן ברק בפרשת אפרופים — סיכום**\n\nבית המשפט העליון בפרשת עא 4628/93 (מדינת ישראל נ׳ אפרופים) ניסח גישה קונטקסטואלית־תכליתית לפרשנות חוזים: לשון ההסכם מהווה נקודת פתיחה חשובה אך פירושה נקבע בהקשר הרחב של העסקה, תוך התחשבות בכוונת הצדדים, בנסיבות החיצוניות ובתכלית החוזה; כאשר יש מתיחה בין פירוש מילולי לתכלית, יש לאזן בין הפירוש הלשוני לבין משקל התכלית והנסיבות כדי להגיע לפירוש הולם.¹\n\n**עקרונות מתודיים שמנמק ברק**\n\nברק הניח מספר עקרונות מתודיים: פירוש לשוני פועל כמַעבדה ראשונית אך אינו בלעדי; יש לפנות למבחני תכליתיות ונסיבות חיצוניות כאשר הנוסח עצום או מעורפל; יש לשקלל מנהגי המקצוע וההיגיון הכלכלי של העסקה כדי להשלים או לתקן פירוש מילולי בעייתי; ובחינה כוללת של החוזה ככלל היא חלק מהפרשנות. עקרונות אלה מובלטים בניסוח ההלכתי שלפיו פירוש הוא פעולת איזון בין טקסט, נסיבות ותכלית.²\n\n**ביקורת דניאל פרידמן על גישת ברק**\n\nפרידמן מבקר את הגישה הקונטקסטואלית־תכליתית של ברק בטענה מרכזית שהשיטה משאירה לשופטים שדה שיפוטי רחב מדי: עלולה לטשטש את הגבול בין פירוש לטביעה של דינים חדשים, ולהחליש את הוודאות והצפויות של הנוסח החוזי מול הצדדים. ביקורת זו מופיעה במאמרו ובאה לידי ביטוי בקריאה להגדרת גבולות ברורים יותר לפרשנות שיפוטית.³\n\nבפרטי הביקורת מדגיש פרידמן את הצורך בכללים מפרישים ומנגנוני בקרה: דרישה להדגשת הטקסט, השמת נטל ראייתי על המעוניין לשנות פירוש מילולי, כללי ברירת מחדל ברורים, ומשמעת שיפוטית שמגבילה נטילת סיכונים פרשניים — כדי למנוע שחיקה של ודאות החוזה והפשרת כוח השופט לפעול כמחוקק פרטי.⁴\n\nאמנם המחלוקת בין ברק לפרידמן אינה רק תאורטית: מאז חזרה הדיון למסלול חקיקתי ולשינוי ניסוח סעיף 25 בחוק החוזים שהציעו לחדד את היחס בין לשון החוזה לנסיבות החיצוניות, וכמה פרסומים פרלמנטריים ואקדמיים מצביעים על ניסיון לאזן בין פרשנות תכליתית לבין חיזוק חוסן הנוסח לטובת ציפיות הצדדים.⁵\n\nלסיכום: הלכת אפרופים מציגה גישה פרשנית תכליתית־קונטקסטואלית שאהרן ברק ניסח כהעדפת איזון בין לשון, נסיבות ותכלית; דניאל פרידמן קרא במענה להגבלות מתודיות וראייתיות כדי לצמצם שיקול דעת שיפוטי ולשמר ודאות חוזית — ודיון זה ממשיך להתקיים הן בפסיקה והן במרחב החקיקתי והאקדמי.⁶",
+  "footnotes": [
+    {
+      "url": "http://www.nevo.co.il/Psika_word/elyon/PADI-NH-2-265-L.doc",
+      "title": "פסק דין מתוך מאגר נבו; ע\"א 4628/93 הלכת אפרופים",
+      "number": 1,
+      "sources": [
+        {
+          "url": "http://www.nevo.co.il/Psika_word/elyon/PADI-NH-2-265-L.doc",
+          "title": "פסק דין מתוך מאגר נבו",
+          "source_type": "case"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+          "title": "ע\"א 4628/93 הלכת אפרופים",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+      "title": "ע\"א 4628/93 הלכת אפרופים; אפרופים עדיין כאן; א. ביטול תורת שני השלבים בפרשנות",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+          "title": "ע\"א 4628/93 הלכת אפרופים",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://cris.huji.ac.il/en/publications/%D7%90%D7%A4%D7%A8%D7%95%D7%A4%D7%99%D7%9D-%D7%A2%D7%93%D7%99%D7%99%D7%9F-%D7%9B%D7%90%D7%9F",
+          "title": "אפרופים עדיין כאן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=101372393&nTocEntryID=101376575",
+          "title": "א. ביטול תורת שני השלבים בפרשנות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/?p=871",
+      "title": "לפרשנות המונח \"פרשנות\" והערות לפסק דין אפרופים; האם הפרשנות התכליתית היא הדין? (כרך נה)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://hamishpat.colman.ac.il/?p=871",
+          "title": "לפרשנות המונח \"פרשנות\" והערות לפסק דין אפרופים",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1962",
+          "title": "האם הפרשנות התכליתית היא הדין? (כרך נה)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/?p=871",
+      "title": "לפרשנות המונח \"פרשנות\" והערות לפסק דין אפרופים; כללים לפרשנות חוזים",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://hamishpat.colman.ac.il/?p=871",
+          "title": "לפרשנות המונח \"פרשנות\" והערות לפסק דין אפרופים",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_ls_mmm_4589344.pdf",
+          "title": "כללים לפרשנות חוזים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_5099927.pdf",
+      "title": "הצעת חוק החוזים (חלק כללי) (תיקון מס' 3), 2024; הצעה לתיקון סעיף 25 לחוק החוזים (חלק כללי)",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_5099927.pdf",
+          "title": "הצעת חוק החוזים (חלק כללי) (תיקון מס' 3), 2024",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_5157632.pdf",
+          "title": "הצעה לתיקון סעיף 25 לחוק החוזים (חלק כללי)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "http://www.nevo.co.il/Psika_word/elyon/PADI-NH-2-265-L.doc",
+      "title": "פסק דין מתוך מאגר נבו; לפרשנות המונח \"פרשנות\" והערות לפסק דין אפרופים",
+      "number": 6,
+      "sources": [
+        {
+          "url": "http://www.nevo.co.il/Psika_word/elyon/PADI-NH-2-265-L.doc",
+          "title": "פסק דין מתוך מאגר נבו",
+          "source_type": "case"
+        },
+        {
+          "url": "https://hamishpat.colman.ac.il/?p=871",
+          "title": "לפרשנות המונח \"פרשנות\" והערות לפסק דין אפרופים",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "http://www.nevo.co.il/Psika_word/elyon/PADI-NH-2-265-L.doc",
+      "title": "פסק דין מתוך מאגר נבו",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "case",
+      "candidate_id": "96e4e1a8-0a26-48a2-956f-9573b6c64dc4"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+      "title": "ע\"א 4628/93 הלכת אפרופים",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "308fddcf-3e2c-4899-b0c4-f426bc3d515a"
+    },
+    {
+      "url": "https://cris.huji.ac.il/en/publications/%D7%90%D7%A4%D7%A8%D7%95%D7%A4%D7%99%D7%9D-%D7%A2%D7%93%D7%99%D7%99%D7%9F-%D7%9B%D7%90%D7%9F",
+      "title": "אפרופים עדיין כאן",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "6f5a6bc8-914f-4dde-9d2e-0020a6f67dbb"
+    },
+    {
+      "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=101372393&nTocEntryID=101376575",
+      "title": "א. ביטול תורת שני השלבים בפרשנות",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "0e5aedf0-167a-4ff1-9c5e-1fea51bf9726"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/?p=871",
+      "title": "לפרשנות המונח \"פרשנות\" והערות לפסק דין אפרופים",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "b1deca2d-7486-4e84-ae2e-d5a97ac97f44"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1962",
+      "title": "האם הפרשנות התכליתית היא הדין? (כרך נה)",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "7b42d4b1-8351-4d59-a5f5-5426128361c0"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_mmm_4589344.pdf",
+      "title": "כללים לפרשנות חוזים",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "62a0319f-58ae-4a2c-accd-f17e952fe56b"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_5099927.pdf",
+      "title": "הצעת חוק החוזים (חלק כללי) (תיקון מס' 3), 2024",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "0374a11c-4720-4078-a166-56d99ae9a589"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_5157632.pdf",
+      "title": "הצעה לתיקון סעיף 25 לחוק החוזים (חלק כללי)",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "17be5eae-78a0-480c-a3fb-6cc6ffbfa34b"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 2,
+      "partial": 12,
+      "unrelated": 4,
+      "tangential": 1
+    },
+    "by_role_match": {
+      "true": 16,
+      "false": 3
+    }
+  }
+}

@@ -1,0 +1,337 @@
+{
+  "id": "Q09",
+  "category": "academic_doctrine",
+  "query": "מהי דוקטרינת \"הבטלות היחסית\" במשפט המנהלי הישראלי, ומיהם המלומדים והפסיקה המרכזיים בפיתוחה?",
+  "run_id": "703d3510-c484-49c1-95f2-6073b7a49cd2",
+  "ok": true,
+  "total_ms": 163801,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "anchor_status": {
+    "direct": 0,
+    "partial": 0,
+    "missing": 0,
+    "entries": []
+  },
+  "missing_required_anchors": null,
+  "answer": "**הגדרה ותמצית הדוקטרינה**\n\nדוקטרינת \"הבטלות היחסית\" במשפט המנהלי מגדירה כי זיהוי פגם משפטי במעשה מנהלי אינו מוביל אוטומטית לביטולו ההלכתי; במקום זאת מפלגת ההלכה מאפשרת לבית המשפט לבחון בסדרת השכלת שיקול־דעת האם ומתי יש להורות על ביטול המעשים. הדוקטרינה מבדילה בין שלב־זיהוי הפגם — שבו נקבע שהמעשה לו פגם כגון חוסר סמכות, פגיעה בזכויות הליך או הפליה — לבין שלב השיקול השיפוטי האם לתקן את התוצאה או להותירה בתוקף מפאת שיקולים של תכלית וצדק פרוצדורלי.¹\n\n**הבחנה בין בטלות מוחלטת לבטלות יחסית**\n\nההבחנה המרכזית היא כי בבטלות מוחלטת הפגם משחרר אוטומטית את ההוראה לביטול והדבר מטיב כתוצאה גמורה; בבטלות יחסית השופט שוקל את משקל הפגם לעומת תוצאות הביטול המעשי — למשל פגיעה בצד שלישי, טובת הציבור או האפשרות לתיקון — ולפיכך ישנה אפשרות להשאיר את המעשה בתוקף למרות קיומו של פגם.²\n\n**פסיקה מרכזית ודוגמאות עיקריות**\n\nהספרות שבמקורות מתייחסת ליששכרוב כדוגמה־צומת בפיתוח הפרקטיקה של גלישת דוקטרינת הבטלות היחסית והניתוח של תוצאות פגם מול חובת הביטול ההלכתית; מאמרים מקדישים ליישום פרקטי זה ניתוח מפורט של יתרונותיו וביקורותיו ביחס להגנה על זכויות הפרט.³\n\nבנוסף למאמרים התיאורטיים, המקורות מצביעים על התפתחות בפסיקה העליונה ובערכאות המנהליות שחיזקו את המעבר ממודל של \"בטלות מוחלטת\" למודל גמיש יותר; יש גם אזכורים לעבודות ובחינה של פסקי דין פרקטיים שבהם נשקלו שיקולי השתק, איזון וטובת הנזקקים.⁴\n\n**מלומדים ומקורות עיקריים בפיתוח וניתוח הדוקטרינה**\n\n- מאמר ראשי שכותרתו \"בטלות יחסית ושיקול דעת שיפוטי\" — סקירה תפקודית של המושג ושני מובניו בפסיקה.⁵\n- אנת גוש-חלב — תזכיר וסיכום המעבר מהבטלות מוחלטת למודל של בטלות יחסית, הכולל הבחנה בין שלב זיהוי הפגם לשלב השלכותיו.⁶\n- מאמר SSRN על יששכרוב — ניתוח מעמיק של יישום הדוקטרינה, יתרונותיה וביקורותיה ביחס להגנה על זכויות הפרט.⁷\n- רותם דוטן — עבודה העוסקת בהשפעת המעבר מדגם הבטלות המוחלטת לבטלות יחסית ובהשלכות על בחינת הפגמים המינהליים.⁸\n- זאב סגל — ניתוחים אקדמיים בהיבטים של יחסיות מינהלית בהקשרים של סמכויות בטחוניות (עדכון וסקירה היסטורית; יש לנסח בזהירות מסקנות מגוונות).⁹\n- זימרן ודגן — מאמר על החלת דוקטרינת הבטלות היחסית, דנים בתנאים ובמגבלות שבהפעלתה.¹⁰\n\n**קריטריונים ובחינות שיפוטיות שעולים במקורות**\n\nהמקורות מציינים באופן תקיף כי בבחינת מתן ביטול יש לשקול בין מספר גורמים: חומרת הפגם (כולל חוסר סמכות, הפרת שימוע או הפליה), היקף הפגיעה בזכויות הפרט, נזק לצד שלישי שנגרם כתוצאה מביטול, טובת הציבור והסבירות לאיפשרה של תיקון או תיקון נסיבתי של המעשה.¹¹\n\nעוד נזכרים שיקולים פרוצדורליים כגון האם הטענה הועלתה במועד סביר, עקרון היציבות והאמון הציבורי, ומשקל יתרון התוצאה הכללית של השארת המעשה בתוקף — קריטריונים המכוונים את שיקול־הדעת השיפוטי ולא יוצרים כלל־אצבע חד־משמעי.¹²\n\n**השלכות דוקטרינריות וביקורת קצרה**\n\nאימוץ הבטלות היחסית יוצר איזון בין אכיפת חוקיות לבין שיקולי תוצאה פרקטית; מצד אחד הוא מאפשר התאמה למציאות פרוצדורלית, ומצד שני מעורר ביקורת על חלישותו הפוטנציאלית בהגנת זכויות יסוד — ומכאן משקל חשוב לדרך שבה בתי המשפט מנסחים את מבחני השקלול והתקינות.¹³\n\nלסיכום, מהמקורות שניתנו עולה כי הבטלות היחסית נתפסת כמסגרת פרשנית־תפקודית שמפרידה בין קביעת קיומו של פגם לבין ההשלכות היישומיות שלו, ונמצאת בפיתוח מתמשך הן בספרות והן בפסיקה; עם זאת, המידע שניתן כאן מבוסס על קבוצת מקורות אקדמיים ומבחר מאמרים ודיונים ופחות כיפוף רשימות מלומדות של פסקי־דין ספציפיים מעבר לאזכורים המפורטים לעיל.",
+  "footnotes": [
+    {
+      "url": "http://lawjournal.huji.ac.il/article/12/923",
+      "title": "בטלות יחסית ושיקול דעת שיפוטי; מעמדה של עילת הסבירות האיזונית בהליכי תקיפה עקיפה מדינת ישראל ' רותם דוטן; 99-313-notebook-2012-anat-gush-chalav.doc",
+      "number": 1,
+      "sources": [
+        {
+          "url": "http://lawjournal.huji.ac.il/article/12/923",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2024/07/lawgov-20240721-dotan.pdf",
+          "title": "מעמדה של עילת הסבירות האיזונית בהליכי תקיפה עקיפה מדינת ישראל ' רותם דוטן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yeara/hebrewtrial/examnotes/99-313-notebook-2012-anat-gush-chalav.doc",
+          "title": "99-313-notebook-2012-anat-gush-chalav.doc",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "http://lawjournal.huji.ac.il/article/12/923",
+      "title": "בטלות יחסית ושיקול דעת שיפוטי; החלת דוקטרינת הבטלות היחסית – תנאים ומגבלות",
+      "number": 2,
+      "sources": [
+        {
+          "url": "http://lawjournal.huji.ac.il/article/12/923",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2021-12/%D7%96%D7%99%D7%9E%D7%A8%D7%9F%20%D7%95%D7%93%D7%92%D7%9F.pdf",
+          "title": "החלת דוקטרינת הבטלות היחסית – תנאים ומגבלות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4011231",
+      "title": "הסיפור של יששכרוב: יששכרוב בפעולה - על יתרונותיה של דוקטרינת הפסלות היחסית ועל תרומתה להגנה על זכויות הפרט / Yissacharov in Action: On the Merits of the Israeli Flexible Exclusionary Rule and its Contribution to the Protection of Individual Rights; בטלות יחסית ושיקול דעת שיפוטי; החלת דוקטרינת הבטלות היחסית – תנאים ומגבלות",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4011231",
+          "title": "הסיפור של יששכרוב: יששכרוב בפעולה - על יתרונותיה של דוקטרינת הפסלות היחסית ועל תרומתה להגנה על זכויות הפרט / Yissacharov in Action: On the Merits of the Israeli Flexible Exclusionary Rule and its Contribution to the Protection of Individual Rights",
+          "source_type": "other"
+        },
+        {
+          "url": "http://lawjournal.huji.ac.il/article/12/923",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2021-12/%D7%96%D7%99%D7%9E%D7%A8%D7%9F%20%D7%95%D7%93%D7%92%D7%9F.pdf",
+          "title": "החלת דוקטרינת הבטלות היחסית – תנאים ומגבלות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "http://lawjournal.huji.ac.il/article/12/923",
+      "title": "בטלות יחסית ושיקול דעת שיפוטי; החלת דוקטרינת הבטלות היחסית – תנאים ומגבלות; חריגה מסמכות עניינית בהליך האזרחי | אלון קלמנט (כרך יח)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "http://lawjournal.huji.ac.il/article/12/923",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2021-12/%D7%96%D7%99%D7%9E%D7%A8%D7%9F%20%D7%95%D7%93%D7%92%D7%9F.pdf",
+          "title": "החלת דוקטרינת הבטלות היחסית – תנאים ומגבלות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://runilawreview.org/2014/12/22/volume18_klement/",
+          "title": "חריגה מסמכות עניינית בהליך האזרחי | אלון קלמנט (כרך יח)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "http://lawjournal.huji.ac.il/article/12/923",
+      "title": "בטלות יחסית ושיקול דעת שיפוטי",
+      "number": 5,
+      "sources": [
+        {
+          "url": "http://lawjournal.huji.ac.il/article/12/923",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "academic"
+    },
+    {
+      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yeara/hebrewtrial/examnotes/99-313-notebook-2012-anat-gush-chalav.doc",
+      "title": "99-313-notebook-2012-anat-gush-chalav.doc",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yeara/hebrewtrial/examnotes/99-313-notebook-2012-anat-gush-chalav.doc",
+          "title": "99-313-notebook-2012-anat-gush-chalav.doc",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4011231",
+      "title": "הסיפור של יששכרוב: יששכרוב בפעולה - על יתרונותיה של דוקטרינת הפסלות היחסית ועל תרומתה להגנה על זכויות הפרט / Yissacharov in Action: On the Merits of the Israeli Flexible Exclusionary Rule and its Contribution to the Protection of Individual Rights",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4011231",
+          "title": "הסיפור של יששכרוב: יששכרוב בפעולה - על יתרונותיה של דוקטרינת הפסלות היחסית ועל תרומתה להגנה על זכויות הפרט / Yissacharov in Action: On the Merits of the Israeli Flexible Exclusionary Rule and its Contribution to the Protection of Individual Rights",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2024/07/lawgov-20240721-dotan.pdf",
+      "title": "מעמדה של עילת הסבירות האיזונית בהליכי תקיפה עקיפה מדינת ישראל ' רותם דוטן",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2024/07/lawgov-20240721-dotan.pdf",
+          "title": "מעמדה של עילת הסבירות האיזונית בהליכי תקיפה עקיפה מדינת ישראל ' רותם דוטן",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://www30.tau.ac.il/internetfiles/yedion/syllabus/10/2012/1009/1009184001_1009184001_syl.doc",
+      "title": "סמכות בטחונית, יחסיות מינהלית וביקורת שיפוטית",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://www30.tau.ac.il/internetfiles/yedion/syllabus/10/2012/1009/1009184001_1009184001_syl.doc",
+          "title": "סמכות בטחונית, יחסיות מינהלית וביקורת שיפוטית",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "academic"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2021-12/%D7%96%D7%99%D7%9E%D7%A8%D7%9F%20%D7%95%D7%93%D7%92%D7%9F.pdf",
+      "title": "החלת דוקטרינת הבטלות היחסית – תנאים ומגבלות",
+      "number": 10,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2021-12/%D7%96%D7%99%D7%9E%D7%A8%D7%9F%20%D7%95%D7%93%D7%92%D7%9F.pdf",
+          "title": "החלת דוקטרינת הבטלות היחסית – תנאים ומגבלות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "http://lawjournal.huji.ac.il/article/12/923",
+      "title": "בטלות יחסית ושיקול דעת שיפוטי; החלת דוקטרינת הבטלות היחסית – תנאים ומגבלות; מעמדה של עילת הסבירות האיזונית בהליכי תקיפה עקיפה מדינת ישראל ' רותם דוטן",
+      "number": 11,
+      "sources": [
+        {
+          "url": "http://lawjournal.huji.ac.il/article/12/923",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2021-12/%D7%96%D7%99%D7%9E%D7%A8%D7%9F%20%D7%95%D7%93%D7%92%D7%9F.pdf",
+          "title": "החלת דוקטרינת הבטלות היחסית – תנאים ומגבלות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2024/07/lawgov-20240721-dotan.pdf",
+          "title": "מעמדה של עילת הסבירות האיזונית בהליכי תקיפה עקיפה מדינת ישראל ' רותם דוטן",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2021-12/%D7%96%D7%99%D7%9E%D7%A8%D7%9F%20%D7%95%D7%93%D7%92%D7%9F.pdf",
+      "title": "החלת דוקטרינת הבטלות היחסית – תנאים ומגבלות; בטלות יחסית ושיקול דעת שיפוטי; מסוימות וגמירת דעת - הילכו שתיים בנפרד?",
+      "number": 12,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2021-12/%D7%96%D7%99%D7%9E%D7%A8%D7%9F%20%D7%95%D7%93%D7%92%D7%9F.pdf",
+          "title": "החלת דוקטרינת הבטלות היחסית – תנאים ומגבלות",
+          "source_type": "other"
+        },
+        {
+          "url": "http://lawjournal.huji.ac.il/article/12/923",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1847",
+          "title": "מסוימות וגמירת דעת - הילכו שתיים בנפרד?",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4011231",
+      "title": "הסיפור של יששכרוב: יששכרוב בפעולה - על יתרונותיה של דוקטרינת הפסלות היחסית ועל תרומתה להגנה על זכויות הפרט / Yissacharov in Action: On the Merits of the Israeli Flexible Exclusionary Rule and its Contribution to the Protection of Individual Rights; בטלות יחסית ושיקול דעת שיפוטי",
+      "number": 13,
+      "sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4011231",
+          "title": "הסיפור של יששכרוב: יששכרוב בפעולה - על יתרונותיה של דוקטרינת הפסלות היחסית ועל תרומתה להגנה על זכויות הפרט / Yissacharov in Action: On the Merits of the Israeli Flexible Exclusionary Rule and its Contribution to the Protection of Individual Rights",
+          "source_type": "other"
+        },
+        {
+          "url": "http://lawjournal.huji.ac.il/article/12/923",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "http://lawjournal.huji.ac.il/article/12/923",
+      "title": "בטלות יחסית ושיקול דעת שיפוטי",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "4698fa31-5312-4a39-8e60-f19b3014a85b"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2024/07/lawgov-20240721-dotan.pdf",
+      "title": "מעמדה של עילת הסבירות האיזונית בהליכי תקיפה עקיפה מדינת ישראל ' רותם דוטן",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "870ea089-ea06-4c08-b408-41dd0c58fb4b"
+    },
+    {
+      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yeara/hebrewtrial/examnotes/99-313-notebook-2012-anat-gush-chalav.doc",
+      "title": "99-313-notebook-2012-anat-gush-chalav.doc",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d81270fb-a71b-4934-978a-1bb5ee9b8b54"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2021-12/%D7%96%D7%99%D7%9E%D7%A8%D7%9F%20%D7%95%D7%93%D7%92%D7%9F.pdf",
+      "title": "החלת דוקטרינת הבטלות היחסית – תנאים ומגבלות",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "9599daca-0fa7-4d3f-b0ee-858de55a4566"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4011231",
+      "title": "הסיפור של יששכרוב: יששכרוב בפעולה - על יתרונותיה של דוקטרינת הפסלות היחסית ועל תרומתה להגנה על זכויות הפרט / Yissacharov in Action: On the Merits of the Israeli Flexible Exclusionary Rule and its Contribution to the Protection of Individual Rights",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "5b8ba64e-62fe-48a1-8f06-a9da210616cf"
+    },
+    {
+      "url": "https://runilawreview.org/2014/12/22/volume18_klement/",
+      "title": "חריגה מסמכות עניינית בהליך האזרחי | אלון קלמנט (כרך יח)",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "92e7ac05-de03-430e-ba78-e1a8a94a1221"
+    },
+    {
+      "url": "https://www30.tau.ac.il/internetfiles/yedion/syllabus/10/2012/1009/1009184001_1009184001_syl.doc",
+      "title": "סמכות בטחונית, יחסיות מינהלית וביקורת שיפוטית",
+      "number": 9,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "e745b00f-3976-49d2-8cb0-2e83475d8219"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1847",
+      "title": "מסוימות וגמירת דעת - הילכו שתיים בנפרד?",
+      "number": 12,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "76612c2f-94dd-4810-bd6b-c082de34ed91"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 5,
+      "partial": 3,
+      "unrelated": 3,
+      "tangential": 1
+    },
+    "by_role_match": {
+      "true": 12,
+      "false": 0
+    }
+  }
+}

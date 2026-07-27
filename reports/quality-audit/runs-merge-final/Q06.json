@@ -1,0 +1,182 @@
+{
+  "id": "Q06",
+  "category": "amendment_history",
+  "query": "מהו השינוי שהוכנס בתיקון מס' 8 לחוק סדר הדין הפלילי (סמכויות אכיפה - מעצרים) לגבי סעיף 21 (מעצר עד תום ההליכים), ומתי נכנס לתוקף?",
+  "run_id": "63c75072-8336-44bb-9fe1-4d95b110dbc6",
+  "ok": true,
+  "total_ms": 157593,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "anchor_status": {
+    "direct": 0,
+    "partial": 0,
+    "missing": 0,
+    "entries": []
+  },
+  "missing_required_anchors": null,
+  "answer": "**מענה תמציתי**\n\nתיקון מס׳ 8 לחוק סדר הדין הפלילי (סמכויות אכיפה — מעצרים) אושר בכנסת ונכנס לתוקף ביום 27.3.2011.¹\n\n**נוסח הסעיף 21 — מה שניתן לקבוע על פי המקורות הסופקו**\n\nהמקורות שסופקו אינם כוללים כאן את נוסח הסעיף 21 לאחר השינויים במלואם, ולכן לא ניתן להביא או להעתיק את הנוסח המתוקן מהחומרים האלה בלבד.²\n\nבמילים אחרות: יש תיעוד לקבלת התיקון ובהקשרו דיונים וניתוחים דוקטרינריים, אך מתוך הסניפטים שסופקו לא נשאב נוסח מלא של הפיסוק התקין של סעיף 21 בעקבות תיקון מס׳ 8.³\n\n**מה מן המקורות אפשר להציע לגבי טבע השינוי וההשלכות שלו**\n\nמן המקורות עולה בזהירות כי תיקון מס׳ 8 נגע לסמכות בתי המשפט לצוות על החזקת נאשם עד תום ההליכים — סמכות המעוגנת בסעיף 21(א) — וכי לתיקון היו השלכות על אופן הארכת המעצר והבחינה הפרקטית של תקופות מעצר.⁴\n\nסיכומי הניירות והניתוחים שצוינו מצביעים על שינויים פרקטיים בסמכויות הארכת מעצר (כולל אזכור סעיף 61(ג) והגבלות לגבי הארכות לאחר הכרעת דין), אך תיאור מפורט של ניסוחי הסייגים או החריגים לא נמצא בסניפטים שסופקו.⁴\n\n**כניסה לתוקף והוראות מעבר**\n\nהמקורות שניתנו מצביעים שהחוק (תיקון מס׳ 8) נכנס לתוקף ביום 27.3.2011, ולא מזכירים צו כניסה נפרד כהוראה שיש לממש לפני כניסת התיקון.¹\n\nלגבי הוראות מעבר או השפעה על מעצרים שהחלו לפני מועד הכניסה לתוקף — בסניפטים שסופקו לא נמצאו הוראות מעבר מפורשות או הוראות יישום שנדונו. אי־זמינות הנוסח המלא מגבילה את היכולת לקבוע בוודאות האם ולכמה הוראות מעבר הונהגו.¹\n\n**השלכות משפטיות־מעשיות מרכזיות**\n\n- חיזוק או הבהרה של סמכות בתי המשפט לצוות על החזקת נאשם עד תום ההליכים, כפי שהדוקטרינה מציינת את עיגון הסמכות בסעיף 21(א).⁵\n- השפעה על פרקטיקת בקשות הארכת מעצר — הסיכומים מטעים כי התיקון השפיע על אופן חישוב תקופות מעצר ועל מגבלות ההארכות (אציין לדוגמה אזכור סעיף 61(ג) וההגבלה של תקופת הארכה לאחר הכרעת דין), מבלי שהסניפים נותנים את נוסח המגבלות המדויק.⁶\n- השלכה מעשית של שינוי זה עשויה להיות שינוי בעמידה התרמית של רשויות האכיפה והפרקליטות בכל הנוגע למסגרות זמן לדיונים והארכות מעצר, ולדרוש התאמות בבקשות הארכת מעצר ובטיעונים בבתי המשפט.⁴\n\nמסקנה מעשית: יש בסיס סביר לראות בתיקון מס׳ 8 כמתקשר להסדרת סמכויות ההחזקה עד תום ההליכים והארכות מעצר, אך למענה מדויק על נוסח הסעיף המתוקן והוראות המעבר נדרש עיון בטקסט המלא של התיקון כפי שפורסם — לא נמצא בסניפטים שסופקו כאן.",
+  "footnotes": [
+    {
+      "url": "https://www.tazkirim.gov.il/sfc/servlet.shepherd/version/download/0683Y000009E46QQAS",
+      "title": "תיק הצעת חוק ממשלתית מס': 803-10-2011-000095; החלטה בתיק בש\"פ 2608/11",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.tazkirim.gov.il/sfc/servlet.shepherd/version/download/0683Y000009E46QQAS",
+          "title": "תיק הצעת חוק ממשלתית מס': 803-10-2011-000095",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%A9%22%D7%A4-2608-11",
+          "title": "החלטה בתיק בש\"פ 2608/11",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.tazkirim.gov.il/sfc/servlet.shepherd/version/download/0683Y000009E46QQAS",
+      "title": "תיק הצעת חוק ממשלתית מס': 803-10-2011-000095; חוק סדר הדין הפלילי (סמכויות אכיפה – מעצרים)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.tazkirim.gov.il/sfc/servlet.shepherd/version/download/0683Y000009E46QQAS",
+          "title": "תיק הצעת חוק ממשלתית מס': 803-10-2011-000095",
+          "source_type": "other"
+        },
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%A1%D7%93%D7%A8_%D7%94%D7%93%D7%99%D7%9F_%D7%94%D7%A4%D7%9C%D7%99%D7%9C%D7%99_(%D7%A1%D7%9E%D7%9B%D7%95%D7%99%D7%95%D7%AA_%D7%90%D7%9B%D7%99%D7%A4%D7%94_%E2%80%93_%D7%9E%D7%A2%D7%A6%D7%A8%D7%99%D7%9D)",
+          "title": "חוק סדר הדין הפלילי (סמכויות אכיפה – מעצרים)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.tazkirim.gov.il/sfc/servlet.shepherd/version/download/0683Y000009E46QQAS",
+      "title": "תיק הצעת חוק ממשלתית מס': 803-10-2011-000095; מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.tazkirim.gov.il/sfc/servlet.shepherd/version/download/0683Y000009E46QQAS",
+          "title": "תיק הצעת חוק ממשלתית מס': 803-10-2011-000095",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2022-09/%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%9E%D7%A1%D7%95%D7%9B%D7%A0%D7%95%D7%AA%20%D7%9B%D7%A2%D7%99%D7%9C%D7%94%20%D7%9C%D7%A9%D7%97%D7%A8%D7%95%D7%A8%20%D7%9E%D7%9E%D7%A6%D7%A8.pdf",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2022-09/%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%9E%D7%A1%D7%95%D7%9B%D7%A0%D7%95%D7%AA%20%D7%9B%D7%A2%D7%99%D7%9C%D7%94%20%D7%9C%D7%A9%D7%97%D7%A8%D7%95%D7%A8%20%D7%9E%D7%9E%D7%A6%D7%A8.pdf",
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); סיכום/נייר בנושא תיקון מס' 8 לחוק המעצרים",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2022-09/%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%9E%D7%A1%D7%95%D7%9B%D7%A0%D7%95%D7%AA%20%D7%9B%D7%A2%D7%99%D7%9C%D7%94%20%D7%9C%D7%A9%D7%97%D7%A8%D7%95%D7%A8%20%D7%9E%D7%9E%D7%A6%D7%A8.pdf",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa-be/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Nyarot74.pdf",
+          "title": "סיכום/נייר בנושא תיקון מס' 8 לחוק המעצרים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2022-09/%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%9E%D7%A1%D7%95%D7%9B%D7%A0%D7%95%D7%AA%20%D7%9B%D7%A2%D7%99%D7%9C%D7%94%20%D7%9C%D7%A9%D7%97%D7%A8%D7%95%D7%A8%20%D7%9E%D7%9E%D7%A6%D7%A8.pdf",
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2022-09/%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%9E%D7%A1%D7%95%D7%9B%D7%A0%D7%95%D7%AA%20%D7%9B%D7%A2%D7%99%D7%9C%D7%94%20%D7%9C%D7%A9%D7%97%D7%A8%D7%95%D7%A8%20%D7%9E%D7%9E%D7%A6%D7%A8.pdf",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa-be/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Nyarot74.pdf",
+      "title": "סיכום/נייר בנושא תיקון מס' 8 לחוק המעצרים",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa-be/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Nyarot74.pdf",
+          "title": "סיכום/נייר בנושא תיקון מס' 8 לחוק המעצרים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.tazkirim.gov.il/sfc/servlet.shepherd/version/download/0683Y000009E46QQAS",
+      "title": "תיק הצעת חוק ממשלתית מס': 803-10-2011-000095",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f4222f77-8803-42e9-bfdf-2aba21cc69ea"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%A9%22%D7%A4-2608-11",
+      "title": "החלטה בתיק בש\"פ 2608/11",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "cdbb8242-6fe8-466c-b8b4-f87a91948bcf"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%A1%D7%93%D7%A8_%D7%94%D7%93%D7%99%D7%9F_%D7%94%D7%A4%D7%9C%D7%99%D7%9C%D7%99_(%D7%A1%D7%9E%D7%9B%D7%95%D7%99%D7%95%D7%AA_%D7%90%D7%9B%D7%99%D7%A4%D7%94_%E2%80%93_%D7%9E%D7%A2%D7%A6%D7%A8%D7%99%D7%9D)",
+      "title": "חוק סדר הדין הפלילי (סמכויות אכיפה – מעצרים)",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "israeli_law",
+      "candidate_id": "c7585d28-ccac-4420-8530-1bda3360313f"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2022-09/%D7%9E%D7%A0%D7%99%D7%A2%D7%AA%20%D7%9E%D7%A1%D7%95%D7%9B%D7%A0%D7%95%D7%AA%20%D7%9B%D7%A2%D7%99%D7%9C%D7%94%20%D7%9C%D7%A9%D7%97%D7%A8%D7%95%D7%A8%20%D7%9E%D7%9E%D7%A6%D7%A8.pdf",
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e30d6a88-6b27-4dc7-a329-c43d87dd880b"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa-be/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Nyarot74.pdf",
+      "title": "סיכום/נייר בנושא תיקון מס' 8 לחוק המעצרים",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "de10c786-2762-4b6d-a003-3647577578c1"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 2,
+      "partial": 3,
+      "unrelated": 6,
+      "tangential": 2
+    },
+    "by_role_match": {
+      "true": 11,
+      "false": 2
+    }
+  }
+}

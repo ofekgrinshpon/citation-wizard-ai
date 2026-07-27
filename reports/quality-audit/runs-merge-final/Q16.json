@@ -1,0 +1,200 @@
+{
+  "id": "Q16",
+  "category": "mixed_sources",
+  "query": "מהם המבחנים לסיווג יחסי עובד-מעביד בפסיקת בית הדין הארצי לעבודה, וכיצד הם משפיעים על חבות המעביד להפרשות פנסיוניות?",
+  "run_id": "ee7df0cf-a560-49d6-bf5c-da5965c52d33",
+  "ok": true,
+  "total_ms": 191016,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "anchor_status": {
+    "direct": 0,
+    "partial": 0,
+    "missing": 0,
+    "entries": []
+  },
+  "missing_required_anchors": null,
+  "answer": "**מבחנים לסיווג יחסי עובד–מעביד בפסיקה הארצית**\n\nלבית הדין הארצי לעבודה ולאור הדוקטרינה המובעת בספרות המקצועית מוקם מבחן רב‑ממדי: השופט בוחן את התמונה העובדתית הכוללת ולא מסתמך על מרכיב יחיד כדי להכריע האם מתקיימים יחסי עובד–מעביד.¹\n\nהגורמים המופוים בפסיקה ובספרות כמרכיבים מרכזיים כוללים בין היתר כפיפות ושליטה בהנחיות ובזמני עבודה, השתלבות העובד במבנה הארגוני, תלות כלכלית במעסיק, אופי וזמינות העבודה (המשכיות), אופן התשלום (שכר קבוע מול תשלום לפי משימה), היכולת להחליף מבצע, הענקת כלים והוצאות על‑ידי המעסיק ונשיאת סיכון עסקי על‑ידי המבצע. חיבור של סימנים אלה יוצר תמונה שקובעת את המעמד בפועל.²\n\nלעניין תווית החוזה: מהמקורות עולה בזהירות כי הכינוי החוזי (למשל 'קבלן עצמאי') אינו הכרעה סופית; הוא ראיה שיש לבחון לצד שאר הראיות, ובמקרים שבהם הכינוי משמש להתחמקות מחובות מעביד נקיטה בבחינה עובדתית עלולה להביא לדחיית התווית החוזית.³\n\n**השפעת הסיווג על חובת ההפרשות הפנסיוניות וסעדי עובד**\n\nהמקורות שסופקו אינם כוללים הוראה מפורשת של חקיקה או פסיקה המפרטת במפורש חובות הפרשה פנסיוניות בהקשר הישראלי; לכן יש לנסח את המסקנות בזהירות. עם זאת, בספרות ובדיונים המשפטיים מצוין במידה זהירה כי הכרעה כי יחסי עובד–מעביד התקיימו יכולה לשמש בסיס לטענות להטלת חובות מעסיק שקשורים לזכויות סוציאליות, ובהן הפרשות או החזרם לאחור, כאשר חובת ההפרשה נובעת מחקיקה, תקנות או הסכמים רלוונטיים שאינם נכללים בסניפטים שסופקו.⁴\n\nבאופנים מעשיים שהוצגו בספרות ובדיונים משפטיים, אמצעי פרעון וסעד שנדונים בהקשר של סיווג שגוי כוללים: תביעה של העובד לבית הדין לעבודה לתשלום הפרשות שהיו צריכות להינתן, הוראות להשבה לאחור של כספים, אכיפה או דרישה מצד קרנות וקובעי רגולציה, וקביעת יחסי עובד–מעביד באופן שיחייב מסגרת סנקציות נגד מעסיק שניסה להתחמק. מסקנות אלה נידונות בעיקר בספרות המחקרית ובניתוחי מדיניות על בעיית התיוג השגוי.⁵\n\nעם זאת, הסניפים שסופקו אינם מפרטים כללים קונקרטיים לגבי תקופת ההתיישנות, חישוב סכומי החוב המדויקים או נוהלי אכיפה ספציפיים (למשל מנגנון חישוב אחוזי הפרשות, חובת דיווח או אופן החיוב על‑ידי קרן). על נקודות אלה יהיה צורך להתבסס על הטקסטים החקיקתיים, תקנות הקרן ורשומות פסיקה מעניינות שאינן כלולות כאן.⁶\n\nלסיכום מעשי: בבקשה להוכיח חבות להפרשות יש לבסס את טיעון העובד על המכלול העובדתי — סימני הכפיפות, התלות הכלכלית, השתלבות בארגון והמשכיות העבודה — שכן אלה הם שעשויים להפוך את הכינוי החוזי שלא תואם את המציאות לחסר משקל בפני בית הדין; בעוד שהתווית החוזית מקבלת משקל ראייתי, היא אינה חוסמת לאכיפת חובות מעביד אם המציאות שונה.²",
+  "footnotes": [
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1931",
+      "title": "לצאת מהחומות: לקראת תיאוריה מאחדת של דוקטרינת \"מיהו עובד\" – מ\"מבחן המטרה\" אל \"המבחן הכלכלי-חברתי\", בראי עבודת אסירים",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1931",
+          "title": "לצאת מהחומות: לקראת תיאוריה מאחדת של דוקטרינת \"מיהו עובד\" – מ\"מבחן המטרה\" אל \"המבחן הכלכלי-חברתי\", בראי עבודת אסירים",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1931",
+      "title": "לצאת מהחומות: לקראת תיאוריה מאחדת של דוקטרינת \"מיהו עובד\" – מ\"מבחן המטרה\" אל \"המבחן הכלכלי-חברתי\", בראי עבודת אסירים; בג\"ץ 38492-10-24 – ג. ויליפוד אינטרנשיונל בע\"מ נ. בית הדין הארצי לעבודה; בג\"ץ 1666/22 ד\"ר ערן ישעיהו אלמגור נ׳ בית הדין הארצי לעבודה פסק דין (01.09.2021)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1931",
+          "title": "לצאת מהחומות: לקראת תיאוריה מאחדת של דוקטרינת \"מיהו עובד\" – מ\"מבחן המטרה\" אל \"המבחן הכלכלי-חברתי\", בראי עבודת אסירים",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=NetVerdicts/2026/4/13/2024-10-38492-13-1&fileName=fdc128879d010000090037f6b155d270&type=2",
+          "title": "בג\"ץ 38492-10-24 – ג. ויליפוד אינטרנשיונל בע\"מ נ. בית הדין הארצי לעבודה",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1666-22-%d7%93%d7%a8-%d7%a2%d7%a8%d7%9f-%d7%99%d7%a9%d7%a2%d7%99%d7%94%d7%95-%d7%90%d7%9c%d7%9e%d7%92%d7%95%d7%a8-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 1666/22 ד\"ר ערן ישעיהו אלמגור נ׳ בית הדין הארצי לעבודה פסק דין (01.09.2021)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=NetVerdicts/2026/4/13/2024-10-38492-13-1&fileName=fdc128879d010000090037f6b155d270&type=2",
+      "title": "בג\"ץ 38492-10-24 – ג. ויליפוד אינטרנשיונל בע\"מ נ. בית הדין הארצי לעבודה; בג\"ץ 1666/22 ד\"ר ערן ישעיהו אלמגור נ׳ בית הדין הארצי לעבודה פסק דין (01.09.2021)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=NetVerdicts/2026/4/13/2024-10-38492-13-1&fileName=fdc128879d010000090037f6b155d270&type=2",
+          "title": "בג\"ץ 38492-10-24 – ג. ויליפוד אינטרנשיונל בע\"מ נ. בית הדין הארצי לעבודה",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1666-22-%d7%93%d7%a8-%d7%a2%d7%a8%d7%9f-%d7%99%d7%a9%d7%a2%d7%99%d7%94%d7%95-%d7%90%d7%9c%d7%9e%d7%92%d7%95%d7%a8-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 1666/22 ד\"ר ערן ישעיהו אלמגור נ׳ בית הדין הארצי לעבודה פסק דין (01.09.2021)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1680",
+      "title": "זכויות יסוד, חקיקת מגן ותום לב - הרהורים חוקתיים על משפט העבודה; Misclassification of Workers as Independent Contractors: A Legal and Economic Analysis",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1680",
+          "title": "זכויות יסוד, חקיקת מגן ותום לב - הרהורים חוקתיים על משפט העבודה",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2674733",
+          "title": "Misclassification of Workers as Independent Contractors: A Legal and Economic Analysis",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2674733",
+      "title": "Misclassification of Workers as Independent Contractors: A Legal and Economic Analysis; Avoiding Employer Obligations Through Independent Contractor Labels; בג\"ץ 38492-10-24 – ג. ויליפוד אינטרנשיונל בע\"מ נ. בית הדין הארצי לעבודה",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2674733",
+          "title": "Misclassification of Workers as Independent Contractors: A Legal and Economic Analysis",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.jstor.org/stable/10.2307/9999999",
+          "title": "Avoiding Employer Obligations Through Independent Contractor Labels",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=NetVerdicts/2026/4/13/2024-10-38492-13-1&fileName=fdc128879d010000090037f6b155d270&type=2",
+          "title": "בג\"ץ 38492-10-24 – ג. ויליפוד אינטרנשיונל בע\"מ נ. בית הדין הארצי לעבודה",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1680",
+      "title": "זכויות יסוד, חקיקת מגן ותום לב - הרהורים חוקתיים על משפט העבודה",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1680",
+          "title": "זכויות יסוד, חקיקת מגן ותום לב - הרהורים חוקתיים על משפט העבודה",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1931",
+      "title": "לצאת מהחומות: לקראת תיאוריה מאחדת של דוקטרינת \"מיהו עובד\" – מ\"מבחן המטרה\" אל \"המבחן הכלכלי-חברתי\", בראי עבודת אסירים",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "684bfccc-e64e-4c78-9e89-6e053d1d1b07"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=NetVerdicts/2026/4/13/2024-10-38492-13-1&fileName=fdc128879d010000090037f6b155d270&type=2",
+      "title": "בג\"ץ 38492-10-24 – ג. ויליפוד אינטרנשיונל בע\"מ נ. בית הדין הארצי לעבודה",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "273b9ebe-af30-4039-b7d1-ef01b4041910"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1666-22-%d7%93%d7%a8-%d7%a2%d7%a8%d7%9f-%d7%99%d7%a9%d7%a2%d7%99%d7%94%d7%95-%d7%90%d7%9c%d7%9e%d7%92%d7%95%d7%a8-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 1666/22 ד\"ר ערן ישעיהו אלמגור נ׳ בית הדין הארצי לעבודה פסק דין (01.09.2021)",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "93b4af59-baff-49bc-998f-578f8dc461fd"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1680",
+      "title": "זכויות יסוד, חקיקת מגן ותום לב - הרהורים חוקתיים על משפט העבודה",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "7d04a8ec-1869-48ee-8693-5d32c03b1125"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2674733",
+      "title": "Misclassification of Workers as Independent Contractors: A Legal and Economic Analysis",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "9d9cb618-7646-4db3-929e-71a732bc1e8d"
+    },
+    {
+      "url": "https://www.jstor.org/stable/10.2307/9999999",
+      "title": "Avoiding Employer Obligations Through Independent Contractor Labels",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "dcbc6fc9-2594-4e35-aba8-bb4046d82231"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 1,
+      "partial": 7,
+      "unrelated": 5,
+      "tangential": 5
+    },
+    "by_role_match": {
+      "true": 18,
+      "false": 0
+    }
+  }
+}
