@@ -76,10 +76,25 @@ for (let i = 0; i < golden.length; i += CONC) {
 function anchorStatusSummary(md: any) {
   const st = md?.requiredAnchors?.statuses ?? md?.retrieval?.requiredAnchors?.statuses ?? [];
   if (!Array.isArray(st)) return { direct: 0, partial: 0, missing: 0, entries: [] };
-  const entries = st.map((a: any) => ({ description: a.description ?? a.ref ?? "?", status: a.status ?? "?" }));
-  const direct = entries.filter((e: any) => e.status === "direct").length;
-  const partial = entries.filter((e: any) => e.status === "partial").length;
-  const missing = entries.filter((e: any) => e.status === "missing").length;
+  const entries = st.map((a: any) => ({
+    description: a.description ?? a.ref ?? "?",
+    status: a.status ?? "?",
+    verified_support: a.verified_support ?? null,
+  }));
+  // Anchor pipeline statuses: "cited" | "emitted" | "missing".
+  // Map to D/P/M using verified_support when available (direct/partial), and
+  // fall back to status: cited→direct, emitted→partial, missing→missing.
+  const bucket = (e: any): "direct" | "partial" | "missing" => {
+    if (e.verified_support === "direct") return "direct";
+    if (e.verified_support === "partial") return "partial";
+    if (e.status === "cited") return "direct";
+    if (e.status === "emitted") return "partial";
+    if (e.status === "missing") return "missing";
+    return "missing";
+  };
+  const direct = entries.filter((e: any) => bucket(e) === "direct").length;
+  const partial = entries.filter((e: any) => bucket(e) === "partial").length;
+  const missing = entries.filter((e: any) => bucket(e) === "missing").length;
   return { direct, partial, missing, entries };
 }
 
