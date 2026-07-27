@@ -448,6 +448,26 @@ function buildStatuteSectionLimitationDraft(
   };
 }
 
+function buildDocketLimitationDraft(
+  missingAnchors: Array<{ description: string; is_docket?: boolean; is_statute_section?: boolean }>,
+): StructuredDraft {
+  const descriptions = missingAnchors
+    .filter((a) => a.is_docket)
+    .map((a) => a.description)
+    .filter((x) => x.trim().length > 0);
+  const target = descriptions.length > 0 ? descriptions.join("; ") : "פסק הדין המבוקש";
+
+  return {
+    blocks: [
+      {
+        kind: "paragraph",
+        text: `לא אותר פסק הדין עצמו במקורות שעברו אימות; לכן לא ניתן לקבוע בביטחון את ההלכה שנפסקה בו. מאחר שהשאלה מבקשת את ההכרעה ב${target}, אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית. יש לעיין בטקסט פסק הדין עצמו כדי לקבוע מה נקבע בו.`,
+        source_refs: [],
+      },
+    ],
+  };
+}
+
 /**
  * Deterministic verbatim-quote draft for statute-section anchors whose
  * canonical text is registered in {@link getStatuteSectionCanonicalText}.
@@ -797,6 +817,8 @@ export async function runDrafterV2(
   const statuteSectionLimitationActive =
     missingAnchors.some((a) => a.is_statute_section) &&
     (shape === "definition" || shape === "quote");
+  const docketLimitationActive =
+    missingAnchors.some((a) => a.is_docket) && shape === "case_holding";
   const leadSelection = selectLeadRef(
     opts?.answerIntent,
     inputSources,
@@ -804,6 +826,44 @@ export async function runDrafterV2(
     missingAnchors.some((a) => a.is_docket),
     missingAnchors.some((a) => a.is_statute_section),
   );
+
+  if (docketLimitationActive) {
+    const t0 = Date.now();
+    const draft = buildDocketLimitationDraft(missingAnchors);
+    const validation = validateStructuredDraft(draft, allowedRefs);
+    const built = validation.draft
+      ? buildFootnotedAnswer(validation.draft, inputSources)
+      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined };
+    const answer = built.answer_markdown;
+    return {
+      ok: validation.report.ok,
+      ms: Date.now() - t_total,
+      model_initial: forceModel ?? MODEL_MINI,
+      model_final: forceModel ?? MODEL_MINI,
+      provider,
+      escalated: false,
+      sources_passed,
+      sources_used: built.used_sources.length,
+      answer_markdown: answer,
+      used_sources: built.used_sources,
+      footnotes: built.footnotes,
+      stage_runs: [{
+        stage: "drafter_v2_docket_guard",
+        model: "deterministic",
+        ms: Date.now() - t0,
+        ok: validation.report.ok,
+      }],
+      structured_validation: validation.report,
+      structured_draft: validation.draft,
+      input_sources: inputSources,
+      builder_report: built.builder_report,
+      quality_warning: computeQualityWarning(answer, { question }),
+      missing_anchor_caveat_injected: true,
+      lead_ref: leadSelection,
+      missing_anchor_descriptions: missingAnchors.map((a) => a.description),
+      schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
+    };
+  }
 
   if (statuteSectionLimitationActive) {
     const t0 = Date.now();
