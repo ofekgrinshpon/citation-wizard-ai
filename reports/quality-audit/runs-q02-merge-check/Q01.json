@@ -1,0 +1,248 @@
+{
+  "id": "Q01",
+  "category": "docket_holding",
+  "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
+  "run_id": "9eeec6df-1464-406e-bed0-af5c86717003",
+  "ok": true,
+  "total_ms": 194812,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "lead_ref": {
+    "ref": "s3",
+    "shape": "case_holding",
+    "reason": "required_anchor_case"
+  },
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "required_anchors": {
+    "count": 1,
+    "anchors": [
+      {
+        "target": "both",
+        "anchor_id": "docket:bagatz-6298-07",
+        "anchor_type": "binding_case_law",
+        "description": "פסק הדין בעניין בג\"ץ 6298/07 עצמו",
+        "query_count": 4,
+        "is_docket_anchor": true,
+        "is_statute_section_anchor": false
+      }
+    ],
+    "enabled": true,
+    "statuses": [
+      {
+        "cited": true,
+        "status": "cited",
+        "emitted": true,
+        "queries": [
+          "בג\"ץ 6298/07",
+          "בג״ץ 6298/07",
+          "HCJ 6298/07",
+          "בג\"ץ 6298-07"
+        ],
+        "anchor_id": "docket:bagatz-6298-07",
+        "anchor_type": "binding_case_law",
+        "description": "פסק הדין בעניין בג\"ץ 6298/07 עצמו",
+        "candidate_ids": [
+          "7cbdd45f-20b5-4b10-b411-45d12b76926c",
+          "f6313fd7-cb1e-48bb-994a-adb19ad911c7",
+          "bdf0afa9-5a94-4e77-a48b-bbcd7db83f90",
+          "320c0693-e4a3-4493-8e47-04f08d524333",
+          "e4a029b6-92cd-4e9d-a5d9-f280d7bc657e",
+          "eb0757dc-d773-43c3-983c-4cc5f6846129",
+          "a5304b9b-f6f4-4aa1-bd55-78b98c010558",
+          "1ce8d397-1412-441d-8932-5678866a52d8"
+        ],
+        "is_docket_anchor": true,
+        "reached_verifier": true,
+        "verified_support": "direct",
+        "is_statute_section_anchor": false
+      }
+    ],
+    "queries_emitted": [
+      {
+        "role": "binding_case_law",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "בג\"ץ 6298/07",
+        "is_docket_anchor": true,
+        "required_anchor_id": "docket:bagatz-6298-07"
+      },
+      {
+        "role": "binding_case_law",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "בג״ץ 6298/07",
+        "is_docket_anchor": true,
+        "required_anchor_id": "docket:bagatz-6298-07"
+      },
+      {
+        "role": "binding_case_law",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "HCJ 6298/07",
+        "is_docket_anchor": true,
+        "required_anchor_id": "docket:bagatz-6298-07"
+      },
+      {
+        "role": "binding_case_law",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "בג\"ץ 6298-07",
+        "is_docket_anchor": true,
+        "required_anchor_id": "docket:bagatz-6298-07"
+      }
+    ]
+  },
+  "answer": "**בג\"ץ 6298/07 — רסלר נ' כנסת ישראל**\n\nהמסקנה המרכזית של בית המשפט העליון בתיק היא כי \"חוק דחיית שירות לתלמידי ישיבות\" (חוק טל) לא עומד בחוקתיות: בית המשפט מצא פגיעה בזכות לשוויון הנגזרת מכבוד האדם, ופגיעה זו אינה מתקיימת במסגרת פסקת ההגבלה של חוק-יסוד: כבוד האדם וחירותו.¹\n\nבית המשפט ביסס את פסילתו בעיקר על כך שההסדרים שבחוק אינם מידתיים. בפסק הדין נזכר כי הכלים שנקבעו בחוק, ובכללם 'שנת ההכרעה', לא השיגו בפועל את התכלית המוצהרת של הגדלת היקף הגיוס והשילוב של תלמידי הישיבות, ולכן הפגיעה בזכות השוויון לא ניתנה להצדקה מצטיינת במשפט החוקה.²\n\nבהתייחס לסעד נקבע כי החוק ייפסל. הפסילה הוחלה באופן שמותאם לתקופת תוקפו של החוק; בפסק הדין לא ניתנה הארכה נוספת לתחולתו מעבר למועד שבו פג החוק כפי שנקבע בחקיקה.³\n\nבית המשפט הדגיש במקביל כי פסילתו של החוק אינה סוגרת את הדרך למחוקק: הכנסת רשאית לגבש הסדר חלופי ביחס לתלמידי הישיבות, כל עוד ההסדר החדש יעמוד בדרישות החוקתיות הרלוונטיות — ובפרט יעמוד במבחני תכלית ראויה ובמידה שאינה עולה על הנדרש במסגרת פסקת ההגבלה.⁴\n\nהרקע הדוקטרינרי והאקדמי מסביב להחלטה מעיד על דיון רחב יותר לגבי אופן יישום מבחני המידתיות והיחס לסעדי פסילה של חוקים; אפשר לראות את הפסיקה כנקודת שיא בדיון זה, אך פרשנויות והשלכות מדיניות־עובדתיות נחקרות ונידונות גם בכתיבה החוקרת.⁵",
+  "footnotes": [
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07; ניתוח ההשפעות הכלכליות של גיל הפטור מגיוס לגברים חרדים והאפשרות לשנותו",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "other"
+        },
+        {
+          "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8375&businessType=1",
+          "title": "ניתוח ההשפעות הכלכליות של גיל הפטור מגיוס לגברים חרדים והאפשרות לשנותו",
+          "source_type": "knesset_research"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07; מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07; פסקאות הגבלה ופסקאות התגברות בחוקות",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "other"
+        },
+        {
+          "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
+          "title": "פסקאות הגבלה ופסקאות התגברות בחוקות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1550",
+      "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה; על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1550",
+          "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://runilawreview.org/2017/11/22/vol20_barak/",
+          "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "7cbdd45f-20b5-4b10-b411-45d12b76926c"
+    },
+    {
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8375&businessType=1",
+      "title": "ניתוח ההשפעות הכלכליות של גיל הפטור מגיוס לגברים חרדים והאפשרות לשנותו",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "knesset_research",
+      "candidate_id": "fde34327-67d3-4398-9160-63f224b576c0"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "f6313fd7-cb1e-48bb-994a-adb19ad911c7"
+    },
+    {
+      "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
+      "title": "פסקאות הגבלה ופסקאות התגברות בחוקות",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "6ee7f7f5-8c38-453b-b677-bdf027493fa4"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1550",
+      "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+      "number": 5,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "bdf0afa9-5a94-4e77-a48b-bbcd7db83f90"
+    },
+    {
+      "url": "https://runilawreview.org/2017/11/22/vol20_barak/",
+      "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+      "number": 5,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "320c0693-e4a3-4493-8e47-04f08d524333"
+    }
+  ],
+  "quality_warning": null
+}

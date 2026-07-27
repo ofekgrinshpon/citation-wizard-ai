@@ -1,0 +1,94 @@
+{
+  "id": "Q02",
+  "category": "docket_holding_missing_source_test",
+  "query": "מה נקבע בע\"מ (מחוזי ת\"א) 61908-05-19 בעניין סיווג הכנסה כהכנסת עבודה או הכנסת עסק?",
+  "run_id": "1bb3734f-3f98-4f3c-9788-63dc0e8f7637",
+  "ok": true,
+  "total_ms": 144185,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "case_holding",
+    "reason": "skipped_missing_docket_anchor"
+  },
+  "missing_anchor_caveat_injected": true,
+  "missing_anchor_descriptions": [
+    "פסק הדין בעניין ע\"מ 61908/05/19 עצמו"
+  ],
+  "required_anchors": {
+    "count": 1,
+    "anchors": [
+      {
+        "target": "both",
+        "anchor_id": "docket:am-61908-05-19",
+        "anchor_type": "binding_case_law",
+        "description": "פסק הדין בעניין ע\"מ 61908/05/19 עצמו",
+        "query_count": 3,
+        "is_docket_anchor": true,
+        "is_statute_section_anchor": false
+      }
+    ],
+    "enabled": true,
+    "statuses": [
+      {
+        "cited": false,
+        "status": "missing",
+        "emitted": true,
+        "queries": [
+          "ע\"מ 61908/05/19",
+          "ע״מ 61908/05/19",
+          "ע\"מ 61908-05-19"
+        ],
+        "anchor_id": "docket:am-61908-05-19",
+        "anchor_type": "binding_case_law",
+        "description": "פסק הדין בעניין ע\"מ 61908/05/19 עצמו",
+        "candidate_ids": [],
+        "is_docket_anchor": true,
+        "reached_verifier": false,
+        "verified_support": "none",
+        "is_statute_section_anchor": false
+      }
+    ],
+    "queries_emitted": [
+      {
+        "role": "binding_case_law",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "ע\"מ 61908/05/19",
+        "is_docket_anchor": true,
+        "required_anchor_id": "docket:am-61908-05-19"
+      },
+      {
+        "role": "binding_case_law",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "ע״מ 61908/05/19",
+        "is_docket_anchor": true,
+        "required_anchor_id": "docket:am-61908-05-19"
+      },
+      {
+        "role": "binding_case_law",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "ע\"מ 61908-05-19",
+        "is_docket_anchor": true,
+        "required_anchor_id": "docket:am-61908-05-19"
+      }
+    ]
+  },
+  "answer": "לא אותר פסק הדין עצמו במקורות שעברו אימות; לכן לא ניתן לקבוע בביטחון את ההלכה שנפסקה בו. מאחר שהשאלה מבקשת את ההכרעה בפסק הדין בעניין ע\"מ 61908/05/19 עצמו, אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית. יש לעיין בטקסט פסק הדין עצמו כדי לקבוע מה נקבע בו.",
+  "footnotes": [],
+  "used_sources": [],
+  "quality_warning": null
+}
