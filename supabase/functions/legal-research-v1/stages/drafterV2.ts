@@ -25,6 +25,7 @@ import {
 } from "./drafter.ts";
 import {
   validateStructuredDraft,
+  type StructuredDraft,
   type StructuredValidation,
 } from "./structuredValidation.ts";
 import { buildFootnotedAnswer } from "./footnoteBuilder.ts";
@@ -419,6 +420,28 @@ export interface QualityWarningHit {
   index: number;
 }
 
+function buildStatuteSectionLimitationDraft(
+  missingAnchors: Array<{ description: string; is_docket?: boolean; is_statute_section?: boolean }>,
+  citationRefs: string[],
+): StructuredDraft {
+  const descriptions = missingAnchors
+    .filter((a) => a.is_statute_section)
+    .map((a) => a.description)
+    .filter((x) => x.trim().length > 0);
+  const target = descriptions.length > 0 ? descriptions.join("; ") : "הסעיף המבוקש";
+  const source_refs = citationRefs.slice(0, 1);
+
+  return {
+    blocks: [
+      {
+        kind: "paragraph",
+        text: `לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של ${target}; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.`,
+        source_refs,
+      },
+    ],
+  };
+}
+
 export interface QualityWarning {
   buckets: string[];
   hit_count: number;
@@ -692,6 +715,10 @@ export async function runDrafterV2(
 
   const missingAnchors = opts?.missingRequiredAnchors ?? [];
   const requiredAnchorCandidateIds = opts?.requiredAnchorCandidateIds ?? new Set<string>();
+  const shape = opts?.answerIntent?.output_shape;
+  const statuteSectionLimitationActive =
+    missingAnchors.some((a) => a.is_statute_section) &&
+    (shape === "definition" || shape === "quote");
   const leadSelection = selectLeadRef(
     opts?.answerIntent,
     inputSources,
@@ -699,6 +726,52 @@ export async function runDrafterV2(
     missingAnchors.some((a) => a.is_docket),
     missingAnchors.some((a) => a.is_statute_section),
   );
+
+  if (statuteSectionLimitationActive) {
+    const t0 = Date.now();
+    const anchorRefs = inputSources
+      .filter((s) => requiredAnchorCandidateIds.has(s.candidate_id))
+      .map((s) => s.ref);
+    const fallbackRefs = inputSources.slice(0, 1).map((s) => s.ref);
+    const draft = buildStatuteSectionLimitationDraft(
+      missingAnchors,
+      anchorRefs.length > 0 ? anchorRefs : fallbackRefs,
+    );
+    const validation = validateStructuredDraft(draft, allowedRefs);
+    const built = validation.draft
+      ? buildFootnotedAnswer(validation.draft, inputSources)
+      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined };
+    const answer = built.answer_markdown;
+    return {
+      ok: validation.report.ok,
+      ms: Date.now() - t_total,
+      model_initial: forceModel ?? MODEL_MINI,
+      model_final: forceModel ?? MODEL_MINI,
+      provider,
+      escalated: false,
+      sources_passed,
+      sources_used: built.used_sources.length,
+      answer_markdown: answer,
+      used_sources: built.used_sources,
+      footnotes: built.footnotes,
+      stage_runs: [{
+        stage: "drafter_v2_statute_section_guard",
+        model: "deterministic",
+        ms: Date.now() - t0,
+        ok: validation.report.ok,
+      }],
+      structured_validation: validation.report,
+      structured_draft: validation.draft,
+      input_sources: inputSources,
+      builder_report: built.builder_report,
+      quality_warning: computeQualityWarning(answer, { question }),
+      missing_anchor_caveat_injected: true,
+      lead_ref: leadSelection,
+      missing_anchor_descriptions: missingAnchors.map((a) => a.description),
+      schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
+    };
+  }
+
   const userMsg = buildUserMessage(
     question,
     claims,

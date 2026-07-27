@@ -2,6 +2,7 @@ import { assertEquals } from "https://deno.land/std@0.168.0/testing/asserts.ts";
 import {
   buildRequiredAnchorQueries,
   computeRequiredAnchorStatuses,
+  pickAnchorsRequiringDrafterLimitation,
   pickMissingAnchors,
   resolveRequiredAnchors,
 } from "./requiredAnchors.ts";
@@ -274,4 +275,28 @@ Deno.test("computeRequiredAnchorStatuses — user doc without matching docket do
   });
   assertEquals(statuses[0].status, "missing");
   assertEquals(statuses[0].cited, false);
+});
+
+Deno.test("pickAnchorsRequiringDrafterLimitation — definition requires direct statute-section support", () => {
+  const statuses = [
+    {
+      anchor_id: "statute_section:income_tax_ordinance-s32-9",
+      description: "הנוסח המחייב של סעיף 32(9) לפקודת מס הכנסה",
+      anchor_type: "primary_statute" as const,
+      is_docket_anchor: false,
+      is_statute_section_anchor: true,
+      emitted: true,
+      queries: [],
+      candidate_ids: ["c1"],
+      reached_verifier: true,
+      verified_support: "partial" as const,
+      cited: false,
+      status: "verified_unused" as const,
+    },
+  ];
+
+  assertEquals(pickMissingAnchors(statuses).length, 0);
+  assertEquals(pickAnchorsRequiringDrafterLimitation(statuses, "definition").length, 1);
+  assertEquals(pickAnchorsRequiringDrafterLimitation(statuses, "quote").length, 1);
+  assertEquals(pickAnchorsRequiringDrafterLimitation(statuses, "analysis").length, 0);
 });

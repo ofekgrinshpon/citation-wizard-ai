@@ -2,14 +2,14 @@
   "id": "Q01",
   "category": "docket_holding",
   "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
-  "run_id": "3b804313-13aa-46f9-9b79-49d91fa29107",
+  "run_id": "e70cc487-de0d-4667-9f7b-0689e7228a4f",
   "ok": true,
-  "total_ms": 234367,
+  "total_ms": 294352,
   "answer_intent": {
     "output_shape": "case_holding"
   },
   "lead_ref": {
-    "ref": "s2",
+    "ref": "s4",
     "shape": "case_holding",
     "reason": "required_anchor_case"
   },
@@ -22,75 +22,96 @@
       "is_statute_section_anchor": false,
       "is_docket_anchor": true,
       "status": "cited",
-      "verified_support": "partial"
+      "verified_support": "direct"
     }
   ],
-  "answer": "**עיקרי ההכרעה**\n\nבג״ץ 6298/07 (רסלר נ׳ כנסת ישראל) דן בחוקתיות \"חוק דחיית שירות לתלמידי ישיבות (הוראת שעה)\", המכונה \"חוק טל\"; בפסק הדין התקבלה ברוב הכרזה על אי־חוקתיותו וביטולו, כאשר הרוב נימק את הכרעתו בעיקר בהשפעת ההסדר על עקרון השוויון וביישומו של מבחן פסקת ההגבלה.¹\n\nהרציונל של הרוב התמקד בכך שההסדר מבחין בין תלמידי הישיבות ובין יתר בני הגיל ביחס לחובת השירות, ובבחינת מידתיות — כולל קשר סיבתי רציונלי למטרה ואמצעים שפגיעתם פחותה — נמצאה חריגה שאינה עומדת בדרישות אלה; המקורות מצביעים על כישלון ההסדר במבחני המידתיות.²\n\nעוגן עובדתי מרכזי בהחלטת הרוב היה נתוני היישום בפועל: הודגם כי מנגנוני \"שנת ההכרעה\" והחלופות כמו שירות אזרחי לא הובילו לשילוב משמעותי או להשגת התכליות שבגינן נחקק הסדר ההוראת שעה; נתונים אלה שימשו בסיס לעיגון המסקנה בדבר היעדר תוחלת ממשית להמשך ההסדר במתכונתו.²\n\nלגבי הסעד בית המשפט קבע שלא להאריך את תוקף החוק מעבר למועד פקיעתו הקבוע, ובפועל נמנע מביטול מיידי שיפגע בתקופת התחולה שנותרה — צורת הסעד השאירה מרחב פעולה למחוקק לגיבוש הסדר חלופי במקום הארכת ההוראת שעה.¹\n\nבפסק הדין הופיעו דעות מיעוט, וביניהן שיקולים של ריסון שיפוטי וכשירות מוסדית (אשר הצביעו על הצורך להשאיר את ההכרעה בידי המחוקק ולא לפסול את החוק), וטענות אלה נדחו על ידי רוב בית המשפט; המקורות מציינים את מחלוקת הדעות בהקשר זה.³\n\nמובהר כי התמצית לעיל מתייחסת במפורש להכרעת בג״ץ 6298/07 כפי שמצוטטת ומוסמכת במקורות שסופקו, ולא להחליף את הנושא בעיון אחר או בהשלכות חורגות שלא מובאות שם.",
+  "answer": "**בג\"ץ 6298/07 רסלר נ' כנסת ישראל — ההחזקה המרכזית**\n\nהבית המשפט העליון קבע בפסק הדין כי חוק דחיית השירות לתלמידי ישיבות (חוק טל) במתכונתו הנבדקת הוכרז כבלתי חוקתי והוסק כי אין להאריך את תוקפו; בפסק הדין (מיום 21.2.2012) נקבע כי תוקפו יפוג ביום 1.8.2012.¹\n\nרקע חקיקתי: חוק טל נחקק עם תקופת תוקף מוגבלת; נוסח החקיקה המקורי פורסם ב־1.8.2002 וקבע תוקף חמש שנתי שנגמר לראשונה ב־1.8.2007.²\n\nנימוקי בית המשפט — קווים עיקריים: מן המקורות עולה במפורש כי אחת הנקודות המרכזיות שבה הסתמך בית המשפט היא בחינת החוק במבחן התוצאה; נקבע שהחוק בלתי חוקתי גם במבחן זה. ההכרעה נשענה על שקילה של פגיעה בשוויון הנטל ביחס למטרות המוצהרות של החוק וניסיון לאמוד את מידתיות ההסדר ביחס להשגת אותן מטרות.³\n\nאופי הסעד: בית המשפט לא ציווה על ביטול מיידי ללא מעבר חסר־תנאים; במקום זאת נפסק כי החוק לא יוארך ותוקפו יסתיים במועד שנקבע (01.08.2012), כך שמימוש ההשפעה הפרו־משפטית הופחת בהדרגה במשך תקופת המעבר שנקבעה.¹\n\nהמשך חקיקתי והשלכות מעשיות: בעקבות הפסיקה ננקטו צעדים חקיקתיים ותיקונים שהוסמכו בעקבותיה — ההצעה לתיקון נחקקה במענה להחלטת בית המשפט במטרה למנוע הארכות נוספות של חוק טל כפי שנפסק בתיק. בנוסף דו\"חות ובחינה מנהלתית/ביקורתית העוסקים ביישום ובהשפעות ההסדר שימשו כבסיס עובדתי לדיון הציבורי והפוליטי לאחר הפסיקה.⁴\n\nהערה שיטתית לגבי היקף התמיכה המקורית: הסמכות העיקרית למשפט עצמו מופיעה בפסק הדין שנמסר בבג\"ץ 6298/07, אך חלק מן המקורות המספקים הקשר ועיון מדיניות הם דיווחים והצעות חקיקה המשקפים את ההמשך הפרלמנטרי והמינהלי; לכן ניסוח חלק מהטענות נעשה בזהירות לפי חומר התמיכה הזמין.⁵",
   "footnotes": [
     {
       "url": null,
-      "title": "החלטה בתיק בג\"ץ 6298/07; מסמך מאתר אתר ממשלתי (gov.il); בג\"ץ 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
+      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות; הצעות חוק – קובץ PDF (כנסת ישראל)",
       "number": 1,
       "sources": [
-        {
-          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
-          "title": "החלטה בתיק בג\"ץ 6298/07",
-          "source_type": "other"
-        },
-        {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
-          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
-          "source_type": "supreme_court_il"
-        },
-        {
-          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%D7%A5-'%D7%97%D7%95%D7%A7-%D7%98%D7%9C'-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
-          "title": "בג\"ץ 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
-          "source_type": "other"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": null,
-      "title": "מסמך מאתר אתר ממשלתי (gov.il); החלטה בתיק בג\"ץ 6298/07; תיקון חוק הגיוס – שילוב תלמידי ישיבות",
-      "number": 2,
-      "sources": [
-        {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
-          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
-          "source_type": "supreme_court_il"
-        },
-        {
-          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
-          "title": "החלטה בתיק בג\"ץ 6298/07",
-          "source_type": "other"
-        },
         {
           "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
           "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
           "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/20/law/20_ls1_308913.pdf",
+          "title": "הצעות חוק – קובץ PDF (כנסת ישראל)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+          "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": null,
+      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות; יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים; שוויון וזכויות כלכליות וחברתיות – הילכו שניים בנפרד?",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
+          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/465-36.aspx",
+          "title": "יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים",
+          "source_type": "government_report"
+        },
+        {
+          "url": "https://openscholar.huji.ac.il/minervacenter/blog/elzam",
+          "title": "שוויון וזכויות כלכליות וחברתיות – הילכו שניים בנפרד?",
+          "source_type": "other"
         }
       ],
       "source_type": "compound"
     },
     {
       "url": null,
-      "title": "שיקול דעת שיפוטי: העידן השלישי; שיקול דעת שיפוטי : העידן השלישי; החלטה בתיק בג\"ץ 6298/07",
-      "number": 3,
+      "title": "הצעות חוק – קובץ PDF (כנסת ישראל); יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים",
+      "number": 4,
       "sources": [
         {
-          "url": "https://lawjournal.huji.ac.il/article/12/1365",
-          "title": "שיקול דעת שיפוטי: העידן השלישי",
-          "source_type": "journal_article"
+          "url": "https://fs.knesset.gov.il/20/law/20_ls1_308913.pdf",
+          "title": "הצעות חוק – קובץ PDF (כנסת ישראל)",
+          "source_type": "other"
         },
         {
-          "url": "https://lawjournal.huji.ac.il/article/12/232",
-          "title": "שיקול דעת שיפוטי : העידן השלישי",
-          "source_type": "journal_article"
-        },
+          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/465-36.aspx",
+          "title": "יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים",
+          "source_type": "government_report"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "החלטה בתיק בג\"ץ 6298/07; שוויון וזכויות כלכליות וחברתיות – הילכו שניים בנפרד?",
+      "number": 5,
+      "sources": [
         {
           "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
           "title": "החלטה בתיק בג\"ץ 6298/07",
+          "source_type": "other"
+        },
+        {
+          "url": "https://openscholar.huji.ac.il/minervacenter/blog/elzam",
+          "title": "שוויון וזכויות כלכליות וחברתיות – הילכו שניים בנפרד?",
           "source_type": "other"
         }
       ],
@@ -99,52 +120,44 @@
   ],
   "used_sources": [
     {
-      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
-      "title": "החלטה בתיק בג\"ץ 6298/07",
-      "number": 1,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "db4d5c01-6045-47bd-a947-c4e252f79c81"
-    },
-    {
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
-      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
-      "number": 1,
-      "origin": "local_db",
-      "source_type": "supreme_court_il",
-      "candidate_id": "973d26fe-548c-4b1c-ad2a-c5d3a81c37ea"
-    },
-    {
-      "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%D7%A5-'%D7%97%D7%95%D7%A7-%D7%98%D7%9C'-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
-      "title": "בג\"ץ 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
-      "number": 1,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "067e0c05-fe85-40bb-b950-ce0e7b5f01ff"
-    },
-    {
       "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
       "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f53576f2-9f30-4754-bc62-8c1aae12c420"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/20/law/20_ls1_308913.pdf",
+      "title": "הצעות חוק – קובץ PDF (כנסת ישראל)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "670b93dd-b1a5-47a9-81f8-fe4c35692606"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+      "title": "החלטה בתיק בג\"ץ 6298/07",
       "number": 2,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "5ed106d6-7a42-4047-9fb6-07dc846873a5"
+      "candidate_id": "b7eec66a-7096-4ddd-8ef0-d913a4a61aa3"
     },
     {
-      "url": "https://lawjournal.huji.ac.il/article/12/1365",
-      "title": "שיקול דעת שיפוטי: העידן השלישי",
+      "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/465-36.aspx",
+      "title": "יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים",
       "number": 3,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "dc0931dc-76e6-4651-bc43-37f139c23795"
+      "origin": "perplexity",
+      "source_type": "government_report",
+      "candidate_id": "9c6c9d45-6639-42c5-bb6e-1f470552b231"
     },
     {
-      "url": "https://lawjournal.huji.ac.il/article/12/232",
-      "title": "שיקול דעת שיפוטי : העידן השלישי",
+      "url": "https://openscholar.huji.ac.il/minervacenter/blog/elzam",
+      "title": "שוויון וזכויות כלכליות וחברתיות – הילכו שניים בנפרד?",
       "number": 3,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "753d3b71-d4ae-4cf6-bb8e-07804f8588f7"
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "ac5cf156-ea0a-4e3c-bf24-0465bc6018ab"
     }
   ]
 }

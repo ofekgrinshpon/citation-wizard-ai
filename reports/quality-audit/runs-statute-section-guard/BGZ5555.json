@@ -2,14 +2,14 @@
   "id": "BGZ5555",
   "category": "case_holding_smoke",
   "query": "מה נקבע בבג\"ץ 5555/18 בעניין חוק-יסוד: הלאום? נסח את ההלכה שנפסקה.",
-  "run_id": "8372805a-d4ab-4d3d-8057-10d410892388",
+  "run_id": "37a77a58-221a-4144-b5e3-fa93d24bafb9",
   "ok": true,
-  "total_ms": 155247,
+  "total_ms": 260451,
   "answer_intent": {
     "output_shape": "case_holding"
   },
   "lead_ref": {
-    "ref": "s6",
+    "ref": "s4",
     "shape": "case_holding",
     "reason": "required_anchor_case"
   },
@@ -25,17 +25,22 @@
       "verified_support": "partial"
     }
   ],
-  "answer": "**הלכת בג\"ץ 5555/18**\n\nבג\"ץ הכיר באופן עקרוני בסמכותו לבחון חוקי יסוד במקרים יוצאי דופן של \"שימוש לרעה בסמכות המכוננת\", אך ציין כי סף ההתערבות גבוה ובמקרה הנדון לא נבחן חציית סף זה.¹\n\nבית המשפט דחה את העתירות וקבע כי לחוק־היסוד אופי הצהרי ונורמטיבי; מימוש משמעויותיו יתבצע באמצעות חקיקה והפעלת סמכויות מנהליות קונקרטיות, ושאלות על פגיעה בזכויות ייבחנו בביקורת שיפוטית פרטנית בעת הצורך.²\n\nלגבי הוראות השפה קבעה ההכרעה כי עיגון העברית כשפה העיקרית אינו מטיל בהכרח הפחתה בהעמדה הקיימת של השפה הערבית; פרשנות ויישום ההוראות ייעשו באופן שישמר שימוש בערבית בשירות הציבורי ובהגנות הקיימות להן.³\n\nמן הדברים בפסק הדין עולה בזהירות כי אין בפסק הדין קביעה לפיה חוק־היסוד שולל מראש את עקרון השוויון; על החקיקה לפרש ולהתממש בהתחשבות בעקרונות יסוד אחרים, ובכלל זאת חוק־יסוד: כבוד האדם וחירותו, אם כי לא נקבעה כלליות מחייבת באשר לאופן יישום ההרמוניה הזו.⁴\n\nסיכומו של דבר: ההלכה שנאחזה בפסק הדין היא כי קיימת סמכות שיפוטית מצומצמת לבחינת חוקי יסוד במצבים קיצוניים, שהסף להתערבות גבוה, ושהחוק מפורש בעיקרו כהצהרתי — יישומו והתאמתו לעקרונות השוויון והזכויות ייבחנו במקרים פרטניים; העתירות נדחו.²",
+  "answer": "**ההלכה בבג\"ץ 5555/18**\n\nבבג\"ץ 5555/18 נדחו העתירות שעתרו לביטול חוק‑יסוד: \"ישראל — מדינת הלאום של העם היהודי\". בית המשפט קבע, בזהירות ובנסיבות הדיון, כי גם בהנחה שיש לבית המשפט סמכות לבחון חוקים‑יסוד במסגרת דוקטרינת 'שימוש לרעה בסמכות המכוננת', לא הוצג במקרה זה משקל ראייתי העומד ברף המחמיר הנדרש להורות על בטלותו של חוק‑יסוד.¹\n\nמהפסיקה עולה בזהירות כי יש לפרש את חוק‑היסוד בהרמוניה עם שאר חוקי‑היסוד ועם הערכים הדמוקרטיים של מערכת המשפט; פירוש זה מצמצם טווח של פרשנויות שעשויות לפגוע בזכויות הפרט, ובכללו עקרון השוויון, כך שפרשנות החוק לא תעמוד בניגוד לעקרונות היסוד שנקבעו בשאר חוקי‑היסוד.²\n\nבהתייחס למעמד השפה הערבית ציין בית המשפט באופן המקובל להסקנות בזהירות כי הורדת מעמדה ל'מיוחד' לפי נוסח חוק‑היסוד אינה מסמיכה פגיעה מהותית בזכויות שימוש ובנגישות בערבית במרחב הציבורי; על הרשויות לפעול לשימור היקף ההסדרים והשירותים בשפה הערבית בהתאם לדין הכללי.²\n\nלגבי סעיף ההתיישבות (סעיף 7): מהפסיקה ניתן להצביע בזהירות על עיקרון שלפיו קידום התיישבות יהודית כמטרה ציבורית לא מהווה היתר להפליה או להדרה של לא‑יהודים; הוראת הסעיף חלה בכפיפות לעקרון השוויון ולכללים הפסיקתיים האוסרים הקצאה מפלה.³\n\nסיכום תמציתי: בג\"ץ דחה את העתירות ולא הורה על ביטול החוק; יחד עם זאת הפסיקה נטתה לפרש את הוראות חוק‑היסוד באופן שמאזן בין עקרון הלאום לבין שמירת זכויות יסוד ועקרון השוויון, והותירה אחריות לרשויות ולמערכת המשפט להבטיח יישום שאינו מפלה.⁴",
   "footnotes": [
     {
       "url": null,
-      "title": "בג\"ץ 5555/18; בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+      "title": "בג\"ץ 5555/18; תקציר בג\"ץ 5555-18; בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
       "number": 1,
       "sources": [
         {
           "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
           "title": "בג\"ץ 5555/18",
-          "source_type": "caselaw"
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555-18",
+          "source_type": "other"
         },
         {
           "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
@@ -47,17 +52,17 @@
     },
     {
       "url": null,
-      "title": "בג\"ץ 5555/18; תקציר בג\"ץ 5555-18",
+      "title": "בג\"ץ 5555/18; חוק-יסוד: ישראל – מדינת הלאום של העם היהודי",
       "number": 2,
       "sources": [
         {
           "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
           "title": "בג\"ץ 5555/18",
-          "source_type": "caselaw"
+          "source_type": "other"
         },
         {
-          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
-          "title": "תקציר בג\"ץ 5555-18",
+          "url": "https://fs.knesset.gov.il/20/law/20_lst_313350.docx",
+          "title": "חוק-יסוד: ישראל – מדינת הלאום של העם היהודי",
           "source_type": "other"
         }
       ],
@@ -65,40 +70,40 @@
     },
     {
       "url": null,
-      "title": "תקציר בג\"ץ 5555-18; חוק-יסוד: ישראל מדינת הלאום של העם היהודי",
+      "title": "בג\"ץ 5555/18; חוק יסוד: ישראל – מדינת הלאום של העם היהודי; בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
       "number": 3,
       "sources": [
         {
-          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
-          "title": "תקציר בג\"ץ 5555-18",
+          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+          "title": "בג\"ץ 5555/18",
           "source_type": "other"
         },
         {
           "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod18.pdf",
-          "title": "חוק-יסוד: ישראל מדינת הלאום של העם היהודי",
+          "title": "חוק יסוד: ישראל – מדינת הלאום של העם היהודי",
           "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2",
+          "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+          "source_type": "supreme_court_il"
         }
       ],
       "source_type": "compound"
     },
     {
       "url": null,
-      "title": "בג\"ץ 5555/18; חוק יסוד: כבוד האדם וחירותו; חוק-יסוד: ישראל מדינת הלאום של העם היהודי",
+      "title": "בג\"ץ 5555/18; תקציר בג\"ץ 5555-18",
       "number": 4,
       "sources": [
         {
           "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
           "title": "בג\"ץ 5555/18",
-          "source_type": "caselaw"
-        },
-        {
-          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
-          "title": "חוק יסוד: כבוד האדם וחירותו",
           "source_type": "other"
         },
         {
-          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod18.pdf",
-          "title": "חוק-יסוד: ישראל מדינת הלאום של העם היהודי",
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555-18",
           "source_type": "other"
         }
       ],
@@ -111,8 +116,16 @@
       "title": "בג\"ץ 5555/18",
       "number": 1,
       "origin": "perplexity",
-      "source_type": "caselaw",
-      "candidate_id": "1d512bdd-1378-4a9c-9a71-f843c68d08ee"
+      "source_type": "other",
+      "candidate_id": "71c91fde-abb0-4674-8d65-ae85e9d0c5ef"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555-18",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "0b875051-e54c-4fda-8f92-3f9a55e61afc"
     },
     {
       "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
@@ -120,31 +133,31 @@
       "number": 1,
       "origin": "local_db",
       "source_type": "caselaw",
-      "candidate_id": "1eaf95e1-a41a-4418-9ff4-41d72ebe7983"
+      "candidate_id": "f1e2278b-a17f-45d6-8e89-2aaa82c9f84f"
     },
     {
-      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
-      "title": "תקציר בג\"ץ 5555-18",
+      "url": "https://fs.knesset.gov.il/20/law/20_lst_313350.docx",
+      "title": "חוק-יסוד: ישראל – מדינת הלאום של העם היהודי",
       "number": 2,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "f441272b-dc36-4e5f-883b-b9a4febcee37"
+      "candidate_id": "06e9d5bb-fc74-44aa-9ff5-233e16ba1c3d"
     },
     {
       "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod18.pdf",
-      "title": "חוק-יסוד: ישראל מדינת הלאום של העם היהודי",
+      "title": "חוק יסוד: ישראל – מדינת הלאום של העם היהודי",
       "number": 3,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "21356719-5c4e-4995-8288-2fe120fa32a5"
+      "candidate_id": "e39f29e3-8dc4-4613-b856-4db97bd44444"
     },
     {
-      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
-      "title": "חוק יסוד: כבוד האדם וחירותו",
-      "number": 4,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "7e5cb4d1-15d5-499c-9e43-40533745b8cb"
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2",
+      "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "14d6d4af-1805-432d-ba94-d3765bcb2969"
     }
   ]
 }

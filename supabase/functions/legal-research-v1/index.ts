@@ -25,7 +25,7 @@ import {
   buildRequiredAnchorQueries,
   buildStatuteSectionAnchors,
   computeRequiredAnchorStatuses,
-  pickMissingAnchors,
+  pickAnchorsRequiringDrafterLimitation,
   resolveRequiredAnchors,
 } from "./stages/requiredAnchors.ts";
 import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
@@ -647,7 +647,10 @@ async function handle(req: Request): Promise<Response> {
     usedCandidateIds: new Set(),
     userDocs: attachmentResult.documents,
   });
-  const missingForCaveat = pickMissingAnchors(preDraftAnchorStatuses)
+  const missingForCaveat = pickAnchorsRequiringDrafterLimitation(
+    preDraftAnchorStatuses,
+    analyzer.answer_intent?.output_shape,
+  )
     .map((s) => ({
       description: s.description,
       is_docket: s.is_docket_anchor,
