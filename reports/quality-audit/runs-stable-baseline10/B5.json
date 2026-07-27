@@ -1,0 +1,40 @@
+{
+  "id": "B5",
+  "category": "analysis",
+  "query": "מהי דוקטרינת השימוש לרעה בסמכות המכוננת במשפט החוקתי הישראלי, וכיצד היא התפתחה בפסיקה המרכזית של בית המשפט העליון?",
+  "run_id": "63e42a55-094a-4e9a-a415-29bc47a9b47f",
+  "ok": false,
+  "total_ms": 97173,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": null,
+  "deterministic_branch": null,
+  "limitation_flags": {
+    "missing_docket": false,
+    "statute_section": false,
+    "canonical_quote": false,
+    "missing_anchor_caveat_injected": false
+  },
+  "missing_anchor_descriptions": [],
+  "anchor_statuses": [],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 15,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 14,
+      "false": 1
+    }
+  },
+  "verifier_labels": null,
+  "used_sources_count": 0,
+  "used_sources": [],
+  "footnotes_count": 0,
+  "footnotes": [],
+  "quality_warnings": [],
+  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+}

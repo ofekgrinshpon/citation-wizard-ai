@@ -1,0 +1,40 @@
+{
+  "id": "B4",
+  "category": "statute_section",
+  "query": "מה קובע סעיף 12 לחוק החוזים (חלק כללי), התשל\"ג-1973 בעניין תום לב במשא ומתן, ומה הסעד?",
+  "run_id": "ad009cdd-1e72-456f-a68f-81375362f5d7",
+  "ok": false,
+  "total_ms": 102729,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": null,
+  "deterministic_branch": null,
+  "limitation_flags": {
+    "missing_docket": false,
+    "statute_section": false,
+    "canonical_quote": false,
+    "missing_anchor_caveat_injected": false
+  },
+  "missing_anchor_descriptions": [],
+  "anchor_statuses": [],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 17,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 17,
+      "false": 0
+    }
+  },
+  "verifier_labels": null,
+  "used_sources_count": 0,
+  "used_sources": [],
+  "footnotes_count": 0,
+  "footnotes": [],
+  "quality_warnings": [],
+  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+}

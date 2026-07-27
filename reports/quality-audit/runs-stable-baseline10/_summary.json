@@ -1,0 +1,429 @@
+[
+  {
+    "id": "B1",
+    "category": "case_holding",
+    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי ביחס למעמדם של חוקי היסוד ולסמכות הביקורת השיפוטית על חקיקה ראשית?",
+    "run_id": "8c8b0645-c445-47ae-a266-4be6580f1efa",
+    "ok": false,
+    "total_ms": 117282,
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "lead_ref": null,
+    "deterministic_branch": null,
+    "limitation_flags": {
+      "missing_docket": false,
+      "statute_section": false,
+      "canonical_quote": false,
+      "missing_anchor_caveat_injected": false
+    },
+    "missing_anchor_descriptions": [],
+    "anchor_statuses": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 17,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 17,
+        "false": 0
+      }
+    },
+    "verifier_labels": null,
+    "used_sources_count": 0,
+    "used_sources": [],
+    "footnotes_count": 0,
+    "footnotes": [],
+    "quality_warnings": [],
+    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  },
+  {
+    "id": "B2",
+    "category": "case_holding",
+    "query": "מה נקבע בבג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל ביחס להקצאת קרקעות למגורים על בסיס לאום?",
+    "run_id": "d744dcfe-2aca-40fa-a10f-b0a57290dd09",
+    "ok": false,
+    "total_ms": 100396,
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "lead_ref": null,
+    "deterministic_branch": null,
+    "limitation_flags": {
+      "missing_docket": false,
+      "statute_section": false,
+      "canonical_quote": false,
+      "missing_anchor_caveat_injected": false
+    },
+    "missing_anchor_descriptions": [],
+    "anchor_statuses": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 24,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 24,
+        "false": 0
+      }
+    },
+    "verifier_labels": null,
+    "used_sources_count": 0,
+    "used_sources": [],
+    "footnotes_count": 0,
+    "footnotes": [],
+    "quality_warnings": [],
+    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  },
+  {
+    "id": "B3",
+    "category": "statute_section",
+    "query": "מה קובע סעיף 6 לחוק החברות, התשנ\"ט-1999 בעניין הרמת מסך ומהם התנאים להפעלת הסמכות?",
+    "run_id": "83bd40fd-b3de-4b7f-8d9a-62e710138f06",
+    "ok": false,
+    "total_ms": 132163,
+    "answer_intent": {
+      "output_shape": "list"
+    },
+    "lead_ref": null,
+    "deterministic_branch": null,
+    "limitation_flags": {
+      "missing_docket": false,
+      "statute_section": false,
+      "canonical_quote": false,
+      "missing_anchor_caveat_injected": false
+    },
+    "missing_anchor_descriptions": [],
+    "anchor_statuses": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 1,
+        "partial": 8,
+        "unrelated": 5,
+        "tangential": 1
+      },
+      "by_role_match": {
+        "true": 15,
+        "false": 0
+      }
+    },
+    "verifier_labels": null,
+    "used_sources_count": 0,
+    "used_sources": [],
+    "footnotes_count": 0,
+    "footnotes": [],
+    "quality_warnings": [],
+    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  },
+  {
+    "id": "B4",
+    "category": "statute_section",
+    "query": "מה קובע סעיף 12 לחוק החוזים (חלק כללי), התשל\"ג-1973 בעניין תום לב במשא ומתן, ומה הסעד?",
+    "run_id": "ad009cdd-1e72-456f-a68f-81375362f5d7",
+    "ok": false,
+    "total_ms": 102729,
+    "answer_intent": {
+      "output_shape": "analysis"
+    },
+    "lead_ref": null,
+    "deterministic_branch": null,
+    "limitation_flags": {
+      "missing_docket": false,
+      "statute_section": false,
+      "canonical_quote": false,
+      "missing_anchor_caveat_injected": false
+    },
+    "missing_anchor_descriptions": [],
+    "anchor_statuses": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 17,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 17,
+        "false": 0
+      }
+    },
+    "verifier_labels": null,
+    "used_sources_count": 0,
+    "used_sources": [],
+    "footnotes_count": 0,
+    "footnotes": [],
+    "quality_warnings": [],
+    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  },
+  {
+    "id": "B5",
+    "category": "analysis",
+    "query": "מהי דוקטרינת השימוש לרעה בסמכות המכוננת במשפט החוקתי הישראלי, וכיצד היא התפתחה בפסיקה המרכזית של בית המשפט העליון?",
+    "run_id": "63e42a55-094a-4e9a-a415-29bc47a9b47f",
+    "ok": false,
+    "total_ms": 97173,
+    "answer_intent": {
+      "output_shape": "analysis"
+    },
+    "lead_ref": null,
+    "deterministic_branch": null,
+    "limitation_flags": {
+      "missing_docket": false,
+      "statute_section": false,
+      "canonical_quote": false,
+      "missing_anchor_caveat_injected": false
+    },
+    "missing_anchor_descriptions": [],
+    "anchor_statuses": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 15,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 14,
+        "false": 1
+      }
+    },
+    "verifier_labels": null,
+    "used_sources_count": 0,
+    "used_sources": [],
+    "footnotes_count": 0,
+    "footnotes": [],
+    "quality_warnings": [],
+    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  },
+  {
+    "id": "B6",
+    "category": "analysis",
+    "query": "מהי דוקטרינת הביצוע בקירוב (cy-près) במשפט הישראלי, וכיצד היא מיושמת בהקשר של הקדשות ונאמנויות ציבוריות?",
+    "run_id": "9bd316e9-5481-4793-98b8-aa05b4787017",
+    "ok": false,
+    "total_ms": 125499,
+    "answer_intent": {
+      "output_shape": "analysis"
+    },
+    "lead_ref": null,
+    "deterministic_branch": null,
+    "limitation_flags": {
+      "missing_docket": false,
+      "statute_section": false,
+      "canonical_quote": false,
+      "missing_anchor_caveat_injected": false
+    },
+    "missing_anchor_descriptions": [],
+    "anchor_statuses": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 22,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 17,
+        "false": 5
+      }
+    },
+    "verifier_labels": null,
+    "used_sources_count": 0,
+    "used_sources": [],
+    "footnotes_count": 0,
+    "footnotes": [],
+    "quality_warnings": [],
+    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  },
+  {
+    "id": "B7",
+    "category": "missing_docket",
+    "query": "מה נקבע בת\"א 98765-04-22 חברת אלפא נ' חברת בטא ביחס לאחריות מנהלים בעת חדלות פירעון?",
+    "run_id": "b53297a2-ff08-4092-b09b-54892435e66e",
+    "ok": false,
+    "total_ms": 130524,
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "lead_ref": null,
+    "deterministic_branch": null,
+    "limitation_flags": {
+      "missing_docket": false,
+      "statute_section": false,
+      "canonical_quote": false,
+      "missing_anchor_caveat_injected": false
+    },
+    "missing_anchor_descriptions": [],
+    "anchor_statuses": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 17,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 17,
+        "false": 0
+      }
+    },
+    "verifier_labels": null,
+    "used_sources_count": 0,
+    "used_sources": [],
+    "footnotes_count": 0,
+    "footnotes": [],
+    "quality_warnings": [],
+    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  },
+  {
+    "id": "B8",
+    "category": "quote",
+    "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+    "run_id": "8f2f3ad9-1741-4fbe-8222-b7cd064909b6",
+    "ok": true,
+    "total_ms": 150694,
+    "answer_intent": {
+      "output_shape": "quote"
+    },
+    "lead_ref": {
+      "ref": "r_basic_law_dignity-s1",
+      "shape": "quote",
+      "reason": "canonical_registry_statute_section"
+    },
+    "deterministic_branch": "canonical_quote_registry",
+    "limitation_flags": {
+      "missing_docket": false,
+      "statute_section": false,
+      "canonical_quote": true,
+      "missing_anchor_caveat_injected": false
+    },
+    "missing_anchor_descriptions": [],
+    "anchor_statuses": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 5,
+        "partial": 7,
+        "unrelated": 4,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 16,
+        "false": 0
+      }
+    },
+    "verifier_labels": null,
+    "used_sources_count": 1,
+    "used_sources": [
+      {
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+        "number": 1,
+        "origin": "local_db",
+        "source_type": "israeli_law",
+        "candidate_id": "canonical:basic_law_dignity-s1"
+      }
+    ],
+    "footnotes_count": 1,
+    "footnotes": [
+      {
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "israeli_law"
+      }
+    ],
+    "quality_warnings": [],
+    "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹"
+  },
+  {
+    "id": "B9",
+    "category": "practical",
+    "query": "מהם הצעדים המשפטיים שעומדים לרשות שוכר דירה כאשר המשכיר מסרב להחזיר את הפיקדון בתום תקופת השכירות, וכיצד מוכיחים נזק?",
+    "run_id": "5c8045a7-9959-4c2c-865f-134398efa18c",
+    "ok": false,
+    "total_ms": 97550,
+    "answer_intent": {
+      "output_shape": "list"
+    },
+    "lead_ref": null,
+    "deterministic_branch": null,
+    "limitation_flags": {
+      "missing_docket": false,
+      "statute_section": false,
+      "canonical_quote": false,
+      "missing_anchor_caveat_injected": false
+    },
+    "missing_anchor_descriptions": [],
+    "anchor_statuses": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 12,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 12,
+        "false": 0
+      }
+    },
+    "verifier_labels": null,
+    "used_sources_count": 0,
+    "used_sources": [],
+    "footnotes_count": 0,
+    "footnotes": [],
+    "quality_warnings": [],
+    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  },
+  {
+    "id": "B10",
+    "category": "practical",
+    "query": "מהם המבחנים המרכזיים שנקבעו בפסיקה לסיווג אדם כעובד ולא כקבלן עצמאי, ומה המשמעות של הסיווג לעניין זכויות סוציאליות?",
+    "run_id": "a4920a79-c027-4e25-b3bf-44c3d103c86d",
+    "ok": false,
+    "total_ms": 86524,
+    "answer_intent": {
+      "output_shape": "analysis"
+    },
+    "lead_ref": null,
+    "deterministic_branch": null,
+    "limitation_flags": {
+      "missing_docket": false,
+      "statute_section": false,
+      "canonical_quote": false,
+      "missing_anchor_caveat_injected": false
+    },
+    "missing_anchor_descriptions": [],
+    "anchor_statuses": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 19,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 19,
+        "false": 0
+      }
+    },
+    "verifier_labels": null,
+    "used_sources_count": 0,
+    "used_sources": [],
+    "footnotes_count": 0,
+    "footnotes": [],
+    "quality_warnings": [],
+    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  }
+]
