@@ -830,7 +830,17 @@ export async function runDrafterV2(
   if (docketLimitationActive) {
     const t0 = Date.now();
     const draft = buildDocketLimitationDraft(missingAnchors);
-    const validation = validateStructuredDraft(draft, allowedRefs);
+    const validationRaw = validateStructuredDraft(draft, allowedRefs);
+    const validation = validationRaw.report.errors.every((e) => e === "no cited segments")
+      ? {
+          draft,
+          report: {
+            ...validationRaw.report,
+            ok: true,
+            errors: [],
+          },
+        }
+      : validationRaw;
     const built = validation.draft
       ? buildFootnotedAnswer(validation.draft, inputSources)
       : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined };
