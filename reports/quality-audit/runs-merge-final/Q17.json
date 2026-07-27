@@ -1,0 +1,234 @@
+{
+  "id": "Q17",
+  "category": "overclaim_trap",
+  "query": "האם בית משפט ישראלי יכיר תמיד בהסכם ממון שנחתם לפני נישואין כמחייב?",
+  "run_id": "48a49473-7a5f-404d-8e74-7432e4db8250",
+  "ok": true,
+  "total_ms": 187981,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "anchor_status": {
+    "direct": 0,
+    "partial": 0,
+    "missing": 0,
+    "entries": []
+  },
+  "missing_required_anchors": null,
+  "answer": "**מענה קצר**\n\nלא — בית המשפט הישראלי לא יכיר תמיד בהסכם ממון שנחתם לפני הנישואין כמחייב ללא בדיקה. הסכם ממון יכול להיות מוכר ולאכיפי, אך ההכרה תלויה בקיום דרישות פורמליות ובעמידה בתנאים מהותיים וכן בפיקוח שיפוטי על כשירות ההסכמה ותאימות להסדרים ציבוריים; מכללי החוק ושלבי אישור מנהליים וקביעות שיפוטיות עולה זאת בזהירות.¹\n\n**דרישות פורמליות ותנאים מהותיים**\n\nיש דרישות פורמליות ברורות המוטלות על הסכמי ממון טרום‑נישואין: העדפה והוראה בעניין זה מופיעים במסמכים חקיקתיים ומנהליים המחייבים בדרך כלל כתב ואמצעי אישור מסוימים כדי להקנות להסכם תוקף פורמלי.²\n\nמלבד הדרישות הטכניות, בית המשפט יבחן תנאים מהותיים לפני הכרעה באכיפת ההסכם — בראש ובראשונה כשירות ההסכמה (היעדר כפייה או הונאה) והימצאות גילוי מהותי של מצגים כלכליים; דוקטרינת דיני החוזים בתחום כפייה והטעיה ניתנת להחלה באופן אנלוגי על הסכמי ממון.³\n\n**מתי ניתן לדחות, לבטל או להתעלם מהסכם ממון**\n\nבית המשפט עלול לדחות או לאכוף חלקית הסכם ממון כאשר עולה כי נחתם בגלל כפייה, הונאה, טעייה מהותית, או שבהשקפת בית המשפט ההסכם פוגע בצורה קיצונית או בלתי סבירה בזכויות אחד הצדדים — וזאת בכפוף לבחינה שיפוטית של נסיבות החתימה ותוצאתה המעשית.⁴\n\nבנוסף, סעדים או הסדרים שנוגעים לצדדים שלישיים או לזכויות הציבור—ובפרט עניינים הנוגעים לילדים—יכולים להצדיק פסילת חלק מההסכם או הגבלת אכיפתו מתוך שיקולים של טובת הקטין ומדיניות ציבורית.⁵\n\n**מזונות ילדים וזכויות ציבוריות בלתי ניתנות לויתור**\n\nקביעה ספרותית וחקיקתית ברורה היא כי חובת מזונות ההורים כלפי קטינים לא נפקעת בהסכמה פרטית בין ההורים; הוראות הדין המחייבות מזונות קטינים עומדות מעל להסכמות אזרחיות פרטיות והינן ברות אכיפה על ידי בתי המשפט.⁶\n\nלכן גם כאשר קיים הסכם ממון שנראה תקין פורמלית, בית המשפט לענייני משפחה רשאי לקבוע או לשנות מזונות לפי צורכי הקטין ולפי שיקוליו, וכל נתון אמפירי או תיאורטי על התערבות שיפוטית בענייני מזונות תומך בזהירות בהיקף המעורבות.⁷\n\nלסיכום מעשי: הסכמי ממון טרום‑נישואין מוכרים ויכולים להיות מחייבים אם ממלאים את הדרישות הפורמליות ואינם קשורים בכפייה, הונאה או פגיעה בזכויות ציבוריות; עם זאת, אין בהם חסינות מוחלטת מפני בדיקה שיפוטית — ובמיוחד לא בכל הנוגע לזכויות ולמזונות קטינים.",
+  "footnotes": [
+    {
+      "url": "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/99-99.pdf",
+      "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973; בקשה לאישור הסכם ממון; מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/99-99.pdf",
+          "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/policy/types-of-procedures/he/FinancialAgreement.pdf",
+          "title": "בקשה לאישור הסכם ממון",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_15_9474-03.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/99-99.pdf",
+      "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973; בקשה לאישור הסכם ממון",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/99-99.pdf",
+          "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/policy/types-of-procedures/he/FinancialAgreement.pdf",
+          "title": "בקשה לאישור הסכם ממון",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_15_9474-03.pdf&type=2",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); נילי כהן, הסכמה וחוזה הכרוכים בהולדה",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_15_9474-03.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://en-law.tau.ac.il/sites/law.english.tau.ac.il/files/media_server/Law/faculty%20members/Nili%20Cohen/10-331-377.pdf",
+          "title": "נילי כהן, הסכמה וחוזה הכרוכים בהולדה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_15_9474-03.pdf&type=2",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); איילת בלכר-פריגת, על זכויות, גבולות ומשפחה",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_15_9474-03.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/law_lgbt/%D7%90%D7%99%D7%99%D7%9C%D7%AA_%D7%91%D7%9C%D7%9B%D7%A8-%D7%A4%D7%A8%D7%99%D7%92%D7%AA_-_%D7%A2%D7%9C_%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA,_%D7%92%D7%91%D7%95%D7%9C%D7%95%D7%AA_%D7%95%D7%9E%D7%A9%D7%A4%D7%97%D7ה_0.pdf",
+          "title": "איילת בלכר-פריגת, על זכויות, גבולות ומשפחה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/71532.htm",
+      "title": "חוק לתיקון דיני המשפחה (מזונות), תשי\"ט-1959; תמר ברודו-בהט, התפיסה המורכבת של משפחה ושל הזכות לפרטיות בתוך המשפחה",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/71532.htm",
+          "title": "חוק לתיקון דיני המשפחה (מזונות), תשי\"ט-1959",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Law_Society_Culture/books/Privacy_and_Company/13%20Braudo-Bahat.pdf",
+          "title": "תמר ברודו-בהט, התפיסה המורכבת של משפחה ושל הזכות לפרטיות בתוך המשפחה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/71532.htm",
+      "title": "חוק לתיקון דיני המשפחה (מזונות), תשי\"ט-1959",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/71532.htm",
+          "title": "חוק לתיקון דיני המשפחה (מזונות), תשי\"ט-1959",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/71532.htm",
+      "title": "חוק לתיקון דיני המשפחה (מזונות), תשי\"ט-1959; משמורת ומזונות ילדים: אקטיביזם וכאוס בבתי המשפט לענייני משפחה",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/71532.htm",
+          "title": "חוק לתיקון דיני המשפחה (מזונות), תשי\"ט-1959",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/mz1",
+          "title": "משמורת ומזונות ילדים: אקטיביזם וכאוס בבתי המשפט לענייני משפחה",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/99-99.pdf",
+      "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "72c2c0a3-23c5-4970-87e6-b4c8a3ab0edf"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/policy/types-of-procedures/he/FinancialAgreement.pdf",
+      "title": "בקשה לאישור הסכם ממון",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "32b6a37c-0cdd-4c85-a565-894e48a1b09a"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_15_9474-03.pdf&type=2",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "5dba6ef2-696d-45d5-97ad-10463eaaa7cd"
+    },
+    {
+      "url": "https://en-law.tau.ac.il/sites/law.english.tau.ac.il/files/media_server/Law/faculty%20members/Nili%20Cohen/10-331-377.pdf",
+      "title": "נילי כהן, הסכמה וחוזה הכרוכים בהולדה",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "b8557bb6-9a32-48a1-8840-6bab27c451eb"
+    },
+    {
+      "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/law_lgbt/%D7%90%D7%99%D7%99%D7%9C%D7%AA_%D7%91%D7%9C%D7%9B%D7%A8-%D7%A4%D7%A8%D7%99%D7%92%D7%AA_-_%D7%A2%D7%9C_%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA,_%D7%92%D7%91%D7%95%D7%9C%D7%95%D7%AA_%D7%95%D7%9E%D7%A9%D7%A4%D7%97%D7ה_0.pdf",
+      "title": "איילת בלכר-פריגת, על זכויות, גבולות ומשפחה",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d9959303-d072-4ddc-88c0-fc3e1088b885"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/71532.htm",
+      "title": "חוק לתיקון דיני המשפחה (מזונות), תשי\"ט-1959",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "88d7ddf6-5329-4d14-b8ab-4a8fcabeebe6"
+    },
+    {
+      "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Law_Society_Culture/books/Privacy_and_Company/13%20Braudo-Bahat.pdf",
+      "title": "תמר ברודו-בהט, התפיסה המורכבת של משפחה ושל הזכות לפרטיות בתוך המשפחה",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "1a659e9f-4849-4d14-bd9c-7a248bab7f2f"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/mz1",
+      "title": "משמורת ומזונות ילדים: אקטיביזם וכאוס בבתי המשפט לענייני משפחה",
+      "number": 7,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "61f5cecb-b258-4e06-9180-5bb9d953f1f2"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 1,
+      "partial": 8,
+      "unrelated": 3,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 11,
+      "false": 1
+    }
+  }
+}

@@ -1,0 +1,306 @@
+{
+  "id": "Q08",
+  "category": "mandate_ordinance",
+  "query": "מה מעמדה של פקודת המשטרה [נוסח חדש] התשל\"א-1971 ביחס לפקודת המשטרה המנדטורית משנת 1926, ומהי משמעות ההוראה בדבר המשכיות?",
+  "run_id": "a5c35654-159f-4a6a-b389-7fce9660a890",
+  "ok": true,
+  "total_ms": 279473,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "anchor_status": {
+    "direct": 0,
+    "partial": 0,
+    "missing": 0,
+    "entries": []
+  },
+  "missing_required_anchors": null,
+  "answer": "**מענה קצר**\n\nפקודת המשטרה (נוסח חדש), תשל\"א–1971, אומצה כנוסח חדש שהופך לטקסט המחייב שבו מסדירים את סמכויות המשטרה במקום הנוסח המנדטורי; עם זאת, שאלת המשכיות התקנות, המינויים וההליכים שנוצרו לפי פקודת 1926 נתונה למנגנון המשכיות שנקבע בפקודת סדרי השלטון והמשפט ובהוראות הפרשנות, ולכן נדרשת בחינה עניינית של כל סעד או הוראה שהועברו מהמקור הישן.\n\n**האם הנוסח החדש מהווה החלפה ובאיזה היקף (C1)**\n\nעל-פי הדו\"ח הפרלמנטרי והטקסטים הרשמיים, הנוסח החדש אושר כהצעת \"נוסח חדש\" ובאמצעות מנגנון סעיף 16 לפקודת סדרי השלטון והמשפט הוא הוכרז כטקסט מחייב של פקודת המשטרה; ביטוי זה בשפה החוקית עושה את נוסח תשל\"א ל'הטקסט הרשמי' שמכתיב את הוראות המשטרה כיום.¹\n\nאולם מעמד זה אינו מובן כאוטומטי שלילת כל השפעה של הטקסט המנדטורי בכל התחומים: פקודת סדרי השלטון והמשפט שומרת על המשפט שהיה קיים ערב הקמת המדינה כל עוד אין בו סתירה לפקודה החדשה או לחוקים שבאו לאחריה, ולכן יש לבחון אילו הוראות ישנות נשמרות מפאת התאמה ומהי המידה שבה הוחלפו או בוטלו במפורש.²\n\n**משמעות הוראת 'המשכיות' בנוסח חדש (C2)**\n\nהוראת המשכיות של מנגנון הנוסח החדש מבקשת להבטיח כי תקנות, צווים, מינויים והליכי מינהל שנעשו לפי החקיקה הישנה לא ייפלו אוטומטית לידיים ריקות; מטרתה היא שמצב רגולטורי שעבד ימשיך לתפקד עד כמה שהדבר אפשרי מבחינה חוקית, אלא אם נשקפה סתירה או בוטל במפורש.³\n\nפקודת הפרשנות וחוקי הפרשנות הרלוונטיים מוסיפים כללים לפרשנות המשכיות: הסמכות ליתן תקנות ניתנת גם לתיקון וביטול, ותקנות או מינויים שנעשו לפי חיקוק קודם נתונות לשימור תוקפן מבחינת תחולה ותחילת תוקף אלא אם נקבע אחרת באופן מפורש או שישנו קונפליקט מהותי עם הוראה חדשה.⁴\n\n**השלכות מעשיות על הליכים שוטפים (C3)**\n\nבענייני עבירות פליליות — הנהוג בעקרון הבסיסי של אי־רטרואקטיביות: עבירות שבוצעו לפני כניסת הנוסח החדש יישפטו לפי הדין שהיה קיים בעת ביצוע המעשים, ואילו השינוי בנוסח אינו מהווה רטרואקטיבית הרחבת אחריות פלילית; פקודת סדרי השלטון והפרשנות מספקות את המסגרת לכך.⁵\n\nלגבי צווים מנהליים ותקנות — רבות מהתקנות שהותקנו מכוח פקודת המשטרה מ-1926 המשיכו להתקיים בפועל לאחר אימוץ הנוסח החדש כל עוד הן לא סותרות את ההוראות החדשות או בוטלו מפורשות; קיימות דוגמאות של תקנות משנות השלושים שממשיכות להופיע במסגרת המשפטית עד לבחינה או ביטול.⁶\n\nמינויי שוטרים וסמכויות אישיות — מינויי עבר שנעשו לפי הפקודה הישנה יישארו תקפים בדרך כלל כל עוד אינם סותרים הוראה מפורשת בנוסח החדש או הוראת תחילה הקובעת אחרת; נוסח הפקודה החדשה כולל הוראות מינהליות ומסגרת סמכויות שיש לבחון כדי לקבוע אם מינוי מסוים עומד בדרישות הנוכחיות.⁷\n\n**מגבלות המשכיות ועקרונות פרשניים (C4)**\n\nכאשר קיימת סתירה ישירה בין הוראה מפורשת בנוסח החדש לבין תקנה משנית מנדטורית, העיקרון הוא שהחוק או הפקודה החדשה גוברים על הדין הישן במידה שהיא חורגת לאותו תחום באופן מפורש או מהותי; סעיף 11 בפקודת סדרי השלטון והמשפט מקנה עדיפות לחקיקה חדשה במקרה של סתירה.⁸\n\nמעבר לדטרמיניזם הטקסטואלי, קיימים גם גבולות שיפוטיים: בית המשפט העליון שומר על סמכותו לבחון הלכות, התאמה לעקרונות יסוד וזכויות אדם, ולכתוב סייגים פרשניים או להורות על ביטול שיפוטי של הוראה שלדעתו חורגת מסמכותה או פוגעת בזכויות; הפסיקה מתייחסת למקרים בהם נדרש איזון זה בדיון על חלות או ביטול תקנות ישנות.⁹\n\nלסיכום מעשי: נוסח תשל\"א הוא היום הטקסט המחייב של פקודת המשטרה; הוראת המשכיות שומרת על המשכיות תקנות, צווים ומינויים מלפניו כל עוד אין סתירה מהותית או ביטול מפורש, אך בכל מקרה נדרשת בדיקה פרטנית — הן מבחינת תחולת הדין הפלילי, והן מבחינת סמכויות מנהליות ומינויי שוטרים; במחלוקת פרשנית הסמכות השיפוטית והכללים בפרשנות יכריעו.³",
+  "footnotes": [
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_1351087.pdf",
+      "title": "דו\"ח הוועדה הציבורית 'דו\"ח לחוק משטרה חדש' – רקע היסטורי וסטטוטורי; מסמך מאתר אתר הכנסת; פקודת המשטרה [נוסח חדש], תשל\"א–1971",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_1351087.pdf",
+          "title": "דו\"ח הוועדה הציבורית 'דו\"ח לחוק משטרה חדש' – רקע היסטורי וסטטוטורי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289970.PDF",
+          "title": "מסמך מאתר אתר הכנסת",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72952.htm",
+          "title": "פקודת המשטרה [נוסח חדש], תשל\"א–1971",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/73184.htm",
+      "title": "פקודת סדרי השלטון והמשפט, תש\"ח-1948",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/73184.htm",
+          "title": "פקודת סדרי השלטון והמשפט, תש\"ח-1948",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/73184.htm",
+      "title": "פקודת סדרי השלטון והמשפט, תש\"ח-1948; מסמך מאתר אתר הכנסת; חוק הפרשנות, תשמ\"א-1981",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/73184.htm",
+          "title": "פקודת סדרי השלטון והמשפט, תש\"ח-1948",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289970.PDF",
+          "title": "מסמך מאתר אתר הכנסת",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/4667.htm",
+          "title": "חוק הפרשנות, תשמ\"א-1981",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/4667.htm",
+      "title": "חוק הפרשנות, תשמ\"א-1981; פקודת הפרשנות (נוסח חדש); תקנות המשטרה (מקום המגורים)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/4667.htm",
+          "title": "חוק הפרשנות, תשמ\"א-1981",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/p197_001.htm",
+          "title": "פקודת הפרשנות (נוסח חדש)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%9E%D7%A9%D7%98%D7%A8%D7%94_(%D7%9E%D7%A7%D7%95%D7%9D_%D7%94%D7%9E%D7%92%D7%95%D7%A8%D7%99%D7%9D)",
+          "title": "תקנות המשטרה (מקום המגורים)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/73184.htm",
+      "title": "פקודת סדרי השלטון והמשפט, תש\"ח-1948; חוק הפרשנות, תשמ\"א-1981",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/73184.htm",
+          "title": "פקודת סדרי השלטון והמשפט, תש\"ח-1948",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/4667.htm",
+          "title": "חוק הפרשנות, תשמ\"א-1981",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%9E%D7%A9%D7%98%D7%A8%D7%94_(%D7%9E%D7%A7%D7%95%D7%9D_%D7%94%D7%9E%D7%92%D7%95%D7%A8%D7%99%D7%9D)",
+      "title": "תקנות המשטרה (מקום המגורים); חוק הפרשנות, תשמ\"א-1981; מסמך מאתר אתר הכנסת",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%9E%D7%A9%D7%98%D7%A8%D7%94_(%D7%9E%D7%A7%D7%95%D7%9D_%D7%94%D7%9E%D7%92%D7%95%D7%A8%D7%99%D7%9D)",
+          "title": "תקנות המשטרה (מקום המגורים)",
+          "source_type": "israeli_law"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/4667.htm",
+          "title": "חוק הפרשנות, תשמ\"א-1981",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289970.PDF",
+          "title": "מסמך מאתר אתר הכנסת",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_1392137.docx",
+      "title": "נוסח פקודת המשטרה – הוראות על שוטרים, מינוי וסמכויות; פקודת המשטרה [נוסח חדש], תשל\"א–1971; פקודת הפרשנות (נוסח חדש)",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_1392137.docx",
+          "title": "נוסח פקודת המשטרה – הוראות על שוטרים, מינוי וסמכויות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72952.htm",
+          "title": "פקודת המשטרה [נוסח חדש], תשל\"א–1971",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/p197_001.htm",
+          "title": "פקודת הפרשנות (נוסח חדש)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/73184.htm",
+      "title": "פקודת סדרי השלטון והמשפט, תש\"ח-1948; פקודת המשטרה [נוסח חדש], תשל\"א–1971",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/73184.htm",
+          "title": "פקודת סדרי השלטון והמשפט, תש\"ח-1948",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72952.htm",
+          "title": "פקודת המשטרה [נוסח חדש], תשל\"א–1971",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+      "title": "ביהמ\"ש העליון, אב\"ד, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופטת דפנה ברק ארז: פס\"ד בעתירות בעניין פיטורי ראש השב\"כ (בג\"ץ 54321-03-25); בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+          "title": "ביהמ\"ש העליון, אב\"ד, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופטת דפנה ברק ארז: פס\"ד בעתירות בעניין פיטורי ראש השב\"כ (בג\"ץ 54321-03-25)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1374-23-%d7%97%d7%90%d7%92%d7%a8-%d7%a0%d7%95%d7%a8%d7%99-%d7%9c%d7%93%d7%a8-%d7%a6%d7%95%d7%a3-%d7%a0-%d7%9e%d7%a4%d7%a7%d7%93-%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a6%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_1351087.pdf",
+      "title": "דו\"ח הוועדה הציבורית 'דו\"ח לחוק משטרה חדש' – רקע היסטורי וסטטוטורי",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "1b0c17ca-408d-4c73-9079-931b8d7d2d6a"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289970.PDF",
+      "title": "מסמך מאתר אתר הכנסת",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "72ed3385-ee72-4cd5-8b6e-480a8f078fea"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/72952.htm",
+      "title": "פקודת המשטרה [נוסח חדש], תשל\"א–1971",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "797fbdd4-9182-45ee-8986-54c58315d087"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/73184.htm",
+      "title": "פקודת סדרי השלטון והמשפט, תש\"ח-1948",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "2bfcef32-c16d-4286-b29a-d3ac2595e36b"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/4667.htm",
+      "title": "חוק הפרשנות, תשמ\"א-1981",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "2884597c-f6cb-49a1-8dbf-d6bbd745c79d"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/p197_001.htm",
+      "title": "פקודת הפרשנות (נוסח חדש)",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "74a16ac5-85da-4f43-93c0-703fe3bbd71c"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%9E%D7%A9%D7%98%D7%A8%D7%94_(%D7%9E%D7%A7%D7%95%D7%9D_%D7%94%D7%9E%D7%92%D7%95%D7%A8%D7%99%D7%9D)",
+      "title": "תקנות המשטרה (מקום המגורים)",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "israeli_law",
+      "candidate_id": "71f9d55a-9ee7-4ee8-b08c-0cd184070b8b"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_1392137.docx",
+      "title": "נוסח פקודת המשטרה – הוראות על שוטרים, מינוי וסמכויות",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "3982796e-7483-49fa-8ee5-470aac13ca78"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+      "title": "ביהמ\"ש העליון, אב\"ד, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופטת דפנה ברק ארז: פס\"ד בעתירות בעניין פיטורי ראש השב\"כ (בג\"ץ 54321-03-25)",
+      "number": 9,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "7f973c67-c779-4176-9c39-9ce74dbfc3e4"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1374-23-%d7%97%d7%90%d7%92%d7%a8-%d7%a0%d7%95%d7%a8%d7%99-%d7%9c%d7%93%d7%a8-%d7%a6%d7%95%d7%a3-%d7%a0-%d7%9e%d7%a4%d7%a7%d7%93-%d7%9b%d7%95%d7%97%d7%95%d7%aa-%d7%a6%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 1374/23 חאג'ר נורי לד'ר צוף נ׳ מפקד כוחות צה\"ל בגדה מערבית פסק דין",
+      "number": 9,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "52cb7308-29b1-4d6e-b472-bc209b590ec5"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 1,
+      "partial": 14,
+      "unrelated": 10,
+      "tangential": 5
+    },
+    "by_role_match": {
+      "true": 30,
+      "false": 0
+    }
+  }
+}

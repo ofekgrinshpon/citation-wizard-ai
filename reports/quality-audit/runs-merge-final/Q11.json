@@ -1,0 +1,205 @@
+{
+  "id": "Q11",
+  "category": "thin_corpus",
+  "query": "האם קיימת פסיקה ישראלית מחייבת בנוגע לאחריות מפעילי בורסות קריפטו מקומיות כלפי משתמשים לאחר פריצת סייבר?",
+  "run_id": "5bda70a3-04d3-4003-abed-c04f48d6248b",
+  "ok": true,
+  "total_ms": 179573,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "anchor_status": {
+    "direct": 0,
+    "partial": 0,
+    "missing": 0,
+    "entries": []
+  },
+  "missing_required_anchors": null,
+  "answer": "**מסקנה תמציתית**\n\nלפי המקורות שסופקו, לא נמצאה בישראל פסיקה מחייבת של בית המשפט העליון או של בג\"ץ שקובעת באופן ספציפי אחריות מפעילי בורסות קריפטו מקומיות כלפי משתמשים לאחר פריצת סייבר.¹\n\nגם חיפוש בתוך אותם מקורות לא מעלה פסקי דין של בתי משפט נמוכים (בתי משפט מחוזיים או שלום) או החלטות מנהליות שמהוות תקדין מחייב בנוגע לחובת זהירות אזרחית ספציפית כלפי לקוחות בורסות קריפטו לאחר פריצה.²\n\nקיימים מסמכים רגולטוריים והנחיות ממשלתיות שמטילים חובות מעשיים על מפעילי פלטפורמות נכסים וירטואליים — בראשם הנחיות מקצועיות בנושאי דיווח ומניעת הלבנת הון שכוללות חובות דיווח ונהלים בחשד לעבירות; אך מסמכים אלה אינם חקיקה פסקתית המעניקה, לפי הטקסט שסופק, זכות תביעה אזרחית אוטומטית בגין אובדן בעקבות פריצה.³\n\nדוחות והמלצות ממשלתיות ומסמכי מדיניות (כולל המלצות להפרדת נכסי לקוחות מרכוש החברה ולשמירת רישום נפרד) מצביעים על סטנדרטים תפעוליים שיכולים לשמש כנקודת ייחוס מקצועית או ראייתית בסכסוכים אזרחיים; עם זאת, המקורות אינם קובעים במפורש שהפרת המלצות אלה תאפשר בהכרח עילת תביעה או תגמול כספי, ולכן יש להפעיל זהירות פרשנית.⁴\n\nלגבי מסמכי מדיניות ותקנוני שוק (כגון כללים לגבי אחסון מפתחות, שימור נכסים או תנאי שימוש עם לקוחות): המקורות מדגישים פרקטיקות מומלצות ובחינות רגולטוריות, אך לא מצביעים על מקרים שבהם בתי משפט אימצו או דחו טענות אזרחיות בהתבססות ישירה על תקנונים אלה במקרי פריצה מוכחים.⁵\n\nסייג חשוב: המענה כאן מבוסס אך ורק על מקורות שסופקו. המקורות הם בעיקר דוחות, הנחיות מקצועיות וסקירות אקדמיות; אין ביניהם ציטוטים של פסקי דין מחייבים ספציפיים. אם ברצונך חיפוש ממוקד בפסקי דין (עליון/מחוזי/שלום) או בחומר שמפרסם רשות רגולטורית ספציפית שלא הופיע כאן, אפשר לבצע חיפוש נוסף במאגרי פסקי דין ופרסומי רגולטורים כדי לאמת האם התפתחו החלטות שיפוטיות מאז.",
+  "footnotes": [
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2023/06/din16-yovel.pdf",
+      "title": "מטבעות קריפטוגרפיים: אתגרים מושגיים, משפטיים ורגולטיביים; FTX והמשבר בקריפטו",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2023/06/din16-yovel.pdf",
+          "title": "מטבעות קריפטוגרפיים: אתגרים מושגיים, משפטיים ורגולטיביים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2023/01/20221227-summary.pdf",
+          "title": "FTX והמשבר בקריפטו",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2023/06/din16-yovel.pdf",
+      "title": "מטבעות קריפטוגרפיים: אתגרים מושגיים, משפטיים ורגולטיביים; הנחיות מקצועיות – יישום גישה מבוססת סיכון בתחום נכסים וירטואליים",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2023/06/din16-yovel.pdf",
+          "title": "מטבעות קריפטוגרפיים: אתגרים מושגיים, משפטיים ורגולטיביים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/instructions-01062020-ra-va-p/he/professional-docs_instructions_01062020_ra_va_p.pdf",
+          "title": "הנחיות מקצועיות – יישום גישה מבוססת סיכון בתחום נכסים וירטואליים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/instructions-01062020-ra-va-p/he/professional-docs_instructions_01062020_ra_va_p.pdf",
+      "title": "הנחיות מקצועיות – יישום גישה מבוססת סיכון בתחום נכסים וירטואליים; הוועדה לגיבוש חזון ואסטרטגיה לאומית לתחום הקריפטו, בלוקצ'יין ו-Web 3.0; דו\"ח אסדרת תחום",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/instructions-01062020-ra-va-p/he/professional-docs_instructions_01062020_ra_va_p.pdf",
+          "title": "הנחיות מקצועיות – יישום גישה מבוססת סיכון בתחום נכסים וירטואליים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_9834502.pdf",
+          "title": "הוועדה לגיבוש חזון ואסטרטגיה לאומית לתחום הקריפטו, בלוקצ'יין ו-Web 3.0",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+          "title": "דו\"ח אסדרת תחום",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_9834502.pdf",
+      "title": "הוועדה לגיבוש חזון ואסטרטגיה לאומית לתחום הקריפטו, בלוקצ'יין ו-Web 3.0; נכסים קריפטוגרפים ויציבות פיננסית; דו\"ח אסדרת תחום",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_9834502.pdf",
+          "title": "הוועדה לגיבוש חזון ואסטרטגיה לאומית לתחום הקריפטו, בלוקצ'יין ו-Web 3.0",
+          "source_type": "other"
+        },
+        {
+          "url": "https://boi.org.il/media/00cpkr2b/%D7%AA%D7%99%D7%91%D7%94-%D7%A0%D7%9B%D7%A1%D7%99%D7%9D-%D7%A7%D7%A8%D7%99%D7%A4%D7%98%D7%95%D7%92%D7%A8%D7%A4%D7%99%D7%99%D7%9D.pdf",
+          "title": "נכסים קריפטוגרפים ויציבות פיננסית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+          "title": "דו\"ח אסדרת תחום",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_9834502.pdf",
+      "title": "הוועדה לגיבוש חזון ואסטרטגיה לאומית לתחום הקריפטו, בלוקצ'יין ו-Web 3.0; קול קורא לבחינת מדיניות בנושא מתן שירותים במטבעות וירטואליים באמצעות מכשירי כספומט קריפטו; מטבעות קריפטוגרפיים: אתגרים מושגיים, משפטיים ורגולטיביים",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_9834502.pdf",
+          "title": "הוועדה לגיבוש חזון ואסטרטגיה לאומית לתחום הקריפטו, בלוקצ'יין ו-Web 3.0",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/publicsharing/public-participation-008/he/crypto_atms_public_consultaion_word.docx",
+          "title": "קול קורא לבחינת מדיניות בנושא מתן שירותים במטבעות וירטואליים באמצעות מכשירי כספומט קריפטו",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2023/06/din16-yovel.pdf",
+          "title": "מטבעות קריפטוגרפיים: אתגרים מושגיים, משפטיים ורגולטיביים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2023/06/din16-yovel.pdf",
+      "title": "מטבעות קריפטוגרפיים: אתגרים מושגיים, משפטיים ורגולטיביים",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "ca88c79a-e62c-492c-9b5d-a3481d9aa2b3"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2023/01/20221227-summary.pdf",
+      "title": "FTX והמשבר בקריפטו",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "108dae7e-814f-4015-9974-6e3cf7905c80"
+    },
+    {
+      "url": "https://www.gov.il/blobFolder/dynamiccollectorresultitem/instructions-01062020-ra-va-p/he/professional-docs_instructions_01062020_ra_va_p.pdf",
+      "title": "הנחיות מקצועיות – יישום גישה מבוססת סיכון בתחום נכסים וירטואליים",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "5f62c68f-4391-489d-b4c5-9a1f8e8346a8"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_9834502.pdf",
+      "title": "הוועדה לגיבוש חזון ואסטרטגיה לאומית לתחום הקריפטו, בלוקצ'יין ו-Web 3.0",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "22f61f38-d60d-42d4-b999-b15b5105d458"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+      "title": "דו\"ח אסדרת תחום",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "b27ef277-dc7b-4baa-8a42-cf4cfd7b369e"
+    },
+    {
+      "url": "https://boi.org.il/media/00cpkr2b/%D7%AA%D7%99%D7%91%D7%94-%D7%A0%D7%9B%D7%A1%D7%99%D7%9D-%D7%A7%D7%A8%D7%99%D7%A4%D7%98%D7%95%D7%92%D7%A8%D7%A4%D7%99%D7%99%D7%9D.pdf",
+      "title": "נכסים קריפטוגרפים ויציבות פיננסית",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e6f6e5d8-b522-4e2e-8e02-a3535f1700ac"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/publicsharing/public-participation-008/he/crypto_atms_public_consultaion_word.docx",
+      "title": "קול קורא לבחינת מדיניות בנושא מתן שירותים במטבעות וירטואליים באמצעות מכשירי כספומט קריפטו",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "705ff6a4-7ec9-4691-bfeb-5022be317a01"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 1,
+      "partial": 7,
+      "unrelated": 7,
+      "tangential": 4
+    },
+    "by_role_match": {
+      "true": 18,
+      "false": 1
+    }
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "id": "Q05",
+  "category": "amendment_history",
+  "query": "מהם השינויים המרכזיים בתיקון 154 לחוק סדר הדין הפלילי, ומתי נכנס לתוקף?",
+  "run_id": "e30f3624-1eb0-4487-888e-9dfd14ed680a",
+  "ok": true,
+  "total_ms": 152442,
+  "answer_intent": {
+    "output_shape": "list"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "list",
+    "reason": "shape_not_eligible"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "anchor_status": {
+    "direct": 0,
+    "partial": 0,
+    "missing": 0,
+    "entries": []
+  },
+  "missing_required_anchors": null,
+  "answer": "- סיכום תמציתי: תיקון מס׳ 154 עורר שינוי פרוצדורלי משמעותי סביב חובת מתן עיון לנאשם בחומר החקירה ובסמכויות בית המשפט להגביל דיון והבאת ראיות שאינן נמסרו לעיון; נוסח התיקון מופיע בעדכוני החוק המשולב אך הסניפטים שסופקו הם חלקיים לכן יש לנקוט זהירות בפרשנות מפורשת של כל סעיף.¹\n- אילו הוראות שונו בפירוט עקרוני: מן הנוסח שבסניפט של ההצעה עולה כי התיקון מתמקד בסעיפים העוסקים בחומר חקירה, בזכות העיון של הנאשם ובתשובת הנאשם לאישום — כלומר הוראות שמסדירות את חובת העברת חומר החקירה, את השלכות אי־מתן עיון ואת המגבלות על שמיעת ראיות שלא הוצגו לעיון; את נוסח החוק המשולב לפני ואחרי התיקון ניתן להשוות בעדכוני החוק המשולב.²\n- השינויים המהותיים בפועל (בזהירות): מן ההצעה ומההקשרים הממשלתיים עולה כי תיקון 154 חיזק את המימד הפרוצדורלי של זכות העיון, נתן לבית המשפט תפקיד ברור יותר לוודא שנעשתה אפשרות לעיון, והטיל הגבלות פרוצדורליות על הבאת ראיות ועובדות שלא הוצגו לעיון — וכן שיש בכוונה להרחיב הסדרים דיוניים לצורך ייעול ההליכים; טענות אלה בנוסח הנתון הן זהירות ומושתתות על טקסטי הצעה ודוחות רקע.³\n- מועד כניסה לתוקף: בסניפטים שסופקו לא נמצא תאריך כניסה לתוקף מפורש ולא זוהה צו כניסה נלווה; מאגרי חקיקה מציגים את הנוסח המעודכן אך הסניפטים אינם כוללים בחומר המוצג פה פירוט של תאריכים או של כניסה בשלבים, ולכן לא ניתן לקבוע על בסיס המסמכים שסופקו מועד כניסה קונקרטי.¹\n- הוראות מעבר ויחס להליכים תלויים ועומדים: בסניפטים המוצגים לא נמצאו הוראות מעבר מפורשות או ניסוח מפורט לגבי יישום התיקון בהליכים שכבר נמצאים בעיצומם; מבחינת התוצאה המעשית יש בזהירות מקום להניח שאלו סוגיות שיש לבדוק בנוסח המלא של התיקון ופרסומי יישום רשמיים.¹\n- הגבלות ותזכורת מקורותיות: המסקנות שלעיל מבוססות על הסניפטים והעדכונים שצורפו (הצעת חוק, נוסח משולב ומקורות רקע); המסמכים שסופקו תומכים בעקרונות ובכיוון השינויים אך אינם חולצים כאן נוסח מלא מפורש של כל סעיף או תאריך כניסה, ולכן למתן תשובה מחייבת יש לעיין בטקסט החקיקה המלא בעדכוני הרישומים ובפרסומי הכנסת/הרשומות.",
+  "footnotes": [
+    {
+      "url": "https://fs.knesset.gov.il/%5C18%5CCommittees%5C18_cs_bg_329085.doc",
+      "title": "הצעת חוק סדר הדין הפלילי (תיקון) – נוסח ועדה/מחוברות כנסת; חוק סדר הדין הפלילי [נוסח משולב], התשמ\"ב–1982",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/%5C18%5CCommittees%5C18_cs_bg_329085.doc",
+          "title": "הצעת חוק סדר הדין הפלילי (תיקון) – נוסח ועדה/מחוברות כנסת",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/74918.htm",
+          "title": "חוק סדר הדין הפלילי [נוסח משולב], התשמ\"ב–1982",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/%5C18%5CCommittees%5C18_cs_bg_329085.doc",
+      "title": "הצעת חוק סדר הדין הפלילי (תיקון) – נוסח ועדה/מחוברות כנסת; חוק סדר הדין הפלילי [נוסח משולב], התשמ\"ב-1982; חוק סדר הדין הפלילי [נוסח משולב], התשמ\"ב–1982",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/%5C18%5CCommittees%5C18_cs_bg_329085.doc",
+          "title": "הצעת חוק סדר הדין הפלילי (תיקון) – נוסח ועדה/מחוברות כנסת",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/10/law/10_lsr_311020.PDF",
+          "title": "חוק סדר הדין הפלילי [נוסח משולב], התשמ\"ב-1982",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/74918.htm",
+          "title": "חוק סדר הדין הפלילי [נוסח משולב], התשמ\"ב–1982",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/%5C18%5CCommittees%5C18_cs_bg_329085.doc",
+      "title": "הצעת חוק סדר הדין הפלילי (תיקון) – נוסח ועדה/מחוברות כנסת; הצעת חוק סדר הדין הפלילי (תיקון מס' ... ); משרד המשפטים – דו\"ח שנתי 2021 (סנגוריה ציבורית)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/%5C18%5CCommittees%5C18_cs_bg_329085.doc",
+          "title": "הצעת חוק סדר הדין הפלילי (תיקון) – נוסח ועדה/מחוברות כנסת",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_lst_5095754.docx",
+          "title": "הצעת חוק סדר הדין הפלילי (תיקון מס' ... )",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/reports/annual-report-all/he/defender-report-2021.pdf",
+          "title": "משרד המשפטים – דו\"ח שנתי 2021 (סנגוריה ציבורית)",
+          "source_type": "government_report"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://fs.knesset.gov.il/%5C18%5CCommittees%5C18_cs_bg_329085.doc",
+      "title": "הצעת חוק סדר הדין הפלילי (תיקון) – נוסח ועדה/מחוברות כנסת",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "aaf25660-b3b8-4945-9e8b-29f927771f0a"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/74918.htm",
+      "title": "חוק סדר הדין הפלילי [נוסח משולב], התשמ\"ב–1982",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "431ff923-d7e6-433c-a88f-a24ac9ba4a67"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/10/law/10_lsr_311020.PDF",
+      "title": "חוק סדר הדין הפלילי [נוסח משולב], התשמ\"ב-1982",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "3431f983-7c78-4463-891c-4af901229de3"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_lst_5095754.docx",
+      "title": "הצעת חוק סדר הדין הפלילי (תיקון מס' ... )",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "32d82377-bf67-4f27-a41c-682585824b58"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/reports/annual-report-all/he/defender-report-2021.pdf",
+      "title": "משרד המשפטים – דו\"ח שנתי 2021 (סנגוריה ציבורית)",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "government_report",
+      "candidate_id": "97f8a2b8-4791-46b2-83cf-7b548e70bcf0"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 0,
+      "partial": 6,
+      "unrelated": 6,
+      "tangential": 1
+    },
+    "by_role_match": {
+      "true": 12,
+      "false": 1
+    }
+  }
+}

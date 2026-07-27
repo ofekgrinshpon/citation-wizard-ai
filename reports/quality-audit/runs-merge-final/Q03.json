@@ -1,0 +1,112 @@
+{
+  "id": "Q03",
+  "category": "statutory_interpretation",
+  "query": "מהי הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה, ומהם התנאים המצטברים?",
+  "run_id": "f66f3745-b67c-4f3a-ab0f-83587d353d15",
+  "ok": true,
+  "total_ms": 154141,
+  "answer_intent": {
+    "output_shape": "definition"
+  },
+  "lead_ref": {
+    "ref": "s5",
+    "shape": "definition",
+    "reason": "required_anchor_statute"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "anchor_status": {
+    "direct": 0,
+    "partial": 0,
+    "missing": 0,
+    "entries": []
+  },
+  "missing_required_anchors": null,
+  "answer": "**הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה**\n\n\"בעל שליטה\" - מי שמחזיק, במישרין או בעקיפין, לבדו או ביחד עם קרובו באחת מאלה: (א) ב-10% לפחות מהון המניות שהוצא או ב-10% לפחות מכוח-ההצבעה; (ב) בזכות להחזיק ב-10% לפחות מהון המניות שהוצא או ב-10% לפחות מכוח-ההצבעה או בזכות לרכשם; (ג) בזכות לקבל 10% לפחות מהרווחים; (ד) בזכות למנות מנהל;¹\n\nמבחינת מבנה ההוראה, סעיף 32(9) קובע שההגדרה מתממשת כאשר מי שמחזיק, במישרין או בעקיפין ובלבד או ביחד עם קרובו, עומד באחת מהחלופות המפורטות. כלומר, האמור בסעיף הוא סדרת חלופות של תנאים שכל אחד מהם מספק כדי להיחשב לבעל שליטה — לא דרישה שכל הסעיפים יתממשו בו־זמנית.¹\n\n**הקריטריונים המפורטים בסעיף — פירוט**\n\n- (א) החזקה, במישרין או בעקיפין, לבדו או ביחד עם קרובו, ב-10% לפחות מהון המניות שהוצא או ב-10% לפחות מכוח ההצבעה.¹\n- (ב) זכות להחזיק, במישרין או בעקיפין, ב-10% לפחות מהון המניות שהוצא או ב-10% לפחות מכוח ההצבעה, או זכות לרכשם.¹\n- (ג) זכות לקבל 10% לפחות מהרווחים.¹\n- (ד) זכות למנות מנהל.¹\n\nההוראה מדגישה רכיבים כמותיים (סף של עשרה אחוזים) ושילובי זכויות שונים: בעלות ישירה או עקיפה, כוח הצבעה, זכויות כלכליות וזכויות ניהוליות (מינוי מנהל). ההגדרה משקפת גישה רחבה הכוללת גם זכויות עתידיות לרכישה ולהחזקה וכך גם זיקות משפחתיות (לבוא ביחד עם קרובו).¹\n\n**פרשנות ופסיקה — מה מצויים המקורות שסופקו**\n\nבמפגש עם שאלות פרשניות מרכזיות — כגון משמעות 'בעקיפין' מול 'במישרין', היקף חישוב אחוזי ההחזקה, או האם זכות למנות מנהל עומדת כשלעצמה — המקורות שסופקו אינם כוללים פסיקה מחייבת שמנסחת מבחנים שיפוטיים מפורשים. על כן אין במקורות הללו כדי להציג מבחני פסיקה של בתי המשפט לגביי ישום סעיף 32(9).\n\nקיימים מסמכים פירשניים והנחיות מנהליות ומאמרים אקדמיים בספק המקורות שסופקו שמעניקים הכוונה וניתוח תיאורטי: חוזר רשות המסים מספק הנחיות פרשניות ויישומיות שנוגעות לאופן חישוב ולמקרים יישומיים; מסמכים פרשניים של גופים חקיקתיים ומאמר אקדמי מנתחים את רעיון מבחן השליטה והבעיות המעשיות בפרשונו. עם זאת, יש לפרש מסמכים אלה בזהירות: הם פרשניים ולא בהכרח פוסקים או מחייבים כמו פסיקה.²\n\nלסיכום קצר: נוסח הסעיף עצמו (סעיף 32(9)) הוא המקור הקובע להגדרת \"בעל שליטה\" והוא מספק רשימת חלופות (א)-(ד) שכל אחת מהן מספיקה להגדרה; עבור שאלות פירושיות ועקרוניות כדאי לעיין גם בחומר המסמכי ובחוזרי רשות המסים, אך מתוך המקורות שסופקו לא ניתן לדלות מבחן שיפוטי מפורט שהובא על ידי בתי המשפט.¹",
+  "footnotes": [
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+      "title": "פקודת מס הכנסה [נוסח חדש] – סעיף 32(9)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+          "title": "פקודת מס הכנסה [נוסח חדש] – סעיף 32(9)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/policy/professional-directives-090226-1/he/IncomeTax_professional-directives-090226-1.pdf",
+      "title": "חוזר מס הכנסה מספר 03/2026; הגדרת בעל שליטה בחברה - גיתית קפלן; מסמך מאתר אתר אקדמי (taulawreview.sites.tau.ac.il)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/policy/professional-directives-090226-1/he/IncomeTax_professional-directives-090226-1.pdf",
+          "title": "חוזר מס הכנסה מספר 03/2026",
+          "source_type": "other"
+        },
+        {
+          "url": "http://www.knesset.gov.il/",
+          "title": "הגדרת בעל שליטה בחברה - גיתית קפלן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_12a4c214b5f74538be24a1ff0c1e2ce5.pdf",
+          "title": "מסמך מאתר אתר אקדמי (taulawreview.sites.tau.ac.il)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+      "title": "פקודת מס הכנסה [נוסח חדש] – סעיף 32(9)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "6318a83a-366a-45ce-acea-05f1110dac66"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/policy/professional-directives-090226-1/he/IncomeTax_professional-directives-090226-1.pdf",
+      "title": "חוזר מס הכנסה מספר 03/2026",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "853657cf-a7a7-4ff5-bca9-c2ef9b9cede9"
+    },
+    {
+      "url": "http://www.knesset.gov.il/",
+      "title": "הגדרת בעל שליטה בחברה - גיתית קפלן",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e5a55503-6742-4fc9-abc6-80bb056eca12"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_12a4c214b5f74538be24a1ff0c1e2ce5.pdf",
+      "title": "מסמך מאתר אתר אקדמי (taulawreview.sites.tau.ac.il)",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "f2e02e80-49ef-43fa-8a57-3194e99311a4"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 1,
+      "partial": 6,
+      "unrelated": 5,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 12,
+      "false": 0
+    }
+  }
+}

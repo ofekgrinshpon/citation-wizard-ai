@@ -1,0 +1,42 @@
+{
+  "id": "Q02",
+  "category": "docket_holding_missing_source_test",
+  "query": "מה נקבע בע\"מ (מחוזי ת\"א) 61908-05-19 בעניין סיווג הכנסה כהכנסת עבודה או הכנסת עסק?",
+  "run_id": "81117562-7988-4e2a-9ec1-0447724ad5e3",
+  "ok": true,
+  "total_ms": 158359,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "case_holding",
+    "reason": "skipped_missing_docket_anchor"
+  },
+  "deterministic_branch": "docket_limitation",
+  "missing_docket_limitation_fired": true,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "anchor_status": {
+    "direct": 0,
+    "partial": 0,
+    "missing": 0,
+    "entries": []
+  },
+  "missing_required_anchors": null,
+  "answer": "לא אותר פסק הדין עצמו במקורות שעברו אימות; לכן לא ניתן לקבוע בביטחון את ההלכה שנפסקה בו. מאחר שהשאלה מבקשת את ההכרעה בפסק הדין בעניין ע\"מ 61908/05/19 עצמו, אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית. יש לעיין בטקסט פסק הדין עצמו כדי לקבוע מה נקבע בו.",
+  "footnotes": [],
+  "used_sources": [],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 1,
+      "partial": 2,
+      "unrelated": 6,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 9,
+      "false": 0
+    }
+  }
+}

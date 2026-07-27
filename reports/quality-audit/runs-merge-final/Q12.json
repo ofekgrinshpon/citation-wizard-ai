@@ -1,0 +1,332 @@
+{
+  "id": "Q12",
+  "category": "thin_corpus",
+  "query": "מהי אחריותו של דירקטור בחברה פרטית לגילויי מידע על שימוש במערכות AI גנרטיביות בתהליכי קבלת החלטות?",
+  "run_id": "6e6c4cda-6d54-474e-82b3-74e9a885c80b",
+  "ok": true,
+  "total_ms": 223118,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "anchor_status": {
+    "direct": 0,
+    "partial": 0,
+    "missing": 0,
+    "entries": []
+  },
+  "missing_required_anchors": null,
+  "answer": "**ניתוח — אחריות דירקטור לחשיפת שימוש ב‑AI גנרטיבי**\n\nמסקנה עיקרית בתמצית: אין בספר החומרים שסופק מקור יחיד שמטיל חובת גילוי פורמלית־כוללת ודדוקרטית לדירקטור בחברה פרטית לגבי השימוש ב‑AI גנרטיבי כלפי בעלי המניות או צדדים שלישיים; עם זאת, חובות פיקוח, קבלת החלטות מיודעת וציות לחקיקה כמו חוק הגנת הפרטיות עשויות לייצר חובות גילוי ותיעוד במצבים מעשיים מסוימים, ובכשל בהן עלול להיווצר חשיפה אזרחית, רגולטורית ואף תתעורר שאלה על הפרת חובת זהירות/נאמנות של הדירקטור.\n\n**שאלה C1 — חובת גילוי האם חלה?**\n\nחובת גילוי פורמלית לגבי שימוש ב‑AI גנרטיבי אינה מופיעה ישירות בחקיקה הכללית שסופקה; עם זאת מסמכים רשמיים המדגישים את תפקיד הדירקטוריון בקיום חובות פרטיות ואבטחת מידע מצביעים כי הדירקטוריון מחויב להכשיר מערכי ציות, דיווח פנימי והחלטות מיודעות. במעשה, פירוש זה עשוי לדרוש חשיפת מידע אודות שימוש בכלים שעשויים לטפל בנתוני אישים או להשפיע מהותית על החלטות עסקיות.¹\n\nהמלצות מעשיות ותמציות במסמכים מקצועיים־אקדמיים ומוסדיים מציעות פרטי גילוי ספציפיים (איזה כלי, לאיזה מטרה, סוג השימוש וכדומה) כמודל לשקיפות — תכניות אלה נועדו בעיקר למערכת אקדמית ולמגזר הציבורי, אך יכולות לשמש כהנחיה רלוונטית לחברות פרטיות בתכנון מדיניות גילוי פנימית וחיצונית.²\n\n**שאלה C2 — הפרת חובת זהירות/נאמנות ואחריות אזרחית/נזיקית**\n\nהמבחן המרכזי בדיני חברות הוא האם הדירקטור קיבל החלטה מיודעת על בסיס מידע סביר; אם מוזנח איסוף מידע מהותי או דיווח פנימי סביר לגבי כלי AI שהשפיעו על ההחלטה, ניתן לטעון לפגם באסמכתאות ההחלטה ולחשוף את ההחלטה לבחינת בית המשפט. מסמכים תאורטיים וספרותיים המנתחים את כלל שיקול הדעת העסקי תומכים בגישה זו.³\n\nבמישור האזרחי/נזיקי: חוק הגנת הפרטיות נכנס כאן במישרין — הוא מקנה סנקציות אזרחיות (פיצויים לדוגמה) בגין הפרות חובות פרטיות; לפיכך אם שימוש ב‑AI גרם לעיבוד פסול של נתונים פרטיים או לפגיעה שאיננה מפוצה, עלולות להתממש תביעות כנגד החברה ולעתים להעמיד בחשבון אחריות של בעלי תפקידים אם יוכח כי לא פעלו להבטיח ציות ונהלים סבירים.⁴\n\n**שאלה C3 — אחריות פלילית או מנהלית/רגולטורית?**\n\nאין במקורות שסופקו הוכחה לכך שדירקטור בחברה פרטית יחויב אוטומטית באחריות פלילית רק בשל שימוש בלתי מדווח ב‑AI; יחד עם זאת חקיקה רגולטורית (ובפרט הוראות הגנת פרטיות/הגנת הצרכן) כוללת מנגנוני אכיפה וסנקציות שיכולות לפגוע בחברה ואף להביא לזרועות אכיפה מנהלית או קנסות. עצם שימוש בלתי מבוקר שיפגע בזכויות האזרחים או יפר חובות חוקיות עלול לעורר אכיפה מנהלית ואף הכרעה שיפוטית שקובעת פסול בהתנהלות.⁵\n\nמבחינת אחריות אישית של דירקטור במסגרת פלילית נדרשת בדיקה של הוראות ספציפיות בחוק, של יסוד עבירה ונכונות הטיפול הראייתי; מסמכים המדיניות והמדריכים הממשלתיים מציעים ציפייה לאחראיות ופיקוח אך אינם מחליפים בחינה פרטנית של חוקי עונשין או הוראות רגולטוריות פרקטיות.⁶\n\n**שאלה C4 — מה צריך לכלול גילוי תקין ומה לגבי תיעוד ובקרת איכות?**\n\nהנחיות ומסמכים מקצועיים שמופיעים ברשימה מצביעים על רכיבים פרקטיים של גילוי ראוי: ציון הכלי או סוג המערכת, המטרה שבה נעשה שימוש, סוג הפעולה שבוצעה (חיפוש רעיונות, עריכת לשון, יצירת טיוטה, חיזוי וכדומה) ורמת ההסתמכות על התוצאה. מסמכים אלה משמשים כמודל להיקף הגילוי ולא כדרישה חקיקתית מחייבת.⁷\n\nלגבי תיעוד ובקרת איכות: הנחיות ממשלתיות ומדריכים בתחום ניהול סיכונים ממליצים על הערכת סיכונים מקדימה (כולל בחינת השפעה על פרטיות), תיעוד החלטות עסקיות ושיקולי הסיכון, נוהלי בקרת ספק וניתוח תוצרים, וביצוע ביקורות תקופתיות — צעדים אלה מחזקים עמדת הדירקטור לקיומה של קבלת החלטה מיודעת ומפחיתים סיכון משפטי.⁸\n\n**שאלה C5 — צעדי ציות וממשל תאגידי שדירקטור יכול לנקוט**\n\nצעדים מעשיים שיישוםם מגובה במסמכים שנבדקו: גיבוש מדיניות AI ארגונית בחתימת הדירקטוריון המגדירה מי רשאי להשתמש, לאילו מטרות ובאילו תנאים; ביצוע בדיקות ספקים וערך משפטי‑טכנולוגי לפני הטמעה; ביצוע הערכות השפעה על פרטיות וניהול סיכונים; קביעת בקרת \"אדם בתהליך\" לסקירת תוצרים קריטיים; תיעוד החלטות ונימוקים עסקיים; והטמעת נוהל דיווח ותחקור אירועים. צעדים אלה מצוטטים במסמכים של ממשלה, מדריכים לניהול סיכונים וספרות ממשלתית ואקדמית.⁹\n\nסיכום ושורה תחתונה מעשית: על דירקטור בחברה פרטית מוטל לוודא שקיימת מדיניות ותשתית פיקוח רציפה לגבי שימוש במערכות AI, ולנקוט צעדי תיעוד, בדיקת סיכונים ובקרות שיבססו כי החלטות התקבלו \"מיודעת\"; במקרה של הפרת חובות פרטיות או של פגיעה מהותית ניתן להגיע לתוצאות משפטיות — בעיקר אזרחיות ורגולטוריות — והמגמה הממשלתית והפסיקה במגזר הציבורי מדגישה שקיפות ופיקוח ככלים מרכזיים למניעת סיכונים עתידיים.",
+  "footnotes": [
+    {
+      "url": "https://www.gov.il/BlobFolder/legalinfo/the_board_role/he/%D7%AA%D7%A4%D7%A7%D7%99%D7%93%20%D7%94%D7%93%D7%99%D7%A8%D7%A7%D7%98%D7%95%D7%A8%D7%99%D7%95%D7%9F%20%D7%91%D7%A7%D7%99%D7%95%D7%9D%20%D7%97%D7%95%D7%91%D7%95%D7%AA%20%D7%94%D7%AA%D7%90%D7%92%D7%99%D7%93%20%D7%9C%D7%A4%D7%99%20%D7%תקנות%20הגנת%20הפרטיות%20%20(%D7%90%D7%91%D7%98%D7%97%D7%AA%20%D7%9D%D7%99%D7%93%D7%A2).pdf",
+      "title": "תפקיד הדירקטוריון בקיום חובות התאגיד לפי תקנות הגנת הפרטיות (אבטחת מידע); חוק הגנת הפרטיות, תשמ\"א-1981; כלל שיקול הדעת העסקי והדרישה לקבל החלטה \"מיודעת\"",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/the_board_role/he/%D7%AA%D7%A4%D7%A7%D7%99%D7%93%20%D7%94%D7%93%D7%99%D7%A8%D7%A7%D7%98%D7%95%D7%A8%D7%99%D7%95%D7%9F%20%D7%91%D7%A7%D7%99%D7%95%D7%9D%20%D7%97%D7%95%D7%91%D7%95%D7%AA%20%D7%94%D7%AA%D7%90%D7%92%D7%99%D7%93%20%D7%9C%D7%A4%D7%99%20%D7%תקנות%20הגנת%20הפרטיות%20%20(%D7%90%D7%91%D7%98%D7%97%D7%AA%20%D7%9D%D7%99%D7%93%D7%A2).pdf",
+          "title": "תפקיד הדירקטוריון בקיום חובות התאגיד לפי תקנות הגנת הפרטיות (אבטחת מידע)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/71631.htm",
+          "title": "חוק הגנת הפרטיות, תשמ\"א-1981",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1631",
+          "title": "כלל שיקול הדעת העסקי והדרישה לקבל החלטה \"מיודעת\"",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_13056424.pdf",
+      "title": "מסמך מאתר אתר הכנסת; מסמך מאתר אתר אקדמי (smkb.ac.il)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_13056424.pdf",
+          "title": "מסמך מאתר אתר הכנסת",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.smkb.ac.il/media/krajq3ed/%D7%A9%D7%99%D7%9E%D7%95%D7%A9-%D7%91%D7%9B%D7%9C%D7%99-%D7%91%D7%99%D7%A0%D7%94-%D7%9E%D7%9C%D7%90%D7%9B%D7%95%D7%AA%D7%99%D7%AA.pdf",
+          "title": "מסמך מאתר אתר אקדמי (smkb.ac.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1631",
+      "title": "כלל שיקול הדעת העסקי והדרישה לקבל החלטה \"מיודעת\"; מינוי דירקטורים: תיאוריה, ראיות, מדיניות; תפקיד הדירקטוריון בקיום חובות התאגיד לפי תקנות הגנת הפרטיות (אבטחת מידע)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1631",
+          "title": "כלל שיקול הדעת העסקי והדרישה לקבל החלטה \"מיודעת\"",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1860",
+          "title": "מינוי דירקטורים: תיאוריה, ראיות, מדיניות",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/the_board_role/he/%D7%AA%D7%A4%D7%A7%D7%99%D7%93%20%D7%94%D7%93%D7%99%D7%A8%D7%A7%D7%98%D7%95%D7%A8%D7%99%D7%95%D7%9F%20%D7%91%D7%A7%D7%99%D7%95%D7%9D%20%D7%97%D7%95%D7%91%D7%95%D7%AA%20%D7%94%D7%AA%D7%90%D7%92%D7%99%D7%93%20%D7%9C%D7%A4%D7%99%20%D7%תקנות%20הגנת%20הפרטיות%20%20(%D7%90%D7%91%D7%98%D7%97%D7%AA%20%D7%9D%D7%99%D7%93%D7%A2).pdf",
+          "title": "תפקיד הדירקטוריון בקיום חובות התאגיד לפי תקנות הגנת הפרטיות (אבטחת מידע)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/71631.htm",
+      "title": "חוק הגנת הפרטיות, תשמ\"א-1981; מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/71631.htm",
+          "title": "חוק הגנת הפרטיות, תשמ\"א-1981",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/1&fileName=SH1_9_4988-08.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/71631.htm",
+      "title": "חוק הגנת הפרטיות, תשמ\"א-1981; תקדימי: העליון מציב גבולות לשימוש ב-AI ברשויות מנהליות - פסקדין; עקרונות מדיניות, רגולציה ואתיקה בתחום הבינה המלאכותית",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/71631.htm",
+          "title": "חוק הגנת הפרטיות, תשמ\"א-1981",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%91%D7%A9%D7%9C-%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA-%D7%A2%D7%9C-%D7%94%D7%96%D7%99%D7%95%D7%AA-%D7%94-AI-%D7%A2%D7%99%D7%A8%D7%99%D7%99%D7%AA-%D7%A8-%D7%92-%D7%AA%D7%A9%D7%9C%D7%9D-%D7%91יוקר",
+          "title": "תקדימי: העליון מציב גבולות לשימוש ב-AI ברשויות מנהליות - פסקדין",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/most-news20231218/he/2023%20Artificial%20Intelligence%20Regulation%20and%20Ethics%20Policy%20Principles%20Document.pdf",
+          "title": "עקרונות מדיניות, רגולציה ואתיקה בתחום הבינה המלאכותית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/most-news20231218/he/2023%20Artificial%20Intelligence%20Regulation%20and%20Ethics%20Policy%20Principles%20Document.pdf",
+      "title": "עקרונות מדיניות, רגולציה ואתיקה בתחום הבינה המלאכותית; מדריך לניהול סיכונים ושימוש אחראי בכלי בינה מלאכותית (AI) במגזר הציבורי",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/news/most-news20231218/he/2023%20Artificial%20Intelligence%20Regulation%20and%20Ethics%20Policy%20Principles%20Document.pdf",
+          "title": "עקרונות מדיניות, רגולציה ואתיקה בתחום הבינה המלאכותית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/ai-guide/en/%D7%9E%D7%93%D7%A8%D7%99%D7%9A%20%D7%9C%D7%A9%D7%99%D7%9E%D7%95%D7%A9%20%D7%90%D7%97%D7%A8%D7%90%D7%99%20%D7%91%D7%91%D7%99%D7%A0%D7%94%20%D7%9E%D7%9C%D7%90%D7%9B%D7%95%D7%AA%D7%99%D7%AA%20%D7%91%D7%9E%D7%92%D7%96%D7%A8%20%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%20-%20%D7%94%D7%A2%D7%A8%D7%95%D7%AA%20%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8.pdf",
+          "title": "מדריך לניהול סיכונים ושימוש אחראי בכלי בינה מלאכותית (AI) במגזר הציבורי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_13056424.pdf",
+      "title": "מסמך מאתר אתר הכנסת; מסמך מאתר אתר אקדמי (smkb.ac.il); הבינה המלאכותית לא תנהל את עצמה: על ממשל תאגידי בעידן ה-AI",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_13056424.pdf",
+          "title": "מסמך מאתר אתר הכנסת",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.smkb.ac.il/media/krajq3ed/%D7%A9%D7%99%D7%9E%D7%95%D7%A9-%D7%91%D7%9B%D7%9C%D7%99-%D7%91%D7%99%D7%A0%D7%94-%D7%9E%D7%9C%D7%90%D7%9B%D7%95%D7%AA%D7%99%D7%AA.pdf",
+          "title": "מסמך מאתר אתר אקדמי (smkb.ac.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://esgblog.runi.ac.il/post/ai-governance",
+          "title": "הבינה המלאכותית לא תנהל את עצמה: על ממשל תאגידי בעידן ה-AI",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/legalinfo/the_board_role/he/%D7%AA%D7%A4%D7%A7%D7%99%D7%93%20%D7%94%D7%93%D7%99%D7%A8%D7%A7%D7%98%D7%95%D7%A8%D7%99%D7%95%D7%9F%20%D7%91%D7%A7%D7%99%D7%95%D7%9D%20%D7%97%D7%95%D7%91%D7%95%D7%AA%20%D7%94%D7%AA%D7%90%D7%92%D7%99%D7%93%20%D7%9C%D7%A4%D7%99%20%D7%תקנות%20הגנת%20הפרטיות%20%20(%D7%90%D7%91%D7%98%D7%97%D7%AA%20%D7%9D%D7%99%D7%93%D7%A2).pdf",
+      "title": "תפקיד הדירקטוריון בקיום חובות התאגיד לפי תקנות הגנת הפרטיות (אבטחת מידע); מדריך לניהול סיכונים ושימוש אחראי בכלי בינה מלאכותית (AI) במגזר הציבורי; ההיערכות הלאומית בתחום הבינה המלאכותית",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/the_board_role/he/%D7%AA%D7%A4%D7%A7%D7%99%D7%93%20%D7%94%D7%93%D7%99%D7%A8%D7%A7%D7%98%D7%95%D7%A8%D7%99%D7%95%D7%9F%20%D7%91%D7%A7%D7%99%D7%95%D7%9D%20%D7%97%D7%95%D7%91%D7%95%D7%AA%20%D7%94%D7%AA%D7%90%D7%92%D7%99%D7%93%20%D7%9C%D7%A4%D7%99%20%D7%תקנות%20הגנת%20הפרטיות%20%20(%D7%90%D7%91%D7%98%D7%97%D7%AA%20%D7%9D%D7%99%D7%93%D7%A2).pdf",
+          "title": "תפקיד הדירקטוריון בקיום חובות התאגיד לפי תקנות הגנת הפרטיות (אבטחת מידע)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/ai-guide/en/%D7%9E%D7%93%D7%A8%D7%99%D7%9A%20%D7%9C%D7%A9%D7%99%D7%9E%D7%95%D7%A9%20%D7%90%D7%97%D7%A8%D7%90%D7%99%20%D7%91%D7%91%D7%99%D7%A0%D7%94%20%D7%9E%D7%9C%D7%90%D7%9B%D7%95%D7%AA%D7%99%D7%AA%20%D7%91%D7%9E%D7%92%D7%96%D7%A8%20%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%20-%20%D7%94%D7%A2%D7%A8%D7%95%D7%AA%20%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8.pdf",
+          "title": "מדריך לניהול סיכונים ושימוש אחראי בכלי בינה מלאכותית (AI) במגזר הציבורי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.boi.org.il/media/rh0bejl4/aireport.pdf",
+          "title": "ההיערכות הלאומית בתחום הבינה המלאכותית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://esgblog.runi.ac.il/post/ai-governance",
+      "title": "הבינה המלאכותית לא תנהל את עצמה: על ממשל תאגידי בעידן ה-AI; תפקיד הדירקטוריון בקיום חובות התאגיד לפי תקנות הגנת הפרטיות (אבטחת מידע); מדריך לניהול סיכונים ושימוש אחראי בכלי בינה מלאכותית (AI) במגזר הציבורי",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://esgblog.runi.ac.il/post/ai-governance",
+          "title": "הבינה המלאכותית לא תנהל את עצמה: על ממשל תאגידי בעידן ה-AI",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/the_board_role/he/%D7%AA%D7%A4%D7%A7%D7%99%D7%93%20%D7%94%D7%93%D7%99%D7%A8%D7%A7%D7%98%D7%95%D7%A8%D7%99%D7%95%D7%9F%20%D7%91%D7%A7%D7%99%D7%95%D7%9D%20%D7%97%D7%95%D7%91%D7%95%D7%AA%20%D7%94%D7%AA%D7%90%D7%92%D7%99%D7%93%20%D7%9C%D7%A4%D7%99%20%D7%תקנות%20הגנת%20הפרטיות%20%20(%D7%90%D7%91%D7%98%D7%97%D7%AA%20%D7%9D%D7%99%D7%93%D7%A2).pdf",
+          "title": "תפקיד הדירקטוריון בקיום חובות התאגיד לפי תקנות הגנת הפרטיות (אבטחת מידע)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/ai-guide/en/%D7%9E%D7%93%D7%A8%D7%99%D7%9A%20%D7%9C%D7%A9%D7%99%D7%9E%D7%95%D7%A9%20%D7%90%D7%97%D7%A8%D7%90%D7%99%20%D7%91%D7%91%D7%99%D7%A0%D7%94%20%D7%9E%D7%9C%D7%90%D7%9B%D7%95%D7%AA%D7%99%D7%AA%20%D7%91%D7%9E%D7%92%D7%96%D7%A8%20%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%20-%20%D7%94%D7%A2%D7%A8%D7%95%D7%AA%20%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8.pdf",
+          "title": "מדריך לניהול סיכונים ושימוש אחראי בכלי בינה מלאכותית (AI) במגזר הציבורי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.gov.il/BlobFolder/legalinfo/the_board_role/he/%D7%AA%D7%A4%D7%A7%D7%99%D7%93%20%D7%94%D7%93%D7%99%D7%A8%D7%A7%D7%98%D7%95%D7%A8%D7%99%D7%95%D7%9F%20%D7%91%D7%A7%D7%99%D7%95%D7%9D%20%D7%97%D7%95%D7%91%D7%95%D7%AA%20%D7%94%D7%AA%D7%90%D7%92%D7%99%D7%93%20%D7%9C%D7%A4%D7%99%20%D7%תקנות%20הגנת%20הפרטיות%20%20(%D7%90%D7%91%D7%98%D7%97%D7%AA%20%D7%9D%D7%99%D7%93%D7%A2).pdf",
+      "title": "תפקיד הדירקטוריון בקיום חובות התאגיד לפי תקנות הגנת הפרטיות (אבטחת מידע)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "8858dc43-99dc-43bc-8d9c-4ba067c6be5a"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/71631.htm",
+      "title": "חוק הגנת הפרטיות, תשמ\"א-1981",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "859f5c73-6fa5-4bca-b231-a19d88ca4194"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1631",
+      "title": "כלל שיקול הדעת העסקי והדרישה לקבל החלטה \"מיודעת\"",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "e57e0838-06a9-4299-90e9-710bc17a1626"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_13056424.pdf",
+      "title": "מסמך מאתר אתר הכנסת",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "bd987097-ee65-4706-bd0d-e429d335d4e2"
+    },
+    {
+      "url": "https://www.smkb.ac.il/media/krajq3ed/%D7%A9%D7%99%D7%9E%D7%95%D7%A9-%D7%91%D7%9B%D7%9C%D7%99-%D7%91%D7%99%D7%A0%D7%94-%D7%9E%D7%9C%D7%90%D7%9B%D7%95%D7%AA%D7%99%D7%AA.pdf",
+      "title": "מסמך מאתר אתר אקדמי (smkb.ac.il)",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "3592a2c5-a6ae-4c93-8ed0-e6f978839893"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1860",
+      "title": "מינוי דירקטורים: תיאוריה, ראיות, מדיניות",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "fd621efe-fb30-4c8c-bd9b-43403d47b061"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/1&fileName=SH1_9_4988-08.pdf&type=2",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "d7db7f88-b981-42c9-a3c9-b234005624e2"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Document/%D7%91%D7%A9%D7%9C-%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA-%D7%A2%D7%9C-%D7%94%D7%96%D7%99%D7%95%D7%AA-%D7%94-AI-%D7%A2%D7%99%D7%A8%D7%99%D7%99%D7%AA-%D7%A8-%D7%92-%D7%AA%D7%A9%D7%9C%D7%9D-%D7%91יוקר",
+      "title": "תקדימי: העליון מציב גבולות לשימוש ב-AI ברשויות מנהליות - פסקדין",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "eaed1c1c-c0c8-4f5b-a7ef-7d800e21506f"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/most-news20231218/he/2023%20Artificial%20Intelligence%20Regulation%20and%20Ethics%20Policy%20Principles%20Document.pdf",
+      "title": "עקרונות מדיניות, רגולציה ואתיקה בתחום הבינה המלאכותית",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "3c49fa61-79fc-4f44-9847-8af3ccdc60a5"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/ai-guide/en/%D7%9E%D7%93%D7%A8%D7%99%D7%9A%20%D7%9C%D7%A9%D7%99%D7%9E%D7%95%D7%A9%20%D7%90%D7%97%D7%A8%D7%90%D7%99%20%D7%91%D7%91%D7%99%D7%A0%D7%94%20%D7%9E%D7%9C%D7%90%D7%9B%D7%95%D7%AA%D7%99%D7%AA%20%D7%91%D7%9E%D7%92%D7%96%D7%A8%20%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%20-%20%D7%94%D7%A2%D7%A8%D7%95%D7%AA%20%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8.pdf",
+      "title": "מדריך לניהול סיכונים ושימוש אחראי בכלי בינה מלאכותית (AI) במגזר הציבורי",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "c8974718-1759-4b58-8ec9-e3073b3c07c3"
+    },
+    {
+      "url": "https://esgblog.runi.ac.il/post/ai-governance",
+      "title": "הבינה המלאכותית לא תנהל את עצמה: על ממשל תאגידי בעידן ה-AI",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "2b07f559-bc94-4385-9d9b-6a15f3801a80"
+    },
+    {
+      "url": "https://www.boi.org.il/media/rh0bejl4/aireport.pdf",
+      "title": "ההיערכות הלאומית בתחום הבינה המלאכותית",
+      "number": 8,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "c2afaa70-6ef0-4b3c-bd4f-fdf19569065b"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 3,
+      "partial": 15,
+      "unrelated": 4,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 24,
+      "false": 1
+    }
+  }
+}

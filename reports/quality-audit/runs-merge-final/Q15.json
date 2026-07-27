@@ -1,0 +1,452 @@
+{
+  "id": "Q15",
+  "category": "mixed_sources",
+  "query": "מהו המסגרת הרגולטורית להנפקת אסימונים דיגיטליים בישראל, בהתבסס על חקיקה, פסיקה וספרות?",
+  "run_id": "02244cc5-6bcc-49cc-b743-320929c89635",
+  "ok": true,
+  "total_ms": 259869,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "anchor_status": {
+    "direct": 0,
+    "partial": 0,
+    "missing": 0,
+    "entries": []
+  },
+  "missing_required_anchors": null,
+  "answer": "**מסקנה תמציתית**\n\nבישראל אין מסגרת אחת־ברורה ואחידה לאסימונים דיגיטליים; ההשלכה הממשית תלויה בסיווג הפונקציונלי של האסימון: אם יימצא כי האסימון מהותית הוא 'נייר ערך' — יחול עליו משטר חוק ניירות ערך הכולל חובות תשקיף ודיווח; במקביל חלות חובות AML/KYC ופיקוח תעבורת כספים לפי מסגרת איסור הלבנת הון והצו־הנחיות הרלוונטיים, ובנק ישראל הבהיר כי מטבעות וירטואליים אינם הילך חוקי.¹\n\n**האם אסימונים דיגיטליים הם 'נייר ערך'?**\n\nהגדרת 'נייר ערך' בחוק ניירות ערך היא העוגן הפרשני המרכזי לקביעת סטטוס של אסימון דיגיטלי; לפי החוק חובות פרסום ותשקיף ודרישות דיווח נכנסות לתוקף כשמדובר בהצעה של נייר ערך לציבור.²\n\nרשות ניירות ערך קבעה במסמכיה כי 'ניירות ערך דיגיטליים' שבמימוש מהווים זכויות כלכליות או השתתפות בהכנסות/השקעה כפופים לחוק ניירות ערך, ולכן הצעות מסוג ICO/ITO עשויות להידרש לפרסום תשקיף וכניסה למשטר דיווח שוטף אם תעמוד ההגדרה העובדתית של נייר ערך.³\n\nבספרות ובניתוחי ICO מוצעים מבחנים פונקציונליים לבחינה (מיקוד בזכויות כלכליות, ציפייה לרווח, תפקוד החליפין), ולכן קביעת הסטטוס היא עניין עובדתי שדורש ניתוח מקרה־מקרה; מסקנות ספרותיות תומכות בכך אך אינן מחליפות הכרעה רגולטורית או שיפוטית אקטואלית.⁴\n\n**השלכות של סיווג כנייר ערך**\n\nאם אסימון יורגש כנייר ערך — יחולו חובות פרסום תשקיף ובהיקף שקובע חוק ניירות ערך, איסורים והגבלות על הצעות ומסחר בלתי מורשה, וכן חובות דיווח וחובת רישום/רישוי של פעילויות מסוימות לפי דיני שוק ההון.⁵\n\n**AML/KYC, חוק איסור הלבנת הון וצווי ניהול זיהוי**\n\nחוק איסור הלבנת הון וצווי היישום מהווים את המסגרת הכללית לחובות זיהוי ודיווח בישראל; חובות אלה חלים על הכנסת/הוצאת כספים ועל פעולות של נותני שירות פיננסיים, אך החוק אינו מגדיר במפורש את הסטטוס של אסימונים דיגיטליים ולכן יש לנסח מסקנות בזהירות ולהתאים לנסיבות העובדתיות.⁶\n\nלצד זאת קיימת התפתחות רגולטורית ישירה: טיוטת צו מ־2022 והנחיות מקצועיות של הרשות להטמעת דיני AML להגברת דרישות הזיהוי, הדיווח וניהול רישומים ביחס לנכסים פיננסיים ונכסים וירטואליים — כלומר יש המגמה להחיל חובות KYC/AML על פעולות הקשורות לאסימונים דיגיטליים ולנותני שירות בתחום זה.⁷\n\nגם בנק ישראל והפיקוח שוקלים מדיניות מבוססת־סיכון לניהול סיכוני AML/CFT בשירותי תשלום הקשורים למטבעות וירטואליים, וזה רומז על דרישות זהות וזיהוי כשפלטפורמות או בנקים מעורבים בהמרה לפיאט או בהעברות כספים בין לקוחות.⁸\n\n**האם אסימונים הם מטבע או אמצעי תשלום?**\n\nעמדת בנק ישראל שמטבעות וירטואליים אינם הילך חוקי ומספר דוחות של הבנק מדגישים כי לנכסים דיגיטליים לא מגובים השפעה מוניטרית זניחה — לכן אין הכרה אוטומטית במעמד של מטבע חוקי. מסקנה מעשית היא שהכרה כאמצעי תשלום תלויה בפונקציה והיקף השימוש, ולא במסמנט הטכנולוגי בלבד.⁹\n\n**הנפקת אסימונים לציבור (ICO/ITO) — חובות רגולטוריות מעשיות**\n\nכאשר אסימון מהווה נייר ערך, הצעה או מכירה לציבור טעונה בדרך כלל פרסום תשקיף וחובת גילוי בהתאם לחוק ניירות ערך; הרגולטור התריע כי הנפקת 'ניירות ערך דיגיטליים' אינה יוצאת מן הכלל מבחינת חובות התשקיף והדיווח.⁵\n\nדו\"חות ועדות ממשלתיות מצביעים על מסלולים רגולטוריים חלופיים (הכנסת הפעילות למפוקחות או חקיקה ייעודית) ועל אפשרות של רישיוי מפעילים של הנפקות או פלטפורמות — אך אלו המלצות שמעוצבות ברמה מדינית ולא חקיקתית מחייבת עדיין.¹⁰\n\n**רגולציה על פלטפורמות מסחר ואחסון (exchanges, custodians, wallet providers)**\n\nדו\"חות וועדה ומסמכי מדיניות ממליצים כי פלטפורמות מסחר ואחסון ייכנסו למסגרת רישוי ופיקוח דומה לפעילויות פיננסיות מפוקחות, תוך עמידה בחובות ניהול סיכונים, שמירת נכסים ואמות מידה של ממשל תאגידי — אלה המלצות מרכזיות אך חלקן טרם מומשו בחקיקה מחייבת.¹¹\n\nבמקביל, צווי איסור הלבנת הון וההנחיות הנלוות מטילים חובות KYC/דיווח על נותני שירותי מטבע ונושאי פעילות תשלום; סכירת ההשלכות היא שפלטפורמות המסחר והאחסון צפויות להיות כפופות לחובות AML ואף לנדרשים לרישום/רישוי בהתאם להתפתחויות התקנות והצוים.¹²\n\n**מיסוי — קווים מנחים והשלכות עיקריות**\n\nרשות המסים הוציאה חוזר מקצועי המסדיר מדיניות מיסוי בנוגע ל'מטבעות וירטואליים' ומנחה את הטיפול במס הכנסה; המסקנה המעשית היא כי הטיפול במס רווח הון או בהכנסה חייב להיקבע לפי אופי הפעילות (חזקה להשקעה מול סחר/פעילות עסקית) והעובדות הספציפיות של המוכר/מונה.¹³\n\nסיווג אסימון כנייר ערך (או כשירות תשלום) עשוי לשנות את מסיקת המס בפועל; המסמכים המקצועיים והסקירה הספרותית מדגישים חוסר אחידות־מוסכמה ולכן יש לגשת לניתוח מס פרטני לכל מקרה ולברר השלכות נוספות כמו חובת מע\"מ במקרה של עסקאות מסחריות — אך בקונטקסט הישראלי אלה עניינים הנחוצים להבחנה עובדתית ולעיתים הכרעה פרשנית.¹⁴\n\n**חוסרים, מגמות רגולטוריות והמלצות פרקטיות לגבי אי ודאות**\n\nהדוקטרינה והרגולטורים בישראל נוטים כיום לגשת לנכסים דיגיטליים תכליתית: האם התכלית הכלכלית והזכויות המתקבלות מהאסימון דומות לנייר ערך או למכשיר תשלום. ועדות, טיוטות צוים ומסמכי BOI מצביעים על כיוון להסדרה חזקה יותר (החלת חובות KYC/AML, אפשרות רישוי למנפיקי stablecoins ולפלטפורמות), אך רבים מהצעדים נשארים טיוטות או המלצות ואינם חקיקה מחייבת סופית.¹⁵\n\nממליץ פרקטית: לערוך בדיקת 'תכלית וזכויות' משפטית ופיננסית לפני הנפקה, לשקול חוות דעת רגולטורית מול רשות ניירות ערך/בנק ישראל/הרשות לאיסור הלבנת הון לפי הרלוונטיות, וליישם מיד מדיניות AML/KYC לפי הנחיות הרשות והצו הקיים עד לקבלת הבהרות חקיקתיות נוספות.¹⁶",
+  "footnotes": [
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/dbe0f2b8-3f0a-e511-80c0-00155d0a70f5/2_dbe0f2b8-3f0a-e511-80c0-00155d0a70f5_11_12187.pdf",
+      "title": "חוק ניירות ערך, תשכ\"ח-1968; מסמך מאתר אתר ממשלתי (gov.il); הודעה לציבור בדבר סיכונים אפשריים הטמונים במטבעות וירטואליים מבוזרים (דוגמת ביטקוין)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/dbe0f2b8-3f0a-e511-80c0-00155d0a70f5/2_dbe0f2b8-3f0a-e511-80c0-00155d0a70f5_11_12187.pdf",
+          "title": "חוק ניירות ערך, תשכ\"ח-1968",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/digital_markets.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.boi.org.il/publications/pressreleases/%D7%94%D7%95%D7%93%D7%A2%D7%94-%D7%9C%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%91%D7%93%D7%91%D7%A8-%D7%A1%D7%99%D7%9B%D7%95%D7%A0%D7%99%D7%9D-%D7%90%D7%A4%D7%A9%D7%A8%D7%99%D7%99%D7%9D-%D7%94%D7%98%D7%9E%D7%95%D7%A0%D7%99%D7%9D-%D7%91%D7%9E%D7%98%D7%91%D7%A2%D7%95%D7%AA-%D7%95%D7%99%D7%A8%D7%98%D7%95%D7%90%D7%9C%D7%99%D7%99%D7%9D-%D7%9E%D7%91%D7%95%D7%96%D7%A8%D7%99%D7%9D-%D7%93%D7%95%D7%92%D7%9E%D7%AA-%D7%91%D7%99%D7%98%D7%A7%D7%95%D7%99%D7%9F/",
+          "title": "הודעה לציבור בדבר סיכונים אפשריים הטמונים במטבעות וירטואליים מבוזרים (דוגמת ביטקוין)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/dbe0f2b8-3f0a-e511-80c0-00155d0a70f5/2_dbe0f2b8-3f0a-e511-80c0-00155d0a70f5_11_12187.pdf",
+      "title": "חוק ניירות ערך, תשכ\"ח-1968",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/dbe0f2b8-3f0a-e511-80c0-00155d0a70f5/2_dbe0f2b8-3f0a-e511-80c0-00155d0a70f5_11_12187.pdf",
+          "title": "חוק ניירות ערך, תשכ\"ח-1968",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/digital_markets.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/digital_markets.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4891593",
+      "title": "Are Securities Issued in ICO's? On the Regulation of Digital Tokens Issued by Companies",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4891593",
+          "title": "Are Securities Issued in ICO's? On the Regulation of Digital Tokens Issued by Companies",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/dbe0f2b8-3f0a-e511-80c0-00155d0a70f5/2_dbe0f2b8-3f0a-e511-80c0-00155d0a70f5_11_12187.pdf",
+      "title": "חוק ניירות ערך, תשכ\"ח-1968; מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/dbe0f2b8-3f0a-e511-80c0-00155d0a70f5/2_dbe0f2b8-3f0a-e511-80c0-00155d0a70f5_11_12187.pdf",
+          "title": "חוק ניירות ערך, תשכ\"ח-1968",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/digital_markets.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/154370.htm",
+      "title": "חוק איסור הלבנת הון, התש״ס–2000; צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע), תשס״ב–2002",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/154370.htm",
+          "title": "חוק איסור הלבנת הון, התש״ס–2000",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/154372.htm",
+          "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע), תשס״ב–2002",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/SecondaryLaw/25_scl_bg_4762308.pdf",
+      "title": "טיוטת צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירות בנכסים פיננסיים), התשפ״ב–2022; חובות דיווח בנכסים וירטואליים במסגרת צו איסור הלבנת הון",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/25/SecondaryLaw/25_scl_bg_4762308.pdf",
+          "title": "טיוטת צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירות בנכסים פיננסיים), התשפ״ב–2022",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/aml-msb-order-14112021/he/professional-docs_orders_aml_msb_pamphlet.pdf",
+          "title": "חובות דיווח בנכסים וירטואליים במסגרת צו איסור הלבנת הון",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.boi.org.il/en/communication-and-publications/press-releases/the-bank-of-israel-announces-the-publication-of-a-draft-regulation-in-the-area-of-amlcft-risk-management-derived-from-the-provision-of-payment-services-related-to-customer-activity-in-virtual-currencies/",
+      "title": "טיוטת תקנות/הסדרה – שירותי תשלום הקשורים למטבעות וירטואליים; מסמך מאתר boi.org.il",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://www.boi.org.il/en/communication-and-publications/press-releases/the-bank-of-israel-announces-the-publication-of-a-draft-regulation-in-the-area-of-amlcft-risk-management-derived-from-the-provision-of-payment-services-related-to-customer-activity-in-virtual-currencies/",
+          "title": "טיוטת תקנות/הסדרה – שירותי תשלום הקשורים למטבעות וירטואליים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.boi.org.il/en/communication-and-publications/press-releases/the-banking-supervision-department-publishes-updates-to-the-proper-conduct-of-banking-business-directive-dealing-with-amlcft/",
+          "title": "מסמך מאתר boi.org.il",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.boi.org.il/publications/pressreleases/%D7%94%D7%95%D7%93%D7%A2%D7%94-%D7%9C%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%91%D7%93%D7%91%D7%A8-%D7%A1%D7%99%D7%9B%D7%95%D7%A0%D7%99%D7%9D-%D7%90%D7%A4%D7%A9%D7%A8%D7%99%D7%99%D7%9D-%D7%94%D7%98%D7%9E%D7%95%D7%A0%D7%99%D7%9D-%D7%91%D7%9E%D7%98%D7%91%D7%A2%D7%95%D7%AA-%D7%95%D7%99%D7%A8%D7%98%D7%95%D7%90%D7%9C%D7%99%D7%99%D7%9D-%D7%9E%D7%91%D7%95%D7%96%D7%A8%D7%99%D7%9D-%D7%93%D7%95%D7%92%D7%9E%D7%AA-%D7%91%D7%99%D7%98%D7%A7%D7%95%D7%99%D7%9F/",
+      "title": "הודעה לציבור בדבר סיכונים אפשריים הטמונים במטבעות וירטואליים מבוזרים (דוגמת ביטקוין); דו\"ח אסדרת תחום נכסים דיגיטליים; העקרונות לפעילות \"מטבעות דיגיטליים יציבים\" בישראל – עדכון",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://www.boi.org.il/publications/pressreleases/%D7%94%D7%95%D7%93%D7%A2%D7%94-%D7%9C%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%91%D7%93%D7%91%D7%A8-%D7%A1%D7%99%D7%9B%D7%95%D7%A0%D7%99%D7%9D-%D7%90%D7%A4%D7%A9%D7%A8%D7%99%D7%99%D7%9D-%D7%94%D7%98%D7%9E%D7%95%D7%A0%D7%99%D7%9D-%D7%91%D7%9E%D7%98%D7%91%D7%A2%D7%95%D7%AA-%D7%95%D7%99%D7%A8%D7%98%D7%95%D7%90%D7%9C%D7%99%D7%99%D7%9D-%D7%9E%D7%91%D7%95%D7%96%D7%A8%D7%99%D7%9D-%D7%93%D7%95%D7%92%D7%9E%D7%AA-%D7%91%D7%99%D7%98%D7%A7%D7%95%D7%99%D7%9F/",
+          "title": "הודעה לציבור בדבר סיכונים אפשריים הטמונים במטבעות וירטואליים מבוזרים (דוגמת ביטקוין)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+          "title": "דו\"ח אסדרת תחום נכסים דיגיטליים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.boi.org.il/publications/pressreleases/55310/",
+          "title": "העקרונות לפעילות \"מטבעות דיגיטליים יציבים\" בישראל – עדכון",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+      "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים לציבור – דו\"ח סופי",
+      "number": 10,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+          "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים לציבור – דו\"ח סופי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+      "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים לציבור – דו\"ח סופי; טכנולוגיית הבלוקצ'יין – לא מה שחשבתם: שיקולים טכנלוגיים ומשפטיים | דלית קן-דרור פלדמן ואור דונקלמן (כרך ט\"ז)",
+      "number": 11,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+          "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים לציבור – דו\"ח סופי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2023/06/din16-kendror.pdf",
+          "title": "טכנולוגיית הבלוקצ'יין – לא מה שחשבתם: שיקולים טכנלוגיים ומשפטיים | דלית קן-דרור פלדמן ואור דונקלמן (כרך ט\"ז)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/154372.htm",
+      "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע), תשס״ב–2002; חובות דיווח בנכסים וירטואליים במסגרת צו איסור הלבנת הון",
+      "number": 12,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/154372.htm",
+          "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע), תשס״ב–2002",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/aml-msb-order-14112021/he/professional-docs_orders_aml_msb_pamphlet.pdf",
+          "title": "חובות דיווח בנכסים וירטואליים במסגרת צו איסור הלבנת הון",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-5-2018/he/Policy_ProfessionalInstIncomeTax_hor_acc%2015.2.18.pdf",
+      "title": "חוזר מס הכנסה מספר 05/2018 – רשות המסים בנושא: מיסוי פעילות באמצעי תשלום מבוזר (המכונים: 'מטבעות וירטואלים')",
+      "number": 13,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-5-2018/he/Policy_ProfessionalInstIncomeTax_hor_acc%2015.2.18.pdf",
+          "title": "חוזר מס הכנסה מספר 05/2018 – רשות המסים בנושא: מיסוי פעילות באמצעי תשלום מבוזר (המכונים: 'מטבעות וירטואלים')",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/dbe0f2b8-3f0a-e511-80c0-00155d0a70f5/2_dbe0f2b8-3f0a-e511-80c0-00155d0a70f5_11_12187.pdf",
+      "title": "חוק ניירות ערך, תשכ\"ח-1968; טכנולוגיית הבלוקצ'יין – לא מה שחשבתם: שיקולים טכנלוגיים ומשפטיים | דלית קן-דרור פלדמן ואור דונקלמן (כרך ט\"ז); חוזר מס הכנסה מספר 05/2018 – רשות המסים בנושא: מיסוי פעילות באמצעי תשלום מבוזר (המכונים: 'מטבעות וירטואלים')",
+      "number": 14,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/dbe0f2b8-3f0a-e511-80c0-00155d0a70f5/2_dbe0f2b8-3f0a-e511-80c0-00155d0a70f5_11_12187.pdf",
+          "title": "חוק ניירות ערך, תשכ\"ח-1968",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2023/06/din16-kendror.pdf",
+          "title": "טכנולוגיית הבלוקצ'יין – לא מה שחשבתם: שיקולים טכנלוגיים ומשפטיים | דלית קן-דרור פלדמן ואור דונקלמן (כרך ט\"ז)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-5-2018/he/Policy_ProfessionalInstIncomeTax_hor_acc%2015.2.18.pdf",
+          "title": "חוזר מס הכנסה מספר 05/2018 – רשות המסים בנושא: מיסוי פעילות באמצעי תשלום מבוזר (המכונים: 'מטבעות וירטואלים')",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+      "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים לציבור – דו\"ח סופי; טיוטת צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירות בנכסים פיננסיים), התשפ״ב–2022; טיוטת תקנות/הסדרה – שירותי תשלום הקשורים למטבעות וירטואליים",
+      "number": 15,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+          "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים לציבור – דו\"ח סופי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/25/SecondaryLaw/25_scl_bg_4762308.pdf",
+          "title": "טיוטת צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירות בנכסים פיננסיים), התשפ״ב–2022",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.boi.org.il/en/communication-and-publications/press-releases/the-bank-of-israel-announces-the-publication-of-a-draft-regulation-in-the-area-of-amlcft-risk-management-derived-from-the-provision-of-payment-services-related-to-customer-activity-in-virtual-currencies/",
+          "title": "טיוטת תקנות/הסדרה – שירותי תשלום הקשורים למטבעות וירטואליים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/digital_markets.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il); טיוטת צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירות בנכסים פיננסיים), התשפ״ב–2022; חובות דיווח בנכסים וירטואליים במסגרת צו איסור הלבנת הון",
+      "number": 16,
+      "sources": [
+        {
+          "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/digital_markets.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/25/SecondaryLaw/25_scl_bg_4762308.pdf",
+          "title": "טיוטת צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירות בנכסים פיננסיים), התשפ״ב–2022",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/aml-msb-order-14112021/he/professional-docs_orders_aml_msb_pamphlet.pdf",
+          "title": "חובות דיווח בנכסים וירטואליים במסגרת צו איסור הלבנת הון",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/dbe0f2b8-3f0a-e511-80c0-00155d0a70f5/2_dbe0f2b8-3f0a-e511-80c0-00155d0a70f5_11_12187.pdf",
+      "title": "חוק ניירות ערך, תשכ\"ח-1968",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d1625f09-20af-4e2a-91d6-a8a2d6bc644a"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/digital_markets.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a4e91bca-c20b-48db-b165-825f4534ed61"
+    },
+    {
+      "url": "https://www.boi.org.il/publications/pressreleases/%D7%94%D7%95%D7%93%D7%A2%D7%94-%D7%9C%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%91%D7%93%D7%91%D7%A8-%D7%A1%D7%99%D7%9B%D7%95%D7%A0%D7%99%D7%9D-%D7%90%D7%A4%D7%A9%D7%A8%D7%99%D7%99%D7%9D-%D7%94%D7%98%D7%9E%D7%95%D7%A0%D7%99%D7%9D-%D7%91%D7%9E%D7%98%D7%91%D7%A2%D7%95%D7%AA-%D7%95%D7%99%D7%A8%D7%98%D7%95%D7%90%D7%9C%D7%99%D7%99%D7%9D-%D7%9E%D7%91%D7%95%D7%96%D7%A8%D7%99%D7%9D-%D7%93%D7%95%D7%92%D7%9E%D7%AA-%D7%91%D7%99%D7%98%D7%A7%D7%95%D7%99%D7%9F/",
+      "title": "הודעה לציבור בדבר סיכונים אפשריים הטמונים במטבעות וירטואליים מבוזרים (דוגמת ביטקוין)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "16fa8283-2cbb-4963-8b11-57166a36fdf6"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4891593",
+      "title": "Are Securities Issued in ICO's? On the Regulation of Digital Tokens Issued by Companies",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e0f70ac8-1517-4858-850d-367eebcbd333"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/154370.htm",
+      "title": "חוק איסור הלבנת הון, התש״ס–2000",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "75e46fae-3178-4793-81d4-09f1049eec82"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/154372.htm",
+      "title": "צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירותי מטבע), תשס״ב–2002",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "4e435ea4-3c2d-4b93-a433-193da24e2f36"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/25/SecondaryLaw/25_scl_bg_4762308.pdf",
+      "title": "טיוטת צו איסור הלבנת הון (חובות זיהוי, דיווח וניהול רישומים של נותני שירות בנכסים פיננסיים), התשפ״ב–2022",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a67f4143-22d5-48e1-8695-dd7834e84e93"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/aml-msb-order-14112021/he/professional-docs_orders_aml_msb_pamphlet.pdf",
+      "title": "חובות דיווח בנכסים וירטואליים במסגרת צו איסור הלבנת הון",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "67e6aa32-8615-4d76-be94-e684310da93f"
+    },
+    {
+      "url": "https://www.boi.org.il/en/communication-and-publications/press-releases/the-bank-of-israel-announces-the-publication-of-a-draft-regulation-in-the-area-of-amlcft-risk-management-derived-from-the-provision-of-payment-services-related-to-customer-activity-in-virtual-currencies/",
+      "title": "טיוטת תקנות/הסדרה – שירותי תשלום הקשורים למטבעות וירטואליים",
+      "number": 8,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a4f0b2b3-0f73-4ad5-bfc8-02bce08d6852"
+    },
+    {
+      "url": "https://www.boi.org.il/en/communication-and-publications/press-releases/the-banking-supervision-department-publishes-updates-to-the-proper-conduct-of-banking-business-directive-dealing-with-amlcft/",
+      "title": "מסמך מאתר boi.org.il",
+      "number": 8,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "2229310e-246b-48bb-aa3d-2595009584a5"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/press_28112022/he/PressReleases_files_press_28112022_file.pdf",
+      "title": "דו\"ח אסדרת תחום נכסים דיגיטליים",
+      "number": 9,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "785563d9-7def-422c-8e2c-6b79edeb3b0f"
+    },
+    {
+      "url": "https://www.boi.org.il/publications/pressreleases/55310/",
+      "title": "העקרונות לפעילות \"מטבעות דיגיטליים יציבים\" בישראל – עדכון",
+      "number": 9,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a0509ff5-085a-43f2-ac98-9ec125cbab65"
+    },
+    {
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-637f2c2bb1c37/CryptoCommitteeFinalReport.pdf",
+      "title": "הוועדה לבחינת אסדרה של הנפקת מטבעות קריפטוגרפיים מבוזרים לציבור – דו\"ח סופי",
+      "number": 10,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "861f1eed-f530-4c09-b10f-5f75cdf530cb"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2023/06/din16-kendror.pdf",
+      "title": "טכנולוגיית הבלוקצ'יין – לא מה שחשבתם: שיקולים טכנלוגיים ומשפטיים | דלית קן-דרור פלדמן ואור דונקלמן (כרך ט\"ז)",
+      "number": 11,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "879dc125-0c90-43d2-83b7-1f95462ce72d"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/policy/income-tax-professional-inst-5-2018/he/Policy_ProfessionalInstIncomeTax_hor_acc%2015.2.18.pdf",
+      "title": "חוזר מס הכנסה מספר 05/2018 – רשות המסים בנושא: מיסוי פעילות באמצעי תשלום מבוזר (המכונים: 'מטבעות וירטואלים')",
+      "number": 13,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "da12a042-2c0a-4905-9965-66af2766c914"
+    }
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 5,
+      "partial": 13,
+      "unrelated": 5,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 26,
+      "false": 0
+    }
+  }
+}

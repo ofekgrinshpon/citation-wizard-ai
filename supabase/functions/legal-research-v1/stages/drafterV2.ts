@@ -680,6 +680,18 @@ export interface DrafterV2Result {
   /** Lead-source selection telemetry (Phase-1 lead_ref patch). */
   lead_ref?: LeadRefSelection;
   missing_anchor_descriptions?: string[];
+  /**
+   * Deterministic drafter branch that fired (bypassing the LLM), if any.
+   * One of: "docket_limitation", "statute_section_limitation",
+   * "canonical_quote_registry", "canonical_quote_verified",
+   * "statute_section_quote_refusal". Unset when the LLM drafter ran.
+   */
+  deterministic_branch?:
+    | "docket_limitation"
+    | "statute_section_limitation"
+    | "canonical_quote_registry"
+    | "canonical_quote_verified"
+    | "statute_section_quote_refusal";
   schema_failure_reason?:
     | "no_tool_call"
     | "json_parse"
@@ -871,6 +883,7 @@ export async function runDrafterV2(
       missing_anchor_caveat_injected: true,
       lead_ref: leadSelection,
       missing_anchor_descriptions: missingAnchors.map((a) => a.description),
+      deterministic_branch: "docket_limitation",
       schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
     };
   }
@@ -916,6 +929,7 @@ export async function runDrafterV2(
       missing_anchor_caveat_injected: true,
       lead_ref: leadSelection,
       missing_anchor_descriptions: missingAnchors.map((a) => a.description),
+      deterministic_branch: "statute_section_limitation",
       schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
     };
   }
@@ -966,6 +980,7 @@ export async function runDrafterV2(
         missing_anchor_caveat_injected: false,
         lead_ref: { ref: registrySource.ref, reason: "canonical_registry_statute_section", shape },
         missing_anchor_descriptions: [],
+        deterministic_branch: "canonical_quote_registry",
         schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
       };
     }
@@ -1029,6 +1044,7 @@ export async function runDrafterV2(
         missing_anchor_caveat_injected: !canonical,
         lead_ref: leadSelection,
         missing_anchor_descriptions: canonical ? [] : [anchor.description],
+        deterministic_branch: canonical ? "canonical_quote_verified" : "statute_section_quote_refusal",
         schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
       };
     }
