@@ -2,161 +2,143 @@
   "id": "Q02",
   "category": "docket_holding_missing_source_test",
   "query": "מה נקבע בע\"מ (מחוזי ת\"א) 61908-05-19 בעניין סיווג הכנסה כהכנסת עבודה או הכנסת עסק?",
-  "run_id": "384c5b2d-8a28-4d48-8828-7aeae1ef271c",
+  "run_id": "595545f6-da84-484c-a3bb-6d3f49699b58",
   "ok": true,
-  "total_ms": 190743,
+  "total_ms": 179071,
   "answer_intent": {
     "output_shape": "case_holding"
   },
   "lead_ref": {
-    "ref": "s3",
+    "ref": null,
     "shape": "case_holding",
-    "reason": "best_case"
+    "reason": "no_case_source"
   },
   "missing_anchor_caveat_injected": false,
   "missing_anchor_descriptions": [],
   "required_anchors": [],
-  "answer": "**הבהרה מקדמית לגבי הזמינות של פסק הדין המבוקש**\n\nמבקש/ת השאלה ביקש/ה נתונים על פסק דין ע\"מ 61908-05-19 (מחוזי תל אביב). בחומר שסופק אין עותק של פסק דין זה ואיני יכול/ה לאמת את זהותו של ההליך, את שמות הצדדים או את תאריך ההחלטה. עקב זאת אין בידי מקור סמכותי מתוך החומרים שסופקו שמאפשר להציג את ההכרעה המהותית של אותו תיק.\n\nמקור המוביל שסופק בחומרים דן בפסיקה אחרת ובשאלת חובת ניכוי מס במקור ובמועד חיוב מסירת שיק; המקור אינו מכיל את ע\"מ 61908-05-19 ולכן אינו מהווה תחליף למידע המבוקש.¹\n\n**האם ניתן לקבוע את ההכרעה המהותית (סיווג ההכנסה) מתוך החומרים?**\n\nלא ניתן לקבוע מתוך החומרים שסופקו האם בעמ 61908-05-19 הוכרה ההכנסה כהכנסת עבודה (שכר) או כהכנסת עסק/עצמאי. אין במקורות שקיבלתי טקסט ההלכה של אותו תיק ולכן יש להיזקק לעותק הפסק דין או למקורות משניים שמצטטים אותו כדי לקבוע את ההכרעה המהותית.\n\n**מבחנים ונימוקים שמקורות משפטיים ורלבנטיים מציגים בהבחנה בין הכנסה מעבודה להכנסה מעסק**\n\nמן הספרות ומהניתוח המשפטי עולה בזהירות כי שני מבחנים מרכזיים חוזרים בבחינת המעמד — מבחן השליטה ומבחן ההשתלבות. מבחן השליטה בוחן את היקף ההוראות, הפיקוח והשליטה שהמעסיק יכול להפעיל על אופן, שעות ותנאי העבודה; מבחן ההשתלבות בוחן האם העמדה של נותן השירות מהותית בתוך מבנה הארגון או שמדובר בפעילות נפרדת עצמאית.²\n\nבנוסף ניתן להצביע על שיקולים משלימים שנזכרים בספרות ובניתוחים אמפיריים: סדירות והמשכיות העבודה; נטל הסיכון הכלכלי והאפשרות לרווח/פסד עסקי; הבעלות וההשקעה באמצעים וציוד; האפשרות להחלפה או ייפוי כוח של מבצע העבודה; היקף הלקוחות והיכולת לשווק שירותים לחוץ — שיקולים אלה משפיעים על ההכרעה הכוללת.³\n\nמן המקורות עולה בזהירות כי בתי משפט ותיאורטיקנים נוטים לשקלל את המבחנים במכלול נסיבות ולא להסתמך על קריטריון יחיד; המשקל הנתון לכל שיקול משתנה לפי הסיטואציה העובדתית והתחום המשפטי (מיסים, דיני עבודה או ביטוח לאומי).⁴\n\n**השלכות מעשיות של סיווג הכנסה בהתאם למקורות שסופקו**\n\nניתן להצביע בזהירות על השלכות אופייניות: אם הכנסה מוסווגת כהכנסת עבודה הדבר משפיע על חובת ניכוי מס במקור וזכויות סוציאליות; אם היא מוכרת כהכנסת עסקי הדבר משנה את אופן הכריית ההכנסות וההוצאות ואת חבות המס של המקבל.⁵\n\nבפרט, במקור המוביל ישנה התייחסות לנקודת הזמן שבה חלה חובת הניכוי במקור — למשל מועד מסירת שיק — ולכן סיווג ההכנסה עשוי להשפיע על זהות החייב בניכוי ומועד החבות; עם זאת החומר שסופק אינו מפרט את השלכותיו המדויקות של הסיווג בעמ 61908-05-19 עצמו.¹\n\nלסיכום מעשי: כדי לקבל תשובה דייקנית על שאלות C1–C4 יש להשיג את פסק הדין ע\"מ 61908-05-19 או ציטוט מהימן שלו. במקומו ניתן להשתמש בכלליות בסקירת המבחנים וההשלכות שבפורטו למעלה, אך כל מסקנה לגבי תיק מסוים מחייבת בדיקה ישירה של טקסט ההחלטה והנסיבות העובדתיות.",
+  "answer": "**ממצא ראשוני**\n\nבבדיקה של המקורות שסופקו כאן לא נמצא הטקסט של פסק‑דין ע\"מ (מחוזי ת\"א) 61908‑05‑19; לכן איני יכול לקבוע, על סמך מקורות אלה בלבד, מה היתה הכרעת בית המשפט בסוגיית סיווג ההכנסה כ'הכנסת עבודה' או כ'הכנסת עסק'.\n\n**עקרונות וסייגים משפטיים רלוונטיים מהמקורות המצורפים**\n\nמהפקודה למיסוי ומהחומר הדוקטרינרי שסופק ניתן בזהירות לזהות את המסגרת החוקית והכללית שבה נשקלת ההבחנה בין הכנסה מעסק לבין הכנסת עבודה — אך יש להיזהר מלקבוע להכרעה של תיק ספציפי ללא בחינת טקסט הפסיקה עצמה.¹\n\n- תלות ושליטה: מידת ההשפעה והפיקוח של המעסיק על אופן ביצוע העבודה והשליטה בתנאי הביצוע נחשבת קריטריון מרכזי להבחנה.²\n- ארגון והשתלבות: האם הפרט משולב בפעילותו של צד אחר ככפוף למבנה ארגוני, או פועל באופן עצמאי ומאורגן כעסק משלו.²\n- כוונת רווח ועצמאות כלכלית: כוונה לייצר רווח עסקי באופן עצמאי ולשאת בסיכון עסקי תיטול את ההטיה לעבר סיווג כ'הכנסת עסק'.¹\n- סדירות והיקף הפעילות: אופי הפעילות מבחינת משך, תדירות והיקף מסייע להבחנה — פעילות קבועה ורציפה מצביעה יותר על עסק מאשר עבודה חד‑פעמית.²\n- מאפיינים חוזיים ופיזיים: תנאי ההתקשרות (האם יש חוזה המסדיר יחסי עובד‑מעביד), שימוש בכלים או במקומות של צד שלישי, ואחריות כלפי לקוחות — כל אלה נלקחים בחשבון.²\n\nהקריטריונים האלה משקפים את האופן שבו הפרשנות של פקודת מס הכנסה ומקורות דוקטרינריים נוטים לגשת להבחנה; עם זאת, ההשפעות המדויקות והמשקל שניתן לכל שיקול נקבעים בהלכה המיישמת אותם על עובדות מקרה ספציפיות.¹\n\n**עובדות המקרה (בקשתך לגבי פרטי התיק)**\n\nלא ניתן לבחון כאן את העובדות המהותיות של תיק ע\"מ 61908‑05‑19 או לצטט את נימוקי בית המשפט הקונקרטיים, מאחר שהטקסט של פסיקה זו לא סופק במקורות המצורפים. אם תספק/י את טקסט הפסיקה או קישור אליה, אוכל להוציא מהמענה את הכרעת בית המשפט, את נאמר שם לגבי הקריטריונים, ואת אילו עובדות בתיק היו מכריעות.\n\n**השלכות מס‑מעשיות באופן כללי על‑פי המקורות**\n\nמן הפקודה והמסמכים הגלויים עולה בזהירות כי הסיווג משפיע על חבות המס וסוג הזכויות לניכוי: הכנסות שהוקבעו כהכנסות מעסק עשויות לאפשר ניכוי הוצאות והכרה בהפסדים עסקיים, בעוד הכנסת עבודה בדרך כלל תיחשב כהכנסה חייבת משכר עם כללי ניכוי וניכוי במקור שונים.³\n\nבנוסף לכך, מקורות מעשיים נתנו דוגמה של השלכות חישוביות ונוהליות — חוברת חישובי משכורת ודו\"חות מעשיים מציינת הבדלים באופן הדיווח, בניכוי מס חודשי ובמקדמות; מאמרים מקצועיים מסכמים כי סיווג שונה עשוי להשפיע גם על זכויות לזיכויים וקיזוזים.⁴\n\nהדגשה שיטתית: כל הנאמר לעיל לגבי השלכות המסייות הוא כללי ואמור להינתן בזהירות — הכרעה מעשית לגבי חיובים, זכות לניכוי או חבות במקור בתיק המסוים מחייבת בדיקה של פסיקת בית המשפט במקרה המדובר ושל אישורים מנהליים רלוונטיים.⁵\n\nמסקנה מעשית והצעה: מכיוון שהפסיקה המבוקשת לא נכללה במקורות שסופקו, כדי לקבל מענה מדויק על כל סעיפי שאלתך (כולל מה החליט בית המשפט בפועל, הנימוקים המפורשים, העובדות המהותיות וההשלכות המיסויות הקונקרטיות) יש להעביר את נוסח פסק‑הדין או קישור שבו הוא מופיע; לאחר מכן אוכל לתמצת את ההחזקה, לצטט את הנימוקים ולבחון את השלכות המס על בסיס אותם פרטים.",
   "footnotes": [
     {
-      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=820",
-      "title": "ביהמ\"ש המחוזי בתל אביב - יפו, שופט הרי קירש: פסק הדין בעניין ערעור מס (ע\"מ 34239-12-20)",
+      "url": null,
+      "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961; מסמך מאתר אתר אקדמי (kotar.cet.ac.il)",
       "number": 1,
       "sources": [
         {
-          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=820",
-          "title": "ביהמ\"ש המחוזי בתל אביב - יפו, שופט הרי קירש: פסק הדין בעניין ערעור מס (ע\"מ 34239-12-20)",
-          "source_type": "caselaw"
+          "url": "https://www.nevo.co.il/law_html/law01/255_001a.htm",
+          "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961",
+          "source_type": "other"
+        },
+        {
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=102565323&nTocEntryID=102567892",
+          "title": "מסמך מאתר אתר אקדמי (kotar.cet.ac.il)",
+          "source_type": "other"
         }
       ],
-      "source_type": "caselaw"
+      "source_type": "compound"
     },
     {
-      "url": null,
-      "title": "מקור אקדמי מתוך מאגר נבו; בן-ישראל, רות — דיני עבודה: ההכרה ביחסי עבודה",
+      "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=102565323&nTocEntryID=102567892",
+      "title": "מסמך מאתר אתר אקדמי (kotar.cet.ac.il)",
       "number": 2,
       "sources": [
         {
-          "url": "https://www.nevo.co.il/Product-Search/%D7%9E%D7%A1%D7%99%D7%9D-%D7%95%D7%A2%D7%A7%D7%A8%D7%95%D7%A0%D7%95%D7%AA-%D7%99%D7%A1%D7%95%D7%93",
-          "title": "מקור אקדמי מתוך מאגר נבו",
-          "source_type": "academic"
-        },
-        {
-          "url": "https://www.nevo.co.il/Product-Search/%D7%93%D7%99%D7%A0%D7%99-%D7%A2%D7%91%D7%95%D7%93%D7%94-%D7%94%D7%94%D7%9B%D7%A8%D7%94-%D7%91%D7%99%D7%97%D7%A1%D7%99-%D7%A2%D7%91%D7%95%D7%93%D7%94",
-          "title": "בן-ישראל, רות — דיני עבודה: ההכרה ביחסי עבודה",
-          "source_type": "academic"
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=102565323&nTocEntryID=102567892",
+          "title": "מסמך מאתר אתר אקדמי (kotar.cet.ac.il)",
+          "source_type": "other"
         }
       ],
-      "source_type": "compound"
+      "source_type": "other"
     },
     {
       "url": null,
-      "title": "סיווג עובד כעצמאי לצורכי מס: בין מבחן ההשתלבות למבחן השליטה; מקור אקדמי מתוך מאגר נבו; Margalioth, Yoram — Employee or Independent Contractor? The Tax and Labour Law Dimensions",
+      "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961; פקודת מס הכנסה",
       "number": 3,
       "sources": [
         {
-          "url": "https://www.jstor.org/action/doBasicSearch?Query=%D7%9E%D7%91%D7%97%D7%9F+%D7%94%D7%A9%D7%AA%D7%9C%D7%91%D7%95%D7%AA+%D7%9E%D7%A1%D7%99%D7%9D+%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
-          "title": "סיווג עובד כעצמאי לצורכי מס: בין מבחן ההשתלבות למבחן השליטה",
-          "source_type": "academic"
+          "url": "https://www.nevo.co.il/law_html/law01/255_001a.htm",
+          "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961",
+          "source_type": "other"
         },
         {
-          "url": "https://www.nevo.co.il/Product-Search/%D7%A7%D7%91%D7%9C%D7%9F-%D7%A2%D7%A6%D7%9E%D7%90%D7%99-%D7%90%D7%95-%D7%A2%D7%95%D7%91%D7%93",
-          "title": "מקור אקדמי מתוך מאגר נבו",
-          "source_type": "academic"
-        },
-        {
-          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=...",
-          "title": "Margalioth, Yoram — Employee or Independent Contractor? The Tax and Labour Law Dimensions",
-          "source_type": "academic"
+          "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+          "title": "פקודת מס הכנסה",
+          "source_type": "other"
         }
       ],
       "source_type": "compound"
-    },
-    {
-      "url": "https://www.nevo.co.il/Product-Search/%D7%9E%D7%A1%D7%99%D7%9D-%D7%95%D7%A2%D7%A7%D7%A8%D7%95%D7%A0%D7%95%D7%AA-%D7%99%D7%A1%D7%95%D7%93",
-      "title": "מקור אקדמי מתוך מאגר נבו",
-      "number": 4,
-      "sources": [
-        {
-          "url": "https://www.nevo.co.il/Product-Search/%D7%9E%D7%A1%D7%99%D7%9D-%D7%95%D7%A2%D7%A7%D7%A8%D7%95%D7%A0%D7%95%D7%AA-%D7%99%D7%A1%D7%95%D7%93",
-          "title": "מקור אקדמי מתוך מאגר נבו",
-          "source_type": "academic"
-        }
-      ],
-      "source_type": "academic"
     },
     {
       "url": null,
-      "title": "ביהמ\"ש המחוזי בתל אביב - יפו, שופט הרי קירש: פסק הדין בעניין ערעור מס (ע\"מ 34239-12-20); מקור אקדמי מתוך מאגר נבו; Margalioth, Yoram — Employee or Independent Contractor? The Tax and Labour Law Dimensions",
-      "number": 5,
+      "title": "לוח עזר לחישוב מס הכנסה ממשכורת ושכר עבודה לחודש ינואר 2026; למכירה: זכויות והטבות ציבוריות",
+      "number": 4,
       "sources": [
         {
-          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=820",
-          "title": "ביהמ\"ש המחוזי בתל אביב - יפו, שופט הרי קירש: פסק הדין בעניין ערעור מס (ע\"מ 34239-12-20)",
-          "source_type": "caselaw"
+          "url": "https://www.gov.il/BlobFolder/generalpage/income-tax-monthly-deductions-booklet/he/generalInformation_income-tax-monthly-deductions-booklet_monthly-deductions-booklet-2026.pdf",
+          "title": "לוח עזר לחישוב מס הכנסה ממשכורת ושכר עבודה לחודש ינואר 2026",
+          "source_type": "other"
         },
         {
-          "url": "https://www.nevo.co.il/Product-Search/%D7%A7%D7%91%D7%9C%D7%9F-%D7%A2%D7%A6%D7%9E%D7%90%D7%99-%D7%90%D7%95-%D7%A2%D7%95%D7%91%D7%93",
-          "title": "מקור אקדמי מתוך מאגר נבו",
-          "source_type": "academic"
-        },
-        {
-          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=...",
-          "title": "Margalioth, Yoram — Employee or Independent Contractor? The Tax and Labour Law Dimensions",
-          "source_type": "academic"
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_55ed6899d8cf46cb817e926b2e9074df.pdf",
+          "title": "למכירה: זכויות והטבות ציבוריות",
+          "source_type": "journal_article"
         }
       ],
       "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+      "title": "פקודת מס הכנסה",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+          "title": "פקודת מס הכנסה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
     }
   ],
   "used_sources": [
     {
-      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=820",
-      "title": "ביהמ\"ש המחוזי בתל אביב - יפו, שופט הרי קירש: פסק הדין בעניין ערעור מס (ע\"מ 34239-12-20)",
+      "url": "https://www.nevo.co.il/law_html/law01/255_001a.htm",
+      "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961",
       "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "ae572713-d85f-43a8-884d-74086cde5f52"
+    },
+    {
+      "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=102565323&nTocEntryID=102567892",
+      "title": "מסמך מאתר אתר אקדמי (kotar.cet.ac.il)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "cc84a3d7-8675-4c59-9104-ca2522400acc"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+      "title": "פקודת מס הכנסה",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "6bc17bb3-b504-497a-916a-4199bd54c194"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/generalpage/income-tax-monthly-deductions-booklet/he/generalInformation_income-tax-monthly-deductions-booklet_monthly-deductions-booklet-2026.pdf",
+      "title": "לוח עזר לחישוב מס הכנסה ממשכורת ושכר עבודה לחודש ינואר 2026",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d98ecc70-3d57-4687-a7c2-0968eb3dcdf4"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_55ed6899d8cf46cb817e926b2e9074df.pdf",
+      "title": "למכירה: זכויות והטבות ציבוריות",
+      "number": 4,
       "origin": "local_db",
-      "source_type": "caselaw",
-      "candidate_id": "9961ca49-4943-45f5-9cd9-1f025ff3f56d"
-    },
-    {
-      "url": "https://www.nevo.co.il/Product-Search/%D7%9E%D7%A1%D7%99%D7%9D-%D7%95%D7%A2%D7%A7%D7%A8%D7%95%D7%A0%D7%95%D7%AA-%D7%99%D7%A1%D7%95%D7%93",
-      "title": "מקור אקדמי מתוך מאגר נבו",
-      "number": 2,
-      "origin": "perplexity",
-      "source_type": "academic",
-      "candidate_id": "bfc208da-229a-466b-95e0-433357fbdb12"
-    },
-    {
-      "url": "https://www.nevo.co.il/Product-Search/%D7%93%D7%99%D7%A0%D7%99-%D7%A2%D7%91%D7%95%D7%93%D7%94-%D7%94%D7%94%D7%9B%D7%A8%D7%94-%D7%91%D7%99%D7%97%D7%A1%D7%99-%D7%A2%D7%91%D7%95%D7%93%D7%94",
-      "title": "בן-ישראל, רות — דיני עבודה: ההכרה ביחסי עבודה",
-      "number": 2,
-      "origin": "perplexity",
-      "source_type": "academic",
-      "candidate_id": "55b60e8c-1701-49a6-b925-0fd26581e5d1"
-    },
-    {
-      "url": "https://www.jstor.org/action/doBasicSearch?Query=%D7%9E%D7%91%D7%97%D7%9F+%D7%94%D7%A9%D7%AA%D7%9C%D7%91%D7%95%D7%AA+%D7%9E%D7%A1%D7%99%D7%9D+%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
-      "title": "סיווג עובד כעצמאי לצורכי מס: בין מבחן ההשתלבות למבחן השליטה",
-      "number": 3,
-      "origin": "perplexity",
-      "source_type": "academic",
-      "candidate_id": "7dc8b881-deb8-4765-9a82-c38b525593d2"
-    },
-    {
-      "url": "https://www.nevo.co.il/Product-Search/%D7%A7%D7%91%D7%9C%D7%9F-%D7%A2%D7%A6%D7%9E%D7%90%D7%99-%D7%90%D7%95-%D7%A2%D7%95%D7%91%D7%93",
-      "title": "מקור אקדמי מתוך מאגר נבו",
-      "number": 3,
-      "origin": "perplexity",
-      "source_type": "academic",
-      "candidate_id": "99ea490e-6e9b-4d3e-ac3d-1eb5758df3e4"
-    },
-    {
-      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=...",
-      "title": "Margalioth, Yoram — Employee or Independent Contractor? The Tax and Labour Law Dimensions",
-      "number": 3,
-      "origin": "perplexity",
-      "source_type": "academic",
-      "candidate_id": "332c3bca-32c4-40b6-a13f-13af66169fac"
+      "source_type": "journal_article",
+      "candidate_id": "8dfa3a65-1142-478a-8499-2ccada78824e"
     }
   ]
 }
