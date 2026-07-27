@@ -2,14 +2,14 @@
   "id": "Q01",
   "category": "docket_holding",
   "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
-  "run_id": "3b804313-13aa-46f9-9b79-49d91fa29107",
+  "run_id": "13d99a84-43ae-49f2-926e-c085cd012082",
   "ok": true,
-  "total_ms": 234367,
+  "total_ms": 239662,
   "answer_intent": {
     "output_shape": "case_holding"
   },
   "lead_ref": {
-    "ref": "s2",
+    "ref": "s8",
     "shape": "case_holding",
     "reason": "required_anchor_case"
   },
@@ -22,29 +22,24 @@
       "is_statute_section_anchor": false,
       "is_docket_anchor": true,
       "status": "cited",
-      "verified_support": "partial"
+      "verified_support": "direct"
     }
   ],
-  "answer": "**עיקרי ההכרעה**\n\nבג״ץ 6298/07 (רסלר נ׳ כנסת ישראל) דן בחוקתיות \"חוק דחיית שירות לתלמידי ישיבות (הוראת שעה)\", המכונה \"חוק טל\"; בפסק הדין התקבלה ברוב הכרזה על אי־חוקתיותו וביטולו, כאשר הרוב נימק את הכרעתו בעיקר בהשפעת ההסדר על עקרון השוויון וביישומו של מבחן פסקת ההגבלה.¹\n\nהרציונל של הרוב התמקד בכך שההסדר מבחין בין תלמידי הישיבות ובין יתר בני הגיל ביחס לחובת השירות, ובבחינת מידתיות — כולל קשר סיבתי רציונלי למטרה ואמצעים שפגיעתם פחותה — נמצאה חריגה שאינה עומדת בדרישות אלה; המקורות מצביעים על כישלון ההסדר במבחני המידתיות.²\n\nעוגן עובדתי מרכזי בהחלטת הרוב היה נתוני היישום בפועל: הודגם כי מנגנוני \"שנת ההכרעה\" והחלופות כמו שירות אזרחי לא הובילו לשילוב משמעותי או להשגת התכליות שבגינן נחקק הסדר ההוראת שעה; נתונים אלה שימשו בסיס לעיגון המסקנה בדבר היעדר תוחלת ממשית להמשך ההסדר במתכונתו.²\n\nלגבי הסעד בית המשפט קבע שלא להאריך את תוקף החוק מעבר למועד פקיעתו הקבוע, ובפועל נמנע מביטול מיידי שיפגע בתקופת התחולה שנותרה — צורת הסעד השאירה מרחב פעולה למחוקק לגיבוש הסדר חלופי במקום הארכת ההוראת שעה.¹\n\nבפסק הדין הופיעו דעות מיעוט, וביניהן שיקולים של ריסון שיפוטי וכשירות מוסדית (אשר הצביעו על הצורך להשאיר את ההכרעה בידי המחוקק ולא לפסול את החוק), וטענות אלה נדחו על ידי רוב בית המשפט; המקורות מציינים את מחלוקת הדעות בהקשר זה.³\n\nמובהר כי התמצית לעיל מתייחסת במפורש להכרעת בג״ץ 6298/07 כפי שמצוטטת ומוסמכת במקורות שסופקו, ולא להחליף את הנושא בעיון אחר או בהשלכות חורגות שלא מובאות שם.",
+  "answer": "**ההחלטה בבג\"ץ 6298/07 — תמצית**\n\nבהחלטה בתיק בג\"ץ 6298/07 (רסלר נ׳ כנסת ישראל) קבע בית המשפט העליון כי חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם (חוק טל), כפי שהורחב והוחל ב‑2007, אינו עומד בדרישות חוק‑יסוד: כבוד האדם וחירותו ובשל כך נפסל.¹\n\nהבסיס החוקתי של הפסילה נבנה על פגיעה בעיקרון השוויון: בית המשפט מצא כי הענקת דחיות שירות בהיקפים ובאופן שנקבע בחוק יוצרת הפליה שאינה עומדת במבחן ההגבלה והמידתיות של סעיף ההגבלה בחוק‑יסוד.¹\n\nלעניין הסעד, ההחלטה כללה ביטול של ההסדר החקיקתי. איכות ההוראה וסדרי המעבר שנקבעו בפסק־הדין מפורטים בפסק‑דין עצמו; במלים קצרות, בית המשפט לא הותיר את ההסדר המקורי בעינו וקרא למחוקק לגבש הסדר חלופי שעומד בעקרון השוויון.²\n\nרקע עובדתי וחקיקתי: החוק המקורי אושר בשנת 2002 והוגדר תקופת ניסיון של חמש שנים; תוקפו הוארך ב‑2007, עניין המופיע במסמכי החקיקה ובדו\"חות רקע של גופים רשמיים.³\n\nהערה לגבי הכרעות מאוחרות יותר: במקורות שסופקו כאן אין פסק־דין משנת 2012 שמאשר שינוי הלכתי, ולכן איני יכול לקבוע על סמך החומרים הנ\"ל האם הושגה הכרעה מבית המשפט לגבי המשך ההסדר לאחר תקופת הניסיון.\n\nלקריאה מלאה של ההחלטה והטקסט החקיקתי ראו פסק‑הדין שפורסם בתיק והחוק עצמו, שמפורט בהם היסודות העובדתיים והנימוקים המשפטיים להחלטה.⁴",
   "footnotes": [
     {
       "url": null,
-      "title": "החלטה בתיק בג\"ץ 6298/07; מסמך מאתר אתר ממשלתי (gov.il); בג\"ץ 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
+      "title": "החלטה בתיק בג\"ץ 6298/07; חוק-יסוד: כבוד האדם וחירותו",
       "number": 1,
       "sources": [
         {
           "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
           "title": "החלטה בתיק בג\"ץ 6298/07",
-          "source_type": "other"
+          "source_type": "caselaw"
         },
         {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
-          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
-          "source_type": "supreme_court_il"
-        },
-        {
-          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%D7%A5-'%D7%97%D7%95%D7%A7-%D7%98%D7%9C'-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
-          "title": "בג\"ץ 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
+          "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+          "title": "חוק-יסוד: כבוד האדם וחירותו",
           "source_type": "other"
         }
       ],
@@ -52,22 +47,17 @@
     },
     {
       "url": null,
-      "title": "מסמך מאתר אתר ממשלתי (gov.il); החלטה בתיק בג\"ץ 6298/07; תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+      "title": "החלטה בתיק בג\"ץ 6298/07; פסק-דין בתיק בג\"ץ 6298/07",
       "number": 2,
       "sources": [
         {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
-          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
-          "source_type": "supreme_court_il"
-        },
-        {
           "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
           "title": "החלטה בתיק בג\"ץ 6298/07",
-          "source_type": "other"
+          "source_type": "caselaw"
         },
         {
-          "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
-          "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "פסק-דין בתיק בג\"ץ 6298/07",
           "source_type": "other"
         }
       ],
@@ -75,23 +65,41 @@
     },
     {
       "url": null,
-      "title": "שיקול דעת שיפוטי: העידן השלישי; שיקול דעת שיפוטי : העידן השלישי; החלטה בתיק בג\"ץ 6298/07",
+      "title": "חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם, התשס\"ב–2002 (PDF); מסמך מאתר אתר ממשלתי (gov.il)",
       "number": 3,
       "sources": [
         {
-          "url": "https://lawjournal.huji.ac.il/article/12/1365",
-          "title": "שיקול דעת שיפוטי: העידן השלישי",
-          "source_type": "journal_article"
+          "url": "https://fs.knesset.gov.il/15/law/15_lsr_300544.pdf",
+          "title": "חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם, התשס\"ב–2002 (PDF)",
+          "source_type": "other"
         },
         {
-          "url": "https://lawjournal.huji.ac.il/article/12/232",
-          "title": "שיקול דעת שיפוטי : העידן השלישי",
-          "source_type": "journal_article"
+          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2012-62-602-Haredim.pdf",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": null,
+      "title": "פסק-דין בתיק בג\"ץ 6298/07; חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם, התשס\"ב–2002 (PDF); החלטה בתיק בג\"ץ 6298/07",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+          "title": "פסק-דין בתיק בג\"ץ 6298/07",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/15/law/15_lsr_300544.pdf",
+          "title": "חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם, התשס\"ב–2002 (PDF)",
+          "source_type": "other"
         },
         {
           "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
           "title": "החלטה בתיק בג\"ץ 6298/07",
-          "source_type": "other"
+          "source_type": "caselaw"
         }
       ],
       "source_type": "compound"
@@ -103,48 +111,40 @@
       "title": "החלטה בתיק בג\"ץ 6298/07",
       "number": 1,
       "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "db4d5c01-6045-47bd-a947-c4e252f79c81"
+      "source_type": "caselaw",
+      "candidate_id": "4844a52f-1e79-41f7-b700-e576ec460cbc"
     },
     {
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
-      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
-      "number": 1,
-      "origin": "local_db",
-      "source_type": "supreme_court_il",
-      "candidate_id": "973d26fe-548c-4b1c-ad2a-c5d3a81c37ea"
-    },
-    {
-      "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92%22%D7%A5-'%D7%97%D7%95%D7%A7-%D7%98%D7%9C'-%D7%90%D7%99%D7%A0%D7%95-%D7%97%D7%95%D7%A7%D7%AA%D7%99--%D7%94%D7%9B%D7%A0%D7%A1%D7%AA-%D7%9C%D7%90-%D7%AA%D7%90%D7%A8%D7%99%D7%9A-%D7%90%D7%AA-%D7%AA%D7%95%D7%A7%D7%A4%D7%95",
-      "title": "בג\"ץ 'חוק טל' אינו חוקתי - הכנסת לא תאריך את תוקפו",
+      "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+      "title": "חוק-יסוד: כבוד האדם וחירותו",
       "number": 1,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "067e0c05-fe85-40bb-b950-ce0e7b5f01ff"
+      "candidate_id": "b92ebba9-cd0f-4fca-aed1-af583908c7b1"
     },
     {
-      "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
-      "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+      "title": "פסק-דין בתיק בג\"ץ 6298/07",
       "number": 2,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "5ed106d6-7a42-4047-9fb6-07dc846873a5"
+      "candidate_id": "52924082-fac8-4506-a231-7927f418ae72"
     },
     {
-      "url": "https://lawjournal.huji.ac.il/article/12/1365",
-      "title": "שיקול דעת שיפוטי: העידן השלישי",
+      "url": "https://fs.knesset.gov.il/15/law/15_lsr_300544.pdf",
+      "title": "חוק דחיית שירות לתלמידי ישיבות שתורתם אומנותם, התשס\"ב–2002 (PDF)",
       "number": 3,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "dc0931dc-76e6-4651-bc43-37f139c23795"
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f1453d0a-4da8-4203-be5d-52267197f6d3"
     },
     {
-      "url": "https://lawjournal.huji.ac.il/article/12/232",
-      "title": "שיקול דעת שיפוטי : העידן השלישי",
+      "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2012-62-602-Haredim.pdf",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
       "number": 3,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "753d3b71-d4ae-4cf6-bb8e-07804f8588f7"
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "1a1e83db-c792-4185-86bc-651ad4e596c4"
     }
   ]
 }
