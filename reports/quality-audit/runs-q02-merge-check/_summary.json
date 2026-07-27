@@ -1,0 +1,855 @@
+[
+  {
+    "id": "Q01",
+    "category": "docket_holding",
+    "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
+    "run_id": "9eeec6df-1464-406e-bed0-af5c86717003",
+    "ok": true,
+    "total_ms": 194812,
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "lead_ref": {
+      "ref": "s3",
+      "shape": "case_holding",
+      "reason": "required_anchor_case"
+    },
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "required_anchors": {
+      "count": 1,
+      "anchors": [
+        {
+          "target": "both",
+          "anchor_id": "docket:bagatz-6298-07",
+          "anchor_type": "binding_case_law",
+          "description": "פסק הדין בעניין בג\"ץ 6298/07 עצמו",
+          "query_count": 4,
+          "is_docket_anchor": true,
+          "is_statute_section_anchor": false
+        }
+      ],
+      "enabled": true,
+      "statuses": [
+        {
+          "cited": true,
+          "status": "cited",
+          "emitted": true,
+          "queries": [
+            "בג\"ץ 6298/07",
+            "בג״ץ 6298/07",
+            "HCJ 6298/07",
+            "בג\"ץ 6298-07"
+          ],
+          "anchor_id": "docket:bagatz-6298-07",
+          "anchor_type": "binding_case_law",
+          "description": "פסק הדין בעניין בג\"ץ 6298/07 עצמו",
+          "candidate_ids": [
+            "7cbdd45f-20b5-4b10-b411-45d12b76926c",
+            "f6313fd7-cb1e-48bb-994a-adb19ad911c7",
+            "bdf0afa9-5a94-4e77-a48b-bbcd7db83f90",
+            "320c0693-e4a3-4493-8e47-04f08d524333",
+            "e4a029b6-92cd-4e9d-a5d9-f280d7bc657e",
+            "eb0757dc-d773-43c3-983c-4cc5f6846129",
+            "a5304b9b-f6f4-4aa1-bd55-78b98c010558",
+            "1ce8d397-1412-441d-8932-5678866a52d8"
+          ],
+          "is_docket_anchor": true,
+          "reached_verifier": true,
+          "verified_support": "direct",
+          "is_statute_section_anchor": false
+        }
+      ],
+      "queries_emitted": [
+        {
+          "role": "binding_case_law",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "בג\"ץ 6298/07",
+          "is_docket_anchor": true,
+          "required_anchor_id": "docket:bagatz-6298-07"
+        },
+        {
+          "role": "binding_case_law",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "בג״ץ 6298/07",
+          "is_docket_anchor": true,
+          "required_anchor_id": "docket:bagatz-6298-07"
+        },
+        {
+          "role": "binding_case_law",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "HCJ 6298/07",
+          "is_docket_anchor": true,
+          "required_anchor_id": "docket:bagatz-6298-07"
+        },
+        {
+          "role": "binding_case_law",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "בג\"ץ 6298-07",
+          "is_docket_anchor": true,
+          "required_anchor_id": "docket:bagatz-6298-07"
+        }
+      ]
+    },
+    "answer": "**בג\"ץ 6298/07 — רסלר נ' כנסת ישראל**\n\nהמסקנה המרכזית של בית המשפט העליון בתיק היא כי \"חוק דחיית שירות לתלמידי ישיבות\" (חוק טל) לא עומד בחוקתיות: בית המשפט מצא פגיעה בזכות לשוויון הנגזרת מכבוד האדם, ופגיעה זו אינה מתקיימת במסגרת פסקת ההגבלה של חוק-יסוד: כבוד האדם וחירותו.¹\n\nבית המשפט ביסס את פסילתו בעיקר על כך שההסדרים שבחוק אינם מידתיים. בפסק הדין נזכר כי הכלים שנקבעו בחוק, ובכללם 'שנת ההכרעה', לא השיגו בפועל את התכלית המוצהרת של הגדלת היקף הגיוס והשילוב של תלמידי הישיבות, ולכן הפגיעה בזכות השוויון לא ניתנה להצדקה מצטיינת במשפט החוקה.²\n\nבהתייחס לסעד נקבע כי החוק ייפסל. הפסילה הוחלה באופן שמותאם לתקופת תוקפו של החוק; בפסק הדין לא ניתנה הארכה נוספת לתחולתו מעבר למועד שבו פג החוק כפי שנקבע בחקיקה.³\n\nבית המשפט הדגיש במקביל כי פסילתו של החוק אינה סוגרת את הדרך למחוקק: הכנסת רשאית לגבש הסדר חלופי ביחס לתלמידי הישיבות, כל עוד ההסדר החדש יעמוד בדרישות החוקתיות הרלוונטיות — ובפרט יעמוד במבחני תכלית ראויה ובמידה שאינה עולה על הנדרש במסגרת פסקת ההגבלה.⁴\n\nהרקע הדוקטרינרי והאקדמי מסביב להחלטה מעיד על דיון רחב יותר לגבי אופן יישום מבחני המידתיות והיחס לסעדי פסילה של חוקים; אפשר לראות את הפסיקה כנקודת שיא בדיון זה, אך פרשנויות והשלכות מדיניות־עובדתיות נחקרות ונידונות גם בכתיבה החוקרת.⁵",
+    "footnotes": [
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+        "title": "החלטה בתיק בג\"ץ 6298/07",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+            "title": "החלטה בתיק בג\"ץ 6298/07",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "other"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+        "title": "החלטה בתיק בג\"ץ 6298/07; ניתוח ההשפעות הכלכליות של גיל הפטור מגיוס לגברים חרדים והאפשרות לשנותו",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+            "title": "החלטה בתיק בג\"ץ 6298/07",
+            "source_type": "other"
+          },
+          {
+            "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8375&businessType=1",
+            "title": "ניתוח ההשפעות הכלכליות של גיל הפטור מגיוס לגברים חרדים והאפשרות לשנותו",
+            "source_type": "knesset_research"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+        "title": "החלטה בתיק בג\"ץ 6298/07; מסמך מאתר אתר ממשלתי (gov.il)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+            "title": "החלטה בתיק בג\"ץ 6298/07",
+            "source_type": "other"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+            "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+            "source_type": "supreme_court_il"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+        "title": "החלטה בתיק בג\"ץ 6298/07; פסקאות הגבלה ופסקאות התגברות בחוקות",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+            "title": "החלטה בתיק בג\"ץ 6298/07",
+            "source_type": "other"
+          },
+          {
+            "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
+            "title": "פסקאות הגבלה ופסקאות התגברות בחוקות",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1550",
+        "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה; על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1550",
+            "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://runilawreview.org/2017/11/22/vol20_barak/",
+            "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+        "title": "החלטה בתיק בג\"ץ 6298/07",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "7cbdd45f-20b5-4b10-b411-45d12b76926c"
+      },
+      {
+        "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8375&businessType=1",
+        "title": "ניתוח ההשפעות הכלכליות של גיל הפטור מגיוס לגברים חרדים והאפשרות לשנותו",
+        "number": 2,
+        "origin": "local_db",
+        "source_type": "knesset_research",
+        "candidate_id": "fde34327-67d3-4398-9160-63f224b576c0"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+        "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "number": 3,
+        "origin": "local_db",
+        "source_type": "supreme_court_il",
+        "candidate_id": "f6313fd7-cb1e-48bb-994a-adb19ad911c7"
+      },
+      {
+        "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
+        "title": "פסקאות הגבלה ופסקאות התגברות בחוקות",
+        "number": 4,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "6ee7f7f5-8c38-453b-b677-bdf027493fa4"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1550",
+        "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+        "number": 5,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "bdf0afa9-5a94-4e77-a48b-bbcd7db83f90"
+      },
+      {
+        "url": "https://runilawreview.org/2017/11/22/vol20_barak/",
+        "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+        "number": 5,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "320c0693-e4a3-4493-8e47-04f08d524333"
+      }
+    ],
+    "quality_warning": null
+  },
+  {
+    "id": "Q02",
+    "category": "docket_holding_missing_source_test",
+    "query": "מה נקבע בע\"מ (מחוזי ת\"א) 61908-05-19 בעניין סיווג הכנסה כהכנסת עבודה או הכנסת עסק?",
+    "run_id": "1bb3734f-3f98-4f3c-9788-63dc0e8f7637",
+    "ok": true,
+    "total_ms": 144185,
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "lead_ref": {
+      "ref": null,
+      "shape": "case_holding",
+      "reason": "skipped_missing_docket_anchor"
+    },
+    "missing_anchor_caveat_injected": true,
+    "missing_anchor_descriptions": [
+      "פסק הדין בעניין ע\"מ 61908/05/19 עצמו"
+    ],
+    "required_anchors": {
+      "count": 1,
+      "anchors": [
+        {
+          "target": "both",
+          "anchor_id": "docket:am-61908-05-19",
+          "anchor_type": "binding_case_law",
+          "description": "פסק הדין בעניין ע\"מ 61908/05/19 עצמו",
+          "query_count": 3,
+          "is_docket_anchor": true,
+          "is_statute_section_anchor": false
+        }
+      ],
+      "enabled": true,
+      "statuses": [
+        {
+          "cited": false,
+          "status": "missing",
+          "emitted": true,
+          "queries": [
+            "ע\"מ 61908/05/19",
+            "ע״מ 61908/05/19",
+            "ע\"מ 61908-05-19"
+          ],
+          "anchor_id": "docket:am-61908-05-19",
+          "anchor_type": "binding_case_law",
+          "description": "פסק הדין בעניין ע\"מ 61908/05/19 עצמו",
+          "candidate_ids": [],
+          "is_docket_anchor": true,
+          "reached_verifier": false,
+          "verified_support": "none",
+          "is_statute_section_anchor": false
+        }
+      ],
+      "queries_emitted": [
+        {
+          "role": "binding_case_law",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C2",
+          "query_he": "ע\"מ 61908/05/19",
+          "is_docket_anchor": true,
+          "required_anchor_id": "docket:am-61908-05-19"
+        },
+        {
+          "role": "binding_case_law",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C2",
+          "query_he": "ע״מ 61908/05/19",
+          "is_docket_anchor": true,
+          "required_anchor_id": "docket:am-61908-05-19"
+        },
+        {
+          "role": "binding_case_law",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C2",
+          "query_he": "ע\"מ 61908-05-19",
+          "is_docket_anchor": true,
+          "required_anchor_id": "docket:am-61908-05-19"
+        }
+      ]
+    },
+    "answer": "לא אותר פסק הדין עצמו במקורות שעברו אימות; לכן לא ניתן לקבוע בביטחון את ההלכה שנפסקה בו. מאחר שהשאלה מבקשת את ההכרעה בפסק הדין בעניין ע\"מ 61908/05/19 עצמו, אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית. יש לעיין בטקסט פסק הדין עצמו כדי לקבוע מה נקבע בו.",
+    "footnotes": [],
+    "used_sources": [],
+    "quality_warning": null
+  },
+  {
+    "id": "Q03",
+    "category": "statutory_interpretation",
+    "query": "מהי הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה, ומהם התנאים המצטברים?",
+    "run_id": "9affcfd4-8fbc-4e21-99bb-79f306b0b951",
+    "ok": true,
+    "total_ms": 125252,
+    "answer_intent": {
+      "output_shape": "definition"
+    },
+    "lead_ref": {
+      "ref": null,
+      "shape": "definition",
+      "reason": "skipped_missing_statute_section_anchor"
+    },
+    "missing_anchor_caveat_injected": true,
+    "missing_anchor_descriptions": [
+      "הנוסח המחייב של סעיף 32(9) לפקודת מס הכנסה"
+    ],
+    "required_anchors": {
+      "count": 1,
+      "anchors": [
+        {
+          "target": "both",
+          "anchor_id": "statute_section:income_tax_ordinance-s32-9",
+          "anchor_type": "primary_statute",
+          "description": "הנוסח המחייב של סעיף 32(9) לפקודת מס הכנסה",
+          "query_count": 3,
+          "is_docket_anchor": false,
+          "is_statute_section_anchor": true
+        }
+      ],
+      "enabled": true,
+      "statuses": [
+        {
+          "cited": true,
+          "status": "cited",
+          "emitted": true,
+          "queries": [
+            "פקודת מס הכנסה סעיף 32(9)",
+            "פקודת מס הכנסה 32(9)",
+            "סעיף 32(9) לפקודת מס הכנסה"
+          ],
+          "anchor_id": "statute_section:income_tax_ordinance-s32-9",
+          "anchor_type": "primary_statute",
+          "description": "הנוסח המחייב של סעיף 32(9) לפקודת מס הכנסה",
+          "candidate_ids": [
+            "71330fb9-555c-40ac-bde8-5d2e3dc56ac0",
+            "c28573fa-aa4e-4c3d-8f3d-40fd1e3a01db"
+          ],
+          "is_docket_anchor": false,
+          "reached_verifier": true,
+          "verified_support": "partial",
+          "is_statute_section_anchor": true
+        }
+      ],
+      "queries_emitted": [
+        {
+          "role": "primary_statute",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "פקודת מס הכנסה סעיף 32(9)",
+          "is_docket_anchor": false,
+          "required_anchor_id": "statute_section:income_tax_ordinance-s32-9"
+        },
+        {
+          "role": "primary_statute",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "פקודת מס הכנסה 32(9)",
+          "is_docket_anchor": false,
+          "required_anchor_id": "statute_section:income_tax_ordinance-s32-9"
+        },
+        {
+          "role": "primary_statute",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "סעיף 32(9) לפקודת מס הכנסה",
+          "is_docket_anchor": false,
+          "required_anchor_id": "statute_section:income_tax_ordinance-s32-9"
+        }
+      ]
+    },
+    "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 32(9) לפקודת מס הכנסה; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹",
+    "footnotes": [
+      {
+        "url": "https://www.btl.gov.il/Laws1/00_0103_000000.pdf",
+        "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961 — סעיף 32(9)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.btl.gov.il/Laws1/00_0103_000000.pdf",
+            "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961 — סעיף 32(9)",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "other"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://www.btl.gov.il/Laws1/00_0103_000000.pdf",
+        "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961 — סעיף 32(9)",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "71330fb9-555c-40ac-bde8-5d2e3dc56ac0"
+      }
+    ],
+    "quality_warning": null
+  },
+  {
+    "id": "Q18",
+    "category": "anchor_preservation",
+    "query": "צטט מילולית את סעיף 1 לחוק יסוד: כבוד האדם וחירותו, והפנה למקור רשמי.",
+    "run_id": "81390682-ef16-42c2-8d76-ac0a02368556",
+    "ok": true,
+    "total_ms": 125533,
+    "answer_intent": {
+      "output_shape": "quote"
+    },
+    "lead_ref": {
+      "ref": "r_basic_law_dignity-s1",
+      "shape": "quote",
+      "reason": "canonical_registry_statute_section"
+    },
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "required_anchors": {
+      "count": 1,
+      "anchors": [
+        {
+          "target": "both",
+          "anchor_id": "statute_section:basic_law_dignity-s1",
+          "anchor_type": "primary_statute",
+          "description": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+          "query_count": 3,
+          "is_docket_anchor": false,
+          "is_statute_section_anchor": true
+        }
+      ],
+      "enabled": true,
+      "statuses": [
+        {
+          "cited": false,
+          "status": "verified_unused",
+          "emitted": true,
+          "queries": [
+            "חוק-יסוד: כבוד האדם וחירותו סעיף 1",
+            "חוק-יסוד: כבוד האדם וחירותו 1",
+            "סעיף 1 לחוק-יסוד: כבוד האדם וחירותו"
+          ],
+          "anchor_id": "statute_section:basic_law_dignity-s1",
+          "anchor_type": "primary_statute",
+          "description": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+          "candidate_ids": [
+            "068486a9-7fb3-4049-9ded-3b366e62e529",
+            "d625d647-4234-4971-8e26-4773b687c9b8"
+          ],
+          "is_docket_anchor": false,
+          "reached_verifier": true,
+          "verified_support": "direct",
+          "is_statute_section_anchor": true
+        }
+      ],
+      "queries_emitted": [
+        {
+          "role": "primary_statute",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "חוק-יסוד: כבוד האדם וחירותו סעיף 1",
+          "is_docket_anchor": false,
+          "required_anchor_id": "statute_section:basic_law_dignity-s1"
+        },
+        {
+          "role": "primary_statute",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "חוק-יסוד: כבוד האדם וחירותו 1",
+          "is_docket_anchor": false,
+          "required_anchor_id": "statute_section:basic_law_dignity-s1"
+        },
+        {
+          "role": "primary_statute",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+          "is_docket_anchor": false,
+          "required_anchor_id": "statute_section:basic_law_dignity-s1"
+        }
+      ]
+    },
+    "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹",
+    "footnotes": [
+      {
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "israeli_law"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+        "number": 1,
+        "origin": "local_db",
+        "source_type": "israeli_law",
+        "candidate_id": "canonical:basic_law_dignity-s1"
+      }
+    ],
+    "quality_warning": null
+  },
+  {
+    "id": "BGZ5555",
+    "category": "case_holding_smoke",
+    "query": "מה נקבע בבג\"ץ 5555/18 בעניין חוק-יסוד: הלאום? נסח את ההלכה שנפסקה.",
+    "run_id": "b9f40557-8192-4c17-b19a-afe711361c78",
+    "ok": true,
+    "total_ms": 317346,
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "lead_ref": {
+      "ref": "s4",
+      "shape": "case_holding",
+      "reason": "required_anchor_case"
+    },
+    "missing_anchor_caveat_injected": false,
+    "missing_anchor_descriptions": [],
+    "required_anchors": {
+      "count": 1,
+      "anchors": [
+        {
+          "target": "both",
+          "anchor_id": "docket:bagatz-5555-18",
+          "anchor_type": "binding_case_law",
+          "description": "פסק הדין בעניין בג\"ץ 5555/18 עצמו",
+          "query_count": 4,
+          "is_docket_anchor": true,
+          "is_statute_section_anchor": false
+        }
+      ],
+      "enabled": true,
+      "statuses": [
+        {
+          "cited": true,
+          "status": "cited",
+          "emitted": true,
+          "queries": [
+            "בג\"ץ 5555/18",
+            "בג״ץ 5555/18",
+            "HCJ 5555/18",
+            "בג\"ץ 5555-18"
+          ],
+          "anchor_id": "docket:bagatz-5555-18",
+          "anchor_type": "binding_case_law",
+          "description": "פסק הדין בעניין בג\"ץ 5555/18 עצמו",
+          "candidate_ids": [
+            "07433232-0411-4efa-b75c-9afb8abdcd72",
+            "df65c21e-da3a-4342-a3ae-e233b210e702",
+            "f0f0f784-80a6-4917-b68d-9c8b91878c9c",
+            "8da3c857-404a-42f2-aa0f-7284566e16cf",
+            "6cc0ef6c-4596-44b3-99e0-fae6b4cf2d24"
+          ],
+          "is_docket_anchor": true,
+          "reached_verifier": true,
+          "verified_support": "direct",
+          "is_statute_section_anchor": false
+        }
+      ],
+      "queries_emitted": [
+        {
+          "role": "binding_case_law",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "בג\"ץ 5555/18",
+          "is_docket_anchor": true,
+          "required_anchor_id": "docket:bagatz-5555-18"
+        },
+        {
+          "role": "binding_case_law",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "בג״ץ 5555/18",
+          "is_docket_anchor": true,
+          "required_anchor_id": "docket:bagatz-5555-18"
+        },
+        {
+          "role": "binding_case_law",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "HCJ 5555/18",
+          "is_docket_anchor": true,
+          "required_anchor_id": "docket:bagatz-5555-18"
+        },
+        {
+          "role": "binding_case_law",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "בג\"ץ 5555-18",
+          "is_docket_anchor": true,
+          "required_anchor_id": "docket:bagatz-5555-18"
+        }
+      ]
+    },
+    "answer": "**הלכת בג\"ץ 5555/18**\n\nבית המשפט העליון קבע בדעת רוב כי יש לאמץ דוקטרינה של התערבות שיפוטית חריגה בלבד כלפי תיקוני חוקי-יסוד: בית המשפט יפעיל את סמכותו לפסול הוראה בחוק-יסוד רק במקרים קיצוניים שבהם הוראת החוק שוללת את ליבת זהות המדינה כמדינה יהודית ודמוקרטית.¹\n\nבהתייחס לחוק-יסוד: ישראל — מדינת הלאום של העם היהודי, קבע בית המשפט כי אין מקום להורות על בטלותו של החוק בנוסחו הנתון; יחד עם זאת הובהר שנדרש לפרש את הוראות החוק בהרמוניה עם מארג חוקי-היסוד המגן על זכויות האדם, ובפרט חוק-יסוד: כבוד האדם וחירותו, כדי למנוע פירושים המנוגדים לזכויות יסוד.²\n\nפסק הדין הכיר בעקרון השוויון כעיקרון חוקתי שנגזר ממכלול חוקי היסוד ומהזהות הדמוקרטית של המדינה, ומשם נבעה ההנחה כי חוק-יסוד הלאום אינו מהווה היתר להפליה פסולה; עם זאת ההכרה בעקרון זה נגועה בגישה זהירה כלפי גבולות הסמכות החקיקתית והפרשנית.³\n\nהעתירות שהוגשו נדחו, אך בית המשפט השאיר פתח לביקורת שיפוטית קונקרטית: נקבע כי יהיה ניתן לפנות לערכאות במקרים של יישום מפלה של הוראות החוק, וכי יש לפרש הוראות שנקשרו במחלוקת — כולל סעיף 7 (התיישבות יהודית) וסעיף 4 (לשון המדינה) — באופן שאינו מסמיך להפליה או לשלול זכויות קיבוציות או לשוניות של מיעוטים.⁴\n\nמכאן נוטה ההלכה להגביל את האפשרות של פסילת חוק-יסוד ולהבליט את ביקורת השיפוט כמוצא אחרון; יחד עם זאת נותרה אפשרות לביקורת שיפוטית ממוקדת כלפי יישומים מעשיים של החוק במקרים שבהם תתברר פגיעה בליבת הזהות היהודית־דמוקרטית או בזכויות יסוד.⁵",
+    "footnotes": [
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+        "title": "תקציר בג\"ץ 5555-18; בג\"ץ 5555/18",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+            "title": "תקציר בג\"ץ 5555-18",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+            "title": "בג\"ץ 5555/18",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+        "title": "תקציר בג\"ץ 5555-18; חוק יסוד: ישראל – מדינת הלאום של העם היהודי; חוק-יסוד: כבוד האדם וחירותו",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+            "title": "תקציר בג\"ץ 5555-18",
+            "source_type": "other"
+          },
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod18.pdf",
+            "title": "חוק יסוד: ישראל – מדינת הלאום של העם היהודי",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+            "title": "חוק-יסוד: כבוד האדם וחירותו",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+        "title": "חוק-יסוד: כבוד האדם וחירותו; מסמך מאתר אתר ממשלתי (gov.il); תקציר בג\"ץ 5555-18",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+            "title": "חוק-יסוד: כבוד האדם וחירותו",
+            "source_type": "other"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+            "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+            "source_type": "supreme_court_il"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+            "title": "תקציר בג\"ץ 5555-18",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+        "title": "תקציר בג\"ץ 5555-18; בג\"ץ 5555/18; חוק יסוד: ישראל – מדינת הלאום של העם היהודי",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+            "title": "תקציר בג\"ץ 5555-18",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+            "title": "בג\"ץ 5555/18",
+            "source_type": "other"
+          },
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod18.pdf",
+            "title": "חוק יסוד: ישראל – מדינת הלאום של העם היהודי",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://main.knesset.gov.il/About/Departments/LDResponses/Bagatz12.pdf",
+        "title": "מסמך כנסת - בג\"ץ 5555/18; ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://main.knesset.gov.il/About/Departments/LDResponses/Bagatz12.pdf",
+            "title": "מסמך כנסת - בג\"ץ 5555/18",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4520",
+            "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+        "title": "תקציר בג\"ץ 5555-18",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "df65c21e-da3a-4342-a3ae-e233b210e702"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+        "title": "בג\"ץ 5555/18",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "f0f0f784-80a6-4917-b68d-9c8b91878c9c"
+      },
+      {
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod18.pdf",
+        "title": "חוק יסוד: ישראל – מדינת הלאום של העם היהודי",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "2c237957-1c0b-4b9a-9819-b725f62ea0b3"
+      },
+      {
+        "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+        "title": "חוק-יסוד: כבוד האדם וחירותו",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "403d288a-05ac-4f32-8012-071ab48d4490"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_1_6298-07.pdf&type=2",
+        "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "number": 3,
+        "origin": "local_db",
+        "source_type": "supreme_court_il",
+        "candidate_id": "790770aa-9ce6-45b8-8726-1ee3567aa958"
+      },
+      {
+        "url": "https://main.knesset.gov.il/About/Departments/LDResponses/Bagatz12.pdf",
+        "title": "מסמך כנסת - בג\"ץ 5555/18",
+        "number": 5,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "07433232-0411-4efa-b75c-9afb8abdcd72"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4520",
+        "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+        "number": 5,
+        "origin": "local_db",
+        "source_type": "caselaw",
+        "candidate_id": "6cc0ef6c-4596-44b3-99e0-fae6b4cf2d24"
+      }
+    ],
+    "quality_warning": null
+  }
+]

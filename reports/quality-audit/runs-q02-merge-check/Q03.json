@@ -1,0 +1,120 @@
+{
+  "id": "Q03",
+  "category": "statutory_interpretation",
+  "query": "מהי הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה, ומהם התנאים המצטברים?",
+  "run_id": "9affcfd4-8fbc-4e21-99bb-79f306b0b951",
+  "ok": true,
+  "total_ms": 125252,
+  "answer_intent": {
+    "output_shape": "definition"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "definition",
+    "reason": "skipped_missing_statute_section_anchor"
+  },
+  "missing_anchor_caveat_injected": true,
+  "missing_anchor_descriptions": [
+    "הנוסח המחייב של סעיף 32(9) לפקודת מס הכנסה"
+  ],
+  "required_anchors": {
+    "count": 1,
+    "anchors": [
+      {
+        "target": "both",
+        "anchor_id": "statute_section:income_tax_ordinance-s32-9",
+        "anchor_type": "primary_statute",
+        "description": "הנוסח המחייב של סעיף 32(9) לפקודת מס הכנסה",
+        "query_count": 3,
+        "is_docket_anchor": false,
+        "is_statute_section_anchor": true
+      }
+    ],
+    "enabled": true,
+    "statuses": [
+      {
+        "cited": true,
+        "status": "cited",
+        "emitted": true,
+        "queries": [
+          "פקודת מס הכנסה סעיף 32(9)",
+          "פקודת מס הכנסה 32(9)",
+          "סעיף 32(9) לפקודת מס הכנסה"
+        ],
+        "anchor_id": "statute_section:income_tax_ordinance-s32-9",
+        "anchor_type": "primary_statute",
+        "description": "הנוסח המחייב של סעיף 32(9) לפקודת מס הכנסה",
+        "candidate_ids": [
+          "71330fb9-555c-40ac-bde8-5d2e3dc56ac0",
+          "c28573fa-aa4e-4c3d-8f3d-40fd1e3a01db"
+        ],
+        "is_docket_anchor": false,
+        "reached_verifier": true,
+        "verified_support": "partial",
+        "is_statute_section_anchor": true
+      }
+    ],
+    "queries_emitted": [
+      {
+        "role": "primary_statute",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "פקודת מס הכנסה סעיף 32(9)",
+        "is_docket_anchor": false,
+        "required_anchor_id": "statute_section:income_tax_ordinance-s32-9"
+      },
+      {
+        "role": "primary_statute",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "פקודת מס הכנסה 32(9)",
+        "is_docket_anchor": false,
+        "required_anchor_id": "statute_section:income_tax_ordinance-s32-9"
+      },
+      {
+        "role": "primary_statute",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "סעיף 32(9) לפקודת מס הכנסה",
+        "is_docket_anchor": false,
+        "required_anchor_id": "statute_section:income_tax_ordinance-s32-9"
+      }
+    ]
+  },
+  "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 32(9) לפקודת מס הכנסה; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹",
+  "footnotes": [
+    {
+      "url": "https://www.btl.gov.il/Laws1/00_0103_000000.pdf",
+      "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961 — סעיף 32(9)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.btl.gov.il/Laws1/00_0103_000000.pdf",
+          "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961 — סעיף 32(9)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.btl.gov.il/Laws1/00_0103_000000.pdf",
+      "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961 — סעיף 32(9)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "71330fb9-555c-40ac-bde8-5d2e3dc56ac0"
+    }
+  ],
+  "quality_warning": null
+}
