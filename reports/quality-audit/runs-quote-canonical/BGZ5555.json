@@ -1,0 +1,116 @@
+{
+  "id": "BGZ5555",
+  "query": "מה נקבע בבג\"ץ 5555/18 בעניין חוק-יסוד: הלאום? נסח את ההלכה שנפסקה.",
+  "run_id": "719fee66-2b68-40b6-bac4-971f157c61d3",
+  "ok": true,
+  "shape": "case_holding",
+  "lead_ref": {
+    "ref": "s6",
+    "shape": "case_holding",
+    "reason": "required_anchor_case"
+  },
+  "caveat": false,
+  "answer": "**הלכת בג״ץ 5555/18 — עיקרי ההלכה**\n\nמן פסק‑דין בג״ץ 5555/18 עולה, בזהירות, כי בית המשפט העליון הכיר בקיום סמכות מצומצמת לעסוק בביקורת שיפוטית על חקיקת חוקי‑יסוד או על תיקוניהם במצבים חריגים של שימוש לרעה בסמכות המכוננת או של פגיעה בליבת אופייה של המדינה כיהודית ודמוקרטית; עם זאת בית המשפט הדגיש כי פסילת חקיקה היא מוצא אחרון והעדפת פתרונות פרשניים וצמצומיים.¹\n\nבג״ץ דחה את העתירות באשר לחוק‑יסוד: ישראל — מדינת הלאום של העם היהודי, וקבע כי לא הוכח כי הוראות החוק שוללות את אופיה הדמוקרטי של המדינה או פוגעות בליבת זכויות היסוד במידה המצדיקה פסילתו.²\n\nהדיון בפסק‑דין הדגיש שעל פרשנות ההוראות בחוק‑היסוד להיעשות באופן הרמוני עם עקרון השוויון; הפרשנות צריכה לשאוף שלא לפגוע בשוויון ולהתחשב בעקרונות הנגזרים מאופיה הדמוקרטי של המדינה ובהוראות חוק‑יסוד: כבוד האדם וחירותו.³\n\nבהקשר קונקרטי קבע התקציר הרשמי ופסק‑הדין כי סעיף 4 מעגן את העברית כשפה העיקרית של המדינה מבלי לגרוע ממעמד השפה הערבית, וכי הסעיף 7 (עידוד התיישבות יהודית) ניתן ליישום לצד ערך השוויון — כלומר הפרשנות המצמצמת ימנעו מתוצאה של הפקעת זכויות מוקנות או הסמכה להפליה.⁴\n\nיש להדגיש כי ההכרעות בנוגע להיקף סמכות הביקורת השיפוטית בפסק‑דין זה נשענות על האיזון בין שמירת אופיה המכונן של הכנסת לבין עיקרון ההימנעות מפסילת חקיקה, והן תלויות בנסיבות המקרה; מן המקורות עולה בזהירות כי בית המשפט שומר על נטייה להימנע מפסילה ופונה לפרשנויות מצמצמות לפני שימוש בסמכות קיצונית זו.⁵",
+  "footnotes": [
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4520",
+      "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23); בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021); בג\"ץ 5555/18",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4520",
+          "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+          "title": "בג\"ץ 5555/18",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555-18; בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021); בג\"ץ 5555/18",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555-18",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+          "title": "בג\"ץ 5555/18",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555-18; חוק-יסוד: כבוד האדם וחירותו",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555-18",
+          "source_type": "other"
+        },
+        {
+          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+          "title": "חוק-יסוד: כבוד האדם וחירותו",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555-18; חוק-יסוד: ישראל – מדינת הלאום של העם היהודי",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555-18",
+          "source_type": "other"
+        },
+        {
+          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod18.pdf",
+          "title": "חוק-יסוד: ישראל – מדינת הלאום של העם היהודי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4520",
+      "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23); בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4520",
+          "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
+          "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ]
+}
