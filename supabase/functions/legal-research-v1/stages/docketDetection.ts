@@ -98,6 +98,7 @@ function buildVariants(def: PrefixDef, number: string): string[] {
   // Number-only variant, useful for URL/citation string search
   // (retrieval scopes it to case rows to avoid false positives).
   out.add(nSlash);
+  out.add(nDash);
   return [...out];
 }
 
