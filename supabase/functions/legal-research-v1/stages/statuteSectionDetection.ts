@@ -28,6 +28,13 @@ export interface StatuteSectionRef {
   suggested_queries: string[];
 }
 
+type DirectTextRule = {
+  /** Terms that must all appear in the candidate text after normalization. */
+  all?: string[];
+  /** At least one of these alternatives must appear. */
+  any?: string[];
+};
+
 interface StatuteDef {
   key: string;
   title_he: string;
@@ -138,6 +145,36 @@ function buildSectionVariants(section: string): string[] {
   return [...out];
 }
 
+function normalizeForDirectText(s: string): string {
+  return String(s ?? "")
+    .replace(/[־–—]/g, "-")
+    .replace(/["״׳']/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function directTextRuleFor(ref: StatuteSectionRef): DirectTextRule | null {
+  if (ref.statute_key === "basic_law_dignity" && normalizeSectionMarker(ref.section) === "1") {
+    return {
+      all: [
+        "זכויות היסוד של האדם בישראל מושתתות",
+        "ההכרה בערך האדם",
+        "בקדושת חייו",
+        "בהיותו בן-חורין",
+      ],
+    };
+  }
+
+  if (ref.statute_key === "income_tax_ordinance" && normalizeSectionMarker(ref.section) === "32(9)") {
+    return {
+      all: ["בעל שליטה"],
+      any: ["10%", "עשרה אחוזים", "אמצעי השליטה", "לפחות באחד מאמצעי השליטה"],
+    };
+  }
+
+  return null;
+}
+
 /**
  * Detect statute-title + section-marker pairs in free text.
  *
@@ -207,4 +244,25 @@ export function candidateSatisfiesStatuteSection(
   if (!titleOk) return false;
   const hay = `${title}\n${snippet}`;
   return ref.section_variants.some((v) => v.length >= 2 && hay.includes(v));
+}
+
+/**
+ * Stronger predicate for definition/quote safety: a candidate may satisfy the
+ * statute-section anchor partially by title+section marker, but it should only
+ * count as direct section text if the extracted title/snippet also exposes the
+ * actual provision language (or a curated marker set for that section).
+ */
+export function candidateHasDirectStatuteSectionText(
+  fields: { title?: string | null; snippet?: string | null; url?: string | null },
+  ref: StatuteSectionRef,
+): boolean {
+  if (!candidateSatisfiesStatuteSection(fields, ref)) return false;
+  const rule = directTextRuleFor(ref);
+  if (!rule) return true;
+
+  const hay = normalizeForDirectText(`${fields.title ?? ""}\n${fields.snippet ?? ""}`);
+  const allOk = (rule.all ?? []).every((term) => hay.includes(normalizeForDirectText(term)));
+  const anyTerms = rule.any ?? [];
+  const anyOk = anyTerms.length === 0 || anyTerms.some((term) => hay.includes(normalizeForDirectText(term)));
+  return allOk && anyOk;
 }

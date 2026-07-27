@@ -12,6 +12,7 @@ import type { AnalyzerOutput, Candidate, Query, SourceRole } from "../lib/types.
 import type { UserDocument } from "../lib/attachments.ts";
 import { detectDockets, type DocketRef } from "./docketDetection.ts";
 import {
+  candidateHasDirectStatuteSectionText,
   candidateSatisfiesStatuteSection,
   detectStatuteSections,
   type StatuteSectionRef,
@@ -250,8 +251,18 @@ export function computeRequiredAnchorStatuses(args: {
     for (const c of anchorCands) {
       const v = verdicts.filter((v) => v.candidate_id === c.candidate_id);
       for (const verdict of v) {
-        if ((supportRank[verdict.support] ?? 0) > (supportRank[verified_support] ?? 0)) {
-          verified_support = verdict.support as RequiredAnchorStatus["verified_support"];
+        const normalizedSupport =
+          isStatuteSection &&
+          a.statute_section_ref &&
+          verdict.support === "direct" &&
+          !candidateHasDirectStatuteSectionText(
+            { title: c.title, snippet: c.snippet, url: c.source_url },
+            a.statute_section_ref,
+          )
+            ? "partial"
+            : verdict.support;
+        if ((supportRank[normalizedSupport] ?? 0) > (supportRank[verified_support] ?? 0)) {
+          verified_support = normalizedSupport as RequiredAnchorStatus["verified_support"];
         }
       }
     }
