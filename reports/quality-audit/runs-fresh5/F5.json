@@ -1,0 +1,181 @@
+{
+  "id": "F5",
+  "query": "מה נקבע בת\"א 12345-01-20 פלוני נ' אלמוני ביחס לאחריות דירקטורים להחלטות שהתקבלו באמצעות מערכת AI?",
+  "run_id": "95c20ca3-0665-409b-81d4-b6df0a63d32f",
+  "ok": true,
+  "total_ms": 265873,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "lead_ref": {
+    "ref": "s4",
+    "shape": "case_holding",
+    "reason": "best_case"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "anchor_statuses": [],
+  "missing_required_anchors": null,
+  "verifier_counts": {
+    "by_support": {
+      "direct": 0,
+      "partial": 5,
+      "unrelated": 9,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 17,
+      "false": 0
+    }
+  },
+  "answer": "**הבהרה מקורות וממצא ראשוני**\n\nאין ברשותי טקסט או תקציר של ת״א 12345-01-20 פלוני נ׳ אלמוני בין המסמכים שסופקו, ולכן לא ניתן לנסח או לחזור על נוסח החלטה ספציפי מתיק זה. המקור המוביל שנמסר הוא ע״א 3521-11 (s4); מאגר זה דן בעיקר בשאלות של חובת הזהירות והמבחן האובייקטיבי, אך אינו עוסק במפורש בהחלטות שהתקבלו באמצעות מערכות AI. להלן מענה זהיר המבוסס על s4 וכמה מקורות אקדמיים המלווים (s1–s3, s5), תוך ציון ההסתייגות מפורשות כאשר הניתוח חורג מהדיון הישיר שבסניפטים.¹\n\n(C1) נוסח ההחלטה ביחס לאחריות דירקטורים להחלטות שהתקבלו באמצעות מערכת AI: לא נמצא במקורות שסופקו פסק‑דין או נוסח החלטה של ת״א 12345-01-20, ולכן אין אני יכול לצטט או לנסח את הכרעתו. מתוך s4 עולה בזהירות שבתי‑המשפט בוחנים שאלות של אחריות דירקטורית באמצעות מבחן חובת זהירות אובייקטיבי, אך s4 אינו קובע באופן מפורש כללי חבות נפרדים במצב שבמערכת AI הופכת לגורם מכריע.²\n\n(C2) המבחן המשפטי/הסטנדרט שהוחל: לפי s4 והניתוח התומך שבספרות, המבחן המרכזי הוא מבחן חובת הזהירות האובייקטיבי — הערכה האם התנהלות הדירקטור עמדה בסטנדרט של דירקטור סביר. s4 מדגיש גם את הבעייתיות של הבחנה בין שיקולי מדיניות לבין דרישות חובת הזהירות; המחקר (s1, s5) תומך בזהירות ברעיון שהערכת הפרת חובת זהירות נשענת על סטנדרט אובייקטיבי, וששיקולי אימוץ טכנולוגיה עשויים לדרוש צעדים פרקטיים כמו בדיקת ספק ותיעוד, אך לא נמצא במקורות נוסח שיפוטי חד‑משמעי הקובע סטנדרט ייחודי ופורמלי לכל אימוץ AI.³\n\n(C3) הוכחת נזק וקשר סיבתי כאשר הגורם המכריע היה מערכת AI: במקורות שסופקו אין הוראה ישירה שקובעת כי חובת הפיקוח על מערכת AI חלה באופן עצמאי וללא הוכחת רשלנות של דירקטור. לפי הגישה הכללית שב‑s4 ובניתוח s1, הנטל על התובע להשתיל הוכחה להפרת חובת זהירות ונזק — כלומר יש להראות כי הליקוי בהתנהלות הדירקטור (למשל באי‑פיקוח סביר על כלי או באי‑בחינת ספק) הוא שתרם לנזק. עבודות מדיניות (s2, s3) מציעות מודלים של חובת פיקוח, תיעוד ובקרות אנושיות, אך אלו המלצות אקדמיות ולא הוראה שיפוטית מחייבת במקורות שנמסרו.⁴\n\n(C4) תוצאת התביעה בפועל בתיק הזה: לא ניתן לקבוע את תוצאתה של ת״א 12345-01-20 משום שהתיק עצמו אינו בין המסמכים שסופקו. גם לגבי s4 לא נמסר כאן טקסט מלא שמפרט תוצאות פרוצדורליות מדויקות בהקשר של AI — הסניפטים העיקריים העוסקים ב‑s4 עוסקים בעקרונות חובת הזהירות ולא במתן כללים מפורשים לשאלות חבות מיוחדות הקשורות ל‑AI.¹\n\n(C5) הנחיות פרקטיות למדיניות תאגידית והמלצות רגולטוריות: אין במקורות השיפוטיים שסופקו פסק‑דין שמנחה במפורש על סט מדויק של אמצעי ממשל ל‑AI. עם זאת, מחקרי מדיניות וסמכי מדיניות תאגידית המובאים (s2, s3) ממליצים בפירוט על צעדים מעשיים — מדיניות שימוש ברורה, בחינת ספק ותהליכי אימות תוצרי AI, תיעוד החלטות, בקרות אנושיות ודרכי דיווח פנימיות — ולפיכך ניתן לציין בזהירות שההמלצות הספרותיות תומכות בהטמעת מערכי פיקוח ותיעוד כאמצעי הפחתת סיכונים; s5 מוסיף נקודת מבט נורמטיבית על חשיבות עקרונות ההגינות והמטרת החברה בהערכת אמות‑מידה ניהוליות.⁵\n\nמסקנה תמציתית: לאור מגבלות החומר שסופק — ובעיקר היעדר פסק‑דין או תקציר של ת״א 12345-01-20 — לא ניתן להציג נוסח הכרעה או תוצאה ספציפית של אותו תיק. מהחומר הקיים ניתן להסיק בזהירות שהערכת אחריות דירקטורים במקרים שבהם החלטה התקבלה באמצעות כלי AI תתבצע על‑פי עקרונות חובת הזהירות האובייקטיביים הקיימים, כאשר ספרות מקצועית ממליצה להרחיב דרכי פיקוח, תיעוד ובקרות אנושיות при אימוץ טכנולוגיות חדשות; אך אין במקורות שסופקו כלל הוראה שיפוטית מחייבת המגבילה או משנה את הנטל ההוכחתי באופן שאינו מתיישב עם עקרונות חובת הזהירות המסורתיים.",
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_3_3521-11.pdf&type=2",
+      "title": "ע\"א 3521-11 - עו\"ד דניאל וגנר נ. מזל עבדי",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_3_3521-11.pdf&type=2",
+          "title": "ע\"א 3521-11 - עו\"ד דניאל וגנר נ. מזל עבדי",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "supreme_court_il"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_3_3521-11.pdf&type=2",
+      "title": "ע\"א 3521-11 - עו\"ד דניאל וגנר נ. מזל עבדי; פטור מחבות בגין הפרת חובת זהירות",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_3_3521-11.pdf&type=2",
+          "title": "ע\"א 3521-11 - עו\"ד דניאל וגנר נ. מזל עבדי",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/5yahbyba/hamdani-hannes.pdf",
+          "title": "פטור מחבות בגין הפרת חובת זהירות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_3_3521-11.pdf&type=2",
+      "title": "ע\"א 3521-11 - עו\"ד דניאל וגנר נ. מזל עבדי; פטור מחבות בגין הפרת חובת זהירות; הוגנוּת תאגידית ומטרת החברה בראי הכלכלה ההתנהגותית | עלי בוקשפן (כרך כט)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_3_3521-11.pdf&type=2",
+          "title": "ע\"א 3521-11 - עו\"ד דניאל וגנר נ. מזל עבדי",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/5yahbyba/hamdani-hannes.pdf",
+          "title": "פטור מחבות בגין הפרת חובת זהירות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://runilawreview.org/2025/01/23/vol29-bukspan/",
+          "title": "הוגנוּת תאגידית ומטרת החברה בראי הכלכלה ההתנהגותית | עלי בוקשפן (כרך כט)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_3_3521-11.pdf&type=2",
+      "title": "ע\"א 3521-11 - עו\"ד דניאל וגנר נ. מזל עבדי; פטור מחבות בגין הפרת חובת זהירות; הבינה המלאכותית לא תנהל את עצמה: על ממשל תאגידי בעידן ה-AI",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_3_3521-11.pdf&type=2",
+          "title": "ע\"א 3521-11 - עו\"ד דניאל וגנר נ. מזל עבדי",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/5yahbyba/hamdani-hannes.pdf",
+          "title": "פטור מחבות בגין הפרת חובת זהירות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://esgblog.runi.ac.il/post/ai-governance",
+          "title": "הבינה המלאכותית לא תנהל את עצמה: על ממשל תאגידי בעידן ה-AI",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://esgblog.runi.ac.il/post/ai-governance",
+      "title": "הבינה המלאכותית לא תנהל את עצמה: על ממשל תאגידי בעידן ה-AI; מדיניות שימוש בכלי בינה מלאכותית יוצרת; הוגנוּת תאגידית ומטרת החברה בראי הכלכלה ההתנהגותית | עלי בוקשפן (כרך כט)",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://esgblog.runi.ac.il/post/ai-governance",
+          "title": "הבינה המלאכותית לא תנהל את עצמה: על ממשל תאגידי בעידן ה-AI",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.herzog.ac.il/wp-content/uploads/2025/09/%D7%9E%D7%93%D7%99%D7%A0%D7%99%D7%95%D7%AA-%D7%91%D7%99%D7%A0%D7%94-%D7%9E%D7%9C%D7%90%D7%9B%D7%95%D7%AA%D7%99%D7%AA-%D7%9E%D7%9B%D7%9C%D7%9C%D7%AA-%D7%94%D7%A8%D7%A6%D7%95%D7%92-%D7%A9%D7%91%D7%98-%D7%AA%D7%A9%D7%A4%D7%ה.pdf",
+          "title": "מדיניות שימוש בכלי בינה מלאכותית יוצרת",
+          "source_type": "other"
+        },
+        {
+          "url": "https://runilawreview.org/2025/01/23/vol29-bukspan/",
+          "title": "הוגנוּת תאגידית ומטרת החברה בראי הכלכלה ההתנהגותית | עלי בוקשפן (כרך כט)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_3_3521-11.pdf&type=2",
+      "title": "ע\"א 3521-11 - עו\"ד דניאל וגנר נ. מזל עבדי",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "935d52bc-341f-4081-86ac-d325ceb9ccaf"
+    },
+    {
+      "url": "https://www.runi.ac.il/media/5yahbyba/hamdani-hannes.pdf",
+      "title": "פטור מחבות בגין הפרת חובת זהירות",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "9e4cb7af-2ecb-4f1e-ab2b-4fd484bb6ed4"
+    },
+    {
+      "url": "https://runilawreview.org/2025/01/23/vol29-bukspan/",
+      "title": "הוגנוּת תאגידית ומטרת החברה בראי הכלכלה ההתנהגותית | עלי בוקשפן (כרך כט)",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "4d62137b-d1cf-4df3-857b-736e9a6a2b22"
+    },
+    {
+      "url": "https://esgblog.runi.ac.il/post/ai-governance",
+      "title": "הבינה המלאכותית לא תנהל את עצמה: על ממשל תאגידי בעידן ה-AI",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a8015063-6325-485c-9cfb-a0475e01f549"
+    },
+    {
+      "url": "https://www.herzog.ac.il/wp-content/uploads/2025/09/%D7%9E%D7%93%D7%99%D7%A0%D7%99%D7%95%D7%AA-%D7%91%D7%99%D7%A0%D7%94-%D7%9E%D7%9C%D7%90%D7%9B%D7%95%D7%AA%D7%99%D7%AA-%D7%9E%D7%9B%D7%9C%D7%9C%D7%AA-%D7%94%D7%A8%D7%A6%D7%95%D7%92-%D7%A9%D7%91%D7%98-%D7%AA%D7%A9%D7%A4%D7%ה.pdf",
+      "title": "מדיניות שימוש בכלי בינה מלאכותית יוצרת",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "3a517602-3cbf-444d-9afa-2bb648609ebe"
+    }
+  ],
+  "used_sources_count": 5
+}

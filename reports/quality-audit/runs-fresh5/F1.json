@@ -1,0 +1,158 @@
+{
+  "id": "F1",
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי ביחס למעמדם של חוקי היסוד ולסמכות הביקורת השיפוטית על חקיקה ראשית?",
+  "run_id": "ec93db3b-2d59-4268-9d4b-18a6cfec47fa",
+  "ok": true,
+  "total_ms": 275082,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "lead_ref": {
+    "ref": "s7",
+    "shape": "case_holding",
+    "reason": "required_anchor_case"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "anchor_statuses": [],
+  "missing_required_anchors": null,
+  "verifier_counts": {
+    "by_support": {
+      "direct": 2,
+      "partial": 10,
+      "unrelated": 9,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 19,
+      "false": 2
+    }
+  },
+  "answer": "**ההלכה בע\"א 6821/93 — בנק המזרחי המאוחד נ' מגדל כפר שיתופי**\n\nמן חומר הפסק‑דין בע\"א 6821/93, כפי שהוא מצוי בארכיון הפסק‑דין והקשרו במסמכים פרלמנטריים, עולה בזהירות כי בית‑המשפט העליון תפס את חוקי היסוד כחלק ממסגרת חוקתית שיש לה משקל נורמטיבי מול חקיקה ראשית.¹\n\nמהפסק‑דין משתמעת גם ההבנה של בית‑המשפט כי לו הסמכות לבחון חקיקה ראשית ביחס לחוקי היסוד; במסגרת זו יכול בית‑המשפט להגיע לפסילת חוק שנמצא בסתירה לחוקי היסוד כאשר הסתירה אינה ניתנת לגישור באמצעים פרשניים.²\n\nהערעור טבע שיטת כללים פרשניים ופרוצדורליים: הנחת תקפות לחקיקת הכנסת; עיקרון הפרשנות התואמת — יש לפרש חקיקה רגילה כך שתהא תואמת לחוקי היסוד ככל האפשר; ורק בכשאין פתרון פרשני שמיישב את הסתירה תידרש הכרעה שיפוטית המביאה לפסילת ההוראה הסתורה.³\n\nהערעור בא לידי ביטוי גם בגישת איזון בין עצמאות השיפוט לבין כבוד לעקרון שלטון העם ולריבונות הכנסת: בית‑המשפט הדגיש קווי ריסון בשימוש בסמכות הביטול — לא ביטול אוטומטי של חקיקה עקב סתירה קלה — אך קבע סדר עדיפויות עקרוני לטובת חוקי היסוד במקרים של עימות מהותי.⁴\n\nמגבלות ראיית החומר: המקור המרכזי שסופק כאן הוא פסק‑דין בארכיון (עם תמיכה פרלמנטרית ותזכירית); רוב המקורות המשניים מספקים ניתוח ודוגמה פרשנית לתפיסות אלו. מאחר שחלק מהתמיכה שנמסרה היא חלקית, נוסח המסקנות לעיל מנוסח בזהירות ותוחם את ההכרעות העיקריות שבמקורות.",
+  "footnotes": [
+    {
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי; פסקאות הגבלה ופסקאות התגברות בחוקות; תזכיר חוק יסוד – ביקורת שיפוטית על תוקפם",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+          "title": "ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
+          "title": "פסקאות הגבלה ופסקאות התגברות בחוקות",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.tazkirim.gov.il/sfc/servlet.shepherd/version/download/0683Y000009EDeSQAW",
+          "title": "תזכיר חוק יסוד – ביקורת שיפוטית על תוקפם",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי; תזכיר חוק יסוד – ביקורת שיפוטית על תוקפם",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+          "title": "ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.tazkirim.gov.il/sfc/servlet.shepherd/version/download/0683Y000009EDeSQAW",
+          "title": "תזכיר חוק יסוד – ביקורת שיפוטית על תוקפם",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/12-mizrahi.pdf",
+      "title": "תקציר פסק־הדין בעניין בנק המזרחי נ׳ מגדל (התיקון ל״חוק גל״); ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/12-mizrahi.pdf",
+          "title": "תקציר פסק־הדין בעניין בנק המזרחי נ׳ מגדל (התיקון ל״חוק גל״)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+          "title": "ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי; דנ\"א 4897/22 בן שלוש ייבוא וייצוא בע\"מ נ׳ יפאורה-תבורי בע\"מ פסק דין (05.07.2022)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+          "title": "ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%93%d7%a0%d7%90-4897-22-%d7%91%d7%9f-%d7%a9%d7%9c%d7%95%d7%a9-%d7%99%d7%99%d7%91%d7%95%d7%90-%d7%95%d7%99%d7%99%d7%a6%d7%95%d7%90-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%99%d7%a4%d7%90%d7%95%d7%a8%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "דנ\"א 4897/22 בן שלוש ייבוא וייצוא בע\"מ נ׳ יפאורה-תבורי בע\"מ פסק דין (05.07.2022)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "8a797ea9-eb56-4ac1-8aee-5aac33b19589"
+    },
+    {
+      "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
+      "title": "פסקאות הגבלה ופסקאות התגברות בחוקות",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "858088e5-55fe-44c4-9495-ce5f6968d0ea"
+    },
+    {
+      "url": "https://www.tazkirim.gov.il/sfc/servlet.shepherd/version/download/0683Y000009EDeSQAW",
+      "title": "תזכיר חוק יסוד – ביקורת שיפוטית על תוקפם",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "2855abc7-91ed-45dc-b66a-31a3e9426e9e"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/12-mizrahi.pdf",
+      "title": "תקציר פסק־הדין בעניין בנק המזרחי נ׳ מגדל (התיקון ל״חוק גל״)",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "807868b7-4a2a-4d08-9f45-2e6ed4c0eda1"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%93%d7%a0%d7%90-4897-22-%d7%91%d7%9f-%d7%a9%d7%9c%d7%95%d7%a9-%d7%99%d7%99%d7%91%d7%95%d7%90-%d7%95%d7%99%d7%99%d7%a6%d7%95%d7%90-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%99%d7%a4%d7%90%d7%95%d7%a8%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "דנ\"א 4897/22 בן שלוש ייבוא וייצוא בע\"מ נ׳ יפאורה-תבורי בע\"מ פסק דין (05.07.2022)",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "804368b2-4ac9-49f4-b090-e32f78ad95e4"
+    }
+  ],
+  "used_sources_count": 5
+}

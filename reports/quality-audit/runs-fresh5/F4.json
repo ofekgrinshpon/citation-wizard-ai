@@ -1,0 +1,350 @@
+{
+  "id": "F4",
+  "query": "מהם המבחנים המרכזיים שנקבעו בפסיקה לסיווג אדם כעובד ולא כקבלן עצמאי, ומה המשמעות של הסיווג לעניין זכויות סוציאליות?",
+  "run_id": "e5ee51fe-efc2-4a3b-80f1-93d985c9d774",
+  "ok": true,
+  "total_ms": 343029,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "anchor_statuses": [],
+  "missing_required_anchors": null,
+  "verifier_counts": {
+    "by_support": {
+      "direct": 8,
+      "partial": 7,
+      "unrelated": 4,
+      "tangential": 2
+    },
+    "by_role_match": {
+      "true": 19,
+      "false": 2
+    }
+  },
+  "answer": "**מבחנים מרכזיים בקביעת מעמד עובד או קבלן**\n\n- מבחן הציות והפיקוח — בוחן את מידת ההנחיה והפיקוח של המעסיק על אופן ביצוע המשימות; כשקיים שליטה נרחבת על לוח הזמנים, אמצעי העבודה ושיטת הביצוע זה מצביע לטובת עובדיות.¹\n- מבחן ההשתלבות/אינטגרציה — בוחן האם נותן השירות משולב בפעילות השוטפת של המעסיק כמרכיב פונקציונלי של הארגון (ולא פועל כבעל עסק עצמאי בשוק חיצוני). השתלבות משמעותית מחזקת קליטה כעובד.¹\n- מבחן התלות הכלכלית וסיכון עסקי — בוחן האם הניתן שירות תלוי כלכלית במעסיק (תלוי בו לפרנסתו) או נושא סיכון עסקי עצמאי; תלות כלכלית מעידה לכיוון עובד, סיכון עסקי ומגוון לקוחות מעידים לכיוון עצמאות.²\n- מבחן האופי האישי והמשך ההעסקה — בוחן דרישה לביצוע אישי, משך והמשכיות ההתקשרות והיקפה (משרה קבועה, השכרת כוח עבודה לטווח ארוך וכו'), שגורמים למשקל לעובדיות.³\n- מבחני עזר נוספים — שיטת התשלום (שכר חודשי לעומת חשבונית), מי מספק את הכלים, האם קיימת חובת ניכוי ומעמד חוזי פורמלי; אלה משמשים אינדיקטורים משלימים במסגרת האיזון הרב־ממדי.⁴\n\n**איזון גורמים והימנעות מכלל יחיד דומיננטי**\n\nהפסיקה והספרות נוקטים בגישה רב־ממדית: בית המשפט שוקל מספר אינדיקציות אינטגרטיביות ולא מטיל מבחן יחיד יחידני. משמעות פרקטית היא שהכרעה נשענת על המשקל המצטבר של נימוקים, ולא על כלל דומיננטי שיוכרע מראש; במקרים קיצוניים גורם אחד יכול להכריע, אך אין כלל פרשני המספיד את שאר המדדים.⁵\n\n**השלכות הסיווג על זכויות סוציאליות**\n\nזכאות לזכויות קונקרטיות המוקנות בחקיקה תלויה במעמד: חוק החופשה השנתית מקנה חופשה בשכר ל'עובד' — משמע שסיווג כעובד יוצר זכאות מעשית לחופשה שנתית בשכר.⁶\n\nביטוח לאומי וזכויות קצבה — הסמכויות המנהליות של הביטוח הלאומי מבחינות בין עצמאים לשכירים; מהמקורות עולה בזהירות כי זכאות וקביעת חובות תשלומים משתנים בין מעמדיהם ומקורה של זכויות כמו דמי אבטלה שונה עבור עצמאים לעומת שכירים.⁷\n\nזכויות תעסוקה נוספות (פיצויי פיטורין, שכר מינימום, דמי מחלה וכדומה) מושפעות מהסיווג: בפסיקה ובספרות מצוין שסיווג כ'עובד' פותח את הדלת לזכויות המגן הקבועות בחקיקה ותקנות, בעוד שסיווג כקבלן עצמאי מצמצם זכאות זו — נושא זה נקבע על-פי נסיבות המקרה והדגשים הפסיקתיים.⁸\n\n**חובות מעביד ותשלומי חובה**\n\nחובות דיווח וניכוי — מעביד מחויב לניכוי מס במקור, לדיווח שנתי על ניכויים (טופס 126) ולדיווח שוטף למוסד לביטוח הלאומי; חובת הדיווח והתשלומים החודשית מחייבת ניהול הנהלת שכר שונה מהיחס כלפי ספק עצמאי.⁹\n\nממדים נוספים של חבות — למעסיק חבות דיווחית וניהולית כלפי הביטוח הלאומי ולפעמים מעורבות בהעברות פנסיוניות; טיב היחסים הקובע אם חובות אלה מוטלות על המעסיק מוגדר על־פי המעמד המשפטי שנקבע.¹⁰\n\n**אמצעים משפטיים וראיות בתביעות על סיווג שגוי**\n\nפעולות משפטיות זמינות — עותר יכול לתבוע להכירו כ'עובד' ולדרוש תשלומים רטרואקטיביים (שכר, דמי חופשה, פיצויי פיטורין וכדומה) וכן להגיש תלונה מנהלית בפני משרד העבודה; רשויות יכולות להטיל סנקציות מעשיות במקרה של הפרת חובות מעביד.¹¹\n\nראיות מרכזיות בבית המשפט — מסמכים בנקאיים ותשלומי שכר, חוזים וחשבוניות, הערכות פיקוח וניהול, עדויות על השתלבות בארגון, היקף והמשכיות ההעסקה ושיטת התשלום. בחינה שיטתית של אינדיקציות אלה לפי מיטב המבחנים שתוארו היא העוגן לפרשנות עובדתית במשפט העבודה.¹²\n\nסיכום קצר — הקביעה תלויה בנסיבות המקרה ובאיזון בין אינדיקציות; משמעות מעשית של ההכרעה גבוהה (זכויות עובדים, חובות דיווח ותשלומים ונגישות לערוצי אכיפה), וכדי לפעול כנגד סיווג יש ללמוד את מכלול הראיות שנוגעות לשליטה, השתלבות, תלות כלכלית והמשכיות.¹",
+  "footnotes": [
+    {
+      "url": "https://www.nevo.co.il/psika_html/avoda/avoda-08-05-2017-1.pdf",
+      "title": "מסמך מאתר מאגר נבו; דיני עבודה",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/psika_html/avoda/avoda-08-05-2017-1.pdf",
+          "title": "מסמך מאתר מאגר נבו",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/product/1417",
+          "title": "דיני עבודה",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/psika_html/avoda/avoda-08-05-2017-1.pdf",
+      "title": "מסמך מאתר מאגר נבו; מעמד העובד: מבחנים, מגמות והתפתחויות",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/psika_html/avoda/avoda-08-05-2017-1.pdf",
+          "title": "מסמך מאתר מאגר נבו",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.huji.ac.il/sites/default/files/law/files/maamad_havod.pdf",
+          "title": "מעמד העובד: מבחנים, מגמות והתפתחויות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/psika_html/avoda/avoda-08-05-2017-1.pdf",
+      "title": "מסמך מאתר מאגר נבו; מיהו עובד: מבחני הסף",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/psika_html/avoda/avoda-08-05-2017-1.pdf",
+          "title": "מסמך מאתר מאגר נבו",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1911",
+          "title": "מיהו עובד: מבחני הסף",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/product/1417",
+      "title": "דיני עבודה; דמי ביטוח לאומי ודמי ביטוח בריאות – פירוט שנתי של השכר וניכוי",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/product/1417",
+          "title": "דיני עבודה",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://www.btl.gov.il/Laws1/02_0103_100058.pdf",
+          "title": "דמי ביטוח לאומי ודמי ביטוח בריאות – פירוט שנתי של השכר וניכוי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/psika_html/avoda/avoda-08-05-2017-1.pdf",
+      "title": "מסמך מאתר מאגר נבו; דיני עבודה; מעמד העובד: מבחנים, מגמות והתפתחויות",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/psika_html/avoda/avoda-08-05-2017-1.pdf",
+          "title": "מסמך מאתר מאגר נבו",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/product/1417",
+          "title": "דיני עבודה",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://law.huji.ac.il/sites/default/files/law/files/maamad_havod.pdf",
+          "title": "מעמד העובד: מבחנים, מגמות והתפתחויות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/771007dc-1277-e511-80d1-00155d0ad6b2/2_771007dc-1277-e511-80d1-00155d0ad6b2_11_8376.pdf",
+      "title": "חוק חופשה שנתית, התשי\"א–1951",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/771007dc-1277-e511-80d1-00155d0ad6b2/2_771007dc-1277-e511-80d1-00155d0ad6b2_11_8376.pdf",
+          "title": "חוק חופשה שנתית, התשי\"א–1951",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/default.aspx",
+      "title": "עובד עצמאי - פירוט סוגי המעמד וחובת תשלום | ביטוח לאומי; זכאות לקצבאות - עובד עצמאי | ביטוח לאומי",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/default.aspx",
+          "title": "עובד עצמאי - פירוט סוגי המעמד וחובת תשלום | ביטוח לאומי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/ZakaotLkizbaot.aspx",
+          "title": "זכאות לקצבאות - עובד עצמאי | ביטוח לאומי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/product/1417",
+      "title": "דיני עבודה; מעמד העובד: מבחנים, מגמות והתפתחויות",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/product/1417",
+          "title": "דיני עבודה",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://law.huji.ac.il/sites/default/files/law/files/maamad_havod.pdf",
+          "title": "מעמד העובד: מבחנים, מגמות והתפתחויות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.btl.gov.il/Laws1/02_0103_100058.pdf",
+      "title": "דמי ביטוח לאומי ודמי ביטוח בריאות – פירוט שנתי של השכר וניכוי; דיווח שנתי על ניכויים ממשכורת ומשכר עבודה (טופס 0126) ועל ניכויים מתשלומים החייבים בניכוי; דיווח ותשלום עבור עובדים",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://www.btl.gov.il/Laws1/02_0103_100058.pdf",
+          "title": "דמי ביטוח לאומי ודמי ביטוח בריאות – פירוט שנתי של השכר וניכוי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/employers-info-170326-1/he/IncomeTax_employers-info-170326-1.pdf",
+          "title": "דיווח שנתי על ניכויים ממשכורת ומשכר עבודה (טופס 0126) ועל ניכויים מתשלומים החייבים בניכוי",
+          "source_type": "other"
+        },
+        {
+          "url": "http://www.btl.gov.il/Insurance/Maasik/MToshavYisrael/DivuahVetashlum/Pages/Divuhach.aspx",
+          "title": "דיווח ותשלום עבור עובדים",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.btl.gov.il/Laws1/02_0103_100058.pdf",
+      "title": "דמי ביטוח לאומי ודמי ביטוח בריאות – פירוט שנתי של השכר וניכוי",
+      "number": 10,
+      "sources": [
+        {
+          "url": "https://www.btl.gov.il/Laws1/02_0103_100058.pdf",
+          "title": "דמי ביטוח לאומי ודמי ביטוח בריאות – פירוט שנתי של השכר וניכוי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://www.gov.il/he/service/work-rights-violation-complaints",
+      "title": "הגשת תלונה על מעסיקים בשל הפרת חוקי עבודה | משרד העבודה; מסמך מאתר מאגר נבו",
+      "number": 11,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/service/work-rights-violation-complaints",
+          "title": "הגשת תלונה על מעסיקים בשל הפרת חוקי עבודה | משרד העבודה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/psika_html/avoda/avoda-08-05-2017-1.pdf",
+          "title": "מסמך מאתר מאגר נבו",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/psika_html/avoda/avoda-08-05-2017-1.pdf",
+      "title": "מסמך מאתר מאגר נבו; דיני עבודה; דמי ביטוח לאומי ודמי ביטוח בריאות – פירוט שנתי של השכר וניכוי",
+      "number": 12,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/psika_html/avoda/avoda-08-05-2017-1.pdf",
+          "title": "מסמך מאתר מאגר נבו",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.nevo.co.il/product/1417",
+          "title": "דיני עבודה",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://www.btl.gov.il/Laws1/02_0103_100058.pdf",
+          "title": "דמי ביטוח לאומי ודמי ביטוח בריאות – פירוט שנתי של השכר וניכוי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.nevo.co.il/psika_html/avoda/avoda-08-05-2017-1.pdf",
+      "title": "מסמך מאתר מאגר נבו",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "1c91a597-9f05-4e3a-849c-401edba45fa3"
+    },
+    {
+      "url": "https://www.nevo.co.il/product/1417",
+      "title": "דיני עבודה",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "e3a4c346-1211-4f64-9bb3-22782e32b3cd"
+    },
+    {
+      "url": "https://law.huji.ac.il/sites/default/files/law/files/maamad_havod.pdf",
+      "title": "מעמד העובד: מבחנים, מגמות והתפתחויות",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f8ed1250-e6bb-4c09-9ee6-fae03abb2685"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1911",
+      "title": "מיהו עובד: מבחני הסף",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "8550d5ee-b2f5-4227-ac56-c43df15ac3d1"
+    },
+    {
+      "url": "https://www.btl.gov.il/Laws1/02_0103_100058.pdf",
+      "title": "דמי ביטוח לאומי ודמי ביטוח בריאות – פירוט שנתי של השכר וניכוי",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "4ac519ae-7ebe-4685-9cff-24078eb134cd"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/771007dc-1277-e511-80d1-00155d0ad6b2/2_771007dc-1277-e511-80d1-00155d0ad6b2_11_8376.pdf",
+      "title": "חוק חופשה שנתית, התשי\"א–1951",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "1f655154-1880-4b2b-8b3f-2ea3f68ba642"
+    },
+    {
+      "url": "https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/default.aspx",
+      "title": "עובד עצמאי - פירוט סוגי המעמד וחובת תשלום | ביטוח לאומי",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "6656229f-a775-4de7-bdb2-4ce310b0c0ae"
+    },
+    {
+      "url": "https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/ZakaotLkizbaot.aspx",
+      "title": "זכאות לקצבאות - עובד עצמאי | ביטוח לאומי",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "4e5e3df8-9ed8-420f-b4a4-ee378ffc6ecc"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/employers-info-170326-1/he/IncomeTax_employers-info-170326-1.pdf",
+      "title": "דיווח שנתי על ניכויים ממשכורת ומשכר עבודה (טופס 0126) ועל ניכויים מתשלומים החייבים בניכוי",
+      "number": 9,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "4c0de4e2-a7d2-4f43-baf2-cf086aed9183"
+    },
+    {
+      "url": "http://www.btl.gov.il/Insurance/Maasik/MToshavYisrael/DivuahVetashlum/Pages/Divuhach.aspx",
+      "title": "דיווח ותשלום עבור עובדים",
+      "number": 9,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "ab9169cc-fefc-4284-b32a-c12cd8519194"
+    },
+    {
+      "url": "https://www.gov.il/he/service/work-rights-violation-complaints",
+      "title": "הגשת תלונה על מעסיקים בשל הפרת חוקי עבודה | משרד העבודה",
+      "number": 11,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "ac9b7d94-279e-47cc-a306-38cd7199733f"
+    }
+  ],
+  "used_sources_count": 11
+}

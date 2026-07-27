@@ -1,0 +1,218 @@
+{
+  "id": "F3",
+  "query": "מהי דוקטרינת השימוש לרעה בסמכות המכוננת במשפט החוקתי הישראלי, וכיצד היא התפתחה בפסיקה המרכזית של בית המשפט העליון?",
+  "run_id": "61f7480f-e869-4fcd-856a-e03554c46717",
+  "ok": true,
+  "total_ms": 167610,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "deterministic_branch": null,
+  "missing_docket_limitation_fired": false,
+  "statute_section_limitation_fired": false,
+  "canonical_quote_fired": false,
+  "missing_anchor_caveat_injected": false,
+  "missing_anchor_descriptions": [],
+  "anchor_statuses": [],
+  "missing_required_anchors": null,
+  "verifier_counts": {
+    "by_support": {
+      "direct": 2,
+      "partial": 4,
+      "unrelated": 5,
+      "tangential": 1
+    },
+    "by_role_match": {
+      "true": 12,
+      "false": 0
+    }
+  },
+  "answer": "**הגדרה: מהי דוקטרינת 'השימוש לרעה בסמכות המכוננת'?**\n\nבצורתה המקובלת בדוקטרינה, מדובר בעקרון שמאפשר לבית המשפט להפעיל ביקורת על מעשים חקיקתיים או מכוננים אף כשהם מבוצעים במסגרת סמכות פורמלית של הרשות המכוננת — כאשר השימוש בסמכות נעשה מתוך מטרה פסולה או מוביל לתוצאה הפוגעת באתוס הדמוקרטי או בזכויות יסוד באופן מהותי.¹\n\nהיסודות המשפטיים המהווים את ליבת הדוקטרינה כוללים, כפי שנותחו בספרות המוקדשת לנושא, את שלושת הממדים: המניע או המטרה מאחורי השימוש במכוננה; התוצאה הממשית או הפוטנציאלית של אותו שימוש על משטר דמוקרטי ועל זכויות יסוד; ואפיונו הפרוצדורלי־מהותי של האקט המכונן (האם הוא נעשה בשלבי חקיקה תקינים, האם ננקטו הליכים ראויים וכו').¹\n\n**התפתחות היסטורית בפסיקה ובהגות משפטית**\n\nהדיון בדוקטרינת השימוש לרעה התפתח בשנים האחרונות בעיקר בהקשר של חוקי יסוד ואלה הוחלפו או נבדקו לאור שאלות של שריון פורמלי ותכלית החקיקה, כפי שמנתח המחקר המוקדש לתחום.¹\n\nבפסיקה העכשווית אחד המקרים המרכזיים שמעמיד במבחן את היקף הביקורת על חקיקה מכוננת הוא תיק הנדון בבג\"ץ 5658/23; הטענות והשיפוט של בית המשפט בתיק זה משמשות נקודת ציון ראשית לדיון על גבולות הביקורת השיפוטית על מכוננת.²\n\nיש לציין כי ישנן גם הכרעות וניתוחים שמתעדים את השאלה האם ובאיזו מידה בתי־משפט שאינם בג\"ץ רשאים להפעיל ביקורת על חקיקה הפוגעת בזכויות — אך בנושא זה הממצא בתנאים המסופקים כאן הוא חלקי ודורש זהירות בפרשנות.³\n\n**אמות מידה ובדיקות שהוצעו ונמצאו בפסיקה ובספרות**\n\n- מבחן המטרה או הכוונה: הבדיקה מתמקדת בשאלה האם המעשה המכונן ננקט כדי להשיג מטרה פסולה (למשל: סילוק חסינות פוליטית, פגיעה במנגנוני בדיקה ובאזכורים דמוקרטיים). מן המקורות עולה בזהירות כי מבחן זה זכה למקום בולט כדרך לאבחן שימוש רע של סמכות מכוננת.⁴\n- מבחן התוצאה/השפעה מהותית: בחלק מהניתוחים מתקיים מבחן שבו נבחנת התוצאה המעשית על משטר הדמוקרטיה ועל זכויות יסוד — האם החקיקה משנה באופן מהותי את מאזן הכוחות או פוגעת בהגנות יסוד במידה שמחייבת התערבות שיפוטית.⁵\n- מבחנים פרוצדורליים/הליכים: חלק מהשיקולים בודקים את תהליך החקיקה המכוננת עצמו — לדוגמה דלות בדיון ציבורי, קיפוח דיון הכנסת, מהירות בלתי סבירה של חקיקה או הפרת אמות־דין פרוצדורליות שעשויות להעיד על שימוש לרעה.⁶\n- מבחני מידתיות ואיזון: כאשר מדובר בפגיעה בזכויות, מקודם שימוש במבחני מידתיות הקלאסיים — התאמת אמצעי למטרה, פגיעה מינימלית, ושקלול תועלת־נזק — כאלמנט שיכול לסייע להערכת 'השפעה מהותית'.⁶\n- מבחן החסינות השיפוטית ועמידות הביקורת: בפסיקה עולות טיעונים גם לגבי מידת הפחתת הביקורת השיפוטית כלפי חקיקה מכוננת, לעומת טענות הסותרות ההפוכה — שיש מקום לביקורת הדוקה אם הוכח שימוש לרעה; הדיון סביב גבולות אלו בולט במיוחד בפסיקה העדכנית.⁷\n\n**סעדים והשלכות מעשיות**\n\nהסעדים שנדונים או הוצעו במקורות כוללים ביטול חקיקה המכוננת במידה והיא נמצאת כעושה שימוש לרעה, פרשנות מצמצמת של הוראות לחסוך פגיעה בזכויות, ולעתים נוקט הפסיקה אמצעים ביניים כגון השהיה מותנית או מתן הוראות לרשות המבצעת לתקן הליכים. על היקף ואופי הסעדים יש ודאות יחסית פחותה והם נדונים באופן פרטני בתיקים השונים.⁷\n\nמחקרי יסוד על הדוקטרינה מדגישים גם את המסגרת העקרונית־דמוקרטית של הוויכוח: כוחה של הכנסת לשנות מסגרות חוקתיות מאזן בין עקרון הריבונות הדמוקרטית לבין ההגנה על זכויות יסוד — והדוקטרינה מנסה לאפשר פיקוח שיפוטי כאשר השימוש במכוננה חורג ממטרות לגיטימיות או פוגע במהות הדמוקרטית.⁸\n\nלסיכום, מן המקורות שסופקו ניכר כי דוקטרינת השימוש לרעה בסמכות המכוננת מתגבשת כיום סביב מערך מבחנים תכליתיים, תוצאתיים ופרוצדורליים; עם זאת, קיימת אי־ודאות מסוימת לגבי היקפה של יכולתם של בתי־משפט שונים (ובפרט בתי־משפט מחוץ לבג\"ץ) להפעיל ביקורת זו, וכן על המידה שבה יש להפחית את הביקורת כשמדובר בחקיקה שמקורה במוסד המכונן.",
+  "footnotes": [
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+      "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+          "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1916",
+      "title": "סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1916",
+          "title": "סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1134",
+      "title": "מעבר לאזרחי ולפלילי: סדר חדש לסדרי הדין; שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1134",
+          "title": "מעבר לאזרחי ולפלילי: סדר חדש לסדרי הדין",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+          "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+      "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws; מסמך מאתר אתר אקדמי (netanya.ac.il)",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+          "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+          "source_type": "other"
+        },
+        {
+          "url": "https://netanya.ac.il/gur/data/AGUDA/law/yearb/evening/%D7%9E%D7%A9%D7%A4%D7%98%20%D7%9E%D7%A0%D7%94%D7%9C%D7%99%20%D7%A9%D7%A0%D7%94%20%D7%91'%20%D7%A2%D7%A8%D7%91.pdf",
+          "title": "מסמך מאתר אתר אקדמי (netanya.ac.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://netanya.ac.il/gur/data/AGUDA/law/yearb/evening/%D7%9E%D7%A9%D7%A4%D7%98%20%D7%9E%D7%A0%D7%94%D7%9C%D7%99%20%D7%A9%D7%A0%D7%94%20%D7%91'%20%D7%A2%D7%A8%D7%91.pdf",
+      "title": "מסמך מאתר אתר אקדמי (netanya.ac.il); משפטים-נאה וקורמן-מורן קפלן",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://netanya.ac.il/gur/data/AGUDA/law/yearb/evening/%D7%9E%D7%A9%D7%A4%D7%98%20%D7%9E%D7%A0%D7%94%D7%9C%D7%99%20%D7%A9%D7%A0%D7%94%20%D7%91'%20%D7%A2%D7%A8%D7%91.pdf",
+          "title": "מסמך מאתר אתר אקדמי (netanya.ac.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/hebrewtrial/examnotes/%D7%9E%D7%A9%D7%A4%D7%98%D7%99%D7%9D-%D7%A0%D7%90%D7%95%D7%94%D7%A7%D7%95%D7%A8%D7%9E%D7%9F-%D7%9E%D7%95%D7%A8%D7%A0%D7%A7%D7%A4%D7%9C%D7%9F.doc",
+          "title": "משפטים-נאה וקורמן-מורן קפלן",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין; סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1916",
+          "title": "סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+      "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws; בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+          "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+      "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d32ffb77-71e3-4b39-b187-5fb52076ba4d"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "1a50ffb8-9f78-4273-92c0-cd7fdb39db73"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1916",
+      "title": "סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "fbc10237-8731-4ac3-a130-d4912b26782a"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1134",
+      "title": "מעבר לאזרחי ולפלילי: סדר חדש לסדרי הדין",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "f6cb32d6-b647-4838-a883-64df498160a5"
+    },
+    {
+      "url": "https://netanya.ac.il/gur/data/AGUDA/law/yearb/evening/%D7%9E%D7%A9%D7%A4%D7%98%20%D7%9E%D7%A0%D7%94%D7%9C%D7%99%20%D7%A9%D7%A0%D7%94%20%D7%91'%20%D7%A2%D7%A8%D7%91.pdf",
+      "title": "מסמך מאתר אתר אקדמי (netanya.ac.il)",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "f8804c35-ca06-43f5-9d03-9d443432434f"
+    },
+    {
+      "url": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/hebrewtrial/examnotes/%D7%9E%D7%A9%D7%A4%D7%98%D7%99%D7%9D-%D7%A0%D7%90%D7%95%D7%94%D7%A7%D7%95%D7%A8%D7%9E%D7%9F-%D7%9E%D7%95%D7%A8%D7%A0%D7%A7%D7%A4%D7%9C%D7%9F.doc",
+      "title": "משפטים-נאה וקורמן-מורן קפלן",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d139fbfa-664a-4575-95a3-dfccf1925953"
+    }
+  ],
+  "used_sources_count": 6
+}
