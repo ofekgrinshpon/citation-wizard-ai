@@ -28,6 +28,12 @@ export interface StatuteSectionRef {
   suggested_queries: string[];
 }
 
+export interface StatuteSectionCanonicalEntry {
+  text: string;
+  official_source_url: string;
+  official_source_title: string;
+}
+
 type DirectTextRule = {
   /** Terms that must all appear in the candidate text after normalization. */
   all?: string[];
@@ -275,12 +281,19 @@ export function candidateHasDirectStatuteSectionText(
  * on a section not registered here, the drafter must refuse rather than
  * regenerate the text.
  */
-const STATUTE_SECTION_CANONICAL_TEXT: Record<string, string> = {
-  "basic_law_dignity-s1":
-    "זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.",
+const STATUTE_SECTION_CANONICAL_TEXT: Record<string, StatuteSectionCanonicalEntry> = {
+  "basic_law_dignity-s1": {
+    text: "זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.",
+    official_source_url: "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+    official_source_title: "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+  },
 };
 
-export function getStatuteSectionCanonicalText(ref: StatuteSectionRef): string | null {
+export function getStatuteSectionCanonicalEntry(ref: StatuteSectionRef): StatuteSectionCanonicalEntry | null {
   return STATUTE_SECTION_CANONICAL_TEXT[ref.ref_id] ?? null;
+}
+
+export function getStatuteSectionCanonicalText(ref: StatuteSectionRef): string | null {
+  return getStatuteSectionCanonicalEntry(ref)?.text ?? null;
 }
 

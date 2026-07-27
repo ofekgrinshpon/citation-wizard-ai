@@ -53,10 +53,15 @@ const PREFIX_TABLE: PrefixDef[] = [
 const HEB_PREFIX_ALT = PREFIX_TABLE.flatMap((p) => p.he).map(escapeRe).sort((a, b) => b.length - a.length).join("|");
 const EN_PREFIX_ALT = PREFIX_TABLE.flatMap((p) => p.en ?? []).map(escapeRe).sort((a, b) => b.length - a.length).join("|");
 
+// Optional court descriptor between prefix and docket number, e.g.
+// ע"מ (מחוזי ת"א) 61908-05-19. We do not include it in the normalized docket;
+// it is only tolerated so the actual docket anchor is not missed.
+const COURT_DESCRIPTOR_RE_SRC = String.raw`(?:\s*\([^)]{1,40}\))?`;
+
 // Number shapes we accept:  1234/56, 1234-56, 39040-12-21
 const NUM_RE_SRC = String.raw`\d{1,6}(?:[\/\-]\d{1,4}){1,2}`;
 
-const HEB_DOCKET_RE = new RegExp(`(${HEB_PREFIX_ALT})\\s*(${NUM_RE_SRC})`, "g");
+const HEB_DOCKET_RE = new RegExp(`(${HEB_PREFIX_ALT})${COURT_DESCRIPTOR_RE_SRC}\\s*(${NUM_RE_SRC})`, "g");
 const EN_DOCKET_RE = new RegExp(`\\b(${EN_PREFIX_ALT})\\s*(${NUM_RE_SRC})\\b`, "gi");
 
 function escapeRe(s: string): string {

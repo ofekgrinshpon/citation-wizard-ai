@@ -51,6 +51,13 @@ Deno.test("detectDockets — district ע\"מ with three-part number", () => {
   assertEquals(d[0].number, "39040/12/21");
 });
 
+Deno.test("detectDockets — tolerates parenthetical court descriptor before number", () => {
+  const d = detectDockets('מה נקבע בע"מ (מחוזי ת"א) 61908-05-19?');
+  assertEquals(d.length, 1);
+  assertEquals(d[0].docket_id, "am-61908-05-19");
+  assertEquals(d[0].number, "61908/05/19");
+});
+
 Deno.test("detectDockets — רע\"א", () => {
   const d = detectDockets('רע"א 1234/20');
   assertEquals(d.length, 1);

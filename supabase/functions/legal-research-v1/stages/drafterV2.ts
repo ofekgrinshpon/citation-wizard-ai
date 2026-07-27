@@ -32,6 +32,8 @@ import { buildFootnotedAnswer } from "./footnoteBuilder.ts";
 import { normalizeHebrewNumberRanges } from "../../_shared/hebrewNumberRange.ts";
 import { checkCompleteness, type CompletenessReport } from "./completenessCheck.ts";
 import {
+  detectStatuteSections,
+  getStatuteSectionCanonicalEntry,
   getStatuteSectionCanonicalText,
   type StatuteSectionRef,
 } from "./statuteSectionDetection.ts";
@@ -476,6 +478,27 @@ function buildStatuteSectionCanonicalQuoteDraft(args: {
   };
 }
 
+function buildCanonicalRegistrySource(ref: StatuteSectionRef): DrafterInputSource | null {
+  const canonical = getStatuteSectionCanonicalEntry(ref);
+  if (!canonical) return null;
+  return {
+    ref: `r_${ref.ref_id.replace(/[^a-zA-Z0-9_-]+/g, "_")}`,
+    candidate_id: `canonical:${ref.ref_id}`,
+    title: canonical.official_source_title,
+    raw_title: canonical.official_source_title,
+    title_status: "ok",
+    title_hygiene_reasons: [],
+    url: canonical.official_source_url,
+    source_type: "israeli_law",
+    role: "primary_statute",
+    origin: "local_db",
+    best_support: "direct",
+    supported_points: [canonical.text],
+    claim_ids: [],
+    snippet: canonical.text,
+  };
+}
+
 export interface QualityWarning {
   buckets: string[];
   hit_count: number;
@@ -721,6 +744,16 @@ export async function runDrafterV2(
     userDocs,
     useAsSource,
   );
+  const shape = opts?.answerIntent?.output_shape;
+  const canonicalQuoteRefs = shape === "quote"
+    ? detectStatuteSections(question).filter((ref) => getStatuteSectionCanonicalEntry(ref))
+    : [];
+  for (const ref of canonicalQuoteRefs) {
+    const registrySource = buildCanonicalRegistrySource(ref);
+    if (registrySource && !inputSources.some((s) => s.candidate_id === registrySource.candidate_id)) {
+      inputSources.unshift(registrySource);
+    }
+  }
   const sources_passed = inputSources.length;
   const allowedRefs = new Set(inputSources.map((s) => s.ref));
 
@@ -757,9 +790,10 @@ export async function runDrafterV2(
     };
   }
 
-  const missingAnchors = opts?.missingRequiredAnchors ?? [];
+  const missingAnchors = (opts?.missingRequiredAnchors ?? []).filter((a) =>
+    !canonicalQuoteRefs.some((ref) => a.anchor_id === `statute_section:${ref.ref_id}`)
+  );
   const requiredAnchorCandidateIds = opts?.requiredAnchorCandidateIds ?? new Set<string>();
-  const shape = opts?.answerIntent?.output_shape;
   const statuteSectionLimitationActive =
     missingAnchors.some((a) => a.is_statute_section) &&
     (shape === "definition" || shape === "quote");
@@ -816,12 +850,60 @@ export async function runDrafterV2(
     };
   }
 
-  // Deterministic canonical-quote branch. When the analyzer asks for a
-  // verbatim `quote` and a statute-section anchor is satisfied at
-  // `direct` support, we never let the LLM regenerate the statutory text —
-  // it must be byte-faithful. If canonical text is registered for the
-  // anchor, we emit it deterministically; if not, we refuse instead of
-  // paraphrasing.
+  // Deterministic canonical-quote branch. Seeded canonical statute-section
+  // quotes do not depend on retrieval rediscovering the same source: if the
+  // user's quote request detects a registered statute section, emit the vetted
+  // text and cite the registry's official URL. Retrieval remains telemetry.
+  if (shape === "quote" && canonicalQuoteRefs.length > 0) {
+    const ref = canonicalQuoteRefs[0];
+    const canonical = getStatuteSectionCanonicalEntry(ref);
+    const registrySource = inputSources.find((s) => s.candidate_id === `canonical:${ref.ref_id}`);
+    if (canonical && registrySource) {
+      const t0 = Date.now();
+      const draft = buildStatuteSectionCanonicalQuoteDraft({
+        canonicalText: canonical.text,
+        description: `הנוסח המחייב של ${ref.section_display} ל${ref.statute_title_he}`,
+        sourceRef: registrySource.ref,
+      });
+      const validation = validateStructuredDraft(draft, allowedRefs);
+      const built = validation.draft
+        ? buildFootnotedAnswer(validation.draft, inputSources)
+        : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined };
+      const answer = built.answer_markdown;
+      return {
+        ok: validation.report.ok,
+        ms: Date.now() - t_total,
+        model_initial: forceModel ?? MODEL_MINI,
+        model_final: forceModel ?? MODEL_MINI,
+        provider,
+        escalated: false,
+        sources_passed,
+        sources_used: built.used_sources.length,
+        answer_markdown: answer,
+        used_sources: built.used_sources,
+        footnotes: built.footnotes,
+        stage_runs: [{
+          stage: "drafter_v2_statute_section_canonical_quote_registry",
+          model: "deterministic",
+          ms: Date.now() - t0,
+          ok: validation.report.ok,
+        }],
+        structured_validation: validation.report,
+        structured_draft: validation.draft,
+        input_sources: inputSources,
+        builder_report: built.builder_report,
+        quality_warning: computeQualityWarning(answer, { question }),
+        missing_anchor_caveat_injected: false,
+        lead_ref: { ref: registrySource.ref, reason: "canonical_registry_statute_section", shape },
+        missing_anchor_descriptions: [],
+        schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
+      };
+    }
+  }
+
+  // Non-seeded deterministic quote fallback. When retrieval verifies direct
+  // statute-section text but no canonical registry entry exists, never let the
+  // LLM regenerate a quote; emit registered text or refuse.
   const satisfiedStatuteSectionAnchors = opts?.satisfiedStatuteSectionAnchors ?? [];
   if (shape === "quote" && satisfiedStatuteSectionAnchors.length > 0) {
     for (const anchor of satisfiedStatuteSectionAnchors) {

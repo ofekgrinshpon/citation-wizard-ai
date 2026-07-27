@@ -67,6 +67,8 @@ const DISCOVERY_ONLY_HINTS = [
   "blog", "scholar.google",
 ];
 
+const CASE_TITLE_RE = /(?:בג["״]?ץ|דנג["״]?ץ|עע["״]?מ|ע["״]?מ|ע["״]?א|ע["״]?פ|רע["״]?א|רע["״]?פ|דנ["״]?א|דנ["״]?פ|בש["״]?פ|בש["״]?א|תפ["״]?ח|תמ["״]?ש|רמ["״]?ש|בר["״]?ם|בר["״]?ע|ה["״]?פ)\s*(?:\([^)]{1,40}\)\s*)?\d{1,6}(?:[\/\-]\d{1,4}){1,2}|פסק\s*דין|פס["״]?ד/;
+
 function getDomain(url: string | undefined): string {
   if (!url) return "";
   try {
@@ -125,8 +127,13 @@ function classify(url: string, title: string): SourceClass {
 
   if (ACADEMIC_SUFFIX.some((s) => domain.endsWith(s))) return "academic";
 
-  // gov.il (non-knesset, non-court): if title says חוק/תקנות → legislation
+  // gov.il (non-knesset, non-court): some official legalinfo PDFs are court
+  // judgments/decision summaries hosted on a ministry domain. If the title is
+  // a docket/case title, classify it as case law before the generic law-path
+  // rule below; otherwise Q02-like exact judgments become "legislation" and
+  // lead_ref refuses while the drafter still sees the substantive snippet.
   if (GOV_REPORT_DOMAINS_SUFFIX.some((s) => domain.endsWith(s))) {
+    if (CASE_TITLE_RE.test(title)) return "court_case";
     if (/חוק|תקנות|פקודה/.test(titleL) || /law|statute/.test(path)) return "legislation";
     return "government_report";
   }
