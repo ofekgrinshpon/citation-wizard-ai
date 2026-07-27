@@ -46,6 +46,9 @@ const PREFIX_TABLE: PrefixDef[] = [
   { slug: "brm", canonicalHe: 'בר"ם', he: ['בר"ם', "בר״ם"] },
   { slug: "brv", canonicalHe: 'בר"ע', he: ['בר"ע', "בר״ע"] },
   { slug: "hp", canonicalHe: 'ה"פ', he: ['ה"פ', "ה״פ"] },
+  { slug: "ta", canonicalHe: 'ת"א', he: ['ת"א', "ת״א"] },
+  { slug: "tap", canonicalHe: 'ת"פ', he: ['ת"פ', "ת״פ"] },
+  { slug: "hpb", canonicalHe: 'הפ"ב', he: ['הפ"ב', "הפ״ב"] },
 ];
 
 // Build a single Hebrew alternation. Prefixes with ASCII `"` or Hebrew `״`
