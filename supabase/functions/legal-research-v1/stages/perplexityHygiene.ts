@@ -323,6 +323,14 @@ export function normalizePerplexitySourceType(
   if (/^(article|paper|book|journal|chapter)/.test(lower)) {
     return { normalized: "academic", raw: rawTrim, was_normalized: true };
   }
+  if (lower === "legal_db" || lower === "legal database" || lower === "legal-database") {
+    const fromClass = mapClassToSourceType(classifiedSourceClass);
+    return {
+      normalized: fromClass,
+      raw: rawTrim,
+      was_normalized: true,
+    };
+  }
   // Conservative fallback: do NOT create pseudo-types.
   return { normalized: "other", raw: rawTrim, was_normalized: true };
 }
