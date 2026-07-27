@@ -1,0 +1,40 @@
+{
+  "id": "B3",
+  "category": "statute_section",
+  "query": "מה קובע סעיף 6 לחוק החברות, התשנ\"ט-1999 בעניין הרמת מסך ומהם התנאים להפעלת הסמכות?",
+  "run_id": "83bd40fd-b3de-4b7f-8d9a-62e710138f06",
+  "ok": false,
+  "total_ms": 132163,
+  "answer_intent": {
+    "output_shape": "list"
+  },
+  "lead_ref": null,
+  "deterministic_branch": null,
+  "limitation_flags": {
+    "missing_docket": false,
+    "statute_section": false,
+    "canonical_quote": false,
+    "missing_anchor_caveat_injected": false
+  },
+  "missing_anchor_descriptions": [],
+  "anchor_statuses": [],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 1,
+      "partial": 8,
+      "unrelated": 5,
+      "tangential": 1
+    },
+    "by_role_match": {
+      "true": 15,
+      "false": 0
+    }
+  },
+  "verifier_labels": null,
+  "used_sources_count": 0,
+  "used_sources": [],
+  "footnotes_count": 0,
+  "footnotes": [],
+  "quality_warnings": [],
+  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+}

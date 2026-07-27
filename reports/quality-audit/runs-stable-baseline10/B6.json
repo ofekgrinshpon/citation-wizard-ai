@@ -1,0 +1,40 @@
+{
+  "id": "B6",
+  "category": "analysis",
+  "query": "מהי דוקטרינת הביצוע בקירוב (cy-près) במשפט הישראלי, וכיצד היא מיושמת בהקשר של הקדשות ונאמנויות ציבוריות?",
+  "run_id": "9bd316e9-5481-4793-98b8-aa05b4787017",
+  "ok": false,
+  "total_ms": 125499,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": null,
+  "deterministic_branch": null,
+  "limitation_flags": {
+    "missing_docket": false,
+    "statute_section": false,
+    "canonical_quote": false,
+    "missing_anchor_caveat_injected": false
+  },
+  "missing_anchor_descriptions": [],
+  "anchor_statuses": [],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 22,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 17,
+      "false": 5
+    }
+  },
+  "verifier_labels": null,
+  "used_sources_count": 0,
+  "used_sources": [],
+  "footnotes_count": 0,
+  "footnotes": [],
+  "quality_warnings": [],
+  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+}

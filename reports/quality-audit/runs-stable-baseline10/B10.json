@@ -1,0 +1,40 @@
+{
+  "id": "B10",
+  "category": "practical",
+  "query": "מהם המבחנים המרכזיים שנקבעו בפסיקה לסיווג אדם כעובד ולא כקבלן עצמאי, ומה המשמעות של הסיווג לעניין זכויות סוציאליות?",
+  "run_id": "a4920a79-c027-4e25-b3bf-44c3d103c86d",
+  "ok": false,
+  "total_ms": 86524,
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "lead_ref": null,
+  "deterministic_branch": null,
+  "limitation_flags": {
+    "missing_docket": false,
+    "statute_section": false,
+    "canonical_quote": false,
+    "missing_anchor_caveat_injected": false
+  },
+  "missing_anchor_descriptions": [],
+  "anchor_statuses": [],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 19,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 19,
+      "false": 0
+    }
+  },
+  "verifier_labels": null,
+  "used_sources_count": 0,
+  "used_sources": [],
+  "footnotes_count": 0,
+  "footnotes": [],
+  "quality_warnings": [],
+  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+}
