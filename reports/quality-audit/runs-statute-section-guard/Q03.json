@@ -2,9 +2,9 @@
   "id": "Q03",
   "category": "statutory_interpretation",
   "query": "מהי הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה, ומהם התנאים המצטברים?",
-  "run_id": "136afb2c-8524-4ea2-be90-7c4b71593f54",
+  "run_id": "2b6d9880-ba38-4e14-8aa0-ee486d6ba18a",
   "ok": true,
-  "total_ms": 130225,
+  "total_ms": 106867,
   "answer_intent": {
     "output_shape": "definition"
   },
@@ -30,13 +30,13 @@
   "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 32(9) לפקודת מס הכנסה; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹",
   "footnotes": [
     {
-      "url": "https://www.btl.gov.il/Laws1/00_0103_000000.pdf",
-      "title": "פקודת מס הכנסה [נוסח חדש] - ביטוח לאומי (PDF)",
+      "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+      "title": "פקודת מס הכנסה",
       "number": 1,
       "sources": [
         {
-          "url": "https://www.btl.gov.il/Laws1/00_0103_000000.pdf",
-          "title": "פקודת מס הכנסה [נוסח חדש] - ביטוח לאומי (PDF)",
+          "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+          "title": "פקודת מס הכנסה",
           "source_type": "other"
         }
       ],
@@ -45,12 +45,12 @@
   ],
   "used_sources": [
     {
-      "url": "https://www.btl.gov.il/Laws1/00_0103_000000.pdf",
-      "title": "פקודת מס הכנסה [נוסח חדש] - ביטוח לאומי (PDF)",
+      "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+      "title": "פקודת מס הכנסה",
       "number": 1,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "21af3312-f256-4d2c-a872-3ec83516b5f4"
+      "candidate_id": "e2b49f2d-66d1-47c8-8667-27dd74fa55d7"
     }
   ]
 }

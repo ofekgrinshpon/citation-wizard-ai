@@ -3,14 +3,14 @@
     "id": "Q01",
     "category": "docket_holding",
     "query": "מה נקבע בבג\"ץ 6298/07 רסלר נ' כנסת ישראל בעניין חוקתיות חוק דחיית שירות לתלמידי ישיבות (חוק טל)?",
-    "run_id": "e70cc487-de0d-4667-9f7b-0689e7228a4f",
+    "run_id": "d1988f45-c303-431b-af99-ccf108bd6a99",
     "ok": true,
-    "total_ms": 294352,
+    "total_ms": 245519,
     "answer_intent": {
       "output_shape": "case_holding"
     },
     "lead_ref": {
-      "ref": "s4",
+      "ref": "s5",
       "shape": "case_holding",
       "reason": "required_anchor_case"
     },
@@ -26,94 +26,86 @@
         "verified_support": "direct"
       }
     ],
-    "answer": "**בג\"ץ 6298/07 רסלר נ' כנסת ישראל — ההחזקה המרכזית**\n\nהבית המשפט העליון קבע בפסק הדין כי חוק דחיית השירות לתלמידי ישיבות (חוק טל) במתכונתו הנבדקת הוכרז כבלתי חוקתי והוסק כי אין להאריך את תוקפו; בפסק הדין (מיום 21.2.2012) נקבע כי תוקפו יפוג ביום 1.8.2012.¹\n\nרקע חקיקתי: חוק טל נחקק עם תקופת תוקף מוגבלת; נוסח החקיקה המקורי פורסם ב־1.8.2002 וקבע תוקף חמש שנתי שנגמר לראשונה ב־1.8.2007.²\n\nנימוקי בית המשפט — קווים עיקריים: מן המקורות עולה במפורש כי אחת הנקודות המרכזיות שבה הסתמך בית המשפט היא בחינת החוק במבחן התוצאה; נקבע שהחוק בלתי חוקתי גם במבחן זה. ההכרעה נשענה על שקילה של פגיעה בשוויון הנטל ביחס למטרות המוצהרות של החוק וניסיון לאמוד את מידתיות ההסדר ביחס להשגת אותן מטרות.³\n\nאופי הסעד: בית המשפט לא ציווה על ביטול מיידי ללא מעבר חסר־תנאים; במקום זאת נפסק כי החוק לא יוארך ותוקפו יסתיים במועד שנקבע (01.08.2012), כך שמימוש ההשפעה הפרו־משפטית הופחת בהדרגה במשך תקופת המעבר שנקבעה.¹\n\nהמשך חקיקתי והשלכות מעשיות: בעקבות הפסיקה ננקטו צעדים חקיקתיים ותיקונים שהוסמכו בעקבותיה — ההצעה לתיקון נחקקה במענה להחלטת בית המשפט במטרה למנוע הארכות נוספות של חוק טל כפי שנפסק בתיק. בנוסף דו\"חות ובחינה מנהלתית/ביקורתית העוסקים ביישום ובהשפעות ההסדר שימשו כבסיס עובדתי לדיון הציבורי והפוליטי לאחר הפסיקה.⁴\n\nהערה שיטתית לגבי היקף התמיכה המקורית: הסמכות העיקרית למשפט עצמו מופיעה בפסק הדין שנמסר בבג\"ץ 6298/07, אך חלק מן המקורות המספקים הקשר ועיון מדיניות הם דיווחים והצעות חקיקה המשקפים את ההמשך הפרלמנטרי והמינהלי; לכן ניסוח חלק מהטענות נעשה בזהירות לפי חומר התמיכה הזמין.⁵",
+    "answer": "**עיקר ההחלטה בבג\"ץ 6298/07**\n\nבג\"ץ 6298/07 דן בחוקתיותו של חוק דחיית שירות לתלמידי ישיבות (חוק טל). בית המשפט מצא כי הנטען על פיו ההסדר, במתכונתו והארכותיו, אינו עומד בדרישות החוקתיות שנקבעו במסגרת חקיקת היסוד, ובכך עוררה ההכרעה שאלות יסודיות בנוגע למידתיות המגבלות והגנה על עקרון השוויון; יחד עם זאת הותרה הארכה זמנית מוגבלת במטרה לאפשר למחוקק להתערב ולגבש הסדר חלופי.¹\n\nבהעמדת הביקורת המקצועית ניצבה זכות השוויון כעמוד התווך של הבדיקה; בית המשפט ניתח את עניין החוק במסגרת פסקת ההגבלה של חוקי היסוד ובחן שאלות של קשר רציונלי בין המטרה לאמצעי, אפשרות אמצעי שפגיעתו פחותה, וכן מידתיות במובן הצר.²\n\nבמהלך הדיון הוצגו גם נתונים ומסמכי רקע מן הכנסת וממרכז המחקר, אשר הדגימו את היקפי הגיוס והשירות האזרחי בקרב קבוצת תלמידי הישיבות ואת מגבלות היישום של ההסדר; מסמכים אלה שימשו כרקע עובדתי לבחינת מידתיות ההגבלה.³\n\nבאשר לסעד — פסק הדין אסר על הארכה בלתי-מוגבלת של תוקפו של החוק והותירו את ההסדר במצב זמני בלבד: בית המשפט אפשר הארכה של תקופה מוגדרת (חמישה-עשר חודשים) כדי לאפשר למחוקק לפעול, אך הצביע כי אין מקום להשאיר את ההסדר בתוקף ללא שינוי קבוע והותיר לקריאה למחוקק לעצב חלופה חוקית.⁴\n\nלסיכום: בג\"ץ פסל את המשך קיומו של ההסדר כפי שנוהל עד אז בלא תיקון חוקתי או חקיקתי מהותי, נתן פתרון זמני כדי לתת למחוקק זמן פעולה, וקרא למחוקק לגבש הסדר חלופי שנבחן ביחס לעקרונות השוויון והמידתיות.",
     "footnotes": [
       {
-        "url": null,
-        "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות; הצעות חוק – קובץ PDF (כנסת ישראל)",
+        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+        "title": "החלטה בתיק בג\"ץ 6298/07; בג\"ץ 6298/07 – פסק-דין; מסמך מאתר psakdin.co.il",
         "number": 1,
         "sources": [
           {
-            "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
-            "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+            "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+            "title": "החלטה בתיק בג\"ץ 6298/07",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+            "title": "בג\"ץ 6298/07 – פסק-דין",
             "source_type": "other"
           },
           {
-            "url": "https://fs.knesset.gov.il/20/law/20_ls1_308913.pdf",
-            "title": "הצעות חוק – קובץ PDF (כנסת ישראל)",
+            "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%A0%D7%AA%D7%9F-%D7%90%D7%95%D7%A8%D7%9B%D7%94-%D7%A9%D7%9C-%D7%97%D7%9E%D7%99%D7%A9%D7%94-%D7%A2%D7%A9%D7%A8-%D7%97%D7%95%D7%93%D7%A9%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%97%D7%95%D7%A7-%D7%98%D7%9C",
+            "title": "מסמך מאתר psakdin.co.il",
             "source_type": "other"
           }
         ],
         "source_type": "compound"
       },
       {
-        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
-        "title": "החלטה בתיק בג\"ץ 6298/07",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+        "title": "בג\"ץ 6298/07 – פסק-דין; החלטה בתיק בג\"ץ 6298/07",
         "number": 2,
         "sources": [
           {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+            "title": "בג\"ץ 6298/07 – פסק-דין",
+            "source_type": "other"
+          },
+          {
             "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
             "title": "החלטה בתיק בג\"ץ 6298/07",
-            "source_type": "other"
+            "source_type": "caselaw"
           }
         ],
-        "source_type": "other"
+        "source_type": "compound"
       },
       {
-        "url": null,
-        "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות; יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים; שוויון וזכויות כלכליות וחברתיות – הילכו שניים בנפרד?",
+        "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_5540738.pdf",
+        "title": "גיוס ופטור מגיוס לגברים בקבוצות אוכלוסייה שונות - הסדרים ונתונים; מסמך מאתר אתר הכנסת",
         "number": 3,
         "sources": [
           {
-            "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
-            "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+            "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_5540738.pdf",
+            "title": "גיוס ופטור מגיוס לגברים בקבוצות אוכלוסייה שונות - הסדרים ונתונים",
             "source_type": "other"
           },
           {
-            "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/465-36.aspx",
-            "title": "יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים",
-            "source_type": "government_report"
-          },
-          {
-            "url": "https://openscholar.huji.ac.il/minervacenter/blog/elzam",
-            "title": "שוויון וזכויות כלכליות וחברתיות – הילכו שניים בנפרד?",
+            "url": "https://fs.knesset.gov.il/globaldocs/MMM/dcbe8d55-f7f7-e411-80c8-00155d010977/2_dcbe8d55-f7f7-e411-80c8-00155d010977_11_9853.pdf",
+            "title": "מסמך מאתר אתר הכנסת",
             "source_type": "other"
           }
         ],
         "source_type": "compound"
       },
       {
-        "url": null,
-        "title": "הצעות חוק – קובץ PDF (כנסת ישראל); יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים",
+        "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%A0%D7%AA%D7%9F-%D7%90%D7%95%D7%A8%D7%9B%D7%94-%D7%A9%D7%9C-%D7%97%D7%9E%D7%99%D7%A9%D7%94-%D7%A2%D7%A9%D7%A8-%D7%97%D7%95%D7%93%D7%A9%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%97%D7%95%D7%A7-%D7%98%D7%9C",
+        "title": "מסמך מאתר psakdin.co.il; מסמך מאתר אתר הכנסת; החלטה בתיק בג\"ץ 6298/07",
         "number": 4,
         "sources": [
           {
-            "url": "https://fs.knesset.gov.il/20/law/20_ls1_308913.pdf",
-            "title": "הצעות חוק – קובץ PDF (כנסת ישראל)",
+            "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%A0%D7%AA%D7%9F-%D7%90%D7%95%D7%A8%D7%9B%D7%94-%D7%A9%D7%9C-%D7%97%D7%9E%D7%99%D7%A9%D7%94-%D7%A2%D7%A9%D7%A8-%D7%97%D7%95%D7%93%D7%A9%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%97%D7%95%D7%A7-%D7%98%D7%9C",
+            "title": "מסמך מאתר psakdin.co.il",
             "source_type": "other"
           },
           {
-            "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/465-36.aspx",
-            "title": "יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים",
-            "source_type": "government_report"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": null,
-        "title": "החלטה בתיק בג\"ץ 6298/07; שוויון וזכויות כלכליות וחברתיות – הילכו שניים בנפרד?",
-        "number": 5,
-        "sources": [
+            "url": "https://fs.knesset.gov.il/20/law/20_ls1_308913.pdf",
+            "title": "מסמך מאתר אתר הכנסת",
+            "source_type": "other"
+          },
           {
             "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
             "title": "החלטה בתיק בג\"ץ 6298/07",
-            "source_type": "other"
-          },
-          {
-            "url": "https://openscholar.huji.ac.il/minervacenter/blog/elzam",
-            "title": "שוויון וזכויות כלכליות וחברתיות – הילכו שניים בנפרד?",
-            "source_type": "other"
+            "source_type": "caselaw"
           }
         ],
         "source_type": "compound"
@@ -121,44 +113,52 @@
     ],
     "used_sources": [
       {
-        "url": "https://fs.knesset.gov.il/24/Committees/24_cs_bg_620813.pdf",
-        "title": "תיקון חוק הגיוס – שילוב תלמידי ישיבות",
+        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
+        "title": "החלטה בתיק בג\"ץ 6298/07",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "caselaw",
+        "candidate_id": "68d52bf9-5c3f-41eb-bdca-b2ba44bcd9dd"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/980/062/n18&fileName=07062980_n18.txt&type=4",
+        "title": "בג\"ץ 6298/07 – פסק-דין",
         "number": 1,
         "origin": "perplexity",
         "source_type": "other",
-        "candidate_id": "f53576f2-9f30-4754-bc62-8c1aae12c420"
+        "candidate_id": "efa81248-0af3-4a91-a857-98675900cf5f"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Document/%D7%91%D7%92%22%D7%A5-%D7%A0%D7%AA%D7%9F-%D7%90%D7%95%D7%A8%D7%9B%D7%94-%D7%A9%D7%9C-%D7%97%D7%9E%D7%99%D7%A9%D7%94-%D7%A2%D7%A9%D7%A8-%D7%97%D7%95%D7%93%D7%A9%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%97%D7%95%D7%A7-%D7%98%D7%9C",
+        "title": "מסמך מאתר psakdin.co.il",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "08bcc9d6-ffed-41fe-8778-ea4f0f3a1c56"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_5540738.pdf",
+        "title": "גיוס ופטור מגיוס לגברים בקבוצות אוכלוסייה שונות - הסדרים ונתונים",
+        "number": 3,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "070c4cee-6aee-4a0c-a690-565b7e57a3be"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/globaldocs/MMM/dcbe8d55-f7f7-e411-80c8-00155d010977/2_dcbe8d55-f7f7-e411-80c8-00155d010977_11_9853.pdf",
+        "title": "מסמך מאתר אתר הכנסת",
+        "number": 3,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "64068be8-b0eb-4df3-bf2a-9721880cce03"
       },
       {
         "url": "https://fs.knesset.gov.il/20/law/20_ls1_308913.pdf",
-        "title": "הצעות חוק – קובץ PDF (כנסת ישראל)",
-        "number": 1,
+        "title": "מסמך מאתר אתר הכנסת",
+        "number": 4,
         "origin": "perplexity",
         "source_type": "other",
-        "candidate_id": "670b93dd-b1a5-47a9-81f8-fe4c35692606"
-      },
-      {
-        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-6298-07",
-        "title": "החלטה בתיק בג\"ץ 6298/07",
-        "number": 2,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "b7eec66a-7096-4ddd-8ef0-d913a4a61aa3"
-      },
-      {
-        "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/465-36.aspx",
-        "title": "יישום השירות האזרחי לפי חוק טל והבקרה עליו - היבטים אחדים",
-        "number": 3,
-        "origin": "perplexity",
-        "source_type": "government_report",
-        "candidate_id": "9c6c9d45-6639-42c5-bb6e-1f470552b231"
-      },
-      {
-        "url": "https://openscholar.huji.ac.il/minervacenter/blog/elzam",
-        "title": "שוויון וזכויות כלכליות וחברתיות – הילכו שניים בנפרד?",
-        "number": 3,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "ac5cf156-ea0a-4e3c-bf24-0465bc6018ab"
+        "candidate_id": "78effc60-4fc0-4904-9624-b64f4070578d"
       }
     ]
   },
@@ -166,143 +166,154 @@
     "id": "Q02",
     "category": "docket_holding_missing_source_test",
     "query": "מה נקבע בע\"מ (מחוזי ת\"א) 61908-05-19 בעניין סיווג הכנסה כהכנסת עבודה או הכנסת עסק?",
-    "run_id": "595545f6-da84-484c-a3bb-6d3f49699b58",
+    "run_id": "b833ab9c-d774-4e26-a2d4-ca7357e0a6e0",
     "ok": true,
-    "total_ms": 179071,
+    "total_ms": 204634,
     "answer_intent": {
       "output_shape": "case_holding"
     },
     "lead_ref": {
       "ref": null,
       "shape": "case_holding",
-      "reason": "no_case_source"
+      "reason": "skipped_missing_docket_anchor"
     },
-    "missing_anchor_caveat_injected": false,
-    "missing_anchor_descriptions": [],
-    "required_anchors": [],
-    "answer": "**ממצא ראשוני**\n\nבבדיקה של המקורות שסופקו כאן לא נמצא הטקסט של פסק‑דין ע\"מ (מחוזי ת\"א) 61908‑05‑19; לכן איני יכול לקבוע, על סמך מקורות אלה בלבד, מה היתה הכרעת בית המשפט בסוגיית סיווג ההכנסה כ'הכנסת עבודה' או כ'הכנסת עסק'.\n\n**עקרונות וסייגים משפטיים רלוונטיים מהמקורות המצורפים**\n\nמהפקודה למיסוי ומהחומר הדוקטרינרי שסופק ניתן בזהירות לזהות את המסגרת החוקית והכללית שבה נשקלת ההבחנה בין הכנסה מעסק לבין הכנסת עבודה — אך יש להיזהר מלקבוע להכרעה של תיק ספציפי ללא בחינת טקסט הפסיקה עצמה.¹\n\n- תלות ושליטה: מידת ההשפעה והפיקוח של המעסיק על אופן ביצוע העבודה והשליטה בתנאי הביצוע נחשבת קריטריון מרכזי להבחנה.²\n- ארגון והשתלבות: האם הפרט משולב בפעילותו של צד אחר ככפוף למבנה ארגוני, או פועל באופן עצמאי ומאורגן כעסק משלו.²\n- כוונת רווח ועצמאות כלכלית: כוונה לייצר רווח עסקי באופן עצמאי ולשאת בסיכון עסקי תיטול את ההטיה לעבר סיווג כ'הכנסת עסק'.¹\n- סדירות והיקף הפעילות: אופי הפעילות מבחינת משך, תדירות והיקף מסייע להבחנה — פעילות קבועה ורציפה מצביעה יותר על עסק מאשר עבודה חד‑פעמית.²\n- מאפיינים חוזיים ופיזיים: תנאי ההתקשרות (האם יש חוזה המסדיר יחסי עובד‑מעביד), שימוש בכלים או במקומות של צד שלישי, ואחריות כלפי לקוחות — כל אלה נלקחים בחשבון.²\n\nהקריטריונים האלה משקפים את האופן שבו הפרשנות של פקודת מס הכנסה ומקורות דוקטרינריים נוטים לגשת להבחנה; עם זאת, ההשפעות המדויקות והמשקל שניתן לכל שיקול נקבעים בהלכה המיישמת אותם על עובדות מקרה ספציפיות.¹\n\n**עובדות המקרה (בקשתך לגבי פרטי התיק)**\n\nלא ניתן לבחון כאן את העובדות המהותיות של תיק ע\"מ 61908‑05‑19 או לצטט את נימוקי בית המשפט הקונקרטיים, מאחר שהטקסט של פסיקה זו לא סופק במקורות המצורפים. אם תספק/י את טקסט הפסיקה או קישור אליה, אוכל להוציא מהמענה את הכרעת בית המשפט, את נאמר שם לגבי הקריטריונים, ואת אילו עובדות בתיק היו מכריעות.\n\n**השלכות מס‑מעשיות באופן כללי על‑פי המקורות**\n\nמן הפקודה והמסמכים הגלויים עולה בזהירות כי הסיווג משפיע על חבות המס וסוג הזכויות לניכוי: הכנסות שהוקבעו כהכנסות מעסק עשויות לאפשר ניכוי הוצאות והכרה בהפסדים עסקיים, בעוד הכנסת עבודה בדרך כלל תיחשב כהכנסה חייבת משכר עם כללי ניכוי וניכוי במקור שונים.³\n\nבנוסף לכך, מקורות מעשיים נתנו דוגמה של השלכות חישוביות ונוהליות — חוברת חישובי משכורת ודו\"חות מעשיים מציינת הבדלים באופן הדיווח, בניכוי מס חודשי ובמקדמות; מאמרים מקצועיים מסכמים כי סיווג שונה עשוי להשפיע גם על זכויות לזיכויים וקיזוזים.⁴\n\nהדגשה שיטתית: כל הנאמר לעיל לגבי השלכות המסייות הוא כללי ואמור להינתן בזהירות — הכרעה מעשית לגבי חיובים, זכות לניכוי או חבות במקור בתיק המסוים מחייבת בדיקה של פסיקת בית המשפט במקרה המדובר ושל אישורים מנהליים רלוונטיים.⁵\n\nמסקנה מעשית והצעה: מכיוון שהפסיקה המבוקשת לא נכללה במקורות שסופקו, כדי לקבל מענה מדויק על כל סעיפי שאלתך (כולל מה החליט בית המשפט בפועל, הנימוקים המפורשים, העובדות המהותיות וההשלכות המיסויות הקונקרטיות) יש להעביר את נוסח פסק‑הדין או קישור שבו הוא מופיע; לאחר מכן אוכל לתמצת את ההחזקה, לצטט את הנימוקים ולבחון את השלכות המס על בסיס אותם פרטים.",
+    "missing_anchor_caveat_injected": true,
+    "missing_anchor_descriptions": [
+      "פסק הדין בעניין ע\"מ 61908/05/19 עצמו"
+    ],
+    "required_anchors": [
+      {
+        "anchor_id": "docket:am-61908-05-19",
+        "description": "פסק הדין בעניין ע\"מ 61908/05/19 עצמו",
+        "is_statute_section_anchor": false,
+        "is_docket_anchor": true,
+        "status": "missing",
+        "verified_support": "none"
+      }
+    ],
+    "answer": "לא אותר פסק הדין עצמו במקורות שעברו אימות; לכן לא ניתן לקבוע בביטחון את ההלכה שנפסקה בו.\n\nמאחר שהדיון מבוקש לגבי התוצאה בסוגיה של סיווג הכנסה בתיק ע\"מ 61908-05-19, חובה להדגיש שבלא גישה לטקסט הפסיקה המבוקשת אין אפשרות להצהיר מה נפסק בתיק זה לגבי סיווג ההכנסה כ'הכנסת עבודה' או כ'הכנסת עסק/משלח־יד'.\n\nבמקורות שסופקו זוהה עמוד מידע המפרט החלטה בתיק מקומי שמספרו דומה — ע\"מ 61908-01-19 (בבחנוב נ' פקיד שומה גוש‑דן) — אך זהו תיק שונה מהתיק שאליו מפנה השאלה, ולכן אין להקביל אוטומטית בין שניהם.¹\n\n**המסגרת החוקית הכללית (לשם הקשר בלבד)**\n\nבפקודת מס הכנסה קיימת הבחנה בין סוגי הכנסה בהתאם לסעיפים 2(1) ו‑2(2), שבה קבועה הבחנה בין הכנסת עסק/משלח־יד לבין הכנסת עבודה; מקורות החוק והדיון הבגצי המוזכר מרמזים על הבחנה זו, אך יש לנסח זאת בזהירות ביחס למקרה הספציפי שחיפשת.²\n\n**שיקולים פסיקתיים המקובלים בהבחנה (סיכום זהיר על‑פי המקורות)**\n\n- עצמאות ותלות בעבודה — מידת השליטה והפיקוח של המזמין/המעסיק בעבודת הנישום נחשבת גורם מרכזי בהבחנה בין עובד לקבלן.³\n- סיכון כלכלי והשקעת הון — נבחנת נושאת הסיכון הכלכלי בעסק, השקעת הון, והאם הפרויקט מביא רווחים תלויים בסיכון עסקי ולא בתשלום קבוע.³\n- אופי התגמול ומקורו — היעדריות של תלות בתשלום משכר קבוע, קיומם של חשבוניות ותשלום לפי פרויקט או תוצאה, וריבוי לקוחות או מוניטין עצמאי נחשבים למתלים שיאששו סיווג כמשלח־יד/עסק.⁴\n- קשר למעסיק יחיד והמשכיות — קיימת חשיבות לכך האם הפעילות נעשית לטובת מעסיק יחיד במסגרת יחסי עבודה מתמשכים, או שמדובר בפעילות עצמאית המשתנה ומשרתת לקוחות רבים.³\n\nהדגשים האלה מבוססים על ניתוחים פסיקתיים ומאמרים משפטיים הכלולים במקורות שסופקו; יש להסתייג ולהתייחס אליהם כאל קווים מנחים כלליים ולא כאל נוסחה מחייבת המחליפה בחינה נסיבתית בכל תיק.⁴\n\nלגבי השאלה האם הפסיקה מקבלת עקרון חד־משמעי או גישה נסיבתית: מן המקורות עולה בזהירות שמדובר בגישה נסיבתית וסיטואציונית — בתי המשפט שוקלים מאזנים של גורמים ולא מקימים מבחן יחיד ומוחלט; ממצא סופי תלוי בשקלול הנסיבות העובדתיות של כל מקרה ומקרה.⁴\n\nמסקנה מעשית והמלצות שימושיות במשטרה של חוסר ודאות זו: כאשר המטרה היא לקבוע סיווג של הכנסה בענייני מס, יש להסתמך על טיוטת חוזה והסדרת היחסים, תיעוד האופן שבו מתבצעת העבודה, ראיות לעמידה בסיכון עסקי או השקעת הון, ותיעוד לקוחות והחשבוניות — אך גם זאת מהווה המלצה זהירה על‑פי המקורות ולא תחליף לבדיקה של פסיקה ספציפית (שלא אותרה כאן).⁵",
     "footnotes": [
       {
-        "url": null,
-        "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961; מסמך מאתר אתר אקדמי (kotar.cet.ac.il)",
+        "url": "https://www.gov.il/he/pages/law61908-01-19",
+        "title": "ע\"מ 61908-01-19 בבחנוב נ' פקיד שומה גוש דן",
         "number": 1,
         "sources": [
           {
-            "url": "https://www.nevo.co.il/law_html/law01/255_001a.htm",
-            "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961",
-            "source_type": "other"
-          },
-          {
-            "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=102565323&nTocEntryID=102567892",
-            "title": "מסמך מאתר אתר אקדמי (kotar.cet.ac.il)",
-            "source_type": "other"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=102565323&nTocEntryID=102567892",
-        "title": "מסמך מאתר אתר אקדמי (kotar.cet.ac.il)",
-        "number": 2,
-        "sources": [
-          {
-            "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=102565323&nTocEntryID=102567892",
-            "title": "מסמך מאתר אתר אקדמי (kotar.cet.ac.il)",
+            "url": "https://www.gov.il/he/pages/law61908-01-19",
+            "title": "ע\"מ 61908-01-19 בבחנוב נ' פקיד שומה גוש דן",
             "source_type": "other"
           }
         ],
         "source_type": "other"
-      },
-      {
-        "url": null,
-        "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961; פקודת מס הכנסה",
-        "number": 3,
-        "sources": [
-          {
-            "url": "https://www.nevo.co.il/law_html/law01/255_001a.htm",
-            "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961",
-            "source_type": "other"
-          },
-          {
-            "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
-            "title": "פקודת מס הכנסה",
-            "source_type": "other"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": null,
-        "title": "לוח עזר לחישוב מס הכנסה ממשכורת ושכר עבודה לחודש ינואר 2026; למכירה: זכויות והטבות ציבוריות",
-        "number": 4,
-        "sources": [
-          {
-            "url": "https://www.gov.il/BlobFolder/generalpage/income-tax-monthly-deductions-booklet/he/generalInformation_income-tax-monthly-deductions-booklet_monthly-deductions-booklet-2026.pdf",
-            "title": "לוח עזר לחישוב מס הכנסה ממשכורת ושכר עבודה לחודש ינואר 2026",
-            "source_type": "other"
-          },
-          {
-            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_55ed6899d8cf46cb817e926b2e9074df.pdf",
-            "title": "למכירה: זכויות והטבות ציבוריות",
-            "source_type": "journal_article"
-          }
-        ],
-        "source_type": "compound"
       },
       {
         "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
-        "title": "פקודת מס הכנסה",
-        "number": 5,
+        "title": "פקודת מס הכנסה [נוסח חדש]; בג\"ץ 9333/03 – אזכור לסוגי הכנסה לפי פקודת מס הכנסה",
+        "number": 2,
         "sources": [
           {
             "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
-            "title": "פקודת מס הכנסה",
+            "title": "פקודת מס הכנסה [נוסח חדש]",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-9333-03",
+            "title": "בג\"ץ 9333/03 – אזכור לסוגי הכנסה לפי פקודת מס הכנסה",
             "source_type": "other"
           }
         ],
-        "source_type": "other"
+        "source_type": "compound"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1244",
+        "title": "עובד או קבלן; דנג\"ץ 5967-10 - המוסד לביטוח לאומי נ. אסתר כהן",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1244",
+            "title": "עובד או קבלן",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_5_5967-10.pdf&type=2",
+            "title": "דנג\"ץ 5967-10 - המוסד לביטוח לאומי נ. אסתר כהן",
+            "source_type": "supreme_court_il"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1244",
+        "title": "עובד או קבלן; בג\"ץ 9333/03 – אזכור לסוגי הכנסה לפי פקודת מס הכנסה",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1244",
+            "title": "עובד או קבלן",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-9333-03",
+            "title": "בג\"ץ 9333/03 – אזכור לסוגי הכנסה לפי פקודת מס הכנסה",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1244",
+        "title": "עובד או קבלן",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1244",
+            "title": "עובד או קבלן",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
       }
     ],
     "used_sources": [
       {
-        "url": "https://www.nevo.co.il/law_html/law01/255_001a.htm",
-        "title": "פקודת מס הכנסה [נוסח חדש], תשכ\"א-1961",
+        "url": "https://www.gov.il/he/pages/law61908-01-19",
+        "title": "ע\"מ 61908-01-19 בבחנוב נ' פקיד שומה גוש דן",
         "number": 1,
         "origin": "perplexity",
         "source_type": "other",
-        "candidate_id": "ae572713-d85f-43a8-884d-74086cde5f52"
-      },
-      {
-        "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=102565323&nTocEntryID=102567892",
-        "title": "מסמך מאתר אתר אקדמי (kotar.cet.ac.il)",
-        "number": 1,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "cc84a3d7-8675-4c59-9104-ca2522400acc"
+        "candidate_id": "18b89f54-fe44-4cef-94c3-07d06eff1d89"
       },
       {
         "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
-        "title": "פקודת מס הכנסה",
+        "title": "פקודת מס הכנסה [נוסח חדש]",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "be56a46c-bfd2-4962-865f-b2b0a1cae4e7"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%92%22%D7%A5-9333-03",
+        "title": "בג\"ץ 9333/03 – אזכור לסוגי הכנסה לפי פקודת מס הכנסה",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "6f2a5da0-9a53-4cf5-b300-0942bb257db7"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1244",
+        "title": "עובד או קבלן",
         "number": 3,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "6bc17bb3-b504-497a-916a-4199bd54c194"
-      },
-      {
-        "url": "https://www.gov.il/BlobFolder/generalpage/income-tax-monthly-deductions-booklet/he/generalInformation_income-tax-monthly-deductions-booklet_monthly-deductions-booklet-2026.pdf",
-        "title": "לוח עזר לחישוב מס הכנסה ממשכורת ושכר עבודה לחודש ינואר 2026",
-        "number": 4,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "d98ecc70-3d57-4687-a7c2-0968eb3dcdf4"
-      },
-      {
-        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_55ed6899d8cf46cb817e926b2e9074df.pdf",
-        "title": "למכירה: זכויות והטבות ציבוריות",
-        "number": 4,
         "origin": "local_db",
         "source_type": "journal_article",
-        "candidate_id": "8dfa3a65-1142-478a-8499-2ccada78824e"
+        "candidate_id": "7b3dbc30-2790-485c-b7bb-849554c1f3db"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_5_5967-10.pdf&type=2",
+        "title": "דנג\"ץ 5967-10 - המוסד לביטוח לאומי נ. אסתר כהן",
+        "number": 3,
+        "origin": "local_db",
+        "source_type": "supreme_court_il",
+        "candidate_id": "fece1f29-6494-473b-875c-48203896a7af"
       }
     ]
   },
@@ -310,9 +321,9 @@
     "id": "Q03",
     "category": "statutory_interpretation",
     "query": "מהי הגדרת \"בעל שליטה\" בסעיף 32(9) לפקודת מס הכנסה, ומהם התנאים המצטברים?",
-    "run_id": "136afb2c-8524-4ea2-be90-7c4b71593f54",
+    "run_id": "2b6d9880-ba38-4e14-8aa0-ee486d6ba18a",
     "ok": true,
-    "total_ms": 130225,
+    "total_ms": 106867,
     "answer_intent": {
       "output_shape": "definition"
     },
@@ -338,13 +349,13 @@
     "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 32(9) לפקודת מס הכנסה; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹",
     "footnotes": [
       {
-        "url": "https://www.btl.gov.il/Laws1/00_0103_000000.pdf",
-        "title": "פקודת מס הכנסה [נוסח חדש] - ביטוח לאומי (PDF)",
+        "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+        "title": "פקודת מס הכנסה",
         "number": 1,
         "sources": [
           {
-            "url": "https://www.btl.gov.il/Laws1/00_0103_000000.pdf",
-            "title": "פקודת מס הכנסה [נוסח חדש] - ביטוח לאומי (PDF)",
+            "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+            "title": "פקודת מס הכנסה",
             "source_type": "other"
           }
         ],
@@ -353,12 +364,12 @@
     ],
     "used_sources": [
       {
-        "url": "https://www.btl.gov.il/Laws1/00_0103_000000.pdf",
-        "title": "פקודת מס הכנסה [נוסח חדש] - ביטוח לאומי (PDF)",
+        "url": "https://www.nevo.co.il/law_html/law01/255_001b.htm",
+        "title": "פקודת מס הכנסה",
         "number": 1,
         "origin": "perplexity",
         "source_type": "other",
-        "candidate_id": "21af3312-f256-4d2c-a872-3ec83516b5f4"
+        "candidate_id": "e2b49f2d-66d1-47c8-8667-27dd74fa55d7"
       }
     ]
   },
@@ -366,16 +377,16 @@
     "id": "Q18",
     "category": "anchor_preservation",
     "query": "צטט מילולית את סעיף 1 לחוק יסוד: כבוד האדם וחירותו, והפנה למקור רשמי.",
-    "run_id": "5001a558-89dc-4d45-b24a-4ca7eeafecec",
+    "run_id": "a3775347-6be5-4840-a11a-2a02683792d0",
     "ok": true,
-    "total_ms": 141847,
+    "total_ms": 106120,
     "answer_intent": {
       "output_shape": "quote"
     },
     "lead_ref": {
-      "ref": "s1",
+      "ref": "r_basic_law_dignity-s1",
       "shape": "quote",
-      "reason": "required_anchor_official"
+      "reason": "canonical_registry_statute_section"
     },
     "missing_anchor_caveat_injected": false,
     "missing_anchor_descriptions": [],
@@ -385,60 +396,34 @@
         "description": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
         "is_statute_section_anchor": true,
         "is_docket_anchor": false,
-        "status": "cited",
+        "status": "verified_unused",
         "verified_support": "direct"
       }
     ],
-    "answer": "חוק יסוד: כבוד האדם וחירותו 1. זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שעל הקמת מדינת ישראל.¹\n\nאת הנוסח המילולי הנ״ל ניתן לאמת במסמך הרשמי של הכנסת (קובץ PDF) המכיל את נוסח חוק היסוד.²",
+    "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹",
     "footnotes": [
       {
         "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
-        "title": "חוק יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
         "number": 1,
         "sources": [
           {
             "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
-            "title": "חוק יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
-            "source_type": "other"
+            "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+            "source_type": "israeli_law"
           }
         ],
-        "source_type": "other"
-      },
-      {
-        "url": null,
-        "title": "חוק יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF); חוק-יסוד: כבוד האדם וחירותו – PDF רשמי בכנסת",
-        "number": 2,
-        "sources": [
-          {
-            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
-            "title": "חוק יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
-            "source_type": "other"
-          },
-          {
-            "url": "https://fs.knesset.gov.il/12/law/12_lsr_211801.PDF",
-            "title": "חוק-יסוד: כבוד האדם וחירותו – PDF רשמי בכנסת",
-            "source_type": "other"
-          }
-        ],
-        "source_type": "compound"
+        "source_type": "israeli_law"
       }
     ],
     "used_sources": [
       {
         "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
-        "title": "חוק יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
         "number": 1,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "59b078be-0260-487a-9cd4-26ff4faf98c6"
-      },
-      {
-        "url": "https://fs.knesset.gov.il/12/law/12_lsr_211801.PDF",
-        "title": "חוק-יסוד: כבוד האדם וחירותו – PDF רשמי בכנסת",
-        "number": 2,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "0673e334-78bd-454d-911e-0ccd994ec0be"
+        "origin": "local_db",
+        "source_type": "israeli_law",
+        "candidate_id": "canonical:basic_law_dignity-s1"
       }
     ]
   },
@@ -446,14 +431,14 @@
     "id": "BGZ5555",
     "category": "case_holding_smoke",
     "query": "מה נקבע בבג\"ץ 5555/18 בעניין חוק-יסוד: הלאום? נסח את ההלכה שנפסקה.",
-    "run_id": "37a77a58-221a-4144-b5e3-fa93d24bafb9",
+    "run_id": "22fad65b-7c11-4143-822e-3e3a5f4e0ac4",
     "ok": true,
-    "total_ms": 260451,
+    "total_ms": 236685,
     "answer_intent": {
       "output_shape": "case_holding"
     },
     "lead_ref": {
-      "ref": "s4",
+      "ref": "s2",
       "shape": "case_holding",
       "reason": "required_anchor_case"
     },
@@ -466,23 +451,31 @@
         "is_statute_section_anchor": false,
         "is_docket_anchor": true,
         "status": "cited",
-        "verified_support": "partial"
+        "verified_support": "direct"
       }
     ],
-    "answer": "**ההלכה בבג\"ץ 5555/18**\n\nבבג\"ץ 5555/18 נדחו העתירות שעתרו לביטול חוק‑יסוד: \"ישראל — מדינת הלאום של העם היהודי\". בית המשפט קבע, בזהירות ובנסיבות הדיון, כי גם בהנחה שיש לבית המשפט סמכות לבחון חוקים‑יסוד במסגרת דוקטרינת 'שימוש לרעה בסמכות המכוננת', לא הוצג במקרה זה משקל ראייתי העומד ברף המחמיר הנדרש להורות על בטלותו של חוק‑יסוד.¹\n\nמהפסיקה עולה בזהירות כי יש לפרש את חוק‑היסוד בהרמוניה עם שאר חוקי‑היסוד ועם הערכים הדמוקרטיים של מערכת המשפט; פירוש זה מצמצם טווח של פרשנויות שעשויות לפגוע בזכויות הפרט, ובכללו עקרון השוויון, כך שפרשנות החוק לא תעמוד בניגוד לעקרונות היסוד שנקבעו בשאר חוקי‑היסוד.²\n\nבהתייחס למעמד השפה הערבית ציין בית המשפט באופן המקובל להסקנות בזהירות כי הורדת מעמדה ל'מיוחד' לפי נוסח חוק‑היסוד אינה מסמיכה פגיעה מהותית בזכויות שימוש ובנגישות בערבית במרחב הציבורי; על הרשויות לפעול לשימור היקף ההסדרים והשירותים בשפה הערבית בהתאם לדין הכללי.²\n\nלגבי סעיף ההתיישבות (סעיף 7): מהפסיקה ניתן להצביע בזהירות על עיקרון שלפיו קידום התיישבות יהודית כמטרה ציבורית לא מהווה היתר להפליה או להדרה של לא‑יהודים; הוראת הסעיף חלה בכפיפות לעקרון השוויון ולכללים הפסיקתיים האוסרים הקצאה מפלה.³\n\nסיכום תמציתי: בג\"ץ דחה את העתירות ולא הורה על ביטול החוק; יחד עם זאת הפסיקה נטתה לפרש את הוראות חוק‑היסוד באופן שמאזן בין עקרון הלאום לבין שמירת זכויות יסוד ועקרון השוויון, והותירה אחריות לרשויות ולמערכת המשפט להבטיח יישום שאינו מפלה.⁴",
+    "answer": "**הלכה עיקרית**\n\nבג\"ץ דחה את העתירות ובדעת רוב קבע כי אין מקום להורות על בטלותו של חוק‑יסוד: ישראל — מדינת הלאום של העם היהודי.¹\n\nבדעת הרוב הובעה תזה של הגבלה בסמכות השיפוטית ביחס לחוקי יסוד: בית המשפט יכול לעיין בהתאמת הוראה בחוק‑יסוד לערכים היסודיים של המשטר, אך סמכות זו מצומצמת וראיות יוצאות דופן נדרשות כדי להצדיק ביטול.²\n\nהרכב הרוב קבע כי החוק בנוסחו הקיים לא חוצה את הרף הקיצוני הנדרש לפסילת הוראה בחוק‑יסוד, וכי לא הוכח שהחוק שולל את אופייה הדמוקרטי של המדינה או את עקרון השוויון במובנו הליבתי.³\n\nנקבע עיקרון פרשני מחייב של הרמוניה חוקתית: יש לפרש את חוק‑היסוד: הלאום ביחד עם שאר חוקי היסוד — ובפרט עם חוק‑היסוד: כבוד האדם וחירותו — במטרה למנוע פרשנויות שהולכות להפליה פסולה או לגריעה מההגנות החוקתיות.⁴\n\nפסק‑הדין התייחס גם ליישום פרשני במבחנים ספציפיים: סעיף 7 של חוק‑היסוד (עידוד התיישבות) אינו מהווה היתר להדרה או להקצאה מפלה, וסעיף 4 (מעמד מיוחד לשפה הערבית) מחייב מתן משמעות מעשית לשימוש בערבית ואינו מצדיק פגיעה שרירותית בזכויות.⁵\n\n**נסוח הלכה שניתן**\n\nהלכה: בדעת רוב פסק בית המשפט העליון כי חוק‑יסוד: ישראל — מדינת הלאום של העם היהודי אינו בטל; לבית המשפט רשאית קיימת סמכות מצומצמת וחריגה לבחון הוראות של חוקי יסוד ולבטלן רק בתנאים קיצוניים של פגיעה מהותית בליבת אופייתה היהודית‑דמוקרטית של המדינה, כשבמקרה נבדק לא הוצהר רף זה ועקב כך נדחתה בקשת הביטול; בנוסף, יש לפרש את החוק בהרמוניה עם חוקי היסוד המגינים על זכויות.²\n\nהיקף יישום ההלכה והאיזון בין עקרונותיה יישארו פתוחים ליישום ולדיון בהליכים עתידיים.",
     "footnotes": [
       {
-        "url": null,
-        "title": "בג\"ץ 5555/18; תקציר בג\"ץ 5555-18; בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
+        "title": "תקציר בג\"ץ 5555-18",
         "number": 1,
         "sources": [
           {
-            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
-            "title": "בג\"ץ 5555/18",
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
+            "title": "תקציר בג\"ץ 5555-18",
             "source_type": "other"
-          },
+          }
+        ],
+        "source_type": "other"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
+        "title": "תקציר בג\"ץ 5555-18; בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+        "number": 2,
+        "sources": [
           {
-            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
             "title": "תקציר בג\"ץ 5555-18",
             "source_type": "other"
           },
@@ -495,58 +488,58 @@
         "source_type": "compound"
       },
       {
-        "url": null,
-        "title": "בג\"ץ 5555/18; חוק-יסוד: ישראל – מדינת הלאום של העם היהודי",
-        "number": 2,
-        "sources": [
-          {
-            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
-            "title": "בג\"ץ 5555/18",
-            "source_type": "other"
-          },
-          {
-            "url": "https://fs.knesset.gov.il/20/law/20_lst_313350.docx",
-            "title": "חוק-יסוד: ישראל – מדינת הלאום של העם היהודי",
-            "source_type": "other"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": null,
-        "title": "בג\"ץ 5555/18; חוק יסוד: ישראל – מדינת הלאום של העם היהודי; בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
+        "title": "תקציר בג\"ץ 5555-18; בג\"ץ 5555/18",
         "number": 3,
         "sources": [
           {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
+            "title": "תקציר בג\"ץ 5555-18",
+            "source_type": "other"
+          },
+          {
             "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
             "title": "בג\"ץ 5555/18",
             "source_type": "other"
-          },
-          {
-            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod18.pdf",
-            "title": "חוק יסוד: ישראל – מדינת הלאום של העם היהודי",
-            "source_type": "other"
-          },
-          {
-            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2",
-            "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
-            "source_type": "supreme_court_il"
           }
         ],
         "source_type": "compound"
       },
       {
-        "url": null,
-        "title": "בג\"ץ 5555/18; תקציר בג\"ץ 5555-18",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
+        "title": "תקציר בג\"ץ 5555-18; רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
         "number": 4,
         "sources": [
           {
-            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
-            "title": "בג\"ץ 5555/18",
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
+            "title": "תקציר בג\"ץ 5555-18",
             "source_type": "other"
           },
           {
-            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+            "url": "https://lawjournal.huji.ac.il/article/12/1930",
+            "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021); חוק-יסוד: ישראל – מדינת הלאום של העם היהודי; תקציר בג\"ץ 5555-18",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%99%D7%A9%D7%A8%D7%90%D7%9C_%E2%80%93_%D7%9E%D7%93%D7%99%D7%A0%D7%AA_%D7%94%D7%9C%D7%90%D7%95%D7%9D_%D7%A9%D7%9C_%D7%94%D7%A2%D7%9D_%D7%94%D7%99%D7%94%D7%95%D7%93%D7%99",
+            "title": "חוק-יסוד: ישראל – מדינת הלאום של העם היהודי",
+            "source_type": "israeli_law"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
             "title": "תקציר בג\"ץ 5555-18",
             "source_type": "other"
           }
@@ -556,52 +549,44 @@
     ],
     "used_sources": [
       {
-        "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
-        "title": "בג\"ץ 5555/18",
-        "number": 1,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "71c91fde-abb0-4674-8d65-ae85e9d0c5ef"
-      },
-      {
-        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%22%D7%A5%205555-18.pdf",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AAקציר%20בג%22ץ%205555-18.pdf",
         "title": "תקציר בג\"ץ 5555-18",
         "number": 1,
         "origin": "perplexity",
         "source_type": "other",
-        "candidate_id": "0b875051-e54c-4fda-8f92-3f9a55e61afc"
+        "candidate_id": "f7b423b3-45ec-4c42-9265-cda1a716ead8"
       },
       {
         "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
         "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
-        "number": 1,
+        "number": 2,
         "origin": "local_db",
         "source_type": "caselaw",
-        "candidate_id": "f1e2278b-a17f-45d6-8e89-2aaa82c9f84f"
+        "candidate_id": "c4444604-f4bc-4565-b1c6-f5499bfa0fbc"
       },
       {
-        "url": "https://fs.knesset.gov.il/20/law/20_lst_313350.docx",
-        "title": "חוק-יסוד: ישראל – מדינת הלאום של העם היהודי",
-        "number": 2,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "06e9d5bb-fc74-44aa-9ff5-233e16ba1c3d"
-      },
-      {
-        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod18.pdf",
-        "title": "חוק יסוד: ישראל – מדינת הלאום של העם היהודי",
+        "url": "https://www.psakdin.co.il/Court/%D7%91%D7%92-%D7%A5-5555-18",
+        "title": "בג\"ץ 5555/18",
         "number": 3,
         "origin": "perplexity",
         "source_type": "other",
-        "candidate_id": "e39f29e3-8dc4-4613-b856-4db97bd44444"
+        "candidate_id": "65dddc50-bd6d-4ac1-9617-af01a26fb906"
       },
       {
-        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2",
-        "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
-        "number": 3,
+        "url": "https://lawjournal.huji.ac.il/article/12/1930",
+        "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+        "number": 4,
         "origin": "local_db",
-        "source_type": "supreme_court_il",
-        "candidate_id": "14d6d4af-1805-432d-ba94-d3765bcb2969"
+        "source_type": "journal_article",
+        "candidate_id": "3c123183-9c61-4ee8-afaa-e994242a294b"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%99%D7%A9%D7%A8%D7%90%D7%9C_%E2%80%93_%D7%9E%D7%93%D7%99%D7%A0%D7%AA_%D7%94%D7%9C%D7%90%D7%95%D7%9D_%D7%A9%D7%9C_%D7%94%D7%A2%D7%9D_%D7%94%D7%99%D7%94%D7%95%D7%93%D7%99",
+        "title": "חוק-יסוד: ישראל – מדינת הלאום של העם היהודי",
+        "number": 5,
+        "origin": "local_db",
+        "source_type": "israeli_law",
+        "candidate_id": "ddab2cfa-b7cc-4a0d-af5f-5aa8140a2449"
       }
     ]
   }
