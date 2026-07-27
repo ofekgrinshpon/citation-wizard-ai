@@ -37,6 +37,7 @@ import {
   getStatuteSectionCanonicalText,
   type StatuteSectionRef,
 } from "./statuteSectionDetection.ts";
+import { detectDockets, candidateMatchesDocket, type DocketRef } from "./docketDetection.ts";
 
 // drafterV2-only output-token budgets. Reasoning models (gpt-5 family) burn
 // most tokens on hidden reasoning; the default gateway cap has been observed
@@ -461,7 +462,12 @@ function buildDocketLimitationDraft(
     blocks: [
       {
         kind: "paragraph",
-        text: `לא אותר פסק הדין עצמו במקורות שעברו אימות; לכן לא ניתן לקבוע בביטחון את ההלכה שנפסקה בו. מאחר שהשאלה מבקשת את ההכרעה ב${target}, אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית. יש לעיין בטקסט פסק הדין עצמו כדי לקבוע מה נקבע בו.`,
+        text: `לא אותר במקורות הזמינים ${target}. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.`,
+        source_refs: [],
+      },
+      {
+        kind: "paragraph",
+        text: `אם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.`,
         source_refs: [],
       },
     ],
@@ -826,6 +832,43 @@ export async function runDrafterV2(
     !canonicalQuoteRefs.some((ref) => a.anchor_id === `statute_section:${ref.ref_id}`)
   );
   const requiredAnchorCandidateIds = opts?.requiredAnchorCandidateIds ?? new Set<string>();
+
+  // Defensive docket guard: for case_holding, if the question contains a
+  // docket pattern and no case source in the input pool matches that docket,
+  // treat as a missing docket anchor even when the required-anchor pipeline
+  // did not register it. This prevents `best_case` fallback from citing an
+  // unrelated ruling as the "leading source" when the user asked about a
+  // specific case.
+  const requestedDockets: DocketRef[] = shape === "case_holding"
+    ? detectDockets(question)
+    : [];
+  const unmatchedRequestedDockets: DocketRef[] = requestedDockets.filter((d) => {
+    // Already surfaced as a missing required anchor — leave existing handling.
+    const anchorId = `docket:${d.docket_id}`;
+    if (missingAnchors.some((a) => (a as { anchor_id?: string }).anchor_id === anchorId)) {
+      return true;
+    }
+    // Consider matched if any input source (case-type or user doc) mentions
+    // the docket in its title/snippet/url.
+    return !inputSources.some((s) =>
+      candidateMatchesDocket(
+        { title: s.title, snippet: s.snippet, url: s.url },
+        [d],
+      )
+    );
+  });
+  const synthesizedDocketMissing = unmatchedRequestedDockets
+    .filter((d) => !missingAnchors.some((a) => a.is_docket && a.description.includes(d.number)))
+    .map((d) => ({
+      anchor_id: `docket:${d.docket_id}`,
+      description: `${d.prefix_he} ${d.number}`,
+      is_docket: true,
+      is_statute_section: false,
+    }));
+  if (synthesizedDocketMissing.length > 0) {
+    missingAnchors.push(...synthesizedDocketMissing);
+  }
+
   const statuteSectionLimitationActive =
     missingAnchors.some((a) => a.is_statute_section) &&
     (shape === "definition" || shape === "quote");
