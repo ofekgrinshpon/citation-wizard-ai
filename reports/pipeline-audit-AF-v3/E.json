@@ -1,0 +1,1926 @@
+{
+  "id": "E",
+  "category": "practical",
+  "query": "מה עושים אם המשכיר לא מחזיר פיקדון?",
+  "run_id": "f5c0d11b-d665-4285-bac8-2e12097c305a",
+  "qa_log_id": "fadab5c0-ad6a-4a0e-92e6-f3deb24efc8d",
+  "answer": "- המשכיר חייב להשיב את הפיקדון; חוק השכירות והשאילה קובע מגבלת גובה הבטוחה (שליש מתקופת השכירות או שלושה חודשי שכירות, לפי הנמוך) ומחייב השבה בתוך 60 ימים ממסירת החזקה, בכפוף לקיזוז חובות שניתן לקזז.¹\n- מתי ניתן לקזז: קיזוז מן הפיקדון מותנה בהוכחת החיוב ובכך שהחוב ניתן לקיזוז כדין; קיזוז שבוצע על בסיס חשבוניות בלתי מתאימות או בלתי מפורטות עלול להיחשב שלא כדין, ובמקרים שבהם הנזק אינו סכום קצוב בית המשפט ציין כי ההלכה הנכונה היא הגשת תובענה ולא קיזוז עצמי.²\n- צעדים מעשיים כאשר הפיקדון אינו מוחזר: שלח דרישת תשלום בכתב ודרש השבה תוך ציון המועד החוקי של 60 ימים; אם המשכיר אינו עונה — הגש תובענה מתאימה והמשך בהליכי גבייה או הוצאה לפועל לפי החלטת בית המשפט; הימנעות מתשלום או קיזוז עצמי על ידי השוכר אינם תחליף להליך שיפוטי.³\n- ראיות ותיעוד שנחוצים לתביעה: פרוטוקול כניסה ופרוטוקול יציאה חתומים, תמונות/סרטונים מתועדכים בתאריכים, מסמכי מסירה של החזקה, הוכחות העברה בנקאית של הפיקדון, וחשבוניות/קבלות מפורטות עבור עבודות או תיקונים — בתי המשפט דורשים מסמכים מפורטים התואמים לסיבת הקיזוז.⁴\n- מועד התיישנות: ייתכן כי תקופת ההתיישנות החלה בחוק ההתיישנות היא שבע שנים ומתחילה ביום שבו נולדה עילת התביעה; יש להתייעץ ולקבוע את המועד המבוסס על יום הולדת העילה כדי לא לחרוג מ срока ההתיישנות.⁵",
+  "footnotes": [
+    {
+      "url": "https://fs.knesset.gov.il/20/law/20_lst_308205.docx",
+      "title": "חוק השכירות והשאילה, תשל\"א-1971 (תיקוני בטוחות בשכירות למגורים)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/20/law/20_lst_308205.docx",
+          "title": "חוק השכירות והשאילה, תשל\"א-1971 (תיקוני בטוחות בשכירות למגורים)",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "legislation"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/20/law/20_lst_308205.docx",
+      "title": "חוק השכירות והשאילה, תשל\"א-1971 (תיקוני בטוחות בשכירות למגורים); פסק-דין בתיק ע\"א 20818-01-13; החלטה בתיק רת\"ק 55210-12-11",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/20/law/20_lst_308205.docx",
+          "title": "חוק השכירות והשאילה, תשל\"א-1971 (תיקוני בטוחות בשכירות למגורים)",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+          "title": "פסק-דין בתיק ע\"א 20818-01-13",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%A8%D7%AA%22%D7%A7-55210-12-11",
+          "title": "החלטה בתיק רת\"ק 55210-12-11",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/20/law/20_lst_308205.docx",
+      "title": "חוק השכירות והשאילה, תשל\"א-1971 (תיקוני בטוחות בשכירות למגורים); החלטה בתיק רת\"ק 55210-12-11",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/20/law/20_lst_308205.docx",
+          "title": "חוק השכירות והשאילה, תשל\"א-1971 (תיקוני בטוחות בשכירות למגורים)",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%A8%D7%AA%22%D7%A7-55210-12-11",
+          "title": "החלטה בתיק רת\"ק 55210-12-11",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+      "title": "פסק-דין בתיק ע\"א 20818-01-13",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+          "title": "פסק-דין בתיק ע\"א 20818-01-13",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/17/Committees/17_cs_bg_335707.doc",
+      "title": "חוק ההתיישנות, תשי\"ח-1958, סעיפים 5–6",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/17/Committees/17_cs_bg_335707.doc",
+          "title": "חוק ההתיישנות, תשי\"ח-1958, סעיפים 5–6",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "legislation"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "יש לברר האם קיימת חובה משפטית מפורשת או דוקטרינלית להשיב פיקדון, והאם ההתחייבות נגזרת מחוזה בין הצדדים או מעקרונות דיני ממון; זה מחייב פסיקה מחייבת וספרות להסבר.",
+        "text_he": "האם המשכיר מחויב להשיב את הפיקדון במלואו בתום השכירות ומה הבסיס המשפטי (חוזי/ציבורי) להתחייבות זו?",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "קביעת גבולות הקיזוז והדרישות להוכחה היא עניין דוקטרינרי שבתי המשפט הכריעו בו; צריך פסיקה מחייבת וספרות לפרש את הכללים.",
+        "text_he": "באילו נסיבות המשכיר יכול לקזז או לעקל חלק מהפיקדון (לרבות נזקים מעבר לשחיקה רגילה, חובות שלא שולמו, עלויות ניקיון), ומהן ההגבלות והדרישות להוכחת הנזק/החוב?",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "השאלה כוללת הליכים פרוצדורליים וסדרי פעולה מעשיים — צריך פסיקה מחייבת לגבי מסלולים משפטיים ודו\"ח/הנחיות פרקטיות שמסבירות שלבי פעולה מקובלים.",
+        "text_he": "אילו צעדים פרקטיים ומשפטיים יש לנקוט כדי להשיב פיקדון שלא הוחזר (מכתב דרישה, הליכים חלופיים, תביעה בבתי משפט לתביעות קטנות/בית המשפט השלום/בית המשפט המחוזי, הוצאה לפועל)?",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "factual_report"
+        ],
+        "is_black_letter": false
+      },
+      {
+        "reason": "מדובר בעצות פרקטיות ואיסוף ראיות; יש להסתמך על הנחיות פרקטיות וספרות (מדריכים משפטיים) לגבי ראיות רצויות.",
+        "text_he": "אילו ראיות ותיעוד ידרשו להוכיח זכות להחזרת הפיקדון וכיצד לתעד מצב נכס בכניסה/ביציאה כדי לחזק תביעה?",
+        "claim_id": "C4",
+        "required_roles": [
+          "factual_report",
+          "scholarship"
+        ],
+        "is_black_letter": false
+      },
+      {
+        "reason": "שאלה על מועדי התיישנות היא שאלת חוקית-דוקטרינרית המובילה ליישום חוקי (חוק ההתיישנות) ופסיקה מפרשת אותם כללים.",
+        "text_he": "מהן תקופות ההתיישנות או המועד האחרון להגשת תביעה על החזרת פיקדון?",
+        "claim_id": "C5",
+        "required_roles": [
+          "primary_statute",
+          "binding_case_law"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "f5c0d11b-d665-4285-bac8-2e12097c305a",
+    "drafter": {
+      "ms": 37407,
+      "ok": true,
+      "lead_ref": {
+        "ref": null,
+        "shape": "list",
+        "reason": "shape_not_eligible"
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "completeness": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "list_item",
+        "last_block_excerpt": "…ומתחילה ביום שבו נולדה עילת התביעה; יש להתייעץ ולקבוע את המועד המבוסס על יום הולדת העילה כדי לא לחרוג מ срока ההתיישנות."
+      },
+      "sources_used": 4,
+      "used_sources": [
+        {
+          "url": "https://fs.knesset.gov.il/20/law/20_lst_308205.docx",
+          "title": "חוק השכירות והשאילה, תשל\"א-1971 (תיקוני בטוחות בשכירות למגורים)",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "legislation",
+          "candidate_id": "a27f9657-e58b-4e3a-924e-17ac64d2f6c5"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+          "title": "פסק-דין בתיק ע\"א 20818-01-13",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "caselaw",
+          "candidate_id": "78b3ff7d-b81d-4265-a87b-fd7cf4a0a262"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%A8%D7%AA%22%D7%A7-55210-12-11",
+          "title": "החלטה בתיק רת\"ק 55210-12-11",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "caselaw",
+          "candidate_id": "35d76a12-e51d-4d0d-977f-c2272304f4c5"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/17/Committees/17_cs_bg_335707.doc",
+          "title": "חוק ההתיישנות, תשי\"ח-1958, סעיפים 5–6",
+          "number": 5,
+          "origin": "perplexity",
+          "source_type": "legislation",
+          "candidate_id": "9c152c93-49d3-4a4b-9d4a-3850565153f4"
+        }
+      ],
+      "marker_format": "superscript",
+      "model_initial": "openai/gpt-5-mini",
+      "builder_report": {
+        "marker_count": 5,
+        "heading_count": 0,
+        "list_item_count": 5,
+        "paragraph_count": 0,
+        "cited_segment_count": 5,
+        "adjacent_marker_count": 0,
+        "distinct_source_count": 4,
+        "compound_segment_count": 2,
+        "compound_footnote_count": 2,
+        "avg_sources_per_cited_segment": 1.6
+      },
+      "footnote_count": 5,
+      "sources_passed": 4,
+      "drafter_version": "v2.1c",
+      "truncation_retry": {
+        "retry_ms": 0,
+        "attempted": false,
+        "reasons_initial": [],
+        "same_model_retry": false,
+        "escalated_to_full": false
+      },
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "answer_style_report": {
+        "metrics": {
+          "block_count": 5,
+          "denylist_hits": [],
+          "heading_count": 0,
+          "heading_ratio": 0,
+          "cited_block_count": 5,
+          "total_footnote_count": 5,
+          "compound_footnote_count": 2,
+          "compound_footnote_ratio": 0.4,
+          "unsafe_display_title_count": 0,
+          "avg_sources_per_cited_block": 1.6,
+          "unsafe_display_title_examples": [],
+          "partial_supported_strong_claims": [],
+          "total_source_refs_in_cited_blocks": 8
+        },
+        "report_only": true,
+        "triggered_reasons": [
+          "compound_footnote_ratio_high"
+        ]
+      },
+      "unique_source_count": 4,
+      "completeness_initial": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "list_item",
+        "last_block_excerpt": "…ומתחילה ביום שבו נולדה עילת התביעה; יש להתייעץ ולקבוע את המועד המבוסס על יום הולדת העילה כדי לא לחרוג מ срока ההתיישנות."
+      },
+      "deterministic_branch": null,
+      "canonical_quote_fired": false,
+      "omitted_candidate_ids": [],
+      "structured_validation": {
+        "ok": true,
+        "errors": [],
+        "block_count": 5,
+        "heading_count": 0,
+        "list_item_count": 5,
+        "paragraph_count": 0,
+        "cited_segment_count": 5,
+        "forbidden_text_hits": [],
+        "unknown_source_refs": [],
+        "total_source_ref_count": 8
+      },
+      "max_completion_tokens_used": 8000,
+      "missing_anchor_descriptions": [],
+      "missing_anchor_caveat_injected": false,
+      "missing_docket_limitation_fired": false,
+      "statute_section_limitation_fired": false
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "דרוש פסיקה מחייבת שמבהירה את היסוד המשפטי (חוזי לעומת חובה ציבורית) של חובת השבת הפיקדון על ידי משכיר.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "פסק דין בית המשפט העליון חובת המשכיר להשיב פיקדון שכירות בתום החכירה האם החובת השבה נגזרת ממערכת יחסים חוזית או מתחייבת גם כזכות ציבורית/ציבורית-משפטית",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מחקר אקדמי יעזור להסביר את ההבחנה התיאורטית והשאילתאות בין בסיס חוזי לציבורי של חובת ההשבה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי חובת השבת פיקדון שכירות מעמד חוזי או התחייבות אזרחית/ציבורית כתבי עת משפטיים בישראל",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "נדרש פסיקה מחייבת שמאפיינת את התנאים שבהם משכיר רשאי לקזז מהפיקדון ומהן דרישות ההוכחה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "פסק דין בית המשפט העליון קיזוז פיקדון שכירות נזקים מעבר לשחיקה רגילה הוכחת נזק פיצוי עלויות ניקיון חובות שלא שולמו",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "ספרות משפטית תספק ניתוח של כללי הוכחה, סטנדרטים לגביית נזקים ודיון בעקרונות ההגנה של השוכר.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר/סקירה משפטית קיזוז פיקדון שכירות הוכחת נזק סטנדרט הוכחה עלויות ניקיון ונזקי מעבר לשחיקה רגילה",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "יש לאתר פסיקה שמבהירה איזה ערוץ שיפוטי מתאים להחזרת פיקדון ומה ההשלכות הפרוצדורליות של בחירה בערוץ מסוים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "פסקי דין הליכי החזרת פיקדון שכירות סמכות שיפוט תביעות קטנות הוצאה לפועל פסק דין שמגדיר סדרי דין וסמכויות בין תביעות קטנות לבית משפט שלום",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "factual_report",
+        "reason": "נדרש מקור מעשי ופרקטי (דו\"ח/מדריך) המתאר צעדים פרקטיים — מכתבי דרישה, הליכים חלופיים ופעולות בהוצאה לפועל.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מדריך/דו\"ח הליכים מעשיים להשבת פיקדון שכירות מכתב דרישה תביעות קטנות הוצאה לפועל משרד המשפטים או לשכת עורכי הדין מדריך לשוכר",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "factual_report",
+        "reason": "מקור מעשי שיכלול טמפלטים והנחיות לתיעוד מצב נכס (צילום, פרוטוקולים) שיחזקו תביעה להשבת פיקדון.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מדריך תיעוד מצב נכס כניסה יציאה דוח מסירת דירה צילום פרוטוקול מסירת דירה המלצות לתיעוד ראיות במחלוקת על פיקדון שכירות",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מאמרים אקדמיים יספקו ניתוח ראייתי של סוגי ראיות המקובלים וכיצד לתעד בצורה מיטבית כדי לתמוך בתביעה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמר ראיות בתביעות שכירות תיעוד מצב נכס כוח הראיה בחוזה שכירות פרקטיקות משפטיות לתיעוד והוכחת נזקים",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "נדרש מקור חקיקתי המגדיר תקופות התיישנות רלוונטיות לתביעות כספיות, כולל החזרת פיקדון.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C5",
+        "query_he": "חוק ההתיישנות התשי\"ח התיישנות תביעות כספיות מועד התיישנות לתביעת החזרת פיקדון שכירות",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "יש לאתר פסיקה שמיישמת את חוק ההתיישנות לשינוי מועד התחלות ההתיישנות בתביעות להשבת פיקדון כדי לדעת רלוונטיות מעשית.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C5",
+        "query_he": "בית המשפט העליון פסקי דין פירוש חוק ההתיישנות והחלפת מועד התיישנות בתביעות על החזרת פיקדון שכירות פסיקה שמחייבת קביעת המועד שבו מתחילה ההתיישנות",
+        "expected_source_type": "case"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 31790,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 29181,
+        "confidence": 0.9,
+        "legal_area": "דיני שכירות",
+        "answer_type": "application",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "answer_intent": {
+          "output_shape": "list"
+        },
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "interpretation_note": null
+      },
+      "claims_count": 5,
+      "queries_count": 10,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 156027,
+    "verifier": {
+      "ms": 34081,
+      "counts": {
+        "by_support": {
+          "direct": 2,
+          "partial": 2,
+          "unrelated": 1,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 4,
+          "false": 1
+        },
+        "model_verdicts": 5,
+        "by_support_model": {
+          "direct": 2,
+          "partial": 2,
+          "unrelated": 1,
+          "tangential": 0
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": false,
+          "best_support": "direct",
+          "candidate_id": "a27f9657-e58b-4e3a-924e-17ac64d2f6c5",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "9c152c93-49d3-4a4b-9d4a-3850565153f4",
+          "verdict_claim_ids": [
+            "C5"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "78b3ff7d-b81d-4265-a87b-fd7cf4a0a262",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "35d76a12-e51d-4d0d-977f-c2272304f4c5",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 34081,
+          "label": "batch1",
+          "attempts": 1,
+          "claim_ids": [
+            "C1",
+            "C2",
+            "C5"
+          ],
+          "escalated": false,
+          "recovered": false,
+          "candidates": 5,
+          "split_probes": 0
+        }
+      ],
+      "dropped": [
+        {
+          "role": "primary_statute",
+          "title": "חוק ההתיישנות, תשי\"ז-1957, סעיף 2",
+          "origin": "perplexity",
+          "reason": "הוראה זו עוסקת בחריג לגבי כספים ששולמו לבנק הדואר ולא בקביעת תקופות התיישנות כלליות לגבי החזרת פיקדון; כלומר סובייקט אחר ולא תומך בדרך ישירה.",
+          "candidate_id": "2cafad43-bcb7-4ef7-83b6-19d21658739b",
+          "worst_support": "unrelated",
+          "retrieval_method": "perplexity"
+        }
+      ],
+      "batch_ms": [
+        34081
+      ],
+      "parallel": true,
+      "verdicts": [
+        {
+          "reason": "חוק השכירות והשאילה מטפל במפורש בהוראות לגבי הפיקדון, כולל מגבלות גובה, מועד והשבה ותנאי קיזוז.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": false,
+          "candidate_id": "a27f9657-e58b-4e3a-924e-17ac64d2f6c5",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "מגבילה את גובה הבטוחה (שליש מתקופת השכירות או שלושה חודשי שכירות)",
+            "מחייבת השבת הבטוחה בתוך 60 ימים ממסירת החזקה",
+            "מדגישה שההחזקה תוחזר בכפוף לקיזוז חובות שניתן לקזז"
+          ]
+        },
+        {
+          "reason": "פסק־דין עוסק ישירות בקיזוז מתוך פיקדון ובדרישות ההוכחה לחיובים שממנו מקזזים.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "78b3ff7d-b81d-4265-a87b-fd7cf4a0a262",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "בית־המשפט פסק שקיזוז מתוך הפיקדון שבוצע על בסיס חשבוניות שאינן מתאימות ולא מפורטות נעשה שלא כדין",
+            "מדגיש דרישה ראייתית למתן חשבוניות/מסמכים התואמים לסיבת הקיזוז"
+          ]
+        },
+        {
+          "reason": "החלטה רלוונטית למגבלות קיזוז ולצורך בסכום קצוב/הוכחה, אך אינה פסק־דין ספציפי על קיזוז מפיקדון ולכן תומכת באופן חלקי.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "35d76a12-e51d-4d0d-977f-c2272304f4c5",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "קבע שאין זה סעד של קיזוז עצמי כאשר הנזקים אינם סכום קצוב",
+            "מציין שהסעד הנכון הוא הגשת תובענה ולא הפסקת תשלום או קיזוז עצמאי"
+          ]
+        },
+        {
+          "reason": "חוק ההתיישנות קובע את משך תקופת ההתיישנות העיקרית וההגדרה של מועד תחילתה — רלוונטי ישירות לתביעת החזרת פיקדון.",
+          "support": "partial",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "9c152c93-49d3-4a4b-9d4a-3850565153f4",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "קובע תקופת התיישנות של שבע שנים לתביעות אזרחיות מסוימות",
+            "מצהיר שההתיישנות מתחילה ביום שבו נולדה עילת התביעה"
+          ]
+        },
+        {
+          "reason": "הוראה זו עוסקת בחריג לגבי כספים ששולמו לבנק הדואר ולא בקביעת תקופות התיישנות כלליות לגבי החזרת פיקדון; כלומר סובייקט אחר ולא תומך בדרך ישירה.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "2cafad43-bcb7-4ef7-83b6-19d21658739b",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        }
+      ],
+      "demotions": [
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C5",
+          "candidate_id": "9c152c93-49d3-4a4b-9d4a-3850565153f4",
+          "reason_excerpt": "חוק ההתיישנות קובע את משך תקופת ההתיישנות העיקרית וההגדרה של מועד תחילתה — רלוונטי ישירות לתביעת החזרת פיקדון."
+        },
+        {
+          "to": "unrelated",
+          "from": "tangential",
+          "rule": "wrong_subject",
+          "claim_id": "C5",
+          "candidate_id": "2cafad43-bcb7-4ef7-83b6-19d21658739b",
+          "reason_excerpt": "הוראה זו עוסקת בחריג לגבי כספים ששולמו לבנק הדואר ולא בקביעת תקופות התיישנות כלליות לגבי החזרת פיקדון; כלומר סובייקט אחר ולא תומך בדרך ישירה."
+        }
+      ],
+      "batch_count": 1,
+      "call_failed": false,
+      "model_final": "openai/gpt-5-mini",
+      "retry_count": 0,
+      "per_claim_ms": {
+        "C1": 34081,
+        "C2": 34081,
+        "C5": 34081
+      },
+      "total_sum_ms": 34081,
+      "call_failures": [],
+      "model_initial": "openai/gpt-5-mini",
+      "total_wall_ms": 34081,
+      "retry_attempts": 0,
+      "escalated_claims": [],
+      "rate_limit_count": 0,
+      "candidates_usable": 4,
+      "concurrency_limit": 2,
+      "demotions_by_rule": {
+        "analogical": 0,
+        "background": 0,
+        "landing_page": 1,
+        "wrong_subject": 1,
+        "self_contradiction": 0
+      },
+      "escalated_batches": 0,
+      "recovered_batches": 0,
+      "candidates_dropped": 1,
+      "candidates_verified": 5,
+      "split_probe_attempts": 0,
+      "merge_order_preserved": true,
+      "fallback_to_sequential": false
+    },
+    "retrieval": {
+      "ms": 22967,
+      "pool": {
+        "drops": [],
+        "found": 5,
+        "counts": {
+          "by_role": {
+            "primary_statute": 3,
+            "binding_case_law": 2
+          },
+          "by_claim": {
+            "C1": 1,
+            "C2": 2,
+            "C5": 2
+          },
+          "by_origin": {
+            "perplexity": 5
+          }
+        },
+        "after_dedup": 5,
+        "dedup_drops": 0,
+        "drop_reason_counts": {}
+      },
+      "local": {
+        "ms": 2,
+        "aggregate": {
+          "wall_ms": 2,
+          "max_query_ms": 0,
+          "sum_query_ms": 0,
+          "slowest_query": null,
+          "slowest_method": "exact",
+          "method_total_ms": {
+            "text": 0,
+            "exact": 0,
+            "vector": 0,
+            "embedding": 0
+          },
+          "queries_executed": 0,
+          "exact_error_count": 0,
+          "text_timeout_count": 0,
+          "candidates_by_method": {
+            "text": 0,
+            "vector": 0,
+            "exact_authority": 0
+          },
+          "vector_timeout_count": 0,
+          "bottleneck_hypothesis": "dominant_method=exact (sum=0ms across 0 queries)",
+          "duplicate_query_count": 0
+        },
+        "per_query": [],
+        "candidates": 0,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 22965,
+        "dropped": 42,
+        "parallel": true,
+        "query_ms": [
+          13274,
+          8717,
+          7206,
+          14835,
+          8155,
+          8925,
+          9270,
+          8128,
+          3677,
+          4648
+        ],
+        "per_query": [
+          {
+            "ms": 13274,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%A1%D7%A2%D7%99%D7%A3-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%91%D7%97%D7%95%D7%96%D7%94-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%94%D7%97%D7%95%D7%A7-%D7%9E%D7%AA%D7%99%D7%A8-%D7%9C%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+                "title": "סעיף פיקדון בחוזה שכירות: מה החוק מתיר למשכיר?",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "extracted_followup_terms": [
+                  "סעיף 9 לחוק השכירות והשאילה"
+                ],
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8%D7%AA-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%D7%99%D7%9A-%D7%9B%D7%A9%D7%95%D7%9B%D7%A8-%D7%90%D7%95-%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+                "title": "החזרת פיקדון שכירות: מה זכויותיך כשוכר או משכיר?",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://msl.org.il/guide/tenant-rights-deposit/",
+                "title": "זכויות שוכר: מה מותר למשכיר לדרוש — ומה החוק אוסר",
+                "domain": "msl.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_binding_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://myglaw.co.il/rental-security-deposit-refund-landlord-deductions/",
+                "title": "החזר פיקדון שכירות – מתי המשכיר רשאי לנכות?",
+                "domain": "myglaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://skiramishpatit.com/wp-content/uploads/267740518new.docx",
+                "title": "267740518new.docx",
+                "domain": "skiramishpatit.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA_%D7%95%D7%94%D7%A9%D7%90%D7%99%D7%9C%D7%94",
+                "title": "חוק השכירות והשאילה, תשל״א–1971",
+                "domain": "he.wikisource.org",
+                "drop_reason": "followup:class_unknown_not_admitted_for_binding_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.ozar-law.co.il/privatePrint.php?id=22232",
+                "title": "הפרשנות לחוק השכירות והשאילה, התשל\"א-1971 (סדרי דין, עילות ותקדימים)",
+                "domain": "ozar-law.co.il",
+                "drop_reason": "followup:discovery_only",
+                "classified_source_class": "discovery_only",
+                "extracted_followup_terms": [
+                  "סעיף 9 לחוק השכירות והשאילה כולל אפשרות לשוכר לתקן את הפגם ולדרוש מהמשכ"
+                ],
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.afiklaw.com/caselaw/11277",
+                "title": "תא (ת\"א) 8900-06-19 ג'פרי קוין פיירסן נ' תומר ברין",
+                "domain": "he.afiklaw.com",
+                "drop_reason": "followup:discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.toledano.co.il/%D7%AA%D7%90%D7%97-15899-05-09-%D7%92%D7%9E%D7%96%D7%95-%D7%9C%D7%98%D7%95%D7%91%D7%94-%D7%95%D7%90%D7%97-%D7%A0-%D7%A4%D7%A8%D7%A0%D7%A7%D7%9C/",
+                "title": "תא\"ח 15899-05-09 גמזו לטובה ואח' נ' פרנקל",
+                "domain": "toledano.co.il",
+                "drop_reason": "followup:class_unknown_not_admitted_for_binding_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.ozarlaw.co.il/privatePrint.php?id=22234",
+                "title": "הפרשנות לחוק השכירות והשאילה, התשל\"א-1971 (סדרי דין, עילות ותקדימים)",
+                "domain": "ozarlaw.co.il",
+                "drop_reason": "followup:discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C1",
+            "query_he": "פסק דין בית המשפט העליון חובת המשכיר להשיב פיקדון שכירות בתום החכירה האם החובת השבה נגזרת ממערכת יחסים חוזית או מתחייבת גם כזכות ציבורית/ציבורית-משפטית",
+            "raw_count": 5,
+            "discovery_only": 7,
+            "followup_terms": [
+              "סעיף 9 לחוק השכירות והשאילה"
+            ],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 8717,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://fs.knesset.gov.il/20/law/20_lst_308205.docx",
+                "title": "חוק השכירות והשאילה, תשל\"א-1971 (תיקוני בטוחות בשכירות למגורים)",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/20/law/20_lst_308205.docx",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/20/law/20_lst_308205.docx",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 171,
+                  "title_meaningful_chars": 56
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "scholarship",
+                "raw_pplx_source_type": "חקיקה / מקור משפטי",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.kolzchut.org.il/he/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F_%D7%9E%D7%96%D7%95%D7%9E%D7%9F_%D7%9B%D7%A2%D7%A8%D7%95%D7%91%D7%94_%D7%9C%D7%94%D7%91%D7%98%D7%97%D7%AA_%D7%97%D7%99%D7%95%D7%91",
+                "title": "פיקדון מזומן כערובה להבטחת חיוב (מושג)",
+                "domain": "kolzchut.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8%D7%AA-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%D7%99%D7%9A-%D7%9B%D7%A9%D7%95%D7%9B%D7%A8-%D7%90%D7%95-%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+                "title": "החזרת פיקדון שכירות: מה זכויותיך כשוכר או משכיר?",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%A1%D7%A2%D7%99%D7%A3-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%91%D7%97%D7%95%D7%96%D7%94-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%94%D7%97%D7%95%D7%A7-%D7%9E%D7%AA%D7%99%D7%A8-%D7%9C%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+                "title": "סעיף פיקדון בחוזה שכירות: מה החוק מתיר למשכיר?",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%95%D7%A2%D7%A8%D7%91%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%9E%D7%95%D7%AA%D7%A8-%D7%97%D7%95%D7%A7%D7%99%D7%AA-%D7%95%D7%9E%D7%94-%D7%9B%D7%93%D7%90%D7%99/",
+                "title": "פיקדון וערבויות בשכירות: מה מותר חוקית ומה כדאי?",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C1",
+            "query_he": "מאמר משפטי חובת השבת פיקדון שכירות מעמד חוזי או התחייבות אזרחית/ציבורית כתבי עת משפטיים בישראל",
+            "raw_count": 5,
+            "discovery_only": 4,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 7206,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+                "title": "פסק-דין בתיק ע\"א 20818-01-13",
+                "domain": "psakdin.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "unknown",
+                  "body_meaningful_chars": 149,
+                  "title_meaningful_chars": 25
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "psakdin",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%A8%D7%AA%22%D7%A7-55210-12-11",
+                "title": "החלטה בתיק רת\"ק 55210-12-11",
+                "domain": "psakdin.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%A8%D7%AA%22%D7%A7-55210-12-11",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%A8%D7%AA%22%D7%A7-55210-12-11",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "unknown",
+                  "body_meaningful_chars": 152,
+                  "title_meaningful_chars": 24
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "psakdin",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.kolzchut.org.il/he/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F_%D7%9E%D7%96%D7%95%D7%9E%D7%9F_%D7%9B%D7%A2%D7%A8%D7%95%D7%91%D7%94_%D7%9C%D7%94%D7%91%D7%98%D7%97%D7%AA_%D7%97%D7%99%D7%95%D7%91",
+                "title": "פיקדון מזומן כערובה להבטחת חיוב (מושג)",
+                "domain": "kolzchut.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.law-info.co.il/article-display.php?articleno=813",
+                "title": "ביטחונות בהסכם שכירות",
+                "domain": "law-info.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.toledano.co.il/%D7%94%D7%90%D7%9D-%D7%A8%D7%A9%D7%90%D7%99-%D7%A9%D7%95%D7%9B%D7%A8-%D7%9C%D7%90-%D7%9C%D7%A9%D7%9C%D7%9D-%D7%93%D7%9E%D7%99-%D7%A9%D7%כירות-%D7%9C%D7%90%D7%95%D7%A8%D7%ך-%D7%96",
+                "title": "האם רשאי שוכר לא לשלם דמי שכירות לאורך זמן בטענת קיזוז",
+                "domain": "toledano.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_binding_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C2",
+            "query_he": "פסק דין בית המשפט העליון קיזוז פיקדון שכירות נזקים מעבר לשחיקה רגילה הוכחת נזק פיצוי עלויות ניקיון חובות שלא שולמו",
+            "raw_count": 5,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 14835,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://avniguy.co.il/blog/landlord-security-deposit-return/",
+                "title": "האם בעל דירה חייב להחזיר פיקדון: כללי 60 יום וניכויים מותרים",
+                "domain": "avniguy.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://msl.org.il/guide/tenant-rights-deposit/",
+                "title": "זכויות שוכר: מה מותר למשכיר לדרוש — ומה החוק אוסר",
+                "domain": "msl.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.dinrega.com/gs/%D7%AA%D7%91%D7%99%D7%A2%D7%94%20%D7%9C%D7%94%D7%97%D7%96%D7%A8%20%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F%20%D7%95%D7%AA%D7%99%D7%A7%D7%95%D7%A0%D7%99%D7%9D%20%D7%91%D7%A0%D7%9B%D7%A1%20%D7%A9%D7%9B%D7%95%D7%A8",
+                "title": "תביעה להחזר פיקדון ותיקונים בנכס שכור",
+                "domain": "dinrega.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9B%D7%99%D7%A6%D7%93-%D7%9C%D7%94%D7%AA%D7%9E%D7%95%D7%93%D7%93-%D7%A2%D7%9D-%D7%9E%D7%97%D7%9C%D7%95%D7%A7%D7%AA-%D7%9E%D7%A9%D7%A4%D7%98%D7%99%D7%AA/",
+                "title": "פיקדון שכירות: כיצד להתמודד עם מחלוקת משפטית?",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%91%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%A9%D7%95%D7%AA%D7%A4%D7%AA-%D7%9B%D7%99%D7%A6%D7%93-%D7%9C%D7%94%D7%AA%D7%9E%D7%95%D7%93%D7%93-%D7%9E%D7%A9%D7%A4%D7%98%D7%99%D7%AA/",
+                "title": "החזר פיקדון בשכירות משותפת: כיצד להתמודד משפטית?",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C2",
+            "query_he": "מאמר/סקירה משפטית קיזוז פיקדון שכירות הוכחת נזק סטנדרט הוכחה עלויות ניקיון ונזקי מעבר לשחיקה רגילה",
+            "raw_count": 5,
+            "discovery_only": 3,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 8155,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://www.dinrega.com/gs/%D7%AA%D7%91%D7%99%D7%A2%D7%94%20%D7%9C%D7%94%D7%97%D7%96%D7%A8%20%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F%20%D7%95%D7%AA%D7%99%D7%A7%D7%95%D7%A0%D7%99%D7%9D%20%D7%91%D7%A0%D7%9B%D7%A1%20%D7%A9%D7%9B%D7%95%D7%A8",
+                "title": "תביעה להחזר פיקדון ותיקונים בנכס שכור",
+                "domain": "dinrega.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8%D7%AA-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%D7%99%D7%9A-%D7%9B%D7%A9%D7%95%D7%9B%D7%A8-%D7%90%D7%95-%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+                "title": "החזרת פיקדון שכירות: מה זכויותיך כשוכר או משכיר?",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%91%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%A9%D7%95%D7%AA%D7%A4%D7%AA-%D7%9B%D7%99%D7%A6%D7%93-%D7%9C%D7%94%D7%AA%D7%9E%D7%95%D7%93%D7%93-%D7%9E%D7%A9%D7%A4%D7%98%D7%99%D7%AA/",
+                "title": "החזר פיקדון בשכירות משותפת: כיצד להתמודד משפטית?",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.audreylaw.co.il/index.php/en/2020-02-16-17-04-22/2020-01-31-13-23-149.html",
+                "title": "בעל הדירה לא מחזיר צ'יק ביטחון לשוכר?",
+                "domain": "audreylaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/he/service/filing_a_small_claim",
+                "title": "הגשת תביעה קטנה לבית משפט לתביעות קטנות",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_binding_case_law",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C3",
+            "query_he": "פסקי דין הליכי החזרת פיקדון שכירות סמכות שיפוט תביעות קטנות הוצאה לפועל פסק דין שמגדיר סדרי דין וסמכויות בין תביעות קטנות לבית משפט שלום",
+            "raw_count": 5,
+            "discovery_only": 4,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 8925,
+            "http": 200,
+            "role": "factual_report",
+            "results": [
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8%D7%AA-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%D7%99%D7%9A-%D7%9B%D7%A9%D7%95%D7%9B%D7%A8-%D7%90%D7%95-%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+                "title": "החזרת פיקדון שכירות: מה זכויותיך כשוכר או משכיר?",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://msl.org.il/guide/tenant-rights-deposit/",
+                "title": "זכויות שוכר: מה מותר למשכיר לדרוש — ומה החוק אוסר",
+                "domain": "msl.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_factual_report",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8%D7%AA-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%91%D7%A1%D7%99%D7%95%D7%9D-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%94%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+                "title": "החזרת פיקדון בסיום שכירות - מה זכויות המשכיר?",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%A1%D7%A2%D7%99%D7%A3-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%91%D7%97%D7%95%D7%96%D7%94-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%94%D7%97%D7%95%D7%A7-%D7%9E%D7%AA%D7%99%D7%A8-%D7%9C%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+                "title": "סעיף פיקדון בחוזה שכירות: מה החוק מתיר למשכיר?",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-familylaw.co.il/%D7%9B%D7%99%D7%A6%D7%93-%D7%AA%D7%92%D7%9F-%D7%A2%D7%9C-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%D7%99%D7%9A-%D7%9B%D7%A9%D7%95%D7%9B%D7%A8-%D7%9E%D7%95%D7%9C-%D7%91%D7%A2%D7%9C-%D7%93%D7%99%D7%A8-2/",
+                "title": "כיצד תגן על זכויותיך כשוכר מול בעל דירה המסרב להחזיר שיק פיקדון ללא הצדקה חוקית?",
+                "domain": "at-familylaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C3",
+            "query_he": "מדריך/דו\"ח הליכים מעשיים להשבת פיקדון שכירות מכתב דרישה תביעות קטנות הוצאה לפועל משרד המשפטים או לשכת עורכי הדין מדריך לשוכר",
+            "raw_count": 5,
+            "discovery_only": 4,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 9270,
+            "http": 200,
+            "role": "factual_report",
+            "results": [
+              {
+                "url": "https://www.kovetz.co.il/templates/apartment-handover",
+                "title": "פרוטוקול מסירת דירה - תבנית למילוי",
+                "domain": "kovetz.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_factual_report",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://llt.org.il/%D7%94%D7%A9%D7%9B%D7%A8%D7%AA-%D7%93%D7%99%D7%A8%D7%94/",
+                "title": "השכרת דירה - מדריך ופרסום הדירה בחינם",
+                "domain": "llt.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_factual_report",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://eliavlaw.co.il/%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F/%D7%9E%D7%94%D7%95-%D7%98%D7%95%D7%A4%D7%A1-%D7%9E%D7%A1%D7%99%D7%A8%D7%AA-%D7%93%D7%99%D7%A8%D7%94/",
+                "title": "מהו טופס מסירת דירה?",
+                "domain": "eliavlaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://elkayamlaw.co.il/%D7%A4%D7%A8%D7%95%D7%98%D7%95%D7%A7%D7%95%D7%9C-%D7%9E%D7%A1%D7%99%D7%A8%D7%94-%D7%93%D7%99%D7%A8%D7%94-%D7%99%D7%93-%D7%A9%D7%A0%D7%99%D7%99%D7%94-%D7%9B%D7%95%D7%9C%D7%9C-%D7%93%D7%95%D7%92%D7%9E%D7%9E%D7%94/%D7%A0%D7%93%D7%9C%D7%9F-%D7%95%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F/",
+                "title": "פרוטוקול מסירה דירה יד שנייה כולל דוגמא PDF",
+                "domain": "elkayamlaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C4",
+            "query_he": "מדריך תיעוד מצב נכס כניסה יציאה דוח מסירת דירה צילום פרוטוקול מסירת דירה המלצות לתיעוד ראיות במחלוקת על פיקדון שכירות",
+            "raw_count": 4,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 8128,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://pelleg-law.co.il/small-claims-damage-to-rental/",
+                "title": "תביעה קטנה על נזק לדירה – מה חשוב לדעת?",
+                "domain": "pelleg-law.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.rrshamaut.co.il/%D7%9B%D7%9C-%D7%9E%D7%94-%D7%A9%D7%97%D7%A9%D7%95%D7%91-%D7%9C%D7%93%D7%A2%D7%AA-%D7%9B%D7%90%D7%A9%D7%A8-%D7%94%D7%A9%D7%95%D7%9B%D7%A8%D7%99%D7%9D-%D7%9E%D7%A1%D7%91%D7%99%D7%9D-%D7%A0%D7%96%D7%A7/",
+                "title": "נזקי שוכרים לדירה: היבט משפטי, הוכחת נזק ודרכי תביעה",
+                "domain": "rrshamaut.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%90%D7%97%D7%A8%D7%99%D7%95%D7%AA-%D7%A9%D7%95%D7%9B%D7%A8%D7%99%D7%9D-%D7%9C%D7%A0%D7%96%D7%A7%D7%99%D7%9D-%D7%90%D7%99%D7%9A-%D7%9C%D7%94%D7%AA%D7%92%D7%95%D7%A0%D7%9F-%D7%9E%D7%A9%D7%A4%D7%98%D7%99%D7%AA/",
+                "title": "אחריות שוכרים לנזקים - איך להתגונן משפטית?",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://izhakniyalaw.co.il/%D7%A9%D7%95%D7%9B%D7%A8-%D7%94%D7%A9%D7%90%D7%99%D7%A8-%D7%A0%D7%96%D7%A7%D7%99%D7%9D-%D7%91%D7%93%D7%99%D7%A8%D7%94-%D7%90%D7%99%D7%9A-%D7%9E%D7%95%D7%9B%D7%99%D7%97%D7%99%D7%9D-%D7%95/",
+                "title": "שוכר השאיר נזקים בדירה – איך מוכיחים ומה עושים",
+                "domain": "izhakniyalaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.ynet.co.il/articles/0,7340,L-4253097,00.html",
+                "title": "חוזה השכירות הופר? מי ישלם למי וכמה",
+                "domain": "ynet.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C4",
+            "query_he": "מאמר ראיות בתביעות שכירות תיעוד מצב נכס כוח הראיה בחוזה שכירות פרקטיקות משפטיות לתיעוד והוכחת נזקים",
+            "raw_count": 5,
+            "discovery_only": 4,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 3677,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://fs.knesset.gov.il/17/Committees/17_cs_bg_335707.doc",
+                "title": "חוק ההתיישנות, תשי\"ח-1958, סעיפים 5–6",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/17/Committees/17_cs_bg_335707.doc",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/17/Committees/17_cs_bg_335707.doc",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 70,
+                  "title_meaningful_chars": 33
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "חקיקה ראשית",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il/%5C3%5Claw%5C3_ls1_289041.PDF",
+                "title": "חוק ההתיישנות, תשי\"ז-1957, סעיף 2",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/%5C3%5Claw%5C3_ls1_289041.PDF",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/%5C3%5Claw%5C3_ls1_289041.PDF",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 69,
+                  "title_meaningful_chars": 29
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "חקיקה ראשית",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C5",
+            "query_he": "חוק ההתיישנות התשי\"ח התיישנות תביעות כספיות מועד התיישנות לתביעת החזרת פיקדון שכירות",
+            "raw_count": 2,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4648,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%95%D7%A2%D7%A8%D7%91%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%9E%D7%95%D7%AA%D7%A8-%D7%97%D7%95%D7%A7%D7%99%D7%AA-%D7%95%D7%9E%D7%94-%D7%כדאי/",
+                "title": "פיקדון וערבויות בשכירות: מה מותר חוקית ומה כדאי? - טאוב ושות'",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C5",
+            "query_he": "בית המשפט העליון פסקי דין פירוש חוק ההתיישנות והחלפת מועד התיישנות בתביעות על החזרת פיקדון שכירות פסיקה שמחייבת קביעת המועד שבו מתחילה ההתיישנות",
+            "raw_count": 1,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 5,
+        "query_count": 10,
+        "retry_count": 0,
+        "total_sum_ms": 86835,
+        "total_wall_ms": 22965,
+        "hygiene_counts": {
+          "keep": 5,
+          "total": 5,
+          "exclude": 0,
+          "reasons": {},
+          "downgrade": 0,
+          "report_only_mode": false,
+          "would_exclude_in_report_only": 0
+        },
+        "rate_limit_count": 0,
+        "role_corrections": [
+          {
+            "to": "primary_statute",
+            "url": "https://fs.knesset.gov.il/20/law/20_lst_308205.docx",
+            "from": "scholarship",
+            "title": "חוק השכירות והשאילה, תשל\"א-1971 (תיקוני בטוחות בשכירות למגורים)",
+            "admitted": true,
+            "claim_id": "C1"
+          }
+        ],
+        "concurrency_limit": 4,
+        "merge_order_preserved": true,
+        "fallback_to_sequential": false
+      }
+    },
+    "candidates": [
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק השכירות והשאילה, תשל\"א-1971 (תיקוני בטוחות בשכירות למגורים)",
+        "origin": "perplexity",
+        "snippet": "לטובת חובת השבת פיקדון בשכירות, חוק השכירות והשאילה מגביל את גובה הבטוחה לשליש מתקופת השכירות או לשלושה חודשי שכירות, לפי הנמוך מביניהם, ומחייב השבה בתוך 60 ימים ממסירת החזקה, בכפוף לחובות שניתן לקזז מהם.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://fs.knesset.gov.il/20/law/20_lst_308205.docx",
+            "hygiene_action": "keep",
+            "url_normalized": "https://fs.knesset.gov.il/20/law/20_lst_308205.docx",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 171,
+            "title_meaningful_chars": 56
+          },
+          "role_corrected_from": "scholarship",
+          "raw_pplx_source_type": "חקיקה / מקור משפטי",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "מאמר משפטי חובת השבת פיקדון שכירות מעמד חוזי או התחייבות אזרחית/ציבורית כתבי עת משפטיים בישראל",
+        "source_url": "https://fs.knesset.gov.il/20/law/20_lst_308205.docx",
+        "source_type": "legislation",
+        "candidate_id": "a27f9657-e58b-4e3a-924e-17ac64d2f6c5",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק ההתיישנות, תשי\"ח-1958, סעיפים 5–6",
+        "origin": "perplexity",
+        "snippet": "לא תוגש תובענה אלא תוך שבע שנים; תקופת ההתיישנות מתחילה ביום שבו נולדה עילת התובענה.",
+        "claim_id": "C5",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://fs.knesset.gov.il/17/Committees/17_cs_bg_335707.doc",
+            "hygiene_action": "keep",
+            "url_normalized": "https://fs.knesset.gov.il/17/Committees/17_cs_bg_335707.doc",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 70,
+            "title_meaningful_chars": 33
+          },
+          "raw_pplx_source_type": "חקיקה ראשית",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חוק ההתיישנות התשי\"ח התיישנות תביעות כספיות מועד התיישנות לתביעת החזרת פיקדון שכירות",
+        "source_url": "https://fs.knesset.gov.il/17/Committees/17_cs_bg_335707.doc",
+        "source_type": "legislation",
+        "candidate_id": "9c152c93-49d3-4a4b-9d4a-3850565153f4",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק ההתיישנות, תשי\"ז-1957, סעיף 2",
+        "origin": "perplexity",
+        "snippet": "הוראה זו לא תחול על תביעה להחזרת כספים ששולמו לבנק הדואר ולתשלום ריבית המגיעה ממנו.",
+        "claim_id": "C5",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://fs.knesset.gov.il/%5C3%5Claw%5C3_ls1_289041.PDF",
+            "hygiene_action": "keep",
+            "url_normalized": "https://fs.knesset.gov.il/%5C3%5Claw%5C3_ls1_289041.PDF",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 69,
+            "title_meaningful_chars": 29
+          },
+          "raw_pplx_source_type": "חקיקה ראשית",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חוק ההתיישנות התשי\"ח התיישנות תביעות כספיות מועד התיישנות לתביעת החזרת פיקדון שכירות",
+        "source_url": "https://fs.knesset.gov.il/%5C3%5Claw%5C3_ls1_289041.PDF",
+        "source_type": "legislation",
+        "candidate_id": "2cafad43-bcb7-4ef7-83b6-19d21658739b",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.75,
+        "title": "פסק-דין בתיק ע\"א 20818-01-13",
+        "origin": "perplexity",
+        "snippet": "בפסק דין בערעור על תביעת פיצוי בגין הפרת הסכם שכירות וחילוט פיקדון נקבע כי החשבוניות שצורפו אינן תואמות את עילות הקיזוז ואינן מפורטות מספיק; לכן הקיזוז מתוך הפיקדון נעשה שלא כדין.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "psakdin.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+            "hygiene_reasons": [],
+            "landing_page_status": "unknown",
+            "body_meaningful_chars": 149,
+            "title_meaningful_chars": 25
+          },
+          "raw_pplx_source_type": "psakdin",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "פסק דין בית המשפט העליון קיזוז פיקדון שכירות נזקים מעבר לשחיקה רגילה הוכחת נזק פיצוי עלויות ניקיון חובות שלא שולמו",
+        "source_url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+        "source_type": "caselaw",
+        "candidate_id": "78b3ff7d-b81d-4265-a87b-fd7cf4a0a262",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.75,
+        "title": "החלטה בתיק רת\"ק 55210-12-11",
+        "origin": "perplexity",
+        "snippet": "ביחס להימנעות ממושכת מתשלום דמי שכירות נקבע כי אין מדובר בסעד עצמי של קיזוז כאשר הנזקים הנטענים אינם סכום קצוב; תרופת השוכר היא להגיש תובענה מתאימה ולא להפסיק לשלם לאורך חודשים ושנים.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "psakdin.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%A8%D7%AA%22%D7%A7-55210-12-11",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%A8%D7%AA%22%D7%A7-55210-12-11",
+            "hygiene_reasons": [],
+            "landing_page_status": "unknown",
+            "body_meaningful_chars": 152,
+            "title_meaningful_chars": 24
+          },
+          "raw_pplx_source_type": "psakdin",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "פסק דין בית המשפט העליון קיזוז פיקדון שכירות נזקים מעבר לשחיקה רגילה הוכחת נזק פיצוי עלויות ניקיון חובות שלא שולמו",
+        "source_url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%A8%D7%AA%22%D7%A7-55210-12-11",
+        "source_type": "caselaw",
+        "candidate_id": "35d76a12-e51d-4d0d-977f-c2272304f4c5",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 29181,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 31790,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 2,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 22965,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 34080,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 37405,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter_v2.initial",
+        "escalated": false,
+        "http_status": 200
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%A1%D7%A2%D7%99%D7%A3-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%91%D7%97%D7%95%D7%96%D7%94-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%94%D7%97%D7%95%D7%A7-%D7%9E%D7%AA%D7%99%D7%A8-%D7%9C%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+        "role": "binding_case_law",
+        "title": "סעיף פיקדון בחוזה שכירות: מה החוק מתיר למשכיר?",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "פסק דין בית המשפט העליון חובת המשכיר להשיב פיקדון שכירות בתום החכירה האם החובת השבה נגזרת ממערכת יחסים חוזית או מתחייבת גם כזכות ציבורית/ציבורית-משפטית",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8%D7%AA-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%D7%99%D7%9A-%D7%9B%D7%A9%D7%95%D7%9B%D7%A8-%D7%90%D7%95-%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+        "role": "binding_case_law",
+        "title": "החזרת פיקדון שכירות: מה זכויותיך כשוכר או משכיר?",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "פסק דין בית המשפט העליון חובת המשכיר להשיב פיקדון שכירות בתום החכירה האם החובת השבה נגזרת ממערכת יחסים חוזית או מתחייבת גם כזכות ציבורית/ציבורית-משפטית",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://msl.org.il/guide/tenant-rights-deposit/",
+        "role": "binding_case_law",
+        "title": "זכויות שוכר: מה מותר למשכיר לדרוש — ומה החוק אוסר",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "פסק דין בית המשפט העליון חובת המשכיר להשיב פיקדון שכירות בתום החכירה האם החובת השבה נגזרת ממערכת יחסים חוזית או מתחייבת גם כזכות ציבורית/ציבורית-משפטית",
+        "drop_reason": "class_unknown_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://myglaw.co.il/rental-security-deposit-refund-landlord-deductions/",
+        "role": "binding_case_law",
+        "title": "החזר פיקדון שכירות – מתי המשכיר רשאי לנכות?",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "פסק דין בית המשפט העליון חובת המשכיר להשיב פיקדון שכירות בתום החכירה האם החובת השבה נגזרת ממערכת יחסים חוזית או מתחייבת גם כזכות ציבורית/ציבורית-משפטית",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://skiramishpatit.com/wp-content/uploads/267740518new.docx",
+        "role": "binding_case_law",
+        "title": "267740518new.docx",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "פסק דין בית המשפט העליון חובת המשכיר להשיב פיקדון שכירות בתום החכירה האם החובת השבה נגזרת ממערכת יחסים חוזית או מתחייבת גם כזכות ציבורית/ציבורית-משפטית",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA_%D7%95%D7%94%D7%A9%D7%90%D7%99%D7%9C%D7%94",
+        "role": "binding_case_law",
+        "title": "חוק השכירות והשאילה, תשל״א–1971",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "פסק דין בית המשפט העליון חובת המשכיר להשיב פיקדון שכירות בתום החכירה האם החובת השבה נגזרת ממערכת יחסים חוזית או מתחייבת גם כזכות ציבורית/ציבורית-משפטית",
+        "drop_reason": "followup:class_unknown_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://www.ozar-law.co.il/privatePrint.php?id=22232",
+        "role": "binding_case_law",
+        "title": "הפרשנות לחוק השכירות והשאילה, התשל\"א-1971 (סדרי דין, עילות ותקדימים)",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "פסק דין בית המשפט העליון חובת המשכיר להשיב פיקדון שכירות בתום החכירה האם החובת השבה נגזרת ממערכת יחסים חוזית או מתחייבת גם כזכות ציבורית/ציבורית-משפטית",
+        "drop_reason": "followup:discovery_only"
+      },
+      {
+        "url": "https://he.afiklaw.com/caselaw/11277",
+        "role": "binding_case_law",
+        "title": "תא (ת\"א) 8900-06-19 ג'פרי קוין פיירסן נ' תומר ברין",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "פסק דין בית המשפט העליון חובת המשכיר להשיב פיקדון שכירות בתום החכירה האם החובת השבה נגזרת ממערכת יחסים חוזית או מתחייבת גם כזכות ציבורית/ציבורית-משפטית",
+        "drop_reason": "followup:discovery_only"
+      },
+      {
+        "url": "https://www.toledano.co.il/%D7%AA%D7%90%D7%97-15899-05-09-%D7%92%D7%9E%D7%96%D7%95-%D7%9C%D7%98%D7%95%D7%91%D7%94-%D7%95%D7%90%D7%97-%D7%A0-%D7%A4%D7%A8%D7%A0%D7%A7%D7%9C/",
+        "role": "binding_case_law",
+        "title": "תא\"ח 15899-05-09 גמזו לטובה ואח' נ' פרנקל",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "פסק דין בית המשפט העליון חובת המשכיר להשיב פיקדון שכירות בתום החכירה האם החובת השבה נגזרת ממערכת יחסים חוזית או מתחייבת גם כזכות ציבורית/ציבורית-משפטית",
+        "drop_reason": "followup:class_unknown_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://www.ozarlaw.co.il/privatePrint.php?id=22234",
+        "role": "binding_case_law",
+        "title": "הפרשנות לחוק השכירות והשאילה, התשל\"א-1971 (סדרי דין, עילות ותקדימים)",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "פסק דין בית המשפט העליון חובת המשכיר להשיב פיקדון שכירות בתום החכירה האם החובת השבה נגזרת ממערכת יחסים חוזית או מתחייבת גם כזכות ציבורית/ציבורית-משפטית",
+        "drop_reason": "followup:discovery_only"
+      },
+      {
+        "url": "https://www.kolzchut.org.il/he/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F_%D7%9E%D7%96%D7%95%D7%9E%D7%9F_%D7%9B%D7%A2%D7%A8%D7%95%D7%91%D7%94_%D7%9C%D7%94%D7%91%D7%98%D7%97%D7%AA_%D7%97%D7%99%D7%95%D7%91",
+        "role": "scholarship",
+        "title": "פיקדון מזומן כערובה להבטחת חיוב (מושג)",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי חובת השבת פיקדון שכירות מעמד חוזי או התחייבות אזרחית/ציבורית כתבי עת משפטיים בישראל",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8%D7%AA-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%D7%99%D7%9A-%D7%9B%D7%A9%D7%95%D7%9B%D7%A8-%D7%90%D7%95-%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+        "role": "scholarship",
+        "title": "החזרת פיקדון שכירות: מה זכויותיך כשוכר או משכיר?",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי חובת השבת פיקדון שכירות מעמד חוזי או התחייבות אזרחית/ציבורית כתבי עת משפטיים בישראל",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%A1%D7%A2%D7%99%D7%A3-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%91%D7%97%D7%95%D7%96%D7%94-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%94%D7%97%D7%95%D7%A7-%D7%9E%D7%AA%D7%99%D7%A8-%D7%9C%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+        "role": "scholarship",
+        "title": "סעיף פיקדון בחוזה שכירות: מה החוק מתיר למשכיר?",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי חובת השבת פיקדון שכירות מעמד חוזי או התחייבות אזרחית/ציבורית כתבי עת משפטיים בישראל",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%95%D7%A2%D7%A8%D7%91%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%9E%D7%95%D7%AA%D7%A8-%D7%97%D7%95%D7%A7%D7%99%D7%AA-%D7%95%D7%9E%D7%94-%D7%9B%D7%93%D7%90%D7%99/",
+        "role": "scholarship",
+        "title": "פיקדון וערבויות בשכירות: מה מותר חוקית ומה כדאי?",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי חובת השבת פיקדון שכירות מעמד חוזי או התחייבות אזרחית/ציבורית כתבי עת משפטיים בישראל",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.kolzchut.org.il/he/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F_%D7%9E%D7%96%D7%95%D7%9E%D7%9F_%D7%9B%D7%A2%D7%A8%D7%95%D7%91%D7%94_%D7%9C%D7%94%D7%91%D7%98%D7%97%D7%AA_%D7%97%D7%99%D7%95%D7%91",
+        "role": "binding_case_law",
+        "title": "פיקדון מזומן כערובה להבטחת חיוב (מושג)",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "פסק דין בית המשפט העליון קיזוז פיקדון שכירות נזקים מעבר לשחיקה רגילה הוכחת נזק פיצוי עלויות ניקיון חובות שלא שולמו",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.law-info.co.il/article-display.php?articleno=813",
+        "role": "binding_case_law",
+        "title": "ביטחונות בהסכם שכירות",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "פסק דין בית המשפט העליון קיזוז פיקדון שכירות נזקים מעבר לשחיקה רגילה הוכחת נזק פיצוי עלויות ניקיון חובות שלא שולמו",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.toledano.co.il/%D7%94%D7%90%D7%9D-%D7%A8%D7%A9%D7%90%D7%99-%D7%A9%D7%95%D7%9B%D7%A8-%D7%9C%D7%90-%D7%9C%D7%A9%D7%9C%D7%9D-%D7%93%D7%9E%D7%99-%D7%A9%D7%כירות-%D7%9C%D7%90%D7%95%D7%A8%D7%ך-%D7%96",
+        "role": "binding_case_law",
+        "title": "האם רשאי שוכר לא לשלם דמי שכירות לאורך זמן בטענת קיזוז",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "פסק דין בית המשפט העליון קיזוז פיקדון שכירות נזקים מעבר לשחיקה רגילה הוכחת נזק פיצוי עלויות ניקיון חובות שלא שולמו",
+        "drop_reason": "class_unknown_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://avniguy.co.il/blog/landlord-security-deposit-return/",
+        "role": "scholarship",
+        "title": "האם בעל דירה חייב להחזיר פיקדון: כללי 60 יום וניכויים מותרים",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר/סקירה משפטית קיזוז פיקדון שכירות הוכחת נזק סטנדרט הוכחה עלויות ניקיון ונזקי מעבר לשחיקה רגילה",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://msl.org.il/guide/tenant-rights-deposit/",
+        "role": "scholarship",
+        "title": "זכויות שוכר: מה מותר למשכיר לדרוש — ומה החוק אוסר",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר/סקירה משפטית קיזוז פיקדון שכירות הוכחת נזק סטנדרט הוכחה עלויות ניקיון ונזקי מעבר לשחיקה רגילה",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.dinrega.com/gs/%D7%AA%D7%91%D7%99%D7%A2%D7%94%20%D7%9C%D7%94%D7%97%D7%96%D7%A8%20%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F%20%D7%95%D7%AA%D7%99%D7%A7%D7%95%D7%A0%D7%99%D7%9D%20%D7%91%D7%A0%D7%9B%D7%A1%20%D7%A9%D7%9B%D7%95%D7%A8",
+        "role": "scholarship",
+        "title": "תביעה להחזר פיקדון ותיקונים בנכס שכור",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר/סקירה משפטית קיזוז פיקדון שכירות הוכחת נזק סטנדרט הוכחה עלויות ניקיון ונזקי מעבר לשחיקה רגילה",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9B%D7%99%D7%A6%D7%93-%D7%9C%D7%94%D7%AA%D7%9E%D7%95%D7%93%D7%93-%D7%A2%D7%9D-%D7%9E%D7%97%D7%9C%D7%95%D7%A7%D7%AA-%D7%9E%D7%A9%D7%A4%D7%98%D7%99%D7%AA/",
+        "role": "scholarship",
+        "title": "פיקדון שכירות: כיצד להתמודד עם מחלוקת משפטית?",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר/סקירה משפטית קיזוז פיקדון שכירות הוכחת נזק סטנדרט הוכחה עלויות ניקיון ונזקי מעבר לשחיקה רגילה",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%91%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%A9%D7%95%D7%AA%D7%A4%D7%AA-%D7%9B%D7%99%D7%A6%D7%93-%D7%9C%D7%94%D7%AA%D7%9E%D7%95%D7%93%D7%93-%D7%9E%D7%A9%D7%A4%D7%98%D7%99%D7%AA/",
+        "role": "scholarship",
+        "title": "החזר פיקדון בשכירות משותפת: כיצד להתמודד משפטית?",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר/סקירה משפטית קיזוז פיקדון שכירות הוכחת נזק סטנדרט הוכחה עלויות ניקיון ונזקי מעבר לשחיקה רגילה",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.dinrega.com/gs/%D7%AA%D7%91%D7%99%D7%A2%D7%94%20%D7%9C%D7%94%D7%97%D7%96%D7%A8%20%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F%20%D7%95%D7%AA%D7%99%D7%A7%D7%95%D7%A0%D7%99%D7%9D%20%D7%91%D7%A0%D7%9B%D7%A1%20%D7%A9%D7%9B%D7%95%D7%A8",
+        "role": "binding_case_law",
+        "title": "תביעה להחזר פיקדון ותיקונים בנכס שכור",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "פסקי דין הליכי החזרת פיקדון שכירות סמכות שיפוט תביעות קטנות הוצאה לפועל פסק דין שמגדיר סדרי דין וסמכויות בין תביעות קטנות לבית משפט שלום",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8%D7%AA-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%D7%99%D7%9A-%D7%9B%D7%A9%D7%95%D7%9B%D7%A8-%D7%90%D7%95-%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+        "role": "binding_case_law",
+        "title": "החזרת פיקדון שכירות: מה זכויותיך כשוכר או משכיר?",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "פסקי דין הליכי החזרת פיקדון שכירות סמכות שיפוט תביעות קטנות הוצאה לפועל פסק דין שמגדיר סדרי דין וסמכויות בין תביעות קטנות לבית משפט שלום",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%91%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%A9%D7%95%D7%AA%D7%A4%D7%AA-%D7%9B%D7%99%D7%A6%D7%93-%D7%9C%D7%94%D7%AA%D7%9E%D7%95%D7%93%D7%93-%D7%9E%D7%A9%D7%A4%D7%98%D7%99%D7%AA/",
+        "role": "binding_case_law",
+        "title": "החזר פיקדון בשכירות משותפת: כיצד להתמודד משפטית?",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "פסקי דין הליכי החזרת פיקדון שכירות סמכות שיפוט תביעות קטנות הוצאה לפועל פסק דין שמגדיר סדרי דין וסמכויות בין תביעות קטנות לבית משפט שלום",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.audreylaw.co.il/index.php/en/2020-02-16-17-04-22/2020-01-31-13-23-149.html",
+        "role": "binding_case_law",
+        "title": "בעל הדירה לא מחזיר צ'יק ביטחון לשוכר?",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "פסקי דין הליכי החזרת פיקדון שכירות סמכות שיפוט תביעות קטנות הוצאה לפועל פסק דין שמגדיר סדרי דין וסמכויות בין תביעות קטנות לבית משפט שלום",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.gov.il/he/service/filing_a_small_claim",
+        "role": "binding_case_law",
+        "title": "הגשת תביעה קטנה לבית משפט לתביעות קטנות",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "פסקי דין הליכי החזרת פיקדון שכירות סמכות שיפוט תביעות קטנות הוצאה לפועל פסק דין שמגדיר סדרי דין וסמכויות בין תביעות קטנות לבית משפט שלום",
+        "drop_reason": "class_government_report_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8%D7%AA-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%D7%99%D7%9A-%D7%9B%D7%A9%D7%95%D7%9B%D7%A8-%D7%90%D7%95-%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+        "role": "factual_report",
+        "title": "החזרת פיקדון שכירות: מה זכויותיך כשוכר או משכיר?",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מדריך/דו\"ח הליכים מעשיים להשבת פיקדון שכירות מכתב דרישה תביעות קטנות הוצאה לפועל משרד המשפטים או לשכת עורכי הדין מדריך לשוכר",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://msl.org.il/guide/tenant-rights-deposit/",
+        "role": "factual_report",
+        "title": "זכויות שוכר: מה מותר למשכיר לדרוש — ומה החוק אוסר",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מדריך/דו\"ח הליכים מעשיים להשבת פיקדון שכירות מכתב דרישה תביעות קטנות הוצאה לפועל משרד המשפטים או לשכת עורכי הדין מדריך לשוכר",
+        "drop_reason": "class_unknown_not_admitted_for_factual_report"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8%D7%AA-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%91%D7%A1%D7%99%D7%95%D7%9D-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%94%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+        "role": "factual_report",
+        "title": "החזרת פיקדון בסיום שכירות - מה זכויות המשכיר?",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מדריך/דו\"ח הליכים מעשיים להשבת פיקדון שכירות מכתב דרישה תביעות קטנות הוצאה לפועל משרד המשפטים או לשכת עורכי הדין מדריך לשוכר",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%A1%D7%A2%D7%99%D7%A3-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%91%D7%97%D7%95%D7%96%D7%94-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%94%D7%97%D7%95%D7%A7-%D7%9E%D7%AA%D7%99%D7%A8-%D7%9C%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+        "role": "factual_report",
+        "title": "סעיף פיקדון בחוזה שכירות: מה החוק מתיר למשכיר?",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מדריך/דו\"ח הליכים מעשיים להשבת פיקדון שכירות מכתב דרישה תביעות קטנות הוצאה לפועל משרד המשפטים או לשכת עורכי הדין מדריך לשוכר",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.at-familylaw.co.il/%D7%9B%D7%99%D7%A6%D7%93-%D7%AA%D7%92%D7%9F-%D7%A2%D7%9C-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%D7%99%D7%9A-%D7%9B%D7%A9%D7%95%D7%9B%D7%A8-%D7%9E%D7%95%D7%9C-%D7%91%D7%A2%D7%9C-%D7%93%D7%99%D7%A8-2/",
+        "role": "factual_report",
+        "title": "כיצד תגן על זכויותיך כשוכר מול בעל דירה המסרב להחזיר שיק פיקדון ללא הצדקה חוקית?",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מדריך/דו\"ח הליכים מעשיים להשבת פיקדון שכירות מכתב דרישה תביעות קטנות הוצאה לפועל משרד המשפטים או לשכת עורכי הדין מדריך לשוכר",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.kovetz.co.il/templates/apartment-handover",
+        "role": "factual_report",
+        "title": "פרוטוקול מסירת דירה - תבנית למילוי",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מדריך תיעוד מצב נכס כניסה יציאה דוח מסירת דירה צילום פרוטוקול מסירת דירה המלצות לתיעוד ראיות במחלוקת על פיקדון שכירות",
+        "drop_reason": "class_unknown_not_admitted_for_factual_report"
+      },
+      {
+        "url": "https://llt.org.il/%D7%94%D7%A9%D7%9B%D7%A8%D7%AA-%D7%93%D7%99%D7%A8%D7%94/",
+        "role": "factual_report",
+        "title": "השכרת דירה - מדריך ופרסום הדירה בחינם",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מדריך תיעוד מצב נכס כניסה יציאה דוח מסירת דירה צילום פרוטוקול מסירת דירה המלצות לתיעוד ראיות במחלוקת על פיקדון שכירות",
+        "drop_reason": "class_unknown_not_admitted_for_factual_report"
+      },
+      {
+        "url": "https://eliavlaw.co.il/%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F/%D7%9E%D7%94%D7%95-%D7%98%D7%95%D7%A4%D7%A1-%D7%9E%D7%A1%D7%99%D7%A8%D7%AA-%D7%93%D7%99%D7%A8%D7%94/",
+        "role": "factual_report",
+        "title": "מהו טופס מסירת דירה?",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מדריך תיעוד מצב נכס כניסה יציאה דוח מסירת דירה צילום פרוטוקול מסירת דירה המלצות לתיעוד ראיות במחלוקת על פיקדון שכירות",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://elkayamlaw.co.il/%D7%A4%D7%A8%D7%95%D7%98%D7%95%D7%A7%D7%95%D7%9C-%D7%9E%D7%A1%D7%99%D7%A8%D7%94-%D7%93%D7%99%D7%A8%D7%94-%D7%99%D7%93-%D7%A9%D7%A0%D7%99%D7%99%D7%94-%D7%9B%D7%95%D7%9C%D7%9C-%D7%93%D7%95%D7%92%D7%9E%D7%9E%D7%94/%D7%A0%D7%93%D7%9C%D7%9F-%D7%95%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F/",
+        "role": "factual_report",
+        "title": "פרוטוקול מסירה דירה יד שנייה כולל דוגמא PDF",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מדריך תיעוד מצב נכס כניסה יציאה דוח מסירת דירה צילום פרוטוקול מסירת דירה המלצות לתיעוד ראיות במחלוקת על פיקדון שכירות",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://pelleg-law.co.il/small-claims-damage-to-rental/",
+        "role": "scholarship",
+        "title": "תביעה קטנה על נזק לדירה – מה חשוב לדעת?",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר ראיות בתביעות שכירות תיעוד מצב נכס כוח הראיה בחוזה שכירות פרקטיקות משפטיות לתיעוד והוכחת נזקים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.rrshamaut.co.il/%D7%9B%D7%9C-%D7%9E%D7%94-%D7%A9%D7%97%D7%A9%D7%95%D7%91-%D7%9C%D7%93%D7%A2%D7%AA-%D7%9B%D7%90%D7%A9%D7%A8-%D7%94%D7%A9%D7%95%D7%9B%D7%A8%D7%99%D7%9D-%D7%9E%D7%A1%D7%91%D7%99%D7%9D-%D7%A0%D7%96%D7%A7/",
+        "role": "scholarship",
+        "title": "נזקי שוכרים לדירה: היבט משפטי, הוכחת נזק ודרכי תביעה",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר ראיות בתביעות שכירות תיעוד מצב נכס כוח הראיה בחוזה שכירות פרקטיקות משפטיות לתיעוד והוכחת נזקים",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%90%D7%97%D7%A8%D7%99%D7%95%D7%AA-%D7%A9%D7%95%D7%9B%D7%A8%D7%99%D7%9D-%D7%9C%D7%A0%D7%96%D7%A7%D7%99%D7%9D-%D7%90%D7%99%D7%9A-%D7%9C%D7%94%D7%AA%D7%92%D7%95%D7%A0%D7%9F-%D7%9E%D7%A9%D7%A4%D7%98%D7%99%D7%AA/",
+        "role": "scholarship",
+        "title": "אחריות שוכרים לנזקים - איך להתגונן משפטית?",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר ראיות בתביעות שכירות תיעוד מצב נכס כוח הראיה בחוזה שכירות פרקטיקות משפטיות לתיעוד והוכחת נזקים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://izhakniyalaw.co.il/%D7%A9%D7%95%D7%9B%D7%A8-%D7%94%D7%A9%D7%90%D7%99%D7%A8-%D7%A0%D7%96%D7%A7%D7%99%D7%9D-%D7%91%D7%93%D7%99%D7%A8%D7%94-%D7%90%D7%99%D7%9A-%D7%9E%D7%95%D7%9B%D7%99%D7%97%D7%99%D7%9D-%D7%95/",
+        "role": "scholarship",
+        "title": "שוכר השאיר נזקים בדירה – איך מוכיחים ומה עושים",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר ראיות בתביעות שכירות תיעוד מצב נכס כוח הראיה בחוזה שכירות פרקטיקות משפטיות לתיעוד והוכחת נזקים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.ynet.co.il/articles/0,7340,L-4253097,00.html",
+        "role": "scholarship",
+        "title": "חוזה השכירות הופר? מי ישלם למי וכמה",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר ראיות בתביעות שכירות תיעוד מצב נכס כוח הראיה בחוזה שכירות פרקטיקות משפטיות לתיעוד והוכחת נזקים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%95%D7%A2%D7%A8%D7%91%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%9E%D7%95%D7%AA%D7%A8-%D7%97%D7%95%D7%A7%D7%99%D7%AA-%D7%95%D7%9E%D7%94-%D7%כדאי/",
+        "role": "binding_case_law",
+        "title": "פיקדון וערבויות בשכירות: מה מותר חוקית ומה כדאי? - טאוב ושות'",
+        "origin": "perplexity",
+        "claim_id": "C5",
+        "query_he": "בית המשפט העליון פסקי דין פירוש חוק ההתיישנות והחלפת מועד התיישנות בתביעות על החזרת פיקדון שכירות פסיקה שמחייבת קביעת המועד שבו מתחילה ההתיישנות",
+        "drop_reason": "discovery_only"
+      }
+    ],
+    "required_anchors": {
+      "count": 0,
+      "anchors": [],
+      "enabled": true,
+      "statuses": [],
+      "queries_emitted": []
+    },
+    "drafter_v2_full_compare": null,
+    "drafter_v2_opus_compare": null,
+    "drafter_v2_sonnet_compare": null
+  }
+}
