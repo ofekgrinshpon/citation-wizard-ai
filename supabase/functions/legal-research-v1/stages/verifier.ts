@@ -1121,8 +1121,12 @@ export async function runVerifier(
     rate_limit_count,
     retry_count,
     fallback_to_sequential,
-    call_failed: allCallFailures.length > 0,
+    call_failed: unrecovered_failed_batches > 0,
     call_failures: allCallFailures,
+    recovered_batches,
+    retry_attempts: total_retry_attempts,
+    split_probe_attempts: total_split_probe_attempts,
+
     demotions: allDemotions,
     demotions_by_rule: allDemotions.reduce((acc, d) => {
       acc[d.rule] = (acc[d.rule] ?? 0) + 1;
