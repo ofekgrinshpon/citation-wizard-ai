@@ -3,17 +3,165 @@
     "id": "B2",
     "category": "case_holding",
     "query": "מה נקבע בבג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל ביחס להקצאת קרקעות למגורים על בסיס לאום?",
-    "run_id": "c8bd14a3-3733-442f-a90e-cc0af395dc0a",
+    "run_id": "e9582ef2-11cf-41e3-b9e7-b158a99a9bfd",
     "ok": true,
-    "total_ms": 176815,
+    "total_ms": 171273,
     "answer_intent": {
       "output_shape": "case_holding"
     },
     "shape_override": null,
     "lead_ref": {
-      "ref": "s4",
+      "ref": null,
       "shape": "case_holding",
-      "reason": "required_anchor_case"
+      "reason": "skipped_missing_docket_anchor"
+    },
+    "deterministic_branch": "docket_limitation",
+    "limitation_flags": {
+      "missing_docket": true,
+      "statute_section": false,
+      "canonical_quote": false,
+      "missing_anchor_caveat_injected": true
+    },
+    "missing_anchor_descriptions": [
+      "פסק הדין בעניין בג\"ץ 6698/95 עצמו"
+    ],
+    "anchor_statuses": [],
+    "used_sources_count": 0,
+    "used_sources": [],
+    "footnotes_count": 0,
+    "footnotes": [],
+    "quality_warnings": [],
+    "answer": "לא אותר במקורות הזמינים פסק הדין בעניין בג\"ץ 6698/95 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+  },
+  {
+    "id": "B3",
+    "category": "statute_section",
+    "query": "מה קובע סעיף 6 לחוק החברות, התשנ\"ט-1999 בעניין הרמת מסך ומהם התנאים להפעלת הסמכות?",
+    "run_id": "a7c2ea9e-a1fd-41f8-a866-886e9e998589",
+    "ok": true,
+    "total_ms": 93541,
+    "answer_intent": {
+      "output_shape": "definition"
+    },
+    "shape_override": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "definition",
+      "reason": "skipped_missing_statute_section_anchor"
+    },
+    "deterministic_branch": "statute_section_limitation",
+    "limitation_flags": {
+      "missing_docket": false,
+      "statute_section": true,
+      "canonical_quote": false,
+      "missing_anchor_caveat_injected": true
+    },
+    "missing_anchor_descriptions": [
+      "הנוסח המחייב של סעיף 6 לחוק החברות"
+    ],
+    "anchor_statuses": [],
+    "used_sources_count": 1,
+    "used_sources": [
+      {
+        "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+        "title": "חוק החברות, התשנ״ט–1999",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "legislation",
+        "candidate_id": "6acb67e8-cac0-46d9-9d72-f8d60b2c0ab3"
+      }
+    ],
+    "footnotes_count": 1,
+    "footnotes": [
+      {
+        "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+        "title": "חוק החברות, התשנ״ט–1999",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+            "title": "חוק החברות, התשנ״ט–1999",
+            "source_type": "legislation"
+          }
+        ],
+        "source_type": "legislation"
+      }
+    ],
+    "quality_warnings": [],
+    "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 6 לחוק החברות; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
+  },
+  {
+    "id": "B4",
+    "category": "statute_section",
+    "query": "מה קובע סעיף 12 לחוק החוזים (חלק כללי), התשל\"ג-1973 בעניין תום לב במשא ומתן, ומה הסעד?",
+    "run_id": "e08b6834-212e-4220-8b3f-11f19de7997c",
+    "ok": true,
+    "total_ms": 106186,
+    "answer_intent": {
+      "output_shape": "quote"
+    },
+    "shape_override": null,
+    "lead_ref": {
+      "ref": "s3",
+      "shape": "quote",
+      "reason": "required_anchor_official"
+    },
+    "deterministic_branch": "statute_section_quote_refusal",
+    "limitation_flags": {
+      "missing_docket": false,
+      "statute_section": false,
+      "canonical_quote": false,
+      "missing_anchor_caveat_injected": true
+    },
+    "missing_anchor_descriptions": [
+      "הנוסח המחייב של סעיף 12 לחוק החוזים (חלק כללי)"
+    ],
+    "anchor_statuses": [],
+    "used_sources_count": 1,
+    "used_sources": [
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+        "title": "חוק החוזים (חלק כללי)",
+        "number": 1,
+        "origin": "local_db",
+        "source_type": "israeli_law",
+        "candidate_id": "8af25b4a-5302-4087-a00b-117afd96e531"
+      }
+    ],
+    "footnotes_count": 1,
+    "footnotes": [
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+        "title": "חוק החוזים (חלק כללי)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+            "title": "חוק החוזים (חלק כללי)",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "israeli_law"
+      }
+    ],
+    "quality_warnings": [],
+    "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 12 לחוק החוזים (חלק כללי); לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
+  },
+  {
+    "id": "Q03",
+    "category": "definition",
+    "query": "מהי הגדרת \"עובד\" בסעיף 1 לחוק הסכמים קיבוציים, התשי\"ז-1957?",
+    "run_id": "cad5463e-65e8-46c7-95f9-6bbfbd35548d",
+    "ok": true,
+    "total_ms": 118410,
+    "answer_intent": {
+      "output_shape": "quote"
+    },
+    "shape_override": null,
+    "lead_ref": {
+      "ref": "s2",
+      "shape": "quote",
+      "reason": "official_source_with_snippet"
     },
     "deterministic_branch": null,
     "limitation_flags": {
@@ -27,89 +175,107 @@
     "used_sources_count": 4,
     "used_sources": [
       {
-        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-        "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/directory-6-13/he/files_directory-collector_directory-6-13.pdf",
+        "title": "חוק הסכמים קיבוציים",
         "number": 1,
-        "origin": "local_db",
-        "source_type": "caselaw",
-        "candidate_id": "ea0295f7-69c1-43df-badd-a5861f67b667"
+        "origin": "perplexity",
+        "source_type": "legislation",
+        "candidate_id": "5d6e5883-39cc-4572-99c6-79e1d7611960"
       },
       {
-        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/3&fileName=SB3_10_5666-03.pdf&type=2",
-        "title": "בג\"ץ 5666-03 - עמותת קו לעובד נ. בית הדין הארצי לעבודה בירושלים",
+        "url": "https://fs.knesset.gov.il/3/law/3_lsr_208274.PDF",
+        "title": "חוק הסכמים קיבוציים, תשי\"ז-1957",
         "number": 1,
-        "origin": "local_db",
-        "source_type": "supreme_court_il",
-        "candidate_id": "2bcc7df3-7ebe-43ae-a622-a4a64ba9b2f4"
+        "origin": "perplexity",
+        "source_type": "legislation",
+        "candidate_id": "5569f921-f30d-4934-860a-33ba0e5f1e3f"
       },
       {
-        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1288-20-%d7%a9%d7%9e%d7%97%d7%94-%d7%93%d7%90%d7%95%d7%9f-%d7%a0-%d7%a0%d7%95%d7%a2%d7%9d-%d7%91%d7%a8%d7%9d-%d7%a2%d7%95%d7%93-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-        "title": "רע\"א 1288/20 שמחה דאון נ׳ נועם ברם עו\"ד החלטה (17.03.2020)",
-        "number": 2,
-        "origin": "local_db",
-        "source_type": "caselaw",
-        "candidate_id": "c70a43df-663b-442d-bc0b-8005c03cb5dd"
+        "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%9E%D7%97%D7%91%D7%A8%D7%AA%20%D7%91%D7%97%D7%99%D7%A0%D7%94-%20%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20%D7%91%D7%A8%20%D7%A6%D7%93%D7%A7%D7%94.pdf",
+        "title": "דיני עבודה - המכללה האקדמית נתניה (מחברת בחינה)",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "f74811e5-c262-4596-a943-adbd853892c1"
       },
       {
-        "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf",
-        "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח רשמי, סעיף 8)",
+        "url": "https://fs.knesset.gov.il/18/law/18_lsr_301045.pdf",
+        "title": "חוק הסכמים קיבוציים (תיקון מס' 8), התשס\"ט-2009",
         "number": 3,
         "origin": "perplexity",
         "source_type": "legislation",
-        "candidate_id": "89c20be9-ee58-4e2d-844a-43656880e574"
+        "candidate_id": "790b5df2-ba13-47ab-9775-95fb3084aade"
       }
     ],
-    "footnotes_count": 3,
+    "footnotes_count": 4,
     "footnotes": [
       {
-        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-        "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021); בג\"ץ 5666-03 - עמותת קו לעובד נ. בית הדין הארצי לעבודה בירושלים",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/directory-6-13/he/files_directory-collector_directory-6-13.pdf",
+        "title": "חוק הסכמים קיבוציים; חוק הסכמים קיבוציים, תשי\"ז-1957; דיני עבודה - המכללה האקדמית נתניה (מחברת בחינה)",
         "number": 1,
         "sources": [
           {
-            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-            "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
-            "source_type": "caselaw"
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/directory-6-13/he/files_directory-collector_directory-6-13.pdf",
+            "title": "חוק הסכמים קיבוציים",
+            "source_type": "legislation"
           },
           {
-            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/3&fileName=SB3_10_5666-03.pdf&type=2",
-            "title": "בג\"ץ 5666-03 - עמותת קו לעובד נ. בית הדין הארצי לעבודה בירושלים",
-            "source_type": "supreme_court_il"
+            "url": "https://fs.knesset.gov.il/3/law/3_lsr_208274.PDF",
+            "title": "חוק הסכמים קיבוציים, תשי\"ז-1957",
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%9E%D7%97%D7%91%D7%A8%D7%AA%20%D7%91%D7%97%D7%99%D7%A0%D7%94-%20%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20%D7%91%D7%A8%20%D7%A6%D7%93%D7%A7%D7%94.pdf",
+            "title": "דיני עבודה - המכללה האקדמית נתניה (מחברת בחינה)",
+            "source_type": "other"
           }
         ],
         "source_type": "compound"
       },
       {
-        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-        "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021); רע\"א 1288/20 שמחה דאון נ׳ נועם ברם עו\"ד החלטה (17.03.2020)",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/directory-6-13/he/files_directory-collector_directory-6-13.pdf",
+        "title": "חוק הסכמים קיבוציים",
         "number": 2,
         "sources": [
           {
-            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-            "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
-            "source_type": "caselaw"
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/directory-6-13/he/files_directory-collector_directory-6-13.pdf",
+            "title": "חוק הסכמים קיבוציים",
+            "source_type": "legislation"
+          }
+        ],
+        "source_type": "legislation"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/directory-6-13/he/files_directory-collector_directory-6-13.pdf",
+        "title": "חוק הסכמים קיבוציים; חוק הסכמים קיבוציים (תיקון מס' 8), התשס\"ט-2009",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/directory-6-13/he/files_directory-collector_directory-6-13.pdf",
+            "title": "חוק הסכמים קיבוציים",
+            "source_type": "legislation"
           },
           {
-            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1288-20-%d7%a9%d7%9e%d7%97%d7%94-%d7%93%d7%90%d7%95%d7%9f-%d7%a0-%d7%a0%d7%95%d7%a2%d7%9d-%d7%91%d7%a8%d7%9d-%d7%a2%d7%95%d7%93-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-            "title": "רע\"א 1288/20 שמחה דאון נ׳ נועם ברם עו\"ד החלטה (17.03.2020)",
-            "source_type": "caselaw"
+            "url": "https://fs.knesset.gov.il/18/law/18_lsr_301045.pdf",
+            "title": "חוק הסכמים קיבוציים (תיקון מס' 8), התשס\"ט-2009",
+            "source_type": "legislation"
           }
         ],
         "source_type": "compound"
       },
       {
-        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-        "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021); חוק-יסוד: כבוד האדם וחירותו (נוסח רשמי, סעיף 8)",
-        "number": 3,
+        "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%9E%D7%97%D7%91%D7%A8%D7%AA%20%D7%91%D7%97%D7%99%D7%A0%D7%94-%20%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20%D7%91%D7%A8%20%D7%A6%D7%93%D7%A7%D7%94.pdf",
+        "title": "דיני עבודה - המכללה האקדמית נתניה (מחברת בחינה); חוק הסכמים קיבוציים, תשי\"ז-1957",
+        "number": 4,
         "sources": [
           {
-            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-            "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
-            "source_type": "caselaw"
+            "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%9E%D7%97%D7%91%D7%A8%D7%AA%20%D7%91%D7%97%D7%99%D7%A0%D7%94-%20%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20%D7%91%D7%A8%20%D7%A6%D7%93%D7%A7%D7%94.pdf",
+            "title": "דיני עבודה - המכללה האקדמית נתניה (מחברת בחינה)",
+            "source_type": "other"
           },
           {
-            "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf",
-            "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח רשמי, סעיף 8)",
+            "url": "https://fs.knesset.gov.il/3/law/3_lsr_208274.PDF",
+            "title": "חוק הסכמים קיבוציים, תשי\"ז-1957",
             "source_type": "legislation"
           }
         ],
@@ -117,15 +283,15 @@
       }
     ],
     "quality_warnings": [],
-    "answer": "**עיקרי ההכרעה בבג\"ץ קעדאן 6698/95**\n\nבפסק־דין המקושר לנושא (כצוטט והוזכר בפסיקה מאוחרת יותר), נקבע כי רשות המינהלית המנהלת מקרקעי הציבור אינה רשאית להקצות קרקע למגורים תוך אפליה מחמת לאום; עקרון השוויון חלה גם על מדיניות והחלטות ההקצאה של מקרקעין ציבוריים.¹\n\nהפסיקה הדגישה כי אין מקום לעקוף איסור אפליה על ידי הסמכת גוף חיצוני: כאשר גוף פרטי פועל כשולח או כנציג המדינה בהקצאות קרקע ציבורית, הוא כפוף לעקרונות המשפט הציבורי — ובכלל זה לחובת השוויון.¹\n\nבאשר לסעד, בית־המשפט ביטל את ההחלטה שניתנה לגבי סירוב הקליטה מטעמי לאום והורה על החזרת העניין לשיקול הרשות לשקול את בקשתם מחדש על יסוד עקרון השוויון; לא ניתנה פקודה לחייב קבלה מיידית של העותרים.²\n\nבנימוקי הפסיקה הושמע קישור בין איסור האפליה לבין ערכי היסוד החוקתיים, ובהם כבוד האדם; מבחינת המסגרת החוקתית הדבר נקשר לפסקת ההגבלה שבחוק‑יסוד: כבוד האדם וחירותו, אם כי יש לפרש ולהפעיל את מסגרת הפסקה על פי מבחני ההגבלה המקובלים.³\n\nהבהרה והגבלות: התמצית לעיל עומדת במסגרת המקורות שסופקו — היא מבוססת על האזכורים והדיונים בפסיקה המאוחרת ובחומר המשני. אם נדרש ציטוט מדויק מהטקסט המלא של פסק‑דין קעדאן 6698/95 או ניתוח מפורט של מבחני ההסברה שהוטלו בו, יש להביא את נוסח הפסק‑דין המלא לצורך בדיקה מעמיקה יותר."
+    "answer": "מענה תמציתי: בסעיף 1 לחוק הסכמים קיבוציים, תשי\"ז‑1957 אין הגדרה של המונח \"עובד\"; סעיף 1 עוסק בהגדרת המונח \"הסכם קיבוצי\" ובלשון החוק המלא כפי שמתפרסם רשמית.¹\n\n\"החוק מגדיר 'הסכם קיבוצי' כהסכם בין מעסיק או ארגון מעבידים לבין ארגון עובדים שנעשה והוגש לרישום לפי החוק, בענייני קבלת אדם לעבודה או סיום עבודתו, תנאי עבודה, יחסי עבודה, זכויות וחובות של הארגונים בעלי ההסכם, או בחלק מעניינים אלה.\",²\n\nהאם נוסח הסעיף השתנה מאז החקיקה המקורית ומיהו הנוסח המחייב היום: נוסח החוק המחייב כיום מופיע בגוף החוק כפי שמתפרסם באתר הרשמי (s2). מתוך המקורות שסופקו לא עולה כי נוסח סעיף 1 תוקן כדי להוסיף הגדרה של \"עובד\"; תיקון מס' 8 (2009) שהופיע במסמכי תיקון החקיקה הוסיף את סעיף 33ח אך אינו מציג הגדרה של \"עובד\" בסעיף 1.³\n\nהאם קיימת פסיקה מחייבת המפרשת את המונח \"עובד\" לפי סעיף 1: במקורות שסופקו אין פסקי דין של בית המשפט העליון או של בתי הדין שפורטו ומפרשים באופן מחייב את המונח \"עובד\" בהיקף של סעיף 1. חומרי לימוד שנכללו מציינים כי החוק עצמו אינו מגדיר את המונח, אך אין במקורות הללו פסיקה מחייבת המתמצתת את פירוש המונח לחוק זה; לשם קבלת פירוש שיפוטי יש לעיין בפסיקה שלא נכללה בחומרים שסופקו כאן.⁴\n\nמסקנה קצרה: אין בסעיף 1 הגדרה של \"עובד\"; סעיף 1 מגדיר את \"הסכם קיבוצי\" (ראה הציטוט לעיל), והגדרת היקף המונח \"עובד\" צריכה להסתמך על פסיקה והלכות בדיני עבודה שאינן מצויות במסמכים שסופקו."
   },
   {
-    "id": "B3",
-    "category": "statute_section",
-    "query": "מה קובע סעיף 6 לחוק החברות, התשנ\"ט-1999 בעניין הרמת מסך ומהם התנאים להפעלת הסמכות?",
-    "run_id": "6c174a8b-4d80-430e-9082-307d6f5394ac",
+    "id": "Q18",
+    "category": "quote",
+    "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+    "run_id": "4c472901-8575-42dc-ad78-11e701567070",
     "ok": true,
-    "total_ms": 162939,
+    "total_ms": 110102,
     "answer_intent": {
       "output_shape": "quote"
     },
@@ -143,531 +309,46 @@
       "missing_anchor_caveat_injected": true
     },
     "missing_anchor_descriptions": [
-      "הנוסח המחייב של סעיף 6 לחוק החברות"
+      "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו"
     ],
-    "anchor_statuses": [],
-    "used_sources_count": 1,
-    "used_sources": [
-      {
-        "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
-        "title": "חוק החברות, התש\"ט-1999 - רשות ניירות ערך",
-        "number": 1,
-        "origin": "perplexity",
-        "source_type": "legislation",
-        "candidate_id": "99e4b694-1f0a-4079-bf40-8df10dad8894"
-      }
-    ],
-    "footnotes_count": 1,
-    "footnotes": [
-      {
-        "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
-        "title": "חוק החברות, התש\"ט-1999 - רשות ניירות ערך",
-        "number": 1,
-        "sources": [
-          {
-            "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
-            "title": "חוק החברות, התש\"ט-1999 - רשות ניירות ערך",
-            "source_type": "legislation"
-          }
-        ],
-        "source_type": "legislation"
-      }
-    ],
-    "quality_warnings": [],
-    "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 6 לחוק החברות; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
-  },
-  {
-    "id": "B4",
-    "category": "statute_section",
-    "query": "מה קובע סעיף 12 לחוק החוזים (חלק כללי), התשל\"ג-1973 בעניין תום לב במשא ומתן, ומה הסעד?",
-    "run_id": "0db06489-3ee8-41cb-a208-f48e02ef84db",
-    "ok": true,
-    "total_ms": 152428,
-    "answer_intent": {
-      "output_shape": "definition"
-    },
-    "shape_override": null,
-    "lead_ref": {
-      "ref": "s7",
-      "shape": "definition",
-      "reason": "required_anchor_statute"
-    },
-    "deterministic_branch": null,
-    "limitation_flags": {
-      "missing_docket": false,
-      "statute_section": false,
-      "canonical_quote": false,
-      "missing_anchor_caveat_injected": false
-    },
-    "missing_anchor_descriptions": [],
-    "anchor_statuses": [],
-    "used_sources_count": 11,
-    "used_sources": [
-      {
-        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
-        "title": "חוק החוזים (חלק כללי)",
-        "number": 1,
-        "origin": "local_db",
-        "source_type": "israeli_law",
-        "candidate_id": "ed161fd6-c8a2-4281-89f5-2c83d90f5160"
-      },
-      {
-        "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
-        "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
-        "number": 1,
-        "origin": "perplexity",
-        "source_type": "legislation",
-        "candidate_id": "d3820534-54fc-4eed-b1df-187844cf20ed"
-      },
-      {
-        "url": "https://www.nevo.co.il/law_html/law01/999_155.htm",
-        "title": "פס\"ד חיים נ' חיים – בית המשפט העליון",
-        "number": 2,
-        "origin": "perplexity",
-        "source_type": "legislation",
-        "candidate_id": "184e6482-78b3-4c60-84c4-87a9fe83ef1a"
-      },
-      {
-        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-10582-02",
-        "title": "פסק-דין בתיק ע\"א 10582/02",
-        "number": 3,
-        "origin": "perplexity",
-        "source_type": "caselaw",
-        "candidate_id": "7a29b0ee-0ebf-4935-8dfe-59d196bb3e1f"
-      },
-      {
-        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96ה_0.pdf",
-        "title": "תום לב בחוזים ואשם ביצירת החוזה",
-        "number": 4,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "3c34444c-34f8-4682-854c-bbbbd29b0a67"
-      },
-      {
-        "url": "https://www.nevo.co.il/law_html/law01/999_100.htm",
-        "title": "חובת הגילוי במשא ומתן – פסיקת בית המשפט העליון",
-        "number": 5,
-        "origin": "perplexity",
-        "source_type": "legislation",
-        "candidate_id": "59c6d192-de9b-4e4d-afcb-2a2d155183ec"
-      },
-      {
-        "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
-        "title": "תרומתה של השופטת בן־פורת לעיצובו של תום הלב במשא ומתן",
-        "number": 5,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "f91ab8f8-a17e-4cf9-988e-bf0cc6a95124"
-      },
-      {
-        "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/Volume_J/11RosenZvi.pdf",
-        "title": "(מעשי משפט) היקף חובות הגילוי המוטלות על צדדים למשא ומתן",
-        "number": 5,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "2260af3e-234e-4c41-944b-ede4e111efd2"
-      },
-      {
-        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C02/090/030/s08&fileName=02030090.s08&type=4",
-        "title": "ע\"א 02030090.S08",
-        "number": 8,
-        "origin": "perplexity",
-        "source_type": "caselaw",
-        "candidate_id": "d550333d-e599-49bd-b34d-5b0837cbf2d3"
-      },
-      {
-        "url": "https://www.nevo.co.il/law_html/law00/74849.htm",
-        "title": "חוק בתי המשפט [נוסח משולב], תשמ\"ד-1984",
-        "number": 8,
-        "origin": "perplexity",
-        "source_type": "legislation",
-        "candidate_id": "773a560d-5c59-463d-a096-22795952f34f"
-      },
-      {
-        "url": "https://www.nevo.co.il/law_html/law00/157751.htm",
-        "title": "תקנות סדר הדין האזרחי, תשע\"ט-2018",
-        "number": 9,
-        "origin": "perplexity",
-        "source_type": "legislation",
-        "candidate_id": "3a7c9906-b97a-41bf-bd64-106af600f794"
-      }
-    ],
-    "footnotes_count": 10,
-    "footnotes": [
-      {
-        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
-        "title": "חוק החוזים (חלק כללי); חוק החוזים (חלק כללי), תשל\"ג-1973",
-        "number": 1,
-        "sources": [
-          {
-            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
-            "title": "חוק החוזים (חלק כללי)",
-            "source_type": "israeli_law"
-          },
-          {
-            "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
-            "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
-            "source_type": "legislation"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://www.nevo.co.il/law_html/law01/999_155.htm",
-        "title": "פס\"ד חיים נ' חיים – בית המשפט העליון",
-        "number": 2,
-        "sources": [
-          {
-            "url": "https://www.nevo.co.il/law_html/law01/999_155.htm",
-            "title": "פס\"ד חיים נ' חיים – בית המשפט העליון",
-            "source_type": "legislation"
-          }
-        ],
-        "source_type": "legislation"
-      },
-      {
-        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-10582-02",
-        "title": "פסק-דין בתיק ע\"א 10582/02; פס\"ד חיים נ' חיים – בית המשפט העליון",
-        "number": 3,
-        "sources": [
-          {
-            "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-10582-02",
-            "title": "פסק-דין בתיק ע\"א 10582/02",
-            "source_type": "caselaw"
-          },
-          {
-            "url": "https://www.nevo.co.il/law_html/law01/999_155.htm",
-            "title": "פס\"ד חיים נ' חיים – בית המשפט העליון",
-            "source_type": "legislation"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96ה_0.pdf",
-        "title": "תום לב בחוזים ואשם ביצירת החוזה",
-        "number": 4,
-        "sources": [
-          {
-            "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96ה_0.pdf",
-            "title": "תום לב בחוזים ואשם ביצירת החוזה",
-            "source_type": "other"
-          }
-        ],
-        "source_type": "other"
-      },
-      {
-        "url": "https://www.nevo.co.il/law_html/law01/999_100.htm",
-        "title": "חובת הגילוי במשא ומתן – פסיקת בית המשפט העליון; תרומתה של השופטת בן־פורת לעיצובו של תום הלב במשא ומתן; (מעשי משפט) היקף חובות הגילוי המוטלות על צדדים למשא ומתן",
-        "number": 5,
-        "sources": [
-          {
-            "url": "https://www.nevo.co.il/law_html/law01/999_100.htm",
-            "title": "חובת הגילוי במשא ומתן – פסיקת בית המשפט העליון",
-            "source_type": "legislation"
-          },
-          {
-            "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
-            "title": "תרומתה של השופטת בן־פורת לעיצובו של תום הלב במשא ומתן",
-            "source_type": "other"
-          },
-          {
-            "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/Volume_J/11RosenZvi.pdf",
-            "title": "(מעשי משפט) היקף חובות הגילוי המוטלות על צדדים למשא ומתן",
-            "source_type": "other"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/Volume_J/11RosenZvi.pdf",
-        "title": "(מעשי משפט) היקף חובות הגילוי המוטלות על צדדים למשא ומתן; תרומתה של השופטת בן־פורת לעיצובו של תום הלב במשא ומתן",
-        "number": 6,
-        "sources": [
-          {
-            "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/Volume_J/11RosenZvi.pdf",
-            "title": "(מעשי משפט) היקף חובות הגילוי המוטלות על צדדים למשא ומתן",
-            "source_type": "other"
-          },
-          {
-            "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
-            "title": "תרומתה של השופטת בן־פורת לעיצובו של תום הלב במשא ומתן",
-            "source_type": "other"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
-        "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
-        "number": 7,
-        "sources": [
-          {
-            "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
-            "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
-            "source_type": "legislation"
-          }
-        ],
-        "source_type": "legislation"
-      },
-      {
-        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C02/090/030/s08&fileName=02030090.s08&type=4",
-        "title": "ע\"א 02030090.S08; חוק בתי המשפט [נוסח משולב], תשמ\"ד-1984",
-        "number": 8,
-        "sources": [
-          {
-            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C02/090/030/s08&fileName=02030090.s08&type=4",
-            "title": "ע\"א 02030090.S08",
-            "source_type": "caselaw"
-          },
-          {
-            "url": "https://www.nevo.co.il/law_html/law00/74849.htm",
-            "title": "חוק בתי המשפט [נוסח משולב], תשמ\"ד-1984",
-            "source_type": "legislation"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
-        "title": "חוק החוזים (חלק כללי), תשל\"ג-1973; ע\"א 02030090.S08; תקנות סדר הדין האזרחי, תשע\"ט-2018",
-        "number": 9,
-        "sources": [
-          {
-            "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
-            "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
-            "source_type": "legislation"
-          },
-          {
-            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C02/090/030/s08&fileName=02030090.s08&type=4",
-            "title": "ע\"א 02030090.S08",
-            "source_type": "caselaw"
-          },
-          {
-            "url": "https://www.nevo.co.il/law_html/law00/157751.htm",
-            "title": "תקנות סדר הדין האזרחי, תשע\"ט-2018",
-            "source_type": "legislation"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
-        "title": "חוק החוזים (חלק כללי); חוק החוזים (חלק כללי), תשל\"ג-1973; ע\"א 02030090.S08",
-        "number": 10,
-        "sources": [
-          {
-            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
-            "title": "חוק החוזים (חלק כללי)",
-            "source_type": "israeli_law"
-          },
-          {
-            "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
-            "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
-            "source_type": "legislation"
-          },
-          {
-            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C02/090/030/s08&fileName=02030090.s08&type=4",
-            "title": "ע\"א 02030090.S08",
-            "source_type": "caselaw"
-          }
-        ],
-        "source_type": "compound"
-      }
-    ],
-    "quality_warnings": [],
-    "answer": "נוסח סעיף 12 לחוק החוזים (חלק כללי), התשל\"ג-1973: \"סעיף 12. (א) במשא ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך מקובלת ובתום לב. (ב) צד שלא נהג בדרך מקובלת ולא בתום-לב חייב לצד השני פיצויים בעד הנזק שנגרם לו עקב המשא ומתן או עקב כריתת החוזה.\".¹\n\nהמשמעות החוקית הבסיסית: הסעיף קובע חובת תום לב ייחודית לשלב המשא ומתן לקראת חוזה — חובת נהיגה בדרך מקובלת ובתום לב — ומצמיד לה אחריות פיצויים אזרחית למקרה של אי־קיום החובה, כלומר קובע מקור משפטי לתביעה לפיצויים בגין נזק שנגרם עקב המשא ומתן או עקב כריתת החוזה.¹\n\nמתי חלה החובה: סעיף 12 חלה בשלב הטרום‑חוזי — שלב המשא ומתן עצמו, כלומר לפני כריתת החוזה; הפסיקה העל־תיכונית הבהירה במפורש כי החובה חלה כבר בשלב זה של המשא ומתן.²\n\nעל מי חלה החובה: החובה חלה על הצדדים המנהלים את המשא ומתן; בפסיקה הובהר כי גם פעולותיהם של מי שמנהלים את המשא ומתן מטעם תאגיד עשויות לעגן אחריות אישית של האורגן כשהתנהלותם לא היתה בתום לב.³\n\nשאלת היקף היחסיות והחלה כלפי שלישיים: בספרות נדונה השאלה האם ההתחייבות מוגבלת רק בין הצדדים למשא ומתן או שהיא עשויה להשפיע גם ביחסים כלפי שלישיים; בדיון זה קיימת השונה דוקטרינרית ולא ניתן להפיק מסקנה חותכת מן החוק בלבד — יש דיון תיאורטי ופסיקתי סביב גבולות החובה.⁴\n\nמה נחשב להפרה — התנהגויות אופייניות: הפסיקה והספרות מזהים בין היתר הטעיה או מתן מידע מטעה, הימנעות מגילוי מידע מהותי כשהנסיבות מחייבות גילוי, ועשיית הצהרות או הבטחות שלכאורה מעודדות הסתמכות שאינן נענות בפועל. בפסיקה נקבע כי קיימת לעתים חובת גילוי יזום של מידע מהותי במהלך המשא ומתן.⁵\n\nהסטנדרט שנדרש: קיימת התפתחות דוקטרינרית ופסיקתית בשאלה אם החובה היא סובייקטיבית או אובייקטיבית; יש דיעות בפסיקה ובספרות שהטוּחוֹת נוטות לנסח את החובה באופן אובייקטיבי לפי סטנדרטים ערכיים של נורמות המקובלות, אך טענה זו בספרות נתונה לניתוח ולא ניתן להכריז על אופי יחיד וסופי ללא התייחסות מקרה‑מקרה.⁶\n\nהסעד המפורש בחוק: חוק החוזים קובע באופן מפורש כי מי שלא נוהג בדרך מקובלת ובתום לב \"חייב לצד השני פיצויים בעד הנזק שנגרם לו\" עקב המשא ומתן או עקב כריתת החוזה — כלומר הסעד הכספי של פיצוי על נזק הוא סעד סטטוטורי.⁷\n\nסעדים נוספים ובכוח בית המשפט: בפסיקה נקבע כי סוג וספרת הסעד שיירשמו תלויים בנסיבות המקרה, ובית המשפט רשאי במקרים מסוימים להורות על סעד זמני או להבטיח את ביצוע פסק‑דין; בנוסף, סמכותם של בתי המשפט להעמיד צווים והצהרות מאפשרת מתן סעדים שאינם רק כספיים במידת הצורך, אם נסיבות העניין מצדיקות זאת.⁸\n\nתנאי מימוש הסעד והאמצעים הפרוצדורליים: כדי לממש תביעה לפי סעיף 12 נדרש להראות נזק שנגרם עקב המשא ומתן או הכריתה וקשר סיבתי בין ההתנהגות שלא בתום לב לבין הנזק; בהליך עצמאו ייתכנו גם בקשות לסעד זמני ולהבטחת ביצוע בהתאם לכללים הפרוצדורליים הנהוגים בכלל ההליכים האזרחיים ולתקנות סדר הדין.⁹\n\nמסקנה תמציתית: סעיף 12 מטיל חובה חוקית לנהוג בתום לב במהלך המשא ומתן ומספק סעד פיצוי כספי לנפגע; היקף החובה, הסטנדרט הקונקרטי ומגבלות החלה על שלישיים נקבעים באמצעות הפסיקה והדיון הספרותי, והסעד המעשי שיינתן בפועל תלוי בנסיבות המקרה ובהוכחת הנזק וקשר הסיבתי.¹⁰"
-  },
-  {
-    "id": "Q03",
-    "category": "definition",
-    "query": "מהי הגדרת \"עובד\" בסעיף 1 לחוק הסכמים קיבוציים, התשי\"ז-1957?",
-    "run_id": "4c0bbea5-bede-4654-9ad4-8ba46a91f938",
-    "ok": true,
-    "total_ms": 133100,
-    "answer_intent": {
-      "output_shape": "definition"
-    },
-    "shape_override": null,
-    "lead_ref": {
-      "ref": "s4",
-      "shape": "definition",
-      "reason": "primary_statute"
-    },
-    "deterministic_branch": null,
-    "limitation_flags": {
-      "missing_docket": false,
-      "statute_section": false,
-      "canonical_quote": false,
-      "missing_anchor_caveat_injected": false
-    },
-    "missing_anchor_descriptions": [],
-    "anchor_statuses": [],
-    "used_sources_count": 5,
-    "used_sources": [
-      {
-        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A1%D7%9B%D7%9E%D7%99%D7%9D_%D7%A7%D7%99%D7%91%D7%95%D7%A6%D7%99%D7%99%D7%9D",
-        "title": "חוק הסכמים קיבוציים",
-        "number": 1,
-        "origin": "local_db",
-        "source_type": "israeli_law",
-        "candidate_id": "39ac8c52-ba9f-4bae-846b-810ce18359c9"
-      },
-      {
-        "url": "https://fs.knesset.gov.il/8/law/8_lsr_208278.PDF",
-        "title": "חוק הסכמים קיבוציים (תיקון מס' 2), תשל\"ו-1976",
-        "number": 2,
-        "origin": "perplexity",
-        "source_type": "legislation",
-        "candidate_id": "d8eb3bac-4b85-49b5-afad-6eb13f85cfc4"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/general/collective-labor-agreement-and-extension-orders",
-        "title": "הסכמים קיבוציים וצווי הרחבה",
-        "number": 3,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "db728ad6-300b-4414-8eb5-c6f41c8a38b5"
-      },
-      {
-        "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/Volume_K/11_Lifshitz.pdf",
-        "title": "מקור אקדמי מתוך אתר אקדמי (law.tau.ac.il)",
-        "number": 3,
-        "origin": "perplexity",
-        "source_type": "academic",
-        "candidate_id": "176516a5-0a26-418d-bfa1-d8c28e5f13d2"
-      },
-      {
-        "url": "https://lawjournal.huji.ac.il/sites/default/files/2019-02/%D7%9C%D7%9E%D7%94%20%D7%A9%D7%9C%D7%99%D7%A9-%20%D7%A2%D7%9C%20%D7%99%D7%A6%D7%99%D7%92%D7%95%D7%AA,%20%D7%97%D7%99%D7%A8%D7%95%D7%AA%20%D7%95%D7%99%D7%A6%D7%99%D7%91%D7%95%D7%AA%20%D7%91%D7%משפט%20העבודה%20הקיבוצי.pdf",
-        "title": "למה שליש? על ייצוגיות, חירות ויציבות במשפט העבודה הקיבוצי",
-        "number": 3,
-        "origin": "perplexity",
-        "source_type": "academic",
-        "candidate_id": "c1cfed92-a7dc-4b8a-835d-e1ea64e371f2"
-      }
-    ],
-    "footnotes_count": 3,
-    "footnotes": [
-      {
-        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A1%D7%9B%D7%9E%D7%99%D7%9D_%D7%A7%D7%99%D7%91%D7%95%D7%A6%D7%99%D7%99%D7%9D",
-        "title": "חוק הסכמים קיבוציים",
-        "number": 1,
-        "sources": [
-          {
-            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A1%D7%9B%D7%9E%D7%99%D7%9D_%D7%A7%D7%99%D7%91%D7%95%D7%A6%D7%99%D7%99%D7%9D",
-            "title": "חוק הסכמים קיבוציים",
-            "source_type": "israeli_law"
-          }
-        ],
-        "source_type": "israeli_law"
-      },
-      {
-        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A1%D7%9B%D7%9E%D7%99%D7%9D_%D7%A7%D7%99%D7%91%D7%95%D7%A6%D7%99%D7%99%D7%9D",
-        "title": "חוק הסכמים קיבוציים; חוק הסכמים קיבוציים (תיקון מס' 2), תשל\"ו-1976",
-        "number": 2,
-        "sources": [
-          {
-            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A1%D7%9B%D7%9E%D7%99%D7%9D_%D7%A7%D7%99%D7%91%D7%95%D7%A6%D7%99%D7%99%D7%9D",
-            "title": "חוק הסכמים קיבוציים",
-            "source_type": "israeli_law"
-          },
-          {
-            "url": "https://fs.knesset.gov.il/8/law/8_lsr_208278.PDF",
-            "title": "חוק הסכמים קיבוציים (תיקון מס' 2), תשל\"ו-1976",
-            "source_type": "legislation"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/general/collective-labor-agreement-and-extension-orders",
-        "title": "הסכמים קיבוציים וצווי הרחבה; מקור אקדמי מתוך אתר אקדמי (law.tau.ac.il); למה שליש? על ייצוגיות, חירות ויציבות במשפט העבודה הקיבוצי",
-        "number": 3,
-        "sources": [
-          {
-            "url": "https://www.gov.il/he/departments/general/collective-labor-agreement-and-extension-orders",
-            "title": "הסכמים קיבוציים וצווי הרחבה",
-            "source_type": "other"
-          },
-          {
-            "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/Volume_K/11_Lifshitz.pdf",
-            "title": "מקור אקדמי מתוך אתר אקדמי (law.tau.ac.il)",
-            "source_type": "academic"
-          },
-          {
-            "url": "https://lawjournal.huji.ac.il/sites/default/files/2019-02/%D7%9C%D7%9E%D7%94%20%D7%A9%D7%9C%D7%99%D7%A9-%20%D7%A2%D7%9C%20%D7%99%D7%A6%D7%99%D7%92%D7%95%D7%AA,%20%D7%97%D7%99%D7%A8%D7%95%D7%AA%20%D7%95%D7%99%D7%A6%D7%99%D7%91%D7%95%D7%AA%20%D7%91%D7%משפט%20העבודה%20הקיבוצי.pdf",
-            "title": "למה שליש? על ייצוגיות, חירות ויציבות במשפט העבודה הקיבוצי",
-            "source_type": "academic"
-          }
-        ],
-        "source_type": "compound"
-      }
-    ],
-    "quality_warnings": [],
-    "answer": "בסעיף 1 לחוק הסכמים קיבוציים, התשי״ז-1957, כפי שמפורסם בנוסח החוק, אין הגדרה מפורשת של המונח \"עובד\" — סעיף 1 עוסק בהגדרת \"הסכם קיבוצי\" ובמונחים תכליתיים אחרים, אך לא מנסח הגדרה מקובעת ל\"עובד\".¹\n\nאין לפיכך \"לצטט\" נוסח הגדרה של המונח \"עובד\" מתוך סעיף 1, כיון שסעיף זה אינו מכיל נוסח מילולי המגדיר את המונח; במקום זאת סעיף 1 מנסח את היקף ההסכם הקיבוצי כיחס בין מעסיק או ארגון מעבידים לבין ארגון עובדים וסוקר ענייני יישומו (קבלת אדם לעבודה, סיום עבודתו, תנאי עבודה וכו').¹\n\nהאם נוסח הסעיף שונה בתיקונים: בחומר שסופק מופיעה רשימת תיקונים לאורך השנים (ביניהם תיקון תשל\"ו) והמסמכים המשפטיים הרשמיים של התיקונים זמינים; עם זאת, אין בנתונים שסופקו חיזוק שמצביע על הכנסת הגדרה ספציפית חדשה ל\"עובד\" בסעיף 1. כדי לקבוע בוודאות היסטורית יש להשוות נוסחי הסעיף בכל גרסאות התיקון (ראו נוסח התיקון בתשל\"ו כמקור לבדיקה).²\n\nכיצד הפסיקה מפרשת: מן המקורות הנוספים שבידינו עולה בזהירות כי בתי הדין לעבודה ובית המשפט מתייחסים לשאלות הכללת יחידים בהיקף הסכמים קיבוציים על פי מבחנים עובד־עובדיים ועקרון יחידת המיקוח, ולא על בסיס הגדרה מילולית אחת בסעיף 1; סוגיות כמו תחולתם של הסכמים על עובדי מדינה, עצמאים או סטודנטים נבחנות בשים לב לנסיבות העובדתיות, ליחסי העבודה ואופן ביטוי ההסכמה/צווי ההרחבה, כפי שעולה בדיונים על תחולת צווי הרחבה ויחידת המיקוח. יש לפרש ממצאים אלה בזהירות, כי המקורות האקדמיים והממשלתיים שבחומר מספקים תמיכה חלקית בלבד לפרשנות הפסיקתית הרחבה.³\n\nמסקנה מעשית קצרה: סעיף 1 אינו מספק הגדרה סגורה של \"עובד\"; לפיכך קביעת מעמדו של אדם לצורכי חוק זה תלויה בהערכת הנסיבות ובפסיקה/בהחלטות מנהליות הרלבנטיות (הסכם קיבוצי, צו הרחבה, ותבחינים עובדיים), ולא בהסתמך על הגדרה מפורשת בסעיף 1 בלבד."
-  },
-  {
-    "id": "Q18",
-    "category": "quote",
-    "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
-    "run_id": "65e6f556-caf2-4a89-a23c-8384b2381f0b",
-    "ok": true,
-    "total_ms": 80572,
-    "answer_intent": {
-      "output_shape": "quote"
-    },
-    "shape_override": null,
-    "lead_ref": {
-      "ref": "r_basic_law_dignity-s1",
-      "shape": "quote",
-      "reason": "canonical_registry_statute_section"
-    },
-    "deterministic_branch": "canonical_quote_registry",
-    "limitation_flags": {
-      "missing_docket": false,
-      "statute_section": false,
-      "canonical_quote": true,
-      "missing_anchor_caveat_injected": false
-    },
-    "missing_anchor_descriptions": [],
     "anchor_statuses": [],
     "used_sources_count": 1,
     "used_sources": [
       {
         "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
-        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+        "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח מאוחד/מעודכן)",
         "number": 1,
-        "origin": "local_db",
-        "source_type": "israeli_law",
-        "candidate_id": "canonical:basic_law_dignity-s1"
+        "origin": "perplexity",
+        "source_type": "legislation",
+        "candidate_id": "4bf8a9c8-3138-4fb7-ab9e-192602e2d28a"
       }
     ],
     "footnotes_count": 1,
     "footnotes": [
       {
         "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
-        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+        "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח מאוחד/מעודכן)",
         "number": 1,
         "sources": [
           {
             "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
-            "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
-            "source_type": "israeli_law"
+            "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח מאוחד/מעודכן)",
+            "source_type": "legislation"
           }
         ],
-        "source_type": "israeli_law"
+        "source_type": "legislation"
       }
     ],
     "quality_warnings": [],
-    "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹"
+    "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
   },
   {
     "id": "Q02",
     "category": "case_holding",
     "query": "מה נפסק בע\"א 8163/05 הדר חברה לביטוח בע\"מ נ' פלוני ביחס לנטל ההוכחה בתביעות ביטוח נזקי גוף?",
-    "run_id": "47d9e1d2-e341-4147-85bb-376455c6abfa",
+    "run_id": "ec3034c4-73c5-4dd5-aceb-e52963a9a69a",
     "ok": true,
-    "total_ms": 112306,
+    "total_ms": 137341,
     "answer_intent": {
       "output_shape": "case_holding"
     },
@@ -699,9 +380,9 @@
     "id": "F5",
     "category": "missing_docket",
     "query": "מה נקבע בת\"א 12345-01-24 חברת גמא נ' חברת דלתא ביחס להפרת חוזה מסחרי?",
-    "run_id": "1434bc1a-7a4c-497b-9b20-6cbf362fb97c",
+    "run_id": "2d8df23c-f263-4b8d-bb49-946c524a38d1",
     "ok": true,
-    "total_ms": 126142,
+    "total_ms": 106696,
     "answer_intent": {
       "output_shape": "case_holding"
     },
@@ -733,169 +414,7 @@
     "id": "B1",
     "category": "case_holding",
     "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי ביחס למעמדם של חוקי היסוד ולסמכות הביקורת השיפוטית על חקיקה ראשית?",
-    "run_id": "4fcaf1d2-0bcb-4fb4-998f-467fb34d5c65",
-    "ok": true,
-    "total_ms": 115793,
-    "answer_intent": {
-      "output_shape": "case_holding"
-    },
-    "shape_override": null,
-    "lead_ref": {
-      "ref": "s2",
-      "shape": "case_holding",
-      "reason": "required_anchor_case"
-    },
-    "deterministic_branch": null,
-    "limitation_flags": {
-      "missing_docket": false,
-      "statute_section": false,
-      "canonical_quote": false,
-      "missing_anchor_caveat_injected": false
-    },
-    "missing_anchor_descriptions": [],
-    "anchor_statuses": [],
-    "used_sources_count": 6,
-    "used_sources": [
-      {
-        "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-        "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
-        "number": 1,
-        "origin": "perplexity",
-        "source_type": "caselaw",
-        "candidate_id": "68b735e2-13ad-4ce6-a5ea-7850be86c824"
-      },
-      {
-        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-segal.pdf",
-        "title": "בג״ץ במרקם החברה הישראלית – לאחר חמישים שנה",
-        "number": 1,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "459134f2-c1f8-49ce-97e5-cd190322a9d5"
-      },
-      {
-        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-zamir-1.pdf",
-        "title": "הביקורת השיפוטית על חוקיות חוקים",
-        "number": 2,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "30df6ce6-6667-4dcc-8a63-7d58a953061c"
-      },
-      {
-        "url": "https://lawjournal.huji.ac.il/sites/default/files/2024-12/%D7%91%D7%A8%D7%A7%20%D7%9E%D7%93%D7%99%D7%A0%D7%94.pdf",
-        "title": "סמכות בתי המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות",
-        "number": 2,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "154e345c-53f8-42d3-899f-361c0338395b"
-      },
-      {
-        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
-        "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
-        "number": 3,
-        "origin": "local_db",
-        "source_type": "journal_article",
-        "candidate_id": "78cad502-5248-4466-a88e-7fc60d43470f"
-      },
-      {
-        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-mermor.pdf",
-        "title": "מסמך מאתר אתר אקדמי (law.haifa.ac.il)",
-        "number": 4,
-        "origin": "perplexity",
-        "source_type": "other",
-        "candidate_id": "4eaa2fb3-5d67-4fea-aaf4-31b373d3af59"
-      }
-    ],
-    "footnotes_count": 4,
-    "footnotes": [
-      {
-        "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-        "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי; בג״ץ במרקם החברה הישראלית – לאחר חמישים שנה",
-        "number": 1,
-        "sources": [
-          {
-            "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-            "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
-            "source_type": "caselaw"
-          },
-          {
-            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-segal.pdf",
-            "title": "בג״ץ במרקם החברה הישראלית – לאחר חמישים שנה",
-            "source_type": "other"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-        "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי; הביקורת השיפוטית על חוקיות חוקים; סמכות בתי המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות",
-        "number": 2,
-        "sources": [
-          {
-            "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-            "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
-            "source_type": "caselaw"
-          },
-          {
-            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-zamir-1.pdf",
-            "title": "הביקורת השיפוטית על חוקיות חוקים",
-            "source_type": "other"
-          },
-          {
-            "url": "https://lawjournal.huji.ac.il/sites/default/files/2024-12/%D7%91%D7%A8%D7%A7%20%D7%9E%D7%93%D7%99%D7%A0%D7%94.pdf",
-            "title": "סמכות בתי המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות",
-            "source_type": "other"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-        "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי; בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת; סמכות בתי המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות",
-        "number": 3,
-        "sources": [
-          {
-            "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-            "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
-            "source_type": "caselaw"
-          },
-          {
-            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
-            "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
-            "source_type": "journal_article"
-          },
-          {
-            "url": "https://lawjournal.huji.ac.il/sites/default/files/2024-12/%D7%91%D7%A8%D7%A7%20%D7%9E%D7%93%D7%99%D7%A0%D7%94.pdf",
-            "title": "סמכות בתי המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות",
-            "source_type": "other"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-        "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי; מסמך מאתר אתר אקדמי (law.haifa.ac.il); בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
-        "number": 4,
-        "sources": [
-          {
-            "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-            "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
-            "source_type": "caselaw"
-          },
-          {
-            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-mermor.pdf",
-            "title": "מסמך מאתר אתר אקדמי (law.haifa.ac.il)",
-            "source_type": "other"
-          },
-          {
-            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
-            "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
-            "source_type": "journal_article"
-          }
-        ],
-        "source_type": "compound"
-      }
-    ],
-    "quality_warnings": [],
-    "answer": "בפסק‑דין ע״א 6821/93 נדונה סוגיית מעמדה של חקיקת היסוד ביחס לחקיקה ראשית; מתוך נוסח ההחלטה עולה בהתייחסות שופטים עמדה לפיה לחוקי היסוד מיוחס מעמד על־חוקי ביחס לחקיקה רגילה, וכי הם יכולים לשמש מקור להצדקת ביקורת שיפוטית ובמקרים של סתירה לאפשר לזיהוי אי‑התיישבות של הוראות חקיקה רגילה.¹\n\nבנוגע לסמכות הביקורתית, בפסק‑דין נרמז ואף נתונה תשתית לפרשנות המאפשרת לבית המשפט העליון לקיים ביקורת שיפוטית על חקיקה ראשית כאשר זו נוגדת הוראות או עקרונות המופיעים בחוקי היסוד; במבנים אלה בית המשפט יכול להורות על אי‑התיישבות ולעתים להורות על אי‑ביצוע או ביטול של הוראות חקיקה הנמצאות בסתירה לערכי היסוד.²\n\nעם זאת, מן החומר עולה בזהירות כי הסמכות אינה בלתי מוגבלת: נדרשת סתירה ממשית או זיקה מהותית לעקרון או להוראה בחוק יסוד, ויש לשקלל שיקולים של תכליתיות וסבירות והאיזון בין רשויות השלטון בעת קביעת הצעדים הרלוונטיים — כלומר הפסיקה עצמה וגם הפרשנות בספרות מדגישות צורך בבחינה איזונית ולא בפסילה אוטומטית של חקיקה ראשית.³\n\nיש להדגיש שהמסקנות לעיל נוסחו בזהירות בשל טבע התמיכה החומרית: ברשימת המקורות נמצא פסק‑דין העוסק בנושא וכן עבודות תיאורטיות המפתחות מסגרות לפרשנות ולהערכת הגבולות הפרשניים והמעשיים של ביקורת שיפוטית; שאלות פרשניות ויישומיות רבות נותרו פתוחות והן נידונות בהרחבה בספרות המשנית.⁴"
+    "run_id": "d6317751-106d-4b6e-9ad3-146873cb6748",
+    "error": "poll_timeout"
   }
 ]
