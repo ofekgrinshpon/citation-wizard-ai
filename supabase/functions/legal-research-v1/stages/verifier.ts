@@ -559,13 +559,22 @@ export async function runVerifier(
     stage_runs: StageRun[];
     verdicts: Verdict[];
     demotions: DemotionEvent[];
-    meta: { label: string; claim_ids: string[]; candidates: number; escalated: boolean; ms: number };
+    meta: {
+      label: string;
+      claim_ids: string[];
+      candidates: number;
+      escalated: boolean;
+      ms: number;
+      failed?: boolean;
+      failure_reason?: string;
+    };
     errors: Array<{ claim_id: string; reason: string }>;
     per_claim_ms: Record<string, number>;
     escalated_claim_ids: string[];
     rate_limited: boolean;
     failed: boolean;
     failure_reason?: string;
+    call_failures: VerifierCallFailure[];
   }
 
   const isRateLimited = (r: { http_status: number; http_error?: string }): boolean => {
@@ -591,6 +600,7 @@ export async function runVerifier(
       escalated_claim_ids: [],
       rate_limited: false,
       failed: false,
+      call_failures: [],
     };
 
     // Validate that all batch claims exist in analyzer output.
@@ -603,6 +613,7 @@ export async function runVerifier(
       batch.candidates.map((c) => pairKey(c.candidate_id, c.claim_id)),
     );
     const userMsg = buildBatchUserMessage(question, batch.claims, batch.candidates);
+    const payloadSize = SYSTEM_PROMPT.length + userMsg.length;
     const t0 = Date.now();
     let resp = await callOpenAIJsonTool<unknown>({
       model: MODEL_MINI,
@@ -614,12 +625,35 @@ export async function runVerifier(
         parameters: VERIFIER_TOOL_PARAMETERS,
       },
     });
+    const initialMs = Date.now() - t0;
+    const initialStage = `verifier.${batch.label}.initial`;
     out.stage_runs.push({
-      stage: `verifier.${batch.label}.initial`,
+      stage: initialStage,
       model: MODEL_MINI,
-      ms: Date.now() - t0,
+      ms: initialMs,
       ok: !!resp.data,
+      ...(typeof resp.http_status === "number" ? { http_status: resp.http_status } : {}),
+      ...(resp.http_error ? { http_error: resp.http_error.slice(0, 500) } : {}),
+      ...(resp.parse_error ? { parse_error: resp.parse_error.slice(0, 500) } : {}),
     });
+    if (!resp.data) {
+      out.call_failures.push({
+        batch_label: batch.label,
+        stage: initialStage,
+        model: MODEL_MINI,
+        ms: initialMs,
+        http_status: resp.http_status,
+        http_error: resp.http_error?.slice(0, 500),
+        parse_error: resp.parse_error?.slice(0, 500),
+        failure_reason:
+          resp.http_error || resp.parse_error || `http_status=${resp.http_status}`,
+        candidate_count: batch.candidates.length,
+        request_payload_size: payloadSize,
+        tool_call_present: false,
+        raw_response_present: !!resp.raw_text,
+        escalation_attempted: false,
+      });
+    }
     if (isRateLimited(resp)) out.rate_limited = true;
     let parsed = validateBatchVerdicts(resp.data, expectedPairs);
 
@@ -637,13 +671,38 @@ export async function runVerifier(
           parameters: VERIFIER_TOOL_PARAMETERS,
         },
       });
+      const escMs = Date.now() - t1;
+      const escStage = `verifier.${batch.label}.escalated`;
       out.stage_runs.push({
-        stage: `verifier.${batch.label}.escalated`,
+        stage: escStage,
         model: MODEL_FULL,
-        ms: Date.now() - t1,
+        ms: escMs,
         ok: !!resp.data,
         escalated: true,
+        ...(typeof resp.http_status === "number" ? { http_status: resp.http_status } : {}),
+        ...(resp.http_error ? { http_error: resp.http_error.slice(0, 500) } : {}),
+        ...(resp.parse_error ? { parse_error: resp.parse_error.slice(0, 500) } : {}),
       });
+      if (!resp.data) {
+        out.call_failures.push({
+          batch_label: batch.label,
+          stage: escStage,
+          model: MODEL_FULL,
+          ms: escMs,
+          http_status: resp.http_status,
+          http_error: resp.http_error?.slice(0, 500),
+          parse_error: resp.parse_error?.slice(0, 500),
+          failure_reason:
+            resp.http_error || resp.parse_error || `http_status=${resp.http_status}`,
+          candidate_count: batch.candidates.length,
+          request_payload_size: payloadSize,
+          tool_call_present: false,
+          raw_response_present: !!resp.raw_text,
+          escalation_attempted: true,
+          escalation_from: MODEL_MINI,
+          escalation_to: MODEL_FULL,
+        });
+      }
       if (isRateLimited(resp)) out.rate_limited = true;
       parsed = validateBatchVerdicts(resp.data, expectedPairs);
     }
@@ -672,6 +731,9 @@ export async function runVerifier(
       const cand = candById.get(candidate_id);
       const claim = claimsById.get(claim_id);
       if (!cand || !claim) continue;
+      // SYNTHETIC backfill — NOT a real model verdict. Marked so audit
+      // reports never conflate a verifier-call failure with 17 real
+      // "unrelated" model judgments.
       out.verdicts.push({
         candidate_id,
         claim_id,
@@ -679,6 +741,8 @@ export async function runVerifier(
         role_match: rolesMatch(cand.role, claim.required_roles),
         supported_points: [],
         reason: "verifier did not return a verdict for this candidate",
+        synthetic: true,
+        synthetic_reason: "missing_verifier_output",
       });
     }
 
@@ -686,13 +750,15 @@ export async function runVerifier(
     for (const cl of batch.claims) out.per_claim_ms[cl.claim_id] = out.meta.ms;
 
     // A batch is "failed" only when the final response had no data AND no
-    // verdicts were produced. Backfilled-unrelated verdicts count, matching
-    // sequential behavior where a broken LLM call still produces the same
-    // backfill set downstream.
-    if (!resp.data && parsed.verdicts.length === 0) {
+    // real verdicts were produced. Backfilled-synthetic verdicts do NOT
+    // rescue the batch from failure.
+    const realCount = out.verdicts.filter((v) => !v.synthetic).length;
+    if (!resp.data && realCount === 0) {
       out.failed = true;
       out.failure_reason =
         resp.http_error || resp.parse_error || `http_status=${resp.http_status}`;
+      out.meta.failed = true;
+      out.meta.failure_reason = out.failure_reason;
     }
     return out;
   };
@@ -713,6 +779,7 @@ export async function runVerifier(
           try {
             slots[i] = await processBatch(batches[i]);
           } catch (e) {
+            const reason = e instanceof Error ? e.message : String(e);
             slots[i] = {
               stage_runs: [],
               verdicts: [],
@@ -723,16 +790,30 @@ export async function runVerifier(
                 candidates: batches[i].candidates.length,
                 escalated: false,
                 ms: 0,
+                failed: true,
+                failure_reason: reason,
               },
               errors: [{
                 claim_id: batches[i].claims.map((c) => c.claim_id).join(","),
-                reason: `processBatch threw: ${e instanceof Error ? e.message : String(e)}`,
+                reason: `processBatch threw: ${reason}`,
               }],
               per_claim_ms: {},
               escalated_claim_ids: [],
               rate_limited: false,
               failed: true,
-              failure_reason: e instanceof Error ? e.message : String(e),
+              failure_reason: reason,
+              call_failures: [{
+                batch_label: batches[i].label,
+                stage: `verifier.${batches[i].label}.exception`,
+                model: MODEL_MINI,
+                ms: 0,
+                failure_reason: reason,
+                candidate_count: batches[i].candidates.length,
+                request_payload_size: 0,
+                tool_call_present: false,
+                raw_response_present: false,
+                escalation_attempted: false,
+              }],
             };
           }
         }
@@ -740,6 +821,7 @@ export async function runVerifier(
     }
     await Promise.all(workers);
   }
+
 
   // Rate-limit safety net: re-run only rate-limited failed slots sequentially.
   // Preserves slot indexes; never re-runs successful batches.
