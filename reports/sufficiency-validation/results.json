@@ -1,0 +1,606 @@
+[
+  {
+    "id": "A",
+    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי?",
+    "run_id": "df7c381a-c306-43cb-bfd1-1afa46a1795e",
+    "shape": "case_holding",
+    "deterministic_branch": null,
+    "insufficient_fired": false,
+    "sufficiency": {
+      "shape": "case_holding",
+      "reason": "shape_not_gated",
+      "applied": false,
+      "category": "not_applicable",
+      "sufficient": true,
+      "thin_source": false,
+      "found_titles": [
+        "חוק-יסוד: כבוד האדם וחירותו",
+        "הממשלה: מדרגה קונסטיטוציוני",
+        "חוק יסוד: כבוד האדם וחירותו, סעיף 10",
+        "חוק יסוד: כבוד האדם וחירותו (נוסח הכנסת)",
+        "חוק יסוד: כבוד האדם וחירותו"
+      ],
+      "topical_refs": [
+        "s10"
+      ],
+      "topic_phrases": [
+        "בנק המזרחי",
+        "נקבע בע"
+      ],
+      "topical_authority_refs": [
+        "s10"
+      ]
+    },
+    "lead_ref": {
+      "ref": "s10",
+      "shape": "case_holding",
+      "reason": "required_anchor_case"
+    },
+    "sources_passed": 10,
+    "sources_used": 6,
+    "answer": "בע\"א 6821/93 (בנק המזרחי נ' מגדל כפר שיתופי) נקבע, בזהירות, כי יש להכיר במשקל מיוחד של חוקי יסוד ובסמכות בתי המשפט לבחון חקיקה רגילה ביחס אליהם.¹\n\nבית המשפט התייחס לפסקת ההגבלה שבחוק-יסוד: כבוד האדם וחירותו וקבע כי פגיעה בזכויות צריכה להיבחן לפי תכלית ראויה ומבחני המידתיות; שיקולים אלה שימשו כציר לבחינת תקפות החקיקה שנדונה בתיק.²\n\nהתקבלה ההבחנה כי חוקי יסוד אינם פוגעים בתוקפו של דין שהיה קיים ערב כניסתם (עקרון שמירת דינים), אך יחד עם זאת יש לפרש חקיקה קיימת ככל שניתן לאור ערכי חוקי היסוד.³\n\nבהשלכה העובדתית על העתירה של הבנקים נבחנה טענה לפגיעה בזכות הקניין; אף שנמצאה פגיעה מסוימת, בית המשפט מצא כי החוק שנבדק עומד בתנאי פסקת ההגבלה ולכן לא נפסל, ולצורך זה ננקטה פרשנות מצמצמת שתומכת בעמידת החוק בתנאים החוקתיים.⁴\n\nהפסיקה הדגישה גם תובנה מוסדית לגבי דואליות תפקידי הכנסת — כרשות מחוקקת וכגורם בעל מאפיינים מכוננים — ובהקשר זה רואתה חקיקת היסוד כחלק מתהליך של \"חוקה בהתהוות\" המעניקה משקל נורמטיבי מיוחד לחוקי היסוד מבלי שניתנה קודיפיקציה מלאה.⁵\n\nהערת סייג: תקציר זה מבוסס על הפנייה לע\"א 6821/93 כפי שסופקה כאן והתמיכה בה מוגדרת חלקית; לעיון בנימוקים המלאים, בפרטי המבחנים שניתנו ובפרשנויות המלאות יש לעיין בפסק‑דין המלא.",
+    "footnotes": [
+      {
+        "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+        "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+            "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+        "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי; פסקות ההגבלה",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+            "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H26-07-2005_14-15-33_piskat.doc",
+            "title": "פסקות ההגבלה",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+        "title": "חוק יסוד: כבוד האדם וחירותו, סעיף 10; חוק יסוד: כבוד האדם וחירותו",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+            "title": "חוק יסוד: כבוד האדם וחירותו, סעיף 10",
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://meyda.education.gov.il/files/Pop/0files/magal_hashana/student-rights/Basic-Law-of-Human-Dignity-and-Liberty.docx",
+            "title": "חוק יסוד: כבוד האדם וחירותו",
+            "source_type": "legislation"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+        "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי; חוק-יסוד: כבוד האדם וחירותו",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+            "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "title": "חוק-יסוד: כבוד האדם וחירותו",
+            "source_type": "legislation"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+        "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי; 5658-23 פסק דין.docx",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+            "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5658-23/he/5658-23%20%D7%A4%D7%A1%D7%A7%20%D7%93%D7%99%D7%9F.docx",
+            "title": "5658-23 פסק דין.docx",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ]
+  },
+  {
+    "id": "B",
+    "query": "מה קובע סעיף 12 לחוק החוזים?",
+    "run_id": "ca513cfc-12a2-49d1-b7ad-45f615ee3e94",
+    "shape": "definition",
+    "deterministic_branch": null,
+    "insufficient_fired": false,
+    "sufficiency": {
+      "shape": "definition",
+      "reason": "shape_not_gated",
+      "applied": false,
+      "category": "not_applicable",
+      "sufficient": true,
+      "thin_source": false,
+      "found_titles": [
+        "נוסח מעודכן מטעם יו\"ר הוועדה לדיון ביום 1 ביולי 2025 - הצעת חוק החוזים (חלק כללי)",
+        "חוק החוזים (חלק כללי), תשל\"ג-1973 – סעיף 12",
+        "חוק החוזים (חלק כללי), תשל\"ג-1973",
+        "חוק החוזים (חלק כללי)",
+        "חוק החוזים (חלק כללי), תשל\"ג-1973"
+      ],
+      "topical_refs": [
+        "s3",
+        "s4",
+        "s6",
+        "s8",
+        "s10",
+        "s11"
+      ],
+      "topic_phrases": [
+        "לחוק החוזים"
+      ],
+      "topical_authority_refs": [
+        "s3",
+        "s4",
+        "s10",
+        "s11"
+      ]
+    },
+    "lead_ref": {
+      "ref": "s4",
+      "shape": "definition",
+      "reason": "required_anchor_statute"
+    },
+    "sources_passed": 11,
+    "sources_used": 5,
+    "answer": "**זיהוי החוק ונוסח סעיף 12**\n\nסעיף 12 לחוק החוזים (חלק כללי), תשל\"ג-1973 — נוסחו: (א) במשא ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך מקובלת ובתום לב. (ב) צד שלא נהג בדרך מקובלת ולא בתום-לב חייב לצד השני פיצויים בעד הנזק שנגרם לו עקב המשא ומתן או עקב כריתת החוזה, והוראות סעיפים 10, 13 ו־14 לחוק החוזים (תרופות בשל הפרת חוזה), תשל\"א–1970, יחולו בשינויים המתאימים.¹\n\nמשמעותו הפרקטית של הסעיף היא שמוטלת חובת תום לב ונהג מקובל במשא ומתן קדם-חוזי; הפרת חובה זו יכולה להקים חבות לפיצוי בעד הנזק שנגרם עקב המשא ומתן או עקב כריתת החוזה, כאשר למטרת הסעד מוחלות, תוך התאמות נדרשות, הוראות סעיפים 10, 13 ו־14 לחוק החוזים (תרופות בשל הפרת חוזה), תשל\"א–1970.²\n\nלגבי שינוי נוסח: נוסח הסעיף כפי שנאמר לעיל נכלל בחוק החוזים (חלק כללי), תשל\"ג-1973. קיימת עבודת חקיקה עדכנית לפי נוסח טיוטת ועדה מיום 1 ביולי 2025 שמציגה הצעת תיקון, אך מדובר בטיוטה/הצעה בלבד שאינה מהווה נוסח בתוקף ולא קובעת מועד כניסה לתוקף.³",
+    "footnotes": [
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+        "title": "חוק החוזים (חלק כללי); חוק החוזים (חלק כללי), תשל\"ג-1973; חוק החוזים (חלק כללי), תשל\"ג-1973 – סעיף 12",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+            "title": "חוק החוזים (חלק כללי)",
+            "source_type": "israeli_law"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+            "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+            "title": "חוק החוזים (חלק כללי), תשל\"ג-1973 – סעיף 12",
+            "source_type": "legislation"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+        "title": "חוק החוזים (חלק כללי), תשל\"ג-1973; קובץ דיני חוזים (PDF) - אוניברסיטה/מסגרת אקדמית",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+            "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://desigprog.biu.ac.il/sites/desigprog/files/khnn_dd-dyny_khvzym.pdf",
+            "title": "קובץ דיני חוזים (PDF) - אוניברסיטה/מסגרת אקדמית",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_7460401.pdf",
+        "title": "נוסח מעודכן מטעם יו\"ר הוועדה לדיון ביום 1 ביולי 2025 - הצעת חוק החוזים (חלק כללי); חוק החוזים (חלק כללי), תשל\"ג-1973",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_7460401.pdf",
+            "title": "נוסח מעודכן מטעם יו\"ר הוועדה לדיון ביום 1 ביולי 2025 - הצעת חוק החוזים (חלק כללי)",
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+            "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+            "source_type": "legislation"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ]
+  },
+  {
+    "id": "C",
+    "query": "מה הפסיקה אומרת על הלכת יורש אחר יורש?",
+    "run_id": "acf7556f-056d-4441-ae85-874ebc22d304",
+    "shape": "analysis",
+    "deterministic_branch": "insufficient_sources_limitation",
+    "insufficient_fired": true,
+    "sufficiency": {
+      "shape": "analysis",
+      "reason": "no_topical_source",
+      "applied": true,
+      "category": "case_law_synthesis",
+      "sufficient": false,
+      "thin_source": false,
+      "found_titles": [
+        "הירושה, תשכ\"ה-1965",
+        "חוק הירושה, תשכ\"ה-1965",
+        "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+        "Res Judicata in the Law of Succession: A Critical Analysis",
+        "Changing Circumstances and the Modification of Testamentary Dispositions"
+      ],
+      "topical_refs": [],
+      "topic_phrases": [
+        "הלכת יורש אחר יורש",
+        "הלכת יורש אחר",
+        "יורש אחר יורש",
+        "הלכת יורש",
+        "יורש אחר",
+        "אחר יורש"
+      ],
+      "topical_authority_refs": []
+    },
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
+    "sources_passed": 7,
+    "sources_used": 0,
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): הירושה, תשכ\"ה-1965; חוק הירושה, תשכ\"ה-1965; ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24); Res Judicata in the Law of Succession: A Critical Analysis.",
+    "footnotes": []
+  },
+  {
+    "id": "D",
+    "query": "מהי חובת תום הלב במשא ומתן?",
+    "run_id": "1c98910a-b99b-472f-908c-becf8d5eae7c",
+    "shape": "definition",
+    "deterministic_branch": null,
+    "insufficient_fired": false,
+    "sufficiency": {
+      "shape": "definition",
+      "reason": "shape_not_gated",
+      "applied": false,
+      "category": "not_applicable",
+      "sufficient": true,
+      "thin_source": false,
+      "found_titles": [
+        "חוק החוזים (חלק כללי), תשל\"ג-1973",
+        "פסק-דין בתיק ת.א. 53861/07",
+        "ע\"א 10582/02",
+        "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+        "The Duty of Good Faith in Negotiations"
+      ],
+      "topical_refs": [
+        "s2",
+        "s4",
+        "s6",
+        "s8",
+        "s9",
+        "s10"
+      ],
+      "topic_phrases": [
+        "חובת תום הלב במשא",
+        "תום הלב במשא ומתן",
+        "הלב במשא ומתן",
+        "חובת תום הלב",
+        "תום הלב במשא",
+        "במשא ומתן",
+        "חובת תום",
+        "הלב במשא",
+        "תום הלב"
+      ],
+      "topical_authority_refs": [
+        "s2",
+        "s4"
+      ]
+    },
+    "lead_ref": {
+      "ref": "s1",
+      "shape": "definition",
+      "reason": "primary_statute"
+    },
+    "sources_passed": 12,
+    "sources_used": 9,
+    "answer": "חובת תום הלב במשא ומתן היא חובת התנהגות לפיה מי שלוקח חלק במגעים החוזיים חייב לנהוג בדרך מקובלת ובתום לב, ובפרט להימנע מהטעיה או מאי‑גילוי מהותי בנסיבות שבהן הימנעות כזו מצופה; הוראה זו מקורה בסעיף 12 לחוק החוזים ובהרחבותיה בפסיקה.¹\n\n**יסודות ומבחנים להטלת החובה**\n\nההטלה מעוגנת בשלושה יסודות מבניים: א) מבחן אובייקטיבי של 'דרך מקובלת ובתום לב' שנקבע בפסיקה; ב) בדיקת תלות־הסתמכות של הצד שנטען שנפגע; וג) שיקול של סבירות הציפיה לגילוי פריט עובדה מסוים בנסיבות המקרה.²\n\n**היקף החובה ותנאי חלותה**\n\nהחובה חלה ביחס לכל מי שלוקח חלק במגעים החוזיים, אך היקפה מותנה בנסיבות: היא מיושמת בעוצמה רבה יותר כאשר קיימת תלות כלכלית או חוסר־שוויון מידע משמעותי, כאשר בנסיבות המו״מ מעורבות הבטחות או הצגת מצג חיוני, ובמקרים של משאים מיוחדים כגון מיזוגים שבהם ההשפעה על זכויות שלישי ברורה.³\n\n**מעשים אופייניים המחויבים או האסורים במשא ומתן**\n\n- חובת גילוי של עובדות מהותיות כאשר ההסתרה עלולה להטעות והצד השני סומך במידה סבירה על המידע המצוי אצל המידע; אי־גילוי יכול ללבוש צורת מחדל אם היה ראוי לצפות לגילויו.⁴\n- איסור על מצגי שווא פעילים, ההטעיה במצגי עובדה או בהתחייבויות שקריות שנועדו להניע את הצד השני לפעול בעסקה.⁵\n- הסתרת עובדות מהותיות באופן מכוון (concealment) ובעיקר כאשר בית המשפט יכול למצוא כי ההסתרה פגעה בתשתית קבלת ההחלטה של הצד השני.⁵\n- ניצול קשרי תלות או פערי מידע כדי להשיג רווח זמני על חשבון הצד הניהל פניו במשא ומתן — מצב שנבחן ביתר דקדוק בהקשרים של מיזוגים והגנה על המיעוט.⁶\n- יצירת מניפולציה למשא ומתן, למשל הפגת משאבים מכוונת כדי להכשיל המשא ומתן או התנגדות לפעולות הדרושות לשם מימוש עסקה לאחר ההגעה להבנות — מעשים כאלה יכולים להיחשב חוסר תום לב לפי הנסיבות.⁵\n\n**השלכות משפטיות וסעדים**\n\nהפרת חובת תום הלב יכולה להביא לסעדים שונים: פיצויי הסתמכות (שיקום המצב לו היה הצד הנפגע לו לא הסתמך), לעתים פיצויי קיום או היקף פיצוי אחר בהיקף הצפוי מההפרה, פסקי דין המונעים מימוש זכות מסוימת או הכרזה על פגם בהתקשרות (כולל השתק הבטחה) — סוג הסעד נקבע לפי נסיבות המקרה והנזק שנגרם.⁷\n\nגבולות האחריות כוללים דרישות הוכחה של סיבתיות והנזק הצפוי, בחינה של מידת ההסתמכות והאם ההפרה הייתה סבירה לצפותה; בפסיקה ובספרות נדונו גם שאלות של מידת אשמה (האם התנהגות אובייקטיבית בלתי סבירה או כוונה להטעות נדרשת) ובדיקה זו תלויה בנסיבות ובמבחנים שהביא בית המשפט.⁸\n\nלסיכום קצר: החוק (סעיף 12) יחד עם הפסיקה מטמיעים חובת תום הלב במשא ומתן, אך היקפה, המעשים המצופים והסעדים האפשריים נקבעים בהתאם לנסיבות המקרה, לבדיקה של תלות־הסתמכות, סבירות הציפייה לגילוי והיקף הנזק; בסוגיות מסוימות, ובפרט במצבים של מיזוג או תלות כלכלית, הספרות והפסיקה עוסקות בשאלות נוספות של מיתרגם סעד והשתק הבטחה.⁹",
+    "footnotes": [
+      {
+        "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+        "title": "חוק החוזים (חלק כללי), תשל\"ג-1973; ע\"א 10582/02",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+            "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-10582-02",
+            "title": "ע\"א 10582/02",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA-%D7%90-53861-07",
+        "title": "פסק-דין בתיק ת.א. 53861/07; השתק הבטחה והממשק החוזי; ע\"א 10582/02",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA-%D7%90-53861-07",
+            "title": "פסק-דין בתיק ת.א. 53861/07",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+            "title": "השתק הבטחה והממשק החוזי",
+            "source_type": "academic"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-10582-02",
+            "title": "ע\"א 10582/02",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-10582-02",
+        "title": "ע\"א 10582/02; חוק החוזים (חלק כללי), תשל\"ג-1973; הגנת בעלי המניות במיזוג חברות",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-10582-02",
+            "title": "ע\"א 10582/02",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+            "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/933",
+            "title": "הגנת בעלי המניות במיזוג חברות",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA-%D7%90-53861-07",
+        "title": "פסק-דין בתיק ת.א. 53861/07; סעיף 12 לחוק החוזים: תום לב במשא ומתן",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA-%D7%90-53861-07",
+            "title": "פסק-דין בתיק ת.א. 53861/07",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+            "title": "סעיף 12 לחוק החוזים: תום לב במשא ומתן",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA-%D7%90-53861-07",
+        "title": "פסק-דין בתיק ת.א. 53861/07; ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA-%D7%90-53861-07",
+            "title": "פסק-דין בתיק ת.א. 53861/07",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/933",
+        "title": "הגנת בעלי המניות במיזוג חברות; השתק הבטחה והממשק החוזי",
+        "number": 6,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/933",
+            "title": "הגנת בעלי המניות במיזוג חברות",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+            "title": "השתק הבטחה והממשק החוזי",
+            "source_type": "academic"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+        "title": "תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן; השתק הבטחה והממשק החוזי; פסק-דין בתיק ת.א. 53861/07",
+        "number": 7,
+        "sources": [
+          {
+            "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+            "title": "תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן",
+            "source_type": "other"
+          },
+          {
+            "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+            "title": "השתק הבטחה והממשק החוזי",
+            "source_type": "academic"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA-%D7%90-53861-07",
+            "title": "פסק-דין בתיק ת.א. 53861/07",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+        "title": "השתק הבטחה והממשק החוזי; ייחוד עילה בדיני הפגמים בכריתה: ניתוח עיוני ונורמטיבי | חגי ויניצקי (כרך י)",
+        "number": 8,
+        "sources": [
+          {
+            "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+            "title": "השתק הבטחה והממשק החוזי",
+            "source_type": "academic"
+          },
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m4.pdf",
+            "title": "ייחוד עילה בדיני הפגמים בכריתה: ניתוח עיוני ונורמטיבי | חגי ויניצקי (כרך י)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+        "title": "חוק החוזים (חלק כללי), תשל\"ג-1973; ע\"א 10582/02; תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן",
+        "number": 9,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+            "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-10582-02",
+            "title": "ע\"א 10582/02",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+            "title": "תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ]
+  },
+  {
+    "id": "E",
+    "query": "מה עושים אם המשכיר לא מחזיר פיקדון?",
+    "run_id": "7061cffc-2a4c-4aac-9991-a52504507f66",
+    "shape": "list",
+    "deterministic_branch": "insufficient_sources_limitation",
+    "insufficient_fired": true,
+    "sufficiency": {
+      "shape": "list",
+      "reason": "generic_procedure_only",
+      "applied": true,
+      "category": "practical_list",
+      "sufficient": false,
+      "thin_source": false,
+      "found_titles": [
+        "חוק ההתיישנות, תשי\"ח-1958",
+        "חו\"ד תזכיר חוק ההתיישנות",
+        "חוק ההתיישנות תשי\"ז-1957",
+        "נוסח לדיון – ועדת הכנסת",
+        "פתיחת תיק ליישוב סכסוך"
+      ],
+      "topical_refs": [],
+      "topic_phrases": [
+        "מחזיר פיקדון"
+      ],
+      "topical_authority_refs": []
+    },
+    "lead_ref": {
+      "ref": null,
+      "shape": "list",
+      "reason": "shape_not_eligible"
+    },
+    "sources_passed": 7,
+    "sources_used": 0,
+    "answer": "לא נמצאו במקורות מקורות משפטיים ייעודיים לנושא שנשאל, אלא חומר כללי בלבד. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק ההתיישנות, תשי\"ח-1958; חו\"ד תזכיר חוק ההתיישנות; חוק ההתיישנות תשי\"ז-1957; נוסח לדיון – ועדת הכנסת.",
+    "footnotes": []
+  },
+  {
+    "id": "B8",
+    "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+    "run_id": "c43ec763-49ee-4f46-8d67-b884da1be70f",
+    "shape": "quote",
+    "deterministic_branch": "canonical_quote_registry",
+    "insufficient_fired": false,
+    "sufficiency": null,
+    "lead_ref": {
+      "ref": "r_basic_law_dignity-s1",
+      "shape": "quote",
+      "reason": "canonical_registry_statute_section"
+    },
+    "sources_passed": 16,
+    "sources_used": 1,
+    "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹",
+    "footnotes": [
+      {
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "israeli_law"
+      }
+    ]
+  },
+  {
+    "id": "B2",
+    "query": "מה נקבע בבג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל ביחס להקצאת קרקעות למגורים על בסיס לאום?",
+    "run_id": "164e5d4d-9faf-497d-a667-474798005ccd",
+    "shape": "case_holding",
+    "deterministic_branch": "docket_limitation",
+    "insufficient_fired": false,
+    "sufficiency": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "case_holding",
+      "reason": "skipped_missing_docket_anchor"
+    },
+    "sources_passed": 13,
+    "sources_used": 0,
+    "answer": "לא אותר במקורות הזמינים פסק הדין בעניין בג\"ץ 6698/95 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.",
+    "footnotes": []
+  }
+]
