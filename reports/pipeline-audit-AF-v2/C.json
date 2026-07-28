@@ -1,0 +1,2483 @@
+{
+  "id": "C",
+  "category": "case_law_synthesis",
+  "query": "מה הפסיקה אומרת על הלכת יורש אחר יורש?",
+  "run_id": "daf83c67-09d8-4da2-9a7d-1ceea292e27e",
+  "qa_log_id": "c3fef63f-6d5b-4a46-921a-c19ed6c71930",
+  "answer": "**ניתוח הפסיקה לגבי \"יורש אחר יורש\"**\n\nליבה של הפסיקה מצביעה על הבחנה פרשנית בין מנגנוני הורשה שונים: כדי שייווצר אפקט של \"יורש אחר יורש\" נדרשת הכרעה פרשנית מדויקת בלשון הצוואה והנסיבות; מעמדו של היורש הראשון וההגנה של צדדים שלישיים נקבעים בהתאם לפרשנות זו ולכללי רישום והסתמכות.¹\n\n**הבחנה פרשנית בין 'יורש אחר יורש' ל'יורש במקום יורש'**\n\nהפסיקה עוסקת בהבדלה בין 'יורש במקום יורש' — הורשה שמעניקה זכות ממילא כנגד מי שהוחלף — לבין 'יורש אחר יורש', שבו נדרש ראיה מפורשת על כוונת המצווה להעביר זכות מותנית או להטיל סדר חלוקה שונה; ההבחנה מוגדרת לפי לשון הצוואה והנסיבות הפרטניות של המקרה.²\n\n**דרישות ניסוח וחזקות פרשניות בצוואה**\n\nבפסיקה ניתנת חשיבות מיוחדת ללשון הצוואה: בתי המשפט ידרשו ניסוח ברור כדי להורות על הורשה בסגנון 'יורש אחר יורש', ואילו כשיש עמימות יחולו חזקות פרשניות שמנסות לשמור על כוונת המצווה אך אינן אוטומטית יוצרות העברה מסוג זה ללא הודאות מפורשת.²\n\n**מעמד וסמכויות היורש הראשון כלפי נכסי העיזבון**\n\nמן הפסיקה עולה בזהירות כי מעמדו של היורש הראשון אינו תמיד זהה לבעלות חופשית בלתי מוגבלת: בתי המשפט מטפלים בשאלות האם קיימת בעלות מידית של היורש הראשון או בעלות כפופה לזכות העתידית של היורש הבא, ובהמשך שוקלים את השלכות כך על יכולתו של היורש הראשון להעביר נכסים, להעמיד שעבוד או לתת צווי. קביעות מעשיות בעניין זה מופיעות בפסיקות העוסקות בזכויות במקרקעין ובעזבון, כאשר הסמכות השיפוטית לבירור מעמדי מוגדרת על פי חוק וסמכויות בתי המשפט.³\n\n**השלכות כלפי צדדים שלישיים ורישום במקרקעין**\n\nהפסיקה מדגישה כי ביחס לנכסים הרשומים מעמדם של צדדים שלישיים נקבע לפי כללי הרישום וההגנה של רוכש בתום לב; משמעותה היא שבנסיבות מסוימות רישום או הסתמכות של רוכש תמורת תמורה עשויים לגבור על סידורי הורשה פנימיים, וכך השאלה של 'יורש אחר יורש' תהא תלויה גם במצב הרישום ובהסתמכות של צד ג'.⁴\n\nהמגמות שתוארו מבוססות על מקורות שניתנו כאן בהיקף שונה: יש מקור שמתמקד ישירות בנושא ותומך בפרשנות ובדרישות ניסוח, בעוד מספר פסקי דין נוספים נוגעים בהשלכות מעמדיות וברישום אך תומכים בזהירות בלבד ולכן אין בהם כדי לקבוע מסקנה גורפת מעבר להבחנות ולעקרונות שהוצגו מעלה.",
+  "footnotes": [
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9,-%D7%90%D7%95-%D7%99%D7%95%D7%A8%D7%A9-%D7%אחרי-%D7%99%D7%ורש",
+      "title": "פסק דין מתוך psakdin.co.il; ע\"א 767-11 - ג'הנשה להיגי נ. יצחק עזורי",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9,-%D7%90%D7%95-%D7%99%D7%95%D7%A8%D7%A9-%D7%אחרי-%D7%99%D7%ורש",
+          "title": "פסק דין מתוך psakdin.co.il",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_16_767-11.pdf&type=2",
+          "title": "ע\"א 767-11 - ג'הנשה להיגי נ. יצחק עזורי",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9,-%D7%90%D7%95-%D7%99%D7%95%D7%A8%D7%A9-%D7%אחרי-%D7%99%D7%ורש",
+      "title": "פסק דין מתוך psakdin.co.il",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9,-%D7%90%D7%95-%D7%99%D7%95%D7%A8%D7%A9-%D7%אחרי-%D7%99%D7%ורש",
+          "title": "פסק דין מתוך psakdin.co.il",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+      "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין תביעה למתן סעד הצהרתי בדבר קיומן של זכויות במקרקעין, וכן לחיוב בדמי שימוש ראויים (תמ\"ש 11810-09-21); רע\"א 4936/20 עזבון המנוח מוחמד מחמוד סומרין ז\"ל נ׳ הימונתא בע\"מ פסק דין (30.06.2020)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+          "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין תביעה למתן סעד הצהרתי בדבר קיומן של זכויות במקרקעין, וכן לחיוב בדמי שימוש ראויים (תמ\"ש 11810-09-21)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-4936-20-%d7%a2%d7%96%d7%91%d7%95%d7%9f-%d7%94%d7%9e%d7%a0%d7%95%d7%97-%d7%9e%d7%95%d7%97%d7%9e%d7%93-%d7%9e%d7%97%d7%9e%d7%95%d7%93-%d7%a1%d7%95%d7%9e%d7%a8%d7%99%d7%9f-%d7%96/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "רע\"א 4936/20 עזבון המנוח מוחמד מחמוד סומרין ז\"ל נ׳ הימונתא בע\"מ פסק דין (30.06.2020)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_16_767-11.pdf&type=2",
+      "title": "ע\"א 767-11 - ג'הנשה להיגי נ. יצחק עזורי; רע\"א 4936/20 עזבון המנוח מוחמד מחמוד סומרין ז\"ל נ׳ הימונתא בע\"מ פסק דין (30.06.2020)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_16_767-11.pdf&type=2",
+          "title": "ע\"א 767-11 - ג'הנשה להיגי נ. יצחק עזורי",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-4936-20-%d7%a2%d7%96%d7%91%d7%95%d7%9f-%d7%94%d7%9e%d7%a0%d7%95%d7%97-%d7%9e%d7%95%d7%97%d7%9e%d7%93-%d7%9e%d7%97%d7%9e%d7%95%d7%93-%d7%a1%d7%95%d7%9e%d7%a8%d7%99%d7%9f-%d7%96/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "רע\"א 4936/20 עזבון המנוח מוחמד מחמוד סומרין ז\"ל נ׳ הימונתא בע\"מ פסק דין (30.06.2020)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "השאלה נוגעת לדוקטרינה סטטוטורית שמפורשת בפסיקה; דרוש עיגון חוקי והלכות מחייבות של העליון.",
+        "text_he": "המסגרת הנורמטיבית של \"יורש אחר יורש\" נקבעת בחוק הירושה (הסדר סטטוטורי), והפסיקה מפרשת את מהות הזכויות של היורש הראשון והשני במסגרת זו.",
+        "claim_id": "C1",
+        "required_roles": [
+          "primary_statute",
+          "binding_case_law"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "ההכרעות המהותיות על כוחו של היורש הראשון עוצבו בפסיקה על בסיס הוראות החוק; נדרש ניתוח הלכות מחייבות לצד עיגון סטטוטורי.",
+        "text_he": "היקף זכויותיו וסמכויותיו של היורש הראשון: באיזו מידה הוא בעלים חופשי בנכסים לעומת בעלות כפופה לזכות עתידית של היורש השני, ומהן המגבלות על העברה, שעבוד, וציווי מצדו לפי הפסיקה.",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "primary_statute"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "סוגיה זו נשענת על הלכות פרשנות של צוואות בפסיקה ולעיתים על ספרות פרשנית המסכמת מגמות.",
+        "text_he": "דרישות ניסוח ופרשנות בצוואה ליצירת \"יורש אחר יורש\" והבדלתה מ\"יורש במקום יורש\", לרבות חזקות פרשניות של בתי המשפט.",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": false
+      },
+      {
+        "reason": "הדין המהותי והקנייני (חוקים רלוונטיים) בצירוף פסיקה קובעים את מעמדו של צד ג' ונושים מול מנגנון \"יורש אחר יורש\".",
+        "text_he": "גבולות והשלכות כלפי צדדים שלישיים ונושים: היקף ההגנה של צד ג' בתום לב, תחרות זכויות, ורישום זכויות (לרבות במקרקעין) כאשר יש הוראה של \"יורש אחר יורש\".",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "primary_statute"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "daf83c67-09d8-4da2-9a7d-1ceea292e27e",
+    "drafter": {
+      "ms": 35874,
+      "ok": true,
+      "lead_ref": {
+        "ref": null,
+        "shape": "analysis",
+        "reason": "shape_not_eligible"
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "completeness": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "paragraph",
+        "last_block_excerpt": "…ים בהשלכות מעמדיות וברישום אך תומכים בזהירות בלבד ולכן אין בהם כדי לקבוע מסקנה גורפת מעבר להבחנות ולעקרונות שהוצגו מעלה."
+      },
+      "sources_used": 4,
+      "used_sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9,-%D7%90%D7%95-%D7%99%D7%95%D7%A8%D7%A9-%D7%אחרי-%D7%99%D7%ורש",
+          "title": "פסק דין מתוך psakdin.co.il",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "caselaw",
+          "candidate_id": "212413dc-25d6-4317-8b13-6c9d1292b45e"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_16_767-11.pdf&type=2",
+          "title": "ע\"א 767-11 - ג'הנשה להיגי נ. יצחק עזורי",
+          "number": 1,
+          "origin": "local_db",
+          "source_type": "supreme_court_il",
+          "candidate_id": "5cef2284-3f52-4cc6-a2ad-39cfd24621ce"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+          "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין תביעה למתן סעד הצהרתי בדבר קיומן של זכויות במקרקעין, וכן לחיוב בדמי שימוש ראויים (תמ\"ש 11810-09-21)",
+          "number": 3,
+          "origin": "local_db",
+          "source_type": "caselaw",
+          "candidate_id": "4375e59c-b6d7-4f80-a97e-f995f40eade2"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-4936-20-%d7%a2%d7%96%d7%91%d7%95%d7%9f-%d7%94%d7%9e%d7%a0%d7%95%d7%97-%d7%9e%d7%95%d7%97%d7%9e%d7%93-%d7%9e%d7%97%d7%9e%d7%95%d7%93-%d7%a1%d7%95%d7%9e%d7%a8%d7%99%d7%9f-%d7%96/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "רע\"א 4936/20 עזבון המנוח מוחמד מחמוד סומרין ז\"ל נ׳ הימונתא בע\"מ פסק דין (30.06.2020)",
+          "number": 3,
+          "origin": "local_db",
+          "source_type": "caselaw",
+          "candidate_id": "424a13fd-9405-4ee4-b5f7-96e73456e557"
+        }
+      ],
+      "marker_format": "superscript",
+      "model_initial": "openai/gpt-5-mini",
+      "builder_report": {
+        "marker_count": 5,
+        "heading_count": 5,
+        "list_item_count": 0,
+        "paragraph_count": 6,
+        "cited_segment_count": 5,
+        "adjacent_marker_count": 0,
+        "distinct_source_count": 4,
+        "compound_segment_count": 3,
+        "compound_footnote_count": 3,
+        "avg_sources_per_cited_segment": 1.75
+      },
+      "footnote_count": 4,
+      "sources_passed": 4,
+      "drafter_version": "v2.1c",
+      "truncation_retry": {
+        "retry_ms": 0,
+        "attempted": false,
+        "reasons_initial": [],
+        "same_model_retry": false,
+        "escalated_to_full": false
+      },
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "answer_style_report": {
+        "metrics": {
+          "block_count": 11,
+          "denylist_hits": [],
+          "heading_count": 5,
+          "heading_ratio": 0.455,
+          "cited_block_count": 5,
+          "total_footnote_count": 4,
+          "compound_footnote_count": 3,
+          "compound_footnote_ratio": 0.75,
+          "unsafe_display_title_count": 1,
+          "avg_sources_per_cited_block": 1.6,
+          "unsafe_display_title_examples": [
+            {
+              "ref": "s2",
+              "status": "fallback_truncated",
+              "display_title": "פסק דין מתוך psakdin.co.il"
+            }
+          ],
+          "partial_supported_strong_claims": [],
+          "total_source_refs_in_cited_blocks": 8
+        },
+        "report_only": true,
+        "triggered_reasons": [
+          "unsafe_display_title",
+          "compound_footnote_ratio_high",
+          "excessive_headings"
+        ]
+      },
+      "unique_source_count": 4,
+      "completeness_initial": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "paragraph",
+        "last_block_excerpt": "…ים בהשלכות מעמדיות וברישום אך תומכים בזהירות בלבד ולכן אין בהם כדי לקבוע מסקנה גורפת מעבר להבחנות ולעקרונות שהוצגו מעלה."
+      },
+      "deterministic_branch": null,
+      "canonical_quote_fired": false,
+      "omitted_candidate_ids": [],
+      "structured_validation": {
+        "ok": true,
+        "errors": [],
+        "block_count": 11,
+        "heading_count": 5,
+        "list_item_count": 0,
+        "paragraph_count": 6,
+        "cited_segment_count": 5,
+        "forbidden_text_hits": [],
+        "unknown_source_refs": [],
+        "total_source_ref_count": 8
+      },
+      "max_completion_tokens_used": 8000,
+      "missing_anchor_descriptions": [],
+      "missing_anchor_caveat_injected": false,
+      "missing_docket_limitation_fired": false,
+      "statute_section_limitation_fired": false
+    },
+    "queries": [
+      {
+        "role": "primary_statute",
+        "reason": "לזהות את המסגרת הסטטוטורית שבה מוגדרת או מוסברת התופעה 'יורש אחר יורש' ואת ההוראות שיכולות לקבוע את מהות זכויות היורש הראשון והשני.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "חוק הירושה, התשכ\"ה-1965 הוראות וטרמינולוגיה לגבי \"יורש אחר יורש\" וסטטוס משפטי של יורש ראשון ויורש שני",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסקי-דין עליונים שמפרשים את ההשלכות החוקתיות/החוקיות של הוראות 'יורש אחר יורש' ולבנות מסגרת פרשנית שפוסקת לגבי חלוקת הזכויות.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "בית המשפט העליון \"יורש אחר יורש\" פרשנות מהות הזכויות של היורש הראשון והיורש השני בפסק-דין מוביל",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסיקה מחייבת שקבעה מהו היקף הבעלות שהיורש הראשון מקבל, ומהן המגבלות שהפסיקה הטילה על העברה, שעבוד או צוויון מצדו.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון פסק-דין \"בעלות חופשי\" \"בעלות כפופה\" \"יורש אחר יורש\" העברה שעבוד ציווי בפסיקה על זכויות היורש הראשון",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "לבחון בחוק את המנגנונים החוקיים שמגבילים או מאפשרים העברה ושעבוד של חלקי הירושה ולקשר אותם לפסיקה לגבי היורש הראשון.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "חוק הירושה, התשכ\"ה-1965 הוראות על העברת זכות בירושה, שעבוד נכסי מורשת, והגבלת בזכויות היורש לפני חלוקה או מימוש",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסקי-דין עליונים שקבעו כללים לפרשנות ניסוחי צוואה, הבדל בין הוראות החלפה ('במקום') לעומת הוראות שרשרת ('אחר'), וחזקות פרשניות שהושמו על ניסוח.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון \"יורש במקום יורש\" מול \"יורש אחר יורש\" פרשנות בדיני צוואות וחזקות פרשניות בפסיקה",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "למצוא מאמרים וניתוחים אקדמיים שמפרטים את כללי הפרשנות של ניסוחי צוואות ומבחנים מפרידים בין סוגי הורשות אלו, כולל דוגמאות ודיונים תאורטיים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי \"יורש אחר יורש\" \"יורש במקום יורש\" פרשנות צוואות חזקות פרשניות כתב-עת משפטי מאמר",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסיקה שמדגישה את ההשפעה של הוראות שרשרת על מעמד נושים וצדדים שלישיים בתום לב, ועל סכסוכים בין זכויות שונות.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון פסק-דין \"יורש אחר יורש\" נושים צד ג' בתום לב רישום במקרקעין השפעת הוראה שירשה אחר יורש על זכויות צד שלישי",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "לבחון בסעיפי החוק את ההוראות שנוגעות להגנת נושים וצד שלישי ולרישום זכויות כשיש הוראה של 'יורש אחר יורש'.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "חוק הירושה, התשכ\"ה-1965 הוראות לגבי זכויות נושים, הגנה לצד שלישי בתום לב ורישום זכויות במקרקעין בהקשר צוואות ו'יורש אחר יורש'",
+        "expected_source_type": "statute"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 36461,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 61682,
+        "confidence": 0.8,
+        "legal_area": "דיני ירושה",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5",
+        "schema_valid": true,
+        "answer_intent": {
+          "output_shape": "analysis"
+        },
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": true,
+        "escalation_reason": [
+          "B2:confidence<0.7"
+        ],
+        "interpretation_note": null
+      },
+      "claims_count": 4,
+      "queries_count": 8,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 192793,
+    "verifier": {
+      "ms": 43651,
+      "counts": {
+        "by_support": {
+          "direct": 1,
+          "partial": 3,
+          "unrelated": 4,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 8,
+          "false": 0
+        },
+        "model_verdicts": 8,
+        "by_support_model": {
+          "direct": 1,
+          "partial": 3,
+          "unrelated": 4,
+          "tangential": 0
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "4375e59c-b6d7-4f80-a97e-f995f40eade2",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "212413dc-25d6-4317-8b13-6c9d1292b45e",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "424a13fd-9405-4ee4-b5f7-96e73456e557",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "5cef2284-3f52-4cc6-a2ad-39cfd24621ce",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 43651,
+          "label": "batch1",
+          "attempts": 1,
+          "claim_ids": [
+            "C1",
+            "C2",
+            "C3",
+            "C4"
+          ],
+          "escalated": false,
+          "recovered": false,
+          "candidates": 8,
+          "split_probes": 0
+        }
+      ],
+      "dropped": [
+        {
+          "role": "binding_case_law",
+          "title": "רע\"א 3614/19 קדמת עדן בע\"מ נ׳ נסאר נסאר פסק דין (12.08.2021)",
+          "origin": "local_db",
+          "reason": "פסק דין עוסק בהסכמי חכירה וחוזים ולא בנושאי ירושה או בהגדרת מנגנון 'יורש אחרי יורש'.",
+          "candidate_id": "9ddc446a-a5bd-4960-a245-5830fb7e218d",
+          "worst_support": "unrelated",
+          "retrieval_method": "text"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "ע\"א 2395/17 דפנה ארנון נ׳ שלמה פיוטרקובסקי פסק דין",
+          "origin": "local_db",
+          "reason": "התקציר מצביע על ענייני שיעוי וטענות דיוניות/חישובי נזקים ולא על דוקטרינה של זכויות יורשים בעזבון.",
+          "candidate_id": "02381d05-e01b-469f-a602-ee3a6cf2c0f7",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "בג\"ץ 3550/21 אילנית בוטראשוילי נ׳ בית הדין הארצי לעבודה פסק דין (13.07.2021)",
+          "origin": "local_db",
+          "reason": "מדובר בבג\"ץ בתחום דיני עבודה; לא נראית רלוונטיות לניסוח או לפרשנות של חוק הירושה או ל'יורש אחרי יורש'.",
+          "candidate_id": "10e10c88-7515-47a4-8c57-2da6dc58d554",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        },
+        {
+          "role": "primary_statute",
+          "title": "בג\"ץ 3390/16 עדאלה – המרכז המשפטי לזכויות המיעוט הערבי בישראל נ׳ הכנסת פסק דין",
+          "origin": "local_db",
+          "reason": "פסק דין עוסק בזכויות יסוד והפליה ציבורית (בג\"ץ), לא בהסדרי הירושה או בזכויות יורש ראשון/שני; סובייקט שונה.",
+          "candidate_id": "83225a00-3e09-4fd0-bbd2-27feffa37bb9",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        }
+      ],
+      "batch_ms": [
+        43651
+      ],
+      "parallel": true,
+      "verdicts": [
+        {
+          "reason": "פסק דין עוסק בהסכמי חכירה וחוזים ולא בנושאי ירושה או בהגדרת מנגנון 'יורש אחרי יורש'.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "9ddc446a-a5bd-4960-a245-5830fb7e218d",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        },
+        {
+          "reason": "מדובר בבג\"ץ בתחום דיני עבודה; לא נראית רלוונטיות לניסוח או לפרשנות של חוק הירושה או ל'יורש אחרי יורש'.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "10e10c88-7515-47a4-8c57-2da6dc58d554",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        },
+        {
+          "reason": "פסק דין עוסק בזכויות יסוד והפליה ציבורית (בג\"ץ), לא בהסדרי הירושה או בזכויות יורש ראשון/שני; סובייקט שונה.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "83225a00-3e09-4fd0-bbd2-27feffa37bb9",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        },
+        {
+          "reason": "מדובר בתיק עזבון העוסק בבעלות במקרקעין, רלוונטי לשאלת היקף זכויות היורש הראשון, אך הקטע המסופק אינו מציג דיונים ספציפיים על 'יורש ראשון' מול 'יורש שני' או ניתוח סטטוטורי מלא — לכן רק partial.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "424a13fd-9405-4ee4-b5f7-96e73456e557",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "פסק דין מטפל בנושאי עזבון ובשאלות בעלות בנכסי מקרקעין של העזבון.",
+            "הדיון מכיל התייחסות לסמכויות בתי המשפט ביחס לזכויות במקרקעין העשויות להניח בסיס להערכת מעמדו של יורש ראשון."
+          ]
+        },
+        {
+          "reason": "התקציר מצביע על ענייני שיעוי וטענות דיוניות/חישובי נזקים ולא על דוקטרינה של זכויות יורשים בעזבון.",
+          "support": "unrelated",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "02381d05-e01b-469f-a602-ee3a6cf2c0f7",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        },
+        {
+          "reason": "המקור עוסק בדיוק בנושא הטענה — כללי פרשנות וניסוח לצוואה וההבחנה בין מנגנוני הורשה אלה — ולכן תומך ישירות.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "212413dc-25d6-4317-8b13-6c9d1292b45e",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "מאמר עוסק במפורש בהבחנה הפרשנית בין 'יורש במקום יורש' ל'יורש אחרי יורש'.",
+            "המקור מתייחס לדרישות ניסוח ופרשנות של צוואות ולחזקות פרשניות שנידונות בבתי המשפט."
+          ]
+        },
+        {
+          "reason": "התיק נוגע לזכויות במקרקעין בין קרובי משפחה וניהולן בבית משפט, רלוונטי להשלכות כלפי צדדים שלישיים/נושים באופן כללי, אך לא מציין במפורש הוראת 'יורש אחרי יורש' או טיפול סטטוטורי מיוחד — לכן partial.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "4375e59c-b6d7-4f80-a97e-f995f40eade2",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "פסק דין משפחתי עוסק בהצהרת זכויות במקרקעין והחבות בדמי שימוש בין קרובים.",
+            "החלטה זו עשויה לרמוז על השפעות בין יורשים ושאלות לגבי מעמד זכויות מול צדדים פנימיים בעיזבון."
+          ]
+        },
+        {
+          "reason": "החלטת ש\"ע עוסקת בדיוק בסוגיות רישום, תום לב והסתמכות — נושאים מרכזיים לטענה על גבולות זכויות כלפי צדדים שלישיים — אך הקטע אינו מצביע במפורש על 'יורש אחרי יורש', ולכן partial.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "5cef2284-3f52-4cc6-a2ad-39cfd24621ce",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "פסק דין על רישום במקרקעין והתייחסות להגנת רוכש בתום לב ולהסתמכות על רישום.",
+            "מכיל עקרונות בנוגע לסדרי קדימויות ורישום שנוגעים להיקף ההגנה של צד ג' מול זכויות פנימיות."
+          ]
+        }
+      ],
+      "demotions": [],
+      "batch_count": 1,
+      "call_failed": false,
+      "model_final": "openai/gpt-5-mini",
+      "retry_count": 0,
+      "per_claim_ms": {
+        "C1": 43651,
+        "C2": 43651,
+        "C3": 43651,
+        "C4": 43651
+      },
+      "total_sum_ms": 43651,
+      "call_failures": [],
+      "model_initial": "openai/gpt-5-mini",
+      "total_wall_ms": 43651,
+      "retry_attempts": 0,
+      "escalated_claims": [],
+      "rate_limit_count": 0,
+      "candidates_usable": 4,
+      "concurrency_limit": 2,
+      "demotions_by_rule": {
+        "analogical": 0,
+        "background": 0,
+        "landing_page": 0,
+        "wrong_subject": 0,
+        "self_contradiction": 0
+      },
+      "escalated_batches": 0,
+      "recovered_batches": 0,
+      "candidates_dropped": 4,
+      "candidates_verified": 8,
+      "split_probe_attempts": 0,
+      "merge_order_preserved": true,
+      "fallback_to_sequential": false
+    },
+    "retrieval": {
+      "ms": 14469,
+      "pool": {
+        "drops": [
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.130513625591993,
+            "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "9d4cd9c3-e808-4a20-b5a3-ee891d260cac",
+            "rank_before_drop": 1,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.130513625591993,
+            "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "547f63c0-fe38-4864-ad9d-56a3d2b61d82",
+            "rank_before_drop": 2,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "primary_statute",
+            "score": 0.129851283878088,
+            "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' ריבי לב אוחיון: פסק דין בעניין בקשה לסילוק התובענה על הסף (תמ\"ש 25065-11-24)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "0b57aeb7-de45-42ad-9a65-1ecc81ee087f",
+            "rank_before_drop": 3,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.126174638420343,
+            "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין תביעה למתן סעד הצהרתי בדבר קיומן של זכויות במקרקעין, וכן לחיוב בדמי שימוש ראויים (תמ\"ש 11810-09-21)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "doc:e46e7ee1-2be9-4ccb-b5ca-d3d0007325f9",
+            "drop_reason": "dup_document_id",
+            "source_type": "caselaw",
+            "candidate_id": "2f267e00-6c92-4d2f-9b47-d670d9aeb35f",
+            "rank_before_drop": 4,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.124861216545105,
+            "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' ריבי לב אוחיון: פסק דין בעניין בקשה לסילוק התובענה על הסף (תמ\"ש 25065-11-24)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "88d41dc7-f0e8-4cc1-bb5b-f9148bac6f63",
+            "rank_before_drop": 5,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+            "role": "binding_case_law",
+            "score": 0.124861216545105,
+            "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "871b1d77-8ca8-45cc-86cb-23f0fdf7a0a3",
+            "rank_before_drop": 6,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+            "role": "binding_case_law",
+            "score": 0.124861216545105,
+            "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "7f25ab2f-cc8f-42c3-be84-31b928ba1895",
+            "rank_before_drop": 7,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.123747153580189,
+            "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "edb71ff0-5333-4fb4-94d9-8cca4b9e9296",
+            "rank_before_drop": 8,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
+            "role": "binding_case_law",
+            "score": 0.123641608655453,
+            "title": "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "8bd75303-ef1c-4862-8c49-e4d0b47a3cc3",
+            "rank_before_drop": 9,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+            "role": "binding_case_law",
+            "score": 0.123547792807221,
+            "title": "בית המשפט לענייני משפחה באשדוד, סגנית הנשיא השופטת ענת אלפסי: פסק דין שעניינו אכיפת הסכם העברת בעלות בדירה (תלה\"מ 30657-01-21)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "f9442bda-7c44-4865-8dcd-1775e1912150",
+            "rank_before_drop": 10,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+            "role": "primary_statute",
+            "score": 0.122328186780214,
+            "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "fa8cee8a-4885-4f68-907f-6f6be8fe023b",
+            "rank_before_drop": 11,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
+            "role": "binding_case_law",
+            "score": 0.122172452881932,
+            "title": "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "b4b4d4c0-97a8-4d5b-8564-fab58d83e832",
+            "rank_before_drop": 12,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+            "role": "primary_statute",
+            "score": 0.122119278088212,
+            "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "416ca952-06f1-4758-8d79-13914fa38ad8",
+            "rank_before_drop": 13,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.121483842283487,
+            "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' ריבי לב אוחיון: פסק דין בעניין בקשה לסילוק התובענה על הסף (תמ\"ש 25065-11-24)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "8b1ace1d-6bc1-46df-8462-207d1ed7ff7f",
+            "rank_before_drop": 14,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
+            "role": "binding_case_law",
+            "score": 0.121108578890562,
+            "title": "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "12188e97-53d1-4670-9bb8-0ae948763dde",
+            "rank_before_drop": 15,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=500",
+            "role": "binding_case_law",
+            "score": 0.121043630316854,
+            "title": "בימ\"ש עליון, אב\"ד השופט יוסף אלרון, השופטת גילה כנפי-שטייניץ, השופטת רות רונן: פס\"ד בערעור על הכ\"ד ברצח בנסיבות מחמירות של רעייתו וגזה\"ד (ע\"פ 7905/23)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "aa972115-97be-47bb-a25c-e9f2dfa76718",
+            "rank_before_drop": 16,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.120607251673937,
+            "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' ריבי לב אוחיון: פסק דין בעניין בקשה לסילוק התובענה על הסף (תמ\"ש 25065-11-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "ae8ff0cd-63c3-4030-8326-21becba5e7bd",
+            "rank_before_drop": 17,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
+            "role": "primary_statute",
+            "score": 0.120562240853906,
+            "title": "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "9511a453-0ed9-4eb1-8844-949f362f2b29",
+            "rank_before_drop": 18,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.120394135266542,
+            "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "bbe71cf1-f5a1-4515-a7b2-f600bdac98f7",
+            "rank_before_drop": 19,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+            "role": "binding_case_law",
+            "score": 0.120369779318571,
+            "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "8d644ceb-59d3-4729-85f2-3de0d2156a81",
+            "rank_before_drop": 20,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=70",
+            "role": "binding_case_law",
+            "score": 0.12026423625648,
+            "title": "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעה להצהרה על זכויות במבנה מגורים בירושלים ומנגד תביעה לסילוק יד מהנכס ע\"י בריטניה (ת\"א 42550-01-21)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "fee913de-8508-4697-9b1e-91b7d1607283",
+            "rank_before_drop": 21,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+            "role": "primary_statute",
+            "score": 0.12026423625648,
+            "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: פסק דין לפי חוק יחסי ממון (תמ\"ש 28833-05-24)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "e9fa824d-6d36-4e06-8ac6-fa10da88fbee",
+            "rank_before_drop": 22,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+            "role": "binding_case_law",
+            "score": 0.119874539226294,
+            "title": "בימ\"ש עליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת רות רונן: פס\"ד בערעור על זיכוי נאשמת מעבירת מסירת ידיעה העלולה להיות לתועלת האויב (ע\"פ ב3766-24)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "dc13ea7a-208b-4c1c-9041-36e173597f1a",
+            "rank_before_drop": 24,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.119874539226294,
+            "title": "בימ\"ש עליון, הרכב שופטים השופטת דפנה ברק-ארז, השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין, השופט יחיאל כשר:  פס\"ד בפרשת העוברים (בע\"מ 69395-03-25)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "c4688293-890c-4a10-8ba5-0ce9721fbb7f",
+            "rank_before_drop": 25,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+            "role": "binding_case_law",
+            "score": 0.119874539226294,
+            "title": "בימ\"ש עליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פס\"ד בערעור של מטפלת שהורשעה בעבירה של התעללות בחסר ישע על-ידי אחראי (ע\"פ 5770/24)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "d22e958b-dcd9-442c-9af0-0474d11ae0e0",
+            "rank_before_drop": 26,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+            "role": "primary_statute",
+            "score": 0.119171556457877,
+            "title": "בימ\"ש השלום ת\"א, השופט טל חבקין: החלטה בבקשות בשמונה תיקים לביטול פסקי דין שניתנו בהעדר הגנה של אבי דוביצקי (ת\"א 13548-01-17)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "7b6e0672-bffa-4b42-9009-9f542d4cbefa",
+            "rank_before_drop": 27,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+            "role": "primary_statute",
+            "score": 0.118774220719934,
+            "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "b6159a55-6cfd-4112-848a-2171118ab5cb",
+            "rank_before_drop": 28,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
+            "role": "primary_statute",
+            "score": 0.118575550988317,
+            "title": "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "fc4fd331-a296-4fcf-8f5f-a7af87b333dc",
+            "rank_before_drop": 29,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=10",
+            "role": "primary_statute",
+            "score": 0.117880208790302,
+            "title": "ביהמ\"ש המחוזי מרכז, אב\"ד סג\"נ עמי קובו, שופטת מרב גרינברג, שופט מיכאל קרשן: גז\"ד למחבל אשר ניסה לרצוח שני חיילים בשנת 2023 (תפ\"ח 42620-04-23)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "86dabef4-dea8-4bb0-b983-67f34cdd442d",
+            "rank_before_drop": 30,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.117757592722774,
+            "title": "בימ\"ש עליון, הרכב שופטים השופטת דפנה ברק-ארז, השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין, השופט יחיאל כשר:  פס\"ד בפרשת העוברים (בע\"מ 69395-03-25)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "9c8cbd01-38ae-43f4-b9f4-7b8d25cb4c97",
+            "rank_before_drop": 31,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=230",
+            "role": "primary_statute",
+            "score": 0.117383536323905,
+            "title": "ביהמ\"ש השלום בטבריה, הנשיא ניר מישורי לב טוב: גזר דין בעניין ביצוע עבירת צידת חיית בר מוגנת ללא רישיון ציד או היתר, וביצוע עבירת איסור ציד בשיטות אסורות (ת\"פ 61589-07-22)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "f12bc44b-103e-425a-8efb-9f40d3611c58",
+            "rank_before_drop": 32,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+            "role": "primary_statute",
+            "score": 0.117110366374254,
+            "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "72340f40-e08d-4aca-964f-8f0cf0b50dd3",
+            "rank_before_drop": 33,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
+            "role": "binding_case_law",
+            "score": 0.116570234671235,
+            "title": "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "0a6589a6-3e14-4e41-ae49-0d6e9bca5596",
+            "rank_before_drop": 34,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
+            "role": "primary_statute",
+            "score": 0.114304167591035,
+            "title": "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "b8c3f1a9-f1aa-46e3-9aa2-e9b488da3f34",
+            "rank_before_drop": 35,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=300",
+            "role": "primary_statute",
+            "score": 0.114304167591035,
+            "title": "ביהמ\"ש השלום בנוף הגליל-נצרת, הנשיא ניר מישורי לב טוב: גזר דין בעניין עבירת מסירת ידיעה כוזבת, ועבירת זיף פנקס או מסמך אחר והשתמש בכל מרמה או תחבולה (ת\"פ 41647-10-22)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "d437977a-db0e-4f96-ab55-e728d03a4534",
+            "rank_before_drop": 36,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=230",
+            "role": "primary_statute",
+            "score": 0.113040412217379,
+            "title": "ביהמ\"ש השלום בטבריה, הנשיא ניר מישורי לב טוב: גזר דין בעניין ביצוע עבירת צידת חיית בר מוגנת ללא רישיון ציד או היתר, וביצוע עבירת איסור ציד בשיטות אסורות (ת\"פ 61589-07-22)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "4c57b2ff-2f2c-43f2-91ec-925f84790580",
+            "rank_before_drop": 37,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+            "role": "primary_statute",
+            "score": 0.112861145660281,
+            "title": "בית המשפט לענייני משפחה באשדוד, סגנית הנשיא השופטת ענת אלפסי: פסק דין שעניינו אכיפת הסכם העברת בעלות בדירה (תלה\"מ 30657-01-21)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "9d997609-c18c-4bcd-8c02-dfae32700554",
+            "rank_before_drop": 38,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=20",
+            "role": "primary_statute",
+            "score": 0.112019474059343,
+            "title": "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "f5e70979-73d1-47de-afeb-9f94e35a0fb5",
+            "rank_before_drop": 39,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
+            "role": "primary_statute",
+            "score": 0.111622136458755,
+            "title": "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "e30270f7-23b3-4a29-8e88-bc7c8728eea2",
+            "rank_before_drop": 40,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=230",
+            "role": "primary_statute",
+            "score": 0.10933744199574,
+            "title": "ביהמ\"ש השלום בטבריה, הנשיא ניר מישורי לב טוב: גזר דין בעניין ביצוע עבירת צידת חיית בר מוגנת ללא רישיון ציד או היתר, וביצוע עבירת איסור ציד בשיטות אסורות (ת\"פ 61589-07-22)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "8799ef64-e90c-44d4-ba26-856d7bb91357",
+            "rank_before_drop": 41,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3650",
+            "role": "binding_case_law",
+            "score": 0.3918576695985882,
+            "title": "ביהמ\"ש לענייני משפחה אשדוד, השופטת עפרה גיא: פס\"ד בתיק משפחה 80810-01-19",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "a1419da6-7a81-4732-83bd-0b88fe76a537",
+            "rank_before_drop": 43,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4540",
+            "role": "primary_statute",
+            "score": 0.37737661530588124,
+            "title": "בימ\"ש לענייני משפחה ת\"א, השופט ארז שני: פס\"ד בתביעה בין אחים על רקע עזבון אמם (תמ\"ש 12532-05-20)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "vector:C2:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "7b9c58f3-ff5b-4352-a0ca-8183be751463",
+            "rank_before_drop": 47,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3270",
+            "role": "binding_case_law",
+            "score": 0.376383338150805,
+            "title": "ביהמ\"ש לענייני משפחה בטבריה, השופטת ורד ריקנטי רוסהר: פס\"ד בתביעה למזונות אישה וקטינה מעיזבון (ת\"ע 5688-11-21)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "b34461c9-0599-41a9-985f-91f02f5204a9",
+            "rank_before_drop": 48,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_13_6650-04.pdf&type=2",
+            "role": "primary_statute",
+            "score": 0.3710970342026076,
+            "title": "בג\"ץ 6650-04 - פלוני נ. בית  הדין הרבני האיזורי בנתניה",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:supremedecisions.court.gov.il/home/download",
+            "drop_reason": "dup_url",
+            "source_type": "supreme_court_il",
+            "candidate_id": "7176204e-550c-4964-bdd8-382df2a6dff0",
+            "rank_before_drop": 49,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3650",
+            "role": "primary_statute",
+            "score": 0.369204121855374,
+            "title": "ביהמ\"ש לענייני משפחה אשדוד, השופטת עפרה גיא: פס\"ד בתיק משפחה 80810-01-19",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "2b32d693-cd36-4d32-99cd-695b54d22d96",
+            "rank_before_drop": 51,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2490",
+            "role": "primary_statute",
+            "score": 0.3653320151050602,
+            "title": "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת נאוה גדיש: פס\"ד בתביעה כספית שהגישו אם ובנה כנגד אחיה של האם בטענה להפרת התחייבות (תמ\"ש 40211-07-18)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "d5ffe9f2-cc0c-4c02-96e4-f679b890587c",
+            "rank_before_drop": 52,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1260",
+            "role": "primary_statute",
+            "score": 0.3635991740592474,
+            "title": "התיישנות שיעבודים",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "vector:C2:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "0bc23d2a-1397-4623-8a78-cbc50adf6066",
+            "rank_before_drop": 54,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1150",
+            "role": "binding_case_law",
+            "score": 0.35547889258297377,
+            "title": "ביהמ\"ש לענייניי משפחה בירושלים, השופטת הילה גלבוע: החלטה בעניין שינוי צוואה שנערכה לאחר פטירת בן הזוג (ת\"ע 38653-08-20)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "e846e260-91a7-4018-badb-96de05e2b278",
+            "rank_before_drop": 55,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1800",
+            "role": "binding_case_law",
+            "score": 0.3474227200571934,
+            "title": "ביהמ\"ש לענייני משפחה בקריות, סגנית הנשיאה השופטת שירי היימן: פס\"ד בשאלת רלוונטיות הצוואה של המנוחה ( תמ\"ש 48903-09-22)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "5fc6bb7f-21e4-4ffb-9fb5-f2066f65acb4",
+            "rank_before_drop": 56,
+            "retrieval_method": "vector"
+          }
+        ],
+        "found": 57,
+        "counts": {
+          "by_role": {
+            "primary_statute": 1,
+            "binding_case_law": 6,
+            "persuasive_case_law": 1
+          },
+          "by_claim": {
+            "C1": 3,
+            "C2": 2,
+            "C3": 1,
+            "C4": 2
+          },
+          "by_origin": {
+            "local_db": 7,
+            "perplexity": 1
+          }
+        },
+        "after_dedup": 8,
+        "dedup_drops": 49,
+        "drop_reason_counts": {
+          "dup_url": 46,
+          "dup_document_id": 1,
+          "vector_quota_per_claim": 2
+        }
+      },
+      "local": {
+        "ms": 3563,
+        "aggregate": {
+          "wall_ms": 3563,
+          "max_query_ms": 3563,
+          "sum_query_ms": 24245,
+          "slowest_query": {
+            "ms": 3563,
+            "role": "primary_statute",
+            "text_ms": 3278,
+            "claim_id": "C1",
+            "exact_ms": 1,
+            "query_he": "חוק הירושה, התשכ\"ה-1965 הוראות וטרמינולוגיה לגבי \"יורש אחר יורש\" וסטטוס משפטי של יורש ראשון ויורש שני",
+            "vector_ms": 282,
+            "embedding_ms": 172
+          },
+          "slowest_method": "text",
+          "method_total_ms": {
+            "text": 22253,
+            "exact": 2,
+            "vector": 1983,
+            "embedding": 1115
+          },
+          "queries_executed": 7,
+          "exact_error_count": 0,
+          "text_timeout_count": 0,
+          "candidates_by_method": {
+            "text": 42,
+            "vector": 14,
+            "exact_authority": 0
+          },
+          "vector_timeout_count": 0,
+          "bottleneck_hypothesis": "single_slow_query (max=3563ms ≈ wall=3563ms)",
+          "duplicate_query_count": 0
+        },
+        "per_query": [
+          {
+            "ms": 3386,
+            "diag": {
+              "text_ms": 3139,
+              "exact_ms": 0,
+              "vector_ms": 245,
+              "text_status": "ok",
+              "embedding_ms": 170,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+                "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין תביעה למתן סעד הצהרתי בדבר קיומן של זכויות במקרקעין, וכן לחיוב בדמי שימוש ראויים (תמ\"ש 11810-09-21)",
+                "ביהמ\"ש לענייני משפחה בירושלים, ש' ריבי לב אוחיון: פסק דין בעניין בקשה לסילוק התובענה על הסף (תמ\"ש 25065-11-24)",
+                "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+                "בית המשפט לענייני משפחה באשדוד, סגנית הנשיא השופטת ענת אלפסי: פסק דין שעניינו אכיפת הסכם העברת בעלות בדירה (תלה\"מ 30657-01-21)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 3139,
+              "top_vector_titles": [
+                "רע\"א 4936/20 עזבון המנוח מוחמד מחמוד סומרין ז\"ל נ׳ הימונתא בע\"מ פסק דין (30.06.2020)",
+                "ע\"א 2395/17 דפנה ארנון נ׳ שלמה פיוטרקובסקי פסק דין"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק הי",
+                  "raw_clue": "חוק הי",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק הי",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "הי",
+                  "candidate_title_tokens": [
+                    "הי"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק הי",
+                "search_terms": [
+                  "חוק הי"
+                ]
+              }
+            ],
+            "vector_hits": 2,
+            "vector_budget": 2,
+            "compact_query_he": "תום לב העליון פסק-דין בעלות חופשי כפופה יורש אחר העברה שעבוד ציווי זכויות היורש הראשון בפסיקה",
+            "original_query_he": "בית המשפט העליון פסק-דין \"בעלות חופשי\" \"בעלות כפופה\" \"יורש אחר יורש\" העברה שעבוד ציווי בפסיקה על זכויות היורש הראשון",
+            "text_authority_signal": {
+              "has_signal": true,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": true,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 3391,
+            "diag": {
+              "text_ms": 3153,
+              "exact_ms": 0,
+              "vector_ms": 237,
+              "text_status": "ok",
+              "embedding_ms": 189,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+                "ביהמ\"ש לענייני משפחה בירושלים, ש' ריבי לב אוחיון: פסק דין בעניין בקשה לסילוק התובענה על הסף (תמ\"ש 25065-11-24)",
+                "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+                "רע\"א 3614/19 קדמת עדן בע\"מ נ׳ נסאר נסאר פסק דין (12.08.2021)",
+                "בימ\"ש עליון, הרכב שופטים השופטת דפנה ברק-ארז, השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין, השופט יחיאל כשר:  פס\"ד בפרשת העוברים (בע\"מ 69395-03-25)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 3153,
+              "top_vector_titles": [
+                "ביהמ\"ש לענייני משפחה בטבריה, השופטת ורד ריקנטי רוסהר: פס\"ד בתביעה למזונות אישה וקטינה מעיזבון (ת\"ע 5688-11-21)",
+                "בג\"ץ 3550/21 אילנית בוטראשוילי נ׳ בית הדין הארצי לעבודה פסק דין (13.07.2021)"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק הי",
+                  "raw_clue": "חוק הי",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק הי",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "הי",
+                  "candidate_title_tokens": [
+                    "הי"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק הי",
+                "search_terms": [
+                  "חוק הי"
+                ]
+              }
+            ],
+            "vector_hits": 2,
+            "vector_budget": 2,
+            "compact_query_he": "תום לב העליון יורש אחר יורש פרשנות מהות הזכויות היורש הראשון והיורש השני בפסק-דין מוביל",
+            "original_query_he": "בית המשפט העליון \"יורש אחר יורש\" פרשנות מהות הזכויות של היורש הראשון והיורש השני בפסק-דין מוביל",
+            "text_authority_signal": {
+              "has_signal": true,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": true,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 3411,
+            "diag": {
+              "text_ms": 3009,
+              "exact_ms": 0,
+              "vector_ms": 402,
+              "text_status": "ok",
+              "embedding_ms": 157,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין תביעה למתן סעד הצהרתי בדבר קיומן של זכויות במקרקעין, וכן לחיוב בדמי שימוש ראויים (תמ\"ש 11810-09-21)",
+                "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+                "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+                "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+                "ביהמ\"ש לענייני משפחה בירושלים, ש' ריבי לב אוחיון: פסק דין בעניין בקשה לסילוק התובענה על הסף (תמ\"ש 25065-11-24)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 3009,
+              "top_vector_titles": [
+                "ביהמ\"ש לענייני משפחה אשדוד, השופטת עפרה גיא: פס\"ד בתיק משפחה 80810-01-19",
+                "ע\"א 767-11 - ג'הנשה להיגי נ. יצחק עזורי"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק הי",
+                  "raw_clue": "חוק הי",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק הי",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "הי",
+                  "candidate_title_tokens": [
+                    "הי"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק הי",
+                "search_terms": [
+                  "חוק הי"
+                ]
+              }
+            ],
+            "vector_hits": 2,
+            "vector_budget": 2,
+            "compact_query_he": "תום לב העליון פסק-דין יורש אחר נושים צד השפעת הוראה שירשה זכויות שלישי בתום רישום במקרקעין",
+            "original_query_he": "בית המשפט העליון פסק-דין \"יורש אחר יורש\" נושים צד ג' בתום לב רישום במקרקעין השפעת הוראה שירשה אחר יורש על זכויות צד שלישי",
+            "text_authority_signal": {
+              "has_signal": true,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": true,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 3488,
+            "diag": {
+              "text_ms": 3290,
+              "exact_ms": 0,
+              "vector_ms": 196,
+              "text_status": "ok",
+              "embedding_ms": 125,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה בירושלים, ש' ריבי לב אוחיון: פסק דין בעניין בקשה לסילוק התובענה על הסף (תמ\"ש 25065-11-24)",
+                "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+                "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: פסק דין לפי חוק יחסי ממון (תמ\"ש 28833-05-24)",
+                "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)",
+                "ביהמ\"ש השלום בטבריה, הנשיא ניר מישורי לב טוב: גזר דין בעניין ביצוע עבירת צידת חיית בר מוגנת ללא רישיון ציד או היתר, וביצוע עבירת איסור ציד בשיטות אסורות (ת\"פ 61589-07-22)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 3290,
+              "top_vector_titles": [
+                "בימ\"ש לענייני משפחה ת\"א, השופט ארז שני: פס\"ד בתביעה בין אחים על רקע עזבון אמם (תמ\"ש 12532-05-20)",
+                "התיישנות שיעבודים"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק הי",
+                  "raw_clue": "חוק הי",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק הי",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "הי",
+                  "candidate_title_tokens": [
+                    "הי"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 8,
+            "role": "primary_statute",
+            "claim_id": "C2",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הי",
+                "search_terms": [
+                  "חוק הי"
+                ]
+              }
+            ],
+            "vector_hits": 2,
+            "vector_budget": 2,
+            "compact_query_he": "תום לב חוק הירושה התשכ העברת זכות בירושה שעבוד נכסי מורשת והגבלת בזכויות היורש לפני חלוקה ה-1965",
+            "original_query_he": "חוק הירושה, התשכ\"ה-1965 הוראות על העברת זכות בירושה, שעבוד נכסי מורשת, והגבלת בזכויות היורש לפני חלוקה או מימוש",
+            "text_authority_signal": {
+              "has_signal": true,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": true,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 3492,
+            "diag": {
+              "text_ms": 3236,
+              "exact_ms": 1,
+              "vector_ms": 255,
+              "text_status": "ok",
+              "embedding_ms": 130,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "בימ\"ש השלום ת\"א, השופט טל חבקין: החלטה בבקשות בשמונה תיקים לביטול פסקי דין שניתנו בהעדר הגנה של אבי דוביצקי (ת\"א 13548-01-17)",
+                "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+                "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+                "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)",
+                "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 3236,
+              "top_vector_titles": [
+                "ביהמ\"ש לענייני משפחה אשדוד, השופטת עפרה גיא: פס\"ד בתיק משפחה 80810-01-19",
+                "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת נאוה גדיש: פס\"ד בתביעה כספית שהגישו אם ובנה כנגד אחיה של האם בטענה להפרת התחייבות (תמ\"ש 40211-07-18)"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק הי",
+                  "raw_clue": "חוק הי",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק הי",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "הי",
+                  "candidate_title_tokens": [
+                    "הי"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 8,
+            "role": "primary_statute",
+            "claim_id": "C4",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הי",
+                "search_terms": [
+                  "חוק הי"
+                ]
+              }
+            ],
+            "vector_hits": 2,
+            "vector_budget": 2,
+            "compact_query_he": "תום לב חוק הירושה התשכ הוראות לגבי זכויות נושים הגנה לצד שלישי בתום ורישום במקרקעין בהקשר צוואות",
+            "original_query_he": "חוק הירושה, התשכ\"ה-1965 הוראות לגבי זכויות נושים, הגנה לצד שלישי בתום לב ורישום זכויות במקרקעין בהקשר צוואות ו'יורש אחר יורש'",
+            "text_authority_signal": {
+              "has_signal": true,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": true,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 3514,
+            "diag": {
+              "text_ms": 3148,
+              "exact_ms": 0,
+              "vector_ms": 366,
+              "text_status": "ok",
+              "embedding_ms": 172,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+                "בימ\"ש עליון, אב\"ד השופט יוסף אלרון, השופטת גילה כנפי-שטייניץ, השופטת רות רונן: פס\"ד בערעור על הכ\"ד ברצח בנסיבות מחמירות של רעייתו וגזה\"ד (ע\"פ 7905/23)",
+                "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+                "בימ\"ש עליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת רות רונן: פס\"ד בערעור על זיכוי נאשמת מעבירת מסירת ידיעה העלולה להיות לתועלת האויב (ע\"פ ב3766-24)",
+                "בימ\"ש עליון, הרכב שופטים השופטת דפנה ברק-ארז, השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין, השופט יחיאל כשר:  פס\"ד בפרשת העוברים (בע\"מ 69395-03-25)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 3148,
+              "top_vector_titles": [
+                "ביהמ\"ש לענייניי משפחה בירושלים, השופטת הילה גלבוע: החלטה בעניין שינוי צוואה שנערכה לאחר פטירת בן הזוג (ת\"ע 38653-08-20)",
+                "ביהמ\"ש לענייני משפחה בקריות, סגנית הנשיאה השופטת שירי היימן: פס\"ד בשאלת רלוונטיות הצוואה של המנוחה ( תמ\"ש 48903-09-22)"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק הי",
+                  "raw_clue": "חוק הי",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק הי",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "הי",
+                  "candidate_title_tokens": [
+                    "הי"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק הי",
+                "search_terms": [
+                  "חוק הי"
+                ]
+              }
+            ],
+            "vector_hits": 2,
+            "vector_budget": 2,
+            "compact_query_he": "תום לב העליון יורש במקום יורש מול אחר פרשנות בדיני צוואות וחזקות פרשניות בפסיקה",
+            "original_query_he": "בית המשפט העליון \"יורש במקום יורש\" מול \"יורש אחר יורש\" פרשנות בדיני צוואות וחזקות פרשניות בפסיקה",
+            "text_authority_signal": {
+              "has_signal": true,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": true,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 3563,
+            "diag": {
+              "text_ms": 3278,
+              "exact_ms": 1,
+              "vector_ms": 282,
+              "text_status": "ok",
+              "embedding_ms": 172,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+                "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)",
+                "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+                "ביהמ\"ש המחוזי מרכז, אב\"ד סג\"נ עמי קובו, שופטת מרב גרינברג, שופט מיכאל קרשן: גז\"ד למחבל אשר ניסה לרצוח שני חיילים בשנת 2023 (תפ\"ח 42620-04-23)",
+                "ביהמ\"ש השלום בטבריה, הנשיא ניר מישורי לב טוב: גזר דין בעניין ביצוע עבירת צידת חיית בר מוגנת ללא רישיון ציד או היתר, וביצוע עבירת איסור ציד בשיטות אסורות (ת\"פ 61589-07-22)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 3278,
+              "top_vector_titles": [
+                "בג\"ץ 6650-04 - פלוני נ. בית  הדין הרבני האיזורי בנתניה",
+                "בג\"ץ 3390/16 עדאלה – המרכז המשפטי לזכויות המיעוט הערבי בישראל נ׳ הכנסת פסק דין"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק הי",
+                  "raw_clue": "חוק הי",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק הי",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "הי",
+                  "candidate_title_tokens": [
+                    "הי"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 8,
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הי",
+                "search_terms": [
+                  "חוק הי"
+                ]
+              }
+            ],
+            "vector_hits": 2,
+            "vector_budget": 2,
+            "compact_query_he": "תום לב חוק הירושה התשכ הוראות וטרמינולוגיה לגבי יורש אחר וסטטוס משפטי ראשון ויורש שני ה-1965",
+            "original_query_he": "חוק הירושה, התשכ\"ה-1965 הוראות וטרמינולוגיה לגבי \"יורש אחר יורש\" וסטטוס משפטי של יורש ראשון ויורש שני",
+            "text_authority_signal": {
+              "has_signal": true,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": true,
+              "exact_statute_section": false
+            }
+          }
+        ],
+        "candidates": 56,
+        "global_exact": {
+          "clues_from_claims": [
+            {
+              "kind": "statute",
+              "source": "claim",
+              "law_name": "חוק הי",
+              "search_terms": [
+                "חוק הי"
+              ]
+            }
+          ],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 14461,
+        "dropped": 9,
+        "parallel": false,
+        "query_ms": [
+          14459
+        ],
+        "per_query": [
+          {
+            "ms": 14459,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.boazkraus.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+                "title": "יורש אחר יורש - עורך דין בעז קראוס",
+                "domain": "boazkraus.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9,-%D7%90%D7%95-%D7%99%D7%95%D7%A8%D7%A9-%D7%אחרי-%D7%99%D7%ורש",
+                "title": "פרשנות צוואה - יורש במקום יורש, או יורש אחרי יורש",
+                "domain": "psakdin.co.il",
+                "hygiene": {
+                  "url_status": "suspicious",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9,-%D7%90%D7%95-%D7%99%D7%95%D7%A8%D7%A9-%D7%אחרי-%D7%99%D7%ורש",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9,-%D7%90%D7%95-%D7%99%D7%95%D7%A8%D7%A9-%D7%%D7%90%D7%97%D7%A8%D7%99-%D7%99%D7%%D7%95%D7%A8%D7%A9",
+                  "hygiene_reasons": [
+                    "url_suspicious_encoding"
+                  ],
+                  "landing_page_status": "unknown",
+                  "body_meaningful_chars": 118,
+                  "title_meaningful_chars": 40
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "persuasive_case_law",
+                "role_corrected_from": "scholarship",
+                "raw_pplx_source_type": "webpage",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://he.afiklaw.com/caselaw/16741",
+                "title": "תמש (קריות) 48903-09-22 ל.מ נ' מ.ב",
+                "domain": "he.afiklaw.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "extracted_followup_terms": [
+                  "סעיף 42 לחוק הירושה"
+                ],
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/41825-10-22.docx",
+                "title": "41825-10-22.docx",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_scholarship",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.the-lawyer.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+                "title": "יורש אחר יורש: המדריך המלא לסעיף 42 לחוק הירושה",
+                "domain": "the-lawyer.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "extracted_followup_terms": [
+                  "סעיף 42 לחוק הירושה מאמר הסבר משפטי: \"יורש אחר יורש\" – המדריך המלא לסעיף"
+                ],
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.boazkraus.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+                "title": "יורש אחר יורש - עורך דין בעז קראוס",
+                "domain": "boazkraus.co.il",
+                "drop_reason": "followup:class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.the-lawyer.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+                "title": "יורש אחר יורש: המדריך המלא לסעיף 42 לחוק הירושה",
+                "domain": "the-lawyer.co.il",
+                "drop_reason": "followup:discovery_only",
+                "classified_source_class": "discovery_only",
+                "extracted_followup_terms": [
+                  "סעיף 42 לחוק הירושה מדריך משפטי על \"יורש אחר יורש\" עם הסבר על סעיף 42 לח"
+                ],
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://iblaw.co.il/%D7%94%D7%95%D7%9F-%D7%9E%D7%A9%D7%A4%D7%97%D7%AA%D7%99-%D7%A2%D7%A1%D7%A7%D7%99%D7%9D-%D7%99%D7%A8%D7%95%D7%A9%D7%95%D7%AA-%D7%A1%D7%9B%D7%A1%D7%95%D7%9B%D7%99%D7%9D/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%99%D7%9A-%D7%9C%D7%90%D7%9B%D7%95%D7%9C-%D7%90%D7%AA-%D7%94%D7%A2%D7%95%D7%92%D7%94-%D7%95%D7%9C%D7%94%D7%A9%D7%90/",
+                "title": "יורש אחר יורש - איך לאכול את העוגה ולהשאיר אותה שלמה | איריס בודנהיימר",
+                "domain": "iblaw.co.il",
+                "drop_reason": "followup:discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://lareshet.co.il/interpretation-of-will/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+                "title": "יכולתו של מצווה לקבוע סדר ירושה - יורש אחר יורש | מגזין לרשת",
+                "domain": "lareshet.co.il",
+                "drop_reason": "followup:class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gerushin.co.il/%D7%94%D7%95%D7%A8%D7%90%D7%94-%D7%91%D7%93%D7%91%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%9B%D7%99%D7%95%D7%A6%D7%A8%D7%AA-%D7%91%D7%A2%D7%99%D7%95%D7%AA/",
+                "title": "יורש אחר יורש: מה קובע החוק, איפה מתחילות הבעיות ואיך פוסק בית ...",
+                "domain": "gerushin.co.il",
+                "drop_reason": "followup:class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C3",
+            "query_he": "מאמר משפטי \"יורש אחר יורש\" \"יורש במקום יורש\" פרשנות צוואות חזקות פרשניות כתב-עת משפטי מאמר",
+            "raw_count": 5,
+            "discovery_only": 4,
+            "followup_terms": [
+              "סעיף 42 לחוק הירושה",
+              "סעיף 42 לחוק הירושה מאמר הסבר משפטי: \"יורש אחר יורש\" – המדריך המלא לסעיף"
+            ],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 1,
+        "query_count": 1,
+        "retry_count": 0,
+        "total_sum_ms": 14459,
+        "total_wall_ms": 14461,
+        "hygiene_counts": {
+          "keep": 1,
+          "total": 1,
+          "exclude": 0,
+          "reasons": {
+            "url_suspicious_encoding": 1
+          },
+          "downgrade": 0,
+          "report_only_mode": false,
+          "would_exclude_in_report_only": 0
+        },
+        "rate_limit_count": 0,
+        "role_corrections": [
+          {
+            "to": "persuasive_case_law",
+            "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9,-%D7%90%D7%95-%D7%99%D7%95%D7%A8%D7%A9-%D7%אחרי-%D7%99%D7%ורש",
+            "from": "scholarship",
+            "title": "פרשנות צוואה - יורש במקום יורש, או יורש אחרי יורש",
+            "admitted": true,
+            "claim_id": "C3"
+          }
+        ],
+        "concurrency_limit": 4,
+        "merge_order_preserved": true,
+        "fallback_to_sequential": false
+      }
+    },
+    "candidates": [
+      {
+        "role": "binding_case_law",
+        "score": 0.134993335604668,
+        "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין תביעה למתן סעד הצהרתי בדבר קיומן של זכויות במקרקעין, וכן לחיוב בדמי שימוש ראויים (תמ\"ש 11810-09-21)",
+        "origin": "local_db",
+        "snippet": "ב פני כב' ה שופט פליקס גורודצקי תובעים א . ע . א . ע\"י ב\"כ עו\"ד ניצן שמואלי נגד נתבעים 1 . א . ע . א . 2 . ר . ע . א . ע\"י ב\"כ עו\"ד ראפת עליאן 3 . ר . ע . א . 4. ס . ע . א . 5 . א. ע . א . 6 . נ . ע . א . 7 . ר . ע . א . 8 . נ . ע . פסק דין לפניי תביעה למתן סעד הצהרתי בדבר קיומן של זכויות במקרקעין, וכן לחיוב בדמי שימוש ראויים. רקע עובדתי רלוונטי התובע הוא אחיהם של הנתבעים 1 ו-3-8 (להלן: \" האחים \" ",
+        "claim_id": "C4",
+        "metadata": {
+          "court": "בתי המשפט לענייני משפחה",
+          "judges": "פליקס גורודצקי",
+          "district": "מחוז ירושלים",
+          "procedure_type": "משפחה"
+        },
+        "query_he": "בית המשפט העליון פסק-דין \"יורש אחר יורש\" נושים צד ג' בתום לב רישום במקרקעין השפעת הוראה שירשה אחר יורש על זכויות צד שלישי",
+        "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "document_id": "e46e7ee1-2be9-4ccb-b5ca-d3d0007325f9",
+        "source_type": "caselaw",
+        "candidate_id": "4375e59c-b6d7-4f80-a97e-f995f40eade2",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.119947607070208,
+        "title": "רע\"א 3614/19 קדמת עדן בע\"מ נ׳ נסאר נסאר פסק דין (12.08.2021)",
+        "origin": "local_db",
+        "snippet": "1 הפורמלית המשיבה בין הסכם נכרת 7.7.2004\n החכירה הסכמי לפי מהמסדר המקרקעין את תחכור היא אם ,לכהן שהעניק הייעוץ עבור\n שני ונסאר כהן כרתו ,הפיתוח הסכם חתימת ולאחר ,לכך בהמשך .(הייעוץ הסכם :להלן)\n 35% לקבל נסאר של זכותו את עיגן ,15.2.2006 ביום נכרת אשר ,האחד :נוספים הסכמים\n אם דולר אלף 350 של בסך מוסכם פיצוי גם כמו ,מהמסדר כהן תקבל אשר תשלום מכל\n לעמלה זכאי יהא נסאר כי נקבע ובו ,22.6.2008 ביום נכרת ,",
+        "claim_id": "C1",
+        "metadata": {
+          "parties": "קדמת עדן בע\"מ נ׳ נסאר נסאר",
+          "raw_title": "רע\"א 3614/19 קדמת עדן בע\"מ נ. נסאר נסאר",
+          "source_site": "toledano.co.il",
+          "decision_date": "12.08.2021",
+          "decision_kind": "פסק דין",
+          "document_kind": "caselaw",
+          "local_pdf_file": "01445 - רע א 3614 19 קדמת עדן בע מ נ׳ נסאר נסאר פסק דין (12.08.2021).pdf",
+          "procedure_type": "רע\"א",
+          "source_category": "פסיקה חינם",
+          "procedure_number": "3614/19"
+        },
+        "query_he": "בית המשפט העליון \"יורש אחר יורש\" פרשנות מהות הזכויות של היורש הראשון והיורש השני בפסק-דין מוביל",
+        "source_url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-3614-19-%d7%a7%d7%93%d7%9e%d7%aa-%d7%a2%d7%93%d7%9f-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a0%d7%a1%d7%90%d7%a8-%d7%a0%d7%a1%d7%90%d7%a8/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "document_id": "273ef8ef-fb3a-40c2-9fe3-a4d235accfe3",
+        "source_type": "caselaw",
+        "candidate_id": "9ddc446a-a5bd-4960-a245-5830fb7e218d",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.75,
+        "title": "פרשנות צוואה - יורש במקום יורש, או יורש אחרי יורש",
+        "origin": "perplexity",
+        "snippet": "מאמר על פרשנות צוואה: \"יורש במקום יורש, או יורש אחרי יורש\". עוסק בהבחנה פרשנית בין שני מנגנוני ההורשה ובמשמעות לשון הצוואה ונסיבות חיצוניות.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "psakdin.co.il",
+          "pplx_hygiene": {
+            "url_status": "suspicious",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9,-%D7%90%D7%95-%D7%99%D7%95%D7%A8%D7%A9-%D7%אחרי-%D7%99%D7%ורש",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9,-%D7%90%D7%95-%D7%99%D7%95%D7%A8%D7%A9-%D7%%D7%90%D7%97%D7%A8%D7%99-%D7%99%D7%%D7%95%D7%A8%D7%A9",
+            "hygiene_reasons": [
+              "url_suspicious_encoding"
+            ],
+            "landing_page_status": "unknown",
+            "body_meaningful_chars": 118,
+            "title_meaningful_chars": 40
+          },
+          "role_corrected_from": "scholarship",
+          "raw_pplx_source_type": "webpage",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "מאמר משפטי \"יורש אחר יורש\" \"יורש במקום יורש\" פרשנות צוואות חזקות פרשניות כתב-עת משפטי מאמר",
+        "source_url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9,-%D7%90%D7%95-%D7%99%D7%95%D7%A8%D7%A9-%D7%אחרי-%D7%99%D7%ורש",
+        "source_type": "caselaw",
+        "candidate_id": "212413dc-25d6-4317-8b13-6c9d1292b45e",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.387580726436208,
+        "title": "רע\"א 4936/20 עזבון המנוח מוחמד מחמוד סומרין ז\"ל נ׳ הימונתא בע\"מ פסק דין (30.06.2020)",
+        "origin": "local_db",
+        "snippet": "י בתביעת הדין פסק התבסס עליו הראשון האדן ,להיווכח שניתן כפי.44\n בשאלות ולהכריע לדון העניינית הסמכות ,כידוע .בנכס הבעלות בזכויות עוסק הראשונה\n בתי לחוק (3)(א)51 סעיף ראו) המחוזי המשפט לבית מסורה במקרקעין לבעלות הנוגעות\n שהדבר ככל במקרקעין הבעלות בשאלת לדון רשאי השלום משפט בית ,אומנם .(המשפט\n 76 בסעיף לו הנתונה הנגררת הסמכות מכוח וזאת ,שלפניו העניין בירור לצורך דרוש\n ידי על נקבעו אשר ,אלה מעין קביעו",
+        "claim_id": "C2",
+        "metadata": {
+          "parties": "עזבון המנוח מוחמד מחמוד סומרין ז\"ל נ׳ הימונתא בע\"מ",
+          "raw_title": "רע\"א 4936/20 עזבון המנוח מוחמד מחמוד סומרין ז\"ל נ. הימונתא בע\"מ",
+          "source_site": "toledano.co.il",
+          "decision_date": "30.06.2020",
+          "decision_kind": "פסק דין",
+          "document_kind": "caselaw",
+          "local_pdf_file": "00309 - רע א 4936 20 עזבון המנוח מוחמד מחמוד סומרין ז ל נ׳ הימונתא בע מ פסק דין (30.06.2020).pdf",
+          "procedure_type": "רע\"א",
+          "source_category": "פסיקה חינם",
+          "procedure_number": "4936/20"
+        },
+        "query_he": "בית המשפט העליון פסק-דין \"בעלות חופשי\" \"בעלות כפופה\" \"יורש אחר יורש\" העברה שעבוד ציווי בפסיקה על זכויות היורש הראשון",
+        "source_url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-4936-20-%d7%a2%d7%96%d7%91%d7%95%d7%9f-%d7%94%d7%9e%d7%a0%d7%95%d7%97-%d7%9e%d7%95%d7%97%d7%9e%d7%93-%d7%9e%d7%97%d7%9e%d7%95%d7%93-%d7%a1%d7%95%d7%9e%d7%a8%d7%99%d7%9f-%d7%96/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "document_id": "370b36eb-c486-4d93-9d2c-e80c922d3ee1",
+        "source_type": "caselaw",
+        "candidate_id": "424a13fd-9405-4ee4-b5f7-96e73456e557",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.387264504122436,
+        "title": "ע\"א 767-11 - ג'הנשה להיגי נ. יצחק עזורי",
+        "origin": "local_db",
+        "snippet": "ע המקרקעין לחוק \"שוק תקנת \" אשר מוסדרים במקרקעין\n תנאיה בהתקיים– הרישום על לב בתום והסתמכות תמורה תשלום – בידיו יש \n שהרישום למרות שרכש הזכות את בידיו לשמר במקרקעין זכות רוכש של\nנכון היה לא הסתמך שעליו . ובלשוןהסעיף:  \n\nע\" א767/11  נ להיגי 'עזורי  \n  \nפ\"דסו )2 (853  א השופטת 'חיות  \n \n \n \n870  פסקי־דין ,סו כרך ,שני חלק ,התשע\" ג2013  \n \n  \n  \nא  \n  \nב  \n  \nג  \n  \nד  \n  \nה  \n  \nו  \n  \nז  \n  \n  \n  \n ",
+        "claim_id": "C4",
+        "metadata": {
+          "page": 853,
+          "year": 2013,
+          "volume": "ס\"ו",
+          "doc_type": "padi",
+          "case_name": "ג'הנשה להיגי נ. יצחק עזורי",
+          "source_site": "supreme_court_il",
+          "verdict_type": "פד\"י"
+        },
+        "query_he": "בית המשפט העליון פסק-דין \"יורש אחר יורש\" נושים צד ג' בתום לב רישום במקרקעין השפעת הוראה שירשה אחר יורש על זכויות צד שלישי",
+        "source_url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_16_767-11.pdf&type=2",
+        "document_id": "c18b795c-dd95-4290-b509-3b2965010c07",
+        "source_type": "supreme_court_il",
+        "candidate_id": "5cef2284-3f52-4cc6-a2ad-39cfd24621ce",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.38702945733126537,
+        "title": "ע\"א 2395/17 דפנה ארנון נ׳ שלמה פיוטרקובסקי פסק דין",
+        "origin": "local_db",
+        "snippet": "מד לא והוא ,הנתבע על רובץ להוכחתה הנטל ממילא .השיהוי דוקטרינת את\n19\n\nדבר סוף\n פסק פי על כי ולהבהיר ,הערעור את לקבל לחבריי אציע ,לעיל האמור כל לאור.28\n על דין פי על וריבית הצמדה הפרשי גם למערערות לשלם המשיבים על העיקרי הדין\n הדין פסק מתן למועד ועד אותם קיבל שפיוטרקובסקי מאז התקופה בגין הדיבידנדים\n התדיינות למניעת ,להבהיר אציע כן .(\"הראשונה התקופה בגין ההפרשים\" :להלן) העיקרי\n דין פי על וריבית הצמדה ",
+        "claim_id": "C2",
+        "metadata": {
+          "parties": "דפנה ארנון נ׳ שלמה פיוטרקובסקי",
+          "raw_title": "ע\"א 2395/17 דפנה ארנון נ. שלמה פיוטרקובסקי",
+          "source_site": "toledano.co.il",
+          "decision_date": null,
+          "decision_kind": "פסק דין",
+          "document_kind": "caselaw",
+          "local_pdf_file": "02979 - ע א 2395 17 דפנה ארנון נ׳ שלמה פיוטרקובסקי פסק דין.pdf",
+          "procedure_type": "ע\"א",
+          "source_category": "פסיקה חינם",
+          "procedure_number": "2395/17"
+        },
+        "query_he": "בית המשפט העליון פסק-דין \"בעלות חופשי\" \"בעלות כפופה\" \"יורש אחר יורש\" העברה שעבוד ציווי בפסיקה על זכויות היורש הראשון",
+        "source_url": "https://www.toledano.co.il/%d7%a2%d7%90-2395-17-%d7%93%d7%a4%d7%a0%d7%94-%d7%90%d7%a8%d7%a0%d7%95%d7%9f-%d7%a0-%d7%a9%d7%9c%d7%9e%d7%94-%d7%a4%d7%99%d7%95%d7%98%d7%a8%d7%a7%d7%95%d7%91%d7%a1%d7%a7%d7%99-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "document_id": "ce9de41c-38f6-4abf-9ca1-2cadec463b47",
+        "source_type": "caselaw",
+        "candidate_id": "02381d05-e01b-469f-a602-ee3a6cf2c0f7",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.37066634925781977,
+        "title": "בג\"ץ 3550/21 אילנית בוטראשוילי נ׳ בית הדין הארצי לעבודה פסק דין (13.07.2021)",
+        "origin": "local_db",
+        "snippet": "ים וכהנה כהנה ועוד ,ותכליתו החוק\n מצדיקה אינה ודאי – מסוימים עקרונות או זכויות פי-על פלוני חוק לפרש יש כי ,לאקונית\n.לעבודה הארצי הדין בית של דין פסק על שיפוטית ביקורת\n5\n\n ,הלב-תום במישורי מצוי העותרות של טענותיהן עיקר כי דומה ,למעשה ,ואכן.15\n ,המקרה נסיבות רקע על ,הצדק מן סעד להן ליתן יש כי סבורות הן באשר ,וההגינות הצדק\n העניין נסיבות :לכחד אין ,אמנם .ל\"המל של – לטענתן – הבעייתית והתנהלותו\n להביע ",
+        "claim_id": "C1",
+        "metadata": {
+          "parties": "אילנית בוטראשוילי נ׳ בית הדין הארצי לעבודה",
+          "raw_title": "בג\"ץ 3550/21 אילנית בוטראשוילי נ. בית הדין הארצי לעבודה פסק דין מיום 13.07.21",
+          "source_site": "toledano.co.il",
+          "decision_date": "13.07.2021",
+          "decision_kind": "פסק דין",
+          "document_kind": "caselaw",
+          "local_pdf_file": "01589 - בג ץ 3550 21 אילנית בוטראשוילי נ׳ בית הדין הארצי לעבודה פסק דין (13.07.2021).pdf",
+          "procedure_type": "בג\"ץ",
+          "source_category": "פסיקה חינם",
+          "procedure_number": "3550/21"
+        },
+        "query_he": "בית המשפט העליון \"יורש אחר יורש\" פרשנות מהות הזכויות של היורש הראשון והיורש השני בפסק-דין מוביל",
+        "source_url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3550-21-%d7%90%d7%99%d7%9c%d7%a0%d7%99%d7%aa-%d7%91%d7%95%d7%98%d7%a8%d7%90%d7%a9%d7%95%d7%99%d7%9c%d7%99-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "document_id": "6d41b907-cb0c-4bf8-b8a3-866249f08762",
+        "source_type": "caselaw",
+        "candidate_id": "10e10c88-7515-47a4-8c57-2da6dc58d554",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.36416378775753,
+        "title": "בג\"ץ 3390/16 עדאלה – המרכז המשפטי לזכויות המיעוט הערבי בישראל נ׳ הכנסת פסק דין",
+        "origin": "local_db",
+        "snippet": "לשוויון החוקתית בזכות בפגיעה מדובר אם ולבחון להוסיף יש ,שלילית הינה זו\n .האדם לכבוד \"הדוק ענייני\" בקשר הקשורה בהפליה מדובר אם\n מכוון הוא שכן ,לאום רקע על שונים קטינים בין מבחין ההסדר כי טענו העותרים.6\n .זו טענה לדחות יש לדעתי .בלבד ערבי ממוצא קטינים של לעניינם למעשה הלכה\n בתיקון המנויות בעבירות שהורשע מי על חל ההסדר כי חולק אין ,הדברים בפשטות\n העבירות .יהודי שאינו במי מדובר אם ובין ביהודי מדובר אם",
+        "claim_id": "C1",
+        "metadata": {
+          "parties": "עדאלה – המרכז המשפטי לזכויות המיעוט הערבי בישראל נ׳ הכנסת",
+          "raw_title": "בג\"ץ 3390/16 עדאלה – המרכז המשפטי לזכויות המיעוט הערבי בישראל נ. הכנסת",
+          "source_site": "toledano.co.il",
+          "decision_date": null,
+          "decision_kind": "פסק דין",
+          "document_kind": "caselaw",
+          "local_pdf_file": "01616 - בג ץ 3390 16 עדאלה – המרכז המשפטי לזכויות המיעוט הערבי בישראל נ׳ הכנסת פסק דין.pdf",
+          "procedure_type": "בג\"ץ",
+          "source_category": "פסיקה חינם",
+          "procedure_number": "3390/16"
+        },
+        "query_he": "חוק הירושה, התשכ\"ה-1965 הוראות וטרמינולוגיה לגבי \"יורש אחר יורש\" וסטטוס משפטי של יורש ראשון ויורש שני",
+        "source_url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3390-16-%d7%a2%d7%93%d7%90%d7%9c%d7%94-%d7%94%d7%9e%d7%a8%d7%9b%d7%96-%d7%94%d7%9e%d7%a9%d7%a4%d7%98%d7%99-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%9e%d7%99%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "document_id": "42b4a276-39ee-41e6-a327-de67f5d15164",
+        "source_type": "caselaw",
+        "candidate_id": "83225a00-3e09-4fd0-bbd2-27feffa37bb9",
+        "retrieval_method": "vector",
+        "expected_source_type": "statute"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 28265,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 33417,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "claim_analyzer.escalated",
+        "escalated": true,
+        "http_status": 200
+      },
+      {
+        "ms": 36461,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 3563,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 14461,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 43650,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 35872,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter_v2.initial",
+        "escalated": false,
+        "http_status": 200
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://www.boazkraus.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+        "role": "scholarship",
+        "title": "יורש אחר יורש - עורך דין בעז קראוס",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי \"יורש אחר יורש\" \"יורש במקום יורש\" פרשנות צוואות חזקות פרשניות כתב-עת משפטי מאמר",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://he.afiklaw.com/caselaw/16741",
+        "role": "scholarship",
+        "title": "תמש (קריות) 48903-09-22 ל.מ נ' מ.ב",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי \"יורש אחר יורש\" \"יורש במקום יורש\" פרשנות צוואות חזקות פרשניות כתב-עת משפטי מאמר",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/41825-10-22.docx",
+        "role": "scholarship",
+        "title": "41825-10-22.docx",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי \"יורש אחר יורש\" \"יורש במקום יורש\" פרשנות צוואות חזקות פרשניות כתב-עת משפטי מאמר",
+        "drop_reason": "class_government_report_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.the-lawyer.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+        "role": "scholarship",
+        "title": "יורש אחר יורש: המדריך המלא לסעיף 42 לחוק הירושה",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי \"יורש אחר יורש\" \"יורש במקום יורש\" פרשנות צוואות חזקות פרשניות כתב-עת משפטי מאמר",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.boazkraus.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+        "role": "scholarship",
+        "title": "יורש אחר יורש - עורך דין בעז קראוס",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי \"יורש אחר יורש\" \"יורש במקום יורש\" פרשנות צוואות חזקות פרשניות כתב-עת משפטי מאמר",
+        "drop_reason": "followup:class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.the-lawyer.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+        "role": "scholarship",
+        "title": "יורש אחר יורש: המדריך המלא לסעיף 42 לחוק הירושה",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי \"יורש אחר יורש\" \"יורש במקום יורש\" פרשנות צוואות חזקות פרשניות כתב-עת משפטי מאמר",
+        "drop_reason": "followup:discovery_only"
+      },
+      {
+        "url": "https://iblaw.co.il/%D7%94%D7%95%D7%9F-%D7%9E%D7%A9%D7%A4%D7%97%D7%AA%D7%99-%D7%A2%D7%A1%D7%A7%D7%99%D7%9D-%D7%99%D7%A8%D7%95%D7%A9%D7%95%D7%AA-%D7%A1%D7%9B%D7%A1%D7%95%D7%9B%D7%99%D7%9D/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%99%D7%9A-%D7%9C%D7%90%D7%9B%D7%95%D7%9C-%D7%90%D7%AA-%D7%94%D7%A2%D7%95%D7%92%D7%94-%D7%95%D7%9C%D7%94%D7%A9%D7%90/",
+        "role": "scholarship",
+        "title": "יורש אחר יורש - איך לאכול את העוגה ולהשאיר אותה שלמה | איריס בודנהיימר",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי \"יורש אחר יורש\" \"יורש במקום יורש\" פרשנות צוואות חזקות פרשניות כתב-עת משפטי מאמר",
+        "drop_reason": "followup:discovery_only"
+      },
+      {
+        "url": "https://lareshet.co.il/interpretation-of-will/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+        "role": "scholarship",
+        "title": "יכולתו של מצווה לקבוע סדר ירושה - יורש אחר יורש | מגזין לרשת",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי \"יורש אחר יורש\" \"יורש במקום יורש\" פרשנות צוואות חזקות פרשניות כתב-עת משפטי מאמר",
+        "drop_reason": "followup:class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.gerushin.co.il/%D7%94%D7%95%D7%A8%D7%90%D7%94-%D7%91%D7%93%D7%91%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%9B%D7%99%D7%95%D7%A6%D7%A8%D7%AA-%D7%91%D7%A2%D7%99%D7%95%D7%AA/",
+        "role": "scholarship",
+        "title": "יורש אחר יורש: מה קובע החוק, איפה מתחילות הבעיות ואיך פוסק בית ...",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי \"יורש אחר יורש\" \"יורש במקום יורש\" פרשנות צוואות חזקות פרשניות כתב-עת משפטי מאמר",
+        "drop_reason": "followup:class_unknown_not_admitted_for_scholarship"
+      }
+    ],
+    "required_anchors": {
+      "count": 0,
+      "anchors": [],
+      "enabled": true,
+      "statuses": [],
+      "queries_emitted": []
+    },
+    "drafter_v2_full_compare": null,
+    "drafter_v2_opus_compare": null,
+    "drafter_v2_sonnet_compare": null
+  }
+}

@@ -1,0 +1,2120 @@
+{
+  "id": "F",
+  "category": "worker_classification",
+  "query": "מהם המבחנים להבחנה בין עובד לקבלן עצמאי?",
+  "run_id": "3531b25d-1afc-4da5-9433-5d7f9dd281dd",
+  "qa_log_id": "f1b7f982-3ecc-4c0f-8e78-e3836a8a9bdb",
+  "answer": "- שורה תחתונה: המבחנים המרכזיים להבחנה בין עובד לקבלן עצמאי הם מבחן השליטה/הכפיפות, מבחן התלות הכלכלית ושיטת התשלום, מבחן ההשתלבות וזמינות רציפה, ומבחן החופש למנות מחליף, בעלות על כלים וסיכון עסקי.\n- מבחן השליטה/הכפיפות — בוחנים עד כמה המזמין קובע את אופן ביצוע העבודה, שעותיה, מיקומה וקיומו של פיקוח שוטף; חוסר עצמאות ניכר בתחומים אלה מהווה אינדיקציה לכיוון יחסי עובד-מעביד.¹\n- מבחן התלות הכלכלית ושיטת התשלום — בודקים האם המבצע תלוי כלכלית במזמין (למשל משכורת קבועה או תלות בהכנסה) לעומת תשלום לפי פרויקט/מלאכה, וכן ניתן להשוות חישובית את עלות העסקת עובד שווה עם התשלום שקיבל המבצע כקבלן לצורך הבהרת עוצמת התלות.²\n- מבחן ההשתלבות וזמינות רציפה — בוחנים האם המבצע מהווה חלק מהותי ובלתי נפרד ממבנה הארגון, פועל במסגרת המשכיות או בלעדיות למזמין ומשמר זמינות רציפה; השתלבות גבוהה היא אינדיקציה למעמד עובד.³\n- מבחן החופש למינוי מחליף, בעלות על כלים וסיכון עסקי — בודקים אם המבצע יכול למנות מחליף, מי מספק את הכלים והציוד, והאם המבצע נושא בסיכון עסקי ומחויב להשיג רווח; סממנים אלה מצביעים לטובת מעמד קבלן עצמאי.⁴",
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_5_1181-03.pdf&type=2",
+      "title": "בג\"ץ 1181-03 - אוניברסיטת בר אילן נ. בית הדין הארצי לעבודה; מיהו המעביד – הגדרת יחסי עובד-מעביד בתבניות העסקה מודולאריות",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_5_1181-03.pdf&type=2",
+          "title": "בג\"ץ 1181-03 - אוניברסיטת בר אילן נ. בית הדין הארצי לעבודה",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/MM2.pdf",
+          "title": "מיהו המעביד – הגדרת יחסי עובד-מעביד בתבניות העסקה מודולאריות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%A1%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+      "title": "התניה על סטטוס 'עובד' והשלכותיה; זכויות עובדים - ברק קורן",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%A1%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+          "title": "התניה על סטטוס 'עובד' והשלכותיה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%20%D7%A2%D7%95%D7%91%D7%93%D7%99%D7%9D%20-%20%D7%91%D7%A8%D7%A7%20%D7%A7%D7%95%D7%A8%D7%9F.pdf",
+          "title": "זכויות עובדים - ברק קורן",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); בג\"ץ 1181-03 - אוניברסיטת בר אילן נ. בית הדין הארצי לעבודה",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_5_1181-03.pdf&type=2",
+          "title": "בג\"ץ 1181-03 - אוניברסיטת בר אילן נ. בית הדין הארצי לעבודה",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/71886.htm",
+      "title": "חוק חוזה קבלנות, תשל\"ד-1974; מיהו המעביד – הגדרת יחסי עובד-מעביד בתבניות העסקה מודולאריות",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/71886.htm",
+          "title": "חוק חוזה קבלנות, תשל\"ד-1974",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/MM2.pdf",
+          "title": "מיהו המעביד – הגדרת יחסי עובד-מעביד בתבניות העסקה מודולאריות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "גורם מרכזי בפסיקה הישראלית לקביעת מעמד הוא מידת השליטה והפיקוח; נדרשת פסיקה מחייבת להגדיר את המשמעות והיישום של המבחן, וספרות להשלים מונחים ומבחנים משניים.",
+        "text_he": "מבחן השליטה/כפיפות (control/subordination): יש לבחון עד כמה המעביד קובע את אופן העבודה, את שעותיה, את מקום עבודתה ואת הפיקוח על ביצועה.",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "פסיקה קובעת את חשיבות ההיבט הכלכלי/תאגידי בקביעת מעמד; ספרות מסבירה כיצד למדוד תלות כלכלית ושיטת התשלום במצבים מעשיים.",
+        "text_he": "מבחן התלות הכלכלית ושיטת התשלום (economic reality): יש לבדוק האם העובד תלוי כלכלית במעסיק (משכורת קבועה, תלות בהכנסה) לעומת תשלום לפי פרויקט/עבודה ומציאות רווח/הפסד אצל המבצע.",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "היבט האינטגרציה והמשכיות נדון בפסיקה כמרכיב חשוב; נדרשת פסיקה להסביר את הקריטריונים ולספרות כדי לפרט נסיבות יישומם.",
+        "text_he": "מבחן ההשתלבות בארגון וזמינות רציפה (integration/continuity): יש להעריך אם המבצע מהווה חלק מהותי ובלתי נפרד מן הארגון או עובד בבחינת המשכיות ובלעדיות מול המעסיק.",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "פסיקה מציינת את זכות ההחלפה, בעלות על כלים ונשיאת סיכון כרמזים מהותיים למעמד; ספרות עוזרת להבחין בין אינדיקטורים אלה במגוון פרקטיקות.",
+        "text_he": "מבחן החופש לפנות משנה/בעלות על כלים/סיכון עסקי (substitution, ownership, risk): יש לבדוק האם לעובד זכות למנות מחליף, מי מספק את הכלים והאם המבצע נושא בסיכון העסקי/מבקש רווח.",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "3531b25d-1afc-4da5-9433-5d7f9dd281dd",
+    "drafter": {
+      "ms": 30035,
+      "ok": true,
+      "lead_ref": {
+        "ref": null,
+        "shape": "list",
+        "reason": "shape_not_eligible"
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "completeness": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "list_item",
+        "last_block_excerpt": "…מחליף, מי מספק את הכלים והציוד, והאם המבצע נושא בסיכון עסקי ומחויב להשיג רווח; סממנים אלה מצביעים לטובת מעמד קבלן עצמאי."
+      },
+      "sources_used": 6,
+      "used_sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_5_1181-03.pdf&type=2",
+          "title": "בג\"ץ 1181-03 - אוניברסיטת בר אילן נ. בית הדין הארצי לעבודה",
+          "number": 1,
+          "origin": "local_db",
+          "source_type": "supreme_court_il",
+          "candidate_id": "e2eed3f7-6d42-4a87-b88b-3000058dcd14"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/MM2.pdf",
+          "title": "מיהו המעביד – הגדרת יחסי עובד-מעביד בתבניות העסקה מודולאריות",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "66441131-5eb5-4e65-815c-edf20a3c2de0"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%A1%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+          "title": "התניה על סטטוס 'עובד' והשלכותיה",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "c2d69ad2-341b-4a0a-8a74-01de8f658ff1"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%20%D7%A2%D7%95%D7%91%D7%93%D7%99%D7%9D%20-%20%D7%91%D7%A8%D7%A7%20%D7%A7%D7%95%D7%A8%D7%9F.pdf",
+          "title": "זכויות עובדים - ברק קורן",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "4584ff82-e072-4dda-892e-57106aac109e"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "32eeb734-f513-4452-8211-07cac064ef49"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/71886.htm",
+          "title": "חוק חוזה קבלנות, תשל\"ד-1974",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "legislation",
+          "candidate_id": "1ebd442e-237b-4ab6-93d8-8b83428b1520"
+        }
+      ],
+      "marker_format": "superscript",
+      "model_initial": "openai/gpt-5-mini",
+      "builder_report": {
+        "marker_count": 4,
+        "heading_count": 0,
+        "list_item_count": 5,
+        "paragraph_count": 0,
+        "cited_segment_count": 4,
+        "adjacent_marker_count": 0,
+        "distinct_source_count": 6,
+        "compound_segment_count": 4,
+        "compound_footnote_count": 4,
+        "avg_sources_per_cited_segment": 2
+      },
+      "footnote_count": 4,
+      "sources_passed": 6,
+      "drafter_version": "v2.1c",
+      "truncation_retry": {
+        "retry_ms": 0,
+        "attempted": false,
+        "reasons_initial": [],
+        "same_model_retry": false,
+        "escalated_to_full": false
+      },
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "answer_style_report": {
+        "metrics": {
+          "block_count": 5,
+          "denylist_hits": [],
+          "heading_count": 0,
+          "heading_ratio": 0,
+          "cited_block_count": 4,
+          "total_footnote_count": 4,
+          "compound_footnote_count": 4,
+          "compound_footnote_ratio": 1,
+          "unsafe_display_title_count": 1,
+          "avg_sources_per_cited_block": 2,
+          "unsafe_display_title_examples": [
+            {
+              "ref": "s4",
+              "status": "fallback_truncated",
+              "display_title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)"
+            }
+          ],
+          "partial_supported_strong_claims": [],
+          "total_source_refs_in_cited_blocks": 8
+        },
+        "report_only": true,
+        "triggered_reasons": [
+          "unsafe_display_title",
+          "compound_footnote_ratio_high",
+          "avg_sources_per_block_high"
+        ]
+      },
+      "unique_source_count": 6,
+      "completeness_initial": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "list_item",
+        "last_block_excerpt": "…מחליף, מי מספק את הכלים והציוד, והאם המבצע נושא בסיכון עסקי ומחויב להשיג רווח; סממנים אלה מצביעים לטובת מעמד קבלן עצמאי."
+      },
+      "deterministic_branch": null,
+      "canonical_quote_fired": false,
+      "omitted_candidate_ids": [],
+      "structured_validation": {
+        "ok": true,
+        "errors": [],
+        "block_count": 5,
+        "heading_count": 0,
+        "list_item_count": 5,
+        "paragraph_count": 0,
+        "cited_segment_count": 4,
+        "forbidden_text_hits": [],
+        "unknown_source_refs": [],
+        "total_source_ref_count": 8
+      },
+      "max_completion_tokens_used": 8000,
+      "missing_anchor_descriptions": [],
+      "missing_anchor_caveat_injected": false,
+      "missing_docket_limitation_fired": false,
+      "statute_section_limitation_fired": false
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסקי-דין מחייבים של בית המשפט העליון המנסחים את מבחן השליטה/כפיפות בהבחנה בין עובד לקבלן עצמאי.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "פסק דין בית המשפט העליון מבחן השליטה כפיפות קבלן עצמאי עובד 'שליטה' 'כפיפות' פסק-דין דיני עבודה",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "למצוא ניתוח אקדמי שמסביר את היסודות התאורטיים והביקורת על מבחן השליטה וכיצד יש ליישמו.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר דיני עבודה 'מבחן השליטה' 'כפיפות' קבלן עצמאי השפעת שליטה על יחסי עבודה מאמר משפטי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "להשיג פסיקה מחייבת שדן במבחן התלות הכלכלית ובמשמעות שיטת התשלום בפסיקה הישראלית.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "פסק דין בית המשפט העליון 'תלות כלכלית' 'שיטת תשלום' קבלן עצמאי עובד 'משכורת קבועה' 'תשלום לפי פרויקט' פסק-דין",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "למצוא כתיבה אקדמית המסבירה את המושג 'economic reality' ואת יישומו בבחינת תלות כלכלית ושיטת התשלום.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר דיני עבודה 'תלות כלכלית' 'שיטת תשלום' 'economic reality' קבלן עצמאי עובד ניתוח השוואתי מאמר משפטי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסקי-דין מחייבים שבהם בית המשפט העליון דן במבחן ההשתלבות בארגון וזמינות רציפה כמדד להבחנה.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "פסק דין בית המשפט העליון 'השתלבות בארגון' 'זמינות רציפה' קבלן עצמאי עובד 'אינטגרציה' פסק-דין דיני עבודה",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "להשיג ניתוחים אקדמיים על המבחנים של אינטגרציה ומשכיות בעבודות להבחנה בין עובד לקבלן.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמר 'השתלבות בארגון' 'continuity' דיני עבודה קבלן עצמאי עובדה משפטית מאמר בכתב-עת משפטי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסיקה מחייבת שבה נדונו זכות מינוי מחליף, בעלות על ציוד ונשיאת סיכון עסקי בקביעת מעמד העובד/קבלן.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "פסק דין בית המשפט העליון 'מינוי מחליף' 'הזכות למנות מחליף' 'בעלות על כלים' 'סיכון עסקי' קבלן עצמאי עובד פסק-דין",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "למצוא מאמרים משפטיים הבוחנים את ההשלכות של זכות ההחלפה, בעלות על ציוד ונשיאת סיכון עסקי על מעמד העובד/קבלן.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמר דיני עבודה 'מינוי מחליף' 'בעלות על כלים' 'סיכון עסקי' קבלן עצמאי ניתוח משפטי מאמר",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 34418,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 29054,
+        "confidence": 0.9,
+        "legal_area": "דיני עבודה",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "answer_intent": {
+          "output_shape": "list"
+        },
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "interpretation_note": null
+      },
+      "claims_count": 4,
+      "queries_count": 8,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 143477,
+    "verifier": {
+      "ms": 39788,
+      "counts": {
+        "by_support": {
+          "direct": 2,
+          "partial": 4,
+          "unrelated": 5,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 10,
+          "false": 1
+        },
+        "model_verdicts": 11,
+        "by_support_model": {
+          "direct": 2,
+          "partial": 4,
+          "unrelated": 5,
+          "tangential": 0
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": false,
+          "best_support": "partial",
+          "candidate_id": "1ebd442e-237b-4ab6-93d8-8b83428b1520",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "4584ff82-e072-4dda-892e-57106aac109e",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "c2d69ad2-341b-4a0a-8a74-01de8f658ff1",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "32eeb734-f513-4452-8211-07cac064ef49",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "66441131-5eb5-4e65-815c-edf20a3c2de0",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "e2eed3f7-6d42-4a87-b88b-3000058dcd14",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 39788,
+          "label": "batch1",
+          "attempts": 1,
+          "claim_ids": [
+            "C1",
+            "C2",
+            "C3",
+            "C4"
+          ],
+          "escalated": false,
+          "recovered": false,
+          "candidates": 11,
+          "split_probes": 0
+        }
+      ],
+      "dropped": [
+        {
+          "role": "binding_case_law",
+          "title": "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+          "origin": "local_db",
+          "reason": "פסק דין משפחתי על קביעת הורות/פונדקאות; אינו עוסק במבחן השליטה/כפיפות או בהבחנה בין עובד לקבלן עצמאי.",
+          "candidate_id": "2ee30b92-cb05-4d53-b95b-e2ecb2985c0d",
+          "worst_support": "unrelated",
+          "retrieval_method": "text"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+          "origin": "local_db",
+          "reason": "הקטע המובא אינו מציין דיון במבחן התלות הכלכלית או בשיטת התשלום; אין סימנים שהפסיקה עוסקת בסיווג עובד/קבלן.",
+          "candidate_id": "b9dc7c84-a159-4c52-aee9-1438865e0b8a",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "רע\"א 7706/22 ציפורה שרה סינגר אטיה נ׳ עו\"ד אייל אבידן פסק דין (18.07.2022)",
+          "origin": "local_db",
+          "reason": "הכותרת/תקציר המובא עוסק בהליכים/ערעורים כלליים ולא מצביע על דיון במבחן התלות הכלכלית או בשיטת התשלום.",
+          "candidate_id": "14da7a25-f126-4429-91d4-4349bf32dbd1",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+          "origin": "local_db",
+          "reason": "מאמר על ענייני אישים ומעמד בעלי שליטה בחברות; אינו נוגע למבחני החלפה, בעלות על כלים או סיכון עסקי בהבחנה עובד/קבלן.",
+          "candidate_id": "3b451b33-3049-472c-8e7a-afdc7084ec0b",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "ריאיון עם המשנה לנשיא בית המשפט העליון (בדימוס) השופט מישאל חשין | טל כהנא ואילנה פרנקל (כרך ג)",
+          "origin": "local_db",
+          "reason": "ראיון משפטי כללי על איזוני זכויות; אין אזכור לבחינת שליטה/כפיפות בהקשר של מעמד עובד/קבלן.",
+          "candidate_id": "7278a05f-b440-4b65-b244-5f728f887bf2",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        }
+      ],
+      "batch_ms": [
+        39788
+      ],
+      "parallel": true,
+      "verdicts": [
+        {
+          "reason": "פסק דין משפחתי על קביעת הורות/פונדקאות; אינו עוסק במבחן השליטה/כפיפות או בהבחנה בין עובד לקבלן עצמאי.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "2ee30b92-cb05-4d53-b95b-e2ecb2985c0d",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        },
+        {
+          "reason": "ראיון משפטי כללי על איזוני זכויות; אין אזכור לבחינת שליטה/כפיפות בהקשר של מעמד עובד/קבלן.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "7278a05f-b440-4b65-b244-5f728f887bf2",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        },
+        {
+          "reason": "מאמר/סקירה אקדמית המקדישה את עצמה למבחן התלות הכלכלית ומסביר את המדדים הרלוונטיים — תואם ישירות לטענה.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "4584ff82-e072-4dda-892e-57106aac109e",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "מגדיר ומדגיש את מושג התלות הכלכלית (economic dependency).",
+            "דן ביחסי תשלום ותלות העובד במעביד כמרכיב בהבחנה עובד/קבלן."
+          ]
+        },
+        {
+          "reason": "מקור עיוני המוביל ישירות לניתוח קריטריונים של שיטת תשלום ותלות כלכלית — תואם את טענת המבחן.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "c2d69ad2-341b-4a0a-8a74-01de8f658ff1",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "דן בהשוואת עלות העסקת עובד מול תשלום לקבלן ובמשמעות לכך לסיווג.",
+            "מייחס חשיבות לשיטת התשלום כמבחן להערכת תלות כלכלית."
+          ]
+        },
+        {
+          "reason": "הקטע המובא אינו מציין דיון במבחן התלות הכלכלית או בשיטת התשלום; אין סימנים שהפסיקה עוסקת בסיווג עובד/קבלן.",
+          "support": "unrelated",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "b9dc7c84-a159-4c52-aee9-1438865e0b8a",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        },
+        {
+          "reason": "הכותרת/תקציר המובא עוסק בהליכים/ערעורים כלליים ולא מצביע על דיון במבחן התלות הכלכלית או בשיטת התשלום.",
+          "support": "unrelated",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "14da7a25-f126-4429-91d4-4349bf32dbd1",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        },
+        {
+          "reason": "מאמר מקצועי המוקדש ישירות למבחן ההשתלבות ומציין אותו כגורם מרכזי בסיווג — תואם במדויק לטענה.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "32eeb734-f513-4452-8211-07cac064ef49",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "מציג את מבחן ההשתלבות כמרכיב מרכזי בהבחנה בין עובד לקבלן.",
+            "מספק תיאור ועיבוד של ההיבטים המהותיים של השתלבות ובלעדיות."
+          ]
+        },
+        {
+          "reason": "מקור עיוני בתחום סיווג עובד/קבלן אך אינו מציג, עלפי התקציר, מיקוד ייחודי ומפורט רק במבחן ההשתלבות.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "66441131-5eb5-4e65-815c-edf20a3c2de0",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "דן בהגדרת יחסי עובד-מעביד ובהבחנות בתבניות העסקה מורכבות.",
+            "עשוי לכלול התייחסות להיבטים של השתלבות וזמינות ברקע התבניות המודולריות."
+          ]
+        },
+        {
+          "reason": "פסק הדין עוסק בהגדרת 'עובדים' והקשרם לארגון, אך התקציר אינו מציין דיון מפורש במבחן ההשתלבות/זמינות הרציפה עצמם.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "e2eed3f7-6d42-4a87-b88b-3000058dcd14",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "פסיקה עוסקת בהגדרות של עובדים בתוך ארגון ובהכרה בהקשרים ארגוניים.",
+            "יכולה לשמש כהקשר משפטי לניתוח השתלבות העובד בארגון."
+          ]
+        },
+        {
+          "reason": "חוק חוזה הקבלנות רלוונטי להגדרת יחסי קבלנות אבל אינו מפרט במפורש את מבחני ההחלפה/בעלות/סיכון כנוסח בדוקטרינה — תומך באופן חלקי.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": false,
+          "candidate_id": "1ebd442e-237b-4ab6-93d8-8b83428b1520",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "חוק חוזה קבלנות מבדיל בין קבלן לעובד ומגדיר את מערכת החובות בין מזמין לקבלן.",
+            "רמז לכך שהקבלן אחראי על ביצוע המלאכה ועל אמצעים שלו, רלוונטי להערכת בעלות על כלים וסיכון עסקי."
+          ]
+        },
+        {
+          "reason": "מאמר על ענייני אישים ומעמד בעלי שליטה בחברות; אינו נוגע למבחני החלפה, בעלות על כלים או סיכון עסקי בהבחנה עובד/קבלן.",
+          "support": "unrelated",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "3b451b33-3049-472c-8e7a-afdc7084ec0b",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        }
+      ],
+      "demotions": [
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C2",
+          "candidate_id": "4584ff82-e072-4dda-892e-57106aac109e",
+          "reason_excerpt": "מאמר/סקירה אקדמית המקדישה את עצמה למבחן התלות הכלכלית ומסביר את המדדים הרלוונטיים — תואם ישירות לטענה."
+        }
+      ],
+      "batch_count": 1,
+      "call_failed": false,
+      "model_final": "openai/gpt-5-mini",
+      "retry_count": 0,
+      "per_claim_ms": {
+        "C1": 39788,
+        "C2": 39788,
+        "C3": 39788,
+        "C4": 39788
+      },
+      "total_sum_ms": 39788,
+      "call_failures": [],
+      "model_initial": "openai/gpt-5-mini",
+      "total_wall_ms": 39788,
+      "retry_attempts": 0,
+      "escalated_claims": [],
+      "rate_limit_count": 0,
+      "candidates_usable": 6,
+      "concurrency_limit": 2,
+      "demotions_by_rule": {
+        "analogical": 0,
+        "background": 0,
+        "landing_page": 1,
+        "wrong_subject": 0,
+        "self_contradiction": 0
+      },
+      "escalated_batches": 0,
+      "recovered_batches": 0,
+      "candidates_dropped": 5,
+      "candidates_verified": 11,
+      "split_probe_attempts": 0,
+      "merge_order_preserved": true,
+      "fallback_to_sequential": false
+    },
+    "retrieval": {
+      "ms": 9272,
+      "pool": {
+        "drops": [
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.139850290864706,
+            "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "fed84548-e940-47d7-9229-7b1b48ba4b3b",
+            "rank_before_drop": 1,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+            "role": "binding_case_law",
+            "score": 0.138477923721075,
+            "title": "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "doc:8e15165f-026f-48db-a05a-8625606f0e8c",
+            "drop_reason": "dup_document_id",
+            "source_type": "caselaw",
+            "candidate_id": "df499b3c-e0e3-4fca-8f6c-5e3e3840ef87",
+            "rank_before_drop": 2,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+            "role": "binding_case_law",
+            "score": 0.138477923721075,
+            "title": "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "doc:8e15165f-026f-48db-a05a-8625606f0e8c",
+            "drop_reason": "dup_document_id",
+            "source_type": "caselaw",
+            "candidate_id": "75073384-f43b-4b5d-a058-f3e241896944",
+            "rank_before_drop": 3,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.137003841251135,
+            "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "c9b05f2c-440d-4c78-be99-7e7bb3f4194f",
+            "rank_before_drop": 4,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.137003841251135,
+            "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "8e09c896-2ef5-4a83-b33d-dd58fa42ca40",
+            "rank_before_drop": 5,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+            "role": "binding_case_law",
+            "score": 0.135912729799747,
+            "title": "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "doc:8e15165f-026f-48db-a05a-8625606f0e8c",
+            "drop_reason": "dup_document_id",
+            "source_type": "caselaw",
+            "candidate_id": "77bd48bc-eb14-4810-89a7-def5c71a13ed",
+            "rank_before_drop": 6,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=300",
+            "role": "binding_case_law",
+            "score": 0.135063158720732,
+            "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין בקשה לביטול ו/או הפחתת דמי מזונות (תמ\"ש 38293-10-23)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "779b27a0-6ca8-459f-841e-5821a7d3fee1",
+            "rank_before_drop": 7,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.134536920487881,
+            "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "a11f020d-61fe-4fbd-8e1f-6685dbf8f21f",
+            "rank_before_drop": 8,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+            "role": "binding_case_law",
+            "score": 0.134423224627972,
+            "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "793ffc16-9d8d-4090-8f70-5719e9f63316",
+            "rank_before_drop": 9,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+            "role": "binding_case_law",
+            "score": 0.133886305987835,
+            "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "a51d100b-94d3-4c55-81a3-b3a4e98acdb3",
+            "rank_before_drop": 10,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=300",
+            "role": "binding_case_law",
+            "score": 0.133083964139223,
+            "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין בקשה לביטול ו/או הפחתת דמי מזונות (תמ\"ש 38293-10-23)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "8592eb88-1194-4a59-95f3-9308d749f123",
+            "rank_before_drop": 11,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+            "role": "binding_case_law",
+            "score": 0.132377313822508,
+            "title": "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "10c75045-f322-4840-a145-085b8558ab6c",
+            "rank_before_drop": 12,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+            "role": "binding_case_law",
+            "score": 0.131964421272278,
+            "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "aae77295-be50-437a-a652-b9924a9576fb",
+            "rank_before_drop": 13,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+            "role": "binding_case_law",
+            "score": 0.131964421272278,
+            "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "e06def5f-5235-4ec2-9309-37d1e1fd0732",
+            "rank_before_drop": 14,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=300",
+            "role": "binding_case_law",
+            "score": 0.130720822513103,
+            "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין בקשה לביטול ו/או הפחתת דמי מזונות (תמ\"ש 38293-10-23)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "a42601d6-d637-494b-9a8a-eaeb337c5189",
+            "rank_before_drop": 15,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=60",
+            "role": "binding_case_law",
+            "score": 0.130238341540098,
+            "title": "בית משפט השלום ת\"א-יפו, השופט אביים ברקאי: פסק דין בנושא ניגוד עניינים בניהול פרויקט התחדשות עירונית (ת\"א 22191-01-21)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "4c57c536-142b-45e8-94cb-7bc122a3c3b2",
+            "rank_before_drop": 16,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+            "role": "binding_case_law",
+            "score": 0.130064649879932,
+            "title": "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "3f1ca5f8-3fd0-4600-8528-94af3c95952b",
+            "rank_before_drop": 17,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+            "role": "binding_case_law",
+            "score": 0.130064649879932,
+            "title": "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "d9fd5291-f96b-4056-8bdc-619f772201b7",
+            "rank_before_drop": 18,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=300",
+            "role": "binding_case_law",
+            "score": 0.128672765940428,
+            "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין בקשה לביטול ו/או הפחתת דמי מזונות (תמ\"ש 38293-10-23)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "04198ef3-b1a5-4d5e-b076-d410d50bbc84",
+            "rank_before_drop": 19,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+            "role": "binding_case_law",
+            "score": 0.128060339391232,
+            "title": "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "8a9378a9-a5ec-4d64-b956-79808f583392",
+            "rank_before_drop": 20,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+            "role": "binding_case_law",
+            "score": 0.127888007462025,
+            "title": "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 65165-12-23)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "53bbf417-c7d2-4b57-b00d-a22a8afce490",
+            "rank_before_drop": 21,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+            "role": "binding_case_law",
+            "score": 0.124847812950611,
+            "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "7d9208e6-e007-4b0e-b8ed-8a91df4170c8",
+            "rank_before_drop": 22,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+            "role": "binding_case_law",
+            "score": 0.124317083880305,
+            "title": "ביהמ\"ש לענייני משפחה בתל אביב יפו, ש' ורד שביט פינקלשטיין: פסק דין בעניין תביעה כספית שהגישה אפוטרופ בשם התובעת כנגד אחייניתה להשבת כספים שנטלו שלא כדין טרם מינוי אפוטרופוס על התובעת (תמ\"ש 32657-09-20)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "2e736d10-da8d-473f-85a2-f1f00bad39e5",
+            "rank_before_drop": 23,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=630",
+            "role": "binding_case_law",
+            "score": 0.36579360493403884,
+            "title": "ביהמ\"ש לענייני משפחה בירושלים, השופטת אורית אביגיל יהלומי: פס\"ד בתיק תמ\"ש 24824-12-20",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "fe6e7da0-0a6c-444a-b581-dce416779a5f",
+            "rank_before_drop": 32,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-7706-22-%d7%a6%d7%99%d7%a4%d7%95%d7%a8%d7%94-%d7%a9%d7%a8%d7%94-%d7%a1%d7%99%d7%a0%d7%92%d7%a8-%d7%90%d7%98%d7%99%d7%94-%d7%a0-%d7%a2%d7%95%d7%93-%d7%90%d7%99%d7%99%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "role": "binding_case_law",
+            "score": 0.34391513936304424,
+            "title": "רע\"א 7706/22 ציפורה שרה סינגר אטיה נ׳ עו\"ד אייל אבידן פסק דין (18.07.2022)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:15cc283e-f2a8-4e24-b3e6-65f2b3f42a47",
+            "drop_reason": "dup_document_id",
+            "source_type": "caselaw",
+            "candidate_id": "632046e0-8722-4b76-991e-54bbcad35ac4",
+            "rank_before_drop": 34,
+            "retrieval_method": "vector"
+          }
+        ],
+        "found": 36,
+        "counts": {
+          "by_role": {
+            "scholarship": 4,
+            "primary_statute": 1,
+            "binding_case_law": 6
+          },
+          "by_claim": {
+            "C1": 2,
+            "C2": 4,
+            "C3": 3,
+            "C4": 2
+          },
+          "by_origin": {
+            "local_db": 6,
+            "perplexity": 5
+          }
+        },
+        "after_dedup": 11,
+        "dedup_drops": 25,
+        "drop_reason_counts": {
+          "dup_url": 21,
+          "dup_document_id": 4
+        }
+      },
+      "local": {
+        "ms": 1735,
+        "aggregate": {
+          "wall_ms": 1735,
+          "max_query_ms": 1732,
+          "sum_query_ms": 6733,
+          "slowest_query": {
+            "ms": 1732,
+            "role": "binding_case_law",
+            "text_ms": 1560,
+            "claim_id": "C4",
+            "exact_ms": 0,
+            "query_he": "פסק דין בית המשפט העליון 'מינוי מחליף' 'הזכות למנות מחליף' 'בעלות על כלים' 'סיכון עסקי' קבלן עצמאי עובד פסק-דין",
+            "vector_ms": 169,
+            "embedding_ms": 167
+          },
+          "slowest_method": "text",
+          "method_total_ms": {
+            "text": 6129,
+            "exact": 0,
+            "vector": 597,
+            "embedding": 639
+          },
+          "queries_executed": 4,
+          "exact_error_count": 0,
+          "text_timeout_count": 0,
+          "candidates_by_method": {
+            "text": 24,
+            "vector": 7,
+            "exact_authority": 0
+          },
+          "vector_timeout_count": 0,
+          "bottleneck_hypothesis": "single_slow_query (max=1732ms ≈ wall=1735ms)",
+          "duplicate_query_count": 0
+        },
+        "per_query": [
+          {
+            "ms": 1634,
+            "diag": {
+              "text_ms": 1513,
+              "exact_ms": 0,
+              "vector_ms": 119,
+              "text_status": "ok",
+              "embedding_ms": 163,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+                "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+                "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+                "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין בקשה לביטול ו/או הפחתת דמי מזונות (תמ\"ש 38293-10-23)",
+                "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 1513,
+              "top_vector_titles": [
+                "רע\"א 7706/22 ציפורה שרה סינגר אטיה נ׳ עו\"ד אייל אבידן פסק דין (18.07.2022)",
+                "ריאיון עם המשנה לנשיא בית המשפט העליון (בדימוס) השופט מישאל חשין | טל כהנא ואילנה פרנקל (כרך ג)"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "vector_budget": 2,
+            "compact_query_he": "העליון מבחן השליטה כפיפות קבלן עצמאי עובד שליטה פסק-דין דיני עבודה דין",
+            "original_query_he": "פסק דין בית המשפט העליון מבחן השליטה כפיפות קבלן עצמאי עובד 'שליטה' 'כפיפות' פסק-דין דיני עבודה",
+            "text_authority_signal": {
+              "has_signal": true,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": true,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 1682,
+            "diag": {
+              "text_ms": 1496,
+              "exact_ms": 0,
+              "vector_ms": 186,
+              "text_status": "ok",
+              "embedding_ms": 164,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+                "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+                "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+                "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין בקשה לביטול ו/או הפחתת דמי מזונות (תמ\"ש 38293-10-23)",
+                "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 1496,
+              "top_vector_titles": [
+                "פרטי מסמך",
+                "בג\"ץ 1181-03 - אוניברסיטת בר אילן נ. בית הדין הארצי לעבודה"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 7,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "vector_budget": 2,
+            "compact_query_he": "העליון השתלבות בארגון זמינות רציפה קבלן עצמאי עובד אינטגרציה פסק-דין דיני עבודה דין",
+            "original_query_he": "פסק דין בית המשפט העליון 'השתלבות בארגון' 'זמינות רציפה' קבלן עצמאי עובד 'אינטגרציה' פסק-דין דיני עבודה",
+            "text_authority_signal": {
+              "has_signal": true,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": true,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 1685,
+            "diag": {
+              "text_ms": 1560,
+              "exact_ms": 0,
+              "vector_ms": 123,
+              "text_status": "ok",
+              "embedding_ms": 145,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+                "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+                "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין בקשה לביטול ו/או הפחתת דמי מזונות (תמ\"ש 38293-10-23)",
+                "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+                "בית משפט השלום ת\"א-יפו, השופט אביים ברקאי: פסק דין בנושא ניגוד עניינים בניהול פרויקט התחדשות עירונית (ת\"א 22191-01-21)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 1560,
+              "top_vector_titles": [
+                "רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+                "רע\"א 7706/22 ציפורה שרה סינגר אטיה נ׳ עו\"ד אייל אבידן פסק דין (18.07.2022)"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "vector_budget": 2,
+            "compact_query_he": "העליון תלות כלכלית שיטת תשלום קבלן עצמאי עובד משכורת קבועה פרויקט פסק-דין דין",
+            "original_query_he": "פסק דין בית המשפט העליון 'תלות כלכלית' 'שיטת תשלום' קבלן עצמאי עובד 'משכורת קבועה' 'תשלום לפי פרויקט' פסק-דין",
+            "text_authority_signal": {
+              "has_signal": true,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": true,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 1732,
+            "diag": {
+              "text_ms": 1560,
+              "exact_ms": 0,
+              "vector_ms": 169,
+              "text_status": "ok",
+              "embedding_ms": 167,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+                "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+                "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+                "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין בקשה לביטול ו/או הפחתת דמי מזונות (תמ\"ש 38293-10-23)",
+                "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 1560,
+              "top_vector_titles": [
+                "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+                "ביהמ\"ש לענייני משפחה בירושלים, השופטת אורית אביגיל יהלומי: פס\"ד בתיק תמ\"ש 24824-12-20"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "vector_budget": 2,
+            "compact_query_he": "העליון מינוי מחליף הזכות למנות בעלות כלים סיכון עסקי קבלן עצמאי עובד פסק-דין דין",
+            "original_query_he": "פסק דין בית המשפט העליון 'מינוי מחליף' 'הזכות למנות מחליף' 'בעלות על כלים' 'סיכון עסקי' קבלן עצמאי עובד פסק-דין",
+            "text_authority_signal": {
+              "has_signal": true,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": true,
+              "exact_statute_section": false
+            }
+          }
+        ],
+        "candidates": 31,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 9266,
+        "dropped": 12,
+        "parallel": true,
+        "query_ms": [
+          5036,
+          6685,
+          5557,
+          9265
+        ],
+        "per_query": [
+          {
+            "ms": 5036,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://smarter.co.il/downloads/37370/",
+                "title": "סמינריון בנושא יחסי עובד מעביד, תוך סקירת המבחנים השונים בפסיקה, בספרות, ובמשפט משווה",
+                "domain": "smarter.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://smarter.co.il/downloads/24069/",
+                "title": "מבחן השליטה יחסי עובד מעביד",
+                "domain": "smarter.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://meyda.education.gov.il/files/MadaTech/NihulTaasiaYazamut/limudeyhemsheh/nihul/2020/717001-Pitaron-2019.pdf",
+                "title": "פתרון 2019 - פיקוח ברמה של עובד",
+                "domain": "meyda.education.gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_scholarship",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.klarfeldlaw.com/labor/",
+                "title": "יחסי עובד מעביד",
+                "domain": "klarfeldlaw.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://smarter.co.il/downloads/37370/",
+                "title": "סמינריון בנושא יחסי עובד מעביד, תוך סקירת המבחנים השונים בפסיקה, בספרות, ובמשפט משווה",
+                "domain": "smarter.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C1",
+            "query_he": "מאמר דיני עבודה 'מבחן השליטה' 'כפיפות' קבלן עצמאי השפעת שליטה על יחסי עבודה מאמר משפטי",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 6685,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%20%D7%A2%D7%95%D7%91%D7%93%D7%99%D7%9D%20-%20%D7%91%D7%A8%D7%A7%20%D7%A7%D7%95%D7%A8%D7%9F.pdf",
+                "title": "זכויות עובדים - ברק קורן",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%20%D7%A2%D7%95%D7%91%D7%93%D7%99%D7%9D%20-%20%D7%91%D7%A8%D7%A7%20%D7%A7%D7%95%D7%A8%D7%9F.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%20%D7%A2%D7%95%D7%91%D7%93%D7%99%D7%9D%20-%20%D7%91%D7%A8%D7%A7%20%D7%A7%D7%95%D7%A8%D7%9F.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 80,
+                  "title_meaningful_chars": 20
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "academic_pdf",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision15868-04-18/he/15868-04-18.pdf",
+                "title": "ע\"ע 15868-04-18 גבריאל כותה נ' מדינת ישראל משרד המשפטים",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_scholarship",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%A1%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+                "title": "התניה על סטטוס 'עובד' והשלכותיה",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%A1%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%A1%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 121,
+                  "title_meaningful_chars": 27
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "academic_pdf",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://he.afiklaw.com/caselaw/12258/4",
+                "title": "ע\"ע 15868-04-18 גבריאל כותה – מדינת ישראל משרד המשפטים - חלק 4",
+                "domain": "he.afiklaw.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://yaelgoldman.wordpress.com/wp-content/uploads/2013/10/d793d799d7a0d799-d7a2d791d795d793d794-d7a1d799d79bd795d79d-d7a9d792d799d790.doc",
+                "title": "דיני עבודה - סיכום השגי עבודה",
+                "domain": "yaelgoldman.wordpress.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C2",
+            "query_he": "מאמר דיני עבודה 'תלות כלכלית' 'שיטת תשלום' 'economic reality' קבלן עצמאי עובד ניתוח השוואתי מאמר משפטי",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5557,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+                "title": "מבחני הסף מיהו עובד",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 112,
+                  "title_meaningful_chars": 16
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "אקדמי",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.scribd.com/document/579755198/%D7%9E%D7%97%D7%91%D7%A8%D7%AA-%D7%93%D7%99%D7%A0%D7%99-%D7%A2%D7%91%D7%95%D7%93%D7%94-%D7%9C%D7%99%D7%9F-%D7%91%D7%A7%D7%A9%D7%99",
+                "title": "מחברת דיני עבודה – לין בקשי",
+                "domain": "scribd.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/MM2.pdf",
+                "title": "מיהו המעביד – הגדרת יחסי עובד-מעביד בתבניות העסקה מודולאריות",
+                "domain": "law.haifa.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://law.haifa.ac.il/wp-content/uploads/2017/05/MM2.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://law.haifa.ac.il/wp-content/uploads/2017/05/MM2.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 123,
+                  "title_meaningful_chars": 52
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "אקדמי",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C3",
+            "query_he": "מאמר 'השתלבות בארגון' 'continuity' דיני עבודה קבלן עצמאי עובדה משפטית מאמר בכתב-עת משפטי",
+            "raw_count": 3,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 9265,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.nevo.co.il/law_html/law00/71886.htm",
+                "title": "חוק חוזה קבלנות, תשל\"ד-1974",
+                "domain": "nevo.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.nevo.co.il/law_html/law00/71886.htm",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.nevo.co.il/law_html/law00/71886.htm",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 147,
+                  "title_meaningful_chars": 24
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "scholarship",
+                "raw_pplx_source_type": "statute",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://bazlaw.co.il/employee-vs-contractor/",
+                "title": "עובד או קבלן עצמאי – המבחנים המשפטיים",
+                "domain": "bazlaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.chamber.org.il/serviceslobby/legal/1856/2167/",
+                "title": "החוק להגברת האכיפה של דיני העבודה נכנס לתוקף-הנחיות למזמיני שירות",
+                "domain": "chamber.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.boi.org.il/media/sr1diywn/0326-%D7%91%D7%99%D7%A6%D7%95%D7%A2-%D7%A2%D7%91%D7%95%D7%93%D7%95%D7%AA-%D7%97%D7%99%D7%96%D7%95%D7%A7-%D7%9E%D7%91%D7%A0%D7%99-%D7%A8%D7%A2%D7%99%D7%93%D7%95%D7%AA-%D7%90%D7%93%D7%9מה-%D7%95%D7%A2%D7%91%D7%95%D7%93%D7%ות-%D7%A9%D7%יפוצים-%D7%הסכם.pdf",
+                "title": "חוזה לביצוע עבודות לחיזוק מפני רעידות אדמה ועבודות שיפוצים",
+                "domain": "boi.org.il",
+                "drop_reason": "class_government_report_not_admitted_for_scholarship",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C4",
+            "query_he": "מאמר דיני עבודה 'מינוי מחליף' 'בעלות על כלים' 'סיכון עסקי' קבלן עצמאי ניתוח משפטי מאמר",
+            "raw_count": 4,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 5,
+        "query_count": 4,
+        "retry_count": 0,
+        "total_sum_ms": 26543,
+        "total_wall_ms": 9266,
+        "hygiene_counts": {
+          "keep": 5,
+          "total": 5,
+          "exclude": 0,
+          "reasons": {},
+          "downgrade": 0,
+          "report_only_mode": false,
+          "would_exclude_in_report_only": 0
+        },
+        "rate_limit_count": 0,
+        "role_corrections": [
+          {
+            "to": "primary_statute",
+            "url": "https://www.nevo.co.il/law_html/law00/71886.htm",
+            "from": "scholarship",
+            "title": "חוק חוזה קבלנות, תשל\"ד-1974",
+            "admitted": true,
+            "claim_id": "C4"
+          }
+        ],
+        "concurrency_limit": 4,
+        "merge_order_preserved": true,
+        "fallback_to_sequential": false
+      }
+    },
+    "candidates": [
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק חוזה קבלנות, תשל\"ד-1974",
+        "origin": "perplexity",
+        "snippet": "חוזה קבלנות הוא חוזה לעשיית מלאכה או למתן שירות בשכר כשהקבלן אינו עובדו של המזמין. הקבלן חייב לעשות את המלאכה או לתת את השירות והמזמין חייב לשלם את השכר, הכל לפי המוסכם בין הצדדים.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.nevo.co.il/law_html/law00/71886.htm",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.nevo.co.il/law_html/law00/71886.htm",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 147,
+            "title_meaningful_chars": 24
+          },
+          "role_corrected_from": "scholarship",
+          "raw_pplx_source_type": "statute",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "מאמר דיני עבודה 'מינוי מחליף' 'בעלות על כלים' 'סיכון עסקי' קבלן עצמאי ניתוח משפטי מאמר",
+        "source_url": "https://www.nevo.co.il/law_html/law00/71886.htm",
+        "source_type": "legislation",
+        "candidate_id": "1ebd442e-237b-4ab6-93d8-8b83428b1520",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.141437767446041,
+        "title": "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+        "origin": "local_db",
+        "snippet": "במשפט בישראל הסדרה כוללת לקביעת שאלת ההורות כמו גם הוראות חוק המסדירות במפורש – מונחי אבהות, אמהות או הורות; ברם לצד זאת התפיסה היא, כי הורות, קודם לכל – מוגדרת כהורות ביולוגית, כעולה אף מאדני ההורות שפורטו בפסיקת ביהמ\"ש העליון; כך גם קיבל בית המשפט את טענת קיומה של אפליה וקבע בזיקה לכך, ותוך שהוא מבחין בין נסיבות מצב זה שבהן מתקיימת זיקה גנטית של שני ההורים לקטינה וקובע אף ביחס אליו שאין מקום ליצ",
+        "claim_id": "C1",
+        "metadata": {
+          "court": "בתי המשפט לענייני משפחה",
+          "judges": "הילה מלר-שלו",
+          "district": "מחוז מרכז",
+          "procedure_type": "משפחה"
+        },
+        "query_he": "פסק דין בית המשפט העליון מבחן השליטה כפיפות קבלן עצמאי עובד 'שליטה' 'כפיפות' פסק-דין דיני עבודה",
+        "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+        "document_id": "8e15165f-026f-48db-a05a-8625606f0e8c",
+        "source_type": "caselaw",
+        "candidate_id": "2ee30b92-cb05-4d53-b95b-e2ecb2985c0d",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "זכויות עובדים - ברק קורן",
+        "origin": "perplexity",
+        "snippet": "התלות מתייחס בעיקר לתלות הכלכלית (economic dependency) של העובד במקום עבודתו ולפיכך במעבידו.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%20%D7%A2%D7%95%D7%91%D7%93%D7%99%D7%9D%20-%20%D7%91%D7%A8%D7%A7%20%D7%A7%D7%95%D7%A8%D7%9F.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%20%D7%A2%D7%95%D7%91%D7%93%D7%99%D7%9D%20-%20%D7%91%D7%A8%D7%A7%20%D7%A7%D7%95%D7%A8%D7%9F.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 80,
+            "title_meaningful_chars": 20
+          },
+          "raw_pplx_source_type": "academic_pdf",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר דיני עבודה 'תלות כלכלית' 'שיטת תשלום' 'economic reality' קבלן עצמאי עובד ניתוח השוואתי מאמר משפטי",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%20%D7%A2%D7%95%D7%91%D7%93%D7%99%D7%9D%20-%20%D7%91%D7%A8%D7%A7%20%D7%A7%D7%95%D7%A8%D7%9F.pdf",
+        "source_type": "other",
+        "candidate_id": "4584ff82-e072-4dda-892e-57106aac109e",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "התניה על סטטוס 'עובד' והשלכותיה",
+        "origin": "perplexity",
+        "snippet": "כאשר הסיווג אינו חד-משמעי... יש לאפשר קיזוז, בכל מקרה בו השוואה חישובית בין עלות ההעסקה של עובד מקביל לבין התשלום שקיבל המועסק כקבלן חושפת פער...",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%A1%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%A1%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 121,
+            "title_meaningful_chars": 27
+          },
+          "raw_pplx_source_type": "academic_pdf",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר דיני עבודה 'תלות כלכלית' 'שיטת תשלום' 'economic reality' קבלן עצמאי עובד ניתוח השוואתי מאמר משפטי",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%A1%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+        "source_type": "other",
+        "candidate_id": "c2d69ad2-341b-4a0a-8a74-01de8f658ff1",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "מבחני הסף מיהו עובד",
+        "origin": "perplexity",
+        "snippet": "גיא דוידוב, 'מבחני הסף מיהו עובד', כתב העת משפטים. הקובץ מציג את מבחן ההשתלבות כמרכזי לבחינת מעמדו של מבצע העבודה כעובד או כקבלן עצמאי.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 112,
+            "title_meaningful_chars": 16
+          },
+          "raw_pplx_source_type": "אקדמי",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'השתלבות בארגון' 'continuity' דיני עבודה קבלן עצמאי עובדה משפטית מאמר בכתב-עת משפטי",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+        "source_type": "other",
+        "candidate_id": "32eeb734-f513-4452-8211-07cac064ef49",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "מיהו המעביד – הגדרת יחסי עובד-מעביד בתבניות העסקה מודולאריות",
+        "origin": "perplexity",
+        "snippet": "במסמך האקדמי 'מיהו המעביד – הגדרת יחסי עובד-מעביד בתבניות העסקה מודולאריות' נידונה ההבחנה בין עובד לבין קבלן עצמאי בהקשר של תבניות העסקה מורכבות.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://law.haifa.ac.il/wp-content/uploads/2017/05/MM2.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://law.haifa.ac.il/wp-content/uploads/2017/05/MM2.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 123,
+            "title_meaningful_chars": 52
+          },
+          "raw_pplx_source_type": "אקדמי",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'השתלבות בארגון' 'continuity' דיני עבודה קבלן עצמאי עובדה משפטית מאמר בכתב-עת משפטי",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/MM2.pdf",
+        "source_type": "other",
+        "candidate_id": "66441131-5eb5-4e65-815c-edf20a3c2de0",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.3707643814602708,
+        "title": "רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+        "origin": "local_db",
+        "snippet": "העליון המשפט בבית\n5263/22 א\"רע\nסולברג 'נ השופט כבוד:לפני\nזר אליעזר:המבקש\nד ג נ\nמודיאנו ניצה עמליה .1:המשיבים\nחיים עץ אילן שחר .2\n המחוזי המשפט בית של הדין פסק על ערעור רשות בקשת\n 62635-04-21 א\"בע 18.11.2021 מיום ,יפו-אביב בתל\n שילה 'ונ רביד 'ע ,שוחט 'ש :השופטים כבוד ידי על שניתן\nכהן דניאל ד\"עו ;נקי מאיר ד\"עו ;הלפר דוד ד\"עו:המבקש בשם\nמדר תמיר ד\"עו:המשיבים בשם\nהחלטה\n מיום ,יפו-אביב בתל המחוזי המשפט ",
+        "claim_id": "C2",
+        "metadata": {
+          "parties": "אליעזר זר נ׳ עמליה ניצה מודיאנו",
+          "raw_title": "רע\"א 5263/22 אליעזר זר נ. עמליה ניצה מודיאנו החלטה מיום 23.11.2022",
+          "source_site": "toledano.co.il",
+          "decision_date": "23.11.2022",
+          "decision_kind": "החלטה",
+          "document_kind": "caselaw",
+          "local_pdf_file": "00816 - רע א 5263 22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022).pdf",
+          "procedure_type": "רע\"א",
+          "source_category": "פסיקה חינם",
+          "procedure_number": "5263/22"
+        },
+        "query_he": "פסק דין בית המשפט העליון 'תלות כלכלית' 'שיטת תשלום' קבלן עצמאי עובד 'משכורת קבועה' 'תשלום לפי פרויקט' פסק-דין",
+        "source_url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5263-22-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%a8-%d7%a0-%d7%a2%d7%9e%d7%9c%d7%99%d7%94-%d7%a0%d7%99%d7%a6%d7%94-%d7%9e%d7%95%d7%93%d7%99%d7%90%d7%a0%d7%95-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "document_id": "0a08a877-b26d-46a0-a605-430ca5a501bf",
+        "source_type": "caselaw",
+        "candidate_id": "b9dc7c84-a159-4c52-aee9-1438865e0b8a",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.370732287273648,
+        "title": "רע\"א 7706/22 ציפורה שרה סינגר אטיה נ׳ עו\"ד אייל אבידן פסק דין (18.07.2022)",
+        "origin": "local_db",
+        "snippet": "העליון המשפט בבית\n7706/22 א\"רע\nאלרון 'י השופט כבוד:לפני\nשטיין 'א השופט כבוד\nכשר 'י השופט כבוד\nאטיה סינגר שרה ציפורה:המבקשת\nד ג נ\nאבידן אייל ד\"עו:המשיב\n המחוזי המשפט בית של דינו פסק על ערעור רשות בקשת\n א\"בע 18.7.2022 ביום שניתן (רון 'א השופט) ירושלים\n22350-11-21\nאלנתן אייל ד\"עו:המבקשת בשם\nדיין אריאל ד\"עו:המשיב בשם\nדין-פסק\n:שטיין 'א השופט\nהדיון נושא המשפטית הסוגיה\n להסדרי נוגעת אשר חשובה משפטית בשאל",
+        "claim_id": "C2",
+        "metadata": {
+          "parties": "ציפורה שרה סינגר אטיה נ׳ עו\"ד אייל אבידן",
+          "raw_title": "רע\"א 7706/22 ציפורה שרה סינגר אטיה נ. עו\"ד אייל אבידן פסק דין פסק דין",
+          "source_site": "toledano.co.il",
+          "decision_date": "18.07.2022",
+          "decision_kind": "פסק דין",
+          "document_kind": "caselaw",
+          "local_pdf_file": "00400 - רע א 7706 22 ציפורה שרה סינגר אטיה נ׳ עו ד אייל אבידן פסק דין (18.07.2022).pdf",
+          "procedure_type": "רע\"א",
+          "source_category": "פסיקה חינם",
+          "procedure_number": "7706/22"
+        },
+        "query_he": "פסק דין בית המשפט העליון 'תלות כלכלית' 'שיטת תשלום' קבלן עצמאי עובד 'משכורת קבועה' 'תשלום לפי פרויקט' פסק-דין",
+        "source_url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-7706-22-%d7%a6%d7%99%d7%a4%d7%95%d7%a8%d7%94-%d7%a9%d7%a8%d7%94-%d7%a1%d7%99%d7%a0%d7%92%d7%a8-%d7%90%d7%98%d7%99%d7%94-%d7%a0-%d7%a2%d7%95%d7%93-%d7%90%d7%99%d7%99%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "document_id": "15cc283e-f2a8-4e24-b3e6-65f2b3f42a47",
+        "source_type": "caselaw",
+        "candidate_id": "14da7a25-f126-4429-91d4-4349bf32dbd1",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.3700767154264338,
+        "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+        "origin": "local_db",
+        "snippet": "יין אקויטל, יש להתעכב קמעה על פסק הדין בעניין לייבוביץ,\n103\n \nהקורא דווקא לפרשנות מאוזנת להגדרת \"עניין אישי\" .פסק דין זה עסק בהחלטתה של \nחברת צמיחה – שהיא חברה ציבורית הנשלטת על ידי חברת גרינסטון, אשר נשלטת על \nידי חברת אולטרה – להשקיע 20 מיליון ש\"ח בחברת שמן, העוסקת בקידוחי נפט וגז. \nאולטרה וגרינסטון עצמן השקיעו עוד קודם לכן במישרין סכומים משמעותיים בשמן – \nאולטרה החזיקה במניות שמן בהיקף של כרבע ",
+        "claim_id": "C4",
+        "metadata": {
+          "abstract": "עסקאות של חברה ציבורית ניתנות למימון בעזרת הון עצמי, הון זר (חוב) או שילוב של השניים. כאשר לחברה יש בעל שליטה, מימון העסקה בעזרת הון עצמי, המחייב הנפקה של מניות חדשות, עלול לדלל את חלקו בחברה, עד כדי אובדן השליטה ...",
+          "source_site": "reichman_law_review"
+        },
+        "query_he": "פסק דין בית המשפט העליון 'מינוי מחליף' 'הזכות למנות מחליף' 'בעלות על כלים' 'סיכון עסקי' קבלן עצמאי עובד פסק-דין",
+        "source_url": "https://runilawreview.org/2025/06/30/vol31-levi/",
+        "document_id": "fb26278f-673a-4586-aebb-042637ee708e",
+        "source_type": "journal_article",
+        "candidate_id": "3b451b33-3049-472c-8e7a-afdc7084ec0b",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.3561858538255824,
+        "title": "בג\"ץ 1181-03 - אוניברסיטת בר אילן נ. בית הדין הארצי לעבודה",
+        "origin": "local_db",
+        "snippet": " מבחינה ,עובדים ארגון, כפי \nב שהוגדרבג\"ץ 7029/95 נ החדשה הכללית העובדים הסתדרות 'בית\n -\n הארצי הדין\nלעבודה\n ]1[ )להלן :עניין עמית(, הוא ארגון שעובדים חברים בו בחברות \nוולונטרית ,קיבוצי בהסכם עבודתם תנאי קידום לשם . אינם אלה מאפיינים\nבגמלאים מתקיימים .מכאן , לקדם שבכוחו כמי עובדים בארגון הכרה שלצורך\nהגמלאים של ענייניהם את ,העבודה חוקי של חקיקתי שינוי נדרש . לא עוד כל\nנעשה זה דבר ,תנאי להטבת הארגון ",
+        "claim_id": "C3",
+        "metadata": {
+          "page": 204,
+          "year": 2011,
+          "volume": "ס\"ד",
+          "doc_type": "padi",
+          "case_name": "אוניברסיטת בר אילן נ. בית הדין הארצי לעבודה",
+          "source_site": "supreme_court_il",
+          "verdict_type": "פד\"י"
+        },
+        "query_he": "פסק דין בית המשפט העליון 'השתלבות בארגון' 'זמינות רציפה' קבלן עצמאי עובד 'אינטגרציה' פסק-דין דיני עבודה",
+        "source_url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_5_1181-03.pdf&type=2",
+        "document_id": "1936cdec-e2d5-47e1-9290-4e5b8a5f07a5",
+        "source_type": "supreme_court_il",
+        "candidate_id": "e2eed3f7-6d42-4a87-b88b-3000058dcd14",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.343581447621408,
+        "title": "ריאיון עם המשנה לנשיא בית המשפט העליון (בדימוס) השופט מישאל חשין | טל כהנא ואילנה פרנקל (כרך ג)",
+        "origin": "local_db",
+        "snippet": "היא עינויים, ולדעתי של בהקשר גם מיושמת זו טכניקה \nספקאין לעשות במצבי קיצון, שיש למרות הבעייתיות שהצבעת עליה באיזונים הקשים \nזכויות האדם)בין שמדוברעל הדרך להגנה את שםללה היא שעצם עשייתם לאורך השנים \nמתנגדאתה זבות אחרת( ולביםום מעמדן. מדוע אפוא או בבל בחופש הביטוי, בזכות לחיים \nל״פורמולות האיזון״ הללו? כל כך \nעצמו. החיים מורכבים, וקשהאת נועד לווסת הוא לא המשפט נועד לווסת דרכי התנהגות, \nהרשויותבין שא",
+        "claim_id": "C1",
+        "metadata": {
+          "part": "חלק 2",
+          "year": "תשס\"ז-תשס\"ח",
+          "author": "טל כהנא ואילנה פרנקל",
+          "volume": "כרך ג",
+          "journal": "דין ודברים",
+          "pdf_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/c2_3.pdf",
+          "section": "משפט ומדעי הרוח",
+          "citation": "טל כהנא ואילנה פרנקל, \"ריאיון עם המשנה לנשיא בית המשפט העליון (בדימוס) השופט מישאל חשין\" דין ודברים ג 195 (תשס\"ז-תשס\"ח)",
+          "pdf_pages": 40,
+          "publisher": "הפקולטה למשפטים, אוניברסיטת חיפה",
+          "volume_he": "ג",
+          "first_page": "195",
+          "landing_url": "https://law.haifa.ac.il/law-journals/haifa-law-review/",
+          "source_site": "haifa_law_review",
+          "article_title": "ריאיון עם המשנה לנשיא בית המשפט העליון (בדימוס) השופט מישאל חשין",
+          "raw_list_text": "טל כהנא ואילנה פרנקל, ריאיון עם המשנה לנשיא בית המשפט העליון (בדימוס) השופט מישאל חשין 195",
+          "local_pdf_file": "00045 - ריאיון עם המשנה לנשיא בית המשפט העליון (בדימוס) השופט מישאל חשין טל כהנא ואילנה פרנקל (כרך ג).pdf",
+          "journal_english": "Haifa Law Review"
+        },
+        "query_he": "פסק דין בית המשפט העליון מבחן השליטה כפיפות קבלן עצמאי עובד 'שליטה' 'כפיפות' פסק-דין דיני עבודה",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/c2_3.pdf",
+        "document_id": "a4e7726e-8d46-4e7f-a252-616807ba25ea",
+        "source_type": "journal_article",
+        "candidate_id": "7278a05f-b440-4b65-b244-5f728f887bf2",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 29054,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 34418,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 1735,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 9266,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 39786,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 30033,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter_v2.initial",
+        "escalated": false,
+        "http_status": 200
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://smarter.co.il/downloads/37370/",
+        "role": "scholarship",
+        "title": "סמינריון בנושא יחסי עובד מעביד, תוך סקירת המבחנים השונים בפסיקה, בספרות, ובמשפט משווה",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר דיני עבודה 'מבחן השליטה' 'כפיפות' קבלן עצמאי השפעת שליטה על יחסי עבודה מאמר משפטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://smarter.co.il/downloads/24069/",
+        "role": "scholarship",
+        "title": "מבחן השליטה יחסי עובד מעביד",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר דיני עבודה 'מבחן השליטה' 'כפיפות' קבלן עצמאי השפעת שליטה על יחסי עבודה מאמר משפטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://meyda.education.gov.il/files/MadaTech/NihulTaasiaYazamut/limudeyhemsheh/nihul/2020/717001-Pitaron-2019.pdf",
+        "role": "scholarship",
+        "title": "פתרון 2019 - פיקוח ברמה של עובד",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר דיני עבודה 'מבחן השליטה' 'כפיפות' קבלן עצמאי השפעת שליטה על יחסי עבודה מאמר משפטי",
+        "drop_reason": "class_government_report_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.klarfeldlaw.com/labor/",
+        "role": "scholarship",
+        "title": "יחסי עובד מעביד",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר דיני עבודה 'מבחן השליטה' 'כפיפות' קבלן עצמאי השפעת שליטה על יחסי עבודה מאמר משפטי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://smarter.co.il/downloads/37370/",
+        "role": "scholarship",
+        "title": "סמינריון בנושא יחסי עובד מעביד, תוך סקירת המבחנים השונים בפסיקה, בספרות, ובמשפט משווה",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר דיני עבודה 'מבחן השליטה' 'כפיפות' קבלן עצמאי השפעת שליטה על יחסי עבודה מאמר משפטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision15868-04-18/he/15868-04-18.pdf",
+        "role": "scholarship",
+        "title": "ע\"ע 15868-04-18 גבריאל כותה נ' מדינת ישראל משרד המשפטים",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר דיני עבודה 'תלות כלכלית' 'שיטת תשלום' 'economic reality' קבלן עצמאי עובד ניתוח השוואתי מאמר משפטי",
+        "drop_reason": "class_government_report_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://he.afiklaw.com/caselaw/12258/4",
+        "role": "scholarship",
+        "title": "ע\"ע 15868-04-18 גבריאל כותה – מדינת ישראל משרד המשפטים - חלק 4",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר דיני עבודה 'תלות כלכלית' 'שיטת תשלום' 'economic reality' קבלן עצמאי עובד ניתוח השוואתי מאמר משפטי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://yaelgoldman.wordpress.com/wp-content/uploads/2013/10/d793d799d7a0d799-d7a2d791d795d793d794-d7a1d799d79bd795d79d-d7a9d792d799d790.doc",
+        "role": "scholarship",
+        "title": "דיני עבודה - סיכום השגי עבודה",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר דיני עבודה 'תלות כלכלית' 'שיטת תשלום' 'economic reality' קבלן עצמאי עובד ניתוח השוואתי מאמר משפטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.scribd.com/document/579755198/%D7%9E%D7%97%D7%91%D7%A8%D7%AA-%D7%93%D7%99%D7%A0%D7%99-%D7%A2%D7%91%D7%95%D7%93%D7%94-%D7%9C%D7%99%D7%9F-%D7%91%D7%A7%D7%A9%D7%99",
+        "role": "scholarship",
+        "title": "מחברת דיני עבודה – לין בקשי",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר 'השתלבות בארגון' 'continuity' דיני עבודה קבלן עצמאי עובדה משפטית מאמר בכתב-עת משפטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://bazlaw.co.il/employee-vs-contractor/",
+        "role": "scholarship",
+        "title": "עובד או קבלן עצמאי – המבחנים המשפטיים",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר דיני עבודה 'מינוי מחליף' 'בעלות על כלים' 'סיכון עסקי' קבלן עצמאי ניתוח משפטי מאמר",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.chamber.org.il/serviceslobby/legal/1856/2167/",
+        "role": "scholarship",
+        "title": "החוק להגברת האכיפה של דיני העבודה נכנס לתוקף-הנחיות למזמיני שירות",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר דיני עבודה 'מינוי מחליף' 'בעלות על כלים' 'סיכון עסקי' קבלן עצמאי ניתוח משפטי מאמר",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.boi.org.il/media/sr1diywn/0326-%D7%91%D7%99%D7%A6%D7%95%D7%A2-%D7%A2%D7%91%D7%95%D7%93%D7%95%D7%AA-%D7%97%D7%99%D7%96%D7%95%D7%A7-%D7%9E%D7%91%D7%A0%D7%99-%D7%A8%D7%A2%D7%99%D7%93%D7%95%D7%AA-%D7%90%D7%93%D7%9מה-%D7%95%D7%A2%D7%91%D7%95%D7%93%D7%ות-%D7%A9%D7%יפוצים-%D7%הסכם.pdf",
+        "role": "scholarship",
+        "title": "חוזה לביצוע עבודות לחיזוק מפני רעידות אדמה ועבודות שיפוצים",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר דיני עבודה 'מינוי מחליף' 'בעלות על כלים' 'סיכון עסקי' קבלן עצמאי ניתוח משפטי מאמר",
+        "drop_reason": "class_government_report_not_admitted_for_scholarship"
+      }
+    ],
+    "required_anchors": {
+      "count": 0,
+      "anchors": [],
+      "enabled": true,
+      "statuses": [],
+      "queries_emitted": []
+    },
+    "drafter_v2_full_compare": null,
+    "drafter_v2_opus_compare": null,
+    "drafter_v2_sonnet_compare": null
+  }
+}

@@ -574,8 +574,14 @@ async function handle(req: Request): Promise<Response> {
       found: pool.found,
       after_dedup: pool.after_dedup,
       dedup_drops: pool.dedup_drops,
+      drops: pool.drops,
+      drop_reason_counts: pool.drops.reduce((acc, d) => {
+        acc[d.drop_reason] = (acc[d.drop_reason] ?? 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
       counts: pool.counts,
     },
+
   };
 
   // ─── P4: Source Verifier ─────────────────────────────────────────────────

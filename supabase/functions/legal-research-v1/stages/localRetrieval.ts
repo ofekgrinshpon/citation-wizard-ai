@@ -50,10 +50,48 @@ function tokenize(s: string): string[] {
     .filter((t) => t && t.length >= 2 && !COMPACT_STOPWORDS.has(t));
 }
 
+// ─── General Hebrew legal noun-phrase preservation ──────────────────────────
+// Dictionary-free: keep contiguous runs of 2–4 Hebrew content tokens from the
+// planner query together instead of atomizing them into single terms
+// ("יורש אחר יורש", "מבחן ההשתלבות", "תום לב במשא ומתן"). A run is cut by
+// punctuation, question words, and generic connectors (COMPACT_STOPWORDS),
+// which is what separates noun phrases in Hebrew legal writing in practice.
+const HEBREW_TOKEN_RE = /^[\u0590-\u05FF][\u0590-\u05FF"'׳״-]*$/;
+const PHRASE_MAX_TOKENS = 4;
+
+function detectHebrewNounPhrases(text: string): string[] {
+  const raw = String(text || "")
+    .replace(/["׳״''`,.;:?!()[\]{}<>«»—–]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(" ");
+  const phrases: string[] = [];
+  let run: string[] = [];
+  const flush = () => {
+    while (run.length >= 2) {
+      phrases.push(run.slice(0, Math.min(PHRASE_MAX_TOKENS, run.length)).join(" "));
+      if (run.length <= PHRASE_MAX_TOKENS) break;
+      run = run.slice(PHRASE_MAX_TOKENS);
+    }
+    run = [];
+  };
+  for (const tok of raw) {
+    const isContent = tok.length >= 2 && !COMPACT_STOPWORDS.has(tok) && HEBREW_TOKEN_RE.test(tok);
+    if (isContent) run.push(tok);
+    else flush();
+  }
+  flush();
+  return phrases;
+}
+
 // Build compact FTS query from planner-query plus optional original-question/claim context.
 function buildCompactQuery(plannerQuery: string, ctxCorpus: string): string {
   // 1. preserved phrases first (highest priority)
-  const phrases = detectPhrases(plannerQuery + " " + ctxCorpus);
+  const bankPhrases = detectPhrases(plannerQuery + " " + ctxCorpus);
+  // 1b. general Hebrew noun phrases from the planner query itself
+  const nounPhrases = detectHebrewNounPhrases(plannerQuery)
+    .filter((p) => !bankPhrases.some((b) => b.includes(p) || p.includes(b)));
+  const phrases = [...bankPhrases, ...nounPhrases];
   // 2. residual single tokens from planner query
   const corpus = (plannerQuery + " " + ctxCorpus).slice(0, 600);
   const phraseTokens = new Set<string>(
@@ -73,17 +111,24 @@ function buildCompactQuery(plannerQuery: string, ctxCorpus: string): string {
     residual.unshift(ss[0]);
   }
   const parts: string[] = [...phrases, ...residual];
-  // Cap to ~8 terms / ~80 chars
+  // Cap to ~10 terms / ~100 chars — phrases are admitted whole (never split),
+  // so a multi-word doctrine is either fully kept or skipped.
   const out: string[] = [];
+  const emitted = new Set<string>();
   let len = 0;
   for (const p of parts) {
-    if (out.length >= 8) break;
-    if (len + p.length + 1 > 80) break;
-    out.push(p);
-    len += p.length + 1;
+    const words = p.split(" ").filter((w) => w && !emitted.has(w));
+    if (!words.length) continue;
+    const piece = words.join(" ");
+    if (out.length + words.length > 10) continue;
+    if (len + piece.length + 1 > 100) continue;
+    out.push(piece);
+    for (const w of words) emitted.add(w);
+    len += piece.length + 1;
   }
   return out.join(" ");
 }
+
 
 // ─── Exact authority detection ──────────────────────────────────────────────
 
@@ -448,6 +493,63 @@ interface RpcRow {
   similarity?: number;
 }
 
+// ─── Vector-quota authority signal ──────────────────────────────────────────
+const MIN_VECTOR_FLOOR = 4;
+const SNIPPET_DEFAULT = 400;
+const SNIPPET_ANCHOR = 1200;
+// Only statutory/regulatory texts count as "official primary" for the purpose
+// of shrinking vector recall. Case-law rows count only via an exact docket
+// match, otherwise every Nevo hit would suppress doctrinal vector recall.
+const OFFICIAL_SOURCE_TYPES = new Set([
+  "legislation_primary", "legislation_secondary", "regulation", "statute",
+]);
+const OFFICIAL_HOST_RE = /(^|\.)(knesset\.gov\.il|gov\.il|court\.gov\.il|nevo\.co\.il)/i;
+
+export interface AuthoritySignal {
+  has_signal: boolean;
+  exact_docket: boolean;
+  exact_statute_section: boolean;
+  official_primary: boolean;
+  phrase_overlap: boolean;
+}
+
+function textAuthoritySignal(
+  rows: RpcRow[],
+  clues: ExactClue[],
+  compactQuery: string,
+): AuthoritySignal {
+  const sig: AuthoritySignal = {
+    has_signal: false, exact_docket: false, exact_statute_section: false,
+    official_primary: false, phrase_overlap: false,
+  };
+  if (!rows.length) return sig;
+
+  const dockets = clues.filter((c) => c.kind === "docket").map((c) => c.docket || "").filter(Boolean);
+  const sections = clues.filter((c) => c.kind === "statute_section");
+  // Multi-word phrases from the compact query (dictionary-free overlap test).
+  const phrases = detectHebrewNounPhrases(compactQuery)
+    .filter((p) => p.split(" ").length >= 2 && p.length >= 8);
+
+  for (const r of rows) {
+    const hay = `${r.document_title || ""} ${r.source_url || ""}`;
+    if (dockets.some((d) => hay.includes(d))) sig.exact_docket = true;
+    for (const s of sections) {
+      const nameHit = s.law_name ? (r.document_title || "").includes(s.law_name.replace(/^ל/, "")) : false;
+      const secHit = `${r.document_title || ""} ${r.chunk_content || ""}`.includes(`סעיף ${s.section}`);
+      if (nameHit && secHit) sig.exact_statute_section = true;
+    }
+    if (OFFICIAL_SOURCE_TYPES.has(r.source_type) && OFFICIAL_HOST_RE.test(r.source_url || "")) {
+      sig.official_primary = true;
+    }
+    if (phrases.some((p) => (r.document_title || "").includes(p))) {
+      sig.phrase_overlap = true;
+    }
+  }
+  sig.has_signal = sig.exact_docket || sig.exact_statute_section || sig.official_primary || sig.phrase_overlap;
+  return sig;
+}
+
+
 function isPlaceholderTitle(t: string | null | undefined): boolean {
   const s = (t || "").trim();
   if (!s) return true;
@@ -465,6 +567,8 @@ export interface LocalRetrievalResult {
     exact_hits: number;
     text_hits: number;
     vector_hits: number;
+    vector_budget: number;
+    text_authority_signal: AuthoritySignal;
     kept: number;
     ms: number;
     diag: {
@@ -575,17 +679,33 @@ export async function runLocalRetrieval(
       const parallelBatchMs = Date.now() - parallelT0;
       const exactMs = exactRes.ms;
 
+      let vectorBudgetUsed = 0;
+      let authoritySignal: AuthoritySignal = {
+        has_signal: false, exact_docket: false, exact_statute_section: false,
+        official_primary: false, phrase_overlap: false,
+      };
       let vectorDiag: {
         status: "ok" | "empty" | "error" | "timeout" | "no_embedding";
         rows: RpcRow[];
         error?: string;
         ms: number;
       };
+
       if (!embedRes.vec) {
         vectorDiag = { status: "no_embedding", rows: [], ms: 0, error: embedRes.error };
       } else {
-        // P3.2 #3: if we already have strong text hits, shrink vector quota.
-        const vectorBudget = textDiag.rows.length >= 3 ? 2 : CAPS.LOCAL_PER_QUERY;
+        // Shrink the vector quota only when the text hits already carry a
+        // high-confidence authority signal (exact docket / exact statute
+        // section / official primary source / strong phrase overlap).
+        // Otherwise keep a vector floor so noisy text hits cannot crowd out
+        // doctrinal recall.
+        const authority = textAuthoritySignal(textDiag.rows, clues, q.query_he);
+        const vectorBudget = authority.has_signal
+          ? 2
+          : Math.max(MIN_VECTOR_FLOOR, CAPS.LOCAL_PER_QUERY);
+        vectorBudgetUsed = vectorBudget;
+        authoritySignal = authority;
+
         const d = await runRpcDiag<RpcRow[]>(
           // deno-lint-ignore no-explicit-any
           (admin.rpc("match_legal_chunks", {
@@ -625,6 +745,14 @@ export async function runLocalRetrieval(
           }
         }
 
+        // Step 3: larger snippets ONLY for anchor / lead-grade candidates —
+        // required anchors, exact docket/statute matches, exact-authority rows.
+        const isAnchorGrade =
+          Boolean(q.metadata?.required_anchor_id) ||
+          docket_match ||
+          method === "exact_authority";
+        const snippetLimit = isAnchorGrade ? SNIPPET_ANCHOR : SNIPPET_DEFAULT;
+
         candidates.push({
           candidate_id: crypto.randomUUID(),
           claim_id: q.claim_id,
@@ -635,7 +763,8 @@ export async function runLocalRetrieval(
           source_type: m.source_type,
           document_id: m.document_id,
           source_url: m.source_url ?? null,
-          snippet: (m.chunk_content || "").slice(0, 400),
+          snippet: (m.chunk_content || "").slice(0, snippetLimit),
+
           query_he: q.query_he,
           // Small docket-match boost so exact-holding rows sort above adjacent
           // cases inside the same tier at pool time.
@@ -664,6 +793,8 @@ export async function runLocalRetrieval(
         exact_hits: exactRows.length,
         text_hits: textRows.length,
         vector_hits: vecRows.length,
+        vector_budget: vectorBudgetUsed,
+        text_authority_signal: authoritySignal,
         kept,
         ms: Date.now() - qStart,
         diag: {
