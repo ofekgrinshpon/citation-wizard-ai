@@ -175,6 +175,12 @@ export interface Verdict {
   supported_points: string[];
   reason: string;
   support_subtype?: SupportSubtype;
+  // True when this verdict was NOT produced by the verifier LLM but backfilled
+  // deterministically because the model call failed / returned no tool data.
+  // Synthetic verdicts always carry support="unrelated" as a technical
+  // placeholder and MUST NOT be counted as real model judgments.
+  synthetic?: boolean;
+  synthetic_reason?: "missing_verifier_output";
 }
 
 export interface DroppedCandidate {
