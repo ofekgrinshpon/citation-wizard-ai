@@ -228,8 +228,23 @@ export function computeRequiredAnchorStatuses(args: {
     //   whose snippet contains the section marker count.
     let anchorCands = anchorCandsAll;
     if (isDocket) {
-      anchorCands = anchorCandsAll.filter((c) =>
-        ((c.metadata as Record<string, unknown> | undefined)?.docket_match) === true);
+      // Strict docket anchor satisfaction: candidate must both carry the
+      // exact docket_match flag AND actually BE a case-law source. An
+      // academic article, retrospective, or generic web page that merely
+      // mentions the docket string in its snippet does NOT satisfy the
+      // anchor — otherwise `lead_ref=required_anchor_case` binds to
+      // scholarship (B2 Ka'adan regression).
+      const CASE_TYPES = new Set([
+        "caselaw",
+        "supreme_court_il",
+        "case",
+        "court_case",
+      ]);
+      anchorCands = anchorCandsAll.filter((c) => {
+        if (((c.metadata as Record<string, unknown> | undefined)?.docket_match) !== true) return false;
+        const st = String(c.source_type ?? "").toLowerCase();
+        return CASE_TYPES.has(st);
+      });
     } else if (isStatuteSection && a.statute_section_ref) {
       const ref = a.statute_section_ref;
       // Statute-section anchors: evaluate the strict title+section predicate

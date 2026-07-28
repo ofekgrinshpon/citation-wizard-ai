@@ -334,7 +334,7 @@ function selectLeadRef(
   const isCaseType = (t: string) =>
     t === "caselaw" || t === "supreme_court_il" || t === "case";
   const isStatuteType = (t: string) =>
-    t === "israeli_law" || t === "statute" || t === "regulation";
+    t === "israeli_law" || t === "statute" || t === "regulation" || t === "legislation";
   // Source-type veto: types that are definitively NOT primary/official law
   // and must never be selected as a lead for the eligible shapes.
   const isNonOfficialType = (t: string) =>
@@ -842,21 +842,28 @@ export async function runDrafterV2(
   const requestedDockets: DocketRef[] = shape === "case_holding"
     ? detectDockets(question)
     : [];
+  const CASE_LIKE = new Set(["caselaw", "supreme_court_il", "case", "court_case"]);
   const unmatchedRequestedDockets: DocketRef[] = requestedDockets.filter((d) => {
     // Already surfaced as a missing required anchor — leave existing handling.
     const anchorId = `docket:${d.docket_id}`;
     if (missingAnchors.some((a) => (a as { anchor_id?: string }).anchor_id === anchorId)) {
       return true;
     }
-    // Consider matched if any input source (case-type or user doc) mentions
-    // the docket in its title/snippet/url.
+    // Consider matched only if a CASE-LIKE input source mentions the docket
+    // in its title/snippet/url. An academic article that merely cites the
+    // docket does not count — otherwise B2-style requests (Ka'adan) silently
+    // fall back to `best_case` on a retrospective article.
     return !inputSources.some((s) =>
+      CASE_LIKE.has(String(s.source_type ?? "").toLowerCase()) &&
       candidateMatchesDocket(
-        { title: s.title, snippet: s.snippet, url: s.url },
+        // Title/URL only — snippet mentions of the target docket in a later
+        // case's analysis do not make that later case the requested ruling.
+        { title: s.title, snippet: null, url: s.url },
         [d],
       )
     );
   });
+
   const synthesizedDocketMissing = unmatchedRequestedDockets
     .filter((d) => !missingAnchors.some((a) => a.is_docket && a.description.includes(d.number)))
     .map((d) => ({

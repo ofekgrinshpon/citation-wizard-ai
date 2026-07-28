@@ -1,0 +1,169 @@
+{
+  "id": "B1",
+  "category": "case_holding",
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי ביחס למעמדם של חוקי היסוד ולסמכות הביקורת השיפוטית על חקיקה ראשית?",
+  "run_id": "4fcaf1d2-0bcb-4fb4-998f-467fb34d5c65",
+  "ok": true,
+  "total_ms": 115793,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "shape_override": null,
+  "lead_ref": {
+    "ref": "s2",
+    "shape": "case_holding",
+    "reason": "required_anchor_case"
+  },
+  "deterministic_branch": null,
+  "limitation_flags": {
+    "missing_docket": false,
+    "statute_section": false,
+    "canonical_quote": false,
+    "missing_anchor_caveat_injected": false
+  },
+  "missing_anchor_descriptions": [],
+  "anchor_statuses": [],
+  "used_sources_count": 6,
+  "used_sources": [
+    {
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "caselaw",
+      "candidate_id": "68b735e2-13ad-4ce6-a5ea-7850be86c824"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-segal.pdf",
+      "title": "בג״ץ במרקם החברה הישראלית – לאחר חמישים שנה",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "459134f2-c1f8-49ce-97e5-cd190322a9d5"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-zamir-1.pdf",
+      "title": "הביקורת השיפוטית על חוקיות חוקים",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "30df6ce6-6667-4dcc-8a63-7d58a953061c"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2024-12/%D7%91%D7%A8%D7%A7%20%D7%9E%D7%93%D7%99%D7%A0%D7%94.pdf",
+      "title": "סמכות בתי המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "154e345c-53f8-42d3-899f-361c0338395b"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
+      "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
+      "number": 3,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "78cad502-5248-4466-a88e-7fc60d43470f"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-mermor.pdf",
+      "title": "מסמך מאתר אתר אקדמי (law.haifa.ac.il)",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "4eaa2fb3-5d67-4fea-aaf4-31b373d3af59"
+    }
+  ],
+  "footnotes_count": 4,
+  "footnotes": [
+    {
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי; בג״ץ במרקם החברה הישראלית – לאחר חמישים שנה",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+          "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-segal.pdf",
+          "title": "בג״ץ במרקם החברה הישראלית – לאחר חמישים שנה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי; הביקורת השיפוטית על חוקיות חוקים; סמכות בתי המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+          "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-zamir-1.pdf",
+          "title": "הביקורת השיפוטית על חוקיות חוקים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2024-12/%D7%91%D7%A8%D7%A7%20%D7%9E%D7%93%D7%99%D7%A0%D7%94.pdf",
+          "title": "סמכות בתי המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי; בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת; סמכות בתי המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+          "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
+          "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2024-12/%D7%91%D7%A8%D7%A7%20%D7%9E%D7%93%D7%99%D7%A0%D7%94.pdf",
+          "title": "סמכות בתי המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי; מסמך מאתר אתר אקדמי (law.haifa.ac.il); בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+          "title": "נבו – ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-mermor.pdf",
+          "title": "מסמך מאתר אתר אקדמי (law.haifa.ac.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
+          "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "quality_warnings": [],
+  "answer": "בפסק‑דין ע״א 6821/93 נדונה סוגיית מעמדה של חקיקת היסוד ביחס לחקיקה ראשית; מתוך נוסח ההחלטה עולה בהתייחסות שופטים עמדה לפיה לחוקי היסוד מיוחס מעמד על־חוקי ביחס לחקיקה רגילה, וכי הם יכולים לשמש מקור להצדקת ביקורת שיפוטית ובמקרים של סתירה לאפשר לזיהוי אי‑התיישבות של הוראות חקיקה רגילה.¹\n\nבנוגע לסמכות הביקורתית, בפסק‑דין נרמז ואף נתונה תשתית לפרשנות המאפשרת לבית המשפט העליון לקיים ביקורת שיפוטית על חקיקה ראשית כאשר זו נוגדת הוראות או עקרונות המופיעים בחוקי היסוד; במבנים אלה בית המשפט יכול להורות על אי‑התיישבות ולעתים להורות על אי‑ביצוע או ביטול של הוראות חקיקה הנמצאות בסתירה לערכי היסוד.²\n\nעם זאת, מן החומר עולה בזהירות כי הסמכות אינה בלתי מוגבלת: נדרשת סתירה ממשית או זיקה מהותית לעקרון או להוראה בחוק יסוד, ויש לשקלל שיקולים של תכליתיות וסבירות והאיזון בין רשויות השלטון בעת קביעת הצעדים הרלוונטיים — כלומר הפסיקה עצמה וגם הפרשנות בספרות מדגישות צורך בבחינה איזונית ולא בפסילה אוטומטית של חקיקה ראשית.³\n\nיש להדגיש שהמסקנות לעיל נוסחו בזהירות בשל טבע התמיכה החומרית: ברשימת המקורות נמצא פסק‑דין העוסק בנושא וכן עבודות תיאורטיות המפתחות מסגרות לפרשנות ולהערכת הגבולות הפרשניים והמעשיים של ביקורת שיפוטית; שאלות פרשניות ויישומיות רבות נותרו פתוחות והן נידונות בהרחבה בספרות המשנית.⁴"
+}

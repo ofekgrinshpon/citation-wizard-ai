@@ -28,6 +28,7 @@ import {
   pickAnchorsRequiringDrafterLimitation,
   resolveRequiredAnchors,
 } from "./stages/requiredAnchors.ts";
+import { detectStatuteSections } from "./stages/statuteSectionDetection.ts";
 import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
 import { StageRun } from "./lib/types.ts";
@@ -354,6 +355,32 @@ async function handle(req: Request): Promise<Response> {
       },
     });
   }
+
+  // Deterministic post-analyzer shape override — statute-section definition.
+  //
+  // Analyzer sometimes classifies "מה קובע סעיף X ל<חוק> ומהם התנאים"-type
+  // questions as `analysis`, which disables the statute-section anchor /
+  // direct-only guard machinery (B3 §6 חוק החברות regression). When the
+  // question names a registered statute AND at least one `סעיף N` marker
+  // AND opens with a "what does the section provide / what are the
+  // conditions per §" phrasing, we force `output_shape = definition` so
+  // the existing statute-section pipeline can run. Never overrides `quote`.
+  if (analyzer && analyzer.answer_intent?.output_shape !== "quote") {
+    const hasStatuteSection = detectStatuteSections(question).length > 0;
+    const shapeCue = /(מה\s+(קובע|נקבע|אומר|מגדיר)|מהם?\s+התנאים|מהי\s+ההגדרה|מהם\s+היסודות)/;
+    if (hasStatuteSection && shapeCue.test(question)) {
+      const before = analyzer.answer_intent?.output_shape ?? "unknown";
+      analyzer.answer_intent = { ...(analyzer.answer_intent ?? {}), output_shape: "definition" };
+      (analyzer as unknown as { _shape_override?: unknown })._shape_override = {
+        applied: true,
+        from: before,
+        to: "definition",
+        reason: "statute_section_definition_cue",
+      };
+    }
+  }
+
+
 
 
   // ─── P2: Research Query Planner ──────────────────────────────────────────

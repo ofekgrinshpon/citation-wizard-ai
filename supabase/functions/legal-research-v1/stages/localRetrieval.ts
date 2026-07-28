@@ -612,17 +612,19 @@ export async function runLocalRetrieval(
         const key = `${method}:${m.document_id}`;
         if (seenInQuery.has(key)) return;
         seenInQuery.add(key);
-        // Docket-anchor: mark docket_match when the row's title/snippet/url
-        // contains any of the docket string variants (already true for rows
-        // from a docket clue; also flag text/vector rows that happen to hit).
+        // Docket-anchor: mark docket_match ONLY when the docket string appears
+        // in title/url (not the chunk snippet). Snippet mentions frequently
+        // come from later cases citing the target ruling and must not satisfy
+        // the anchor (B2 Ka'adan regression).
         let docket_match = meta.docket_match === true;
         if (isDocketAnchor && !docket_match) {
-          const hay = `${m.document_title}\n${m.chunk_content ?? ""}\n${m.source_url ?? ""}`;
+          const hay = `${m.document_title}\n${m.source_url ?? ""}`;
           for (const v of docketVariants) {
             if (v.length < 4) continue;
             if (hay.includes(v)) { docket_match = true; break; }
           }
         }
+
         candidates.push({
           candidate_id: crypto.randomUUID(),
           claim_id: q.claim_id,
