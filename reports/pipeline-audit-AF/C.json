@@ -1,0 +1,2645 @@
+{
+  "id": "C",
+  "category": "case_law_synthesis",
+  "query": "מה הפסיקה אומרת על הלכת יורש אחר יורש?",
+  "run_id": "08e758df-a78b-4cb7-87c7-757ae9adc9d5",
+  "qa_log_id": "30be070e-b16e-4e6b-8b63-70251ce000ab",
+  "answer": "**מענה קצר**\n\nאין פסיקה שמכוננת דוקטרינה אחת ומקיפה בשם 'הלכת יורש אחר יורש' המוחלת אוטומטית בכל מקרה; עם זאת בתי המשפט דנים ומחילים על העברות בין יורשים עקרונות מעקרות סופיות והשתק/עקרונות פרשניים בהתאם לנסיבות כל מקרה, ולפיכך יש לכל מקרה מבחן עובדתי־פרוצדורלי משלו.¹\n\n**תנאי יסוד והאלמנטים שבהם בתי המשפט בוחנים האם פסיקה קודמת מחייבת יורש אחר יורש**\n\nמוסכם בפסיקה כי לקביעה האם החלטה קודמת חבה אחריה מחויבות כלפי יורש יש לבחון שאלות של זהות הפלוגתא — האם אותו עיקרון/טיעון הוכרע בעבר — וכן זהות הנסיבות העובדתיות שעל בסיסן התקבלה ההכרעה; ההכרעה צריכה להיות חיונית לפסיקה ולא משנית בלבד.²\n\nבנוסף נבחנת הזיקה בין הצדדים: האם היורש הנוכחי הוא ממשיך של אותו צד סובל בפסק הדין הקודם (או חליפו שנושא בעמדות זהות), והאם היתה לו הזדמנות להגן על זכויותיו בהליך הראשון; אי־קיום הזדמנות להתדיין מחזק טענת אי־הספיקה של ההשפעה הקודמת.³\n\n**גבולות וחריגים מרכזיים בפסיקה**\n\nהמחוזי והפסיקה קבעו גבולות ברורים: הוראת 'יורש אחר יורש' בצוואה אינה פרושה אוטומטי של 'יורש במקום יורש' — יש לאפשר לזוכה השני לתבוע לפרשנות צוואה ולהוכיח כוונה של המצווה לפני שיוטל עליו מעמד כאילו היה יורש המקום.⁴\n\nעוד נקבע כי הסכמות פרוצדורליות בין יורשים או מסמכים כגון ייפוי כוח וויתור על זכות חזרה אינם בהכרח רפאצים מוחלטים לטעון מצד יורש שני כאשר מדובר בזכויות קנייניות או בתביעות חדשות שונות בעילה או בעובדות; שינוי נסיבות מהותי או טיעון חדש עלולים להפחית את תחולת ההלכה הקודמת.⁵\n\n**השלכות פרוצדורליות מעשיות בקרב יורשים ובהליכי ביצוע**\n\nבהגנה משפטית יש להצדיע את טענות ההשתק/שיהוי/עניין המניע כטענות מקדמיות: בית המשפט יבחן אם מתקיימים התנאים שנקבעו להעברת הוצאות או לפסיקת חבות כלפי יורש, ובמקרים מסוימים דחיה על הסף תיתכן אם נקבע כי מדובר בסוגיה שכבר הוכרעה בחלוטות ביחס לצדדים הרלוונטיים.⁶\n\nבאשר לאכיפה וביצוע — העברת זכויות בין יורשים משפיעה על מי רשאי לבקש ביצוע ובהתאם לחוק ההוצאה לפועל עלותיו ואופן המימוש; בעת הגשת בקשה לביצוע יש לצרף מסמכים רלוונטיים (למשל צו ירושה או צו קיום צוואה) ולשים לב לאפשרות של בקשות לפתיחת תיק ביצוע או לבקשות לביטול/סיכול ביצוע במקרים של טענות חדשות או סכסוך על הזכות הנשואת לביצוע.⁷\n\nיתרה מזאת, מעשית בתי המשפט מאפשרים לאשר הסכמי חלוקה בין יורשים ובהתאם לסעיפי חוק הירושה ולכללי הסמכות הפרוצדורלית — מה שיכול להשפיע על קיומה של מחויבות קודמת כלפי יורשים שהעבירו נכסים ביניהם.⁸\n\nמסקנה מעשית: יש לבחון כל מקרה לגופו לפי זהות הפלוגתא, תוכן ההכרעה הקודמת, הזיקה בין הצדדים והזדמנות להתדיין; אין רול־אוט יחיד של 'יורש אחר יורש' שמחקה אוטומטית החלטות קודמות בלי בדיקה עובדתי‑פרוצדורלית.",
+  "footnotes": [
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9?IsMobile=false",
+      "title": "זכויות יורש אחר יורש - פסקדין; המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש' | פסקדין; ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9?IsMobile=false",
+          "title": "זכויות יורש אחר יורש - פסקדין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%90%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+          "title": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש' | פסקדין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+          "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+      "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24); זכויות יורש אחר יורש - פסקדין; ע\"א 36414-01-21 פלוני נ' פלונית ואח' – בית המשפט המחוזי מרכז-לוד",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+          "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9?IsMobile=false",
+          "title": "זכויות יורש אחר יורש - פסקדין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision36414-01-21/he/36414-01-21.pdf",
+          "title": "ע\"א 36414-01-21 פלוני נ' פלונית ואח' – בית המשפט המחוזי מרכז-לוד",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+      "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24); תקנות הירושה, התשנ\"ח-1998",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+          "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Law/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA-%D7%94%D7%99%D7%A8%D7%95%D7%A9%D7%94,-%D7%94%D7%AA%D7%A9%D7%A0%22%D7%97-1998",
+          "title": "תקנות הירושה, התשנ\"ח-1998",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%90%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+      "title": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש' | פסקדין; המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש'; חוק הירושה, תשכ\"ה-1965",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%90%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+          "title": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש' | פסקדין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%A2%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%אה-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%95%D7%A7%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+          "title": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש'",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72178.htm",
+          "title": "חוק הירושה, תשכ\"ה-1965",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9?IsMobile=false",
+      "title": "זכויות יורש אחר יורש - פסקדין; ע\"א 36414-01-21 פלוני נ' פלונית ואח' – בית המשפט המחוזי מרכז-לוד",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9?IsMobile=false",
+          "title": "זכויות יורש אחר יורש - פסקדין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision36414-01-21/he/36414-01-21.pdf",
+          "title": "ע\"א 36414-01-21 פלוני נ' פלונית ואח' – בית המשפט המחוזי מרכז-לוד",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+      "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24); ע\"א 36414-01-21 פלוני נ' פלונית ואח' – בית המשפט המחוזי מרכז-לוד",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+          "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision36414-01-21/he/36414-01-21.pdf",
+          "title": "ע\"א 36414-01-21 פלוני נ' פלונית ואח' – בית המשפט המחוזי מרכז-לוד",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.btl.gov.il/Laws1/00_0063_000000.pdf",
+      "title": "חוק ההוצאה לפועל, התשכ\"ז-1967; פסק דין מתוך אתר ממשלתי (gov.il); בקשה לקבלת העתק דיגיטלי מצו ירושה או צו קיום צוואה",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.btl.gov.il/Laws1/00_0063_000000.pdf",
+          "title": "חוק ההוצאה לפועל, התשכ\"ז-1967",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://www.gov.il/he/service/opening_monetary_verdict_file",
+          "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.gov.il/he/service/inheritance_digital_order",
+          "title": "בקשה לקבלת העתק דיגיטלי מצו ירושה או צו קיום צוואה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision36414-01-21/he/36414-01-21.pdf",
+      "title": "ע\"א 36414-01-21 פלוני נ' פלונית ואח' – בית המשפט המחוזי מרכז-לוד; תקנות הירושה, התשנ\"ח-1998",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision36414-01-21/he/36414-01-21.pdf",
+          "title": "ע\"א 36414-01-21 פלוני נ' פלונית ואח' – בית המשפט המחוזי מרכז-לוד",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Law/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA-%D7%94%D7%99%D7%A8%D7%95%D7%A9%D7%94,-%D7%94%D7%AA%D7%A9%D7%A0%22%D7%97-1998",
+          "title": "תקנות הירושה, התשנ\"ח-1998",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "השאלה היא על דוקטרינה משפטית מוכרת בפסיקה — נדרש פסקי-דין מחייבים של בתי המשפט (binding_case_law) כדי לקבוע קיומה ותכולתה, וספרות משפטית כדי להציג הגדרה ונסחים מקובלים.",
+        "text_he": "האם קיימת בלשכת הפסיקה דוקטרינה מוכרת של «הלכת יורש אחר יורש» (כלומר: האם פסק דין כנגד יורש מחייב יורש בהמשך), והגדרה בסיסית של הלכה זו בפסיקה הישראלית.",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "זו שאלה דוקטרינרית לגבי יסודות ההשפעה של פסק דין; נדרש ציטוט פסקי-דין מחייבים וספרות להבהרת האלמנטים, ופסיקה שיכולה לשמש כהסבר/דוגמא (persuasive_case_law).",
+        "text_he": "מהם תנאי היסוד/האלמנטים שהפסיקה דורשת כדי שהלכת \"יורש אחר יורש\" תחול (למשל: זהות פלוגתא/זהות נסיבות, הכרעה פוזיטיבית וחיונית, צדדים או חליפיהם, הזדמנות להתדיין וכו').",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship",
+          "persuasive_case_law"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "הגדרת הגבולות והחריגים מבוססת על פסיקה מנחה וספרות שמנתחת יוצאים מן הכלל; פסיקות של בתי משפט נמוכים יכולות להמחיש חריגים (persuasive_case_law).",
+        "text_he": "מהם הגבולות והחריגים להלכת יורש אחר יורש בפסיקה (למשל: מתי יורש אינו מחויב, מקרים של שינוי נסיבות מהותי, תביעות חדשות שאינן זהות בעילה או בעובדות, זכויות סובייקטיביות שלא ניתנות להיקבע פסק-דין כלפי יורש ועוד).",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "persuasive_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "לניתוח ההשפעות הפרוצדורליות דרושים פסקי-דין מנחים ודוגמאות מקרים (binding ו-persuasive case law), דוחות/תיאורי מקרים פרקטיים (factual_report) וספרות לפרשנות והמלצות פרקטיות.",
+        "text_he": "מהן השלכות מעשיות פרוצדורליות מהפסיקה לגבי מקרים בהם הועברו זכויות בין יורשים — כיצד נשאלת שאלת הטיעון/ההגנה בבית המשפט, האם יש הליכים לפתיחה מחדש/בקשה לשינוי/ביטול פסק דין קודם, והשלכות על ביצוע/הוצאה לפועל והגנה על זכויות נכסיות.",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "persuasive_case_law",
+          "factual_report",
+          "scholarship"
+        ],
+        "is_black_letter": false
+      }
+    ],
+    "run_id": "08e758df-a78b-4cb7-87c7-757ae9adc9d5",
+    "drafter": {
+      "ms": 32246,
+      "ok": true,
+      "lead_ref": {
+        "ref": null,
+        "shape": "analysis",
+        "reason": "shape_not_eligible"
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "completeness": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "paragraph",
+        "last_block_excerpt": "…ן הצדדים והזדמנות להתדיין; אין רול־אוט יחיד של 'יורש אחר יורש' שמחקה אוטומטית החלטות קודמות בלי בדיקה עובדתי‑פרוצדורלית."
+      },
+      "sources_used": 10,
+      "used_sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9?IsMobile=false",
+          "title": "זכויות יורש אחר יורש - פסקדין",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "caselaw",
+          "candidate_id": "1cbff241-bb29-4da5-b468-b7875d95b085"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%90%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+          "title": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש' | פסקדין",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "caselaw",
+          "candidate_id": "36a5ef74-a185-4d19-9f8a-f3e7b9aa7e56"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+          "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+          "number": 1,
+          "origin": "local_db",
+          "source_type": "caselaw",
+          "candidate_id": "b3a9494b-606f-402e-8294-3e246b88c941"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision36414-01-21/he/36414-01-21.pdf",
+          "title": "ע\"א 36414-01-21 פלוני נ' פלונית ואח' – בית המשפט המחוזי מרכז-לוד",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "caselaw",
+          "candidate_id": "ec0f397d-7fcf-4223-88b4-8b0992b155dc"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Law/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA-%D7%94%D7%99%D7%A8%D7%95%D7%A9%D7%94,-%D7%94%D7%AA%D7%A9%D7%A0%22%D7%97-1998",
+          "title": "תקנות הירושה, התשנ\"ח-1998",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "caselaw",
+          "candidate_id": "ac4acdeb-81f5-4186-ba55-9f79d15b4094"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%A2%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%אה-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%95%D7%A7%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+          "title": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש'",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "caselaw",
+          "candidate_id": "12015c74-730f-4dc2-9f83-71f83dad9f6c"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/72178.htm",
+          "title": "חוק הירושה, תשכ\"ה-1965",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "legislation",
+          "candidate_id": "c9ad97b7-eaf5-4f84-9b3a-1a5e5c7ba6c6"
+        },
+        {
+          "url": "https://www.btl.gov.il/Laws1/00_0063_000000.pdf",
+          "title": "חוק ההוצאה לפועל, התשכ\"ז-1967",
+          "number": 7,
+          "origin": "perplexity",
+          "source_type": "legislation",
+          "candidate_id": "6a7cf84b-537d-4731-b6cd-b9309df25eb0"
+        },
+        {
+          "url": "https://www.gov.il/he/service/opening_monetary_verdict_file",
+          "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+          "number": 7,
+          "origin": "perplexity",
+          "source_type": "caselaw",
+          "candidate_id": "b139f9e4-dcd0-4d6d-9e94-3e3a0e4e285e"
+        },
+        {
+          "url": "https://www.gov.il/he/service/inheritance_digital_order",
+          "title": "בקשה לקבלת העתק דיגיטלי מצו ירושה או צו קיום צוואה",
+          "number": 7,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "ad586faa-52c9-4dd2-8270-a6c8f4b1aa55"
+        }
+      ],
+      "marker_format": "superscript",
+      "model_initial": "openai/gpt-5-mini",
+      "builder_report": {
+        "marker_count": 8,
+        "heading_count": 4,
+        "list_item_count": 0,
+        "paragraph_count": 9,
+        "cited_segment_count": 8,
+        "adjacent_marker_count": 0,
+        "distinct_source_count": 10,
+        "compound_segment_count": 8,
+        "compound_footnote_count": 8,
+        "avg_sources_per_cited_segment": 2.5
+      },
+      "footnote_count": 8,
+      "sources_passed": 11,
+      "drafter_version": "v2.1c",
+      "truncation_retry": {
+        "retry_ms": 0,
+        "attempted": false,
+        "reasons_initial": [],
+        "same_model_retry": false,
+        "escalated_to_full": false
+      },
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "answer_style_report": {
+        "metrics": {
+          "block_count": 13,
+          "denylist_hits": [],
+          "heading_count": 4,
+          "heading_ratio": 0.308,
+          "cited_block_count": 8,
+          "total_footnote_count": 8,
+          "compound_footnote_count": 8,
+          "compound_footnote_ratio": 1,
+          "unsafe_display_title_count": 1,
+          "avg_sources_per_cited_block": 2.5,
+          "unsafe_display_title_examples": [
+            {
+              "ref": "s10",
+              "status": "fallback_truncated",
+              "display_title": "פסק דין מתוך אתר ממשלתי (gov.il)"
+            }
+          ],
+          "partial_supported_strong_claims": [],
+          "total_source_refs_in_cited_blocks": 20
+        },
+        "report_only": true,
+        "triggered_reasons": [
+          "unsafe_display_title",
+          "compound_footnote_ratio_high",
+          "avg_sources_per_block_high",
+          "excessive_headings"
+        ]
+      },
+      "unique_source_count": 10,
+      "completeness_initial": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "paragraph",
+        "last_block_excerpt": "…ן הצדדים והזדמנות להתדיין; אין רול־אוט יחיד של 'יורש אחר יורש' שמחקה אוטומטית החלטות קודמות בלי בדיקה עובדתי‑פרוצדורלית."
+      },
+      "deterministic_branch": null,
+      "canonical_quote_fired": false,
+      "omitted_candidate_ids": [
+        "3e2641e8-7afb-4720-8749-bc84c82c1d5c"
+      ],
+      "structured_validation": {
+        "ok": true,
+        "errors": [],
+        "block_count": 13,
+        "heading_count": 4,
+        "list_item_count": 0,
+        "paragraph_count": 9,
+        "cited_segment_count": 8,
+        "forbidden_text_hits": [],
+        "unknown_source_refs": [],
+        "total_source_ref_count": 20
+      },
+      "max_completion_tokens_used": 8000,
+      "missing_anchor_descriptions": [],
+      "missing_anchor_caveat_injected": false,
+      "missing_docket_limitation_fired": false,
+      "statute_section_limitation_fired": false
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסקי-דין מחייבים של בית המשפט העליון שמנסחים או מאמצים את המושג/הדוקטרינה 'יורש אחר יורש' ואת ההגדרה הבסיסית שלה בפסיקה הישראלית.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "בית המשפט העליון \"יורש אחר יורש\" \"המשכיות פסק דין\" ״פסק דין כחייב יורש״ ע\"א OR בג\"צ OR ע\"מ",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "למצוא מאמרים אקדמיים בעברית שמסבירים האם קיימת דוקטרינה מוכרת, מניחים הגדרה מקובלת ובוחנים אותה בהקשר הפסיקה הישראלית.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר \"יורש אחר יורש\" \"המשכיות פסק דין\" כתב-עת משפטי \"משפטים\" OR \"הלכה\" מאמר דוקטרינרי על חבות יורש בפסקי דין",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לזהות פסקי-דין עליונים שקובעים את תנאי היסוד/אלמנטים להטלת חבות על יורש (זהות פלוגתא, נסיבות, הזדמנות להתדיין ועוד).",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון \"יורש אחר יורש\" \"זהות פלוגתא\" \"זהות נסיבות\" \"הזדמנות להתדיין\" פסק דין",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "למצוא ניתוחים אקדמיים שמפרטים את האלמנטים הנדרשים בפסיקה ומספקים סיכומים או ביקורת על הסטנדרטים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר \"יורש אחר יורש\" \"זהות פלוגתא\" \"הכרעה פוזיטיבית\" כתב-עת משפטי \"משפטים\" OR \"המשפט\"",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "למצוא פסקי-דין מדרגים נמוכים שמיישמים או מפרשים את האלמנטים בפועל, ויכולים לשמש כביסוס מפורסם לפרקטיקה השיפוטית.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית משפט מחוזי OR בית משפט שלום \"יורש אחר יורש\" \"זהות נסיבות\" \"זהות פלוגתא\" פסק דין מחוזי/שלום",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסקי-דין עליונים שקובעים גבולות וחריגים להלכה — מתי יורש אינו מחויב או כשהתביעה אינה חלה עליו.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון \"יורש אחר יורש\" \"שינוי נסיבות מהותי\" \"זכות סובייקטיבית\" פסק דין חריגים אי-חבות יורש",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "לדלות פסקי-דין פרקטיים שמיישמים חריגים — מקרים של תביעות חדשות, שינוי נסיבות, או זכויות שלא ניתנות להיקבע כלפי יורש.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית משפט מחוזי OR בית משפט שלום \"יורש אחר יורש\" \"חריג\" \"שינוי נסיבות\" פסק דין דוגמה להחרגת יורש",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לאסוף ניתוחים אקדמיים שמפרקים את הגבולות והטיעונים בעד ונגד החלות חבות על יורשים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמר \"יורש אחר יורש\" \"חריגים\" \"שינוי נסיבות\" כתב-עת משפטי OR סקירת ספרות דוקטרינית במאמרים על המשכיות פסק דין כלפי יורשים",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לזהות החלטות עליונות המתייחסות לפרוצדורות לפתיחה מחדש, בקשות שינוי/ביטול פסק-דין והשפעתן על יורשים והוצאה לפועל.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון \"בקשה לשינוי פסק דין\" OR \"פתיחה מחדש של הליך\" \"יורש\" \"יורש אחר יורש\" \"הוצאה לפועל\" פסק דין",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "למצוא פסקי-דין מעשיים בבתי משפט נמוכים שמתארים כיצד נטענות ההגנות, דרישות פתיחה מחדש ותוצאות בהוצאה לפועל כשזכויות עוברות בין יורשים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית משפט מחוזי OR שלום \"בקשה לפתיחה מחדש\" \"יורש\" \"הגנה\" \"הוצאה לפועל\" פסק דין פרוצדורלי בנושא העברת זכויות בין יורשים",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "factual_report",
+        "reason": "למצוא דו\"חות ממשלתיים או דוחות של רשות האכיפה והגבייה/משרד המשפטים המתייחסים להשלכות פרוצדורליות וסטטיסטיקות הקשורות להוצאה לפועל והעברות זכויות בין יורשים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "דו\"ח משרד המשפטים OR דו\"ח רשות האכיפה והגבייה \"הוצאה לפועל\" \"יורש\" דו\"ח סטטיסטי או הנחיות פרוצדורליות פתיחת הליכים לאחר העברת נכסים",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "scholarship",
+        "reason": "למצוא ניתוחים אקדמיים על כלי פרוצדורליים (פתיחה מחדש, בקשת שינוי/ביטול, השפעה על הוצאה לפועל) בהקשר של חבות יורש.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמר פרוצדורלי \"פתיחה מחדש של הליך\" \"בקשה לביטול פסק דין\" \"יורש\" כתב-עת משפטי \"משפטים\" OR \"דיני תהליך\"",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 36825,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 28220,
+        "confidence": 0.8,
+        "legal_area": "סדר דין אזרחי",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "answer_intent": {
+          "output_shape": "analysis"
+        },
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "interpretation_note": null
+      },
+      "claims_count": 4,
+      "queries_count": 12,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 166019,
+    "verifier": {
+      "ms": 49627,
+      "counts": {
+        "by_support": {
+          "direct": 5,
+          "partial": 6,
+          "unrelated": 3,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 12,
+          "false": 2
+        },
+        "model_verdicts": 14,
+        "by_support_model": {
+          "direct": 5,
+          "partial": 6,
+          "unrelated": 3,
+          "tangential": 0
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": false,
+          "best_support": "partial",
+          "candidate_id": "c9ad97b7-eaf5-4f84-9b3a-1a5e5c7ba6c6",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": false,
+          "best_support": "partial",
+          "candidate_id": "6a7cf84b-537d-4731-b6cd-b9309df25eb0",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "ec0f397d-7fcf-4223-88b4-8b0992b155dc",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "ac4acdeb-81f5-4186-ba55-9f79d15b4094",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "3e2641e8-7afb-4720-8749-bc84c82c1d5c",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "b3a9494b-606f-402e-8294-3e246b88c941",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "1cbff241-bb29-4da5-b468-b7875d95b085",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "36a5ef74-a185-4d19-9f8a-f3e7b9aa7e56",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "12015c74-730f-4dc2-9f83-71f83dad9f6c",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "b139f9e4-dcd0-4d6d-9e94-3e3a0e4e285e",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "ad586faa-52c9-4dd2-8270-a6c8f4b1aa55",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 49626,
+          "label": "batch1",
+          "attempts": 1,
+          "claim_ids": [
+            "C1",
+            "C2",
+            "C3",
+            "C4"
+          ],
+          "escalated": false,
+          "recovered": false,
+          "candidates": 14,
+          "split_probes": 0
+        }
+      ],
+      "dropped": [
+        {
+          "role": "binding_case_law",
+          "title": "רע\"א 3810-06 - י. דורי את צ'קובסקי בניה והשקעות בע\"מ נ. שמאי גולדשטיין",
+          "origin": "local_db",
+          "reason": "המסמך המובא עוסק בעיקר בענייני פרוצדורה כללית/ראיות ואינו מתמקד בדוקטרינת 'יורש אחר יורש' או בתנאיה.",
+          "candidate_id": "ccf56191-cc16-48d9-af02-115e91438a68",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "ריפוי החוזה לאחר הפרתו",
+          "origin": "local_db",
+          "reason": "מאמר/קטע המצוטט אינו עוסק בהלכת 'יורש אחר יורש' אלא בטענות כלליות/שגויות על דיני חוזים; לא רלוונטי לנושא.",
+          "candidate_id": "27d216c6-aabc-4c43-b388-6b0adb43f0de",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "רע\"א 7614/21 איתנים י.ר. בניה וחיזוק מבנים בע\"מ נ׳ מגרש 901 בגוש 6158 פס\"ד פסק דין (04.05.2022)",
+          "origin": "local_db",
+          "reason": "פסק‑דין המוצג עוסק בסוגיות חברות ורישום מניות, לא בדוקטרינת 'יורש אחר יורש' — נושא שונה.",
+          "candidate_id": "ab69af83-6ef3-4134-8dd1-eda24a81247e",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        }
+      ],
+      "batch_ms": [
+        49626
+      ],
+      "parallel": true,
+      "verdicts": [
+        {
+          "reason": "מקור עוסק במפורש בהלכת 'יורש אחר יורש' ובהשלכותיה על זכויות יורש שני — לכן תומך ישירות בהגדרה הבסיסית של הדוקטרינה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "1cbff241-bb29-4da5-b468-b7875d95b085",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "דן בזכויות 'יורש אחר יורש' בענייני קניין ועוסק בכך בפסיקה",
+            "מצביע כי יפוי כוח וויתור אינם בהכרח דיים לריפוי זכויות יורש שני"
+          ]
+        },
+        {
+          "reason": "מאמר/קטע המצוטט אינו עוסק בהלכת 'יורש אחר יורש' אלא בטענות כלליות/שגויות על דיני חוזים; לא רלוונטי לנושא.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "27d216c6-aabc-4c43-b388-6b0adb43f0de",
+          "supported_points": []
+        },
+        {
+          "reason": "פסק‑דין המוצג עוסק בסוגיות חברות ורישום מניות, לא בדוקטרינת 'יורש אחר יורש' — נושא שונה.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "ab69af83-6ef3-4134-8dd1-eda24a81247e",
+          "supported_points": []
+        },
+        {
+          "reason": "מקור עוסק בתנאים של השתק פלוגתא/קביעת עניין מוכרע — נוגע באופן מועיל לתנאי היסוד של 'יורש אחר יורש' אך אינו מסביר את הדוקטרינה הספציפית במלואה.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "b3a9494b-606f-402e-8294-3e246b88c941",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "דן בתנאיה של דוקטרינת השתק/השתק פלוגתא (הלכת סררו) כגון זהות הפלוגתא והנסיבות",
+            "תנאים אלה רלוונטיים לבחינת מקרים של 'יורש אחר יורש' כהשתק/קביעת עילה"
+          ]
+        },
+        {
+          "reason": "המקור עוסק ישירות בפרשנות ובהשלכות של הוראת 'יורש אחר יורש' — תומך בתנאים ובהיבטים פרשניים הנדרשים להחלת ההלכה.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "36a5ef74-a185-4d19-9f8a-f3e7b9aa7e56",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "פסיקה מחוזית דנה במפורש בפרשנות הוראת 'יורש אחר יורש' בצוואה",
+            "מציינת שלא כל הוראה כזו מהווה באופן אוטומטי 'יורש במקום יורש' ושהזוכה השני יכול לתבוע את כוונת המצווה"
+          ]
+        },
+        {
+          "reason": "המסמך המובא עוסק בעיקר בענייני פרוצדורה כללית/ראיות ואינו מתמקד בדוקטרינת 'יורש אחר יורש' או בתנאיה.",
+          "support": "unrelated",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "ccf56191-cc16-48d9-af02-115e91438a68",
+          "supported_points": []
+        },
+        {
+          "reason": "המקור עוסק במפורש בחריגים ובגבולות הפרשניים של הוראות 'יורש אחר יורש' — לכן תומך ישירות בטענה על גבולות והחריגים.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "12015c74-730f-4dc2-9f83-71f83dad9f6c",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "מדובר בפסק‑דין המחוזי שמגביל פרשנות של 'יורש אחר יורש' בצוואה",
+            "קובע כי יש לאפשר לזוכה השני לתבוע לפרשנות וכי לא תמיד ייושם כיורש במקום יורש"
+          ]
+        },
+        {
+          "reason": "חוק הירושה הוא מקור ראשי הרלוונטי באופן ישיר להשלכות הפרוצדורליות על זכויות יורשים והחלקתם של עיזבונות.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": false,
+          "candidate_id": "c9ad97b7-eaf5-4f84-9b3a-1a5e5c7ba6c6",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "חוק הירושה קובע מי הם יורשים (על פי דין או צוואה) ומשפיע על מי רשאי לפעול בהליכי חלוקה",
+            "הסדרי החוק משפיעים על הליך פרוצדורלי כגון חלוקת עיזבון ובעלות על נכסים"
+          ]
+        },
+        {
+          "reason": "המקור עוסק בהליכי הוצאה לפועל הכלליים — רלוונטי לאכיפה וביצוע אך אינו עוסק ספציפית ב'יורש אחר יורש'.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": false,
+          "candidate_id": "6a7cf84b-537d-4731-b6cd-b9309df25eb0",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "חוק ההוצאה לפועל קובע את הדרך ליישום פסקי דין והוצאה לפועל של חובות כנגד נכסים",
+            "חוק זה רלוונטי להשלכות פרוצדורליות על ביצוע פסקי דין נגד יורשים או בנכסים שהועברו"
+          ]
+        },
+        {
+          "reason": "פסק‑דין זה דן ישירות בפרקטיקה של חלוקת עיזבון וזכויות יורשים — רלוונטי להשלכות פרוצדורליות במצבים של העברת זכויות בין יורשים.",
+          "support": "direct",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "ec0f397d-7fcf-4223-88b4-8b0992b155dc",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "פסק‑דין המחוזי התייחס לסעיף 110 לחוק הירושה ולכך שרק היורשים רשאים לחלק את העיזבון",
+            "מאשר כי בתי המשפט מאפשרים ולאשר הסכמי חלוקה בין יורשים"
+          ]
+        },
+        {
+          "reason": "תקנות הירושה עוסקות באופן ישיר בכללים פרוצדורליים הקשורים להליכים ירושה ולזכויות יורשים.",
+          "support": "direct",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "ac4acdeb-81f5-4186-ba55-9f79d15b4094",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "התקנות מגדירות 'יורש' וכוללות הוראות פרוצדורליות לגבי ניהול הליכים שנוגעים ליורשים",
+            "מכילות סמכויות לבית המשפט בנוגע להעברת דיון ומילוי תנאים פרוצדורליים"
+          ]
+        },
+        {
+          "reason": "דו\"ח עובדתי המספק רקע על הגורמים המנהלתיים והפרוצדורות של הוצאה לפועל — רלוונטי להשלכות פרוצדורליות אך אינו דן בדוקטרינת 'יורש אחר יורש'.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "3e2641e8-7afb-4720-8749-bc84c82c1d5c",
+          "support_subtype": "background",
+          "supported_points": [
+            "דו\"ח משרד המשפטים מתאר את תפקידה של רשות האכיפה והגבייה בניהול תיקי הוצאה לפועל",
+            "מספק רקע ארגוני על אופן יישום פסקי‑דין והוצאה לפועל בישראל"
+          ]
+        },
+        {
+          "reason": "המקור הוא מדריך/שירות פרוצדורלי (דף שירות) — מספק תמיכה פרקטית אך לא מקור פסיקתי ישיר על 'יורש אחר יורש'.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "b139f9e4-dcd0-4d6d-9e94-3e3a0e4e285e",
+          "support_subtype": "background",
+          "supported_points": [
+            "עמוד שירות ממשלתי מפרט את הליך פתיחת תיק הוצאה לפועל למימוש פסק‑דין",
+            "מסביר צעדים פרקטיים להגשת בקשה ופתיחת תיק ביצוע"
+          ]
+        },
+        {
+          "reason": "עמוד שירות מנהלי המספק אמצעי לקבלת הוכחות (צו ירושה) — רלוונטי פרוצדורלית אך אינו דן בפסיקה על 'יורש אחר יורש'.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "ad586faa-52c9-4dd2-8270-a6c8f4b1aa55",
+          "support_subtype": "background",
+          "supported_points": [
+            "שירות משרד המשפטים למתן העתק דיגיטלי מצו ירושה/צו קיום צוואה",
+            "שימוש במסמכים אלה רלוונטי להגנה על זכויות נכסיות ולהצגתם בהליכים משפטיים"
+          ]
+        }
+      ],
+      "demotions": [
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C4",
+          "candidate_id": "c9ad97b7-eaf5-4f84-9b3a-1a5e5c7ba6c6",
+          "reason_excerpt": "חוק הירושה הוא מקור ראשי הרלוונטי באופן ישיר להשלכות הפרוצדורליות על זכויות יורשים והחלקתם של עיזבונות."
+        }
+      ],
+      "batch_count": 1,
+      "call_failed": false,
+      "model_final": "openai/gpt-5-mini",
+      "retry_count": 0,
+      "per_claim_ms": {
+        "C1": 49626,
+        "C2": 49626,
+        "C3": 49626,
+        "C4": 49626
+      },
+      "total_sum_ms": 49626,
+      "call_failures": [],
+      "model_initial": "openai/gpt-5-mini",
+      "total_wall_ms": 49627,
+      "retry_attempts": 0,
+      "escalated_claims": [],
+      "rate_limit_count": 0,
+      "candidates_usable": 11,
+      "concurrency_limit": 2,
+      "demotions_by_rule": {
+        "analogical": 0,
+        "background": 0,
+        "landing_page": 1,
+        "wrong_subject": 0,
+        "self_contradiction": 0
+      },
+      "escalated_batches": 0,
+      "recovered_batches": 0,
+      "candidates_dropped": 3,
+      "candidates_verified": 14,
+      "split_probe_attempts": 0,
+      "merge_order_preserved": true,
+      "fallback_to_sequential": false
+    },
+    "retrieval": {
+      "ms": 18529,
+      "pool": {
+        "found": 42,
+        "counts": {
+          "by_role": {
+            "factual_report": 2,
+            "primary_statute": 2,
+            "binding_case_law": 4,
+            "persuasive_case_law": 6
+          },
+          "by_claim": {
+            "C1": 3,
+            "C2": 3,
+            "C3": 1,
+            "C4": 7
+          },
+          "by_origin": {
+            "local_db": 4,
+            "perplexity": 10
+          }
+        },
+        "after_dedup": 14,
+        "dedup_drops": 28
+      },
+      "local": {
+        "ms": 1770,
+        "aggregate": {
+          "wall_ms": 1770,
+          "max_query_ms": 1767,
+          "sum_query_ms": 7004,
+          "slowest_query": {
+            "ms": 1767,
+            "role": "binding_case_law",
+            "text_ms": 1438,
+            "claim_id": "C4",
+            "exact_ms": 0,
+            "query_he": "בית המשפט העליון \"בקשה לשינוי פסק דין\" OR \"פתיחה מחדש של הליך\" \"יורש\" \"יורש אחר יורש\" \"הוצאה לפועל\" פסק דין",
+            "vector_ms": 329,
+            "embedding_ms": 153
+          },
+          "slowest_method": "text",
+          "method_total_ms": {
+            "text": 5736,
+            "exact": 0,
+            "vector": 1266,
+            "embedding": 619
+          },
+          "queries_executed": 4,
+          "exact_error_count": 0,
+          "text_timeout_count": 0,
+          "candidates_by_method": {
+            "text": 24,
+            "vector": 8,
+            "exact_authority": 0
+          },
+          "vector_timeout_count": 0,
+          "bottleneck_hypothesis": "single_slow_query (max=1767ms ≈ wall=1770ms)",
+          "duplicate_query_count": 0
+        },
+        "per_query": [
+          {
+            "ms": 1731,
+            "diag": {
+              "text_ms": 1415,
+              "exact_ms": 0,
+              "vector_ms": 316,
+              "text_status": "ok",
+              "embedding_ms": 153,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+                "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+                "בית משפט השלום לתעבורה בבאר שבע, השופט הבכיר אלון אופיר: גזר דין לנאשם שנהג בזמן פסילה בפעם החמישית (פל\"א 8465-09-24)",
+                "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+                "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 1415,
+              "top_vector_titles": [
+                "רע\"א 3810-06 - י. דורי את צ'קובסקי בניה והשקעות בע\"מ נ. שמאי גולדשטיין",
+                "בג\"ץ 466-07 - ח\"כ זהבה גלאון-יו\"ר סיעת מר\"צ-יחד נ. היועץ המשפטי לממשלה"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "compact_query_he": "זהות פלוגתא העליון יורש אחר נסיבות הזדמנות להתדיין דין",
+            "original_query_he": "בית המשפט העליון \"יורש אחר יורש\" \"זהות פלוגתא\" \"זהות נסיבות\" \"הזדמנות להתדיין\" פסק דין"
+          },
+          {
+            "ms": 1742,
+            "diag": {
+              "text_ms": 1444,
+              "exact_ms": 0,
+              "vector_ms": 297,
+              "text_status": "ok",
+              "embedding_ms": 135,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+                "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+                "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)",
+                "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+                "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 1444,
+              "top_vector_titles": [
+                "ריפוי החוזה לאחר הפרתו",
+                "רע\"א 7614/21 איתנים י.ר. בניה וחיזוק מבנים בע\"מ נ׳ מגרש 901 בגוש 6158 פס\"ד פסק דין (04.05.2022)"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "compact_query_he": "זהות פלוגתא העליון יורש אחר המשכיות דין כחייב OR",
+            "original_query_he": "בית המשפט העליון \"יורש אחר יורש\" \"המשכיות פסק דין\" ״פסק דין כחייב יורש״ ע\"א OR בג\"צ OR ע\"מ"
+          },
+          {
+            "ms": 1764,
+            "diag": {
+              "text_ms": 1439,
+              "exact_ms": 0,
+              "vector_ms": 324,
+              "text_status": "ok",
+              "embedding_ms": 178,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+                "ביהמ\"ש השלום בנוף הגליל-נצרת, הנשיא ניר מישורי לב טוב: גזר דין בעניין עבירת מסירת ידיעה כוזבת, ועבירת זיף פנקס או מסמך אחר והשתמש בכל מרמה או תחבולה (ת\"פ 41647-10-22)",
+                "בית משפט לענייני משפחה בירושלים, שופט  פליקס גורודצקי: החלטה בעניין שינוי גיל (תמ\"ש 31536-12-24)",
+                "ביהמ\"ש המחוזי בתל אביב- יפו, אב\"ד ש' יונה אטדגי, ש' אריאל צימרמן, ש' טל לוי-מיכאלי: פסק דין אזרחי בעניין מתי תותר הרחבת בחזית, הבחנה בין שינוי חזית בטענות עובדתיות ובטענות משפטיות (ע\"א 19249-06-23)",
+                "בימ\"ש לנוער באר שבע, השופטת מירב הרשקוביץ יצחק: החלטה בבקשה להורות על שינוי דרכי טיפול לקטין (,תנ\"ז 21514-02-25)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 1439,
+              "top_vector_titles": [
+                "בימ\"ש לענייני משפחה ב\"ש, סגנית הנשיא השופטת רותם קודלר עיאש: פסקי דין בתיקי משפחה (תלה\"מ 3037-05-22)",
+                "בימ\"ש לענייני משפחה באשדוד, השופטת עפרה גיא: פס\"ד בבקשות הדדיות של הורי קטינים לביטול וחיוב דמי מזונות (תמ\"ש 3402-09-21)"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "compact_query_he": "זהות פלוגתא העליון יורש אחר שינוי נסיבות מהותי זכות",
+            "original_query_he": "בית המשפט העליון \"יורש אחר יורש\" \"שינוי נסיבות מהותי\" \"זכות סובייקטיבית\" פסק דין חריגים אי-חבות יורש"
+          },
+          {
+            "ms": 1767,
+            "diag": {
+              "text_ms": 1438,
+              "exact_ms": 0,
+              "vector_ms": 329,
+              "text_status": "ok",
+              "embedding_ms": 153,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+                "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+                "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין בקשה לביטול ו/או הפחתת דמי מזונות (תמ\"ש 38293-10-23)",
+                "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)",
+                "בית משפט לענייני משפחה בפתח תקווה, השופטת נאוה גדיש: החלטה בעניין בקשה לעיון מחדש בהחלטה למזונות (תלה\"מ 24640-12-24)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 1438,
+              "top_vector_titles": [
+                "רע\"פ 797-07 - יצחק כהן נ. מדינת ישראל",
+                "ע\"א 9183-09 - The Football Association Premier League Limited נ. פלוני"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "compact_query_he": "זהות פלוגתא העליון בקשה לשינוי דין OR פתיחה מחדש",
+            "original_query_he": "בית המשפט העליון \"בקשה לשינוי פסק דין\" OR \"פתיחה מחדש של הליך\" \"יורש\" \"יורש אחר יורש\" \"הוצאה לפועל\" פסק דין"
+          }
+        ],
+        "candidates": 32,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 18524,
+        "dropped": 32,
+        "parallel": true,
+        "query_ms": [
+          6156,
+          3907,
+          12463,
+          7819,
+          7681,
+          12259,
+          6763,
+          6933
+        ],
+        "per_query": [
+          {
+            "ms": 6156,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.boazkraus.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+                "title": "No academic article found in provided results",
+                "domain": "boazkraus.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.boazkraus.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+                "title": "יורש אחר יורש - עורך דין בעז קראוס",
+                "domain": "boazkraus.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision42405-01-20/he/42405-01-20.docx",
+                "title": "42405-01-20.docx",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_scholarship",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.afiklaw.com/caselaw/5490/2",
+                "title": "תמש (ת\"א) 45880/06 נ.ר. נ' א.ר - חלק 2",
+                "domain": "he.afiklaw.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9?IsMobile=false",
+                "title": "זכויות יורש אחר יורש - פסקדין",
+                "domain": "psakdin.co.il",
+                "hygiene": {
+                  "url_status": "suspicious",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9?IsMobile=false",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9?IsMobile=false",
+                  "hygiene_reasons": [
+                    "url_suspicious_encoding"
+                  ],
+                  "landing_page_status": "unknown",
+                  "body_meaningful_chars": 141,
+                  "title_meaningful_chars": 24
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "persuasive_case_law",
+                "role_corrected_from": "scholarship",
+                "raw_pplx_source_type": "case_law",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C1",
+            "query_he": "מאמר \"יורש אחר יורש\" \"המשכיות פסק דין\" כתב-עת משפטי \"משפטים\" OR \"הלכה\" מאמר דוקטרינרי על חבות יורש בפסקי דין",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 3907,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision40340-04-20/he/40340-04-20.docx",
+                "title": "40340-04-20.docx",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_scholarship",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://yfc-law.com/2025/03/25/%D7%94%D7%A9%D7%AA%D7%A7-%D7%A4%D7%9C%D7%95%D7%92%D7%AA%D7%90-%D7%94%D7%AA%D7%A7%D7%A4%D7%99/",
+                "title": "השתק פלוגתא והשתק עילה - מעשה בית דין",
+                "domain": "yfc-law.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C2",
+            "query_he": "מאמר \"יורש אחר יורש\" \"זהות פלוגתא\" \"הכרעה פוזיטיבית\" כתב-עת משפטי \"משפטים\" OR \"המשפט\"",
+            "raw_count": 2,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 12463,
+            "http": 200,
+            "role": "persuasive_case_law",
+            "results": [
+              {
+                "url": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%90%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+                "title": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש' | פסקדין",
+                "domain": "psakdin.co.il",
+                "hygiene": {
+                  "url_status": "suspicious",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%90%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%90%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+                  "hygiene_reasons": [
+                    "url_suspicious_encoding"
+                  ],
+                  "landing_page_status": "unknown",
+                  "body_meaningful_chars": 129,
+                  "title_meaningful_chars": 61
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "פסק דין/אינדקס משפטי",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.toledano.co.il/%D7%93%D7%99%D7%A0%D7%99-%D7%9E%D7%A9%D7%A4%D7%97%D7%94-%D7%95%D7%99%D7%A8%D7%95%D7%A9%D7%94-%D7%A2%D7%9E-2/",
+                "title": "עמ\"ש 27630-04-15 ר' נ' פ' ואח' | תולעדנו",
+                "domain": "toledano.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_persuasive_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.toledano.co.il/%D7%94%D7%93%D7%A8%D7%9מה-%D7%94%D7%9משפטית-%D7%A2%D7%9C-%D7%94%D7%A6%D7%95%D7%95%D7%90%D7%95%D7%AA-%D7%94%D7%94%D7%93%D7%93%D7%99%D7%95%D7%AA/",
+                "title": "עמ\"ש 41825-10-22 | תולעדנו",
+                "domain": "toledano.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_persuasive_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision42405-01-20/he/42405-01-20.docx",
+                "title": "42405-01-20.docx | gov.il",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_persuasive_case_law",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision34136-11-22/he/34136-11-22.docx",
+                "title": "34136-11-22.docx | gov.il",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_persuasive_case_law",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C2",
+            "query_he": "בית משפט מחוזי OR בית משפט שלום \"יורש אחר יורש\" \"זהות נסיבות\" \"זהות פלוגתא\" פסק דין מחוזי/שלום",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 7819,
+            "http": 200,
+            "role": "persuasive_case_law",
+            "results": [
+              {
+                "url": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%A2%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%אה-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%95%D7%A7%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+                "title": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש'",
+                "domain": "psakdin.co.il",
+                "hygiene": {
+                  "url_status": "suspicious",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%A2%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%אה-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%95%D7%A7%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%A2%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%%D7%90%D7%94-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%95%D7%A7%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+                  "hygiene_reasons": [
+                    "url_suspicious_encoding"
+                  ],
+                  "landing_page_status": "unknown",
+                  "body_meaningful_chars": 132,
+                  "title_meaningful_chars": 54
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "caselaw_summary",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://immunewill.co.il/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%A2%D7%9D-%D7%AA%D7%A0%D7%99%D7%99%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+                "title": "ת\"ע 948-02-09 - פרשנות צוואה עם תניית יורש אחר יורש",
+                "domain": "immunewill.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_persuasive_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision48903-09-22/he/48903-09-22.docx",
+                "title": "48903-09-22.docx",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_persuasive_case_law",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision42405-01-20/he/42405-01-20.docx",
+                "title": "42405-01-20.docx",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_persuasive_case_law",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.calcalist.co.il/local_news/article/hyqlxirxye",
+                "title": "הצוואה ההדדית לא התקיימה והבן יירש רק כ-30% מהרכוש במקום 80%",
+                "domain": "calcalist.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C3",
+            "query_he": "בית משפט מחוזי OR בית משפט שלום \"יורש אחר יורש\" \"חריג\" \"שינוי נסיבות\" פסק דין דוגמה להחרגת יורש",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 7681,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://hamishpat.com/wp-content/uploads/2022/10/%D7%93%D7%99%D7%A0%D7%99-%D7%99%D7%A8%D7%95%D7%A9%D7%94-%D7%90%D7%9C%D7%99%D7%A0%D7%95%D7%A8.docx",
+                "title": "דיני ירושה - אלינור (מסמך לימוד/סקירה דוקטרינית)",
+                "domain": "hamishpat.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://immunewill.co.il/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%A2%D7%9D-%D7%תניית-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+                "title": "ת\"ע 948-02-09 - פרשנות צוואה עם תניית יורש אחר יורש - צוואה חסינה",
+                "domain": "immunewill.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.boazkraus.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+                "title": "יורש אחר יורש - עורך דין בעז קראוס",
+                "domain": "boazkraus.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.mako.co.il/news-law_guide/2026_q1/Article-a7d9559edfbfb91027.htm",
+                "title": "בית המשפט הכריע: דירה הושבה ליורשת – למרות צוואה מאוחרת | N12",
+                "domain": "mako.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.twizer-lawoffice.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9/",
+                "title": "יורש במקום יורש: מתי זה מתאפשר ומה המשמעות המשפטית? | עו\"ד טויזר",
+                "domain": "twizer-lawoffice.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C3",
+            "query_he": "מאמר \"יורש אחר יורש\" \"חריגים\" \"שינוי נסיבות\" כתב-עת משפטי OR סקירת ספרות דוקטרינית במאמרים על המשכיות פסק דין כלפי יורשים",
+            "raw_count": 5,
+            "discovery_only": 3,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 12259,
+            "http": 200,
+            "role": "persuasive_case_law",
+            "results": [
+              {
+                "url": "https://rotenberglaw.co.il/decision28302-12-22",
+                "title": "decision28302-12-22",
+                "domain": "rotenberglaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision59714-11-18/he/59714-11-18.docx",
+                "title": "59714-11-18.docx",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_persuasive_case_law",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://rotenberglaw.co.il/decision24916-06-21",
+                "title": "decision24916-06-21",
+                "domain": "rotenberglaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.ihaklai.org.il/index.php/about/item/34244-%D7%A8%D7%9E-%D7%99-%D7%AA%D7%AA%D7%A7%D7%9F-%D7%90%D7%AA-%D7%94%D7%92%D7%93%D7%A8%D7%AA-%D7%94%D7%A2%D7%91%D7%A8%D7%AA-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%90%D7%91%D7%99%D7%92%D7%93%D7%95%D7%A8-%D7%9C%D7%99%D7%91%D7%95%D7%91%D7%99%D7%A5,-%D7%A2%D7%95%D7%B4%D7%93",
+                "title": "רמ\"י תתקן את הגדרת \"העברת זכויות\" בהחלטה / אביגדור ליבוביץ, עו״ד",
+                "domain": "ihaklai.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_persuasive_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.estyokev-law.co.il/divisions-and-balances-in-inheritance",
+                "title": "חלוקות ואיזונים בירושות | עו\"ד אסתי עוקב",
+                "domain": "estyokev-law.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "extracted_followup_terms": [
+                  "סעיף 110 לחוק הירושה מקנה ליורשים על פי דין או ליורשים מכוח צוואה את האפש"
+                ],
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision36414-01-21/he/36414-01-21.pdf",
+                "title": "ע\"א 36414-01-21 פלוני נ' פלונית ואח' – בית המשפט המחוזי מרכז-לוד",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision36414-01-21/he/36414-01-21.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision36414-01-21/he/36414-01-21.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 153,
+                  "title_meaningful_chars": 54
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "פסיקה",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law00/72178.htm",
+                "title": "חוק הירושה, תשכ\"ה-1965",
+                "domain": "nevo.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.nevo.co.il/law_html/law00/72178.htm",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.nevo.co.il/law_html/law00/72178.htm",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 78,
+                  "title_meaningful_chars": 20
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "persuasive_case_law",
+                "raw_pplx_source_type": "חקיקה",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://rotenberglaw.co.il/_Uploads/dbsAttachedFiles/HY.pdf",
+                "title": "חוק הירושה, תשכ\"ה-1965 – סעיף 110",
+                "domain": "rotenberglaw.co.il",
+                "drop_reason": "followup:discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.psakdin.co.il/Law/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA-%D7%94%D7%99%D7%A8%D7%95%D7%A9%D7%94,-%D7%94%D7%AA%D7%A9%D7%A0%22%D7%97-1998",
+                "title": "תקנות הירושה, התשנ\"ח-1998",
+                "domain": "psakdin.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.psakdin.co.il/Law/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA-%D7%94%D7%99%D7%A8%D7%95%D7%A9%D7%94,-%D7%94%D7%AA%D7%A9%D7%A0%22%D7%97-1998",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.psakdin.co.il/Law/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA-%D7%94%D7%99%D7%A8%D7%95%D7%A9%D7%94,-%D7%94%D7%AA%D7%A9%D7%A0%22%D7%97-1998",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "unknown",
+                  "body_meaningful_chars": 119,
+                  "title_meaningful_chars": 23
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "חקיקה",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://rotenberglaw.co.il/inheritance-ruling",
+                "title": "פסיקה בנושא צוואות וירושות – העברת דיון",
+                "domain": "rotenberglaw.co.il",
+                "drop_reason": "followup:discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C4",
+            "query_he": "בית משפט מחוזי OR שלום \"בקשה לפתיחה מחדש\" \"יורש\" \"הגנה\" \"הוצאה לפועל\" פסק דין פרוצדורלי בנושא העברת זכויות בין יורשים",
+            "raw_count": 5,
+            "discovery_only": 5,
+            "followup_terms": [
+              "סעיף 110 לחוק הירושה מקנה ליורשים על פי דין או ליורשים מכוח צוואה את האפש"
+            ],
+            "followup_admitted": 3
+          },
+          {
+            "ms": 6763,
+            "http": 200,
+            "role": "factual_report",
+            "results": [
+              {
+                "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2024/2024.11-75A-PartB/2024.11-75A-PartB-602-Ministry-of-Justice.pdf",
+                "title": "טיפול משרד המשפטים בהליכי חדלות פירעון ושיקום כלכלי",
+                "domain": "library.mevaker.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2024/2024.11-75A-PartB/2024.11-75A-PartB-602-Ministry-of-Justice.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2024/2024.11-75A-PartB/2024.11-75A-PartB-602-Ministry-of-Justice.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 192,
+                  "title_meaningful_chars": 44
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "דו\"ח רשמי / מבקר המדינה",
+                "normalized_source_type": "other",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://sadehlaw.com/%D7%94%D7%95%D7%A6%D7%90%D7%94-%D7%9C%D7%A4%D7%95%D7%A2%D7%9C-%D7%99%D7%95%D7%A8%D7%A9%D7%99%D7%9D-%D7%9B%D7%9C-%D7%9E%D7%94-%D7%A9%D7%A6%D7%A8%D7%99%D7%9A-%D7%9C%D7%93%D7%A2%D7%AA/",
+                "title": "הוצאה לפועל על יורשים – כל מה שצריך לדעת",
+                "domain": "sadehlaw.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/he/service/opening_monetary_verdict_file",
+                "title": "פתיחת תיק פסק דין כספי בהוצאה לפועל",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/he/service/opening_monetary_verdict_file",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/he/service/opening_monetary_verdict_file",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 175,
+                  "title_meaningful_chars": 29
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "persuasive_case_law",
+                "role_corrected_from": "factual_report",
+                "raw_pplx_source_type": "שירות ממשלתי רשמי",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.gov.il/he/service/inheritance_digital_order",
+                "title": "בקשה לקבלת העתק דיגיטלי מצו ירושה או צו קיום צוואה",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/he/service/inheritance_digital_order",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/he/service/inheritance_digital_order",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 149,
+                  "title_meaningful_chars": 41
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "שירות ממשלתי רשמי",
+                "normalized_source_type": "other",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.btl.gov.il/Laws1/00_0063_000000.pdf",
+                "title": "חוק ההוצאה לפועל, התשכ\"ז-1967",
+                "domain": "btl.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.btl.gov.il/Laws1/00_0063_000000.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.btl.gov.il/Laws1/00_0063_000000.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 113,
+                  "title_meaningful_chars": 26
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "factual_report",
+                "raw_pplx_source_type": "חוק / מקור רשמי",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C4",
+            "query_he": "דו\"ח משרד המשפטים OR דו\"ח רשות האכיפה והגבייה \"הוצאה לפועל\" \"יורש\" דו\"ח סטטיסטי או הנחיות פרוצדורליות פתיחת הליכים לאחר העברת נכסים",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 6933,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.kolzchut.org.il/he/%D7%91%D7%A7%D7%A9%D7%94_%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%9C_%D7%A4%D7%A1%D7%A7_%D7%93%D7%99%D7%9F_%D7%A9%D7%A0%D7%99%D7%AA%D7%9F_%D7%91%D7%94%D7%99%D7%A2%D7%93%D7%A8_%D7%94%D7%92%D7%A0%D7%94_%D7%91%D7%9E%D7%A2%D7%9E%D7%93_%D7%A6%D7%93_%D7%90%D7%97%D7%93",
+                "title": "אין מקורות אקדמיים ישירים בתוצאות שסופקו",
+                "domain": "kolzchut.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision31254-03-19/he/31254-03-19.pdf",
+                "title": "בית משפט לענייני משפחה בתל אביב-יפו, החלטה 31254-03-19",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_scholarship",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.kolzchut.org.il/he/%D7%91%D7%A7%D7%A9%D7%94_%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%9C_%D7%A4%D7%A1%D7%A7_%D7%93%D7%99%D7%9F_%D7%A9%D7%A0%D7%99%D7%AA%D7%9F_%D7%91%D7%94%D7%99%D7%A2%D7%93%D7%A8_%D7%94%D7%92%D7%A0%D7%94_%D7%91%D7%9E%D7%A2%D7%מ%D7%93_%D7%A6%D7%93_%D7%90%D7%97%D7%93",
+                "title": "בקשה לביטול פסק דין שניתן בהיעדר הגנה במעמד צד אחד",
+                "domain": "kolzchut.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.malka-law.co.il/%D7%9B%D7%9C%D7%9C%D7%99-%D7%9E%D7%90%D7%9E%D7%A8%D7%99%D7%9D/%D7%91%D7%99%D7%98%D7%95%D7%9C-%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%94%D7%9C%D7%99%D7%9A-%D7%90%D7%96%D7%A8%D7%97%D7%99/",
+                "title": "ביטול פסק דין בהליך אזרחי",
+                "domain": "malka-law.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.article.co.il/ShowArticle.asp?id=2080",
+                "title": "מאמר בנושא ביטול פסק דין",
+                "domain": "article.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C4",
+            "query_he": "מאמר פרוצדורלי \"פתיחה מחדש של הליך\" \"בקשה לביטול פסק דין\" \"יורש\" כתב-עת משפטי \"משפטים\" OR \"דיני תהליך\"",
+            "raw_count": 5,
+            "discovery_only": 3,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 10,
+        "query_count": 8,
+        "retry_count": 0,
+        "total_sum_ms": 63981,
+        "total_wall_ms": 18524,
+        "hygiene_counts": {
+          "keep": 10,
+          "total": 10,
+          "exclude": 0,
+          "reasons": {
+            "url_generic_index": 2,
+            "url_suspicious_encoding": 3
+          },
+          "downgrade": 0,
+          "report_only_mode": false,
+          "would_exclude_in_report_only": 0
+        },
+        "rate_limit_count": 0,
+        "role_corrections": [
+          {
+            "to": "persuasive_case_law",
+            "url": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9?IsMobile=false",
+            "from": "scholarship",
+            "title": "זכויות יורש אחר יורש - פסקדין",
+            "admitted": true,
+            "claim_id": "C1"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://www.nevo.co.il/law_html/law00/72178.htm",
+            "from": "persuasive_case_law",
+            "title": "חוק הירושה, תשכ\"ה-1965",
+            "admitted": true,
+            "claim_id": "C4"
+          },
+          {
+            "to": "persuasive_case_law",
+            "url": "https://www.gov.il/he/service/opening_monetary_verdict_file",
+            "from": "factual_report",
+            "title": "פתיחת תיק פסק דין כספי בהוצאה לפועל",
+            "admitted": true,
+            "claim_id": "C4"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://www.btl.gov.il/Laws1/00_0063_000000.pdf",
+            "from": "factual_report",
+            "title": "חוק ההוצאה לפועל, התשכ\"ז-1967",
+            "admitted": true,
+            "claim_id": "C4"
+          }
+        ],
+        "concurrency_limit": 4,
+        "merge_order_preserved": true,
+        "fallback_to_sequential": false
+      }
+    },
+    "candidates": [
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק הירושה, תשכ\"ה-1965",
+        "origin": "perplexity",
+        "snippet": "היורשים הם יורשים על פי דין או זוכים על פי צוואה; הירושה היא על פי דין זולת במידה שהיא על פי צוואה.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.nevo.co.il/law_html/law00/72178.htm",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.nevo.co.il/law_html/law00/72178.htm",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 78,
+            "title_meaningful_chars": 20
+          },
+          "role_corrected_from": "persuasive_case_law",
+          "raw_pplx_source_type": "חקיקה",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "בית משפט מחוזי OR שלום \"בקשה לפתיחה מחדש\" \"יורש\" \"הגנה\" \"הוצאה לפועל\" פסק דין פרוצדורלי בנושא העברת זכויות בין יורשים",
+        "source_url": "https://www.nevo.co.il/law_html/law00/72178.htm",
+        "source_type": "legislation",
+        "candidate_id": "c9ad97b7-eaf5-4f84-9b3a-1a5e5c7ba6c6",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק ההוצאה לפועל, התשכ\"ז-1967",
+        "origin": "perplexity",
+        "snippet": "חוק ההוצאה לפועל, התשכ\"ז-1967. נוסח החוק כולל הוראות על תשלום אגרות, פטור ותשלום דחוי, ודרכי חישוב הוצאות לשם נקיטת הליכים ושיעוריהם.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "btl.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.btl.gov.il/Laws1/00_0063_000000.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.btl.gov.il/Laws1/00_0063_000000.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 113,
+            "title_meaningful_chars": 26
+          },
+          "role_corrected_from": "factual_report",
+          "raw_pplx_source_type": "חוק / מקור רשמי",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "דו\"ח משרד המשפטים OR דו\"ח רשות האכיפה והגבייה \"הוצאה לפועל\" \"יורש\" דו\"ח סטטיסטי או הנחיות פרוצדורליות פתיחת הליכים לאחר העברת נכסים",
+        "source_url": "https://www.btl.gov.il/Laws1/00_0063_000000.pdf",
+        "source_type": "legislation",
+        "candidate_id": "6a7cf84b-537d-4731-b6cd-b9309df25eb0",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.75,
+        "title": "ע\"א 36414-01-21 פלוני נ' פלונית ואח' – בית המשפט המחוזי מרכז-לוד",
+        "origin": "perplexity",
+        "snippet": "אכן, ע\"פ סעיף 110 לחוק הירושה, רק ה\"יורשים\" רשאים לחלק ביניהם את העיזבון על פי הסכם ביניהם... היינו הינם יורשים על פי דין או על פי צוואה. לפיכך אין כל מניעה לאשר את הסכם החלוקה בין היורשים.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision36414-01-21/he/36414-01-21.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision36414-01-21/he/36414-01-21.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 153,
+            "title_meaningful_chars": 54
+          },
+          "raw_pplx_source_type": "פסיקה",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "בית משפט מחוזי OR שלום \"בקשה לפתיחה מחדש\" \"יורש\" \"הגנה\" \"הוצאה לפועל\" פסק דין פרוצדורלי בנושא העברת זכויות בין יורשים",
+        "source_url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision36414-01-21/he/36414-01-21.pdf",
+        "source_type": "caselaw",
+        "candidate_id": "ec0f397d-7fcf-4223-88b4-8b0992b155dc",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.75,
+        "title": "תקנות הירושה, התשנ\"ח-1998",
+        "origin": "perplexity",
+        "snippet": "\"יורש\" - לרבות זוכה על פי צוואה, לפי הענין;... רשאי בית המשפט להורות על העברת הדיון לבית משפט אחר אם כל הצדדים או רובם מתגוררים מחוץ לתחום השיפוט.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "psakdin.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.psakdin.co.il/Law/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA-%D7%94%D7%99%D7%A8%D7%95%D7%A9%D7%94,-%D7%94%D7%AA%D7%A9%D7%A0%22%D7%97-1998",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.psakdin.co.il/Law/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA-%D7%94%D7%99%D7%A8%D7%95%D7%A9%D7%94,-%D7%94%D7%AA%D7%A9%D7%A0%22%D7%97-1998",
+            "hygiene_reasons": [],
+            "landing_page_status": "unknown",
+            "body_meaningful_chars": 119,
+            "title_meaningful_chars": 23
+          },
+          "raw_pplx_source_type": "חקיקה",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "בית משפט מחוזי OR שלום \"בקשה לפתיחה מחדש\" \"יורש\" \"הגנה\" \"הוצאה לפועל\" פסק דין פרוצדורלי בנושא העברת זכויות בין יורשים",
+        "source_url": "https://www.psakdin.co.il/Law/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA-%D7%94%D7%99%D7%A8%D7%95%D7%A9%D7%94,-%D7%94%D7%AA%D7%A9%D7%A0%22%D7%97-1998",
+        "source_type": "caselaw",
+        "candidate_id": "ac4acdeb-81f5-4186-ba55-9f79d15b4094",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "factual_report",
+        "score": 0.75,
+        "title": "טיפול משרד המשפטים בהליכי חדלות פירעון ושיקום כלכלי",
+        "origin": "perplexity",
+        "snippet": "טיפול משרד המשפטים בהליכי חדלות פירעון ושיקום כלכלי - מבקר המדינה. המסמך מציין כי רשות האכיפה והגבייה אחראית למערכת ההוצאה לפועל, שבה מוצאים לפועל פסקי דין או החלטות אחרות בעניינים אזרחיים, ונגבים חיובים אחרים שדינם כדין פסק דין.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "library.mevaker.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2024/2024.11-75A-PartB/2024.11-75A-PartB-602-Ministry-of-Justice.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2024/2024.11-75A-PartB/2024.11-75A-PartB-602-Ministry-of-Justice.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 192,
+            "title_meaningful_chars": 44
+          },
+          "raw_pplx_source_type": "דו\"ח רשמי / מבקר המדינה",
+          "source_type_normalized": true,
+          "classified_source_class": "government_report"
+        },
+        "query_he": "דו\"ח משרד המשפטים OR דו\"ח רשות האכיפה והגבייה \"הוצאה לפועל\" \"יורש\" דו\"ח סטטיסטי או הנחיות פרוצדורליות פתיחת הליכים לאחר העברת נכסים",
+        "source_url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2024/2024.11-75A-PartB/2024.11-75A-PartB-602-Ministry-of-Justice.pdf",
+        "source_type": "other",
+        "candidate_id": "3e2641e8-7afb-4720-8749-bc84c82c1d5c",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.151833294332027,
+        "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+        "origin": "local_db",
+        "snippet": "עה היא האם יש לדחות את התביעה דנן על הסף מחמת השתק פלוגתא. הלכה פסוקה היא כי דוקטרינת השתק הפלוגתא נועדה למנוע התדיינות חוזרת בסוגיה שכבר הוכרעה בפסק דין חלוט בין אותם צדדים. לשם כך, יש לבחון האם מתקיימים התנאים המצטברים שנקבעו בהלכת סררו . זהות הפלוגתא: בהליך הקודם (תמ\"ש *** ) נדונה סוגיית חלוקת הזכויות הסוציאליות שצברה הנתבעת במהלך הנישואין. בתביעה דנן מבקש התובע לקבל מחצית מהזכויות הסוציאליות ש",
+        "claim_id": "C2",
+        "metadata": {
+          "court": "בתי המשפט לענייני משפחה",
+          "judges": "סמאח מנאסרה סבאח",
+          "district": "מחוז מרכז",
+          "procedure_type": "משפחה"
+        },
+        "query_he": "בית המשפט העליון \"יורש אחר יורש\" \"זהות פלוגתא\" \"זהות נסיבות\" \"הזדמנות להתדיין\" פסק דין",
+        "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+        "document_id": "aea8d6dd-fe6e-4966-849a-1f8246fb69ff",
+        "source_type": "caselaw",
+        "candidate_id": "b3a9494b-606f-402e-8294-3e246b88c941",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.75,
+        "title": "זכויות יורש אחר יורש - פסקדין",
+        "origin": "perplexity",
+        "snippet": "לעניין זכויות יורש שני בהסדר של 'יורש אחר יורש', כאשר עסקינן בזכויות קנייניות ובעסקת מתנה של נכס עזבון ע\"י היורש הראשון - לא די במתן יפוי כוח בלתי חוזר וויתור על זכות החזרה.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "psakdin.co.il",
+          "pplx_hygiene": {
+            "url_status": "suspicious",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9?IsMobile=false",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9?IsMobile=false",
+            "hygiene_reasons": [
+              "url_suspicious_encoding"
+            ],
+            "landing_page_status": "unknown",
+            "body_meaningful_chars": 141,
+            "title_meaningful_chars": 24
+          },
+          "role_corrected_from": "scholarship",
+          "raw_pplx_source_type": "case_law",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "מאמר \"יורש אחר יורש\" \"המשכיות פסק דין\" כתב-עת משפטי \"משפטים\" OR \"הלכה\" מאמר דוקטרינרי על חבות יורש בפסקי דין",
+        "source_url": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9?IsMobile=false",
+        "source_type": "caselaw",
+        "candidate_id": "1cbff241-bb29-4da5-b468-b7875d95b085",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.75,
+        "title": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש' | פסקדין",
+        "origin": "perplexity",
+        "snippet": "\"המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש'\"; צויין כי לא ניתן לקבוע מראש שכל הוראת 'יורש אחר יורש' תיחשב גם כהוראת 'יורש במקום יורש'.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "psakdin.co.il",
+          "pplx_hygiene": {
+            "url_status": "suspicious",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%90%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%90%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+            "hygiene_reasons": [
+              "url_suspicious_encoding"
+            ],
+            "landing_page_status": "unknown",
+            "body_meaningful_chars": 129,
+            "title_meaningful_chars": 61
+          },
+          "raw_pplx_source_type": "פסק דין/אינדקס משפטי",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "בית משפט מחוזי OR בית משפט שלום \"יורש אחר יורש\" \"זהות נסיבות\" \"זהות פלוגתא\" פסק דין מחוזי/שלום",
+        "source_url": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%90%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+        "source_type": "caselaw",
+        "candidate_id": "36a5ef74-a185-4d19-9f8a-f3e7b9aa7e56",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.75,
+        "title": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש'",
+        "origin": "perplexity",
+        "snippet": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש'... יש לאפשר לזוכה השני להוכיח כי זו הייתה כוונת המצווה בצוואתו באמצעות תובענה לפרשנות צוואה.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "psakdin.co.il",
+          "pplx_hygiene": {
+            "url_status": "suspicious",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%A2%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%אה-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%95%D7%A7%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%A2%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%%D7%90%D7%94-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%95%D7%A7%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+            "hygiene_reasons": [
+              "url_suspicious_encoding"
+            ],
+            "landing_page_status": "unknown",
+            "body_meaningful_chars": 132,
+            "title_meaningful_chars": 54
+          },
+          "raw_pplx_source_type": "caselaw_summary",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "בית משפט מחוזי OR בית משפט שלום \"יורש אחר יורש\" \"חריג\" \"שינוי נסיבות\" פסק דין דוגמה להחרגת יורש",
+        "source_url": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%A2%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%אה-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%95%D7%A7%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+        "source_type": "caselaw",
+        "candidate_id": "12015c74-730f-4dc2-9f83-71f83dad9f6c",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.75,
+        "title": "פתיחת תיק פסק דין כספי בהוצאה לפועל",
+        "origin": "perplexity",
+        "snippet": "פתיחת תיק פסק דין כספי בהוצאה לפועל. שירות זה של gov.il מסביר כי זוכים רשאים להגיש בקשה למימוש פסק דין כספי שניתן על ידי בית משפט או ערכאה מוכרת אחרת, ומפרט את אופן הפתיחה המקוונת ופרטי המענה של רשות האכיפה והגבייה.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.gov.il/he/service/opening_monetary_verdict_file",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.gov.il/he/service/opening_monetary_verdict_file",
+            "hygiene_reasons": [
+              "url_generic_index"
+            ],
+            "landing_page_status": "generic_index",
+            "body_meaningful_chars": 175,
+            "title_meaningful_chars": 29
+          },
+          "role_corrected_from": "factual_report",
+          "raw_pplx_source_type": "שירות ממשלתי רשמי",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "דו\"ח משרד המשפטים OR דו\"ח רשות האכיפה והגבייה \"הוצאה לפועל\" \"יורש\" דו\"ח סטטיסטי או הנחיות פרוצדורליות פתיחת הליכים לאחר העברת נכסים",
+        "source_url": "https://www.gov.il/he/service/opening_monetary_verdict_file",
+        "source_type": "caselaw",
+        "candidate_id": "b139f9e4-dcd0-4d6d-9e94-3e3a0e4e285e",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "factual_report",
+        "score": 0.75,
+        "title": "בקשה לקבלת העתק דיגיטלי מצו ירושה או צו קיום צוואה",
+        "origin": "perplexity",
+        "snippet": "בקשה לקבלת העתק דיגיטלי מצו ירושה או צו קיום צוואה. השירות של משרד המשפטים מאפשר קבלת העתק דיגיטלי של צו ירושה או צו קיום צוואה, מסמך רלוונטי לצירוף בהליכים הנוגעים לעיזבון וירושה.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.gov.il/he/service/inheritance_digital_order",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.gov.il/he/service/inheritance_digital_order",
+            "hygiene_reasons": [
+              "url_generic_index"
+            ],
+            "landing_page_status": "generic_index",
+            "body_meaningful_chars": 149,
+            "title_meaningful_chars": 41
+          },
+          "raw_pplx_source_type": "שירות ממשלתי רשמי",
+          "source_type_normalized": true,
+          "classified_source_class": "government_report"
+        },
+        "query_he": "דו\"ח משרד המשפטים OR דו\"ח רשות האכיפה והגבייה \"הוצאה לפועל\" \"יורש\" דו\"ח סטטיסטי או הנחיות פרוצדורליות פתיחת הליכים לאחר העברת נכסים",
+        "source_url": "https://www.gov.il/he/service/inheritance_digital_order",
+        "source_type": "other",
+        "candidate_id": "ad586faa-52c9-4dd2-8270-a6c8f4b1aa55",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.36067646898469863,
+        "title": "רע\"א 3810-06 - י. דורי את צ'קובסקי בניה והשקעות בע\"מ נ. שמאי גולדשטיין",
+        "origin": "local_db",
+        "snippet": "שלמה לוין \nתורת \nהפרוצדורה האזרחית ]22[\n ,בעמ' 114–115 ;רע\"א 3005/02 ]5 [הנ\"ל  .(אעיר \nבהקשר זה כי המשפט הפלילי הישראלי מכיר בשימוש במצלמות וידאו לשם \nגביית עדות מחוץ לאולם בית המשפט בנסיבות מסוימות .כך לדוגמה ,ניתן \nלגבות את עדותו של מתלונן במשפט פלילי בשל עבירת מין או בשל עבירת סחר \nבבני אדם לעיסוק בזנות באמצעות טלוויזיה במעגל סגור) ראו סעיף 2ב לחוק \nלתיקון סדרי הדין) חקירת עדים( ,התשי\"ח -1957, ",
+        "claim_id": "C2",
+        "metadata": {
+          "page": 175,
+          "year": 2007,
+          "volume": "ס\"ב",
+          "doc_type": "padi",
+          "case_name": "י. דורי את צ'קובסקי בניה והשקעות בע\"מ נ. שמאי גולדשטיין",
+          "source_site": "supreme_court_il",
+          "verdict_type": "פד\"י"
+        },
+        "query_he": "בית המשפט העליון \"יורש אחר יורש\" \"זהות פלוגתא\" \"זהות נסיבות\" \"הזדמנות להתדיין\" פסק דין",
+        "source_url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/3&fileName=SB3_7_3810-06.pdf&type=2",
+        "document_id": "d75e1f44-8669-432c-99ae-c9af3fe4a17d",
+        "source_type": "supreme_court_il",
+        "candidate_id": "ccf56191-cc16-48d9-af02-115e91438a68",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.3572476135344846,
+        "title": "ריפוי החוזה לאחר הפרתו",
+        "origin": "local_db",
+        "snippet": " נראה'חיוב '\nו'זכות 'מרחיב פירוש ליתן יש,\n זכות רק לא בחובם יכללו שהם באופן ,\n \n130  כהסכמה כלל בדרך להיחשב יכולה אינה ששתיקה החוזים דיני לקביעת היחיד החריג אינו זה .דוגמה \n היא נוספת נפוצה\"האחרונה הירייה כלל \" במצבי\nbattle of the forms .הבין המכר חוק ראו\n-\nלאומי ,ס '\n19)ב.(  \n131  שבס הכללית ההוראה מן בסטייה וזאת '27הבין המכר לחוק \n-\nלאומי ,ולפיה :\" מפורשות נקבע אם זולת\nהאמנה של זה בחלק אחרת ,הוד",
+        "claim_id": "C1",
+        "metadata": {
+          "tags": [
+            "דיני חוזים",
+            "דיני חוזים",
+            "הערת פסיקה",
+            "דיני חוזים",
+            "דיני מסים"
+          ],
+          "volume": "כרך נג",
+          "source_site": "mishpatim"
+        },
+        "query_he": "בית המשפט העליון \"יורש אחר יורש\" \"המשכיות פסק דין\" ״פסק דין כחייב יורש״ ע\"א OR בג\"צ OR ע\"מ",
+        "source_url": "https://lawjournal.huji.ac.il/article/12/1922",
+        "document_id": "904b5eee-663c-493d-9924-5be8adf688eb",
+        "source_type": "journal_article",
+        "candidate_id": "27d216c6-aabc-4c43-b388-6b0adb43f0de",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.35269176108222117,
+        "title": "רע\"א 7614/21 איתנים י.ר. בניה וחיזוק מבנים בע\"מ נ׳ מגרש 901 בגוש 6158 פס\"ד פסק דין (04.05.2022)",
+        "origin": "local_db",
+        "snippet": "משרה ונושאי המניות בעלי של המדויקת\n יֵרשמו הנוכחיים הזכויות בעלי שכן ,החייאתה לאחר בתכוף רלבנטיים לבלתי יֵהפכו אלה\n.ההכרחיות ההסדרה פעולות את לבצע שיוכלו בכדי ,העדכניים המניות כבעלי\n16\n\nדבר סוף\n בגין שנתית אגרה של מראש בתשלום החברה החייאת את להתנות מקום אין.40\n דוח בהגשת זאת להתנות מקום אין אף ;החברות ממרשם מחוקה הייתה שבהן השנים\n לשם ,המחוזי המשפט לבית התיק החזרת על להורות יש ,העניין בנסיבות .עדכ",
+        "claim_id": "C1",
+        "metadata": {
+          "parties": "איתנים י.ר. בניה וחיזוק מבנים בע\"מ נ׳ מגרש 901 בגוש 6158 פס\"ד",
+          "raw_title": "רע\"א 7614/21 איתנים י.ר. בניה וחיזוק מבנים בע\"מ נ. מגרש 901 בגוש 6158 פס\"ד מיום 4.5.22",
+          "source_site": "toledano.co.il",
+          "decision_date": "04.05.2022",
+          "decision_kind": "פסק דין",
+          "document_kind": "caselaw",
+          "local_pdf_file": "01165 - רע א 7614 21 איתנים י.ר. בניה וחיזוק מבנים בע מ נ׳ מגרש 901 בגוש 6158 פס ד פסק דין (04.05.2022).pdf",
+          "procedure_type": "רע\"א",
+          "source_category": "פסיקה חינם",
+          "procedure_number": "7614/21"
+        },
+        "query_he": "בית המשפט העליון \"יורש אחר יורש\" \"המשכיות פסק דין\" ״פסק דין כחייב יורש״ ע\"א OR בג\"צ OR ע\"מ",
+        "source_url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-7614-21-%d7%90%d7%99%d7%aa%d7%a0%d7%99%d7%9d-%d7%99-%d7%a8-%d7%91%d7%a0%d7%99%d7%94-%d7%95%d7%97%d7%99%d7%96%d7%95%d7%a7-%d7%9e%d7%91%d7%a0%d7%99%d7%9d-%d7%91%d7%a2%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "document_id": "56771412-7a30-430f-b31e-45f9d59a5a1f",
+        "source_type": "caselaw",
+        "candidate_id": "ab69af83-6ef3-4134-8dd1-eda24a81247e",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 28220,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 36825,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 1770,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 18524,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 49625,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 32242,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter_v2.initial",
+        "escalated": false,
+        "http_status": 200
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://www.boazkraus.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+        "role": "scholarship",
+        "title": "No academic article found in provided results",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר \"יורש אחר יורש\" \"המשכיות פסק דין\" כתב-עת משפטי \"משפטים\" OR \"הלכה\" מאמר דוקטרינרי על חבות יורש בפסקי דין",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.boazkraus.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+        "role": "scholarship",
+        "title": "יורש אחר יורש - עורך דין בעז קראוס",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר \"יורש אחר יורש\" \"המשכיות פסק דין\" כתב-עת משפטי \"משפטים\" OR \"הלכה\" מאמר דוקטרינרי על חבות יורש בפסקי דין",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision42405-01-20/he/42405-01-20.docx",
+        "role": "scholarship",
+        "title": "42405-01-20.docx",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר \"יורש אחר יורש\" \"המשכיות פסק דין\" כתב-עת משפטי \"משפטים\" OR \"הלכה\" מאמר דוקטרינרי על חבות יורש בפסקי דין",
+        "drop_reason": "class_government_report_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://he.afiklaw.com/caselaw/5490/2",
+        "role": "scholarship",
+        "title": "תמש (ת\"א) 45880/06 נ.ר. נ' א.ר - חלק 2",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר \"יורש אחר יורש\" \"המשכיות פסק דין\" כתב-עת משפטי \"משפטים\" OR \"הלכה\" מאמר דוקטרינרי על חבות יורש בפסקי דין",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision40340-04-20/he/40340-04-20.docx",
+        "role": "scholarship",
+        "title": "40340-04-20.docx",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר \"יורש אחר יורש\" \"זהות פלוגתא\" \"הכרעה פוזיטיבית\" כתב-עת משפטי \"משפטים\" OR \"המשפט\"",
+        "drop_reason": "class_government_report_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://yfc-law.com/2025/03/25/%D7%94%D7%A9%D7%AA%D7%A7-%D7%A4%D7%9C%D7%95%D7%92%D7%AA%D7%90-%D7%94%D7%AA%D7%A7%D7%A4%D7%99/",
+        "role": "scholarship",
+        "title": "השתק פלוגתא והשתק עילה - מעשה בית דין",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר \"יורש אחר יורש\" \"זהות פלוגתא\" \"הכרעה פוזיטיבית\" כתב-עת משפטי \"משפטים\" OR \"המשפט\"",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.toledano.co.il/%D7%93%D7%99%D7%A0%D7%99-%D7%9E%D7%A9%D7%A4%D7%97%D7%94-%D7%95%D7%99%D7%A8%D7%95%D7%A9%D7%94-%D7%A2%D7%9E-2/",
+        "role": "persuasive_case_law",
+        "title": "עמ\"ש 27630-04-15 ר' נ' פ' ואח' | תולעדנו",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "בית משפט מחוזי OR בית משפט שלום \"יורש אחר יורש\" \"זהות נסיבות\" \"זהות פלוגתא\" פסק דין מחוזי/שלום",
+        "drop_reason": "class_unknown_not_admitted_for_persuasive_case_law"
+      },
+      {
+        "url": "https://www.toledano.co.il/%D7%94%D7%93%D7%A8%D7%9מה-%D7%94%D7%9משפטית-%D7%A2%D7%9C-%D7%94%D7%A6%D7%95%D7%95%D7%90%D7%95%D7%AA-%D7%94%D7%94%D7%93%D7%93%D7%99%D7%95%D7%AA/",
+        "role": "persuasive_case_law",
+        "title": "עמ\"ש 41825-10-22 | תולעדנו",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "בית משפט מחוזי OR בית משפט שלום \"יורש אחר יורש\" \"זהות נסיבות\" \"זהות פלוגתא\" פסק דין מחוזי/שלום",
+        "drop_reason": "class_unknown_not_admitted_for_persuasive_case_law"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision42405-01-20/he/42405-01-20.docx",
+        "role": "persuasive_case_law",
+        "title": "42405-01-20.docx | gov.il",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "בית משפט מחוזי OR בית משפט שלום \"יורש אחר יורש\" \"זהות נסיבות\" \"זהות פלוגתא\" פסק דין מחוזי/שלום",
+        "drop_reason": "class_government_report_not_admitted_for_persuasive_case_law"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision34136-11-22/he/34136-11-22.docx",
+        "role": "persuasive_case_law",
+        "title": "34136-11-22.docx | gov.il",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "בית משפט מחוזי OR בית משפט שלום \"יורש אחר יורש\" \"זהות נסיבות\" \"זהות פלוגתא\" פסק דין מחוזי/שלום",
+        "drop_reason": "class_government_report_not_admitted_for_persuasive_case_law"
+      },
+      {
+        "url": "https://immunewill.co.il/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%A2%D7%9D-%D7%AA%D7%A0%D7%99%D7%99%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+        "role": "persuasive_case_law",
+        "title": "ת\"ע 948-02-09 - פרשנות צוואה עם תניית יורש אחר יורש",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית משפט מחוזי OR בית משפט שלום \"יורש אחר יורש\" \"חריג\" \"שינוי נסיבות\" פסק דין דוגמה להחרגת יורש",
+        "drop_reason": "class_unknown_not_admitted_for_persuasive_case_law"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision48903-09-22/he/48903-09-22.docx",
+        "role": "persuasive_case_law",
+        "title": "48903-09-22.docx",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית משפט מחוזי OR בית משפט שלום \"יורש אחר יורש\" \"חריג\" \"שינוי נסיבות\" פסק דין דוגמה להחרגת יורש",
+        "drop_reason": "class_government_report_not_admitted_for_persuasive_case_law"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision42405-01-20/he/42405-01-20.docx",
+        "role": "persuasive_case_law",
+        "title": "42405-01-20.docx",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית משפט מחוזי OR בית משפט שלום \"יורש אחר יורש\" \"חריג\" \"שינוי נסיבות\" פסק דין דוגמה להחרגת יורש",
+        "drop_reason": "class_government_report_not_admitted_for_persuasive_case_law"
+      },
+      {
+        "url": "https://www.calcalist.co.il/local_news/article/hyqlxirxye",
+        "role": "persuasive_case_law",
+        "title": "הצוואה ההדדית לא התקיימה והבן יירש רק כ-30% מהרכוש במקום 80%",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית משפט מחוזי OR בית משפט שלום \"יורש אחר יורש\" \"חריג\" \"שינוי נסיבות\" פסק דין דוגמה להחרגת יורש",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://hamishpat.com/wp-content/uploads/2022/10/%D7%93%D7%99%D7%A0%D7%99-%D7%99%D7%A8%D7%95%D7%A9%D7%94-%D7%90%D7%9C%D7%99%D7%A0%D7%95%D7%A8.docx",
+        "role": "scholarship",
+        "title": "דיני ירושה - אלינור (מסמך לימוד/סקירה דוקטרינית)",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר \"יורש אחר יורש\" \"חריגים\" \"שינוי נסיבות\" כתב-עת משפטי OR סקירת ספרות דוקטרינית במאמרים על המשכיות פסק דין כלפי יורשים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://immunewill.co.il/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%A2%D7%9D-%D7%תניית-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+        "role": "scholarship",
+        "title": "ת\"ע 948-02-09 - פרשנות צוואה עם תניית יורש אחר יורש - צוואה חסינה",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר \"יורש אחר יורש\" \"חריגים\" \"שינוי נסיבות\" כתב-עת משפטי OR סקירת ספרות דוקטרינית במאמרים על המשכיות פסק דין כלפי יורשים",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.boazkraus.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9/",
+        "role": "scholarship",
+        "title": "יורש אחר יורש - עורך דין בעז קראוס",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר \"יורש אחר יורש\" \"חריגים\" \"שינוי נסיבות\" כתב-עת משפטי OR סקירת ספרות דוקטרינית במאמרים על המשכיות פסק דין כלפי יורשים",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.mako.co.il/news-law_guide/2026_q1/Article-a7d9559edfbfb91027.htm",
+        "role": "scholarship",
+        "title": "בית המשפט הכריע: דירה הושבה ליורשת – למרות צוואה מאוחרת | N12",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר \"יורש אחר יורש\" \"חריגים\" \"שינוי נסיבות\" כתב-עת משפטי OR סקירת ספרות דוקטרינית במאמרים על המשכיות פסק דין כלפי יורשים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.twizer-lawoffice.co.il/%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9/",
+        "role": "scholarship",
+        "title": "יורש במקום יורש: מתי זה מתאפשר ומה המשמעות המשפטית? | עו\"ד טויזר",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר \"יורש אחר יורש\" \"חריגים\" \"שינוי נסיבות\" כתב-עת משפטי OR סקירת ספרות דוקטרינית במאמרים על המשכיות פסק דין כלפי יורשים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://rotenberglaw.co.il/decision28302-12-22",
+        "role": "persuasive_case_law",
+        "title": "decision28302-12-22",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "בית משפט מחוזי OR שלום \"בקשה לפתיחה מחדש\" \"יורש\" \"הגנה\" \"הוצאה לפועל\" פסק דין פרוצדורלי בנושא העברת זכויות בין יורשים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision59714-11-18/he/59714-11-18.docx",
+        "role": "persuasive_case_law",
+        "title": "59714-11-18.docx",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "בית משפט מחוזי OR שלום \"בקשה לפתיחה מחדש\" \"יורש\" \"הגנה\" \"הוצאה לפועל\" פסק דין פרוצדורלי בנושא העברת זכויות בין יורשים",
+        "drop_reason": "class_government_report_not_admitted_for_persuasive_case_law"
+      },
+      {
+        "url": "https://rotenberglaw.co.il/decision24916-06-21",
+        "role": "persuasive_case_law",
+        "title": "decision24916-06-21",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "בית משפט מחוזי OR שלום \"בקשה לפתיחה מחדש\" \"יורש\" \"הגנה\" \"הוצאה לפועל\" פסק דין פרוצדורלי בנושא העברת זכויות בין יורשים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.ihaklai.org.il/index.php/about/item/34244-%D7%A8%D7%9E-%D7%99-%D7%AA%D7%AA%D7%A7%D7%9F-%D7%90%D7%AA-%D7%94%D7%92%D7%93%D7%A8%D7%AA-%D7%94%D7%A2%D7%91%D7%A8%D7%AA-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%90%D7%91%D7%99%D7%92%D7%93%D7%95%D7%A8-%D7%9C%D7%99%D7%91%D7%95%D7%91%D7%99%D7%A5,-%D7%A2%D7%95%D7%B4%D7%93",
+        "role": "persuasive_case_law",
+        "title": "רמ\"י תתקן את הגדרת \"העברת זכויות\" בהחלטה / אביגדור ליבוביץ, עו״ד",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "בית משפט מחוזי OR שלום \"בקשה לפתיחה מחדש\" \"יורש\" \"הגנה\" \"הוצאה לפועל\" פסק דין פרוצדורלי בנושא העברת זכויות בין יורשים",
+        "drop_reason": "class_unknown_not_admitted_for_persuasive_case_law"
+      },
+      {
+        "url": "https://www.estyokev-law.co.il/divisions-and-balances-in-inheritance",
+        "role": "persuasive_case_law",
+        "title": "חלוקות ואיזונים בירושות | עו\"ד אסתי עוקב",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "בית משפט מחוזי OR שלום \"בקשה לפתיחה מחדש\" \"יורש\" \"הגנה\" \"הוצאה לפועל\" פסק דין פרוצדורלי בנושא העברת זכויות בין יורשים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://rotenberglaw.co.il/_Uploads/dbsAttachedFiles/HY.pdf",
+        "role": "persuasive_case_law",
+        "title": "חוק הירושה, תשכ\"ה-1965 – סעיף 110",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "בית משפט מחוזי OR שלום \"בקשה לפתיחה מחדש\" \"יורש\" \"הגנה\" \"הוצאה לפועל\" פסק דין פרוצדורלי בנושא העברת זכויות בין יורשים",
+        "drop_reason": "followup:discovery_only"
+      },
+      {
+        "url": "https://rotenberglaw.co.il/inheritance-ruling",
+        "role": "persuasive_case_law",
+        "title": "פסיקה בנושא צוואות וירושות – העברת דיון",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "בית משפט מחוזי OR שלום \"בקשה לפתיחה מחדש\" \"יורש\" \"הגנה\" \"הוצאה לפועל\" פסק דין פרוצדורלי בנושא העברת זכויות בין יורשים",
+        "drop_reason": "followup:discovery_only"
+      },
+      {
+        "url": "https://sadehlaw.com/%D7%94%D7%95%D7%A6%D7%90%D7%94-%D7%9C%D7%A4%D7%95%D7%A2%D7%9C-%D7%99%D7%95%D7%A8%D7%A9%D7%99%D7%9D-%D7%9B%D7%9C-%D7%9E%D7%94-%D7%A9%D7%A6%D7%A8%D7%99%D7%9A-%D7%9C%D7%93%D7%A2%D7%AA/",
+        "role": "factual_report",
+        "title": "הוצאה לפועל על יורשים – כל מה שצריך לדעת",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "דו\"ח משרד המשפטים OR דו\"ח רשות האכיפה והגבייה \"הוצאה לפועל\" \"יורש\" דו\"ח סטטיסטי או הנחיות פרוצדורליות פתיחת הליכים לאחר העברת נכסים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.kolzchut.org.il/he/%D7%91%D7%A7%D7%A9%D7%94_%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%9C_%D7%A4%D7%A1%D7%A7_%D7%93%D7%99%D7%9F_%D7%A9%D7%A0%D7%99%D7%AA%D7%9F_%D7%91%D7%94%D7%99%D7%A2%D7%93%D7%A8_%D7%94%D7%92%D7%A0%D7%94_%D7%91%D7%9E%D7%A2%D7%9E%D7%93_%D7%A6%D7%93_%D7%90%D7%97%D7%93",
+        "role": "scholarship",
+        "title": "אין מקורות אקדמיים ישירים בתוצאות שסופקו",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר פרוצדורלי \"פתיחה מחדש של הליך\" \"בקשה לביטול פסק דין\" \"יורש\" כתב-עת משפטי \"משפטים\" OR \"דיני תהליך\"",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision31254-03-19/he/31254-03-19.pdf",
+        "role": "scholarship",
+        "title": "בית משפט לענייני משפחה בתל אביב-יפו, החלטה 31254-03-19",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר פרוצדורלי \"פתיחה מחדש של הליך\" \"בקשה לביטול פסק דין\" \"יורש\" כתב-עת משפטי \"משפטים\" OR \"דיני תהליך\"",
+        "drop_reason": "class_government_report_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.kolzchut.org.il/he/%D7%91%D7%A7%D7%A9%D7%94_%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%9C_%D7%A4%D7%A1%D7%A7_%D7%93%D7%99%D7%9F_%D7%A9%D7%A0%D7%99%D7%AA%D7%9F_%D7%91%D7%94%D7%99%D7%A2%D7%93%D7%A8_%D7%94%D7%92%D7%A0%D7%94_%D7%91%D7%9E%D7%A2%D7%מ%D7%93_%D7%A6%D7%93_%D7%90%D7%97%D7%93",
+        "role": "scholarship",
+        "title": "בקשה לביטול פסק דין שניתן בהיעדר הגנה במעמד צד אחד",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר פרוצדורלי \"פתיחה מחדש של הליך\" \"בקשה לביטול פסק דין\" \"יורש\" כתב-עת משפטי \"משפטים\" OR \"דיני תהליך\"",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.malka-law.co.il/%D7%9B%D7%9C%D7%9C%D7%99-%D7%9E%D7%90%D7%9E%D7%A8%D7%99%D7%9D/%D7%91%D7%99%D7%98%D7%95%D7%9C-%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%94%D7%9C%D7%99%D7%9A-%D7%90%D7%96%D7%A8%D7%97%D7%99/",
+        "role": "scholarship",
+        "title": "ביטול פסק דין בהליך אזרחי",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר פרוצדורלי \"פתיחה מחדש של הליך\" \"בקשה לביטול פסק דין\" \"יורש\" כתב-עת משפטי \"משפטים\" OR \"דיני תהליך\"",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.article.co.il/ShowArticle.asp?id=2080",
+        "role": "scholarship",
+        "title": "מאמר בנושא ביטול פסק דין",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר פרוצדורלי \"פתיחה מחדש של הליך\" \"בקשה לביטול פסק דין\" \"יורש\" כתב-עת משפטי \"משפטים\" OR \"דיני תהליך\"",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      }
+    ],
+    "required_anchors": {
+      "count": 0,
+      "anchors": [],
+      "enabled": true,
+      "statuses": [],
+      "queries_emitted": []
+    },
+    "drafter_v2_full_compare": null,
+    "drafter_v2_opus_compare": null,
+    "drafter_v2_sonnet_compare": null
+  }
+}

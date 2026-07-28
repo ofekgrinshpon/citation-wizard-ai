@@ -1,0 +1,3587 @@
+{
+  "id": "F",
+  "category": "worker_classification",
+  "query": "מהם המבחנים להבחנה בין עובד לקבלן עצמאי?",
+  "run_id": "e397d1a2-db4c-4172-bab3-57f69182fd65",
+  "qa_log_id": "d8afaab5-7095-420f-96f5-fc9091d9e61d",
+  "answer": "- המבחנים הדוקטרינליים המרכזיים שנבדקו בפסיקה ובדוקטרינה לקביעת האם אדם הוא עובד או קבלן עצמאי הם מבחן השליטה (control) — מי קובע את אופן ביצוע העבודה וזמניו; מבחן ההשתלבות/השייכות (integration) — האם המבצע משולב במפעל המעסיק; מבחן התלות הכלכלית/סיכון העסקי — האם המבצע נושא בסיכון העסקי ובאפשרות לרווח/הפסד; וכן מבחנים משלימים כגון זכות להעברת העבודה לאחרים, אופי שיטת התשלום, משך העסקה ובלעדיות.¹\n- הכינוי החוזי (\"עובד\" או \"קבלן\") אינו קובע את המעמד באופן אוטומטי; בתי הדין והכללים הדוקטרינליים בוחנים את מהות היחסים העובדתית והראייתית מעבר לתגית החוזה, ועל כן הסיווג החוזי יכול להיות מוטל בספק או מבוטל אם המציאות שונה.²\n- המבחנים וההשלכות משתנים לפי המסגרת המשפטית: דיני עבודה, תקנות הביטוח הלאומי ורשות המיסים מנסחים קריטריונים והגדרות משלהם, ולכן מסגרת ההכרעה עשויה להשפיע על התוצאה והסנקציות היישומיות.³\n- סימנים וסימפטומים מעשיים שבתי המשפט והרשויות שוקלים (אינן ממצות אך מהוות אינדיקציות מרכזיות): מי מפקח וקובע שיטת העבודה; מי מספק כלים/חומרים; האם קיים סיכון עסקי או אחריות לרווח/הפסד; האם המבצע רשאי להעביר את העבודה לאחרים; שיטת ותנאי התשלום (שכר קבוע מול תשלום לפי פרויקט/חשבונית); משך ובלעדיות; ורמת ההשתלבות בארגון המעסיק.¹\n- השלכות המס והחבות הכספית: במקרה של סיווג שגוי עלול המשלם להיחשב חייב בניכוי במקור וחבות במס לפי פקודת מס הכנסה וכן בחיובי תשלומי ביטוח לאומי רטרואקטיביים — נוכח חקיקה ופרקטיקה מנהלית שונה בין גופים.⁴\n- השלכות דיני עבודה וזכויות עובדים: סיווג כ'עובד' עשוי לזכות את המבצע בהגנות כגון שכר מינימום, דמי חופשה, זכאות לפיצויי פיטורים ותלושי שכר; קביעה כי התקשרות הייתה יחסי עובד-מעסיק עשויה לחייב תשלומים רטרואקטיביים לפי חוק פיצויי פיטורים וחוק הגנת השכר.⁵\n- סנקציות ואמצעי אכיפה נוספים: סמכויות להטלת קנסות ועיצומים קיימות בחוקים ספציפיים ובחקיקה מנהלית (למשל הוראות ביחס לעובדים זרים ולנוהלי אכיפה), ויכולות לנבוע גם מהמלצות מבקר המדינה לשיפור אכיפה במקרים מסוימים.⁶\n- שיקולים פרקטיים בראיות ובהליך: ההכרעה עובדתית ותלויה במכלול הראיות — אין מבחן יחיד ומוחלט; בתי הדין שוקלים עדות, מסמכים (חוזים, תלושי שכר/חשבוניות), התנהלות בפועל והסדרי עבודה בפועל, והמשקל עשוי להשתנות לפי המסגרת הנבחרת.⁷\n- סיכום מעשי: קביעת מעמד עובדתית דורשת בחינת מכלול נסיבות; יש להקפיד על זיהוי המסגרת החוקית הרלוונטית מכיוון שההגדרות, המבחנים וההשלכות עשויים להשתנות בין דיני עבודה, ביטוח לאומי ומס.",
+  "footnotes": [
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2194-21-%d7%9e%d7%95%d7%97%d7%9e%d7%93-%d7%9e%d7%95%d7%a4%d7%9c%d7%97-%d7%93%d7%a8%d7%95%d7%99%d7%a9-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 2194/21 מוחמד מופלח דרויש נ׳ בית הדין הארצי לעבודה פסק דין; בג\"ץ 6497/22 יעקב גרא נ׳ בית הדין הארצי לעבודה פסק דין; דיני עבודה",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2194-21-%d7%9e%d7%95%d7%97%d7%9e%d7%93-%d7%9e%d7%95%d7%a4%d7%9c%d7%97-%d7%93%d7%a8%d7%95%d7%99%d7%a9-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 2194/21 מוחמד מופלח דרויש נ׳ בית הדין הארצי לעבודה פסק דין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-6497-22-%d7%99%d7%a2%d7%a7%d7%91-%d7%92%d7%a8%d7%90-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6%d7%99-%d7%9c%d7%a2%d7%91%d7%95%d7%93%d7%94-%d7%a4/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 6497/22 יעקב גרא נ׳ בית הדין הארצי לעבודה פסק דין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%9E%D7%97%D7%91%D7%A8%D7%AA%20%D7%91%D7%97%D7%99%D7%A0%D7%94-%20%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20%D7%91%D7%A8%20%D7%A6%D7%93%D7%A7%D7%94.pdf",
+          "title": "דיני עבודה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+      "title": "עובד או קבלן; התניה על סטטוס 'עובד' והשלכותיה",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+          "title": "עובד או קבלן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%AA%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+          "title": "התניה על סטטוס 'עובד' והשלכותיה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/94cc5e47-9bc6-eb11-8125-00155d0af32a/2_94cc5e47-9bc6-eb11-8125-00155d0af32a_11_18136.pdf",
+      "title": "חוק הביטוח הלאומי [נוסח משולב], התשנ\"ה-1995; פקודת מס הכנסה [נוסח חדש]; חוק הגנת השכר, תשי\"ח-1958",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/94cc5e47-9bc6-eb11-8125-00155d0af32a/2_94cc5e47-9bc6-eb11-8125-00155d0af32a_11_18136.pdf",
+          "title": "חוק הביטוח הלאומי [נוסח משולב], התשנ\"ה-1995",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4/2_0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4_11_25077.pdf",
+          "title": "פקודת מס הכנסה [נוסח חדש]",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/Law01/500_043.htm",
+          "title": "חוק הגנת השכר, תשי\"ח-1958",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4/2_0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4_11_25077.pdf",
+      "title": "פקודת מס הכנסה [נוסח חדש]; חוק הביטוח הלאומי [נוסח משולב], התשנ\"ה-1995; צו הביטוח הלאומי (סיווג מבוטחים וקביעת מעבידים), תשל\"ב-1972",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4/2_0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4_11_25077.pdf",
+          "title": "פקודת מס הכנסה [נוסח חדש]",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/94cc5e47-9bc6-eb11-8125-00155d0af32a/2_94cc5e47-9bc6-eb11-8125-00155d0af32a_11_18136.pdf",
+          "title": "חוק הביטוח הלאומי [נוסח משולב], התשנ\"ה-1995",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://www.btl.gov.il/Laws1/03_0001_000008.pdf",
+          "title": "צו הביטוח הלאומי (סיווג מבוטחים וקביעת מעבידים), תשל\"ב-1972",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c/2_4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c_11_25077.pdf",
+      "title": "חוק פיצויי פיטורים, התשכ\"ג-1963; חוק הגנת השכר, התשי\"ח-1958; חוק הגנת השכר, תשי\"ח-1958",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c/2_4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c_11_25077.pdf",
+          "title": "חוק פיצויי פיטורים, התשכ\"ג-1963",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75/2_2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75_11_25077.pdf",
+          "title": "חוק הגנת השכר, התשי\"ח-1958",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/Law01/500_043.htm",
+          "title": "חוק הגנת השכר, תשי\"ח-1958",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2/2_8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2_11_25077.pdf",
+      "title": "חוק עובדים זרים, התשנ\"א-1991; הבאת עובדים זרים ושמירה על זכויותיהם - מבקר המדינה",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2/2_8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2_11_25077.pdf",
+          "title": "חוק עובדים זרים, התשנ\"א-1991",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/297-27.aspx",
+          "title": "הבאת עובדים זרים ושמירה על זכויותיהם - מבקר המדינה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1911",
+      "title": "מיהו עובד: מבחני הסף; בג\"ץ 2194/21 מוחמד מופלח דרויש נ׳ בית הדין הארצי לעבודה פסק דין",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1911",
+          "title": "מיהו עובד: מבחני הסף",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2194-21-%d7%9e%d7%95%d7%97%d7%9e%d7%93-%d7%9e%d7%95%d7%a4%d7%9c%d7%97-%d7%93%d7%a8%d7%95%d7%99%d7%a9-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 2194/21 מוחמד מופלח דרויש נ׳ בית הדין הארצי לעבודה פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "המבחנים הם תוצר של פסיקה ושיטת חשיבה משפטית; חשוב לצטט פסקי-דין מחייבים ופרשנות בספרות כדי לתארם במדויק.",
+        "text_he": "מהם המבחנים הדוקטרינליים המרכזיים שמפותחים בפסיקה להבחנה בין עובד לקבלן עצמאי (לדוגמה: מבחן השליטה, מבחן השייכות/אינטגרציה, מבחן התלות הכלכלית/הסיכון העסקי ועוד).",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "פסיקה עיקרית קובעת שכותרת חוזה אינה מחייבת; צריך פסקי-דין מדגמיים והסבר תיאורטי בספרות.",
+        "text_he": "מהי משמעותה המשפטית של כינוי החוזה (\"עובד\"/\"קבלן\") — האם התגיות החוזיות קובעות או שהן בלתי מחייבות ויש לבחון את המציאות העובדתית.",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "הבחינה מושפעת מסדרי דין שונים ותקנות/הנחיות מנהליות; יש להתבסס על חקיקה, פסיקה והנחיות רשמיות.",
+        "text_he": "עד כמה מבחנים שונים בגופים משפטיים/מינהליים שונים (בתי-דין לעבודה, מס הכנסה, ביטוח לאומי) שונים זה מזה והאם התוצאה עשויה להשתנות לפי המסגרת המשפטית.",
+        "claim_id": "C3",
+        "required_roles": [
+          "primary_statute",
+          "binding_case_law",
+          "government_report"
+        ],
+        "is_black_letter": false
+      },
+      {
+        "reason": "אלה הם גורמים דוקטרינליים שנבחנו בפסיקה ובהנחיות מנהליות; דרוש צמצום מפורש לפי פסקי-דין וספרות.",
+        "text_he": "רשימת גורמי העזר/סימנים מעשיים שבתי המשפט והגופים בוחנים (למשל: שליטה על אופן העבודה, אספקת אמצעים, סיכון עסקי ורווח/הפסד, זכות להעביר עבודה לאחרים/לחלק, אופי שיטת התשלום, משך והבלעדיות ועוד).",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship",
+          "government_report"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "ההשלכות נקבעות על ידי חקיקה ופסיקה וכן על ידי מדיניות מנהלית; יש להסתמך על מקורות חקיקתיים ופסקי-דין.",
+        "text_he": "אילו משמעויות וסנקציות משפטיות נגרמות מטעות בסיווג (זכויות עובדים, חוב תשלומי ביטוח לאומי ומס, קנסות, תביעות פיצוי והשלכות חוזיות).",
+        "claim_id": "C5",
+        "required_roles": [
+          "primary_statute",
+          "binding_case_law",
+          "government_report"
+        ],
+        "is_black_letter": false
+      }
+    ],
+    "run_id": "e397d1a2-db4c-4172-bab3-57f69182fd65",
+    "drafter": {
+      "ms": 38262,
+      "ok": true,
+      "lead_ref": {
+        "ref": null,
+        "shape": "list",
+        "reason": "shape_not_eligible"
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "completeness": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "list_item",
+        "last_block_excerpt": "…הקפיד על זיהוי המסגרת החוקית הרלוונטית מכיוון שההגדרות, המבחנים וההשלכות עשויים להשתנות בין דיני עבודה, ביטוח לאומי ומס."
+      },
+      "sources_used": 14,
+      "used_sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2194-21-%d7%9e%d7%95%d7%97%d7%9e%d7%93-%d7%9e%d7%95%d7%a4%d7%9c%d7%97-%d7%93%d7%a8%d7%95%d7%99%d7%a9-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 2194/21 מוחמד מופלח דרויש נ׳ בית הדין הארצי לעבודה פסק דין",
+          "number": 1,
+          "origin": "local_db",
+          "source_type": "caselaw",
+          "candidate_id": "c100aaa9-172b-4764-81d3-b796dc93273f"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-6497-22-%d7%99%d7%a2%d7%a7%d7%91-%d7%92%d7%a8%d7%90-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6%d7%99-%d7%9c%d7%a2%d7%91%d7%95%d7%93%d7%94-%d7%a4/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 6497/22 יעקב גרא נ׳ בית הדין הארצי לעבודה פסק דין",
+          "number": 1,
+          "origin": "local_db",
+          "source_type": "caselaw",
+          "candidate_id": "cc6685cb-d7db-4ff8-967e-219c643cfcb9"
+        },
+        {
+          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%9E%D7%97%D7%91%D7%A8%D7%AA%20%D7%91%D7%97%D7%99%D7%A0%D7%94-%20%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20%D7%91%D7%A8%20%D7%A6%D7%93%D7%A7%D7%94.pdf",
+          "title": "דיני עבודה",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "a4545b63-d8e0-4d72-93af-2b11e53afaa0"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+          "title": "עובד או קבלן",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "3df32328-22cb-4810-9b13-cb440dd2ebd4"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%AA%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+          "title": "התניה על סטטוס 'עובד' והשלכותיה",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "cff87955-981f-4219-bcde-05f1db6a4dad"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/94cc5e47-9bc6-eb11-8125-00155d0af32a/2_94cc5e47-9bc6-eb11-8125-00155d0af32a_11_18136.pdf",
+          "title": "חוק הביטוח הלאומי [נוסח משולב], התשנ\"ה-1995",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "legislation",
+          "candidate_id": "de0263b9-8eed-449d-9d5c-244d49766b37"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4/2_0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4_11_25077.pdf",
+          "title": "פקודת מס הכנסה [נוסח חדש]",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "legislation",
+          "candidate_id": "ac7ad9c2-8ee8-4793-a2fb-353d960607b1"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/Law01/500_043.htm",
+          "title": "חוק הגנת השכר, תשי\"ח-1958",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "legislation",
+          "candidate_id": "4e0e9bfd-bd73-480e-bbd6-e7cdcff4afeb"
+        },
+        {
+          "url": "https://www.btl.gov.il/Laws1/03_0001_000008.pdf",
+          "title": "צו הביטוח הלאומי (סיווג מבוטחים וקביעת מעבידים), תשל\"ב-1972",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "legislation",
+          "candidate_id": "a76d29ad-3837-4dea-b67b-4fe5ab39fcee"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c/2_4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c_11_25077.pdf",
+          "title": "חוק פיצויי פיטורים, התשכ\"ג-1963",
+          "number": 5,
+          "origin": "perplexity",
+          "source_type": "legislation",
+          "candidate_id": "cd5fedd2-6501-4882-8d70-254e36fa2243"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75/2_2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75_11_25077.pdf",
+          "title": "חוק הגנת השכר, התשי\"ח-1958",
+          "number": 5,
+          "origin": "perplexity",
+          "source_type": "legislation",
+          "candidate_id": "0a2636f1-aeb1-4e5f-9059-d84962ea812b"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2/2_8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2_11_25077.pdf",
+          "title": "חוק עובדים זרים, התשנ\"א-1991",
+          "number": 6,
+          "origin": "perplexity",
+          "source_type": "legislation",
+          "candidate_id": "a43fa161-b3ad-4990-a56c-ee3fa3c71aae"
+        },
+        {
+          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/297-27.aspx",
+          "title": "הבאת עובדים זרים ושמירה על זכויותיהם - מבקר המדינה",
+          "number": 6,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "4c2da4ab-d5e0-48d2-9a69-b736bd043b6e"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1911",
+          "title": "מיהו עובד: מבחני הסף",
+          "number": 7,
+          "origin": "local_db",
+          "source_type": "journal_article",
+          "candidate_id": "7c13c616-e4f2-4b1f-a2c4-20ad00520d3d"
+        }
+      ],
+      "marker_format": "superscript",
+      "model_initial": "openai/gpt-5-mini",
+      "builder_report": {
+        "marker_count": 8,
+        "heading_count": 0,
+        "list_item_count": 9,
+        "paragraph_count": 0,
+        "cited_segment_count": 8,
+        "adjacent_marker_count": 0,
+        "distinct_source_count": 14,
+        "compound_segment_count": 8,
+        "compound_footnote_count": 7,
+        "avg_sources_per_cited_segment": 2.5714285714285716
+      },
+      "footnote_count": 7,
+      "sources_passed": 16,
+      "drafter_version": "v2.1c",
+      "truncation_retry": {
+        "retry_ms": 0,
+        "attempted": false,
+        "reasons_initial": [],
+        "same_model_retry": false,
+        "escalated_to_full": false
+      },
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      "answer_style_report": {
+        "metrics": {
+          "block_count": 9,
+          "denylist_hits": [],
+          "heading_count": 0,
+          "heading_ratio": 0,
+          "cited_block_count": 8,
+          "total_footnote_count": 7,
+          "compound_footnote_count": 7,
+          "compound_footnote_ratio": 1,
+          "unsafe_display_title_count": 0,
+          "avg_sources_per_cited_block": 2.625,
+          "unsafe_display_title_examples": [],
+          "partial_supported_strong_claims": [],
+          "total_source_refs_in_cited_blocks": 21
+        },
+        "report_only": true,
+        "triggered_reasons": [
+          "compound_footnote_ratio_high",
+          "avg_sources_per_block_high"
+        ]
+      },
+      "unique_source_count": 14,
+      "completeness_initial": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "list_item",
+        "last_block_excerpt": "…הקפיד על זיהוי המסגרת החוקית הרלוונטית מכיוון שההגדרות, המבחנים וההשלכות עשויים להשתנות בין דיני עבודה, ביטוח לאומי ומס."
+      },
+      "deterministic_branch": null,
+      "canonical_quote_fired": false,
+      "omitted_candidate_ids": [
+        "b8b6cab9-367d-4bfe-b375-aec36c177f03",
+        "e6920eab-ebba-4650-bfad-81cb50cdc219"
+      ],
+      "structured_validation": {
+        "ok": true,
+        "errors": [],
+        "block_count": 9,
+        "heading_count": 0,
+        "list_item_count": 9,
+        "paragraph_count": 0,
+        "cited_segment_count": 8,
+        "forbidden_text_hits": [],
+        "unknown_source_refs": [],
+        "total_source_ref_count": 21
+      },
+      "max_completion_tokens_used": 8000,
+      "missing_anchor_descriptions": [],
+      "missing_anchor_caveat_injected": false,
+      "missing_docket_limitation_fired": false,
+      "statute_section_limitation_fired": false
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "לזהות פסקי-דין עליונים מחייבים שמנסחים את המבחנים הדוקטרינליים המרכזיים ושמשמשים כ״black-letter law״ בנושא.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "פסק-דין בית המשפט העליון לגבי ההבחנה בין 'עובד' ל'קבלן עצמאי' המפתח את מבחני השליטה, השייכות/אינטגרציה והתלות הכלכלית (מילות מפתח: \"מבחן השליטה\", \"מבחן השייכות\", \"תלות כלכלית\" פסק דין בית המשפט העליון 'עובד או קבלן עצמאי')",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לקבל ניסוחים אקדמיים מקבילים, השוואות בין מבחנים וניתוחי רקע תאורטיים שמפתחים את המבחנים בפסיקה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי דיני עבודה 'מבחן השליטה' 'מבחן השייכות' 'תלות כלכלית' הבחנה עובד קבלן עצמאי סקירה ספרותית (מאמר, כתב-עת אקדמי או פרק ספר)",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לחפש פסקי-דין עליונים שמכריעים ששמות בחוזה אינם קובעים כשלעצמם ושיש לבחון את המציאות, וכן פסקי-דין הפוסקים אחרת.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "פסק-דין בית המשפט העליון על משמעות כינוי חוזה ('עובד' או 'קבלן') והאם הכינוי החוזי מחייב או אם יש לבחון את המציאות העובדתית בפועל (מילות מפתח: 'כינוי חוזה', 'labeling', 'תווית חוזה', 'עובד או קבלן')",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לאסוף ניתוחים אקדמיים על תוקף התוויות החוזיות והשפעתן על פרשנות יחסי עבודה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר אקדמי 'משמעות כינוי החוזה' 'labeling' בהקשר של סיווג עובד/קבלן עצמאי דיני עבודה (מאמר, כתב-עת או ספר)",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "לזהות נוסחי חקיקה רשמיים המסדירים הגדרות וסמכויות של גופים שונים ולהשוות הוראות חוקיות המשפיעות על סיווג עובד/עצמאי.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "חוק הביטוח הלאומי חוק מס הכנסה חוק פיצויי פיטורים חוק הגנת השכר 'הגדרת עובד' 'הגדרת עצמאי' הבדלים בין הסמכויות של ביטוח לאומי, מס הכנסה ובתי דין לעבודה בחקיקה",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסקי-דין שמדגימים כי המבחנים והתוצאות משתנים לפי המסגרת השיפוטית או המינהלית.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "פסק-דין בית המשפט העליון/בית הדין לעבודה שמדגיש הבדלים בתוצאה בין מס הכנסה, ביטוח לאומי ובתי דין לעבודה בסיווג עובד או עצמאי (מילות מפתח: 'הבדלים בין מס הכנסה וביטוח לאומי', 'סיווג עובד עצמאי')",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "government_report",
+        "reason": "דו\"חות ממשלתיים עשויים לתאר מדיניות רשמית, הנחיות בין-גופיות וההבדלים הפרקטיים בסיווג בין גופים שונים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "דו\"ח משרד העבודה/המוסד לביטוח לאומי/משרד האוצר על בעיית סיווג עובדים עצמאים וההשלכות השונות בין מס הכנסה, ביטוח לאומי ובתי דין לעבודה (דו\"ח, הנחיות, סקירה)",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לזהות פסקי-דין שמנסים לפרט את גורמי העזר והסימנים שהשופטים בוחנים באופן מעשי.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "פסק-דין בית המשפט העליון/בית הדין הארצי לעבודה רשימת סימנים מעשיים לבחינת 'עובד או עצמאי' (אספקת אמצעים, שליטה על אופן העבודה, סיכון עסקי, זכות להעביר עבודה, שיטת תשלום, משך עבודה, בלעדיות)",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לאסוף רשימות מעשיות מסודרות והמלצות אקדמיות על גורמי העזר לשימוש במחקר.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמר אקדמי 'סימנים להבחנה בין עובד לקבלן עצמאי' אספקת ציוד סיכון עסקי אינטגרציה שייכות שיטות תשלום רשימת גורמים בהנחיית שופטים (מאמר, כתב-עת דיני עבודה)",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "government_report",
+        "reason": "דו\"חות רשמיים מכילים לעתים רשימות סימנים הנדרשות לביצוע בדיקות מינהליות וסנקציות פרוצדורליות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "דו\"ח המוסד לביטוח לאומי/משרד העבודה על 'מבחני סיווג עצמאים' הכולל רשימות סימנים מעשיים (דו\"ח, הנחיות פנימיות, הנחיות מבקר)",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "לחפש הוראות חקיקה המגדירות חובות תשלום/קנסות ומנגנוני תיקון במקרה של סיווג שגוי של עובדים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C5",
+        "query_he": "חוק הביטוח הלאומי חוק מס הכנסה חוק הגנת השכר חוק פיצויי פיטורים \"השלכות סיווג שגוי\" חובת מעסיק חיובי תשלומי עבר וקנסות בחקיקה",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסקי-דין שמטילים חובות והשלכות מעשיות בעקבות סיווג שגוי ומגדירים את היקף הנזקים והחובות.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C5",
+        "query_he": "פסק-דין בית המשפט העליון/בית הדין הארצי לעבודה על תוצאות וסנקציות של סיווג שגוי (חיוב בתשלומי ביטוח לאומי, חובות מס, פיצויים לעובדים וזכויות חוזיות) 'סיווג שגוי' פסק-דין",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "government_report",
+        "reason": "דו\"חות מבקר ומשרדי הממשלה עשויים להכיל הערכות כספיות והמלצות מדיניות לגבי הטיפול בסיווג שגוי והחיובים הנלווים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C5",
+        "query_he": "דו\"ח מבקר המדינה/דו\"ח המוסד לביטוח לאומי/משרד האוצר על עלויות וסנקציות של טעות בסיווג עובדים כעצמאים (דו\"ח בקרה, המלצות מדיניות, הערכת עלויות)",
+        "expected_source_type": "report"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 67452,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 29866,
+        "confidence": 0.9,
+        "legal_area": "דיני עבודה",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "answer_intent": {
+          "output_shape": "list"
+        },
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "interpretation_note": null
+      },
+      "claims_count": 5,
+      "queries_count": 13,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 223476,
+    "verifier": {
+      "ms": 70675,
+      "counts": {
+        "by_support": {
+          "direct": 6,
+          "partial": 10,
+          "unrelated": 6,
+          "tangential": 8
+        },
+        "by_role_match": {
+          "true": 30,
+          "false": 0
+        },
+        "model_verdicts": 30,
+        "by_support_model": {
+          "direct": 6,
+          "partial": 10,
+          "unrelated": 6,
+          "tangential": 8
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "de0263b9-8eed-449d-9d5c-244d49766b37",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "a76d29ad-3837-4dea-b67b-4fe5ab39fcee",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "ac7ad9c2-8ee8-4793-a2fb-353d960607b1",
+          "verdict_claim_ids": [
+            "C5"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "0a2636f1-aeb1-4e5f-9059-d84962ea812b",
+          "verdict_claim_ids": [
+            "C5"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "cd5fedd2-6501-4882-8d70-254e36fa2243",
+          "verdict_claim_ids": [
+            "C5"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "a43fa161-b3ad-4990-a56c-ee3fa3c71aae",
+          "verdict_claim_ids": [
+            "C5"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "c100aaa9-172b-4764-81d3-b796dc93273f",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "cc6685cb-d7db-4ff8-967e-219c643cfcb9",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "b8b6cab9-367d-4bfe-b375-aec36c177f03",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "4e0e9bfd-bd73-480e-bbd6-e7cdcff4afeb",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "3df32328-22cb-4810-9b13-cb440dd2ebd4",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "cff87955-981f-4219-bcde-05f1db6a4dad",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "a4545b63-d8e0-4d72-93af-2b11e53afaa0",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "e6920eab-ebba-4650-bfad-81cb50cdc219",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "4c2da4ab-d5e0-48d2-9a69-b736bd043b6e",
+          "verdict_claim_ids": [
+            "C5"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "7c13c616-e4f2-4b1f-a2c4-20ad00520d3d",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 70675,
+          "label": "batch1",
+          "attempts": 1,
+          "claim_ids": [
+            "C5",
+            "C2"
+          ],
+          "escalated": false,
+          "recovered": false,
+          "candidates": 15,
+          "split_probes": 0
+        },
+        {
+          "ms": 63769,
+          "label": "batch2",
+          "attempts": 1,
+          "claim_ids": [
+            "C3",
+            "C4"
+          ],
+          "escalated": false,
+          "recovered": false,
+          "candidates": 15,
+          "split_probes": 0
+        }
+      ],
+      "dropped": [
+        {
+          "role": "primary_statute",
+          "title": "דין וחשבון שנתי לפי חוק חופש המידע לשנת 2025",
+          "origin": "perplexity",
+          "reason": "דו\"ח מנהלי/דוח חופש מידע מספק רק רקע ארגוני ולא ניתוח השוואתי של מבחנים משפטיים/מנהליים.",
+          "candidate_id": "0fa417f8-2b7a-4cad-9da5-d8b995651681",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "primary_statute",
+          "title": "סמכות הטלת סנקציות בגין אי-יישום דוחות מבקר המדינה - סקירה משווה",
+          "origin": "perplexity",
+          "reason": "המסמך דן בסמכות הטלת סנקציות בהקשר של יישום המלצות מבקר המדינה, נושא שונה מהשאלות על זכויות עובדים וחבות תשלומים בגין סיווג חוזי.",
+          "candidate_id": "4e7e9e64-4df9-4360-829a-aff49cb4bf7d",
+          "worst_support": "unrelated",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "government_report",
+          "title": "שוק העבודה בישראל 2022 תמונת מצב ופעילות משרד העבודה",
+          "origin": "perplexity",
+          "reason": "דו\"ח נתונים שאינו מנתח מבחנים משפטיים אינו תומך בצורה ישירה בטענה על הבדלים במבחנים בין גופים.",
+          "candidate_id": "03c2cfbc-0857-4ac2-a725-72e894d070f5",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "government_report",
+          "title": "איגרת למעסיק לשנת 2026",
+          "origin": "perplexity",
+          "reason": "המסמך הוא הודעה מנהלית/מידע טיפולי ולא פירוט של הקריטריונים המשפטיים שנבדקים בבתי דין.",
+          "candidate_id": "f8f97324-4ea6-46fc-ac08-2b678a29917f",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+          "origin": "local_db",
+          "reason": "פסק‑דין זה עוסק בשאלות הורות ובמשפט משפחה, אינו נוגע למשמעויות או סנקציות של סיווג עובד/קבלן.",
+          "candidate_id": "c97018fa-f813-4e70-a369-a5070211ef71",
+          "worst_support": "unrelated",
+          "retrieval_method": "text"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "דיני מזונות אישה בין בית הדין השרעי לבית המשפט לענייני משפחה: סיפורה של מהפכה שמרנית במחלצות ליברליות",
+          "origin": "local_db",
+          "reason": "המאמר עוסק בדיני מזונות/משפחה ולא בסוגיות של סיווג עובד וקבלן או בעיצומים הנגזרים ממנו.",
+          "candidate_id": "76c55716-bcb8-40a0-9576-90ddf408f05c",
+          "worst_support": "unrelated",
+          "retrieval_method": "text"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "הפללתה של הקללה: ניתוח ריאליסטי של העלבת עובד ציבור",
+          "origin": "local_db",
+          "reason": "המאמר/מקרה דן בהעלבת עובד ציבור/עבירות פליליות של לשון הרע, אינו עוסק בסיווג חוזי של עובד/קבלן או במשמעות תגיות חוזיות.",
+          "candidate_id": "d8d570ce-e2a5-46a6-a429-fbe632c824d6",
+          "worst_support": "unrelated",
+          "retrieval_method": "text"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "אולמות ספורט ומגרשי כדורגל – השוואה בין רשויות מקומיות",
+          "origin": "local_db",
+          "reason": "המקור עוסק בהשוואת רשויות מקומיות ואולמות ספורט, אינו נוגע לשאלת סיווג עובד/קבלן או לשוני מבחנים בין גופים.",
+          "candidate_id": "9d4d9beb-8790-46f6-a600-5d1987de3c84",
+          "worst_support": "unrelated",
+          "retrieval_method": "text"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק מבקר המדינה, תשי\"ח-1958 [נוסח משולב]",
+          "origin": "perplexity",
+          "reason": "חוק מבקר המדינה עוסק בסמכויות המבקר ודיווחיו; אין בו הוראות על חובות מעבידים/חבות מס או זכויות עובדים בהקשר של סיווג.",
+          "candidate_id": "d2bc8407-9deb-4db4-9a12-1f5a5b0f00f4",
+          "worst_support": "unrelated",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "government_report",
+          "title": "אתר הכנסת - פרסומי ועדות",
+          "origin": "perplexity",
+          "reason": "האתר עצמו הוא אינדקס/מאגר ולא מקור ממוקד שבוחן/משווה מבחנים בין גופים משפטיים ומנהליים.",
+          "candidate_id": "757c03b2-60a6-45f7-811d-23b35ee9a0a2",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "government_report",
+          "title": "פתיחת תיק עצמאי בביטוח לאומי - עובד עצמאי",
+          "origin": "perplexity",
+          "reason": "מדובר בדף הנחיות מנהלי/פרוצדורלי; הוא רלוונטי למעמד מנהלי אך אינו מספק פירוט של הקריטריונים המשפטיים-פסיקתיים שמצוינים בטענה.",
+          "candidate_id": "fa2acb5d-a037-4654-92d1-565d17164a9e",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "government_report",
+          "title": "דין וחשבון רב שנתי | המוסד לביטוח לאומי",
+          "origin": "perplexity",
+          "reason": "המסמך רקע ארגוני/מנהלי ואינו מהווה מקור ישיר לרשימת הקריטריונים המשפטיים הנבדקים בבתי הדין.",
+          "candidate_id": "b31e7ca4-cd04-4626-8eab-661dcc8523d5",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "government_report",
+          "title": "דוח שנתי של מבקר המדינה - מאי 2026",
+          "origin": "perplexity",
+          "reason": "דוח שנתי של מבקר המדינה הוא מקור עובדי/פיקוח כללי; עשוי להכיל אזכורים רלוונטיים אך אינו מקור חקיקתי שמכריע בסנקציות החומריות של סיווג שגוי.",
+          "candidate_id": "a761230f-922c-4cb8-8e79-bb168b3e2bde",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "government_report",
+          "title": "נוהל טיפול בפניות הציבור למשרד מבקר המדינה",
+          "origin": "perplexity",
+          "reason": "נוהל פנימי לטיפול בפניות הציבור אינו דן בהשלכות חוקיות של סיווג עובד/קבלן ולכן רק נוגע ברמה פרוצדורלית כללית.",
+          "candidate_id": "fd76a578-4acc-47ce-9222-b5e05ec76f42",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        }
+      ],
+      "batch_ms": [
+        70675,
+        63769
+      ],
+      "parallel": true,
+      "verdicts": [
+        {
+          "reason": "פקודת מס הכנסה עוסקת ישירות בחובות מס וניכוי במקור המהווים אחת התוצאות המשפטיות המרכזיות של סיווג שגוי.",
+          "support": "direct",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "ac7ad9c2-8ee8-4793-a2fb-353d960607b1",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "אוריינס פקודת מס הכנסה קובעת חובת ניכוי במקור על הכנסות מעבודה.",
+            "מציינת את חבותו של המשלם/המעסיק בנוגע לניכוי ותשלום מס, רלוונטי לחוב מס במקרה של סיווג שגוי."
+          ]
+        },
+        {
+          "reason": "החוק קובע חובות וזכויות שכר ומספק סנקציות רלוונטיות לתוצאות של סיווג כוזב של עובד.",
+          "support": "partial",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "0a2636f1-aeb1-4e5f-9059-d84962ea812b",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "חוק הגנת השכר קובע חובת תשלום שכר במועד ובאמצעים מסוימים.",
+            "דן בסנקציות ובפיצויים (לדוגמה פיצויי הלנת שכר) שניתן להטיל על מעסיק שאינו עומד בחובותיו."
+          ]
+        },
+        {
+          "reason": "החוק מסדיר סנקציה כספית (תשלום פיצוי) שמגיעה לעובד במקרה של סיווג שגוי.",
+          "support": "direct",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "cd5fedd2-6501-4882-8d70-254e36fa2243",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "חוק פיצויי פיטורים קובע את הזכאות לפיצויי פיטורים ואת אופן חישובם.",
+            "כולל אפשרות לחיוב תשלומים רטרואקטיביים אם נקבע שמדובר ביחסי עובד-מעסיק."
+          ]
+        },
+        {
+          "reason": "החוק דן בסנקציות הקשורות להעסקה בלתי-חוקית/שגויה של עובדים זרים, מה שמתאים לחלק מהמשמעויות המשפטיות של סיווג שגוי.",
+          "support": "direct",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "a43fa161-b3ad-4990-a56c-ee3fa3c71aae",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "חוק עובדים זרים סיק צורות אחריות מעסיקים ועיצומים בגין העסקה שלא כדין.",
+            "קובע עיצומים כספיים וצעדים אכיפתיים הנוגעים להעסקת עובדים זרים, עניין החופף לסנקציות עקב סיווג שגוי."
+          ]
+        },
+        {
+          "reason": "המסמך דן בסמכות הטלת סנקציות בהקשר של יישום המלצות מבקר המדינה, נושא שונה מהשאלות על זכויות עובדים וחבות תשלומים בגין סיווג חוזי.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "4e7e9e64-4df9-4360-829a-aff49cb4bf7d",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        },
+        {
+          "reason": "פסק‑דין זה עוסק בשאלות הורות ובמשפט משפחה, אינו נוגע למשמעויות או סנקציות של סיווג עובד/קבלן.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "c97018fa-f813-4e70-a369-a5070211ef71",
+          "supported_points": []
+        },
+        {
+          "reason": "המאמר עוסק בדיני מזונות/משפחה ולא בסוגיות של סיווג עובד וקבלן או בעיצומים הנגזרים ממנו.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "76c55716-bcb8-40a0-9576-90ddf408f05c",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק מבקר המדינה עוסק בסמכויות המבקר ודיווחיו; אין בו הוראות על חובות מעבידים/חבות מס או זכויות עובדים בהקשר של סיווג.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "d2bc8407-9deb-4db4-9a12-1f5a5b0f00f4",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        },
+        {
+          "reason": "דוח שנתי של מבקר המדינה הוא מקור עובדי/פיקוח כללי; עשוי להכיל אזכורים רלוונטיים אך אינו מקור חקיקתי שמכריע בסנקציות החומריות של סיווג שגוי.",
+          "support": "tangential",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "a761230f-922c-4cb8-8e79-bb168b3e2bde",
+          "support_subtype": "background",
+          "supported_points": []
+        },
+        {
+          "reason": "נוהל פנימי לטיפול בפניות הציבור אינו דן בהשלכות חוקיות של סיווג עובד/קבלן ולכן רק נוגע ברמה פרוצדורלית כללית.",
+          "support": "tangential",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "fd76a578-4acc-47ce-9222-b5e05ec76f42",
+          "support_subtype": "background",
+          "supported_points": []
+        },
+        {
+          "reason": "הדוח מספק רקע עובדתי ומסקנות מדיניות על פגיעה בזכויות ועיצומים נגד מעסיקים; אינו מהווה מקור חקיקתי ישיר אך תומך בהבנת ההשלכות המעשיות.",
+          "support": "partial",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "4c2da4ab-d5e0-48d2-9a69-b736bd043b6e",
+          "support_subtype": "background",
+          "supported_points": [
+            "דוח מבקר המדינה על הבאת עובדים זרים מתאר ליקויים בהגנה על זכויות עובדים ודן בצורך בתקנות ואכיפה.",
+            "כולל מסקנות והמלצות אשר נוגעות לסנקציות ואמצעי אכיפה נגד מעסיקים, רלוונטי להשלכות מעשיות של סיווג שגוי."
+          ]
+        },
+        {
+          "reason": "המאמר/מקרה דן בהעלבת עובד ציבור/עבירות פליליות של לשון הרע, אינו עוסק בסיווג חוזי של עובד/קבלן או במשמעות תגיות חוזיות.",
+          "support": "unrelated",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "d8d570ce-e2a5-46a6-a429-fbe632c824d6",
+          "supported_points": []
+        },
+        {
+          "reason": "מאמר שדן בדיוק בשאלת משמעות התיוג החוזי ומספק דוקטרינה ישירה שאומרת שיש לבחון את המציאות העובדתית.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "3df32328-22cb-4810-9b13-cb440dd2ebd4",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "קובע במפורש כי ההבחנה נקבעת לפי מהות היחסים ולא לפי הכינוי החוזי.",
+            "מביא נימוקים לשימוש במונח נייטרלי \"קבלן\" ומסביר מדוע התגיות החוזיות אינן הכרעה סופית."
+          ]
+        },
+        {
+          "reason": "מאמר שעסק בדיוק בסוגיה המבוקשת ומספק תמיכה ישירה לכך שהתיוג החוזי אינו הכרעה סופית.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "cff87955-981f-4219-bcde-05f1db6a4dad",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "עוסק באופן מפורש בהשלכות המשפטיות של התניה על סטטוס 'עובד' ובהשפעת התגיות החוזיות.",
+            "מנתח מתי וכיצד תגיות חוזיות ייחשבו שאינן מחייבות את בית המשפט ויש לבחון את מהות היחסים."
+          ]
+        },
+        {
+          "reason": "חומר לימודי בדיני עבודה המסביר את המבחנים המהותיים שקובעים את מעמד העובד, תומך ישירות בשאלה האם הכינוי החוזי קובע.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "a4545b63-d8e0-4d72-93af-2b11e53afaa0",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מסכם כי \"מבחן ההשתלבות\" הוא מבחן מרכזי להכרעת מעמד עובד, כלומר בדיקת מהותית של הקשר ולא רק תגית חוזית.",
+            "מספק רקע דוקטרינרי וכלים להערכת המציאות העובדתית מעבר לכינוי בחוזה."
+          ]
+        },
+        {
+          "reason": "זהו חוק ראשי בתחום הביטוח הלאומי המייצג מבחן/הגדרה של גוף אחד בלבד; אינו משווה במפורש בין מבחנים של גופים שונים.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "de0263b9-8eed-449d-9d5c-244d49766b37",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "חוק הביטוח הלאומי מגדיר במפורש את המושג 'עובד עצמאי' ומפרט זכויות וחובות הרלוונטיות למעמד זה.",
+            "המקור מראה את הקריטריונים הספציפיים שהמוסד לביטוח הלאומי משתמש בהם, ולכן תורם למסקנה שמבחני הסיווג משתנים לפי המסגרת החוקית."
+          ]
+        },
+        {
+          "reason": "צו של רשות ספציפית מייצג מבחן מנהלי של הביטוח הלאומי בלבד ואינו מהווה השוואה בין גופים.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "a76d29ad-3837-4dea-b67b-4fe5ab39fcee",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "צו סיווג מבוטחים מפרט אילו סוגי עיסוק ייחשבו עצמאיים לצורכי הביטוח הלאומי.",
+            "מציג גישת סיווג מנהלית ספציפית שממחישה הבדלים אפשריים מול מבחנים משפטיים אחרים."
+          ]
+        },
+        {
+          "reason": "דו\"ח מנהלי/דוח חופש מידע מספק רק רקע ארגוני ולא ניתוח השוואתי של מבחנים משפטיים/מנהליים.",
+          "support": "tangential",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "0fa417f8-2b7a-4cad-9da5-d8b995651681",
+          "support_subtype": "background",
+          "supported_points": [
+            "דין וחשבון שנתי של משרד העבודה כולל מידע ארגוני ופרטי פעילות אך אינו מנתח באופן ישיר את ההבדלים בין מבחני סיווג של גופים משפטיים שונים."
+          ]
+        },
+        {
+          "reason": "דו\"ח נתונים שאינו מנתח מבחנים משפטיים אינו תומך בצורה ישירה בטענה על הבדלים במבחנים בין גופים.",
+          "support": "tangential",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "03c2cfbc-0857-4ac2-a725-72e894d070f5",
+          "support_subtype": "background",
+          "supported_points": [
+            "דוח שוק העבודה מציג נתונים על התפלגות סוגי תעסוקה (כולל עצמאים) כסקירה עובדתית.",
+            "הנתונים מספקים רקע עובדתי לשאלת המעמד אך אינם דנים במבחנים המשפטיים/המנהליים בין הגופים."
+          ]
+        },
+        {
+          "reason": "המקור עוסק בהשוואת רשויות מקומיות ואולמות ספורט, אינו נוגע לשאלת סיווג עובד/קבלן או לשוני מבחנים בין גופים.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "9d4d9beb-8790-46f6-a600-5d1987de3c84",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק ראשי בתחום יחסי העבודה מייצג מבחן בתחום זה בלבד; אינו משווה ישירות בין גופים אך תורם להוכחת שונות בין מסגרות.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "b8b6cab9-367d-4bfe-b375-aec36c177f03",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "חוק פיצויי פיטורים מגדיר מי נחשב 'עובד' לצורך זכאות לפיצויי פיטורים.",
+            "מראה שהגדרה בחוק עבודה מסוים עשויה להיות שונה מהגדרות בתחומים אחרים (ביטוח לאומי, מסים), ובהתאם לכך עשויה לשנות את התוצאה לפי המסגרת."
+          ]
+        },
+        {
+          "reason": "חוק זה רלוונטי לתחום העבודה אך אינו מספק השוואה בין המבחנים של גופים שונים.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "4e0e9bfd-bd73-480e-bbd6-e7cdcff4afeb",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "חוק הגנת השכר מגדיר 'עובד' וכולל כללים ספציפיים הקשורים לתשלומי שכר וזכויות עובדים.",
+            "הגדרה זו משמשת כמבחן בתחום דיני עבודה שיכול לסטות מהגדרות בחקיקה מנהלית או מיסוי."
+          ]
+        },
+        {
+          "reason": "מקור מנהלי המבהיר גישת הביטוח הלאומי; אינו משווה פורמלית בין גופים אבל מספק תמיכה חלקית לטענה על שונות.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "e6920eab-ebba-4650-bfad-81cb50cdc219",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "דף המוסד לביטוח הלאומי מפרט סוגי מעמדים וחובות דיווח של עצמאים, כולל אילו פעילויות נחשבות 'עצמאיות'.",
+            "המסמך ממחיש קריטריונים מנהליים של המוסד שבמקרים מסוימים שונים ממבחני בתי הדין או רשות המיסים."
+          ]
+        },
+        {
+          "reason": "האתר עצמו הוא אינדקס/מאגר ולא מקור ממוקד שבוחן/משווה מבחנים בין גופים משפטיים ומנהליים.",
+          "support": "tangential",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "757c03b2-60a6-45f7-811d-23b35ee9a0a2",
+          "support_subtype": "background",
+          "supported_points": [
+            "אתר הכנסת הוא מאגר פרסומים ודיונים שיכול להכיל סקירות על נושאי סיווג עצמאים, אך ככזה הוא רק מקור רקע כללי."
+          ]
+        },
+        {
+          "reason": "מקור אנליטי/פסיקתי חשוב להבנת שונות הפסיקה, אך אינו מהווה מסמך המשווה פורמלית בין כל הרשויות המנהליות (מסים, ביטוח לאומי וכו').",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "7c13c616-e4f2-4b1f-a2c4-20ad00520d3d",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מאמר/ניתוח פסיקה העוסק ב'מיהו עובד' מסכם פסקי דין ומשקף שונות במבחנים וביישומם בהתאם לנסיבות העובדתיות של כל מקרה.",
+            "מספק ניתוח פסיקתי שיכול לשמש להראות שהמבחנים עשויים להשנות תוצאות בין מסגרות ושאלות עובדתיות."
+          ]
+        },
+        {
+          "reason": "המסמך הוא הודעה מנהלית/מידע טיפולי ולא פירוט של הקריטריונים המשפטיים שנבדקים בבתי דין.",
+          "support": "tangential",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "f8f97324-4ea6-46fc-ac08-2b678a29917f",
+          "support_subtype": "background",
+          "supported_points": [
+            "איגרת למעסיקים עוסקת בשיעורי דמי ביטוח ונהלים מנהליים ולא ברשימת גורמי מבחן משפטיים לקביעת מעמד עובד/קבלן."
+          ]
+        },
+        {
+          "reason": "פסיקה עילית העוסקת ישירות בשאלת מעמד עובד/קבלן ומציינת את הגורמים המעשיים הנבחנים — תואם במדויק את הטענה.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "c100aaa9-172b-4764-81d3-b796dc93273f",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "פסק הדין דן במפורש במעמד עובד לעומת קבלן ובא לידי ביטוי רשימת מבחנים מעשיים שהבתי דין בוחנים (כגון שליטה על אופן העבודה, אספקת אמצעים, סיכון עסקי, זכות להעברת העבודה)."
+          ]
+        },
+        {
+          "reason": "פסיקה עוסקת באופן ישיר ברשימת הגורמים/practical indicia שבתי הדין בוחנים — תומכת ישירות בטענה על גורמי העזר הנפוצים.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "cc6685cb-d7db-4ff8-967e-219c643cfcb9",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "פסק דין של בית הדין הארצי לעבודה דן בקריטריונים לקביעת מעמד עובד/קבלן וציין גורמי מבחן פרקטיים המשמשים בבחינה (שליטה, אספקת אמצעים, תמורה ומשך, וכד')."
+          ]
+        },
+        {
+          "reason": "מדובר בדף הנחיות מנהלי/פרוצדורלי; הוא רלוונטי למעמד מנהלי אך אינו מספק פירוט של הקריטריונים המשפטיים-פסיקתיים שמצוינים בטענה.",
+          "support": "tangential",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "fa2acb5d-a037-4654-92d1-565d17164a9e",
+          "support_subtype": "background",
+          "supported_points": [
+            "העמוד בנושא פתיחת תיק עצמאי מפרט הליכים פרוצדורליים והפניות לפתיחת תיק, אך אינו מפרט רשימת גורמי מבחן משפטיים כמו שליטה או סיכון עסקי."
+          ]
+        },
+        {
+          "reason": "המסמך רקע ארגוני/מנהלי ואינו מהווה מקור ישיר לרשימת הקריטריונים המשפטיים הנבדקים בבתי הדין.",
+          "support": "tangential",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "b31e7ca4-cd04-4626-8eab-661dcc8523d5",
+          "support_subtype": "background",
+          "supported_points": [
+            "דין וחשבון רב שנתי של המוסד לביטוח הלאומי מספק מידע ארגוני על נוהלי קביעת מעמד ומאפשר עדכון מעמד אך אינו מפרט בפירוט מבחני בית הדין/פסיקה."
+          ]
+        }
+      ],
+      "demotions": [
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C5",
+          "candidate_id": "0a2636f1-aeb1-4e5f-9059-d84962ea812b",
+          "reason_excerpt": "החוק קובע חובות וזכויות שכר ומספק סנקציות רלוונטיות לתוצאות של סיווג כוזב של עובד."
+        },
+        {
+          "to": "unrelated",
+          "from": "tangential",
+          "rule": "wrong_subject",
+          "claim_id": "C5",
+          "candidate_id": "4e7e9e64-4df9-4360-829a-aff49cb4bf7d",
+          "reason_excerpt": "המסמך דן בסמכות הטלת סנקציות בהקשר של יישום המלצות מבקר המדינה, נושא שונה מהשאלות על זכויות עובדים וחבות תשלומים בגין סיווג חוזי."
+        },
+        {
+          "to": "unrelated",
+          "from": "tangential",
+          "rule": "wrong_subject",
+          "claim_id": "C5",
+          "candidate_id": "d2bc8407-9deb-4db4-9a12-1f5a5b0f00f4",
+          "reason_excerpt": "חוק מבקר המדינה עוסק בסמכויות המבקר ודיווחיו; אין בו הוראות על חובות מעבידים/חבות מס או זכויות עובדים בהקשר של סיווג."
+        },
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C4",
+          "candidate_id": "c100aaa9-172b-4764-81d3-b796dc93273f",
+          "reason_excerpt": "פסיקה עילית העוסקת ישירות בשאלת מעמד עובד/קבלן ומציינת את הגורמים המעשיים הנבחנים — תואם במדויק את הטענה."
+        },
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C4",
+          "candidate_id": "cc6685cb-d7db-4ff8-967e-219c643cfcb9",
+          "reason_excerpt": "פסיקה עוסקת באופן ישיר ברשימת הגורמים/practical indicia שבתי הדין בוחנים — תומכת ישירות בטענה על גורמי העזר הנפוצים."
+        }
+      ],
+      "batch_count": 2,
+      "call_failed": false,
+      "model_final": "openai/gpt-5-mini",
+      "retry_count": 0,
+      "per_claim_ms": {
+        "C2": 70675,
+        "C3": 63769,
+        "C4": 63769,
+        "C5": 70675
+      },
+      "total_sum_ms": 134444,
+      "call_failures": [],
+      "model_initial": "openai/gpt-5-mini",
+      "total_wall_ms": 70675,
+      "retry_attempts": 0,
+      "escalated_claims": [],
+      "rate_limit_count": 0,
+      "candidates_usable": 16,
+      "concurrency_limit": 2,
+      "demotions_by_rule": {
+        "analogical": 0,
+        "background": 0,
+        "landing_page": 3,
+        "wrong_subject": 2,
+        "self_contradiction": 0
+      },
+      "escalated_batches": 0,
+      "recovered_batches": 0,
+      "candidates_dropped": 14,
+      "candidates_verified": 30,
+      "split_probe_attempts": 0,
+      "merge_order_preserved": true,
+      "fallback_to_sequential": false
+    },
+    "retrieval": {
+      "ms": 16524,
+      "pool": {
+        "found": 64,
+        "counts": {
+          "by_role": {
+            "scholarship": 3,
+            "primary_statute": 11,
+            "binding_case_law": 7,
+            "government_report": 9
+          },
+          "by_claim": {
+            "C2": 4,
+            "C3": 10,
+            "C4": 5,
+            "C5": 11
+          },
+          "by_origin": {
+            "local_db": 7,
+            "perplexity": 23
+          }
+        },
+        "after_dedup": 30,
+        "dedup_drops": 27
+      },
+      "local": {
+        "ms": 3343,
+        "aggregate": {
+          "wall_ms": 3343,
+          "max_query_ms": 3340,
+          "sum_query_ms": 14716,
+          "slowest_query": {
+            "ms": 3340,
+            "role": "binding_case_law",
+            "text_ms": 3196,
+            "claim_id": "C5",
+            "exact_ms": 0,
+            "query_he": "פסק-דין בית המשפט העליון/בית הדין הארצי לעבודה על תוצאות וסנקציות של סיווג שגוי (חיוב בתשלומי ביטוח לאומי, חובות מס, פיצויים לעובדים וזכויות חוזיות) 'סיווג שגוי' פסק-דין",
+            "vector_ms": 144,
+            "embedding_ms": 143
+          },
+          "slowest_method": "text",
+          "method_total_ms": {
+            "text": 13877,
+            "exact": 0,
+            "vector": 836,
+            "embedding": 709
+          },
+          "queries_executed": 5,
+          "exact_error_count": 0,
+          "text_timeout_count": 0,
+          "candidates_by_method": {
+            "text": 29,
+            "vector": 9,
+            "exact_authority": 0
+          },
+          "vector_timeout_count": 0,
+          "bottleneck_hypothesis": "single_slow_query (max=3340ms ≈ wall=3343ms)",
+          "duplicate_query_count": 0
+        },
+        "per_query": [
+          {
+            "ms": 2408,
+            "diag": {
+              "text_ms": 2172,
+              "exact_ms": 0,
+              "vector_ms": 234,
+              "text_status": "ok",
+              "embedding_ms": 137,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+                "ביהמ\"ש המחוזי בתל-אביב, השופטת יעל בלכר: פס\"ד שעניינו בשאלה האם נכרת הסכם מחייב בין בעלי הדין למתן הנחה בדמי השכירות בתקופת הקורונה (ת\"א 26891-11-21)",
+                "בימ\"ש עליון, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופט דוד מינץ, השופט עופר גרוסקופף, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ, השופט חאלד כבוב: פס\"ד בעתירות שעניינן סיום כהונתה של היועצת המשפטית לממשלה (בג\"ץ 18225-06-25)",
+                "בית המשפט העליון בשבתו כבג\"ץ, השופטת דפנה ברק-ארז, השופט דוד מינץ והשופט עופר גרוסקופף: פס\"ד העוסק בחובה לעמוד בדרישות החוק ביחס להספקת מזון ברמה בסיסית לכלל האסירים הביטחוניים המוחזקים בבתי הסוהר בישראל (בג\"ץ 2858-24)",
+                "אולמות ספורט ומגרשי כדורגל – השוואה בין רשויות מקומיות"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 2172,
+              "top_vector_titles": [
+                "ע\"א 7594/16 עו\"ד יצחק מולכו, המנהל המיוחד מטעם הכונס הרשמי של נ׳ בנק מזר פסק דין (29.06.2016)",
+                "בג\"ץ 4948-03 - מר משה אלחנתי נ. שר האוצר - מר בנימין נתניהו"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "compact_query_he": "פסק-דין העליון לגבי ההבחנה בין עובד קבלן עצמאי",
+            "original_query_he": "פסק-דין בית המשפט העליון לגבי ההבחנה בין 'עובד' ל'קבלן עצמאי' המפתח את מבחני השליטה, השייכות/אינטגרציה והתלות הכלכלית (מילות מפתח: \"מבחן השליטה\", \"מבחן השייכות\", \"תלות כלכלית\" פסק דין בית המשפט העליון 'עובד או קבלן עצמאי')"
+          },
+          {
+            "ms": 2635,
+            "diag": {
+              "text_ms": 2470,
+              "exact_ms": 0,
+              "vector_ms": 165,
+              "text_status": "ok",
+              "embedding_ms": 141,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש המחוזי בתל-אביב, השופטת יעל בלכר: פס\"ד שעניינו בשאלה האם נכרת הסכם מחייב בין בעלי הדין למתן הנחה בדמי השכירות בתקופת הקורונה (ת\"א 26891-11-21)",
+                "אולמות ספורט ומגרשי כדורגל – השוואה בין רשויות מקומיות",
+                "בימ\"ש עליון, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופט דוד מינץ, השופט עופר גרוסקופף, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ, השופט חאלד כבוב: פס\"ד בעתירות שעניינן סיום כהונתה של היועצת המשפטית לממשלה (בג\"ץ 18225-06-25)",
+                "בית המשפט המחוזי חיפה, אב\"ד ש' יחיאל ליפשיץ, ש' גלית ציגלר, ש' שמואל מנדלבום: הכרעת דין לאדוארד קצורה (תפ\"ח 11792-12-21)",
+                "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעות הדדיות של בעל נכס מקרקעין ובנק בעקבות עסקה שהשתבשה (ת\"א 10512-01-21)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 2470,
+              "top_vector_titles": [
+                "מיהו עובד: מבחני הסף",
+                "מיהו עובד: מבחני הסף"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 6,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "compact_query_he": "פסק-דין העליון/בית הדין לעבודה שמדגיש הבדלים בתוצאה בין",
+            "original_query_he": "פסק-דין בית המשפט העליון/בית הדין לעבודה שמדגיש הבדלים בתוצאה בין מס הכנסה, ביטוח לאומי ובתי דין לעבודה בסיווג עובד או עצמאי (מילות מפתח: 'הבדלים בין מס הכנסה וביטוח לאומי', 'סיווג עובד עצמאי')"
+          },
+          {
+            "ms": 3149,
+            "diag": {
+              "text_ms": 2998,
+              "exact_ms": 0,
+              "vector_ms": 150,
+              "text_status": "ok",
+              "embedding_ms": 135,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש המחוזי מרכז-לוד, סגנית הנשיאה ש' ורדה פלאוט: פסק הדין בנושא ערעור על החלטה הדוחה בקשה לעיכוב ביצוע פסק דין חלוט, בקשה שהוגשה במסגרת תביעה (רמ\"ש 13497-09-24) למשפט אזרחי חוזר",
+                "ביהמ\"ש המחוזי בחיפה, ש' סארי ג'יוסי, ש' עפרה אטיאס, ש' ניצן סילמן: פסק הדין עוסק בפירוק שיתוף במקרקעין בין בני משפחה ובהיבטים קשורים – הערכת שווי ושמאות וחיוב במס (עמ\"ש 36793-09-24)",
+                "דיני מזונות אישה בין בית הדין השרעי לבית המשפט לענייני משפחה: סיפורה של מהפכה שמרנית במחלצות ליברליות",
+                "ביהמ\"ש המחוזי בתל-אביב, השופטת יעל בלכר: פס\"ד שעניינו בשאלה האם נכרת הסכם מחייב בין בעלי הדין למתן הנחה בדמי השכירות בתקופת הקורונה (ת\"א 26891-11-21)",
+                "בג\"ץ 2194/21 מוחמד מופלח דרויש נ׳ בית הדין הארצי לעבודה פסק דין"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 2998,
+              "top_vector_titles": [
+                "משולש ברמודה: מנגנוני אפליה בקבלה לעבודה בתהליכי תיווך של חברות השמה",
+                "בג\"ץ 844-06 - אוניברסיטת חיפה נ. פרופ' אברהם עוז"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "compact_query_he": "פסק-דין העליון/בית הדין הארצי לעבודה רשימת סימנים מעשיים",
+            "original_query_he": "פסק-דין בית המשפט העליון/בית הדין הארצי לעבודה רשימת סימנים מעשיים לבחינת 'עובד או עצמאי' (אספקת אמצעים, שליטה על אופן העבודה, סיכון עסקי, זכות להעביר עבודה, שיטת תשלום, משך עבודה, בלעדיות)"
+          },
+          {
+            "ms": 3184,
+            "diag": {
+              "text_ms": 3041,
+              "exact_ms": 0,
+              "vector_ms": 143,
+              "text_status": "ok",
+              "embedding_ms": 153,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש המחוזי בתל אביב, השופט יונה אטדגי: פס\"ד דין העוסק בנושא התחלוף וסעיף 62 (ד) לחוק חוזה הביטוח (ע\"א 12523-06-24)",
+                "ביהמ\"ש השלום בירושלים, השופט מוחמד חאג' יחיא: הכרעת דין הדנה באחריות מנהל עבודה של קבלן ראשי (ת\"פ  35875-04-20)",
+                "ביהמ\"ש לענייני משפחה בראשל\"צ, השופט עובד אליאס: פס\"ד בתמ\"ש 61932-09-23 (\"פרשת העוברים\")",
+                "ביהמ\"ש לענייני משפחה בראשון לציון, השופט עובד אליאס: החלטה בבקשה לפסיקת מזונותיה הזמניים של הקטינה, בתם של הצדדים (תלה\"מ 21926-09-24)",
+                "הפללתה של הקללה: ניתוח ריאליסטי של העלבת עובד ציבור"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 3041,
+              "top_vector_titles": [
+                "רע\"א 8356-22 היועצת המשפטית לממשלה נ׳ שלמה גולן פסק דין",
+                "הזכות לפרטיות בעבודה: עיון מחודש בפרשת איסקוב-ענבר ויישומה"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "compact_query_he": "פסק-דין העליון משמעות כינוי חוזה עובד קבלן והאם",
+            "original_query_he": "פסק-דין בית המשפט העליון על משמעות כינוי חוזה ('עובד' או 'קבלן') והאם הכינוי החוזי מחייב או אם יש לבחון את המציאות העובדתית בפועל (מילות מפתח: 'כינוי חוזה', 'labeling', 'תווית חוזה', 'עובד או קבלן')"
+          },
+          {
+            "ms": 3340,
+            "diag": {
+              "text_ms": 3196,
+              "exact_ms": 0,
+              "vector_ms": 144,
+              "text_status": "ok",
+              "embedding_ms": 143,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+                "ביהמ\"ש המחוזי מרכז-לוד, סגנית הנשיאה ש' ורדה פלאוט: פסק הדין בנושא ערעור על החלטה הדוחה בקשה לעיכוב ביצוע פסק דין חלוט, בקשה שהוגשה במסגרת תביעה (רמ\"ש 13497-09-24) למשפט אזרחי חוזר",
+                "ביהמ\"ש המחוזי בחיפה, השופט חננאל שרעבי: החלטה סיווג החלטה על מנת להכריע האם הערעור בזכות או ברשות (עמ\"ש 49311-01-25)",
+                "ביהמ\"ש המחוזי בחיפה, ש' סארי ג'יוסי, ש' עפרה אטיאס, ש' ניצן סילמן: פסק הדין עוסק בפירוק שיתוף במקרקעין בין בני משפחה ובהיבטים קשורים – הערכת שווי ושמאות וחיוב במס (עמ\"ש 36793-09-24)",
+                "דיני מזונות אישה בין בית הדין השרעי לבית המשפט לענייני משפחה: סיפורה של מהפכה שמרנית במחלצות ליברליות"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 3196,
+              "top_vector_titles": [
+                "דנג\"ץ 5967-10 - המוסד לביטוח לאומי נ. אסתר כהן",
+                "הזכות לפרטיות בעבודה: עיון מחודש בפרשת איסקוב-ענבר ויישומה"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C5",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "compact_query_he": "פסק-דין העליון/בית הדין הארצי לעבודה תוצאות וסנקציות סיווג",
+            "original_query_he": "פסק-דין בית המשפט העליון/בית הדין הארצי לעבודה על תוצאות וסנקציות של סיווג שגוי (חיוב בתשלומי ביטוח לאומי, חובות מס, פיצויים לעובדים וזכויות חוזיות) 'סיווג שגוי' פסק-דין"
+          }
+        ],
+        "candidates": 38,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 16517,
+        "dropped": 12,
+        "parallel": true,
+        "query_ms": [
+          6783,
+          7289,
+          11424,
+          4959,
+          5423,
+          7232,
+          8259,
+          6130
+        ],
+        "per_query": [
+          {
+            "ms": 6783,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.hilan.co.il/%D7%9E%D7%A8%D7%9B%D7%96-%D7%99%D7%93%D7%A2/%D7%91%D7%A1%D7%99%D7%A1-%D7%99%D7%93%D7%A2/%D7%9E%D7%99%D7%9C%D7%95%D7%9F-%D7%9C%D7%AA%D7%A0%D7%90%D7%99-%D7%A2%D7%91%D7%95%D7%93%D7%94/%D7%99/%D7%99%D7%97%D7%A1%D7%99-%D7%A2%D7%95%D7%91%D7%93-%D7%9E%D7%A2%D7%91%D7%99%D7%93/",
+                "title": "יחסי עובד-מעביד",
+                "domain": "hilan.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://be-sure.co.il/wp-content/uploads/2020/02/article_39.pdf",
+                "title": "אובן קוניאק - מאמר/סיכום על יחסי עובד-מעביד",
+                "domain": "be-sure.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://sfile.f-static.com/image/users/250155/ftp/my_files/dini%20avoda%20D/%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20-%20%D7%9E%D7%99%D7%9B%D7%90%D7%9C%20%D7%91%D7%90%D7%A8%D7%99%D7%A1.pdf?id=14351140",
+                "title": "דיני עבודה - סיכומי שיעור",
+                "domain": "sfile.f-static.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.wikipedia.org/wiki/%D7%99%D7%97%D7%A1%D7%99_%D7%A2%D7%95%D7%91%D7%93%E2%80%93%D7%9E%D7%A2%D7%91%D7%99%D7%93",
+                "title": "יחסי עובד–מעביד",
+                "domain": "he.wikipedia.org",
+                "drop_reason": "bad_source",
+                "classified_source_class": "bad",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://ygoldlaw.co.il/litigation-lawyer/labor/employer-employee-relationship/",
+                "title": "יחסי עובד מעביד",
+                "domain": "ygoldlaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C1",
+            "query_he": "מאמר אקדמי דיני עבודה 'מבחן השליטה' 'מבחן השייכות' 'תלות כלכלית' הבחנה עובד קבלן עצמאי סקירה ספרותית (מאמר, כתב-עת אקדמי או פרק ספר)",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 7289,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+                "title": "עובד או קבלן",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 154,
+                  "title_meaningful_chars": 10
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "אקדמי / מאמר",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%AA%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+                "title": "התניה על סטטוס 'עובד' והשלכותיה",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%AA%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%AA%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 110,
+                  "title_meaningful_chars": 27
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "אקדמי / מאמר",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://bazlaw.co.il/employee-vs-contractor/",
+                "title": "עובד או קבלן עצמאי – המבחנים המשפטיים",
+                "domain": "bazlaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%9E%D7%97%D7%91%D7%A8%D7%AA%20%D7%91%D7%97%D7%99%D7%A0%D7%94-%20%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20%D7%91%D7%A8%20%D7%A6%D7%93%D7%A7%D7%94.pdf",
+                "title": "דיני עבודה",
+                "domain": "netanya.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%9E%D7%97%D7%91%D7%A8%D7%AA%20%D7%91%D7%97%D7%99%D7%A0%D7%94-%20%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20%D7%91%D7%A8%20%D7%A6%D7%93%D7%A7%D7%94.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%9E%D7%97%D7%91%D7%A8%D7%AA%20%D7%91%D7%97%D7%99%D7%A0%D7%94-%20%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20%D7%91%D7%A8%20%D7%A6%D7%93%D7%A7%D7%94.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 108,
+                  "title_meaningful_chars": 9
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "אקדמי / חומר לימודי",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.globes.co.il/news/article.aspx?did=66288",
+                "title": "מה ההבדל בין עובד לבין קבלן?",
+                "domain": "globes.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C2",
+            "query_he": "מאמר אקדמי 'משמעות כינוי החוזה' 'labeling' בהקשר של סיווג עובד/קבלן עצמאי דיני עבודה (מאמר, כתב-עת או ספר)",
+            "raw_count": 5,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 11424,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://fs.knesset.gov.il/globaldocs/MMM/94cc5e47-9bc6-eb11-8125-00155d0af32a/2_94cc5e47-9bc6-eb11-8125-00155d0af32a_11_18136.pdf",
+                "title": "חוק הביטוח הלאומי [נוסח משולב], התשנ\"ה-1995",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/globaldocs/MMM/94cc5e47-9bc6-eb11-8125-00155d0af32a/2_94cc5e47-9bc6-eb11-8125-00155d0af32a_11_18136.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/globaldocs/MMM/94cc5e47-9bc6-eb11-8125-00155d0af32a/2_94cc5e47-9bc6-eb11-8125-00155d0af32a_11_18136.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 136,
+                  "title_meaningful_chars": 38
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "search_result",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/Law01/500_001.htm",
+                "title": "חוק פיצויי פיטורים, תשכ\"ג-1963",
+                "domain": "nevo.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.nevo.co.il/law_html/Law01/500_001.htm",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.nevo.co.il/law_html/Law01/500_001.htm",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 125,
+                  "title_meaningful_chars": 27
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "search_result",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/Law01/500_043.htm",
+                "title": "חוק הגנת השכר, תשי\"ח-1958",
+                "domain": "nevo.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.nevo.co.il/law_html/Law01/500_043.htm",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.nevo.co.il/law_html/Law01/500_043.htm",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 115,
+                  "title_meaningful_chars": 22
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "search_result",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/Law01/500_001.htm",
+                "title": "פקודת מס הכנסה [נוסח חדש]",
+                "domain": "nevo.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.nevo.co.il/law_html/Law01/500_001.htm",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.nevo.co.il/law_html/Law01/500_001.htm",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 147,
+                  "title_meaningful_chars": 21
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "search_result",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.kolzchut.org.il/he/%D7%A2%D7%95%D7%91%D7%93_%D7%A2%D7%A6%D7%9E%D7%90%D7%99_(%D7%9C%D7%A4%D7%99_%D7%94%D7%92%D7%93%D7%A8%D7%AA_%D7%94%D7%9E%D7%95%D7%A1%D7%93_%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%9C%D7%אומי)",
+                "title": "הבדלים בין הגדרות מעמד עובד/עצמאי",
+                "domain": "kolzchut.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C3",
+            "query_he": "חוק הביטוח הלאומי חוק מס הכנסה חוק פיצויי פיטורים חוק הגנת השכר 'הגדרת עובד' 'הגדרת עצמאי' הבדלים בין הסמכויות של ביטוח לאומי, מס הכנסה ובתי דין לעבודה בחקיקה",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4959,
+            "http": 200,
+            "role": "government_report",
+            "results": [
+              {
+                "url": "https://www.gov.il/BlobFolder/news/employment-report-2022/he/employment-report-2022.pdf",
+                "title": "שוק העבודה בישראל 2022 תמונת מצב ופעילות משרד העבודה",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/BlobFolder/news/employment-report-2022/he/employment-report-2022.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/BlobFolder/news/employment-report-2022/he/employment-report-2022.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 100,
+                  "title_meaningful_chars": 44
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "gov.il",
+                "normalized_source_type": "other",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.btl.gov.il/Laws1/03_0001_000008.pdf",
+                "title": "צו הביטוח הלאומי (סיווג מבוטחים וקביעת מעבידים), תשל\"ב-1972",
+                "domain": "btl.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.btl.gov.il/Laws1/03_0001_000008.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.btl.gov.il/Laws1/03_0001_000008.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 141,
+                  "title_meaningful_chars": 52
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "government_report",
+                "raw_pplx_source_type": "btl.gov.il",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/default.aspx",
+                "title": "עובד עצמאי - פירוט סוגי המעמד וחובת תשלום",
+                "domain": "btl.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/default.aspx",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/default.aspx",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 94,
+                  "title_meaningful_chars": 34
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "btl.gov.il",
+                "normalized_source_type": "other",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/generalpage/freedom-of-info-law/he/freedom-of-info-report-25.pdf",
+                "title": "דין וחשבון שנתי לפי חוק חופש המידע לשנת 2025",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/BlobFolder/generalpage/freedom-of-info-law/he/freedom-of-info-report-25.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/BlobFolder/generalpage/freedom-of-info-law/he/freedom-of-info-report-25.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 83,
+                  "title_meaningful_chars": 36
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "government_report",
+                "raw_pplx_source_type": "gov.il",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.knesset.gov.il",
+                "title": "אתר הכנסת - פרסומי ועדות",
+                "domain": "knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.knesset.gov.il",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.knesset.gov.il/",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 116,
+                  "title_meaningful_chars": 20
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "knesset.gov.il",
+                "normalized_source_type": "other",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 5,
+            "claim_id": "C3",
+            "query_he": "דו\"ח משרד העבודה/המוסד לביטוח לאומי/משרד האוצר על בעיית סיווג עובדים עצמאים וההשלכות השונות בין מס הכנסה, ביטוח לאומי ובתי דין לעבודה (דו\"ח, הנחיות, סקירה)",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5423,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.calcalist.co.il/local/articles/0,7340,L-3634496,00.html",
+                "title": "עובד שכיר או קבלן עצמאי? כך תדעו",
+                "domain": "calcalist.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.maariv.co.il/news/law/Article-775051",
+                "title": "קביעת יחסי עבודה: עצמאי או שכיר? זו השאלה",
+                "domain": "maariv.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://bazlaw.co.il/employee-vs-contractor/",
+                "title": "מאמר מס' 3: עובד או קבלן עצמאי – המבחנים המשפטיים",
+                "domain": "bazlaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C4",
+            "query_he": "מאמר אקדמי 'סימנים להבחנה בין עובד לקבלן עצמאי' אספקת ציוד סיכון עסקי אינטגרציה שייכות שיטות תשלום רשימת גורמים בהנחיית שופטים (מאמר, כתב-עת דיני עבודה)",
+            "raw_count": 3,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 7232,
+            "http": 200,
+            "role": "government_report",
+            "results": [
+              {
+                "url": "http://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/default.aspx",
+                "title": "עובד עצמאי - פירוט סוגי המעמד וחובת תשלום",
+                "domain": "btl.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "http://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/default.aspx",
+                  "hygiene_action": "keep",
+                  "url_normalized": "http://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/default.aspx",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 217,
+                  "title_meaningful_chars": 34
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "government",
+                "normalized_source_type": "other",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "http://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/howtoregister.aspx",
+                "title": "פתיחת תיק עצמאי בביטוח לאומי - עובד עצמאי",
+                "domain": "btl.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "http://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/howtoregister.aspx",
+                  "hygiene_action": "keep",
+                  "url_normalized": "http://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/howtoregister.aspx",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 138,
+                  "title_meaningful_chars": 34
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "government",
+                "normalized_source_type": "other",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.gov.il/he/service/annual_report",
+                "title": "דין וחשבון רב שנתי | המוסד לביטוח לאומי",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/he/service/annual_report",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/he/service/annual_report",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 171,
+                  "title_meaningful_chars": 32
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "government",
+                "normalized_source_type": "other",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://ahec-tax.co.il/wp-content/uploads/2013/03/yeda_434-nov-2012_am61.pdf",
+                "title": "yeda 434 november 2012.indd",
+                "domain": "ahec-tax.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_government_report",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.btl.gov.il/Insurance/HozrimBituah/Hozrim/_%D7%90%D7%99%D7%92%D7%A8%D7%AA_%D7%9C%D7%9E%D7%A2%D7%A1%D7%99%D7%A7_%D7%9C%D7%A9%D7%A0%D7%AA_2026.pdf",
+                "title": "איגרת למעסיק לשנת 2026",
+                "domain": "btl.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.btl.gov.il/Insurance/HozrimBituah/Hozrim/_%D7%90%D7%99%D7%92%D7%A8%D7%AA_%D7%9C%D7%9E%D7%A2%D7%A1%D7%99%D7%A7_%D7%9C%D7%A9%D7%A0%D7%AA_2026.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.btl.gov.il/Insurance/HozrimBituah/Hozrim/_%D7%90%D7%99%D7%92%D7%A8%D7%AA_%D7%9C%D7%9E%D7%A2%D7%A1%D7%99%D7%A7_%D7%9C%D7%A9%D7%A0%D7%AA_2026.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 123,
+                  "title_meaningful_chars": 19
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "government",
+                "normalized_source_type": "other",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C4",
+            "query_he": "דו\"ח המוסד לביטוח לאומי/משרד העבודה על 'מבחני סיווג עצמאים' הכולל רשימות סימנים מעשיים (דו\"ח, הנחיות פנימיות, הנחיות מבקר)",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 8259,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://fs.knesset.gov.il/globaldocs/MMM/25f0b1e6-7f2c-ee11-8143-005056aac7c8/2_25f0b1e6-7f2c-ee11-8143-005056aac7c8_11_25077.pdf",
+                "title": "חוק הביטוח הלאומי [נוסח משולב], התשנ\"ה-1995",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/globaldocs/MMM/25f0b1e6-7f2c-ee11-8143-005056aac7c8/2_25f0b1e6-7f2c-ee11-8143-005056aac7c8_11_25077.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/globaldocs/MMM/25f0b1e6-7f2c-ee11-8143-005056aac7c8/2_25f0b1e6-7f2c-ee11-8143-005056aac7c8_11_25077.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 117,
+                  "title_meaningful_chars": 38
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "חקיקה ראשית",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il/globaldocs/MMM/0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4/2_0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4_11_25077.pdf",
+                "title": "פקודת מס הכנסה [נוסח חדש]",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/globaldocs/MMM/0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4/2_0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4_11_25077.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/globaldocs/MMM/0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4/2_0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4_11_25077.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 108,
+                  "title_meaningful_chars": 21
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "חקיקה ראשית",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il/globaldocs/MMM/2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75/2_2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75_11_25077.pdf",
+                "title": "חוק הגנת השכר, התשי\"ח-1958",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/globaldocs/MMM/2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75/2_2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75_11_25077.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/globaldocs/MMM/2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75/2_2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75_11_25077.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 93,
+                  "title_meaningful_chars": 23
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "חקיקה ראשית",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il/globaldocs/MMM/4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c/2_4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c_11_25077.pdf",
+                "title": "חוק פיצויי פיטורים, התשכ\"ג-1963",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/globaldocs/MMM/4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c/2_4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c_11_25077.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/globaldocs/MMM/4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c/2_4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c_11_25077.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 143,
+                  "title_meaningful_chars": 28
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "חקיקה ראשית",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il/globaldocs/MMM/8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2/2_8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2_11_25077.pdf",
+                "title": "חוק עובדים זרים, התשנ\"א-1991",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/globaldocs/MMM/8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2/2_8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2_11_25077.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/globaldocs/MMM/8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2/2_8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2_11_25077.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 133,
+                  "title_meaningful_chars": 25
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "חקיקה ראשית",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 5,
+            "claim_id": "C5",
+            "query_he": "חוק הביטוח הלאומי חוק מס הכנסה חוק הגנת השכר חוק פיצויי פיטורים \"השלכות סיווג שגוי\" חובת מעסיק חיובי תשלומי עבר וקנסות בחקיקה",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 6130,
+            "http": 200,
+            "role": "government_report",
+            "results": [
+              {
+                "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Publications/2144.aspx",
+                "title": "דוח שנתי של מבקר המדינה - מאי 2026",
+                "domain": "library.mevaker.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Publications/2144.aspx",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Publications/2144.aspx",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 92,
+                  "title_meaningful_chars": 27
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "government report",
+                "normalized_source_type": "other",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law01/195_001.htm",
+                "title": "חוק מבקר המדינה, תשי\"ח-1958 [נוסח משולב]",
+                "domain": "nevo.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.nevo.co.il/law_html/law01/195_001.htm",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.nevo.co.il/law_html/law01/195_001.htm",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 149,
+                  "title_meaningful_chars": 35
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "government_report",
+                "raw_pplx_source_type": "law / official source",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://media.mevaker.gov.il/mevaker/media/f5qfqvcp/%D7%A0%D7%95%D7%94%D7%9C-%D7%98%D7%99%D7%A4%D7%95%D7%9C-%D7%91%D7%A4%D7%A0%D7%99%D7%95%D7%AA-%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%9C%D7%9E%D7%A9%D7%A8%D7%93-%D7%9E%D7%91%D7%A7%D7%A8-%D7המדינה.pdf",
+                "title": "נוהל טיפול בפניות הציבור למשרד מבקר המדינה",
+                "domain": "media.mevaker.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://media.mevaker.gov.il/mevaker/media/f5qfqvcp/%D7%A0%D7%95%D7%94%D7%9C-%D7%98%D7%99%D7%A4%D7%95%D7%9C-%D7%91%D7%A4%D7%A0%D7%99%D7%95%D7%AA-%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%9C%D7%9E%D7%A9%D7%A8%D7%93-%D7%9E%D7%91%D7%A7%D7%A8-%D7המדינה.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://media.mevaker.gov.il/mevaker/media/f5qfqvcp/%D7%A0%D7%95%D7%94%D7%9C-%D7%98%D7%99%D7%A4%D7%95%D7%9C-%D7%91%D7%A4%D7%A0%D7%99%D7%95%D7%AA-%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%9C%D7%9E%D7%A9%D7%A8%D7%93-%D7%9E%D7%91%D7%A7%D7%A8-%D7%D7%94%D7%9E%D7%93%D7%99%D7%A0%D7%94.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 115,
+                  "title_meaningful_chars": 36
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "government document",
+                "normalized_source_type": "other",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il/globaldocs/MMM/2cbf8d55-f7f7-e411-80c8-00155d010977/2_2cbf8d55-f7f7-e411-80c8-00155d010977_11_7309.pdf",
+                "title": "סמכות הטלת סנקציות בגין אי-יישום דוחות מבקר המדינה - סקירה משווה",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/globaldocs/MMM/2cbf8d55-f7f7-e411-80c8-00155d010977/2_2cbf8d55-f7f7-e411-80c8-00155d010977_11_7309.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/globaldocs/MMM/2cbf8d55-f7f7-e411-80c8-00155d010977/2_2cbf8d55-f7f7-e411-80c8-00155d010977_11_7309.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 152,
+                  "title_meaningful_chars": 54
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "government_report",
+                "raw_pplx_source_type": "knesset research report",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/297-27.aspx",
+                "title": "הבאת עובדים זרים ושמירה על זכויותיהם - מבקר המדינה",
+                "domain": "library.mevaker.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/297-27.aspx",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/297-27.aspx",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 153,
+                  "title_meaningful_chars": 42
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "government report",
+                "normalized_source_type": "other",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 5,
+            "claim_id": "C5",
+            "query_he": "דו\"ח מבקר המדינה/דו\"ח המוסד לביטוח לאומי/משרד האוצר על עלויות וסנקציות של טעות בסיווג עובדים כעצמאים (דו\"ח בקרה, המלצות מדיניות, הערכת עלויות)",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 26,
+        "query_count": 8,
+        "retry_count": 0,
+        "total_sum_ms": 57499,
+        "total_wall_ms": 16517,
+        "hygiene_counts": {
+          "keep": 26,
+          "total": 26,
+          "exclude": 0,
+          "reasons": {
+            "url_generic_index": 10
+          },
+          "downgrade": 0,
+          "report_only_mode": false,
+          "would_exclude_in_report_only": 0
+        },
+        "rate_limit_count": 0,
+        "role_corrections": [
+          {
+            "to": "primary_statute",
+            "url": "https://www.btl.gov.il/Laws1/03_0001_000008.pdf",
+            "from": "government_report",
+            "title": "צו הביטוח הלאומי (סיווג מבוטחים וקביעת מעבידים), תשל\"ב-1972",
+            "admitted": true,
+            "claim_id": "C3"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://www.gov.il/BlobFolder/generalpage/freedom-of-info-law/he/freedom-of-info-report-25.pdf",
+            "from": "government_report",
+            "title": "דין וחשבון שנתי לפי חוק חופש המידע לשנת 2025",
+            "admitted": true,
+            "claim_id": "C3"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://www.nevo.co.il/law_html/law01/195_001.htm",
+            "from": "government_report",
+            "title": "חוק מבקר המדינה, תשי\"ח-1958 [נוסח משולב]",
+            "admitted": true,
+            "claim_id": "C5"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://fs.knesset.gov.il/globaldocs/MMM/2cbf8d55-f7f7-e411-80c8-00155d010977/2_2cbf8d55-f7f7-e411-80c8-00155d010977_11_7309.pdf",
+            "from": "government_report",
+            "title": "סמכות הטלת סנקציות בגין אי-יישום דוחות מבקר המדינה - סקירה משווה",
+            "admitted": true,
+            "claim_id": "C5"
+          }
+        ],
+        "concurrency_limit": 4,
+        "merge_order_preserved": true,
+        "fallback_to_sequential": false
+      }
+    },
+    "candidates": [
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק הביטוח הלאומי [נוסח משולב], התשנ\"ה-1995",
+        "origin": "perplexity",
+        "snippet": "חוק הביטוח הלאומי [נוסח משולב], התשנ\"ה-1995 – סעיף 1 מגדיר \"עובד עצמאי\" לפי היקף עבודה והכנסה, וסעיפים 77 ו-81 עוסקים בזכאות וגמלאות. יש להסתמך על נוסח החוק הרשמי.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://fs.knesset.gov.il/globaldocs/MMM/94cc5e47-9bc6-eb11-8125-00155d0af32a/2_94cc5e47-9bc6-eb11-8125-00155d0af32a_11_18136.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://fs.knesset.gov.il/globaldocs/MMM/94cc5e47-9bc6-eb11-8125-00155d0af32a/2_94cc5e47-9bc6-eb11-8125-00155d0af32a_11_18136.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 136,
+            "title_meaningful_chars": 38
+          },
+          "raw_pplx_source_type": "search_result",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חוק הביטוח הלאומי חוק מס הכנסה חוק פיצויי פיטורים חוק הגנת השכר 'הגדרת עובד' 'הגדרת עצמאי' הבדלים בין הסמכויות של ביטוח לאומי, מס הכנסה ובתי דין לעבודה בחקיקה",
+        "source_url": "https://fs.knesset.gov.il/globaldocs/MMM/94cc5e47-9bc6-eb11-8125-00155d0af32a/2_94cc5e47-9bc6-eb11-8125-00155d0af32a_11_18136.pdf",
+        "source_type": "legislation",
+        "candidate_id": "de0263b9-8eed-449d-9d5c-244d49766b37",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "צו הביטוח הלאומי (סיווג מבוטחים וקביעת מעבידים), תשל\"ב-1972",
+        "origin": "perplexity",
+        "snippet": "המוסד לביטוח לאומי – \"צו הביטוח הלאומי (סיווג מבוטחים וקביעת מעבידים), תשל\"ב-1972\". הצו מונה סוגי עיסוקים שבהם מבוטח ייחשב, לעניין החוק, כעובד עצמאי, בתנאים מוגדרים.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "btl.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.btl.gov.il/Laws1/03_0001_000008.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.btl.gov.il/Laws1/03_0001_000008.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 141,
+            "title_meaningful_chars": 52
+          },
+          "role_corrected_from": "government_report",
+          "raw_pplx_source_type": "btl.gov.il",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "דו\"ח משרד העבודה/המוסד לביטוח לאומי/משרד האוצר על בעיית סיווג עובדים עצמאים וההשלכות השונות בין מס הכנסה, ביטוח לאומי ובתי דין לעבודה (דו\"ח, הנחיות, סקירה)",
+        "source_url": "https://www.btl.gov.il/Laws1/03_0001_000008.pdf",
+        "source_type": "legislation",
+        "candidate_id": "a76d29ad-3837-4dea-b67b-4fe5ab39fcee",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "דין וחשבון שנתי לפי חוק חופש המידע לשנת 2025",
+        "origin": "perplexity",
+        "snippet": "משרד העבודה – דין וחשבון שנתי לפי חוק חופש המידע לשנת 2025, עם פרטי קשר וכתובות של יחידות משרד העבודה.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.gov.il/BlobFolder/generalpage/freedom-of-info-law/he/freedom-of-info-report-25.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.gov.il/BlobFolder/generalpage/freedom-of-info-law/he/freedom-of-info-report-25.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 83,
+            "title_meaningful_chars": 36
+          },
+          "role_corrected_from": "government_report",
+          "raw_pplx_source_type": "gov.il",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "דו\"ח משרד העבודה/המוסד לביטוח לאומי/משרד האוצר על בעיית סיווג עובדים עצמאים וההשלכות השונות בין מס הכנסה, ביטוח לאומי ובתי דין לעבודה (דו\"ח, הנחיות, סקירה)",
+        "source_url": "https://www.gov.il/BlobFolder/generalpage/freedom-of-info-law/he/freedom-of-info-report-25.pdf",
+        "source_type": "legislation",
+        "candidate_id": "0fa417f8-2b7a-4cad-9da5-d8b995651681",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "פקודת מס הכנסה [נוסח חדש]",
+        "origin": "perplexity",
+        "snippet": "פקודת מס הכנסה [נוסח חדש]; הוראות הניכוי במקור והחבות במס של מעסיק/משלם מצויות בפרק הניכוי במקור ובפרקים העוסקים בהכנסה מעבודה.",
+        "claim_id": "C5",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://fs.knesset.gov.il/globaldocs/MMM/0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4/2_0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4_11_25077.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://fs.knesset.gov.il/globaldocs/MMM/0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4/2_0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4_11_25077.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 108,
+            "title_meaningful_chars": 21
+          },
+          "raw_pplx_source_type": "חקיקה ראשית",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חוק הביטוח הלאומי חוק מס הכנסה חוק הגנת השכר חוק פיצויי פיטורים \"השלכות סיווג שגוי\" חובת מעסיק חיובי תשלומי עבר וקנסות בחקיקה",
+        "source_url": "https://fs.knesset.gov.il/globaldocs/MMM/0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4/2_0c6f0a62-5c66-4f0a-9a0b-3d6a2bfbf1f4_11_25077.pdf",
+        "source_type": "legislation",
+        "candidate_id": "ac7ad9c2-8ee8-4793-a2fb-353d960607b1",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק הגנת השכר, התשי\"ח-1958",
+        "origin": "perplexity",
+        "snippet": "חוק הגנת השכר, התשי\"ח-1958; קובע חובת תשלום שכר במועד, תשלום פיצויי הלנת שכר וסנקציות בשל הפרת חובות תשלום שכר.",
+        "claim_id": "C5",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://fs.knesset.gov.il/globaldocs/MMM/2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75/2_2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75_11_25077.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://fs.knesset.gov.il/globaldocs/MMM/2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75/2_2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75_11_25077.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 93,
+            "title_meaningful_chars": 23
+          },
+          "raw_pplx_source_type": "חקיקה ראשית",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חוק הביטוח הלאומי חוק מס הכנסה חוק הגנת השכר חוק פיצויי פיטורים \"השלכות סיווג שגוי\" חובת מעסיק חיובי תשלומי עבר וקנסות בחקיקה",
+        "source_url": "https://fs.knesset.gov.il/globaldocs/MMM/2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75/2_2c7a8ef0-fd19-4bf6-8b1d-0b7a70a8af75_11_25077.pdf",
+        "source_type": "legislation",
+        "candidate_id": "0a2636f1-aeb1-4e5f-9059-d84962ea812b",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק פיצויי פיטורים, התשכ\"ג-1963",
+        "origin": "perplexity",
+        "snippet": "חוק פיצויי פיטורים, התשכ\"ג-1963; קובע זכאות לפיצויי פיטורים וחיוב בתשלום כאשר מתקיימים תנאי הזכאות, כולל אפשרות לתשלום רטרואקטיבי במקרה של קביעה בדבר יחסי עובד-מעסיק.",
+        "claim_id": "C5",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://fs.knesset.gov.il/globaldocs/MMM/4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c/2_4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c_11_25077.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://fs.knesset.gov.il/globaldocs/MMM/4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c/2_4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c_11_25077.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 143,
+            "title_meaningful_chars": 28
+          },
+          "raw_pplx_source_type": "חקיקה ראשית",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חוק הביטוח הלאומי חוק מס הכנסה חוק הגנת השכר חוק פיצויי פיטורים \"השלכות סיווג שגוי\" חובת מעסיק חיובי תשלומי עבר וקנסות בחקיקה",
+        "source_url": "https://fs.knesset.gov.il/globaldocs/MMM/4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c/2_4d7cb1ec-7f9d-4b44-8f4d-4b4bcb6c9e6c_11_25077.pdf",
+        "source_type": "legislation",
+        "candidate_id": "cd5fedd2-6501-4882-8d70-254e36fa2243",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק עובדים זרים, התשנ\"א-1991",
+        "origin": "perplexity",
+        "snippet": "חוק עובדים זרים, התשנ\"א-1991; כולל הוראות על העסקה כדין, אחריות מעסיק והטלת עיצומים כספיים/סנקציות בגין הפרות, הרלוונטיות גם בהקשר של סיווג יחסי עבודה שגוי.",
+        "claim_id": "C5",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://fs.knesset.gov.il/globaldocs/MMM/8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2/2_8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2_11_25077.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://fs.knesset.gov.il/globaldocs/MMM/8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2/2_8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2_11_25077.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 133,
+            "title_meaningful_chars": 25
+          },
+          "raw_pplx_source_type": "חקיקה ראשית",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חוק הביטוח הלאומי חוק מס הכנסה חוק הגנת השכר חוק פיצויי פיטורים \"השלכות סיווג שגוי\" חובת מעסיק חיובי תשלומי עבר וקנסות בחקיקה",
+        "source_url": "https://fs.knesset.gov.il/globaldocs/MMM/8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2/2_8c6adf8f-7a69-4d6f-8e8a-9b7d67d4f6f2_11_25077.pdf",
+        "source_type": "legislation",
+        "candidate_id": "a43fa161-b3ad-4990-a56c-ee3fa3c71aae",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "סמכות הטלת סנקציות בגין אי-יישום דוחות מבקר המדינה - סקירה משווה",
+        "origin": "perplexity",
+        "snippet": "סקירה זו הוכנה ... לצורך דיוני הוועדה ... בהצעת חוק שנועדה לייעל את הפיקוח על יישום המלצות מבקר המדינה . ... אי-נקיטת אמצעים לתיקון ליקויים שחשף המבקר, ללא הצדק סביר, תהיה עבירת משמעת.",
+        "claim_id": "C5",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://fs.knesset.gov.il/globaldocs/MMM/2cbf8d55-f7f7-e411-80c8-00155d010977/2_2cbf8d55-f7f7-e411-80c8-00155d010977_11_7309.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://fs.knesset.gov.il/globaldocs/MMM/2cbf8d55-f7f7-e411-80c8-00155d010977/2_2cbf8d55-f7f7-e411-80c8-00155d010977_11_7309.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 152,
+            "title_meaningful_chars": 54
+          },
+          "role_corrected_from": "government_report",
+          "raw_pplx_source_type": "knesset research report",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "דו\"ח מבקר המדינה/דו\"ח המוסד לביטוח לאומי/משרד האוצר על עלויות וסנקציות של טעות בסיווג עובדים כעצמאים (דו\"ח בקרה, המלצות מדיניות, הערכת עלויות)",
+        "source_url": "https://fs.knesset.gov.il/globaldocs/MMM/2cbf8d55-f7f7-e411-80c8-00155d010977/2_2cbf8d55-f7f7-e411-80c8-00155d010977_11_7309.pdf",
+        "source_type": "legislation",
+        "candidate_id": "4e7e9e64-4df9-4360-829a-aff49cb4bf7d",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "government_report",
+        "score": 0.75,
+        "title": "שוק העבודה בישראל 2022 תמונת מצב ופעילות משרד העבודה",
+        "origin": "perplexity",
+        "snippet": "משרד העבודה – \"שוק העבודה בישראל 2022 תמונת מצב ופעילות משרד העבודה\" (PDF) כולל נתונים על התפלגות סוג התעסוקה של עצמאים.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.gov.il/BlobFolder/news/employment-report-2022/he/employment-report-2022.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.gov.il/BlobFolder/news/employment-report-2022/he/employment-report-2022.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 100,
+            "title_meaningful_chars": 44
+          },
+          "raw_pplx_source_type": "gov.il",
+          "source_type_normalized": true,
+          "classified_source_class": "government_report"
+        },
+        "query_he": "דו\"ח משרד העבודה/המוסד לביטוח לאומי/משרד האוצר על בעיית סיווג עובדים עצמאים וההשלכות השונות בין מס הכנסה, ביטוח לאומי ובתי דין לעבודה (דו\"ח, הנחיות, סקירה)",
+        "source_url": "https://www.gov.il/BlobFolder/news/employment-report-2022/he/employment-report-2022.pdf",
+        "source_type": "other",
+        "candidate_id": "03c2cfbc-0857-4ac2-a725-72e894d070f5",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "government_report",
+        "score": 0.75,
+        "title": "איגרת למעסיק לשנת 2026",
+        "origin": "perplexity",
+        "snippet": "איגרת למעסיק לשנת 2026 כוללת מידע רשמי על שיעורי דמי הביטוח, דרכי פנייה, ומוקדי טיפול. זהו מסמך רשמי של הביטוח הלאומי, אך לא מסמך סיווג עצמאים מפורש.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "btl.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.btl.gov.il/Insurance/HozrimBituah/Hozrim/_%D7%90%D7%99%D7%92%D7%A8%D7%AA_%D7%9C%D7%9E%D7%A2%D7%A1%D7%99%D7%A7_%D7%9C%D7%A9%D7%A0%D7%AA_2026.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.btl.gov.il/Insurance/HozrimBituah/Hozrim/_%D7%90%D7%99%D7%92%D7%A8%D7%AA_%D7%9C%D7%9E%D7%A2%D7%A1%D7%99%D7%A7_%D7%9C%D7%A9%D7%A0%D7%AA_2026.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 123,
+            "title_meaningful_chars": 19
+          },
+          "raw_pplx_source_type": "government",
+          "source_type_normalized": true,
+          "classified_source_class": "government_report"
+        },
+        "query_he": "דו\"ח המוסד לביטוח לאומי/משרד העבודה על 'מבחני סיווג עצמאים' הכולל רשימות סימנים מעשיים (דו\"ח, הנחיות פנימיות, הנחיות מבקר)",
+        "source_url": "https://www.btl.gov.il/Insurance/HozrimBituah/Hozrim/_%D7%90%D7%99%D7%92%D7%A8%D7%AA_%D7%9C%D7%9E%D7%A2%D7%A1%D7%99%D7%A7_%D7%9C%D7%A9%D7%A0%D7%AA_2026.pdf",
+        "source_type": "other",
+        "candidate_id": "f8f97324-4ea6-46fc-ac08-2b678a29917f",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.155880174040794,
+        "title": "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+        "origin": "local_db",
+        "snippet": "במשפט בישראל הסדרה כוללת לקביעת שאלת ההורות כמו גם הוראות חוק המסדירות במפורש – מונחי אבהות, אמהות או הורות; ברם לצד זאת התפיסה היא, כי הורות, קודם לכל – מוגדרת כהורות ביולוגית, כעולה אף מאדני ההורות שפורטו בפסיקת ביהמ\"ש העליון; כך גם קיבל בית המשפט את טענת קיומה של אפליה וקבע בזיקה לכך, ותוך שהוא מבחין בין נסיבות מצב זה שבהן מתקיימת זיקה גנטית של שני ההורים לקטינה וקובע אף ביחס אליו שאין מקום ליצ",
+        "claim_id": "C5",
+        "metadata": {
+          "court": "בתי המשפט לענייני משפחה",
+          "judges": "הילה מלר-שלו",
+          "district": "מחוז מרכז",
+          "procedure_type": "משפחה"
+        },
+        "query_he": "פסק-דין בית המשפט העליון/בית הדין הארצי לעבודה על תוצאות וסנקציות של סיווג שגוי (חיוב בתשלומי ביטוח לאומי, חובות מס, פיצויים לעובדים וזכויות חוזיות) 'סיווג שגוי' פסק-דין",
+        "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+        "document_id": "8e15165f-026f-48db-a05a-8625606f0e8c",
+        "source_type": "caselaw",
+        "candidate_id": "c97018fa-f813-4e70-a369-a5070211ef71",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.133159658312798,
+        "title": "דיני מזונות אישה בין בית הדין השרעי לבית המשפט לענייני משפחה: סיפורה של מהפכה שמרנית במחלצות ליברליות",
+        "origin": "local_db",
+        "snippet": "ייכות\n-\nלאומיים .  \nמס תיקון את שיזמו הנשים ארגוני של מבטם מנקודת כי לכחד אין '5 , בוודאי אלה\nומצערות צפויות לא תוצאות .ב להביא יש זאת עם לא תוצאות גם היו לתיקון כי חשבון\nמכוונות ,ביסודן וחיוביות : מזונות בתביעת לפנות מוסלמיות לנשים שניתנה האפשרות\n פנימיות רפורמות ליזום השרעיים הדין בתי את הניעה משפחה לענייני המשפט לבתי\nרווחתן את ולקדם נשים עם להיטיב שנועדו . הנשים שמא חששו שהקאדים אפשר\nהמוסלמיהאז",
+        "claim_id": "C5",
+        "metadata": {
+          "tags": [
+            "דיני משפחה",
+            "דיני משפחה",
+            "דיני משפחה"
+          ],
+          "volume": "כרך נב",
+          "source_site": "mishpatim"
+        },
+        "query_he": "פסק-דין בית המשפט העליון/בית הדין הארצי לעבודה על תוצאות וסנקציות של סיווג שגוי (חיוב בתשלומי ביטוח לאומי, חובות מס, פיצויים לעובדים וזכויות חוזיות) 'סיווג שגוי' פסק-דין",
+        "source_url": "https://lawjournal.huji.ac.il/article/12/1928",
+        "document_id": "248c690f-93a8-4499-9a31-bd184cc80fd2",
+        "source_type": "journal_article",
+        "candidate_id": "76c55716-bcb8-40a0-9576-90ddf408f05c",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.125836899876595,
+        "title": "הפללתה של הקללה: ניתוח ריאליסטי של העלבת עובד ציבור",
+        "origin": "local_db",
+        "snippet": "במקרה של  מדינת ישראל נ' ג'ית \n115\n הורשע  אדם  שאמר  \nלשוטר \"אתה היטלר, אתה גרמני\".   \nהתוצאות השונות המתקבלות במקרים דומים  אינן  מפתיעות. הדבר  אינו  נובע רק \nמהעמימות הכללית של העבירה ושל המבחנים שנקבעו על  ידי בית המשפט,  אלא גם  \nמהאופן הקונטקסטואלי שבו  ביטויים מקבלים משמעות  במרחב הלשוני-תרבותי.  הדבר  \nנכון  בנוגע לביטויים באופן כללי, אך במיוחד באשר לקללות אשר מידת הפוגענות שלהן  \nתלויה ל",
+        "claim_id": "C2",
+        "metadata": {
+          "author": "",
+          "volume_url": "https://www.taulawreview.sites.tau.ac.il/mkh-2",
+          "source_site": "tau_law_review"
+        },
+        "query_he": "פסק-דין בית המשפט העליון על משמעות כינוי חוזה ('עובד' או 'קבלן') והאם הכינוי החוזי מחייב או אם יש לבחון את המציאות העובדתית בפועל (מילות מפתח: 'כינוי חוזה', 'labeling', 'תווית חוזה', 'עובד או קבלן')",
+        "source_url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_8bac089491d3465dba2a0c2c73de48d0.pdf",
+        "document_id": "b728d7f9-bb0a-468b-8cd0-82ac1a2d0d4b",
+        "source_type": "journal_article",
+        "candidate_id": "d8d570ce-e2a5-46a6-a429-fbe632c824d6",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.119343134015799,
+        "title": "אולמות ספורט ומגרשי כדורגל – השוואה בין רשויות מקומיות",
+        "origin": "local_db",
+        "snippet": "ת נפרדת של הרשויות המעורבות לא נמצאו הבדלים משמעותיים בינן ובין הרשויות היהודיות. \n14\n עם זאת, בחינה של גודל האולמות מעלה כי שניים מכל שלושה אולמות ספורט ברשויות הערביות הם בינוניים או גדולים (כ-%66), בעוד \nהנתון המקביל ברשויות שאינן ערביות עומד על פחות ממחצית מהאולמות (48.5%.) \n\nאולמות ספורט ומגרשי כדורגל – השוואה בין רשויות מקומיות ערביות ושאינן ערביות | 4 \n \nהכנסת – מרכז המחקר והמידע  www.kness",
+        "claim_id": "C3",
+        "metadata": {
+          "author": null,
+          "authors": "אסף וינינגר",
+          "approver": null,
+          "doc_type": null,
+          "category_id": 19,
+          "broken_title": false,
+          "recovered_at": "2026-04-19T17:22:47.871Z",
+          "requested_by": "מאזן גנאים",
+          "category_name": "תיירות תרבות וספורט",
+          "knesset_number": null,
+          "recovered_title": true,
+          "recovery_method": "after_kativa_header",
+          "publication_date": "09 ביוני 2021",
+          "publication_year": "2021"
+        },
+        "query_he": "פסק-דין בית המשפט העליון/בית הדין לעבודה שמדגיש הבדלים בתוצאה בין מס הכנסה, ביטוח לאומי ובתי דין לעבודה בסיווג עובד או עצמאי (מילות מפתח: 'הבדלים בין מס הכנסה וביטוח לאומי', 'סיווג עובד עצמאי')",
+        "source_url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7008&businessType=1",
+        "document_id": "6841e471-4320-4625-a973-f144ca332ba1",
+        "source_type": "knesset_research",
+        "candidate_id": "9d4d9beb-8790-46f6-a600-5d1987de3c84",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.0475902520120144,
+        "title": "בג\"ץ 2194/21 מוחמד מופלח דרויש נ׳ בית הדין הארצי לעבודה פסק דין",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C4",
+        "metadata": {
+          "parties": "מוחמד מופלח דרויש נ׳ בית הדין הארצי לעבודה",
+          "raw_title": "בג\"ץ 2194/21 מוחמד מופלח דרויש נ. בית הדין הארצי לעבודה פסק דין",
+          "source_site": "toledano.co.il",
+          "decision_date": null,
+          "decision_kind": "פסק דין",
+          "document_kind": "caselaw",
+          "local_pdf_file": "01867 - בג ץ 2194 21 מוחמד מופלח דרויש נ׳ בית הדין הארצי לעבודה פסק דין.pdf",
+          "procedure_type": "בג\"ץ",
+          "source_category": "פסיקה חינם",
+          "procedure_number": "2194/21"
+        },
+        "query_he": "פסק-דין בית המשפט העליון/בית הדין הארצי לעבודה רשימת סימנים מעשיים לבחינת 'עובד או עצמאי' (אספקת אמצעים, שליטה על אופן העבודה, סיכון עסקי, זכות להעביר עבודה, שיטת תשלום, משך עבודה, בלעדיות)",
+        "source_url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2194-21-%d7%9e%d7%95%d7%97%d7%9e%d7%93-%d7%9e%d7%95%d7%a4%d7%9c%d7%97-%d7%93%d7%a8%d7%95%d7%99%d7%a9-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "document_id": "480ecdf1-c011-4859-a745-47cf4e570da3",
+        "source_type": "caselaw",
+        "candidate_id": "c100aaa9-172b-4764-81d3-b796dc93273f",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.0475902520120144,
+        "title": "בג\"ץ 6497/22 יעקב גרא נ׳ בית הדין הארצי לעבודה פסק דין",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C4",
+        "metadata": {
+          "parties": "יעקב גרא נ׳ בית הדין הארצי לעבודה",
+          "raw_title": "בג\"ץ 6497/22 יעקב גרא נ. בית הדין הארצי לעבודה פסק דין",
+          "source_site": "toledano.co.il",
+          "decision_date": null,
+          "decision_kind": "פסק דין",
+          "document_kind": "caselaw",
+          "local_pdf_file": "00884 - בג ץ 6497 22 יעקב גרא נ׳ בית הדין הארצי לעבודה פסק דין.pdf",
+          "procedure_type": "בג\"ץ",
+          "source_category": "פסיקה חינם",
+          "procedure_number": "6497/22"
+        },
+        "query_he": "פסק-דין בית המשפט העליון/בית הדין הארצי לעבודה רשימת סימנים מעשיים לבחינת 'עובד או עצמאי' (אספקת אמצעים, שליטה על אופן העבודה, סיכון עסקי, זכות להעביר עבודה, שיטת תשלום, משך עבודה, בלעדיות)",
+        "source_url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-6497-22-%d7%99%d7%a2%d7%a7%d7%91-%d7%92%d7%a8%d7%90-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6%d7%99-%d7%9c%d7%a2%d7%91%d7%95%d7%93%d7%94-%d7%a4/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "document_id": "2633128e-2f93-4792-b428-e7af0b5d415f",
+        "source_type": "caselaw",
+        "candidate_id": "cc6685cb-d7db-4ff8-967e-219c643cfcb9",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק פיצויי פיטורים, תשכ\"ג-1963",
+        "origin": "perplexity",
+        "snippet": "בחוק פיצויי פיטורים, תשכ\"ג-1963, הזכות לפיצויי פיטורים נובעת מיחסי עובד-מעסיק; \"עובד\" מוגדר בסעיף 1, והסעיפים המרכזיים לעניין הזכאות הם 1, 3 ו-11.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.nevo.co.il/law_html/Law01/500_001.htm",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.nevo.co.il/law_html/Law01/500_001.htm",
+            "hygiene_reasons": [
+              "url_generic_index"
+            ],
+            "landing_page_status": "generic_index",
+            "body_meaningful_chars": 125,
+            "title_meaningful_chars": 27
+          },
+          "raw_pplx_source_type": "search_result",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חוק הביטוח הלאומי חוק מס הכנסה חוק פיצויי פיטורים חוק הגנת השכר 'הגדרת עובד' 'הגדרת עצמאי' הבדלים בין הסמכויות של ביטוח לאומי, מס הכנסה ובתי דין לעבודה בחקיקה",
+        "source_url": "https://www.nevo.co.il/law_html/Law01/500_001.htm",
+        "source_type": "legislation",
+        "candidate_id": "b8b6cab9-367d-4bfe-b375-aec36c177f03",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק הגנת השכר, תשי\"ח-1958",
+        "origin": "perplexity",
+        "snippet": "בחוק הגנת השכר, תשי\"ח-1958, סעיף 1 מגדיר \"שכר\" ו\"עובד\" בהקשר של זכויות שכר, וסעיפים 10-13 עוסקים במועדי תשלום, תלוש שכר וניכויים אסורים.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.nevo.co.il/law_html/Law01/500_043.htm",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.nevo.co.il/law_html/Law01/500_043.htm",
+            "hygiene_reasons": [
+              "url_generic_index"
+            ],
+            "landing_page_status": "generic_index",
+            "body_meaningful_chars": 115,
+            "title_meaningful_chars": 22
+          },
+          "raw_pplx_source_type": "search_result",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חוק הביטוח הלאומי חוק מס הכנסה חוק פיצויי פיטורים חוק הגנת השכר 'הגדרת עובד' 'הגדרת עצמאי' הבדלים בין הסמכויות של ביטוח לאומי, מס הכנסה ובתי דין לעבודה בחקיקה",
+        "source_url": "https://www.nevo.co.il/law_html/Law01/500_043.htm",
+        "source_type": "legislation",
+        "candidate_id": "4e0e9bfd-bd73-480e-bbd6-e7cdcff4afeb",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק מבקר המדינה, תשי\"ח-1958 [נוסח משולב]",
+        "origin": "perplexity",
+        "snippet": "חוק מבקר המדינה, תשי\"ח-1958 [נוסח משולב] ... לא יאוחר מיום 15 בפברואר בכל שנה ימציא המבקר לראש הממשלה וליושב ראש הוועדה לעניני ביקורת המדינה של הכנסת לעיון דין וחשבון על פעולותיו.",
+        "claim_id": "C5",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.nevo.co.il/law_html/law01/195_001.htm",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.nevo.co.il/law_html/law01/195_001.htm",
+            "hygiene_reasons": [
+              "url_generic_index"
+            ],
+            "landing_page_status": "generic_index",
+            "body_meaningful_chars": 149,
+            "title_meaningful_chars": 35
+          },
+          "role_corrected_from": "government_report",
+          "raw_pplx_source_type": "law / official source",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "דו\"ח מבקר המדינה/דו\"ח המוסד לביטוח לאומי/משרד האוצר על עלויות וסנקציות של טעות בסיווג עובדים כעצמאים (דו\"ח בקרה, המלצות מדיניות, הערכת עלויות)",
+        "source_url": "https://www.nevo.co.il/law_html/law01/195_001.htm",
+        "source_type": "legislation",
+        "candidate_id": "d2bc8407-9deb-4db4-9a12-1f5a5b0f00f4",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "עובד או קבלן",
+        "origin": "perplexity",
+        "snippet": "איל זמיר, \"עובד או קבלן\", משפטים. במבוא נאמר כי ביחס להבחנה בין עובד ל\"קבלן עצמאי\" עדיף מבחינה לשונית להשתמש במונח הנייטרלי \"קבלן\"; ההבחנה נקבעת לפי מהות היחסים ולא רק לפי המינוח החוזי.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 154,
+            "title_meaningful_chars": 10
+          },
+          "raw_pplx_source_type": "אקדמי / מאמר",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר אקדמי 'משמעות כינוי החוזה' 'labeling' בהקשר של סיווג עובד/קבלן עצמאי דיני עבודה (מאמר, כתב-עת או ספר)",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+        "source_type": "other",
+        "candidate_id": "3df32328-22cb-4810-9b13-cb440dd2ebd4",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "התניה על סטטוס 'עובד' והשלכותיה",
+        "origin": "perplexity",
+        "snippet": "המאמר \"התניה על סטטוס 'עובד' והשלכותיה\" עוסק בהשלכות המשפטיות של סיווג ההתקשרות ומציע דיון רחב בשאלת הסטטוס החוזי והמהותי של עובד.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%AA%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%AA%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 110,
+            "title_meaningful_chars": 27
+          },
+          "raw_pplx_source_type": "אקדמי / מאמר",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר אקדמי 'משמעות כינוי החוזה' 'labeling' בהקשר של סיווג עובד/קבלן עצמאי דיני עבודה (מאמר, כתב-עת או ספר)",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%AA%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+        "source_type": "other",
+        "candidate_id": "cff87955-981f-4219-bcde-05f1db6a4dad",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "דיני עבודה",
+        "origin": "perplexity",
+        "snippet": "חומר לימודי בדיני עבודה מסכם כי \"מבחן ההשתלבות\" הוא העיקרי בקביעת מעמד עובד, וכי עובד הוא מי שמשולב במפעל ואינו בעל עסק עצמאי משלו.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "netanya.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%9E%D7%97%D7%91%D7%A8%D7%AA%20%D7%91%D7%97%D7%99%D7%A0%D7%94-%20%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20%D7%91%D7%A8%20%D7%A6%D7%93%D7%A7%D7%94.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%9E%D7%97%D7%91%D7%A8%D7%AA%20%D7%91%D7%97%D7%99%D7%A0%D7%94-%20%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20%D7%91%D7%A8%20%D7%A6%D7%93%D7%A7%D7%94.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 108,
+            "title_meaningful_chars": 9
+          },
+          "raw_pplx_source_type": "אקדמי / חומר לימודי",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר אקדמי 'משמעות כינוי החוזה' 'labeling' בהקשר של סיווג עובד/קבלן עצמאי דיני עבודה (מאמר, כתב-עת או ספר)",
+        "source_url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%9E%D7%97%D7%91%D7%A8%D7%AA%20%D7%91%D7%97%D7%99%D7%A0%D7%94-%20%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20%D7%91%D7%A8%20%D7%A6%D7%93%D7%A7%D7%94.pdf",
+        "source_type": "other",
+        "candidate_id": "a4545b63-d8e0-4d72-93af-2b11e53afaa0",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "government_report",
+        "score": 0.75,
+        "title": "עובד עצמאי - פירוט סוגי המעמד וחובת תשלום",
+        "origin": "perplexity",
+        "snippet": "המוסד לביטוח לאומי – דף \"עובד עצמאי - פירוט סוגי המעמד וחובת תשלום\". דף רשמי על מעמד עובד עצמאי, חובת תשלום ודיווח.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "btl.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/default.aspx",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/default.aspx",
+            "hygiene_reasons": [
+              "url_generic_index"
+            ],
+            "landing_page_status": "generic_index",
+            "body_meaningful_chars": 94,
+            "title_meaningful_chars": 34
+          },
+          "raw_pplx_source_type": "btl.gov.il",
+          "source_type_normalized": true,
+          "classified_source_class": "government_report"
+        },
+        "query_he": "דו\"ח משרד העבודה/המוסד לביטוח לאומי/משרד האוצר על בעיית סיווג עובדים עצמאים וההשלכות השונות בין מס הכנסה, ביטוח לאומי ובתי דין לעבודה (דו\"ח, הנחיות, סקירה)",
+        "source_url": "https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/default.aspx",
+        "source_type": "other",
+        "candidate_id": "e6920eab-ebba-4650-bfad-81cb50cdc219",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "government_report",
+        "score": 0.75,
+        "title": "אתר הכנסת - פרסומי ועדות",
+        "origin": "perplexity",
+        "snippet": "כנסת ישראל – פרסומי ועדות ודיונים עשויים לכלול סקירות על סיווג עצמאים, זכויות וחובות בדיני עבודה, ביטוח לאומי ומס; ניתן לאתר דרך אתר הכנסת.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.knesset.gov.il",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.knesset.gov.il/",
+            "hygiene_reasons": [
+              "url_generic_index"
+            ],
+            "landing_page_status": "generic_index",
+            "body_meaningful_chars": 116,
+            "title_meaningful_chars": 20
+          },
+          "raw_pplx_source_type": "knesset.gov.il",
+          "source_type_normalized": true,
+          "classified_source_class": "government_report"
+        },
+        "query_he": "דו\"ח משרד העבודה/המוסד לביטוח לאומי/משרד האוצר על בעיית סיווג עובדים עצמאים וההשלכות השונות בין מס הכנסה, ביטוח לאומי ובתי דין לעבודה (דו\"ח, הנחיות, סקירה)",
+        "source_url": "https://www.knesset.gov.il",
+        "source_type": "other",
+        "candidate_id": "757c03b2-60a6-45f7-811d-23b35ee9a0a2",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "government_report",
+        "score": 0.75,
+        "title": "פתיחת תיק עצמאי בביטוח לאומי - עובד עצמאי",
+        "origin": "perplexity",
+        "snippet": "פתיחת תיק עצמאי בביטוח לאומי - עובד עצמאי. האתר מציין שניתן לפתוח תיק ברשות המסים וגם בביטוח הלאומי בתהליך דיגיטלי אחד, וכולל הפניה לפתיחת התיק והגשת הפרטים הנדרשים.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "btl.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "http://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/howtoregister.aspx",
+            "hygiene_action": "keep",
+            "url_normalized": "http://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/howtoregister.aspx",
+            "hygiene_reasons": [
+              "url_generic_index"
+            ],
+            "landing_page_status": "generic_index",
+            "body_meaningful_chars": 138,
+            "title_meaningful_chars": 34
+          },
+          "raw_pplx_source_type": "government",
+          "source_type_normalized": true,
+          "classified_source_class": "government_report"
+        },
+        "query_he": "דו\"ח המוסד לביטוח לאומי/משרד העבודה על 'מבחני סיווג עצמאים' הכולל רשימות סימנים מעשיים (דו\"ח, הנחיות פנימיות, הנחיות מבקר)",
+        "source_url": "http://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/howtoregister.aspx",
+        "source_type": "other",
+        "candidate_id": "fa2acb5d-a037-4654-92d1-565d17164a9e",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "government_report",
+        "score": 0.75,
+        "title": "דין וחשבון רב שנתי | המוסד לביטוח לאומי",
+        "origin": "perplexity",
+        "snippet": "דין וחשבון רב שנתי | המוסד לביטוח לאומי. השירות מאפשר לפתוח תיק גבייה ולהודיע על שינוי במעמד; מילוי הטופס כנדרש יאפשר את קביעת המעמד בביטוח הלאומי, קביעת הבסיס לחיובים בדמי ביטוח והבטחת הזכויות בהתאם לחוק.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.gov.il/he/service/annual_report",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.gov.il/he/service/annual_report",
+            "hygiene_reasons": [
+              "url_generic_index"
+            ],
+            "landing_page_status": "generic_index",
+            "body_meaningful_chars": 171,
+            "title_meaningful_chars": 32
+          },
+          "raw_pplx_source_type": "government",
+          "source_type_normalized": true,
+          "classified_source_class": "government_report"
+        },
+        "query_he": "דו\"ח המוסד לביטוח לאומי/משרד העבודה על 'מבחני סיווג עצמאים' הכולל רשימות סימנים מעשיים (דו\"ח, הנחיות פנימיות, הנחיות מבקר)",
+        "source_url": "https://www.gov.il/he/service/annual_report",
+        "source_type": "other",
+        "candidate_id": "b31e7ca4-cd04-4626-8eab-661dcc8523d5",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "government_report",
+        "score": 0.75,
+        "title": "דוח שנתי של מבקר המדינה - מאי 2026",
+        "origin": "perplexity",
+        "snippet": "דוח הביקורת השנתי של מבקר המדינה - מאי 2026 מונח על שולחן הכנסת על פי חוק מבקר המדינה, התשי\"ח-1958 [נוסח משולב].",
+        "claim_id": "C5",
+        "metadata": {
+          "domain": "library.mevaker.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Publications/2144.aspx",
+            "hygiene_action": "keep",
+            "url_normalized": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Publications/2144.aspx",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 92,
+            "title_meaningful_chars": 27
+          },
+          "raw_pplx_source_type": "government report",
+          "source_type_normalized": true,
+          "classified_source_class": "government_report"
+        },
+        "query_he": "דו\"ח מבקר המדינה/דו\"ח המוסד לביטוח לאומי/משרד האוצר על עלויות וסנקציות של טעות בסיווג עובדים כעצמאים (דו\"ח בקרה, המלצות מדיניות, הערכת עלויות)",
+        "source_url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Publications/2144.aspx",
+        "source_type": "other",
+        "candidate_id": "a761230f-922c-4cb8-8e79-bb168b3e2bde",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "government_report",
+        "score": 0.75,
+        "title": "נוהל טיפול בפניות הציבור למשרד מבקר המדינה",
+        "origin": "perplexity",
+        "snippet": "הביקורת העוסקות בהכנת דוחות ביקורת על הגופים המבוקרים ... הסמיך את מבקר המדינה ונציב תלונות הציבור ... לבחון \"כל עניין אחר שיראה בו צורך\".",
+        "claim_id": "C5",
+        "metadata": {
+          "domain": "media.mevaker.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://media.mevaker.gov.il/mevaker/media/f5qfqvcp/%D7%A0%D7%95%D7%94%D7%9C-%D7%98%D7%99%D7%A4%D7%95%D7%9C-%D7%91%D7%A4%D7%A0%D7%99%D7%95%D7%AA-%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%9C%D7%9E%D7%A9%D7%A8%D7%93-%D7%9E%D7%91%D7%A7%D7%A8-%D7המדינה.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://media.mevaker.gov.il/mevaker/media/f5qfqvcp/%D7%A0%D7%95%D7%94%D7%9C-%D7%98%D7%99%D7%A4%D7%95%D7%9C-%D7%91%D7%A4%D7%A0%D7%99%D7%95%D7%AA-%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%9C%D7%9E%D7%A9%D7%A8%D7%93-%D7%9E%D7%91%D7%A7%D7%A8-%D7%D7%94%D7%9E%D7%93%D7%99%D7%A0%D7%94.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 115,
+            "title_meaningful_chars": 36
+          },
+          "raw_pplx_source_type": "government document",
+          "source_type_normalized": true,
+          "classified_source_class": "government_report"
+        },
+        "query_he": "דו\"ח מבקר המדינה/דו\"ח המוסד לביטוח לאומי/משרד האוצר על עלויות וסנקציות של טעות בסיווג עובדים כעצמאים (דו\"ח בקרה, המלצות מדיניות, הערכת עלויות)",
+        "source_url": "https://media.mevaker.gov.il/mevaker/media/f5qfqvcp/%D7%A0%D7%95%D7%94%D7%9C-%D7%98%D7%99%D7%A4%D7%95%D7%9C-%D7%91%D7%A4%D7%A0%D7%99%D7%95%D7%AA-%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%9C%D7%9E%D7%A9%D7%A8%D7%93-%D7%9E%D7%91%D7%A7%D7%A8-%D7המדינה.pdf",
+        "source_type": "other",
+        "candidate_id": "fd76a578-4acc-47ce-9222-b5e05ec76f42",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "government_report",
+        "score": 0.75,
+        "title": "הבאת עובדים זרים ושמירה על זכויותיהם - מבקר המדינה",
+        "origin": "perplexity",
+        "snippet": "בחודשים פברואר 2013 עד יוני 2014 בדק משרד מבקר המדינה לסירוגין כמה סוגיות הנוגעות להעסקת עו\"ז בענפי הסיעוד, החקלאות והבנייה: השמירה על זכויות עו\"ז; התקנת תקנות בדבר פיקדון לעו\"ז; ...",
+        "claim_id": "C5",
+        "metadata": {
+          "domain": "library.mevaker.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/297-27.aspx",
+            "hygiene_action": "keep",
+            "url_normalized": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/297-27.aspx",
+            "hygiene_reasons": [
+              "url_generic_index"
+            ],
+            "landing_page_status": "generic_index",
+            "body_meaningful_chars": 153,
+            "title_meaningful_chars": 42
+          },
+          "raw_pplx_source_type": "government report",
+          "source_type_normalized": true,
+          "classified_source_class": "government_report"
+        },
+        "query_he": "דו\"ח מבקר המדינה/דו\"ח המוסד לביטוח לאומי/משרד האוצר על עלויות וסנקציות של טעות בסיווג עובדים כעצמאים (דו\"ח בקרה, המלצות מדיניות, הערכת עלויות)",
+        "source_url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/297-27.aspx",
+        "source_type": "other",
+        "candidate_id": "4c2da4ab-d5e0-48d2-9a69-b736bd043b6e",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.4065298265896674,
+        "title": "מיהו עובד: מבחני הסף",
+        "origin": "local_db",
+        "snippet": "של פסקי \nדין אלה, עם ניסיון ליישב ביניהם אגב הצגת השוני העובדתי בין המקרים השונים. \n64\n  בחלק מהמדינות שהסדירו את הנושא בחקיקה נקבעה מגבלה כזו במפורש.  ראו  Rosemary  Owens  & \nAndrew Stewart, Regulating for Decent Work Experience: Meeting the Challenge of \nthe Rise of the Intern, 155 INT'L LAB. REV. 679, 689–691 (2016) . \n65\n  בית הדין ציין לאחרונה בהקשר קרוב, של מעמד משתקמים, כי ״יש לשקול [...] ",
+        "claim_id": "C3",
+        "metadata": {
+          "tags": [
+            "דיני עבודה",
+            "דיני עבודה",
+            "דיני חוזים",
+            "דיני עבודה",
+            "דיני עבודה",
+            "דיני עבודה"
+          ],
+          "volume": "כרך נד",
+          "source_site": "mishpatim"
+        },
+        "query_he": "פסק-דין בית המשפט העליון/בית הדין לעבודה שמדגיש הבדלים בתוצאה בין מס הכנסה, ביטוח לאומי ובתי דין לעבודה בסיווג עובד או עצמאי (מילות מפתח: 'הבדלים בין מס הכנסה וביטוח לאומי', 'סיווג עובד עצמאי')",
+        "source_url": "https://lawjournal.huji.ac.il/article/12/1911",
+        "document_id": "bb6afb4a-e1de-49ed-b5ad-2a891c9e886b",
+        "source_type": "journal_article",
+        "candidate_id": "7c13c616-e4f2-4b1f-a2c4-20ad00520d3d",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 29866,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 67452,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 3343,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 16517,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 70674,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 63768,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch2.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 38259,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter_v2.initial",
+        "escalated": false,
+        "http_status": 200
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://www.hilan.co.il/%D7%9E%D7%A8%D7%9B%D7%96-%D7%99%D7%93%D7%A2/%D7%91%D7%A1%D7%99%D7%A1-%D7%99%D7%93%D7%A2/%D7%9E%D7%99%D7%9C%D7%95%D7%9F-%D7%9C%D7%AA%D7%A0%D7%90%D7%99-%D7%A2%D7%91%D7%95%D7%93%D7%94/%D7%99/%D7%99%D7%97%D7%A1%D7%99-%D7%A2%D7%95%D7%91%D7%93-%D7%9E%D7%A2%D7%91%D7%99%D7%93/",
+        "role": "scholarship",
+        "title": "יחסי עובד-מעביד",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי דיני עבודה 'מבחן השליטה' 'מבחן השייכות' 'תלות כלכלית' הבחנה עובד קבלן עצמאי סקירה ספרותית (מאמר, כתב-עת אקדמי או פרק ספר)",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://be-sure.co.il/wp-content/uploads/2020/02/article_39.pdf",
+        "role": "scholarship",
+        "title": "אובן קוניאק - מאמר/סיכום על יחסי עובד-מעביד",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי דיני עבודה 'מבחן השליטה' 'מבחן השייכות' 'תלות כלכלית' הבחנה עובד קבלן עצמאי סקירה ספרותית (מאמר, כתב-עת אקדמי או פרק ספר)",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://sfile.f-static.com/image/users/250155/ftp/my_files/dini%20avoda%20D/%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20-%20%D7%9E%D7%99%D7%9B%D7%90%D7%9C%20%D7%91%D7%90%D7%A8%D7%99%D7%A1.pdf?id=14351140",
+        "role": "scholarship",
+        "title": "דיני עבודה - סיכומי שיעור",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי דיני עבודה 'מבחן השליטה' 'מבחן השייכות' 'תלות כלכלית' הבחנה עובד קבלן עצמאי סקירה ספרותית (מאמר, כתב-עת אקדמי או פרק ספר)",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://he.wikipedia.org/wiki/%D7%99%D7%97%D7%A1%D7%99_%D7%A2%D7%95%D7%91%D7%93%E2%80%93%D7%9E%D7%A2%D7%91%D7%99%D7%93",
+        "role": "scholarship",
+        "title": "יחסי עובד–מעביד",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי דיני עבודה 'מבחן השליטה' 'מבחן השייכות' 'תלות כלכלית' הבחנה עובד קבלן עצמאי סקירה ספרותית (מאמר, כתב-עת אקדמי או פרק ספר)",
+        "drop_reason": "bad_source"
+      },
+      {
+        "url": "https://ygoldlaw.co.il/litigation-lawyer/labor/employer-employee-relationship/",
+        "role": "scholarship",
+        "title": "יחסי עובד מעביד",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי דיני עבודה 'מבחן השליטה' 'מבחן השייכות' 'תלות כלכלית' הבחנה עובד קבלן עצמאי סקירה ספרותית (מאמר, כתב-עת אקדמי או פרק ספר)",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://bazlaw.co.il/employee-vs-contractor/",
+        "role": "scholarship",
+        "title": "עובד או קבלן עצמאי – המבחנים המשפטיים",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר אקדמי 'משמעות כינוי החוזה' 'labeling' בהקשר של סיווג עובד/קבלן עצמאי דיני עבודה (מאמר, כתב-עת או ספר)",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.globes.co.il/news/article.aspx?did=66288",
+        "role": "scholarship",
+        "title": "מה ההבדל בין עובד לבין קבלן?",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר אקדמי 'משמעות כינוי החוזה' 'labeling' בהקשר של סיווג עובד/קבלן עצמאי דיני עבודה (מאמר, כתב-עת או ספר)",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.kolzchut.org.il/he/%D7%A2%D7%95%D7%91%D7%93_%D7%A2%D7%A6%D7%9E%D7%90%D7%99_(%D7%9C%D7%A4%D7%99_%D7%94%D7%92%D7%93%D7%A8%D7%AA_%D7%94%D7%9E%D7%95%D7%A1%D7%93_%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%9C%D7%אומי)",
+        "role": "primary_statute",
+        "title": "הבדלים בין הגדרות מעמד עובד/עצמאי",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "חוק הביטוח הלאומי חוק מס הכנסה חוק פיצויי פיטורים חוק הגנת השכר 'הגדרת עובד' 'הגדרת עצמאי' הבדלים בין הסמכויות של ביטוח לאומי, מס הכנסה ובתי דין לעבודה בחקיקה",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.calcalist.co.il/local/articles/0,7340,L-3634496,00.html",
+        "role": "scholarship",
+        "title": "עובד שכיר או קבלן עצמאי? כך תדעו",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר אקדמי 'סימנים להבחנה בין עובד לקבלן עצמאי' אספקת ציוד סיכון עסקי אינטגרציה שייכות שיטות תשלום רשימת גורמים בהנחיית שופטים (מאמר, כתב-עת דיני עבודה)",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.maariv.co.il/news/law/Article-775051",
+        "role": "scholarship",
+        "title": "קביעת יחסי עבודה: עצמאי או שכיר? זו השאלה",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר אקדמי 'סימנים להבחנה בין עובד לקבלן עצמאי' אספקת ציוד סיכון עסקי אינטגרציה שייכות שיטות תשלום רשימת גורמים בהנחיית שופטים (מאמר, כתב-עת דיני עבודה)",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://bazlaw.co.il/employee-vs-contractor/",
+        "role": "scholarship",
+        "title": "מאמר מס' 3: עובד או קבלן עצמאי – המבחנים המשפטיים",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר אקדמי 'סימנים להבחנה בין עובד לקבלן עצמאי' אספקת ציוד סיכון עסקי אינטגרציה שייכות שיטות תשלום רשימת גורמים בהנחיית שופטים (מאמר, כתב-עת דיני עבודה)",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://ahec-tax.co.il/wp-content/uploads/2013/03/yeda_434-nov-2012_am61.pdf",
+        "role": "government_report",
+        "title": "yeda 434 november 2012.indd",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "דו\"ח המוסד לביטוח לאומי/משרד העבודה על 'מבחני סיווג עצמאים' הכולל רשימות סימנים מעשיים (דו\"ח, הנחיות פנימיות, הנחיות מבקר)",
+        "drop_reason": "class_unknown_not_admitted_for_government_report"
+      }
+    ],
+    "required_anchors": {
+      "count": 0,
+      "anchors": [],
+      "enabled": true,
+      "statuses": [],
+      "queries_emitted": []
+    },
+    "drafter_v2_full_compare": null,
+    "drafter_v2_opus_compare": null,
+    "drafter_v2_sonnet_compare": null
+  }
+}

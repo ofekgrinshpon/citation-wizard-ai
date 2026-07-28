@@ -1,0 +1,1995 @@
+{
+  "id": "D",
+  "category": "doctrine",
+  "query": "מהי חובת תום הלב במשא ומתן?",
+  "run_id": "c1559fa7-e63f-4de6-8cc6-04b153de1ebc",
+  "qa_log_id": "60425e3a-a019-403d-a956-24aa9c4207a7",
+  "answer": "חובת תום הלב במשא ומתן מחייבת שהתנהלות הצדדים בשלב הטרום‑חוזי תהיה הוגנת: על הצדדים להימנע מהטעיה או מהסתרת עובדות מהותיות במצבים שבהם חלה חובת גילוי, וכשנזיקי — להימנע מפעולות שיובילו להסתמכות סבירה שעלולה לגרום לנזק.¹\n\n**היקף החובה**\n\nהחובה אינה חובת גילוי כללית של כל פרט; בסעיף 12 מפורש כי חובת גילוי צומחת במקרים שבהם הצד היודע כי המתקשר האחר אינו יכול להשיג בעצמו פרטים חיוניים למילוי הכרעתו מחויב לגלותם. יחד עם זאת חובת תום הלב כוללת גם איסור על הטעיה פעילה ופרקטיקות משא‑ומתן מניפולטיביות שמטרתן לגרום לטעויות או להסתמכות כוזבת.²\n\n**תנאי קיום והיסודות להוכחת הפרה**\n\nהפרת חובת תום הלב במשא‑ומתן נבחנת לפי יסודות אופרטיביים: קיומה של ממשק משא‑ומתן בין צדדים (כולל שלב הטרום‑חוזי), זהות העובדות או המידע שהוסתרו או שונו, ידיעת הצד המוסר על כך שהצד השני אינו יכול לקבל את המידע בעצמו, הסתמכות סבירה של הצד הנפגע על מה שנאמר או לא נודע, וקשר סיבתי בין ההטעיה לנזק. הנטל להוכיח יסודות אלה מוטל על המערער הנפגע.³\n\n**סנקציות ופתרונות משפטיים**\n\nהסעד תלוי בנסיבות ובחומרת ההפרה: פורמלית מצויים פיצויי הסתמכות ונזקי משא‑ומתן (פיצוי כספי), השבת המצב לקדמותו או ביטול העסקה/מניעת קיום הסכם שנגזר מהטעיה, ואף סעדים חריגים כגון פיצויי קיום או צווי אכיפה כאשר הוכח כי חוזה כמעט הופק וההפרה מנעה את מימושו. בבתי המשפט גם נדונו השלכות ראייתיות ושיקולים לגבי תוקף הסכמי פשרה שהושגו לאחר הסתרת עובדות.⁴\n\n**מגבלות והחרגות**\n\nהתפשטות חובת תום הלב מצומצמת בידי היחס בין עקרון תום הלב וחופש החוזים: יש גישה כלכלית המזהירה מפני הטלת חובות גילוי רחבות שעלולות לצמצם יתר על המידה את חופש המשא‑ומתן. בנוסף, הסעיף הממלכתי קובע תנאי של ידיעה כי הצד השני אינו יכול להשיג את המידע בעצמו — גבול המקטין את חובת הגילוי. בחלק מהטקסטים מוסבר כי יש להבחין בין חובת השתיקה הכללית (המותרת) לבין איסור ההטעיה וההסתרה של מידע מהותי.⁵\n\nמגבלות נוספות נקשרות לנסיבות יחסיות: יחסי תלות מיוחדים או חוקים רגולטוריים/מימוניים עשויים להגביר את חובת הגילוי, ואילו משא‑ומתן מסחרי תחרותי יוטה להחיל גבולות רחבים יותר לחופש להסתיר פרטים שלא חורגים מהאיסור על הטעיה.²\n\nהיקף הסקירה כאן מוגבל למקורות שסופקו: התשובה מתבססת על ההדגשים החוקתיים והאקדמיים בסעיף 12, בעבודות דוקטרינטליות שניתנו ובפסיקה המדגמית שהובאה; אם ברצונך ניתוח של פסק‑דין מסוים או דוח מקיף על חריגים רגולטוריים, ציין מהו המקור המבוקש.",
+  "footnotes": [
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+      "title": "סעיף 12 לחוק החתים: תום לב גמשא ומתן; תום לב בחוזים ואשם ביצירת החוזה; החובה לנהוג בתום לב במשא ומתן בראי הגישה הכלכלית",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+          "title": "סעיף 12 לחוק החתים: תום לב גמשא ומתן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+          "title": "תום לב בחוזים ואשם ביצירת החוזה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+          "title": "החובה לנהוג בתום לב במשא ומתן בראי הגישה הכלכלית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+      "title": "סעיף 12 לחוק החתים: תום לב גמשא ומתן; החובה לנהוג בתום לב במשא ומתן בראי הגישה הכלכלית",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+          "title": "סעיף 12 לחוק החתים: תום לב גמשא ומתן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+          "title": "החובה לנהוג בתום לב במשא ומתן בראי הגישה הכלכלית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+      "title": "תום לב בחוזים ואשם ביצירת החוזה; סעיף 12 לחוק החתים: תום לב גמשא ומתן; נזיקי - השתק הבטחה והממשק החוזי",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+          "title": "תום לב בחוזים ואשם ביצירת החוזה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+          "title": "סעיף 12 לחוק החתים: תום לב גמשא ומתן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.bi.u.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+          "title": "נזיקי - השתק הבטחה והממשק החוזי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+      "title": "תרומות/תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן; נזיקי - השתק הבטחה והממשק החוזי; ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+          "title": "תרומות/תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.bi.u.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+          "title": "נזיקי - השתק הבטחה והממשק החוזי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+          "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+      "title": "החובה לנהוג בתום לב במשא ומתן בראי הגישה הכלכלית; סעיף 12 לחוק החתים: תום לב גמשא ומתן; מהותו של עקרון תום הלב – סיכום",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+          "title": "החובה לנהוג בתום לב במשא ומתן בראי הגישה הכלכלית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+          "title": "סעיף 12 לחוק החתים: תום לב גמשא ומתן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/%D7%AA%D7%99%D7%9E%D7%A6%D7%95%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%9C%20%D7%92%D7%91%D7%A8%D7%99%D7%90%D7%9C%D7%94%20%D7%A9%D7%9C%D7%95.doc",
+          "title": "מהותו של עקרון תום הלב – סיכום",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "הגדרת דוקטרינה דורשת עיגון בפסיקה המחייבת (הסייגים והנסיבות שבהן נקבעה החובה) ובספרות שמנסחת את הדרגות והקריטריונים התיאורטיים.",
+        "text_he": "הגדרה משפטית בסיסית: מהו היקף החובה של תום הלב במשא ומתן (האם היא חובת גילוי, חובת הימנעות מהטעיה, חובת זהירות כלפי הסתמכות הצד השני, וכד')?",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "שאלה על אלמנטים ופיתוח מבחנים היא גרעין דוקטרינרי שנקבע ונפרש בפסיקה המחייבת ותורם הספרות המשפטית.",
+        "text_he": "תנאי קיום החובה והאלמנטים הנדרשים להוכחת הפרה במשא ומתן (מתי ונגד מי החובה חלה — רק בין צדדים קיימים, גם במשא ומתן ראשוני; מה הם היסודות: זהות פלוגתא של העובדות, הסתמכות סבירה, חשיפת מידע מהותי וכו')?",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "היקף הסנקציות והנזקים נקבע בפסיקה המחייבת ובספרות שמבררת את היישום המעשי של הדוקטרינה.",
+        "text_he": "סנקציות ופתרונות משפטיים להפרת חובת תום הלב במשא ומתן (פיצויים, מניעת קיום הסכם, ציווי מניעה, החזרת מצב לקדמותו, סנקציות ראייתיות וכו')?",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "הגבלות וחריגים מעוגנים בפסיקה המחייבת ובמקרים משכנעים נוספים; הספרות מסייעת לפרש את הקווים המבדילים ולנסח כללים מעשיים.",
+        "text_he": "מגבלות והחרגות: היכן מושלמת חובת תום הלב מול חופש החוזים, סיכון משא ומתן, חובת השתיקה מול חובת גילוי, והאם קיימות סטיות מיוחדות (לדוגמה: יחסי תלות מיוחדים, מידע שניתן לדרוש בחוזים פיננסיים/רגולטוריים)?",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "persuasive_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "c1559fa7-e63f-4de6-8cc6-04b153de1ebc",
+    "drafter": {
+      "ms": 37213,
+      "ok": true,
+      "lead_ref": {
+        "ref": null,
+        "shape": "definition",
+        "reason": "no_statute_source"
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "completeness": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "paragraph",
+        "last_block_excerpt": "…שניתנו ובפסיקה המדגמית שהובאה; אם ברצונך ניתוח של פסק‑דין מסוים או דוח מקיף על חריגים רגולטוריים, ציין מהו המקור המבוקש."
+      },
+      "sources_used": 7,
+      "used_sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+          "title": "סעיף 12 לחוק החתים: תום לב גמשא ומתן",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "cda1de3c-f03d-4e9e-bdf2-52d2037cc8d1"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+          "title": "תום לב בחוזים ואשם ביצירת החוזה",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "5545a7b1-9ef2-48e6-98bc-a581b437c067"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+          "title": "החובה לנהוג בתום לב במשא ומתן בראי הגישה הכלכלית",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "3c90619d-eb5f-4361-87c2-abf4bebeb83f"
+        },
+        {
+          "url": "https://law.bi.u.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+          "title": "נזיקי - השתק הבטחה והממשק החוזי",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "e1dde364-8d3b-46ac-9a88-6d53609f46ac"
+        },
+        {
+          "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+          "title": "תרומות/תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "c2b7851d-9200-4a21-b187-d66ee3383cea"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+          "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+          "number": 4,
+          "origin": "local_db",
+          "source_type": "caselaw",
+          "candidate_id": "0baa2058-fe67-483b-a4a5-e65dd4a9709f"
+        },
+        {
+          "url": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/%D7%AA%D7%99%D7%9E%D7%A6%D7%95%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%9C%20%D7%92%D7%91%D7%A8%D7%99%D7%90%D7%9C%D7%94%20%D7%A9%D7%9C%D7%95.doc",
+          "title": "מהותו של עקרון תום הלב – סיכום",
+          "number": 5,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "b4cc4703-0380-49f3-b6c0-08ec1368231f"
+        }
+      ],
+      "marker_format": "superscript",
+      "model_initial": "openai/gpt-5-mini",
+      "builder_report": {
+        "marker_count": 6,
+        "heading_count": 4,
+        "list_item_count": 0,
+        "paragraph_count": 7,
+        "cited_segment_count": 6,
+        "adjacent_marker_count": 0,
+        "distinct_source_count": 7,
+        "compound_segment_count": 6,
+        "compound_footnote_count": 5,
+        "avg_sources_per_cited_segment": 2.8
+      },
+      "footnote_count": 5,
+      "sources_passed": 9,
+      "drafter_version": "v2.1c",
+      "truncation_retry": {
+        "retry_ms": 0,
+        "attempted": false,
+        "reasons_initial": [],
+        "same_model_retry": false,
+        "escalated_to_full": false
+      },
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "answer_style_report": {
+        "metrics": {
+          "block_count": 11,
+          "denylist_hits": [],
+          "heading_count": 4,
+          "heading_ratio": 0.364,
+          "cited_block_count": 6,
+          "total_footnote_count": 5,
+          "compound_footnote_count": 5,
+          "compound_footnote_ratio": 1,
+          "unsafe_display_title_count": 0,
+          "avg_sources_per_cited_block": 2.667,
+          "unsafe_display_title_examples": [],
+          "partial_supported_strong_claims": [],
+          "total_source_refs_in_cited_blocks": 16
+        },
+        "report_only": true,
+        "triggered_reasons": [
+          "compound_footnote_ratio_high",
+          "avg_sources_per_block_high",
+          "excessive_headings"
+        ]
+      },
+      "unique_source_count": 7,
+      "completeness_initial": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "paragraph",
+        "last_block_excerpt": "…שניתנו ובפסיקה המדגמית שהובאה; אם ברצונך ניתוח של פסק‑דין מסוים או דוח מקיף על חריגים רגולטוריים, ציין מהו המקור המבוקש."
+      },
+      "deterministic_branch": null,
+      "canonical_quote_fired": false,
+      "omitted_candidate_ids": [
+        "50b768ad-d8aa-4787-af01-3e94b3c5f962",
+        "c82b2167-4ded-4042-96ec-84e358fd3bfd"
+      ],
+      "structured_validation": {
+        "ok": true,
+        "errors": [],
+        "block_count": 11,
+        "heading_count": 4,
+        "list_item_count": 0,
+        "paragraph_count": 7,
+        "cited_segment_count": 6,
+        "forbidden_text_hits": [],
+        "unknown_source_refs": [],
+        "total_source_ref_count": 16
+      },
+      "max_completion_tokens_used": 8000,
+      "missing_anchor_descriptions": [],
+      "missing_anchor_caveat_injected": false,
+      "missing_docket_limitation_fired": false,
+      "statute_section_limitation_fired": false
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "לזיהוי פסיקה מחייבת של בית המשפט העליון שמגדירה את היקף חובת תום הלב במשא ומתן ומפרטת האם היא חובת גילוי/הימנעות מהטעיה/חובת זהירות.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "בית המשפט העליון פסיקה עקרונית 'תום הלב במשא ומתן' היקף החובה: חובת גילוי, הימנעות מהטעיה, חובת זהירות כלפי הסתמכות הצד השני",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לניתוח תאורטי והשוואתי של היקף החובה ולמציאת הגדרות וסקירות אקדמיות שמבהירות את ההבחנות בין חובת גילוי, הימנעות מהטעיה וחובת זהירות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי 'תום הלב במשא ומתן' ניתוח היקף החובה (חובת גילוי/הימנעות מהטעיה/חובת זהירות) כתב עת משפטי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למציאת פסיקה מחייבת שקובעת את האלמנטים והיסודות הנדרשים להוכחת הפרת חובת תום הלב במשא ומתן.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון פסקי דין 'תום הלב במשא ומתן' תנאי קיום החובה: זהות פלוגתא, הסתמכות סבירה, חשיפת מידע מהותי, מתי החובה חלה במשא ומתן ראשוני או רק בין צדדים קיימים",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לניתוח אקדמי של האלמנטים הראייתיים ותאורטי שמסייע לפרש מתי ובאילו נסיבות חובת תום הלב חלה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר 'תנאי קיום תום הלב במשא ומתן' זהות פלוגתא הסתמכות סבירה חשיפת מידע מהותי מתי החובה חלה כתב עת משפטי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לזהות פסיקה מחייבת שמפרטת את הסנקציות והפתרונות המשפטיים שניתנים בגין הפרת תום הלב במשא ומתן.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון פסיקה 'הפרת תום הלב במשא ומתן' סנקציות וסעדי משפט: פיצויים, מניעת קיום הסכם, ציווי מניעה, החזרת מצב לקדמותו, סנקציות ראייתיות",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לסקירת הספרות על אופני הסעד והנמקותיהם התאורטיות והמעשיות, כולל דיון בסנקציות ראייתיות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמר 'סעדי הפרת תום הלב במשא ומתן' פיצויים מניעת קיום ציווי מניעה החזרת מצב לקדמותו סנקציות ראייתיות כתב עת משפטי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למציאת פסיקה מחייבת שמגבילה או מחדדת את חובת תום הלב על רקע עקרונות כמו חופש החוזים ויחסי תלות מיוחדים.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון פסיקה 'מגבלות חובת תום הלב' אל מול חופש החוזים וסיכון משא ומתן חובת השתיקה מול חובת גילוי יחסי תלות מיוחדים",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "להשיג פסיקה תקדימית לא מחייבת מבתי משפט מחוזיים/שלום שמתארת יישומים מעשיים והחרגות שבהן חובת תום הלב לא מוחלת או מוחלת באופן מצומצם.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "בתי משפט מחוזיים/שלום פסיקות 'תום לב במשא ומתן' חובת גילוי מול חובת השתיקה חריגים בחוזים פיננסיים רגולטוריים 'סיכון משא ומתן'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לניתוח אמפירי ותיאורטי של ההחרגות והמגבלות, כולל דיון על חוזים פיננסיים ודרישות רגולטוריות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמר 'מגבלות חובת תום הלב בחוזים' חופש החוזים סיכון משא ומתן חובת השתיקה מול חובת גילוי יחסי תלות מיוחדים חוזים פיננסיים כתב עת משפטי",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 36168,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 31671,
+        "confidence": 0.9,
+        "legal_area": "דיני חוזים",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "answer_intent": {
+          "output_shape": "definition"
+        },
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "interpretation_note": null
+      },
+      "claims_count": 4,
+      "queries_count": 9,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 157122,
+    "verifier": {
+      "ms": 37145,
+      "counts": {
+        "by_support": {
+          "direct": 6,
+          "partial": 3,
+          "unrelated": 1,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 10,
+          "false": 0
+        },
+        "model_verdicts": 10,
+        "by_support_model": {
+          "direct": 6,
+          "partial": 3,
+          "unrelated": 1,
+          "tangential": 0
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "0baa2058-fe67-483b-a4a5-e65dd4a9709f",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "3c90619d-eb5f-4361-87c2-abf4bebeb83f",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "cda1de3c-f03d-4e9e-bdf2-52d2037cc8d1",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "5545a7b1-9ef2-48e6-98bc-a581b437c067",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "e1dde364-8d3b-46ac-9a88-6d53609f46ac",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "50b768ad-d8aa-4787-af01-3e94b3c5f962",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "c2b7851d-9200-4a21-b187-d66ee3383cea",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "c82b2167-4ded-4042-96ec-84e358fd3bfd",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "b4cc4703-0380-49f3-b6c0-08ec1368231f",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 37145,
+          "label": "batch1",
+          "attempts": 1,
+          "claim_ids": [
+            "C1",
+            "C2",
+            "C3",
+            "C4"
+          ],
+          "escalated": false,
+          "recovered": false,
+          "candidates": 10,
+          "split_probes": 0
+        }
+      ],
+      "dropped": [
+        {
+          "role": "binding_case_law",
+          "title": "יישום חובת הדיווח של המוסדות הרפואיים למשרד",
+          "origin": "local_db",
+          "reason": "המקור עוסק בחובת דיווח מוסדות רפואיים ותיירות מרפא – נושא רגולטורי/בריאותי שאינו נוגע למגבלות ועקרונות תום הלב במשא ומתן.",
+          "candidate_id": "1b6b53c8-091d-48ee-a353-321160f7fad0",
+          "worst_support": "unrelated",
+          "retrieval_method": "text"
+        }
+      ],
+      "batch_ms": [
+        37145
+      ],
+      "parallel": true,
+      "verdicts": [
+        {
+          "reason": "מאמר אקדמי המוקדש ישירות לנושא היקף חובת תום הלב במשא ומתן, ולכן תומך ישירות בהגדרת היקף החובה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "3c90619d-eb5f-4361-87c2-abf4bebeb83f",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "מאמר עוסק במפורש בחובת תום הלב במשא ומתן ובמגבלותיה",
+            "דן בהשפעת עיקרון התום לב על חופש החוזים ועל חובת גילוי/הימנעות מהטעיה",
+            "מתאר גישה כלכלית שמסייעת להגדיר היקף החובה בפועל"
+          ]
+        },
+        {
+          "reason": "מאמר המבוסס על סעיף 12 עוסק במישרין בהיקף החובה במשא ומתן, כולל אלמנטי גילוי ונסיבות החיוב.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "cda1de3c-f03d-4e9e-bdf2-52d2037cc8d1",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "מתמקד בסעיף 12 לחוק החוזים ובהחלתו על שלב המשא ומתן",
+            "מזכיר תנאים לחובת הגילוי (הידיעה כי הצד השני אינו יכול להשיג פרטים חיוניים בעצמו)"
+          ]
+        },
+        {
+          "reason": "פסק דין עוסק ישירות בטענות של חוסר תום לב במשא ומתן ובממדי ההוכחה הנדרשים, ולכן תומך בבחינת תנאי הקיום והאלמנטים.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "0baa2058-fe67-483b-a4a5-e65dd4a9709f",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "פסיקה דנה בחוסר תום לב במשא ומתן ובהסתרת עובדות לביצוע הסדר הפשרה",
+            "משמשת דוגמה ליישום ההלכה על אופן הוכחת ההטעיה וההסתרה במשא ומתן"
+          ]
+        },
+        {
+          "reason": "מקור שעוסק במישרין בהתקיימות החובה בשלב הטרום-חוזי וביסודות ההוכחה להפרתה.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "5545a7b1-9ef2-48e6-98bc-a581b437c067",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "מאמר אקדמי המנתח את תחולת סעיף 12 לשלב הטרום-חוזי ו'אשם ביצירת החוזה'",
+            "דן באלמנטים הדרושים כדי להטיל חובת תום לב בשלב המשא ומתן"
+          ]
+        },
+        {
+          "reason": "מאמר המתמקד בהפרת חובת תום הלב במשא ומתן וביסודות ההוכחה (הסתמכות ונזק), תומך ישירות בטענה על תנאי קיום והאלמנטים.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "e1dde364-8d3b-46ac-9a88-6d53609f46ac",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "דן בממשק בין דיני חוזים ונזיקין וביישום סעיף 12(ב) על המשא ומתן",
+            "מתייחס להסתמכות סבירה ולנזקי הסתמכות כיסוד לטענות הפרה טרום-חוזית"
+          ]
+        },
+        {
+          "reason": "מקור הוראתי המצטט את הסעיף הרלוונטי ומסביר את היקף החובה בשלב המשא ומתן — תומך ישירות בתנאי קיום והיסודות.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "50b768ad-d8aa-4787-af01-3e94b3c5f962",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "הרצאה/חומר קורס המצטט את סעיף 12 ומנוסח החובה לנהוג בתום לב במשא ומתן",
+            "מבהיר את נוכחות החובה כבר בשלב המשא ומתן וכי מדובר בעקרון מקובל"
+          ]
+        },
+        {
+          "reason": "מאמר שעוסק במפורש בתגובות האפשריות להפרת תום הלב במשא ומתן ובסוגי הסעדים, ולכן תומך ישירות בטענה על סנקציות ופתרונות.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "c2b7851d-9200-4a21-b187-d66ee3383cea",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "דן בהחלטות השופטת בן‑פורת ובהבחנה בין השבת המצב לקדמותו לפיצויים מיוחדים",
+            "מזכיר פיצויי קיום/אכיפה במקרים שבהם חוזה היה כמעט מושלם ונמנע בחוסר תום לב"
+          ]
+        },
+        {
+          "reason": "מקור אקדמי המנתח בפירוט את הסעדים הזמינים לתיקון הפרת תום הלב טרום‑חוזית — תומך ישירות בטענה.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "c82b2167-4ded-4042-96ec-84e358fd3bfd",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "מאמר על הממשק החוזי‑נזיקי הכולל דיון בפיצויי הסתמכות ובהשבת המצב לקדמותו",
+            "מסביר אילו סעדי נזק והשבה רלוונטיים להפרת חובת תום הלב במשא ומתן"
+          ]
+        },
+        {
+          "reason": "המקור עוסק בחובת דיווח מוסדות רפואיים ותיירות מרפא – נושא רגולטורי/בריאותי שאינו נוגע למגבלות ועקרונות תום הלב במשא ומתן.",
+          "support": "unrelated",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "1b6b53c8-091d-48ee-a353-321160f7fad0",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        },
+        {
+          "reason": "טקסט המסכם את עקרון תום הלב ומדבר במפורש על אי‑גילוי, החלת סעיף 12 והאיזון מול חופש החוזים — תומך ישירות בטענה על מגבלות והחרגות.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "b4cc4703-0380-49f3-b6c0-08ec1368231f",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "סיכום עקרון תום הלב המדגיש כי אי‑גילוי עובדות מהותיות עלול להיחשב לחוסר תום לב",
+            "מציין את החלות של סעיף 12 לשלב המשא ומתן ומגבשות נקודות על המגבלות בין חובת גילוי לחופש החוזים"
+          ]
+        }
+      ],
+      "demotions": [
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C2",
+          "candidate_id": "50b768ad-d8aa-4787-af01-3e94b3c5f962",
+          "reason_excerpt": "מקור הוראתי המצטט את הסעיף הרלוונטי ומסביר את היקף החובה בשלב המשא ומתן — תומך ישירות בתנאי קיום והיסודות."
+        },
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C3",
+          "candidate_id": "c82b2167-4ded-4042-96ec-84e358fd3bfd",
+          "reason_excerpt": "מקור אקדמי המנתח בפירוט את הסעדים הזמינים לתיקון הפרת תום הלב טרום‑חוזית — תומך ישירות בטענה."
+        },
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C4",
+          "candidate_id": "b4cc4703-0380-49f3-b6c0-08ec1368231f",
+          "reason_excerpt": "טקסט המסכם את עקרון תום הלב ומדבר במפורש על אי‑גילוי, החלת סעיף 12 והאיזון מול חופש החוזים — תומך ישירות בטענה על מגבלות והחרגות."
+        }
+      ],
+      "batch_count": 1,
+      "call_failed": false,
+      "model_final": "openai/gpt-5-mini",
+      "retry_count": 0,
+      "per_claim_ms": {
+        "C1": 37145,
+        "C2": 37145,
+        "C3": 37145,
+        "C4": 37145
+      },
+      "total_sum_ms": 37145,
+      "call_failures": [],
+      "model_initial": "openai/gpt-5-mini",
+      "total_wall_ms": 37145,
+      "retry_attempts": 0,
+      "escalated_claims": [],
+      "rate_limit_count": 0,
+      "candidates_usable": 9,
+      "concurrency_limit": 2,
+      "demotions_by_rule": {
+        "analogical": 0,
+        "background": 0,
+        "landing_page": 3,
+        "wrong_subject": 0,
+        "self_contradiction": 0
+      },
+      "escalated_batches": 0,
+      "recovered_batches": 0,
+      "candidates_dropped": 1,
+      "candidates_verified": 10,
+      "split_probe_attempts": 0,
+      "merge_order_preserved": true,
+      "fallback_to_sequential": false
+    },
+    "retrieval": {
+      "ms": 14345,
+      "pool": {
+        "found": 52,
+        "counts": {
+          "by_role": {
+            "scholarship": 8,
+            "binding_case_law": 2
+          },
+          "by_claim": {
+            "C1": 2,
+            "C2": 4,
+            "C3": 2,
+            "C4": 2
+          },
+          "by_origin": {
+            "local_db": 2,
+            "perplexity": 8
+          }
+        },
+        "after_dedup": 10,
+        "dedup_drops": 42
+      },
+      "local": {
+        "ms": 2086,
+        "aggregate": {
+          "wall_ms": 2086,
+          "max_query_ms": 2085,
+          "sum_query_ms": 10024,
+          "slowest_query": {
+            "ms": 2085,
+            "role": "binding_case_law",
+            "text_ms": 1636,
+            "claim_id": "C1",
+            "exact_ms": 0,
+            "query_he": "בית המשפט העליון פסיקה עקרונית 'תום הלב במשא ומתן' היקף החובה: חובת גילוי, הימנעות מהטעיה, חובת זהירות כלפי הסתמכות הצד השני",
+            "vector_ms": 448,
+            "embedding_ms": 150
+          },
+          "slowest_method": "text",
+          "method_total_ms": {
+            "text": 8096,
+            "exact": 0,
+            "vector": 1925,
+            "embedding": 747
+          },
+          "queries_executed": 5,
+          "exact_error_count": 0,
+          "text_timeout_count": 0,
+          "candidates_by_method": {
+            "text": 30,
+            "vector": 10,
+            "exact_authority": 0
+          },
+          "vector_timeout_count": 0,
+          "bottleneck_hypothesis": "single_slow_query (max=2085ms ≈ wall=2086ms)",
+          "duplicate_query_count": 0
+        },
+        "per_query": [
+          {
+            "ms": 1746,
+            "diag": {
+              "text_ms": 1567,
+              "exact_ms": 0,
+              "vector_ms": 178,
+              "text_status": "ok",
+              "embedding_ms": 141,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה בראשון לציון, השופטת מירה רום פלאי: פס\"ד בעניין ביטול הסכם שלום בית וגירושין, בעילות של עושק, טעות והטעיה, חוסר תום לב, ועוד (תה\"ס 13518-03-23)",
+                "ביהמ\"ש השלום בנוף הגליל-נצרת, הנשיא ניר מישורי לב טוב: גזר דין בעבירות של התעללות בבעלי חיים ועוד ( ת\"פ 70782-07-20)",
+                "ביהמ\"ש השלום רחובות, שופט ישראל פת: פס\"ד בעניין פינוי דירה שיזן תפס בטענה שהזכויות נמכרו לו (ת\"א 19529-09-19)",
+                "ביהמ\"ש השלום בטבריה, הנשיא ניר מישורי לב טוב: גזר דין בעניין ביצוע עבירת החזקת אגרופן או סכין שלא כדין (ת\"פ 34841-10-23)",
+                "ביהמ\"ש השלום בנוף הגליל-נצרת, הנשיא ניר מישורי לב טוב: גזר דין בעניין עבירת מסירת ידיעה כוזבת, ועבירת זיף פנקס או מסמך אחר והשתמש בכל מרמה או תחבולה (ת\"פ 41647-10-22)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 1567,
+              "top_vector_titles": [
+                "בימ\"ש לענייני משפחה ת\"א, השופט יהורם שקד: פס\"ד בעתירה חוזרת של אב להורות על ביטול/הפחתת מזונות הקטינים (תלה\"מ 1891-02-23)",
+                "ביהמ\"ש לענייני משפחה חיפה, השופטת הילה גורביץ עובדיה: פס\"ד בתביעה למזונות אישה ולהחזר כספים שנמשכו ללא הרשאה מחשבון משותף (תלה\"מ 38614-12-20)"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "persuasive_case_law",
+            "claim_id": "C4",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "compact_query_he": "זהות פלוגתא תום לב בתי משפט מחוזיים/שלום פסיקות במשא ומתן",
+            "original_query_he": "בתי משפט מחוזיים/שלום פסיקות 'תום לב במשא ומתן' חובת גילוי מול חובת השתיקה חריגים בחוזים פיננסיים רגולטוריים 'סיכון משא ומתן'"
+          },
+          {
+            "ms": 2041,
+            "diag": {
+              "text_ms": 1707,
+              "exact_ms": 0,
+              "vector_ms": 334,
+              "text_status": "ok",
+              "embedding_ms": 147,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+                "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+                "ביהמ\"ש לענייני משפחה בראשון לציון, השופטת מירה רום פלאי: פס\"ד בעניין ביטול הסכם שלום בית וגירושין, בעילות של עושק, טעות והטעיה, חוסר תום לב, ועוד (תה\"ס 13518-03-23)",
+                "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+                "בית המשפט המחוזי חיפה, אב\"ד חננאל שרעבי, ש' אספרנצה אלון, ש' אריה נאמן: פסק דין בערעור על החלטה כי הסכם בין הצדדים תקף עד ליום נישואיהם ומשם יחול חוק יחסי ממון (עמ\"ש 46664-10-24)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 1707,
+              "top_vector_titles": [
+                "ביהמ\"ש לענייני משפחה קריית גת, השופטת פאני גילת כהן: פס\"ד בתיק תמ\"ש 15913-09-19",
+                "ביהמ\"ש לענייני משפחה בתל אביב, השופט ארז שני: פס\"ד בתובענה לצווים לביצוע רישום מקרקעין מכוח העברת הזכויות ע\"י הורים (תמ\"ש 66384-05-22)"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "compact_query_he": "זהות פלוגתא העליון דין תום הלב במשא ומתן קיום",
+            "original_query_he": "בית המשפט העליון פסקי דין 'תום הלב במשא ומתן' תנאי קיום החובה: זהות פלוגתא, הסתמכות סבירה, חשיפת מידע מהותי, מתי החובה חלה במשא ומתן ראשוני או רק בין צדדים קיימים"
+          },
+          {
+            "ms": 2075,
+            "diag": {
+              "text_ms": 1637,
+              "exact_ms": 0,
+              "vector_ms": 437,
+              "text_status": "ok",
+              "embedding_ms": 161,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה בראשון לציון, השופטת מירה רום פלאי: פס\"ד בעניין ביטול הסכם שלום בית וגירושין, בעילות של עושק, טעות והטעיה, חוסר תום לב, ועוד (תה\"ס 13518-03-23)",
+                "בית המשפט לענייני משפחה בקרית גת, השופט אריאל ממן: פסק דין בתובענה לאכיפת הסכם ולפסיקת תרופות בגין הפרת ההסכם (תמ\"ש 7859-12-21)",
+                "בית משפט לענייני משפחה בב\"ש, השופטת אפרת שוהם דליות: פס\"ד בתביעה נזיקית כספית בגין הפרת עוולת לשון הרע (תלה''מ 22355-07-22)",
+                "בית משפט לתביעות קטנות בירושלים, הרשמת בכירה אביגיל ון-קרפלד: פס\"ד בעניין הפרת חוק הגנת הצרכן, עניינו של דג דניס (ת\"ק 25040-12-24)",
+                "ביהמ\"ש לענייני משפחה בחיפה, סגן הנשיאה השופט טל פפרני: פס\"ד בעניין קבלת בקשה לסילוק על הסף של תביעה מטעמים של שימוש לרעה בהליכי משפט וחוסר תום לב, עיקרון סופיות הדיון, התועלת בניהול ההליך (תמ\"ש 26337-02-23)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 1637,
+              "top_vector_titles": [
+                "ביהמ\"ש לענייני משפחה קריית גת, השופטת פאני גילת כהן: פס\"ד בתיק תמ\"ש 15913-09-19",
+                "ביהמ\"ש השלום בחיפה, השופט רמזי חדיד: פס\"ד בעניין הפרת חובת תום לב במשא ומתן לקראת כריתת חוזה (ת\"א 2117-07-19)"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "compact_query_he": "זהות פלוגתא העליון פסיקה הפרת תום הלב במשא ומתן",
+            "original_query_he": "בית המשפט העליון פסיקה 'הפרת תום הלב במשא ומתן' סנקציות וסעדי משפט: פיצויים, מניעת קיום הסכם, ציווי מניעה, החזרת מצב לקדמותו, סנקציות ראייתיות"
+          },
+          {
+            "ms": 2077,
+            "diag": {
+              "text_ms": 1549,
+              "exact_ms": 0,
+              "vector_ms": 528,
+              "text_status": "ok",
+              "embedding_ms": 148,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה בראשון לציון, השופטת מירה רום פלאי: פס\"ד בעניין ביטול הסכם שלום בית וגירושין, בעילות של עושק, טעות והטעיה, חוסר תום לב, ועוד (תה\"ס 13518-03-23)",
+                "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+                "בימ\"ש לנוער חדרה, השופטת אורית קליינפלד: החלטה בבקשה להורות על ביטול כתב האישום בשל אי קיום חובת ההיוועצות (22120-02-24)",
+                "יישום חובת הדיווח של המוסדות הרפואיים למשרד",
+                "בית משפט השלום ת\"א-יפו, השופט אביים ברקאי: פסק דין שעניינו מחלוקת בהגדרת משק לצורך חלוקות עתידיות כ\"נחלה מלאה\" אל מול \"נחלה חסרה\" (ת\"א 45983-03-22)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 1549,
+              "top_vector_titles": [
+                "ביהמ\"ש לענייני משפחה קריית גת, השופטת פאני גילת כהן: פס\"ד בתיק תמ\"ש 15913-09-19",
+                "בימ\"ש לענייני משפחה קריית גת, השופטת פאני גילת כהן: פס\"ד בהסכם המכר של דירת מגורים שנחתם בין בני זוג גרושים- האם דינו להיאכף או שמא להתבטל (תמ\"ש 31829-07-16)"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "compact_query_he": "זהות פלוגתא העליון פסיקה מגבלות חובת תום הלב מול",
+            "original_query_he": "בית המשפט העליון פסיקה 'מגבלות חובת תום הלב' אל מול חופש החוזים וסיכון משא ומתן חובת השתיקה מול חובת גילוי יחסי תלות מיוחדים"
+          },
+          {
+            "ms": 2085,
+            "diag": {
+              "text_ms": 1636,
+              "exact_ms": 0,
+              "vector_ms": 448,
+              "text_status": "ok",
+              "embedding_ms": 150,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה בראשון לציון, השופטת מירה רום פלאי: פס\"ד בעניין ביטול הסכם שלום בית וגירושין, בעילות של עושק, טעות והטעיה, חוסר תום לב, ועוד (תה\"ס 13518-03-23)",
+                "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+                "ביהמ\"ש לענייני משפחה בחיפה, סגן הנשיאה השופט טל פפרני: פס\"ד בעניין קבלת בקשה לסילוק על הסף של תביעה מטעמים של שימוש לרעה בהליכי משפט וחוסר תום לב, עיקרון סופיות הדיון, התועלת בניהול ההליך (תמ\"ש 26337-02-23)",
+                "בית המשפט המחוזי בבאר שבע, השופט אהרון משניות: החלטה בערר על בקשת מעצר עד תום הליכים לנאשם בחברות בארגון טרור (עמ\"ת 3719-09-24)",
+                "בימ\"ש לנוער תל אביב, השופטת טל לויטס פרץ: החלטה בבקשה למעצר עד תום ההליכים נגד קטין שהואשם בעבירות רכב( 19719-02-25)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 1636,
+              "top_vector_titles": [
+                "ביהמ\"ש לענייני משפחה קריית גת, השופטת פאני גילת כהן: פס\"ד בתיק תמ\"ש 15913-09-19",
+                "ביהמ\"ש השלום הרצליה, השופט אמיר ויצנבליט: החלטה בבקשה לצו עשה זמני המורה למשיבה  לאפשר החזרת עובר לרחם המבקשת במרפאת המבקשת (ת\"א 45641-12-23)"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 8,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 2,
+            "compact_query_he": "זהות פלוגתא העליון פסיקה עקרונית תום הלב במשא ומתן",
+            "original_query_he": "בית המשפט העליון פסיקה עקרונית 'תום הלב במשא ומתן' היקף החובה: חובת גילוי, הימנעות מהטעיה, חובת זהירות כלפי הסתמכות הצד השני"
+          }
+        ],
+        "candidates": 40,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 14340,
+        "dropped": 13,
+        "parallel": true,
+        "query_ms": [
+          7409,
+          14337,
+          6161,
+          9588
+        ],
+        "per_query": [
+          {
+            "ms": 7409,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+                "title": "החובה לנהוג בתום לב במשא ומתן בראי הגישה הכלכלית",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 119,
+                  "title_meaningful_chars": 40
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "PDF (אקדמי)",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/generalpage/14_10_2024/he/14_10.pdf",
+                "title": "חוות דעת בנושא חובת הגילוי ותום הלב במשא ומתן בעסקאות ...",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_scholarship",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+                "title": "סעיף 12 לחוק החתים: תום לב גמשא ומתן",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 149,
+                  "title_meaningful_chars": 29
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "PDF (כתב עת משפטי)",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.miller-adv.com/he-il/pages/article.asp?ContentID=20",
+                "title": "חובת תום לב - חוזים",
+                "domain": "miller-adv.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.dinrega.com/gs/%D7%94%D7%A4%D7%A8%D7%AA%20%D7%97%D7%95%D7%91%D7%AA%20%D7%AA%D7%95%D7%9D%20%D7%94%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%9C%D7%A7%D7%A8%D7%90%D7%AA%20%D7%A8%D7%9B%D7%99%D7%A9%D7%AA%20%D7%9E%D7%A0%D7%99%D7%95%D7%AA",
+                "title": "הפרת חובת תום הלב במשא ומתן לקראת רכישת מניות",
+                "domain": "dinrega.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C1",
+            "query_he": "מאמר אקדמי 'תום הלב במשא ומתן' ניתוח היקף החובה (חובת גילוי/הימנעות מהטעיה/חובת זהירות) כתב עת משפטי",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 14337,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.barelaw.co.il/he/%D7%AA%D7%95%D7%9D-%D7%9C%D7%91-%D7%91%D7%9E%D7%A9%D7%90-%D7%95%D7%9E%D7%AA%D7%9F-%D7%9C%D7%9B%D7%A8%D7%99%D7%AA%D7%AA-%D7%97%D7%95%D7%96%D7%D7ה.html",
+                "title": "תנאי קיום תום הלב במשא ומתן",
+                "domain": "barelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "extracted_followup_terms": [
+                  "סעיף 12 לחוק החוזים"
+                ],
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.youtube.com/watch?v=0zJKmp__Bhk",
+                "title": "תום לב במשא ומתן (פרק וידאו)",
+                "domain": "youtube.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.lawlioz.com/post/%D7%A2%D7%A7%D7%A8%D7%95%D7%9F-%D7%AA%D7%95%D7%9D-%D7%94%D7%9C%D7%91-%D7%97%D7%95%D7%96%D7%99%D7%D7%9D-%D7%A2%D7%D7%D7%95%D7%A8%D7%9A-%D7%93%D7%99%D7%9F-%D7%91%D7%91%D7%AA-%D7%99%D7%9D",
+                "title": "עקרון תום הלב | דיני חוזים | משא ומתן | עורך דין בבת ים והסביבה",
+                "domain": "lawlioz.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "extracted_followup_terms": [
+                  "סעיף 12 לחוק החוזים: 'במשא ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך"
+                ],
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://ekw.co.il/expectation-compensation-with-respect-to-egotiation-held-not-in-good-faith-mala-fides/",
+                "title": "פיצויי ציפייה בגין ניהול משא ומתן שלא בתום לב",
+                "domain": "ekw.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.blitshtein-law.com/%D7%A2%D7%95%D7%A8%D7%9A-%D7%93%D7%99%D7%9F-%D7%97%D7%95%D7%96%D7%99%D7%9D/%D7%AA%D7%95%D7%9D-%D7%9C%D7%91/",
+                "title": "תום לב בקיום חוזה ובהליכים משפטיים - מה זה אומר בפועל?",
+                "domain": "blitshtein-law.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "extracted_followup_terms": [
+                  "סעיף 39 לחוק החוזים"
+                ],
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+                "title": "תום לב בחוזים ואשם ביצירת החוזה",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 110,
+                  "title_meaningful_chars": 26
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "אקדמי (PDF/מאמר משפטי)",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.bi.u.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+                "title": "נזיקי - השתק הבטחה והממשק החוזי",
+                "domain": "law.bi.u.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://law.bi.u.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://law.bi.u.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 113,
+                  "title_meaningful_chars": 26
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "אקדמי (PDF/מאמר משפטי)",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/9462448.doc",
+                "title": "עקרונות יסוד בדיני חוזים",
+                "domain": "netanya.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/9462448.doc",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/9462448.doc",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 89,
+                  "title_meaningful_chars": 21
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "אקדמי (חומר קורס/סיכום)",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://hamishpatworldarchive.github.io/Courses/99102/102-02-notebook-2010-shmuel-marom.doc",
+                "title": "מחברת קורס מצטברת - שמואל מרום",
+                "domain": "hamishpatworldarchive.github.io",
+                "drop_reason": "followup:discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+                "title": "תום לב בחוזים ואשם ביצירת החוזה",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 96,
+                  "title_meaningful_chars": 26
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "כתב עת משפטי / אקדמי",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C2",
+            "query_he": "מאמר 'תנאי קיום תום הלב במשא ומתן' זהות פלוגתא הסתמכות סבירה חשיפת מידע מהותי מתי החובה חלה כתב עת משפטי",
+            "raw_count": 5,
+            "discovery_only": 4,
+            "followup_terms": [
+              "סעיף 12 לחוק החוזים",
+              "סעיף 12 לחוק החוזים: 'במשא ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך"
+            ],
+            "followup_admitted": 4
+          },
+          {
+            "ms": 6161,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.alysefer.com/trofut/",
+                "title": "תרופות בשל הפרת חובת תום הלב במשא ומתן לכריתת חוזה?",
+                "domain": "alysefer.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+                "title": "תרומות/תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן",
+                "domain": "hamishpat.colman.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 119,
+                  "title_meaningful_chars": 51
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "pdf",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://ekw.co.il/expectation-compensation-with-respect-to-egotiation-held-not-in-good-faith-mala-fides/",
+                "title": "פיצויי ציפייה בגין ניהול משא ומתן שלא בתום לב",
+                "domain": "ekw.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+                "title": "השתק הבטחה והממשק החוזי",
+                "domain": "law.biu.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 95,
+                  "title_meaningful_chars": 20
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "pdf",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://zes.co.il/%D7%98%D7%A2%D7%A0%D7%94-%D7%9C%D7%97%D7%95%D7%A1%D7%A8-%D7%AA%D7%95%D7%9D-%D7%9C%D7%91-%D7%91%D7%9E%D7%A9%D7%90-%D7%95%D7%9E%D7%AA%D7%9F-%D7%99%D7%9B%D7%95%D7%9C%D7%94-%D7%9C%D7%94%D7%99%D7%95-2/",
+                "title": "טענה לחוסר תום לב במשא ומתן יכולה להיות גם טענת הגנה נגד התביעה",
+                "domain": "zes.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C3",
+            "query_he": "מאמר 'סעדי הפרת תום הלב במשא ומתן' פיצויים מניעת קיום ציווי מניעה החזרת מצב לקדמותו סנקציות ראייתיות כתב עת משפטי",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 9588,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+                "title": "תום לב בחוזים ואשם ביצירת החוזה",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 77,
+                  "title_meaningful_chars": 26
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "אקדמי / PDF של כתב עת משפטי",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+                "title": "החובה לנהוג בתום לב במשא ומתן בראי הגישה הכלכלית",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 91,
+                  "title_meaningful_chars": 40
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "אקדמי / PDF של כתב עת משפטי",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/%D7%AA%D7%99%D7%9E%D7%A6%D7%95%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%9C%20%D7%92%D7%91%D7%A8%D7%99%D7%90%D7%9C%D7%94%20%D7%A9%D7%9C%D7%95.doc",
+                "title": "מהותו של עקרון תום הלב – סיכום",
+                "domain": "netanya.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/%D7%AA%D7%99%D7%9E%D7%A6%D7%95%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%9C%20%D7%92%D7%91%D7%A8%D7%99%D7%90%D7%9C%D7%94%20%D7%A9%D7%9C%D7%95.doc",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/%D7%AA%D7%99%D7%9E%D7%A6%D7%95%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%9C%20%D7%92%D7%91%D7%A8%D7%99%D7%90%D7%9C%D7%94%20%D7%A9%D7%9C%D7%95.doc",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 100,
+                  "title_meaningful_chars": 24
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "אקדמי / חומר לימוד משפטי",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+                "title": "החובה לנהוג בתום לב במשא ומתן בראי הגישה הכלכלית",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 93,
+                  "title_meaningful_chars": 40
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "אקדמי / כתב עת משפטי",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.barelaw.co.il/he/%D7%AA%D7%95%D7%9D-%D7%9C%D7%91-%D7%91%D7%9E%D7%A9%D7%90-%D7%95%D7%9E%D7%AA%D7%9F-%D7%9C%D7%9B%D7%A8%D7%99%D7%AA%D7%AA-%D7%97%D7%95%D7%96%D7%94.html",
+                "title": "חובת תום הלב במשא ומתן - המדריך המשפטי המקיף",
+                "domain": "barelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C4",
+            "query_he": "מאמר 'מגבלות חובת תום הלב בחוזים' חופש החוזים סיכון משא ומתן חובת השתיקה מול חובת גילוי יחסי תלות מיוחדים חוזים פיננסיים כתב עת משפטי",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 12,
+        "query_count": 4,
+        "retry_count": 0,
+        "total_sum_ms": 37495,
+        "total_wall_ms": 14340,
+        "hygiene_counts": {
+          "keep": 12,
+          "total": 12,
+          "exclude": 0,
+          "reasons": {},
+          "downgrade": 0,
+          "report_only_mode": false,
+          "would_exclude_in_report_only": 0
+        },
+        "rate_limit_count": 0,
+        "role_corrections": [],
+        "concurrency_limit": 4,
+        "merge_order_preserved": true,
+        "fallback_to_sequential": false
+      }
+    },
+    "candidates": [
+      {
+        "role": "binding_case_law",
+        "score": 0.153099803626537,
+        "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+        "origin": "local_db",
+        "snippet": "ו בו: \" פגם הסכמי \" ו- \"פגם שיפוטי\" . אשר לפגם ההסכמי , טענו התובעות כי לא התקיימו בעניינן הרכיבים הדרושים בדיני החוזים לצורך התקשרות בהסכם מרצון בין הצדדים, נוכח חו ס ר תום הלב שבהתנהלות הנתבעות ו הטעייתן את בית המשפט ואת התובעות . זאת, בנוסף ל שינוי נסיבות אשר אינו מ אפשר את מימוש הסכם הפשרה. בין היתר , טענו כי הנתבעות נהגו בחוסר תום לב במשא ומתן לקראת גיבוש הסדר הפשרה , עת הסתירו מפני בית המשפט",
+        "claim_id": "C2",
+        "metadata": {
+          "court": "בתי המשפט המחוזיים",
+          "judges": "אילן דפדי",
+          "district": "מחוז תל-אביב",
+          "procedure_type": "אזרחי"
+        },
+        "query_he": "בית המשפט העליון פסקי דין 'תום הלב במשא ומתן' תנאי קיום החובה: זהות פלוגתא, הסתמכות סבירה, חשיפת מידע מהותי, מתי החובה חלה במשא ומתן ראשוני או רק בין צדדים קיימים",
+        "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "document_id": "c817223f-1d10-48ae-b74d-7a0e26a9da6a",
+        "source_type": "caselaw",
+        "candidate_id": "0baa2058-fe67-483b-a4a5-e65dd4a9709f",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.115198177658021,
+        "title": "יישום חובת הדיווח של המוסדות הרפואיים למשרד",
+        "origin": "local_db",
+        "snippet": " ביקוש לטיפול רפואי באיכות גבוהה מזו  הקיימת במדינת המקור; חוסר זמינות הטיפול \nבפרק זמן סביר בארץ המוצא; עלות נמוכה יותר של ההליכים הרפואיים וסיבות נוספות.\n1\n \nבשנת  8201  נחקק בישראל  חוק תיירות מרפא, התשע\"ח-2018, שנכנס לתוקפו ב -29  בינואר  2019\n2\n  והוא \nמגדיר  תייר מרפא  כ\"תייר המקבל או מבקש לקבל טיפול רפואי בישראל במוסד רפואי\"  .מוסד רפואי לעניין  \nזה מתייחס הן לבתי החולים הממשלתיים, הן  ל בת",
+        "claim_id": "C4",
+        "metadata": {
+          "author": null,
+          "authors": "פלורה קוך דבידוביץ'",
+          "doc_type": null,
+          "category_id": 2,
+          "broken_title": false,
+          "recovered_at": "2026-04-19T17:26:19.050Z",
+          "requested_by": "ועדת הבריאות",
+          "category_name": "ביטחון פנים",
+          "recovered_title": true,
+          "recovery_method": "after_kativa_header",
+          "publication_date": "25 בינואר 2022",
+          "publication_year": "2022"
+        },
+        "query_he": "בית המשפט העליון פסיקה 'מגבלות חובת תום הלב' אל מול חופש החוזים וסיכון משא ומתן חובת השתיקה מול חובת גילוי יחסי תלות מיוחדים",
+        "source_url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7459&businessType=1",
+        "document_id": "b39cef20-f8b9-4f08-aa43-1e2f2173a913",
+        "source_type": "knesset_research",
+        "candidate_id": "1b6b53c8-091d-48ee-a353-321160f7fad0",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "החובה לנהוג בתום לב במשא ומתן בראי הגישה הכלכלית",
+        "origin": "perplexity",
+        "snippet": "החובה לנהוג בתום לב במשא ומתן בראי הגישה הכלכלית* ... הטלת החובה לנהוג בתום לב במשא ומתן מגבילה בדרך כלל את חופש הפעולה של הצדדים במהלך המשא ומתן.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 119,
+            "title_meaningful_chars": 40
+          },
+          "raw_pplx_source_type": "PDF (אקדמי)",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר אקדמי 'תום הלב במשא ומתן' ניתוח היקף החובה (חובת גילוי/הימנעות מהטעיה/חובת זהירות) כתב עת משפטי",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+        "source_type": "other",
+        "candidate_id": "3c90619d-eb5f-4361-87c2-abf4bebeb83f",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "סעיף 12 לחוק החתים: תום לב גמשא ומתן",
+        "origin": "perplexity",
+        "snippet": "סעיף 12 לחוק החתים: תום לב גמשא ומתן ... נוסף המוטל בה: אין החובה צומחת אלא כאשר יודע הצד עליו מוטלת חובת הגילוי כי המתקשר השני אינו יכול להשיג את הפרטים החיוניים להכרעתו בכוחות עצמו.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 149,
+            "title_meaningful_chars": 29
+          },
+          "raw_pplx_source_type": "PDF (כתב עת משפטי)",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר אקדמי 'תום הלב במשא ומתן' ניתוח היקף החובה (חובת גילוי/הימנעות מהטעיה/חובת זהירות) כתב עת משפטי",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+        "source_type": "other",
+        "candidate_id": "cda1de3c-f03d-4e9e-bdf2-52d2037cc8d1",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "תום לב בחוזים ואשם ביצירת החוזה",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי/פרסום משפטי על תום לב במשא ומתן לפי סעיף 12 לחוק החוזים, כולל דיון ב\"אשם ביצירת החוזה\" ובתחולת החובה כבר בשלב הטרום-חוזי.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 110,
+            "title_meaningful_chars": 26
+          },
+          "raw_pplx_source_type": "אקדמי (PDF/מאמר משפטי)",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'תנאי קיום תום הלב במשא ומתן' זהות פלוגתא הסתמכות סבירה חשיפת מידע מהותי מתי החובה חלה כתב עת משפטי",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+        "source_type": "other",
+        "candidate_id": "5545a7b1-9ef2-48e6-98bc-a581b437c067",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "נזיקי - השתק הבטחה והממשק החוזי",
+        "origin": "perplexity",
+        "snippet": "מאמר/פרק אקדמי העוסק בממשק שבין דיני חוזים ונזיקין, ובפרט בהפרת חובת תום הלב במשא ומתן לפי סעיף 12(ב) ובפיצויי הסתמכות/נזק טרום-חוזי.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "law.bi.u.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://law.bi.u.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://law.bi.u.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 113,
+            "title_meaningful_chars": 26
+          },
+          "raw_pplx_source_type": "אקדמי (PDF/מאמר משפטי)",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'תנאי קיום תום הלב במשא ומתן' זהות פלוגתא הסתמכות סבירה חשיפת מידע מהותי מתי החובה חלה כתב עת משפטי",
+        "source_url": "https://law.bi.u.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+        "source_type": "other",
+        "candidate_id": "e1dde364-8d3b-46ac-9a88-6d53609f46ac",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "עקרונות יסוד בדיני חוזים",
+        "origin": "perplexity",
+        "snippet": "חומר אקדמי בקורס דיני חוזים המצטט את סעיף 12 לחוק החוזים ואת נוסח החובה לנהוג בדרך מקובלת ובתום לב במשא ומתן.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "netanya.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/9462448.doc",
+            "hygiene_action": "keep",
+            "url_normalized": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/9462448.doc",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 89,
+            "title_meaningful_chars": 21
+          },
+          "raw_pplx_source_type": "אקדמי (חומר קורס/סיכום)",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'תנאי קיום תום הלב במשא ומתן' זהות פלוגתא הסתמכות סבירה חשיפת מידע מהותי מתי החובה חלה כתב עת משפטי",
+        "source_url": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/9462448.doc",
+        "source_type": "other",
+        "candidate_id": "50b768ad-d8aa-4787-af01-3e94b3c5f962",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "תרומות/תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן",
+        "origin": "perplexity",
+        "snippet": "מציג את ההבחנה בין פיצויים שליליים (השבת המצב לקדמותו) לבין סעדים חריגים כגון פיצויי קיום ואכיפה כאשר חוזה היה כמעט מושלם ונמנע עקב חוסר תום לב.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "hamishpat.colman.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 119,
+            "title_meaningful_chars": 51
+          },
+          "raw_pplx_source_type": "pdf",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'סעדי הפרת תום הלב במשא ומתן' פיצויים מניעת קיום ציווי מניעה החזרת מצב לקדמותו סנקציות ראייתיות כתב עת משפטי",
+        "source_url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+        "source_type": "other",
+        "candidate_id": "c2b7851d-9200-4a21-b187-d66ee3383cea",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "השתק הבטחה והממשק החוזי",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי/משפטי על הממשק החוזי-נזיקי; כולל דיון בפיצויי הסתמכות ובהשבת המצב לקדמותו כתגובה להפרת חובת תום הלב.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "law.biu.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 95,
+            "title_meaningful_chars": 20
+          },
+          "raw_pplx_source_type": "pdf",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'סעדי הפרת תום הלב במשא ומתן' פיצויים מניעת קיום ציווי מניעה החזרת מצב לקדמותו סנקציות ראייתיות כתב עת משפטי",
+        "source_url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+        "source_type": "other",
+        "candidate_id": "c82b2167-4ded-4042-96ec-84e358fd3bfd",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "מהותו של עקרון תום הלב – סיכום",
+        "origin": "perplexity",
+        "snippet": "טקסט אקדמי/הוראה המציין כי אי-גילוי עובדות רלוונטיות עשוי להיחשב לחוסר תום לב, ושסעיף 12 לחוק החוזים חל בשלב המשא ומתן.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "netanya.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/%D7%AA%D7%99%D7%9E%D7%A6%D7%95%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%9C%20%D7%92%D7%91%D7%A8%D7%99%D7%90%D7%9C%D7%94%20%D7%A9%D7%9C%D7%95.doc",
+            "hygiene_action": "keep",
+            "url_normalized": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/%D7%AA%D7%99%D7%9E%D7%A6%D7%95%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%9C%20%D7%92%D7%91%D7%A8%D7%99%D7%90%D7%9C%D7%94%20%D7%A9%D7%9C%D7%95.doc",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 100,
+            "title_meaningful_chars": 24
+          },
+          "raw_pplx_source_type": "אקדמי / חומר לימוד משפטי",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'מגבלות חובת תום הלב בחוזים' חופש החוזים סיכון משא ומתן חובת השתיקה מול חובת גילוי יחסי תלות מיוחדים חוזים פיננסיים כתב עת משפטי",
+        "source_url": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/%D7%AA%D7%99%D7%9E%D7%A6%D7%95%D7%AA%20%D7%94%D7%A1%D7%A4%D7%A8%20%D7%A9%D7%9C%20%D7%92%D7%91%D7%A8%D7%99%D7%90%D7%9C%D7%94%20%D7%A9%D7%9C%D7%95.doc",
+        "source_type": "other",
+        "candidate_id": "b4cc4703-0380-49f3-b6c0-08ec1368231f",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 31671,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 36168,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 2086,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 14340,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 37144,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 37209,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter_v2.initial",
+        "escalated": false,
+        "http_status": 200
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://www.gov.il/BlobFolder/generalpage/14_10_2024/he/14_10.pdf",
+        "role": "scholarship",
+        "title": "חוות דעת בנושא חובת הגילוי ותום הלב במשא ומתן בעסקאות ...",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי 'תום הלב במשא ומתן' ניתוח היקף החובה (חובת גילוי/הימנעות מהטעיה/חובת זהירות) כתב עת משפטי",
+        "drop_reason": "class_government_report_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.miller-adv.com/he-il/pages/article.asp?ContentID=20",
+        "role": "scholarship",
+        "title": "חובת תום לב - חוזים",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי 'תום הלב במשא ומתן' ניתוח היקף החובה (חובת גילוי/הימנעות מהטעיה/חובת זהירות) כתב עת משפטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.dinrega.com/gs/%D7%94%D7%A4%D7%A8%D7%AA%20%D7%97%D7%95%D7%91%D7%AA%20%D7%AA%D7%95%D7%9D%20%D7%94%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%9C%D7%A7%D7%A8%D7%90%D7%AA%20%D7%A8%D7%9B%D7%99%D7%A9%D7%AA%20%D7%9E%D7%A0%D7%99%D7%95%D7%AA",
+        "role": "scholarship",
+        "title": "הפרת חובת תום הלב במשא ומתן לקראת רכישת מניות",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי 'תום הלב במשא ומתן' ניתוח היקף החובה (חובת גילוי/הימנעות מהטעיה/חובת זהירות) כתב עת משפטי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.barelaw.co.il/he/%D7%AA%D7%95%D7%9D-%D7%9C%D7%91-%D7%91%D7%9E%D7%A9%D7%90-%D7%95%D7%9E%D7%AA%D7%9F-%D7%9C%D7%9B%D7%A8%D7%99%D7%AA%D7%AA-%D7%97%D7%95%D7%96%D7%D7ה.html",
+        "role": "scholarship",
+        "title": "תנאי קיום תום הלב במשא ומתן",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר 'תנאי קיום תום הלב במשא ומתן' זהות פלוגתא הסתמכות סבירה חשיפת מידע מהותי מתי החובה חלה כתב עת משפטי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=0zJKmp__Bhk",
+        "role": "scholarship",
+        "title": "תום לב במשא ומתן (פרק וידאו)",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר 'תנאי קיום תום הלב במשא ומתן' זהות פלוגתא הסתמכות סבירה חשיפת מידע מהותי מתי החובה חלה כתב עת משפטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.lawlioz.com/post/%D7%A2%D7%A7%D7%A8%D7%95%D7%9F-%D7%AA%D7%95%D7%9D-%D7%94%D7%9C%D7%91-%D7%97%D7%95%D7%96%D7%99%D7%D7%9D-%D7%A2%D7%D7%D7%95%D7%A8%D7%9A-%D7%93%D7%99%D7%9F-%D7%91%D7%91%D7%AA-%D7%99%D7%9D",
+        "role": "scholarship",
+        "title": "עקרון תום הלב | דיני חוזים | משא ומתן | עורך דין בבת ים והסביבה",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר 'תנאי קיום תום הלב במשא ומתן' זהות פלוגתא הסתמכות סבירה חשיפת מידע מהותי מתי החובה חלה כתב עת משפטי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://ekw.co.il/expectation-compensation-with-respect-to-egotiation-held-not-in-good-faith-mala-fides/",
+        "role": "scholarship",
+        "title": "פיצויי ציפייה בגין ניהול משא ומתן שלא בתום לב",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר 'תנאי קיום תום הלב במשא ומתן' זהות פלוגתא הסתמכות סבירה חשיפת מידע מהותי מתי החובה חלה כתב עת משפטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.blitshtein-law.com/%D7%A2%D7%95%D7%A8%D7%9A-%D7%93%D7%99%D7%9F-%D7%97%D7%95%D7%96%D7%99%D7%9D/%D7%AA%D7%95%D7%9D-%D7%9C%D7%91/",
+        "role": "scholarship",
+        "title": "תום לב בקיום חוזה ובהליכים משפטיים - מה זה אומר בפועל?",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר 'תנאי קיום תום הלב במשא ומתן' זהות פלוגתא הסתמכות סבירה חשיפת מידע מהותי מתי החובה חלה כתב עת משפטי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://hamishpatworldarchive.github.io/Courses/99102/102-02-notebook-2010-shmuel-marom.doc",
+        "role": "scholarship",
+        "title": "מחברת קורס מצטברת - שמואל מרום",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר 'תנאי קיום תום הלב במשא ומתן' זהות פלוגתא הסתמכות סבירה חשיפת מידע מהותי מתי החובה חלה כתב עת משפטי",
+        "drop_reason": "followup:discovery_only"
+      },
+      {
+        "url": "https://www.alysefer.com/trofut/",
+        "role": "scholarship",
+        "title": "תרופות בשל הפרת חובת תום הלב במשא ומתן לכריתת חוזה?",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר 'סעדי הפרת תום הלב במשא ומתן' פיצויים מניעת קיום ציווי מניעה החזרת מצב לקדמותו סנקציות ראייתיות כתב עת משפטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://ekw.co.il/expectation-compensation-with-respect-to-egotiation-held-not-in-good-faith-mala-fides/",
+        "role": "scholarship",
+        "title": "פיצויי ציפייה בגין ניהול משא ומתן שלא בתום לב",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר 'סעדי הפרת תום הלב במשא ומתן' פיצויים מניעת קיום ציווי מניעה החזרת מצב לקדמותו סנקציות ראייתיות כתב עת משפטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://zes.co.il/%D7%98%D7%A2%D7%A0%D7%94-%D7%9C%D7%97%D7%95%D7%A1%D7%A8-%D7%AA%D7%95%D7%9D-%D7%9C%D7%91-%D7%91%D7%9E%D7%A9%D7%90-%D7%95%D7%9E%D7%AA%D7%9F-%D7%99%D7%9B%D7%95%D7%9C%D7%94-%D7%9C%D7%94%D7%99%D7%95-2/",
+        "role": "scholarship",
+        "title": "טענה לחוסר תום לב במשא ומתן יכולה להיות גם טענת הגנה נגד התביעה",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר 'סעדי הפרת תום הלב במשא ומתן' פיצויים מניעת קיום ציווי מניעה החזרת מצב לקדמותו סנקציות ראייתיות כתב עת משפטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.barelaw.co.il/he/%D7%AA%D7%95%D7%9D-%D7%9C%D7%91-%D7%91%D7%9E%D7%A9%D7%90-%D7%95%D7%9E%D7%AA%D7%9F-%D7%9C%D7%9B%D7%A8%D7%99%D7%AA%D7%AA-%D7%97%D7%95%D7%96%D7%94.html",
+        "role": "scholarship",
+        "title": "חובת תום הלב במשא ומתן - המדריך המשפטי המקיף",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר 'מגבלות חובת תום הלב בחוזים' חופש החוזים סיכון משא ומתן חובת השתיקה מול חובת גילוי יחסי תלות מיוחדים חוזים פיננסיים כתב עת משפטי",
+        "drop_reason": "discovery_only"
+      }
+    ],
+    "required_anchors": {
+      "count": 0,
+      "anchors": [],
+      "enabled": true,
+      "statuses": [],
+      "queries_emitted": []
+    },
+    "drafter_v2_full_compare": null,
+    "drafter_v2_opus_compare": null,
+    "drafter_v2_sonnet_compare": null
+  }
+}
