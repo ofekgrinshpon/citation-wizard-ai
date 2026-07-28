@@ -88,6 +88,9 @@ const results = await Promise.all(triggered.map(async ({ id, category, query, ru
       usable: v.candidates_usable ?? v.usable?.length,
       dropped: v.candidates_dropped ?? v.dropped?.length,
     },
+    verifier_call_failed: v.call_failed === true,
+    verifier_call_failures: v.call_failures ?? [],
+    verifier_errors: v.errors ?? [],
     verifier_labels: v.labels ?? null,
     used_sources_count: usedSources.length,
     used_sources: usedSources,
@@ -112,7 +115,18 @@ for (const r of results as any[]) {
   if (r.error) { md.push(`ERROR: ${r.error}`); md.push(""); continue; }
   md.push(`- shape: \`${r.answer_intent?.output_shape ?? "-"}\` | lead_ref: \`${r.lead_ref?.ref ?? "-"}\` (${r.lead_ref?.reason ?? "-"}) | branch: \`${r.deterministic_branch ?? "-"}\``);
   md.push(`- flags: docket=${r.limitation_flags.missing_docket} statute=${r.limitation_flags.statute_section} canonical=${r.limitation_flags.canonical_quote} caveat=${r.limitation_flags.missing_anchor_caveat_injected}`);
-  md.push(`- verifier: ${JSON.stringify(r.verifier_counts)} | sources=${r.used_sources_count} | footnotes=${r.footnotes_count}`);
+  const vc = r.verifier_counts ?? {};
+  const bs = vc.by_support ?? {};
+  const bsm = vc.by_support_model ?? {};
+  const bss = vc.by_support_synthetic ?? {};
+  const mv = vc.model_verdicts ?? 0;
+  const sv = vc.synthetic_verdicts ?? 0;
+  md.push(`- verifier: total D/P/T/U=${bs.direct ?? 0}/${bs.partial ?? 0}/${bs.tangential ?? 0}/${bs.unrelated ?? 0} | model D/P/T/U=${bsm.direct ?? 0}/${bsm.partial ?? 0}/${bsm.tangential ?? 0}/${bsm.unrelated ?? 0} (n=${mv}) | synthetic_unrelated=${bss.unrelated ?? 0} (n=${sv}) | call_failed=${r.verifier_call_failed} | sources=${r.used_sources_count} | footnotes=${r.footnotes_count}`);
+  if (r.verifier_call_failed) {
+    for (const f of r.verifier_call_failures ?? []) {
+      md.push(`  - CALL FAILURE @ ${f.stage} model=${f.model} ms=${f.ms} http_status=${f.http_status ?? "-"} reason="${(f.failure_reason ?? "").slice(0,200)}" candidates=${f.candidate_count} payload=${f.request_payload_size}B escalated=${f.escalation_attempted}`);
+    }
+  }
   md.push(`- warnings: ${JSON.stringify(r.quality_warnings)}`);
   md.push("");
   md.push("### Answer");
