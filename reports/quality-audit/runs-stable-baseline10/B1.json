@@ -2,14 +2,14 @@
   "id": "B1",
   "category": "case_holding",
   "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי ביחס למעמדם של חוקי היסוד ולסמכות הביקורת השיפוטית על חקיקה ראשית?",
-  "run_id": "9269a0de-26d9-4ca2-9d24-99b566334d64",
+  "run_id": "dd731586-6120-40aa-a2f6-db40d79ddd05",
   "ok": true,
-  "total_ms": 241938,
+  "total_ms": 249424,
   "answer_intent": {
     "output_shape": "case_holding"
   },
   "lead_ref": {
-    "ref": "s7",
+    "ref": "s10",
     "shape": "case_holding",
     "reason": "required_anchor_case"
   },
@@ -24,21 +24,21 @@
   "anchor_statuses": [],
   "verifier_counts": {
     "by_support": {
-      "direct": 1,
-      "partial": 12,
-      "unrelated": 11,
-      "tangential": 5
+      "direct": 5,
+      "partial": 9,
+      "unrelated": 3,
+      "tangential": 2
     },
     "by_role_match": {
-      "true": 29,
-      "false": 0
+      "true": 18,
+      "false": 1
     },
-    "model_verdicts": 29,
+    "model_verdicts": 19,
     "by_support_model": {
-      "direct": 1,
-      "partial": 12,
-      "unrelated": 11,
-      "tangential": 5
+      "direct": 5,
+      "partial": 9,
+      "unrelated": 3,
+      "tangential": 2
     },
     "synthetic_verdicts": 0,
     "by_support_synthetic": {
@@ -55,135 +55,169 @@
   "verifier_split_probe_attempts": 0,
   "verifier_errors": [],
   "verifier_labels": null,
-  "used_sources_count": 6,
+  "used_sources_count": 8,
   "used_sources": [
     {
       "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-      "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+      "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
       "number": 1,
       "origin": "perplexity",
       "source_type": "caselaw",
-      "candidate_id": "c2cc201c-95b2-4c95-b7a9-42c977579732"
+      "candidate_id": "657fe26d-ca0b-4f93-8576-fa67c5f4cc60"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/3&fileName=SG3_12_8823-07.pdf&type=2",
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "supreme_court_il",
+      "candidate_id": "3b195a38-f97e-4970-a8d4-6289ef23cf53"
+    },
+    {
+      "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+      "title": "חוק יסוד - כבוד האדם וחירותו",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "legislation",
+      "candidate_id": "b899b17d-c694-499f-821d-e8462895910f"
     },
     {
       "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
       "title": "פסקאות הגבלה ופסקאות התגברות בחוקות",
-      "number": 2,
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "legislation",
+      "candidate_id": "381262b4-e5ef-427b-88ee-6106074ae3f9"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%A7%D7%9C%D7%95%D7%93%20%D7%A7%D7%9C%D7%99%D7%99%D7%9F%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%94%D7%9E%D7%9B%D7%95%D7%A0%D7%A0%D7%AA%20%D7%91%D7%9E%D7%93%D7%99%D7%A0%D7%AA%20%D7%99%D7%A9%D7%A8%D7%90%D7%9C.pdf",
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+      "number": 4,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "55ecb874-181d-4d9c-9a0a-ede3196ccfdf"
+      "candidate_id": "8e61d94f-0d16-4f2b-a6a4-b727859b2b01"
     },
     {
-      "url": "https://lawjournal.huji.ac.il/index.php/article/12/1309",
-      "title": "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
-      "number": 3,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "fb3d0bb9-4def-4795-bfae-c08a36312b97"
-    },
-    {
-      "url": "https://runilawreview.org/2024/02/05/dishon/",
-      "title": "שימוש לרעה בשריוּן פורמלי של חוק יסוד | נדב דישון (רוב, מיעוט וכללי הכרעה)",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3808990",
+      "title": "הכנסת כרשות מכוננת ושאלת התיקון החוקתי שאינו חוקתי",
       "number": 4,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "a471e057-5ab4-4fda-963e-2bf6750de211"
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "8025b880-6cda-470d-84bd-a07a8b74be9a"
     },
     {
-      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
-      "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
+      "url": "https://fs.knesset.gov.il/18/law/18_lst%20%20_142301.doc",
+      "title": "רשומות - כנסת",
       "number": 5,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "27fb8fad-3b19-438c-b0d6-dbb461b83550"
+      "origin": "perplexity",
+      "source_type": "legislation",
+      "candidate_id": "1f819b3e-fd02-40d4-840d-3eb49012254d"
     },
     {
       "url": "https://lawjournal.huji.ac.il/article/12/1930",
       "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
-      "number": 5,
+      "number": 6,
       "origin": "local_db",
       "source_type": "journal_article",
-      "candidate_id": "18296bd5-79d5-4b27-9929-940304c56429"
+      "candidate_id": "504145fc-5955-4e43-836d-4783d79e795e"
     }
   ],
-  "footnotes_count": 5,
+  "footnotes_count": 6,
   "footnotes": [
     {
       "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-      "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+      "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
       "number": 1,
       "sources": [
         {
           "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-          "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+          "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
           "source_type": "caselaw"
         }
       ],
       "source_type": "caselaw"
     },
     {
-      "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
-      "title": "פסקאות הגבלה ופסקאות התגברות בחוקות; נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי; מסמך מאתר אתר ממשלתי (gov.il)",
       "number": 2,
       "sources": [
         {
-          "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
-          "title": "פסקאות הגבלה ופסקאות התגברות בחוקות",
-          "source_type": "other"
+          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+          "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+          "source_type": "caselaw"
         },
         {
-          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-          "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
-          "source_type": "caselaw"
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/3&fileName=SG3_12_8823-07.pdf&type=2",
+          "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+          "source_type": "supreme_court_il"
         }
       ],
       "source_type": "compound"
     },
     {
-      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-      "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי; מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+      "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+      "title": "חוק יסוד - כבוד האדם וחירותו; פסקאות הגבלה ופסקאות התגברות בחוקות",
       "number": 3,
       "sources": [
         {
-          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-          "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
-          "source_type": "caselaw"
+          "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+          "title": "חוק יסוד - כבוד האדם וחירותו",
+          "source_type": "legislation"
         },
         {
-          "url": "https://lawjournal.huji.ac.il/index.php/article/12/1309",
-          "title": "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
-          "source_type": "journal_article"
+          "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
+          "title": "פסקאות הגבלה ופסקאות התגברות בחוקות",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%A7%D7%9C%D7%95%D7%93%20%D7%A7%D7%9C%D7%99%D7%99%D7%9F%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%94%D7%9E%D7%9B%D7%95%D7%A0%D7%A0%D7%AA%20%D7%91%D7%9E%D7%93%D7%99%D7%A0%D7%AA%20%D7%99%D7%A9%D7%A8%D7%90%D7%9C.pdf",
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); הכנסת כרשות מכוננת ושאלת התיקון החוקתי שאינו חוקתי",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%A7%D7%9C%D7%95%D7%93%20%D7%A7%D7%9C%D7%99%D7%99%D7%9F%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%94%D7%9E%D7%9B%D7%95%D7%A0%D7%A0%D7%AA%20%D7%91%D7%9E%D7%93%D7%99%D7%A0%D7%AA%20%D7%99%D7%A9%D7%A8%D7%90%D7%9C.pdf",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3808990",
+          "title": "הכנסת כרשות מכוננת ושאלת התיקון החוקתי שאינו חוקתי",
+          "source_type": "other"
         }
       ],
       "source_type": "compound"
     },
     {
       "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-      "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי; שימוש לרעה בשריוּן פורמלי של חוק יסוד | נדב דישון (רוב, מיעוט וכללי הכרעה)",
-      "number": 4,
+      "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי; רשומות - כנסת",
+      "number": 5,
       "sources": [
         {
           "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
-          "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+          "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
           "source_type": "caselaw"
         },
         {
-          "url": "https://runilawreview.org/2024/02/05/dishon/",
-          "title": "שימוש לרעה בשריוּן פורמלי של חוק יסוד | נדב דישון (רוב, מיעוט וכללי הכרעה)",
-          "source_type": "journal_article"
+          "url": "https://fs.knesset.gov.il/18/law/18_lst%20%20_142301.doc",
+          "title": "רשומות - כנסת",
+          "source_type": "legislation"
         }
       ],
       "source_type": "compound"
     },
     {
-      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
-      "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת; רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
-      "number": 5,
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי; רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+      "number": 6,
       "sources": [
         {
-          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
-          "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
-          "source_type": "journal_article"
+          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+          "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+          "source_type": "caselaw"
         },
         {
           "url": "https://lawjournal.huji.ac.il/article/12/1930",
@@ -195,5 +229,5 @@
     }
   ],
   "quality_warnings": [],
-  "answer": "**עיקרי ההחזקה בפסק‑דין ע\"א 6821/93 — בנק המזרחי נ' מגדל כפר שיתופי**\n\nבפסק‑דין זה הובעו מסקנות יסוד ביחס למעמדם של חוקי היסוד ולביקורת השיפוטית על חקיקה ראשית: בית המשפט הכיר בהבחנה בין סמכות מכוננת לבין סמכות רגילה של הכנסת, הצביע על מעמדם המיוחד של חוקי היסוד כ'פרקי חוקה' והותיר פתח לביצוע ביקורת שיפוטית על חקיקה רגילה שנמצאת בסתירה להוראות חוק‑יסוד.¹\n\nהמשפט בצידו של פסקת ההגבלה כמסגרת לבדיקה החוקהּת של פגיעה בזכות: בפסק‑דין זה עוצבה, בהקשרו, הגדרת פסקת ההגבלה — מבחנים של תכלית ראויה, התאמה או הולמות ביחס לערכי המדינה, ומידתיות — ובכך נקשר האיזון בין זכויות לבין חקיקה רגילה למסגרת מבחנים זו.²\n\nלגבי חקיקה קודמת ומאוחרת לחוקי היסוד: במסגרת ההבחנה בפסק‑דין הוצע כי חוקים שחוקקו לפני חוקי היסוד נשמרים בתוקף אך יש לפרשם ברוח החוקות החדשות; חקיקה שנחקקה לאחר חוקי היסוד תיבחן במלואה עפ״י הוראות חוקי היסוד ועלולה להיפסל אם סותרת אותן.³\n\nממבחינה נורמטיבית הובעה בפסק‑דין תמיכה ברעיון של עדיפות נורמטיבית לחוקי היסוד ביחס לחוק רגיל: חוק רגיל אינו נועד לשנות או לגרוע באופן המהותי מהוראות חוק‑יסוד, וכי הוראות של שריון או הסדרי הגנה בחוקי היסוד הם בעלי משמעות פרשנית ואכיפתית שיש להביא בחשבון.⁴\n\nאולם יש להדגיש כי המקור המרכזי לסיכום זה מהווה תמיכה חלקית בפסק‑דין; נותרו שאלות פרשניות ומערכתיות פתוחות לגבי היקף הביקורת השיפוטית, סמכויות בתי המשפט במשוואת המידתיות ופרשנות הוראות השריון, ונמצא ויכוח אקדמי ופסיקתי בהמשך דרכו של ציבור הפסיקה והספרות המשפטית.⁵"
+  "answer": "**מסקנות מרכזיות בפסק‑דין ע\"א 6821/93 — בנק המזרחי נ' מגדל כפר שיתופי**\n\nפסק‑דין ע\"א 6821/93 דן בסוגיית מעמדם של חוקי היסוד ובהשפעתם על תוקפה של חקיקה ראשית; מן הדיון בפסק‑דין עולה בזהירות כי בית המשפט בחן את מעמדם המיוחד של חוקי היסוד ואת ההשלכות האפשריות על חקיקה רגילה כאשר יש סתירה בין שתיהן.¹\n\nהדיון בפסק‑דין כולל עיסוק בסמכות הביקורת השיפוטית: בית המשפט דן בשאלת יכולתו של בית המשפט לבחון האם חוק רגיל סותר הוראה או עיקרון שבחוק יסוד, ובכך להורות על אי‑תחולה או על בטלותו של החוק במידה והסתירה מהותית; עם זאת, לא מדובר בפסק‑דין המנסח הכרעה פרשנית מוחלטת ברוח של קביעה גורפת אלא בעיון והנמקה שדורשים קריאה זהירה.²\n\nלגבי מבחן הביקורת על חקיקה הפוגעת בזכויות המוגנות בחוקי היסוד, הנוסח של פסקאות ההגבלה בחוקי היסוד מתאר קריטריונים המוכרים בדוקטרינה: קיום יסוד בחוק, היותו הולם את ערכיה של מדינת ישראל, שיועד לתכלית ראויה, ובמידה שאינה עולה על הנדרש (מבחן המידתיות). נוסח זה מצוי במיוחד בסעיף ההגבלה של חוק‑היסוד: כבוד האדם וחירותו ועולה גם במסמכים משקיפים על עניין זה.³\n\nרקע תיאורטי ומוסדי שיוחס בפסיקה ובספרות הנוגע ל'כנסת כרשות מכוננת' ולטענת הרציפות מוצג במסגרות אקדמיות וניתוחיות; מקורות אלה מצביעים על כך שיש היגיון תיאורטי לראות בכנסת גוף שביכולתו לחוקק חוקי יסוד בעלי תוקף מיוחד, אך סוגיות ההמשכיות, התיקון והקשר להחלטת הררי נשמעות כחלק מעיון רחב יותר בספרות ובפסיקה.⁴\n\nלגבי פרוצדורת החקיקה: בעוד שמקורות חקיקתיים מפרטים כללים פרוצדורליים לחקיקת חוקי יסוד, מן החומר שבדקתי עולה בזהירות כי פסק‑הדין איננו מניח שתוקף על‑חוקי של חוק יסוד יחול אך ורק עקב הליכים פרוצדורליים מיוחדים; סוגיית התלות בין מעמדו של חוק יסוד לדרך חקיקתו נותרת להבחנה ולדיון משפטי מעמיק יותר.⁵\n\nסיכום קצר: ע\"א 6821/93 מוצג כמקור מרכזי לדיון במעמדם של חוקי היסוד ובסמכויות הביקורת השיפוטית על חקיקה ראשית; מן הפסק‑דין ובתמיכתם של מקורות משלימים עולה תמונה שבית המשפט מזהה לחוקי היסוד מעמד מיוחד ולו אחריות לבחון חקיקה רגילה המצטלבת עמם, אך אין בפסק‑דין זה כדי להוות נוסח אחרון וגורף של כללי המערכת — יש להתייחס אליו כדוגמה חשובה בתוך התפתחות הפסיקה.⁶"
 }

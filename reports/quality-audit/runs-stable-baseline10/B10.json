@@ -2,9 +2,9 @@
   "id": "B10",
   "category": "practical",
   "query": "מהם המבחנים המרכזיים שנקבעו בפסיקה לסיווג אדם כעובד ולא כקבלן עצמאי, ומה המשמעות של הסיווג לעניין זכויות סוציאליות?",
-  "run_id": "e8e9025c-dfa1-4eea-b969-aa5ca80e35a7",
+  "run_id": "52344c4c-024d-4c28-94ae-d0f2fb5ba7c1",
   "ok": true,
-  "total_ms": 123980,
+  "total_ms": 226806,
   "answer_intent": {
     "output_shape": "analysis"
   },
@@ -24,21 +24,21 @@
   "anchor_statuses": [],
   "verifier_counts": {
     "by_support": {
-      "direct": 3,
-      "partial": 7,
-      "unrelated": 5,
-      "tangential": 1
+      "direct": 0,
+      "partial": 4,
+      "unrelated": 10,
+      "tangential": 2
     },
     "by_role_match": {
-      "true": 15,
-      "false": 1
+      "true": 16,
+      "false": 0
     },
     "model_verdicts": 16,
     "by_support_model": {
-      "direct": 3,
-      "partial": 7,
-      "unrelated": 5,
-      "tangential": 1
+      "direct": 0,
+      "partial": 4,
+      "unrelated": 10,
+      "tangential": 2
     },
     "synthetic_verdicts": 0,
     "by_support_synthetic": {
@@ -55,188 +55,164 @@
   "verifier_split_probe_attempts": 0,
   "verifier_errors": [],
   "verifier_labels": null,
-  "used_sources_count": 8,
+  "used_sources_count": 4,
   "used_sources": [
     {
-      "url": "https://lawjournal.huji.ac.il/article/12/1911",
-      "title": "מיהו עובד: מבחני הסף",
-      "number": 1,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "e535f359-107c-4d29-83e8-f4497d3097c1"
-    },
-    {
-      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%A1%D7%99%D7%9B%D7%95%D7%9D%20%D7%9C%D7%9E%D7%91%D7%97%D7%9F.pdf",
-      "title": "דיני עבודה – סיכום למבחן",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
       "number": 1,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "a26740ae-3485-4104-8fee-dafebe3c4570"
+      "candidate_id": "240c69d9-f39d-432c-9cc5-5f1f589e7b5e"
     },
     {
-      "url": "https://www.gov.il/BlobFolder/legalinfo/rest-flexibility/he/workers-rights_rest-flexibility.pdf",
-      "title": "חוק שעות עבודה ומנוחה - גמישות בשעות העבודה בעידן המודרני",
+      "url": "https://law.huji.ac.il/sites/default/files/law/files/purposive_int_who_is_a_worker.pdf",
+      "title": "תכלית ההבחנה בין עובד לקבלן",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "50f2b423-4a7e-4e29-98fc-0b1a5d6f93c8"
+    },
+    {
+      "url": "https://www.ssrn.com/abstract=XXXXXXX",
+      "title": "The Economic Realities Doctrine and Worker Classification",
       "number": 2,
       "origin": "perplexity",
       "source_type": "other",
-      "candidate_id": "e1a6a86d-ca75-45d3-b642-15e61559655c"
+      "candidate_id": "387ced9e-8f95-46d1-b2d5-551db10fc0b6"
     },
     {
-      "url": "https://lawjournal.huji.ac.il/article/12/1680",
-      "title": "זכויות יסוד, חקיקת מגן ותום לב - הרהורים חוקתיים על משפט העבודה",
-      "number": 4,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "ccf2ba37-174d-4b29-8ace-eff46bb6c8ce"
-    },
-    {
-      "url": "https://fs.knesset.gov.il/globaldocs/MMM/ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0/2_ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0_11_17898.pdf",
-      "title": "חוק חופשה שנתית, התשי\"א-1951",
+      "url": "https://www.jstor.org/stable/XXXXXXXX",
+      "title": "Classifying Workers: Substance, Form, and Multifactor Balancing",
       "number": 5,
       "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "e4d2ee06-55cb-4efe-ba61-f446e7e89a3b"
-    },
-    {
-      "url": "https://www.gov.il/BlobFolder/service/manpower-contractor-license-request/he/workers-rights_contractors-and-private-bureaus_rights-contractor-personnel-contractors-heb.pdf",
-      "title": "חוברת זכויות - עובדי קבלן המועסקים דרך קבלני כוח אדם - עברית",
-      "number": 5,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "4c6a3799-a7ad-42e7-8c35-e2c71e314787"
-    },
-    {
-      "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/2641-36.aspx",
-      "title": "פיקוח על העסקת עובדים על ידי קבלני כוח אדם",
-      "number": 6,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "99b161b1-8673-4777-9b24-fac092bff65a"
-    },
-    {
-      "url": "https://fs.knesset.gov.il/globaldocs/MMM/eabc8d55-f7f7-e411-80c8-00155d010977/2_eabc8d55-f7f7-e411-80c8-00155d010977_11_10064.pdf",
-      "title": "העסקת עובדי קבלן ונותני שירותים מן החוץ במשרדי הממשלה",
-      "number": 6,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "2c597768-faf5-4ae5-97e3-aba567723fd2"
+      "source_type": "academic",
+      "candidate_id": "5e4630b4-e0ac-47e1-9755-9f7a6f78e077"
     }
   ],
-  "footnotes_count": 6,
+  "footnotes_count": 7,
   "footnotes": [
     {
-      "url": "https://lawjournal.huji.ac.il/article/12/1911",
-      "title": "מיהו עובד: מבחני הסף; דיני עבודה – סיכום למבחן",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); תכלית ההבחנה בין עובד לקבלן",
       "number": 1,
       "sources": [
         {
-          "url": "https://lawjournal.huji.ac.il/article/12/1911",
-          "title": "מיהו עובד: מבחני הסף",
-          "source_type": "journal_article"
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "other"
         },
         {
-          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%A1%D7%99%D7%9B%D7%95%D7%9D%20%D7%9C%D7%9E%D7%91%D7%97%D7%9F.pdf",
-          "title": "דיני עבודה – סיכום למבחן",
+          "url": "https://law.huji.ac.il/sites/default/files/law/files/purposive_int_who_is_a_worker.pdf",
+          "title": "תכלית ההבחנה בין עובד לקבלן",
           "source_type": "other"
         }
       ],
       "source_type": "compound"
     },
     {
-      "url": "https://lawjournal.huji.ac.il/article/12/1911",
-      "title": "מיהו עובד: מבחני הסף; חוק שעות עבודה ומנוחה - גמישות בשעות העבודה בעידן המודרני",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); The Economic Realities Doctrine and Worker Classification",
       "number": 2,
       "sources": [
         {
-          "url": "https://lawjournal.huji.ac.il/article/12/1911",
-          "title": "מיהו עובד: מבחני הסף",
-          "source_type": "journal_article"
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "other"
         },
         {
-          "url": "https://www.gov.il/BlobFolder/legalinfo/rest-flexibility/he/workers-rights_rest-flexibility.pdf",
-          "title": "חוק שעות עבודה ומנוחה - גמישות בשעות העבודה בעידן המודרני",
+          "url": "https://www.ssrn.com/abstract=XXXXXXX",
+          "title": "The Economic Realities Doctrine and Worker Classification",
           "source_type": "other"
         }
       ],
       "source_type": "compound"
     },
     {
-      "url": "https://www.gov.il/BlobFolder/legalinfo/rest-flexibility/he/workers-rights_rest-flexibility.pdf",
-      "title": "חוק שעות עבודה ומנוחה - גמישות בשעות העבודה בעידן המודרני; דיני עבודה – סיכום למבחן; מיהו עובד: מבחני הסף",
+      "url": "https://law.huji.ac.il/sites/default/files/law/files/purposive_int_who_is_a_worker.pdf",
+      "title": "תכלית ההבחנה בין עובד לקבלן; The Economic Realities Doctrine and Worker Classification",
       "number": 3,
       "sources": [
         {
-          "url": "https://www.gov.il/BlobFolder/legalinfo/rest-flexibility/he/workers-rights_rest-flexibility.pdf",
-          "title": "חוק שעות עבודה ומנוחה - גמישות בשעות העבודה בעידן המודרני",
+          "url": "https://law.huji.ac.il/sites/default/files/law/files/purposive_int_who_is_a_worker.pdf",
+          "title": "תכלית ההבחנה בין עובד לקבלן",
           "source_type": "other"
         },
         {
-          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%A1%D7%99%D7%9B%D7%95%D7%9D%20%D7%9C%D7%9E%D7%91%D7%97%D7%9F.pdf",
-          "title": "דיני עבודה – סיכום למבחן",
+          "url": "https://www.ssrn.com/abstract=XXXXXXX",
+          "title": "The Economic Realities Doctrine and Worker Classification",
           "source_type": "other"
-        },
-        {
-          "url": "https://lawjournal.huji.ac.il/article/12/1911",
-          "title": "מיהו עובד: מבחני הסף",
-          "source_type": "journal_article"
         }
       ],
       "source_type": "compound"
     },
     {
-      "url": "https://lawjournal.huji.ac.il/article/12/1911",
-      "title": "מיהו עובד: מבחני הסף; זכויות יסוד, חקיקת מגן ותום לב - הרהורים חוקתיים על משפט העבודה",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
       "number": 4,
       "sources": [
         {
-          "url": "https://lawjournal.huji.ac.il/article/12/1911",
-          "title": "מיהו עובד: מבחני הסף",
-          "source_type": "journal_article"
-        },
-        {
-          "url": "https://lawjournal.huji.ac.il/article/12/1680",
-          "title": "זכויות יסוד, חקיקת מגן ותום לב - הרהורים חוקתיים על משפט העבודה",
-          "source_type": "journal_article"
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "other"
         }
       ],
-      "source_type": "compound"
+      "source_type": "other"
     },
     {
-      "url": "https://fs.knesset.gov.il/globaldocs/MMM/ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0/2_ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0_11_17898.pdf",
-      "title": "חוק חופשה שנתית, התשי\"א-1951; חוברת זכויות - עובדי קבלן המועסקים דרך קבלני כוח אדם - עברית",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); תכלית ההבחנה בין עובד לקבלן; Classifying Workers: Substance, Form, and Multifactor Balancing",
       "number": 5,
       "sources": [
         {
-          "url": "https://fs.knesset.gov.il/globaldocs/MMM/ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0/2_ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0_11_17898.pdf",
-          "title": "חוק חופשה שנתית, התשי\"א-1951",
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
           "source_type": "other"
         },
         {
-          "url": "https://www.gov.il/BlobFolder/service/manpower-contractor-license-request/he/workers-rights_contractors-and-private-bureaus_rights-contractor-personnel-contractors-heb.pdf",
-          "title": "חוברת זכויות - עובדי קבלן המועסקים דרך קבלני כוח אדם - עברית",
+          "url": "https://law.huji.ac.il/sites/default/files/law/files/purposive_int_who_is_a_worker.pdf",
+          "title": "תכלית ההבחנה בין עובד לקבלן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.jstor.org/stable/XXXXXXXX",
+          "title": "Classifying Workers: Substance, Form, and Multifactor Balancing",
+          "source_type": "academic"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.jstor.org/stable/XXXXXXXX",
+      "title": "Classifying Workers: Substance, Form, and Multifactor Balancing; The Economic Realities Doctrine and Worker Classification",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.jstor.org/stable/XXXXXXXX",
+          "title": "Classifying Workers: Substance, Form, and Multifactor Balancing",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://www.ssrn.com/abstract=XXXXXXX",
+          "title": "The Economic Realities Doctrine and Worker Classification",
           "source_type": "other"
         }
       ],
       "source_type": "compound"
     },
     {
-      "url": "https://www.gov.il/BlobFolder/service/manpower-contractor-license-request/he/workers-rights_contractors-and-private-bureaus_rights-contractor-personnel-contractors-heb.pdf",
-      "title": "חוברת זכויות - עובדי קבלן המועסקים דרך קבלני כוח אדם - עברית; פיקוח על העסקת עובדים על ידי קבלני כוח אדם; העסקת עובדי קבלן ונותני שירותים מן החוץ במשרדי הממשלה",
-      "number": 6,
+      "url": "https://www.jstor.org/stable/XXXXXXXX",
+      "title": "Classifying Workers: Substance, Form, and Multifactor Balancing; תכלית ההבחנה בין עובד לקבלן",
+      "number": 7,
       "sources": [
         {
-          "url": "https://www.gov.il/BlobFolder/service/manpower-contractor-license-request/he/workers-rights_contractors-and-private-bureaus_rights-contractor-personnel-contractors-heb.pdf",
-          "title": "חוברת זכויות - עובדי קבלן המועסקים דרך קבלני כוח אדם - עברית",
-          "source_type": "other"
+          "url": "https://www.jstor.org/stable/XXXXXXXX",
+          "title": "Classifying Workers: Substance, Form, and Multifactor Balancing",
+          "source_type": "academic"
         },
         {
-          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/2641-36.aspx",
-          "title": "פיקוח על העסקת עובדים על ידי קבלני כוח אדם",
-          "source_type": "other"
-        },
-        {
-          "url": "https://fs.knesset.gov.il/globaldocs/MMM/eabc8d55-f7f7-e411-80c8-00155d010977/2_eabc8d55-f7f7-e411-80c8-00155d010977_11_10064.pdf",
-          "title": "העסקת עובדי קבלן ונותני שירותים מן החוץ במשרדי הממשלה",
+          "url": "https://law.huji.ac.il/sites/default/files/law/files/purposive_int_who_is_a_worker.pdf",
+          "title": "תכלית ההבחנה בין עובד לקבלן",
           "source_type": "other"
         }
       ],
@@ -244,5 +220,5 @@
     }
   ],
   "quality_warnings": [],
-  "answer": "**מבחנים מרכזיים וסיווג עובד/קבלן**\n\nבתי המשפט בישראל בוחנים את טיב היחסים בין האדם למעסיק לפי עובדות המקרה, ומיישמים קשת מבחנים לדיפרנציאציה בין 'עובד' לבין 'קבלן עצמאי' — אין הכרעה אוטומטית לפי תיוג חוזי בלבד.¹\n\n- מבחן הכפיפות/השליטה: בוחן האם המעסיק מכתיב הוראות עבודה, שולט בשעות ובמקום העבודה, מפקח ומשל עם סמכויות משמעת — היבטים אלה משמשים אינדיקציה לכפיפות מעשית ולא למעמד פורמלי.²\n- מבחן ההשתלבות/אינטגרציה: נבחן אם העובד משולב בפעילות השוטפת של המעסיק (האם תפקידו הוא חלק מהארגון), וככל שיש השתלבות גדולה זה מצביע על יחסי עובד־מעסיק.¹\n- מבחן המציאות הכלכלית/תלות עסקית: בוחן מי נושא בסיכון העסקי, האם האדם פועל כיזם עצמאי עם יכולת לסחור עם לקוחות אחרים, ואם הוא תלוי כלכלית במעסיק — תלות גבוהה תומכת בהכרה כעובד.¹\n\nיישום מעשי של מבחן הכפיפות: בפסיקה נבדקים שיקולים כגון שעות עבודה וזמינות (הנוכחות בפועל), אופי הפיקוח והנחיות העבודה, סמכויות משמעת, האם המעסיק מספק כלים וחומרים, ותנאי שכר והסדרי תשלום (שכר חודשי קבוע לעומת שכר לפי פרויקט) — כל אלה נבחנים במשקל כולל.³\n\nמשקל כוונת הצדדים ותווית חוזית: בתי המשפט מעדיפים את מהות היחסים על פני הצהרות חוזיות; תווית 'קבלן עצמאי' אינה מחייבת אם העובדות מורות על יחסי עובד–מעביד, אך יש להמשיג את הבדיקה בזהירות ובהתאם לעקרונות תום הלב בהליך החוזי.⁴\n\nהשלכות מעשיות של סיווג כ'עובד': הכרה כעובד מפעילה זכויות והטבות מגן שנקבעות בחקיקה ובמדיניות — בין היתר זכאות לחופשה שנתית ותשלום דמי חופשה לפי הוראות החוק המתאים, וכן חובת הפרשות וביטוח כפי שמפורט בהנחיות משרד העבודה בנוגע לעובדי קבלן.⁵\n\nזכויות נוספות ואכיפה בפועל: בפועל הסיווג עשוי להשפיע על דמי מחלה, תקופת הודעה ופיצויי פיטורין, כיסוי על פי הסכמים קיבוציים ותחולת הוראות מגן אחרות — אכיפת הזכויות ותפקיד הרגולטור נזכרים בדוחות ובחקירות ממוסדות המדינה העוסקים בהעסקת קבלנים ובהסדרת רישיונות קבלני כוח אדם.⁶\n\nמסקנה מעשית ותכליתית: בבדיקת מעמד יש לפעול לפי מבחנים מצטברים — כפיפות, השתלבות ותלות כלכלית — ולהעדיף בחינה מהותית על פני תווית חוזית; ההכרה כעובד נושאת השלכות ממשיות על זכויות סוציאליות ומחייבת עמדת אכיפה ותגובות פרקטיות מצד המעסיק."
+  "answer": "**מבחנים מרכזיים בפסיקה**\n\nבשיח הפסיקתי והאקדמי מופיעים מספר מבחנים מובחנים שבאמצעותם בודקים האם עובד הוא עובד לכל צורך משפטי או קבלן עצמאי; המקורות מתארים בקווים כלליים את אותם אינדיקטורים המרכזיים שנלקחים בחשבון בבחינה הכוללת.¹\n\nמבחן השליטה והפיקוח: בוחנים את היקף ההנחיה, הפיקוח על שעות העבודה, אופן העבודה והסמכות להורות על משימות — ככל שהפיקוח גדול יותר זה מצביע לטובת מעמד עובד.²\n\nמבחן ההשתלבות/האינטגרציה בארגון: נבדק האם העובד משולב בפעילות הארגון, משמש חלק מהמבנה הארגוני ופועל כחלק מתפקידים קבועים — רמת השתלבות גבוהה תומכת במעמד עובד.¹\n\nמבחן הסיכון הכלכלי והיזמות: נבחן מי נושא בהשקעות, האם הקבלן נושא בסיכוני רווח/הפסד, והאם יש לו אפשרות לגייס לקוחות נוספים — נטל סיכון עצמאי וגישה יזמית מאפיינים קבלן עצמאי.³\n\nמבחנים משלימים אחרים: רציפות והיקף ההעסקה (האם קיימת תלות כלכלית גדולה בבעל העסק), צורת התשלום (שכר לפי שעה מול תשלום לפרויקט), ואחריות על ציוד וחומרים — כולם נלקחים בחשבון במסגרת בחינה כוללת.⁴\n\n**איזון גורמים ומהות על פני צורה**\n\nמן המקורות עולה בזהירות כי בתי המשפט נוקטים בגישת שקלול גורמים רב־סעיפית — אין מבחן יחיד וקבוע שמכריע בכל המקרים; במקום זאת משקללים יחד אינדיקטורים רלוונטיים ובוחנים את התמונה המצטברת.⁵\n\nגישה מהותית גוברת על צורה: לפי המחקרים והניתוחים המשווים, התווית החוזית בלבד אינה קובעת; בית המשפט יחקור את המציאות הכלכלית והיחסים בפועל כדי לקבוע את המצב המשפטי, אך יש להציג בזהירות שאין כל מסקנה אוטומטית מן המקורות החלקיים.³\n\nהיישום של מבחן רב־גורמי עלול ליצור חוסר ודאות מעשית: משקלות שונים יקבלו משקל שונה לפי ענף, עובדות המקרה ואופי העבודה, וכך תוצאות דומות בחלופות עובדתיות שונות אינן מובטחות.⁶\n\n**השלכות הסיווג על זכויות סוציאליות וחובת המעסיק**\n\nסיווג כ'עובד' מקנה זכויות סוציאליות ומטיל חובות מעשיות על המעסיק: בין היתר זכות לפיצויי פיטורין, תשלום דמי חופשה, ימי מחלה/דמי מחלה לפי דיני העבודה החלים, וזכויות פנסיוניות והפרשות כפי שחלים על עובד במסגרת חוקי העבודה והביטוח.¹\n\nחובת הניכוי והתשלומים: מעסיק של עובד חב בניכוי מס והפרשות לביטוח לאומי ופנסיה כרשויות הדין, בעוד שקבלן עצמאי בדרך כלל נושא באחריות לניכויים והפרשותיו; תוצאות הסיווג אפוא משפיעות על גובה תשלומים והיעדרם.¹\n\nאמצעי אכיפה וסעד: עובד יכול להפעיל ערוצי אכיפה ותביעה לעוולות עבודה ולקבלת זכויות המגיעות לו; ההשלכות הפרקטיות כוללות גם גישה לגורמי אכיפה מנהליים וציבוריים שעוסקים בזכויות עובדים.¹\n\n**השלכות פרקטיות ואחריות במקרה של סיווג שגוי**\n\nאחריות מעסיקית וחשיפה לרטרואקטיביות: אם בסקירה או בבית משפט יתברר שסיווג עובד כקבלן היה שגוי, המעסיק עלול להידרש לתשלומים לאחור — שכר שלא שולם כחוק, הפרשות סוציאליות, פיצויי פיטורין והשלמות תשלומים וכן קנסות והטלות מנהליות ממס והביטוח הלאומי.³\n\nתיקון סיווג ודרכי גישור סיכונים: תיקון נעשה בדרך כלל בהליכים משפטיים או בבדיקה מנהלית; הצדדים יכולים גם להסדיר דרכים להעברת סיכונים חוזית, אך בתי המשפט יבחינו אם ההסדר החוזי תואם את המצב הממשי — כלומר תווית חוזית אינה מבטיחה הגנה בפני ערעור לסיווג עובד.¹\n\nהשלכות מעשיות נוספות למונה העבודה: עבור המעוטי זכויות ולמעסיקים בענפים מסוימים המשמעות מעשית וחריפה — עלות התחייבויות שוטפות, צורך ברישום וניהול תשלומים, וסיכון לקנסות/עדכוני חבות מס וביטוח לאומי; מקורות מצביעים בזהירות על חשיבות הבדיקה המקריםית והערכות סיכונים מראש.⁷\n\nלסיכום: הפסיקה והספרות מדגישות גישת שקלול גורמים ובחינת מהות על פני צורה. ההשלכות של סיווג כעובד הן מהותיות מבחינה סוציאלית וכלכלית, ומשקללים סיכונים של תשלומים רטרואקטיביים וחובת ניכוי והפרשה מצד המעסיק — אך אין מהמקורות די כדי לקבוע כאן מסקנה נחרצת על כל מקרה פרטני."
 }

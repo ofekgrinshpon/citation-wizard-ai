@@ -2,45 +2,43 @@
   "id": "B4",
   "category": "statute_section",
   "query": "מה קובע סעיף 12 לחוק החוזים (חלק כללי), התשל\"ג-1973 בעניין תום לב במשא ומתן, ומה הסעד?",
-  "run_id": "8ecdf870-39d6-4d59-9c27-6287d72a32a7",
+  "run_id": "cb420c5b-e2fc-4257-93e6-3a076620ddd6",
   "ok": true,
-  "total_ms": 103686,
+  "total_ms": 176239,
   "answer_intent": {
-    "output_shape": "quote"
+    "output_shape": "definition"
   },
   "lead_ref": {
-    "ref": "s3",
-    "shape": "quote",
-    "reason": "required_anchor_official"
+    "ref": "s2",
+    "shape": "definition",
+    "reason": "required_anchor_statute"
   },
-  "deterministic_branch": "statute_section_quote_refusal",
+  "deterministic_branch": null,
   "limitation_flags": {
     "missing_docket": false,
     "statute_section": false,
     "canonical_quote": false,
-    "missing_anchor_caveat_injected": true
+    "missing_anchor_caveat_injected": false
   },
-  "missing_anchor_descriptions": [
-    "הנוסח המחייב של סעיף 12 לחוק החוזים (חלק כללי)"
-  ],
+  "missing_anchor_descriptions": [],
   "anchor_statuses": [],
   "verifier_counts": {
     "by_support": {
-      "direct": 3,
-      "partial": 10,
-      "unrelated": 7,
-      "tangential": 2
+      "direct": 4,
+      "partial": 7,
+      "unrelated": 4,
+      "tangential": 1
     },
     "by_role_match": {
-      "true": 22,
-      "false": 0
+      "true": 15,
+      "false": 1
     },
-    "model_verdicts": 22,
+    "model_verdicts": 16,
     "by_support_model": {
-      "direct": 3,
-      "partial": 10,
-      "unrelated": 7,
-      "tangential": 2
+      "direct": 4,
+      "partial": 7,
+      "unrelated": 4,
+      "tangential": 1
     },
     "synthetic_verdicts": 0,
     "by_support_synthetic": {
@@ -57,33 +55,155 @@
   "verifier_split_probe_attempts": 0,
   "verifier_errors": [],
   "verifier_labels": null,
-  "used_sources_count": 1,
+  "used_sources_count": 7,
   "used_sources": [
     {
-      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+      "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
       "title": "חוק החוזים (חלק כללי)",
       "number": 1,
-      "origin": "local_db",
-      "source_type": "israeli_law",
-      "candidate_id": "5eec6227-83cb-46ff-ae87-5b83c19d9b7a"
+      "origin": "perplexity",
+      "source_type": "legislation",
+      "candidate_id": "9e7697ef-9713-498c-a450-b7f093eee04f"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "legislation",
+      "candidate_id": "c885f452-29a0-4196-a90a-c6da06406c1d"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+      "title": "סעיף 12 לחוק החוזים: תום לב במשא ומתן",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "c45f170c-01fe-4ad7-b379-0ff53594215a"
+    },
+    {
+      "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+      "title": "השתק הבטחה והממשק החוזי",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "548ef592-cb09-454c-843c-c716141e47fe"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+      "title": "תום לב בחוזים ואשם ביצירת החוזה",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "b8ce1fc5-3b01-4a0c-af5c-f604a139379f"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+      "title": "תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "5866b7f6-c1eb-49b5-8f72-641e6e3fd46d"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m4.pdf",
+      "title": "ייחוד עילה בדיני הפגמים בכריתה: ניתוח עיוני ונורמטיבי",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e42f4ae8-3b36-40a7-93c2-3d41af5b5d95"
     }
   ],
-  "footnotes_count": 1,
+  "footnotes_count": 4,
   "footnotes": [
     {
-      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
-      "title": "חוק החוזים (חלק כללי)",
+      "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+      "title": "חוק החוזים (חלק כללי); חוק החוזים (חלק כללי), תשל\"ג-1973",
       "number": 1,
       "sources": [
         {
-          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+          "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
           "title": "חוק החוזים (חלק כללי)",
-          "source_type": "israeli_law"
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+          "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+          "source_type": "legislation"
         }
       ],
-      "source_type": "israeli_law"
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+      "title": "סעיף 12 לחוק החוזים: תום לב במשא ומתן; השתק הבטחה והממשק החוזי; תום לב בחוזים ואשם ביצירת החוזה",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+          "title": "סעיף 12 לחוק החוזים: תום לב במשא ומתן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+          "title": "השתק הבטחה והממשק החוזי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+          "title": "תום לב בחוזים ואשם ביצירת החוזה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+      "title": "תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן; השתק הבטחה והממשק החוזי; ייחוד עילה בדיני הפגמים בכריתה: ניתוח עיוני ונורמטיבי",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+          "title": "תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+          "title": "השתק הבטחה והממשק החוזי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m4.pdf",
+          "title": "ייחוד עילה בדיני הפגמים בכריתה: ניתוח עיוני ונורמטיבי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973; תום לב בחוזים ואשם ביצירת החוזה; ייחוד עילה בדיני הפגמים בכריתה: ניתוח עיוני ונורמטיבי",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+          "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+          "title": "תום לב בחוזים ואשם ביצירת החוזה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m4.pdf",
+          "title": "ייחוד עילה בדיני הפגמים בכריתה: ניתוח עיוני ונורמטיבי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
     }
   ],
   "quality_warnings": [],
-  "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 12 לחוק החוזים (חלק כללי); לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
+  "answer": "**סעיף 12 לחוק החוזים — נוסח ותכלית**\n\nהגדרה ונוסח: סעיף 12 לחוק החוזים (חלק כללי), תשל\"ג-1973 קובע: «במשא-ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך מקובלת ובתום לב; צד שלא נהג בדרך מקובלת ולא בתום-לב חייב לצד השני פיצויים בעד הנזק שנגרם לו עקב המשא-ומתן או עקב כריתת החוזה.».¹\n\nהמשמעות הדוקטרינרית: מן הסעיף עולה כי החובה אינה מדברת רק על מילים טכניות של חוזה, אלא מטילה חובה התנהגותית בזמן המשא ומתן — לנהוג בדרך מקובלת ובתום לב. פירוש זה כולל איסור על התנהגויות שמטרתן להטעות, להונות, להחזיר הבטחות ללא כוונה ממשית או לנצל מידע רגיש על מנת לפגוע בזכות ההסתמכות של הצד האחר; מטרת החובה נורמטיבית היא להגן על סבירות ההסתמכות ולהשוות כוח במשא-ומתן. ביחס להיקף החובה קיימת גם דעה לפיה תחולתה רחבה יותר מיחסי החוזה הפנימיים ועלולה להגיע מעבר ליחסי הצדדים הפשוטים במשא-ומתן.²\n\nהסעד הקבוע בסעיף: הסעיף מטיל חבות לפיצויים על המפר; הפסיקה והספרות מצביעות כי הסעד המרכזי הוא פיצויי הסתמכות (השלמת הוצאות או הפסדי הסתמכות שנגרמו לנפגע בשל ההסתמכות על המשא-ומתן), ובמקרים חריגים ובנסיבות יוצאות דופן נדונה אפשרות לפיצוי חיובי (רווח שאבד כתוצאה מהפסיקה להיכנס בעסקה). יש להדגיש כי הסעיף עצמו מדבר בהיקף כללי על פיצויים בעד הנזק שנגרם עקב המשא-ומתן או כריתת החוזה, ואופן ומידת הסעד נקבעים בהתאם לנסיבות המקרה ולכללי ההוכחה והשיפוט.³\n\nאלמנטים ראייתיים ונדרשים כדי להוכיח הפרה: על התובע להראות כי החובה חלה במשא-ומתן המסוים (המשא-ומתן היה לקראת כריתת חוזה), שנפלה התנהגות שאינה «דרך מקובלת» או שאינה בתום לב, שהצד התהלך בהסתמכות סבירה על מעשיו או הבטחותיו של המפר, ושנגרם נזק שניתן לקשור סיבתי להתנהגות זו. בנוסף, בתי המשפט שוקלים את מידת ההגנה הראויה בהתאם להקשר המעשי — למשל חוזק ההסתמכות, מידת ההודגשה של הבטחות או הצהרות, והישירות שבינן לבין הנזק שנגרם. מן המקורות עולה בזהירות כי הנטל להוכיח הסתמכות סבירה ונזק סיבתי הוא מהותי לקביעה של חבות לפי סעיף 12.⁴\n\nהערת מסגרת: המקורות שסופקו מכסים את נוסח הסעיף, פרשנויות ודעות השונות לגבי היקף החובה וסוגי הסעד; קיימת תיאורטיזציה ומשקל שיפוטי שוני בספרות ובפסיקה, ולכן בדיון מעשיי יש לבחון כל מקרה לפי נסיבותיו ולפי ראיותיו."
 }
