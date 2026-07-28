@@ -1,0 +1,29 @@
+{
+  "id": "B7",
+  "category": "missing_docket",
+  "query": "מה נקבע בת\"א 98765-04-22 חברת אלפא נ' חברת בטא ביחס לאחריות מנהלים בעת חדלות פירעון?",
+  "run_id": "8f811d61-1354-4363-813e-6da993a443b3",
+  "ok": true,
+  "shape": "case_holding",
+  "lead_ref": {
+    "ref": null,
+    "shape": "case_holding",
+    "reason": "skipped_missing_docket_anchor"
+  },
+  "deterministic_branch": "docket_limitation",
+  "limitation_flags": {
+    "missing_docket": true,
+    "statute_section": false,
+    "canonical_quote": false
+  },
+  "verifier_call_failed": false,
+  "synthetic_verdicts": 0,
+  "stub": false,
+  "hedge_hits": [],
+  "meta_hits": [],
+  "first_sentence": "לא אותר במקורות הזמינים פסק הדין בעניין ת\"א 98765/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.",
+  "used_sources_count": 0,
+  "footnotes_count": 0,
+  "quality_warnings": [],
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ת\"א 98765/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}

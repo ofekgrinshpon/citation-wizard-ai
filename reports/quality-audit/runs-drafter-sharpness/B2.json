@@ -1,0 +1,29 @@
+{
+  "id": "B2",
+  "category": "case_holding",
+  "query": "מה נקבע בבג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל ביחס להקצאת קרקעות למגורים על בסיס לאום?",
+  "run_id": "68e65c08-d2db-4f85-b4ab-236f65552e04",
+  "ok": true,
+  "shape": "case_holding",
+  "lead_ref": {
+    "ref": null,
+    "shape": "case_holding",
+    "reason": "skipped_missing_docket_anchor"
+  },
+  "deterministic_branch": "docket_limitation",
+  "limitation_flags": {
+    "missing_docket": true,
+    "statute_section": false,
+    "canonical_quote": false
+  },
+  "verifier_call_failed": false,
+  "synthetic_verdicts": 0,
+  "stub": false,
+  "hedge_hits": [],
+  "meta_hits": [],
+  "first_sentence": "לא אותר במקורות הזמינים פסק הדין בעניין בג\"ץ 6698/95 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.",
+  "used_sources_count": 0,
+  "footnotes_count": 0,
+  "quality_warnings": [],
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין בג\"ץ 6698/95 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}
