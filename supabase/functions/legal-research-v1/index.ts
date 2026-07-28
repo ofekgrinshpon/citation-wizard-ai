@@ -565,6 +565,10 @@ async function handle(req: Request): Promise<Response> {
     fallback_to_sequential: verifier.fallback_to_sequential,
     call_failed: verifier.call_failed,
     call_failures: verifier.call_failures,
+    recovered_batches: verifier.recovered_batches,
+    retry_attempts: verifier.retry_attempts,
+    split_probe_attempts: verifier.split_probe_attempts,
+
     demotions: verifier.demotions,
     demotions_by_rule: verifier.demotions_by_rule,
   };
