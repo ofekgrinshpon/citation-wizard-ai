@@ -44,6 +44,8 @@ const corsHeaders = {
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const STUB_ANSWER = "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.";
+const VERIFIER_FAILURE_ANSWER = "השלב שאמור לאמת את המקורות לא הושלם בהצלחה, ולכן לא ניתן להפיק תשובה משפטית אמינה מהמקורות שנמצאו. נסו להריץ שוב, או צרפו מקור רלוונטי.";
+
 
 function jsonResponse(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
