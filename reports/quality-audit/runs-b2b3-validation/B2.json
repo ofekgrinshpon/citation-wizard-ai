@@ -2,9 +2,9 @@
   "id": "B2",
   "category": "case_holding",
   "query": "מה נקבע בבג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל ביחס להקצאת קרקעות למגורים על בסיס לאום?",
-  "run_id": "e9582ef2-11cf-41e3-b9e7-b158a99a9bfd",
+  "run_id": "610c7724-2f73-4786-a466-533d1f906c98",
   "ok": true,
-  "total_ms": 171273,
+  "total_ms": 204016,
   "answer_intent": {
     "output_shape": "case_holding"
   },

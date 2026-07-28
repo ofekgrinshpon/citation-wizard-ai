@@ -2,9 +2,9 @@
   "id": "Q02",
   "category": "case_holding",
   "query": "מה נפסק בע\"א 8163/05 הדר חברה לביטוח בע\"מ נ' פלוני ביחס לנטל ההוכחה בתביעות ביטוח נזקי גוף?",
-  "run_id": "ec3034c4-73c5-4dd5-aceb-e52963a9a69a",
+  "run_id": "c7121294-99dc-46d6-b946-07a58c7689e6",
   "ok": true,
-  "total_ms": 137341,
+  "total_ms": 181283,
   "answer_intent": {
     "output_shape": "case_holding"
   },

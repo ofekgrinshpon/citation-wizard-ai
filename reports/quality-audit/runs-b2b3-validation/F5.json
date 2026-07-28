@@ -2,9 +2,9 @@
   "id": "F5",
   "category": "missing_docket",
   "query": "מה נקבע בת\"א 12345-01-24 חברת גמא נ' חברת דלתא ביחס להפרת חוזה מסחרי?",
-  "run_id": "2d8df23c-f263-4b8d-bb49-946c524a38d1",
+  "run_id": "d4e8745f-6727-4705-bf66-756bf5f5a707",
   "ok": true,
-  "total_ms": 106696,
+  "total_ms": 125796,
   "answer_intent": {
     "output_shape": "case_holding"
   },

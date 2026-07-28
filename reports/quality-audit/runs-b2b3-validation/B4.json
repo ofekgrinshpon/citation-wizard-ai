@@ -2,30 +2,28 @@
   "id": "B4",
   "category": "statute_section",
   "query": "מה קובע סעיף 12 לחוק החוזים (חלק כללי), התשל\"ג-1973 בעניין תום לב במשא ומתן, ומה הסעד?",
-  "run_id": "e08b6834-212e-4220-8b3f-11f19de7997c",
+  "run_id": "191a5fcf-9448-4097-a74f-d4dc8eb4efae",
   "ok": true,
-  "total_ms": 106186,
+  "total_ms": 174282,
   "answer_intent": {
-    "output_shape": "quote"
+    "output_shape": "definition"
   },
   "shape_override": null,
   "lead_ref": {
     "ref": "s3",
-    "shape": "quote",
-    "reason": "required_anchor_official"
+    "shape": "definition",
+    "reason": "required_anchor_statute"
   },
-  "deterministic_branch": "statute_section_quote_refusal",
+  "deterministic_branch": null,
   "limitation_flags": {
     "missing_docket": false,
     "statute_section": false,
     "canonical_quote": false,
-    "missing_anchor_caveat_injected": true
+    "missing_anchor_caveat_injected": false
   },
-  "missing_anchor_descriptions": [
-    "הנוסח המחייב של סעיף 12 לחוק החוזים (חלק כללי)"
-  ],
+  "missing_anchor_descriptions": [],
   "anchor_statuses": [],
-  "used_sources_count": 1,
+  "used_sources_count": 7,
   "used_sources": [
     {
       "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
@@ -33,25 +31,181 @@
       "number": 1,
       "origin": "local_db",
       "source_type": "israeli_law",
-      "candidate_id": "8af25b4a-5302-4087-a00b-117afd96e531"
+      "candidate_id": "26925b72-00de-4153-ba63-1371bdc9d9cb"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "legislation",
+      "candidate_id": "e377acce-20d1-415a-8617-60e890dd0948"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+      "title": "חוק החוזים (חלק כללי) תשל\"ג-1973 - נוסח חוק / עותק PDF",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "legislation",
+      "candidate_id": "afcb25c0-b88c-413e-8fd9-4096ae20b0e9"
+    },
+    {
+      "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+      "title": "השתק הבטחה והממשק החוזי / יותם קפלן",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "935fcfdc-dc04-49e6-a0a2-7db45abbeadd"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+      "title": "תרומתה של השופטת בן־פורת לעיצובו של תום הלב במשא ומתן",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e98027b0-daac-4ed1-a804-a93569dffca9"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4900302",
+      "title": "תוצאות הפרת חובת תום הלב במשא ומתן / Damages for Breach of the Obligation to Act in Good Faith in the Pre-Contractual Stage",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "938dd3fe-ba86-4687-83b8-be31f15e2109"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+      "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+      "number": 6,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "2c99002d-ea4a-4572-810e-606906b4bc41"
     }
   ],
-  "footnotes_count": 1,
+  "footnotes_count": 7,
   "footnotes": [
     {
       "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
-      "title": "חוק החוזים (חלק כללי)",
+      "title": "חוק החוזים (חלק כללי); חוק החוזים (חלק כללי), תשל\"ג-1973",
       "number": 1,
       "sources": [
         {
           "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
           "title": "חוק החוזים (חלק כללי)",
           "source_type": "israeli_law"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+          "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+          "source_type": "legislation"
         }
       ],
-      "source_type": "israeli_law"
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973; חוק החוזים (חלק כללי) תשל\"ג-1973 - נוסח חוק / עותק PDF",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+          "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+          "title": "חוק החוזים (חלק כללי) תשל\"ג-1973 - נוסח חוק / עותק PDF",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+      "title": "השתק הבטחה והממשק החוזי / יותם קפלן; תרומתה של השופטת בן־פורת לעיצובו של תום הלב במשא ומתן",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+          "title": "השתק הבטחה והממשק החוזי / יותם קפלן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+          "title": "תרומתה של השופטת בן־פורת לעיצובו של תום הלב במשא ומתן",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973; תרומתה של השופטת בן־פורת לעיצובו של תום הלב במשא ומתן",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+          "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+          "title": "תרומתה של השופטת בן־פורת לעיצובו של תום הלב במשא ומתן",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+      "title": "השתק הבטחה והממשק החוזי / יותם קפלן; תוצאות הפרת חובת תום הלב במשא ומתן / Damages for Breach of the Obligation to Act in Good Faith in the Pre-Contractual Stage",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+          "title": "השתק הבטחה והממשק החוזי / יותם קפלן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4900302",
+          "title": "תוצאות הפרת חובת תום הלב במשא ומתן / Damages for Breach of the Obligation to Act in Good Faith in the Pre-Contractual Stage",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+      "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+          "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+      "title": "תרומתה של השופטת בן־פורת לעיצובו של תום הלב במשא ומתן; תוצאות הפרת חובת תום הלב במשא ומתן / Damages for Breach of the Obligation to Act in Good Faith in the Pre-Contractual Stage",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+          "title": "תרומתה של השופטת בן־פורת לעיצובו של תום הלב במשא ומתן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4900302",
+          "title": "תוצאות הפרת חובת תום הלב במשא ומתן / Damages for Breach of the Obligation to Act in Good Faith in the Pre-Contractual Stage",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
     }
   ],
   "quality_warnings": [],
-  "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 12 לחוק החוזים (חלק כללי); לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
+  "answer": "**נוסח סעיף 12 לחוק החוזים (חלק כללי)**\n\nבמשא ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך מקובלת ובתום לב; צד שלא נהג כך חייב לפצות על הנזק שנגרם עקב המשא ומתן או עקב כריתת החוזה.¹\n\n**האם הסעיף קובע חובת תום לב במשא ומתן ומה טיבה**\n\nסעיף 12(א) קובע בחזקה משפטית חובת התנהגות בתום לב ובדרך מקובלת בשלב הטרום־חוזי — כלומר במשא ומתן לקראת כריתת חוזה; החובה מופיעה כהוראת די־התנהגות ולא כהוראת תוצאה המחייבת להגיע להסכם.²\n\nהמשמעות הפרקטית של הסעיף היא שבמהלך המשא ומתן ייבחנו מעשיהם של הצדדים לפי אמות מידה של התנהגות מקובלת והוגנת: פעולה מטעה, השמטת מידע מהותי במטרה לפגוע או הכרזות מטעיות על כוונה לכרות חוזה עלולות להיחשב כהפרת החובה.³\n\nהחוק עצמו איננו מטיל חובת הגעה להסכם; הוא מפקח על אופן ההתנהלות בעת המשא ומתן. עם זאת בספרות ובפסיקה הודגש כי במקרים שבהם המשא ומתן התקרב מאד לכריתת חוזה בית המשפט עשוי לשקול סעד חירום או סעד הקשור לקיום ההסכם — אך זאת כריתת שיקול שיפוטית חריגה, ולא הוראת־יסוד בסעיף 12.⁴\n\n**היקף החובה בפסיקה ובספרות**\n\nמן הספרות המשפטית עולה בזהירות כי חובת תום הלב כוללת רכיבים של חובת גילוי ואיסור השתקה של מידע מהותי בשלב הטרום־חוזי; מחקרים דנים במיוחד במצב שבו השמטת מידע יוצרת הסתמכות שגויה אצל האחר.⁵\n\nבפסיקה מופיעות יישומים שונים של המושג (הדגמות של שימוש בטענה בחוסר תום לב בהליכי שיפוט), אך המידע שבמקורות שנבדקו אינו מפרט נוסח־פסיקה מקיף המרחיב את הסעיף על כל סוגי היחסים; לפיכך יש לפעול בזהירות בפרשנות של היקף החובה על סמך המקרים הספציפיים.⁶\n\n**הסעד על הפרת הסעיף וקריטריונים לחישוב נזק**\n\nסעיף 12(ב) קובע במפורש כי הצד שלא נהג בדרך מקובלת ולא בתום־לב חייב לצד השני פיצויים בעד הנזק שנגרם לו עקב המשא ומתן או עקב כריתת החוזה; כך שהסעד החוקי הבסיסי הוא פיצוי נזיקי.¹\n\nהספרות והמחקר המשפטי מצביעים בזהירות על כך שפיצויי ההסתמכות הם הסעדים המקובלים במקרים אלה — כלומר פיצוי על הוצאות והפסדי הסתמכות שנגרמו לנוכח הסתמכות על המשא ומתן — ובמקרים חריגים שבהם החוזה כמעט הושלם נדונה אפשרות של פיצויי קיום או אכיפה, אך זאת כהקלה יוצאת דופן ולא ככלל.⁷\n\nלעניין חישוב ואימות הנזק המקורות מדגישים את הצורך בקשר סיבתי בין הפרת חובת התום־לב לנזק שנגרם ובדרישת הוכחה של היקף ההסתמכות או אובדן ההזדמנות; נטל ההוכחה על הטוען לנזק, והערכת הנזק נתונה לכללי השיפוט הכלליים לגבי הוכחת נזק ונזק צפוי.⁷\n\nסיכום קצר: סעיף 12 קובע חובת התנהגות בתום לב במשא ומתן והסעד העיקרי הוא פיצויים על הנזק שנגרם; המגמות בספרות מדגישות חובת גילוי ונתינת פיצויי הסתמכות, ואילו סעד של קיום חוזה יילקח בחשבון רק בחריגים שבהם ההתקשרות עמדה להושלם."
 }

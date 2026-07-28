@@ -743,7 +743,12 @@ export async function runDrafterV2(
     // legal anchors did not reach the verifier or were not effectively
     // supported, append a single instruction to the user message telling
     // the drafter to caveat the answer instead of inferring around them.
-    missingRequiredAnchors?: Array<{ description: string; is_docket?: boolean; is_statute_section?: boolean }>;
+    missingRequiredAnchors?: Array<{
+      anchor_id?: string;
+      description: string;
+      is_docket?: boolean;
+      is_statute_section?: boolean;
+    }>;
     // Optional analyzer-emitted answer intent. Rendered into the user message
     // as a compact "Answer Intent" block; the drafter system prompt has
     // per-shape and per-posture rules that reference it. Backwards
@@ -938,52 +943,6 @@ export async function runDrafterV2(
     };
   }
 
-  if (statuteSectionLimitationActive) {
-    const t0 = Date.now();
-    const anchorRefs = inputSources
-      .filter((s) => requiredAnchorCandidateIds.has(s.candidate_id))
-      .map((s) => s.ref);
-    const fallbackRefs = inputSources.slice(0, 1).map((s) => s.ref);
-    const draft = buildStatuteSectionLimitationDraft(
-      missingAnchors,
-      anchorRefs.length > 0 ? anchorRefs : fallbackRefs,
-    );
-    const validation = validateStructuredDraft(draft, allowedRefs);
-    const built = validation.draft
-      ? buildFootnotedAnswer(validation.draft, inputSources)
-      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined };
-    const answer = built.answer_markdown;
-    return {
-      ok: validation.report.ok,
-      ms: Date.now() - t_total,
-      model_initial: forceModel ?? MODEL_MINI,
-      model_final: forceModel ?? MODEL_MINI,
-      provider,
-      escalated: false,
-      sources_passed,
-      sources_used: built.used_sources.length,
-      answer_markdown: answer,
-      used_sources: built.used_sources,
-      footnotes: built.footnotes,
-      stage_runs: [{
-        stage: "drafter_v2_statute_section_guard",
-        model: "deterministic",
-        ms: Date.now() - t0,
-        ok: validation.report.ok,
-      }],
-      structured_validation: validation.report,
-      structured_draft: validation.draft,
-      input_sources: inputSources,
-      builder_report: built.builder_report,
-      quality_warning: computeQualityWarning(answer, { question }),
-      missing_anchor_caveat_injected: true,
-      lead_ref: leadSelection,
-      missing_anchor_descriptions: missingAnchors.map((a) => a.description),
-      deterministic_branch: "statute_section_limitation",
-      schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
-    };
-  }
-
   // Deterministic canonical-quote branch. Seeded canonical statute-section
   // quotes do not depend on retrieval rediscovering the same source: if the
   // user's quote request detects a registered statute section, emit the vetted
@@ -1034,6 +993,52 @@ export async function runDrafterV2(
         schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
       };
     }
+  }
+
+  if (statuteSectionLimitationActive) {
+    const t0 = Date.now();
+    const anchorRefs = inputSources
+      .filter((s) => requiredAnchorCandidateIds.has(s.candidate_id))
+      .map((s) => s.ref);
+    const fallbackRefs = inputSources.slice(0, 1).map((s) => s.ref);
+    const draft = buildStatuteSectionLimitationDraft(
+      missingAnchors,
+      anchorRefs.length > 0 ? anchorRefs : fallbackRefs,
+    );
+    const validation = validateStructuredDraft(draft, allowedRefs);
+    const built = validation.draft
+      ? buildFootnotedAnswer(validation.draft, inputSources)
+      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined };
+    const answer = built.answer_markdown;
+    return {
+      ok: validation.report.ok,
+      ms: Date.now() - t_total,
+      model_initial: forceModel ?? MODEL_MINI,
+      model_final: forceModel ?? MODEL_MINI,
+      provider,
+      escalated: false,
+      sources_passed,
+      sources_used: built.used_sources.length,
+      answer_markdown: answer,
+      used_sources: built.used_sources,
+      footnotes: built.footnotes,
+      stage_runs: [{
+        stage: "drafter_v2_statute_section_guard",
+        model: "deterministic",
+        ms: Date.now() - t0,
+        ok: validation.report.ok,
+      }],
+      structured_validation: validation.report,
+      structured_draft: validation.draft,
+      input_sources: inputSources,
+      builder_report: built.builder_report,
+      quality_warning: computeQualityWarning(answer, { question }),
+      missing_anchor_caveat_injected: true,
+      lead_ref: leadSelection,
+      missing_anchor_descriptions: missingAnchors.map((a) => a.description),
+      deterministic_branch: "statute_section_limitation",
+      schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
+    };
   }
 
   // Non-seeded deterministic quote fallback. When retrieval verifies direct

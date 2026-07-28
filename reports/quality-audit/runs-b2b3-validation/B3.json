@@ -2,9 +2,9 @@
   "id": "B3",
   "category": "statute_section",
   "query": "מה קובע סעיף 6 לחוק החברות, התשנ\"ט-1999 בעניין הרמת מסך ומהם התנאים להפעלת הסמכות?",
-  "run_id": "a7c2ea9e-a1fd-41f8-a866-886e9e998589",
+  "run_id": "de261e0a-bc2f-4aae-acce-682badf01181",
   "ok": true,
-  "total_ms": 93541,
+  "total_ms": 164283,
   "answer_intent": {
     "output_shape": "definition"
   },
@@ -28,24 +28,24 @@
   "used_sources_count": 1,
   "used_sources": [
     {
-      "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
-      "title": "חוק החברות, התשנ״ט–1999",
+      "url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+      "title": "הצעת חוק החברות, התשס\"ב 2002",
       "number": 1,
       "origin": "perplexity",
       "source_type": "legislation",
-      "candidate_id": "6acb67e8-cac0-46d9-9d72-f8d60b2c0ab3"
+      "candidate_id": "ab78bd66-7e76-4ccf-8457-5b815f6542e9"
     }
   ],
   "footnotes_count": 1,
   "footnotes": [
     {
-      "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
-      "title": "חוק החברות, התשנ״ט–1999",
+      "url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+      "title": "הצעת חוק החברות, התשס\"ב 2002",
       "number": 1,
       "sources": [
         {
-          "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
-          "title": "חוק החברות, התשנ״ט–1999",
+          "url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+          "title": "הצעת חוק החברות, התשס\"ב 2002",
           "source_type": "legislation"
         }
       ],
