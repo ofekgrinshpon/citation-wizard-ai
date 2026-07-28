@@ -1,0 +1,3829 @@
+{
+  "id": "B8",
+  "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+  "run_id": "55dd584f-5146-4bfd-a44b-a520ac8fe775",
+  "qa_log_id": "b4719dd9-67ac-4f76-9e2b-cdc351f396c8",
+  "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹",
+  "footnotes": [
+    {
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+          "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "israeli_law"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "בקשת ציטוט של סעיף בחוק מחייבת אימות לפי נוסח החקיקה הרשמי (מקור ראשי).",
+        "text_he": "זהה את המקור הרשמי וסימול החוק והסעיף: מהו 'סעיף 1 לחוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית?",
+        "claim_id": "C1",
+        "required_roles": [
+          "primary_statute"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "יש לספק את נוסח הסעיף המילולי בהתאם לטקסט החוקי או לדו\"ח רשמי המכיל את הנוסח המעודכן.",
+        "text_he": "האם ניתן להביא כאן את נוסח סעיף 1 במלואו (הציטוט המילולי של הטקסט בעברית) ומה הנוסח המדויק?",
+        "claim_id": "C2",
+        "required_roles": [
+          "primary_statute",
+          "factual_report"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "על מנת להציע הפנייה רשמית או תרגום יש להיוועץ בדו\"חות/מקורות ממשלתיים או בכלי פרסום רשמיים.",
+        "text_he": "האם המשתמש רוצה גם ציון מקור רשמי/קישור למקור (למשל 'תקנון החוקים' או אתר הכנסת) או תרגום לשפה אחרת לצד הציטוט?",
+        "claim_id": "C3",
+        "required_roles": [
+          "government_report",
+          "factual_report"
+        ],
+        "is_black_letter": false
+      }
+    ],
+    "run_id": "55dd584f-5146-4bfd-a44b-a520ac8fe775",
+    "drafter": {
+      "ms": 2,
+      "ok": true,
+      "lead_ref": {
+        "ref": "r_basic_law_dignity-s1",
+        "shape": "quote",
+        "reason": "canonical_registry_statute_section"
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "sources_used": 1,
+      "used_sources": [
+        {
+          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+          "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+          "number": 1,
+          "origin": "local_db",
+          "source_type": "israeli_law",
+          "candidate_id": "canonical:basic_law_dignity-s1"
+        }
+      ],
+      "marker_format": "superscript",
+      "model_initial": "openai/gpt-5-mini",
+      "builder_report": {
+        "marker_count": 2,
+        "heading_count": 0,
+        "list_item_count": 0,
+        "paragraph_count": 2,
+        "cited_segment_count": 2,
+        "adjacent_marker_count": 0,
+        "distinct_source_count": 1,
+        "compound_segment_count": 0,
+        "compound_footnote_count": 0,
+        "avg_sources_per_cited_segment": 1
+      },
+      "footnote_count": 1,
+      "sources_passed": 13,
+      "drafter_version": "v2.1c",
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1
+        ]
+      },
+      "source_sufficiency": null,
+      "answer_style_report": {
+        "metrics": {
+          "block_count": 2,
+          "denylist_hits": [],
+          "heading_count": 0,
+          "heading_ratio": 0,
+          "cited_block_count": 2,
+          "total_footnote_count": 1,
+          "compound_footnote_count": 0,
+          "compound_footnote_ratio": 0,
+          "unsafe_display_title_count": 0,
+          "avg_sources_per_cited_block": 1,
+          "unsafe_display_title_examples": [],
+          "partial_supported_strong_claims": [],
+          "total_source_refs_in_cited_blocks": 2
+        },
+        "report_only": true,
+        "triggered_reasons": []
+      },
+      "unique_source_count": 1,
+      "deterministic_branch": "canonical_quote_registry",
+      "canonical_quote_fired": true,
+      "omitted_candidate_ids": [
+        "b9d44e3b-0a37-4b4f-ae4e-1eaec409b93a",
+        "4291bf92-b711-4e74-ac3d-3749f679bc1b",
+        "a486f6de-750e-42de-b55f-e73c9947a160",
+        "de6749db-e64d-4a86-9918-faae57088143",
+        "006a81e8-547f-4cef-98fb-23fa047239c5",
+        "5d864afc-99d6-43a6-bfbc-6747aed93320",
+        "554b7991-d7d9-4551-9dc4-e99a9e23d1e3",
+        "d9deeaab-9138-4491-843e-e7c97f9a5f59",
+        "f896f944-f90f-449b-9ef5-275f602e6ecb",
+        "133f875a-6328-4f9b-a7df-cf284c6fe238",
+        "b0cad592-b3f6-4e44-9c99-94b73158d835",
+        "c704af30-d81f-47ad-934b-beb1b2b73f4b"
+      ],
+      "structured_validation": {
+        "ok": true,
+        "errors": [],
+        "block_count": 2,
+        "heading_count": 0,
+        "list_item_count": 0,
+        "paragraph_count": 2,
+        "cited_segment_count": 2,
+        "forbidden_text_hits": [],
+        "unknown_source_refs": [],
+        "total_source_ref_count": 2
+      },
+      "missing_anchor_descriptions": [],
+      "missing_anchor_caveat_injected": false,
+      "missing_docket_limitation_fired": false,
+      "statute_section_limitation_fired": false,
+      "insufficient_sources_limitation_fired": false
+    },
+    "queries": [
+      {
+        "role": "primary_statute",
+        "reason": "לאמת את הזיהוי המדויק של המקור הרשמי ולשלוף את נוסח הסעיף למטרת ציטוט מדויק ומקצועי; חובה לכלול את שם החוק וסעיף 1 כפי שמצויין בניתוח.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "חוק יסוד: כבוד האדם וחירותו, סעיף 1, נוסח רשמי בעברית (טקסט מלא של 'סעיף 1') — מקור רשמי/גרסה מאושרת",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "לשלוף את נוסח הסעיף המדויק לציטוט מילולי; דרישה מפורשת לכלול את שם החוק וסעיף 1 כדי להבטיח ציטוט נאמן.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "טקסט רשמי של חוק יסוד: כבוד האדם וחירותו, סעיף 1 — נוסח מלא בעברית (גרסת החוק כפי שפורסם/מנוסח באתר הכנסת או ברשומות)",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "factual_report",
+        "reason": "לקבוע אם קיימות מגבלות פרקטיות או הנחיות רשמיות (זכויות יוצרים, פוליסת האתר) לגבי פרסום ציטוט מלא של סעיף חוק; רלוונטי לשאלה אם ניתן \"להביא כאן\" את הנוסח במלואו.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "הנחיות/מדיניות לגבי ציטוט מלא של טקסטי חקיקה באתרי ציבוריים: האם מותר לצטט במלואו סעיף 1 של חוק יסוד: כבוד האדם וחירותו — הנחיות אתר הכנסת/משרד המשפטים/הרשומות",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "government_report",
+        "reason": "להביא לציון מקור רשמי/קישור למקור הרשמי שבו מפורסם נוסח החוק; יסייע לענות האם יש לצרף קישור רשמי יחד עם הציטוט.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "דף החוק באתר הכנסת: חוק יסוד: כבוד האדם וחירותו — קישור רשמי לנוסח בעברית ופרסום רשמי (תקנון החוקים/אתר הכנסת) כולל גרסאות ותרגומים רשמיים אם קיימים",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "factual_report",
+        "reason": "לבדוק האם קיים תרגום רשמי שניתן לצרף לצד הציטוט בעברית ולספק המלצה לגבי הכללת תרגום במענה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "תרגום רשמי לחוק יסוד: כבוד האדם וחירותו (תרגום אנגלי רשמי) באתר הכנסת או משרד המשפטים — קיום תרגום רשמי ומהי נוסחאות התרגום",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "required_anchor:statute_section:basic_law_dignity-s1",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "metadata": {
+          "required_anchor_id": "statute_section:basic_law_dignity-s1",
+          "statute_section_ref_id": "basic_law_dignity-s1",
+          "is_statute_section_anchor": true
+        },
+        "query_he": "חוק-יסוד: כבוד האדם וחירותו סעיף 1",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "required_anchor:statute_section:basic_law_dignity-s1",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "metadata": {
+          "required_anchor_id": "statute_section:basic_law_dignity-s1",
+          "statute_section_ref_id": "basic_law_dignity-s1",
+          "is_statute_section_anchor": true
+        },
+        "query_he": "חוק-יסוד: כבוד האדם וחירותו 1",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "required_anchor:statute_section:basic_law_dignity-s1",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "metadata": {
+          "required_anchor_id": "statute_section:basic_law_dignity-s1",
+          "statute_section_ref_id": "basic_law_dignity-s1",
+          "is_statute_section_anchor": true
+        },
+        "query_he": "סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+        "expected_source_type": "statute"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 33583,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 26459,
+        "confidence": 1,
+        "legal_area": "חוקתי",
+        "answer_type": "factual_legal",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "answer_intent": {
+          "output_shape": "quote"
+        },
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "interpretation_note": null
+      },
+      "claims_count": 3,
+      "queries_count": 5,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 134092,
+    "verifier": {
+      "ms": 63735,
+      "counts": {
+        "by_support": {
+          "direct": 1,
+          "partial": 11,
+          "unrelated": 3,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 14,
+          "false": 1
+        },
+        "model_verdicts": 15,
+        "by_support_model": {
+          "direct": 1,
+          "partial": 11,
+          "unrelated": 3,
+          "tangential": 0
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "b9d44e3b-0a37-4b4f-ae4e-1eaec409b93a",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "4291bf92-b711-4e74-ac3d-3749f679bc1b",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "a486f6de-750e-42de-b55f-e73c9947a160",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "de6749db-e64d-4a86-9918-faae57088143",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "006a81e8-547f-4cef-98fb-23fa047239c5",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "5d864afc-99d6-43a6-bfbc-6747aed93320",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "554b7991-d7d9-4551-9dc4-e99a9e23d1e3",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "d9deeaab-9138-4491-843e-e7c97f9a5f59",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "f896f944-f90f-449b-9ef5-275f602e6ecb",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "133f875a-6328-4f9b-a7df-cf284c6fe238",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "b0cad592-b3f6-4e44-9c99-94b73158d835",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "c704af30-d81f-47ad-934b-beb1b2b73f4b",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 63734,
+          "label": "batch1",
+          "attempts": 1,
+          "claim_ids": [
+            "C1",
+            "C2",
+            "C3"
+          ],
+          "escalated": false,
+          "recovered": false,
+          "candidates": 15,
+          "split_probes": 0
+        }
+      ],
+      "dropped": [
+        {
+          "role": "primary_statute",
+          "title": "חוקי היסוד של מדינת ישראל (PDF) – אתר הכנסת",
+          "origin": "perplexity",
+          "reason": "הטענה שואלת לגבי רצון המשתמש לקבל ציון מקור/קישור או תרגום (שאלה על העדפה/פורמט); המסמך המוצע הוא אוסף חוקי יסוד באתר הכנסת ולא עונה על שאלה זו לגבי רצון המשתמש.",
+          "candidate_id": "95594632-4ec1-4729-a239-947b6e35a1ef",
+          "worst_support": "unrelated",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "primary_statute",
+          "title": "ההסדרה המוצעת למוצרים ביוצדיים לחיטוי עור האדם ולדחיית מזיקים מגוף האדם",
+          "origin": "local_db",
+          "reason": "המסמך עוסק ברגולציה של מוצרים ביוצדיים/חוקי רוקחים — נושא שונה לחלוטין ולא רלוונטי לזיהוי נוסח סעיף 1 של חוק יסוד כבוד האדם וחירותו.",
+          "candidate_id": "639773ad-0776-42e9-a6e6-e0490079b91e",
+          "worst_support": "unrelated",
+          "retrieval_method": "text"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק בינוי ופינוי של אזורי שיקום",
+          "origin": "local_db",
+          "reason": "המקור הוא חוק בנייה/פינוי — סובייקט אחר לחלוטין, אינו עוסק בחוק היסוד המבוקש.",
+          "candidate_id": "b601f2e2-0314-4459-a8d9-55a9585741c1",
+          "worst_support": "unrelated",
+          "retrieval_method": "text"
+        }
+      ],
+      "batch_ms": [
+        63734
+      ],
+      "parallel": true,
+      "verdicts": [
+        {
+          "reason": "מסמך חקיקה הכולל את נוסח החוק עצמו; עוסק בדיוק בסעיף המבוקש.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "de6749db-e64d-4a86-9918-faae57088143",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "קובץ PDF שמכיל את נוסח 'חוק יסוד: כבוד האדם וחירותו' כולל סעיף 1."
+          ]
+        },
+        {
+          "reason": "מקור טקסטואלי של אותו חוק/סעיף — עוסק במדויק בנוסח המסוים.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "006a81e8-547f-4cef-98fb-23fa047239c5",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "דף ויקיסורס/ויקיטקסט שמציג את נוסח חוק היסוד במלואו, כולל סעיף 1."
+          ]
+        },
+        {
+          "reason": "עוסק בתחום זהה (העיגון החוקתי וזכויות יסוד) אך אינו מהווה נוסח רשמי או מקור ישיר לסעיף 1.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "5d864afc-99d6-43a6-bfbc-6747aed93320",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מאמר אקדמי על העיגון החוקתי של זכויות האדם המספק רק רקע ודוקטרינה רלוונטית לחוק היסוד."
+          ]
+        },
+        {
+          "reason": "פסיקה המצטטת/מיישמת את החוק מספקת תמיכה בהקשר פרקטי אך אינה מהווה את נוסח הסעיף הרשמי.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "554b7991-d7d9-4551-9dc4-e99a9e23d1e3",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "פסק דין שמזכיר ומיישם את חוק היסוד, מראה יישום פסיקתי של הדין."
+          ]
+        },
+        {
+          "reason": "המסמך עוסק ברגולציה של מוצרים ביוצדיים/חוקי רוקחים — נושא שונה לחלוטין ולא רלוונטי לזיהוי נוסח סעיף 1 של חוק יסוד כבוד האדם וחירותו.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "639773ad-0776-42e9-a6e6-e0490079b91e",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        },
+        {
+          "reason": "המקור הוא חוק בנייה/פינוי — סובייקט אחר לחלוטין, אינו עוסק בחוק היסוד המבוקש.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "b601f2e2-0314-4459-a8d9-55a9585741c1",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        },
+        {
+          "reason": "מתן רקע משפטי ודוקטרינלי רלוונטי לתחום אך לא נוסח רשמי של סעיף 1.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "d9deeaab-9138-4491-843e-e7c97f9a5f59",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "סקירה על 'המהפכה החוקתית' המספקת הקשר היסטורי/דוקטרינלי לגבי חקיקת חוקי יסוד."
+          ]
+        },
+        {
+          "reason": "מקור אקדמי/ניתוחי בתחום החוקי אך אינו מהווה את נוסח הסעיף עצמו.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "f896f944-f90f-449b-9ef5-275f602e6ecb",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מאמר משפטי המנתח פסיקה והזכויות היסודיות; מספק הקשר ופרשנות."
+          ]
+        },
+        {
+          "reason": "עוסק בתחום דומה ומזכיר את החוק אך אינו מקור לטקסט הרשמי של סעיף 1.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "133f875a-6328-4f9b-a7df-cf284c6fe238",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מאמר שעוסק בנושאים משפטיים שבהם מוזכר חוק יסוד או פסקת התגברות; מספק הקשר אך לא את נוסח הסעיף."
+          ]
+        },
+        {
+          "reason": "מסמך חקיקה רשמי של הכנסת שמכיל את נוסח הסעיף — מתאים לציטוט מילולי.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "b9d44e3b-0a37-4b4f-ae4e-1eaec409b93a",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "קובץ PDF מאתר הכנסת שמציין במפורש את נוסח חוק היסוד וכולל את סעיף 1 במלואו."
+          ]
+        },
+        {
+          "reason": "מקור רשמי המאפשר להעתיק את נוסח סעיף 1 במלואו.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "4291bf92-b711-4e74-ac3d-3749f679bc1b",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "מסמך חקיקה/נוסח רשמי (PDF) באתר הכנסת הכולל את נוסח חוק היסוד בעברית."
+          ]
+        },
+        {
+          "reason": "למרות שאינו האתר הרשמי של הכנסת, המסמך מכיל את נוסח החוק עצמו ולכן תומך בציטוט המילולי של סעיף 1.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "a486f6de-750e-42de-b55f-e73c9947a160",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "קובץ DOCX של משרד החינוך הכולל את נוסח חוק היסוד כולל סעיף 1; מאפשר ציטוט לשימוש לימודי/מידעי."
+          ]
+        },
+        {
+          "reason": "מספק רקע וניתוח על החוק אך איננו מקור לטקסט הרשמי המלא של סעיף 1.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "b0cad592-b3f6-4e44-9c99-94b73158d835",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מאמר אקדמי המתייחס להתפתחות החוקתית וסוקֵר את נוסח החוקה והמשמעויות המשפטיות שלו."
+          ]
+        },
+        {
+          "reason": "מקור אקדמי שמסביר את ההקשר של סעיף 1 אך אינו מהווה מקור רשמי לנוסח המילולי.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "c704af30-d81f-47ad-934b-beb1b2b73f4b",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מאמר אקדמי על היקף הזכויות הבלתי-מונות והעיגון החוקתי; רקע רלוונטי אך לא נוסח רשמי."
+          ]
+        },
+        {
+          "reason": "הטענה שואלת לגבי רצון המשתמש לקבל ציון מקור/קישור או תרגום (שאלה על העדפה/פורמט); המסמך המוצע הוא אוסף חוקי יסוד באתר הכנסת ולא עונה על שאלה זו לגבי רצון המשתמש.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": false,
+          "candidate_id": "95594632-4ec1-4729-a239-947b6e35a1ef",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        }
+      ],
+      "demotions": [
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C1",
+          "candidate_id": "006a81e8-547f-4cef-98fb-23fa047239c5",
+          "reason_excerpt": "מקור טקסטואלי של אותו חוק/סעיף — עוסק במדויק בנוסח המסוים."
+        },
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C2",
+          "candidate_id": "b9d44e3b-0a37-4b4f-ae4e-1eaec409b93a",
+          "reason_excerpt": "מסמך חקיקה רשמי של הכנסת שמכיל את נוסח הסעיף — מתאים לציטוט מילולי."
+        },
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C2",
+          "candidate_id": "4291bf92-b711-4e74-ac3d-3749f679bc1b",
+          "reason_excerpt": "מקור רשמי המאפשר להעתיק את נוסח סעיף 1 במלואו."
+        },
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C2",
+          "candidate_id": "a486f6de-750e-42de-b55f-e73c9947a160",
+          "reason_excerpt": "למרות שאינו האתר הרשמי של הכנסת, המסמך מכיל את נוסח החוק עצמו ולכן תומך בציטוט המילולי של סעיף 1."
+        }
+      ],
+      "batch_count": 1,
+      "call_failed": false,
+      "model_final": "openai/gpt-5-mini",
+      "retry_count": 0,
+      "per_claim_ms": {
+        "C1": 63734,
+        "C2": 63734,
+        "C3": 63734
+      },
+      "total_sum_ms": 63734,
+      "call_failures": [],
+      "model_initial": "openai/gpt-5-mini",
+      "total_wall_ms": 63734,
+      "retry_attempts": 0,
+      "escalated_claims": [],
+      "rate_limit_count": 0,
+      "candidates_usable": 12,
+      "concurrency_limit": 2,
+      "demotions_by_rule": {
+        "analogical": 0,
+        "background": 0,
+        "landing_page": 4,
+        "wrong_subject": 0,
+        "self_contradiction": 0
+      },
+      "escalated_batches": 0,
+      "recovered_batches": 0,
+      "candidates_dropped": 3,
+      "candidates_verified": 15,
+      "split_probe_attempts": 0,
+      "merge_order_preserved": true,
+      "fallback_to_sequential": false
+    },
+    "retrieval": {
+      "ms": 10063,
+      "pool": {
+        "drops": [
+          {
+            "url": "https://meyda.education.gov.il/files/Pop/0files/magal_hashana/student-rights/Basic-Law-of-Human-Dignity-and-Liberty.docx",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק יסוד: כבוד האדם וחירותו – משרד החינוך",
+            "origin": "perplexity",
+            "claim_id": "C3",
+            "drop_key": "url:meyda.education.gov.il/files/pop/0files/magal_hashana/student-rights/basic-law-of-human-dignity-and-liberty.docx",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "06c2aee4-4fef-49d9-aaa0-25b6c0789635",
+            "rank_before_drop": 34,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק יסוד: כבוד האדם וחירותו",
+            "origin": "perplexity",
+            "claim_id": "C1",
+            "drop_key": "url:m.knesset.gov.il/activity/legislation/documents/yesod3.pdf",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "947952de-844a-404f-9e0b-ef6c3ece28bb",
+            "rank_before_drop": 35,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק יסוד: כבוד האדם וחירותו",
+            "origin": "perplexity",
+            "claim_id": "C1",
+            "drop_key": "url:m.knesset.gov.il/activity/legislation/documents/yesod3.pdf",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "365ed5fa-0f7e-4d0b-ba62-47df28df80e2",
+            "rank_before_drop": 36,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק יסוד כבוד האדם וחירותו",
+            "origin": "perplexity",
+            "claim_id": "C1",
+            "drop_key": "url:m.knesset.gov.il/activity/legislation/documents/yesod3.pdf",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "645ed1d1-2e28-49f1-83b8-eb502d3d5b93",
+            "rank_before_drop": 37,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק יסוד: כבוד האדם וחירותו",
+            "origin": "perplexity",
+            "claim_id": "C1",
+            "drop_key": "url:m.knesset.gov.il/activity/legislation/documents/yesod3.pdf",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "bb5ce15f-cdd5-4fc4-bb18-164d0c31aa58",
+            "rank_before_drop": 38,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק יסוד כבוד האדם וחירותו",
+            "origin": "perplexity",
+            "claim_id": "C1",
+            "drop_key": "url:m.knesset.gov.il/activity/legislation/documents/yesod3.pdf",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "d7017c86-868a-4af3-8ff2-548fe13f53fb",
+            "rank_before_drop": 39,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+            "role": "primary_statute",
+            "score": 1.5,
+            "title": "חוק-יסוד: כבוד האדם וחירותו",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:ce785af1-863f-43f6-ac1e-42d026f25bab",
+            "drop_reason": "dup_document_id",
+            "source_type": "israeli_law",
+            "candidate_id": "13f9bb32-6972-43e4-a6ea-d1f7fbbc8796",
+            "rank_before_drop": 1,
+            "retrieval_method": "exact_authority"
+          },
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+            "role": "primary_statute",
+            "score": 1.5,
+            "title": "חוק-יסוד: כבוד האדם וחירותו",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:ce785af1-863f-43f6-ac1e-42d026f25bab",
+            "drop_reason": "dup_document_id",
+            "source_type": "israeli_law",
+            "candidate_id": "5eb8a31b-30c8-486b-8bc9-67de227d4941",
+            "rank_before_drop": 2,
+            "retrieval_method": "exact_authority"
+          },
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+            "role": "primary_statute",
+            "score": 1.5,
+            "title": "חוק-יסוד: כבוד האדם וחירותו",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:ce785af1-863f-43f6-ac1e-42d026f25bab",
+            "drop_reason": "dup_document_id",
+            "source_type": "israeli_law",
+            "candidate_id": "8eca2315-7403-492e-ba3a-96fe5f4de9e5",
+            "rank_before_drop": 3,
+            "retrieval_method": "exact_authority"
+          },
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+            "role": "primary_statute",
+            "score": 1.5,
+            "title": "חוק-יסוד: כבוד האדם וחירותו",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "doc:ce785af1-863f-43f6-ac1e-42d026f25bab",
+            "drop_reason": "dup_document_id",
+            "source_type": "israeli_law",
+            "candidate_id": "6feae9e5-1ee5-418b-ba96-85b4548dec8e",
+            "rank_before_drop": 4,
+            "retrieval_method": "exact_authority"
+          },
+          {
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+            "role": "primary_statute",
+            "score": 0.168813972175121,
+            "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:f4d37d17-7f7e-4dea-bf23-c903daccfafa",
+            "drop_reason": "dup_document_id",
+            "source_type": "journal_article",
+            "candidate_id": "6bb1ea7a-6382-4442-81d4-440d25a3f5b5",
+            "rank_before_drop": 6,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+            "role": "primary_statute",
+            "score": 0.168813972175121,
+            "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:f4d37d17-7f7e-4dea-bf23-c903daccfafa",
+            "drop_reason": "dup_document_id",
+            "source_type": "journal_article",
+            "candidate_id": "0d847cb7-11d6-439d-ad54-45303fdc0328",
+            "rank_before_drop": 7,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=150",
+            "role": "primary_statute",
+            "score": 0.152108038216829,
+            "title": "בית משפט לענייני משפחה בחיפה, השופטת העמיתה אלה מירז: פס\"ד ענינו בשיקולי בית המשפט בתיקון הגיל ואי הכבדה על המבקש למיצוי זכויותיו לאוטונומיה ,ובהתאם לחוק יסוד: כבוד האדם וחרותו (ת\"ג 19279-12-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:a566db92-7bbe-4bb8-a533-5433dd7817a2",
+            "drop_reason": "dup_document_id",
+            "source_type": "caselaw",
+            "candidate_id": "bf02f60e-f0e1-428e-8790-056203c7a528",
+            "rank_before_drop": 9,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=150",
+            "role": "primary_statute",
+            "score": 0.152108038216829,
+            "title": "בית משפט לענייני משפחה בחיפה, השופטת העמיתה אלה מירז: פס\"ד ענינו בשיקולי בית המשפט בתיקון הגיל ואי הכבדה על המבקש למיצוי זכויותיו לאוטונומיה ,ובהתאם לחוק יסוד: כבוד האדם וחרותו (ת\"ג 19279-12-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:a566db92-7bbe-4bb8-a533-5433dd7817a2",
+            "drop_reason": "dup_document_id",
+            "source_type": "caselaw",
+            "candidate_id": "2b245c75-62bb-4d40-83ec-ba174292fd6a",
+            "rank_before_drop": 10,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7930&businessType=1",
+            "role": "primary_statute",
+            "score": 0.145896083116531,
+            "title": "ההסדרה המוצעת למוצרים ביוצדיים לחיטוי עור האדם ולדחיית מזיקים מגוף האדם",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:cfe4054c-ea66-4563-b299-0f83d86cefc6",
+            "drop_reason": "dup_document_id",
+            "source_type": "knesset_research",
+            "candidate_id": "884db96c-11ac-4ffa-8a8e-9a8dc8baff53",
+            "rank_before_drop": 12,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=310",
+            "role": "primary_statute",
+            "score": 0.143423365801573,
+            "title": "בימ\"ש לענייני משפחה ת\"א, השופטת לורן אקוקה: פס\"ד בתביעה לאכיפת פסק דין לפי סעיף 7 לחוק בתי המשפט לענייני משפחה (תמ\"ש 29428-09-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "46bde260-f770-4a85-9764-9193a2d7b5e6",
+            "rank_before_drop": 13,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=290",
+            "role": "primary_statute",
+            "score": 0.141553750634193,
+            "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: החלטה בעקבות השלמות הגשת שעניינן הוראות סעיף 6(ו) לחוק בתי המשפט לענייני משפחה (תמ\"ש 19336-07-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "b64d6ed7-d99e-452c-be0f-dba8056f0d20",
+            "rank_before_drop": 14,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7930&businessType=1",
+            "role": "primary_statute",
+            "score": 0.135040240734816,
+            "title": "ההסדרה המוצעת למוצרים ביוצדיים לחיטוי עור האדם ולדחיית מזיקים מגוף האדם",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:cfe4054c-ea66-4563-b299-0f83d86cefc6",
+            "drop_reason": "dup_document_id",
+            "source_type": "knesset_research",
+            "candidate_id": "df9b5726-7ebc-4f80-aed5-f668b1d03a5b",
+            "rank_before_drop": 15,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1090",
+            "role": "primary_statute",
+            "score": 0.134738693386316,
+            "title": "בית המשפט לענייני משפחה בבאר שבע, השופטת אפרת שהם דליות: החלטה בערעור על חיוב משיב לפי סעיף 48 לחוק ההוצאה לפועל (ע\"ר 52407-10-23)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "98358af4-e227-46bb-b5f0-0fe34fee90ae",
+            "rank_before_drop": 16,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=320",
+            "role": "primary_statute",
+            "score": 0.131361319124699,
+            "title": "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, יו\"ר ועדה, כבוד השופטת בדימוס אורית אפעל-גבאי: החלטה בעניין בקשתו של אסיר לשחרור על תנאי (וש\"מ 21146-11-22)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "f6234f14-1317-47a4-ad7e-86043184d596",
+            "rank_before_drop": 17,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=320",
+            "role": "primary_statute",
+            "score": 0.131361319124699,
+            "title": "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, יו\"ר ועדה, כבוד השופטת בדימוס אורית אפעל-גבאי: החלטה בעניין בקשתו של אסיר לשחרור על תנאי (וש\"מ 21146-11-22)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "1efda13c-f209-4bbf-8f07-995b9586044a",
+            "rank_before_drop": 18,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+            "role": "primary_statute",
+            "score": 0.129732942581177,
+            "title": "בית המשפט המחוזי ב\"ש, השופטת יעל ייטב: פסק דין בערעור על החלטה לפסילת ספריו של המערער וקביעת הכנסתו בצו ע\"פ סעיף 152(ב) לפקודת מס הכנסה (ע\"מ 39040-12-21)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "d43cbe8f-7e7e-4c82-a96a-d8578bb0c4e3",
+            "rank_before_drop": 19,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+            "role": "primary_statute",
+            "score": 0.129732942581177,
+            "title": "בית המשפט המחוזי ב\"ש, השופטת יעל ייטב: פסק דין בערעור על החלטה לפסילת ספריו של המערער וקביעת הכנסתו בצו ע\"פ סעיף 152(ב) לפקודת מס הכנסה (ע\"מ 39040-12-21)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "09b001db-ced7-444e-b442-74346f6996ed",
+            "rank_before_drop": 20,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=290",
+            "role": "primary_statute",
+            "score": 0.129190149158239,
+            "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: החלטה בעקבות השלמות הגשת שעניינן הוראות סעיף 6(ו) לחוק בתי המשפט לענייני משפחה (תמ\"ש 19336-07-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "10949a64-f3df-48c9-996c-d258d4c97e74",
+            "rank_before_drop": 21,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=290",
+            "role": "primary_statute",
+            "score": 0.129190149158239,
+            "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: החלטה בעקבות השלמות הגשת שעניינן הוראות סעיף 6(ו) לחוק בתי המשפט לענייני משפחה (תמ\"ש 19336-07-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "5c84e475-a119-4fa4-a52d-a0699bdb96c9",
+            "rank_before_drop": 22,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+            "role": "primary_statute",
+            "score": 0.118454929813743,
+            "title": "בית המשפט המחוזי ב\"ש, השופטת יעל ייטב: פסק דין בערעור על החלטה לפסילת ספריו של המערער וקביעת הכנסתו בצו ע\"פ סעיף 152(ב) לפקודת מס הכנסה (ע\"מ 39040-12-21)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "aaafeebe-6674-4ff4-8734-def6aedab68c",
+            "rank_before_drop": 23,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+            "role": "primary_statute",
+            "score": 0.117427442595363,
+            "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "2671d3dd-02ff-4c54-a301-5046b3bf8978",
+            "rank_before_drop": 24,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+            "role": "primary_statute",
+            "score": 0.114353834092617,
+            "title": "בית המשפט העליון בשבתו כבג\"ץ, השופטת דפנה ברק-ארז, השופט דוד מינץ והשופט עופר גרוסקופף: פס\"ד העוסק בחובה לעמוד בדרישות החוק ביחס להספקת מזון ברמה בסיסית לכלל האסירים הביטחוניים המוחזקים בבתי הסוהר בישראל (בג\"ץ 2858-24)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "febe1be3-90fa-4c8a-be74-900ddb36be84",
+            "rank_before_drop": 25,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+            "role": "primary_statute",
+            "score": 0.11302701048553,
+            "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: פסק דין לפי חוק יחסי ממון (תמ\"ש 28833-05-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "bbba6f12-64a7-4928-a4ac-f9891e4e40e0",
+            "rank_before_drop": 26,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+            "role": "primary_statute",
+            "score": 0.0289790648967028,
+            "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:f4d37d17-7f7e-4dea-bf23-c903daccfafa",
+            "drop_reason": "dup_document_id",
+            "source_type": "journal_article",
+            "candidate_id": "b85e0eeb-7d53-44ad-8c88-cdcf92c81e14",
+            "rank_before_drop": 28,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1527",
+            "role": "primary_statute",
+            "score": 0.4092390992890866,
+            "title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:92ccbb25-8fb6-474b-8859-5e161ed5a9d7",
+            "drop_reason": "dup_document_id",
+            "source_type": "journal_article",
+            "candidate_id": "2a51d90d-fe3c-48b6-a01b-4aeb9fe51c0f",
+            "rank_before_drop": 42,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_3.pdf",
+            "role": "primary_statute",
+            "score": 0.40908523567301697,
+            "title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "92a71206-a14a-4fe2-bcc3-233220c75c07",
+            "rank_before_drop": 44,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_3.pdf",
+            "role": "primary_statute",
+            "score": 0.40764166960585074,
+            "title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "0d964053-9aae-4429-9499-dcde546103bd",
+            "rank_before_drop": 45,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1527",
+            "role": "primary_statute",
+            "score": 0.4070977111330884,
+            "title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "d587cf83-401c-49eb-9a90-684ab70e78e8",
+            "rank_before_drop": 46,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11//DI02.pdf",
+            "role": "primary_statute",
+            "score": 0.4055297717031354,
+            "title": "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "6ee194ee-06ba-4a51-9bb5-b6c492a1e6d7",
+            "rank_before_drop": 47,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11//DI02.pdf",
+            "role": "primary_statute",
+            "score": 0.4055297717031354,
+            "title": "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "6927861a-60a1-439c-88ee-8af96bf313ef",
+            "rank_before_drop": 48,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://runilawreview.org/2016/06/09/volume19_roznaisommer/",
+            "role": "primary_statute",
+            "score": 0.40185632140223937,
+            "title": "\"אֵם כל הזכויות\": הזכות החוקתית לחיים | יניב רוזנאי והלל סומר (כרך יט)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "98d59304-2270-4e19-9f17-89ff9aba74f4",
+            "rank_before_drop": 49,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/index.php/article/12/1307",
+            "role": "primary_statute",
+            "score": 0.4003810208389524,
+            "title": "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "6a957e5e-ea1f-4ee8-9808-03af0788e818",
+            "rank_before_drop": 50,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/index.php/article/12/1309",
+            "role": "primary_statute",
+            "score": 0.4003810208389524,
+            "title": "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "1637e6c6-3625-44a1-aed7-a3be380f664c",
+            "rank_before_drop": 51,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/index.php/article/12/1307",
+            "role": "primary_statute",
+            "score": 0.4003810208389524,
+            "title": "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "28aedc5a-bf6d-4f13-a713-db58cda83aee",
+            "rank_before_drop": 52,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/index.php/article/12/1309",
+            "role": "primary_statute",
+            "score": 0.4003810208389524,
+            "title": "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "aaf5be15-e388-43db-a180-9253ed05e5cb",
+            "rank_before_drop": 53,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://runilawreview.org/2017/12/13/vol21_kamir/",
+            "role": "primary_statute",
+            "score": 0.39997252902777297,
+            "title": "התעמרות בעבודה: בין פסיכולוגיה למשפט, בין חקיקה לפסיקה | אורית קמיר (כרך כא)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "e22a5860-5cbe-4311-9561-81445a7dc4f8",
+            "rank_before_drop": 54,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://runilawreview.org/2017/12/13/vol21_kamir/",
+            "role": "primary_statute",
+            "score": 0.39997252902777297,
+            "title": "התעמרות בעבודה: בין פסיכולוגיה למשפט, בין חקיקה לפסיקה | אורית קמיר (כרך כא)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "7734d9b1-7d4f-4f65-ba81-0014f7bde929",
+            "rank_before_drop": 55,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/1&fileName=SV1_15_7146-12.pdf&type=2",
+            "role": "primary_statute",
+            "score": 0.39926533481322296,
+            "title": "בג\"ץ 7146-12 - נג'ט סרג' אדם נ. הכנסת",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "supreme_court_il",
+            "candidate_id": "f717eea2-b78e-446e-b0c4-b7bc763c1ebf",
+            "rank_before_drop": 56,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/3&fileName=SG3_12_8823-07.pdf&type=2",
+            "role": "primary_statute",
+            "score": 0.3987127451583618,
+            "title": "בש\"פ 8823-07 - פלוני נ. מדינת ישראל",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "supreme_court_il",
+            "candidate_id": "eab5f2ff-abf9-4fca-8bce-766b97207771",
+            "rank_before_drop": 57,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/index.php/article/12/1307",
+            "role": "primary_statute",
+            "score": 0.398357337390891,
+            "title": "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "90c9f590-af94-4f9e-b7a0-fd44481d03cc",
+            "rank_before_drop": 58,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1962",
+            "role": "primary_statute",
+            "score": 0.3694482893805522,
+            "title": "האם הפרשנות התכליתית היא הדין? (כרך נה)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "10e5e919-b420-40b2-9118-21ba3c4b91f7",
+            "rank_before_drop": 60,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_3.pdf",
+            "role": "primary_statute",
+            "score": 0.3693547483504284,
+            "title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "4a00c748-9665-4241-bb76-807f39b5ac51",
+            "rank_before_drop": 61,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1527",
+            "role": "primary_statute",
+            "score": 0.36319974139822014,
+            "title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "93b3b3c9-01f3-400d-bb3a-395848de29f4",
+            "rank_before_drop": 62,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_11_2121-12.pdf&type=2",
+            "role": "primary_statute",
+            "score": 0.361041051505839,
+            "title": "דנ\"א 2121-12 - פלוני נ. ד\"ר אילנה דיין אורבך",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "supreme_court_il",
+            "candidate_id": "28340c0c-9d02-4aaa-aa15-3da76f377506",
+            "rank_before_drop": 63,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://runilawreview.org/2017/12/13/vol21_kamir/",
+            "role": "primary_statute",
+            "score": 0.3606028123770108,
+            "title": "התעמרות בעבודה: בין פסיכולוגיה למשפט, בין חקיקה לפסיקה | אורית קמיר (כרך כא)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "c07f14c4-5d28-4e73-a8e6-a945288b8a10",
+            "rank_before_drop": 64,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=3340&businessType=1",
+            "role": "primary_statute",
+            "score": 0.36015823026856436,
+            "title": "ומידע מחקר מרכז מנהל",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "vector:C2:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "knesset_research",
+            "candidate_id": "a73b14a1-663a-4cec-8457-bbdbaa792db4",
+            "rank_before_drop": 66,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/index.php/article/12/1309",
+            "role": "primary_statute",
+            "score": 0.3601517277872202,
+            "title": "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "d7fbcb61-f3b2-4ca5-b9d3-e968739f4a26",
+            "rank_before_drop": 67,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/738",
+            "role": "primary_statute",
+            "score": 0.35593661330035015,
+            "title": "מברגמן וקול-העם לבנק המזרחי - הדרך לביקורת שיפוטית על חוקים הפוגעים בזכויות אדם",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "vector:C2:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "ce1b6e8b-650b-464f-839a-b937477f8710",
+            "rank_before_drop": 68,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://runilawreview.org/2020/01/08/vol22_yosef/",
+            "role": "primary_statute",
+            "score": 0.35421740198720697,
+            "title": "הדיאלוג החוקתי בישראל: שתי נקודות מבט | בל יוסף (כרך כב)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "vector:C2:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "d6cecc4b-b15d-439e-a3dd-ec5de97df5fd",
+            "rank_before_drop": 69,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3950",
+            "role": "primary_statute",
+            "score": 0.3533952356296272,
+            "title": "ביהמ\"ש המחוזי מרכז לוד, השופט צבי ויצמן: פס\"ד בתביעה כספית של 77 תובעים לפצותם בגין נזקים בשל הוראות מפלות בחוק הפונדקאות ובחוק תרומת ביציות (ת\"א 33813-07-20)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "vector:C2:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "46f758ab-deb4-4ad3-8d0c-b9770001e3ee",
+            "rank_before_drop": 70,
+            "retrieval_method": "vector"
+          }
+        ],
+        "found": 71,
+        "counts": {
+          "by_role": {
+            "primary_statute": 15
+          },
+          "by_claim": {
+            "C1": 9,
+            "C2": 5,
+            "C3": 1
+          },
+          "by_origin": {
+            "local_db": 10,
+            "perplexity": 5
+          }
+        },
+        "after_dedup": 15,
+        "dedup_drops": 62,
+        "drop_reason_counts": {
+          "dup_url": 19,
+          "dup_document_id": 12,
+          "vector_quota_per_claim": 25
+        }
+      },
+      "local": {
+        "ms": 2210,
+        "aggregate": {
+          "wall_ms": 2210,
+          "max_query_ms": 2207,
+          "sum_query_ms": 9957,
+          "slowest_query": {
+            "ms": 2207,
+            "role": "primary_statute",
+            "text_ms": 1997,
+            "claim_id": "C2",
+            "exact_ms": 203,
+            "query_he": "טקסט רשמי של חוק יסוד: כבוד האדם וחירותו, סעיף 1 — נוסח מלא בעברית (גרסת החוק כפי שפורסם/מנוסח באתר הכנסת או ברשומות)",
+            "vector_ms": 209,
+            "embedding_ms": 169
+          },
+          "slowest_method": "text",
+          "method_total_ms": {
+            "text": 9439,
+            "exact": 1226,
+            "vector": 513,
+            "embedding": 892
+          },
+          "queries_executed": 5,
+          "exact_error_count": 0,
+          "text_timeout_count": 0,
+          "candidates_by_method": {
+            "text": 25,
+            "vector": 30,
+            "exact_authority": 5
+          },
+          "vector_timeout_count": 0,
+          "bottleneck_hypothesis": "single_slow_query (max=2207ms ≈ wall=2210ms)",
+          "duplicate_query_count": 0
+        },
+        "per_query": [
+          {
+            "ms": 1861,
+            "diag": {
+              "text_ms": 1780,
+              "exact_ms": 310,
+              "vector_ms": 79,
+              "text_status": "ok",
+              "embedding_ms": 161,
+              "exact_status": "ok",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+                "בית משפט לענייני משפחה בחיפה, השופטת העמיתה אלה מירז: פס\"ד ענינו בשיקולי בית המשפט בתיקון הגיל ואי הכבדה על המבקש למיצוי זכויותיו לאוטונומיה ,ובהתאם לחוק יסוד: כבוד האדם וחרותו (ת\"ג 19279-12-24)",
+                "בימ\"ש לענייני משפחה ת\"א, השופטת לורן אקוקה: פס\"ד בתביעה לאכיפת פסק דין לפי סעיף 7 לחוק בתי המשפט לענייני משפחה (תמ\"ש 29428-09-24)",
+                "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: החלטה בעקבות השלמות הגשת שעניינן הוראות סעיף 6(ו) לחוק בתי המשפט לענייני משפחה (תמ\"ש 19336-07-24)",
+                "ההסדרה המוצעת למוצרים ביוצדיים לחיטוי עור האדם ולדחיית מזיקים מגוף האדם"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "חוק-יסוד: כבוד האדם וחירותו"
+              ],
+              "parallel_batch_ms": 1780,
+              "top_vector_titles": [
+                "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+                "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+                "\"אֵם כל הזכויות\": הזכות החוקתית לחיים | יניב רוזנאי והלל סומר (כרך יט)",
+                "בג\"ץ 7146-12 - נג'ט סרג' אדם נ. הכנסת",
+                "בש\"פ 8823-07 - פלוני נ. מדינת ישראל"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "section": "1",
+                  "law_name": "חוק-יסוד: כבוד האדם וחירותו",
+                  "raw_clue": "חוק-יסוד: כבוד האדם וחירותו",
+                  "clue_kind": "statute_section",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "חוק-יסוד: כבוד האדם וחירותו"
+                  ],
+                  "normalized_clue": "חוק-יסוד: כבוד האדם וחירותו",
+                  "title_match_query": "חוק-יסוד AND כבוד AND האדם AND וחירותו",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": false,
+                  "matched_document_ids": [
+                    "ce785af1-863f-43f6-ac1e-42d026f25bab"
+                  ],
+                  "body_after_head_strip": ": כבוד האדם וחירותו",
+                  "candidate_title_tokens": [
+                    "חוק-יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו"
+                  ],
+                  "title_tokens_for_ilike": [
+                    "חוק-יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "section": "1",
+                  "law_name": "חוק יסוד: כבוד האדם וחירותו",
+                  "raw_clue": "חוק יסוד: כבוד האדם וחירותו",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [
+                    "חוק-יסוד: כבוד האדם וחירותו"
+                  ],
+                  "normalized_clue": "חוק יסוד: כבוד האדם וחירותו",
+                  "title_match_query": "יסוד AND כבוד AND האדם AND וחירותו",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": false,
+                  "matched_document_ids": [
+                    "ce785af1-863f-43f6-ac1e-42d026f25bab"
+                  ],
+                  "body_after_head_strip": ": כבוד האדם וחירותו",
+                  "candidate_title_tokens": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו"
+                  ],
+                  "title_tokens_for_ilike": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו"
+                  ]
+                },
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק יס",
+                  "raw_clue": "חוק יס",
+                  "clue_kind": "statute",
+                  "clue_source": "question",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק יס",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "יס",
+                  "candidate_title_tokens": [
+                    "יס"
+                  ],
+                  "title_tokens_for_ilike": []
+                },
+                {
+                  "status": "empty",
+                  "section": "1",
+                  "law_name": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "raw_clue": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "normalized_clue": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "title_match_query": "יסוד AND כבוד AND האדם AND וחירותו AND והשאלה AND האם",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": false,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": ": כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "candidate_title_tokens": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו",
+                    "והשאלה",
+                    "האם"
+                  ],
+                  "title_tokens_for_ilike": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו",
+                    "והשאלה",
+                    "האם"
+                  ]
+                },
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק וה",
+                  "raw_clue": "חוק וה",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק וה",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "וה",
+                  "candidate_title_tokens": [
+                    "וה"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 13,
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 1,
+            "exact_clues": [
+              {
+                "kind": "statute_section",
+                "source": "planner_query",
+                "section": "1",
+                "law_name": "חוק-יסוד: כבוד האדם וחירותו",
+                "search_terms": [
+                  "חוק-יסוד: כבוד האדם וחירותו",
+                  "סעיף 1"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "1",
+                "law_name": "חוק יסוד: כבוד האדם וחירותו",
+                "search_terms": [
+                  "חוק יסוד: כבוד האדם וחירותו",
+                  "סעיף 1"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "question",
+                "law_name": "חוק יס",
+                "search_terms": [
+                  "חוק יס"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "1",
+                "law_name": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                "search_terms": [
+                  "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "סעיף 1"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק וה",
+                "search_terms": [
+                  "חוק וה"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "לחוק-יסוד כבוד האדם וחירותו סעיף 1",
+            "original_query_he": "סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 1877,
+            "diag": {
+              "text_ms": 1788,
+              "exact_ms": 242,
+              "vector_ms": 89,
+              "text_status": "ok",
+              "embedding_ms": 194,
+              "exact_status": "ok",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+                "בית משפט לענייני משפחה בחיפה, השופטת העמיתה אלה מירז: פס\"ד ענינו בשיקולי בית המשפט בתיקון הגיל ואי הכבדה על המבקש למיצוי זכויותיו לאוטונומיה ,ובהתאם לחוק יסוד: כבוד האדם וחרותו (ת\"ג 19279-12-24)",
+                "ההסדרה המוצעת למוצרים ביוצדיים לחיטוי עור האדם ולדחיית מזיקים מגוף האדם",
+                "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, יו\"ר ועדה, כבוד השופטת בדימוס אורית אפעל-גבאי: החלטה בעניין בקשתו של אסיר לשחרור על תנאי (וש\"מ 21146-11-22)",
+                "בית המשפט המחוזי ב\"ש, השופטת יעל ייטב: פסק דין בערעור על החלטה לפסילת ספריו של המערער וקביעת הכנסתו בצו ע\"פ סעיף 152(ב) לפקודת מס הכנסה (ע\"מ 39040-12-21)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "חוק-יסוד: כבוד האדם וחירותו"
+              ],
+              "parallel_batch_ms": 1788,
+              "top_vector_titles": [
+                "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+                "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+                "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
+                "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+                "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "section": "1",
+                  "law_name": "חוק יסוד: כבוד האדם וחירותו",
+                  "raw_clue": "חוק יסוד: כבוד האדם וחירותו",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [
+                    "חוק-יסוד: כבוד האדם וחירותו"
+                  ],
+                  "normalized_clue": "חוק יסוד: כבוד האדם וחירותו",
+                  "title_match_query": "יסוד AND כבוד AND האדם AND וחירותו",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": false,
+                  "matched_document_ids": [
+                    "ce785af1-863f-43f6-ac1e-42d026f25bab"
+                  ],
+                  "body_after_head_strip": ": כבוד האדם וחירותו",
+                  "candidate_title_tokens": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו"
+                  ],
+                  "title_tokens_for_ilike": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו"
+                  ]
+                },
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק יס",
+                  "raw_clue": "חוק יס",
+                  "clue_kind": "statute",
+                  "clue_source": "question",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק יס",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "יס",
+                  "candidate_title_tokens": [
+                    "יס"
+                  ],
+                  "title_tokens_for_ilike": []
+                },
+                {
+                  "status": "empty",
+                  "section": "1",
+                  "law_name": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "raw_clue": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "normalized_clue": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "title_match_query": "יסוד AND כבוד AND האדם AND וחירותו AND והשאלה AND האם",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": false,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": ": כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "candidate_title_tokens": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו",
+                    "והשאלה",
+                    "האם"
+                  ],
+                  "title_tokens_for_ilike": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו",
+                    "והשאלה",
+                    "האם"
+                  ]
+                },
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק וה",
+                  "raw_clue": "חוק וה",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק וה",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "וה",
+                  "candidate_title_tokens": [
+                    "וה"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 13,
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 1,
+            "exact_clues": [
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "1",
+                "law_name": "חוק יסוד: כבוד האדם וחירותו",
+                "search_terms": [
+                  "חוק יסוד: כבוד האדם וחירותו",
+                  "סעיף 1"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "question",
+                "law_name": "חוק יס",
+                "search_terms": [
+                  "חוק יס"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "1",
+                "law_name": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                "search_terms": [
+                  "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "סעיף 1"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק וה",
+                "search_terms": [
+                  "חוק וה"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "חוק-יסוד כבוד האדם וחירותו סעיף 1",
+            "original_query_he": "חוק-יסוד: כבוד האדם וחירותו 1",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 1945,
+            "diag": {
+              "text_ms": 1885,
+              "exact_ms": 208,
+              "vector_ms": 60,
+              "text_status": "ok",
+              "embedding_ms": 191,
+              "exact_status": "ok",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+                "בית משפט לענייני משפחה בחיפה, השופטת העמיתה אלה מירז: פס\"ד ענינו בשיקולי בית המשפט בתיקון הגיל ואי הכבדה על המבקש למיצוי זכויותיו לאוטונומיה ,ובהתאם לחוק יסוד: כבוד האדם וחרותו (ת\"ג 19279-12-24)",
+                "ההסדרה המוצעת למוצרים ביוצדיים לחיטוי עור האדם ולדחיית מזיקים מגוף האדם",
+                "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, יו\"ר ועדה, כבוד השופטת בדימוס אורית אפעל-גבאי: החלטה בעניין בקשתו של אסיר לשחרור על תנאי (וש\"מ 21146-11-22)",
+                "בית המשפט המחוזי ב\"ש, השופטת יעל ייטב: פסק דין בערעור על החלטה לפסילת ספריו של המערער וקביעת הכנסתו בצו ע\"פ סעיף 152(ב) לפקודת מס הכנסה (ע\"מ 39040-12-21)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "חוק-יסוד: כבוד האדם וחירותו"
+              ],
+              "parallel_batch_ms": 1885,
+              "top_vector_titles": [
+                "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+                "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+                "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
+                "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+                "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "section": "1",
+                  "law_name": "חוק יסוד: כבוד האדם וחירותו",
+                  "raw_clue": "חוק יסוד: כבוד האדם וחירותו",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [
+                    "חוק-יסוד: כבוד האדם וחירותו"
+                  ],
+                  "normalized_clue": "חוק יסוד: כבוד האדם וחירותו",
+                  "title_match_query": "יסוד AND כבוד AND האדם AND וחירותו",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": false,
+                  "matched_document_ids": [
+                    "ce785af1-863f-43f6-ac1e-42d026f25bab"
+                  ],
+                  "body_after_head_strip": ": כבוד האדם וחירותו",
+                  "candidate_title_tokens": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו"
+                  ],
+                  "title_tokens_for_ilike": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו"
+                  ]
+                },
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק יס",
+                  "raw_clue": "חוק יס",
+                  "clue_kind": "statute",
+                  "clue_source": "question",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק יס",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "יס",
+                  "candidate_title_tokens": [
+                    "יס"
+                  ],
+                  "title_tokens_for_ilike": []
+                },
+                {
+                  "status": "empty",
+                  "section": "1",
+                  "law_name": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "raw_clue": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "normalized_clue": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "title_match_query": "יסוד AND כבוד AND האדם AND וחירותו AND והשאלה AND האם",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": false,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": ": כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "candidate_title_tokens": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו",
+                    "והשאלה",
+                    "האם"
+                  ],
+                  "title_tokens_for_ilike": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו",
+                    "והשאלה",
+                    "האם"
+                  ]
+                },
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק וה",
+                  "raw_clue": "חוק וה",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק וה",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "וה",
+                  "candidate_title_tokens": [
+                    "וה"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 13,
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 1,
+            "exact_clues": [
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "1",
+                "law_name": "חוק יסוד: כבוד האדם וחירותו",
+                "search_terms": [
+                  "חוק יסוד: כבוד האדם וחירותו",
+                  "סעיף 1"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "question",
+                "law_name": "חוק יס",
+                "search_terms": [
+                  "חוק יס"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "1",
+                "law_name": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                "search_terms": [
+                  "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "סעיף 1"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק וה",
+                "search_terms": [
+                  "חוק וה"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "חוק-יסוד כבוד האדם וחירותו סעיף 1",
+            "original_query_he": "חוק-יסוד: כבוד האדם וחירותו סעיף 1",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 2067,
+            "diag": {
+              "text_ms": 1989,
+              "exact_ms": 263,
+              "vector_ms": 76,
+              "text_status": "ok",
+              "embedding_ms": 177,
+              "exact_status": "ok",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "בית המשפט המחוזי ב\"ש, השופטת יעל ייטב: פסק דין בערעור על החלטה לפסילת ספריו של המערער וקביעת הכנסתו בצו ע\"פ סעיף 152(ב) לפקודת מס הכנסה (ע\"מ 39040-12-21)",
+                "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+                "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: פסק דין לפי חוק יחסי ממון (תמ\"ש 28833-05-24)",
+                "חוק בינוי ופינוי של אזורי שיקום",
+                "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "חוק-יסוד: כבוד האדם וחירותו"
+              ],
+              "parallel_batch_ms": 1989,
+              "top_vector_titles": [
+                "האם הפרשנות התכליתית היא הדין? (כרך נה)",
+                "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+                "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+                "דנ\"א 2121-12 - פלוני נ. ד\"ר אילנה דיין אורבך",
+                "התעמרות בעבודה: בין פסיכולוגיה למשפט, בין חקיקה לפסיקה | אורית קמיר (כרך כא)"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק יס",
+                  "raw_clue": "חוק יס",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק יס",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "יס",
+                  "candidate_title_tokens": [
+                    "יס"
+                  ],
+                  "title_tokens_for_ilike": []
+                },
+                {
+                  "status": "ok",
+                  "section": "1",
+                  "law_name": "חוק יסוד: כבוד האדם וחירותו",
+                  "raw_clue": "חוק יסוד: כבוד האדם וחירותו",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [
+                    "חוק-יסוד: כבוד האדם וחירותו"
+                  ],
+                  "normalized_clue": "חוק יסוד: כבוד האדם וחירותו",
+                  "title_match_query": "יסוד AND כבוד AND האדם AND וחירותו",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": false,
+                  "matched_document_ids": [
+                    "ce785af1-863f-43f6-ac1e-42d026f25bab"
+                  ],
+                  "body_after_head_strip": ": כבוד האדם וחירותו",
+                  "candidate_title_tokens": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו"
+                  ],
+                  "title_tokens_for_ilike": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו"
+                  ]
+                },
+                {
+                  "status": "empty",
+                  "section": "1",
+                  "law_name": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "raw_clue": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "normalized_clue": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "title_match_query": "יסוד AND כבוד AND האדם AND וחירותו AND והשאלה AND האם",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": false,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": ": כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "candidate_title_tokens": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו",
+                    "והשאלה",
+                    "האם"
+                  ],
+                  "title_tokens_for_ilike": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו",
+                    "והשאלה",
+                    "האם"
+                  ]
+                },
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק וה",
+                  "raw_clue": "חוק וה",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק וה",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "וה",
+                  "candidate_title_tokens": [
+                    "וה"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 13,
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 1,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק יס",
+                "search_terms": [
+                  "חוק יס"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "1",
+                "law_name": "חוק יסוד: כבוד האדם וחירותו",
+                "search_terms": [
+                  "חוק יסוד: כבוד האדם וחירותו",
+                  "סעיף 1"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "1",
+                "law_name": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                "search_terms": [
+                  "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "סעיף 1"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק וה",
+                "search_terms": [
+                  "חוק וה"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "חוק יסוד כבוד האדם וחירותו סעיף נוסח רשמי בעברית טקסט 1 מלא מקור רשמי/גרסה מאושרת",
+            "original_query_he": "חוק יסוד: כבוד האדם וחירותו, סעיף 1, נוסח רשמי בעברית (טקסט מלא של 'סעיף 1') — מקור רשמי/גרסה מאושרת",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 2207,
+            "diag": {
+              "text_ms": 1997,
+              "exact_ms": 203,
+              "vector_ms": 209,
+              "text_status": "ok",
+              "embedding_ms": 169,
+              "exact_status": "ok",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "פרטי מסמך",
+                "פרטי מסמך",
+                "בית המשפט העליון בשבתו כבג\"ץ, השופטת דפנה ברק-ארז, השופט דוד מינץ והשופט עופר גרוסקופף: פס\"ד העוסק בחובה לעמוד בדרישות החוק ביחס להספקת מזון ברמה בסיסית לכלל האסירים הביטחוניים המוחזקים בבתי הסוהר בישראל (בג\"ץ 2858-24)",
+                "פרטי מסמך",
+                "פרטי מסמך"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "חוק-יסוד: כבוד האדם וחירותו"
+              ],
+              "parallel_batch_ms": 1997,
+              "top_vector_titles": [
+                "עשרים שנה לבנק הזמרחי: סיפורה הפיקנטי של חוקת הכלאיים הישראלית",
+                "הזכויות הבלתי-מנויות - על היקפה של המהפכה החוקתית",
+                "ומידע מחקר מרכז מנהל",
+                "מברגמן וקול-העם לבנק המזרחי - הדרך לביקורת שיפוטית על חוקים הפוגעים בזכויות אדם",
+                "הדיאלוג החוקתי בישראל: שתי נקודות מבט | בל יוסף (כרך כב)"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק יס",
+                  "raw_clue": "חוק יס",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק יס",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "יס",
+                  "candidate_title_tokens": [
+                    "יס"
+                  ],
+                  "title_tokens_for_ilike": []
+                },
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק כפ",
+                  "raw_clue": "חוק כפ",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק כפ",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "כפ",
+                  "candidate_title_tokens": [
+                    "כפ"
+                  ],
+                  "title_tokens_for_ilike": []
+                },
+                {
+                  "status": "ok",
+                  "section": "1",
+                  "law_name": "חוק יסוד: כבוד האדם וחירותו",
+                  "raw_clue": "חוק יסוד: כבוד האדם וחירותו",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [
+                    "חוק-יסוד: כבוד האדם וחירותו"
+                  ],
+                  "normalized_clue": "חוק יסוד: כבוד האדם וחירותו",
+                  "title_match_query": "יסוד AND כבוד AND האדם AND וחירותו",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": false,
+                  "matched_document_ids": [
+                    "ce785af1-863f-43f6-ac1e-42d026f25bab"
+                  ],
+                  "body_after_head_strip": ": כבוד האדם וחירותו",
+                  "candidate_title_tokens": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו"
+                  ],
+                  "title_tokens_for_ilike": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו"
+                  ]
+                },
+                {
+                  "status": "empty",
+                  "section": "1",
+                  "law_name": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "raw_clue": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "normalized_clue": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "title_match_query": "יסוד AND כבוד AND האדם AND וחירותו AND והשאלה AND האם",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": false,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": ": כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "candidate_title_tokens": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו",
+                    "והשאלה",
+                    "האם"
+                  ],
+                  "title_tokens_for_ilike": [
+                    "יסוד",
+                    "כבוד",
+                    "האדם",
+                    "וחירותו",
+                    "והשאלה",
+                    "האם"
+                  ]
+                },
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק וה",
+                  "raw_clue": "חוק וה",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק וה",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "וה",
+                  "candidate_title_tokens": [
+                    "וה"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 8,
+            "role": "primary_statute",
+            "claim_id": "C2",
+            "text_hits": 6,
+            "exact_hits": 1,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק יס",
+                "search_terms": [
+                  "חוק יס"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק כפ",
+                "search_terms": [
+                  "חוק כפ"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "1",
+                "law_name": "חוק יסוד: כבוד האדם וחירותו",
+                "search_terms": [
+                  "חוק יסוד: כבוד האדם וחירותו",
+                  "סעיף 1"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "1",
+                "law_name": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                "search_terms": [
+                  "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                  "סעיף 1"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק וה",
+                "search_terms": [
+                  "חוק וה"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "טקסט רשמי חוק יסוד כבוד האדם וחירותו סעיף נוסח מלא בעברית גרסת החוק כפי באתר הכנסת 1 שפורסם/מנוסח",
+            "original_query_he": "טקסט רשמי של חוק יסוד: כבוד האדם וחירותו, סעיף 1 — נוסח מלא בעברית (גרסת החוק כפי שפורסם/מנוסח באתר הכנסת או ברשומות)",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          }
+        ],
+        "candidates": 60,
+        "global_exact": {
+          "clues_from_claims": [
+            {
+              "kind": "statute_section",
+              "source": "claim",
+              "section": "1",
+              "law_name": "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+              "search_terms": [
+                "חוק יסוד: כבוד האדם וחירותו' והשאלה האם יש לצטט את נוסחו הרשמי בעברית",
+                "סעיף 1"
+              ]
+            },
+            {
+              "kind": "statute",
+              "source": "claim",
+              "law_name": "חוק וה",
+              "search_terms": [
+                "חוק וה"
+              ]
+            },
+            {
+              "kind": "statute",
+              "source": "claim",
+              "law_name": "חוק יס",
+              "search_terms": [
+                "חוק יס"
+              ]
+            }
+          ],
+          "clues_from_question": [
+            {
+              "kind": "statute_section",
+              "source": "question",
+              "section": "1",
+              "law_name": "חוק יסוד: כבוד האדם וחירותו",
+              "search_terms": [
+                "חוק יסוד: כבוד האדם וחירותו",
+                "סעיף 1"
+              ]
+            },
+            {
+              "kind": "statute",
+              "source": "question",
+              "law_name": "חוק יס",
+              "search_terms": [
+                "חוק יס"
+              ]
+            }
+          ]
+        }
+      },
+      "perplexity": {
+        "ms": 10055,
+        "dropped": 13,
+        "parallel": true,
+        "query_ms": [
+          5391,
+          5847,
+          6960,
+          3191,
+          3619,
+          4663
+        ],
+        "per_query": [
+          {
+            "ms": 5391,
+            "http": 200,
+            "role": "factual_report",
+            "results": [
+              {
+                "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                "title": "חוק יסוד כבוד האדם וחירותו (PDF) – אתר הכנסת",
+                "domain": "m.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 82,
+                  "title_meaningful_chars": 36
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "factual_report",
+                "raw_pplx_source_type": "official parliament document",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il/7/law/7_ls1_290307.PDF",
+                "title": "מסמך חקיקה – אתר הכנסת (PDF)",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/7/law/7_ls1_290307.PDF",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/7/law/7_ls1_290307.PDF",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 96,
+                  "title_meaningful_chars": 23
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "factual_report",
+                "raw_pplx_source_type": "official parliament document",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.kolzchut.org.il/he/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93:_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+                "title": "חוק יסוד: כבוד האדם וחירותו – כל זכות",
+                "domain": "kolzchut.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://meyda.education.gov.il/files/Pop/0files/magal_hashana/student-rights/Basic-Law-of-Human-Dignity-and-Liberty.docx",
+                "title": "חוק יסוד: כבוד האדם וחירותו – משרד החינוך",
+                "domain": "meyda.education.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://meyda.education.gov.il/files/Pop/0files/magal_hashana/student-rights/Basic-Law-of-Human-Dignity-and-Liberty.docx",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://meyda.education.gov.il/files/Pop/0files/magal_hashana/student-rights/Basic-Law-of-Human-Dignity-and-Liberty.docx",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 85,
+                  "title_meaningful_chars": 34
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "factual_report",
+                "raw_pplx_source_type": "government education document",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C2",
+            "query_he": "הנחיות/מדיניות לגבי ציטוט מלא של טקסטי חקיקה באתרי ציבוריים: האם מותר לצטט במלואו סעיף 1 של חוק יסוד: כבוד האדם וחירותו — הנחיות אתר הכנסת/משרד המשפטים/הרשומות",
+            "raw_count": 4,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5847,
+            "http": 200,
+            "role": "government_report",
+            "results": [
+              {
+                "url": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+                "title": "חוקי היסוד של מדינת ישראל (PDF) – אתר הכנסת",
+                "domain": "main.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 69,
+                  "title_meaningful_chars": 35
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "government_report",
+                "raw_pplx_source_type": "official parliamentary publication (Knesset PDF)",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.kolzchut.org.il/he/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93:_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+                "title": "חוק יסוד: כבוד האדם וחירותו – כל זכות",
+                "domain": "kolzchut.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://hamoked.org.il/document.php?dID=1810",
+                "title": "חוק יסוד: כבוד האדם וחירותו, תשנ\"ב-1992 – המוקד להגנת הפרט",
+                "domain": "hamoked.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_government_report",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.kkl.org.il/education/today_in_history/basic-law-human-dignity-and-liberty-17-3-1992.aspx",
+                "title": "כבוד האדם וחירותו – קק\"ל",
+                "domain": "kkl.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_government_report",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://meyda.education.gov.il/files/Pop/0files/magal_hashana/student-rights/Basic-Law-of-Human-Dignity-and-Liberty.docx",
+                "title": "חוק יסוד: כבוד האדם וחירותו – משרד החינוך",
+                "domain": "meyda.education.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://meyda.education.gov.il/files/Pop/0files/magal_hashana/student-rights/Basic-Law-of-Human-Dignity-and-Liberty.docx",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://meyda.education.gov.il/files/Pop/0files/magal_hashana/student-rights/Basic-Law-of-Human-Dignity-and-Liberty.docx",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 64,
+                  "title_meaningful_chars": 34
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "government_report",
+                "raw_pplx_source_type": "government education document (Word file)",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C3",
+            "query_he": "דף החוק באתר הכנסת: חוק יסוד: כבוד האדם וחירותו — קישור רשמי לנוסח בעברית ופרסום רשמי (תקנון החוקים/אתר הכנסת) כולל גרסאות ותרגומים רשמיים אם קיימים",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 6960,
+            "http": 200,
+            "role": "factual_report",
+            "results": [
+              {
+                "url": "https://www.sefaria.org/Sheet.114316",
+                "title": "Basic Law: Human Dignity and Liberty (English translation cited in web results)",
+                "domain": "sefaria.org",
+                "drop_reason": "class_unknown_not_admitted_for_factual_report",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.kolzchut.org.il/he/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93:_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+                "title": "חוק יסוד: כבוד האדם וחירותו - כל זכות",
+                "domain": "kolzchut.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://hamoked.org.il/document.php?dID=1810",
+                "title": "חוק יסוד: כבוד האדם וחירותו, תשנ\"ב-1992 - המוקד להגנת הפרט",
+                "domain": "hamoked.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_factual_report",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.sefaria.org/Sheet.114316",
+                "title": "Israeli Basic Law: Human Dignity and Liberty",
+                "domain": "sefaria.org",
+                "drop_reason": "class_unknown_not_admitted_for_factual_report",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.lilach.org.il/law_dignity/",
+                "title": "חוק יסוד: כבוד האדם וחירותו",
+                "domain": "lilach.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_factual_report",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C3",
+            "query_he": "תרגום רשמי לחוק יסוד: כבוד האדם וחירותו (תרגום אנגלי רשמי) באתר הכנסת או משרד המשפטים — קיום תרגום רשמי ומהי נוסחאות התרגום",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 3191,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                "title": "חוק יסוד: כבוד האדם וחירותו",
+                "domain": "m.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 163,
+                  "title_meaningful_chars": 23
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "government_pdf",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                "title": "חוק יסוד: כבוד האדם וחירותו",
+                "domain": "m.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 82,
+                  "title_meaningful_chars": 23
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "knesset.gov.il",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C1",
+            "query_he": "חוק-יסוד: כבוד האדם וחירותו סעיף 1",
+            "raw_count": 2,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 3619,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                "title": "חוק יסוד כבוד האדם וחירותו",
+                "domain": "m.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 188,
+                  "title_meaningful_chars": 22
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "knesset.gov.il",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                "title": "חוק יסוד: כבוד האדם וחירותו",
+                "domain": "m.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 121,
+                  "title_meaningful_chars": 23
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "knesset.gov.il",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                "title": "חוק יסוד כבוד האדם וחירותו",
+                "domain": "m.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 176,
+                  "title_meaningful_chars": 22
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "knesset.gov.il",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C1",
+            "query_he": "חוק-יסוד: כבוד האדם וחירותו 1",
+            "raw_count": 3,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4663,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+                "title": "חוק יסוד: כבוד האדם וחירותו",
+                "domain": "btl.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 240,
+                  "title_meaningful_chars": 23
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "PDF",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.kolzchut.org.il/he/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93:_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+                "title": "חוק יסוד: כבוד האדם וחירותו - כל זכות",
+                "domain": "kolzchut.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.kkl.org.il/education/today_in_history/basic-law-human-dignity-and-liberty-17-3-1992.aspx",
+                "title": "חינוך וקהילה – אתר קק\"ל למחנכים, ילדים ונוער - כבוד האדם וחירותו",
+                "domain": "kkl.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_primary_statute",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://law.huji.ac.il/sites/default/files/law/files/67haperaklit-41-3-271.pdf",
+                "title": "כבוד האדם כזכות חוקתית",
+                "domain": "law.huji.ac.il",
+                "drop_reason": "class_academic_not_admitted_for_primary_statute",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.wikipedia.org/wiki/%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D",
+                "title": "כבוד האדם – ויקיפדיה",
+                "domain": "he.wikipedia.org",
+                "drop_reason": "bad_source",
+                "classified_source_class": "bad",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C1",
+            "query_he": "סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 11,
+        "query_count": 6,
+        "retry_count": 0,
+        "total_sum_ms": 29671,
+        "total_wall_ms": 10055,
+        "hygiene_counts": {
+          "keep": 11,
+          "total": 11,
+          "exclude": 0,
+          "reasons": {},
+          "downgrade": 0,
+          "report_only_mode": false,
+          "would_exclude_in_report_only": 0
+        },
+        "rate_limit_count": 0,
+        "role_corrections": [
+          {
+            "to": "primary_statute",
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "from": "factual_report",
+            "title": "חוק יסוד כבוד האדם וחירותו (PDF) – אתר הכנסת",
+            "admitted": true,
+            "claim_id": "C2"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://fs.knesset.gov.il/7/law/7_ls1_290307.PDF",
+            "from": "factual_report",
+            "title": "מסמך חקיקה – אתר הכנסת (PDF)",
+            "admitted": true,
+            "claim_id": "C2"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://meyda.education.gov.il/files/Pop/0files/magal_hashana/student-rights/Basic-Law-of-Human-Dignity-and-Liberty.docx",
+            "from": "factual_report",
+            "title": "חוק יסוד: כבוד האדם וחירותו – משרד החינוך",
+            "admitted": true,
+            "claim_id": "C2"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+            "from": "government_report",
+            "title": "חוקי היסוד של מדינת ישראל (PDF) – אתר הכנסת",
+            "admitted": true,
+            "claim_id": "C3"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://meyda.education.gov.il/files/Pop/0files/magal_hashana/student-rights/Basic-Law-of-Human-Dignity-and-Liberty.docx",
+            "from": "government_report",
+            "title": "חוק יסוד: כבוד האדם וחירותו – משרד החינוך",
+            "admitted": true,
+            "claim_id": "C3"
+          }
+        ],
+        "concurrency_limit": 4,
+        "merge_order_preserved": true,
+        "fallback_to_sequential": false
+      }
+    },
+    "candidates": [
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק יסוד כבוד האדם וחירותו (PDF) – אתר הכנסת",
+        "origin": "perplexity",
+        "snippet": "חוק-יסוד: כבוד האדם וחירותו – נוסח הסעיף המלא באתר הכנסת. סעיף 1 מופיע כלשונו במסמך הרשמי של הכנסת.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "m.knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 82,
+            "title_meaningful_chars": 36
+          },
+          "role_corrected_from": "factual_report",
+          "raw_pplx_source_type": "official parliament document",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "הנחיות/מדיניות לגבי ציטוט מלא של טקסטי חקיקה באתרי ציבוריים: האם מותר לצטט במלואו סעיף 1 של חוק יסוד: כבוד האדם וחירותו — הנחיות אתר הכנסת/משרד המשפטים/הרשומות",
+        "source_url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "source_type": "legislation",
+        "candidate_id": "b9d44e3b-0a37-4b4f-ae4e-1eaec409b93a",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "מסמך חקיקה – אתר הכנסת (PDF)",
+        "origin": "perplexity",
+        "snippet": "מסמך חקיקה/נוסח חוק באתר הכנסת, בפורמט PDF, כולל נוסחי חוק יסוד בעברית. רלוונטי לאיתור נוסח רשמי של סעיפים והצגתם.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://fs.knesset.gov.il/7/law/7_ls1_290307.PDF",
+            "hygiene_action": "keep",
+            "url_normalized": "https://fs.knesset.gov.il/7/law/7_ls1_290307.PDF",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 96,
+            "title_meaningful_chars": 23
+          },
+          "role_corrected_from": "factual_report",
+          "raw_pplx_source_type": "official parliament document",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "הנחיות/מדיניות לגבי ציטוט מלא של טקסטי חקיקה באתרי ציבוריים: האם מותר לצטט במלואו סעיף 1 של חוק יסוד: כבוד האדם וחירותו — הנחיות אתר הכנסת/משרד המשפטים/הרשומות",
+        "source_url": "https://fs.knesset.gov.il/7/law/7_ls1_290307.PDF",
+        "source_type": "legislation",
+        "candidate_id": "4291bf92-b711-4e74-ac3d-3749f679bc1b",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק יסוד: כבוד האדם וחירותו – משרד החינוך",
+        "origin": "perplexity",
+        "snippet": "קובץ DOCX באתר משרד החינוך מציג את נוסח חוק יסוד: כבוד האדם וחירותו, כולל סעיף 1, לשימוש לימודי/מידעי.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "meyda.education.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://meyda.education.gov.il/files/Pop/0files/magal_hashana/student-rights/Basic-Law-of-Human-Dignity-and-Liberty.docx",
+            "hygiene_action": "keep",
+            "url_normalized": "https://meyda.education.gov.il/files/Pop/0files/magal_hashana/student-rights/Basic-Law-of-Human-Dignity-and-Liberty.docx",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 85,
+            "title_meaningful_chars": 34
+          },
+          "role_corrected_from": "factual_report",
+          "raw_pplx_source_type": "government education document",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "הנחיות/מדיניות לגבי ציטוט מלא של טקסטי חקיקה באתרי ציבוריים: האם מותר לצטט במלואו סעיף 1 של חוק יסוד: כבוד האדם וחירותו — הנחיות אתר הכנסת/משרד המשפטים/הרשומות",
+        "source_url": "https://meyda.education.gov.il/files/Pop/0files/magal_hashana/student-rights/Basic-Law-of-Human-Dignity-and-Liberty.docx",
+        "source_type": "legislation",
+        "candidate_id": "a486f6de-750e-42de-b55f-e73c9947a160",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוקי היסוד של מדינת ישראל (PDF) – אתר הכנסת",
+        "origin": "perplexity",
+        "snippet": "[PDF] יסוד ה חוקי - אתר הכנסת\nכל.אדם זכאי להגנה על חייו, על גופו ועל כבודו\nחירות אישית",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "main.knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 69,
+            "title_meaningful_chars": 35
+          },
+          "role_corrected_from": "government_report",
+          "raw_pplx_source_type": "official parliamentary publication (Knesset PDF)",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "דף החוק באתר הכנסת: חוק יסוד: כבוד האדם וחירותו — קישור רשמי לנוסח בעברית ופרסום רשמי (תקנון החוקים/אתר הכנסת) כולל גרסאות ותרגומים רשמיים אם קיימים",
+        "source_url": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+        "source_type": "legislation",
+        "candidate_id": "95594632-4ec1-4729-a239-947b6e35a1ef",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק יסוד: כבוד האדם וחירותו",
+        "origin": "perplexity",
+        "snippet": "חוק יסוד - כבוד האדם וחירותו ... זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל... חוק-יסוד זה, מטרתו להגן על כבוד האדם וחירותו, כדי לעגן בחוק-יסוד את ערכיה של מדינת ישראל כמדינה יהודית ודמוקרטית.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "btl.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 240,
+            "title_meaningful_chars": 23
+          },
+          "required_anchor_id": "statute_section:basic_law_dignity-s1",
+          "raw_pplx_source_type": "PDF",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+        "source_url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+        "source_type": "legislation",
+        "candidate_id": "de6749db-e64d-4a86-9918-faae57088143",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.5,
+        "title": "חוק-יסוד: כבוד האדם וחירותו",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "basic_law",
+          "source_site": "wikisource",
+          "is_basic_law": true,
+          "required_anchor_id": "statute_section:basic_law_dignity-s1"
+        },
+        "query_he": "סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+        "document_id": "ce785af1-863f-43f6-ac1e-42d026f25bab",
+        "source_type": "israeli_law",
+        "candidate_id": "006a81e8-547f-4cef-98fb-23fa047239c5",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.171950100362301,
+        "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+        "origin": "local_db",
+        "snippet": "לא רק פורמליים) של שלטון החוק, כלומר, שהחקיקה צריכה לקיים היבטים שעניינם \n אנו סבורים כי יש \n92\nכלליות, פומביות, תחולה פרוספקטיבית ולא תחולה למפרע, וכדומה.\nמקום להחיל פרשנות מסוג זה גם לעניין הדרישה שקביעת מיסים ותשלומי־חובה אחרים \n הדרישה להסמכה בחוק נועדה להבטיח \n93\nתיעשה בחוק, וזאת לנוכח תכליתה של דרישה זו.\nשההכרעות ייעשו באופן ענייני, ולא ישמשו לקידום אינטרסים צרים של קבוצות מסוימות \nבחברה. דרישה זו מנוסחת לעיתים כשאיפה שההכרעות החברתיות יתקבלו מאחורי \"מסך \n חקיקה \"פרסונלית\" (או \"אישית\") המכוּ ונת לאנשים מסוימים — בין שהם נמנים \n94\nבערות\".\nבמפורש בשמותיהם ובין שמדובר בהגדרה שהיא כללית למראית־עין אך מכוּ ונת למעשה \nלאנשים מסוימים — עומדת בסתירה לעקרון שלטון החוק. חקיקה אישית מגבירה את החשש \nשהחקיקה בכנסת מושפעת מאינטרסים צרים של קבוצות־כוח שונות, ואינה מבטאת הערכה \nשל חברי הכנסת באשר להסדר החברתי הרצוי לאור שיקולים כלליים. יתרונה של ההסתמכות \n לחוק־יסוד: משק המדינה הוא כאמור האפשרות ליישם על הנורמה הנדונה מבחן 1על סעיף \nחד־שלבי, ולהימנע ממבחני האיזון שמקובלים במסגרת חוק־יסוד: כבוד האדם וחירותו לאור \n בתחומים אחרים, שאינם עוסקים בהטלת מיסים ובקביעת הקלות \n95\nפסקת ההגבלה הקיימת בו.\n לחוק־יסוד: הכנסת, 1בתחום זה, נדרש להסתמך על הוראות כלליות יותר, ובראשם סעיף \n לחוק־יסוד: הממשלה, של",
+        "claim_id": "C1",
+        "metadata": {
+          "author": "",
+          "volume_url": "https://www.taulawreview.sites.tau.ac.il/m-2-2",
+          "source_site": "tau_law_review",
+          "required_anchor_id": "statute_section:basic_law_dignity-s1"
+        },
+        "query_he": "סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+        "source_url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+        "document_id": "f4d37d17-7f7e-4dea-bf23-c903daccfafa",
+        "source_type": "journal_article",
+        "candidate_id": "5d864afc-99d6-43a6-bfbc-6747aed93320",
+        "retrieval_method": "text",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.15210804194212,
+        "title": "בית משפט לענייני משפחה בחיפה, השופטת העמיתה אלה מירז: פס\"ד ענינו בשיקולי בית המשפט בתיקון הגיל ואי הכבדה על המבקש למיצוי זכויותיו לאוטונומיה ,ובהתאם לחוק יסוד: כבוד האדם וחרותו (ת\"ג 19279-12-24)",
+        "origin": "local_db",
+        "snippet": "ל פני כבוד ה שופט חננאל שרעבי מבקש ת האישה ע\"י ב\"כ עוה\"ד עיסא פריג' – ב מינוי הלשכה לסיוע משפטי נגד משיבים 1. האיש ע\"י ב\"כ עוה\"ד ג'ורג' חלים שחאדה 2. עו\"ד גיל אור – נאמן לנכסי האיש בחדל\"פ פסק דין 1. בקשת רשות ערעור על החלטת בית המשפט לענייני משפחה בקריות (כב' השופט ניר זיתוני) מיום 19.6.2024 בתיק תלה\"מ 57649-03-24 (להלן: \" ההחלטה קמא \" ו- \" התיק קמא \" בהתאמה), במסגרתה נדחתה בקשת המבקשת כאן, למתן צו עשה שיחייב את משיב 1 למסור למבקשת את מפתחות בית המגורים ולאפשר לה להתגורר בבית. 2. יוער כי התיק דנן הועבר לטיפולי ביום 27.4.2025, לאור שינוי בסדרי העבודה של המותב הקודם, כב' השופט סארי ג'יוסי. לאחר עיון בתיק דנן וכן בתיק קמא, סבורני כי התיק בשל למתן פסק דין על יסוד המסמכים שהוגשו בו, וכן לאחר שני דיונים שהתקיימו בפני המותב הקודם. רקע וההחלטה קמא 3. בקליפת אגוז יסופר, כי המבקשת ומשיב 1 (להלן: \" המשיב \", וביחד יכונו להלן \" הצדדים \") נישאו זל\"ז בשנת .... בכנסייה האנגליקנית, ומנישואים אלה באו לעולם שלושה ילדים, כיום כולם בגירים. לימים עלו נישואיהם על שרטון, וההליכים המשפטיים מתנהלים בין הצדדים למן שנת 2001 (אם כי על מועד הפירוד קיימת מחלוקת). 4. ביום 25.3.2024, הגישה המבקשת כאן תובענה בתיק קמא, למתן סעד הצהרתי לפיו המבקשת זכאית למלוא הזכויות בבית המגורים ב ... (להלן: \" הבית \"), לנוכח זכויותי",
+        "claim_id": "C1",
+        "metadata": {
+          "court": "בתי המשפט לענייני משפחה",
+          "judges": "אלה מירז",
+          "district": "מחוז חיפה",
+          "procedure_type": "משפחה",
+          "required_anchor_id": "statute_section:basic_law_dignity-s1"
+        },
+        "query_he": "סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+        "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=150",
+        "document_id": "a566db92-7bbe-4bb8-a533-5433dd7817a2",
+        "source_type": "caselaw",
+        "candidate_id": "554b7991-d7d9-4551-9dc4-e99a9e23d1e3",
+        "retrieval_method": "text",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.145896083116531,
+        "title": "ההסדרה המוצעת למוצרים ביוצדיים לחיטוי עור האדם ולדחיית מזיקים מגוף האדם",
+        "origin": "local_db",
+        "snippet": "ים (מס' 35), התשפ\"ג —2023 (מ/1649), של הממשלה, נוסח לקריאה הראשונה.  \n65\n סעיף 55ח2(ד )(1) להצעת חוק לתיקון פקודת הרוקחים (מס' 35), התשפ\"ג—2023 (מ/1649), של הממשלה, נוסח לקריאה הראשונה.  \n66\n ECHA, Information on biocides, Biocidal products, accessed: February 12\nth\n 2024. \n67\n  משרד הבריאות,  מסמך  RIA  לרגולציית הביוצידים  'עמ ,4–5; סעיף  15  לצו  הפיקוח על מצרכים ושירותים (תכשירים להדברת מזיקים \nלאדם), תשכ״ב –1962 . \n68\n סעיף 55ח2(ז) ו -(ח) להצעת חוק לתיקון פקודת הרוקחים (מס' 35), התשפ\"ג —2023  /מ(1649), של הממשלה, נוסח לקריאה הראשונה . \nכיום רישיון למוצר \nלדחיית מזיקים תקף \nלשלוש שנים בלבד ;\nלפי הצעת החוק \nתוקף הרישום יעמוד \nעל חמש שנים \n\nההסדרה המוצעת למוצרים ביוצדיים לחיטוי עור האדם ולדחיית מזיקים מגוף האדם  | 17 \n \nהכנסת – מרכז המחקר והמידע  www.knesset.gov.il/mmm \n \nצוין כי הצורך להתאים את המבחנים הנדרשים היום עבור  מוצרים אלו לסטנדרטים האירופיים  \nמהווה תוספת לנטל הרגולטורי. \n69\n  לדברי משרד הבריאות ניתן יהיה לכתוב קווים מנחים לביצוע \nהבדיקות החדשות שנדרשות למוצרים אלו ובכך להקל על הנטל הרגולטורי  והכספי הכרוך  \nבאישור מחדש של המוצרים הרשומים כיום .\n70\n \n6. סוגיות בהצעת החוק  \nבפרק זה נדון בכמה סוגיות בהצעת החוק הישראלית בהשוואה לתקנה האירופית.   \n6.1 החרגות לחובת אישור בי",
+        "claim_id": "C1",
+        "metadata": {
+          "author": null,
+          "authors": "נעם גרינברג",
+          "doc_type": null,
+          "category_id": 2,
+          "broken_title": false,
+          "recovered_at": "2026-04-19T17:27:32.044Z",
+          "requested_by": "ועדת הבריאות",
+          "category_name": "ביטחון פנים",
+          "recovered_title": true,
+          "recovery_method": "after_section_label",
+          "publication_date": "13 במרץ 2024",
+          "publication_year": "2024",
+          "required_anchor_id": "statute_section:basic_law_dignity-s1"
+        },
+        "query_he": "חוק-יסוד: כבוד האדם וחירותו 1",
+        "source_url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7930&businessType=1",
+        "document_id": "cfe4054c-ea66-4563-b299-0f83d86cefc6",
+        "source_type": "knesset_research",
+        "candidate_id": "639773ad-0776-42e9-a6e6-e0490079b91e",
+        "retrieval_method": "text",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.109770257398486,
+        "title": "חוק בינוי ופינוי של אזורי שיקום",
+        "origin": "local_db",
+        "snippet": "ום שיכונים ציבוריים תקנות מקרקעין • מיסוי מקרקעין • תכנון ובניה • שמאי מקרקעין • הגנת הצרכן • מס ערך מוסף • תקנות המודדים שונות קובץ החלטות רמ\"י • תכניות תמ\"א • תת\"ל • תקן שמאים • קווים מנחים לשומות חלק מפרויקט ספר החוקים הפתוח אוחזר מתוך \" https://he.wikisource.org/w/index.php?title=חוק_בינוי_ופינוי_של_אזורי_שיקום&oldid=2883815 \" <div",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו, סעיף 1, נוסח רשמי בעברית (טקסט מלא של 'סעיף 1') — מקור רשמי/גרסה מאושרת",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+        "document_id": "9d93b35a-1a84-4c0f-b470-611eb5b044e5",
+        "source_type": "israeli_law",
+        "candidate_id": "b601f2e2-0314-4459-a8d9-55a9585741c1",
+        "retrieval_method": "text",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.0280671734362841,
+        "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+        "origin": "local_db",
+        "snippet": " \n62   פרשתברגמן  ,ה לעיל\" ש38 ,בעמ '696697הדין לפסק . \n63    פרשתהמזרחי בנק ,ה לעיל\" ש2 ,בפס '12זמיר השופט של דינו לפסק  .אמור\nכ ,ברור לא , אין ואף\nלקבוע הכרח ,מהפכה התרחשה אכן אם , בפרשת ראה\n לא עצמו המשפט וביתברגמן) ה לעיל\" ש38 (\nמהפכה משום . לנדוי ראו\"לישראל חוקה מתן\" ,ה לעיל\" ש17 ,בעמ '699700. \n\nמשפטים ב תשפ\"ד–2024  החוקתית למהפכה מאה רבע – ה של מצב תמות\"בהר חוקהצה\"  \n985  \nועניין ?השניי",
+        "claim_id": "C1",
+        "metadata": {
+          "tags": [
+            "משפט חוקתי",
+            "דיון פלילי",
+            "משפט חוקתי",
+            "משפט משווה",
+            "דיון אזרחי",
+            "משפט חוקתי"
+          ],
+          "volume": "כרך נב",
+          "source_site": "mishpatim"
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו, סעיף 1, נוסח רשמי בעברית (טקסט מלא של 'סעיף 1') — מקור רשמי/גרסה מאושרת",
+        "source_url": "https://lawjournal.huji.ac.il/article/12/1930",
+        "document_id": "87353e6e-0195-40f9-9116-319445e7f0f7",
+        "source_type": "journal_article",
+        "candidate_id": "d9deeaab-9138-4491-843e-e7c97f9a5f59",
+        "retrieval_method": "text",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.4092390992890866,
+        "title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+        "origin": "local_db",
+        "snippet": "                                        7                                                       \n677                                                      10                                                      \n188,186יסוד: כבוד האדם וחירותו            חוק \n377 -  376 ,374-373,192-  191  \n664 - 663 ,598 ,442 ,425 ,422 ,393 \n772 ,769 ,765 ,741 ,687 ,680 - 677,675 \n442                                                       1                                                       \n769,766                                                2                                                \n769,766                                                4                                                \n243                                                       5                                                       \n766                                                  (7)א                                                  \n766 ,677 ,499 ,243                                 8                                 \n769,766,677                                       10                                       \n197                                                      11                                                 ",
+        "claim_id": "C1",
+        "metadata": {
+          "tags": [
+            "דיני חוזים",
+            "דיני חוזים",
+            "דיני חוזים"
+          ],
+          "volume": "כרך כט",
+          "source_site": "mishpatim",
+          "required_anchor_id": "statute_section:basic_law_dignity-s1"
+        },
+        "query_he": "חוק-יסוד: כבוד האדם וחירותו 1",
+        "source_url": "https://lawjournal.huji.ac.il/article/12/1527",
+        "document_id": "92ccbb25-8fb6-474b-8859-5e161ed5a9d7",
+        "source_type": "journal_article",
+        "candidate_id": "f896f944-f90f-449b-9ef5-275f602e6ecb",
+        "retrieval_method": "vector",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.40908523567301697,
+        "title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+        "origin": "local_db",
+        "snippet": "היסוד \"פסקת התגברות\" בדומה להוראת סעיף לחוק 8\n -\nיסוד: כבוד \nהאדם וחירותו. \n79 לתכליתו של עניין ראו בין היתר: 63/74בג\"ץ איזמירו נ' בית המשפט המחוזי\nאיזמירו נ' בית המשפט המחוזיאיזמירו נ' בית המשפט המחוזי\nאיזמירו נ' בית המשפט המחוזי( 2, פ\"ד כח)\n37 )1974 עמ\"מ ;(4794/05 או\nאואו\nפןאו\nפןפן\n פן\n \n נ' שר הביטחון\nנ' שר הביטחוןנ' שר הביטחון\nנ' שר הביטחוןפורסם בנבו, ) 12.6.2005( על\"ע ;\n2388/00 ניר נ' הועד המחוזי\nניר נ' הועד המחוזיניר נ' הועד המחוזי\nניר נ' הועד המחוזיפורסם בנבו, ) 23.1.2002( 330/78; ע\"א המהפך אגודה \nהמהפך אגודה המהפך אגודה \nהמהפך אגודה \nשתופית בע\"מ נ' פקיד השומה למס הכנסה\nשתופית בע\"מ נ' פקיד השומה למס הכנסהשתופית בע\"מ נ' פקיד השומה למס הכנסה\nשתופית בע\"מ נ' פקיד השומה למס הכנסה)1981) 499( 2, פ\"ד לה(. \n\nוביץשחר קט\n \n תשע\"ז י דין ודברים\n130 \nהמוגדרים מראש,\n81\n כאשר על צד המבקש לבטל פסק דין חלוט שיסודו בפשרהבשל – \nטענה לפגם בתהליך ההסכמי – מוטלת החובה להגיש הליך שיפוטי מתאים, ככל שהדבר \nאפשרי בנסיבות העניין.\n82\n קל וחומר, כי ככלל, אין מקום לאפשר לרשות מנהלית לבטל \nאו לשנות מהוראותיו של פסק דין חלוטוַ וּ ,דאי שלא למחול על קניינו של פלוני. \nלחוק 3כידוע סעיף ,לא זו אף זו\n -\nיסוד: כבוד האדם וחירותו כי \"מורה אין פוגעים \nבקנינו של אדם\", כאשר \"אין פוגעים בזכויות שלפי חוק\n -\nיסוד זה אלא בח",
+        "claim_id": "C1",
+        "metadata": {
+          "part": "חלק 1",
+          "year": "תשע\"ז",
+          "author": "שחר קטוביץ",
+          "volume": "כרך י",
+          "journal": "דין ודברים",
+          "pdf_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_3.pdf",
+          "section": null,
+          "citation": "שחר קטוביץ, \"הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל\" דין ודברים י 105 (תשע\"ז)",
+          "pdf_pages": 36,
+          "publisher": "הפקולטה למשפטים, אוניברסיטת חיפה",
+          "volume_he": "י",
+          "first_page": "105",
+          "landing_url": "https://law.haifa.ac.il/law-journals/haifa-law-review/",
+          "source_site": "haifa_law_review",
+          "article_title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל",
+          "raw_list_text": "שחר קטוביץ, הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל 105",
+          "local_pdf_file": "00119 - הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל שחר קטוביץ (כרך י).pdf",
+          "journal_english": "Haifa Law Review",
+          "required_anchor_id": "statute_section:basic_law_dignity-s1"
+        },
+        "query_he": "חוק-יסוד: כבוד האדם וחירותו 1",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_3.pdf",
+        "document_id": "dcbe9cdf-8624-4533-9610-002b0f4d6bde",
+        "source_type": "journal_article",
+        "candidate_id": "133f875a-6328-4f9b-a7df-cf284c6fe238",
+        "retrieval_method": "vector",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.379289618377344,
+        "title": "עשרים שנה לבנק הזמרחי: סיפורה הפיקנטי של חוקת הכלאיים הישראלית",
+        "origin": "local_db",
+        "snippet": "יע לקבוע איזו משתי בנק המזרחיהאחרים בעניין \nהתאוריות המוניסטיות מסבירה טוב יותר את התפתחות החוקה הישראלית. אם תנסה הכנסת \nלהתגבר על חוק יסוד: כבוד האדם וחירותו באמירה מפורשת ובית משפט יבטל חקיקה זו, \nהכנסת תעיד בכך על עמדתה שחוקת מדינת ישראל היא מסוג אופן וצורה ובית המשפט \nיעיד על כך שלגישתו החוקה היא מסוג של כבילה עצמית או מסוג דואליסטי. אם כן, שוב \nאפשר לראות שאותו טקסט חוקתי (פסקת הגבלה) מקבל מ",
+        "claim_id": "C2",
+        "metadata": {
+          "author": "",
+          "volume_url": "https://www.taulawreview.sites.tau.ac.il/lh-3",
+          "source_site": "tau_law_review"
+        },
+        "query_he": "טקסט רשמי של חוק יסוד: כבוד האדם וחירותו, סעיף 1 — נוסח מלא בעברית (גרסת החוק כפי שפורסם/מנוסח באתר הכנסת או ברשומות)",
+        "source_url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_de4b01f3397b42efbccf10f0c3de1167.pdf",
+        "document_id": "1a026737-30b0-463b-b082-eb344b3d0912",
+        "source_type": "journal_article",
+        "candidate_id": "b0cad592-b3f6-4e44-9c99-94b73158d835",
+        "retrieval_method": "vector",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.3602144321671524,
+        "title": "הזכויות הבלתי-מנויות - על היקפה של המהפכה החוקתית",
+        "origin": "local_db",
+        "snippet": "יל,   הפוגע   בחופש   העיסוק   פגיעה   שאיננהחוק      שנית,    הכנסת   רשאית   לחוקק \nחברי־של  הנדרש,   בתנאי  שיתקבל  ברוב על  שהיא   במידה   העולה או     לתכלית   ראויה  \nכזהחוק  על־אף   האמור  בחוק  יסוד:   חופש  העיסוק. בו כי הוא תקף     הכנסת   ושייאמר  \n״פסקת  ההתגברות״   הכלולה   בחוקלפי  ארבע  שנים, של עד  למשך  תקופה תקף   יהיה \nפסקתשל  דעתנו  בדבר  רציותה את איננו  מביעים זה  בעניין אף  ",
+        "claim_id": "C2",
+        "metadata": {
+          "tags": [
+            "משפט חוקתי",
+            "משפט חוקתי",
+            "משפט חוקתי"
+          ],
+          "volume": "כרך כח",
+          "source_site": "mishpatim"
+        },
+        "query_he": "טקסט רשמי של חוק יסוד: כבוד האדם וחירותו, סעיף 1 — נוסח מלא בעברית (גרסת החוק כפי שפורסם/מנוסח באתר הכנסת או ברשומות)",
+        "source_url": "https://lawjournal.huji.ac.il/article/12/736",
+        "document_id": "a46186e4-f5c2-4201-9e1f-5468063fdcb3",
+        "source_type": "journal_article",
+        "candidate_id": "c704af30-d81f-47ad-934b-beb1b2b73f4b",
+        "retrieval_method": "vector",
+        "expected_source_type": "statute"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 26459,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 33583,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 2210,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 10055,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 63733,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 1,
+        "ok": true,
+        "model": "deterministic",
+        "stage": "drafter_v2_statute_section_canonical_quote_registry"
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://www.kolzchut.org.il/he/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93:_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+        "role": "factual_report",
+        "title": "חוק יסוד: כבוד האדם וחירותו – כל זכות",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "הנחיות/מדיניות לגבי ציטוט מלא של טקסטי חקיקה באתרי ציבוריים: האם מותר לצטט במלואו סעיף 1 של חוק יסוד: כבוד האדם וחירותו — הנחיות אתר הכנסת/משרד המשפטים/הרשומות",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.kolzchut.org.il/he/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93:_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+        "role": "government_report",
+        "title": "חוק יסוד: כבוד האדם וחירותו – כל זכות",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "דף החוק באתר הכנסת: חוק יסוד: כבוד האדם וחירותו — קישור רשמי לנוסח בעברית ופרסום רשמי (תקנון החוקים/אתר הכנסת) כולל גרסאות ותרגומים רשמיים אם קיימים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://hamoked.org.il/document.php?dID=1810",
+        "role": "government_report",
+        "title": "חוק יסוד: כבוד האדם וחירותו, תשנ\"ב-1992 – המוקד להגנת הפרט",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "דף החוק באתר הכנסת: חוק יסוד: כבוד האדם וחירותו — קישור רשמי לנוסח בעברית ופרסום רשמי (תקנון החוקים/אתר הכנסת) כולל גרסאות ותרגומים רשמיים אם קיימים",
+        "drop_reason": "class_unknown_not_admitted_for_government_report"
+      },
+      {
+        "url": "https://www.kkl.org.il/education/today_in_history/basic-law-human-dignity-and-liberty-17-3-1992.aspx",
+        "role": "government_report",
+        "title": "כבוד האדם וחירותו – קק\"ל",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "דף החוק באתר הכנסת: חוק יסוד: כבוד האדם וחירותו — קישור רשמי לנוסח בעברית ופרסום רשמי (תקנון החוקים/אתר הכנסת) כולל גרסאות ותרגומים רשמיים אם קיימים",
+        "drop_reason": "class_unknown_not_admitted_for_government_report"
+      },
+      {
+        "url": "https://www.sefaria.org/Sheet.114316",
+        "role": "factual_report",
+        "title": "Basic Law: Human Dignity and Liberty (English translation cited in web results)",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "תרגום רשמי לחוק יסוד: כבוד האדם וחירותו (תרגום אנגלי רשמי) באתר הכנסת או משרד המשפטים — קיום תרגום רשמי ומהי נוסחאות התרגום",
+        "drop_reason": "class_unknown_not_admitted_for_factual_report"
+      },
+      {
+        "url": "https://www.kolzchut.org.il/he/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93:_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+        "role": "factual_report",
+        "title": "חוק יסוד: כבוד האדם וחירותו - כל זכות",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "תרגום רשמי לחוק יסוד: כבוד האדם וחירותו (תרגום אנגלי רשמי) באתר הכנסת או משרד המשפטים — קיום תרגום רשמי ומהי נוסחאות התרגום",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://hamoked.org.il/document.php?dID=1810",
+        "role": "factual_report",
+        "title": "חוק יסוד: כבוד האדם וחירותו, תשנ\"ב-1992 - המוקד להגנת הפרט",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "תרגום רשמי לחוק יסוד: כבוד האדם וחירותו (תרגום אנגלי רשמי) באתר הכנסת או משרד המשפטים — קיום תרגום רשמי ומהי נוסחאות התרגום",
+        "drop_reason": "class_unknown_not_admitted_for_factual_report"
+      },
+      {
+        "url": "https://www.sefaria.org/Sheet.114316",
+        "role": "factual_report",
+        "title": "Israeli Basic Law: Human Dignity and Liberty",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "תרגום רשמי לחוק יסוד: כבוד האדם וחירותו (תרגום אנגלי רשמי) באתר הכנסת או משרד המשפטים — קיום תרגום רשמי ומהי נוסחאות התרגום",
+        "drop_reason": "class_unknown_not_admitted_for_factual_report"
+      },
+      {
+        "url": "https://www.lilach.org.il/law_dignity/",
+        "role": "factual_report",
+        "title": "חוק יסוד: כבוד האדם וחירותו",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "תרגום רשמי לחוק יסוד: כבוד האדם וחירותו (תרגום אנגלי רשמי) באתר הכנסת או משרד המשפטים — קיום תרגום רשמי ומהי נוסחאות התרגום",
+        "drop_reason": "class_unknown_not_admitted_for_factual_report"
+      },
+      {
+        "url": "https://www.kolzchut.org.il/he/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93:_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+        "role": "primary_statute",
+        "title": "חוק יסוד: כבוד האדם וחירותו - כל זכות",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.kkl.org.il/education/today_in_history/basic-law-human-dignity-and-liberty-17-3-1992.aspx",
+        "role": "primary_statute",
+        "title": "חינוך וקהילה – אתר קק\"ל למחנכים, ילדים ונוער - כבוד האדם וחירותו",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+        "drop_reason": "class_unknown_not_admitted_for_primary_statute"
+      },
+      {
+        "url": "https://law.huji.ac.il/sites/default/files/law/files/67haperaklit-41-3-271.pdf",
+        "role": "primary_statute",
+        "title": "כבוד האדם כזכות חוקתית",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+        "drop_reason": "class_academic_not_admitted_for_primary_statute"
+      },
+      {
+        "url": "https://he.wikipedia.org/wiki/%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D",
+        "role": "primary_statute",
+        "title": "כבוד האדם – ויקיפדיה",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+        "drop_reason": "bad_source"
+      }
+    ],
+    "required_anchors": {
+      "count": 1,
+      "anchors": [
+        {
+          "target": "both",
+          "anchor_id": "statute_section:basic_law_dignity-s1",
+          "anchor_type": "primary_statute",
+          "description": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+          "query_count": 3,
+          "is_docket_anchor": false,
+          "is_statute_section_anchor": true
+        }
+      ],
+      "enabled": true,
+      "statuses": [
+        {
+          "cited": false,
+          "status": "verified_unused",
+          "emitted": true,
+          "queries": [
+            "חוק-יסוד: כבוד האדם וחירותו סעיף 1",
+            "חוק-יסוד: כבוד האדם וחירותו 1",
+            "סעיף 1 לחוק-יסוד: כבוד האדם וחירותו"
+          ],
+          "anchor_id": "statute_section:basic_law_dignity-s1",
+          "anchor_type": "primary_statute",
+          "description": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+          "candidate_ids": [
+            "b9d44e3b-0a37-4b4f-ae4e-1eaec409b93a",
+            "a486f6de-750e-42de-b55f-e73c9947a160"
+          ],
+          "is_docket_anchor": false,
+          "reached_verifier": true,
+          "verified_support": "partial",
+          "is_statute_section_anchor": true
+        }
+      ],
+      "queries_emitted": [
+        {
+          "role": "primary_statute",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "חוק-יסוד: כבוד האדם וחירותו סעיף 1",
+          "is_docket_anchor": false,
+          "required_anchor_id": "statute_section:basic_law_dignity-s1"
+        },
+        {
+          "role": "primary_statute",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "חוק-יסוד: כבוד האדם וחירותו 1",
+          "is_docket_anchor": false,
+          "required_anchor_id": "statute_section:basic_law_dignity-s1"
+        },
+        {
+          "role": "primary_statute",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "סעיף 1 לחוק-יסוד: כבוד האדם וחירותו",
+          "is_docket_anchor": false,
+          "required_anchor_id": "statute_section:basic_law_dignity-s1"
+        }
+      ]
+    },
+    "drafter_v2_full_compare": null,
+    "drafter_v2_opus_compare": null,
+    "drafter_v2_sonnet_compare": null
+  }
+}
