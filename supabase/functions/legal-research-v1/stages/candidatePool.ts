@@ -40,17 +40,41 @@ function docketKey(c: Candidate): string {
   return m ? m[0].replace(/\s+/g, " ").trim() : "";
 }
 
+export interface PoolDrop {
+  candidate_id: string;
+  title: string;
+  url: string | null;
+  source_type: string;
+  origin: string;
+  retrieval_method: string;
+  role: string;
+  claim_id: string;
+  rank_before_drop: number;
+  drop_reason:
+    | "vector_quota_per_claim"
+    | "dup_document_id"
+    | "dup_url"
+    | "dup_statute_section"
+    | "dup_docket"
+    | "dup_role_title"
+    | "max_candidates_cap";
+  drop_key: string;
+  score: number;
+}
+
 export interface PoolResult {
   candidates: Candidate[];
   found: number;
   after_dedup: number;
   dedup_drops: number;
+  drops: PoolDrop[];
   counts: {
     by_origin: Record<string, number>;
     by_role: Record<string, number>;
     by_claim: Record<string, number>;
   };
 }
+
 
 const MAX_VECTOR_PER_CLAIM = 2;
 const MIN_TRUSTED_PERPLEXITY = 10;
@@ -122,14 +146,40 @@ export function buildCandidatePool(all: Candidate[]): PoolResult {
   });
   const out: Candidate[] = [];
   let dedup_drops = 0;
+  const rankOf = new Map<string, number>();
+  sorted.forEach((c, i) => rankOf.set(c.candidate_id, i));
+  const dropLog: PoolDrop[] = [];
+  const logDrop = (c: Candidate, reason: PoolDrop["drop_reason"], key: string) => {
+    dropLog.push({
+      candidate_id: c.candidate_id,
+      title: c.title,
+      url: c.source_url ?? null,
+      source_type: c.source_type,
+      origin: c.origin,
+      retrieval_method: c.retrieval_method,
+      role: c.role,
+      claim_id: c.claim_id,
+      rank_before_drop: rankOf.get(c.candidate_id) ?? -1,
+      drop_reason: reason,
+      drop_key: key,
+      score: c.score,
+    });
+  };
 
   // Shared admission routine — runs the existing dedup/vector-cap checks and pushes into `out`.
   // Returns true if admitted.
   const tryAdmit = (c: Candidate): boolean => {
-    if (out.length >= CAPS.MAX_CANDIDATES) return false;
+    if (out.length >= CAPS.MAX_CANDIDATES) {
+      logDrop(c, "max_candidates_cap", `cap:${CAPS.MAX_CANDIDATES}`);
+      return false;
+    }
     if (c.retrieval_method === "vector") {
       const n = vectorPerClaim.get(c.claim_id) ?? 0;
-      if (n >= MAX_VECTOR_PER_CLAIM) { dedup_drops++; return false; }
+      if (n >= MAX_VECTOR_PER_CLAIM) {
+        dedup_drops++;
+        logDrop(c, "vector_quota_per_claim", `vector:${c.claim_id}:${MAX_VECTOR_PER_CLAIM}`);
+        return false;
+      }
     }
     const docId = c.document_id ? `doc:${c.document_id}` : "";
     const url = normUrl(c.source_url);
@@ -140,11 +190,11 @@ export function buildCandidatePool(all: Candidate[]): PoolResult {
     const dk = dkKey ? `dk:${dkKey}` : "";
     const ttKey = `tt:${c.role}:${normTitle(c.title)}`;
 
-    if (docId && seenDoc.has(docId)) { dedup_drops++; return false; }
-    if (urlKey && seenUrl.has(urlKey)) { dedup_drops++; return false; }
-    if (stK && seenStatute.has(stK)) { dedup_drops++; return false; }
-    if (dk && seenDocket.has(dk)) { dedup_drops++; return false; }
-    if (seenTitle.has(ttKey)) { dedup_drops++; return false; }
+    if (docId && seenDoc.has(docId)) { dedup_drops++; logDrop(c, "dup_document_id", docId); return false; }
+    if (urlKey && seenUrl.has(urlKey)) { dedup_drops++; logDrop(c, "dup_url", urlKey); return false; }
+    if (stK && seenStatute.has(stK)) { dedup_drops++; logDrop(c, "dup_statute_section", stK); return false; }
+    if (dk && seenDocket.has(dk)) { dedup_drops++; logDrop(c, "dup_docket", dk); return false; }
+    if (seenTitle.has(ttKey)) { dedup_drops++; logDrop(c, "dup_role_title", ttKey); return false; }
 
     if (docId) seenDoc.add(docId);
     if (urlKey) seenUrl.add(urlKey);
@@ -191,11 +241,25 @@ export function buildCandidatePool(all: Candidate[]): PoolResult {
     counts.by_claim[c.claim_id] = (counts.by_claim[c.claim_id] ?? 0) + 1;
   }
 
+  // A candidate can be provisionally rejected in pass A (trusted reservation)
+  // and admitted later in pass B; keep only drops for candidates that never
+  // made it into the final pool, deduped by candidate_id (first reason wins).
+  const admittedIds = new Set(out.map((c) => c.candidate_id));
+  const seenDropIds = new Set<string>();
+  const drops = dropLog.filter((d) => {
+    if (admittedIds.has(d.candidate_id)) return false;
+    if (seenDropIds.has(d.candidate_id)) return false;
+    seenDropIds.add(d.candidate_id);
+    return true;
+  });
+
   return {
     candidates: out,
     found: all.length,
     after_dedup: out.length,
     dedup_drops,
+    drops,
     counts,
   };
 }
+

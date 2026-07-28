@@ -1,0 +1,73 @@
+{
+  "id": "A",
+  "category": "case_holding",
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי?",
+  "run_id": "715facd3-a626-466c-95d9-29abf33d7451",
+  "qa_log_id": "d0cdbefa-f144-4718-aa5b-2b2129d5e279",
+  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "footnotes": [],
+  "metadata": {
+    "phase": "P2",
+    "run_id": "715facd3-a626-466c-95d9-29abf33d7451",
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "analyzer": {
+        "ms": 71422,
+        "attempts": [
+          {
+            "ms": 46227,
+            "attempt": 1,
+            "got_data": true,
+            "http_status": 200
+          }
+        ],
+        "confidence": 0.9,
+        "model_final": "openai/gpt-5",
+        "schema_valid": false,
+        "model_initial": "openai/gpt-5-mini",
+        "transport_failed": false,
+        "escalated_to_gpt5": true,
+        "escalation_reason": [
+          "B1:schema_invalid"
+        ]
+      },
+      "claims_count": 5,
+      "queries_count": 0,
+      "planning_error": {
+        "stage": "claim_analyzer",
+        "reasons": [
+          "B1:schema_invalid",
+          "answer_type: invalid (case_holding)"
+        ],
+        "attempts": [
+          {
+            "ms": 46227,
+            "attempt": 1,
+            "got_data": true,
+            "http_status": 200
+          }
+        ],
+        "transport_failed": false
+      },
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "stage_runs": [
+      {
+        "ms": 25195,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 46227,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "claim_analyzer.escalated",
+        "escalated": true,
+        "http_status": 200
+      }
+    ]
+  }
+}
