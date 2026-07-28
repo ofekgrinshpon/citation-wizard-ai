@@ -373,6 +373,24 @@ const SUPPORT_RANK: Record<SupportLevel, number> = {
   unrelated: 3,
 };
 
+export interface VerifierCallFailure {
+  batch_label: string;
+  stage: string; // e.g. "verifier.batch1.initial" | "verifier.batch1.escalated"
+  model: string;
+  ms: number;
+  http_status?: number;
+  http_error?: string;
+  parse_error?: string;
+  failure_reason: string;
+  candidate_count: number;
+  request_payload_size: number;
+  tool_call_present: boolean;
+  raw_response_present: boolean;
+  escalation_attempted: boolean;
+  escalation_from?: string;
+  escalation_to?: string;
+}
+
 export interface VerifierResult {
   ms: number;
   model_initial: string;
@@ -383,6 +401,11 @@ export interface VerifierResult {
   counts: {
     by_support: Record<SupportLevel, number>;
     by_role_match: { true: number; false: number };
+    // Split of by_support into real model verdicts vs synthetic backfill.
+    by_support_model: Record<SupportLevel, number>;
+    by_support_synthetic: Record<SupportLevel, number>;
+    model_verdicts: number;
+    synthetic_verdicts: number;
   };
   candidates_verified: number;
   candidates_usable: number;
@@ -391,7 +414,15 @@ export interface VerifierResult {
   dropped: DroppedCandidate[];
   stage_runs: StageRun[];
   errors: Array<{ claim_id: string; reason: string }>;
-  batches: Array<{ label: string; claim_ids: string[]; candidates: number; escalated: boolean; ms: number }>;
+  batches: Array<{
+    label: string;
+    claim_ids: string[];
+    candidates: number;
+    escalated: boolean;
+    ms: number;
+    failed?: boolean;
+    failure_reason?: string;
+  }>;
   // P6.2b parallel verifier telemetry (orchestration only, contract preserved):
   parallel: boolean;
   concurrency_limit: number;
@@ -404,6 +435,9 @@ export interface VerifierResult {
   rate_limit_count: number;
   retry_count: number;
   fallback_to_sequential: boolean;
+  // Verifier-call observability (new).
+  call_failed: boolean;
+  call_failures: VerifierCallFailure[];
   // Phase 1: subject-identity strictness telemetry.
   demotions: DemotionEvent[];
   demotions_by_rule: Record<DemotionRule, number>;
