@@ -365,17 +365,34 @@ async function handle(req: Request): Promise<Response> {
   // AND opens with a "what does the section provide / what are the
   // conditions per §" phrasing, we force `output_shape = definition` so
   // the existing statute-section pipeline can run. Never overrides `quote`.
-  if (analyzer && analyzer.answer_intent?.output_shape !== "quote") {
+  const EXPLICIT_QUOTE_CUE = /(צטט|צטטו|נוסח\s+מדויק|כלשונו|כלשונה|לשון\s+הסעיף)/;
+  const DEFINITION_CUE =
+    /(מהי\s+הגדרת|מה\s+ההגדרה|כיצד\s+מוגדר|מה\s+(קובע|נקבע|אומר|מגדיר)|מהם?\s+התנאים|מהי\s+ההגדרה|מהם\s+היסודות)/;
+  if (analyzer) {
+    const currentShape = analyzer.answer_intent?.output_shape;
     const hasStatuteSection = detectStatuteSections(question).length > 0;
-    const shapeCue = /(מה\s+(קובע|נקבע|אומר|מגדיר)|מהם?\s+התנאים|מהי\s+ההגדרה|מהם\s+היסודות)/;
-    if (hasStatuteSection && shapeCue.test(question)) {
-      const before = analyzer.answer_intent?.output_shape ?? "unknown";
+    const hasDefinitionCue = DEFINITION_CUE.test(question);
+    const hasQuoteCue = EXPLICIT_QUOTE_CUE.test(question);
+
+    let overrideReason: string | null = null;
+    if (currentShape !== "quote") {
+      // Analyzer classified as analysis/other for "מה קובע סעיף X" phrasing —
+      // force definition so the statute-section machinery can run.
+      if (hasStatuteSection && hasDefinitionCue) overrideReason = "statute_section_definition_cue";
+    } else if (hasDefinitionCue && !hasQuoteCue) {
+      // Analyzer over-classified as `quote` although the user asked a
+      // definition/statute-section question with no explicit quote cue.
+      overrideReason = "definition_cue_demotes_quote";
+    }
+
+    if (overrideReason) {
+      const before = currentShape ?? "unknown";
       analyzer.answer_intent = { ...(analyzer.answer_intent ?? {}), output_shape: "definition" };
       (analyzer as unknown as { _shape_override?: unknown })._shape_override = {
         applied: true,
         from: before,
         to: "definition",
-        reason: "statute_section_definition_cue",
+        reason: overrideReason,
       };
     }
   }
@@ -687,6 +704,7 @@ async function handle(req: Request): Promise<Response> {
     analyzer.answer_intent?.output_shape,
   )
     .map((s) => ({
+      anchor_id: s.anchor_id,
       description: s.description,
       is_docket: s.is_docket_anchor,
       is_statute_section: !!s.is_statute_section_anchor,
