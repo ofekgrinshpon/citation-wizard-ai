@@ -2,39 +2,65 @@
   "id": "B7",
   "category": "missing_docket",
   "query": "מה נקבע בת\"א 98765-04-22 חברת אלפא נ' חברת בטא ביחס לאחריות מנהלים בעת חדלות פירעון?",
-  "run_id": "b53297a2-ff08-4092-b09b-54892435e66e",
-  "ok": false,
-  "total_ms": 130524,
+  "run_id": "8d65b8c8-e71c-4bfb-89ed-b81ee1c6424c",
+  "ok": true,
+  "total_ms": 137024,
   "answer_intent": {
     "output_shape": "case_holding"
   },
-  "lead_ref": null,
-  "deterministic_branch": null,
+  "lead_ref": {
+    "ref": null,
+    "shape": "case_holding",
+    "reason": "skipped_missing_docket_anchor"
+  },
+  "deterministic_branch": "docket_limitation",
   "limitation_flags": {
-    "missing_docket": false,
+    "missing_docket": true,
     "statute_section": false,
     "canonical_quote": false,
-    "missing_anchor_caveat_injected": false
+    "missing_anchor_caveat_injected": true
   },
-  "missing_anchor_descriptions": [],
+  "missing_anchor_descriptions": [
+    "פסק הדין בעניין ת\"א 98765/04/22 עצמו"
+  ],
   "anchor_statuses": [],
   "verifier_counts": {
     "by_support": {
-      "direct": 0,
-      "partial": 0,
-      "unrelated": 17,
-      "tangential": 0
+      "direct": 3,
+      "partial": 4,
+      "unrelated": 6,
+      "tangential": 2
     },
     "by_role_match": {
-      "true": 17,
-      "false": 0
+      "true": 14,
+      "false": 1
+    },
+    "model_verdicts": 15,
+    "by_support_model": {
+      "direct": 3,
+      "partial": 4,
+      "unrelated": 6,
+      "tangential": 2
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
     }
   },
+  "verifier_call_failed": false,
+  "verifier_call_failures": [],
+  "verifier_recovered_batches": 0,
+  "verifier_retry_attempts": 0,
+  "verifier_split_probe_attempts": 0,
+  "verifier_errors": [],
   "verifier_labels": null,
   "used_sources_count": 0,
   "used_sources": [],
   "footnotes_count": 0,
   "footnotes": [],
   "quality_warnings": [],
-  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ת\"א 98765/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
 }
