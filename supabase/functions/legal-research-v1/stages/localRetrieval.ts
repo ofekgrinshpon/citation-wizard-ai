@@ -497,8 +497,11 @@ interface RpcRow {
 const MIN_VECTOR_FLOOR = 4;
 const SNIPPET_DEFAULT = 400;
 const SNIPPET_ANCHOR = 1200;
+// Only statutory/regulatory texts count as "official primary" for the purpose
+// of shrinking vector recall. Case-law rows count only via an exact docket
+// match, otherwise every Nevo hit would suppress doctrinal vector recall.
 const OFFICIAL_SOURCE_TYPES = new Set([
-  "legislation_primary", "legislation_secondary", "regulation", "statute", "caselaw",
+  "legislation_primary", "legislation_secondary", "regulation", "statute",
 ]);
 const OFFICIAL_HOST_RE = /(^|\.)(knesset\.gov\.il|gov\.il|court\.gov\.il|nevo\.co\.il)/i;
 
@@ -524,7 +527,8 @@ function textAuthoritySignal(
   const dockets = clues.filter((c) => c.kind === "docket").map((c) => c.docket || "").filter(Boolean);
   const sections = clues.filter((c) => c.kind === "statute_section");
   // Multi-word phrases from the compact query (dictionary-free overlap test).
-  const phrases = detectHebrewNounPhrases(compactQuery).filter((p) => p.split(" ").length >= 2);
+  const phrases = detectHebrewNounPhrases(compactQuery)
+    .filter((p) => p.split(" ").length >= 2 && p.length >= 8);
 
   for (const r of rows) {
     const hay = `${r.document_title || ""} ${r.source_url || ""}`;
@@ -537,7 +541,7 @@ function textAuthoritySignal(
     if (OFFICIAL_SOURCE_TYPES.has(r.source_type) && OFFICIAL_HOST_RE.test(r.source_url || "")) {
       sig.official_primary = true;
     }
-    if (phrases.some((p) => (r.document_title || "").includes(p) || (r.chunk_content || "").includes(p))) {
+    if (phrases.some((p) => (r.document_title || "").includes(p))) {
       sig.phrase_overlap = true;
     }
   }
@@ -695,7 +699,7 @@ export async function runLocalRetrieval(
         // section / official primary source / strong phrase overlap).
         // Otherwise keep a vector floor so noisy text hits cannot crowd out
         // doctrinal recall.
-        const authority = textAuthoritySignal(textDiag.rows, clues, compact || q.query_he);
+        const authority = textAuthoritySignal(textDiag.rows, clues, q.query_he);
         const vectorBudget = authority.has_signal
           ? 2
           : Math.max(MIN_VECTOR_FLOOR, CAPS.LOCAL_PER_QUERY);
