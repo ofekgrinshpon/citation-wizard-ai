@@ -1005,16 +1005,21 @@ export async function runVerifier(
       escalated_batches++;
       anyEscalated = true;
     }
-    // Surface every batch call failure as a top-level verifier error entry
-    // so `metadata.verifier.errors` no longer stays empty when the LLM call
-    // failed. Existing validator-error entries above are preserved.
+    if (s.recovered) recovered_batches++;
+    total_retry_attempts += s.retry_attempts;
+    total_split_probe_attempts += s.split_probe_attempts;
+    // Surface every UNRECOVERED batch call failure as a top-level verifier
+    // error entry. When retry/split recovers real model verdicts, we do NOT
+    // pollute the top-level errors array (recovered_batches still records it).
     if (s.failed && s.failure_reason) {
+      unrecovered_failed_batches++;
       errors.push({
         claim_id: batches[i].claims.map((c) => c.claim_id).join(","),
         reason: `verifier_call_failed: ${s.failure_reason}`,
       });
     }
   }
+
   const total_wall_ms = Date.now() - t_pool;
   const total_sum_ms = batch_ms_arr.reduce((a, b) => a + b, 0);
 
