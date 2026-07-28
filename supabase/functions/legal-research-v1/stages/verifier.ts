@@ -855,6 +855,7 @@ export async function runVerifier(
   let escalated_batches = 0;
   const batch_ms_arr: number[] = [];
   const allDemotions: DemotionEvent[] = [];
+  const allCallFailures: VerifierCallFailure[] = [];
   for (let i = 0; i < batches.length; i++) {
     const s = slots[i];
     if (!s) {
@@ -866,6 +867,7 @@ export async function runVerifier(
     allVerdicts.push(...s.verdicts);
     allDemotions.push(...s.demotions);
     errors.push(...s.errors);
+    allCallFailures.push(...s.call_failures);
     for (const cid of s.escalated_claim_ids) escalated_claims.push(cid);
     for (const [k, v] of Object.entries(s.per_claim_ms)) per_claim_ms[k] = v;
     batchesMeta.push(s.meta);
@@ -873,6 +875,15 @@ export async function runVerifier(
     if (s.meta.escalated) {
       escalated_batches++;
       anyEscalated = true;
+    }
+    // Surface every batch call failure as a top-level verifier error entry
+    // so `metadata.verifier.errors` no longer stays empty when the LLM call
+    // failed. Existing validator-error entries above are preserved.
+    if (s.failed && s.failure_reason) {
+      errors.push({
+        claim_id: batches[i].claims.map((c) => c.claim_id).join(","),
+        reason: `verifier_call_failed: ${s.failure_reason}`,
+      });
     }
   }
   const total_wall_ms = Date.now() - t_pool;
