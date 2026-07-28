@@ -404,15 +404,18 @@ function processRaw(
     const downgrade = !reportOnly && hygiene.hygiene_action === "downgrade";
     if (downgrade && baseScore > 0.5) baseScore = 0.5;
 
-    // Docket-anchor: mark docket_match when title/snippet/url contains any
-    // variant. Boost score slightly so the exact ruling outranks adjacent cases.
+    // Docket-anchor: mark docket_match ONLY when the docket string appears in
+    // the TITLE or URL (not the snippet). A later case whose analysis merely
+    // cites the target docket in its snippet is not the target ruling; letting
+    // such rows satisfy `docket:*` anchors caused the B2 Ka'adan regression
+    // (lead_ref bound to an unrelated case that name-dropped 6698/95).
     const qMeta = (query.metadata ?? {}) as Record<string, unknown>;
     const isDocketAnchor = qMeta.is_docket_anchor === true;
     const docketVariants: string[] = Array.isArray(qMeta.docket_variants)
       ? (qMeta.docket_variants as string[]) : [];
     let docket_match = false;
     if (isDocketAnchor) {
-      const hay = `${title}\n${s.snippet ?? ""}\n${effectiveUrl}`;
+      const hay = `${title}\n${effectiveUrl}`;
       const hayLower = hay.toLowerCase();
       for (const v of docketVariants) {
         if (v.length < 4) continue;
@@ -421,6 +424,7 @@ function processRaw(
         } else if (hay.includes(v)) { docket_match = true; break; }
       }
     }
+
     if (docket_match) baseScore = Math.min(1, baseScore + 0.05);
 
     rows.push({

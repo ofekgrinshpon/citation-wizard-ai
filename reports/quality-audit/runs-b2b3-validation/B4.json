@@ -1,0 +1,57 @@
+{
+  "id": "B4",
+  "category": "statute_section",
+  "query": "מה קובע סעיף 12 לחוק החוזים (חלק כללי), התשל\"ג-1973 בעניין תום לב במשא ומתן, ומה הסעד?",
+  "run_id": "e08b6834-212e-4220-8b3f-11f19de7997c",
+  "ok": true,
+  "total_ms": 106186,
+  "answer_intent": {
+    "output_shape": "quote"
+  },
+  "shape_override": null,
+  "lead_ref": {
+    "ref": "s3",
+    "shape": "quote",
+    "reason": "required_anchor_official"
+  },
+  "deterministic_branch": "statute_section_quote_refusal",
+  "limitation_flags": {
+    "missing_docket": false,
+    "statute_section": false,
+    "canonical_quote": false,
+    "missing_anchor_caveat_injected": true
+  },
+  "missing_anchor_descriptions": [
+    "הנוסח המחייב של סעיף 12 לחוק החוזים (חלק כללי)"
+  ],
+  "anchor_statuses": [],
+  "used_sources_count": 1,
+  "used_sources": [
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+      "title": "חוק החוזים (חלק כללי)",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "israeli_law",
+      "candidate_id": "8af25b4a-5302-4087-a00b-117afd96e531"
+    }
+  ],
+  "footnotes_count": 1,
+  "footnotes": [
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+      "title": "חוק החוזים (חלק כללי)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+          "title": "חוק החוזים (חלק כללי)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "israeli_law"
+    }
+  ],
+  "quality_warnings": [],
+  "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 12 לחוק החוזים (חלק כללי); לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
+}

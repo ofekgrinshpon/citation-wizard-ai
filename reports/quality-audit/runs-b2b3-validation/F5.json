@@ -1,0 +1,34 @@
+{
+  "id": "F5",
+  "category": "missing_docket",
+  "query": "מה נקבע בת\"א 12345-01-24 חברת גמא נ' חברת דלתא ביחס להפרת חוזה מסחרי?",
+  "run_id": "2d8df23c-f263-4b8d-bb49-946c524a38d1",
+  "ok": true,
+  "total_ms": 106696,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "shape_override": null,
+  "lead_ref": {
+    "ref": null,
+    "shape": "case_holding",
+    "reason": "skipped_missing_docket_anchor"
+  },
+  "deterministic_branch": "docket_limitation",
+  "limitation_flags": {
+    "missing_docket": true,
+    "statute_section": false,
+    "canonical_quote": false,
+    "missing_anchor_caveat_injected": true
+  },
+  "missing_anchor_descriptions": [
+    "פסק הדין בעניין ת\"א 12345/01/24 עצמו"
+  ],
+  "anchor_statuses": [],
+  "used_sources_count": 0,
+  "used_sources": [],
+  "footnotes_count": 0,
+  "footnotes": [],
+  "quality_warnings": [],
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ת\"א 12345/01/24 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}

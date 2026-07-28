@@ -305,6 +305,17 @@ export function normalizePerplexitySourceType(
       was_normalized: fromClass !== "other",
     };
   }
+  // Strong domain-class signals override the raw PPLX tag. When our own
+  // URL/title classifier already decided the source is legislation or an
+  // official court judgment, do not let a generic raw tag ("web", "pdf",
+  // "document", etc.) collapse it into "other". Downstream lead_ref/statute
+  // guards depend on these labels being correct (B3 §6 regression).
+  if (classifiedSourceClass === "legislation") {
+    return { normalized: "legislation", raw: rawTrim, was_normalized: true };
+  }
+  if (classifiedSourceClass === "official_primary" || classifiedSourceClass === "court_case") {
+    return { normalized: "caselaw", raw: rawTrim, was_normalized: true };
+  }
   const lower = rawTrim.toLowerCase();
   // Already known canonical value.
   if (KNOWN_SOURCE_TYPES.has(lower)) {
