@@ -934,7 +934,11 @@ export async function runVerifier(
                 raw_response_present: false,
                 escalation_attempted: false,
               }],
+              recovered: false,
+              retry_attempts: 0,
+              split_probe_attempts: 0,
             };
+
           }
         }
       })());
