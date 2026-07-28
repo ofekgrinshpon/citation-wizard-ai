@@ -936,14 +936,28 @@ export async function runVerifier(
     }
   }
 
+  const emptySupport = (): Record<SupportLevel, number> => ({
+    direct: 0, partial: 0, tangential: 0, unrelated: 0,
+  });
   const counts = {
-    by_support: { direct: 0, partial: 0, tangential: 0, unrelated: 0 } as Record<SupportLevel, number>,
+    by_support: emptySupport(),
     by_role_match: { true: 0, false: 0 },
+    by_support_model: emptySupport(),
+    by_support_synthetic: emptySupport(),
+    model_verdicts: 0,
+    synthetic_verdicts: 0,
   };
   for (const v of allVerdicts) {
     counts.by_support[v.support] = (counts.by_support[v.support] ?? 0) + 1;
     if (v.role_match) counts.by_role_match.true++;
     else counts.by_role_match.false++;
+    if (v.synthetic) {
+      counts.by_support_synthetic[v.support] = (counts.by_support_synthetic[v.support] ?? 0) + 1;
+      counts.synthetic_verdicts++;
+    } else {
+      counts.by_support_model[v.support] = (counts.by_support_model[v.support] ?? 0) + 1;
+      counts.model_verdicts++;
+    }
   }
 
   return {
@@ -973,6 +987,8 @@ export async function runVerifier(
     rate_limit_count,
     retry_count,
     fallback_to_sequential,
+    call_failed: allCallFailures.length > 0,
+    call_failures: allCallFailures,
     demotions: allDemotions,
     demotions_by_rule: allDemotions.reduce((acc, d) => {
       acc[d.rule] = (acc[d.rule] ?? 0) + 1;
