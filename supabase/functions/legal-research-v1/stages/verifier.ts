@@ -980,6 +980,11 @@ export async function runVerifier(
   const batch_ms_arr: number[] = [];
   const allDemotions: DemotionEvent[] = [];
   const allCallFailures: VerifierCallFailure[] = [];
+  let recovered_batches = 0;
+  let total_retry_attempts = 0;
+  let total_split_probe_attempts = 0;
+  let unrecovered_failed_batches = 0;
+
   for (let i = 0; i < batches.length; i++) {
     const s = slots[i];
     if (!s) {
