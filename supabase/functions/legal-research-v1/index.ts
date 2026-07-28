@@ -866,8 +866,17 @@ async function handle(req: Request): Promise<Response> {
     statuses: requiredAnchorStatuses,
   };
 
-  const finalAnswer = drafter.ok ? drafter.answer_markdown : STUB_ANSWER;
+  // If the verifier call ultimately failed (no real model verdicts and a
+  // deterministic branch did not fire), surface a clear technical limitation
+  // instead of the P5 dev stub.
+  const verifierFailedNoDrafter = !drafter.ok
+    && drafter.error === "no_usable_candidates"
+    && verifier.call_failed;
+  const finalAnswer = drafter.ok
+    ? drafter.answer_markdown
+    : (verifierFailedNoDrafter ? VERIFIER_FAILURE_ANSWER : STUB_ANSWER);
   const finalFootnotes = drafter.ok ? drafter.footnotes : [];
+
 
   // Mark final stage (footnote rendering / finalize) as active then complete.
   await markStage("finalize");
