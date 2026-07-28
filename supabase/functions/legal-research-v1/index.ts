@@ -896,6 +896,11 @@ async function handle(req: Request): Promise<Response> {
     canonical_quote_fired:
       drafter.deterministic_branch === "canonical_quote_registry" ||
       drafter.deterministic_branch === "canonical_quote_verified",
+    // Source-sufficiency gate telemetry.
+    source_sufficiency: drafter.sufficiency ?? null,
+    insufficient_sources_limitation_fired:
+      drafter.deterministic_branch === "insufficient_sources_limitation",
+
     // Truncation guard telemetry (drafterV2-only, additive).
     completeness: drafter.completeness,
     completeness_initial: drafter.completeness_initial,

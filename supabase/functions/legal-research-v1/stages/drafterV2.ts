@@ -38,6 +38,11 @@ import {
   type StatuteSectionRef,
 } from "./statuteSectionDetection.ts";
 import { detectDockets, candidateMatchesDocket, type DocketRef } from "./docketDetection.ts";
+import {
+  assessSourceSufficiency,
+  type SufficiencyAssessment,
+} from "./sourceSufficiency.ts";
+
 
 // drafterV2-only output-token budgets. Reasoning models (gpt-5 family) burn
 // most tokens on hidden reasoning; the default gateway cap has been observed
@@ -187,12 +192,19 @@ function buildUserMessage(
   missingAnchors: Array<{ description: string; is_docket?: boolean; is_statute_section?: boolean }>,
   answerIntent?: AnswerIntent,
   leadRef?: string | null,
+  sufficiency?: SufficiencyAssessment,
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
   lines.push(
     "מסגרת התשובה חייבת להישאר נאמנה לשאלה כפי שנשאלה. אם המקורות עוסקים בנושא סמוך אך לא זהה — ציין זאת במפורש ואל תחליף את שאלת המשתמש.",
   );
+  if (sufficiency?.thin_source) {
+    lines.push(
+      "הערת דלילות מקורות: הטקסט התומך שנמצא קצר ואינו כולל נוסח מלא של ההלכה/ההוראה. נסח את התשובה על בסיס מה שקיים בפועל, והוסף בסוף הסתייגות קצרה שלפיה טקסט ההלכה המלא לא היה בידיך.",
+    );
+  }
+
   const missingDocketAnchors = missingAnchors.filter((a) => a.is_docket);
   const missingStatuteSectionAnchors = missingAnchors.filter((a) => a.is_statute_section);
   const missingNonDocketAnchors = missingAnchors.filter((a) => !a.is_docket && !a.is_statute_section);
@@ -481,6 +493,38 @@ function buildDocketLimitationDraft(
 }
 
 /**
+ * Deterministic limited-source answer for questions whose source pack does not
+ * contain authority about the asked topic. Never derives a legal rule; may
+ * mention, factually, what kind of material was found.
+ */
+function buildInsufficientSourcesDraft(s: SufficiencyAssessment): StructuredDraft {
+  const opening = s.category === "practical_list"
+    ? "לא נמצאו במקורות מקורות משפטיים ייעודיים לנושא שנשאל, אלא חומר כללי בלבד. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף."
+    : "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.";
+  const blocks: StructuredDraft["blocks"] = [
+    { kind: "paragraph", text: opening, source_refs: [] },
+    {
+      kind: "paragraph",
+      text:
+        "אין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.",
+      source_refs: [],
+    },
+  ];
+  if (s.found_titles.length > 0) {
+    blocks.push({
+      kind: "paragraph",
+      text: `מה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): ${
+        s.found_titles.slice(0, 4).join("; ")
+      }.`,
+      source_refs: [],
+    });
+  }
+  return { blocks };
+}
+
+
+
+/**
  * Deterministic verbatim-quote draft for statute-section anchors whose
  * canonical text is registered in {@link getStatuteSectionCanonicalText}.
  * Bypasses the LLM entirely so the model can never paraphrase or distort
@@ -703,7 +747,11 @@ export interface DrafterV2Result {
     | "statute_section_limitation"
     | "canonical_quote_registry"
     | "canonical_quote_verified"
-    | "statute_section_quote_refusal";
+    | "statute_section_quote_refusal"
+    | "insufficient_sources_limitation";
+  /** Deterministic source-sufficiency assessment (telemetry + gate result). */
+  sufficiency?: SufficiencyAssessment;
+
   schema_failure_reason?:
     | "no_tool_call"
     | "json_parse"
@@ -1112,6 +1160,59 @@ export async function runDrafterV2(
   }
 
 
+  // ── Deterministic source-sufficiency gate ─────────────────────────────
+  // For case-law synthesis / doctrine / practical-list questions, refuse to
+  // synthesize a doctrine out of sources that are not about the asked topic.
+  const sufficiency = assessSourceSufficiency({
+    question,
+    shape,
+    sources: inputSources,
+    requiredAnchorCandidateIds,
+  });
+
+  if (sufficiency.applied && !sufficiency.sufficient) {
+    const t0 = Date.now();
+    const draft = buildInsufficientSourcesDraft(sufficiency);
+    const validationRaw = validateStructuredDraft(draft, allowedRefs);
+    const validation = validationRaw.report.errors.every((e) => e === "no cited segments")
+      ? { draft, report: { ...validationRaw.report, ok: true, errors: [] } }
+      : validationRaw;
+    const built = validation.draft
+      ? buildFootnotedAnswer(validation.draft, inputSources)
+      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined };
+    const answer = built.answer_markdown;
+    return {
+      ok: validation.report.ok,
+      ms: Date.now() - t_total,
+      model_initial: forceModel ?? MODEL_MINI,
+      model_final: forceModel ?? MODEL_MINI,
+      provider,
+      escalated: false,
+      sources_passed,
+      sources_used: built.used_sources.length,
+      answer_markdown: answer,
+      used_sources: built.used_sources,
+      footnotes: built.footnotes,
+      stage_runs: [{
+        stage: "drafter_v2_source_sufficiency_gate",
+        model: "deterministic",
+        ms: Date.now() - t0,
+        ok: validation.report.ok,
+      }],
+      structured_validation: validation.report,
+      structured_draft: validation.draft,
+      input_sources: inputSources,
+      builder_report: built.builder_report,
+      quality_warning: computeQualityWarning(answer, { question }),
+      missing_anchor_caveat_injected: true,
+      lead_ref: leadSelection,
+      missing_anchor_descriptions: missingAnchors.map((a) => a.description),
+      deterministic_branch: "insufficient_sources_limitation",
+      sufficiency,
+      schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
+    };
+  }
+
   const userMsg = buildUserMessage(
     question,
     claims,
@@ -1121,7 +1222,9 @@ export async function runDrafterV2(
     missingAnchors,
     opts?.answerIntent,
     leadSelection.ref,
+    sufficiency,
   );
+
   const tool = {
     name: "emit_structured_draft",
     description: "Emit the Hebrew legal answer as structured blocks. Code adds footnote markers.",
@@ -1347,6 +1450,8 @@ export async function runDrafterV2(
     missing_anchor_caveat_injected: missingAnchors.length > 0,
     lead_ref: leadSelection,
     missing_anchor_descriptions: missingAnchors.map((a) => a.description),
+    sufficiency,
+
     completeness,
     completeness_initial,
     truncation_retry,
