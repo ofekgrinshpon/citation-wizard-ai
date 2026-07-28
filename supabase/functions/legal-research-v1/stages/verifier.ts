@@ -438,9 +438,13 @@ export interface VerifierResult {
   // Verifier-call observability (new).
   call_failed: boolean;
   call_failures: VerifierCallFailure[];
+  recovered_batches: number;
+  retry_attempts: number;
+  split_probe_attempts: number;
   // Phase 1: subject-identity strictness telemetry.
   demotions: DemotionEvent[];
   demotions_by_rule: Record<DemotionRule, number>;
+
 }
 
 interface Batch {
