@@ -2,43 +2,45 @@
   "id": "B3",
   "category": "statute_section",
   "query": "מה קובע סעיף 6 לחוק החברות, התשנ\"ט-1999 בעניין הרמת מסך ומהם התנאים להפעלת הסמכות?",
-  "run_id": "15b46396-f1c0-40c6-b77b-dd4cc11ff131",
+  "run_id": "a6a86d35-11b8-46cc-80c7-9afa8361b42c",
   "ok": true,
-  "total_ms": 123712,
+  "total_ms": 223914,
   "answer_intent": {
-    "output_shape": "analysis"
+    "output_shape": "definition"
   },
   "lead_ref": {
     "ref": null,
-    "shape": "analysis",
-    "reason": "shape_not_eligible"
+    "shape": "definition",
+    "reason": "skipped_missing_statute_section_anchor"
   },
-  "deterministic_branch": null,
+  "deterministic_branch": "statute_section_limitation",
   "limitation_flags": {
     "missing_docket": false,
-    "statute_section": false,
+    "statute_section": true,
     "canonical_quote": false,
-    "missing_anchor_caveat_injected": false
+    "missing_anchor_caveat_injected": true
   },
-  "missing_anchor_descriptions": [],
+  "missing_anchor_descriptions": [
+    "הנוסח המחייב של סעיף 6 לחוק החברות"
+  ],
   "anchor_statuses": [],
   "verifier_counts": {
     "by_support": {
-      "direct": 3,
-      "partial": 8,
-      "unrelated": 4,
-      "tangential": 1
+      "direct": 0,
+      "partial": 4,
+      "unrelated": 16,
+      "tangential": 2
     },
     "by_role_match": {
-      "true": 16,
-      "false": 0
+      "true": 20,
+      "false": 2
     },
-    "model_verdicts": 16,
+    "model_verdicts": 22,
     "by_support_model": {
-      "direct": 3,
-      "partial": 8,
-      "unrelated": 4,
-      "tangential": 1
+      "direct": 0,
+      "partial": 4,
+      "unrelated": 16,
+      "tangential": 2
     },
     "synthetic_verdicts": 0,
     "by_support_synthetic": {
@@ -55,302 +57,33 @@
   "verifier_split_probe_attempts": 0,
   "verifier_errors": [],
   "verifier_labels": null,
-  "used_sources_count": 9,
+  "used_sources_count": 1,
   "used_sources": [
     {
       "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
-      "title": "חוק החברות, התשנ״ט-1999",
+      "title": "חוק החברות, התשנ\"ט-1999",
       "number": 1,
       "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "ada28ff9-ffed-4b5b-9563-536c57d34ccb"
-    },
-    {
-      "url": "https://www.nevo.co.il/law_html/law01/139_002.htm",
-      "title": "חוק החברות, תשנ\"ט-1999",
-      "number": 1,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "75bdc010-e395-455b-9841-e3fcf2663a60"
-    },
-    {
-      "url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
-      "title": "הצעת חוק החברות, התשס\"ב 2002",
-      "number": 1,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "3a9a0759-d7b5-4606-9f29-a635682e7923"
-    },
-    {
-      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
-      "title": "פרק ו': הרמת המסך",
-      "number": 2,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "a348d740-5a86-42c1-a463-bfb01f13f55f"
-    },
-    {
-      "url": "https://www.jstor.org/stable/12345678",
-      "title": "הרמת מסך והטלת אחריות אישית בחברות",
-      "number": 3,
-      "origin": "perplexity",
-      "source_type": "academic",
-      "candidate_id": "9bed9105-922d-4e10-a108-df554f03a164"
-    },
-    {
-      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
-      "title": "אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות",
-      "number": 4,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "91866bca-026a-4de3-9a4f-9b6fe34f2b4f"
-    },
-    {
-      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5464-22-%d7%93%d7%a8-%d7%93%d7%a8%d7%95%d7%a8-%d7%9c%d7%93%d7%a8%d7%9e%d7%9f-%d7%a0-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa-%d7%a7%d7%a8%d7%99%d7%aa-%d7%92%d7%aa-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "title": "רע\"א 5464/22 ד\"ר דרור לדרמן נ׳ עיריית קרית -גת החלטה (19.10.2022)",
-      "number": 4,
-      "origin": "local_db",
-      "source_type": "caselaw",
-      "candidate_id": "6108ca5b-0184-4e21-8e05-86c313e55747"
-    },
-    {
-      "url": "https://lawjournal.huji.ac.il/article/12/1682",
-      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
-      "number": 7,
-      "origin": "local_db",
-      "source_type": "journal_article",
-      "candidate_id": "d76c4317-5124-4ce5-be4b-a8031ecb6e50"
-    },
-    {
-      "url": "https://www.nevo.co.il/law_html/law21/71589.htm",
-      "title": "מסמך מאתר מאגר נבו",
-      "number": 9,
-      "origin": "perplexity",
-      "source_type": "other",
-      "candidate_id": "fac41e78-7ccc-497f-a578-7d761d7279f8"
+      "source_type": "legislation",
+      "candidate_id": "2f2903c8-2965-427c-8606-c565d9aebba8"
     }
   ],
-  "footnotes_count": 11,
+  "footnotes_count": 1,
   "footnotes": [
     {
       "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
-      "title": "חוק החברות, התשנ״ט-1999; חוק החברות, תשנ\"ט-1999; הצעת חוק החברות, התשס\"ב 2002",
+      "title": "חוק החברות, התשנ\"ט-1999",
       "number": 1,
       "sources": [
         {
           "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
-          "title": "חוק החברות, התשנ״ט-1999",
-          "source_type": "other"
-        },
-        {
-          "url": "https://www.nevo.co.il/law_html/law01/139_002.htm",
-          "title": "חוק החברות, תשנ\"ט-1999",
-          "source_type": "other"
-        },
-        {
-          "url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
-          "title": "הצעת חוק החברות, התשס\"ב 2002",
-          "source_type": "other"
+          "title": "חוק החברות, התשנ\"ט-1999",
+          "source_type": "legislation"
         }
       ],
-      "source_type": "compound"
-    },
-    {
-      "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
-      "title": "חוק החברות, התשנ״ט-1999; פרק ו': הרמת המסך",
-      "number": 2,
-      "sources": [
-        {
-          "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
-          "title": "חוק החברות, התשנ״ט-1999",
-          "source_type": "other"
-        },
-        {
-          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
-          "title": "פרק ו': הרמת המסך",
-          "source_type": "other"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
-      "title": "פרק ו': הרמת המסך; הרמת מסך והטלת אחריות אישית בחברות",
-      "number": 3,
-      "sources": [
-        {
-          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
-          "title": "פרק ו': הרמת המסך",
-          "source_type": "other"
-        },
-        {
-          "url": "https://www.jstor.org/stable/12345678",
-          "title": "הרמת מסך והטלת אחריות אישית בחברות",
-          "source_type": "academic"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
-      "title": "אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות; רע\"א 5464/22 ד\"ר דרור לדרמן נ׳ עיריית קרית -גת החלטה (19.10.2022)",
-      "number": 4,
-      "sources": [
-        {
-          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
-          "title": "אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות",
-          "source_type": "other"
-        },
-        {
-          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5464-22-%d7%93%d7%a8-%d7%93%d7%a8%d7%95%d7%a8-%d7%9c%d7%93%d7%a8%d7%9e%d7%9f-%d7%a0-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa-%d7%a7%d7%a8%d7%99%d7%aa-%d7%92%d7%aa-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-          "title": "רע\"א 5464/22 ד\"ר דרור לדרמן נ׳ עיריית קרית -גת החלטה (19.10.2022)",
-          "source_type": "caselaw"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
-      "title": "פרק ו': הרמת המסך; אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות",
-      "number": 5,
-      "sources": [
-        {
-          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
-          "title": "פרק ו': הרמת המסך",
-          "source_type": "other"
-        },
-        {
-          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
-          "title": "אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות",
-          "source_type": "other"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": "https://www.jstor.org/stable/12345678",
-      "title": "הרמת מסך והטלת אחריות אישית בחברות; רע\"א 5464/22 ד\"ר דרור לדרמן נ׳ עיריית קרית -גת החלטה (19.10.2022)",
-      "number": 6,
-      "sources": [
-        {
-          "url": "https://www.jstor.org/stable/12345678",
-          "title": "הרמת מסך והטלת אחריות אישית בחברות",
-          "source_type": "academic"
-        },
-        {
-          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5464-22-%d7%93%d7%a8-%d7%93%d7%a8%d7%95%d7%a8-%d7%9c%d7%93%d7%a8%d7%9e%d7%9f-%d7%a0-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa-%d7%a7%d7%a8%d7%99%d7%aa-%d7%92%d7%aa-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-          "title": "רע\"א 5464/22 ד\"ר דרור לדרמן נ׳ עיריית קרית -גת החלטה (19.10.2022)",
-          "source_type": "caselaw"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": "https://lawjournal.huji.ac.il/article/12/1682",
-      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); פרק ו': הרמת המסך",
-      "number": 7,
-      "sources": [
-        {
-          "url": "https://lawjournal.huji.ac.il/article/12/1682",
-          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
-          "source_type": "journal_article"
-        },
-        {
-          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
-          "title": "פרק ו': הרמת המסך",
-          "source_type": "other"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": "https://lawjournal.huji.ac.il/article/12/1682",
-      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות",
-      "number": 8,
-      "sources": [
-        {
-          "url": "https://lawjournal.huji.ac.il/article/12/1682",
-          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
-          "source_type": "journal_article"
-        },
-        {
-          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
-          "title": "אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות",
-          "source_type": "other"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
-      "title": "חוק החברות, התשנ״ט-1999; מסמך מאתר מאגר נבו; פרק ו': הרמת המסך",
-      "number": 9,
-      "sources": [
-        {
-          "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
-          "title": "חוק החברות, התשנ״ט-1999",
-          "source_type": "other"
-        },
-        {
-          "url": "https://www.nevo.co.il/law_html/law21/71589.htm",
-          "title": "מסמך מאתר מאגר נבו",
-          "source_type": "other"
-        },
-        {
-          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
-          "title": "פרק ו': הרמת המסך",
-          "source_type": "other"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": "https://lawjournal.huji.ac.il/article/12/1682",
-      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות; פרק ו': הרמת המסך",
-      "number": 10,
-      "sources": [
-        {
-          "url": "https://lawjournal.huji.ac.il/article/12/1682",
-          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
-          "source_type": "journal_article"
-        },
-        {
-          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
-          "title": "אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות",
-          "source_type": "other"
-        },
-        {
-          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
-          "title": "פרק ו': הרמת המסך",
-          "source_type": "other"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
-      "title": "חוק החברות, התשנ״ט-1999; פרק ו': הרמת המסך; מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
-      "number": 11,
-      "sources": [
-        {
-          "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
-          "title": "חוק החברות, התשנ״ט-1999",
-          "source_type": "other"
-        },
-        {
-          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
-          "title": "פרק ו': הרמת המסך",
-          "source_type": "other"
-        },
-        {
-          "url": "https://lawjournal.huji.ac.il/article/12/1682",
-          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
-          "source_type": "journal_article"
-        }
-      ],
-      "source_type": "compound"
+      "source_type": "legislation"
     }
   ],
   "quality_warnings": [],
-  "answer": "**סעיף 6 לחוק החברות — לשון וסייגים עיקריים**\n\nברמת העיקרון, נוסח סעיף 6 בחוק החברות קובע סמכות שיפוטית להיעתר, בנסיבות מסוימות, ל'הרמת מסך ההתאגדות' — כלומר להתעלם מהפרדה בין הישות המשפטית של החברה לבין בעלי השליטה בה, על אף הוראות האחריות הכללית שניתנות בהתאגדות.¹\n\nלשון הסעיף והמסמכים המלווים מצביעים על כך שמדובר בסמכות נקודתית של בית המשפט הנתונה בסייגים; החוק אינו מגדיר את ההרמה כהלכה אוטומטית אלא מאפשר התערבות שיפוטית בכפוף לבחינה עובדתית־משפטית של נסיבות המקרה.²\n\n**תנאים עיקריים שנדונו בדוקטרינה ובפסיקה**\n\n- שליטה ואיחוד בין הגורמים: בדוקטרינה מקובל כי דרישת בסיס היא שליטה עובדתית או בעלות שמאפשרת שליטה בפעילות החברה; שליטה כזו מהווה בסיס לבחינת ההרמה כאשר היא מוסווה מאחורי הפרדה פורמלית.³\n- שימוש לרעה במנגנון החברה: יש להראות שימוש בתאגיד כמרכיב בהטיות תכלית, מעקף התחייבויות, הסתרת נכסים או ביצוע הונאה — כלומר פעולות שנעשו בעילום תכלית ההתאגדות או בניגוד לה.⁴\n- תוצאיות בלתי־הוגנות וקשר סיבתי לנזק: על המבקש להראות שאימוץ ההפרדה הפורמלית יוצר תוצאה בלתי־הוגנת כלפי זוכים או גורם שמגיע לו סעד, ושקיים קשר סיבתי בין השימוש בחברה לבין הנזק הנידון.⁵\n- פער בין תכלית ההתאגדות לבין השימוש שנעשה בה (מעקף זכויות): המוטיבציה לשימוש בחברה לצורך עקיפה של חובות או זכויות של צדדים שלישיים מהווה כוח משקל מרכזי בשיקול בית המשפט.⁶\n- שיקול מידתיות ואלטרנטיבה: הדוקטרינה והספרות מדגישות כי יש לבחון חלופות פחות חודרניות לפני הרמת המסך — חובת בית המשפט לשקול פרופורציונליות וסעד חלופי.⁷\n\nמבחן הראיות: בדיבור המקובל בספרות, הנטל מוטל על המבקש להוכיח את יסודות ההרמה ולעתים נדרש משקל ראייתי גבוה יחסית; בית המשפט שוקל את מכלול הראיות והיחסיות בעת קבלת ההחלטה.⁸\n\n**תוצאות וסעדים שנדונו כללית**\n\n- הטלת אחריות אישית: בהתקיים תנאי הרמת המסך עלולים בתי המשפט לייחס לחובות החברה לבעלי מניות, לבעלי השליטה או לנושאי משרה ולהטיל עליהם אחריות אישית כלפי נושים.⁵\n- הכרה בפעולות כפעולות אישיות: פעולות שבוצעו באמצעות החברה עשויות להיחשב כפעולות של האדם הפרטי שמסתתר מאחוריה, עם השלכות אכיפה וקיזוז בהתאם.³\n- תיקון סדרי קדימויות ואכיפה נגד צד ג׳: במקרים מסוימים עלולה ההכרה להוביל לשינוי בהיקף זכויות וסדרי קדימויות בין נושים, ולהענקת סמכויות אכיפה ישירות נגד המעורבים הפרטיים.⁵\n\nהיקף הסדר הסעדי תלוי בשיקול שיפוטי של מידתיות ובמטרת ההרמיה — ההלכה והספרות מצביעות על אפשרויות שונות אך אינן מעניקות נוסח אחיד של סעד יחיד לכל מקרה.³\n\n**היבטים פרוצדורליים, מי רשאי לבקש ונטל הראיה**\n\nהסמכות נתונה לבית המשפט, והבקשה להרים את המסך מוגשת בהליך שבו מבקש להציג את העובדות והראיות התומכות בשורשי הדרישה; מתוך הספרות והניסיון השיפוטי עולה כי מבקשים טיפוסיים הם נושים, מפרקים או צדדים המחזיקים בטענה להיפגעות מזכויותיהם — אך אין בכך כדי לפסול סוגי מבקשים אחרים כאשר תנאי הראיה מתקיימים.⁹\n\nנטל הראיה והדגשים הראייתיים: על המבקש מוטל להציג עובדות קונקרטיות לגבי שליטה, כוונה לעקוף התחייבות, והקשר סיבתי לנזק; השופט מאזין לשקלול ראיות, מהימנות מסמכים ואפשרות פתרונות חלופיים, תוך שמירה על פרופורציונליות.¹⁰\n\nהערת סיכום על תחום ההכרעה: המקורות החוקיים והספרותיים שסקרתי תומכים בתפיסה כי סעיף 6 מעניק לבית המשפט סמכות צמיתה אך מוגבלת; גבולות ההרמה והמשקל הנתון לכל יסוד עובדי־משפטי תלויים בפרשנות השיפוטית ובנסיבות המקרה, והעיון הנפרד בפסיקה המפורטת של בתי המשפט נחוץ להחלטה קונקרטית.¹¹"
+  "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 6 לחוק החברות; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
 }
