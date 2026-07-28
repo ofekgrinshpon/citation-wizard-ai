@@ -1,0 +1,55 @@
+{
+  "id": "Q18",
+  "category": "quote",
+  "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+  "run_id": "cdab9b1e-7447-4b9f-8630-0191589859d4",
+  "ok": true,
+  "total_ms": 144181,
+  "answer_intent": {
+    "output_shape": "quote"
+  },
+  "shape_override": null,
+  "lead_ref": {
+    "ref": "r_basic_law_dignity-s1",
+    "shape": "quote",
+    "reason": "canonical_registry_statute_section"
+  },
+  "deterministic_branch": "canonical_quote_registry",
+  "limitation_flags": {
+    "missing_docket": false,
+    "statute_section": false,
+    "canonical_quote": true,
+    "missing_anchor_caveat_injected": false
+  },
+  "missing_anchor_descriptions": [],
+  "anchor_statuses": [],
+  "used_sources_count": 1,
+  "used_sources": [
+    {
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "israeli_law",
+      "candidate_id": "canonical:basic_law_dignity-s1"
+    }
+  ],
+  "footnotes_count": 1,
+  "footnotes": [
+    {
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+          "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "israeli_law"
+    }
+  ],
+  "quality_warnings": [],
+  "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹"
+}

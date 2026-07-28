@@ -1,0 +1,221 @@
+{
+  "id": "B1",
+  "category": "case_holding",
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי ביחס למעמדם של חוקי היסוד ולסמכות הביקורת השיפוטית על חקיקה ראשית?",
+  "run_id": "0a133fc7-3b95-4c92-8aba-7b0478c06a4a",
+  "ok": true,
+  "total_ms": 265351,
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "shape_override": null,
+  "lead_ref": {
+    "ref": "s3",
+    "shape": "case_holding",
+    "reason": "required_anchor_case"
+  },
+  "deterministic_branch": null,
+  "limitation_flags": {
+    "missing_docket": false,
+    "statute_section": false,
+    "canonical_quote": false,
+    "missing_anchor_caveat_injected": false
+  },
+  "missing_anchor_descriptions": [],
+  "anchor_statuses": [],
+  "used_sources_count": 9,
+  "used_sources": [
+    {
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי, פ''ד מט(4) 221",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "caselaw",
+      "candidate_id": "8cebfb7c-8468-416a-bc1d-c89b4b15e52a"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/14-landoy.pdf",
+      "title": "מתן חוקה לישראל בדרך פםיקת בית־המשפט",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "04f1d561-0a3b-4f6c-a7ca-1209152d2e4b"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/12-mizrahi.pdf",
+      "title": "תקציר פסק־הדין בעניין בנק המזרחי נ׳ מגדל (התיקון ל״חוק גל״)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "681bc36b-51ef-449f-9759-766da7cb3172"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/7a6447cc-8d91-ed11-8151-005056aac6c3/2_7a6447cc-8d91-ed11-8151-005056aac6c3_11_19979.pdf",
+      "title": "מקור חקיקה מתוך אתר הכנסת",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "legislation",
+      "candidate_id": "cb3b3e8f-043f-42fe-bcad-079669c9e384"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%93%D7%A8%D7%9A%20%D7%9C%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA%20%D7%A2%D7%9C%20%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%A9%D7%9C%20%D7%97%D7%95%D7%A7%D7%99%D7%9D%20-%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%9C%D7%94%D7%9B%D7%A8%D7%99%D7%96%20%D7%A2%D7%9C%20%D7%90%D7%99-%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%97%D7%A7%D7%99%D7%A7%D7%94%20-%20%D7%9C%D7%9E%D7%99.pdf",
+      "title": "הדרך לביקורת שיפוטית על חוקתיות של חוקים - הסמכות להכריז על אי-חוקתיות חקיקה",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "1ac34a21-f4a2-42fc-a50c-ac9d6a34baba"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5658-23/he/5658-23%20%D7%A4%D7%A1%D7%A7%20%D7%93%D7%99%D7%9F.docx",
+      "title": "5658-23 פסק דין.docx",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "caselaw",
+      "candidate_id": "476478ef-c663-48bb-84f7-7900be4b91d5"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/?p=255",
+      "title": "אוריאל לין - חוקי-היסוד כחלק מהחוקה הישראלית הכתובה",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "a334bf27-7b53-49c5-acbd-05b7b7bb835f"
+    },
+    {
+      "url": "https://cris.tau.ac.il/en/publications/%D7%9E%D7%94%D7%95%D7%9E%D7%94-%D7%A2%D7%9C-%D7%9C%D7%90-%D7%9E%D7%90%D7%95%D7%9E%D7%94-2/",
+      "title": "מהומה על לא מאומה",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "aa2e8825-2a3d-429e-b218-6365a280a18a"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-zamir-1.pdf",
+      "title": "הביקורת השיפוטית על חוקיות חוקים",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "987c7fc2-7ee0-4ffc-954f-dfbfc026ce4b"
+    }
+  ],
+  "footnotes_count": 5,
+  "footnotes": [
+    {
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי, פ''ד מט(4) 221; מתן חוקה לישראל בדרך פםיקת בית־המשפט; תקציר פסק־הדין בעניין בנק המזרחי נ׳ מגדל (התיקון ל״חוק גל״)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+          "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי, פ''ד מט(4) 221",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/14-landoy.pdf",
+          "title": "מתן חוקה לישראל בדרך פםיקת בית־המשפט",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/12-mizrahi.pdf",
+          "title": "תקציר פסק־הדין בעניין בנק המזרחי נ׳ מגדל (התיקון ל״חוק גל״)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי, פ''ד מט(4) 221; מקור חקיקה מתוך אתר הכנסת; הדרך לביקורת שיפוטית על חוקתיות של חוקים - הסמכות להכריז על אי-חוקתיות חקיקה",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+          "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי, פ''ד מט(4) 221",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/7a6447cc-8d91-ed11-8151-005056aac6c3/2_7a6447cc-8d91-ed11-8151-005056aac6c3_11_19979.pdf",
+          "title": "מקור חקיקה מתוך אתר הכנסת",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%93%D7%A8%D7%9A%20%D7%9C%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA%20%D7%A2%D7%9C%20%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%A9%D7%9C%20%D7%97%D7%95%D7%A7%D7%99%D7%9D%20-%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%9C%D7%94%D7%9B%D7%A8%D7%99%D7%96%20%D7%A2%D7%9C%20%D7%90%D7%99-%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%97%D7%A7%D7%99%D7%A7%D7%94%20-%20%D7%9C%D7%9E%D7%99.pdf",
+          "title": "הדרך לביקורת שיפוטית על חוקתיות של חוקים - הסמכות להכריז על אי-חוקתיות חקיקה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי, פ''ד מט(4) 221; 5658-23 פסק דין.docx; תקציר פסק־הדין בעניין בנק המזרחי נ׳ מגדל (התיקון ל״חוק גל״)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+          "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי, פ''ד מט(4) 221",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5658-23/he/5658-23%20%D7%A4%D7%A1%D7%A7%20%D7%93%D7%99%D7%9F.docx",
+          "title": "5658-23 פסק דין.docx",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/12-mizrahi.pdf",
+          "title": "תקציר פסק־הדין בעניין בנק המזרחי נ׳ מגדל (התיקון ל״חוק גל״)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+      "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי, פ''ד מט(4) 221; אוריאל לין - חוקי-היסוד כחלק מהחוקה הישראלית הכתובה; מהומה על לא מאומה",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+          "title": "נבו - ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי, פ''ד מט(4) 221",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://hamishpat.colman.ac.il/?p=255",
+          "title": "אוריאל לין - חוקי-היסוד כחלק מהחוקה הישראלית הכתובה",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://cris.tau.ac.il/en/publications/%D7%9E%D7%94%D7%95%D7%9E%D7%94-%D7%A2%D7%9C-%D7%9C%D7%90-%D7%9E%D7%90%D7%95%D7%9E%D7%94-2/",
+          "title": "מהומה על לא מאומה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://cris.tau.ac.il/en/publications/%D7%9E%D7%94%D7%95%D7%9E%D7%94-%D7%A2%D7%9C-%D7%9C%D7%90-%D7%9E%D7%90%D7%95%D7%9E%D7%94-2/",
+      "title": "מהומה על לא מאומה; הביקורת השיפוטית על חוקיות חוקים; הדרך לביקורת שיפוטית על חוקתיות של חוקים - הסמכות להכריז על אי-חוקתיות חקיקה",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://cris.tau.ac.il/en/publications/%D7%9E%D7%94%D7%95%D7%9E%D7%94-%D7%A2%D7%9C-%D7%9C%D7%90-%D7%9E%D7%90%D7%95%D7%9E%D7%94-2/",
+          "title": "מהומה על לא מאומה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-zamir-1.pdf",
+          "title": "הביקורת השיפוטית על חוקיות חוקים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%93%D7%A8%D7%9A%20%D7%9C%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA%20%D7%A2%D7%9C%20%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%A9%D7%9C%20%D7%97%D7%95%D7%A7%D7%99%D7%9D%20-%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%9C%D7%94%D7%9B%D7%A8%D7%99%D7%96%20%D7%A2%D7%9C%20%D7%90%D7%99-%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%97%D7%A7%D7%99%D7%A7%D7%94%20-%20%D7%9C%D7%9E%D7%99.pdf",
+          "title": "הדרך לביקורת שיפוטית על חוקתיות של חוקים - הסמכות להכריז על אי-חוקתיות חקיקה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "quality_warnings": [],
+  "answer": "**עיקר ההכרעה בע\"א 6821/93 — בנק המזרחי נ' מגדל כפר שיתופי**\n\nמן פסק הדין בע\"א 6821/93 עולה בזהירות כי בית המשפט ראה בחוקי היסוד מעמד נורמטיבי־על ביחס לחקיקה רגילה ותיאר באמצעותם תשתית חוקתית שאליה יש להתייחס בבחינת חקיקה ראשית.¹\n\nבפסק הדין הוכרה, באופן מדוד וסייגי, סמכות שיפוטית לבחון חקיקה ראשית ביחס לחוקי היסוד ולהצביע על חוסר התאמה או על פגם בהתאמה כאשר קיימת סתירה שאינה ניתנת לפירוש מתיישב; מסקנה זו מוגשת בזהירות לאור אופיין המוצהר של ההכרעות והדיונים ההיקפיים סביב הנושא.²\n\nההלכה ניסחה כלל פרשני מובהק: יש לנסות תחילה לפרש חוק רגיל באופן המתיישב עם הוראות חוק יסוד, ורק במקרה של סתירה בלתי־פשרית יתאפשר אמצעי כבירות או ביטול של החקיקה הרגילה; כלל זה מדגיש את העדפת הפרשנות המקיימת כמנגנון סינון לפני הכרעה בטענת אי־חוקתיות.³\n\nהדיון בפסק הדין לא הגיע להכרזה כי הכנסת ויתרה באופן מוחלט על יכולתה לשנות חקיקה או על זכותה לשנות חוקי יסוד; בית המשפט אימץ גישה מאוזנת שמעדיפה פרשנות הרמונית ומקנה עדיפות לחוק יסוד במקרה של הסתירה המובהקת, אך לא הציגה מנגנון של חוקה כתובה ובלתי־ניתנת לשינוי.⁴\n\nהמשמעות התיאורטית וההשלכות המעשיות של ההכרעה שנויים בפרשנות וביישום: מן הספרות והדיון האקדמי עולה בזהירות כי פסק הדין הניח תשתית דוקטרינלית חשובה אך השאלות על היקף הביקורת בפועל, גבולותיה והיחסים עם הגופים המחוקקים ממשיכות להיות נתונות לוויכוח ולפיתוח שיפוטי וחוקתי נוסף.⁵\n\nלסיכום: בפסק הדין של בנק המזרחי נקבע, באופן זהיר ומוסדר, כי חוקי היסוד נהנים ממעמד על־חוקי ביחס לחקיקה רגילה; הוכרה סמכות שיפוטית לבחון התאמה ולפעול במקרה של סתירה בלתי־פשרית; ובכל זאת נשמרה גישה מאוזנת שאינה טוענת כי הכנסת ויתרה באופן מוחלט על יכולתה לחקיקה ושינוי חוקי יסוד."
+}
