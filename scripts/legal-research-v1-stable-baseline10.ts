@@ -90,7 +90,11 @@ const results = await Promise.all(triggered.map(async ({ id, category, query, ru
     },
     verifier_call_failed: v.call_failed === true,
     verifier_call_failures: v.call_failures ?? [],
+    verifier_recovered_batches: v.recovered_batches ?? 0,
+    verifier_retry_attempts: v.retry_attempts ?? 0,
+    verifier_split_probe_attempts: v.split_probe_attempts ?? 0,
     verifier_errors: v.errors ?? [],
+
     verifier_labels: v.labels ?? null,
     used_sources_count: usedSources.length,
     used_sources: usedSources,
