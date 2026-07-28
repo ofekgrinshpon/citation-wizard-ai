@@ -2,13 +2,17 @@
   "id": "B5",
   "category": "analysis",
   "query": "מהי דוקטרינת השימוש לרעה בסמכות המכוננת במשפט החוקתי הישראלי, וכיצד היא התפתחה בפסיקה המרכזית של בית המשפט העליון?",
-  "run_id": "63e42a55-094a-4e9a-a415-29bc47a9b47f",
-  "ok": false,
-  "total_ms": 97173,
+  "run_id": "e581a01b-4986-4ffd-bc58-716bbaf79196",
+  "ok": true,
+  "total_ms": 119631,
   "answer_intent": {
     "output_shape": "analysis"
   },
-  "lead_ref": null,
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
   "deterministic_branch": null,
   "limitation_flags": {
     "missing_docket": false,
@@ -20,21 +24,201 @@
   "anchor_statuses": [],
   "verifier_counts": {
     "by_support": {
-      "direct": 0,
-      "partial": 0,
-      "unrelated": 15,
-      "tangential": 0
+      "direct": 2,
+      "partial": 4,
+      "unrelated": 3,
+      "tangential": 1
     },
     "by_role_match": {
-      "true": 14,
-      "false": 1
+      "true": 10,
+      "false": 0
+    },
+    "model_verdicts": 10,
+    "by_support_model": {
+      "direct": 2,
+      "partial": 4,
+      "unrelated": 3,
+      "tangential": 1
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
     }
   },
+  "verifier_call_failed": false,
+  "verifier_call_failures": [],
+  "verifier_recovered_batches": 0,
+  "verifier_retry_attempts": 0,
+  "verifier_split_probe_attempts": 0,
+  "verifier_errors": [],
   "verifier_labels": null,
-  "used_sources_count": 0,
-  "used_sources": [],
-  "footnotes_count": 0,
-  "footnotes": [],
+  "used_sources_count": 5,
+  "used_sources": [
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+      "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "9f9be5c2-44c5-466b-a2c2-462814af516e"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "853452ef-0b28-4b83-92c7-e856379bb17a"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2905-20-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 2905/20 התנועה למען איכות השלטון בישראל נ׳ כנסת ישראל פסק דין",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "ae790fa2-781a-4dc7-8ca9-b41c61b14317"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2025-01/%D7%9E%D7%99%20%D7%A7%D7%95%D7%91%D7%A2%20%D7%90%D7%AA%20%D7%9B%D7%9C%D7%9C%D7%99%20%D7%94%D7%A9%D7%99%D7%98%D7%94.pdf",
+      "title": "מי קובע את כללי השיטה",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "7aed398f-6663-4014-9885-fd76b04f0f84"
+    },
+    {
+      "url": "https://www.runi.ac.il/media/bddphhts/dishon.pdf",
+      "title": "מסמך מאתר אתר אקדמי (runi.ac.il)",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "d2f3b1f6-1231-471c-9eb6-d058466c4c34"
+    }
+  ],
+  "footnotes_count": 6,
+  "footnotes": [
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+      "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws; בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+          "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין; בג\"ץ 2905/20 התנועה למען איכות השלטון בישראל נ׳ כנסת ישראל פסק דין; שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2905-20-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 2905/20 התנועה למען איכות השלטון בישראל נ׳ כנסת ישראל פסק דין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+          "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+      "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+          "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "other"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+      "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws; מי קובע את כללי השיטה; מסמך מאתר אתר אקדמי (runi.ac.il)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+          "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2025-01/%D7%9E%D7%99%20%D7%A7%D7%95%D7%91%D7%A2%20%D7%90%D7%AA%20%D7%9B%D7%9C%D7%9C%D7%99%20%D7%94%D7%A9%D7%99%D7%98%D7%94.pdf",
+          "title": "מי קובע את כללי השיטה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/bddphhts/dishon.pdf",
+          "title": "מסמך מאתר אתר אקדמי (runi.ac.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2025-01/%D7%9E%D7%99%20%D7%A7%D7%95%D7%91%D7%A2%20%D7%90%D7%AA%20%D7%9B%D7%9C%D7%9C%D7%99%20%D7%94%D7%A9%D7%99%D7%98%D7%94.pdf",
+      "title": "מי קובע את כללי השיטה; שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2025-01/%D7%9E%D7%99%20%D7%A7%D7%95%D7%91%D7%A2%20%D7%90%D7%AA%20%D7%9B%D7%9C%D7%9C%D7%99%20%D7%94%D7%A9%D7%99%D7%98%D7%94.pdf",
+          "title": "מי קובע את כללי השיטה",
+          "source_type": "other"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+          "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+      "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws; בג\"ץ 2905/20 התנועה למען איכות השלטון בישראל נ׳ כנסת ישראל פסק דין; מסמך מאתר אתר אקדמי (runi.ac.il)",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+          "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2905-20-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 2905/20 התנועה למען איכות השלטון בישראל נ׳ כנסת ישראל פסק דין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/bddphhts/dishon.pdf",
+          "title": "מסמך מאתר אתר אקדמי (runi.ac.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
   "quality_warnings": [],
-  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  "answer": "**הגדרה ועקרונות יסוד**\n\nדוקטרינת 'השימוש לרעה בסמכות המכוננת' היא עיקרון משפטי שמתייחס לבחינה שיפוטית של מקרים שבהם בית המחוקקים עושה שימוש בסמכותו המכוננת — ובפרט ביצירת או בשריון של 'חוקי יסוד' — באופן שבא להקנות תוקף חוקתי או בלעדיות יתר שתפקידו לעקוף או לערער את עקרונות היסוד של הסדר החוקתי. הדוקטרינה מזהה את היחס בין הצורה לבין התוכן: גם כאשר לכאורה מומש הליך חוקתי פורמלי, שופטים רשאים לבדוק האם השימוש בסמכות היה מהותית שימוש לרעה, כולל במקרים של כוונה להטעות, כיסוי של פסיקה או עקיפת ערכי יסוד.¹\n\n**התפתחות בפסיקה המרכזית**\n\nבפסיקה הישראלית הדיון בדוקטרינה התפתח בעיקר במסגרת עתירות נגד הכנסת והחקיקה המכוונת לשינוי מעמדם של חוקי יסוד; בשנים האחרונות הדיון הופך ממטאפורה תיאורטית לכלי שבית המשפט מתייחס אליו במפורש בתיקים מרכזיים שבהם נשקלו הגבולות של סמכות מכוננת.²\n\nניתן לזהות שלבי התגבשות: ראשית הדיון עוסק בעקרונות תיאורטיים ובבחינה הצורנית האם פעולה מסוימת מצויה בתוך הסמכות המכוננת; בהמשך טענות אלה הופנו אל בתי המשפט והובילו לדיון מעשי יותר, שבחלקו נדון והוכנס כמונחים משפטיים בפסקי דין עדכניים.³\n\n**הקריטריונים שבהם בוחן בית המשפט שימוש לרעה**\n\nמן המקורות — ובייחוד מסקירות העוסקות בדוקטרינה ובהלכה — עולה בזהירות כי בית המשפט בוחן מספר יסודות עיקריים תוך כדי איזון בין כיבוד הבחירה הדמוקרטית לבין הגנה על ערכי יסוד של המשטר: כוונה פסולה (מניע שהשימוש נועד לעקוף חוקים או דיון ציבורי), הצגה כוזבת או הסתרת מהות הפעולה (כיסוי/רמייה), והשפעה על עקרונות היסוד של המשטר והזכויות המובטחות בחוקי היסוד.⁴\n\nבנוסף יש מבחנים צורניים שעולים בדיונים משפטיים: למשל השאלה האם ההגדרה הצורנית של 'חוק יסוד' או תווית מכוננת נוצלה כשריון פורמלי במקום הליך מכונן אמיתי — מבחנים אלה בוחנים את מהות הפעולה ולא רק את צורתה.⁵\n\n**סנקציות ומשמעות פרקטית**\n\nכאשר בית המשפט מקבל קביעה של שימוש לרעה בסמכות המכוננת, ההשלכות העשויות לכלול ביטול או פגיעה בתוקפו של האקט המכונן, הגבלה על אופן יישום החוק או קריאה לפרשנות מצמצמת (read‑down) כדי למנוע עקיפת ערכי היסוד. בפסקי דין עדכניים נדונה האפשרות שבית המשפט יגביל את השימוש בשריונות פורמליים של הכנסת במקרים שבהם נמצא מניע מנוגד לעקרון החוקתי.¹\n\nעם זאת, מן המקורות עולה בזהירות כי הדוקטרינה עדיין בתהליך התגבשות בפסיקה הישראלית: בתי המשפט ממשיכים לנסח גבולות, לבחון מבחנים משקליים ולתאם בין עקרון זה לבין תקפותה של הכרעה דמוקרטית ותלותה בערכי היסוד.⁶\n\nהמקורות שסופקו עוסקים במידה מרכזית בשימוש ובשריון פורמלי של חוקי יסוד. אם כוונתך לשאול על היבט אחר של 'סמכות מכוננת' שאינו מתמקד בשריונות פורמליים, ציין זאת במפורש כדי שאוכל להתמקד במקורות או בהלכה המתאימים."
 }

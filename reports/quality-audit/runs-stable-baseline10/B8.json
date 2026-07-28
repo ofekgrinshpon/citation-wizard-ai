@@ -2,9 +2,9 @@
   "id": "B8",
   "category": "quote",
   "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
-  "run_id": "8f2f3ad9-1741-4fbe-8222-b7cd064909b6",
+  "run_id": "7fe60807-9ea6-45c9-892c-405454672824",
   "ok": true,
-  "total_ms": 150694,
+  "total_ms": 115341,
   "answer_intent": {
     "output_shape": "quote"
   },
@@ -24,16 +24,36 @@
   "anchor_statuses": [],
   "verifier_counts": {
     "by_support": {
-      "direct": 5,
+      "direct": 6,
       "partial": 7,
-      "unrelated": 4,
-      "tangential": 0
+      "unrelated": 3,
+      "tangential": 1
     },
     "by_role_match": {
       "true": 16,
-      "false": 0
+      "false": 1
+    },
+    "model_verdicts": 17,
+    "by_support_model": {
+      "direct": 6,
+      "partial": 7,
+      "unrelated": 3,
+      "tangential": 1
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
     }
   },
+  "verifier_call_failed": false,
+  "verifier_call_failures": [],
+  "verifier_recovered_batches": 0,
+  "verifier_retry_attempts": 0,
+  "verifier_split_probe_attempts": 0,
+  "verifier_errors": [],
   "verifier_labels": null,
   "used_sources_count": 1,
   "used_sources": [

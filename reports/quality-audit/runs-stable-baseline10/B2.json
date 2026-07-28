@@ -2,13 +2,17 @@
   "id": "B2",
   "category": "case_holding",
   "query": "מה נקבע בבג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל ביחס להקצאת קרקעות למגורים על בסיס לאום?",
-  "run_id": "d744dcfe-2aca-40fa-a10f-b0a57290dd09",
-  "ok": false,
-  "total_ms": 100396,
+  "run_id": "0e9bd8cd-7c16-494f-a753-2910b58981d5",
+  "ok": true,
+  "total_ms": 239351,
   "answer_intent": {
     "output_shape": "case_holding"
   },
-  "lead_ref": null,
+  "lead_ref": {
+    "ref": "s2",
+    "shape": "case_holding",
+    "reason": "required_anchor_case"
+  },
   "deterministic_branch": null,
   "limitation_flags": {
     "missing_docket": false,
@@ -20,21 +24,160 @@
   "anchor_statuses": [],
   "verifier_counts": {
     "by_support": {
-      "direct": 0,
-      "partial": 0,
-      "unrelated": 24,
-      "tangential": 0
+      "direct": 3,
+      "partial": 3,
+      "unrelated": 15,
+      "tangential": 2
     },
     "by_role_match": {
-      "true": 24,
+      "true": 23,
       "false": 0
+    },
+    "model_verdicts": 23,
+    "by_support_model": {
+      "direct": 3,
+      "partial": 3,
+      "unrelated": 15,
+      "tangential": 2
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
     }
   },
+  "verifier_call_failed": false,
+  "verifier_call_failures": [],
+  "verifier_recovered_batches": 0,
+  "verifier_retry_attempts": 0,
+  "verifier_split_probe_attempts": 0,
+  "verifier_errors": [],
   "verifier_labels": null,
-  "used_sources_count": 0,
-  "used_sources": [],
-  "footnotes_count": 0,
-  "footnotes": [],
+  "used_sources_count": 6,
+  "used_sources": [
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "caselaw",
+      "candidate_id": "db395c4c-e652-466d-a1d1-8fd92e176666"
+    },
+    {
+      "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/Law/maasei%20mishpat/Issue3/11.pdf",
+      "title": "עשור לפסק–דין קעדאן",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "59963fee-6b9b-487d-a252-607168bade3d"
+    },
+    {
+      "url": "https://cris.haifa.ac.il/en/publications/%D7%9E%D7%97%D7%95%D7%96%D7%95%D7%AA-%D7%94%D7%97%D7%95%D7%9C%D7%A9%D7%94-%D7%94%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99-%D7%95%D7%94%D7%9E%D7%A8%D7%97%D7%91-%D7%94%D7%90%D7%AA%D7%A0%D7%95-%D7%9C%D7%90%D7%95%D7%9E%D7%99-%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+      "title": "מסמך מאתר אתר אקדמי (cris.haifa.ac.il)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "35b3b486-2a70-4267-be7a-65042b7acb45"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C13/060/069/t17&fileName=13069060.t17&type=4",
+      "title": "בג\"ץ 6906/13 – החלטה המתייחסת לקעדאן",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "caselaw",
+      "candidate_id": "6da9e133-75ff-4215-afb5-b49003aaec8a"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1084",
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+      "number": 2,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "1e49bbef-4636-4571-9aac-3aa9b2106fc5"
+    },
+    {
+      "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=111434478&nTocEntryID=111435113",
+      "title": "הציונות כגזענות",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "academic",
+      "candidate_id": "ea9e283a-6121-4a0a-86ba-c29ae0949365"
+    }
+  ],
+  "footnotes_count": 3,
+  "footnotes": [
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021); עשור לפסק–דין קעדאן; מסמך מאתר אתר אקדמי (cris.haifa.ac.il)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/Law/maasei%20mishpat/Issue3/11.pdf",
+          "title": "עשור לפסק–דין קעדאן",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://cris.haifa.ac.il/en/publications/%D7%9E%D7%97%D7%95%D7%96%D7%95%D7%AA-%D7%94%D7%97%D7%95%D7%9C%D7%A9%D7%94-%D7%94%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99-%D7%95%D7%94%D7%9E%D7%A8%D7%97%D7%91-%D7%94%D7%90%D7%AA%D7%A0%D7%95-%D7%9C%D7%90%D7%95%D7%9E%D7%99-%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+          "title": "מסמך מאתר אתר אקדמי (cris.haifa.ac.il)",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C13/060/069/t17&fileName=13069060.t17&type=4",
+      "title": "בג\"ץ 6906/13 – החלטה המתייחסת לקעדאן; מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C13/060/069/t17&fileName=13069060.t17&type=4",
+          "title": "בג\"ץ 6906/13 – החלטה המתייחסת לקעדאן",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1084",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021); הציונות כגזענות; מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=111434478&nTocEntryID=111435113",
+          "title": "הציונות כגזענות",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1084",
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
   "quality_warnings": [],
-  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  "answer": "הכרעה מרכזית: בפס”ד קעדאן (בג\"ץ 6698/95) נקבע כי הקצאת קרקעות למגורים על בסיס לאום או דת היא פסולה מבחינה משפטית כנגועה בהפליה ובהפרת עקרון השוויון; ההלכה דוחה מדיניות של \"שווה אבל נפרד\" ומסמנת איסור על הדרת אוכלוסיות מהקצאות מקרקעין על רקע זהותי.¹\n\n**נימוקים משפטיים**\n\nבית המשפט נשען על עקרון השוויון כיסוד שלטוני־מנהלתי מרכזי והדגיש כי מדיניות הקצאה שמותאמת על פי שיוך לאומי או דתי פוגעת בזכות לשוויון; בפסיקה הובעה גם הבחנה בין סמכויות מנהליות לבין חקיקה, כך ששיקולים מנהליים שאינם מגובים בסמכות חוקית ולא עומדים בעקרון השוויון ייחשבו בלתי־כשרים.²\n\n**סעד והוראות מעשיות בפסק הדין**\n\nההלכה בפסק־הדין הובילה לביטול או לפסיקה של מנגנונים מדיניים־מנהליים שבהם הודרה קבוצת אוכלוסייה בהקצאות מקרקעין, ולדרישה להתאמת נהלים והחלטות מנהליות כך שלא יכילו קריטריונים מפלים על בסיס לאום/דת; בפועל ספרות וניתוחים המצטטים את קעדאן מדווחים על פסיקה שמונעת הקצאות מפלות וקובעת גבולות לנהלים המנהליים בתחום.¹\n\n**משמעות מעשית והיקף ההשפעה**\n\nהפסיקה של קעדאן משמשת נקודת ייחוס בשעתיד לפסיקות ולקביעות מנהליות ביחס להקצאות מקרקעין והיא מצוטטת בפסקי דין מאוחרים כהוראה נגד אפליה בהקצאות; עם זאת, יש לה השפעה פרקטית שתלויה במידה רבה במידת ההסדרה החוקית של ההקצאות, מאחר שחלק ניכר מההקצאות מתבסס על החלטות מנהליות ונהלים שניתנים לשינוי.³\n\nהערה על היקף המענה: התשובה נאמנת לשאלה המרכזית על קבעי קעדאן ביחס להקצאת קרקע למגורים על בסיס לאום; אם נדרש ניתוח מעמיק יותר של נוסחי פסק‑הדין המלאים, של נוסחי צווים או של יישום בפסיקה שלא צוינה כאן, יש להיעזר בטקסט המלא של פסק‑הדין ובמקורות המשפטיים הנוספים."
 }

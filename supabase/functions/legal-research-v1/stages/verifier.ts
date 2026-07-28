@@ -438,9 +438,13 @@ export interface VerifierResult {
   // Verifier-call observability (new).
   call_failed: boolean;
   call_failures: VerifierCallFailure[];
+  recovered_batches: number;
+  retry_attempts: number;
+  split_probe_attempts: number;
   // Phase 1: subject-identity strictness telemetry.
   demotions: DemotionEvent[];
   demotions_by_rule: Record<DemotionRule, number>;
+
 }
 
 interface Batch {
@@ -567,6 +571,9 @@ export async function runVerifier(
       ms: number;
       failed?: boolean;
       failure_reason?: string;
+      attempts?: number;
+      split_probes?: number;
+      recovered?: boolean;
     };
     errors: Array<{ claim_id: string; reason: string }>;
     per_claim_ms: Record<string, number>;
@@ -575,6 +582,9 @@ export async function runVerifier(
     failed: boolean;
     failure_reason?: string;
     call_failures: VerifierCallFailure[];
+    recovered: boolean;
+    retry_attempts: number;
+    split_probe_attempts: number;
   }
 
   const isRateLimited = (r: { http_status: number; http_error?: string }): boolean => {
@@ -583,37 +593,43 @@ export async function runVerifier(
     return /(^|\b)429\b/.test(t) || /rate[\s_-]*limit/.test(t);
   };
 
-  const processBatch = async (batch: Batch): Promise<BatchOutcome> => {
-    const out: BatchOutcome = {
-      stage_runs: [],
-      verdicts: [],
-      demotions: [],
-      meta: {
-        label: batch.label,
-        claim_ids: batch.claims.map((c) => c.claim_id),
-        candidates: batch.candidates.length,
-        escalated: false,
-        ms: 0,
-      },
-      errors: [],
-      per_claim_ms: {},
-      escalated_claim_ids: [],
-      rate_limited: false,
-      failed: false,
-      call_failures: [],
-    };
+  interface AttemptResult {
+    hasData: boolean;
+    verdicts: Verdict[];
+    stage_runs: StageRun[];
+    call_failures: VerifierCallFailure[];
+    demotions: DemotionEvent[];
+    escalated: boolean;
+    rate_limited: boolean;
+    validator_errors: string[];
+    last_failure_reason?: string;
+  }
 
-    // Validate that all batch claims exist in analyzer output.
-    for (const cl of batch.claims) {
-      if (!claimsById.has(cl.claim_id)) {
-        out.errors.push({ claim_id: cl.claim_id, reason: "claim not found in analyzer output" });
-      }
-    }
+  // Run one attempt (initial + optional escalation) over an arbitrary
+  // (claims, candidates) slice. Never backfills; returns only what the model
+  // produced. Caller composes attempts and does final backfill.
+  const runAttempt = async (
+    stageLabel: string,
+    attemptClaims: Claim[],
+    attemptCands: Candidate[],
+  ): Promise<AttemptResult> => {
+    const out: AttemptResult = {
+      hasData: false,
+      verdicts: [],
+      stage_runs: [],
+      call_failures: [],
+      demotions: [],
+      escalated: false,
+      rate_limited: false,
+      validator_errors: [],
+    };
     const expectedPairs = new Set<string>(
-      batch.candidates.map((c) => pairKey(c.candidate_id, c.claim_id)),
+      attemptCands.map((c) => pairKey(c.candidate_id, c.claim_id)),
     );
-    const userMsg = buildBatchUserMessage(question, batch.claims, batch.candidates);
+    const candById = new Map(attemptCands.map((c) => [c.candidate_id, c]));
+    const userMsg = buildBatchUserMessage(question, attemptClaims, attemptCands);
     const payloadSize = SYSTEM_PROMPT.length + userMsg.length;
+
     const t0 = Date.now();
     let resp = await callOpenAIJsonTool<unknown>({
       model: MODEL_MINI,
@@ -626,7 +642,7 @@ export async function runVerifier(
       },
     });
     const initialMs = Date.now() - t0;
-    const initialStage = `verifier.${batch.label}.initial`;
+    const initialStage = `verifier.${stageLabel}.initial`;
     out.stage_runs.push({
       stage: initialStage,
       model: MODEL_MINI,
@@ -638,7 +654,7 @@ export async function runVerifier(
     });
     if (!resp.data) {
       out.call_failures.push({
-        batch_label: batch.label,
+        batch_label: stageLabel,
         stage: initialStage,
         model: MODEL_MINI,
         ms: initialMs,
@@ -647,19 +663,20 @@ export async function runVerifier(
         parse_error: resp.parse_error?.slice(0, 500),
         failure_reason:
           resp.http_error || resp.parse_error || `http_status=${resp.http_status}`,
-        candidate_count: batch.candidates.length,
+        candidate_count: attemptCands.length,
         request_payload_size: payloadSize,
         tool_call_present: false,
         raw_response_present: !!resp.raw_text,
         escalation_attempted: false,
       });
+      out.last_failure_reason =
+        resp.http_error || resp.parse_error || `http_status=${resp.http_status}`;
     }
     if (isRateLimited(resp)) out.rate_limited = true;
     let parsed = validateBatchVerdicts(resp.data, expectedPairs);
 
     if (!parsed.ok) {
-      out.meta.escalated = true;
-      for (const cl of batch.claims) out.escalated_claim_ids.push(cl.claim_id);
+      out.escalated = true;
       const t1 = Date.now();
       resp = await callOpenAIJsonTool<unknown>({
         model: MODEL_FULL,
@@ -672,7 +689,7 @@ export async function runVerifier(
         },
       });
       const escMs = Date.now() - t1;
-      const escStage = `verifier.${batch.label}.escalated`;
+      const escStage = `verifier.${stageLabel}.escalated`;
       out.stage_runs.push({
         stage: escStage,
         model: MODEL_FULL,
@@ -685,7 +702,7 @@ export async function runVerifier(
       });
       if (!resp.data) {
         out.call_failures.push({
-          batch_label: batch.label,
+          batch_label: stageLabel,
           stage: escStage,
           model: MODEL_FULL,
           ms: escMs,
@@ -694,7 +711,7 @@ export async function runVerifier(
           parse_error: resp.parse_error?.slice(0, 500),
           failure_reason:
             resp.http_error || resp.parse_error || `http_status=${resp.http_status}`,
-          candidate_count: batch.candidates.length,
+          candidate_count: attemptCands.length,
           request_payload_size: payloadSize,
           tool_call_present: false,
           raw_response_present: !!resp.raw_text,
@@ -702,66 +719,169 @@ export async function runVerifier(
           escalation_from: MODEL_MINI,
           escalation_to: MODEL_FULL,
         });
+        out.last_failure_reason =
+          resp.http_error || resp.parse_error || `http_status=${resp.http_status}`;
       }
       if (isRateLimited(resp)) out.rate_limited = true;
       parsed = validateBatchVerdicts(resp.data, expectedPairs);
     }
 
-    if (parsed.errors.length) {
-      out.errors.push({
-        claim_id: batch.claims.map((c) => c.claim_id).join(","),
-        reason: parsed.errors.slice(0, 3).join("; "),
-      });
-    }
-
-    // Fill role_match deterministically + backfill missing pairs as unrelated.
-    const candById = new Map(batch.candidates.map((c) => [c.candidate_id, c]));
+    out.hasData = !!resp.data;
+    out.validator_errors = parsed.errors;
     for (const v of parsed.verdicts) {
       const cand = candById.get(v.candidate_id);
       const claim = claimsById.get(v.claim_id);
       if (cand && claim) v.role_match = rolesMatch(cand.role, claim.required_roles);
-      // Subject-identity strictness: deterministically demote sources that are
-      // conceptually/analogically related but not on the claim's actual subject.
       const enforced = enforceSubjectIdentity(v, cand);
       if (enforced.demotion) out.demotions.push(enforced.demotion);
       out.verdicts.push(enforced.verdict);
     }
-    for (const missingKey of parsed.missing) {
-      const [candidate_id, claim_id] = missingKey.split("::");
-      const cand = candById.get(candidate_id);
-      const claim = claimsById.get(claim_id);
-      if (!cand || !claim) continue;
-      // SYNTHETIC backfill — NOT a real model verdict. Marked so audit
-      // reports never conflate a verifier-call failure with 17 real
-      // "unrelated" model judgments.
-      out.verdicts.push({
-        candidate_id,
-        claim_id,
-        support: "unrelated",
-        role_match: rolesMatch(cand.role, claim.required_roles),
-        supported_points: [],
-        reason: "verifier did not return a verdict for this candidate",
-        synthetic: true,
-        synthetic_reason: "missing_verifier_output",
-      });
+    return out;
+  };
+
+  const processBatch = async (batch: Batch): Promise<BatchOutcome> => {
+    const outerT0 = Date.now();
+    const out: BatchOutcome = {
+      stage_runs: [],
+      verdicts: [],
+      demotions: [],
+      meta: {
+        label: batch.label,
+        claim_ids: batch.claims.map((c) => c.claim_id),
+        candidates: batch.candidates.length,
+        escalated: false,
+        ms: 0,
+        attempts: 0,
+        split_probes: 0,
+        recovered: false,
+      },
+      errors: [],
+      per_claim_ms: {},
+      escalated_claim_ids: [],
+      rate_limited: false,
+      failed: false,
+      call_failures: [],
+      recovered: false,
+      retry_attempts: 0,
+      split_probe_attempts: 0,
+    };
+
+    // Validate that all batch claims exist in analyzer output.
+    for (const cl of batch.claims) {
+      if (!claimsById.has(cl.claim_id)) {
+        out.errors.push({ claim_id: cl.claim_id, reason: "claim not found in analyzer output" });
+      }
     }
 
-    out.meta.ms = Date.now() - t0;
-    for (const cl of batch.claims) out.per_claim_ms[cl.claim_id] = out.meta.ms;
+    const mergedByPair = new Map<string, Verdict>();
+    const mergeAttempt = (att: AttemptResult) => {
+      out.stage_runs.push(...att.stage_runs);
+      out.call_failures.push(...att.call_failures);
+      out.demotions.push(...att.demotions);
+      if (att.escalated) out.meta.escalated = true;
+      if (att.rate_limited) out.rate_limited = true;
+      if (att.validator_errors.length) {
+        out.errors.push({
+          claim_id: batch.claims.map((c) => c.claim_id).join(","),
+          reason: att.validator_errors.slice(0, 3).join("; "),
+        });
+      }
+      for (const v of att.verdicts) {
+        const key = pairKey(v.candidate_id, v.claim_id);
+        if (!mergedByPair.has(key)) mergedByPair.set(key, v);
+      }
+    };
 
-    // A batch is "failed" only when the final response had no data AND no
-    // real verdicts were produced. Backfilled-synthetic verdicts do NOT
-    // rescue the batch from failure.
+    // Attempt 1: original batch.
+    out.meta.attempts = 1;
+    const att1 = await runAttempt(batch.label, batch.claims, batch.candidates);
+    mergeAttempt(att1);
+    let lastFailure = att1.last_failure_reason;
+    let recoveredFromRetry = false;
+
+    // Attempt 2: bounded retry of the same batch if no data (or missing pairs).
+    if (!att1.hasData || att1.verdicts.length === 0) {
+      out.meta.attempts = 2;
+      out.retry_attempts = 1;
+      const att2 = await runAttempt(`${batch.label}.retry1`, batch.claims, batch.candidates);
+      mergeAttempt(att2);
+      lastFailure = att2.last_failure_reason ?? lastFailure;
+      if (att2.hasData && att2.verdicts.length > 0) recoveredFromRetry = true;
+
+      // Attempt 3: split into per-candidate probes (grouped by claim).
+      if (!att2.hasData || att2.verdicts.length === 0) {
+        // Chunk into groups of 4 for efficiency; each chunk keeps its claim.
+        const chunkSize = 4;
+        const candsByClaim = new Map<string, Candidate[]>();
+        for (const c of batch.candidates) {
+          const arr = candsByClaim.get(c.claim_id) ?? [];
+          arr.push(c);
+          candsByClaim.set(c.claim_id, arr);
+        }
+        let probeIdx = 0;
+        let anySplitOk = false;
+        for (const cl of batch.claims) {
+          const arr = candsByClaim.get(cl.claim_id) ?? [];
+          for (let i = 0; i < arr.length; i += chunkSize) {
+            const chunk = arr.slice(i, i + chunkSize);
+            probeIdx++;
+            out.split_probe_attempts++;
+            const attS = await runAttempt(
+              `${batch.label}.split${probeIdx}`,
+              [cl],
+              chunk,
+            );
+            mergeAttempt(attS);
+            if (attS.hasData && attS.verdicts.length > 0) anySplitOk = true;
+            lastFailure = attS.last_failure_reason ?? lastFailure;
+          }
+        }
+        out.meta.split_probes = probeIdx;
+        if (anySplitOk) recoveredFromRetry = true;
+      }
+    }
+
+    // Deterministic backfill for still-missing pairs (mark synthetic).
+    const candById = new Map(batch.candidates.map((c) => [c.candidate_id, c]));
+    for (const c of batch.candidates) {
+      const key = pairKey(c.candidate_id, c.claim_id);
+      if (!mergedByPair.has(key)) {
+        const claim = claimsById.get(c.claim_id);
+        if (!claim) continue;
+        mergedByPair.set(key, {
+          candidate_id: c.candidate_id,
+          claim_id: c.claim_id,
+          support: "unrelated",
+          role_match: rolesMatch(c.role, claim.required_roles),
+          supported_points: [],
+          reason: "verifier did not return a verdict for this candidate",
+          synthetic: true,
+          synthetic_reason: "missing_verifier_output",
+        });
+      }
+    }
+    // Emit merged verdicts (dedup done by mergedByPair).
+    out.verdicts = Array.from(mergedByPair.values());
+    void candById;
+
+    out.meta.ms = Date.now() - outerT0;
+    for (const cl of batch.claims) out.per_claim_ms[cl.claim_id] = out.meta.ms;
+    if (out.meta.escalated) {
+      for (const cl of batch.claims) out.escalated_claim_ids.push(cl.claim_id);
+    }
+
     const realCount = out.verdicts.filter((v) => !v.synthetic).length;
-    if (!resp.data && realCount === 0) {
+    out.recovered = recoveredFromRetry && realCount > 0;
+    out.meta.recovered = out.recovered;
+    if (realCount === 0) {
       out.failed = true;
-      out.failure_reason =
-        resp.http_error || resp.parse_error || `http_status=${resp.http_status}`;
+      out.failure_reason = lastFailure ?? "verifier returned no data after retries";
       out.meta.failed = true;
       out.meta.failure_reason = out.failure_reason;
     }
     return out;
   };
+
 
   // Bounded-concurrency worker pool. Cursor is shared via closure; JS is
   // single-threaded so `cursor++` is atomic across workers.
@@ -814,7 +934,11 @@ export async function runVerifier(
                 raw_response_present: false,
                 escalation_attempted: false,
               }],
+              recovered: false,
+              retry_attempts: 0,
+              split_probe_attempts: 0,
             };
+
           }
         }
       })());
@@ -856,6 +980,11 @@ export async function runVerifier(
   const batch_ms_arr: number[] = [];
   const allDemotions: DemotionEvent[] = [];
   const allCallFailures: VerifierCallFailure[] = [];
+  let recovered_batches = 0;
+  let total_retry_attempts = 0;
+  let total_split_probe_attempts = 0;
+  let unrecovered_failed_batches = 0;
+
   for (let i = 0; i < batches.length; i++) {
     const s = slots[i];
     if (!s) {
@@ -876,16 +1005,21 @@ export async function runVerifier(
       escalated_batches++;
       anyEscalated = true;
     }
-    // Surface every batch call failure as a top-level verifier error entry
-    // so `metadata.verifier.errors` no longer stays empty when the LLM call
-    // failed. Existing validator-error entries above are preserved.
+    if (s.recovered) recovered_batches++;
+    total_retry_attempts += s.retry_attempts;
+    total_split_probe_attempts += s.split_probe_attempts;
+    // Surface every UNRECOVERED batch call failure as a top-level verifier
+    // error entry. When retry/split recovers real model verdicts, we do NOT
+    // pollute the top-level errors array (recovered_batches still records it).
     if (s.failed && s.failure_reason) {
+      unrecovered_failed_batches++;
       errors.push({
         claim_id: batches[i].claims.map((c) => c.claim_id).join(","),
         reason: `verifier_call_failed: ${s.failure_reason}`,
       });
     }
   }
+
   const total_wall_ms = Date.now() - t_pool;
   const total_sum_ms = batch_ms_arr.reduce((a, b) => a + b, 0);
 
@@ -987,8 +1121,12 @@ export async function runVerifier(
     rate_limit_count,
     retry_count,
     fallback_to_sequential,
-    call_failed: allCallFailures.length > 0,
+    call_failed: unrecovered_failed_batches > 0,
     call_failures: allCallFailures,
+    recovered_batches,
+    retry_attempts: total_retry_attempts,
+    split_probe_attempts: total_split_probe_attempts,
+
     demotions: allDemotions,
     demotions_by_rule: allDemotions.reduce((acc, d) => {
       acc[d.rule] = (acc[d.rule] ?? 0) + 1;

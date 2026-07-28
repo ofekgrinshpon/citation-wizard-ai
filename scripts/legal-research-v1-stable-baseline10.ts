@@ -90,7 +90,11 @@ const results = await Promise.all(triggered.map(async ({ id, category, query, ru
     },
     verifier_call_failed: v.call_failed === true,
     verifier_call_failures: v.call_failures ?? [],
+    verifier_recovered_batches: v.recovered_batches ?? 0,
+    verifier_retry_attempts: v.retry_attempts ?? 0,
+    verifier_split_probe_attempts: v.split_probe_attempts ?? 0,
     verifier_errors: v.errors ?? [],
+
     verifier_labels: v.labels ?? null,
     used_sources_count: usedSources.length,
     used_sources: usedSources,
@@ -121,7 +125,7 @@ for (const r of results as any[]) {
   const bss = vc.by_support_synthetic ?? {};
   const mv = vc.model_verdicts ?? 0;
   const sv = vc.synthetic_verdicts ?? 0;
-  md.push(`- verifier: total D/P/T/U=${bs.direct ?? 0}/${bs.partial ?? 0}/${bs.tangential ?? 0}/${bs.unrelated ?? 0} | model D/P/T/U=${bsm.direct ?? 0}/${bsm.partial ?? 0}/${bsm.tangential ?? 0}/${bsm.unrelated ?? 0} (n=${mv}) | synthetic_unrelated=${bss.unrelated ?? 0} (n=${sv}) | call_failed=${r.verifier_call_failed} | sources=${r.used_sources_count} | footnotes=${r.footnotes_count}`);
+  md.push(`- verifier: total D/P/T/U=${bs.direct ?? 0}/${bs.partial ?? 0}/${bs.tangential ?? 0}/${bs.unrelated ?? 0} | model D/P/T/U=${bsm.direct ?? 0}/${bsm.partial ?? 0}/${bsm.tangential ?? 0}/${bsm.unrelated ?? 0} (n=${mv}) | synthetic_unrelated=${bss.unrelated ?? 0} (n=${sv}) | call_failed=${r.verifier_call_failed} | recovered=${r.verifier_recovered_batches} retry=${r.verifier_retry_attempts} split=${r.verifier_split_probe_attempts} | sources=${r.used_sources_count} | footnotes=${r.footnotes_count}`);
   if (r.verifier_call_failed) {
     for (const f of r.verifier_call_failures ?? []) {
       md.push(`  - CALL FAILURE @ ${f.stage} model=${f.model} ms=${f.ms} http_status=${f.http_status ?? "-"} reason="${(f.failure_reason ?? "").slice(0,200)}" candidates=${f.candidate_count} payload=${f.request_payload_size}B escalated=${f.escalation_attempted}`);

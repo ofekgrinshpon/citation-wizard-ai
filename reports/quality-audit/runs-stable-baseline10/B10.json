@@ -2,13 +2,17 @@
   "id": "B10",
   "category": "practical",
   "query": "מהם המבחנים המרכזיים שנקבעו בפסיקה לסיווג אדם כעובד ולא כקבלן עצמאי, ומה המשמעות של הסיווג לעניין זכויות סוציאליות?",
-  "run_id": "a4920a79-c027-4e25-b3bf-44c3d103c86d",
-  "ok": false,
-  "total_ms": 86524,
+  "run_id": "e8e9025c-dfa1-4eea-b969-aa5ca80e35a7",
+  "ok": true,
+  "total_ms": 123980,
   "answer_intent": {
     "output_shape": "analysis"
   },
-  "lead_ref": null,
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
   "deterministic_branch": null,
   "limitation_flags": {
     "missing_docket": false,
@@ -20,21 +24,225 @@
   "anchor_statuses": [],
   "verifier_counts": {
     "by_support": {
-      "direct": 0,
-      "partial": 0,
-      "unrelated": 19,
-      "tangential": 0
+      "direct": 3,
+      "partial": 7,
+      "unrelated": 5,
+      "tangential": 1
     },
     "by_role_match": {
-      "true": 19,
-      "false": 0
+      "true": 15,
+      "false": 1
+    },
+    "model_verdicts": 16,
+    "by_support_model": {
+      "direct": 3,
+      "partial": 7,
+      "unrelated": 5,
+      "tangential": 1
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
     }
   },
+  "verifier_call_failed": false,
+  "verifier_call_failures": [],
+  "verifier_recovered_batches": 0,
+  "verifier_retry_attempts": 0,
+  "verifier_split_probe_attempts": 0,
+  "verifier_errors": [],
   "verifier_labels": null,
-  "used_sources_count": 0,
-  "used_sources": [],
-  "footnotes_count": 0,
-  "footnotes": [],
+  "used_sources_count": 8,
+  "used_sources": [
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1911",
+      "title": "מיהו עובד: מבחני הסף",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "e535f359-107c-4d29-83e8-f4497d3097c1"
+    },
+    {
+      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%A1%D7%99%D7%9B%D7%95%D7%9D%20%D7%9C%D7%9E%D7%91%D7%97%D7%9F.pdf",
+      "title": "דיני עבודה – סיכום למבחן",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "a26740ae-3485-4104-8fee-dafebe3c4570"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/legalinfo/rest-flexibility/he/workers-rights_rest-flexibility.pdf",
+      "title": "חוק שעות עבודה ומנוחה - גמישות בשעות העבודה בעידן המודרני",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e1a6a86d-ca75-45d3-b642-15e61559655c"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1680",
+      "title": "זכויות יסוד, חקיקת מגן ותום לב - הרהורים חוקתיים על משפט העבודה",
+      "number": 4,
+      "origin": "local_db",
+      "source_type": "journal_article",
+      "candidate_id": "ccf2ba37-174d-4b29-8ace-eff46bb6c8ce"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0/2_ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0_11_17898.pdf",
+      "title": "חוק חופשה שנתית, התשי\"א-1951",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "e4d2ee06-55cb-4efe-ba61-f446e7e89a3b"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/service/manpower-contractor-license-request/he/workers-rights_contractors-and-private-bureaus_rights-contractor-personnel-contractors-heb.pdf",
+      "title": "חוברת זכויות - עובדי קבלן המועסקים דרך קבלני כוח אדם - עברית",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "4c6a3799-a7ad-42e7-8c35-e2c71e314787"
+    },
+    {
+      "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/2641-36.aspx",
+      "title": "פיקוח על העסקת עובדים על ידי קבלני כוח אדם",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "99b161b1-8673-4777-9b24-fac092bff65a"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/eabc8d55-f7f7-e411-80c8-00155d010977/2_eabc8d55-f7f7-e411-80c8-00155d010977_11_10064.pdf",
+      "title": "העסקת עובדי קבלן ונותני שירותים מן החוץ במשרדי הממשלה",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "other",
+      "candidate_id": "2c597768-faf5-4ae5-97e3-aba567723fd2"
+    }
+  ],
+  "footnotes_count": 6,
+  "footnotes": [
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1911",
+      "title": "מיהו עובד: מבחני הסף; דיני עבודה – סיכום למבחן",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1911",
+          "title": "מיהו עובד: מבחני הסף",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%A1%D7%99%D7%9B%D7%95%D7%9D%20%D7%9C%D7%9E%D7%91%D7%97%D7%9F.pdf",
+          "title": "דיני עבודה – סיכום למבחן",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1911",
+      "title": "מיהו עובד: מבחני הסף; חוק שעות עבודה ומנוחה - גמישות בשעות העבודה בעידן המודרני",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1911",
+          "title": "מיהו עובד: מבחני הסף",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/rest-flexibility/he/workers-rights_rest-flexibility.pdf",
+          "title": "חוק שעות עבודה ומנוחה - גמישות בשעות העבודה בעידן המודרני",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/legalinfo/rest-flexibility/he/workers-rights_rest-flexibility.pdf",
+      "title": "חוק שעות עבודה ומנוחה - גמישות בשעות העבודה בעידן המודרני; דיני עבודה – סיכום למבחן; מיהו עובד: מבחני הסף",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/rest-flexibility/he/workers-rights_rest-flexibility.pdf",
+          "title": "חוק שעות עבודה ומנוחה - גמישות בשעות העבודה בעידן המודרני",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%A1%D7%99%D7%9B%D7%95%D7%9D%20%D7%9C%D7%9E%D7%91%D7%97%D7%9F.pdf",
+          "title": "דיני עבודה – סיכום למבחן",
+          "source_type": "other"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1911",
+          "title": "מיהו עובד: מבחני הסף",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1911",
+      "title": "מיהו עובד: מבחני הסף; זכויות יסוד, חקיקת מגן ותום לב - הרהורים חוקתיים על משפט העבודה",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1911",
+          "title": "מיהו עובד: מבחני הסף",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1680",
+          "title": "זכויות יסוד, חקיקת מגן ותום לב - הרהורים חוקתיים על משפט העבודה",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0/2_ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0_11_17898.pdf",
+      "title": "חוק חופשה שנתית, התשי\"א-1951; חוברת זכויות - עובדי קבלן המועסקים דרך קבלני כוח אדם - עברית",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0/2_ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0_11_17898.pdf",
+          "title": "חוק חופשה שנתית, התשי\"א-1951",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/service/manpower-contractor-license-request/he/workers-rights_contractors-and-private-bureaus_rights-contractor-personnel-contractors-heb.pdf",
+          "title": "חוברת זכויות - עובדי קבלן המועסקים דרך קבלני כוח אדם - עברית",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/service/manpower-contractor-license-request/he/workers-rights_contractors-and-private-bureaus_rights-contractor-personnel-contractors-heb.pdf",
+      "title": "חוברת זכויות - עובדי קבלן המועסקים דרך קבלני כוח אדם - עברית; פיקוח על העסקת עובדים על ידי קבלני כוח אדם; העסקת עובדי קבלן ונותני שירותים מן החוץ במשרדי הממשלה",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/service/manpower-contractor-license-request/he/workers-rights_contractors-and-private-bureaus_rights-contractor-personnel-contractors-heb.pdf",
+          "title": "חוברת זכויות - עובדי קבלן המועסקים דרך קבלני כוח אדם - עברית",
+          "source_type": "other"
+        },
+        {
+          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/2641-36.aspx",
+          "title": "פיקוח על העסקת עובדים על ידי קבלני כוח אדם",
+          "source_type": "other"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/eabc8d55-f7f7-e411-80c8-00155d010977/2_eabc8d55-f7f7-e411-80c8-00155d010977_11_10064.pdf",
+          "title": "העסקת עובדי קבלן ונותני שירותים מן החוץ במשרדי הממשלה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
   "quality_warnings": [],
-  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  "answer": "**מבחנים מרכזיים וסיווג עובד/קבלן**\n\nבתי המשפט בישראל בוחנים את טיב היחסים בין האדם למעסיק לפי עובדות המקרה, ומיישמים קשת מבחנים לדיפרנציאציה בין 'עובד' לבין 'קבלן עצמאי' — אין הכרעה אוטומטית לפי תיוג חוזי בלבד.¹\n\n- מבחן הכפיפות/השליטה: בוחן האם המעסיק מכתיב הוראות עבודה, שולט בשעות ובמקום העבודה, מפקח ומשל עם סמכויות משמעת — היבטים אלה משמשים אינדיקציה לכפיפות מעשית ולא למעמד פורמלי.²\n- מבחן ההשתלבות/אינטגרציה: נבחן אם העובד משולב בפעילות השוטפת של המעסיק (האם תפקידו הוא חלק מהארגון), וככל שיש השתלבות גדולה זה מצביע על יחסי עובד־מעסיק.¹\n- מבחן המציאות הכלכלית/תלות עסקית: בוחן מי נושא בסיכון העסקי, האם האדם פועל כיזם עצמאי עם יכולת לסחור עם לקוחות אחרים, ואם הוא תלוי כלכלית במעסיק — תלות גבוהה תומכת בהכרה כעובד.¹\n\nיישום מעשי של מבחן הכפיפות: בפסיקה נבדקים שיקולים כגון שעות עבודה וזמינות (הנוכחות בפועל), אופי הפיקוח והנחיות העבודה, סמכויות משמעת, האם המעסיק מספק כלים וחומרים, ותנאי שכר והסדרי תשלום (שכר חודשי קבוע לעומת שכר לפי פרויקט) — כל אלה נבחנים במשקל כולל.³\n\nמשקל כוונת הצדדים ותווית חוזית: בתי המשפט מעדיפים את מהות היחסים על פני הצהרות חוזיות; תווית 'קבלן עצמאי' אינה מחייבת אם העובדות מורות על יחסי עובד–מעביד, אך יש להמשיג את הבדיקה בזהירות ובהתאם לעקרונות תום הלב בהליך החוזי.⁴\n\nהשלכות מעשיות של סיווג כ'עובד': הכרה כעובד מפעילה זכויות והטבות מגן שנקבעות בחקיקה ובמדיניות — בין היתר זכאות לחופשה שנתית ותשלום דמי חופשה לפי הוראות החוק המתאים, וכן חובת הפרשות וביטוח כפי שמפורט בהנחיות משרד העבודה בנוגע לעובדי קבלן.⁵\n\nזכויות נוספות ואכיפה בפועל: בפועל הסיווג עשוי להשפיע על דמי מחלה, תקופת הודעה ופיצויי פיטורין, כיסוי על פי הסכמים קיבוציים ותחולת הוראות מגן אחרות — אכיפת הזכויות ותפקיד הרגולטור נזכרים בדוחות ובחקירות ממוסדות המדינה העוסקים בהעסקת קבלנים ובהסדרת רישיונות קבלני כוח אדם.⁶\n\nמסקנה מעשית ותכליתית: בבדיקת מעמד יש לפעול לפי מבחנים מצטברים — כפיפות, השתלבות ותלות כלכלית — ולהעדיף בחינה מהותית על פני תווית חוזית; ההכרה כעובד נושאת השלכות ממשיות על זכויות סוציאליות ומחייבת עמדת אכיפה ותגובות פרקטיות מצד המעסיק."
 }

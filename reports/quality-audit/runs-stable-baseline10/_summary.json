@@ -3,93 +3,17 @@
     "id": "B1",
     "category": "case_holding",
     "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי ביחס למעמדם של חוקי היסוד ולסמכות הביקורת השיפוטית על חקיקה ראשית?",
-    "run_id": "8c8b0645-c445-47ae-a266-4be6580f1efa",
-    "ok": false,
-    "total_ms": 117282,
+    "run_id": "9269a0de-26d9-4ca2-9d24-99b566334d64",
+    "ok": true,
+    "total_ms": 241938,
     "answer_intent": {
       "output_shape": "case_holding"
     },
-    "lead_ref": null,
-    "deterministic_branch": null,
-    "limitation_flags": {
-      "missing_docket": false,
-      "statute_section": false,
-      "canonical_quote": false,
-      "missing_anchor_caveat_injected": false
+    "lead_ref": {
+      "ref": "s7",
+      "shape": "case_holding",
+      "reason": "required_anchor_case"
     },
-    "missing_anchor_descriptions": [],
-    "anchor_statuses": [],
-    "verifier_counts": {
-      "by_support": {
-        "direct": 0,
-        "partial": 0,
-        "unrelated": 17,
-        "tangential": 0
-      },
-      "by_role_match": {
-        "true": 17,
-        "false": 0
-      }
-    },
-    "verifier_labels": null,
-    "used_sources_count": 0,
-    "used_sources": [],
-    "footnotes_count": 0,
-    "footnotes": [],
-    "quality_warnings": [],
-    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
-  },
-  {
-    "id": "B2",
-    "category": "case_holding",
-    "query": "מה נקבע בבג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל ביחס להקצאת קרקעות למגורים על בסיס לאום?",
-    "run_id": "d744dcfe-2aca-40fa-a10f-b0a57290dd09",
-    "ok": false,
-    "total_ms": 100396,
-    "answer_intent": {
-      "output_shape": "case_holding"
-    },
-    "lead_ref": null,
-    "deterministic_branch": null,
-    "limitation_flags": {
-      "missing_docket": false,
-      "statute_section": false,
-      "canonical_quote": false,
-      "missing_anchor_caveat_injected": false
-    },
-    "missing_anchor_descriptions": [],
-    "anchor_statuses": [],
-    "verifier_counts": {
-      "by_support": {
-        "direct": 0,
-        "partial": 0,
-        "unrelated": 24,
-        "tangential": 0
-      },
-      "by_role_match": {
-        "true": 24,
-        "false": 0
-      }
-    },
-    "verifier_labels": null,
-    "used_sources_count": 0,
-    "used_sources": [],
-    "footnotes_count": 0,
-    "footnotes": [],
-    "quality_warnings": [],
-    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
-  },
-  {
-    "id": "B3",
-    "category": "statute_section",
-    "query": "מה קובע סעיף 6 לחוק החברות, התשנ\"ט-1999 בעניין הרמת מסך ומהם התנאים להפעלת הסמכות?",
-    "run_id": "83bd40fd-b3de-4b7f-8d9a-62e710138f06",
-    "ok": false,
-    "total_ms": 132163,
-    "answer_intent": {
-      "output_shape": "list"
-    },
-    "lead_ref": null,
     "deterministic_branch": null,
     "limitation_flags": {
       "missing_docket": false,
@@ -102,74 +26,821 @@
     "verifier_counts": {
       "by_support": {
         "direct": 1,
+        "partial": 12,
+        "unrelated": 11,
+        "tangential": 5
+      },
+      "by_role_match": {
+        "true": 29,
+        "false": 0
+      },
+      "model_verdicts": 29,
+      "by_support_model": {
+        "direct": 1,
+        "partial": 12,
+        "unrelated": 11,
+        "tangential": 5
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "verifier_call_failed": false,
+    "verifier_call_failures": [],
+    "verifier_recovered_batches": 0,
+    "verifier_retry_attempts": 0,
+    "verifier_split_probe_attempts": 0,
+    "verifier_errors": [],
+    "verifier_labels": null,
+    "used_sources_count": 6,
+    "used_sources": [
+      {
+        "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+        "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "caselaw",
+        "candidate_id": "c2cc201c-95b2-4c95-b7a9-42c977579732"
+      },
+      {
+        "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
+        "title": "פסקאות הגבלה ופסקאות התגברות בחוקות",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "55ecb874-181d-4d9c-9a0a-ede3196ccfdf"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/index.php/article/12/1309",
+        "title": "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+        "number": 3,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "fb3d0bb9-4def-4795-bfae-c08a36312b97"
+      },
+      {
+        "url": "https://runilawreview.org/2024/02/05/dishon/",
+        "title": "שימוש לרעה בשריוּן פורמלי של חוק יסוד | נדב דישון (רוב, מיעוט וכללי הכרעה)",
+        "number": 4,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "a471e057-5ab4-4fda-963e-2bf6750de211"
+      },
+      {
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
+        "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
+        "number": 5,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "27fb8fad-3b19-438c-b0d6-dbb461b83550"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1930",
+        "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+        "number": 5,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "18296bd5-79d5-4b27-9929-940304c56429"
+      }
+    ],
+    "footnotes_count": 5,
+    "footnotes": [
+      {
+        "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+        "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+            "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
+        "title": "פסקאות הגבלה ופסקאות התגברות בחוקות; נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
+            "title": "פסקאות הגבלה ופסקאות התגברות בחוקות",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+            "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+        "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי; מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+            "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/index.php/article/12/1309",
+            "title": "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+        "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי; שימוש לרעה בשריוּן פורמלי של חוק יסוד | נדב דישון (רוב, מיעוט וכללי הכרעה)",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+            "title": "נבו – ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://runilawreview.org/2024/02/05/dishon/",
+            "title": "שימוש לרעה בשריוּן פורמלי של חוק יסוד | נדב דישון (רוב, מיעוט וכללי הכרעה)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
+        "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת; רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
+            "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1930",
+            "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "quality_warnings": [],
+    "answer": "**עיקרי ההחזקה בפסק‑דין ע\"א 6821/93 — בנק המזרחי נ' מגדל כפר שיתופי**\n\nבפסק‑דין זה הובעו מסקנות יסוד ביחס למעמדם של חוקי היסוד ולביקורת השיפוטית על חקיקה ראשית: בית המשפט הכיר בהבחנה בין סמכות מכוננת לבין סמכות רגילה של הכנסת, הצביע על מעמדם המיוחד של חוקי היסוד כ'פרקי חוקה' והותיר פתח לביצוע ביקורת שיפוטית על חקיקה רגילה שנמצאת בסתירה להוראות חוק‑יסוד.¹\n\nהמשפט בצידו של פסקת ההגבלה כמסגרת לבדיקה החוקהּת של פגיעה בזכות: בפסק‑דין זה עוצבה, בהקשרו, הגדרת פסקת ההגבלה — מבחנים של תכלית ראויה, התאמה או הולמות ביחס לערכי המדינה, ומידתיות — ובכך נקשר האיזון בין זכויות לבין חקיקה רגילה למסגרת מבחנים זו.²\n\nלגבי חקיקה קודמת ומאוחרת לחוקי היסוד: במסגרת ההבחנה בפסק‑דין הוצע כי חוקים שחוקקו לפני חוקי היסוד נשמרים בתוקף אך יש לפרשם ברוח החוקות החדשות; חקיקה שנחקקה לאחר חוקי היסוד תיבחן במלואה עפ״י הוראות חוקי היסוד ועלולה להיפסל אם סותרת אותן.³\n\nממבחינה נורמטיבית הובעה בפסק‑דין תמיכה ברעיון של עדיפות נורמטיבית לחוקי היסוד ביחס לחוק רגיל: חוק רגיל אינו נועד לשנות או לגרוע באופן המהותי מהוראות חוק‑יסוד, וכי הוראות של שריון או הסדרי הגנה בחוקי היסוד הם בעלי משמעות פרשנית ואכיפתית שיש להביא בחשבון.⁴\n\nאולם יש להדגיש כי המקור המרכזי לסיכום זה מהווה תמיכה חלקית בפסק‑דין; נותרו שאלות פרשניות ומערכתיות פתוחות לגבי היקף הביקורת השיפוטית, סמכויות בתי המשפט במשוואת המידתיות ופרשנות הוראות השריון, ונמצא ויכוח אקדמי ופסיקתי בהמשך דרכו של ציבור הפסיקה והספרות המשפטית.⁵"
+  },
+  {
+    "id": "B2",
+    "category": "case_holding",
+    "query": "מה נקבע בבג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל ביחס להקצאת קרקעות למגורים על בסיס לאום?",
+    "run_id": "0e9bd8cd-7c16-494f-a753-2910b58981d5",
+    "ok": true,
+    "total_ms": 239351,
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "lead_ref": {
+      "ref": "s2",
+      "shape": "case_holding",
+      "reason": "required_anchor_case"
+    },
+    "deterministic_branch": null,
+    "limitation_flags": {
+      "missing_docket": false,
+      "statute_section": false,
+      "canonical_quote": false,
+      "missing_anchor_caveat_injected": false
+    },
+    "missing_anchor_descriptions": [],
+    "anchor_statuses": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 3,
+        "partial": 3,
+        "unrelated": 15,
+        "tangential": 2
+      },
+      "by_role_match": {
+        "true": 23,
+        "false": 0
+      },
+      "model_verdicts": 23,
+      "by_support_model": {
+        "direct": 3,
+        "partial": 3,
+        "unrelated": 15,
+        "tangential": 2
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "verifier_call_failed": false,
+    "verifier_call_failures": [],
+    "verifier_recovered_batches": 0,
+    "verifier_retry_attempts": 0,
+    "verifier_split_probe_attempts": 0,
+    "verifier_errors": [],
+    "verifier_labels": null,
+    "used_sources_count": 6,
+    "used_sources": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
+        "number": 1,
+        "origin": "local_db",
+        "source_type": "caselaw",
+        "candidate_id": "db395c4c-e652-466d-a1d1-8fd92e176666"
+      },
+      {
+        "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/Law/maasei%20mishpat/Issue3/11.pdf",
+        "title": "עשור לפסק–דין קעדאן",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "academic",
+        "candidate_id": "59963fee-6b9b-487d-a252-607168bade3d"
+      },
+      {
+        "url": "https://cris.haifa.ac.il/en/publications/%D7%9E%D7%97%D7%95%D7%96%D7%95%D7%AA-%D7%94%D7%97%D7%95%D7%9C%D7%A9%D7%94-%D7%94%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99-%D7%95%D7%94%D7%9E%D7%A8%D7%97%D7%91-%D7%94%D7%90%D7%AA%D7%A0%D7%95-%D7%9C%D7%90%D7%95%D7%9E%D7%99-%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+        "title": "מסמך מאתר אתר אקדמי (cris.haifa.ac.il)",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "35b3b486-2a70-4267-be7a-65042b7acb45"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C13/060/069/t17&fileName=13069060.t17&type=4",
+        "title": "בג\"ץ 6906/13 – החלטה המתייחסת לקעדאן",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "caselaw",
+        "candidate_id": "6da9e133-75ff-4215-afb5-b49003aaec8a"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1084",
+        "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+        "number": 2,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "1e49bbef-4636-4571-9aac-3aa9b2106fc5"
+      },
+      {
+        "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=111434478&nTocEntryID=111435113",
+        "title": "הציונות כגזענות",
+        "number": 3,
+        "origin": "perplexity",
+        "source_type": "academic",
+        "candidate_id": "ea9e283a-6121-4a0a-86ba-c29ae0949365"
+      }
+    ],
+    "footnotes_count": 3,
+    "footnotes": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021); עשור לפסק–דין קעדאן; מסמך מאתר אתר אקדמי (cris.haifa.ac.il)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/Law/maasei%20mishpat/Issue3/11.pdf",
+            "title": "עשור לפסק–דין קעדאן",
+            "source_type": "academic"
+          },
+          {
+            "url": "https://cris.haifa.ac.il/en/publications/%D7%9E%D7%97%D7%95%D7%96%D7%95%D7%AA-%D7%94%D7%97%D7%95%D7%9C%D7%A9%D7%94-%D7%94%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99-%D7%95%D7%94%D7%9E%D7%A8%D7%97%D7%91-%D7%94%D7%90%D7%AA%D7%A0%D7%95-%D7%9C%D7%90%D7%95%D7%9E%D7%99-%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+            "title": "מסמך מאתר אתר אקדמי (cris.haifa.ac.il)",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C13/060/069/t17&fileName=13069060.t17&type=4",
+        "title": "בג\"ץ 6906/13 – החלטה המתייחסת לקעדאן; מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C13/060/069/t17&fileName=13069060.t17&type=4",
+            "title": "בג\"ץ 6906/13 – החלטה המתייחסת לקעדאן",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1084",
+            "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021); הציונות כגזענות; מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=111434478&nTocEntryID=111435113",
+            "title": "הציונות כגזענות",
+            "source_type": "academic"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1084",
+            "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "quality_warnings": [],
+    "answer": "הכרעה מרכזית: בפס”ד קעדאן (בג\"ץ 6698/95) נקבע כי הקצאת קרקעות למגורים על בסיס לאום או דת היא פסולה מבחינה משפטית כנגועה בהפליה ובהפרת עקרון השוויון; ההלכה דוחה מדיניות של \"שווה אבל נפרד\" ומסמנת איסור על הדרת אוכלוסיות מהקצאות מקרקעין על רקע זהותי.¹\n\n**נימוקים משפטיים**\n\nבית המשפט נשען על עקרון השוויון כיסוד שלטוני־מנהלתי מרכזי והדגיש כי מדיניות הקצאה שמותאמת על פי שיוך לאומי או דתי פוגעת בזכות לשוויון; בפסיקה הובעה גם הבחנה בין סמכויות מנהליות לבין חקיקה, כך ששיקולים מנהליים שאינם מגובים בסמכות חוקית ולא עומדים בעקרון השוויון ייחשבו בלתי־כשרים.²\n\n**סעד והוראות מעשיות בפסק הדין**\n\nההלכה בפסק־הדין הובילה לביטול או לפסיקה של מנגנונים מדיניים־מנהליים שבהם הודרה קבוצת אוכלוסייה בהקצאות מקרקעין, ולדרישה להתאמת נהלים והחלטות מנהליות כך שלא יכילו קריטריונים מפלים על בסיס לאום/דת; בפועל ספרות וניתוחים המצטטים את קעדאן מדווחים על פסיקה שמונעת הקצאות מפלות וקובעת גבולות לנהלים המנהליים בתחום.¹\n\n**משמעות מעשית והיקף ההשפעה**\n\nהפסיקה של קעדאן משמשת נקודת ייחוס בשעתיד לפסיקות ולקביעות מנהליות ביחס להקצאות מקרקעין והיא מצוטטת בפסקי דין מאוחרים כהוראה נגד אפליה בהקצאות; עם זאת, יש לה השפעה פרקטית שתלויה במידה רבה במידת ההסדרה החוקית של ההקצאות, מאחר שחלק ניכר מההקצאות מתבסס על החלטות מנהליות ונהלים שניתנים לשינוי.³\n\nהערה על היקף המענה: התשובה נאמנת לשאלה המרכזית על קבעי קעדאן ביחס להקצאת קרקע למגורים על בסיס לאום; אם נדרש ניתוח מעמיק יותר של נוסחי פסק‑הדין המלאים, של נוסחי צווים או של יישום בפסיקה שלא צוינה כאן, יש להיעזר בטקסט המלא של פסק‑הדין ובמקורות המשפטיים הנוספים."
+  },
+  {
+    "id": "B3",
+    "category": "statute_section",
+    "query": "מה קובע סעיף 6 לחוק החברות, התשנ\"ט-1999 בעניין הרמת מסך ומהם התנאים להפעלת הסמכות?",
+    "run_id": "15b46396-f1c0-40c6-b77b-dd4cc11ff131",
+    "ok": true,
+    "total_ms": 123712,
+    "answer_intent": {
+      "output_shape": "analysis"
+    },
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
+    "deterministic_branch": null,
+    "limitation_flags": {
+      "missing_docket": false,
+      "statute_section": false,
+      "canonical_quote": false,
+      "missing_anchor_caveat_injected": false
+    },
+    "missing_anchor_descriptions": [],
+    "anchor_statuses": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 3,
         "partial": 8,
-        "unrelated": 5,
+        "unrelated": 4,
         "tangential": 1
       },
       "by_role_match": {
-        "true": 15,
+        "true": 16,
         "false": 0
+      },
+      "model_verdicts": 16,
+      "by_support_model": {
+        "direct": 3,
+        "partial": 8,
+        "unrelated": 4,
+        "tangential": 1
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
       }
     },
+    "verifier_call_failed": false,
+    "verifier_call_failures": [],
+    "verifier_recovered_batches": 0,
+    "verifier_retry_attempts": 0,
+    "verifier_split_probe_attempts": 0,
+    "verifier_errors": [],
     "verifier_labels": null,
-    "used_sources_count": 0,
-    "used_sources": [],
-    "footnotes_count": 0,
-    "footnotes": [],
+    "used_sources_count": 9,
+    "used_sources": [
+      {
+        "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+        "title": "חוק החברות, התשנ״ט-1999",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "ada28ff9-ffed-4b5b-9563-536c57d34ccb"
+      },
+      {
+        "url": "https://www.nevo.co.il/law_html/law01/139_002.htm",
+        "title": "חוק החברות, תשנ\"ט-1999",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "75bdc010-e395-455b-9841-e3fcf2663a60"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+        "title": "הצעת חוק החברות, התשס\"ב 2002",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "3a9a0759-d7b5-4606-9f29-a635682e7923"
+      },
+      {
+        "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+        "title": "פרק ו': הרמת המסך",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "a348d740-5a86-42c1-a463-bfb01f13f55f"
+      },
+      {
+        "url": "https://www.jstor.org/stable/12345678",
+        "title": "הרמת מסך והטלת אחריות אישית בחברות",
+        "number": 3,
+        "origin": "perplexity",
+        "source_type": "academic",
+        "candidate_id": "9bed9105-922d-4e10-a108-df554f03a164"
+      },
+      {
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
+        "title": "אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות",
+        "number": 4,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "91866bca-026a-4de3-9a4f-9b6fe34f2b4f"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5464-22-%d7%93%d7%a8-%d7%93%d7%a8%d7%95%d7%a8-%d7%9c%d7%93%d7%a8%d7%9e%d7%9f-%d7%a0-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa-%d7%a7%d7%a8%d7%99%d7%aa-%d7%92%d7%aa-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 5464/22 ד\"ר דרור לדרמן נ׳ עיריית קרית -גת החלטה (19.10.2022)",
+        "number": 4,
+        "origin": "local_db",
+        "source_type": "caselaw",
+        "candidate_id": "6108ca5b-0184-4e21-8e05-86c313e55747"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1682",
+        "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+        "number": 7,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "d76c4317-5124-4ce5-be4b-a8031ecb6e50"
+      },
+      {
+        "url": "https://www.nevo.co.il/law_html/law21/71589.htm",
+        "title": "מסמך מאתר מאגר נבו",
+        "number": 9,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "fac41e78-7ccc-497f-a578-7d761d7279f8"
+      }
+    ],
+    "footnotes_count": 11,
+    "footnotes": [
+      {
+        "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+        "title": "חוק החברות, התשנ״ט-1999; חוק החברות, תשנ\"ט-1999; הצעת חוק החברות, התשס\"ב 2002",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+            "title": "חוק החברות, התשנ״ט-1999",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law01/139_002.htm",
+            "title": "חוק החברות, תשנ\"ט-1999",
+            "source_type": "other"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+            "title": "הצעת חוק החברות, התשס\"ב 2002",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+        "title": "חוק החברות, התשנ״ט-1999; פרק ו': הרמת המסך",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+            "title": "חוק החברות, התשנ״ט-1999",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+            "title": "פרק ו': הרמת המסך",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+        "title": "פרק ו': הרמת המסך; הרמת מסך והטלת אחריות אישית בחברות",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+            "title": "פרק ו': הרמת המסך",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.jstor.org/stable/12345678",
+            "title": "הרמת מסך והטלת אחריות אישית בחברות",
+            "source_type": "academic"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
+        "title": "אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות; רע\"א 5464/22 ד\"ר דרור לדרמן נ׳ עיריית קרית -גת החלטה (19.10.2022)",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
+            "title": "אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5464-22-%d7%93%d7%a8-%d7%93%d7%a8%d7%95%d7%a8-%d7%9c%d7%93%d7%a8%d7%9e%d7%9f-%d7%a0-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa-%d7%a7%d7%a8%d7%99%d7%aa-%d7%92%d7%aa-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "רע\"א 5464/22 ד\"ר דרור לדרמן נ׳ עיריית קרית -גת החלטה (19.10.2022)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+        "title": "פרק ו': הרמת המסך; אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+            "title": "פרק ו': הרמת המסך",
+            "source_type": "other"
+          },
+          {
+            "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
+            "title": "אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.jstor.org/stable/12345678",
+        "title": "הרמת מסך והטלת אחריות אישית בחברות; רע\"א 5464/22 ד\"ר דרור לדרמן נ׳ עיריית קרית -גת החלטה (19.10.2022)",
+        "number": 6,
+        "sources": [
+          {
+            "url": "https://www.jstor.org/stable/12345678",
+            "title": "הרמת מסך והטלת אחריות אישית בחברות",
+            "source_type": "academic"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5464-22-%d7%93%d7%a8-%d7%93%d7%a8%d7%95%d7%a8-%d7%9c%d7%93%d7%a8%d7%9e%d7%9f-%d7%a0-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa-%d7%a7%d7%a8%d7%99%d7%aa-%d7%92%d7%aa-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "רע\"א 5464/22 ד\"ר דרור לדרמן נ׳ עיריית קרית -גת החלטה (19.10.2022)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1682",
+        "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); פרק ו': הרמת המסך",
+        "number": 7,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1682",
+            "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+            "title": "פרק ו': הרמת המסך",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1682",
+        "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות",
+        "number": 8,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1682",
+            "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
+            "title": "אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+        "title": "חוק החברות, התשנ״ט-1999; מסמך מאתר מאגר נבו; פרק ו': הרמת המסך",
+        "number": 9,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+            "title": "חוק החברות, התשנ״ט-1999",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law21/71589.htm",
+            "title": "מסמך מאתר מאגר נבו",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+            "title": "פרק ו': הרמת המסך",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1682",
+        "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות; פרק ו': הרמת המסך",
+        "number": 10,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1682",
+            "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
+            "title": "אחריות אישית של נושאי משרה וחובות החברה: פרשנות סעיף 6 לחוק החברות",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+            "title": "פרק ו': הרמת המסך",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+        "title": "חוק החברות, התשנ״ט-1999; פרק ו': הרמת המסך; מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+        "number": 11,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+            "title": "חוק החברות, התשנ״ט-1999",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+            "title": "פרק ו': הרמת המסך",
+            "source_type": "other"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1682",
+            "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
     "quality_warnings": [],
-    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+    "answer": "**סעיף 6 לחוק החברות — לשון וסייגים עיקריים**\n\nברמת העיקרון, נוסח סעיף 6 בחוק החברות קובע סמכות שיפוטית להיעתר, בנסיבות מסוימות, ל'הרמת מסך ההתאגדות' — כלומר להתעלם מהפרדה בין הישות המשפטית של החברה לבין בעלי השליטה בה, על אף הוראות האחריות הכללית שניתנות בהתאגדות.¹\n\nלשון הסעיף והמסמכים המלווים מצביעים על כך שמדובר בסמכות נקודתית של בית המשפט הנתונה בסייגים; החוק אינו מגדיר את ההרמה כהלכה אוטומטית אלא מאפשר התערבות שיפוטית בכפוף לבחינה עובדתית־משפטית של נסיבות המקרה.²\n\n**תנאים עיקריים שנדונו בדוקטרינה ובפסיקה**\n\n- שליטה ואיחוד בין הגורמים: בדוקטרינה מקובל כי דרישת בסיס היא שליטה עובדתית או בעלות שמאפשרת שליטה בפעילות החברה; שליטה כזו מהווה בסיס לבחינת ההרמה כאשר היא מוסווה מאחורי הפרדה פורמלית.³\n- שימוש לרעה במנגנון החברה: יש להראות שימוש בתאגיד כמרכיב בהטיות תכלית, מעקף התחייבויות, הסתרת נכסים או ביצוע הונאה — כלומר פעולות שנעשו בעילום תכלית ההתאגדות או בניגוד לה.⁴\n- תוצאיות בלתי־הוגנות וקשר סיבתי לנזק: על המבקש להראות שאימוץ ההפרדה הפורמלית יוצר תוצאה בלתי־הוגנת כלפי זוכים או גורם שמגיע לו סעד, ושקיים קשר סיבתי בין השימוש בחברה לבין הנזק הנידון.⁵\n- פער בין תכלית ההתאגדות לבין השימוש שנעשה בה (מעקף זכויות): המוטיבציה לשימוש בחברה לצורך עקיפה של חובות או זכויות של צדדים שלישיים מהווה כוח משקל מרכזי בשיקול בית המשפט.⁶\n- שיקול מידתיות ואלטרנטיבה: הדוקטרינה והספרות מדגישות כי יש לבחון חלופות פחות חודרניות לפני הרמת המסך — חובת בית המשפט לשקול פרופורציונליות וסעד חלופי.⁷\n\nמבחן הראיות: בדיבור המקובל בספרות, הנטל מוטל על המבקש להוכיח את יסודות ההרמה ולעתים נדרש משקל ראייתי גבוה יחסית; בית המשפט שוקל את מכלול הראיות והיחסיות בעת קבלת ההחלטה.⁸\n\n**תוצאות וסעדים שנדונו כללית**\n\n- הטלת אחריות אישית: בהתקיים תנאי הרמת המסך עלולים בתי המשפט לייחס לחובות החברה לבעלי מניות, לבעלי השליטה או לנושאי משרה ולהטיל עליהם אחריות אישית כלפי נושים.⁵\n- הכרה בפעולות כפעולות אישיות: פעולות שבוצעו באמצעות החברה עשויות להיחשב כפעולות של האדם הפרטי שמסתתר מאחוריה, עם השלכות אכיפה וקיזוז בהתאם.³\n- תיקון סדרי קדימויות ואכיפה נגד צד ג׳: במקרים מסוימים עלולה ההכרה להוביל לשינוי בהיקף זכויות וסדרי קדימויות בין נושים, ולהענקת סמכויות אכיפה ישירות נגד המעורבים הפרטיים.⁵\n\nהיקף הסדר הסעדי תלוי בשיקול שיפוטי של מידתיות ובמטרת ההרמיה — ההלכה והספרות מצביעות על אפשרויות שונות אך אינן מעניקות נוסח אחיד של סעד יחיד לכל מקרה.³\n\n**היבטים פרוצדורליים, מי רשאי לבקש ונטל הראיה**\n\nהסמכות נתונה לבית המשפט, והבקשה להרים את המסך מוגשת בהליך שבו מבקש להציג את העובדות והראיות התומכות בשורשי הדרישה; מתוך הספרות והניסיון השיפוטי עולה כי מבקשים טיפוסיים הם נושים, מפרקים או צדדים המחזיקים בטענה להיפגעות מזכויותיהם — אך אין בכך כדי לפסול סוגי מבקשים אחרים כאשר תנאי הראיה מתקיימים.⁹\n\nנטל הראיה והדגשים הראייתיים: על המבקש מוטל להציג עובדות קונקרטיות לגבי שליטה, כוונה לעקוף התחייבות, והקשר סיבתי לנזק; השופט מאזין לשקלול ראיות, מהימנות מסמכים ואפשרות פתרונות חלופיים, תוך שמירה על פרופורציונליות.¹⁰\n\nהערת סיכום על תחום ההכרעה: המקורות החוקיים והספרותיים שסקרתי תומכים בתפיסה כי סעיף 6 מעניק לבית המשפט סמכות צמיתה אך מוגבלת; גבולות ההרמה והמשקל הנתון לכל יסוד עובדי־משפטי תלויים בפרשנות השיפוטית ובנסיבות המקרה, והעיון הנפרד בפסיקה המפורטת של בתי המשפט נחוץ להחלטה קונקרטית.¹¹"
   },
   {
     "id": "B4",
     "category": "statute_section",
     "query": "מה קובע סעיף 12 לחוק החוזים (חלק כללי), התשל\"ג-1973 בעניין תום לב במשא ומתן, ומה הסעד?",
-    "run_id": "ad009cdd-1e72-456f-a68f-81375362f5d7",
-    "ok": false,
-    "total_ms": 102729,
+    "run_id": "8ecdf870-39d6-4d59-9c27-6287d72a32a7",
+    "ok": true,
+    "total_ms": 103686,
     "answer_intent": {
-      "output_shape": "analysis"
+      "output_shape": "quote"
     },
-    "lead_ref": null,
-    "deterministic_branch": null,
+    "lead_ref": {
+      "ref": "s3",
+      "shape": "quote",
+      "reason": "required_anchor_official"
+    },
+    "deterministic_branch": "statute_section_quote_refusal",
     "limitation_flags": {
       "missing_docket": false,
       "statute_section": false,
       "canonical_quote": false,
-      "missing_anchor_caveat_injected": false
+      "missing_anchor_caveat_injected": true
     },
-    "missing_anchor_descriptions": [],
+    "missing_anchor_descriptions": [
+      "הנוסח המחייב של סעיף 12 לחוק החוזים (חלק כללי)"
+    ],
     "anchor_statuses": [],
     "verifier_counts": {
       "by_support": {
-        "direct": 0,
-        "partial": 0,
-        "unrelated": 17,
-        "tangential": 0
+        "direct": 3,
+        "partial": 10,
+        "unrelated": 7,
+        "tangential": 2
       },
       "by_role_match": {
-        "true": 17,
+        "true": 22,
         "false": 0
+      },
+      "model_verdicts": 22,
+      "by_support_model": {
+        "direct": 3,
+        "partial": 10,
+        "unrelated": 7,
+        "tangential": 2
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
       }
     },
+    "verifier_call_failed": false,
+    "verifier_call_failures": [],
+    "verifier_recovered_batches": 0,
+    "verifier_retry_attempts": 0,
+    "verifier_split_probe_attempts": 0,
+    "verifier_errors": [],
     "verifier_labels": null,
-    "used_sources_count": 0,
-    "used_sources": [],
-    "footnotes_count": 0,
-    "footnotes": [],
+    "used_sources_count": 1,
+    "used_sources": [
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+        "title": "חוק החוזים (חלק כללי)",
+        "number": 1,
+        "origin": "local_db",
+        "source_type": "israeli_law",
+        "candidate_id": "5eec6227-83cb-46ff-ae87-5b83c19d9b7a"
+      }
+    ],
+    "footnotes_count": 1,
+    "footnotes": [
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+        "title": "חוק החוזים (חלק כללי)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+            "title": "חוק החוזים (חלק כללי)",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "israeli_law"
+      }
+    ],
     "quality_warnings": [],
-    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+    "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 12 לחוק החוזים (חלק כללי); לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
   },
   {
     "id": "B5",
     "category": "analysis",
     "query": "מהי דוקטרינת השימוש לרעה בסמכות המכוננת במשפט החוקתי הישראלי, וכיצד היא התפתחה בפסיקה המרכזית של בית המשפט העליון?",
-    "run_id": "63e42a55-094a-4e9a-a415-29bc47a9b47f",
-    "ok": false,
-    "total_ms": 97173,
+    "run_id": "e581a01b-4986-4ffd-bc58-716bbaf79196",
+    "ok": true,
+    "total_ms": 119631,
     "answer_intent": {
       "output_shape": "analysis"
     },
-    "lead_ref": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
     "deterministic_branch": null,
     "limitation_flags": {
       "missing_docket": false,
@@ -181,35 +852,219 @@
     "anchor_statuses": [],
     "verifier_counts": {
       "by_support": {
-        "direct": 0,
-        "partial": 0,
-        "unrelated": 15,
-        "tangential": 0
+        "direct": 2,
+        "partial": 4,
+        "unrelated": 3,
+        "tangential": 1
       },
       "by_role_match": {
-        "true": 14,
-        "false": 1
+        "true": 10,
+        "false": 0
+      },
+      "model_verdicts": 10,
+      "by_support_model": {
+        "direct": 2,
+        "partial": 4,
+        "unrelated": 3,
+        "tangential": 1
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
       }
     },
+    "verifier_call_failed": false,
+    "verifier_call_failures": [],
+    "verifier_recovered_batches": 0,
+    "verifier_retry_attempts": 0,
+    "verifier_split_probe_attempts": 0,
+    "verifier_errors": [],
     "verifier_labels": null,
-    "used_sources_count": 0,
-    "used_sources": [],
-    "footnotes_count": 0,
-    "footnotes": [],
+    "used_sources_count": 5,
+    "used_sources": [
+      {
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+        "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "9f9be5c2-44c5-466b-a2c2-462814af516e"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 1,
+        "origin": "local_db",
+        "source_type": "caselaw",
+        "candidate_id": "853452ef-0b28-4b83-92c7-e856379bb17a"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2905-20-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 2905/20 התנועה למען איכות השלטון בישראל נ׳ כנסת ישראל פסק דין",
+        "number": 2,
+        "origin": "local_db",
+        "source_type": "caselaw",
+        "candidate_id": "ae790fa2-781a-4dc7-8ca9-b41c61b14317"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2025-01/%D7%9E%D7%99%20%D7%A7%D7%95%D7%91%D7%A2%20%D7%90%D7%AA%20%D7%9B%D7%9C%D7%9C%D7%99%20%D7%94%D7%A9%D7%99%D7%98%D7%94.pdf",
+        "title": "מי קובע את כללי השיטה",
+        "number": 4,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "7aed398f-6663-4014-9885-fd76b04f0f84"
+      },
+      {
+        "url": "https://www.runi.ac.il/media/bddphhts/dishon.pdf",
+        "title": "מסמך מאתר אתר אקדמי (runi.ac.il)",
+        "number": 4,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "d2f3b1f6-1231-471c-9eb6-d058466c4c34"
+      }
+    ],
+    "footnotes_count": 6,
+    "footnotes": [
+      {
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+        "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws; בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+            "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין; בג\"ץ 2905/20 התנועה למען איכות השלטון בישראל נ׳ כנסת ישראל פסק דין; שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2905-20-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 2905/20 התנועה למען איכות השלטון בישראל נ׳ כנסת ישראל פסק דין",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+            "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+        "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+            "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "other"
+      },
+      {
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+        "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws; מי קובע את כללי השיטה; מסמך מאתר אתר אקדמי (runi.ac.il)",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+            "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+            "source_type": "other"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/sites/default/files/2025-01/%D7%9E%D7%99%20%D7%A7%D7%95%D7%91%D7%A2%20%D7%90%D7%AA%20%D7%9B%D7%9C%D7%9C%D7%99%20%D7%94%D7%A9%D7%99%D7%98%D7%94.pdf",
+            "title": "מי קובע את כללי השיטה",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.runi.ac.il/media/bddphhts/dishon.pdf",
+            "title": "מסמך מאתר אתר אקדמי (runi.ac.il)",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2025-01/%D7%9E%D7%99%20%D7%A7%D7%95%D7%91%D7%A2%20%D7%90%D7%AA%20%D7%9B%D7%9C%D7%9C%D7%99%20%D7%94%D7%A9%D7%99%D7%98%D7%94.pdf",
+        "title": "מי קובע את כללי השיטה; שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/sites/default/files/2025-01/%D7%9E%D7%99%20%D7%A7%D7%95%D7%91%D7%A2%20%D7%90%D7%AA%20%D7%9B%D7%9C%D7%9C%D7%99%20%D7%94%D7%A9%D7%99%D7%98%D7%94.pdf",
+            "title": "מי קובע את כללי השיטה",
+            "source_type": "other"
+          },
+          {
+            "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+            "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+        "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws; בג\"ץ 2905/20 התנועה למען איכות השלטון בישראל נ׳ כנסת ישראל פסק דין; מסמך מאתר אתר אקדמי (runi.ac.il)",
+        "number": 6,
+        "sources": [
+          {
+            "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4458251",
+            "title": "שימוש לרעה בשריון פורמלי של חוק יסוד / Misuse of Entrenchment Clauses in Israel's Basic Laws",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2905-20-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 2905/20 התנועה למען איכות השלטון בישראל נ׳ כנסת ישראל פסק דין",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.runi.ac.il/media/bddphhts/dishon.pdf",
+            "title": "מסמך מאתר אתר אקדמי (runi.ac.il)",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
     "quality_warnings": [],
-    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+    "answer": "**הגדרה ועקרונות יסוד**\n\nדוקטרינת 'השימוש לרעה בסמכות המכוננת' היא עיקרון משפטי שמתייחס לבחינה שיפוטית של מקרים שבהם בית המחוקקים עושה שימוש בסמכותו המכוננת — ובפרט ביצירת או בשריון של 'חוקי יסוד' — באופן שבא להקנות תוקף חוקתי או בלעדיות יתר שתפקידו לעקוף או לערער את עקרונות היסוד של הסדר החוקתי. הדוקטרינה מזהה את היחס בין הצורה לבין התוכן: גם כאשר לכאורה מומש הליך חוקתי פורמלי, שופטים רשאים לבדוק האם השימוש בסמכות היה מהותית שימוש לרעה, כולל במקרים של כוונה להטעות, כיסוי של פסיקה או עקיפת ערכי יסוד.¹\n\n**התפתחות בפסיקה המרכזית**\n\nבפסיקה הישראלית הדיון בדוקטרינה התפתח בעיקר במסגרת עתירות נגד הכנסת והחקיקה המכוונת לשינוי מעמדם של חוקי יסוד; בשנים האחרונות הדיון הופך ממטאפורה תיאורטית לכלי שבית המשפט מתייחס אליו במפורש בתיקים מרכזיים שבהם נשקלו הגבולות של סמכות מכוננת.²\n\nניתן לזהות שלבי התגבשות: ראשית הדיון עוסק בעקרונות תיאורטיים ובבחינה הצורנית האם פעולה מסוימת מצויה בתוך הסמכות המכוננת; בהמשך טענות אלה הופנו אל בתי המשפט והובילו לדיון מעשי יותר, שבחלקו נדון והוכנס כמונחים משפטיים בפסקי דין עדכניים.³\n\n**הקריטריונים שבהם בוחן בית המשפט שימוש לרעה**\n\nמן המקורות — ובייחוד מסקירות העוסקות בדוקטרינה ובהלכה — עולה בזהירות כי בית המשפט בוחן מספר יסודות עיקריים תוך כדי איזון בין כיבוד הבחירה הדמוקרטית לבין הגנה על ערכי יסוד של המשטר: כוונה פסולה (מניע שהשימוש נועד לעקוף חוקים או דיון ציבורי), הצגה כוזבת או הסתרת מהות הפעולה (כיסוי/רמייה), והשפעה על עקרונות היסוד של המשטר והזכויות המובטחות בחוקי היסוד.⁴\n\nבנוסף יש מבחנים צורניים שעולים בדיונים משפטיים: למשל השאלה האם ההגדרה הצורנית של 'חוק יסוד' או תווית מכוננת נוצלה כשריון פורמלי במקום הליך מכונן אמיתי — מבחנים אלה בוחנים את מהות הפעולה ולא רק את צורתה.⁵\n\n**סנקציות ומשמעות פרקטית**\n\nכאשר בית המשפט מקבל קביעה של שימוש לרעה בסמכות המכוננת, ההשלכות העשויות לכלול ביטול או פגיעה בתוקפו של האקט המכונן, הגבלה על אופן יישום החוק או קריאה לפרשנות מצמצמת (read‑down) כדי למנוע עקיפת ערכי היסוד. בפסקי דין עדכניים נדונה האפשרות שבית המשפט יגביל את השימוש בשריונות פורמליים של הכנסת במקרים שבהם נמצא מניע מנוגד לעקרון החוקתי.¹\n\nעם זאת, מן המקורות עולה בזהירות כי הדוקטרינה עדיין בתהליך התגבשות בפסיקה הישראלית: בתי המשפט ממשיכים לנסח גבולות, לבחון מבחנים משקליים ולתאם בין עקרון זה לבין תקפותה של הכרעה דמוקרטית ותלותה בערכי היסוד.⁶\n\nהמקורות שסופקו עוסקים במידה מרכזית בשימוש ובשריון פורמלי של חוקי יסוד. אם כוונתך לשאול על היבט אחר של 'סמכות מכוננת' שאינו מתמקד בשריונות פורמליים, ציין זאת במפורש כדי שאוכל להתמקד במקורות או בהלכה המתאימים."
   },
   {
     "id": "B6",
     "category": "analysis",
     "query": "מהי דוקטרינת הביצוע בקירוב (cy-près) במשפט הישראלי, וכיצד היא מיושמת בהקשר של הקדשות ונאמנויות ציבוריות?",
-    "run_id": "9bd316e9-5481-4793-98b8-aa05b4787017",
-    "ok": false,
-    "total_ms": 125499,
+    "run_id": "3c109509-c843-43dd-b0ee-3a7fc7ef0361",
+    "ok": true,
+    "total_ms": 116177,
     "answer_intent": {
       "output_shape": "analysis"
     },
-    "lead_ref": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
     "deterministic_branch": null,
     "limitation_flags": {
       "missing_docket": false,
@@ -222,70 +1077,240 @@
     "verifier_counts": {
       "by_support": {
         "direct": 0,
-        "partial": 0,
-        "unrelated": 22,
-        "tangential": 0
+        "partial": 5,
+        "unrelated": 7,
+        "tangential": 1
       },
       "by_role_match": {
-        "true": 17,
-        "false": 5
+        "true": 10,
+        "false": 3
+      },
+      "model_verdicts": 13,
+      "by_support_model": {
+        "direct": 0,
+        "partial": 5,
+        "unrelated": 7,
+        "tangential": 1
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
       }
     },
+    "verifier_call_failed": false,
+    "verifier_call_failures": [],
+    "verifier_recovered_batches": 0,
+    "verifier_retry_attempts": 0,
+    "verifier_split_probe_attempts": 0,
+    "verifier_errors": [],
     "verifier_labels": null,
-    "used_sources_count": 0,
-    "used_sources": [],
-    "footnotes_count": 0,
-    "footnotes": [],
+    "used_sources_count": 5,
+    "used_sources": [
+      {
+        "url": "https://www.nevo.co.il/law_html/law00/72996.htm",
+        "title": "חוק הנאמנות, תשל\"ט-1979",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "ec74c5ec-0668-4fb2-ae8d-465f9e38fc45"
+      },
+      {
+        "url": "https://scholars.huji.ac.il/sites/default/files/adamhofriwinogradow/files/mmr_lhvn_mshpkhty_-_svpy.doc",
+        "title": "מחלוקת בזכויות בנאמנות במשפט הישראלי",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "bc596e4d-8b7a-4eb3-943e-db6c3ddaa575"
+      },
+      {
+        "url": "https://supreme.court.gov.il/museum/Pages/British_Mandate_Period.aspx",
+        "title": "תקופת המנדט (1948-1917)",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "73a80c0b-90ea-4cac-b885-d49be17d8945"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/3&fileName=SB3_14_5853-07.pdf&type=2",
+        "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "number": 2,
+        "origin": "local_db",
+        "source_type": "supreme_court_il",
+        "candidate_id": "0b71b239-3308-436b-b1c0-796a14c51acd"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/18/law/18_ls1_566871.pdf",
+        "title": "תיקון לחוק הנאמנות (רישום נאמנים)",
+        "number": 4,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "cf754794-8263-4fef-b0b5-a18ffd04ea51"
+      }
+    ],
+    "footnotes_count": 4,
+    "footnotes": [
+      {
+        "url": "https://www.nevo.co.il/law_html/law00/72996.htm",
+        "title": "חוק הנאמנות, תשל\"ט-1979; מחלוקת בזכויות בנאמנות במשפט הישראלי",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/72996.htm",
+            "title": "חוק הנאמנות, תשל\"ט-1979",
+            "source_type": "other"
+          },
+          {
+            "url": "https://scholars.huji.ac.il/sites/default/files/adamhofriwinogradow/files/mmr_lhvn_mshpkhty_-_svpy.doc",
+            "title": "מחלוקת בזכויות בנאמנות במשפט הישראלי",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://supreme.court.gov.il/museum/Pages/British_Mandate_Period.aspx",
+        "title": "תקופת המנדט (1948-1917); חוק הנאמנות, תשל\"ט-1979; מסמך מאתר אתר ממשלתי (gov.il)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://supreme.court.gov.il/museum/Pages/British_Mandate_Period.aspx",
+            "title": "תקופת המנדט (1948-1917)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/72996.htm",
+            "title": "חוק הנאמנות, תשל\"ט-1979",
+            "source_type": "other"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/3&fileName=SB3_14_5853-07.pdf&type=2",
+            "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+            "source_type": "supreme_court_il"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.nevo.co.il/law_html/law00/72996.htm",
+        "title": "חוק הנאמנות, תשל\"ט-1979; מסמך מאתר אתר ממשלתי (gov.il)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/72996.htm",
+            "title": "חוק הנאמנות, תשל\"ט-1979",
+            "source_type": "other"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/3&fileName=SB3_14_5853-07.pdf&type=2",
+            "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+            "source_type": "supreme_court_il"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/3&fileName=SB3_14_5853-07.pdf&type=2",
+        "title": "מסמך מאתר אתר ממשלתי (gov.il); תיקון לחוק הנאמנות (רישום נאמנים); חוק הנאמנות, תשל\"ט-1979",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/3&fileName=SB3_14_5853-07.pdf&type=2",
+            "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+            "source_type": "supreme_court_il"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/18/law/18_ls1_566871.pdf",
+            "title": "תיקון לחוק הנאמנות (רישום נאמנים)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/72996.htm",
+            "title": "חוק הנאמנות, תשל\"ט-1979",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
     "quality_warnings": [],
-    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+    "answer": "**דוקטרינת \"ביצוע בקירוב\" — הגדרה ותכלית**\n\nדוקטרינת 'ביצוע בקירוב' (cy-près) היא מנגנון פרשני־תיקוני שמטרתו לאפשר למערכת המשפטית להתאים או להמיר ייעוד של הקדשה או נאמנות ציבורית כאשר ייעוד המקור אינו ניתן למימוש באופן מעשי או כאשר הימשכו במצבו המקורי יהיה מנוגד לכוונת הצדדים או בלתי־יעיל מבחינה ציבורית; מטרת הדוקטרינה היא לשמר את רוח הכוונה המקורית לטובת מטרה ציבורית הקרובה ביותר לייעוד המקורי, במקום להביא לנטל מוחלט על נכסי הנאמנות או להחזרת הנכסים לצדדים פרטיים, ככל שמדובר בכוונה צדקה כללית.¹\n\n**יסוד חוקי ומשפטי בישראל**\n\nבישראל אין בתמצית הסניפית של מקורות החוק שסופקו הוראה מפורשת המכנה או קודפת במפורש את דוקטרינת cy-près כפי שהיא מוכרת במשפט האנגלו־סקוטי; ביחד עם זאת, מן המורשת המנדטורית שהועברה אלינו ומהחוק הישראלי על הנאמנויות עולות יסודות המאפשרים לבית המשפט לפתח פתרונות תיקוניים במצבים שבהם הייעוד בלתי־ממומש או בלתי־יעיל, ולכן יש להסתכל על היישום כעל שילוב של יסודות חקיקתיים ומיתרי היורשה המנדטורית יחד עם פיתוח שיפוטי.²\n\n**תנאים ומבחנים מרכזיים להטלת 'ביצוע בקירוב' על הקדשות ונאמנויות ציבוריות**\n\n- אי־אפשרות פרקטית או משפטית של יישום הייעוד המקורי (impossibility או impracticability): כאשר נתקלות קשיים ממשיים או איסורים חוקיים שמונעים את קיום הייעוד, בתי המשפט נוטים לשקול התאמה של הייעוד במקום פירוק מוחלט; מבחן זה מתבסס על עקרונות חובת הנאמן ואיסור הפגיעה בנכסי הנאמנות, ובהן יש לשקול האם הפגיעה בייעוד נובעת מכוח עליון, שינוי נסיבות קיצוני או איסור חוקי.¹\n- כוונת הצד התורם או מבוססת הציבוריות (general charitable intent) והחיפוש אחר 'מטרה קרובה ככל האפשר' (nearest possible purpose): כאשר ניתן להראות כי המוריש/המייסד התכוון לקדם מטרה ציבורית רחבה, יש עיקרון שאומר שניתן לכוון את הנכסים למטרה דומה שתממש את רוח הייעוד המקורי. השאלה מעשית ותלויה בנסיבות ובאופן ניסוח הייעוד בצוואה או במסמכי הנאמנות.¹\n- זיקות חוזיות וזכויות צדדים שלישיים, ואפשרות של reversion או resulting trust: אם הייעוד המקורי היה תלוי בתנאים מפורשים של המוריש שמציינים החזרה לבעלי דין מסוימים או התחייבויות לצדדים שלישיים, בתי המשפט עלולים להימנע מהמרת הייעוד ולשקול את מעמדם של זכאים פרטיים לפני איפוס המטרה הציבורית.¹\n\n**הליך פרוצדורלי וסעדי בפועל**\n\nמי יכול לעתור ולפנות לבית המשפט אינו מוסכם בצורה מלאה במסמכים שסופקו; באופן מצומצם ותוך זהירות ניתן לומר כי בעלי העניין בנאמנות — הנאמן עצמו, הנהנים הפוטנציאליים ולפעמים רשויות ציבוריות או גופים המופקדים על ענייני צדקה — הם המבקשים הטבעיים להעלות סוגיות של התאמת ייעוד, וכי בית המשפט העליון ובתי המשפט הכלליים הם המוסדות השיפוטיים שיכולים לדון בשאלות אלה בהתאם לסמכויותיהם.³\n\nסעדי אפשריים כוללים צווים המאפשרים העברת נכסים למטרה קרובה, שינוי תנאי הנאמנות או מינוי/החלפה של נאמנים כדי לאפשר ביצוע הייעוד המתוקן; תקנות או תיקונים לחוק שקשורים ברישום ובכשירות הנאמן רלוונטיים כשמדובר בהחלפת נאמנים או בהטלת פיקוח על ניהול הנכסים.⁴\n\n**מגבלות וסיכונים מעשיים ביישום הדוקטרינה**\n\nבתי המשפט יזהרו להפעיל את הדוקטרינה אם לא עולה כוונה צדקה כללית מהטקסט או מהנסיבות, אם קיימת הוראה מפורשת בלתי־ניתנת לשינוי על ידי המוריש, או אם הפעלת הדוקטרינה תפגע בזכויות מסוימות של צדדים שלישיים; נוסף על כך, החוק הקובע כי אין לרדת לנכסי הנאמנות אלא במצבים מסוימים מכתיב גבולות לפרשנות תיקונית.¹\n\nבמקרים שבהם הייעוד אינו ציבורי אך יש סעיף החזרה (reversion) או ניתנת זכות לתביעה מצד בעלי דין פרטיים, ההשפעה הפרקטית על נכסי הנאמנות שונה: לעתים ההכרעה תחייב החזרת נכסים לבעליהם או יצירת נאמנות חוזרת במקום המרה לטובת צדקה — ושיקול זה מצביע על מגבלות ברורות ביישום דוקטרינת cy-près.¹\n\nסיכום זה מתבסס על מקורות שסיפקו תמיכה חלקית בלבד, ולכן יש לנקוט במשנה זהירות במסקנות; נוכח הפערים והעובדה שאין ציטוט מפורש של דוקטרינה זו בחומר שסופק, יש להסתמך בפועל על פסיקה מפורשת נוספת והקשר משפטי מעמיק יותר כדי לקבוע את היקף היישום בישראל."
   },
   {
     "id": "B7",
     "category": "missing_docket",
     "query": "מה נקבע בת\"א 98765-04-22 חברת אלפא נ' חברת בטא ביחס לאחריות מנהלים בעת חדלות פירעון?",
-    "run_id": "b53297a2-ff08-4092-b09b-54892435e66e",
-    "ok": false,
-    "total_ms": 130524,
+    "run_id": "8d65b8c8-e71c-4bfb-89ed-b81ee1c6424c",
+    "ok": true,
+    "total_ms": 137024,
     "answer_intent": {
       "output_shape": "case_holding"
     },
-    "lead_ref": null,
-    "deterministic_branch": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "case_holding",
+      "reason": "skipped_missing_docket_anchor"
+    },
+    "deterministic_branch": "docket_limitation",
     "limitation_flags": {
-      "missing_docket": false,
+      "missing_docket": true,
       "statute_section": false,
       "canonical_quote": false,
-      "missing_anchor_caveat_injected": false
+      "missing_anchor_caveat_injected": true
     },
-    "missing_anchor_descriptions": [],
+    "missing_anchor_descriptions": [
+      "פסק הדין בעניין ת\"א 98765/04/22 עצמו"
+    ],
     "anchor_statuses": [],
     "verifier_counts": {
       "by_support": {
-        "direct": 0,
-        "partial": 0,
-        "unrelated": 17,
-        "tangential": 0
+        "direct": 3,
+        "partial": 4,
+        "unrelated": 6,
+        "tangential": 2
       },
       "by_role_match": {
-        "true": 17,
-        "false": 0
+        "true": 14,
+        "false": 1
+      },
+      "model_verdicts": 15,
+      "by_support_model": {
+        "direct": 3,
+        "partial": 4,
+        "unrelated": 6,
+        "tangential": 2
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
       }
     },
+    "verifier_call_failed": false,
+    "verifier_call_failures": [],
+    "verifier_recovered_batches": 0,
+    "verifier_retry_attempts": 0,
+    "verifier_split_probe_attempts": 0,
+    "verifier_errors": [],
     "verifier_labels": null,
     "used_sources_count": 0,
     "used_sources": [],
     "footnotes_count": 0,
     "footnotes": [],
     "quality_warnings": [],
-    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+    "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ת\"א 98765/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
   },
   {
     "id": "B8",
     "category": "quote",
     "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
-    "run_id": "8f2f3ad9-1741-4fbe-8222-b7cd064909b6",
+    "run_id": "7fe60807-9ea6-45c9-892c-405454672824",
     "ok": true,
-    "total_ms": 150694,
+    "total_ms": 115341,
     "answer_intent": {
       "output_shape": "quote"
     },
@@ -305,16 +1330,36 @@
     "anchor_statuses": [],
     "verifier_counts": {
       "by_support": {
-        "direct": 5,
+        "direct": 6,
         "partial": 7,
-        "unrelated": 4,
-        "tangential": 0
+        "unrelated": 3,
+        "tangential": 1
       },
       "by_role_match": {
         "true": 16,
-        "false": 0
+        "false": 1
+      },
+      "model_verdicts": 17,
+      "by_support_model": {
+        "direct": 6,
+        "partial": 7,
+        "unrelated": 3,
+        "tangential": 1
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
       }
     },
+    "verifier_call_failed": false,
+    "verifier_call_failures": [],
+    "verifier_recovered_batches": 0,
+    "verifier_retry_attempts": 0,
+    "verifier_split_probe_attempts": 0,
+    "verifier_errors": [],
     "verifier_labels": null,
     "used_sources_count": 1,
     "used_sources": [
@@ -350,13 +1395,17 @@
     "id": "B9",
     "category": "practical",
     "query": "מהם הצעדים המשפטיים שעומדים לרשות שוכר דירה כאשר המשכיר מסרב להחזיר את הפיקדון בתום תקופת השכירות, וכיצד מוכיחים נזק?",
-    "run_id": "5c8045a7-9959-4c2c-865f-134398efa18c",
-    "ok": false,
-    "total_ms": 97550,
+    "run_id": "5bbfb291-59ff-44e4-b09b-960f73c12145",
+    "ok": true,
+    "total_ms": 144528,
     "answer_intent": {
       "output_shape": "list"
     },
-    "lead_ref": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "list",
+      "reason": "shape_not_eligible"
+    },
     "deterministic_branch": null,
     "limitation_flags": {
       "missing_docket": false,
@@ -368,35 +1417,207 @@
     "anchor_statuses": [],
     "verifier_counts": {
       "by_support": {
-        "direct": 0,
-        "partial": 0,
-        "unrelated": 12,
-        "tangential": 0
+        "direct": 2,
+        "partial": 5,
+        "unrelated": 5,
+        "tangential": 2
       },
       "by_role_match": {
-        "true": 12,
+        "true": 14,
         "false": 0
+      },
+      "model_verdicts": 14,
+      "by_support_model": {
+        "direct": 2,
+        "partial": 5,
+        "unrelated": 5,
+        "tangential": 2
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
       }
     },
+    "verifier_call_failed": false,
+    "verifier_call_failures": [],
+    "verifier_recovered_batches": 0,
+    "verifier_retry_attempts": 0,
+    "verifier_split_probe_attempts": 0,
+    "verifier_errors": [],
     "verifier_labels": null,
-    "used_sources_count": 0,
-    "used_sources": [],
-    "footnotes_count": 0,
-    "footnotes": [],
+    "used_sources_count": 6,
+    "used_sources": [
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%22%D7%90-9779-04-10",
+        "title": "פסק-דין בתיק ת״א 9779-04-10",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "e3701d44-78d3-4e28-90dc-725e9e67a3f2"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+        "title": "פסק-דין בתיק ע״א 20818-01-13",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "1b6e587e-5a65-47fa-8d3f-f9299ba0fd60"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%92%D7%A0%D7%AA_%D7%94%D7%93%D7%99%D7%99%D7%A8",
+        "title": "מסמך מאתר he.wikisource.org",
+        "number": 2,
+        "origin": "local_db",
+        "source_type": "israeli_law",
+        "candidate_id": "c23c7b24-0198-4b91-83fa-b7175c5fbcaf"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/1&fileName=SH1_3_7547-99.pdf&type=2",
+        "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "number": 2,
+        "origin": "local_db",
+        "source_type": "supreme_court_il",
+        "candidate_id": "a55ca235-034f-4a07-b067-f5bc9a9f870f"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/",
+        "title": "חוק ההתיישנות, תשי\"ח-1958",
+        "number": 4,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "1de8b25a-446a-4a84-bdae-56c84b3dcc6e"
+      },
+      {
+        "url": "https://www.nevo.co.il/",
+        "title": "חוק ההתיישנות, תשי\"ח-1958",
+        "number": 4,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "31d55de2-5d2f-4f53-9a90-38491be1295d"
+      }
+    ],
+    "footnotes_count": 6,
+    "footnotes": [
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%22%D7%90-9779-04-10",
+        "title": "פסק-דין בתיק ת״א 9779-04-10; פסק-דין בתיק ע״א 20818-01-13",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%22%D7%90-9779-04-10",
+            "title": "פסק-דין בתיק ת״א 9779-04-10",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+            "title": "פסק-דין בתיק ע״א 20818-01-13",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%92%D7%A0%D7%AA_%D7%94%D7%93%D7%99%D7%99%D7%A8",
+        "title": "מסמך מאתר he.wikisource.org; מסמך מאתר אתר ממשלתי (gov.il)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%92%D7%A0%D7%AA_%D7%94%D7%93%D7%99%D7%99%D7%A8",
+            "title": "מסמך מאתר he.wikisource.org",
+            "source_type": "israeli_law"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/1&fileName=SH1_3_7547-99.pdf&type=2",
+            "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+            "source_type": "supreme_court_il"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%22%D7%90-9779-04-10",
+        "title": "פסק-דין בתיק ת״א 9779-04-10; מסמך מאתר אתר ממשלתי (gov.il)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%22%D7%90-9779-04-10",
+            "title": "פסק-דין בתיק ת״א 9779-04-10",
+            "source_type": "other"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/1&fileName=SH1_3_7547-99.pdf&type=2",
+            "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+            "source_type": "supreme_court_il"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/",
+        "title": "חוק ההתיישנות, תשי\"ח-1958; חוק ההתיישנות, תשי\"ח-1958",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://fs.knesset.gov.il/",
+            "title": "חוק ההתיישנות, תשי\"ח-1958",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.nevo.co.il/",
+            "title": "חוק ההתיישנות, תשי\"ח-1958",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/1&fileName=SH1_3_7547-99.pdf&type=2",
+        "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/1&fileName=SH1_3_7547-99.pdf&type=2",
+            "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+            "source_type": "supreme_court_il"
+          }
+        ],
+        "source_type": "supreme_court_il"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%92%D7%A0%D7%AA_%D7%94%D7%93%D7%99%D7%99%D7%A8",
+        "title": "מסמך מאתר he.wikisource.org",
+        "number": 6,
+        "sources": [
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%92%D7%A0%D7%AA_%D7%94%D7%93%D7%99%D7%99%D7%A8",
+            "title": "מסמך מאתר he.wikisource.org",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "israeli_law"
+      }
+    ],
     "quality_warnings": [],
-    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+    "answer": "- סעד שיפוטי קיים: ניתן לתבוע את השבת הפיקדון בערכאות האזרחיות — יש פסקי‑דין שמאשרים מתן סעד להשבת פיקדון שנגבה לכיסוי נזקי דירה או נחולץ שלא כדין.¹\n- צעדים מידיים פרקטיים לפני הליך משפטי: שליחת מכתב דרישה בכתב (מומלץ ברישום) שמפרט את הסכום, מועדי מסירת הדירה ובקשה להשבה בתוך פרק זמן סביר; איסוף הקבלות וההוכחות להפקדה של הפיקדון והסכם השכירות.\n- בחירת ערכאה ומהלך תביעה: עבור סכומים קטנים אפשר לפתוח בהליך בבתי‑משפט לתביעות קטנות; לסכומים גבוהים יותר או טענות מורכבות — בית משפט השלום. פסיקה מבהירה כי שני סוגי הערכאות דנים בטענות להשבת פיקדון וקיזוזים שנעשו על יד המשכיר.¹\n- ראיות מרכזיות שיש לאסוף: פרוטוקול מסירת דירה/טופס כניסה ויציאה עם תאריכים ותמונות, קבלות וחשבוניות על תיקונים שנעשו בפועל, העברות בנקאיות המעידות על הפקדת הפיקדון, התכתבות כתובה עם המשכיר ועדויות עדים (למשל שכנים או בעלי מקצוע).²\n- איך להראות שהנזק חורג מבלאי סביר: חוות‑דעת מומחה או הערכה מקצועית שמבדילה בין בלאי טבעי לנזק שנגרם ברשלנות או בזדון; תיעוד מצב הדירה במועד הכניסה שמאפשר השוואה; חשבוניות שמוכיחות עלות תיקון שאינה בלאי שגרתי.²\n- כימות הנזק והיקף התביעה: נסמך על עלות תיקון בפועל או על הערכת מומחה סבירה; יש להגיש חשבוניות/הערכות מפורטות כדי להראות את סכום הקיזוז שבוצע מהפיקדון או את הסכום שדרוש להשבה.³\n- קיזוז ופסקי דין לגבי חילוט פיקדון: המשכיר רשאי לקזז רק הוצאות מגובות והצדקה שניתן להציגן; פסקי‑דין דנו במקרים של חילוט פיקדון שלא כדין והראו שנדרש בסיס ראייתי להוצאות המשכיר.¹\n- התיישנות ותזמון תביעה: מן החוק עולה כי קיימות תקופות התיישנות כלליות לתביעות כספיות — ככלל מפורש בחוק ההתיישנות נקבעת תקופה של שבע שנים לתביעות שאינן במקרקעין, והמרוץ מתחיל מיום היווצרות עילת התביעה; יש לגשת לזה בזהירות לפי נסיבות המקרה וייעוץ משפטי.⁴\n- כללי ראיה בפרקטיקה: בית המשפט יקבע את גובה הפיצוי על בסיס ראיות סבירות — חשבוניות, חוות‑דעת מומחה ותיעוד תמונתי — ויאזן בין היקף הנזק לבין הציפייה לסבלנות לבלאי רגיל; עקרונות אלה נדונים במסמכים פסיקתיים והערכיים לגבי הוכחת נזק.⁵\n- פעולות מניעתיות לחיזוק עמדה של השוכר: להסדיר בכתב את הפיקדון ולקבל קבלה על הפקדה, לערוך פרוטוקול כניסה מפורט עם תמונות ותאריכים חתומים על‑ידי שני הצדדים, לתעד כל תקשורת עם המשכיר ולשמור חשבוניות על פעולות ניקיון ותיקון; פרוטוקולים וחוות‑דעת מומחה תומכים בטענות בבית‑המשפט.⁶\n- סעדים אפשריים במידה והמשכיר מסרב להשיב: דרישה להשבת הפיקדון ו/או תביעה לצורך קיזוז בלתי מוצדק; בקשות למינוי מומחה על‑ידי בית‑המשפט ולהצגת חשבוניות; במקרים מורכבים — שקלו יצוג עורך‑דין. ההליך הנדרש והסעד תלויים בנסיבות ובאמות הראיה שהשוכר מציג.¹"
   },
   {
     "id": "B10",
     "category": "practical",
     "query": "מהם המבחנים המרכזיים שנקבעו בפסיקה לסיווג אדם כעובד ולא כקבלן עצמאי, ומה המשמעות של הסיווג לעניין זכויות סוציאליות?",
-    "run_id": "a4920a79-c027-4e25-b3bf-44c3d103c86d",
-    "ok": false,
-    "total_ms": 86524,
+    "run_id": "e8e9025c-dfa1-4eea-b969-aa5ca80e35a7",
+    "ok": true,
+    "total_ms": 123980,
     "answer_intent": {
       "output_shape": "analysis"
     },
-    "lead_ref": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
     "deterministic_branch": null,
     "limitation_flags": {
       "missing_docket": false,
@@ -408,22 +1629,226 @@
     "anchor_statuses": [],
     "verifier_counts": {
       "by_support": {
-        "direct": 0,
-        "partial": 0,
-        "unrelated": 19,
-        "tangential": 0
+        "direct": 3,
+        "partial": 7,
+        "unrelated": 5,
+        "tangential": 1
       },
       "by_role_match": {
-        "true": 19,
-        "false": 0
+        "true": 15,
+        "false": 1
+      },
+      "model_verdicts": 16,
+      "by_support_model": {
+        "direct": 3,
+        "partial": 7,
+        "unrelated": 5,
+        "tangential": 1
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
       }
     },
+    "verifier_call_failed": false,
+    "verifier_call_failures": [],
+    "verifier_recovered_batches": 0,
+    "verifier_retry_attempts": 0,
+    "verifier_split_probe_attempts": 0,
+    "verifier_errors": [],
     "verifier_labels": null,
-    "used_sources_count": 0,
-    "used_sources": [],
-    "footnotes_count": 0,
-    "footnotes": [],
+    "used_sources_count": 8,
+    "used_sources": [
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1911",
+        "title": "מיהו עובד: מבחני הסף",
+        "number": 1,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "e535f359-107c-4d29-83e8-f4497d3097c1"
+      },
+      {
+        "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%A1%D7%99%D7%9B%D7%95%D7%9D%20%D7%9C%D7%9E%D7%91%D7%97%D7%9F.pdf",
+        "title": "דיני עבודה – סיכום למבחן",
+        "number": 1,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "a26740ae-3485-4104-8fee-dafebe3c4570"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/legalinfo/rest-flexibility/he/workers-rights_rest-flexibility.pdf",
+        "title": "חוק שעות עבודה ומנוחה - גמישות בשעות העבודה בעידן המודרני",
+        "number": 2,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "e1a6a86d-ca75-45d3-b642-15e61559655c"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1680",
+        "title": "זכויות יסוד, חקיקת מגן ותום לב - הרהורים חוקתיים על משפט העבודה",
+        "number": 4,
+        "origin": "local_db",
+        "source_type": "journal_article",
+        "candidate_id": "ccf2ba37-174d-4b29-8ace-eff46bb6c8ce"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/globaldocs/MMM/ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0/2_ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0_11_17898.pdf",
+        "title": "חוק חופשה שנתית, התשי\"א-1951",
+        "number": 5,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "e4d2ee06-55cb-4efe-ba61-f446e7e89a3b"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/service/manpower-contractor-license-request/he/workers-rights_contractors-and-private-bureaus_rights-contractor-personnel-contractors-heb.pdf",
+        "title": "חוברת זכויות - עובדי קבלן המועסקים דרך קבלני כוח אדם - עברית",
+        "number": 5,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "4c6a3799-a7ad-42e7-8c35-e2c71e314787"
+      },
+      {
+        "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/2641-36.aspx",
+        "title": "פיקוח על העסקת עובדים על ידי קבלני כוח אדם",
+        "number": 6,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "99b161b1-8673-4777-9b24-fac092bff65a"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/globaldocs/MMM/eabc8d55-f7f7-e411-80c8-00155d010977/2_eabc8d55-f7f7-e411-80c8-00155d010977_11_10064.pdf",
+        "title": "העסקת עובדי קבלן ונותני שירותים מן החוץ במשרדי הממשלה",
+        "number": 6,
+        "origin": "perplexity",
+        "source_type": "other",
+        "candidate_id": "2c597768-faf5-4ae5-97e3-aba567723fd2"
+      }
+    ],
+    "footnotes_count": 6,
+    "footnotes": [
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1911",
+        "title": "מיהו עובד: מבחני הסף; דיני עבודה – סיכום למבחן",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1911",
+            "title": "מיהו עובד: מבחני הסף",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%A1%D7%99%D7%9B%D7%95%D7%9D%20%D7%9C%D7%9E%D7%91%D7%97%D7%9F.pdf",
+            "title": "דיני עבודה – סיכום למבחן",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1911",
+        "title": "מיהו עובד: מבחני הסף; חוק שעות עבודה ומנוחה - גמישות בשעות העבודה בעידן המודרני",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1911",
+            "title": "מיהו עובד: מבחני הסף",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/legalinfo/rest-flexibility/he/workers-rights_rest-flexibility.pdf",
+            "title": "חוק שעות עבודה ומנוחה - גמישות בשעות העבודה בעידן המודרני",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/legalinfo/rest-flexibility/he/workers-rights_rest-flexibility.pdf",
+        "title": "חוק שעות עבודה ומנוחה - גמישות בשעות העבודה בעידן המודרני; דיני עבודה – סיכום למבחן; מיהו עובד: מבחני הסף",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/legalinfo/rest-flexibility/he/workers-rights_rest-flexibility.pdf",
+            "title": "חוק שעות עבודה ומנוחה - גמישות בשעות העבודה בעידן המודרני",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%A1%D7%99%D7%9B%D7%95%D7%9D%20%D7%9C%D7%9E%D7%91%D7%97%D7%9F.pdf",
+            "title": "דיני עבודה – סיכום למבחן",
+            "source_type": "other"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1911",
+            "title": "מיהו עובד: מבחני הסף",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1911",
+        "title": "מיהו עובד: מבחני הסף; זכויות יסוד, חקיקת מגן ותום לב - הרהורים חוקתיים על משפט העבודה",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1911",
+            "title": "מיהו עובד: מבחני הסף",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1680",
+            "title": "זכויות יסוד, חקיקת מגן ותום לב - הרהורים חוקתיים על משפט העבודה",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/globaldocs/MMM/ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0/2_ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0_11_17898.pdf",
+        "title": "חוק חופשה שנתית, התשי\"א-1951; חוברת זכויות - עובדי קבלן המועסקים דרך קבלני כוח אדם - עברית",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://fs.knesset.gov.il/globaldocs/MMM/ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0/2_ddd9bfa0-8e0c-41bc-8d54-a1f0d4c0b7d0_11_17898.pdf",
+            "title": "חוק חופשה שנתית, התשי\"א-1951",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/service/manpower-contractor-license-request/he/workers-rights_contractors-and-private-bureaus_rights-contractor-personnel-contractors-heb.pdf",
+            "title": "חוברת זכויות - עובדי קבלן המועסקים דרך קבלני כוח אדם - עברית",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/service/manpower-contractor-license-request/he/workers-rights_contractors-and-private-bureaus_rights-contractor-personnel-contractors-heb.pdf",
+        "title": "חוברת זכויות - עובדי קבלן המועסקים דרך קבלני כוח אדם - עברית; פיקוח על העסקת עובדים על ידי קבלני כוח אדם; העסקת עובדי קבלן ונותני שירותים מן החוץ במשרדי הממשלה",
+        "number": 6,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/service/manpower-contractor-license-request/he/workers-rights_contractors-and-private-bureaus_rights-contractor-personnel-contractors-heb.pdf",
+            "title": "חוברת זכויות - עובדי קבלן המועסקים דרך קבלני כוח אדם - עברית",
+            "source_type": "other"
+          },
+          {
+            "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/2641-36.aspx",
+            "title": "פיקוח על העסקת עובדים על ידי קבלני כוח אדם",
+            "source_type": "other"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/globaldocs/MMM/eabc8d55-f7f7-e411-80c8-00155d010977/2_eabc8d55-f7f7-e411-80c8-00155d010977_11_10064.pdf",
+            "title": "העסקת עובדי קבלן ונותני שירותים מן החוץ במשרדי הממשלה",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
     "quality_warnings": [],
-    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+    "answer": "**מבחנים מרכזיים וסיווג עובד/קבלן**\n\nבתי המשפט בישראל בוחנים את טיב היחסים בין האדם למעסיק לפי עובדות המקרה, ומיישמים קשת מבחנים לדיפרנציאציה בין 'עובד' לבין 'קבלן עצמאי' — אין הכרעה אוטומטית לפי תיוג חוזי בלבד.¹\n\n- מבחן הכפיפות/השליטה: בוחן האם המעסיק מכתיב הוראות עבודה, שולט בשעות ובמקום העבודה, מפקח ומשל עם סמכויות משמעת — היבטים אלה משמשים אינדיקציה לכפיפות מעשית ולא למעמד פורמלי.²\n- מבחן ההשתלבות/אינטגרציה: נבחן אם העובד משולב בפעילות השוטפת של המעסיק (האם תפקידו הוא חלק מהארגון), וככל שיש השתלבות גדולה זה מצביע על יחסי עובד־מעסיק.¹\n- מבחן המציאות הכלכלית/תלות עסקית: בוחן מי נושא בסיכון העסקי, האם האדם פועל כיזם עצמאי עם יכולת לסחור עם לקוחות אחרים, ואם הוא תלוי כלכלית במעסיק — תלות גבוהה תומכת בהכרה כעובד.¹\n\nיישום מעשי של מבחן הכפיפות: בפסיקה נבדקים שיקולים כגון שעות עבודה וזמינות (הנוכחות בפועל), אופי הפיקוח והנחיות העבודה, סמכויות משמעת, האם המעסיק מספק כלים וחומרים, ותנאי שכר והסדרי תשלום (שכר חודשי קבוע לעומת שכר לפי פרויקט) — כל אלה נבחנים במשקל כולל.³\n\nמשקל כוונת הצדדים ותווית חוזית: בתי המשפט מעדיפים את מהות היחסים על פני הצהרות חוזיות; תווית 'קבלן עצמאי' אינה מחייבת אם העובדות מורות על יחסי עובד–מעביד, אך יש להמשיג את הבדיקה בזהירות ובהתאם לעקרונות תום הלב בהליך החוזי.⁴\n\nהשלכות מעשיות של סיווג כ'עובד': הכרה כעובד מפעילה זכויות והטבות מגן שנקבעות בחקיקה ובמדיניות — בין היתר זכאות לחופשה שנתית ותשלום דמי חופשה לפי הוראות החוק המתאים, וכן חובת הפרשות וביטוח כפי שמפורט בהנחיות משרד העבודה בנוגע לעובדי קבלן.⁵\n\nזכויות נוספות ואכיפה בפועל: בפועל הסיווג עשוי להשפיע על דמי מחלה, תקופת הודעה ופיצויי פיטורין, כיסוי על פי הסכמים קיבוציים ותחולת הוראות מגן אחרות — אכיפת הזכויות ותפקיד הרגולטור נזכרים בדוחות ובחקירות ממוסדות המדינה העוסקים בהעסקת קבלנים ובהסדרת רישיונות קבלני כוח אדם.⁶\n\nמסקנה מעשית ותכליתית: בבדיקת מעמד יש לפעול לפי מבחנים מצטברים — כפיפות, השתלבות ותלות כלכלית — ולהעדיף בחינה מהותית על פני תווית חוזית; ההכרה כעובד נושאת השלכות ממשיות על זכויות סוציאליות ומחייבת עמדת אכיפה ותגובות פרקטיות מצד המעסיק."
   }
 ]

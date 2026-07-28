@@ -2,39 +2,88 @@
   "id": "B4",
   "category": "statute_section",
   "query": "מה קובע סעיף 12 לחוק החוזים (חלק כללי), התשל\"ג-1973 בעניין תום לב במשא ומתן, ומה הסעד?",
-  "run_id": "ad009cdd-1e72-456f-a68f-81375362f5d7",
-  "ok": false,
-  "total_ms": 102729,
+  "run_id": "8ecdf870-39d6-4d59-9c27-6287d72a32a7",
+  "ok": true,
+  "total_ms": 103686,
   "answer_intent": {
-    "output_shape": "analysis"
+    "output_shape": "quote"
   },
-  "lead_ref": null,
-  "deterministic_branch": null,
+  "lead_ref": {
+    "ref": "s3",
+    "shape": "quote",
+    "reason": "required_anchor_official"
+  },
+  "deterministic_branch": "statute_section_quote_refusal",
   "limitation_flags": {
     "missing_docket": false,
     "statute_section": false,
     "canonical_quote": false,
-    "missing_anchor_caveat_injected": false
+    "missing_anchor_caveat_injected": true
   },
-  "missing_anchor_descriptions": [],
+  "missing_anchor_descriptions": [
+    "הנוסח המחייב של סעיף 12 לחוק החוזים (חלק כללי)"
+  ],
   "anchor_statuses": [],
   "verifier_counts": {
     "by_support": {
-      "direct": 0,
-      "partial": 0,
-      "unrelated": 17,
-      "tangential": 0
+      "direct": 3,
+      "partial": 10,
+      "unrelated": 7,
+      "tangential": 2
     },
     "by_role_match": {
-      "true": 17,
+      "true": 22,
       "false": 0
+    },
+    "model_verdicts": 22,
+    "by_support_model": {
+      "direct": 3,
+      "partial": 10,
+      "unrelated": 7,
+      "tangential": 2
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
     }
   },
+  "verifier_call_failed": false,
+  "verifier_call_failures": [],
+  "verifier_recovered_batches": 0,
+  "verifier_retry_attempts": 0,
+  "verifier_split_probe_attempts": 0,
+  "verifier_errors": [],
   "verifier_labels": null,
-  "used_sources_count": 0,
-  "used_sources": [],
-  "footnotes_count": 0,
-  "footnotes": [],
+  "used_sources_count": 1,
+  "used_sources": [
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+      "title": "חוק החוזים (חלק כללי)",
+      "number": 1,
+      "origin": "local_db",
+      "source_type": "israeli_law",
+      "candidate_id": "5eec6227-83cb-46ff-ae87-5b83c19d9b7a"
+    }
+  ],
+  "footnotes_count": 1,
+  "footnotes": [
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+      "title": "חוק החוזים (חלק כללי)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+          "title": "חוק החוזים (חלק כללי)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "israeli_law"
+    }
+  ],
   "quality_warnings": [],
-  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 12 לחוק החוזים (חלק כללי); לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
 }
