@@ -1,0 +1,2932 @@
+{
+  "id": "M5-practical",
+  "query": "מה עושים אם המשכיר לא מחזיר פיקדון?",
+  "run_id": "e9078879-ea6c-4f26-bf46-0abb7a06193b",
+  "qa_log_id": "74d3366d-2fb1-4647-ad11-3f458099c5d3",
+  "research_mode": "practical_steps",
+  "mode_plan": {
+    "mode": "practical_steps",
+    "audit": {
+      "mode": "practical_steps",
+      "obligations": [
+        {
+          "id": "substantive_law_query",
+          "label": "שאילתת דין מהותי בתחום",
+          "satisfied": true
+        },
+        {
+          "id": "substantive_before_procedure",
+          "label": "דין מהותי לפני סדרי דין/אכיפה",
+          "satisfied": true
+        }
+      ],
+      "total_count": 2,
+      "unsatisfied": [],
+      "satisfied_count": 2,
+      "targets_by_role": {
+        "regulation": {
+          "total": 2,
+          "local_db": 0,
+          "perplexity": 2
+        },
+        "scholarship": {
+          "total": 2,
+          "local_db": 0,
+          "perplexity": 2
+        },
+        "factual_report": {
+          "total": 1,
+          "local_db": 1,
+          "perplexity": 0
+        },
+        "primary_statute": {
+          "total": 2,
+          "local_db": 0,
+          "perplexity": 2
+        },
+        "binding_case_law": {
+          "total": 3,
+          "local_db": 0,
+          "perplexity": 3
+        },
+        "government_report": {
+          "total": 1,
+          "local_db": 0,
+          "perplexity": 1
+        }
+      },
+      "caselaw_includes_perplexity": true,
+      "substantive_law_query_present": true
+    },
+    "output_shape": "list",
+    "directive_sent": true,
+    "target_enforcement": {
+      "applied": false,
+      "widened_query_count": 0
+    },
+    "obligations_required": [
+      "substantive_law_query",
+      "substantive_before_procedure"
+    ],
+    "classification_reasons": [
+      "shape=list"
+    ]
+  },
+  "output_shape": null,
+  "deterministic_branch": "insufficient_sources_limitation",
+  "insufficient_fired": true,
+  "thin_source": null,
+  "source_sufficiency": {
+    "shape": "list",
+    "reason": "generic_procedure_only",
+    "applied": true,
+    "category": "practical_list",
+    "sufficient": false,
+    "thin_source": false,
+    "found_titles": [
+      "פסק-דין בתיק ע\"א 4893/14",
+      "חוק שיפוט בתביעות קטנות, תשל\"ה-1975",
+      "חוק בתי המשפט [נוסח משולב], תשמ\"ד-1984",
+      "תקנות שיפוט בתביעות קטנות (סדרי דין), תשל\"ז-1976",
+      "תקנות סדר הדין האזרחי, התשע״ט–2018"
+    ],
+    "topical_refs": [],
+    "topic_phrases": [
+      "מחזיר פיקדון"
+    ],
+    "topical_authority_refs": []
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "list",
+    "reason": "shape_not_eligible"
+  },
+  "sources_passed": 16,
+  "sources_used": 0,
+  "used_sources": [],
+  "footnotes": [],
+  "answer": "לא נמצאו במקורות מקורות משפטיים ייעודיים לנושא שנשאל, אלא חומר כללי בלבד. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור צעדים משפטיים קונקרטיים לנושא שנשאל ממקורות מתחום אחר או מחומר פרוצדורלי כללי; לכן לא מוצגת כאן הנחיה משפטית לשאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): פסק-דין בתיק ע\"א 4893/14; חוק שיפוט בתביעות קטנות, תשל\"ה-1975; חוק בתי המשפט [נוסח משולב], תשמ\"ד-1984; תקנות שיפוט בתביעות קטנות (סדרי דין), תשל\"ז-1976.",
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "צריך לבדוק האם יש חקיקה או תקנה המגדירה חובות לגבי פיקדונות בשכירות, ומה הפסיקה המחייבת קובעת לגבי מעמד הפיקדון ותנאי הורדתו; ספרות עוזרת לפרש דוקטרינות ותקנות פרקטיות.",
+        "text_he": "האם לשוכר זכות מובחנת לקבל את הפיקדון בחזרה כשהשכירות מסתיימת, ומהם התנאים החוקיים והחוזיים שמאפשרים או מצדיקים החזקת הפיקדון על־ידי המשכיר (למשל נזק, חשבונות שלא שולמו, הסכמות חוזיות)?",
+        "claim_id": "C1",
+        "required_roles": [
+          "primary_statute",
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "נדרש לבחון חקיקה ותקנות שקשורות לערכאות ולנהלי תביעות (למשל תביעות קטנות, חוק סדרי דין אזרחי/תקנות), וכן פסיקה שמסמלת את הדרך הנכונה לתביעה כזו.",
+        "text_he": "אילו צעדים פרוצדורליים משפטיים זמינים כאשר המשכיר מסרב להחזיר את הפיקדון — מכתב דרישה, תביעה בבית הדין לתביעות קטנות או בבתי משפט רגילים, בקשה לצו תשלום/צו עיקול/אכיפה — ומהם הכללים הקשורים לבחירת ערכאה ולסוג התביעה?",
+        "claim_id": "C2",
+        "required_roles": [
+          "primary_statute",
+          "regulation",
+          "binding_case_law"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "אמצעים אלו תלויים בנהלים של מבחן בית משפט/משרדי אכיפה ותקנות ביצוע; יש צורך בתקנות ופסיקה ובמידע פרקטי על נהלי האכיפה כדי להעריך זמינות ואפשרות השימוש.",
+        "text_he": "אילו אמצעים זמניים ואכיפתיים עומדים לרשות השוכר כדי להבטיח קבלת הפיקדון (צו מניעה, שעבוד/עיקול של נכסים, צו תשלום מהיר), ומה הדרישות והסיכויים להנפקתם?",
+        "claim_id": "C3",
+        "required_roles": [
+          "regulation",
+          "binding_case_law",
+          "government_report"
+        ],
+        "is_black_letter": false
+      },
+      {
+        "reason": "הערכת ראיות והדרכה פרקטית הם עניין עובדתי וספרותי — ראיות מייצגות מצבים אמיתיים וספרות מספקת דרכים מקובלות להציגן.",
+        "text_he": "אילו ראיות וטיעונים יש לאסוף ולהציג כדי לחזק תביעה להשבת פיקדון (חוזה שכירות, מסמכי הפקדה, תמונות מצב הדירה, קבלות תשלומים, הודעות הדדיות) ומה ההשפעה האפשרית של טענות המשכיר לגבי נזקים או חובות שסוכמו על ידו?",
+        "claim_id": "C4",
+        "required_roles": [
+          "factual_report",
+          "scholarship"
+        ],
+        "is_black_letter": false
+      }
+    ],
+    "run_id": "e9078879-ea6c-4f26-bf46-0abb7a06193b",
+    "drafter": {
+      "ms": 3,
+      "ok": true,
+      "lead_ref": {
+        "ref": null,
+        "shape": "list",
+        "reason": "shape_not_eligible"
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "sources_used": 0,
+      "used_sources": [],
+      "marker_format": "superscript",
+      "model_initial": "openai/gpt-5-mini",
+      "builder_report": {
+        "marker_count": 0,
+        "heading_count": 0,
+        "list_item_count": 0,
+        "paragraph_count": 3,
+        "cited_segment_count": 0,
+        "adjacent_marker_count": 0,
+        "distinct_source_count": 0,
+        "compound_segment_count": 0,
+        "compound_footnote_count": 0,
+        "avg_sources_per_cited_segment": 0
+      },
+      "footnote_count": 0,
+      "sources_passed": 16,
+      "drafter_version": "v2.1c",
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": []
+      },
+      "source_sufficiency": {
+        "shape": "list",
+        "reason": "generic_procedure_only",
+        "applied": true,
+        "category": "practical_list",
+        "sufficient": false,
+        "thin_source": false,
+        "found_titles": [
+          "פסק-דין בתיק ע\"א 4893/14",
+          "חוק שיפוט בתביעות קטנות, תשל\"ה-1975",
+          "חוק בתי המשפט [נוסח משולב], תשמ\"ד-1984",
+          "תקנות שיפוט בתביעות קטנות (סדרי דין), תשל\"ז-1976",
+          "תקנות סדר הדין האזרחי, התשע״ט–2018"
+        ],
+        "topical_refs": [],
+        "topic_phrases": [
+          "מחזיר פיקדון"
+        ],
+        "topical_authority_refs": []
+      },
+      "answer_style_report": {
+        "metrics": {
+          "block_count": 3,
+          "denylist_hits": [],
+          "heading_count": 0,
+          "heading_ratio": 0,
+          "cited_block_count": 0,
+          "total_footnote_count": 0,
+          "compound_footnote_count": 0,
+          "compound_footnote_ratio": 0,
+          "unsafe_display_title_count": 0,
+          "avg_sources_per_cited_block": 0,
+          "unsafe_display_title_examples": [],
+          "partial_supported_strong_claims": [],
+          "total_source_refs_in_cited_blocks": 0
+        },
+        "report_only": true,
+        "triggered_reasons": []
+      },
+      "unique_source_count": 0,
+      "deterministic_branch": "insufficient_sources_limitation",
+      "canonical_quote_fired": false,
+      "omitted_candidate_ids": [
+        "dcc8e83e-c428-49dd-a1bd-3c285df0bbef",
+        "762c7c0a-5e83-4be3-a49a-4314dad2bca0",
+        "7ad48495-7fd4-456b-a011-ce8f6a171b0e",
+        "766ab729-a331-458b-9c03-da83fad6a4dd",
+        "24764ed7-d881-4baa-a940-784d4d78cbed",
+        "a39aa1c0-faeb-47a4-8009-79dc9cc08d03",
+        "51fe6f40-27e0-40e6-9b4c-428ee685e386",
+        "e591948a-66b0-4b5f-9d1f-7fcec8fe8777",
+        "08581baf-d0fc-4839-a446-45c03fb0b860",
+        "6cc47a49-23ad-4845-8a3e-bae5117ad8bc",
+        "b1572d56-1a32-40aa-bee0-de09bf508575",
+        "a6286a71-1868-4bd4-9573-8c806e4895c7",
+        "2d804644-d2c0-48ae-aa59-812b6c8491d6",
+        "d583553d-cc6a-4b18-ae9a-154c4852c558",
+        "ac2a9dc5-37ec-4989-9c15-b0259e7471ba",
+        "885da293-34ae-4c2b-acd5-2aef80b1c017"
+      ],
+      "structured_validation": {
+        "ok": true,
+        "errors": [],
+        "block_count": 3,
+        "heading_count": 0,
+        "list_item_count": 0,
+        "paragraph_count": 3,
+        "cited_segment_count": 0,
+        "forbidden_text_hits": [],
+        "unknown_source_refs": [],
+        "total_source_ref_count": 0
+      },
+      "missing_anchor_descriptions": [],
+      "missing_anchor_caveat_injected": true,
+      "missing_docket_limitation_fired": false,
+      "statute_section_limitation_fired": false,
+      "insufficient_sources_limitation_fired": true
+    },
+    "queries": [
+      {
+        "role": "primary_statute",
+        "reason": "לקבוע האם קיימת חובת משפטית מפורשת להשבת פיקדון ומתי המשכיר רשאי להחזיקו — השאלה מהותית ודורשת עיון בחקיקה הרלוונטית.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "השבת פיקדון בשכירות בישראל חקיקה רלוונטית כוח משכיר להשאיר פיקדון; חיפוש טקסטים בחקיקה ובחוקי משנה המכילים ביטויים 'פיקדון' ו'שכירות' ו'החזרת פיקדון' בישראל",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "מציאת פסיקה מחייבת שיענה על השאלה אילו תנאים פרשניים בתי המשפט העליונים מציבים להחזקה של פיקדון על ידי המשכיר.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "בית המשפט העליון פסקי דין 'השבת פיקדון' 'פיקדון שכירות' משכיר שלא החזיר פיקדון אילו נסיבות סותרות בין טענות נזק לבין זכות השבת הפיקדון",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "דיון אקדמי יעזור להבין פרשנויות, קווים מנחים וסוגיות חוזיות-משפטיות לרבות התייחסות לשיקולים מעשיים ותיקי פסיקה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי 'פיקדון שכירות' 'השבת פיקדון' נזקים בחוזה שכירות רשימת תנאים לחזקת פיקדון מאמר בכתב-עת משפטי ישראלי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "לבחירת הערכאה המעשית יש לבחון את חוק בתי משפט לתביעות קטנות וסמכויותיו; זו שאלה מהותית לפני תכנון צעדים פרוצדורליים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "חוק בתי משפט לתביעות קטנות סמכויות והוראות לגבי תביעות להשבת פיקדון שכירות הגבלת סכומים סמכות שיפוטית הגשת תביעה",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "regulation",
+        "reason": "פרטים פרוצדורליים (מועדי הודעה, דרישות לצו תשלום, עיקול) מוסדרים לעתים בתקנות ובנוהלי בתי המשפט; חשוב לאתר הוראות מפורטות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "תקנות סדר הדין האזרחי/תקנות בתי משפט לתביעות קטנות הוראות נוהל לגבי מכתבי דרישה, בקשה לצו תשלום, עיקול נכסים והגשת תביעה להשבת פיקדון",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "יש לפסיקה מחייבת קווים להבחנה בין ערכאות ולכללים לקביעת סוג התביעה ומסלול ההגשה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון פסקי דין קובעי כללים לבחירת ערכאה בתביעות כסף קטנות/פיקדון שכירות ומבחנים להליך מתאים (תביעות קטנות מול שלום/מחוזי)",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "regulation",
+        "reason": "אמצעים זמניים ואכיפתיים מוסדרים לעתים בתקנות סדר הדין; דרישה למצוא הוראות תקנתיות לפני פנייה לבית המשפט.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "תקנות סדר הדין האזרחי הוראות לגבי הוצאת צו מניעה זמני, צו לעיקול נכסים וצעדים זמניים אחרים בסכסוכי שכירות; נוהלי בקשה מהירה להשבת נכס או פיקדון",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "פסיקה מחייבת תבהיר את הדרישות המתודיות והסיכויים לקבלת צווים זמניים בקונטקסט של פיקדון שכירות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון צו מניעה פיקדון שכירות פסק דין העדפת סעד זמני לשוכר כדי להבטיח השבת פיקדון מתי ניתן צו מניעה למניעת הפקדת סכום או שימוש בפיקדון",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "government_report",
+        "reason": "דו\"ח ממשלתי יכול להציע הנחיות פרקטיות לאכיפה ולסיכויי הצלחה של אמצעים זמניים ולאבחן חסמים מערכתיים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "משרד המשפטים דו\"ח/הנחיות אכיפה על צווים זמניים ועיקולים דו\"ח על יעילות אכיפת פסקי דין אזרחיים ופעולות חירום משפטיות להגנה על זכויות שוכרים להשבת פיקדון",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "factual_report",
+        "reason": "נדרש חומר פרקטי ופורמטים מוכנים לאיסוף ראיות; סביר שמקורות כאלה נמצאים במסמכי ארגון/מאגר פנימי (local_db).",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "מדריך פרקטי/דו\"ח רשימת ראיות בתביעות להשבת פיקדון שכירות: טפסים, אישורי הפקדה, חוזה שכירות, תמונות מצב דירה, קבלות תשלומים, הודעות SMS/אימייל — דוחות פרקטיקה או דפי פעולה של ארגונים מובילים",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מחקר אקדמי יכול להסביר סטנדרטים של הוכחה, איך לשקלל טענות נזק של המשכיר ומהו משקלן של ראיות שונות בבית המשפט.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמרים אקדמיים/לחוברים משפטיים על הוכחות בתביעות חוזיות והמשמעות של ראיות בתביעות השבת פיקדון שכירות 'ראיות בתביעות שכירות' 'משקל ראיה' 'חוזה שכירות' כתב-עת משפטי ישראלי",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 61141,
+        "mode_plan": {
+          "mode": "practical_steps",
+          "audit": {
+            "mode": "practical_steps",
+            "obligations": [
+              {
+                "id": "substantive_law_query",
+                "label": "שאילתת דין מהותי בתחום",
+                "satisfied": true
+              },
+              {
+                "id": "substantive_before_procedure",
+                "label": "דין מהותי לפני סדרי דין/אכיפה",
+                "satisfied": true
+              }
+            ],
+            "total_count": 2,
+            "unsatisfied": [],
+            "satisfied_count": 2,
+            "targets_by_role": {
+              "regulation": {
+                "total": 2,
+                "local_db": 0,
+                "perplexity": 2
+              },
+              "scholarship": {
+                "total": 2,
+                "local_db": 0,
+                "perplexity": 2
+              },
+              "factual_report": {
+                "total": 1,
+                "local_db": 1,
+                "perplexity": 0
+              },
+              "primary_statute": {
+                "total": 2,
+                "local_db": 0,
+                "perplexity": 2
+              },
+              "binding_case_law": {
+                "total": 3,
+                "local_db": 0,
+                "perplexity": 3
+              },
+              "government_report": {
+                "total": 1,
+                "local_db": 0,
+                "perplexity": 1
+              }
+            },
+            "caselaw_includes_perplexity": true,
+            "substantive_law_query_present": true
+          },
+          "output_shape": "list",
+          "directive_sent": true,
+          "target_enforcement": {
+            "applied": false,
+            "widened_query_count": 0
+          },
+          "obligations_required": [
+            "substantive_law_query",
+            "substantive_before_procedure"
+          ],
+          "classification_reasons": [
+            "shape=list"
+          ]
+        },
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 24671,
+        "confidence": 0.9,
+        "legal_area": "דיני שכירות / דיני חוזים",
+        "answer_type": "application",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "answer_intent": {
+          "output_shape": "list"
+        },
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "interpretation_note": null
+      },
+      "claims_count": 4,
+      "queries_count": 11,
+      "research_mode": "practical_steps",
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 165258,
+    "verifier": {
+      "ms": 60245,
+      "counts": {
+        "by_support": {
+          "direct": 8,
+          "partial": 8,
+          "unrelated": 1,
+          "tangential": 2
+        },
+        "by_role_match": {
+          "true": 19,
+          "false": 0
+        },
+        "model_verdicts": 19,
+        "by_support_model": {
+          "direct": 8,
+          "partial": 8,
+          "unrelated": 1,
+          "tangential": 2
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "dcc8e83e-c428-49dd-a1bd-3c285df0bbef",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "762c7c0a-5e83-4be3-a49a-4314dad2bca0",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "7ad48495-7fd4-456b-a011-ce8f6a171b0e",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "766ab729-a331-458b-9c03-da83fad6a4dd",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "24764ed7-d881-4baa-a940-784d4d78cbed",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "a39aa1c0-faeb-47a4-8009-79dc9cc08d03",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "51fe6f40-27e0-40e6-9b4c-428ee685e386",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "e591948a-66b0-4b5f-9d1f-7fcec8fe8777",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "08581baf-d0fc-4839-a446-45c03fb0b860",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "6cc47a49-23ad-4845-8a3e-bae5117ad8bc",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "b1572d56-1a32-40aa-bee0-de09bf508575",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "a6286a71-1868-4bd4-9573-8c806e4895c7",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "2d804644-d2c0-48ae-aa59-812b6c8491d6",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "d583553d-cc6a-4b18-ae9a-154c4852c558",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "ac2a9dc5-37ec-4989-9c15-b0259e7471ba",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "885da293-34ae-4c2b-acd5-2aef80b1c017",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 60245,
+          "label": "batch1",
+          "attempts": 1,
+          "claim_ids": [
+            "C1",
+            "C2",
+            "C3",
+            "C4"
+          ],
+          "escalated": false,
+          "recovered": false,
+          "candidates": 19,
+          "split_probes": 0
+        }
+      ],
+      "dropped": [
+        {
+          "role": "factual_report",
+          "title": "נתונים על זכאים לדיור ציבורי ולסיוע בשכר דירה",
+          "origin": "local_db",
+          "reason": "הדו\"ח עוסק בזכאי דיור ציבורי ונתונים סטטיסטיים על סיוע בשכר דירה — אינו עוסק בראיות או בטיעונים בתביעת השבת פיקדון.",
+          "candidate_id": "644f3104-8462-4c58-819e-3bd8a058d016",
+          "worst_support": "unrelated",
+          "retrieval_method": "text"
+        },
+        {
+          "role": "factual_report",
+          "title": "ביהמ\"ש השלום רחובות, שופט ישראל פת: פס\"ד בעניין פינוי דירה שיזן תפס בטענה שהזכויות נמכרו לו (ת\"א 19529-09-19)",
+          "origin": "local_db",
+          "reason": "המקור עוסק בעיקר בסוגיות סמכות ופינוי ולא במפורש ברשימת ראיות הרלוונטיות להשבת פיקדון; לכן נוגע רק בשוליים.",
+          "candidate_id": "b74019cd-18a6-4227-897f-c3b76533f334",
+          "worst_support": "tangential",
+          "retrieval_method": "text"
+        },
+        {
+          "role": "scholarship",
+          "title": "תביעות חוזיות בגין סרבנות גט",
+          "origin": "perplexity",
+          "reason": "המאמר אינו עוסק בפיקדון או בהחזרת פיקדון אלא בנושאים חוזיים מובחנים; לכן רלוונטי רק באופנים אנלוגיים ושוליים.",
+          "candidate_id": "9190d536-30dd-47b0-9e2c-09157f38304f",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        }
+      ],
+      "batch_ms": [
+        60245
+      ],
+      "parallel": true,
+      "verdicts": [
+        {
+          "reason": "הפסק‑דין מתמקד בהחזר כספים לקוח שכירות אך הקטע בחיבור אינו מציין באופן מפורש דיון בתנאים החוקיים/החוזיים של החזקת פיקדון ולכן אינו תומך באופן ישיר בכל היבט של הטענה.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "dcc8e83e-c428-49dd-a1bd-3c285df0bbef",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "פסק‑דין עוסק בהחזר כספים ששולמו (צו להחזרת יתרת דמי שכירות).",
+            "ממחיש נטייה שיפוטית להורות על החזר כספים למחזיק זכות לשכירות."
+          ]
+        },
+        {
+          "reason": "פסק‑דין עוסק ישירות בשבת פיקדון ובתנאים להחזקתו־וחיוב הקיזוז; מתאים כעדות לדוקטרינה המיישמת את הטענה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "51fe6f40-27e0-40e6-9b4c-428ee685e386",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "הכרעת בית המשפט דחתה ניכויים מתוך הפיקדון כנעשו שלא כדין.",
+            "המשיב לא הוכיח נזקים מספקים ולכן נדרש להחזיר הפיקדון."
+          ]
+        },
+        {
+          "reason": "המקור עוסק ישירות בזכאות להשבת פיקדון ובאופן חישובו — אותו סובייקט כמו הטענה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "e591948a-66b0-4b5f-9d1f-7fcec8fe8777",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "דיון בפסק‑דין על החזר פיקדון שניתן לשערכו לפי מדד ולצירוף ריבית.",
+            "מאשר כי החזרת הפיקדון כוללת גם שיקולים של עדכון מדד וריבית בהתאם לנסיבות."
+          ]
+        },
+        {
+          "reason": "חוק זה הוא הכלל היסודי לקביעת סמכות בית משפט לתביעות קטנות וענייני פרוצדורה — תומך ישירות בבחירת ערכאה לפרוצדורות שצוינו בטענה.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "762c7c0a-5e83-4be3-a49a-4314dad2bca0",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "חוק שיפוט בתביעות קטנות קובע את הסמכות לדיון בתביעות כספיות בסכומים מוגבלים.",
+            "מספק בסיס לבחירת ערכאה בעת תביעת השבת פיקדון בסכום התאים."
+          ]
+        },
+        {
+          "reason": "חוק בתי המשפט הוא מקור ראשי להנחיות על בחירת ערכאה וסמכויות ולכן תומך ישירות בטענה הפרוצדורלית.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "7ad48495-7fd4-456b-a011-ce8f6a171b0e",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "חוק בתי המשפט קובע את הסמכויות הענייןיות של בתי המשפט האזרחיים וסף הסכומים.",
+            "מסייע בקביעת האם יש להגיש תביעה בבית משפט שלום או ניסוח אחר."
+          ]
+        },
+        {
+          "reason": "התקנות מוסיפות פירוט פרוצדורלי ישיר הנוגע להגשת תביעה בתביעות קטנות — רלוונטי לבחירת ערכאה והליכי פתיחה.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "766ab729-a331-458b-9c03-da83fad6a4dd",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "תקנות סדר הדין לבית משפט לתביעות קטנות מפרטות טפסים, מועד ההתראה ונהלי הגשה.",
+            "מתארות את אופן פתיחת תביעה והליכים פרוצדורליים המעורבים."
+          ]
+        },
+        {
+          "reason": "הדו\"ח מספק רק רקע תפעולי ותיאורי על בית המשפט לתביעות קטנות ולא מהווה מקור חקיקתי ישיר; לכן תומך באופן רקע בלבד.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "08581baf-d0fc-4839-a446-45c03fb0b860",
+          "support_subtype": "background",
+          "supported_points": [
+            "דו\"ח מבקר המדינה מתאר את אופן ניהול הליכים בבית המשפט לתביעות קטנות.",
+            "מזכיר שימוש בתקנות סדר הדין והטפסים הנהוגים במערכת."
+          ]
+        },
+        {
+          "reason": "מקור מוסדי־מניעתי המסביר פרוצדורה בפועל — תומך בצעדים הפרוצדורליים אך אינו מחליף את החוק/תקנות.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "a6286a71-1868-4bd4-9573-8c806e4895c7",
+          "support_subtype": "background",
+          "supported_points": [
+            "עמוד השירות של הרשות השופטת מפרט את אופן הגשת תביעה קטנה, עלויות ואגרות.",
+            "מספק הדרכה פרקטית לגבי צעדים כמו הגשת כתב תביעה וטופס."
+          ]
+        },
+        {
+          "reason": "התקנות הן המקור הפרוצדורלי המרכזי למחוק הנוגע להנפקת צווים זמניים והתנאים להנפקתם — תומך ישירות בטענה.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "24764ed7-d881-4baa-a940-784d4d78cbed",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "תקנות סדר הדין האזרחי קובעות את הקריטריונים למתן סעד זמני (תקנה 95 ועוד).",
+            "מפרטות כי יש להראות לכאורה עילת תביעה וסיכון לפגיעה במימוש פסק‑דין אם לא יינתן הצו."
+          ]
+        },
+        {
+          "reason": "מדריך רשמי המסביר הוראות התקנות החדשות מוסיף תמיכה פרוצדורלית ישירה בנוגע להנפקת סעד זמני.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "a39aa1c0-faeb-47a4-8009-79dc9cc08d03",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "הכללה מסבירה שניתן לבקש סעד זמני אף בטרם הגשת כתב תביעה אם התובענה תוגש בתוך פרק זמן קבוע.",
+            "מבהירה הליכי הבקשה והפוטנציאל לקבלת צו זמני."
+          ]
+        },
+        {
+          "reason": "ההחלטה עוסקת בסעד זמני בהקשר דומה (פינוי/מושכר) ומספקת דוגמא פרשנית; היא אינה פסק דין מחייב בתחום הפיקדון אך רלוונטית אנלוגית.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "6cc47a49-23ad-4845-8a3e-bae5117ad8bc",
+          "support_subtype": "analogical",
+          "supported_points": [
+            "החלטה בנוגע לצו זמני בענייני פינוי מציינת כי צו זמני ניתן על סמך ראיות חלקיות.",
+            "מדגימה את הסטנדרט השיפוטי שנדרש להנפקת צווים זמניים."
+          ]
+        },
+        {
+          "reason": "התקנה עוסקת במנגנוני הגבלת נכסים ופקדונות — ישירות רלוונטית לאמצעים אכיפתיים כגון עיקול/שעבוד זמני.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "b1572d56-1a32-40aa-bee0-de09bf508575",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "תקנה מורה על סמכות למתן צו להגבלת הוצאת נכסים מרשות המשיב (שעתע/עיקול זמני).",
+            "כוללת הוראות לגבי החזרת נכסים במקרה של פקיעת צו זמני."
+          ]
+        },
+        {
+          "reason": "מקור מנהלי המסביר דרישות פרוצדורליות (התחייבות) בתיקי סעד זמני — תומך ברקע אך אינו פסיקה/תקנה עצמה.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "2d804644-d2c0-48ae-aa59-812b6c8491d6",
+          "support_subtype": "background",
+          "supported_points": [
+            "שירות הרשות השופטת מסביר את הצורך בהתחייבות עצמית בעת בקשה לסעד זמני.",
+            "מנחה על אופן ההגשה בשלוחות בית המשפט והשימוש בטפסים נלווים."
+          ]
+        },
+        {
+          "reason": "הדו\"ח עוסק בזכאי דיור ציבורי ונתונים סטטיסטיים על סיוע בשכר דירה — אינו עוסק בראיות או בטיעונים בתביעת השבת פיקדון.",
+          "support": "unrelated",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "644f3104-8462-4c58-819e-3bd8a058d016",
+          "support_subtype": "wrong_subject",
+          "supported_points": []
+        },
+        {
+          "reason": "המקור עוסק בעיקר בסוגיות סמכות ופינוי ולא במפורש ברשימת ראיות הרלוונטיות להשבת פיקדון; לכן נוגע רק בשוליים.",
+          "support": "tangential",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "b74019cd-18a6-4227-897f-c3b76533f334",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מדובר בפסק‑דין בתחום דיוני (פינוי/סמכות) המחייב התייחסות להליכי בית המשפט.",
+            "יכול להעיד על חשיבות הבהרת סמכויות וערעורים בהליכים שקשורים למושכר."
+          ]
+        },
+        {
+          "reason": "ספרות משפטית זו מספקת רקע תיאורטי על דוקטרינות חוזיות ושיטות הוכחה; תומכת אנלוגית בטענה על ראיות בתביעות חוזיות אך אינה מקור עובדתי ישיר.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "d583553d-cc6a-4b18-ae9a-154c4852c558",
+          "support_subtype": "analogical",
+          "supported_points": [
+            "מאמר על הסתמכות ותמורה מסביר יסודות הוכחה בעסקאות וחוזים.",
+            "יכול לתמוך בטיעונים ביחס להתחייבויות חוזיות הנוגעות לפיקדון (הסתמכות, תוקף התחייבות)."
+          ]
+        },
+        {
+          "reason": "המאמר אינו עוסק בפיקדון או בהחזרת פיקדון אלא בנושאים חוזיים מובחנים; לכן רלוונטי רק באופנים אנלוגיים ושוליים.",
+          "support": "tangential",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "9190d536-30dd-47b0-9e2c-09157f38304f",
+          "support_subtype": "analogical",
+          "supported_points": [
+            "מאמר על תביעות חוזיות בסוגיה ספציפית (סרבנות גט) דן בעקרונות אכיפה וראיות בחוזים.",
+            "יכול להציע כלים עיוניים כלליים להוכחת תביעות חוזיות."
+          ]
+        },
+        {
+          "reason": "מקור תיאורטי על דיני חוזים המספק כלים אנלוגיים להערכת ראיות אך אינו מדריך עובדתי ספציפי לרשימת מסמכים לפיקדון.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "ac2a9dc5-37ec-4989-9c15-b0259e7471ba",
+          "support_subtype": "analogical",
+          "supported_points": [
+            "מאמר על שיקולי הדדיות בדיני החוזים דן בפרקטיקות הוכחה ושקלול טיעונים חוזיים.",
+            "יכול לסייע בהערכת ראיות וטיעונים במשפט חוזי להשבת פיקדון."
+          ]
+        },
+        {
+          "reason": "המאמר הוא רקע תאורטי רחב ולא מסמך שמפרט באופן ישיר אילו ראיות יש לאסוף בתיק פיקדון.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "885da293-34ae-4c2b-acd5-2aef80b1c017",
+          "support_subtype": "background",
+          "supported_points": [
+            "סקירה על מגמות בדיני חוזים מספקת רקע תאורטי ליעוד ראיות והערכת טענות.",
+            "מהווה מסמך רקע על עקרונות החוזים שיש ליישם בתביעה."
+          ]
+        }
+      ],
+      "demotions": [],
+      "batch_count": 1,
+      "call_failed": false,
+      "model_final": "openai/gpt-5-mini",
+      "retry_count": 0,
+      "per_claim_ms": {
+        "C1": 60245,
+        "C2": 60245,
+        "C3": 60245,
+        "C4": 60245
+      },
+      "total_sum_ms": 60245,
+      "call_failures": [],
+      "model_initial": "openai/gpt-5-mini",
+      "total_wall_ms": 60245,
+      "retry_attempts": 0,
+      "escalated_claims": [],
+      "rate_limit_count": 0,
+      "candidates_usable": 16,
+      "concurrency_limit": 2,
+      "demotions_by_rule": {
+        "analogical": 0,
+        "background": 0,
+        "landing_page": 0,
+        "wrong_subject": 0,
+        "self_contradiction": 0
+      },
+      "escalated_batches": 0,
+      "recovered_batches": 0,
+      "candidates_dropped": 3,
+      "candidates_verified": 19,
+      "split_probe_attempts": 0,
+      "merge_order_preserved": true,
+      "fallback_to_sequential": false
+    },
+    "retrieval": {
+      "ms": 18917,
+      "pool": {
+        "drops": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C17%5C340%5C052%5Cm03&fileName=17052340.M03&type=2",
+            "role": "binding_case_law",
+            "score": 0.95,
+            "title": "רע\"א 5234/17",
+            "origin": "perplexity",
+            "claim_id": "C2",
+            "drop_key": "url:supremedecisions.court.gov.il/home/download",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "1198dd67-9cba-4bbe-aa09-f013659076f3",
+            "rank_before_drop": 10,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/157751.htm",
+            "role": "regulation",
+            "score": 0.95,
+            "title": "תקנות סדר הדין האזרחי, התשע״ט–2018",
+            "origin": "perplexity",
+            "claim_id": "C3",
+            "drop_key": "url:www.nevo.co.il/law_html/law00/157751.htm",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "ab1b837e-22e1-4a2b-8c48-62add2a8905e",
+            "rank_before_drop": 13,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6807&businessType=1",
+            "role": "factual_report",
+            "score": 0.116148064285517,
+            "title": "ניתוח הצעה לסבסוד רכישת דירה ראשונה והשוואה למודל מחיר למשתכן | 1",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:main.knesset.gov.il/activity/info/research/pages/incident.aspx",
+            "drop_reason": "dup_url",
+            "source_type": "knesset_research",
+            "candidate_id": "23865e05-54f0-47ec-9ab9-d2481bfa9f5a",
+            "rank_before_drop": 1,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7327&businessType=1",
+            "role": "factual_report",
+            "score": 0.115330106019974,
+            "title": "דירות מגורים בישראל, נתונים על מספר ביטוחי דירה בישראל והפרמיה השנתית המשולמת, וכן הסבר על הכיסוי",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:main.knesset.gov.il/activity/info/research/pages/incident.aspx",
+            "drop_reason": "dup_url",
+            "source_type": "knesset_research",
+            "candidate_id": "a9e1caa2-c111-4807-baaa-3b3e59303ecc",
+            "rank_before_drop": 3,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8057&businessType=1",
+            "role": "factual_report",
+            "score": 0.113958048075438,
+            "title": "נתונים על מצב הבריאות של יוצאי אתיופיה",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:main.knesset.gov.il/activity/info/research/pages/incident.aspx",
+            "drop_reason": "dup_url",
+            "source_type": "knesset_research",
+            "candidate_id": "fa58c375-789c-4303-a929-1e86e0890ed2",
+            "rank_before_drop": 4,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
+            "role": "factual_report",
+            "score": 0.113008162379265,
+            "title": "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "3fcec545-8786-4ce6-8634-7dfb68c495d2",
+            "rank_before_drop": 5,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/service/filing_a_small_claim",
+            "role": "regulation",
+            "score": 0.75,
+            "title": "הגשת תביעה קטנה לבית משפט לתביעות קטנות | הרשות השופטת",
+            "origin": "perplexity",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/service/filing_a_small_claim",
+            "drop_reason": "dup_url",
+            "source_type": "other",
+            "candidate_id": "a4e80c82-549e-4fd8-b0b1-39bbf8a73b3b",
+            "rank_before_drop": 18,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7336&businessType=1",
+            "role": "factual_report",
+            "score": 0.354972632061414,
+            "title": "נתונים על שימושים ציבוריים בדירות הדיור הציבורי",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:main.knesset.gov.il/activity/info/research/pages/incident.aspx",
+            "drop_reason": "dup_url",
+            "source_type": "knesset_research",
+            "candidate_id": "a5d782bd-fdf8-404e-9cc9-7759b0eb68d2",
+            "rank_before_drop": 26,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7369&businessType=1",
+            "role": "factual_report",
+            "score": 0.3490971545395986,
+            "title": "סיוע המדינה לדרי רחוב",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:main.knesset.gov.il/activity/info/research/pages/incident.aspx",
+            "drop_reason": "dup_url",
+            "source_type": "knesset_research",
+            "candidate_id": "aa7f0307-fcbd-407b-9754-692b1ad60610",
+            "rank_before_drop": 27,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7109&businessType=1",
+            "role": "factual_report",
+            "score": 0.3480121667244918,
+            "title": "שימושים ציבוריים בנכסי הדיור הציבורי – רקע",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:main.knesset.gov.il/activity/info/research/pages/incident.aspx",
+            "drop_reason": "dup_url",
+            "source_type": "knesset_research",
+            "candidate_id": "3058c74b-6b51-4d0d-bc93-cf47c3c5c511",
+            "rank_before_drop": 28,
+            "retrieval_method": "vector"
+          }
+        ],
+        "found": 29,
+        "counts": {
+          "by_role": {
+            "regulation": 5,
+            "scholarship": 4,
+            "factual_report": 2,
+            "primary_statute": 3,
+            "binding_case_law": 3,
+            "government_report": 1,
+            "persuasive_case_law": 1
+          },
+          "by_claim": {
+            "C1": 3,
+            "C2": 5,
+            "C3": 5,
+            "C4": 6
+          },
+          "by_origin": {
+            "local_db": 2,
+            "perplexity": 17
+          }
+        },
+        "after_dedup": 19,
+        "dedup_drops": 12,
+        "drop_reason_counts": {
+          "dup_url": 10
+        }
+      },
+      "local": {
+        "ms": 2390,
+        "aggregate": {
+          "wall_ms": 2390,
+          "max_query_ms": 2389,
+          "sum_query_ms": 2389,
+          "slowest_query": {
+            "ms": 2389,
+            "role": "factual_report",
+            "text_ms": 678,
+            "claim_id": "C4",
+            "exact_ms": 0,
+            "query_he": "מדריך פרקטי/דו\"ח רשימת ראיות בתביעות להשבת פיקדון שכירות: טפסים, אישורי הפקדה, חוזה שכירות, תמונות מצב דירה, קבלות תשלומים, הודעות SMS/אימייל — דוחות פרקטיקה או דפי פעולה של ארגונים מובילים",
+            "vector_ms": 1707,
+            "embedding_ms": 137
+          },
+          "slowest_method": "vector",
+          "method_total_ms": {
+            "text": 678,
+            "exact": 0,
+            "vector": 1707,
+            "embedding": 137
+          },
+          "queries_executed": 1,
+          "exact_error_count": 0,
+          "text_timeout_count": 0,
+          "candidates_by_method": {
+            "text": 6,
+            "vector": 3,
+            "exact_authority": 0
+          },
+          "vector_timeout_count": 0,
+          "bottleneck_hypothesis": "dominant_method=vector (sum=1707ms across 1 queries)",
+          "duplicate_query_count": 0
+        },
+        "per_query": [
+          {
+            "ms": 2389,
+            "diag": {
+              "text_ms": 678,
+              "exact_ms": 0,
+              "vector_ms": 1707,
+              "text_status": "ok",
+              "embedding_ms": 137,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "נתונים על זכאים לדיור ציבורי ולסיוע בשכר דירה",
+                "ניתוח הצעה לסבסוד רכישת דירה ראשונה והשוואה למודל מחיר למשתכן | 1",
+                "ביהמ\"ש השלום רחובות, שופט ישראל פת: פס\"ד בעניין פינוי דירה שיזן תפס בטענה שהזכויות נמכרו לו (ת\"א 19529-09-19)",
+                "דירות מגורים בישראל, נתונים על מספר ביטוחי דירה בישראל והפרמיה השנתית המשולמת, וכן הסבר על הכיסוי",
+                "נתונים על מצב הבריאות של יוצאי אתיופיה"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 678,
+              "top_vector_titles": [
+                "נתונים על שימושים ציבוריים בדירות הדיור הציבורי",
+                "פרטי מסמך",
+                "סיוע המדינה לדרי רחוב",
+                "פרטי מסמך",
+                "שימושים ציבוריים בנכסי הדיור הציבורי – רקע"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "knesset_research"
+              ]
+            },
+            "kept": 9,
+            "role": "factual_report",
+            "claim_id": "C4",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "רשימת ראיות בתביעות להשבת פיקדון שכירות טפסים אישורי הפקדה חוזה תמונות מצב דירה קבלות תשלומים מדריך",
+            "original_query_he": "מדריך פרקטי/דו\"ח רשימת ראיות בתביעות להשבת פיקדון שכירות: טפסים, אישורי הפקדה, חוזה שכירות, תמונות מצב דירה, קבלות תשלומים, הודעות SMS/אימייל — דוחות פרקטיקה או דפי פעולה של ארגונים מובילים",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          }
+        ],
+        "candidates": 9,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 18912,
+        "dropped": 24,
+        "parallel": true,
+        "query_ms": [
+          9668,
+          4645,
+          4655,
+          6450,
+          4584,
+          5713,
+          6661,
+          6368,
+          6189,
+          8534
+        ],
+        "per_query": [
+          {
+            "ms": 9668,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://www.kolzchut.org.il/he/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F_%D7%9E%D7%96%D7%95%D7%9E%D7%9F_%D7%9B%D7%A2%D7%A8%D7%95%D7%91%D7%94_%D7%9C%D7%94%D7%91%D7%98%D7%97%D7%AA_%D7%97%D7%99%D7%95%D7%91",
+                "title": "פיקדון מזומן כערובה להבטחת חיוב (מושג)",
+                "domain": "kolzchut.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%95%D7%A2%D7%A8%D7%91%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%9E%D7%95%D7%AA%D7%A8-%D7%97%D7%95%D7%A7%D7%99%D7%AA-%D7%95%D7%9E%D7%94-%D7%9B%D7%93%D7%90%D7%99/",
+                "title": "פיקדון וערבויות בשכירות: מה מותר חוקית ומה כדאי? - עורך דין מקרקעין ונדל\"ן - טאוב ושות' משרד עו\"ד",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8%D7%AA-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%D7%99%D7%9A-%D7%9B%D7%A9%D7%95%D7%9B%D7%A8-%D7%90%D7%95-%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+                "title": "החזרת פיקדון שכירות: מה זכויותיך כשוכר או משכיר? - עורך דין מקרקעין ונדל\"ן - טאוב ושות' משרד עו\"ד",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.ailaw.co.il/post/%D7%9E%D7%A9%D7%9B%D7%99%D7%A8%D7%99%D7%9D-%D7%91%D7%98%D7%95%D7%97-%D7%99%D7%A9%D7%A0%D7%99%D7%9D-%D7%91%D7%A9%D7%A7%D7%98-%D7%94%D7%9E%D7%93%D7%A8%D7%99%D7%9A-%D7%9C%D7%A2%D7%A8%D7%91%D7%95%D7%99%D7%95%D7%AA-%D7%A9%D7%9B%D7%9C-%D7%9E%D7%A9%D7%9B%D7%99%D7%A8-%D7%95%D7%A9%D7%95%D7%9B%D7%A8-%D7%97%D7%99%D7%99%D7%91%D7%99%D7%9D-%D7%9C%D7%94%D7%9B%D7%99%D7%A8",
+                "title": "הבנת הסכמי השכירות למגורים בישראל: כל מה שצריך לדעת",
+                "domain": "ailaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C1",
+            "query_he": "השבת פיקדון בשכירות בישראל חקיקה רלוונטית כוח משכיר להשאיר פיקדון; חיפוש טקסטים בחקיקה ובחוקי משנה המכילים ביטויים 'פיקדון' ו'שכירות' ו'החזרת פיקדון' בישראל",
+            "raw_count": 4,
+            "discovery_only": 4,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4645,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+                "title": "פסק-דין בתיק ע\"א 20818-01-13",
+                "domain": "psakdin.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "unknown",
+                  "body_meaningful_chars": 188,
+                  "title_meaningful_chars": 25
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "psakdin",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%תיק-%D7%A2%22%D7א-003084-02",
+                "title": "פסק-דין בתיק ע\"א 003084/02",
+                "domain": "psakdin.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%תיק-%D7%A2%22%D7א-003084-02",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%D7%90-003084-02",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "unknown",
+                  "body_meaningful_chars": 140,
+                  "title_meaningful_chars": 23
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "psakdin",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C14%5C930%5C048%5Ce06&fileName=14048930_e06.txt&type=4",
+                "title": "פסק-דין בתיק ע\"א 4893/14",
+                "domain": "supremedecisions.court.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C14%5C930%5C048%5Ce06&fileName=14048930_e06.txt&type=4",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C14%5C930%5C048%5Ce06&fileName=14048930_e06.txt&type=4",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 148,
+                  "title_meaningful_chars": 21
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "supremedecisions",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C1",
+            "query_he": "בית המשפט העליון פסקי דין 'השבת פיקדון' 'פיקדון שכירות' משכיר שלא החזיר פיקדון אילו נסיבות סותרות בין טענות נזק לבין זכות השבת הפיקדון",
+            "raw_count": 3,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4655,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://msl.org.il/guide/tenant-rights-deposit/",
+                "title": "ערבויות ופיקדונות בהשכרת דירות",
+                "domain": "msl.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%95%D7%A2%D7%A8%D7%91%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%9E%D7%95%D7%AA%D7%A8-%D7%97%D7%95%D7%A7%D7%99%D7%AA-%D7%95%D7%9E%D7%94-%D7%9B%D7%93%D7%90%D7%99/",
+                "title": "זכויות השוכר והמשכיר בדיני השכירות",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.globes.co.il/news/article.aspx?did=1001511947",
+                "title": "אין מקור מאומת בנתונים שסופקו",
+                "domain": "globes.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C1",
+            "query_he": "מאמר משפטי 'פיקדון שכירות' 'השבת פיקדון' נזקים בחוזה שכירות רשימת תנאים לחזקת פיקדון מאמר בכתב-עת משפטי ישראלי",
+            "raw_count": 3,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 6450,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://fs.knesset.gov.il/8/law/8_ls1_289680.PDF",
+                "title": "חוק שיפוט בתביעות קטנות, תשל\"ה-1975",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/8/law/8_ls1_289680.PDF",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/8/law/8_ls1_289680.PDF",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 191,
+                  "title_meaningful_chars": 31
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "primary law PDF",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law00/74849.htm",
+                "title": "חוק בתי המשפט [נוסח משולב], תשמ\"ד-1984",
+                "domain": "nevo.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.nevo.co.il/law_html/law00/74849.htm",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.nevo.co.il/law_html/law00/74849.htm",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 182,
+                  "title_meaningful_chars": 33
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "primary law text",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.gov.il/he/service/filing_a_small_claim",
+                "title": "הגשת תביעה קטנה לבית משפט לתביעות קטנות | הרשות השופטת",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/he/service/filing_a_small_claim",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/he/service/filing_a_small_claim",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 93,
+                  "title_meaningful_chars": 45
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "government service page",
+                "normalized_source_type": "other",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.histadrut.org.il/%D7%91%D7%99%D7%AA-%D7%94%D7%9E%D7%A9%D7%A4%D7%98-%D7%9C%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA-%D7%A7%D7%98%D7%A0%D7%95%D7%AA/",
+                "title": "בית המשפט לתביעות קטנות",
+                "domain": "histadrut.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_primary_statute",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.toledano.co.il/wp-content/uploads/2019/02/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA-%D7%A9%D7%99%D7%A4%D7%95%D7%98-%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA-%D7%A7%D7%98%D7%A0%D7%95%D7%AA.pdf",
+                "title": "תקנות שיפוט בתביעות קטנות (סדרי דין), התשל\"ז-1976",
+                "domain": "toledano.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_primary_statute",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C2",
+            "query_he": "חוק בתי משפט לתביעות קטנות סמכויות והוראות לגבי תביעות להשבת פיקדון שכירות הגבלת סכומים סמכות שיפוטית הגשת תביעה",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4584,
+            "http": 200,
+            "role": "regulation",
+            "results": [
+              {
+                "url": "https://www.nevo.co.il/law_html/law00/98563.htm",
+                "title": "תקנות שיפוט בתביעות קטנות (סדרי דין), תשל\"ז-1976",
+                "domain": "nevo.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.nevo.co.il/law_html/law00/98563.htm",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.nevo.co.il/law_html/law00/98563.htm",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 121,
+                  "title_meaningful_chars": 42
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "nevo.co.il",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%AA%D7%99_%D7%94%D7%9E%D7%A9%D7%A4%D7%98",
+                "title": "חוק בתי המשפט [נוסח משולב], התשמ\"ד–1984",
+                "domain": "he.wikisource.org",
+                "drop_reason": "class_unknown_not_admitted_for_regulation",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/he/service/filing_a_small_claim",
+                "title": "הגשת תביעה קטנה לבית משפט לתביעות קטנות | הרשות השופטת",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/he/service/filing_a_small_claim",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/he/service/filing_a_small_claim",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 91,
+                  "title_meaningful_chars": 45
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "gov.il",
+                "normalized_source_type": "other",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/1950-2008/2004-54b/2004-54b-238-TviotKtanot.pdf",
+                "title": "בית המשפט לתביעות קטנות - מבקר המדינה",
+                "domain": "library.mevaker.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/1950-2008/2004-54b/2004-54b-238-TviotKtanot.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/1950-2008/2004-54b/2004-54b-238-TviotKtanot.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 93,
+                  "title_meaningful_chars": 31
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "gov_report",
+                "normalized_source_type": "government_report",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C2",
+            "query_he": "תקנות סדר הדין האזרחי/תקנות בתי משפט לתביעות קטנות הוראות נוהל לגבי מכתבי דרישה, בקשה לצו תשלום, עיקול נכסים והגשת תביעה להשבת פיקדון",
+            "raw_count": 4,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5713,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C17%5C340%5C052%5Cm03&fileName=17052340.M03&type=2",
+                "title": "רע\"א 5234/17",
+                "domain": "supremedecisions.court.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C17%5C340%5C052%5Cm03&fileName=17052340.M03&type=2",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C17%5C340%5C052%5Cm03&fileName=17052340.M03&type=2",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 108,
+                  "title_meaningful_chars": 11
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "primary court decision",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.dinrega.com/gs/%D7%94%D7%99%D7%A2%D7%93%D7%A8%20%D7%99%D7%99%D7%A6%D7%95%D7%92%20%D7%91%D7%93%D7%99%D7%95%D7%9F%20%D7%91%D7%91%D7%99%D7%AA%20%D7%המשפט%20העליון",
+                "title": "היעדר ייצוג בדיון בבית המשפט העליון",
+                "domain": "dinrega.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%A9%D7%99%D7%A4%D7%95%D7%98_%D7%91%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA_%D7%A7%D7%98%D7%A0%D7%95%D7%AA_(%D7%A1%D7%93%D7%A8%D7%99_%D7%93%D7%99%D7%9F)",
+                "title": "תקנות שיפוט בתביעות קטנות (סדרי דין), תשל\"ז–1976",
+                "domain": "he.wikisource.org",
+                "drop_reason": "class_unknown_not_admitted_for_binding_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.felaw.co.il/%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA-%D7%A7%D7%98%D7%A0%D7%95%D7%AA/",
+                "title": "תביעות קטנות – ייעוץ משפטי",
+                "domain": "felaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.wikipedia.org/wiki/%D7%AA%D7%91%D7%99%D7%A2%D7%94_%D7%A7%D7%98%D7%A0%D7%94",
+                "title": "תביעה קטנה",
+                "domain": "he.wikipedia.org",
+                "drop_reason": "bad_source",
+                "classified_source_class": "bad",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C2",
+            "query_he": "בית המשפט העליון פסקי דין קובעי כללים לבחירת ערכאה בתביעות כסף קטנות/פיקדון שכירות ומבחנים להליך מתאים (תביעות קטנות מול שלום/מחוזי)",
+            "raw_count": 5,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 6661,
+            "http": 200,
+            "role": "regulation",
+            "results": [
+              {
+                "url": "https://www.nevo.co.il/law_html/law00/157751.htm",
+                "title": "תקנות סדר הדין האזרחי, התשע״ט–2018",
+                "domain": "nevo.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.nevo.co.il/law_html/law00/157751.htm",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.nevo.co.il/law_html/law00/157751.htm",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 219,
+                  "title_meaningful_chars": 30
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "חקיקה / נוסח תקנות",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law01/055_060_000.htm",
+                "title": "תקנות סדר הדין האזרחי, התשמ\"ד–1984",
+                "domain": "nevo.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.nevo.co.il/law_html/law01/055_060_000.htm",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.nevo.co.il/law_html/law01/055_060_000.htm",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 219,
+                  "title_meaningful_chars": 30
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "חקיקה / נוסח תקנות",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law00/157751.htm",
+                "title": "תקנות סדר הדין האזרחי, התשע״ט–2018",
+                "domain": "nevo.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.nevo.co.il/law_html/law00/157751.htm",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.nevo.co.il/law_html/law00/157751.htm",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 129,
+                  "title_meaningful_chars": 30
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "חקיקה / נוסח תקנות",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/guide/guide_to_civil_procedure_01012021/he/%D7%A9%D7%90%D7%9C%D7%95%D7%AA%20%D7%95%D7%AA%D7%A9%D7%95%D7%91%D7%95%D7%AA%20%D7%A0%D7%A4%D7%95%D7%A6%D7%95%D7%AA%20-%20%D7%A2%D7%93%D7%9B%D7%95%D7%9F%20%D7%A0%D7%9B%D7%95%D7%9F%20%D7%9C-24.12.20.docx_.pdf",
+                "title": "שאלות ותשובות - תקנות סדר הדין האזרחי החדשות",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/BlobFolder/guide/guide_to_civil_procedure_01012021/he/%D7%A9%D7%90%D7%9C%D7%95%D7%AA%20%D7%95%D7%AA%D7%A9%D7%95%D7%91%D7%95%D7%AA%20%D7%A0%D7%A4%D7%95%D7%A6%D7%95%D7%AA%20-%20%D7%A2%D7%93%D7%9B%D7%95%D7%9F%20%D7%A0%D7%9B%D7%95%D7%9F%20%D7%9C-24.12.20.docx_.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/BlobFolder/guide/guide_to_civil_procedure_01012021/he/%D7%A9%D7%90%D7%9C%D7%95%D7%AA%20%D7%95%D7%AA%D7%A9%D7%95%D7%91%D7%95%D7%AA%20%D7%A0%D7%A4%D7%95%D7%A6%D7%95%D7%AA%20-%20%D7%A2%D7%93%D7%9B%D7%95%D7%9F%20%D7%A0%D7%9B%D7%95%D7%9F%20%D7%9C-24.12.20.docx_.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 174,
+                  "title_meaningful_chars": 37
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "מסמך רשמי / דף מידע",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%D7%90%22%D7%97-17842-11-11",
+                "title": "החלטה בתיק תא\"ח 17842-11-11",
+                "domain": "psakdin.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%D7%90%22%D7%97-17842-11-11",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%D7%90%22%D7%97-17842-11-11",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "unknown",
+                  "body_meaningful_chars": 116,
+                  "title_meaningful_chars": 24
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "persuasive_case_law",
+                "role_corrected_from": "regulation",
+                "raw_pplx_source_type": "פסיקה",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 5,
+            "claim_id": "C3",
+            "query_he": "תקנות סדר הדין האזרחי הוראות לגבי הוצאת צו מניעה זמני, צו לעיקול נכסים וצעדים זמניים אחרים בסכסוכי שכירות; נוהלי בקשה מהירה להשבת נכס או פיקדון",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 6368,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision61551-10-24/he/61551-10-24.docx",
+                "title": "61551-10-24.docx",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_binding_case_law",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.kolzchut.org.il/he/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F_%D7%9E%D7%96%D7%95%D7%9E%D7%9F_%D7%9B%D7%A2%D7%A8%D7%95%D7%91%D7%94_%D7%9C%D7%94%D7%91%D7%98%D7%97%D7%AA_%D7%97%D7%99%D7%95%D7%91",
+                "title": "פיקדון מזומן כערובה להבטחת חיוב (מושג)",
+                "domain": "kolzchut.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.ozar-law.co.il/index2.php?id=22246&lang=HEB",
+                "title": "פרק ז ': תביעות פינוי, סילוק יד והפרת הסכם",
+                "domain": "ozar-law.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.at-realestatelaw.co.il/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9B%D7%99%D7%A6%D7%93-%D7%9C%D7%94%D7%AA%D7%9E%D7%95%D7%93%D7%93-%D7%A2%D7%9D-%D7%9E%D7%97%D7%9C%D7%95%D7%A7%D7%AA-%D7%9E%D7%A9%D7%A4%D7%98%D7%99%D7%AA/",
+                "title": "פיקדון שכירות: כיצד להתמודד עם מחלוקת משפטית?",
+                "domain": "at-realestatelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://law.co.il/media/computer-law/finkelstein_CKvCr5O.pdf",
+                "title": "פסק דין - law.co.il",
+                "domain": "law.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C3",
+            "query_he": "בית המשפט העליון צו מניעה פיקדון שכירות פסק דין העדפת סעד זמני לשוכר כדי להבטיח השבת פיקדון מתי ניתן צו מניעה למניעת הפקדת סכום או שימוש בפיקדון",
+            "raw_count": 5,
+            "discovery_only": 4,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 6189,
+            "http": 200,
+            "role": "government_report",
+            "results": [
+              {
+                "url": "https://he.wikisource.org/wiki/%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA_%D7%94%D7%99%D7%95%D7%A2%D7%A5_%D7%94%D7%9E%D7%A9%D7%A4%D7%98%D7%99_%D7%9C%D7%9E%D7%9E%D7%A9%D7%9C%D7%94",
+                "title": "הנחיות היועץ המשפטי לממשלה",
+                "domain": "he.wikisource.org",
+                "drop_reason": "class_unknown_not_admitted_for_government_report",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/he/service/obligation_statement",
+                "title": "התחייבות עצמית וערובה בבקשה לסעד זמני | הרשות השופטת",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/he/service/obligation_statement",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/he/service/obligation_statement",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 113,
+                  "title_meaningful_chars": 44
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "gov.il",
+                "normalized_source_type": "other",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.yosefbdlaw.com/news/%D7%A1%D7%A2%D7%93%D7%99%D7%9D-%D7%96%D7%9E%D7%A0%D7%99%D7%99%D7%9D/",
+                "title": "סעדים זמניים - YBD - יוסף בן-דוד, משרד עורכי דין",
+                "domain": "yosefbdlaw.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.yosefbdlaw.com/news/%D7%A1%D7%A2%D7%93%D7%99%D7%9D-%D7%96%D7%9E%D7%A0%D7%99%D7%99%D7%9D/",
+                "title": "סעדים זמניים - YBD - יוסף בן-דוד, משרד עורכי דין",
+                "domain": "yosefbdlaw.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://yancu-law.co.il/%D7%9E%D7%94%D7%9D-%D7%A1%D7%A2%D7%93%D7%99%D7%9D-%D7%96%D7%9E%D7%A0%D7%99%D7%99%D7%9D-%D7%95%D7%9E%D7%AA%D7%99-%D7%9B%D7%93%D7%90%D7%99-%D7%9C%D7%94%D7%A9%D7%AA%D7%9E%D7%A9-%D7%91%D7%94%D7%9D/",
+                "title": "מהם סעדים זמניים ומתי כדאי להשתמש בהם? - עורך דין",
+                "domain": "yancu-law.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C3",
+            "query_he": "משרד המשפטים דו\"ח/הנחיות אכיפה על צווים זמניים ועיקולים דו\"ח על יעילות אכיפת פסקי דין אזרחיים ופעולות חירום משפטיות להגנה על זכויות שוכרים להשבת פיקדון",
+            "raw_count": 5,
+            "discovery_only": 3,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 8534,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5015336",
+                "title": "הסתמכות ותמורה בדיני חוזים – מן המשפט העברי אל המשפט הישראלי / Reliance and Consideration in Contract Law – From Jewish Law to Israeli Law",
+                "domain": "papers.ssrn.com",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5015336",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5015336",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 237,
+                  "title_meaningful_chars": 114
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "SSRN",
+                "normalized_source_type": "other",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m8.pdf",
+                "title": "תביעות חוזיות בגין סרבנות גט",
+                "domain": "law.haifa.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m8.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m8.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 129,
+                  "title_meaningful_chars": 24
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "אוניברסיטת חיפה (PDF)",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m3.pdf",
+                "title": "שיקול ההדדיות בדיני החוזים: מבט על שלוש סוגיות בפסיקה הישראלית",
+                "domain": "law.haifa.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m3.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m3.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 117,
+                  "title_meaningful_chars": 53
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "אוניברסיטת חיפה (PDF)",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%93%D7%99%D7%A0%D7%99%20%D7%97%D7%95%D7%96%D7%99%D7%9D%20-%20%D7%9E%D7%92%D7%9E%D7%95%D7%AA%20%D7%95%D7%94%D7%A2%D7%A8%D7%9B%D7%94.pdf",
+                "title": "דיני חוזים – מגמות והערכה",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%93%D7%99%D7%A0%D7%99%20%D7%97%D7%95%D7%96%D7%99%D7%9D%20-%20%D7%9E%D7%92%D7%9E%D7%95%D7%AA%20%D7%95%D7%94%D7%A2%D7%A8%D7%9B%D7%94.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%93%D7%99%D7%A0%D7%99%20%D7%97%D7%95%D7%96%D7%99%D7%9D%20-%20%D7%9E%D7%92%D7%9E%D7%95%D7%AA%20%D7%95%D7%94%D7%A2%D7%A8%D7%9B%D7%94.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 136,
+                  "title_meaningful_chars": 21
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "האוניברסיטה העברית / כתב העת משפטים (PDF)",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.smallclaims.co.il/%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA-%D7%A7%D7%98%D7%A0%D7%95%D7%AA-%D7%93%D7%A8%D7%9B%D7%99-%D7%94%D7%95%D7%9B%D7%97%D7%AA-%D7%A8%D7%90%D7%99%D7%95%D7%AA/",
+                "title": "תביעות קטנות - דרכי הוכחת ראיות",
+                "domain": "smallclaims.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C4",
+            "query_he": "מאמרים אקדמיים/לחוברים משפטיים על הוכחות בתביעות חוזיות והמשמעות של ראיות בתביעות השבת פיקדון שכירות 'ראיות בתביעות שכירות' 'משקל ראיה' 'חוזה שכירות' כתב-עת משפטי ישראלי",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 20,
+        "query_count": 10,
+        "retry_count": 0,
+        "total_sum_ms": 63467,
+        "total_wall_ms": 18912,
+        "hygiene_counts": {
+          "keep": 20,
+          "total": 20,
+          "exclude": 0,
+          "reasons": {
+            "url_generic_index": 4
+          },
+          "downgrade": 0,
+          "report_only_mode": false,
+          "would_exclude_in_report_only": 0
+        },
+        "rate_limit_count": 0,
+        "role_corrections": [
+          {
+            "to": "persuasive_case_law",
+            "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%D7%90%22%D7%97-17842-11-11",
+            "from": "regulation",
+            "title": "החלטה בתיק תא\"ח 17842-11-11",
+            "admitted": true,
+            "claim_id": "C3"
+          }
+        ],
+        "concurrency_limit": 4,
+        "merge_order_preserved": true,
+        "fallback_to_sequential": false
+      }
+    },
+    "candidates": [
+      {
+        "role": "binding_case_law",
+        "score": 0.95,
+        "title": "פסק-דין בתיק ע\"א 4893/14",
+        "origin": "perplexity",
+        "snippet": "פסק-דין בתיק ע\"א 4893/14; בית המשפט המחוזי פסק לזכות השוכרת והורה על החזר יתרת דמי השכירות, תוך הערה כי אילו עתרה להשבת דמי השכירות לחודשי השהייה במפעל היה ראוי להורות גם על השבתם.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "supremedecisions.court.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C14%5C930%5C048%5Ce06&fileName=14048930_e06.txt&type=4",
+            "hygiene_action": "keep",
+            "url_normalized": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C14%5C930%5C048%5Ce06&fileName=14048930_e06.txt&type=4",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 148,
+            "title_meaningful_chars": 21
+          },
+          "raw_pplx_source_type": "supremedecisions",
+          "source_type_normalized": true,
+          "classified_source_class": "official_primary"
+        },
+        "query_he": "בית המשפט העליון פסקי דין 'השבת פיקדון' 'פיקדון שכירות' משכיר שלא החזיר פיקדון אילו נסיבות סותרות בין טענות נזק לבין זכות השבת הפיקדון",
+        "source_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C14%5C930%5C048%5Ce06&fileName=14048930_e06.txt&type=4",
+        "source_type": "caselaw",
+        "candidate_id": "dcc8e83e-c428-49dd-a1bd-3c285df0bbef",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק שיפוט בתביעות קטנות, תשל\"ה-1975",
+        "origin": "perplexity",
+        "snippet": "חוק שיפוט בתביעות קטנות,תשל\"ה-1975. בית משפט לתביעות קטנות ידון בתביעה אזרחית שהוגשה מאת יחיד וסכומה... אינו עולה על 2,000 לירות... ובלבד שהתביעות כאמור אינן על-פי זכות שהומחתה או שהוסבה ואינן בסמכותו הייחודית של בית משפט אחר.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://fs.knesset.gov.il/8/law/8_ls1_289680.PDF",
+            "hygiene_action": "keep",
+            "url_normalized": "https://fs.knesset.gov.il/8/law/8_ls1_289680.PDF",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 191,
+            "title_meaningful_chars": 31
+          },
+          "raw_pplx_source_type": "primary law PDF",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חוק בתי משפט לתביעות קטנות סמכויות והוראות לגבי תביעות להשבת פיקדון שכירות הגבלת סכומים סמכות שיפוטית הגשת תביעה",
+        "source_url": "https://fs.knesset.gov.il/8/law/8_ls1_289680.PDF",
+        "source_type": "legislation",
+        "candidate_id": "762c7c0a-5e83-4be3-a49a-4314dad2bca0",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק בתי המשפט [נוסח משולב], תשמ\"ד-1984",
+        "origin": "perplexity",
+        "snippet": "חוק בתי המשפט [נוסח משולב], תשמ\"ד-1984. תביעות אזרחיות – למעט תביעות הנוגעות למקרקעין – כשסכום התביעה או שווי הנושא אינו עולה על 2,500,000 שקלים חדשים ביום הגשת התובענה... לתשלום סכום שאינו עולה על 38,900 שקלים חדשים;",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.nevo.co.il/law_html/law00/74849.htm",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.nevo.co.il/law_html/law00/74849.htm",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 182,
+            "title_meaningful_chars": 33
+          },
+          "raw_pplx_source_type": "primary law text",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חוק בתי משפט לתביעות קטנות סמכויות והוראות לגבי תביעות להשבת פיקדון שכירות הגבלת סכומים סמכות שיפוטית הגשת תביעה",
+        "source_url": "https://www.nevo.co.il/law_html/law00/74849.htm",
+        "source_type": "legislation",
+        "candidate_id": "7ad48495-7fd4-456b-a011-ce8f6a171b0e",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "regulation",
+        "score": 0.95,
+        "title": "תקנות שיפוט בתביעות קטנות (סדרי דין), תשל\"ז-1976",
+        "origin": "perplexity",
+        "snippet": "תביעה תיפתח בהגשת כתב תביעה לבית המשפט לפי טופס 1 שבתוספת. ... לא הומצא כתב התביעה עד 60 ימים לפני הדיון ... ימציא התובע ... 40 ימים לפחות לפני הדיון.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.nevo.co.il/law_html/law00/98563.htm",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.nevo.co.il/law_html/law00/98563.htm",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 121,
+            "title_meaningful_chars": 42
+          },
+          "raw_pplx_source_type": "nevo.co.il",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "תקנות סדר הדין האזרחי/תקנות בתי משפט לתביעות קטנות הוראות נוהל לגבי מכתבי דרישה, בקשה לצו תשלום, עיקול נכסים והגשת תביעה להשבת פיקדון",
+        "source_url": "https://www.nevo.co.il/law_html/law00/98563.htm",
+        "source_type": "legislation",
+        "candidate_id": "766ab729-a331-458b-9c03-da83fad6a4dd",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "regulation",
+        "score": 0.95,
+        "title": "תקנות סדר הדין האזרחי, התשע״ט–2018",
+        "origin": "perplexity",
+        "snippet": "תקנות סדר הדין האזרחי, התשע״ט–2018: תקנות 95–109 עוסקות בסעדים זמניים; בתקנה 95 נקבע כי סעד זמני יינתן רק אם שוכנע בית המשפט כי לכאורה קיימת עילת תביעה ושאי-מתן הצו עלול להכביד על ביצוע פסק הדין, ובתקנה 103(ג) ו־106 נקבע כי יחולו על צו מניעה זמני בשינויים המחויבים.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.nevo.co.il/law_html/law00/157751.htm",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.nevo.co.il/law_html/law00/157751.htm",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 219,
+            "title_meaningful_chars": 30
+          },
+          "raw_pplx_source_type": "חקיקה / נוסח תקנות",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "תקנות סדר הדין האזרחי הוראות לגבי הוצאת צו מניעה זמני, צו לעיקול נכסים וצעדים זמניים אחרים בסכסוכי שכירות; נוהלי בקשה מהירה להשבת נכס או פיקדון",
+        "source_url": "https://www.nevo.co.il/law_html/law00/157751.htm",
+        "source_type": "legislation",
+        "candidate_id": "24764ed7-d881-4baa-a940-784d4d78cbed",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "regulation",
+        "score": 0.95,
+        "title": "שאלות ותשובות - תקנות סדר הדין האזרחי החדשות",
+        "origin": "perplexity",
+        "snippet": "מטרת הסעד הזמני היא להבטיח את קיומו התקין והיעיל של ההליך או את ביצועו הראוי של פסק הדין; התקנות החדשות קובעות גם שניתן לתת סעד זמני או ארעי בטרם הגשת כתב תביעה אם התביעה תוגש בתוך 7 ימים או במועד אחר שבית המשפט יורה.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.gov.il/BlobFolder/guide/guide_to_civil_procedure_01012021/he/%D7%A9%D7%90%D7%9C%D7%95%D7%AA%20%D7%95%D7%AA%D7%A9%D7%95%D7%91%D7%95%D7%AA%20%D7%A0%D7%A4%D7%95%D7%A6%D7%95%D7%AA%20-%20%D7%A2%D7%93%D7%9B%D7%95%D7%9F%20%D7%A0%D7%9B%D7%95%D7%9F%20%D7%9C-24.12.20.docx_.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.gov.il/BlobFolder/guide/guide_to_civil_procedure_01012021/he/%D7%A9%D7%90%D7%9C%D7%95%D7%AA%20%D7%95%D7%AA%D7%A9%D7%95%D7%91%D7%95%D7%AA%20%D7%A0%D7%A4%D7%95%D7%A6%D7%95%D7%AA%20-%20%D7%A2%D7%93%D7%9B%D7%95%D7%9F%20%D7%A0%D7%9B%D7%95%D7%9F%20%D7%9C-24.12.20.docx_.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 174,
+            "title_meaningful_chars": 37
+          },
+          "raw_pplx_source_type": "מסמך רשמי / דף מידע",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "תקנות סדר הדין האזרחי הוראות לגבי הוצאת צו מניעה זמני, צו לעיקול נכסים וצעדים זמניים אחרים בסכסוכי שכירות; נוהלי בקשה מהירה להשבת נכס או פיקדון",
+        "source_url": "https://www.gov.il/BlobFolder/guide/guide_to_civil_procedure_01012021/he/%D7%A9%D7%90%D7%9C%D7%95%D7%AA%20%D7%95%D7%AA%D7%A9%D7%95%D7%91%D7%95%D7%AA%20%D7%A0%D7%A4%D7%95%D7%A6%D7%95%D7%AA%20-%20%D7%A2%D7%93%D7%9B%D7%95%D7%9F%20%D7%A0%D7%9B%D7%95%D7%9F%20%D7%9C-24.12.20.docx_.pdf",
+        "source_type": "legislation",
+        "candidate_id": "a39aa1c0-faeb-47a4-8009-79dc9cc08d03",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.75,
+        "title": "פסק-דין בתיק ע\"א 20818-01-13",
+        "origin": "perplexity",
+        "snippet": "פסק-דין בתיק ע\"א 20818-01-13; ערעור על פסק דינו של בית משפט השלום בתל אביב, בתא\"מ 11614-12-10. התקבלה תביעת השבת פיקדון שחולט שלא כדין; בית המשפט דחה טענות לנזקים מחמת היעדר ראיה מספקת וקבע כי הקיזוז מתוך הפיקדון נעשה שלא כדין.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "psakdin.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+            "hygiene_reasons": [],
+            "landing_page_status": "unknown",
+            "body_meaningful_chars": 188,
+            "title_meaningful_chars": 25
+          },
+          "raw_pplx_source_type": "psakdin",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "בית המשפט העליון פסקי דין 'השבת פיקדון' 'פיקדון שכירות' משכיר שלא החזיר פיקדון אילו נסיבות סותרות בין טענות נזק לבין זכות השבת הפיקדון",
+        "source_url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-20818-01-13",
+        "source_type": "caselaw",
+        "candidate_id": "51fe6f40-27e0-40e6-9b4c-428ee685e386",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.75,
+        "title": "פסק-דין בתיק ע\"א 003084/02",
+        "origin": "perplexity",
+        "snippet": "פסק-דין בתיק ע\"א 003084/02; דן בשערוך סכום פיקדון ששולם בשנות ה-60 ובהתחייבות להחזירו בעת פינוי המזנון; בית המשפט קבע שיש להשיב את הפיקדון כשהוא צמוד למדד ונושא ריבית.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "psakdin.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%תיק-%D7%A2%22%D7א-003084-02",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%D7%90-003084-02",
+            "hygiene_reasons": [],
+            "landing_page_status": "unknown",
+            "body_meaningful_chars": 140,
+            "title_meaningful_chars": 23
+          },
+          "raw_pplx_source_type": "psakdin",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "בית המשפט העליון פסקי דין 'השבת פיקדון' 'פיקדון שכירות' משכיר שלא החזיר פיקדון אילו נסיבות סותרות בין טענות נזק לבין זכות השבת הפיקדון",
+        "source_url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%תיק-%D7%A2%22%D7א-003084-02",
+        "source_type": "caselaw",
+        "candidate_id": "e591948a-66b0-4b5f-9d1f-7fcec8fe8777",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "regulation",
+        "score": 0.75,
+        "title": "בית המשפט לתביעות קטנות - מבקר המדינה",
+        "origin": "perplexity",
+        "snippet": "בית המשפט לתביעות קטנות ... תיק תביעה נפתח ... לפי תקנות סדרי הדין ... כתב התביעה מוגש על גבי טופס שנקבע בתקנות ...",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "library.mevaker.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/1950-2008/2004-54b/2004-54b-238-TviotKtanot.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/1950-2008/2004-54b/2004-54b-238-TviotKtanot.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 93,
+            "title_meaningful_chars": 31
+          },
+          "raw_pplx_source_type": "gov_report",
+          "source_type_normalized": true,
+          "classified_source_class": "government_report"
+        },
+        "query_he": "תקנות סדר הדין האזרחי/תקנות בתי משפט לתביעות קטנות הוראות נוהל לגבי מכתבי דרישה, בקשה לצו תשלום, עיקול נכסים והגשת תביעה להשבת פיקדון",
+        "source_url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/1950-2008/2004-54b/2004-54b-238-TviotKtanot.pdf",
+        "source_type": "government_report",
+        "candidate_id": "08581baf-d0fc-4839-a446-45c03fb0b860",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.75,
+        "title": "החלטה בתיק תא\"ח 17842-11-11",
+        "origin": "perplexity",
+        "snippet": "בפסק דין/החלטה בתיק פינוי מושכר צוין כי צו זמני אינו ניתן לאחר בירור מלא של זכויות בעלי הדין אלא על סמך ראיות חלקיות ובטרם התברר הסכסוך לגופו.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "psakdin.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%D7%90%22%D7%97-17842-11-11",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%D7%90%22%D7%97-17842-11-11",
+            "hygiene_reasons": [],
+            "landing_page_status": "unknown",
+            "body_meaningful_chars": 116,
+            "title_meaningful_chars": 24
+          },
+          "role_corrected_from": "regulation",
+          "raw_pplx_source_type": "פסיקה",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "תקנות סדר הדין האזרחי הוראות לגבי הוצאת צו מניעה זמני, צו לעיקול נכסים וצעדים זמניים אחרים בסכסוכי שכירות; נוהלי בקשה מהירה להשבת נכס או פיקדון",
+        "source_url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%D7%90%22%D7%97-17842-11-11",
+        "source_type": "caselaw",
+        "candidate_id": "6cc47a49-23ad-4845-8a3e-bae5117ad8bc",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "factual_report",
+        "score": 0.118092658370733,
+        "title": "נתונים על זכאים לדיור ציבורי ולסיוע בשכר דירה",
+        "origin": "local_db",
+        "snippet": "כרי דירות בשוק הפרטי, הניתן לפי \nמגוון קריטריונים.\n20\n משרד העלייה והקליטה קובע את הזכאות של עולים חדשים לסיוע, אך \nמשרד הבינוי והשיכון הוא זה שמעביר את סכום הסיוע בשכר דירה, גם לעולים.\n21\n  \nלפי נתוני משרד הבינוי והשיכון, ברבעון הראשון של 2021 היו 179,894 משקי בית שמימשו \nסיוע בדיור (לא כולל סיוע מוגדל בשכ\"ד המיועד לממתינים לדיור הציבורי )– 93,765 מהם \n(52%) ותיקים, ו-86,129 מהם (48%) עולים חדשים",
+        "claim_id": "C4",
+        "metadata": {
+          "author": null,
+          "authors": "ד\"ר אילה אליהו",
+          "doc_type": null,
+          "category_id": 1,
+          "broken_title": false,
+          "recovered_at": "2026-04-19T17:25:42.399Z",
+          "requested_by": "יסמין פרידמן",
+          "category_name": "מדינה וממשל",
+          "recovered_title": true,
+          "recovery_method": "after_section_label",
+          "publication_date": "3 באוקטובר 2021",
+          "publication_year": "2021"
+        },
+        "query_he": "מדריך פרקטי/דו\"ח רשימת ראיות בתביעות להשבת פיקדון שכירות: טפסים, אישורי הפקדה, חוזה שכירות, תמונות מצב דירה, קבלות תשלומים, הודעות SMS/אימייל — דוחות פרקטיקה או דפי פעולה של ארגונים מובילים",
+        "source_url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7081&businessType=1",
+        "document_id": "a601974e-f5c2-43b6-bf71-bc66b0e68ce9",
+        "source_type": "knesset_research",
+        "candidate_id": "644f3104-8462-4c58-819e-3bd8a058d016",
+        "retrieval_method": "text",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "factual_report",
+        "score": 0.116148064285517,
+        "title": "ביהמ\"ש השלום רחובות, שופט ישראל פת: פס\"ד בעניין פינוי דירה שיזן תפס בטענה שהזכויות נמכרו לו (ת\"א 19529-09-19)",
+        "origin": "local_db",
+        "snippet": "ר סמכות כלשהי לדון בתביעה , שאם היו טוענים כך (כך, לשיטתם), היו מגישים לתיק זה בקשה לסילוק על הסף, מחמת חוסר סמכות (סע' 1.1.1 לסיכומים הנ\"ל). דא עקא שהנתבעים עצמם טענו בדיוק להיפך, כמצוטט באקדמות מילין וכן בפרק ב' לסיכומיהם העיקריים כדלעיל – \" שאלת הבעלות בדירה, הינה בסמכותו העניינית של כב' בית המשפט המחוזי מרכז\". רק לאחר שב\"כ התובעים עימת את הנתבעים עם הטענה בדבר ניהול ההליך המקביל בביהמ\"ש המחוזי",
+        "claim_id": "C4",
+        "metadata": {
+          "court": "בתי משפט השלום",
+          "judges": "ישראל פת",
+          "district": "מחוז מרכז",
+          "procedure_type": "אזרחי"
+        },
+        "query_he": "מדריך פרקטי/דו\"ח רשימת ראיות בתביעות להשבת פיקדון שכירות: טפסים, אישורי הפקדה, חוזה שכירות, תמונות מצב דירה, קבלות תשלומים, הודעות SMS/אימייל — דוחות פרקטיקה או דפי פעולה של ארגונים מובילים",
+        "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+        "document_id": "ecc6666d-8d0a-4461-907e-4c4d1a802200",
+        "source_type": "caselaw",
+        "candidate_id": "b74019cd-18a6-4227-897f-c3b76533f334",
+        "retrieval_method": "text",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "regulation",
+        "score": 0.95,
+        "title": "תקנות סדר הדין האזרחי, התשמ\"ד–1984",
+        "origin": "perplexity",
+        "snippet": "תקנות סדר הדין האזרחי, התשמ\"ד–1984 (נוסח היסטורי): תקנה 383(א) מסמיכה מתן צו להגבלת הוצאת נכסים מרשותו של משיב; תקנה 383(ג) קובעת כי אם פקע צו תפיסת נכסים או צו כינוס נכסים זמני ולא הורה בית המשפט מה ייעשה בנכסים, יוחזרו הנכסים בהקדם האפשרי ולא יאוחר מתום שבעה ימים.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.nevo.co.il/law_html/law01/055_060_000.htm",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.nevo.co.il/law_html/law01/055_060_000.htm",
+            "hygiene_reasons": [
+              "url_generic_index"
+            ],
+            "landing_page_status": "generic_index",
+            "body_meaningful_chars": 219,
+            "title_meaningful_chars": 30
+          },
+          "raw_pplx_source_type": "חקיקה / נוסח תקנות",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "תקנות סדר הדין האזרחי הוראות לגבי הוצאת צו מניעה זמני, צו לעיקול נכסים וצעדים זמניים אחרים בסכסוכי שכירות; נוהלי בקשה מהירה להשבת נכס או פיקדון",
+        "source_url": "https://www.nevo.co.il/law_html/law01/055_060_000.htm",
+        "source_type": "legislation",
+        "candidate_id": "b1572d56-1a32-40aa-bee0-de09bf508575",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.75,
+        "title": "הגשת תביעה קטנה לבית משפט לתביעות קטנות | הרשות השופטת",
+        "origin": "perplexity",
+        "snippet": "הגשת תביעה קטנה לבית משפט לתביעות קטנות | הרשות השופטת. האגרה על הגשת תביעה קטנה היא 1% מסכום התביעה, ולפחות 50 ₪.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.gov.il/he/service/filing_a_small_claim",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.gov.il/he/service/filing_a_small_claim",
+            "hygiene_reasons": [
+              "url_generic_index"
+            ],
+            "landing_page_status": "generic_index",
+            "body_meaningful_chars": 93,
+            "title_meaningful_chars": 45
+          },
+          "raw_pplx_source_type": "government service page",
+          "source_type_normalized": true,
+          "classified_source_class": "government_report"
+        },
+        "query_he": "חוק בתי משפט לתביעות קטנות סמכויות והוראות לגבי תביעות להשבת פיקדון שכירות הגבלת סכומים סמכות שיפוטית הגשת תביעה",
+        "source_url": "https://www.gov.il/he/service/filing_a_small_claim",
+        "source_type": "other",
+        "candidate_id": "a6286a71-1868-4bd4-9573-8c806e4895c7",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "government_report",
+        "score": 0.75,
+        "title": "התחייבות עצמית וערובה בבקשה לסעד זמני | הרשות השופטת",
+        "origin": "perplexity",
+        "snippet": "שירות זה מאפשר להגיש טופס התחייבות עצמית בבקשה לסעד זמני, בהתאם לתקנות או להחלטה שיפוטית, ויש להגישו במזכירות בית המשפט שבו מתנהל התיק.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.gov.il/he/service/obligation_statement",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.gov.il/he/service/obligation_statement",
+            "hygiene_reasons": [
+              "url_generic_index"
+            ],
+            "landing_page_status": "generic_index",
+            "body_meaningful_chars": 113,
+            "title_meaningful_chars": 44
+          },
+          "raw_pplx_source_type": "gov.il",
+          "source_type_normalized": true,
+          "classified_source_class": "government_report"
+        },
+        "query_he": "משרד המשפטים דו\"ח/הנחיות אכיפה על צווים זמניים ועיקולים דו\"ח על יעילות אכיפת פסקי דין אזרחיים ופעולות חירום משפטיות להגנה על זכויות שוכרים להשבת פיקדון",
+        "source_url": "https://www.gov.il/he/service/obligation_statement",
+        "source_type": "other",
+        "candidate_id": "2d804644-d2c0-48ae-aa59-812b6c8491d6",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "report"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הסתמכות ותמורה בדיני חוזים – מן המשפט העברי אל המשפט הישראלי / Reliance and Consideration in Contract Law – From Jewish Law to Israeli Law",
+        "origin": "perplexity",
+        "snippet": "מאמר זה מבקש להציג את בעיית ההתחייבות שבדיני החוזים ההלכתיים ואת פתרונותיה... הראשון- מתן תוקף להתחייבות באמצעות הסתמכות (מעין-נזיקית)... השני- הכרה בתקפותם של חוזים באמצעות יסוד התמורה (\"בההיא הנאה\"). \"ספר יעקב נאמן\" 31 (אהרן ברק ודוד גליקסברג עורכים, 2023). Available at SSRN.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "papers.ssrn.com",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5015336",
+            "hygiene_action": "keep",
+            "url_normalized": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5015336",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 237,
+            "title_meaningful_chars": 114
+          },
+          "raw_pplx_source_type": "SSRN",
+          "source_type_normalized": true,
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמרים אקדמיים/לחוברים משפטיים על הוכחות בתביעות חוזיות והמשמעות של ראיות בתביעות השבת פיקדון שכירות 'ראיות בתביעות שכירות' 'משקל ראיה' 'חוזה שכירות' כתב-עת משפטי ישראלי",
+        "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5015336",
+        "source_type": "other",
+        "candidate_id": "d583553d-cc6a-4b18-ae9a-154c4852c558",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "תביעות חוזיות בגין סרבנות גט",
+        "origin": "perplexity",
+        "snippet": "תביעות חוזיות בגין סרבנות גט. המאמר מצביע על דמיון בין שאלות של אכיפה, סעד, ותוקף התחייבויות לבין תביעות חוזיות, וכולל דיון בספרות חוזית ישראלית ואנגלית.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m8.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m8.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 129,
+            "title_meaningful_chars": 24
+          },
+          "raw_pplx_source_type": "אוניברסיטת חיפה (PDF)",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמרים אקדמיים/לחוברים משפטיים על הוכחות בתביעות חוזיות והמשמעות של ראיות בתביעות השבת פיקדון שכירות 'ראיות בתביעות שכירות' 'משקל ראיה' 'חוזה שכירות' כתב-עת משפטי ישראלי",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m8.pdf",
+        "source_type": "other",
+        "candidate_id": "9190d536-30dd-47b0-9e2c-09157f38304f",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "שיקול ההדדיות בדיני החוזים: מבט על שלוש סוגיות בפסיקה הישראלית",
+        "origin": "perplexity",
+        "snippet": "שיקול ההדדיות בדיני החוזים: מבט על שלוש סוגיות בפסיקה הישראלית. מאמר משפטי ישראלי העוסק בשיקולי איזון והוכחה בדיני חוזים וביישומם בפסיקה.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m3.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m3.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 117,
+            "title_meaningful_chars": 53
+          },
+          "raw_pplx_source_type": "אוניברסיטת חיפה (PDF)",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמרים אקדמיים/לחוברים משפטיים על הוכחות בתביעות חוזיות והמשמעות של ראיות בתביעות השבת פיקדון שכירות 'ראיות בתביעות שכירות' 'משקל ראיה' 'חוזה שכירות' כתב-עת משפטי ישראלי",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m3.pdf",
+        "source_type": "other",
+        "candidate_id": "ac2a9dc5-37ec-4989-9c15-b0259e7471ba",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "דיני חוזים – מגמות והערכה",
+        "origin": "perplexity",
+        "snippet": "דיני חוזים – מגמות והערכה. מאמר יסוד ישראלי המצוטט בספרות חוזית; עוסק במגמות כלליות בדיני חוזים ויכול לסייע כרקע תאורטי לשאלות של משקל ראיה והוכחה בתביעות חוזיות.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%93%D7%99%D7%A0%D7%99%20%D7%97%D7%95%D7%96%D7%99%D7%9D%20-%20%D7%9E%D7%92%D7%9E%D7%95%D7%AA%20%D7%95%D7%94%D7%A2%D7%A8%D7%9B%D7%94.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%93%D7%99%D7%A0%D7%99%20%D7%97%D7%95%D7%96%D7%99%D7%9D%20-%20%D7%9E%D7%92%D7%9E%D7%95%D7%AA%20%D7%95%D7%94%D7%A2%D7%A8%D7%9B%D7%94.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 136,
+            "title_meaningful_chars": 21
+          },
+          "raw_pplx_source_type": "האוניברסיטה העברית / כתב העת משפטים (PDF)",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמרים אקדמיים/לחוברים משפטיים על הוכחות בתביעות חוזיות והמשמעות של ראיות בתביעות השבת פיקדון שכירות 'ראיות בתביעות שכירות' 'משקל ראיה' 'חוזה שכירות' כתב-עת משפטי ישראלי",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%93%D7%99%D7%A0%D7%99%20%D7%97%D7%95%D7%96%D7%99%D7%9D%20-%20%D7%9E%D7%92%D7%9E%D7%95%D7%AA%20%D7%95%D7%94%D7%A2%D7%A8%D7%9B%D7%94.pdf",
+        "source_type": "other",
+        "candidate_id": "885da293-34ae-4c2b-acd5-2aef80b1c017",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 24671,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 61141,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 2390,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 18912,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 60243,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 1,
+        "ok": true,
+        "model": "deterministic",
+        "stage": "drafter_v2_source_sufficiency_gate"
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://www.kolzchut.org.il/he/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F_%D7%9E%D7%96%D7%95%D7%9E%D7%9F_%D7%9B%D7%A2%D7%A8%D7%95%D7%91%D7%94_%D7%9C%D7%94%D7%91%D7%98%D7%97%D7%AA_%D7%97%D7%99%D7%95%D7%91",
+        "role": "primary_statute",
+        "title": "פיקדון מזומן כערובה להבטחת חיוב (מושג)",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "השבת פיקדון בשכירות בישראל חקיקה רלוונטית כוח משכיר להשאיר פיקדון; חיפוש טקסטים בחקיקה ובחוקי משנה המכילים ביטויים 'פיקדון' ו'שכירות' ו'החזרת פיקדון' בישראל",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%95%D7%A2%D7%A8%D7%91%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%9E%D7%95%D7%AA%D7%A8-%D7%97%D7%95%D7%A7%D7%99%D7%AA-%D7%95%D7%9E%D7%94-%D7%9B%D7%93%D7%90%D7%99/",
+        "role": "primary_statute",
+        "title": "פיקדון וערבויות בשכירות: מה מותר חוקית ומה כדאי? - עורך דין מקרקעין ונדל\"ן - טאוב ושות' משרד עו\"ד",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "השבת פיקדון בשכירות בישראל חקיקה רלוונטית כוח משכיר להשאיר פיקדון; חיפוש טקסטים בחקיקה ובחוקי משנה המכילים ביטויים 'פיקדון' ו'שכירות' ו'החזרת פיקדון' בישראל",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%94%D7%97%D7%96%D7%A8%D7%AA-%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%D7%99%D7%9A-%D7%9B%D7%A9%D7%95%D7%9B%D7%A8-%D7%90%D7%95-%D7%9E%D7%A9%D7%9B%D7%99%D7%A8/",
+        "role": "primary_statute",
+        "title": "החזרת פיקדון שכירות: מה זכויותיך כשוכר או משכיר? - עורך דין מקרקעין ונדל\"ן - טאוב ושות' משרד עו\"ד",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "השבת פיקדון בשכירות בישראל חקיקה רלוונטית כוח משכיר להשאיר פיקדון; חיפוש טקסטים בחקיקה ובחוקי משנה המכילים ביטויים 'פיקדון' ו'שכירות' ו'החזרת פיקדון' בישראל",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.ailaw.co.il/post/%D7%9E%D7%A9%D7%9B%D7%99%D7%A8%D7%99%D7%9D-%D7%91%D7%98%D7%95%D7%97-%D7%99%D7%A9%D7%A0%D7%99%D7%9D-%D7%91%D7%A9%D7%A7%D7%98-%D7%94%D7%9E%D7%93%D7%A8%D7%99%D7%9A-%D7%9C%D7%A2%D7%A8%D7%91%D7%95%D7%99%D7%95%D7%AA-%D7%A9%D7%9B%D7%9C-%D7%9E%D7%A9%D7%9B%D7%99%D7%A8-%D7%95%D7%A9%D7%95%D7%9B%D7%A8-%D7%97%D7%99%D7%99%D7%91%D7%99%D7%9D-%D7%9C%D7%94%D7%9B%D7%99%D7%A8",
+        "role": "primary_statute",
+        "title": "הבנת הסכמי השכירות למגורים בישראל: כל מה שצריך לדעת",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "השבת פיקדון בשכירות בישראל חקיקה רלוונטית כוח משכיר להשאיר פיקדון; חיפוש טקסטים בחקיקה ובחוקי משנה המכילים ביטויים 'פיקדון' ו'שכירות' ו'החזרת פיקדון' בישראל",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://msl.org.il/guide/tenant-rights-deposit/",
+        "role": "scholarship",
+        "title": "ערבויות ופיקדונות בהשכרת דירות",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי 'פיקדון שכירות' 'השבת פיקדון' נזקים בחוזה שכירות רשימת תנאים לחזקת פיקדון מאמר בכתב-עת משפטי ישראלי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%95%D7%A2%D7%A8%D7%91%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9E%D7%94-%D7%9E%D7%95%D7%AA%D7%A8-%D7%97%D7%95%D7%A7%D7%99%D7%AA-%D7%95%D7%9E%D7%94-%D7%9B%D7%93%D7%90%D7%99/",
+        "role": "scholarship",
+        "title": "זכויות השוכר והמשכיר בדיני השכירות",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי 'פיקדון שכירות' 'השבת פיקדון' נזקים בחוזה שכירות רשימת תנאים לחזקת פיקדון מאמר בכתב-עת משפטי ישראלי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.globes.co.il/news/article.aspx?did=1001511947",
+        "role": "scholarship",
+        "title": "אין מקור מאומת בנתונים שסופקו",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי 'פיקדון שכירות' 'השבת פיקדון' נזקים בחוזה שכירות רשימת תנאים לחזקת פיקדון מאמר בכתב-עת משפטי ישראלי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.histadrut.org.il/%D7%91%D7%99%D7%AA-%D7%94%D7%9E%D7%A9%D7%A4%D7%98-%D7%9C%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA-%D7%A7%D7%98%D7%A0%D7%95%D7%AA/",
+        "role": "primary_statute",
+        "title": "בית המשפט לתביעות קטנות",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "חוק בתי משפט לתביעות קטנות סמכויות והוראות לגבי תביעות להשבת פיקדון שכירות הגבלת סכומים סמכות שיפוטית הגשת תביעה",
+        "drop_reason": "class_unknown_not_admitted_for_primary_statute"
+      },
+      {
+        "url": "https://www.toledano.co.il/wp-content/uploads/2019/02/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA-%D7%A9%D7%99%D7%A4%D7%95%D7%98-%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA-%D7%A7%D7%98%D7%A0%D7%95%D7%AA.pdf",
+        "role": "primary_statute",
+        "title": "תקנות שיפוט בתביעות קטנות (סדרי דין), התשל\"ז-1976",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "חוק בתי משפט לתביעות קטנות סמכויות והוראות לגבי תביעות להשבת פיקדון שכירות הגבלת סכומים סמכות שיפוטית הגשת תביעה",
+        "drop_reason": "class_unknown_not_admitted_for_primary_statute"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%AA%D7%99_%D7%94%D7%9E%D7%A9%D7%A4%D7%98",
+        "role": "regulation",
+        "title": "חוק בתי המשפט [נוסח משולב], התשמ\"ד–1984",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "תקנות סדר הדין האזרחי/תקנות בתי משפט לתביעות קטנות הוראות נוהל לגבי מכתבי דרישה, בקשה לצו תשלום, עיקול נכסים והגשת תביעה להשבת פיקדון",
+        "drop_reason": "class_unknown_not_admitted_for_regulation"
+      },
+      {
+        "url": "https://www.dinrega.com/gs/%D7%94%D7%99%D7%A2%D7%93%D7%A8%20%D7%99%D7%99%D7%A6%D7%95%D7%92%20%D7%91%D7%93%D7%99%D7%95%D7%9F%20%D7%91%D7%91%D7%99%D7%AA%20%D7%המשפט%20העליון",
+        "role": "binding_case_law",
+        "title": "היעדר ייצוג בדיון בבית המשפט העליון",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון פסקי דין קובעי כללים לבחירת ערכאה בתביעות כסף קטנות/פיקדון שכירות ומבחנים להליך מתאים (תביעות קטנות מול שלום/מחוזי)",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%A9%D7%99%D7%A4%D7%95%D7%98_%D7%91%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA_%D7%A7%D7%98%D7%A0%D7%95%D7%AA_(%D7%A1%D7%93%D7%A8%D7%99_%D7%93%D7%99%D7%9F)",
+        "role": "binding_case_law",
+        "title": "תקנות שיפוט בתביעות קטנות (סדרי דין), תשל\"ז–1976",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון פסקי דין קובעי כללים לבחירת ערכאה בתביעות כסף קטנות/פיקדון שכירות ומבחנים להליך מתאים (תביעות קטנות מול שלום/מחוזי)",
+        "drop_reason": "class_unknown_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://www.felaw.co.il/%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA-%D7%A7%D7%98%D7%A0%D7%95%D7%AA/",
+        "role": "binding_case_law",
+        "title": "תביעות קטנות – ייעוץ משפטי",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון פסקי דין קובעי כללים לבחירת ערכאה בתביעות כסף קטנות/פיקדון שכירות ומבחנים להליך מתאים (תביעות קטנות מול שלום/מחוזי)",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://he.wikipedia.org/wiki/%D7%AA%D7%91%D7%99%D7%A2%D7%94_%D7%A7%D7%98%D7%A0%D7%94",
+        "role": "binding_case_law",
+        "title": "תביעה קטנה",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון פסקי דין קובעי כללים לבחירת ערכאה בתביעות כסף קטנות/פיקדון שכירות ומבחנים להליך מתאים (תביעות קטנות מול שלום/מחוזי)",
+        "drop_reason": "bad_source"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision61551-10-24/he/61551-10-24.docx",
+        "role": "binding_case_law",
+        "title": "61551-10-24.docx",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון צו מניעה פיקדון שכירות פסק דין העדפת סעד זמני לשוכר כדי להבטיח השבת פיקדון מתי ניתן צו מניעה למניעת הפקדת סכום או שימוש בפיקדון",
+        "drop_reason": "class_government_report_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://www.kolzchut.org.il/he/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F_%D7%9E%D7%96%D7%95%D7%9E%D7%9F_%D7%9B%D7%A2%D7%A8%D7%95%D7%91%D7%94_%D7%9C%D7%94%D7%91%D7%98%D7%97%D7%AA_%D7%97%D7%99%D7%95%D7%91",
+        "role": "binding_case_law",
+        "title": "פיקדון מזומן כערובה להבטחת חיוב (מושג)",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון צו מניעה פיקדון שכירות פסק דין העדפת סעד זמני לשוכר כדי להבטיח השבת פיקדון מתי ניתן צו מניעה למניעת הפקדת סכום או שימוש בפיקדון",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.ozar-law.co.il/index2.php?id=22246&lang=HEB",
+        "role": "binding_case_law",
+        "title": "פרק ז ': תביעות פינוי, סילוק יד והפרת הסכם",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון צו מניעה פיקדון שכירות פסק דין העדפת סעד זמני לשוכר כדי להבטיח השבת פיקדון מתי ניתן צו מניעה למניעת הפקדת סכום או שימוש בפיקדון",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.at-realestatelaw.co.il/%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F-%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA-%D7%9B%D7%99%D7%A6%D7%93-%D7%9C%D7%94%D7%AA%D7%9E%D7%95%D7%93%D7%93-%D7%A2%D7%9D-%D7%9E%D7%97%D7%9C%D7%95%D7%A7%D7%AA-%D7%9E%D7%A9%D7%A4%D7%98%D7%99%D7%AA/",
+        "role": "binding_case_law",
+        "title": "פיקדון שכירות: כיצד להתמודד עם מחלוקת משפטית?",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון צו מניעה פיקדון שכירות פסק דין העדפת סעד זמני לשוכר כדי להבטיח השבת פיקדון מתי ניתן צו מניעה למניעת הפקדת סכום או שימוש בפיקדון",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://law.co.il/media/computer-law/finkelstein_CKvCr5O.pdf",
+        "role": "binding_case_law",
+        "title": "פסק דין - law.co.il",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון צו מניעה פיקדון שכירות פסק דין העדפת סעד זמני לשוכר כדי להבטיח השבת פיקדון מתי ניתן צו מניעה למניעת הפקדת סכום או שימוש בפיקדון",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA_%D7%94%D7%99%D7%95%D7%A2%D7%A5_%D7%94%D7%9E%D7%A9%D7%A4%D7%98%D7%99_%D7%9C%D7%9E%D7%9E%D7%A9%D7%9C%D7%94",
+        "role": "government_report",
+        "title": "הנחיות היועץ המשפטי לממשלה",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "משרד המשפטים דו\"ח/הנחיות אכיפה על צווים זמניים ועיקולים דו\"ח על יעילות אכיפת פסקי דין אזרחיים ופעולות חירום משפטיות להגנה על זכויות שוכרים להשבת פיקדון",
+        "drop_reason": "class_unknown_not_admitted_for_government_report"
+      },
+      {
+        "url": "https://www.yosefbdlaw.com/news/%D7%A1%D7%A2%D7%93%D7%99%D7%9D-%D7%96%D7%9E%D7%A0%D7%99%D7%99%D7%9D/",
+        "role": "government_report",
+        "title": "סעדים זמניים - YBD - יוסף בן-דוד, משרד עורכי דין",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "משרד המשפטים דו\"ח/הנחיות אכיפה על צווים זמניים ועיקולים דו\"ח על יעילות אכיפת פסקי דין אזרחיים ופעולות חירום משפטיות להגנה על זכויות שוכרים להשבת פיקדון",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.yosefbdlaw.com/news/%D7%A1%D7%A2%D7%93%D7%99%D7%9D-%D7%96%D7%9E%D7%A0%D7%99%D7%99%D7%9D/",
+        "role": "government_report",
+        "title": "סעדים זמניים - YBD - יוסף בן-דוד, משרד עורכי דין",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "משרד המשפטים דו\"ח/הנחיות אכיפה על צווים זמניים ועיקולים דו\"ח על יעילות אכיפת פסקי דין אזרחיים ופעולות חירום משפטיות להגנה על זכויות שוכרים להשבת פיקדון",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://yancu-law.co.il/%D7%9E%D7%94%D7%9D-%D7%A1%D7%A2%D7%93%D7%99%D7%9D-%D7%96%D7%9E%D7%A0%D7%99%D7%99%D7%9D-%D7%95%D7%9E%D7%AA%D7%99-%D7%9B%D7%93%D7%90%D7%99-%D7%9C%D7%94%D7%A9%D7%AA%D7%9E%D7%A9-%D7%91%D7%94%D7%9D/",
+        "role": "government_report",
+        "title": "מהם סעדים זמניים ומתי כדאי להשתמש בהם? - עורך דין",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "משרד המשפטים דו\"ח/הנחיות אכיפה על צווים זמניים ועיקולים דו\"ח על יעילות אכיפת פסקי דין אזרחיים ופעולות חירום משפטיות להגנה על זכויות שוכרים להשבת פיקדון",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.smallclaims.co.il/%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA-%D7%A7%D7%98%D7%A0%D7%95%D7%AA-%D7%93%D7%A8%D7%9B%D7%99-%D7%94%D7%95%D7%9B%D7%97%D7%AA-%D7%A8%D7%90%D7%99%D7%95%D7%AA/",
+        "role": "scholarship",
+        "title": "תביעות קטנות - דרכי הוכחת ראיות",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמרים אקדמיים/לחוברים משפטיים על הוכחות בתביעות חוזיות והמשמעות של ראיות בתביעות השבת פיקדון שכירות 'ראיות בתביעות שכירות' 'משקל ראיה' 'חוזה שכירות' כתב-עת משפטי ישראלי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      }
+    ],
+    "required_anchors": {
+      "count": 0,
+      "anchors": [],
+      "enabled": true,
+      "statuses": [],
+      "queries_emitted": []
+    },
+    "drafter_v2_full_compare": null,
+    "drafter_v2_opus_compare": null,
+    "drafter_v2_sonnet_compare": null
+  }
+}

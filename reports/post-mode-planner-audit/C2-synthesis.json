@@ -1,0 +1,3886 @@
+{
+  "id": "C2-synthesis",
+  "query": "מה הפסיקה אומרת על הלכת השיתוף?",
+  "run_id": "3ded72e6-eb34-4a29-9287-53d7e597a3b7",
+  "qa_log_id": "2fa0515a-a7ca-4500-8bf2-ee95f6215a8d",
+  "research_mode": "case_law_synthesis",
+  "mode_plan": {
+    "mode": "case_law_synthesis",
+    "audit": {
+      "mode": "case_law_synthesis",
+      "obligations": [
+        {
+          "id": "statutory_background",
+          "label": "רקע חקיקתי",
+          "satisfied": true
+        },
+        {
+          "id": "leading_case_law",
+          "label": "פסיקה מנחה/מחייבת",
+          "satisfied": true
+        },
+        {
+          "id": "applying_case_law",
+          "label": "פסיקה מיישמת",
+          "satisfied": true
+        },
+        {
+          "id": "limiting_case_law",
+          "label": "פסיקה מסייגת/מבחינה",
+          "satisfied": true
+        },
+        {
+          "id": "secondary_commentary",
+          "label": "ספרות משנית",
+          "satisfied": true
+        },
+        {
+          "id": "caselaw_dual_target",
+          "label": "שאילתות פסיקה מופנות ל-local_db וגם ל-perplexity",
+          "satisfied": true
+        }
+      ],
+      "total_count": 6,
+      "unsatisfied": [],
+      "satisfied_count": 6,
+      "targets_by_role": {
+        "scholarship": {
+          "total": 3,
+          "local_db": 0,
+          "perplexity": 3
+        },
+        "primary_statute": {
+          "total": 1,
+          "local_db": 1,
+          "perplexity": 0
+        },
+        "binding_case_law": {
+          "total": 4,
+          "local_db": 4,
+          "perplexity": 4
+        },
+        "persuasive_case_law": {
+          "total": 2,
+          "local_db": 2,
+          "perplexity": 2
+        }
+      },
+      "caselaw_includes_perplexity": true,
+      "substantive_law_query_present": true
+    },
+    "output_shape": "analysis",
+    "directive_sent": true,
+    "target_enforcement": {
+      "rule": "caselaw_roles_dual_target",
+      "applied": false,
+      "widened_query_count": 0
+    },
+    "obligations_required": [
+      "statutory_background",
+      "leading_case_law",
+      "applying_case_law",
+      "limiting_case_law",
+      "secondary_commentary",
+      "caselaw_dual_target"
+    ],
+    "classification_reasons": [
+      "case_law_synthesis_phrasing"
+    ]
+  },
+  "output_shape": null,
+  "deterministic_branch": null,
+  "insufficient_fired": false,
+  "thin_source": null,
+  "source_sufficiency": {
+    "shape": "analysis",
+    "reason": "case_law_synthesis_supported",
+    "applied": true,
+    "category": "case_law_synthesis",
+    "sufficient": true,
+    "thin_source": false,
+    "found_titles": [
+      "ע\"א 1000/92 בן נון נ' בן נון",
+      "ע\"א 52/80 שחר נ' פרידמן",
+      "פסק דין מתוך psakdin.co.il",
+      "אנציקלופדיה יהודית דעת – הלכת השיתוף בנכסים",
+      "הקדמת מועד איזון המשאבים בתיקון מס' 4 לחוק יחסי ממון והחקיקה"
+    ],
+    "topical_refs": [
+      "s1",
+      "s4",
+      "s5"
+    ],
+    "topic_phrases": [
+      "הלכת השיתוף"
+    ],
+    "topical_authority_refs": [
+      "s1"
+    ]
+  },
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "sources_passed": 6,
+  "sources_used": 5,
+  "used_sources": [
+    {
+      "title": "אנציקלופדיה יהודית דעת – הלכת השיתוף בנכסים",
+      "url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+      "type": "other"
+    },
+    {
+      "title": "ע\"א 1000/92 בן נון נ' בן נון",
+      "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+      "type": "caselaw"
+    },
+    {
+      "title": "פסק דין מתוך psakdin.co.il",
+      "url": "https://www.psakdin.co.il/Document/%D7%99%D7%A9-%D7%A8%D7%A7-%D7%93%D7%A8%D7%9A-%D7%90%D7%97%D7%AA-%D7%9C%D7%94%D7%91%D7%98%D7%99%D7%97-%D7%94%D7%A4%D7%A8%D7%93%D7%AA-%D7%A8%D7%9B%D7%95%D7%A9-%D7%91%D7%99%D7%9F-%D7%91%D7%A0%D7%99-%D7%96%D7%95%D7%92",
+      "type": "caselaw"
+    },
+    {
+      "title": "הקדמת מועד איזון המשאבים בתיקון מס' 4 לחוק יחסי ממון והחקיקה",
+      "url": "https://www.runi.ac.il/media/4zvhf00n/cohen.pdf",
+      "type": "other"
+    },
+    {
+      "title": "ע\"א 52/80 שחר נ' פרידמן",
+      "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+      "type": "caselaw"
+    }
+  ],
+  "footnotes": [
+    {
+      "url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+      "title": "אנציקלופדיה יהודית דעת – הלכת השיתוף בנכסים; ע\"א 1000/92 בן נון נ' בן נון",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+          "title": "אנציקלופדיה יהודית דעת – הלכת השיתוף בנכסים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+          "title": "ע\"א 1000/92 בן נון נ' בן נון",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+      "title": "ע\"א 1000/92 בן נון נ' בן נון; פסק דין מתוך psakdin.co.il",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+          "title": "ע\"א 1000/92 בן נון נ' בן נון",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%99%D7%A9-%D7%A8%D7%A7-%D7%93%D7%A8%D7%9A-%D7%90%D7%97%D7%AA-%D7%9C%D7%94%D7%91%D7%98%D7%99%D7%97-%D7%94%D7%A4%D7%A8%D7%93%D7%AA-%D7%A8%D7%9B%D7%95%D7%A9-%D7%91%D7%99%D7%9F-%D7%91%D7%A0%D7%99-%D7%96%D7%95%D7%92",
+          "title": "פסק דין מתוך psakdin.co.il",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+      "title": "ע\"א 1000/92 בן נון נ' בן נון; אנציקלופדיה יהודית דעת – הלכת השיתוף בנכסים; הקדמת מועד איזון המשאבים בתיקון מס' 4 לחוק יחסי ממון והחקיקה",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+          "title": "ע\"א 1000/92 בן נון נ' בן נון",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+          "title": "אנציקלופדיה יהודית דעת – הלכת השיתוף בנכסים",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/4zvhf00n/cohen.pdf",
+          "title": "הקדמת מועד איזון המשאבים בתיקון מס' 4 לחוק יחסי ממון והחקיקה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+      "title": "ע\"א 52/80 שחר נ' פרידמן; פסק דין מתוך psakdin.co.il; הקדמת מועד איזון המשאבים בתיקון מס' 4 לחוק יחסי ממון והחקיקה",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+          "title": "ע\"א 52/80 שחר נ' פרידמן",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%99%D7%A9-%D7%A8%D7%A7-%D7%93%D7%A8%D7%9A-%D7%90%D7%97%D7%AA-%D7%9C%D7%94%D7%91%D7%98%D7%99%D7%97-%D7%94%D7%A4%D7%A8%D7%93%D7%AA-%D7%A8%D7%9B%D7%95%D7%A9-%D7%91%D7%99%D7%9F-%D7%91%D7%A0%D7%99-%D7%96%D7%95%D7%92",
+          "title": "פסק דין מתוך psakdin.co.il",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/4zvhf00n/cohen.pdf",
+          "title": "הקדמת מועד איזון המשאבים בתיקון מס' 4 לחוק יחסי ממון והחקיקה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+      "title": "ע\"א 1000/92 בן נון נ' בן נון; הקדמת מועד איזון המשאבים בתיקון מס' 4 לחוק יחסי ממון והחקיקה",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+          "title": "ע\"א 1000/92 בן נון נ' בן נון",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/4zvhf00n/cohen.pdf",
+          "title": "הקדמת מועד איזון המשאבים בתיקון מס' 4 לחוק יחסי ממון והחקיקה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "answer": "**תמצית עיקרית**\n\nבפסיקה נהוגה דוקטרינת 'הלכת השיתוף' לפיה רכוש שנצבר במהלך הנישואין נתפש כחזקת בעלות משותפת, ולרוב אין צורך להוכיח כוונה מיוחדת לשיתוף לגבי נכס ספציפי; עם זאת גבולות ההלכה וחריגיה נדונים בפסיקה.¹\n\n**זהות העיקרון וההגדרה**\n\nהלכת השיתוף מוגדרת כדוקטרינה שיפוטית המייחסת חזקה של בעלות משותפת לנכסים שנצברו במסגרת חיים משותפים ומאמץ כלכלי משותף. ההנחה נגזרת מנסיבות החיים המשותפים ולא מהתרשמות פורמלית של רישום בלבד.¹\n\n**קריטריונים ותנאים להורות על שיתוף או לחלופין על חלוקה**\n\nבפסיקה בתי־המשפט בוחנים את נסיבות החיים המשותפים, תרומת הצדדים ואופי ההשקעה בנכס כדי להכריע אם להורות שיתוף או לחלופין חלוקה. ביחס לנכסי ירושה מצויה בפסיקה דרישה לראיות לכוונת שיתוף ספציפית יותר, והדבר מהווה מגבלה ביחס להנחת השיתוף הכללית.²\n\n**הסעדים וההוראות המעשיות שניתנות עלידי בתי־המשפט**\n\nבפסקי דין מופיעים סעדיים מעשיים שמטרתם לממש או להסדיר את הזכויות המשותפות: חלוקה בפועל של נכסים ניתנים לחלוקה, מכירה וחלוקת התמורה, חשבון בין הצדדים ואף צווי מניעה כדי למנוע פגיעה בזכויות השותפים. הבחירה בסעד מותאמת לנסיבות ולמניעת נזקים בלתי סבירים.³\n\n**מגבלות, חריגים והתפתחות הפסיקה**\n\nהפסיקה הגבילה את היקף ההלכה במקרים מסוימים: נדחו ניסיונות להרחבת החזקה לידועים בציבור, הושמו דרישות ראייתיות מחמירות לנכסי ירושה, ולעיתים נדונים שיקולים של עוול או אינטרס ציבורי המונעים פיצול רכוש. במקביל מתנהלים דיונים משפטיים‑חקיקתיים שמשפיעים על מועד איזון המשאבים והיקף יישום ההלכה.⁴\n\nלסיכום, הפסיקה מנסחת חזקת שיתוף כעיקרון יסוד בדיני יחסי ממון בין בני זוג, אך היקפה ועקרונות יישום הסעד כפופים לבחינה עובדתית ולחריגים פרשניים; יש לנהוג בזהירות בפרשנות מפני שחלק מהתמיכה בספרות ובפסיקה מסווגת כתמיכה חלקית בלבד.⁵",
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "הבנת ההלכה מחייבת התייחסות לפסיקת ביהמ\"ש (כדי לזהות את המקור והנוסח המחייב) ולספרות להבהרת ההגדרה והנסיבות ההיסטוריות.",
+        "text_he": "זהות והגדרה של \"הלכת השיתוף\" — מהי העקרון המשפטי שהפסיקה קבעה בשם זה (מטרת ההלכה ומה היא מניחה לגבי זכויות שותפים ברכוש משותף).",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "מבחני הכרעה הם דוקטרינליים ומבוססים על פסיקה; ספרות מסייעת בפירוט ובניתוח השיקולים החוקתיים-אזרחיים.",
+        "text_he": "קריטריונים ותנאים להורות על שיתוף בפועל או חלוקה/מכירה — אילו מבחנים בתי המשפט נוקטים כשמכריעים האם לחלק את הנכס או לשמר שיתוף, ומהם המרכיבים של מבחן זה. ",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "הסעדים נגזרים מפסיקה מחייבת ולעיתים מפסיקה משכנעת; נדרש לחקור את הפסיקה ליישום מעשי.",
+        "text_he": "ההליכים והסעד המעשי שנותנת הפסיקה בהלכות שיתוף — טיפוסי הסעד (חלוקה בפועל, מכירה ופיצוי, חשבון, צווי מניעה) והכללים לחלוקה של חלקים ותשלומים.",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "persuasive_case_law"
+        ],
+        "is_black_letter": false
+      },
+      {
+        "reason": "הבנת המגבלות דורשת סקירת פסיקה מאוחרת ומאמרים ביקורתיים שמצביעים על מגמות ושינויים.",
+        "text_he": "מגבלות, חריגים והתפתחות הפסיקה — מתי בתי המשפט מסרבים להורות שיתוף (שיקולים של עוול, אינטרס ציבורי, נזק בלתי סביר, מעמד משפחתי) וכיצד ההלכה השתנתה עם הזמן.",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "persuasive_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": false
+      }
+    ],
+    "run_id": "3ded72e6-eb34-4a29-9287-53d7e597a3b7",
+    "drafter": {
+      "ms": 46587,
+      "ok": true,
+      "lead_ref": {
+        "ref": null,
+        "shape": "analysis",
+        "reason": "shape_not_eligible"
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "completeness": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "paragraph",
+        "last_block_excerpt": "…פים לבחינה עובדתית ולחריגים פרשניים; יש לנהוג בזהירות בפרשנות מפני שחלק מהתמיכה בספרות ובפסיקה מסווגת כתמיכה חלקית בלבד."
+      },
+      "sources_used": 5,
+      "used_sources": [
+        {
+          "url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+          "title": "אנציקלופדיה יהודית דעת – הלכת השיתוף בנכסים",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "7fc3ecfc-223f-420f-80c4-a72d63b25426"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+          "title": "ע\"א 1000/92 בן נון נ' בן נון",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "caselaw",
+          "candidate_id": "3ee06e71-eb78-4feb-913c-d3903ff75a5d"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Document/%D7%99%D7%A9-%D7%A8%D7%A7-%D7%93%D7%A8%D7%9A-%D7%90%D7%97%D7%AA-%D7%9C%D7%94%D7%91%D7%98%D7%99%D7%97-%D7%94%D7%A4%D7%A8%D7%93%D7%AA-%D7%A8%D7%9B%D7%95%D7%A9-%D7%91%D7%99%D7%9F-%D7%91%D7%A0%D7%99-%D7%96%D7%95%D7%92",
+          "title": "פסק דין מתוך psakdin.co.il",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "caselaw",
+          "candidate_id": "804edfb1-506c-438e-9a25-241516f666cf"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/4zvhf00n/cohen.pdf",
+          "title": "הקדמת מועד איזון המשאבים בתיקון מס' 4 לחוק יחסי ממון והחקיקה",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "other",
+          "candidate_id": "f8d9e380-3ba1-4e6a-a4ca-8c8923cd3aa1"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+          "title": "ע\"א 52/80 שחר נ' פרידמן",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "caselaw",
+          "candidate_id": "b2e786e1-8e22-46c9-a849-2ea196c8d36e"
+        }
+      ],
+      "marker_format": "superscript",
+      "model_initial": "openai/gpt-5-mini",
+      "builder_report": {
+        "marker_count": 6,
+        "heading_count": 5,
+        "list_item_count": 0,
+        "paragraph_count": 6,
+        "cited_segment_count": 6,
+        "adjacent_marker_count": 0,
+        "distinct_source_count": 5,
+        "compound_segment_count": 6,
+        "compound_footnote_count": 5,
+        "avg_sources_per_cited_segment": 2.4
+      },
+      "footnote_count": 5,
+      "sources_passed": 6,
+      "drafter_version": "v2.1c",
+      "truncation_retry": {
+        "retry_ms": 0,
+        "attempted": false,
+        "reasons_initial": [],
+        "same_model_retry": false,
+        "escalated_to_full": false
+      },
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "source_sufficiency": {
+        "shape": "analysis",
+        "reason": "case_law_synthesis_supported",
+        "applied": true,
+        "category": "case_law_synthesis",
+        "sufficient": true,
+        "thin_source": false,
+        "found_titles": [
+          "ע\"א 1000/92 בן נון נ' בן נון",
+          "ע\"א 52/80 שחר נ' פרידמן",
+          "פסק דין מתוך psakdin.co.il",
+          "אנציקלופדיה יהודית דעת – הלכת השיתוף בנכסים",
+          "הקדמת מועד איזון המשאבים בתיקון מס' 4 לחוק יחסי ממון והחקיקה"
+        ],
+        "topical_refs": [
+          "s1",
+          "s4",
+          "s5"
+        ],
+        "topic_phrases": [
+          "הלכת השיתוף"
+        ],
+        "topical_authority_refs": [
+          "s1"
+        ]
+      },
+      "answer_style_report": {
+        "metrics": {
+          "block_count": 11,
+          "denylist_hits": [],
+          "heading_count": 5,
+          "heading_ratio": 0.455,
+          "cited_block_count": 6,
+          "total_footnote_count": 5,
+          "compound_footnote_count": 5,
+          "compound_footnote_ratio": 1,
+          "unsafe_display_title_count": 1,
+          "avg_sources_per_cited_block": 2.333,
+          "unsafe_display_title_examples": [
+            {
+              "ref": "s3",
+              "status": "fallback_truncated",
+              "display_title": "פסק דין מתוך psakdin.co.il"
+            }
+          ],
+          "partial_supported_strong_claims": [],
+          "total_source_refs_in_cited_blocks": 14
+        },
+        "report_only": true,
+        "triggered_reasons": [
+          "unsafe_display_title",
+          "compound_footnote_ratio_high",
+          "avg_sources_per_block_high",
+          "excessive_headings"
+        ]
+      },
+      "unique_source_count": 5,
+      "completeness_initial": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "paragraph",
+        "last_block_excerpt": "…פים לבחינה עובדתית ולחריגים פרשניים; יש לנהוג בזהירות בפרשנות מפני שחלק מהתמיכה בספרות ובפסיקה מסווגת כתמיכה חלקית בלבד."
+      },
+      "deterministic_branch": null,
+      "canonical_quote_fired": false,
+      "omitted_candidate_ids": [
+        "3158f344-2723-4605-976d-ce107db9b376"
+      ],
+      "structured_validation": {
+        "ok": true,
+        "errors": [],
+        "block_count": 11,
+        "heading_count": 5,
+        "list_item_count": 0,
+        "paragraph_count": 6,
+        "cited_segment_count": 6,
+        "forbidden_text_hits": [],
+        "unknown_source_refs": [],
+        "total_source_ref_count": 14
+      },
+      "max_completion_tokens_used": 8000,
+      "missing_anchor_descriptions": [],
+      "missing_anchor_caveat_injected": false,
+      "missing_docket_limitation_fired": false,
+      "statute_section_limitation_fired": false,
+      "insufficient_sources_limitation_fired": false
+    },
+    "queries": [
+      {
+        "role": "primary_statute",
+        "reason": "רקע חקיקתי: לזהות את המסגרת הסטטוטורית שבה פועלת 'הלכת השיתוף' והוראות הקשורות לבעלות משותפת וצעדי חלוקה/מכירה.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "חוק המקרקעין, תשכ\"ט-1969 הוראות לגבי בעלות משותפת, שיתוף בנכס, בקשה לחלוקת שיתוף, סעד חלוקה ומכירה",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסקי דין של בית המשפט העליון שמנסחים ומגדירים במפורש את 'הלכת השיתוף' כעיקרון משפטי.",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "הלכת השיתוף הגדרה 'הלכת השיתוף' בית המשפט העליון פסק דין הגדרה מטרת ההלכה זכויות שותפים ברכוש משותף",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "ספרות משנית שתספק הגדרה מובנית, פרשנות תכליתית והסבר מדוע הפסיקה קיבצה את העיקרון תחת השם 'הלכת השיתוף'.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי 'הלכת השיתוף' הגדרת ההלכה זכויות שותפים ברכוש משותף סקירה תיאורטית",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לזהות פסקי דין מנחים שמנסחים את המבחנים והשיקולים להורות על שיתוף בפועל, חלוקה או מכירה.",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון קריטריונים להורות על שיתוף בפועל או חלוקה/מכירה מבחנים כשמחליטים האם לחלק את הנכס 'מבחן' 'שיקולים' 'נסיבות המקרה'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "ניתוח אקדמי של מבנים מבחניים והמלצות פרשניות לגבי המרכיבים שמהם בתי המשפט נגזרים את החלטתם.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר משפטי קריטריונים להורות על שיתוף חלוקה במקרקעין סקירה שיטה מבחנים שיקולי שופטין",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסקי דין על סוגי הסעד המעשיים שניתנו בפסקי דין על שיתוף וכיצד קובעים חלוקה של חלקים ותשלומים.",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון סוגי הסעד בפסיקות שיתוף חלוקה בפועל מכירה פיצוי חשבון צו מניעה כללים לחלוקה של חלקים ותשלומים 'יישום' 'סעד מעשי'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "דיון בפסיקה יישומית של ערכאות מחוזיות/שלום שמדגימות כיצד ההלכה מיושמת בנסיבות מעשיות שונות.",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "פסקי דין מחוזי או שלום יישום הלכת השיתוף דוגמאות מקרים יישום 'בנסיבות' 'בעקבות' חלוקה בפועל מכירה פיצוי חשבון",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסקי דין מנחים שקובעים מתי ויתרו בתי המשפט על הוראת שיתוף והציגו חריגים וסייגים להלכה.",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון חריגים להורות שיתוף מתי מסרבים להורות שיתוף עוול אינטרס ציבורי נזק בלתי סביר מעמד משפחתי 'סייג' 'דעת מיעוט'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "פשיטה על פסיקה נמוכה שמיישמת או מצמצמת את ההלכה בהקשרים מיוחדים ובוחנת מגבלות מעשיות.",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "פסקי דין מחוזי חריגים וסייגים להלכת השיתוף 'הבחנה' 'צמצום' 'ביקורת' דוגמאות מקרים החלטות שביקשו להגביל או למתן הוראת שיתוף",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "ניתוח אקדמי שיתאר את התפתחות הפסיקה, המגמות והשינויים בעמדות בתי המשפט לגבי חריגים וסייגים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמר סקירה התפתחות פסיקת השיתוף סייגים חריגים ביקורת על התפתחות הפסיקה 'הלכת השיתוף' התפתחות היסטורית",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 46959,
+        "mode_plan": {
+          "mode": "case_law_synthesis",
+          "audit": {
+            "mode": "case_law_synthesis",
+            "obligations": [
+              {
+                "id": "statutory_background",
+                "label": "רקע חקיקתי",
+                "satisfied": true
+              },
+              {
+                "id": "leading_case_law",
+                "label": "פסיקה מנחה/מחייבת",
+                "satisfied": true
+              },
+              {
+                "id": "applying_case_law",
+                "label": "פסיקה מיישמת",
+                "satisfied": true
+              },
+              {
+                "id": "limiting_case_law",
+                "label": "פסיקה מסייגת/מבחינה",
+                "satisfied": true
+              },
+              {
+                "id": "secondary_commentary",
+                "label": "ספרות משנית",
+                "satisfied": true
+              },
+              {
+                "id": "caselaw_dual_target",
+                "label": "שאילתות פסיקה מופנות ל-local_db וגם ל-perplexity",
+                "satisfied": true
+              }
+            ],
+            "total_count": 6,
+            "unsatisfied": [],
+            "satisfied_count": 6,
+            "targets_by_role": {
+              "scholarship": {
+                "total": 3,
+                "local_db": 0,
+                "perplexity": 3
+              },
+              "primary_statute": {
+                "total": 1,
+                "local_db": 1,
+                "perplexity": 0
+              },
+              "binding_case_law": {
+                "total": 4,
+                "local_db": 4,
+                "perplexity": 4
+              },
+              "persuasive_case_law": {
+                "total": 2,
+                "local_db": 2,
+                "perplexity": 2
+              }
+            },
+            "caselaw_includes_perplexity": true,
+            "substantive_law_query_present": true
+          },
+          "output_shape": "analysis",
+          "directive_sent": true,
+          "target_enforcement": {
+            "rule": "caselaw_roles_dual_target",
+            "applied": false,
+            "widened_query_count": 0
+          },
+          "obligations_required": [
+            "statutory_background",
+            "leading_case_law",
+            "applying_case_law",
+            "limiting_case_law",
+            "secondary_commentary",
+            "caselaw_dual_target"
+          ],
+          "classification_reasons": [
+            "case_law_synthesis_phrasing"
+          ]
+        },
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 22753,
+        "confidence": 0.7,
+        "legal_area": "דיני מקרקעין",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "answer_intent": {
+          "output_shape": "analysis"
+        },
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "interpretation_note": null
+      },
+      "claims_count": 4,
+      "queries_count": 10,
+      "research_mode": "case_law_synthesis",
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 176637,
+    "verifier": {
+      "ms": 40735,
+      "counts": {
+        "by_support": {
+          "direct": 1,
+          "partial": 5,
+          "unrelated": 7,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 11,
+          "false": 2
+        },
+        "model_verdicts": 13,
+        "by_support_model": {
+          "direct": 1,
+          "partial": 5,
+          "unrelated": 7,
+          "tangential": 0
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "3ee06e71-eb78-4feb-913c-d3903ff75a5d",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "b2e786e1-8e22-46c9-a849-2ea196c8d36e",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "804edfb1-506c-438e-9a25-241516f666cf",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "7fc3ecfc-223f-420f-80c4-a72d63b25426",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "f8d9e380-3ba1-4e6a-a4ca-8c8923cd3aa1",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": false,
+          "best_support": "partial",
+          "candidate_id": "3158f344-2723-4605-976d-ce107db9b376",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 40734,
+          "label": "batch1",
+          "attempts": 1,
+          "claim_ids": [
+            "C1",
+            "C3",
+            "C4"
+          ],
+          "escalated": false,
+          "recovered": false,
+          "candidates": 13,
+          "split_probes": 0
+        }
+      ],
+      "dropped": [
+        {
+          "role": "binding_case_law",
+          "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+          "origin": "local_db",
+          "reason": "פסק דין עוסק בסמכות וסילוק תביעה מנהלית/אדמיניסטרטיבית; אינו דן בהלכת השיתוף או בהגדרת חזקת שיתוף.",
+          "candidate_id": "0b21b719-80b4-4c62-beb7-3102a8e012db",
+          "worst_support": "unrelated",
+          "retrieval_method": "text"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "עקרונות להבטחת עצמאות גופי שידור ציבורי",
+          "origin": "local_db",
+          "reason": "דוח של הכנסת בנושא עצמאות גופי שידור; לא קשור להלכות שיתוף או למגבלות בפסיקה בנוגע לחלוקה רכושית בין בני זוג.",
+          "candidate_id": "d6130496-6246-40e3-80e5-c19e566320b0",
+          "worst_support": "unrelated",
+          "retrieval_method": "text"
+        },
+        {
+          "role": "persuasive_case_law",
+          "title": "ע\"א 7703-10 - גיא ישועה נ. מדינת ישראל - מנהלת סל\"ע",
+          "origin": "local_db",
+          "reason": "הקטע נראה עוסק בסוגיות חוקתיות ופיצוי ולא בפסיקה הנוגעת לסעדים בהלכות שיתוף.",
+          "candidate_id": "f87c026f-d841-4eab-892f-2b5ed2164463",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        },
+        {
+          "role": "persuasive_case_law",
+          "title": "תקנות הניקוז וההגנה מפני שטפונות (סדרי דין בבתי דין לעניני מים ובערעורים על החלטותיהם)",
+          "origin": "local_db",
+          "reason": "תקנות ניקוז והליכי בית דין למים — אינם נוגעים להלכת השיתוף או למגבלות בהלכות שיתוף.",
+          "candidate_id": "d9110de4-33c8-4722-ab48-6e7d4d686208",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        },
+        {
+          "role": "primary_statute",
+          "title": "עיונים בנושא השכירות",
+          "origin": "local_db",
+          "reason": "מאמר על זכויות חכירה ומשכון שכירות; אינו דן בהלכת השיתוף או בחזקת שיתוף בין בני זוג.",
+          "candidate_id": "ac50bad7-763a-4bd8-aafe-9225239693c5",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        },
+        {
+          "role": "persuasive_case_law",
+          "title": "ספרים, ו' לוסטהויז וט' שפניץ: חוזים אחידים",
+          "origin": "local_db",
+          "reason": "מאמר על חוזים אחידים ואי-התאמה לתכנים של הלכת השיתוף וסעדים כמו חלוקה/מכירה/חשבון.",
+          "candidate_id": "29b04de9-6c2a-4268-8a0e-442165b595b4",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        },
+        {
+          "role": "persuasive_case_law",
+          "title": "החקירה האחרונה של דיויד וינר",
+          "origin": "local_db",
+          "reason": "מאמר/חקירה על נושאים של חיסיון וסייגים אחרים; הקטע אינו עוסק במגבלות או בהתפתחות פסיקת הלכת השיתוף.",
+          "candidate_id": "34aa0adb-d25f-4ee2-a7d4-d9126f2b17f9",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        }
+      ],
+      "batch_ms": [
+        40734
+      ],
+      "parallel": true,
+      "verdicts": [
+        {
+          "reason": "פסק דין עוסק בסמכות וסילוק תביעה מנהלית/אדמיניסטרטיבית; אינו דן בהלכת השיתוף או בהגדרת חזקת שיתוף.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "0b21b719-80b4-4c62-beb7-3102a8e012db",
+          "supported_points": []
+        },
+        {
+          "reason": "מקור אנציקלופדי מספק הגדרה ישירה של הלכת השיתוף והעקרונות הבסיסיים שלה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "7fc3ecfc-223f-420f-80c4-a72d63b25426",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "מנסח את חזקת השיתוף: רכוש שנצבר במהלך הנישואין נחשב למשותף.",
+            "מציין שרישום פורמלי אינו קובע באופן אוטומטי את הבעלות."
+          ]
+        },
+        {
+          "reason": "מאמר על זכויות חכירה ומשכון שכירות; אינו דן בהלכת השיתוף או בחזקת שיתוף בין בני זוג.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": false,
+          "candidate_id": "ac50bad7-763a-4bd8-aafe-9225239693c5",
+          "supported_points": []
+        },
+        {
+          "reason": "מאמר על מקרקעין מספק רקע בתחום הרלוונטי אך אינו עוסק בהגדרה ספציפית של הלכת השיתוף.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": false,
+          "candidate_id": "3158f344-2723-4605-976d-ce107db9b376",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "דן בעקרונות כלליים של בעלות במקרקעין וחריגים להבחנה בין מקרקעין למתחדשים.",
+            "מהווה רקע בתחום דיני המקרקעין הרלוונטי להיבטים של חזקת שיתוף, אך אינו מגדיר את הלכת השיתוף עצמה."
+          ]
+        },
+        {
+          "reason": "פסק דין זה מסביר את החזקת השיתוף והנמקותיה, אך הקטע שסופק אינו מפרט את אופי הסעדים הפרוצדורליים (חלוקה/מכירה/חשבון/צווי מניעה).",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "3ee06e71-eb78-4feb-913c-d3903ff75a5d",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מביא נוסח פסיקה המנסחת את חזקת השיתוף לגבי רכוש שנצבר על ידי בני זוג.",
+            "מדגיש כי אין צורך להוכיח כוונת שיתוף מיוחדת לגבי נכס מסוים."
+          ]
+        },
+        {
+          "reason": "פסק דין רלוונטי למגבלות החזקת השיתוף אך אינו מפרט באופן מוחלט את סוגי הסעדים הפרוצדורליים והכללים לחלוקת חלקים ותשלומים.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "b2e786e1-8e22-46c9-a849-2ea196c8d36e",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "דוחה הרחבה של חזקת השיתוף ל'ידועים בציבור'.",
+            "מספק גבולות לדוקטרינת חזקת השיתוף הרלוונטיים להליכים בין צדדים שונים."
+          ]
+        },
+        {
+          "reason": "הקטע נראה עוסק בסוגיות חוקתיות ופיצוי ולא בפסיקה הנוגעת לסעדים בהלכות שיתוף.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "f87c026f-d841-4eab-892f-2b5ed2164463",
+          "supported_points": []
+        },
+        {
+          "reason": "מאמר על חוזים אחידים ואי-התאמה לתכנים של הלכת השיתוף וסעדים כמו חלוקה/מכירה/חשבון.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "29b04de9-6c2a-4268-8a0e-442165b595b4",
+          "supported_points": []
+        },
+        {
+          "reason": "פסק דין על הלכת השיתוף שמכריע במגבלות לגבי נכסי ירושה והוכחת כוונת שיתוף — תומך ישירות בטענה על מגבלות והתפתחות הפסיקה.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "804edfb1-506c-438e-9a25-241516f666cf",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "פסיקה על מקרה של 58 שנות נישואין שקובעת שנכסי ירושה יהיו ברי שיתוף רק אם הוכחה כוונת שיתוף ספציפית.",
+            "ממחיש מגבלה/חריג ביחס לנכסי ירושה בהלכות השיתוף."
+          ]
+        },
+        {
+          "reason": "דוח של הכנסת בנושא עצמאות גופי שידור; לא קשור להלכות שיתוף או למגבלות בפסיקה בנוגע לחלוקה רכושית בין בני זוג.",
+          "support": "unrelated",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "d6130496-6246-40e3-80e5-c19e566320b0",
+          "supported_points": []
+        },
+        {
+          "reason": "מקור אקדמי המספק רקע וניתוח על התפתחות ההלכה והחריגים, אך אינו פסק דין מחייב בפני עצמו.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "f8d9e380-3ba1-4e6a-a4ca-8c8923cd3aa1",
+          "support_subtype": "background",
+          "supported_points": [
+            "מאמר דן בהתפתחות הפסיקה והחקיקה סביב הלכת השיתוף ובשינויי חוק (הקדמת מועד איזון המשאבים).",
+            "מספק ניתוח מחקרי של השינויים וההגבלות שנדונו בפסיקה ובחקיקה."
+          ]
+        },
+        {
+          "reason": "תקנות ניקוז והליכי בית דין למים — אינם נוגעים להלכת השיתוף או למגבלות בהלכות שיתוף.",
+          "support": "unrelated",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "d9110de4-33c8-4722-ab48-6e7d4d686208",
+          "supported_points": []
+        },
+        {
+          "reason": "מאמר/חקירה על נושאים של חיסיון וסייגים אחרים; הקטע אינו עוסק במגבלות או בהתפתחות פסיקת הלכת השיתוף.",
+          "support": "unrelated",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "34aa0adb-d25f-4ee2-a7d4-d9126f2b17f9",
+          "supported_points": []
+        }
+      ],
+      "demotions": [
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C4",
+          "candidate_id": "804edfb1-506c-438e-9a25-241516f666cf",
+          "reason_excerpt": "פסק דין על הלכת השיתוף שמכריע במגבלות לגבי נכסי ירושה והוכחת כוונת שיתוף — תומך ישירות בטענה על מגבלות והתפתחות הפסיקה."
+        }
+      ],
+      "batch_count": 1,
+      "call_failed": false,
+      "model_final": "openai/gpt-5-mini",
+      "retry_count": 0,
+      "per_claim_ms": {
+        "C1": 40734,
+        "C3": 40734,
+        "C4": 40734
+      },
+      "total_sum_ms": 40734,
+      "call_failures": [],
+      "model_initial": "openai/gpt-5-mini",
+      "total_wall_ms": 40734,
+      "retry_attempts": 0,
+      "escalated_claims": [],
+      "rate_limit_count": 0,
+      "candidates_usable": 6,
+      "concurrency_limit": 2,
+      "demotions_by_rule": {
+        "analogical": 0,
+        "background": 0,
+        "landing_page": 1,
+        "wrong_subject": 0,
+        "self_contradiction": 0
+      },
+      "escalated_batches": 0,
+      "recovered_batches": 0,
+      "candidates_dropped": 7,
+      "candidates_verified": 13,
+      "split_probe_attempts": 0,
+      "merge_order_preserved": true,
+      "fallback_to_sequential": false
+    },
+    "retrieval": {
+      "ms": 19181,
+      "pool": {
+        "drops": [
+          {
+            "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+            "role": "persuasive_case_law",
+            "score": 0.75,
+            "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+            "origin": "perplexity",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/blobfolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "8b879170-107d-4283-a6e2-5ab24fa16112",
+            "rank_before_drop": 46,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+            "role": "binding_case_law",
+            "score": 0.132543625682592,
+            "title": "בית המשפט לענייני משפחה בת\"א-יפו, השופט תומר שלם: פסק דין שעניינו תביעה להשבה כספית בין ידועים בציבור (תלה\"מ 18668-11-23)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "e4bc0f6e-a554-44d6-b658-687b16854cbe",
+            "rank_before_drop": 1,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=280",
+            "role": "binding_case_law",
+            "score": 0.129014701023698,
+            "title": "ביהמ\"ש לענייני משפחה בחיפה, לירון זרבל - קדשאי: פסק דין בעניין הסכם שלום בית ולחילופין גירושין (תלה\"מ 4061-06-21)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "4ad0066f-78d5-4622-b0f3-e2863e5b4694",
+            "rank_before_drop": 2,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+            "role": "binding_case_law",
+            "score": 0.126664357632399,
+            "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "4acd974f-05b2-473d-8951-f8c627a350e6",
+            "rank_before_drop": 3,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+            "role": "binding_case_law",
+            "score": 0.12582922577858,
+            "title": "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "79488358-1b1b-4f0f-8041-de689faeea87",
+            "rank_before_drop": 4,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+            "role": "binding_case_law",
+            "score": 0.125483811274171,
+            "title": "בית המשפט לענייני משפחה באשדוד, סגנית הנשיא השופטת ענת אלפסי: פסק דין שעניינו אכיפת הסכם העברת בעלות בדירה (תלה\"מ 30657-01-21)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "5cbdd298-ddce-4a01-8428-0c5da42971e4",
+            "rank_before_drop": 5,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "primary_statute",
+            "score": 0.124169323965907,
+            "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' ריבי לב אוחיון: פסק דין בעניין בקשה לסילוק התובענה על הסף (תמ\"ש 25065-11-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "d424cfe6-c158-430f-ac14-8b6bdb806288",
+            "rank_before_drop": 6,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+            "role": "primary_statute",
+            "score": 0.123747151717544,
+            "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: פסק דין לפי חוק יחסי ממון (תמ\"ש 28833-05-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "cd6bec2b-d5cc-4986-a01c-ef13919c3d62",
+            "rank_before_drop": 7,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1050",
+            "role": "binding_case_law",
+            "score": 0.122740975022316,
+            "title": "ביהמ\"ש לענייני משפחה בקריות, השופטת ליאת דהן חיון: החלטה בעניין צו מניעה וצו עשה (תלה\"מ 46533-11-24)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "87dcd16c-81e5-4c80-a706-3b956eb361c3",
+            "rank_before_drop": 8,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.121319665014744,
+            "title": "בית המשפט המחוזי ב\"ש, השופטת טל לחיאני שהם: גזר דין לנאשמת בהמתה בקלות דעת, הפקרה ונהיגה בשכרות אשר גרמה למותה של ניר אבוחצירה ז\"ל (ת\"פ 19589-02-24)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "0b242cdf-1dc6-41a8-8d19-d6288cf455c0",
+            "rank_before_drop": 10,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+            "role": "persuasive_case_law",
+            "score": 0.121277450025082,
+            "title": "בית המשפט המחוזי באר שבע, אב\"ד סג\"נ השופט אריאל ואגו, השופט אלון אינפלד, השופט אריאל חזק: גזר דין מותר בפרסום ליוטיובר שהורשע בעבירות מין (תפח\"ע 43300-09-20)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "78dff9d9-a5c0-485d-ad88-7d2e6a59821f",
+            "rank_before_drop": 11,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=60",
+            "role": "persuasive_case_law",
+            "score": 0.121277448162436,
+            "title": "ימ\"ש מחוזי ת\"א-יפו, השופט יעקב שקד: פסק דין המאשר הסדר בתביעה ייצוגית נגד חברת חזיבנק דיזיין (ת\"צ 47928-10-13)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "f6fb9bf6-f2eb-4ec5-a192-70967c8a430e",
+            "rank_before_drop": 12,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "binding_case_law",
+            "score": 0.120626097917557,
+            "title": "בימ\"ש עליון, הרכב שופטים השופטת דפנה ברק-ארז, השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין, השופט יחיאל כשר:  פס\"ד בפרשת העוברים (בע\"מ 69395-03-25)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "5615d5b2-79c3-4a7a-a6cc-89bba23495ad",
+            "rank_before_drop": 13,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+            "role": "persuasive_case_law",
+            "score": 0.120022995769978,
+            "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "a9e358f1-e2c5-4093-bdc5-1981200de230",
+            "rank_before_drop": 14,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "persuasive_case_law",
+            "score": 0.119540514796972,
+            "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "doc:c817223f-1d10-48ae-b74d-7a0e26a9da6a",
+            "drop_reason": "dup_document_id",
+            "source_type": "caselaw",
+            "candidate_id": "4658f002-e8d7-451d-8b07-ca07797851db",
+            "rank_before_drop": 15,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=60",
+            "role": "persuasive_case_law",
+            "score": 0.118941432237625,
+            "title": "בית משפט השלום לתעבורה בבאר שבע, השופט הבכיר אלון אופיר: גזר דין לנאשם שנהג בזמן פסילה בפעם החמישית (פל\"א 8465-09-24)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "e9286c76-5f0a-480d-8980-a032f83f013f",
+            "rank_before_drop": 16,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=280",
+            "role": "persuasive_case_law",
+            "score": 0.118937412649393,
+            "title": "ביהמ\"ש לענייני משפחה בחיפה, ש' אלה פטל: פסק דין בעניין דמי שימוש ראויים בגין שימוש בדירת מגורים (תלה\"מ 46793-12-23)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "9da63623-8f55-4e9d-9ca6-1387af3c6c4a",
+            "rank_before_drop": 17,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1080",
+            "role": "persuasive_case_law",
+            "score": 0.118454931676388,
+            "title": "ביהמ\"ש לענייני משפחה בראשל\"צ, השופטת מירה רום פלאי: פס\"ד בשאלה מה דינם של הליכים המנוהלים ע\"י בעל דין שמפר את כללי הדיון, אינו מקיים החלטות שיפוטיות ועוד (ת\"ע 68570-01-19 ועוד)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "a501b347-52fd-49f9-94b8-135a119522bf",
+            "rank_before_drop": 18,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+            "role": "persuasive_case_law",
+            "score": 0.118454929813743,
+            "title": "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "5e430a7d-2f21-46da-be07-ad6c7e8d7ca9",
+            "rank_before_drop": 19,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=70",
+            "role": "binding_case_law",
+            "score": 0.118237812444568,
+            "title": "בימ\"ש המחוזי ת\"א, השופטת אירית קלמן ברום: החלטה בבקשה לצו מניעה זמני להיכל התרבות להתקשר עם קבוצת R2M (ת\"א 12431-05-25)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "f68cef1b-ff0e-4ae4-9638-74a878a8e13e",
+            "rank_before_drop": 20,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+            "role": "persuasive_case_law",
+            "score": 0.118237812444568,
+            "title": "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 65165-12-23)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "58b0bb2f-e453-4a5f-a89f-6ca02212bb22",
+            "rank_before_drop": 21,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+            "role": "persuasive_case_law",
+            "score": 0.118237812444568,
+            "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "55fc487e-64c6-41ec-ab7b-d0895aed3301",
+            "rank_before_drop": 22,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+            "role": "persuasive_case_law",
+            "score": 0.118237812444568,
+            "title": "ביהמ\"ש לענייני משפחה בתל אביב יפו, ש' ורד שביט פינקלשטיין: פסק דין בעניין תביעה כספית שהגישה אפוטרופ בשם התובעת כנגד אחייניתה להשבת כספים שנטלו שלא כדין טרם מינוי אפוטרופוס על התובעת (תמ\"ש 32657-09-20)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "72a85c60-2812-4477-abf0-b637e1f58904",
+            "rank_before_drop": 23,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1060",
+            "role": "binding_case_law",
+            "score": 0.118090333789587,
+            "title": "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת נאוה גדיש: החלטה בבקשת אם למתן צו מניעה כנגד אבי הקטינים למניעת קרבה אל הקטינים לביתם ולמסגרות החינוך (תלה\"מ 66070-09-24)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "05169ab5-9c24-46c6-bafd-25db03f537dd",
+            "rank_before_drop": 24,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "primary_statute",
+            "score": 0.117520122230053,
+            "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין תביעה למתן סעד הצהרתי בדבר קיומן של זכויות במקרקעין, וכן לחיוב בדמי שימוש ראויים (תמ\"ש 11810-09-21)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "0d2c39ed-ecb3-466c-b7fb-fbbbb0db4446",
+            "rank_before_drop": 25,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1050",
+            "role": "binding_case_law",
+            "score": 0.117369346693158,
+            "title": "ביהמ\"ש לענייני משפחה בת\"א, סגן הנשיאה יהורם שקד: פס\"ד הדן בשאלה האם להורות על ביטול עסקאות מתנה והעברת סכום קצוב שביצעה האשל\"א לבנה בטענה לפגמים ברצון ובטרם מונה לה אפוטרופוס (תמ\"ש 42085-01-22 ועוד)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "a190b629-dcf5-4387-a625-e093b50c6b23",
+            "rank_before_drop": 26,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=100",
+            "role": "persuasive_case_law",
+            "score": 0.117369346693158,
+            "title": "בימ\"ש מחוזי לנוער באר שבע, השופטת טל לחיאני שהם: פסק דין בנושא החלטת בית משפט קמא להתיר הזנה בכפייה לקטין באמצעות זונדה (ענ\"א 70267-04-25)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "c2c8c535-4491-42a7-b757-ee712f3be0d9",
+            "rank_before_drop": 27,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+            "role": "binding_case_law",
+            "score": 0.116148064285517,
+            "title": "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "359f3db9-4048-4bae-9df2-8b969f08047d",
+            "rank_before_drop": 28,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+            "role": "primary_statute",
+            "score": 0.116148062422872,
+            "title": "בית המשפט לענייני משפחה באשדוד, סגנית הנשיא השופטת ענת אלפסי: פסק דין שעניינו אכיפת הסכם העברת בעלות בדירה (תלה\"מ 30657-01-21)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "620e8a1c-8b25-4149-86aa-2b911f7f69e5",
+            "rank_before_drop": 29,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
+            "role": "binding_case_law",
+            "score": 0.115952054411173,
+            "title": "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "42ebc3c2-3039-4193-9d09-74976c153db2",
+            "rank_before_drop": 30,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=500",
+            "role": "binding_case_law",
+            "score": 0.115198177658021,
+            "title": "בימ\"ש עליון, אב\"ד השופט יוסף אלרון, השופטת גילה כנפי-שטייניץ, השופטת רות רונן: פס\"ד בערעור על הכ\"ד ברצח בנסיבות מחמירות של רעייתו וגזה\"ד (ע\"פ 7905/23)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "48772be7-8320-4f1f-8a6d-4941d5c7628e",
+            "rank_before_drop": 31,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+            "role": "binding_case_law",
+            "score": 0.115198177658021,
+            "title": "בימ\"ש עליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת רות רונן: פס\"ד בערעור על זיכוי נאשמת מעבירת מסירת ידיעה העלולה להיות לתועלת האויב (ע\"פ ב3766-24)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "bd65a1bc-22ac-4e90-a7ea-a0de3e2815a2",
+            "rank_before_drop": 32,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+            "role": "binding_case_law",
+            "score": 0.115198177658021,
+            "title": "בימ\"ש עליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פס\"ד בערעור של מטפלת שהורשעה בעבירה של התעללות בחסר ישע על-ידי אחראי (ע\"פ 5770/24)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "6c46be5f-22e3-4962-9f13-6efec6ccbecb",
+            "rank_before_drop": 33,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1050",
+            "role": "binding_case_law",
+            "score": 0.115198177658021,
+            "title": "ביהמ\"ש לענייני משפחה בת\"א, סגן הנשיאה יהורם שקד: פס\"ד הדן בשאלה האם להורות על ביטול עסקאות מתנה והעברת סכום קצוב שביצעה האשל\"א לבנה בטענה לפגמים ברצון ובטרם מונה לה אפוטרופוס (תמ\"ש 42085-01-22 ועוד)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "a7323c04-fd5e-4649-8b1b-96c0d14f22f1",
+            "rank_before_drop": 34,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8122&businessType=1",
+            "role": "binding_case_law",
+            "score": 0.114184964820743,
+            "title": "חלוקה ומשתמשי קצה",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:main.knesset.gov.il/activity/info/research/pages/incident.aspx",
+            "drop_reason": "dup_url",
+            "source_type": "knesset_research",
+            "candidate_id": "e15e25ac-3c6b-4aa7-9607-16aff9f22f48",
+            "rank_before_drop": 35,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+            "role": "primary_statute",
+            "score": 0.113958048075438,
+            "title": "בית המשפט לענייני משפחה בב\"ש, סג\"נ השופטת רותם קודלר עיאש: החלטה בתביעה למתן פס\"ד הצהרתי בעניין זכויות חזקה ושימוש במגרש ומנגד בקשה להורות על סילוק התביעה על הסף (תמ\"ש 58185-07-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "17eeacd6-d4c6-4504-995f-8c375f7fd454",
+            "rank_before_drop": 36,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=520",
+            "role": "binding_case_law",
+            "score": 0.113875372707844,
+            "title": "ביהמ\"ש לענייני משפחה בירושלים, השופט פליקס גורודצקי: החלטה בעניין פירוק שיתוף בדירה לפני איזון כולל (תמ\"ש 24468-09-24)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "c451a178-6a89-4184-bc38-3087b021eb6a",
+            "rank_before_drop": 37,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=510",
+            "role": "binding_case_law",
+            "score": 0.113622069731355,
+            "title": "ביהמ\"ש לענייני משפחה בפתח תקווה, השופטת אפרת ונקרט: פס\"ד בבקשה לצו מניעה (תמ\"ש 30471-03-23)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "8c826db4-eb45-41f9-898b-652237453f4b",
+            "rank_before_drop": 38,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=520",
+            "role": "binding_case_law",
+            "score": 0.113008162379265,
+            "title": "ביהמ\"ש לענייני משפחה בירושלים, השופט פליקס גורודצקי: החלטה בעניין פירוק שיתוף בדירה לפני איזון כולל (תמ\"ש 24468-09-24)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "88732477-afa8-402a-ac9b-efefd7e2e515",
+            "rank_before_drop": 39,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+            "role": "primary_statute",
+            "score": 0.112348519638181,
+            "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "ec4d963a-3467-4aaa-a3d4-972cfa81ddd8",
+            "rank_before_drop": 40,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1040",
+            "role": "binding_case_law",
+            "score": 0.111398633010685,
+            "title": "ביהמ\"ש לענייני משפחה בחיפה, השופטת הילה גורביץ עובדיה: החלטה בתביעה לאיזון משאבים ופירוק שיתוף (תלה\"מ 75693-01-24)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "78a80c6d-3d67-4117-9c80-b1466bc1badc",
+            "rank_before_drop": 41,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+            "role": "scholarship",
+            "score": 0.75,
+            "title": "הלכת השיתוף בנכסים",
+            "origin": "perplexity",
+            "claim_id": "C4",
+            "drop_key": "url:www.daat.ac.il/encyclopedia/value.asp",
+            "drop_reason": "dup_url",
+            "source_type": "other",
+            "candidate_id": "a7c10946-4811-462d-8e47-695a95f5166a",
+            "rank_before_drop": 47,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3270",
+            "role": "binding_case_law",
+            "score": 0.3757418151297438,
+            "title": "ביהמ\"ש לענייני משפחה בנצרת, השופטת רונית גורביץ': פס\"ד בעניין אחריות הורית משותפת על אף נוכחות פיזית לא שווה (תלה\"מ 46457-07-10 ועוד)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "d0ea86d5-4737-44a4-8cc8-e3c7bcb81ec4",
+            "rank_before_drop": 51,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/772",
+            "role": "primary_statute",
+            "score": 0.374237021303883,
+            "title": "מקרקעין ומיטלטלין",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "3067acd2-293d-4d67-ad2e-15c1b8ffe130",
+            "rank_before_drop": 55,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%93%D7%99%D7%95%D7%9F_%D7%91%D7%91%D7%AA%D7%99-%D7%94%D7%93%D7%99%D7%9F_%D7%94%D7%A8%D7%91%D7%A0%D7%99%D7%99%D7%9D_%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+            "role": "persuasive_case_law",
+            "score": 0.3735744657808008,
+            "title": "תקנות הדיון בבתי-הדין הרבניים בישראל",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "vector:C4:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "israeli_law",
+            "candidate_id": "2c585933-d9b6-482e-860a-30efb05d1cfd",
+            "rank_before_drop": 57,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_3_10141-09.pdf&type=2",
+            "role": "persuasive_case_law",
+            "score": 0.3730780134200304,
+            "title": "רע\"פ 10141-09 - אברהם בן חיים נ. מדינת ישראל",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "vector:C3:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "supreme_court_il",
+            "candidate_id": "f0df10f7-0f78-462c-901e-6f25f601200f",
+            "rank_before_drop": 58,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://runilawreview.org/2012/10/31/volume14_gibton/",
+            "role": "persuasive_case_law",
+            "score": 0.3727544201312094,
+            "title": "לאיזה תלמיד החוק דואג? חוק זכויות התלמיד: תרומתו ותפקידו בראי הפסיקה | דן גבתון (כרך יד)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "vector:C3:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "94b2c9ce-7a6b-4d67-ad96-4de8d7c8581e",
+            "rank_before_drop": 59,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/3&fileName=SV3_12_8954-11.pdf&type=2",
+            "role": "persuasive_case_law",
+            "score": 0.37212633458878924,
+            "title": "ע\"א 8954-11 - פלוני נ. פלוני",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "vector:C3:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "supreme_court_il",
+            "candidate_id": "aa0aaaa8-7738-43d9-a251-64453a4b0ea6",
+            "rank_before_drop": 60,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=8150",
+            "role": "persuasive_case_law",
+            "score": 0.37047238994735815,
+            "title": "ביה\"ד האזורי לעבודה בתל אביב, שופטת מירב קליימן: פס\"ד והחלטה בנושא עבודתה של סייעת בכוכב יאיר בתקופת הקורונה (סע\"ש 42405-02-21)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "vector:C3:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "b84b8f69-b683-4782-b262-badce37023de",
+            "rank_before_drop": 61,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=910",
+            "role": "persuasive_case_law",
+            "score": 0.3670430546593056,
+            "title": "בית המשפט לענייני משפחה באשדוד, השופטת עפרה גיא: פסק דין בתביעה לקביעת מזונותיה של בתם הקטינה של הצדדים (תלה\"מ 64175-08-22)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "vector:C4:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "3687a680-ecfd-46e9-b0e1-a0d242446c05",
+            "rank_before_drop": 62,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%AA%D7%99_%D7%94%D7%93%D7%99%D7%9F_%D7%94%D7%93%D7%AA%D7%99%D7%99%D7%9D_%D7%94%D7%93%D7%A8%D7%95%D7%96%D7%99%D7%99%D7%9D_(%D7%90%D7%92%D7%A8%D7%95%D7%AA)",
+            "role": "persuasive_case_law",
+            "score": 0.36596740469775,
+            "title": "תקנות בתי הדין הדתיים הדרוזיים (אגרות)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "vector:C4:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "israeli_law",
+            "candidate_id": "a32586e7-4830-4c05-b61b-51e455e9da20",
+            "rank_before_drop": 63,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5340",
+            "role": "primary_statute",
+            "score": 0.3655527491311812,
+            "title": "ביהמ\"ש העליון, אב\"ד הנשיאה אסתר חיות, המשנה לנשיאה (בדימ') ניל הנדל, המשנה לנשיאה עוזי פוגלמן, השופט יצחק עמית, השופט נעם סולברג, השופטת דפנה ברק-ארז והשופטת ענת ברון: פסק דין במסגרת דיון נוסף אזרחי בעניין הישוב מצפה כרמים (דנ\"א 6364/20)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "f377f699-d8be-416f-a4ed-bccbded30ded",
+            "rank_before_drop": 64,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%AA%D7%99_%D7%94%D7%93%D7%99%D7%9F_%D7%94%D7%A9%D7%A8%D7%A2%D7%99%D7%99%D7%9D_(%D7%90%D7%92%D7%A8%D7%95%D7%AA)",
+            "role": "persuasive_case_law",
+            "score": 0.3654780402095268,
+            "title": "תקנות בתי הדין השרעיים (אגרות)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "vector:C4:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "israeli_law",
+            "candidate_id": "2cac5f9f-476a-486c-bf69-5b0282b6a62f",
+            "rank_before_drop": 65,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2530",
+            "role": "binding_case_law",
+            "score": 0.3599897616036942,
+            "title": "ביהמ\"ש מחוזי חיפה, השופט סארי ג'יוסי: החלטה בקשת רשות ערעור על החלטת בימ\"ש לענייני משפחה (רמ\"ש 18399-12-23)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "e3a3f5b2-f0ad-46b6-97c9-928b9e9633d4",
+            "rank_before_drop": 66,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/nun1_7.pdf",
+            "role": "binding_case_law",
+            "score": 0.35594967227716073,
+            "title": "הלכת פיצול הסעדים בין בתי משפט שונים והלכת העיקר והטפל- בין המצוי על תקלותיו לרצוי על תקוותיו",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "vector:C3:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "af78cbdd-db46-4038-83e2-e21b61c7b076",
+            "rank_before_drop": 67,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4020",
+            "role": "binding_case_law",
+            "score": 0.353982266630772,
+            "title": "ביהמ\"ש לענייני משפחה קריות, השופטת ליאת דהן חיון: פס\"ד בתיק משפחה (תלה\"מ 28285-03-20",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "d8989bf7-4b2e-4237-819c-3cd256375924",
+            "rank_before_drop": 68,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=130",
+            "role": "binding_case_law",
+            "score": 0.3538045783684788,
+            "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: פסק דין שעניינו מזונות קטינים (תלה\"מ 15767-09-23)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "8cd5f67e-27bd-4b02-89c7-8d7f20a039c9",
+            "rank_before_drop": 69,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2210",
+            "role": "binding_case_law",
+            "score": 0.3535732443306558,
+            "title": "בימ\"ש מחוזי לנוער ב\"ש, אב\"ד ס.הנשיאה הש' אליהו ביתן, הש' יובל ליבדרו, הש' רחל תורן: פס\"ד בערעור של קטין על הרשעתו בגין החזקת סכין ( 7463-09-22)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "f8f4a083-bd62-4ff3-98e0-0222b913560f",
+            "rank_before_drop": 70,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5430",
+            "role": "binding_case_law",
+            "score": 0.3520822178547174,
+            "title": "בימ\"ש לענייני משפחה ת\"א, השופטת סגלית אופק: החלטה בתובענה לפירוק שיתוף בשני נכסים שעברו לרשותן של שתי אחיות כירושה (תמ\"ש 63690-10-21)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "vector:C3:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "865bc099-9ec5-4a20-9af1-f60efa4b1c27",
+            "rank_before_drop": 71,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_5af46bb80ac243b4a2ab7d4622677b97.pdf",
+            "role": "binding_case_law",
+            "score": 0.3513358111285716,
+            "title": "פיצוי נאות: על סעדים וצדק בדיני הנטילה השלטונית בישראל",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "vector:C3:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "ee012a83-0b89-46ad-b120-68aa33345bf9",
+            "rank_before_drop": 72,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=200",
+            "role": "binding_case_law",
+            "score": 0.3502703615635104,
+            "title": "ביהמ\"ש השלום ברחובות, ש' ישראל פת: פסק דין בעניין תביעה ותביעת נגד, שעניינן בסכסוך שכנים, הנובע ממחלוקת בדבר השימוש ברכוש המשותף בבניין משותף (ת\"א 54319-03-22)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "vector:C3:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "62fbd45c-0cff-442b-9205-eb03f197b465",
+            "rank_before_drop": 73,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1420",
+            "role": "binding_case_law",
+            "score": 0.3501296744723022,
+            "title": "ביהמ\"ש לענייני משפחה בחדרה, השופטת יפעת שקדי שץ: פס\"ד בעניין ביטול דמי מזונות קטינים (תלה\"מ 27379-07-22)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "6338e088-9c36-4e33-9243-bfa235cfc9de",
+            "rank_before_drop": 74,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+            "role": "binding_case_law",
+            "score": 0.3488666486832654,
+            "title": "בימ\"ש מחוזי ת\"א, השופט יעקב שקד: החלטה בבקשה למתן סעד זמני בעניין פיתוח ובנייה של שטח של כ– 160 דונם במערב רעננה (ת\"א 67463-01-25)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "vector:C3:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "883c0b5c-2366-4946-8daa-67baf0c3e113",
+            "rank_before_drop": 75,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-4657-21-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%90%d7%99%d7%a8-%d7%9b%d7%94%d7%9f-%d7%a0-%d7%9e%d7%a9%d7%94%d7%91-%d7%97%d7%91%d7%a8%d7%94-%d7%9c%d7%91%d7%a0%d7%99%d7%99%d7%9f-2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "role": "binding_case_law",
+            "score": 0.348034806380994,
+            "title": "רע\"א 4657/21 ישראל מאיר כהן נ׳ משהב חברה לבניין ופיתוח בע\"מ פס\"ד פסק דין (03.08.2022)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "vector:C3:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "fd3a9e25-3602-4176-9533-de37b9839be7",
+            "rank_before_drop": 76,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-1829-21-%d7%93%d7%99%d7%9f-%d7%9e%d7%97%d7%9c%d7%95%d7%a3-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "role": "binding_case_law",
+            "score": 0.344089391362335,
+            "title": "בש\"פ 1829/21 דין מחלוף נ׳ מדינת ישראל החלטה (11.04.2021)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "vector:C4:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "d1b3bcbe-1013-40de-bfc5-698cb22590ec",
+            "rank_before_drop": 77,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-5402-21-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%97%d7%95%d7%a1%d7%90%d7%9d-%d7%90%d7%9e%d7%90%d7%a8%d7%94-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "role": "binding_case_law",
+            "score": 0.3339778301475444,
+            "title": "בש\"פ 5402/21 מדינת ישראל נ׳ חוסאם אמארה החלטה (12.08.2021)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "vector:C4:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "e0b527b0-49eb-42d7-98ac-8fd0187e7d19",
+            "rank_before_drop": 78,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1921",
+            "role": "binding_case_law",
+            "score": 0.3319375580897706,
+            "title": "ואף-על-פי-כן: מרוץ סמכויות",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "5cdeddd9-cb87-49d7-a97e-13238c43a9fe",
+            "rank_before_drop": 79,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/b1_14.pdf",
+            "role": "binding_case_law",
+            "score": 0.3260703928976496,
+            "title": "המשפחה בעידן הגנטי – הגדרת הורות בנסיבות של הולדה מלאכותית כמקרה מבחן | רות זפרן (כרך ב)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "vector:C4:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "55854945-7453-44c9-93b2-2b57b96b6030",
+            "rank_before_drop": 80,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://runilawreview.org/2012/11/26/volume15_medina/",
+            "role": "binding_case_law",
+            "score": 0.3260501312124636,
+            "title": "על \"פגיעה\" בזכות חוקתית ועל \"תכלית ראויה\" | ברק מדינה (כרך טו)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "f371b8bf-621f-4199-8171-46a9f1a64360",
+            "rank_before_drop": 81,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/yovinermeodkan.pdf",
+            "role": "binding_case_law",
+            "score": 0.32545955959926537,
+            "title": "הארכיטקטורה של כלל בררת הדין בנזיקין במשפט הבין-לאומי הפרטי בישראל - עיון תאורטי בפרשת יובינר",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "acc3e592-56d0-4421-b34e-92f741dfaf0c",
+            "rank_before_drop": 82,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-4698-20-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-16-08-2020/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "role": "binding_case_law",
+            "score": 0.32506416060591176,
+            "title": "בש\"פ 4698/20 פלוני נ׳ מדינת ישראל החלטה (16.08.2020)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "vector:C4:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "b0a56795-8778-4cb7-b3e3-283e3f9ff2e3",
+            "rank_before_drop": 83,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1843",
+            "role": "binding_case_law",
+            "score": 0.32483716771668897,
+            "title": "שלושה צמתים ביחסי בית הדין הרבני ובית המשפט האזרחי: מזונות ילדים, שיתוף רכושי והחוק להסדר התדיינויות בסכסוכי משפחה",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "e27440dc-c282-4b0f-a6c4-a0eb05e3193b",
+            "rank_before_drop": 84,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-8761-22-%d7%92%d7%9e%d7%90%d7%9c-%d7%90%d7%91%d7%95-%d7%a1%d7%90%d7%a8%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "role": "binding_case_law",
+            "score": 0.3246089415974676,
+            "title": "בש\"פ 8761/22 גמאל אבו סארה נ׳ מדינת ישראל החלטה (05.01.2023)",
+            "origin": "local_db",
+            "claim_id": "C4",
+            "drop_key": "vector:C4:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "db942911-8a9c-467a-9b5b-9ad770896c14",
+            "rank_before_drop": 85,
+            "retrieval_method": "vector"
+          }
+        ],
+        "found": 86,
+        "counts": {
+          "by_role": {
+            "scholarship": 2,
+            "primary_statute": 2,
+            "binding_case_law": 3,
+            "persuasive_case_law": 6
+          },
+          "by_claim": {
+            "C1": 4,
+            "C3": 4,
+            "C4": 5
+          },
+          "by_origin": {
+            "local_db": 8,
+            "perplexity": 5
+          }
+        },
+        "after_dedup": 13,
+        "dedup_drops": 74,
+        "drop_reason_counts": {
+          "dup_url": 47,
+          "dup_document_id": 1,
+          "vector_quota_per_claim": 25
+        }
+      },
+      "local": {
+        "ms": 6731,
+        "aggregate": {
+          "wall_ms": 6731,
+          "max_query_ms": 6730,
+          "sum_query_ms": 41029,
+          "slowest_query": {
+            "ms": 6730,
+            "role": "primary_statute",
+            "text_ms": 6136,
+            "claim_id": "C1",
+            "exact_ms": 0,
+            "query_he": "חוק המקרקעין, תשכ\"ט-1969 הוראות לגבי בעלות משותפת, שיתוף בנכס, בקשה לחלוקת שיתוף, סעד חלוקה ומכירה",
+            "vector_ms": 592,
+            "embedding_ms": 151
+          },
+          "slowest_method": "text",
+          "method_total_ms": {
+            "text": 35850,
+            "exact": 0,
+            "vector": 5173,
+            "embedding": 1099
+          },
+          "queries_executed": 7,
+          "exact_error_count": 0,
+          "text_timeout_count": 0,
+          "candidates_by_method": {
+            "text": 42,
+            "vector": 37,
+            "exact_authority": 0
+          },
+          "vector_timeout_count": 0,
+          "bottleneck_hypothesis": "single_slow_query (max=6730ms ≈ wall=6731ms)",
+          "duplicate_query_count": 0
+        },
+        "per_query": [
+          {
+            "ms": 5312,
+            "diag": {
+              "text_ms": 4622,
+              "exact_ms": 0,
+              "vector_ms": 689,
+              "text_status": "ok",
+              "embedding_ms": 178,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+                "בית המשפט לענייני משפחה בת\"א-יפו, השופט תומר שלם: פסק דין שעניינו תביעה להשבה כספית בין ידועים בציבור (תלה\"מ 18668-11-23)",
+                "ביהמ\"ש לענייני משפחה בחיפה, לירון זרבל - קדשאי: פסק דין בעניין הסכם שלום בית ולחילופין גירושין (תלה\"מ 4061-06-21)",
+                "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+                "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 4622,
+              "top_vector_titles": [
+                "ואף-על-פי-כן: מרוץ סמכויות",
+                "ואף-על-פי-כן: מרוץ סמכויות",
+                "על \"פגיעה\" בזכות חוקתית ועל \"תכלית ראויה\" | ברק מדינה (כרך טו)",
+                "הארכיטקטורה של כלל בררת הדין בנזיקין במשפט הבין-לאומי הפרטי בישראל - עיון תאורטי בפרשת יובינר",
+                "שלושה צמתים ביחסי בית הדין הרבני ובית המשפט האזרחי: מזונות ילדים, שיתוף רכושי והחוק להסדר התדיינויות בסכסוכי משפחה"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 10,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "הלכת השיתוף הגדרה הלכת דין מטרת ההלכה זכויות שותפים ברכוש משותף העליון",
+            "original_query_he": "הלכת השיתוף הגדרה 'הלכת השיתוף' בית המשפט העליון פסק דין הגדרה מטרת ההלכה זכויות שותפים ברכוש משותף",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 5358,
+            "diag": {
+              "text_ms": 4763,
+              "exact_ms": 0,
+              "vector_ms": 595,
+              "text_status": "ok",
+              "embedding_ms": 159,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה בקריות, השופטת ליאת דהן חיון: החלטה בעניין צו מניעה וצו עשה (תלה\"מ 46533-11-24)",
+                "בימ\"ש המחוזי ת\"א, השופטת אירית קלמן ברום: החלטה בבקשה לצו מניעה זמני להיכל התרבות להתקשר עם קבוצת R2M (ת\"א 12431-05-25)",
+                "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת נאוה גדיש: החלטה בבקשת אם למתן צו מניעה כנגד אבי הקטינים למניעת קרבה אל הקטינים לביתם ולמסגרות החינוך (תלה\"מ 66070-09-24)",
+                "חלוקה ומשתמשי קצה",
+                "ביהמ\"ש לענייני משפחה בירושלים, השופט פליקס גורודצקי: החלטה בעניין פירוק שיתוף בדירה לפני איזון כולל (תמ\"ש 24468-09-24)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 4763,
+              "top_vector_titles": [
+                "הלכת פיצול הסעדים בין בתי משפט שונים והלכת העיקר והטפל- בין המצוי על תקלותיו לרצוי על תקוותיו",
+                "בימ\"ש לענייני משפחה ת\"א, השופטת סגלית אופק: החלטה בתובענה לפירוק שיתוף בשני נכסים שעברו לרשותן של שתי אחיות כירושה (תמ\"ש 63690-10-21)",
+                "פיצוי נאות: על סעדים וצדק בדיני הנטילה השלטונית בישראל",
+                "ביהמ\"ש השלום ברחובות, ש' ישראל פת: פסק דין בעניין תביעה ותביעת נגד, שעניינן בסכסוך שכנים, הנובע ממחלוקת בדבר השימוש ברכוש המשותף בבניין משותף (ת\"א 54319-03-22)",
+                "בימ\"ש מחוזי ת\"א, השופט יעקב שקד: החלטה בבקשה למתן סעד זמני בעניין פיתוח ובנייה של שטח של כ– 160 דונם במערב רעננה (ת\"א 67463-01-25)"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "העליון סוגי הסעד בפסיקות שיתוף חלוקה בפועל מכירה פיצוי חשבון צו מניעה כללים לחלוקה מעשי",
+            "original_query_he": "בית המשפט העליון סוגי הסעד בפסיקות שיתוף חלוקה בפועל מכירה פיצוי חשבון צו מניעה כללים לחלוקה של חלקים ותשלומים 'יישום' 'סעד מעשי'",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 5705,
+            "diag": {
+              "text_ms": 4831,
+              "exact_ms": 0,
+              "vector_ms": 873,
+              "text_status": "ok",
+              "embedding_ms": 159,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "בימ\"ש עליון, הרכב שופטים השופטת דפנה ברק-ארז, השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין, השופט יחיאל כשר:  פס\"ד בפרשת העוברים (בע\"מ 69395-03-25)",
+                "ביהמ\"ש לענייני משפחה בת\"א, סגן הנשיאה יהורם שקד: פס\"ד הדן בשאלה האם להורות על ביטול עסקאות מתנה והעברת סכום קצוב שביצעה האשל\"א לבנה בטענה לפגמים ברצון ובטרם מונה לה אפוטרופוס (תמ\"ש 42085-01-22 ועוד)",
+                "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+                "בימ\"ש עליון, אב\"ד השופט יוסף אלרון, השופטת גילה כנפי-שטייניץ, השופטת רות רונן: פס\"ד בערעור על הכ\"ד ברצח בנסיבות מחמירות של רעייתו וגזה\"ד (ע\"פ 7905/23)",
+                "בימ\"ש עליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת רות רונן: פס\"ד בערעור על זיכוי נאשמת מעבירת מסירת ידיעה העלולה להיות לתועלת האויב (ע\"פ ב3766-24)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 4831,
+              "top_vector_titles": [
+                "ביהמ\"ש לענייני משפחה בנצרת, השופטת רונית גורביץ': פס\"ד בעניין אחריות הורית משותפת על אף נוכחות פיזית לא שווה (תלה\"מ 46457-07-10 ועוד)",
+                "ביהמ\"ש מחוזי חיפה, השופט סארי ג'יוסי: החלטה בקשת רשות ערעור על החלטת בימ\"ש לענייני משפחה (רמ\"ש 18399-12-23)",
+                "ביהמ\"ש לענייני משפחה קריות, השופטת ליאת דהן חיון: פס\"ד בתיק משפחה (תלה\"מ 28285-03-20",
+                "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: פסק דין שעניינו מזונות קטינים (תלה\"מ 15767-09-23)",
+                "בימ\"ש מחוזי לנוער ב\"ש, אב\"ד ס.הנשיאה הש' אליהו ביתן, הש' יובל ליבדרו, הש' רחל תורן: פס\"ד בערעור של קטין על הרשעתו בגין החזקת סכין ( 7463-09-22)"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "העליון קריטריונים להורות שיתוף בפועל מבחנים כשמחליטים הנכס מבחן שיקולים נסיבות חלוקה/מכירה לחלק",
+            "original_query_he": "בית המשפט העליון קריטריונים להורות על שיתוף בפועל או חלוקה/מכירה מבחנים כשמחליטים האם לחלק את הנכס 'מבחן' 'שיקולים' 'נסיבות המקרה'",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 5891,
+            "diag": {
+              "text_ms": 5129,
+              "exact_ms": 0,
+              "vector_ms": 762,
+              "text_status": "ok",
+              "embedding_ms": 159,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+                "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+                "ביהמ\"ש לענייני משפחה בחיפה, ש' אלה פטל: פסק דין בעניין דמי שימוש ראויים בגין שימוש בדירת מגורים (תלה\"מ 46793-12-23)",
+                "ביהמ\"ש לענייני משפחה בראשל\"צ, השופטת מירה רום פלאי: פס\"ד בשאלה מה דינם של הליכים המנוהלים ע\"י בעל דין שמפר את כללי הדיון, אינו מקיים החלטות שיפוטיות ועוד (ת\"ע 68570-01-19 ועוד)",
+                "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 5128,
+              "top_vector_titles": [
+                "תקנות הניקוז וההגנה מפני שטפונות (סדרי דין בבתי דין לעניני מים ובערעורים על החלטותיהם)",
+                "החקירה האחרונה של דיויד וינר",
+                "תקנות הדיון בבתי-הדין הרבניים בישראל",
+                "בית המשפט לענייני משפחה באשדוד, השופטת עפרה גיא: פסק דין בתביעה לקביעת מזונותיה של בתם הקטינה של הצדדים (תלה\"מ 64175-08-22)",
+                "תקנות בתי הדין הדתיים הדרוזיים (אגרות)"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "persuasive_case_law",
+            "claim_id": "C4",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "דין מחוזי חריגים וסייגים להלכת השיתוף הבחנה צמצום ביקורת דוגמאות מקרים החלטות שביקשו להגביל",
+            "original_query_he": "פסקי דין מחוזי חריגים וסייגים להלכת השיתוף 'הבחנה' 'צמצום' 'ביקורת' דוגמאות מקרים החלטות שביקשו להגביל או למתן הוראת שיתוף",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 5985,
+            "diag": {
+              "text_ms": 5402,
+              "exact_ms": 0,
+              "vector_ms": 582,
+              "text_status": "ok",
+              "embedding_ms": 161,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "בית המשפט המחוזי באר שבע, אב\"ד סג\"נ השופט אריאל ואגו, השופט אלון אינפלד, השופט אריאל חזק: גזר דין מותר בפרסום ליוטיובר שהורשע בעבירות מין (תפח\"ע 43300-09-20)",
+                "ימ\"ש מחוזי ת\"א-יפו, השופט יעקב שקד: פסק דין המאשר הסדר בתביעה ייצוגית נגד חברת חזיבנק דיזיין (ת\"צ 47928-10-13)",
+                "בית משפט השלום לתעבורה בבאר שבע, השופט הבכיר אלון אופיר: גזר דין לנאשם שנהג בזמן פסילה בפעם החמישית (פל\"א 8465-09-24)",
+                "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 65165-12-23)",
+                "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 5402,
+              "top_vector_titles": [
+                "ע\"א 7703-10 - גיא ישועה נ. מדינת ישראל - מנהלת סל\"ע",
+                "ספרים, ו' לוסטהויז וט' שפניץ: חוזים אחידים",
+                "רע\"פ 10141-09 - אברהם בן חיים נ. מדינת ישראל",
+                "לאיזה תלמיד החוק דואג? חוק זכויות התלמיד: תרומתו ותפקידו בראי הפסיקה | דן גבתון (כרך יד)",
+                "ע\"א 8954-11 - פלוני נ. פלוני"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "persuasive_case_law",
+            "claim_id": "C3",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "דין מחוזי שלום יישום הלכת השיתוף דוגמאות מקרים בנסיבות בעקבות חלוקה בפועל מכירה פיצוי חשבון",
+            "original_query_he": "פסקי דין מחוזי או שלום יישום הלכת השיתוף דוגמאות מקרים יישום 'בנסיבות' 'בעקבות' חלוקה בפועל מכירה פיצוי חשבון",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 6048,
+            "diag": {
+              "text_ms": 4967,
+              "exact_ms": 0,
+              "vector_ms": 1080,
+              "text_status": "ok",
+              "embedding_ms": 132,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "עקרונות להבטחת עצמאות גופי שידור ציבורי",
+                "בית המשפט המחוזי ב\"ש, השופטת טל לחיאני שהם: גזר דין לנאשמת בהמתה בקלות דעת, הפקרה ונהיגה בשכרות אשר גרמה למותה של ניר אבוחצירה ז\"ל (ת\"פ 19589-02-24)",
+                "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+                "ביהמ\"ש לענייני משפחה בת\"א, סגן הנשיאה יהורם שקד: פס\"ד הדן בשאלה האם להורות על ביטול עסקאות מתנה והעברת סכום קצוב שביצעה האשל\"א לבנה בטענה לפגמים ברצון ובטרם מונה לה אפוטרופוס (תמ\"ש 42085-01-22 ועוד)",
+                "ביהמ\"ש לענייני משפחה בירושלים, השופט פליקס גורודצקי: החלטה בעניין פירוק שיתוף בדירה לפני איזון כולל (תמ\"ש 24468-09-24)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 4967,
+              "top_vector_titles": [
+                "בש\"פ 1829/21 דין מחלוף נ׳ מדינת ישראל החלטה (11.04.2021)",
+                "בש\"פ 5402/21 מדינת ישראל נ׳ חוסאם אמארה החלטה (12.08.2021)",
+                "המשפחה בעידן הגנטי – הגדרת הורות בנסיבות של הולדה מלאכותית כמקרה מבחן | רות זפרן (כרך ב)",
+                "בש\"פ 4698/20 פלוני נ׳ מדינת ישראל החלטה (16.08.2020)",
+                "בש\"פ 8761/22 גמאל אבו סארה נ׳ מדינת ישראל החלטה (05.01.2023)"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 11,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "העליון חריגים להורות שיתוף מסרבים עוול אינטרס ציבורי נזק בלתי סביר מעמד משפחתי סייג דעת מיעוט",
+            "original_query_he": "בית המשפט העליון חריגים להורות שיתוף מתי מסרבים להורות שיתוף עוול אינטרס ציבורי נזק בלתי סביר מעמד משפחתי 'סייג' 'דעת מיעוט'",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 6730,
+            "diag": {
+              "text_ms": 6136,
+              "exact_ms": 0,
+              "vector_ms": 592,
+              "text_status": "ok",
+              "embedding_ms": 151,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "ביהמ\"ש לענייני משפחה בירושלים, ש' ריבי לב אוחיון: פסק דין בעניין בקשה לסילוק התובענה על הסף (תמ\"ש 25065-11-24)",
+                "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: פסק דין לפי חוק יחסי ממון (תמ\"ש 28833-05-24)",
+                "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין תביעה למתן סעד הצהרתי בדבר קיומן של זכויות במקרקעין, וכן לחיוב בדמי שימוש ראויים (תמ\"ש 11810-09-21)",
+                "בית המשפט לענייני משפחה באשדוד, סגנית הנשיא השופטת ענת אלפסי: פסק דין שעניינו אכיפת הסכם העברת בעלות בדירה (תלה\"מ 30657-01-21)",
+                "בית המשפט לענייני משפחה בב\"ש, סג\"נ השופטת רותם קודלר עיאש: החלטה בתביעה למתן פס\"ד הצהרתי בעניין זכויות חזקה ושימוש במגרש ומנגד בקשה להורות על סילוק התביעה על הסף (תמ\"ש 58185-07-24)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 6136,
+              "top_vector_titles": [
+                "עיונים בנושא השכירות",
+                "מקרקעין ומיטלטלין",
+                "מקרקעין ומיטלטלין",
+                "ביהמ\"ש העליון, אב\"ד הנשיאה אסתר חיות, המשנה לנשיאה (בדימ') ניל הנדל, המשנה לנשיאה עוזי פוגלמן, השופט יצחק עמית, השופט נעם סולברג, השופטת דפנה ברק-ארז והשופטת ענת ברון: פסק דין במסגרת דיון נוסף אזרחי בעניין הישוב מצפה כרמים (דנ\"א 6364/20)",
+                "מקרקעין ומיטלטלין"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק המ",
+                  "raw_clue": "חוק המ",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק המ",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "המ",
+                  "candidate_title_tokens": [
+                    "המ"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 10,
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק המ",
+                "search_terms": [
+                  "חוק המ"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "חוק המקרקעין תשכ הוראות לגבי בעלות משותפת שיתוף בנכס בקשה לחלוקת סעד חלוקה ומכירה ט-1969",
+            "original_query_he": "חוק המקרקעין, תשכ\"ט-1969 הוראות לגבי בעלות משותפת, שיתוף בנכס, בקשה לחלוקת שיתוף, סעד חלוקה ומכירה",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          }
+        ],
+        "candidates": 79,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 19174,
+        "dropped": 36,
+        "parallel": true,
+        "query_ms": [
+          7080,
+          5309,
+          5677,
+          9625,
+          6194,
+          6215,
+          8342,
+          5131,
+          7659
+        ],
+        "per_query": [
+          {
+            "ms": 7080,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://he.wikipedia.org/wiki/%D7%94%D7%9C%D7%9B%D7%AA_%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3",
+                "title": "הלכת השיתוף - ויקיפדיה",
+                "domain": "he.wikipedia.org",
+                "drop_reason": "bad_source",
+                "classified_source_class": "bad",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://familylawisrael.com/%D7%94%D7%9C%D7%9B%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%94%D7%A1%D7%93%D7%A8-%D7%A8%D7%9B%D7%95%D7%A9%D7%99-%D7%9C%D7%99%D7%93%D7%95%D7%A2%D7%99%D7%9D-%D7%91%D7%A6%D7%99%D7%91%D7%95%D7%A8/",
+                "title": "הלכת השיתוף – הסדר רכושי לידועים בציבור וזוגות שנישאו לפני 1974",
+                "domain": "familylawisrael.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gerushin.co.il/%D7%9E%D7%94%D7%99-%D7%97%D7%96%D7%A7%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3/",
+                "title": "מהי הלכת השיתוף / חזקת השיתוף בין בני זוג?",
+                "domain": "gerushin.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_binding_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+                "title": "אנציקלופדיה יהודית דעת - הלכת השיתוף בנכסים",
+                "domain": "daat.ac.il",
+                "drop_reason": "class_academic_not_admitted_for_binding_case_law",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C1",
+            "query_he": "הלכת השיתוף הגדרה 'הלכת השיתוף' בית המשפט העליון פסק דין הגדרה מטרת ההלכה זכויות שותפים ברכוש משותף",
+            "raw_count": 4,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5309,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+                "title": "אנציקלופדיה יהודית דעת – הלכת השיתוף בנכסים",
+                "domain": "daat.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 103,
+                  "title_meaningful_chars": 37
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "encyclopedia",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.kolzchut.org.il/he/%D7%97%D7%96%D7%A7%D7%AA_%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3_%D7%91%D7%99%D7%9F_%D7%91%D7%A0%D7%99_%D7%96%D7%95%D7%92",
+                "title": "כל זכות – חזקת השיתוף בין בני זוג (מושג)",
+                "domain": "kolzchut.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.wikipedia.org/wiki/%D7%94%D7%9C%D7%9B%D7%AA_%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3",
+                "title": "ויקיפדיה – הלכת השיתוף",
+                "domain": "he.wikipedia.org",
+                "drop_reason": "bad_source",
+                "classified_source_class": "bad",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.ayanau.co.il/%D7%94%D7%9C%D7%9B%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3/",
+                "title": "איילות עו\"ד – הלכת השיתוף",
+                "domain": "ayanau.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.mako.co.il/news-law_guide/2024_q4/Article-832d4f01b078391026.htm",
+                "title": "N12 – חלוקת רכוש בין בני זוג – מה חשוב לדעת?",
+                "domain": "mako.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C1",
+            "query_he": "מאמר משפטי 'הלכת השיתוף' הגדרת ההלכה זכויות שותפים ברכוש משותף סקירה תיאורטית",
+            "raw_count": 5,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5677,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://www.globes.co.il/news/article.aspx?did=1001514600",
+                "title": "פסק הדין החדש שכל זוג נשוי צריך להכיר. וההשלכות",
+                "domain": "globes.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://rslawfirm.co.il/divorce-lawyer/%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99-%D7%92%D7%99%D7%A8%D7%95%D7%A9%D7%99%D7%9F/",
+                "title": "שיתוף ספציפי בנכסים, פסק דין עליון 30.6.2025 ניתוח משפטי",
+                "domain": "rslawfirm.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://avivharel.co.il/%D7%A2%D7%95%D7%A8%D7%9A-%D7%93%D7%99%D7%9F-%D7%92%D7%99%D7%A8%D7%95%D7%A9%D7%99%D7%9F/unequal-division-of-property-in-divorce/",
+                "title": "חלוקת רכוש לא שוויונית בגירושין | עו״ד אביב הראל",
+                "domain": "avivharel.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_binding_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://rotenberglaw.co.il/?CategoryID=188",
+                "title": "פסקי דין שאלות ותשובות בנושא חלוקת רכוש",
+                "domain": "rotenberglaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C2",
+            "query_he": "בית המשפט העליון קריטריונים להורות על שיתוף בפועל או חלוקה/מכירה מבחנים כשמחליטים האם לחלק את הנכס 'מבחן' 'שיקולים' 'נסיבות המקרה'",
+            "raw_count": 4,
+            "discovery_only": 3,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 9625,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://eshimony-law.co.il/%D7%A2%D7%95%D7%A8%D7%9A-%D7%93%D7%99%D7%9F-%D7%A6%D7%95%D7%95%D7%90%D7%95%D7%AA-%D7%95%D7%99%D7%A8%D7%95%D7%A9%D7%95%D7%AA/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F-%D7%91%D7%99%D7%9F-%D7%99%D7%95%D7%A8%D7%A9%D7%99%D7%9D/",
+                "title": "פירוק שיתוף במקרקעין בין יורשים – אלי שמעוני, משרד עורכי דין",
+                "domain": "eshimony-law.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://kalaw.co.il/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3/",
+                "title": "פירוק שיתוף – עו\"ד אשר כהנא",
+                "domain": "kalaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://okhg.co.il/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F/",
+                "title": "פירוק שיתוף זכויות במקרקעין – OKHG Law Firm",
+                "domain": "okhg.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gerushin.co.il/%D7%9E%D7%94%D7%95-%D7%94%D7%A4%D7%A1%D7%93-%D7%9B%D7%90%D7%A9%D7%A8-%D7%90%D7%A0%D7%95-%D7%A2%D7%95%D7%A1%D7%A7%D7%99%D7%9D-%D7%91%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%/",
+                "title": "פירוק שיתוף בדרך של חלוקה בעין ולא של מכר – גירושין.נט",
+                "domain": "gerushin.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://ygoldlaw.co.il/real-estate-lawyer/disassembly-sharing/",
+                "title": "תביעת פירוק שיתוף במקרקעין: תהליך, עלויות ושיקולים – YGold Law",
+                "domain": "ygoldlaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C2",
+            "query_he": "מאמר משפטי קריטריונים להורות על שיתוף חלוקה במקרקעין סקירה שיטה מבחנים שיקולי שופטין",
+            "raw_count": 5,
+            "discovery_only": 3,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 6194,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://www.barelaw.co.il/he/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F.html",
+                "title": "פירוק שיתוף במקרקעין - בר אל ירון, משרד עורכי דין וגישור מסחרי",
+                "domain": "barelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gerushin.co.il/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%93%D7%99%D7%A8%D7%94/",
+                "title": "פירוק שיתוף בדירת מגורים בין בני זוג בגירושין ב- 2025",
+                "domain": "gerushin.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_binding_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.amitvered.co.il/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F/",
+                "title": "פירוק שיתוף במקרקעין - המדריך המלא 2025 | עו\"ד ...",
+                "domain": "amitvered.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_binding_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://israel-law.co/%D7%AA%D7%97%D7%95%D7%9E%D7%99-%D7%A2%D7%99%D7%A1%D7%95%D7%A7/%D7%97%D7%A7%D7%99%D7%A7%D7%94/%D7%A4%D7%A1%D7%99%D7%A7%D7%94/%D7%A4%D7%A1%D7%99%D7%A7%D7%94-%D7%91%D7%93%D7%99%D7%A0%D7%99-%D7%9E%D7%A7%D7%A8%D7%A7%D7%Aעין/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F-%D7%94%D7%A0%D7%99%D7%AA%D7%A0%D7%99%D7%9D-%D7%9C%D7%97%D7%9C%D7%95%D7%A7%D7%94-%D7%99/",
+                "title": "רידלביץ נ' מודעי | פירוק שיתוף- חלוקה בעין או מכירה",
+                "domain": "israel-law.co",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.ynet.co.il/article/hkv0wukvgg",
+                "title": "פסק הדין שמשנה את כללי המשחק: מהו שיתוף ספציפי בגירושין ומתי ...",
+                "domain": "ynet.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C3",
+            "query_he": "בית המשפט העליון סוגי הסעד בפסיקות שיתוף חלוקה בפועל מכירה פיצוי חשבון צו מניעה כללים לחלוקה של חלקים ותשלומים 'יישום' 'סעד מעשי'",
+            "raw_count": 5,
+            "discovery_only": 3,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 6215,
+            "http": 200,
+            "role": "persuasive_case_law",
+            "results": [
+              {
+                "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+                "title": "פסקי דין והחלטות שהופצו על ידי מערך הדוברות | הרשות השופטת",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_persuasive_case_law",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+                "title": "ע\"א 1000/92 בן נון נ' בן נון",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 291,
+                  "title_meaningful_chars": 22
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "מסמך משפטי",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://rotenberglaw.co.il/_Uploads/dbsAttachedFiles/court-file-2478-14.pdf",
+                "title": "בע\"מ 2478/14",
+                "domain": "rotenberglaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.kolzchut.org.il/he/%D7%97%D7%96%D7%A7%D7%AA_%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3_%D7%91%D7%99%D7%9F_%D7%91%D7%A0%D%D7%99_%D7%96%D7%95%D7%92",
+                "title": "חזקת השיתוף בין בני זוג (מושג)",
+                "domain": "kolzchut.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+                "title": "ע\"א 52/80 שחר נ' פרידמן",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 68,
+                  "title_meaningful_chars": 19
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "מסמך משפטי",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C3",
+            "query_he": "פסקי דין מחוזי או שלום יישום הלכת השיתוף דוגמאות מקרים יישום 'בנסיבות' 'בעקבות' חלוקה בפועל מכירה פיצוי חשבון",
+            "raw_count": 5,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 8342,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://www.yosefbdlaw.com/news/%D7%94%D7%A2%D7%9C%D7%99%D7%95%D7%9F-%D7%9C%D7%90-%D7%A0%D7%93%D7%A8%D7%A9%D7%99%D7%9D-%D7%94%D7%9C%D7%99%D7%9B%D7%99-%D7%96%D7%99%D7%94%D7%95%D7%99-%D7%A0%D7%95%D7%A1%D7%A4%D7%99%D7%9D-%D7%9C%D7%90/",
+                "title": "העליון: לא נדרשים הליכי זיהוי נוספים לאחר פירוק שיתוף במקרקעין",
+                "domain": "yosefbdlaw.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.globes.co.il/news/article.aspx?did=1001514600",
+                "title": "פסק הדין החדש שכל זוג נשוי צריך להכיר. וההשלכות",
+                "domain": "globes.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.calcalist.co.il/local/articles/0,7340,L-3777484,00.html",
+                "title": "פסק הדין של העליון משנה את הלכות השיתוף בפייסבוק",
+                "domain": "calcalist.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.barelaw.co.il/he/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F-%D7%9B%D7%9C-%D7%9E%D7%94-%D7%A9%D7%A6%D7%A8%D7%99%D7%9A-%D7%9C%D7%93%D7%A2%D7%AA-%D7%9C%D7%A4%D7%A0%D7%99-%D7%A9%D7%A0%D7%9B%D7%A0%D7%A1%D7%99%D7%9D-%D7%9C%D7%94%D7%9C%D7%99%D7%9A.html",
+                "title": "פירוק שיתוף במקרקעין: כל מה שצריך לדעת לפני שנכנסים להליך",
+                "domain": "barelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.psakdin.co.il/Document/%D7%99%D7%A9-%D7%A8%D7%A7-%D7%93%D7%A8%D7%9A-%D7%90%D7%97%D7%AA-%D7%9C%D7%94%D7%91%D7%98%D7%99%D7%97-%D7%94%D7%A4%D7%A8%D7%93%D7%AA-%D7%A8%D7%9B%D7%95%D7%A9-%D7%91%D7%99%D7%9F-%D7%91%D7%A0%D7%99-%D7%96%D7%95%D7%92",
+                "title": "יש רק דרך אחת להבטיח הפרדת רכוש בין בני זוג",
+                "domain": "psakdin.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.psakdin.co.il/Document/%D7%99%D7%A9-%D7%A8%D7%A7-%D7%93%D7%A8%D7%9A-%D7%90%D7%97%D7%AA-%D7%9C%D7%94%D7%91%D7%98%D7%99%D7%97-%D7%94%D7%A4%D7%A8%D7%93%D7%AA-%D7%A8%D7%9B%D7%95%D7%A9-%D7%91%D7%99%D7%9F-%D7%91%D7%A0%D7%99-%D7%96%D7%95%D7%92",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.psakdin.co.il/Document/%D7%99%D7%A9-%D7%A8%D7%A7-%D7%93%D7%A8%D7%9A-%D7%90%D7%97%D7%AA-%D7%9C%D7%94%D7%91%D7%98%D7%99%D7%97-%D7%94%D7%A4%D7%A8%D7%93%D7%AA-%D7%A8%D7%9B%D7%95%D7%A9-%D7%91%D7%99%D7%9F-%D7%91%D7%A0%D7%99-%D7%96%D7%95%D7%92",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "unknown",
+                  "body_meaningful_chars": 77,
+                  "title_meaningful_chars": 34
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "secondary",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C4",
+            "query_he": "בית המשפט העליון חריגים להורות שיתוף מתי מסרבים להורות שיתוף עוול אינטרס ציבורי נזק בלתי סביר מעמד משפחתי 'סייג' 'דעת מיעוט'",
+            "raw_count": 5,
+            "discovery_only": 4,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5131,
+            "http": 200,
+            "role": "persuasive_case_law",
+            "results": [
+              {
+                "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+                "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 182,
+                  "title_meaningful_chars": 29
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "gov.il PDF",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.kolzchut.org.il/he/%D7%97%D7%96%D7%A7%D7%AA_%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3_%D7%91%D7%99%D7%9F_%D7%91%D7%A0%D7%99_%D7%96%D7%95%D7%92",
+                "title": "חזקת השיתוף בין בני זוג (מושג)",
+                "domain": "kolzchut.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://od-nadlan.co.il/?p=1574",
+                "title": "פירוק שיתוף – זכות אבסולוטית או נתונה לשיקול דעתו של בית משפט",
+                "domain": "od-nadlan.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_persuasive_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.globes.co.il/news/article.aspx?did=522299",
+                "title": "הלכת השיתוף: מבחן הכוונה - גלובס",
+                "domain": "globes.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://od-nadlan.co.il/?p=1574",
+                "title": "פירוק שיתוף – זכות אבסולוטית או נתונה לשיקול דעתו של בית משפט",
+                "domain": "od-nadlan.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_persuasive_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C4",
+            "query_he": "פסקי דין מחוזי חריגים וסייגים להלכת השיתוף 'הבחנה' 'צמצום' 'ביקורת' דוגמאות מקרים החלטות שביקשו להגביל או למתן הוראת שיתוף",
+            "raw_count": 5,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 7659,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+                "title": "הלכת השיתוף בנכסים",
+                "domain": "daat.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 186,
+                  "title_meaningful_chars": 16
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "encyclopedia",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.runi.ac.il/media/4zvhf00n/cohen.pdf",
+                "title": "הקדמת מועד איזון המשאבים בתיקון מס' 4 לחוק יחסי ממון והחקיקה",
+                "domain": "runi.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.runi.ac.il/media/4zvhf00n/cohen.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.runi.ac.il/media/4zvhf00n/cohen.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 103,
+                  "title_meaningful_chars": 50
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "academic article",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/1194209-3/he/%D7%92%D7%93%D7%A8%D7%99%20%D7%94%D7%9C%D7%9B%D7%AA%20%D7%A9%D7%99%D7%AA%D7%95%D7%A3%20%D7%A1%D7%A4%D7%A6%D7%יפי%20%D7%91%D7%93%D7%99%D7%A8%D7%AA%20%D7%9E%D7%92%D7%95%D7%A8%D7%99%D7%9D%20-%201194209-3%20%D7%91%D7%99%D7%94''%D7%93%20%D7%90%D7%A9%D7%93%D7%95%D7%93%20(1).docx",
+                "title": "גדרי הלכת שיתוף ספציפי בדירת מגורים",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_scholarship",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.wikipedia.org/wiki/%D7%94%D7%9C%D7%9B%D7%AA_%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3",
+                "title": "הלכת השיתוף",
+                "domain": "he.wikipedia.org",
+                "drop_reason": "bad_source",
+                "classified_source_class": "bad",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.divorce-online.co.il/%D7%AA%D7%95%D7%A7%D7%A4%D7%94-%D7%A9%D7%9C-%D7%97%D7%96%D7%A7%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3/",
+                "title": "תוקפה של חזקת השיתוף",
+                "domain": "divorce-online.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C4",
+            "query_he": "מאמר סקירה התפתחות פסיקת השיתוף סייגים חריגים ביקורת על התפתחות הפסיקה 'הלכת השיתוף' התפתחות היסטורית",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 7,
+        "query_count": 9,
+        "retry_count": 0,
+        "total_sum_ms": 61232,
+        "total_wall_ms": 19174,
+        "hygiene_counts": {
+          "keep": 7,
+          "total": 7,
+          "exclude": 0,
+          "reasons": {
+            "url_generic_index": 2
+          },
+          "downgrade": 0,
+          "report_only_mode": false,
+          "would_exclude_in_report_only": 0
+        },
+        "rate_limit_count": 0,
+        "role_corrections": [],
+        "concurrency_limit": 4,
+        "merge_order_preserved": true,
+        "fallback_to_sequential": false
+      }
+    },
+    "candidates": [
+      {
+        "role": "persuasive_case_law",
+        "score": 0.75,
+        "title": "ע\"א 1000/92 בן נון נ' בן נון",
+        "origin": "perplexity",
+        "snippet": "\"א. (1) בית-משפט אזרחי פוסק בסכסוך בין בני-זוג על-פי הלכת השיתוף, שבמסגרתה נקבע כי חזקה על בני-זוג, המנהלים אורח חיים תקין ומאמץ משותף, כי הרכוש שנצבר מצוי בבעלותם המשותפת... (2) שותפות זו נגזרת מגמירת הדעת המיוחסת לצדדים והנלמדת מנסיבות החיים המשותפים; עצם החיים המשותפים יוצרים חזקת שיתוף, ואין צורך להוכיח כוונה מיוחדת לשיתוף ביחס לנכס מיוחד.\"",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 291,
+            "title_meaningful_chars": 22
+          },
+          "raw_pplx_source_type": "מסמך משפטי",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "פסקי דין מחוזי או שלום יישום הלכת השיתוף דוגמאות מקרים יישום 'בנסיבות' 'בעקבות' חלוקה בפועל מכירה פיצוי חשבון",
+        "source_url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+        "source_type": "caselaw",
+        "candidate_id": "3ee06e71-eb78-4feb-913c-d3903ff75a5d",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.75,
+        "title": "ע\"א 52/80 שחר נ' פרידמן",
+        "origin": "perplexity",
+        "snippet": "\"ע\"א 52/80 שחר נ' פרידמן\" ... \"אין להרחיב את חזקת שיתוף הנכסים על הידועים בציבור.\"",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 68,
+            "title_meaningful_chars": 19
+          },
+          "raw_pplx_source_type": "מסמך משפטי",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "פסקי דין מחוזי או שלום יישום הלכת השיתוף דוגמאות מקרים יישום 'בנסיבות' 'בעקבות' חלוקה בפועל מכירה פיצוי חשבון",
+        "source_url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+        "source_type": "caselaw",
+        "candidate_id": "b2e786e1-8e22-46c9-a849-2ea196c8d36e",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.75,
+        "title": "יש רק דרך אחת להבטיח הפרדת רכוש בין בני זוג",
+        "origin": "perplexity",
+        "snippet": "העליון קבע כי לאחר 58 שנות נישואין גם נכסי ירושה הם ברי שיתוף אם הוכחה כוונת שיתוף ספציפית בהם.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "psakdin.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.psakdin.co.il/Document/%D7%99%D7%A9-%D7%A8%D7%A7-%D7%93%D7%A8%D7%9A-%D7%90%D7%97%D7%AA-%D7%9C%D7%94%D7%91%D7%98%D7%99%D7%97-%D7%94%D7%A4%D7%A8%D7%93%D7%AA-%D7%A8%D7%9B%D7%95%D7%A9-%D7%91%D7%99%D7%9F-%D7%91%D7%A0%D7%99-%D7%96%D7%95%D7%92",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.psakdin.co.il/Document/%D7%99%D7%A9-%D7%A8%D7%A7-%D7%93%D7%A8%D7%9A-%D7%90%D7%97%D7%AA-%D7%9C%D7%94%D7%91%D7%98%D7%99%D7%97-%D7%94%D7%A4%D7%A8%D7%93%D7%AA-%D7%A8%D7%9B%D7%95%D7%A9-%D7%91%D7%99%D7%9F-%D7%91%D7%A0%D7%99-%D7%96%D7%95%D7%92",
+            "hygiene_reasons": [],
+            "landing_page_status": "unknown",
+            "body_meaningful_chars": 77,
+            "title_meaningful_chars": 34
+          },
+          "raw_pplx_source_type": "secondary",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "בית המשפט העליון חריגים להורות שיתוף מתי מסרבים להורות שיתוף עוול אינטרס ציבורי נזק בלתי סביר מעמד משפחתי 'סייג' 'דעת מיעוט'",
+        "source_url": "https://www.psakdin.co.il/Document/%D7%99%D7%A9-%D7%A8%D7%A7-%D7%93%D7%A8%D7%9A-%D7%90%D7%97%D7%AA-%D7%9C%D7%94%D7%91%D7%98%D7%99%D7%97-%D7%94%D7%A4%D7%A8%D7%93%D7%AA-%D7%A8%D7%9B%D7%95%D7%A9-%D7%91%D7%99%D7%9F-%D7%91%D7%A0%D7%99-%D7%96%D7%95%D7%92",
+        "source_type": "caselaw",
+        "candidate_id": "804edfb1-506c-438e-9a25-241516f666cf",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.136537032574415,
+        "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+        "origin": "local_db",
+        "snippet": "רי, הרי שהסמכות העניינית נתונה לבית המשפט לעניינים מנהליים ולו בלבד. אשר ל טענת הנתבעת 1 לקיומה של תביעה זהה שהוגשה על ידי התובעות, אציין כי אכן להליך כאן קדמה הגשת תביעה בה פורטה מסכת עובדתית דומה (ת\"א 17613-04-24) . לאחר שהתקיים בפניי דיון ביום 3.2.2025 בשני התיקים , ניתן על ידי ביום 16.2.2025 פסק דין בו הוריתי על סילוקה של התביעה בתיק הקודם, כך שהתביעה דנן היא התביעה היחידה שנותרה. בהחלטתי מיום",
+        "claim_id": "C1",
+        "metadata": {
+          "court": "בתי המשפט המחוזיים",
+          "judges": "אילן דפדי",
+          "district": "מחוז תל-אביב",
+          "procedure_type": "אזרחי"
+        },
+        "query_he": "הלכת השיתוף הגדרה 'הלכת השיתוף' בית המשפט העליון פסק דין הגדרה מטרת ההלכה זכויות שותפים ברכוש משותף",
+        "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "document_id": "c817223f-1d10-48ae-b74d-7a0e26a9da6a",
+        "source_type": "caselaw",
+        "candidate_id": "0b21b719-80b4-4c62-beb7-3102a8e012db",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.121319665014744,
+        "title": "עקרונות להבטחת עצמאות גופי שידור ציבורי",
+        "origin": "local_db",
+        "snippet": "set.gov.il/mmm \n \nעוד צוין בדוח ה-EBU כי יש לעגן בחקיקה (should  be  laid  down  in  law) את הדרישות \nהפרוצדורליות הבסיסות וכך גם את הקריטריונים לפיהם ייבחרו המועמדים המתאימים ביותר, \nובראשם מומחיות וניסיון מקצועי בתחום. בדוח ה-EBU מוטעם כי הובלה של גוף תקשורת וניהולו \nמצריכים כישורים ייחודיים, ומינויים שהינם פוליטיים בעיקרם עלולים לגרום נזק כבד לארגון \nכולו. \nהתערבות פוליטית בעבודת גופי השידור בא",
+        "claim_id": "C4",
+        "metadata": {
+          "author": null,
+          "authors": "ד\"ר יהודה טרואן",
+          "approver": null,
+          "doc_type": null,
+          "category_id": 13,
+          "broken_title": false,
+          "recovered_at": "2026-04-19T17:23:11.249Z",
+          "requested_by": "אפרת רייטן מרום",
+          "category_name": "מגדר",
+          "knesset_number": null,
+          "recovered_title": true,
+          "recovery_method": "after_section_label",
+          "publication_date": "21 באוגוסט 2024",
+          "publication_year": "2024"
+        },
+        "query_he": "בית המשפט העליון חריגים להורות שיתוף מתי מסרבים להורות שיתוף עוול אינטרס ציבורי נזק בלתי סביר מעמד משפחתי 'סייג' 'דעת מיעוט'",
+        "source_url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8086&businessType=1",
+        "document_id": "6fb3a4ea-4d80-4294-99d9-29adb4e2cd0b",
+        "source_type": "knesset_research",
+        "candidate_id": "d6130496-6246-40e3-80e5-c19e566320b0",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "אנציקלופדיה יהודית דעת – הלכת השיתוף בנכסים",
+        "origin": "perplexity",
+        "snippet": "חזקת השיתוף קובעת כי כל הנכסים שנצברו במהלך הנישואין הינם משותפים, ואין הרישום הפורמלי של הבעלות בנכסים קובע את הבעלות בהם.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "daat.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+            "hygiene_reasons": [
+              "url_generic_index"
+            ],
+            "landing_page_status": "generic_index",
+            "body_meaningful_chars": 103,
+            "title_meaningful_chars": 37
+          },
+          "raw_pplx_source_type": "encyclopedia",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר משפטי 'הלכת השיתוף' הגדרת ההלכה זכויות שותפים ברכוש משותף סקירה תיאורטית",
+        "source_url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+        "source_type": "other",
+        "candidate_id": "7fc3ecfc-223f-420f-80c4-a72d63b25426",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הקדמת מועד איזון המשאבים בתיקון מס' 4 לחוק יחסי ממון והחקיקה",
+        "origin": "perplexity",
+        "snippet": "הלכת השיתוף היא יצירת הפסיקה. במאמר נדונה התפתחות החקיקה והפסיקה סביב הקדמת מועד איזון המשאבים בתיקון מס' 4 לחוק יחסי ממון.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "runi.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.runi.ac.il/media/4zvhf00n/cohen.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.runi.ac.il/media/4zvhf00n/cohen.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 103,
+            "title_meaningful_chars": 50
+          },
+          "raw_pplx_source_type": "academic article",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר סקירה התפתחות פסיקת השיתוף סייגים חריגים ביקורת על התפתחות הפסיקה 'הלכת השיתוף' התפתחות היסטורית",
+        "source_url": "https://www.runi.ac.il/media/4zvhf00n/cohen.pdf",
+        "source_type": "other",
+        "candidate_id": "f8d9e380-3ba1-4e6a-a4ca-8c8923cd3aa1",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.37887908783682056,
+        "title": "ע\"א 7703-10 - גיא ישועה נ. מדינת ישראל - מנהלת סל\"ע",
+        "origin": "local_db",
+        "snippet": "דות בנסיבות\nאשם בהם שאין במקרים גם חוקתית בזכות פגיעה בגין . מעשה של המקרה\nפר על מידתי בלתי נטל המטיל שלטונילכך ראויה דוגמה הוא מסוים ט. \n)82ז–83א(  \n)6(  )ד אליבא\nצ שופט 'זילברטל  :( בשאלה ההכרעה את מצוא לעת להותיר יש\nמתי ,בכלל אם , בהעדר עצמאית חוקתית פיצוי בעילת להכיר מקום יהיה\nאשם.) 82ד -ה(  \nב.  )1(   החקיקתי ההסדר אם– ויישומו פרשנותו פי על – הוגן פיצוי מנגנון קובע \nושלם ,לו חיצונית חוקתית עו",
+        "claim_id": "C3",
+        "metadata": {
+          "page": 25,
+          "year": 2014,
+          "volume": "ס\"ז",
+          "doc_type": "padi",
+          "case_name": "גיא ישועה נ. מדינת ישראל - מנהלת סל\"ע",
+          "source_site": "supreme_court_il",
+          "verdict_type": "פד\"י"
+        },
+        "query_he": "פסקי דין מחוזי או שלום יישום הלכת השיתוף דוגמאות מקרים יישום 'בנסיבות' 'בעקבות' חלוקה בפועל מכירה פיצוי חשבון",
+        "source_url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_2_7703-13.pdf&type=2",
+        "document_id": "b5ce9bce-7c11-42f0-b7d5-42adc3b65a56",
+        "source_type": "supreme_court_il",
+        "candidate_id": "f87c026f-d841-4eab-892f-2b5ed2164463",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.3768065955607638,
+        "title": "תקנות הניקוז וההגנה מפני שטפונות (סדרי דין בבתי דין לעניני מים ובערעורים על החלטותיהם)",
+        "origin": "local_db",
+        "snippet": "דין רשאי לדחות את שמיעת הערר, הערר על שומה או הבקשה למועד אחר, ומשהתחיל בשמיעה – לדחות את המשך הדיון בהם, אם הדחיה דרושה, לדעתו, למען הצדק. 17. הדיון מוגבל לנימוקים שבכתב [תיקון: ס״ח תשכ״א] (א) בשמיעת הערר, הערר על שומה או הבקשה לא ייזקק בית הדין לכל נימוק שלא הוזכר בהם או בתשובה אלא אם כן הוא משוכנע שהנימוק הושמט שלא באשמת בעל הדין המבקש להיעזר בו או ששמיעת הנימוק דרושה למען הצדק. (ב) בית הדין רש",
+        "claim_id": "C4",
+        "metadata": {
+          "law_type": "regulation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "פסקי דין מחוזי חריגים וסייגים להלכת השיתוף 'הבחנה' 'צמצום' 'ביקורת' דוגמאות מקרים החלטות שביקשו להגביל או למתן הוראת שיתוף",
+        "source_url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%A0%D7%99%D7%A7%D7%95%D7%96_%D7%95%D7%94%D7%94%D7%92%D7%A0%D7%94_%D7%9E%D7%A4%D7%A0%D7%99_%D7%A9%D7%98%D7%A4%D7%95%D7%A0%D7%95%D7%AA_(%D7%A1%D7%93%D7%A8%D7%99_%D7%93%D7%99%D7%9F_%D7%91%D7%91%D7%AA%D7%99_%D7%93%D7%99%D7%9F_%D7%9C%D7%A2%D7%A0%D7%99%D7%A0%D7%99_%D7%9E%D7%99%D7%9D_%D7%95%D7%91%D7%A2%D7%A8%D7%A2%D7%95%D7%A8%D7%99%D7%9D_%D7%A2%D7%9C_%D7%94%D7%97%D7%9C%D7%98%D7%95%D7%AA%D7%99%D7%94%D7%9D)",
+        "document_id": "fe15b69d-4e9a-4bf1-9056-cc0bd6417372",
+        "source_type": "israeli_law",
+        "candidate_id": "d9110de4-33c8-4722-ab48-6e7d4d686208",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.3756066633873864,
+        "title": "עיונים בנושא השכירות",
+        "origin": "local_db",
+        "snippet": "חכר.\n2\n  8.  משכון  השכירות\"\n  הצבענו  לעיל  על  התפקיד  החיוני  שיש  למשכון  שכירות  מקרקעין  במציאות  הכלכלית\nנוכח  העובדה  שמרבית  ׳׳רוכשי״  המקרקעין)כמו  דירות  למגורים(  אינם\n    280\n  הישראלית,\nוזכות  החכירה  היא  הנכס  העיקרי  שביכולתם  להציע\n  281\n  אלא  חוכרים  לתקופה  ממושכת,\n  כבטוחה  להלוואה.  אמנם,  משכון  זכותו  של  השוכר  עשוי  להביא  להעברת  השכירות\n  בהליכים  למימוש  המשכון,  ועל ",
+        "claim_id": "C1",
+        "metadata": {
+          "tags": [
+            "דיני קניין",
+            "דיני קניין",
+            "דיני קניין",
+            "דיני חוזים",
+            "דיני נזיקין"
+          ],
+          "volume": "כרך לג",
+          "source_site": "mishpatim"
+        },
+        "query_he": "חוק המקרקעין, תשכ\"ט-1969 הוראות לגבי בעלות משותפת, שיתוף בנכס, בקשה לחלוקת שיתוף, סעד חלוקה ומכירה",
+        "source_url": "https://lawjournal.huji.ac.il/article/12/686",
+        "document_id": "a7e8e7e2-98e3-443a-80af-1a4a3778d0e3",
+        "source_type": "journal_article",
+        "candidate_id": "ac50bad7-763a-4bd8-aafe-9225239693c5",
+        "retrieval_method": "vector",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.374244727648854,
+        "title": "ספרים, ו' לוסטהויז וט' שפניץ: חוזים אחידים",
+        "origin": "local_db",
+        "snippet": "גיקוית  ספרים\nשפניץוטי לוסטמות  ד \n  חוזים  אחיזים\n  הוצאת  נבו)1994(\n מאת\nדויטש* סמי \nהצגת  גישהתוך  שפניץ  חחים  אחידים, וטי  לוםטהויז את ספק של  ר  בוחן  זה    מאמר  \nנפוציםאמם  מהסוגיות  שנדונו  בספר.  מאמרי  ביקורח  ספרים  חלק    ביקורתית  כלפי  \nספרות  משפטית בישראל,  שנודעה לספרי משפטזה של מקום לסוג יש   בישראל.  לדעתי, \nהחתיםחוק  תורם  תרומה  חשובה  לבחינת  יישום  ספר זה פירוש  חוקים  וייש",
+        "claim_id": "C3",
+        "metadata": {
+          "tags": [
+            "דיני חוזים",
+            "דיני חוזים",
+            "דיני קניין",
+            "דיני חוזים"
+          ],
+          "volume": "כרך כז",
+          "source_site": "mishpatim"
+        },
+        "query_he": "פסקי דין מחוזי או שלום יישום הלכת השיתוף דוגמאות מקרים יישום 'בנסיבות' 'בעקבות' חלוקה בפועל מכירה פיצוי חשבון",
+        "source_url": "https://lawjournal.huji.ac.il/article/12/722",
+        "document_id": "82869b63-e6c5-4cdd-b66d-dce0a5cfb3bf",
+        "source_type": "journal_article",
+        "candidate_id": "29b04de9-6c2a-4268-8a0e-442165b595b4",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.374237021303883,
+        "title": "מקרקעין ומיטלטלין",
+        "origin": "local_db",
+        "snippet": "     \nהמקרקעין  היתה  למנוע  פיצול  בין  הבעלות  בקרקע  לביןשל חוק  מגמת־היסוד     §33    \nבאהזו  כדי  היותו  למקרקעין.  מגמה עד קבע של   הבעלות  במה  שחובר  לקרקע  חיבור \nלחוק  המקרקעין,  תשכ״ט-1969,  שלפיה  ״הבעלות   12   לידי   ביטוי  בהוראה  שבסעיף \nהבנוי  והנטוע  עליה  ועל  כל דבר אחר המחובר אליה חיבור של קבע,גם על   כקרקע  חלה \nחריגים  מספר,  כשהחשוב  שבהם  הואזו     זולת   מחוברים  הניתנים ",
+        "claim_id": "C1",
+        "metadata": {
+          "tags": [
+            "דיני קניין",
+            "משפט בינתחומי",
+            "דיני קניין",
+            "דיני קניין"
+          ],
+          "volume": "כרך יט",
+          "source_site": "mishpatim"
+        },
+        "query_he": "חוק המקרקעין, תשכ\"ט-1969 הוראות לגבי בעלות משותפת, שיתוף בנכס, בקשה לחלוקת שיתוף, סעד חלוקה ומכירה",
+        "source_url": "https://lawjournal.huji.ac.il/article/12/771",
+        "document_id": "bdc2459d-0f06-40ef-bf1c-b8113208ee52",
+        "source_type": "journal_article",
+        "candidate_id": "3158f344-2723-4605-976d-ce107db9b376",
+        "retrieval_method": "vector",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.373820268472635,
+        "title": "החקירה האחרונה של דיויד וינר",
+        "origin": "local_db",
+        "snippet": "ת כאלה בתנאים החיסיון הסרת \nהדין בעורך .הציפיבענ יכריע עצמו שהוא יהיין , מחירים בין לבחור אותו מחייבת\nנסבלים בלתי .  \nכללית בראייה , החיסיון במוסד לפגוע עלול חקירה מפני התגוננות של הסייג\nבכללותו ,מוחלט כחיסיון בחוק נקבע אשר.\n34\n יהיו דין עורכי אם רשאים על לוותר \nכאלה בנסיבות החיסיון , עצמם את ימצאו הם למעשה הלכהחייביםכן לעשות  .ש כן\nוברור מידי באופן לרעתם תתפרש שתיקתם . בין השיח שאיכות לכך יגרום ז",
+        "claim_id": "C4",
+        "metadata": {
+          "author": "עו&quot;ד דרור ארד-אילון",
+          "volume": "ספר דיויד וינר 2009",
+          "source_site": "hapraklit"
+        },
+        "query_he": "פסקי דין מחוזי חריגים וסייגים להלכת השיתוף 'הבחנה' 'צמצום' 'ביקורת' דוגמאות מקרים החלטות שביקשו להגביל או למתן הוראת שיתוף",
+        "source_url": "http://www.hapraklit.co.il//_Uploads/dbsAttachedFiles/Dror_arad.pdf",
+        "document_id": "94ec8306-a682-49c7-b043-902d0e1a0a74",
+        "source_type": "journal_article",
+        "candidate_id": "34aa0adb-d25f-4ee2-a7d4-d9126f2b17f9",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 22753,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 46959,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 6731,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 19174,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 40733,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 46584,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter_v2.initial",
+        "escalated": false,
+        "http_status": 200
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://he.wikipedia.org/wiki/%D7%94%D7%9C%D7%9B%D7%AA_%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3",
+        "role": "binding_case_law",
+        "title": "הלכת השיתוף - ויקיפדיה",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "הלכת השיתוף הגדרה 'הלכת השיתוף' בית המשפט העליון פסק דין הגדרה מטרת ההלכה זכויות שותפים ברכוש משותף",
+        "drop_reason": "bad_source"
+      },
+      {
+        "url": "https://familylawisrael.com/%D7%94%D7%9C%D7%9B%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%94%D7%A1%D7%93%D7%A8-%D7%A8%D7%9B%D7%95%D7%A9%D7%99-%D7%9C%D7%99%D7%93%D7%95%D7%A2%D7%99%D7%9D-%D7%91%D7%A6%D7%99%D7%91%D7%95%D7%A8/",
+        "role": "binding_case_law",
+        "title": "הלכת השיתוף – הסדר רכושי לידועים בציבור וזוגות שנישאו לפני 1974",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "הלכת השיתוף הגדרה 'הלכת השיתוף' בית המשפט העליון פסק דין הגדרה מטרת ההלכה זכויות שותפים ברכוש משותף",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.gerushin.co.il/%D7%9E%D7%94%D7%99-%D7%97%D7%96%D7%A7%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3/",
+        "role": "binding_case_law",
+        "title": "מהי הלכת השיתוף / חזקת השיתוף בין בני זוג?",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "הלכת השיתוף הגדרה 'הלכת השיתוף' בית המשפט העליון פסק דין הגדרה מטרת ההלכה זכויות שותפים ברכוש משותף",
+        "drop_reason": "class_unknown_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+        "role": "binding_case_law",
+        "title": "אנציקלופדיה יהודית דעת - הלכת השיתוף בנכסים",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "הלכת השיתוף הגדרה 'הלכת השיתוף' בית המשפט העליון פסק דין הגדרה מטרת ההלכה זכויות שותפים ברכוש משותף",
+        "drop_reason": "class_academic_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://www.kolzchut.org.il/he/%D7%97%D7%96%D7%A7%D7%AA_%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3_%D7%91%D7%99%D7%9F_%D7%91%D7%A0%D7%99_%D7%96%D7%95%D7%92",
+        "role": "scholarship",
+        "title": "כל זכות – חזקת השיתוף בין בני זוג (מושג)",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי 'הלכת השיתוף' הגדרת ההלכה זכויות שותפים ברכוש משותף סקירה תיאורטית",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://he.wikipedia.org/wiki/%D7%94%D7%9C%D7%9B%D7%AA_%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3",
+        "role": "scholarship",
+        "title": "ויקיפדיה – הלכת השיתוף",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי 'הלכת השיתוף' הגדרת ההלכה זכויות שותפים ברכוש משותף סקירה תיאורטית",
+        "drop_reason": "bad_source"
+      },
+      {
+        "url": "https://www.ayanau.co.il/%D7%94%D7%9C%D7%9B%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3/",
+        "role": "scholarship",
+        "title": "איילות עו\"ד – הלכת השיתוף",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי 'הלכת השיתוף' הגדרת ההלכה זכויות שותפים ברכוש משותף סקירה תיאורטית",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.mako.co.il/news-law_guide/2024_q4/Article-832d4f01b078391026.htm",
+        "role": "scholarship",
+        "title": "N12 – חלוקת רכוש בין בני זוג – מה חשוב לדעת?",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי 'הלכת השיתוף' הגדרת ההלכה זכויות שותפים ברכוש משותף סקירה תיאורטית",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.globes.co.il/news/article.aspx?did=1001514600",
+        "role": "binding_case_law",
+        "title": "פסק הדין החדש שכל זוג נשוי צריך להכיר. וההשלכות",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון קריטריונים להורות על שיתוף בפועל או חלוקה/מכירה מבחנים כשמחליטים האם לחלק את הנכס 'מבחן' 'שיקולים' 'נסיבות המקרה'",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://rslawfirm.co.il/divorce-lawyer/%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99-%D7%92%D7%99%D7%A8%D7%95%D7%A9%D7%99%D7%9F/",
+        "role": "binding_case_law",
+        "title": "שיתוף ספציפי בנכסים, פסק דין עליון 30.6.2025 ניתוח משפטי",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון קריטריונים להורות על שיתוף בפועל או חלוקה/מכירה מבחנים כשמחליטים האם לחלק את הנכס 'מבחן' 'שיקולים' 'נסיבות המקרה'",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://avivharel.co.il/%D7%A2%D7%95%D7%A8%D7%9A-%D7%93%D7%99%D7%9F-%D7%92%D7%99%D7%A8%D7%95%D7%A9%D7%99%D7%9F/unequal-division-of-property-in-divorce/",
+        "role": "binding_case_law",
+        "title": "חלוקת רכוש לא שוויונית בגירושין | עו״ד אביב הראל",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון קריטריונים להורות על שיתוף בפועל או חלוקה/מכירה מבחנים כשמחליטים האם לחלק את הנכס 'מבחן' 'שיקולים' 'נסיבות המקרה'",
+        "drop_reason": "class_unknown_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://rotenberglaw.co.il/?CategoryID=188",
+        "role": "binding_case_law",
+        "title": "פסקי דין שאלות ותשובות בנושא חלוקת רכוש",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון קריטריונים להורות על שיתוף בפועל או חלוקה/מכירה מבחנים כשמחליטים האם לחלק את הנכס 'מבחן' 'שיקולים' 'נסיבות המקרה'",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://eshimony-law.co.il/%D7%A2%D7%95%D7%A8%D7%9A-%D7%93%D7%99%D7%9F-%D7%A6%D7%95%D7%95%D7%90%D7%95%D7%AA-%D7%95%D7%99%D7%A8%D7%95%D7%A9%D7%95%D7%AA/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F-%D7%91%D7%99%D7%9F-%D7%99%D7%95%D7%A8%D7%A9%D7%99%D7%9D/",
+        "role": "scholarship",
+        "title": "פירוק שיתוף במקרקעין בין יורשים – אלי שמעוני, משרד עורכי דין",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר משפטי קריטריונים להורות על שיתוף חלוקה במקרקעין סקירה שיטה מבחנים שיקולי שופטין",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://kalaw.co.il/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3/",
+        "role": "scholarship",
+        "title": "פירוק שיתוף – עו\"ד אשר כהנא",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר משפטי קריטריונים להורות על שיתוף חלוקה במקרקעין סקירה שיטה מבחנים שיקולי שופטין",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://okhg.co.il/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%91%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F/",
+        "role": "scholarship",
+        "title": "פירוק שיתוף זכויות במקרקעין – OKHG Law Firm",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר משפטי קריטריונים להורות על שיתוף חלוקה במקרקעין סקירה שיטה מבחנים שיקולי שופטין",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.gerushin.co.il/%D7%9E%D7%94%D7%95-%D7%94%D7%A4%D7%A1%D7%93-%D7%9B%D7%90%D7%A9%D7%A8-%D7%90%D7%A0%D7%95-%D7%A2%D7%95%D7%A1%D7%A7%D7%99%D7%9D-%D7%91%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%/",
+        "role": "scholarship",
+        "title": "פירוק שיתוף בדרך של חלוקה בעין ולא של מכר – גירושין.נט",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר משפטי קריטריונים להורות על שיתוף חלוקה במקרקעין סקירה שיטה מבחנים שיקולי שופטין",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://ygoldlaw.co.il/real-estate-lawyer/disassembly-sharing/",
+        "role": "scholarship",
+        "title": "תביעת פירוק שיתוף במקרקעין: תהליך, עלויות ושיקולים – YGold Law",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר משפטי קריטריונים להורות על שיתוף חלוקה במקרקעין סקירה שיטה מבחנים שיקולי שופטין",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.barelaw.co.il/he/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F.html",
+        "role": "binding_case_law",
+        "title": "פירוק שיתוף במקרקעין - בר אל ירון, משרד עורכי דין וגישור מסחרי",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון סוגי הסעד בפסיקות שיתוף חלוקה בפועל מכירה פיצוי חשבון צו מניעה כללים לחלוקה של חלקים ותשלומים 'יישום' 'סעד מעשי'",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.gerushin.co.il/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%93%D7%99%D7%A8%D7%94/",
+        "role": "binding_case_law",
+        "title": "פירוק שיתוף בדירת מגורים בין בני זוג בגירושין ב- 2025",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון סוגי הסעד בפסיקות שיתוף חלוקה בפועל מכירה פיצוי חשבון צו מניעה כללים לחלוקה של חלקים ותשלומים 'יישום' 'סעד מעשי'",
+        "drop_reason": "class_unknown_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://www.amitvered.co.il/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F/",
+        "role": "binding_case_law",
+        "title": "פירוק שיתוף במקרקעין - המדריך המלא 2025 | עו\"ד ...",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון סוגי הסעד בפסיקות שיתוף חלוקה בפועל מכירה פיצוי חשבון צו מניעה כללים לחלוקה של חלקים ותשלומים 'יישום' 'סעד מעשי'",
+        "drop_reason": "class_unknown_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://israel-law.co/%D7%AA%D7%97%D7%95%D7%9E%D7%99-%D7%A2%D7%99%D7%A1%D7%95%D7%A7/%D7%97%D7%A7%D7%99%D7%A7%D7%94/%D7%A4%D7%A1%D7%99%D7%A7%D7%94/%D7%A4%D7%A1%D7%99%D7%A7%D7%94-%D7%91%D7%93%D7%99%D7%A0%D7%99-%D7%9E%D7%A7%D7%A8%D7%A7%D7%Aעין/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F-%D7%94%D7%A0%D7%99%D7%AA%D7%A0%D7%99%D7%9D-%D7%9C%D7%97%D7%9C%D7%95%D7%A7%D7%94-%D7%99/",
+        "role": "binding_case_law",
+        "title": "רידלביץ נ' מודעי | פירוק שיתוף- חלוקה בעין או מכירה",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון סוגי הסעד בפסיקות שיתוף חלוקה בפועל מכירה פיצוי חשבון צו מניעה כללים לחלוקה של חלקים ותשלומים 'יישום' 'סעד מעשי'",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.ynet.co.il/article/hkv0wukvgg",
+        "role": "binding_case_law",
+        "title": "פסק הדין שמשנה את כללי המשחק: מהו שיתוף ספציפי בגירושין ומתי ...",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון סוגי הסעד בפסיקות שיתוף חלוקה בפועל מכירה פיצוי חשבון צו מניעה כללים לחלוקה של חלקים ותשלומים 'יישום' 'סעד מעשי'",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+        "role": "persuasive_case_law",
+        "title": "פסקי דין והחלטות שהופצו על ידי מערך הדוברות | הרשות השופטת",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "פסקי דין מחוזי או שלום יישום הלכת השיתוף דוגמאות מקרים יישום 'בנסיבות' 'בעקבות' חלוקה בפועל מכירה פיצוי חשבון",
+        "drop_reason": "class_government_report_not_admitted_for_persuasive_case_law"
+      },
+      {
+        "url": "https://rotenberglaw.co.il/_Uploads/dbsAttachedFiles/court-file-2478-14.pdf",
+        "role": "persuasive_case_law",
+        "title": "בע\"מ 2478/14",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "פסקי דין מחוזי או שלום יישום הלכת השיתוף דוגמאות מקרים יישום 'בנסיבות' 'בעקבות' חלוקה בפועל מכירה פיצוי חשבון",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.kolzchut.org.il/he/%D7%97%D7%96%D7%A7%D7%AA_%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3_%D7%91%D7%99%D7%9F_%D7%91%D7%A0%D%D7%99_%D7%96%D7%95%D7%92",
+        "role": "persuasive_case_law",
+        "title": "חזקת השיתוף בין בני זוג (מושג)",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "פסקי דין מחוזי או שלום יישום הלכת השיתוף דוגמאות מקרים יישום 'בנסיבות' 'בעקבות' חלוקה בפועל מכירה פיצוי חשבון",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.yosefbdlaw.com/news/%D7%94%D7%A2%D7%9C%D7%99%D7%95%D7%9F-%D7%9C%D7%90-%D7%A0%D7%93%D7%A8%D7%A9%D7%99%D7%9D-%D7%94%D7%9C%D7%99%D7%9B%D7%99-%D7%96%D7%99%D7%94%D7%95%D7%99-%D7%A0%D7%95%D7%A1%D7%A4%D7%99%D7%9D-%D7%9C%D7%90/",
+        "role": "binding_case_law",
+        "title": "העליון: לא נדרשים הליכי זיהוי נוספים לאחר פירוק שיתוף במקרקעין",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון חריגים להורות שיתוף מתי מסרבים להורות שיתוף עוול אינטרס ציבורי נזק בלתי סביר מעמד משפחתי 'סייג' 'דעת מיעוט'",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.globes.co.il/news/article.aspx?did=1001514600",
+        "role": "binding_case_law",
+        "title": "פסק הדין החדש שכל זוג נשוי צריך להכיר. וההשלכות",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון חריגים להורות שיתוף מתי מסרבים להורות שיתוף עוול אינטרס ציבורי נזק בלתי סביר מעמד משפחתי 'סייג' 'דעת מיעוט'",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.calcalist.co.il/local/articles/0,7340,L-3777484,00.html",
+        "role": "binding_case_law",
+        "title": "פסק הדין של העליון משנה את הלכות השיתוף בפייסבוק",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון חריגים להורות שיתוף מתי מסרבים להורות שיתוף עוול אינטרס ציבורי נזק בלתי סביר מעמד משפחתי 'סייג' 'דעת מיעוט'",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.barelaw.co.il/he/%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F-%D7%9B%D7%9C-%D7%9E%D7%94-%D7%A9%D7%A6%D7%A8%D7%99%D7%9A-%D7%9C%D7%93%D7%A2%D7%AA-%D7%9C%D7%A4%D7%A0%D7%99-%D7%A9%D7%A0%D7%9B%D7%A0%D7%A1%D7%99%D7%9D-%D7%9C%D7%94%D7%9C%D7%99%D7%9A.html",
+        "role": "binding_case_law",
+        "title": "פירוק שיתוף במקרקעין: כל מה שצריך לדעת לפני שנכנסים להליך",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון חריגים להורות שיתוף מתי מסרבים להורות שיתוף עוול אינטרס ציבורי נזק בלתי סביר מעמד משפחתי 'סייג' 'דעת מיעוט'",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.kolzchut.org.il/he/%D7%97%D7%96%D7%A7%D7%AA_%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3_%D7%91%D7%99%D7%9F_%D7%91%D7%A0%D7%99_%D7%96%D7%95%D7%92",
+        "role": "persuasive_case_law",
+        "title": "חזקת השיתוף בין בני זוג (מושג)",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "פסקי דין מחוזי חריגים וסייגים להלכת השיתוף 'הבחנה' 'צמצום' 'ביקורת' דוגמאות מקרים החלטות שביקשו להגביל או למתן הוראת שיתוף",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://od-nadlan.co.il/?p=1574",
+        "role": "persuasive_case_law",
+        "title": "פירוק שיתוף – זכות אבסולוטית או נתונה לשיקול דעתו של בית משפט",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "פסקי דין מחוזי חריגים וסייגים להלכת השיתוף 'הבחנה' 'צמצום' 'ביקורת' דוגמאות מקרים החלטות שביקשו להגביל או למתן הוראת שיתוף",
+        "drop_reason": "class_unknown_not_admitted_for_persuasive_case_law"
+      },
+      {
+        "url": "https://www.globes.co.il/news/article.aspx?did=522299",
+        "role": "persuasive_case_law",
+        "title": "הלכת השיתוף: מבחן הכוונה - גלובס",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "פסקי דין מחוזי חריגים וסייגים להלכת השיתוף 'הבחנה' 'צמצום' 'ביקורת' דוגמאות מקרים החלטות שביקשו להגביל או למתן הוראת שיתוף",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://od-nadlan.co.il/?p=1574",
+        "role": "persuasive_case_law",
+        "title": "פירוק שיתוף – זכות אבסולוטית או נתונה לשיקול דעתו של בית משפט",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "פסקי דין מחוזי חריגים וסייגים להלכת השיתוף 'הבחנה' 'צמצום' 'ביקורת' דוגמאות מקרים החלטות שביקשו להגביל או למתן הוראת שיתוף",
+        "drop_reason": "class_unknown_not_admitted_for_persuasive_case_law"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/1194209-3/he/%D7%92%D7%93%D7%A8%D7%99%20%D7%94%D7%9C%D7%9B%D7%AA%20%D7%A9%D7%99%D7%AA%D7%95%D7%A3%20%D7%A1%D7%A4%D7%A6%D7%יפי%20%D7%91%D7%93%D7%99%D7%A8%D7%AA%20%D7%9E%D7%92%D7%95%D7%A8%D7%99%D7%9D%20-%201194209-3%20%D7%91%D7%99%D7%94''%D7%93%20%D7%90%D7%A9%D7%93%D7%95%D7%93%20(1).docx",
+        "role": "scholarship",
+        "title": "גדרי הלכת שיתוף ספציפי בדירת מגורים",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר סקירה התפתחות פסיקת השיתוף סייגים חריגים ביקורת על התפתחות הפסיקה 'הלכת השיתוף' התפתחות היסטורית",
+        "drop_reason": "class_government_report_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://he.wikipedia.org/wiki/%D7%94%D7%9C%D7%9B%D7%AA_%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3",
+        "role": "scholarship",
+        "title": "הלכת השיתוף",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר סקירה התפתחות פסיקת השיתוף סייגים חריגים ביקורת על התפתחות הפסיקה 'הלכת השיתוף' התפתחות היסטורית",
+        "drop_reason": "bad_source"
+      },
+      {
+        "url": "https://www.divorce-online.co.il/%D7%AA%D7%95%D7%A7%D7%A4%D7%94-%D7%A9%D7%9C-%D7%97%D7%96%D7%A7%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3/",
+        "role": "scholarship",
+        "title": "תוקפה של חזקת השיתוף",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר סקירה התפתחות פסיקת השיתוף סייגים חריגים ביקורת על התפתחות הפסיקה 'הלכת השיתוף' התפתחות היסטורית",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      }
+    ],
+    "required_anchors": {
+      "count": 0,
+      "anchors": [],
+      "enabled": true,
+      "statuses": [],
+      "queries_emitted": []
+    },
+    "drafter_v2_full_compare": null,
+    "drafter_v2_opus_compare": null,
+    "drafter_v2_sonnet_compare": null
+  }
+}
