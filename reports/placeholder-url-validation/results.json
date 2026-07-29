@@ -1,0 +1,280 @@
+[
+  {
+    "id": "B8-canonical-quote",
+    "query": "צטט את סעיף 1 לחוק יסוד: כבוד האדם וחירותו",
+    "run_id": "23a77edf-2996-490d-a47c-8f6e4e8ce925",
+    "qa_log_id": "f95f8876-742f-4d93-8f48-75d6646c7a4d",
+    "research_mode": "canonical_quote",
+    "output_shape": null,
+    "lead_ref": {
+      "ref": "r_basic_law_dignity-s1",
+      "shape": "quote",
+      "reason": "canonical_registry_statute_section"
+    },
+    "sufficiency": null,
+    "integrity_rejects": 0,
+    "tier_counts": {
+      "primary_mirror": 1,
+      "index_or_listing": 1,
+      "official_primary": 6,
+      "secondary_commentary": 7
+    },
+    "citable_counts": {
+      "statute": 5,
+      "unknown": 2,
+      "commentary": 4,
+      "not_citable": 1,
+      "scholarship": 3
+    },
+    "role_unsatisfied": 7,
+    "used_sources": [
+      {
+        "n": 1,
+        "t": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "type": "israeli_law"
+      }
+    ],
+    "answer_head": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹"
+  },
+  {
+    "id": "B2-missing-docket",
+    "query": "מה נקבע בבג\"ץ 6698/95 קעדאן נ. מינהל מקרקעי ישראל?",
+    "run_id": "664c61dd-2876-4043-a712-11843b94f387",
+    "qa_log_id": "53989476-82c6-4214-aef2-d163fb7f1fec",
+    "research_mode": "specific_case",
+    "output_shape": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "case_holding",
+      "reason": "skipped_missing_docket_anchor"
+    },
+    "sufficiency": null,
+    "integrity_rejects": 0,
+    "tier_counts": {
+      "primary_mirror": 1,
+      "statute_mirror": 4,
+      "index_or_listing": 1,
+      "official_primary": 2,
+      "secondary_commentary": 15
+    },
+    "citable_counts": {
+      "statute": 5,
+      "unknown": 1,
+      "judgment": 1,
+      "commentary": 3,
+      "not_citable": 1,
+      "scholarship": 12
+    },
+    "role_unsatisfied": 20,
+    "used_sources": [],
+    "answer_head": "לא אותר במקורות הזמינים פסק הדין בעניין בג\"ץ 6698/95 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+  },
+  {
+    "id": "M1-specific-case",
+    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי?",
+    "run_id": "6024a34d-9754-430f-a6c2-c31a3ecb2c5c",
+    "qa_log_id": "0fb779e6-2a3d-47e9-834d-62f57056ef3a",
+    "research_mode": "specific_case",
+    "output_shape": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "case_holding",
+      "reason": "skipped_missing_docket_anchor"
+    },
+    "sufficiency": null,
+    "integrity_rejects": 0,
+    "tier_counts": {
+      "primary_mirror": 1,
+      "statute_mirror": 1,
+      "index_or_listing": 2,
+      "official_primary": 4,
+      "secondary_commentary": 9
+    },
+    "citable_counts": {
+      "statute": 5,
+      "judgment": 1,
+      "commentary": 3,
+      "not_citable": 2,
+      "scholarship": 6
+    },
+    "role_unsatisfied": 12,
+    "used_sources": [],
+    "answer_head": "לא אותר במקורות הזמינים ע\"א 6821/93. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+  },
+  {
+    "id": "M2-statute-section",
+    "query": "מה קובע סעיף 12 לחוק החוזים?",
+    "run_id": "58a32e62-5b04-4706-a2cb-5a919ed6b40d",
+    "qa_log_id": "6c7d1f3c-179a-4b91-8b98-ef4ff956a0e6",
+    "research_mode": "statute_section_definition",
+    "output_shape": null,
+    "lead_ref": {
+      "ref": "s3",
+      "shape": "definition",
+      "reason": "required_anchor_statute"
+    },
+    "sufficiency": null,
+    "integrity_rejects": 0,
+    "tier_counts": {
+      "primary_mirror": 3,
+      "statute_mirror": 3,
+      "index_or_listing": 1,
+      "official_primary": 3,
+      "secondary_commentary": 3
+    },
+    "citable_counts": {
+      "statute": 6,
+      "unknown": 1,
+      "judgment": 2,
+      "commentary": 1,
+      "not_citable": 1,
+      "scholarship": 2
+    },
+    "role_unsatisfied": 7,
+    "used_sources": [
+      {
+        "n": 1,
+        "t": "חוק החוזים (חלק כללי)",
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+        "type": "israeli_law"
+      }
+    ],
+    "answer_head": "תום לב במשא ומתן (א) במשא ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך מקובלת ובתום לב. (ב) צד שלא נהג בדרך מקובלת ולא בתום־לב חייב לצד השני פיצויים בעד הנזק שנגרם לו עקב המשא ומתן או עקב כריתת החוזה, והוראות סעיפים 10, 13 ו־14 לחוק החוזים (תרופות בשל הפרת חוזה), תשל\"א–1970, יחולו בשינויים המתאימים.¹\n\nסעיף 12(א) קובע חובת התנהגות במשא ומתן: אדם הנועד לנהל משא ומתן לקראת כריתתו של חוזה חייב לנהוג "
+  },
+  {
+    "id": "C2-synthesis",
+    "query": "מה הפסיקה אומרת על הלכת השיתוף?",
+    "run_id": "5e451b3a-993d-436c-a565-5201d01a8a44",
+    "qa_log_id": "29b85988-4e49-4d95-8d66-579e2d41cf23",
+    "research_mode": "case_law_synthesis",
+    "output_shape": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
+    "sufficiency": null,
+    "integrity_rejects": 0,
+    "tier_counts": {
+      "index_or_listing": 1,
+      "official_primary": 3,
+      "secondary_commentary": 10
+    },
+    "citable_counts": {
+      "statute": 2,
+      "judgment": 1,
+      "commentary": 6,
+      "not_citable": 1,
+      "scholarship": 4
+    },
+    "role_unsatisfied": 11,
+    "used_sources": [],
+    "answer_head": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק יחסי ממון בין בני זוג, תשל\"ג-1973; חוק יחסי ממון בין בני זוג, תשל\"ג-1973 (PDF); ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן; תחולה ויישום "
+  },
+  {
+    "id": "C1-false-doctrine",
+    "query": "מה הפסיקה אומרת על הלכת יורש אחר יורש?",
+    "run_id": "e55d911f-2eda-455f-b87d-5a5fd255c532",
+    "qa_log_id": "43aee2a7-5c88-46f0-94cf-03a573b61f83",
+    "research_mode": "case_law_synthesis",
+    "output_shape": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
+    "sufficiency": null,
+    "integrity_rejects": 1,
+    "tier_counts": {
+      "primary_mirror": 1,
+      "index_or_listing": 1,
+      "official_primary": 4,
+      "secondary_commentary": 19
+    },
+    "citable_counts": {
+      "statute": 4,
+      "unknown": 3,
+      "judgment": 1,
+      "commentary": 10,
+      "not_citable": 1,
+      "scholarship": 6
+    },
+    "role_unsatisfied": 20,
+    "used_sources": [
+      {
+        "n": 1,
+        "t": "חוק הירושה, תשכ\"ה-1965, סעיף 42",
+        "url": "https://fs.knesset.gov.il/5/law/5_lsr_208455.PDF",
+        "type": "legislation"
+      },
+      {
+        "n": 1,
+        "t": "חוק הירושה, תשכ\"ה-1965",
+        "url": "https://www.nevo.co.il/law_html/law00/72178.htm",
+        "type": "legislation"
+      },
+      {
+        "n": 2,
+        "t": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש'",
+        "url": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%90%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%90%D7%ה-כ-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+        "type": "caselaw"
+      },
+      {
+        "n": 2,
+        "t": "פסק דין מתוך psakdin.co.il",
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%94%D7%93%D7%9F-%D7%91%D7%A9%D7%90%D7%9C%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%94%D7%A1%D7%9B%D7%9E%D7%99%D7%9D-%D7%95%D7%94%D7סדרים-בין-יורשים-ביחס-לירושה-בעבר-ו?IsMobile=false",
+        "type": "caselaw"
+      },
+      {
+        "n": 3,
+        "t": "מקור חקיקה מתוך מאגר נבו",
+        "url": "https://www.nevo.co.il/law_html/law01/306_001.htm",
+        "type": "legislation"
+      },
+      {
+        "n": 4,
+        "t": "זכויות יורש אחר יורש - פסקדין",
+        "url": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9?IsMobile=false",
+        "type": "caselaw"
+      },
+      {
+        "n": 5,
+        "t": "מקור אקדמי מתוך אתר אקדמי (law.huji.ac.il)",
+        "url": "https://law.huji.ac.il/book/הזיקה-בין-זכויות-הנפטר-ליורש",
+        "type": "academic"
+      },
+      {
+        "n": 5,
+        "t": "זכויות אישיות וירושה",
+        "url": "https://law.biu.ac.il/book/זכויות-אישיות-וירושה",
+        "type": "academic"
+      },
+      {
+        "n": 5,
+        "t": "מקור אקדמי מתוך אתר אקדמי (law.huji.ac.il)",
+        "url": "https://law.huji.ac.il/book/יורש-אחר-יורש",
+        "type": "academic"
+      },
+      {
+        "n": 6,
+        "t": "מקור חקיקה מתוך אתר הכנסת",
+        "url": "https://fs.knesset.gov.il/5/law/5_ls1_4276908.pdf",
+        "type": "legislation"
+      },
+      {
+        "n": 7,
+        "t": "פסק דין מתוך אתר ממשלתי (gov.il)",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision48903-09-22/he/48903-09-22.docx",
+        "type": "caselaw"
+      },
+      {
+        "n": 7,
+        "t": "פס\"ד הדן בשאלת יורש אחר יורש – פסיקה",
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%94%D7%93%D7%9F-%D7%91%D7%A9%D7%90%D7%9C%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%94%D7%A1%D7%9B%D7%9E%D7%99%D7%9D-%D7%95%D7%94%D7%A1%D7%93%D7%A8%D7%99%D7%9D-%D7%91%D7%99%D7%9F-%D7%99%D7%95%D7%A8%D7%A9%D7%99%D7%9D-%D7%91%D7%99%D7%97%D7%A1-%D7%9C%D7%99%D7%A8%D7%95%D7%A9%D7%94-%D7%91%D7%A2%D7%91%D7%A8-%D7%95",
+        "type": "caselaw"
+      }
+    ],
+    "answer_head": "**מסקנה ראשית**\n\nהדין קובע כי הוראת \"יורש אחר יורש\" מעוגנת בסעיף 42 לחוק הירושה: המצווה רשאי לצוות לשניים כך שהשני יזכה לפי המוקדם — לאחר שזכה הראשון או בהתקיים התנאי שנקבע; הראשון רשאי לעשות במה שקיבל כבתוך שלו והשני יזכה רק במה שישאיר הראשון, אך הראשון אינו יכול לגרוע בזכותו של השני בצוואה.¹\n\n**תנאים והיקף החלת ההוראה**\n\nהוראת 'יורש אחר יורש' חלה במסגרת צוואה תקפה בלבד; בפסיקה נקבע כי לא ניתן לי"
+  }
+]
