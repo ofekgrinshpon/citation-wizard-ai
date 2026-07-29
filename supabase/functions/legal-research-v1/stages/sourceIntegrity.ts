@@ -255,7 +255,18 @@ export function classifySourceIntegrity(input: IntegrityInput): SourceIntegrity 
         reject_reason: "placeholder_url",
       };
     }
+    if (lacksRealAcademicId(u)) {
+      return {
+        authority_tier: "non_authority",
+        text_usability: "unknown",
+        citable_as: "not_citable",
+        integrity_flags: ["placeholder_url", "academic_url_without_identifier"],
+        reject: true,
+        reject_reason: "academic_url_without_identifier",
+      };
+    }
   }
+
 
   // ── Tier ──────────────────────────────────────────────────────────────────
   let tier: AuthorityTier = "unknown";
