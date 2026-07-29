@@ -155,8 +155,18 @@ export function assessSourceSufficiency(args: {
   const topical = sources.filter((s) => isTopical(s, phrases));
   const topicalAuthority = topical.filter((s) => {
     const t = String(s.source_type || "").toLowerCase();
-    return CASE_TYPES.has(t) || STATUTE_TYPES.has(t) || DOCTRINAL_TYPES.has(t);
+    const typeOk = CASE_TYPES.has(t) || STATUTE_TYPES.has(t) || DOCTRINAL_TYPES.has(t);
+    if (!typeOk) return false;
+    // Authority-tier adequacy: topicality alone is not enough. Listing /
+    // pagination / non-citable pages never count as authority.
+    if (s.citable_as === "not_citable") return false;
+    if (s.authority_tier === "index_or_listing" || s.authority_tier === "non_authority") {
+      return false;
+    }
+    if (s.text_usability === "listing_page") return false;
+    return true;
   });
+
   const satisfiedAnchor = sources.some((s) => anchorIds.has(s.candidate_id));
 
   const base = {

@@ -583,6 +583,23 @@ async function handle(req: Request): Promise<Response> {
       }, {} as Record<string, number>),
       counts: pool.counts,
     },
+    source_integrity: {
+      rejects: pool.integrity_rejects,
+      admitted: pool.integrity,
+      tier_counts: pool.integrity.reduce((acc, r) => {
+        acc[r.authority_tier] = (acc[r.authority_tier] ?? 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+      citable_counts: pool.integrity.reduce((acc, r) => {
+        acc[r.citable_as] = (acc[r.citable_as] ?? 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+      role_unsatisfied: pool.integrity.filter((r) => !r.can_satisfy_role).length,
+      downgrades: pool.integrity
+        .filter((r) => !!r.downgrade_reason)
+        .map((r) => ({ candidate_id: r.candidate_id, reason: r.downgrade_reason })),
+    },
+
 
   };
 

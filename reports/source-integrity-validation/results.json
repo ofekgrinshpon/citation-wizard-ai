@@ -1,0 +1,292 @@
+[
+  {
+    "id": "M1-specific-case",
+    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי?",
+    "run_id": "6584858a-2194-4738-85da-463bd45e7f0d",
+    "qa_log_id": "d36c49a0-e458-4c83-a948-1aa03de0d3a3",
+    "research_mode": "specific_case",
+    "output_shape": null,
+    "lead_ref": {
+      "ref": "s6",
+      "shape": "case_holding",
+      "reason": "binding_case_law"
+    },
+    "sufficiency": null,
+    "integrity_rejects": 0,
+    "tier_counts": {
+      "primary_mirror": 2,
+      "index_or_listing": 2,
+      "official_primary": 8,
+      "secondary_commentary": 10
+    },
+    "citable_counts": {
+      "statute": 7,
+      "unknown": 1,
+      "judgment": 2,
+      "commentary": 6,
+      "not_citable": 2,
+      "scholarship": 4
+    },
+    "role_unsatisfied": 14,
+    "used_sources": [
+      {
+        "n": 1,
+        "t": "CA 6821/93 United Mizrahi Bank Ltd. v. Migdal Cooperative Village",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=EnglishVerdicts%5C93%5C210%5C068%5Cz01&fileName=93068210_z01.txt&type=2",
+        "type": "caselaw"
+      },
+      {
+        "n": 2,
+        "t": "חוק־יסוד: כבוד האדם וחירותו",
+        "url": "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+        "type": "legislation"
+      },
+      {
+        "n": 3,
+        "t": "חוק-יסוד: כבוד האדם וחירותו",
+        "url": "https://fs.knesset.gov.il/1/law/1_ls1_190454.pdf",
+        "type": "legislation"
+      },
+      {
+        "n": 4,
+        "t": "חוק-יסוד: הכנסת (נוסח מעודכן)",
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod4.pdf",
+        "type": "legislation"
+      }
+    ],
+    "answer_head": "**הכרעת בית המשפט בע\"א 6821/93 (בנק המזרחי)**\n\nבית המשפט העליון קבע שבעת בחינה של החוק המתוקן שנגע לזכויות קניין של נושים — אף על פי שהחוק פגע בזכויות הקניין של הנושים, הוראות החוק עמדו בדרישות סעיף 8 לחוק־יסוד: כבוד האדם וחירותו; לפיכך הערעור נדחה והחוק לא נפסל.¹\n\nהפסיקה הכירה במעמד מיוחס לחוקי היסוד וציינה שקביעתם מעמידה בסיס לבחינה שיפוטית של חקיקה ראשית אם עולה סתירה לזכויות המוגנות בחוקי היסו"
+  },
+  {
+    "id": "M2-statute-section",
+    "query": "מה קובע סעיף 12 לחוק החוזים?",
+    "run_id": "f778e427-16e9-42da-9282-d2e0f8686490",
+    "qa_log_id": "f8e2a95f-d815-4fc6-8d1b-f959fd16c5cc",
+    "research_mode": "statute_section_definition",
+    "output_shape": null,
+    "lead_ref": {
+      "ref": "s2",
+      "shape": "definition",
+      "reason": "required_anchor_statute"
+    },
+    "sufficiency": null,
+    "integrity_rejects": 0,
+    "tier_counts": {
+      "primary_mirror": 2,
+      "statute_mirror": 2,
+      "index_or_listing": 1,
+      "official_primary": 5,
+      "secondary_commentary": 4
+    },
+    "citable_counts": {
+      "statute": 6,
+      "unknown": 1,
+      "judgment": 2,
+      "commentary": 2,
+      "not_citable": 1,
+      "scholarship": 2
+    },
+    "role_unsatisfied": 7,
+    "used_sources": [
+      {
+        "n": 1,
+        "t": "חוק החוזים (חלק כללי), תשל\"ג-1973 – נוסח סעיף 12",
+        "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+        "type": "legislation"
+      },
+      {
+        "n": 2,
+        "t": "על משא ומתן וחוק החוזים: סעיף 12 לחוק החוזים בראי גישות תיאורטיות בתחום המשא ומתן",
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3965485",
+        "type": "other"
+      },
+      {
+        "n": 2,
+        "t": "מרים מרקוביץ-ביטון ויפעת נחמיאס 20 שנה להלכת א.ש.י.ר: מגמות בפסיקת בתי המשפט 599 (כרך ט\"ו)",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%9E%D7%A8%D7%99%D7%9D-%D7%9E%D7%A8%D7%A7%D7%95%D7%91%D7%99%D7%A5-%D7%91%D7%99%D7%98%D7%95%D7%9F-%D7%95%D7%99%D7%A4%D7%A2%D7%AA-%D7%A0%D7%97%D7%9E%D7%99%D7%90%D7%A1-599.pdf",
+        "type": "journal_article"
+      },
+      {
+        "n": 4,
+        "t": "רע\"א 7706/22 ציפורה שרה סינגר אטיה נ׳ עו\"ד אייל אבידן פסק דין (18.07.2022)",
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-7706-22-%d7%a6%d7%99%d7%a4%d7%95%d7%a8%d7%94-%d7%a9%d7%a8%d7%94-%d7%a1%d7%99%d7%a0%d7%92%d7%a8-%d7%90%d7%98%d7%99%d7%94-%d7%a0-%d7%a2%d7%95%d7%93-%d7%90%d7%99%d7%99%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "type": "caselaw"
+      },
+      {
+        "n": 5,
+        "t": "הכנסת – מסמך חקיקה (PDF)",
+        "url": "https://fs.knesset.gov.il/%5C10%5Claw%5C10_lsr_208383.PDF",
+        "type": "legislation"
+      },
+      {
+        "n": 5,
+        "t": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+        "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+        "type": "legislation"
+      }
+    ],
+    "answer_head": "**נוסח סעיף 12 — חוק החוזים (חלק כללי)**\n\n(א) במשא ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך מקובלת ובתום לב.\n\n(ב) צד שלא נהג בדרך מקובלת ולא בתום-לב חייב לצד השני פיצויים בעד הנזק שנגרם לו עקב המשא ומתן או עקב כריתת החוזה, והוראות סעיפים 10, 13 ו-14 לחוק החוזים (תרופות בשל הפרת חוזה), תשל\"א-1970, יחולו בשינויים המתבקשים.¹\n\n**פירושים ופסיקה — קווים מרכזיים**\n\nהדוקטרינה והפסיקה מציגות שני מרכיב"
+  },
+  {
+    "id": "C2-synthesis",
+    "query": "מה הפסיקה אומרת על הלכת השיתוף?",
+    "run_id": "3a955edb-f372-4904-b82c-fc438da01002",
+    "qa_log_id": "0dd2d11d-40ef-408b-ba71-0a27fde1343a",
+    "research_mode": "case_law_synthesis",
+    "output_shape": null,
+    "lead_ref": {
+      "ref": "s2",
+      "shape": "definition",
+      "reason": "primary_statute"
+    },
+    "sufficiency": null,
+    "integrity_rejects": 0,
+    "tier_counts": {
+      "primary_mirror": 3,
+      "index_or_listing": 3,
+      "official_primary": 2,
+      "secondary_commentary": 13
+    },
+    "citable_counts": {
+      "statute": 1,
+      "unknown": 1,
+      "judgment": 3,
+      "commentary": 10,
+      "not_citable": 3,
+      "scholarship": 3
+    },
+    "role_unsatisfied": 16,
+    "used_sources": [
+      {
+        "n": 1,
+        "t": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+        "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+        "type": "legislation"
+      },
+      {
+        "n": 1,
+        "t": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+        "type": "caselaw"
+      },
+      {
+        "n": 2,
+        "t": "פסק דין מתוך אתר ממשלתי (gov.il)",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/80/520/000/B06&fileName=80052060.B06&type=2",
+        "type": "caselaw"
+      },
+      {
+        "n": 2,
+        "t": "ע\"א 7687/92 נסים נ' נסים",
+        "url": "https://nevo.co.il/law_word/law14/psakdin/psak-1234.htm",
+        "type": "caselaw"
+      },
+      {
+        "n": 3,
+        "t": "חלוקת חובות משותפים",
+        "url": "https://www.psakdin.co.il/Court/%D7%97%D7%9C%D7%95%D7%A7%D7%AA-%D7%97%D7%95%D7%91%D7%95%D7%AA-%D7%9E%D7%A9%D7%95%D7%AA%D7%A4%D7%99%D7%9D",
+        "type": "caselaw"
+      },
+      {
+        "n": 4,
+        "t": "הקדמת מועד איזון המשאבים בתיקון מס&#8217; 4 לחוק יחסי ממון והחקיקה השיפוטית שנוצרה לפניה – עיון מחודש | יצחק כהן (כרך כב)",
+        "url": "https://runilawreview.org/2018/08/23/vol22_cohen/",
+        "type": "journal_article"
+      },
+      {
+        "n": 5,
+        "t": "ידועים בציבור והלכת השיתוף: כוונה משתמעת והבססת שיתוף על התנהגות",
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=0000000",
+        "type": "other"
+      },
+      {
+        "n": 6,
+        "t": "נטל הוכחת שיתוף בדירה להשקעה שנקנתה בתקופת הנישואין מכספי ירושה",
+        "url": "https://daat.ac.il/daat/psk/psk.asp?id=3454",
+        "type": "caselaw"
+      },
+      {
+        "n": 7,
+        "t": "על נכסי עבר, על נכסי עתיד ועל הפילוסופיה של חזקת השיתוף",
+        "url": "https://lawjournal.huji.ac.il/article/12/947",
+        "type": "journal_article"
+      }
+    ],
+    "answer_head": "**הגדרת הלכת השיתוף**\n\nהלכת השיתוף היא חזקה פסיקתית לפיה בני זוג שדיווחו על חיי נישואין ומשק בית משותף נחשבים, ככלל, שותפים ברכוש שנצבר במהלך החיים המשותפים גם ללא רישום פורמלי; ההלכה מושתתת על קונספט של הסכמה משתמעת בין הצדדים שנגזרת מנסיבות החיים המשותפים.¹\n\nהיסודות והאינדיקציות שנבחנות על ידי בתי המשפט כוללות בין היתר חיי משפחה ומסגרת משותפת, אופן ניהול משק הבית והכספים, משך הקשר, ומאמץ משותף; "
+  },
+  {
+    "id": "C1-false-doctrine",
+    "query": "מה הפסיקה אומרת על הלכת יורש אחר יורש?",
+    "run_id": "65911ce7-f3d4-4f6a-a467-90fc500b7e33",
+    "qa_log_id": "064dc438-755e-4e61-a729-3ffe06ebe1d2",
+    "research_mode": "case_law_synthesis",
+    "output_shape": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
+    "sufficiency": null,
+    "integrity_rejects": 0,
+    "tier_counts": {
+      "primary_mirror": 1,
+      "statute_mirror": 2,
+      "index_or_listing": 3,
+      "official_primary": 4,
+      "secondary_commentary": 9
+    },
+    "citable_counts": {
+      "statute": 3,
+      "unknown": 1,
+      "judgment": 3,
+      "commentary": 7,
+      "not_citable": 3,
+      "scholarship": 2
+    },
+    "role_unsatisfied": 14,
+    "used_sources": [
+      {
+        "n": 1,
+        "t": "חוק הירושה, התשכ\"ה-1965 - סעיף 42",
+        "url": "https://fs.knesset.gov.il/5/law/5_lsr_208455.PDF",
+        "type": "legislation"
+      },
+      {
+        "n": 1,
+        "t": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש'",
+        "url": "https://www.psakdin.co.il/Document/%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%90%D7%99%D7%9F-%D7%9C%D7%A4%D7%A8%D7%A9-%D7%94%D7%95%D7%A8%D7%90%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%9B-%D7%99%D7%95%D7%A8%D7%A9-%D7%91%D7%9E%D7%A7%D7%95%D7%9D-%D7%99%D7%95%D7%A8%D7%A9",
+        "type": "caselaw"
+      },
+      {
+        "n": 2,
+        "t": "פרשנות צוואה",
+        "url": "https://www.nevo.co.il/product/1186",
+        "type": "caselaw"
+      },
+      {
+        "n": 2,
+        "t": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/1&fileName=SB1_13_10807-03.pdf&type=2",
+        "type": "supreme_court_il"
+      },
+      {
+        "n": 3,
+        "t": "פסק דין מתוך psakdin.co.il",
+        "url": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9",
+        "type": "caselaw"
+      },
+      {
+        "n": 4,
+        "t": "פרשנות צוואה ציווי ובקשה",
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA-%D7%A6%D7%95%D7%95%D7%90%D7%94-%D7%A6%D7%99%D7%95%D7%95%D7%99-%D7%95%D7%91%D7%A7%D7%A9%D7%94",
+        "type": "caselaw"
+      },
+      {
+        "n": 6,
+        "t": "פרשנות צוואות ועקרון אומד דעת המצווה",
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=0000000",
+        "type": "other"
+      }
+    ],
+    "answer_head": "**מה הפסיקה אומרת על \"יורש אחר יורש\"?**\n\nתשובה קצרה: הדין הישראלי מקבל את מוסד \"יורש אחר יורש\" כהסדר שבו המצווה מצווה לשניים כך שהשני יזכה רק אחרי זכותו של הראשון; חוק הירושה קובע את היחסים בין הראשון לשני, ופסקי-דין דנו בסיכונים הפרקטיים ובאופן פרשנות הצוואות במקרים אלה.¹\n\nהגדרה והבחנה עיקרית: \"יורש אחר יורש\" מתאפיין בכך שהזכאות של השני מותנית במה שישאר או בשלב שבו זכה הראשון (מותו או מועד/תנאי כ"
+  }
+]

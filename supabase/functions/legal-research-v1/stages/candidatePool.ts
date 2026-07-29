@@ -1,6 +1,12 @@
 // P3 — Candidate pool: merge local + Perplexity, dedupe, cap.
 
 import { CAPS, Candidate } from "../lib/types.ts";
+import {
+  canSatisfyRole,
+  classifySourceIntegrity,
+  type SourceIntegrity,
+} from "./sourceIntegrity.ts";
+
 
 function normTitle(t: string): string {
   return (t || "")
@@ -57,9 +63,25 @@ export interface PoolDrop {
     | "dup_statute_section"
     | "dup_docket"
     | "dup_role_title"
-    | "max_candidates_cap";
+    | "max_candidates_cap"
+    | "source_integrity_reject";
   drop_key: string;
   score: number;
+}
+
+/** Per-admitted-candidate source-integrity telemetry row. */
+export interface IntegrityLogRow {
+  candidate_id: string;
+  title: string;
+  url: string | null;
+  role: string;
+  original_source_type: string;
+  authority_tier: string;
+  text_usability: string;
+  citable_as: string;
+  integrity_flags: string[];
+  can_satisfy_role: boolean;
+  downgrade_reason?: string;
 }
 
 export interface PoolResult {
@@ -68,12 +90,15 @@ export interface PoolResult {
   after_dedup: number;
   dedup_drops: number;
   drops: PoolDrop[];
+  integrity: IntegrityLogRow[];
+  integrity_rejects: number;
   counts: {
     by_origin: Record<string, number>;
     by_role: Record<string, number>;
     by_claim: Record<string, number>;
   };
 }
+
 
 
 const MAX_VECTOR_PER_CLAIM = 2;
@@ -91,6 +116,12 @@ const MIN_TRUSTED_PERPLEXITY = 10;
 function isTrustedPerplexity(c: Candidate): boolean {
   if (c.retrieval_method !== "perplexity") return false;
   const meta = (c.metadata ?? {}) as Record<string, unknown>;
+  // Listing / pagination / non-authority pages never earn a reserved slot.
+  const integ = meta.source_integrity as SourceIntegrity | undefined;
+  if (integ && (integ.citable_as === "not_citable" || integ.authority_tier === "index_or_listing")) {
+    return false;
+  }
+
   const hygiene = meta.pplx_hygiene as
     | {
         hygiene_action?: string;
@@ -123,13 +154,32 @@ const TRUSTED_PPLX_CLASSES = new Set([
   "scholarship",
 ]);
 
-export function buildCandidatePool(all: Candidate[]): PoolResult {
+export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
+  // ── Source-integrity classification (deterministic, pre-verifier) ────────
+  const integrityById = new Map<string, SourceIntegrity>();
+  const rejected: Candidate[] = [];
+  const all: Candidate[] = [];
+  for (const c of allRaw) {
+    const integ = classifySourceIntegrity({
+      url: c.source_url,
+      title: c.title,
+      snippet: c.snippet,
+      source_type: c.source_type,
+      role: c.role,
+    });
+    integrityById.set(c.candidate_id, integ);
+    c.metadata = { ...(c.metadata ?? {}), source_integrity: integ };
+    if (integ.reject) rejected.push(c);
+    else all.push(c);
+  }
+
   const seenDoc = new Set<string>();
   const seenUrl = new Set<string>();
   const seenStatute = new Set<string>();
   const seenDocket = new Set<string>();
   const seenTitle = new Map<string, Candidate>(); // role+normTitle → kept
   const vectorPerClaim = new Map<string, number>();
+
 
   // P3.2 #3: priority — exact_authority > text > perplexity > vector.
   // Score still tie-breaks within a tier.
@@ -253,13 +303,53 @@ export function buildCandidatePool(all: Candidate[]): PoolResult {
     return true;
   });
 
+  // Integrity rejects (placeholder / malformed / search pages) never reach the
+  // verifier; log them alongside the dedup drops.
+  for (const c of rejected) {
+    const integ = integrityById.get(c.candidate_id)!;
+    drops.push({
+      candidate_id: c.candidate_id,
+      title: c.title,
+      url: c.source_url ?? null,
+      source_type: c.source_type,
+      origin: c.origin,
+      retrieval_method: c.retrieval_method,
+      role: c.role,
+      claim_id: c.claim_id,
+      rank_before_drop: -1,
+      drop_reason: "source_integrity_reject",
+      drop_key: integ.reject_reason ?? "integrity",
+      score: c.score,
+    });
+  }
+
+  const integrity: IntegrityLogRow[] = out.map((c) => {
+    const integ = integrityById.get(c.candidate_id)!;
+    return {
+      candidate_id: c.candidate_id,
+      title: c.title,
+      url: c.source_url ?? null,
+      role: c.role,
+      original_source_type: c.source_type,
+      authority_tier: integ.authority_tier,
+      text_usability: integ.text_usability,
+      citable_as: integ.citable_as,
+      integrity_flags: integ.integrity_flags,
+      can_satisfy_role: canSatisfyRole(integ, c.role),
+      downgrade_reason: integ.downgrade_reason,
+    };
+  });
+
   return {
     candidates: out,
-    found: all.length,
+    found: allRaw.length,
     after_dedup: out.length,
     dedup_drops,
     drops,
+    integrity,
+    integrity_rejects: rejected.length,
     counts,
   };
 }
+
 

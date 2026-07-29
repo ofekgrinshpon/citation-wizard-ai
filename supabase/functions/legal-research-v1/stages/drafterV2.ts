@@ -29,6 +29,8 @@ import {
   type StructuredValidation,
 } from "./structuredValidation.ts";
 import { buildFootnotedAnswer } from "./footnoteBuilder.ts";
+import { tierRank, type AuthorityTier } from "./sourceIntegrity.ts";
+
 import { normalizeHebrewNumberRanges } from "../../_shared/hebrewNumberRange.ts";
 import { checkCompleteness, type CompletenessReport } from "./completenessCheck.ts";
 import {
@@ -335,10 +337,16 @@ function selectLeadRef(
   const scoreOf = (s: DrafterInputSource): number => {
     let n = 0;
     if (requiredAnchorCandidateIds.has(s.candidate_id)) n += 100;
+    // Authority tier: official/recognized primary outranks a statute mirror,
+    // which outranks commentary. Listing pages are already filtered out.
+    n += tierRank((s.authority_tier ?? "unknown") as AuthorityTier) * 4;
+    if (s.text_usability === "full_text") n += 3;
+    else if (s.text_usability === "substantive_excerpt") n += 1;
     if (s.best_support === "direct") n += 10;
     n += Math.min((s.snippet?.length ?? 0) / 100, 5);
     return n;
   };
+
   const pick = (pool: DrafterInputSource[]): DrafterInputSource | null =>
     pool.length ? [...pool].sort((a, b) => scoreOf(b) - scoreOf(a))[0] : null;
 
@@ -362,17 +370,29 @@ function selectLeadRef(
     t === "news" ||
     t === "blog" ||
     t === "user_document";
-  const officialOnly = sources.filter((s) => !isNonOfficialType(s.source_type));
+  // Source-integrity veto: listing/pagination/non-authority pages can never
+  // lead an answer, regardless of the source_type they were tagged with.
+  const citable = sources.filter(
+    (s) => s.citable_as !== "not_citable" && s.authority_tier !== "index_or_listing",
+  );
+  const officialOnly = citable.filter((s) => !isNonOfficialType(s.source_type));
 
   if (shape === "case_holding") {
     const cases = officialOnly.filter(
       (s) =>
-        isCaseType(s.source_type) ||
-        // Role fallback ONLY when source_type is neutral ("other"), never for
-        // clearly-statutory types.
-        ((s.role === "binding_case_law" || s.role === "persuasive_case_law") &&
-          s.source_type === "other"),
+        // Must be usable judgment text — an index/metadata-only page cannot
+        // satisfy a holding lead.
+        (s.citable_as === "judgment" || s.citable_as === undefined) &&
+        s.text_usability !== "metadata_only" &&
+        s.text_usability !== "listing_page" &&
+        (isCaseType(s.source_type) ||
+          // Role fallback ONLY when source_type is neutral ("other"), never for
+          // clearly-statutory types.
+          ((s.role === "binding_case_law" || s.role === "persuasive_case_law") &&
+            s.source_type === "other")),
     );
+
+
     if (cases.length === 0) return { ref: null, reason: "no_case_source", shape };
     const req = cases.filter((s) => requiredAnchorCandidateIds.has(s.candidate_id));
     if (req.length > 0) {
