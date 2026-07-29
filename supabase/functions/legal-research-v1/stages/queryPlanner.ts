@@ -8,6 +8,15 @@ import {
 } from "../lib/schemas.ts";
 import { plannerEscalationReasons } from "../lib/escalation.ts";
 import {
+  auditPlannerObligations,
+  classifyResearchMode,
+  enforceModeTargets,
+  modePlannerDirective,
+  ObligationAudit,
+  ResearchModeDecision,
+  TargetEnforcementReport,
+} from "./researchMode.ts";
+import {
   AnalyzerOutput,
   MODEL_FULL,
   MODEL_MINI,
@@ -62,10 +71,23 @@ export interface PlannerStageResult {
   stage_runs: StageRun[];
   raw_text_initial: string;
   raw_text_final: string;
+  mode_plan: {
+    mode: ResearchModeDecision["mode"];
+    output_shape: ResearchModeDecision["output_shape"];
+    classification_reasons: string[];
+    directive_sent: boolean;
+    obligations_required: string[];
+    audit: ObligationAudit | null;
+    target_enforcement: TargetEnforcementReport;
+  };
 }
 
 
-function plannerUserMessage(analyzer: AnalyzerOutput, question: string): string {
+function plannerUserMessage(
+  analyzer: AnalyzerOutput,
+  question: string,
+  decision: ResearchModeDecision,
+): string {
   const payload: Record<string, unknown> = {
     question_he: question,
     legal_area: analyzer.legal_area,
@@ -80,7 +102,9 @@ function plannerUserMessage(analyzer: AnalyzerOutput, question: string): string 
   if (analyzer.interpretation_note) {
     payload.interpretation_note = analyzer.interpretation_note;
   }
-  return `ניתוח הטענות:\n${JSON.stringify(payload, null, 2)}\n\nצור שאילתות מחקר.`;
+  payload.research_mode = decision.mode;
+  if (decision.output_shape) payload.output_shape = decision.output_shape;
+  return `ניתוח הטענות:\n${JSON.stringify(payload, null, 2)}\n\n${modePlannerDirective(decision)}\n\nצור שאילתות מחקר בהתאם לחובות מצב המחקר.`;
 }
 
 
@@ -89,7 +113,38 @@ export async function runQueryPlanner(
   analyzer: AnalyzerOutput,
 ): Promise<PlannerStageResult> {
   const knownClaimIds = analyzer.claims.map((c) => c.claim_id);
-  const userMsg = plannerUserMessage(analyzer, question);
+  const decision = classifyResearchMode(question, analyzer);
+  const userMsg = plannerUserMessage(analyzer, question, decision);
+  const obligations_required = decision.obligations.map((o) => o.id);
+
+  const finalize = (
+    result: ValidationResult<PlannerOutput>,
+  ): {
+    result: ValidationResult<PlannerOutput>;
+    mode_plan: PlannerStageResult["mode_plan"];
+  } => {
+    let enforced: TargetEnforcementReport = { applied: false, widened_query_count: 0 };
+    let audit: ObligationAudit | null = null;
+    let out = result;
+    if (result.value && result.value.queries.length > 0) {
+      const e = enforceModeTargets(decision, result.value.queries);
+      enforced = e.report;
+      out = { ...result, value: { ...result.value, queries: e.queries } };
+      audit = auditPlannerObligations(decision, e.queries);
+    }
+    return {
+      result: out,
+      mode_plan: {
+        mode: decision.mode,
+        output_shape: decision.output_shape,
+        classification_reasons: decision.reasons,
+        directive_sent: true,
+        obligations_required,
+        audit,
+        target_enforcement: enforced,
+      },
+    };
+  };
 
   const stage_runs: StageRun[] = [];
 
@@ -116,8 +171,10 @@ export async function runQueryPlanner(
   const reasons = plannerEscalationReasons(validated.ok, validated.value, analyzer);
 
   if (reasons.length === 0) {
+    const f = finalize(validated);
     return {
-      result: validated,
+      result: f.result,
+      mode_plan: f.mode_plan,
       model_initial: MODEL_MINI,
       model_final: MODEL_MINI,
       escalated: false,
@@ -149,9 +206,11 @@ export async function runQueryPlanner(
     escalated: true,
   });
   validated = validatePlanner(retry.data, knownClaimIds);
+  const f = finalize(validated);
 
   return {
-    result: validated,
+    result: f.result,
+    mode_plan: f.mode_plan,
     model_initial: MODEL_MINI,
     model_final: MODEL_FULL,
     escalated: true,
