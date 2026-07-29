@@ -121,8 +121,32 @@ const PLACEHOLDER_PATTERNS = [
   /\/stable\/sample\b/i,
   /\bexample\.(com|org|net)\b/i,
   /\b(sample|placeholder|dummy|lorem|test123|xxxx)\b/i,
+  // SSRN / repository abstract ids that are zero or an obvious dummy sequence.
+  /[?&/]abstract(_?id)?=?0+\b/i,
+  /[?&/]abstract(_?id)?=?(123456789|1234567890?|987654321)\b/i,
   /\/abstract=?(0|123456789)\b/i,
+  // Generic all-zero numeric identifier in any id-like query param.
+  /[?&](abstract_?id|paper_?id|doc_?id|docid|id|itemid|lawitemid|caseid)=0+(&|$)/i,
+  // All-zero numeric path segment (e.g. /papers/0000000).
+  /\/0+(\/|$)/,
 ];
+
+/** Academic / repository hosts where a real paper identifier is mandatory. */
+const ACADEMIC_ID_HOSTS = ["ssrn.com", "papers.ssrn.com", "jstor.org", "researchgate.net", "academia.edu"];
+
+/** True when an academic host URL carries no plausible non-zero paper identifier. */
+function lacksRealAcademicId(u: URL): boolean {
+  const host = hostOf(u);
+  if (!hostMatches(host, ACADEMIC_ID_HOSTS)) return false;
+  const hay = `${u.pathname}${u.search}`;
+  const nums = hay.match(/\d+/g) ?? [];
+  const meaningful = nums.filter((n) => Number(n) > 0 && n.length >= 4);
+  if (meaningful.length > 0) return false;
+  // DOI-style or slug identifiers are acceptable too.
+  if (/10\.\d{4,}\//.test(hay)) return false;
+  return true;
+}
+
 
 function hostOf(u: URL): string {
   return u.hostname.replace(/^www\./i, "").toLowerCase();
