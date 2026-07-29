@@ -205,7 +205,12 @@ export interface DrafterInputSource {
   supported_points: string[];
   claim_ids: string[];
   snippet: string | null;
+  /** Deterministic source-integrity classification (see sourceIntegrity.ts). */
+  authority_tier?: string;
+  text_usability?: string;
+  citable_as?: string;
 }
+
 
 interface RawDraft {
   answer_markdown?: unknown;
@@ -213,6 +218,8 @@ interface RawDraft {
 }
 
 import { computeDisplayTitle } from "./displayTitleHygiene.ts";
+import { classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
+
 
 export function buildInputSources(
   candidates: Candidate[],
@@ -233,12 +240,26 @@ export function buildInputSources(
   for (const u of usable) {
     const c = candById.get(u.candidate_id);
     if (!c) continue;
+    // Source-integrity gate: index/pagination/archive-listing pages and other
+    // non-citable artifacts never become citable sources for the drafter.
+    const meta0 = (c.metadata ?? {}) as Record<string, unknown>;
+    const integ0 =
+      (meta0.source_integrity as SourceIntegrity | undefined) ??
+      classifySourceIntegrity({
+        url: c.source_url,
+        title: c.title,
+        snippet: c.snippet,
+        source_type: c.source_type,
+        role: c.role,
+      });
+    if (integ0.citable_as === "not_citable") continue;
     const vs = (verdictsByCand.get(u.candidate_id) ?? []).filter(
       (v) => v.support === "direct" || v.support === "partial",
     );
     const supported_points = Array.from(
       new Set(vs.flatMap((v) => v.supported_points).filter((p) => !!p)),
     ).slice(0, 6);
+
     const dt = computeDisplayTitle({
       title: c.title,
       url: c.source_url ?? null,
@@ -260,7 +281,12 @@ export function buildInputSources(
       supported_points,
       claim_ids: vs.map((v) => v.claim_id),
       snippet: (c.snippet || "").replace(/\s+/g, " ").trim().slice(0, 500) || null,
+      authority_tier: integ0.authority_tier,
+      text_usability: integ0.text_usability,
+      citable_as: integ0.citable_as,
+
     });
+
   }
   if (useAsSource) {
     for (const d of userDocs) {

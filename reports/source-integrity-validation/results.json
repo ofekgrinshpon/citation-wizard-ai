@@ -1,0 +1,211 @@
+[
+  {
+    "id": "M1-specific-case",
+    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי?",
+    "run_id": "ecb4c3bd-ceab-4982-bc34-74f3aed3430e",
+    "qa_log_id": "eb8c9346-9115-42b4-adf6-6aee982318b7",
+    "research_mode": "specific_case",
+    "output_shape": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "case_holding",
+      "reason": "no_case_source"
+    },
+    "sufficiency": null,
+    "integrity_rejects": null,
+    "tier_counts": null,
+    "citable_counts": null,
+    "role_unsatisfied": null,
+    "used_sources": [
+      {
+        "n": 1,
+        "t": "נבו – ע״א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי, פ״ד מט(4) 221",
+        "url": "https://www.nevo.co.il/PadiArchive.aspx?MsgId=251",
+        "type": "caselaw"
+      },
+      {
+        "n": 2,
+        "t": "חוק-יסוד: כבוד האדם וחירותו, סעיף 8",
+        "url": "https://fs.knesset.gov.il/13/law/13_ls1_314440.pdf",
+        "type": "legislation"
+      },
+      {
+        "n": 2,
+        "t": "חוק-יסוד: חופש העיסוק, סעיף 4",
+        "url": "https://fs.knesset.gov.il/13/law/13_ls1_314441.pdf",
+        "type": "legislation"
+      },
+      {
+        "n": 3,
+        "t": "חוק-יסוד: כבוד האדם וחירותו – שמירת דינים",
+        "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+        "type": "legislation"
+      },
+      {
+        "n": 4,
+        "t": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
+        "type": "journal_article"
+      },
+      {
+        "n": 4,
+        "t": "הדרך לביקורת שיפוטית על חוקתיות של חוקים - הסמכות להכריז על אי-חוקתיות חקיקה - למי?",
+        "url": "https://lawjournal.huji.ac.il/article/12/735",
+        "type": "journal_article"
+      }
+    ],
+    "answer_head": "**ע\"א 6821/93 — מסקנה ראשית**\n\nעל‑פי החומרים שנמסרו, יש רישום לפסק‑דין ע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי (פ\"ד מט(4) 221), אך במקורות אלה לא נמצא נוסח מלא של ההחלטה או נוסח הלכה מפורש; לא ניתן לקבוע מתוך החומרים הנוכחיים מה נקבע בפסק‑דין באופן חד‑משמעי.¹\n\nרקע משפטי שעשוי להיות רלוונטי לפירוש הכרעה העוסקת בזכויות יסוד: מבחן פסקת ההגבלה כפי שמנוסח בחוק‑יסוד: כבוד האדם וחירותו (סעיף 8) ובחוק‑י"
+  },
+  {
+    "id": "M2-statute-section",
+    "query": "מה קובע סעיף 12 לחוק החוזים?",
+    "run_id": "a90f85ae-5a27-43ff-a38d-cf38913090bb",
+    "qa_log_id": "92741868-45fb-4900-8531-b79de5365e24",
+    "research_mode": "statute_section_definition",
+    "output_shape": null,
+    "lead_ref": {
+      "ref": "s7",
+      "shape": "definition",
+      "reason": "required_anchor_statute"
+    },
+    "sufficiency": null,
+    "integrity_rejects": null,
+    "tier_counts": null,
+    "citable_counts": null,
+    "role_unsatisfied": null,
+    "used_sources": [
+      {
+        "n": 1,
+        "t": "חוק החוזים (חלק כללי)",
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+        "type": "israeli_law"
+      },
+      {
+        "n": 2,
+        "t": "מאגר החקיקה הלאומי – הכנסת",
+        "url": "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawPrimary.aspx?lawitemid=2000047",
+        "type": "legislation"
+      },
+      {
+        "n": 2,
+        "t": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+        "url": "https://www.gov.il/he/departments/general/contracts_general_law_1973",
+        "type": "legislation"
+      },
+      {
+        "n": 2,
+        "t": "הצעת חוק החוזים (חלק כללי) (תיקון מס' 3), התשפ\"ד-2024",
+        "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_4586179.pdf",
+        "type": "legislation"
+      },
+      {
+        "n": 3,
+        "t": "על משא ומתן וחוק החוזים: סעיף 12 לחוק החוזים בראי גישות תיאורטיות בתחום המשא ומתן / On Negotiation and Contract Law – Sec. 12 of Contracts (General Part) Law 5733-1973 as Reflected in Theoretical Approaches to Negotiation",
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3965485",
+        "type": "other"
+      },
+      {
+        "n": 3,
+        "t": "ארבעים שנה לדיני החוזים",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%90%D7%A8%D7%91%D7%A2%D7%99%D7%9D%20%D7%A9%D7%A0%D7%94%20%D7%9C%D7%93%D7%99%D7%A0%D7%99%20%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D.pdf",
+        "type": "other"
+      },
+      {
+        "n": 4,
+        "t": "חוק החוזים (חלק כללי) - נוסח סעיף 12",
+        "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+        "type": "legislation"
+      }
+    ],
+    "answer_head": "**נוסח סעיף 12 לחוק החוזים (חלק כללי)**\n\nסעיף 12 קובע: תום לב במשא ומתן (א) במשא ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך מקובלת ובתום לב. (ב) צד שלא נהג בדרך מקובלת ולא בתום־לב חייב לצד השני פיצויים בעד הנזק שנגרם לו עקב המשא ומתן או עקב כריתת החוזה, והוראות סעיפים 10, 13 ו־14 לחוק החוזים (תרופות בשל הפרת חוזה), תשל\"א–1970, יחולו בשינויים המתאימים.¹\n\n**סטטוס היסטורי ותיקונים**\n\nהסעיף נכלל בנ"
+  },
+  {
+    "id": "C2-synthesis",
+    "query": "מה הפסיקה אומרת על הלכת השיתוף?",
+    "run_id": "55a453da-0169-4bce-b9bf-f23bbbeac732",
+    "qa_log_id": "20dc2a8e-4527-494f-b968-635295cdfb44",
+    "research_mode": "case_law_synthesis",
+    "output_shape": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
+    "sufficiency": null,
+    "integrity_rejects": null,
+    "tier_counts": null,
+    "citable_counts": null,
+    "role_unsatisfied": null,
+    "used_sources": [],
+    "answer_head": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק יחסי ממון בין בני זוג, תשל\"ג-1973; ע\"א 806/93 הדרי נ' הדרי; ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן; חוק יחסי ממון בין בני-הזוג, תשל\"ג"
+  },
+  {
+    "id": "C1-false-doctrine",
+    "query": "מה הפסיקה אומרת על הלכת יורש אחר יורש?",
+    "run_id": "8b5b3851-a902-421a-93e9-c96564af3802",
+    "qa_log_id": "11251a3f-99cf-47c0-931b-9349f19c0c3f",
+    "research_mode": "case_law_synthesis",
+    "output_shape": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
+    "sufficiency": null,
+    "integrity_rejects": null,
+    "tier_counts": null,
+    "citable_counts": null,
+    "role_unsatisfied": null,
+    "used_sources": [
+      {
+        "n": 1,
+        "t": "חוק הירושה, תשכ״ה-1965 (סעיף 42)",
+        "url": "https://fs.knesset.gov.il/5/law/5_lsr_208455.PDF",
+        "type": "legislation"
+      },
+      {
+        "n": 1,
+        "t": "חוק הירושה, תשכ\"ה-1965",
+        "url": "https://www.nevo.co.il/law_html/law00/72178.htm",
+        "type": "legislation"
+      },
+      {
+        "n": 2,
+        "t": "יורש אחר יורש — סעיף 42 לחוק הירושה",
+        "url": "https://www.nevo.co.il/",
+        "type": "caselaw"
+      },
+      {
+        "n": 2,
+        "t": "הלכת יורש אחר יורש — עיונים בפסיקה",
+        "url": "https://www.takdin.co.il/",
+        "type": "caselaw"
+      },
+      {
+        "n": 3,
+        "t": "חוק הירושה",
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%99%D7%A8%D7%95%D7%A9%D7%94",
+        "type": "israeli_law"
+      },
+      {
+        "n": 4,
+        "t": "זכויות יורש אחר יורש - פסקדין",
+        "url": "https://www.psakdin.co.il/Court/%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9?IsMobile=false",
+        "type": "caselaw"
+      },
+      {
+        "n": 7,
+        "t": "מסמך מאתר אתר אקדמי (daat.ac.il)",
+        "url": "https://www.daat.ac.il/daat/psk/psk.asp?id=1992",
+        "type": "other"
+      },
+      {
+        "n": 8,
+        "t": "פסק דין מתוך psakdin.co.il",
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%94%D7%93%D7%9F-%D7%91%D7%A9%D7%90%D7%9C%D7%AA-%D7%99%D7%95%D7%A8%D7%A9-%D7%90%D7%97%D7%A8-%D7%99%D7%95%D7%A8%D7%A9-%D7%94%D7%A1%D7%9B%D7%9E%D7%99%D7%9D-%D7%95%D7%94%D7%A1%D7%93%D7%A8%D7%99%D7%9D-%D7%91%D7%99%D7%9F-%D7%99%D7%95%D7%A8%D7%A9%D7%99%D7%9D-%D7%91%D7%99%D7%97%D7%A1-%D7%9C%D7%99%D7%A8%D7%95%D7%A9%D7%94-%D7%91%D7%A2%D7%91%D7%A8-%D7%95?IsMobile=false",
+        "type": "caselaw"
+      }
+    ],
+    "answer_head": "**הגדרה ועיקרון**\n\nשורה תחתונה: 'יורש אחר־יורש' הוא מוסד צוואתי המפורט בסעיף 42 לחוק הירושה, הקובע כי המצווה רשאי לצוות לשניים כך שהשני יזכה רק אחרי שזכה הראשון; הראשון רשאי לעשות במה שקיבל כבתוך שלו והשני יזכה רק במה שישאיר הראשון, ואולם הראשון אינו יכול לגרוע מזכותו של השני על־ידי צוואה.¹\n\n**היקף ומקרים מסורתיים**\n\nהמוסד חל טיפוסית על הוראה צוואתית לשניים בלבד — מי שמוכר כ'ראשון' ו'שני' — והזכיי"
+  }
+]
