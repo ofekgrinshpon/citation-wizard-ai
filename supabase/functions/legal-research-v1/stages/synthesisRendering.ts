@@ -280,6 +280,17 @@ export interface SynthesisRenderingReport {
   metadata_only_sources_used_as_holdings: boolean;
   commentary_used_as_primary_authority: boolean;
   named_case_keys: string[];
+  groups: SynthesisSourceGroups;
+  group_counts: Record<string, number>;
+}
+
+function groupCounts(g: SynthesisSourceGroups): Record<string, number> {
+  return {
+    usable_authorities: g.usable_authorities.length,
+    statutory_background: g.statutory_background.length,
+    secondary_context: g.secondary_context.length,
+    found_but_not_usable: g.found_but_not_usable.length,
+  };
 }
 
 /** Docket-style identifiers, e.g. ע"א 52/80, בג״ץ 6698/95, בע"מ 5620/24. */
@@ -318,6 +329,8 @@ export function reportSynthesisRendering(opts: {
       metadata_only_sources_used_as_holdings: false,
       commentary_used_as_primary_authority: false,
       named_case_keys: [],
+      groups: opts.plan.groups,
+      group_counts: groupCounts(opts.plan.groups),
     };
   }
   const bodyKeys = docketKeys(opts.answerMarkdown);
@@ -362,5 +375,7 @@ export function reportSynthesisRendering(opts: {
     metadata_only_sources_used_as_holdings: metadataAsHolding,
     commentary_used_as_primary_authority: named_cases_in_body === 0 && commentaryCited,
     named_case_keys: Array.from(new Set(named_case_keys)),
+    groups: opts.plan.groups,
+    group_counts: groupCounts(opts.plan.groups),
   };
 }
