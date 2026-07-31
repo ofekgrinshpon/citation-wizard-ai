@@ -20,6 +20,10 @@ import {
   Verdict,
 } from "../lib/types.ts";
 import {
+  summarizeSnippetBudget,
+  type SnippetBudgetReport,
+} from "./synthesisSnippetBudget.ts";
+import {
   buildInputSources,
   type DrafterInputSource,
 } from "./drafter.ts";
@@ -795,6 +799,8 @@ export interface DrafterV2Result {
   sufficiency?: SufficiencyAssessment;
   /** Named-doctrine premise/framing signal (telemetry + drafter directive). */
   named_doctrine_framing?: NamedDoctrineFraming;
+  /** Synthesis snippet-budget telemetry (case-law synthesis runs only). */
+  snippet_budget_report?: SnippetBudgetReport;
 
 
   schema_failure_reason?:
@@ -867,6 +873,8 @@ export async function runDrafterV2(
       ref: StatuteSectionRef;
       candidate_ids: string[];
     }>;
+    /** Planner research mode — gates the synthesis snippet budget only. */
+    researchMode?: string | null;
   },
 ): Promise<DrafterV2Result> {
   const t_total = Date.now();
@@ -885,6 +893,23 @@ export async function runDrafterV2(
     verifier.usable,
     userDocs,
     useAsSource,
+    opts?.researchMode ?? null,
+  );
+  const snippet_budget_report = summarizeSnippetBudget(
+    opts?.researchMode ?? null,
+    inputSources.map((s) => ({
+      ref: s.ref,
+      citable_as: String(s.citable_as ?? "unknown"),
+      synthesis_role: String(s.synthesis_role ?? "unknown"),
+      text_usability: String(s.text_usability ?? "unknown"),
+      budget: s.snippet_budget ?? 500,
+      expanded: s.snippet_budget_expanded ?? false,
+      reason: (s.snippet_budget_reason ?? "not_synthesis_mode") as never,
+      snippet_length: s.snippet_length ?? (s.snippet?.length ?? 0),
+      available_text_length: s.available_text_length ?? (s.snippet?.length ?? 0),
+      has_holding_text: s.has_holding_text ?? false,
+      has_statutory_text: s.has_statutory_text ?? false,
+    })),
   );
   const shape = opts?.answerIntent?.output_shape;
   const canonicalQuoteRefs = shape === "quote"
@@ -914,6 +939,7 @@ export async function runDrafterV2(
 
   if (sources_passed === 0) {
     return {
+      snippet_budget_report,
       ok: false,
       ms: Date.now() - t_total,
       model_initial: forceModel ?? MODEL_MINI,
@@ -1012,6 +1038,7 @@ export async function runDrafterV2(
       : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined };
     const answer = built.answer_markdown;
     return {
+      snippet_budget_report,
       ok: validation.report.ok,
       ms: Date.now() - t_total,
       model_initial: forceModel ?? MODEL_MINI,
@@ -1110,6 +1137,7 @@ export async function runDrafterV2(
       : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined };
     const answer = built.answer_markdown;
     return {
+      snippet_budget_report,
       ok: validation.report.ok,
       ms: Date.now() - t_total,
       model_initial: forceModel ?? MODEL_MINI,
@@ -1227,6 +1255,7 @@ export async function runDrafterV2(
       : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined };
     const answer = built.answer_markdown;
     return {
+      snippet_budget_report,
       ok: validation.report.ok,
       ms: Date.now() - t_total,
       model_initial: forceModel ?? MODEL_MINI,
@@ -1380,6 +1409,7 @@ export async function runDrafterV2(
 
   if (!parsed.draft) {
     return {
+      snippet_budget_report,
       ok: false,
       ms: Date.now() - t_total,
       model_initial: forceModel ?? MODEL_MINI,
@@ -1473,6 +1503,7 @@ export async function runDrafterV2(
   }));
 
   return {
+    snippet_budget_report,
     ok: true,
     ms: Date.now() - t_total,
     model_initial: forceModel ?? MODEL_MINI,

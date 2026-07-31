@@ -765,6 +765,7 @@ export async function runLocalRetrieval(
           source_url: m.source_url ?? null,
           snippet: (m.chunk_content || "").slice(0, snippetLimit),
 
+
           query_he: q.query_he,
           // Small docket-match boost so exact-holding rows sort above adjacent
           // cases inside the same tier at pool time.
@@ -772,11 +773,18 @@ export async function runLocalRetrieval(
           expected_source_type: q.expected_source_type,
           metadata: {
             ...meta,
+            // Reserve text for the synthesis snippet budget. Not shown to the
+            // drafter unless the source qualifies (judgment / statute in a
+            // synthesis role) — the displayed snippet cap is unchanged.
+            ...((m.chunk_content || "").length > snippetLimit
+              ? { extended_text: (m.chunk_content || "").slice(0, 1600) }
+              : {}),
             ...(docket_match ? { docket_match: true } : {}),
             ...(q.metadata?.required_anchor_id
               ? { required_anchor_id: q.metadata.required_anchor_id }
               : {}),
           },
+
         });
         kept++;
       };

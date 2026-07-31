@@ -783,6 +783,7 @@ async function handle(req: Request): Promise<Response> {
       answerIntent: analyzer.answer_intent,
       requiredAnchorCandidateIds,
       satisfiedStatuteSectionAnchors,
+      researchMode: plannerStage.mode_plan?.mode ?? null,
     },
   );
   stage_runs.push(...drafter.stage_runs);
@@ -915,6 +916,8 @@ async function handle(req: Request): Promise<Response> {
         has_holding_text: u.has_holding_text,
       })),
     ),
+    // Synthesis snippet budget telemetry (case-law synthesis runs only).
+    snippet_budget: drafter.snippet_budget_report ?? null,
     marker_format: "superscript" as const,
     error: drafter.error,
     raw_text: drafter.raw_text,
