@@ -16,6 +16,7 @@ import { runQueryPlanner } from "./stages/queryPlanner.ts";
 import { runLocalRetrieval } from "./stages/localRetrieval.ts";
 import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
+import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRole.ts";
 import { runVerifier } from "./stages/verifier.ts";
 import { runDrafter } from "./stages/drafter.ts";
 import { runDrafterV2 } from "./stages/drafterV2.ts";
