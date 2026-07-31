@@ -81,6 +81,11 @@ export interface IntegrityLogRow {
   citable_as: string;
   integrity_flags: string[];
   can_satisfy_role: boolean;
+  is_judgment_document: boolean;
+  has_holding_text: boolean;
+  synthesis_role: string;
+  synthesis_role_seeded_from: string;
+  synthesis_role_overridden: boolean;
   downgrade_reason?: string;
 }
 
