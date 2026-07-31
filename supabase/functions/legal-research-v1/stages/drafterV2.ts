@@ -1477,6 +1477,8 @@ export async function runDrafterV2(
     lead_ref: leadSelection,
     missing_anchor_descriptions: missingAnchors.map((a) => a.description),
     sufficiency,
+    named_doctrine_framing: framing,
+
 
     completeness,
     completeness_initial,
