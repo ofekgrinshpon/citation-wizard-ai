@@ -48,6 +48,13 @@ const THIN_USABILITY = new Set(["metadata_only", "unusable", "unknown"]);
 
 const FILE_URL_RE = /\.(pdf|docx?|rtf)(\?|#|$)/i;
 
+/** Court download endpoints that serve a file without a file extension. */
+const DIRECT_DOWNLOAD_RE = /(\/Home\/Download\?|[?&]fileName=|[?&]download=)/i;
+
+function isDirectFileUrl(url: string): boolean {
+  return FILE_URL_RE.test(url) || DIRECT_DOWNLOAD_RE.test(url);
+}
+
 /** Court / official hosts whose HTML pages may wrap a downloadable file. */
 const WRAPPER_HOST_RE = /(court\.gov\.il|gov\.il|nevo\.co\.il|knesset\.gov\.il)/i;
 
@@ -136,8 +143,15 @@ async function fetchBytes(url: string): Promise<{ bytes: Uint8Array; contentType
 /** Method 1 — the URL already points at a judgment file. */
 async function tryDirectFile(url: string): Promise<string> {
   const { bytes, contentType } = await fetchBytes(url);
-  const isPdf = /pdf/.test(contentType) || /\.pdf(\?|#|$)/i.test(url);
-  const isDocx = /wordprocessingml|msword/.test(contentType) || /\.docx?(\?|#|$)/i.test(url);
+  // Content-type first, then extension, then magic bytes (court download
+  // endpoints often serve octet-stream with no extension in the URL).
+  const head = new TextDecoder("latin1").decode(bytes.slice(0, 4));
+  const isPdf =
+    /pdf/.test(contentType) || /\.pdf(\?|#|$)/i.test(url) || head.startsWith("%PDF");
+  const isDocx =
+    /wordprocessingml|msword|officedocument/.test(contentType) ||
+    /\.docx?(\?|#|$)/i.test(url) ||
+    head.startsWith("PK");
   if (!isPdf && !isDocx) throw new Error("not_a_document_file");
   return normText(await extractDocumentText(bytes, isPdf ? "pdf" : "docx"));
 }
@@ -272,9 +286,9 @@ export async function runJudgmentTextAcquisition(
     let failure: string | null = null;
 
     const plan: AcquisitionMethod[] = [];
-    if (url && FILE_URL_RE.test(url)) plan.push("direct_file_fetch");
+    if (url && isDirectFileUrl(url)) plan.push("direct_file_fetch");
     plan.push("local_db_docket_lookup");
-    if (url && WRAPPER_HOST_RE.test(url) && !FILE_URL_RE.test(url)) {
+    if (url && WRAPPER_HOST_RE.test(url) && !isDirectFileUrl(url)) {
       plan.push("wrapper_file_resolve");
     }
 
