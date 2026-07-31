@@ -919,6 +919,12 @@ async function handle(req: Request): Promise<Response> {
     source_sufficiency: drafter.sufficiency ?? null,
     insufficient_sources_limitation_fired:
       drafter.deterministic_branch === "insufficient_sources_limitation",
+    // Named-doctrine premise/framing telemetry.
+    named_doctrine_framing: drafter.named_doctrine_framing ?? null,
+    framing_correction_required:
+      drafter.named_doctrine_framing?.framing_correction_required ?? false,
+
+
 
     // Truncation guard telemetry (drafterV2-only, additive).
     completeness: drafter.completeness,
