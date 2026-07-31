@@ -200,17 +200,33 @@ function buildUserMessage(
   answerIntent?: AnswerIntent,
   leadRef?: string | null,
   sufficiency?: SufficiencyAssessment,
+  framing?: NamedDoctrineFraming,
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
   lines.push(
     "מסגרת התשובה חייבת להישאר נאמנה לשאלה כפי שנשאלה. אם המקורות עוסקים בנושא סמוך אך לא זהה — ציין זאת במפורש ואל תחליף את שאלת המשתמש.",
   );
+  if (framing?.framing_correction_required && framing.named_doctrine_phrase) {
+    const named = framing.named_doctrine_phrase;
+    const subject = framing.subject_phrase ?? named;
+    lines.push("");
+    lines.push(
+      `הערה קריטית — תיקון מסגור (premise): המשתמש ניסח את השאלה כאילו קיימת הלכה/דוקטרינה בשם "${named}", אך אף מקור בר-ציטוט מבין אלה שסופקו לך אינו משתמש בשם הזה כשם של הלכה מוכרת. עם זאת, המקורות כן עוסקים במוסד/הסדר משפטי אמיתי בעניין "${subject}".`,
+    );
+    lines.push(
+      `לכן מבנה התשובה חייב להיות, בסדר הזה: (1) משפט פתיחה שקובע במפורש שלא נמצאה הלכה מוכרת בשם "${named}"; (2) משפט שמזהה את ההסדר/המוסד המשפטי הקרוב שכן קיים לפי המקורות (למשל הוראת חוק ספציפית) ונוקב בשמו ובמקורו; (3) גוף התשובה — הדין לגבי אותו הסדר, רק ככל שהמקורות תומכים בו; (4) משפט סיום שמזמין את המשתמש לחדד אם התכוון להלכה אחרת או להעלות מקור.`,
+    );
+    lines.push(
+      `אין לפתוח בכותרת או במשפט שמציג את "${named}" כהלכה מוכרת, ואין להשתמש בניסוחים כמו "הפסיקה מכירה בהלכת…" ביחס לשם הזה. כלל התיקון הזה גובר על כלל "שורה תחתונה בפתיחה".`,
+    );
+  }
   if (sufficiency?.thin_source) {
     lines.push(
       "הערת דלילות מקורות: הטקסט התומך שנמצא קצר ואינו כולל נוסח מלא של ההלכה/ההוראה. נסח את התשובה על בסיס מה שקיים בפועל, והוסף בסוף הסתייגות קצרה שלפיה טקסט ההלכה המלא לא היה בידיך.",
     );
   }
+
 
   const missingDocketAnchors = missingAnchors.filter((a) => a.is_docket);
   const missingStatuteSectionAnchors = missingAnchors.filter((a) => a.is_statute_section);
