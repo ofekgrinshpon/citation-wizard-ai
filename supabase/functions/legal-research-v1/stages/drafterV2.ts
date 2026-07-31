@@ -1234,6 +1234,9 @@ export async function runDrafterV2(
     };
   }
 
+  // ── Named-doctrine premise / framing validation ───────────────────────
+  const framing = assessNamedDoctrineFraming({ question, sources: inputSources });
+
   const userMsg = buildUserMessage(
     question,
     claims,
@@ -1244,7 +1247,9 @@ export async function runDrafterV2(
     opts?.answerIntent,
     leadSelection.ref,
     sufficiency,
+    framing,
   );
+
 
   const tool = {
     name: "emit_structured_draft",
