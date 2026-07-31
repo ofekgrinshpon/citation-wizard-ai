@@ -1356,6 +1356,67 @@ export async function runDrafterV2(
     framingCorrectionActive: framing?.framing_correction_required === true,
   });
 
+  // ── Group A empty in case-law synthesis → deterministic limitation ────
+  if (synthesisPlan.limitation_required) {
+    const t0 = Date.now();
+    const synthSufficiency: SufficiencyAssessment = {
+      applied: true,
+      category: "case_law_synthesis",
+      shape: String(shape ?? "analysis"),
+      sufficient: false,
+      reason: synthesisPlan.reason,
+      topic_phrases: sufficiency?.topic_phrases ?? [],
+      topical_refs: sufficiency?.topical_refs ?? [],
+      topical_authority_refs: [],
+      found_titles: synthesisPlan.groups.found_but_not_usable
+        .map((r) => inputSources.find((s) => s.ref === r)?.title ?? "")
+        .filter(Boolean),
+      thin_source: true,
+    };
+    const draft = buildInsufficientSourcesDraft(synthSufficiency);
+    const validationRaw = validateStructuredDraft(draft, allowedRefs);
+    const validation = validationRaw.report.errors.every((e) => e === "no cited segments")
+      ? { draft, report: { ...validationRaw.report, ok: true, errors: [] } }
+      : validationRaw;
+    const built = validation.draft
+      ? buildFootnotedAnswer(validation.draft, inputSources)
+      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined };
+    const answer = built.answer_markdown;
+    return {
+      snippet_budget_report,
+      ok: validation.report.ok,
+      ms: Date.now() - t_total,
+      model_initial: forceModel ?? MODEL_MINI,
+      model_final: forceModel ?? MODEL_MINI,
+      provider,
+      escalated: false,
+      sources_passed,
+      sources_used: built.used_sources.length,
+      answer_markdown: answer,
+      used_sources: built.used_sources,
+      footnotes: built.footnotes,
+      stage_runs: [{
+        stage: "drafter_v2_synthesis_no_usable_authority",
+        model: "deterministic",
+        ms: Date.now() - t0,
+        ok: validation.report.ok,
+      }],
+      structured_validation: validation.report,
+      structured_draft: validation.draft,
+      input_sources: inputSources,
+      builder_report: built.builder_report,
+      quality_warning: computeQualityWarning(answer, { question }),
+      missing_anchor_caveat_injected: true,
+      lead_ref: leadSelection,
+      missing_anchor_descriptions: missingAnchors.map((a) => a.description),
+      deterministic_branch: "insufficient_sources_limitation",
+      sufficiency: synthSufficiency,
+      schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
+    };
+  }
+
+
+
   const userMsg = buildUserMessage(
     question,
     claims,
