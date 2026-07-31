@@ -208,6 +208,15 @@ export interface UsedSource {
   url: string | null;
   source_type: string;
   origin: Origin | "user_upload";
+  // Source-integrity pass-through (observability; set when available).
+  authority_tier?: string;
+  citable_as?: string;
+  text_usability?: string;
+  integrity_flags?: string[];
+  is_judgment_document?: boolean;
+  has_holding_text?: boolean;
+  can_satisfy_authority_role?: boolean;
+  synthesis_role?: string;
 }
 
 export interface Footnote {
