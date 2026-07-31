@@ -596,6 +596,15 @@ async function handle(req: Request): Promise<Response> {
         return acc;
       }, {} as Record<string, number>),
       role_unsatisfied: pool.integrity.filter((r) => !r.can_satisfy_role).length,
+      judgment_documents: pool.integrity.filter((r) => r.is_judgment_document).length,
+      judgments_with_holding_text: pool.integrity.filter(
+        (r) => r.is_judgment_document && r.has_holding_text,
+      ).length,
+      synthesis_role_counts: pool.integrity.reduce((acc, r) => {
+        acc[r.synthesis_role] = (acc[r.synthesis_role] ?? 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+      synthesis_role_overrides: pool.integrity.filter((r) => r.synthesis_role_overridden).length,
       downgrades: pool.integrity
         .filter((r) => !!r.downgrade_reason)
         .map((r) => ({ candidate_id: r.candidate_id, reason: r.downgrade_reason })),
