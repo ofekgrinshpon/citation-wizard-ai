@@ -186,8 +186,11 @@ export function planSynthesisRendering(opts: {
   }
 
 
-  const usableRefs = usable.map((s) => s.ref);
-  const metaRefs = metaOnly.map((s) => s.ref);
+  const usableRefs = groups.usable_authorities;
+  const metaRefs = groups.found_but_not_usable;
+  void usable;
+  void metaOnly;
+
 
   const L: string[] = [];
   L.push("");
