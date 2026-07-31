@@ -369,12 +369,31 @@ export function classifySourceIntegrity(input: IntegrityInput): SourceIntegrity 
     flags.push("listing_title");
   }
 
-  const usability = classifyUsability(tier, snippet, u);
+  // ── Judgment typing (deterministic) ───────────────────────────────────────
+  // A real decision file/page is a judgment regardless of how the upstream
+  // source_type labelled it (gov.il PDFs/DOCX were previously demoted to
+  // commentary). Listing/pagination pages never reach here.
+  const judg = detectJudgmentDocument(u, title, snippet, sourceType, tier === "index_or_listing");
+  if (judg.is_judgment) {
+    flags.push("judgment_document");
+    if (judg.has_holding_text) flags.push("holding_text_present");
+    if (tier === "secondary_commentary" || tier === "unknown") {
+      tier = judg.official_host ? "official_primary" : "primary_mirror";
+      flags.push("judgment_tier_promoted");
+    }
+  }
+
+  let usability = classifyUsability(tier, snippet, u);
+  if (judg.is_judgment && judg.has_holding_text && usability === "metadata_only") {
+    usability = "substantive_excerpt";
+  }
 
   // ── citable_as ────────────────────────────────────────────────────────────
   let citable: CitableAs = "unknown";
   if ((tier as AuthorityTier) === "index_or_listing" || (tier as AuthorityTier) === "non_authority") {
     citable = "not_citable";
+  } else if (judg.is_judgment) {
+    citable = "judgment";
   } else if (tier === "statute_mirror") {
     citable = "statute";
   } else if (CASE_TYPES.has(sourceType)) {
@@ -408,6 +427,8 @@ export function classifySourceIntegrity(input: IntegrityInput): SourceIntegrity 
     integrity_flags: flags,
     reject: false,
     downgrade_reason,
+    is_judgment_document: judg.is_judgment,
+    has_holding_text: judg.has_holding_text,
   };
 }
 
