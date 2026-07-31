@@ -77,6 +77,50 @@ const LIMITING_ROLES = new Set([
 ]);
 const STATUTORY_ROLES = new Set(["statutory_background", "primary_statute"]);
 
+/** Roles that may carry a case-law holding / application / limitation. */
+const AUTHORITY_ROLES = new Set([
+  "leading_candidate",
+  "applying_candidate",
+  "limiting_or_distinguishing_candidate",
+  "leading_authority",
+  "applying_authority",
+  "limiting_authority",
+  "distinguishing_candidate",
+  "limiting_candidate",
+]);
+
+const emptyGroups = (): SynthesisSourceGroups => ({
+  usable_authorities: [],
+  statutory_background: [],
+  secondary_context: [],
+  found_but_not_usable: [],
+});
+
+/**
+ * Deterministic pack separation. A judgment reaches group A only when it is a
+ * judgment, carries usable holding text, AND sits in a case-law synthesis role.
+ * Statutes never enter group A; commentary never enters group A or D.
+ */
+export function partitionSynthesisSources(
+  sources: DrafterInputSource[],
+): SynthesisSourceGroups {
+  const g = emptyGroups();
+  for (const s of sources) {
+    const role = String(s.synthesis_role ?? "");
+    if (isJudgment(s)) {
+      if (isUsableText(s) && AUTHORITY_ROLES.has(role)) g.usable_authorities.push(s.ref);
+      else g.found_but_not_usable.push(s.ref);
+      continue;
+    }
+    if (STATUTORY_ROLES.has(role) || String(s.citable_as ?? "") === "statute") {
+      g.statutory_background.push(s.ref);
+      continue;
+    }
+    g.secondary_context.push(s.ref);
+  }
+  return g;
+}
+
 /**
  * Build the synthesis rendering plan + prompt directive.
  * `framingCorrectionActive` short-circuits the plan: the named-doctrine
@@ -88,6 +132,8 @@ export function planSynthesisRendering(opts: {
   framingCorrectionActive: boolean;
 }): SynthesisRenderingPlan {
   const empty = {
+    limitation_required: false,
+    groups: emptyGroups(),
     usable_judgment_refs: [] as string[],
     metadata_only_judgment_refs: [] as string[],
     leading_refs: [] as string[],
@@ -108,33 +154,37 @@ export function planSynthesisRendering(opts: {
   const judgments = opts.sources.filter(isJudgment);
   const usable = judgments.filter(isUsableText);
   const metaOnly = judgments.filter((s) => !isUsableText(s));
+  const groups = partitionSynthesisSources(opts.sources);
 
   const byRole = (set: Set<string>) =>
     opts.sources.filter((s) => set.has(String(s.synthesis_role ?? ""))).map((s) => s.ref);
-  // Application / limitation layers may only be built from judgments that carry
-  // usable holding text; metadata-only judgments and commentary cannot create them.
+  // Application / limitation layers may only be built from judgments that are
+  // in group A; metadata-only judgments and commentary cannot create them.
+  const inGroupA = new Set(groups.usable_authorities);
   const byUsableRole = (set: Set<string>) =>
     opts.sources
-      .filter((s) => set.has(String(s.synthesis_role ?? "")) && isUsableText(s))
+      .filter((s) => set.has(String(s.synthesis_role ?? "")) && inGroupA.has(s.ref))
       .map((s) => s.ref);
 
-  const leading_refs = byRole(LEADING_ROLES);
+  const leading_refs = byRole(LEADING_ROLES).filter((r) => inGroupA.has(r));
   const applying_refs = byUsableRole(APPLYING_ROLES);
   const limiting_refs = byUsableRole(LIMITING_ROLES);
-  const statutory_refs = byRole(STATUTORY_ROLES);
-  const commentary_refs = opts.sources
-    .filter((s) => !isJudgment(s) && !STATUTORY_ROLES.has(String(s.synthesis_role ?? "")))
-    .map((s) => s.ref);
+  const statutory_refs = groups.statutory_background;
+  const commentary_refs = groups.secondary_context;
 
-  if (judgments.length === 0) {
+  if (judgments.length === 0 || groups.usable_authorities.length === 0) {
     return {
       applied: false,
-      reason: "no_citable_judgments",
+      reason: judgments.length === 0 ? "no_citable_judgments" : "no_usable_authorities",
       ...empty,
+      limitation_required: true,
+      groups,
+      metadata_only_judgment_refs: groups.found_but_not_usable,
       commentary_refs,
       statutory_refs,
     };
   }
+
 
   const usableRefs = usable.map((s) => s.ref);
   const metaRefs = metaOnly.map((s) => s.ref);
