@@ -17,6 +17,7 @@ import { runLocalRetrieval } from "./stages/localRetrieval.ts";
 import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRole.ts";
+import { runJudgmentTextAcquisition } from "./stages/judgmentTextAcquisition.ts";
 import { runVerifier } from "./stages/verifier.ts";
 import { runDrafter } from "./stages/drafter.ts";
 import { runDrafterV2 } from "./stages/drafterV2.ts";
@@ -534,6 +535,30 @@ async function handle(req: Request): Promise<Response> {
   ]);
   stage_runs.push(...local.stage_runs, ...pplx.stage_runs);
   const pool = buildCandidatePool([...local.candidates, ...pplx.candidates]);
+
+  // ─── Judgment text acquisition (case-law synthesis only, ≤2 attempts) ────
+  // Bounded, fail-closed attempt to obtain real judgment text for citable
+  // judgment candidates in a synthesis role that arrived metadata-only.
+  const judgmentAcquisition = await runJudgmentTextAcquisition({
+    admin,
+    research_mode: plannerStage.mode_plan?.mode ?? null,
+    candidates: pool.candidates,
+  });
+  if (judgmentAcquisition.successes > 0) {
+    // Refresh the integrity telemetry rows for upgraded candidates.
+    const byId = new Map(pool.candidates.map((c) => [c.candidate_id, c]));
+    for (const row of pool.integrity) {
+      const c = byId.get(row.candidate_id);
+      const integ = ((c?.metadata ?? {}) as Record<string, unknown>).source_integrity as
+        | { text_usability?: string; has_holding_text?: boolean; integrity_flags?: string[] }
+        | undefined;
+      if (!integ) continue;
+      row.text_usability = String(integ.text_usability ?? row.text_usability);
+      row.has_holding_text = integ.has_holding_text ?? row.has_holding_text;
+      row.integrity_flags = integ.integrity_flags ?? row.integrity_flags;
+    }
+  }
+
   const role_corrections = pplx.per_query.flatMap((pq) =>
     pq.results
       .filter((r) => r.role_corrected_from)
@@ -609,6 +634,8 @@ async function handle(req: Request): Promise<Response> {
         .filter((r) => !!r.downgrade_reason)
         .map((r) => ({ candidate_id: r.candidate_id, reason: r.downgrade_reason })),
     },
+    judgment_text_acquisition: judgmentAcquisition,
+
 
 
   };

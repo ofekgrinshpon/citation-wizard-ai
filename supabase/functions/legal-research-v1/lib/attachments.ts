@@ -138,6 +138,22 @@ async function extractDocx(bytes: Uint8Array): Promise<string> {
   }
 }
 
+/**
+ * Shared document-text extraction for non-attachment callers (e.g. bounded
+ * judgment-text acquisition). Returns plain text; PDF pages are joined.
+ */
+export async function extractDocumentText(
+  bytes: Uint8Array,
+  kind: "pdf" | "docx",
+): Promise<string> {
+  if (kind === "pdf") {
+    const pages = await extractPdf(bytes);
+    return pages.join("\n").trim();
+  }
+  return await extractDocx(bytes);
+}
+
+
 async function buildSignedUrl(
   admin: SupabaseClient,
   storage_path: string,
