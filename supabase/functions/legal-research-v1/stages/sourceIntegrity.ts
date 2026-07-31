@@ -56,6 +56,10 @@ export interface SourceIntegrity {
   reject_reason?: string;
   /** Set when the incoming source_type over-claims authority. */
   downgrade_reason?: string;
+  /** Deterministic judgment-document detection (PDF/DOCX/judgment page). */
+  is_judgment_document?: boolean;
+  /** Snippet carries operative judgment/holding language. */
+  has_holding_text?: boolean;
 }
 
 export interface IntegrityInput {
