@@ -225,7 +225,8 @@ interface RawDraft {
 }
 
 import { computeDisplayTitle } from "./displayTitleHygiene.ts";
-import { classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
+import { canSatisfyRole, classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
+import { assignSynthesisRole } from "./synthesisRole.ts";
 
 
 export function buildInputSources(
