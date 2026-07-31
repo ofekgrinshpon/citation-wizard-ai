@@ -44,6 +44,11 @@ import {
   assessSourceSufficiency,
   type SufficiencyAssessment,
 } from "./sourceSufficiency.ts";
+import {
+  assessNamedDoctrineFraming,
+  type NamedDoctrineFraming,
+} from "./namedDoctrine.ts";
+
 
 
 // drafterV2-only output-token budgets. Reasoning models (gpt-5 family) burn
