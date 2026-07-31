@@ -33,9 +33,18 @@ function isJudgment(s: DrafterInputSource): boolean {
   return String(s.citable_as ?? "") === "judgment" || s.is_judgment_document === true;
 }
 
+/**
+ * A source may support holding / application / limitation language ONLY if it is
+ * a judgment, carries real text (full_text | substantive_excerpt) AND is flagged
+ * as containing holding text. All three conditions are required.
+ */
 function isUsableText(s: DrafterInputSource): boolean {
   const u = String(s.text_usability ?? "");
-  return s.has_holding_text === true || u === "full_text" || u === "substantive_excerpt";
+  return (
+    isJudgment(s) &&
+    (u === "full_text" || u === "substantive_excerpt") &&
+    s.has_holding_text === true
+  );
 }
 
 const LEADING_ROLES = new Set(["leading_candidate", "leading_authority"]);
@@ -81,10 +90,16 @@ export function planSynthesisRendering(opts: {
 
   const byRole = (set: Set<string>) =>
     opts.sources.filter((s) => set.has(String(s.synthesis_role ?? ""))).map((s) => s.ref);
+  // Application / limitation layers may only be built from judgments that carry
+  // usable holding text; metadata-only judgments and commentary cannot create them.
+  const byUsableRole = (set: Set<string>) =>
+    opts.sources
+      .filter((s) => set.has(String(s.synthesis_role ?? "")) && isUsableText(s))
+      .map((s) => s.ref);
 
   const leading_refs = byRole(LEADING_ROLES);
-  const applying_refs = byRole(APPLYING_ROLES);
-  const limiting_refs = byRole(LIMITING_ROLES);
+  const applying_refs = byUsableRole(APPLYING_ROLES);
+  const limiting_refs = byUsableRole(LIMITING_ROLES);
   const statutory_refs = byRole(STATUTORY_ROLES);
   const commentary_refs = opts.sources
     .filter((s) => !isJudgment(s) && !STATUTORY_ROLES.has(String(s.synthesis_role ?? "")))
@@ -110,10 +125,14 @@ export function planSynthesisRendering(opts: {
   );
   L.push('  1. כותרת: "שורה תחתונה" — הכלל הנוהג כיום, במשפט או שניים.');
   L.push(
-    '  2. כותרת: "המקור הפסיקתי המרכזי שנמצא" — נקוב בשם ובמספר ההליך של פסק/י הדין המובילים בגוף הטקסט, וכתוב מה כל אחד מהם קובע בפועל.',
+    '  2. כותרת: "המקור הפסיקתי המרכזי שנמצא" — נקוב בשם ובמספר ההליך של פסק/י הדין המובילים בגוף הטקסט, וכתוב מה כל אחד מהם קובע בפועל. מותר רק לגבי פסקי דין שסומנו כבעלי טקסט שמיש.',
   );
-  L.push('  3. כותרת: "יישומים בפסיקה שנמצאה" — פסקי דין מיישמים, בקבוצה נפרדת.');
-  L.push('  4. כותרת: "מגבלות והבחנות" — פסקי דין מסייגים/מבחינים, בקבוצה נפרדת.');
+  L.push(
+    '  3. כותרת: "יישומים בפסיקה שנמצאה" — פסקי דין מיישמים בעלי טקסט שמיש בלבד, בקבוצה נפרדת.',
+  );
+  L.push(
+    '  4. כותרת: "מגבלות והבחנות" — פסקי דין מסייגים/מבחינים בעלי טקסט שמיש בלבד, בקבוצה נפרדת.',
+  );
   L.push('  5. כותרת: "הרקע החקיקתי" — הוראות חוק רלוונטיות, בנפרד מהפסיקה.');
   L.push('  6. כותרת: "מה לא ניתן לקבוע מהמקורות" — פערים שנותרו.');
   L.push("");
@@ -122,15 +141,19 @@ export function planSynthesisRendering(opts: {
     "  • מותר לנקוב בשמות פסקי דין רק אם הם מופיעים ברשימת המקורות שסופקה לך. אין להוסיף פסקי דין מהזיכרון, גם אם הם 'הלכות ידועות'.",
   );
   L.push(
-    "  • אין לייחס קביעה או הלכה למקור שסומן כ-metadata_only — עבור מקורות כאלה מותר רק לציין שהם אותרו ושרמת הפירוט שלהם מוגבלת.",
+    "  • ניסוח של הלכה, יישום, סייג או כל מהלך דוקטרינרי מותר אך ורק על בסיס פסק דין שמופיע ברשימת 'מקורות פסיקה עם טקסט שמיש'. כל מקור אחר אינו יכול לשאת מהלך כזה.",
   );
-  L.push("  • אין לגזור סייג או הבחנה מספרות/פרשנות בלבד ללא פסיקה תומכת.");
-  L.push("  • ספרות ופרשנות מופיעות רק אחרי המשפט הראשוני, ולא כתחליף לפסיקה חסרה.");
+  L.push(
+    "  • לגבי פסק דין שסומן metadata_only: אסור לכתוב לגביו 'נקבע בו', 'הוחל בו', 'הוגבל בו', 'נפסק כי', 'קבע כי' או כל ניסוח הלכתי דומה. מותר להזכיר אותו אך ורק כהערת מקור מוגבל, בנוסח: \"נמצא אזכור/מקור מטא־דאטה לפסק הדין X, אך לא די טקסט אופרטיבי כדי לגזור ממנו הלכה.\"",
+  );
+  L.push(
+    "  • ספרות ופרשנות אינן יוצרות שכבת יישום או סייג בפני עצמן. הן מותרות רק להסבר או הקשר, ורק אחרי שהוצגה סמכות פסיקתית שמישה.",
+  );
   L.push("  • חוק אינו הלכה פסוקה — אין להציג נוסח חוק כקביעה של בית משפט.");
 
   if (usable.length === 0) {
     L.push(
-      "  • אזהרה: לאף פסק דין ברשימה אין טקסט הלכתי שמיש. אל תציג אף קביעה כהלכה שנפסקה; ציין במפורש שרק מטא-נתונים של פסקי דין אותרו.",
+      "  • אזהרה: לאף פסק דין ברשימה אין טקסט הלכתי שמיש. אל תציג אף קביעה כהלכה שנפסקה, אל תכתוב פרק יישומים או מגבלות, וציין במפורש שרק מטא-נתונים/אזכורים של פסקי דין אותרו.",
     );
   } else if (usable.length === 1) {
     L.push(
@@ -139,7 +162,7 @@ export function planSynthesisRendering(opts: {
   }
   if (metaRefs.length > 0) {
     L.push(
-      `  • מקורות פסיקה עם מטא-נתונים בלבד (אין להסיק מהם הלכה): ${metaRefs.join(", ")}.`,
+      `  • מקורות פסיקה עם מטא-נתונים בלבד (אין להסיק מהם הלכה, יישום או סייג; רק הערת מקור מוגבל): ${metaRefs.join(", ")}.`,
     );
   }
   if (usableRefs.length > 0) {
@@ -191,7 +214,17 @@ function docketKeys(text: string): Set<string> {
   return out;
 }
 
-const HOLDING_VERBS = /(נקבע|קבע|פסק|נפסק|הלכה|קובע)/;
+// Attribution-style holding language only (a metadata-only case must never carry
+// these). Bare nouns like "הלכה"/"פסיקה" are excluded — they appear in legitimate
+// limited-source notes such as "לא זוהה טקסט הלכתי".
+const HOLDING_VERBS =
+  /(נקבע|נפסק|קבע כי|פסק כי|קובע כי|הוחל|החיל|הוגבל|הגביל|סייג את|סויג|הבחין בין|יישם|יושם)/;
+
+// Markers of the prescribed limited-source note; when present around the case
+// name, the mention is explicitly non-operative and must not be flagged.
+const LIMITED_SOURCE_MARKERS =
+  /(מטא[־\-–]?דאטה|מטא[־\-–]?נתונים|אזכור|לא די טקסט|לא זוהה|לא נמצא טקסט|אינו כולל טקסט|מוגבל)/;
+
 
 export function reportSynthesisRendering(opts: {
   plan: SynthesisRenderingPlan;
@@ -225,11 +258,14 @@ export function reportSynthesisRendering(opts: {
     if (isUsableText(s)) {
       usable_judgments_named++;
     } else {
-      // Metadata-only judgment named next to holding language → flag.
+      // Metadata-only judgment named next to holding language → flag,
+      // unless the mention sits inside the prescribed limited-source note.
       const idx = opts.answerMarkdown.indexOf(match);
       if (idx >= 0) {
-        const window = opts.answerMarkdown.slice(Math.max(0, idx - 120), idx + 120);
-        if (HOLDING_VERBS.test(window)) metadataAsHolding = true;
+        const window = opts.answerMarkdown.slice(Math.max(0, idx - 200), idx + 200);
+        if (HOLDING_VERBS.test(window) && !LIMITED_SOURCE_MARKERS.test(window)) {
+          metadataAsHolding = true;
+        }
       }
     }
   }

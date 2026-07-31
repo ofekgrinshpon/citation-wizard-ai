@@ -1,0 +1,416 @@
+[
+  {
+    "id": "C2b",
+    "run_id": "288e435d-d195-49d3-9862-e4c37d4f5be3",
+    "research_mode": "case_law_synthesis",
+    "pool_judgments": 2,
+    "pool_judgments_with_holding": 1,
+    "citable_counts": {
+      "unknown": 1,
+      "judgment": 3,
+      "commentary": 10,
+      "not_citable": 1,
+      "scholarship": 4
+    },
+    "synthesis_role_counts": {
+      "unknown": 2,
+      "applying_candidate": 2,
+      "secondary_commentary": 14,
+      "limiting_or_distinguishing_candidate": 1
+    },
+    "synthesis_role_overrides": 15,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 0,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {},
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [],
+    "answer_len": 459,
+    "answer_head": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמ"
+  },
+  {
+    "id": "C2",
+    "run_id": "f640d636-aa18-4432-97fa-0f8006cb8567",
+    "research_mode": "case_law_synthesis",
+    "pool_judgments": 0,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 2,
+      "unknown": 2,
+      "judgment": 2,
+      "commentary": 13,
+      "not_citable": 3,
+      "scholarship": 3
+    },
+    "synthesis_role_counts": {
+      "unknown": 4,
+      "leading_candidate": 1,
+      "secondary_commentary": 16,
+      "statutory_background": 3,
+      "limiting_or_distinguishing_candidate": 1
+    },
+    "synthesis_role_overrides": 18,
+    "pack": {
+      "has_judgment": true,
+      "statute_count": 2,
+      "judgment_count": 1,
+      "commentary_count": 4,
+      "by_synthesis_role": {
+        "secondary_commentary": 4,
+        "statutory_background": 3,
+        "limiting_or_distinguishing_candidate": 1
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": true,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "הלכת השיתוף בנכסים",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 1,
+        "title": "מסמך מאתר אתר אקדמי (daat.ac.il)",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 1,
+        "title": "חוק המקרקעין, תשכ\"ט-1969",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 2,
+        "title": "22.04B פעולות לצורך רישום או עדכון זכויות בלשכת רישום המקרקעין )טאבו",
+        "citable_as": "unknown",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 2,
+        "title": "מקור חקיקה מתוך אתר הכנסת",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 3,
+        "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "limiting_or_distinguishing_candidate"
+      },
+      {
+        "n": 3,
+        "title": "פס\"ד בתביעת יורשים להחלת הלכת השיתוף",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 3,
+        "title": "פסק דין מתוך psakdin.co.il",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      }
+    ],
+    "answer_len": 987,
+    "answer_head": "**שורה תחתונה**\n\nהמגמה בפסיקה ובספרות היא כי נכסים שנצברו במהלך הנישואין נתפסים כשיתוף בין בני הזוג, והעדר רישום פורמלי על שם אחד מהצדדים אינו בהכרח מבטל זכות שיתוף; פירוק השיתוף וחלוקת הנכסים מסודרים במסגרת חוק המקרקעין ובהלכות ובמבחנים המובאים בספרות המשפטית.¹\n\n**הרקע החקיקתי**\n\nחוק המקרקעין מספק "
+  },
+  {
+    "id": "C1",
+    "run_id": "09edf19c-ed40-4a3e-89e4-a5bdb458903c",
+    "research_mode": "case_law_synthesis",
+    "pool_judgments": 0,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 5,
+      "commentary": 11,
+      "not_citable": 2,
+      "scholarship": 3
+    },
+    "synthesis_role_counts": {
+      "unknown": 2,
+      "secondary_commentary": 14,
+      "statutory_background": 5
+    },
+    "synthesis_role_overrides": 13,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 3,
+      "judgment_count": 0,
+      "commentary_count": 6,
+      "by_synthesis_role": {
+        "secondary_commentary": 6,
+        "statutory_background": 3
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": true,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "חוק הירושה, תשכ\"ה-1965",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 1,
+        "title": "חוק הירושה, תשכ\"ה-1965 – סעיף 42",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 2,
+        "title": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש'",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 3,
+        "title": "פסק דין מתוך psakdin.co.il",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 4,
+        "title": "פסק דין מתוך psakdin.co.il",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 5,
+        "title": "פקודת פשיטת הרגל [נוסח חדש], תש\"ם-1980",
+        "citable_as": "statute",
+        "tier": "primary_mirror",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 6,
+        "title": "מסמך מאתר אתר אקדמי (daat.ac.il)",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 6,
+        "title": "צוואה כהלכה במשפט העברי והישראלי",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 6,
+        "title": "על ירושות ומשפחות בראי ההלכה – הסדרי הורשות והדרות בדין העברי",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      }
+    ],
+    "answer_len": 1990,
+    "answer_head": "לא נמצאה במקורות שסופקו הלכה מוכרת שנושאת את השם \"הלכת יורש אחר יורש\"; השם כפי שניסחת אינו מופיע ככותרת הלכתית במקורות שחולצו.\n\nהסדר המשפטי הקרוב שתומכים בו המקורות הוא הוראת \"יורש אחר יורש\" בחוק הירושה, תשכה-1965 — במיוחד סעיף 42 של החוק.¹\n\nלפי סעיף 42, ניתן בצוואה לצוות לשניים באופן שיזכה השני אחר"
+  },
+  {
+    "id": "M1",
+    "run_id": "d5625a4f-87fb-4e2c-a364-262a5de82de1",
+    "research_mode": "specific_case",
+    "pool_judgments": 1,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "unknown": 7,
+      "judgment": 1,
+      "commentary": 2,
+      "not_citable": 2,
+      "scholarship": 12
+    },
+    "synthesis_role_counts": {
+      "unknown": 4,
+      "leading_candidate": 1,
+      "secondary_commentary": 19
+    },
+    "synthesis_role_overrides": 17,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 0,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {},
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [],
+    "answer_len": 320,
+    "answer_head": "לא אותר במקורות הזמינים ע\"א 6821/93. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטי"
+  },
+  {
+    "id": "M2",
+    "run_id": "d04640b7-7a60-4383-8de9-11266e0d94e6",
+    "research_mode": "statute_section_definition",
+    "pool_judgments": 1,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 11,
+      "unknown": 1,
+      "judgment": 1,
+      "not_citable": 1,
+      "scholarship": 2
+    },
+    "synthesis_role_counts": {
+      "unknown": 1,
+      "secondary_commentary": 2,
+      "statutory_background": 12,
+      "limiting_or_distinguishing_candidate": 1
+    },
+    "synthesis_role_overrides": 4,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 1,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {
+        "statutory_background": 1
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": true,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "הצעת חוק החברות, התשס״ב-2002",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      }
+    ],
+    "answer_len": 247,
+    "answer_head": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 6 לחוק החברות; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
+  },
+  {
+    "id": "B8",
+    "run_id": "cbb41f71-abf1-41fd-bfed-ddc7760e53a6",
+    "research_mode": "canonical_quote",
+    "pool_judgments": 0,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 5,
+      "unknown": 1,
+      "not_citable": 1,
+      "scholarship": 5
+    },
+    "synthesis_role_counts": {
+      "unknown": 1,
+      "secondary_commentary": 5,
+      "statutory_background": 6
+    },
+    "synthesis_role_overrides": 6,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 0,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {
+        "unknown": 1
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)"
+      }
+    ],
+    "answer_len": 294,
+    "answer_head": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹"
+  },
+  {
+    "id": "B2",
+    "run_id": "f1c5d406-b357-4116-a7b3-4e83605fe2a9",
+    "research_mode": "specific_case",
+    "pool_judgments": 2,
+    "pool_judgments_with_holding": 1,
+    "citable_counts": {
+      "statute": 1,
+      "unknown": 3,
+      "judgment": 2,
+      "commentary": 6,
+      "not_citable": 1,
+      "scholarship": 11
+    },
+    "synthesis_role_counts": {
+      "unknown": 2,
+      "leading_candidate": 1,
+      "applying_candidate": 1,
+      "secondary_commentary": 19,
+      "statutory_background": 1
+    },
+    "synthesis_role_overrides": 19,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 0,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {},
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [],
+    "answer_len": 342,
+    "answer_head": "לא אותר במקורות הזמינים פסק הדין בעניין בג\"ץ 6698/95 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכ"
+  }
+]
