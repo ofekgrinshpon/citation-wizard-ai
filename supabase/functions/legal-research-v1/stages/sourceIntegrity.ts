@@ -100,7 +100,70 @@ const OFFICIAL_HOSTS = [
   "elyon2.court.gov.il",
   "nevo.co.il",
   "takdin.co.il",
+  // Government portal: specific decision/statute files are official primary;
+  // dynamiccollectors / pagination pages are caught earlier as listings.
+  "gov.il",
 ];
+
+/** Mirrors that republish full judgment text (not official, still primary text). */
+const JUDGMENT_MIRROR_HOSTS = ["psakdin.co.il", "din.co.il", "pador.co.il", "lawdata.co.il"];
+
+/** Docket pattern (Israeli court case numbers). */
+const DOCKET_RE =
+  /(בג["״']?ץ|בגץ|עע["״']?ם|ע["״']?א|רע["״']?א|ע["״']?פ|רע["״']?פ|בש["״']?פ|בש["״']?א|ע["״']?מ|עה["״']?ס|תמ["״']?ש|ת["״']?א|ה["״']?פ|עב["״']?ל|ע["״']?ע|דנ["״']?א|דנג["״']?ץ)\s*\d{1,5}\s*\/\s*\d{2,4}/;
+
+/** Court / judgment vocabulary that marks an actual decision document. */
+const JUDGMENT_PHRASE_RE =
+  /(פסק[\s-]?דין|פסק[\s-]?הדין|פסה["״']?ד|בית\s+המשפט\s+העליון|בבית\s+המשפט|בית\s+הדין\s+ה|כב['״]?\s*השופט|בפני\s+כב|השופט[ת]?\s+\S|החלטה\s+בבקשה|בשבתו\s+כבית)/;
+
+/** URL shapes that point at a decision file / decision viewer. */
+const JUDGMENT_URL_RE =
+  /(supremedecisions|\/verdict|\/verdicts|\/judg?ments?|\/pskdin|\/psakdin|\/decisions?\/|piskei|hachlatot)/i;
+
+/** Operative holding language inside the snippet. */
+const HOLDING_TEXT_RE =
+  /(אנו\s+פוסקים|הערעור\s+(מתקבל|נדחה)|העתירה\s+(מתקבלת|נדחית)|ניתן\s+היום|אשר\s+על\s+כן|לפיכך\s|נפסק\s+כי|קובע[ת]?\s+כי|הלכה\s+ש|בדעת\s+(רוב|מיעוט)|דעת\s+הרוב)/;
+
+function detectJudgmentDocument(
+  u: URL | null,
+  title: string,
+  snippet: string,
+  sourceType: string,
+  listing: boolean,
+): { is_judgment: boolean; has_holding_text: boolean; official_host: boolean } {
+  const has_holding_text = HOLDING_TEXT_RE.test(snippet) || HOLDING_TEXT_RE.test(title);
+  if (listing) return { is_judgment: false, has_holding_text, official_host: false };
+
+  const host = u ? hostOf(u) : "";
+  const official_host = !!host && hostMatches(host, OFFICIAL_HOSTS);
+  const mirror_host = !!host && hostMatches(host, JUDGMENT_MIRROR_HOSTS);
+  let hay = `${title} ${snippet}`;
+  let urlPath = "";
+  if (u) {
+    try {
+      urlPath = decodeURIComponent(`${u.pathname}${u.search}`);
+    } catch {
+      urlPath = `${u.pathname}${u.search}`;
+    }
+    hay += ` ${urlPath}`;
+  }
+
+  const hostJudgment =
+    /supremedecisions\.court\.gov\.il|elyon[12]\.court\.gov\.il/.test(host) ||
+    (!!u && JUDGMENT_URL_RE.test(urlPath));
+  const hasDocket = DOCKET_RE.test(hay);
+  const hasPhrase = JUDGMENT_PHRASE_RE.test(`${title} ${snippet}`);
+  const fileDoc = !!u && /\.(pdf|docx?|rtf)$/i.test(u.pathname);
+  const caseType = CASE_TYPES.has(sourceType);
+
+  const is_judgment =
+    (hostJudgment && (hasDocket || hasPhrase || fileDoc)) ||
+    ((official_host || mirror_host) && fileDoc && hasDocket && (hasPhrase || has_holding_text)) ||
+    ((official_host || mirror_host) && hasDocket && hasPhrase && caseType) ||
+    (fileDoc && hasDocket && hasPhrase && caseType);
+
+  return { is_judgment, has_holding_text, official_host };
+}
 
 const STATUTE_MIRROR_HOSTS = ["wikisource.org", "he.wikisource.org", "wikitext.org"];
 
