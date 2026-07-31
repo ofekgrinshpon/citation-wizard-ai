@@ -207,6 +207,14 @@ export function buildFootnotedAnswer(
         url: s.url,
         source_type: s.source_type,
         origin: s.origin as UsedSource["origin"],
+        authority_tier: s.authority_tier,
+        citable_as: s.citable_as,
+        text_usability: s.text_usability,
+        integrity_flags: s.integrity_flags,
+        is_judgment_document: s.is_judgment_document,
+        has_holding_text: s.has_holding_text,
+        can_satisfy_authority_role: s.can_satisfy_authority_role,
+        synthesis_role: s.synthesis_role,
       });
     }
   }
