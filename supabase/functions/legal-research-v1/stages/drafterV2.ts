@@ -772,6 +772,9 @@ export interface DrafterV2Result {
     | "insufficient_sources_limitation";
   /** Deterministic source-sufficiency assessment (telemetry + gate result). */
   sufficiency?: SufficiencyAssessment;
+  /** Named-doctrine premise/framing signal (telemetry + drafter directive). */
+  named_doctrine_framing?: NamedDoctrineFraming;
+
 
   schema_failure_reason?:
     | "no_tool_call"
