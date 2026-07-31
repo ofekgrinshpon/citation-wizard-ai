@@ -896,6 +896,15 @@ async function handle(req: Request): Promise<Response> {
     marker_validation,
     omitted_candidate_ids,
     used_sources: drafter.used_sources,
+    // Authority-role / judgment-typing view of the final pack (labelling only).
+    synthesis_pack: summarizeSynthesisPack(
+      drafter.used_sources.map((u) => ({
+        citable_as: String(u.citable_as ?? "unknown"),
+        text_usability: String(u.text_usability ?? "unknown"),
+        synthesis_role: (u.synthesis_role ?? "unknown") as SynthesisRole,
+        has_holding_text: u.has_holding_text,
+      })),
+    ),
     marker_format: "superscript" as const,
     error: drafter.error,
     raw_text: drafter.raw_text,
