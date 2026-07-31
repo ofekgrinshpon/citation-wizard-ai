@@ -1,0 +1,1245 @@
+[
+  {
+    "id": "C2",
+    "run_id": "af9d5a28-2d17-48ac-9d3d-03af217fbd5b",
+    "research_mode": "case_law_synthesis",
+    "pool_judgments": 0,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 1,
+      "unknown": 1,
+      "judgment": 2,
+      "commentary": 7,
+      "not_citable": 1,
+      "scholarship": 6
+    },
+    "synthesis_role_counts": {
+      "unknown": 1,
+      "leading_candidate": 2,
+      "secondary_commentary": 13,
+      "statutory_background": 2
+    },
+    "synthesis_role_overrides": 10,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 0,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {},
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [],
+    "snippet_budget": {
+      "research_mode": "case_law_synthesis",
+      "synthesis_run": true,
+      "max_snippet_length": 395,
+      "expanded_source_count": 0,
+      "statute_sources_ge_900": 0,
+      "judgment_sources_ge_900": 0,
+      "snippet_budget_by_source": [
+        {
+          "ref": "s1",
+          "budget": 500,
+          "reason": "no_real_text",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 112,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 112
+        },
+        {
+          "ref": "s2",
+          "budget": 500,
+          "reason": "no_real_text",
+          "expanded": false,
+          "citable_as": "judgment",
+          "snippet_length": 187,
+          "synthesis_role": "leading_candidate",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 187
+        },
+        {
+          "ref": "s3",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 188,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 188
+        },
+        {
+          "ref": "s4",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 75,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 75
+        },
+        {
+          "ref": "s5",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 277,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 277
+        },
+        {
+          "ref": "s6",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 106,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 106
+        },
+        {
+          "ref": "s7",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 116,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 116
+        },
+        {
+          "ref": "s8",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 73,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 73
+        },
+        {
+          "ref": "s9",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 368,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": true,
+          "has_statutory_text": true,
+          "available_text_length": 368
+        },
+        {
+          "ref": "s10",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 395,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 395
+        }
+      ],
+      "commentary_max_snippet_length": 395
+    },
+    "judgment_text_acquisition": {
+      "ms": 1458,
+      "mode": "case_law_synthesis",
+      "enabled": true,
+      "attempts": [
+        {
+          "ms": 900,
+          "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+          "title": "על-אודות בית המשפט העליון - הרשות השופטת",
+          "success": false,
+          "candidate_id": "2393a86b-cce2-4cf7-a5ed-8722c39a96c0",
+          "title_signal": "על-אודות בית המשפט העליון - הרשות השופטת",
+          "docket_signal": null,
+          "failure_reason": "no_downloadable_file_on_wrapper",
+          "synthesis_role": "leading_candidate",
+          "trigger_reason": "metadata_only",
+          "method_succeeded": null,
+          "methods_attempted": [
+            "local_db_docket_lookup",
+            "wrapper_file_resolve"
+          ],
+          "text_usability_after": "metadata_only",
+          "extracted_text_length": 0,
+          "text_usability_before": "metadata_only",
+          "can_support_synthesis_holding": false
+        },
+        {
+          "ms": 558,
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+          "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+          "success": false,
+          "candidate_id": "9b32c88c-2315-44d6-a52e-1054a0465f83",
+          "title_signal": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+          "docket_signal": "ע\"א 52/80",
+          "failure_reason": "no_local_document_match",
+          "synthesis_role": "leading_candidate",
+          "trigger_reason": "metadata_only",
+          "method_succeeded": null,
+          "methods_attempted": [
+            "direct_file_fetch",
+            "local_db_docket_lookup"
+          ],
+          "text_usability_after": "metadata_only",
+          "extracted_text_length": 0,
+          "text_usability_before": "metadata_only",
+          "can_support_synthesis_holding": false
+        }
+      ],
+      "successes": 0,
+      "attempts_made": 2,
+      "eligible_count": 2
+    },
+    "answer_len": 425,
+    "answer_head": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): מקור חקיקה מתוך אתר הכנסת; ע\"א 52/"
+  },
+  {
+    "id": "C1",
+    "run_id": "917c616f-3ba0-42c9-bcc8-fa3a0b1f0730",
+    "research_mode": "case_law_synthesis",
+    "pool_judgments": 1,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 4,
+      "unknown": 1,
+      "judgment": 3,
+      "commentary": 6,
+      "not_citable": 2,
+      "scholarship": 5
+    },
+    "synthesis_role_counts": {
+      "unknown": 3,
+      "leading_candidate": 2,
+      "secondary_commentary": 11,
+      "statutory_background": 4,
+      "limiting_or_distinguishing_candidate": 1
+    },
+    "synthesis_role_overrides": 15,
+    "pack": {
+      "has_judgment": true,
+      "statute_count": 3,
+      "judgment_count": 2,
+      "commentary_count": 3,
+      "by_synthesis_role": {
+        "leading_candidate": 2,
+        "secondary_commentary": 3,
+        "statutory_background": 3
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": true,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "חוק הירושה, תשכ\"ה-1965",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 1,
+        "title": "בע\"מ 8588/20 (ההחלטה בעניין הסתלקות מצוואה הדדית)",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "leading_candidate"
+      },
+      {
+        "n": 1,
+        "title": "תקנות סדר הדין האזרחי, תשע״ט-2018",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 2,
+        "title": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש'",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 3,
+        "title": "שאלות ותשובות - תקנות סדר הדין האזרחי החדשות 1.1.2021",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 5,
+        "title": "ערעור על פסק דין חלוט במסווה ערעור על החלטות מאוחרות העוסקות בביצועו",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "leading_candidate"
+      },
+      {
+        "n": 5,
+        "title": "ע\"א 1579/20 פביו יחזקאל מלכסון אנגל נ׳ פקיד שומה תל אביב פסק דין (18.0",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 5,
+        "title": "חידת הירושה: רצון, המשכיות ומחויבות",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      }
+    ],
+    "snippet_budget": {
+      "research_mode": "case_law_synthesis",
+      "synthesis_run": true,
+      "max_snippet_length": 395,
+      "expanded_source_count": 0,
+      "statute_sources_ge_900": 0,
+      "judgment_sources_ge_900": 0,
+      "snippet_budget_by_source": [
+        {
+          "ref": "s1",
+          "budget": 500,
+          "reason": "no_real_text",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 99,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 99
+        },
+        {
+          "ref": "s2",
+          "budget": 500,
+          "reason": "no_real_text",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 188,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 188
+        },
+        {
+          "ref": "s3",
+          "budget": 500,
+          "reason": "no_real_text",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 154,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 154
+        },
+        {
+          "ref": "s4",
+          "budget": 500,
+          "reason": "no_real_text",
+          "expanded": false,
+          "citable_as": "judgment",
+          "snippet_length": 200,
+          "synthesis_role": "leading_candidate",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 200
+        },
+        {
+          "ref": "s5",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 157,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 157
+        },
+        {
+          "ref": "s6",
+          "budget": 500,
+          "reason": "no_real_text",
+          "expanded": false,
+          "citable_as": "judgment",
+          "snippet_length": 183,
+          "synthesis_role": "leading_candidate",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 183
+        },
+        {
+          "ref": "s7",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 122,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 122
+        },
+        {
+          "ref": "s8",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 395,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 395
+        },
+        {
+          "ref": "s9",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 395,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 395
+        }
+      ],
+      "commentary_max_snippet_length": 395
+    },
+    "judgment_text_acquisition": {
+      "ms": 277,
+      "mode": "case_law_synthesis",
+      "enabled": true,
+      "attempts": [
+        {
+          "ms": 207,
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision39317-10-22/he/39317-10-22.docx",
+          "title": "בע\"מ 8588/20 (ההחלטה בעניין הסתלקות מצוואה הדדית)",
+          "success": false,
+          "candidate_id": "918a52ff-50ce-42dc-a415-c5cddab13db3",
+          "title_signal": "בע\"מ 8588/20 (ההחלטה בעניין הסתלקות מצוואה הדדית)",
+          "docket_signal": null,
+          "failure_reason": "no_local_document_match",
+          "synthesis_role": "leading_candidate",
+          "trigger_reason": "metadata_only",
+          "method_succeeded": null,
+          "methods_attempted": [
+            "direct_file_fetch",
+            "local_db_docket_lookup"
+          ],
+          "text_usability_after": "metadata_only",
+          "extracted_text_length": 0,
+          "text_usability_before": "metadata_only",
+          "can_support_synthesis_holding": false
+        },
+        {
+          "ms": 69,
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/1308370-2/he/%D7%A2%D7%A8%D7%A2%D7%95%D7%A8%20%D7%A2%D7%9C%20%D7%A4%D7%A1%D7%A7%20%D7%93%D7%99%D7%9F%20%D7%97%D7%9C%D7%95%D7%98%20%D7%91%D7%9E%D7%A1%D7%95%D7%95%D7%94%20%D7%A2%D7%A8%D7%A2%D7%95%D7%A8%20%D7%A2%D7%9C%20%D7%94%D7%97%D7%9C%D7%98%D7%95%D7%AA%20%D7%9E%D7%90%D7%95%D7%97%D7%A8%D7%95%D7%AA%20%D7%94%D7%A2%D7%95%D7%A1%D7%A7%D7%95%D7%AA%20%D7%91%D7%91%D7%99%D7%A6%D7%95%D7%A2%D7%95%20-%201308370-2%20-%20%D7%91%D7%99%D7%94''%D7%93%20%D7%94%D7%92%D7%93%D7%95%D7%9C.docx",
+          "title": "ערעור על פסק דין חלוט במסווה ערעור על החלטות מאוחרות העוסקות בביצועו",
+          "success": false,
+          "candidate_id": "e250a982-c2e6-4db1-b5e5-34e9d455b8f5",
+          "title_signal": "ערעור על פסק דין חלוט במסווה ערעור על החלטות מאוחרות העוסקות בביצועו",
+          "docket_signal": null,
+          "failure_reason": "no_local_document_match",
+          "synthesis_role": "leading_candidate",
+          "trigger_reason": "metadata_only",
+          "method_succeeded": null,
+          "methods_attempted": [
+            "direct_file_fetch",
+            "local_db_docket_lookup"
+          ],
+          "text_usability_after": "metadata_only",
+          "extracted_text_length": 0,
+          "text_usability_before": "metadata_only",
+          "can_support_synthesis_holding": false
+        }
+      ],
+      "successes": 0,
+      "attempts_made": 2,
+      "eligible_count": 3
+    },
+    "answer_len": 2271,
+    "answer_head": "לא נמצאה בשורה של מקורות אלה הלכה מוכרת שמכונה בשם\"הלכת יורש אחר יורש\"; השם כמוסד דוקטרינרי ניכר בדיון המשפטי אך אינו מוצג כאן כשם הלכה רשמי.\n\nההסדר המשפטי הקרוב שנדון במקורות הוא הוראות צוואה והוראות חוק הירושה ביחס להעברת זכויות ליורשים, וכן פרשנות שיפוטית של ניסוחים צוואתיים כגון \"יורש אחר יורש\";"
+  },
+  {
+    "id": "M1",
+    "run_id": "c77ef632-23c0-42f1-b0f2-379e8ea152a8",
+    "research_mode": "specific_case",
+    "pool_judgments": 1,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 5,
+      "unknown": 1,
+      "judgment": 1,
+      "commentary": 2,
+      "not_citable": 2,
+      "scholarship": 16
+    },
+    "synthesis_role_counts": {
+      "unknown": 3,
+      "leading_candidate": 1,
+      "secondary_commentary": 18,
+      "statutory_background": 5
+    },
+    "synthesis_role_overrides": 21,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 0,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {},
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [],
+    "snippet_budget": {
+      "research_mode": "specific_case",
+      "synthesis_run": false,
+      "max_snippet_length": 500,
+      "expanded_source_count": 0,
+      "statute_sources_ge_900": 0,
+      "judgment_sources_ge_900": 0,
+      "snippet_budget_by_source": [
+        {
+          "ref": "s1",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 329,
+          "synthesis_role": "statutory_background",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 329
+        },
+        {
+          "ref": "s2",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 171,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 171
+        },
+        {
+          "ref": "s3",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 261,
+          "synthesis_role": "statutory_background",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 261
+        },
+        {
+          "ref": "s4",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 80,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 80
+        },
+        {
+          "ref": "s5",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 91,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 91
+        },
+        {
+          "ref": "s6",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 393,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 393
+        },
+        {
+          "ref": "s7",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 500,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 1180
+        },
+        {
+          "ref": "s8",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 500,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 1129
+        },
+        {
+          "ref": "s9",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 500,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 1138
+        },
+        {
+          "ref": "s10",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 500,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 1056
+        },
+        {
+          "ref": "s11",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 500,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 998
+        },
+        {
+          "ref": "s12",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "judgment",
+          "snippet_length": 500,
+          "synthesis_role": "leading_candidate",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 1199
+        },
+        {
+          "ref": "s13",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 391,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": true,
+          "has_statutory_text": true,
+          "available_text_length": 391
+        },
+        {
+          "ref": "s14",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 374,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 374
+        },
+        {
+          "ref": "s15",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 393,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 393
+        }
+      ],
+      "commentary_max_snippet_length": 500
+    },
+    "judgment_text_acquisition": {
+      "ms": 0,
+      "mode": "specific_case",
+      "enabled": false,
+      "attempts": [],
+      "successes": 0,
+      "attempts_made": 0,
+      "eligible_count": 0
+    },
+    "answer_len": 320,
+    "answer_head": "לא אותר במקורות הזמינים ע\"א 6821/93. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטי"
+  },
+  {
+    "id": "M2",
+    "run_id": "253d3a22-f826-4eb9-8737-20b90f06d1a8",
+    "research_mode": "statute_section_definition",
+    "pool_judgments": 0,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 9,
+      "not_citable": 2,
+      "scholarship": 2
+    },
+    "synthesis_role_counts": {
+      "unknown": 2,
+      "secondary_commentary": 2,
+      "statutory_background": 9
+    },
+    "synthesis_role_overrides": 4,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 3,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {
+        "statutory_background": 3
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": true,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "חוק החברות, התשנ״ט–1999",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "full_text",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 2,
+        "title": "חוק החברות, התשנ״ט–1999 (תיקון מס' 6)",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 2,
+        "title": "חוק החברות, התשנ״ט–1999 (תיקון מס' 16)",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      }
+    ],
+    "snippet_budget": {
+      "research_mode": "statute_section_definition",
+      "synthesis_run": false,
+      "max_snippet_length": 379,
+      "expanded_source_count": 0,
+      "statute_sources_ge_900": 0,
+      "judgment_sources_ge_900": 0,
+      "snippet_budget_by_source": [
+        {
+          "ref": "s1",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 379,
+          "synthesis_role": "statutory_background",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 379
+        },
+        {
+          "ref": "s2",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 103,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 103
+        },
+        {
+          "ref": "s3",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 72,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 72
+        },
+        {
+          "ref": "s4",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 209,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 209
+        },
+        {
+          "ref": "s5",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 112,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 112
+        },
+        {
+          "ref": "s6",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 185,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 185
+        },
+        {
+          "ref": "s7",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 69,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 69
+        },
+        {
+          "ref": "s8",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 22,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 22
+        }
+      ],
+      "commentary_max_snippet_length": 0
+    },
+    "judgment_text_acquisition": {
+      "ms": 0,
+      "mode": "statute_section_definition",
+      "enabled": false,
+      "attempts": [],
+      "successes": 0,
+      "attempts_made": 0,
+      "eligible_count": 0
+    },
+    "answer_len": 1580,
+    "answer_head": "**סעיף 6 — הרמת מסך**\n\nלהלן לשון סעיף 6 לחוק החברות, התשנ\"ט–1999 (נוסחו המעודכן): 6. הרמת מסך (א) הרמה של מסך ההתאגדות היא כל אחד מאלה: (1) ייחוס זכויות וחובות של החברה לבעל מניה בה; (2) ייחוס תכונות, זכויות וחובות של בעל מניה לחברה. (ב) על אף הוראת סעיף 4, רשאי בית משפט להרים את מסך ההתאגדות אם התק"
+  },
+  {
+    "id": "B8",
+    "run_id": "cf6c87e2-c9de-4ac9-bb5e-400d4954a725",
+    "research_mode": "canonical_quote",
+    "pool_judgments": 0,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 5,
+      "unknown": 1,
+      "not_citable": 4,
+      "scholarship": 5
+    },
+    "synthesis_role_counts": {
+      "unknown": 4,
+      "secondary_commentary": 5,
+      "statutory_background": 6
+    },
+    "synthesis_role_overrides": 4,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 0,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {
+        "unknown": 1
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)"
+      }
+    ],
+    "snippet_budget": null,
+    "judgment_text_acquisition": {
+      "ms": 0,
+      "mode": "canonical_quote",
+      "enabled": false,
+      "attempts": [],
+      "successes": 0,
+      "attempts_made": 0,
+      "eligible_count": 0
+    },
+    "answer_len": 294,
+    "answer_head": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹"
+  },
+  {
+    "id": "B2",
+    "run_id": "269071f8-984c-4e52-95cf-12473000e66d",
+    "research_mode": "specific_case",
+    "pool_judgments": 0,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 4,
+      "unknown": 6,
+      "judgment": 1,
+      "commentary": 5,
+      "not_citable": 1,
+      "scholarship": 13
+    },
+    "synthesis_role_counts": {
+      "unknown": 2,
+      "leading_candidate": 1,
+      "secondary_commentary": 18,
+      "statutory_background": 9
+    },
+    "synthesis_role_overrides": 21,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 0,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {},
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [],
+    "snippet_budget": {
+      "research_mode": "specific_case",
+      "synthesis_run": false,
+      "max_snippet_length": 500,
+      "expanded_source_count": 0,
+      "statute_sources_ge_900": 0,
+      "judgment_sources_ge_900": 0,
+      "snippet_budget_by_source": [
+        {
+          "ref": "s1",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 74,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 74
+        },
+        {
+          "ref": "s2",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 155,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 155
+        },
+        {
+          "ref": "s3",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "judgment",
+          "snippet_length": 84,
+          "synthesis_role": "leading_candidate",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 84
+        },
+        {
+          "ref": "s4",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "unknown",
+          "snippet_length": 145,
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 145
+        },
+        {
+          "ref": "s5",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 500,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 1177
+        },
+        {
+          "ref": "s6",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 500,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 1171
+        },
+        {
+          "ref": "s7",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 500,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 898
+        },
+        {
+          "ref": "s8",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 500,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 1178
+        },
+        {
+          "ref": "s9",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "statute",
+          "snippet_length": 255,
+          "synthesis_role": "statutory_background",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 255
+        },
+        {
+          "ref": "s10",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 343,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 343
+        },
+        {
+          "ref": "s11",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 396,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 396
+        },
+        {
+          "ref": "s12",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 392,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 392
+        },
+        {
+          "ref": "s13",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 393,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 393
+        },
+        {
+          "ref": "s14",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 500,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 1004
+        }
+      ],
+      "commentary_max_snippet_length": 500
+    },
+    "judgment_text_acquisition": {
+      "ms": 0,
+      "mode": "specific_case",
+      "enabled": false,
+      "attempts": [],
+      "successes": 0,
+      "attempts_made": 0,
+      "eligible_count": 0
+    },
+    "answer_len": 342,
+    "answer_head": "לא אותר במקורות הזמינים פסק הדין בעניין בג\"ץ 6698/95 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכ"
+  }
+]

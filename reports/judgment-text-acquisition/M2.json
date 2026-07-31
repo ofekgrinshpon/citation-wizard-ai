@@ -1,0 +1,3809 @@
+{
+  "id": "d9ca201d-7e6c-42b2-8b32-396260d6ecf0",
+  "query": "מה קובע סעיף 6 לחוק החברות?",
+  "run_id": "253d3a22-f826-4eb9-8737-20b90f06d1a8",
+  "created_at": "2026-07-31T14:24:54.843347+00:00",
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "השאלה מבקשת את הוראת החוק עצמה; המקור המחייב לכך הוא נוסח החוק הרשמי.",
+        "text_he": "לאתר ולהציג את לשון סעיף 6 לחוק החברות, התשנ\"ט–1999, בנוסחו העדכני (ציטוט מלא ומדויק).",
+        "claim_id": "C1",
+        "required_roles": [
+          "primary_statute"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "זהו הכלל הנורמטיבי העיקרי העולה מלשון הסעיף, ולכן מקורו בחוק עצמו.",
+        "text_he": "לקבוע שסעיף 6 מסדיר את הרמת מסך ההתאגדות ומקנה לבית המשפט סמכות לייחס חובות של החברה לבעל מניות כאשר מתקיימות נסיבות המצדיקות זאת.",
+        "claim_id": "C2",
+        "required_roles": [
+          "primary_statute"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "העילות להרמת מסך הן קבועות בלשון הסעיף ומצריכות עיון ישיר בנוסח החוק.",
+        "text_he": "לפרט את העילות המנויות בסעיף להרמת מסך, לרבות שימוש לרעה באישיות המשפטית הנפרדת להונאה/הטעיה/הברחת נכסים/סיכול זכויות נושים, וכן ערבוב נכסים או עניינים בין החברה לבעל מניותיה.",
+        "claim_id": "C3",
+        "required_roles": [
+          "primary_statute"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "היקף התחולה והפעלת הסמכות נלמדים מלשון הסעיף עצמו.",
+        "text_he": "להבהיר את גבולות הסעד לפי הסעיף: ההוראה חלה כלפי \"בעל מניה\" והפעלתה נתונה לשיקול דעת בית המשפט בהתאם לנסיבות המנויות.",
+        "claim_id": "C4",
+        "required_roles": [
+          "primary_statute"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "253d3a22-f826-4eb9-8737-20b90f06d1a8",
+    "drafter": {
+      "ms": 47180,
+      "ok": true,
+      "lead_ref": {
+        "ref": "s1",
+        "shape": "definition",
+        "reason": "required_anchor_statute"
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "completeness": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "paragraph",
+        "last_block_excerpt": "זהו נוסח הסעיף ותמצית סמכויותיו ועילותיו כפי שהן מופיעות בנוסח המעודכן של חוק החברות."
+      },
+      "sources_used": 3,
+      "used_sources": [
+        {
+          "url": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+          "title": "חוק החברות, התשנ״ט–1999",
+          "number": 1,
+          "origin": "perplexity",
+          "citable_as": "statute",
+          "source_type": "legislation",
+          "candidate_id": "bf526da1-d6be-445c-8b50-3f824403caec",
+          "authority_tier": "official_primary",
+          "synthesis_role": "statutory_background",
+          "text_usability": "full_text",
+          "integrity_flags": [],
+          "has_holding_text": false,
+          "is_judgment_document": false,
+          "can_satisfy_authority_role": true
+        },
+        {
+          "url": "https://www.knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+          "title": "חוק החברות, התשנ״ט–1999 (תיקון מס' 6)",
+          "number": 2,
+          "origin": "perplexity",
+          "citable_as": "statute",
+          "source_type": "legislation",
+          "candidate_id": "0c396c51-ca9e-49a2-ad71-dac5c85f0bae",
+          "authority_tier": "official_primary",
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "integrity_flags": [],
+          "has_holding_text": false,
+          "is_judgment_document": false,
+          "can_satisfy_authority_role": true
+        },
+        {
+          "url": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+          "title": "חוק החברות, התשנ״ט–1999 (תיקון מס' 16)",
+          "number": 2,
+          "origin": "perplexity",
+          "citable_as": "statute",
+          "source_type": "legislation",
+          "candidate_id": "2b8a6824-627f-4f2a-8a89-818be048e7bc",
+          "authority_tier": "official_primary",
+          "synthesis_role": "statutory_background",
+          "text_usability": "metadata_only",
+          "integrity_flags": [],
+          "has_holding_text": false,
+          "is_judgment_document": false,
+          "can_satisfy_authority_role": true
+        }
+      ],
+      "marker_format": "superscript",
+      "model_initial": "openai/gpt-5-mini",
+      "builder_report": {
+        "marker_count": 7,
+        "heading_count": 2,
+        "list_item_count": 4,
+        "paragraph_count": 4,
+        "cited_segment_count": 7,
+        "adjacent_marker_count": 0,
+        "distinct_source_count": 3,
+        "compound_segment_count": 3,
+        "compound_footnote_count": 2,
+        "avg_sources_per_cited_segment": 1.75
+      },
+      "footnote_count": 4,
+      "snippet_budget": {
+        "research_mode": "statute_section_definition",
+        "synthesis_run": false,
+        "max_snippet_length": 379,
+        "expanded_source_count": 0,
+        "statute_sources_ge_900": 0,
+        "judgment_sources_ge_900": 0,
+        "snippet_budget_by_source": [
+          {
+            "ref": "s1",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "statute",
+            "snippet_length": 379,
+            "synthesis_role": "statutory_background",
+            "text_usability": "full_text",
+            "has_holding_text": false,
+            "has_statutory_text": true,
+            "available_text_length": 379
+          },
+          {
+            "ref": "s2",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "statute",
+            "snippet_length": 103,
+            "synthesis_role": "statutory_background",
+            "text_usability": "metadata_only",
+            "has_holding_text": false,
+            "has_statutory_text": true,
+            "available_text_length": 103
+          },
+          {
+            "ref": "s3",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "statute",
+            "snippet_length": 72,
+            "synthesis_role": "statutory_background",
+            "text_usability": "metadata_only",
+            "has_holding_text": false,
+            "has_statutory_text": true,
+            "available_text_length": 72
+          },
+          {
+            "ref": "s4",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "statute",
+            "snippet_length": 209,
+            "synthesis_role": "statutory_background",
+            "text_usability": "metadata_only",
+            "has_holding_text": false,
+            "has_statutory_text": true,
+            "available_text_length": 209
+          },
+          {
+            "ref": "s5",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "statute",
+            "snippet_length": 112,
+            "synthesis_role": "statutory_background",
+            "text_usability": "metadata_only",
+            "has_holding_text": false,
+            "has_statutory_text": true,
+            "available_text_length": 112
+          },
+          {
+            "ref": "s6",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "statute",
+            "snippet_length": 185,
+            "synthesis_role": "statutory_background",
+            "text_usability": "metadata_only",
+            "has_holding_text": false,
+            "has_statutory_text": true,
+            "available_text_length": 185
+          },
+          {
+            "ref": "s7",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "statute",
+            "snippet_length": 69,
+            "synthesis_role": "statutory_background",
+            "text_usability": "metadata_only",
+            "has_holding_text": false,
+            "has_statutory_text": true,
+            "available_text_length": 69
+          },
+          {
+            "ref": "s8",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "statute",
+            "snippet_length": 22,
+            "synthesis_role": "statutory_background",
+            "text_usability": "metadata_only",
+            "has_holding_text": false,
+            "has_statutory_text": false,
+            "available_text_length": 22
+          }
+        ],
+        "commentary_max_snippet_length": 0
+      },
+      "sources_passed": 8,
+      "synthesis_pack": {
+        "has_judgment": false,
+        "statute_count": 3,
+        "judgment_count": 0,
+        "commentary_count": 0,
+        "by_synthesis_role": {
+          "statutory_background": 3
+        },
+        "not_citable_count": 0,
+        "scholarship_count": 0,
+        "has_usable_holding_text": false,
+        "has_statutory_background": true,
+        "judgments_with_holding_text": 0
+      },
+      "drafter_version": "v2.1c",
+      "truncation_retry": {
+        "retry_ms": 0,
+        "attempted": false,
+        "reasons_initial": [],
+        "same_model_retry": false,
+        "escalated_to_full": false
+      },
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "source_sufficiency": {
+        "shape": "definition",
+        "reason": "shape_not_gated",
+        "applied": false,
+        "category": "not_applicable",
+        "sufficient": true,
+        "thin_source": false,
+        "found_titles": [
+          "חוק החברות, התשנ״ט–1999",
+          "חוק החברות, התשנ\"ט-1999",
+          "חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך",
+          "חוק החברות, התשנ״ט–1999 (תיקון מס' 16)",
+          "הצעת חוק החברות, התשס״ב–2002"
+        ],
+        "topical_refs": [
+          "s4"
+        ],
+        "topic_phrases": [
+          "לחוק החברות"
+        ],
+        "topical_authority_refs": [
+          "s4"
+        ]
+      },
+      "answer_style_report": {
+        "metrics": {
+          "block_count": 10,
+          "denylist_hits": [],
+          "heading_count": 2,
+          "heading_ratio": 0.2,
+          "cited_block_count": 7,
+          "total_footnote_count": 4,
+          "compound_footnote_count": 2,
+          "compound_footnote_ratio": 0.5,
+          "unsafe_display_title_count": 0,
+          "avg_sources_per_cited_block": 1.571,
+          "unsafe_display_title_examples": [],
+          "partial_supported_strong_claims": [],
+          "total_source_refs_in_cited_blocks": 11
+        },
+        "report_only": true,
+        "triggered_reasons": [
+          "compound_footnote_ratio_high"
+        ]
+      },
+      "unique_source_count": 3,
+      "completeness_initial": {
+        "reasons": [],
+        "signals": [],
+        "truncated": false,
+        "last_block_kind": "paragraph",
+        "last_block_excerpt": "זהו נוסח הסעיף ותמצית סמכויותיו ועילותיו כפי שהן מופיעות בנוסח המעודכן של חוק החברות."
+      },
+      "deterministic_branch": null,
+      "canonical_quote_fired": false,
+      "omitted_candidate_ids": [
+        "27ef61a3-3ea8-403e-9b7b-bf285857e6c8",
+        "87c45b2f-1840-449d-8a48-c747b8bf0db1",
+        "c2df138a-4767-4b17-bc7b-41201aedb156",
+        "2451f441-5e08-4aeb-8167-987caebf7363",
+        "5c1fb7d1-57ec-44c9-96ab-8dcc069101ea",
+        "ea4bbce8-bce9-4f61-95c0-b56bc00a8456"
+      ],
+      "structured_validation": {
+        "ok": true,
+        "errors": [],
+        "block_count": 10,
+        "heading_count": 2,
+        "list_item_count": 4,
+        "paragraph_count": 4,
+        "cited_segment_count": 7,
+        "forbidden_text_hits": [],
+        "unknown_source_refs": [],
+        "total_source_ref_count": 11
+      },
+      "named_doctrine_framing": {
+        "reason": "not_a_named_doctrine_question",
+        "subject_phrase": null,
+        "named_doctrine_phrase": null,
+        "nearby_institution_refs": [],
+        "named_doctrine_recognized": false,
+        "recognized_phrase_matches": [],
+        "is_named_doctrine_question": false,
+        "recognized_phrase_variants": [],
+        "framing_correction_required": false,
+        "nearby_legal_institution_found": false
+      },
+      "max_completion_tokens_used": 8000,
+      "framing_correction_required": false,
+      "missing_anchor_descriptions": [],
+      "missing_anchor_caveat_injected": false,
+      "missing_docket_limitation_fired": false,
+      "statute_section_limitation_fired": false,
+      "insufficient_sources_limitation_fired": false
+    },
+    "queries": [
+      {
+        "role": "primary_statute",
+        "reason": "הטענה דורשת את הלשון המלאה והמעודכנת של הסעיף; יש להביא את נוסח החוק הרשמי כפי שמתפרסם באתרי חקיקה רשמיים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - נוסח מעודכן (ציטוט מלא ומדויק של לשון הסעיף); חיפוש במסמכים רשמיים: אתר הכנסת, משרד המשפטים, נבו או רישומי חקיקה רשמיים.",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "כדי לקבוע אם הסעיף מסדיר הרמת מסך ויש בו סמכות לייחס חובות, יש להביא את נוסח הסעיף ולחפש בו את המונחים הרלוונטיים המגדירים סמכות כזו.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - האם הסעיף עוסק ב'הרמת מסך' ו'ייחוס חובות של החברה לבעל מניה' ומעניק לבית המשפט סמכות לייחס חובות; חפש בשפת הסעיף את המונחים 'הרמת מסך', 'יחוס חובות', 'בעל מניה', 'סמכות בית המשפט'.",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "הטענה מבקשת לפרט את העילות המנויות בסעיף; יש לאתר במדויק את המילים/הנסיבות המופיעות בלשון הסעיף עצמו.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - רשימת העילות המנויות בסעיף להרמת מסך; חפש במפורש בלשון הסעיף מונחים כגון 'הונאה', 'הטעיה', 'הברחת נכסים', 'סיכול זכויות נושים', 'ערבוב נכסים', 'שימוש לרעה באישיות המשפטית'.",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "הטענה דורשת הבהרה של תכלית ההוראה והיקף הסעד והאם היא חלה כלפי 'בעל מניה' וכי הפעלתה מותנית בשיקול דעת בית המשפט; יש להוציא זאת מהנוסח הרשמי של הסעיף.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - גבולות הסעד לפי הסעיף: חפש בלשון הסעיף התייחסות ל'הוראה חלה כלפי \"בעל מניה\"', 'הפעלת שיקול דעת בית המשפט', או ניסוחים המגדירים את טיב הסעד והיקפו.",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "required_anchor:statute_section:companies_law-s6",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "metadata": {
+          "required_anchor_id": "statute_section:companies_law-s6",
+          "statute_section_ref_id": "companies_law-s6",
+          "is_statute_section_anchor": true
+        },
+        "query_he": "חוק החברות סעיף 6",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "required_anchor:statute_section:companies_law-s6",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "metadata": {
+          "required_anchor_id": "statute_section:companies_law-s6",
+          "statute_section_ref_id": "companies_law-s6",
+          "is_statute_section_anchor": true
+        },
+        "query_he": "חוק החברות 6",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "required_anchor:statute_section:companies_law-s6",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "metadata": {
+          "required_anchor_id": "statute_section:companies_law-s6",
+          "statute_section_ref_id": "companies_law-s6",
+          "is_statute_section_anchor": true
+        },
+        "query_he": "סעיף 6 לחוק החברות",
+        "expected_source_type": "statute"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 25170,
+        "mode_plan": {
+          "mode": "statute_section_definition",
+          "audit": {
+            "mode": "statute_section_definition",
+            "obligations": [
+              {
+                "id": "statute_text_query",
+                "label": "שאילתת נוסח הסעיף עצמו",
+                "satisfied": true
+              },
+              {
+                "id": "statute_first",
+                "label": "שאילתת החקיקה מופיעה לפני פרשנות",
+                "satisfied": true
+              },
+              {
+                "id": "interpretation_after_statute",
+                "label": "פרשנות/פסיקה אחרי נוסח הסעיף",
+                "satisfied": true
+              }
+            ],
+            "total_count": 3,
+            "unsatisfied": [],
+            "satisfied_count": 3,
+            "targets_by_role": {
+              "primary_statute": {
+                "total": 4,
+                "local_db": 0,
+                "perplexity": 4
+              }
+            },
+            "caselaw_includes_perplexity": false,
+            "substantive_law_query_present": true
+          },
+          "output_shape": "definition",
+          "directive_sent": true,
+          "target_enforcement": {
+            "applied": false,
+            "widened_query_count": 0
+          },
+          "obligations_required": [
+            "statute_text_query",
+            "statute_first",
+            "interpretation_after_statute"
+          ],
+          "classification_reasons": [
+            "shape=definition+statute_section"
+          ]
+        },
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 42591,
+        "confidence": 0.9,
+        "legal_area": "דיני תאגידים",
+        "answer_type": "factual_legal",
+        "model_final": "openai/gpt-5",
+        "schema_valid": true,
+        "answer_intent": {
+          "output_shape": "definition"
+        },
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": true,
+        "escalation_reason": [
+          "B3:claims<2"
+        ],
+        "interpretation_note": null
+      },
+      "claims_count": 4,
+      "queries_count": 4,
+      "research_mode": "statute_section_definition",
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 176743,
+    "verifier": {
+      "ms": 48698,
+      "counts": {
+        "by_support": {
+          "direct": 3,
+          "partial": 6,
+          "unrelated": 2,
+          "tangential": 2
+        },
+        "by_role_match": {
+          "true": 12,
+          "false": 1
+        },
+        "model_verdicts": 13,
+        "by_support_model": {
+          "direct": 3,
+          "partial": 6,
+          "unrelated": 2,
+          "tangential": 2
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "bf526da1-d6be-445c-8b50-3f824403caec",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "27ef61a3-3ea8-403e-9b7b-bf285857e6c8",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "87c45b2f-1840-449d-8a48-c747b8bf0db1",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "2b8a6824-627f-4f2a-8a89-818be048e7bc",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "c2df138a-4767-4b17-bc7b-41201aedb156",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "0c396c51-ca9e-49a2-ad71-dac5c85f0bae",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "2451f441-5e08-4aeb-8167-987caebf7363",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "5c1fb7d1-57ec-44c9-96ab-8dcc069101ea",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": false,
+          "best_support": "partial",
+          "candidate_id": "ea4bbce8-bce9-4f61-95c0-b56bc00a8456",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 48696,
+          "label": "batch1",
+          "attempts": 1,
+          "claim_ids": [
+            "C1",
+            "C2"
+          ],
+          "escalated": false,
+          "recovered": false,
+          "candidates": 13,
+          "split_probes": 0
+        }
+      ],
+      "dropped": [
+        {
+          "role": "primary_statute",
+          "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: החלטה בעקבות השלמות הגשת שעניינן הוראות סעיף 6(ו) לחוק בתי המשפט לענייני משפחה (תמ\"ש 19336-07-24)",
+          "origin": "local_db",
+          "reason": "המקור עוסק בחוק אחר (בתי משפט לענייני משפחה) ולכן אינו מספק את נוסח סעיף 6 לחוק החברות.",
+          "candidate_id": "9dca2e69-d149-4689-88a1-83f405e94877",
+          "worst_support": "unrelated",
+          "retrieval_method": "text"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק בינוי ופינוי של אזורי שיקום",
+          "origin": "local_db",
+          "reason": "המקור עוסק בחקיקה שונה לחלוטין ולכן אינו רלוונטי להצגת נוסח סעיף 6 לחוק החברות.",
+          "candidate_id": "6f7c69f9-a5e4-451f-8619-71235deadc73",
+          "worst_support": "unrelated",
+          "retrieval_method": "text"
+        },
+        {
+          "role": "primary_statute",
+          "title": "\"בין האתמול לעתיד, בין האוצר לתחתית\": אחריות דירקטוריון בגין חלוקה אסורה | אסף אקשטיין ודוד האן (כרך כד(2))",
+          "origin": "local_db",
+          "reason": "המאמר עוסק בנושא קרוב (דיני חברות) אך אינו מציג או מצטט את נוסח סעיף 6 ולכן אינו תומך ישירות בהצגת הנוסח.",
+          "candidate_id": "bcaa29c7-dcef-4912-8b99-bd2d9c73456b",
+          "worst_support": "tangential",
+          "retrieval_method": "vector"
+        },
+        {
+          "role": "primary_statute",
+          "title": "מיסוי אשכול חברות רב-לאומי | תמיר שאנן ואורי גולדפריד (כרך יט)",
+          "origin": "local_db",
+          "reason": "נושא המאמר רחוק מהבהרת נוסח סעיף 6; מדובר בנושא משיק ולא במקור לחוק עצמו.",
+          "candidate_id": "5a44eede-a16a-4671-be53-941f682224e0",
+          "worst_support": "tangential",
+          "retrieval_method": "vector"
+        }
+      ],
+      "batch_ms": [
+        48696
+      ],
+      "parallel": true,
+      "verdicts": [
+        {
+          "reason": "מסמך הכנסת מכיל בפירוש את נוסח סעיף 6 המעודכן; הוא עוסק בדיוק בסעיף המבוקש.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "bf526da1-d6be-445c-8b50-3f824403caec",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "מכיל את נוסח סעיף 6 לחוק החברות בנוסחו המעודכן כפי שמופיע במסמך הכנסת.",
+            "מציין את הסעיפים (א)–(ג) ומגדיר את הרמת מסך ההתאגדות."
+          ]
+        },
+        {
+          "reason": "מסמך רשמי המכיל את נוסח חוק החברות והסעיף המבוקש.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "27ef61a3-3ea8-403e-9b7b-bf285857e6c8",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "קובץ ממשלתי (gov.il) עם נוסח חוק החברות המעודכן הכולל סעיף 6.",
+            "מתעד את תוכן העניינים וסעיף 6 באופן מפורש."
+          ]
+        },
+        {
+          "reason": "המסמך מציג את חוק החברות המעודכן כולל סעיף 6 ולכן תואם ישירות לטענה.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "87c45b2f-1840-449d-8a48-c747b8bf0db1",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "מסמך רשות ניירות ערך הכולל את חוק החברות בנוסחו המעודכן.",
+            "מכיל את טקסט הסעיף ואת תיקוני החוק הרלוונטיים."
+          ]
+        },
+        {
+          "reason": "המסמך עוסק בתיקון לחוק החברות (אותו סובייקט) אך הוא מסמך דיוני/תיקוני ולא בהכרח נוסח מקובץ מלא ומסודר של סעיף 6.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "2451f441-5e08-4aeb-8167-987caebf7363",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מסמך כנסת המתמקד בתיקון מספר 6 לחוק החברות ומציג נוסח התיקון.",
+            "מתאים כתיעוד היסטורי/תיקוני לחקיקה אך אינו בהכרח נוסח מקובץ סופי של החוק."
+          ]
+        },
+        {
+          "reason": "המקור עוסק בחוק אחר (בתי משפט לענייני משפחה) ולכן אינו מספק את נוסח סעיף 6 לחוק החברות.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "9dca2e69-d149-4689-88a1-83f405e94877",
+          "support_subtype": "wrong_subject",
+          "supported_points": [
+            "מתייחס לסעיף 6(ו) בחוק בתי המשפט לענייני משפחה, לא לסעיף 6 בחוק החברות."
+          ]
+        },
+        {
+          "reason": "המקור עוסק בחקיקה שונה לחלוטין ולכן אינו רלוונטי להצגת נוסח סעיף 6 לחוק החברות.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "6f7c69f9-a5e4-451f-8619-71235deadc73",
+          "support_subtype": "wrong_subject",
+          "supported_points": [
+            "מסמך אודות חוק בינוי ופינוי של אזורי שיקום — חוק אחר שאינו חוק החברות."
+          ]
+        },
+        {
+          "reason": "Nevo מפרסם את נוסח החוק המלא והמעודכן כולל סעיף 6, ולכן תומך ישירות בטענה.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "5c1fb7d1-57ec-44c9-96ab-8dcc069101ea",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "עמוד Nevo המכיל את נוסח חוק החברות המעודכן.",
+            "כולל את הסעיף המבוקש במסגרת הטקסט החוקי."
+          ]
+        },
+        {
+          "reason": "המסמך מתמקד בתיקון לחוק החברות ולכן רלוונטי אך לא תמיד מהווה נוסח מוחלט ומקובץ של הסעיף העדכני.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": false,
+          "candidate_id": "ea4bbce8-bce9-4f61-95c0-b56bc00a8456",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מציין את תיקון מס' 6 (2007) לחוק החברות ומספק טקסט של התיקון.",
+            "מהווה מקור על התיקון אך לא בהכרח נוסח מקובץ סופי של סעיף 6."
+          ]
+        },
+        {
+          "reason": "המאמר עוסק בנושא קרוב (דיני חברות) אך אינו מציג או מצטט את נוסח סעיף 6 ולכן אינו תומך ישירות בהצגת הנוסח.",
+          "support": "tangential",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "bcaa29c7-dcef-4912-8b99-bd2d9c73456b",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מאמר משפטי העוסק באחריות דירקטורים ובדיני חברות — נוגע לתחום דיני החברות.",
+            "אינו מכיל את נוסח סעיף 6 עצמו."
+          ]
+        },
+        {
+          "reason": "נושא המאמר רחוק מהבהרת נוסח סעיף 6; מדובר בנושא משיק ולא במקור לחוק עצמו.",
+          "support": "tangential",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "5a44eede-a16a-4671-be53-941f682224e0",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מאמר על מיסוי אשכול חברות — עוסק בהיבט מסחרי/מיסוי של חברות.",
+            "אינו מכיל את נוסח סעיף 6 של חוק החברות."
+          ]
+        },
+        {
+          "reason": "המסמך מכיל נוסח או סיכום ברור של הוראות סעיף 6 ביחס להרמת מסך ולשיקול הייחוס של חובות — זהו דיווח ישיר על הסמכות והנסיבות.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "2b8a6824-627f-4f2a-8a89-818be048e7bc",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "מציין במפורש שסעיף 6 קובע שהרמת מסך נעשית כאשר התקיימו תנאים בחיקוק או כאשר בנסיבות העניין צודק ונכון לעשות כן.",
+            "מציין כי הרמת מסך לייחוס חובות לבעל מניות תיעשה תוך התחשבות ביכולת החברה לפרוע את חובותיה."
+          ]
+        },
+        {
+          "reason": "המקור רלוונטי ונוגע ישירות לסעיף 6 אך זהו טקסט הצעה/דיון ולא בהכרח נוסח מחוק סופי שמסדיר את סמכות בית המשפט.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "c2df138a-4767-4b17-bc7b-41201aedb156",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "הצעת חוק מתארת את הרחבת הגדרת הרמת המסך בסעיף 6(א) ומציינת ייחוס זכויות וחובות.",
+            "מהווה תיעוד של דיון ותיקון מוצע לסעיף 6 אך לא נוסח חקיקה מקובץ סופי."
+          ]
+        },
+        {
+          "reason": "המסמך מציג ישירות את נוסח סעיף 6 בחוק החברות ולכן תומך בטענה שהסעיף מסדיר הרמת מסך ומקנה סמכות לייחס חובות לבעל מניה.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "0c396c51-ca9e-49a2-ad71-dac5c85f0bae",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "מסמך הכנסת המציג את נוסח סעיף 6 הכולל את ההגדרה של הרמת מסך והוראות לגבי ייחוס זכויות וחובות.",
+            "מכיל ניסוח מפורש אשר נותן לבית המשפט סמכות בהרמת המסך בהתאם לנסיבות המפורטות."
+          ]
+        }
+      ],
+      "demotions": [
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C1",
+          "candidate_id": "27ef61a3-3ea8-403e-9b7b-bf285857e6c8",
+          "reason_excerpt": "מסמך רשמי המכיל את נוסח חוק החברות והסעיף המבוקש."
+        },
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C1",
+          "candidate_id": "87c45b2f-1840-449d-8a48-c747b8bf0db1",
+          "reason_excerpt": "המסמך מציג את חוק החברות המעודכן כולל סעיף 6 ולכן תואם ישירות לטענה."
+        },
+        {
+          "to": "unrelated",
+          "from": "tangential",
+          "rule": "wrong_subject",
+          "claim_id": "C1",
+          "candidate_id": "9dca2e69-d149-4689-88a1-83f405e94877",
+          "reason_excerpt": "המקור עוסק בחוק אחר (בתי משפט לענייני משפחה) ולכן אינו מספק את נוסח סעיף 6 לחוק החברות."
+        },
+        {
+          "to": "unrelated",
+          "from": "tangential",
+          "rule": "wrong_subject",
+          "claim_id": "C1",
+          "candidate_id": "6f7c69f9-a5e4-451f-8619-71235deadc73",
+          "reason_excerpt": "המקור עוסק בחקיקה שונה לחלוטין ולכן אינו רלוונטי להצגת נוסח סעיף 6 לחוק החברות."
+        },
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C1",
+          "candidate_id": "5c1fb7d1-57ec-44c9-96ab-8dcc069101ea",
+          "reason_excerpt": "Nevo מפרסם את נוסח החוק המלא והמעודכן כולל סעיף 6, ולכן תומך ישירות בטענה."
+        }
+      ],
+      "batch_count": 1,
+      "call_failed": false,
+      "model_final": "openai/gpt-5-mini",
+      "retry_count": 0,
+      "per_claim_ms": {
+        "C1": 48696,
+        "C2": 48696
+      },
+      "total_sum_ms": 48696,
+      "call_failures": [],
+      "model_initial": "openai/gpt-5-mini",
+      "total_wall_ms": 48696,
+      "retry_attempts": 0,
+      "escalated_claims": [],
+      "rate_limit_count": 0,
+      "candidates_usable": 9,
+      "concurrency_limit": 2,
+      "demotions_by_rule": {
+        "analogical": 0,
+        "background": 0,
+        "landing_page": 3,
+        "wrong_subject": 2,
+        "self_contradiction": 0
+      },
+      "escalated_batches": 0,
+      "recovered_batches": 0,
+      "candidates_dropped": 4,
+      "candidates_verified": 13,
+      "split_probe_attempts": 0,
+      "merge_order_preserved": true,
+      "fallback_to_sequential": false
+    },
+    "retrieval": {
+      "ms": 12538,
+      "pool": {
+        "drops": [
+          {
+            "url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק החברות, התשנ״ט-1999",
+            "origin": "perplexity",
+            "claim_id": "C1",
+            "drop_key": "st:חוק החברות, התשנט-1999§6",
+            "drop_reason": "dup_statute_section",
+            "source_type": "legislation",
+            "candidate_id": "f91d355e-9441-4be2-adc4-4e9f72ab16be",
+            "rank_before_drop": 20,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק החברות (תיקון מס' 16), התשע\"א-2011",
+            "origin": "perplexity",
+            "claim_id": "C4",
+            "drop_key": "url:fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "194bf71f-1ad7-4af8-b7ff-f3df92b5ee85",
+            "rank_before_drop": 29,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק החברות, התשנ״ט-1999 - רשות ניירות ערך",
+            "origin": "perplexity",
+            "claim_id": "C1",
+            "drop_key": "url:www.new.isa.gov.il/images/fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/compan01.pdf",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "8b387850-6e57-4c1f-8d92-4de1673c6f23",
+            "rank_before_drop": 30,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "הצעת חוק החברות, התשס״ב 2002",
+            "origin": "perplexity",
+            "claim_id": "C1",
+            "drop_key": "url:fs.knesset.gov.il/15/law/15_lst_546023.doc",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "bf83ea8e-be58-410e-93b1-60562532c671",
+            "rank_before_drop": 31,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+            "role": "primary_statute",
+            "score": 0.154713439196348,
+            "title": "בית המשפט המחוזי ב\"ש, השופטת יעל ייטב: פסק דין בערעור על החלטה לפסילת ספריו של המערער וקביעת הכנסתו בצו ע\"פ סעיף 152(ב) לפקודת מס הכנסה (ע\"מ 39040-12-21)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "6c347db9-c72c-48eb-a38f-513467983c92",
+            "rank_before_drop": 1,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+            "role": "primary_statute",
+            "score": 0.154713439196348,
+            "title": "בית המשפט המחוזי ב\"ש, השופטת יעל ייטב: פסק דין בערעור על החלטה לפסילת ספריו של המערער וקביעת הכנסתו בצו ע\"פ סעיף 152(ב) לפקודת מס הכנסה (ע\"מ 39040-12-21)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "5971181c-d99f-4a5e-8a06-c4f2ceb4643c",
+            "rank_before_drop": 2,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=290",
+            "role": "primary_statute",
+            "score": 0.154713439196348,
+            "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: החלטה בתובענה שהוגשה בטענה כי מעל בתפקידו בהתאם לחוק הכשרות והאפוטרופסות (תמ\"ש 42346-04-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "579b5ed5-95f4-4899-8f5c-fdac179c2383",
+            "rank_before_drop": 3,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=310",
+            "role": "primary_statute",
+            "score": 0.154713435471058,
+            "title": "בימ\"ש לענייני משפחה ת\"א, השופטת לורן אקוקה: פס\"ד בתביעה לאכיפת פסק דין לפי סעיף 7 לחוק בתי המשפט לענייני משפחה (תמ\"ש 29428-09-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "4b1fcc1a-9eb7-45af-aaa1-e2a3600a1236",
+            "rank_before_drop": 4,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "primary_statute",
+            "score": 0.153024753928185,
+            "title": "בית המשפט המחוזי ב\"ש, השופטת טל לחיאני שהם: גזר דין לנאשמת בהמתה בקלות דעת, הפקרה ונהיגה בשכרות אשר גרמה למותה של ניר אבוחצירה ז\"ל (ת\"פ 19589-02-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "6e2b48b9-8ee7-49e0-b423-d921a03c189f",
+            "rank_before_drop": 5,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+            "role": "primary_statute",
+            "score": 0.148796840012074,
+            "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "4b8ff44d-df2c-4674-8f3b-dadc0c5829f7",
+            "rank_before_drop": 6,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+            "role": "primary_statute",
+            "score": 0.148796840012074,
+            "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "dee99cf7-bbce-4272-96ac-8f36cc29bae5",
+            "rank_before_drop": 7,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=270",
+            "role": "primary_statute",
+            "score": 0.145152097940445,
+            "title": "בית משפט לתביעות קטנות בירושלים, הרשמת בכירה אביגיל ון-קרפלד: פס\"ד בעניין תיקון 2 לחוק שירותי תעופה (ת\"ק 65486-11-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "8da83213-8943-4c57-838f-d485ee8c90c3",
+            "rank_before_drop": 8,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+            "role": "primary_statute",
+            "score": 0.142554896324873,
+            "title": "בית המשפט המחוזי ב\"ש, השופטת יעל ייטב: פסק דין בערעור על החלטה לפסילת ספריו של המערער וקביעת הכנסתו בצו ע\"פ סעיף 152(ב) לפקודת מס הכנסה (ע\"מ 39040-12-21)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "34130c2c-44ab-4f8b-8d09-ef4c6b8014c4",
+            "rank_before_drop": 9,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=290",
+            "role": "primary_statute",
+            "score": 0.140866211056709,
+            "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: החלטה בעקבות השלמות הגשת שעניינן הוראות סעיף 6(ו) לחוק בתי המשפט לענייני משפחה (תמ\"ש 19336-07-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:ca14dacc-32e2-4e33-9db8-f7f17576c19d",
+            "drop_reason": "dup_document_id",
+            "source_type": "caselaw",
+            "candidate_id": "08fb4f37-776d-4f27-97b2-411e83ece388",
+            "rank_before_drop": 10,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "primary_statute",
+            "score": 0.140866211056709,
+            "title": "בית המשפט המחוזי ב\"ש, השופטת טל לחיאני שהם: גזר דין לנאשמת בהמתה בקלות דעת, הפקרה ונהיגה בשכרות אשר גרמה למותה של ניר אבוחצירה ז\"ל (ת\"פ 19589-02-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "99d7aff2-841f-4085-8818-d0dbb1ac5117",
+            "rank_before_drop": 11,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+            "role": "primary_statute",
+            "score": 0.140866211056709,
+            "title": "ביהמ\"ש לענייני משפחה בפתח תקווה, ש' סמאח מנאסרה סבאח: פסק דין בשאלת הסמכות העניינית לבית המשפט לענייני משפחה לדון בתובענת לשון הרע שאינה בין בני משפחה כהגדרות חוק בתי המשפט לענייני משפחה (תמ\"ש 47608-04-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "db20680e-4ec9-4f89-b00c-89bfa381dd84",
+            "rank_before_drop": 12,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=290",
+            "role": "primary_statute",
+            "score": 0.140866211056709,
+            "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: החלטה בעקבות השלמות הגשת שעניינן הוראות סעיף 6(ו) לחוק בתי המשפט לענייני משפחה (תמ\"ש 19336-07-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:ca14dacc-32e2-4e33-9db8-f7f17576c19d",
+            "drop_reason": "dup_document_id",
+            "source_type": "caselaw",
+            "candidate_id": "9077030e-425e-42e9-be1e-da0af8802b67",
+            "rank_before_drop": 13,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "primary_statute",
+            "score": 0.140866211056709,
+            "title": "בית המשפט המחוזי ב\"ש, השופטת טל לחיאני שהם: גזר דין לנאשמת בהמתה בקלות דעת, הפקרה ונהיגה בשכרות אשר גרמה למותה של ניר אבוחצירה ז\"ל (ת\"פ 19589-02-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "445147eb-8215-441a-a744-12bae943f749",
+            "rank_before_drop": 14,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+            "role": "primary_statute",
+            "score": 0.140866211056709,
+            "title": "ביהמ\"ש לענייני משפחה בפתח תקווה, ש' סמאח מנאסרה סבאח: פסק דין בשאלת הסמכות העניינית לבית המשפט לענייני משפחה לדון בתובענת לשון הרע שאינה בין בני משפחה כהגדרות חוק בתי המשפט לענייני משפחה (תמ\"ש 47608-04-24)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "7dea4473-bc1c-40c2-abd5-13d4e5b679fb",
+            "rank_before_drop": 15,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+            "role": "primary_statute",
+            "score": 0.127356717735529,
+            "title": "חוק בינוי ופינוי של אזורי שיקום",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:9d93b35a-1a84-4c0f-b470-611eb5b044e5",
+            "drop_reason": "dup_document_id",
+            "source_type": "israeli_law",
+            "candidate_id": "0252fc67-ae03-4266-a6b9-bc6e438e9a55",
+            "rank_before_drop": 17,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק החברות, התשנ״ט–1999",
+            "origin": "perplexity",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/blobfolder/legalinfo/info-and-regulation-15/he/files_informationandregulation_15-law_companieslaw.pdf",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "6f128df0-6f99-4bc8-829a-8ed677b3d683",
+            "rank_before_drop": 24,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק החברות, תשנ\"ט-1999",
+            "origin": "perplexity",
+            "claim_id": "C3",
+            "drop_key": "url:www.knesset.gov.il/committees/heb/material/data/h31-03-2008_8-59-00_nosach010408.doc",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "1b1363b9-8777-483a-ba37-7992031547fd",
+            "rank_before_drop": 26,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק החברות, התשנ\"ט-1999",
+            "origin": "perplexity",
+            "claim_id": "C3",
+            "drop_key": "url:www.new.isa.gov.il/images/fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/compan01.pdf",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "92af9b73-2a0c-4443-84ff-8d8ba5a52dc1",
+            "rank_before_drop": 27,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק החברות, התשנ\"ט-1999",
+            "origin": "perplexity",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/blobfolder/legalinfo/info-and-regulation-15/he/files_informationandregulation_15-law_companieslaw.pdf",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "56691f2d-5481-4abd-9508-dd69a0047a34",
+            "rank_before_drop": 28,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק החברות (תיקון מס' 6), התשס\"ז-2007",
+            "origin": "perplexity",
+            "claim_id": "C1",
+            "drop_key": "url:knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "f0e0f450-87e4-4f99-9977-2c95e7875e81",
+            "rank_before_drop": 34,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק החברות, תשנ\"ט-1999",
+            "origin": "perplexity",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/blobfolder/legalinfo/info-and-regulation-15/he/files_informationandregulation_15-law_companieslaw.pdf",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "781860c0-cb0c-4fc9-ab14-0ce76bcaf992",
+            "rank_before_drop": 35,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק החברות (תיקון מס' 16), התשע\"א-2011",
+            "origin": "perplexity",
+            "claim_id": "C1",
+            "drop_key": "url:fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "1986072b-4e15-45f2-9cbd-71435dbd0096",
+            "rank_before_drop": 36,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+            "role": "primary_statute",
+            "score": 0.95,
+            "title": "חוק החברות תיקון מס' 6 קריאה שנייה שלישית",
+            "origin": "perplexity",
+            "claim_id": "C1",
+            "drop_key": "url:knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+            "drop_reason": "dup_url",
+            "source_type": "legislation",
+            "candidate_id": "31e28fa6-25b7-485b-97d3-9152bb5ad770",
+            "rank_before_drop": 37,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=690",
+            "role": "primary_statute",
+            "score": 0.3826397806809006,
+            "title": "בית המשפט לענייני משפחה בבאר שבע, השופט בן שלו: פסק דין בתביעת בעל מניות בתאגיד להורות על רכישה כפויה של מניותיו בתאגיד (תמ\"ש 57980-01-19)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "ab60014c-b2b2-401d-a57d-3453be1a2e1a",
+            "rank_before_drop": 39,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=690",
+            "role": "primary_statute",
+            "score": 0.382552491366993,
+            "title": "בית המשפט לענייני משפחה בבאר שבע, השופט בן שלו: פסק דין בתביעת בעל מניות בתאגיד להורות על רכישה כפויה של מניותיו בתאגיד (תמ\"ש 57980-01-19)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "ff97628d-c055-4f8b-80ab-bf7248599fdc",
+            "rank_before_drop": 40,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://runilawreview.org/2022/01/30/vol24-eckstein-hahn/",
+            "role": "primary_statute",
+            "score": 0.37924176729787135,
+            "title": "\"בין האתמול לעתיד, בין האוצר לתחתית\": אחריות דירקטוריון בגין חלוקה אסורה | אסף אקשטיין ודוד האן (כרך כד(2))",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "doc:ac6c2e62-4af4-43d0-8422-0b80cc116bc1",
+            "drop_reason": "dup_document_id",
+            "source_type": "journal_article",
+            "candidate_id": "7042d1ec-5ebf-42ad-8dbf-a61b4c033967",
+            "rank_before_drop": 42,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=690",
+            "role": "primary_statute",
+            "score": 0.37381842965345696,
+            "title": "בית המשפט לענייני משפחה בבאר שבע, השופט בן שלו: פסק דין בתביעת בעל מניות בתאגיד להורות על רכישה כפויה של מניותיו בתאגיד (תמ\"ש 57980-01-19)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "9b1ea193-6e66-4920-956e-18e00b35dabe",
+            "rank_before_drop": 43,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://runilawreview.org/2016/11/01/volume19_shanan_goldfryd/",
+            "role": "primary_statute",
+            "score": 0.37267047258103503,
+            "title": "מיסוי אשכול חברות רב-לאומי | תמיר שאנן ואורי גולדפריד (כרך יט)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "616e2d01-b608-4f5d-a7b6-5ceb5fc24bfc",
+            "rank_before_drop": 45,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
+            "role": "primary_statute",
+            "score": 0.3717269255605236,
+            "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "d9f93897-59fa-4521-aca4-bf19331054c8",
+            "rank_before_drop": 46,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
+            "role": "primary_statute",
+            "score": 0.3716826300163266,
+            "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "d6b1ece7-87c1-41fe-ba06-aaf80b7aa848",
+            "rank_before_drop": 47,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1539",
+            "role": "primary_statute",
+            "score": 0.3691190726252304,
+            "title": "צדק, הגינות ויעילות בדיני חברות: הערות בעקבות ע\"א 4263/04",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "106b76fc-d7c6-40c0-97d0-70ffca455280",
+            "rank_before_drop": 48,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1539",
+            "role": "primary_statute",
+            "score": 0.3691113648403038,
+            "title": "צדק, הגינות ויעילות בדיני חברות: הערות בעקבות ע\"א 4263/04",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "0a7a479e-b922-4b10-b62e-dac4d5ba7480",
+            "rank_before_drop": 49,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1789",
+            "role": "primary_statute",
+            "score": 0.36735018703038663,
+            "title": "הזכות לקיום בכבוד בראי המשפט העברי: מעמדה החוקתי",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "03f74fca-74ec-4ca8-93a5-a23b66d7edb3",
+            "rank_before_drop": 50,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1789",
+            "role": "primary_statute",
+            "score": 0.36732195570216836,
+            "title": "הזכות לקיום בכבוד בראי המשפט העברי: מעמדה החוקתי",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "f2559b6b-a935-42c3-b151-b9fc8a92cb2d",
+            "rank_before_drop": 51,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/877",
+            "role": "primary_statute",
+            "score": 0.36080723438430834,
+            "title": "מיזם משותף כהסדר כובל",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "e1f1321a-3c0a-4ec3-9ed5-0c6e1dd255c7",
+            "rank_before_drop": 52,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://runilawreview.org/2022/01/30/vol24-eckstein-hahn/",
+            "role": "primary_statute",
+            "score": 0.35932271740345617,
+            "title": "\"בין האתמול לעתיד, בין האוצר לתחתית\": אחריות דירקטוריון בגין חלוקה אסורה | אסף אקשטיין ודוד האן (כרך כד(2))",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "158a3d73-c628-4f78-b557-972a85e06b53",
+            "rank_before_drop": 53,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_25172cfab4714536a40ad22e1893c85b.pdf",
+            "role": "primary_statute",
+            "score": 0.35912950041831837,
+            "title": "החלופות להפיכת חברה ציבורית לפרטית: ניתוח משפטי וממצאים אמפיריים",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "c20eddc1-0cdf-4d1b-b666-04a843c8c8a2",
+            "rank_before_drop": 54,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%9C%D7%A7%D7%99%D7%93%D7%95%D7%9D_%D7%94%D7%AA%D7%97%D7%A8%D7%95%D7%AA_%D7%95%D7%9C%D7%A6%D7%9E%D7%A6%D7%95%D7%9D_%D7%94%D7%A8%D7%99%D7%9B%D7%95%D7%96%D7%99%D7%95%D7%AA",
+            "role": "primary_statute",
+            "score": 0.35877647705230203,
+            "title": "חוק לקידום התחרות ולצמצום הריכוזיות",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "israeli_law",
+            "candidate_id": "c9ad6d13-beed-4a03-bcca-f641c375c06b",
+            "rank_before_drop": 55,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2",
+            "role": "primary_statute",
+            "score": 0.35762113952406543,
+            "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+            "origin": "local_db",
+            "claim_id": "C1",
+            "drop_key": "vector:C1:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "supreme_court_il",
+            "candidate_id": "2c023fba-14b2-456c-b463-d5e218630d27",
+            "rank_before_drop": 56,
+            "retrieval_method": "vector"
+          }
+        ],
+        "found": 57,
+        "counts": {
+          "by_role": {
+            "primary_statute": 12,
+            "persuasive_case_law": 1
+          },
+          "by_claim": {
+            "C1": 10,
+            "C2": 3
+          },
+          "by_origin": {
+            "local_db": 4,
+            "perplexity": 9
+          }
+        },
+        "after_dedup": 13,
+        "dedup_drops": 48,
+        "drop_reason_counts": {
+          "dup_url": 27,
+          "dup_document_id": 4,
+          "dup_statute_section": 1,
+          "vector_quota_per_claim": 12
+        }
+      },
+      "local": {
+        "ms": 1184,
+        "aggregate": {
+          "wall_ms": 1184,
+          "max_query_ms": 1181,
+          "sum_query_ms": 3471,
+          "slowest_query": {
+            "ms": 1181,
+            "role": "primary_statute",
+            "text_ms": 986,
+            "claim_id": "C1",
+            "exact_ms": 0,
+            "query_he": "סעיף 6 לחוק החברות",
+            "vector_ms": 193,
+            "embedding_ms": 173
+          },
+          "slowest_method": "text",
+          "method_total_ms": {
+            "text": 2961,
+            "exact": 0,
+            "vector": 505,
+            "embedding": 563
+          },
+          "queries_executed": 3,
+          "exact_error_count": 0,
+          "text_timeout_count": 0,
+          "candidates_by_method": {
+            "text": 18,
+            "vector": 18,
+            "exact_authority": 0
+          },
+          "vector_timeout_count": 0,
+          "bottleneck_hypothesis": "single_slow_query (max=1181ms ≈ wall=1184ms)",
+          "duplicate_query_count": 0
+        },
+        "per_query": [
+          {
+            "ms": 1144,
+            "diag": {
+              "text_ms": 896,
+              "exact_ms": 0,
+              "vector_ms": 245,
+              "text_status": "ok",
+              "embedding_ms": 198,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "בית המשפט המחוזי ב\"ש, השופטת יעל ייטב: פסק דין בערעור על החלטה לפסילת ספריו של המערער וקביעת הכנסתו בצו ע\"פ סעיף 152(ב) לפקודת מס הכנסה (ע\"מ 39040-12-21)",
+                "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+                "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: החלטה בעקבות השלמות הגשת שעניינן הוראות סעיף 6(ו) לחוק בתי המשפט לענייני משפחה (תמ\"ש 19336-07-24)",
+                "בית המשפט המחוזי ב\"ש, השופטת טל לחיאני שהם: גזר דין לנאשמת בהמתה בקלות דעת, הפקרה ונהיגה בשכרות אשר גרמה למותה של ניר אבוחצירה ז\"ל (ת\"פ 19589-02-24)",
+                "ביהמ\"ש לענייני משפחה בפתח תקווה, ש' סמאח מנאסרה סבאח: פסק דין בשאלת הסמכות העניינית לבית המשפט לענייני משפחה לדון בתובענת לשון הרע שאינה בין בני משפחה כהגדרות חוק בתי המשפט לענייני משפחה (תמ\"ש 47608-04-24)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 896,
+              "top_vector_titles": [
+                "בית המשפט לענייני משפחה בבאר שבע, השופט בן שלו: פסק דין בתביעת בעל מניות בתאגיד להורות על רכישה כפויה של מניותיו בתאגיד (תמ\"ש 57980-01-19)",
+                "\"בין האתמול לעתיד, בין האוצר לתחתית\": אחריות דירקטוריון בגין חלוקה אסורה | אסף אקשטיין ודוד האן (כרך כד(2))",
+                "מיסוי אשכול חברות רב-לאומי | תמיר שאנן ואורי גולדפריד (כרך יט)",
+                "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+                "צדק, הגינות ויעילות בדיני חברות: הערות בעקבות ע\"א 4263/04"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק הח",
+                  "raw_clue": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק הח",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "הח",
+                  "candidate_title_tokens": [
+                    "הח"
+                  ],
+                  "title_tokens_for_ilike": []
+                },
+                {
+                  "status": "skipped_low_signal",
+                  "section": "6",
+                  "law_name": "חוק החברות",
+                  "raw_clue": "חוק החברות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [],
+                  "skipped_reason": "single_token",
+                  "normalized_clue": "חוק החברות",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "החברות",
+                  "candidate_title_tokens": [
+                    "החברות"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 12,
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "6",
+                "law_name": "חוק החברות",
+                "search_terms": [
+                  "חוק החברות",
+                  "סעיף 6"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "שיקול דעת חוק החברות סעיף 6",
+            "original_query_he": "חוק החברות סעיף 6",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 1146,
+            "diag": {
+              "text_ms": 1079,
+              "exact_ms": 0,
+              "vector_ms": 67,
+              "text_status": "ok",
+              "embedding_ms": 192,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "בית המשפט המחוזי ב\"ש, השופטת יעל ייטב: פסק דין בערעור על החלטה לפסילת ספריו של המערער וקביעת הכנסתו בצו ע\"פ סעיף 152(ב) לפקודת מס הכנסה (ע\"מ 39040-12-21)",
+                "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+                "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: החלטה בעקבות השלמות הגשת שעניינן הוראות סעיף 6(ו) לחוק בתי המשפט לענייני משפחה (תמ\"ש 19336-07-24)",
+                "בית המשפט המחוזי ב\"ש, השופטת טל לחיאני שהם: גזר דין לנאשמת בהמתה בקלות דעת, הפקרה ונהיגה בשכרות אשר גרמה למותה של ניר אבוחצירה ז\"ל (ת\"פ 19589-02-24)",
+                "ביהמ\"ש לענייני משפחה בפתח תקווה, ש' סמאח מנאסרה סבאח: פסק דין בשאלת הסמכות העניינית לבית המשפט לענייני משפחה לדון בתובענת לשון הרע שאינה בין בני משפחה כהגדרות חוק בתי המשפט לענייני משפחה (תמ\"ש 47608-04-24)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 1079,
+              "top_vector_titles": [
+                "בית המשפט לענייני משפחה בבאר שבע, השופט בן שלו: פסק דין בתביעת בעל מניות בתאגיד להורות על רכישה כפויה של מניותיו בתאגיד (תמ\"ש 57980-01-19)",
+                "\"בין האתמול לעתיד, בין האוצר לתחתית\": אחריות דירקטוריון בגין חלוקה אסורה | אסף אקשטיין ודוד האן (כרך כד(2))",
+                "מיסוי אשכול חברות רב-לאומי | תמיר שאנן ואורי גולדפריד (כרך יט)",
+                "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+                "צדק, הגינות ויעילות בדיני חברות: הערות בעקבות ע\"א 4263/04"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק הח",
+                  "raw_clue": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק הח",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "הח",
+                  "candidate_title_tokens": [
+                    "הח"
+                  ],
+                  "title_tokens_for_ilike": []
+                },
+                {
+                  "status": "skipped_low_signal",
+                  "section": "6",
+                  "law_name": "חוק החברות",
+                  "raw_clue": "חוק החברות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [],
+                  "skipped_reason": "single_token",
+                  "normalized_clue": "חוק החברות",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "החברות",
+                  "candidate_title_tokens": [
+                    "החברות"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 12,
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "6",
+                "law_name": "חוק החברות",
+                "search_terms": [
+                  "חוק החברות",
+                  "סעיף 6"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "שיקול דעת חוק החברות סעיף 6",
+            "original_query_he": "חוק החברות 6",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 1181,
+            "diag": {
+              "text_ms": 986,
+              "exact_ms": 0,
+              "vector_ms": 193,
+              "text_status": "ok",
+              "embedding_ms": 173,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: החלטה בעקבות השלמות הגשת שעניינן הוראות סעיף 6(ו) לחוק בתי המשפט לענייני משפחה (תמ\"ש 19336-07-24)",
+                "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: החלטה בתובענה שהוגשה בטענה כי מעל בתפקידו בהתאם לחוק הכשרות והאפוטרופסות (תמ\"ש 42346-04-24)",
+                "בימ\"ש לענייני משפחה ת\"א, השופטת לורן אקוקה: פס\"ד בתביעה לאכיפת פסק דין לפי סעיף 7 לחוק בתי המשפט לענייני משפחה (תמ\"ש 29428-09-24)",
+                "בית המשפט המחוזי ב\"ש, השופטת טל לחיאני שהם: גזר דין לנאשמת בהמתה בקלות דעת, הפקרה ונהיגה בשכרות אשר גרמה למותה של ניר אבוחצירה ז\"ל (ת\"פ 19589-02-24)",
+                "בית משפט לתביעות קטנות בירושלים, הרשמת בכירה אביגיל ון-קרפלד: פס\"ד בעניין תיקון 2 לחוק שירותי תעופה (ת\"ק 65486-11-24)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 986,
+              "top_vector_titles": [
+                "בית המשפט לענייני משפחה בבאר שבע, השופט בן שלו: פסק דין בתביעת בעל מניות בתאגיד להורות על רכישה כפויה של מניותיו בתאגיד (תמ\"ש 57980-01-19)",
+                "מיזם משותף כהסדר כובל",
+                "\"בין האתמול לעתיד, בין האוצר לתחתית\": אחריות דירקטוריון בגין חלוקה אסורה | אסף אקשטיין ודוד האן (כרך כד(2))",
+                "החלופות להפיכת חברה ציבורית לפרטית: ניתוח משפטי וממצאים אמפיריים",
+                "חוק לקידום התחרות ולצמצום הריכוזיות"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "skipped_low_signal",
+                  "section": "6",
+                  "law_name": "חוק החברות",
+                  "raw_clue": "חוק החברות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "skipped_reason": "single_token",
+                  "normalized_clue": "חוק החברות",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "החברות",
+                  "candidate_title_tokens": [
+                    "החברות"
+                  ],
+                  "title_tokens_for_ilike": []
+                },
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק הח",
+                  "raw_clue": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק הח",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "הח",
+                  "candidate_title_tokens": [
+                    "הח"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 12,
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "statute_section",
+                "source": "planner_query",
+                "section": "6",
+                "law_name": "חוק החברות",
+                "search_terms": [
+                  "חוק החברות",
+                  "סעיף 6"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "שיקול דעת לחוק החברות סעיף 6",
+            "original_query_he": "סעיף 6 לחוק החברות",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          }
+        ],
+        "candidates": 36,
+        "global_exact": {
+          "clues_from_claims": [
+            {
+              "kind": "statute_section",
+              "source": "claim",
+              "section": "6",
+              "law_name": "חוק החברות",
+              "search_terms": [
+                "חוק החברות",
+                "סעיף 6"
+              ]
+            },
+            {
+              "kind": "statute",
+              "source": "claim",
+              "law_name": "חוק הח",
+              "search_terms": [
+                "חוק הח"
+              ]
+            }
+          ],
+          "clues_from_question": [
+            {
+              "kind": "statute_section",
+              "source": "question",
+              "section": "6",
+              "law_name": "חוק החברות",
+              "search_terms": [
+                "חוק החברות",
+                "סעיף 6"
+              ]
+            },
+            {
+              "kind": "statute",
+              "source": "question",
+              "law_name": "חוק הח",
+              "search_terms": [
+                "חוק הח"
+              ]
+            }
+          ]
+        }
+      },
+      "perplexity": {
+        "ms": 12527,
+        "dropped": 14,
+        "parallel": true,
+        "query_ms": [
+          9126,
+          4409,
+          4749,
+          4733,
+          4087,
+          5133,
+          7775
+        ],
+        "per_query": [
+          {
+            "ms": 9126,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+                "title": "חוק החברות, התשנ״ט–1999",
+                "domain": "knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 307,
+                  "title_meaningful_chars": 21
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "official legislative text mirror",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+                "title": "חוק החברות, התשנ\"ט-1999",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 80,
+                  "title_meaningful_chars": 21
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "official government PDF mirror",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+                "title": "חוק החברות, התשנ״ט-1999",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 180,
+                  "title_meaningful_chars": 21
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "official Knesset legislative document",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.npo.co.il/wp-content/uploads/2020/11/%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA.pdf",
+                "title": "חוק החברות, התשנ\"ט-1999",
+                "domain": "npo.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_primary_statute",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+                "title": "חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך",
+                "domain": "new.isa.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 60,
+                  "title_meaningful_chars": 35
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "official regulator PDF mirror",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C1",
+            "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - נוסח מעודכן (ציטוט מלא ומדויק של לשון הסעיף); חיפוש במסמכים רשמיים: אתר הכנסת, משרד המשפטים, נבו או רישומי חקיקה רשמיים.",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4409,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA",
+                "title": "חוק החברות, התשנ״ט–1999",
+                "domain": "he.wikisource.org",
+                "drop_reason": "class_unknown_not_admitted_for_primary_statute",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+                "title": "חוק החברות, התשנ״ט–1999 (תיקון מס' 16)",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 171,
+                  "title_meaningful_chars": 33
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "statute",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+                "title": "הצעת חוק החברות, התשס״ב–2002",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 91,
+                  "title_meaningful_chars": 25
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "statute",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+                "title": "חוק החברות, התשנ״ט–1999",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "thin_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+                  "hygiene_reasons": [
+                    "body_thin"
+                  ],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 49,
+                  "title_meaningful_chars": 21
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "statute",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+                "title": "חוק החברות, התשנ״ט–1999 (תיקון מס' 6)",
+                "domain": "knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 150,
+                  "title_meaningful_chars": 32
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "statute",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C2",
+            "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - האם הסעיף עוסק ב'הרמת מסך' ו'ייחוס חובות של החברה לבעל מניה' ומעניק לבית המשפט סמכות לייחס חובות; חפש בשפת הסעיף את המונחים 'הרמת מסך', 'יחוס חובות', 'בעל מניה', 'סמכות בית המשפט'.",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4749,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+                "title": "חוק החברות, תשנ\"ט-1999",
+                "domain": "knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "thin_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+                  "hygiene_reasons": [
+                    "body_thin"
+                  ],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 22,
+                  "title_meaningful_chars": 20
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "official_bill_or_statute_text",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+                "title": "חוק החברות, התשנ\"ט-1999",
+                "domain": "new.isa.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "thin_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+                  "hygiene_reasons": [
+                    "body_thin"
+                  ],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 35,
+                  "title_meaningful_chars": 21
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "official_gov_pdf",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+                "title": "חוק החברות, התשנ\"ט-1999",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "thin_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+                  "hygiene_reasons": [
+                    "body_thin"
+                  ],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 35,
+                  "title_meaningful_chars": 21
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "official_gov_pdf",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://he.afiklaw.com/caselaw/8976/2",
+                "title": "הפ (ראשל\"צ) 8871-09-18 ג.ר.ו.י יזמות והשקעות בע\"מ נ' מוניות חוף הזהב בעמ - חלק 2",
+                "domain": "he.afiklaw.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.afiklaw.com/caselaw/5604/13",
+                "title": "עא 4263/04 קיבוץ משמר העמק נ' עו\"ד טומי מנור, מפרק אפרוחי הצפון בע\"מ, פ ...",
+                "domain": "he.afiklaw.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C3",
+            "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - רשימת העילות המנויות בסעיף להרמת מסך; חפש במפורש בלשון הסעיף מונחים כגון 'הונאה', 'הטעיה', 'הברחת נכסים', 'סיכול זכויות נושים', 'ערבוב נכסים', 'שימוש לרעה באישיות המשפטית'.",
+            "raw_count": 5,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4733,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA",
+                "title": "חוק החברות, התשנ\"ט–1999",
+                "domain": "he.wikisource.org",
+                "drop_reason": "class_unknown_not_admitted_for_primary_statute",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.npo.co.il/wp-content/uploads/2020/11/%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA.pdf",
+                "title": "חוק החברות, התשנ\"ט–1999",
+                "domain": "npo.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_primary_statute",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+                "title": "חוק החברות (תיקון מס' 16), התשע\"א-2011",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 149,
+                  "title_meaningful_chars": 33
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "knesset pdf",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C4",
+            "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - גבולות הסעד לפי הסעיף: חפש בלשון הסעיף התייחסות ל'הוראה חלה כלפי \"בעל מניה\"', 'הפעלת שיקול דעת בית המשפט', או ניסוחים המגדירים את טיב הסעד והיקפו.",
+            "raw_count": 3,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4087,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA",
+                "title": "חוק החברות, התשנ״ט–1999",
+                "domain": "he.wikisource.org",
+                "drop_reason": "class_unknown_not_admitted_for_primary_statute",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.npo.co.il/wp-content/uploads/2020/11/%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA.pdf",
+                "title": "חוק החברות, התשנ\"ט-1999",
+                "domain": "npo.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_primary_statute",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+                "title": "חוק החברות, התשנ״ט-1999 - רשות ניירות ערך",
+                "domain": "new.isa.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 75,
+                  "title_meaningful_chars": 35
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "search result",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+                "title": "הצעת חוק החברות, התשס״ב 2002",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 59,
+                  "title_meaningful_chars": 24
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "search result",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+                "title": "חוק החברות תיקון מס' 6 קריאה שנייה שלישית",
+                "domain": "knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 59,
+                  "title_meaningful_chars": 34
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "search result",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C1",
+            "query_he": "חוק החברות סעיף 6",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5133,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://www.nevo.co.il/law_html/law01/139_002.htm",
+                "title": "חוק החברות, תשנ\"ט-1999",
+                "domain": "nevo.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "thin_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.nevo.co.il/law_html/law01/139_002.htm",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.nevo.co.il/law_html/law01/139_002.htm",
+                  "hygiene_reasons": [
+                    "body_thin",
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 20,
+                  "title_meaningful_chars": 20
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "nevo",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+                "title": "חוק החברות (תיקון מס' 6), התשס\"ז-2007",
+                "domain": "knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "thin_body",
+                  "title_status": "valid",
+                  "url_original": "https://knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+                  "hygiene_reasons": [
+                    "body_thin"
+                  ],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 32,
+                  "title_meaningful_chars": 32
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "knesset",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA",
+                "title": "חוק החברות, התשנ\"ט-1999",
+                "domain": "he.wikisource.org",
+                "drop_reason": "class_unknown_not_admitted_for_primary_statute",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.takdin.co.il/document/index/706607-%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA-%D7%AA%D7%99%D7%A7%D7%95%D7%9F-%D7%9E%D7%A1-6-%D7%94%D7%AA%D7%A9%D7%A1%D7%96-2007",
+                "title": "חוק החברות (תיקון מס' 6), התשס\"ז-2007",
+                "domain": "takdin.co.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "thin_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.takdin.co.il/document/index/706607-%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA-%D7%AA%D7%99%D7%A7%D7%95%D7%9F-%D7%9E%D7%A1-6-%D7%94%D7%AA%D7%A9%D7%A1%D7%96-2007",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.takdin.co.il/document/index/706607-%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA-%D7%AA%D7%99%D7%A7%D7%95%D7%9F-%D7%9E%D7%A1-6-%D7%94%D7%AA%D7%A9%D7%A1%D7%96-2007",
+                  "hygiene_reasons": [
+                    "body_thin"
+                  ],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 32,
+                  "title_meaningful_chars": 32
+                },
+                "hygiene_enforced": false,
+                "role_corrected_to": "persuasive_case_law",
+                "role_corrected_from": "primary_statute",
+                "raw_pplx_source_type": "takdin",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C1",
+            "query_he": "חוק החברות 6",
+            "raw_count": 4,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 7775,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://www.npo.co.il/wp-content/uploads/2020/11/%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA.pdf",
+                "title": "חוק החברות, התשנ\"ט–1999",
+                "domain": "npo.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_primary_statute",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+                "title": "חוק החברות, תשנ\"ט-1999",
+                "domain": "gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "thin_body",
+                  "title_status": "valid",
+                  "url_original": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+                  "hygiene_reasons": [
+                    "body_thin"
+                  ],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 33,
+                  "title_meaningful_chars": 20
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "Government PDF mirror",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+                "title": "חוק החברות (תיקון מס' 16), התשע\"א-2011",
+                "domain": "fs.knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "thin_body",
+                  "title_status": "valid",
+                  "url_original": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+                  "hygiene_reasons": [
+                    "body_thin"
+                  ],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 33,
+                  "title_meaningful_chars": 33
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "Knesset PDF",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+                "title": "חוק החברות תיקון מס' 6 קריאה שנייה שלישית",
+                "domain": "knesset.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "thin_body",
+                  "title_status": "valid",
+                  "url_original": "https://knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+                  "hygiene_reasons": [
+                    "body_thin"
+                  ],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 34,
+                  "title_meaningful_chars": 34
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "Knesset committee document",
+                "normalized_source_type": "legislation",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://he.afiklaw.com/caselaw/15468/3",
+                "title": "תא (מרכז) 42447-06-20 אר.ג'י.אם. תעשיות מזון בע\"מ נ' משה קאופטייל",
+                "domain": "he.afiklaw.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "extracted_followup_terms": [
+                  "סעיף 6 לחוק החברות מעגן את העיקרון המשפטי של הרמת המסך"
+                ],
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA",
+                "title": "חוק החברות - ויקיטקסט",
+                "domain": "he.wikisource.org",
+                "drop_reason": "followup:class_unknown_not_admitted_for_primary_statute",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://mo.ralc.co.il/%D7%9E%D7%90%D7%9E%D7%A8-1568-%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA-%D7%A1%D7%A2%D7%99%D7%A3-6-%D7%94%D7%A8%D7%9E%D7%AA-%D7%9E%D7%A1%D7%9A.aspx",
+                "title": "חוק החברות סעיף 6. הרמת מסך",
+                "domain": "mo.ralc.co.il",
+                "drop_reason": "followup:class_unknown_not_admitted_for_primary_statute",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gatrimon-law.co.il/%D7%94%D7%90%D7%9D-%D7%91%D7%A2%D7%9C%D7%99-%D7%94%D7%9E%D7%A0%D7%99%D7%95%D7%AA-%D7%99%D7%A9%D7%9C%D7%9E%D7%95-%D7%90%D7%AA-%D7%97%D7%95%D7%91%D7%95%D7%AA-%D7%94%D7%97%D7%91%D7%A8%D7%94/",
+                "title": "חובות חברה: מתי בעלי המניות ישלמו? | עו\"ד גת רימון",
+                "domain": "gatrimon-law.co.il",
+                "drop_reason": "followup:discovery_only",
+                "classified_source_class": "discovery_only",
+                "extracted_followup_terms": [
+                  "סעיף 6 לחוק החברות מסמיך את בית המשפט לייחס חוב של החברה לבעל מניה"
+                ],
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C1",
+            "query_he": "סעיף 6 לחוק החברות",
+            "raw_count": 5,
+            "discovery_only": 2,
+            "followup_terms": [
+              "סעיף 6 לחוק החברות מעגן את העיקרון המשפטי של הרמת המסך"
+            ],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 21,
+        "query_count": 7,
+        "retry_count": 0,
+        "total_sum_ms": 40012,
+        "total_wall_ms": 12527,
+        "hygiene_counts": {
+          "keep": 21,
+          "total": 21,
+          "exclude": 0,
+          "reasons": {
+            "body_thin": 10,
+            "url_generic_index": 1
+          },
+          "downgrade": 0,
+          "report_only_mode": false,
+          "would_exclude_in_report_only": 0
+        },
+        "rate_limit_count": 0,
+        "role_corrections": [
+          {
+            "to": "persuasive_case_law",
+            "url": "https://www.takdin.co.il/document/index/706607-%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA-%D7%AA%D7%99%D7%A7%D7%95%D7%9F-%D7%9E%D7%A1-6-%D7%94%D7%AA%D7%A9%D7%A1%D7%96-2007",
+            "from": "primary_statute",
+            "title": "חוק החברות (תיקון מס' 6), התשס\"ז-2007",
+            "admitted": true,
+            "claim_id": "C1"
+          }
+        ],
+        "concurrency_limit": 4,
+        "merge_order_preserved": true,
+        "fallback_to_sequential": false
+      },
+      "source_integrity": {
+        "rejects": 0,
+        "admitted": [
+          {
+            "url": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+            "role": "primary_statute",
+            "title": "חוק החברות, התשנ״ט–1999",
+            "citable_as": "statute",
+            "candidate_id": "bf526da1-d6be-445c-8b50-3f824403caec",
+            "authority_tier": "official_primary",
+            "synthesis_role": "statutory_background",
+            "text_usability": "full_text",
+            "integrity_flags": [],
+            "can_satisfy_role": true,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "legislation",
+            "synthesis_role_overridden": false,
+            "synthesis_role_seeded_from": "statutory_background"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+            "role": "primary_statute",
+            "title": "חוק החברות, התשנ\"ט-1999",
+            "citable_as": "statute",
+            "candidate_id": "27ef61a3-3ea8-403e-9b7b-bf285857e6c8",
+            "authority_tier": "official_primary",
+            "synthesis_role": "statutory_background",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "can_satisfy_role": true,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "legislation",
+            "synthesis_role_overridden": false,
+            "synthesis_role_seeded_from": "statutory_background"
+          },
+          {
+            "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+            "role": "primary_statute",
+            "title": "חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך",
+            "citable_as": "statute",
+            "candidate_id": "87c45b2f-1840-449d-8a48-c747b8bf0db1",
+            "authority_tier": "official_primary",
+            "synthesis_role": "statutory_background",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "can_satisfy_role": true,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "legislation",
+            "synthesis_role_overridden": false,
+            "synthesis_role_seeded_from": "statutory_background"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+            "role": "primary_statute",
+            "title": "חוק החברות, התשנ״ט–1999 (תיקון מס' 16)",
+            "citable_as": "statute",
+            "candidate_id": "2b8a6824-627f-4f2a-8a89-818be048e7bc",
+            "authority_tier": "official_primary",
+            "synthesis_role": "statutory_background",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "can_satisfy_role": true,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "legislation",
+            "synthesis_role_overridden": false,
+            "synthesis_role_seeded_from": "statutory_background"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+            "role": "primary_statute",
+            "title": "הצעת חוק החברות, התשס״ב–2002",
+            "citable_as": "statute",
+            "candidate_id": "c2df138a-4767-4b17-bc7b-41201aedb156",
+            "authority_tier": "official_primary",
+            "synthesis_role": "statutory_background",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "can_satisfy_role": true,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "legislation",
+            "synthesis_role_overridden": false,
+            "synthesis_role_seeded_from": "statutory_background"
+          },
+          {
+            "url": "https://www.knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+            "role": "primary_statute",
+            "title": "חוק החברות, התשנ״ט–1999 (תיקון מס' 6)",
+            "citable_as": "statute",
+            "candidate_id": "0c396c51-ca9e-49a2-ad71-dac5c85f0bae",
+            "authority_tier": "official_primary",
+            "synthesis_role": "statutory_background",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "can_satisfy_role": true,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "legislation",
+            "synthesis_role_overridden": false,
+            "synthesis_role_seeded_from": "statutory_background"
+          },
+          {
+            "url": "https://knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+            "role": "primary_statute",
+            "title": "חוק החברות תיקון מס' 6 קריאה שנייה שלישית",
+            "citable_as": "statute",
+            "candidate_id": "2451f441-5e08-4aeb-8167-987caebf7363",
+            "authority_tier": "official_primary",
+            "synthesis_role": "statutory_background",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "can_satisfy_role": true,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "legislation",
+            "synthesis_role_overridden": false,
+            "synthesis_role_seeded_from": "statutory_background"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=290",
+            "role": "primary_statute",
+            "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: החלטה בעקבות השלמות הגשת שעניינן הוראות סעיף 6(ו) לחוק בתי המשפט לענייני משפחה (תמ\"ש 19336-07-24)",
+            "citable_as": "not_citable",
+            "candidate_id": "9dca2e69-d149-4689-88a1-83f405e94877",
+            "authority_tier": "index_or_listing",
+            "synthesis_role": "unknown",
+            "text_usability": "listing_page",
+            "integrity_flags": [
+              "listing_or_pagination_page"
+            ],
+            "can_satisfy_role": false,
+            "downgrade_reason": "caselaw_type_on_listing_page",
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "caselaw",
+            "synthesis_role_overridden": true,
+            "synthesis_role_seeded_from": "statutory_background"
+          },
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+            "role": "primary_statute",
+            "title": "חוק בינוי ופינוי של אזורי שיקום",
+            "citable_as": "statute",
+            "candidate_id": "6f7c69f9-a5e4-451f-8619-71235deadc73",
+            "authority_tier": "statute_mirror",
+            "synthesis_role": "statutory_background",
+            "text_usability": "substantive_excerpt",
+            "integrity_flags": [
+              "consolidated_statute_mirror"
+            ],
+            "can_satisfy_role": true,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "israeli_law",
+            "synthesis_role_overridden": false,
+            "synthesis_role_seeded_from": "statutory_background"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law01/139_002.htm",
+            "role": "primary_statute",
+            "title": "חוק החברות, תשנ\"ט-1999",
+            "citable_as": "statute",
+            "candidate_id": "5c1fb7d1-57ec-44c9-96ab-8dcc069101ea",
+            "authority_tier": "primary_mirror",
+            "synthesis_role": "statutory_background",
+            "text_usability": "metadata_only",
+            "integrity_flags": [
+              "official_host_non_specific_path"
+            ],
+            "can_satisfy_role": true,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "legislation",
+            "synthesis_role_overridden": false,
+            "synthesis_role_seeded_from": "statutory_background"
+          },
+          {
+            "url": "https://www.takdin.co.il/document/index/706607-%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA-%D7%AA%D7%99%D7%A7%D7%95%D7%9F-%D7%9E%D7%A1-6-%D7%94%D7%AA%D7%A9%D7%A1%D7%96-2007",
+            "role": "persuasive_case_law",
+            "title": "חוק החברות (תיקון מס' 6), התשס\"ז-2007",
+            "citable_as": "not_citable",
+            "candidate_id": "ea4bbce8-bce9-4f61-95c0-b56bc00a8456",
+            "authority_tier": "index_or_listing",
+            "synthesis_role": "unknown",
+            "text_usability": "listing_page",
+            "integrity_flags": [
+              "listing_or_pagination_page"
+            ],
+            "can_satisfy_role": false,
+            "downgrade_reason": "caselaw_type_on_listing_page",
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "caselaw",
+            "synthesis_role_overridden": true,
+            "synthesis_role_seeded_from": "applying_candidate"
+          },
+          {
+            "url": "https://runilawreview.org/2022/01/30/vol24-eckstein-hahn/",
+            "role": "primary_statute",
+            "title": "\"בין האתמול לעתיד, בין האוצר לתחתית\": אחריות דירקטוריון בגין חלוקה אסורה | אסף אקשטיין ודוד האן (כרך כד(2))",
+            "citable_as": "scholarship",
+            "candidate_id": "bcaa29c7-dcef-4912-8b99-bd2d9c73456b",
+            "authority_tier": "secondary_commentary",
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "full_text",
+            "integrity_flags": [],
+            "can_satisfy_role": false,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "journal_article",
+            "synthesis_role_overridden": true,
+            "synthesis_role_seeded_from": "statutory_background"
+          },
+          {
+            "url": "https://runilawreview.org/2016/11/01/volume19_shanan_goldfryd/",
+            "role": "primary_statute",
+            "title": "מיסוי אשכול חברות רב-לאומי | תמיר שאנן ואורי גולדפריד (כרך יט)",
+            "citable_as": "scholarship",
+            "candidate_id": "5a44eede-a16a-4671-be53-941f682224e0",
+            "authority_tier": "secondary_commentary",
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "full_text",
+            "integrity_flags": [],
+            "can_satisfy_role": false,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "journal_article",
+            "synthesis_role_overridden": true,
+            "synthesis_role_seeded_from": "statutory_background"
+          }
+        ],
+        "downgrades": [
+          {
+            "reason": "caselaw_type_on_listing_page",
+            "candidate_id": "9dca2e69-d149-4689-88a1-83f405e94877"
+          },
+          {
+            "reason": "caselaw_type_on_listing_page",
+            "candidate_id": "ea4bbce8-bce9-4f61-95c0-b56bc00a8456"
+          }
+        ],
+        "tier_counts": {
+          "primary_mirror": 1,
+          "statute_mirror": 1,
+          "index_or_listing": 2,
+          "official_primary": 7,
+          "secondary_commentary": 2
+        },
+        "citable_counts": {
+          "statute": 9,
+          "not_citable": 2,
+          "scholarship": 2
+        },
+        "role_unsatisfied": 4,
+        "judgment_documents": 0,
+        "synthesis_role_counts": {
+          "unknown": 2,
+          "secondary_commentary": 2,
+          "statutory_background": 9
+        },
+        "synthesis_role_overrides": 4,
+        "judgments_with_holding_text": 0
+      },
+      "judgment_text_acquisition": {
+        "ms": 0,
+        "mode": "statute_section_definition",
+        "enabled": false,
+        "attempts": [],
+        "successes": 0,
+        "attempts_made": 0,
+        "eligible_count": 0
+      }
+    },
+    "candidates": [
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק החברות, התשנ״ט–1999",
+        "origin": "perplexity",
+        "snippet": "חוק החברות, התשנ״ט–1999; נוסח מלא ומעודכן; סעיף 6 הרמת מסך ... (א) הרמה של מסך ההתאגדות היא כל אחד מאלה: (1) ייחוס זכויות וחובות של החברה לבעל מניה בה; (2) ייחוס תכונות, זכויות וחובות של בעל מניה לחברה. (ב) על אף הוראת סעיף 4, רשאי בית משפט להרים את מסך ההתאגדות אם התקיים לכך תנאי הקבוע בחיקוק או אם בנסיבות הענין צודק ונכון לעשות כן, או אם התקיימו התנאים הקבועים בסעיף קטן (ג).",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 307,
+            "title_meaningful_chars": 21
+          },
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "statute",
+            "authority_tier": "official_primary",
+            "text_usability": "full_text",
+            "integrity_flags": [],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "raw_pplx_source_type": "official legislative text mirror",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - נוסח מעודכן (ציטוט מלא ומדויק של לשון הסעיף); חיפוש במסמכים רשמיים: אתר הכנסת, משרד המשפטים, נבו או רישומי חקיקה רשמיים.",
+        "source_url": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+        "source_type": "legislation",
+        "candidate_id": "bf526da1-d6be-445c-8b50-3f824403caec",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק החברות, התשנ\"ט-1999",
+        "origin": "perplexity",
+        "snippet": "1999 - חוק החברות, תשנ\"ט ... תוכן ענינים ... סעיף 6 ... (א) ... (ב) ... (ג) ... (ד) ... (ה) ... (ו) ...",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 80,
+            "title_meaningful_chars": 21
+          },
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "statute",
+            "authority_tier": "official_primary",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "raw_pplx_source_type": "official government PDF mirror",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - נוסח מעודכן (ציטוט מלא ומדויק של לשון הסעיף); חיפוש במסמכים רשמיים: אתר הכנסת, משרד המשפטים, נבו או רישומי חקיקה רשמיים.",
+        "source_url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+        "source_type": "legislation",
+        "candidate_id": "27ef61a3-3ea8-403e-9b7b-bf285857e6c8",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך",
+        "origin": "perplexity",
+        "snippet": "חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך ... התשע\"ד [תיקון (מס' 6)] ...",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "new.isa.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 60,
+            "title_meaningful_chars": 35
+          },
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "statute",
+            "authority_tier": "official_primary",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "raw_pplx_source_type": "official regulator PDF mirror",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - נוסח מעודכן (ציטוט מלא ומדויק של לשון הסעיף); חיפוש במסמכים רשמיים: אתר הכנסת, משרד המשפטים, נבו או רישומי חקיקה רשמיים.",
+        "source_url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+        "source_type": "legislation",
+        "candidate_id": "87c45b2f-1840-449d-8a48-c747b8bf0db1",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק החברות, התשנ״ט–1999 (תיקון מס' 16)",
+        "origin": "perplexity",
+        "snippet": "סעיף 6 לחוק החברות (תיקון מס' 16) מורה כי הרמת מסך נעשית כאשר מתקיימים התנאים בחיקוק או בנסיבות העניין צודק ונכון לעשות כן; הרמת מסך לשם ייחוס חובות החברה לבעל מניה תיעשה בשים לב ליכולת החברה לפרוע את חובותיה.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 171,
+            "title_meaningful_chars": 33
+          },
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "statute",
+            "authority_tier": "official_primary",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "raw_pplx_source_type": "statute",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - האם הסעיף עוסק ב'הרמת מסך' ו'ייחוס חובות של החברה לבעל מניה' ומעניק לבית המשפט סמכות לייחס חובות; חפש בשפת הסעיף את המונחים 'הרמת מסך', 'יחוס חובות', 'בעל מניה', 'סמכות בית המשפט'.",
+        "source_url": "https://fs.knesset.gov.il/18/law/18_lsr_301197.pdf",
+        "source_type": "legislation",
+        "candidate_id": "2b8a6824-627f-4f2a-8a89-818be048e7bc",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "הצעת חוק החברות, התשס״ב–2002",
+        "origin": "perplexity",
+        "snippet": "הוארך בסעיף 6(א): 'הרמה של מסך ההתאגדות היא כל אחד מאלה: (1) ייחוס זכויות וחובות של החברה לבעל מניה בה; (2) ...'",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+            "hygiene_action": "keep",
+            "url_normalized": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 91,
+            "title_meaningful_chars": 25
+          },
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "statute",
+            "authority_tier": "official_primary",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "raw_pplx_source_type": "statute",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - האם הסעיף עוסק ב'הרמת מסך' ו'ייחוס חובות של החברה לבעל מניה' ומעניק לבית המשפט סמכות לייחס חובות; חפש בשפת הסעיף את המונחים 'הרמת מסך', 'יחוס חובות', 'בעל מניה', 'סמכות בית המשפט'.",
+        "source_url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+        "source_type": "legislation",
+        "candidate_id": "c2df138a-4767-4b17-bc7b-41201aedb156",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק החברות, התשנ״ט–1999 (תיקון מס' 6)",
+        "origin": "perplexity",
+        "snippet": "סעיף 6 לחוק העיקרי קובע כדלקמן: \"6. הרמת מסך (א) הרמה של מסך ההתאגדות היא כל אחד מאלה: (1) ייחוס זכויות וחובות של החברה לבעל מניה בה; (2) ייחוס תכונות, זכויות וחובות של בעל מניה לחברה.\"",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://www.knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 150,
+            "title_meaningful_chars": 32
+          },
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "statute",
+            "authority_tier": "official_primary",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "raw_pplx_source_type": "statute",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - האם הסעיף עוסק ב'הרמת מסך' ו'ייחוס חובות של החברה לבעל מניה' ומעניק לבית המשפט סמכות לייחס חובות; חפש בשפת הסעיף את המונחים 'הרמת מסך', 'יחוס חובות', 'בעל מניה', 'סמכות בית המשפט'.",
+        "source_url": "https://www.knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+        "source_type": "legislation",
+        "candidate_id": "0c396c51-ca9e-49a2-ad71-dac5c85f0bae",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק החברות תיקון מס' 6 קריאה שנייה שלישית",
+        "origin": "perplexity",
+        "snippet": "חוק החברות (תיקון מס' 6), התשס״ז-2007. מסמך כנסת רלוונטי לתיקון החוק.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "knesset.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+            "hygiene_action": "keep",
+            "url_normalized": "https://knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 59,
+            "title_meaningful_chars": 34
+          },
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "statute",
+            "authority_tier": "official_primary",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "required_anchor_id": "statute_section:companies_law-s6",
+          "raw_pplx_source_type": "search result",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חוק החברות סעיף 6",
+        "source_url": "https://knesset.gov.il/committees/heb/material/data/huka2007-05-17.doc",
+        "source_type": "legislation",
+        "candidate_id": "2451f441-5e08-4aeb-8167-987caebf7363",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.15817524343729,
+        "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: החלטה בעקבות השלמות הגשת שעניינן הוראות סעיף 6(ו) לחוק בתי המשפט לענייני משפחה (תמ\"ש 19336-07-24)",
+        "origin": "local_db",
+        "snippet": "ה שלא יכול היה להעלותה אז ולא נדרש היה להעלותה. המשיב עשה כן בהזדמנות הראשונה ובעת הרלוונטית להעלתה. כן נדחית הטענה , לפי נוכח העובדה של בית המשפט נתונה סמכות לצרף תובענות , ה מוגשות ב ב תי משפט שונים (סעיף 6(ה) לחוק בית המשפט לענייני משפחה) , יש לדחות הבקשה, היות ועם הפרדת התובענות הן תאוחדנה ולכן יש, לכאורה \"לדלג\" על המשוכה שלפנינו. קבלת טענה זו, אך בשל סמכותו של בית המשפט המעוגנת בדין, משמעה איון הוראת סעיף 6(ו) לחוק . כידוע הן צרוף בעל דין והן צרוף תובענה אינן נעשות אך בשל בקשה או טענה של מי מבעלי הדין, והדבר דרוש בחינה והכרעה לגופם של דברים, כאשר לא בנקל יאפשר בית המשפט הצירוף המבוקש ולכן אין מקום \"לדלג\" על ההליכים שאינם מתאפשרים כדבר שבשגרה . לגופו של עניין - בבע\"מ 6975/12 ב.ח.מ.י ניהול אחזקות בע\"מ נ' עו\"ד עופר שפירא – כונס נכסים (28.10.2012) עמד בית המשפט העליון, בין היתר, על השיקולים שעל בית המשפט לענייני משפחה לשקול בבואו להפעיל סמכותו מכוח הוראת ה חוק הנ\"ל : \"בהפעלת סמכות הצירוף על פי סעיף 6(ו) לחוק ישקול בית המשפט גם את השאלה, אם הצדק והתועלת בצירופו של הצד השלישי לצורך בירור התובענה וההכרעה בסכסוך, עולים על הפגיעה בעניינו של הצד השלישי שעד לצירופו כלל לא היה צד לתובענה. על בית המשפט לבחון את השאלה, אם לא ניתן לברר את התובענה ולהכריע בסכסוך ללא נוכחותו של הצד השלישי כבעל",
+        "claim_id": "C1",
+        "metadata": {
+          "court": "בתי המשפט לענייני משפחה",
+          "judges": "דיאנה פסו-ואגו",
+          "district": "מחוז דרום",
+          "extended_text": "ה שלא יכול היה להעלותה אז ולא נדרש היה להעלותה. המשיב עשה כן בהזדמנות הראשונה ובעת הרלוונטית להעלתה. כן נדחית הטענה , לפי נוכח העובדה של בית המשפט נתונה סמכות לצרף תובענות , ה מוגשות ב ב תי משפט שונים (סעיף 6(ה) לחוק בית המשפט לענייני משפחה) , יש לדחות הבקשה, היות ועם הפרדת התובענות הן תאוחדנה ולכן יש, לכאורה \"לדלג\" על המשוכה שלפנינו. קבלת טענה זו, אך בשל סמכותו של בית המשפט המעוגנת בדין, משמעה איון הוראת סעיף 6(ו) לחוק . כידוע הן צרוף בעל דין והן צרוף תובענה אינן נעשות אך בשל בקשה או טענה של מי מבעלי הדין, והדבר דרוש בחינה והכרעה לגופם של דברים, כאשר לא בנקל יאפשר בית המשפט הצירוף המבוקש ולכן אין מקום \"לדלג\" על ההליכים שאינם מתאפשרים כדבר שבשגרה . לגופו של עניין - בבע\"מ 6975/12 ב.ח.מ.י ניהול אחזקות בע\"מ נ' עו\"ד עופר שפירא – כונס נכסים (28.10.2012) עמד בית המשפט העליון, בין היתר, על השיקולים שעל בית המשפט לענייני משפחה לשקול בבואו להפעיל סמכותו מכוח הוראת ה חוק הנ\"ל : \"בהפעלת סמכות הצירוף על פי סעיף 6(ו) לחוק ישקול בית המשפט גם את השאלה, אם הצדק והתועלת בצירופו של הצד השלישי לצורך בירור התובענה וההכרעה בסכסוך, עולים על הפגיעה בעניינו של הצד השלישי שעד לצירופו כלל לא היה צד לתובענה. על בית המשפט לבחון את השאלה, אם לא ניתן לברר את התובענה ולהכריע בסכסוך ללא נוכחותו של הצד השלישי כבעל דין בה... במסגרת זו, יש לבחון את מידת הפגיעה בעניינו של אותו צד ג' להיות מצורף באופן שאם ניתן להגיע לבירור התובענה ולהכרעה בסכסוך שלא על דרך צירופו, כך יש לנהוג גם אם הדבר קשה יותר. הגישה הכוללנית אינטגרטיבית של המחוקק בחקיקת החוק והמוצאת את ביטויה גם בסעיף 6(ו) לחוק, להביא לפתרון כולל של הסכסוך גם",
+          "procedure_type": "משפחה",
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "not_citable",
+            "authority_tier": "index_or_listing",
+            "text_usability": "listing_page",
+            "integrity_flags": [
+              "listing_or_pagination_page"
+            ],
+            "downgrade_reason": "caselaw_type_on_listing_page",
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "required_anchor_id": "statute_section:companies_law-s6"
+        },
+        "query_he": "סעיף 6 לחוק החברות",
+        "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=290",
+        "document_id": "ca14dacc-32e2-4e33-9db8-f7f17576c19d",
+        "source_type": "caselaw",
+        "candidate_id": "9dca2e69-d149-4689-88a1-83f405e94877",
+        "retrieval_method": "text",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.127356717735529,
+        "title": "חוק בינוי ופינוי של אזורי שיקום",
+        "origin": "local_db",
+        "snippet": "ום שיכונים ציבוריים תקנות מקרקעין • מיסוי מקרקעין • תכנון ובניה • שמאי מקרקעין • הגנת הצרכן • מס ערך מוסף • תקנות המודדים שונות קובץ החלטות רמ\"י • תכניות תמ\"א • תת\"ל • תקן שמאים • קווים מנחים לשומות חלק מפרויקט ספר החוקים הפתוח אוחזר מתוך \" https://he.wikisource.org/w/index.php?title=חוק_בינוי_ופינוי_של_אזורי_שיקום&oldid=2883815 \" <div",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false,
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "statute",
+            "authority_tier": "statute_mirror",
+            "text_usability": "substantive_excerpt",
+            "integrity_flags": [
+              "consolidated_statute_mirror"
+            ],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "required_anchor_id": "statute_section:companies_law-s6"
+        },
+        "query_he": "חוק החברות סעיף 6",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+        "document_id": "9d93b35a-1a84-4c0f-b470-611eb5b044e5",
+        "source_type": "israeli_law",
+        "candidate_id": "6f7c69f9-a5e4-451f-8619-71235deadc73",
+        "retrieval_method": "text",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק החברות, תשנ\"ט-1999",
+        "origin": "perplexity",
+        "snippet": "חוק החברות, תשנ\"ט-1999",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "thin_body",
+            "title_status": "valid",
+            "url_original": "https://www.nevo.co.il/law_html/law01/139_002.htm",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.nevo.co.il/law_html/law01/139_002.htm",
+            "hygiene_reasons": [
+              "body_thin",
+              "url_generic_index"
+            ],
+            "landing_page_status": "generic_index",
+            "body_meaningful_chars": 20,
+            "title_meaningful_chars": 20
+          },
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "statute",
+            "authority_tier": "primary_mirror",
+            "text_usability": "metadata_only",
+            "integrity_flags": [
+              "official_host_non_specific_path"
+            ],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "required_anchor_id": "statute_section:companies_law-s6",
+          "raw_pplx_source_type": "nevo",
+          "source_type_normalized": true,
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חוק החברות 6",
+        "source_url": "https://www.nevo.co.il/law_html/law01/139_002.htm",
+        "source_type": "legislation",
+        "candidate_id": "5c1fb7d1-57ec-44c9-96ab-8dcc069101ea",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.75,
+        "title": "חוק החברות (תיקון מס' 6), התשס\"ז-2007",
+        "origin": "perplexity",
+        "snippet": "חוק החברות (תיקון מס' 6), התשס\"ז-2007",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "takdin.co.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "thin_body",
+            "title_status": "valid",
+            "url_original": "https://www.takdin.co.il/document/index/706607-%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA-%D7%AA%D7%99%D7%A7%D7%95%D7%9F-%D7%9E%D7%A1-6-%D7%94%D7%AA%D7%A9%D7%A1%D7%96-2007",
+            "hygiene_action": "keep",
+            "url_normalized": "https://www.takdin.co.il/document/index/706607-%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA-%D7%AA%D7%99%D7%A7%D7%95%D7%9F-%D7%9E%D7%A1-6-%D7%94%D7%AA%D7%A9%D7%A1%D7%96-2007",
+            "hygiene_reasons": [
+              "body_thin"
+            ],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 32,
+            "title_meaningful_chars": 32
+          },
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "not_citable",
+            "authority_tier": "index_or_listing",
+            "text_usability": "listing_page",
+            "integrity_flags": [
+              "listing_or_pagination_page"
+            ],
+            "downgrade_reason": "caselaw_type_on_listing_page",
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "required_anchor_id": "statute_section:companies_law-s6",
+          "role_corrected_from": "primary_statute",
+          "raw_pplx_source_type": "takdin",
+          "source_type_normalized": true,
+          "classified_source_class": "court_case"
+        },
+        "query_he": "חוק החברות 6",
+        "source_url": "https://www.takdin.co.il/document/index/706607-%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA-%D7%AA%D7%99%D7%A7%D7%95%D7%9F-%D7%9E%D7%A1-6-%D7%94%D7%AA%D7%A9%D7%A1%D7%96-2007",
+        "source_type": "caselaw",
+        "candidate_id": "ea4bbce8-bce9-4f61-95c0-b56bc00a8456",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.3793672432578744,
+        "title": "\"בין האתמול לעתיד, בין האוצר לתחתית\": אחריות דירקטוריון בגין חלוקה אסורה | אסף אקשטיין ודוד האן (כרך כד(2))",
+        "origin": "local_db",
+        "snippet": "שה; ולענין זה, \n'רכישה' – רכישה או מתן מימון לרכישה, במישרין או בעקיפין, בידי חברה או \nבידי חברה בת שלה או בידי תאגיד אחר בשליטתה, של מניות החברה או של \nניירות ערך שניתן להמירם למניות החברה או שניתן לממשם במניות החברה, או \nפדיון של ניירות ערך בני פדיון שהם חלק מהונה העצמי של החברה בהתאם \n______________ \nהיחידה לסיפוק תביעותיהם, הונה העצמי של החברה, לא תדולדל שלא כדין\"); יוסף גרוס חוק \nהחברות כרך א 895 (מהדורה חמישית מורחבת, 2016). \n13 Trevor v. Whitworth (1887) 12 App. Cas. 409 (HL) (appeal taken from Eng.); ע\"א 486/69 \nקמחי נ' בנק י' ל' פויכטונגר בע\"מ, פ\"ד כד(1 )527 ,530 (1970 .)נוסף על כך, ס' 139 לפקודת \nהחברות [נוסח חדש], התשמ\"ג\n-\n1983 אסר על חברה לסייע במימון רכישת מניותיה על ידי אדם \nאחר. ראו בעניין זה ע\"א 817/79 קוסוי נ' בנק י.ל. פויכטונגר בע\"מ, פ\"ד לח(3 )253 (1984); ועדת\n-\nהחקירה לענין ויסות מניות הבנקים דין\n-\nוחשבון (1986.) \n14 גרוס \"מקורות לחלוקת דיווידנד\", לעיל ה\"ש 8, בעמ' 246; יצחק סוארי, משה ברקת ודן גבעולי \nהיבטים בחלוקת דיבידנד – לאור חוק החברות החדש 220 (1999); יוסף גרוס \"מהו רווח הניתן \nל'חלוקה' על\n-\nפי חוק החברות?\" קרית המשפט ב 67 ,74–75 (2002.) \n15 הוועדה לחקיקת חוק חברות חדש דין וחשבון (1994). \n16 ראו דברי ההסבר להצעת חוק החברות, לעיל ה\"ש 12, בעמ' 100. \n17 שם, בע",
+        "claim_id": "C1",
+        "metadata": {
+          "abstract": "אחת ההחלטות החשובות ביותר שמתקבלות בחברה, על ידי דירקטוריון החברה, היא ההחלטה על חלוקה, בדרך כלל של דיווידנד. במהלך השנים האחרונות ניתנו בישראל כמה פסקי דין שמעוררים שאלה כבדת משקל, והיא מהו סטנדרט הביקורת השיפוטית הראוי ביחס להחלטה של דירקטורים ...",
+          "source_site": "reichman_law_review",
+          "extended_text": "שה; ולענין זה, \n'רכישה' – רכישה או מתן מימון לרכישה, במישרין או בעקיפין, בידי חברה או \nבידי חברה בת שלה או בידי תאגיד אחר בשליטתה, של מניות החברה או של \nניירות ערך שניתן להמירם למניות החברה או שניתן לממשם במניות החברה, או \nפדיון של ניירות ערך בני פדיון שהם חלק מהונה העצמי של החברה בהתאם \n______________ \nהיחידה לסיפוק תביעותיהם, הונה העצמי של החברה, לא תדולדל שלא כדין\"); יוסף גרוס חוק \nהחברות כרך א 895 (מהדורה חמישית מורחבת, 2016). \n13 Trevor v. Whitworth (1887) 12 App. Cas. 409 (HL) (appeal taken from Eng.); ע\"א 486/69 \nקמחי נ' בנק י' ל' פויכטונגר בע\"מ, פ\"ד כד(1 )527 ,530 (1970 .)נוסף על כך, ס' 139 לפקודת \nהחברות [נוסח חדש], התשמ\"ג\n-\n1983 אסר על חברה לסייע במימון רכישת מניותיה על ידי אדם \nאחר. ראו בעניין זה ע\"א 817/79 קוסוי נ' בנק י.ל. פויכטונגר בע\"מ, פ\"ד לח(3 )253 (1984); ועדת\n-\nהחקירה לענין ויסות מניות הבנקים דין\n-\nוחשבון (1986.) \n14 גרוס \"מקורות לחלוקת דיווידנד\", לעיל ה\"ש 8, בעמ' 246; יצחק סוארי, משה ברקת ודן גבעולי \nהיבטים בחלוקת דיבידנד – לאור חוק החברות החדש 220 (1999); יוסף גרוס \"מהו רווח הניתן \nל'חלוקה' על\n-\nפי חוק החברות?\" קרית המשפט ב 67 ,74–75 (2002.) \n15 הוועדה לחקיקת חוק חברות חדש דין וחשבון (1994). \n16 ראו דברי ההסבר להצעת חוק החברות, לעיל ה\"ש 12, בעמ' 100. \n17 שם, בעמ' 101. \n18 בפרק השני לחלק השביעי לחוק החברות. \n19 ראו דברי ההסבר להצעת חוק החברות, לעיל ה\"ש 12. \n\nמשפט ועסקים כד, תשפ\"ב אחריות דירקטוריון בגין חלוקה אסורה \n645 \nלסעיף 312(ד), ולרבות התחייבות לעשיית כל אחד מאלה, והכל, ובלבד שהמוכר \nאינו החברה עצמה או תאגיד אחר בבעלותה המלאה של החברה...\"\n20\n \n\"דיבידנ",
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "scholarship",
+            "authority_tier": "secondary_commentary",
+            "text_usability": "full_text",
+            "integrity_flags": [],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "required_anchor_id": "statute_section:companies_law-s6"
+        },
+        "query_he": "חוק החברות 6",
+        "source_url": "https://runilawreview.org/2022/01/30/vol24-eckstein-hahn/",
+        "document_id": "ac6c2e62-4af4-43d0-8422-0b80cc116bc1",
+        "source_type": "journal_article",
+        "candidate_id": "bcaa29c7-dcef-4912-8b99-bd2d9c73456b",
+        "retrieval_method": "vector",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.3726812989819146,
+        "title": "מיסוי אשכול חברות רב-לאומי | תמיר שאנן ואורי גולדפריד (כרך יט)",
+        "origin": "local_db",
+        "snippet": "פשר לאשכול החברות הרב\n-\nלאומי \nלהפיק פעילות יצרנית בכל מדינה ומדינה.\n28\n כפועל יוצא מפעילות ענפה זו, רבות הן \n______________ \n23 לחובסקי, לעיל ה\"ש 16, בעמ' 10–20. \n24 להרחבה על\n-\nאודות ההבדל בין מדינות שונות בהגדרה של חברה\n-\nבת ראו אליהו גילבאי מיסוי \nחברות החזקה ואשכול חברות 49–65 (2003.) \n25 על  חלק  משיקולי  המס  נרחיב  בפרק  ב  להלן.  להרחבה  ראו:  Walter  W.  Brundo, Tax \nConsiderations in Selecting a Form of Foreign Business Organization, 13 VAND. L. REV. \n151 (1959). \n26 Joseph P. Griffin, The Power of Host Countries Over the Multinational: Lifting the Veil in \nthe  European  Economic  Community  and  the  United States,  6 L. & POL'Y INT'L BUS. 375, \n378–379, 381 (1974). \n27 לחובסקי, לעיל ה\"ש 16, בעמ' 37. \n28 Bruce  Kogut, Multinational  Corporations, in INTERNATIONAL ENCYCLOPEDIA  OF  THE \nSOCIAL AND BEHAVIORAL SCIENCES 10197 (Neil J. Smelser & Paul B. Baltes eds., 2001). \n\nמשפט ועסקים יט, תשע\"ז  מיסוי אשכול חברות רב\n-\nלאומי \n1075 \nהמדינות שמעוניינות למסות את רווחיו והכנסותיו של אשכול החברות הרב\n-\nלאומי או \nאת החברות\n-\nהבנות שפועלות תחתיו. בהמשך הרשימה נציג את משטרי המס שאומצו \nעל\n-\nמנת להתמודד עם אופן פעילותם של אשכולות החברות הרב\n-\nלאומיים. לעת עתה \nנציין כי כחלק מפתרון ",
+        "claim_id": "C1",
+        "metadata": {
+          "abstract": "מיסוי של תאגידים רב-לאומיים הוא אחת הסוגיות הבוערות ביותר בתחום המיסוי הבין-לאומי זה שנים רבות. אולם למרבה הצער נראה כי טרם ניתן מענה אפקטיבי לפעילותם הענפה של תאגידים אלה. בעוד שבעבר פעלו תאגידים אלה בעיקר בגבולותיהן של המדינות שבהן התאגדו, ...",
+          "source_site": "reichman_law_review",
+          "extended_text": "פשר לאשכול החברות הרב\n-\nלאומי \nלהפיק פעילות יצרנית בכל מדינה ומדינה.\n28\n כפועל יוצא מפעילות ענפה זו, רבות הן \n______________ \n23 לחובסקי, לעיל ה\"ש 16, בעמ' 10–20. \n24 להרחבה על\n-\nאודות ההבדל בין מדינות שונות בהגדרה של חברה\n-\nבת ראו אליהו גילבאי מיסוי \nחברות החזקה ואשכול חברות 49–65 (2003.) \n25 על  חלק  משיקולי  המס  נרחיב  בפרק  ב  להלן.  להרחבה  ראו:  Walter  W.  Brundo, Tax \nConsiderations in Selecting a Form of Foreign Business Organization, 13 VAND. L. REV. \n151 (1959). \n26 Joseph P. Griffin, The Power of Host Countries Over the Multinational: Lifting the Veil in \nthe  European  Economic  Community  and  the  United States,  6 L. & POL'Y INT'L BUS. 375, \n378–379, 381 (1974). \n27 לחובסקי, לעיל ה\"ש 16, בעמ' 37. \n28 Bruce  Kogut, Multinational  Corporations, in INTERNATIONAL ENCYCLOPEDIA  OF  THE \nSOCIAL AND BEHAVIORAL SCIENCES 10197 (Neil J. Smelser & Paul B. Baltes eds., 2001). \n\nמשפט ועסקים יט, תשע\"ז  מיסוי אשכול חברות רב\n-\nלאומי \n1075 \nהמדינות שמעוניינות למסות את רווחיו והכנסותיו של אשכול החברות הרב\n-\nלאומי או \nאת החברות\n-\nהבנות שפועלות תחתיו. בהמשך הרשימה נציג את משטרי המס שאומצו \nעל\n-\nמנת להתמודד עם אופן פעילותם של אשכולות החברות הרב\n-\nלאומיים. לעת עתה \nנציין כי כחלק מפתרון הבעיה אנו סוברים כי יש לבחון את אשכול החברות – שעימו \nנמנה גם אשכול החברות הרב\n-\nלאומי – כיחידה משפטית\n-\nכלכלית אחת. להצדקת \nהשקפה זו נתבסס על עולמות הכלכלה והמשפט. \n1. אשכול חברות בראי תורת הארגונים ותורת הכלכלה \nבחינה כלכלית ובחינה משפטית יכולות להוביל למסקנה משותפת כי יש להשקיף על \nאשכול החברות כ",
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "scholarship",
+            "authority_tier": "secondary_commentary",
+            "text_usability": "full_text",
+            "integrity_flags": [],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "required_anchor_id": "statute_section:companies_law-s6"
+        },
+        "query_he": "חוק החברות 6",
+        "source_url": "https://runilawreview.org/2016/11/01/volume19_shanan_goldfryd/",
+        "document_id": "ea302f60-294c-4c9c-9bb3-c496a95c4864",
+        "source_type": "journal_article",
+        "candidate_id": "5a44eede-a16a-4671-be53-941f682224e0",
+        "retrieval_method": "vector",
+        "expected_source_type": "statute"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 15524,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 27067,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "claim_analyzer.escalated",
+        "escalated": true,
+        "http_status": 200
+      },
+      {
+        "ms": 25170,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 1184,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 12527,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 48695,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 47177,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter_v2.initial",
+        "escalated": false,
+        "http_status": 200
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://www.npo.co.il/wp-content/uploads/2020/11/%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA.pdf",
+        "role": "primary_statute",
+        "title": "חוק החברות, התשנ\"ט-1999",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - נוסח מעודכן (ציטוט מלא ומדויק של לשון הסעיף); חיפוש במסמכים רשמיים: אתר הכנסת, משרד המשפטים, נבו או רישומי חקיקה רשמיים.",
+        "drop_reason": "class_unknown_not_admitted_for_primary_statute"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA",
+        "role": "primary_statute",
+        "title": "חוק החברות, התשנ״ט–1999",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - האם הסעיף עוסק ב'הרמת מסך' ו'ייחוס חובות של החברה לבעל מניה' ומעניק לבית המשפט סמכות לייחס חובות; חפש בשפת הסעיף את המונחים 'הרמת מסך', 'יחוס חובות', 'בעל מניה', 'סמכות בית המשפט'.",
+        "drop_reason": "class_unknown_not_admitted_for_primary_statute"
+      },
+      {
+        "url": "https://he.afiklaw.com/caselaw/8976/2",
+        "role": "primary_statute",
+        "title": "הפ (ראשל\"צ) 8871-09-18 ג.ר.ו.י יזמות והשקעות בע\"מ נ' מוניות חוף הזהב בעמ - חלק 2",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - רשימת העילות המנויות בסעיף להרמת מסך; חפש במפורש בלשון הסעיף מונחים כגון 'הונאה', 'הטעיה', 'הברחת נכסים', 'סיכול זכויות נושים', 'ערבוב נכסים', 'שימוש לרעה באישיות המשפטית'.",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://he.afiklaw.com/caselaw/5604/13",
+        "role": "primary_statute",
+        "title": "עא 4263/04 קיבוץ משמר העמק נ' עו\"ד טומי מנור, מפרק אפרוחי הצפון בע\"מ, פ ...",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - רשימת העילות המנויות בסעיף להרמת מסך; חפש במפורש בלשון הסעיף מונחים כגון 'הונאה', 'הטעיה', 'הברחת נכסים', 'סיכול זכויות נושים', 'ערבוב נכסים', 'שימוש לרעה באישיות המשפטית'.",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA",
+        "role": "primary_statute",
+        "title": "חוק החברות, התשנ\"ט–1999",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - גבולות הסעד לפי הסעיף: חפש בלשון הסעיף התייחסות ל'הוראה חלה כלפי \"בעל מניה\"', 'הפעלת שיקול דעת בית המשפט', או ניסוחים המגדירים את טיב הסעד והיקפו.",
+        "drop_reason": "class_unknown_not_admitted_for_primary_statute"
+      },
+      {
+        "url": "https://www.npo.co.il/wp-content/uploads/2020/11/%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA.pdf",
+        "role": "primary_statute",
+        "title": "חוק החברות, התשנ\"ט–1999",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "סעיף 6 לחוק החברות, התשנ\"ט–1999 - גבולות הסעד לפי הסעיף: חפש בלשון הסעיף התייחסות ל'הוראה חלה כלפי \"בעל מניה\"', 'הפעלת שיקול דעת בית המשפט', או ניסוחים המגדירים את טיב הסעד והיקפו.",
+        "drop_reason": "class_unknown_not_admitted_for_primary_statute"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA",
+        "role": "primary_statute",
+        "title": "חוק החברות, התשנ״ט–1999",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "חוק החברות סעיף 6",
+        "drop_reason": "class_unknown_not_admitted_for_primary_statute"
+      },
+      {
+        "url": "https://www.npo.co.il/wp-content/uploads/2020/11/%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA.pdf",
+        "role": "primary_statute",
+        "title": "חוק החברות, התשנ\"ט-1999",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "חוק החברות סעיף 6",
+        "drop_reason": "class_unknown_not_admitted_for_primary_statute"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA",
+        "role": "primary_statute",
+        "title": "חוק החברות, התשנ\"ט-1999",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "חוק החברות 6",
+        "drop_reason": "class_unknown_not_admitted_for_primary_statute"
+      },
+      {
+        "url": "https://www.npo.co.il/wp-content/uploads/2020/11/%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA.pdf",
+        "role": "primary_statute",
+        "title": "חוק החברות, התשנ\"ט–1999",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "סעיף 6 לחוק החברות",
+        "drop_reason": "class_unknown_not_admitted_for_primary_statute"
+      },
+      {
+        "url": "https://he.afiklaw.com/caselaw/15468/3",
+        "role": "primary_statute",
+        "title": "תא (מרכז) 42447-06-20 אר.ג'י.אם. תעשיות מזון בע\"מ נ' משה קאופטייל",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "סעיף 6 לחוק החברות",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA",
+        "role": "primary_statute",
+        "title": "חוק החברות - ויקיטקסט",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "סעיף 6 לחוק החברות",
+        "drop_reason": "followup:class_unknown_not_admitted_for_primary_statute"
+      },
+      {
+        "url": "https://mo.ralc.co.il/%D7%9E%D7%90%D7%9E%D7%A8-1568-%D7%97%D7%95%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%95%D7%AA-%D7%A1%D7%A2%D7%99%D7%A3-6-%D7%94%D7%A8%D7%9E%D7%AA-%D7%9E%D7%A1%D7%9A.aspx",
+        "role": "primary_statute",
+        "title": "חוק החברות סעיף 6. הרמת מסך",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "סעיף 6 לחוק החברות",
+        "drop_reason": "followup:class_unknown_not_admitted_for_primary_statute"
+      },
+      {
+        "url": "https://www.gatrimon-law.co.il/%D7%94%D7%90%D7%9D-%D7%91%D7%A2%D7%9C%D7%99-%D7%94%D7%9E%D7%A0%D7%99%D7%95%D7%AA-%D7%99%D7%A9%D7%9C%D7%9E%D7%95-%D7%90%D7%AA-%D7%97%D7%95%D7%91%D7%95%D7%AA-%D7%94%D7%97%D7%91%D7%A8%D7%94/",
+        "role": "primary_statute",
+        "title": "חובות חברה: מתי בעלי המניות ישלמו? | עו\"ד גת רימון",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "סעיף 6 לחוק החברות",
+        "drop_reason": "followup:discovery_only"
+      }
+    ],
+    "required_anchors": {
+      "count": 1,
+      "anchors": [
+        {
+          "target": "both",
+          "anchor_id": "statute_section:companies_law-s6",
+          "anchor_type": "primary_statute",
+          "description": "הנוסח המחייב של סעיף 6 לחוק החברות",
+          "query_count": 3,
+          "is_docket_anchor": false,
+          "is_statute_section_anchor": true
+        }
+      ],
+      "enabled": true,
+      "statuses": [
+        {
+          "cited": true,
+          "status": "cited",
+          "emitted": true,
+          "queries": [
+            "חוק החברות סעיף 6",
+            "חוק החברות 6",
+            "סעיף 6 לחוק החברות"
+          ],
+          "anchor_id": "statute_section:companies_law-s6",
+          "anchor_type": "primary_statute",
+          "description": "הנוסח המחייב של סעיף 6 לחוק החברות",
+          "candidate_ids": [
+            "bf526da1-d6be-445c-8b50-3f824403caec",
+            "27ef61a3-3ea8-403e-9b7b-bf285857e6c8",
+            "2b8a6824-627f-4f2a-8a89-818be048e7bc",
+            "c2df138a-4767-4b17-bc7b-41201aedb156",
+            "0c396c51-ca9e-49a2-ad71-dac5c85f0bae"
+          ],
+          "is_docket_anchor": false,
+          "reached_verifier": true,
+          "verified_support": "direct",
+          "is_statute_section_anchor": true
+        }
+      ],
+      "queries_emitted": [
+        {
+          "role": "primary_statute",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "חוק החברות סעיף 6",
+          "is_docket_anchor": false,
+          "required_anchor_id": "statute_section:companies_law-s6"
+        },
+        {
+          "role": "primary_statute",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "חוק החברות 6",
+          "is_docket_anchor": false,
+          "required_anchor_id": "statute_section:companies_law-s6"
+        },
+        {
+          "role": "primary_statute",
+          "targets": [
+            "local_db",
+            "perplexity"
+          ],
+          "claim_id": "C1",
+          "query_he": "סעיף 6 לחוק החברות",
+          "is_docket_anchor": false,
+          "required_anchor_id": "statute_section:companies_law-s6"
+        }
+      ]
+    },
+    "drafter_v2_full_compare": null,
+    "drafter_v2_opus_compare": null,
+    "drafter_v2_sonnet_compare": null
+  },
+  "answer": "**סעיף 6 — הרמת מסך**\n\nלהלן לשון סעיף 6 לחוק החברות, התשנ\"ט–1999 (נוסחו המעודכן): 6. הרמת מסך (א) הרמה של מסך ההתאגדות היא כל אחד מאלה: (1) ייחוס זכויות וחובות של החברה לבעל מניה בה; (2) ייחוס תכונות, זכויות וחובות של בעל מניה לחברה. (ב) על אף הוראת סעיף 4, רשאי בית משפט להרים את מסך ההתאגדות אם התקיים לכך תנאי הקבוע בחיקוק או אם בנסיבות העניין צודק ונכון לעשות כן, או אם התקיימו התנאים הקבועים בסעיף קטן (ג).¹\n\nסעיף 6 מגדיר את רעיון 'הרמת מסך ההתאגדות' ומשמש כהוראת יסוד המאפשרת לבית המשפט לייחוס זכויות או חובות בין החברה ובין בעל מניה; על פי הסעיף רשאי בית משפט, בנסיבות החקיקה או בנסיבות העניין, להורות על ייחוס כזה כולל ייחוס חובות החברה לבעל מניה כאשר מתקיימות נסיבות המצדיקות הרמה.²\n\n**עילות ומקרים שהחוק מציין או מתייחס אליהם**\n\n- השימוש לרעה באישיות המשפטית של החברה, לרבות הונאה או הטעיה שמטרתן להתחמק מחובות או להטעות צדדים חיצוניים.³\n- הברחת נכסים או העברת נכסים במטרה להקשות על מימוש זכויות נושים או לסכל תביעות נגדם.³\n- ערבוב נכסים או עניינים בין החברה לבין בעלי מניותיה, כך שאין הפרדה מעשית בין הרכוש או הנהלת העניינים של החברה ובין אלה של בעלי המניות.³\n- כל מקרה שבו המבנה התאגידי מנוצל לצורך עקיפת חובות או פגיעה בזכויות נושים — כאמור, הרמת המסך חלה כאשר בנסיבות העניין צודק ונכון לעשות כן.⁴\n\nגבולות הסעד: הוראת הסעיף חלה ביחס ל'בעל מניה' וייעודה להקצות תכונות, זכויות או חובות בין החברה לבין בעל המניה; הפעלת הסעד נתונה לשיקול דעת בית המשפט וצריכה להיעשות בהתחשב בנסיבות המקרה, ובכלל זה בשיקול לגבי יכולתה של החברה לפרוע את חובותיה בעת שמיועדת להעלות חובות אלה לבעל המניה.⁴\n\nזהו נוסח הסעיף ותמצית סמכויותיו ועילותיו כפי שהן מופיעות בנוסח המעודכן של חוק החברות."
+}
