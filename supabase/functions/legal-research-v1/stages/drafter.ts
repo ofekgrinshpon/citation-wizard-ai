@@ -209,6 +209,13 @@ export interface DrafterInputSource {
   authority_tier?: string;
   text_usability?: string;
   citable_as?: string;
+  integrity_flags?: string[];
+  is_judgment_document?: boolean;
+  has_holding_text?: boolean;
+  /** Whether the classified source can satisfy the planner role it came from. */
+  can_satisfy_authority_role?: boolean;
+  /** Authority-role label for case-law synthesis (see synthesisRole.ts). */
+  synthesis_role?: string;
 }
 
 
