@@ -222,6 +222,8 @@ interface PplxSource {
   source_type?: string;
   url?: string;
   snippet?: string;
+  /** Untruncated snippet text, reserved for the synthesis snippet budget. */
+  snippet_full?: string;
 }
 
 async function callPerplexity(query: Query, queryOverride?: string): Promise<{
@@ -288,6 +290,7 @@ async function callPerplexity(query: Query, queryOverride?: string): Promise<{
           source_type: String(s.source_type ?? "").trim(),
           url: (s.url && String(s.url).trim()) || citations[i] || "",
           snippet: s.snippet ? String(s.snippet).slice(0, 400) : undefined,
+          snippet_full: s.snippet ? String(s.snippet).slice(0, 1600) : undefined,
         }))
       : [];
     return { raw, ms, ok: true, http: r.status };
@@ -454,6 +457,10 @@ function processRaw(
       expected_source_type: query.expected_source_type,
       metadata: {
         domain, classified_source_class: cls,
+        // Reserved text for the synthesis snippet budget (display cap unchanged).
+        ...(s.snippet_full && s.snippet_full.length > (s.snippet?.length ?? 0)
+          ? { extended_text: s.snippet_full }
+          : {}),
         role_corrected_from: corrected_from,
         pplx_hygiene: hygiene,
         raw_pplx_source_type: rawSt,

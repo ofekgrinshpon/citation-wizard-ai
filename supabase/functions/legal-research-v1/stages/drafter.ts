@@ -216,7 +216,15 @@ export interface DrafterInputSource {
   can_satisfy_authority_role?: boolean;
   /** Authority-role label for case-law synthesis (see synthesisRole.ts). */
   synthesis_role?: string;
+  /** Synthesis snippet-budget telemetry (see synthesisSnippetBudget.ts). */
+  snippet_budget?: number;
+  snippet_budget_expanded?: boolean;
+  snippet_budget_reason?: string;
+  snippet_length?: number;
+  available_text_length?: number;
+  has_statutory_text?: boolean;
 }
+
 
 
 interface RawDraft {
@@ -227,6 +235,11 @@ interface RawDraft {
 import { computeDisplayTitle } from "./displayTitleHygiene.ts";
 import { canSatisfyRole, classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
 import { assignSynthesisRole } from "./synthesisRole.ts";
+import {
+  hasStatutoryText,
+  resolveSnippetBudget,
+  SNIPPET_DEFAULT_BUDGET,
+} from "./synthesisSnippetBudget.ts";
 
 
 export function buildInputSources(
@@ -235,6 +248,7 @@ export function buildInputSources(
   usable: UsableCandidate[],
   userDocs: UserDocument[],
   useAsSource: boolean,
+  researchMode?: string | null,
 ): DrafterInputSource[] {
   const candById = new Map(candidates.map((c) => [c.candidate_id, c]));
   const verdictsByCand = new Map<string, Verdict[]>();
@@ -274,6 +288,27 @@ export function buildInputSources(
       source_type: c.source_type,
       origin: c.origin,
     });
+    const synthesisRole = assignSynthesisRole({
+      role: c.role,
+      integrity: integ0,
+      title: c.title,
+      snippet: c.snippet,
+    }).synthesis_role;
+    // Synthesis snippet budget: judgments / statute text in a synthesis role
+    // may receive more text. Everything else keeps the default cap.
+    const budgetDecision = resolveSnippetBudget({
+      research_mode: researchMode ?? null,
+      citable_as: integ0.citable_as,
+      synthesis_role: synthesisRole,
+      text_usability: integ0.text_usability,
+    });
+    const extendedText = typeof meta0.extended_text === "string" ? meta0.extended_text : "";
+    const availableText = (
+      budgetDecision.expanded && extendedText.length > (c.snippet || "").length
+        ? extendedText
+        : (c.snippet || "")
+    ).replace(/\s+/g, " ").trim();
+    const snippetText = availableText.slice(0, budgetDecision.budget) || null;
     out.push({
       ref: `s${n++}`,
       candidate_id: c.candidate_id,
@@ -288,7 +323,7 @@ export function buildInputSources(
       best_support: u.best_support === "direct" ? "direct" : "partial",
       supported_points,
       claim_ids: vs.map((v) => v.claim_id),
-      snippet: (c.snippet || "").replace(/\s+/g, " ").trim().slice(0, 500) || null,
+      snippet: snippetText,
       authority_tier: integ0.authority_tier,
       text_usability: integ0.text_usability,
       citable_as: integ0.citable_as,
@@ -296,12 +331,13 @@ export function buildInputSources(
       is_judgment_document: integ0.is_judgment_document ?? false,
       has_holding_text: integ0.has_holding_text ?? false,
       can_satisfy_authority_role: canSatisfyRole(integ0, c.role),
-      synthesis_role: assignSynthesisRole({
-        role: c.role,
-        integrity: integ0,
-        title: c.title,
-        snippet: c.snippet,
-      }).synthesis_role,
+      synthesis_role: synthesisRole,
+      snippet_budget: budgetDecision.budget,
+      snippet_budget_expanded: budgetDecision.expanded,
+      snippet_budget_reason: budgetDecision.reason,
+      snippet_length: snippetText ? snippetText.length : 0,
+      available_text_length: availableText.length,
+      has_statutory_text: hasStatutoryText(availableText),
 
 
     });
@@ -326,7 +362,7 @@ export function buildInputSources(
           best_support: "direct",
           supported_points: [ch.text.replace(/\s+/g, " ").slice(0, 220)],
           claim_ids: [],
-          snippet: ch.text.replace(/\s+/g, " ").trim().slice(0, 500) || null,
+          snippet: ch.text.replace(/\s+/g, " ").trim().slice(0, SNIPPET_DEFAULT_BUDGET) || null,
         });
       }
     }
