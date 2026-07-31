@@ -12,13 +12,33 @@ import type { DrafterInputSource } from "./drafter.ts";
 
 export const CASE_LAW_SYNTHESIS_MODE = "case_law_synthesis";
 
+/**
+ * Deterministic source-pack separation for case-law synthesis.
+ * The LLM never decides which sources may carry a holding — the pack itself
+ * is split before drafting.
+ */
+export interface SynthesisSourceGroups {
+  /** A — judgments that may support holdings / applications / limits. */
+  usable_authorities: string[];
+  /** B — statutes / regulations (background only). */
+  statutory_background: string[];
+  /** C — scholarship / commentary (context only). */
+  secondary_context: string[];
+  /** D — judgments found but without usable holding text. */
+  found_but_not_usable: string[];
+}
+
 export interface SynthesisRenderingPlan {
   applied: boolean;
   reason:
     | "not_synthesis_mode"
     | "framing_correction_active"
     | "no_citable_judgments"
+    | "no_usable_authorities"
     | "applied";
+  /** True when synthesis mode is active but group A is empty → limitation. */
+  limitation_required: boolean;
+  groups: SynthesisSourceGroups;
   usable_judgment_refs: string[];
   metadata_only_judgment_refs: string[];
   leading_refs: string[];
@@ -28,6 +48,7 @@ export interface SynthesisRenderingPlan {
   commentary_refs: string[];
   directive_lines: string[];
 }
+
 
 function isJudgment(s: DrafterInputSource): boolean {
   return String(s.citable_as ?? "") === "judgment" || s.is_judgment_document === true;
@@ -56,6 +77,50 @@ const LIMITING_ROLES = new Set([
 ]);
 const STATUTORY_ROLES = new Set(["statutory_background", "primary_statute"]);
 
+/** Roles that may carry a case-law holding / application / limitation. */
+const AUTHORITY_ROLES = new Set([
+  "leading_candidate",
+  "applying_candidate",
+  "limiting_or_distinguishing_candidate",
+  "leading_authority",
+  "applying_authority",
+  "limiting_authority",
+  "distinguishing_candidate",
+  "limiting_candidate",
+]);
+
+const emptyGroups = (): SynthesisSourceGroups => ({
+  usable_authorities: [],
+  statutory_background: [],
+  secondary_context: [],
+  found_but_not_usable: [],
+});
+
+/**
+ * Deterministic pack separation. A judgment reaches group A only when it is a
+ * judgment, carries usable holding text, AND sits in a case-law synthesis role.
+ * Statutes never enter group A; commentary never enters group A or D.
+ */
+export function partitionSynthesisSources(
+  sources: DrafterInputSource[],
+): SynthesisSourceGroups {
+  const g = emptyGroups();
+  for (const s of sources) {
+    const role = String(s.synthesis_role ?? "");
+    if (isJudgment(s)) {
+      if (isUsableText(s) && AUTHORITY_ROLES.has(role)) g.usable_authorities.push(s.ref);
+      else g.found_but_not_usable.push(s.ref);
+      continue;
+    }
+    if (STATUTORY_ROLES.has(role) || String(s.citable_as ?? "") === "statute") {
+      g.statutory_background.push(s.ref);
+      continue;
+    }
+    g.secondary_context.push(s.ref);
+  }
+  return g;
+}
+
 /**
  * Build the synthesis rendering plan + prompt directive.
  * `framingCorrectionActive` short-circuits the plan: the named-doctrine
@@ -67,6 +132,8 @@ export function planSynthesisRendering(opts: {
   framingCorrectionActive: boolean;
 }): SynthesisRenderingPlan {
   const empty = {
+    limitation_required: false,
+    groups: emptyGroups(),
     usable_judgment_refs: [] as string[],
     metadata_only_judgment_refs: [] as string[],
     leading_refs: [] as string[],
@@ -87,36 +154,43 @@ export function planSynthesisRendering(opts: {
   const judgments = opts.sources.filter(isJudgment);
   const usable = judgments.filter(isUsableText);
   const metaOnly = judgments.filter((s) => !isUsableText(s));
+  const groups = partitionSynthesisSources(opts.sources);
 
   const byRole = (set: Set<string>) =>
     opts.sources.filter((s) => set.has(String(s.synthesis_role ?? ""))).map((s) => s.ref);
-  // Application / limitation layers may only be built from judgments that carry
-  // usable holding text; metadata-only judgments and commentary cannot create them.
+  // Application / limitation layers may only be built from judgments that are
+  // in group A; metadata-only judgments and commentary cannot create them.
+  const inGroupA = new Set(groups.usable_authorities);
   const byUsableRole = (set: Set<string>) =>
     opts.sources
-      .filter((s) => set.has(String(s.synthesis_role ?? "")) && isUsableText(s))
+      .filter((s) => set.has(String(s.synthesis_role ?? "")) && inGroupA.has(s.ref))
       .map((s) => s.ref);
 
-  const leading_refs = byRole(LEADING_ROLES);
+  const leading_refs = byRole(LEADING_ROLES).filter((r) => inGroupA.has(r));
   const applying_refs = byUsableRole(APPLYING_ROLES);
   const limiting_refs = byUsableRole(LIMITING_ROLES);
-  const statutory_refs = byRole(STATUTORY_ROLES);
-  const commentary_refs = opts.sources
-    .filter((s) => !isJudgment(s) && !STATUTORY_ROLES.has(String(s.synthesis_role ?? "")))
-    .map((s) => s.ref);
+  const statutory_refs = groups.statutory_background;
+  const commentary_refs = groups.secondary_context;
 
-  if (judgments.length === 0) {
+  if (judgments.length === 0 || groups.usable_authorities.length === 0) {
     return {
       applied: false,
-      reason: "no_citable_judgments",
+      reason: judgments.length === 0 ? "no_citable_judgments" : "no_usable_authorities",
       ...empty,
+      limitation_required: true,
+      groups,
+      metadata_only_judgment_refs: groups.found_but_not_usable,
       commentary_refs,
       statutory_refs,
     };
   }
 
-  const usableRefs = usable.map((s) => s.ref);
-  const metaRefs = metaOnly.map((s) => s.ref);
+
+  const usableRefs = groups.usable_authorities;
+  const metaRefs = groups.found_but_not_usable;
+  void usable;
+  void metaOnly;
+
 
   const L: string[] = [];
   L.push("");
@@ -151,23 +225,23 @@ export function planSynthesisRendering(opts: {
   );
   L.push("  • חוק אינו הלכה פסוקה — אין להציג נוסח חוק כקביעה של בית משפט.");
 
-  if (usable.length === 0) {
+  L.push(
+    '  • חלוקת חבילת המקורות נעשתה מראש בקוד. קבוצה A ("סמכויות פסיקתיות שמישות") היא הקבוצה היחידה שממנה מותר לגזור הלכה, יישום או סייג. קבוצה B היא רקע חקיקתי, קבוצה C היא ספרות/פרשנות, וקבוצה D היא מקורות שנמצאו אך אינם שמישים לגזירת הלכה.',
+  );
+  L.push(
+    '  • מקורות מקבוצה D מותרים אך ורק תחת הכותרת "מה לא ניתן לקבוע מהמקורות", ורק בנוסח הערת מקור מוגבל.',
+  );
+  if (usableRefs.length === 1) {
     L.push(
-      "  • אזהרה: לאף פסק דין ברשימה אין טקסט הלכתי שמיש. אל תציג אף קביעה כהלכה שנפסקה, אל תכתוב פרק יישומים או מגבלות, וציין במפורש שרק מטא-נתונים/אזכורים של פסקי דין אותרו.",
-    );
-  } else if (usable.length === 1) {
-    L.push(
-      `  • רק לפסק דין אחד יש טקסט שמיש (${usableRefs[0]}). ציין במפורש שהתשובה נסמכת בעיקר עליו ועל מקורות תומכים מוגבלים, ואל תרחיב ממנו כלל גורף.`,
+      `  • בקבוצה A יש פסק דין אחד בלבד (${usableRefs[0]}). מדובר בסקירה חלקית: מרכז את התשובה בפסק דין זה, ציין במפורש שקו הפסיקה אינו שלם, ואל תגזור ממנו כלל גורף.`,
     );
   }
   if (metaRefs.length > 0) {
     L.push(
-      `  • מקורות פסיקה עם מטא-נתונים בלבד (אין להסיק מהם הלכה, יישום או סייג; רק הערת מקור מוגבל): ${metaRefs.join(", ")}.`,
+      `  • קבוצה D — נמצאו אך אינם שמישים להלכה (אין להסיק מהם הלכה, יישום או סייג; רק הערת מקור מוגבל): ${metaRefs.join(", ")}.`,
     );
   }
-  if (usableRefs.length > 0) {
-    L.push(`  • מקורות פסיקה עם טקסט שמיש: ${usableRefs.join(", ")}.`);
-  }
+  L.push(`  • קבוצה A — סמכויות פסיקתיות שמישות: ${usableRefs.join(", ")}.`);
   L.push("");
   L.push("תפקידי סמכות שהוקצו למקורות (השתמש בהם לצורך הקיבוץ בלבד):");
   const roleLine = (label: string, refs: string[]) => {
@@ -182,6 +256,8 @@ export function planSynthesisRendering(opts: {
   return {
     applied: true,
     reason: "applied",
+    limitation_required: false,
+    groups,
     usable_judgment_refs: usableRefs,
     metadata_only_judgment_refs: metaRefs,
     leading_refs,
@@ -191,6 +267,7 @@ export function planSynthesisRendering(opts: {
     commentary_refs,
     directive_lines: L,
   };
+
 }
 
 // ── Post-draft telemetry ────────────────────────────────────────────────────
@@ -203,6 +280,17 @@ export interface SynthesisRenderingReport {
   metadata_only_sources_used_as_holdings: boolean;
   commentary_used_as_primary_authority: boolean;
   named_case_keys: string[];
+  groups: SynthesisSourceGroups;
+  group_counts: Record<string, number>;
+}
+
+function groupCounts(g: SynthesisSourceGroups): Record<string, number> {
+  return {
+    usable_authorities: g.usable_authorities.length,
+    statutory_background: g.statutory_background.length,
+    secondary_context: g.secondary_context.length,
+    found_but_not_usable: g.found_but_not_usable.length,
+  };
 }
 
 /** Docket-style identifiers, e.g. ע"א 52/80, בג״ץ 6698/95, בע"מ 5620/24. */
@@ -241,6 +329,8 @@ export function reportSynthesisRendering(opts: {
       metadata_only_sources_used_as_holdings: false,
       commentary_used_as_primary_authority: false,
       named_case_keys: [],
+      groups: opts.plan.groups,
+      group_counts: groupCounts(opts.plan.groups),
     };
   }
   const bodyKeys = docketKeys(opts.answerMarkdown);
@@ -285,5 +375,7 @@ export function reportSynthesisRendering(opts: {
     metadata_only_sources_used_as_holdings: metadataAsHolding,
     commentary_used_as_primary_authority: named_cases_in_body === 0 && commentaryCited,
     named_case_keys: Array.from(new Set(named_case_keys)),
+    groups: opts.plan.groups,
+    group_counts: groupCounts(opts.plan.groups),
   };
 }

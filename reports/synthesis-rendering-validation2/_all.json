@@ -1,0 +1,157 @@
+[
+  {
+    "id": "C2b",
+    "run_id": "25539ee5-b586-46a9-a2b4-5ce2d02dd34d",
+    "research_mode": "case_law_synthesis",
+    "pool_judgments": 2,
+    "pool_judgments_with_holding": 1,
+    "citable_counts": {
+      "statute": 3,
+      "unknown": 5,
+      "judgment": 4,
+      "commentary": 10,
+      "not_citable": 1,
+      "scholarship": 6
+    },
+    "synthesis_role_counts": {
+      "unknown": 6,
+      "leading_candidate": 2,
+      "applying_candidate": 2,
+      "secondary_commentary": 16,
+      "statutory_background": 3
+    },
+    "synthesis_role_overrides": 12,
+    "pack": {
+      "has_judgment": true,
+      "statute_count": 1,
+      "judgment_count": 4,
+      "commentary_count": 3,
+      "by_synthesis_role": {
+        "unknown": 1,
+        "leading_candidate": 2,
+        "applying_candidate": 2,
+        "secondary_commentary": 3,
+        "statutory_background": 1
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": true,
+      "has_statutory_background": true,
+      "judgments_with_holding_text": 1
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "בע\"מ 4623/04",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "full_text",
+        "synthesis_role": "leading_candidate"
+      },
+      {
+        "n": 2,
+        "title": "גדרי הלכת שיתוף ספציפי בדירת מגורים",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 2,
+        "title": "החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואין ועל נכסים ",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 3,
+        "title": "חוק המקרקעין, תשכ\"ט-1969",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 4,
+        "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "leading_candidate"
+      },
+      {
+        "n": 4,
+        "title": "ע\"א 1000/92",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "applying_candidate"
+      },
+      {
+        "n": 4,
+        "title": "פסק דין מחוזי \"יישום\" \"הלכת השיתוף\"",
+        "citable_as": "judgment",
+        "tier": "primary_mirror",
+        "usability": "metadata_only",
+        "synthesis_role": "applying_candidate"
+      },
+      {
+        "n": 5,
+        "title": "10615-11-21.docx | gov.il",
+        "citable_as": "unknown",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "unknown"
+      },
+      {
+        "n": 5,
+        "title": "ביהמ\"ש העליון דחה עתירה לקיום ד\"נ בעניין פירוק שיתוף במקרקעין",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      }
+    ],
+    "answer_len": 1670,
+    "answer_head": "**שורה תחתונה**\n\nהפסיקה שנמצאה קובעת באופן מצומצם כי הלכת השיתוף יכולה לחול גם על נכסים שאינם מקרקעין, אך חלות עליה מגבלות של היקף ותכלית — בית המשפט בוחן את אופי הנכס והנסיבות היחסיות בטרם יקבע כי התקיים שיתוף.¹\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nפסק הדין המרכזי שנמצא הוא בע\"מ 4623/04; בהכרעתו בוחן ב"
+  },
+  {
+    "id": "C2",
+    "run_id": "1ad263f6-a296-4dd5-828f-318075658d49",
+    "research_mode": "case_law_synthesis",
+    "pool_judgments": 1,
+    "pool_judgments_with_holding": 1,
+    "citable_counts": {
+      "statute": 4,
+      "unknown": 2,
+      "judgment": 3,
+      "commentary": 7,
+      "not_citable": 1,
+      "scholarship": 2
+    },
+    "synthesis_role_counts": {
+      "unknown": 2,
+      "leading_candidate": 2,
+      "applying_candidate": 1,
+      "secondary_commentary": 9,
+      "statutory_background": 5
+    },
+    "synthesis_role_overrides": 8,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 0,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {},
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [],
+    "answer_len": 438,
+    "answer_head": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק יחסי ממון בין בני זוג, תשל\"ג-1"
+  }
+]
