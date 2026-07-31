@@ -6,6 +6,7 @@ import {
   classifySourceIntegrity,
   type SourceIntegrity,
 } from "./sourceIntegrity.ts";
+import { assignSynthesisRole } from "./synthesisRole.ts";
 
 
 function normTitle(t: string): string {
