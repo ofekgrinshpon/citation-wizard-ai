@@ -303,7 +303,7 @@ function buildUserMessage(
   lines.push("");
   lines.push(`מקורות זמינים (${sources.length}) — השתמש אך ורק במזהים האלה ב-source_refs:`);
 
-  const renderSource = (s: DrafterInputSource) => {
+  const renderSource = (s: DrafterInputSource, opts?: { noText?: boolean }) => {
     lines.push("---");
     lines.push(`ref: ${s.ref}`);
     lines.push(`title: ${s.title}`);
@@ -313,6 +313,12 @@ function buildUserMessage(
       lines.push(
         `authority: citable_as=${s.citable_as ?? "unknown"} | tier=${s.authority_tier ?? "unknown"} | text_usability=${s.text_usability ?? "unknown"} | has_holding_text=${s.has_holding_text === true} | synthesis_role=${s.synthesis_role ?? "unknown"}`,
       );
+    }
+    if (opts?.noText) {
+      lines.push(
+        "note: לא נמצא בו טקסט אופרטיבי מספיק; אין לגזור ממנו הלכה, יישום או סייג.",
+      );
+      return;
     }
     if (s.best_support === "partial") {
       lines.push(`hint: תמיכה חלקית בלבד — נסח טענה זו בלשון זהירה (ראה חוזה הראיות במערכת ההנחיות).`);
@@ -325,7 +331,39 @@ function buildUserMessage(
     if (s.snippet) lines.push(`snippet: ${s.snippet}`);
   };
 
-  if (leadSource) {
+  if (synthesisRendering?.applied) {
+    // Deterministic pack separation: the model never sees a non-usable judgment
+    // inside the authority list.
+    const g = synthesisRendering.groups;
+    const byRef = new Map(sources.map((s) => [s.ref, s]));
+    const section = (
+      header: string,
+      refs: string[],
+      opts?: { noText?: boolean },
+    ) => {
+      lines.push("");
+      lines.push(`${header} (${refs.length}):`);
+      if (refs.length === 0) {
+        lines.push("  (אין)");
+        return;
+      }
+      for (const r of refs) {
+        const s = byRef.get(r);
+        if (s) renderSource(s, opts);
+      }
+    };
+    if (leadSource && g.usable_authorities.includes(leadSource.ref)) {
+      lines.push(`lead_ref: ${leadSource.ref}`);
+    }
+    section("A. סמכויות שמישות לגזירת הלכה (רק מהן מותר 'נקבע/נפסק/הוחל/הוגבל')", g.usable_authorities);
+    section("B. רקע חקיקתי (חוק/תקנות — לא הלכה פסוקה)", g.statutory_background);
+    section("C. הקשר משני (ספרות/פרשנות — הסבר בלבד)", g.secondary_context);
+    section(
+      'D. נמצאו אך אינם שמישים לגזירת הלכה (מותר להזכיר רק תחת "מה לא ניתן לקבוע מהמקורות")',
+      g.found_but_not_usable,
+      { noText: true },
+    );
+  } else if (leadSource) {
     lines.push(`lead_ref: ${leadSource.ref}`);
     renderSource(leadSource);
     if (secondary.length > 0) {
@@ -336,6 +374,7 @@ function buildUserMessage(
   } else {
     for (const s of sources) renderSource(s);
   }
+
   if (!useAsSource && userDocs.some((d) => d.chunks.length > 0)) {
     lines.push("");
     lines.push("הקשר רך מהמסמכים שצירף המשתמש (לרקע בלבד — אסור לצטט מהם):");
