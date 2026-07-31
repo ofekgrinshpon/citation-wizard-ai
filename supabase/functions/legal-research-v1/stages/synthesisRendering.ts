@@ -12,13 +12,33 @@ import type { DrafterInputSource } from "./drafter.ts";
 
 export const CASE_LAW_SYNTHESIS_MODE = "case_law_synthesis";
 
+/**
+ * Deterministic source-pack separation for case-law synthesis.
+ * The LLM never decides which sources may carry a holding — the pack itself
+ * is split before drafting.
+ */
+export interface SynthesisSourceGroups {
+  /** A — judgments that may support holdings / applications / limits. */
+  usable_authorities: string[];
+  /** B — statutes / regulations (background only). */
+  statutory_background: string[];
+  /** C — scholarship / commentary (context only). */
+  secondary_context: string[];
+  /** D — judgments found but without usable holding text. */
+  found_but_not_usable: string[];
+}
+
 export interface SynthesisRenderingPlan {
   applied: boolean;
   reason:
     | "not_synthesis_mode"
     | "framing_correction_active"
     | "no_citable_judgments"
+    | "no_usable_authorities"
     | "applied";
+  /** True when synthesis mode is active but group A is empty → limitation. */
+  limitation_required: boolean;
+  groups: SynthesisSourceGroups;
   usable_judgment_refs: string[];
   metadata_only_judgment_refs: string[];
   leading_refs: string[];
@@ -28,6 +48,7 @@ export interface SynthesisRenderingPlan {
   commentary_refs: string[];
   directive_lines: string[];
 }
+
 
 function isJudgment(s: DrafterInputSource): boolean {
   return String(s.citable_as ?? "") === "judgment" || s.is_judgment_document === true;
