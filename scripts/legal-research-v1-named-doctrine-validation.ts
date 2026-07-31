@@ -59,8 +59,8 @@ const results = await Promise.all(triggered.map(async ({ id, query, run_id }) =>
     output_shape: d.output_shape ?? null,
     deterministic_branch: d.deterministic_branch ?? md.deterministic_branch ?? null,
     sufficiency: md.source_sufficiency ?? null,
-    named_doctrine_framing: md.named_doctrine_framing ?? null,
-    framing_correction_required: md.framing_correction_required ?? null,
+    named_doctrine_framing: d.named_doctrine_framing ?? md.named_doctrine_framing ?? null,
+    framing_correction_required: d.framing_correction_required ?? md.framing_correction_required ?? null,
     answer_head: answer.slice(0, 700),
     answer_len: answer.length,
   };
