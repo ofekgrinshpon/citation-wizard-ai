@@ -330,6 +330,12 @@ export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
 
   const integrity: IntegrityLogRow[] = out.map((c) => {
     const integ = integrityById.get(c.candidate_id)!;
+    const sr = assignSynthesisRole({
+      role: c.role,
+      integrity: integ,
+      title: c.title,
+      snippet: c.snippet,
+    });
     return {
       candidate_id: c.candidate_id,
       title: c.title,
@@ -341,6 +347,11 @@ export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
       citable_as: integ.citable_as,
       integrity_flags: integ.integrity_flags,
       can_satisfy_role: canSatisfyRole(integ, c.role),
+      is_judgment_document: integ.is_judgment_document ?? false,
+      has_holding_text: integ.has_holding_text ?? false,
+      synthesis_role: sr.synthesis_role,
+      synthesis_role_seeded_from: sr.seeded_from,
+      synthesis_role_overridden: sr.overridden,
       downgrade_reason: integ.downgrade_reason,
     };
   });
