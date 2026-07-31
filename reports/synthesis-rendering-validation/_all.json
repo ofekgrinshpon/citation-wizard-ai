@@ -1,0 +1,489 @@
+[
+  {
+    "id": "C2b",
+    "run_id": "e6c47fb4-3881-458f-96a4-cb9c12337290",
+    "research_mode": "case_law_synthesis",
+    "pool_judgments": 2,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 1,
+      "unknown": 1,
+      "judgment": 3,
+      "commentary": 5,
+      "not_citable": 1,
+      "scholarship": 5
+    },
+    "synthesis_role_counts": {
+      "unknown": 2,
+      "leading_candidate": 3,
+      "secondary_commentary": 10,
+      "statutory_background": 1
+    },
+    "synthesis_role_overrides": 10,
+    "pack": {
+      "has_judgment": true,
+      "statute_count": 1,
+      "judgment_count": 3,
+      "commentary_count": 2,
+      "by_synthesis_role": {
+        "leading_candidate": 3,
+        "secondary_commentary": 2,
+        "statutory_background": 1
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": true,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "ע\"א 8068/16 פלונית נ' פלוני",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "substantive_excerpt",
+        "synthesis_role": "leading_candidate"
+      },
+      {
+        "n": 1,
+        "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "substantive_excerpt",
+        "synthesis_role": "leading_candidate"
+      },
+      {
+        "n": 4,
+        "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "leading_candidate"
+      },
+      {
+        "n": 5,
+        "title": "תחולה ויישום הלכת השיתוף בנכסים בין ידועים בציבור (שיתוף כללי ושיתוף ס",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 5,
+        "title": "שיתוף בנכסים או הפרדה רכושית ב\"ידועים בציבור\"",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 7,
+        "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      }
+    ],
+    "answer_len": 2242,
+    "answer_head": "**שורה תחתונה — הכלל הנוהג כיום, במשפט או שניים.**\n\nשורה תחתונה: הפסיקה מכירה בחזקת השיתוף — חזקה ראייתית לפיה רכוש שנצבר במהלך חיי זוגיות/נישואים עשוי להיחשב בהחזקה משותפת אף אם הוא רשום על שם צד אחד; חזקה זו ניתנת לסתירה בראיות המנוגדות.¹\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nעיקרי ההלכה המופיעים בפסיק"
+  },
+  {
+    "id": "C2",
+    "run_id": "9f7c117e-6516-4485-b996-18d13ba7e6f0",
+    "research_mode": "case_law_synthesis",
+    "pool_judgments": 2,
+    "pool_judgments_with_holding": 2,
+    "citable_counts": {
+      "unknown": 1,
+      "judgment": 3,
+      "commentary": 7,
+      "not_citable": 1,
+      "scholarship": 6
+    },
+    "synthesis_role_counts": {
+      "unknown": 2,
+      "leading_candidate": 3,
+      "secondary_commentary": 13
+    },
+    "synthesis_role_overrides": 11,
+    "pack": {
+      "has_judgment": true,
+      "statute_count": 0,
+      "judgment_count": 3,
+      "commentary_count": 4,
+      "by_synthesis_role": {
+        "leading_candidate": 3,
+        "secondary_commentary": 4
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": true,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 2
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "פסק-דין בתיק בע\"מ 4623/04",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "full_text",
+        "synthesis_role": "leading_candidate"
+      },
+      {
+        "n": 1,
+        "title": "פסק-דין בתיק ע\"א 767/11",
+        "citable_as": "judgment",
+        "tier": "primary_mirror",
+        "usability": "substantive_excerpt",
+        "synthesis_role": "leading_candidate"
+      },
+      {
+        "n": 4,
+        "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "leading_candidate"
+      },
+      {
+        "n": 5,
+        "title": "פסק דין מתוך psakdin.co.il",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 5,
+        "title": "גדרי הלכת שיתוף ספציפי בדירת מגורים",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 6,
+        "title": "ע\"א 3391-22 בנק לאומי לישראל בע\"מ נ׳ דוד קונפינו פסק דין",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 6,
+        "title": "ע\"א 3296/19 אחמד ג'אבר נ׳ רשות מקרקעי ישראל פסק דין (26.12.2021)",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary"
+      }
+    ],
+    "answer_len": 2334,
+    "answer_head": "**שורה תחתונה**\n\nשורה תחתונה: בתי המשפט מכירים ב\"הלכת השיתוף\" כמכשיר המאפשר להכיר בבעלות משותפת כאשר הנכס רשום בשם יחיד אך קיימות ראיות לכוונה ולמעשים משותפים, אך בו־זמנית רישום בלשכת המקרקעין נשקל כראיה מכרעת והפסיקה נוטה לצמצם את תחולתה בנסיבות מסוימות.¹\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nבע\"מ 4623/"
+  },
+  {
+    "id": "C1",
+    "run_id": "6a6e8923-588a-4707-982e-025d46914e58",
+    "research_mode": "case_law_synthesis",
+    "pool_judgments": 2,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 4,
+      "unknown": 1,
+      "judgment": 2,
+      "commentary": 9,
+      "not_citable": 3,
+      "scholarship": 4
+    },
+    "synthesis_role_counts": {
+      "unknown": 4,
+      "leading_candidate": 1,
+      "secondary_commentary": 13,
+      "statutory_background": 4,
+      "limiting_or_distinguishing_candidate": 1
+    },
+    "synthesis_role_overrides": 18,
+    "pack": {
+      "has_judgment": true,
+      "statute_count": 2,
+      "judgment_count": 2,
+      "commentary_count": 3,
+      "by_synthesis_role": {
+        "leading_candidate": 1,
+        "secondary_commentary": 3,
+        "statutory_background": 2,
+        "limiting_or_distinguishing_candidate": 1
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": true,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "חוק הירושה, תשכ\"ה-1965, סעיף 42",
+        "citable_as": "statute",
+        "tier": "primary_mirror",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 1,
+        "title": "מקור חקיקה מתוך מאגר נבו",
+        "citable_as": "statute",
+        "tier": "primary_mirror",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 2,
+        "title": "בע\"מ 10807/03 – פלוני נ' פלוני",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "limiting_or_distinguishing_candidate"
+      },
+      {
+        "n": 2,
+        "title": "זכויות יורש אחר יורש - פסקדין",
+        "citable_as": "judgment",
+        "tier": "primary_mirror",
+        "usability": "metadata_only",
+        "synthesis_role": "leading_candidate"
+      },
+      {
+        "n": 3,
+        "title": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש'",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 3,
+        "title": "המחוזי: אין לפרש הוראת 'יורש אחר יורש' בצוואה כ'יורש במקום יורש'",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 4,
+        "title": "פסק דין מתוך psakdin.co.il",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      }
+    ],
+    "answer_len": 1767,
+    "answer_head": "לא נמצאה במקורות שסופקו הלכה מוכרת שנושאת את השם \"הלכת יורש אחר יורש\" כשם הלכתי רשמי או מונח־כותרת.\n\nהמוסד הקונקרטי שמוזכר במקורות ונוגע לשאלה מוכר בסעיף 42 לחוק הירושה, תשכה-1965, שמסדיר הוראות הנוגעות להצבעה \"לשניים\" ולעיקרון המכונה בציבוריות \"יורש אחר יורש\".¹\n\nלפי נוסח והפירושים המובאים בסעיף 42 "
+  },
+  {
+    "id": "M1",
+    "run_id": "f88c8c95-4d2d-41f8-ab9c-4c106d1d60f7",
+    "research_mode": null,
+    "pool_judgments": null,
+    "pool_judgments_with_holding": null,
+    "citable_counts": null,
+    "synthesis_role_counts": null,
+    "synthesis_role_overrides": null,
+    "pack": null,
+    "used_sources": [],
+    "answer_len": 82,
+    "answer_head": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  },
+  {
+    "id": "M2",
+    "run_id": "ce41edb4-e8fc-401f-9d0d-776b4bcdea6e",
+    "research_mode": "statute_section_definition",
+    "pool_judgments": 1,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 14,
+      "unknown": 1,
+      "judgment": 1,
+      "commentary": 1,
+      "not_citable": 3,
+      "scholarship": 1
+    },
+    "synthesis_role_counts": {
+      "unknown": 3,
+      "leading_candidate": 1,
+      "secondary_commentary": 2,
+      "statutory_background": 15
+    },
+    "synthesis_role_overrides": 5,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 1,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {
+        "statutory_background": 1
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": true,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "חוק החברות, התשנ\"ט-1999",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      }
+    ],
+    "answer_len": 247,
+    "answer_head": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 6 לחוק החברות; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
+  },
+  {
+    "id": "B8",
+    "run_id": "f7aa2bfc-e5e4-4eb6-be2d-3c4f44ee4555",
+    "research_mode": "canonical_quote",
+    "pool_judgments": 0,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 5,
+      "unknown": 1,
+      "not_citable": 1,
+      "scholarship": 3
+    },
+    "synthesis_role_counts": {
+      "unknown": 1,
+      "secondary_commentary": 3,
+      "statutory_background": 6
+    },
+    "synthesis_role_overrides": 4,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 0,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {
+        "unknown": 1
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)"
+      }
+    ],
+    "answer_len": 294,
+    "answer_head": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹"
+  },
+  {
+    "id": "B2",
+    "run_id": "5d2f836b-9159-4162-b6f8-cfb8714e85a3",
+    "research_mode": "specific_case",
+    "pool_judgments": 0,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 6,
+      "unknown": 7,
+      "judgment": 1,
+      "commentary": 6,
+      "not_citable": 1,
+      "scholarship": 9
+    },
+    "synthesis_role_counts": {
+      "unknown": 6,
+      "leading_candidate": 1,
+      "secondary_commentary": 15,
+      "statutory_background": 8
+    },
+    "synthesis_role_overrides": 14,
+    "pack": {
+      "has_judgment": true,
+      "statute_count": 3,
+      "judgment_count": 1,
+      "commentary_count": 2,
+      "by_synthesis_role": {
+        "unknown": 1,
+        "leading_candidate": 1,
+        "secondary_commentary": 2,
+        "statutory_background": 3
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": true,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "HCJ 6698/95 Ka'adan et al. v. Israel Land Administration et al.",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "substantive_excerpt",
+        "synthesis_role": "leading_candidate"
+      },
+      {
+        "n": 2,
+        "title": "חוק יסוד: כבוד האדם וחירותו",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 3,
+        "title": "אי קיומו בזמן של פסק הדין בעניין הקצאת הקרקעות בקציר - עילה לחיוב המנה",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 4,
+        "title": "בג\"צ 6698/95 עאדל ואימאן קעדאן נגד מינהל מקרקעי ישראל ואח'",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 4,
+        "title": "17_ptv_134648.doc",
+        "citable_as": "unknown",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "unknown"
+      },
+      {
+        "n": 5,
+        "title": "מקור חקיקה מתוך מאגר נבו",
+        "citable_as": "statute",
+        "tier": "primary_mirror",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 5,
+        "title": "חוק רשות מקרקעי ישראל - תיקון/הצעת חוק (כולל העדפת בני מקום בפריפריה)",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      }
+    ],
+    "answer_len": 1849,
+    "answer_head": "**פסק‑דין — קעדאן (בג״ץ 6698/95)**\n\nבית המשפט קבע כי עקרון השוויון הוא עקרון יסוד החלים על פעולות כל רשות שלטונית, וכי המדינה אינה רשאית להקצות מקרקעי מדינה בהבחנה או בהפליה על יסוד לאום; על כן הוכח כי ההקצאה שנועדה להתבצע לסוכנות היהודית לצורך הקמת היישוב שנדון בוטלה או נדחתה כאמצעי למניעת הפליה בי"
+  }
+]

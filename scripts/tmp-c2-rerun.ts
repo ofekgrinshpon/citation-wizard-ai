@@ -10,14 +10,14 @@ if (!SUPABASE_URL || !SR_KEY) { console.error("Missing env"); process.exit(1); }
 const QUERIES = [
   { id: "C2b", query: `מה הפסיקה אומרת על הלכת השיתוף?` },
   { id: "C2", query: `מה הפסיקה אומרת על הלכת השיתוף?` },
-  { id: "C1", query: `מה הפסיקה אומרת על הלכת יורש אחר יורש?` },
-  { id: "M1", query: `מה נקבע בע"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי?` },
-  { id: "M2", query: `מה קובע סעיף 6 לחוק החברות?` },
-  { id: "B8", query: `צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.` },
-  { id: "B2", query: `מה נקבע בבג"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל ביחס להקצאת קרקעות למגורים על בסיס לאום?` },
+  
+  
+  
+  
+  
 ];
 
-const OUT = "reports/synthesis-rendering-validation";
+const OUT = "reports/synthesis-rendering-validation2";
 mkdirSync(OUT, { recursive: true });
 
 async function trigger(q: string) {
