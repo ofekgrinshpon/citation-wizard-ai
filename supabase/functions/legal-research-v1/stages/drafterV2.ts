@@ -52,6 +52,12 @@ import {
   assessNamedDoctrineFraming,
   type NamedDoctrineFraming,
 } from "./namedDoctrine.ts";
+import {
+  planSynthesisRendering,
+  reportSynthesisRendering,
+  type SynthesisRenderingPlan,
+  type SynthesisRenderingReport,
+} from "./synthesisRendering.ts";
 
 
 
@@ -205,6 +211,7 @@ function buildUserMessage(
   leadRef?: string | null,
   sufficiency?: SufficiencyAssessment,
   framing?: NamedDoctrineFraming,
+  synthesisRendering?: SynthesisRenderingPlan,
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
@@ -230,6 +237,11 @@ function buildUserMessage(
       "הערת דלילות מקורות: הטקסט התומך שנמצא קצר ואינו כולל נוסח מלא של ההלכה/ההוראה. נסח את התשובה על בסיס מה שקיים בפועל, והוסף בסוף הסתייגות קצרה שלפיה טקסט ההלכה המלא לא היה בידיך.",
     );
   }
+  if (synthesisRendering?.applied) {
+    for (const l of synthesisRendering.directive_lines) lines.push(l);
+  }
+
+
 
 
   const missingDocketAnchors = missingAnchors.filter((a) => a.is_docket);
@@ -297,9 +309,15 @@ function buildUserMessage(
     lines.push(`title: ${s.title}`);
     if (s.url) lines.push(`url: ${s.url}`);
     lines.push(`source_type: ${s.source_type} | role: ${s.role} | support: ${s.best_support}`);
+    if (synthesisRendering?.applied) {
+      lines.push(
+        `authority: citable_as=${s.citable_as ?? "unknown"} | tier=${s.authority_tier ?? "unknown"} | text_usability=${s.text_usability ?? "unknown"} | has_holding_text=${s.has_holding_text === true} | synthesis_role=${s.synthesis_role ?? "unknown"}`,
+      );
+    }
     if (s.best_support === "partial") {
       lines.push(`hint: תמיכה חלקית בלבד — נסח טענה זו בלשון זהירה (ראה חוזה הראיות במערכת ההנחיות).`);
     }
+
     if (s.supported_points.length) {
       lines.push(`supported_points:`);
       for (const p of s.supported_points) lines.push(`  • ${p}`);
@@ -801,6 +819,8 @@ export interface DrafterV2Result {
   named_doctrine_framing?: NamedDoctrineFraming;
   /** Synthesis snippet-budget telemetry (case-law synthesis runs only). */
   snippet_budget_report?: SnippetBudgetReport;
+  /** Case-law synthesis rendering telemetry (synthesis runs only). */
+  synthesis_rendering?: SynthesisRenderingReport;
 
 
   schema_failure_reason?:
@@ -1290,6 +1310,13 @@ export async function runDrafterV2(
   // ── Named-doctrine premise / framing validation ───────────────────────
   const framing = assessNamedDoctrineFraming({ question, sources: inputSources });
 
+  // ── Case-law synthesis rendering (prompt-layer only) ──────────────────
+  const synthesisPlan = planSynthesisRendering({
+    researchMode: opts?.researchMode ?? null,
+    sources: inputSources,
+    framingCorrectionActive: framing?.framing_correction_required === true,
+  });
+
   const userMsg = buildUserMessage(
     question,
     claims,
@@ -1301,6 +1328,7 @@ export async function runDrafterV2(
     leadSelection.ref,
     sufficiency,
     framing,
+    synthesisPlan,
   );
 
 
@@ -1497,6 +1525,16 @@ export async function runDrafterV2(
 
   // Rule 1.10 — Hebrew number ranges must be written high→low in source order.
   const answer_markdown = normalizeHebrewNumberRanges(built.answer_markdown);
+  const synthesis_rendering = reportSynthesisRendering({
+    plan: synthesisPlan,
+    answerMarkdown: answer_markdown,
+    sources: inputSources,
+    usedRefs: new Set(
+      built.used_sources
+        .map((u) => inputSources.find((s) => s.candidate_id === u.candidate_id)?.ref)
+        .filter((r): r is string => !!r),
+    ),
+  });
   const footnotes = built.footnotes.map((fn) => ({
     ...fn,
     text: normalizeHebrewNumberRanges(fn.text),
@@ -1533,6 +1571,7 @@ export async function runDrafterV2(
     missing_anchor_descriptions: missingAnchors.map((a) => a.description),
     sufficiency,
     named_doctrine_framing: framing,
+    synthesis_rendering,
 
 
     completeness,

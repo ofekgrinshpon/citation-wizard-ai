@@ -972,6 +972,12 @@ async function handle(req: Request): Promise<Response> {
     named_doctrine_framing: drafter.named_doctrine_framing ?? null,
     framing_correction_required:
       drafter.named_doctrine_framing?.framing_correction_required ?? false,
+    // Case-law synthesis rendering telemetry.
+    synthesis_rendering: drafter.synthesis_rendering ?? null,
+    synthesis_rendering_applied:
+      drafter.synthesis_rendering?.synthesis_rendering_applied ?? false,
+
+
 
 
 
