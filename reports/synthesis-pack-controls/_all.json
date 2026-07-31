@@ -1,0 +1,389 @@
+[
+  {
+    "id": "C1",
+    "run_id": "aa5c1885-082c-4695-9c24-d1abf4ce2892",
+    "research_mode": "case_law_synthesis",
+    "pool_judgments": 1,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 3,
+      "unknown": 3,
+      "judgment": 1,
+      "commentary": 12,
+      "not_citable": 1,
+      "scholarship": 4
+    },
+    "synthesis_role_counts": {
+      "unknown": 1,
+      "leading_candidate": 1,
+      "secondary_commentary": 16,
+      "statutory_background": 6
+    },
+    "synthesis_role_overrides": 13,
+    "pack": {
+      "has_judgment": true,
+      "statute_count": 2,
+      "judgment_count": 1,
+      "commentary_count": 7,
+      "by_synthesis_role": {
+        "leading_candidate": 1,
+        "secondary_commentary": 7,
+        "statutory_background": 3
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": true,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "פס\"ד העוסק בפרשנות צוואה הדדית- 'יורש אחר יורש' מול 'יורש במקום יורש' ",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 1,
+        "title": "ע\"א 4576/17 – החלטה",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "leading_candidate"
+      },
+      {
+        "n": 1,
+        "title": "חוק הירושה, תשכ\"ה-1965",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 2,
+        "title": "nevo.co.il - Gov.il",
+        "citable_as": "unknown",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 3,
+        "title": "ע\"א 4460-22 תרצה אביתר נ׳ מדינת ישראל המרכז לגביית קנסות, אגרות והוצאו",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 3,
+        "title": "קובי ורדי, דיון אזרחי – שיעור מס' 12",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 4,
+        "title": "ע\"א 206/20 טבע תעשיות פרמצבטיות בע\"מ נ׳ טי.אנד.אם גושן פסק דין (13.12.",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 4,
+        "title": "רע\"א 7116/20 שרית קילקר נ׳ עובד נסים נועם החלטה (07.12.2020)",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 5,
+        "title": "ס\"ד בתובענה למתן סעד הצהרתי של יורש שעתר להכרה כבעל זכויות יחידי בנכס ",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 5,
+        "title": "פסק דין בתביעה למתן סעד הצהרתי",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 5,
+        "title": "תקנות סדר הדין האזרחי, תשמ\"ד-1984 (כפי שהיו נכון ליום 31.12.2020)",
+        "citable_as": "statute",
+        "tier": "primary_mirror",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      }
+    ],
+    "answer_len": 1927,
+    "answer_head": "לא נמצא מקור המציין קיומה של הלכה מוכרת בשם 'הלכת יורש אחר יורש'.\n\nבמקום זאת, המקורות שבדקתי עוסקים בהסדרים הקשורים לסופיות פסק‑דין והשתק ביחס ליורשים — בעיקר בדוקטרינת ההשתק/השתק פלוגתא בהליכים אזרחיים ובפרשנות צוואות (הבחנה בין 'יורש אחר יורש' ל'יורש במקום יורש'), וכן בחוק הירושה כמסגרת לחזקת מעמד"
+  },
+  {
+    "id": "M1",
+    "run_id": "656a3bfe-b109-4234-ad0c-5f007fc3854d",
+    "research_mode": "specific_case",
+    "pool_judgments": 0,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 8,
+      "unknown": 2,
+      "judgment": 1,
+      "commentary": 5,
+      "not_citable": 2,
+      "scholarship": 9
+    },
+    "synthesis_role_counts": {
+      "unknown": 3,
+      "leading_candidate": 1,
+      "secondary_commentary": 14,
+      "statutory_background": 9
+    },
+    "synthesis_role_overrides": 14,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 0,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {},
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [],
+    "answer_len": 320,
+    "answer_head": "לא אותר במקורות הזמינים ע\"א 6821/93. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטי"
+  },
+  {
+    "id": "M2",
+    "run_id": "d01bd362-4389-4154-9c1e-ae247e2bd785",
+    "research_mode": "statute_section_definition",
+    "pool_judgments": 1,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 9,
+      "unknown": 1,
+      "judgment": 1,
+      "commentary": 2,
+      "not_citable": 2,
+      "scholarship": 3
+    },
+    "synthesis_role_counts": {
+      "unknown": 2,
+      "applying_candidate": 1,
+      "secondary_commentary": 5,
+      "statutory_background": 10
+    },
+    "synthesis_role_overrides": 6,
+    "pack": {
+      "has_judgment": true,
+      "statute_count": 5,
+      "judgment_count": 1,
+      "commentary_count": 1,
+      "by_synthesis_role": {
+        "applying_candidate": 1,
+        "secondary_commentary": 1,
+        "statutory_background": 5
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": true,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "חוק החברות, תשנ\"ט-1999",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 2,
+        "title": "חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 3,
+        "title": "ע\"א 3432/17 – פסק דין",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "applying_candidate"
+      },
+      {
+        "n": 4,
+        "title": "דיני חברות - פרופ' הדרה בר מור לירון בטיטו",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 6,
+        "title": "הצעת חוק החברות, התשס\"ב 2002",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 6,
+        "title": "חוק החברות תיקון מס' 6 קריאה שנייה שלישית",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      },
+      {
+        "n": 6,
+        "title": "חוק החברות (תיקון מס' 16), התשע\"א-2011",
+        "citable_as": "statute",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "statutory_background"
+      }
+    ],
+    "answer_len": 2119,
+    "answer_head": "**סעיף 6 — נוסח עקרוני ומשמעות**\n\nסעיף 6 לחוק החברות קובע את עקרון הרמת מסך ההתאגדות ומאפשר, בכפוף לתנאים ולשיקול בית המשפט, לייחס זכויות וחובות של התאגיד לבעלי מניותיו/בעלי שליטה.¹\n\nהנוסח הרשמי המלא של סעיף 6 מופיע בטקסט החוקי המעודכן של חוק החברות, תשנ\"ט‑1999; המקור הרשמי זמין במסמכי החוק (החוק המ"
+  },
+  {
+    "id": "B8",
+    "run_id": "8150a0fb-01ce-404e-b5fe-8ad5848522c6",
+    "research_mode": "canonical_quote",
+    "pool_judgments": 0,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 7,
+      "unknown": 1,
+      "not_citable": 1,
+      "scholarship": 5
+    },
+    "synthesis_role_counts": {
+      "unknown": 1,
+      "secondary_commentary": 5,
+      "statutory_background": 8
+    },
+    "synthesis_role_overrides": 6,
+    "pack": {
+      "has_judgment": false,
+      "statute_count": 0,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {
+        "unknown": 1
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)"
+      }
+    ],
+    "answer_len": 294,
+    "answer_head": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹"
+  },
+  {
+    "id": "B2",
+    "run_id": "5d45bb87-1de2-419f-9761-02ed6b4be4ed",
+    "research_mode": "specific_case",
+    "pool_judgments": 1,
+    "pool_judgments_with_holding": 0,
+    "citable_counts": {
+      "statute": 2,
+      "unknown": 1,
+      "judgment": 1,
+      "commentary": 3,
+      "not_citable": 1,
+      "scholarship": 12
+    },
+    "synthesis_role_counts": {
+      "unknown": 2,
+      "leading_candidate": 1,
+      "secondary_commentary": 15,
+      "statutory_background": 2
+    },
+    "synthesis_role_overrides": 18,
+    "pack": {
+      "has_judgment": true,
+      "statute_count": 0,
+      "judgment_count": 1,
+      "commentary_count": 1,
+      "by_synthesis_role": {
+        "leading_candidate": 1,
+        "secondary_commentary": 4
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 3,
+      "has_usable_holding_text": false,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 0
+    },
+    "used_sources": [
+      {
+        "n": 1,
+        "title": "בג\"ץ 6698/95 - קובץ פסק דין",
+        "citable_as": "judgment",
+        "tier": "official_primary",
+        "usability": "metadata_only",
+        "synthesis_role": "leading_candidate"
+      },
+      {
+        "n": 2,
+        "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+        "citable_as": "scholarship",
+        "tier": "secondary_commentary",
+        "usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 2,
+        "title": "חוקיות ההפרטה של אספקת שירותים ציבוריים",
+        "citable_as": "scholarship",
+        "tier": "secondary_commentary",
+        "usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 3,
+        "title": "הכלה והדרה במרחב הישראלי: הזכות לקניין כמפתח לפתרון סוגיית ההדרה הגיאו",
+        "citable_as": "scholarship",
+        "tier": "secondary_commentary",
+        "usability": "full_text",
+        "synthesis_role": "secondary_commentary"
+      },
+      {
+        "n": 4,
+        "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
+        "citable_as": "commentary",
+        "tier": "secondary_commentary",
+        "usability": "full_text",
+        "synthesis_role": "secondary_commentary"
+      }
+    ],
+    "answer_len": 1563,
+    "answer_head": "**בג\"ץ קעדאן (בג\"ץ 6698/95) — עיקר ההחלטה**\n\nבג\"ץ קבע כי מדיניות הקצאת קרקעות המדינה למגורים המבוססת על קריטריון לאומי — במעמד העקרוני של \"ליהודים בלבד\" — פסולה; ההחלטה נשענה על עיקרון השוויון וחובת המינהל הציבורי שלא להפלות בעת הקצאת מקרקעין ציבוריים.¹\n\nבית המשפט לא אימץ הקצאה אוטומטית או זכות מוחל"
+  }
+]
