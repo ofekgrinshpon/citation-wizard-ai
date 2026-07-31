@@ -209,6 +209,13 @@ export interface DrafterInputSource {
   authority_tier?: string;
   text_usability?: string;
   citable_as?: string;
+  integrity_flags?: string[];
+  is_judgment_document?: boolean;
+  has_holding_text?: boolean;
+  /** Whether the classified source can satisfy the planner role it came from. */
+  can_satisfy_authority_role?: boolean;
+  /** Authority-role label for case-law synthesis (see synthesisRole.ts). */
+  synthesis_role?: string;
 }
 
 
@@ -218,7 +225,8 @@ interface RawDraft {
 }
 
 import { computeDisplayTitle } from "./displayTitleHygiene.ts";
-import { classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
+import { canSatisfyRole, classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
+import { assignSynthesisRole } from "./synthesisRole.ts";
 
 
 export function buildInputSources(
@@ -284,6 +292,17 @@ export function buildInputSources(
       authority_tier: integ0.authority_tier,
       text_usability: integ0.text_usability,
       citable_as: integ0.citable_as,
+      integrity_flags: integ0.integrity_flags,
+      is_judgment_document: integ0.is_judgment_document ?? false,
+      has_holding_text: integ0.has_holding_text ?? false,
+      can_satisfy_authority_role: canSatisfyRole(integ0, c.role),
+      synthesis_role: assignSynthesisRole({
+        role: c.role,
+        integrity: integ0,
+        title: c.title,
+        snippet: c.snippet,
+      }).synthesis_role,
+
 
     });
 

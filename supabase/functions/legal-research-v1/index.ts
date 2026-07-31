@@ -16,6 +16,7 @@ import { runQueryPlanner } from "./stages/queryPlanner.ts";
 import { runLocalRetrieval } from "./stages/localRetrieval.ts";
 import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
+import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRole.ts";
 import { runVerifier } from "./stages/verifier.ts";
 import { runDrafter } from "./stages/drafter.ts";
 import { runDrafterV2 } from "./stages/drafterV2.ts";
@@ -595,6 +596,15 @@ async function handle(req: Request): Promise<Response> {
         return acc;
       }, {} as Record<string, number>),
       role_unsatisfied: pool.integrity.filter((r) => !r.can_satisfy_role).length,
+      judgment_documents: pool.integrity.filter((r) => r.is_judgment_document).length,
+      judgments_with_holding_text: pool.integrity.filter(
+        (r) => r.is_judgment_document && r.has_holding_text,
+      ).length,
+      synthesis_role_counts: pool.integrity.reduce((acc, r) => {
+        acc[r.synthesis_role] = (acc[r.synthesis_role] ?? 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+      synthesis_role_overrides: pool.integrity.filter((r) => r.synthesis_role_overridden).length,
       downgrades: pool.integrity
         .filter((r) => !!r.downgrade_reason)
         .map((r) => ({ candidate_id: r.candidate_id, reason: r.downgrade_reason })),
@@ -896,6 +906,15 @@ async function handle(req: Request): Promise<Response> {
     marker_validation,
     omitted_candidate_ids,
     used_sources: drafter.used_sources,
+    // Authority-role / judgment-typing view of the final pack (labelling only).
+    synthesis_pack: summarizeSynthesisPack(
+      drafter.used_sources.map((u) => ({
+        citable_as: String(u.citable_as ?? "unknown"),
+        text_usability: String(u.text_usability ?? "unknown"),
+        synthesis_role: (u.synthesis_role ?? "unknown") as SynthesisRole,
+        has_holding_text: u.has_holding_text,
+      })),
+    ),
     marker_format: "superscript" as const,
     error: drafter.error,
     raw_text: drafter.raw_text,
