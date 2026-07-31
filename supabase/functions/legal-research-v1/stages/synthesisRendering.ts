@@ -225,23 +225,23 @@ export function planSynthesisRendering(opts: {
   );
   L.push("  • חוק אינו הלכה פסוקה — אין להציג נוסח חוק כקביעה של בית משפט.");
 
-  if (usable.length === 0) {
+  L.push(
+    '  • חלוקת חבילת המקורות נעשתה מראש בקוד. קבוצה A ("סמכויות פסיקתיות שמישות") היא הקבוצה היחידה שממנה מותר לגזור הלכה, יישום או סייג. קבוצה B היא רקע חקיקתי, קבוצה C היא ספרות/פרשנות, וקבוצה D היא מקורות שנמצאו אך אינם שמישים לגזירת הלכה.',
+  );
+  L.push(
+    '  • מקורות מקבוצה D מותרים אך ורק תחת הכותרת "מה לא ניתן לקבוע מהמקורות", ורק בנוסח הערת מקור מוגבל.',
+  );
+  if (usableRefs.length === 1) {
     L.push(
-      "  • אזהרה: לאף פסק דין ברשימה אין טקסט הלכתי שמיש. אל תציג אף קביעה כהלכה שנפסקה, אל תכתוב פרק יישומים או מגבלות, וציין במפורש שרק מטא-נתונים/אזכורים של פסקי דין אותרו.",
-    );
-  } else if (usable.length === 1) {
-    L.push(
-      `  • רק לפסק דין אחד יש טקסט שמיש (${usableRefs[0]}). ציין במפורש שהתשובה נסמכת בעיקר עליו ועל מקורות תומכים מוגבלים, ואל תרחיב ממנו כלל גורף.`,
+      `  • בקבוצה A יש פסק דין אחד בלבד (${usableRefs[0]}). מדובר בסקירה חלקית: מרכז את התשובה בפסק דין זה, ציין במפורש שקו הפסיקה אינו שלם, ואל תגזור ממנו כלל גורף.`,
     );
   }
   if (metaRefs.length > 0) {
     L.push(
-      `  • מקורות פסיקה עם מטא-נתונים בלבד (אין להסיק מהם הלכה, יישום או סייג; רק הערת מקור מוגבל): ${metaRefs.join(", ")}.`,
+      `  • קבוצה D — נמצאו אך אינם שמישים להלכה (אין להסיק מהם הלכה, יישום או סייג; רק הערת מקור מוגבל): ${metaRefs.join(", ")}.`,
     );
   }
-  if (usableRefs.length > 0) {
-    L.push(`  • מקורות פסיקה עם טקסט שמיש: ${usableRefs.join(", ")}.`);
-  }
+  L.push(`  • קבוצה A — סמכויות פסיקתיות שמישות: ${usableRefs.join(", ")}.`);
   L.push("");
   L.push("תפקידי סמכות שהוקצו למקורות (השתמש בהם לצורך הקיבוץ בלבד):");
   const roleLine = (label: string, refs: string[]) => {
@@ -256,6 +256,8 @@ export function planSynthesisRendering(opts: {
   return {
     applied: true,
     reason: "applied",
+    limitation_required: false,
+    groups,
     usable_judgment_refs: usableRefs,
     metadata_only_judgment_refs: metaRefs,
     leading_refs,
@@ -265,6 +267,7 @@ export function planSynthesisRendering(opts: {
     commentary_refs,
     directive_lines: L,
   };
+
 }
 
 // ── Post-draft telemetry ────────────────────────────────────────────────────
