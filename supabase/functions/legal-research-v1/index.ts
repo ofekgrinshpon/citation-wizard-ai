@@ -18,6 +18,7 @@ import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRole.ts";
 import { runJudgmentTextAcquisition } from "./stages/judgmentTextAcquisition.ts";
+import { runSpecificCaseResolution } from "./stages/specificCaseResolution.ts";
 import { runVerifier } from "./stages/verifier.ts";
 import { runDrafter } from "./stages/drafter.ts";
 import { runDrafterV2 } from "./stages/drafterV2.ts";
@@ -559,7 +560,18 @@ async function handle(req: Request): Promise<Response> {
     }
   }
 
-  const role_corrections = pplx.per_query.flatMap((pq) =>
+  // ─── Specific-case authority resolution (specific_case mode only) ───────
+  // Exact-docket guard + bounded judgment-text acquisition. Fail-closed: when
+  // no admitted source carries the exact requested docket with usable text,
+  // the drafter fires `docket_limitation` regardless of pool size.
+  const specificCase = await runSpecificCaseResolution({
+    admin,
+    research_mode: plannerStage.mode_plan?.mode ?? null,
+    question,
+    candidates: pool.candidates,
+  });
+
+  const role_corrections = pplx.per_query.flatMap((pq) =
     pq.results
       .filter((r) => r.role_corrected_from)
       .map((r) => ({
@@ -635,6 +647,7 @@ async function handle(req: Request): Promise<Response> {
         .map((r) => ({ candidate_id: r.candidate_id, reason: r.downgrade_reason })),
     },
     judgment_text_acquisition: judgmentAcquisition,
+    specific_case_resolution: specificCase,
 
 
 
@@ -811,6 +824,13 @@ async function handle(req: Request): Promise<Response> {
       requiredAnchorCandidateIds,
       satisfiedStatuteSectionAnchors,
       researchMode: plannerStage.mode_plan?.mode ?? null,
+      specificCaseGate: specificCase.enabled
+        ? {
+            allow: specificCase.allow_case_holding_answer,
+            docket_display: specificCase.requested_docket_display,
+            reason: specificCase.final_docket_branch_reason,
+          }
+        : null,
     },
   );
   stage_runs.push(...drafter.stage_runs);
@@ -960,6 +980,18 @@ async function handle(req: Request): Promise<Response> {
     // Narrow default-on merge telemetry (Track: lead_ref + deterministic branches).
     deterministic_branch: drafter.deterministic_branch ?? null,
     missing_docket_limitation_fired: drafter.deterministic_branch === "docket_limitation",
+    // Specific-case authority resolution telemetry.
+    specific_case_resolution: specificCase,
+    requested_docket_normalized: specificCase.requested_docket_normalized,
+    exact_docket_source_found: specificCase.exact_docket_source_found,
+    exact_docket_source_title: specificCase.exact_docket_source_title,
+    exact_docket_source_url: specificCase.exact_docket_source_url,
+    text_acquisition_attempted: specificCase.text_acquisition_attempted,
+    acquisition_method: specificCase.acquisition_method,
+    acquisition_success: specificCase.acquisition_success,
+    acquired_text_length: specificCase.acquired_text_length,
+    final_docket_branch_reason: specificCase.final_docket_branch_reason,
+    near_match_sources_ignored_count: specificCase.near_match_sources_ignored_count,
     statute_section_limitation_fired: drafter.deterministic_branch === "statute_section_limitation",
     canonical_quote_fired:
       drafter.deterministic_branch === "canonical_quote_registry" ||
