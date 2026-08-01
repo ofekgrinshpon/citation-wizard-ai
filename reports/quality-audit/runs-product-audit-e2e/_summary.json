@@ -1,0 +1,1880 @@
+[
+  {
+    "id": "P01",
+    "kind": "specific_case_holding",
+    "query": "מה נקבע בבג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל ביחס להקצאת קרקע על בסיס השתייכות לאומית?",
+    "run_id": "5e850af0-d1ef-4652-b095-590a1ea3ca41",
+    "ok": true,
+    "total_ms": 151429,
+    "research_mode": "specific_case",
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "deterministic_branch": "docket_limitation",
+    "lead_ref": {
+      "ref": null,
+      "shape": "case_holding",
+      "reason": "skipped_missing_docket_anchor"
+    },
+    "sufficiency": null,
+    "named_doctrine": null,
+    "synthesis_rendering": null,
+    "source_integrity_counts": null,
+    "missing_anchor_descriptions": [
+      "פסק הדין בעניין בג\"ץ 6698/95 עצמו"
+    ],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 11,
+        "unrelated": 12,
+        "tangential": 7
+      },
+      "by_role_match": {
+        "true": 29,
+        "false": 1
+      },
+      "model_verdicts": 30,
+      "by_support_model": {
+        "direct": 0,
+        "partial": 11,
+        "unrelated": 12,
+        "tangential": 7
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "used_sources": [],
+    "used_sources_count": 0,
+    "footnotes": [],
+    "answer": "לא אותר במקורות הזמינים פסק הדין בעניין בג\"ץ 6698/95 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+  },
+  {
+    "id": "P02",
+    "kind": "missing_fake_docket",
+    "query": "מה נקבע בע\"א 99887-04-22 לוי נ' כהן ביחס לאחריות פלטפורמה מקוונת לתוכן משתמשים?",
+    "run_id": "281016bd-8962-491b-94f2-1707ab260c62",
+    "ok": true,
+    "total_ms": 189604,
+    "research_mode": "specific_case",
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "deterministic_branch": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "case_holding",
+      "reason": "no_case_source"
+    },
+    "sufficiency": null,
+    "named_doctrine": null,
+    "synthesis_rendering": {
+      "groups": {
+        "secondary_context": [],
+        "usable_authorities": [],
+        "found_but_not_usable": [],
+        "statutory_background": []
+      },
+      "reason": "not_synthesis_mode",
+      "group_counts": {
+        "secondary_context": 0,
+        "usable_authorities": 0,
+        "found_but_not_usable": 0,
+        "statutory_background": 0
+      },
+      "named_case_keys": [],
+      "named_cases_in_body": 0,
+      "usable_judgments_named": 0,
+      "synthesis_rendering_applied": false,
+      "commentary_used_as_primary_authority": false,
+      "metadata_only_sources_used_as_holdings": false
+    },
+    "source_integrity_counts": null,
+    "missing_anchor_descriptions": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 9,
+        "unrelated": 13,
+        "tangential": 2
+      },
+      "by_role_match": {
+        "true": 23,
+        "false": 1
+      },
+      "model_verdicts": 24,
+      "by_support_model": {
+        "direct": 0,
+        "partial": 9,
+        "unrelated": 13,
+        "tangential": 2
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "used_sources": [
+      {
+        "url": "https://www.psakdin.co.il/Court",
+        "title": "Search results for \"ע״א 99887/04/22\"",
+        "number": 1,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "4daed40f-20f2-47b6-9980-d47b2ffd3fda",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-41724-08-16-%D7%9C%D7%95%D7%99-%D7%A0-%D7%9B%D7%94%D7%9F-%D7%95%D7%90%D7%97_2",
+        "title": "לוי נ' כהן ואח'",
+        "number": 1,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "689f94c4-952d-428b-80a2-c59675acb3ca",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%20%D7%9C%D7%95%D7%99%20%D7%95%D7%90%D7%97'",
+        "title": "כהן נ' לוי ואח'",
+        "number": 1,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "27b6364e-f53e-4c67-be7d-86b1be1dbe33",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%D7%9C%D7%95%D7%99-%D7%95%D7%90%D7%97'",
+        "title": "כהן נ' לוי ואח' - פסקדין",
+        "number": 2,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "f5c7cae4-28f7-4fe4-b388-6764e092458b",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%91%D7%96%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%9C%D7%AA%D7%A7%D7%A9%D7%95%D7%A8%D7%AA-%D7%91%D7%A2%22%D7%9D-%D7%A0'%D7%9B%D7%94%D7%9F",
+        "title": "בזק החברה הישראלית לתקשורת בע\"מ נ' כהן",
+        "number": 3,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "17477d2a-6057-4733-96be-2680fb5582ab",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1239-19-%d7%99%d7%95%d7%90%d7%9c-%d7%a9%d7%90%d7%95%d7%9c-%d7%a0-%d7%97%d7%91%d7%a8%d7%aa-%d7%a0%d7%99%d7%99%d7%93%d7%9c%d7%99-%d7%aa%d7%a7%d7%a9%d7%95%d7%a8%d7%aa-%d7%91%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 1239/19 יואל שאול נ׳ חברת ניידלי תקשורת בע\"מ פסק דין (08.01.2020)",
+        "number": 3,
+        "origin": "local_db",
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "3e086a72-60da-4a9b-bbfa-8dea9a440852",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-7647-16-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%a9%d7%a8/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 7647/16 האגודה לזכויות האזרח בישראל נ׳ שרת התרבות והספורט פסק דין",
+        "number": 3,
+        "origin": "local_db",
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "679a2bc0-adc4-4bc5-a639-82d1ad91f906",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://fs.knesset.gov.il/5/law/5_lsr_208497.pdf",
+        "title": "חוק לשון הרע, תשכ;quot&ה1965 *",
+        "number": 4,
+        "origin": "perplexity",
+        "citable_as": "statute",
+        "source_type": "legislation",
+        "candidate_id": "329842eb-49ae-449d-b9ba-e4b4248350be",
+        "authority_tier": "official_primary",
+        "synthesis_role": "statutory_background",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://lite.takdin.co.il/search-results?t=%D7%9C%D7%99%D7%90%D7%9F%20%D7%9B%D7%94%D7%9F&pn=1",
+        "title": "כל פסקי הדין עבור ליאן כהן",
+        "number": 6,
+        "origin": "perplexity",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "c013ab39-195c-4e77-9174-ff1d1f8c2120",
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "integrity_flags": [
+          "official_host_non_specific_path"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      }
+    ],
+    "used_sources_count": 9,
+    "footnotes": [
+      {
+        "url": "https://www.psakdin.co.il/Court",
+        "title": "Search results for \"ע״א 99887/04/22\"; לוי נ' כהן ואח'; כהן נ' לוי ואח'",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court",
+            "title": "Search results for \"ע״א 99887/04/22\"",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-41724-08-16-%D7%9C%D7%95%D7%99-%D7%A0-%D7%9B%D7%94%D7%9F-%D7%95%D7%90%D7%97_2",
+            "title": "לוי נ' כהן ואח'",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%20%D7%9C%D7%95%D7%99%20%D7%95%D7%90%D7%97'",
+            "title": "כהן נ' לוי ואח'",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%D7%9C%D7%95%D7%99-%D7%95%D7%90%D7%97'",
+        "title": "כהן נ' לוי ואח' - פסקדין; כהן נ' לוי ואח'; לוי נ' כהן ואח'",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%D7%9C%D7%95%D7%99-%D7%95%D7%90%D7%97'",
+            "title": "כהן נ' לוי ואח' - פסקדין",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%20%D7%9C%D7%95%D7%99%20%D7%95%D7%90%D7%97'",
+            "title": "כהן נ' לוי ואח'",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-41724-08-16-%D7%9C%D7%95%D7%99-%D7%A0-%D7%9B%D7%94%D7%9F-%D7%95%D7%90%D7%97_2",
+            "title": "לוי נ' כהן ואח'",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%91%D7%96%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%9C%D7%AA%D7%A7%D7%A9%D7%95%D7%A8%D7%AA-%D7%91%D7%A2%22%D7%9D-%D7%A0'%D7%9B%D7%94%D7%9F",
+        "title": "בזק החברה הישראלית לתקשורת בע\"מ נ' כהן; רע\"א 1239/19 יואל שאול נ׳ חברת ניידלי תקשורת בע\"מ פסק דין (08.01.2020); בג\"ץ 7647/16 האגודה לזכויות האזרח בישראל נ׳ שרת התרבות והספורט פסק דין",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%96%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%9C%D7%AA%D7%A7%D7%A9%D7%95%D7%A8%D7%AA-%D7%91%D7%A2%22%D7%9D-%D7%A0'%D7%9B%D7%94%D7%9F",
+            "title": "בזק החברה הישראלית לתקשורת בע\"מ נ' כהן",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1239-19-%d7%99%d7%95%d7%90%d7%9c-%d7%a9%d7%90%d7%95%d7%9c-%d7%a0-%d7%97%d7%91%d7%a8%d7%aa-%d7%a0%d7%99%d7%99%d7%93%d7%9c%d7%99-%d7%aa%d7%a7%d7%a9%d7%95%d7%a8%d7%aa-%d7%91%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "רע\"א 1239/19 יואל שאול נ׳ חברת ניידלי תקשורת בע\"מ פסק דין (08.01.2020)",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-7647-16-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%a9%d7%a8/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 7647/16 האגודה לזכויות האזרח בישראל נ׳ שרת התרבות והספורט פסק דין",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/5/law/5_lsr_208497.pdf",
+        "title": "חוק לשון הרע, תשכ;quot&ה1965 *; בזק החברה הישראלית לתקשורת בע\"מ נ' כהן",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://fs.knesset.gov.il/5/law/5_lsr_208497.pdf",
+            "title": "חוק לשון הרע, תשכ;quot&ה1965 *",
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%96%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%9C%D7%AA%D7%A7%D7%A9%D7%95%D7%A8%D7%AA-%D7%91%D7%A2%22%D7%9D-%D7%A0'%D7%9B%D7%94%D7%9F",
+            "title": "בזק החברה הישראלית לתקשורת בע\"מ נ' כהן",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%20%D7%9C%D7%95%D7%99%20%D7%95%D7%90%D7%97'",
+        "title": "כהן נ' לוי ואח'; לוי נ' כהן ואח'; בזק החברה הישראלית לתקשורת בע\"מ נ' כהן",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%20%D7%9C%D7%95%D7%99%20%D7%95%D7%90%D7%97'",
+            "title": "כהן נ' לוי ואח'",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-41724-08-16-%D7%9C%D7%95%D7%99-%D7%A0-%D7%9B%D7%94%D7%9F-%D7%95%D7%90%D7%97_2",
+            "title": "לוי נ' כהן ואח'",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%91%D7%96%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%9C%D7%AA%D7%A7%D7%A9%D7%95%D7%A8%D7%AA-%D7%91%D7%A2%22%D7%9D-%D7%A0'%D7%9B%D7%94%D7%9F",
+            "title": "בזק החברה הישראלית לתקשורת בע\"מ נ' כהן",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court",
+        "title": "Search results for \"ע״א 99887/04/22\"; כל פסקי הדין עבור ליאן כהן",
+        "number": 6,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court",
+            "title": "Search results for \"ע״א 99887/04/22\"",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://lite.takdin.co.il/search-results?t=%D7%9C%D7%99%D7%90%D7%9F%20%D7%9B%D7%94%D7%9F&pn=1",
+            "title": "כל פסקי הדין עבור ליאן כהן",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "answer": "**מסקנה עיקרית**\n\nאין במקורות הנגישים פסק‑דין של בית המשפט העליון במספר ע״א 99887‑04‑22; הרישומים המזהים את השמות \"לוי נ' כהן\" מתייחסים להליכים בבתי משפט נמוכים (תיקים בתיקי תביעה אזרחית/בית משפט השלום) ולכן אין בכך הכרעה עליונה מחייבת.¹\n\n**מה שניתן לומר לגבי אחריות פלטפורמה מקוונת**\n\nלא נמצא שבערעור המספרי שנשאל הוצהרה הלכה עליונה הקובעת באופן גורף אחריות ישירה או שילוחית של פלטפורמה מקוונת; מסמכים של בתי משפט נמוכים שעוסקים בזיקה בין הצדדים מעלים דיונים על מעמד התיווך של הפלטפורמה ועל נסיבות שבהן ייתכן שיוחס לה מעמד של \"מפרסם\" או שותפה לפרסום — אך אלה מופיעים ברמת הערכאה הנמוכה ולא מהווים הלכה מחייבת של בית המשפט העליון.²\n\nבפרשנויות ובפסיקה אנלוגית נדונו מבחנים מעשיים כגון היקף השליטה של הפלטפורמה בתוכן, מידת הסיוע הטכני או העריכתי לפרסום, והידיעה בפועל של המפעיל לגבי תוכן מפרסם; לצד זאת הוזכרו מודלים פרקטיים של הודעה והסרה ואמות‑מידה לדרישת ידיעה, כאשר כל איזון כזה נעשה לעיתים תוך שקילה של חופש הביטוי.³\n\nהדיון נבחן גם בהקשר לחקיקה רלוונטית כגון חוק לשון הרע ולדוקטרינת הנזיקין, אך לא נמצא במקורות שסופקו התייחסות מפורשת המעניקה לפלטפורמות חסינות סטטוטורית גורפת; סוגיות של החלת הוראות לשון הרע על מתווכים נדונו בעיקר כנקודת השוואה ולא כהכרעה ישירה בתיק העיקרי הנדון כאן.⁴\n\nבאשר לסעדים — המקורות הזמינים לא מספקים נוסח החלטה מלא של הערעור המבוקש, ולפיכך אין בידי אימות של סעדים שנפסקו נגד הפלטפורמה בערכאה עליונה; ברמה הנמוכה יותר נדונו בקשות להסרת תוכן, צווי מניעה ושאלות פיצוי נזיקי בהקשרים דומים, אך אין בכך עדות להלכה קבילה בערעור זה.⁵\n\nהסתייגות ומגבלות: מסקנות אלה מבוססות על רישומים וחיפושי מאמרים ופסקי דין חלקיים; כדי לקבוע בוודאות מה נקבע בע״א 99887‑04‑22 יש להשיג את פסק‑הדין המלא או מקור עליון מוסמך של ההכרעה.⁶"
+  },
+  {
+    "id": "P03",
+    "kind": "statute_section_definition",
+    "query": "כיצד מגדיר סעיף 1 לחוק החוזים (חלק כללי), תשל\"ג-1973 את דרך הכריתה של חוזה?",
+    "run_id": "1c54d5c7-79f3-45f0-b1c8-1dd3433a9e5e",
+    "ok": true,
+    "total_ms": 89210,
+    "research_mode": "canonical_quote",
+    "answer_intent": {
+      "output_shape": "quote"
+    },
+    "deterministic_branch": "statute_section_quote_refusal",
+    "lead_ref": {
+      "ref": "s7",
+      "shape": "quote",
+      "reason": "required_anchor_official"
+    },
+    "sufficiency": null,
+    "named_doctrine": null,
+    "synthesis_rendering": null,
+    "source_integrity_counts": null,
+    "missing_anchor_descriptions": [
+      "הנוסח המחייב של סעיף 1 לחוק החוזים (חלק כללי)"
+    ],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 1,
+        "partial": 9,
+        "unrelated": 4,
+        "tangential": 5
+      },
+      "by_role_match": {
+        "true": 18,
+        "false": 1
+      },
+      "model_verdicts": 19,
+      "by_support_model": {
+        "direct": 1,
+        "partial": 9,
+        "unrelated": 4,
+        "tangential": 5
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "used_sources": [
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+        "title": "חוק החוזים (חלק כללי)",
+        "number": 1,
+        "origin": "local_db",
+        "citable_as": "statute",
+        "source_type": "israeli_law",
+        "candidate_id": "b1bf67ba-674c-4cf3-a591-c9fbbde59ee2",
+        "authority_tier": "statute_mirror",
+        "synthesis_role": "statutory_background",
+        "text_usability": "substantive_excerpt",
+        "integrity_flags": [
+          "consolidated_statute_mirror"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      }
+    ],
+    "used_sources_count": 1,
+    "footnotes": [
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+        "title": "חוק החוזים (חלק כללי)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+            "title": "חוק החוזים (חלק כללי)",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "israeli_law"
+      }
+    ],
+    "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 1 לחוק החוזים (חלק כללי); לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
+  },
+  {
+    "id": "P04",
+    "kind": "canonical_quote",
+    "query": "מהו הנוסח המדויק של סעיף 8 לחוק יסוד: כבוד האדם וחירותו (פסקת ההגבלה)?",
+    "run_id": "81af71ac-543a-4c30-a74e-7c93b792ec34",
+    "ok": true,
+    "total_ms": 68961,
+    "research_mode": "canonical_quote",
+    "answer_intent": {
+      "output_shape": "quote"
+    },
+    "deterministic_branch": "statute_section_quote_refusal",
+    "lead_ref": {
+      "ref": "s1",
+      "shape": "quote",
+      "reason": "required_anchor_official"
+    },
+    "sufficiency": null,
+    "named_doctrine": null,
+    "synthesis_rendering": null,
+    "source_integrity_counts": null,
+    "missing_anchor_descriptions": [
+      "הנוסח המחייב של סעיף 8 לחוק-יסוד: כבוד האדם וחירותו"
+    ],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 1,
+        "partial": 9,
+        "unrelated": 2,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 12,
+        "false": 0
+      },
+      "model_verdicts": 12,
+      "by_support_model": {
+        "direct": 1,
+        "partial": 9,
+        "unrelated": 2,
+        "tangential": 0
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "used_sources": [
+      {
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "title": "חוק יסוד: כבוד האדם וחירותו (נוסח רשמי באתר הכנסת)",
+        "number": 1,
+        "origin": "perplexity",
+        "citable_as": "statute",
+        "source_type": "legislation",
+        "candidate_id": "21647a9b-2e51-4e27-aefb-23f4fea464af",
+        "authority_tier": "official_primary",
+        "synthesis_role": "statutory_background",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      }
+    ],
+    "used_sources_count": 1,
+    "footnotes": [
+      {
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "title": "חוק יסוד: כבוד האדם וחירותו (נוסח רשמי באתר הכנסת)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+            "title": "חוק יסוד: כבוד האדם וחירותו (נוסח רשמי באתר הכנסת)",
+            "source_type": "legislation"
+          }
+        ],
+        "source_type": "legislation"
+      }
+    ],
+    "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 8 לחוק-יסוד: כבוד האדם וחירותו; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
+  },
+  {
+    "id": "P05",
+    "kind": "case_law_synthesis",
+    "query": "מה הפסיקה אומרת על הלכת תום הלב במשא ומתן לפי סעיף 12 לחוק החוזים?",
+    "run_id": "af1f7a01-c2e9-4015-9cf1-19db2d3fa52d",
+    "ok": true,
+    "total_ms": 137904,
+    "research_mode": "case_law_synthesis",
+    "answer_intent": {
+      "output_shape": "analysis"
+    },
+    "deterministic_branch": null,
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
+    "sufficiency": null,
+    "named_doctrine": null,
+    "synthesis_rendering": {
+      "groups": {
+        "secondary_context": [],
+        "usable_authorities": [],
+        "found_but_not_usable": [],
+        "statutory_background": []
+      },
+      "reason": "framing_correction_active",
+      "group_counts": {
+        "secondary_context": 0,
+        "usable_authorities": 0,
+        "found_but_not_usable": 0,
+        "statutory_background": 0
+      },
+      "named_case_keys": [],
+      "named_cases_in_body": 0,
+      "usable_judgments_named": 0,
+      "synthesis_rendering_applied": false,
+      "commentary_used_as_primary_authority": false,
+      "metadata_only_sources_used_as_holdings": false
+    },
+    "source_integrity_counts": null,
+    "missing_anchor_descriptions": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 3,
+        "partial": 15,
+        "unrelated": 9,
+        "tangential": 2
+      },
+      "by_role_match": {
+        "true": 27,
+        "false": 2
+      },
+      "model_verdicts": 29,
+      "by_support_model": {
+        "direct": 3,
+        "partial": 15,
+        "unrelated": 9,
+        "tangential": 2
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "used_sources": [
+      {
+        "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+        "title": "חוק החוזים (חלק כללי) - נוסח/חומר חקיקה",
+        "number": 1,
+        "origin": "perplexity",
+        "citable_as": "statute",
+        "source_type": "legislation",
+        "candidate_id": "49b2a4b9-7f0f-4ee9-9752-a90ccc3eb65f",
+        "authority_tier": "official_primary",
+        "synthesis_role": "statutory_background",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+        "title": "חוק החוזים (חלק כללי)",
+        "number": 1,
+        "origin": "local_db",
+        "citable_as": "statute",
+        "source_type": "israeli_law",
+        "candidate_id": "a3b5d88c-bbdd-42dc-a2ed-9bf33b89403c",
+        "authority_tier": "statute_mirror",
+        "synthesis_role": "statutory_background",
+        "text_usability": "substantive_excerpt",
+        "integrity_flags": [
+          "consolidated_statute_mirror"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://www.nevo.co.il/law_html/law01/012_001.htm",
+        "title": "ע\"א 1662/99 חיים נ' חיים",
+        "number": 2,
+        "origin": "perplexity",
+        "citable_as": "statute",
+        "source_type": "legislation",
+        "candidate_id": "fbf17fde-4121-47d2-82d5-47bfdf41d0e7",
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "statutory_background",
+        "text_usability": "metadata_only",
+        "integrity_flags": [
+          "official_host_non_specific_path"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/articlesgabriela/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91-%20%D7%92%D7%91%D7%A8%D7%99%D7%90%D7%9C%D7%94%20%D7%A9%D7%9C%D7%95.pdf",
+        "title": "תום לב - גביראֶלה שלו",
+        "number": 3,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "other",
+        "candidate_id": "a8c10c1a-24c7-4fb5-93ea-bb5e2200a2a3",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+        "title": "השתק הבטחה והממשק החוזי",
+        "number": 4,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "other",
+        "candidate_id": "bbcf51c3-a3e2-4736-aaa1-4dad3fce7508",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": true,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-25798-12-14",
+        "title": "ת\"א 25798-12-14",
+        "number": 5,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "762ba22a-e1fd-4f13-a9eb-7a1863fa244b",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": true,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/990/022/x03&fileName=23022990.X03&type=4",
+        "title": "החלטה בתיק רע\"א 2299/23",
+        "number": 5,
+        "origin": "perplexity",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "067c735f-2c87-4de4-9083-1ef7c56f7c53",
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_document",
+          "judgment_text_acquired"
+        ],
+        "has_holding_text": true,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m4.pdf",
+        "title": "ייחוד עילה בדיני הפגמים בכריתה: ניתוח עיוני ונורמטיבי",
+        "number": 6,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "other",
+        "candidate_id": "0947f708-bb4b-40f3-bd3e-53b86b74627d",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "http://lawjournal.huji.ac.il/article/12/373",
+        "title": "סעיף 12 לחוק החוזים: תום לב במשא ומתן",
+        "number": 6,
+        "origin": "perplexity",
+        "citable_as": "unknown",
+        "source_type": "academic",
+        "candidate_id": "e25ec470-5a7d-421e-aaa4-77109f5959ef",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+        "title": "תום לב בחוזים ואשם ביצירת החוזה",
+        "number": 6,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "other",
+        "candidate_id": "a2fcdee3-3264-4d9a-8909-d5e964eb21ef",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      }
+    ],
+    "used_sources_count": 10,
+    "footnotes": [
+      {
+        "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+        "title": "חוק החוזים (חלק כללי) - נוסח/חומר חקיקה; חוק החוזים (חלק כללי)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+            "title": "חוק החוזים (חלק כללי) - נוסח/חומר חקיקה",
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+            "title": "חוק החוזים (חלק כללי)",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.nevo.co.il/law_html/law01/012_001.htm",
+        "title": "ע\"א 1662/99 חיים נ' חיים; חוק החוזים (חלק כללי) - נוסח/חומר חקיקה",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law01/012_001.htm",
+            "title": "ע\"א 1662/99 חיים נ' חיים",
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+            "title": "חוק החוזים (חלק כללי) - נוסח/חומר חקיקה",
+            "source_type": "legislation"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.nevo.co.il/law_html/law01/012_001.htm",
+        "title": "ע\"א 1662/99 חיים נ' חיים; תום לב - גביראֶלה שלו",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law01/012_001.htm",
+            "title": "ע\"א 1662/99 חיים נ' חיים",
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/articlesgabriela/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91-%20%D7%92%D7%91%D7%A8%D7%99%D7%90%D7%9C%D7%94%20%D7%A9%D7%9C%D7%95.pdf",
+            "title": "תום לב - גביראֶלה שלו",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+        "title": "חוק החוזים (חלק כללי) - נוסח/חומר חקיקה; השתק הבטחה והממשק החוזי",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+            "title": "חוק החוזים (חלק כללי) - נוסח/חומר חקיקה",
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+            "title": "השתק הבטחה והממשק החוזי",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-25798-12-14",
+        "title": "ת\"א 25798-12-14; החלטה בתיק רע\"א 2299/23",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-25798-12-14",
+            "title": "ת\"א 25798-12-14",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/990/022/x03&fileName=23022990.X03&type=4",
+            "title": "החלטה בתיק רע\"א 2299/23",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m4.pdf",
+        "title": "ייחוד עילה בדיני הפגמים בכריתה: ניתוח עיוני ונורמטיבי; סעיף 12 לחוק החוזים: תום לב במשא ומתן; תום לב בחוזים ואשם ביצירת החוזה",
+        "number": 6,
+        "sources": [
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m4.pdf",
+            "title": "ייחוד עילה בדיני הפגמים בכריתה: ניתוח עיוני ונורמטיבי",
+            "source_type": "other"
+          },
+          {
+            "url": "http://lawjournal.huji.ac.il/article/12/373",
+            "title": "סעיף 12 לחוק החוזים: תום לב במשא ומתן",
+            "source_type": "academic"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+            "title": "תום לב בחוזים ואשם ביצירת החוזה",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "answer": "לא נמצאה במקורות שמסופקו הלכה מוכרת בשם \"הלכת תום הלב במשא ומתן\".\n\nההסדר המשפטי הקרוב לקביעה זו מופיע בסעיף 12 לחוק החוזים (חלק כללי), הקובע במפורש חובת תום לב במשא‑ומתן לקראת כריתת חוזה ואת הסעד של פיצויים בגין נזק שנגרם מכך.¹\n\nלפי הפסיקה שצוינה במקורות, בתי המשפט יישמו את סעיף 12 והכירו בחובת תום הלב במשא‑ומתן כעקרון שניתן להיאכף משפטית; בית המשפט בדק הפרות של החובה ובהתאם קימם עילות וביקש להסתמך על הוראת הסעיף בהענקת סעד.²\n\nהיסודות והקריטריונים שהפסיקה אימצה בעילות מסוג זה כוללים מדד אובייקטיבי של התנהגות סבירה והגונה בנסיבות העניין, חובת גילוי של עובדות מהותיות ואיסור ליצר מצג מטעה במהלך המשא‑ומתן.³\n\nהסעד הספציפי שמסמיך החוק הוא פיצויים בעד הנזק שנגרם עקב המשא‑ומתן או עקב כריתת החוזה; נוסח סעיף 12(ב) מפנה ליישום הוראות סעיפים 10, 13 ו‑14 בהתאם, והספרות והפרשנות המשפטית מדגישות כי פיצויים הם הסעד העיקרי שקשור להפרה זו.⁴\n\nבמקביל, בפסיקה נדונו סוגיות של סעדים נוספים — למשל האפשרות של סעד הצהרתי או סעד אופרטיבי שנגזר מאותה עילה — וקיימת בפסיקה ועיקרון לפיו זוכה בסעד הצהרתי עשוי לבקש גם סעד אופרטיבי שנובע מהעילה; עם זאת, המסמכים שברשותנו אינם מצביעים על כלל אחיד המורה על שימוש קבוע בצווים אלה במקום או בנוסף לפיצויים.⁵\n\nהמגבלות והסייגים ביחס לחובת תום הלב במשא‑ומתן נידונו בספרות ובפסיקה: קיימת הבחנה בין תום לב אובייקטיבי לבין הטעיה או פגם בכריתה, שאלות לגבי היקף החובה בסוגי מו\"מ שונים (מסחרי, צרכני, מנהלי) ושאלת היכולת לוויתר על חובת תום הלב — נושאים אלה מצויים בדיון אקדמי ולא הוכרעו באופן אחיד במקורות שסופקו.⁶\n\nאם רצונך שאבדוק הלכה ספציפית (שם תיק או ציטוט מפסק־דין) או שאתרחב בעניינים מעשיים־הליךיים (אמות מידה הראייתיות, דוגמאות לפסיקה נוספת או ניסוח תביעה/הגנה), אנא פרט/י ואבדוק את המקורות הרלוונטיים."
+  },
+  {
+    "id": "P06",
+    "kind": "misframed_doctrine",
+    "query": "מה הפסיקה אומרת על הלכת ההסתמכות ההפוכה בדיני עבודה?",
+    "run_id": "568f5d99-dd28-4a3d-acb2-3beafdf64a85",
+    "ok": true,
+    "total_ms": 142179,
+    "research_mode": "case_law_synthesis",
+    "answer_intent": {
+      "output_shape": "analysis"
+    },
+    "deterministic_branch": "insufficient_sources_limitation",
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
+    "sufficiency": null,
+    "named_doctrine": null,
+    "synthesis_rendering": null,
+    "source_integrity_counts": null,
+    "missing_anchor_descriptions": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 2,
+        "unrelated": 5,
+        "tangential": 13
+      },
+      "by_role_match": {
+        "true": 18,
+        "false": 2
+      },
+      "model_verdicts": 20,
+      "by_support_model": {
+        "direct": 0,
+        "partial": 2,
+        "unrelated": 5,
+        "tangential": 13
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "used_sources": [],
+    "used_sources_count": 0,
+    "footnotes": [],
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק הגנה על עובדים (חשיפת עבירות ופגיעה בטוהר המידות או במינהל התקין), תשנ\"ז-1997; חוק פיצויי פיטורים, תשכ\"ג-1963."
+  },
+  {
+    "id": "P07",
+    "kind": "doctrine_explanation",
+    "query": "מהי דוקטרינת הביטול היחסי במשפט המנהלי הישראלי וכיצד היא מיושמת?",
+    "run_id": "385e7137-15c2-41a0-8489-435caec4eb61",
+    "ok": true,
+    "total_ms": 91272,
+    "research_mode": "doctrine_explanation",
+    "answer_intent": {
+      "output_shape": "analysis"
+    },
+    "deterministic_branch": "insufficient_sources_limitation",
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
+    "sufficiency": null,
+    "named_doctrine": null,
+    "synthesis_rendering": null,
+    "source_integrity_counts": null,
+    "missing_anchor_descriptions": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 1,
+        "partial": 6,
+        "unrelated": 7,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 14,
+        "false": 0
+      },
+      "model_verdicts": 14,
+      "by_support_model": {
+        "direct": 1,
+        "partial": 6,
+        "unrelated": 7,
+        "tangential": 0
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "used_sources": [],
+    "used_sources_count": 0,
+    "footnotes": [],
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): דיני חוזי מנהליי : ענ של המשפט המנהלי ?; אחרי עשרים שנה: הרהורים על מוסכמות מקובלות בשיח המידתיות; בית־המשפט לעניינים מינהליים; מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת מינהלי."
+  },
+  {
+    "id": "P08",
+    "kind": "practical_steps",
+    "query": "מהם השלבים המעשיים להגשת תביעה קטנה בישראל, כולל סכום התביעה המרבי ואגרות?",
+    "run_id": "91c14149-6ab8-44e0-9477-db24e8353869",
+    "ok": true,
+    "total_ms": 116989,
+    "research_mode": "practical_steps",
+    "answer_intent": {
+      "output_shape": "list"
+    },
+    "deterministic_branch": "insufficient_sources_limitation",
+    "lead_ref": {
+      "ref": null,
+      "shape": "list",
+      "reason": "shape_not_eligible"
+    },
+    "sufficiency": null,
+    "named_doctrine": null,
+    "synthesis_rendering": null,
+    "source_integrity_counts": null,
+    "missing_anchor_descriptions": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 4,
+        "partial": 23,
+        "unrelated": 0,
+        "tangential": 3
+      },
+      "by_role_match": {
+        "true": 26,
+        "false": 4
+      },
+      "model_verdicts": 30,
+      "by_support_model": {
+        "direct": 4,
+        "partial": 23,
+        "unrelated": 0,
+        "tangential": 3
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "used_sources": [],
+    "used_sources_count": 0,
+    "footnotes": [],
+    "answer": "לא נמצאו במקורות מקורות משפטיים ייעודיים לנושא שנשאל, אלא חומר כללי בלבד. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור צעדים משפטיים קונקרטיים לנושא שנשאל ממקורות מתחום אחר או מחומר פרוצדורלי כללי; לכן לא מוצגת כאן הנחיה משפטית לשאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק שיפוט בתביעות קטנות, תשל\"ה-1975; חוק שיפוט בתביעות קטנות (תיקון מס' 2), התשמ\"ג-1982; תקנות שיפוט בתביעות קטנות (סדרי דין), תשל\"ז-1976; תקנות בתי המשפט (אגרות), תשס\"ז-2007."
+  },
+  {
+    "id": "P09",
+    "kind": "worker_classification",
+    "query": "כיצד קובעת הפסיקה אם מתכנת שעבד כפרילנסר במשך חמש שנים הוא למעשה עובד, ומה ההשלכות הכספיות?",
+    "run_id": "09f2a39e-4a23-46fa-802f-cb391468843b",
+    "ok": true,
+    "total_ms": 98809,
+    "research_mode": "doctrine_explanation",
+    "answer_intent": {
+      "output_shape": "analysis"
+    },
+    "deterministic_branch": "insufficient_sources_limitation",
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
+    "sufficiency": null,
+    "named_doctrine": null,
+    "synthesis_rendering": null,
+    "source_integrity_counts": null,
+    "missing_anchor_descriptions": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 9,
+        "unrelated": 13,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 22,
+        "false": 0
+      },
+      "model_verdicts": 22,
+      "by_support_model": {
+        "direct": 0,
+        "partial": 9,
+        "unrelated": 13,
+        "tangential": 0
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "used_sources": [],
+    "used_sources_count": 0,
+    "footnotes": [],
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): דוחות מבקר המדינה על המוסד לביטוח לאומי; פרילנסרים בישראל (דו״ח מחקר); הפרילנסרים; מסמך מאתר המוסד לביטוח לאומי."
+  },
+  {
+    "id": "P10",
+    "kind": "inheritance_mutual_wills",
+    "query": "מה הדין ביחס לצוואות הדדיות וביטולן לאחר פטירת אחד מבני הזוג לפי סעיף 8א לחוק הירושה?",
+    "run_id": "d1bfa07c-248f-4d95-ae4b-39c51aa8462b",
+    "ok": true,
+    "total_ms": 82196,
+    "research_mode": "doctrine_explanation",
+    "answer_intent": {
+      "output_shape": "analysis"
+    },
+    "deterministic_branch": "insufficient_sources_limitation",
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
+    "sufficiency": null,
+    "named_doctrine": null,
+    "synthesis_rendering": null,
+    "source_integrity_counts": null,
+    "missing_anchor_descriptions": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 1,
+        "partial": 7,
+        "unrelated": 3,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 11,
+        "false": 0
+      },
+      "model_verdicts": 11,
+      "by_support_model": {
+        "direct": 1,
+        "partial": 7,
+        "unrelated": 3,
+        "tangential": 0
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "used_sources": [],
+    "used_sources_count": 0,
+    "footnotes": [],
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק הירושה, תשכ\"ה-1965; 20_lsh_504167.docx; 20-0314.pdf; 65652-12-22.docx."
+  },
+  {
+    "id": "P11",
+    "kind": "constitutional_doctrine",
+    "query": "מהי דוקטרינת הפגיעה החוקתית והמידתיות בביקורת שיפוטית על חקיקה ראשית בישראל?",
+    "run_id": "4e9f7623-b0da-4e81-bf1d-7a2bd94193cb",
+    "ok": true,
+    "total_ms": 157105,
+    "research_mode": "doctrine_explanation",
+    "answer_intent": {
+      "output_shape": "definition"
+    },
+    "deterministic_branch": null,
+    "lead_ref": {
+      "ref": "s1",
+      "shape": "definition",
+      "reason": "primary_statute"
+    },
+    "sufficiency": null,
+    "named_doctrine": null,
+    "synthesis_rendering": {
+      "groups": {
+        "secondary_context": [],
+        "usable_authorities": [],
+        "found_but_not_usable": [],
+        "statutory_background": []
+      },
+      "reason": "not_synthesis_mode",
+      "group_counts": {
+        "secondary_context": 0,
+        "usable_authorities": 0,
+        "found_but_not_usable": 0,
+        "statutory_background": 0
+      },
+      "named_case_keys": [],
+      "named_cases_in_body": 0,
+      "usable_judgments_named": 0,
+      "synthesis_rendering_applied": false,
+      "commentary_used_as_primary_authority": false,
+      "metadata_only_sources_used_as_holdings": false
+    },
+    "source_integrity_counts": null,
+    "missing_anchor_descriptions": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 7,
+        "partial": 14,
+        "unrelated": 0,
+        "tangential": 2
+      },
+      "by_role_match": {
+        "true": 23,
+        "false": 0
+      },
+      "model_verdicts": 23,
+      "by_support_model": {
+        "direct": 7,
+        "partial": 14,
+        "unrelated": 0,
+        "tangential": 2
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "used_sources": [
+      {
+        "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf",
+        "title": "חוק־יסוד: כבוד האדם וחירותו (PDF)",
+        "number": 1,
+        "origin": "perplexity",
+        "citable_as": "statute",
+        "source_type": "legislation",
+        "candidate_id": "f1296c3e-a6c7-4ad9-8cb2-67f67ee04206",
+        "authority_tier": "official_primary",
+        "synthesis_role": "statutory_background",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://www.runi.ac.il/media/14md33du/medina.pdf",
+        "title": "'על פגיעה' בזכות חוקתית ועל 'תכלית ראויה'",
+        "number": 1,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "other",
+        "candidate_id": "f41ce46c-d194-491c-b5b8-57a9bf8283aa",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": true,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+        "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+        "number": 2,
+        "origin": "perplexity",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "448c7deb-f057-4e77-9fa7-06191f564ac6",
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "integrity_flags": [
+          "judgment_document"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA%20-%20%D7%91%D7%A0%D7%93%D7%95%D7%A8%20%D7%95%D7%A1%D7%9C%D7%A2.pdf",
+        "title": "על המידתיות של המידתיות",
+        "number": 2,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "other",
+        "candidate_id": "a8f7f3d8-400c-4498-95de-d3abb8e214e4",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3245792",
+        "title": "עליית המידתיות, ירידת ההסתברות והשלכותיה הבלתי-צפויות של המהפכה החוקתית על המשפט החוקתי הישראלי",
+        "number": 5,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "other",
+        "candidate_id": "e40ba2cd-f35f-4df3-8761-edd371df2268",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision4694-20/he/4694-20.pdf",
+        "title": "החלטה/פסק דין עליון – gov.il PDF",
+        "number": 6,
+        "origin": "perplexity",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "09e8f67e-6843-4299-a8b9-364d14fea10a",
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+        "title": "תקציר בג\"ץ 5555-18",
+        "number": 7,
+        "origin": "perplexity",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "0d6b55b7-6ddc-4182-9148-963df1f58eec",
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": true,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://www.nevo.co.il/Content/Safrut/TableOfContents/parshanut-c/",
+        "title": "פסק דין מתוך מאגר נבו",
+        "number": 8,
+        "origin": "perplexity",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "31ee7fbe-e13c-498e-9135-1b0c69783138",
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "metadata_only",
+        "integrity_flags": [
+          "official_host_non_specific_path"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1852",
+        "title": "שלילת אבהות בהסכמה",
+        "number": 8,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "af07be36-10b0-4546-827c-7c607404a857",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "number": 11,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "4902bd2e-9d83-4e71-9fd9-e1069f4e2364",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "full_text",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1550",
+        "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+        "number": 11,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "ea7cb4f3-1938-468c-a3cd-c2e8a7ab3226",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://law.huji.ac.il/sites/default/files/law/files/74haperaklit-43-1-2-005.pdf",
+        "title": "מסמך מאתר אתר אקדמי (law.huji.ac.il)",
+        "number": 12,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "other",
+        "candidate_id": "a2ad97fc-a394-48ff-95cf-44d2b2471795",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/6-dotan.pdf",
+        "title": "האם ישראל צריכה בית־משפט לחוקה?",
+        "number": 12,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "other",
+        "candidate_id": "d75037b8-6bec-41b1-a49e-007cb2b40038",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/nun1_2.pdf",
+        "title": "מסמך מאתר hapraklit.co.il",
+        "number": 12,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "aae78c27-b3dc-4ecd-9ddb-3d6859c57515",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "full_text",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      }
+    ],
+    "used_sources_count": 14,
+    "footnotes": [
+      {
+        "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf",
+        "title": "חוק־יסוד: כבוד האדם וחירותו (PDF); 'על פגיעה' בזכות חוקתית ועל 'תכלית ראויה'",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf",
+            "title": "חוק־יסוד: כבוד האדם וחירותו (PDF)",
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://www.runi.ac.il/media/14md33du/medina.pdf",
+            "title": "'על פגיעה' בזכות חוקתית ועל 'תכלית ראויה'",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+        "title": "פסק דין מתוך אתר ממשלתי (gov.il); על המידתיות של המידתיות",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+            "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA%20-%20%D7%91%D7%A0%D7%93%D7%95%D7%A8%20%D7%95%D7%A1%D7%9C%D7%A2.pdf",
+            "title": "על המידתיות של המידתיות",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+        "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+            "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+        "title": "פסק דין מתוך אתר ממשלתי (gov.il); חוק־יסוד: כבוד האדם וחירותו (PDF)",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+            "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf",
+            "title": "חוק־יסוד: כבוד האדם וחירותו (PDF)",
+            "source_type": "legislation"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+        "title": "פסק דין מתוך אתר ממשלתי (gov.il); עליית המידתיות, ירידת ההסתברות והשלכותיה הבלתי-צפויות של המהפכה החוקתית על המשפט החוקתי הישראלי",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+            "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3245792",
+            "title": "עליית המידתיות, ירידת ההסתברות והשלכותיה הבלתי-צפויות של המהפכה החוקתית על המשפט החוקתי הישראלי",
+            "source_type": "other"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3245792",
+        "title": "עליית המידתיות, ירידת ההסתברות והשלכותיה הבלתי-צפויות של המהפכה החוקתית על המשפט החוקתי הישראלי; החלטה/פסק דין עליון – gov.il PDF",
+        "number": 6,
+        "sources": [
+          {
+            "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3245792",
+            "title": "עליית המידתיות, ירידת ההסתברות והשלכותיה הבלתי-צפויות של המהפכה החוקתית על המשפט החוקתי הישראלי",
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision4694-20/he/4694-20.pdf",
+            "title": "החלטה/פסק דין עליון – gov.il PDF",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+        "title": "תקציר בג\"ץ 5555-18; פסק דין מתוך אתר ממשלתי (gov.il)",
+        "number": 7,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+            "title": "תקציר בג\"ץ 5555-18",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+            "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.nevo.co.il/Content/Safrut/TableOfContents/parshanut-c/",
+        "title": "פסק דין מתוך מאגר נבו; שלילת אבהות בהסכמה",
+        "number": 8,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/Content/Safrut/TableOfContents/parshanut-c/",
+            "title": "פסק דין מתוך מאגר נבו",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1852",
+            "title": "שלילת אבהות בהסכמה",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+        "title": "תקציר בג\"ץ 5555-18; פסק דין מתוך מאגר נבו",
+        "number": 9,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+            "title": "תקציר בג\"ץ 5555-18",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.nevo.co.il/Content/Safrut/TableOfContents/parshanut-c/",
+            "title": "פסק דין מתוך מאגר נבו",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+        "title": "פסק דין מתוך אתר ממשלתי (gov.il); שלילת אבהות בהסכמה",
+        "number": 10,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+            "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1852",
+            "title": "שלילת אבהות בהסכמה",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו); על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+        "number": 11,
+        "sources": [
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+            "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1550",
+            "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://law.huji.ac.il/sites/default/files/law/files/74haperaklit-43-1-2-005.pdf",
+        "title": "מסמך מאתר אתר אקדמי (law.huji.ac.il); האם ישראל צריכה בית־משפט לחוקה?; מסמך מאתר hapraklit.co.il",
+        "number": 12,
+        "sources": [
+          {
+            "url": "https://law.huji.ac.il/sites/default/files/law/files/74haperaklit-43-1-2-005.pdf",
+            "title": "מסמך מאתר אתר אקדמי (law.huji.ac.il)",
+            "source_type": "other"
+          },
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/6-dotan.pdf",
+            "title": "האם ישראל צריכה בית־משפט לחוקה?",
+            "source_type": "other"
+          },
+          {
+            "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/nun1_2.pdf",
+            "title": "מסמך מאתר hapraklit.co.il",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "answer": "**הגדרה מהותית של 'פגיעה חוקתית'**\n\nפגיעה חוקתית מתרחשת כאשר מסמך חקיקה ראשי יוצר גבול על זכות או עקרון המוגנים בחוק‑יסוד באופן שאינו עומד בתנאי פסקת ההגבלה: הפגיעה צריכה להיות מבוססת על חוק ההולם את ערכיה של מדינת ישראל, שנועד לתכלית ראויה, ובמידה שאינה עולה על הנדרש. סעיף 8 בחוק‑יסוד: כבוד האדם וחירותו הוא הנוסח המרכזי המסדיר את המושג הזה, והלכה ופרשנות משפטית מקבלת גם פגיעות בלתי‑מכוונות ככאלה המחייבות בחינה מידתית.¹\n\n**מבנה מבחן המידתיות — שלבים עיקריים**\n\nבפסיקה הישראלית אומצה מסגרת פרשנית שפועלת בשיטת שלבי‑מידתיות: מזהים מטרה לגיטימית, בוחנים התאמה/רלוונטיות של האמצעי, את הכרחו והדרגתיותו, ומעריכים את האיזון הכללי בין הפגיעה והיעד. בתי המשפט הכירו בשלושה מבחני משנה מקובלים שנועדו לבחון את מידתיותה של הפגיעה.²\n\n- מטרה לגיטימית: יש לזהות בהירות של תכלית החוק וביסוס שזו תכלית ראויה במובן הציבורי והחוקתי; זהו שלב מקדים שנועד להצדיק את השימוש בסמכות החקיקה.¹\n- התאמה / רלוונטיות: יש לבחון האם האמצעי שנבחר מקדם בפועל את המטרה באופן סביר וקיים קשר רציונלי בין האמצעי לתכלית.³\n- הכרח / דרגתיות (אמצעי שפגיעתו פחותה): יש לבדוק האם חקיקה חלופית פחות מגבילה של הזכות היתה יכולה להשיג את אותה מטרה; אם קיים אמצעי חלופי שמפחית פגיעה — החקיקה המקורית נגרעת בעומקה של ההצדקה.²\n- איזון / מידתיות במובן הצר: בשלב המסכם יש לאזן בין חומרת הפגיעה לתועלת הציבורית המושגת ולהעריך האם יחס התועלת‑נזק מלמד שהפגיעה מוצדקת או מופרזת.⁴\n\n**משקל השיפוטיות ובסיס התערבות בבחינת חקיקה ראשית**\n\nקיימת מסורת של הנחה פרשנית לטובת תוקפה של חקיקה ראשית, ואלה שיוזמים פסילה נדרשים להוכיח כי הפגיעה חורגת מהסף המקובל. עם זאת בתי המשפט קבעו כי מבחני המידתיות הם הכלי המתאים לבחינת הפגיעה, ודרגת הקפדנות בבחינה עשויה להשתנות בהתאם לאופי הזכות ולנסיבות הנוגעות לציבור ולסוג ההחלטה המחוקקת.⁵\n\nבפועל, מידת ההתערבות השיפוטית מושפעת מהשיקולים המוסדיים והמעשיים: בכל מקום שבו השיקול הוא פוליטי־כלכלי עמוק או שבו קיימת תלות בשיקול מדיניות רחב, הכיוון המוסכם בפסיקה נוטה לדפנות מתונה יותר; לעומת זאת, כאשר נפגעות זכויות יסוד מהותיות או נגרם פגיעה שאינה ניתנת להפחתה באמצעים אלטרנטיביים — הביקורת עלולה להידקש ולהיות קפדנית יותר.⁶\n\n**תרופות וסעד במקרה של פגיעה חוקתית**\n\n- בטלות חלקית או מלאה של הוראת חקיקה: אפשרות זו עומדת בידי בית המשפט אך בפסיקה האחרונה נדגיש כי בית המשפט חרד מלהורות על בטלות של חוקי‑יסוד, ולפעמים נמנע ממתן סעד כזה במקרים מסוימים של חקיקה על‑יסודית.⁷\n- קריאה מטה (reading down) ופרשנות מצמצמת: בית המשפט יכול לפרש הוראה חקיקתית באופן המצמצם את הפגיעה כך שתעמוד במסגרת פסקת ההגבלה במקום לפסול את החוק במלאו.⁸\n- עיכוב בביצוע או דחיית סעד הפסילה: בשים לב להשלכות מוסדיות וציבוריות, בית המשפט לעתים מקבל סעד מותנה או דוחה את ביטול ההוראה כדי לאפשר לממשלה או לכנסת תיקון פרוגרמטי של הליך החקיקה.⁹\n- מגבלות צמצום והבחנה: במקום בטלות גורפת ניתן לבחור בפתרונות ממוקדים — פסק דין המצמצם את היקף היישום של החוק או מטיל הבחנות בין אוכלוסיות/נסיבות.¹⁰\n\n**ביקורות והגבלות על דוקטרינת המידתיות בישראל**\n\nביקורת מרכזית מצביעה על סכנת ריכוזיות שיפוטית ואי‑ודאות נורמטיבית: מידתיות מאפשרת שיפוטיות ענפה ומרחב שיפוטי רחב שעלול להעמיד שיקולים מדיניים בפני טיעונים שיפוטיים טכניים. מחקרים השוו את מידתיות לכלים מנהליים אחרים ותהו האם היא תמיד ההלך המתאים לכל סוג של הכרעה של הרשות.¹¹\n\nבנוסף קיימת ויכוח מוסדי על מי הגוף הראוי להכריע במקרים רגישים ואיך לשמר לגיטימציה דמוקרטית: יש הטוענים לטיפול זהיר, שימוש בפרשנות מצמצמת והעדפה של תיקון חקיקתי על פני פסילה שיפוטית; אחרים מדגישים את הצורך בשיפוט פעיל להגנה על זכויות יסוד.¹²\n\nלסיכום: דוקטרינת הפגיעה והמידתיות בישראל מבוססת על נוסח פסקת ההגבלה בסעיף 8 והותוותה בפסיקה כמשפט בעל שלבים ברורים, אך יישומה הוא תלוי הקשר ומתוחכם מבחינה מוסדית — היא משמשת ככלי מרכזי אך גם כמוקד לביקורת על מעורבות שיפוטית ועל הוודאות של הכלל החוקתי."
+  },
+  {
+    "id": "P12",
+    "kind": "tenant_deposit",
+    "query": "בעל דירה מסרב להחזיר לי את הפיקדון בסיום שכירות למרות שהחזרתי את הדירה במצב תקין. מה הדין ומה הצעדים המעשיים?",
+    "run_id": "22a5cd44-26a2-4285-ae9b-04297224eeba",
+    "ok": true,
+    "total_ms": 104572,
+    "research_mode": "doctrine_explanation",
+    "answer_intent": {
+      "output_shape": "analysis"
+    },
+    "deterministic_branch": "insufficient_sources_limitation",
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
+    "sufficiency": null,
+    "named_doctrine": null,
+    "synthesis_rendering": null,
+    "source_integrity_counts": null,
+    "missing_anchor_descriptions": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 7,
+        "unrelated": 6,
+        "tangential": 7
+      },
+      "by_role_match": {
+        "true": 20,
+        "false": 0
+      },
+      "model_verdicts": 20,
+      "by_support_model": {
+        "direct": 0,
+        "partial": 7,
+        "unrelated": 6,
+        "tangential": 7
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "used_sources": [],
+    "used_sources_count": 0,
+    "footnotes": [],
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק השכירות והשאילה, תשל\"א-1971; עיונים בנושא השכירות; חוק השכירות ההוגנת; מסמך מאתר hapraklit.co.il."
+  },
+  {
+    "id": "P13",
+    "kind": "specific_case_holding",
+    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי ביחס לסמכות בית המשפט לבטל חוק הסותר חוק יסוד?",
+    "run_id": "7c0542fd-71e9-4e2c-ad0b-09cffc2a61ff",
+    "ok": true,
+    "total_ms": 142331,
+    "research_mode": "specific_case",
+    "answer_intent": {
+      "output_shape": "case_holding"
+    },
+    "deterministic_branch": "docket_limitation",
+    "lead_ref": {
+      "ref": null,
+      "shape": "case_holding",
+      "reason": "skipped_missing_docket_anchor"
+    },
+    "sufficiency": null,
+    "named_doctrine": null,
+    "synthesis_rendering": null,
+    "source_integrity_counts": null,
+    "missing_anchor_descriptions": [
+      "ע\"א 6821/93"
+    ],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 5,
+        "partial": 13,
+        "unrelated": 7,
+        "tangential": 2
+      },
+      "by_role_match": {
+        "true": 27,
+        "false": 0
+      },
+      "model_verdicts": 27,
+      "by_support_model": {
+        "direct": 5,
+        "partial": 13,
+        "unrelated": 7,
+        "tangential": 2
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "used_sources": [],
+    "used_sources_count": 0,
+    "footnotes": [],
+    "answer": "לא אותר במקורות הזמינים ע\"א 6821/93. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+  },
+  {
+    "id": "P14",
+    "kind": "case_law_synthesis",
+    "query": "מה הפסיקה אומרת על הרמת מסך ההתאגדות בחברות משפחתיות?",
+    "run_id": "b0145c94-8b5a-4cd6-85d7-e39624680ca3",
+    "ok": true,
+    "total_ms": 163558,
+    "research_mode": "case_law_synthesis",
+    "answer_intent": {
+      "output_shape": "analysis"
+    },
+    "deterministic_branch": "insufficient_sources_limitation",
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
+    "sufficiency": null,
+    "named_doctrine": null,
+    "synthesis_rendering": null,
+    "source_integrity_counts": null,
+    "missing_anchor_descriptions": [],
+    "verifier_counts": {
+      "by_support": {
+        "direct": 1,
+        "partial": 7,
+        "unrelated": 10,
+        "tangential": 1
+      },
+      "by_role_match": {
+        "true": 16,
+        "false": 3
+      },
+      "model_verdicts": 19,
+      "by_support_model": {
+        "direct": 1,
+        "partial": 7,
+        "unrelated": 10,
+        "tangential": 1
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "used_sources": [],
+    "used_sources_count": 0,
+    "footnotes": [],
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה."
+  }
+]

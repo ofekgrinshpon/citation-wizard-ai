@@ -1,0 +1,53 @@
+{
+  "id": "P12",
+  "kind": "tenant_deposit",
+  "query": "בעל דירה מסרב להחזיר לי את הפיקדון בסיום שכירות למרות שהחזרתי את הדירה במצב תקין. מה הדין ומה הצעדים המעשיים?",
+  "run_id": "22a5cd44-26a2-4285-ae9b-04297224eeba",
+  "ok": true,
+  "total_ms": 104572,
+  "research_mode": "doctrine_explanation",
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "deterministic_branch": "insufficient_sources_limitation",
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "sufficiency": null,
+  "named_doctrine": null,
+  "synthesis_rendering": null,
+  "source_integrity_counts": null,
+  "missing_anchor_descriptions": [],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 0,
+      "partial": 7,
+      "unrelated": 6,
+      "tangential": 7
+    },
+    "by_role_match": {
+      "true": 20,
+      "false": 0
+    },
+    "model_verdicts": 20,
+    "by_support_model": {
+      "direct": 0,
+      "partial": 7,
+      "unrelated": 6,
+      "tangential": 7
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "used_sources": [],
+  "used_sources_count": 0,
+  "footnotes": [],
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק השכירות והשאילה, תשל\"א-1971; עיונים בנושא השכירות; חוק השכירות ההוגנת; מסמך מאתר hapraklit.co.il."
+}

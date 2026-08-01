@@ -1,0 +1,519 @@
+{
+  "id": "P11",
+  "kind": "constitutional_doctrine",
+  "query": "מהי דוקטרינת הפגיעה החוקתית והמידתיות בביקורת שיפוטית על חקיקה ראשית בישראל?",
+  "run_id": "4e9f7623-b0da-4e81-bf1d-7a2bd94193cb",
+  "ok": true,
+  "total_ms": 157105,
+  "research_mode": "doctrine_explanation",
+  "answer_intent": {
+    "output_shape": "definition"
+  },
+  "deterministic_branch": null,
+  "lead_ref": {
+    "ref": "s1",
+    "shape": "definition",
+    "reason": "primary_statute"
+  },
+  "sufficiency": null,
+  "named_doctrine": null,
+  "synthesis_rendering": {
+    "groups": {
+      "secondary_context": [],
+      "usable_authorities": [],
+      "found_but_not_usable": [],
+      "statutory_background": []
+    },
+    "reason": "not_synthesis_mode",
+    "group_counts": {
+      "secondary_context": 0,
+      "usable_authorities": 0,
+      "found_but_not_usable": 0,
+      "statutory_background": 0
+    },
+    "named_case_keys": [],
+    "named_cases_in_body": 0,
+    "usable_judgments_named": 0,
+    "synthesis_rendering_applied": false,
+    "commentary_used_as_primary_authority": false,
+    "metadata_only_sources_used_as_holdings": false
+  },
+  "source_integrity_counts": null,
+  "missing_anchor_descriptions": [],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 7,
+      "partial": 14,
+      "unrelated": 0,
+      "tangential": 2
+    },
+    "by_role_match": {
+      "true": 23,
+      "false": 0
+    },
+    "model_verdicts": 23,
+    "by_support_model": {
+      "direct": 7,
+      "partial": 14,
+      "unrelated": 0,
+      "tangential": 2
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "used_sources": [
+    {
+      "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf",
+      "title": "חוק־יסוד: כבוד האדם וחירותו (PDF)",
+      "number": 1,
+      "origin": "perplexity",
+      "citable_as": "statute",
+      "source_type": "legislation",
+      "candidate_id": "f1296c3e-a6c7-4ad9-8cb2-67f67ee04206",
+      "authority_tier": "official_primary",
+      "synthesis_role": "statutory_background",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://www.runi.ac.il/media/14md33du/medina.pdf",
+      "title": "'על פגיעה' בזכות חוקתית ועל 'תכלית ראויה'",
+      "number": 1,
+      "origin": "perplexity",
+      "citable_as": "commentary",
+      "source_type": "other",
+      "candidate_id": "f41ce46c-d194-491c-b5b8-57a9bf8283aa",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": true,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+      "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+      "number": 2,
+      "origin": "perplexity",
+      "citable_as": "judgment",
+      "source_type": "caselaw",
+      "candidate_id": "448c7deb-f057-4e77-9fa7-06191f564ac6",
+      "authority_tier": "official_primary",
+      "synthesis_role": "leading_candidate",
+      "text_usability": "metadata_only",
+      "integrity_flags": [
+        "judgment_document"
+      ],
+      "has_holding_text": false,
+      "is_judgment_document": true,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA%20-%20%D7%91%D7%A0%D7%93%D7%95%D7%A8%20%D7%95%D7%A1%D7%9C%D7%A2.pdf",
+      "title": "על המידתיות של המידתיות",
+      "number": 2,
+      "origin": "perplexity",
+      "citable_as": "commentary",
+      "source_type": "other",
+      "candidate_id": "a8f7f3d8-400c-4498-95de-d3abb8e214e4",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3245792",
+      "title": "עליית המידתיות, ירידת ההסתברות והשלכותיה הבלתי-צפויות של המהפכה החוקתית על המשפט החוקתי הישראלי",
+      "number": 5,
+      "origin": "perplexity",
+      "citable_as": "commentary",
+      "source_type": "other",
+      "candidate_id": "e40ba2cd-f35f-4df3-8761-edd371df2268",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision4694-20/he/4694-20.pdf",
+      "title": "החלטה/פסק דין עליון – gov.il PDF",
+      "number": 6,
+      "origin": "perplexity",
+      "citable_as": "judgment",
+      "source_type": "caselaw",
+      "candidate_id": "09e8f67e-6843-4299-a8b9-364d14fea10a",
+      "authority_tier": "official_primary",
+      "synthesis_role": "leading_candidate",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555-18",
+      "number": 7,
+      "origin": "perplexity",
+      "citable_as": "judgment",
+      "source_type": "caselaw",
+      "candidate_id": "0d6b55b7-6ddc-4182-9148-963df1f58eec",
+      "authority_tier": "official_primary",
+      "synthesis_role": "leading_candidate",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": true,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://www.nevo.co.il/Content/Safrut/TableOfContents/parshanut-c/",
+      "title": "פסק דין מתוך מאגר נבו",
+      "number": 8,
+      "origin": "perplexity",
+      "citable_as": "judgment",
+      "source_type": "caselaw",
+      "candidate_id": "31ee7fbe-e13c-498e-9135-1b0c69783138",
+      "authority_tier": "primary_mirror",
+      "synthesis_role": "applying_candidate",
+      "text_usability": "metadata_only",
+      "integrity_flags": [
+        "official_host_non_specific_path"
+      ],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1852",
+      "title": "שלילת אבהות בהסכמה",
+      "number": 8,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "af07be36-10b0-4546-827c-7c607404a857",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+      "number": 11,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "4902bd2e-9d83-4e71-9fd9-e1069f4e2364",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "full_text",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1550",
+      "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+      "number": 11,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "ea7cb4f3-1938-468c-a3cd-c2e8a7ab3226",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://law.huji.ac.il/sites/default/files/law/files/74haperaklit-43-1-2-005.pdf",
+      "title": "מסמך מאתר אתר אקדמי (law.huji.ac.il)",
+      "number": 12,
+      "origin": "perplexity",
+      "citable_as": "commentary",
+      "source_type": "other",
+      "candidate_id": "a2ad97fc-a394-48ff-95cf-44d2b2471795",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/6-dotan.pdf",
+      "title": "האם ישראל צריכה בית־משפט לחוקה?",
+      "number": 12,
+      "origin": "perplexity",
+      "citable_as": "commentary",
+      "source_type": "other",
+      "candidate_id": "d75037b8-6bec-41b1-a49e-007cb2b40038",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/nun1_2.pdf",
+      "title": "מסמך מאתר hapraklit.co.il",
+      "number": 12,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "aae78c27-b3dc-4ecd-9ddb-3d6859c57515",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "full_text",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    }
+  ],
+  "used_sources_count": 14,
+  "footnotes": [
+    {
+      "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf",
+      "title": "חוק־יסוד: כבוד האדם וחירותו (PDF); 'על פגיעה' בזכות חוקתית ועל 'תכלית ראויה'",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf",
+          "title": "חוק־יסוד: כבוד האדם וחירותו (PDF)",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/14md33du/medina.pdf",
+          "title": "'על פגיעה' בזכות חוקתית ועל 'תכלית ראויה'",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+      "title": "פסק דין מתוך אתר ממשלתי (gov.il); על המידתיות של המידתיות",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+          "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA%20-%20%D7%91%D7%A0%D7%93%D7%95%D7%A8%20%D7%95%D7%A1%D7%9C%D7%A2.pdf",
+          "title": "על המידתיות של המידתיות",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+      "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+          "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+      "title": "פסק דין מתוך אתר ממשלתי (gov.il); חוק־יסוד: כבוד האדם וחירותו (PDF)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+          "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf",
+          "title": "חוק־יסוד: כבוד האדם וחירותו (PDF)",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+      "title": "פסק דין מתוך אתר ממשלתי (gov.il); עליית המידתיות, ירידת ההסתברות והשלכותיה הבלתי-צפויות של המהפכה החוקתית על המשפט החוקתי הישראלי",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+          "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3245792",
+          "title": "עליית המידתיות, ירידת ההסתברות והשלכותיה הבלתי-צפויות של המהפכה החוקתית על המשפט החוקתי הישראלי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3245792",
+      "title": "עליית המידתיות, ירידת ההסתברות והשלכותיה הבלתי-צפויות של המהפכה החוקתית על המשפט החוקתי הישראלי; החלטה/פסק דין עליון – gov.il PDF",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3245792",
+          "title": "עליית המידתיות, ירידת ההסתברות והשלכותיה הבלתי-צפויות של המהפכה החוקתית על המשפט החוקתי הישראלי",
+          "source_type": "other"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision4694-20/he/4694-20.pdf",
+          "title": "החלטה/פסק דין עליון – gov.il PDF",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555-18; פסק דין מתוך אתר ממשלתי (gov.il)",
+      "number": 7,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555-18",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+          "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/Content/Safrut/TableOfContents/parshanut-c/",
+      "title": "פסק דין מתוך מאגר נבו; שלילת אבהות בהסכמה",
+      "number": 8,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/Content/Safrut/TableOfContents/parshanut-c/",
+          "title": "פסק דין מתוך מאגר נבו",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1852",
+          "title": "שלילת אבהות בהסכמה",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+      "title": "תקציר בג\"ץ 5555-18; פסק דין מתוך מאגר נבו",
+      "number": 9,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5555-18/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%91%D7%92%D7%A5%205555-18.pdf",
+          "title": "תקציר בג\"ץ 5555-18",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.nevo.co.il/Content/Safrut/TableOfContents/parshanut-c/",
+          "title": "פסק דין מתוך מאגר נבו",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+      "title": "פסק דין מתוך אתר ממשלתי (gov.il); שלילת אבהות בהסכמה",
+      "number": 10,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+          "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1852",
+          "title": "שלילת אבהות בהסכמה",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו); על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+      "number": 11,
+      "sources": [
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+          "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1550",
+          "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://law.huji.ac.il/sites/default/files/law/files/74haperaklit-43-1-2-005.pdf",
+      "title": "מסמך מאתר אתר אקדמי (law.huji.ac.il); האם ישראל צריכה בית־משפט לחוקה?; מסמך מאתר hapraklit.co.il",
+      "number": 12,
+      "sources": [
+        {
+          "url": "https://law.huji.ac.il/sites/default/files/law/files/74haperaklit-43-1-2-005.pdf",
+          "title": "מסמך מאתר אתר אקדמי (law.huji.ac.il)",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/6-dotan.pdf",
+          "title": "האם ישראל צריכה בית־משפט לחוקה?",
+          "source_type": "other"
+        },
+        {
+          "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/nun1_2.pdf",
+          "title": "מסמך מאתר hapraklit.co.il",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "answer": "**הגדרה מהותית של 'פגיעה חוקתית'**\n\nפגיעה חוקתית מתרחשת כאשר מסמך חקיקה ראשי יוצר גבול על זכות או עקרון המוגנים בחוק‑יסוד באופן שאינו עומד בתנאי פסקת ההגבלה: הפגיעה צריכה להיות מבוססת על חוק ההולם את ערכיה של מדינת ישראל, שנועד לתכלית ראויה, ובמידה שאינה עולה על הנדרש. סעיף 8 בחוק‑יסוד: כבוד האדם וחירותו הוא הנוסח המרכזי המסדיר את המושג הזה, והלכה ופרשנות משפטית מקבלת גם פגיעות בלתי‑מכוונות ככאלה המחייבות בחינה מידתית.¹\n\n**מבנה מבחן המידתיות — שלבים עיקריים**\n\nבפסיקה הישראלית אומצה מסגרת פרשנית שפועלת בשיטת שלבי‑מידתיות: מזהים מטרה לגיטימית, בוחנים התאמה/רלוונטיות של האמצעי, את הכרחו והדרגתיותו, ומעריכים את האיזון הכללי בין הפגיעה והיעד. בתי המשפט הכירו בשלושה מבחני משנה מקובלים שנועדו לבחון את מידתיותה של הפגיעה.²\n\n- מטרה לגיטימית: יש לזהות בהירות של תכלית החוק וביסוס שזו תכלית ראויה במובן הציבורי והחוקתי; זהו שלב מקדים שנועד להצדיק את השימוש בסמכות החקיקה.¹\n- התאמה / רלוונטיות: יש לבחון האם האמצעי שנבחר מקדם בפועל את המטרה באופן סביר וקיים קשר רציונלי בין האמצעי לתכלית.³\n- הכרח / דרגתיות (אמצעי שפגיעתו פחותה): יש לבדוק האם חקיקה חלופית פחות מגבילה של הזכות היתה יכולה להשיג את אותה מטרה; אם קיים אמצעי חלופי שמפחית פגיעה — החקיקה המקורית נגרעת בעומקה של ההצדקה.²\n- איזון / מידתיות במובן הצר: בשלב המסכם יש לאזן בין חומרת הפגיעה לתועלת הציבורית המושגת ולהעריך האם יחס התועלת‑נזק מלמד שהפגיעה מוצדקת או מופרזת.⁴\n\n**משקל השיפוטיות ובסיס התערבות בבחינת חקיקה ראשית**\n\nקיימת מסורת של הנחה פרשנית לטובת תוקפה של חקיקה ראשית, ואלה שיוזמים פסילה נדרשים להוכיח כי הפגיעה חורגת מהסף המקובל. עם זאת בתי המשפט קבעו כי מבחני המידתיות הם הכלי המתאים לבחינת הפגיעה, ודרגת הקפדנות בבחינה עשויה להשתנות בהתאם לאופי הזכות ולנסיבות הנוגעות לציבור ולסוג ההחלטה המחוקקת.⁵\n\nבפועל, מידת ההתערבות השיפוטית מושפעת מהשיקולים המוסדיים והמעשיים: בכל מקום שבו השיקול הוא פוליטי־כלכלי עמוק או שבו קיימת תלות בשיקול מדיניות רחב, הכיוון המוסכם בפסיקה נוטה לדפנות מתונה יותר; לעומת זאת, כאשר נפגעות זכויות יסוד מהותיות או נגרם פגיעה שאינה ניתנת להפחתה באמצעים אלטרנטיביים — הביקורת עלולה להידקש ולהיות קפדנית יותר.⁶\n\n**תרופות וסעד במקרה של פגיעה חוקתית**\n\n- בטלות חלקית או מלאה של הוראת חקיקה: אפשרות זו עומדת בידי בית המשפט אך בפסיקה האחרונה נדגיש כי בית המשפט חרד מלהורות על בטלות של חוקי‑יסוד, ולפעמים נמנע ממתן סעד כזה במקרים מסוימים של חקיקה על‑יסודית.⁷\n- קריאה מטה (reading down) ופרשנות מצמצמת: בית המשפט יכול לפרש הוראה חקיקתית באופן המצמצם את הפגיעה כך שתעמוד במסגרת פסקת ההגבלה במקום לפסול את החוק במלאו.⁸\n- עיכוב בביצוע או דחיית סעד הפסילה: בשים לב להשלכות מוסדיות וציבוריות, בית המשפט לעתים מקבל סעד מותנה או דוחה את ביטול ההוראה כדי לאפשר לממשלה או לכנסת תיקון פרוגרמטי של הליך החקיקה.⁹\n- מגבלות צמצום והבחנה: במקום בטלות גורפת ניתן לבחור בפתרונות ממוקדים — פסק דין המצמצם את היקף היישום של החוק או מטיל הבחנות בין אוכלוסיות/נסיבות.¹⁰\n\n**ביקורות והגבלות על דוקטרינת המידתיות בישראל**\n\nביקורת מרכזית מצביעה על סכנת ריכוזיות שיפוטית ואי‑ודאות נורמטיבית: מידתיות מאפשרת שיפוטיות ענפה ומרחב שיפוטי רחב שעלול להעמיד שיקולים מדיניים בפני טיעונים שיפוטיים טכניים. מחקרים השוו את מידתיות לכלים מנהליים אחרים ותהו האם היא תמיד ההלך המתאים לכל סוג של הכרעה של הרשות.¹¹\n\nבנוסף קיימת ויכוח מוסדי על מי הגוף הראוי להכריע במקרים רגישים ואיך לשמר לגיטימציה דמוקרטית: יש הטוענים לטיפול זהיר, שימוש בפרשנות מצמצמת והעדפה של תיקון חקיקתי על פני פסילה שיפוטית; אחרים מדגישים את הצורך בשיפוט פעיל להגנה על זכויות יסוד.¹²\n\nלסיכום: דוקטרינת הפגיעה והמידתיות בישראל מבוססת על נוסח פסקת ההגבלה בסעיף 8 והותוותה בפסיקה כמשפט בעל שלבים ברורים, אך יישומה הוא תלוי הקשר ומתוחכם מבחינה מוסדית — היא משמשת ככלי מרכזי אך גם כמוקד לביקורת על מעורבות שיפוטית ועל הוודאות של הכלל החוקתי."
+}
