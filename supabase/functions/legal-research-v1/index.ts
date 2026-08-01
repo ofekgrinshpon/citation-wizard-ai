@@ -571,7 +571,7 @@ async function handle(req: Request): Promise<Response> {
     candidates: pool.candidates,
   });
 
-  const role_corrections = pplx.per_query.flatMap((pq) =
+  const role_corrections = pplx.per_query.flatMap((pq) =>
     pq.results
       .filter((r) => r.role_corrected_from)
       .map((r) => ({
