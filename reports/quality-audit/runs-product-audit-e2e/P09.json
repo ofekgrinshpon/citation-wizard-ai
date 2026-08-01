@@ -1,0 +1,53 @@
+{
+  "id": "P09",
+  "kind": "worker_classification",
+  "query": "כיצד קובעת הפסיקה אם מתכנת שעבד כפרילנסר במשך חמש שנים הוא למעשה עובד, ומה ההשלכות הכספיות?",
+  "run_id": "09f2a39e-4a23-46fa-802f-cb391468843b",
+  "ok": true,
+  "total_ms": 98809,
+  "research_mode": "doctrine_explanation",
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "deterministic_branch": "insufficient_sources_limitation",
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "sufficiency": null,
+  "named_doctrine": null,
+  "synthesis_rendering": null,
+  "source_integrity_counts": null,
+  "missing_anchor_descriptions": [],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 0,
+      "partial": 9,
+      "unrelated": 13,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 22,
+      "false": 0
+    },
+    "model_verdicts": 22,
+    "by_support_model": {
+      "direct": 0,
+      "partial": 9,
+      "unrelated": 13,
+      "tangential": 0
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "used_sources": [],
+  "used_sources_count": 0,
+  "footnotes": [],
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): דוחות מבקר המדינה על המוסד לביטוח לאומי; פרילנסרים בישראל (דו״ח מחקר); הפרילנסרים; מסמך מאתר המוסד לביטוח לאומי."
+}

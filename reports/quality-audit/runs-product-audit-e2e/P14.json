@@ -1,0 +1,53 @@
+{
+  "id": "P14",
+  "kind": "case_law_synthesis",
+  "query": "מה הפסיקה אומרת על הרמת מסך ההתאגדות בחברות משפחתיות?",
+  "run_id": "b0145c94-8b5a-4cd6-85d7-e39624680ca3",
+  "ok": true,
+  "total_ms": 163558,
+  "research_mode": "case_law_synthesis",
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "deterministic_branch": "insufficient_sources_limitation",
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "sufficiency": null,
+  "named_doctrine": null,
+  "synthesis_rendering": null,
+  "source_integrity_counts": null,
+  "missing_anchor_descriptions": [],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 1,
+      "partial": 7,
+      "unrelated": 10,
+      "tangential": 1
+    },
+    "by_role_match": {
+      "true": 16,
+      "false": 3
+    },
+    "model_verdicts": 19,
+    "by_support_model": {
+      "direct": 1,
+      "partial": 7,
+      "unrelated": 10,
+      "tangential": 1
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "used_sources": [],
+  "used_sources_count": 0,
+  "footnotes": [],
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה."
+}

@@ -1,0 +1,86 @@
+{
+  "id": "P04",
+  "kind": "canonical_quote",
+  "query": "מהו הנוסח המדויק של סעיף 8 לחוק יסוד: כבוד האדם וחירותו (פסקת ההגבלה)?",
+  "run_id": "81af71ac-543a-4c30-a74e-7c93b792ec34",
+  "ok": true,
+  "total_ms": 68961,
+  "research_mode": "canonical_quote",
+  "answer_intent": {
+    "output_shape": "quote"
+  },
+  "deterministic_branch": "statute_section_quote_refusal",
+  "lead_ref": {
+    "ref": "s1",
+    "shape": "quote",
+    "reason": "required_anchor_official"
+  },
+  "sufficiency": null,
+  "named_doctrine": null,
+  "synthesis_rendering": null,
+  "source_integrity_counts": null,
+  "missing_anchor_descriptions": [
+    "הנוסח המחייב של סעיף 8 לחוק-יסוד: כבוד האדם וחירותו"
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 1,
+      "partial": 9,
+      "unrelated": 2,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 12,
+      "false": 0
+    },
+    "model_verdicts": 12,
+    "by_support_model": {
+      "direct": 1,
+      "partial": 9,
+      "unrelated": 2,
+      "tangential": 0
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "used_sources": [
+    {
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "title": "חוק יסוד: כבוד האדם וחירותו (נוסח רשמי באתר הכנסת)",
+      "number": 1,
+      "origin": "perplexity",
+      "citable_as": "statute",
+      "source_type": "legislation",
+      "candidate_id": "21647a9b-2e51-4e27-aefb-23f4fea464af",
+      "authority_tier": "official_primary",
+      "synthesis_role": "statutory_background",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    }
+  ],
+  "used_sources_count": 1,
+  "footnotes": [
+    {
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "title": "חוק יסוד: כבוד האדם וחירותו (נוסח רשמי באתר הכנסת)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+          "title": "חוק יסוד: כבוד האדם וחירותו (נוסח רשמי באתר הכנסת)",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "legislation"
+    }
+  ],
+  "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 8 לחוק-יסוד: כבוד האדם וחירותו; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
+}

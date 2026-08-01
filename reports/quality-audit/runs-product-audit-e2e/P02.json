@@ -1,0 +1,349 @@
+{
+  "id": "P02",
+  "kind": "missing_fake_docket",
+  "query": "מה נקבע בע\"א 99887-04-22 לוי נ' כהן ביחס לאחריות פלטפורמה מקוונת לתוכן משתמשים?",
+  "run_id": "281016bd-8962-491b-94f2-1707ab260c62",
+  "ok": true,
+  "total_ms": 189604,
+  "research_mode": "specific_case",
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "deterministic_branch": null,
+  "lead_ref": {
+    "ref": null,
+    "shape": "case_holding",
+    "reason": "no_case_source"
+  },
+  "sufficiency": null,
+  "named_doctrine": null,
+  "synthesis_rendering": {
+    "groups": {
+      "secondary_context": [],
+      "usable_authorities": [],
+      "found_but_not_usable": [],
+      "statutory_background": []
+    },
+    "reason": "not_synthesis_mode",
+    "group_counts": {
+      "secondary_context": 0,
+      "usable_authorities": 0,
+      "found_but_not_usable": 0,
+      "statutory_background": 0
+    },
+    "named_case_keys": [],
+    "named_cases_in_body": 0,
+    "usable_judgments_named": 0,
+    "synthesis_rendering_applied": false,
+    "commentary_used_as_primary_authority": false,
+    "metadata_only_sources_used_as_holdings": false
+  },
+  "source_integrity_counts": null,
+  "missing_anchor_descriptions": [],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 0,
+      "partial": 9,
+      "unrelated": 13,
+      "tangential": 2
+    },
+    "by_role_match": {
+      "true": 23,
+      "false": 1
+    },
+    "model_verdicts": 24,
+    "by_support_model": {
+      "direct": 0,
+      "partial": 9,
+      "unrelated": 13,
+      "tangential": 2
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "used_sources": [
+    {
+      "url": "https://www.psakdin.co.il/Court",
+      "title": "Search results for \"ע״א 99887/04/22\"",
+      "number": 1,
+      "origin": "perplexity",
+      "citable_as": "commentary",
+      "source_type": "caselaw",
+      "candidate_id": "4daed40f-20f2-47b6-9980-d47b2ffd3fda",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-41724-08-16-%D7%9C%D7%95%D7%99-%D7%A0-%D7%9B%D7%94%D7%9F-%D7%95%D7%90%D7%97_2",
+      "title": "לוי נ' כהן ואח'",
+      "number": 1,
+      "origin": "perplexity",
+      "citable_as": "commentary",
+      "source_type": "caselaw",
+      "candidate_id": "689f94c4-952d-428b-80a2-c59675acb3ca",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%20%D7%9C%D7%95%D7%99%20%D7%95%D7%90%D7%97'",
+      "title": "כהן נ' לוי ואח'",
+      "number": 1,
+      "origin": "perplexity",
+      "citable_as": "commentary",
+      "source_type": "caselaw",
+      "candidate_id": "27b6364e-f53e-4c67-be7d-86b1be1dbe33",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%D7%9C%D7%95%D7%99-%D7%95%D7%90%D7%97'",
+      "title": "כהן נ' לוי ואח' - פסקדין",
+      "number": 2,
+      "origin": "perplexity",
+      "citable_as": "commentary",
+      "source_type": "caselaw",
+      "candidate_id": "f5c7cae4-28f7-4fe4-b388-6764e092458b",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%91%D7%96%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%9C%D7%AA%D7%A7%D7%A9%D7%95%D7%A8%D7%AA-%D7%91%D7%A2%22%D7%9D-%D7%A0'%D7%9B%D7%94%D7%9F",
+      "title": "בזק החברה הישראלית לתקשורת בע\"מ נ' כהן",
+      "number": 3,
+      "origin": "perplexity",
+      "citable_as": "commentary",
+      "source_type": "caselaw",
+      "candidate_id": "17477d2a-6057-4733-96be-2680fb5582ab",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1239-19-%d7%99%d7%95%d7%90%d7%9c-%d7%a9%d7%90%d7%95%d7%9c-%d7%a0-%d7%97%d7%91%d7%a8%d7%aa-%d7%a0%d7%99%d7%99%d7%93%d7%9c%d7%99-%d7%aa%d7%a7%d7%a9%d7%95%d7%a8%d7%aa-%d7%91%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "רע\"א 1239/19 יואל שאול נ׳ חברת ניידלי תקשורת בע\"מ פסק דין (08.01.2020)",
+      "number": 3,
+      "origin": "local_db",
+      "citable_as": "commentary",
+      "source_type": "caselaw",
+      "candidate_id": "3e086a72-60da-4a9b-bbfa-8dea9a440852",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-7647-16-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%a9%d7%a8/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 7647/16 האגודה לזכויות האזרח בישראל נ׳ שרת התרבות והספורט פסק דין",
+      "number": 3,
+      "origin": "local_db",
+      "citable_as": "commentary",
+      "source_type": "caselaw",
+      "candidate_id": "679a2bc0-adc4-4bc5-a639-82d1ad91f906",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://fs.knesset.gov.il/5/law/5_lsr_208497.pdf",
+      "title": "חוק לשון הרע, תשכ;quot&ה1965 *",
+      "number": 4,
+      "origin": "perplexity",
+      "citable_as": "statute",
+      "source_type": "legislation",
+      "candidate_id": "329842eb-49ae-449d-b9ba-e4b4248350be",
+      "authority_tier": "official_primary",
+      "synthesis_role": "statutory_background",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://lite.takdin.co.il/search-results?t=%D7%9C%D7%99%D7%90%D7%9F%20%D7%9B%D7%94%D7%9F&pn=1",
+      "title": "כל פסקי הדין עבור ליאן כהן",
+      "number": 6,
+      "origin": "perplexity",
+      "citable_as": "judgment",
+      "source_type": "caselaw",
+      "candidate_id": "c013ab39-195c-4e77-9174-ff1d1f8c2120",
+      "authority_tier": "primary_mirror",
+      "synthesis_role": "leading_candidate",
+      "text_usability": "metadata_only",
+      "integrity_flags": [
+        "official_host_non_specific_path"
+      ],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    }
+  ],
+  "used_sources_count": 9,
+  "footnotes": [
+    {
+      "url": "https://www.psakdin.co.il/Court",
+      "title": "Search results for \"ע״א 99887/04/22\"; לוי נ' כהן ואח'; כהן נ' לוי ואח'",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court",
+          "title": "Search results for \"ע״א 99887/04/22\"",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-41724-08-16-%D7%9C%D7%95%D7%99-%D7%A0-%D7%9B%D7%94%D7%9F-%D7%95%D7%90%D7%97_2",
+          "title": "לוי נ' כהן ואח'",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%20%D7%9C%D7%95%D7%99%20%D7%95%D7%90%D7%97'",
+          "title": "כהן נ' לוי ואח'",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%D7%9C%D7%95%D7%99-%D7%95%D7%90%D7%97'",
+      "title": "כהן נ' לוי ואח' - פסקדין; כהן נ' לוי ואח'; לוי נ' כהן ואח'",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%D7%9C%D7%95%D7%99-%D7%95%D7%90%D7%97'",
+          "title": "כהן נ' לוי ואח' - פסקדין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%20%D7%9C%D7%95%D7%99%20%D7%95%D7%90%D7%97'",
+          "title": "כהן נ' לוי ואח'",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-41724-08-16-%D7%9C%D7%95%D7%99-%D7%A0-%D7%9B%D7%94%D7%9F-%D7%95%D7%90%D7%97_2",
+          "title": "לוי נ' כהן ואח'",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%91%D7%96%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%9C%D7%AA%D7%A7%D7%A9%D7%95%D7%A8%D7%AA-%D7%91%D7%A2%22%D7%9D-%D7%A0'%D7%9B%D7%94%D7%9F",
+      "title": "בזק החברה הישראלית לתקשורת בע\"מ נ' כהן; רע\"א 1239/19 יואל שאול נ׳ חברת ניידלי תקשורת בע\"מ פסק דין (08.01.2020); בג\"ץ 7647/16 האגודה לזכויות האזרח בישראל נ׳ שרת התרבות והספורט פסק דין",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%96%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%9C%D7%AA%D7%A7%D7%A9%D7%95%D7%A8%D7%AA-%D7%91%D7%A2%22%D7%9D-%D7%A0'%D7%9B%D7%94%D7%9F",
+          "title": "בזק החברה הישראלית לתקשורת בע\"מ נ' כהן",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1239-19-%d7%99%d7%95%d7%90%d7%9c-%d7%a9%d7%90%d7%95%d7%9c-%d7%a0-%d7%97%d7%91%d7%a8%d7%aa-%d7%a0%d7%99%d7%99%d7%93%d7%9c%d7%99-%d7%aa%d7%a7%d7%a9%d7%95%d7%a8%d7%aa-%d7%91%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "רע\"א 1239/19 יואל שאול נ׳ חברת ניידלי תקשורת בע\"מ פסק דין (08.01.2020)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-7647-16-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%a9%d7%a8/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 7647/16 האגודה לזכויות האזרח בישראל נ׳ שרת התרבות והספורט פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/5/law/5_lsr_208497.pdf",
+      "title": "חוק לשון הרע, תשכ;quot&ה1965 *; בזק החברה הישראלית לתקשורת בע\"מ נ' כהן",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/5/law/5_lsr_208497.pdf",
+          "title": "חוק לשון הרע, תשכ;quot&ה1965 *",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%96%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%9C%D7%AA%D7%A7%D7%A9%D7%95%D7%A8%D7%AA-%D7%91%D7%A2%22%D7%9D-%D7%A0'%D7%9B%D7%94%D7%9F",
+          "title": "בזק החברה הישראלית לתקשורת בע\"מ נ' כהן",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%20%D7%9C%D7%95%D7%99%20%D7%95%D7%90%D7%97'",
+      "title": "כהן נ' לוי ואח'; לוי נ' כהן ואח'; בזק החברה הישראלית לתקשורת בע\"מ נ' כהן",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%9B%D7%94%D7%9F-%D7%A0'%20%D7%9C%D7%95%D7%99%20%D7%95%D7%90%D7%97'",
+          "title": "כהן נ' לוי ואח'",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-41724-08-16-%D7%9C%D7%95%D7%99-%D7%A0-%D7%9B%D7%94%D7%9F-%D7%95%D7%90%D7%97_2",
+          "title": "לוי נ' כהן ואח'",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%91%D7%96%D7%A7-%D7%94%D7%97%D7%91%D7%A8%D7%94-%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA-%D7%9C%D7%AA%D7%A7%D7%A9%D7%95%D7%A8%D7%AA-%D7%91%D7%A2%22%D7%9D-%D7%A0'%D7%9B%D7%94%D7%9F",
+          "title": "בזק החברה הישראלית לתקשורת בע\"מ נ' כהן",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court",
+      "title": "Search results for \"ע״א 99887/04/22\"; כל פסקי הדין עבור ליאן כהן",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court",
+          "title": "Search results for \"ע״א 99887/04/22\"",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://lite.takdin.co.il/search-results?t=%D7%9C%D7%99%D7%90%D7%9F%20%D7%9B%D7%94%D7%9F&pn=1",
+          "title": "כל פסקי הדין עבור ליאן כהן",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "answer": "**מסקנה עיקרית**\n\nאין במקורות הנגישים פסק‑דין של בית המשפט העליון במספר ע״א 99887‑04‑22; הרישומים המזהים את השמות \"לוי נ' כהן\" מתייחסים להליכים בבתי משפט נמוכים (תיקים בתיקי תביעה אזרחית/בית משפט השלום) ולכן אין בכך הכרעה עליונה מחייבת.¹\n\n**מה שניתן לומר לגבי אחריות פלטפורמה מקוונת**\n\nלא נמצא שבערעור המספרי שנשאל הוצהרה הלכה עליונה הקובעת באופן גורף אחריות ישירה או שילוחית של פלטפורמה מקוונת; מסמכים של בתי משפט נמוכים שעוסקים בזיקה בין הצדדים מעלים דיונים על מעמד התיווך של הפלטפורמה ועל נסיבות שבהן ייתכן שיוחס לה מעמד של \"מפרסם\" או שותפה לפרסום — אך אלה מופיעים ברמת הערכאה הנמוכה ולא מהווים הלכה מחייבת של בית המשפט העליון.²\n\nבפרשנויות ובפסיקה אנלוגית נדונו מבחנים מעשיים כגון היקף השליטה של הפלטפורמה בתוכן, מידת הסיוע הטכני או העריכתי לפרסום, והידיעה בפועל של המפעיל לגבי תוכן מפרסם; לצד זאת הוזכרו מודלים פרקטיים של הודעה והסרה ואמות‑מידה לדרישת ידיעה, כאשר כל איזון כזה נעשה לעיתים תוך שקילה של חופש הביטוי.³\n\nהדיון נבחן גם בהקשר לחקיקה רלוונטית כגון חוק לשון הרע ולדוקטרינת הנזיקין, אך לא נמצא במקורות שסופקו התייחסות מפורשת המעניקה לפלטפורמות חסינות סטטוטורית גורפת; סוגיות של החלת הוראות לשון הרע על מתווכים נדונו בעיקר כנקודת השוואה ולא כהכרעה ישירה בתיק העיקרי הנדון כאן.⁴\n\nבאשר לסעדים — המקורות הזמינים לא מספקים נוסח החלטה מלא של הערעור המבוקש, ולפיכך אין בידי אימות של סעדים שנפסקו נגד הפלטפורמה בערכאה עליונה; ברמה הנמוכה יותר נדונו בקשות להסרת תוכן, צווי מניעה ושאלות פיצוי נזיקי בהקשרים דומים, אך אין בכך עדות להלכה קבילה בערעור זה.⁵\n\nהסתייגות ומגבלות: מסקנות אלה מבוססות על רישומים וחיפושי מאמרים ופסקי דין חלקיים; כדי לקבוע בוודאות מה נקבע בע״א 99887‑04‑22 יש להשיג את פסק‑הדין המלא או מקור עליון מוסמך של ההכרעה.⁶"
+}

@@ -1,0 +1,53 @@
+{
+  "id": "P08",
+  "kind": "practical_steps",
+  "query": "מהם השלבים המעשיים להגשת תביעה קטנה בישראל, כולל סכום התביעה המרבי ואגרות?",
+  "run_id": "91c14149-6ab8-44e0-9477-db24e8353869",
+  "ok": true,
+  "total_ms": 116989,
+  "research_mode": "practical_steps",
+  "answer_intent": {
+    "output_shape": "list"
+  },
+  "deterministic_branch": "insufficient_sources_limitation",
+  "lead_ref": {
+    "ref": null,
+    "shape": "list",
+    "reason": "shape_not_eligible"
+  },
+  "sufficiency": null,
+  "named_doctrine": null,
+  "synthesis_rendering": null,
+  "source_integrity_counts": null,
+  "missing_anchor_descriptions": [],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 4,
+      "partial": 23,
+      "unrelated": 0,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 26,
+      "false": 4
+    },
+    "model_verdicts": 30,
+    "by_support_model": {
+      "direct": 4,
+      "partial": 23,
+      "unrelated": 0,
+      "tangential": 3
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "used_sources": [],
+  "used_sources_count": 0,
+  "footnotes": [],
+  "answer": "לא נמצאו במקורות מקורות משפטיים ייעודיים לנושא שנשאל, אלא חומר כללי בלבד. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור צעדים משפטיים קונקרטיים לנושא שנשאל ממקורות מתחום אחר או מחומר פרוצדורלי כללי; לכן לא מוצגת כאן הנחיה משפטית לשאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק שיפוט בתביעות קטנות, תשל\"ה-1975; חוק שיפוט בתביעות קטנות (תיקון מס' 2), התשמ\"ג-1982; תקנות שיפוט בתביעות קטנות (סדרי דין), תשל\"ז-1976; תקנות בתי המשפט (אגרות), תשס\"ז-2007."
+}

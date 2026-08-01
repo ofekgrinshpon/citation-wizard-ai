@@ -1,0 +1,55 @@
+{
+  "id": "P13",
+  "kind": "specific_case_holding",
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי ביחס לסמכות בית המשפט לבטל חוק הסותר חוק יסוד?",
+  "run_id": "7c0542fd-71e9-4e2c-ad0b-09cffc2a61ff",
+  "ok": true,
+  "total_ms": 142331,
+  "research_mode": "specific_case",
+  "answer_intent": {
+    "output_shape": "case_holding"
+  },
+  "deterministic_branch": "docket_limitation",
+  "lead_ref": {
+    "ref": null,
+    "shape": "case_holding",
+    "reason": "skipped_missing_docket_anchor"
+  },
+  "sufficiency": null,
+  "named_doctrine": null,
+  "synthesis_rendering": null,
+  "source_integrity_counts": null,
+  "missing_anchor_descriptions": [
+    "ע\"א 6821/93"
+  ],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 5,
+      "partial": 13,
+      "unrelated": 7,
+      "tangential": 2
+    },
+    "by_role_match": {
+      "true": 27,
+      "false": 0
+    },
+    "model_verdicts": 27,
+    "by_support_model": {
+      "direct": 5,
+      "partial": 13,
+      "unrelated": 7,
+      "tangential": 2
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "used_sources": [],
+  "used_sources_count": 0,
+  "footnotes": [],
+  "answer": "לא אותר במקורות הזמינים ע\"א 6821/93. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}

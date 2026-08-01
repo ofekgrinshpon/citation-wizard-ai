@@ -1,0 +1,355 @@
+{
+  "id": "P05",
+  "kind": "case_law_synthesis",
+  "query": "מה הפסיקה אומרת על הלכת תום הלב במשא ומתן לפי סעיף 12 לחוק החוזים?",
+  "run_id": "af1f7a01-c2e9-4015-9cf1-19db2d3fa52d",
+  "ok": true,
+  "total_ms": 137904,
+  "research_mode": "case_law_synthesis",
+  "answer_intent": {
+    "output_shape": "analysis"
+  },
+  "deterministic_branch": null,
+  "lead_ref": {
+    "ref": null,
+    "shape": "analysis",
+    "reason": "shape_not_eligible"
+  },
+  "sufficiency": null,
+  "named_doctrine": null,
+  "synthesis_rendering": {
+    "groups": {
+      "secondary_context": [],
+      "usable_authorities": [],
+      "found_but_not_usable": [],
+      "statutory_background": []
+    },
+    "reason": "framing_correction_active",
+    "group_counts": {
+      "secondary_context": 0,
+      "usable_authorities": 0,
+      "found_but_not_usable": 0,
+      "statutory_background": 0
+    },
+    "named_case_keys": [],
+    "named_cases_in_body": 0,
+    "usable_judgments_named": 0,
+    "synthesis_rendering_applied": false,
+    "commentary_used_as_primary_authority": false,
+    "metadata_only_sources_used_as_holdings": false
+  },
+  "source_integrity_counts": null,
+  "missing_anchor_descriptions": [],
+  "verifier_counts": {
+    "by_support": {
+      "direct": 3,
+      "partial": 15,
+      "unrelated": 9,
+      "tangential": 2
+    },
+    "by_role_match": {
+      "true": 27,
+      "false": 2
+    },
+    "model_verdicts": 29,
+    "by_support_model": {
+      "direct": 3,
+      "partial": 15,
+      "unrelated": 9,
+      "tangential": 2
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "used_sources": [
+    {
+      "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+      "title": "חוק החוזים (חלק כללי) - נוסח/חומר חקיקה",
+      "number": 1,
+      "origin": "perplexity",
+      "citable_as": "statute",
+      "source_type": "legislation",
+      "candidate_id": "49b2a4b9-7f0f-4ee9-9752-a90ccc3eb65f",
+      "authority_tier": "official_primary",
+      "synthesis_role": "statutory_background",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+      "title": "חוק החוזים (חלק כללי)",
+      "number": 1,
+      "origin": "local_db",
+      "citable_as": "statute",
+      "source_type": "israeli_law",
+      "candidate_id": "a3b5d88c-bbdd-42dc-a2ed-9bf33b89403c",
+      "authority_tier": "statute_mirror",
+      "synthesis_role": "statutory_background",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [
+        "consolidated_statute_mirror"
+      ],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/012_001.htm",
+      "title": "ע\"א 1662/99 חיים נ' חיים",
+      "number": 2,
+      "origin": "perplexity",
+      "citable_as": "statute",
+      "source_type": "legislation",
+      "candidate_id": "fbf17fde-4121-47d2-82d5-47bfdf41d0e7",
+      "authority_tier": "primary_mirror",
+      "synthesis_role": "statutory_background",
+      "text_usability": "metadata_only",
+      "integrity_flags": [
+        "official_host_non_specific_path"
+      ],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/articlesgabriela/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91-%20%D7%92%D7%91%D7%A8%D7%99%D7%90%D7%9C%D7%94%20%D7%A9%D7%9C%D7%95.pdf",
+      "title": "תום לב - גביראֶלה שלו",
+      "number": 3,
+      "origin": "perplexity",
+      "citable_as": "commentary",
+      "source_type": "other",
+      "candidate_id": "a8c10c1a-24c7-4fb5-93ea-bb5e2200a2a3",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+      "title": "השתק הבטחה והממשק החוזי",
+      "number": 4,
+      "origin": "perplexity",
+      "citable_as": "commentary",
+      "source_type": "other",
+      "candidate_id": "bbcf51c3-a3e2-4736-aaa1-4dad3fce7508",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": true,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-25798-12-14",
+      "title": "ת\"א 25798-12-14",
+      "number": 5,
+      "origin": "perplexity",
+      "citable_as": "commentary",
+      "source_type": "caselaw",
+      "candidate_id": "762ba22a-e1fd-4f13-a9eb-7a1863fa244b",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": true,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/990/022/x03&fileName=23022990.X03&type=4",
+      "title": "החלטה בתיק רע\"א 2299/23",
+      "number": 5,
+      "origin": "perplexity",
+      "citable_as": "judgment",
+      "source_type": "caselaw",
+      "candidate_id": "067c735f-2c87-4de4-9083-1ef7c56f7c53",
+      "authority_tier": "official_primary",
+      "synthesis_role": "leading_candidate",
+      "text_usability": "full_text",
+      "integrity_flags": [
+        "judgment_document",
+        "judgment_text_acquired"
+      ],
+      "has_holding_text": true,
+      "is_judgment_document": true,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m4.pdf",
+      "title": "ייחוד עילה בדיני הפגמים בכריתה: ניתוח עיוני ונורמטיבי",
+      "number": 6,
+      "origin": "perplexity",
+      "citable_as": "commentary",
+      "source_type": "other",
+      "candidate_id": "0947f708-bb4b-40f3-bd3e-53b86b74627d",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "http://lawjournal.huji.ac.il/article/12/373",
+      "title": "סעיף 12 לחוק החוזים: תום לב במשא ומתן",
+      "number": 6,
+      "origin": "perplexity",
+      "citable_as": "unknown",
+      "source_type": "academic",
+      "candidate_id": "e25ec470-5a7d-421e-aaa4-77109f5959ef",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+      "title": "תום לב בחוזים ואשם ביצירת החוזה",
+      "number": 6,
+      "origin": "perplexity",
+      "citable_as": "commentary",
+      "source_type": "other",
+      "candidate_id": "a2fcdee3-3264-4d9a-8909-d5e964eb21ef",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    }
+  ],
+  "used_sources_count": 10,
+  "footnotes": [
+    {
+      "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+      "title": "חוק החוזים (חלק כללי) - נוסח/חומר חקיקה; חוק החוזים (חלק כללי)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+          "title": "חוק החוזים (חלק כללי) - נוסח/חומר חקיקה",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+          "title": "חוק החוזים (חלק כללי)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/012_001.htm",
+      "title": "ע\"א 1662/99 חיים נ' חיים; חוק החוזים (חלק כללי) - נוסח/חומר חקיקה",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/012_001.htm",
+          "title": "ע\"א 1662/99 חיים נ' חיים",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+          "title": "חוק החוזים (חלק כללי) - נוסח/חומר חקיקה",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/012_001.htm",
+      "title": "ע\"א 1662/99 חיים נ' חיים; תום לב - גביראֶלה שלו",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/012_001.htm",
+          "title": "ע\"א 1662/99 חיים נ' חיים",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/contracts/examnotes/articlesgabriela/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91-%20%D7%92%D7%91%D7%A8%D7%99%D7%90%D7%9C%D7%94%20%D7%A9%D7%9C%D7%95.pdf",
+          "title": "תום לב - גביראֶלה שלו",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+      "title": "חוק החוזים (חלק כללי) - נוסח/חומר חקיקה; השתק הבטחה והממשק החוזי",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+          "title": "חוק החוזים (חלק כללי) - נוסח/חומר חקיקה",
+          "source_type": "legislation"
+        },
+        {
+          "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+          "title": "השתק הבטחה והממשק החוזי",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-25798-12-14",
+      "title": "ת\"א 25798-12-14; החלטה בתיק רע\"א 2299/23",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-25798-12-14",
+          "title": "ת\"א 25798-12-14",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/990/022/x03&fileName=23022990.X03&type=4",
+          "title": "החלטה בתיק רע\"א 2299/23",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m4.pdf",
+      "title": "ייחוד עילה בדיני הפגמים בכריתה: ניתוח עיוני ונורמטיבי; סעיף 12 לחוק החוזים: תום לב במשא ומתן; תום לב בחוזים ואשם ביצירת החוזה",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m4.pdf",
+          "title": "ייחוד עילה בדיני הפגמים בכריתה: ניתוח עיוני ונורמטיבי",
+          "source_type": "other"
+        },
+        {
+          "url": "http://lawjournal.huji.ac.il/article/12/373",
+          "title": "סעיף 12 לחוק החוזים: תום לב במשא ומתן",
+          "source_type": "academic"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+          "title": "תום לב בחוזים ואשם ביצירת החוזה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "answer": "לא נמצאה במקורות שמסופקו הלכה מוכרת בשם \"הלכת תום הלב במשא ומתן\".\n\nההסדר המשפטי הקרוב לקביעה זו מופיע בסעיף 12 לחוק החוזים (חלק כללי), הקובע במפורש חובת תום לב במשא‑ומתן לקראת כריתת חוזה ואת הסעד של פיצויים בגין נזק שנגרם מכך.¹\n\nלפי הפסיקה שצוינה במקורות, בתי המשפט יישמו את סעיף 12 והכירו בחובת תום הלב במשא‑ומתן כעקרון שניתן להיאכף משפטית; בית המשפט בדק הפרות של החובה ובהתאם קימם עילות וביקש להסתמך על הוראת הסעיף בהענקת סעד.²\n\nהיסודות והקריטריונים שהפסיקה אימצה בעילות מסוג זה כוללים מדד אובייקטיבי של התנהגות סבירה והגונה בנסיבות העניין, חובת גילוי של עובדות מהותיות ואיסור ליצר מצג מטעה במהלך המשא‑ומתן.³\n\nהסעד הספציפי שמסמיך החוק הוא פיצויים בעד הנזק שנגרם עקב המשא‑ומתן או עקב כריתת החוזה; נוסח סעיף 12(ב) מפנה ליישום הוראות סעיפים 10, 13 ו‑14 בהתאם, והספרות והפרשנות המשפטית מדגישות כי פיצויים הם הסעד העיקרי שקשור להפרה זו.⁴\n\nבמקביל, בפסיקה נדונו סוגיות של סעדים נוספים — למשל האפשרות של סעד הצהרתי או סעד אופרטיבי שנגזר מאותה עילה — וקיימת בפסיקה ועיקרון לפיו זוכה בסעד הצהרתי עשוי לבקש גם סעד אופרטיבי שנובע מהעילה; עם זאת, המסמכים שברשותנו אינם מצביעים על כלל אחיד המורה על שימוש קבוע בצווים אלה במקום או בנוסף לפיצויים.⁵\n\nהמגבלות והסייגים ביחס לחובת תום הלב במשא‑ומתן נידונו בספרות ובפסיקה: קיימת הבחנה בין תום לב אובייקטיבי לבין הטעיה או פגם בכריתה, שאלות לגבי היקף החובה בסוגי מו\"מ שונים (מסחרי, צרכני, מנהלי) ושאלת היכולת לוויתר על חובת תום הלב — נושאים אלה מצויים בדיון אקדמי ולא הוכרעו באופן אחיד במקורות שסופקו.⁶\n\nאם רצונך שאבדוק הלכה ספציפית (שם תיק או ציטוט מפסק־דין) או שאתרחב בעניינים מעשיים־הליךיים (אמות מידה הראייתיות, דוגמאות לפסיקה נוספת או ניסוח תביעה/הגנה), אנא פרט/י ואבדוק את המקורות הרלוונטיים."
+}
