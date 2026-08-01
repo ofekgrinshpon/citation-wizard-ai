@@ -156,3 +156,76 @@ export function candidateMatchesDocket(
   }
   return false;
 }
+
+// ─── Strict normalized docket matching (specific-case authority resolution) ──
+//
+// The permissive `candidateMatchesDocket` above accepts any verbatim variant
+// anywhere in title/snippet/url. Specific-case mode needs a stricter, quote-
+// and-separator-insensitive comparison so that:
+//   * `בג"ץ 6698/95`, `בג״ץ 6698/95`, `בגצ 6698/95`, `בג ץ 06698/95`,
+//     `HCJ 6698/95` and `בג"ץ 6698-95` all match the same docket;
+//   * a mere topical mention inside a commentary snippet does not.
+
+/** Quote/gershayim/whitespace-insensitive normalization of arbitrary text. */
+export function normalizeDocketText(s: string): string {
+  return String(s ?? "")
+    .replace(/[\u0022\u0027\u05F3\u05F4\u2018\u2019\u201C\u201D`´]/g, "")
+    .replace(/[\u2010-\u2015]/g, "-")
+    .replace(/\s+/g, " ")
+    .toLowerCase()
+    .trim();
+}
+
+/** Strip leading zeros from each numeric segment: `06698/095` → `6698/95`. */
+function stripLeadingZeros(num: string): string {
+  return num.split(/[\/\-]/).map((p) => p.replace(/^0+(?=\d)/, "")).join("/");
+}
+
+/**
+ * Canonical normalized form of a docket: `<slug>:<num-with-slashes-no-zeros>`.
+ * Example: `bagatz:6698/95`.
+ */
+export function normalizedDocketId(d: DocketRef): string {
+  const slug = d.docket_id.replace(/-\d.*$/, "");
+  return `${slug}:${stripLeadingZeros(d.number)}`;
+}
+
+/** All normalized string forms that count as an exact reference to `d`. */
+export function normalizedDocketVariants(d: DocketRef): string[] {
+  const def = PREFIX_TABLE.find((p) => d.docket_id.startsWith(`${p.slug}-`));
+  const prefixes = [
+    ...(def ? def.he : [d.prefix_he]),
+    ...(def?.en ?? (d.prefix_en ? [d.prefix_en] : [])),
+  ].map((p) => normalizeDocketText(p));
+  const bare = stripLeadingZeros(d.number);
+  const numbers = new Set<string>([bare, bare.replace(/\//g, "-"), bare.replace(/\//g, " / ")]);
+  const out = new Set<string>();
+  for (const p of new Set(prefixes)) {
+    for (const n of numbers) {
+      out.add(`${p} ${n}`);
+      out.add(`${p}${n}`);
+    }
+  }
+  return [...out];
+}
+
+/**
+ * Strict exact-docket predicate. Only the fields the caller passes are
+ * searched — specific-case mode intentionally passes title/url/citation and
+ * NOT commentary snippets.
+ */
+export function textContainsExactDocket(text: string | null | undefined, d: DocketRef): boolean {
+  const raw = String(text ?? "");
+  if (!raw) return false;
+  // Normalize, then also strip leading zeros inside numbers found in the text.
+  const hay = normalizeDocketText(raw).replace(/\b0+(\d)/g, "$1");
+  return normalizedDocketVariants(d).some((v) => hay.includes(v));
+}
+
+/** Strict variant of `candidateMatchesDocket` over explicit fields. */
+export function fieldsContainExactDocket(
+  fields: Array<string | null | undefined>,
+  dockets: DocketRef[],
+): boolean {
+  return dockets.some((d) => fields.some((f) => textContainsExactDocket(f, d)));
+}

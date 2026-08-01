@@ -51,14 +51,14 @@ const FILE_URL_RE = /\.(pdf|docx?|rtf)(\?|#|$)/i;
 /** Court download endpoints that serve a file without a file extension. */
 const DIRECT_DOWNLOAD_RE = /(\/Home\/Download\?|[?&]fileName=|[?&]download=)/i;
 
-function isDirectFileUrl(url: string): boolean {
+export function isDirectFileUrl(url: string): boolean {
   return FILE_URL_RE.test(url) || DIRECT_DOWNLOAD_RE.test(url);
 }
 
 /** Court / official hosts whose HTML pages may wrap a downloadable file. */
-const WRAPPER_HOST_RE = /(court\.gov\.il|gov\.il|nevo\.co\.il|knesset\.gov\.il)/i;
+export const WRAPPER_HOST_RE = /(court\.gov\.il|gov\.il|nevo\.co\.il|knesset\.gov\.il)/i;
 
-const HOLDING_TEXT_RE =
+export const HOLDING_TEXT_RE =
   /(אנו\s+פוסקים|הערעור\s+(מתקבל|נדחה)|העתירה\s+(מתקבלת|נדחית)|ניתן\s+היום|אשר\s+על\s+כן|לפיכך\s|נפסק\s+כי|קובע[ת]?\s+כי|הלכה\s+ש|בדעת\s+(רוב|מיעוט)|דעת\s+הרוב)/;
 
 const DOCKET_RE =
@@ -98,7 +98,7 @@ export interface AcquisitionResult {
   ms: number;
 }
 
-function normText(s: string): string {
+export function normText(s: string): string {
   return (s || "").replace(/\u0000/g, " ").replace(/[ \t]+/g, " ").replace(/\s*\n\s*/g, "\n").trim();
 }
 
@@ -114,7 +114,7 @@ function availableTextLength(c: Candidate): number {
   return Math.max((c.snippet || "").length, ext.length);
 }
 
-async function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
+export async function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
   let t: number | undefined;
   try {
     return await Promise.race([
@@ -141,7 +141,7 @@ async function fetchBytes(url: string): Promise<{ bytes: Uint8Array; contentType
 }
 
 /** Method 1 — the URL already points at a judgment file. */
-async function tryDirectFile(url: string): Promise<string> {
+export async function tryDirectFile(url: string): Promise<string> {
   const { bytes, contentType } = await fetchBytes(url);
   // Content-type first, then extension, then magic bytes (court download
   // endpoints often serve octet-stream with no extension in the URL).
@@ -157,7 +157,7 @@ async function tryDirectFile(url: string): Promise<string> {
 }
 
 /** Method 2 — pull the full text we already store locally, by docket / title. */
-async function tryLocalDb(
+export async function tryLocalDb(
   admin: SupabaseClient,
   docket: string | null,
   title: string | null,
@@ -194,7 +194,7 @@ async function tryLocalDb(
 }
 
 /** Method 3 — an HTML wrapper page on a court host that links the real file. */
-async function tryWrapperResolve(url: string): Promise<string> {
+export async function tryWrapperResolve(url: string): Promise<string> {
   const res = await fetch(url, {
     redirect: "follow",
     headers: { "User-Agent": "Mozilla/5.0 (compatible; ReLexBot/1.0)" },

@@ -934,6 +934,17 @@ export async function runDrafterV2(
     }>;
     /** Planner research mode — gates the synthesis snippet budget only. */
     researchMode?: string | null;
+    /**
+     * Specific-case authority gate (specific_case mode only). When `allow` is
+     * false, the drafter fires `docket_limitation` deterministically — no
+     * substantive holding may be drafted from near-name commentary, listing
+     * pages, or adjacent cases, regardless of how large the source pack is.
+     */
+    specificCaseGate?: {
+      allow: boolean;
+      docket_display: string | null;
+      reason: string;
+    } | null;
   },
 ): Promise<DrafterV2Result> {
   const t_total = Date.now();
@@ -1068,8 +1079,25 @@ export async function runDrafterV2(
   const statuteSectionLimitationActive =
     missingAnchors.some((a) => a.is_statute_section) &&
     (shape === "definition" || shape === "quote");
+  // Specific-case gate: in `specific_case` mode the exact requested docket
+  // must have been resolved with usable text. Otherwise refuse, whatever the
+  // analyzer's shape guess was (P02: noisy pool must not defeat the guard).
+  const specificCaseGate = opts?.specificCaseGate ?? null;
+  const specificCaseRefusal = !!specificCaseGate && specificCaseGate.allow === false;
+  if (specificCaseRefusal && specificCaseGate?.docket_display) {
+    const display = specificCaseGate.docket_display;
+    if (!missingAnchors.some((a) => a.is_docket && a.description.includes(display))) {
+      missingAnchors.push({
+        anchor_id: `docket:${display}`,
+        description: display,
+        is_docket: true,
+        is_statute_section: false,
+      });
+    }
+  }
   const docketLimitationActive =
-    missingAnchors.some((a) => a.is_docket) && shape === "case_holding";
+    specificCaseRefusal ||
+    (missingAnchors.some((a) => a.is_docket) && shape === "case_holding");
   const leadSelection = selectLeadRef(
     opts?.answerIntent,
     inputSources,
