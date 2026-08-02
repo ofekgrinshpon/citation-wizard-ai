@@ -202,7 +202,51 @@ function isDomainMatch(s: DrafterInputSource, phrases: string[], tokens: string[
   return tokens.some((t) => hay.includes(t));
 }
 
-function isGoverningStatuteLike(s: DrafterInputSource): boolean {
+// ── Morphology-tolerant Hebrew stemming (domain matching ONLY) ────────────
+// Never used for docket matching, quote matching, or anchor resolution.
+const HEB_PREFIXES = ["ו", "ב", "ל", "ה", "כ", "מ"];
+const HEB_SUFFIXES = ["יות", "ות", "ים", "יה", "ה", "ת"];
+
+export function stemHebrew(tokenRaw: string): string | null {
+  let tok = String(tokenRaw || "").replace(/["'׳״]/g, "");
+  if (!HEBREW_TOKEN_RE.test(tok)) return null;
+  // Strip at most two stacked prefixes (e.g. "ובתביעות").
+  for (let i = 0; i < 2; i++) {
+    const p = HEB_PREFIXES.find((pref) => tok.startsWith(pref));
+    if (p && tok.length - p.length >= 3) tok = tok.slice(p.length);
+    else break;
+  }
+  for (const suf of HEB_SUFFIXES) {
+    if (tok.endsWith(suf) && tok.length - suf.length >= 3) {
+      tok = tok.slice(0, tok.length - suf.length);
+      break;
+    }
+  }
+  return tok.length >= 3 ? tok : null;
+}
+
+export function stemSet(text: string): string[] {
+  const out = new Set<string>();
+  for (const tok of normalize(text).split(" ")) {
+    if (tok.length < 3 || META_TOKENS.has(tok)) continue;
+    const st = stemHebrew(tok);
+    if (st) out.add(st);
+  }
+  return [...out];
+}
+
+function stemsIntersect(qStems: string[], sStems: string[]): boolean {
+  const set = new Set(sStems);
+  for (const q of qStems) {
+    if (set.has(q)) return true;
+    if (q.length >= 4 && sStems.some((s) => s.includes(q) || (s.length >= 4 && q.includes(s)))) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function isGoverningStatuteLike(s: DrafterInputSource, opts?: { allowThinText?: boolean }): boolean {
   const t = String(s.source_type || "").toLowerCase();
   const citable = String(s.citable_as || "");
   const typeOk = citable === "statute" || STATUTE_TYPES.has(t);
@@ -211,8 +255,18 @@ function isGoverningStatuteLike(s: DrafterInputSource): boolean {
   const tier = String(s.authority_tier || "unknown");
   if (tier !== "unknown" && !PRIMARY_TIERS.has(tier)) return false;
   const usability = String(s.text_usability || "unknown");
-  if (usability !== "unknown" && !USABLE_TEXT.has(usability)) return false;
+  if (usability === "listing_page") return false;
+  if (s.authority_tier === "index_or_listing" || s.authority_tier === "non_authority") return false;
+  if (usability !== "unknown" && !USABLE_TEXT.has(usability)) {
+    // Thin (metadata_only) official statutes/regulations are accepted only
+    // where the caller explicitly opts in (practical_steps).
+    return opts?.allowThinText === true && usability === "metadata_only";
+  }
   return true;
+}
+
+function isThinText(s: DrafterInputSource): boolean {
+  return String(s.text_usability || "unknown") === "metadata_only";
 }
 
 function isRegulation(s: DrafterInputSource): boolean {
