@@ -332,11 +332,12 @@ export async function runSpecificCaseResolution(
     // Identity already carries the exact docket (that is why `c` is a target),
     // so plain-text court downloads are permitted for it; the text itself must
     // still look like a judgment body (enforced inside tryDirectFile).
-    const identityHasDocket = true;
+    // The downloaded body itself must carry the exact requested docket —
+    // a matching title/url alone is not enough (web titles can be wrong).
     const fileOpts = {
       allowPlainText: true,
       validateText: (text: string) =>
-        identityHasDocket || dockets.some((d) => textContainsExactDocket(text.slice(0, 4000), d)),
+        dockets.some((d) => textContainsExactDocket(text.slice(0, 20000), d)),
     };
     const plan: SpecificCaseAcquisitionMethod[] = [];
     if (url && isDirectFileUrl(url)) plan.push("direct_file_fetch");
