@@ -503,14 +503,23 @@ export function assessSourceSufficiency(args: {
     const hasProcedural = governingRegulations.length >= 1;
     const hasDomainAuthority = domainStatutes.length >= 1 || usableJudgments.length >= 1;
     const ok = hasDomainAuthority && (!wantsProcedure || hasProcedural || domainStatutes.length >= 2);
+    if (ok) {
+      return finish(true, true, "statutory_procedural_pack_present", thin_source);
+    }
+    // Thin fallback: official/primary on-topic legislation or regulations that
+    // survived integrity but carry only metadata text. They license a bounded
+    // practical answer — never exact amounts, deadlines or section text.
+    const thinAuthorityCount = thinGoverningStatutes.length + thinGoverningRegulations.length;
+    if (thinAuthorityCount >= 1) {
+      return finish(true, true, "thin_governing_statute_pack_present", true, {
+        thinAuthorityPassed: true,
+        exactAmountsAllowed: false,
+      });
+    }
     return finish(
       true,
-      ok,
-      ok
-        ? "statutory_procedural_pack_present"
-        : hasDomainAuthority
-        ? "no_procedural_or_fee_source"
-        : "generic_procedure_only",
+      false,
+      hasDomainAuthority ? "no_procedural_or_fee_source" : "generic_procedure_only",
       thin_source,
     );
   }
