@@ -77,10 +77,16 @@ export interface SpecificCaseResolution {
   exact_docket_source_usable: boolean;
   text_acquisition_attempted: boolean;
   acquisition_method: SpecificCaseAcquisitionMethod | null;
+  /** Set only on success (mirrors `acquisition_method`). */
+  acquisition_method_successful: SpecificCaseAcquisitionMethod | null;
   acquisition_methods_attempted: SpecificCaseAcquisitionMethod[];
   acquisition_success: boolean;
   acquisition_failure_reason: string | null;
+  /** Every failure reason observed, in attempt order. */
+  acquisition_failure_reasons: string[];
+  last_acquisition_failure_reason: string | null;
   acquired_text_length: number;
+
   /** Why the caller will (or will not) fire `docket_limitation`. */
   final_docket_branch_reason:
     | "not_specific_case_mode"
@@ -114,9 +120,12 @@ function disabled(
     exact_docket_source_usable: false,
     text_acquisition_attempted: false,
     acquisition_method: null,
+    acquisition_method_successful: null,
     acquisition_methods_attempted: [],
     acquisition_success: false,
     acquisition_failure_reason: null,
+    acquisition_failure_reasons: [],
+    last_acquisition_failure_reason: null,
     acquired_text_length: 0,
     final_docket_branch_reason: reason,
     allow_case_holding_answer: true,
@@ -126,6 +135,14 @@ function disabled(
     ms: 0,
   };
 }
+
+/** Record a failure reason without losing earlier ones. */
+function recordFailure(res: SpecificCaseResolution, reason: string): void {
+  res.acquisition_failure_reasons.push(reason);
+  res.last_acquisition_failure_reason = reason;
+  res.acquisition_failure_reason = reason;
+}
+
 
 function availableText(c: Candidate): string {
   const meta = (c.metadata ?? {}) as Record<string, unknown>;
@@ -299,6 +316,7 @@ export async function runSpecificCaseResolution(
     };
     if ((c.snippet || "").length < 300) c.snippet = stored.slice(0, 800);
     res.acquisition_method = method;
+    res.acquisition_method_successful = method;
     res.acquisition_success = true;
     res.acquired_text_length = stored.length;
     res.exact_docket_source_title = c.title;
@@ -311,18 +329,30 @@ export async function runSpecificCaseResolution(
   for (const c of targets) {
     if (res.acquisition_success) break;
     const url = c.source_url ?? null;
+    // Identity already carries the exact docket (that is why `c` is a target),
+    // so plain-text court downloads are permitted for it; the text itself must
+    // still look like a judgment body (enforced inside tryDirectFile).
+    // The downloaded body itself must carry the exact requested docket —
+    // a matching title/url alone is not enough (web titles can be wrong).
+    const fileOpts = {
+      allowPlainText: true,
+      validateText: (text: string) =>
+        dockets.some((d) => textContainsExactDocket(text.slice(0, 20000), d)),
+    };
     const plan: SpecificCaseAcquisitionMethod[] = [];
     if (url && isDirectFileUrl(url)) plan.push("direct_file_fetch");
     if (url && WRAPPER_HOST_RE.test(url) && !isDirectFileUrl(url)) plan.push("wrapper_file_resolve");
     for (const method of plan) {
       if (Date.now() - t0 > SPECIFIC_CASE_LIMITS.TOTAL_MS) {
-        res.acquisition_failure_reason = "stage_time_budget_exhausted";
+        recordFailure(res, "stage_time_budget_exhausted");
         break;
       }
       res.acquisition_methods_attempted.push(method);
       try {
         const got = await withTimeout(
-          method === "direct_file_fetch" ? tryDirectFile(url!) : tryWrapperResolve(url!),
+          method === "direct_file_fetch"
+            ? tryDirectFile(url!, fileOpts)
+            : tryWrapperResolve(url!, fileOpts),
           SPECIFIC_CASE_LIMITS.PER_METHOD_MS,
           method,
         );
@@ -330,12 +360,13 @@ export async function runSpecificCaseResolution(
           applyText(c, normText(got), method);
           break;
         }
-        res.acquisition_failure_reason = "extracted_text_below_threshold";
+        recordFailure(res, "extracted_text_below_threshold");
       } catch (err) {
-        res.acquisition_failure_reason = err instanceof Error ? err.message : String(err);
+        recordFailure(res, err instanceof Error ? err.message : String(err));
       }
     }
   }
+
 
   // Local DB by normalized docket variants — also the only path when the pool
   // contains no exact-docket source at all.
@@ -395,20 +426,23 @@ export async function runSpecificCaseResolution(
           applyText(injected, local.text, "local_db_docket_lookup");
         }
       } else {
-        res.acquisition_failure_reason = res.acquisition_failure_reason ?? "no_local_document_match";
+        recordFailure(res, "no_local_document_match");
       }
     } catch (err) {
-      res.acquisition_failure_reason = err instanceof Error ? err.message : String(err);
+      recordFailure(res, err instanceof Error ? err.message : String(err));
     }
   }
 
   if (!res.acquisition_success) {
     res.allow_case_holding_answer = false;
+    res.acquisition_method = null;
+    res.acquisition_method_successful = null;
     res.final_docket_branch_reason = res.exact_docket_source_found
       ? "exact_docket_no_usable_text"
       : "no_exact_docket_source";
-    res.acquisition_failure_reason = res.acquisition_failure_reason ?? "no_method_available";
+    if (!res.acquisition_failure_reason) recordFailure(res, "no_method_available");
   }
+
 
   res.ms = Date.now() - t0;
   return res;

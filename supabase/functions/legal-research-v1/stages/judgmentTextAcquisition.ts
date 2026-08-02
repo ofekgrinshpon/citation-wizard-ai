@@ -46,17 +46,37 @@ const ROLE_PRIORITY: Record<string, number> = {
 
 const THIN_USABILITY = new Set(["metadata_only", "unusable", "unknown"]);
 
-const FILE_URL_RE = /\.(pdf|docx?|rtf)(\?|#|$)/i;
+const FILE_URL_RE = /\.(pdf|docx?|rtf|txt)(\?|#|$)/i;
 
 /** Court download endpoints that serve a file without a file extension. */
 const DIRECT_DOWNLOAD_RE = /(\/Home\/Download\?|[?&]fileName=|[?&]download=)/i;
+
+/**
+ * Hosts whose plain-text downloads may be treated as judgment text.
+ * Israeli Supreme Court decisions are served as `.txt` from these hosts.
+ */
+export const TRUSTED_COURT_TEXT_HOST_RE =
+  /(^|\.)(supremedecisions\.court\.gov\.il|elyon1\.court\.gov\.il|court\.gov\.il)$/i;
+
+export function isTrustedCourtTextHost(url: string): boolean {
+  try {
+    return TRUSTED_COURT_TEXT_HOST_RE.test(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+}
 
 export function isDirectFileUrl(url: string): boolean {
   return FILE_URL_RE.test(url) || DIRECT_DOWNLOAD_RE.test(url);
 }
 
+/** Hebrew markers that indicate a real judgment body (not a listing page). */
+export const JUDGMENT_BODY_RE =
+  /(בבית\s+המשפט|בפני|כב['׳]?\s*הש(ופט|ופטת)|פסק[\-\s]?דין|החלטה|לפני:|העותר|המערער|המשיב)/;
+
 /** Court / official hosts whose HTML pages may wrap a downloadable file. */
 export const WRAPPER_HOST_RE = /(court\.gov\.il|gov\.il|nevo\.co\.il|knesset\.gov\.il)/i;
+
 
 export const HOLDING_TEXT_RE =
   /(אנו\s+פוסקים|הערעור\s+(מתקבל|נדחה)|העתירה\s+(מתקבלת|נדחית)|ניתן\s+היום|אשר\s+על\s+כן|לפיכך\s|נפסק\s+כי|קובע[ת]?\s+כי|הלכה\s+ש|בדעת\s+(רוב|מיעוט)|דעת\s+הרוב)/;
@@ -140,8 +160,45 @@ async function fetchBytes(url: string): Promise<{ bytes: Uint8Array; contentType
   return { bytes: buf, contentType };
 }
 
+/** Decode Hebrew bytes safely: UTF-8 first, windows-1255 fallback. */
+export function decodeHebrew(bytes: Uint8Array): string {
+  const utf8 = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
+  const replacementRatio = (utf8.match(/\uFFFD/g)?.length ?? 0) / Math.max(utf8.length, 1);
+  const hasHebrew = /[\u0590-\u05FF]/.test(utf8);
+  if (hasHebrew && replacementRatio < 0.01) return utf8;
+  try {
+    const cp1255 = new TextDecoder("windows-1255", { fatal: false }).decode(bytes);
+    if (/[\u0590-\u05FF]/.test(cp1255)) return cp1255;
+  } catch { /* decoder unavailable */ }
+  return utf8;
+}
+
+/** Strip HTML/RTF-ish wrappers a court .txt file may still carry. */
+function plainTextFromTxt(raw: string): string {
+  let s = raw;
+  if (/<\s*(html|body|p|div|br)\b/i.test(s)) {
+    s = s.replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style[\s\S]*?<\/style>/gi, " ")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&nbsp;/g, " ")
+      .replace(/&amp;/g, "&")
+      .replace(/&quot;/g, '"');
+  }
+  return normText(s);
+}
+
+export interface DirectFileOptions {
+  /**
+   * Allow plain-text downloads. Only ever enabled for trusted court hosts —
+   * the caller must also validate that the text is a real judgment body.
+   */
+  allowPlainText?: boolean;
+  /** Extra gate applied to plain-text downloads (e.g. exact-docket check). */
+  validateText?: (text: string) => boolean;
+}
+
 /** Method 1 — the URL already points at a judgment file. */
-export async function tryDirectFile(url: string): Promise<string> {
+export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): Promise<string> {
   const { bytes, contentType } = await fetchBytes(url);
   // Content-type first, then extension, then magic bytes (court download
   // endpoints often serve octet-stream with no extension in the URL).
@@ -152,9 +209,28 @@ export async function tryDirectFile(url: string): Promise<string> {
     /wordprocessingml|msword|officedocument/.test(contentType) ||
     /\.docx?(\?|#|$)/i.test(url) ||
     head.startsWith("PK");
-  if (!isPdf && !isDocx) throw new Error("not_a_document_file");
-  return normText(await extractDocumentText(bytes, isPdf ? "pdf" : "docx"));
+  if (isPdf || isDocx) {
+    return normText(await extractDocumentText(bytes, isPdf ? "pdf" : "docx"));
+  }
+
+  const looksTextual =
+    /text\/plain|charset|octet-stream/.test(contentType) ||
+    /\.txt(\?|#|$)/i.test(url) ||
+    DIRECT_DOWNLOAD_RE.test(url);
+  if (!opts.allowPlainText || !looksTextual) throw new Error("not_a_document_file");
+  if (!isTrustedCourtTextHost(url)) throw new Error("plain_text_host_not_trusted");
+
+  const text = plainTextFromTxt(decodeHebrew(bytes));
+  if (text.length < ACQUISITION_LIMITS.MIN_USABLE_TEXT) {
+    throw new Error("plain_text_below_threshold");
+  }
+  if (!JUDGMENT_BODY_RE.test(text)) throw new Error("plain_text_not_judgment_like");
+  if (opts.validateText && !opts.validateText(text)) {
+    throw new Error("plain_text_docket_mismatch");
+  }
+  return text;
 }
+
 
 /** Method 2 — pull the full text we already store locally, by docket / title. */
 export async function tryLocalDb(
@@ -193,8 +269,18 @@ export async function tryLocalDb(
   return text;
 }
 
-/** Method 3 — an HTML wrapper page on a court host that links the real file. */
-export async function tryWrapperResolve(url: string): Promise<string> {
+/**
+ * Method 3 — an HTML wrapper page on a court host that links the real file.
+ *
+ * Conservative by design: only a direct document/download link is followed.
+ * Listing / archive pages (e.g. Nevo `PadiArchive.aspx`) that expose no
+ * document link fail closed — their own page text is never treated as
+ * judgment text.
+ */
+export async function tryWrapperResolve(
+  url: string,
+  opts: DirectFileOptions = {},
+): Promise<string> {
   const res = await fetch(url, {
     redirect: "follow",
     headers: { "User-Agent": "Mozilla/5.0 (compatible; ReLexBot/1.0)" },
@@ -202,10 +288,11 @@ export async function tryWrapperResolve(url: string): Promise<string> {
   if (!res.ok) throw new Error(`http_${res.status}`);
   const html = (await res.text()).slice(0, 400_000);
   const hrefs = Array.from(html.matchAll(/href\s*=\s*["']([^"']+)["']/gi)).map((m) => m[1]);
-  const fileHref = hrefs.find((h) => FILE_URL_RE.test(h));
+  const fileHref = hrefs.find((h) => FILE_URL_RE.test(h) || DIRECT_DOWNLOAD_RE.test(h));
   if (!fileHref) throw new Error("no_downloadable_file_on_wrapper");
   const abs = new URL(fileHref, url).toString();
-  return await tryDirectFile(abs);
+  return await tryDirectFile(abs, opts);
+
 }
 
 export interface AcquisitionInput {
