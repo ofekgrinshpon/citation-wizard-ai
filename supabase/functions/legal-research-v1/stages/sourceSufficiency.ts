@@ -79,6 +79,20 @@ export interface SufficiencyAssessment {
   governing_regulation_refs: string[];
   /** Refs of usable judgment sources. */
   usable_judgment_refs: string[];
+
+  // ── Practical-steps thin-authority telemetry (practical_steps only) ─────
+  /** Official/primary statutes that are on-topic but metadata_only. */
+  thin_governing_statute_refs: string[];
+  /** Official/primary regulations that are on-topic but metadata_only. */
+  thin_governing_regulation_refs: string[];
+  /** Whether any domain match was achieved only via morphology normalization. */
+  morphology_domain_match: boolean;
+  normalized_question_tokens: string[];
+  normalized_source_tokens: string[];
+  /** practical_steps passed sufficiency on thin (metadata_only) authority. */
+  practical_steps_thin_authority_passed: boolean;
+  /** Whether exact amounts / fees / deadlines may be stated. */
+  exact_amounts_allowed: boolean;
 }
 
 const META_TOKENS = new Set([
