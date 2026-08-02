@@ -1,0 +1,2629 @@
+{
+  "id": "80ec021d-4c25-41bf-b603-eb79c7150638",
+  "query": "מהי דוקטרינת הבטלות היחסית במשפט המנהלי?",
+  "run_id": "708eb1b6-902f-4e95-9e7c-97a4ddc2783a",
+  "created_at": "2026-08-02T12:56:23.22982+00:00",
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "הגדרה של דוקטרינה משפטית מבוססת בעיקר על פסיקה מחייבת והסברים בספרות המשפטית; יש צורך בפסיקה של בתי המשפט ועל מאמרים/ספרות שמנסחת את העקרון כדי להציגה במונחים דוקטרינליים.",
+        "text_he": "מהי ההגדרה החוקתית/הדוקטרינלית של \"הבטלות היחסית\" במשפט המנהלי — כלומר מה המשמעות המשפטית של תוצאת פסק דין המכריזה על בטלות יחסית של פעולה מנהלית לעומת בטלות מוחלטת.",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "שאלת היישום דורשת להתבסס על קו המבחנים שנבנה בפסיקה המחייבת ובניתוח ספרותי; פסיקה זוטרה או חו\"ל עשויה להיות משכנעת ולכן גם persuasive_case_law רלוונטית.",
+        "text_he": "אילו מבחנים/כללים משתמשים בהם בתי המשפט כדי להכריע מתי יש להחיל בטלות יחסית (קריטריונים כמו חומרת הפגם, האם הפגם פוגע בליבת הסמכות, הסתמכות של צד ג', ציבורי/פרטי, פגיעה בטוהר ההליך וכד').",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship",
+          "persuasive_case_law"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "השלכות מעשיות של הסעד נבנות בפסיקה ושוחזרה בספרות; ישנם רעיונות פרשניים מעשיים שאינם תמיד 'ספרי לימוד' קפדניים ולכן סימנתי כלא-בלק־לטר.",
+        "text_he": "מהן ההשלכות הפרקטיות של הכרזה על ביטלות יחסית — אילו סעדי בית המשפט יסתפקו (ביטול חלקי, תיקון/חלופת מינוי, אישור בדיעבד, פיצוי, צווי מניעה/הכרה) ומה משמעותן לגבי תוקף ההחלטה והשלכותיה לעתיד ולעבר.",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "persuasive_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": false
+      },
+      {
+        "reason": "גבולות הדוקטרינה והקשריה לדוקטרינות אחרות הם נקודות דוקטרינליות שדורשות תמיכה בפסיקה ובספרות.",
+        "text_he": "מהם הגבולות והקשרים של הדוקטרינה — מתי היא לא תחול (למשל כשמדובר בפגם מהותי שחותך את הליבה הסמכותית), וכיצד היא מתקשרת לעקרונות אחרים במשפט המנהלי (הליך תקין, פרופורציונליות, עיקרון הלגיטימיות הציבורית).",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "708eb1b6-902f-4e95-9e7c-97a4ddc2783a",
+    "drafter": {
+      "ms": 3,
+      "ok": true,
+      "lead_ref": {
+        "ref": null,
+        "shape": "definition",
+        "reason": "no_statute_source"
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "sources_used": 0,
+      "used_sources": [],
+      "marker_format": "superscript",
+      "model_initial": "openai/gpt-5-mini",
+      "builder_report": {
+        "marker_count": 0,
+        "heading_count": 0,
+        "list_item_count": 0,
+        "paragraph_count": 3,
+        "cited_segment_count": 0,
+        "adjacent_marker_count": 0,
+        "distinct_source_count": 0,
+        "compound_segment_count": 0,
+        "compound_footnote_count": 0,
+        "avg_sources_per_cited_segment": 0
+      },
+      "footnote_count": 0,
+      "snippet_budget": {
+        "research_mode": "doctrine_explanation",
+        "synthesis_run": false,
+        "max_snippet_length": 395,
+        "expanded_source_count": 0,
+        "statute_sources_ge_900": 0,
+        "judgment_sources_ge_900": 0,
+        "snippet_budget_by_source": [
+          {
+            "ref": "s1",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "judgment",
+            "snippet_length": 103,
+            "synthesis_role": "leading_candidate",
+            "text_usability": "metadata_only",
+            "has_holding_text": false,
+            "has_statutory_text": false,
+            "available_text_length": 103
+          },
+          {
+            "ref": "s2",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "unknown",
+            "snippet_length": 139,
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "metadata_only",
+            "has_holding_text": false,
+            "has_statutory_text": false,
+            "available_text_length": 139
+          },
+          {
+            "ref": "s3",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "unknown",
+            "snippet_length": 126,
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "metadata_only",
+            "has_holding_text": false,
+            "has_statutory_text": false,
+            "available_text_length": 126
+          },
+          {
+            "ref": "s4",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "unknown",
+            "snippet_length": 119,
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "metadata_only",
+            "has_holding_text": false,
+            "has_statutory_text": false,
+            "available_text_length": 119
+          },
+          {
+            "ref": "s5",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "commentary",
+            "snippet_length": 395,
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "substantive_excerpt",
+            "has_holding_text": false,
+            "has_statutory_text": false,
+            "available_text_length": 395
+          },
+          {
+            "ref": "s6",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "commentary",
+            "snippet_length": 395,
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "substantive_excerpt",
+            "has_holding_text": false,
+            "has_statutory_text": false,
+            "available_text_length": 395
+          },
+          {
+            "ref": "s7",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "scholarship",
+            "snippet_length": 298,
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "substantive_excerpt",
+            "has_holding_text": false,
+            "has_statutory_text": false,
+            "available_text_length": 298
+          },
+          {
+            "ref": "s8",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "commentary",
+            "snippet_length": 394,
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "substantive_excerpt",
+            "has_holding_text": false,
+            "has_statutory_text": false,
+            "available_text_length": 394
+          }
+        ],
+        "commentary_max_snippet_length": 395
+      },
+      "sources_passed": 8,
+      "synthesis_pack": {
+        "has_judgment": false,
+        "statute_count": 0,
+        "judgment_count": 0,
+        "commentary_count": 0,
+        "by_synthesis_role": {},
+        "not_citable_count": 0,
+        "scholarship_count": 0,
+        "has_usable_holding_text": false,
+        "has_statutory_background": false,
+        "judgments_with_holding_text": 0
+      },
+      "drafter_version": "v2.1c",
+      "case_law_required": false,
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": []
+      },
+      "acquisition_method": null,
+      "source_sufficiency": {
+        "shape": "definition",
+        "reason": "no_statutory_caselaw_or_doctrinal_anchor",
+        "applied": true,
+        "category": "not_applicable",
+        "sufficient": false,
+        "thin_source": true,
+        "found_titles": [
+          "המרכז האקדמי למשפט ולעסקים ואח' נ' כנסת ישראל (בנק המזרחי)",
+          "בטלות יחסית ושיקול דעת שיפוטי",
+          "במקום בטלות יחסית",
+          "הגנת ההסתמכות במשפט המנהלי",
+          "ע\"א 9096/18 עזבון המנוח זידאן סלימאן אבו פארס נ׳ לשכת הסדר ורישום מקרקעי פסק דין (13.11.2018)"
+        ],
+        "topical_refs": [
+          "s3",
+          "s4"
+        ],
+        "topic_phrases": [
+          "דוקטרינת הבטלות היחסית במשפט",
+          "הבטלות היחסית במשפט המנהלי",
+          "דוקטרינת הבטלות היחסית",
+          "הבטלות היחסית במשפט",
+          "היחסית במשפט המנהלי",
+          "דוקטרינת הבטלות",
+          "הבטלות היחסית",
+          "היחסית במשפט",
+          "במשפט המנהלי"
+        ],
+        "case_law_required": false,
+        "statute_only_answer": false,
+        "sufficiency_profile": "statutory_institution",
+        "usable_judgment_refs": [],
+        "governing_statute_refs": [],
+        "topical_authority_refs": [],
+        "governing_regulation_refs": [],
+        "sufficiency_authority_basis": "insufficient",
+        "authority_type_sufficiency_passed": false,
+        "case_law_missing_but_not_required": false
+      },
+      "acquisition_success": false,
+      "answer_style_report": {
+        "metrics": {
+          "block_count": 3,
+          "denylist_hits": [],
+          "heading_count": 0,
+          "heading_ratio": 0,
+          "cited_block_count": 0,
+          "total_footnote_count": 0,
+          "compound_footnote_count": 0,
+          "compound_footnote_ratio": 0,
+          "unsafe_display_title_count": 1,
+          "avg_sources_per_cited_block": 0,
+          "unsafe_display_title_examples": [
+            {
+              "ref": "s7",
+              "status": "fallback_truncated",
+              "display_title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)"
+            }
+          ],
+          "partial_supported_strong_claims": [],
+          "total_source_refs_in_cited_blocks": 0
+        },
+        "report_only": true,
+        "triggered_reasons": [
+          "unsafe_display_title"
+        ]
+      },
+      "statute_only_answer": false,
+      "sufficiency_profile": "statutory_institution",
+      "synthesis_rendering": null,
+      "unique_source_count": 0,
+      "acquired_text_length": 0,
+      "deterministic_branch": "insufficient_sources_limitation",
+      "canonical_quote_fired": false,
+      "omitted_candidate_ids": [
+        "6846c3ba-27ef-4112-8fce-da9370909bb7",
+        "8dfd0d96-2236-4c2c-a0d9-415d3453c9dd",
+        "87f33794-2f8a-4977-8b98-29119562e457",
+        "e2709838-69b1-4160-a4fb-baefb75fdc8a",
+        "3d42f922-decd-44e8-9559-04cfa9bcdcad",
+        "461a8dc7-e4c2-4d3b-96d3-d9d0cf086dfc",
+        "7fe2f733-f991-4653-af64-8c713463a03d",
+        "3f49b350-53c8-4734-af8f-ec999eb06169"
+      ],
+      "structured_validation": {
+        "ok": true,
+        "errors": [],
+        "block_count": 3,
+        "heading_count": 0,
+        "list_item_count": 0,
+        "paragraph_count": 3,
+        "cited_segment_count": 0,
+        "forbidden_text_hits": [],
+        "unknown_source_refs": [],
+        "total_source_ref_count": 0
+      },
+      "named_doctrine_framing": null,
+      "exact_docket_source_url": null,
+      "specific_case_resolution": {
+        "ms": 0,
+        "mode": "doctrine_explanation",
+        "enabled": false,
+        "acquisition_method": null,
+        "acquisition_success": false,
+        "acquired_text_length": 0,
+        "injected_candidate_id": null,
+        "exact_docket_source_url": null,
+        "requested_docket_display": null,
+        "allow_case_holding_answer": true,
+        "exact_docket_source_found": false,
+        "exact_docket_source_title": null,
+        "acquisition_failure_reason": null,
+        "exact_docket_source_usable": false,
+        "final_docket_branch_reason": "not_specific_case_mode",
+        "near_match_sources_ignored": [],
+        "text_acquisition_attempted": false,
+        "acquisition_failure_reasons": [],
+        "requested_docket_normalized": null,
+        "requested_dockets_normalized": [],
+        "acquisition_method_successful": null,
+        "acquisition_methods_attempted": [],
+        "last_acquisition_failure_reason": null,
+        "near_match_sources_ignored_count": 0
+      },
+      "exact_docket_source_found": false,
+      "exact_docket_source_title": null,
+      "final_docket_branch_reason": "not_specific_case_mode",
+      "text_acquisition_attempted": false,
+      "acquisition_failure_reasons": [],
+      "framing_correction_required": false,
+      "missing_anchor_descriptions": [],
+      "requested_docket_normalized": null,
+      "sufficiency_authority_basis": "insufficient",
+      "synthesis_rendering_applied": false,
+      "acquisition_method_successful": null,
+      "acquisition_methods_attempted": [],
+      "missing_anchor_caveat_injected": true,
+      "last_acquisition_failure_reason": null,
+      "missing_docket_limitation_fired": false,
+      "near_match_sources_ignored_count": 0,
+      "statute_section_limitation_fired": false,
+      "authority_type_sufficiency_passed": false,
+      "case_law_missing_but_not_required": false,
+      "insufficient_sources_limitation_fired": true
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "יש צורך בעוגן מחייב (פסיקה עליונה) שמגדיר את משמעות המשפטית של הכרזת בית המשפט על \"בטלות יחסית\" לעומת בטלות מוחלטת.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "פסק דין של בית המשפט העליון שקובע או מנסח את דוקטרינת \"בטלות יחסית\" מול \"בטלות מוחלטת\" — חיפוש ביטויים: \"בטלות יחסית\" \"בטלות מוחלטת\" \"הבחנה בין\" \"הגדרה דוקטרינלית\"",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסיקה מחייבת שמנסחת את הקריטריונים שבהם יש להעדיף בטלות יחסית על פני בטלות מוחלטת.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון פסקי דין לגבי מבחנים להחלת \"בטלות יחסית\" — חיפוש ביטויים: \"מבחן\" \"בטלות יחסית\" \"חומרת הפגם\" \"ליבת הסמכות\" \"הסתמכות\" \"טוהר ההליך\"",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "עמותה פרקטית של קריטריונים בבתי משפט מחוזיים תעזור להבין איך המבחנים מיושמים בפועל ומספקת דוגמאות מנומקות.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "פסקי דין בתי משפט מחוזיים או ערעורים אזרחיים/מנהלתיים שבהם הוחלה או נדחתה דוקטרינת \"בטלות יחסית\" — חיפוש ביטויים: \"בטלות יחסית\" \"חומרת הפגם\" \"הסתמכות צד ג'\" \"טוהר ההליך\"",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "ניתוח אקדמי יספק ניסוח תימוכי למבחנים, סקירת ספרות והשוואה תאורטית של הקריטריונים שבהם בתי המשפט נשענים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר משפטי על מבחנים להחלת בטלות יחסית במשפט המנהלי, ניתוח קריטריונים כגון חומרת הפגם, ליבת הסמכות, הסתמכות צד ג', טוהר ההליך — חיפוש בתשתיות מאמרים וכתבי עת (לדוגמה: \"משפטים\", \"מנשר\", \"מבט\" )",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "נדרש עוגן מחייב שמסביר אילו סעדים העליון מתיר במקרה של בטלות יחסית וכיצד הם משפיעים על תוקף ההחלטה לעתיד ולעבר.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון פסקי דין שמפרטים את הסעדים בפסק דין המכריז על \"בטלות יחסית\" — חיפוש ביטויים: \"ביטול חלקי\" \"אישור בדיעבד\" \"תיקון\" \"מינוי חלופי\" \"פיצויים\" \"צו\" בהקשר של \"בטלות יחסית\"",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "דוגמאות פרקטיות מבתי משפט נמוכים מראות אילו סעדי חלופה ניתנים בפועל וכיצד מתבצעת יישום ההשלכות על תקופות העבר והעתיד.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "פסקי דין של בתי משפט מחוזיים/שלום שמיישמים סעדי \"אישור בדיעבד\", \"ביטול חלקי\" או \"פיצוי\" בעקבות הכרזה על בטלות יחסית — חיפוש ביטויים: \"אישור בדיעבד\" \"ביטול חלקי\" \"פיצוי\" \"בטלות יחסית\"",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לחקור פסיקה מחייבת שמנסחת מקרים שבהם הפגם חותך את ליבת הסמכות ולכן אין מקום לבטלות יחסית.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "פסק דין של בית המשפט העליון המתאר את הגבולות שבהם דוקטרינת הבטלות היחסית אינה חלה — חיפוש ביטויים: \"דוקטרינת הבטלות היחסית לא תחול\" \"פגם מהותי\" \"ליבת הסמכות\" \"גבולות הדוקטרינה\"",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "ניתוח תאורטי אקדמי נחוץ כדי להסביר כיצד הדוקטרינה מתקשרת לעקרונות מנהליים אחרים ומתי יש להעדיף עקרונות אלה על פני הפתרון של בטלות יחסית.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמרים או פרקי ספר המנתחים את גבולות דוקטרינת הבטלות היחסית וקשריה לעקרונות אחרים (הליך תקין, פרופורציונליות, לגיטימיות ציבורית) — חיפוש ביטויים: \"גבולות הבטלות היחסית\" \"פגם מהותי\" \"פרופורציונליות\" \"הליך תקין\"",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 60513,
+        "mode_plan": {
+          "mode": "doctrine_explanation",
+          "audit": {
+            "mode": "doctrine_explanation",
+            "obligations": [
+              {
+                "id": "doctrinal_anchor",
+                "label": "עוגן דוקטרינרי ישיר (חוק / פסיקה מחייבת)",
+                "satisfied": true
+              },
+              {
+                "id": "bounded_scholarship",
+                "label": "ספרות מוגבלת ולא חבילת scholarship גנרית",
+                "satisfied": true
+              }
+            ],
+            "total_count": 2,
+            "unsatisfied": [],
+            "satisfied_count": 2,
+            "targets_by_role": {
+              "scholarship": {
+                "total": 2,
+                "local_db": 0,
+                "perplexity": 2
+              },
+              "binding_case_law": {
+                "total": 4,
+                "local_db": 0,
+                "perplexity": 4
+              },
+              "persuasive_case_law": {
+                "total": 2,
+                "local_db": 2,
+                "perplexity": 0
+              }
+            },
+            "caselaw_includes_perplexity": false,
+            "substantive_law_query_present": true
+          },
+          "output_shape": "definition",
+          "directive_sent": true,
+          "target_enforcement": {
+            "applied": false,
+            "widened_query_count": 0
+          },
+          "obligations_required": [
+            "doctrinal_anchor",
+            "bounded_scholarship"
+          ],
+          "classification_reasons": [
+            "shape=definition"
+          ]
+        },
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 26116,
+        "confidence": 0.9,
+        "legal_area": "משפט מנהלי",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "answer_intent": {
+          "output_shape": "definition"
+        },
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "interpretation_note": null
+      },
+      "claims_count": 4,
+      "queries_count": 8,
+      "research_mode": "doctrine_explanation",
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 133672,
+    "verifier": {
+      "ms": 36299,
+      "counts": {
+        "by_support": {
+          "direct": 0,
+          "partial": 8,
+          "unrelated": 1,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 9,
+          "false": 0
+        },
+        "model_verdicts": 9,
+        "by_support_model": {
+          "direct": 0,
+          "partial": 8,
+          "unrelated": 1,
+          "tangential": 0
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "6846c3ba-27ef-4112-8fce-da9370909bb7",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "8dfd0d96-2236-4c2c-a0d9-415d3453c9dd",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "87f33794-2f8a-4977-8b98-29119562e457",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "e2709838-69b1-4160-a4fb-baefb75fdc8a",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "3d42f922-decd-44e8-9559-04cfa9bcdcad",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "461a8dc7-e4c2-4d3b-96d3-d9d0cf086dfc",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "7fe2f733-f991-4653-af64-8c713463a03d",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "3f49b350-53c8-4734-af8f-ec999eb06169",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 36299,
+          "label": "batch1",
+          "attempts": 1,
+          "claim_ids": [
+            "C2",
+            "C3"
+          ],
+          "escalated": false,
+          "recovered": false,
+          "candidates": 9,
+          "split_probes": 0
+        }
+      ],
+      "dropped": [
+        {
+          "role": "persuasive_case_law",
+          "title": "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעת פיצויים בגין ביטול טיסה (ת\"א 65400-06-22)",
+          "origin": "local_db",
+          "reason": "פסק דין בענייני תביעת פיצויים עקב ביטול טיסה/אירוע עובדי טיסה — אינו דן בבטלות יחסית במנהלית או בסעדי בתי משפט מנהליים.",
+          "candidate_id": "5e538db3-c5c0-4336-add5-6f4cc25c7f98",
+          "worst_support": "unrelated",
+          "retrieval_method": "text"
+        }
+      ],
+      "batch_ms": [
+        36299
+      ],
+      "parallel": true,
+      "verdicts": [
+        {
+          "reason": "פסיקה זו עוסקת במפורש במבחנים/כללים לשאלת בטלות יחסית ולכן תומכת ישירות בטענה.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "6846c3ba-27ef-4112-8fce-da9370909bb7",
+          "support_subtype": "exact_subject",
+          "supported_points": [
+            "פסק הדין מזהה ומפרט שלושה מבחנים יישומיים הרלוונטיים לבחינת בטלות יחסית (קשר רציונלי, מבחן האמצעי/פגיעה פחותה, ומבחן המידתיות במובן הצר).",
+            "המקור הוא פסיקה מחייבת העוסקת ישירות בקריטריונים שדנים מתי לסטות מבטלות מוחלטת לטובת סעד מצומצם."
+          ]
+        },
+        {
+          "reason": "כתיבה אקדמית הרלוונטית לתאור הקריטריונים והנימוקים אך אינה פסיקה מחייבת על מבחנים ספציפיים.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "8dfd0d96-2236-4c2c-a0d9-415d3453c9dd",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מאמר דן בהבחנה בין הפגם לבין נזקו ובתפקיד שיקול הדעת השיפוטי בעיצוב הסעד.",
+            "מסביר כיצד שיקולי מדיניות ומשקל הפגם משפיעים על בחירת סעד כגון בטלות יחסית."
+          ]
+        },
+        {
+          "reason": "רלוונטי ודומה בתחום אך מאמר אקדמי — תמיכה משלימה ולא פסיקה מחייבת.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "87f33794-2f8a-4977-8b98-29119562e457",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מאמר היסטורי/דוקטרינרי הבוחן הצדקה ושיקולי מדיניות לתרופת הבטלות היחסית.",
+            "מספק נימוקים וטיעונים המשמשים כבסיס להבנת הקריטריונים (חומרת הפגם, איזון אינטרסים ועוד)."
+          ]
+        },
+        {
+          "reason": "מקור מדעי המתמקד בקריטריון מהותי (הסתמכות) — משלים לקריטריונים הכלליים אך אינו פסיקה מחייבת.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "e2709838-69b1-4160-a4fb-baefb75fdc8a",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "מאמר מתמקד בהגנת ההסתמכות ובוחן את משקל ההסתמכות בקביעת הסעד.",
+            "יכול לתמוך בקריטריון שהסתמכות של צד ג' מפחיתה את הסבירות לביטול מוחלט ולטובת סעד חלופי."
+          ]
+        },
+        {
+          "reason": "פסיקה מחוזית/שכנועית הרלוונטית לקריטריונים אך אינה פסיקה עליונה שמגדירה את המבחנים באופן אבסולוטי.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "3d42f922-decd-44e8-9559-04cfa9bcdcad",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "החלטה עוסקת בשיקול ההסתמכות של צדדים שלישיים ובהשפעת עיכוב/שיהוי על התיקון או דחיית הבקשה.",
+            "מזכירה גורמים מעשיים שנלקחים בחשבון כששוקלים בטלות יחסית כגון נזק לצד ג' ואפשרות לתיקון."
+          ]
+        },
+        {
+          "reason": "נוגע בנושא ובמרכיבים פרוצדורליים של השיקול, אך אינו מסמך מרכזי שקובע מבחנים עקרוניים.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "461a8dc7-e4c2-4d3b-96d3-d9d0cf086dfc",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "ההחלטה נוגעת להיבטים פרוצדורליים כמו מועד וטענת סמכות שנוגעים ליישום סעדי בטלות יחסית.",
+            "מטפלת בשאלות של מי העלה את הטענה ובמועד ההעלאתה — שיקולים המעבים את השיקול להחיל בטלות יחסית."
+          ]
+        },
+        {
+          "reason": "פסק דין בענייני תביעת פיצויים עקב ביטול טיסה/אירוע עובדי טיסה — אינו דן בבטלות יחסית במנהלית או בסעדי בתי משפט מנהליים.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "5e538db3-c5c0-4336-add5-6f4cc25c7f98",
+          "supported_points": []
+        },
+        {
+          "reason": "מקור עיוני על פיצויים שאינו עוסק ספציפית בבטלות יחסית אך מהווה הקבלה דוקטרינלית לשיקולי סעד.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "7fe2f733-f991-4653-af64-8c713463a03d",
+          "support_subtype": "analogical",
+          "supported_points": [
+            "מאמר תיאורטי על יסודות פיצויים חלקיים יכול להאיר את הנימוקים למתן פיצוי כסעיף חלופי לאחר הכרזה על בטלות יחסית.",
+            "מספק מסגרת תאורטית לשקילת פיצויים חלקיים כחלופה לביטול מוחלט של החלטה."
+          ]
+        },
+        {
+          "reason": "פסיקה שקשורה להשלכות מעשיות של הליכים ושיקולים פרקטיים של שופטים — רלוונטית אך לא מספקת סקירה מלאה של כל סוגי הסעדים של בטלות יחסית.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "3f49b350-53c8-4734-af8f-ec999eb06169",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "החלטה דנה בהשלכות ניהוליות ובעלויות משפטיות שעשויות לנבוע מהחלטות ביניים ובהשלכות על המשך הליכים.",
+            "מהווה דוגמה מעשית לדרכי פעולה וסנקציות אפשריות שהשופט עשוי להורות לאחר פסיקה על פגם מנהלי."
+          ]
+        }
+      ],
+      "demotions": [
+        {
+          "to": "partial",
+          "from": "direct",
+          "rule": "landing_page",
+          "claim_id": "C2",
+          "candidate_id": "6846c3ba-27ef-4112-8fce-da9370909bb7",
+          "reason_excerpt": "פסיקה זו עוסקת במפורש במבחנים/כללים לשאלת בטלות יחסית ולכן תומכת ישירות בטענה."
+        }
+      ],
+      "batch_count": 1,
+      "call_failed": false,
+      "model_final": "openai/gpt-5-mini",
+      "retry_count": 0,
+      "per_claim_ms": {
+        "C2": 36299,
+        "C3": 36299
+      },
+      "total_sum_ms": 36299,
+      "call_failures": [],
+      "model_initial": "openai/gpt-5-mini",
+      "total_wall_ms": 36299,
+      "retry_attempts": 0,
+      "escalated_claims": [],
+      "rate_limit_count": 0,
+      "candidates_usable": 8,
+      "concurrency_limit": 2,
+      "demotions_by_rule": {
+        "analogical": 0,
+        "background": 0,
+        "landing_page": 1,
+        "wrong_subject": 0,
+        "self_contradiction": 0
+      },
+      "escalated_batches": 0,
+      "recovered_batches": 0,
+      "candidates_dropped": 1,
+      "candidates_verified": 9,
+      "split_probe_attempts": 0,
+      "merge_order_preserved": true,
+      "fallback_to_sequential": false
+    },
+    "retrieval": {
+      "ms": 10119,
+      "pool": {
+        "drops": [
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=70",
+            "role": "persuasive_case_law",
+            "score": 0.127018981054425,
+            "title": "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעה להצהרה על זכויות במבנה מגורים בירושלים ומנגד תביעה לסילוק יד מהנכס ע\"י בריטניה (ת\"א 42550-01-21)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "d3c11430-6f82-4568-a819-ccada9f201da",
+            "rank_before_drop": 1,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "persuasive_case_law",
+            "score": 0.126491267606616,
+            "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "07e224d2-3af4-46e3-8f3e-2ea9319058ee",
+            "rank_before_drop": 2,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+            "role": "persuasive_case_law",
+            "score": 0.126306567713618,
+            "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "c918283f-ffb2-4582-afab-29df588beda7",
+            "rank_before_drop": 3,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=500",
+            "role": "persuasive_case_law",
+            "score": 0.125751115754247,
+            "title": "ביהמ\"ש לענייני משפחה בירושלים, השופט פליקס גורודצקי: החלטה בעניין חיוב אפוטרופוס בהוצאות משפט (תמ\"ש 16507-03-24)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "e11d71fc-ef60-46d0-bb94-bf29c00d0f66",
+            "rank_before_drop": 4,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+            "role": "persuasive_case_law",
+            "score": 0.125646924972534,
+            "title": "בימ\"ש השלום לנוער רחובות, השופט בן ציון קבלר: הכרעת דין לקטין שהואשם בפציעה והחזקת סכין שלא כדין ( 35343-11-21)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "cd7f6702-3535-4464-8440-4af40b7bf00e",
+            "rank_before_drop": 5,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+            "role": "persuasive_case_law",
+            "score": 0.125646924972534,
+            "title": "בימ\"ש השלום לנוער רחובות, השופט בן ציון קבלר: הכרעת דין לקטין שהואשם בפציעה והחזקת סכין שלא כדין ( 35343-11-21)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "88e20a6c-1add-419e-a387-2d0499bae449",
+            "rank_before_drop": 6,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+            "role": "persuasive_case_law",
+            "score": 0.125295961648226,
+            "title": "ביהמ\"ש לענייני משפחה בפתח תקווה, ש' סמאח מנאסרה סבאח: פסק דין בשאלת הסמכות העניינית לבית המשפט לענייני משפחה לדון בתובענת לשון הרע שאינה בין בני משפחה כהגדרות חוק בתי המשפט לענייני משפחה (תמ\"ש 47608-04-24)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "80540103-6c3f-4b6e-86d0-983009cd7a39",
+            "rank_before_drop": 7,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+            "role": "persuasive_case_law",
+            "score": 0.124697039276361,
+            "title": "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעות הדדיות של בעל נכס מקרקעין ובנק בעקבות עסקה שהשתבשה (ת\"א 10512-01-21)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "0cfa2e2f-6431-4b28-bbe0-1b10d3e56aa8",
+            "rank_before_drop": 8,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+            "role": "persuasive_case_law",
+            "score": 0.123747153580189,
+            "title": "ביהמ\"ש המחוזי בחיפה, ש' חננאל שרעבי: פסק דין בבקשת ערעור על ביהמ\"ש לענייני משפחה בחיפה (רמ\"ש 26806-04-25)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "f4218389-b866-4559-9a3d-5fdb239bc719",
+            "rank_before_drop": 9,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=60",
+            "role": "persuasive_case_law",
+            "score": 0.123747153580189,
+            "title": "בית משפט השלום ת\"א-יפו, השופט אביים ברקאי: פסק דין בנושא ניגוד עניינים בניהול פרויקט התחדשות עירונית (ת\"א 22191-01-21)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "ffd7c629-87cd-46ba-bd10-58e151b911f9",
+            "rank_before_drop": 10,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+            "role": "persuasive_case_law",
+            "score": 0.123747153580189,
+            "title": "בית המשפט המחוזי ב\"ש, השופטת טל לחיאני שהם: גזר דין לנאשמת בהמתה בקלות דעת, הפקרה ונהיגה בשכרות אשר גרמה למותה של ניר אבוחצירה ז\"ל (ת\"פ 19589-02-24)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "a7cc05da-856c-4fb1-b483-f7a44a3c3fa8",
+            "rank_before_drop": 11,
+            "retrieval_method": "text"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C20%5C690%5C059%5Cv16&fileName=20059690.V16&type=2",
+            "role": "binding_case_law",
+            "score": 0.95,
+            "title": "בג\"ץ 5969/20",
+            "origin": "perplexity",
+            "claim_id": "C2",
+            "drop_key": "url:supremedecisions.court.gov.il/home/download",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "ba5f9084-f248-4e97-8edd-c0e8191808bb",
+            "rank_before_drop": 12,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+            "role": "scholarship",
+            "score": 0.75,
+            "title": "אין מקור נוסף מזוהה בתוצאות שסופקו",
+            "origin": "perplexity",
+            "claim_id": "C2",
+            "drop_key": "url:lawjournal.huji.ac.il/sites/default/files/2018-02/%d7%91%d7%9e%d7%a7%d7%95%d7%9d%20%d7%91%d7%98%d7%9c%d7%95%d7%aa%20%d7%99%d7%97%d7%a1%d7%99%d7%aa.pdf",
+            "drop_reason": "dup_url",
+            "source_type": "other",
+            "candidate_id": "b9493807-420c-4909-882c-d4c56f6e8719",
+            "rank_before_drop": 17,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/923",
+            "role": "scholarship",
+            "score": 0.75,
+            "title": "בטלות יחסית ושיקול דעת שיפוטי",
+            "origin": "perplexity",
+            "claim_id": "C4",
+            "drop_key": "tt:scholarship:בטלות יחסית ושיקול דעת שיפוטי",
+            "drop_reason": "dup_role_title",
+            "source_type": "academic",
+            "candidate_id": "1d35915a-3047-48a4-b47a-a04e634ce535",
+            "rank_before_drop": 18,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/923",
+            "role": "scholarship",
+            "score": 0.75,
+            "title": "בטלות יחסית ושיקול דעת שיפוטי",
+            "origin": "perplexity",
+            "claim_id": "C4",
+            "drop_key": "tt:scholarship:בטלות יחסית ושיקול דעת שיפוטי",
+            "drop_reason": "dup_role_title",
+            "source_type": "academic",
+            "candidate_id": "f051077e-d708-46af-8f96-6a780ce61134",
+            "rank_before_drop": 19,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+            "role": "scholarship",
+            "score": 0.75,
+            "title": "במקום בטלות יחסית",
+            "origin": "perplexity",
+            "claim_id": "C4",
+            "drop_key": "url:lawjournal.huji.ac.il/sites/default/files/2018-02/%d7%91%d7%9e%d7%a7%d7%95%d7%9d%20%d7%91%d7%98%d7%9c%d7%95%d7%aa%20%d7%99%d7%97%d7%a1%d7%99%d7%aa.pdf",
+            "drop_reason": "dup_url",
+            "source_type": "academic",
+            "candidate_id": "e6b1dffe-e6b0-4b8c-8f4d-5d874a5fcb3a",
+            "rank_before_drop": 20,
+            "retrieval_method": "perplexity"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=720",
+            "role": "persuasive_case_law",
+            "score": 0.4040953016369256,
+            "title": "ביהמ\"ש השלום בראשל\"צ, השופט יוני לבני: הכרעת דין לנאשמים העוסקים בייבוא של מוצרי מזון בעבירה של מתן שוחד למנהל מחלקת כשרות הייבוא ברבנות הראשית (ת\"פ 25747-05-20)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "ed90de92-ba31-4b45-9e08-3c79eab828dc",
+            "rank_before_drop": 21,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2030",
+            "role": "persuasive_case_law",
+            "score": 0.3906760374051546,
+            "title": "בימ\"ש עליון, אב\"ד השופט יוסף אלרון, השופט אלכס שטיין, השופטת רות רונן: פס\"ד בבקשת רשות ערעור הנוגעת לשימוש משטרת ישראל בתצלומי אויר (רע\"פ 5334-23)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "url:www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "drop_reason": "dup_url",
+            "source_type": "caselaw",
+            "candidate_id": "50fb6436-2a2a-4c44-937f-104050e0dc2e",
+            "rank_before_drop": 23,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-6158-22-%d7%92%d7%99%d7%a0%d7%93%d7%99-%d7%90%d7%97%d7%96%d7%a7%d7%95%d7%aa-%d7%93%d7%99%d7%a8%d7%95%d7%aa-%d7%99%d7%95%d7%a7%d7%a8%d7%94-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a0%d7%a6/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "role": "persuasive_case_law",
+            "score": 0.3892364990966514,
+            "title": "רע\"א 6158/22 גינדי אחזקות דירות יוקרה בע\"מ נ׳ נציגות הבית המשותף פסק דין (29.08.2022)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "vector:C2:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "52fd9f81-a681-4bd9-a39d-50cc150055df",
+            "rank_before_drop": 25,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-7840-20-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%9e%d7%a8%d7%9b%d7%96-%d7%a8%d7%a4%d7%95%d7%90%d7%99-%d7%9e%d7%a2%d7%99%d7%99%d7%a0%d7%99-%d7%94%d7%99%d7%a9%d7%95%d7%a2%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "role": "persuasive_case_law",
+            "score": 0.3867774136474494,
+            "title": "רע\"א 7840/20 פלוני נ׳ מרכז רפואי מעייני הישועה החלטה (22.12.2020)",
+            "origin": "local_db",
+            "claim_id": "C2",
+            "drop_key": "vector:C2:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "791301a9-f472-4d6c-945d-69cb25061550",
+            "rank_before_drop": 26,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/3&fileName=SG3_9_1021-07.pdf&type=2",
+            "role": "persuasive_case_law",
+            "score": 0.36322392763468075,
+            "title": "רע\"פ 1021-07 - פלוני נ. מדינת ישראל",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "url:supremedecisions.court.gov.il/home/download",
+            "drop_reason": "dup_url",
+            "source_type": "supreme_court_il",
+            "candidate_id": "3c958b85-2337-4d2f-807d-e5894a101b41",
+            "rank_before_drop": 27,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1906",
+            "role": "persuasive_case_law",
+            "score": 0.3597342030549108,
+            "title": "רשלנות הטועה: אשם, צדק ותום לב",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "vector:C3:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "journal_article",
+            "candidate_id": "70e54be4-c9cf-476f-a6c9-1ff9a03ba659",
+            "rank_before_drop": 30,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%a2%d7%90-2719-19-%d7%a2%d7%96%d7%91%d7%95%d7%9f-%d7%94%d7%9e%d7%a0%d7%95%d7%97-%d7%a4%d7%a8%d7%99%d7%93-%d7%9e%d7%95%d7%a1%d7%98%d7%a4%d7%90-%d7%97%d7%98%d7%99%d7%91-%d7%91%d7%90%d7%9e%d7%a6/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "role": "persuasive_case_law",
+            "score": 0.3591952359668748,
+            "title": "ע\"א 2719/19 עזבון המנוח פריד מוסטפא ח'טיב באמצעות יורשיו נ׳ מדינת ישראל פסק דין",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "vector:C3:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "79a90187-7329-4585-b5b8-33e024f4b567",
+            "rank_before_drop": 31,
+            "retrieval_method": "vector"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-7790-20-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%94%d7%9e%d7%95%d7%a1%d7%93-%d7%9c%d7%91%d7%99%d7%98%d7%95%d7%97-%d7%9c%d7%90%d7%95%d7%9e%d7%99-%d7%94%d7%97%d7%9c%d7%98%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "role": "persuasive_case_law",
+            "score": 0.3588892785873546,
+            "title": "רע\"א 7790/20 פלוני נ׳ המוסד לביטוח לאומי החלטה (14.12.2020)",
+            "origin": "local_db",
+            "claim_id": "C3",
+            "drop_key": "vector:C3:2",
+            "drop_reason": "vector_quota_per_claim",
+            "source_type": "caselaw",
+            "candidate_id": "4baffcd9-45b4-4467-9224-b152e7ef354e",
+            "rank_before_drop": 32,
+            "retrieval_method": "vector"
+          }
+        ],
+        "found": 33,
+        "counts": {
+          "by_role": {
+            "scholarship": 3,
+            "binding_case_law": 1,
+            "persuasive_case_law": 5
+          },
+          "by_claim": {
+            "C2": 6,
+            "C3": 3
+          },
+          "by_origin": {
+            "local_db": 5,
+            "perplexity": 4
+          }
+        },
+        "after_dedup": 9,
+        "dedup_drops": 24,
+        "drop_reason_counts": {
+          "dup_url": 17,
+          "dup_role_title": 2,
+          "vector_quota_per_claim": 5
+        }
+      },
+      "local": {
+        "ms": 1071,
+        "aggregate": {
+          "wall_ms": 1071,
+          "max_query_ms": 1071,
+          "sum_query_ms": 2096,
+          "slowest_query": {
+            "ms": 1071,
+            "role": "persuasive_case_law",
+            "text_ms": 900,
+            "claim_id": "C2",
+            "exact_ms": 0,
+            "query_he": "פסקי דין בתי משפט מחוזיים או ערעורים אזרחיים/מנהלתיים שבהם הוחלה או נדחתה דוקטרינת \"בטלות יחסית\" — חיפוש ביטויים: \"בטלות יחסית\" \"חומרת הפגם\" \"הסתמכות צד ג'\" \"טוהר ההליך\"",
+            "vector_ms": 168,
+            "embedding_ms": 226
+          },
+          "slowest_method": "text",
+          "method_total_ms": {
+            "text": 1754,
+            "exact": 0,
+            "vector": 339,
+            "embedding": 428
+          },
+          "queries_executed": 2,
+          "exact_error_count": 0,
+          "text_timeout_count": 0,
+          "candidates_by_method": {
+            "text": 12,
+            "vector": 12,
+            "exact_authority": 0
+          },
+          "vector_timeout_count": 0,
+          "bottleneck_hypothesis": "single_slow_query (max=1071ms ≈ wall=1071ms)",
+          "duplicate_query_count": 0
+        },
+        "per_query": [
+          {
+            "ms": 1025,
+            "diag": {
+              "text_ms": 854,
+              "exact_ms": 0,
+              "vector_ms": 171,
+              "text_status": "ok",
+              "embedding_ms": 202,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעת פיצויים בגין ביטול טיסה (ת\"א 65400-06-22)",
+                "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+                "בימ\"ש השלום לנוער רחובות, השופט בן ציון קבלר: הכרעת דין לקטין שהואשם בפציעה והחזקת סכין שלא כדין ( 35343-11-21)",
+                "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעות הדדיות של בעל נכס מקרקעין ובנק בעקבות עסקה שהשתבשה (ת\"א 10512-01-21)",
+                "ביהמ\"ש המחוזי בחיפה, ש' חננאל שרעבי: פסק דין בבקשת ערעור על ביהמ\"ש לענייני משפחה בחיפה (רמ\"ש 26806-04-25)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 854,
+              "top_vector_titles": [
+                "רע\"פ 1021-07 - פלוני נ. מדינת ישראל",
+                "הבסיס העיוני לפסיקת פיצויים חלקיים בישראל",
+                "רע\"א 6285/20 טמפלרים בשרונה בע\"מ נ׳ שירת הקרן בע\"מ החלטה (23.11.2020)",
+                "רשלנות הטועה: אשם, צדק ותום לב",
+                "ע\"א 2719/19 עזבון המנוח פריד מוסטפא ח'טיב באמצעות יורשיו נ׳ מדינת ישראל פסק דין"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "persuasive_case_law",
+            "claim_id": "C3",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "בתי משפט שמיישמים סעדי אישור בדיעבד ביטול חלקי פיצוי בעקבות הכרזה בטלות יחסית חיפוש ביטויים דין",
+            "original_query_he": "פסקי דין של בתי משפט מחוזיים/שלום שמיישמים סעדי \"אישור בדיעבד\", \"ביטול חלקי\" או \"פיצוי\" בעקבות הכרזה על בטלות יחסית — חיפוש ביטויים: \"אישור בדיעבד\" \"ביטול חלקי\" \"פיצוי\" \"בטלות יחסית\"",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          },
+          {
+            "ms": 1071,
+            "diag": {
+              "text_ms": 900,
+              "exact_ms": 0,
+              "vector_ms": 168,
+              "text_status": "ok",
+              "embedding_ms": 226,
+              "exact_status": "empty",
+              "vector_status": "ok",
+              "top_text_titles": [
+                "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעה להצהרה על זכויות במבנה מגורים בירושלים ומנגד תביעה לסילוק יד מהנכס ע\"י בריטניה (ת\"א 42550-01-21)",
+                "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+                "ביהמ\"ש לענייני משפחה בירושלים, השופט פליקס גורודצקי: החלטה בעניין חיוב אפוטרופוס בהוצאות משפט (תמ\"ש 16507-03-24)",
+                "בימ\"ש השלום לנוער רחובות, השופט בן ציון קבלר: הכרעת דין לקטין שהואשם בפציעה והחזקת סכין שלא כדין ( 35343-11-21)",
+                "ביהמ\"ש לענייני משפחה בפתח תקווה, ש' סמאח מנאסרה סבאח: פסק דין בשאלת הסמכות העניינית לבית המשפט לענייני משפחה לדון בתובענת לשון הרע שאינה בין בני משפחה כהגדרות חוק בתי המשפט לענייני משפחה (תמ\"ש 47608-04-24)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "parallel_batch_ms": 900,
+              "top_vector_titles": [
+                "ביהמ\"ש השלום בראשל\"צ, השופט יוני לבני: הכרעת דין לנאשמים העוסקים בייבוא של מוצרי מזון בעבירה של מתן שוחד למנהל מחלקת כשרות הייבוא ברבנות הראשית (ת\"פ 25747-05-20)",
+                "ע\"א 9096/18 עזבון המנוח זידאן סלימאן אבו פארס נ׳ לשכת הסדר ורישום מקרקעי פסק דין (13.11.2018)",
+                "בימ\"ש עליון, אב\"ד השופט יוסף אלרון, השופט אלכס שטיין, השופטת רות רונן: פס\"ד בבקשת רשות ערעור הנוגעת לשימוש משטרת ישראל בתצלומי אויר (רע\"פ 5334-23)",
+                "רע\"פ 3017/20 עסאם נעאמנה נ׳ היחידה הארצית לאכיפה דיני התכנון והבנייה החלטה (20.04.2020)",
+                "רע\"א 6158/22 גינדי אחזקות דירות יוקרה בע\"מ נ׳ נציגות הבית המשותף פסק דין (29.08.2022)"
+              ],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "persuasive_case_law",
+            "claim_id": "C2",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 6,
+            "vector_budget": 6,
+            "compact_query_he": "דין בתי משפט מחוזיים שבהם הוחלה נדחתה דוקטרינת בטלות יחסית חיפוש ביטויים חומרת הפגם הסתמכות צד",
+            "original_query_he": "פסקי דין בתי משפט מחוזיים או ערעורים אזרחיים/מנהלתיים שבהם הוחלה או נדחתה דוקטרינת \"בטלות יחסית\" — חיפוש ביטויים: \"בטלות יחסית\" \"חומרת הפגם\" \"הסתמכות צד ג'\" \"טוהר ההליך\"",
+            "text_authority_signal": {
+              "has_signal": false,
+              "exact_docket": false,
+              "phrase_overlap": false,
+              "official_primary": false,
+              "exact_statute_section": false
+            }
+          }
+        ],
+        "candidates": 24,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 10110,
+        "dropped": 20,
+        "parallel": true,
+        "query_ms": [
+          4038,
+          5514,
+          7422,
+          8356,
+          4431,
+          4593
+        ],
+        "per_query": [
+          {
+            "ms": 4038,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://hamishpatworldarchive.github.io/Courses/99204/210-Summary3.doc",
+                "title": "בג\"צ 2918/93 - עירית קרית גת נ' מדינת ישראל ו-9 אח'",
+                "domain": "hamishpatworldarchive.github.io",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "http://lawjournal.huji.ac.il/article/12/923",
+                "title": "בטלות יחסית ושיקול דעת שיפוטי",
+                "domain": "lawjournal.huji.ac.il",
+                "drop_reason": "class_academic_not_admitted_for_binding_case_law",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.afiklaw.com/caselaw/8262/40",
+                "title": "בג\"ץ 466/07 ח\"כ זהבה גלאון מר\"צ-יחד נ' היועץ המשפטי לממשלה",
+                "domain": "he.afiklaw.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.davidov-benyamini.com/relative-voidness",
+                "title": "בטלות יחסית - עו\"ד אדיר בנימיני",
+                "domain": "davidov-benyamini.com",
+                "drop_reason": "class_unknown_not_admitted_for_binding_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C1",
+            "query_he": "פסק דין של בית המשפט העליון שקובע או מנסח את דוקטרינת \"בטלות יחסית\" מול \"בטלות מוחלטת\" — חיפוש ביטויים: \"בטלות יחסית\" \"בטלות מוחלטת\" \"הבחנה בין\" \"הגדרה דוקטרינלית\"",
+            "raw_count": 4,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5514,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://hamishpat.com/therepository/%D7%A9%D7%A0%D7%94%20%D7%90/%D7%9E%D7%A9%D7%A4%D7%98%20%D7%97%D7%95%D7%A7%D7%AA%D7%99/167.doc",
+                "title": "בג\"ץ 2918/93 - עירית קרית גת נ' מדינת ישראל ו-9 אח'",
+                "domain": "hamishpat.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C20%5C690%5C059%5Cv16&fileName=20059690.V16&type=2",
+                "title": "בג\"ץ 5969/20",
+                "domain": "supremedecisions.court.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "thin_body",
+                  "title_status": "valid",
+                  "url_original": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C20%5C690%5C059%5Cv16&fileName=20059690.V16&type=2",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C20%5C690%5C059%5Cv16&fileName=20059690.V16&type=2",
+                  "hygiene_reasons": [
+                    "body_thin"
+                  ],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 22,
+                  "title_meaningful_chars": 11
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "PDF",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.toledano.co.il/wp-content/uploads/2024/01/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%99%D7%98%D7%95%D7%9C-%D7%A2%D7%99%D7%9C%D7%AA-%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA-%D7%A2%D7%9C-%D7%99%D7%93%D7%99-%D7%91%D7%92%D7%A5-%D7%92%D7%A8%D7%A1%D7%94-%D7%9E%D7%9C%D7%90%D7%94.pdf",
+                "title": "בג\"ץ 5658/23 - פסק דין",
+                "domain": "toledano.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_binding_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+                "title": "המרכז האקדמי למשפט ולעסקים ואח' נ' כנסת ישראל (בנק המזרחי)",
+                "domain": "supremedecisions.court.gov.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 89,
+                  "title_meaningful_chars": 49
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "PDF",
+                "normalized_source_type": "caselaw",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "http://lawjournal.huji.ac.il/article/24/1813",
+                "title": "בג\"ץ אדלשטיין – הערת פסיקה",
+                "domain": "lawjournal.huji.ac.il",
+                "drop_reason": "class_academic_not_admitted_for_binding_case_law",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C2",
+            "query_he": "בית המשפט העליון פסקי דין לגבי מבחנים להחלת \"בטלות יחסית\" — חיפוש ביטויים: \"מבחן\" \"בטלות יחסית\" \"חומרת הפגם\" \"ליבת הסמכות\" \"הסתמכות\" \"טוהר ההליך\"",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 7422,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+                "title": "בטלות יחסית ושיקול דעת שיפוטי",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 115,
+                  "title_meaningful_chars": 25
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "article",
+                "normalized_source_type": "academic",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+                "title": "במקום בטלות יחסית",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 107,
+                  "title_meaningful_chars": 15
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "article",
+                "normalized_source_type": "academic",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+                "title": "הגנת ההסתמכות במשפט המנהלי",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 100,
+                  "title_meaningful_chars": 23
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "article",
+                "normalized_source_type": "academic",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.davidov-benyamini.com/relative-voidness",
+                "title": "בטלות יחסית",
+                "domain": "davidov-benyamini.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+                "title": "אין מקור נוסף מזוהה בתוצאות שסופקו",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 176,
+                  "title_meaningful_chars": 29
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "inference",
+                "normalized_source_type": "other",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C2",
+            "query_he": "מאמר משפטי על מבחנים להחלת בטלות יחסית במשפט המנהלי, ניתוח קריטריונים כגון חומרת הפגם, ליבת הסמכות, הסתמכות צד ג', טוהר ההליך — חיפוש בתשתיות מאמרים וכתבי עת (לדוגמה: \"משפטים\", \"מנשר\", \"מבט\" )",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 8356,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://hamishpat.com/therepository/%D7%A9%D7%A0%D7%94%20%D7%90/%D7%9E%D7%A9%D7%A4%D7%98%20%D7%97%D7%95%D7%A7%D7%AA%D7%99/167.doc",
+                "title": "בג\"צ 2918/93 עירית קרית גת נ' מדינת ישראל ו-9 אח'",
+                "domain": "hamishpat.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.wikipedia.org/wiki/%D7%91%D7%92%22%D7%A5_%D7%94%D7%AA%D7%A0%D7%ועה_%D7%9C%D7%9E%D7%A2%D7%9F_%D7%90%D7%99%D7%9B%D7%95%D7%AA_%D7%94%D7%A9%D7%9C%D7%98%D7%95%D7%9F_%D7%A0%D7%92%D7%93_%D7%94%D7%9B%D7%A0%D7%A1%D7%AA_(%D7%A2%D7%99%D7%9C%D7%AA_%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA)",
+                "title": "בג\"ץ התנועה למען איכות השלטון נגד הכנסת (עילת הסבירות)",
+                "domain": "he.wikipedia.org",
+                "drop_reason": "bad_source",
+                "classified_source_class": "bad",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.wikipedia.org/wiki/%D7%91%D7%92%22%D7%A5_%D7%94%D7%AA%D7%A0%D7%95%D7%A2%D7%94_%D7%9C%D7%9E%D7%A2%D7%9F_%D7%90%D7%99%D7%9B%D7%95%D7%AA_%D7%94%D7%A9%D7%9C%D7%98%D7%95%D7%9F_%D7%A0%D7%92%D7%93_%D7%94%D7%9B%D7%A0%D7%A1%D7%AA_(%D7%A2%D7%99%D7%9C%D7%AA_%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA)",
+                "title": "בג\"ץ התנועה למען איכות השלטון נגד הכנסת (עילת הסבירות)",
+                "domain": "he.wikipedia.org",
+                "drop_reason": "bad_source",
+                "classified_source_class": "bad",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision32539-04-24/he/32539-04-24.docx",
+                "title": "32539-04-24.docx",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_binding_case_law",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.wikipedia.org/wiki/%D7%91%D7%92%22%D7%A5_%D7%97%D7%A1%D7%95%D7%9F_%D7%A0%D7%92%D7%93_%D7%9B%D7%A0%D7%A1%D7%AA_%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+                "title": "בג\"ץ חסון נגד כנסת ישראל",
+                "domain": "he.wikipedia.org",
+                "drop_reason": "bad_source",
+                "classified_source_class": "bad",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C3",
+            "query_he": "בית המשפט העליון פסקי דין שמפרטים את הסעדים בפסק דין המכריז על \"בטלות יחסית\" — חיפוש ביטויים: \"ביטול חלקי\" \"אישור בדיעבד\" \"תיקון\" \"מינוי חלופי\" \"פיצויים\" \"צו\" בהקשר של \"בטלות יחסית\"",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4431,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://hamishpatworldarchive.github.io/Courses/99204/210-Summary3.doc",
+                "title": "בג\"ץ 2918/93 עיריית קריית גת נ' מדינת ישראל",
+                "domain": "hamishpatworldarchive.github.io",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+                "title": "בטלות יחסית ושיקול דעת שיפוטי",
+                "domain": "lawjournal.huji.ac.il",
+                "drop_reason": "class_academic_not_admitted_for_binding_case_law",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.ovdim.org.il/%D7%91%D7%98%D7%9C%D7%95%D7%AA-%D7%99%D7%97%D7%A1%D7%99%D7%AA/",
+                "title": "דוקטרינת הבטלות היחסית בבית הדין לעבודה",
+                "domain": "ovdim.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_binding_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.din.co.il/articles/1/B-3989/",
+                "title": "הכשרת היתר בניה שהוצא שלא כחוק מכוח דוקטרינת הבטלות היחסית",
+                "domain": "din.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2024/07/lawgov-20240721-dotan.pdf",
+                "title": "מעמדה של עילת הסבירות האיזונית בהליכי תקיפה עקיפה",
+                "domain": "law.haifa.ac.il",
+                "drop_reason": "class_academic_not_admitted_for_binding_case_law",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C4",
+            "query_he": "פסק דין של בית המשפט העליון המתאר את הגבולות שבהם דוקטרינת הבטלות היחסית אינה חלה — חיפוש ביטויים: \"דוקטרינת הבטלות היחסית לא תחול\" \"פגם מהותי\" \"ליבת הסמכות\" \"גבולות הדוקטרינה\"",
+            "raw_count": 5,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4593,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/article/12/923",
+                "title": "בטלות יחסית ושיקול דעת שיפוטי",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/article/12/923",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/article/12/923",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 185,
+                  "title_meaningful_chars": 25
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "article",
+                "normalized_source_type": "academic",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/article/12/923",
+                "title": "בטלות יחסית ושיקול דעת שיפוטי",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/article/12/923",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/article/12/923",
+                  "hygiene_reasons": [
+                    "url_generic_index"
+                  ],
+                  "landing_page_status": "generic_index",
+                  "body_meaningful_chars": 115,
+                  "title_meaningful_chars": 25
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "article",
+                "normalized_source_type": "academic",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+                "title": "במקום בטלות יחסית",
+                "domain": "lawjournal.huji.ac.il",
+                "hygiene": {
+                  "url_status": "valid",
+                  "body_status": "has_body",
+                  "title_status": "valid",
+                  "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+                  "hygiene_action": "keep",
+                  "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+                  "hygiene_reasons": [],
+                  "landing_page_status": "specific_document",
+                  "body_meaningful_chars": 99,
+                  "title_meaningful_chars": 15
+                },
+                "hygiene_enforced": false,
+                "raw_pplx_source_type": "article",
+                "normalized_source_type": "academic",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.ovdim.org.il/%D7%91%D7%98%D7%9C%D7%95%D7%AA-%D7%99%D7%97%D7%A1%D7%99%D7%AA/",
+                "title": "דוקטרינת הבטלות היחסית בבית הדין לעבודה",
+                "domain": "ovdim.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.globes.co.il/news/article.aspx?did=507516",
+                "title": "סעד מתאים לכל פגם",
+                "domain": "globes.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C4",
+            "query_he": "מאמרים או פרקי ספר המנתחים את גבולות דוקטרינת הבטלות היחסית וקשריה לעקרונות אחרים (הליך תקין, פרופורציונליות, לגיטימיות ציבורית) — חיפוש ביטויים: \"גבולות הבטלות היחסית\" \"פגם מהותי\" \"פרופורציונליות\" \"הליך תקין\"",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 9,
+        "query_count": 6,
+        "retry_count": 0,
+        "total_sum_ms": 34354,
+        "total_wall_ms": 10110,
+        "hygiene_counts": {
+          "keep": 9,
+          "total": 9,
+          "exclude": 0,
+          "reasons": {
+            "body_thin": 1,
+            "url_generic_index": 2
+          },
+          "downgrade": 0,
+          "report_only_mode": false,
+          "would_exclude_in_report_only": 0
+        },
+        "rate_limit_count": 0,
+        "role_corrections": [],
+        "concurrency_limit": 4,
+        "merge_order_preserved": true,
+        "fallback_to_sequential": false
+      },
+      "source_integrity": {
+        "rejects": 0,
+        "admitted": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+            "role": "binding_case_law",
+            "title": "המרכז האקדמי למשפט ולעסקים ואח' נ' כנסת ישראל (בנק המזרחי)",
+            "citable_as": "judgment",
+            "candidate_id": "6846c3ba-27ef-4112-8fce-da9370909bb7",
+            "authority_tier": "official_primary",
+            "synthesis_role": "leading_candidate",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "can_satisfy_role": false,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "caselaw",
+            "synthesis_role_overridden": false,
+            "synthesis_role_seeded_from": "leading_candidate"
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=10",
+            "role": "persuasive_case_law",
+            "title": "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעת פיצויים בגין ביטול טיסה (ת\"א 65400-06-22)",
+            "citable_as": "not_citable",
+            "candidate_id": "5e538db3-c5c0-4336-add5-6f4cc25c7f98",
+            "authority_tier": "index_or_listing",
+            "synthesis_role": "unknown",
+            "text_usability": "listing_page",
+            "integrity_flags": [
+              "listing_or_pagination_page"
+            ],
+            "can_satisfy_role": false,
+            "downgrade_reason": "caselaw_type_on_listing_page",
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "caselaw",
+            "synthesis_role_overridden": true,
+            "synthesis_role_seeded_from": "applying_candidate"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+            "role": "scholarship",
+            "title": "בטלות יחסית ושיקול דעת שיפוטי",
+            "citable_as": "unknown",
+            "candidate_id": "8dfd0d96-2236-4c2c-a0d9-415d3453c9dd",
+            "authority_tier": "secondary_commentary",
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "can_satisfy_role": false,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "academic",
+            "synthesis_role_overridden": false,
+            "synthesis_role_seeded_from": "secondary_commentary"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+            "role": "scholarship",
+            "title": "במקום בטלות יחסית",
+            "citable_as": "unknown",
+            "candidate_id": "87f33794-2f8a-4977-8b98-29119562e457",
+            "authority_tier": "secondary_commentary",
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "can_satisfy_role": false,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "academic",
+            "synthesis_role_overridden": false,
+            "synthesis_role_seeded_from": "secondary_commentary"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+            "role": "scholarship",
+            "title": "הגנת ההסתמכות במשפט המנהלי",
+            "citable_as": "unknown",
+            "candidate_id": "e2709838-69b1-4160-a4fb-baefb75fdc8a",
+            "authority_tier": "secondary_commentary",
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "can_satisfy_role": false,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "academic",
+            "synthesis_role_overridden": false,
+            "synthesis_role_seeded_from": "secondary_commentary"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%a2%d7%90-9096-18-%d7%a2%d7%96%d7%91%d7%95%d7%9f-%d7%94%d7%9e%d7%a0%d7%95%d7%97-%d7%96%d7%99%d7%93%d7%90%d7%9f-%d7%a1%d7%9c%d7%99%d7%9e%d7%90%d7%9f-%d7%90%d7%91%d7%95-%d7%a4%d7%90%d7%a8%d7%a1/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "role": "persuasive_case_law",
+            "title": "ע\"א 9096/18 עזבון המנוח זידאן סלימאן אבו פארס נ׳ לשכת הסדר ורישום מקרקעי פסק דין (13.11.2018)",
+            "citable_as": "commentary",
+            "candidate_id": "3d42f922-decd-44e8-9559-04cfa9bcdcad",
+            "authority_tier": "secondary_commentary",
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "substantive_excerpt",
+            "integrity_flags": [],
+            "can_satisfy_role": false,
+            "downgrade_reason": "caselaw_type_without_judgment_authority",
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "caselaw",
+            "synthesis_role_overridden": true,
+            "synthesis_role_seeded_from": "applying_candidate"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-3017-20-%d7%a2%d7%a1%d7%90%d7%9d-%d7%a0%d7%a2%d7%90%d7%9e%d7%a0%d7%94-%d7%a0-%d7%94%d7%99%d7%97%d7%99%d7%93%d7%94-%d7%94%d7%90%d7%a8%d7%a6%d7%99%d7%aa-%d7%9c%d7%90%d7%9b%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "role": "persuasive_case_law",
+            "title": "רע\"פ 3017/20 עסאם נעאמנה נ׳ היחידה הארצית לאכיפה דיני התכנון והבנייה החלטה (20.04.2020)",
+            "citable_as": "commentary",
+            "candidate_id": "461a8dc7-e4c2-4d3b-96d3-d9d0cf086dfc",
+            "authority_tier": "secondary_commentary",
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "substantive_excerpt",
+            "integrity_flags": [],
+            "can_satisfy_role": false,
+            "downgrade_reason": "caselaw_type_without_judgment_authority",
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "caselaw",
+            "synthesis_role_overridden": true,
+            "synthesis_role_seeded_from": "applying_candidate"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1682",
+            "role": "persuasive_case_law",
+            "title": "הבסיס העיוני לפסיקת פיצויים חלקיים בישראל",
+            "citable_as": "scholarship",
+            "candidate_id": "7fe2f733-f991-4653-af64-8c713463a03d",
+            "authority_tier": "secondary_commentary",
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "substantive_excerpt",
+            "integrity_flags": [],
+            "can_satisfy_role": false,
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "journal_article",
+            "synthesis_role_overridden": true,
+            "synthesis_role_seeded_from": "applying_candidate"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-6285-20-%d7%98%d7%9e%d7%a4%d7%9c%d7%a8%d7%99%d7%9d-%d7%91%d7%a9%d7%a8%d7%95%d7%a0%d7%94-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a9%d7%99%d7%a8%d7%aa-%d7%94%d7%a7%d7%a8%d7%9f-%d7%91%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "role": "persuasive_case_law",
+            "title": "רע\"א 6285/20 טמפלרים בשרונה בע\"מ נ׳ שירת הקרן בע\"מ החלטה (23.11.2020)",
+            "citable_as": "commentary",
+            "candidate_id": "3f49b350-53c8-4734-af8f-ec999eb06169",
+            "authority_tier": "secondary_commentary",
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "substantive_excerpt",
+            "integrity_flags": [],
+            "can_satisfy_role": false,
+            "downgrade_reason": "caselaw_type_without_judgment_authority",
+            "has_holding_text": false,
+            "is_judgment_document": false,
+            "original_source_type": "caselaw",
+            "synthesis_role_overridden": true,
+            "synthesis_role_seeded_from": "applying_candidate"
+          }
+        ],
+        "downgrades": [
+          {
+            "reason": "caselaw_type_on_listing_page",
+            "candidate_id": "5e538db3-c5c0-4336-add5-6f4cc25c7f98"
+          },
+          {
+            "reason": "caselaw_type_without_judgment_authority",
+            "candidate_id": "3d42f922-decd-44e8-9559-04cfa9bcdcad"
+          },
+          {
+            "reason": "caselaw_type_without_judgment_authority",
+            "candidate_id": "461a8dc7-e4c2-4d3b-96d3-d9d0cf086dfc"
+          },
+          {
+            "reason": "caselaw_type_without_judgment_authority",
+            "candidate_id": "3f49b350-53c8-4734-af8f-ec999eb06169"
+          }
+        ],
+        "tier_counts": {
+          "index_or_listing": 1,
+          "official_primary": 1,
+          "secondary_commentary": 7
+        },
+        "citable_counts": {
+          "unknown": 3,
+          "judgment": 1,
+          "commentary": 3,
+          "not_citable": 1,
+          "scholarship": 1
+        },
+        "role_unsatisfied": 9,
+        "judgment_documents": 0,
+        "synthesis_role_counts": {
+          "unknown": 1,
+          "leading_candidate": 1,
+          "secondary_commentary": 7
+        },
+        "synthesis_role_overrides": 5,
+        "judgments_with_holding_text": 0
+      },
+      "specific_case_resolution": {
+        "ms": 0,
+        "mode": "doctrine_explanation",
+        "enabled": false,
+        "acquisition_method": null,
+        "acquisition_success": false,
+        "acquired_text_length": 0,
+        "injected_candidate_id": null,
+        "exact_docket_source_url": null,
+        "requested_docket_display": null,
+        "allow_case_holding_answer": true,
+        "exact_docket_source_found": false,
+        "exact_docket_source_title": null,
+        "acquisition_failure_reason": null,
+        "exact_docket_source_usable": false,
+        "final_docket_branch_reason": "not_specific_case_mode",
+        "near_match_sources_ignored": [],
+        "text_acquisition_attempted": false,
+        "acquisition_failure_reasons": [],
+        "requested_docket_normalized": null,
+        "requested_dockets_normalized": [],
+        "acquisition_method_successful": null,
+        "acquisition_methods_attempted": [],
+        "last_acquisition_failure_reason": null,
+        "near_match_sources_ignored_count": 0
+      },
+      "judgment_text_acquisition": {
+        "ms": 0,
+        "mode": "doctrine_explanation",
+        "enabled": false,
+        "attempts": [],
+        "successes": 0,
+        "attempts_made": 0,
+        "eligible_count": 0
+      }
+    },
+    "candidates": [
+      {
+        "role": "binding_case_law",
+        "score": 0.95,
+        "title": "המרכז האקדמי למשפט ולעסקים ואח' נ' כנסת ישראל (בנק המזרחי)",
+        "origin": "perplexity",
+        "snippet": "בפסיקה הוכרו שלושה מבחנים... מבחן הקשר הרציונלי... מבחן האמצעי שפגיעתו פחותה... מבחן המידתיות במובן הצר",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "supremedecisions.court.gov.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+            "hygiene_action": "keep",
+            "url_normalized": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 89,
+            "title_meaningful_chars": 49
+          },
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "judgment",
+            "authority_tier": "official_primary",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "raw_pplx_source_type": "PDF",
+          "source_type_normalized": true,
+          "classified_source_class": "official_primary"
+        },
+        "query_he": "בית המשפט העליון פסקי דין לגבי מבחנים להחלת \"בטלות יחסית\" — חיפוש ביטויים: \"מבחן\" \"בטלות יחסית\" \"חומרת הפגם\" \"ליבת הסמכות\" \"הסתמכות\" \"טוהר ההליך\"",
+        "source_url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+        "source_type": "caselaw",
+        "candidate_id": "6846c3ba-27ef-4112-8fce-da9370909bb7",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.130396355316043,
+        "title": "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעת פיצויים בגין ביטול טיסה (ת\"א 65400-06-22)",
+        "origin": "local_db",
+        "snippet": "2, לאחר שבוצעו על הקרקע פעולות לבדיקה ותיקון התקלה, ובכללן ניטרול של מערכת הדיחוס במנוע שמאל ( (bleed 1 בסופן לא נדלקו עוד נורות אזהרה במנוע ימין או שמאל, המריא המטוס בפעם השנייה בדרכו לישראל, או אז נדלקה בלוח הבקרה של המטוס נורית אזהרה ( bleed 2 - overpass ). בעקבות כך ואי הצלחת צוות המטוס לתקן את התקלה באוויר, בסביבות השעה 6:00 בבוקר יום 20.5.22, שב המטוס בפעם השנייה אל נמל התעופה בטבליסי, גם הפ",
+        "claim_id": "C3",
+        "metadata": {
+          "court": "בתי משפט השלום",
+          "judges": "אלעד לנג",
+          "district": "מחוז ירושלים",
+          "extended_text": "2, לאחר שבוצעו על הקרקע פעולות לבדיקה ותיקון התקלה, ובכללן ניטרול של מערכת הדיחוס במנוע שמאל ( (bleed 1 בסופן לא נדלקו עוד נורות אזהרה במנוע ימין או שמאל, המריא המטוס בפעם השנייה בדרכו לישראל, או אז נדלקה בלוח הבקרה של המטוס נורית אזהרה ( bleed 2 - overpass ). בעקבות כך ואי הצלחת צוות המטוס לתקן את התקלה באוויר, בסביבות השעה 6:00 בבוקר יום 20.5.22, שב המטוס בפעם השנייה אל נמל התעופה בטבליסי, גם הפעם לאחר שחג במעגלים לשם שריפת דלק והפחתת משקל המטוס לפני נחיתה (להלן: \" הטיסה השנייה \"). בהמשך לכך, פרקו הנתבעות את מזוודות הנוסעים מהמטוס והסיעו את הנוסעים אל בית מלון מקומי, כמו גם הזמינו מכונאים מישראל עם חלקי חילוף לשם תיקון התקלות - אלה הגיעו לטבליסי בשעות הצהרים של יום 20.5.22. בשעות הערב של אותו יום הוחזרו הנוסעים אל נמל התעופה ואולם בשל התמשכות זמן התיקון הם הוסעו בחזרה אל בית המלון. בסופו של דבר, בשעות הבוקר המוקדמות של יום 21.5.22 (בשעה 2:55) המריאו הנוסעים אל ישראל במטוס של חברת טראוולסרביס שחכרו הנתבעות עבורם, כאשר מטוס הנתבעות תוקן והוטס לישראל כשהוא ריק מנוסעים ביום 22.5.22. טענות הצדדים והמהלך הדיוני בימים 29.6.22 ו-27.2.23 הגישו התובעים את התביעות שלפני ובהן עתרו לחייב את הנתבעות לפצותם בסך כולל של 1,223,009 ש\"ח בגין הפיצוי הסטטוטורי הקבוע בסעיף 6(א)(3) ל חוק שירותי תעופה (פיצוי וסיוע בשל ביטול טיסה או שינוי בתנאיה) , תשע\"ב-2012 (להלן: \" החוק \") עקב ביטול 2 הטיסות, בשים לב למרחק הטיסה (סך של 1,320 ש\"ח, כפול 2 טיסות, לכל תובע) (להלן יכונה: \" הפיצוי הסטטוטורי \"); בגין פיצוי לדוגמה הקבוע בסעיף 11(א) לחוק עקב הפרת חובות הנתבעות על פי החוק (סך של 10,590 ש\"ח לכל תובע) (להלן",
+          "procedure_type": "אזרחי",
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "not_citable",
+            "authority_tier": "index_or_listing",
+            "text_usability": "listing_page",
+            "integrity_flags": [
+              "listing_or_pagination_page"
+            ],
+            "downgrade_reason": "caselaw_type_on_listing_page",
+            "has_holding_text": false,
+            "is_judgment_document": false
+          }
+        },
+        "query_he": "פסקי דין של בתי משפט מחוזיים/שלום שמיישמים סעדי \"אישור בדיעבד\", \"ביטול חלקי\" או \"פיצוי\" בעקבות הכרזה על בטלות יחסית — חיפוש ביטויים: \"אישור בדיעבד\" \"ביטול חלקי\" \"פיצוי\" \"בטלות יחסית\"",
+        "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=10",
+        "document_id": "cca24cd9-4cdd-48e0-a2cd-18bed5f4df58",
+        "source_type": "caselaw",
+        "candidate_id": "5e538db3-c5c0-4336-add5-6f4cc25c7f98",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "בטלות יחסית ושיקול דעת שיפוטי",
+        "origin": "perplexity",
+        "snippet": "בטלות יחסית ושיקול דעת שיפוטי – דפנה ברק-ארז. מאמר בכתב העת 'משפטים' על ההבחנה בין הפגם לבין נפקות הפגם ועל שיקול הדעת השיפוטי בעיצוב הסעד.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 115,
+            "title_meaningful_chars": 25
+          },
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "unknown",
+            "authority_tier": "secondary_commentary",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "raw_pplx_source_type": "article",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר משפטי על מבחנים להחלת בטלות יחסית במשפט המנהלי, ניתוח קריטריונים כגון חומרת הפגם, ליבת הסמכות, הסתמכות צד ג', טוהר ההליך — חיפוש בתשתיות מאמרים וכתבי עת (לדוגמה: \"משפטים\", \"מנשר\", \"מבט\" )",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+        "source_type": "academic",
+        "candidate_id": "8dfd0d96-2236-4c2c-a0d9-415d3453c9dd",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "במקום בטלות יחסית",
+        "origin": "perplexity",
+        "snippet": "במקום בטלות יחסית – מאמר בכתב העת 'משפטים' (כרך כ\"ב, תשנ\"ד), עוסק בהצדקה ובשיקולי המדיניות לתרופת הבטלות היחסית במשפט המינהלי.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 107,
+            "title_meaningful_chars": 15
+          },
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "unknown",
+            "authority_tier": "secondary_commentary",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "raw_pplx_source_type": "article",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר משפטי על מבחנים להחלת בטלות יחסית במשפט המנהלי, ניתוח קריטריונים כגון חומרת הפגם, ליבת הסמכות, הסתמכות צד ג', טוהר ההליך — חיפוש בתשתיות מאמרים וכתבי עת (לדוגמה: \"משפטים\", \"מנשר\", \"מבט\" )",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%9E%D7%A7%D7%95%D7%9D%20%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA.pdf",
+        "source_type": "academic",
+        "candidate_id": "87f33794-2f8a-4977-8b98-29119562e457",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "origin": "perplexity",
+        "snippet": "הגנת ההסתמכות במשפט המנהלי – מאמר בכתב העת 'משפטים' על משקל ההסתמכות והציפיות שנוצרו עקב ההחלטה המנהלית בעת קביעת הסעד.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "pplx_hygiene": {
+            "url_status": "valid",
+            "body_status": "has_body",
+            "title_status": "valid",
+            "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+            "hygiene_action": "keep",
+            "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+            "hygiene_reasons": [],
+            "landing_page_status": "specific_document",
+            "body_meaningful_chars": 100,
+            "title_meaningful_chars": 23
+          },
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "unknown",
+            "authority_tier": "secondary_commentary",
+            "text_usability": "metadata_only",
+            "integrity_flags": [],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          },
+          "raw_pplx_source_type": "article",
+          "source_type_normalized": true,
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר משפטי על מבחנים להחלת בטלות יחסית במשפט המנהלי, ניתוח קריטריונים כגון חומרת הפגם, ליבת הסמכות, הסתמכות צד ג', טוהר ההליך — חיפוש בתשתיות מאמרים וכתבי עת (לדוגמה: \"משפטים\", \"מנשר\", \"מבט\" )",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+        "source_type": "academic",
+        "candidate_id": "e2709838-69b1-4160-a4fb-baefb75fdc8a",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.39413032975150497,
+        "title": "ע\"א 9096/18 עזבון המנוח זידאן סלימאן אבו פארס נ׳ לשכת הסדר ורישום מקרקעי פסק דין (13.11.2018)",
+        "origin": "local_db",
+        "snippet": "8832/12 ם\"עע ;(2013) 58 (2)סו ד\"פ ,תקווה פתח עיריית 'נ\n שגרם שיהוי של במצב סופר טעות של תיקון מתבקש שבו במקרה .((15.4.2015) מ\"בע\n השונה) זה מטעם להידחות עשויה הבקשה – שלישיים צדדים של להסתמכות או לנזק\n.(הפורמאלי ההתיישנות מדין מדעיקרא\n.גאולה להיות יכולה שבפנינו לקרקע :אחת בדעה כולנו ובכך ,דבר סוף .6\nת ט פ ו ש \n:מינץ 'ד השופט\n תחולתם אי לשאלת באשר .סולברג 'נ השופט חברי של דעתו חוות עם אני מסכים\n לע",
+        "claim_id": "C2",
+        "metadata": {
+          "parties": "עזבון המנוח זידאן סלימאן אבו פארס נ׳ לשכת הסדר ורישום מקרקעי",
+          "raw_title": "ע\"א 9096/18 עזבון המנוח זידאן סלימאן אבו פארס נ. לשכת הסדר ורישום מקרקעי",
+          "source_site": "toledano.co.il",
+          "decision_date": "13.11.2018",
+          "decision_kind": "פסק דין",
+          "document_kind": "caselaw",
+          "extended_text": "8832/12 ם\"עע ;(2013) 58 (2)סו ד\"פ ,תקווה פתח עיריית 'נ\n שגרם שיהוי של במצב סופר טעות של תיקון מתבקש שבו במקרה .((15.4.2015) מ\"בע\n השונה) זה מטעם להידחות עשויה הבקשה – שלישיים צדדים של להסתמכות או לנזק\n.(הפורמאלי ההתיישנות מדין מדעיקרא\n.גאולה להיות יכולה שבפנינו לקרקע :אחת בדעה כולנו ובכך ,דבר סוף .6\nת ט פ ו ש \n:מינץ 'ד השופט\n תחולתם אי לשאלת באשר .סולברג 'נ השופט חברי של דעתו חוות עם אני מסכים\n לעת להשאירה אני מעדיף ,לפקודה 95 בסעיף הקבועה הסמכות על ההתיישנות דיני של\n .מצוא\nט פ ו ש \n .סולברג נעם השופט של הדין בפסק כאמור הוחלט לפיכך\n.(26.7.2020) פ\"התש באב 'ה ,היום ניתן\nט פ ו ש ת ט פ ו ש ט פ ו ש\n_________________________\nשצ 18090960_O11.docx \nhttp://supreme.court.gov.il ,אינטרנט אתר ; *3852 ,077-2703333 'טל ,מידע מרכז\n9",
+          "local_pdf_file": "02561 - ע א 9096 18 עזבון המנוח זידאן סלימאן אבו פארס נ׳ לשכת הסדר ורישום מקרקעי פסק דין (13.11.2018).pdf",
+          "procedure_type": "ע\"א",
+          "source_category": "פסיקה חינם",
+          "procedure_number": "9096/18",
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "commentary",
+            "authority_tier": "secondary_commentary",
+            "text_usability": "substantive_excerpt",
+            "integrity_flags": [],
+            "downgrade_reason": "caselaw_type_without_judgment_authority",
+            "has_holding_text": false,
+            "is_judgment_document": false
+          }
+        },
+        "query_he": "פסקי דין בתי משפט מחוזיים או ערעורים אזרחיים/מנהלתיים שבהם הוחלה או נדחתה דוקטרינת \"בטלות יחסית\" — חיפוש ביטויים: \"בטלות יחסית\" \"חומרת הפגם\" \"הסתמכות צד ג'\" \"טוהר ההליך\"",
+        "source_url": "https://www.toledano.co.il/%d7%a2%d7%90-9096-18-%d7%a2%d7%96%d7%91%d7%95%d7%9f-%d7%94%d7%9e%d7%a0%d7%95%d7%97-%d7%96%d7%99%d7%93%d7%90%d7%9f-%d7%a1%d7%9c%d7%99%d7%9e%d7%90%d7%9f-%d7%90%d7%91%d7%95-%d7%a4%d7%90%d7%a8%d7%a1/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "document_id": "7d93e46d-20d6-4fe9-a41e-dba846fd91a0",
+        "source_type": "caselaw",
+        "candidate_id": "3d42f922-decd-44e8-9559-04cfa9bcdcad",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.3903567547167996,
+        "title": "רע\"פ 3017/20 עסאם נעאמנה נ׳ היחידה הארצית לאכיפה דיני התכנון והבנייה החלטה (20.04.2020)",
+        "origin": "local_db",
+        "snippet": "ית של לסמכותו הנוגעת טענה כל המחוזי\n המשפט בבית בדיונים נוכחים היו כוחו ובא שהמבקש אף כי ,יצוין .זו לטענה להידרש\n ניהול בעת הועלתה לא הסמכות העדר טענת ,יחיד דן של במותב שהתקיימו המחוזי\n זה משפט בבית נטענה לא אף המותב סמכות חוסר של זו טענה ,כן על יתר .ההליך\n בבקשה לראשונה הועלתה היא אלא ,המבקש שהגיש ערעור לרשות המקורית בבקשה\n רגליים יש ,משכך .זו להתנהלות הדעת את מניח הסבר כל ללא וזאת ,מטעמו המתוקנת",
+        "claim_id": "C2",
+        "metadata": {
+          "parties": "עסאם נעאמנה נ׳ היחידה הארצית לאכיפה דיני התכנון והבנייה",
+          "raw_title": "רע\"פ 3017/20 עסאם נעאמנה נ. היחידה הארצית לאכיפה דיני התכנון והבנייה החלטה",
+          "source_site": "toledano.co.il",
+          "decision_date": "20.04.2020",
+          "decision_kind": "החלטה",
+          "document_kind": "caselaw",
+          "extended_text": "ית של לסמכותו הנוגעת טענה כל המחוזי\n המשפט בבית בדיונים נוכחים היו כוחו ובא שהמבקש אף כי ,יצוין .זו לטענה להידרש\n ניהול בעת הועלתה לא הסמכות העדר טענת ,יחיד דן של במותב שהתקיימו המחוזי\n זה משפט בבית נטענה לא אף המותב סמכות חוסר של זו טענה ,כן על יתר .ההליך\n בבקשה לראשונה הועלתה היא אלא ,המבקש שהגיש ערעור לרשות המקורית בבקשה\n רגליים יש ,משכך .זו להתנהלות הדעת את מניח הסבר כל ללא וזאת ,מטעמו המתוקנת\n משתוצאת אותה \"שלף\"ו באמתחתו הסמכות העדר טענת את \"שמר\" המבקש כי לסברה\n לב תום חוסר כדי לעלות עשוי הדבר ,העניין בנסיבות .לרוחו הייתה לא בערעור ההליך\n כמפורט ,מניעות מחמת גם להידחות ראויה זו טענתו ולפיכך ,משפטיים הליכים בניהול\n לביטול כעת לעתור המשיבות של ניסיונן\" לפיהם ,אפרידר בעניין שנקבעו הדברים .לעיל\n הליכים בניהול לב תום חוסר לכדי עולה ,עליהן מקובלת אינה שתוצאתו לאחר ,הדין פסק\n גם הופעלה זו הלכה ...מניעות טענת מחמת גם להידחות ראויה כן ועל ,משפטיים\n כי הטענה הועלתה יחיד בדן החלטה מתן לאחר רק בהם ,עסקינן בו זה כדוגמת במצבים\n .לענייננו גם יפים – \"תלתא במותב בעניין לדון צורך היה\nדבר סוף\n ביטולו על מורה אני .3017/20 פ\"ברע הבקשה נדחית וממילא נדחית הבקשה.11\n ליום עד יבוצע ההריסה צו .3017/20 פ\"רע בגדר שניתן ביצוע לעיכוב הארעי צו של\n .6.9.2020\n.(18.8.2020) פ\"התש באב ח\"כ ,היום ניתנה\nט פ ו ש\n_________________________\n7\n\nסח 20030170_Q05.docx \nhttp://supreme.court.gov.il ,אינטרנט אתר ; *3852 ,077-2703333 'טל ,מידע מרכז\n8",
+          "local_pdf_file": "02478 - רע פ 3017 20 עסאם נעאמנה נ׳ היחידה הארצית לאכיפה דיני התכנון והבנייה החלטה (20.04.2020).pdf",
+          "procedure_type": "רע\"פ",
+          "source_category": "פסיקה חינם",
+          "procedure_number": "3017/20",
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "commentary",
+            "authority_tier": "secondary_commentary",
+            "text_usability": "substantive_excerpt",
+            "integrity_flags": [],
+            "downgrade_reason": "caselaw_type_without_judgment_authority",
+            "has_holding_text": false,
+            "is_judgment_document": false
+          }
+        },
+        "query_he": "פסקי דין בתי משפט מחוזיים או ערעורים אזרחיים/מנהלתיים שבהם הוחלה או נדחתה דוקטרינת \"בטלות יחסית\" — חיפוש ביטויים: \"בטלות יחסית\" \"חומרת הפגם\" \"הסתמכות צד ג'\" \"טוהר ההליך\"",
+        "source_url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-3017-20-%d7%a2%d7%a1%d7%90%d7%9d-%d7%a0%d7%a2%d7%90%d7%9e%d7%a0%d7%94-%d7%a0-%d7%94%d7%99%d7%97%d7%99%d7%93%d7%94-%d7%94%d7%90%d7%a8%d7%a6%d7%99%d7%aa-%d7%9c%d7%90%d7%9b%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "document_id": "b1272f25-57d9-42c9-8240-faa9a3303de3",
+        "source_type": "caselaw",
+        "candidate_id": "461a8dc7-e4c2-4d3b-96d3-d9d0cf086dfc",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.3630204480415038,
+        "title": "הבסיס העיוני לפסיקת פיצויים חלקיים בישראל",
+        "origin": "local_db",
+        "snippet": "rongs,    19  J.  LEGAL STUD.  691  (1990);  Tamsen  Douglass  Love,      Deterring      \n!!responsible     Use and   Disposal      of   Toxic   Substances:     The  Case   for   Legislative          Recognition          \nof  Increased     Risk   Cause    of  Action,   49 VAND. L.  REV.  789  (1996);  Michael  Abraraowicz, A \nCompromise       Approach    to Compromise        Verdicts,    89 CAL. L",
+        "claim_id": "C3",
+        "metadata": {
+          "tags": [
+            "דיני נזיקין",
+            "דיני נזיקין",
+            "דיני נזיקין",
+            "משפט אמפירי"
+          ],
+          "volume": "כרך לז",
+          "source_site": "mishpatim",
+          "extended_text": "rongs,    19  J.  LEGAL STUD.  691  (1990);  Tamsen  Douglass  Love,      Deterring      \n!!responsible     Use and   Disposal      of   Toxic   Substances:     The  Case   for   Legislative          Recognition          \nof  Increased     Risk   Cause    of  Action,   49 VAND. L.  REV.  789  (1996);  Michael  Abraraowicz, A \nCompromise       Approach    to Compromise        Verdicts,    89 CAL. L. REV.  231  (2001); Marc \nStanch,  Causation,     Risk,   and  Loss   of Chance    in Medical    Negligence,     17  OXFORD J.  LEGAL  \nSTUD.  205  (1997);  Ariel Porat &  Alex Stein,  Indeterminate      Causation     and        Apportionment        \nof  Damages:     An Essay   on Holtby,     AMen  and FairckiM,     23  OXFORD  J.  LEGAL  STUD.  667  \nלאאו•  ומיקה משקללת?  האומנם  ׳הכול או  שלמה  לבנוני  ״השפיטה:  הכרעה דיכוטומית  ;(2003) \n.(2003)  531 ג כלום׳?״ עלי משפט \n179 \n\nלזתשסי׳ז  משפטים  \n  בועז  שנור\nשאימוצו  מביא  לפסיקת  פיצויים  חלקיים.  אמנם  -\n     12\nהנזק  הראייתי  -חדש   נזק   בראש \nאימוצו  מביא  לפיצוי  חלקי  הדומהאך  \n 13\nאינו  מפצה  ישירות  בגין  סיכונים,זה    ראש  נזק \nעם\n  14\n  במרבית  המקרים  לפיצוי  שהיה  ניתן  אילו  הוכרה  האפשרות  לפצות  בגין  סיכונים.\nומאחר שעניינה\n   15\n  זאת,  ראש  הנזק  של נזק  ראייתי לא  אומץ  בפסיקה  הישראלית עד  היום,\nלאהיא  בהבהרת   הבסיסים   העיוניים   האפשריים  לפסיקה  הישראלית, זו  רשימה   של \n  תעסוק  בראש נזק זה.\nהכרהעל  פסקי  הדין  שבהם  ניתן  פיצוי  חלקי את  המשפט  העליון  בחר  לבסס  בית \nבסיסים  עיונייםעל שני  עשויה  להתבסס כ",
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "scholarship",
+            "authority_tier": "secondary_commentary",
+            "text_usability": "substantive_excerpt",
+            "integrity_flags": [],
+            "has_holding_text": false,
+            "is_judgment_document": false
+          }
+        },
+        "query_he": "פסקי דין של בתי משפט מחוזיים/שלום שמיישמים סעדי \"אישור בדיעבד\", \"ביטול חלקי\" או \"פיצוי\" בעקבות הכרזה על בטלות יחסית — חיפוש ביטויים: \"אישור בדיעבד\" \"ביטול חלקי\" \"פיצוי\" \"בטלות יחסית\"",
+        "source_url": "https://lawjournal.huji.ac.il/article/12/1682",
+        "document_id": "a47aee83-6579-4592-991b-ac86b704fc4a",
+        "source_type": "journal_article",
+        "candidate_id": "7fe2f733-f991-4653-af64-8c713463a03d",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.36201480084482934,
+        "title": "רע\"א 6285/20 טמפלרים בשרונה בע\"מ נ׳ שירת הקרן בע\"מ החלטה (23.11.2020)",
+        "origin": "local_db",
+        "snippet": "תי בירור דורשות לשיטתה\n המשפט בית ,הסף על הדחייה בקשת במסגרת למצותו שיש וצר שטחי בבירור מדובר\n ההליך במסגרת שתיעשה התעמקות מצריך אלה לשאלות מענה גם כי קבע המחוזי\n .זו בקביעתו להתערב ראיתי ולא ,העיקרי\n אותה ייאלץ נגדה התביעה ניהול המשך לפיה המבקשת לטענת אשר ,לבסוף.10\n למותר שלא הרי ,בכך הכרוכים המשאבים על ,ומורכב ממושך משפטי בהליך חלק ליטול\n פסיקת באמצעות התביעה ניהול השלכות על לפצותה יהא ניתן הצור",
+        "claim_id": "C3",
+        "metadata": {
+          "parties": "טמפלרים בשרונה בע\"מ נ׳ שירת הקרן בע\"מ",
+          "raw_title": "רע\"א 6285/20 טמפלרים בשרונה בע\"מ נ. שירת הקרן בע\"מ החלטה מיום 23.11.2020",
+          "source_site": "toledano.co.il",
+          "decision_date": "23.11.2020",
+          "decision_kind": "החלטה",
+          "document_kind": "caselaw",
+          "extended_text": "תי בירור דורשות לשיטתה\n המשפט בית ,הסף על הדחייה בקשת במסגרת למצותו שיש וצר שטחי בבירור מדובר\n ההליך במסגרת שתיעשה התעמקות מצריך אלה לשאלות מענה גם כי קבע המחוזי\n .זו בקביעתו להתערב ראיתי ולא ,העיקרי\n אותה ייאלץ נגדה התביעה ניהול המשך לפיה המבקשת לטענת אשר ,לבסוף.10\n למותר שלא הרי ,בכך הכרוכים המשאבים על ,ומורכב ממושך משפטי בהליך חלק ליטול\n פסיקת באמצעות התביעה ניהול השלכות על לפצותה יהא ניתן הצורך במידת כי לציין\n .המבררת הערכאה של דעתה לשיקול בהתאם כמובן והכול ,משפט הוצאות\n .נדחית הערעור רשות בקשת ,לעיל האמור כל נוכח.11\n .להוצאות צו אין ,תשובה נתבקשה משלא\n.(23.11.2020) א\"התשפ בכסלו 'ז ,היום ניתנה\nת ט פ ו ש\n_____________________\nיכ 20062850_R01.docx \nhttp://supreme.court.gov.il ,אינטרנט אתר ; *3852 ,077-2703333 'טל ,מידע מרכז\n5",
+          "local_pdf_file": "02324 - רע א 6285 20 טמפלרים בשרונה בע מ נ׳ שירת הקרן בע מ החלטה (23.11.2020).pdf",
+          "procedure_type": "רע\"א",
+          "source_category": "פסיקה חינם",
+          "procedure_number": "6285/20",
+          "source_integrity": {
+            "reject": false,
+            "citable_as": "commentary",
+            "authority_tier": "secondary_commentary",
+            "text_usability": "substantive_excerpt",
+            "integrity_flags": [],
+            "downgrade_reason": "caselaw_type_without_judgment_authority",
+            "has_holding_text": false,
+            "is_judgment_document": false
+          }
+        },
+        "query_he": "פסקי דין של בתי משפט מחוזיים/שלום שמיישמים סעדי \"אישור בדיעבד\", \"ביטול חלקי\" או \"פיצוי\" בעקבות הכרזה על בטלות יחסית — חיפוש ביטויים: \"אישור בדיעבד\" \"ביטול חלקי\" \"פיצוי\" \"בטלות יחסית\"",
+        "source_url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-6285-20-%d7%98%d7%9e%d7%a4%d7%9c%d7%a8%d7%99%d7%9d-%d7%91%d7%a9%d7%a8%d7%95%d7%a0%d7%94-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a9%d7%99%d7%a8%d7%aa-%d7%94%d7%a7%d7%a8%d7%9f-%d7%91%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "document_id": "e07f6fba-d87a-42c7-9c3c-cfc930421949",
+        "source_type": "caselaw",
+        "candidate_id": "3f49b350-53c8-4734-af8f-ec999eb06169",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 26116,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 60513,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 1071,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 10110,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 36297,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 1,
+        "ok": true,
+        "model": "deterministic",
+        "stage": "drafter_v2_source_sufficiency_gate"
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://hamishpatworldarchive.github.io/Courses/99204/210-Summary3.doc",
+        "role": "binding_case_law",
+        "title": "בג\"צ 2918/93 - עירית קרית גת נ' מדינת ישראל ו-9 אח'",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "פסק דין של בית המשפט העליון שקובע או מנסח את דוקטרינת \"בטלות יחסית\" מול \"בטלות מוחלטת\" — חיפוש ביטויים: \"בטלות יחסית\" \"בטלות מוחלטת\" \"הבחנה בין\" \"הגדרה דוקטרינלית\"",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "http://lawjournal.huji.ac.il/article/12/923",
+        "role": "binding_case_law",
+        "title": "בטלות יחסית ושיקול דעת שיפוטי",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "פסק דין של בית המשפט העליון שקובע או מנסח את דוקטרינת \"בטלות יחסית\" מול \"בטלות מוחלטת\" — חיפוש ביטויים: \"בטלות יחסית\" \"בטלות מוחלטת\" \"הבחנה בין\" \"הגדרה דוקטרינלית\"",
+        "drop_reason": "class_academic_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://he.afiklaw.com/caselaw/8262/40",
+        "role": "binding_case_law",
+        "title": "בג\"ץ 466/07 ח\"כ זהבה גלאון מר\"צ-יחד נ' היועץ המשפטי לממשלה",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "פסק דין של בית המשפט העליון שקובע או מנסח את דוקטרינת \"בטלות יחסית\" מול \"בטלות מוחלטת\" — חיפוש ביטויים: \"בטלות יחסית\" \"בטלות מוחלטת\" \"הבחנה בין\" \"הגדרה דוקטרינלית\"",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.davidov-benyamini.com/relative-voidness",
+        "role": "binding_case_law",
+        "title": "בטלות יחסית - עו\"ד אדיר בנימיני",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "פסק דין של בית המשפט העליון שקובע או מנסח את דוקטרינת \"בטלות יחסית\" מול \"בטלות מוחלטת\" — חיפוש ביטויים: \"בטלות יחסית\" \"בטלות מוחלטת\" \"הבחנה בין\" \"הגדרה דוקטרינלית\"",
+        "drop_reason": "class_unknown_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://hamishpat.com/therepository/%D7%A9%D7%A0%D7%94%20%D7%90/%D7%9E%D7%A9%D7%A4%D7%98%20%D7%97%D7%95%D7%A7%D7%AA%D7%99/167.doc",
+        "role": "binding_case_law",
+        "title": "בג\"ץ 2918/93 - עירית קרית גת נ' מדינת ישראל ו-9 אח'",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון פסקי דין לגבי מבחנים להחלת \"בטלות יחסית\" — חיפוש ביטויים: \"מבחן\" \"בטלות יחסית\" \"חומרת הפגם\" \"ליבת הסמכות\" \"הסתמכות\" \"טוהר ההליך\"",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.toledano.co.il/wp-content/uploads/2024/01/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%99%D7%98%D7%95%D7%9C-%D7%A2%D7%99%D7%9C%D7%AA-%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA-%D7%A2%D7%9C-%D7%99%D7%93%D7%99-%D7%91%D7%92%D7%A5-%D7%92%D7%A8%D7%A1%D7%94-%D7%9E%D7%9C%D7%90%D7%94.pdf",
+        "role": "binding_case_law",
+        "title": "בג\"ץ 5658/23 - פסק דין",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון פסקי דין לגבי מבחנים להחלת \"בטלות יחסית\" — חיפוש ביטויים: \"מבחן\" \"בטלות יחסית\" \"חומרת הפגם\" \"ליבת הסמכות\" \"הסתמכות\" \"טוהר ההליך\"",
+        "drop_reason": "class_unknown_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "http://lawjournal.huji.ac.il/article/24/1813",
+        "role": "binding_case_law",
+        "title": "בג\"ץ אדלשטיין – הערת פסיקה",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון פסקי דין לגבי מבחנים להחלת \"בטלות יחסית\" — חיפוש ביטויים: \"מבחן\" \"בטלות יחסית\" \"חומרת הפגם\" \"ליבת הסמכות\" \"הסתמכות\" \"טוהר ההליך\"",
+        "drop_reason": "class_academic_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://www.davidov-benyamini.com/relative-voidness",
+        "role": "scholarship",
+        "title": "בטלות יחסית",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר משפטי על מבחנים להחלת בטלות יחסית במשפט המנהלי, ניתוח קריטריונים כגון חומרת הפגם, ליבת הסמכות, הסתמכות צד ג', טוהר ההליך — חיפוש בתשתיות מאמרים וכתבי עת (לדוגמה: \"משפטים\", \"מנשר\", \"מבט\" )",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://hamishpat.com/therepository/%D7%A9%D7%A0%D7%94%20%D7%90/%D7%9E%D7%A9%D7%A4%D7%98%20%D7%97%D7%95%D7%A7%D7%AA%D7%99/167.doc",
+        "role": "binding_case_law",
+        "title": "בג\"צ 2918/93 עירית קרית גת נ' מדינת ישראל ו-9 אח'",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון פסקי דין שמפרטים את הסעדים בפסק דין המכריז על \"בטלות יחסית\" — חיפוש ביטויים: \"ביטול חלקי\" \"אישור בדיעבד\" \"תיקון\" \"מינוי חלופי\" \"פיצויים\" \"צו\" בהקשר של \"בטלות יחסית\"",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://he.wikipedia.org/wiki/%D7%91%D7%92%22%D7%A5_%D7%94%D7%AA%D7%A0%D7%ועה_%D7%9C%D7%9E%D7%A2%D7%9F_%D7%90%D7%99%D7%9B%D7%95%D7%AA_%D7%94%D7%A9%D7%9C%D7%98%D7%95%D7%9F_%D7%A0%D7%92%D7%93_%D7%94%D7%9B%D7%A0%D7%A1%D7%AA_(%D7%A2%D7%99%D7%9C%D7%AA_%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA)",
+        "role": "binding_case_law",
+        "title": "בג\"ץ התנועה למען איכות השלטון נגד הכנסת (עילת הסבירות)",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון פסקי דין שמפרטים את הסעדים בפסק דין המכריז על \"בטלות יחסית\" — חיפוש ביטויים: \"ביטול חלקי\" \"אישור בדיעבד\" \"תיקון\" \"מינוי חלופי\" \"פיצויים\" \"צו\" בהקשר של \"בטלות יחסית\"",
+        "drop_reason": "bad_source"
+      },
+      {
+        "url": "https://he.wikipedia.org/wiki/%D7%91%D7%92%22%D7%A5_%D7%94%D7%AA%D7%A0%D7%95%D7%A2%D7%94_%D7%9C%D7%9E%D7%A2%D7%9F_%D7%90%D7%99%D7%9B%D7%95%D7%AA_%D7%94%D7%A9%D7%9C%D7%98%D7%95%D7%9F_%D7%A0%D7%92%D7%93_%D7%94%D7%9B%D7%A0%D7%A1%D7%AA_(%D7%A2%D7%99%D7%9C%D7%AA_%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA)",
+        "role": "binding_case_law",
+        "title": "בג\"ץ התנועה למען איכות השלטון נגד הכנסת (עילת הסבירות)",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון פסקי דין שמפרטים את הסעדים בפסק דין המכריז על \"בטלות יחסית\" — חיפוש ביטויים: \"ביטול חלקי\" \"אישור בדיעבד\" \"תיקון\" \"מינוי חלופי\" \"פיצויים\" \"צו\" בהקשר של \"בטלות יחסית\"",
+        "drop_reason": "bad_source"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision32539-04-24/he/32539-04-24.docx",
+        "role": "binding_case_law",
+        "title": "32539-04-24.docx",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון פסקי דין שמפרטים את הסעדים בפסק דין המכריז על \"בטלות יחסית\" — חיפוש ביטויים: \"ביטול חלקי\" \"אישור בדיעבד\" \"תיקון\" \"מינוי חלופי\" \"פיצויים\" \"צו\" בהקשר של \"בטלות יחסית\"",
+        "drop_reason": "class_government_report_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://he.wikipedia.org/wiki/%D7%91%D7%92%22%D7%A5_%D7%97%D7%A1%D7%95%D7%9F_%D7%A0%D7%92%D7%93_%D7%9B%D7%A0%D7%A1%D7%AA_%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+        "role": "binding_case_law",
+        "title": "בג\"ץ חסון נגד כנסת ישראל",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון פסקי דין שמפרטים את הסעדים בפסק דין המכריז על \"בטלות יחסית\" — חיפוש ביטויים: \"ביטול חלקי\" \"אישור בדיעבד\" \"תיקון\" \"מינוי חלופי\" \"פיצויים\" \"צו\" בהקשר של \"בטלות יחסית\"",
+        "drop_reason": "bad_source"
+      },
+      {
+        "url": "https://hamishpatworldarchive.github.io/Courses/99204/210-Summary3.doc",
+        "role": "binding_case_law",
+        "title": "בג\"ץ 2918/93 עיריית קריית גת נ' מדינת ישראל",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "פסק דין של בית המשפט העליון המתאר את הגבולות שבהם דוקטרינת הבטלות היחסית אינה חלה — חיפוש ביטויים: \"דוקטרינת הבטלות היחסית לא תחול\" \"פגם מהותי\" \"ליבת הסמכות\" \"גבולות הדוקטרינה\"",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
+        "role": "binding_case_law",
+        "title": "בטלות יחסית ושיקול דעת שיפוטי",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "פסק דין של בית המשפט העליון המתאר את הגבולות שבהם דוקטרינת הבטלות היחסית אינה חלה — חיפוש ביטויים: \"דוקטרינת הבטלות היחסית לא תחול\" \"פגם מהותי\" \"ליבת הסמכות\" \"גבולות הדוקטרינה\"",
+        "drop_reason": "class_academic_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://www.ovdim.org.il/%D7%91%D7%98%D7%9C%D7%95%D7%AA-%D7%99%D7%97%D7%A1%D7%99%D7%AA/",
+        "role": "binding_case_law",
+        "title": "דוקטרינת הבטלות היחסית בבית הדין לעבודה",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "פסק דין של בית המשפט העליון המתאר את הגבולות שבהם דוקטרינת הבטלות היחסית אינה חלה — חיפוש ביטויים: \"דוקטרינת הבטלות היחסית לא תחול\" \"פגם מהותי\" \"ליבת הסמכות\" \"גבולות הדוקטרינה\"",
+        "drop_reason": "class_unknown_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://www.din.co.il/articles/1/B-3989/",
+        "role": "binding_case_law",
+        "title": "הכשרת היתר בניה שהוצא שלא כחוק מכוח דוקטרינת הבטלות היחסית",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "פסק דין של בית המשפט העליון המתאר את הגבולות שבהם דוקטרינת הבטלות היחסית אינה חלה — חיפוש ביטויים: \"דוקטרינת הבטלות היחסית לא תחול\" \"פגם מהותי\" \"ליבת הסמכות\" \"גבולות הדוקטרינה\"",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2024/07/lawgov-20240721-dotan.pdf",
+        "role": "binding_case_law",
+        "title": "מעמדה של עילת הסבירות האיזונית בהליכי תקיפה עקיפה",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "פסק דין של בית המשפט העליון המתאר את הגבולות שבהם דוקטרינת הבטלות היחסית אינה חלה — חיפוש ביטויים: \"דוקטרינת הבטלות היחסית לא תחול\" \"פגם מהותי\" \"ליבת הסמכות\" \"גבולות הדוקטרינה\"",
+        "drop_reason": "class_academic_not_admitted_for_binding_case_law"
+      },
+      {
+        "url": "https://www.ovdim.org.il/%D7%91%D7%98%D7%9C%D7%95%D7%AA-%D7%99%D7%97%D7%A1%D7%99%D7%AA/",
+        "role": "scholarship",
+        "title": "דוקטרינת הבטלות היחסית בבית הדין לעבודה",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמרים או פרקי ספר המנתחים את גבולות דוקטרינת הבטלות היחסית וקשריה לעקרונות אחרים (הליך תקין, פרופורציונליות, לגיטימיות ציבורית) — חיפוש ביטויים: \"גבולות הבטלות היחסית\" \"פגם מהותי\" \"פרופורציונליות\" \"הליך תקין\"",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.globes.co.il/news/article.aspx?did=507516",
+        "role": "scholarship",
+        "title": "סעד מתאים לכל פגם",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמרים או פרקי ספר המנתחים את גבולות דוקטרינת הבטלות היחסית וקשריה לעקרונות אחרים (הליך תקין, פרופורציונליות, לגיטימיות ציבורית) — חיפוש ביטויים: \"גבולות הבטלות היחסית\" \"פגם מהותי\" \"פרופורציונליות\" \"הליך תקין\"",
+        "drop_reason": "discovery_only"
+      }
+    ],
+    "required_anchors": {
+      "count": 0,
+      "anchors": [],
+      "enabled": true,
+      "statuses": [],
+      "queries_emitted": []
+    },
+    "drafter_v2_full_compare": null,
+    "drafter_v2_opus_compare": null,
+    "drafter_v2_sonnet_compare": null
+  },
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): המרכז האקדמי למשפט ולעסקים ואח' נ' כנסת ישראל (בנק המזרחי); בטלות יחסית ושיקול דעת שיפוטי; במקום בטלות יחסית; הגנת ההסתמכות במשפט המנהלי."
+}
