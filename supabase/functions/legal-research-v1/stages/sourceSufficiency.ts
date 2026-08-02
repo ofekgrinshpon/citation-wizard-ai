@@ -355,15 +355,33 @@ export function assessSourceSufficiency(args: {
     return true;
   });
 
+  // Morphology-tolerant domain matching (domain buckets only).
+  const qStems = stemSet(question);
+  let morphologyDomainMatch = false;
+  const sourceStemsSeen = new Set<string>();
+  const domainMatch = (s: DrafterInputSource): boolean => {
+    if (isDomainMatch(s, phrases, tokens)) return true;
+    const sStems = stemSet(`${s.title} ${s.snippet ?? ""}`);
+    for (const st of sStems.slice(0, 40)) sourceStemsSeen.add(st);
+    if (stemsIntersect(qStems, sStems)) {
+      morphologyDomainMatch = true;
+      return true;
+    }
+    return false;
+  };
+
   // Authority-type buckets (domain-matched, not doctrine-phrase-matched).
-  const domainStatutes = sources.filter(
-    (s) => isGoverningStatuteLike(s) && isDomainMatch(s, phrases, tokens),
+  const isPracticalSteps = profile === "practical_steps";
+  const domainStatutesAll = sources.filter(
+    (s) => isGoverningStatuteLike(s, { allowThinText: isPracticalSteps }) && domainMatch(s),
   );
+  const domainStatutes = domainStatutesAll.filter((s) => !isThinText(s));
+  const thinDomainStatutes = domainStatutesAll.filter(isThinText);
   const governingRegulations = domainStatutes.filter(isRegulation);
   const governingStatutes = domainStatutes.filter((s) => !isRegulation(s));
-  const usableJudgments = sources.filter(
-    (s) => isUsableJudgment(s) && isDomainMatch(s, phrases, tokens),
-  );
+  const thinGoverningRegulations = thinDomainStatutes.filter(isRegulation);
+  const thinGoverningStatutes = thinDomainStatutes.filter((s) => !isRegulation(s));
+  const usableJudgments = sources.filter((s) => isUsableJudgment(s) && domainMatch(s));
 
   const satisfiedAnchor = sources.some((s) => anchorIds.has(s.candidate_id));
 
@@ -378,6 +396,10 @@ export function assessSourceSufficiency(args: {
     governing_statute_refs: governingStatutes.map((s) => s.ref),
     governing_regulation_refs: governingRegulations.map((s) => s.ref),
     usable_judgment_refs: usableJudgments.map((s) => s.ref),
+    thin_governing_statute_refs: thinGoverningStatutes.map((s) => s.ref),
+    thin_governing_regulation_refs: thinGoverningRegulations.map((s) => s.ref),
+    normalized_question_tokens: qStems,
+    normalized_source_tokens: [...sourceStemsSeen].slice(0, 60),
   };
 
   const caseLawRequired = profile === "case_law_synthesis";
@@ -389,6 +411,8 @@ export function assessSourceSufficiency(args: {
     }
     if (governingStatutes.length > 0) return "governing_statute";
     if (governingRegulations.length > 0) return "governing_regulation";
+    if (thinGoverningStatutes.length > 0) return "governing_statute";
+    if (thinGoverningRegulations.length > 0) return "governing_regulation";
     return "insufficient";
   };
 
@@ -397,22 +421,32 @@ export function assessSourceSufficiency(args: {
     sufficient: boolean,
     reason: string,
     thin_source: boolean,
-    opts?: { basis?: SufficiencyAuthorityBasis },
+    opts?: {
+      basis?: SufficiencyAuthorityBasis;
+      thinAuthorityPassed?: boolean;
+      exactAmountsAllowed?: boolean;
+    },
   ): SufficiencyAssessment => {
     const basis = opts?.basis ?? (sufficient ? basisFor() : "insufficient");
     const statuteOnly = sufficient && basis !== "usable_judgment" && basis !== "insufficient";
+    const thinAuthorityPassed = opts?.thinAuthorityPassed === true;
+    const exactAmountsAllowed = opts?.exactAmountsAllowed ??
+      (sufficient && !thinAuthorityPassed);
     return {
       ...base,
       applied,
       sufficient,
       reason,
-      thin_source,
+      thin_source: thin_source || thinAuthorityPassed,
       authority_type_sufficiency_passed: sufficient,
       sufficiency_authority_basis: basis,
       statute_only_answer: statuteOnly,
       case_law_required: caseLawRequired,
       case_law_missing_but_not_required:
         !caseLawRequired && usableJudgments.length === 0 && statuteOnly,
+      morphology_domain_match: morphologyDomainMatch,
+      practical_steps_thin_authority_passed: thinAuthorityPassed,
+      exact_amounts_allowed: exactAmountsAllowed,
     };
   };
 
