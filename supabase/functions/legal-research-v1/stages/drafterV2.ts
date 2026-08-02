@@ -1401,7 +1401,17 @@ export async function runDrafterV2(
         .map((r) => inputSources.find((s) => s.ref === r)?.title ?? "")
         .filter(Boolean),
       thin_source: true,
+      sufficiency_profile: "case_law_synthesis",
+      authority_type_sufficiency_passed: false,
+      sufficiency_authority_basis: "insufficient",
+      statute_only_answer: false,
+      case_law_required: true,
+      case_law_missing_but_not_required: false,
+      governing_statute_refs: sufficiency?.governing_statute_refs ?? [],
+      governing_regulation_refs: sufficiency?.governing_regulation_refs ?? [],
+      usable_judgment_refs: [],
     };
+
     const draft = buildInsufficientSourcesDraft(synthSufficiency);
     const validationRaw = validateStructuredDraft(draft, allowedRefs);
     const validation = validationRaw.report.errors.every((e) => e === "no cited segments")
