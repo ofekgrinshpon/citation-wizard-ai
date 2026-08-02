@@ -1328,6 +1328,7 @@ export async function runDrafterV2(
     shape,
     sources: inputSources,
     requiredAnchorCandidateIds,
+    researchMode: opts?.researchMode ?? null,
   });
 
   if (sufficiency.applied && !sufficiency.sufficient) {
