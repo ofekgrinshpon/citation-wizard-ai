@@ -1434,6 +1434,13 @@ export async function runDrafterV2(
       governing_statute_refs: sufficiency?.governing_statute_refs ?? [],
       governing_regulation_refs: sufficiency?.governing_regulation_refs ?? [],
       usable_judgment_refs: [],
+      thin_governing_statute_refs: sufficiency?.thin_governing_statute_refs ?? [],
+      thin_governing_regulation_refs: sufficiency?.thin_governing_regulation_refs ?? [],
+      morphology_domain_match: sufficiency?.morphology_domain_match ?? false,
+      normalized_question_tokens: sufficiency?.normalized_question_tokens ?? [],
+      normalized_source_tokens: sufficiency?.normalized_source_tokens ?? [],
+      practical_steps_thin_authority_passed: false,
+      exact_amounts_allowed: false,
     };
 
     const draft = buildInsufficientSourcesDraft(synthSufficiency);
