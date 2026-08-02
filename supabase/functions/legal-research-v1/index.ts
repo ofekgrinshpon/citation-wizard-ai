@@ -1004,6 +1004,15 @@ async function handle(req: Request): Promise<Response> {
     source_sufficiency: drafter.sufficiency ?? null,
     insufficient_sources_limitation_fired:
       drafter.deterministic_branch === "insufficient_sources_limitation",
+    // Authority-type-aware sufficiency telemetry.
+    sufficiency_profile: drafter.sufficiency?.sufficiency_profile ?? null,
+    authority_type_sufficiency_passed:
+      drafter.sufficiency?.authority_type_sufficiency_passed ?? null,
+    sufficiency_authority_basis: drafter.sufficiency?.sufficiency_authority_basis ?? null,
+    statute_only_answer: drafter.sufficiency?.statute_only_answer ?? false,
+    case_law_required: drafter.sufficiency?.case_law_required ?? false,
+    case_law_missing_but_not_required:
+      drafter.sufficiency?.case_law_missing_but_not_required ?? false,
     // Named-doctrine premise/framing telemetry.
     named_doctrine_framing: drafter.named_doctrine_framing ?? null,
     framing_correction_required:
