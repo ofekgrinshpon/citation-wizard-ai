@@ -1013,6 +1013,14 @@ async function handle(req: Request): Promise<Response> {
     case_law_required: drafter.sufficiency?.case_law_required ?? false,
     case_law_missing_but_not_required:
       drafter.sufficiency?.case_law_missing_but_not_required ?? false,
+    thin_governing_statute_refs: drafter.sufficiency?.thin_governing_statute_refs ?? [],
+    thin_governing_regulation_refs: drafter.sufficiency?.thin_governing_regulation_refs ?? [],
+    morphology_domain_match: drafter.sufficiency?.morphology_domain_match ?? false,
+    normalized_question_tokens: drafter.sufficiency?.normalized_question_tokens ?? [],
+    normalized_source_tokens: drafter.sufficiency?.normalized_source_tokens ?? [],
+    practical_steps_thin_authority_passed:
+      drafter.sufficiency?.practical_steps_thin_authority_passed ?? false,
+    exact_amounts_allowed: drafter.sufficiency?.exact_amounts_allowed ?? null,
     // Named-doctrine premise/framing telemetry.
     named_doctrine_framing: drafter.named_doctrine_framing ?? null,
     framing_correction_required:
