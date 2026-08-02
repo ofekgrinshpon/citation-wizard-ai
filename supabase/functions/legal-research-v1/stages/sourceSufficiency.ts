@@ -79,6 +79,20 @@ export interface SufficiencyAssessment {
   governing_regulation_refs: string[];
   /** Refs of usable judgment sources. */
   usable_judgment_refs: string[];
+
+  // ── Practical-steps thin-authority telemetry (practical_steps only) ─────
+  /** Official/primary statutes that are on-topic but metadata_only. */
+  thin_governing_statute_refs: string[];
+  /** Official/primary regulations that are on-topic but metadata_only. */
+  thin_governing_regulation_refs: string[];
+  /** Whether any domain match was achieved only via morphology normalization. */
+  morphology_domain_match: boolean;
+  normalized_question_tokens: string[];
+  normalized_source_tokens: string[];
+  /** practical_steps passed sufficiency on thin (metadata_only) authority. */
+  practical_steps_thin_authority_passed: boolean;
+  /** Whether exact amounts / fees / deadlines may be stated. */
+  exact_amounts_allowed: boolean;
 }
 
 const META_TOKENS = new Set([
@@ -188,7 +202,51 @@ function isDomainMatch(s: DrafterInputSource, phrases: string[], tokens: string[
   return tokens.some((t) => hay.includes(t));
 }
 
-function isGoverningStatuteLike(s: DrafterInputSource): boolean {
+// ── Morphology-tolerant Hebrew stemming (domain matching ONLY) ────────────
+// Never used for docket matching, quote matching, or anchor resolution.
+const HEB_PREFIXES = ["ו", "ב", "ל", "ה", "כ", "מ"];
+const HEB_SUFFIXES = ["יות", "ות", "ים", "יה", "ה", "ת"];
+
+export function stemHebrew(tokenRaw: string): string | null {
+  let tok = String(tokenRaw || "").replace(/["'׳״]/g, "");
+  if (!HEBREW_TOKEN_RE.test(tok)) return null;
+  // Strip at most two stacked prefixes (e.g. "ובתביעות").
+  for (let i = 0; i < 2; i++) {
+    const p = HEB_PREFIXES.find((pref) => tok.startsWith(pref));
+    if (p && tok.length - p.length >= 3) tok = tok.slice(p.length);
+    else break;
+  }
+  for (const suf of HEB_SUFFIXES) {
+    if (tok.endsWith(suf) && tok.length - suf.length >= 3) {
+      tok = tok.slice(0, tok.length - suf.length);
+      break;
+    }
+  }
+  return tok.length >= 3 ? tok : null;
+}
+
+export function stemSet(text: string): string[] {
+  const out = new Set<string>();
+  for (const tok of normalize(text).split(" ")) {
+    if (tok.length < 3 || META_TOKENS.has(tok)) continue;
+    const st = stemHebrew(tok);
+    if (st) out.add(st);
+  }
+  return [...out];
+}
+
+function stemsIntersect(qStems: string[], sStems: string[]): boolean {
+  const set = new Set(sStems);
+  for (const q of qStems) {
+    if (set.has(q)) return true;
+    if (q.length >= 4 && sStems.some((s) => s.includes(q) || (s.length >= 4 && q.includes(s)))) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function isGoverningStatuteLike(s: DrafterInputSource, opts?: { allowThinText?: boolean }): boolean {
   const t = String(s.source_type || "").toLowerCase();
   const citable = String(s.citable_as || "");
   const typeOk = citable === "statute" || STATUTE_TYPES.has(t);
@@ -197,8 +255,18 @@ function isGoverningStatuteLike(s: DrafterInputSource): boolean {
   const tier = String(s.authority_tier || "unknown");
   if (tier !== "unknown" && !PRIMARY_TIERS.has(tier)) return false;
   const usability = String(s.text_usability || "unknown");
-  if (usability !== "unknown" && !USABLE_TEXT.has(usability)) return false;
+  if (usability === "listing_page") return false;
+  if (s.authority_tier === "index_or_listing" || s.authority_tier === "non_authority") return false;
+  if (usability !== "unknown" && !USABLE_TEXT.has(usability)) {
+    // Thin (metadata_only) official statutes/regulations are accepted only
+    // where the caller explicitly opts in (practical_steps).
+    return opts?.allowThinText === true && usability === "metadata_only";
+  }
   return true;
+}
+
+function isThinText(s: DrafterInputSource): boolean {
+  return String(s.text_usability || "unknown") === "metadata_only";
 }
 
 function isRegulation(s: DrafterInputSource): boolean {
@@ -287,15 +355,33 @@ export function assessSourceSufficiency(args: {
     return true;
   });
 
+  // Morphology-tolerant domain matching (domain buckets only).
+  const qStems = stemSet(question);
+  let morphologyDomainMatch = false;
+  const sourceStemsSeen = new Set<string>();
+  const domainMatch = (s: DrafterInputSource): boolean => {
+    if (isDomainMatch(s, phrases, tokens)) return true;
+    const sStems = stemSet(`${s.title} ${s.snippet ?? ""}`);
+    for (const st of sStems.slice(0, 40)) sourceStemsSeen.add(st);
+    if (stemsIntersect(qStems, sStems)) {
+      morphologyDomainMatch = true;
+      return true;
+    }
+    return false;
+  };
+
   // Authority-type buckets (domain-matched, not doctrine-phrase-matched).
-  const domainStatutes = sources.filter(
-    (s) => isGoverningStatuteLike(s) && isDomainMatch(s, phrases, tokens),
+  const isPracticalSteps = profile === "practical_steps";
+  const domainStatutesAll = sources.filter(
+    (s) => isGoverningStatuteLike(s, { allowThinText: isPracticalSteps }) && domainMatch(s),
   );
+  const domainStatutes = domainStatutesAll.filter((s) => !isThinText(s));
+  const thinDomainStatutes = domainStatutesAll.filter(isThinText);
   const governingRegulations = domainStatutes.filter(isRegulation);
   const governingStatutes = domainStatutes.filter((s) => !isRegulation(s));
-  const usableJudgments = sources.filter(
-    (s) => isUsableJudgment(s) && isDomainMatch(s, phrases, tokens),
-  );
+  const thinGoverningRegulations = thinDomainStatutes.filter(isRegulation);
+  const thinGoverningStatutes = thinDomainStatutes.filter((s) => !isRegulation(s));
+  const usableJudgments = sources.filter((s) => isUsableJudgment(s) && domainMatch(s));
 
   const satisfiedAnchor = sources.some((s) => anchorIds.has(s.candidate_id));
 
@@ -310,6 +396,10 @@ export function assessSourceSufficiency(args: {
     governing_statute_refs: governingStatutes.map((s) => s.ref),
     governing_regulation_refs: governingRegulations.map((s) => s.ref),
     usable_judgment_refs: usableJudgments.map((s) => s.ref),
+    thin_governing_statute_refs: thinGoverningStatutes.map((s) => s.ref),
+    thin_governing_regulation_refs: thinGoverningRegulations.map((s) => s.ref),
+    normalized_question_tokens: qStems,
+    normalized_source_tokens: [...sourceStemsSeen].slice(0, 60),
   };
 
   const caseLawRequired = profile === "case_law_synthesis";
@@ -321,6 +411,8 @@ export function assessSourceSufficiency(args: {
     }
     if (governingStatutes.length > 0) return "governing_statute";
     if (governingRegulations.length > 0) return "governing_regulation";
+    if (thinGoverningStatutes.length > 0) return "governing_statute";
+    if (thinGoverningRegulations.length > 0) return "governing_regulation";
     return "insufficient";
   };
 
@@ -329,22 +421,32 @@ export function assessSourceSufficiency(args: {
     sufficient: boolean,
     reason: string,
     thin_source: boolean,
-    opts?: { basis?: SufficiencyAuthorityBasis },
+    opts?: {
+      basis?: SufficiencyAuthorityBasis;
+      thinAuthorityPassed?: boolean;
+      exactAmountsAllowed?: boolean;
+    },
   ): SufficiencyAssessment => {
     const basis = opts?.basis ?? (sufficient ? basisFor() : "insufficient");
     const statuteOnly = sufficient && basis !== "usable_judgment" && basis !== "insufficient";
+    const thinAuthorityPassed = opts?.thinAuthorityPassed === true;
+    const exactAmountsAllowed = opts?.exactAmountsAllowed ??
+      (sufficient && !thinAuthorityPassed);
     return {
       ...base,
       applied,
       sufficient,
       reason,
-      thin_source,
+      thin_source: thin_source || thinAuthorityPassed,
       authority_type_sufficiency_passed: sufficient,
       sufficiency_authority_basis: basis,
       statute_only_answer: statuteOnly,
       case_law_required: caseLawRequired,
       case_law_missing_but_not_required:
         !caseLawRequired && usableJudgments.length === 0 && statuteOnly,
+      morphology_domain_match: morphologyDomainMatch,
+      practical_steps_thin_authority_passed: thinAuthorityPassed,
+      exact_amounts_allowed: exactAmountsAllowed,
     };
   };
 
@@ -401,14 +503,23 @@ export function assessSourceSufficiency(args: {
     const hasProcedural = governingRegulations.length >= 1;
     const hasDomainAuthority = domainStatutes.length >= 1 || usableJudgments.length >= 1;
     const ok = hasDomainAuthority && (!wantsProcedure || hasProcedural || domainStatutes.length >= 2);
+    if (ok) {
+      return finish(true, true, "statutory_procedural_pack_present", thin_source);
+    }
+    // Thin fallback: official/primary on-topic legislation or regulations that
+    // survived integrity but carry only metadata text. They license a bounded
+    // practical answer — never exact amounts, deadlines or section text.
+    const thinAuthorityCount = thinGoverningStatutes.length + thinGoverningRegulations.length;
+    if (thinAuthorityCount >= 1) {
+      return finish(true, true, "thin_governing_statute_pack_present", true, {
+        thinAuthorityPassed: true,
+        exactAmountsAllowed: false,
+      });
+    }
     return finish(
       true,
-      ok,
-      ok
-        ? "statutory_procedural_pack_present"
-        : hasDomainAuthority
-        ? "no_procedural_or_fee_source"
-        : "generic_procedure_only",
+      false,
+      hasDomainAuthority ? "no_procedural_or_fee_source" : "generic_procedure_only",
       thin_source,
     );
   }
