@@ -142,5 +142,41 @@
     "used_sources": 0,
     "is_stub": true,
     "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  },
+  {
+    "id": "P01",
+    "run_id": "28335363-92e7-4d3a-a4b5-f13f1c50e9e3",
+    "total_ms": 206723,
+    "research_mode": null,
+    "shape": null,
+    "deterministic_branch": "docket_limitation",
+    "sufficiency_profile": null,
+    "authority_type_sufficiency_passed": null,
+    "sufficiency_authority_basis": null,
+    "statute_only_answer": null,
+    "case_law_required": null,
+    "case_law_missing_but_not_required": null,
+    "sufficiency_reason": null,
+    "used_sources": 0,
+    "is_stub": false,
+    "answer": "לא אותר במקורות הזמינים בג\"ץ 6698/95. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+  },
+  {
+    "id": "B8",
+    "run_id": "0d99a195-f79b-4d04-ac78-1b8aa7a0aaa4",
+    "total_ms": 125403,
+    "research_mode": null,
+    "shape": null,
+    "deterministic_branch": "canonical_quote_registry",
+    "sufficiency_profile": null,
+    "authority_type_sufficiency_passed": null,
+    "sufficiency_authority_basis": null,
+    "statute_only_answer": null,
+    "case_law_required": null,
+    "case_law_missing_but_not_required": null,
+    "sufficiency_reason": null,
+    "used_sources": 1,
+    "is_stub": false,
+    "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹"
   }
 ]
