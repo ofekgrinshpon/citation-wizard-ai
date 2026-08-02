@@ -232,11 +232,21 @@ function buildUserMessage(
       `אין לפתוח בכותרת או במשפט שמציג את "${named}" כהלכה מוכרת, ואין להשתמש בניסוחים כמו "הפסיקה מכירה בהלכת…" ביחס לשם הזה. כלל התיקון הזה גובר על כלל "שורה תחתונה בפתיחה".`,
     );
   }
+  if (sufficiency?.statute_only_answer) {
+    lines.push("");
+    lines.push(
+      "בסיס הסמכות לתשובה הזו הוא חקיקה/תקנות בלבד — לא נמצאו פסקי דין ברי-שימוש בנושא. נסח את התשובה על בסיס הוראות החוק והתקנות שסופקו לך בלבד.",
+    );
+    lines.push(
+      "אין להמציא פסקי דין, אין לייחס הלכות לבתי משפט, ואין להישען על ספרות/פרשנות כמקור סמכות ראשי. ציין במפורש, במשפט קצר, שלא מוצגת כאן סקירת פסיקה משום שלא נמצאו פסקי דין ברי-שימוש. שמור את התשובה בגבולות מה שהחוק/התקנות תומכים בו.",
+    );
+  }
   if (sufficiency?.thin_source) {
     lines.push(
       "הערת דלילות מקורות: הטקסט התומך שנמצא קצר ואינו כולל נוסח מלא של ההלכה/ההוראה. נסח את התשובה על בסיס מה שקיים בפועל, והוסף בסוף הסתייגות קצרה שלפיה טקסט ההלכה המלא לא היה בידיך.",
     );
   }
+
   if (synthesisRendering?.applied) {
     for (const l of synthesisRendering.directive_lines) lines.push(l);
   }
@@ -1328,6 +1338,7 @@ export async function runDrafterV2(
     shape,
     sources: inputSources,
     requiredAnchorCandidateIds,
+    researchMode: opts?.researchMode ?? null,
   });
 
   if (sufficiency.applied && !sufficiency.sufficient) {
@@ -1400,7 +1411,17 @@ export async function runDrafterV2(
         .map((r) => inputSources.find((s) => s.ref === r)?.title ?? "")
         .filter(Boolean),
       thin_source: true,
+      sufficiency_profile: "case_law_synthesis",
+      authority_type_sufficiency_passed: false,
+      sufficiency_authority_basis: "insufficient",
+      statute_only_answer: false,
+      case_law_required: true,
+      case_law_missing_but_not_required: false,
+      governing_statute_refs: sufficiency?.governing_statute_refs ?? [],
+      governing_regulation_refs: sufficiency?.governing_regulation_refs ?? [],
+      usable_judgment_refs: [],
     };
+
     const draft = buildInsufficientSourcesDraft(synthSufficiency);
     const validationRaw = validateStructuredDraft(draft, allowedRefs);
     const validation = validationRaw.report.errors.every((e) => e === "no cited segments")
