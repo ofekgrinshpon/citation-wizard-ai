@@ -1498,5 +1498,1101 @@
     "footnotes": 4,
     "answer_len": 2597,
     "answer": "מניסוח סעיף 8א לחוק הירושה עולה מסקנה מעשית וברורה: בחיי שני בני הזוג ניתן לבטל צוואה הדדית על ידי מסירת הודעה בכתב, ואולם לאחר מות אחד המצווים אפשרות הביטול כפופה להחזקה/ויתור על מה שנתקבל מן העיזבון של המנוח. הסעיף קובע בכך תנאים לביטול אך אינו מעניק לצוואה הדדית מעמד אוטומטי של חוזה בלתי הפיך שאוסר על ביטול בחיי הצד השני.¹\n\nהיקף ותוכן הסעיף: סעיף 8א מהווה מסגרת סטטוטורית המגדירה את אופן הביטול של צוואות הדדיות (הודעה בכתב במהלך חיי המצווים; בתנאים של השבה/וויתור לאחר מות אחד המצווים) אך אין בו פירוט מקיף של כל ההשלכות המהותיות של הסדרים בין צוואות או קביעה כי צוואה הדדית מוסיפה זכויות קניין או מחייבת בהכרח מן המניין מעבר לכללי הצוואה הכלליים. מבקרי הדין מצביעים על כך שהסעיף מסדיר אופן ביטול אך אינו נותן מענה מלא למטרות ההסתמכות והיציבות שהצוואה ההדדית עשויה לשרת.²\n\nדרישות פורמליות ומהותיות: החוק מטיל דרישה מפורשת להודעה בכתב כאמצעי לביטול בחיי המצווים, ולקבעה של השלכה מיוחדת לאחר המוות — השבה או ויתור על מה שנתקבל. מעבר לכך, דרישות הצורה הכלליות החלות על צוואה (ככל שמקובלות בסעיפי חוק אחרים ובדוקטרינה) לא מבוטלות על‑ידי סעיף 8א; כלומר, אין בסעיף ראיה לכך שנדרש ניסוח שבעצם שונה באופן מהותי מהנוסח המקובל בצוואה יחידנית, אלא שהחוק מוסיף תנאי לביטול ההדדי.³\n\nשאלה של ביטול חד־צדדי והשלכותיו: מבחינת הדין הסטטוטורי, האפשרות לביטול בחיי השניים על ידי הודעה בכתב היא חד־צדדית מבחינה פרוצדורלית; לאחר מות אחד המצווים החוק מציב תנאי נוסף — השבה/הסתלקות — שעשויה להגביל את היכולת המעשית להפעיל ביטול כשיש כבר העברות או קבלת נכסים. אין בסעיף 8א בכך כדי לקבוע באופן מפורש מנגנון של השתתקות מוחלטת או מנגנון חוזי־מחייב שאוסר ביטול בחיי הצד השני, אך פסיקה ומאמרים עסקו בשאלות של הסתמכות, טעות ופיצויים במקרים אלה ולכן ייתכנו פתרונות שיפוטיים בהתאמה לעובדות כל מקרה.⁴\n\nסעדים וטענות מצד הנפגע מביטול או הפרת צוואה הדדית: הסעיף אינו מפנה לסעד חוזי אוטומטי; האמצעים המעשיים הנפוצים הם אתגרי תקפות הצוואה עצמה (ביטולה/פסילתה), טענות להשבה או לביצוע על‑פי ההסדרים שבאמתחת הצדדים, וטענות שוויוניות או של הסתמכות (השתתקות, טעות) שהופכות להכרעה שיפוטית במקרה של סתירות. הפסיקה הנמצאית והספרות מצביעות על שימוש בכלים אלה במקרים מסוימים, אך ההכרעה תלויה בנסיבות ובשיקול בית המשפט; אין במקורות אלה כדי להראות סדירות אחידה של פיצוי או ביצוע אוטומטי של הסדרים בין צוואות.⁴\n\nמסקנה מעשית וקווים להמשך: סעיף 8א מסדיר באופן ברור את תנאי הביטול — הודעה בכתב בחיי המצווים ותנאי השבה/וויתור לאחר מות — אך אינו משנה באופן מוחלט את הדוקטרינה של צוואה ביחס לזכויות והסדרים חוזיים. במקרים שבהם מתקיימת הסתמכות ממשית, טעות או העברה שכבר בוצעה, ייתכנו טענות שיפוטיות מבוססות; עם זאת פתרונות אלה נתונים לשיפוט השגרתי ולהערכת הראיות. נציין כי ניתוח מעמיק יותר ידרוש בחינה מקרה־מקרה של פסיקה רלוונטית ופסקי דין ספציפיים."
+  },
+  {
+    "id": "R07",
+    "query": "מהי חובת תום הלב במשא ומתן לפי סעיף 12 לחוק החוזים?",
+    "mode_expected": "statute_section_analysis",
+    "run_id": "ff68caae-8b4b-4da4-bf4d-9894d2acecb1",
+    "total_ms": 173577,
+    "research_mode": null,
+    "shape": null,
+    "deterministic_branch": null,
+    "sufficiency_profile": "statute_section_definition",
+    "sufficiency_passed": true,
+    "sufficiency_reason": "required_anchor_satisfied",
+    "pool": {
+      "found": null,
+      "admitted": 25,
+      "integrity_rejects": 1,
+      "tier_counts": {
+        "primary_mirror": 2,
+        "statute_mirror": 3,
+        "index_or_listing": 1,
+        "official_primary": 3,
+        "secondary_commentary": 16
+      },
+      "citable_counts": {
+        "statute": 5,
+        "unknown": 4,
+        "judgment": 2,
+        "commentary": 12,
+        "not_citable": 1,
+        "scholarship": 1
+      },
+      "judgment_documents": 0,
+      "judgments_with_holding_text": 0,
+      "synthesis_role_counts": {
+        "unknown": 1,
+        "leading_candidate": 2,
+        "secondary_commentary": 16,
+        "statutory_background": 6
+      }
+    },
+    "text_usability_counts": {
+      "metadata_only": 13,
+      "listing_page": 1,
+      "full_text": 1,
+      "substantive_excerpt": 10
+    },
+    "role_counts": {
+      "primary_statute": 7,
+      "binding_case_law": 3,
+      "scholarship": 11,
+      "persuasive_case_law": 4
+    },
+    "admitted_sources": [
+      {
+        "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+        "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+        "role": "primary_statute",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": []
+      },
+      {
+        "title": "חוק החוזים (חלק כללי)",
+        "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+        "role": "primary_statute",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": []
+      },
+      {
+        "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "role": "primary_statute",
+        "tier": "index_or_listing",
+        "text_usability": "listing_page",
+        "citable_as": "not_citable",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [
+          "listing_or_pagination_page"
+        ]
+      },
+      {
+        "title": "יישום תיקון מס' 5 לחוק הקולנוע – מאגר הלקטורים",
+        "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8287&businessType=1",
+        "role": "primary_statute",
+        "tier": "primary_mirror",
+        "text_usability": "full_text",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [
+          "official_host_non_specific_path"
+        ]
+      },
+      {
+        "title": "חוק בינוי ופינוי של אזורי שיקום",
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+        "role": "primary_statute",
+        "tier": "statute_mirror",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [
+          "consolidated_statute_mirror"
+        ]
+      },
+      {
+        "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+        "url": "https://www.justice.gov.il/Units/StateAttorney/LegalInformation/Pages/Laws.aspx",
+        "role": "binding_case_law",
+        "tier": "primary_mirror",
+        "text_usability": "metadata_only",
+        "citable_as": "judgment",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "leading_candidate",
+        "flags": [
+          "official_host_non_specific_path"
+        ]
+      },
+      {
+        "title": "סעיף 12 לחוק החוזים : תום לב במשא ומתן",
+        "url": "http://lawjournal.huji.ac.il/article/12/373",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "על משא ומתן וחוק החוזים: סעיף 12 לחוק החוזים בראי גישות תיאורטיות בתחום המשא ומתן / On Negotiation and Contract Law",
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3965485",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "סעיף 12 לחוק החוזים: תום לב במשא ומתן",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "החובה לנהוג בתום לב במשא ומתן בראי הגישה הכלכלית",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "על דיני המכר כמכורתם של עקרון תום הלב ועל עקרון תום הלב כמעוז דיני האמון במשפט הישראלי",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2025-11/%D7%A2%D7%9C%20%D7%93%D7%99%D7%A0%D7%99%20%D7%94%D7%9E%D7%9B%D7%A8%20%D7%9B%D7%9E%D7%9B%D7%95%D7%A8%D7%AA%D7%9D%20%D7%A9%D7%9C%20%D7%A2%D7%A7%D7%A8%D7%95%D7%9F%20%D7%AA%D7%95%D7%9D%20%D7%94%D7%9C%D7%91%20%20%20%D7%95%D7%A2%D7%9C%20%D7%A2%D7%A7%D7%A8%D7%95%D7%9F%20%D7%AA%D7%95%D7%9D%20%D7%94%D7%9C%D7%91%20%D7%9B%D7%9E%D7%A2%D7%95%D7%96%20%D7%93%D7%99%D7%A0%D7%99%20%D7%94%D7%90%D7%9E%D7%95%D7%9F%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%20%20%20.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "תום לב בחוזים ואשם ביצירת החוזה - כתב העת משפטים",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "תם ומושלם - על אמון כתיאוריית־על של דיני החוזים ועל עקרון תום הלב",
+        "url": "https://www.runi.ac.il/yedion/facultypublications/getfile.ashx?username=bukspan&fileType=3&publicationId=396",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "תום לב בחוזים ואשם ביצירת החוזה",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%D7%94_0.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "אכיפה בהעדר חוזה מחייב ופריזמת ההסכמה",
+        "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Cegla/%D7%A0%D7%9E%D7%A8%D7%95%D7%93%20%D7%90%D7%91%D7%A8%D7%9E%D7%95%D7%91%20%D7%95%D7%A2%D7%9E%D7%A8%D7%99%20%D7%A8%D7%97%D7%95%D7%9D-%D7%98%D7%95%D7%95%D7%99%D7%92.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "השתק הבטחה והממשק החוזי",
+        "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "תום לב (עקרון-על) כמבנה נורמטיבי במשפט הפרטי הישראלי",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2019-04/ofek-gendler-%20tom%20lev.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "בש\"פ 2563/23 יזן חמאדה נ׳ מדינת ישראל פסק דין (02.04.2023)",
+        "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-2563-23-%d7%99%d7%96%d7%9f-%d7%97%d7%9e%d7%90%d7%93%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "רע\"פ 8316-05 - מדינת ישראל נ. פלוני",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/1&fileName=SB1_18_8316-05.pdf&type=2",
+        "role": "binding_case_law",
+        "tier": "official_primary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "judgment",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "leading_candidate",
+        "flags": []
+      },
+      {
+        "title": "ע\"פ 2392/21 פלוני נ׳ מדינת ישראל פסק דין (12.08.2021)",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a4-2392-21-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d-12-08-2021/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "רע\"א 1099/21 הרמטיק נאמנות נ׳ אקסטרה פיתוח פסק דין (17.11.2021)",
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1099-21-%d7%94%d7%a8%d7%9e%d7%98%d7%99%d7%a7-%d7%a0%d7%90%d7%9e%d7%a0%d7%95%d7%aa-%d7%a0-%d7%90%d7%a7%d7%a1%d7%98%d7%a8%d7%94-%d7%a4%d7%99%d7%aa%d7%95%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "רשלנות הטועה: אשם, צדק ותום לב",
+        "url": "https://lawjournal.huji.ac.il/article/12/1906",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "חוק ההתייעלות הכלכלית (תיקוני חקיקה להשגת יעדי התקציב לשנות התקציב 2021 ו-2022)",
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%94%D7%AA%D7%99%D7%99%D7%A2%D7%9C%D7%95%D7%AA_%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA_(%D7%AA%D7%99%D7%A7%D7%95%D7%A0%D7%99_%D7%97%D7%A7%D7%99%D7%A7%D7%94_%D7%9C%D7%94%D7%A9%D7%92%D7%AA_%D7%99%D7%A2%D7%93%D7%99_%D7%94%D7%AA%D7%A7%D7%A6%D7%99%D7%91_%D7%9C%D7%A9%D7%A0%D7%95%D7%AA_%D7%94%D7%AA%D7%A7%D7%A6%D7%99%D7%91_2021_%D7%95-2022)",
+        "role": "primary_statute",
+        "tier": "statute_mirror",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [
+          "consolidated_statute_mirror"
+        ]
+      },
+      {
+        "title": "פקודת העיריות",
+        "url": "https://he.wikisource.org/wiki/%D7%A4%D7%A7%D7%95%D7%93%D7%AA_%D7%94%D7%A2%D7%99%D7%A8%D7%99%D7%95%D7%AA",
+        "role": "primary_statute",
+        "tier": "statute_mirror",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [
+          "consolidated_statute_mirror"
+        ]
+      },
+      {
+        "title": "ע\"א 11146-04-22 אייסוניק קיד מערכות בע\"מ נ׳ לה ריין יזמות ואירועים בע\"מ פסק דין",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-11146-04-22-%d7%90%d7%99%d7%99%d7%a1%d7%95%d7%a0%d7%99%d7%a7-%d7%a7%d7%99%d7%93-%d7%9e%d7%a2%d7%a8%d7%9b%d7%95%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%9c%d7%94-%d7%a8%d7%99%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      }
+    ],
+    "acquisition": {
+      "ms": 0,
+      "mode": "statute_section_definition",
+      "budget": null,
+      "enabled": false,
+      "attempts": [],
+      "excluded": [],
+      "successes": 0,
+      "attempts_made": 0,
+      "eligible_count": 0,
+      "judgment_candidates": 0
+    },
+    "used_sources": 13,
+    "footnotes": 7,
+    "answer_len": 2200,
+    "answer": "**חובת תום הלב במשא ומתן — הגדרה לפי סעיף 12**\n\nהחובה החוקית: סעיף 12 לחוק החוזים (חלק כללי) קובע כי (א) במשא ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך מקובלת ובתום לב; (ב) צד שלא נהג בדרך מקובלת ולא בתום-לב חייב לצד השני פיצויים בעד הנזק שנגרם לו. לפיכך, בסעיף מצויה חובת התנהגות נורמטיבית בשלב המשא ומתן לצד הוראה על פיצוי במקרה של הפרה.¹\n\nהיקף התנהגויות האסורות: נוסח הסעיף עצמו אינו מפרט רשימת מעשים אסורים. בפרשנות אקדמית וניתוחי יישום של סעיף 12 מתוארים באופן חוזר מקרים שנחשבים מנוגדים לתום הלב במשא ומתן, כגון הטעיה פעילה, הסתרת עובדות מהותיות וניצול עמדת כוח מיקוח לרעת הצד השני.²\n\nחובת גילוי חיובית: לגבי חובת גילוי של עובדות מהותיות קיימות במקורות דעות מנוגדות — יש המטילים את דגש התום‑לב על איסור להטעות בלבד, ואחרים סבורים כי במצבים מסוימים תחול גם חובת גילוי חיובית. עמדה לפיה חובת גילוי חלה באופן כללי בכל משא‑ומתן אינה נתמכת בנוסח החוק ויש ליישמה בזהירות בהתאם לנסיבות המסחריות.³\n\nטווח יישום זמני: הנוסח \"במשא ומתן לקראת כריתתו של חוזה\" מצביע על כך שהחובה חלה בשלב הטרום‑חוזי — על פעולות והחלטות הנעשות תוך כדי המשא‑ומתן ובקשר ישיר להכנה או לכוונה לכריתת חוזה.⁴\n\nדו‑צדדיות והמשכיות לאחר כריתת החוזה: התייחסות בספרות תומכת ברעיון שהחובה חלה בין הצדדים המשתתפים במשא‑ומתן והיא דו‑צדדית. בשאלה האם חובת תום הלב ממשיכה לרוחב לאחר חתימת חוזה — פסיקה ובחינה פרשנית מראות שעיקרון תום הלב משפיע על אופן הפעלת זכויות חוזיות, אולם לא מתקבלת הרחבה אבסולוטית; בתי‑המשפט מטילים מגבלות והבחנות בהתאם לנסיבות כל מקרה.⁵\n\nסנקציות ותרופות: סעיף 12(ב) קובע זכות לקבלת פיצויים בעד נזק שנגרם מהפרת חובת התום במשא‑ומתן. בספרות נדונו גם פיצויי הסתמכות כאמצעי מתאים במקרים שבהם לא נוצר חוזה מחייב, ואפשרויות אכיפה חלופיות או תיקונים משפטיים אחרים בהתאם לנסיבות העניין.⁶\n\nמגבלות והחרגות מעשיות: מקורות פרשניים מזהירים מפני הרחבה בלתי מבוקרת של חובת התום. בין ההגבלות שהוספו לדיון — קבלת סטנדרט של זהירות מסחרית, שמירת סודיות עסקית, והסכמות מפורשות המסתייגות מהוראות טרום‑חוזיות; כמו כן יש צורך בזהירות בפרשנות החובה ביחס לשווקים תחרותיים ומצבים מסחריים שגרתיים.⁷\n\nסיכום תמציתי: סעיף 12 מטיל חובה לנהוג בתום לב במשא‑ומתן ומציין סעד פיצויי בגין הפרה; הפרשנות המעשית של גבולות החובה, מרכיבי חובת הגילוי ותכליתה לאחר כריתת חוזה נקבעת בעיקר על‑ידי הפסיקה והספרות הפרשנית ודורשת בחינה נסיבתית מדויקת של כל מקרה."
+  },
+  {
+    "id": "R08",
+    "query": "כתוב סקירה משפטית קצרה על התפתחות מבחני המידתיות במשפט החוקתי הישראלי.",
+    "mode_expected": "academic_legal_review",
+    "run_id": "78e2c1ad-a31c-466b-b27e-3df1b0399f29",
+    "total_ms": 217063,
+    "research_mode": null,
+    "shape": null,
+    "deterministic_branch": null,
+    "sufficiency_profile": "statutory_institution",
+    "sufficiency_passed": true,
+    "sufficiency_reason": "doctrinal_anchor_present",
+    "pool": {
+      "found": null,
+      "admitted": 22,
+      "integrity_rejects": 0,
+      "tier_counts": {
+        "statute_mirror": 1,
+        "index_or_listing": 3,
+        "official_primary": 3,
+        "secondary_commentary": 15
+      },
+      "citable_counts": {
+        "statute": 1,
+        "unknown": 2,
+        "judgment": 1,
+        "commentary": 8,
+        "not_citable": 3,
+        "scholarship": 7
+      },
+      "judgment_documents": 0,
+      "judgments_with_holding_text": 0,
+      "synthesis_role_counts": {
+        "unknown": 5,
+        "applying_candidate": 1,
+        "secondary_commentary": 15,
+        "statutory_background": 1
+      }
+    },
+    "text_usability_counts": {
+      "metadata_only": 9,
+      "listing_page": 3,
+      "substantive_excerpt": 5,
+      "full_text": 5
+    },
+    "role_counts": {
+      "government_report": 2,
+      "binding_case_law": 7,
+      "primary_statute": 2,
+      "scholarship": 9,
+      "persuasive_case_law": 2
+    },
+    "admitted_sources": [
+      {
+        "title": "דו״ח סיכום פעילות 2021",
+        "url": "https://www.gov.il/BlobFolder/reports/300423/he/2021.pdf",
+        "role": "government_report",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": []
+      },
+      {
+        "title": "הנחיית פרקליט המדינה / הוראת עבודה - ציות לפסקי דין",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/16-017-00/he/s-a-guidelines_16.17.pdf",
+        "role": "government_report",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": []
+      },
+      {
+        "title": "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "role": "binding_case_law",
+        "tier": "index_or_listing",
+        "text_usability": "listing_page",
+        "citable_as": "not_citable",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [
+          "listing_or_pagination_page"
+        ]
+      },
+      {
+        "title": "חוק בינוי ופינוי של אזורי שיקום",
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+        "role": "primary_statute",
+        "tier": "statute_mirror",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [
+          "consolidated_statute_mirror"
+        ]
+      },
+      {
+        "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+        "role": "primary_statute",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "איזון חוקתי עקרוני ומידתיות: ההיבט התורתי",
+        "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "הפרדת רשויות ומידתיות",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-cohen-elia.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "פתח דבר",
+        "url": "https://kotar.cet.ac.il/kotarapp/index/Page.aspx?nBookID=103799703&nTocEntryID=103801084&nPageID=103799828",
+        "role": "scholarship",
+        "tier": "index_or_listing",
+        "text_usability": "listing_page",
+        "citable_as": "not_citable",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [
+          "listing_or_pagination_page"
+        ]
+      },
+      {
+        "title": "יתרונותיו של מבחן האיזון האנכי על פני מבחני המידתיות בהגנה על זכויות אדם",
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3685788",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "המובן הפורמלי והמובן המהוהי של מבחני המידתיות בפסיקת בג\"ץ",
+        "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/P_MChoen.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "מידתיות במבט ביקורתי ומשווה",
+        "url": "https://kotar.cet.ac.il/kotarapp/index/Book.aspx?nBookID=103799703",
+        "role": "scholarship",
+        "tier": "index_or_listing",
+        "text_usability": "listing_page",
+        "citable_as": "not_citable",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [
+          "listing_or_pagination_page"
+        ]
+      },
+      {
+        "title": "חוקה למדינת ישראל - הדיאלוג הקונסטיטוציוני לאחר 'המהפכה החוקתית'",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%97%D7%95%D7%A7%D7%94%20%D7%9C%D7%9E%D7%93%D7%99%D7%A0%D7%AA%20%D7%99%D7%A9%D7%A8%D7%90%D7%9C%20-%20%D7%94%D7%93%D7%99%D7%90%D7%9C%D7%95%D7%92%20%D7%94%D7%A7%D7%95%D7%A0%D7%A1%D7%98%D7%99%D7%98%D7%95%D7%A6%D7%99%D7%95%D7%A0%D7%99%20%D7%9C%D7%90%D7%97%D7%A8%20'%D7%94%D7%9E%D7%94%D7%A4%D7%9B%D7%94%20%D7%94%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%AA'.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "בית־משפט חוקתי למדינת ישראל",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/3-barack.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "הביקורת השיפוטית על חוקיות חוקים",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-zamir-1.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "ע\"פ 845-02 - מדינת ישראל נ. תנובה מרכז שיתופי לשיווק תוצרת חקלאית לישראל",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/3&fileName=SB3_11_845-02.pdf&type=2",
+        "role": "persuasive_case_law",
+        "tier": "official_primary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "judgment",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "applying_candidate",
+        "flags": []
+      },
+      {
+        "title": "הזכות לפרטיות בעבודה: עיון מחודש בפרשת איסקוב-ענבר ויישומה",
+        "url": "https://lawjournal.huji.ac.il/article/12/1909",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "מי הזיז את העכבר שלי? טכנולוגיה, שירותים משפטיים מקוונים ואתיקה מקצועית",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_b5df6d51efe843ba84c1d01c5056ff9c.pdf",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "בג\"ץ 3390/16 עדאלה – המרכז המשפטי לזכויות המיעוט הערבי בישראל נ׳ הכנסת פסק דין",
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3390-16-%d7%a2%d7%93%d7%90%d7%9c%d7%94-%d7%94%d7%9e%d7%a8%d7%9b%d7%96-%d7%94%d7%9e%d7%a9%d7%a4%d7%98%d7%99-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%9e%d7%99%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "החלה ישירה של זכויות האדם על הכלל",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_93301dbd20b64543b3ea796d359434d5.pdf",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "בין \"קניין תרבותי\" לתפיסה זמנית של נכסים: על הצורך בדין הפקעות כללי",
+        "url": "https://lawjournal.huji.ac.il/article/12/1816",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "צדק ביחסים ודיני נזיקין ביקורת על &quot;צדק ביחסים&quot; של חנוך דגן ואביחי דורפמן",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_5323b995add546adb8eb33a65c7b5689.pdf",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      }
+    ],
+    "acquisition": {
+      "ms": 2,
+      "mode": "doctrine_explanation",
+      "budget": {
+        "other": 2,
+        "total": 3,
+        "leading": 3
+      },
+      "enabled": true,
+      "attempts": [],
+      "excluded": [],
+      "successes": 0,
+      "attempts_made": 0,
+      "eligible_count": 0,
+      "judgment_candidates": 2
+    },
+    "used_sources": 11,
+    "footnotes": 10,
+    "answer_len": 3064,
+    "answer": "השורה התחתונה: במשפט החוקתי הישראלי מבחן המידתיות נוסח כשלוש מבחני משנה — התאמה, הכרחיות או חלופה פחות פוגעת, ומידתיות במובן הצר (איזון בין חומרת הפגיעה לחשיבות המטרה) — ונוסחאות אלה מיושמות בפסיקה אך עוברות עיבוד משתנה בהיסטוריה החוקתית הישראלית.¹\n\n**מרכיבי המבחן ונוסחאות נפוצות**\n\n- התאמה: בדיקה ראשונית של הקשר בין האמצעי למטרה; נוסח נפוץ בגרסה הישראלית בודק האם האמצעי שוהה בעקביות להשגת המטרה המצוטטת ולא מהווה אמצעי זר לתכלית.¹\n- הכרחיות / חלופה פחות פוגעת: בחינה האם קיים אמצעי חלופי שמשיג את המטרה ברמת יעילות דומה ופוגע פחות בזכות; נוסח מקובל דורש שהמדור שיבחר אינו פוגעני יותר ממה שנדרש להשגת המטרה.¹\n- מידתיות במובן הצר (איזון): שקלול מעמדי בין חומרת הפגיעה בזכות לבין חשיבות המטרה הציבורית והתועלת הנובעת מהאמצעי; נוסח נפוץ מבקש לראות האם היחס בין הפגיעה לתועלת ניתן להצדקה סבירה.²\n\n**התפתחות היסטורית וצמתים מרכזיים**\n\nהמעבר החוקתי בעשורים האחרונים — שלעיגון חוקי היסוד ותיאוריות על \"מהפכה חוקתית\" — יצר מסגרת לפרשנות ממילאת יותר של זכויות ולחיזוק המבחן ככלי ביקורת; בתוך כך ספרות ופסיקה תיעדו מספר שלבים בפיתוח המבחן ובהדגשתו כמרכיב מרכזי בביקורת השיפוטית.³\n\nבמהלך עידן השפעתם של פסקי‑דין וגישות מייצגות של בית המשפט העליון (בין היתר בגישות שזוהו עם תקופות של הקצנה פרשנית) המבחן אומץ והופעל באופן נרחב יותר, ולאחר מכן המשיך לעבור גיבוש, הבחנה אינטנסיבית וסלקציה הקונטקסטואלית; פסיקה עדכנית ממחישה יישומים מעודכנים של עקרונות אלה בהכרעות על חוקיות חוקים וזכויות יסוד.⁴\n\n**אינטנסיביות הביקורת — משמעות ויישום**\n\nאינטנסיביות הביקורת מתייחסת לעומק ושלב הבדיקה שעושה בית המשפט במסגרת מבחן המידתיות; בספרות ובפסיקה מובחנת גמישות אינטנסיביות — בדיקה קפדנית יותר כאשר מעורבות זכויות יסוד מרכזיות או פגיעה מוחשית בחירויות אזרחיות, וביקורת מתירנית יותר בתחומי מדיניות כלכלית או ביטחונית שבהם ניתנת עדיפות לשיקול דעת הרשות המבצעת.⁵\n\nהיקף הדיון על מידת ה‑deference מציג כלים פרשניים לקביעת רמת האינטנסיביות: מבחני רגישות לתחום, לשיקולי דעת המוסדיים, ולמידת המומחיות של הרשות — שיקולים אלה משולבים בשיקול האיזון שנדרש במידתיות.⁶\n\n**ביקורות עיקריות והצעות תיקון**\n\nבספרות הועלו מספר ביקורות על השימוש במידתיות: נטען כי המבחן מאפשר לשופטים להפעיל שיקול דעת תכוף ולעתים רחבה מדי (סכנת 'שיפוטיות יתר'), וכן שהנוסח והמאזנים אינם תמיד ברורים דיים, מה שיוצר חוסר קונסיסטנטיות והיעדר נורמטיביות מדויקת.⁷\n\nהצעות תיקון המוזכרות כוללות: הגדרת פרמטרים פרוצדורליים ברורים יותר לבדיקה, הבחנה מובנית ברמת האינטנסיביות לפי תחום, ושילוב מדדים שקופים לנימוק האיזון — צעדים שנועדו לצמצם חוסר בהירות ולהבהיר את תחום הביקורת השיפוטית.⁸\n\n**דרישות נימוקיות ופרוצדורליות בפסיקה**\n\nהפסיקה והספרות מדגישות כי שופט המבצע מבחן מידתיות חייב לנמק בשקיפות את שלבי הבדיקה: להראות את נימוק ההתאמה, להסביר מדוע לא התקיימה חלופה פחות פוגעת או מדוע היא אינה מספקת, ולבצע איזון מפורש בין היקף הפגיעה לבין חשיבות המטרה.⁹\n\nהדרישות הפרוצדורליות דומות לדרישות של אחריות שיפוטית: נימוקים מדידים ככל האפשר, התייחסות חלופית עניינית, והבהרת השיקולים שהכריעו באיזון — הן כאמצעי שקיפות והן כאמצעי ביקורת הראויה של החלטות מוקרת חקיקה.¹⁰\n\nהסתייגות מקורות: חומר הטקסטים שנוצל הוא דל וכולל קטעי תמיכה קצרים וסיכומים; ניסוח זה מבוסס על הסניפטים שהוצגו לי ולא על נוסחי הלכות מלאים של פסקי‑דין או מסמכי חקיקה שלמים."
+  },
+  {
+    "id": "R09",
+    "query": "כתוב סקירת פסיקה על מבחן ההשתלבות בדיני עבודה.",
+    "mode_expected": "academic_legal_review",
+    "run_id": "b5565f06-c21c-4a9c-949e-295f4d00f83a",
+    "total_ms": 179039,
+    "research_mode": null,
+    "shape": null,
+    "deterministic_branch": null,
+    "sufficiency_profile": "case_law_synthesis",
+    "sufficiency_passed": true,
+    "sufficiency_reason": "case_law_synthesis_supported",
+    "pool": {
+      "found": null,
+      "admitted": 22,
+      "integrity_rejects": 1,
+      "tier_counts": {
+        "primary_mirror": 2,
+        "statute_mirror": 1,
+        "index_or_listing": 2,
+        "official_primary": 6,
+        "secondary_commentary": 11
+      },
+      "citable_counts": {
+        "statute": 2,
+        "unknown": 5,
+        "judgment": 3,
+        "commentary": 4,
+        "not_citable": 2,
+        "scholarship": 6
+      },
+      "judgment_documents": 1,
+      "judgments_with_holding_text": 0,
+      "synthesis_role_counts": {
+        "unknown": 6,
+        "leading_candidate": 3,
+        "secondary_commentary": 11,
+        "statutory_background": 2
+      }
+    },
+    "text_usability_counts": {
+      "metadata_only": 10,
+      "listing_page": 2,
+      "substantive_excerpt": 8,
+      "full_text": 2
+    },
+    "role_counts": {
+      "primary_statute": 3,
+      "factual_report": 3,
+      "government_report": 2,
+      "binding_case_law": 9,
+      "persuasive_case_law": 3,
+      "scholarship": 2
+    },
+    "admitted_sources": [
+      {
+        "title": "25_lst_5146711.docx",
+        "url": "https://fs.knesset.gov.il/25/law/25_lst_5146711.docx",
+        "role": "primary_statute",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": []
+      },
+      {
+        "title": "שוק העבודה בישראל 2022 תמונת מצב ופעילות משרד העבודה",
+        "url": "https://www.gov.il/BlobFolder/news/employment-report-2022/he/employment-report-2022.pdf",
+        "role": "factual_report",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": []
+      },
+      {
+        "title": "דוח ממדי העוני והאי-שוויון בהכנסות – 2024",
+        "url": "https://www.btl.gov.il/Publications/oni_report/Documents/dohahoni2024.pdf",
+        "role": "factual_report",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": []
+      },
+      {
+        "title": "דו\"ח הוועדה לשינוי כלכלי חברתי",
+        "url": "https://www.gov.il/BlobFolder/reports/govmes091011/he/mediacenter_secretaryannouncements_documents_shinuy011211.pdf",
+        "role": "government_report",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": []
+      },
+      {
+        "title": "קבלת המלצות הצוות המייעץ לבחינת האסדרה של פלטפורמות תוכן דיגיטליות",
+        "url": "https://www.gov.il/BlobFolder/reports/14122022/he/Report-digital-platforms-Letter-Minister-of-Communications.pdf",
+        "role": "government_report",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": []
+      },
+      {
+        "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "role": "binding_case_law",
+        "tier": "index_or_listing",
+        "text_usability": "listing_page",
+        "citable_as": "not_citable",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [
+          "listing_or_pagination_page"
+        ]
+      },
+      {
+        "title": "חוק בינוי ופינוי של אזורי שיקום",
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+        "role": "primary_statute",
+        "tier": "statute_mirror",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [
+          "consolidated_statute_mirror"
+        ]
+      },
+      {
+        "title": "בית המשפט העליון - Overview",
+        "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+        "role": "binding_case_law",
+        "tier": "primary_mirror",
+        "text_usability": "metadata_only",
+        "citable_as": "judgment",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "leading_candidate",
+        "flags": [
+          "official_host_non_specific_path"
+        ]
+      },
+      {
+        "title": "בית המשפט העליון - Bi din",
+        "url": "https://supreme.court.gov.il/Pages/Bi_din.aspx",
+        "role": "binding_case_law",
+        "tier": "primary_mirror",
+        "text_usability": "metadata_only",
+        "citable_as": "judgment",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "leading_candidate",
+        "flags": [
+          "official_host_non_specific_path"
+        ]
+      },
+      {
+        "title": "הגדרת העובד בדיני עבודה: בין מבחן ההשתלבות למבחנים נוספים",
+        "url": "https://www.nevo.co.il/",
+        "role": "persuasive_case_law",
+        "tier": "index_or_listing",
+        "text_usability": "listing_page",
+        "citable_as": "not_citable",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [
+          "official_host_bare_root"
+        ]
+      },
+      {
+        "title": "מבחן ההשתלבות בדיני עבודה",
+        "url": "https://openscholar.huji.ac.il/",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "עובד או קבלן",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "פרסומים תקופתיים | בנק ישראל",
+        "url": "https://www.boi.org.il/publications/regularpublications/",
+        "role": "factual_report",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "ארבעים שנה לדיני העבודה (תגובה להרצאתה של ד\"ר רדאי)",
+        "url": "https://lawjournal.huji.ac.il/article/12/882",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "לצאת מהחומות: לקראת תיאוריה מאחדת של דוקטרינת \"מיהו עובד\" – מ\"מבחן המטרה\" אל \"המבחן הכלכלי-חברתי\", בראי עבודת אסירים",
+        "url": "https://lawjournal.huji.ac.il/article/12/1931",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "פיטורי עובדות הרות וקריטריון הוותק בחוק עבודת נשים: ההגנה שהפכה למנגנון מעודד אפליה",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_8ad759e0696c430983cfb64f72c6a95e.pdf",
+        "role": "primary_statute",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": true,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "מיהו עובד: מבחני הסף",
+        "url": "https://lawjournal.huji.ac.il/article/12/1911",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "בג\"ץ 3404/21 אה\"ל- ארגון המתמחים לרפואה נ׳ שר העבודה, הרווחה והשירותים הח פסק דין",
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3404-21-%d7%90%d7%94%d7%9c-%d7%90%d7%a8%d7%92%d7%95%d7%9f-%d7%94%d7%9e%d7%aa%d7%9e%d7%97%d7%99%d7%9d-%d7%9c%d7%a8%d7%a4%d7%95%d7%90%d7%94-%d7%a0-%d7%a9%d7%a8-%d7%94%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "בג\"ץ 1181-03 - אוניברסיטת בר אילן נ. בית הדין הארצי לעבודה",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_5_1181-03.pdf&type=2",
+        "role": "binding_case_law",
+        "tier": "official_primary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "judgment",
+        "judgment": true,
+        "holding_text": false,
+        "synthesis_role": "leading_candidate",
+        "flags": [
+          "judgment_document"
+        ]
+      },
+      {
+        "title": "הרמת המסך: בחינה עיונית ואמפירית",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_9723bedb2be34d9fa437d5c75e849d6c.pdf",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": true,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "מעמדם וזכויותיהם של העובדים בהליך הקפאת הליכים – מבט השוואתי | עומר קמחי (כרך יט)",
+        "url": "https://runilawreview.org/2015/04/08/volume19_kimhi/",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      },
+      {
+        "title": "ע\"א 1582/20 עו\"ד יוגב חלפון נ׳ שמן משאבי נפט וגז בע\"מ פסק דין (29.12.2021)",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-1582-20-%d7%a2%d7%95%d7%93-%d7%99%d7%95%d7%92%d7%91-%d7%97%d7%9c%d7%a4%d7%95%d7%9f-%d7%a0-%d7%a9%d7%9e%d7%9f-%d7%9e%d7%a9%d7%90%d7%91%d7%99-%d7%a0%d7%a4%d7%98-%d7%95%d7%92%d7%96/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": []
+      }
+    ],
+    "acquisition": {
+      "ms": 3,
+      "mode": "doctrine_explanation",
+      "budget": {
+        "other": 2,
+        "total": 3,
+        "leading": 3
+      },
+      "enabled": true,
+      "attempts": [],
+      "excluded": [
+        {
+          "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+          "title": "בית המשפט העליון - Overview",
+          "reason": "institutional_page",
+          "candidate_id": "8e31beaa-c448-4f98-afd6-258873f91c54"
+        },
+        {
+          "url": "https://supreme.court.gov.il/Pages/Bi_din.aspx",
+          "title": "בית המשפט העליון - Bi din",
+          "reason": "no_docket_or_title_signal",
+          "candidate_id": "7fe3a6a6-8725-44a8-bd71-dbdb6f27c225"
+        }
+      ],
+      "successes": 0,
+      "attempts_made": 0,
+      "eligible_count": 0,
+      "judgment_candidates": 6
+    },
+    "used_sources": 8,
+    "footnotes": 10,
+    "answer_len": 3278,
+    "answer": "**מבחן ההשתלבות בדיני עבודה — תמצית ומבוא**\n\nהמבחן האמור נועד לבחון האם יחסי עבודה הם יחסי העסקה (מעמד עובד) על‑מנת להצדיק הטלת חובות וזכויות על המעסיק; בבסיסו מבחן השתלבות בוחן עד כמה עבודתו של בעל השירות 'נטועה' בתוך מסגרת הארגון של המעסיק ולא עומדת כפעילות עצמאית חיצונית.¹\n\nמטרת המבחן, כמתוארת בספרות, היא לזהות את מי שמוטלת עליו האחריות המעשית־חוקית כלפי המבצע — כלומר מי נהנה מהתוצר ומי מספק ההגנה החוקית. המבחן משמש גם כמכשיר פרשני לצורך יישום זכויות עבודה כמו שכר מינימום, דמי חופשה, פיצויי פיטורים וזכויות פיטורין.²\n\nרכיבי הבדיקה הנפוצים שמזוהים בספרות ובפרקטיקה המשפיעים על הממצא הם, בין היתר: מידה שבה העובד משולב בארגון המעסיק (תפקיד מובנה, מיקום תפעולי), דרגת ההשגחה והשליטה מצד המעסיק, תלות כלכלית והיעדר ניידות שוק, האם העובד מפעיל אמצעים וכלים שלו או של המעסיק, עקביות והמשכיות של העיסוק, והאם פעולותיו מופיעות בהכרח כחלק מהפעילות העסקית של המעסיק.³\n\nהפסיקה הישראלית והדיון האקדמי מצביעים על חוסר אחידות מסוים באופן שבו בתי הדין לעבודה ובית המשפט העליון משלבים את מבחן ההשתלבות עם מבחנים אחרים; מחקרים וניתוחים פסיקתיים מדגישים כי לעתים בתי הדין נוטים לנסח מבחנים מעורבים או להעדיף מבחן פונקציונלי בסיטואציות שונות, מה שמוביל להיקף בחינה משתנה בין תיקים.⁴\n\nמקרים עכשוויים שעוררו דיון ציבורי ומשפטי מראים שפתרונות מגיעים בתיקים ספציפיים: ישנם פסקי‑דין ועתירות שנוגעות למעמד מתמחים ולעובדים בסקטורים מסוימים, שבהם נבחנים רכיבים המזכירים את מבחן ההשתלבות. עם זאת המקורות שסופקו אינם מאפשרים להסיק מסקנה סופית על אחידות הלכתית בפסיקה העליונה.⁵\n\nביחס למבחנים המתחרים — מבחן השליטה, מבחן התלות הכלכלית (או האוטונומיה) ומבחנים מעורבים — הספרות והפסיקה בישראל נוטים לראותם כמערכתית משלימה: מבחן ההשתלבות מקנה משקל ליחס הארגוני והפונקציונלי, בעוד מבחן השליטה בוחן היבט היררכי והפרקטי, ותלות כלכלית בוחנת היקף התלות בכנסתו. מצד פרקטיקה וביקורת אקדמית, אין עדות ברורה לריבונות מוחלטת של מבחן אחד על פני האחרים; בתי הדין מאמצים לעתים גישה משקולתית שבה כל גורם נבחן ביחד.⁶\n\nהחלת המבחן בהקשרים מודרניים מעוררת קשיים פרקטיים: בשוק העבודה הזמני ובפלטפורמות דיגיטליות עולה קושי להחליט האם נותני שירות מהווים 'עובד' או 'עצמאי' בשל תכונות של ניידות, שימוש בפלטפורמה כינתר, והיעדר אינטגרציה ארגונית ברורה. דו\"ח ממשלתי המליץ על רגולציות ייעודיות לפלטפורמות, אך המלצות אלה אינן מהוות הכרעה שיפוטית ועל כן יש לנסח מסקנות כאלה בזהירות.⁷\n\nבמקרים של קבלני משנה ומיקור חוץ נוצרות בעיות זיהוי מיוחדות: עצם היות שירות מסופק דרך ישות כלכלית נפרדת אינו פוטר מן הצורך לבחון השתלבות העובד בפועל בתוך מוסדות המעסיק הזמני. הניתוח הפסיקתי־תיאורטי מזהיר מפני קבלת דחיקה אוטומטית של זכויות להשוואת מעמד רק בשל אמצעי ספקולציה ארגוניים.⁸\n\nהשלכות מעשיות של הכרעה בהשתלבות כקביעת מעמד עובד כוללות חובות מעסיקיות חשובות: תשלום שכר חובה, חבות על דמי פיצויי פיטורים, חובות נלוות בדיני פיטורים והפעלת הטבות וסנקציות לפי חקיקה רלוונטית. המחקר והספרות מצביעים גם על סנקציות מחמירות במקרים מסוימים — לדוגמה חיזוק ההגנות והפיצויים במקרים של פגיעה בזכויות עובדת הרה — אך מקורות אלו אינם מהווים רשימה ממצה של כל הזכויות והעונשים הקיימים.⁹\n\nלסיכום: מבחן ההשתלבות הוא מרכיב מרכזי אך בלתי נפרד במערך המבחנים שמטרתם להבחין בין עובד לעצמאי; הפסיקה והספרות מצביעות על נדידת גבולות, על שימוש בגישות מעורבות ועל קשיים ביישום בסקטורים חדשים. נדרשת זהירות פרשנית, ועבור מקרים חדשניים (פלטפורמות, מיקור חוץ) הספרות והממשל מציעים גישה ברגולציה ובניתוח תכליתי — אך אין במקורות שסופקו כדי לקבוע מסקנה אחידה או הלכה מחייבת אחת.¹⁰"
   }
 ]

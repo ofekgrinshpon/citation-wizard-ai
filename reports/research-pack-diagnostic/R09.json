@@ -2,74 +2,96 @@
   "id": "R09",
   "query": "כתוב סקירת פסיקה על מבחן ההשתלבות בדיני עבודה.",
   "mode_expected": "academic_legal_review",
-  "run_id": "688998d3-44f3-402a-b333-8d7be0506c84",
-  "total_ms": 200860,
+  "run_id": "b5565f06-c21c-4a9c-949e-295f4d00f83a",
+  "total_ms": 179039,
   "research_mode": null,
   "shape": null,
-  "deterministic_branch": "insufficient_sources_limitation",
+  "deterministic_branch": null,
   "sufficiency_profile": "case_law_synthesis",
-  "sufficiency_passed": false,
-  "sufficiency_reason": "no_usable_judgment_authority",
+  "sufficiency_passed": true,
+  "sufficiency_reason": "case_law_synthesis_supported",
   "pool": {
     "found": null,
-    "admitted": 24,
-    "integrity_rejects": 0,
+    "admitted": 22,
+    "integrity_rejects": 1,
     "tier_counts": {
-      "primary_mirror": 1,
-      "statute_mirror": 9,
-      "index_or_listing": 1,
-      "official_primary": 9,
-      "secondary_commentary": 4
+      "primary_mirror": 2,
+      "statute_mirror": 1,
+      "index_or_listing": 2,
+      "official_primary": 6,
+      "secondary_commentary": 11
     },
     "citable_counts": {
-      "statute": 11,
-      "unknown": 7,
-      "judgment": 2,
-      "commentary": 1,
-      "not_citable": 1,
-      "scholarship": 2
+      "statute": 2,
+      "unknown": 5,
+      "judgment": 3,
+      "commentary": 4,
+      "not_citable": 2,
+      "scholarship": 6
     },
-    "judgment_documents": 2,
+    "judgment_documents": 1,
     "judgments_with_holding_text": 0,
     "synthesis_role_counts": {
-      "unknown": 7,
-      "leading_candidate": 1,
-      "applying_candidate": 1,
-      "secondary_commentary": 4,
-      "statutory_background": 11
+      "unknown": 6,
+      "leading_candidate": 3,
+      "secondary_commentary": 11,
+      "statutory_background": 2
     }
   },
   "text_usability_counts": {
-    "metadata_only": 9,
-    "substantive_excerpt": 14,
-    "listing_page": 1
+    "metadata_only": 10,
+    "listing_page": 2,
+    "substantive_excerpt": 8,
+    "full_text": 2
   },
   "role_counts": {
-    "binding_case_law": 5,
-    "government_report": 5,
-    "regulation": 8,
     "primary_statute": 3,
-    "scholarship": 1,
-    "persuasive_case_law": 2
+    "factual_report": 3,
+    "government_report": 2,
+    "binding_case_law": 9,
+    "persuasive_case_law": 3,
+    "scholarship": 2
   },
   "admitted_sources": [
     {
-      "title": "תקציר בג\"ץ/ע\"א 7846/19",
-      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision7846-19/he/7846-19%20%D7%AA%D7%A7%D7%A6%D7%99%D7%A8.pdf",
-      "role": "binding_case_law",
+      "title": "25_lst_5146711.docx",
+      "url": "https://fs.knesset.gov.il/25/law/25_lst_5146711.docx",
+      "role": "primary_statute",
       "tier": "official_primary",
       "text_usability": "metadata_only",
-      "citable_as": "judgment",
-      "judgment": true,
+      "citable_as": "statute",
+      "judgment": false,
       "holding_text": false,
-      "synthesis_role": "leading_candidate",
-      "flags": [
-        "judgment_document"
-      ]
+      "synthesis_role": "statutory_background",
+      "flags": []
     },
     {
-      "title": "האם נטל הוכחת אי קיום יחסי עובד-מעביד יוטל על הפלטפורמות ...",
-      "url": "https://main.knesset.gov.il/apps/committees/4196/news/8951",
+      "title": "שוק העבודה בישראל 2022 תמונת מצב ופעילות משרד העבודה",
+      "url": "https://www.gov.il/BlobFolder/news/employment-report-2022/he/employment-report-2022.pdf",
+      "role": "factual_report",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": []
+    },
+    {
+      "title": "דוח ממדי העוני והאי-שוויון בהכנסות – 2024",
+      "url": "https://www.btl.gov.il/Publications/oni_report/Documents/dohahoni2024.pdf",
+      "role": "factual_report",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": []
+    },
+    {
+      "title": "דו\"ח הוועדה לשינוי כלכלי חברתי",
+      "url": "https://www.gov.il/BlobFolder/reports/govmes091011/he/mediacenter_secretaryannouncements_documents_shinuy011211.pdf",
       "role": "government_report",
       "tier": "official_primary",
       "text_usability": "metadata_only",
@@ -80,74 +102,16 @@
       "flags": []
     },
     {
-      "title": "תקנות הביטוח הלאומי (ביטוח סיעוד) (ועדות עררים)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%94%D7%9C%D7%90%D7%95%D7%9E%D7%99_(%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%A1%D7%99%D7%A2%D7%95%D7%93)_(%D7%95%D7%A2%D7%93%D7%95%D7%AA_%D7%A2%D7%A8%D7%A8%D7%99%D7%9D)",
-      "role": "regulation",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
+      "title": "קבלת המלצות הצוות המייעץ לבחינת האסדרה של פלטפורמות תוכן דיגיטליות",
+      "url": "https://www.gov.il/BlobFolder/reports/14122022/he/Report-digital-platforms-Letter-Minister-of-Communications.pdf",
+      "role": "government_report",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
-    },
-    {
-      "title": "תקנות הביטוח הלאומי (ביטוח סיעוד) (מבחני הכנסה לקביעת הזכות לגימלת סיעוד ושיעורה)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%94%D7%9C%D7%90%D7%95%D7%9E%D7%99_(%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%A1%D7%99%D7%A2%D7%95%D7%93)_(%D7%9E%D7%91%D7%97%D7%A0%D7%99_%D7%94%D7%9B%D7%A0%D7%A1%D7%94_%D7%9C%D7%A7%D7%91%D7%99%D7%A2%D7%AA_%D7%94%D7%96%D7%9B%D7%95%D7%AA_%D7%9C%D7%92%D7%99%D7%9E%D7%9C%D7%AA_%D7%A1%D7%99%D7%A2%D7%95%D7%93_%D7%95%D7%A9%D7%99%D7%A2%D7%95%D7%A8%D7%94)",
-      "role": "regulation",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
-    },
-    {
-      "title": "תקנות ביטוח בריאות ממלכתי (הוראות מיוחדות בדבר תשלום דמי ביטוח בריאות)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9E%D7%9E%D7%9C%D7%9B%D7%AA%D7%99_(%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%9E%D7%99%D7%95%D7%97%D7%93%D7%95%D7%AA_%D7%91%D7%93%D7%91%D7%A8_%D7%AA%D7%A9%D7%9C%D7%95%D7%9D_%D7%93%D7%9E%D7%99_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA)",
-      "role": "regulation",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
-    },
-    {
-      "title": "תקנות ביטוח בריאות ממלכתי (פטור מתשלום דמי ביטוח בריאות למתגורר במעון)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9E%D7%9E%D7%9C%D7%9B%D7%AA%D7%99_(%D7%A4%D7%98%D7%95%D7%A8_%D7%9E%D7%AA%D7%A9%D7%9C%D7%95%D7%9D_%D7%93%D7%9E%D7%99_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9C%D7%9E%D7%AA%D7%92%D7%95%D7%A8%D7%A8_%D7%91%D7%9E%D7%A2%D7%95%D7%9F)",
-      "role": "regulation",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
-    },
-    {
-      "title": "תקנות הביטוח הלאומי (ביטוח נכות) (צמצום בהשתכרות)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%94%D7%9C%D7%90%D7%95%D7%9E%D7%99_(%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%A0%D7%9B%D7%95%D7%AA)_(%D7%A6%D7%9E%D7%A6%D7%95%D7%9D_%D7%91%D7%94%D7%A9%D7%AA%D7%9B%D7%A8%D7%95%D7%AA)",
-      "role": "regulation",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
+      "synthesis_role": "unknown",
+      "flags": []
     },
     {
       "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
@@ -164,9 +128,9 @@
       ]
     },
     {
-      "title": "תקנות הביטוח הלאומי (ביטוח מפני פגיעה בעבודה)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%94%D7%9C%D7%90%D7%95%D7%9E%D7%99_(%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%9E%D7%A4%D7%A0%D7%99_%D7%A4%D7%92%D7%99%D7%A2%D7%94_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94)",
-      "role": "regulation",
+      "title": "חוק בינוי ופינוי של אזורי שיקום",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+      "role": "primary_statute",
       "tier": "statute_mirror",
       "text_usability": "substantive_excerpt",
       "citable_as": "statute",
@@ -178,32 +142,50 @@
       ]
     },
     {
-      "title": "הצעת חוק עוסק בכלכלת הפלטפורמה, התשפ\"ה–2024",
-      "url": "https://fs.knesset.gov.il/25/law/25_lst_5146711.docx",
-      "role": "primary_statute",
-      "tier": "official_primary",
+      "title": "בית המשפט העליון - Overview",
+      "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+      "role": "binding_case_law",
+      "tier": "primary_mirror",
       "text_usability": "metadata_only",
-      "citable_as": "statute",
+      "citable_as": "judgment",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": []
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
     },
     {
-      "title": "דו\"ח העסקה שוויונית ומגוונת משרד הכלכלה והתעשייה",
-      "url": "https://fs.knesset.gov.il/23/Committees/23_cs_ans_603790.pdf",
-      "role": "primary_statute",
-      "tier": "official_primary",
+      "title": "בית המשפט העליון - Bi din",
+      "url": "https://supreme.court.gov.il/Pages/Bi_din.aspx",
+      "role": "binding_case_law",
+      "tier": "primary_mirror",
       "text_usability": "metadata_only",
-      "citable_as": "statute",
+      "citable_as": "judgment",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": []
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
     },
     {
-      "title": "עובד או קבלן",
-      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+      "title": "הגדרת העובד בדיני עבודה: בין מבחן ההשתלבות למבחנים נוספים",
+      "url": "https://www.nevo.co.il/",
+      "role": "persuasive_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "official_host_bare_root"
+      ]
+    },
+    {
+      "title": "מבחן ההשתלבות בדיני עבודה",
+      "url": "https://openscholar.huji.ac.il/",
       "role": "scholarship",
       "tier": "secondary_commentary",
       "text_usability": "metadata_only",
@@ -214,66 +196,40 @@
       "flags": []
     },
     {
-      "title": "כלכלת הפלטפורמה - Gov.il",
-      "url": "https://www.gov.il/BlobFolder/guide/platform-sessions/he/platform_kazenelson.pdf",
-      "role": "government_report",
-      "tier": "official_primary",
+      "title": "עובד או קבלן",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
       "text_usability": "metadata_only",
-      "citable_as": "unknown",
+      "citable_as": "commentary",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "unknown",
+      "synthesis_role": "secondary_commentary",
       "flags": []
     },
     {
-      "title": "דוח שכר וכח אדם",
-      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/gca_salary_and_hr_report_2020/he/gca_reports_gca_salary_and_hr_report_2020.pdf",
-      "role": "government_report",
-      "tier": "official_primary",
+      "title": "פרסומים תקופתיים | בנק ישראל",
+      "url": "https://www.boi.org.il/publications/regularpublications/",
+      "role": "factual_report",
+      "tier": "secondary_commentary",
       "text_usability": "metadata_only",
-      "citable_as": "unknown",
+      "citable_as": "commentary",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "unknown",
+      "synthesis_role": "secondary_commentary",
       "flags": []
     },
     {
-      "title": "כללי סיווג משלחי יד 2011",
-      "url": "https://www.cbs.gov.il/he/publications/doclib/2015/occupations_class11_81/pdf/intro_h.pdf",
-      "role": "government_report",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "unknown",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "unknown",
-      "flags": []
-    },
-    {
-      "title": "שוק העבודה בישראל 2024",
-      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/employment-report-2024/he/strategy_annual-employment-report24-full.pdf",
-      "role": "government_report",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "unknown",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "unknown",
-      "flags": []
-    },
-    {
-      "title": "הכרה בתחום האבטחה בבתי חולים כעבודה מועדפת – אומדן עלות",
-      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7464&businessType=1",
+      "title": "ארבעים שנה לדיני העבודה (תגובה להרצאתה של ד\"ר רדאי)",
+      "url": "https://lawjournal.huji.ac.il/article/12/882",
       "role": "binding_case_law",
-      "tier": "primary_mirror",
+      "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
-      "citable_as": "unknown",
+      "citable_as": "scholarship",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "unknown",
-      "flags": [
-        "official_host_non_specific_path"
-      ]
+      "synthesis_role": "secondary_commentary",
+      "flags": []
     },
     {
       "title": "לצאת מהחומות: לקראת תיאוריה מאחדת של דוקטרינת \"מיהו עובד\" – מ\"מבחן המטרה\" אל \"המבחן הכלכלי-חברתי\", בראי עבודת אסירים",
@@ -288,37 +244,21 @@
       "flags": []
     },
     {
-      "title": "תקנות הביטוח הלאומי (תשלום וניכוי דמי ביטוח משכר מבוטח העובד אצל מעבידים שונים)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%94%D7%9C%D7%90%D7%95%D7%9E%D7%99_(%D7%AA%D7%A9%D7%9C%D7%95%D7%9D_%D7%95%D7%A0%D7%99%D7%9B%D7%95%D7%99_%D7%93%D7%9E%D7%99_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%9E%D7%A9%D7%9B%D7%A8_%D7%9E%D7%91%D7%95%D7%98%D7%97_%D7%94%D7%A2%D7%95%D7%91%D7%93_%D7%90%D7%A6%D7%9C_%D7%9E%D7%A2%D7%91%D7%99%D7%93%D7%99%D7%9D_%D7%A9%D7%95%D7%A0%D7%99%D7%9D)",
-      "role": "regulation",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
+      "title": "פיטורי עובדות הרות וקריטריון הוותק בחוק עבודת נשים: ההגנה שהפכה למנגנון מעודד אפליה",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_8ad759e0696c430983cfb64f72c6a95e.pdf",
+      "role": "primary_statute",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
       "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
+      "holding_text": true,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
     },
     {
-      "title": "תקנות הביטוח הלאומי (כללים לעיגול סכומים)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%94%D7%9C%D7%90%D7%95%D7%9E%D7%99_(%D7%9B%D7%9C%D7%9C%D7%99%D7%9D_%D7%9C%D7%A2%D7%99%D7%92%D7%95%D7%9C_%D7%A1%D7%9B%D7%95%D7%9E%D7%99%D7%9D)",
-      "role": "regulation",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
-    },
-    {
-      "title": "עובד או קבלן",
-      "url": "https://lawjournal.huji.ac.il/article/12/1244",
-      "role": "binding_case_law",
+      "title": "מיהו עובד: מבחני הסף",
+      "url": "https://lawjournal.huji.ac.il/article/12/1911",
+      "role": "persuasive_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
       "citable_as": "scholarship",
@@ -328,37 +268,59 @@
       "flags": []
     },
     {
+      "title": "בג\"ץ 3404/21 אה\"ל- ארגון המתמחים לרפואה נ׳ שר העבודה, הרווחה והשירותים הח פסק דין",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3404-21-%d7%90%d7%94%d7%9c-%d7%90%d7%a8%d7%92%d7%95%d7%9f-%d7%94%d7%9e%d7%aa%d7%9e%d7%97%d7%99%d7%9d-%d7%9c%d7%a8%d7%a4%d7%95%d7%90%d7%94-%d7%a0-%d7%a9%d7%a8-%d7%94%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
       "title": "בג\"ץ 1181-03 - אוניברסיטת בר אילן נ. בית הדין הארצי לעבודה",
       "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_5_1181-03.pdf&type=2",
-      "role": "persuasive_case_law",
+      "role": "binding_case_law",
       "tier": "official_primary",
       "text_usability": "substantive_excerpt",
       "citable_as": "judgment",
       "judgment": true,
       "holding_text": false,
-      "synthesis_role": "applying_candidate",
+      "synthesis_role": "leading_candidate",
       "flags": [
         "judgment_document"
       ]
     },
     {
-      "title": "תקנות הפיקוח על שירותים פיננסיים (ביטוח) (בקשה לרישיון, הכשרה, התמחות ובחינות של סוכני ביטוח, יועצים פנסיוניים וסוכני שיווק פנסיוני)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%A4%D7%99%D7%A7%D7%95%D7%97_%D7%A2%D7%9C_%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D_%D7%A4%D7%99%D7%A0%D7%A0%D7%A1%D7%99%D7%99%D7%9D_(%D7%91%D7%99%D7%98%D7%95%D7%97)_(%D7%91%D7%A7%D7%A9%D7%94_%D7%9C%D7%A8%D7%99%D7%A9%D7%99%D7%95%D7%9F%2C_%D7%94%D7%9B%D7%A9%D7%A8%D7%94%2C_%D7%94%D7%AA%D7%9E%D7%97%D7%95%D7%AA_%D7%95%D7%91%D7%97%D7%99%D7%A0%D7%95%D7%AA_%D7%A9%D7%9C_%D7%A1%D7%95%D7%9B%D7%A0%D7%99_%D7%91%D7%99%D7%98%D7%95%D7%97%2C_%D7%99%D7%95%D7%A2%D7%A6%D7%99%D7%9D_%D7%A4%D7%A0%D7%A1%D7%99%D7%95%D7%A0%D7%99%D7%99%D7%9D_%D7%95%D7%A1%D7%95%D7%9B%D7%A0%D7%99_%D7%A9%D7%99%D7%95%D7%95%D7%A7_%D7%A4%D7%A0%D7%A1%D7%99%D7%95%D7%A0%D7%99)",
-      "role": "primary_statute",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
+      "title": "הרמת המסך: בחינה עיונית ואמפירית",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_9723bedb2be34d9fa437d5c75e849d6c.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
       "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
+      "holding_text": true,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
     },
     {
-      "title": "בג\"ץ 8672/17 ד\"ר רות לוי נ׳ הוועדה לענייני פיצויים ותמלוגים מכוח חוק הפטנטים פסק דין",
-      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8672-17-%d7%93%d7%a8-%d7%a8%d7%95%d7%aa-%d7%9c%d7%95%d7%99-%d7%a0-%d7%94%d7%95%d7%95%d7%a2%d7%93%d7%94-%d7%9c%d7%a2%d7%a0%d7%99%d7%99%d7%a0%d7%99-%d7%a4%d7%99%d7%a6%d7%95%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "מעמדם וזכויותיהם של העובדים בהליך הקפאת הליכים – מבט השוואתי | עומר קמחי (כרך יט)",
+      "url": "https://runilawreview.org/2015/04/08/volume19_kimhi/",
       "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "ע\"א 1582/20 עו\"ד יוגב חלפון נ׳ שמן משאבי נפט וגז בע\"מ פסק דין (29.12.2021)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-1582-20-%d7%a2%d7%95%d7%93-%d7%99%d7%95%d7%92%d7%91-%d7%97%d7%9c%d7%a4%d7%95%d7%9f-%d7%a0-%d7%a9%d7%9e%d7%9f-%d7%9e%d7%a9%d7%90%d7%91%d7%99-%d7%a0%d7%a4%d7%98-%d7%95%d7%92%d7%96/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
       "citable_as": "commentary",
@@ -369,7 +331,7 @@
     }
   ],
   "acquisition": {
-    "ms": 1671,
+    "ms": 3,
     "mode": "doctrine_explanation",
     "budget": {
       "other": 2,
@@ -377,54 +339,28 @@
       "leading": 3
     },
     "enabled": true,
-    "attempts": [
+    "attempts": [],
+    "excluded": [
       {
-        "ms": 1669,
-        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision7846-19/he/7846-19%20%D7%AA%D7%A7%D7%A6%D7%99%D7%A8.pdf",
-        "title": "תקציר בג\"ץ/ע\"א 7846/19",
-        "success": false,
-        "candidate_id": "584d55f2-0de6-41a3-b93f-8a0910608a9d",
-        "title_signal": "תקציר בג\"ץ/ע\"א 7846/19",
-        "docket_signal": "ע\"א 7846/19",
-        "failure_reason": "no_exact_docket_document_match",
-        "synthesis_role": "leading_candidate",
-        "trigger_reason": "metadata_only",
-        "has_holding_text": false,
-        "method_succeeded": null,
-        "docket_normalized": "aa:7846/19",
-        "methods_attempted": [
-          "direct_file_fetch",
-          "local_db_docket_lookup"
-        ],
-        "judgment_candidate": true,
-        "usable_for_holding": false,
-        "acquisition_success": false,
-        "acquired_text_length": 0,
-        "final_text_usability": "metadata_only",
-        "text_usability_after": "metadata_only",
-        "acquisition_attempted": true,
-        "extracted_text_length": 0,
-        "text_usability_before": "metadata_only",
-        "acquisition_failure_reasons": [
-          "http_403",
-          "no_exact_docket_document_match"
-        ],
-        "acquisition_methods_attempted": [
-          "direct_file_fetch",
-          "local_db_docket_lookup"
-        ],
-        "body_contains_docket_or_title": false,
-        "can_support_synthesis_holding": false
+        "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+        "title": "בית המשפט העליון - Overview",
+        "reason": "institutional_page",
+        "candidate_id": "8e31beaa-c448-4f98-afd6-258873f91c54"
+      },
+      {
+        "url": "https://supreme.court.gov.il/Pages/Bi_din.aspx",
+        "title": "בית המשפט העליון - Bi din",
+        "reason": "no_docket_or_title_signal",
+        "candidate_id": "7fe3a6a6-8725-44a8-bd71-dbdb6f27c225"
       }
     ],
-    "excluded": [],
     "successes": 0,
-    "attempts_made": 1,
-    "eligible_count": 1,
-    "judgment_candidates": 4
+    "attempts_made": 0,
+    "eligible_count": 0,
+    "judgment_candidates": 6
   },
-  "used_sources": 0,
-  "footnotes": 0,
-  "answer_len": 432,
-  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): מסמך מאתר אתר הכנסת; תקנות הביטוח הלאומי (ביטוח נכות) (צמצום בהשתכרות); הצעת חוק עוסק בכלכלת הפלטפורמה, התשפ\"ה–2024; דו\"ח העסקה שוויונית ומגוונת משרד הכלכלה והתעשייה."
+  "used_sources": 8,
+  "footnotes": 10,
+  "answer_len": 3278,
+  "answer": "**מבחן ההשתלבות בדיני עבודה — תמצית ומבוא**\n\nהמבחן האמור נועד לבחון האם יחסי עבודה הם יחסי העסקה (מעמד עובד) על‑מנת להצדיק הטלת חובות וזכויות על המעסיק; בבסיסו מבחן השתלבות בוחן עד כמה עבודתו של בעל השירות 'נטועה' בתוך מסגרת הארגון של המעסיק ולא עומדת כפעילות עצמאית חיצונית.¹\n\nמטרת המבחן, כמתוארת בספרות, היא לזהות את מי שמוטלת עליו האחריות המעשית־חוקית כלפי המבצע — כלומר מי נהנה מהתוצר ומי מספק ההגנה החוקית. המבחן משמש גם כמכשיר פרשני לצורך יישום זכויות עבודה כמו שכר מינימום, דמי חופשה, פיצויי פיטורים וזכויות פיטורין.²\n\nרכיבי הבדיקה הנפוצים שמזוהים בספרות ובפרקטיקה המשפיעים על הממצא הם, בין היתר: מידה שבה העובד משולב בארגון המעסיק (תפקיד מובנה, מיקום תפעולי), דרגת ההשגחה והשליטה מצד המעסיק, תלות כלכלית והיעדר ניידות שוק, האם העובד מפעיל אמצעים וכלים שלו או של המעסיק, עקביות והמשכיות של העיסוק, והאם פעולותיו מופיעות בהכרח כחלק מהפעילות העסקית של המעסיק.³\n\nהפסיקה הישראלית והדיון האקדמי מצביעים על חוסר אחידות מסוים באופן שבו בתי הדין לעבודה ובית המשפט העליון משלבים את מבחן ההשתלבות עם מבחנים אחרים; מחקרים וניתוחים פסיקתיים מדגישים כי לעתים בתי הדין נוטים לנסח מבחנים מעורבים או להעדיף מבחן פונקציונלי בסיטואציות שונות, מה שמוביל להיקף בחינה משתנה בין תיקים.⁴\n\nמקרים עכשוויים שעוררו דיון ציבורי ומשפטי מראים שפתרונות מגיעים בתיקים ספציפיים: ישנם פסקי‑דין ועתירות שנוגעות למעמד מתמחים ולעובדים בסקטורים מסוימים, שבהם נבחנים רכיבים המזכירים את מבחן ההשתלבות. עם זאת המקורות שסופקו אינם מאפשרים להסיק מסקנה סופית על אחידות הלכתית בפסיקה העליונה.⁵\n\nביחס למבחנים המתחרים — מבחן השליטה, מבחן התלות הכלכלית (או האוטונומיה) ומבחנים מעורבים — הספרות והפסיקה בישראל נוטים לראותם כמערכתית משלימה: מבחן ההשתלבות מקנה משקל ליחס הארגוני והפונקציונלי, בעוד מבחן השליטה בוחן היבט היררכי והפרקטי, ותלות כלכלית בוחנת היקף התלות בכנסתו. מצד פרקטיקה וביקורת אקדמית, אין עדות ברורה לריבונות מוחלטת של מבחן אחד על פני האחרים; בתי הדין מאמצים לעתים גישה משקולתית שבה כל גורם נבחן ביחד.⁶\n\nהחלת המבחן בהקשרים מודרניים מעוררת קשיים פרקטיים: בשוק העבודה הזמני ובפלטפורמות דיגיטליות עולה קושי להחליט האם נותני שירות מהווים 'עובד' או 'עצמאי' בשל תכונות של ניידות, שימוש בפלטפורמה כינתר, והיעדר אינטגרציה ארגונית ברורה. דו\"ח ממשלתי המליץ על רגולציות ייעודיות לפלטפורמות, אך המלצות אלה אינן מהוות הכרעה שיפוטית ועל כן יש לנסח מסקנות כאלה בזהירות.⁷\n\nבמקרים של קבלני משנה ומיקור חוץ נוצרות בעיות זיהוי מיוחדות: עצם היות שירות מסופק דרך ישות כלכלית נפרדת אינו פוטר מן הצורך לבחון השתלבות העובד בפועל בתוך מוסדות המעסיק הזמני. הניתוח הפסיקתי־תיאורטי מזהיר מפני קבלת דחיקה אוטומטית של זכויות להשוואת מעמד רק בשל אמצעי ספקולציה ארגוניים.⁸\n\nהשלכות מעשיות של הכרעה בהשתלבות כקביעת מעמד עובד כוללות חובות מעסיקיות חשובות: תשלום שכר חובה, חבות על דמי פיצויי פיטורים, חובות נלוות בדיני פיטורים והפעלת הטבות וסנקציות לפי חקיקה רלוונטית. המחקר והספרות מצביעים גם על סנקציות מחמירות במקרים מסוימים — לדוגמה חיזוק ההגנות והפיצויים במקרים של פגיעה בזכויות עובדת הרה — אך מקורות אלו אינם מהווים רשימה ממצה של כל הזכויות והעונשים הקיימים.⁹\n\nלסיכום: מבחן ההשתלבות הוא מרכיב מרכזי אך בלתי נפרד במערך המבחנים שמטרתם להבחין בין עובד לעצמאי; הפסיקה והספרות מצביעות על נדידת גבולות, על שימוש בגישות מעורבות ועל קשיים ביישום בסקטורים חדשים. נדרשת זהירות פרשנית, ועבור מקרים חדשניים (פלטפורמות, מיקור חוץ) הספרות והממשל מציעים גישה ברגולציה ובניתוח תכליתי — אך אין במקורות שסופקו כדי לקבוע מסקנה אחידה או הלכה מחייבת אחת.¹⁰"
 }
