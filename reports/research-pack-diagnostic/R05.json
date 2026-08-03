@@ -1,0 +1,252 @@
+{
+  "id": "R05",
+  "query": "מהי דוקטרינת הבטלות היחסית במשפט המנהלי?",
+  "mode_expected": "doctrine_explanation",
+  "run_id": "12c02616-cdcc-4778-b1b5-be6bdf3cd674",
+  "total_ms": 147366,
+  "research_mode": null,
+  "shape": null,
+  "deterministic_branch": "insufficient_sources_limitation",
+  "sufficiency_profile": "statutory_institution",
+  "sufficiency_passed": false,
+  "sufficiency_reason": "no_statutory_caselaw_or_doctrinal_anchor",
+  "pool": {
+    "found": null,
+    "admitted": 15,
+    "integrity_rejects": 0,
+    "tier_counts": {
+      "primary_mirror": 1,
+      "statute_mirror": 1,
+      "index_or_listing": 1,
+      "official_primary": 3,
+      "secondary_commentary": 9
+    },
+    "citable_counts": {
+      "statute": 3,
+      "unknown": 4,
+      "commentary": 4,
+      "not_citable": 1,
+      "scholarship": 3
+    },
+    "judgment_documents": 0,
+    "judgments_with_holding_text": 0,
+    "synthesis_role_counts": {
+      "unknown": 1,
+      "secondary_commentary": 10,
+      "statutory_background": 4
+    }
+  },
+  "text_usability_counts": {
+    "metadata_only": 5,
+    "listing_page": 1,
+    "substantive_excerpt": 8,
+    "full_text": 1
+  },
+  "role_counts": {
+    "regulation": 3,
+    "binding_case_law": 4,
+    "scholarship": 5,
+    "persuasive_case_law": 3
+  },
+  "admitted_sources": [
+    {
+      "title": "דיון בוועדת הכנסת על חוק העבירות המנהליות",
+      "url": "https://knesset.gov.il/committees/heb/material/data/H05-01-2016_11-31-50_06012016.docx",
+      "role": "regulation",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": []
+    },
+    {
+      "title": "תקנות העבירות המינהליות, תשמ\"ו-1986",
+      "url": "https://www.nevo.co.il/law_html/law00/4323.htm",
+      "role": "regulation",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": []
+    },
+    {
+      "title": "חקיקת משנה: נוהל והנחיות",
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/regulation_explanation.pdf",
+      "role": "regulation",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": []
+    },
+    {
+      "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+      "role": "binding_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "listing_or_pagination_page"
+      ]
+    },
+    {
+      "title": "הכנסת – הלשכה המשפטית – תחום חקיקה ומחקר משפטי",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6209&businessType=1",
+      "role": "scholarship",
+      "tier": "primary_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "בטלות יחסית ושיקול דעת שיפוטי",
+      "url": "https://lawjournal.huji.ac.il/article/12/923",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "השעיית הכרזת הבטלות",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/2-marzel.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "תקנות סדר הדין האזרחי הישנות",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%A1%D7%93%D7%A8_%D7%94%D7%93%D7%99%D7%9F_%D7%94%D7%90%D7%96%D7%A8%D7%97%D7%99_%D7%94%D7%99%D7%A9%D7%A0%D7%95%D7%AA",
+      "role": "scholarship",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "רע\"פ 1201/12 יוסף קטיעי נ׳ מדינת ישראל החלטה (20.08.2020)",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-1201-12-%d7%99%d7%95%d7%a1%d7%a3-%d7%a7%d7%98%d7%99%d7%a2%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "ע\"א 7791/19 שלה אמין נ׳ מדינת ישראל- משרד המסחר והתעשייה פסק דין (03.06.2020)",
+      "url": "https://www.toledano.co.il/%d7%a9%d7%9c%d7%94-%d7%90%d7%9e%d7%99%d7%9f-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%9e%d7%a1%d7%97%d7%a8-%d7%95%d7%94%d7%aa%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "ע\"א 3017/21 התעשיה האווירית לישראל בע\"מ נ׳ גיא דקל פסק דין (29.07.2021)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-3017-21-%d7%94%d7%aa%d7%a2%d7%a9%d7%99%d7%94-%d7%94%d7%90%d7%95%d7%95%d7%99%d7%a8%d7%99%d7%aa-%d7%9c%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%92%d7%99%d7%90-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "החיסיון מפני הפללה עצמית: בחינה מחודשת בראי הטכנולוגיה",
+      "url": "https://lawjournal.huji.ac.il/article/12/1806",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "חוק &quot;רוצה להיות חופשי&quot;: פרסום חקיקה בעידן האינטרנט",
+      "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/Article_235(1).pdf",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "עע\"מ 7002/19 צ'יינה מוטורס בע\"מ נ׳ משרד התחבורה והבטיחות בדרכים פסק דין (22.07.2019)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-7002-19-%d7%a6%d7%99%d7%99%d7%a0%d7%94-%d7%9e%d7%95%d7%98%d7%95%d7%a8%d7%a1-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%aa%d7%97%d7%91%d7%95%d7%a8%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "על הממשל התאגידי של התאגיד הממשלתי – בין שלוש שכבות של בעיית נציג (כרך נו)",
+      "url": "https://lawjournal.huji.ac.il/article/12/1979",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    }
+  ],
+  "acquisition": {
+    "ms": 0,
+    "mode": "doctrine_explanation",
+    "enabled": false,
+    "attempts": [],
+    "successes": 0,
+    "attempts_made": 0,
+    "eligible_count": 0
+  },
+  "used_sources": 0,
+  "footnotes": 0,
+  "answer_len": 317,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): בטלות יחסית ושיקול דעת שיפוטי; השעיית הכרזת הבטלות."
+}

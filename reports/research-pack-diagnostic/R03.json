@@ -1,0 +1,469 @@
+{
+  "id": "R03",
+  "query": "מה הפסיקה אומרת על הלכת השיתוף?",
+  "mode_expected": "case_law_synthesis",
+  "run_id": "9bf4da6a-0f4c-4969-901e-b065131cf0a1",
+  "total_ms": 126448,
+  "research_mode": null,
+  "shape": null,
+  "deterministic_branch": "insufficient_sources_limitation",
+  "sufficiency_profile": "case_law_synthesis",
+  "sufficiency_passed": false,
+  "sufficiency_reason": "no_usable_judgment_authority",
+  "pool": {
+    "found": null,
+    "admitted": 28,
+    "integrity_rejects": 0,
+    "tier_counts": {
+      "primary_mirror": 6,
+      "statute_mirror": 1,
+      "index_or_listing": 1,
+      "official_primary": 4,
+      "secondary_commentary": 16
+    },
+    "citable_counts": {
+      "statute": 5,
+      "unknown": 1,
+      "judgment": 5,
+      "commentary": 10,
+      "not_citable": 1,
+      "scholarship": 6
+    },
+    "judgment_documents": 3,
+    "judgments_with_holding_text": 0,
+    "synthesis_role_counts": {
+      "unknown": 2,
+      "leading_candidate": 1,
+      "applying_candidate": 2,
+      "secondary_commentary": 16,
+      "statutory_background": 5,
+      "limiting_or_distinguishing_candidate": 2
+    }
+  },
+  "text_usability_counts": {
+    "substantive_excerpt": 10,
+    "metadata_only": 14,
+    "listing_page": 1,
+    "full_text": 3
+  },
+  "role_counts": {
+    "primary_statute": 4,
+    "binding_case_law": 9,
+    "persuasive_case_law": 10,
+    "scholarship": 5
+  },
+  "admitted_sources": [
+    {
+      "title": "חוק פיצויים לנפגעי תאונות דרכים, תשל\"ה-1975",
+      "url": "https://www.nevo.co.il/law_html/law00/4554.htm",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": []
+    },
+    {
+      "title": "פלוני נ. פלונית",
+      "url": "https://www.supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts\\24\\620\\056\\o04&fileName=24056200.o04&type=4",
+      "role": "binding_case_law",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": true,
+      "holding_text": false,
+      "synthesis_role": "limiting_or_distinguishing_candidate",
+      "flags": [
+        "judgment_document"
+      ]
+    },
+    {
+      "title": "פסק-דין בתיק בע\"מ 4623/04",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+      "role": "persuasive_case_law",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": true,
+      "holding_text": false,
+      "synthesis_role": "limiting_or_distinguishing_candidate",
+      "flags": [
+        "judgment_document"
+      ]
+    },
+    {
+      "title": "פסק-דין בתיק בע\"מ 1681/04",
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%A2%22%D7%9E-1681-04",
+      "role": "persuasive_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": true,
+      "holding_text": false,
+      "synthesis_role": "applying_candidate",
+      "flags": [
+        "judgment_document",
+        "judgment_tier_promoted"
+      ]
+    },
+    {
+      "title": "עא 52/80 ישעיהו שחר נ' מנדל פרידמן",
+      "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+      "role": "persuasive_case_law",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "applying_candidate",
+      "flags": []
+    },
+    {
+      "title": "פס\"ד בתביעת יורשים להחלת הלכת השיתוף",
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%91%D7%AA%D7%91%D7%99%D7%A2%D7%AA-%D7%99%D7%95%D7%A8%D7%A9%D7%99%D7%9D-%D7%9C%D7%94%D7%97%D7%9C%D7%AA-%D7%94%D7%9C%D7%9B%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": true,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "ביהמ\"ש המחוזי בחיפה, ש' חננאל שרעבי: החלטה בעניין בקשת רשות ערעור על החלטת בית משפט לענייני משפחה בקריות הנוגעת לזמני שהות של המבקש עם הקטינה (רמ\"ש 20345-03-25)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+      "role": "persuasive_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "listing_or_pagination_page"
+      ]
+    },
+    {
+      "title": "השלכות החלטת הממשלה בדבר הקמת",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=5025&businessType=1",
+      "role": "binding_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "תקנת השוק במכר על ידי רשות שנפל בהליכיו פגם חוקי",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_962b41b3597d440195f4e35963cfe3df.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "על-אודות בית המשפט העליון - הרשות השופטת",
+      "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+      "role": "binding_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "פלונית נ. פלוני",
+      "url": "https://www.nevo.co.il/law_html/law01/111_012.htm",
+      "role": "primary_statute",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "הדרי נ. הדרי",
+      "url": "https://www.nevo.co.il/law_html/law01/131_001.htm",
+      "role": "primary_statute",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "פלוני נ. בית הדין הרבני הגדול",
+      "url": "https://www.nevo.co.il/law_html/law01/103_002.htm",
+      "role": "primary_statute",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "תחולה ויישום הלכת השיתוף בנכסים בין ידועים בציבור (שיתוף כללי ושיתוף ספציפי) וכן במזונות משקמים",
+      "url": "https://www.psakdin.co.il/Court/%D7%AA%D7%97%D7%95%D7%9C%D7%94-%D7%95%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%94%D7%9C%D7%9B%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%A0%D7%9B%D7%A1%D7%99%D7%9D-%D7%91%D7%99%D7%9F-%D7%99%D7%93%D7%95%D7%A2%D7%99%D7%9D-%D7%91%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%9B%D7%9C%D7%9C%D7%99-%D7%95%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%A1%D7%A4%D7%A6%D7%99%D7%A4",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואים ועל ירושו",
+      "url": "https://law.biu.ac.il/files/law/shared/segel/hacalathshitufhspezifi.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "אנציקלופדיה יהודית דעת - הלכת השיתוף בנכסים",
+      "url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "הלכת השיתוף הספציפי: חשיבה מחדש / Rethinking the Doctrine of Specific Co-Ownership",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4868130",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "מבחני הלכת השיתוף והכללת פסיקה על פיה בהסכמה שבקניין לדון על פי החוק",
+      "url": "https://www.daat.ac.il/daat/psk/psk.asp?id=1802",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "השותפות הנישואית והערבות ההדדית בין בני זוג בפשיטת רגל",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/l1_3.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "הערת מערכת: פיל בקופה של מחט – בחינה מחודשת של דיני תעמולת בחירות ברשת",
+      "url": "https://lawjournal.huji.ac.il/article/12/1877",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "רע\"א 3332/20 מיכאלה ברדר נ׳ רשות מקרקעי ישראל החלטה (01.07.2020)",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-3332-20-%d7%9e%d7%99%d7%9b%d7%90%d7%9c%d7%94-%d7%91%d7%a8%d7%93%d7%a8-%d7%a0-%d7%a8%d7%a9%d7%95%d7%aa-%d7%9e%d7%a7%d7%a8%d7%a7%d7%a2%d7%99-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "רע\"א 7614/21 איתנים י.ר. בניה וחיזוק מבנים בע\"מ נ׳ מגרש 901 בגוש 6158 פס\"ד פסק דין (04.05.2022)",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-7614-21-%d7%90%d7%99%d7%aa%d7%a0%d7%99%d7%9d-%d7%99-%d7%a8-%d7%91%d7%a0%d7%99%d7%94-%d7%95%d7%97%d7%99%d7%96%d7%95%d7%a7-%d7%9e%d7%91%d7%a0%d7%99%d7%9d-%d7%91%d7%a2%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "בג\"ץ 5961/21 שאכר סאמי מוחסן נ׳ שר הבינוי והשיכון פסק דין (01.11.2021)",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5961-21-%d7%a9%d7%90%d7%9b%d7%a8-%d7%a1%d7%90%d7%9e%d7%99-%d7%9e%d7%95%d7%97%d7%a1%d7%9f-%d7%a0-%d7%a9%d7%a8-%d7%94%d7%91%d7%99%d7%a0%d7%95%d7%99-%d7%95%d7%94%d7%a9%d7%99%d7%9b/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "תקנות בריאות העם (רמת האיכות (סטנדרד) של צרכי אוכל)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%94%D7%A2%D7%9D_(%D7%A8%D7%9E%D7%AA_%D7%94%D7%90%D7%99%D7%9B%D7%95%D7%AA_(%D7%A1%D7%98%D7%A0%D7%93%D7%A8%D7%93)_%D7%A9%D7%9C_%D7%A6%D7%A8%D7%9B%D7%99_%D7%90%D7%95%D7%9B%D7%9C)",
+      "role": "binding_case_law",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "מיזם משותף כהסדר כובל",
+      "url": "https://lawjournal.huji.ac.il/article/12/877",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "סמכות נמשכת בדיני המשפחה לאחר אישור הסכם בין בני-זוג: על כיבוד הדדי, על מבחן הסיכול ועל מבחן ה\"דן ופָסַק\" – מודל חדש | יצחק כהן (כרך יט)",
+      "url": "https://runilawreview.org/2016/06/08/volume19_cohen/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "פרשנות שיפוטית של הטבות מס לעידוד השקעות",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_b18199aa2fa34c94bb5216817d04e15a.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "בשבחו של אינסטרומנטליזם צנוע: הערות ביקורתיות בעקבות ספרו של אלון הראל Why Law Matters",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_eff2fc9ae66a48ff8598406dfc6d1635.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    }
+  ],
+  "acquisition": {
+    "ms": 912,
+    "mode": "case_law_synthesis",
+    "enabled": true,
+    "attempts": [
+      {
+        "ms": 869,
+        "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+        "title": "על-אודות בית המשפט העליון - הרשות השופטת",
+        "success": false,
+        "candidate_id": "3892a23c-0da5-49e3-b05c-c57fd43d7f59",
+        "title_signal": "על-אודות בית המשפט העליון - הרשות השופטת",
+        "docket_signal": null,
+        "failure_reason": "no_downloadable_file_on_wrapper",
+        "synthesis_role": "leading_candidate",
+        "trigger_reason": "metadata_only",
+        "method_succeeded": null,
+        "methods_attempted": [
+          "local_db_docket_lookup",
+          "wrapper_file_resolve"
+        ],
+        "text_usability_after": "metadata_only",
+        "extracted_text_length": 0,
+        "text_usability_before": "metadata_only",
+        "can_support_synthesis_holding": false
+      },
+      {
+        "ms": 43,
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%91%D7%A2%22%D7%9E-1681-04",
+        "title": "פסק-דין בתיק בע\"מ 1681/04",
+        "success": false,
+        "candidate_id": "d185034b-715e-49cb-bc79-e0d19306541e",
+        "title_signal": "פסק-דין בתיק בע\"מ 1681/04",
+        "docket_signal": null,
+        "failure_reason": "no_local_document_match",
+        "synthesis_role": "applying_candidate",
+        "trigger_reason": "metadata_only",
+        "method_succeeded": null,
+        "methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "text_usability_after": "metadata_only",
+        "extracted_text_length": 0,
+        "text_usability_before": "metadata_only",
+        "can_support_synthesis_holding": false
+      }
+    ],
+    "successes": 0,
+    "attempts_made": 2,
+    "eligible_count": 5
+  },
+  "used_sources": 0,
+  "footnotes": 0,
+  "answer_len": 372,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): פלוני נ. פלונית; פסק-דין בתיק בע\"מ 4623/04; פסק-דין בתיק בע\"מ 1681/04; עא 52/80 ישעיהו שחר נ' מנדל פרידמן."
+}
