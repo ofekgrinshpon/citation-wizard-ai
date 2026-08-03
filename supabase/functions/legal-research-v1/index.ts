@@ -537,14 +537,16 @@ async function handle(req: Request): Promise<Response> {
   stage_runs.push(...local.stage_runs, ...pplx.stage_runs);
   const pool = buildCandidatePool([...local.candidates, ...pplx.candidates]);
 
-  // ─── Judgment text acquisition (case-law synthesis only, ≤2 attempts) ────
-  // Bounded, fail-closed attempt to obtain real judgment text for citable
-  // judgment candidates in a synthesis role that arrived metadata-only.
+  // ─── Judgment-body acquisition (first-class stage) ───────────────────────
+  // Bounded, fail-closed attempt to obtain real judgment text for high-value
+  // judgment candidates in every judgment-bearing mode, with per-role budgets.
   const judgmentAcquisition = await runJudgmentTextAcquisition({
     admin,
     research_mode: plannerStage.mode_plan?.mode ?? null,
+    question,
     candidates: pool.candidates,
   });
+
   if (judgmentAcquisition.successes > 0) {
     // Refresh the integrity telemetry rows for upgraded candidates.
     const byId = new Map(pool.candidates.map((c) => [c.candidate_id, c]));

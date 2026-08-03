@@ -2,8 +2,8 @@
   "id": "R07",
   "query": "מהי חובת תום הלב במשא ומתן לפי סעיף 12 לחוק החוזים?",
   "mode_expected": "statute_section_analysis",
-  "run_id": "24748d16-dc9d-4d35-a184-e4ae967191be",
-  "total_ms": 193064,
+  "run_id": "ff68caae-8b4b-4da4-bf4d-9894d2acecb1",
+  "total_ms": 173577,
   "research_mode": null,
   "shape": null,
   "deterministic_branch": null,
@@ -12,43 +12,43 @@
   "sufficiency_reason": "required_anchor_satisfied",
   "pool": {
     "found": null,
-    "admitted": 20,
-    "integrity_rejects": 0,
+    "admitted": 25,
+    "integrity_rejects": 1,
     "tier_counts": {
-      "primary_mirror": 1,
+      "primary_mirror": 2,
       "statute_mirror": 3,
-      "index_or_listing": 2,
+      "index_or_listing": 1,
       "official_primary": 3,
-      "secondary_commentary": 11
+      "secondary_commentary": 16
     },
     "citable_counts": {
       "statute": 5,
-      "unknown": 1,
-      "judgment": 1,
-      "commentary": 10,
-      "not_citable": 2,
+      "unknown": 4,
+      "judgment": 2,
+      "commentary": 12,
+      "not_citable": 1,
       "scholarship": 1
     },
     "judgment_documents": 0,
     "judgments_with_holding_text": 0,
     "synthesis_role_counts": {
-      "unknown": 2,
-      "applying_candidate": 1,
-      "secondary_commentary": 11,
+      "unknown": 1,
+      "leading_candidate": 2,
+      "secondary_commentary": 16,
       "statutory_background": 6
     }
   },
   "text_usability_counts": {
-    "metadata_only": 8,
-    "substantive_excerpt": 7,
-    "listing_page": 2,
-    "full_text": 3
+    "metadata_only": 13,
+    "listing_page": 1,
+    "full_text": 1,
+    "substantive_excerpt": 10
   },
   "role_counts": {
-    "primary_statute": 10,
+    "primary_statute": 7,
     "binding_case_law": 3,
-    "scholarship": 6,
-    "persuasive_case_law": 1
+    "scholarship": 11,
+    "persuasive_case_law": 4
   },
   "admitted_sources": [
     {
@@ -64,7 +64,7 @@
       "flags": []
     },
     {
-      "title": "חוק החוזים (חלק כללי) – סעיף 12",
+      "title": "חוק החוזים (חלק כללי)",
       "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
       "role": "primary_statute",
       "tier": "official_primary",
@@ -74,20 +74,6 @@
       "holding_text": false,
       "synthesis_role": "statutory_background",
       "flags": []
-    },
-    {
-      "title": "חוק החוזים (חלק כללי)",
-      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
-      "role": "primary_statute",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
     },
     {
       "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
@@ -133,21 +119,21 @@
     },
     {
       "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
-      "url": "https://www.justice.gov.il/",
+      "url": "https://www.justice.gov.il/Units/StateAttorney/LegalInformation/Pages/Laws.aspx",
       "role": "binding_case_law",
-      "tier": "index_or_listing",
-      "text_usability": "listing_page",
-      "citable_as": "not_citable",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "unknown",
+      "synthesis_role": "leading_candidate",
       "flags": [
-        "official_host_bare_root"
+        "official_host_non_specific_path"
       ]
     },
     {
-      "title": "תום לב בחוזים ואשם ביצירת החוזה",
-      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+      "title": "סעיף 12 לחוק החוזים : תום לב במשא ומתן",
+      "url": "http://lawjournal.huji.ac.il/article/12/373",
       "role": "scholarship",
       "tier": "secondary_commentary",
       "text_usability": "metadata_only",
@@ -158,11 +144,11 @@
       "flags": []
     },
     {
-      "title": "פגמים בכריתת החוזה — קווים מנחים",
-      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A4%D7%92%D7%9E%D7%99%D7%9D%20%D7%91%D7%9B%D7%A8%D7%99%D7%AA%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94%20-%20%D7%A7%D7%95%D7%95%D7%99%D7%9D%20%D7%9E%D7%A0%D7%97%D7%99%D7%9D.pdf",
+      "title": "על משא ומתן וחוק החוזים: סעיף 12 לחוק החוזים בראי גישות תיאורטיות בתחום המשא ומתן / On Negotiation and Contract Law",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3965485",
       "role": "scholarship",
       "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
+      "text_usability": "substantive_excerpt",
       "citable_as": "commentary",
       "judgment": false,
       "holding_text": false,
@@ -170,20 +156,8 @@
       "flags": []
     },
     {
-      "title": "השתק הבטחה והממשק החוזי",
-      "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "תרומתה של השופטת בן־פורת לעיצובו של תום הלב במשא ומתן",
-      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+      "title": "סעיף 12 לחוק החוזים: תום לב במשא ומתן",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
       "role": "scholarship",
       "tier": "secondary_commentary",
       "text_usability": "metadata_only",
@@ -206,8 +180,8 @@
       "flags": []
     },
     {
-      "title": "סעיף 12 לחוק החוזים: תום לב במשא ומתן",
-      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+      "title": "על דיני המכר כמכורתם של עקרון תום הלב ועל עקרון תום הלב כמעוז דיני האמון במשפט הישראלי",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2025-11/%D7%A2%D7%9C%20%D7%93%D7%99%D7%A0%D7%99%20%D7%94%D7%9E%D7%9B%D7%A8%20%D7%9B%D7%9E%D7%9B%D7%95%D7%A8%D7%AA%D7%9D%20%D7%A9%D7%9C%20%D7%A2%D7%A7%D7%A8%D7%95%D7%9F%20%D7%AA%D7%95%D7%9D%20%D7%94%D7%9C%D7%91%20%20%20%D7%95%D7%A2%D7%9C%20%D7%A2%D7%A7%D7%A8%D7%95%D7%9F%20%D7%AA%D7%95%D7%9D%20%D7%94%D7%9C%D7%91%20%D7%9B%D7%9E%D7%A2%D7%95%D7%96%20%D7%93%D7%99%D7%A0%D7%99%20%D7%94%D7%90%D7%9E%D7%95%D7%9F%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%20%20%20.pdf",
       "role": "scholarship",
       "tier": "secondary_commentary",
       "text_usability": "metadata_only",
@@ -218,8 +192,104 @@
       "flags": []
     },
     {
-      "title": "רע\"א 4752/20 פלוני נ׳ אליהו חברה לביטוח בע\"מ בניהול מגדל חברה לביטוח בע\" פסק דין (09.06.2020)",
-      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-4752-20-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%90%d7%9c%d7%99%d7%94%d7%95-%d7%97%d7%91%d7%a8%d7%94-%d7%9c%d7%91%d7%99%d7%98%d7%95%d7%97-%d7%91%d7%a2%d7%9e-%d7%91%d7%a0%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "תום לב בחוזים ואשם ביצירת החוזה - כתב העת משפטים",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "תם ומושלם - על אמון כתיאוריית־על של דיני החוזים ועל עקרון תום הלב",
+      "url": "https://www.runi.ac.il/yedion/facultypublications/getfile.ashx?username=bukspan&fileType=3&publicationId=396",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "תום לב בחוזים ואשם ביצירת החוזה",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%D7%94_0.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "אכיפה בהעדר חוזה מחייב ופריזמת ההסכמה",
+      "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Cegla/%D7%A0%D7%9E%D7%A8%D7%95%D7%93%20%D7%90%D7%91%D7%A8%D7%9E%D7%95%D7%91%20%D7%95%D7%A2%D7%9E%D7%A8%D7%99%20%D7%A8%D7%97%D7%95%D7%9D-%D7%98%D7%95%D7%95%D7%99%D7%92.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "השתק הבטחה והממשק החוזי",
+      "url": "https://law.biu.ac.il/files/law/shared/the_contract_tort_interface_1_5_2019_0.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "תום לב (עקרון-על) כמבנה נורמטיבי במשפט הפרטי הישראלי",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2019-04/ofek-gendler-%20tom%20lev.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "בש\"פ 2563/23 יזן חמאדה נ׳ מדינת ישראל פסק דין (02.04.2023)",
+      "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-2563-23-%d7%99%d7%96%d7%9f-%d7%97%d7%9e%d7%90%d7%93%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "רע\"פ 8316-05 - מדינת ישראל נ. פלוני",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/1&fileName=SB1_18_8316-05.pdf&type=2",
+      "role": "binding_case_law",
+      "tier": "official_primary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "leading_candidate",
+      "flags": []
+    },
+    {
+      "title": "ע\"פ 2392/21 פלוני נ׳ מדינת ישראל פסק דין (12.08.2021)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%a4-2392-21-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d-12-08-2021/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
       "role": "persuasive_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
@@ -230,9 +300,9 @@
       "flags": []
     },
     {
-      "title": "רע\"א 5432/22 פלוני נ׳ קצין תגמולים – משרד הביטחון – אגף שיקום פסק דין (17.07.2022)",
-      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5432-22-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%a7%d7%a6%d7%99%d7%9f-%d7%aa%d7%92%d7%9e%d7%95%d7%9c%d7%99%d7%9d-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%99%d7%98%d7%97%d7%95/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "role": "binding_case_law",
+      "title": "רע\"א 1099/21 הרמטיק נאמנות נ׳ אקסטרה פיתוח פסק דין (17.11.2021)",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1099-21-%d7%94%d7%a8%d7%9e%d7%98%d7%99%d7%a7-%d7%a0%d7%90%d7%9e%d7%a0%d7%95%d7%aa-%d7%a0-%d7%90%d7%a7%d7%a1%d7%98%d7%a8%d7%94-%d7%a4%d7%99%d7%aa%d7%95%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "persuasive_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
       "citable_as": "commentary",
@@ -242,47 +312,11 @@
       "flags": []
     },
     {
-      "title": "רע\"א 5107/22 אפ.סי.סי.שיפינג בע\"מ נ׳ רקלה ארסבן החלטה (31.05.2022)",
-      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5107-22-%d7%90%d7%a4-%d7%a1%d7%99-%d7%a1%d7%99-%d7%a9%d7%99%d7%a4%d7%99%d7%a0%d7%92-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a8%d7%a7%d7%9c%d7%94-%d7%90%d7%a8%d7%a1%d7%91%d7%9f-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "role": "primary_statute",
+      "title": "רשלנות הטועה: אשם, צדק ותום לב",
+      "url": "https://lawjournal.huji.ac.il/article/12/1906",
+      "role": "persuasive_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
-      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "role": "primary_statute",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "ע\"א 1445-04 - בייזמן השקעות בעמ נ. משה חליוה (חליבה)",
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/1&fileName=SG1_10_1445-04.pdf&type=2",
-      "role": "primary_statute",
-      "tier": "official_primary",
-      "text_usability": "full_text",
-      "citable_as": "judgment",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "applying_candidate",
-      "flags": []
-    },
-    {
-      "title": "אריאל בן-נון: חוק החוזים האחידים, התשמ״ג-1982 (פירוש לחוקי החוזים בעריכת ג' טדסקי)",
-      "url": "https://lawjournal.huji.ac.il/article/12/650",
-      "role": "primary_statute",
-      "tier": "secondary_commentary",
-      "text_usability": "full_text",
       "citable_as": "scholarship",
       "judgment": false,
       "holding_text": false,
@@ -290,9 +324,9 @@
       "flags": []
     },
     {
-      "title": "תקנות צער בעלי חיים (הגנה על בעלי חיים) (החזקה של עגלי חלב)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%A6%D7%A2%D7%A8_%D7%91%D7%A2%D7%9C%D7%99_%D7%97%D7%99%D7%99%D7%9D_(%D7%94%D7%92%D7%A0%D7%94_%D7%A2%D7%9C_%D7%91%D7%A2%D7%9C%D7%99_%D7%97%D7%99%D7%99%D7%9D)_(%D7%94%D7%97%D7%96%D7%A7%D7%94_%D7%A9%D7%9C_%D7%A2%D7%92%D7%9C%D7%99_%D7%97%D7%9C%D7%91)",
-      "role": "binding_case_law",
+      "title": "חוק ההתייעלות הכלכלית (תיקוני חקיקה להשגת יעדי התקציב לשנות התקציב 2021 ו-2022)",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%94%D7%AA%D7%99%D7%99%D7%A2%D7%9C%D7%95%D7%AA_%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA_(%D7%AA%D7%99%D7%A7%D7%95%D7%A0%D7%99_%D7%97%D7%A7%D7%99%D7%A7%D7%94_%D7%9C%D7%94%D7%A9%D7%92%D7%AA_%D7%99%D7%A2%D7%93%D7%99_%D7%94%D7%AA%D7%A7%D7%A6%D7%99%D7%91_%D7%9C%D7%A9%D7%A0%D7%95%D7%AA_%D7%94%D7%AA%D7%A7%D7%A6%D7%99%D7%91_2021_%D7%95-2022)",
+      "role": "primary_statute",
       "tier": "statute_mirror",
       "text_usability": "substantive_excerpt",
       "citable_as": "statute",
@@ -302,19 +336,48 @@
       "flags": [
         "consolidated_statute_mirror"
       ]
+    },
+    {
+      "title": "פקודת העיריות",
+      "url": "https://he.wikisource.org/wiki/%D7%A4%D7%A7%D7%95%D7%93%D7%AA_%D7%94%D7%A2%D7%99%D7%A8%D7%99%D7%95%D7%AA",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "ע\"א 11146-04-22 אייסוניק קיד מערכות בע\"מ נ׳ לה ריין יזמות ואירועים בע\"מ פסק דין",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-11146-04-22-%d7%90%d7%99%d7%99%d7%a1%d7%95%d7%a0%d7%99%d7%a7-%d7%a7%d7%99%d7%93-%d7%9e%d7%a2%d7%a8%d7%9b%d7%95%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%9c%d7%94-%d7%a8%d7%99%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
     }
   ],
   "acquisition": {
     "ms": 0,
     "mode": "statute_section_definition",
+    "budget": null,
     "enabled": false,
     "attempts": [],
+    "excluded": [],
     "successes": 0,
     "attempts_made": 0,
-    "eligible_count": 0
+    "eligible_count": 0,
+    "judgment_candidates": 0
   },
-  "used_sources": 2,
-  "footnotes": 3,
-  "answer_len": 1779,
-  "answer": "**הגדרה — חובת תום הלב במשא ומתן לפי סעיף 12**\n\nסעיף 12 לחוק החוזים קובע כי ‘‘במשא ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך מקובלת ובתום לב.’’.¹\n\nהחוק מוסיף בסעיף 12(ב) כי צד שלא נהג בדרך מקובלת ובתום לב יחויב בפיצויים בעד הנזק שנגרם לו עקב המשא ומתן או עקב כריתת החוזה, וכי הוראות סעיפים 10, 13 ו־14 לחוק החוזים (תרופות בשל הפרת חוזה) יחולו בהתאמות הנדרשות.²\n\nמבחינת היקף החובה — לפי נוסח הסעיף החובה חלה על ‘‘משא ומתן לקראת כריתתו של חוזה’’ ולפיכך מסגרת ההתחייבות החקוקית היא שלב המשא ומתן הטרום־חוזי; משמע, החוק מטיל חובת התנהגות על המעורבים בשלב זה להנהג בדרך מקובלת ובתום לב.¹\n\nהחוק עצמו אינו מפרט ברשימה סגורה אילו מעשים מס constitute הפרה של חובת תום הלב (למשל: האם וכיצד להגדיר הטעיה, חובת גילוי במצבים מסוימים, או מתי הצהרות בלתי מחייבות יהפכו להבטחות מחייבות). לפיכך, נוסח הסעיף נותן עיקרון חקוק אך לא מפרט סטנדרט התנהגותי מדויק בתוך החוק עצמו.\n\nלגבי סעד — הסעיף נותן עוגן ברור: חובת תום הלב נענשת בפיצויים בעד הנזק שנגרם עקב המשא ומתן או עקב כריתת החוזה, והסמכתו להתבסס על הוראות סעיפים 10, 13 ו־14 מעידה כי נדרשות התייחסויות לפרטי דרכי החישוב ולסוגי התרופות המוכרות בחוק החוזים; מאחר שהטקסט של סעיפים אלה לא נכלל כאן, אי־אפשר על בסיס המסמכים הניתנים לקבוע בפירוט אילו סוגי פיצויים (למשל, פיצויי הסתמכות לעומת פיצויי קיום) יהיו מוחלטים בכל מקרה.²\n\nאין כאן סקירת פסיקה — לא הוצגו בפניה זו פסקי דין ברי־שימוש שמגדירים את מרכיבי חובת התום לב במשא ומתן או את מבחני היישום והנזק; לפיכך התשובה נשענת אך ורק על נוסח החוק וההפניות שבו ולא על הלכות או פרשנויות שיפוטיות.\n\nמסקנה קצרה: סעיף 12 קובע עיקרון חקוק מחייב של ‘‘נהיגה בדרך מקובלת ובתום לב’’ בשלב המשא־ומתן, ומסמיך פיצויים בעד נזק שנגרם עקב הפרה; עם זאת החוק אינו מפרט בתוך נוסחו את כל המרכיבים ההתנהגותיים, את מבחני ההסתמכות או את כל גבולות הסעדים — לפרטים אלה נדרשת השלמה בפסיקה ובפרשנות חיצונית שאינה מוצגת כאן.³"
+  "used_sources": 13,
+  "footnotes": 7,
+  "answer_len": 2200,
+  "answer": "**חובת תום הלב במשא ומתן — הגדרה לפי סעיף 12**\n\nהחובה החוקית: סעיף 12 לחוק החוזים (חלק כללי) קובע כי (א) במשא ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך מקובלת ובתום לב; (ב) צד שלא נהג בדרך מקובלת ולא בתום-לב חייב לצד השני פיצויים בעד הנזק שנגרם לו. לפיכך, בסעיף מצויה חובת התנהגות נורמטיבית בשלב המשא ומתן לצד הוראה על פיצוי במקרה של הפרה.¹\n\nהיקף התנהגויות האסורות: נוסח הסעיף עצמו אינו מפרט רשימת מעשים אסורים. בפרשנות אקדמית וניתוחי יישום של סעיף 12 מתוארים באופן חוזר מקרים שנחשבים מנוגדים לתום הלב במשא ומתן, כגון הטעיה פעילה, הסתרת עובדות מהותיות וניצול עמדת כוח מיקוח לרעת הצד השני.²\n\nחובת גילוי חיובית: לגבי חובת גילוי של עובדות מהותיות קיימות במקורות דעות מנוגדות — יש המטילים את דגש התום‑לב על איסור להטעות בלבד, ואחרים סבורים כי במצבים מסוימים תחול גם חובת גילוי חיובית. עמדה לפיה חובת גילוי חלה באופן כללי בכל משא‑ומתן אינה נתמכת בנוסח החוק ויש ליישמה בזהירות בהתאם לנסיבות המסחריות.³\n\nטווח יישום זמני: הנוסח \"במשא ומתן לקראת כריתתו של חוזה\" מצביע על כך שהחובה חלה בשלב הטרום‑חוזי — על פעולות והחלטות הנעשות תוך כדי המשא‑ומתן ובקשר ישיר להכנה או לכוונה לכריתת חוזה.⁴\n\nדו‑צדדיות והמשכיות לאחר כריתת החוזה: התייחסות בספרות תומכת ברעיון שהחובה חלה בין הצדדים המשתתפים במשא‑ומתן והיא דו‑צדדית. בשאלה האם חובת תום הלב ממשיכה לרוחב לאחר חתימת חוזה — פסיקה ובחינה פרשנית מראות שעיקרון תום הלב משפיע על אופן הפעלת זכויות חוזיות, אולם לא מתקבלת הרחבה אבסולוטית; בתי‑המשפט מטילים מגבלות והבחנות בהתאם לנסיבות כל מקרה.⁵\n\nסנקציות ותרופות: סעיף 12(ב) קובע זכות לקבלת פיצויים בעד נזק שנגרם מהפרת חובת התום במשא‑ומתן. בספרות נדונו גם פיצויי הסתמכות כאמצעי מתאים במקרים שבהם לא נוצר חוזה מחייב, ואפשרויות אכיפה חלופיות או תיקונים משפטיים אחרים בהתאם לנסיבות העניין.⁶\n\nמגבלות והחרגות מעשיות: מקורות פרשניים מזהירים מפני הרחבה בלתי מבוקרת של חובת התום. בין ההגבלות שהוספו לדיון — קבלת סטנדרט של זהירות מסחרית, שמירת סודיות עסקית, והסכמות מפורשות המסתייגות מהוראות טרום‑חוזיות; כמו כן יש צורך בזהירות בפרשנות החובה ביחס לשווקים תחרותיים ומצבים מסחריים שגרתיים.⁷\n\nסיכום תמציתי: סעיף 12 מטיל חובה לנהוג בתום לב במשא‑ומתן ומציין סעד פיצויי בגין הפרה; הפרשנות המעשית של גבולות החובה, מרכיבי חובת הגילוי ותכליתה לאחר כריתת חוזה נקבעת בעיקר על‑ידי הפסיקה והספרות הפרשנית ודורשת בחינה נסיבתית מדויקת של כל מקרה."
 }

@@ -2,57 +2,67 @@
   "id": "R05",
   "query": "מהי דוקטרינת הבטלות היחסית במשפט המנהלי?",
   "mode_expected": "doctrine_explanation",
-  "run_id": "12c02616-cdcc-4778-b1b5-be6bdf3cd674",
-  "total_ms": 147366,
+  "run_id": "c3e4005d-9abf-473e-a292-a587a6dcf3f9",
+  "total_ms": 181890,
   "research_mode": null,
   "shape": null,
-  "deterministic_branch": "insufficient_sources_limitation",
+  "deterministic_branch": null,
   "sufficiency_profile": "statutory_institution",
-  "sufficiency_passed": false,
-  "sufficiency_reason": "no_statutory_caselaw_or_doctrinal_anchor",
+  "sufficiency_passed": true,
+  "sufficiency_reason": "doctrinal_anchor_present",
   "pool": {
     "found": null,
-    "admitted": 15,
+    "admitted": 16,
     "integrity_rejects": 0,
     "tier_counts": {
       "primary_mirror": 1,
-      "statute_mirror": 1,
       "index_or_listing": 1,
       "official_primary": 3,
-      "secondary_commentary": 9
+      "secondary_commentary": 11
     },
     "citable_counts": {
       "statute": 3,
-      "unknown": 4,
-      "commentary": 4,
+      "unknown": 1,
+      "commentary": 6,
       "not_citable": 1,
-      "scholarship": 3
+      "scholarship": 5
     },
     "judgment_documents": 0,
     "judgments_with_holding_text": 0,
     "synthesis_role_counts": {
-      "unknown": 1,
-      "secondary_commentary": 10,
-      "statutory_background": 4
+      "unknown": 2,
+      "secondary_commentary": 11,
+      "statutory_background": 3
     }
   },
   "text_usability_counts": {
+    "substantive_excerpt": 8,
     "metadata_only": 5,
     "listing_page": 1,
-    "substantive_excerpt": 8,
-    "full_text": 1
+    "full_text": 2
   },
   "role_counts": {
-    "regulation": 3,
-    "binding_case_law": 4,
-    "scholarship": 5,
-    "persuasive_case_law": 3
+    "primary_statute": 3,
+    "binding_case_law": 10,
+    "scholarship": 3
   },
   "admitted_sources": [
     {
-      "title": "דיון בוועדת הכנסת על חוק העבירות המנהליות",
-      "url": "https://knesset.gov.il/committees/heb/material/data/H05-01-2016_11-31-50_06012016.docx",
-      "role": "regulation",
+      "title": "חוק בתי משפט לענינים מינהליים, התש״ס–2000",
+      "url": "https://www.nevo.co.il/law_html/law00/98562.htm",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": []
+    },
+    {
+      "title": "חוק הפרשנות, תשמ״א–1981",
+      "url": "https://www.nevo.co.il/law_html/law00/4414.htm",
+      "role": "primary_statute",
       "tier": "official_primary",
       "text_usability": "metadata_only",
       "citable_as": "statute",
@@ -62,24 +72,12 @@
       "flags": []
     },
     {
-      "title": "תקנות העבירות המינהליות, תשמ\"ו-1986",
-      "url": "https://www.nevo.co.il/law_html/law00/4323.htm",
-      "role": "regulation",
+      "title": "תקנות סדר הדין האזרחי, תשע\"ט-2018",
+      "url": "https://www.nevo.co.il/law_html/law00/157751.htm",
+      "role": "primary_statute",
       "tier": "official_primary",
       "text_usability": "metadata_only",
       "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": []
-    },
-    {
-      "title": "חקיקת משנה: נוהל והנחיות",
-      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/regulation_explanation.pdf",
-      "role": "regulation",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "unknown",
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "statutory_background",
@@ -100,123 +98,49 @@
       ]
     },
     {
-      "title": "הכנסת – הלשכה המשפטית – תחום חקיקה ומחקר משפטי",
-      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6209&businessType=1",
-      "role": "scholarship",
+      "title": "נתונים על ענף התיירות וסקירה על החלטות ממשלה בנושא פיתוח תיירות ביישובים ערביים",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8230&businessType=1",
+      "role": "binding_case_law",
       "tier": "primary_mirror",
       "text_usability": "substantive_excerpt",
       "citable_as": "unknown",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "secondary_commentary",
+      "synthesis_role": "unknown",
       "flags": [
         "official_host_non_specific_path"
       ]
     },
     {
       "title": "בטלות יחסית ושיקול דעת שיפוטי",
-      "url": "https://lawjournal.huji.ac.il/article/12/923",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
       "role": "scholarship",
       "tier": "secondary_commentary",
       "text_usability": "metadata_only",
-      "citable_as": "unknown",
+      "citable_as": "commentary",
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "secondary_commentary",
       "flags": []
     },
     {
-      "title": "השעיית הכרזת הבטלות",
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/2-marzel.pdf",
+      "title": "דיני חוזי מנהליי : ענ של המשפט המנהלי ? - יצחק זמיר",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/07-zamir.pdf",
       "role": "scholarship",
       "tier": "secondary_commentary",
       "text_usability": "metadata_only",
-      "citable_as": "unknown",
+      "citable_as": "commentary",
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "secondary_commentary",
       "flags": []
     },
     {
-      "title": "תקנות סדר הדין האזרחי הישנות",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%A1%D7%93%D7%A8_%D7%94%D7%93%D7%99%D7%9F_%D7%94%D7%90%D7%96%D7%A8%D7%97%D7%99_%D7%94%D7%99%D7%A9%D7%A0%D7%95%D7%AA",
-      "role": "scholarship",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
-    },
-    {
-      "title": "רע\"פ 1201/12 יוסף קטיעי נ׳ מדינת ישראל החלטה (20.08.2020)",
-      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-1201-12-%d7%99%d7%95%d7%a1%d7%a3-%d7%a7%d7%98%d7%99%d7%a2%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "הגנת ההסתמכות במשפט המנהלי",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
       "role": "scholarship",
       "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "ע\"א 7791/19 שלה אמין נ׳ מדינת ישראל- משרד המסחר והתעשייה פסק דין (03.06.2020)",
-      "url": "https://www.toledano.co.il/%d7%a9%d7%9c%d7%94-%d7%90%d7%9e%d7%99%d7%9f-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%9e%d7%a1%d7%97%d7%a8-%d7%95%d7%94%d7%aa%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "role": "persuasive_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "ע\"א 3017/21 התעשיה האווירית לישראל בע\"מ נ׳ גיא דקל פסק דין (29.07.2021)",
-      "url": "https://www.toledano.co.il/%d7%a2%d7%90-3017-21-%d7%94%d7%aa%d7%a2%d7%a9%d7%99%d7%94-%d7%94%d7%90%d7%95%d7%95%d7%99%d7%a8%d7%99%d7%aa-%d7%9c%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%92%d7%99%d7%90-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "role": "persuasive_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "החיסיון מפני הפללה עצמית: בחינה מחודשת בראי הטכנולוגיה",
-      "url": "https://lawjournal.huji.ac.il/article/12/1806",
-      "role": "binding_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "scholarship",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "חוק &quot;רוצה להיות חופשי&quot;: פרסום חקיקה בעידן האינטרנט",
-      "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/Article_235(1).pdf",
-      "role": "persuasive_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "full_text",
-      "citable_as": "scholarship",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "עע\"מ 7002/19 צ'יינה מוטורס בע\"מ נ׳ משרד התחבורה והבטיחות בדרכים פסק דין (22.07.2019)",
-      "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-7002-19-%d7%a6%d7%99%d7%99%d7%a0%d7%94-%d7%9e%d7%95%d7%98%d7%95%d7%a8%d7%a1-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%aa%d7%97%d7%91%d7%95%d7%a8%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "role": "binding_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
+      "text_usability": "metadata_only",
       "citable_as": "commentary",
       "judgment": false,
       "holding_text": false,
@@ -234,19 +158,110 @@
       "holding_text": false,
       "synthesis_role": "secondary_commentary",
       "flags": []
+    },
+    {
+      "title": "רע\"פ 7052/18 מדינת ישראל נ׳ רפי רותם פסק דין (05.05.2020)",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-7052-18-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%a8%d7%a4%d7%99-%d7%a8%d7%95%d7%aa%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "ע\"א 1062/20 מדינת ישראל נ׳ אברהם סימון פסק דין (11.11.2021)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-1062-20-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%90%d7%91%d7%a8%d7%94%d7%9d-%d7%a1%d7%99%d7%9e%d7%95%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "רע\"א 2401/21 סאמי ג'אעוני נ׳ נחלת שמעון בע\"מ פסק דין",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2401-21-%d7%a1%d7%90%d7%9e%d7%99-%d7%92%d7%90%d7%a2%d7%95%d7%a0%d7%99-%d7%a0-%d7%a0%d7%97%d7%9c%d7%aa-%d7%a9%d7%9e%d7%a2%d7%95%d7%9f-%d7%91%d7%a2%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "נטילת הזדמנות עסקית: היקף אחריותו של נושא משרה בחברה ציבורית בגין נטילת הזדמנות עסקית של החברה",
+      "url": "https://lawjournal.huji.ac.il/article/12/1879",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "המשתמש העסקי בפלטפורמות דיגיטליות: העדשה החוזית",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/5fc83c_bd438379151c4985b79dc765f652e6ca.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "מסוימות וגמירת דעת - הילכו שתיים בנפרד?",
+      "url": "https://lawjournal.huji.ac.il/article/12/1847",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "הוכחת סיבתיות באמצעות ראיות סטטיסטיות",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_cd425a1ea5cf4d20a06581f8fcc36592.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
     }
   ],
   "acquisition": {
-    "ms": 0,
+    "ms": 1,
     "mode": "doctrine_explanation",
-    "enabled": false,
+    "budget": {
+      "other": 2,
+      "total": 3,
+      "leading": 3
+    },
+    "enabled": true,
     "attempts": [],
+    "excluded": [],
     "successes": 0,
     "attempts_made": 0,
-    "eligible_count": 0
+    "eligible_count": 0,
+    "judgment_candidates": 4
   },
-  "used_sources": 0,
-  "footnotes": 0,
-  "answer_len": 317,
-  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): בטלות יחסית ושיקול דעת שיפוטי; השעיית הכרזת הבטלות."
+  "used_sources": 9,
+  "footnotes": 8,
+  "answer_len": 2408,
+  "answer": "דוקטרינת הבטלות היחסית במשפט המנהלי אומרת כי פגם בהחלטה מנהלית אינו מוביל אוטומטית לבטלותה; יש להפריד בין קיומו של הפגם לבין נפקותיו, ובית המשפט בוחן אם מעשית ההחלטה ראויה להתבטל, להתוקן או להשאירה בעינה תוך מתן סעד מותאם.¹\n\nהבחנה בין בטלות יחסית לבטלות מוחלטת היא מהותית: בבטלות מוחלטת הטענה היא שההחלטה חסרת תוקף מיסודה ותוצאותיה בטלות לחלוטין, בעוד שבבטלות יחסית הפגם נבחן מבחינת חומרה, מטרת הכלל שנפגע, ותוצאת הפגם — ולא תמיד יובילו לאקט ביטול מוחלט.²\n\n**תוצאות והסדרי סעד**\n\nבתי המשפט יכולים להורות על ביטול (annulment) של החלטה מנהלית במסגרת העתירה המינהלית, שכן חוק בתי המשפט לעניינים מינהליים מאפשר את סעד הביטול כמי מהסעדין העיקריים העומדים לפני בית המשפט, אך הסעד אינו בלתי־אופייני לשיקול שיפוטי של נפקות הפגם.¹\n\nלגבי ריפוי ואישורים בדיעבד — קיימת אפשרות תיאורטית של היוונות או תיקון הליך על־ידי הרשות או הגורמים המעורבים, והחוק הכללי לפרשנות ולכללי פרשנות מקנה סמכויות רלוונטיות; עם זאת, העמדה לגבי מידה וגבולות ההיוונות משתנה בפסיקה ובספרות ויש לנסח כל מסקנה בזהירות.³\n\n**קריטריונים שבית המשפט שוקל בבחינת בטלות יחסית**\n\n- חומרת הפגם — עד כמה הפגם נוגע בראשי ההכרעה, לשיקול הדעת המהותי או להליך שקיבל החלטה; שיקול זה מעוגן בהבחנה בין קיום הפגם לנפקותיו.²\n- מטרת הכלל או הסמכות שנפגעה — האם הכלל או הנוהל נועדו להגן על אינטרס ציבורי או על זכויות מסוימות; אם כן, פגיעה במטרה תחזק את הצד לביטול.⁴\n- נזק או היעדר נזק לנגועים — האם הפגם גרם פגיעה ממשית במי שהכלל נועד להגן עליו; היעדר פגיעה מהותית עשוי להטות את מאזני הטיעונים לטובת אי־ביטול.⁵\n- הזדמנות לתקן או לטעון — האם ניתנה הזדמנות מספקת לעניין ההליך או שהצדדים הופלו מהזדמנות הלכתית להשתתף; תקנות סדר הדין והפסיקה מטילות משקל על היבט זה.⁶\n\n**יחסים לדוקטרינות קרובות ומשמעויות מעשיות**\n\nהדוקטרינה מתנגשת ומתיישבת במקביל עם עקרונות כמו השתק (estoppel) ואישור בדיעבד: לעתים הסכמות או פעולות שאנשים עשו בהסתמכות על ההחלטה יגבירו את השיקול נגד ביטול, ואפשר לראות באישורים או בפעולות ההן מרכיב המעודד ריפוי; הדיון בפסיקה ובספרות לגבי יחסים אלה לעיתים תומך בגמישות שיפוטית.⁷\n\nבנוגע לצדדים שלישיים וסמכות ציבורית — בתי המשפט מאזנים בין הצורך בשמירה על החוקיות והדיוק הפרוצדורלי לבין ההשפעות על זכויות צדדים שלישיים ותוצאות יציבות סמכותית; משקל הפרט לעומת היציבות הציבורית מהווה מרכיב מרכזי בקביעת הסעד.⁸\n\nלסיכום והסתייגות קצרה: התשובה נוסחה על בסיס קטעי מקור קצרים וניתוח ספרותי מצומצם שמסופקים; טקסט ההלכה או נוסח מלא של פסקי הדין והחוקים הרלוונטיים לא היה ברשותי במלואו, ולכן נדונו המגמות והעקרונות בזהירות ובמידה המתאימה לרמת התמיכה שניתנה לכל מקור."
 }
