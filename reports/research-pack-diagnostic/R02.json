@@ -2,8 +2,8 @@
   "id": "R02",
   "query": "מה נקבע בבנק המזרחי ביחס לסמכות בית המשפט לבטל חקיקה?",
   "mode_expected": "specific_case_holding",
-  "run_id": "03a98bbb-549f-496f-b000-3c8816c6ca63",
-  "total_ms": 204027,
+  "run_id": "e5a062dd-aa8e-4570-b30d-7ef73112e34e",
+  "total_ms": 264685,
   "research_mode": null,
   "shape": null,
   "deterministic_branch": null,
@@ -12,47 +12,64 @@
   "sufficiency_reason": "shape_not_gated",
   "pool": {
     "found": null,
-    "admitted": 19,
+    "admitted": 21,
     "integrity_rejects": 0,
     "tier_counts": {
-      "primary_mirror": 2,
       "index_or_listing": 1,
-      "official_primary": 2,
-      "secondary_commentary": 14
+      "official_primary": 3,
+      "secondary_commentary": 17
     },
     "citable_counts": {
-      "statute": 2,
-      "unknown": 1,
+      "statute": 1,
+      "unknown": 3,
       "judgment": 1,
-      "commentary": 12,
+      "commentary": 11,
       "not_citable": 1,
-      "scholarship": 2
+      "scholarship": 4
     },
-    "judgment_documents": 0,
-    "judgments_with_holding_text": 0,
+    "judgment_documents": 1,
+    "judgments_with_holding_text": 1,
     "synthesis_role_counts": {
       "unknown": 2,
       "leading_candidate": 1,
-      "secondary_commentary": 14,
-      "statutory_background": 2
+      "secondary_commentary": 17,
+      "statutory_background": 1
     }
   },
   "text_usability_counts": {
-    "metadata_only": 10,
-    "listing_page": 1,
-    "substantive_excerpt": 7,
-    "full_text": 1
+    "full_text": 4,
+    "metadata_only": 8,
+    "substantive_excerpt": 8,
+    "listing_page": 1
   },
   "role_counts": {
-    "primary_statute": 2,
-    "binding_case_law": 5,
-    "persuasive_case_law": 3,
-    "scholarship": 9
+    "binding_case_law": 6,
+    "primary_statute": 1,
+    "factual_report": 1,
+    "scholarship": 9,
+    "persuasive_case_law": 4
   },
   "admitted_sources": [
     {
-      "title": "חוק יסוד: כבוד האדם וחירותו",
-      "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+      "title": "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/900/007/A08&fileName=97007900_A08.txt&type=4",
+      "role": "binding_case_law",
+      "tier": "official_primary",
+      "text_usability": "full_text",
+      "citable_as": "judgment",
+      "judgment": true,
+      "holding_text": true,
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "judgment_document",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ]
+    },
+    {
+      "title": "הערות על פסק דין בנק המזרחי",
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_1885195.pdf",
       "role": "primary_statute",
       "tier": "official_primary",
       "text_usability": "metadata_only",
@@ -60,6 +77,18 @@
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "statutory_background",
+      "flags": []
+    },
+    {
+      "title": "זכרונות תיק בנק המזרחי נ' מגדל ואח' - Gov.il",
+      "url": "https://www.gov.il/BlobFolder/reports/roots_1995_3/he/roots-1995-3.pdf",
+      "role": "factual_report",
+      "tier": "official_primary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
       "flags": []
     },
     {
@@ -77,59 +106,19 @@
       ]
     },
     {
-      "title": "תיאור וניתוח הצעת חוק ההתייעלות הכלכלית (תיקוני חקיקה",
-      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7064&businessType=1",
-      "role": "persuasive_case_law",
-      "tier": "primary_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "unknown",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "unknown",
-      "flags": [
-        "official_host_non_specific_path"
-      ]
-    },
-    {
-      "title": "חוקי היסוד של מדינת ישראל",
-      "url": "https://main.knesset.gov.il/Activity/Legislation/pages/basiclaws.aspx",
-      "role": "primary_statute",
-      "tier": "primary_mirror",
-      "text_usability": "metadata_only",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "official_host_non_specific_path"
-      ]
-    },
-    {
-      "title": "מהפכה או המשכיות: מקומו של פסק-דין בנק המזרחי בהתפתחות המודלים של ביקורת שיפוטית בישראל",
-      "url": "https://cris.biu.ac.il/en/publications/%D7%9E%D7%94%D7%A4%D7%9B%D7%94-%D7%90%D7%95-%D7%94%D7%9E%D7%A9%D7%9B%D7%99%D7%95%D7%AA-%D7%9E%D7%A7%D7%95%D7%9E%D7%95-%D7%A9%D7%9C-%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%91%D7%94%D7%AA%D7%A4%D7%AA%D7%97%D7%95%D7%AA-%D7%94%D7%9E%D7%95%D7%93%D7%9C%D7%99%D7%9D-%D7%A9%D7%9C-/",
+      "title": "הדרך לביקורת שיפוטית על חוקתיות של חוקים — הסמכות להכריז על אי־חוקתיות חקיקה",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%93%D7%A8%D7%9A%20%D7%9C%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA%20%D7%A2%D7%9C%20%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%A9%D7%9C%20%D7%97%D7%95%D7%A7%D7%99%D7%9D%20-%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%9C%D7%94%D7%9B%D7%A8%D7%99%D7%96%20%D7%A2%D7%9C%20%D7%90%D7%99-%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%97%D7%A7%D7%99%D7%A7%D7%94%20-%20%D7%9C%D7%9E%D7%99.pdf",
       "role": "scholarship",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
       "citable_as": "commentary",
       "judgment": false,
-      "holding_text": false,
+      "holding_text": true,
       "synthesis_role": "secondary_commentary",
       "flags": []
     },
     {
-      "title": "תקציר פסק־הדין בעניין בנק המזרחי נ׳ מגדל (התיקון ל״חוק גל״)",
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/12-mizrahi.pdf",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "די בנק המזרחי מקומו של פסק ? מהפכה או המשכיות בהתפתחות ...",
+      "title": "די בנק המזרחי מקומו של פסק? מהפכה או המשכיות בהתפתחות ...",
       "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/Bar-Siman-Tov.pdf",
       "role": "scholarship",
       "tier": "secondary_commentary",
@@ -141,8 +130,8 @@
       "flags": []
     },
     {
-      "title": "בעקבות פסק הדין בנק המזרחי — הסמכות המכוננת",
-      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA%20%D7%A4%D7%A1%D7%A7%20%D7%94%D7%93%D7%99%D7%9F%20%D7%91%D7%A0%D7%A7%20%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99%20-%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%המכוננת%20בראי%20בית-%D7%94%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%A2%D7%9C%D7%99%D7%95%D7%9F.pdf",
+      "title": "סמכות בתי המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות ...",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2024-12/%D7%91%D7%A8%D7%A7%20%D7%9E%D7%93%D7%99%D7%A0%D7%94.pdf",
       "role": "scholarship",
       "tier": "secondary_commentary",
       "text_usability": "metadata_only",
@@ -153,7 +142,31 @@
       "flags": []
     },
     {
-      "title": "חצי יובל לפסק דין בנק המזרחי : שאון תופי המהפכה וקולו של הפיקולו",
+      "title": "המובן הפורמלי והמובן המהותי של מבחני המידתיות בפסיקת בג\"ץ",
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/P_MChoen.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "יתרונותיו של מבחן האיזון האנכי על פני מבחני המידתיות בהגנה על זכויות אדם / The Advantages of The Vertical Balance Test Over The Proportionality Tests For The Protection Of Human Rights",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3685788",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "חצי יובל לפסק דין בנק המזרחי: שאון תופי המהפכה וקולו של הפיקולו",
       "url": "https://www.runi.ac.il/media/cqkldvpg/dotan.pdf",
       "role": "scholarship",
       "tier": "secondary_commentary",
@@ -165,20 +178,8 @@
       "flags": []
     },
     {
-      "title": "מברגמן וקול-העם לבנק המזרחי - הדרך לביקורת שיפוטית על חוקים הפוגעים בזכויות אדם",
-      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%9E%D7%91%D7%A8%D7%92%D7%9E%D7%9F%20%D7%95%D7%A7%D7%95%D7%9C-%D7%94%D7%A2%D7%9D%20%D7%9C%D7%91%D7%A0%D7%A7%20%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99%20-%20%D7%94%D7%93%D7%A8%D7%9A%20%D7%9C%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%20%D7%A9%D7%יפוטית%20%D7%A2%D7%9C%20%D7%97%D7%95%D7%A7%D7%99%D7%9D%20%D7%94%D7%A4%D7%95%D7%92%D7%A2%D7%99%D7%9D%20%D7%91%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%20%D7%90%D7%93%D7%9D.pdf",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
       "title": "בעקבות פסק הדין בנק המזרחי — הסמכות המכוננת בראי בית המשפט העליון",
-      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA%20%D7%A4%D7%A1%D7%A7%20%D7%94%D7%93%D7%99%D7%9F%20%D7%91%D7%A0%D7%A7%20%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99%20-%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%94%D7%9E%D7%כוננת%20%D7%91%D7%A8%D7%90%D7%99%20%D7%91%D7%99%D7%AA-%D7%94%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%A2%D7%9C%D7%99%D7%95%D7%9F.pdf",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/12-mizrahi.pdf",
       "role": "scholarship",
       "tier": "secondary_commentary",
       "text_usability": "metadata_only",
@@ -189,44 +190,32 @@
       "flags": []
     },
     {
-      "title": "חוקה בהרצאה",
-      "url": "https://lawjournal.huji.ac.il/sites/default/files/2024-07/%D7%97%D7%95%D7%A7%D7%94%20%D7%91%D7%94%D7%A8%D7%A6%D7%90%D7%94.pdf",
+      "title": "מהפכה או המשכיות: מקומו של פסק-דין בנק המזרחי בהתפתחות המודלים של ביקורת שיפוטית בישראל",
+      "url": "https://cris.biu.ac.il/en/publications/%D7%9E%D7%94%D7%A4%D7%9B%D7%94-%D7%90%D7%95-%D7%94%D7%9E%D7%A9%D7%9B%D7%99%D7%95%D7%AA-%D7%9E%D7%A7%D7%95%D7%9E%D7%95-%D7%A9%D7%9C-%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%91%D7%94%D7%AA%D7%A4%D7%AA%D7%97%D7%95%D7%AA-%D7%94%D7%9E%D7%95%D7%93%D7%9C%D7%99%D7%9D-%D7%A9%D7%9C-",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "בעקבות פסק־הדין בנק המזרחי — הסמכות המכוננת בראי בית המשפט העליון",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA%20%D7%A4%D7%A1%D7%A7%20%D7%94%D7%93%D7%99%D7%9F%20%D7%91%D7%A0%D7%A7%20%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99%20-%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%94%D7%9E%D7%9B%D7%95%D7%A0%D7%A0%D7%AA%20%D7%91%D7%A8%D7%90%D7%99%20%D7%91%D7%99%D7%AA-%D7%94%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%A2%D7%9C%D7%99%D7%95%D7%9F.pdf",
       "role": "scholarship",
       "tier": "secondary_commentary",
       "text_usability": "metadata_only",
-      "citable_as": "commentary",
+      "citable_as": "unknown",
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "secondary_commentary",
       "flags": []
     },
     {
-      "title": "עשרים שנה לבנק המזרחי: סיפורה הפיקנטי של חוקת הכלאיים הישראלית",
-      "url": "https://www.academia.edu/86416577/%D7%A2%D7%A9%D7%A8%D7%99%D7%9D_%D7%A9%D7%A0%D7%94_%D7%9C%D7%91%D7%A0%D7%A7_%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99_%D7%A1%D7%99%D7%A4%D7%95%D7%A8%D7%94_%D7%94%D7%A4%D7%99%D7%A7%D7%A0%D7%98%D7%99_%D7%A9%D7%9C_%D7%97%D7%95%D7%A7%D7%AA_%D7%94%D7%9B%D7%9C%D7%90%D7%99%D7%99%D7%9D_%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%D7%AA_United_Mizrahi_Banks_Twentieth_Anniversary_On_the_Piquant_Story_of_the_Hybrid_Israeli_Constitution?uc-sb-sw=28011015",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "שני מושגים של ריסון - וסבירות",
-      "url": "https://lawjournal.huji.ac.il/article/12/1807",
-      "role": "persuasive_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "scholarship",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "עע\"מ 5427/21 מדינת ישראל- משרד הבריאות, משטרת ישראל ובית החולים נ׳ פלוני פס\"ד פסק דין (31.05.2022)",
-      "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-5427-21-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%9e%d7%a9%d7%98%d7%a8%d7%aa-%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "ע\"א 206/20 טבע תעשיות פרמצבטיות בע\"מ נ׳ טי.אנד.אם גושן פסק דין (13.12.2021)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-206-20-%d7%98%d7%91%d7%a2-%d7%aa%d7%a2%d7%a9%d7%99%d7%95%d7%aa-%d7%a4%d7%a8%d7%9e%d7%a6%d7%91%d7%98%d7%99%d7%95%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%98%d7%99-%d7%90%d7%a0%d7%93-%d7%90/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
@@ -237,8 +226,8 @@
       "flags": []
     },
     {
-      "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
-      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "רע\"א 4179/20 בסט קאר חברה לשירותי רכב בע\"מ נ׳ איי. די .איי חברה לביטוח בע פסק דין",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-4179-20-%d7%91%d7%a1%d7%98-%d7%a7%d7%90%d7%a8-%d7%97%d7%91%d7%a8%d7%94-%d7%9c%d7%a9%d7%99%d7%a8%d7%95%d7%aa%d7%99-%d7%a8%d7%9b%d7%91-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%90%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
@@ -249,20 +238,8 @@
       "flags": []
     },
     {
-      "title": "עע\"מ 449-13 - קבוצת קדם חיזוק וחידוש מבנים בע\"מ נ. עיריית תל אביב",
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/67/1&fileName=SZ1_4_4491-13.pdf&type=2",
-      "role": "binding_case_law",
-      "tier": "official_primary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "judgment",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "leading_candidate",
-      "flags": []
-    },
-    {
-      "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
-      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
@@ -273,8 +250,20 @@
       "flags": []
     },
     {
-      "title": "מטבעות קריפטוגרפיים: אתגרים מושגיים, משפטיים ורגולטיביים | יונתן יובל (כרך ט\"ז)",
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2023/06/din16-yovel.pdf",
+      "title": "בש\"פ 1758/20 יונתן אוריך נ׳ מדינת ישראל פסק דין (26.01.2021)",
+      "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-1758-20-%d7%99%d7%95%d7%a0%d7%aa%d7%9f-%d7%90%d7%95%d7%a8%d7%99%d7%9a-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "מי הזיז את העכבר שלי? טכנולוגיה, שירותים משפטיים מקוונים ואתיקה מקצועית",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_b5df6d51efe843ba84c1d01c5056ff9c.pdf",
       "role": "persuasive_case_law",
       "tier": "secondary_commentary",
       "text_usability": "full_text",
@@ -283,10 +272,46 @@
       "holding_text": false,
       "synthesis_role": "secondary_commentary",
       "flags": []
+    },
+    {
+      "title": "על הסכנה ההגבלית שבהסכם זכיינות – פטור ולא פטור",
+      "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/Adi_Eyal_Article.pdf",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "פיקוח על מיזוגים כפתרון (חלקי) לבעיית הריכוזיות הכלל-משקית | ליאור פרנק ומיכל גל (כרך י\"ז)",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2024/01/din17-frank.pdf",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "ההגנה על עקרון השוויון בדיני הנזיקין והאחריות ברשלנות במסגרת יחסי־כוח",
+      "url": "https://lawjournal.huji.ac.il/article/12/1127",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
     }
   ],
   "acquisition": {
-    "ms": 2,
+    "ms": 946,
     "mode": "specific_case",
     "budget": {
       "other": 1,
@@ -294,15 +319,299 @@
       "leading": 3
     },
     "enabled": true,
-    "attempts": [],
-    "excluded": [],
-    "successes": 0,
-    "attempts_made": 0,
-    "eligible_count": 0,
-    "judgment_candidates": 5
+    "attempts": [
+      {
+        "ms": 869,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/900/007/A08&fileName=97007900_A08.txt&type=4",
+        "title": "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+        "success": true,
+        "candidate_id": "fb70b5cf-7531-46f5-973b-33a9ed87d9c0",
+        "title_signal": "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+        "docket_signal": "ע\"א 6821/93",
+        "failure_reason": null,
+        "synthesis_role": "leading_candidate",
+        "trigger_reason": "metadata_only",
+        "has_holding_text": true,
+        "method_succeeded": "direct_file_fetch",
+        "docket_normalized": "aa:6821/93",
+        "methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": true,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 25681,
+        "text_usability_before": "metadata_only",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": true
+      },
+      {
+        "ms": 75,
+        "url": "https://www.gov.il/BlobFolder/reports/roots_1995_3/he/roots-1995-3.pdf",
+        "title": "זכרונות תיק בנק המזרחי נ' מגדל ואח' - Gov.il",
+        "success": false,
+        "candidate_id": "897d531f-52ea-438f-bec3-5186259ca3f8",
+        "title_signal": "זכרונות תיק בנק המזרחי נ' מגדל ואח' - Gov.il",
+        "docket_signal": null,
+        "failure_reason": "http_403",
+        "synthesis_role": "unknown",
+        "trigger_reason": "text_below_threshold",
+        "has_holding_text": false,
+        "method_succeeded": null,
+        "docket_normalized": null,
+        "methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": false,
+        "acquired_text_length": 0,
+        "final_text_usability": "substantive_excerpt",
+        "text_usability_after": "substantive_excerpt",
+        "acquisition_attempted": true,
+        "extracted_text_length": 0,
+        "text_usability_before": "substantive_excerpt",
+        "acquisition_failure_reasons": [
+          "http_403"
+        ],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "body_contains_docket_or_title": false,
+        "can_support_synthesis_holding": false
+      }
+    ],
+    "excluded": [
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+        "reason": "budget_exhausted",
+        "candidate_id": "5a81a35d-0b83-45ad-b2d8-fc49b4b060ba"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-206-20-%d7%98%d7%91%d7%a2-%d7%aa%d7%a2%d7%a9%d7%99%d7%95%d7%aa-%d7%a4%d7%a8%d7%9e%d7%a6%d7%91%d7%98%d7%99%d7%95%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%98%d7%99-%d7%90%d7%a0%d7%93-%d7%90/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"א 206/20 טבע תעשיות פרמצבטיות בע\"מ נ׳ טי.אנד.אם גושן פסק דין (13.12.2021)",
+        "reason": "budget_exhausted",
+        "candidate_id": "6f5b9add-31c6-43dc-b5de-ef6340707b0d"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-4179-20-%d7%91%d7%a1%d7%98-%d7%a7%d7%90%d7%a8-%d7%97%d7%91%d7%a8%d7%94-%d7%9c%d7%a9%d7%99%d7%a8%d7%95%d7%aa%d7%99-%d7%a8%d7%9b%d7%91-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%90%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 4179/20 בסט קאר חברה לשירותי רכב בע\"מ נ׳ איי. די .איי חברה לביטוח בע פסק דין",
+        "reason": "budget_exhausted",
+        "candidate_id": "960f3622-8a75-4b77-8e0c-72bcccc474f7"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "reason": "budget_exhausted",
+        "candidate_id": "93160ada-2d8c-4f6e-9770-81b133261efb"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-1758-20-%d7%99%d7%95%d7%a0%d7%aa%d7%9f-%d7%90%d7%95%d7%a8%d7%99%d7%9a-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בש\"פ 1758/20 יונתן אוריך נ׳ מדינת ישראל פסק דין (26.01.2021)",
+        "reason": "budget_exhausted",
+        "candidate_id": "9976c816-a2f1-49b2-84dc-9dd964bb5362"
+      }
+    ],
+    "successes": 1,
+    "attempts_made": 2,
+    "eligible_count": 7,
+    "judgment_candidates": 7,
+    "eligibility_diagnostics": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/900/007/A08&fileName=97007900_A08.txt&type=4",
+        "title": "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "fb70b5cf-7531-46f5-973b-33a9ed87d9c0",
+        "planner_role": "binding_case_law",
+        "has_court_url": true,
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": null,
+        "has_party_names": true,
+        "has_download_url": true,
+        "docket_normalized": "aa:6821/93",
+        "eligibility_basis": [
+          "docket_signal",
+          "official_court_url",
+          "case_title_party_names",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/reports/roots_1995_3/he/roots-1995-3.pdf",
+        "title": "זכרונות תיק בנק המזרחי נ' מגדל ואח' - Gov.il",
+        "eligible": true,
+        "citable_as": "unknown",
+        "source_type": "other",
+        "candidate_id": "897d531f-52ea-438f-bec3-5186259ca3f8",
+        "planner_role": "factual_report",
+        "has_court_url": false,
+        "authority_tier": "official_primary",
+        "synthesis_role": "unknown",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": null,
+        "has_party_names": true,
+        "has_download_url": true,
+        "docket_normalized": null,
+        "eligibility_basis": [
+          "case_title_party_names"
+        ],
+        "has_docket_signal": false,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+        "eligible": true,
+        "citable_as": "not_citable",
+        "source_type": "caselaw",
+        "candidate_id": "5a81a35d-0b83-45ad-b2d8-fc49b4b060ba",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "index_or_listing",
+        "synthesis_role": "unknown",
+        "text_usability": "listing_page",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": "ta:32539/4/24",
+        "eligibility_basis": [
+          "docket_signal"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-206-20-%d7%98%d7%91%d7%a2-%d7%aa%d7%a2%d7%a9%d7%99%d7%95%d7%aa-%d7%a4%d7%a8%d7%9e%d7%a6%d7%91%d7%98%d7%99%d7%95%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%98%d7%99-%d7%90%d7%a0%d7%93-%d7%90/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"א 206/20 טבע תעשיות פרמצבטיות בע\"מ נ׳ טי.אנד.אם גושן פסק דין (13.12.2021)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "6f5b9add-31c6-43dc-b5de-ef6340707b0d",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "aa:206/20",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-4179-20-%d7%91%d7%a1%d7%98-%d7%a7%d7%90%d7%a8-%d7%97%d7%91%d7%a8%d7%94-%d7%9c%d7%a9%d7%99%d7%a8%d7%95%d7%aa%d7%99-%d7%a8%d7%9b%d7%91-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%90%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 4179/20 בסט קאר חברה לשירותי רכב בע\"מ נ׳ איי. די .איי חברה לביטוח בע פסק דין",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "960f3622-8a75-4b77-8e0c-72bcccc474f7",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "raa:4179/20",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "93160ada-2d8c-4f6e-9770-81b133261efb",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "bagatz:5658/23",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-1758-20-%d7%99%d7%95%d7%a0%d7%aa%d7%9f-%d7%90%d7%95%d7%a8%d7%99%d7%9a-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בש\"פ 1758/20 יונתן אוריך נ׳ מדינת ישראל פסק דין (26.01.2021)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "9976c816-a2f1-49b2-84dc-9dd964bb5362",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "bshp:1758/20",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      }
+    ]
   },
-  "used_sources": 11,
+  "used_sources": 9,
   "footnotes": 6,
-  "answer_len": 1935,
-  "answer": "בפסק‑דין 'בנק המזרחי' נחזה מעבר לדגם פרוצדורלי גרידא: בפסיקה זו — כפי שמנתחים מספר מקורות אקדמיים — התגבשה תפיסה של ביקורת שיפוטית סובסטנטיבית המאפשרת לבית המשפט העליון לעיין בטיב החקיקה ולבטלה במקרים שבהם היא אינה עומדת בעקרונות יסוד ובאמות‑מדה מהותיות של זכויות וחוקיות.¹\n\nמבחני הבדיקה שהתבססו על ניתוחי פסק‑הדין כוללים בדיקה מהותית של פגיעה בזכויות יסוד, איזון בין אינטרסים ציבוריים לפרטיים ובחינת מידתיות (קרובה למבחן הפרופורציונליות): כלומר, הפסיקה דרשה שמחוקק ייצג נכונות סבירה לפגיעה וזיקה מידתית בין המטרה לבין האמצעים.²\n\nיחס ההלכה להיררכיית הנורמות נחקר בכתיבה המשפטית: מספר ניתוחים מצביעים כי בנק המזרחי נתן משקל מיוחד להוראות יסוד (חוקי יסוד) כנקודת ייחוס ערכית, אך לא ניסח כלל פורמלי חד־משמעי שקובע כי כל חוק יסוד יגבור באופן אוטומטי על חוק רגיל בכל נסיבה.³\n\nלכן, יש דוגמאות שבהן ההכרעה נשענת על בסיס של הוראת יסוד ובמקרים אחרים נגררו היסקים מתוך עקרונות כלליים של שלטון החוק וזכויות יסוד; הדיון האקדמי אף מדבר על דוקטרינות משלימות שהופיעו לאחר מכן, כגון טענות על 'שימוש לרעה בסמכות מכוננת' או על 'תיקון חוקתי' שאינם מהווים ניסוח אחד אחיד לפסיקה.⁴\n\nבתוצאה המעשית, מחקרי משפט והניתוחים מבקשים לזקוף לבנק המזרחי השפעה חיובית על אימוץ ביקורת מהותית במשפט הישראלי: הפסק‑דין הזניק ויכוח חדש, שימש כעוגן לפרשנויות שאימצו מבחני מידתיות והותיר רושם נרחב בשיח המשפטי והציבורי — אך יש גם טענות כי השפעתו פורשה ונדונה מחדש בעשורים שלאחריו.⁵\n\nבפסיקה מאוחרת ניכרים שימושים והסתייגויות: נמצאו הכרעות שהתייחסו לכללים או לשיקולים שהועלו בדיון סביב בנק המזרחי, אך היישום המעשי משתנה בין תיקים ובין הרכב לשיפוט — כך שגם על אופן האימוץ וההיקף אסור להסיק מסקנה אחידה מן המקורות המופיעים כאן.⁶\n\nסיכום והסתייגות שיטתית: הפרשנות של 'בנק המזרחי' כפי שהיא משתקפת במקורות האקדמיים המצורפים מצביעה על העמדה שהעניקה לבית המשפט סמכות בדיקה מהותית של חקיקה ויצרה דגש על מבחני מידתיות וזכויות יסוד; עם זאת, המקורות שניתנו הם ניתוחים פרשניים ולא נוסח הפסיקה המקורית המובא במלואו, ולכן יש להגדיר את המסקנה ברמה של מגמה פרשנית ולא כהכרעה טכנית־פורמלית מלאה."
+  "answer_len": 1998,
+  "answer": "שורה תחתונה: בפסק‑דין 'בנק המזרחי' קבע בית המשפט העליון כי בתי‑המשפט — ובייחוד בית המשפט העליון — מוסמכים לערוך ביקורת שיפוטית על חקיקת הכנסת ולבחון האם חקיקה פוגעת בזכויות יסוד, ובמקרים שבהם נקבע פגיעה תתאפשר תמיכה בסעד שיבטל או יתקן את ההשפעה החוקתית של החקיקה הרלוונטית.¹\n\n**עובדות וצדדים**\n\nבפסק‑דין זה (עא790/97), המערער הוא בנק המזרחי המאוחד; המשיבים כללו את מגדל כפר שיתופי ואנשים פרטיים. המחלוקת נגעה לעסקת מקרקעין ולשינוי חקיקה 'מחדשת' שהשפיע על זכויות קניין של בעלי זכות בקרקע, ונטענה טענה חוקתית שבית המשפט קיבל לגבי פגיעה בזכויות הקניין.²\n\n**מה נפסק ביחס לסמכות בתי‑המשפט לבטל חקיקה**\n\nבית המשפט העליון קיבל את הטענה החוקתית שבמקרה קבעה פגיעה בזכויות קניין והעניק סעד מתאימה שתרמה לאימות היכולת השיפוטית להתמודד עם חקיקה פוגעת; יחד עם זאת בפסק‑הדין לא נוסחה הכרזה אבסולוטית שאומרת שבג\"ץ רשאי לבטל חוקים בכל נסיבה ללא מבחנים או מגבלות פרשניות ושיפוטיות.¹\n\n**המבחנים והתנאים שצופו בפסק‑דין ובניתוחים הפרשניים**\n\nבניתוח שהובא בפסק‑הדין ובמאמרים המנתחים אותו הוצגו כללי בדיקה על בסיס פסקת ההגבלה ומבחני מידתיות שמשקללים את מידת הפגיעה, תכלית החקיקה והקשר בין האמצעים למטרה; הפסיקה הזיקה חשיבות לפרשנות מצמצמת ולבחינת זהות הפלוגתא טרם מתן סעד ביטולי.³\n\nבנוסף ציינו פרשנים כי בית המשפט הנחה מגבלות פרקטיות: יש להראות פגיעה ממשית בזכויות, להפעיל שיקול איזון בין זכויות וזכויות קיבולת החקיקה, ולשקול קודם פרשנות מצמצמת או תיקון שיפוטי מצומצם לפני הכרזה על ביטול כולל של חוק.⁴\n\n**השלכות מעשיות והדיון האקדמי**\n\nמחקר וספרות משפטית רואים בפסק‑דין בנק המזרחי נקודת מפנה שעידנה והעצימה את היקף הביקורת השיפוטית; חלק מהכותבים טענו כי הוא חיזק את המודל הסובסטנטיבי של הביקורת והשפיע על הפרקטיקה השיפוטית לאחר מכן, אם כי יש ויכוח לגבי היקף השינוי וכיצד לפרש את היקף 'הסמכות המכוננת' שמיוחסת לפסיקה זו.⁵\n\nלסיכום: פסק‑דין בנק המזרחי קבע כי לבתי‑המשפט נתונה סל השיפוט לבחון חוקתיות חקיקה ולנקוט סעד במקרים של פגיעה בזכויות יסוד, תוך יישום מבחני מידתיות, פרשנות מצמצמת ושיקולי איפוק שיפוטי; עם זאת קיים בדיון פרשני מתמשך לגבי מידה שבה הפסיקה הקנתה סמכות 'מוחלטת' לביטול חוקים והמשמעות המוסדית של הכרעה זו.⁶"
 }

@@ -2,8 +2,8 @@
   "id": "R08",
   "query": "כתוב סקירה משפטית קצרה על התפתחות מבחני המידתיות במשפט החוקתי הישראלי.",
   "mode_expected": "academic_legal_review",
-  "run_id": "78e2c1ad-a31c-466b-b27e-3df1b0399f29",
-  "total_ms": 217063,
+  "run_id": "515f2e1d-442a-47c1-9398-7b3ad6ff552c",
+  "total_ms": 248739,
   "research_mode": null,
   "shape": null,
   "deterministic_branch": null,
@@ -12,72 +12,81 @@
   "sufficiency_reason": "doctrinal_anchor_present",
   "pool": {
     "found": null,
-    "admitted": 22,
+    "admitted": 23,
     "integrity_rejects": 0,
     "tier_counts": {
-      "statute_mirror": 1,
-      "index_or_listing": 3,
+      "primary_mirror": 3,
+      "statute_mirror": 4,
+      "index_or_listing": 1,
       "official_primary": 3,
-      "secondary_commentary": 15
+      "secondary_commentary": 12
     },
     "citable_counts": {
-      "statute": 1,
+      "statute": 4,
       "unknown": 2,
-      "judgment": 1,
-      "commentary": 8,
-      "not_citable": 3,
-      "scholarship": 7
+      "judgment": 4,
+      "commentary": 7,
+      "not_citable": 1,
+      "scholarship": 5
     },
-    "judgment_documents": 0,
+    "judgment_documents": 1,
     "judgments_with_holding_text": 0,
     "synthesis_role_counts": {
-      "unknown": 5,
-      "applying_candidate": 1,
-      "secondary_commentary": 15,
-      "statutory_background": 1
+      "unknown": 2,
+      "leading_candidate": 1,
+      "applying_candidate": 3,
+      "secondary_commentary": 12,
+      "statutory_background": 5
     }
   },
   "text_usability_counts": {
-    "metadata_only": 9,
-    "listing_page": 3,
-    "substantive_excerpt": 5,
-    "full_text": 5
+    "full_text": 5,
+    "listing_page": 1,
+    "substantive_excerpt": 10,
+    "metadata_only": 7
   },
   "role_counts": {
-    "government_report": 2,
-    "binding_case_law": 7,
-    "primary_statute": 2,
-    "scholarship": 9,
-    "persuasive_case_law": 2
+    "persuasive_case_law": 3,
+    "binding_case_law": 8,
+    "primary_statute": 4,
+    "scholarship": 7,
+    "factual_report": 1
   },
   "admitted_sources": [
     {
-      "title": "דו״ח סיכום פעילות 2021",
-      "url": "https://www.gov.il/BlobFolder/reports/300423/he/2021.pdf",
-      "role": "government_report",
+      "title": "בג״ץ 1308/17",
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision1308-17/he/1308-17.pdf",
+      "role": "persuasive_case_law",
       "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "unknown",
+      "text_usability": "full_text",
+      "citable_as": "judgment",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "unknown",
-      "flags": []
+      "synthesis_role": "applying_candidate",
+      "flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
+      ]
     },
     {
-      "title": "הנחיית פרקליט המדינה / הוראת עבודה - ציות לפסקי דין",
-      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/16-017-00/he/s-a-guidelines_16.17.pdf",
-      "role": "government_report",
+      "title": "פסק-דין בתיק בג\"ץ 1107/21",
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision1107-21/he/%D7%A4%D7%A1%D7%93%201107-21.pdf",
+      "role": "persuasive_case_law",
       "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "unknown",
-      "judgment": false,
+      "text_usability": "full_text",
+      "citable_as": "judgment",
+      "judgment": true,
       "holding_text": false,
-      "synthesis_role": "unknown",
-      "flags": []
+      "synthesis_role": "applying_candidate",
+      "flags": [
+        "judgment_document",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
+      ]
     },
     {
-      "title": "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
-      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+      "title": "בימ\"ש עליון, הרכב שופטים השופטת דפנה ברק-ארז, השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין, השופט יחיאל כשר:  פס\"ד בפרשת העוברים (בע\"מ 69395-03-25)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
       "role": "binding_case_law",
       "tier": "index_or_listing",
       "text_usability": "listing_page",
@@ -88,6 +97,18 @@
       "flags": [
         "listing_or_pagination_page"
       ]
+    },
+    {
+      "title": "אין דנים אדם על מעשה שהורשע בו קודם לכן? יוצרים שיטה לעדות השיטה",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_81655c5d954049b7878df6abb69469ca.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
     },
     {
       "title": "חוק בינוי ופינוי של אזורי שיקום",
@@ -104,11 +125,11 @@
       ]
     },
     {
-      "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
-      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+      "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+      "url": "https://lawjournal.huji.ac.il/article/12/1930",
       "role": "primary_statute",
       "tier": "secondary_commentary",
-      "text_usability": "full_text",
+      "text_usability": "substantive_excerpt",
       "citable_as": "scholarship",
       "judgment": false,
       "holding_text": false,
@@ -116,8 +137,96 @@
       "flags": []
     },
     {
-      "title": "איזון חוקתי עקרוני ומידתיות: ההיבט התורתי",
-      "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
+      "title": "בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות ...",
+      "url": "http://lawjournal.huji.ac.il/article/12/1550",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט",
+      "url": "https://cris.biu.ac.il/en/publications/%D7%A2%D7%9C-%D7%94%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA-%D7%A9%D7%9C-%D7%94%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA-%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA-%D7%A1%D7%A4%D7%A8%D7%95-%D7%A9%D7%9C-%D7%90%D7%94%D7%A8%D7%9F-%D7%91%D7%A8%D7%A7-%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA-%D7%91%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%A4%D7%92-2/",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "על \"פגיעה\" בזכות חוקתית ועל \"תכלית ראויה\": בעקבות ספרו של אהרן ברק \"מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה\" (2010): [מאמר ביקורת]",
+      "url": "https://cris.huji.ac.il/en/publications/%D7%A2%D7%9C-%D7%A4%D7%92%D7%99%D7%A2%D7%94-%D7%91%D7%96%D7%9B%D7%95%D7%AA-%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%AA-%D7%95%D7%A2%D7%9C-%D7%AA%D7%9B%D7%9C%D7%99%D7%AA-%D7%A8%D7%90%D7%95%D7%99%D7%94-%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA-%D7%A1%D7%A4%D7%A8%D7%95-%D7%A9%D7%9C-%D7%90%D7%94%D7%A8%D7%9F-%D7%91%D7%A8%D7%A7-%D7%9E%D7%99%D7%93",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "אהרן ברק / פרשנות במשפט",
+      "url": "https://www.nevo.co.il/Content/Safrut/TableOfContents/parshanut-c/",
+      "role": "persuasive_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "applying_candidate",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "מרכז המחקר והמידע של הכנסת",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/default.aspx",
+      "role": "factual_report",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "עליית המידתיות, ירידת ההסתברות והשלכותיה הבלתי-צפויות של המהפכה החוקתית על המשפט החוקתי הישראלי",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3245792",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת ...",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "המובן הפורמלי והמובן המהותי של מבחני המידתיות בפסיקת בג\"ץ",
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/P_MChoen.pdf",
       "role": "scholarship",
       "tier": "secondary_commentary",
       "text_usability": "metadata_only",
@@ -140,103 +249,31 @@
       "flags": []
     },
     {
-      "title": "פתח דבר",
-      "url": "https://kotar.cet.ac.il/kotarapp/index/Page.aspx?nBookID=103799703&nTocEntryID=103801084&nPageID=103799828",
-      "role": "scholarship",
-      "tier": "index_or_listing",
-      "text_usability": "listing_page",
-      "citable_as": "not_citable",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "unknown",
-      "flags": [
-        "listing_or_pagination_page"
-      ]
-    },
-    {
-      "title": "יתרונותיו של מבחן האיזון האנכי על פני מבחני המידתיות בהגנה על זכויות אדם",
-      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3685788",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "המובן הפורמלי והמובן המהוהי של מבחני המידתיות בפסיקת בג\"ץ",
-      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/P_MChoen.pdf",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "מידתיות במבט ביקורתי ומשווה",
-      "url": "https://kotar.cet.ac.il/kotarapp/index/Book.aspx?nBookID=103799703",
-      "role": "scholarship",
-      "tier": "index_or_listing",
-      "text_usability": "listing_page",
-      "citable_as": "not_citable",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "unknown",
-      "flags": [
-        "listing_or_pagination_page"
-      ]
-    },
-    {
-      "title": "חוקה למדינת ישראל - הדיאלוג הקונסטיטוציוני לאחר 'המהפכה החוקתית'",
-      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%97%D7%95%D7%A7%D7%94%20%D7%9C%D7%9E%D7%93%D7%99%D7%A0%D7%AA%20%D7%99%D7%A9%D7%A8%D7%90%D7%9C%20-%20%D7%94%D7%93%D7%99%D7%90%D7%9C%D7%95%D7%92%20%D7%94%D7%A7%D7%95%D7%A0%D7%A1%D7%98%D7%99%D7%98%D7%95%D7%A6%D7%99%D7%95%D7%A0%D7%99%20%D7%9C%D7%90%D7%97%D7%A8%20'%D7%94%D7%9E%D7%94%D7%A4%D7%9B%D7%94%20%D7%94%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%AA'.pdf",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "בית־משפט חוקתי למדינת ישראל",
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/3-barack.pdf",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "הביקורת השיפוטית על חוקיות חוקים",
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-zamir-1.pdf",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "ע\"פ 845-02 - מדינת ישראל נ. תנובה מרכז שיתופי לשיווק תוצרת חקלאית לישראל",
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/3&fileName=SB3_11_845-02.pdf&type=2",
-      "role": "persuasive_case_law",
+      "title": "עע\"מ 4614-05 - מדינת ישראל נ. אבנר אורן",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_5_4614-05.pdf&type=2",
+      "role": "binding_case_law",
       "tier": "official_primary",
-      "text_usability": "substantive_excerpt",
+      "text_usability": "full_text",
       "citable_as": "judgment",
       "judgment": false,
+      "holding_text": true,
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ]
+    },
+    {
+      "title": "אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו)",
+      "url": "https://runilawreview.org/2012/11/26/volume15_barak/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
       "holding_text": false,
-      "synthesis_role": "applying_candidate",
+      "synthesis_role": "secondary_commentary",
       "flags": []
     },
     {
@@ -252,21 +289,9 @@
       "flags": []
     },
     {
-      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
-      "role": "binding_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "full_text",
-      "citable_as": "scholarship",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
       "title": "מי הזיז את העכבר שלי? טכנולוגיה, שירותים משפטיים מקוונים ואתיקה מקצועית",
       "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_b5df6d51efe843ba84c1d01c5056ff9c.pdf",
-      "role": "persuasive_case_law",
+      "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "full_text",
       "citable_as": "scholarship",
@@ -276,56 +301,64 @@
       "flags": []
     },
     {
-      "title": "בג\"ץ 3390/16 עדאלה – המרכז המשפטי לזכויות המיעוט הערבי בישראל נ׳ הכנסת פסק דין",
-      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3390-16-%d7%a2%d7%93%d7%90%d7%9c%d7%94-%d7%94%d7%9e%d7%a8%d7%9b%d7%96-%d7%94%d7%9e%d7%a9%d7%a4%d7%98%d7%99-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%9e%d7%99%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "פקודת המכרות",
+      "url": "https://he.wikisource.org/wiki/%D7%A4%D7%A7%D7%95%D7%93%D7%AA_%D7%94%D7%9E%D7%9B%D7%A8%D7%95%D7%AA",
       "role": "binding_case_law",
-      "tier": "secondary_commentary",
+      "tier": "statute_mirror",
       "text_usability": "substantive_excerpt",
-      "citable_as": "commentary",
+      "citable_as": "statute",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
     },
     {
-      "title": "החלה ישירה של זכויות האדם על הכלל",
-      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_93301dbd20b64543b3ea796d359434d5.pdf",
+      "title": "תקנות הנמלים (בטיחות השיט)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%A0%D7%9E%D7%9C%D7%99%D7%9D_(%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%94%D7%A9%D7%99%D7%98)",
       "role": "binding_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "full_text",
-      "citable_as": "scholarship",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "בין \"קניין תרבותי\" לתפיסה זמנית של נכסים: על הצורך בדין הפקעות כללי",
-      "url": "https://lawjournal.huji.ac.il/article/12/1816",
-      "role": "binding_case_law",
-      "tier": "secondary_commentary",
+      "tier": "statute_mirror",
       "text_usability": "substantive_excerpt",
-      "citable_as": "scholarship",
+      "citable_as": "statute",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
     },
     {
-      "title": "צדק ביחסים ודיני נזיקין ביקורת על &quot;צדק ביחסים&quot; של חנוך דגן ואביחי דורפמן",
-      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_5323b995add546adb8eb33a65c7b5689.pdf",
-      "role": "binding_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "full_text",
-      "citable_as": "scholarship",
+      "title": "ומידע מחקר מרכז מנהל",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=3340&businessType=1",
+      "role": "primary_statute",
+      "tier": "primary_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "חוק הסדרת העיסוק בשירותי תשלום וייזום תשלום",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A1%D7%93%D7%A8%D7%AA_%D7%94%D7%A2%D7%99%D7%A1%D7%95%D7%A7_%D7%91%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99_%D7%AA%D7%A9%D7%9C%D7%95%D7%9D_%D7%95%D7%99%D7%99%D7%96%D7%95%D7%9D_%D7%AA%D7%A9%D7%9C%D7%95%D7%9D",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
     }
   ],
   "acquisition": {
-    "ms": 2,
+    "ms": 6860,
     "mode": "doctrine_explanation",
     "budget": {
       "other": 2,
@@ -333,15 +366,232 @@
       "leading": 3
     },
     "enabled": true,
-    "attempts": [],
-    "excluded": [],
-    "successes": 0,
-    "attempts_made": 0,
-    "eligible_count": 0,
-    "judgment_candidates": 2
+    "attempts": [
+      {
+        "ms": 3441,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_5_4614-05.pdf&type=2",
+        "title": "עע\"מ 4614-05 - מדינת ישראל נ. אבנר אורן",
+        "success": true,
+        "candidate_id": "730be43b-1a7c-4aa3-a996-f5143703141c",
+        "title_signal": "עע\"מ 4614-05 - מדינת ישראל נ. אבנר אורן",
+        "docket_signal": "עע\"מ 4614/05",
+        "failure_reason": null,
+        "synthesis_role": "leading_candidate",
+        "trigger_reason": "no_judgment_body_text",
+        "has_holding_text": true,
+        "method_succeeded": "direct_file_fetch",
+        "docket_normalized": "aam:4614/5",
+        "methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": true,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 92985,
+        "text_usability_before": "substantive_excerpt",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": true
+      },
+      {
+        "ms": 1784,
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision1308-17/he/1308-17.pdf",
+        "title": "בג״ץ 1308/17",
+        "success": true,
+        "candidate_id": "72f092e3-4258-4048-9b92-3b5c48b7bda1",
+        "title_signal": "בג״ץ 1308/17",
+        "docket_signal": "בג\"ץ 1308/17",
+        "failure_reason": null,
+        "synthesis_role": "applying_candidate",
+        "trigger_reason": "metadata_only",
+        "has_holding_text": false,
+        "method_succeeded": "local_db_docket_lookup",
+        "docket_normalized": "bagatz:1308/17",
+        "methods_attempted": [
+          "direct_file_fetch",
+          "local_db_docket_lookup"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 11849,
+        "text_usability_before": "metadata_only",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch",
+          "local_db_docket_lookup"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": false
+      },
+      {
+        "ms": 1633,
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision1107-21/he/%D7%A4%D7%A1%D7%93%201107-21.pdf",
+        "title": "פסק-דין בתיק בג\"ץ 1107/21",
+        "success": true,
+        "candidate_id": "99c8e0e8-5b21-476d-94f7-560049e69674",
+        "title_signal": "פסק-דין בתיק בג\"ץ 1107/21",
+        "docket_signal": "בג\"ץ 1107/21",
+        "failure_reason": null,
+        "synthesis_role": "applying_candidate",
+        "trigger_reason": "metadata_only",
+        "has_holding_text": false,
+        "method_succeeded": "local_db_docket_lookup",
+        "docket_normalized": "bagatz:1107/21",
+        "methods_attempted": [
+          "direct_file_fetch",
+          "local_db_docket_lookup"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 11844,
+        "text_usability_before": "metadata_only",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch",
+          "local_db_docket_lookup"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": false
+      }
+    ],
+    "excluded": [
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "בימ\"ש עליון, הרכב שופטים השופטת דפנה ברק-ארז, השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין, השופט יחיאל כשר:  פס\"ד בפרשת העוברים (בע\"מ 69395-03-25)",
+        "reason": "budget_exhausted",
+        "candidate_id": "ed60bc47-a15e-48f9-9ee4-65705994d141"
+      }
+    ],
+    "successes": 3,
+    "attempts_made": 3,
+    "eligible_count": 4,
+    "judgment_candidates": 4,
+    "eligibility_diagnostics": [
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision1308-17/he/1308-17.pdf",
+        "title": "בג״ץ 1308/17",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "72f092e3-4258-4048-9b92-3b5c48b7bda1",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": false,
+        "authority_tier": "official_primary",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": true,
+        "docket_normalized": "bagatz:1308/17",
+        "eligibility_basis": [
+          "docket_signal",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision1107-21/he/%D7%A4%D7%A1%D7%93%201107-21.pdf",
+        "title": "פסק-דין בתיק בג\"ץ 1107/21",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "99c8e0e8-5b21-476d-94f7-560049e69674",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": false,
+        "authority_tier": "official_primary",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": true,
+        "docket_normalized": "bagatz:1107/21",
+        "eligibility_basis": [
+          "docket_signal",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "בימ\"ש עליון, הרכב שופטים השופטת דפנה ברק-ארז, השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין, השופט יחיאל כשר:  פס\"ד בפרשת העוברים (בע\"מ 69395-03-25)",
+        "eligible": true,
+        "citable_as": "not_citable",
+        "source_type": "caselaw",
+        "candidate_id": "ed60bc47-a15e-48f9-9ee4-65705994d141",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "index_or_listing",
+        "synthesis_role": "unknown",
+        "text_usability": "listing_page",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": "am:69395/3/25",
+        "eligibility_basis": [
+          "docket_signal"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_5_4614-05.pdf&type=2",
+        "title": "עע\"מ 4614-05 - מדינת ישראל נ. אבנר אורן",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "supreme_court_il",
+        "candidate_id": "730be43b-1a7c-4aa3-a996-f5143703141c",
+        "planner_role": "binding_case_law",
+        "has_court_url": true,
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": true,
+        "docket_normalized": "aam:4614/5",
+        "eligibility_basis": [
+          "docket_signal",
+          "official_court_url",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      }
+    ]
   },
-  "used_sources": 11,
-  "footnotes": 10,
-  "answer_len": 3064,
-  "answer": "השורה התחתונה: במשפט החוקתי הישראלי מבחן המידתיות נוסח כשלוש מבחני משנה — התאמה, הכרחיות או חלופה פחות פוגעת, ומידתיות במובן הצר (איזון בין חומרת הפגיעה לחשיבות המטרה) — ונוסחאות אלה מיושמות בפסיקה אך עוברות עיבוד משתנה בהיסטוריה החוקתית הישראלית.¹\n\n**מרכיבי המבחן ונוסחאות נפוצות**\n\n- התאמה: בדיקה ראשונית של הקשר בין האמצעי למטרה; נוסח נפוץ בגרסה הישראלית בודק האם האמצעי שוהה בעקביות להשגת המטרה המצוטטת ולא מהווה אמצעי זר לתכלית.¹\n- הכרחיות / חלופה פחות פוגעת: בחינה האם קיים אמצעי חלופי שמשיג את המטרה ברמת יעילות דומה ופוגע פחות בזכות; נוסח מקובל דורש שהמדור שיבחר אינו פוגעני יותר ממה שנדרש להשגת המטרה.¹\n- מידתיות במובן הצר (איזון): שקלול מעמדי בין חומרת הפגיעה בזכות לבין חשיבות המטרה הציבורית והתועלת הנובעת מהאמצעי; נוסח נפוץ מבקש לראות האם היחס בין הפגיעה לתועלת ניתן להצדקה סבירה.²\n\n**התפתחות היסטורית וצמתים מרכזיים**\n\nהמעבר החוקתי בעשורים האחרונים — שלעיגון חוקי היסוד ותיאוריות על \"מהפכה חוקתית\" — יצר מסגרת לפרשנות ממילאת יותר של זכויות ולחיזוק המבחן ככלי ביקורת; בתוך כך ספרות ופסיקה תיעדו מספר שלבים בפיתוח המבחן ובהדגשתו כמרכיב מרכזי בביקורת השיפוטית.³\n\nבמהלך עידן השפעתם של פסקי‑דין וגישות מייצגות של בית המשפט העליון (בין היתר בגישות שזוהו עם תקופות של הקצנה פרשנית) המבחן אומץ והופעל באופן נרחב יותר, ולאחר מכן המשיך לעבור גיבוש, הבחנה אינטנסיבית וסלקציה הקונטקסטואלית; פסיקה עדכנית ממחישה יישומים מעודכנים של עקרונות אלה בהכרעות על חוקיות חוקים וזכויות יסוד.⁴\n\n**אינטנסיביות הביקורת — משמעות ויישום**\n\nאינטנסיביות הביקורת מתייחסת לעומק ושלב הבדיקה שעושה בית המשפט במסגרת מבחן המידתיות; בספרות ובפסיקה מובחנת גמישות אינטנסיביות — בדיקה קפדנית יותר כאשר מעורבות זכויות יסוד מרכזיות או פגיעה מוחשית בחירויות אזרחיות, וביקורת מתירנית יותר בתחומי מדיניות כלכלית או ביטחונית שבהם ניתנת עדיפות לשיקול דעת הרשות המבצעת.⁵\n\nהיקף הדיון על מידת ה‑deference מציג כלים פרשניים לקביעת רמת האינטנסיביות: מבחני רגישות לתחום, לשיקולי דעת המוסדיים, ולמידת המומחיות של הרשות — שיקולים אלה משולבים בשיקול האיזון שנדרש במידתיות.⁶\n\n**ביקורות עיקריות והצעות תיקון**\n\nבספרות הועלו מספר ביקורות על השימוש במידתיות: נטען כי המבחן מאפשר לשופטים להפעיל שיקול דעת תכוף ולעתים רחבה מדי (סכנת 'שיפוטיות יתר'), וכן שהנוסח והמאזנים אינם תמיד ברורים דיים, מה שיוצר חוסר קונסיסטנטיות והיעדר נורמטיביות מדויקת.⁷\n\nהצעות תיקון המוזכרות כוללות: הגדרת פרמטרים פרוצדורליים ברורים יותר לבדיקה, הבחנה מובנית ברמת האינטנסיביות לפי תחום, ושילוב מדדים שקופים לנימוק האיזון — צעדים שנועדו לצמצם חוסר בהירות ולהבהיר את תחום הביקורת השיפוטית.⁸\n\n**דרישות נימוקיות ופרוצדורליות בפסיקה**\n\nהפסיקה והספרות מדגישות כי שופט המבצע מבחן מידתיות חייב לנמק בשקיפות את שלבי הבדיקה: להראות את נימוק ההתאמה, להסביר מדוע לא התקיימה חלופה פחות פוגעת או מדוע היא אינה מספקת, ולבצע איזון מפורש בין היקף הפגיעה לבין חשיבות המטרה.⁹\n\nהדרישות הפרוצדורליות דומות לדרישות של אחריות שיפוטית: נימוקים מדידים ככל האפשר, התייחסות חלופית עניינית, והבהרת השיקולים שהכריעו באיזון — הן כאמצעי שקיפות והן כאמצעי ביקורת הראויה של החלטות מוקרת חקיקה.¹⁰\n\nהסתייגות מקורות: חומר הטקסטים שנוצל הוא דל וכולל קטעי תמיכה קצרים וסיכומים; ניסוח זה מבוסס על הסניפטים שהוצגו לי ולא על נוסחי הלכות מלאים של פסקי‑דין או מסמכי חקיקה שלמים."
+  "used_sources": 13,
+  "footnotes": 11,
+  "answer_len": 2406,
+  "answer": "**מבחן המידתיות במשפט החוקתי הישראלי — שורה תחתונה**\n\nמבחן המידתיות במשפט החוקתי הישראלי מקובל כמסגרת שבאמצעותה נבחנת הלגיטימיות של פגיעה בזכות חוקתית: פגיעה מותרת רק אם היא עומדת בשלושה מרכיבים מכוננים — התאמה, הכרח ואיזון.¹\n\n**מהות דוקטרינרית ומרכיבי המבחן**\n\n- התאמה: האמצעי שנבחר צריך להיות מתאים להשגת המטרה החוקית שהוצגה.²\n- הכרח (רציונליות/חסר חלופה מקטינה פגיעה): אין לבחור באמצעי שפוגע בזכויות אם קיים אמצעי חלופי פחות פוגע שמממש באותה מידה את המטרה.³\n- איזון (פרופורציונליות ממשית בין הפגיעה ליתרון הציבורי): יש לשקלל את חומרת הפגיעה בזכות אל מול התועלת הציבורית המושגת על ידי האמצעי ולוודא שהפגיעה לא בלתי פרופורציונלית ביחס לתועלת.⁴\n\n**התפתחות היסטורית קצרה**\n\nאפשר לזהות במקורות ובספרות שלושה שלבי מגמה: שלב מוקדם שבו מבחני ההסתברות והסבירות היו דומיננטיים; שלב המעבר וההסמכה של מבחן המידתיות לאחר 'המהפכה החוקתית' ופסיקה כמו תיקי בנק המזרחי; ובעידן שאחר כך — התגבשות נוסחאות פרשניות מובהקות, בייחוד עמדות שהושפעו מעבודתו של אהרן ברק.⁵\n\nביחס להתגבשות בפרקטיקה השיפוטית יש עדויות לפסיקה בה מוזכר ומיושם רעיון המידתיות כדרישה מרכזית לבדיקת פגיעה בזכויות, וניתן לראות בכך נקודות ציון בהתפתחות המבחן במשפט הישראלי.⁶\n\n**יישום בתחומי שיפוט שונים**\n\nבביקורת חקיקה ובביקורת שיפוטית של החלטות מנהליות בית המשפט נוטה להפעיל את שלבי המבחן, אך אופן המשקל וההוכחה משתנה לפי תחום: במשפט המנהלי נעשה שימוש מעשי במידתיות כפרמטר של סבירות ובדיקה מעמיקה של אמצעים; בהליכי זכויות יסוד המבחן ממוקד יותר בפגיעה ובאיזון הערכים.⁷\n\nישנן שיטות פרשניות שדורשות התאמה והכרחיות כמבחן מצומצם ולהשאיר את שאלות האיזון הרחבות יותר לגורמי המחוקק או לפוליטיקה, מה שממחיש שונות יישומית בין גישות שיפוטיות.⁸\n\n**ביקורת ואלטרנטיבות**\n\nביקורת עיקרית נגד שיטת המידתיות מצביעה על ריכוז סמכויות בשופטים, חוסר ודאות טקטי ותלות רבה בשיקול הערכי השיפוטי; מבקרים הציעו להצמצם את המבחן לשני הממדים הראשונים או להדגיש בדיקות עובדתיות פחות שיפוטיות.⁹\n\nמנגד, תומכיה של המידתיות — ובכללם התגובות הספרותיות מעבודתו של אהרן ברק — טוענים כי אין תחליף פרקטי טוב יותר לשיטה זו וכי הביקורת צריכה להתמקד בהגברת השקיפות והבהירות הנימוקית במקום בהחלפה מוחלטת של מסגרת הבדיקה.¹⁰\n\nהמגמות הללו מדגימות דיון מתמשך בין שמירה על ביקורת שיפוטית חזקה וצורך בהגבלת השיפוטיות, ולעתים מוצעות קומבינציות פרשניות שמנסות לאזן בין שני הצרכים.¹¹\n\nהסתייגות לגבי מקורות: חומר התומך שסופק קצר וחלקי; הטקסטים שנמצאו מספקים תמיכה וניתוח תיאורטי אך אינם מהווים כאן ציטוט מלא של נוסחי הלכות או הכרעות מעמיקות של בתי המשפט, ולכן יש להכיר בהיקף המידע המוגבל בעת שימוש בסקירה זו."
 }

@@ -2,8 +2,8 @@
   "id": "R03",
   "query": "מה הפסיקה אומרת על הלכת השיתוף?",
   "mode_expected": "case_law_synthesis",
-  "run_id": "5242e83f-ebd5-428e-a9dd-93cbd3ef5b57",
-  "total_ms": 229313,
+  "run_id": "fc9d2949-942c-4d06-a298-853b45d9e7f5",
+  "total_ms": 253758,
   "research_mode": null,
   "shape": null,
   "deterministic_branch": "insufficient_sources_limitation",
@@ -12,49 +12,48 @@
   "sufficiency_reason": "no_usable_judgment_authority",
   "pool": {
     "found": null,
-    "admitted": 22,
+    "admitted": 20,
     "integrity_rejects": 0,
     "tier_counts": {
-      "primary_mirror": 1,
+      "primary_mirror": 2,
       "statute_mirror": 1,
       "index_or_listing": 2,
-      "official_primary": 5,
-      "secondary_commentary": 13
+      "official_primary": 4,
+      "secondary_commentary": 11
     },
     "citable_counts": {
-      "statute": 3,
-      "unknown": 1,
-      "judgment": 3,
-      "commentary": 9,
+      "statute": 4,
+      "unknown": 2,
+      "judgment": 2,
+      "commentary": 8,
       "not_citable": 2,
-      "scholarship": 4
+      "scholarship": 2
     },
-    "judgment_documents": 1,
-    "judgments_with_holding_text": 1,
+    "judgment_documents": 0,
+    "judgments_with_holding_text": 0,
     "synthesis_role_counts": {
       "unknown": 3,
       "leading_candidate": 2,
-      "secondary_commentary": 13,
-      "statutory_background": 3,
-      "limiting_or_distinguishing_candidate": 1
+      "secondary_commentary": 11,
+      "statutory_background": 4
     }
   },
   "text_usability_counts": {
     "metadata_only": 9,
-    "full_text": 4,
-    "listing_page": 2,
-    "substantive_excerpt": 7
+    "full_text": 3,
+    "substantive_excerpt": 7,
+    "listing_page": 1
   },
   "role_counts": {
     "primary_statute": 3,
-    "binding_case_law": 14,
-    "persuasive_case_law": 2,
-    "scholarship": 3
+    "binding_case_law": 9,
+    "scholarship": 6,
+    "persuasive_case_law": 2
   },
   "admitted_sources": [
     {
-      "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
-      "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+      "title": "חוק המקרקעין, תשכ״ט–1969",
+      "url": "https://fs.knesset.gov.il/6/law/6_lsr_208977.PDF",
       "role": "primary_statute",
       "tier": "official_primary",
       "text_usability": "metadata_only",
@@ -65,23 +64,8 @@
       "flags": []
     },
     {
-      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ' הכנסת",
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
-      "role": "binding_case_law",
-      "tier": "official_primary",
-      "text_usability": "full_text",
-      "citable_as": "judgment",
-      "judgment": true,
-      "holding_text": true,
-      "synthesis_role": "limiting_or_distinguishing_candidate",
-      "flags": [
-        "judgment_document",
-        "judgment_text_acquired"
-      ]
-    },
-    {
-      "title": "2592/20 בג\"ץ – תשובת הכנסת",
-      "url": "https://main.knesset.gov.il/About/Departments/LDResponses/Bagatz3.pdf",
+      "title": "חוק ההתיישנות, התשכ\"ט-1969 – נוסח לדיון בוועדת הכנסת",
+      "url": "https://fs.knesset.gov.il/17/Committees/17_cs_bg_335707.doc",
       "role": "primary_statute",
       "tier": "official_primary",
       "text_usability": "metadata_only",
@@ -92,7 +76,7 @@
       "flags": []
     },
     {
-      "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+      "title": "עא 52/80 ישעיהו שחר נ' מנדל פרידמן",
       "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
       "role": "binding_case_law",
       "tier": "official_primary",
@@ -104,70 +88,25 @@
       "flags": []
     },
     {
-      "title": "פסק דין בתביעה לפירוק שיתוף בנכסי בני זוג שנישאו לפני 1974 ושחלה עליהם הלכת השיתוף, וכן בנכסים חיצוניים",
-      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%91%D7%AA%D7%91%D7%99%D7%A2%D7%94-%D7%9C%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%A0%D7%9B%D7%A1%D7%99-%D7%91%D7%A0%D7%99-%D7%96%D7%95%D7%92-%D7%A9%D7%A0%D7%99%D7%A9%D7%90%D7%95-%D7%9C%D7%A4%D7%A0%D7%99-1974-%D7%95%D7%A9%D7%97%D7%9C%D7%94-%D7%A2%D7%9C%D7%99%D7%94%D7%9D-%D7%94%D7%9C%D7%9B%D7%AA",
-      "role": "persuasive_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "ידועים בציבור? על חזקת השיתוף וחלוקת הרכוש המשותף - פסקדין",
-      "url": "https://www.psakdin.co.il/Document/%D7%99%D7%93%D7%95%D7%A2%D7%99%D7%9D-%D7%91%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%A2%D7%9C-%D7%97%D7%96%D7%A7%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%95%D7%97%D7%9C%D7%95%D7%A7%D7%AA-%D7%94%D7%A8%D7%9B%D7%95%D7%A9-%D7%94%D7%9E%D7%A9%D7%95%D7%AA%D7%A3?IsMobile=false",
-      "role": "persuasive_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "ע\"א 806/93 הדרי נ' הדרי",
-      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/1194209-3/he/%D7%92%D7%93%D7%A8%D7%99%20%D7%94%D7%9C%D7%9B%D7%AA%20%D7%A9%D7%99%D7%AA%D7%95%D7%A3%20%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99%20%D7%91%D7%93%D7%99%D7%A8%D7%AA%20%D7%9E%D7%92%D7%95%D7%A8%D7%99%D7%9D%20-%201194209-3%20%D7%91%D7%99%D7%94''%D7%93%20%D7%90%D7%A9%D7%93%D7%95%D7%93%20(1).docx",
-      "role": "binding_case_law",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "judgment",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "leading_candidate",
-      "flags": []
-    },
-    {
-      "title": "בע\"ם 1270/23 פלונית נ' פלוני",
-      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%A2%D7%A0%D7%99%D7%99%D7%9F-%D7%97%D7%96%D7%A7%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%99%D7%9F-%D7%91%D7%A0%D7%99-%D7%96%D7%95%D7%ג-%D7%91%D7%93%D7%99%D7%A8%D7%AA-%D7%94%D7%9E%D7%92%D7%95%D7%A8%D7%99%D7%9D-%D7%94%D7%A8%D7%A9%D7%95%D7%9E%D7%94-%D7%A2%D7%9C-%D7%A9%D7%9E%D7%94?download=true",
-      "role": "binding_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: פסק דין לפי חוק יחסי ממון (תמ\"ש 28833-05-24)",
-      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+      "title": "בימ\"ש לענייני משפחה ת\"א, סגן הנשיאה יהורם שקד: החלטה בבקשתו של התובע לפירוק השיתוף בבית מגורים (תמ\"ש 58316-11-22)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=370",
       "role": "binding_case_law",
       "tier": "index_or_listing",
-      "text_usability": "listing_page",
+      "text_usability": "full_text",
       "citable_as": "not_citable",
       "judgment": false,
-      "holding_text": false,
+      "holding_text": true,
       "synthesis_role": "unknown",
       "flags": [
-        "listing_or_pagination_page"
+        "listing_or_pagination_page",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
       ]
     },
     {
-      "title": "זכויות דיירים במהלך חיזוק מבנה קיים",
-      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6040&businessType=1",
+      "title": "יישום התוכנית הלאומית להתמודדות עם מחלת האלצהיימר ודמנציות אחרות",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7457&businessType=1",
       "role": "binding_case_law",
       "tier": "primary_mirror",
       "text_usability": "substantive_excerpt",
@@ -180,8 +119,8 @@
       ]
     },
     {
-      "title": "חוק בינוי ופינוי של אזורי שיקום",
-      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+      "title": "תקנות הבטיחות בעבודה (מכירה והשכרה של מכונות, מיתקנים וציוד)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%9E%D7%9B%D7%99%D7%A8%D7%94_%D7%95%D7%94%D7%A9%D7%9B%D7%A8%D7%94_%D7%A9%D7%9C_%D7%9E%D7%9B%D7%95%D7%A0%D7%95%D7%AA%2C_%D7%9E%D7%99%D7%AA%D7%A7%D7%A0%D7%99%D7%9D_%D7%95%D7%A6%D7%99%D7%95%D7%93)",
       "role": "binding_case_law",
       "tier": "statute_mirror",
       "text_usability": "substantive_excerpt",
@@ -194,7 +133,33 @@
       ]
     },
     {
-      "title": "הלכת השיתוף – מט״ח",
+      "title": "חוק המקרקעין, תשכ\"ט-1969",
+      "url": "https://www.nevo.co.il/law_html/law01/p214_001.htm",
+      "role": "primary_statute",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "Co-Ownership of Land / שיתוף במקרקעין—מוסד חקיקתי רצוי ו/או בעייתי?",
+      "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/Law/faculty%20members/Hanoch%20Dagan/Co-Ownership%20of%20Land.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "הלכת השיתוף",
       "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=111640791&nTocEntryID=111642266",
       "role": "scholarship",
       "tier": "index_or_listing",
@@ -208,8 +173,8 @@
       ]
     },
     {
-      "title": "כוונת שיתוף בנכסים חיצוניים ומבחניה עקרונות ויישום",
-      "url": "https://www.daat.ac.il/daat/psk/psk.asp?id=1868",
+      "title": "החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואים ועל נכסים אחרים",
+      "url": "https://law.biu.ac.il/files/law/shared/segel/hacalathshitufhspezifi.pdf",
       "role": "scholarship",
       "tier": "secondary_commentary",
       "text_usability": "metadata_only",
@@ -220,8 +185,20 @@
       "flags": []
     },
     {
-      "title": "החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואים ועל נכסים חיצוניים",
-      "url": "https://law.biu.ac.il/sites/law/files/shared/segel/hacalathshitufhspezifi.pdf",
+      "title": "הלימוד הישיבתי ומחקר התלמוד האקדמי",
+      "url": "https://www.daat.ac.il/daat/toshba/horaat/halimud-2.htm",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "כתבי עת משפטיים ישראליים רלוונטיים",
+      "url": "https://lawjournal.tau.ac.il/",
       "role": "scholarship",
       "tier": "secondary_commentary",
       "text_usability": "metadata_only",
@@ -232,20 +209,59 @@
       "flags": []
     },
     {
-      "title": "השותפות הנישואית והערבות ההדדית בין בני הזוג בפשיטת רגיל – עיון מחדש | דוד מינץ (כרך ט)",
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/l1_3.pdf",
+      "title": "אסופה",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/mishpatim-17-1-003.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "זכויות במקרקעין באזור יהודה והשומרון: הליכי הכרה, כללי הכרה וכללי הגנה",
+      "url": "https://lawjournal.huji.ac.il/article/12/1844",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "שלושה צמתים ביחסי בית הדין הרבני ובית המשפט האזרחי: מזונות ילדים, שיתוף רכושי והחוק להסדר התדיינויות בסכסוכי משפחה",
+      "url": "https://lawjournal.huji.ac.il/article/12/1843",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "ע\"פ 1932-24 בלאי קיברה נ׳ מדינת ישראל פסק דין",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%a4-1932-24-%d7%91%d7%9c%d7%90%d7%99-%d7%a7%d7%99%d7%91%d7%a8%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "full_text",
-      "citable_as": "scholarship",
+      "citable_as": "commentary",
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "secondary_commentary",
-      "flags": []
+      "flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
+      ]
     },
     {
-      "title": "ע\"א 7594/16 עו\"ד יצחק מולכו, המנהל המיוחד מטעם הכונס הרשמי של נ׳ בנק מזר פסק דין (29.06.2016)",
-      "url": "https://www.toledano.co.il/%d7%a2%d7%90-7594-16-%d7%a2%d7%95%d7%93-%d7%99%d7%a6%d7%97%d7%a7-%d7%9e%d7%95%d7%9c%d7%9b%d7%95-%d7%94%d7%9e%d7%a0%d7%94%d7%9c-%d7%94%d7%9e%d7%99%d7%95%d7%97%d7%93-%d7%9e%d7%98%d7%a2%d7%9d-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "ע\"פ 640/21 סלמאן עאמר נ׳ מדינת ישראל פס\"ד פסק דין (07.07.2022)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%a4-640-21-%d7%a1%d7%9c%d7%9e%d7%90%d7%9f-%d7%a2%d7%90%d7%9e%d7%a8-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%93-%d7%9e%d7%99%d7%95%d7%9d-07-07/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
@@ -256,32 +272,23 @@
       "flags": []
     },
     {
-      "title": "ע\"א 6180/20 ד\"ר משה וינברג ושות' נ׳ מדינת ישראל פסק דין (13.06.2021)",
-      "url": "https://www.toledano.co.il/%d7%a2%d7%90-6180-20-%d7%93%d7%a8-%d7%9e%d7%a9%d7%94-%d7%95%d7%99%d7%a0%d7%91%d7%a8%d7%92-%d7%95%d7%a9%d7%95%d7%aa-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "רע\"א 8233-08 - מרגלית כובשי נ. עו\"ד איל שוורץ",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/2&fileName=SD2_4_8233-08.pdf&type=2",
       "role": "binding_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "בעל נגד אישה, אמת נגד משפחה, או המבט הרביעי על הכשרות להעיד במשפט הפלילי | אסף הרדוף (כרך ג)",
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/c2_1.pdf",
-      "role": "binding_case_law",
-      "tier": "secondary_commentary",
+      "tier": "official_primary",
       "text_usability": "full_text",
-      "citable_as": "scholarship",
+      "citable_as": "judgment",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
+      ]
     },
     {
-      "title": "ע\"א 6709/22 מלונות פתאל בע\"מ נ׳ נ.י אשקלון בע\"מ החלטה (09.11.2022)",
-      "url": "https://www.toledano.co.il/%d7%a2%d7%90-6709-22-%d7%9e%d7%9c%d7%95%d7%a0%d7%95%d7%aa-%d7%a4%d7%aa%d7%90%d7%9c-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a0-%d7%99-%d7%90%d7%a9%d7%a7%d7%9c%d7%95%d7%9f-%d7%91%d7%a2%d7%9e-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
@@ -292,36 +299,12 @@
       "flags": []
     },
     {
-      "title": "רע\"פ 5305/20 אליהו נחום נ׳ הועדה המקומית לתכנון ולבניה תל אביב יפו החלטה (16.06.2020)",
-      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-5305-20-%d7%90%d7%9c%d7%99%d7%94%d7%95-%d7%a0%d7%97%d7%95%d7%9d-%d7%a0-%d7%94%d7%95%d7%a2%d7%93%d7%94-%d7%94%d7%9e%d7%a7%d7%95%d7%9e%d7%99%d7%aa-%d7%9c%d7%aa%d7%9b%d7%a0%d7%95/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 408/19 עיריית בני ברק נ׳ שר התחבורה פסק דין (19.04.2021)",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-408-19-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa-%d7%91%d7%a0%d7%99-%d7%91%d7%a8%d7%a7-%d7%a0-%d7%a9%d7%a8-%d7%94%d7%aa%d7%97%d7%91%d7%95%d7%a8%d7%94-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
       "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "הקדמת מועד איזון המשאבים בתיקון מס&#8217; 4 לחוק יחסי ממון והחקיקה השיפוטית שנוצרה לפניה – עיון מחודש | יצחק כהן (כרך כב)",
-      "url": "https://runilawreview.org/2018/08/23/vol22_cohen/",
-      "role": "primary_statute",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "scholarship",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "אמון ויחסים חוזיים",
-      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/5fc83c_b6d09c4675dc447b8e1b746773e5e0a2.pdf",
-      "role": "binding_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "full_text",
-      "citable_as": "scholarship",
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "secondary_commentary",
@@ -329,7 +312,7 @@
     }
   ],
   "acquisition": {
-    "ms": 10357,
+    "ms": 6105,
     "mode": "case_law_synthesis",
     "budget": {
       "other": 2,
@@ -339,57 +322,19 @@
     "enabled": true,
     "attempts": [
       {
-        "ms": 7082,
+        "ms": 1961,
         "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
-        "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "title": "עא 52/80 ישעיהו שחר נ' מנדל פרידמן",
         "success": false,
-        "candidate_id": "5e80d770-908d-4aa7-884d-f63e3f69050f",
-        "title_signal": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "candidate_id": "9da0c1d3-8b84-417d-b176-b8c34bcf7f21",
+        "title_signal": "עא 52/80 ישעיהו שחר נ' מנדל פרידמן",
         "docket_signal": "ע\"א 52/80",
-        "failure_reason": "local_db_docket_lookup_timeout",
-        "synthesis_role": "leading_candidate",
-        "trigger_reason": "metadata_only",
-        "has_holding_text": false,
-        "method_succeeded": null,
-        "docket_normalized": "aa:52/80",
-        "methods_attempted": [
-          "direct_file_fetch",
-          "local_db_docket_lookup"
-        ],
-        "judgment_candidate": true,
-        "usable_for_holding": false,
-        "acquisition_success": false,
-        "acquired_text_length": 0,
-        "final_text_usability": "metadata_only",
-        "text_usability_after": "metadata_only",
-        "acquisition_attempted": true,
-        "extracted_text_length": 0,
-        "text_usability_before": "metadata_only",
-        "acquisition_failure_reasons": [
-          "http_403",
-          "local_db_docket_lookup_timeout"
-        ],
-        "acquisition_methods_attempted": [
-          "direct_file_fetch",
-          "local_db_docket_lookup"
-        ],
-        "body_contains_docket_or_title": false,
-        "can_support_synthesis_holding": false
-      },
-      {
-        "ms": 2504,
-        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/1194209-3/he/%D7%92%D7%93%D7%A8%D7%99%20%D7%94%D7%9C%D7%9B%D7%AA%20%D7%A9%D7%99%D7%AA%D7%95%D7%A3%20%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99%20%D7%91%D7%93%D7%99%D7%A8%D7%AA%20%D7%9E%D7%92%D7%95%D7%A8%D7%99%D7%9D%20-%201194209-3%20%D7%91%D7%99%D7%94''%D7%93%20%D7%90%D7%A9%D7%93%D7%95%D7%93%20(1).docx",
-        "title": "ע\"א 806/93 הדרי נ' הדרי",
-        "success": false,
-        "candidate_id": "ad6cb1be-0157-4ac2-b466-522edb1cc9ce",
-        "title_signal": "ע\"א 806/93 הדרי נ' הדרי",
-        "docket_signal": "ע\"א 806/93",
         "failure_reason": "no_local_document_match",
         "synthesis_role": "leading_candidate",
         "trigger_reason": "metadata_only",
         "has_holding_text": false,
         "method_succeeded": null,
-        "docket_normalized": "aa:806/93",
+        "docket_normalized": "aa:52/80",
         "methods_attempted": [
           "direct_file_fetch",
           "local_db_docket_lookup"
@@ -415,21 +360,54 @@
         "can_support_synthesis_holding": false
       },
       {
-        "ms": 769,
-        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
-        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ' הכנסת",
+        "ms": 1404,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/2&fileName=SD2_4_8233-08.pdf&type=2",
+        "title": "רע\"א 8233-08 - מרגלית כובשי נ. עו\"ד איל שוורץ",
         "success": true,
-        "candidate_id": "9772f10c-4195-444c-b330-be00da5fca69",
-        "title_signal": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ' הכנסת",
-        "docket_signal": "בג\"ץ 5658/23",
+        "candidate_id": "13bf670f-59c3-41c4-a21a-ed43418a47c0",
+        "title_signal": "רע\"א 8233-08 - מרגלית כובשי נ. עו\"ד איל שוורץ",
+        "docket_signal": "רע\"א 8233/08",
         "failure_reason": null,
-        "synthesis_role": "limiting_or_distinguishing_candidate",
-        "trigger_reason": "metadata_only",
-        "has_holding_text": true,
+        "synthesis_role": "leading_candidate",
+        "trigger_reason": "no_judgment_body_text",
+        "has_holding_text": false,
         "method_succeeded": "direct_file_fetch",
-        "docket_normalized": "bagatz:5658/23",
+        "docket_normalized": "raa:8233/8",
         "methods_attempted": [
           "direct_file_fetch"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 87978,
+        "text_usability_before": "substantive_excerpt",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": false
+      },
+      {
+        "ms": 1100,
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=370",
+        "title": "בימ\"ש לענייני משפחה ת\"א, סגן הנשיאה יהורם שקד: החלטה בבקשתו של התובע לפירוק השיתוף בבית מגורים (תמ\"ש 58316-11-22)",
+        "success": true,
+        "candidate_id": "099549ba-2bdd-485e-accc-8f2d744e07b3",
+        "title_signal": "בימ\"ש לענייני משפחה ת\"א, סגן הנשיאה יהורם שקד: החלטה בבקשתו של התובע לפירוק השיתוף בבית מגורים (תמ\"ש 58316-11-22)",
+        "docket_signal": "תמ\"ש 58316/11/22",
+        "failure_reason": null,
+        "synthesis_role": "unknown",
+        "trigger_reason": "no_judgment_body_text",
+        "has_holding_text": true,
+        "method_succeeded": "local_db_docket_lookup",
+        "docket_normalized": "tms:58316/11/22",
+        "methods_attempted": [
+          "local_db_docket_lookup"
         ],
         "judgment_candidate": true,
         "usable_for_holding": true,
@@ -438,24 +416,261 @@
         "final_text_usability": "full_text",
         "text_usability_after": "full_text",
         "acquisition_attempted": true,
-        "extracted_text_length": 27635,
-        "text_usability_before": "metadata_only",
+        "extracted_text_length": 8193,
+        "text_usability_before": "listing_page",
         "acquisition_failure_reasons": [],
         "acquisition_methods_attempted": [
-          "direct_file_fetch"
+          "local_db_docket_lookup"
         ],
         "body_contains_docket_or_title": true,
         "can_support_synthesis_holding": true
+      },
+      {
+        "ms": 1638,
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a4-1932-24-%d7%91%d7%9c%d7%90%d7%99-%d7%a7%d7%99%d7%91%d7%a8%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"פ 1932-24 בלאי קיברה נ׳ מדינת ישראל פסק דין",
+        "success": true,
+        "candidate_id": "6b9317a6-1142-4a46-87f6-4a1d7eb4a6cd",
+        "title_signal": "ע\"פ 1932-24 בלאי קיברה נ׳ מדינת ישראל פסק דין",
+        "docket_signal": "ע\"פ 1932/24",
+        "failure_reason": null,
+        "synthesis_role": "secondary_commentary",
+        "trigger_reason": "no_judgment_body_text",
+        "has_holding_text": false,
+        "method_succeeded": "local_db_docket_lookup",
+        "docket_normalized": "ap:1932/24",
+        "methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 11841,
+        "text_usability_before": "substantive_excerpt",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": false
       }
     ],
-    "excluded": [],
-    "successes": 1,
-    "attempts_made": 3,
-    "eligible_count": 3,
-    "judgment_candidates": 9
+    "excluded": [
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a4-640-21-%d7%a1%d7%9c%d7%9e%d7%90%d7%9f-%d7%a2%d7%90%d7%9e%d7%a8-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%93-%d7%9e%d7%99%d7%95%d7%9d-07-07/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"פ 640/21 סלמאן עאמר נ׳ מדינת ישראל פס\"ד פסק דין (07.07.2022)",
+        "reason": "budget_exhausted",
+        "candidate_id": "1b3a9caa-b50d-4aab-8a41-3793673c98d3"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+        "reason": "budget_exhausted",
+        "candidate_id": "e2a28651-325a-47d4-94f5-6e03f3d9d6c7"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-408-19-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa-%d7%91%d7%a0%d7%99-%d7%91%d7%a8%d7%a7-%d7%a0-%d7%a9%d7%a8-%d7%94%d7%aa%d7%97%d7%91%d7%95%d7%a8%d7%94-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 408/19 עיריית בני ברק נ׳ שר התחבורה פסק דין (19.04.2021)",
+        "reason": "budget_exhausted",
+        "candidate_id": "64bd97b5-dfd3-4920-b1c6-018635e64a48"
+      }
+    ],
+    "successes": 3,
+    "attempts_made": 4,
+    "eligible_count": 7,
+    "judgment_candidates": 7,
+    "eligibility_diagnostics": [
+      {
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+        "title": "עא 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "9da0c1d3-8b84-417d-b176-b8c34bcf7f21",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": null,
+        "has_party_names": true,
+        "has_download_url": true,
+        "docket_normalized": "aa:52/80",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=370",
+        "title": "בימ\"ש לענייני משפחה ת\"א, סגן הנשיאה יהורם שקד: החלטה בבקשתו של התובע לפירוק השיתוף בבית מגורים (תמ\"ש 58316-11-22)",
+        "eligible": true,
+        "citable_as": "not_citable",
+        "source_type": "caselaw",
+        "candidate_id": "099549ba-2bdd-485e-accc-8f2d744e07b3",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "index_or_listing",
+        "synthesis_role": "unknown",
+        "text_usability": "listing_page",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": "tms:58316/11/22",
+        "eligibility_basis": [
+          "docket_signal"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a4-1932-24-%d7%91%d7%9c%d7%90%d7%99-%d7%a7%d7%99%d7%91%d7%a8%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"פ 1932-24 בלאי קיברה נ׳ מדינת ישראל פסק דין",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "6b9317a6-1142-4a46-87f6-4a1d7eb4a6cd",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": null,
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "ap:1932/24",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a4-640-21-%d7%a1%d7%9c%d7%9e%d7%90%d7%9f-%d7%a2%d7%90%d7%9e%d7%a8-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%93-%d7%9e%d7%99%d7%95%d7%9d-07-07/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"פ 640/21 סלמאן עאמר נ׳ מדינת ישראל פס\"ד פסק דין (07.07.2022)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "1b3a9caa-b50d-4aab-8a41-3793673c98d3",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "ap:640/21",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/2&fileName=SD2_4_8233-08.pdf&type=2",
+        "title": "רע\"א 8233-08 - מרגלית כובשי נ. עו\"ד איל שוורץ",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "supreme_court_il",
+        "candidate_id": "13bf670f-59c3-41c4-a21a-ed43418a47c0",
+        "planner_role": "binding_case_law",
+        "has_court_url": true,
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": true,
+        "docket_normalized": "raa:8233/8",
+        "eligibility_basis": [
+          "docket_signal",
+          "official_court_url",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "e2a28651-325a-47d4-94f5-6e03f3d9d6c7",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "raa:2299/23",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-408-19-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa-%d7%91%d7%a0%d7%99-%d7%91%d7%a8%d7%a7-%d7%a0-%d7%a9%d7%a8-%d7%94%d7%aa%d7%97%d7%91%d7%95%d7%a8%d7%94-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 408/19 עיריית בני ברק נ׳ שר התחבורה פסק דין (19.04.2021)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "64bd97b5-dfd3-4920-b1c6-018635e64a48",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "bagatz:408/19",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      }
+    ]
   },
   "used_sources": 0,
   "footnotes": 0,
-  "answer_len": 506,
-  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק יחסי ממון בין בני זוג, תשל\"ג-1973; ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן; פסק דין בתביעה לפירוק שיתוף בנכסי בני זוג שנישאו לפני 1974 ושחלה עליהם הלכת השיתוף, וכן בנכסים חיצוניים; ידועים בציבור? על חזקת השיתוף וחלוקת הרכוש המשותף - פסקדין."
+  "answer_len": 430,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק המקרקעין, תשכ״ט–1969; עא 52/80 ישעיהו שחר נ' מנדל פרידמן; חוק המקרקעין, תשכ\"ט-1969; החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואים ועל נכסים אחרים."
 }

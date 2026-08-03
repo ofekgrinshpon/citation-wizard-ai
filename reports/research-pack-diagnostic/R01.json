@@ -2,8 +2,8 @@
   "id": "R01",
   "query": "מה נקבע בבג\"ץ קעדאן ביחס לשוויון בהקצאת מקרקעין?",
   "mode_expected": "specific_case_holding",
-  "run_id": "881780ec-4da9-4033-a296-a6b991c874ad",
-  "total_ms": 220231,
+  "run_id": "a8365151-fdbb-42a6-a2ea-d69dd363ec97",
+  "total_ms": 248424,
   "research_mode": null,
   "shape": null,
   "deterministic_branch": null,
@@ -12,42 +12,49 @@
   "sufficiency_reason": "shape_not_gated",
   "pool": {
     "found": null,
-    "admitted": 12,
+    "admitted": 23,
     "integrity_rejects": 0,
     "tier_counts": {
-      "primary_mirror": 1,
-      "index_or_listing": 1,
-      "official_primary": 1,
-      "secondary_commentary": 9
+      "primary_mirror": 2,
+      "statute_mirror": 4,
+      "index_or_listing": 2,
+      "official_primary": 3,
+      "secondary_commentary": 12
     },
     "citable_counts": {
-      "unknown": 1,
-      "judgment": 1,
-      "commentary": 6,
-      "not_citable": 1,
-      "scholarship": 3
+      "statute": 4,
+      "unknown": 2,
+      "judgment": 3,
+      "commentary": 10,
+      "not_citable": 2,
+      "scholarship": 2
     },
     "judgment_documents": 1,
     "judgments_with_holding_text": 1,
     "synthesis_role_counts": {
-      "unknown": 2,
+      "unknown": 4,
       "leading_candidate": 1,
-      "secondary_commentary": 9
+      "applying_candidate": 2,
+      "secondary_commentary": 12,
+      "statutory_background": 4
     }
   },
   "text_usability_counts": {
-    "full_text": 2,
-    "metadata_only": 1,
-    "listing_page": 1,
-    "substantive_excerpt": 8
+    "full_text": 3,
+    "metadata_only": 8,
+    "listing_page": 2,
+    "substantive_excerpt": 10
   },
   "role_counts": {
-    "binding_case_law": 9,
-    "primary_statute": 3
+    "binding_case_law": 8,
+    "government_report": 2,
+    "primary_statute": 3,
+    "persuasive_case_law": 5,
+    "scholarship": 5
   },
   "admitted_sources": [
     {
-      "title": "בג\"ץ 6698/95 קעדאן ואח' נ' מינהל מקרקעי ישראל ואח'",
+      "title": "בג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל",
       "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C95%5C980%5C066%5CA14&fileName=95066980_a14.txt&type=2",
       "role": "binding_case_law",
       "tier": "official_primary",
@@ -58,25 +65,27 @@
       "synthesis_role": "leading_candidate",
       "flags": [
         "judgment_document",
-        "judgment_text_acquired"
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
       ]
     },
     {
-      "title": "בני הזוג קעדאן עותרים ליישום החלטות בג\"ץ",
-      "url": "https://www.psakdin.co.il/Document/%D7%91%D7%A0%D7%99-%D7%94%D7%96%D7%95%D7%92-%D7%A7%D7%A2%D7%93%D7%90%D7%9F-%D7%A2%D7%95%D7%AA%D7%A8%D7%99%D7%9D-%D7%9C%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%94%D7%97%D7%9C%D7%98%D7%95%D7%AA-%D7%91%D7%92%22%D7%A5",
-      "role": "binding_case_law",
-      "tier": "secondary_commentary",
+      "title": "מסמך בנושא קרקעות / דיון בכנסת (כולל אזכור קעדאן)",
+      "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H02-10-2005_8-56-01_hityashvut.doc",
+      "role": "government_report",
+      "tier": "official_primary",
       "text_usability": "metadata_only",
-      "citable_as": "commentary",
+      "citable_as": "unknown",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "secondary_commentary",
+      "synthesis_role": "unknown",
       "flags": []
     },
     {
-      "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
-      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
-      "role": "primary_statute",
+      "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+      "role": "binding_case_law",
       "tier": "index_or_listing",
       "text_usability": "listing_page",
       "citable_as": "not_citable",
@@ -88,22 +97,8 @@
       ]
     },
     {
-      "title": "2 .המדינה מבקר דוח עיקרי...........................................................עמ '2-3",
-      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=2870&businessType=1",
-      "role": "binding_case_law",
-      "tier": "primary_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "unknown",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "unknown",
-      "flags": [
-        "official_host_non_specific_path"
-      ]
-    },
-    {
-      "title": "ערים מעורבות בהתהוות: בין הפרטי לציבורי | מנאל תותרי-ג’ובראן (כרך י)",
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_1.pdf",
+      "title": "תקנת השוק במכר על ידי רשות שנפל בהליכיו פגם חוקי",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_962b41b3597d440195f4e35963cfe3df.pdf",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "full_text",
@@ -114,8 +109,178 @@
       "flags": []
     },
     {
-      "title": "ע\"א 6672/19 יוסף יקותיאלי נ׳ מנהל מיסוי מקרקעין חיפה פסק דין (29.06.2021)",
-      "url": "https://www.toledano.co.il/%d7%a2%d7%90-6672-19-%d7%99%d7%95%d7%a1%d7%a3-%d7%99%d7%a7%d7%95%d7%aa%d7%99%d7%90%d7%9c%d7%99-%d7%a0-%d7%9e%d7%a0%d7%94%d7%9c-%d7%9e%d7%99%d7%a1%d7%95%d7%99-%d7%9e%d7%a7%d7%a8%d7%a7%d7%a2%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "חוק בינוי ופינוי של אזורי שיקום",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "תקנות הביטוח הלאומי (ביטוח מפני פגיעה בעבודה)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%94%D7%9C%D7%90%D7%95%D7%9E%D7%99_(%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%9E%D7%A4%D7%A0%D7%99_%D7%A4%D7%92%D7%99%D7%A2%D7%94_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94)",
+      "role": "binding_case_law",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "חיפוש מתקדם - בית המשפט העליון - הרשות השופטת",
+      "url": "https://supreme.court.gov.il/Pages/fullsearch.aspx",
+      "role": "persuasive_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "applying_candidate",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "עשור לפסק–דין קעדאן",
+      "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/Law/maasei%20mishpat/Issue3/11.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "ציונות בישראל?",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/4-gabizon.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "בין איסור ההפליה בקעדאן ל שינוי תקנון התאגיד ב פלטין",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/KG01.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "תקדין - מאגר פסקי הדין המוביל בישראל",
+      "url": "https://www.takdin.co.il/",
+      "role": "persuasive_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "official_host_bare_root"
+      ]
+    },
+    {
+      "title": "חיפוש פסיקה",
+      "url": "https://www.nevo.co.il/psikasearch.aspx",
+      "role": "persuasive_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "applying_candidate",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "השוויון בפגי החוק",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-zamir.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "דחיית הטענות בדבר חוסר לגיטימיות ועלות מוגזמת הנטענות כלפי קידום השוויון",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/3-keren-paz.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "דין וחשבון על פעולות רשות מקרקעי ישראל לשנת 2021",
+      "url": "https://www.gov.il/BlobFolder/reports/reshut-mekarkeai-israel-2021/he/publications_doch18102022.pdf",
+      "role": "government_report",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": []
+    },
+    {
+      "title": "חוק רשות מקרקעי ישראל",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%A8%D7%A9%D7%95%D7%AA_%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99_%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "חוק מקרקעי ישראל",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99_%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
@@ -126,11 +291,11 @@
       "flags": []
     },
     {
-      "title": "סיפורם של חוקי-היסוד | אמנון רובינשטיין (כרך יד)",
-      "url": "https://runilawreview.org/2012/10/31/volume14_rubinstein/",
-      "role": "primary_statute",
+      "title": "פיצוי נאות: על סעדים וצדק בדיני הנטילה השלטונית בישראל",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_5af46bb80ac243b4a2ab7d4622677b97.pdf",
+      "role": "binding_case_law",
       "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
+      "text_usability": "full_text",
       "citable_as": "scholarship",
       "judgment": false,
       "holding_text": false,
@@ -138,20 +303,32 @@
       "flags": []
     },
     {
-      "title": "האם הפרשנות התכליתית היא הדין? (כרך נה)",
-      "url": "https://lawjournal.huji.ac.il/article/12/1962",
-      "role": "primary_statute",
+      "title": "בר\"מ 3646/20 מדינת ישראל נ׳ פלוני החלטה (29.11.2020)",
+      "url": "https://www.toledano.co.il/%d7%91%d7%a8%d7%9e-3646-20-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-29-11-2020/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "persuasive_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
-      "citable_as": "scholarship",
+      "citable_as": "commentary",
       "judgment": false,
-      "holding_text": true,
+      "holding_text": false,
       "synthesis_role": "secondary_commentary",
       "flags": []
     },
     {
-      "title": "רע\"א 2401/21 סאמי ג'אעוני נ׳ נחלת שמעון בע\"מ פסק דין",
-      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2401-21-%d7%a1%d7%90%d7%9e%d7%99-%d7%92%d7%90%d7%a2%d7%95%d7%a0%d7%99-%d7%a0-%d7%a0%d7%97%d7%9c%d7%aa-%d7%a9%d7%9e%d7%a2%d7%95%d7%9f-%d7%91%d7%a2%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "ע\"א 521/21 עיריית חיפה נ׳ יוסף אפשטיין ז\"ל- באמצעות יורשתו נילי אפשטיין החלטה (30.11.2020)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-521-21-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa-%d7%97%d7%99%d7%a4%d7%94-%d7%a0-%d7%99%d7%95%d7%a1%d7%a3-%d7%90%d7%a4%d7%a9%d7%98%d7%99%d7%99%d7%9f-%d7%96%d7%9c-%d7%91%d7%90%d7%9e%d7%a6/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "עע\"מ 8734/19 אסתר ביטן נ׳ עמידר החברה הלאומית לשיכון בישראל פסק דין (11.07.2019)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-8734-19-%d7%90%d7%a1%d7%aa%d7%a8-%d7%91%d7%99%d7%98%d7%9f-%d7%a0-%d7%a2%d7%9e%d7%99%d7%93%d7%a8-%d7%94%d7%97%d7%91%d7%a8%d7%94-%d7%94%d7%9c%d7%90%d7%95%d7%9e%d7%99%d7%aa-%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
@@ -162,32 +339,8 @@
       "flags": []
     },
     {
-      "title": "בג\"ץ 5405/22 פלוני נ׳ בית הדין הדתי הדרוזי בעכו פסק דין (23.01.2023)",
-      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5405-22-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%93%d7%aa%d7%99-%d7%94%d7%93%d7%a8%d7%95%d7%96%d7%99-%d7%91%d7%a2%d7%9b%d7%95/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "role": "binding_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "רע\"א 1162/23 עצמאות ניהול מלונות בע\"מ נ׳ פלטרין השקעות בע\"מ פסק דין (05.12.2022)",
-      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1162-23-%d7%a2%d7%a6%d7%9e%d7%90%d7%95%d7%aa-%d7%a0%d7%99%d7%94%d7%95%d7%9c-%d7%9e%d7%9c%d7%95%d7%a0%d7%95%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a4%d7%9c%d7%98%d7%a8%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "role": "binding_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "בג\"ץ 3054/19 ד\"ר שוורץ סיגל נ׳ בית הדין הארצי לעבודה פסק דין (04.03.2021)",
-      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3054-19-%d7%93%d7%a8-%d7%a9%d7%95%d7%95%d7%a8%d7%a5-%d7%a1%d7%99%d7%92%d7%9c-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6%d7%99-%d7%9c%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "רע\"א 2116/19 יונתן שליידר נ׳ חברת החשמל לישראל בע\"מ פסק דין (01.06.2020)",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2116-19-%d7%99%d7%95%d7%a0%d7%aa%d7%9f-%d7%a9%d7%9c%d7%99%d7%99%d7%93%d7%a8-%d7%a0-%d7%97%d7%91%d7%a8%d7%aa-%d7%94%d7%97%d7%a9%d7%9e%d7%9c-%d7%9c%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
@@ -199,7 +352,7 @@
     }
   ],
   "acquisition": {
-    "ms": 491,
+    "ms": 1422,
     "mode": "specific_case",
     "budget": {
       "other": 1,
@@ -209,12 +362,12 @@
     "enabled": true,
     "attempts": [
       {
-        "ms": 490,
+        "ms": 575,
         "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C95%5C980%5C066%5CA14&fileName=95066980_a14.txt&type=2",
-        "title": "בג\"ץ 6698/95 קעדאן ואח' נ' מינהל מקרקעי ישראל ואח'",
+        "title": "בג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל",
         "success": true,
-        "candidate_id": "3094ad9c-eb83-485e-a5e1-8cf663e73b44",
-        "title_signal": "בג\"ץ 6698/95 קעדאן ואח' נ' מינהל מקרקעי ישראל ואח'",
+        "candidate_id": "8ba9e14b-fae2-4f0c-b5f9-9d80dfcb6008",
+        "title_signal": "בג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל",
         "docket_signal": "בג\"ץ 6698/95",
         "failure_reason": null,
         "synthesis_role": "leading_candidate",
@@ -240,16 +393,297 @@
         ],
         "body_contains_docket_or_title": true,
         "can_support_synthesis_holding": true
+      },
+      {
+        "ms": 845,
+        "url": "https://supreme.court.gov.il/Pages/fullsearch.aspx",
+        "title": "חיפוש מתקדם - בית המשפט העליון - הרשות השופטת",
+        "success": false,
+        "candidate_id": "1f4c2bdf-0669-4cfc-8653-4d02567ca079",
+        "title_signal": "חיפוש מתקדם - בית המשפט העליון - הרשות השופטת",
+        "docket_signal": null,
+        "failure_reason": "no_downloadable_file_on_wrapper",
+        "synthesis_role": "applying_candidate",
+        "trigger_reason": "metadata_only",
+        "has_holding_text": false,
+        "method_succeeded": null,
+        "docket_normalized": null,
+        "methods_attempted": [
+          "wrapper_file_resolve"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": false,
+        "acquired_text_length": 0,
+        "final_text_usability": "metadata_only",
+        "text_usability_after": "metadata_only",
+        "acquisition_attempted": true,
+        "extracted_text_length": 0,
+        "text_usability_before": "metadata_only",
+        "acquisition_failure_reasons": [
+          "no_downloadable_file_on_wrapper"
+        ],
+        "acquisition_methods_attempted": [
+          "wrapper_file_resolve"
+        ],
+        "body_contains_docket_or_title": false,
+        "can_support_synthesis_holding": false
       }
     ],
-    "excluded": [],
+    "excluded": [
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+        "reason": "budget_exhausted",
+        "candidate_id": "36e57b59-868e-4f45-865f-5201fb74f96a"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+        "reason": "budget_exhausted",
+        "candidate_id": "9a004b88-9194-429f-8d04-a86bc45ba084"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%a8%d7%9e-3646-20-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-29-11-2020/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בר\"מ 3646/20 מדינת ישראל נ׳ פלוני החלטה (29.11.2020)",
+        "reason": "budget_exhausted",
+        "candidate_id": "ad90ac51-d208-4a0c-8aeb-4108e8faa857"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-521-21-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa-%d7%97%d7%99%d7%a4%d7%94-%d7%a0-%d7%99%d7%95%d7%a1%d7%a3-%d7%90%d7%a4%d7%a9%d7%98%d7%99%d7%99%d7%9f-%d7%96%d7%9c-%d7%91%d7%90%d7%9e%d7%a6/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"א 521/21 עיריית חיפה נ׳ יוסף אפשטיין ז\"ל- באמצעות יורשתו נילי אפשטיין החלטה (30.11.2020)",
+        "reason": "budget_exhausted",
+        "candidate_id": "f2a331f7-0b74-48ba-a0a3-de7ab6fccd10"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-8734-19-%d7%90%d7%a1%d7%aa%d7%a8-%d7%91%d7%99%d7%98%d7%9f-%d7%a0-%d7%a2%d7%9e%d7%99%d7%93%d7%a8-%d7%94%d7%97%d7%91%d7%a8%d7%94-%d7%94%d7%9c%d7%90%d7%95%d7%9e%d7%99%d7%aa-%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "עע\"מ 8734/19 אסתר ביטן נ׳ עמידר החברה הלאומית לשיכון בישראל פסק דין (11.07.2019)",
+        "reason": "budget_exhausted",
+        "candidate_id": "8f6ef1ea-fc9b-433b-9b23-c0e75937026b"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2116-19-%d7%99%d7%95%d7%a0%d7%aa%d7%9f-%d7%a9%d7%9c%d7%99%d7%99%d7%93%d7%a8-%d7%a0-%d7%97%d7%91%d7%a8%d7%aa-%d7%94%d7%97%d7%a9%d7%9e%d7%9c-%d7%9c%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 2116/19 יונתן שליידר נ׳ חברת החשמל לישראל בע\"מ פסק דין (01.06.2020)",
+        "reason": "budget_exhausted",
+        "candidate_id": "c352d7e4-7eaa-488b-9003-97ce6f6f9cb9"
+      }
+    ],
     "successes": 1,
-    "attempts_made": 1,
-    "eligible_count": 1,
-    "judgment_candidates": 7
+    "attempts_made": 2,
+    "eligible_count": 8,
+    "judgment_candidates": 8,
+    "eligibility_diagnostics": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C95%5C980%5C066%5CA14&fileName=95066980_a14.txt&type=2",
+        "title": "בג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "8ba9e14b-fae2-4f0c-b5f9-9d80dfcb6008",
+        "planner_role": "binding_case_law",
+        "has_court_url": true,
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": null,
+        "has_party_names": true,
+        "has_download_url": true,
+        "docket_normalized": "bagatz:6698/95",
+        "eligibility_basis": [
+          "docket_signal",
+          "official_court_url",
+          "case_title_party_names",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+        "eligible": true,
+        "citable_as": "not_citable",
+        "source_type": "caselaw",
+        "candidate_id": "36e57b59-868e-4f45-865f-5201fb74f96a",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "index_or_listing",
+        "synthesis_role": "unknown",
+        "text_usability": "listing_page",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": "ta:32539/4/24",
+        "eligibility_basis": [
+          "docket_signal"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://supreme.court.gov.il/Pages/fullsearch.aspx",
+        "title": "חיפוש מתקדם - בית המשפט העליון - הרשות השופטת",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "1f4c2bdf-0669-4cfc-8653-4d02567ca079",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": true,
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": null,
+        "eligibility_basis": [
+          "official_court_url"
+        ],
+        "has_docket_signal": false,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "9a004b88-9194-429f-8d04-a86bc45ba084",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "raa:2299/23",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%a8%d7%9e-3646-20-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-29-11-2020/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בר\"מ 3646/20 מדינת ישראל נ׳ פלוני החלטה (29.11.2020)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "ad90ac51-d208-4a0c-8aeb-4108e8faa857",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": null,
+        "eligibility_basis": [
+          "case_title_party_names"
+        ],
+        "has_docket_signal": false,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-521-21-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa-%d7%97%d7%99%d7%a4%d7%94-%d7%a0-%d7%99%d7%95%d7%a1%d7%a3-%d7%90%d7%a4%d7%a9%d7%98%d7%99%d7%99%d7%9f-%d7%96%d7%9c-%d7%91%d7%90%d7%9e%d7%a6/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"א 521/21 עיריית חיפה נ׳ יוסף אפשטיין ז\"ל- באמצעות יורשתו נילי אפשטיין החלטה (30.11.2020)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "f2a331f7-0b74-48ba-a0a3-de7ab6fccd10",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "aa:521/21",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-8734-19-%d7%90%d7%a1%d7%aa%d7%a8-%d7%91%d7%99%d7%98%d7%9f-%d7%a0-%d7%a2%d7%9e%d7%99%d7%93%d7%a8-%d7%94%d7%97%d7%91%d7%a8%d7%94-%d7%94%d7%9c%d7%90%d7%95%d7%9e%d7%99%d7%aa-%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "עע\"מ 8734/19 אסתר ביטן נ׳ עמידר החברה הלאומית לשיכון בישראל פסק דין (11.07.2019)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "8f6ef1ea-fc9b-433b-9b23-c0e75937026b",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "aam:8734/19",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2116-19-%d7%99%d7%95%d7%a0%d7%aa%d7%9f-%d7%a9%d7%9c%d7%99%d7%99%d7%93%d7%a8-%d7%a0-%d7%97%d7%91%d7%a8%d7%aa-%d7%94%d7%97%d7%a9%d7%9e%d7%9c-%d7%9c%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 2116/19 יונתן שליידר נ׳ חברת החשמל לישראל בע\"מ פסק דין (01.06.2020)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "c352d7e4-7eaa-488b-9003-97ce6f6f9cb9",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "raa:2116/19",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      }
+    ]
   },
-  "used_sources": 4,
-  "footnotes": 4,
-  "answer_len": 871,
-  "answer": "**בג\"ץ קעדאן — ההכרעה המרכזית**\n\nבית המשפט קבע כי עקרון השוויון מחייב את רשויות המדינה, ובכלל זה מינהל מקרקעי ישראל, בעת הקצאת מקרקעי ציבור; רשויות אלה אינן רשאיות להפלות בין אזרחים בהקצאה.¹\n\nנוסף על כך נפסק כי המדינה אינה רשאית לעקוף את חובת השוויון באמצעות העברת ההקצאה לגופים מתווכים (כדוגמת הסוכנות היהודית או אגודה קהילתית) אם בכך נגרמת הדרה של מבקשים על בסיס השתייכותם.²\n\nבג\"ץ הבהיר כי אפליה על רקע השתייכות לאומית או אתנית בהקצאת קרקעות המדינה היא פסולה ובלתי־חוקית; מסקנה זו עומדת בקו פרשני עם עקרונות השוויון הנלמדים מחוק-יסוד: כבוד האדם וחירותו.³\n\nהסעד שניתן לא כלל צו לקליטת העותרים ביישוב באופן מיידי; בית המשפט הורה למינהל לשקול מחדש את בקשתם להקצאת מגרש בקציר לפי עקרון השוויון, והעניק אפשרות לדיון מחודש במקום צו להכנסה מיידית.⁴\n\nההצגה כאן מתמקדת בפסיקה עצמו; מקורות משניים מספקים ניתוח והקשר תיאורטי או תקדימי אך אינם מחליפים את הכרעת בית המשפט בפסק הדין."
+  "used_sources": 5,
+  "footnotes": 3,
+  "answer_len": 1215,
+  "answer": "שורה תחתונה: בג\"ץ קבע בפסק‑דין קעדאן כי חובת השוויון שמוטלת על הרשות הציבורית חלה גם על הקצאת מקרקעי המדינה, ופסק כי בקשת העותרים תישקל מחדש על יסוד עקרון זה.¹\n\nתשתית נורמטיבית: בית המשפט נימק את הכרעתו כשילוב של עקרון השוויון בדין הציבורי המחייב את ההתנהלות המנהלית ביחס לנכסי הציבור; בפסק‑הדין הוצגה חובת המדינה לנהוג באופן שוויוני בחלוקת קרקעותיה, ולא רק כחובה פרטנית שנגזרת מחקיקה ספציפית.²\n\nגבולות וחריגים: בפסק‑הדין לא נקבע כלל גורף האוסר כל הבחנה בעקב ההקצאה, והדבר מובן כהתירה להבחין כאשר קיימים נימוקים ענייניים, חוקיים ורלוונטיים המצדיקים זאת; עם זאת ההבחנות ייבחנו בכל מקרה תחת דרישת עמידה בעקרון השוויון ובנימוקיות היסודית שנדרשה בפסק‑דין.³\n\nהסעד וההשלכות היישומיות: באופן מעשי בית המשפט הורה על חזרה ושקילה מחדש של בקשות ההקצאה על יסוד שוויון (צו שחייב את המנהל לבחון את הבקשה מחדש); ביבחון האקדמי נוטים לראות בפסק‑דין זה אות התחלה שמשפיעה על ניסוח קריטריונים מדיניים ומנהליים לחלוקת קרקע ועל דרישת נימוקיות ופיקוח שיפוטי מוגבר בנושאי מדיניות הקצאה.¹\n\nהערה מסכמת: המקורות שסופקו כוללים את פסק‑הדין עצמו ואנליזות אקדמיות; טענות רחבות יותר לגבי יישום המדינה או הפיכת ההלכה למדיניות קבועה דנות בספרות ויש לגשת אליהן בזהירות — אין במקורות אלה כדי לטעון שהוכר כלל של עדיפות קולקטיבית רחבה ללא הגבלות נוספות."
 }

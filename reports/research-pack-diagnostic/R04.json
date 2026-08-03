@@ -2,8 +2,8 @@
   "id": "R04",
   "query": "מה הפסיקה אומרת על הרמת מסך ההתאגדות?",
   "mode_expected": "case_law_synthesis",
-  "run_id": "3d599b22-c8ad-4cfa-aa11-36c40da90c71",
-  "total_ms": 225256,
+  "run_id": "76d21f30-a551-4117-badb-f5475f4d34c6",
+  "total_ms": 178721,
   "research_mode": null,
   "shape": null,
   "deterministic_branch": "insufficient_sources_limitation",
@@ -12,66 +12,51 @@
   "sufficiency_reason": "no_usable_judgment_authority",
   "pool": {
     "found": null,
-    "admitted": 23,
-    "integrity_rejects": 1,
+    "admitted": 24,
+    "integrity_rejects": 0,
     "tier_counts": {
-      "primary_mirror": 3,
-      "statute_mirror": 3,
+      "primary_mirror": 2,
+      "statute_mirror": 4,
       "index_or_listing": 2,
       "official_primary": 2,
-      "secondary_commentary": 13
+      "secondary_commentary": 14
     },
     "citable_counts": {
-      "statute": 4,
-      "unknown": 1,
-      "judgment": 3,
-      "commentary": 9,
+      "statute": 5,
+      "unknown": 2,
+      "judgment": 2,
+      "commentary": 8,
       "not_citable": 2,
-      "scholarship": 4
+      "scholarship": 5
     },
-    "judgment_documents": 1,
+    "judgment_documents": 0,
     "judgments_with_holding_text": 0,
     "synthesis_role_counts": {
       "unknown": 3,
-      "leading_candidate": 1,
       "applying_candidate": 2,
-      "secondary_commentary": 13,
-      "statutory_background": 4
+      "secondary_commentary": 14,
+      "statutory_background": 5
     }
   },
   "text_usability_counts": {
-    "metadata_only": 10,
-    "substantive_excerpt": 8,
-    "listing_page": 2,
-    "full_text": 3
+    "metadata_only": 7,
+    "full_text": 3,
+    "substantive_excerpt": 13,
+    "listing_page": 1
   },
   "role_counts": {
-    "binding_case_law": 7,
-    "primary_statute": 3,
-    "persuasive_case_law": 9,
-    "scholarship": 4
+    "primary_statute": 5,
+    "binding_case_law": 9,
+    "persuasive_case_law": 4,
+    "scholarship": 6
   },
   "admitted_sources": [
     {
-      "title": "צוק אור בע\"מ נ' קאר סקיוריטי בע\"מ",
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts\\89\\070\\004\\F14&fileName=89004070_f14.txt",
-      "role": "binding_case_law",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "judgment",
-      "judgment": true,
-      "holding_text": false,
-      "synthesis_role": "leading_candidate",
-      "flags": [
-        "judgment_document"
-      ]
-    },
-    {
-      "title": "חוק החברות, תשנ\"ט-1999",
-      "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+      "title": "הצעת חוק החברות, התשס\"ב 2002",
+      "url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
       "role": "primary_statute",
       "tier": "official_primary",
-      "text_usability": "substantive_excerpt",
+      "text_usability": "metadata_only",
       "citable_as": "statute",
       "judgment": false,
       "holding_text": false,
@@ -81,18 +66,6 @@
     {
       "title": "הרמת מסך ההתאגדות בחברה",
       "url": "https://www.psakdin.co.il/Document/%D7%94%D7%A8%D7%9E%D7%AA-%D7%9E%D7%A1%D7%9A-%D7%94%D7%94%D7%AA%D7%90%D7%92%D7%93%D7%95%D7%AA-%D7%91%D7%97%D7%91%D7%A8%D7%94",
-      "role": "persuasive_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "טלטלת המסך - בין הרמה מוצדקת לצדק מורם",
-      "url": "https://www.psakdin.co.il/Document/%D7%98%D7%9C%D7%98%D7%9C%D7%AA-%D7%94%D7%9E%D7%A1%D7%9A--%D7%91%D7%99%D7%9F-%D7%94%D7%A8%D7%9E%D7%94-%D7%9E%D7%95%D7%A6%D7%93%D7%A7%D7%AA-%D7%9C%D7%A6%D7%93%D7%A7-%D7%9E%D7%95%D7%A8%D7%9D",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "metadata_only",
@@ -103,31 +76,19 @@
       "flags": []
     },
     {
-      "title": "בית משפט לענייני משפחה בתל אביב -יפו, השופטת הבכירה  מירה דהן: החלטה בבקשה לפסק דין הצהרתי בדבר אימהות (תמ\"ש 47191-01-25)",
-      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=280",
-      "role": "persuasive_case_law",
+      "title": "בימ\"ש עליון, אב\"ד השופט יוסף אלרון, השופטת גילה כנפי-שטייניץ, השופטת רות רונן: פס\"ד בערעור על הכ\"ד ברצח בנסיבות מחמירות של רעייתו וגזה\"ד (ע\"פ 7905/23)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=500",
+      "role": "binding_case_law",
       "tier": "index_or_listing",
-      "text_usability": "listing_page",
+      "text_usability": "full_text",
       "citable_as": "not_citable",
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "unknown",
       "flags": [
-        "listing_or_pagination_page"
-      ]
-    },
-    {
-      "title": "חלוקת תמלוגים לבעלי זכויות בתחום המוזיקה",
-      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7323&businessType=1",
-      "role": "binding_case_law",
-      "tier": "primary_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "unknown",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "unknown",
-      "flags": [
-        "official_host_non_specific_path"
+        "listing_or_pagination_page",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
       ]
     },
     {
@@ -145,8 +106,74 @@
       ]
     },
     {
-      "title": "חיפוש מתקדם - בית המשפט העליון",
-      "url": "https://supreme.court.gov.il/Pages/fullsearch.aspx",
+      "title": "האם ב-ICOs מונפקים ניירות ערך? על אסדרה של אסימונים דיגיטליים שמנפיקות חברות",
+      "url": "https://lawjournal.huji.ac.il/article/12/1793",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "שיקום או פירוק? המאפיינים של הליכי חדלות פירעון תאגידיים בישראל",
+      "url": "https://lawjournal.huji.ac.il/article/12/1791",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "חוק בינוי ופינוי של אזורי שיקום",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "תקנות הבטיחות בעבודה (עבודות בניה)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%91%D7%95%D7%93%D7%95%D7%AA_%D7%91%D7%A0%D7%99%D7%94)",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "תקנות הבטיחות בעבודה (גיליון בטיחות, סיווג, אריזה, תיווי וסימון של אריזות)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%92%D7%99%D7%9C%D7%99%D7%95%D7%9F_%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA%2C_%D7%A1%D7%99%D7%95%D7%95%D7%92%2C_%D7%90%D7%A8%D7%99%D7%96%D7%94%2C_%D7%AA%D7%99%D7%95%D7%95%D7%99_%D7%95%D7%A1%D7%99%D7%9E%D7%95%D7%9F_%D7%A9%D7%9C_%D7%90%D7%A8%D7%99%D7%96%D7%95%D7%AA)",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "נט המשפט - דף הבית",
+      "url": "https://www.court.gov.il/ngcs.web.site/homepage.aspx",
       "role": "persuasive_case_law",
       "tier": "primary_mirror",
       "text_usability": "metadata_only",
@@ -157,6 +184,18 @@
       "flags": [
         "official_host_non_specific_path"
       ]
+    },
+    {
+      "title": "הרמת המסך: בחינה עיונית ואמפירית",
+      "url": "https://www.taulawreview.sites.tau.ac.il/mb-1-1/%D7%94%D7%A8%D7%9E%D7%AA-%D7%94%D7%9E%D7%A1%D7%9A:-%D7%91%D7%97%D7%99%D7%A0%D7%94-%D7%A2%D7%99%D7%95%D7%A0%D7%99%D7%AA-%D7%95%D7%90%D7%9E%D7%A4%D7%99%D7%A8%D7%99%D7%AA",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
     },
     {
       "title": "פרק ו': הרמת המסך",
@@ -171,70 +210,8 @@
       "flags": []
     },
     {
-      "title": "פסקדין - חיפוש פסקי-דין",
-      "url": "https://www.psakdin.co.il/Court",
-      "role": "persuasive_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "נבו - חיפוש פסיקה",
-      "url": "https://www.nevo.co.il/psikasearch.aspx",
-      "role": "persuasive_case_law",
-      "tier": "primary_mirror",
-      "text_usability": "metadata_only",
-      "citable_as": "judgment",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "applying_candidate",
-      "flags": [
-        "official_host_non_specific_path"
-      ]
-    },
-    {
-      "title": "הרמת מסך: בחינה עיונית ואמפירית (Piercing the Corporate Veil: Theoretical and Empirical Examination)",
-      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3416115",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "מבחנים, ציונים ורווחה פסיכולוגית - פורטל מס\"ע",
-      "url": "https://portal.macam.ac.il/article/%D7%9E%D7%91%D7%97%D7%A0%D7%99%D7%9D-%D7%A6%D7%99%D7%95%D7%A0%D7%99%D7%9D-%D7%95%D7%A8%D7%95%D7%95%D7%97%D7%94-%D7%A4%D7%A1%D7%99%D7%9B%D7%95%D7%9C%D7%95%D7%92%D7%99%D7%AA/",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "העליון ביטל פס\"ד והחזיר הדיון למחוזי - לא ברור אם הוכחה עילה המצדיקה הרמת מסך",
-      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%A2%D7%9C%D7%99%D7%95%D7%9F-%D7%91%D7%99%D7%98%D7%9C-%D7%A4%D7%A1%22%D7%93-%D7%95%D7%94%D7%97%D7%96%D7%99%D7%A8-%D7%94%D7%93%D7%99%D7%95%D7%9F-%D7%9C%D7%9E%D7%97%D7%95%D7%96%D7%99--%D7%9C%D7%90-%D7%91%D7%A8%D7%95%D7%A8-%D7%90%D7%9D-%D7%94%D7%95%D7%9B%D7%97%D7%94-%D7%A2%D7%99%D7%9C%D7%94-%D7%94%D7%9E%D7%A6%D7%93%D7%99%D7%A7%D7%94-%D7%94%D7%A8%D7%9E%D7%AA-%D7%9E%D7%A1%D7%9A",
-      "role": "binding_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "הרמת מסך – מי רשאי לבקש? נושים, מפרקים ורשויות מס",
-      "url": "https://kotar.cet.ac.il/kotarapp/index/Book.aspx?nBookID=104503403",
+      "title": "שימוש שלא כדין בעקרון האישיות המשפטית הנפרדת לשם הונאה או קיפוח",
+      "url": "https://kotar.cet.ac.il/KotarApp/Index/Chapter.aspx?nBookID=102951716&nTocEntryID=102953080",
       "role": "scholarship",
       "tier": "index_or_listing",
       "text_usability": "listing_page",
@@ -247,58 +224,109 @@
       ]
     },
     {
-      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
-      "role": "persuasive_case_law",
+      "title": "התשלום העונשי כסנקציה בדיני החוזים",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/%D7%93%D7%99%D7%A1%D7%A8%D7%98%D7%A6%D7%99%D7%94-%D7%A9%D7%A2%D7%A8_%D7%95%D7%AA%D7%95%D7%9B%D7%9F_%D7%A2%D7%A0%D7%99%D7%99%D7%A0%D7%99%D7%9D.PDF",
+      "role": "scholarship",
       "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "Piercing the Corporate Veil: Theoretical and Empirical Analysis",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3416115",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "מימון דק׳/ הרמת המסך והגבלת האחריות בדיני חברות",
+      "url": "https://netanya.ac.il/gur/data/AGUDA/law/yearb/companies/papers/paper12015/%D7%A2%D7%99%D7%95%D7%A0%D7%99%20%D7%9E%D7%A9%D7%A4%D7%98%20%D7%A4%D7%A8%D7%95%D7%A7%D7%A6%D7%99%D7%94%20%D7%94%D7%A8%D7%9E%D7%AA%20%D7%9E%D7%A1%D7%9A%20%D7%9E%D7%99%D7%9E%D7%95%D7%9F%20%D7%93%D7%A7.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "חריגה מסמכות עניינית בהליך האזרחי | אלון קלמנט (כרך יח)",
+      "url": "https://runilawreview.org/2014/12/22/volume18_klement/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "ביטוח כפל יתר: סעיף 59 לחוק חוזה הביטוח, התשמ״א-1981",
+      "url": "https://lawjournal.huji.ac.il/article/12/1020",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "רע\"א 1239/19 יואל שאול נ׳ חברת ניידלי תקשורת בע\"מ פסק דין (08.01.2020)",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1239-19-%d7%99%d7%95%d7%90%d7%9c-%d7%a9%d7%90%d7%95%d7%9c-%d7%a0-%d7%97%d7%91%d7%a8%d7%aa-%d7%a0%d7%99%d7%99%d7%93%d7%9c%d7%99-%d7%aa%d7%a7%d7%a9%d7%95%d7%a8%d7%aa-%d7%91%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "רע\"א 187-05 - נעמה נסייר נ. עיריית נצרת עילית",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/1&fileName=SD1_6_187-05.pdf&type=2",
+      "role": "persuasive_case_law",
+      "tier": "official_primary",
       "text_usability": "full_text",
-      "citable_as": "scholarship",
+      "citable_as": "judgment",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "הוגנוּת תאגידית ומטרת החברה בראי הכלכלה ההתנהגותית | עלי בוקשפן (כרך כט)",
-      "url": "https://runilawreview.org/2025/01/23/vol29-bukspan/",
-      "role": "primary_statute",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "scholarship",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "חוק מיסוי מקרקעין (שבח ורכישה)",
-      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%9E%D7%99%D7%A1%D7%95%D7%99_%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99%D7%9F_(%D7%A9%D7%91%D7%97_%D7%95%D7%A8%D7%9B%D7%99%D7%A9%D7%94)",
-      "role": "persuasive_case_law",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
+      "synthesis_role": "applying_candidate",
       "flags": [
-        "consolidated_statute_mirror"
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
       ]
     },
     {
-      "title": "פתח־דבר: לשים את האדם במרכז - על מקומו של האדם במשפט",
-      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_0a721e60559b4bc6a01a0ad0b563d4cb.pdf",
-      "role": "primary_statute",
-      "tier": "secondary_commentary",
-      "text_usability": "full_text",
-      "citable_as": "scholarship",
+      "title": "ניסויים בבעלי חיים בישראל – פיקוח ונתונים",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6860&businessType=1",
+      "role": "persuasive_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
+      "synthesis_role": "unknown",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
     },
     {
-      "title": "רע\"א 6158/22 גינדי אחזקות דירות יוקרה בע\"מ נ׳ נציגות הבית המשותף פסק דין (29.08.2022)",
-      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-6158-22-%d7%92%d7%99%d7%a0%d7%93%d7%99-%d7%90%d7%97%d7%96%d7%a7%d7%95%d7%aa-%d7%93%d7%99%d7%a8%d7%95%d7%aa-%d7%99%d7%95%d7%a7%d7%a8%d7%94-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a0%d7%a6/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "ע\"א 6553/20 עיריית תל אביב יפו נ׳ כונס הנכסים הרשמי פסק דין (29.07.2021)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-6553-20-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91-%d7%99%d7%a4%d7%95-%d7%a0-%d7%9b%d7%95%d7%a0%d7%a1-%d7%94%d7%a0%d7%9b%d7%a1%d7%99%d7%9d-%d7%94%d7%a8/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
       "role": "persuasive_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
@@ -309,9 +337,9 @@
       "flags": []
     },
     {
-      "title": "עלותו השקועה של התקדים | מיכל טמיר (כרך א)",
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/a1_15.pdf",
-      "role": "persuasive_case_law",
+      "title": "דיני הראיות בראי התיאוריה",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_77e1f23af363483b8a4ac71d748aa720.pdf",
+      "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "full_text",
       "citable_as": "scholarship",
@@ -321,34 +349,20 @@
       "flags": []
     },
     {
-      "title": "רע\"א 7714/22 אריאל מואב נ׳ בנק הפועלים בע\"מ החלטה (20.12.2022)",
-      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-7714-22-%d7%90%d7%a8%d7%99%d7%90%d7%9c-%d7%9e%d7%95%d7%90%d7%91-%d7%a0-%d7%91%d7%a0%d7%a7-%d7%94%d7%a4%d7%95%d7%a2%d7%9c%d7%99%d7%9d-%d7%91%d7%a2%d7%9e-%d7%94%d7%97%d7%9c%d7%98/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "role": "binding_case_law",
+      "title": "ע\"פ 4039/19 דניאל נחמני נ׳ מדינת ישראל פסק דין (17.03.2021)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%a4-4039-19-%d7%93%d7%a0%d7%99%d7%90%d7%9c-%d7%a0%d7%97%d7%9e%d7%a0%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "primary_statute",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
       "citable_as": "commentary",
       "judgment": false,
-      "holding_text": true,
+      "holding_text": false,
       "synthesis_role": "secondary_commentary",
       "flags": []
-    },
-    {
-      "title": "תקנות התכנון והבניה (סדרי דין בבקשות לעניין צו הריסה מינהלי)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%AA%D7%9B%D7%A0%D7%95%D7%9F_%D7%95%D7%94%D7%91%D7%A0%D7%99%D7%94_(%D7%A1%D7%93%D7%A8%D7%99_%D7%93%D7%99%D7%9F_%D7%91%D7%91%D7%A7%D7%A9%D7%95%D7%AA_%D7%9C%D7%A2%D7%A0%D7%99%D7%99%D7%9F_%D7%A6%D7%95_%D7%94%D7%A8%D7%99%D7%A1%D7%94_%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99)",
-      "role": "binding_case_law",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
     }
   ],
   "acquisition": {
-    "ms": 1829,
+    "ms": 3285,
     "mode": "case_law_synthesis",
     "budget": {
       "other": 2,
@@ -358,59 +372,260 @@
     "enabled": true,
     "attempts": [
       {
-        "ms": 1825,
-        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts\\89\\070\\004\\F14&fileName=89004070_f14.txt",
-        "title": "צוק אור בע\"מ נ' קאר סקיוריטי בע\"מ",
-        "success": false,
-        "candidate_id": "ebf214c2-c74a-4ea7-b009-3755faa41c0a",
-        "title_signal": "צוק אור בע\"מ נ' קאר סקיוריטי בע\"מ",
-        "docket_signal": "ע\"א 407/89",
-        "failure_reason": "no_local_document_match",
-        "synthesis_role": "leading_candidate",
-        "trigger_reason": "metadata_only",
+        "ms": 1651,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/1&fileName=SD1_6_187-05.pdf&type=2",
+        "title": "רע\"א 187-05 - נעמה נסייר נ. עיריית נצרת עילית",
+        "success": true,
+        "candidate_id": "b78d17ee-8dcf-4cff-b5f3-89e9a51f0d51",
+        "title_signal": "רע\"א 187-05 - נעמה נסייר נ. עיריית נצרת עילית",
+        "docket_signal": "רע\"א 187/05",
+        "failure_reason": null,
+        "synthesis_role": "applying_candidate",
+        "trigger_reason": "no_judgment_body_text",
         "has_holding_text": false,
-        "method_succeeded": null,
-        "docket_normalized": "aa:407/89",
+        "method_succeeded": "direct_file_fetch",
+        "docket_normalized": "raa:187/5",
         "methods_attempted": [
-          "direct_file_fetch",
+          "direct_file_fetch"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 97278,
+        "text_usability_before": "substantive_excerpt",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": false
+      },
+      {
+        "ms": 1632,
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=500",
+        "title": "בימ\"ש עליון, אב\"ד השופט יוסף אלרון, השופטת גילה כנפי-שטייניץ, השופטת רות רונן: פס\"ד בערעור על הכ\"ד ברצח בנסיבות מחמירות של רעייתו וגזה\"ד (ע\"פ 7905/23)",
+        "success": true,
+        "candidate_id": "e44b1082-2e0c-4446-8a03-19d422df49ff",
+        "title_signal": "בימ\"ש עליון, אב\"ד השופט יוסף אלרון, השופטת גילה כנפי-שטייניץ, השופטת רות רונן: פס\"ד בערעור על הכ\"ד ברצח בנסיבות מחמירות ",
+        "docket_signal": "ע\"פ 7905/23",
+        "failure_reason": null,
+        "synthesis_role": "unknown",
+        "trigger_reason": "no_judgment_body_text",
+        "has_holding_text": false,
+        "method_succeeded": "local_db_docket_lookup",
+        "docket_normalized": "ap:7905/23",
+        "methods_attempted": [
           "local_db_docket_lookup"
         ],
         "judgment_candidate": true,
         "usable_for_holding": false,
-        "acquisition_success": false,
-        "acquired_text_length": 0,
-        "final_text_usability": "metadata_only",
-        "text_usability_after": "metadata_only",
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
         "acquisition_attempted": true,
-        "extracted_text_length": 0,
-        "text_usability_before": "metadata_only",
-        "acquisition_failure_reasons": [
-          "plain_text_below_threshold",
-          "no_local_document_match"
-        ],
+        "extracted_text_length": 12005,
+        "text_usability_before": "listing_page",
+        "acquisition_failure_reasons": [],
         "acquisition_methods_attempted": [
-          "direct_file_fetch",
           "local_db_docket_lookup"
         ],
-        "body_contains_docket_or_title": false,
+        "body_contains_docket_or_title": true,
         "can_support_synthesis_holding": false
       }
     ],
     "excluded": [
       {
-        "url": "https://supreme.court.gov.il/Pages/fullsearch.aspx",
-        "title": "חיפוש מתקדם - בית המשפט העליון",
-        "reason": "no_docket_or_title_signal",
-        "candidate_id": "61ab97a3-d568-4699-90ce-0081ed7948b2"
+        "url": "https://www.court.gov.il/ngcs.web.site/homepage.aspx",
+        "title": "נט המשפט - דף הבית",
+        "reason": "institutional_page",
+        "candidate_id": "26ffbe4f-dc79-4df9-8c19-50e8df5d3c3b"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1239-19-%d7%99%d7%95%d7%90%d7%9c-%d7%a9%d7%90%d7%95%d7%9c-%d7%a0-%d7%97%d7%91%d7%a8%d7%aa-%d7%a0%d7%99%d7%99%d7%93%d7%9c%d7%99-%d7%aa%d7%a7%d7%a9%d7%95%d7%a8%d7%aa-%d7%91%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 1239/19 יואל שאול נ׳ חברת ניידלי תקשורת בע\"מ פסק דין (08.01.2020)",
+        "reason": "budget_exhausted",
+        "candidate_id": "e7564efe-0544-4486-a9ba-44deab7bb0c7"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-6553-20-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91-%d7%99%d7%a4%d7%95-%d7%a0-%d7%9b%d7%95%d7%a0%d7%a1-%d7%94%d7%a0%d7%9b%d7%a1%d7%99%d7%9d-%d7%94%d7%a8/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"א 6553/20 עיריית תל אביב יפו נ׳ כונס הנכסים הרשמי פסק דין (29.07.2021)",
+        "reason": "budget_exhausted",
+        "candidate_id": "75c37d22-ca68-4eb5-8d38-97e04630f5e4"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a4-4039-19-%d7%93%d7%a0%d7%99%d7%90%d7%9c-%d7%a0%d7%97%d7%9e%d7%a0%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"פ 4039/19 דניאל נחמני נ׳ מדינת ישראל פסק דין (17.03.2021)",
+        "reason": "budget_exhausted",
+        "candidate_id": "04537f5f-9d7d-464c-81ba-175861516548"
       }
     ],
-    "successes": 0,
-    "attempts_made": 1,
-    "eligible_count": 1,
-    "judgment_candidates": 5
+    "successes": 2,
+    "attempts_made": 2,
+    "eligible_count": 5,
+    "judgment_candidates": 6,
+    "eligibility_diagnostics": [
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=500",
+        "title": "בימ\"ש עליון, אב\"ד השופט יוסף אלרון, השופטת גילה כנפי-שטייניץ, השופטת רות רונן: פס\"ד בערעור על הכ\"ד ברצח בנסיבות מחמירות של רעייתו וגזה\"ד (ע\"פ 7905/23)",
+        "eligible": true,
+        "citable_as": "not_citable",
+        "source_type": "caselaw",
+        "candidate_id": "e44b1082-2e0c-4446-8a03-19d422df49ff",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "index_or_listing",
+        "synthesis_role": "unknown",
+        "text_usability": "listing_page",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": "ap:7905/23",
+        "eligibility_basis": [
+          "docket_signal"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.court.gov.il/ngcs.web.site/homepage.aspx",
+        "title": "נט המשפט - דף הבית",
+        "eligible": false,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "26ffbe4f-dc79-4df9-8c19-50e8df5d3c3b",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": true,
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": "institutional_page",
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": null,
+        "eligibility_basis": [],
+        "has_docket_signal": false,
+        "ineligible_reason": "institutional_page",
+        "acquisition_attempted": false,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-1239-19-%d7%99%d7%95%d7%90%d7%9c-%d7%a9%d7%90%d7%95%d7%9c-%d7%a0-%d7%97%d7%91%d7%a8%d7%aa-%d7%a0%d7%99%d7%99%d7%93%d7%9c%d7%99-%d7%aa%d7%a7%d7%a9%d7%95%d7%a8%d7%aa-%d7%91%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 1239/19 יואל שאול נ׳ חברת ניידלי תקשורת בע\"מ פסק דין (08.01.2020)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "e7564efe-0544-4486-a9ba-44deab7bb0c7",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "raa:1239/19",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/1&fileName=SD1_6_187-05.pdf&type=2",
+        "title": "רע\"א 187-05 - נעמה נסייר נ. עיריית נצרת עילית",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "supreme_court_il",
+        "candidate_id": "b78d17ee-8dcf-4cff-b5f3-89e9a51f0d51",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": true,
+        "authority_tier": "official_primary",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": true,
+        "docket_normalized": "raa:187/5",
+        "eligibility_basis": [
+          "docket_signal",
+          "official_court_url",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-6553-20-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa-%d7%aa%d7%9c-%d7%90%d7%91%d7%99%d7%91-%d7%99%d7%a4%d7%95-%d7%a0-%d7%9b%d7%95%d7%a0%d7%a1-%d7%94%d7%a0%d7%9b%d7%a1%d7%99%d7%9d-%d7%94%d7%a8/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"א 6553/20 עיריית תל אביב יפו נ׳ כונס הנכסים הרשמי פסק דין (29.07.2021)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "75c37d22-ca68-4eb5-8d38-97e04630f5e4",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "aa:6553/20",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a4-4039-19-%d7%93%d7%a0%d7%99%d7%90%d7%9c-%d7%a0%d7%97%d7%9e%d7%a0%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"פ 4039/19 דניאל נחמני נ׳ מדינת ישראל פסק דין (17.03.2021)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "04537f5f-9d7d-464c-81ba-175861516548",
+        "planner_role": "primary_statute",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "ap:4039/19",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      }
+    ]
   },
   "used_sources": 0,
   "footnotes": 0,
-  "answer_len": 388,
-  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): פסק דין מתוך אתר ממשלתי (gov.il); חוק החברות, תשנ\"ט-1999; הרמת מסך ההתאגדות בחברה; טלטלת המסך - בין הרמה מוצדקת לצדק מורם."
+  "answer_len": 399,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): הצעת חוק החברות, התשס\"ב 2002; הרמת מסך ההתאגדות בחברה; מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); הרמת המסך: בחינה עיונית ואמפירית."
 }
