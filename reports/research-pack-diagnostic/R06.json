@@ -1,0 +1,230 @@
+{
+  "id": "R06",
+  "query": "מה הדין ביחס לצוואות הדדיות לפי סעיף 8א לחוק הירושה?",
+  "mode_expected": "statute_section_analysis",
+  "run_id": "7c64c249-b052-4e11-83b8-b6491e56c89f",
+  "total_ms": 174070,
+  "research_mode": null,
+  "shape": null,
+  "deterministic_branch": null,
+  "sufficiency_profile": "statutory_institution",
+  "sufficiency_passed": true,
+  "sufficiency_reason": "doctrinal_anchor_present",
+  "pool": {
+    "found": null,
+    "admitted": 13,
+    "integrity_rejects": 0,
+    "tier_counts": {
+      "primary_mirror": 1,
+      "statute_mirror": 1,
+      "index_or_listing": 1,
+      "official_primary": 4,
+      "secondary_commentary": 6
+    },
+    "citable_counts": {
+      "statute": 4,
+      "unknown": 1,
+      "judgment": 1,
+      "commentary": 4,
+      "not_citable": 1,
+      "scholarship": 2
+    },
+    "judgment_documents": 0,
+    "judgments_with_holding_text": 0,
+    "synthesis_role_counts": {
+      "unknown": 1,
+      "applying_candidate": 1,
+      "secondary_commentary": 6,
+      "statutory_background": 5
+    }
+  },
+  "text_usability_counts": {
+    "metadata_only": 4,
+    "listing_page": 1,
+    "substantive_excerpt": 7,
+    "full_text": 1
+  },
+  "role_counts": {
+    "primary_statute": 6,
+    "regulation": 2,
+    "scholarship": 1,
+    "binding_case_law": 4
+  },
+  "admitted_sources": [
+    {
+      "title": "חוק הירושה, תשכ\"ה-1965, סעיף 8א",
+      "url": "https://www.nevo.co.il/law_html/law00/72178.htm",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": []
+    },
+    {
+      "title": "תקנות הירושה, תשנ\"ח-1998",
+      "url": "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/Inheritance_Regulations.pdf",
+      "role": "regulation",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": []
+    },
+    {
+      "title": "הוראות חוק הירושה – סעיף 8א (צוואות הדדיות)",
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision65652-12-22/he/65652-12-22.docx",
+      "role": "regulation",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": []
+    },
+    {
+      "title": "בית משפט לענייני משפחה בראשון לציון, השופטת  מירה רום פלאי: פס\"ד בתביעות הדדיות בין שני אחים בעניין זכויות במשק (תמ\"ש 9094-10-22)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+      "role": "primary_statute",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": true,
+      "synthesis_role": "unknown",
+      "flags": [
+        "listing_or_pagination_page"
+      ]
+    },
+    {
+      "title": "החוק להגנה על אמריקאים מפני יישומים הנשלטים",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8002&businessType=1",
+      "role": "primary_statute",
+      "tier": "primary_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "סעיף 8א לחוק הירושה (צוואות הדדיות) – האם הסדר שולל?",
+      "url": "https://www.taulawreview.sites.tau.ac.il/post/mendelson_reich-ziv_49",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "בג\"ץ 2887-04 - סלים אבו מדיגם נ. מינהל מקרקעי ישראל",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/2&fileName=SB2_3_2887-04.pdf&type=2",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "applying_candidate",
+      "flags": []
+    },
+    {
+      "title": "ע\"א 6180/20 ד\"ר משה וינברג ושות' נ׳ מדינת ישראל פסק דין (13.06.2021)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-6180-20-%d7%93%d7%a8-%d7%9e%d7%a9%d7%94-%d7%95%d7%99%d7%a0%d7%91%d7%a8%d7%92-%d7%95%d7%a9%d7%95%d7%aa-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "בג\"ץ 1273/20 משמר הדמוקרטיה הישראלית נ׳ הכנסת ה- 22 פסק דין (09.09.2020)",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1273-20-%d7%9e%d7%a9%d7%9e%d7%a8-%d7%94%d7%93%d7%9e%d7%95%d7%a7%d7%a8%d7%98%d7%99%d7%94-%d7%94%d7%99%d7%a9%d7%a8%d7%90%d7%9c%d7%99%d7%aa-%d7%a0-%d7%94%d7%9b%d7%a0%d7%a1%d7%aa/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "פיצוי נאות: על סעדים וצדק בדיני הנטילה השלטונית בישראל",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_5af46bb80ac243b4a2ab7d4622677b97.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "\"משנים מפני השלום\": חופש הציווי או חופש החוזים? חופש החוזים עדיף – היבטים עיוניים ומעשיים בהסדרתה של הצוואה ההדדית | עירית רייך־זיו (כרך כד)",
+      "url": "https://runilawreview.org/2021/05/27/vol24-reich-ziv/",
+      "role": "primary_statute",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": true,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "חוק הירושה",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%99%D7%A8%D7%95%D7%A9%D7%94",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "בג\"ץ 3390/16 עדאלה – המרכז המשפטי לזכויות המיעוט הערבי בישראל נ׳ הכנסת פסק דין",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3390-16-%d7%a2%d7%93%d7%90%d7%9c%d7%94-%d7%94%d7%9e%d7%a8%d7%9b%d7%96-%d7%94%d7%9e%d7%a9%d7%a4%d7%98%d7%99-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%9e%d7%99%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    }
+  ],
+  "acquisition": {
+    "ms": 0,
+    "mode": "doctrine_explanation",
+    "enabled": false,
+    "attempts": [],
+    "successes": 0,
+    "attempts_made": 0,
+    "eligible_count": 0
+  },
+  "used_sources": 5,
+  "footnotes": 5,
+  "answer_len": 2181,
+  "answer": "**מענה קצר**\n\nסעיף 8א לחוק הירושה מאפשר לבני זוג לערוך צוואות הדדיות ומסדיר הופעתן והוראות לגבי ביטולן; נוסח הסעיף והוראות נלוויות מופיעים בחוק ובתקנות הרלוונטיות.¹\n\nהחוק מתאר את הצוואה ההדדית כצוואה הנעשית \"מתוך הסתמכות\" של בן זוג על צוואת בן הזוג האחר וקובע תנאים מיוחדים לביטול צוואות אלה, אך אין בסעיף כדי לקבוע במפורש כי צוואות אלה הופכות להסדר חוזי בלתי־ניתן לשינוי שאוסר על אחד הצדדים לשנות או לבטל צוואתו בכל נסיבות.²\n\nלעניין טבעה המשפטי של הצוואה ההדדית — מן הנוסח בחוק ובניתוחי המשנה עולה בזהירות כי החוק מווסת את אופן עריכתן וביטולן של צוואות מסוג זה, אך אינו מטיל איסור מוחלט על שינוי או ביטול בצוואה כל עוד מופעלים הנהלים שקבועים בסעיף ולתקנות המתאימות; אין במקורות הסטטוטוריים כאן כדי להפיק מסקנה נחרצת בדבר הפיכת הצוואה להסכם קיבול מחייב בין המצווים שאסר על שינוי מוחלט.³\n\nדרישות הצורה והפרוצדורה הקשורות בצוואות — כולל הוראות כלליות על אופן עריכת צוואה והליכי נסמך שמופיעות בתקנות הירושה — חלות גם על צוואות הדדיות; החוק עצמו מציין מנגנוני ביטול ספציפיים (כולל דרישות בכתב בתקופת החיים ובמקרים של השבה או הסתלקות לאחר פטירה) כפי שמתואר בסעיף 8א ובהערות המשניות שנדונו בספרות ובתקנות.⁴\n\nהשלכות הפרת דרישות הצורה והתנאים: המקורות הסטטוטוריים שמוצגים כאן אינם מפרטים סנקציה חד־משמעית פרט לאי־תוקף הצוואה שלא עומדת בתנאי החוק הכלליים; מאחר שסעיף 8א ותקנות הירושה מתמקדים בהסדרת אופן העריכה והביטול, אין בהן הוראה מפורשת לגבי סעד קונקרטי של פיצוי או קיום אישי במקרה של שינוי או ביטול שלא על‑פי הנוסח המוסכם.⁴\n\nלגבי סעדי נזיקין או סעד לביצוע ההסדר (כמו פסק דין שיפוי או קיום התחייבות בין המצווים) — המקורות שניתנו אינם קובעים במפורש זכות שכזו או מסלול אכיפה פרטני; מכאן שלא ניתן להפיק ממקורות אלה פסק־דין סטטוטורי המעניק סעד כזה ללא תמיכה נוספת (למשל בפסיקה שאינה מוצגת כאן).⁵\n\nאין כאן סקירת פסיקה: לא הוצגה במסגרת תשובה זו פסיקה ראויה לשימוש בעניינן של צוואות הדדיות, ולכן המענה נשען אך ורק על הוראות החוק והתקנות שנמסרו.\n\nמסקנה מעשית קצרה: חוק הירושה קובע מסגרת משפטית לצוואות הדדיות ומניח מנגנוני ביטול מסוימים, אך אינו נותן במפורש הוראה כי צוואה הדדית תהפוך להסכם בלתי־ניתן־לביטול; נוכח חוסר הבהירות שהמקורות מצביעים עליה ביחס לתוצאות לאחר מותו של אחד המצווים, הסיכום המשפטי הסופי ביחס לזמינות סעדים נותר תלוי בפיתוחי פסיקה או בחיזוק הוראות סטטוטוריות שלא נכללו כאן.⁵"
+}

@@ -1,0 +1,355 @@
+{
+  "id": "R09",
+  "query": "כתוב סקירת פסיקה על מבחן ההשתלבות בדיני עבודה.",
+  "mode_expected": "academic_legal_review",
+  "run_id": "00130679-4a87-4047-832b-ef5ae69acfa0",
+  "total_ms": 173869,
+  "research_mode": null,
+  "shape": null,
+  "deterministic_branch": "insufficient_sources_limitation",
+  "sufficiency_profile": "case_law_synthesis",
+  "sufficiency_passed": false,
+  "sufficiency_reason": "no_usable_judgment_authority",
+  "pool": {
+    "found": null,
+    "admitted": 22,
+    "integrity_rejects": 0,
+    "tier_counts": {
+      "primary_mirror": 2,
+      "statute_mirror": 7,
+      "index_or_listing": 1,
+      "official_primary": 5,
+      "secondary_commentary": 7
+    },
+    "citable_counts": {
+      "statute": 8,
+      "unknown": 6,
+      "judgment": 1,
+      "commentary": 1,
+      "not_citable": 1,
+      "scholarship": 5
+    },
+    "judgment_documents": 1,
+    "judgments_with_holding_text": 0,
+    "synthesis_role_counts": {
+      "unknown": 6,
+      "applying_candidate": 1,
+      "secondary_commentary": 7,
+      "statutory_background": 8
+    }
+  },
+  "text_usability_counts": {
+    "metadata_only": 6,
+    "listing_page": 1,
+    "substantive_excerpt": 13,
+    "full_text": 2
+  },
+  "role_counts": {
+    "government_report": 4,
+    "binding_case_law": 9,
+    "primary_statute": 5,
+    "scholarship": 1,
+    "persuasive_case_law": 3
+  },
+  "admitted_sources": [
+    {
+      "title": "האם נטל הוכחת אי קיום יחסי עובד-מעביד יוטל על הפלטפורמות הדיגיטליות?",
+      "url": "https://main.knesset.gov.il/apps/committees/4196/news/8951",
+      "role": "government_report",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": []
+    },
+    {
+      "title": "בית המשפט המחוזי ת\"א-יפו, השופט גלעד הס: פסק דין בערעור על החלטה בעניין סמכות בית המשפט בישראל לדון בבקשה לאישור הגשת תביעה ייצוגית כנגד חברת \"סנאפצ'ט\"  (ע\"ר 68900-06-25)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=20",
+      "role": "binding_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "listing_or_pagination_page"
+      ]
+    },
+    {
+      "title": "תקנות הבטיחות בעבודה (עבודה בגובה)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%91%D7%95%D7%93%D7%94_%D7%91%D7%92%D7%95%D7%91%D7%94)",
+      "role": "binding_case_law",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "תקנות הבטיחות בעבודה (עזרה ראשונה במקומות עבודה)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%96%D7%A8%D7%94_%D7%A8%D7%90%D7%A9%D7%95%D7%A0%D7%94_%D7%91%D7%9E%D7%A7%D7%95%D7%9E%D7%95%D7%AA_%D7%A2%D7%91%D7%95%D7%93%D7%94)",
+      "role": "binding_case_law",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "נתונים על מקבלי מענק עבודה מועדפת",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8205&businessType=1",
+      "role": "binding_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "חוק בינוי ופינוי של אזורי שיקום",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "תקנות ביטוח בריאות ממלכתי (העברת דמי ביטוח בידי משרד הבטחון כמשלם תגמול)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9E%D7%9E%D7%9C%D7%9B%D7%AA%D7%99_(%D7%94%D7%A2%D7%91%D7%A8%D7%AA_%D7%93%D7%9E%D7%99_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%99%D7%93%D7%99_%D7%9E%D7%A9%D7%A8%D7%93_%D7%94%D7%91%D7%98%D7%97%D7%95%D7%9F_%D7%9B%D7%9E%D7%A9%D7%9C%D7%9D_%D7%AA%D7%92%D7%9E%D7%95%D7%9C)",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "תקנות ביטוח בריאות ממלכתי (הוראות מיוחדות בדבר תשלום דמי ביטוח בריאות)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9E%D7%9E%D7%9C%D7%9B%D7%AA%D7%99_(%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%9E%D7%99%D7%95%D7%97%D7%93%D7%95%D7%AA_%D7%91%D7%93%D7%91%D7%A8_%D7%AA%D7%A9%D7%9C%D7%95%D7%9D_%D7%93%D7%9E%D7%99_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA)",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "העצמאים הצעירים וכלכלת הפלטפורמה בישראל",
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/a1489602-e9e0-f011-a866-005056aa9911/2_a1489602-e9e0-f011-a866-005056aa9911_11_21367.pdf",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": []
+    },
+    {
+      "title": "עובד או קבלן",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "משרד העבודה צוות כלכלת פלטפורמה ישיבה מיום 26.09.24",
+      "url": "https://www.gov.il/BlobFolder/guide/platform-sessions/he/platform_session5-protocol.pdf",
+      "role": "government_report",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": []
+    },
+    {
+      "title": "הוועדה לקידום תחום התעסוקה לקראת שנת 2030 - דוח מסכם",
+      "url": "https://www.gov.il/BlobFolder/reports/employment_report_2030/he/2030-report_2030report-acc.pdf",
+      "role": "government_report",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": []
+    },
+    {
+      "title": "platform_henig-economy.pptx",
+      "url": "https://www.gov.il/BlobFolder/guide/platform-sessions/he/platform_henig-economy.pptx",
+      "role": "government_report",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "בג\"ץ 1181-03 - אוניברסיטת בר אילן נ. בית הדין הארצי לעבודה",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_5_1181-03.pdf&type=2",
+      "role": "persuasive_case_law",
+      "tier": "official_primary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "judgment",
+      "judgment": true,
+      "holding_text": false,
+      "synthesis_role": "applying_candidate",
+      "flags": [
+        "judgment_document"
+      ]
+    },
+    {
+      "title": "בג\"ץ 8672/17 ד\"ר רות לוי נ׳ הוועדה לענייני פיצויים ותמלוגים מכוח חוק הפטנטים פסק דין",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8672-17-%d7%93%d7%a8-%d7%a8%d7%95%d7%aa-%d7%9c%d7%95%d7%99-%d7%a0-%d7%94%d7%95%d7%95%d7%a2%d7%93%d7%94-%d7%9c%d7%a2%d7%a0%d7%99%d7%99%d7%a0%d7%99-%d7%a4%d7%99%d7%a6%d7%95%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "פרמיית השליטה בעסקות מיזוג מסוג going private | מורן אופיר (כרך כ)",
+      "url": "https://runilawreview.org/2017/11/13/vol20_ofir/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "חוק הגנת השכר",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%92%D7%A0%D7%AA_%D7%94%D7%A9%D7%9B%D7%A8",
+      "role": "persuasive_case_law",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "הזכות לפרטיות בעבודה: עיון מחודש בפרשת איסקוב-ענבר ויישומה",
+      "url": "https://lawjournal.huji.ac.il/article/12/1909",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "חוק העבירות המינהליות",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%A2%D7%91%D7%99%D7%A8%D7%95%D7%AA_%D7%94%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%95%D7%AA",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "פיטורי עובדות הרות וקריטריון הוותק בחוק עבודת נשים: ההגנה שהפכה למנגנון מעודד אפליה",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_8ad759e0696c430983cfb64f72c6a95e.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "לא מוסדר, ולא במקרה: כשלים מובנים באסדרת (רגולציה) שירותים ציבוריים מופרטים חלקית",
+      "url": "https://lawjournal.huji.ac.il/article/12/1173",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "&quot;השב תשיב לו אשם&quot;: על תשלומי השבה בדיני חוזים",
+      "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/6_anidjar.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    }
+  ],
+  "acquisition": {
+    "ms": 0,
+    "mode": "doctrine_explanation",
+    "enabled": false,
+    "attempts": [],
+    "successes": 0,
+    "attempts_made": 0,
+    "eligible_count": 0
+  },
+  "used_sources": 0,
+  "footnotes": 0,
+  "answer_len": 429,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): האם נטל הוכחת אי קיום יחסי עובד-מעביד יוטל על הפלטפורמות הדיגיטליות?; מקור חקיקה מתוך אתר הכנסת; עובד או קבלן; משרד העבודה צוות כלכלת פלטפורמה ישיבה מיום 26.09.24."
+}

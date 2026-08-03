@@ -1,0 +1,361 @@
+{
+  "id": "R04",
+  "query": "מה הפסיקה אומרת על הרמת מסך ההתאגדות?",
+  "mode_expected": "case_law_synthesis",
+  "run_id": "5e0364c4-0d37-4922-91d7-ec6dc80b8b63",
+  "total_ms": 206122,
+  "research_mode": null,
+  "shape": null,
+  "deterministic_branch": "insufficient_sources_limitation",
+  "sufficiency_profile": "case_law_synthesis",
+  "sufficiency_passed": false,
+  "sufficiency_reason": "no_usable_judgment_authority",
+  "pool": {
+    "found": null,
+    "admitted": 22,
+    "integrity_rejects": 0,
+    "tier_counts": {
+      "primary_mirror": 2,
+      "index_or_listing": 1,
+      "official_primary": 5,
+      "secondary_commentary": 14
+    },
+    "citable_counts": {
+      "statute": 5,
+      "unknown": 3,
+      "judgment": 1,
+      "commentary": 2,
+      "not_citable": 1,
+      "scholarship": 10
+    },
+    "judgment_documents": 1,
+    "judgments_with_holding_text": 0,
+    "synthesis_role_counts": {
+      "unknown": 1,
+      "secondary_commentary": 14,
+      "statutory_background": 6,
+      "limiting_or_distinguishing_candidate": 1
+    }
+  },
+  "text_usability_counts": {
+    "metadata_only": 9,
+    "listing_page": 1,
+    "substantive_excerpt": 7,
+    "full_text": 5
+  },
+  "role_counts": {
+    "binding_case_law": 7,
+    "primary_statute": 7,
+    "persuasive_case_law": 5,
+    "scholarship": 3
+  },
+  "admitted_sources": [
+    {
+      "title": "ע\"א 4263/04 קיבוץ משמר העמק נ' עו\"ד טוביה בן צבי",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts\\04\\630\\042\\m03&fileName=04263040.m03&type=2",
+      "role": "binding_case_law",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": true,
+      "holding_text": false,
+      "synthesis_role": "limiting_or_distinguishing_candidate",
+      "flags": [
+        "judgment_document"
+      ]
+    },
+    {
+      "title": "תקנות סדר הדין האזרחי, תשע\"ט-2018",
+      "url": "https://www.nevo.co.il/law_html/law00/157751.htm",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": []
+    },
+    {
+      "title": "רשימת סוגי תיקים",
+      "url": "https://www.gov.il/BlobFolder/generalpage/net_law_info2/ar/net_filelist.pdf",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": []
+    },
+    {
+      "title": "חסר מידע בנתוני החיפוש",
+      "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": []
+    },
+    {
+      "title": "ביהמ\"ש השלום רחובות, שופט ישראל פת: פס\"ד בעניין פינוי דירה שיזן תפס בטענה שהזכויות נמכרו לו (ת\"א 19529-09-19)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+      "role": "persuasive_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "listing_or_pagination_page"
+      ]
+    },
+    {
+      "title": "שיקום או פירוק? המאפיינים של הליכי חדלות פירעון תאגידיים בישראל",
+      "url": "https://lawjournal.huji.ac.il/article/12/1791",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "יישום \"חוק פיצול דירות\" (חוק התכנון והבנייה",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6629&businessType=1",
+      "role": "primary_statute",
+      "tier": "primary_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "חוק הסעד (סדרי דין בעניני קטינים, חולי נפש ונעדרים), תשט\"ו-1955",
+      "url": "https://www.nevo.co.il/law_html/law01/055_081.htm",
+      "role": "primary_statute",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "חוק חדלות פירעון ושיקום כלכלי (תיקון מס ...",
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_7902343.pdf",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": []
+    },
+    {
+      "title": "הרמת המסך: בחינה עיונית ואמפירית",
+      "url": "https://www.taulawreview.sites.tau.ac.il/mb-1-1/%D7%94%D7%A8%D7%9E%D7%AA-%D7%94%D7%9E%D7%A1%D7%9A:-%D7%91%D7%97%D7%99%D7%A0%D7%94-%D7%A2%D7%99%D7%95%D7%A0%D7%99%D7%AA-%D7%95%D7%90%D7%9E%D7%A4%D7%99%D7%A8%D7%99%D7%AA",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "פרק ו': הרמת המסך",
+      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "המוציא ממעסיקו עליו הראיה?",
+      "url": "https://www.runi.ac.il/media/f2lnrngl/frenkel2022.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "אחריות לנֶצח? בעקבות ע\"א 1726/21 בכרי נ&#8217; מגנאג&#8217;י | מיכל לביא (כרך לא)",
+      "url": "https://runilawreview.org/2025/01/21/vol31-lavi/",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "אריאל בנדור, על דין ודיבורים | תגובה: (כרך א)",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/a1_5.pdf",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "הלכת פיצול הסעדים בין בתי משפט שונים והלכת העיקר והטפל- בין המצוי על תקלותיו לרצוי על תקוותיו",
+      "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/nun1_7.pdf",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_ebbf6fda97d74731a9cea34d71d369e4.pdf",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "האם התמקצעות שיפוטית חשובה? התמקצעות ועומס בבתי המשפט המחוזיים | נטע נדיב (כרך כז)",
+      "url": "https://runilawreview.org/2022/04/27/vol27-nadiv/",
+      "role": "primary_statute",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "הרמת המסך: בחינה עיונית ואמפירית",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_9723bedb2be34d9fa437d5c75e849d6c.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "ע\"א 7657/17 רו\"ח חן ברדיצ'ב בתפקידו כנאמן על הסדר הנושים של פו נ׳ עזריאל פסק דין (02.07.2017)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-7657-17-%d7%a8%d7%95%d7%97-%d7%97%d7%9f-%d7%91%d7%a8%d7%93%d7%99%d7%a6%d7%91-%d7%91%d7%aa%d7%a4%d7%a7%d7%99%d7%93%d7%95-%d7%9b%d7%a0%d7%90%d7%9e%d7%9f-%d7%a2%d7%9c-%d7%94%d7%a1/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "בשבחו של אינסטרומנטליזם צנוע: הערות ביקורתיות בעקבות ספרו של אלון הראל Why Law Matters",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_eff2fc9ae66a48ff8598406dfc6d1635.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "אוטונומיה, פטרנליזם וסולידריות בשלב סוף החיים בבתי דיור מוגן בישראל",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_125b407b46984975bd719481801bf70d.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "דוקטרינת הנזק הראייתי: האם הורם נטל השיכנוע?",
+      "url": "https://lawjournal.huji.ac.il/article/12/789",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    }
+  ],
+  "acquisition": {
+    "ms": 558,
+    "mode": "case_law_synthesis",
+    "enabled": true,
+    "attempts": [
+      {
+        "ms": 558,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts\\04\\630\\042\\m03&fileName=04263040.m03&type=2",
+        "title": "ע\"א 4263/04 קיבוץ משמר העמק נ' עו\"ד טוביה בן צבי",
+        "success": false,
+        "candidate_id": "ac1fd8d7-c80c-4369-ad10-a03085d1fbb6",
+        "title_signal": "ע\"א 4263/04 קיבוץ משמר העמק נ' עו\"ד טוביה בן צבי",
+        "docket_signal": "ע\"א 4263/04",
+        "failure_reason": "no_local_document_match",
+        "synthesis_role": "limiting_or_distinguishing_candidate",
+        "trigger_reason": "metadata_only",
+        "method_succeeded": null,
+        "methods_attempted": [
+          "direct_file_fetch",
+          "local_db_docket_lookup"
+        ],
+        "text_usability_after": "metadata_only",
+        "extracted_text_length": 0,
+        "text_usability_before": "metadata_only",
+        "can_support_synthesis_holding": false
+      }
+    ],
+    "successes": 0,
+    "attempts_made": 1,
+    "eligible_count": 1
+  },
+  "used_sources": 0,
+  "footnotes": 0,
+  "answer_len": 422,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): ע\"א 4263/04 קיבוץ משמר העמק נ' עו\"ד טוביה בן צבי; תקנות סדר הדין האזרחי, תשע\"ט-2018; מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il); מקור חקיקה מתוך אתר הכנסת."
+}
