@@ -1,0 +1,547 @@
+{
+  "generated_at": "2026-08-03T08:37:02.531Z",
+  "fixtures": [
+    {
+      "fixture_id": "P10",
+      "kind": "inheritance_mutual_wills (statute-based accuracy)",
+      "question": "מה הדין ביחס לצוואות הדדיות וביטולן לאחר פטירת אחד מבני הזוג לפי סעיף 8א לחוק הירושה?",
+      "run_id": "8de49e58-3116-4b53-8833-22e64155263f",
+      "source_pack": {
+        "usable_count": 5,
+        "candidates_count": 17,
+        "usable_judgments": 0,
+        "usable_statutes_regulations": 0,
+        "metadata_only": 0,
+        "other": 5,
+        "sufficiency": null,
+        "source_integrity_counts": null,
+        "synthesis_partition": null,
+        "deterministic_branch": null,
+        "research_mode": null,
+        "output_shape": null
+      },
+      "A": {
+        "model": "openai/gpt-5-mini",
+        "ok": true,
+        "ms": 6,
+        "sources_used": 0,
+        "answer_length": 389,
+        "footnote_count": 0,
+        "superscripts": 0,
+        "quality_warning_buckets": {},
+        "latin_tokens": [
+          "psakdin",
+          "co",
+          "il"
+        ],
+        "foreign_tokens": [],
+        "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): מאגרי פסיקה ישראליים - חיפוש ראשוני; חוק הירושה, תשכ\"ה-1965; פסק דין מתוך psakdin.co.il; 39317-10-22 (עמ\"ש) – מסמך פסק דין.",
+        "footnotes": []
+      },
+      "B": {
+        "model": "openai/gpt-5",
+        "ok": true,
+        "ms": 2,
+        "sources_used": 0,
+        "answer_length": 389,
+        "footnote_count": 0,
+        "superscripts": 0,
+        "quality_warning_buckets": {},
+        "latin_tokens": [
+          "psakdin",
+          "co",
+          "il"
+        ],
+        "foreign_tokens": [],
+        "schema_failure_reason": null,
+        "error": null,
+        "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): מאגרי פסיקה ישראליים - חיפוש ראשוני; חוק הירושה, תשכ\"ה-1965; פסק דין מתוך psakdin.co.il; 39317-10-22 (עמ\"ש) – מסמך פסק דין.",
+        "footnotes": []
+      }
+    },
+    {
+      "fixture_id": "C2",
+      "kind": "case_law_synthesis (rendering)",
+      "question": "מה הפסיקה אומרת על הלכת השיתוף?",
+      "run_id": "367ed434-3969-46ef-ba7d-1c559418ca63",
+      "source_pack": {
+        "usable_count": 13,
+        "candidates_count": 19,
+        "usable_judgments": 0,
+        "usable_statutes_regulations": 0,
+        "metadata_only": 0,
+        "other": 13,
+        "sufficiency": null,
+        "source_integrity_counts": null,
+        "synthesis_partition": null,
+        "deterministic_branch": null,
+        "research_mode": null,
+        "output_shape": null
+      },
+      "A": {
+        "model": "openai/gpt-5-mini",
+        "ok": true,
+        "ms": 63915,
+        "sources_used": 6,
+        "answer_length": 1786,
+        "footnote_count": 4,
+        "superscripts": 6,
+        "quality_warning_buckets": {},
+        "latin_tokens": [],
+        "foreign_tokens": [],
+        "answer": "**שורה תחתונה**\n\nבעמ 4623/04, אשר עומד במרכז קו הפסיקה שנמצא, נדונה חלותה של 'הלכת השיתוף' לגבי נכסי בני זוג; על פי פסק‑הדין יש מענה לשאלת הכרת שיתוף בנכסים שנצברו במהלך הנישואים והדבר נבחן על‑פי נסיבות המקרה ולא על‑פי רישום פורמלי בלבד.¹\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nבעמ 4623/04 — בית המשפט העליון בחן ערעור שבו נשאלה שאלת חלות הלכת השיתוף על נכסי בני זוג לאחר פרידה והתגרשות; בפסק‑הדין נדונו בקשות להכריז על פירוק שיתוף, צווי מניעה ומניעת פירוק נכסים, וכך הפך פסק‑דין זה למקור מרכזי לדיון בהיקף חלת ההלכה ביחס לנכסי בני זוג.²\n\n**יישומים בפסיקה שנמצאה**\n\nבעמ 4623/04 יושמה הזיקה בין הלכת השיתוף לבין תביעות לפירוק שיתוף במסגרת הליכים משפחתיים — בית המשפט בחן את טענות הצדדים בנוגע לזכויות בנכסים שנרכשו במהלך הנישואים והדיון עסק במתן סעדים כגון הכרזה על שיתוף או הוראות מניעה מפעולות בנכס.²\n\n**מגבלות והבחנות**\n\nבעמ 4623/04 הועלו שאלות לגבי גבולות ההלכה: האם נכסים מן הסוג האישי ביותר — כגון קריירה, מוניטין או נכסים שהיו בידי אחד הצדדים מלפני הנישואים — נופלים בהכרח תחת שיתוף; בפסק‑הדין ניכרת גישה המצריכה בחינה עובדית וסייגים לכל סוג נכס.²\n\nבספרות נידונו הבחנות נוספות והרחבות אפשריות של ההלכה, כגון החלת שיתוף ספציפי על נכסים מלפני הנישואים או על ירושות, אך אלה מצויות ברובן בדיון תיאורטי או פרשני ולא מהוות סייגים פסיקתיים עצמאים על‑פי המקורות השמישים שנמצאו.³\n\n**מה לא ניתן לקבוע מהמקורות**\n\nאין במקורות השמישים שנמצאו כדי להפיק כאן נוסח מבחן דוגמטי יחיד, מחייב ומלא של 'הלכת השיתוף' מעבר להיבטיו שנדונו בבעמ 4623/04; נמצאו אזכורים לפסקי דין נוספים (עא 52/80, עא 1000/92) אך אצלם לא נמצא טקסט אופרטיבי מספק להסקת הלכה, ולכן אין להסתמך עליהם כעל מקור מכונן.⁴\n\nהערה קצרה בדבר דלילות החומר: הטקסט התומך שהוצא למעלה חלקי — טקסט ההלכה המלא אינו היה ברשותי, ולכן הסיכום מבוסס על הסניפטים והפרשנות הזמינה ולא ניתן בו כדי לטעון לקביעת הלכה גורפת נוספת מעבר למה שנכלל בפסק‑הדין השמיש.",
+        "footnotes": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+            "title": "בע\"מ 4623/04; איזון משאבים - הלכת השיתוף הספציפית - הוכחת שיתוף בנכס ספציפי",
+            "number": 1,
+            "sources": [
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+                "title": "בע\"מ 4623/04",
+                "source_type": "caselaw"
+              },
+              {
+                "url": "https://www.psakdin.co.il/Document/%D7%90%D7%99%D7%96%D7%95%D7%9F-%D7%9E%D7%A9%D7%90%D7%91%D7%99%D7%9D--%D7%94%D7%9C%D7%9B%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%94%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99%D7%AA--%D7%94%D7%95%D7%9B%D7%97%D7%AA-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%A0%D7%9B%D7%A1-%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99",
+                "title": "איזון משאבים - הלכת השיתוף הספציפית - הוכחת שיתוף בנכס ספציפי",
+                "source_type": "caselaw"
+              }
+            ],
+            "source_type": "compound"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+            "title": "בע\"מ 4623/04",
+            "number": 2,
+            "sources": [
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+                "title": "בע\"מ 4623/04",
+                "source_type": "caselaw"
+              }
+            ],
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://law.biu.ac.il/files/law/shared/segel/hacalathshitufhspezifi.pdf",
+            "title": "החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואים ועל ירושות; מסמך מאתר אתר אקדמי (daat.ac.il)",
+            "number": 3,
+            "sources": [
+              {
+                "url": "https://law.biu.ac.il/files/law/shared/segel/hacalathshitufhspezifi.pdf",
+                "title": "החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואים ועל ירושות",
+                "source_type": "other"
+              },
+              {
+                "url": "https://www.daat.ac.il/daat/psk/psk.asp?id=1802",
+                "title": "מסמך מאתר אתר אקדמי (daat.ac.il)",
+                "source_type": "other"
+              }
+            ],
+            "source_type": "compound"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+            "title": "בע\"מ 4623/04; ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן; ע\"א 1000/92",
+            "number": 4,
+            "sources": [
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+                "title": "בע\"מ 4623/04",
+                "source_type": "caselaw"
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+                "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+                "source_type": "caselaw"
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+                "title": "ע\"א 1000/92",
+                "source_type": "caselaw"
+              }
+            ],
+            "source_type": "compound"
+          }
+        ]
+      },
+      "B": {
+        "model": "openai/gpt-5",
+        "ok": true,
+        "ms": 81383,
+        "sources_used": 4,
+        "answer_length": 1022,
+        "footnote_count": 3,
+        "superscripts": 3,
+        "quality_warning_buckets": {},
+        "latin_tokens": [],
+        "foreign_tokens": [],
+        "schema_failure_reason": null,
+        "error": null,
+        "answer": "**שורה תחתונה**\n\nהלכת השיתוף בפסיקה הישראלית עוסקת בשיתוף בנכסים בין בני זוג שנצברו במהלך חיי הנישואין. לצד נכסים מוחשיים, נדונה בפסיקה גם תחולת ההלכה על נכסים בלתי מוחשיים כגון מוניטין אישי, נכסי קריירה וכושר השתכרות מוגבר.¹\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nבע\"מ 4623/04 פלוני נ' פלונית: בבית המשפט העליון נדונה ישירות השאלה האם הלכת השיתוף חלה גם על \"נכסי קריירה\", על מוניטין אישי ועל כושר השתכרות מוגבר. ההליך נסב על פירוק שיתוף בין בני זוג שנישאו בראשית שנות השבעים ונפרדו בשנות התשעים, ובכללו נדונו גם סוגיות אופרטיביות כגון מועד הפסקת השיתוף שקבע בית המשפט לענייני משפחה. פסק הדין ממקם את הדיון בהיקף תחולת ההלכה גם ביחס לנכסים שאינם מוחשיים, במסגרת בחינת הסכסוך הקונקרטי בין הצדדים.²\n\n**מה לא ניתן לקבוע מהמקורות**\n\nנמצא אזכור לפסקי דין מרכזיים נוספים בסוגיה, אך ללא טקסט אופרטיבי שמיש: ע\"א 52/80 שחר נ' פרידמן וע\"א 1000/92. בשל כך לא ניתן לגזור מהם כאן קביעות הלכתיות, יישומים או סייגים, וקו הפסיקה שלפנינו חלקי בלבד.³\n\nהסתייגות: הנוסח המלא של ההלכה לא היה לפניי, והסקירה מבוססת על טקסטים חלקיים של המקורות שנמצאו.",
+        "footnotes": [
+          {
+            "url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+            "title": "הלכת השיתוף בנכסים; בע\"מ 4623/04",
+            "number": 1,
+            "sources": [
+              {
+                "url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+                "title": "הלכת השיתוף בנכסים",
+                "source_type": "other"
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+                "title": "בע\"מ 4623/04",
+                "source_type": "caselaw"
+              }
+            ],
+            "source_type": "compound"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+            "title": "בע\"מ 4623/04",
+            "number": 2,
+            "sources": [
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+                "title": "בע\"מ 4623/04",
+                "source_type": "caselaw"
+              }
+            ],
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+            "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן; ע\"א 1000/92",
+            "number": 3,
+            "sources": [
+              {
+                "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+                "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+                "source_type": "caselaw"
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+                "title": "ע\"א 1000/92",
+                "source_type": "caselaw"
+              }
+            ],
+            "source_type": "compound"
+          }
+        ]
+      }
+    },
+    {
+      "fixture_id": "P14",
+      "kind": "case_law_synthesis (doctrine)",
+      "question": "מה הפסיקה אומרת על הרמת מסך ההתאגדות בחברות משפחתיות?",
+      "run_id": "2fa85059-0d6d-47fa-8939-58549e62e0c0",
+      "source_pack": {
+        "usable_count": 10,
+        "candidates_count": 28,
+        "usable_judgments": 0,
+        "usable_statutes_regulations": 0,
+        "metadata_only": 0,
+        "other": 10,
+        "sufficiency": null,
+        "source_integrity_counts": null,
+        "synthesis_partition": null,
+        "deterministic_branch": null,
+        "research_mode": null,
+        "output_shape": null
+      },
+      "A": {
+        "model": "openai/gpt-5-mini",
+        "ok": true,
+        "ms": 7,
+        "sources_used": 0,
+        "answer_length": 316,
+        "footnote_count": 0,
+        "superscripts": 0,
+        "quality_warning_buckets": {},
+        "latin_tokens": [],
+        "foreign_tokens": [],
+        "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): ע\"א 313/08 ‏‪R.H.‬‎ אלקטרוניקה בע\"מ נ' אסא עובדיה.",
+        "footnotes": []
+      },
+      "B": {
+        "model": "openai/gpt-5",
+        "ok": true,
+        "ms": 2,
+        "sources_used": 0,
+        "answer_length": 316,
+        "footnote_count": 0,
+        "superscripts": 0,
+        "quality_warning_buckets": {},
+        "latin_tokens": [],
+        "foreign_tokens": [],
+        "schema_failure_reason": null,
+        "error": null,
+        "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): ע\"א 313/08 ‏‪R.H.‬‎ אלקטרוניקה בע\"מ נ' אסא עובדיה.",
+        "footnotes": []
+      }
+    },
+    {
+      "fixture_id": "P12",
+      "kind": "practical_steps (statutory practical answer)",
+      "question": "בעל דירה מסרב להחזיר לי את הפיקדון בסיום שכירות למרות שהחזרתי את הדירה במצב תקין. מה הדין ומה הצעדים המעשיים?",
+      "run_id": "a29d8de7-f1f9-40c1-85f7-5270e7b9fad4",
+      "source_pack": {
+        "usable_count": 11,
+        "candidates_count": 20,
+        "usable_judgments": 0,
+        "usable_statutes_regulations": 0,
+        "metadata_only": 0,
+        "other": 11,
+        "sufficiency": null,
+        "source_integrity_counts": null,
+        "synthesis_partition": null,
+        "deterministic_branch": null,
+        "research_mode": null,
+        "output_shape": null
+      },
+      "A": {
+        "model": "openai/gpt-5-mini",
+        "ok": true,
+        "ms": 53470,
+        "sources_used": 8,
+        "answer_length": 2972,
+        "footnote_count": 10,
+        "superscripts": 14,
+        "quality_warning_buckets": {},
+        "latin_tokens": [],
+        "foreign_tokens": [],
+        "answer": "**שורה תחתונה**\n\nאם החזרת את הדירה במצב תקין (ללא נזקים מעבר לשחיקה סבירה) נתון הפיקדון אמור להישב לידי השוכר; עם זאת, בחומר החקיקתי שסופק אין נוסח מפורש שמסדיר באופן מפורט מנגנון הפיקדון, ולכן הזכאות עשויה להיקבע לפי הוראות חוזיות והוראות חוק השכירות והשאילה ביחס לחוזה השכירות.¹\n\nאין כאן סקירת פסיקה — לא הוצגו או הוכנסו פסקי‑דין ברי‑שימוש בנוגע לעילה זו, ולכן התשובה נשענת על הוראות החקיקה והמסמכים המנהליים בלבד.\n\nצעדים מעשיים מקובלים: שלח/י מכתב דרישה בכתב למשכיר ובהמשך, אם אין תגובה — הגש/י תביעה בבית משפט לתביעות קטנות. לאחר פסק‑דין חל עליך מסלול ביצוע לפי חוק ההוצאה לפועל, ובמקרה שהכסף מוחזק אצל צד שלישי ניתן להורות על עיקול כספי צד שלישי לפי הנהלים המנהליים המפורטים באתר השירות.²\n\n**אמצעי פעולה מפורטיים**\n\n- מכתב דרישה בכתב שמפרט את הסכום המבוקש, תאריך מסירת הדירה ומועד סופי להחזר — חשוב לשמור העתקים של המכתב והאישורים על מסירה או משלוח.¹\n- תביעה לבית משפט לתביעות קטנות — מסלול זמין להחזרת סכומי פיקדון במידה וסכום הנתבע נופל בתחום סמכותו של בית זה.¹\n- ביצוע פסק‑דין באמצעות הוצאה לפועל — לאחר קבלת פסק‑דין ניתן להנפיק צו עיקול או לפעול לפי הוראות חוק ההוצאה לפועל לצורך גביית החיוב.³\n- עיקול כספי צד שלישי — כאשר הפיקדון מוחזק בידי גורם שלישי, ניתן לבקש עיקול כספים של צד שלישי באמצעות הטפסים וההליכים המפורטים באתר השירות הממשלתי.⁴\n- פשרה או גישור — אפשרות מעשית שכדאי לבחון מראש כדי לקצר סכסוך ולהימנע מהליכי ביצוע; המסמכים החוזיים ותיעוד המצב ישפרו עמדתך במשא‑ומתן.⁵\n\n**ראיות ותיעוד מומלצים**\n\nהמסמכים והראיות היעילים ביותר בתיק כזה הם חוזה השכירות הכתוב, פרוטוקול מסירה והחזרת הדירה (אם קיים), תמונות/וידאו המראים את מצב הדירה בזמן ההחזרה, קבלות על תיקונים או ניקיון שבוצעו, ותיעוד התכתבות בכתב עם המשכיר (מייל/וואטסאפ מודפס/מכתב).⁶\n\nאם אין פרוטוקול מסירה חתום — תיעוד עצמאי צילום/וידאו עם תאריך ושמות עדים, והודעת מסירה בכתב למשכיר, יחזקו את טענתך.⁷\n\n**טענות הגנה של המשכיר ונטל הראיה**\n\nהמשכיר עלול לטעון לנזקים מעבר לשחיקה סבירה, לצורך בתיקונים, לחובות שכירות שלא שולמו או להוצאות ניקיון; החזקה של הפיקדון מצד המשכיר מצריכה בדרך‑כלל הצגת ראיות המכלילות פירוט הנזקים וההוצאות.¹\n\nבהיעדר חוזה שקובע אחרת, בדרך‑כלל מוטל על המשכיר להוכיח את יסוד טענותיו לגבי קיזוז מהפיקדון; לכל עניין פרשני בחוזה ניתן להסתייע בכללי פירוש החוזים בעת הצורך.⁸\n\n**מועדי התיישנות ותזמון התביעה**\n\nתביעה אזרחית רגילה להחזרת סכומים שאינם מקרקעין כפופה ברוב המקרים לתקופת התיישנות של שבע שנים לפי חוק ההתיישנות.⁹\n\nייתכנו חריגים בענפים מסוימים או במקרים חוזיים מיוחדים שבהם חלים לוחות זמנים אחרים; לכן יש לבדוק אם חוזה השכירות או חקיקה אחרת קובעים תקופה קצרה יותר.¹⁰\n\n**סדר עבודה מעשי מוצע**\n\n1) אסוף/י את המסמכים והראיות המפורטות לעיל; 2) שלח/י מכתב דרישה כתוב למשכיר עם מועד סופי להחזר; 3) אם לא נענה — הגש/י תביעה לתביעות קטנות; 4) לאחר פסק‑דין, פעל/י להוצאה לפועל ולמימוש פסק‑הדין, ובמקרה של כספים אצל צד שלישי הגש/י בקשת עיקול לפי הנהלים הממשלתיים.²\n\nהערה אחרונה קצרה: החומר שנצבר לשם מענה זה כולל קטעי תמיכה קצרים ולא את נוסחי ההוראות או הפסיקה במלואם; לפיכך נוסח כל הוראה או פירוט הליכי ביצוע מלאים יש לעיין בטקסטים המלאים של החוקים, התקנות והנחיות המנהליות הרלוונטיות.",
+        "footnotes": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/5149.htm",
+            "title": "חוק השכירות והשאילה, תשל\"א-1971",
+            "number": 1,
+            "sources": [
+              {
+                "url": "https://www.nevo.co.il/law_html/law00/5149.htm",
+                "title": "חוק השכירות והשאילה, תשל\"א-1971",
+                "source_type": "legislation"
+              }
+            ],
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/5149.htm",
+            "title": "חוק השכירות והשאילה, תשל\"א-1971; חוק ההוצאה לפועל, תשכ\"ז-1967; מסמך מאתר אתר ממשלתי (gov.il)",
+            "number": 2,
+            "sources": [
+              {
+                "url": "https://www.nevo.co.il/law_html/law00/5149.htm",
+                "title": "חוק השכירות והשאילה, תשל\"א-1971",
+                "source_type": "legislation"
+              },
+              {
+                "url": "https://fs.knesset.gov.il/%5C6%5Claw%5C6_lsr_208253.PDF",
+                "title": "חוק ההוצאה לפועל, תשכ\"ז-1967",
+                "source_type": "legislation"
+              },
+              {
+                "url": "https://www.gov.il/he/service/third_party_confiscation_request",
+                "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+                "source_type": "other"
+              }
+            ],
+            "source_type": "compound"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/%5C6%5Claw%5C6_lsr_208253.PDF",
+            "title": "חוק ההוצאה לפועל, תשכ\"ז-1967",
+            "number": 3,
+            "sources": [
+              {
+                "url": "https://fs.knesset.gov.il/%5C6%5Claw%5C6_lsr_208253.PDF",
+                "title": "חוק ההוצאה לפועל, תשכ\"ז-1967",
+                "source_type": "legislation"
+              }
+            ],
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://www.gov.il/he/service/third_party_confiscation_request",
+            "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+            "number": 4,
+            "sources": [
+              {
+                "url": "https://www.gov.il/he/service/third_party_confiscation_request",
+                "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+                "source_type": "other"
+              }
+            ],
+            "source_type": "other"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%95%D7%A0%D7%99%D7%9D%20%D7%91%D7%A0%D7%95%D7%A9%D7%90%20%D7%94%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA.pdf",
+            "title": "עיוגים בנושא השכירות 1",
+            "number": 5,
+            "sources": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%95%D7%A0%D7%99%D7%9D%20%D7%91%D7%A0%D7%95%D7%A9%D7%90%20%D7%94%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA.pdf",
+                "title": "עיוגים בנושא השכירות 1",
+                "source_type": "other"
+              }
+            ],
+            "source_type": "other"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/5149.htm",
+            "title": "חוק השכירות והשאילה, תשל\"א-1971; חוזה שכירות עירוני מומלץ - מיפוי סוגיות מרכזיות; עיוגים בנושא השכירות 1",
+            "number": 6,
+            "sources": [
+              {
+                "url": "https://www.nevo.co.il/law_html/law00/5149.htm",
+                "title": "חוק השכירות והשאילה, תשל\"א-1971",
+                "source_type": "legislation"
+              },
+              {
+                "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/hagar/images/policy-cv30/976b1a_53eb23deb6d1443198587577d25eb.pdf",
+                "title": "חוזה שכירות עירוני מומלץ - מיפוי סוגיות מרכזיות",
+                "source_type": "other"
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%95%D7%A0%D7%99%D7%9D%20%D7%91%D7%A0%D7%95%D7%A9%D7%90%20%D7%94%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA.pdf",
+                "title": "עיוגים בנושא השכירות 1",
+                "source_type": "other"
+              }
+            ],
+            "source_type": "compound"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%95%D7%A0%D7%99%D7%9D%20%D7%91%D7%A0%D7%95%D7%A9%D7%90%20%D7%94%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA.pdf",
+            "title": "עיוגים בנושא השכירות 1; חוזה שכירות עירוני מומלץ - מיפוי סוגיות מרכזיות",
+            "number": 7,
+            "sources": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%95%D7%A0%D7%99%D7%9D%20%D7%91%D7%A0%D7%95%D7%A9%D7%90%20%D7%94%D7%A9%D7%9B%D7%99%D7%A8%D7%95%D7%AA.pdf",
+                "title": "עיוגים בנושא השכירות 1",
+                "source_type": "other"
+              },
+              {
+                "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/hagar/images/policy-cv30/976b1a_53eb23deb6d1443198587577d25eb.pdf",
+                "title": "חוזה שכירות עירוני מומלץ - מיפוי סוגיות מרכזיות",
+                "source_type": "other"
+              }
+            ],
+            "source_type": "compound"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/sites/default/files/2021-09/mishpatim-51-1-081.pdf",
+            "title": "עובדות וערכים, דין, תיאוריה: פירוש חוזים; חוק השכירות והשאילה, תשל\"א-1971",
+            "number": 8,
+            "sources": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2021-09/mishpatim-51-1-081.pdf",
+                "title": "עובדות וערכים, דין, תיאוריה: פירוש חוזים",
+                "source_type": "academic"
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law00/5149.htm",
+                "title": "חוק השכירות והשאילה, תשל\"א-1971",
+                "source_type": "legislation"
+              }
+            ],
+            "source_type": "compound"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/71809.htm",
+            "title": "חוק ההתיישנות, תשי\"ח-1958",
+            "number": 9,
+            "sources": [
+              {
+                "url": "https://www.nevo.co.il/law_html/law00/71809.htm",
+                "title": "חוק ההתיישנות, תשי\"ח-1958",
+                "source_type": "legislation"
+              }
+            ],
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/globaldocs/MMM/da725fea-f8c4-ea11-8107-00155d0aee38/2_da725fea-f8c4-ea11-8107-00155d0aee38_11_16435.pdf",
+            "title": "הסדרים חקיקתיים בנוגע לתקופות התיישנות בחוזי ביטוח - סקירה משווה; חוק השכירות והשאילה, תשל\"א-1971",
+            "number": 10,
+            "sources": [
+              {
+                "url": "https://fs.knesset.gov.il/globaldocs/MMM/da725fea-f8c4-ea11-8107-00155d0aee38/2_da725fea-f8c4-ea11-8107-00155d0aee38_11_16435.pdf",
+                "title": "הסדרים חקיקתיים בנוגע לתקופות התיישנות בחוזי ביטוח - סקירה משווה",
+                "source_type": "legislation"
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law00/5149.htm",
+                "title": "חוק השכירות והשאילה, תשל\"א-1971",
+                "source_type": "legislation"
+              }
+            ],
+            "source_type": "compound"
+          }
+        ]
+      },
+      "B": {
+        "model": "openai/gpt-5",
+        "ok": true,
+        "ms": 71256,
+        "sources_used": 4,
+        "answer_length": 2370,
+        "footnote_count": 3,
+        "superscripts": 11,
+        "quality_warning_buckets": {},
+        "latin_tokens": [],
+        "foreign_tokens": [],
+        "schema_failure_reason": null,
+        "error": null,
+        "answer": "במצב שבו הדירה הוחזרה בסיום השכירות בהתאם להסכם ובמצב תקין, נקודת המוצא היא שהשבת הפיקדון נגזרת מתנאי חוזה השכירות: אם ההסכם קובע שהבטוחה תשוחרר לאחר קיום חיובי השוכר, על המשכיר לפעול לפי ההסכם, ואין הוא רשאי להחזיק בפיקדון ללא עילה חוזית מפורשת המסמיכה זאת.¹\n\nלא מובאת כאן סקירת פסיקה, מאחר שלא אותרו פסקי דין ברי‑שימוש לשאלה זו.\n\n**הדין החל והתכלית החוזית של הפיקדון**\n\nחוזה השכירות הוא המסמך המסדיר את יחסי הצדדים, את סוג הבטוחה, את ייעודה ואת תנאי השבתה. לפיכך, ההכרעה אם וכיצד יש להשיב את הפיקדון תיעשה לפי לשון ההסכם והוראותיו, ובכלל זה הוראות על נזקים בר־תיקון, סילוק חיובים ושחרור הבטוחה לאחר מילוי החיובים שהוטלו על השוכר.¹\n\nכאשר ההסכם אינו מקנה למשכיר זכות מפורשת לעכב את הפיקדון, וכאשר חיובי השוכר סולקו בהתאם להסכם, ניתן לתבוע את השבת הפיקדון כסעד חוזי. ככל שקיימות בהסכם הוראות המאפשרות קיזוז או עיכבון, תחולתן ומידתן יימדדו לפי לשון ההסכם ותכליתו.¹\n\n**צעדים מעשיים מוצעים**\n\n- לעיין מיד בחוזה השכירות ולאתר את הסעיפים הנוגעים לפיקדון, ייעודו, מועדי השבתו, וכן כל מנגנון מוסכם של קיזוז או עיכבון.¹\n- לאסוף תיעוד מסודר: פרוטוקול מסירה/החזרה, תמונות וסרטונים מתאריכים סמוכים למסירה, חשבונות ותשלומים אחרונים, וכל אסמכתה לקיום התחייבויות לפי ההסכם.¹\n- לשלוח דרישה כתובה ומנומקת להשבת הפיקדון לפי ההסכם, בצירוף העתקי אסמכתאות. יש לקבוע מועד סביר להשבה ולהבהיר כי בהעדר השבה תישקל פנייה לערכאה שיפוטית.\n- אם הדרישה לא נענית: להגיש תביעה כספית מתאימה על יסוד ההסכם. לאחר קבלת פסק דין, ניתן לפעול לביצועו בלשכת ההוצאה לפועל, לרבות שימוש באמצעי ביצוע כגון עיקולים, בהתאם לדין ולהנחיות המינהליות הרלוונטיות.²\n- לשים לב להתיישנות: בתביעה אזרחית שאינה במקרקעין, תקופת ההתיישנות הכללית היא שבע שנים. מומלץ שלא להשתהות ולהגיש תביעה בזמן ההולם בנסיבות.³\n\n**טענות אפשריות של המשכיר והיקפן החוזי**\n\nמשכיר עשוי לטעון לזכות לקזז או לעכב מן הפיקדון בשל חיובים שלא נפרעו או בשל נזקים המוסדרים בהסכם. טענות אלה מחייבות אחיזה בהוראות חוזיות רלוונטיות ותשתית עובדתית מספקת, והן תיבחנה לאור מנגנוני הבטוחה וההשבה שהוסכמו בחוזה.¹\n\n**ראיות שכדאי להכין עוד לפני פנייה לערכאה**\n\n- חוזה השכירות המלא וכל נספחיו, ובעיקר סעיפי הבטוחות והפיקדון.¹\n- פרוטוקול מסירת הדירה בתחילת השכירות ובסיומה, לרבות הערות על מצב הנכס.¹\n- תיעוד חזותי עדכני של מצב הדירה בעת ההחזרה, וקבלות על תיקונים או ניקיון שבוצעו לפי ההסכם.¹\n\nהערת מקור: התשובה מבוססת על הוראות חוקיות ותקנות בלבד; לא הובאה פסיקה. כמו כן, נוסח מלא ומפורט של ההסדרים לא עמד במלואו לנגד העיניים, ולכן האמור נוסח על בסיס הטקסט שקיים בפועל.",
+        "footnotes": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/5149.htm",
+            "title": "חוק השכירות והשאילה, תשל\"א-1971",
+            "number": 1,
+            "sources": [
+              {
+                "url": "https://www.nevo.co.il/law_html/law00/5149.htm",
+                "title": "חוק השכירות והשאילה, תשל\"א-1971",
+                "source_type": "legislation"
+              }
+            ],
+            "source_type": "legislation"
+          },
+          {
+            "url": "https://fs.knesset.gov.il/%5C6%5Claw%5C6_lsr_208253.PDF",
+            "title": "חוק ההוצאה לפועל, תשכ\"ז-1967; מסמך מאתר אתר ממשלתי (gov.il)",
+            "number": 2,
+            "sources": [
+              {
+                "url": "https://fs.knesset.gov.il/%5C6%5Claw%5C6_lsr_208253.PDF",
+                "title": "חוק ההוצאה לפועל, תשכ\"ז-1967",
+                "source_type": "legislation"
+              },
+              {
+                "url": "https://www.gov.il/he/service/third_party_confiscation_request",
+                "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+                "source_type": "other"
+              }
+            ],
+            "source_type": "compound"
+          },
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/71809.htm",
+            "title": "חוק ההתיישנות, תשי\"ח-1958",
+            "number": 3,
+            "sources": [
+              {
+                "url": "https://www.nevo.co.il/law_html/law00/71809.htm",
+                "title": "חוק ההתיישנות, תשי\"ח-1958",
+                "source_type": "legislation"
+              }
+            ],
+            "source_type": "legislation"
+          }
+        ]
+      }
+    }
+  ]
+}
