@@ -869,9 +869,20 @@ async function handle(req: Request): Promise<Response> {
         {
           userDocs: attachmentResult.documents,
           useAsSource,
+          missingRequiredAnchors: missingForCaveat,
+          answerIntent: analyzer.answer_intent,
+          requiredAnchorCandidateIds,
+          satisfiedStatuteSectionAnchors,
+          researchMode: plannerStage.mode_plan?.mode ?? null,
+          specificCaseGate: specificCase.enabled
+            ? {
+                allow: specificCase.allow_case_holding_answer,
+                docket_display: specificCase.requested_docket_display,
+                reason: specificCase.final_docket_branch_reason,
+              }
+            : null,
           forceModel: "openai/gpt-5",
           skipEscalation: true,
-          answerIntent: analyzer.answer_intent,
         },
       );
     } catch (e) {
