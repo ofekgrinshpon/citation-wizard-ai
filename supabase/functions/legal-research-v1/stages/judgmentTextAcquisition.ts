@@ -152,7 +152,8 @@ export interface AcquisitionAttemptLog {
   trigger_reason:
     | "metadata_only"
     | "unusable_or_unknown"
-    | "text_below_threshold";
+    | "text_below_threshold"
+    | "no_judgment_body_text";
   acquisition_attempted: boolean;
   methods_attempted: AcquisitionMethod[];
   acquisition_methods_attempted: AcquisitionMethod[];
@@ -181,8 +182,36 @@ export interface AcquisitionSkipLog {
     | "institutional_page"
     | "listing_page"
     | "no_docket_or_title_signal"
+    | "statute_or_regulation"
+    | "scholarship_without_case_identity"
+    | "already_has_usable_text"
     | "budget_exhausted"
     | "stage_time_budget_exhausted";
+}
+
+/** Part 1 — per-candidate eligibility diagnostics for non-attempted judgments. */
+export interface EligibilityDiagnostic {
+  candidate_id: string;
+  title: string;
+  url: string | null;
+  source_type: string | null;
+  citable_as: string | null;
+  authority_tier: string | null;
+  text_usability: string | null;
+  docket_normalized: string | null;
+  has_docket_signal: boolean;
+  has_case_title_signal: boolean;
+  has_court_url: boolean;
+  has_download_url: boolean;
+  has_party_names: boolean;
+  synthesis_role: string;
+  planner_role: string | null;
+  eligible: boolean;
+  excluded_reason: string | null;
+  ineligible_reason: string | null;
+  eligibility_basis: string[];
+  would_have_been_attempted_under_relaxed_rule: boolean;
+  acquisition_attempted: boolean;
 }
 
 export interface AcquisitionResult {
@@ -192,11 +221,13 @@ export interface AcquisitionResult {
   judgment_candidates: number;
   eligible_count: number;
   excluded: AcquisitionSkipLog[];
+  eligibility_diagnostics: EligibilityDiagnostic[];
   attempts: AcquisitionAttemptLog[];
   attempts_made: number;
   successes: number;
   ms: number;
 }
+
 
 export function normText(s: string): string {
   return (s || "").replace(/\u0000/g, " ").replace(/[ \t]+/g, " ").replace(/\s*\n\s*/g, "\n").trim();
@@ -469,6 +500,7 @@ interface Eligible {
   dockets: DocketRef[];
   isRequested: boolean;
   trigger: AcquisitionAttemptLog["trigger_reason"];
+  diag: EligibilityDiagnostic;
 }
 
 function disabledResult(mode: string | null): AcquisitionResult {
@@ -479,6 +511,7 @@ function disabledResult(mode: string | null): AcquisitionResult {
     judgment_candidates: 0,
     eligible_count: 0,
     excluded: [],
+    eligibility_diagnostics: [],
     attempts: [],
     attempts_made: 0,
     successes: 0,
@@ -486,19 +519,24 @@ function disabledResult(mode: string | null): AcquisitionResult {
   };
 }
 
+/** Legal-DB / aggregator pages: usable for docket resolution, never as a body. */
+const LEGAL_DB_HOST_RE = /(nevo\.co\.il|psakdin\.co\.il|takdin\.co\.il|pador|lawdata|din\.co\.il)/i;
+
 /**
  * Is this candidate a judgment candidate worth acquiring?
- * A judgment candidate has a docket, a court/supreme-decisions URL, or a
- * recognizable Israeli judgment title — and is typed as a judgment or a
- * case-like source.
+ * Widened: a judgment candidate is anything carrying real case identity —
+ * a docket, an official court URL, or an Israeli case-title pattern — that is
+ * not a statute/regulation and not identity-free scholarship.
  */
 function isJudgmentCandidate(c: Candidate, integ: SourceIntegrity, dockets: DocketRef[]): boolean {
   const url = c.source_url ?? "";
   const typedJudgment = integ.citable_as === "judgment" || integ.is_judgment_document === true;
   const caseLike = /case|caselaw|judgment|court/i.test(String(c.source_type ?? ""));
   const courtUrl = /court\.gov\.il|supremedecisions/i.test(url);
-  const hasSignal = dockets.length > 0 || courtUrl || JUDGMENT_TITLE_RE.test(c.title ?? "");
-  return (typedJudgment || caseLike || courtUrl) && hasSignal;
+  const legalDb = LEGAL_DB_HOST_RE.test(url);
+  const titleSignal = JUDGMENT_TITLE_RE.test(c.title ?? "");
+  const hasSignal = dockets.length > 0 || courtUrl || titleSignal;
+  return (typedJudgment || caseLike || courtUrl || legalDb || titleSignal) && hasSignal;
 }
 
 /**
@@ -515,6 +553,7 @@ export async function runJudgmentTextAcquisition(
   const budget = ACQUISITION_BUDGETS[mode] ?? ACQUISITION_BUDGETS.generic;
   const requestedDockets = detectDockets(input.question ?? "");
   const excluded: AcquisitionSkipLog[] = [];
+  const diagnostics: EligibilityDiagnostic[] = [];
   const eligible: Eligible[] = [];
   let judgmentCandidates = 0;
 
@@ -533,30 +572,73 @@ export async function runJudgmentTextAcquisition(
     judgmentCandidates++;
 
     const url = c.source_url ?? null;
-    if (isInstitutionalPage(url)) {
-      excluded.push({ candidate_id: c.candidate_id, title: c.title, url, reason: "institutional_page" });
-      continue;
-    }
-    if (isListingPage(url) && dockets.length === 0) {
-      excluded.push({ candidate_id: c.candidate_id, title: c.title, url, reason: "listing_page" });
-      continue;
-    }
-    if (dockets.length === 0 && !JUDGMENT_TITLE_RE.test(c.title ?? "")) {
-      excluded.push({
-        candidate_id: c.candidate_id,
-        title: c.title,
-        url,
-        reason: "no_docket_or_title_signal",
-      });
-      continue;
-    }
-
     const role = assignSynthesisRole({
       role: c.role,
       integrity: integ,
       title: c.title,
       snippet: c.snippet,
     }).synthesis_role;
+    const titleSignal = JUDGMENT_TITLE_RE.test(c.title ?? "");
+    const courtUrl = /court\.gov\.il|supremedecisions/i.test(url ?? "");
+    const isRequested =
+      requestedDockets.length > 0 &&
+      requestedDockets.some((d) =>
+        [c.title, c.source_url].some((f) => textContainsExactDocket(f, d))
+      );
+
+    const diag: EligibilityDiagnostic = {
+      candidate_id: c.candidate_id,
+      title: c.title,
+      url,
+      source_type: c.source_type ?? null,
+      citable_as: integ.citable_as ?? null,
+      authority_tier: integ.authority_tier ?? null,
+      text_usability: integ.text_usability ?? null,
+      docket_normalized: dockets[0] ? normalizedDocketId(dockets[0]) : null,
+      has_docket_signal: dockets.length > 0,
+      has_case_title_signal: titleSignal,
+      has_court_url: courtUrl,
+      has_download_url: !!url && isDirectFileUrl(url),
+      has_party_names: titleSignal,
+      synthesis_role: role,
+      planner_role: (c.role as string | null) ?? null,
+      eligible: false,
+      excluded_reason: null,
+      ineligible_reason: null,
+      eligibility_basis: [],
+      would_have_been_attempted_under_relaxed_rule: false,
+      acquisition_attempted: false,
+    };
+    diagnostics.push(diag);
+
+    const drop = (reason: AcquisitionSkipLog["reason"], relaxed = false) => {
+      excluded.push({ candidate_id: c.candidate_id, title: c.title, url, reason });
+      diag.excluded_reason = reason;
+      diag.ineligible_reason = reason;
+      diag.would_have_been_attempted_under_relaxed_rule = relaxed;
+    };
+
+    // ── Hard exclusions (never spend budget) ────────────────────────────────
+    if (isInstitutionalPage(url)) { drop("institutional_page"); continue; }
+    if (isListingPage(url) && dockets.length === 0 && !titleSignal) { drop("listing_page"); continue; }
+    if (integ.citable_as === "statute") { drop("statute_or_regulation"); continue; }
+    if (
+      (integ.citable_as === "scholarship" || integ.citable_as === "commentary") &&
+      dockets.length === 0 && !titleSignal
+    ) { drop("scholarship_without_case_identity"); continue; }
+
+    // ── Widened eligibility basis (any one suffices) ────────────────────────
+    if (isRequested) diag.eligibility_basis.push("exact_requested_docket");
+    if (dockets.length > 0) diag.eligibility_basis.push("docket_signal");
+    if (courtUrl) diag.eligibility_basis.push("official_court_url");
+    if (titleSignal) diag.eligibility_basis.push("case_title_party_names");
+    if (LEGAL_DB_HOST_RE.test(url ?? "") && (dockets.length > 0 || titleSignal)) {
+      diag.eligibility_basis.push("legal_db_resolution_only");
+    }
+    if (ACQUIRABLE_ROLES.has(role) && (dockets.length > 0 || titleSignal)) {
+      diag.eligibility_basis.push("planner_role_with_case_identity");
+    }
+    if (diag.eligibility_basis.length === 0) { drop("no_docket_or_title_signal"); continue; }
 
     const usability = String(integ.text_usability ?? "unknown");
     const len = availableTextLength(c);
@@ -564,20 +646,20 @@ export async function runJudgmentTextAcquisition(
     if (usability === "metadata_only") trigger = "metadata_only";
     else if (THIN_USABILITY.has(usability)) trigger = "unusable_or_unknown";
     else if (len < ACQUISITION_LIMITS.MIN_USABLE_TEXT) trigger = "text_below_threshold";
-    if (!trigger) continue;
+    // A long commentary/summary snippet about a judgment is not a judgment body:
+    // if the candidate carries case identity but no judgment text, still try.
+    else if (integ.is_judgment_document !== true || integ.has_holding_text !== true) {
+      trigger = "no_judgment_body_text";
+    }
+    if (!trigger) {
+      diag.ineligible_reason = "already_has_usable_text";
+      continue;
+    }
 
-    const isRequested =
-      requestedDockets.length > 0 &&
-      requestedDockets.some((d) =>
-        [c.title, c.source_url].some((f) => textContainsExactDocket(f, d))
-      );
-
-    // In judgment-bearing modes we also allow well-signalled judgments whose
-    // synthesis role came back "unknown" (e.g. doctrine/survey packs).
-    if (!ACQUIRABLE_ROLES.has(role) && !isRequested && dockets.length === 0) continue;
-
-    eligible.push({ c, integ, role, dockets, isRequested, trigger });
+    diag.eligible = true;
+    eligible.push({ c, integ, role, dockets, isRequested, trigger, diag });
   }
+
 
   // Exact requested docket first, then leading → applying → limiting, then score.
   eligible.sort((a, b) =>
@@ -599,6 +681,9 @@ export async function runJudgmentTextAcquisition(
         url: e.c.source_url ?? null,
         reason: "budget_exhausted",
       });
+      e.diag.excluded_reason = "budget_exhausted";
+      e.diag.ineligible_reason = "budget_exhausted";
+      e.diag.would_have_been_attempted_under_relaxed_rule = true;
       continue;
     }
     if (Date.now() - t0 > ACQUISITION_LIMITS.TOTAL_MS) {
@@ -608,6 +693,9 @@ export async function runJudgmentTextAcquisition(
         url: e.c.source_url ?? null,
         reason: "stage_time_budget_exhausted",
       });
+      e.diag.excluded_reason = "stage_time_budget_exhausted";
+      e.diag.ineligible_reason = "stage_time_budget_exhausted";
+      e.diag.would_have_been_attempted_under_relaxed_rule = true;
       continue;
     }
     const isLeading = e.isRequested || e.role === "leading_candidate";
@@ -618,6 +706,9 @@ export async function runJudgmentTextAcquisition(
         url: e.c.source_url ?? null,
         reason: "budget_exhausted",
       });
+      e.diag.excluded_reason = "budget_exhausted";
+      e.diag.ineligible_reason = "budget_exhausted";
+      e.diag.would_have_been_attempted_under_relaxed_rule = true;
       continue;
     }
     if (!isLeading && otherUsed >= budget.other) {
@@ -627,10 +718,14 @@ export async function runJudgmentTextAcquisition(
         url: e.c.source_url ?? null,
         reason: "budget_exhausted",
       });
+      e.diag.excluded_reason = "budget_exhausted";
+      e.diag.ineligible_reason = "budget_exhausted";
+      e.diag.would_have_been_attempted_under_relaxed_rule = true;
       continue;
     }
     if (isLeading) leadingUsed++;
     else otherUsed++;
+    e.diag.acquisition_attempted = true;
 
     const tAttempt = Date.now();
     const url = e.c.source_url ?? null;
@@ -700,10 +795,33 @@ export async function runJudgmentTextAcquisition(
       e.integ.text_usability = after as SourceIntegrity["text_usability"];
       e.integ.has_holding_text = e.integ.has_holding_text || holding;
       e.integ.is_judgment_document = true;
+      // Part 3 — handoff consistency: an acquired body that carries its own
+      // case identity is a judgment for every downstream consumer, including
+      // sufficiency. Text always comes from a court file or the local corpus —
+      // aggregator page text is never used as a body — so this is not a
+      // loosening of sufficiency, only a correct hand-off.
+      if (bodySignal && stored.length >= ACQUISITION_LIMITS.MIN_USABLE_TEXT) {
+        e.integ.citable_as = "judgment";
+        if (
+          e.integ.authority_tier === "index_or_listing" ||
+          e.integ.authority_tier === "non_authority" ||
+          e.integ.authority_tier === "unknown"
+        ) {
+          e.integ.authority_tier = (succeeded === "direct_file_fetch" && isTrustedCourtTextHost(url ?? "")) ||
+              succeeded === "local_db_docket_lookup" || succeeded === "summary_page_docket_resolve"
+            ? "official_primary"
+            : "primary_mirror";
+        }
+        e.integ.reject = false;
+        delete e.integ.reject_reason;
+      }
       e.integ.integrity_flags = [
         ...(e.integ.integrity_flags ?? []),
         "judgment_text_acquired",
+        ...(bodySignal ? ["judgment_identity_confirmed_in_body"] : []),
+        ...(holding ? ["holding_text_present"] : []),
       ];
+
       e.c.metadata = {
         ...(e.c.metadata ?? {}),
         source_integrity: e.integ,
@@ -713,6 +831,8 @@ export async function runJudgmentTextAcquisition(
         judgment_text_acquired: true,
         judgment_text_acquisition_method: succeeded,
         body_contains_docket_or_title: bodySignal,
+        usable_for_holding: holding && stored.length >= ACQUISITION_LIMITS.MIN_USABLE_TEXT,
+        final_text_usability: after,
       };
       if ((e.c.snippet || "").length < 200) {
         e.c.snippet = stored.slice(0, 600);
@@ -768,6 +888,7 @@ export async function runJudgmentTextAcquisition(
     judgment_candidates: judgmentCandidates,
     eligible_count: eligible.length,
     excluded,
+    eligibility_diagnostics: diagnostics,
     attempts,
     attempts_made: attempts.length,
     successes,
