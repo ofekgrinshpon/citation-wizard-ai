@@ -2,8 +2,8 @@
   "id": "R10",
   "query": "כתוב סקירה משפטית על השימוש בהרמת מסך בחברות משפחתיות.",
   "mode_expected": "academic_legal_review",
-  "run_id": "58832008-67c3-4fc8-becf-25f65552bb9b",
-  "total_ms": 226964,
+  "run_id": "1a59cf7a-5883-40e5-80eb-c79f2751a2f1",
+  "total_ms": 238776,
   "research_mode": null,
   "shape": null,
   "deterministic_branch": null,
@@ -12,139 +12,72 @@
   "sufficiency_reason": "doctrinal_anchor_present",
   "pool": {
     "found": null,
-    "admitted": 19,
+    "admitted": 20,
     "integrity_rejects": 0,
     "tier_counts": {
-      "primary_mirror": 2,
-      "index_or_listing": 1,
-      "official_primary": 7,
-      "secondary_commentary": 9
+      "statute_mirror": 2,
+      "index_or_listing": 2,
+      "official_primary": 1,
+      "secondary_commentary": 15
     },
     "citable_counts": {
-      "statute": 5,
-      "unknown": 2,
-      "judgment": 2,
-      "commentary": 3,
-      "not_citable": 1,
-      "scholarship": 6
+      "statute": 2,
+      "unknown": 1,
+      "judgment": 1,
+      "commentary": 12,
+      "not_citable": 2,
+      "scholarship": 2
     },
-    "judgment_documents": 2,
+    "judgment_documents": 0,
     "judgments_with_holding_text": 0,
     "synthesis_role_counts": {
-      "unknown": 1,
-      "leading_candidate": 2,
-      "secondary_commentary": 10,
-      "statutory_background": 6
+      "unknown": 2,
+      "leading_candidate": 1,
+      "secondary_commentary": 15,
+      "statutory_background": 2
     }
   },
   "text_usability_counts": {
-    "metadata_only": 8,
-    "substantive_excerpt": 9,
-    "listing_page": 1,
-    "full_text": 1
+    "metadata_only": 10,
+    "listing_page": 2,
+    "substantive_excerpt": 6,
+    "full_text": 2
   },
   "role_counts": {
-    "primary_statute": 6,
-    "binding_case_law": 2,
-    "scholarship": 10,
-    "persuasive_case_law": 1
+    "persuasive_case_law": 6,
+    "binding_case_law": 8,
+    "primary_statute": 1,
+    "scholarship": 5
   },
   "admitted_sources": [
     {
-      "title": "חוק החברות, התשנ\"ט-1999 - רשות ניירות ערך",
-      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
-      "role": "primary_statute",
-      "tier": "official_primary",
+      "title": "הרמת מסך ההתאגדות בחברה",
+      "url": "https://www.psakdin.co.il/Document/%D7%94%D7%A8%D7%9E%D7%AA-%D7%9E%D7%A1%D7%9A-%D7%94%D7%94%D7%AA%D7%90%D7%92%D7%93%D7%95%D7%AA-%D7%91%D7%97%D7%91%D7%A8%D7%94",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
       "text_usability": "metadata_only",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": []
-    },
-    {
-      "title": "ע\"א 10582/02 ישראל בן אבו נ' דלתות חמדיה בע\"מ",
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/t31&fileName=23056580.T31.SUM&type=4",
-      "role": "binding_case_law",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "judgment",
-      "judgment": true,
-      "holding_text": false,
-      "synthesis_role": "leading_candidate",
-      "flags": [
-        "judgment_document"
-      ]
-    },
-    {
-      "title": "חוק חדלות פירעון ושיקום כלכלי, תשע\"ח-2018 – סעיף 219",
-      "url": "https://www.gov.il/BlobFolder/legalinfo/law23327-04-20/he/LegalInformation_kesher_23327-04-20.pdf",
-      "role": "primary_statute",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": []
-    },
-    {
-      "title": "חוק חדלות פירעון ושיקום כלכלי, תשע\"ח-2018 – סעיף 126",
-      "url": "https://fs.knesset.gov.il/25/law/25_lsr_10981603.pdf",
-      "role": "primary_statute",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": []
-    },
-    {
-      "title": "פסק-דין בתיק ת\"א 2020-98",
-      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA-%D7%90-2020-98",
-      "role": "binding_case_law",
-      "tier": "primary_mirror",
-      "text_usability": "metadata_only",
-      "citable_as": "judgment",
-      "judgment": true,
-      "holding_text": false,
-      "synthesis_role": "leading_candidate",
-      "flags": [
-        "judgment_document",
-        "judgment_tier_promoted"
-      ]
-    },
-    {
-      "title": "חיתום, הפצה ואופן הצעה לציבור",
-      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-6253f4f00241c/DistributionUnderwriting.pdf",
-      "role": "primary_statute",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "unknown",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": []
-    },
-    {
-      "title": "שירי ספקטור-בן ארי, מרכז המחקר והמידע",
-      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6084&businessType=1",
-      "role": "scholarship",
-      "tier": "primary_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "unknown",
+      "citable_as": "commentary",
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "secondary_commentary",
-      "flags": [
-        "official_host_non_specific_path"
-      ]
+      "flags": []
     },
     {
-      "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
-      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+      "title": "פסק-דין חלקי בתיק ת.א. 6905/98",
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%97%D7%9C%D7%A7%D7%99-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA-%D7%90-6905-98",
       "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "ביהמ\"ש המחוזי בתל אביב - יפו, ש' נועה גרוס: החלטה בעניין עיכוב הליכים בחדלות פירעון של תאגידים, לאחר פקיעת תוקפו של תיקון מס' 4, וטרם כניסתו לתוקף של תיקון מס' 9 לחוק חדלות פירעון ושיקום כלכלי (פר\"ק 21610-04-25, חדל\"ת 27247-04-25)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=120",
+      "role": "binding_case_law",
       "tier": "index_or_listing",
       "text_usability": "listing_page",
       "citable_as": "not_citable",
@@ -156,93 +89,159 @@
       ]
     },
     {
-      "title": "האם ב-ICOs מונפקים ניירות ערך? על אסדרה של אסימונים דיגיטליים שמנפיקות חברות",
-      "url": "https://lawjournal.huji.ac.il/article/12/1793",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "scholarship",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "חוק החברות, תשנ\"ט-1999",
-      "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+      "title": "חוק בינוי ופינוי של אזורי שיקום",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
       "role": "primary_statute",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
       "citable_as": "statute",
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
+    },
+    {
+      "title": "הרמת מסך: בחינה עיונית ואמפירית",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3416115",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
       "flags": []
     },
     {
-      "title": "חוק חדלות פירעון ושיקום כלכלי, תשע\"ח-2018",
-      "url": "https://www.nevo.co.il/law_html/law00/154362.htm",
-      "role": "primary_statute",
-      "tier": "official_primary",
+      "title": "פרק ו': הרמת המסך",
+      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
       "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "מימון דק׳/ הרמת המסך והגבלת האחריות בדיני חברות",
+      "url": "https://netanya.ac.il/gur/data/AGUDA/law/yearb/companies/papers/paper12015/%D7%A2%D7%99%D7%95%D7%A0%D7%99%20%D7%9E%D7%A9%D7%A4%D7%98%20%D7%A4%D7%A8%D7%95%D7%A7%D7%A6%D7%99%D7%94%20%D7%94%D7%A8%D7%9E%D7%AA%20%D7%9E%D7%A1%D7%9A%20%D7%9E%D7%99%D7%9E%D7%95%D7%9F%20%D7%93%D7%A7.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "צדק, הגינות ויעילות בדיני חברות: הערות בעקבות ע\"א 4263/04",
+      "url": "http://lawjournal.huji.ac.il/article/12/1539",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "הרמת מסך בעילה של ערבוב נכסים בין שתי חברות משפחתיות",
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%A8%D7%9E%D7%AA-%D7%9E%D7%A1%D7%9A-%D7%91%D7%A2%D7%99%D7%9C%D7%94-%D7%A9%D7%9C-%D7%A2%D7%A8%D7%91%D7%95%D7%91-%D7%A0%D7%9B%D7%A1%D7%99%D7%9D-%D7%91%D7%99%D7%9F-%D7%A9%D7%AA%D7%99-%D7%97%D7%91%D7%A8%D7%95%D7%AA-%D7%9E%D7%A9%D7%A4%D7%97%D7%AA%D7%99%D7%95%D7%AA",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "הרמת מסך בחברה משפחתית",
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%A8%D7%9E%D7%AA-%D7%9E%D7%A1%D7%9A-%D7%91%D7%97%D7%91%D7%A8%D7%94-%D7%9E%D7%A9%D7%A4%D7%97%D7%AA%D7%99%D7%AA",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "דיני ראיות – ד\"ר גיא בן דוד",
+      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearc/evidence/%D7%93%D7%99%D7%A0%D7%99%20%D7%A8%D7%90%D7%99%D7%95%D7%AA%20-%20%D7%9E%D7%97%D7%91%D7%A8%D7%AA%20%D7%91%D7%97%D7%99%D7%A0%D7%94%20-%20%D7%98%D7%9C%20%D7%A1%D7%99%D7%A0%D7%A8,.doc",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "פסקדין – חיפוש פסקי-דין",
+      "url": "https://www.psakdin.co.il/Court",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "תקדין",
+      "url": "https://www.takdin.co.il/",
+      "role": "persuasive_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "official_host_bare_root"
+      ]
+    },
+    {
+      "title": "פקודת המכרות",
+      "url": "https://he.wikisource.org/wiki/%D7%A4%D7%A7%D7%95%D7%93%D7%AA_%D7%94%D7%9E%D7%9B%D7%A8%D7%95%D7%AA",
+      "role": "binding_case_law",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
       "citable_as": "statute",
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "statutory_background",
-      "flags": []
+      "flags": [
+        "consolidated_statute_mirror"
+      ]
     },
     {
-      "title": "רע\"א 4174/23 מיטל כהן נ׳ גד איזנקוט פסק דין (08.05.2023)",
-      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-4174-23-%d7%9e%d7%99%d7%98%d7%9c-%d7%9b%d7%94%d7%9f-%d7%a0-%d7%92%d7%93-%d7%90%d7%99%d7%96%d7%a0%d7%a7%d7%95%d7%98/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
+      "title": "רע\"פ 10141-09 - אברהם בן חיים נ. מדינת ישראל",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/3&fileName=SH3_3_10141-09.pdf&type=2",
+      "role": "binding_case_law",
+      "tier": "official_primary",
       "text_usability": "substantive_excerpt",
-      "citable_as": "commentary",
+      "citable_as": "judgment",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "secondary_commentary",
+      "synthesis_role": "leading_candidate",
       "flags": []
     },
     {
-      "title": "ע\"א 3417/16 פינרוס החזקות בע\"מ נ׳ התובע הייצוגי דב גולדשטיין פסק דין",
-      "url": "https://www.toledano.co.il/%d7%a2%d7%90-3417-16-%d7%a4%d7%99%d7%a0%d7%a8%d7%95%d7%a1-%d7%94%d7%97%d7%96%d7%a7%d7%95%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%94%d7%aa%d7%95%d7%91%d7%a2-%d7%94%d7%99%d7%99%d7%a6%d7%95%d7%92%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "ואף-על-פי-כן: מרוץ סמכויות",
-      "url": "https://lawjournal.huji.ac.il/article/12/1921",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "scholarship",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "ע\"א 7300/21 משה מישל אסרף נ׳ כפיר בובליל פסק דין (21.09.2021)",
-      "url": "https://www.toledano.co.il/%d7%a2%d7%90-7300-21-%d7%9e%d7%a9%d7%94-%d7%9e%d7%99%d7%a9%d7%9c-%d7%90%d7%a1%d7%a8%d7%a3-%d7%a0-%d7%9b%d7%a4%d7%99%d7%a8-%d7%91%d7%95%d7%91%d7%9c%d7%99%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "על מגבלותיה של תאוריית הנאמנות במשפט המנהלי | עמרי בן-צבי (כרך ט\"ז)",
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/08/dd-2022-16-benzvi.pdf",
-      "role": "scholarship",
+      "title": "הרמת המסך: בחינה עיונית ואמפירית",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_9723bedb2be34d9fa437d5c75e849d6c.pdf",
+      "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "full_text",
       "citable_as": "scholarship",
@@ -252,11 +251,23 @@
       "flags": []
     },
     {
-      "title": "הגנת ההסתמכות במשפט המנהלי",
-      "url": "https://lawjournal.huji.ac.il/article/12/707",
-      "role": "scholarship",
+      "title": "רע\"א 4553/19 י.ח. דמרי בניה ופיתוח בע\"מ נ׳ עיריית אשקלון פסק דין (04.03.2020)",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-4553-19-%d7%99-%d7%97-%d7%93%d7%9e%d7%a8%d7%99-%d7%91%d7%a0%d7%99%d7%94-%d7%95%d7%a4%d7%99%d7%aa%d7%95%d7%97-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a2%d7%99%d7%a8%d7%99%d7%99%d7%aa/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "איסור הלבנת הון: חידושים מקומיים ומגמות גלובליות | עידו באום (כרך י)",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_6.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
       "citable_as": "scholarship",
       "judgment": false,
       "holding_text": false,
@@ -264,24 +275,24 @@
       "flags": []
     },
     {
-      "title": "שלושה צמתים ביחסי בית הדין הרבני ובית המשפט האזרחי: מזונות ילדים, שיתוף רכושי והחוק להסדר התדיינויות בסכסוכי משפחה",
-      "url": "https://lawjournal.huji.ac.il/article/12/1843",
-      "role": "scholarship",
+      "title": "רע\"א 7270/20 מירב בן דוד בלחסן נ׳ שמעון בן דוד החלטה (29.11.2020)",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-7270-20-%d7%9e%d7%99%d7%a8%d7%91-%d7%91%d7%9f-%d7%93%d7%95%d7%93-%d7%91%d7%9c%d7%97%d7%a1%d7%9f-%d7%a0-%d7%a9%d7%9e%d7%a2%d7%95%d7%9f-%d7%91%d7%9f-%d7%93%d7%95%d7%93-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
-      "citable_as": "scholarship",
+      "citable_as": "commentary",
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "secondary_commentary",
       "flags": []
     },
     {
-      "title": "דבר המערכת | רות זפרן, שחר פרידמן וניב אמיתי (כרך יח)",
-      "url": "https://runilawreview.org/2014/12/21/vol18-zafran-friedman-amitay/",
-      "role": "scholarship",
+      "title": "ע\"א 8416/19 ד\"ר שלמה נס עו\"ד שפלר נ׳ מדינת ישראל פסק דין (22.12.2021)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-8416-19-%d7%93%d7%a8-%d7%a9%d7%9c%d7%9e%d7%94-%d7%a0%d7%a1-%d7%a2%d7%95%d7%93-%d7%a9%d7%a4%d7%9c%d7%a8-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
-      "citable_as": "scholarship",
+      "citable_as": "commentary",
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "secondary_commentary",
@@ -289,16 +300,23 @@
     }
   ],
   "acquisition": {
-    "ms": 0,
+    "ms": 2,
     "mode": "doctrine_explanation",
-    "enabled": false,
+    "budget": {
+      "other": 2,
+      "total": 3,
+      "leading": 3
+    },
+    "enabled": true,
     "attempts": [],
+    "excluded": [],
     "successes": 0,
     "attempts_made": 0,
-    "eligible_count": 0
+    "eligible_count": 0,
+    "judgment_candidates": 4
   },
-  "used_sources": 12,
-  "footnotes": 10,
-  "answer_len": 3620,
-  "answer": "**סקירה: הרמת מסך בחברות משפחתיות**\n\nבשאלת ההרתעה וההרמה של מסך התאגידי בישראל ההכרעה היא בעיקר שיפוטית: חוקי היסוד והחברות מספקים רק רקע לחובות והסמכויות של בעלי תפקידים, ואילו הפסיקה היא המקור המעשי שבו נקבעת עילת ההרמה והתוצאות הנגזרות ממנה.¹\n\nהיסוד החוקי הכללי נותר במסגרת חוק החברות וחקיקה משלימה: חוק החברות קובע חובות בעלי תפקידים ואמות מידה של התנהלות תאגידית, אך אינו מכיל הוראת הרמה מפורשת של המסך התאגידי; בתי המשפט מסתמכים על פירוש של חובה זו ושל עקרונות משפטיים שנגזרים מהסמכות השיפוטית והדוקטרינה הפסיקתית כדי להורות על הרמת מסך במקרים חריגים.²\n\nהפסיקה המכרעת מדגישה כי הרמת המסך היא אמצעי יוצא דופן שננועד לסתור את עקרון האחריות המוגבלת. פסקי דין מובילים מונים נסיבות שבהן הוחלט לחייב בעלי שליטה או מנהלים באחריות אישית כאשר צוּרו לקטנות את המסגרת התאגידית או נעשה שימוש בחברה לכפוף הונאה או לעקיפת חובות.³\n\nהקריטריונים המעשייים שנדונים בפסיקה ובספרות כוללים, בין היתר: שימוש בחברה כ'מעטפת' לביצוע הונאה או התחמקות מחובות; דומיננטיות מוחלטת של בעל השליטה עד כדי העדר הפרדה אמיתית בין האישיות התאגידית לאישיותו; עסקאות שאינן במסגרת התנהלות כלכלית שוטפת וסבירה; העברת נכסים בניגוד לאינטרס הנושים; ושילוב כספים וניהול ללא ניירת פורמלית. בתי המשפט שוקלים את מכלול הראיות, ולא די בעקיפין שליטה בלבד להורות על הרמה.⁴\n\nאותה פסיקה מזהה אינדיקטורים שיש להם משקל מעשי בבחינת העילה: חוסר הפרדה בין נכסי החברה ונכסי הבעלים, העברות בין גורמים קשורים ללא תמורה או בנימוקי כיסוי, אי־קיום פרוטוקולים ומחלוקות על אופן ניהול העסקים, ונטילת סיכונים אישיים על ידי בעל השליטה שלא דרך ערוצים תאגידיים תקינים.⁵\n\nלאחר הרמת המסך בתי המשפט יכולים להביא לתוצאות תיקוניות שונות: חיוב אישי של בעלי שליטה או מנהלים בפיצוי או בהחזרת נכסים; ביטול או השבה של עסקאות שנעשו כדי לפגוע בנושים; השפעה על סדרי עדיפויות וסעדים במסגרת הליכי חדלות פירעון (כולל הוראות לביטול פעולות שנועדו לקדם פירעון חוב); וכן הוצאת צווים עיכוביים או מניעתיים. אופי התיקון מותאם לנסיבות המקרה ולכלים הסמויים בחקיקה הקיימת ובפסיקה.⁶\n\nדוקטרינות קרובות משפיעות על האופן שבו נשקלת הרמת המסך: חובות הנאמנות וחובת האמונה של נושאי משרה ותאגידים מהוות רקע פרשני חיוני לרתימת המסך; כללי חדלות פירעון מספקים כלים להחזיר פעולות ולהגן על נושים; והעמדה הארגונית והיחס ל'חובת הנאמנות' מעצבים את שיקול בית המשפט האם פעל בעל השליטה בניגוד לחובותיו. ביחס לדוקטרינות אלה קיימת חפיפה ודילמה פרשנית — הרמת מסך אינה מחליפה תביעה נגזרת או אמצעי אחר אלא מהווה סעד יוצא דופן כשהדברים חריפים.⁷\n\nהיכן שיש מתח בין דוקטרינות: יש לנטרל סכנה של שיבוש האחריות המוגבלת מחד ולשמור על זכויות הנושים והצדדים הפגועים מאידך. הפסיקה מראה כי בתי המשפט נוטים להטיל אחריות אישית רק לאחר בדיקה של נסיבות מצטברות, על מנת לאפשר התאמה בין עקרון האחריות המוגבלת לבין הצורך למנוע ניצול לרעה של המבנה התאגידי.⁸\n\nהמלצות מניעה פרקטיות לחברות משפחתיות — בהתבסס על עקרונות החקיקה והפסיקה — כוללות: שמירה קפדנית על הפרדה בין נכסי החברה והמשפחה, תיעוד החלטות מועצה ואסיפות בכלל, ניסוח מפורש של הסכמי בעלי מניות (כולל מנגנוני קניין, הליך הכרעה ופתרון סכסוכים), שימוש בערבויות ותיעוד להלוואות בין גורמים קשורים, והקפדה על שקיפות כלפי נושים וגורמים חיצוניים. צעדים אלה מקטינים סיכוי שביהמ״ש ימצא כי הושלכה עילת הרמה.⁹\n\nמגבלות וסייגים: רוב המקורות העוסקים בחקיקה הם רקעים פרגמטים ולא ממסדין הוראה סטטוטורית שאומרת 'הרם את המסך'; הפסיקה מספקת הדרכה אך תלויה בנסיבות כל תיק. כמה מפסקי הדין והמאמרים בעיונים מטפלים במקרים משפחתיים ספציפיים או בהיבטים נקודתיים של חובת הנאמנות, ולכן יש להיזהר מכל הכללה גורפת מעבר למה שנקבע בכל מקרה לגופו.\n\nלסיכום מעשי: טיפול מונע והקפדה על פורמליות תאגידית הם המענה המעשית העיקרי להפחתת סיכון להרמת מסך בחברות משפחתיות; כאשר מתגבשת תלונה על שימוש פגום במבנה התאגידי, בתי המשפט עשויים להרימו כמענה יצירתי ומשקף את מאזן האינטרסים בין שמירת האחריות המוגבלת לבין ההגנה על נושים וצדדים שנפגעו.¹⁰"
+  "used_sources": 9,
+  "footnotes": 9,
+  "answer_len": 2666,
+  "answer": "**הסטנדרט הדוקטרינרי להרמת מסך**\n\nבפסיקה הישראלית הרמת המסך נחשבת לכלי חריג: על המבקש להראות נסיבות מיוחדות ותשתית עובדתית מקיפה כבר בכתב התביעה, והנטל להוכיח ערבוב או שימוש לרעה נטל על המבקש עצמו.¹\n\nבפועל מזהים בפסיקה יסודות שחוזרים כנקודות־ציון שקובעות את הצורך בהרמה, כגון שליטה מוחלטת או היעדר נפרדות מעשית בין החברה לבין בעלי השליטה, ערבוב נכסים ופיננסים בין תאגידים וגורמים פרטיים, ושימוש בתאגיד כדי לעקוף חובות או להטעות נושים.²\n\n**המאפיינים והאיזונים בחברות משפחתיות**\n\nבחברות משפחתיות קיימת תכופה גדולה יותר של מאפיינים ש法院 בודקים כעוגנים להרמת מסך — אינטגרציה של נכסים משפחתיים, שימוש משותף במשאבים ושילוב ניהול אישי ומשפחתי בפעילות התאגידית — עובדות אלה מגבירות את הצורך בבחינה זהירה של ההפרדה בין הנכסים.³\n\nבתי המשפט מאזנים בין ההגנה המשפטית של אחריות מוגבלת, החשובה לעידוד סיכון ופעילות כלכלית, לבין הצורך להגן על נושים ולמנוע שימוש לרעה בתאגיד; ההחלטה להרימו תלויה בהוכחה מפורטת שהמבנה התאגידי נוצל בהיחשפות להונאה או כדי לחמוק מחובות.⁴\n\n**ההשלכות המשפטיות והפרוצדורליות של הרמת מסך**\n\nמעשה של הרמת מסך עשוי להוביל לכך שבעלי שליטה, בעלי מניות מסוימים או מנהלים יחויבו ישירות בחובות החברה — הן בהקשר חוזי והן בהקשר נזיקי — וכי נכסיהם האישיים יעמדו לעיון נושי החברה או הנפגעים.⁵\n\nברמה הפרוצדורלית השפעה מהותית היא דרישת הפרט והגיבוי העובדתי כבר בשלב התביעה: בתי המשפט מצפים לטיעונים וראיות מפורטים על ערבוב נכסים, על החלטות שננקטו לטובת בעלי השליטה או על כוונה להטעות, ורק במקרה של הצגה מספקת של אלה נשקלת הרמת המסך.⁶\n\n**מבחנים עובדתיים וראייתיים — נטל וראיות נדרשות**\n\nהנטל להראות את היסודות להרמת מסך מוטל על המבקש; מבחינה ראייתית נדרשת הצגה של ראיות מחוברות המראות ערבוב מהותי בין הפעילות/נכסיה של החברה לבין אלו של בעלי השליטה או ישויות מקושרות.⁷\n\nחדלות פירעון או עוני הון כשלעצמם אינם די כדי להרימו מסך אלא אם הם משולבים בעילות נוספות — למשל היעדר נפרדות מעשית או שימוש בתאגיד כדי לטשטש פעילות הונאתית; בתי המשפט נוטים לבדוק את ההקשר הכולל ולא להסתמך על ממצא פיננסי יחיד.¹\n\n**המלצות פרקטיות למניעה והגנה בחברות משפחתיות**\n\nספרות והנמקות פרקטיות מדגישות שמירה קפדנית על טקסים תאגידיים: ניהול פנקסים ורישומים נפרדים, אסיפות ודירקטורים מושבעים, פירוט עסקאות עם קשורים, והבחנה ברורה בין נכסים פרטיים לנכסי החברה — צעדים אלה מורידים את הסיכון שהשופטים יתפסו ערבוב מצדיק.⁸\n\nמעבר לכך מומלץ לתעד הסכמים בין החברה ובעלי השליטה, להפעיל נהלים לעמידה בדרישות ההון ההתחלתי וההון השוטף, לשקול שימוש בדרגים בלתי תלויים בבקרה ובביקורת ולהכין מסמכי תמיכה פיננסית לפני מחלוקות — צעדים שיכולים להקל על הנטל הראייתי של החברה במקרה של טענות.⁹\n\nהערה סגירית לגבי מקורות: חומר התמיכה שנמצא קצר וחלקי ואינו כולל את נוסחי ההלכות במלואן; התשובות לעיל נוסחו על בסיס הסניפטים והניתוחים שהוצעו במקורות האמורים ולכן צריכות להימסגר לבחינה נוספת מול נוסחי פסקי הדין והמאמרים המלאים."
 }

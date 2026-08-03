@@ -2,8 +2,8 @@
   "id": "R08",
   "query": "כתוב סקירה משפטית קצרה על התפתחות מבחני המידתיות במשפט החוקתי הישראלי.",
   "mode_expected": "academic_legal_review",
-  "run_id": "710c83fb-7b89-44f9-97e2-5afc7513a7ed",
-  "total_ms": 317715,
+  "run_id": "519db47b-b60b-4ff1-b524-0c32da780c7d",
+  "total_ms": 150719,
   "research_mode": null,
   "shape": null,
   "deterministic_branch": "insufficient_sources_limitation",
@@ -12,48 +12,48 @@
   "sufficiency_reason": "no_statutory_caselaw_or_doctrinal_anchor",
   "pool": {
     "found": null,
-    "admitted": 24,
+    "admitted": 16,
     "integrity_rejects": 0,
     "tier_counts": {
-      "statute_mirror": 6,
-      "index_or_listing": 2,
-      "official_primary": 7,
-      "secondary_commentary": 9
+      "primary_mirror": 1,
+      "statute_mirror": 1,
+      "index_or_listing": 1,
+      "official_primary": 2,
+      "secondary_commentary": 11
     },
     "citable_counts": {
-      "statute": 8,
-      "unknown": 4,
+      "statute": 2,
+      "unknown": 1,
       "judgment": 1,
       "commentary": 5,
-      "not_citable": 2,
-      "scholarship": 4
+      "not_citable": 1,
+      "scholarship": 6
     },
     "judgment_documents": 0,
     "judgments_with_holding_text": 0,
     "synthesis_role_counts": {
-      "unknown": 6,
+      "unknown": 2,
       "leading_candidate": 1,
-      "secondary_commentary": 9,
-      "statutory_background": 8
+      "secondary_commentary": 11,
+      "statutory_background": 2
     }
   },
   "text_usability_counts": {
-    "metadata_only": 11,
-    "listing_page": 2,
-    "full_text": 2,
-    "substantive_excerpt": 9
+    "metadata_only": 4,
+    "listing_page": 1,
+    "substantive_excerpt": 10,
+    "full_text": 1
   },
   "role_counts": {
-    "primary_statute": 2,
-    "binding_case_law": 10,
-    "scholarship": 6,
-    "factual_report": 4,
-    "persuasive_case_law": 2
+    "primary_statute": 1,
+    "persuasive_case_law": 1,
+    "binding_case_law": 9,
+    "scholarship": 5
   },
   "admitted_sources": [
     {
-      "title": "חוק-יסוד: כבוד האדם וחירותו",
-      "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+      "title": "ביקורת שיפוטית על חוקתיות החוק",
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/7a6447cc-8d91-ed11-8151-005056aac6c3/2_7a6447cc-8d91-ed11-8151-005056aac6c3_11_19979.pdf",
       "role": "primary_statute",
       "tier": "official_primary",
       "text_usability": "metadata_only",
@@ -64,9 +64,9 @@
       "flags": []
     },
     {
-      "title": "בימ\"ש עליון, הרכב שופטים השופטת דפנה ברק-ארז, השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין, השופט יחיאל כשר:  פס\"ד בפרשת העוברים (בע\"מ 69395-03-25)",
-      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
-      "role": "binding_case_law",
+      "title": "ביהמ\"ש השלום בראשל\"צ, סגנית הנשיא דורית סבן נוי: גז\"ד למורשע בעבירות תקיפה הגורמת חבלה ממשית, בילוש או התחקות אחר אדם ועוד  (ת\"פ 32799-01-24)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1090",
+      "role": "persuasive_case_law",
       "tier": "index_or_listing",
       "text_usability": "listing_page",
       "citable_as": "not_citable",
@@ -78,178 +78,78 @@
       ]
     },
     {
-      "title": "תקנת השוק במכר על ידי רשות שנפל בהליכיו פגם חוקי",
-      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_962b41b3597d440195f4e35963cfe3df.pdf",
+      "title": "שילוב נכי צבא וכוחות הביטחון בתעסוקה – כלי מדיניות בישראל ובארצות הברית | 1",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8232&businessType=1",
       "role": "binding_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "full_text",
-      "citable_as": "scholarship",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "זכויות חברתיות ושירותי הרווחה האישיים בישראל",
-      "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_5436422.pdf",
-      "role": "primary_statute",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": []
-    },
-    {
-      "title": "איזון חוקתי עקרוני ומידתיות: ההיבט התורתי",
-      "url": "https://law.huji.ac.il/sites/default/files/law/files/136barak.pdf",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "על 'פגיעה' בזכות חוקתית ועל 'תכלית ראויה'",
-      "url": "https://www.runi.ac.il/media/14md33du/medina.pdf",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת ...",
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "המובן הפורמלי והמובן המהוהי של מבחני המידתיות בפסיקת בג\"ץ",
-      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/P_MChoen.pdf",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "עליית המידתיות, ירידת ההסתברות והשלכותיה הבלתי-צפויות של המהפכה החוקתית על המשפט החוקתי הישראלי",
-      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3245792",
-      "role": "scholarship",
-      "tier": "secondary_commentary",
-      "text_usability": "metadata_only",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "מידתיות במבט ביקורתי ומשווה",
-      "url": "https://kotar.cet.ac.il/kotarapp/index/Book.aspx?nBookID=103799703",
-      "role": "scholarship",
-      "tier": "index_or_listing",
-      "text_usability": "listing_page",
-      "citable_as": "not_citable",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "unknown",
-      "flags": [
-        "listing_or_pagination_page"
-      ]
-    },
-    {
-      "title": "הסיוע המשפטי - משרד המשפטים - דו\"ח סיכום פעילות 2016-2017",
-      "url": "https://www.gov.il/BlobFolder/reports/annual_activity_summary_report_2016_2017/he/2016_2017.pdf",
-      "role": "factual_report",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "unknown",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "unknown",
-      "flags": []
-    },
-    {
-      "title": "חברה, אדם, משפט - דוח הסיוע המשפטי 2022-2023",
-      "url": "https://www.gov.il/BlobFolder/reports/report-01-01-25/he/report-1-1-25.pdf",
-      "role": "factual_report",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "unknown",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "unknown",
-      "flags": []
-    },
-    {
-      "title": "אי-מיצוי של זכויות חברתיות - מבקר המדינה",
-      "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/65c/2015-65c-101-Zehuyot.pdf",
-      "role": "factual_report",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "unknown",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "unknown",
-      "flags": []
-    },
-    {
-      "title": "זכויות של מיצוי - אי חברתיות - מבקר המדינה",
-      "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2021/72A/2021-72A-302-Social-Benefit-Rights.pdf",
-      "role": "factual_report",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "unknown",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "unknown",
-      "flags": []
-    },
-    {
-      "title": "תקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%A9%D7%95%D7%95%D7%99%D7%95%D7%9F_%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA_%D7%9C%D7%90%D7%A0%D7%A9%D7%99%D7%9D_%D7%A2%D7%9D_%D7%9E%D7%95%D7%92%D7%91%D7%9C%D7%95%D7%AA_(%D7%94%D7%AA%D7%90%D7%9E%D7%95%D7%AA_%D7%A0%D7%92%D7%99%D7%A9%D7%95%D7%AA_%D7%9C%D7%A9%D7%99%D7%A8%D7%95%D7%AA)",
-      "role": "binding_case_law",
-      "tier": "statute_mirror",
+      "tier": "primary_mirror",
       "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
+      "citable_as": "unknown",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "statutory_background",
+      "synthesis_role": "unknown",
       "flags": [
-        "consolidated_statute_mirror"
+        "official_host_non_specific_path"
       ]
     },
     {
-      "title": "תקנות שעת חירום (חרבות ברזל) (התמודדות עם תקיפות סייבר חמורות במגזר השירותים הדיגיטליים ושירותי האחסון)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%A9%D7%A2%D7%AA_%D7%97%D7%99%D7%A8%D7%95%D7%9D_(%D7%97%D7%A8%D7%91%D7%95%D7%AA_%D7%91%D7%A8%D7%96%D7%9C)_(%D7%94%D7%AA%D7%9E%D7%95%D7%93%D7%93%D7%95%D7%AA_%D7%A2%D7%9D_%D7%AA%D7%A7%D7%99%D7%A4%D7%95%D7%AA_%D7%A1%D7%99%D7%99%D7%91%D7%A8_%D7%97%D7%9E%D7%95%D7%A8%D7%95%D7%AA_%D7%91%D7%9E%D7%92%D7%96%D7%A8_%D7%94%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D_%D7%94%D7%93%D7%99%D7%92%D7%99%D7%98%D7%9C%D7%99%D7%99%D7%9D_%D7%95%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99_%D7%94%D7%90%D7%97%D7%A1%D7%95%D7%9F)",
-      "role": "binding_case_law",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
+      "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+      "url": "https://lawjournal.huji.ac.il/article/12/1550",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "\"האם המחוקק ירה בתותח כדי לפגוע בזבוב\" – על מידתיות במשפט",
+      "url": "https://www.runi.ac.il/media/elzhhkck/weill.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "נהליות מ טית על החלטות ו הביקורת השיפ תיאוריה מפרקטיקה ל",
+      "url": "https://www.runi.ac.il/media/hfaja1so/zamir.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "חלק ראשון – ביקורת שיפוטית יתרונות וחסרונות",
+      "url": "https://law.huji.ac.il/sites/default/files/law/files/dotan.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "יתרונותיו של מבחן האיזון האנכי על פני מבחני המידתיות בהגנה על זכויות אדם",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3685788",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
     },
     {
       "title": "עע\"מ 4614-05 - מדינת ישראל נ. אבנר אורן",
@@ -264,48 +164,8 @@
       "flags": []
     },
     {
-      "title": "תקנות חובת המכרזים/התקשרויות מינהלת תקומה",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%97%D7%95%D7%91%D7%AA_%D7%94%D7%9E%D7%9B%D7%A8%D7%96%D7%99%D7%9D%2F%D7%94%D7%AA%D7%A7%D7%A9%D7%A8%D7%95%D7%99%D7%95%D7%AA_%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%AA_%D7%AA%D7%A7%D7%95%D7%9E%D7%94",
-      "role": "persuasive_case_law",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
-    },
-    {
-      "title": "תקנות התקשורת (בזק ושידורים) (התקנה, תפעול ותחזוקה)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%AA%D7%A7%D7%A9%D7%95%D7%A8%D7%AA_(%D7%91%D7%96%D7%A7_%D7%95%D7%A9%D7%99%D7%93%D7%95%D7%A8%D7%99%D7%9D)_(%D7%94%D7%AA%D7%A7%D7%A0%D7%94%2C_%D7%AA%D7%A4%D7%A2%D7%95%D7%9C_%D7%95%D7%AA%D7%97%D7%96%D7%95%D7%A7%D7%94)",
-      "role": "persuasive_case_law",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
-    },
-    {
-      "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
-      "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
-      "role": "binding_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "scholarship",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "זכויות יוצרים ותחרות – משוק עותקים למשטר רישוי | ניבה אלקין-קורן (כרך ב)",
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/b2_6.pdf",
+      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "full_text",
@@ -316,8 +176,8 @@
       "flags": []
     },
     {
-      "title": "אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו)",
-      "url": "https://runilawreview.org/2012/11/26/volume15_barak/",
+      "title": "הזכות לפרטיות בעבודה: עיון מחודש בפרשת איסקוב-ענבר ויישומה",
+      "url": "https://lawjournal.huji.ac.il/article/12/1909",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
@@ -328,8 +188,20 @@
       "flags": []
     },
     {
-      "title": "תקנות ביטוח בריאות ממלכתי (החזר בעד שירותי בריאות)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9E%D7%9E%D7%9C%D7%9B%D7%AA%D7%99_(%D7%94%D7%97%D7%96%D7%A8_%D7%91%D7%A2%D7%93_%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA)",
+      "title": "התפתחותן של עילות ההגנה בתביעות ייצוגיות כנגד רשויות המדינה",
+      "url": "http://www.hapraklit.co.il//_Uploads/dbsAttachedFiles/8.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "תקנות הביטוח הלאומי (קביעת דרגת נכות לנפגעי עבודה)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%94%D7%9C%D7%90%D7%95%D7%9E%D7%99_(%D7%A7%D7%91%D7%99%D7%A2%D7%AA_%D7%93%D7%A8%D7%92%D7%AA_%D7%A0%D7%9B%D7%95%D7%AA_%D7%9C%D7%A0%D7%A4%D7%92%D7%A2%D7%99_%D7%A2%D7%91%D7%95%D7%93%D7%94)",
       "role": "binding_case_law",
       "tier": "statute_mirror",
       "text_usability": "substantive_excerpt",
@@ -342,31 +214,60 @@
       ]
     },
     {
-      "title": "תקנות ביטוח בריאות ממלכתי (ניכוי ותשלום החזר בעד דמי ביטוח רפואי)",
-      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9E%D7%9E%D7%9C%D7%9B%D7%AA%D7%99_(%D7%A0%D7%99%D7%9B%D7%95%D7%99_%D7%95%D7%AA%D7%A9%D7%9C%D7%95%D7%9D_%D7%94%D7%97%D7%96%D7%A8_%D7%91%D7%A2%D7%93_%D7%93%D7%9E%D7%99_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%A8%D7%A4%D7%95%D7%90%D7%99)",
+      "title": "חופש הביטוי בתקשורת המקוונת: בחינה מחדש של תורת המניעה המוקדמת | אריאל בנדור ומיכל טמיר (כרך כו)",
+      "url": "https://runilawreview.org/2022/01/27/vol26-bendor-tamir/",
       "role": "binding_case_law",
-      "tier": "statute_mirror",
+      "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
+      "citable_as": "scholarship",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "לקראת דוקטרינת אפקט מצטבר: אגרגציה בביקורת שיפוטית חוקתית",
+      "url": "https://lawjournal.huji.ac.il/article/12/1217",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "הזכות הטבועה להגנה עצמית ומידתיות במסגרת Jus ad Bellum | דוד קרצמר (כרך יז)",
+      "url": "https://runilawreview.org/2014/06/30/volume17_kretzmer/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
     }
   ],
   "acquisition": {
-    "ms": 0,
+    "ms": 2,
     "mode": "doctrine_explanation",
-    "enabled": false,
+    "budget": {
+      "other": 2,
+      "total": 3,
+      "leading": 3
+    },
+    "enabled": true,
     "attempts": [],
+    "excluded": [],
     "successes": 0,
     "attempts_made": 0,
-    "eligible_count": 0
+    "eligible_count": 0,
+    "judgment_candidates": 2
   },
   "used_sources": 0,
   "footnotes": 0,
-  "answer_len": 419,
-  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק-יסוד: כבוד האדם וחירותו; איזון חוקתי עקרוני ומידתיות: ההיבט התורתי; על 'פגיעה' בזכות חוקתית ועל 'תכלית ראויה'; מסמך מאתר אתר אקדמי (law.haifa.ac.il)."
+  "answer_len": 458,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): מקור חקיקה מתוך אתר הכנסת; על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה; מסמך מאתר אתר אקדמי (runi.ac.il); מסמך מאתר אתר אקדמי (runi.ac.il)."
 }

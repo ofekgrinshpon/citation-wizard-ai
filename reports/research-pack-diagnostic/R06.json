@@ -2,8 +2,8 @@
   "id": "R06",
   "query": "מה הדין ביחס לצוואות הדדיות לפי סעיף 8א לחוק הירושה?",
   "mode_expected": "statute_section_analysis",
-  "run_id": "7c64c249-b052-4e11-83b8-b6491e56c89f",
-  "total_ms": 174070,
+  "run_id": "b4fd155a-2eb8-42f0-b74d-f4f6f4e9446b",
+  "total_ms": 171268,
   "research_mode": null,
   "shape": null,
   "deterministic_branch": null,
@@ -12,48 +12,47 @@
   "sufficiency_reason": "doctrinal_anchor_present",
   "pool": {
     "found": null,
-    "admitted": 13,
+    "admitted": 14,
     "integrity_rejects": 0,
     "tier_counts": {
-      "primary_mirror": 1,
-      "statute_mirror": 1,
+      "primary_mirror": 2,
       "index_or_listing": 1,
-      "official_primary": 4,
-      "secondary_commentary": 6
+      "official_primary": 2,
+      "secondary_commentary": 9
     },
     "citable_counts": {
-      "statute": 4,
+      "statute": 2,
       "unknown": 1,
       "judgment": 1,
-      "commentary": 4,
+      "commentary": 2,
       "not_citable": 1,
-      "scholarship": 2
+      "scholarship": 7
     },
     "judgment_documents": 0,
     "judgments_with_holding_text": 0,
     "synthesis_role_counts": {
       "unknown": 1,
-      "applying_candidate": 1,
-      "secondary_commentary": 6,
-      "statutory_background": 5
+      "leading_candidate": 1,
+      "secondary_commentary": 9,
+      "statutory_background": 3
     }
   },
   "text_usability_counts": {
     "metadata_only": 4,
     "listing_page": 1,
     "substantive_excerpt": 7,
-    "full_text": 1
+    "full_text": 2
   },
   "role_counts": {
-    "primary_statute": 6,
-    "regulation": 2,
+    "primary_statute": 7,
+    "persuasive_case_law": 1,
     "scholarship": 1,
-    "binding_case_law": 4
+    "binding_case_law": 5
   },
   "admitted_sources": [
     {
-      "title": "חוק הירושה, תשכ\"ה-1965, סעיף 8א",
-      "url": "https://www.nevo.co.il/law_html/law00/72178.htm",
+      "title": "חוק הירושה – סעיף 8א (ביטול צוואות הדדיות)",
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision39317-10-22/he/39317-10-22.docx",
       "role": "primary_statute",
       "tier": "official_primary",
       "text_usability": "metadata_only",
@@ -64,50 +63,52 @@
       "flags": []
     },
     {
-      "title": "תקנות הירושה, תשנ\"ח-1998",
-      "url": "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/Inheritance_Regulations.pdf",
-      "role": "regulation",
-      "tier": "official_primary",
+      "title": "פס״ד של העליון בנושא טעות בצוואות הדדיות",
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%A9%D7%9C-%D7%94%D7%A2%D7%9C%D7%99%D7%95%D7%9F-%D7%91%D7%A0%D7%95%D7%A9%D7%90-%D7%98%D7%A2%D7%95%D7%AA-%D7%91%D7%A6%D7%95%D7%95%D7%90%D7%95%D7%AA-%D7%94%D7%93%D7%93%D7%99%D7%95%D7%AA",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
       "text_usability": "metadata_only",
-      "citable_as": "statute",
+      "citable_as": "commentary",
       "judgment": false,
       "holding_text": false,
-      "synthesis_role": "statutory_background",
+      "synthesis_role": "secondary_commentary",
       "flags": []
     },
     {
-      "title": "הוראות חוק הירושה – סעיף 8א (צוואות הדדיות)",
-      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision65652-12-22/he/65652-12-22.docx",
-      "role": "regulation",
-      "tier": "official_primary",
-      "text_usability": "metadata_only",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": []
-    },
-    {
-      "title": "בית משפט לענייני משפחה בראשון לציון, השופטת  מירה רום פלאי: פס\"ד בתביעות הדדיות בין שני אחים בעניין זכויות במשק (תמ\"ש 9094-10-22)",
-      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+      "title": "בית המשפט לענייני משפחה בירושלים, השופטת ריבי לב אוחיון: החלטה שעניינה סוגיית עריכת צוואה (ת\"ע 14439-01-24)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=100",
       "role": "primary_statute",
       "tier": "index_or_listing",
       "text_usability": "listing_page",
       "citable_as": "not_citable",
       "judgment": false,
-      "holding_text": true,
+      "holding_text": false,
       "synthesis_role": "unknown",
       "flags": [
         "listing_or_pagination_page"
       ]
     },
     {
-      "title": "החוק להגנה על אמריקאים מפני יישומים הנשלטים",
-      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8002&businessType=1",
+      "title": "יישום תיקון מס' 5 לחוק הקולנוע – מאגר הלקטורים",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8287&businessType=1",
       "role": "primary_statute",
       "tier": "primary_mirror",
       "text_usability": "substantive_excerpt",
       "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "official_host_non_specific_path"
+      ]
+    },
+    {
+      "title": "חקיקה/הפניה: סעיף 8א לחוק הירושה",
+      "url": "https://www.nevo.co.il/law_html/law01/306_002.htm",
+      "role": "primary_statute",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "statutory_background",
@@ -128,44 +129,20 @@
       "flags": []
     },
     {
-      "title": "בג\"ץ 2887-04 - סלים אבו מדיגם נ. מינהל מקרקעי ישראל",
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/2&fileName=SB2_3_2887-04.pdf&type=2",
-      "role": "primary_statute",
-      "tier": "official_primary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "judgment",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "applying_candidate",
-      "flags": []
-    },
-    {
-      "title": "ע\"א 6180/20 ד\"ר משה וינברג ושות' נ׳ מדינת ישראל פסק דין (13.06.2021)",
-      "url": "https://www.toledano.co.il/%d7%a2%d7%90-6180-20-%d7%93%d7%a8-%d7%9e%d7%a9%d7%94-%d7%95%d7%99%d7%a0%d7%91%d7%a8%d7%92-%d7%95%d7%a9%d7%95%d7%aa-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "חלוקתה של זכות היוצרים בין בני זוג – עיין ערך: \"אהבה\" | טל איטקין (כרך כד)",
+      "url": "https://runilawreview.org/2021/06/16/vol24-itkin/",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
-      "citable_as": "commentary",
+      "citable_as": "scholarship",
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "secondary_commentary",
       "flags": []
     },
     {
-      "title": "בג\"ץ 1273/20 משמר הדמוקרטיה הישראלית נ׳ הכנסת ה- 22 פסק דין (09.09.2020)",
-      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1273-20-%d7%9e%d7%a9%d7%9e%d7%a8-%d7%94%d7%93%d7%9e%d7%95%d7%a7%d7%a8%d7%98%d7%99%d7%94-%d7%94%d7%99%d7%a9%d7%a8%d7%90%d7%9c%d7%99%d7%aa-%d7%a0-%d7%94%d7%9b%d7%a0%d7%a1%d7%aa/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-      "role": "binding_case_law",
-      "tier": "secondary_commentary",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "commentary",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "secondary_commentary",
-      "flags": []
-    },
-    {
-      "title": "פיצוי נאות: על סעדים וצדק בדיני הנטילה השלטונית בישראל",
-      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_5af46bb80ac243b4a2ab7d4622677b97.pdf",
+      "title": "זקנה אחרת: ההיבטים המשפטיים של משפחות חדשות בזקנה בישראל | כרמית טולדנו, ישראל איסי דורון ואריאן רנן-ברזילי (כרך י\"ז)",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2024/01/din17-toledano.pdf",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "full_text",
@@ -173,6 +150,54 @@
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "לא עוד &quot;כבוד הריבונות&quot; – דרישת ההדדיות ועליית קרנם של שיקולים ציבוריים־ריבוניים מתחום המשפט הבין־לאומי הפומבי בתחום המשפט הבין־לאומי הפרטי",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_8a27e0b488b14212b0883ebd0c4597d0.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "היקף תחולת סעיף 22 לחוק העונשין - עבירות של אחריות קפידה",
+      "url": "https://lawjournal.huji.ac.il/article/12/660",
+      "role": "primary_statute",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "הלוואות בעלים, מימון דק ובעיית הנציג של הנושים (כרך נו)",
+      "url": "https://lawjournal.huji.ac.il/article/12/1972",
+      "role": "primary_statute",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": []
+    },
+    {
+      "title": "בג\"ץ 2887-04 - סלים אבו מדיגם נ. מינהל מקרקעי ישראל",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/2&fileName=SB2_3_2887-04.pdf&type=2",
+      "role": "binding_case_law",
+      "tier": "official_primary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "leading_candidate",
       "flags": []
     },
     {
@@ -188,26 +213,12 @@
       "flags": []
     },
     {
-      "title": "חוק הירושה",
-      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%99%D7%A8%D7%95%D7%A9%D7%94",
-      "role": "primary_statute",
-      "tier": "statute_mirror",
-      "text_usability": "substantive_excerpt",
-      "citable_as": "statute",
-      "judgment": false,
-      "holding_text": false,
-      "synthesis_role": "statutory_background",
-      "flags": [
-        "consolidated_statute_mirror"
-      ]
-    },
-    {
-      "title": "בג\"ץ 3390/16 עדאלה – המרכז המשפטי לזכויות המיעוט הערבי בישראל נ׳ הכנסת פסק דין",
-      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3390-16-%d7%a2%d7%93%d7%90%d7%9c%d7%94-%d7%94%d7%9e%d7%a8%d7%9b%d7%96-%d7%94%d7%9e%d7%a9%d7%a4%d7%98%d7%99-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%9e%d7%99%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "רשימה: עקרון ״אי־ההנצחה״ בשיטת המשטר הישראלית | רועי אשכנזי",
+      "url": "https://runilawreview.org/2023/02/13/ashkenazi/",
       "role": "binding_case_law",
       "tier": "secondary_commentary",
       "text_usability": "substantive_excerpt",
-      "citable_as": "commentary",
+      "citable_as": "scholarship",
       "judgment": false,
       "holding_text": false,
       "synthesis_role": "secondary_commentary",
@@ -215,16 +226,23 @@
     }
   ],
   "acquisition": {
-    "ms": 0,
+    "ms": 1,
     "mode": "doctrine_explanation",
-    "enabled": false,
+    "budget": {
+      "other": 2,
+      "total": 3,
+      "leading": 3
+    },
+    "enabled": true,
     "attempts": [],
+    "excluded": [],
     "successes": 0,
     "attempts_made": 0,
-    "eligible_count": 0
+    "eligible_count": 0,
+    "judgment_candidates": 2
   },
-  "used_sources": 5,
-  "footnotes": 5,
-  "answer_len": 2181,
-  "answer": "**מענה קצר**\n\nסעיף 8א לחוק הירושה מאפשר לבני זוג לערוך צוואות הדדיות ומסדיר הופעתן והוראות לגבי ביטולן; נוסח הסעיף והוראות נלוויות מופיעים בחוק ובתקנות הרלוונטיות.¹\n\nהחוק מתאר את הצוואה ההדדית כצוואה הנעשית \"מתוך הסתמכות\" של בן זוג על צוואת בן הזוג האחר וקובע תנאים מיוחדים לביטול צוואות אלה, אך אין בסעיף כדי לקבוע במפורש כי צוואות אלה הופכות להסדר חוזי בלתי־ניתן לשינוי שאוסר על אחד הצדדים לשנות או לבטל צוואתו בכל נסיבות.²\n\nלעניין טבעה המשפטי של הצוואה ההדדית — מן הנוסח בחוק ובניתוחי המשנה עולה בזהירות כי החוק מווסת את אופן עריכתן וביטולן של צוואות מסוג זה, אך אינו מטיל איסור מוחלט על שינוי או ביטול בצוואה כל עוד מופעלים הנהלים שקבועים בסעיף ולתקנות המתאימות; אין במקורות הסטטוטוריים כאן כדי להפיק מסקנה נחרצת בדבר הפיכת הצוואה להסכם קיבול מחייב בין המצווים שאסר על שינוי מוחלט.³\n\nדרישות הצורה והפרוצדורה הקשורות בצוואות — כולל הוראות כלליות על אופן עריכת צוואה והליכי נסמך שמופיעות בתקנות הירושה — חלות גם על צוואות הדדיות; החוק עצמו מציין מנגנוני ביטול ספציפיים (כולל דרישות בכתב בתקופת החיים ובמקרים של השבה או הסתלקות לאחר פטירה) כפי שמתואר בסעיף 8א ובהערות המשניות שנדונו בספרות ובתקנות.⁴\n\nהשלכות הפרת דרישות הצורה והתנאים: המקורות הסטטוטוריים שמוצגים כאן אינם מפרטים סנקציה חד־משמעית פרט לאי־תוקף הצוואה שלא עומדת בתנאי החוק הכלליים; מאחר שסעיף 8א ותקנות הירושה מתמקדים בהסדרת אופן העריכה והביטול, אין בהן הוראה מפורשת לגבי סעד קונקרטי של פיצוי או קיום אישי במקרה של שינוי או ביטול שלא על‑פי הנוסח המוסכם.⁴\n\nלגבי סעדי נזיקין או סעד לביצוע ההסדר (כמו פסק דין שיפוי או קיום התחייבות בין המצווים) — המקורות שניתנו אינם קובעים במפורש זכות שכזו או מסלול אכיפה פרטני; מכאן שלא ניתן להפיק ממקורות אלה פסק־דין סטטוטורי המעניק סעד כזה ללא תמיכה נוספת (למשל בפסיקה שאינה מוצגת כאן).⁵\n\nאין כאן סקירת פסיקה: לא הוצגה במסגרת תשובה זו פסיקה ראויה לשימוש בעניינן של צוואות הדדיות, ולכן המענה נשען אך ורק על הוראות החוק והתקנות שנמסרו.\n\nמסקנה מעשית קצרה: חוק הירושה קובע מסגרת משפטית לצוואות הדדיות ומניח מנגנוני ביטול מסוימים, אך אינו נותן במפורש הוראה כי צוואה הדדית תהפוך להסכם בלתי־ניתן־לביטול; נוכח חוסר הבהירות שהמקורות מצביעים עליה ביחס לתוצאות לאחר מותו של אחד המצווים, הסיכום המשפטי הסופי ביחס לזמינות סעדים נותר תלוי בפיתוחי פסיקה או בחיזוק הוראות סטטוטוריות שלא נכללו כאן.⁵"
+  "used_sources": 4,
+  "footnotes": 4,
+  "answer_len": 2597,
+  "answer": "מניסוח סעיף 8א לחוק הירושה עולה מסקנה מעשית וברורה: בחיי שני בני הזוג ניתן לבטל צוואה הדדית על ידי מסירת הודעה בכתב, ואולם לאחר מות אחד המצווים אפשרות הביטול כפופה להחזקה/ויתור על מה שנתקבל מן העיזבון של המנוח. הסעיף קובע בכך תנאים לביטול אך אינו מעניק לצוואה הדדית מעמד אוטומטי של חוזה בלתי הפיך שאוסר על ביטול בחיי הצד השני.¹\n\nהיקף ותוכן הסעיף: סעיף 8א מהווה מסגרת סטטוטורית המגדירה את אופן הביטול של צוואות הדדיות (הודעה בכתב במהלך חיי המצווים; בתנאים של השבה/וויתור לאחר מות אחד המצווים) אך אין בו פירוט מקיף של כל ההשלכות המהותיות של הסדרים בין צוואות או קביעה כי צוואה הדדית מוסיפה זכויות קניין או מחייבת בהכרח מן המניין מעבר לכללי הצוואה הכלליים. מבקרי הדין מצביעים על כך שהסעיף מסדיר אופן ביטול אך אינו נותן מענה מלא למטרות ההסתמכות והיציבות שהצוואה ההדדית עשויה לשרת.²\n\nדרישות פורמליות ומהותיות: החוק מטיל דרישה מפורשת להודעה בכתב כאמצעי לביטול בחיי המצווים, ולקבעה של השלכה מיוחדת לאחר המוות — השבה או ויתור על מה שנתקבל. מעבר לכך, דרישות הצורה הכלליות החלות על צוואה (ככל שמקובלות בסעיפי חוק אחרים ובדוקטרינה) לא מבוטלות על‑ידי סעיף 8א; כלומר, אין בסעיף ראיה לכך שנדרש ניסוח שבעצם שונה באופן מהותי מהנוסח המקובל בצוואה יחידנית, אלא שהחוק מוסיף תנאי לביטול ההדדי.³\n\nשאלה של ביטול חד־צדדי והשלכותיו: מבחינת הדין הסטטוטורי, האפשרות לביטול בחיי השניים על ידי הודעה בכתב היא חד־צדדית מבחינה פרוצדורלית; לאחר מות אחד המצווים החוק מציב תנאי נוסף — השבה/הסתלקות — שעשויה להגביל את היכולת המעשית להפעיל ביטול כשיש כבר העברות או קבלת נכסים. אין בסעיף 8א בכך כדי לקבוע באופן מפורש מנגנון של השתתקות מוחלטת או מנגנון חוזי־מחייב שאוסר ביטול בחיי הצד השני, אך פסיקה ומאמרים עסקו בשאלות של הסתמכות, טעות ופיצויים במקרים אלה ולכן ייתכנו פתרונות שיפוטיים בהתאמה לעובדות כל מקרה.⁴\n\nסעדים וטענות מצד הנפגע מביטול או הפרת צוואה הדדית: הסעיף אינו מפנה לסעד חוזי אוטומטי; האמצעים המעשיים הנפוצים הם אתגרי תקפות הצוואה עצמה (ביטולה/פסילתה), טענות להשבה או לביצוע על‑פי ההסדרים שבאמתחת הצדדים, וטענות שוויוניות או של הסתמכות (השתתקות, טעות) שהופכות להכרעה שיפוטית במקרה של סתירות. הפסיקה הנמצאית והספרות מצביעות על שימוש בכלים אלה במקרים מסוימים, אך ההכרעה תלויה בנסיבות ובשיקול בית המשפט; אין במקורות אלה כדי להראות סדירות אחידה של פיצוי או ביצוע אוטומטי של הסדרים בין צוואות.⁴\n\nמסקנה מעשית וקווים להמשך: סעיף 8א מסדיר באופן ברור את תנאי הביטול — הודעה בכתב בחיי המצווים ותנאי השבה/וויתור לאחר מות — אך אינו משנה באופן מוחלט את הדוקטרינה של צוואה ביחס לזכויות והסדרים חוזיים. במקרים שבהם מתקיימת הסתמכות ממשית, טעות או העברה שכבר בוצעה, ייתכנו טענות שיפוטיות מבוססות; עם זאת פתרונות אלה נתונים לשיפוט השגרתי ולהערכת הראיות. נציין כי ניתוח מעמיק יותר ידרוש בחינה מקרה־מקרה של פסיקה רלוונטית ופסקי דין ספציפיים."
 }
