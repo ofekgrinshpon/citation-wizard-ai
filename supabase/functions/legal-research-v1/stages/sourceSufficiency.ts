@@ -472,7 +472,15 @@ export function assessSourceSufficiency(args: {
 
   // ── 1. Case-law synthesis: strict, judgments only ───────────────────────
   if (profile === "case_law_synthesis") {
-    const ok = usableJudgments.length >= 1 && topical.length >= 1;
+    // Handoff fix: an acquired judgment body is truncated for the drafter, so
+    // the doctrine phrase may not appear in the visible snippet even though
+    // the verifier already graded the judgment `direct` for this question.
+    // A domain-matched usable judgment with a *direct* verifier verdict is
+    // therefore accepted as topical grounding. No loosening otherwise:
+    // partial/tangential judgments still require a phrase-level topical hit.
+    const directJudgments = usableJudgments.filter((s) => s.best_support === "direct");
+    const ok = usableJudgments.length >= 1 &&
+      (topical.length >= 1 || directJudgments.length >= 1);
     return finish(
       true,
       ok,
@@ -485,6 +493,7 @@ export function assessSourceSufficiency(args: {
       ok ? { basis: "usable_judgment" } : { basis: "insufficient" },
     );
   }
+
 
   // ── 3. Statute-section definition: governing statute suffices ───────────
   if (profile === "statute_section_definition") {
