@@ -1,0 +1,3803 @@
+[
+  {
+    "id": "R03",
+    "query": "מה הפסיקה אומרת על הלכת השיתוף?",
+    "run_id": "48ea8a69-6f0b-46e3-954b-3e8abbbce000",
+    "total_ms": 270305,
+    "research_mode": null,
+    "shape": null,
+    "deterministic_branch": null,
+    "is_stub": false,
+    "verifier_counts": {
+      "by_support": {
+        "direct": 8,
+        "partial": 4,
+        "unrelated": 4,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 16,
+        "false": 0
+      },
+      "model_verdicts": 16,
+      "by_support_model": {
+        "direct": 8,
+        "partial": 4,
+        "unrelated": 4,
+        "tangential": 0
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "verifier_errors": [],
+    "sufficiency": {
+      "shape": "definition",
+      "reason": "case_law_synthesis_supported",
+      "applied": true,
+      "category": "not_applicable",
+      "sufficient": true,
+      "thin_source": false,
+      "found_titles": [
+        "בע\"מ 4623/04",
+        "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "פסק דין מתוך אתר ממשלתי (gov.il)",
+        "גדרי הלכת שיתוף ספציפי בדירת מגורים",
+        "החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואים ועל נכסים עסקיים"
+      ],
+      "topical_refs": [
+        "s9"
+      ],
+      "topic_phrases": [
+        "הלכת השיתוף"
+      ],
+      "case_law_required": true,
+      "statute_only_answer": false,
+      "sufficiency_profile": "case_law_synthesis",
+      "usable_judgment_refs": [
+        "s1"
+      ],
+      "exact_amounts_allowed": true,
+      "governing_statute_refs": [],
+      "topical_authority_refs": [
+        "s9"
+      ],
+      "morphology_domain_match": false,
+      "normalized_source_tokens": [
+        "אליעזר",
+        "עמל",
+        "ניצ",
+        "דיאנו",
+        "חלט",
+        "עליון",
+        "בית",
+        "סולברג",
+        "שופט",
+        "בוד",
+        "פני",
+        "בקש",
+        "שיב",
+        "חיים",
+        "אילן",
+        "שחר",
+        "חוזי",
+        "פסק",
+        "ערעור",
+        "רשו",
+        "קשת",
+        "יום",
+        "יפו",
+        "אביב",
+        "בתל",
+        "שיל",
+        "רביד",
+        "שוחט",
+        "ידי",
+        "שניתן",
+        "כהן",
+        "דניאל",
+        "נקי",
+        "איר",
+        "לפר",
+        "דוד",
+        "בשם",
+        "מדר",
+        "תמיר",
+        "ערער"
+      ],
+      "governing_regulation_refs": [],
+      "normalized_question_tokens": [
+        "לכת",
+        "שיתוף"
+      ],
+      "sufficiency_authority_basis": "usable_judgment",
+      "thin_governing_statute_refs": [],
+      "thin_governing_regulation_refs": [],
+      "authority_type_sufficiency_passed": true,
+      "case_law_missing_but_not_required": false,
+      "practical_steps_thin_authority_passed": false
+    },
+    "acquisition": {
+      "ms": 5507,
+      "mode": "case_law_synthesis",
+      "budget": {
+        "other": 2,
+        "total": 4,
+        "leading": 2
+      },
+      "enabled": true,
+      "attempts": [
+        {
+          "ms": 918,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+          "title": "בע\"מ 4623/04",
+          "success": true,
+          "candidate_id": "03052195-e0e2-416e-b79b-bd0affa98237",
+          "title_signal": "בע\"מ 4623/04",
+          "docket_signal": "ע\"מ 4623/04",
+          "failure_reason": null,
+          "synthesis_role": "leading_candidate",
+          "trigger_reason": "metadata_only",
+          "has_holding_text": true,
+          "method_succeeded": "direct_file_fetch",
+          "docket_normalized": "am:4623/4",
+          "methods_attempted": [
+            "direct_file_fetch"
+          ],
+          "judgment_candidate": true,
+          "usable_for_holding": true,
+          "acquisition_success": true,
+          "acquired_text_length": 6000,
+          "final_text_usability": "full_text",
+          "text_usability_after": "full_text",
+          "acquisition_attempted": true,
+          "extracted_text_length": 35771,
+          "text_usability_before": "metadata_only",
+          "acquisition_failure_reasons": [],
+          "acquisition_methods_attempted": [
+            "direct_file_fetch"
+          ],
+          "body_contains_docket_or_title": true,
+          "can_support_synthesis_holding": true
+        },
+        {
+          "ms": 1830,
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+          "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+          "success": false,
+          "candidate_id": "57619d4c-b39e-408a-b1ac-488e6f77015d",
+          "title_signal": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+          "docket_signal": "ע\"א 52/80",
+          "failure_reason": "no_local_document_match",
+          "synthesis_role": "leading_candidate",
+          "trigger_reason": "metadata_only",
+          "has_holding_text": false,
+          "method_succeeded": null,
+          "docket_normalized": "aa:52/80",
+          "methods_attempted": [
+            "direct_file_fetch",
+            "local_db_docket_lookup"
+          ],
+          "judgment_candidate": true,
+          "usable_for_holding": false,
+          "acquisition_success": false,
+          "acquired_text_length": 0,
+          "final_text_usability": "metadata_only",
+          "text_usability_after": "metadata_only",
+          "acquisition_attempted": true,
+          "extracted_text_length": 0,
+          "text_usability_before": "metadata_only",
+          "acquisition_failure_reasons": [
+            "http_403",
+            "no_local_document_match"
+          ],
+          "acquisition_methods_attempted": [
+            "direct_file_fetch",
+            "local_db_docket_lookup"
+          ],
+          "body_contains_docket_or_title": false,
+          "can_support_synthesis_holding": false
+        },
+        {
+          "ms": 1140,
+          "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-199-21-%d7%a8%d7%9e%d7%99-%d7%99%d7%95%d7%92%d7%91-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-02/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בש\"פ 199/21 רמי יוגב נ׳ מדינת ישראל החלטה (02.03.2021)",
+          "success": true,
+          "candidate_id": "db8fc8b0-3b43-4e33-8f8b-ea98ace7bd83",
+          "title_signal": "בש\"פ 199/21 רמי יוגב נ׳ מדינת ישראל החלטה (02.03.2021)",
+          "docket_signal": "בש\"פ 199/21",
+          "failure_reason": null,
+          "synthesis_role": "secondary_commentary",
+          "trigger_reason": "no_judgment_body_text",
+          "has_holding_text": false,
+          "method_succeeded": "local_db_docket_lookup",
+          "docket_normalized": "bshp:199/21",
+          "methods_attempted": [
+            "local_db_docket_lookup"
+          ],
+          "judgment_candidate": true,
+          "usable_for_holding": false,
+          "acquisition_success": true,
+          "acquired_text_length": 6000,
+          "final_text_usability": "full_text",
+          "text_usability_after": "full_text",
+          "acquisition_attempted": true,
+          "extracted_text_length": 11823,
+          "text_usability_before": "substantive_excerpt",
+          "acquisition_failure_reasons": [],
+          "acquisition_methods_attempted": [
+            "local_db_docket_lookup"
+          ],
+          "body_contains_docket_or_title": true,
+          "can_support_synthesis_holding": false
+        },
+        {
+          "ms": 1616,
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5263-22-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%a8-%d7%a0-%d7%a2%d7%9e%d7%9c%d7%99%d7%94-%d7%a0%d7%99%d7%a6%d7%94-%d7%9e%d7%95%d7%93%d7%99%d7%90%d7%a0%d7%95-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+          "success": true,
+          "candidate_id": "6b5eaa02-4bc7-4178-be7a-ecbb68308cd2",
+          "title_signal": "רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+          "docket_signal": "רע\"א 5263/22",
+          "failure_reason": null,
+          "synthesis_role": "secondary_commentary",
+          "trigger_reason": "no_judgment_body_text",
+          "has_holding_text": true,
+          "method_succeeded": "local_db_docket_lookup",
+          "docket_normalized": "raa:5263/22",
+          "methods_attempted": [
+            "local_db_docket_lookup"
+          ],
+          "judgment_candidate": true,
+          "usable_for_holding": true,
+          "acquisition_success": true,
+          "acquired_text_length": 6000,
+          "final_text_usability": "full_text",
+          "text_usability_after": "full_text",
+          "acquisition_attempted": true,
+          "extracted_text_length": 11839,
+          "text_usability_before": "substantive_excerpt",
+          "acquisition_failure_reasons": [],
+          "acquisition_methods_attempted": [
+            "local_db_docket_lookup"
+          ],
+          "body_contains_docket_or_title": true,
+          "can_support_synthesis_holding": true
+        }
+      ],
+      "excluded": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision22552-04-23/he/22552-04-23.docx",
+          "title": "ע\"מ 22552-04-23 י. ס. ל נ' ח. ח. ל",
+          "reason": "budget_exhausted",
+          "candidate_id": "96e8ae67-a96e-421c-8ab4-b1520012544f"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-3460-21-%d7%9e%d7%a9%d7%94-%d7%91%d7%9f-%d7%a9%d7%9e%d7%97%d7%95%d7%9f-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בש\"פ 3460/21 משה בן שמחון נ׳ מדינת ישראל החלטה (06.06.2021)",
+          "reason": "budget_exhausted",
+          "candidate_id": "ef845e47-8d39-4faa-919f-8ee087ef86ea"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1783",
+          "title": "אי-חוקיות, מראית עין או משכון מוסווה? (בעקבות ע\"א 6634/15 טופ במרחבי השרון ייזום בע\"מ נ' קפלן)",
+          "reason": "budget_exhausted",
+          "candidate_id": "d40aee3d-5604-4885-96cd-3870219bc41f"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=180",
+          "title": "ביהמ\"ש לענייני משפחה בתל אביב - יפו, ש' ארז שני: פסק דין בעניין תובענה לשיתוף רכושי (תמ\"ש 62952-05-20)",
+          "reason": "budget_exhausted",
+          "candidate_id": "4a98218d-5eb5-4669-97df-c0bd355bd4d1"
+        }
+      ],
+      "successes": 3,
+      "attempts_made": 4,
+      "eligible_count": 8,
+      "judgment_candidates": 8,
+      "eligibility_diagnostics": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+          "title": "בע\"מ 4623/04",
+          "eligible": true,
+          "citable_as": "judgment",
+          "rank_score": 135,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "source_type": "caselaw",
+          "candidate_id": "03052195-e0e2-416e-b79b-bd0affa98237",
+          "planner_role": "binding_case_law",
+          "has_court_url": true,
+          "authority_tier": "official_primary",
+          "synthesis_role": "leading_candidate",
+          "text_usability": "metadata_only",
+          "excluded_reason": null,
+          "has_party_names": false,
+          "has_download_url": true,
+          "docket_normalized": "am:4623/4",
+          "eligibility_basis": [
+            "docket_signal",
+            "official_court_url",
+            "planner_role_with_case_identity"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": false,
+          "rank_before_acquisition": 1,
+          "would_have_been_attempted_under_relaxed_rule": false
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+          "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+          "eligible": true,
+          "citable_as": "judgment",
+          "rank_score": 110,
+          "rank_reason": "+direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "source_type": "caselaw",
+          "candidate_id": "57619d4c-b39e-408a-b1ac-488e6f77015d",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "official_primary",
+          "synthesis_role": "leading_candidate",
+          "text_usability": "metadata_only",
+          "excluded_reason": null,
+          "has_party_names": true,
+          "has_download_url": true,
+          "docket_normalized": "aa:52/80",
+          "eligibility_basis": [
+            "docket_signal",
+            "case_title_party_names",
+            "planner_role_with_case_identity"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 2,
+          "would_have_been_attempted_under_relaxed_rule": false
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision22552-04-23/he/22552-04-23.docx",
+          "title": "ע\"מ 22552-04-23 י. ס. ל נ' ח. ח. ל",
+          "eligible": true,
+          "citable_as": "judgment",
+          "rank_score": 110,
+          "rank_reason": "+direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "source_type": "caselaw",
+          "candidate_id": "96e8ae67-a96e-421c-8ab4-b1520012544f",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "official_primary",
+          "synthesis_role": "leading_candidate",
+          "text_usability": "metadata_only",
+          "excluded_reason": "budget_exhausted",
+          "has_party_names": true,
+          "has_download_url": true,
+          "docket_normalized": "am:22552/4/23",
+          "eligibility_basis": [
+            "docket_signal",
+            "case_title_party_names",
+            "planner_role_with_case_identity"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": "budget_exhausted",
+          "acquisition_attempted": false,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 3,
+          "would_have_been_attempted_under_relaxed_rule": true
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=180",
+          "title": "ביהמ\"ש לענייני משפחה בתל אביב - יפו, ש' ארז שני: פסק דין בעניין תובענה לשיתוף רכושי (תמ\"ש 62952-05-20)",
+          "eligible": true,
+          "citable_as": "not_citable",
+          "rank_score": -140,
+          "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+          "source_type": "caselaw",
+          "candidate_id": "4a98218d-5eb5-4669-97df-c0bd355bd4d1",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "index_or_listing",
+          "synthesis_role": "unknown",
+          "text_usability": "listing_page",
+          "excluded_reason": "budget_exhausted",
+          "has_party_names": false,
+          "has_download_url": false,
+          "docket_normalized": "tms:62952/5/20",
+          "eligibility_basis": [
+            "docket_signal"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": "budget_exhausted",
+          "acquisition_attempted": false,
+          "has_case_title_signal": false,
+          "rank_before_acquisition": 8,
+          "would_have_been_attempted_under_relaxed_rule": true
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-199-21-%d7%a8%d7%9e%d7%99-%d7%99%d7%95%d7%92%d7%91-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-02/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בש\"פ 199/21 רמי יוגב נ׳ מדינת ישראל החלטה (02.03.2021)",
+          "eligible": true,
+          "citable_as": "commentary",
+          "rank_score": 15,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "source_type": "caselaw",
+          "candidate_id": "db8fc8b0-3b43-4e33-8f8b-ea98ace7bd83",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "secondary_commentary",
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": null,
+          "has_party_names": true,
+          "has_download_url": false,
+          "docket_normalized": "bshp:199/21",
+          "eligibility_basis": [
+            "docket_signal",
+            "case_title_party_names"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 4,
+          "would_have_been_attempted_under_relaxed_rule": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5263-22-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%a8-%d7%a0-%d7%a2%d7%9e%d7%9c%d7%99%d7%94-%d7%a0%d7%99%d7%a6%d7%94-%d7%9e%d7%95%d7%93%d7%99%d7%90%d7%a0%d7%95-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+          "eligible": true,
+          "citable_as": "commentary",
+          "rank_score": 15,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "source_type": "caselaw",
+          "candidate_id": "6b5eaa02-4bc7-4178-be7a-ecbb68308cd2",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "secondary_commentary",
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": null,
+          "has_party_names": true,
+          "has_download_url": false,
+          "docket_normalized": "raa:5263/22",
+          "eligibility_basis": [
+            "docket_signal",
+            "case_title_party_names"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 5,
+          "would_have_been_attempted_under_relaxed_rule": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-3460-21-%d7%9e%d7%a9%d7%94-%d7%91%d7%9f-%d7%a9%d7%9e%d7%97%d7%95%d7%9f-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בש\"פ 3460/21 משה בן שמחון נ׳ מדינת ישראל החלטה (06.06.2021)",
+          "eligible": true,
+          "citable_as": "commentary",
+          "rank_score": 15,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "source_type": "caselaw",
+          "candidate_id": "ef845e47-8d39-4faa-919f-8ee087ef86ea",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "secondary_commentary",
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": "budget_exhausted",
+          "has_party_names": true,
+          "has_download_url": false,
+          "docket_normalized": "bshp:3460/21",
+          "eligibility_basis": [
+            "docket_signal",
+            "case_title_party_names"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": "budget_exhausted",
+          "acquisition_attempted": false,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 6,
+          "would_have_been_attempted_under_relaxed_rule": true
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1783",
+          "title": "אי-חוקיות, מראית עין או משכון מוסווה? (בעקבות ע\"א 6634/15 טופ במרחבי השרון ייזום בע\"מ נ' קפלן)",
+          "eligible": true,
+          "citable_as": "scholarship",
+          "rank_score": 15,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "source_type": "journal_article",
+          "candidate_id": "d40aee3d-5604-4885-96cd-3870219bc41f",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "secondary_commentary",
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": "budget_exhausted",
+          "has_party_names": true,
+          "has_download_url": false,
+          "docket_normalized": "aa:6634/15",
+          "eligibility_basis": [
+            "docket_signal",
+            "case_title_party_names"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": "budget_exhausted",
+          "acquisition_attempted": false,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 7,
+          "would_have_been_attempted_under_relaxed_rule": true
+        }
+      ],
+      "acquisition_budget_spent_on": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+          "rank": 1,
+          "title": "בע\"מ 4623/04",
+          "success": true,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "03052195-e0e2-416e-b79b-bd0affa98237",
+          "official_judgment_document": true
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+          "rank": 2,
+          "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+          "success": false,
+          "rank_reason": "+direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "57619d4c-b39e-408a-b1ac-488e6f77015d",
+          "official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-199-21-%d7%a8%d7%9e%d7%99-%d7%99%d7%95%d7%92%d7%91-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-02/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 4,
+          "title": "בש\"פ 199/21 רמי יוגב נ׳ מדינת ישראל החלטה (02.03.2021)",
+          "success": true,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "db8fc8b0-3b43-4e33-8f8b-ea98ace7bd83",
+          "official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5263-22-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%a8-%d7%a0-%d7%a2%d7%9e%d7%9c%d7%99%d7%94-%d7%a0%d7%99%d7%a6%d7%94-%d7%9e%d7%95%d7%93%d7%99%d7%90%d7%a0%d7%95-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 5,
+          "title": "רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+          "success": true,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "6b5eaa02-4bc7-4178-be7a-ecbb68308cd2",
+          "official_judgment_document": false
+        }
+      ],
+      "official_judgment_documents_found": 1,
+      "skipped_higher_quality_candidates": 1,
+      "official_judgment_documents_acquired": 1,
+      "institutional_pages_excluded_before_budget": 1,
+      "judgment_candidate_rank_before_acquisition": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+          "rank": 1,
+          "score": 135,
+          "title": "בע\"מ 4623/04",
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "03052195-e0e2-416e-b79b-bd0affa98237",
+          "negative_signals": [],
+          "positive_signals": [
+            "official_court_download_url",
+            "direct_judgment_document",
+            "docket_signal",
+            "planner_judgment_role",
+            "planner_leading_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": true
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+          "rank": 2,
+          "score": 110,
+          "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+          "rank_reason": "+direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "57619d4c-b39e-408a-b1ac-488e6f77015d",
+          "negative_signals": [],
+          "positive_signals": [
+            "direct_judgment_document",
+            "docket_signal",
+            "case_title_pattern",
+            "planner_judgment_role",
+            "planner_leading_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision22552-04-23/he/22552-04-23.docx",
+          "rank": 3,
+          "score": 110,
+          "title": "ע\"מ 22552-04-23 י. ס. ל נ' ח. ח. ל",
+          "rank_reason": "+direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "96e8ae67-a96e-421c-8ab4-b1520012544f",
+          "negative_signals": [],
+          "positive_signals": [
+            "direct_judgment_document",
+            "docket_signal",
+            "case_title_pattern",
+            "planner_judgment_role",
+            "planner_leading_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-199-21-%d7%a8%d7%9e%d7%99-%d7%99%d7%95%d7%92%d7%91-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-02/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 4,
+          "score": 15,
+          "title": "בש\"פ 199/21 רמי יוגב נ׳ מדינת ישראל החלטה (02.03.2021)",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "db8fc8b0-3b43-4e33-8f8b-ea98ace7bd83",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5263-22-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%a8-%d7%a0-%d7%a2%d7%9e%d7%9c%d7%99%d7%94-%d7%a0%d7%99%d7%a6%d7%94-%d7%9e%d7%95%d7%93%d7%99%d7%90%d7%a0%d7%95-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 5,
+          "score": 15,
+          "title": "רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "6b5eaa02-4bc7-4178-be7a-ecbb68308cd2",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-3460-21-%d7%9e%d7%a9%d7%94-%d7%91%d7%9f-%d7%a9%d7%9e%d7%97%d7%95%d7%9f-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 6,
+          "score": 15,
+          "title": "בש\"פ 3460/21 משה בן שמחון נ׳ מדינת ישראל החלטה (06.06.2021)",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "ef845e47-8d39-4faa-919f-8ee087ef86ea",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1783",
+          "rank": 7,
+          "score": 15,
+          "title": "אי-חוקיות, מראית עין או משכון מוסווה? (בעקבות ע\"א 6634/15 טופ במרחבי השרון ייזום בע\"מ נ' קפלן)",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "d40aee3d-5604-4885-96cd-3870219bc41f",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=180",
+          "rank": 8,
+          "score": -140,
+          "title": "ביהמ\"ש לענייני משפחה בתל אביב - יפו, ש' ארז שני: פסק דין בעניין תובענה לשיתוף רכושי (תמ\"ש 62952-05-20)",
+          "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+          "candidate_id": "4a98218d-5eb5-4669-97df-c0bd355bd4d1",
+          "negative_signals": [
+            "institutional_or_root_page",
+            "listing_or_index_page",
+            "integrity_listing_or_not_citable"
+          ],
+          "positive_signals": [
+            "docket_signal"
+          ],
+          "is_institutional_or_listing": true,
+          "is_official_judgment_document": false
+        }
+      ]
+    },
+    "judgment_discovery": {
+      "topic": "הלכת השיתוף",
+      "layers": [
+        "leading",
+        "official_document",
+        "applying",
+        "limiting"
+      ],
+      "enabled": true,
+      "survey_like": true,
+      "judgment_discovery_queries": [
+        "הלכת השיתוף פסק דין עליון",
+        "הלכת השיתוף הלכה פסוקה ע\"א בג\"ץ דנ\"א",
+        "הלכת השיתוף site:supremedecisions.court.gov.il Download",
+        "הלכת השיתוף site:court.gov.il filetype:pdf פסק דין",
+        "הלכת השיתוף יישום ההלכה פסיקה מאוחרת נסיבות",
+        "הלכת השיתוף חריג סייג צמצום הבחנה דעת מיעוט"
+      ],
+      "acquisition_budget_spent_on": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+          "rank": 1,
+          "title": "בע\"מ 4623/04",
+          "success": true,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "03052195-e0e2-416e-b79b-bd0affa98237",
+          "official_judgment_document": true
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+          "rank": 2,
+          "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+          "success": false,
+          "rank_reason": "+direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "57619d4c-b39e-408a-b1ac-488e6f77015d",
+          "official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-199-21-%d7%a8%d7%9e%d7%99-%d7%99%d7%95%d7%92%d7%91-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-02/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 4,
+          "title": "בש\"פ 199/21 רמי יוגב נ׳ מדינת ישראל החלטה (02.03.2021)",
+          "success": true,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "db8fc8b0-3b43-4e33-8f8b-ea98ace7bd83",
+          "official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5263-22-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%a8-%d7%a0-%d7%a2%d7%9e%d7%9c%d7%99%d7%94-%d7%a0%d7%99%d7%a6%d7%94-%d7%9e%d7%95%d7%93%d7%99%d7%90%d7%a0%d7%95-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 5,
+          "title": "רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+          "success": true,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "6b5eaa02-4bc7-4178-be7a-ecbb68308cd2",
+          "official_judgment_document": false
+        }
+      ],
+      "judgment_candidate_rank_reason": [
+        {
+          "rank": 1,
+          "reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "03052195-e0e2-416e-b79b-bd0affa98237"
+        },
+        {
+          "rank": 2,
+          "reason": "+direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "57619d4c-b39e-408a-b1ac-488e6f77015d"
+        },
+        {
+          "rank": 3,
+          "reason": "+direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "96e8ae67-a96e-421c-8ab4-b1520012544f"
+        },
+        {
+          "rank": 4,
+          "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "db8fc8b0-3b43-4e33-8f8b-ea98ace7bd83"
+        },
+        {
+          "rank": 5,
+          "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "6b5eaa02-4bc7-4178-be7a-ecbb68308cd2"
+        },
+        {
+          "rank": 6,
+          "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "ef845e47-8d39-4faa-919f-8ee087ef86ea"
+        },
+        {
+          "rank": 7,
+          "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "d40aee3d-5604-4885-96cd-3870219bc41f"
+        },
+        {
+          "rank": 8,
+          "reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+          "candidate_id": "4a98218d-5eb5-4669-97df-c0bd355bd4d1"
+        }
+      ],
+      "commentary_share_of_admitted_pack": 0.63,
+      "official_judgment_documents_found": 1,
+      "skipped_higher_quality_candidates": 1,
+      "official_judgment_documents_acquired": 1,
+      "institutional_pages_excluded_before_budget": 1,
+      "judgment_candidate_rank_before_acquisition": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+          "rank": 1,
+          "score": 135,
+          "title": "בע\"מ 4623/04",
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "03052195-e0e2-416e-b79b-bd0affa98237",
+          "negative_signals": [],
+          "positive_signals": [
+            "official_court_download_url",
+            "direct_judgment_document",
+            "docket_signal",
+            "planner_judgment_role",
+            "planner_leading_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": true
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+          "rank": 2,
+          "score": 110,
+          "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+          "rank_reason": "+direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "57619d4c-b39e-408a-b1ac-488e6f77015d",
+          "negative_signals": [],
+          "positive_signals": [
+            "direct_judgment_document",
+            "docket_signal",
+            "case_title_pattern",
+            "planner_judgment_role",
+            "planner_leading_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision22552-04-23/he/22552-04-23.docx",
+          "rank": 3,
+          "score": 110,
+          "title": "ע\"מ 22552-04-23 י. ס. ל נ' ח. ח. ל",
+          "rank_reason": "+direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "96e8ae67-a96e-421c-8ab4-b1520012544f",
+          "negative_signals": [],
+          "positive_signals": [
+            "direct_judgment_document",
+            "docket_signal",
+            "case_title_pattern",
+            "planner_judgment_role",
+            "planner_leading_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-199-21-%d7%a8%d7%9e%d7%99-%d7%99%d7%95%d7%92%d7%91-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-02/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 4,
+          "score": 15,
+          "title": "בש\"פ 199/21 רמי יוגב נ׳ מדינת ישראל החלטה (02.03.2021)",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "db8fc8b0-3b43-4e33-8f8b-ea98ace7bd83",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5263-22-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%a8-%d7%a0-%d7%a2%d7%9e%d7%9c%d7%99%d7%94-%d7%a0%d7%99%d7%a6%d7%94-%d7%9e%d7%95%d7%93%d7%99%d7%90%d7%a0%d7%95-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 5,
+          "score": 15,
+          "title": "רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "6b5eaa02-4bc7-4178-be7a-ecbb68308cd2",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-3460-21-%d7%9e%d7%a9%d7%94-%d7%91%d7%9f-%d7%a9%d7%9e%d7%97%d7%95%d7%9f-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 6,
+          "score": 15,
+          "title": "בש\"פ 3460/21 משה בן שמחון נ׳ מדינת ישראל החלטה (06.06.2021)",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "ef845e47-8d39-4faa-919f-8ee087ef86ea",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1783",
+          "rank": 7,
+          "score": 15,
+          "title": "אי-חוקיות, מראית עין או משכון מוסווה? (בעקבות ע\"א 6634/15 טופ במרחבי השרון ייזום בע\"מ נ' קפלן)",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "d40aee3d-5604-4885-96cd-3870219bc41f",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=180",
+          "rank": 8,
+          "score": -140,
+          "title": "ביהמ\"ש לענייני משפחה בתל אביב - יפו, ש' ארז שני: פסק דין בעניין תובענה לשיתוף רכושי (תמ\"ש 62952-05-20)",
+          "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+          "candidate_id": "4a98218d-5eb5-4669-97df-c0bd355bd4d1",
+          "negative_signals": [
+            "institutional_or_root_page",
+            "listing_or_index_page",
+            "integrity_listing_or_not_citable"
+          ],
+          "positive_signals": [
+            "docket_signal"
+          ],
+          "is_institutional_or_listing": true,
+          "is_official_judgment_document": false
+        }
+      ]
+    },
+    "usable_judgments": [
+      {
+        "ref": "s1",
+        "acquired_text_length": null,
+        "verifier": [],
+        "in_answer_footnote": false
+      }
+    ],
+    "admitted_sources": [
+      {
+        "title": "בע\"מ 4623/04",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+        "role": "binding_case_law",
+        "tier": "official_primary",
+        "text_usability": "full_text",
+        "citable_as": "judgment",
+        "judgment": true,
+        "holding_text": true,
+        "synthesis_role": "leading_candidate",
+        "flags": [
+          "judgment_document",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ],
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+        "role": "binding_case_law",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "judgment",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "leading_candidate",
+        "flags": [],
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "title": "ע\"מ 22552-04-23 י. ס. ל נ' ח. ח. ל",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision22552-04-23/he/22552-04-23.docx",
+        "role": "binding_case_law",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "judgment",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "leading_candidate",
+        "flags": [],
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "title": "ביהמ\"ש לענייני משפחה בתל אביב - יפו, ש' ארז שני: פסק דין בעניין תובענה לשיתוף רכושי (תמ\"ש 62952-05-20)",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=180",
+        "role": "binding_case_law",
+        "tier": "index_or_listing",
+        "text_usability": "listing_page",
+        "citable_as": "not_citable",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [
+          "listing_or_pagination_page"
+        ],
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "title": "יישום הדוח למיגור האלימות כלפי צוותים רפואיים בישראל",
+        "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7461&businessType=1",
+        "role": "binding_case_law",
+        "tier": "primary_mirror",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [
+          "official_host_non_specific_path"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "תקנות הבטיחות בעבודה (גיליון בטיחות, סיווג, אריזה, תיווי וסימון של אריזות)",
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%92%D7%99%D7%9C%D7%99%D7%95%D7%9F_%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA%2C_%D7%A1%D7%99%D7%95%D7%95%D7%92%2C_%D7%90%D7%A8%D7%99%D7%96%D7%94%2C_%D7%AA%D7%99%D7%95%D7%95%D7%99_%D7%95%D7%A1%D7%99%D7%9E%D7%95%D7%9F_%D7%A9%D7%9C_%D7%90%D7%A8%D7%99%D7%96%D7%95%D7%AA)",
+        "role": "primary_statute",
+        "tier": "statute_mirror",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [
+          "consolidated_statute_mirror"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "גדרי הלכת שיתוף ספציפי בדירת מגורים",
+        "url": "https://www.daat.ac.il/daat/psk/psk.asp?id=2282",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "title": "החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואים ועל נכסים עסקיים",
+        "url": "https://law.biu.ac.il/files/law/shared/segel/hacalathshitufhspezifi.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "הקדמת מועד איזון המשאבים בתיקון מס&#8217; 4 לחוק יחסי ממון והחקיקה השיפוטית שנוצרה לפניה – עיון מחודש | יצחק כהן (כרך כב)",
+        "url": "https://runilawreview.org/2018/08/23/vol22_cohen/",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "בש\"פ 199/21 רמי יוגב נ׳ מדינת ישראל החלטה (02.03.2021)",
+        "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-199-21-%d7%a8%d7%9e%d7%99-%d7%99%d7%95%d7%92%d7%91-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-02/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "על נכסי עבר, על נכסי עתיד ועל הפילוסופיה של חזקת השיתוף",
+        "url": "https://lawjournal.huji.ac.il/article/12/947",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "title": "השותפות הנישואית והערבות ההדדית בין בני הזוג בפשיטת רגיל – עיון מחדש | דוד מינץ (כרך ט)",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/l1_3.pdf",
+        "role": "primary_statute",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "ואף-על-פי-כן: מרוץ סמכויות",
+        "url": "https://lawjournal.huji.ac.il/article/12/1921",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "title": "רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5263-22-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%a8-%d7%a0-%d7%a2%d7%9e%d7%9c%d7%99%d7%94-%d7%a0%d7%99%d7%a6%d7%94-%d7%9e%d7%95%d7%93%d7%99%d7%90%d7%a0%d7%95-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": true,
+        "synthesis_role": "secondary_commentary",
+        "flags": [
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ],
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "title": "בש\"פ 3460/21 משה בן שמחון נ׳ מדינת ישראל החלטה (06.06.2021)",
+        "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-3460-21-%d7%9e%d7%a9%d7%94-%d7%91%d7%9f-%d7%a9%d7%9e%d7%97%d7%95%d7%9f-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "אי-חוקיות, מראית עין או משכון מוסווה? (בעקבות ע\"א 6634/15 טופ במרחבי השרון ייזום בע\"מ נ' קפלן)",
+        "url": "https://lawjournal.huji.ac.il/article/12/1783",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      }
+    ],
+    "used_sources": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+        "title": "בע\"מ 4623/04",
+        "number": 1,
+        "origin": "perplexity",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "03052195-e0e2-416e-b79b-bd0affa98237",
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_document",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ],
+        "has_holding_text": true,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5263-22-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%a8-%d7%a0-%d7%a2%d7%9e%d7%9c%d7%99%d7%94-%d7%a0%d7%99%d7%a6%d7%94-%d7%9e%d7%95%d7%93%d7%99%d7%90%d7%a0%d7%95-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+        "number": 1,
+        "origin": "local_db",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "6b5eaa02-4bc7-4178-be7a-ecbb68308cd2",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ],
+        "has_holding_text": true,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://law.biu.ac.il/files/law/shared/segel/hacalathshitufhspezifi.pdf",
+        "title": "החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואים ועל נכסים עסקיים",
+        "number": 4,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "other",
+        "candidate_id": "75c309e1-495b-467d-95ef-1e99e76aebe4",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://runilawreview.org/2018/08/23/vol22_cohen/",
+        "title": "הקדמת מועד איזון המשאבים בתיקון מס&#8217; 4 לחוק יחסי ממון והחקיקה השיפוטית שנוצרה לפניה – עיון מחודש | יצחק כהן (כרך כב)",
+        "number": 4,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "ae80d73e-2388-4a1b-99d0-528825e59f9a",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+        "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "number": 5,
+        "origin": "perplexity",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "57619d4c-b39e-408a-b1ac-488e6f77015d",
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision22552-04-23/he/22552-04-23.docx",
+        "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+        "number": 5,
+        "origin": "perplexity",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "96e8ae67-a96e-421c-8ab4-b1520012544f",
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      }
+    ],
+    "footnotes": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+        "title": "בע\"מ 4623/04; רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+            "title": "בע\"מ 4623/04",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5263-22-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%a8-%d7%a0-%d7%a2%d7%9e%d7%9c%d7%99%d7%94-%d7%a0%d7%99%d7%a6%d7%94-%d7%9e%d7%95%d7%93%d7%99%d7%90%d7%a0%d7%95-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+        "title": "בע\"מ 4623/04",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+            "title": "בע\"מ 4623/04",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5263-22-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%a8-%d7%a0-%d7%a2%d7%9e%d7%9c%d7%99%d7%94-%d7%a0%d7%99%d7%a6%d7%94-%d7%9e%d7%95%d7%93%d7%99%d7%90%d7%a0%d7%95-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5263-22-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%a8-%d7%a0-%d7%a2%d7%9e%d7%9c%d7%99%d7%94-%d7%a0%d7%99%d7%a6%d7%94-%d7%9e%d7%95%d7%93%d7%99%d7%90%d7%a0%d7%95-%d7%94%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "רע\"א 5263/22 אליעזר זר נ׳ עמליה ניצה מודיאנו החלטה (23.11.2022)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://law.biu.ac.il/files/law/shared/segel/hacalathshitufhspezifi.pdf",
+        "title": "החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואים ועל נכסים עסקיים; הקדמת מועד איזון המשאבים בתיקון מס&#8217; 4 לחוק יחסי ממון והחקיקה השיפוטית שנוצרה לפניה – עיון מחודש | יצחק כהן (כרך כב)",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://law.biu.ac.il/files/law/shared/segel/hacalathshitufhspezifi.pdf",
+            "title": "החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואים ועל נכסים עסקיים",
+            "source_type": "other"
+          },
+          {
+            "url": "https://runilawreview.org/2018/08/23/vol22_cohen/",
+            "title": "הקדמת מועד איזון המשאבים בתיקון מס&#8217; 4 לחוק יחסי ממון והחקיקה השיפוטית שנוצרה לפניה – עיון מחודש | יצחק כהן (כרך כב)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+        "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן; פסק דין מתוך אתר ממשלתי (gov.il)",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+            "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+            "source_type": "caselaw"
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision22552-04-23/he/22552-04-23.docx",
+            "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "answer_len": 1887,
+    "answer": "**שורה תחתונה**\n\nהלכת השיתוף מוכרת בפסיקה כחזקה לפיה נכסי בני זוג שנצברו במהלך חיי משק בית משותף יכולים להיחשב כשיתוף רכושי; בדירת המגורים ניכרת עוצמה ראייתית גבוהה יותר, ואילו הכרה בשיתוף ספציפי בנכסים שאינם משק בית (כגון נכסי עסק, ירושות או מתנות) מותנית בהוכחה מפורשת של כוונת שיתוף.¹\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nבעמ 4623/04 — פסק‑דין בבית המשפט העליון שבו נדונה במפורש חלות הלכת השיתוף על נכסים של זוג שחי יחד; בפסק הדין נבחנה חזקה לשיתוף והובהרו הנסיבות הראייתיות שבבסיס הכרעה בעניין שיתוף נכסים.²\n\nרע\"א 5263/22 — החלטת בית משפט המחוזי/ערעור שבה הוחלו מבחנים ראייתיים לאיתור \"שיתוף ספציפי\" בנסיבות עובדיות; ההחלטה מיישמת את הרעיון שראיות מצטברות אודות ניהול משק בית משותף, השקעות משותפות ושילוב כלכלי יכולות להקים שיתוף.³\n\n**יישומים בפסיקה שנמצאה**\n\nבעמ 4623/04 יוחסה חשיבות לעובדות החיים המשותפים — נישואין, הקמת משפחה, ותרומת משאבים לטובת משק הבית — כהנמקה להכרזת שיתוף בנכסים שבמפניו הובאה תביעת פרוק שיתוף.²\n\nברע\"א 5263/22 נבחנו מבחני הראיה בפרטי מקרה מעשי (התנהלות לגבי דירה בה התקיימו יחסי שכירות, תשלומים וראיות שימוש) והוצג אופן שבו בית הדין מייצר מסקנה ראייתית לגבי קיומו של שיתוף ספציפי.³\n\n**מגבלות והבחנות**\n\nהפסיקה מבדילה בין נכסי משק בית — שבהם החזקה לשיתוף חזקתית יותר — לבין נכסי פרנסה, נכסי עסק ונכסי עבר (למשל ירושות או מתנות), שבהם נדרש ביסוס מיוחד של כוונת שיתוף והשתתפות כלכלית ממשית.¹\n\n**מה לא ניתן לקבוע מהמקורות**\n\nאין די בפסיקה המעשית והביקורת הספרותית שנתקבלו כאן כדי לגזור כלל אחיד לגבי היחס המלא והפורמלי בין הלכת השיתוף לבין משטר חוק יחסי ממון בין בני זוג — כלומר, מתי ואיך חלות תוצאות של איזון משאבים סטטוטורי במקום או בנוסף להכרה בשיתוף; ספרות מקצועית מצביעה על שאלות אלה אך רק באופן חלקי ומנותח.⁴\n\nנמצא אזכור/מקור מטא־דאטה לפסק הדין עא 52/80 ישעיהו שחר נ' מנדל פרידמן, אך לא די טקסט אופרטיבי כדי לגזור ממנו הלכה; כך גם לגבי פסק דין נוסף שנתגלה בפורמט מטא־דאטה. את מקורות המטא־דאטה יש להביא בחשבון רק כהערת מקור מוגבלת, לא כבסיס להסקת כללי שיתוף.⁵"
+  },
+  {
+    "id": "R04",
+    "query": "מה הפסיקה אומרת על הרמת מסך ההתאגדות?",
+    "run_id": "5a3dda60-b659-46a5-92fc-147aab493015",
+    "total_ms": 200628,
+    "research_mode": null,
+    "shape": null,
+    "deterministic_branch": "insufficient_sources_limitation",
+    "is_stub": false,
+    "verifier_counts": {
+      "by_support": {
+        "direct": 4,
+        "partial": 13,
+        "unrelated": 9,
+        "tangential": 3
+      },
+      "by_role_match": {
+        "true": 25,
+        "false": 4
+      },
+      "model_verdicts": 29,
+      "by_support_model": {
+        "direct": 4,
+        "partial": 13,
+        "unrelated": 9,
+        "tangential": 3
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "verifier_errors": [],
+    "sufficiency": {
+      "shape": "analysis",
+      "reason": "no_usable_judgment_authority",
+      "applied": true,
+      "category": "case_law_synthesis",
+      "sufficient": false,
+      "thin_source": true,
+      "found_titles": [
+        "חוק החברות, תשנ\"ט-1999",
+        "הצעת חוק החברות, התשס\"ב–2002",
+        "פסק דין מתוך אתר ממשלתי (gov.il)",
+        "מסמך מאתר אתר ממשלתי (gov.il)",
+        "חדלות פירעון ושיקום כלכלי"
+      ],
+      "topical_refs": [
+        "s2",
+        "s3",
+        "s8",
+        "s10"
+      ],
+      "topic_phrases": [
+        "הרמת מסך ההתאגדות",
+        "מסך ההתאגדות",
+        "הרמת מסך"
+      ],
+      "case_law_required": true,
+      "statute_only_answer": false,
+      "sufficiency_profile": "case_law_synthesis",
+      "usable_judgment_refs": [],
+      "exact_amounts_allowed": false,
+      "governing_statute_refs": [],
+      "topical_authority_refs": [
+        "s2",
+        "s3"
+      ],
+      "morphology_domain_match": false,
+      "normalized_source_tokens": [
+        "שיף",
+        "זנפרץ",
+        "נאמנ",
+        "אולימפ",
+        "חזק",
+        "נדל",
+        "פסק",
+        "דין",
+        "אזרחי",
+        "ערעור",
+        "שפט",
+        "בית",
+        "שבתו",
+        "עליון",
+        "עמי",
+        "שופט",
+        "בוד",
+        "פני",
+        "רון",
+        "גרוסקופף",
+        "נאמנו",
+        "נבו",
+        "רזניק",
+        "ערער",
+        "משיב",
+        "יוסף",
+        "שיב",
+        "צנלסון",
+        "אוסקר",
+        "מערער",
+        "גוטרמן",
+        "חיים",
+        "גור",
+        "אלכס",
+        "קרסו",
+        "זהב",
+        "רכוב",
+        "פרין",
+        "גבע",
+        "אלמוג",
+        "פקיד",
+        "שומ",
+        "כפר",
+        "סבא",
+        "פלוני",
+        "הות",
+        "אתייחס",
+        "עוד",
+        "משך",
+        "שוב",
+        "אישי",
+        "ניטין",
+        "מכר",
+        "עבור",
+        "תקבול",
+        "צדיק",
+        "שיש",
+        "שכנע",
+        "פנינו",
+        "ציג"
+      ],
+      "governing_regulation_refs": [],
+      "normalized_question_tokens": [
+        "רמת",
+        "מסך",
+        "תאגד"
+      ],
+      "sufficiency_authority_basis": "insufficient",
+      "thin_governing_statute_refs": [],
+      "thin_governing_regulation_refs": [],
+      "authority_type_sufficiency_passed": false,
+      "case_law_missing_but_not_required": false,
+      "practical_steps_thin_authority_passed": false
+    },
+    "acquisition": {
+      "ms": 6072,
+      "mode": "case_law_synthesis",
+      "budget": {
+        "other": 2,
+        "total": 4,
+        "leading": 2
+      },
+      "enabled": true,
+      "attempts": [
+        {
+          "ms": 1729,
+          "url": "https://www.supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C1989%5C407%5C040%5C4_407740_z03.txt",
+          "title": "צוק אור בע\"מ נ' קאר סקיוריטי בע\"מ",
+          "success": false,
+          "candidate_id": "31b4372a-6b8a-4468-9dd6-7c7c0a0d611c",
+          "title_signal": "צוק אור בע\"מ נ' קאר סקיוריטי בע\"מ",
+          "docket_signal": "ע\"א 407/89",
+          "failure_reason": "no_local_document_match",
+          "synthesis_role": "applying_candidate",
+          "trigger_reason": "metadata_only",
+          "has_holding_text": false,
+          "method_succeeded": null,
+          "docket_normalized": "aa:407/89",
+          "methods_attempted": [
+            "direct_file_fetch",
+            "local_db_docket_lookup"
+          ],
+          "judgment_candidate": true,
+          "usable_for_holding": false,
+          "acquisition_success": false,
+          "acquired_text_length": 0,
+          "final_text_usability": "metadata_only",
+          "text_usability_after": "metadata_only",
+          "acquisition_attempted": true,
+          "extracted_text_length": 0,
+          "text_usability_before": "metadata_only",
+          "acquisition_failure_reasons": [
+            "error sending request for url (https://www.supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C1989%5C407%5C040%5C4_407740_z03.txt): client error (Connect): dns error: failed to lookup address information: Name or service not known: failed to lookup address information: Name or service not known",
+            "no_local_document_match"
+          ],
+          "acquisition_methods_attempted": [
+            "direct_file_fetch",
+            "local_db_docket_lookup"
+          ],
+          "body_contains_docket_or_title": false,
+          "can_support_synthesis_holding": false
+        },
+        {
+          "ms": 2662,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/12/460/071/B24&fileName=12071460.B24&type=4",
+          "title": "בג\"ץ 7146/12",
+          "success": true,
+          "candidate_id": "04550c93-bc90-436b-9ae8-aefd12ad198c",
+          "title_signal": "בג\"ץ 7146/12",
+          "docket_signal": "בג\"ץ 7146/12",
+          "failure_reason": null,
+          "synthesis_role": "leading_candidate",
+          "trigger_reason": "metadata_only",
+          "has_holding_text": true,
+          "method_succeeded": "direct_file_fetch",
+          "docket_normalized": "bagatz:7146/12",
+          "methods_attempted": [
+            "direct_file_fetch"
+          ],
+          "judgment_candidate": true,
+          "usable_for_holding": true,
+          "acquisition_success": true,
+          "acquired_text_length": 6000,
+          "final_text_usability": "full_text",
+          "text_usability_after": "full_text",
+          "acquisition_attempted": true,
+          "extracted_text_length": 239807,
+          "text_usability_before": "metadata_only",
+          "acquisition_failure_reasons": [],
+          "acquisition_methods_attempted": [
+            "direct_file_fetch"
+          ],
+          "body_contains_docket_or_title": true,
+          "can_support_synthesis_holding": true
+        },
+        {
+          "ms": 1677,
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-3284-19-%d7%a9%d7%99%d7%a3-%d7%94%d7%96%d7%a0%d7%a4%d7%a8%d7%a5-%d7%a0%d7%90%d7%9e%d7%a0%d7%99%d7%9d-2004-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%90%d7%95%d7%9c%d7%99%d7%9e%d7%a4%d7%99%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 3284/19 שיף הזנפרץ נאמנים (2004) בע\"מ נ׳ אולימפיה החזקות נדל\"ן בע\"מ פסק דין (25.03.2019)",
+          "success": true,
+          "candidate_id": "b82ed8eb-deda-4910-b5a8-be62800b23c0",
+          "title_signal": "ע\"א 3284/19 שיף הזנפרץ נאמנים (2004) בע\"מ נ׳ אולימפיה החזקות נדל\"ן בע\"מ פסק דין (25.03.2019)",
+          "docket_signal": "ע\"א 3284/19",
+          "failure_reason": null,
+          "synthesis_role": "secondary_commentary",
+          "trigger_reason": "no_judgment_body_text",
+          "has_holding_text": false,
+          "method_succeeded": "local_db_docket_lookup",
+          "docket_normalized": "aa:3284/19",
+          "methods_attempted": [
+            "local_db_docket_lookup"
+          ],
+          "judgment_candidate": true,
+          "usable_for_holding": false,
+          "acquisition_success": true,
+          "acquired_text_length": 6000,
+          "final_text_usability": "full_text",
+          "text_usability_after": "full_text",
+          "acquisition_attempted": true,
+          "extracted_text_length": 11843,
+          "text_usability_before": "substantive_excerpt",
+          "acquisition_failure_reasons": [],
+          "acquisition_methods_attempted": [
+            "local_db_docket_lookup"
+          ],
+          "body_contains_docket_or_title": true,
+          "can_support_synthesis_holding": false
+        }
+      ],
+      "excluded": [
+        {
+          "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+          "title": "על-אודות בית המשפט העליון - הרשות השופטת",
+          "reason": "institutional_page",
+          "candidate_id": "fd4d7ff8-8371-45c3-8db1-38861d6b89b2"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-1839-19-%d7%a4%d7%a7%d7%99%d7%93-%d7%a9%d7%95%d7%9e%d7%94-%d7%9b%d7%a4%d7%a8-%d7%a1%d7%91%d7%90-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 1839/19 פקיד שומה כפר סבא נ׳ פלוני פסק דין (14.06.2021)",
+          "reason": "budget_exhausted",
+          "candidate_id": "d73d38aa-f225-4eb7-9970-35be8e82257e"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "reason": "budget_exhausted",
+          "candidate_id": "444b7793-dd32-4c40-a29a-ad35ea174006"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-5451-20-gan-habar-corporation-%d7%a0-%d7%94%d7%90%d7%95%d7%a4%d7%95%d7%98%d7%a8%d7%95%d7%a4%d7%95%d7%a1-%d7%94%d7%9b%d7%9c%d7%9c%d7%99-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%9e%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 5451/20 GAN HABAR CORPORATION נ׳ האופוטרופוס הכללי – משרד המשפטים פס\"ד פסק דין (04.07.2022)",
+          "reason": "budget_exhausted",
+          "candidate_id": "4f22a216-2eb6-416c-b791-39e272ed08fe"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-7721-22-%d7%93%d7%a8-%d7%a2%d7%95%d7%a4%d7%a8-%d7%95%d7%9c%d7%98%d7%a8-%d7%a0%d7%92%d7%93-%d7%98%d7%95%d7%98%d7%a0%d7%94%d7%9d-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%99%d7%95%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 7721-22 ד\"ר עופר ולטר נגד טוטנהם השקעות (יו\"ש) בע\"מ פסק דין",
+          "reason": "budget_exhausted",
+          "candidate_id": "dfdcac8b-0779-4a6f-ab07-536f34f212f4"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-7721-22-%d7%93%d7%a8-%d7%a2%d7%95%d7%a4%d7%a8-%d7%95%d7%9c%d7%98%d7%a8-%d7%a0-%d7%98%d7%95%d7%98%d7%a0%d7%94%d7%9d-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%99%d7%95%d7%a9-%d7%91/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 7721-22 ד\"ר עופר ולטר נ׳ טוטנהם השקעות (יו\"ש) בע\"מ פסק דין",
+          "reason": "budget_exhausted",
+          "candidate_id": "83fd4b8d-d18b-46f0-a83b-959ca9e15a7f"
+        }
+      ],
+      "successes": 2,
+      "attempts_made": 3,
+      "eligible_count": 8,
+      "judgment_candidates": 9,
+      "eligibility_diagnostics": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/12/460/071/B24&fileName=12071460.B24&type=4",
+          "title": "בג\"ץ 7146/12",
+          "eligible": true,
+          "citable_as": "judgment",
+          "rank_score": 135,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "source_type": "caselaw",
+          "candidate_id": "04550c93-bc90-436b-9ae8-aefd12ad198c",
+          "planner_role": "binding_case_law",
+          "has_court_url": true,
+          "authority_tier": "official_primary",
+          "synthesis_role": "leading_candidate",
+          "text_usability": "metadata_only",
+          "excluded_reason": null,
+          "has_party_names": false,
+          "has_download_url": true,
+          "docket_normalized": "bagatz:7146/12",
+          "eligibility_basis": [
+            "docket_signal",
+            "official_court_url",
+            "planner_role_with_case_identity"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": false,
+          "rank_before_acquisition": 2,
+          "would_have_been_attempted_under_relaxed_rule": false
+        },
+        {
+          "url": "https://www.supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C1989%5C407%5C040%5C4_407740_z03.txt",
+          "title": "צוק אור בע\"מ נ' קאר סקיוריטי בע\"מ",
+          "eligible": true,
+          "citable_as": "judgment",
+          "rank_score": 140,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,integrity_judgment_document",
+          "source_type": "caselaw",
+          "candidate_id": "31b4372a-6b8a-4468-9dd6-7c7c0a0d611c",
+          "planner_role": "binding_case_law",
+          "has_court_url": true,
+          "authority_tier": "official_primary",
+          "synthesis_role": "applying_candidate",
+          "text_usability": "metadata_only",
+          "excluded_reason": null,
+          "has_party_names": true,
+          "has_download_url": true,
+          "docket_normalized": "aa:407/89",
+          "eligibility_basis": [
+            "docket_signal",
+            "official_court_url",
+            "case_title_party_names",
+            "planner_role_with_case_identity"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 1,
+          "would_have_been_attempted_under_relaxed_rule": false
+        },
+        {
+          "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+          "title": "על-אודות בית המשפט העליון - הרשות השופטת",
+          "eligible": false,
+          "citable_as": "judgment",
+          "rank_score": -85,
+          "rank_reason": "+planner_judgment_role,planner_leading_role,integrity_judgment_document | -institutional_or_root_page,overview_or_help_page,no_docket_or_title_signal",
+          "source_type": "caselaw",
+          "candidate_id": "fd4d7ff8-8371-45c3-8db1-38861d6b89b2",
+          "planner_role": "binding_case_law",
+          "has_court_url": true,
+          "authority_tier": "primary_mirror",
+          "synthesis_role": "leading_candidate",
+          "text_usability": "metadata_only",
+          "excluded_reason": "institutional_page",
+          "has_party_names": false,
+          "has_download_url": false,
+          "docket_normalized": null,
+          "eligibility_basis": [],
+          "has_docket_signal": false,
+          "ineligible_reason": "institutional_page",
+          "acquisition_attempted": false,
+          "has_case_title_signal": false,
+          "rank_before_acquisition": 9,
+          "would_have_been_attempted_under_relaxed_rule": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-3284-19-%d7%a9%d7%99%d7%a3-%d7%94%d7%96%d7%a0%d7%a4%d7%a8%d7%a5-%d7%a0%d7%90%d7%9e%d7%a0%d7%99%d7%9d-2004-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%90%d7%95%d7%9c%d7%99%d7%9e%d7%a4%d7%99%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 3284/19 שיף הזנפרץ נאמנים (2004) בע\"מ נ׳ אולימפיה החזקות נדל\"ן בע\"מ פסק דין (25.03.2019)",
+          "eligible": true,
+          "citable_as": "commentary",
+          "rank_score": 15,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "source_type": "caselaw",
+          "candidate_id": "b82ed8eb-deda-4910-b5a8-be62800b23c0",
+          "planner_role": "primary_statute",
+          "has_court_url": false,
+          "authority_tier": "secondary_commentary",
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": null,
+          "has_party_names": true,
+          "has_download_url": false,
+          "docket_normalized": "aa:3284/19",
+          "eligibility_basis": [
+            "docket_signal",
+            "case_title_party_names"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 3,
+          "would_have_been_attempted_under_relaxed_rule": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-1839-19-%d7%a4%d7%a7%d7%99%d7%93-%d7%a9%d7%95%d7%9e%d7%94-%d7%9b%d7%a4%d7%a8-%d7%a1%d7%91%d7%90-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 1839/19 פקיד שומה כפר סבא נ׳ פלוני פסק דין (14.06.2021)",
+          "eligible": true,
+          "citable_as": "commentary",
+          "rank_score": 15,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "source_type": "caselaw",
+          "candidate_id": "d73d38aa-f225-4eb7-9970-35be8e82257e",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "secondary_commentary",
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": "budget_exhausted",
+          "has_party_names": true,
+          "has_download_url": false,
+          "docket_normalized": "aa:1839/19",
+          "eligibility_basis": [
+            "docket_signal",
+            "case_title_party_names"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": "budget_exhausted",
+          "acquisition_attempted": false,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 4,
+          "would_have_been_attempted_under_relaxed_rule": true
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "eligible": true,
+          "citable_as": "commentary",
+          "rank_score": 15,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "source_type": "caselaw",
+          "candidate_id": "444b7793-dd32-4c40-a29a-ad35ea174006",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "secondary_commentary",
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": "budget_exhausted",
+          "has_party_names": true,
+          "has_download_url": false,
+          "docket_normalized": "bagatz:5658/23",
+          "eligibility_basis": [
+            "docket_signal",
+            "case_title_party_names"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": "budget_exhausted",
+          "acquisition_attempted": false,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 5,
+          "would_have_been_attempted_under_relaxed_rule": true
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-5451-20-gan-habar-corporation-%d7%a0-%d7%94%d7%90%d7%95%d7%a4%d7%95%d7%98%d7%a8%d7%95%d7%a4%d7%95%d7%a1-%d7%94%d7%9b%d7%9c%d7%9c%d7%99-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%9e%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 5451/20 GAN HABAR CORPORATION נ׳ האופוטרופוס הכללי – משרד המשפטים פס\"ד פסק דין (04.07.2022)",
+          "eligible": true,
+          "citable_as": "commentary",
+          "rank_score": 15,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "source_type": "caselaw",
+          "candidate_id": "4f22a216-2eb6-416c-b791-39e272ed08fe",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "secondary_commentary",
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": "budget_exhausted",
+          "has_party_names": true,
+          "has_download_url": false,
+          "docket_normalized": "aa:5451/20",
+          "eligibility_basis": [
+            "docket_signal",
+            "case_title_party_names"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": "budget_exhausted",
+          "acquisition_attempted": false,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 6,
+          "would_have_been_attempted_under_relaxed_rule": true
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-7721-22-%d7%93%d7%a8-%d7%a2%d7%95%d7%a4%d7%a8-%d7%95%d7%9c%d7%98%d7%a8-%d7%a0%d7%92%d7%93-%d7%98%d7%95%d7%98%d7%a0%d7%94%d7%9d-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%99%d7%95%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 7721-22 ד\"ר עופר ולטר נגד טוטנהם השקעות (יו\"ש) בע\"מ פסק דין",
+          "eligible": true,
+          "citable_as": "commentary",
+          "rank_score": 15,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "source_type": "caselaw",
+          "candidate_id": "dfdcac8b-0779-4a6f-ab07-536f34f212f4",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "secondary_commentary",
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": "budget_exhausted",
+          "has_party_names": true,
+          "has_download_url": false,
+          "docket_normalized": "aa:7721/22",
+          "eligibility_basis": [
+            "docket_signal",
+            "case_title_party_names"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": "budget_exhausted",
+          "acquisition_attempted": false,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 7,
+          "would_have_been_attempted_under_relaxed_rule": true
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-7721-22-%d7%93%d7%a8-%d7%a2%d7%95%d7%a4%d7%a8-%d7%95%d7%9c%d7%98%d7%a8-%d7%a0-%d7%98%d7%95%d7%98%d7%a0%d7%94%d7%9d-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%99%d7%95%d7%a9-%d7%91/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 7721-22 ד\"ר עופר ולטר נ׳ טוטנהם השקעות (יו\"ש) בע\"מ פסק דין",
+          "eligible": true,
+          "citable_as": "commentary",
+          "rank_score": 15,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "source_type": "caselaw",
+          "candidate_id": "83fd4b8d-d18b-46f0-a83b-959ca9e15a7f",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "secondary_commentary",
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": "budget_exhausted",
+          "has_party_names": true,
+          "has_download_url": false,
+          "docket_normalized": "aa:7721/22",
+          "eligibility_basis": [
+            "docket_signal",
+            "case_title_party_names"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": "budget_exhausted",
+          "acquisition_attempted": false,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 8,
+          "would_have_been_attempted_under_relaxed_rule": true
+        }
+      ],
+      "acquisition_budget_spent_on": [
+        {
+          "url": "https://www.supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C1989%5C407%5C040%5C4_407740_z03.txt",
+          "rank": 1,
+          "title": "צוק אור בע\"מ נ' קאר סקיוריטי בע\"מ",
+          "success": false,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,integrity_judgment_document",
+          "candidate_id": "31b4372a-6b8a-4468-9dd6-7c7c0a0d611c",
+          "official_judgment_document": true
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/12/460/071/B24&fileName=12071460.B24&type=4",
+          "rank": 2,
+          "title": "בג\"ץ 7146/12",
+          "success": true,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "04550c93-bc90-436b-9ae8-aefd12ad198c",
+          "official_judgment_document": true
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-3284-19-%d7%a9%d7%99%d7%a3-%d7%94%d7%96%d7%a0%d7%a4%d7%a8%d7%a5-%d7%a0%d7%90%d7%9e%d7%a0%d7%99%d7%9d-2004-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%90%d7%95%d7%9c%d7%99%d7%9e%d7%a4%d7%99%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 3,
+          "title": "ע\"א 3284/19 שיף הזנפרץ נאמנים (2004) בע\"מ נ׳ אולימפיה החזקות נדל\"ן בע\"מ פסק דין (25.03.2019)",
+          "success": true,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "b82ed8eb-deda-4910-b5a8-be62800b23c0",
+          "official_judgment_document": false
+        }
+      ],
+      "official_judgment_documents_found": 2,
+      "skipped_higher_quality_candidates": 0,
+      "official_judgment_documents_acquired": 1,
+      "institutional_pages_excluded_before_budget": 1,
+      "judgment_candidate_rank_before_acquisition": [
+        {
+          "url": "https://www.supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C1989%5C407%5C040%5C4_407740_z03.txt",
+          "rank": 1,
+          "score": 140,
+          "title": "צוק אור בע\"מ נ' קאר סקיוריטי בע\"מ",
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,integrity_judgment_document",
+          "candidate_id": "31b4372a-6b8a-4468-9dd6-7c7c0a0d611c",
+          "negative_signals": [],
+          "positive_signals": [
+            "official_court_download_url",
+            "direct_judgment_document",
+            "docket_signal",
+            "case_title_pattern",
+            "planner_judgment_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": true
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/12/460/071/B24&fileName=12071460.B24&type=4",
+          "rank": 2,
+          "score": 135,
+          "title": "בג\"ץ 7146/12",
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "04550c93-bc90-436b-9ae8-aefd12ad198c",
+          "negative_signals": [],
+          "positive_signals": [
+            "official_court_download_url",
+            "direct_judgment_document",
+            "docket_signal",
+            "planner_judgment_role",
+            "planner_leading_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": true
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-3284-19-%d7%a9%d7%99%d7%a3-%d7%94%d7%96%d7%a0%d7%a4%d7%a8%d7%a5-%d7%a0%d7%90%d7%9e%d7%a0%d7%99%d7%9d-2004-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%90%d7%95%d7%9c%d7%99%d7%9e%d7%a4%d7%99%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 3,
+          "score": 15,
+          "title": "ע\"א 3284/19 שיף הזנפרץ נאמנים (2004) בע\"מ נ׳ אולימפיה החזקות נדל\"ן בע\"מ פסק דין (25.03.2019)",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "b82ed8eb-deda-4910-b5a8-be62800b23c0",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-1839-19-%d7%a4%d7%a7%d7%99%d7%93-%d7%a9%d7%95%d7%9e%d7%94-%d7%9b%d7%a4%d7%a8-%d7%a1%d7%91%d7%90-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 4,
+          "score": 15,
+          "title": "ע\"א 1839/19 פקיד שומה כפר סבא נ׳ פלוני פסק דין (14.06.2021)",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "d73d38aa-f225-4eb7-9970-35be8e82257e",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 5,
+          "score": 15,
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "444b7793-dd32-4c40-a29a-ad35ea174006",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-5451-20-gan-habar-corporation-%d7%a0-%d7%94%d7%90%d7%95%d7%a4%d7%95%d7%98%d7%a8%d7%95%d7%a4%d7%95%d7%a1-%d7%94%d7%9b%d7%9c%d7%9c%d7%99-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%9e%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 6,
+          "score": 15,
+          "title": "ע\"א 5451/20 GAN HABAR CORPORATION נ׳ האופוטרופוס הכללי – משרד המשפטים פס\"ד פסק דין (04.07.2022)",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "4f22a216-2eb6-416c-b791-39e272ed08fe",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-7721-22-%d7%93%d7%a8-%d7%a2%d7%95%d7%a4%d7%a8-%d7%95%d7%9c%d7%98%d7%a8-%d7%a0%d7%92%d7%93-%d7%98%d7%95%d7%98%d7%a0%d7%94%d7%9d-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%99%d7%95%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 7,
+          "score": 15,
+          "title": "ע\"א 7721-22 ד\"ר עופר ולטר נגד טוטנהם השקעות (יו\"ש) בע\"מ פסק דין",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "dfdcac8b-0779-4a6f-ab07-536f34f212f4",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-7721-22-%d7%93%d7%a8-%d7%a2%d7%95%d7%a4%d7%a8-%d7%95%d7%9c%d7%98%d7%a8-%d7%a0-%d7%98%d7%95%d7%98%d7%a0%d7%94%d7%9d-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%99%d7%95%d7%a9-%d7%91/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 8,
+          "score": 15,
+          "title": "ע\"א 7721-22 ד\"ר עופר ולטר נ׳ טוטנהם השקעות (יו\"ש) בע\"מ פסק דין",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "83fd4b8d-d18b-46f0-a83b-959ca9e15a7f",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+          "rank": 9,
+          "score": -85,
+          "title": "על-אודות בית המשפט העליון - הרשות השופטת",
+          "rank_reason": "+planner_judgment_role,planner_leading_role,integrity_judgment_document | -institutional_or_root_page,overview_or_help_page,no_docket_or_title_signal",
+          "candidate_id": "fd4d7ff8-8371-45c3-8db1-38861d6b89b2",
+          "negative_signals": [
+            "institutional_or_root_page",
+            "overview_or_help_page",
+            "no_docket_or_title_signal"
+          ],
+          "positive_signals": [
+            "planner_judgment_role",
+            "planner_leading_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": true,
+          "is_official_judgment_document": false
+        }
+      ]
+    },
+    "judgment_discovery": {
+      "topic": "הרמת מסך ההתאגדות",
+      "layers": [
+        "leading",
+        "official_document",
+        "applying",
+        "limiting"
+      ],
+      "enabled": true,
+      "survey_like": true,
+      "judgment_discovery_queries": [
+        "הרמת מסך ההתאגדות פסק דין עליון",
+        "הרמת מסך ההתאגדות הלכה פסוקה ע\"א בג\"ץ דנ\"א",
+        "הרמת מסך ההתאגדות site:supremedecisions.court.gov.il Download",
+        "הרמת מסך ההתאגדות site:court.gov.il filetype:pdf פסק דין",
+        "הרמת מסך ההתאגדות יישום ההלכה פסיקה מאוחרת נסיבות",
+        "הרמת מסך ההתאגדות חריג סייג צמצום הבחנה דעת מיעוט"
+      ],
+      "acquisition_budget_spent_on": [
+        {
+          "url": "https://www.supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C1989%5C407%5C040%5C4_407740_z03.txt",
+          "rank": 1,
+          "title": "צוק אור בע\"מ נ' קאר סקיוריטי בע\"מ",
+          "success": false,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,integrity_judgment_document",
+          "candidate_id": "31b4372a-6b8a-4468-9dd6-7c7c0a0d611c",
+          "official_judgment_document": true
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/12/460/071/B24&fileName=12071460.B24&type=4",
+          "rank": 2,
+          "title": "בג\"ץ 7146/12",
+          "success": true,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "04550c93-bc90-436b-9ae8-aefd12ad198c",
+          "official_judgment_document": true
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-3284-19-%d7%a9%d7%99%d7%a3-%d7%94%d7%96%d7%a0%d7%a4%d7%a8%d7%a5-%d7%a0%d7%90%d7%9e%d7%a0%d7%99%d7%9d-2004-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%90%d7%95%d7%9c%d7%99%d7%9e%d7%a4%d7%99%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 3,
+          "title": "ע\"א 3284/19 שיף הזנפרץ נאמנים (2004) בע\"מ נ׳ אולימפיה החזקות נדל\"ן בע\"מ פסק דין (25.03.2019)",
+          "success": true,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "b82ed8eb-deda-4910-b5a8-be62800b23c0",
+          "official_judgment_document": false
+        }
+      ],
+      "judgment_candidate_rank_reason": [
+        {
+          "rank": 1,
+          "reason": "+official_court_download_url,direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,integrity_judgment_document",
+          "candidate_id": "31b4372a-6b8a-4468-9dd6-7c7c0a0d611c"
+        },
+        {
+          "rank": 2,
+          "reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "04550c93-bc90-436b-9ae8-aefd12ad198c"
+        },
+        {
+          "rank": 3,
+          "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "b82ed8eb-deda-4910-b5a8-be62800b23c0"
+        },
+        {
+          "rank": 4,
+          "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "d73d38aa-f225-4eb7-9970-35be8e82257e"
+        },
+        {
+          "rank": 5,
+          "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "444b7793-dd32-4c40-a29a-ad35ea174006"
+        },
+        {
+          "rank": 6,
+          "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "4f22a216-2eb6-416c-b791-39e272ed08fe"
+        },
+        {
+          "rank": 7,
+          "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "dfdcac8b-0779-4a6f-ab07-536f34f212f4"
+        },
+        {
+          "rank": 8,
+          "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "83fd4b8d-d18b-46f0-a83b-959ca9e15a7f"
+        },
+        {
+          "rank": 9,
+          "reason": "+planner_judgment_role,planner_leading_role,integrity_judgment_document | -institutional_or_root_page,overview_or_help_page,no_docket_or_title_signal",
+          "candidate_id": "fd4d7ff8-8371-45c3-8db1-38861d6b89b2"
+        }
+      ],
+      "commentary_share_of_admitted_pack": 0.52,
+      "official_judgment_documents_found": 2,
+      "skipped_higher_quality_candidates": 0,
+      "official_judgment_documents_acquired": 1,
+      "institutional_pages_excluded_before_budget": 1,
+      "judgment_candidate_rank_before_acquisition": [
+        {
+          "url": "https://www.supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C1989%5C407%5C040%5C4_407740_z03.txt",
+          "rank": 1,
+          "score": 140,
+          "title": "צוק אור בע\"מ נ' קאר סקיוריטי בע\"מ",
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,case_title_pattern,planner_judgment_role,integrity_judgment_document",
+          "candidate_id": "31b4372a-6b8a-4468-9dd6-7c7c0a0d611c",
+          "negative_signals": [],
+          "positive_signals": [
+            "official_court_download_url",
+            "direct_judgment_document",
+            "docket_signal",
+            "case_title_pattern",
+            "planner_judgment_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": true
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/12/460/071/B24&fileName=12071460.B24&type=4",
+          "rank": 2,
+          "score": 135,
+          "title": "בג\"ץ 7146/12",
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "04550c93-bc90-436b-9ae8-aefd12ad198c",
+          "negative_signals": [],
+          "positive_signals": [
+            "official_court_download_url",
+            "direct_judgment_document",
+            "docket_signal",
+            "planner_judgment_role",
+            "planner_leading_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": true
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-3284-19-%d7%a9%d7%99%d7%a3-%d7%94%d7%96%d7%a0%d7%a4%d7%a8%d7%a5-%d7%a0%d7%90%d7%9e%d7%a0%d7%99%d7%9d-2004-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%90%d7%95%d7%9c%d7%99%d7%9e%d7%a4%d7%99%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 3,
+          "score": 15,
+          "title": "ע\"א 3284/19 שיף הזנפרץ נאמנים (2004) בע\"מ נ׳ אולימפיה החזקות נדל\"ן בע\"מ פסק דין (25.03.2019)",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "b82ed8eb-deda-4910-b5a8-be62800b23c0",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-1839-19-%d7%a4%d7%a7%d7%99%d7%93-%d7%a9%d7%95%d7%9e%d7%94-%d7%9b%d7%a4%d7%a8-%d7%a1%d7%91%d7%90-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 4,
+          "score": 15,
+          "title": "ע\"א 1839/19 פקיד שומה כפר סבא נ׳ פלוני פסק דין (14.06.2021)",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "d73d38aa-f225-4eb7-9970-35be8e82257e",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 5,
+          "score": 15,
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "444b7793-dd32-4c40-a29a-ad35ea174006",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-5451-20-gan-habar-corporation-%d7%a0-%d7%94%d7%90%d7%95%d7%a4%d7%95%d7%98%d7%a8%d7%95%d7%a4%d7%95%d7%a1-%d7%94%d7%9b%d7%9c%d7%9c%d7%99-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%9e%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 6,
+          "score": 15,
+          "title": "ע\"א 5451/20 GAN HABAR CORPORATION נ׳ האופוטרופוס הכללי – משרד המשפטים פס\"ד פסק דין (04.07.2022)",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "4f22a216-2eb6-416c-b791-39e272ed08fe",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-7721-22-%d7%93%d7%a8-%d7%a2%d7%95%d7%a4%d7%a8-%d7%95%d7%9c%d7%98%d7%a8-%d7%a0%d7%92%d7%93-%d7%98%d7%95%d7%98%d7%a0%d7%94%d7%9d-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%99%d7%95%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 7,
+          "score": 15,
+          "title": "ע\"א 7721-22 ד\"ר עופר ולטר נגד טוטנהם השקעות (יו\"ש) בע\"מ פסק דין",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "dfdcac8b-0779-4a6f-ab07-536f34f212f4",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-7721-22-%d7%93%d7%a8-%d7%a2%d7%95%d7%a4%d7%a8-%d7%95%d7%9c%d7%98%d7%a8-%d7%a0-%d7%98%d7%95%d7%98%d7%a0%d7%94%d7%9d-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%99%d7%95%d7%a9-%d7%91/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 8,
+          "score": 15,
+          "title": "ע\"א 7721-22 ד\"ר עופר ולטר נ׳ טוטנהם השקעות (יו\"ש) בע\"מ פסק דין",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "83fd4b8d-d18b-46f0-a83b-959ca9e15a7f",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+          "rank": 9,
+          "score": -85,
+          "title": "על-אודות בית המשפט העליון - הרשות השופטת",
+          "rank_reason": "+planner_judgment_role,planner_leading_role,integrity_judgment_document | -institutional_or_root_page,overview_or_help_page,no_docket_or_title_signal",
+          "candidate_id": "fd4d7ff8-8371-45c3-8db1-38861d6b89b2",
+          "negative_signals": [
+            "institutional_or_root_page",
+            "overview_or_help_page",
+            "no_docket_or_title_signal"
+          ],
+          "positive_signals": [
+            "planner_judgment_role",
+            "planner_leading_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": true,
+          "is_official_judgment_document": false
+        }
+      ]
+    },
+    "usable_judgments": [],
+    "admitted_sources": [
+      {
+        "title": "בג\"ץ 7146/12",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/12/460/071/B24&fileName=12071460.B24&type=4",
+        "role": "binding_case_law",
+        "tier": "official_primary",
+        "text_usability": "full_text",
+        "citable_as": "judgment",
+        "judgment": true,
+        "holding_text": true,
+        "synthesis_role": "leading_candidate",
+        "flags": [
+          "judgment_document",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "חוק החברות, תשנ\"ט-1999",
+        "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+        "role": "primary_statute",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "הצעת חוק החברות, התשס\"ב–2002",
+        "url": "https://fs.knesset.gov.il/15/law/15_lst_546023.doc",
+        "role": "primary_statute",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "צוק אור בע\"מ נ' קאר סקיוריטי בע\"מ",
+        "url": "https://www.supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C1989%5C407%5C040%5C4_407740_z03.txt",
+        "role": "binding_case_law",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "judgment",
+        "judgment": true,
+        "holding_text": false,
+        "synthesis_role": "applying_candidate",
+        "flags": [
+          "judgment_document"
+        ],
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "title": "טיפול משרד המשפטים בהליכי חדלות פירעון ושיקום כלכלי - דוח מיוחד",
+        "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/7845-13.aspx",
+        "role": "factual_report",
+        "tier": "primary_mirror",
+        "text_usability": "metadata_only",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [
+          "official_host_non_specific_path"
+        ],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "צפייה בפרסומים בהליכי חדלות פירעון",
+        "url": "https://www.gov.il/he/service/view-publications-regarding-bankruptcy-cases-liquidation-or-insolvency-cases",
+        "role": "factual_report",
+        "tier": "primary_mirror",
+        "text_usability": "metadata_only",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [
+          "official_host_non_specific_path"
+        ],
+        "verifier": [
+          "tangential"
+        ]
+      },
+      {
+        "title": "חדלות פירעון ושיקום כלכלי",
+        "url": "https://www.gov.il/BlobFolder/generalpage/forms-eca-new-format-3/he/Forms_insolvency-guide.pdf",
+        "role": "factual_report",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "תהליכי חדלות פירעון של יחידים בישראל – השוואה",
+        "url": "https://www.boi.org.il/media/oq0axuma/%D7%97%D7%93%D7%9C%D7%95%D7%AA-%D7%A4%D7%A8%D7%A2%D7%95%D7%9F-3.pdf",
+        "role": "factual_report",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "tangential"
+        ]
+      },
+      {
+        "title": "לשנת 2024 על פעילות רשות האכיפה והגבייה",
+        "url": "https://www.gov.il/BlobFolder/reports/eca-annual-report-2024/he/annual-reports-publications_eca-annual-report-2024.pdf",
+        "role": "factual_report",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "בית המשפט לענייני משפחה בת\"א-יפו, השופט תומר שלם: פסק דין שעניינו תביעה להשבה כספית בין ידועים בציבור (תלה\"מ 18668-11-23)",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+        "role": "binding_case_law",
+        "tier": "index_or_listing",
+        "text_usability": "listing_page",
+        "citable_as": "not_citable",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [
+          "listing_or_pagination_page"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "יישום התוכנית הלאומית להתמודדות עם מחלת האלצהיימר ודמנציות אחרות",
+        "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7457&businessType=1",
+        "role": "binding_case_law",
+        "tier": "primary_mirror",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [
+          "official_host_non_specific_path"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "תקנות הבטיחות בעבודה (הרמת בני אדם במלגזות)",
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%94%D7%A8%D7%9E%D7%AA_%D7%91%D7%A0%D7%99_%D7%90%D7%93%D7%9D_%D7%91%D7%9E%D7%9C%D7%92%D7%96%D7%95%D7%AA)",
+        "role": "binding_case_law",
+        "tier": "statute_mirror",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [
+          "consolidated_statute_mirror"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "חוק בינוי ופינוי של אזורי שיקום",
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+        "role": "primary_statute",
+        "tier": "statute_mirror",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [
+          "consolidated_statute_mirror"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "על-אודות בית המשפט העליון - הרשות השופטת",
+        "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+        "role": "binding_case_law",
+        "tier": "primary_mirror",
+        "text_usability": "metadata_only",
+        "citable_as": "judgment",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "leading_candidate",
+        "flags": [
+          "official_host_non_specific_path"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "פרק ו': הרמת המסך",
+        "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "title": "2.49 תהליך הרמת המסך - מטח",
+        "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=102951716&nTocEntryID=102953088",
+        "role": "scholarship",
+        "tier": "index_or_listing",
+        "text_usability": "listing_page",
+        "citable_as": "not_citable",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [
+          "listing_or_pagination_page"
+        ],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "״מימון דק׳/ הרמת המסך והגבלת האחריות בדיני חברות",
+        "url": "https://netanya.ac.il/gur/data/AGUDA/law/yearb/companies/papers/paper12015/%D7%A2%D7%99%D7%95%D7%A0%D7%99%20%D7%9E%D7%A9%D7%A4%D7%98%20%D7%A4%D7%A8%D7%95%D7%A7%D7%A6%D7%99%D7%94%20%D7%94%D7%A8%D7%9E%D7%AA%20%D7%9E%D7%A1%D7%9A%20%D7%9E%D7%99%D7%9E%D7%95%D7%9F%20%D7%93%D7%A7.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות",
+        "url": "https://www.runi.ac.il/media/bkveypjz/levi.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "Piercing the Corporate Veil: Theoretical and Empirical Analysis",
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3416115",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "להיות כמו דלוור",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_12d6c3c24be5492cb65edd6a47154ebe.pdf",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "ע\"א 3284/19 שיף הזנפרץ נאמנים (2004) בע\"מ נ׳ אולימפיה החזקות נדל\"ן בע\"מ פסק דין (25.03.2019)",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-3284-19-%d7%a9%d7%99%d7%a3-%d7%94%d7%96%d7%a0%d7%a4%d7%a8%d7%a5-%d7%a0%d7%90%d7%9e%d7%a0%d7%99%d7%9d-2004-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%90%d7%95%d7%9c%d7%99%d7%9e%d7%a4%d7%99%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "primary_statute",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body"
+        ],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "העוזר המשפטי לשופט – בין הפן החוקי לפן התעסוקתי",
+        "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/6_hilel_ng2.pdf",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "ע\"א 1839/19 פקיד שומה כפר סבא נ׳ פלוני פסק דין (14.06.2021)",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-1839-19-%d7%a4%d7%a7%d7%99%d7%93-%d7%a9%d7%95%d7%9e%d7%94-%d7%9b%d7%a4%d7%a8-%d7%a1%d7%91%d7%90-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "ייחוד עילה בדיני הפגמים בכריתה: ניתוח עיוני ונורמטיבי | חגי ויניצקי (כרך י)",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m4.pdf",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": true,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "tangential"
+        ]
+      },
+      {
+        "title": "האשליה של תושבות החברה | דוד אלקינס (כרך מיוחד לכבוד פרופ’ יוסי אדרעי)",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/DavidE.pdf",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "ע\"א 5451/20 GAN HABAR CORPORATION נ׳ האופוטרופוס הכללי – משרד המשפטים פס\"ד פסק דין (04.07.2022)",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-5451-20-gan-habar-corporation-%d7%a0-%d7%94%d7%90%d7%95%d7%a4%d7%95%d7%98%d7%a8%d7%95%d7%a4%d7%95%d7%a1-%d7%94%d7%9b%d7%9c%d7%9c%d7%99-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%9e%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "ע\"א 7721-22 ד\"ר עופר ולטר נגד טוטנהם השקעות (יו\"ש) בע\"מ פסק דין",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-7721-22-%d7%93%d7%a8-%d7%a2%d7%95%d7%a4%d7%a8-%d7%95%d7%9c%d7%98%d7%a8-%d7%a0%d7%92%d7%93-%d7%98%d7%95%d7%98%d7%a0%d7%94%d7%9d-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%99%d7%95%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "title": "ע\"א 7721-22 ד\"ר עופר ולטר נ׳ טוטנהם השקעות (יו\"ש) בע\"מ פסק דין",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-7721-22-%d7%93%d7%a8-%d7%a2%d7%95%d7%a4%d7%a8-%d7%95%d7%9c%d7%98%d7%a8-%d7%a0-%d7%98%d7%95%d7%98%d7%a0%d7%94%d7%9d-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%99%d7%95%d7%a9-%d7%91/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "direct"
+        ]
+      }
+    ],
+    "used_sources": [],
+    "footnotes": [],
+    "answer_len": 384,
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק החברות, תשנ\"ט-1999; הצעת חוק החברות, התשס\"ב–2002; פסק דין מתוך אתר ממשלתי (gov.il); מסמך מאתר אתר ממשלתי (gov.il)."
+  },
+  {
+    "id": "R09",
+    "query": "כתוב סקירת פסיקה על מבחן ההשתלבות בדיני עבודה.",
+    "run_id": "62bd541e-533c-4f56-b52f-4c550dc0e101",
+    "total_ms": 223054,
+    "research_mode": null,
+    "shape": null,
+    "deterministic_branch": "insufficient_sources_limitation",
+    "is_stub": false,
+    "verifier_counts": {
+      "by_support": {
+        "direct": 3,
+        "partial": 5,
+        "unrelated": 14,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 21,
+        "false": 1
+      },
+      "model_verdicts": 22,
+      "by_support_model": {
+        "direct": 3,
+        "partial": 5,
+        "unrelated": 14,
+        "tangential": 0
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "verifier_errors": [],
+    "sufficiency": {
+      "shape": "analysis",
+      "reason": "no_usable_judgment_authority",
+      "applied": true,
+      "category": "case_law_synthesis",
+      "sufficient": false,
+      "thin_source": false,
+      "found_titles": [
+        "מקור חקיקה מתוך אתר הכנסת",
+        "כלכלת הפלטפורמה – הודעה לתקשורת (זרוע העבודה)",
+        "דיני עבודה - המכללה האקדמית נתניה",
+        "עובד או קבלן",
+        "עבודה אסורה: בין הפרטי לציבורי, בעקבות עשור לבג&quot;ץ שדות"
+      ],
+      "topical_refs": [
+        "s3",
+        "s4",
+        "s6"
+      ],
+      "topic_phrases": [
+        "מבחן ההשתלבות בדיני עבודה",
+        "ההשתלבות בדיני עבודה",
+        "מבחן ההשתלבות בדיני",
+        "ההשתלבות בדיני",
+        "מבחן ההשתלבות",
+        "בדיני עבודה",
+        "כתוב סקירת"
+      ],
+      "case_law_required": true,
+      "statute_only_answer": false,
+      "sufficiency_profile": "case_law_synthesis",
+      "usable_judgment_refs": [],
+      "exact_amounts_allowed": false,
+      "governing_statute_refs": [],
+      "topical_authority_refs": [
+        "s4",
+        "s6"
+      ],
+      "morphology_domain_match": false,
+      "normalized_source_tokens": [],
+      "governing_regulation_refs": [],
+      "normalized_question_tokens": [
+        "תוב",
+        "סקיר",
+        "בחן",
+        "שתלב",
+        "דיני",
+        "עבוד"
+      ],
+      "sufficiency_authority_basis": "insufficient",
+      "thin_governing_statute_refs": [],
+      "thin_governing_regulation_refs": [],
+      "authority_type_sufficiency_passed": false,
+      "case_law_missing_but_not_required": false,
+      "practical_steps_thin_authority_passed": false
+    },
+    "acquisition": {
+      "ms": 4175,
+      "mode": "doctrine_explanation",
+      "budget": {
+        "other": 2,
+        "total": 3,
+        "leading": 3
+      },
+      "enabled": true,
+      "attempts": [
+        {
+          "ms": 723,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+          "title": "פסק-דין בתיק ע\"פ 766/07",
+          "success": true,
+          "candidate_id": "838383da-7c8c-45a6-a9dd-201b8ff151cf",
+          "title_signal": "פסק-דין בתיק ע\"פ 766/07",
+          "docket_signal": "ע\"פ 766/07",
+          "failure_reason": null,
+          "synthesis_role": "leading_candidate",
+          "trigger_reason": "text_below_threshold",
+          "has_holding_text": true,
+          "method_succeeded": "direct_file_fetch",
+          "docket_normalized": "ap:766/7",
+          "methods_attempted": [
+            "direct_file_fetch"
+          ],
+          "judgment_candidate": true,
+          "usable_for_holding": true,
+          "acquisition_success": true,
+          "acquired_text_length": 6000,
+          "final_text_usability": "full_text",
+          "text_usability_after": "full_text",
+          "acquisition_attempted": true,
+          "extracted_text_length": 72931,
+          "text_usability_before": "substantive_excerpt",
+          "acquisition_failure_reasons": [],
+          "acquisition_methods_attempted": [
+            "direct_file_fetch"
+          ],
+          "body_contains_docket_or_title": true,
+          "can_support_synthesis_holding": true
+        },
+        {
+          "ms": 1794,
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3279-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%95%d7%9e%d7%a9%d7%a8%d7%93-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+          "success": true,
+          "candidate_id": "3f9a84a7-540b-4d9b-82e5-59f5e61cfe06",
+          "title_signal": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+          "docket_signal": "בג\"ץ 3279/22",
+          "failure_reason": null,
+          "synthesis_role": "secondary_commentary",
+          "trigger_reason": "no_judgment_body_text",
+          "has_holding_text": false,
+          "method_succeeded": "local_db_docket_lookup",
+          "docket_normalized": "bagatz:3279/22",
+          "methods_attempted": [
+            "local_db_docket_lookup"
+          ],
+          "judgment_candidate": true,
+          "usable_for_holding": false,
+          "acquisition_success": true,
+          "acquired_text_length": 6000,
+          "final_text_usability": "full_text",
+          "text_usability_after": "full_text",
+          "acquisition_attempted": true,
+          "extracted_text_length": 11846,
+          "text_usability_before": "substantive_excerpt",
+          "acquisition_failure_reasons": [],
+          "acquisition_methods_attempted": [
+            "local_db_docket_lookup"
+          ],
+          "body_contains_docket_or_title": true,
+          "can_support_synthesis_holding": false
+        },
+        {
+          "ms": 1656,
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+          "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+          "success": true,
+          "candidate_id": "2f3a202b-0820-4dae-8c2b-b7fce504deda",
+          "title_signal": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג",
+          "docket_signal": "בג\"ץ 8647/22",
+          "failure_reason": null,
+          "synthesis_role": "unknown",
+          "trigger_reason": "no_judgment_body_text",
+          "has_holding_text": true,
+          "method_succeeded": "local_db_docket_lookup",
+          "docket_normalized": "bagatz:8647/22",
+          "methods_attempted": [
+            "local_db_docket_lookup"
+          ],
+          "judgment_candidate": true,
+          "usable_for_holding": true,
+          "acquisition_success": true,
+          "acquired_text_length": 6000,
+          "final_text_usability": "full_text",
+          "text_usability_after": "full_text",
+          "acquisition_attempted": true,
+          "extracted_text_length": 12004,
+          "text_usability_before": "listing_page",
+          "acquisition_failure_reasons": [],
+          "acquisition_methods_attempted": [
+            "local_db_docket_lookup"
+          ],
+          "body_contains_docket_or_title": true,
+          "can_support_synthesis_holding": true
+        }
+      ],
+      "excluded": [],
+      "successes": 3,
+      "attempts_made": 3,
+      "eligible_count": 3,
+      "judgment_candidates": 3,
+      "eligibility_diagnostics": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+          "title": "פסק-דין בתיק ע\"פ 766/07",
+          "eligible": true,
+          "citable_as": "judgment",
+          "rank_score": 135,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "source_type": "caselaw",
+          "candidate_id": "838383da-7c8c-45a6-a9dd-201b8ff151cf",
+          "planner_role": "binding_case_law",
+          "has_court_url": true,
+          "authority_tier": "official_primary",
+          "synthesis_role": "leading_candidate",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": null,
+          "has_party_names": false,
+          "has_download_url": true,
+          "docket_normalized": "ap:766/7",
+          "eligibility_basis": [
+            "docket_signal",
+            "official_court_url",
+            "planner_role_with_case_identity"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": false,
+          "rank_before_acquisition": 1,
+          "would_have_been_attempted_under_relaxed_rule": false
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+          "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+          "eligible": true,
+          "citable_as": "not_citable",
+          "rank_score": -140,
+          "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+          "source_type": "caselaw",
+          "candidate_id": "2f3a202b-0820-4dae-8c2b-b7fce504deda",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "index_or_listing",
+          "synthesis_role": "unknown",
+          "text_usability": "listing_page",
+          "excluded_reason": null,
+          "has_party_names": false,
+          "has_download_url": false,
+          "docket_normalized": "bagatz:8647/22",
+          "eligibility_basis": [
+            "docket_signal"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": false,
+          "rank_before_acquisition": 3,
+          "would_have_been_attempted_under_relaxed_rule": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3279-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%95%d7%9e%d7%a9%d7%a8%d7%93-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+          "eligible": true,
+          "citable_as": "commentary",
+          "rank_score": 15,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "source_type": "caselaw",
+          "candidate_id": "3f9a84a7-540b-4d9b-82e5-59f5e61cfe06",
+          "planner_role": "persuasive_case_law",
+          "has_court_url": false,
+          "authority_tier": "secondary_commentary",
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": null,
+          "has_party_names": true,
+          "has_download_url": false,
+          "docket_normalized": "bagatz:3279/22",
+          "eligibility_basis": [
+            "docket_signal",
+            "case_title_party_names"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 2,
+          "would_have_been_attempted_under_relaxed_rule": false
+        }
+      ],
+      "acquisition_budget_spent_on": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+          "rank": 1,
+          "title": "פסק-דין בתיק ע\"פ 766/07",
+          "success": true,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "838383da-7c8c-45a6-a9dd-201b8ff151cf",
+          "official_judgment_document": true
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3279-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%95%d7%9e%d7%a9%d7%a8%d7%93-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 2,
+          "title": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+          "success": true,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "3f9a84a7-540b-4d9b-82e5-59f5e61cfe06",
+          "official_judgment_document": false
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+          "rank": 3,
+          "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+          "success": true,
+          "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+          "candidate_id": "2f3a202b-0820-4dae-8c2b-b7fce504deda",
+          "official_judgment_document": false
+        }
+      ],
+      "official_judgment_documents_found": 1,
+      "skipped_higher_quality_candidates": 0,
+      "official_judgment_documents_acquired": 1,
+      "institutional_pages_excluded_before_budget": 1,
+      "judgment_candidate_rank_before_acquisition": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+          "rank": 1,
+          "score": 135,
+          "title": "פסק-דין בתיק ע\"פ 766/07",
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "838383da-7c8c-45a6-a9dd-201b8ff151cf",
+          "negative_signals": [],
+          "positive_signals": [
+            "official_court_download_url",
+            "direct_judgment_document",
+            "docket_signal",
+            "planner_judgment_role",
+            "planner_leading_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": true
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3279-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%95%d7%9e%d7%a9%d7%a8%d7%93-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 2,
+          "score": 15,
+          "title": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "3f9a84a7-540b-4d9b-82e5-59f5e61cfe06",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+          "rank": 3,
+          "score": -140,
+          "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+          "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+          "candidate_id": "2f3a202b-0820-4dae-8c2b-b7fce504deda",
+          "negative_signals": [
+            "institutional_or_root_page",
+            "listing_or_index_page",
+            "integrity_listing_or_not_citable"
+          ],
+          "positive_signals": [
+            "docket_signal"
+          ],
+          "is_institutional_or_listing": true,
+          "is_official_judgment_document": false
+        }
+      ]
+    },
+    "judgment_discovery": {
+      "topic": "כתוב מבחן ההשתלבות בדיני עבודה.",
+      "layers": [
+        "leading",
+        "official_document",
+        "applying",
+        "limiting"
+      ],
+      "enabled": true,
+      "survey_like": true,
+      "judgment_discovery_queries": [
+        "כתוב מבחן ההשתלבות בדיני עבודה. פסק דין עליון",
+        "כתוב מבחן ההשתלבות בדיני עבודה. הלכה פסוקה ע\"א בג\"ץ דנ\"א",
+        "כתוב מבחן ההשתלבות בדיני עבודה. site:supremedecisions.court.gov.il Download",
+        "כתוב מבחן ההשתלבות בדיני עבודה. site:court.gov.il filetype:pdf פסק דין",
+        "כתוב מבחן ההשתלבות בדיני עבודה. יישום ההלכה פסיקה מאוחרת נסיבות",
+        "כתוב מבחן ההשתלבות בדיני עבודה. חריג סייג צמצום הבחנה דעת מיעוט"
+      ],
+      "acquisition_budget_spent_on": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+          "rank": 1,
+          "title": "פסק-דין בתיק ע\"פ 766/07",
+          "success": true,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "838383da-7c8c-45a6-a9dd-201b8ff151cf",
+          "official_judgment_document": true
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3279-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%95%d7%9e%d7%a9%d7%a8%d7%93-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 2,
+          "title": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+          "success": true,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "3f9a84a7-540b-4d9b-82e5-59f5e61cfe06",
+          "official_judgment_document": false
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+          "rank": 3,
+          "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+          "success": true,
+          "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+          "candidate_id": "2f3a202b-0820-4dae-8c2b-b7fce504deda",
+          "official_judgment_document": false
+        }
+      ],
+      "judgment_candidate_rank_reason": [
+        {
+          "rank": 1,
+          "reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "838383da-7c8c-45a6-a9dd-201b8ff151cf"
+        },
+        {
+          "rank": 2,
+          "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "3f9a84a7-540b-4d9b-82e5-59f5e61cfe06"
+        },
+        {
+          "rank": 3,
+          "reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+          "candidate_id": "2f3a202b-0820-4dae-8c2b-b7fce504deda"
+        }
+      ],
+      "commentary_share_of_admitted_pack": 0.59,
+      "official_judgment_documents_found": 1,
+      "skipped_higher_quality_candidates": 0,
+      "official_judgment_documents_acquired": 1,
+      "institutional_pages_excluded_before_budget": 1,
+      "judgment_candidate_rank_before_acquisition": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+          "rank": 1,
+          "score": 135,
+          "title": "פסק-דין בתיק ע\"פ 766/07",
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+          "candidate_id": "838383da-7c8c-45a6-a9dd-201b8ff151cf",
+          "negative_signals": [],
+          "positive_signals": [
+            "official_court_download_url",
+            "direct_judgment_document",
+            "docket_signal",
+            "planner_judgment_role",
+            "planner_leading_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": true
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3279-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%95%d7%9e%d7%a9%d7%a8%d7%93-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 2,
+          "score": 15,
+          "title": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "3f9a84a7-540b-4d9b-82e5-59f5e61cfe06",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+          "rank": 3,
+          "score": -140,
+          "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+          "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+          "candidate_id": "2f3a202b-0820-4dae-8c2b-b7fce504deda",
+          "negative_signals": [
+            "institutional_or_root_page",
+            "listing_or_index_page",
+            "integrity_listing_or_not_citable"
+          ],
+          "positive_signals": [
+            "docket_signal"
+          ],
+          "is_institutional_or_listing": true,
+          "is_official_judgment_document": false
+        }
+      ]
+    },
+    "usable_judgments": [],
+    "admitted_sources": [
+      {
+        "title": "העצמאים הצעירים וכלכלת הפלטפורמה בישראל",
+        "url": "https://fs.knesset.gov.il/globaldocs/MMM/a1489602-e9e0-f011-a866-005056aa9911/2_a1489602-e9e0-f011-a866-005056aa9911_11_21367.pdf",
+        "role": "primary_statute",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "פסק-דין בתיק ע\"פ 766/07",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+        "role": "binding_case_law",
+        "tier": "official_primary",
+        "text_usability": "full_text",
+        "citable_as": "judgment",
+        "judgment": true,
+        "holding_text": true,
+        "synthesis_role": "leading_candidate",
+        "flags": [
+          "judgment_document",
+          "holding_text_present",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "כלכלת הפלטפורמה – הודעה לתקשורת (זרוע העבודה)",
+        "url": "https://www.gov.il/BlobFolder/guide/platform-sessions/he/platform_kazenelson.pdf",
+        "role": "government_report",
+        "tier": "official_primary",
+        "text_usability": "metadata_only",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "role": "binding_case_law",
+        "tier": "index_or_listing",
+        "text_usability": "full_text",
+        "citable_as": "not_citable",
+        "judgment": false,
+        "holding_text": true,
+        "synthesis_role": "unknown",
+        "flags": [
+          "listing_or_pagination_page",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "יישום התוכנית הלאומית להתמודדות עם מחלת האלצהיימר ודמנציות אחרות",
+        "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7457&businessType=1",
+        "role": "binding_case_law",
+        "tier": "primary_mirror",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "unknown",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "unknown",
+        "flags": [
+          "official_host_non_specific_path"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "תקנות הבטיחות בעבודה (עבודה בגובה)",
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%91%D7%95%D7%93%D7%94_%D7%91%D7%92%D7%95%D7%91%D7%94)",
+        "role": "binding_case_law",
+        "tier": "statute_mirror",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [
+          "consolidated_statute_mirror"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "ההסכמים הבילטרליים של ישראל עם מדינות המוצא של מהגרי עבודה: במה הם עוסקים, ממה הם מתעלמים ומה הסיבות לכך",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_9d7c812e9e9a4133b0cb59488862bcb0.pdf",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "תקנות הבטיחות בעבודה (עזרה ראשונה במקומות עבודה)",
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%96%D7%A8%D7%94_%D7%A8%D7%90%D7%A9%D7%95%D7%A0%D7%94_%D7%91%D7%9E%D7%A7%D7%95%D7%9E%D7%95%D7%AA_%D7%A2%D7%91%D7%95%D7%93%D7%94)",
+        "role": "binding_case_law",
+        "tier": "statute_mirror",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [
+          "consolidated_statute_mirror"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "תקנות הבטיחות בעבודה (עבודה על גגות שבירים או תלולים)",
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%91%D7%95%D7%93%D7%94_%D7%A2%D7%9C_%D7%92%D7%92%D7%95%D7%AA_%D7%A9%D7%91%D7%99%D7%A8%D7%99%D7%9D_%D7%90%D7%95_%D7%AA%D7%9C%D7%95%D7%9C%D7%99%D7%9D)",
+        "role": "binding_case_law",
+        "tier": "statute_mirror",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [
+          "consolidated_statute_mirror"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "חוק בינוי ופינוי של אזורי שיקום",
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+        "role": "primary_statute",
+        "tier": "statute_mirror",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "statute",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "statutory_background",
+        "flags": [
+          "consolidated_statute_mirror"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "דיני מזונות אישה בין בית הדין השרעי לבית המשפט לענייני משפחה: סיפורה של מהפכה שמרנית במחלצות ליברליות",
+        "url": "https://lawjournal.huji.ac.il/article/12/1928",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "דיני עבודה - המכללה האקדמית נתניה",
+        "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%9E%D7%97%D7%91%D7%A8%D7%AA%20%D7%91%D7%97%D7%99%D7%A0%D7%94-%20%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20%D7%91%D7%A8%20%D7%A6%D7%93%D7%A7%D7%94.pdf",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "עובד או קבלן",
+        "url": "https://lawjournal.huji.ac.il/article/12/1244",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "title": "עבודה אסורה: בין הפרטי לציבורי, בעקבות עשור לבג&quot;ץ שדות",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e96c3e479ee044cab2e73c919a8c8fed.pdf",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3279-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%95%d7%9e%d7%a9%d7%a8%d7%93-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "commentary",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body"
+        ],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "לצאת מהחומות: לקראת תיאוריה מאחדת של דוקטרינת \"מיהו עובד\" – מ\"מבחן המטרה\" אל \"המבחן הכלכלי-חברתי\", בראי עבודת אסירים",
+        "url": "https://lawjournal.huji.ac.il/article/12/1931",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "title": "פיטורי עובדות הרות וקריטריון הוותק בחוק עבודת נשים: ההגנה שהפכה למנגנון מעודד אפליה",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_8ad759e0696c430983cfb64f72c6a95e.pdf",
+        "role": "primary_statute",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "partial"
+        ]
+      },
+      {
+        "title": "חוק &quot;רוצה להיות חופשי&quot;: פרסום חקיקה בעידן האינטרנט",
+        "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/Article_235(1).pdf",
+        "role": "primary_statute",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "התפתחויות ומגמות במשפט העבודה הקיבוצי והאינדיווידואלי 2011-2010 | מרדכי (מוטי) מירוני (כרך ח)",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/h1_3.pdf",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "title": "חובת ההגינות, בעלי כוח הכרעה וחברות ללא גרעין שליטה",
+        "url": "https://lawjournal.huji.ac.il/article/12/1915",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "אגודות לניהול משותף של זכויות יוצרים – מבט נוסף על יעילות והגינות | גיא פסח (כרך ב)",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/b2_2.pdf",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "full_text",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "unrelated"
+        ]
+      },
+      {
+        "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+        "url": "https://runilawreview.org/2025/06/30/vol31-levi/",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "citable_as": "scholarship",
+        "judgment": false,
+        "holding_text": false,
+        "synthesis_role": "secondary_commentary",
+        "flags": [],
+        "verifier": [
+          "unrelated"
+        ]
+      }
+    ],
+    "used_sources": [],
+    "footnotes": [],
+    "answer_len": 388,
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): מקור חקיקה מתוך אתר הכנסת; כלכלת הפלטפורמה – הודעה לתקשורת (זרוע העבודה); דיני עבודה - המכללה האקדמית נתניה; עובד או קבלן."
+  }
+]

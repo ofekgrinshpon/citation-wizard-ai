@@ -18,6 +18,7 @@ import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRole.ts";
 import { runJudgmentTextAcquisition } from "./stages/judgmentTextAcquisition.ts";
+import { buildJudgmentDiscoveryQueries } from "./stages/judgmentDiscovery.ts";
 import { runSpecificCaseResolution } from "./stages/specificCaseResolution.ts";
 import { runVerifier } from "./stages/verifier.ts";
 import { runDrafter } from "./stages/drafter.ts";
@@ -504,7 +505,16 @@ async function handle(req: Request): Promise<Response> {
   const anchorQueries = requiredAnchors.length > 0
     ? buildRequiredAnchorQueries(analyzer, requiredAnchors)
     : [];
-  const allQueries = [...planner!.queries, ...anchorQueries];
+  // ─── Judgment-focused discovery queries (Parts 2 & 3) ────────────────────
+  // Source-type targeting for case-law synthesis / doctrine / survey-like
+  // questions: real judgment documents must be discoverable before the
+  // acquisition budget is spent. No case names, no doctrine dictionaries.
+  const judgmentDiscovery = buildJudgmentDiscoveryQueries(
+    question,
+    plannerStage.mode_plan?.mode ?? null,
+    analyzer,
+  );
+  const allQueries = [...planner!.queries, ...anchorQueries, ...judgmentDiscovery.queries];
   const requiredAnchorsMeta = {
     enabled: true,
     count: requiredAnchors.length,
@@ -650,6 +660,36 @@ async function handle(req: Request): Promise<Response> {
     },
     judgment_text_acquisition: judgmentAcquisition,
     specific_case_resolution: specificCase,
+    judgment_discovery: {
+      enabled: judgmentDiscovery.enabled,
+      survey_like: judgmentDiscovery.survey_like,
+      topic: judgmentDiscovery.topic,
+      layers: judgmentDiscovery.layers,
+      judgment_discovery_queries: judgmentDiscovery.judgment_discovery_queries,
+      judgment_candidate_rank_before_acquisition:
+        judgmentAcquisition.judgment_candidate_rank_before_acquisition,
+      judgment_candidate_rank_reason:
+        judgmentAcquisition.judgment_candidate_rank_before_acquisition.map((r) => ({
+          candidate_id: r.candidate_id,
+          rank: r.rank,
+          reason: r.rank_reason,
+        })),
+      acquisition_budget_spent_on: judgmentAcquisition.acquisition_budget_spent_on,
+      skipped_higher_quality_candidates: judgmentAcquisition.skipped_higher_quality_candidates,
+      institutional_pages_excluded_before_budget:
+        judgmentAcquisition.institutional_pages_excluded_before_budget,
+      official_judgment_documents_found: judgmentAcquisition.official_judgment_documents_found,
+      official_judgment_documents_acquired:
+        judgmentAcquisition.official_judgment_documents_acquired,
+      commentary_share_of_admitted_pack: (() => {
+        const rows = pool.integrity;
+        if (rows.length === 0) return 0;
+        const commentary = rows.filter(
+          (r) => r.citable_as === "scholarship" || r.citable_as === "commentary",
+        ).length;
+        return Math.round((commentary / rows.length) * 100) / 100;
+      })(),
+    },
 
 
 
