@@ -1,0 +1,850 @@
+{
+  "id": "R03",
+  "query": "מה הפסיקה אומרת על הלכת השיתוף?",
+  "run_id": "e83fd20c-6d41-4554-81da-8de83147359e",
+  "total_ms": 169916,
+  "research_mode": null,
+  "shape": null,
+  "deterministic_branch": null,
+  "is_stub": false,
+  "verifier_counts": {
+    "by_support": {
+      "direct": 2,
+      "partial": 6,
+      "unrelated": 6,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 15,
+      "false": 2
+    },
+    "model_verdicts": 17,
+    "by_support_model": {
+      "direct": 2,
+      "partial": 6,
+      "unrelated": 6,
+      "tangential": 3
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "verifier_errors": [],
+  "sufficiency": {
+    "shape": "definition",
+    "reason": "case_law_synthesis_supported",
+    "applied": true,
+    "category": "not_applicable",
+    "sufficient": true,
+    "thin_source": true,
+    "found_titles": [
+      "בע\"מ 4623/04",
+      "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+      "פקודת הראיות [נוסח חדש], תשל\"א-1971",
+      "השותפות הנישואית והערבות ההדדית בין בני הזוג בפשיטת רגיל – עיון מחדש | דוד מינץ (כרך ט)",
+      "יחסים מחוץ לנישואים כשיקול בחלוקת הרכוש המשפחתי – עיון מחודש במשפט הישראלי | יצחק כהן ואמל ג&#8217;בארין (כרך טז)"
+    ],
+    "topical_refs": [
+      "s2"
+    ],
+    "topic_phrases": [
+      "הלכת השיתוף"
+    ],
+    "case_law_required": true,
+    "statute_only_answer": false,
+    "sufficiency_profile": "case_law_synthesis",
+    "usable_judgment_refs": [
+      "s1"
+    ],
+    "exact_amounts_allowed": true,
+    "governing_statute_refs": [],
+    "topical_authority_refs": [
+      "s2"
+    ],
+    "morphology_domain_match": false,
+    "normalized_source_tokens": [],
+    "governing_regulation_refs": [],
+    "normalized_question_tokens": [
+      "לכת",
+      "שיתוף"
+    ],
+    "sufficiency_authority_basis": "usable_judgment",
+    "thin_governing_statute_refs": [],
+    "thin_governing_regulation_refs": [],
+    "authority_type_sufficiency_passed": true,
+    "case_law_missing_but_not_required": false,
+    "practical_steps_thin_authority_passed": false
+  },
+  "acquisition": {
+    "ms": 4948,
+    "mode": "case_law_synthesis",
+    "budget": {
+      "other": 2,
+      "total": 4,
+      "leading": 2
+    },
+    "enabled": true,
+    "attempts": [
+      {
+        "ms": 1032,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+        "title": "בע\"מ 4623/04",
+        "success": true,
+        "candidate_id": "bb7ad610-a6ff-4cb9-8e38-5fb07c02d8b2",
+        "title_signal": "בע\"מ 4623/04",
+        "docket_signal": "ע\"מ 4623/04",
+        "failure_reason": null,
+        "synthesis_role": "leading_candidate",
+        "trigger_reason": "metadata_only",
+        "has_holding_text": true,
+        "method_succeeded": "direct_file_fetch",
+        "docket_normalized": "am:4623/4",
+        "methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": true,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 35771,
+        "text_usability_before": "metadata_only",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": true
+      },
+      {
+        "ms": 600,
+        "url": "https://supreme.court.gov.il/Documents/%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA%20%D7%94%D7%A0%D7%A9%D7%99%D7%90%D7%94%201.1.2020%20%D7%A1%D7%95%D7%A4%D7%99.pdf",
+        "title": "הנחיות הנשיאה 1.1.2020",
+        "success": true,
+        "candidate_id": "17ee2a3f-a11d-4f7f-83ab-a8d317987707",
+        "title_signal": "הנחיות הנשיאה 1.1.2020",
+        "docket_signal": null,
+        "failure_reason": null,
+        "synthesis_role": "leading_candidate",
+        "trigger_reason": "metadata_only",
+        "has_holding_text": false,
+        "method_succeeded": "direct_file_fetch",
+        "docket_normalized": null,
+        "methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 13664,
+        "text_usability_before": "metadata_only",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": false
+      },
+      {
+        "ms": 1682,
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8202-17-%d7%94%d7%9e%d7%a8%d7%9b%d7%96-%d7%9c%d7%a2%d7%99%d7%95%d7%95%d7%a8-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%a9%d7%a8-%d7%94%d7%90%d7%95%d7%a6%d7%a8/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 8202/17 המרכז לעיוור בישראל נ׳ שר האוצר פסק דין (27.05.2020)",
+        "success": true,
+        "candidate_id": "0be92189-a5c8-411c-ad14-f10b8b254aa2",
+        "title_signal": "בג\"ץ 8202/17 המרכז לעיוור בישראל נ׳ שר האוצר פסק דין (27.05.2020)",
+        "docket_signal": "בג\"ץ 8202/17",
+        "failure_reason": null,
+        "synthesis_role": "secondary_commentary",
+        "trigger_reason": "no_judgment_body_text",
+        "has_holding_text": false,
+        "method_succeeded": "local_db_docket_lookup",
+        "docket_normalized": "bagatz:8202/17",
+        "methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 11848,
+        "text_usability_before": "substantive_excerpt",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": false
+      },
+      {
+        "ms": 1632,
+        "url": "https://lawjournal.huji.ac.il/article/12/1783",
+        "title": "אי-חוקיות, מראית עין או משכון מוסווה? (בעקבות ע\"א 6634/15 טופ במרחבי השרון ייזום בע\"מ נ' קפלן)",
+        "success": true,
+        "candidate_id": "83048c95-1e1f-47e2-8c24-037b7174a78a",
+        "title_signal": "אי-חוקיות, מראית עין או משכון מוסווה? (בעקבות ע\"א 6634/15 טופ במרחבי השרון ייזום בע\"מ נ' קפלן)",
+        "docket_signal": "ע\"א 6634/15",
+        "failure_reason": null,
+        "synthesis_role": "secondary_commentary",
+        "trigger_reason": "no_judgment_body_text",
+        "has_holding_text": true,
+        "method_succeeded": "local_db_docket_lookup",
+        "docket_normalized": "aa:6634/15",
+        "methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": true,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 11736,
+        "text_usability_before": "substantive_excerpt",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": true
+      }
+    ],
+    "excluded": [
+      {
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+        "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "reason": "budget_exhausted",
+        "candidate_id": "255c6808-eb66-4dad-8ade-02ce0b656ad1"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/legalinfo/case566-77/he/cases_%D7%A2%D7%A4%20566-77%20%D7%A7%D7%95%D7%9C%D7%95%D7%A8_0678.docx",
+        "title": "ע\"פ 566-77 קולור",
+        "reason": "budget_exhausted",
+        "candidate_id": "2c41708c-4916-468d-bf3b-a95c7b517ed6"
+      }
+    ],
+    "successes": 4,
+    "attempts_made": 4,
+    "eligible_count": 6,
+    "judgment_candidates": 6,
+    "eligibility_diagnostics": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+        "title": "בע\"מ 4623/04",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "bb7ad610-a6ff-4cb9-8e38-5fb07c02d8b2",
+        "planner_role": "binding_case_law",
+        "has_court_url": true,
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": true,
+        "docket_normalized": "am:4623/4",
+        "eligibility_basis": [
+          "docket_signal",
+          "official_court_url",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+        "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "255c6808-eb66-4dad-8ade-02ce0b656ad1",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": true,
+        "docket_normalized": "aa:52/80",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/legalinfo/case566-77/he/cases_%D7%A2%D7%A4%20566-77%20%D7%A7%D7%95%D7%9C%D7%95%D7%A8_0678.docx",
+        "title": "ע\"פ 566-77 קולור",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "2c41708c-4916-468d-bf3b-a95c7b517ed6",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": false,
+        "has_download_url": true,
+        "docket_normalized": "ap:566/77",
+        "eligibility_basis": [
+          "docket_signal",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://supreme.court.gov.il/Documents/%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA%20%D7%94%D7%A0%D7%A9%D7%99%D7%90%D7%94%201.1.2020%20%D7%A1%D7%95%D7%A4%D7%99.pdf",
+        "title": "הנחיות הנשיאה 1.1.2020",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "17ee2a3f-a11d-4f7f-83ab-a8d317987707",
+        "planner_role": "binding_case_law",
+        "has_court_url": true,
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": true,
+        "docket_normalized": null,
+        "eligibility_basis": [
+          "official_court_url"
+        ],
+        "has_docket_signal": false,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8202-17-%d7%94%d7%9e%d7%a8%d7%9b%d7%96-%d7%9c%d7%a2%d7%99%d7%95%d7%95%d7%a8-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%a9%d7%a8-%d7%94%d7%90%d7%95%d7%a6%d7%a8/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 8202/17 המרכז לעיוור בישראל נ׳ שר האוצר פסק דין (27.05.2020)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "0be92189-a5c8-411c-ad14-f10b8b254aa2",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": null,
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "bagatz:8202/17",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1783",
+        "title": "אי-חוקיות, מראית עין או משכון מוסווה? (בעקבות ע\"א 6634/15 טופ במרחבי השרון ייזום בע\"מ נ' קפלן)",
+        "eligible": true,
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "83048c95-1e1f-47e2-8c24-037b7174a78a",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": null,
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "aa:6634/15",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": false
+      }
+    ]
+  },
+  "usable_judgments": [
+    {
+      "ref": "s1",
+      "acquired_text_length": null,
+      "verifier": [],
+      "in_answer_footnote": false
+    }
+  ],
+  "admitted_sources": [
+    {
+      "title": "בע\"מ 4623/04",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+      "role": "binding_case_law",
+      "tier": "official_primary",
+      "text_usability": "full_text",
+      "citable_as": "judgment",
+      "judgment": true,
+      "holding_text": true,
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "judgment_document",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "verifier": [
+        "direct"
+      ]
+    },
+    {
+      "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+      "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+      "role": "binding_case_law",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": true,
+      "holding_text": false,
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "judgment_document"
+      ],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "ע\"פ 566-77 קולור",
+      "url": "https://www.gov.il/BlobFolder/legalinfo/case566-77/he/cases_%D7%A2%D7%A4%20566-77%20%D7%A7%D7%95%D7%9C%D7%95%D7%A8_0678.docx",
+      "role": "binding_case_law",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "leading_candidate",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "בית המשפט לענייני משפחה בת\"א-יפו, השופט תומר שלם: פסק דין שעניינו תביעה להשבה כספית בין ידועים בציבור (תלה\"מ 18668-11-23)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+      "role": "binding_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "listing_or_pagination_page"
+      ],
+      "verifier": [
+        "direct"
+      ]
+    },
+    {
+      "title": "תכנון פריסתם של מרכזי החוסן לטווח הארוך וההתאמות בעקבות מלחמת חרבות ברזל",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7996&businessType=1",
+      "role": "binding_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "official_host_non_specific_path"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "פקודת הראיות [נוסח חדש], תשל\"א-1971",
+      "url": "https://www.nevo.co.il/law_html/law00/98569.htm",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "הנחיות הנשיאה 1.1.2020",
+      "url": "https://supreme.court.gov.il/Documents/%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA%20%D7%94%D7%A0%D7%A9%D7%99%D7%90%D7%94%201.1.2020%20%D7%A1%D7%95%D7%A4%D7%99.pdf",
+      "role": "binding_case_law",
+      "tier": "official_primary",
+      "text_usability": "full_text",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
+      ],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "הלכת השיתוף - מט\"ח/כותר",
+      "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=111640791&nTocEntryID=111642266",
+      "role": "scholarship",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "listing_or_pagination_page"
+      ],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "תקנות השקעות משותפות בנאמנות (השתתפות מנהל קרן באסיפת מחזיקים)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%A9%D7%A7%D7%A2%D7%95%D7%AA_%D7%9E%D7%A9%D7%95%D7%AA%D7%A4%D7%95%D7%AA_%D7%91%D7%A0%D7%90%D7%9E%D7%A0%D7%95%D7%AA_(%D7%94%D7%A9%D7%AA%D7%AA%D7%A4%D7%95%D7%AA_%D7%9E%D7%A0%D7%94%D7%9C_%D7%A7%D7%A8%D7%9F_%D7%91%D7%90%D7%A1%D7%99%D7%A4%D7%AA_%D7%9E%D7%97%D7%96%D7%99%D7%A7%D7%99%D7%9D)",
+      "role": "binding_case_law",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "השותפות הנישואית והערבות ההדדית בין בני הזוג בפשיטת רגיל – עיון מחדש | דוד מינץ (כרך ט)",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/l1_3.pdf",
+      "role": "primary_statute",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "אחריות בנזיקין של ועדה מקומית לפגמים פיזיים במבנים | עמוס הרמן (כרך ח)",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/h1_6.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "בג\"ץ 8202/17 המרכז לעיוור בישראל נ׳ שר האוצר פסק דין (27.05.2020)",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8202-17-%d7%94%d7%9e%d7%a8%d7%9b%d7%96-%d7%9c%d7%a2%d7%99%d7%95%d7%95%d7%a8-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%a9%d7%a8-%d7%94%d7%90%d7%95%d7%a6%d7%a8/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "יחסים מחוץ לנישואים כשיקול בחלוקת הרכוש המשפחתי – עיון מחודש במשפט הישראלי | יצחק כהן ואמל ג&#8217;בארין (כרך טז)",
+      "url": "https://runilawreview.org/2013/12/04/volume16_cohen_jabareen/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "אי-חוקיות, מראית עין או משכון מוסווה? (בעקבות ע\"א 6634/15 טופ במרחבי השרון ייזום בע\"מ נ' קפלן)",
+      "url": "https://lawjournal.huji.ac.il/article/12/1783",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": true,
+      "synthesis_role": "secondary_commentary",
+      "flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "זוגיות יחד ולחוד – אוטונומיה בתוך אינטימיות | פנחס שיפמן (כרך כד)",
+      "url": "https://runilawreview.org/2021/03/10/vol24-shifman/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "תקנות התכנון והבניה (בקשה להיתר, תנאיו ואגרות)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%AA%D7%9B%D7%A0%D7%95%D7%9F_%D7%95%D7%94%D7%91%D7%A0%D7%99%D7%94_(%D7%91%D7%A7%D7%A9%D7%94_%D7%9C%D7%94%D7%99%D7%AA%D7%A8%2C_%D7%AA%D7%A0%D7%90%D7%99%D7%95_%D7%95%D7%90%D7%92%D7%A8%D7%95%D7%AA)",
+      "role": "binding_case_law",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "מכאוס לעקיבות בדיני המסוימות: מסוימות והשלמה מהותית – הילכו שתיים יחדיו?",
+      "url": "https://lawjournal.huji.ac.il/article/12/1824",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "tangential"
+      ]
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+      "title": "בע\"מ 4623/04",
+      "number": 1,
+      "origin": "perplexity",
+      "citable_as": "judgment",
+      "source_type": "caselaw",
+      "candidate_id": "bb7ad610-a6ff-4cb9-8e38-5fb07c02d8b2",
+      "authority_tier": "official_primary",
+      "synthesis_role": "leading_candidate",
+      "text_usability": "full_text",
+      "integrity_flags": [
+        "judgment_document",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "has_holding_text": true,
+      "is_judgment_document": true,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/l1_3.pdf",
+      "title": "השותפות הנישואית והערבות ההדדית בין בני הזוג בפשיטת רגיל – עיון מחדש | דוד מינץ (כרך ט)",
+      "number": 2,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "33ec7b7c-d532-4982-805b-40cc34b866c0",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "full_text",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://runilawreview.org/2013/12/04/volume16_cohen_jabareen/",
+      "title": "יחסים מחוץ לנישואים כשיקול בחלוקת הרכוש המשפחתי – עיון מחודש במשפט הישראלי | יצחק כהן ואמל ג&#8217;בארין (כרך טז)",
+      "number": 2,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "fd56f0a3-7087-4bce-ba28-daf3307043f5",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/98569.htm",
+      "title": "פקודת הראיות [נוסח חדש], תשל\"א-1971",
+      "number": 3,
+      "origin": "perplexity",
+      "citable_as": "statute",
+      "source_type": "legislation",
+      "candidate_id": "90ce7e9d-fbf0-44b7-9a46-766fb154e542",
+      "authority_tier": "official_primary",
+      "synthesis_role": "statutory_background",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+      "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+      "number": 4,
+      "origin": "perplexity",
+      "citable_as": "judgment",
+      "source_type": "caselaw",
+      "candidate_id": "255c6808-eb66-4dad-8ade-02ce0b656ad1",
+      "authority_tier": "official_primary",
+      "synthesis_role": "leading_candidate",
+      "text_usability": "metadata_only",
+      "integrity_flags": [
+        "judgment_document"
+      ],
+      "has_holding_text": false,
+      "is_judgment_document": true,
+      "can_satisfy_authority_role": false
+    }
+  ],
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+      "title": "בע\"מ 4623/04",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+          "title": "בע\"מ 4623/04",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/l1_3.pdf",
+      "title": "השותפות הנישואית והערבות ההדדית בין בני הזוג בפשיטת רגיל – עיון מחדש | דוד מינץ (כרך ט); יחסים מחוץ לנישואים כשיקול בחלוקת הרכוש המשפחתי – עיון מחודש במשפט הישראלי | יצחק כהן ואמל ג&#8217;בארין (כרך טז)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/l1_3.pdf",
+          "title": "השותפות הנישואית והערבות ההדדית בין בני הזוג בפשיטת רגיל – עיון מחדש | דוד מינץ (כרך ט)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://runilawreview.org/2013/12/04/volume16_cohen_jabareen/",
+          "title": "יחסים מחוץ לנישואים כשיקול בחלוקת הרכוש המשפחתי – עיון מחודש במשפט הישראלי | יצחק כהן ואמל ג&#8217;בארין (כרך טז)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/98569.htm",
+      "title": "פקודת הראיות [נוסח חדש], תשל\"א-1971",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/98569.htm",
+          "title": "פקודת הראיות [נוסח חדש], תשל\"א-1971",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "legislation"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+      "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן; השותפות הנישואית והערבות ההדדית בין בני הזוג בפשיטת רגיל – עיון מחדש | דוד מינץ (כרך ט)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+          "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/l1_3.pdf",
+          "title": "השותפות הנישואית והערבות ההדדית בין בני הזוג בפשיטת רגיל – עיון מחדש | דוד מינץ (כרך ט)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "answer_len": 1867,
+  "answer": "**שורה תחתונה**\n\nבעמ 4623/04 קובע קו־פסיקה שהופך לחזקה את רעיון ה'שיתוף' בנכסים שנצברו במהלך חיי נישואין או משק בית משותף באמצעות מבחנים איכותיים של חיי שיתוף, כאשר החזקה נוטה להיות מחוזקת ביחס לדירת המגורים המשפחתית.¹\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nבעמ 4623/04 — פסק דין של בית המשפט העליון שבו נדון גבול היישום של חזקה שיתופית ברכוש שנצבר על ידי בני זוג; בפסק הדין נקבעו קריטריונים איכותיים לבחינת קיומם של 'חיי שיתוף' ולשיקול חלוקת הרכוש, כאשר בית המשפט הצביע על עוצמת חזקה מוגברת בכל הנוגע לדירת המגורים המשפחתית.¹\n\n**יישומים בפסיקה שנמצאה**\n\nבאותו פסק דין יושם המבחן על נסיבות עובדתיות: בית המשפט שקל משך הקשר, השתתפות במשק הבית, תרומות כלכליות והיקף המעורבות המשותפת וקבע בהתאם את היקף ההכרה בשיתוף בנכסים מסוימים.¹\n\n**מגבלות והבחנות**\n\nבעמ 4623/04 הוצגו סייגים פרקטיים: נכסים בעלי אופי אישי או מקצועי, וכן נכסים הקשורים לעסק עצמאי או למוניטין אישי, עשויים לדרוש הוכחה מפורשת של כוונת שיתוף לפני שיוכר הזכיון השיתופי עליהם.¹\n\nספרות משנית שמסבירה את ההלכה מצביעה על נושאים שהפסיקה שוקלת בהם היבטים שונים, ובכלל זה שאלות של החלת עקרונות השיתוף ביחסים מחוץ לנישואים והמשקל שיש לתת לעובדות חיים כלכליות — אך אלו מהווים פרשנות ודיון תיאורטי, ולא מקור הלכתי מחייב בפני עצמו.²\n\n**הרקע החקיקתי**\n\nפקודת הראיות מהווה רקע מעשי לדיון על הנטל והסטנדרט בהוכחת חיי שיתוף; היא מספקת מסגרת ראייתית לניתוח הטענות בפסקי הדין, אך אינה קובעת את חזקה השיתוף בעצמה.³\n\n**מה לא ניתן לקבוע מהמקורות**\n\nהחומר השיפוטי השמיש שנמצא מצומצם: יש פסק דין עליון אחד שמאפשר ניסוח הלכתי ממוקד, ואין מאגר פסקי דין שמיש ונרחב שמאפשר להסיק מסקנות גורפות לגבי נושאים כגון חלות ההלכה על ידועים בציבור, ההשלכות ביחס לנישואים בתקופות חקיקתיות שונות או נוסחי הסטנדרט הראייתי בכל תרחיש פרטני.⁴\n\nהערת דלילות: הטקסט התומך שברשותי קצר וחלקי, ולכן התיאור כאן נסמך על המידע הזמין בלבד ולא על נוסח מלא של כל ההלכות הרלוונטיות; מסקנות מעמיקות או גורפות ידרשו בדיקה של מאגר פסקי דין רחב יותר וטקסט מלא של ההלכות."
+}

@@ -1,0 +1,547 @@
+{
+  "id": "R02",
+  "query": "מה נקבע בבנק המזרחי ביחס לסמכות בית המשפט לבטל חקיקה?",
+  "run_id": "995f7ca9-2980-44f9-a2e9-19e19141a945",
+  "total_ms": 184381,
+  "research_mode": null,
+  "shape": null,
+  "deterministic_branch": null,
+  "is_stub": false,
+  "verifier_counts": {
+    "by_support": {
+      "direct": 1,
+      "partial": 5,
+      "unrelated": 5,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 11,
+      "false": 0
+    },
+    "model_verdicts": 11,
+    "by_support_model": {
+      "direct": 1,
+      "partial": 5,
+      "unrelated": 5,
+      "tangential": 0
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "verifier_errors": [],
+  "sufficiency": {
+    "shape": "case_holding",
+    "reason": "shape_not_gated",
+    "applied": false,
+    "category": "not_applicable",
+    "sufficient": true,
+    "thin_source": false,
+    "found_titles": [
+      "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי ואח'",
+      "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+      "הזכויות הבלתי-מנויות - על היקפה של המהפכה החוקתית",
+      "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+      "\"האם המחוקק ירה בתותח כדי לפגוע בזבוב?\" על מידתיות במשפט | רבקה ווייל (כרך טו)"
+    ],
+    "topical_refs": [],
+    "topic_phrases": [
+      "בבנק המזרחי ביחס לסמכות",
+      "המזרחי ביחס לסמכות בית",
+      "נקבע בבנק המזרחי ביחס",
+      "המזרחי ביחס לסמכות",
+      "נקבע בבנק המזרחי",
+      "בבנק המזרחי ביחס",
+      "ביחס לסמכות בית",
+      "בבנק המזרחי",
+      "המזרחי ביחס",
+      "ביחס לסמכות",
+      "לסמכות בית",
+      "לבטל חקיקה",
+      "נקבע בבנק"
+    ],
+    "case_law_required": false,
+    "statute_only_answer": false,
+    "sufficiency_profile": "not_applicable",
+    "usable_judgment_refs": [
+      "s1",
+      "s2"
+    ],
+    "exact_amounts_allowed": true,
+    "governing_statute_refs": [],
+    "topical_authority_refs": [],
+    "morphology_domain_match": false,
+    "normalized_source_tokens": [],
+    "governing_regulation_refs": [],
+    "normalized_question_tokens": [
+      "נקבע",
+      "בנק",
+      "זרחי",
+      "יחס",
+      "סמכ",
+      "בית",
+      "בטל",
+      "חקיק"
+    ],
+    "sufficiency_authority_basis": "usable_judgment",
+    "thin_governing_statute_refs": [],
+    "thin_governing_regulation_refs": [],
+    "authority_type_sufficiency_passed": true,
+    "case_law_missing_but_not_required": false,
+    "practical_steps_thin_authority_passed": false
+  },
+  "acquisition": {
+    "ms": 2649,
+    "mode": "specific_case",
+    "budget": {
+      "other": 1,
+      "total": 3,
+      "leading": 3
+    },
+    "enabled": true,
+    "attempts": [
+      {
+        "ms": 923,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/900/007/A08&fileName=97007900_A08.txt&type=4",
+        "title": "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי ואח'",
+        "success": true,
+        "candidate_id": "2fe654e2-ab3c-48b9-9067-70c055caefb0",
+        "title_signal": "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי ואח'",
+        "docket_signal": "ע\"א 6821/93",
+        "failure_reason": null,
+        "synthesis_role": "leading_candidate",
+        "trigger_reason": "text_below_threshold",
+        "has_holding_text": true,
+        "method_succeeded": "direct_file_fetch",
+        "docket_normalized": "aa:6821/93",
+        "methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": true,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 25681,
+        "text_usability_before": "substantive_excerpt",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": true
+      },
+      {
+        "ms": 1724,
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+        "success": true,
+        "candidate_id": "657de66e-7736-40df-b9ac-f824dd71c465",
+        "title_signal": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג",
+        "docket_signal": "בג\"ץ 8647/22",
+        "failure_reason": null,
+        "synthesis_role": "unknown",
+        "trigger_reason": "no_judgment_body_text",
+        "has_holding_text": true,
+        "method_succeeded": "local_db_docket_lookup",
+        "docket_normalized": "bagatz:8647/22",
+        "methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": true,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 12004,
+        "text_usability_before": "listing_page",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": true
+      }
+    ],
+    "excluded": [],
+    "successes": 2,
+    "attempts_made": 2,
+    "eligible_count": 2,
+    "judgment_candidates": 2,
+    "eligibility_diagnostics": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/900/007/A08&fileName=97007900_A08.txt&type=4",
+        "title": "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי ואח'",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "2fe654e2-ab3c-48b9-9067-70c055caefb0",
+        "planner_role": "binding_case_law",
+        "has_court_url": true,
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": null,
+        "has_party_names": true,
+        "has_download_url": true,
+        "docket_normalized": "aa:6821/93",
+        "eligibility_basis": [
+          "docket_signal",
+          "official_court_url",
+          "case_title_party_names",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+        "eligible": true,
+        "citable_as": "not_citable",
+        "source_type": "caselaw",
+        "candidate_id": "657de66e-7736-40df-b9ac-f824dd71c465",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "index_or_listing",
+        "synthesis_role": "unknown",
+        "text_usability": "listing_page",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": "bagatz:8647/22",
+        "eligibility_basis": [
+          "docket_signal"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      }
+    ]
+  },
+  "usable_judgments": [
+    {
+      "ref": "s1",
+      "acquired_text_length": null,
+      "verifier": [],
+      "in_answer_footnote": false
+    },
+    {
+      "ref": "s2",
+      "acquired_text_length": null,
+      "verifier": [],
+      "in_answer_footnote": false
+    }
+  ],
+  "admitted_sources": [
+    {
+      "title": "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי ואח'",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/900/007/A08&fileName=97007900_A08.txt&type=4",
+      "role": "binding_case_law",
+      "tier": "official_primary",
+      "text_usability": "full_text",
+      "citable_as": "judgment",
+      "judgment": true,
+      "holding_text": true,
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "judgment_document",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "verifier": [
+        "direct"
+      ]
+    },
+    {
+      "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+      "role": "binding_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "full_text",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": true,
+      "synthesis_role": "unknown",
+      "flags": [
+        "listing_or_pagination_page",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "יישום \"חוק פיצול דירות\" (חוק התכנון והבנייה",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6629&businessType=1",
+      "role": "primary_statute",
+      "tier": "primary_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "official_host_non_specific_path"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "חוק בינוי ופינוי של אזורי שיקום",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "הזכויות הבלתי-מנויות - על היקפה של המהפכה החוקתית",
+      "url": "https://lawjournal.huji.ac.il/article/12/736",
+      "role": "primary_statute",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "חוק שעות עבודה ומנוחה",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%A9%D7%A2%D7%95%D7%AA_%D7%A2%D7%91%D7%95%D7%93%D7%94_%D7%95%D7%9E%D7%A0%D7%95%D7%97%D7%94",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "\"האם המחוקק ירה בתותח כדי לפגוע בזבוב?\" על מידתיות במשפט | רבקה ווייל (כרך טו)",
+      "url": "https://runilawreview.org/2012/11/26/volume15_weill/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "עשרים שנה לבנק הזמרחי: סיפורה הפיקנטי של חוקת הכלאיים הישראלית",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_de4b01f3397b42efbccf10f0c3de1167.pdf",
+      "role": "primary_statute",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "תקנות התעבורה",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%AA%D7%A2%D7%91%D7%95%D7%A8%D7%94",
+      "role": "binding_case_law",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "תקנות רישוי שירותים ומקצועות בענף הרכב (רישוי עיסוק בשמאות רכב – הוראת שעה)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%A8%D7%99%D7%A9%D7%95%D7%99_%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D_%D7%95%D7%9E%D7%A7%D7%A6%D7%95%D7%A2%D7%95%D7%AA_%D7%91%D7%A2%D7%A0%D7%A3_%D7%94%D7%A8%D7%9B%D7%91_(%D7%A8%D7%99%D7%A9%D7%95%D7%99_%D7%A2%D7%99%D7%A1%D7%95%D7%A7_%D7%91%D7%A9%D7%9E%D7%90%D7%95%D7%AA_%D7%A8%D7%9B%D7%91_%E2%80%93_%D7%94%D7%95%D7%A8%D7%90%D7%AA_%D7%A9%D7%A2%D7%94)",
+      "role": "binding_case_law",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/900/007/A08&fileName=97007900_A08.txt&type=4",
+      "title": "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי ואח'",
+      "number": 1,
+      "origin": "perplexity",
+      "citable_as": "judgment",
+      "source_type": "caselaw",
+      "candidate_id": "2fe654e2-ab3c-48b9-9067-70c055caefb0",
+      "authority_tier": "official_primary",
+      "synthesis_role": "leading_candidate",
+      "text_usability": "full_text",
+      "integrity_flags": [
+        "judgment_document",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "has_holding_text": true,
+      "is_judgment_document": true,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_de4b01f3397b42efbccf10f0c3de1167.pdf",
+      "title": "עשרים שנה לבנק הזמרחי: סיפורה הפיקנטי של חוקת הכלאיים הישראלית",
+      "number": 2,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "5f16910c-84a1-4567-9cd6-69e04e68543c",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "full_text",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+      "number": 2,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "75c00706-8586-4558-8d60-34470528b72a",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "full_text",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://runilawreview.org/2012/11/26/volume15_weill/",
+      "title": "\"האם המחוקק ירה בתותח כדי לפגוע בזבוב?\" על מידתיות במשפט | רבקה ווייל (כרך טו)",
+      "number": 2,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "1428acbc-e43f-4f25-a611-ede00f802f25",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    }
+  ],
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/900/007/A08&fileName=97007900_A08.txt&type=4",
+      "title": "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי ואח'",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/900/007/A08&fileName=97007900_A08.txt&type=4",
+          "title": "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי ואח'",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_de4b01f3397b42efbccf10f0c3de1167.pdf",
+      "title": "עשרים שנה לבנק הזמרחי: סיפורה הפיקנטי של חוקת הכלאיים הישראלית; נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו); \"האם המחוקק ירה בתותח כדי לפגוע בזבוב?\" על מידתיות במשפט | רבקה ווייל (כרך טו)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_de4b01f3397b42efbccf10f0c3de1167.pdf",
+          "title": "עשרים שנה לבנק הזמרחי: סיפורה הפיקנטי של חוקת הכלאיים הישראלית",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+          "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://runilawreview.org/2012/11/26/volume15_weill/",
+          "title": "\"האם המחוקק ירה בתותח כדי לפגוע בזבוב?\" על מידתיות במשפט | רבקה ווייל (כרך טו)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "answer_len": 1418,
+  "answer": "**החזקת \"בנק המזרחי\" — סמכות בית המשפט לבטל חקיקה**\n\nבפסק‑דין 'בנק המזרחי' נקבע כי חוק יסוד: כבוד האדם וחירותו מחזיק מעמד נורמטיבי עליון ביחס לחקיקה רגילה, וכי לבית המשפט העליון סמכות לשאת ולבחון חוק הסותר הוראות של חוקי יסוד ולבטלו במידה ויימצא סתירה כזו.¹\n\nהפסיקה הכירה במעמד דו־מהותי של הכנסת: היא פועלת ככוח מכונן כאשר היא ממקמת או משנה חוקים יסוד, וכרשות מחוקקת רגילה כאשר היא מחוקקת חוקים רגילים; בחקיקה הרגילה זו הכנסת כפופה להגבלות שנקבעות בחוקי היסוד.¹\n\nבנק המזרחי הותיר לבית המשפט סמכות סעדית פרוצדורלית ומהותית — להכריז על בטלות של חקיקה שסותרת חוקי יסוד. ההכרה בסמכות זו הינה חלק מההחזקה בנורמטיביות העליונה של חוקי היסוד כפי שנקבעה בפסק‑דין.¹\n\nלגבי הקריטריונים והאמצעים שיפוטיים שבאמצעותם נבחנת תקפות חקיקה — קיים בתיאוריה ובספרות המשפטית דיון שאותו יש לנסח בזהירות: מחקרים וספרות משפטית מצביעים על כך שהבחינה נעה סביב שאלת פגיעה בזכות יסוד שאינה עומדת בתנאי פסקת ההגבלה, בדגש על תכלית ראויה ובחינת מידתיות/סבירות; נוסף על כך נדונות בגדרי הספרות ובפסיקה המאוחרת אפשרויות מעשיות לצמצום השפעת הביטול, כגון קביעת תחולה עתידית של ההכרעה או העדפת פרשנות מתיישבת עם חוק היסוד במקום ביטול מלא — אולם הדברים הללו נתמכים בעיקר בספרות ובפסיקה משנית ולא כולם מפורשים בפסק‑דין המקורי עצמו.²\n\nלסיכום: 'בנק המזרחי' קבע את יסוד העליונות הנורמטיבית של חוקי היסוד וסיפק סמך לשורש סמכותו של בית המשפט לבחון ולבטל חקיקה סותרת; ההיקף המפורט של מבחני התוקף וסוגי הסעד התפתחו מאז בפסיקה ובספרות והם נשוא דיונים משפטיים מתמשכים."
+}
