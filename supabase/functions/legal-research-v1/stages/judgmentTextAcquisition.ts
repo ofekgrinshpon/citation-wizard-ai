@@ -191,6 +191,7 @@ export interface AcquisitionSkipLog {
     | "scholarship_without_case_identity"
     | "already_has_usable_text"
     | "budget_exhausted"
+    | "docket_mismatch_specific_case"
     | "stage_time_budget_exhausted";
 }
 
@@ -666,6 +667,16 @@ export async function runJudgmentTextAcquisition(
       (integ.citable_as === "scholarship" || integ.citable_as === "commentary") &&
       dockets.length === 0 && !titleSignal
     ) { drop("scholarship_without_case_identity"); continue; }
+    // specific_case: never spend the (tiny) budget on a different case's
+    // judgment — an adjacent docket can never answer the requested one.
+    if (
+      mode === "specific_case" && requestedDockets.length > 0 &&
+      dockets.length > 0 && !isRequested &&
+      !dockets.some((d) =>
+        requestedDockets.some((r) => normalizedDocketId(d) === normalizedDocketId(r))
+      )
+    ) { drop("docket_mismatch_specific_case"); continue; }
+
 
     // ── Widened eligibility basis (any one suffices) ────────────────────────
     if (isRequested) diag.eligibility_basis.push("exact_requested_docket");

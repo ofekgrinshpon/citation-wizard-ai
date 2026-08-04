@@ -7,6 +7,7 @@
 // no case names, no holdings, no allowlists.
 
 import type { AnalyzerOutput, Query } from "../lib/types.ts";
+import { detectDockets } from "./docketDetection.ts";
 
 /** Survey-like phrasings: "כתוב סקירה", "סקירת פסיקה", "התפתחות הפסיקה" … */
 export const SURVEY_CUE_RE =
@@ -107,6 +108,65 @@ export function buildJudgmentDiscoveryQueries(
   analyzer: AnalyzerOutput,
 ): JudgmentDiscoveryResult {
   const survey_like = SURVEY_CUE_RE.test(question || "");
+  const claim_id0 = analyzer.claims?.[0]?.claim_id ?? "c1";
+
+  // ── specific_case: docket-targeted official-document discovery ──────────
+  // The pool for a named judgment is usually full of scholarship *about* the
+  // case; these queries exist only to surface the judgment document itself.
+  if (mode === "specific_case") {
+    const dockets = detectDockets(question || "");
+    if (dockets.length === 0) {
+      return {
+        enabled: false,
+        mode: mode ?? null,
+        survey_like,
+        topic: null,
+        queries: [],
+        judgment_discovery_queries: [],
+        layers: [],
+      };
+    }
+    const d = dockets[0];
+    const display = `${d.prefix_he} ${d.number}`;
+    const specs: Array<{ q: string; reason: string }> = [
+      {
+        q: `${display} site:supremedecisions.court.gov.il Download`,
+        reason: "איתור קובץ פסק הדין הרשמי לפי מספר תיק",
+      },
+      {
+        q: `"${d.number}" ${display} פסק דין טקסט מלא`,
+        reason: "איתור נוסח מלא של פסק הדין",
+      },
+      {
+        q: `${display} site:court.gov.il פסק דין`,
+        reason: "איתור פסק הדין באתרי בתי המשפט",
+      },
+    ];
+    const queries: Query[] = specs.map((s, i) => ({
+      claim_id: claim_id0,
+      role: "binding_case_law",
+      query_he: s.q,
+      targets: ["perplexity"],
+      expected_source_type: "case",
+      reason: s.reason,
+      metadata: {
+        judgment_discovery: true,
+        judgment_discovery_layer: "specific_case_document",
+        judgment_discovery_index: i,
+        survey_like,
+      },
+    }));
+    return {
+      enabled: true,
+      mode: mode ?? null,
+      survey_like,
+      topic: display,
+      queries,
+      judgment_discovery_queries: queries.map((q) => q.query_he),
+      layers: ["specific_case_document"],
+    };
+  }
+
   const eligible = (mode && JUDGMENT_DISCOVERY_MODES.has(mode)) || survey_like;
   if (!eligible) {
     return {
@@ -121,8 +181,9 @@ export function buildJudgmentDiscoveryQueries(
   }
 
   const topic = extractDiscoveryTopic(question, analyzer);
-  const claim_id = analyzer.claims?.[0]?.claim_id ?? "c1";
+  const claim_id = claim_id0;
   const specs = survey_like ? [...BASE_SPECS, ...SURVEY_SPECS] : BASE_SPECS;
+
 
   const queries: Query[] = specs.map((s, i) => ({
     claim_id,
