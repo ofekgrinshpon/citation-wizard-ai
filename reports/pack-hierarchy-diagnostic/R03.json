@@ -1,0 +1,654 @@
+{
+  "id": "R03",
+  "query": "מה הפסיקה אומרת על הלכת השיתוף?",
+  "run_id": "a99bf238-88fe-4518-9f4b-9badc3c34047",
+  "total_ms": 279694,
+  "research_mode": null,
+  "deterministic_branch": null,
+  "is_stub": false,
+  "sufficiency": {
+    "shape": "analysis",
+    "reason": "case_law_synthesis_supported",
+    "applied": true,
+    "category": "case_law_synthesis",
+    "sufficient": true,
+    "thin_source": false,
+    "found_titles": [
+      "בע\"מ 4623/04",
+      "חוק יחסי ממון בין בני זוג, תשל\"ג-1973 – נבו (טקסט מובא בפסק דין)",
+      "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+      "הקמת נאמנות כהגנה מפני שיתוף בנכסים",
+      "ידועים בציבור? על חזקת השיתוף וחלוקת הרכוש המשותף"
+    ],
+    "topical_refs": [
+      "s3",
+      "s7",
+      "s8",
+      "s10"
+    ],
+    "topic_phrases": [
+      "הלכת השיתוף"
+    ],
+    "case_law_required": true,
+    "statute_only_answer": false,
+    "sufficiency_profile": "case_law_synthesis",
+    "usable_judgment_refs": [
+      "s1",
+      "s7"
+    ],
+    "exact_amounts_allowed": true,
+    "governing_statute_refs": [],
+    "topical_authority_refs": [
+      "s3",
+      "s7",
+      "s10"
+    ],
+    "morphology_domain_match": false,
+    "normalized_source_tokens": [],
+    "governing_regulation_refs": [],
+    "normalized_question_tokens": [
+      "לכת",
+      "שיתוף"
+    ],
+    "sufficiency_authority_basis": "usable_judgment",
+    "thin_governing_statute_refs": [],
+    "thin_governing_regulation_refs": [],
+    "authority_type_sufficiency_passed": true,
+    "case_law_missing_but_not_required": false,
+    "practical_steps_thin_authority_passed": false
+  },
+  "commentary_share_of_admitted_pack": 0.59,
+  "A_admitted_composition": {
+    "total": 22,
+    "buckets": {
+      "primary_judgment_usable": 2,
+      "statute": 3,
+      "primary_judgment_metadata_only": 1,
+      "commentary": 7,
+      "listing_not_citable": 2,
+      "unclassified": 1,
+      "scholarship": 6
+    },
+    "primary_count": 6,
+    "secondary_count": 13,
+    "noise_count": 2,
+    "verifier_counts": {
+      "by_support": {
+        "direct": 7,
+        "partial": 6,
+        "unrelated": 9,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 22,
+        "false": 0
+      },
+      "model_verdicts": 22,
+      "by_support_model": {
+        "direct": 7,
+        "partial": 6,
+        "unrelated": 9,
+        "tangential": 0
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "rows": [
+      {
+        "rank": 1,
+        "title": "בע\"מ 4623/04",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+        "bucket": "primary_judgment_usable",
+        "role": "binding_case_law",
+        "tier": "official_primary",
+        "citable_as": "judgment",
+        "text_usability": "full_text",
+        "synthesis_role": "leading_candidate",
+        "origin": null,
+        "verifier": [
+          "direct"
+        ],
+        "flags": [
+          "judgment_document",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ]
+      },
+      {
+        "rank": 2,
+        "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973 – נבו (טקסט מובא בפסק דין)",
+        "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+        "bucket": "statute",
+        "role": "primary_statute",
+        "tier": "official_primary",
+        "citable_as": "statute",
+        "text_usability": "metadata_only",
+        "synthesis_role": "statutory_background",
+        "origin": null,
+        "verifier": [
+          "direct"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 3,
+        "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+        "bucket": "primary_judgment_metadata_only",
+        "role": "binding_case_law",
+        "tier": "official_primary",
+        "citable_as": "judgment",
+        "text_usability": "metadata_only",
+        "synthesis_role": "leading_candidate",
+        "origin": null,
+        "verifier": [
+          "partial"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 4,
+        "title": "הקמת נאמנות כהגנה מפני שיתוף בנכסים",
+        "url": "https://www.psakdin.co.il/Document/%D7%94%D7%A7%D7%9E%D7%AA-%D7%A0%D7%90%D7%9E%D7%A0%D7%95%D7%AA-%D7%9B%D7%90%D7%A1%D7%98%D7%A8%D7%98%D7%92%D7%99%D7%AA-%D7%94%D7%92%D7%A0%D7%94-%D7%9E%D7%A4%D7%A0%D7%99-%D7%94%D7%9C%D7%9B%D7%AA-%D7%94%D7%A9%D7%יתוף-%D7%91%D7%99%D7%9F-%D7%91%D7%A0%D7%99-%D7%96%D7%95%D7%92-%D7%95%D7%94%D7%A2%D7%91%D7%A8%D7%94-%D7%91%D7%99%D7%A0%D7%93%D7%95%D7%A8%D7%99%D7%AA",
+        "bucket": "commentary",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "direct"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 5,
+        "title": "ידועים בציבור? על חזקת השיתוף וחלוקת הרכוש המשותף",
+        "url": "https://www.psakdin.co.il/Document/%D7%99%D7%93%D7%95%D7%A2%D7%99%D7%9D-%D7%91%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%A2%D7%9C-%D7%97%D7%96%D7%A7%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%95%D7%97%D7%9C%D7%95%D7%A7%D7%AA-%D7%94%D7%A8%D7%9B%D7%95%D7%A9-%D7%94%D7%9E%D7%A9%D7%95%D7%AA%D7%A3?IsMobile=false",
+        "bucket": "commentary",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "direct"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 6,
+        "title": "פס\"ד בערעור בשאלה האם חזקת השיתוף חלה על נכסים חיצוניים",
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%91%D7%A2%D7%A8%D7%A2%D7%95%D7%A8-%D7%91%D7%A9%D7%90%D7%9C%D7%94-%D7%94%D7%90%D7%9D-%D7%97%D7%96%D7%A7%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%97%D7%9C%D7%94-%D7%A2%D7%9C-%D7%A0%D7%9B%D7%A1%D7%99%D7%9D-%D7%97%D7%99%D7%A6%D7%95%D7%A0%D7%99%D7%99%D7%9D",
+        "bucket": "commentary",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "direct"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 7,
+        "title": "בג\"ץ 1000/92 בבלי נ' בית הדין הרבני הגדול",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/1194209-3/he/%D7%92%D7%93%D7%A8%D7%99%20%D7%94%D7%9C%D7%9B%D7%AA%20%D7%A9%D7%99%D7%AA%D7%95%D7%A3%20%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99%20%D7%91%D7%93%D7%99%D7%A8%D7%AA%20%D7%9E%D7%92%D7%95%D7%A8%D7%99%D7%9D%20-%201194209-3%20%D7%91%D7%99%D7%94''%D7%93%20%D7%90%D7%A9%D7%93%D7%95%D7%93%20(1).docx",
+        "bucket": "primary_judgment_usable",
+        "role": "binding_case_law",
+        "tier": "official_primary",
+        "citable_as": "judgment",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "leading_candidate",
+        "origin": null,
+        "verifier": [
+          "direct"
+        ],
+        "flags": [
+          "judgment_document",
+          "holding_text_present"
+        ]
+      },
+      {
+        "rank": 8,
+        "title": "ביהמ\"ש לענייני משפחה בתל אביב - יפו, ש' ארז שני: פסק דין בעניין תובענה לשיתוף רכושי (תמ\"ש 62952-05-20)",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=180",
+        "bucket": "listing_not_citable",
+        "role": "binding_case_law",
+        "tier": "index_or_listing",
+        "citable_as": "not_citable",
+        "text_usability": "listing_page",
+        "synthesis_role": "unknown",
+        "origin": null,
+        "verifier": [
+          "direct"
+        ],
+        "flags": [
+          "listing_or_pagination_page"
+        ]
+      },
+      {
+        "rank": 9,
+        "title": "יישום הדוח למיגור האלימות כלפי צוותים רפואיים בישראל",
+        "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7461&businessType=1",
+        "bucket": "unclassified",
+        "role": "binding_case_law",
+        "tier": "primary_mirror",
+        "citable_as": "unknown",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "unknown",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": [
+          "official_host_non_specific_path"
+        ]
+      },
+      {
+        "rank": 10,
+        "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+        "bucket": "scholarship",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "scholarship",
+        "text_usability": "full_text",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 11,
+        "title": "תקנות הבטיחות בעבודה (גיהות תעסוקתית ובטיחות העוסקים בקרינת לייזר)",
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%92%D7%99%D7%94%D7%95%D7%AA_%D7%AA%D7%A2%D7%A1%D7%95%D7%A7%D7%AA%D7%99%D7%AA_%D7%95%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%94%D7%A2%D7%95%D7%A1%D7%A7%D7%99%D7%9D_%D7%91%D7%A7%D7%A8%D7%99%D7%A0%D7%AA_%D7%9C%D7%99%D7%99%D7%96%D7%A8)",
+        "bucket": "statute",
+        "role": "binding_case_law",
+        "tier": "statute_mirror",
+        "citable_as": "statute",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "statutory_background",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": [
+          "consolidated_statute_mirror"
+        ]
+      },
+      {
+        "rank": 12,
+        "title": "משמורת ומזונות ילדים: אקטיביזם וכאוס בבתי המשפט לענייני משפחה",
+        "url": "https://www.taulawreview.sites.tau.ac.il/mz1",
+        "bucket": "scholarship",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "scholarship",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 13,
+        "title": "אנציקלופדיה יהודית דעת - הלכת השיתוף בנכסים",
+        "url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+        "bucket": "scholarship",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "partial"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 14,
+        "title": "הלכת השיתוף - מטח",
+        "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=111640791&nTocEntryID=111642266",
+        "bucket": "listing_not_citable",
+        "role": "scholarship",
+        "tier": "index_or_listing",
+        "citable_as": "not_citable",
+        "text_usability": "listing_page",
+        "synthesis_role": "unknown",
+        "origin": null,
+        "verifier": [
+          "partial"
+        ],
+        "flags": [
+          "listing_or_pagination_page"
+        ]
+      },
+      {
+        "rank": 15,
+        "title": "הקדמת מועד איזון המשאבים בתיקון מס&#8217; 4 לחוק יחסי ממון והחקיקה השיפוטית שנוצרה לפניה – עיון מחודש | יצחק כהן (כרך כב)",
+        "url": "https://runilawreview.org/2018/08/23/vol22_cohen/",
+        "bucket": "commentary",
+        "role": "primary_statute",
+        "tier": "secondary_commentary",
+        "citable_as": "scholarship",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "partial"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 16,
+        "title": "בעל נגד אישה, אמת נגד משפחה, או המבט הרביעי על הכשרות להעיד במשפט הפלילי | אסף הרדוף (כרך ג)",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/c2_1.pdf",
+        "bucket": "scholarship",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "scholarship",
+        "text_usability": "full_text",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 17,
+        "title": "תקנות שירות בטחון",
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%A9%D7%99%D7%A8%D7%95%D7%AA_%D7%91%D7%98%D7%97%D7%95%D7%9F",
+        "bucket": "statute",
+        "role": "binding_case_law",
+        "tier": "statute_mirror",
+        "citable_as": "statute",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "statutory_background",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": [
+          "consolidated_statute_mirror"
+        ]
+      },
+      {
+        "rank": 18,
+        "title": "ע\"פ 3168/19 פלוני נ׳ מדינת ישראל פסק דין (26.01.2022)",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a4-3168-19-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "bucket": "commentary",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "commentary",
+        "text_usability": "full_text",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": [
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body"
+        ]
+      },
+      {
+        "rank": 19,
+        "title": "ואף-על-פי-כן: מרוץ סמכויות",
+        "url": "https://lawjournal.huji.ac.il/article/12/1921",
+        "bucket": "scholarship",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "scholarship",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "partial"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 20,
+        "title": "השותפות הנישואית והערבות ההדדית בין בני הזוג בפשיטת רגיל – עיון מחדש | דוד מינץ (כרך ט)",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/l1_3.pdf",
+        "bucket": "scholarship",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "scholarship",
+        "text_usability": "full_text",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "partial"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 21,
+        "title": "ע\"פ 1932-24 בלאי קיברה נ׳ מדינת ישראל פסק דין",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a4-1932-24-%d7%91%d7%9c%d7%90%d7%99-%d7%a7%d7%99%d7%91%d7%a8%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "bucket": "commentary",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "commentary",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 22,
+        "title": "בג\"ץ 4327/20 ישראל פרוש- ראש העיר אלעד נ׳ ראש הממשלה פסק דין",
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-4327-20-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a8%d7%95%d7%a9-%d7%a8%d7%90%d7%a9-%d7%94%d7%a2%d7%99%d7%a8-%d7%90%d7%9c%d7%a2%d7%93-%d7%a0-%d7%a8%d7%90%d7%a9-%d7%94%d7%9e%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "bucket": "commentary",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "commentary",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": []
+      }
+    ]
+  },
+  "B_used_composition": {
+    "total": 6,
+    "buckets": {
+      "primary_judgment_usable": 2,
+      "statute": 1,
+      "commentary": 2,
+      "primary_judgment_metadata_only": 1
+    },
+    "primary_count": 4,
+    "secondary_count": 2,
+    "first_primary_position": 1,
+    "first_secondary_position": 4,
+    "secondary_precedes_primary": false,
+    "head5_primary": 3,
+    "head5_secondary": 2,
+    "rows": [
+      {
+        "order": 1,
+        "footnote_number": 1,
+        "title": "בע\"מ 4623/04",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+        "bucket": "primary_judgment_usable",
+        "origin": "perplexity",
+        "tier": "official_primary",
+        "citable_as": "judgment",
+        "text_usability": "full_text",
+        "synthesis_role": "leading_candidate",
+        "admitted_rank": 1,
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "order": 2,
+        "footnote_number": 1,
+        "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/1194209-3/he/%D7%92%D7%93%D7%A8%D7%99%20%D7%94%D7%9C%D7%9B%D7%AA%20%D7%A9%D7%99%D7%AA%D7%95%D7%A3%20%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99%20%D7%91%D7%93%D7%99%D7%A8%D7%AA%20%D7%9E%D7%92%D7%95%D7%A8%D7%99%D7%9D%20-%201194209-3%20%D7%91%D7%99%D7%94''%D7%93%20%D7%90%D7%A9%D7%93%D7%95%D7%93%20(1).docx",
+        "bucket": "primary_judgment_usable",
+        "origin": "perplexity",
+        "tier": "official_primary",
+        "citable_as": "judgment",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "leading_candidate",
+        "admitted_rank": 7,
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "order": 3,
+        "footnote_number": 4,
+        "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973 – נבו (טקסט מובא בפסק דין)",
+        "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+        "bucket": "statute",
+        "origin": "perplexity",
+        "tier": "official_primary",
+        "citable_as": "statute",
+        "text_usability": "metadata_only",
+        "synthesis_role": "statutory_background",
+        "admitted_rank": 2,
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "order": 4,
+        "footnote_number": 5,
+        "title": "ידועים בציבור? על חזקת השיתוף וחלוקת הרכוש המשותף",
+        "url": "https://www.psakdin.co.il/Document/%D7%99%D7%93%D7%95%D7%A2%D7%99%D7%9D-%D7%91%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%A2%D7%9C-%D7%97%D7%96%D7%A7%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%95%D7%97%D7%9C%D7%95%D7%A7%D7%AA-%D7%94%D7%A8%D7%9B%D7%95%D7%A9-%D7%94%D7%9E%D7%A9%D7%95%D7%AA%D7%A3?IsMobile=false",
+        "bucket": "commentary",
+        "origin": "perplexity",
+        "tier": "secondary_commentary",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only",
+        "synthesis_role": "secondary_commentary",
+        "admitted_rank": 5,
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "order": 5,
+        "footnote_number": 5,
+        "title": "פס\"ד בערעור בשאלה האם חזקת השיתוף חלה על נכסים חיצוניים",
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%91%D7%A2%D7%A8%D7%A2%D7%95%D7%A8-%D7%91%D7%A9%D7%90%D7%9C%D7%94-%D7%94%D7%90%D7%9D-%D7%97%D7%96%D7%A7%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%97%D7%9C%D7%94-%D7%A2%D7%9C-%D7%A0%D7%9B%D7%A1%D7%99%D7%9D-%D7%97%D7%99%D7%A6%D7%95%D7%A0%D7%99%D7%99%D7%9D",
+        "bucket": "commentary",
+        "origin": "perplexity",
+        "tier": "secondary_commentary",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only",
+        "synthesis_role": "secondary_commentary",
+        "admitted_rank": 6,
+        "verifier": [
+          "direct"
+        ]
+      },
+      {
+        "order": 6,
+        "footnote_number": 5,
+        "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+        "bucket": "primary_judgment_metadata_only",
+        "origin": "perplexity",
+        "tier": "official_primary",
+        "citable_as": "judgment",
+        "text_usability": "metadata_only",
+        "synthesis_role": "leading_candidate",
+        "admitted_rank": 3,
+        "verifier": [
+          "partial"
+        ]
+      }
+    ]
+  },
+  "C_footnotes": {
+    "total": 5,
+    "compound_count": 2,
+    "mixed_hierarchy_count": 1,
+    "secondary_leading_count": 1,
+    "rows": [
+      {
+        "number": 1,
+        "size": 2,
+        "buckets": [
+          "primary_judgment_usable",
+          "primary_judgment_usable"
+        ],
+        "compound": true,
+        "mixes_primary_and_secondary": false,
+        "leads_with_secondary": false
+      },
+      {
+        "number": 2,
+        "size": 1,
+        "buckets": [
+          "primary_judgment_usable"
+        ],
+        "compound": false,
+        "mixes_primary_and_secondary": false,
+        "leads_with_secondary": false
+      },
+      {
+        "number": 3,
+        "size": 1,
+        "buckets": [
+          "primary_judgment_usable"
+        ],
+        "compound": false,
+        "mixes_primary_and_secondary": false,
+        "leads_with_secondary": false
+      },
+      {
+        "number": 4,
+        "size": 1,
+        "buckets": [
+          "statute"
+        ],
+        "compound": false,
+        "mixes_primary_and_secondary": false,
+        "leads_with_secondary": false
+      },
+      {
+        "number": 5,
+        "size": 3,
+        "buckets": [
+          "commentary",
+          "commentary",
+          "primary_judgment_metadata_only"
+        ],
+        "compound": true,
+        "mixes_primary_and_secondary": true,
+        "leads_with_secondary": true
+      }
+    ]
+  },
+  "answer_len": 1867,
+  "answer": "**שורה תחתונה**\n\nהלכת השיתוף מוכרת בפסיקה כעקרון המעניק חזקה לשיתוף בנכסים שנצברו במהלך החיים המשותפים; בתי המשפט העליון ובג\"ץ אישרו את היישום של חזקה זו תוך בחינת נסיבות החיים המשותפים והחרגות ביחס להכנסות ונכסים מנוהלים.¹\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nבע\"מ 4623/04 — בית המשפט העליון דן במישרין בשאלת חלות הלכת השיתוף על נכסים שנצברו במהלך הנישואין, והבהיר את הצורך לבחון את נסיבות החיים המשותפים, משך הנישואין ואופי הנכסים, וכן התייחס לבעיות הנובעות מנכסים המנוהלים והכנסות אישיות.²\n\nבג\"ץ 1000/92 (בבלי נ' בית הדין הרבני הגדול) — בג\"ץ קבע שהלכות שיתוף הנכסים הן חלק מהמשפט האזרחי הכללי וכי יש להחילן בהחלטות רכושיות, לרבות כאשר השאלות מובאות בפני בתי דין רבניים.³\n\n**יישומים בפסיקה שנמצאה**\n\n- במקרה בע\"מ 4623/04 יושמה חזקה של שיתוף כדי להכריע בסכסוך רכושי בין בני זוג, כשהעליון שקל ראיות על אופי החיים המשותפים, תרומות כלכליות וניהול משק הבית המשותף.²\n- בג\"ץ 1000/92 הוחלה ההלכה בהקשר של סמכות הכרעה רכושית בפני בתי הדין הרבניים, וקבע כי הדין האזרחי בדבר שיתוף ידוע רלוונטי להכרעות רכושיות מסוג זה.³\n\n**מגבלות והבחנות**\n\nבע\"מ 4623/04 מודגשת מגבלה מרכזית: החזקה אינה חלה בעיוור על נכסים המנוהלים באופן עצמאי או על הכנסות אישיות ללא ראיות לכוונת שיתוף, ויש לבחון את אופי הנכס והנסיבות הקונקרטיות בטרם הכרעה על שיתוף.²\n\nבג\"ץ 1000/92 קבע שההלכה היא חלק מהמשפט האזרחי, אך הדבר אינו מתיר החלת החזקה ללא בדיקה של נסיבות המקרה בעת הכרעה בנושאים רכושיים שנדונים בערכאות אחרות.³\n\n**הרקע החקיקתי**\n\nחוק יחסי ממון בין בני זוג, תשל\"ג‑1973 מסדיר יחסי ממון סטטוטוריים וחלקו חל על נישואים שפרצו החל מ‑1.1.1974; החוק והאפשרות להסכמי ממון מהווים רקע חקיקתי שיש להתחשב בו בדיוני שיתוף, אך אינם מהווים הלכה פסוקה במקום פסיקה המחייבת.⁴\n\n**מה לא ניתן לקבוע מהמקורות**\n\nאין די במקורות שסופקו כדי לקבוע במפורש את גבולות היישום בין מערכת חוקית של חוק יחסי ממון לבין החזקה הפסיקתית בעבור כל המקרים שלאחר 1.1.1974; נקודות אלה נדונות בספרות אך לא הוכרעו באופן מלא בפסקי הדין השמישים כאן.⁵"
+}
