@@ -18,6 +18,15 @@
 import type { Footnote, UsedSource } from "../lib/types.ts";
 import type { DrafterInputSource } from "./drafter.ts";
 import type { StructuredBlock, StructuredDraft } from "./structuredValidation.ts";
+import {
+  compareHierarchy,
+  hierarchyClassOf,
+  hierarchyTierOf,
+  statuteIdentityKey,
+  statuteMirrorRank,
+  tierRank,
+  type HierarchyTier,
+} from "./sourceHierarchy.ts";
 
 const SUP_DIGITS = "⁰¹²³⁴⁵⁶⁷⁸⁹";
 function toSuperscript(n: number): string {
@@ -26,10 +35,27 @@ function toSuperscript(n: number): string {
 
 const TRAILING_PUNCT_RE = /[.!?:;,]$/u;
 
+export interface HierarchyReport {
+  hierarchy_order_applied: true;
+  used_sources_hierarchy_counts: Record<string, number>;
+  first_primary_position: number | null;
+  first_secondary_position: number | null;
+  primary_before_secondary_passed: boolean;
+  mixed_hierarchy_footnotes_count: number;
+  mixed_hierarchy_footnotes_split: number;
+  commentary_head_count: number;
+  commentary_head5_count: number;
+  primary_head5_count: number;
+  head_cap_passed: boolean;
+  statute_identity_dedup_count: number;
+  usable_primary_count: number;
+}
+
 export interface BuildResult {
   answer_markdown: string;
   footnotes: Footnote[];
   used_sources: UsedSource[];
+  hierarchy_report: HierarchyReport;
   builder_report: {
     paragraph_count: number;
     list_item_count: number;
@@ -55,7 +81,10 @@ interface MarkerEntry {
   // for used_sources mapping
   source_candidate_ids: string[];
   source_inputs: DrafterInputSource[];
+  /** first appearance index (block order) — stable tie-break */
+  first_seen: number;
 }
+
 
 function placeMarker(text: string, marker: string): string {
   // Place marker AFTER trailing punctuation if present, otherwise after a
@@ -68,35 +97,98 @@ export function buildFootnotedAnswer(
   draft: StructuredDraft,
   inputSources: DrafterInputSource[],
 ): BuildResult {
+  // ── Statute identity dedup (legal identity, not URL) ─────────────────────
+  // Collapse mirrors of the same statute/regulation; keep the best mirror
+  // (official_primary > statute_mirror > other mirror), then remap every ref
+  // of a collapsed mirror onto the winner.
+  const bestByIdentity = new Map<string, DrafterInputSource>();
+  for (const s of inputSources) {
+    const key = statuteIdentityKey(s);
+    if (!key) continue;
+    const cur = bestByIdentity.get(key);
+    if (!cur || statuteMirrorRank(s) > statuteMirrorRank(cur)) bestByIdentity.set(key, s);
+  }
+  const canonicalOf = (s: DrafterInputSource): DrafterInputSource => {
+    const key = statuteIdentityKey(s);
+    if (!key) return s;
+    return bestByIdentity.get(key) ?? s;
+  };
+  const collapsedIds = new Set<string>();
+  for (const s of inputSources) {
+    const key = statuteIdentityKey(s);
+    if (!key) continue;
+    const winner = bestByIdentity.get(key)!;
+    if (winner.candidate_id !== s.candidate_id) collapsedIds.add(s.candidate_id);
+  }
+  const statute_identity_dedup_count = collapsedIds.size;
+
   const inputByRef = new Map(inputSources.map((s) => [s.ref, s]));
 
-  // Allocate fn numbers by first-appearance order over (key) = single id OR
-  // sorted joined ids for compound.
-  const keyToEntry = new Map<string, MarkerEntry>();
-  const entriesInOrder: MarkerEntry[] = [];
+  let mixed_hierarchy_footnotes_count = 0;
+  let mixed_hierarchy_footnotes_split = 0;
+  // Counters are gathered on the first (entry-collection) pass only; the
+  // render pass re-resolves the same blocks.
+  let counting = true;
 
-  // First pass: assign numbers.
-  for (const b of draft.blocks) {
-    if (b.kind === "heading") continue;
-    if (b.source_refs.length === 0) continue;
-    const resolved = b.source_refs
+  // Resolve one block's refs into the final, hierarchy-clean source list:
+  //   * refs → sources, statute mirrors collapsed, de-duped
+  //   * no mixed compound footnotes: when a segment cites both primary
+  //     authority and secondary scholarship/commentary, the secondary sources
+  //     are dropped from that citation (explanatory only).
+  const resolveBlockSources = (refs: string[]): DrafterInputSource[] => {
+    const resolved = refs
       .map((r) => inputByRef.get(r))
-      .filter((s): s is DrafterInputSource => !!s);
-    if (resolved.length === 0) continue;
-    // De-dup within one segment (model may repeat a ref).
+      .filter((s): s is DrafterInputSource => !!s)
+      .map(canonicalOf);
     const seen = new Set<string>();
-    const distinct: DrafterInputSource[] = [];
+    let distinct: DrafterInputSource[] = [];
     for (const s of resolved) {
       if (seen.has(s.candidate_id)) continue;
       seen.add(s.candidate_id);
       distinct.push(s);
     }
+    if (distinct.length > 1) {
+      const primary = distinct.filter(
+        (s) => hierarchyClassOf(hierarchyTierOf(s)) === "primary",
+      );
+      const secondary = distinct.filter(
+        (s) => hierarchyClassOf(hierarchyTierOf(s)) === "secondary",
+      );
+      if (primary.length > 0 && secondary.length > 0) {
+        if (counting) {
+          mixed_hierarchy_footnotes_count++;
+          mixed_hierarchy_footnotes_split++;
+        }
+        distinct = distinct.filter(
+          (s) => hierarchyClassOf(hierarchyTierOf(s)) !== "secondary",
+        );
+      }
+      // Within a footnote, order sub-sources by hierarchy too.
+      distinct = distinct
+        .map((s, i) => ({ s, i }))
+        .sort((a, b) => compareHierarchy(a.s, a.i, b.s, b.i))
+        .map((x) => x.s);
+    }
+    return distinct;
+  };
+
+  // Allocate entries by first appearance; numbering happens afterwards in
+  // hierarchy order.
+  const keyToEntry = new Map<string, MarkerEntry>();
+  const entriesInOrder: MarkerEntry[] = [];
+
+  // First pass: collect distinct footnote entries.
+  draft.blocks.forEach((b, blockIndex) => {
+    if (b.kind === "heading") return;
+    if (b.source_refs.length === 0) return;
+    const distinct = resolveBlockSources(b.source_refs);
+    if (distinct.length === 0) return;
     const sortedIds = [...distinct.map((s) => s.candidate_id)].sort();
     const key = sortedIds.join("|");
-    if (keyToEntry.has(key)) continue;
+    if (keyToEntry.has(key)) return;
     const entry: MarkerEntry = {
       key,
-      number: entriesInOrder.length + 1,
+      number: 0,
       title: distinct.length === 1
         ? distinct[0].title
         : distinct.map((s) => s.title).join("; "),
@@ -110,10 +202,40 @@ export function buildFootnotedAnswer(
       source_type: distinct.length === 1 ? distinct[0].source_type : "compound",
       source_candidate_ids: distinct.map((s) => s.candidate_id),
       source_inputs: distinct,
+      first_seen: blockIndex,
     };
     keyToEntry.set(key, entry);
     entriesInOrder.push(entry);
-  }
+  });
+
+  // ── Hierarchy ordering: primary authority first, then secondary, then the
+  // rest. Numbering follows this order, so footnote 1 / used_sources[0] is the
+  // most authoritative source actually used.
+  const entryTier = (e: MarkerEntry): HierarchyTier => {
+    let best: HierarchyTier = "other";
+    let bestRank = Infinity;
+    for (const s of e.source_inputs) {
+      const t = hierarchyTierOf(s);
+      if (tierRank(t) < bestRank) {
+        bestRank = tierRank(t);
+        best = t;
+      }
+    }
+    return best;
+  };
+  entriesInOrder.sort((a, b) => {
+    const ta = tierRank(entryTier(a));
+    const tb = tierRank(entryTier(b));
+    if (ta !== tb) return ta - tb;
+    const c = compareHierarchy(a.source_inputs[0], 0, b.source_inputs[0], 0);
+    if (c !== 0) return c;
+    return a.first_seen - b.first_seen;
+  });
+  entriesInOrder.forEach((e, i) => {
+    e.number = i + 1;
+  });
+
+  counting = false;
 
   // Second pass: render markdown.
   const out: string[] = [];
@@ -125,21 +247,10 @@ export function buildFootnotedAnswer(
   let marker_count = 0;
 
   const renderSegment = (block: Extract<StructuredBlock, { source_refs: string[] }>): string => {
-    let text = block.text.trim();
-    if (block.source_refs.length === 0) {
-      return text;
-    }
-    const resolved = block.source_refs
-      .map((r) => inputByRef.get(r))
-      .filter((s): s is DrafterInputSource => !!s);
-    if (resolved.length === 0) return text;
-    const seen = new Set<string>();
-    const distinct: DrafterInputSource[] = [];
-    for (const s of resolved) {
-      if (seen.has(s.candidate_id)) continue;
-      seen.add(s.candidate_id);
-      distinct.push(s);
-    }
+    const text = block.text.trim();
+    if (block.source_refs.length === 0) return text;
+    const distinct = resolveBlockSources(block.source_refs);
+    if (distinct.length === 0) return text;
     const sortedIds = [...distinct.map((s) => s.candidate_id)].sort();
     const key = sortedIds.join("|");
     const entry = keyToEntry.get(key);
@@ -149,6 +260,7 @@ export function buildFootnotedAnswer(
     marker_count++;
     return placeMarker(text, toSuperscript(entry.number));
   };
+
 
   for (const b of draft.blocks) {
     if (b.kind === "heading") {
@@ -240,10 +352,62 @@ export function buildFootnotedAnswer(
   const totalRefs = entriesInOrder.reduce((s, e) => s + e.source_candidate_ids.length, 0);
   const compound_footnote_count = entriesInOrder.filter((e) => e.source_candidate_ids.length > 1).length;
 
+  // ── Hierarchy telemetry + local invariants ───────────────────────────────
+  const used_sources_hierarchy_counts: Record<string, number> = {};
+  let first_primary_position: number | null = null;
+  let first_secondary_position: number | null = null;
+  used_sources.forEach((u, i) => {
+    const tier = hierarchyTierOf(u as never);
+    used_sources_hierarchy_counts[tier] = (used_sources_hierarchy_counts[tier] ?? 0) + 1;
+    const klass = hierarchyClassOf(tier);
+    if (klass === "primary" && first_primary_position === null) first_primary_position = i + 1;
+    if (klass === "secondary" && first_secondary_position === null) first_secondary_position = i + 1;
+  });
+  const usable_primary_count = used_sources.filter(
+    (u) => hierarchyClassOf(hierarchyTierOf(u as never)) === "primary",
+  ).length;
+  const primary_before_secondary_passed =
+    first_primary_position === null ||
+    first_secondary_position === null ||
+    (first_primary_position as number) < (first_secondary_position as number);
+  const head = used_sources.slice(0, 3);
+  const head5 = used_sources.slice(0, 5);
+  const commentary_head_count = head.filter(
+    (u) => hierarchyClassOf(hierarchyTierOf(u as never)) === "secondary",
+  ).length;
+  const commentary_head5_count = head5.filter(
+    (u) => hierarchyClassOf(hierarchyTierOf(u as never)) === "secondary",
+  ).length;
+  const primary_head5_count = head5.filter(
+    (u) => hierarchyClassOf(hierarchyTierOf(u as never)) === "primary",
+  ).length;
+  const head_cap_passed =
+    usable_primary_count < 2
+      ? primary_before_secondary_passed
+      : commentary_head_count <= 1 && primary_head5_count >= commentary_head5_count;
+
+  const hierarchy_report: HierarchyReport = {
+    hierarchy_order_applied: true,
+    used_sources_hierarchy_counts,
+    first_primary_position,
+    first_secondary_position,
+    primary_before_secondary_passed,
+    mixed_hierarchy_footnotes_count,
+    mixed_hierarchy_footnotes_split,
+    commentary_head_count,
+    commentary_head5_count,
+    primary_head5_count,
+    head_cap_passed,
+    statute_identity_dedup_count,
+    usable_primary_count,
+  };
+
   return {
     answer_markdown,
     footnotes,
     used_sources,
+    hierarchy_report,
+
     builder_report: {
       paragraph_count,
       list_item_count,
