@@ -1,0 +1,97 @@
+[
+  {
+    "id": "R02",
+    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+    "run_id": "0e3a0a92-267d-4bf3-9270-9650fdaca104",
+    "total_ms": 147496,
+    "mode": null,
+    "shape": null,
+    "deterministic_branch": "docket_limitation",
+    "identity": {
+      "required": true,
+      "requested_docket": "ע\"א 6821/93",
+      "requested_case_title": "בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+      "matched_judgment_ref": null,
+      "matched_by": "none",
+      "title_recovery_attempted": false,
+      "title_recovery_success": false,
+      "recovered_title": null,
+      "generic_title_detected": false,
+      "passed": false,
+      "failure_reason": "judgment_body_missing_identity",
+      "title_recoveries": []
+    },
+    "acquisition_success": false,
+    "used_sources_count": 0,
+    "footnote1": null,
+    "used_sources": [],
+    "is_stub": false,
+    "answer_head": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 6821/93 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+  },
+  {
+    "id": "R01",
+    "query": "מה נקבע בבג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל?",
+    "run_id": "9fad551c-775a-47a8-b9aa-0cee35b4c51f",
+    "total_ms": 254359,
+    "mode": null,
+    "shape": null,
+    "deterministic_branch": null,
+    "identity": {
+      "required": true,
+      "requested_docket": "בג\"ץ 6698/95",
+      "requested_case_title": "קעדאן נ' מינהל מקרקעי ישראל",
+      "matched_judgment_ref": "HCJ 6698/95 - Ka'adan et al. v. Israel Land Administration et al. judgment",
+      "matched_by": "docket",
+      "title_recovery_attempted": false,
+      "title_recovery_success": false,
+      "recovered_title": null,
+      "generic_title_detected": false,
+      "passed": true,
+      "failure_reason": null,
+      "title_recoveries": []
+    },
+    "acquisition_success": false,
+    "used_sources_count": 4,
+    "footnote1": {
+      "title": "HCJ 6698/95 - Ka'adan et al. v. Israel Land Administration et al. judgment",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=EnglishVerdicts%5C95%5C980%5C066%5Ca14&fileName=95066980_a14.txt&type=4"
+    },
+    "used_sources": [
+      "HCJ 6698/95 - Ka'adan et al. v. Israel Land Administration et al. judgment",
+      "פסק דין מתוך אתר ממשלתי (gov.il)",
+      "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+      "חוק־יסוד: כבוד האדם וחירותו"
+    ],
+    "is_stub": false,
+    "answer_head": "**בג\"ץ קעדאן (בג\"ץ 6698/95) — הלכות מרכזיות**\n\nבית המשפט קבע בפסק‑דין כי המדינה לא הורשתה על‑פי החוק להקצות קרקע מדינה לסוכנות היהודית לצורך הקמת היישוב קציר על בסיס אפליה בין יהודים ללא‑יהודים.¹\n\nמהכרעתו של בית המשפט נגזר עיקרון מחייב לפיו מינהל מקרקעי ישראל והמדינה אינם רשאים להפעיל קריטריוני לאום או דת בהקצאת מקרקעין מדינתיים; איסור ההפליה חל גם כאשר המעשה נעשה במסגרת העברת ההקצאה לגופים חיצוני"
+  },
+  {
+    "id": "P02",
+    "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+    "run_id": "a0a90167-f642-4339-b360-cf64467df078",
+    "total_ms": 167664,
+    "mode": null,
+    "shape": null,
+    "deterministic_branch": "docket_limitation",
+    "identity": {
+      "required": true,
+      "requested_docket": "ע\"א 99887/04/22",
+      "requested_case_title": "לוי נ' מדינת ישראל",
+      "matched_judgment_ref": "פסק-דין בתיק ע\"פ 7128/16",
+      "matched_by": "body",
+      "title_recovery_attempted": false,
+      "title_recovery_success": false,
+      "recovered_title": null,
+      "generic_title_detected": false,
+      "passed": true,
+      "failure_reason": null,
+      "title_recoveries": []
+    },
+    "acquisition_success": false,
+    "used_sources_count": 0,
+    "footnote1": null,
+    "used_sources": [],
+    "is_stub": false,
+    "answer_head": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+  }
+]
