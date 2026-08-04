@@ -20,6 +20,7 @@ import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRo
 import { runJudgmentTextAcquisition } from "./stages/judgmentTextAcquisition.ts";
 import { buildJudgmentDiscoveryQueries } from "./stages/judgmentDiscovery.ts";
 import { runSpecificCaseResolution } from "./stages/specificCaseResolution.ts";
+import { runSpecificCaseIdentity } from "./stages/specificCaseIdentity.ts";
 import { runVerifier } from "./stages/verifier.ts";
 import { runDrafter } from "./stages/drafter.ts";
 import { runDrafterV2 } from "./stages/drafterV2.ts";
@@ -583,6 +584,29 @@ async function handle(req: Request): Promise<Response> {
     candidates: pool.candidates,
   });
 
+  // ─── Specific-case judgment identity + title recovery ───────────────────
+  // A case-holding answer requires a usable judgment body that provably is the
+  // requested case. Generic-titled official documents get a recovered title.
+  const specificCaseIdentity = runSpecificCaseIdentity({
+    research_mode: plannerStage.mode_plan?.mode ?? null,
+    question,
+    candidates: pool.candidates,
+  });
+
+  const specificCaseGate =
+    specificCase.enabled || specificCaseIdentity.specific_case_identity_required
+      ? {
+          allow:
+            (!specificCase.enabled || specificCase.allow_case_holding_answer) &&
+            specificCaseIdentity.specific_case_identity_passed,
+          docket_display:
+            specificCase.requested_docket_display ?? specificCaseIdentity.requested_docket,
+          reason: !specificCaseIdentity.specific_case_identity_passed
+            ? `specific_case_identity_limitation:${specificCaseIdentity.specific_case_identity_failure_reason}`
+            : specificCase.final_docket_branch_reason,
+        }
+      : null;
+
   const role_corrections = pplx.per_query.flatMap((pq) =>
     pq.results
       .filter((r) => r.role_corrected_from)
@@ -660,6 +684,7 @@ async function handle(req: Request): Promise<Response> {
     },
     judgment_text_acquisition: judgmentAcquisition,
     specific_case_resolution: specificCase,
+    specific_case_identity: specificCaseIdentity,
     judgment_discovery: {
       enabled: judgmentDiscovery.enabled,
       survey_like: judgmentDiscovery.survey_like,
@@ -866,13 +891,7 @@ async function handle(req: Request): Promise<Response> {
       requiredAnchorCandidateIds,
       satisfiedStatuteSectionAnchors,
       researchMode: plannerStage.mode_plan?.mode ?? null,
-      specificCaseGate: specificCase.enabled
-        ? {
-            allow: specificCase.allow_case_holding_answer,
-            docket_display: specificCase.requested_docket_display,
-            reason: specificCase.final_docket_branch_reason,
-          }
-        : null,
+      specificCaseGate,
     },
   );
   stage_runs.push(...drafter.stage_runs);
@@ -916,13 +935,7 @@ async function handle(req: Request): Promise<Response> {
           requiredAnchorCandidateIds,
           satisfiedStatuteSectionAnchors,
           researchMode: plannerStage.mode_plan?.mode ?? null,
-          specificCaseGate: specificCase.enabled
-            ? {
-                allow: specificCase.allow_case_holding_answer,
-                docket_display: specificCase.requested_docket_display,
-                reason: specificCase.final_docket_branch_reason,
-              }
-            : null,
+          specificCaseGate,
           forceModel: "openai/gpt-5",
           skipEscalation: true,
         },
@@ -1063,6 +1076,7 @@ async function handle(req: Request): Promise<Response> {
     missing_docket_limitation_fired: drafter.deterministic_branch === "docket_limitation",
     // Specific-case authority resolution telemetry.
     specific_case_resolution: specificCase,
+    specific_case_identity: specificCaseIdentity,
     requested_docket_normalized: specificCase.requested_docket_normalized,
     exact_docket_source_found: specificCase.exact_docket_source_found,
     exact_docket_source_title: specificCase.exact_docket_source_title,
