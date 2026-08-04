@@ -1,0 +1,1251 @@
+{
+  "id": "R02",
+  "query": "מה נקבע בבנק המזרחי ביחס לסמכות בית המשפט לבטל חקיקה?",
+  "run_id": "b6e96b91-9887-4314-90f6-3b464445a66e",
+  "total_ms": 237130,
+  "research_mode": null,
+  "shape": null,
+  "deterministic_branch": null,
+  "is_stub": false,
+  "verifier_counts": {
+    "by_support": {
+      "direct": 0,
+      "partial": 8,
+      "unrelated": 4,
+      "tangential": 1
+    },
+    "by_role_match": {
+      "true": 13,
+      "false": 0
+    },
+    "model_verdicts": 13,
+    "by_support_model": {
+      "direct": 0,
+      "partial": 8,
+      "unrelated": 4,
+      "tangential": 1
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "verifier_errors": [],
+  "sufficiency": {
+    "shape": "case_holding",
+    "reason": "shape_not_gated",
+    "applied": false,
+    "category": "not_applicable",
+    "sufficient": true,
+    "thin_source": false,
+    "found_titles": [
+      "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+      "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+      "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
+      "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)"
+    ],
+    "topical_refs": [],
+    "topic_phrases": [
+      "בבנק המזרחי ביחס לסמכות",
+      "המזרחי ביחס לסמכות בית",
+      "נקבע בבנק המזרחי ביחס",
+      "המזרחי ביחס לסמכות",
+      "נקבע בבנק המזרחי",
+      "בבנק המזרחי ביחס",
+      "ביחס לסמכות בית",
+      "בבנק המזרחי",
+      "המזרחי ביחס",
+      "ביחס לסמכות",
+      "לסמכות בית",
+      "לבטל חקיקה",
+      "נקבע בבנק"
+    ],
+    "case_law_required": false,
+    "statute_only_answer": false,
+    "sufficiency_profile": "not_applicable",
+    "usable_judgment_refs": [
+      "s3"
+    ],
+    "exact_amounts_allowed": true,
+    "governing_statute_refs": [],
+    "topical_authority_refs": [],
+    "morphology_domain_match": false,
+    "normalized_source_tokens": [
+      "אכרם",
+      "חסון",
+      "נסת",
+      "ירושל",
+      "פסק",
+      "דין",
+      "חוק",
+      "חירותו",
+      "בוד",
+      "יסוד",
+      "חוקתי",
+      "עמד",
+      "יהודי",
+      "אופי",
+      "שמור",
+      "חויב",
+      "וננ",
+      "רשו",
+      "ובע",
+      "חוקק",
+      "דיננו",
+      "שבפסק",
+      "פרשנ",
+      "בהר",
+      "נתון",
+      "דינ",
+      "דמוקרטי",
+      "שתרמו",
+      "עתיר",
+      "פיכך",
+      "ישראל",
+      "שליל",
+      "שום",
+      "אום",
+      "ידח",
+      "אשורו",
+      "שפטי",
+      "מצב",
+      "ינץ",
+      "שופט",
+      "טאמז",
+      "אלישקוב",
+      "נוס",
+      "יטול",
+      "ביא",
+      "דבר",
+      "עשוי",
+      "חוז",
+      "הלן",
+      "לוי",
+      "משל",
+      "סכם",
+      "סקנ",
+      "יצדיקו",
+      "שקל",
+      "בדי",
+      "טעמ",
+      "שישנם",
+      "לבד",
+      "זאת"
+    ],
+    "governing_regulation_refs": [],
+    "normalized_question_tokens": [
+      "נקבע",
+      "בנק",
+      "זרחי",
+      "יחס",
+      "סמכ",
+      "בית",
+      "בטל",
+      "חקיק"
+    ],
+    "sufficiency_authority_basis": "usable_judgment",
+    "thin_governing_statute_refs": [],
+    "thin_governing_regulation_refs": [],
+    "authority_type_sufficiency_passed": true,
+    "case_law_missing_but_not_required": false,
+    "practical_steps_thin_authority_passed": false
+  },
+  "acquisition": {
+    "ms": 4315,
+    "mode": "specific_case",
+    "budget": {
+      "other": 1,
+      "total": 3,
+      "leading": 3
+    },
+    "enabled": true,
+    "attempts": [
+      {
+        "ms": 2567,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/1&fileName=SH1_13_10662-04.pdf&type=2",
+        "title": "בג\"ץ 10662-04 - סלאח חסן נ. המוסד לביטוח לאומי",
+        "success": true,
+        "candidate_id": "f20e1af3-ee19-4e8c-9287-03548fecd0a3",
+        "title_signal": "בג\"ץ 10662-04 - סלאח חסן נ. המוסד לביטוח לאומי",
+        "docket_signal": "בג\"ץ 10662/04",
+        "failure_reason": null,
+        "synthesis_role": "leading_candidate",
+        "trigger_reason": "no_judgment_body_text",
+        "has_holding_text": true,
+        "method_succeeded": "direct_file_fetch",
+        "docket_normalized": "bagatz:10662/4",
+        "methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": true,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 178397,
+        "text_usability_before": "substantive_excerpt",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": true
+      },
+      {
+        "ms": 1744,
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "success": true,
+        "candidate_id": "7f4e8413-96b2-4fb9-8551-a7064aae8003",
+        "title_signal": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "docket_signal": "בג\"ץ 5658/23",
+        "failure_reason": null,
+        "synthesis_role": "secondary_commentary",
+        "trigger_reason": "no_judgment_body_text",
+        "has_holding_text": true,
+        "method_succeeded": "local_db_docket_lookup",
+        "docket_normalized": "bagatz:5658/23",
+        "methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": true,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 11849,
+        "text_usability_before": "substantive_excerpt",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": true
+      }
+    ],
+    "excluded": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+        "reason": "budget_exhausted",
+        "candidate_id": "706944ee-bb17-4aa2-8494-a84d843f7918"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-5427-21-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%9e%d7%a9%d7%98%d7%a8%d7%aa-%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "עע\"מ 5427/21 מדינת ישראל- משרד הבריאות, משטרת ישראל ובית החולים נ׳ פלוני פס\"ד פסק דין (31.05.2022)",
+        "reason": "budget_exhausted",
+        "candidate_id": "cb6ff81d-cfe3-48e3-805d-59fe9c68a4d1"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-647-20-%d7%98%d7%90%d7%9e%d7%96-%d7%90%d7%9c%d7%99%d7%a9%d7%a7%d7%95%d7%91-%d7%a0-%d7%90-%d7%a8-%d7%90-%d7%91-%d7%91%d7%95%d7%a0%d7%95%d7%a1-%d7%91%d7%a2%d7%9e-2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"א 647/20 טאמז אלישקוב נ׳ א.ר.א.ב בונוס בע\"מ פסק דין (02.09.2021)",
+        "reason": "budget_exhausted",
+        "candidate_id": "97e1042e-0152-4bf7-862a-892150a235e0"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-647-20-%d7%98%d7%90%d7%9e%d7%96-%d7%90%d7%9c%d7%99%d7%a9%d7%a7%d7%95%d7%91-%d7%a0-%d7%90-%d7%a8-%d7%90-%d7%91-%d7%91%d7%95%d7%a0%d7%95%d7%a1-%d7%91%d7%a2%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"א 647/20 טאמז אלישקוב נ׳ א.ר.א.ב בונוס בע\"מ פסק דין (23.12.2019)",
+        "reason": "budget_exhausted",
+        "candidate_id": "92fe97d9-c48f-4527-9ead-d74d83c1ec32"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+        "reason": "budget_exhausted",
+        "candidate_id": "48344cec-2eb5-40b6-8fad-62bef8d55417"
+      }
+    ],
+    "successes": 2,
+    "attempts_made": 2,
+    "eligible_count": 7,
+    "judgment_candidates": 7,
+    "eligibility_diagnostics": [
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+        "eligible": true,
+        "citable_as": "not_citable",
+        "rank_score": -140,
+        "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+        "source_type": "caselaw",
+        "candidate_id": "48344cec-2eb5-40b6-8fad-62bef8d55417",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "index_or_listing",
+        "synthesis_role": "unknown",
+        "text_usability": "listing_page",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": "ta:32539/4/24",
+        "eligibility_basis": [
+          "docket_signal"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": false,
+        "rank_before_acquisition": 7,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/1&fileName=SH1_13_10662-04.pdf&type=2",
+        "title": "בג\"ץ 10662-04 - סלאח חסן נ. המוסד לביטוח לאומי",
+        "eligible": true,
+        "citable_as": "judgment",
+        "rank_score": 135,
+        "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+        "source_type": "supreme_court_il",
+        "candidate_id": "f20e1af3-ee19-4e8c-9287-03548fecd0a3",
+        "planner_role": "binding_case_law",
+        "has_court_url": true,
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": true,
+        "docket_normalized": "bagatz:10662/4",
+        "eligibility_basis": [
+          "docket_signal",
+          "official_court_url",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "rank_before_acquisition": 1,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "eligible": true,
+        "citable_as": "commentary",
+        "rank_score": 15,
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "source_type": "caselaw",
+        "candidate_id": "7f4e8413-96b2-4fb9-8551-a7064aae8003",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": null,
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "bagatz:5658/23",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": true,
+        "rank_before_acquisition": 2,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "rank_score": 15,
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "source_type": "caselaw",
+        "candidate_id": "706944ee-bb17-4aa2-8494-a84d843f7918",
+        "planner_role": "primary_statute",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "bagatz:5555/18",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "rank_before_acquisition": 3,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-5427-21-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%9e%d7%a9%d7%98%d7%a8%d7%aa-%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "עע\"מ 5427/21 מדינת ישראל- משרד הבריאות, משטרת ישראל ובית החולים נ׳ פלוני פס\"ד פסק דין (31.05.2022)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "rank_score": 15,
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "source_type": "caselaw",
+        "candidate_id": "cb6ff81d-cfe3-48e3-805d-59fe9c68a4d1",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "aam:5427/21",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "rank_before_acquisition": 4,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-647-20-%d7%98%d7%90%d7%9e%d7%96-%d7%90%d7%9c%d7%99%d7%a9%d7%a7%d7%95%d7%91-%d7%a0-%d7%90-%d7%a8-%d7%90-%d7%91-%d7%91%d7%95%d7%a0%d7%95%d7%a1-%d7%91%d7%a2%d7%9e-2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"א 647/20 טאמז אלישקוב נ׳ א.ר.א.ב בונוס בע\"מ פסק דין (02.09.2021)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "rank_score": 15,
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "source_type": "caselaw",
+        "candidate_id": "97e1042e-0152-4bf7-862a-892150a235e0",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "aa:647/20",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "rank_before_acquisition": 5,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-647-20-%d7%98%d7%90%d7%9e%d7%96-%d7%90%d7%9c%d7%99%d7%a9%d7%a7%d7%95%d7%91-%d7%a0-%d7%90-%d7%a8-%d7%90-%d7%91-%d7%91%d7%95%d7%a0%d7%95%d7%a1-%d7%91%d7%a2%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"א 647/20 טאמז אלישקוב נ׳ א.ר.א.ב בונוס בע\"מ פסק דין (23.12.2019)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "rank_score": 15,
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "source_type": "caselaw",
+        "candidate_id": "92fe97d9-c48f-4527-9ead-d74d83c1ec32",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "aa:647/20",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "rank_before_acquisition": 6,
+        "would_have_been_attempted_under_relaxed_rule": true
+      }
+    ],
+    "acquisition_budget_spent_on": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/1&fileName=SH1_13_10662-04.pdf&type=2",
+        "rank": 1,
+        "title": "בג\"ץ 10662-04 - סלאח חסן נ. המוסד לביטוח לאומי",
+        "success": true,
+        "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+        "candidate_id": "f20e1af3-ee19-4e8c-9287-03548fecd0a3",
+        "official_judgment_document": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 2,
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "success": true,
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "7f4e8413-96b2-4fb9-8551-a7064aae8003",
+        "official_judgment_document": false
+      }
+    ],
+    "official_judgment_documents_found": 1,
+    "skipped_higher_quality_candidates": 0,
+    "official_judgment_documents_acquired": 1,
+    "institutional_pages_excluded_before_budget": 1,
+    "judgment_candidate_rank_before_acquisition": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/1&fileName=SH1_13_10662-04.pdf&type=2",
+        "rank": 1,
+        "score": 135,
+        "title": "בג\"ץ 10662-04 - סלאח חסן נ. המוסד לביטוח לאומי",
+        "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+        "candidate_id": "f20e1af3-ee19-4e8c-9287-03548fecd0a3",
+        "negative_signals": [],
+        "positive_signals": [
+          "official_court_download_url",
+          "direct_judgment_document",
+          "docket_signal",
+          "planner_judgment_role",
+          "planner_leading_role",
+          "integrity_judgment_document"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 2,
+        "score": 15,
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "7f4e8413-96b2-4fb9-8551-a7064aae8003",
+        "negative_signals": [
+          "commentary_with_case_mention_only"
+        ],
+        "positive_signals": [
+          "docket_signal",
+          "case_title_pattern"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 3,
+        "score": 15,
+        "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "706944ee-bb17-4aa2-8494-a84d843f7918",
+        "negative_signals": [
+          "commentary_with_case_mention_only"
+        ],
+        "positive_signals": [
+          "docket_signal",
+          "case_title_pattern"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-5427-21-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%9e%d7%a9%d7%98%d7%a8%d7%aa-%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 4,
+        "score": 15,
+        "title": "עע\"מ 5427/21 מדינת ישראל- משרד הבריאות, משטרת ישראל ובית החולים נ׳ פלוני פס\"ד פסק דין (31.05.2022)",
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "cb6ff81d-cfe3-48e3-805d-59fe9c68a4d1",
+        "negative_signals": [
+          "commentary_with_case_mention_only"
+        ],
+        "positive_signals": [
+          "docket_signal",
+          "case_title_pattern"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-647-20-%d7%98%d7%90%d7%9e%d7%96-%d7%90%d7%9c%d7%99%d7%a9%d7%a7%d7%95%d7%91-%d7%a0-%d7%90-%d7%a8-%d7%90-%d7%91-%d7%91%d7%95%d7%a0%d7%95%d7%a1-%d7%91%d7%a2%d7%9e-2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 5,
+        "score": 15,
+        "title": "ע\"א 647/20 טאמז אלישקוב נ׳ א.ר.א.ב בונוס בע\"מ פסק דין (02.09.2021)",
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "97e1042e-0152-4bf7-862a-892150a235e0",
+        "negative_signals": [
+          "commentary_with_case_mention_only"
+        ],
+        "positive_signals": [
+          "docket_signal",
+          "case_title_pattern"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-647-20-%d7%98%d7%90%d7%9e%d7%96-%d7%90%d7%9c%d7%99%d7%a9%d7%a7%d7%95%d7%91-%d7%a0-%d7%90-%d7%a8-%d7%90-%d7%91-%d7%91%d7%95%d7%a0%d7%95%d7%a1-%d7%91%d7%a2%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 6,
+        "score": 15,
+        "title": "ע\"א 647/20 טאמז אלישקוב נ׳ א.ר.א.ב בונוס בע\"מ פסק דין (23.12.2019)",
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "92fe97d9-c48f-4527-9ead-d74d83c1ec32",
+        "negative_signals": [
+          "commentary_with_case_mention_only"
+        ],
+        "positive_signals": [
+          "docket_signal",
+          "case_title_pattern"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": false
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "rank": 7,
+        "score": -140,
+        "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+        "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+        "candidate_id": "48344cec-2eb5-40b6-8fad-62bef8d55417",
+        "negative_signals": [
+          "institutional_or_root_page",
+          "listing_or_index_page",
+          "integrity_listing_or_not_citable"
+        ],
+        "positive_signals": [
+          "docket_signal"
+        ],
+        "is_institutional_or_listing": true,
+        "is_official_judgment_document": false
+      }
+    ]
+  },
+  "judgment_discovery": {
+    "topic": null,
+    "layers": [],
+    "enabled": false,
+    "survey_like": false,
+    "judgment_discovery_queries": [],
+    "acquisition_budget_spent_on": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/1&fileName=SH1_13_10662-04.pdf&type=2",
+        "rank": 1,
+        "title": "בג\"ץ 10662-04 - סלאח חסן נ. המוסד לביטוח לאומי",
+        "success": true,
+        "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+        "candidate_id": "f20e1af3-ee19-4e8c-9287-03548fecd0a3",
+        "official_judgment_document": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 2,
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "success": true,
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "7f4e8413-96b2-4fb9-8551-a7064aae8003",
+        "official_judgment_document": false
+      }
+    ],
+    "judgment_candidate_rank_reason": [
+      {
+        "rank": 1,
+        "reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+        "candidate_id": "f20e1af3-ee19-4e8c-9287-03548fecd0a3"
+      },
+      {
+        "rank": 2,
+        "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "7f4e8413-96b2-4fb9-8551-a7064aae8003"
+      },
+      {
+        "rank": 3,
+        "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "706944ee-bb17-4aa2-8494-a84d843f7918"
+      },
+      {
+        "rank": 4,
+        "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "cb6ff81d-cfe3-48e3-805d-59fe9c68a4d1"
+      },
+      {
+        "rank": 5,
+        "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "97e1042e-0152-4bf7-862a-892150a235e0"
+      },
+      {
+        "rank": 6,
+        "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "92fe97d9-c48f-4527-9ead-d74d83c1ec32"
+      },
+      {
+        "rank": 7,
+        "reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+        "candidate_id": "48344cec-2eb5-40b6-8fad-62bef8d55417"
+      }
+    ],
+    "commentary_share_of_admitted_pack": 0.69,
+    "official_judgment_documents_found": 1,
+    "skipped_higher_quality_candidates": 0,
+    "official_judgment_documents_acquired": 1,
+    "institutional_pages_excluded_before_budget": 1,
+    "judgment_candidate_rank_before_acquisition": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/1&fileName=SH1_13_10662-04.pdf&type=2",
+        "rank": 1,
+        "score": 135,
+        "title": "בג\"ץ 10662-04 - סלאח חסן נ. המוסד לביטוח לאומי",
+        "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+        "candidate_id": "f20e1af3-ee19-4e8c-9287-03548fecd0a3",
+        "negative_signals": [],
+        "positive_signals": [
+          "official_court_download_url",
+          "direct_judgment_document",
+          "docket_signal",
+          "planner_judgment_role",
+          "planner_leading_role",
+          "integrity_judgment_document"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 2,
+        "score": 15,
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "7f4e8413-96b2-4fb9-8551-a7064aae8003",
+        "negative_signals": [
+          "commentary_with_case_mention_only"
+        ],
+        "positive_signals": [
+          "docket_signal",
+          "case_title_pattern"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 3,
+        "score": 15,
+        "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "706944ee-bb17-4aa2-8494-a84d843f7918",
+        "negative_signals": [
+          "commentary_with_case_mention_only"
+        ],
+        "positive_signals": [
+          "docket_signal",
+          "case_title_pattern"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-5427-21-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%9e%d7%a9%d7%98%d7%a8%d7%aa-%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 4,
+        "score": 15,
+        "title": "עע\"מ 5427/21 מדינת ישראל- משרד הבריאות, משטרת ישראל ובית החולים נ׳ פלוני פס\"ד פסק דין (31.05.2022)",
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "cb6ff81d-cfe3-48e3-805d-59fe9c68a4d1",
+        "negative_signals": [
+          "commentary_with_case_mention_only"
+        ],
+        "positive_signals": [
+          "docket_signal",
+          "case_title_pattern"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-647-20-%d7%98%d7%90%d7%9e%d7%96-%d7%90%d7%9c%d7%99%d7%a9%d7%a7%d7%95%d7%91-%d7%a0-%d7%90-%d7%a8-%d7%90-%d7%91-%d7%91%d7%95%d7%a0%d7%95%d7%a1-%d7%91%d7%a2%d7%9e-2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 5,
+        "score": 15,
+        "title": "ע\"א 647/20 טאמז אלישקוב נ׳ א.ר.א.ב בונוס בע\"מ פסק דין (02.09.2021)",
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "97e1042e-0152-4bf7-862a-892150a235e0",
+        "negative_signals": [
+          "commentary_with_case_mention_only"
+        ],
+        "positive_signals": [
+          "docket_signal",
+          "case_title_pattern"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-647-20-%d7%98%d7%90%d7%9e%d7%96-%d7%90%d7%9c%d7%99%d7%a9%d7%a7%d7%95%d7%91-%d7%a0-%d7%90-%d7%a8-%d7%90-%d7%91-%d7%91%d7%95%d7%a0%d7%95%d7%a1-%d7%91%d7%a2%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 6,
+        "score": 15,
+        "title": "ע\"א 647/20 טאמז אלישקוב נ׳ א.ר.א.ב בונוס בע\"מ פסק דין (23.12.2019)",
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "92fe97d9-c48f-4527-9ead-d74d83c1ec32",
+        "negative_signals": [
+          "commentary_with_case_mention_only"
+        ],
+        "positive_signals": [
+          "docket_signal",
+          "case_title_pattern"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": false
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "rank": 7,
+        "score": -140,
+        "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+        "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+        "candidate_id": "48344cec-2eb5-40b6-8fad-62bef8d55417",
+        "negative_signals": [
+          "institutional_or_root_page",
+          "listing_or_index_page",
+          "integrity_listing_or_not_citable"
+        ],
+        "positive_signals": [
+          "docket_signal"
+        ],
+        "is_institutional_or_listing": true,
+        "is_official_judgment_document": false
+      }
+    ]
+  },
+  "usable_judgments": [
+    {
+      "ref": "s3",
+      "acquired_text_length": null,
+      "verifier": [],
+      "in_answer_footnote": false
+    }
+  ],
+  "admitted_sources": [
+    {
+      "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+      "role": "binding_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "listing_or_pagination_page"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "יישום \"חוק פיצול דירות\" (חוק התכנון והבנייה",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6629&businessType=1",
+      "role": "primary_statute",
+      "tier": "primary_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "official_host_non_specific_path"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "חוק בינוי ופינוי של אזורי שיקום",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+      "url": "https://lawjournal.huji.ac.il/article/12/1930",
+      "role": "primary_statute",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+      "role": "primary_statute",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "בג\"ץ 10662-04 - סלאח חסן נ. המוסד לביטוח לאומי",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/1&fileName=SH1_13_10662-04.pdf&type=2",
+      "role": "binding_case_law",
+      "tier": "official_primary",
+      "text_usability": "full_text",
+      "citable_as": "judgment",
+      "judgment": true,
+      "holding_text": true,
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "judgment_document",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": true,
+      "synthesis_role": "secondary_commentary",
+      "flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_3b568f65476147a5b5282e9b0226732c.pdf",
+      "role": "primary_statute",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "primary_statute",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": true,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
+      "url": "https://lawjournal.huji.ac.il/article/12/1916",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "עע\"מ 5427/21 מדינת ישראל- משרד הבריאות, משטרת ישראל ובית החולים נ׳ פלוני פס\"ד פסק דין (31.05.2022)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-5427-21-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%9e%d7%a9%d7%98%d7%a8%d7%aa-%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "ע\"א 647/20 טאמז אלישקוב נ׳ א.ר.א.ב בונוס בע\"מ פסק דין (02.09.2021)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-647-20-%d7%98%d7%90%d7%9e%d7%96-%d7%90%d7%9c%d7%99%d7%a9%d7%a7%d7%95%d7%91-%d7%a0-%d7%90-%d7%a8-%d7%90-%d7%91-%d7%91%d7%95%d7%a0%d7%95%d7%a1-%d7%91%d7%a2%d7%9e-2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "ע\"א 647/20 טאמז אלישקוב נ׳ א.ר.א.ב בונוס בע\"מ פסק דין (23.12.2019)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-647-20-%d7%98%d7%90%d7%9e%d7%96-%d7%90%d7%9c%d7%99%d7%a9%d7%a7%d7%95%d7%91-%d7%a0-%d7%90-%d7%a8-%d7%90-%d7%91-%d7%91%d7%95%d7%a0%d7%95%d7%a1-%d7%91%d7%a2%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "number": 1,
+      "origin": "local_db",
+      "citable_as": "judgment",
+      "source_type": "caselaw",
+      "candidate_id": "7f4e8413-96b2-4fb9-8551-a7064aae8003",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "leading_candidate",
+      "text_usability": "full_text",
+      "integrity_flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "has_holding_text": true,
+      "is_judgment_document": true,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+      "number": 1,
+      "origin": "local_db",
+      "citable_as": "commentary",
+      "source_type": "caselaw",
+      "candidate_id": "706944ee-bb17-4aa2-8494-a84d843f7918",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": true,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1930",
+      "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+      "number": 2,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "37d27376-971b-4646-ba39-4a9923acb8f7",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1916",
+      "title": "סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
+      "number": 3,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "a5a7141f-956a-4f8a-be33-f9ae0721314e",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+      "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+      "number": 4,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "4b3b2d23-da23-42d9-b9d5-896f02590553",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "full_text",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_3b568f65476147a5b5282e9b0226732c.pdf",
+      "title": "מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
+      "number": 5,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "2500a82f-f18f-427d-8697-298d5d79d66f",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "full_text",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    }
+  ],
+  "footnotes": [
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין; בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021); רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1930",
+          "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין; סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1916",
+          "title": "סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1930",
+      "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"; המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1930",
+          "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+          "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+      "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות; מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
+      "number": 5,
+      "sources": [
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+          "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_3b568f65476147a5b5282e9b0226732c.pdf",
+          "title": "מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין; מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
+      "number": 6,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_3b568f65476147a5b5282e9b0226732c.pdf",
+          "title": "מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "answer_len": 1430,
+  "answer": "בהכרעת מזרחי בנק הובהרה ההבחנה בין כובעה המחוקק של הכנסת לבין כובעה המכונן, וכי מעמדם המיוחד של חוקי היסוד יוצר בסיס משפטי שבית המשפט העליון יכול, בנסיבות מתאימות, להפעיל בו ביקורת שיפוטית על חקיקה ראשית ואף להכריז על בטלותה אם היא סותרת הוראות של חוק יסוד.¹\n\nראשית: לפסיקה יחס ברור לכפילות התפקידים של הכנסת — כגוף מחוקק וכגוף מכונן — ומשמעות הכרה זו היא כי חוקי היסוד נושאים משקל נורמטיבי מיוחד בהשוואה לחקיקה רגילה.²\n\nשנית: ביחס לסמכות בית המשפט — ההלכה שבהקשר מזרחי בנק מאפשרת הקצנה מבוקרת של ביקורת שיפוטית: בית המשפט העליון מוסמך לבחון חקיקה ראשית מבחינה חוקתית ולהכריז על בטלותה כאשר מתקיים קונפליקט עם הוראות של חוק יסוד, בפרט כשחלה פגיעה בעקרונות כגון הגבלת זכויות ויש להפעיל מבחני מידתיות והיררכיה נורמטיבית.³\n\nשלישית: מקור סמכות הביטול אינו נובע מסמכות שיפוטית 'טבעית' מצמצמת אלא ממעמדם המכונן של חוקי היסוד — כלומר, מדובר בעוגן חוקתי של יכולת ביקורת ונורמטיבית-עליות של חוקי היסוד ביחס לחקיקה רגילה.⁴\n\nרביעית: בפסיקה ובספרות הובהר גם כי המעמד החוקתי של חוקי היסוד מאפשר פרשנות שיפוטית מרוסנת שבמקרים המתאימים יכולה להסתיים בהצהרת בטלות של חוק; משמעות הדבר שנדרשת בחינה מעמיקה של הוראות חוק היסוד ושל מבחני ההגבלה לפני הכרעה בביטול, ואינה תלויה תמיד בניסוח מפורש של 'סעיף עליונות' בחוק יסוד מסוים.⁵\n\nמגבלות ההסקה: יש להימנע ממסקנות נחרצות על נוסחה פרוצדורלית אחת ובעלת היקף אבסולוטי — בפסיקה עצמה ובהניתוח הספרותי חל וריאציה בנוגע לאופן שבו מנסחים את תנאי הביקורת והיקפה, והדיון בעניין זה ממשיך להתעדכן בהלכות מאוחרות.⁶"
+}
