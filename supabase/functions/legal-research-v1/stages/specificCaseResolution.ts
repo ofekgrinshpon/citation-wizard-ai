@@ -26,6 +26,7 @@ import {
   type DocketRef,
 } from "./docketDetection.ts";
 import { classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
+import { deriveSupremeCourtFileUrls } from "./courtFileUrls.ts";
 import {
   HOLDING_TEXT_RE,
   isDirectFileUrl,
@@ -43,12 +44,16 @@ export const SPECIFIC_CASE_LIMITS = {
   MIN_USABLE_TEXT: 400,
   /** Per-method time box. */
   PER_METHOD_MS: 8000,
+  /** Per derived-URL probe time box. */
+  PER_DERIVED_URL_MS: 6000,
   /** Whole-stage time box. */
-  TOTAL_MS: 20000,
+  TOTAL_MS: 32000,
   /** Never store more than this. */
   MAX_TEXT: 6000,
   /** Max exact-docket candidates we try to resolve. */
   MAX_TARGETS: 2,
+  /** Max derived court URLs probed per run. */
+  MAX_DERIVED_URLS: 4,
 } as const;
 
 const CASE_LIKE_TYPES = new Set([
@@ -62,7 +67,9 @@ const CASE_LIKE_TYPES = new Set([
 export type SpecificCaseAcquisitionMethod =
   | "direct_file_fetch"
   | "local_db_docket_lookup"
-  | "wrapper_file_resolve";
+  | "wrapper_file_resolve"
+  | "court_url_derivation";
+
 
 export interface SpecificCaseResolution {
   enabled: boolean;
@@ -86,6 +93,10 @@ export interface SpecificCaseResolution {
   acquisition_failure_reasons: string[];
   last_acquisition_failure_reason: string | null;
   acquired_text_length: number;
+  /** Derived official court URLs probed (deterministic, docket-validated). */
+  derived_urls_probed: string[];
+  derived_url_resolved: string | null;
+
 
   /** Why the caller will (or will not) fire `docket_limitation`. */
   final_docket_branch_reason:
@@ -127,6 +138,9 @@ function disabled(
     acquisition_failure_reasons: [],
     last_acquisition_failure_reason: null,
     acquired_text_length: 0,
+    derived_urls_probed: [],
+    derived_url_resolved: null,
+
     final_docket_branch_reason: reason,
     allow_case_holding_answer: true,
     near_match_sources_ignored_count: 0,
@@ -367,6 +381,115 @@ export async function runSpecificCaseResolution(
     }
   }
 
+  /**
+   * Inject an acquired judgment body as a first-class candidate (used when the
+   * pool held no exact-docket source at all).
+   */
+  const injectFromText = (
+    title: string,
+    url: string,
+    text: string,
+    method: SpecificCaseAcquisitionMethod,
+  ) => {
+    const base = input.candidates[0];
+    const stored = text.slice(0, SPECIFIC_CASE_LIMITS.MAX_TEXT);
+    const injected: Candidate = {
+      candidate_id: `specific-case:${res.requested_docket_normalized}`,
+      claim_id: base?.claim_id ?? "C1",
+      role: "binding_case_law",
+      origin: method === "local_db_docket_lookup" ? "local_db" : "web",
+      retrieval_method: "text",
+      title: title || (res.requested_docket_display ?? "פסק דין"),
+      source_type: "caselaw",
+      source_url: url,
+      snippet: stored.slice(0, 800),
+      query_he: res.requested_docket_display ?? input.question.slice(0, 80),
+      score: 1,
+      expected_source_type: "case",
+      metadata: {},
+    };
+    const integ = classifySourceIntegrity({
+      title: injected.title,
+      url: injected.source_url,
+      snippet: injected.snippet,
+      source_type: injected.source_type,
+      role: injected.role,
+    });
+    integ.text_usability = (stored.length >= 1200
+      ? "full_text"
+      : "substantive_excerpt") as SourceIntegrity["text_usability"];
+    integ.has_holding_text = integ.has_holding_text || HOLDING_TEXT_RE.test(stored);
+    integ.citable_as = "judgment";
+    integ.is_judgment_document = true;
+    integ.authority_tier = "official_primary";
+    integ.reject = false;
+    delete integ.reject_reason;
+    injected.metadata = {
+      source_integrity: integ,
+      extended_text: stored,
+      exact_docket_match: true,
+      docket_match: true,
+      specific_case_text_acquired: true,
+      specific_case_acquisition_method: method,
+    };
+    input.candidates.unshift(injected);
+    res.injected_candidate_id = injected.candidate_id;
+    res.exact_docket_source_found = true;
+    applyText(injected, text, method);
+  };
+
+  // ── Derived official court file URLs ───────────────────────────────────
+  // The Supreme Court archive path is fully derivable from the docket, so a
+  // landmark judgment can be acquired even when no search result exposes its
+  // download URL. Every body is validated against the requested docket, so a
+  // wrong guess can never be adopted.
+  if (!res.acquisition_success && Date.now() - t0 <= SPECIFIC_CASE_LIMITS.TOTAL_MS) {
+    const derived: string[] = [];
+    for (const d of dockets) {
+      for (const u of deriveSupremeCourtFileUrls(d)) {
+        if (!derived.includes(u)) derived.push(u);
+      }
+    }
+    res.derived_urls_probed = derived.slice(0, SPECIFIC_CASE_LIMITS.MAX_DERIVED_URLS);
+    if (res.derived_urls_probed.length > 0) {
+      res.acquisition_methods_attempted.push("court_url_derivation");
+    }
+    for (const url of res.derived_urls_probed) {
+      if (res.acquisition_success) break;
+      if (Date.now() - t0 > SPECIFIC_CASE_LIMITS.TOTAL_MS) {
+        recordFailure(res, "stage_time_budget_exhausted");
+        break;
+      }
+      try {
+        const got = await withTimeout(
+          tryDirectFile(url, {
+            allowPlainText: true,
+            validateText: (text: string) =>
+              dockets.some((d) => textContainsExactDocket(text.slice(0, 20000), d)),
+          }),
+          SPECIFIC_CASE_LIMITS.PER_DERIVED_URL_MS,
+          "court_url_derivation",
+        );
+        if (got.length >= SPECIFIC_CASE_LIMITS.MIN_USABLE_TEXT) {
+          res.derived_url_resolved = url;
+          const target = targets[0];
+          if (target) applyText(target, normText(got), "court_url_derivation");
+          else {
+            injectFromText(
+              res.requested_docket_display ?? "פסק דין",
+              url,
+              normText(got),
+              "court_url_derivation",
+            );
+          }
+          break;
+        }
+        recordFailure(res, "derived_url_text_below_threshold");
+      } catch (err) {
+        recordFailure(res, `derived_url:${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
+  }
 
   // Local DB by normalized docket variants — also the only path when the pool
   // contains no exact-docket source at all.
@@ -383,47 +506,7 @@ export async function runSpecificCaseResolution(
         if (target) {
           applyText(target, local.text, "local_db_docket_lookup");
         } else {
-          // Inject the local judgment as a first-class candidate.
-          const base = input.candidates[0];
-          const stored = local.text.slice(0, SPECIFIC_CASE_LIMITS.MAX_TEXT);
-          const injected: Candidate = {
-            candidate_id: `specific-case:${res.requested_docket_normalized}`,
-            claim_id: base?.claim_id ?? "C1",
-            role: "binding_case_law",
-            origin: "local_db",
-            retrieval_method: "text",
-            title: local.title || (res.requested_docket_display ?? "פסק דין"),
-            source_type: "caselaw",
-            source_url: local.url,
-            snippet: stored.slice(0, 800),
-            query_he: res.requested_docket_display ?? input.question.slice(0, 80),
-            score: 1,
-            expected_source_type: "case",
-            metadata: {},
-          };
-          const integ = classifySourceIntegrity({
-            title: injected.title,
-            url: injected.source_url,
-            snippet: injected.snippet,
-            source_type: injected.source_type,
-            role: injected.role,
-          });
-          integ.text_usability = (stored.length >= 1200
-            ? "full_text"
-            : "substantive_excerpt") as SourceIntegrity["text_usability"];
-          integ.has_holding_text = integ.has_holding_text || HOLDING_TEXT_RE.test(stored);
-          injected.metadata = {
-            source_integrity: integ,
-            extended_text: stored,
-            exact_docket_match: true,
-            docket_match: true,
-            specific_case_text_acquired: true,
-            specific_case_acquisition_method: "local_db_docket_lookup",
-          };
-          input.candidates.unshift(injected);
-          res.injected_candidate_id = injected.candidate_id;
-          res.exact_docket_source_found = true;
-          applyText(injected, local.text, "local_db_docket_lookup");
+          injectFromText(local.title, local.url, local.text, "local_db_docket_lookup");
         }
       } else {
         recordFailure(res, "no_local_document_match");
@@ -432,6 +515,7 @@ export async function runSpecificCaseResolution(
       recordFailure(res, err instanceof Error ? err.message : String(err));
     }
   }
+
 
   if (!res.acquisition_success) {
     res.allow_case_holding_answer = false;
