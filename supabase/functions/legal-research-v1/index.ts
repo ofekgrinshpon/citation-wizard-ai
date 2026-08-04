@@ -994,7 +994,20 @@ async function handle(req: Request): Promise<Response> {
     error: drafter.ok ? undefined : (drafter.error ?? drafter.schema_failure_reason),
   };
 
+  // research_pack_hierarchy_v1 — carried research pack: what we are willing to
+  // show as research material. Unrelated verdicts are excluded entirely;
+  // tangential ones are kept in telemetry only.
+  const carriedPack = verifier.usable.filter(
+    (u) => u.best_support === "direct" || u.best_support === "partial",
+  );
+  const unrelated_excluded_from_carried_pack_count =
+    verifier.usable.length - carriedPack.length;
+  const tangential_excluded_from_carried_pack_count = verifier.usable.filter(
+    (u) => String(u.best_support) === "tangential",
+  ).length;
+
   const drafterMeta = {
+
     ok: drafter.ok,
     model_initial: drafter.model_initial,
     model_final: drafter.model_final,
@@ -1023,7 +1036,22 @@ async function handle(req: Request): Promise<Response> {
     raw_text: drafter.raw_text,
     // V2-specific telemetry (additive — does not break baseline consumers).
     drafter_version: "v2.1c" as const,
+    // research_pack_hierarchy_v1 telemetry.
+    hierarchy: drafter.hierarchy_report ?? null,
+    hierarchy_order_applied: true as const,
+    used_sources_hierarchy_counts: drafter.hierarchy_report?.used_sources_hierarchy_counts ?? {},
+    first_primary_position: drafter.hierarchy_report?.first_primary_position ?? null,
+    first_secondary_position: drafter.hierarchy_report?.first_secondary_position ?? null,
+    primary_before_secondary_passed:
+      drafter.hierarchy_report?.primary_before_secondary_passed ?? true,
+    mixed_hierarchy_footnotes_count: drafter.hierarchy_report?.mixed_hierarchy_footnotes_count ?? 0,
+    commentary_head_count: drafter.hierarchy_report?.commentary_head_count ?? 0,
+    statute_identity_dedup_count: drafter.hierarchy_report?.statute_identity_dedup_count ?? 0,
+    carried_pack_size: carriedPack.length,
+    unrelated_excluded_from_carried_pack_count,
+    tangential_excluded_from_carried_pack_count,
     structured_validation: drafter.structured_validation,
+
     builder_report: drafter.builder_report,
     schema_failure_reason: drafter.schema_failure_reason,
     quality_warning: drafter.quality_warning,
