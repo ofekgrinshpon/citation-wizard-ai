@@ -1,0 +1,65 @@
+[
+  {
+    "id": "R03",
+    "branch": null,
+    "ok": true,
+    "used": [
+      {
+        "n": 1,
+        "cit": "judgment",
+        "tier": "official_primary",
+        "usab": "full_text",
+        "title": "רע\"א 2299/23"
+      },
+      {
+        "n": 2,
+        "cit": "judgment",
+        "tier": "official_primary",
+        "usab": "metadata_only",
+        "title": "עא 52/80 ישעיהו שחר נ' מנדל פרידמן"
+      },
+      {
+        "n": 3,
+        "cit": "commentary",
+        "tier": "secondary_commentary",
+        "usab": "metadata_only",
+        "title": "על נכסי עבר, על נכסי עתיד ועל הפילוסופיה של חזקת השיתוף"
+      },
+      {
+        "n": 3,
+        "cit": "commentary",
+        "tier": "secondary_commentary",
+        "usab": "metadata_only",
+        "title": "הלכת השיתוף הספציפי: חשיבה מחדש / Rethinking the Doctrine of"
+      },
+      {
+        "n": 3,
+        "cit": "commentary",
+        "tier": "secondary_commentary",
+        "usab": "metadata_only",
+        "title": "החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואים "
+      }
+    ],
+    "hierarchy": {
+      "head_cap_passed": true,
+      "primary_head5_count": 1,
+      "usable_primary_count": 1,
+      "commentary_head_count": 1,
+      "commentary_head5_count": 3,
+      "first_primary_position": 1,
+      "hierarchy_order_applied": true,
+      "first_secondary_position": 3,
+      "statute_identity_dedup_count": 0,
+      "used_sources_hierarchy_counts": {
+        "commentary": 3,
+        "usable_judgment": 1,
+        "metadata_only_judgment": 1
+      },
+      "mixed_hierarchy_footnotes_count": 0,
+      "mixed_hierarchy_footnotes_split": 0,
+      "primary_before_secondary_passed": true
+    },
+    "carried_pack_size": 21,
+    "unrelated_excluded": 0
+  }
+]
