@@ -1,0 +1,874 @@
+{
+  "id": "R09",
+  "query": "כתוב סקירת פסיקה על מבחן ההשתלבות בדיני עבודה.",
+  "run_id": "62bd541e-533c-4f56-b52f-4c550dc0e101",
+  "total_ms": 223054,
+  "research_mode": null,
+  "shape": null,
+  "deterministic_branch": "insufficient_sources_limitation",
+  "is_stub": false,
+  "verifier_counts": {
+    "by_support": {
+      "direct": 3,
+      "partial": 5,
+      "unrelated": 14,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 21,
+      "false": 1
+    },
+    "model_verdicts": 22,
+    "by_support_model": {
+      "direct": 3,
+      "partial": 5,
+      "unrelated": 14,
+      "tangential": 0
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "verifier_errors": [],
+  "sufficiency": {
+    "shape": "analysis",
+    "reason": "no_usable_judgment_authority",
+    "applied": true,
+    "category": "case_law_synthesis",
+    "sufficient": false,
+    "thin_source": false,
+    "found_titles": [
+      "מקור חקיקה מתוך אתר הכנסת",
+      "כלכלת הפלטפורמה – הודעה לתקשורת (זרוע העבודה)",
+      "דיני עבודה - המכללה האקדמית נתניה",
+      "עובד או קבלן",
+      "עבודה אסורה: בין הפרטי לציבורי, בעקבות עשור לבג&quot;ץ שדות"
+    ],
+    "topical_refs": [
+      "s3",
+      "s4",
+      "s6"
+    ],
+    "topic_phrases": [
+      "מבחן ההשתלבות בדיני עבודה",
+      "ההשתלבות בדיני עבודה",
+      "מבחן ההשתלבות בדיני",
+      "ההשתלבות בדיני",
+      "מבחן ההשתלבות",
+      "בדיני עבודה",
+      "כתוב סקירת"
+    ],
+    "case_law_required": true,
+    "statute_only_answer": false,
+    "sufficiency_profile": "case_law_synthesis",
+    "usable_judgment_refs": [],
+    "exact_amounts_allowed": false,
+    "governing_statute_refs": [],
+    "topical_authority_refs": [
+      "s4",
+      "s6"
+    ],
+    "morphology_domain_match": false,
+    "normalized_source_tokens": [],
+    "governing_regulation_refs": [],
+    "normalized_question_tokens": [
+      "תוב",
+      "סקיר",
+      "בחן",
+      "שתלב",
+      "דיני",
+      "עבוד"
+    ],
+    "sufficiency_authority_basis": "insufficient",
+    "thin_governing_statute_refs": [],
+    "thin_governing_regulation_refs": [],
+    "authority_type_sufficiency_passed": false,
+    "case_law_missing_but_not_required": false,
+    "practical_steps_thin_authority_passed": false
+  },
+  "acquisition": {
+    "ms": 4175,
+    "mode": "doctrine_explanation",
+    "budget": {
+      "other": 2,
+      "total": 3,
+      "leading": 3
+    },
+    "enabled": true,
+    "attempts": [
+      {
+        "ms": 723,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+        "title": "פסק-דין בתיק ע\"פ 766/07",
+        "success": true,
+        "candidate_id": "838383da-7c8c-45a6-a9dd-201b8ff151cf",
+        "title_signal": "פסק-דין בתיק ע\"פ 766/07",
+        "docket_signal": "ע\"פ 766/07",
+        "failure_reason": null,
+        "synthesis_role": "leading_candidate",
+        "trigger_reason": "text_below_threshold",
+        "has_holding_text": true,
+        "method_succeeded": "direct_file_fetch",
+        "docket_normalized": "ap:766/7",
+        "methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": true,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 72931,
+        "text_usability_before": "substantive_excerpt",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": true
+      },
+      {
+        "ms": 1794,
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3279-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%95%d7%9e%d7%a9%d7%a8%d7%93-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+        "success": true,
+        "candidate_id": "3f9a84a7-540b-4d9b-82e5-59f5e61cfe06",
+        "title_signal": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+        "docket_signal": "בג\"ץ 3279/22",
+        "failure_reason": null,
+        "synthesis_role": "secondary_commentary",
+        "trigger_reason": "no_judgment_body_text",
+        "has_holding_text": false,
+        "method_succeeded": "local_db_docket_lookup",
+        "docket_normalized": "bagatz:3279/22",
+        "methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 11846,
+        "text_usability_before": "substantive_excerpt",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": false
+      },
+      {
+        "ms": 1656,
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+        "success": true,
+        "candidate_id": "2f3a202b-0820-4dae-8c2b-b7fce504deda",
+        "title_signal": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג",
+        "docket_signal": "בג\"ץ 8647/22",
+        "failure_reason": null,
+        "synthesis_role": "unknown",
+        "trigger_reason": "no_judgment_body_text",
+        "has_holding_text": true,
+        "method_succeeded": "local_db_docket_lookup",
+        "docket_normalized": "bagatz:8647/22",
+        "methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": true,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 12004,
+        "text_usability_before": "listing_page",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": true
+      }
+    ],
+    "excluded": [],
+    "successes": 3,
+    "attempts_made": 3,
+    "eligible_count": 3,
+    "judgment_candidates": 3,
+    "eligibility_diagnostics": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+        "title": "פסק-דין בתיק ע\"פ 766/07",
+        "eligible": true,
+        "citable_as": "judgment",
+        "rank_score": 135,
+        "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+        "source_type": "caselaw",
+        "candidate_id": "838383da-7c8c-45a6-a9dd-201b8ff151cf",
+        "planner_role": "binding_case_law",
+        "has_court_url": true,
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": true,
+        "docket_normalized": "ap:766/7",
+        "eligibility_basis": [
+          "docket_signal",
+          "official_court_url",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "rank_before_acquisition": 1,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+        "eligible": true,
+        "citable_as": "not_citable",
+        "rank_score": -140,
+        "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+        "source_type": "caselaw",
+        "candidate_id": "2f3a202b-0820-4dae-8c2b-b7fce504deda",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "index_or_listing",
+        "synthesis_role": "unknown",
+        "text_usability": "listing_page",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": "bagatz:8647/22",
+        "eligibility_basis": [
+          "docket_signal"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "rank_before_acquisition": 3,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3279-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%95%d7%9e%d7%a9%d7%a8%d7%93-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+        "eligible": true,
+        "citable_as": "commentary",
+        "rank_score": 15,
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "source_type": "caselaw",
+        "candidate_id": "3f9a84a7-540b-4d9b-82e5-59f5e61cfe06",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": null,
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "bagatz:3279/22",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": true,
+        "rank_before_acquisition": 2,
+        "would_have_been_attempted_under_relaxed_rule": false
+      }
+    ],
+    "acquisition_budget_spent_on": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+        "rank": 1,
+        "title": "פסק-דין בתיק ע\"פ 766/07",
+        "success": true,
+        "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+        "candidate_id": "838383da-7c8c-45a6-a9dd-201b8ff151cf",
+        "official_judgment_document": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3279-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%95%d7%9e%d7%a9%d7%a8%d7%93-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 2,
+        "title": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+        "success": true,
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "3f9a84a7-540b-4d9b-82e5-59f5e61cfe06",
+        "official_judgment_document": false
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "rank": 3,
+        "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+        "success": true,
+        "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+        "candidate_id": "2f3a202b-0820-4dae-8c2b-b7fce504deda",
+        "official_judgment_document": false
+      }
+    ],
+    "official_judgment_documents_found": 1,
+    "skipped_higher_quality_candidates": 0,
+    "official_judgment_documents_acquired": 1,
+    "institutional_pages_excluded_before_budget": 1,
+    "judgment_candidate_rank_before_acquisition": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+        "rank": 1,
+        "score": 135,
+        "title": "פסק-דין בתיק ע\"פ 766/07",
+        "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+        "candidate_id": "838383da-7c8c-45a6-a9dd-201b8ff151cf",
+        "negative_signals": [],
+        "positive_signals": [
+          "official_court_download_url",
+          "direct_judgment_document",
+          "docket_signal",
+          "planner_judgment_role",
+          "planner_leading_role",
+          "integrity_judgment_document"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3279-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%95%d7%9e%d7%a9%d7%a8%d7%93-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 2,
+        "score": 15,
+        "title": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "3f9a84a7-540b-4d9b-82e5-59f5e61cfe06",
+        "negative_signals": [
+          "commentary_with_case_mention_only"
+        ],
+        "positive_signals": [
+          "docket_signal",
+          "case_title_pattern"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": false
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "rank": 3,
+        "score": -140,
+        "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+        "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+        "candidate_id": "2f3a202b-0820-4dae-8c2b-b7fce504deda",
+        "negative_signals": [
+          "institutional_or_root_page",
+          "listing_or_index_page",
+          "integrity_listing_or_not_citable"
+        ],
+        "positive_signals": [
+          "docket_signal"
+        ],
+        "is_institutional_or_listing": true,
+        "is_official_judgment_document": false
+      }
+    ]
+  },
+  "judgment_discovery": {
+    "topic": "כתוב מבחן ההשתלבות בדיני עבודה.",
+    "layers": [
+      "leading",
+      "official_document",
+      "applying",
+      "limiting"
+    ],
+    "enabled": true,
+    "survey_like": true,
+    "judgment_discovery_queries": [
+      "כתוב מבחן ההשתלבות בדיני עבודה. פסק דין עליון",
+      "כתוב מבחן ההשתלבות בדיני עבודה. הלכה פסוקה ע\"א בג\"ץ דנ\"א",
+      "כתוב מבחן ההשתלבות בדיני עבודה. site:supremedecisions.court.gov.il Download",
+      "כתוב מבחן ההשתלבות בדיני עבודה. site:court.gov.il filetype:pdf פסק דין",
+      "כתוב מבחן ההשתלבות בדיני עבודה. יישום ההלכה פסיקה מאוחרת נסיבות",
+      "כתוב מבחן ההשתלבות בדיני עבודה. חריג סייג צמצום הבחנה דעת מיעוט"
+    ],
+    "acquisition_budget_spent_on": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+        "rank": 1,
+        "title": "פסק-דין בתיק ע\"פ 766/07",
+        "success": true,
+        "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+        "candidate_id": "838383da-7c8c-45a6-a9dd-201b8ff151cf",
+        "official_judgment_document": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3279-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%95%d7%9e%d7%a9%d7%a8%d7%93-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 2,
+        "title": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+        "success": true,
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "3f9a84a7-540b-4d9b-82e5-59f5e61cfe06",
+        "official_judgment_document": false
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "rank": 3,
+        "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+        "success": true,
+        "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+        "candidate_id": "2f3a202b-0820-4dae-8c2b-b7fce504deda",
+        "official_judgment_document": false
+      }
+    ],
+    "judgment_candidate_rank_reason": [
+      {
+        "rank": 1,
+        "reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+        "candidate_id": "838383da-7c8c-45a6-a9dd-201b8ff151cf"
+      },
+      {
+        "rank": 2,
+        "reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "3f9a84a7-540b-4d9b-82e5-59f5e61cfe06"
+      },
+      {
+        "rank": 3,
+        "reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+        "candidate_id": "2f3a202b-0820-4dae-8c2b-b7fce504deda"
+      }
+    ],
+    "commentary_share_of_admitted_pack": 0.59,
+    "official_judgment_documents_found": 1,
+    "skipped_higher_quality_candidates": 0,
+    "official_judgment_documents_acquired": 1,
+    "institutional_pages_excluded_before_budget": 1,
+    "judgment_candidate_rank_before_acquisition": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+        "rank": 1,
+        "score": 135,
+        "title": "פסק-דין בתיק ע\"פ 766/07",
+        "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document",
+        "candidate_id": "838383da-7c8c-45a6-a9dd-201b8ff151cf",
+        "negative_signals": [],
+        "positive_signals": [
+          "official_court_download_url",
+          "direct_judgment_document",
+          "docket_signal",
+          "planner_judgment_role",
+          "planner_leading_role",
+          "integrity_judgment_document"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3279-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%95%d7%9e%d7%a9%d7%a8%d7%93-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "rank": 2,
+        "score": 15,
+        "title": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+        "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+        "candidate_id": "3f9a84a7-540b-4d9b-82e5-59f5e61cfe06",
+        "negative_signals": [
+          "commentary_with_case_mention_only"
+        ],
+        "positive_signals": [
+          "docket_signal",
+          "case_title_pattern"
+        ],
+        "is_institutional_or_listing": false,
+        "is_official_judgment_document": false
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "rank": 3,
+        "score": -140,
+        "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+        "rank_reason": "+docket_signal | -institutional_or_root_page,listing_or_index_page,integrity_listing_or_not_citable",
+        "candidate_id": "2f3a202b-0820-4dae-8c2b-b7fce504deda",
+        "negative_signals": [
+          "institutional_or_root_page",
+          "listing_or_index_page",
+          "integrity_listing_or_not_citable"
+        ],
+        "positive_signals": [
+          "docket_signal"
+        ],
+        "is_institutional_or_listing": true,
+        "is_official_judgment_document": false
+      }
+    ]
+  },
+  "usable_judgments": [],
+  "admitted_sources": [
+    {
+      "title": "העצמאים הצעירים וכלכלת הפלטפורמה בישראל",
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/a1489602-e9e0-f011-a866-005056aa9911/2_a1489602-e9e0-f011-a866-005056aa9911_11_21367.pdf",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "פסק-דין בתיק ע\"פ 766/07",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+      "role": "binding_case_law",
+      "tier": "official_primary",
+      "text_usability": "full_text",
+      "citable_as": "judgment",
+      "judgment": true,
+      "holding_text": true,
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "judgment_document",
+        "holding_text_present",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "כלכלת הפלטפורמה – הודעה לתקשורת (זרוע העבודה)",
+      "url": "https://www.gov.il/BlobFolder/guide/platform-sessions/he/platform_kazenelson.pdf",
+      "role": "government_report",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+      "role": "binding_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "full_text",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": true,
+      "synthesis_role": "unknown",
+      "flags": [
+        "listing_or_pagination_page",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "יישום התוכנית הלאומית להתמודדות עם מחלת האלצהיימר ודמנציות אחרות",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7457&businessType=1",
+      "role": "binding_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "official_host_non_specific_path"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "תקנות הבטיחות בעבודה (עבודה בגובה)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%91%D7%95%D7%93%D7%94_%D7%91%D7%92%D7%95%D7%91%D7%94)",
+      "role": "binding_case_law",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "ההסכמים הבילטרליים של ישראל עם מדינות המוצא של מהגרי עבודה: במה הם עוסקים, ממה הם מתעלמים ומה הסיבות לכך",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_9d7c812e9e9a4133b0cb59488862bcb0.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "תקנות הבטיחות בעבודה (עזרה ראשונה במקומות עבודה)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%96%D7%A8%D7%94_%D7%A8%D7%90%D7%A9%D7%95%D7%A0%D7%94_%D7%91%D7%9E%D7%A7%D7%95%D7%9E%D7%95%D7%AA_%D7%A2%D7%91%D7%95%D7%93%D7%94)",
+      "role": "binding_case_law",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "תקנות הבטיחות בעבודה (עבודה על גגות שבירים או תלולים)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%91%D7%95%D7%93%D7%94_%D7%A2%D7%9C_%D7%92%D7%92%D7%95%D7%AA_%D7%A9%D7%91%D7%99%D7%A8%D7%99%D7%9D_%D7%90%D7%95_%D7%AA%D7%9C%D7%95%D7%9C%D7%99%D7%9D)",
+      "role": "binding_case_law",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "חוק בינוי ופינוי של אזורי שיקום",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%99%D7%A0%D7%95%D7%99_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A9%D7%9C_%D7%90%D7%96%D7%95%D7%A8%D7%99_%D7%A9%D7%99%D7%A7%D7%95%D7%9D",
+      "role": "primary_statute",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "דיני מזונות אישה בין בית הדין השרעי לבית המשפט לענייני משפחה: סיפורה של מהפכה שמרנית במחלצות ליברליות",
+      "url": "https://lawjournal.huji.ac.il/article/12/1928",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "דיני עבודה - המכללה האקדמית נתניה",
+      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/work/%D7%9E%D7%97%D7%91%D7%A8%D7%AA%20%D7%91%D7%97%D7%99%D7%A0%D7%94-%20%D7%93%D7%99%D7%A0%D7%99%20%D7%A2%D7%91%D7%95%D7%93%D7%94%20%D7%91%D7%A8%20%D7%A6%D7%93%D7%A7%D7%94.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "עובד או קבלן",
+      "url": "https://lawjournal.huji.ac.il/article/12/1244",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "direct"
+      ]
+    },
+    {
+      "title": "עבודה אסורה: בין הפרטי לציבורי, בעקבות עשור לבג&quot;ץ שדות",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e96c3e479ee044cab2e73c919a8c8fed.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "בג\"ץ 3279-22 מדינת ישראל – משרד הבריאות ומשרד הרווחה נגד חיים זר פסק דין",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3279-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%95%d7%9e%d7%a9%d7%a8%d7%93-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "לצאת מהחומות: לקראת תיאוריה מאחדת של דוקטרינת \"מיהו עובד\" – מ\"מבחן המטרה\" אל \"המבחן הכלכלי-חברתי\", בראי עבודת אסירים",
+      "url": "https://lawjournal.huji.ac.il/article/12/1931",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "direct"
+      ]
+    },
+    {
+      "title": "פיטורי עובדות הרות וקריטריון הוותק בחוק עבודת נשים: ההגנה שהפכה למנגנון מעודד אפליה",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_8ad759e0696c430983cfb64f72c6a95e.pdf",
+      "role": "primary_statute",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "חוק &quot;רוצה להיות חופשי&quot;: פרסום חקיקה בעידן האינטרנט",
+      "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/Article_235(1).pdf",
+      "role": "primary_statute",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "התפתחויות ומגמות במשפט העבודה הקיבוצי והאינדיווידואלי 2011-2010 | מרדכי (מוטי) מירוני (כרך ח)",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/h1_3.pdf",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "direct"
+      ]
+    },
+    {
+      "title": "חובת ההגינות, בעלי כוח הכרעה וחברות ללא גרעין שליטה",
+      "url": "https://lawjournal.huji.ac.il/article/12/1915",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "אגודות לניהול משותף של זכויות יוצרים – מבט נוסף על יעילות והגינות | גיא פסח (כרך ב)",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/b2_2.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+      "url": "https://runilawreview.org/2025/06/30/vol31-levi/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    }
+  ],
+  "used_sources": [],
+  "footnotes": [],
+  "answer_len": 388,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): מקור חקיקה מתוך אתר הכנסת; כלכלת הפלטפורמה – הודעה לתקשורת (זרוע העבודה); דיני עבודה - המכללה האקדמית נתניה; עובד או קבלן."
+}

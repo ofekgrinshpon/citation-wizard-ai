@@ -22,6 +22,11 @@ import {
   textContainsExactDocket,
   type DocketRef,
 } from "./docketDetection.ts";
+import {
+  rankJudgmentCandidates,
+  type JudgmentRank,
+  type RankInput,
+} from "./judgmentCandidateRanking.ts";
 
 export const ACQUISITION_LIMITS = {
   /** Per-method time box. */
@@ -212,6 +217,9 @@ export interface EligibilityDiagnostic {
   eligibility_basis: string[];
   would_have_been_attempted_under_relaxed_rule: boolean;
   acquisition_attempted: boolean;
+  rank_before_acquisition?: number;
+  rank_score?: number;
+  rank_reason?: string;
 }
 
 export interface AcquisitionResult {
@@ -226,6 +234,21 @@ export interface AcquisitionResult {
   attempts_made: number;
   successes: number;
   ms: number;
+  /** Ranking telemetry — computed before any budget is spent. */
+  judgment_candidate_rank_before_acquisition: JudgmentRank[];
+  acquisition_budget_spent_on: Array<{
+    candidate_id: string;
+    title: string;
+    url: string | null;
+    rank: number;
+    rank_reason: string;
+    official_judgment_document: boolean;
+    success: boolean;
+  }>;
+  skipped_higher_quality_candidates: number;
+  institutional_pages_excluded_before_budget: number;
+  official_judgment_documents_found: number;
+  official_judgment_documents_acquired: number;
 }
 
 
@@ -501,6 +524,7 @@ interface Eligible {
   isRequested: boolean;
   trigger: AcquisitionAttemptLog["trigger_reason"];
   diag: EligibilityDiagnostic;
+  rank?: JudgmentRank;
 }
 
 function disabledResult(mode: string | null): AcquisitionResult {
@@ -516,6 +540,12 @@ function disabledResult(mode: string | null): AcquisitionResult {
     attempts_made: 0,
     successes: 0,
     ms: 0,
+    judgment_candidate_rank_before_acquisition: [],
+    acquisition_budget_spent_on: [],
+    skipped_higher_quality_candidates: 0,
+    institutional_pages_excluded_before_budget: 0,
+    official_judgment_documents_found: 0,
+    official_judgment_documents_acquired: 0,
   };
 }
 
@@ -555,6 +585,7 @@ export async function runJudgmentTextAcquisition(
   const excluded: AcquisitionSkipLog[] = [];
   const diagnostics: EligibilityDiagnostic[] = [];
   const eligible: Eligible[] = [];
+  const rankInputs: RankInput[] = [];
   let judgmentCandidates = 0;
 
   for (const c of input.candidates) {
@@ -610,6 +641,15 @@ export async function runJudgmentTextAcquisition(
       acquisition_attempted: false,
     };
     diagnostics.push(diag);
+    rankInputs.push({
+      candidate: c,
+      integrity: integ,
+      dockets,
+      synthesis_role: role,
+      is_requested_docket: isRequested,
+      verdict: typeof meta.verifier_verdict === "string" ? meta.verifier_verdict : null,
+      domain_match: meta.domain_match === true,
+    });
 
     const drop = (reason: AcquisitionSkipLog["reason"], relaxed = false) => {
       excluded.push({ candidate_id: c.candidate_id, title: c.title, url, reason });
@@ -661,12 +701,37 @@ export async function runJudgmentTextAcquisition(
   }
 
 
-  // Exact requested docket first, then leading → applying → limiting, then score.
+  // ── Pre-acquisition ranking (Part 1) ─────────────────────────────────────
+  // Every judgment candidate is scored *before* a single byte is fetched, so
+  // institutional / listing pages can never consume budget ahead of genuine
+  // judgment documents.
+  const ranked = rankJudgmentCandidates(rankInputs);
+  const rankById = new Map(ranked.map((r) => [r.candidate_id, r]));
+  for (const d of diagnostics) {
+    const r = rankById.get(d.candidate_id);
+    if (!r) continue;
+    d.rank_before_acquisition = r.rank;
+    d.rank_score = r.score;
+    d.rank_reason = r.rank_reason;
+  }
+  for (const e of eligible) e.rank = rankById.get(e.c.candidate_id);
+
+  const institutional_pages_excluded_before_budget = ranked.filter(
+    (r) => r.is_institutional_or_listing,
+  ).length;
+  const official_judgment_documents_found = ranked.filter(
+    (r) => r.is_official_judgment_document,
+  ).length;
+
+  // Exact requested docket first, then rank score, then role, then retrieval score.
   eligible.sort((a, b) =>
     Number(b.isRequested) - Number(a.isRequested) ||
+    (b.rank?.score ?? 0) - (a.rank?.score ?? 0) ||
     (ROLE_PRIORITY[a.role] ?? 9) - (ROLE_PRIORITY[b.role] ?? 9) ||
     b.c.score - a.c.score
   );
+
+  const budget_spent_on: AcquisitionResult["acquisition_budget_spent_on"] = [];
 
   const attempts: AcquisitionAttemptLog[] = [];
   let successes = 0;
@@ -848,6 +913,16 @@ export async function runJudgmentTextAcquisition(
       };
     }
 
+    budget_spent_on.push({
+      candidate_id: e.c.candidate_id,
+      title: e.c.title,
+      url,
+      rank: e.rank?.rank ?? -1,
+      rank_reason: e.rank?.rank_reason ?? "unranked",
+      official_judgment_document: e.rank?.is_official_judgment_document ?? false,
+      success: !!succeeded,
+    });
+
     attempts.push({
       candidate_id: e.c.candidate_id,
       title: e.c.title,
@@ -893,5 +968,21 @@ export async function runJudgmentTextAcquisition(
     attempts_made: attempts.length,
     successes,
     ms: Date.now() - t0,
+    judgment_candidate_rank_before_acquisition: ranked,
+    acquisition_budget_spent_on: budget_spent_on,
+    // A higher-ranked candidate that never got an attempt while a lower-ranked
+    // one did — should stay at 0 under correct budgeting.
+    skipped_higher_quality_candidates: (() => {
+      const attemptedRanks = budget_spent_on.map((b) => b.rank).filter((r) => r > 0);
+      if (attemptedRanks.length === 0) return 0;
+      const worst = Math.max(...attemptedRanks);
+      const attempted = new Set(attemptedRanks);
+      return ranked.filter((r) => r.rank < worst && !attempted.has(r.rank)).length;
+    })(),
+    institutional_pages_excluded_before_budget,
+    official_judgment_documents_found,
+    official_judgment_documents_acquired: budget_spent_on.filter(
+      (b) => b.success && b.official_judgment_document,
+    ).length,
   };
 }
