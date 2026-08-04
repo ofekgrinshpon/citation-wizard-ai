@@ -1,0 +1,793 @@
+{
+  "query": {
+    "id": "R03",
+    "query": "מה הפסיקה אומרת על הלכת השיתוף?"
+  },
+  "answer": "**שורה תחתונה**\n\nבפסק־דין מוביל אחד שנמצא (רע\"א 2299/23) נדונה השפעתה של \"הלכת השיתוף\" על סוגי הסעדים שניתן לבקש בהליכים אזרחיים; מפסק‑דין זה עולה תמיכה חלקית בגישה של הכללת נכסים בשיתוף לפי נסיבות ספציפיות, אך אין ממנו קביעה גורפת הקובעת מבחנים אחידים להחלת השיתוף בכל המקרים.¹\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nרע\"א 2299/23 — הערעור נדון בעניין פיצול סעדים ובהיקף הסעדים שניתן לבקש מול טענות לשיתוף רכושי. בית המשפט העליון בחן את נסיבות המקרה, את טענות הצדדים לגבי מעמד הנכסים ואת הצורך בפיצול הליכים, וקבע גישות תהליכיות לגבי מתן סעד באופן שיוכל להתאים לנסיבות המיוחד של המחלוקת; יש להדגיש שהתמיכה של פסק‑דין זה בהרחבת הלכת השיתוף מוגבלת ומחייבת ניסוח זהיר של מסקנות.¹\n\n**מגבלות והבחנות**\n\nמניתוח ההחלטה עולה שהדיון ב‑2299/23 הוא באופן מרכזי סביב סמכויות מתן סעד וחלוקת טעונות בין בתי המשפט, ולא ניסיון לנסח מבחן כללי ושלם להחלת הלכת השיתוף; בית המשפט נמנע מהצעת כלל רחב המוחל על כל סוגי הנכסים (לרבות נכסי ירושה או נכסים מלפני הנישואים) והדגיש את התלות בנסיבות המקרה ובהוכחות לגבי כוונת השיתוף.¹\n\n**מה לא ניתן לקבוע מהמקורות**\n\nאין במקורות השמישים לשם סקירה זו כדי לגזור מסקנה דוקטרינרית מלאה על כל יסודות הלכת השיתוף — כלומר, לא ניתן לקבוע מתוך פסק‑דין 2299/23 את נוסח הקריטריונים המדויקים, את מערכת הסעדים הסטנדרטית או את כללי הראיות הדרושים בכל מקרה של טענת שיתוף.¹\n\nנמצא אזכור מטא‑דאטה לפסק‑דין עא 52/80, אך הטקסט הזמין ממנו אינו אופרטיבי דיו; על כן אין להסתמך עליו לצורך הבאת הלכות, מבחנים או סייגים מחייבים.²\n\nקיימת ספרות ומאמרים רבים (ביניהם דיונים על \"הלכת השיתוף הספציפי\" ועל החלתה על נכסי ירושה ונכסים מלפני הנישואים) שמציעים ניתוחים והצעות לפרשנות, אך אלה משמשים כרקע פרשני בלבד ובלבד — הם אינם מחליפים קביעת בית‑משפט ואין בהם כדי ליצור הלכה מחייבת בפני עצמה.³",
+  "drafter": {
+    "ms": 47969,
+    "ok": true,
+    "lead_ref": {
+      "ref": null,
+      "shape": "analysis",
+      "reason": "shape_not_eligible"
+    },
+    "escalated": false,
+    "hierarchy": {
+      "head_cap_passed": true,
+      "primary_head5_count": 1,
+      "usable_primary_count": 1,
+      "commentary_head_count": 1,
+      "commentary_head5_count": 3,
+      "first_primary_position": 1,
+      "hierarchy_order_applied": true,
+      "first_secondary_position": 3,
+      "statute_identity_dedup_count": 0,
+      "used_sources_hierarchy_counts": {
+        "commentary": 3,
+        "usable_judgment": 1,
+        "metadata_only_judgment": 1
+      },
+      "mixed_hierarchy_footnotes_count": 0,
+      "mixed_hierarchy_footnotes_split": 0,
+      "primary_before_secondary_passed": true
+    },
+    "model_final": "openai/gpt-5-mini",
+    "completeness": {
+      "reasons": [],
+      "signals": [],
+      "truncated": false,
+      "last_block_kind": "paragraph",
+      "last_block_excerpt": "… לפרשנות, אך אלה משמשים כרקע פרשני בלבד ובלבד — הם אינם מחליפים קביעת בית‑משפט ואין בהם כדי ליצור הלכה מחייבת בפני עצמה."
+    },
+    "sources_used": 5,
+    "used_sources": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/990/022/x03&fileName=23022990.X03&type=4",
+        "title": "רע\"א 2299/23",
+        "number": 1,
+        "origin": "perplexity",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "37324e45-cb92-4516-86bf-8e717f0d0b7f",
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_document",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ],
+        "has_holding_text": true,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+        "title": "עא 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "number": 2,
+        "origin": "perplexity",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "f59eb297-00df-474f-992e-513a4995cb20",
+        "authority_tier": "official_primary",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "http://lawjournal.huji.ac.il/article/12/947",
+        "title": "על נכסי עבר, על נכסי עתיד ועל הפילוסופיה של חזקת השיתוף",
+        "number": 3,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "other",
+        "candidate_id": "425babb2-d1a4-44dd-bf41-98ada30858e8",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4868130",
+        "title": "הלכת השיתוף הספציפי: חשיבה מחדש / Rethinking the Doctrine of Specific Co-Ownership",
+        "number": 3,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "other",
+        "candidate_id": "116aa3d0-f48d-4d78-9034-92dab10ff893",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://law.biu.ac.il/files/law/shared/segel/hacalathshitufhspezifi.pdf",
+        "title": "החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואים ועל נכסים שנתקבלו בירושה או במתנה",
+        "number": 3,
+        "origin": "perplexity",
+        "citable_as": "commentary",
+        "source_type": "other",
+        "candidate_id": "091c1263-3a61-46ff-bf0f-4a5a7c178066",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      }
+    ],
+    "marker_format": "superscript",
+    "model_initial": "openai/gpt-5-mini",
+    "builder_report": {
+      "marker_count": 6,
+      "heading_count": 4,
+      "list_item_count": 0,
+      "paragraph_count": 6,
+      "cited_segment_count": 6,
+      "adjacent_marker_count": 0,
+      "distinct_source_count": 5,
+      "compound_segment_count": 1,
+      "compound_footnote_count": 1,
+      "avg_sources_per_cited_segment": 1.6666666666666667
+    },
+    "footnote_count": 3,
+    "snippet_budget": {
+      "research_mode": "case_law_synthesis",
+      "synthesis_run": true,
+      "max_snippet_length": 1200,
+      "expanded_source_count": 1,
+      "statute_sources_ge_900": 0,
+      "judgment_sources_ge_900": 1,
+      "snippet_budget_by_source": [
+        {
+          "ref": "s1",
+          "budget": 1200,
+          "reason": "leading_judgment",
+          "expanded": true,
+          "citable_as": "judgment",
+          "snippet_length": 1200,
+          "synthesis_role": "leading_candidate",
+          "text_usability": "full_text",
+          "has_holding_text": true,
+          "has_statutory_text": false,
+          "available_text_length": 5999
+        },
+        {
+          "ref": "s2",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 156,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 156
+        },
+        {
+          "ref": "s3",
+          "budget": 500,
+          "reason": "no_real_text",
+          "expanded": false,
+          "citable_as": "judgment",
+          "snippet_length": 132,
+          "synthesis_role": "applying_candidate",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 132
+        },
+        {
+          "ref": "s4",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 82,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 82
+        },
+        {
+          "ref": "s5",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 64,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 64
+        },
+        {
+          "ref": "s6",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 46,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 46
+        },
+        {
+          "ref": "s7",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 67,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 67
+        },
+        {
+          "ref": "s8",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 115,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 115
+        },
+        {
+          "ref": "s9",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 134,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 134
+        },
+        {
+          "ref": "s10",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 119,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 119
+        },
+        {
+          "ref": "s11",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "unknown",
+          "snippet_length": 36,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 36
+        },
+        {
+          "ref": "s12",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 64,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 64
+        },
+        {
+          "ref": "s13",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "unknown",
+          "snippet_length": 55,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 55
+        },
+        {
+          "ref": "s14",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "unknown",
+          "snippet_length": 62,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 62
+        },
+        {
+          "ref": "s15",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "unknown",
+          "snippet_length": 28,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 28
+        },
+        {
+          "ref": "s16",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 131,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 131
+        },
+        {
+          "ref": "s17",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 384,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 384
+        },
+        {
+          "ref": "s18",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 386,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 386
+        },
+        {
+          "ref": "s19",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 390,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": false,
+          "has_statutory_text": true,
+          "available_text_length": 390
+        },
+        {
+          "ref": "s20",
+          "budget": 500,
+          "reason": "not_eligible",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 380,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 380
+        }
+      ],
+      "commentary_max_snippet_length": 390
+    },
+    "sources_passed": 20,
+    "synthesis_pack": {
+      "has_judgment": true,
+      "statute_count": 0,
+      "judgment_count": 2,
+      "commentary_count": 3,
+      "by_synthesis_role": {
+        "leading_candidate": 1,
+        "applying_candidate": 1,
+        "secondary_commentary": 3
+      },
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": true,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 1
+    },
+    "drafter_version": "v2.1c",
+    "truncation_retry": {
+      "retry_ms": 0,
+      "attempted": false,
+      "reasons_initial": [],
+      "same_model_retry": false,
+      "escalated_to_full": false
+    },
+    "carried_pack_size": 21,
+    "case_law_required": true,
+    "marker_validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3
+      ]
+    },
+    "acquisition_method": null,
+    "source_sufficiency": {
+      "shape": "analysis",
+      "reason": "case_law_synthesis_supported",
+      "applied": true,
+      "category": "case_law_synthesis",
+      "sufficient": true,
+      "thin_source": false,
+      "found_titles": [
+        "רע\"א 2299/23",
+        "פסק דין מתוך psakdin.co.il",
+        "עא 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "הלכת השיתוף הספציפי: חשיבה מחדש / Rethinking the Doctrine of Specific Co-Ownership",
+        "הקדמת מועד איזון המשאבים בתיקון מס' 4 לחוק יחסי ממון והחקיקה"
+      ],
+      "topical_refs": [
+        "s4",
+        "s8",
+        "s20"
+      ],
+      "topic_phrases": [
+        "הלכת השיתוף"
+      ],
+      "case_law_required": true,
+      "statute_only_answer": false,
+      "sufficiency_profile": "case_law_synthesis",
+      "usable_judgment_refs": [
+        "s1"
+      ],
+      "exact_amounts_allowed": true,
+      "governing_statute_refs": [],
+      "topical_authority_refs": [
+        "s8",
+        "s20"
+      ],
+      "morphology_domain_match": false,
+      "normalized_source_tokens": [],
+      "governing_regulation_refs": [],
+      "normalized_question_tokens": [
+        "לכת",
+        "שיתוף"
+      ],
+      "sufficiency_authority_basis": "usable_judgment",
+      "thin_governing_statute_refs": [],
+      "thin_governing_regulation_refs": [],
+      "authority_type_sufficiency_passed": true,
+      "case_law_missing_but_not_required": false,
+      "practical_steps_thin_authority_passed": false
+    },
+    "acquisition_success": false,
+    "answer_style_report": {
+      "metrics": {
+        "block_count": 10,
+        "denylist_hits": [],
+        "heading_count": 4,
+        "heading_ratio": 0.4,
+        "cited_block_count": 6,
+        "total_footnote_count": 3,
+        "compound_footnote_count": 1,
+        "compound_footnote_ratio": 0.333,
+        "unsafe_display_title_count": 3,
+        "avg_sources_per_cited_block": 1.333,
+        "unsafe_display_title_examples": [
+          {
+            "ref": "s2",
+            "status": "fallback_truncated",
+            "display_title": "פסק דין מתוך psakdin.co.il"
+          },
+          {
+            "ref": "s10",
+            "status": "fallback_truncated",
+            "display_title": "מסמך מאתר אתר אקדמי (faculty.runi.ac.il)"
+          },
+          {
+            "ref": "s14",
+            "status": "fallback_truncated",
+            "display_title": "מקור אקדמי מתוך אתר אקדמי (runi.ac.il)"
+          }
+        ],
+        "partial_supported_strong_claims": [],
+        "total_source_refs_in_cited_blocks": 8
+      },
+      "report_only": true,
+      "triggered_reasons": [
+        "unsafe_display_title",
+        "compound_footnote_ratio_high",
+        "excessive_headings"
+      ]
+    },
+    "statute_only_answer": false,
+    "sufficiency_profile": "case_law_synthesis",
+    "synthesis_rendering": {
+      "groups": {
+        "secondary_context": [
+          "s2",
+          "s4",
+          "s5",
+          "s6",
+          "s7",
+          "s8",
+          "s9",
+          "s10",
+          "s11",
+          "s12",
+          "s13",
+          "s14",
+          "s15",
+          "s16",
+          "s17",
+          "s18",
+          "s19",
+          "s20"
+        ],
+        "usable_authorities": [
+          "s1"
+        ],
+        "found_but_not_usable": [
+          "s3"
+        ],
+        "statutory_background": []
+      },
+      "reason": "applied",
+      "group_counts": {
+        "secondary_context": 18,
+        "usable_authorities": 1,
+        "found_but_not_usable": 1,
+        "statutory_background": 0
+      },
+      "named_case_keys": [
+        "2299/23",
+        "52/80"
+      ],
+      "named_cases_in_body": 2,
+      "usable_judgments_named": 1,
+      "synthesis_rendering_applied": true,
+      "commentary_used_as_primary_authority": false,
+      "metadata_only_sources_used_as_holdings": false
+    },
+    "unique_source_count": 5,
+    "acquired_text_length": 0,
+    "completeness_initial": {
+      "reasons": [],
+      "signals": [],
+      "truncated": false,
+      "last_block_kind": "paragraph",
+      "last_block_excerpt": "… לפרשנות, אך אלה משמשים כרקע פרשני בלבד ובלבד — הם אינם מחליפים קביעת בית‑משפט ואין בהם כדי ליצור הלכה מחייבת בפני עצמה."
+    },
+    "deterministic_branch": null,
+    "canonical_quote_fired": false,
+    "commentary_head_count": 1,
+    "exact_amounts_allowed": true,
+    "omitted_candidate_ids": [
+      "50ab06da-94f8-403d-8180-219bd6cc2c0d",
+      "64037452-9bca-41d1-b2e6-534af44fe4f2",
+      "58afe1e4-d2ef-4af6-8ba6-e0f40dc28de8",
+      "cbfa8021-bfbc-489e-a1f9-2e02796805e2",
+      "533aa6eb-637c-456f-8695-ae978d75e2f7",
+      "d713fd71-0351-42fd-bf34-5428d1a6f590",
+      "e9bafd58-9960-4700-868f-0f7c25b93f06",
+      "5c4b015b-b97c-4143-b6e3-935ef7cd1ecf",
+      "3abb5964-b156-4c25-b370-a87fb9a91651",
+      "079a8607-efac-4407-af74-f07b8eee751f",
+      "ab6f8b22-fa47-422d-a9ae-4ad9cdf84d7e",
+      "dbfaac25-5eed-4405-aff2-ce35ae639c97",
+      "2805b397-dbfa-4a43-8ec8-cb728c642545",
+      "fa2e8992-75fd-4977-9278-0911bfd999e3",
+      "9d8a0653-8cc5-4efd-89e7-9a5374aa264e",
+      "2c01e387-4053-4926-ac9f-089fd91046c5"
+    ],
+    "structured_validation": {
+      "ok": true,
+      "errors": [],
+      "block_count": 10,
+      "heading_count": 4,
+      "list_item_count": 0,
+      "paragraph_count": 6,
+      "cited_segment_count": 6,
+      "forbidden_text_hits": [],
+      "unknown_source_refs": [],
+      "total_source_ref_count": 8
+    },
+    "first_primary_position": 1,
+    "named_doctrine_framing": {
+      "kind": "halacha",
+      "reason": "named_doctrine_recognized_in_authority",
+      "subject_phrase": "השיתוף",
+      "named_doctrine_phrase": "הלכת השיתוף",
+      "nearby_institution_refs": [
+        "s2",
+        "s4",
+        "s6",
+        "s7",
+        "s8",
+        "s16",
+        "s18",
+        "s20"
+      ],
+      "named_doctrine_recognized": true,
+      "recognized_phrase_matches": [
+        "s4",
+        "s8",
+        "s20"
+      ],
+      "is_named_doctrine_question": true,
+      "recognized_phrase_variants": [
+        "הלכת השיתוף",
+        "הלכת שיתוף",
+        "הילכת השיתוף",
+        "הילכת שיתוף",
+        "הלכה השיתוף",
+        "הלכה שיתוף"
+      ],
+      "framing_correction_required": false,
+      "nearby_legal_institution_found": true
+    },
+    "exact_docket_source_url": null,
+    "hierarchy_order_applied": true,
+    "morphology_domain_match": false,
+    "first_secondary_position": 3,
+    "normalized_source_tokens": [],
+    "specific_case_resolution": {
+      "ms": 0,
+      "mode": "case_law_synthesis",
+      "enabled": false,
+      "acquisition_method": null,
+      "acquisition_success": false,
+      "acquired_text_length": 0,
+      "injected_candidate_id": null,
+      "exact_docket_source_url": null,
+      "requested_docket_display": null,
+      "allow_case_holding_answer": true,
+      "exact_docket_source_found": false,
+      "exact_docket_source_title": null,
+      "acquisition_failure_reason": null,
+      "exact_docket_source_usable": false,
+      "final_docket_branch_reason": "not_specific_case_mode",
+      "near_match_sources_ignored": [],
+      "text_acquisition_attempted": false,
+      "acquisition_failure_reasons": [],
+      "requested_docket_normalized": null,
+      "requested_dockets_normalized": [],
+      "acquisition_method_successful": null,
+      "acquisition_methods_attempted": [],
+      "last_acquisition_failure_reason": null,
+      "near_match_sources_ignored_count": 0
+    },
+    "exact_docket_source_found": false,
+    "exact_docket_source_title": null,
+    "final_docket_branch_reason": "not_specific_case_mode",
+    "max_completion_tokens_used": 8000,
+    "normalized_question_tokens": [
+      "לכת",
+      "שיתוף"
+    ],
+    "text_acquisition_attempted": false,
+    "acquisition_failure_reasons": [],
+    "framing_correction_required": false,
+    "missing_anchor_descriptions": [],
+    "requested_docket_normalized": null,
+    "sufficiency_authority_basis": "usable_judgment",
+    "synthesis_rendering_applied": true,
+    "thin_governing_statute_refs": [],
+    "statute_identity_dedup_count": 0,
+    "acquisition_method_successful": null,
+    "acquisition_methods_attempted": [],
+    "used_sources_hierarchy_counts": {
+      "commentary": 3,
+      "usable_judgment": 1,
+      "metadata_only_judgment": 1
+    },
+    "missing_anchor_caveat_injected": false,
+    "thin_governing_regulation_refs": [],
+    "last_acquisition_failure_reason": null,
+    "missing_docket_limitation_fired": false,
+    "mixed_hierarchy_footnotes_count": 0,
+    "primary_before_secondary_passed": true,
+    "near_match_sources_ignored_count": 0,
+    "statute_section_limitation_fired": false,
+    "authority_type_sufficiency_passed": true,
+    "case_law_missing_but_not_required": false,
+    "insufficient_sources_limitation_fired": false,
+    "practical_steps_thin_authority_passed": false,
+    "unrelated_excluded_from_carried_pack_count": 0,
+    "tangential_excluded_from_carried_pack_count": 0
+  },
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/990/022/x03&fileName=23022990.X03&type=4",
+      "title": "רע\"א 2299/23",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/990/022/x03&fileName=23022990.X03&type=4",
+          "title": "רע\"א 2299/23",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+      "title": "עא 52/80 ישעיהו שחר נ' מנדל פרידמן",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+          "title": "עא 52/80 ישעיהו שחר נ' מנדל פרידמן",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "http://lawjournal.huji.ac.il/article/12/947",
+      "title": "על נכסי עבר, על נכסי עתיד ועל הפילוסופיה של חזקת השיתוף; הלכת השיתוף הספציפי: חשיבה מחדש / Rethinking the Doctrine of Specific Co-Ownership; החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואים ועל נכסים שנתקבלו בירושה או במתנה",
+      "number": 3,
+      "sources": [
+        {
+          "url": "http://lawjournal.huji.ac.il/article/12/947",
+          "title": "על נכסי עבר, על נכסי עתיד ועל הפילוסופיה של חזקת השיתוף",
+          "source_type": "other"
+        },
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4868130",
+          "title": "הלכת השיתוף הספציפי: חשיבה מחדש / Rethinking the Doctrine of Specific Co-Ownership",
+          "source_type": "other"
+        },
+        {
+          "url": "https://law.biu.ac.il/files/law/shared/segel/hacalathshitufhspezifi.pdf",
+          "title": "החלת השיתוף הספציפי מכוח הדין הכללי על נכסים מלפני הנישואים ועל נכסים שנתקבלו בירושה או במתנה",
+          "source_type": "other"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ]
+}

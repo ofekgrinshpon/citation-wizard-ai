@@ -1,0 +1,301 @@
+{
+  "query": {
+    "id": "P02",
+    "query": "סכם את פסק הדין בע\"א 99999/99 פלוני נ' אלמוני."
+  },
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99999/99 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.",
+  "drafter": {
+    "ms": 2,
+    "ok": true,
+    "lead_ref": {
+      "ref": null,
+      "shape": "case_holding",
+      "reason": "skipped_missing_docket_anchor"
+    },
+    "escalated": false,
+    "hierarchy": {
+      "head_cap_passed": true,
+      "primary_head5_count": 0,
+      "usable_primary_count": 0,
+      "commentary_head_count": 0,
+      "commentary_head5_count": 0,
+      "first_primary_position": null,
+      "hierarchy_order_applied": true,
+      "first_secondary_position": null,
+      "statute_identity_dedup_count": 0,
+      "used_sources_hierarchy_counts": {},
+      "mixed_hierarchy_footnotes_count": 0,
+      "mixed_hierarchy_footnotes_split": 0,
+      "primary_before_secondary_passed": true
+    },
+    "model_final": "openai/gpt-5-mini",
+    "sources_used": 0,
+    "used_sources": [],
+    "marker_format": "superscript",
+    "model_initial": "openai/gpt-5-mini",
+    "builder_report": {
+      "marker_count": 0,
+      "heading_count": 0,
+      "list_item_count": 0,
+      "paragraph_count": 2,
+      "cited_segment_count": 0,
+      "adjacent_marker_count": 0,
+      "distinct_source_count": 0,
+      "compound_segment_count": 0,
+      "compound_footnote_count": 0,
+      "avg_sources_per_cited_segment": 0
+    },
+    "footnote_count": 0,
+    "snippet_budget": {
+      "research_mode": "specific_case",
+      "synthesis_run": false,
+      "max_snippet_length": 331,
+      "expanded_source_count": 0,
+      "statute_sources_ge_900": 0,
+      "judgment_sources_ge_900": 0,
+      "snippet_budget_by_source": [
+        {
+          "ref": "s1",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "judgment",
+          "snippet_length": 144,
+          "synthesis_role": "leading_candidate",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 144
+        },
+        {
+          "ref": "s2",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 331,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 331
+        }
+      ],
+      "commentary_max_snippet_length": 331
+    },
+    "sources_passed": 2,
+    "synthesis_pack": {
+      "has_judgment": false,
+      "statute_count": 0,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {},
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 0
+    },
+    "drafter_version": "v2.1c",
+    "carried_pack_size": 2,
+    "case_law_required": false,
+    "marker_validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": []
+    },
+    "acquisition_method": null,
+    "source_sufficiency": null,
+    "acquisition_success": false,
+    "answer_style_report": {
+      "metrics": {
+        "block_count": 2,
+        "denylist_hits": [],
+        "heading_count": 0,
+        "heading_ratio": 0,
+        "cited_block_count": 0,
+        "total_footnote_count": 0,
+        "compound_footnote_count": 0,
+        "compound_footnote_ratio": 0,
+        "unsafe_display_title_count": 0,
+        "avg_sources_per_cited_block": 0,
+        "unsafe_display_title_examples": [],
+        "partial_supported_strong_claims": [],
+        "total_source_refs_in_cited_blocks": 0
+      },
+      "report_only": true,
+      "triggered_reasons": []
+    },
+    "statute_only_answer": false,
+    "sufficiency_profile": null,
+    "synthesis_rendering": null,
+    "unique_source_count": 0,
+    "acquired_text_length": 0,
+    "deterministic_branch": "docket_limitation",
+    "canonical_quote_fired": false,
+    "commentary_head_count": 0,
+    "exact_amounts_allowed": null,
+    "omitted_candidate_ids": [
+      "c81f6a52-eb17-4f0c-90f0-d478fd2b555a",
+      "4b7ff1a2-ee11-42c3-bc3b-aefff7cb4817"
+    ],
+    "structured_validation": {
+      "ok": true,
+      "errors": [],
+      "block_count": 2,
+      "heading_count": 0,
+      "list_item_count": 0,
+      "paragraph_count": 2,
+      "cited_segment_count": 0,
+      "forbidden_text_hits": [],
+      "unknown_source_refs": [],
+      "total_source_ref_count": 0
+    },
+    "first_primary_position": null,
+    "named_doctrine_framing": null,
+    "exact_docket_source_url": null,
+    "hierarchy_order_applied": true,
+    "morphology_domain_match": false,
+    "first_secondary_position": null,
+    "normalized_source_tokens": [],
+    "specific_case_resolution": {
+      "ms": 1561,
+      "mode": "specific_case",
+      "enabled": true,
+      "acquisition_method": null,
+      "acquisition_success": false,
+      "acquired_text_length": 0,
+      "injected_candidate_id": null,
+      "exact_docket_source_url": null,
+      "requested_docket_display": "ע\"א 99999/99",
+      "allow_case_holding_answer": false,
+      "exact_docket_source_found": false,
+      "exact_docket_source_title": null,
+      "acquisition_failure_reason": "no_local_document_match",
+      "exact_docket_source_usable": false,
+      "final_docket_branch_reason": "no_exact_docket_source",
+      "near_match_sources_ignored": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C15%5C190%5C009%5Cm29&fileName=15009190_m29.txt&type=2",
+          "title": "פסק-דין בתיק בע\"מ 919/15",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%9C%D7%95%D7%A0%D7%99-%D7%A0'%D7%90%D7%9C%D7%9E%D7%95%D7%A0%D7%99-%D7%95%D7%90%D7%97'",
+          "title": "פלוני נ' אלמוני ואח'",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/7637-09-18",
+          "title": "7637-09-18 - פסקדין",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision12334-01-20/he/12334-01-21.pdf",
+          "title": "פסק דין",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%9C%D7%95%D7%A0%D7%99-%D7%A0'-%D7%90%D7%9C%D7%9E%D7%95%D7%A0%D7%99-%D7%95%D7%90%D7%97'",
+          "title": "תוצאות חיפוש שסופקו",
+          "reason": "docket_in_snippet_only"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision993-19/he/%D7%AA%D7%A7%D7%A6%D7%99%D7%A8%20%D7%A2%D7%90%20993-19.docx",
+          "title": "תקציר עא 993-19.docx - Gov.il",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+          "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.takdin.co.il/",
+          "title": "תקדין",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court",
+          "title": "פסקי-דין - פסקדין",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%a4-2444-22-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d-14-11-2022/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"פ 2444/22 פלוני נ׳ מדינת ישראל פסק דין (14.11.2022)",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-6164-22-smiths-detection-inc-%d7%a0-%d7%95%d7%95%d7%98%d7%90%d7%99%d7%a8%d7%a4%d7%95%d7%9c-%d7%94%d7%a0%d7%93%d7%a1%d7%94-%d7%91%d7%a2%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 6164/22 SMITHS DETECTION INC נ׳ ווטאירפול הנדסה בע\"מ פסק דין",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-6037-19-%d7%94%d7%9e%d7%95%d7%a1%d7%93-%d7%9c%d7%91%d7%99%d7%98%d7%95%d7%97-%d7%9c%d7%90%d7%95%d7%9e%d7%99-%d7%a0-%d7%9b%d7%90%d7%9f-%d7%91%d7%95%d7%a0%d7%99%d7%9d-%d7%91%d7%a2%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 6037/19 המוסד לביטוח לאומי נ׳ כאן בונים בע\"מ פסק דין (12.08.2021)",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-6868-22-%d7%90%d7%92%d7%a8%d7%95%d7%9e%d7%98%d7%9c-%d7%a4%d7%a8%d7%95%d7%99%d7%a7%d7%98%d7%99%d7%9d-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a4%d7%aa%d7%97%d7%99-%d7%90%d7%91%d7%95-%d7%92/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "רע\"א 6868/22 אגרומטל פרויקטים בע\"מ נ׳ פתחי אבו גאנם פסק דין (22.09.2022)",
+          "reason": "adjacent_case_like_source"
+        }
+      ],
+      "text_acquisition_attempted": true,
+      "acquisition_failure_reasons": [
+        "no_local_document_match"
+      ],
+      "requested_docket_normalized": "aa:99999/99",
+      "requested_dockets_normalized": [
+        "aa:99999/99"
+      ],
+      "acquisition_method_successful": null,
+      "acquisition_methods_attempted": [
+        "local_db_docket_lookup"
+      ],
+      "last_acquisition_failure_reason": "no_local_document_match",
+      "near_match_sources_ignored_count": 13
+    },
+    "exact_docket_source_found": false,
+    "exact_docket_source_title": null,
+    "final_docket_branch_reason": "no_exact_docket_source",
+    "normalized_question_tokens": [],
+    "text_acquisition_attempted": true,
+    "acquisition_failure_reasons": [
+      "no_local_document_match"
+    ],
+    "framing_correction_required": false,
+    "missing_anchor_descriptions": [
+      "פסק הדין בעניין ע\"א 99999/99 עצמו"
+    ],
+    "requested_docket_normalized": "aa:99999/99",
+    "sufficiency_authority_basis": null,
+    "synthesis_rendering_applied": false,
+    "thin_governing_statute_refs": [],
+    "statute_identity_dedup_count": 0,
+    "acquisition_method_successful": null,
+    "acquisition_methods_attempted": [
+      "local_db_docket_lookup"
+    ],
+    "used_sources_hierarchy_counts": {},
+    "missing_anchor_caveat_injected": true,
+    "thin_governing_regulation_refs": [],
+    "last_acquisition_failure_reason": "no_local_document_match",
+    "missing_docket_limitation_fired": true,
+    "mixed_hierarchy_footnotes_count": 0,
+    "primary_before_secondary_passed": true,
+    "near_match_sources_ignored_count": 13,
+    "statute_section_limitation_fired": false,
+    "authority_type_sufficiency_passed": null,
+    "case_law_missing_but_not_required": false,
+    "insufficient_sources_limitation_fired": false,
+    "practical_steps_thin_authority_passed": false,
+    "unrelated_excluded_from_carried_pack_count": 0,
+    "tangential_excluded_from_carried_pack_count": 0
+  },
+  "footnotes": []
+}

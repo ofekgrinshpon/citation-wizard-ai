@@ -1,0 +1,394 @@
+{
+  "query": {
+    "id": "R01",
+    "query": "מה נקבע בבג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל?"
+  },
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין בג\"ץ 6698/95 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.",
+  "drafter": {
+    "ms": 3,
+    "ok": true,
+    "lead_ref": {
+      "ref": null,
+      "shape": "case_holding",
+      "reason": "skipped_missing_docket_anchor"
+    },
+    "escalated": false,
+    "hierarchy": {
+      "head_cap_passed": true,
+      "primary_head5_count": 0,
+      "usable_primary_count": 0,
+      "commentary_head_count": 0,
+      "commentary_head5_count": 0,
+      "first_primary_position": null,
+      "hierarchy_order_applied": true,
+      "first_secondary_position": null,
+      "statute_identity_dedup_count": 0,
+      "used_sources_hierarchy_counts": {},
+      "mixed_hierarchy_footnotes_count": 0,
+      "mixed_hierarchy_footnotes_split": 0,
+      "primary_before_secondary_passed": true
+    },
+    "model_final": "openai/gpt-5-mini",
+    "sources_used": 0,
+    "used_sources": [],
+    "marker_format": "superscript",
+    "model_initial": "openai/gpt-5-mini",
+    "builder_report": {
+      "marker_count": 0,
+      "heading_count": 0,
+      "list_item_count": 0,
+      "paragraph_count": 2,
+      "cited_segment_count": 0,
+      "adjacent_marker_count": 0,
+      "distinct_source_count": 0,
+      "compound_segment_count": 0,
+      "compound_footnote_count": 0,
+      "avg_sources_per_cited_segment": 0
+    },
+    "footnote_count": 0,
+    "snippet_budget": {
+      "research_mode": "specific_case",
+      "synthesis_run": false,
+      "max_snippet_length": 500,
+      "expanded_source_count": 0,
+      "statute_sources_ge_900": 0,
+      "judgment_sources_ge_900": 0,
+      "snippet_budget_by_source": [
+        {
+          "ref": "s1",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "judgment",
+          "snippet_length": 468,
+          "synthesis_role": "leading_candidate",
+          "text_usability": "full_text",
+          "has_holding_text": true,
+          "has_statutory_text": false,
+          "available_text_length": 468
+        },
+        {
+          "ref": "s2",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 500,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 1171
+        },
+        {
+          "ref": "s3",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 500,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 898
+        },
+        {
+          "ref": "s4",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 500,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 1178
+        },
+        {
+          "ref": "s5",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "judgment",
+          "snippet_length": 205,
+          "synthesis_role": "leading_candidate",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 205
+        },
+        {
+          "ref": "s6",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 171,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 171
+        },
+        {
+          "ref": "s7",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 158,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "metadata_only",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 158
+        },
+        {
+          "ref": "s8",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "scholarship",
+          "snippet_length": 394,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 394
+        },
+        {
+          "ref": "s9",
+          "budget": 500,
+          "reason": "not_synthesis_mode",
+          "expanded": false,
+          "citable_as": "commentary",
+          "snippet_length": 393,
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "has_holding_text": false,
+          "has_statutory_text": false,
+          "available_text_length": 393
+        }
+      ],
+      "commentary_max_snippet_length": 500
+    },
+    "sources_passed": 9,
+    "synthesis_pack": {
+      "has_judgment": false,
+      "statute_count": 0,
+      "judgment_count": 0,
+      "commentary_count": 0,
+      "by_synthesis_role": {},
+      "not_citable_count": 0,
+      "scholarship_count": 0,
+      "has_usable_holding_text": false,
+      "has_statutory_background": false,
+      "judgments_with_holding_text": 0
+    },
+    "drafter_version": "v2.1c",
+    "carried_pack_size": 9,
+    "case_law_required": false,
+    "marker_validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": []
+    },
+    "acquisition_method": null,
+    "source_sufficiency": null,
+    "acquisition_success": false,
+    "answer_style_report": {
+      "metrics": {
+        "block_count": 2,
+        "denylist_hits": [],
+        "heading_count": 0,
+        "heading_ratio": 0,
+        "cited_block_count": 0,
+        "total_footnote_count": 0,
+        "compound_footnote_count": 0,
+        "compound_footnote_ratio": 0,
+        "unsafe_display_title_count": 2,
+        "avg_sources_per_cited_block": 0,
+        "unsafe_display_title_examples": [
+          {
+            "ref": "s1",
+            "status": "fallback_truncated",
+            "display_title": "פסק דין מתוך אתר ממשלתי (gov.il)"
+          },
+          {
+            "ref": "s6",
+            "status": "fallback_truncated",
+            "display_title": "מסמך מאתר אתר אקדמי (cris.haifa.ac.il)"
+          }
+        ],
+        "partial_supported_strong_claims": [],
+        "total_source_refs_in_cited_blocks": 0
+      },
+      "report_only": true,
+      "triggered_reasons": [
+        "unsafe_display_title"
+      ]
+    },
+    "statute_only_answer": false,
+    "sufficiency_profile": null,
+    "synthesis_rendering": null,
+    "unique_source_count": 0,
+    "acquired_text_length": 6000,
+    "deterministic_branch": "docket_limitation",
+    "canonical_quote_fired": false,
+    "commentary_head_count": 0,
+    "exact_amounts_allowed": null,
+    "omitted_candidate_ids": [
+      "caa61602-7820-42a9-95f1-cf7daad0a37f",
+      "ebc436b8-05f4-44f7-9ca5-15862b24ea35",
+      "ea7cda31-4599-4ede-837a-d3fae9734225",
+      "98201ba4-e1c1-483c-a08f-52dda21eb735",
+      "f0ea9d1b-4c93-4aea-9c12-9ec768149256",
+      "f8f4cb04-5a6f-431f-a08f-d17985a4a382",
+      "b5c4bf2e-6959-410d-b823-7b347ec28c6d",
+      "b3cb342a-dd80-40d4-9ea4-56a5f1280f33",
+      "b8e0726a-7467-4c59-9322-faaff1aeefb5"
+    ],
+    "structured_validation": {
+      "ok": true,
+      "errors": [],
+      "block_count": 2,
+      "heading_count": 0,
+      "list_item_count": 0,
+      "paragraph_count": 2,
+      "cited_segment_count": 0,
+      "forbidden_text_hits": [],
+      "unknown_source_refs": [],
+      "total_source_ref_count": 0
+    },
+    "first_primary_position": null,
+    "named_doctrine_framing": null,
+    "exact_docket_source_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C95%5C980%5C066%5CA14&fileName=95066980_a14.txt&type=2",
+    "hierarchy_order_applied": true,
+    "morphology_domain_match": false,
+    "first_secondary_position": null,
+    "normalized_source_tokens": [],
+    "specific_case_resolution": {
+      "ms": 2,
+      "mode": "specific_case",
+      "enabled": true,
+      "acquisition_method": null,
+      "acquisition_success": false,
+      "acquired_text_length": 6000,
+      "injected_candidate_id": null,
+      "exact_docket_source_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C95%5C980%5C066%5CA14&fileName=95066980_a14.txt&type=2",
+      "requested_docket_display": "בג\"ץ 6698/95",
+      "allow_case_holding_answer": true,
+      "exact_docket_source_found": true,
+      "exact_docket_source_title": "בג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל",
+      "acquisition_failure_reason": null,
+      "exact_docket_source_usable": true,
+      "final_docket_branch_reason": "exact_docket_usable_text",
+      "near_match_sources_ignored": [
+        {
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision1308-17/he/1308-17.pdf",
+          "title": "פסק-דין בתיק בג\"ץ 1308/17 - gov.il",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-8010-16-%d7%91%d7%a8%d7%96%d7%95%d7%9f-%d7%9e%d7%9c%d7%9b%d7%94-%d7%a0%d7%a2%d7%9e%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 8010/16 ברזון מלכה נעמה נ׳ מדינת ישראל פסק דין (12.07.2021)",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5720",
+          "title": "בימ\"ש עליון, אב\"ד השופטת ענת ברון, השופט יוסף אלרון, השופט אלכס שטיין: פס\"ד בארבע עתירות שהוגשו נגד הקמת רכבל לעיר העתיקה בירושלים (בג\"ץ 7841/19)",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1981",
+          "title": "\"וגשֵר הסדק שנפער\": תרבות הסדרית בבג\"ץ וקריאה למיסוד מנגנון גישור בג\"צי ייעודי (כרך נה)",
+          "reason": "docket_in_snippet_only"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+          "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+          "reason": "docket_in_snippet_only"
+        },
+        {
+          "url": "https://www.psakdin.co.il/Court/%D7%90%D7%99-%D7%A7%D7%99%D7%95%D7%9D-%D7%91%D7%96%D7%9E%D7%9F-%D7%A9%D7%9C-%D7%A4%D7%A1%D7%A7-%D7%94%D7%93%D7%99%D7%9F-%D7%91%D7%A2%D7%A0%D7%99%D7%99%D7%9F-%D7%94%D7%A7%D7%A6%D7%90%D7%AA-%D7%94%D7%A7%D7%A8%D7%A7%D7%A2%D7%95%D7%AA-%D7%91%D7%Aקציר--%D7%A2%D7%99%D7%9C%D7%94-%D7%9C%D7%97%D7%99%D7%95%D7%91-%D7%94%D7%9E%D7%A0%D7%94%D7%9C-%D7%91%D7%94%D7%95%D7%A6%D7%90%D7%95%D7%AA",
+          "title": "אי קיומו בזמן של פסק הדין בעניין הקצאת הקרקעות בקציר - עילה לחיוב המנהל בהוצאות",
+          "reason": "docket_in_snippet_only"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-2276-20-%d7%9e%d7%95%d7%a2%d7%a6%d7%94-%d7%90%d7%96%d7%95%d7%a8%d7%99%d7%aa-%d7%9c%d7%91-%d7%94%d7%a9%d7%a8%d7%95%d7%9f-%d7%a0-%d7%9e%d7%90%d7%99%d7%a8-%d7%93%d7%95%d7%99%d7%93%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 2276/20 מועצה אזורית לב השרון נ׳ מאיר דוידי פסק דין (06.11.2022)",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-4241-20-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a8%d7%a9%d7%95%d7%aa-%d7%9e%d7%a7%d7%a8%d7%a7%d7%a2%d7%99-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%a2%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 4241/20 מדינת ישראל- רשות מקרקעי ישראל נ׳ עיזבון המנוח מוחמד סעיד תי פסק דין",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-6574-19-%d7%a8%d7%95%d7%aa-%d7%90%d7%92%d7%9d-%d7%a0-bnp-paribas-sa/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 6574/19 רות אגם נ׳ BNP PARIBAS SA פסק דין (27.02.2020)",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%93%d7%a0%d7%90-1652-19-%d7%a1%d7%91%d7%98%d7%9c%d7%a0%d7%94-%d7%90%d7%99%d7%a1%d7%97%d7%a7%d7%95%d7%91-%d7%a0-%d7%98%d7%98%d7%99%d7%90%d7%a0%d7%94-%d7%a2%d7%99%d7%93%d7%99%d7%aa-%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "דנ\"א 1652/19 סבטלנה איסחקוב נ׳ טטיאנה (עידית) סקוק פסק דין",
+          "reason": "adjacent_case_like_source"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%93%d7%a0%d7%90-4897-22-%d7%91%d7%9f-%d7%a9%d7%9c%d7%95%d7%a9-%d7%99%d7%99%d7%91%d7%95%d7%90-%d7%95%d7%99%d7%99%d7%a6%d7%95%d7%90-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%99%d7%a4%d7%90%d7%95%d7%a8%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "דנ\"א 4897/22 בן שלוש ייבוא וייצוא בע\"מ נ׳ יפאורה-תבורי בע\"מ פסק דין (05.07.2022)",
+          "reason": "adjacent_case_like_source"
+        }
+      ],
+      "text_acquisition_attempted": false,
+      "acquisition_failure_reasons": [],
+      "requested_docket_normalized": "bagatz:6698/95",
+      "requested_dockets_normalized": [
+        "bagatz:6698/95"
+      ],
+      "acquisition_method_successful": null,
+      "acquisition_methods_attempted": [],
+      "last_acquisition_failure_reason": null,
+      "near_match_sources_ignored_count": 11
+    },
+    "exact_docket_source_found": true,
+    "exact_docket_source_title": "בג\"ץ 6698/95 קעדאן נ' מינהל מקרקעי ישראל",
+    "final_docket_branch_reason": "exact_docket_usable_text",
+    "normalized_question_tokens": [],
+    "text_acquisition_attempted": false,
+    "acquisition_failure_reasons": [],
+    "framing_correction_required": false,
+    "missing_anchor_descriptions": [
+      "פסק הדין בעניין בג\"ץ 6698/95 עצמו"
+    ],
+    "requested_docket_normalized": "bagatz:6698/95",
+    "sufficiency_authority_basis": null,
+    "synthesis_rendering_applied": false,
+    "thin_governing_statute_refs": [],
+    "statute_identity_dedup_count": 0,
+    "acquisition_method_successful": null,
+    "acquisition_methods_attempted": [],
+    "used_sources_hierarchy_counts": {},
+    "missing_anchor_caveat_injected": true,
+    "thin_governing_regulation_refs": [],
+    "last_acquisition_failure_reason": null,
+    "missing_docket_limitation_fired": true,
+    "mixed_hierarchy_footnotes_count": 0,
+    "primary_before_secondary_passed": true,
+    "near_match_sources_ignored_count": 11,
+    "statute_section_limitation_fired": false,
+    "authority_type_sufficiency_passed": null,
+    "case_law_missing_but_not_required": false,
+    "insufficient_sources_limitation_fired": false,
+    "practical_steps_thin_authority_passed": false,
+    "unrelated_excluded_from_carried_pack_count": 0,
+    "tangential_excluded_from_carried_pack_count": 0
+  },
+  "footnotes": []
+}
