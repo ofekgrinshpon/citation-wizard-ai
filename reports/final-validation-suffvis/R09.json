@@ -1,0 +1,598 @@
+{
+  "id": "R09",
+  "query": "כתוב סקירת פסיקה על מבחן ההשתלבות בדיני עבודה.",
+  "run_id": "50f4fe7e-3783-4492-b0d1-2a3aef09e1c2",
+  "total_ms": 158883,
+  "research_mode": null,
+  "shape": null,
+  "deterministic_branch": "insufficient_sources_limitation",
+  "is_stub": false,
+  "verifier_counts": {
+    "by_support": {
+      "direct": 3,
+      "partial": 9,
+      "unrelated": 4,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 19,
+      "false": 0
+    },
+    "model_verdicts": 19,
+    "by_support_model": {
+      "direct": 3,
+      "partial": 9,
+      "unrelated": 4,
+      "tangential": 3
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "verifier_errors": [],
+  "sufficiency": {
+    "shape": "analysis",
+    "reason": "no_topical_source",
+    "applied": true,
+    "category": "case_law_synthesis",
+    "sufficient": false,
+    "thin_source": false,
+    "found_titles": [
+      "חוק פיצויי פיטורים, תשכ\"ג-1963",
+      "חלק 8 פרישה מן השירות ו זכויות פרישה",
+      "ספר החוקים",
+      "העסקת עובדי קבלן ונותני שירותים מן החוץ במשרדי הממשלה",
+      "שוק העבודה בישראל 2022 – תמונת מצב ופעילות משרד העבודה"
+    ],
+    "topical_refs": [],
+    "topic_phrases": [
+      "מבחן ההשתלבות בדיני עבודה",
+      "ההשתלבות בדיני עבודה",
+      "מבחן ההשתלבות בדיני",
+      "ההשתלבות בדיני",
+      "מבחן ההשתלבות",
+      "בדיני עבודה",
+      "כתוב סקירת"
+    ],
+    "case_law_required": true,
+    "statute_only_answer": false,
+    "sufficiency_profile": "case_law_synthesis",
+    "usable_judgment_refs": [
+      "s11"
+    ],
+    "exact_amounts_allowed": false,
+    "governing_statute_refs": [],
+    "topical_authority_refs": [],
+    "morphology_domain_match": false,
+    "normalized_source_tokens": [],
+    "governing_regulation_refs": [],
+    "normalized_question_tokens": [
+      "תוב",
+      "סקיר",
+      "בחן",
+      "שתלב",
+      "דיני",
+      "עבוד"
+    ],
+    "sufficiency_authority_basis": "insufficient",
+    "thin_governing_statute_refs": [],
+    "thin_governing_regulation_refs": [],
+    "authority_type_sufficiency_passed": false,
+    "case_law_missing_but_not_required": false,
+    "practical_steps_thin_authority_passed": false
+  },
+  "acquisition": {
+    "ms": 3909,
+    "mode": "doctrine_explanation",
+    "budget": {
+      "other": 2,
+      "total": 3,
+      "leading": 3
+    },
+    "enabled": true,
+    "attempts": [
+      {
+        "ms": 570,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/980/061/t68&fileName=23061980.T68.SUM&type=4",
+        "title": "מערכת בתי המשפט",
+        "success": true,
+        "candidate_id": "256aaccd-b4e5-4725-a043-4691268693de",
+        "title_signal": "מערכת בתי המשפט",
+        "docket_signal": null,
+        "failure_reason": null,
+        "synthesis_role": "leading_candidate",
+        "trigger_reason": "metadata_only",
+        "has_holding_text": false,
+        "method_succeeded": "direct_file_fetch",
+        "docket_normalized": null,
+        "methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": true,
+        "acquired_text_length": 4676,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 4676,
+        "text_usability_before": "metadata_only",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": false
+      },
+      {
+        "ms": 1479,
+        "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/hesber.pdf",
+        "title": "ההסבר (תירוץ) השוקי לפערי שכר מגדריים: בעקבות פסק דין הומסנטר (עשה זאת בעצמך) בע&quot;מ נ' אורית גורן",
+        "success": true,
+        "candidate_id": "68f97927-4fb8-45eb-8207-22ccd254ecf8",
+        "title_signal": "ההסבר (תירוץ) השוקי לפערי שכר מגדריים: בעקבות פסק דין הומסנטר (עשה זאת בעצמך) בע&quot;מ נ' אורית גורן",
+        "docket_signal": null,
+        "failure_reason": null,
+        "synthesis_role": "secondary_commentary",
+        "trigger_reason": "no_judgment_body_text",
+        "has_holding_text": false,
+        "method_succeeded": "direct_file_fetch",
+        "docket_normalized": null,
+        "methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 109779,
+        "text_usability_before": "full_text",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": false
+      },
+      {
+        "ms": 1858,
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5148-18-%d7%90%d7%95%d7%a8-%d7%a9%d7%97%d7%9d-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6%d7%99-%d7%9c%d7%a2%d7%91%d7%95%d7%93%d7%94-%d7%a4%d7%a1/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5148/18 אור שחם נ׳ בית הדין הארצי לעבודה פס\"ד פסק דין (11.07.2022)",
+        "success": true,
+        "candidate_id": "9c95326a-3c64-4fa3-a203-6e2b10479c2d",
+        "title_signal": "בג\"ץ 5148/18 אור שחם נ׳ בית הדין הארצי לעבודה פס\"ד פסק דין (11.07.2022)",
+        "docket_signal": "בג\"ץ 5148/18",
+        "failure_reason": null,
+        "synthesis_role": "secondary_commentary",
+        "trigger_reason": "no_judgment_body_text",
+        "has_holding_text": true,
+        "method_succeeded": "local_db_docket_lookup",
+        "docket_normalized": "bagatz:5148/18",
+        "methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": true,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 11841,
+        "text_usability_before": "substantive_excerpt",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": true
+      }
+    ],
+    "excluded": [],
+    "successes": 3,
+    "attempts_made": 3,
+    "eligible_count": 3,
+    "judgment_candidates": 3,
+    "eligibility_diagnostics": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/980/061/t68&fileName=23061980.T68.SUM&type=4",
+        "title": "מערכת בתי המשפט",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "256aaccd-b4e5-4725-a043-4691268693de",
+        "planner_role": "binding_case_law",
+        "has_court_url": true,
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": true,
+        "docket_normalized": null,
+        "eligibility_basis": [
+          "official_court_url"
+        ],
+        "has_docket_signal": false,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/hesber.pdf",
+        "title": "ההסבר (תירוץ) השוקי לפערי שכר מגדריים: בעקבות פסק דין הומסנטר (עשה זאת בעצמך) בע&quot;מ נ' אורית גורן",
+        "eligible": true,
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "68f97927-4fb8-45eb-8207-22ccd254ecf8",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "full_text",
+        "excluded_reason": null,
+        "has_party_names": true,
+        "has_download_url": true,
+        "docket_normalized": null,
+        "eligibility_basis": [
+          "case_title_party_names"
+        ],
+        "has_docket_signal": false,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5148-18-%d7%90%d7%95%d7%a8-%d7%a9%d7%97%d7%9d-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6%d7%99-%d7%9c%d7%a2%d7%91%d7%95%d7%93%d7%94-%d7%a4%d7%a1/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5148/18 אור שחם נ׳ בית הדין הארצי לעבודה פס\"ד פסק דין (11.07.2022)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "9c95326a-3c64-4fa3-a203-6e2b10479c2d",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": null,
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "bagatz:5148/18",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": false
+      }
+    ]
+  },
+  "usable_judgments": [
+    {
+      "ref": "s11",
+      "acquired_text_length": null,
+      "verifier": [],
+      "in_answer_footnote": false
+    }
+  ],
+  "admitted_sources": [
+    {
+      "title": "חוק פיצויי פיטורים, תשכ\"ג-1963",
+      "url": "https://fs.knesset.gov.il/%5C5%5Claw%5C5_lsr_209275.PDF",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [],
+      "verifier": [
+        "direct"
+      ]
+    },
+    {
+      "title": "חלק 8 פרישה מן השירות ו זכויות פרישה",
+      "url": "https://www.btl.gov.il/Laws1/30_0999_000009.pdf",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [],
+      "verifier": [
+        "direct"
+      ]
+    },
+    {
+      "title": "ספר החוקים",
+      "url": "https://fs.knesset.gov.il/25/law/25_lsr_4769128.pdf",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "העסקת עובדי קבלן ונותני שירותים מן החוץ במשרדי הממשלה",
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/c4bc8d55-f7f7-e411-80c8-00155d010977/2_c4bc8d55-f7f7-e411-80c8-00155d010977_11_9500.pdf",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "שוק העבודה בישראל 2022 – תמונת מצב ופעילות משרד העבודה",
+      "url": "https://www.gov.il/BlobFolder/news/employment-report-2022/he/employment-report-2022.pdf",
+      "role": "government_report",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "האם נטל הוכחת אי קיום יחסי עובד-מעביד יוטל על הפלטפורמות ...",
+      "url": "https://main.knesset.gov.il/apps/committees/4196/news/8951",
+      "role": "government_report",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "כלכלת הפלטפורמה - Gov.il",
+      "url": "https://www.gov.il/BlobFolder/guide/platform-sessions/he/platform_kazenelson.pdf",
+      "role": "government_report",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+      "role": "persuasive_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "listing_or_pagination_page"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "חוק העסקת עובדים על ידי קבלני כוח אדם, תשנ\"ו-1996",
+      "url": "https://www.nevo.co.il/law_html/law01/116_001.htm",
+      "role": "primary_statute",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "official_host_non_specific_path"
+      ],
+      "verifier": [
+        "direct"
+      ]
+    },
+    {
+      "title": "מערכת בתי המשפט",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/980/061/t68&fileName=23061980.T68.SUM&type=4",
+      "role": "binding_case_law",
+      "tier": "official_primary",
+      "text_usability": "full_text",
+      "citable_as": "judgment",
+      "judgment": true,
+      "holding_text": false,
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "judgment_document",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "עובד או קבלן",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%95%D7%91%D7%93%20%D7%90%D7%95%20%D7%A7%D7%91%D7%9C%D7%9F.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "מבחני הסף מיהו עובד",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-01/%D7%9E%D7%99%D7%94%D7%95%20%D7%A2%D7%95%D7%91%D7%93%20%D7%9E%D7%91%D7%97%D7%A0%D7%99%20%D7%94%D7%A1%D7%A3%20.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "digital_economy_2018",
+      "url": "https://www.gov.il/BlobFolder/reports/digital_economy_2018/he/digital_economy.pdf",
+      "role": "government_report",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "ההסבר (תירוץ) השוקי לפערי שכר מגדריים: בעקבות פסק דין הומסנטר (עשה זאת בעצמך) בע&quot;מ נ' אורית גורן",
+      "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/hesber.pdf",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "זקנה אחרת: ההיבטים המשפטיים של משפחות חדשות בזקנה בישראל | כרמית טולדנו, ישראל איסי דורון ואריאן רנן-ברזילי (כרך י\"ז)",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2024/01/din17-toledano.pdf",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "בג\"ץ 5148/18 אור שחם נ׳ בית הדין הארצי לעבודה פס\"ד פסק דין (11.07.2022)",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5148-18-%d7%90%d7%95%d7%a8-%d7%a9%d7%97%d7%9d-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6%d7%99-%d7%9c%d7%a2%d7%91%d7%95%d7%93%d7%94-%d7%a4%d7%a1/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": true,
+      "synthesis_role": "secondary_commentary",
+      "flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "הזכות לפרטיות בעבודה: עיון מחודש בפרשת איסקוב-ענבר ויישומה",
+      "url": "https://lawjournal.huji.ac.il/article/12/1909",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "כ\"בא גתשס ייר\"ט",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=4311&businessType=1",
+      "role": "persuasive_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "official_host_non_specific_path"
+      ],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "בין אינטימיות נדרשת ובלתי־מוגבלת לכפייה: המקרה של עובדות בית",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d0b116eaa8ff4f9fa620a4790ba4733a.pdf",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    }
+  ],
+  "used_sources": [],
+  "footnotes": [],
+  "answer_len": 402,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק פיצויי פיטורים, תשכ\"ג-1963; חלק 8 פרישה מן השירות ו זכויות פרישה; ספר החוקים; העסקת עובדי קבלן ונותני שירותים מן החוץ במשרדי הממשלה."
+}

@@ -1,0 +1,913 @@
+{
+  "id": "R04",
+  "query": "מה הפסיקה אומרת על הרמת מסך ההתאגדות?",
+  "run_id": "551f7395-66bf-4451-bded-ea90e90c1571",
+  "total_ms": 136453,
+  "research_mode": null,
+  "shape": null,
+  "deterministic_branch": "insufficient_sources_limitation",
+  "is_stub": false,
+  "verifier_counts": {
+    "by_support": {
+      "direct": 1,
+      "partial": 12,
+      "unrelated": 8,
+      "tangential": 5
+    },
+    "by_role_match": {
+      "true": 24,
+      "false": 2
+    },
+    "model_verdicts": 26,
+    "by_support_model": {
+      "direct": 1,
+      "partial": 12,
+      "unrelated": 8,
+      "tangential": 5
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "verifier_errors": [],
+  "sufficiency": {
+    "shape": "analysis",
+    "reason": "no_usable_judgment_authority",
+    "applied": true,
+    "category": "case_law_synthesis",
+    "sufficient": false,
+    "thin_source": true,
+    "found_titles": [
+      "חוק החברות, 1999 - תוכן ענינים",
+      "חוק חדלות פירעון ושיקום כלכלי, תשע\"ח-2018",
+      "חוק חדלות פירעון ושיקום כלכלי – דברי הסבר/רקע חקיקתי",
+      "נדחתה בקשה להרמת המסך בשלב שלאחר מתן פסק הדין - פסקדין",
+      "פרק ו': הרמת המסך"
+    ],
+    "topical_refs": [
+      "s4"
+    ],
+    "topic_phrases": [
+      "הרמת מסך ההתאגדות",
+      "מסך ההתאגדות",
+      "הרמת מסך"
+    ],
+    "case_law_required": true,
+    "statute_only_answer": false,
+    "sufficiency_profile": "case_law_synthesis",
+    "usable_judgment_refs": [],
+    "exact_amounts_allowed": false,
+    "governing_statute_refs": [],
+    "topical_authority_refs": [
+      "s4"
+    ],
+    "morphology_domain_match": false,
+    "normalized_source_tokens": [
+      "יזמנ",
+      "שקע",
+      "חיים",
+      "משה",
+      "נגד",
+      "פירוק",
+      "פסק",
+      "דין",
+      "ראו",
+      "נוש",
+      "עדפ",
+      "סגר",
+      "שציינתי",
+      "כפי",
+      "זכור",
+      "זאת",
+      "ניין",
+      "קבלני",
+      "וגיסטי",
+      "רכז",
+      "דיני",
+      "וצא",
+      "נקוד",
+      "תמיד",
+      "ניצב",
+      "שוויון",
+      "עיקרון",
+      "אולם",
+      "שיש",
+      "חריג",
+      "גדר",
+      "מנו",
+      "סטי",
+      "וכל",
+      "פירעון",
+      "חדל",
+      "קריספי",
+      "משל",
+      "צדיקו",
+      "אלקטרוניק",
+      "ישראל",
+      "שלסר",
+      "מכר",
+      "בית",
+      "חלט",
+      "אות",
+      "שאינן",
+      "טענ",
+      "תייחס",
+      "שלא",
+      "רשאי",
+      "פרק",
+      "עומד",
+      "הות",
+      "פור",
+      "רנד",
+      "שקמ",
+      "שיווק",
+      "לוי",
+      "רמי"
+    ],
+    "governing_regulation_refs": [],
+    "normalized_question_tokens": [
+      "רמת",
+      "מסך",
+      "תאגד"
+    ],
+    "sufficiency_authority_basis": "insufficient",
+    "thin_governing_statute_refs": [],
+    "thin_governing_regulation_refs": [],
+    "authority_type_sufficiency_passed": false,
+    "case_law_missing_but_not_required": false,
+    "practical_steps_thin_authority_passed": false
+  },
+  "acquisition": {
+    "ms": 2294,
+    "mode": "case_law_synthesis",
+    "budget": {
+      "other": 2,
+      "total": 4,
+      "leading": 2
+    },
+    "enabled": true,
+    "attempts": [
+      {
+        "ms": 1175,
+        "url": "https://supremedecisions.court.gov.il",
+        "title": "מערכת פסקי דין של בית המשפט העליון",
+        "success": true,
+        "candidate_id": "57660cda-c770-417c-97ca-371fcfc52598",
+        "title_signal": "מערכת פסקי דין של בית המשפט העליון",
+        "docket_signal": null,
+        "failure_reason": null,
+        "synthesis_role": "unknown",
+        "trigger_reason": "text_below_threshold",
+        "has_holding_text": false,
+        "method_succeeded": "wrapper_file_resolve",
+        "docket_normalized": null,
+        "methods_attempted": [
+          "wrapper_file_resolve"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 11724,
+        "text_usability_before": "listing_page",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "wrapper_file_resolve"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": false
+      },
+      {
+        "ms": 1117,
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+        "title": "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעות הדדיות של בעל נכס מקרקעין ובנק בעקבות עסקה שהשתבשה (ת\"א 10512-01-21)",
+        "success": true,
+        "candidate_id": "ee1a3515-2f35-4665-9bdd-72af9373755f",
+        "title_signal": "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעות הדדיות של בעל נכס מקרקעין ובנק בעקבות עסקה שהשתבשה (ת\"א 10512-01-21)",
+        "docket_signal": "ת\"א 10512/01/21",
+        "failure_reason": null,
+        "synthesis_role": "unknown",
+        "trigger_reason": "no_judgment_body_text",
+        "has_holding_text": false,
+        "method_succeeded": "local_db_docket_lookup",
+        "docket_normalized": "ta:10512/1/21",
+        "methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 12006,
+        "text_usability_before": "listing_page",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "local_db_docket_lookup"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": false
+      }
+    ],
+    "excluded": [
+      {
+        "url": "https://www.court.gov.il/ngcs.web.site/homepage.aspx",
+        "title": "נט המשפט - דף הבית",
+        "reason": "institutional_page",
+        "candidate_id": "6f832a9a-0132-451d-b556-ba39d66184a1"
+      },
+      {
+        "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+        "title": "על-אודות בית המשפט העליון - הרשות השופטת",
+        "reason": "institutional_page",
+        "candidate_id": "c0b6a58d-96f4-49b9-90aa-84c033e9c368"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1783",
+        "title": "אי-חוקיות, מראית עין או משכון מוסווה? (בעקבות ע\"א 6634/15 טופ במרחבי השרון ייזום בע\"מ נ' קפלן)",
+        "reason": "budget_exhausted",
+        "candidate_id": "3f7011ee-f9c9-46ce-bff5-03e1d44bd4c1"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-5655-20-%d7%9b%d7%a4%d7%a8-%d7%99%d7%9c%d7%93%d7%99%d7%9d-%d7%95%d7%a0%d7%95%d7%a2%d7%a8-%d7%90%d7%94%d7%91%d7%94-%d7%a2%d7%9e%d7%95%d7%aa%d7%94-%d7%9c%d7%a7%d7%99%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "עע\"מ 5655/20 כפר ילדים ונוער \"אהבה\" – עמותה לקידום ילדים, נועד נ׳ מדינת י פסק דין (03.08.2020)",
+        "reason": "budget_exhausted",
+        "candidate_id": "5cdd3117-e3aa-4758-9e28-95258bd198a7"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-8038-20-%d7%91-%d7%a8-%d7%9f-%d7%99%d7%96%d7%9e%d7%a0%d7%95%d7%aa-%d7%95%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%97%d7%99%d7%99%d7%9d-%d7%95%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 8038/20 ב.ר.ן יזמנות והשקעות בע\"מ נ׳ חיים ומשה מנגד בע\"מ (בפירוק) פסק דין (20.10.2020)",
+        "reason": "budget_exhausted",
+        "candidate_id": "83768aef-3aae-4e74-92d5-59e031bbb481"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-3587-20-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a9%d7%9c%d7%a1%d7%a8-%d7%a0-%d7%9e%d7%9e%d7%9b%d7%a8-%d7%91%d7%99%d7%aa-%d7%91%d7%a2%d7%9e-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 3587/20 ישראל שלסר נ׳ ממכר בית בע\"מ החלטה (30.06.2020)",
+        "reason": "budget_exhausted",
+        "candidate_id": "a889828f-3d4e-4a8e-8be7-7145648c951c"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5309-18-%d7%94%d7%aa%d7%90%d7%97%d7%93%d7%95%d7%aa-%d7%94%d7%9e%d7%9c%d7%95%d7%a0%d7%95%d7%aa-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%a4/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5309/18 התאחדות המלונות בישראל נ׳ משרד הפנים פסק דין (06.01.2021)",
+        "reason": "budget_exhausted",
+        "candidate_id": "d6c4c5a8-8f5c-4245-827b-9d9155cec632"
+      }
+    ],
+    "successes": 2,
+    "attempts_made": 2,
+    "eligible_count": 7,
+    "judgment_candidates": 9,
+    "eligibility_diagnostics": [
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+        "title": "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעות הדדיות של בעל נכס מקרקעין ובנק בעקבות עסקה שהשתבשה (ת\"א 10512-01-21)",
+        "eligible": true,
+        "citable_as": "not_citable",
+        "source_type": "caselaw",
+        "candidate_id": "ee1a3515-2f35-4665-9bdd-72af9373755f",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": false,
+        "authority_tier": "index_or_listing",
+        "synthesis_role": "unknown",
+        "text_usability": "listing_page",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": "ta:10512/1/21",
+        "eligibility_basis": [
+          "docket_signal"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il",
+        "title": "מערכת פסקי דין של בית המשפט העליון",
+        "eligible": true,
+        "citable_as": "not_citable",
+        "source_type": "caselaw",
+        "candidate_id": "57660cda-c770-417c-97ca-371fcfc52598",
+        "planner_role": "binding_case_law",
+        "has_court_url": true,
+        "authority_tier": "index_or_listing",
+        "synthesis_role": "unknown",
+        "text_usability": "listing_page",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": null,
+        "eligibility_basis": [
+          "official_court_url"
+        ],
+        "has_docket_signal": false,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.court.gov.il/ngcs.web.site/homepage.aspx",
+        "title": "נט המשפט - דף הבית",
+        "eligible": false,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "6f832a9a-0132-451d-b556-ba39d66184a1",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": true,
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": "institutional_page",
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": null,
+        "eligibility_basis": [],
+        "has_docket_signal": false,
+        "ineligible_reason": "institutional_page",
+        "acquisition_attempted": false,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+        "title": "על-אודות בית המשפט העליון - הרשות השופטת",
+        "eligible": false,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "c0b6a58d-96f4-49b9-90aa-84c033e9c368",
+        "planner_role": "binding_case_law",
+        "has_court_url": true,
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": "institutional_page",
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": null,
+        "eligibility_basis": [],
+        "has_docket_signal": false,
+        "ineligible_reason": "institutional_page",
+        "acquisition_attempted": false,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1783",
+        "title": "אי-חוקיות, מראית עין או משכון מוסווה? (בעקבות ע\"א 6634/15 טופ במרחבי השרון ייזום בע\"מ נ' קפלן)",
+        "eligible": true,
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "3f7011ee-f9c9-46ce-bff5-03e1d44bd4c1",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "aa:6634/15",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-5655-20-%d7%9b%d7%a4%d7%a8-%d7%99%d7%9c%d7%93%d7%99%d7%9d-%d7%95%d7%a0%d7%95%d7%a2%d7%a8-%d7%90%d7%94%d7%91%d7%94-%d7%a2%d7%9e%d7%95%d7%aa%d7%94-%d7%9c%d7%a7%d7%99%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "עע\"מ 5655/20 כפר ילדים ונוער \"אהבה\" – עמותה לקידום ילדים, נועד נ׳ מדינת י פסק דין (03.08.2020)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "5cdd3117-e3aa-4758-9e28-95258bd198a7",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "aam:5655/20",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-8038-20-%d7%91-%d7%a8-%d7%9f-%d7%99%d7%96%d7%9e%d7%a0%d7%95%d7%aa-%d7%95%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%97%d7%99%d7%99%d7%9d-%d7%95%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 8038/20 ב.ר.ן יזמנות והשקעות בע\"מ נ׳ חיים ומשה מנגד בע\"מ (בפירוק) פסק דין (20.10.2020)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "83768aef-3aae-4e74-92d5-59e031bbb481",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "raa:8038/20",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-3587-20-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a9%d7%9c%d7%a1%d7%a8-%d7%a0-%d7%9e%d7%9e%d7%9b%d7%a8-%d7%91%d7%99%d7%aa-%d7%91%d7%a2%d7%9e-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 3587/20 ישראל שלסר נ׳ ממכר בית בע\"מ החלטה (30.06.2020)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "a889828f-3d4e-4a8e-8be7-7145648c951c",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "raa:3587/20",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5309-18-%d7%94%d7%aa%d7%90%d7%97%d7%93%d7%95%d7%aa-%d7%94%d7%9e%d7%9c%d7%95%d7%a0%d7%95%d7%aa-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%a4/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5309/18 התאחדות המלונות בישראל נ׳ משרד הפנים פסק דין (06.01.2021)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "d6c4c5a8-8f5c-4245-827b-9d9155cec632",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "bagatz:5309/18",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      }
+    ]
+  },
+  "usable_judgments": [],
+  "admitted_sources": [
+    {
+      "title": "חוק החברות, 1999 - תוכן ענינים",
+      "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "חוק בתי המשפט [נוסח משולב], תשמ\"ד-1984",
+      "url": "https://www.nevo.co.il/law_html/law00/74849.htm",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": true,
+      "synthesis_role": "statutory_background",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "חוק חדלות פירעון ושיקום כלכלי, תשע\"ח-2018",
+      "url": "https://www.nevo.co.il/law_html/law00/154362.htm",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [],
+      "verifier": [
+        "direct"
+      ]
+    },
+    {
+      "title": "חוק חדלות פירעון ושיקום כלכלי – דברי הסבר/רקע חקיקתי",
+      "url": "https://www.gov.il/BlobFolder/reports/roots_2018/he/roots-2018.pdf",
+      "role": "primary_statute",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "נדחתה בקשה להרמת המסך בשלב שלאחר מתן פסק הדין - פסקדין",
+      "url": "https://www.psakdin.co.il/Court/%D7%A0%D7%93%D7%97%D7%AA%D7%94-%D7%91%D7%A7%D7%A9%D7%94-%D7%9C%D7%94%D7%A8%D7%9E%D7%AA-%D7%94%D7%9E%D7%A1%D7%9A-%D7%91%D7%A9%D7%9C%D7%91-%D7%A9%D7%9C%D7%90%D7%97%D7%A8-%D7%9E%D7%AA%D7%9F-%D7%A4%D7%A1%D7%A7-%D7%94%D7%D7%93%D7%99%D7%9F",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעות הדדיות של בעל נכס מקרקעין ובנק בעקבות עסקה שהשתבשה (ת\"א 10512-01-21)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+      "role": "persuasive_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "full_text",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "listing_or_pagination_page",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "יישום \"חוק פיצול דירות\" (חוק התכנון והבנייה",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6629&businessType=1",
+      "role": "primary_statute",
+      "tier": "primary_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "official_host_non_specific_path"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "תקנת השוק במכר על ידי רשות שנפל בהליכיו פגם חוקי",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_962b41b3597d440195f4e35963cfe3df.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "תקנות הבטיחות בעבודה (הרמת בני אדם במלגזות)",
+      "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%94%D7%A8%D7%9E%D7%AA_%D7%91%D7%A0%D7%99_%D7%90%D7%93%D7%9D_%D7%91%D7%9E%D7%9C%D7%92%D7%96%D7%95%D7%AA)",
+      "role": "binding_case_law",
+      "tier": "statute_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "consolidated_statute_mirror"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "מערכת פסקי דין של בית המשפט העליון",
+      "url": "https://supremedecisions.court.gov.il",
+      "role": "binding_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "full_text",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "official_host_bare_root",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
+      ],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "נט המשפט - דף הבית",
+      "url": "https://www.court.gov.il/ngcs.web.site/homepage.aspx",
+      "role": "persuasive_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "applying_candidate",
+      "flags": [
+        "official_host_non_specific_path"
+      ],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "על-אודות בית המשפט העליון - הרשות השופטת",
+      "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+      "role": "binding_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "official_host_non_specific_path"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "פרק ו': הרמת המסך",
+      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "2.34 הרמת מסך – היישויות שנמצאות מעבר למסך והתמודדות עם \"בעיית ...\"",
+      "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=102951716&nTocEntryID=102953071",
+      "role": "scholarship",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "listing_or_pagination_page"
+      ],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_3.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "נטע נדיב, סיפור של חדלות פירעון: רפורמות פוגשות את ההליך השיפוטי",
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A1%D7%99%D7%A4%D7%95%D7%A8-%D7%A9%D7%9C-%D7%97%D7%93%D7%9C%D7%95%D7%AA-%D7%A4%D7%99%D7%A8%D7%A2%D7%95%D7%9F-%D7%90%D7%97%D7%A8%D7%99-%D7%A2%D7%A8%D7%99%D7%9B%D7%94-%D7%9C%D7%A9%D7%95%D7%A0%D7%99%D7%AA-%D7%9E%D7%9E%D7%AA%D7%99%D7%9F-%D7%9C%D7%A0%D7%91%D7%95-7.11.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "צמצום שלא כפשוטו: אחריותם של נושאי משרה בחברה בסמיכות לחדלות פירעון | עמיר ליכט (כרך כד(2))",
+      "url": "https://runilawreview.org/2022/01/16/vol24-licht/",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "שם הוורד: אמצעי זהירות ושיקול-דעת עסקי של נושא-משרה | עמיר ליכט (כרך יט)",
+      "url": "https://runilawreview.org/2015/06/25/volume19_licht/",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "אי-חוקיות, מראית עין או משכון מוסווה? (בעקבות ע\"א 6634/15 טופ במרחבי השרון ייזום בע\"מ נ' קפלן)",
+      "url": "https://lawjournal.huji.ac.il/article/12/1783",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "עע\"מ 5655/20 כפר ילדים ונוער \"אהבה\" – עמותה לקידום ילדים, נועד נ׳ מדינת י פסק דין (03.08.2020)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-5655-20-%d7%9b%d7%a4%d7%a8-%d7%99%d7%9c%d7%93%d7%99%d7%9d-%d7%95%d7%a0%d7%95%d7%a2%d7%a8-%d7%90%d7%94%d7%91%d7%94-%d7%a2%d7%9e%d7%95%d7%aa%d7%94-%d7%9c%d7%a7%d7%99%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "רע\"א 8038/20 ב.ר.ן יזמנות והשקעות בע\"מ נ׳ חיים ומשה מנגד בע\"מ (בפירוק) פסק דין (20.10.2020)",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-8038-20-%d7%91-%d7%a8-%d7%9f-%d7%99%d7%96%d7%9e%d7%a0%d7%95%d7%aa-%d7%95%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%97%d7%99%d7%99%d7%9d-%d7%95%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "רע\"א 3587/20 ישראל שלסר נ׳ ממכר בית בע\"מ החלטה (30.06.2020)",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-3587-20-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a9%d7%9c%d7%a1%d7%a8-%d7%a0-%d7%9e%d7%9e%d7%9b%d7%a8-%d7%91%d7%99%d7%aa-%d7%91%d7%a2%d7%9e-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "יחסי אֵמוּנאוּת בתאגיד – חובת האמון | עמיר ליכט (כרך יח)",
+      "url": "https://runilawreview.org/2015/01/05/volume18_licht/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "גישת עבודה לסחר בבני אדם: 20 שנה למאבק הבינלאומי בסחר בבני אדם",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_5318267ae8bb4dcc9b369ee4a2e4f3bc.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "בג\"ץ 5309/18 התאחדות המלונות בישראל נ׳ משרד הפנים פסק דין (06.01.2021)",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5309-18-%d7%94%d7%aa%d7%90%d7%97%d7%93%d7%95%d7%aa-%d7%94%d7%9e%d7%9c%d7%95%d7%a0%d7%95%d7%aa-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%a4/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "קהילות מגורים חדשות בישראל – בין הפרטה להפרדה | אמנון להבי (כרך ב)",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/b1_5.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    }
+  ],
+  "used_sources": [],
+  "footnotes": [],
+  "answer_len": 450,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק החברות, 1999 - תוכן ענינים; חוק חדלות פירעון ושיקום כלכלי, תשע\"ח-2018; חוק חדלות פירעון ושיקום כלכלי – דברי הסבר/רקע חקיקתי; נדחתה בקשה להרמת המסך בשלב שלאחר מתן פסק הדין - פסקדין."
+}

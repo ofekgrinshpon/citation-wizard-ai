@@ -1,0 +1,1096 @@
+{
+  "id": "P02",
+  "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+  "run_id": "30b2f5da-52b8-40ec-8990-ae23dcb555be",
+  "total_ms": 129743,
+  "research_mode": null,
+  "shape": null,
+  "deterministic_branch": "docket_limitation",
+  "is_stub": false,
+  "verifier_counts": {
+    "by_support": {
+      "direct": 0,
+      "partial": 5,
+      "unrelated": 13,
+      "tangential": 11
+    },
+    "by_role_match": {
+      "true": 29,
+      "false": 0
+    },
+    "model_verdicts": 29,
+    "by_support_model": {
+      "direct": 0,
+      "partial": 5,
+      "unrelated": 13,
+      "tangential": 11
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "verifier_errors": [],
+  "sufficiency": null,
+  "acquisition": {
+    "ms": 5019,
+    "mode": "specific_case",
+    "budget": {
+      "other": 1,
+      "total": 3,
+      "leading": 3
+    },
+    "enabled": true,
+    "attempts": [
+      {
+        "ms": 704,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+        "title": "פסק-דין בתיק ע\"פ 766/07 | supreme decisions",
+        "success": true,
+        "candidate_id": "539e34e3-0db9-42c6-94b2-9692e266715b",
+        "title_signal": "פסק-דין בתיק ע\"פ 766/07 | supreme decisions",
+        "docket_signal": "ע\"פ 766/07",
+        "failure_reason": null,
+        "synthesis_role": "leading_candidate",
+        "trigger_reason": "metadata_only",
+        "has_holding_text": true,
+        "method_succeeded": "direct_file_fetch",
+        "docket_normalized": "ap:766/7",
+        "methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": true,
+        "acquisition_success": true,
+        "acquired_text_length": 6000,
+        "final_text_usability": "full_text",
+        "text_usability_after": "full_text",
+        "acquisition_attempted": true,
+        "extracted_text_length": 72931,
+        "text_usability_before": "metadata_only",
+        "acquisition_failure_reasons": [],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch"
+        ],
+        "body_contains_docket_or_title": true,
+        "can_support_synthesis_holding": true
+      },
+      {
+        "ms": 2343,
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf",
+        "title": "ע\"פ 43003-10-19 לוי נ' מדינת ישראל",
+        "success": false,
+        "candidate_id": "e87d9701-2151-472e-8bdb-f93621816906",
+        "title_signal": "ע\"פ 43003-10-19 לוי נ' מדינת ישראל",
+        "docket_signal": "ע\"פ 43003/10/19",
+        "failure_reason": "no_local_document_match",
+        "synthesis_role": "leading_candidate",
+        "trigger_reason": "metadata_only",
+        "has_holding_text": false,
+        "method_succeeded": null,
+        "docket_normalized": "ap:43003/10/19",
+        "methods_attempted": [
+          "direct_file_fetch",
+          "local_db_docket_lookup"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": false,
+        "acquired_text_length": 0,
+        "final_text_usability": "metadata_only",
+        "text_usability_after": "metadata_only",
+        "acquisition_attempted": true,
+        "extracted_text_length": 0,
+        "text_usability_before": "metadata_only",
+        "acquisition_failure_reasons": [
+          "http_403",
+          "no_local_document_match"
+        ],
+        "acquisition_methods_attempted": [
+          "direct_file_fetch",
+          "local_db_docket_lookup"
+        ],
+        "body_contains_docket_or_title": false,
+        "can_support_synthesis_holding": false
+      },
+      {
+        "ms": 1970,
+        "url": "https://lite.takdin.co.il/%D7%9C%D7%99%D7%9C%D7%9A_page8.html",
+        "title": "Takdin – חיפוש פסקי דין",
+        "success": false,
+        "candidate_id": "79f1222a-2de0-437a-a489-41ddb8a5df9e",
+        "title_signal": "Takdin – חיפוש פסקי דין",
+        "docket_signal": "ע\"א 99887/04/22",
+        "failure_reason": "no_local_document_match",
+        "synthesis_role": "leading_candidate",
+        "trigger_reason": "metadata_only",
+        "has_holding_text": false,
+        "method_succeeded": null,
+        "docket_normalized": "aa:99887/4/22",
+        "methods_attempted": [
+          "summary_page_docket_resolve"
+        ],
+        "judgment_candidate": true,
+        "usable_for_holding": false,
+        "acquisition_success": false,
+        "acquired_text_length": 0,
+        "final_text_usability": "metadata_only",
+        "text_usability_after": "metadata_only",
+        "acquisition_attempted": true,
+        "extracted_text_length": 0,
+        "text_usability_before": "metadata_only",
+        "acquisition_failure_reasons": [
+          "no_local_document_match"
+        ],
+        "acquisition_methods_attempted": [
+          "summary_page_docket_resolve"
+        ],
+        "body_contains_docket_or_title": false,
+        "can_support_synthesis_holding": false
+      }
+    ],
+    "excluded": [
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-8822-04",
+        "title": "פסק-דין בתיק ע\"א 8822/04 - פסקדין",
+        "reason": "budget_exhausted",
+        "candidate_id": "602b2edf-71ba-4065-9653-713dabe8bd7a"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court?dtDateFrom=01/01/1950&dtDateTo=22/11/2009&rptSearchText.item0.txtTextAnd=&rptSearchText.item1.txtTextAnd=&rptSearchText.item2.txtTextAnd=&rptSearchJudge.item0.txtJudge=%D7%90'%20%D7%9C%D7%95%D7%99&ddlCaseType=&rptSearchSide.item0.txtSide=&txtCaseNumber=&rptSearchLawyer.item0.txtLawyer=&rptSearchJudge=1&rptSearchSide=1&rptSearchLawyer=1&rptSearchText=3&Search=1&IsMobile=true&page=32",
+        "title": "חיפוש פסקי-דין - פסקדין",
+        "reason": "budget_exhausted",
+        "candidate_id": "18f7bdf1-b26a-4763-baa0-d1e70d0247e5"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בית המשפט המחוזי ב\"ש, אב\"ד סג\"נ השופט אריאל ואגו, השופט אלון אינפלד, השופט אריאל חזק: הכרעת דין לנאשם ברצח ישראל מלכה ז\"ל באשדוד (תפ\"ח 17506-10-17)",
+        "reason": "budget_exhausted",
+        "candidate_id": "c3bbfc63-0dec-4d0f-a458-f84883df9c45"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'%D7%9C%D7%95%D7%99-%D7%A2%D7%A6%D7%99%D7%A8_2",
+        "title": "מדינת ישראל נ' לוי(עציר) - פסקדין",
+        "reason": "budget_exhausted",
+        "candidate_id": "09c4466b-7f7b-44cf-925f-a9b474344c16"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'%D7%9C%D7%95%D7%99_83?IsMobile=false",
+        "title": "מדינת ישראל נ' לוי - פסקדין",
+        "reason": "budget_exhausted",
+        "candidate_id": "01107b40-f22c-4918-95c2-743c9992b05a"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'-%D7%9C%D7%95%D7%99-%D7%A2%D7%A6%D7%99%D7%A8_2",
+        "title": "מדינת ישראל נ' לוי(עציר) - פסקדין",
+        "reason": "budget_exhausted",
+        "candidate_id": "54b47c97-4240-490f-81f5-6de0acb64484"
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'%D7%9C%D7%95%D7%99-%D7%A2%D7%A6%D7%99%D7%A8-%D7%95%D7%90%D7%97'_2",
+        "title": "מדינת ישראל נ' לוי(עציר) ואח' | psakdin",
+        "reason": "budget_exhausted",
+        "candidate_id": "96f9002d-8930-422c-b725-dca9032f6015"
+      },
+      {
+        "url": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/punitive/judgementsummaries/interincriminal/levi/%D7%9C%D7%95%D7%99%20%D7%A0'%20%D7%9E%D7%93%D7%99%D7%A0%D7%AA%20%D7%99%D7%A9%D7%A8%D7%90%D7%9C.doc",
+        "title": "לוי נ' מדינת ישראל.doc",
+        "reason": "budget_exhausted",
+        "candidate_id": "b345b31a-4778-448e-a636-93431b404426"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a4-7516-20-%d7%a2%d7%96%d7%a8%d7%90-%d7%a4%d7%9c%d7%a7-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"פ 7516/20 עזרא פלק נ׳ מדינת ישראל פסק דין (16.11.2020)",
+        "reason": "budget_exhausted",
+        "candidate_id": "556059b4-e315-47e7-b15a-e4c4d1011444"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%93%d7%a0%d7%90-4897-22-%d7%91%d7%9f-%d7%a9%d7%9c%d7%95%d7%a9-%d7%99%d7%99%d7%91%d7%95%d7%90-%d7%95%d7%99%d7%99%d7%a6%d7%95%d7%90-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%99%d7%a4%d7%90%d7%95%d7%a8%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "דנ\"א 4897/22 בן שלוש ייבוא וייצוא בע\"מ נ׳ יפאורה-תבורי בע\"מ פסק דין (05.07.2022)",
+        "reason": "budget_exhausted",
+        "candidate_id": "300ec02f-ed06-4919-aae6-68017aeec0d5"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-4719-23-%d7%90%d7%99%d7%9e%d7%90%d7%9f-%d7%a7%d7%91%d7%95%d7%a2%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בש\"פ 4719/23 אימאן קבועה נ׳ מדינת ישראל החלטה (19.06.2023)",
+        "reason": "budget_exhausted",
+        "candidate_id": "f80ecb4c-77eb-4845-adbb-267ac8a0907e"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a4-2005-20-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d-11-08-2020/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"פ 2005/20 פלוני נ׳ מדינת ישראל פסק דין (11.08.2020)",
+        "reason": "budget_exhausted",
+        "candidate_id": "791a6ab0-1f05-4b8b-904d-e152c978a738"
+      }
+    ],
+    "successes": 1,
+    "attempts_made": 3,
+    "eligible_count": 15,
+    "judgment_candidates": 15,
+    "eligibility_diagnostics": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+        "title": "פסק-דין בתיק ע\"פ 766/07 | supreme decisions",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "539e34e3-0db9-42c6-94b2-9692e266715b",
+        "planner_role": "binding_case_law",
+        "has_court_url": true,
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": true,
+        "docket_normalized": "ap:766/7",
+        "eligibility_basis": [
+          "docket_signal",
+          "official_court_url",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'%D7%9C%D7%95%D7%99-%D7%A2%D7%A6%D7%99%D7%A8_2",
+        "title": "מדינת ישראל נ' לוי(עציר) - פסקדין",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "09c4466b-7f7b-44cf-925f-a9b474344c16",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": null,
+        "eligibility_basis": [
+          "case_title_party_names",
+          "legal_db_resolution_only"
+        ],
+        "has_docket_signal": false,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'%D7%9C%D7%95%D7%99_83?IsMobile=false",
+        "title": "מדינת ישראל נ' לוי - פסקדין",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "01107b40-f22c-4918-95c2-743c9992b05a",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": null,
+        "eligibility_basis": [
+          "case_title_party_names",
+          "legal_db_resolution_only"
+        ],
+        "has_docket_signal": false,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf",
+        "title": "ע\"פ 43003-10-19 לוי נ' מדינת ישראל",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "e87d9701-2151-472e-8bdb-f93621816906",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "official_primary",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": null,
+        "has_party_names": true,
+        "has_download_url": true,
+        "docket_normalized": "ap:43003/10/19",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'-%D7%9C%D7%95%D7%99-%D7%A2%D7%A6%D7%99%D7%A8_2",
+        "title": "מדינת ישראל נ' לוי(עציר) - פסקדין",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "54b47c97-4240-490f-81f5-6de0acb64484",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": null,
+        "eligibility_basis": [
+          "case_title_party_names",
+          "legal_db_resolution_only"
+        ],
+        "has_docket_signal": false,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'%D7%9C%D7%95%D7%99-%D7%A2%D7%A6%D7%99%D7%A8-%D7%95%D7%90%D7%97'_2",
+        "title": "מדינת ישראל נ' לוי(עציר) ואח' | psakdin",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "96f9002d-8930-422c-b725-dca9032f6015",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": null,
+        "eligibility_basis": [
+          "case_title_party_names",
+          "legal_db_resolution_only"
+        ],
+        "has_docket_signal": false,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://lite.takdin.co.il/%D7%9C%D7%99%D7%9C%D7%9A_page8.html",
+        "title": "Takdin – חיפוש פסקי דין",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "79f1222a-2de0-437a-a489-41ddb8a5df9e",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": null,
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": "aa:99887/4/22",
+        "eligibility_basis": [
+          "docket_signal",
+          "legal_db_resolution_only",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": null,
+        "acquisition_attempted": true,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": false
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בית המשפט המחוזי ב\"ש, אב\"ד סג\"נ השופט אריאל ואגו, השופט אלון אינפלד, השופט אריאל חזק: הכרעת דין לנאשם ברצח ישראל מלכה ז\"ל באשדוד (תפ\"ח 17506-10-17)",
+        "eligible": true,
+        "citable_as": "not_citable",
+        "source_type": "caselaw",
+        "candidate_id": "c3bbfc63-0dec-4d0f-a458-f84883df9c45",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "index_or_listing",
+        "synthesis_role": "unknown",
+        "text_usability": "listing_page",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": "tpc:17506/10/17",
+        "eligibility_basis": [
+          "docket_signal"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court?dtDateFrom=01/01/1950&dtDateTo=22/11/2009&rptSearchText.item0.txtTextAnd=&rptSearchText.item1.txtTextAnd=&rptSearchText.item2.txtTextAnd=&rptSearchJudge.item0.txtJudge=%D7%90'%20%D7%9C%D7%95%D7%99&ddlCaseType=&rptSearchSide.item0.txtSide=&txtCaseNumber=&rptSearchLawyer.item0.txtLawyer=&rptSearchJudge=1&rptSearchSide=1&rptSearchLawyer=1&rptSearchText=3&Search=1&IsMobile=true&page=32",
+        "title": "חיפוש פסקי-דין - פסקדין",
+        "eligible": true,
+        "citable_as": "not_citable",
+        "source_type": "caselaw",
+        "candidate_id": "18f7bdf1-b26a-4763-baa0-d1e70d0247e5",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "index_or_listing",
+        "synthesis_role": "unknown",
+        "text_usability": "listing_page",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": "aa:99887/4/22",
+        "eligibility_basis": [
+          "docket_signal",
+          "legal_db_resolution_only"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/punitive/judgementsummaries/interincriminal/levi/%D7%9C%D7%95%D7%99%20%D7%A0'%20%D7%9E%D7%93%D7%99%D7%A0%D7%AA%20%D7%99%D7%A9%D7%A8%D7%90%D7%9C.doc",
+        "title": "לוי נ' מדינת ישראל.doc",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "other",
+        "candidate_id": "b345b31a-4778-448e-a636-93431b404426",
+        "planner_role": "scholarship",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "metadata_only",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": true,
+        "docket_normalized": null,
+        "eligibility_basis": [
+          "case_title_party_names"
+        ],
+        "has_docket_signal": false,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-8822-04",
+        "title": "פסק-דין בתיק ע\"א 8822/04 - פסקדין",
+        "eligible": true,
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "602b2edf-71ba-4065-9653-713dabe8bd7a",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "leading_candidate",
+        "text_usability": "metadata_only",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": false,
+        "has_download_url": false,
+        "docket_normalized": "aa:8822/4",
+        "eligibility_basis": [
+          "docket_signal",
+          "legal_db_resolution_only",
+          "planner_role_with_case_identity"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": false,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a4-7516-20-%d7%a2%d7%96%d7%a8%d7%90-%d7%a4%d7%9c%d7%a7-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"פ 7516/20 עזרא פלק נ׳ מדינת ישראל פסק דין (16.11.2020)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "556059b4-e315-47e7-b15a-e4c4d1011444",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "ap:7516/20",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%93%d7%a0%d7%90-4897-22-%d7%91%d7%9f-%d7%a9%d7%9c%d7%95%d7%a9-%d7%99%d7%99%d7%91%d7%95%d7%90-%d7%95%d7%99%d7%99%d7%a6%d7%95%d7%90-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%99%d7%a4%d7%90%d7%95%d7%a8%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "דנ\"א 4897/22 בן שלוש ייבוא וייצוא בע\"מ נ׳ יפאורה-תבורי בע\"מ פסק דין (05.07.2022)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "300ec02f-ed06-4919-aae6-68017aeec0d5",
+        "planner_role": "persuasive_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "dna:4897/22",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-4719-23-%d7%90%d7%99%d7%9e%d7%90%d7%9f-%d7%a7%d7%91%d7%95%d7%a2%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בש\"פ 4719/23 אימאן קבועה נ׳ מדינת ישראל החלטה (19.06.2023)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "f80ecb4c-77eb-4845-adbb-267ac8a0907e",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "bshp:4719/23",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a4-2005-20-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d-11-08-2020/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"פ 2005/20 פלוני נ׳ מדינת ישראל פסק דין (11.08.2020)",
+        "eligible": true,
+        "citable_as": "commentary",
+        "source_type": "caselaw",
+        "candidate_id": "791a6ab0-1f05-4b8b-904d-e152c978a738",
+        "planner_role": "binding_case_law",
+        "has_court_url": false,
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "substantive_excerpt",
+        "excluded_reason": "budget_exhausted",
+        "has_party_names": true,
+        "has_download_url": false,
+        "docket_normalized": "ap:2005/20",
+        "eligibility_basis": [
+          "docket_signal",
+          "case_title_party_names"
+        ],
+        "has_docket_signal": true,
+        "ineligible_reason": "budget_exhausted",
+        "acquisition_attempted": false,
+        "has_case_title_signal": true,
+        "would_have_been_attempted_under_relaxed_rule": true
+      }
+    ]
+  },
+  "usable_judgments": [],
+  "admitted_sources": [
+    {
+      "title": "פסק-דין בתיק ע\"פ 766/07 | supreme decisions",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07%5C660%5C007%5CS03&fileName=07007660_s03.txt&type=2",
+      "role": "binding_case_law",
+      "tier": "official_primary",
+      "text_usability": "full_text",
+      "citable_as": "judgment",
+      "judgment": true,
+      "holding_text": true,
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "judgment_document",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "החוקים כפי שנחקקו במאגר החקיקה הלאומי",
+      "url": "https://www.gov.il/he/service/laws_as_enacted_in_the_national_legislation_database",
+      "role": "primary_statute",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "official_host_non_specific_path"
+      ],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "מאגר החקיקה הלאומי | הכנסת",
+      "url": "http://m.knesset.gov.il/Activity/Legislation/Laws/Pages/LawHome.aspx",
+      "role": "primary_statute",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "statute",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "statutory_background",
+      "flags": [
+        "official_host_non_specific_path"
+      ],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "מדינת ישראל נ' לוי(עציר) - פסקדין",
+      "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'%D7%9C%D7%95%D7%99-%D7%A2%D7%A6%D7%99%D7%A8_2",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "מדינת ישראל נ' לוי - פסקדין",
+      "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'%D7%9C%D7%95%D7%99_83?IsMobile=false",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "ע\"פ 43003-10-19 לוי נ' מדינת ישראל",
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf",
+      "role": "binding_case_law",
+      "tier": "official_primary",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "leading_candidate",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "מדינת ישראל נ' לוי(עציר) - פסקדין",
+      "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'-%D7%9C%D7%95%D7%99-%D7%A2%D7%A6%D7%99%D7%A8_2",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "מדינת ישראל נ' לוי(עציר) ואח' | psakdin",
+      "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'%D7%9C%D7%95%D7%99-%D7%A2%D7%A6%D7%99%D7%A8-%D7%95%D7%90%D7%97'_2",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "Takdin – חיפוש פסקי דין",
+      "url": "https://lite.takdin.co.il/%D7%9C%D7%99%D7%9C%D7%9A_page8.html",
+      "role": "binding_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "official_host_non_specific_path"
+      ],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "בית המשפט המחוזי ב\"ש, אב\"ד סג\"נ השופט אריאל ואגו, השופט אלון אינפלד, השופט אריאל חזק: הכרעת דין לנאשם ברצח ישראל מלכה ז\"ל באשדוד (תפ\"ח 17506-10-17)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+      "role": "binding_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "listing_or_pagination_page"
+      ],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "הערכות ומוכנותאדמה לרעידות ישראל מדינת",
+      "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=3896&businessType=1",
+      "role": "binding_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "unknown",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "official_host_non_specific_path"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "סקירת חדשות מעולם המשפט | משפט פלילי | 6.1.2014",
+      "url": "https://runilawreview.org/2014/01/06/linksroundup20140106/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "חיפוש פסקי-דין - פסקדין",
+      "url": "https://www.psakdin.co.il/Court?dtDateFrom=01/01/1950&dtDateTo=22/11/2009&rptSearchText.item0.txtTextAnd=&rptSearchText.item1.txtTextAnd=&rptSearchText.item2.txtTextAnd=&rptSearchJudge.item0.txtJudge=%D7%90'%20%D7%9C%D7%95%D7%99&ddlCaseType=&rptSearchSide.item0.txtSide=&txtCaseNumber=&rptSearchLawyer.item0.txtLawyer=&rptSearchJudge=1&rptSearchSide=1&rptSearchLawyer=1&rptSearchText=3&Search=1&IsMobile=true&page=32",
+      "role": "binding_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "listing_or_pagination_page"
+      ],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "נבו - חיפוש חקיקה",
+      "url": "https://www.nevo.co.il/HakikaSearch.aspx",
+      "role": "persuasive_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "applying_candidate",
+      "flags": [
+        "official_host_non_specific_path"
+      ],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "התביעה הייצוגית בישראל - על פרשת דרכים בעקבות פסק דין מדינת ...",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/a1_13.pdf",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "מאגרי מידע משפטיים ישראליים | הספרייה למשפטים ע\"ש דוד י. לייט בניין ...",
+      "url": "https://lawlib.tau.ac.il/israeli_databases",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "לוי נ' מדינת ישראל.doc",
+      "url": "https://netanya.ac.il/gur/data/AGUDA/law/yeara/punitive/judgementsummaries/interincriminal/levi/%D7%9C%D7%95%D7%99%20%D7%A0'%20%D7%9E%D7%93%D7%99%D7%A0%D7%AA%20%D7%99%D7%A9%D7%A8%D7%90%D7%9C.doc",
+      "role": "scholarship",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    },
+    {
+      "title": "נבו - חיפוש פסיקה",
+      "url": "https://www.nevo.co.il/psikasearch.aspx",
+      "role": "binding_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "official_host_non_specific_path"
+      ],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "תקדין",
+      "url": "https://www.takdin.co.il/",
+      "role": "binding_case_law",
+      "tier": "index_or_listing",
+      "text_usability": "listing_page",
+      "citable_as": "not_citable",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "unknown",
+      "flags": [
+        "official_host_bare_root"
+      ],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "פסק-דין בתיק ע\"א 8822/04 - פסקדין",
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%A2%22%D7%90-8822-04",
+      "role": "binding_case_law",
+      "tier": "primary_mirror",
+      "text_usability": "metadata_only",
+      "citable_as": "judgment",
+      "judgment": true,
+      "holding_text": false,
+      "synthesis_role": "leading_candidate",
+      "flags": [
+        "judgment_document",
+        "judgment_tier_promoted"
+      ],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "חדשות המשפט • פסקדין אתר המשפט הישראלי",
+      "url": "https://www.psakdin.co.il/Document",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "ע\"פ 7516/20 עזרא פלק נ׳ מדינת ישראל פסק דין (16.11.2020)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%a4-7516-20-%d7%a2%d7%96%d7%a8%d7%90-%d7%a4%d7%9c%d7%a7-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "לאום לוּט בערפל | אמנון רובינשטיין וגל קלנר (כרך כה)",
+      "url": "https://runilawreview.org/2019/08/11/vol25_rubinstein_kelner/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "דנ\"א 4897/22 בן שלוש ייבוא וייצוא בע\"מ נ׳ יפאורה-תבורי בע\"מ פסק דין (05.07.2022)",
+      "url": "https://www.toledano.co.il/%d7%93%d7%a0%d7%90-4897-22-%d7%91%d7%9f-%d7%a9%d7%9c%d7%95%d7%a9-%d7%99%d7%99%d7%91%d7%95%d7%90-%d7%95%d7%99%d7%99%d7%a6%d7%95%d7%90-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%99%d7%a4%d7%90%d7%95%d7%a8%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "persuasive_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "משפט השוואתי כפרקטיקה – היבטים מוסדיים, תרבותיים ויישומיים | דפנה ברק-ארז (כרך ד)",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/d_6.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "tangential"
+      ]
+    },
+    {
+      "title": "&quot;עלולים להיות בין הפונים אליכם עו&quot;ד בלתי רצויים&quot;: המאבק על חופש העיסוק של עורכי דין פלסטינים בשנותיה הראשונות של מדינת ישראל",
+      "url": "http://www.hapraklit.co.il//_Uploads/dbsAttachedFiles/AmongThoseWhoAddressYouThereMayBeSomeUndesirableLawyers.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "דוקטרינת ההשפעות כבסיס לתחולה חוץ־טריטוריאלית של חוק התחרות",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_736bacd1b5f7492d812d30c673cac980.pdf",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "full_text",
+      "citable_as": "scholarship",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "בש\"פ 4719/23 אימאן קבועה נ׳ מדינת ישראל החלטה (19.06.2023)",
+      "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-4719-23-%d7%90%d7%99%d7%9e%d7%90%d7%9f-%d7%a7%d7%91%d7%95%d7%a2%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "unrelated"
+      ]
+    },
+    {
+      "title": "ע\"פ 2005/20 פלוני נ׳ מדינת ישראל פסק דין (11.08.2020)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%a4-2005-20-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d-11-08-2020/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "role": "binding_case_law",
+      "tier": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "citable_as": "commentary",
+      "judgment": false,
+      "holding_text": false,
+      "synthesis_role": "secondary_commentary",
+      "flags": [],
+      "verifier": [
+        "partial"
+      ]
+    }
+  ],
+  "used_sources": [],
+  "footnotes": [],
+  "answer_len": 345,
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}
