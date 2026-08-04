@@ -1,0 +1,3622 @@
+[
+  {
+    "id": "R03",
+    "query": "מה הפסיקה אומרת על הלכת השיתוף?",
+    "run_id": "a99bf238-88fe-4518-9f4b-9badc3c34047",
+    "total_ms": 279694,
+    "research_mode": null,
+    "deterministic_branch": null,
+    "is_stub": false,
+    "sufficiency": {
+      "shape": "analysis",
+      "reason": "case_law_synthesis_supported",
+      "applied": true,
+      "category": "case_law_synthesis",
+      "sufficient": true,
+      "thin_source": false,
+      "found_titles": [
+        "בע\"מ 4623/04",
+        "חוק יחסי ממון בין בני זוג, תשל\"ג-1973 – נבו (טקסט מובא בפסק דין)",
+        "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "הקמת נאמנות כהגנה מפני שיתוף בנכסים",
+        "ידועים בציבור? על חזקת השיתוף וחלוקת הרכוש המשותף"
+      ],
+      "topical_refs": [
+        "s3",
+        "s7",
+        "s8",
+        "s10"
+      ],
+      "topic_phrases": [
+        "הלכת השיתוף"
+      ],
+      "case_law_required": true,
+      "statute_only_answer": false,
+      "sufficiency_profile": "case_law_synthesis",
+      "usable_judgment_refs": [
+        "s1",
+        "s7"
+      ],
+      "exact_amounts_allowed": true,
+      "governing_statute_refs": [],
+      "topical_authority_refs": [
+        "s3",
+        "s7",
+        "s10"
+      ],
+      "morphology_domain_match": false,
+      "normalized_source_tokens": [],
+      "governing_regulation_refs": [],
+      "normalized_question_tokens": [
+        "לכת",
+        "שיתוף"
+      ],
+      "sufficiency_authority_basis": "usable_judgment",
+      "thin_governing_statute_refs": [],
+      "thin_governing_regulation_refs": [],
+      "authority_type_sufficiency_passed": true,
+      "case_law_missing_but_not_required": false,
+      "practical_steps_thin_authority_passed": false
+    },
+    "commentary_share_of_admitted_pack": 0.59,
+    "A_admitted_composition": {
+      "total": 22,
+      "buckets": {
+        "primary_judgment_usable": 2,
+        "statute": 3,
+        "primary_judgment_metadata_only": 1,
+        "commentary": 7,
+        "listing_not_citable": 2,
+        "unclassified": 1,
+        "scholarship": 6
+      },
+      "primary_count": 6,
+      "secondary_count": 13,
+      "noise_count": 2,
+      "verifier_counts": {
+        "by_support": {
+          "direct": 7,
+          "partial": 6,
+          "unrelated": 9,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 22,
+          "false": 0
+        },
+        "model_verdicts": 22,
+        "by_support_model": {
+          "direct": 7,
+          "partial": 6,
+          "unrelated": 9,
+          "tangential": 0
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "rows": [
+        {
+          "rank": 1,
+          "title": "בע\"מ 4623/04",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+          "bucket": "primary_judgment_usable",
+          "role": "binding_case_law",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "full_text",
+          "synthesis_role": "leading_candidate",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": [
+            "judgment_document",
+            "judgment_text_acquired",
+            "judgment_identity_confirmed_in_body",
+            "holding_text_present"
+          ]
+        },
+        {
+          "rank": 2,
+          "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973 – נבו (טקסט מובא בפסק דין)",
+          "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+          "bucket": "statute",
+          "role": "primary_statute",
+          "tier": "official_primary",
+          "citable_as": "statute",
+          "text_usability": "metadata_only",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 3,
+          "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+          "bucket": "primary_judgment_metadata_only",
+          "role": "binding_case_law",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "metadata_only",
+          "synthesis_role": "leading_candidate",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 4,
+          "title": "הקמת נאמנות כהגנה מפני שיתוף בנכסים",
+          "url": "https://www.psakdin.co.il/Document/%D7%94%D7%A7%D7%9E%D7%AA-%D7%A0%D7%90%D7%9E%D7%A0%D7%95%D7%AA-%D7%9B%D7%90%D7%A1%D7%98%D7%A8%D7%98%D7%92%D7%99%D7%AA-%D7%94%D7%92%D7%A0%D7%94-%D7%9E%D7%A4%D7%A0%D7%99-%D7%94%D7%9C%D7%9B%D7%AA-%D7%94%D7%A9%D7%יתוף-%D7%91%D7%99%D7%9F-%D7%91%D7%A0%D7%99-%D7%96%D7%95%D7%92-%D7%95%D7%94%D7%A2%D7%91%D7%A8%D7%94-%D7%91%D7%99%D7%A0%D7%93%D7%95%D7%A8%D7%99%D7%AA",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 5,
+          "title": "ידועים בציבור? על חזקת השיתוף וחלוקת הרכוש המשותף",
+          "url": "https://www.psakdin.co.il/Document/%D7%99%D7%93%D7%95%D7%A2%D7%99%D7%9D-%D7%91%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%A2%D7%9C-%D7%97%D7%96%D7%A7%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%95%D7%97%D7%9C%D7%95%D7%A7%D7%AA-%D7%94%D7%A8%D7%9B%D7%95%D7%A9-%D7%94%D7%9E%D7%A9%D7%95%D7%AA%D7%A3?IsMobile=false",
+          "bucket": "commentary",
+          "role": "persuasive_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 6,
+          "title": "פס\"ד בערעור בשאלה האם חזקת השיתוף חלה על נכסים חיצוניים",
+          "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%91%D7%A2%D7%A8%D7%A2%D7%95%D7%A8-%D7%91%D7%A9%D7%90%D7%9C%D7%94-%D7%94%D7%90%D7%9D-%D7%97%D7%96%D7%A7%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%97%D7%9C%D7%94-%D7%A2%D7%9C-%D7%A0%D7%9B%D7%A1%D7%99%D7%9D-%D7%97%D7%99%D7%A6%D7%95%D7%A0%D7%99%D7%99%D7%9D",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 7,
+          "title": "בג\"ץ 1000/92 בבלי נ' בית הדין הרבני הגדול",
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/1194209-3/he/%D7%92%D7%93%D7%A8%D7%99%20%D7%94%D7%9C%D7%9B%D7%AA%20%D7%A9%D7%99%D7%AA%D7%95%D7%A3%20%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99%20%D7%91%D7%93%D7%99%D7%A8%D7%AA%20%D7%9E%D7%92%D7%95%D7%A8%D7%99%D7%9D%20-%201194209-3%20%D7%91%D7%99%D7%94''%D7%93%20%D7%90%D7%A9%D7%93%D7%95%D7%93%20(1).docx",
+          "bucket": "primary_judgment_usable",
+          "role": "binding_case_law",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "leading_candidate",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": [
+            "judgment_document",
+            "holding_text_present"
+          ]
+        },
+        {
+          "rank": 8,
+          "title": "ביהמ\"ש לענייני משפחה בתל אביב - יפו, ש' ארז שני: פסק דין בעניין תובענה לשיתוף רכושי (תמ\"ש 62952-05-20)",
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=180",
+          "bucket": "listing_not_citable",
+          "role": "binding_case_law",
+          "tier": "index_or_listing",
+          "citable_as": "not_citable",
+          "text_usability": "listing_page",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": [
+            "listing_or_pagination_page"
+          ]
+        },
+        {
+          "rank": 9,
+          "title": "יישום הדוח למיגור האלימות כלפי צוותים רפואיים בישראל",
+          "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7461&businessType=1",
+          "bucket": "unclassified",
+          "role": "binding_case_law",
+          "tier": "primary_mirror",
+          "citable_as": "unknown",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "official_host_non_specific_path"
+          ]
+        },
+        {
+          "rank": 10,
+          "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 11,
+          "title": "תקנות הבטיחות בעבודה (גיהות תעסוקתית ובטיחות העוסקים בקרינת לייזר)",
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%92%D7%99%D7%94%D7%95%D7%AA_%D7%AA%D7%A2%D7%A1%D7%95%D7%A7%D7%AA%D7%99%D7%AA_%D7%95%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%94%D7%A2%D7%95%D7%A1%D7%A7%D7%99%D7%9D_%D7%91%D7%A7%D7%A8%D7%99%D7%A0%D7%AA_%D7%9C%D7%99%D7%99%D7%96%D7%A8)",
+          "bucket": "statute",
+          "role": "binding_case_law",
+          "tier": "statute_mirror",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "consolidated_statute_mirror"
+          ]
+        },
+        {
+          "rank": 12,
+          "title": "משמורת ומזונות ילדים: אקטיביזם וכאוס בבתי המשפט לענייני משפחה",
+          "url": "https://www.taulawreview.sites.tau.ac.il/mz1",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 13,
+          "title": "אנציקלופדיה יהודית דעת - הלכת השיתוף בנכסים",
+          "url": "https://www.daat.ac.il/encyclopedia/value.asp?id1=3908",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 14,
+          "title": "הלכת השיתוף - מטח",
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=111640791&nTocEntryID=111642266",
+          "bucket": "listing_not_citable",
+          "role": "scholarship",
+          "tier": "index_or_listing",
+          "citable_as": "not_citable",
+          "text_usability": "listing_page",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": [
+            "listing_or_pagination_page"
+          ]
+        },
+        {
+          "rank": 15,
+          "title": "הקדמת מועד איזון המשאבים בתיקון מס&#8217; 4 לחוק יחסי ממון והחקיקה השיפוטית שנוצרה לפניה – עיון מחודש | יצחק כהן (כרך כב)",
+          "url": "https://runilawreview.org/2018/08/23/vol22_cohen/",
+          "bucket": "commentary",
+          "role": "primary_statute",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 16,
+          "title": "בעל נגד אישה, אמת נגד משפחה, או המבט הרביעי על הכשרות להעיד במשפט הפלילי | אסף הרדוף (כרך ג)",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/c2_1.pdf",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 17,
+          "title": "תקנות שירות בטחון",
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%A9%D7%99%D7%A8%D7%95%D7%AA_%D7%91%D7%98%D7%97%D7%95%D7%9F",
+          "bucket": "statute",
+          "role": "binding_case_law",
+          "tier": "statute_mirror",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "consolidated_statute_mirror"
+          ]
+        },
+        {
+          "rank": 18,
+          "title": "ע\"פ 3168/19 פלוני נ׳ מדינת ישראל פסק דין (26.01.2022)",
+          "url": "https://www.toledano.co.il/%d7%a2%d7%a4-3168-19-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "judgment_text_acquired",
+            "judgment_identity_confirmed_in_body"
+          ]
+        },
+        {
+          "rank": 19,
+          "title": "ואף-על-פי-כן: מרוץ סמכויות",
+          "url": "https://lawjournal.huji.ac.il/article/12/1921",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 20,
+          "title": "השותפות הנישואית והערבות ההדדית בין בני הזוג בפשיטת רגיל – עיון מחדש | דוד מינץ (כרך ט)",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/l1_3.pdf",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 21,
+          "title": "ע\"פ 1932-24 בלאי קיברה נ׳ מדינת ישראל פסק דין",
+          "url": "https://www.toledano.co.il/%d7%a2%d7%a4-1932-24-%d7%91%d7%9c%d7%90%d7%99-%d7%a7%d7%99%d7%91%d7%a8%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 22,
+          "title": "בג\"ץ 4327/20 ישראל פרוש- ראש העיר אלעד נ׳ ראש הממשלה פסק דין",
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-4327-20-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a8%d7%95%d7%a9-%d7%a8%d7%90%d7%a9-%d7%94%d7%a2%d7%99%d7%a8-%d7%90%d7%9c%d7%a2%d7%93-%d7%a0-%d7%a8%d7%90%d7%a9-%d7%94%d7%9e%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        }
+      ]
+    },
+    "B_used_composition": {
+      "total": 6,
+      "buckets": {
+        "primary_judgment_usable": 2,
+        "statute": 1,
+        "commentary": 2,
+        "primary_judgment_metadata_only": 1
+      },
+      "primary_count": 4,
+      "secondary_count": 2,
+      "first_primary_position": 1,
+      "first_secondary_position": 4,
+      "secondary_precedes_primary": false,
+      "head5_primary": 3,
+      "head5_secondary": 2,
+      "rows": [
+        {
+          "order": 1,
+          "footnote_number": 1,
+          "title": "בע\"מ 4623/04",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+          "bucket": "primary_judgment_usable",
+          "origin": "perplexity",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "full_text",
+          "synthesis_role": "leading_candidate",
+          "admitted_rank": 1,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 2,
+          "footnote_number": 1,
+          "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/1194209-3/he/%D7%92%D7%93%D7%A8%D7%99%20%D7%94%D7%9C%D7%9B%D7%AA%20%D7%A9%D7%99%D7%AA%D7%95%D7%A3%20%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99%20%D7%91%D7%93%D7%99%D7%A8%D7%AA%20%D7%9E%D7%92%D7%95%D7%A8%D7%99%D7%9D%20-%201194209-3%20%D7%91%D7%99%D7%94''%D7%93%20%D7%90%D7%A9%D7%93%D7%95%D7%93%20(1).docx",
+          "bucket": "primary_judgment_usable",
+          "origin": "perplexity",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "leading_candidate",
+          "admitted_rank": 7,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 3,
+          "footnote_number": 4,
+          "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973 – נבו (טקסט מובא בפסק דין)",
+          "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+          "bucket": "statute",
+          "origin": "perplexity",
+          "tier": "official_primary",
+          "citable_as": "statute",
+          "text_usability": "metadata_only",
+          "synthesis_role": "statutory_background",
+          "admitted_rank": 2,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 4,
+          "footnote_number": 5,
+          "title": "ידועים בציבור? על חזקת השיתוף וחלוקת הרכוש המשותף",
+          "url": "https://www.psakdin.co.il/Document/%D7%99%D7%93%D7%95%D7%A2%D7%99%D7%9D-%D7%91%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%A2%D7%9C-%D7%97%D7%96%D7%A7%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%95%D7%97%D7%9C%D7%95%D7%A7%D7%AA-%D7%94%D7%A8%D7%9B%D7%95%D7%A9-%D7%94%D7%9E%D7%A9%D7%95%D7%AA%D7%A3?IsMobile=false",
+          "bucket": "commentary",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 5,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 5,
+          "footnote_number": 5,
+          "title": "פס\"ד בערעור בשאלה האם חזקת השיתוף חלה על נכסים חיצוניים",
+          "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%91%D7%A2%D7%A8%D7%A2%D7%95%D7%A8-%D7%91%D7%A9%D7%90%D7%9C%D7%94-%D7%94%D7%90%D7%9D-%D7%97%D7%96%D7%A7%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%97%D7%9C%D7%94-%D7%A2%D7%9C-%D7%A0%D7%9B%D7%A1%D7%99%D7%9D-%D7%97%D7%99%D7%A6%D7%95%D7%A0%D7%99%D7%99%D7%9D",
+          "bucket": "commentary",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 6,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 6,
+          "footnote_number": 5,
+          "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+          "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+          "bucket": "primary_judgment_metadata_only",
+          "origin": "perplexity",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "metadata_only",
+          "synthesis_role": "leading_candidate",
+          "admitted_rank": 3,
+          "verifier": [
+            "partial"
+          ]
+        }
+      ]
+    },
+    "C_footnotes": {
+      "total": 5,
+      "compound_count": 2,
+      "mixed_hierarchy_count": 1,
+      "secondary_leading_count": 1,
+      "rows": [
+        {
+          "number": 1,
+          "size": 2,
+          "buckets": [
+            "primary_judgment_usable",
+            "primary_judgment_usable"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 2,
+          "size": 1,
+          "buckets": [
+            "primary_judgment_usable"
+          ],
+          "compound": false,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 3,
+          "size": 1,
+          "buckets": [
+            "primary_judgment_usable"
+          ],
+          "compound": false,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 4,
+          "size": 1,
+          "buckets": [
+            "statute"
+          ],
+          "compound": false,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 5,
+          "size": 3,
+          "buckets": [
+            "commentary",
+            "commentary",
+            "primary_judgment_metadata_only"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": true,
+          "leads_with_secondary": true
+        }
+      ]
+    },
+    "answer_len": 1867,
+    "answer": "**שורה תחתונה**\n\nהלכת השיתוף מוכרת בפסיקה כעקרון המעניק חזקה לשיתוף בנכסים שנצברו במהלך החיים המשותפים; בתי המשפט העליון ובג\"ץ אישרו את היישום של חזקה זו תוך בחינת נסיבות החיים המשותפים והחרגות ביחס להכנסות ונכסים מנוהלים.¹\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nבע\"מ 4623/04 — בית המשפט העליון דן במישרין בשאלת חלות הלכת השיתוף על נכסים שנצברו במהלך הנישואין, והבהיר את הצורך לבחון את נסיבות החיים המשותפים, משך הנישואין ואופי הנכסים, וכן התייחס לבעיות הנובעות מנכסים המנוהלים והכנסות אישיות.²\n\nבג\"ץ 1000/92 (בבלי נ' בית הדין הרבני הגדול) — בג\"ץ קבע שהלכות שיתוף הנכסים הן חלק מהמשפט האזרחי הכללי וכי יש להחילן בהחלטות רכושיות, לרבות כאשר השאלות מובאות בפני בתי דין רבניים.³\n\n**יישומים בפסיקה שנמצאה**\n\n- במקרה בע\"מ 4623/04 יושמה חזקה של שיתוף כדי להכריע בסכסוך רכושי בין בני זוג, כשהעליון שקל ראיות על אופי החיים המשותפים, תרומות כלכליות וניהול משק הבית המשותף.²\n- בג\"ץ 1000/92 הוחלה ההלכה בהקשר של סמכות הכרעה רכושית בפני בתי הדין הרבניים, וקבע כי הדין האזרחי בדבר שיתוף ידוע רלוונטי להכרעות רכושיות מסוג זה.³\n\n**מגבלות והבחנות**\n\nבע\"מ 4623/04 מודגשת מגבלה מרכזית: החזקה אינה חלה בעיוור על נכסים המנוהלים באופן עצמאי או על הכנסות אישיות ללא ראיות לכוונת שיתוף, ויש לבחון את אופי הנכס והנסיבות הקונקרטיות בטרם הכרעה על שיתוף.²\n\nבג\"ץ 1000/92 קבע שההלכה היא חלק מהמשפט האזרחי, אך הדבר אינו מתיר החלת החזקה ללא בדיקה של נסיבות המקרה בעת הכרעה בנושאים רכושיים שנדונים בערכאות אחרות.³\n\n**הרקע החקיקתי**\n\nחוק יחסי ממון בין בני זוג, תשל\"ג‑1973 מסדיר יחסי ממון סטטוטוריים וחלקו חל על נישואים שפרצו החל מ‑1.1.1974; החוק והאפשרות להסכמי ממון מהווים רקע חקיקתי שיש להתחשב בו בדיוני שיתוף, אך אינם מהווים הלכה פסוקה במקום פסיקה המחייבת.⁴\n\n**מה לא ניתן לקבוע מהמקורות**\n\nאין די במקורות שסופקו כדי לקבוע במפורש את גבולות היישום בין מערכת חוקית של חוק יחסי ממון לבין החזקה הפסיקתית בעבור כל המקרים שלאחר 1.1.1974; נקודות אלה נדונות בספרות אך לא הוכרעו באופן מלא בפסקי הדין השמישים כאן.⁵"
+  },
+  {
+    "id": "R08",
+    "query": "כתוב סקירת פסיקה על מבחן המידתיות בביקורת שיפוטית על חקיקה.",
+    "run_id": "b8ccaff9-539f-46c5-9f77-dc09ec2648b3",
+    "total_ms": 213686,
+    "research_mode": null,
+    "deterministic_branch": null,
+    "is_stub": false,
+    "sufficiency": {
+      "shape": "analysis",
+      "reason": "case_law_synthesis_supported",
+      "applied": true,
+      "category": "case_law_synthesis",
+      "sufficient": true,
+      "thin_source": true,
+      "found_titles": [
+        "בג\"ץ 3752/10",
+        "בית המשפט העליון, אב\"ד השופט יצחק עמית, השופט עפר גרוסקופף, השופטת גילה כנפי-שטייניץ: פסק דין בעניין החזקת גופת המחבל וליד דקה (בג\"ץ 3289-24)",
+        "אחרי עשרים שנה: הרהורים על מוסכמות מקובלות בשיח המידתיות",
+        "מסמך מאתר אתר אקדמי (law.huji.ac.il)",
+        "סמכות בתי המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות"
+      ],
+      "topical_refs": [
+        "s6",
+        "s8"
+      ],
+      "topic_phrases": [
+        "מבחן המידתיות בביקורת שיפוטית",
+        "המידתיות בביקורת שיפוטית",
+        "מבחן המידתיות בביקורת",
+        "המידתיות בביקורת",
+        "בביקורת שיפוטית",
+        "מבחן המידתיות",
+        "כתוב סקירת"
+      ],
+      "case_law_required": true,
+      "statute_only_answer": false,
+      "sufficiency_profile": "case_law_synthesis",
+      "usable_judgment_refs": [
+        "s2",
+        "s12"
+      ],
+      "exact_amounts_allowed": true,
+      "governing_statute_refs": [],
+      "topical_authority_refs": [],
+      "morphology_domain_match": false,
+      "normalized_source_tokens": [
+        "בית",
+        "עליון",
+        "שבתו",
+        "שפט",
+        "גבו",
+        "צדק",
+        "פני",
+        "בוד",
+        "נשיא",
+        "גרוניס",
+        "שנה",
+        "נאור",
+        "שופט",
+        "דימ",
+        "ארבל",
+        "רובינשטיין",
+        "ראן",
+        "חיו",
+        "נדל",
+        "פוגלמן",
+        "עמי",
+        "עותר",
+        "אמנון",
+        "אוריאל",
+        "רייכמן",
+        "אלעזר",
+        "שטרן",
+        "זמי",
+        "זלמן",
+        "שניאור",
+        "קובלקין",
+        "אורן",
+        "קדמי",
+        "שבתאי",
+        "קורדוב",
+        "עידו",
+        "נגד",
+        "שיב",
+        "נסת",
+        "שרד"
+      ],
+      "governing_regulation_refs": [],
+      "normalized_question_tokens": [
+        "תוב",
+        "סקיר",
+        "בחן",
+        "ידת",
+        "יקור",
+        "שיפוטי",
+        "חקיק"
+      ],
+      "sufficiency_authority_basis": "usable_judgment",
+      "thin_governing_statute_refs": [],
+      "thin_governing_regulation_refs": [],
+      "authority_type_sufficiency_passed": true,
+      "case_law_missing_but_not_required": false,
+      "practical_steps_thin_authority_passed": false
+    },
+    "commentary_share_of_admitted_pack": 0.59,
+    "A_admitted_composition": {
+      "total": 22,
+      "buckets": {
+        "statute": 5,
+        "primary_judgment_usable": 1,
+        "commentary": 3,
+        "listing_not_citable": 2,
+        "unclassified": 1,
+        "scholarship": 10
+      },
+      "primary_count": 6,
+      "secondary_count": 13,
+      "noise_count": 2,
+      "verifier_counts": {
+        "by_support": {
+          "direct": 8,
+          "partial": 6,
+          "unrelated": 5,
+          "tangential": 3
+        },
+        "by_role_match": {
+          "true": 19,
+          "false": 3
+        },
+        "model_verdicts": 22,
+        "by_support_model": {
+          "direct": 8,
+          "partial": 6,
+          "unrelated": 5,
+          "tangential": 3
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "rows": [
+        {
+          "rank": 1,
+          "title": "חוק התכנון והבנייה (תיקון מס' 100), התשע\"ד-2013",
+          "url": "https://fs.knesset.gov.il/%5C19%5Claw%5C19_lsr_301578.pdf",
+          "bucket": "statute",
+          "role": "primary_statute",
+          "tier": "official_primary",
+          "citable_as": "statute",
+          "text_usability": "metadata_only",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 2,
+          "title": "ביקורת שיפוטית על הליך החקיקה",
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/a197e3a7-9132-e811-80de-00155d0a0235/2_a197e3a7-9132-e811-80de-00155d0a0235_11_8976.pdf",
+          "bucket": "statute",
+          "role": "primary_statute",
+          "tier": "official_primary",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 3,
+          "title": "בג\"ץ 3752/10",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C10/520/037/b19&fileName=10037520.b19&type=4",
+          "bucket": "primary_judgment_usable",
+          "role": "binding_case_law",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "full_text",
+          "synthesis_role": "leading_candidate",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": [
+            "judgment_document",
+            "judgment_text_acquired",
+            "judgment_identity_confirmed_in_body",
+            "holding_text_present"
+          ]
+        },
+        {
+          "rank": 4,
+          "title": "החזרת הדיון בתוכניות מתאר לוועדה המחוזית בשל פגמים שנפלו בהליכי התכנון",
+          "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%96%D7%A8%D7%AA-%D7%94%D7%93%D7%99%D7%95%D7%9F-%D7%91%D7%AA%D7%95%D7%9B%D7%A0%D7%99%D7%95%D7%AA-%D7%9E%D7%AA%D7%90%D7%A8-%D7%9C%D7%95%D7%95%D7%A2%D7%93%D7%94-%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99%D7%AA-%D7%91%D7%A9%D7%9C-%D7%A4%D7%92%D7%9E%D7%99%D7%9D-%D7%A9%D7%A0%D7%A4%D7%9C%D7%95-%D7%91%D7%94%D7%9C%D7%99%D7%9B%D7%99-%D7%94%D7%AA%D7%9B%D7%A0%D7%95%D7%9F",
+          "bucket": "commentary",
+          "role": "persuasive_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "tangential"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 5,
+          "title": "בית המשפט העליון, אב\"ד השופט יצחק עמית, השופט עפר גרוסקופף, השופטת גילה כנפי-שטייניץ: פסק דין בעניין החזקת גופת המחבל וליד דקה (בג\"ץ 3289-24)",
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1500",
+          "bucket": "listing_not_citable",
+          "role": "binding_case_law",
+          "tier": "index_or_listing",
+          "citable_as": "not_citable",
+          "text_usability": "full_text",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": [
+            "listing_or_pagination_page",
+            "judgment_text_acquired",
+            "judgment_identity_confirmed_in_body",
+            "holding_text_present"
+          ]
+        },
+        {
+          "rank": 6,
+          "title": "יישום החלטת הממשלה 2225 בדבר הסרת חסמים",
+          "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7547&businessType=1",
+          "bucket": "unclassified",
+          "role": "binding_case_law",
+          "tier": "primary_mirror",
+          "citable_as": "unknown",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "tangential"
+          ],
+          "flags": [
+            "official_host_non_specific_path"
+          ]
+        },
+        {
+          "rank": 7,
+          "title": "חוק התכנון והבניה, תשכ\"ה-1965",
+          "url": "https://www.nevo.co.il/law_html/law01/044_001.htm",
+          "bucket": "statute",
+          "role": "primary_statute",
+          "tier": "primary_mirror",
+          "citable_as": "statute",
+          "text_usability": "metadata_only",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "official_host_non_specific_path"
+          ]
+        },
+        {
+          "rank": 8,
+          "title": "אחרי עשרים שנה: הרהורים על מוסכמות מקובלות בשיח המידתיות",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/Cohn.pdf",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 9,
+          "title": "מידתיות במשפט",
+          "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 10,
+          "title": "המידתיות החוקתית: קווים (ראויים) לדמותה",
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Page.aspx?nBookID=103799703&nTocEntryID=103801083&nPageID=103799805",
+          "bucket": "listing_not_citable",
+          "role": "scholarship",
+          "tier": "index_or_listing",
+          "citable_as": "not_citable",
+          "text_usability": "listing_page",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": [
+            "listing_or_pagination_page"
+          ]
+        },
+        {
+          "rank": 11,
+          "title": "סמכות בתי המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות",
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2024-12/%D7%91%D7%A8%D7%A7%20%D7%9E%D7%93%D7%99%D7%A0%D7%94.pdf",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 12,
+          "title": "ביקורת השיפוטית על חוקיות חוקים",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-zamir-1.pdf",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 13,
+          "title": "הדרך לביקורת שיפוטית על חוקתיות של חוקים - הסמכות להכריז על אי-חוקתיות חקיקה",
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%93%D7%A8%D7%9A%20%D7%9C%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA%20%D7%A2%D7%9C%20%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%A9%D7%9C%20%D7%97%D7%95%D7%A7%D7%99%D7%9D%20-%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%9C%D7%94%D7%9B%D7%A8%D7%99%D7%96%20%D7%A2%D7%9C%20%D7%90%D7%99-%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%97%D7%A7%D7%99%D7%A7%D7%94%20-%20%D7%9C%D7%9E%D7%99.pdf",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 14,
+          "title": "סעד אפיסטמי: סעד שתכליתו למנוע עיוות דין והרשעת שווא",
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2021-12/%D7%96%D7%99%D7%9E%D7%A8%D7%9F%20%D7%95%D7%93%D7%92%D7%9F.pdf",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 15,
+          "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 16,
+          "title": "משפט השוואתי כפרקטיקה – היבטים מוסדיים, תרבותיים ויישומיים | דפנה ברק-ארז (כרך ד)",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/d_6.pdf",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "tangential"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 17,
+          "title": "אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו)",
+          "url": "https://runilawreview.org/2012/11/26/volume15_barak/",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 18,
+          "title": "תקנות הנמלים (מניעת זיהום אוויר מכלי שיט)",
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%A0%D7%9E%D7%9C%D7%99%D7%9D_(%D7%9E%D7%A0%D7%99%D7%A2%D7%AA_%D7%96%D7%99%D7%94%D7%95%D7%9D_%D7%90%D7%95%D7%95%D7%99%D7%A8_%D7%9E%D7%9B%D7%9C%D7%99_%D7%A9%D7%99%D7%98)",
+          "bucket": "statute",
+          "role": "binding_case_law",
+          "tier": "statute_mirror",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "consolidated_statute_mirror"
+          ]
+        },
+        {
+          "rank": 19,
+          "title": "סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
+          "url": "https://lawjournal.huji.ac.il/article/12/1916",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 20,
+          "title": "על חוקתיות ועל סבירות: בעקבות בג&quot;ץ 5636/01 בקמן נ' שר העבודה והרווחה",
+          "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/nun1_6.pdf",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": [
+            "judgment_text_acquired",
+            "judgment_identity_confirmed_in_body",
+            "holding_text_present"
+          ]
+        },
+        {
+          "rank": 21,
+          "title": "הזכות לפרטיות בעבודה: עיון מחודש בפרשת איסקוב-ענבר ויישומה",
+          "url": "https://lawjournal.huji.ac.il/article/12/1909",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 22,
+          "title": "תקנות לתיקון סדרי הדין (חקירת עדים) (גביית עדות מתלונן בשל עבירת מין שלא בפני הנאשם)",
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%9C%D7%AA%D7%99%D7%A7%D7%95%D7%9F_%D7%A1%D7%93%D7%A8%D7%99_%D7%94%D7%93%D7%99%D7%9F_(%D7%97%D7%A7%D7%99%D7%A8%D7%AA_%D7%A2%D7%93%D7%99%D7%9D)_(%D7%92%D7%91%D7%99%D7%99%D7%AA_%D7%A2%D7%93%D7%95%D7%AA_%D7%9E%D7%AA%D7%9C%D7%95%D7%A0%D7%9F_%D7%91%D7%A9%D7%9C_%D7%A2%D7%91%D7%99%D7%A8%D7%AA_%D7%9E%D7%99%D7%9F_%D7%A9%D7%9C%D7%90_%D7%91%D7%A4%D7%A0%D7%99_%D7%94%D7%A0%D7%90%D7%A9%D7%9D)",
+          "bucket": "statute",
+          "role": "binding_case_law",
+          "tier": "statute_mirror",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "consolidated_statute_mirror"
+          ]
+        }
+      ]
+    },
+    "B_used_composition": {
+      "total": 11,
+      "buckets": {
+        "scholarship": 7,
+        "commentary": 1,
+        "primary_judgment_usable": 3
+      },
+      "primary_count": 3,
+      "secondary_count": 8,
+      "first_primary_position": 4,
+      "first_secondary_position": 1,
+      "secondary_precedes_primary": true,
+      "head5_primary": 2,
+      "head5_secondary": 3,
+      "rows": [
+        {
+          "order": 1,
+          "footnote_number": 1,
+          "title": "מסמך מאתר אתר אקדמי (law.huji.ac.il)",
+          "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
+          "bucket": "scholarship",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 9,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 2,
+          "footnote_number": 2,
+          "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+          "bucket": "scholarship",
+          "origin": "local_db",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 15,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 3,
+          "footnote_number": 2,
+          "title": "אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו)",
+          "url": "https://runilawreview.org/2012/11/26/volume15_barak/",
+          "bucket": "commentary",
+          "origin": "local_db",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 17,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 4,
+          "footnote_number": 3,
+          "title": "בג\"ץ 3752/10",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C10/520/037/b19&fileName=10037520.b19&type=4",
+          "bucket": "primary_judgment_usable",
+          "origin": "perplexity",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "full_text",
+          "synthesis_role": "leading_candidate",
+          "admitted_rank": 3,
+          "verifier": [
+            "partial"
+          ]
+        },
+        {
+          "order": 5,
+          "footnote_number": 3,
+          "title": "בית המשפט העליון, אב\"ד השופט יצחק עמית, השופט עפר גרוסקופף, השופטת גילה כנפי-שטייניץ: פסק דין בעניין החזקת גופת המחבל וליד דקה (בג\"ץ 3289-24)",
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1500",
+          "bucket": "primary_judgment_usable",
+          "origin": "local_db",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "full_text",
+          "synthesis_role": "leading_candidate",
+          "admitted_rank": 5,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 6,
+          "footnote_number": 3,
+          "title": "על חוקתיות ועל סבירות: בעקבות בג&quot;ץ 5636/01 בקמן נ' שר העבודה והרווחה",
+          "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/nun1_6.pdf",
+          "bucket": "primary_judgment_usable",
+          "origin": "local_db",
+          "tier": "secondary_commentary",
+          "citable_as": "judgment",
+          "text_usability": "full_text",
+          "synthesis_role": "leading_candidate",
+          "admitted_rank": 20,
+          "verifier": [
+            "partial"
+          ]
+        },
+        {
+          "order": 7,
+          "footnote_number": 4,
+          "title": "סמכות בתי המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות",
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2024-12/%D7%91%D7%A8%D7%A7%20%D7%9E%D7%93%D7%99%D7%A0%D7%94.pdf",
+          "bucket": "scholarship",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 11,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 8,
+          "footnote_number": 6,
+          "title": "ביקורת השיפוטית על חוקיות חוקים",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-zamir-1.pdf",
+          "bucket": "scholarship",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 12,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 9,
+          "footnote_number": 6,
+          "title": "הדרך לביקורת שיפוטית על חוקתיות של חוקים - הסמכות להכריז על אי-חוקתיות חקיקה",
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%93%D7%A8%D7%9A%20%D7%9C%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA%20%D7%A2%D7%9C%20%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%A9%D7%9C%20%D7%97%D7%95%D7%A7%D7%99%D7%9D%20-%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%9C%D7%94%D7%9B%D7%A8%D7%99%D7%96%20%D7%A2%D7%9C%20%D7%90%D7%99-%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%97%D7%A7%D7%99%D7%A7%D7%94%20-%20%D7%9C%D7%9E%D7%99.pdf",
+          "bucket": "scholarship",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 13,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 10,
+          "footnote_number": 6,
+          "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2021-12/%D7%96%D7%99%D7%9E%D7%A8%D7%9F%20%D7%95%D7%93%D7%92%D7%9F.pdf",
+          "bucket": "scholarship",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 14,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 11,
+          "footnote_number": 8,
+          "title": "אחרי עשרים שנה: הרהורים על מוסכמות מקובלות בשיח המידתיות",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/Cohn.pdf",
+          "bucket": "scholarship",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 8,
+          "verifier": [
+            "partial"
+          ]
+        }
+      ]
+    },
+    "C_footnotes": {
+      "total": 8,
+      "compound_count": 6,
+      "mixed_hierarchy_count": 1,
+      "secondary_leading_count": 0,
+      "rows": [
+        {
+          "number": 1,
+          "size": 1,
+          "buckets": [
+            "scholarship"
+          ],
+          "compound": false,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 2,
+          "size": 3,
+          "buckets": [
+            "scholarship",
+            "scholarship",
+            "commentary"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 3,
+          "size": 3,
+          "buckets": [
+            "primary_judgment_usable",
+            "primary_judgment_usable",
+            "primary_judgment_usable"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 4,
+          "size": 3,
+          "buckets": [
+            "primary_judgment_usable",
+            "primary_judgment_usable",
+            "scholarship"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": true,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 5,
+          "size": 2,
+          "buckets": [
+            "primary_judgment_usable",
+            "primary_judgment_usable"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 6,
+          "size": 3,
+          "buckets": [
+            "scholarship",
+            "scholarship",
+            "scholarship"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 7,
+          "size": 1,
+          "buckets": [
+            "primary_judgment_usable"
+          ],
+          "compound": false,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 8,
+          "size": 3,
+          "buckets": [
+            "scholarship",
+            "commentary",
+            "scholarship"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        }
+      ]
+    },
+    "answer_len": 2779,
+    "answer": "**מבחן המידתיות בביקורת שיפוטית על חקיקה**\n\nמבחן המידתיות בביקורת שיפוטית על חקיקה מוגדר בדוקטרינה הרווחת כמבחן רב־שלבי שבוחן האם הגבלה חקיקתית שהופכת על זכויות אדם עומדת בהסמכה המחוקקת: שאלת המטרה הלגיטימית, שאלת הקשר הרציונלי/התאמה, שאלת הצורך באמצעי פחות פוגעני (פגיעה פחותה) ושאלת האיזון הפרופורציונלי בין חומרת הפגיעה לתועלת הציבורית.¹\n\nבפירוט הדוקטרינרי מקובל להבחין בשלבים ברורים: קביעת מטרה ראויה של החקיקה; בדיקת קשר רציונלי בין האמצעי למטרה (סבירות התאמה); בדיקת הצורך — האם קיים אמצעי חלופי שפוגע פחות ובכל זאת מממש את אותה מטרה; ולבסוף שקלול פרטי של מידת הפגיעה לעומת תועלתה (הפרופורציונליות בחומרת הפגיעה).¹\n\nהתפתחות היסטורית במשפט הישראלי מצביעה על כניסת המושג מידתיות לתחומי המשפט המנהלי והחוקתי מאז שנות התשעים, במקביל לדיון על יחסו לדרישת הסבירות המסורתית; יחד עם זאת קיימת ויכוח אקדמי על היקף ולגרסאות היישום של המבחן.²\n\nבפסיקה המבחן אומץ ונעשה לו שימוש לשם עריכת בדיקה מעמיקה של הגבלות על זכויות, אולם המימד המעשי של היישום משתנה — יש פסקי דין שבהם נמתחת סקירה מהותית ולעתים מתן משקל של שיפוטיות מצומצמת יותר במקרים בהם עומדות שיקולים ביטחוניים או אינטרסים ציבוריים כבדים.³\n\nביישום השוטף בתי המשפט שוקלים בין מספר משתנים: חשיבות וטבע הזכות המוגבלת (כצורה פחותה לעומת זכות יסוד מרכזית), היקף ופירוט הראיות על היעילות של האמצעי לקידום המטרה, ומשקל האינטרס הציבורי או הביטחוני. בפסיקה הביטחונית ניכרת לרוב דרישה להוכחה מסוימת שהאמצעי מקדם באופן ממשי את המטרה, ואילו בשדה הכלכלי־מינהלי ניכרת תנועה לעמידה על מרחב שיפוט רחב לרשות המבצעת.⁴\n\nהנוהג השיפוטי להעניק מרווח שיפוט (margin of appreciation) בא לידי ביטוי כאשר יש שיקולים של ביטחון לאומי, של קידום מדיניות ציבורית רחבה, או כאשר הראיות להיתכנות המידה הן עניין עובדי־מערכה שאינו פשוט לשיפוט שיפוטי מעמיק; במצבים אלה בתי המשפט נוטים להקנות לשרויות מידה של סמכות שיפוטית מצומצמת יותר ולעתים לדלג על בדיקה יישומית מעמיקה.⁵\n\nהסעד הניתן כאשר מבחן המידתיות נכשל אינו חד־משמעי: בתי המשפט נוהגים לבטלוּת החלק הבעייתי של החקיקה או של הוראתה, ולעתים לעצב סעד מותנה או מדורג — השעיה, מתן תקופת מעבר, או עיצוב סעדים שיבטיחו התאמה מערכתית במקום ביטול מיידי.⁶\n\nכדוגמה לשילוב מבחן המידתיות עם שיקולי סעד במעשה, בפסק דינו האחרון שנידון בהקשר של החזקת גופות לטובת משא ומתן ביטחוני התקיימה בחינה מפורשת של הקשר הרציונלי ושל המשנה השלישית של המידתיות, ובתחום זה בית המשפט מצא כי הדרישה לקידום מטרה ביטחונית מסוימת מילאה חלק מהאמות המבחן.⁷\n\nביקורת אקדמית טוענת כי השימוש במידתיות עלול להוליד שיפוטיות־יתר, חוסר בהירות בשיטת הניתוח, וקשיים פרשניים ביישום המבחנים המשניים; מצד שני הוגנו העיקרון והפרקטיקה על ידי טיעונים לטובת 'תרבות ההצדקה' והצורך בכלים גמישים לבחינת פשרות בין זכויות ואינטרסים ציבוריים.⁸\n\nלסיום הסתייגות קצרה: הטקסטים שעמדו לרשותי כללו קטעים תומכים וקישורים לפסיקה ולמאמרים אך לא תמיד את נוסחי ההלכות או את מלוא פסקי הדין במלואם; מסקנות הסקירה נוסחו בהתאם להיקף הקטעים שזמינים והתבססו על מקורות אלה בזהירות המתבקשת."
+  },
+  {
+    "id": "R04",
+    "query": "מה הפסיקה אומרת על הרמת מסך ההתאגדות?",
+    "run_id": "e1f73ac1-3dbe-4fb8-86f8-27bb74f6dad9",
+    "total_ms": 224628,
+    "research_mode": null,
+    "deterministic_branch": null,
+    "is_stub": false,
+    "sufficiency": {
+      "shape": "analysis",
+      "reason": "case_law_synthesis_supported",
+      "applied": true,
+      "category": "case_law_synthesis",
+      "sufficient": true,
+      "thin_source": true,
+      "found_titles": [
+        "חוק החברות, התשנ\"ט-1999",
+        "פסק דין מתוך אתר ממשלתי (gov.il)",
+        "תקנות סדר הדין האזרחי, התשע\"ט-2018",
+        "שאלות ותשובות - תקנות סדר הדין האזרחי החדשות",
+        "חוק החברות, תשנ\"ט-1999*"
+      ],
+      "topical_refs": [
+        "s2",
+        "s6",
+        "s7",
+        "s8"
+      ],
+      "topic_phrases": [
+        "הרמת מסך ההתאגדות",
+        "מסך ההתאגדות",
+        "הרמת מסך"
+      ],
+      "case_law_required": true,
+      "statute_only_answer": false,
+      "sufficiency_profile": "case_law_synthesis",
+      "usable_judgment_refs": [
+        "s11",
+        "s12"
+      ],
+      "exact_amounts_allowed": true,
+      "governing_statute_refs": [],
+      "topical_authority_refs": [
+        "s2",
+        "s6",
+        "s7",
+        "s8"
+      ],
+      "morphology_domain_match": false,
+      "normalized_source_tokens": [
+        "חוק",
+        "חבר",
+        "תשנ",
+        "סעיף",
+        "נקבע",
+        "בית",
+        "רשאי",
+        "ייחס",
+        "חוב",
+        "בעל",
+        "ניה",
+        "מצא",
+        "נסיב",
+        "צודק",
+        "נכון",
+        "עשו",
+        "מקר",
+        "שבהם",
+        "שימוש",
+        "איש",
+        "שפטי",
+        "נפרד",
+        "נעש",
+        "ונו",
+        "אדם",
+        "קפח",
+        "נוש",
+        "אופן",
+        "פוגע",
+        "תכלי",
+        "תוך",
+        "נטיל",
+        "סיכון",
+        "לתי",
+        "סביר",
+        "אשר",
+        "יכולת",
+        "פרוע",
+        "חובות",
+        "תקנ",
+        "סדר",
+        "אזרחי",
+        "תשע",
+        "קובע",
+        "טרתן",
+        "קבוע",
+        "דין",
+        "ניהול",
+        "ליכ",
+        "יצור",
+        "דאו",
+        "דיוני",
+        "נוע",
+        "שרירות",
+        "הגש",
+        "עקרונ",
+        "חוקתי",
+        "ליך",
+        "שיפוטי",
+        "ראוי"
+      ],
+      "governing_regulation_refs": [],
+      "normalized_question_tokens": [
+        "רמת",
+        "מסך",
+        "תאגד"
+      ],
+      "sufficiency_authority_basis": "usable_judgment",
+      "thin_governing_statute_refs": [],
+      "thin_governing_regulation_refs": [],
+      "authority_type_sufficiency_passed": true,
+      "case_law_missing_but_not_required": false,
+      "practical_steps_thin_authority_passed": false
+    },
+    "commentary_share_of_admitted_pack": 0.4,
+    "A_admitted_composition": {
+      "total": 25,
+      "buckets": {
+        "statute": 7,
+        "primary_judgment_metadata_only": 5,
+        "commentary": 6,
+        "listing_not_citable": 2,
+        "unclassified": 1,
+        "scholarship": 4
+      },
+      "primary_count": 12,
+      "secondary_count": 10,
+      "noise_count": 2,
+      "verifier_counts": {
+        "by_support": {
+          "direct": 4,
+          "partial": 9,
+          "unrelated": 9,
+          "tangential": 3
+        },
+        "by_role_match": {
+          "true": 25,
+          "false": 0
+        },
+        "model_verdicts": 25,
+        "by_support_model": {
+          "direct": 4,
+          "partial": 9,
+          "unrelated": 9,
+          "tangential": 3
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "rows": [
+        {
+          "rank": 1,
+          "title": "חוק החברות, התשנ\"ט-1999",
+          "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+          "bucket": "statute",
+          "role": "primary_statute",
+          "tier": "official_primary",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 2,
+          "title": "ע\"א 3295/94 פרימק נ' חברת רגנס בע\"מ",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C94%5C950%5C032%5Cz09&fileName=94032950.Z09&type=2",
+          "bucket": "primary_judgment_metadata_only",
+          "role": "binding_case_law",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "metadata_only",
+          "synthesis_role": "leading_candidate",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": [
+            "judgment_document"
+          ]
+        },
+        {
+          "rank": 3,
+          "title": "הנחיות נשיאת בית המשפט העליון – נובמבר 2010",
+          "url": "https://supreme.court.gov.il/Documents/%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA%20%D7%A0%D7%A9%D7%99%D7%90%D7%AA%20%D7%91%D7%99%D7%AA%20%D7%94%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%A2%D7%9C%D7%99%D7%95%D7%9F%20-%20%D7%A0%D7%95%D7%91%D7%9E%D7%91%D7%A8%202010%20-%2012258010.pdf",
+          "bucket": "primary_judgment_metadata_only",
+          "role": "binding_case_law",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "leading_candidate",
+          "origin": null,
+          "verifier": [
+            "tangential"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 4,
+          "title": "תקנות סדר הדין האזרחי, התשע\"ט-2018",
+          "url": "https://www.nevo.co.il/law_html/law00/157751.htm",
+          "bucket": "statute",
+          "role": "primary_statute",
+          "tier": "official_primary",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 5,
+          "title": "שאלות ותשובות - תקנות סדר הדין האזרחי החדשות",
+          "url": "https://www.gov.il/BlobFolder/guide/guide_to_civil_procedure_01012021/he/%D7%A9%D7%90%D7%9C%D7%95%D7%AA%20%D7%95%D7%AA%D7%A9%D7%95%D7%91%D7%95%D7%AA%20-%20%D7%A2%D7%93%D7%9B%D7%95%D7%9F%20%D7%A0%D7%9B%D7%95%D7%9F%20%D7%9C-24.12.20.docx_.pdf",
+          "bucket": "statute",
+          "role": "primary_statute",
+          "tier": "official_primary",
+          "citable_as": "statute",
+          "text_usability": "metadata_only",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 6,
+          "title": "חוק החברות, תשנ\"ט-1999*",
+          "url": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+          "bucket": "statute",
+          "role": "primary_statute",
+          "tier": "official_primary",
+          "citable_as": "statute",
+          "text_usability": "metadata_only",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 7,
+          "title": "פסק-דין בתיק ת\"א 2020-98",
+          "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA-%D7%90-2020-98",
+          "bucket": "commentary",
+          "role": "persuasive_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 8,
+          "title": "דחיית תביעה להרמת מסך ההתאגדות של חברה",
+          "url": "https://www.psakdin.co.il/Court/%D7%93%D7%97%D7%99%D7%99%D7%AA-%D7%AA%D7%91%D7%99%D7%A2%D7%94-%D7%9C%D7%94%D7%A8%D7%9E%D7%AA-%D7%9E%D7%A1%D7%9A-%D7%94%D7%94%D7%AA%D7%90%D7%92%D7%93%D7%95%D7%AA-%D7%A9%D7%9C-%D7%97%D7%91%D7%A8%D7%94",
+          "bucket": "commentary",
+          "role": "persuasive_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 9,
+          "title": "הרמת מסך ההתאגדות בחברה",
+          "url": "https://www.psakdin.co.il/Document/%D7%94%D7%A8%D7%9E%D7%AA-%D7%9E%D7%A1%D7%9A-%D7%94%D7%94%D7%AA%D7%90%D7%92%D7%93%D7%95%D7%AA-%D7%91%D7%97%D7%91%D7%A8%D7%94",
+          "bucket": "commentary",
+          "role": "persuasive_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 10,
+          "title": "בית המשפט לענייני משפחה בת\"א-יפו, השופט תומר שלם: פסק דין שעניינו תביעה להשבה כספית בין ידועים בציבור (תלה\"מ 18668-11-23)",
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+          "bucket": "listing_not_citable",
+          "role": "binding_case_law",
+          "tier": "index_or_listing",
+          "citable_as": "not_citable",
+          "text_usability": "listing_page",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "listing_or_pagination_page"
+          ]
+        },
+        {
+          "rank": 11,
+          "title": "יישום תיקון מס' 5 לחוק הקולנוע – מאגר הלקטורים",
+          "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=8287&businessType=1",
+          "bucket": "unclassified",
+          "role": "persuasive_case_law",
+          "tier": "primary_mirror",
+          "citable_as": "unknown",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "official_host_non_specific_path"
+          ]
+        },
+        {
+          "rank": 12,
+          "title": "תקנות הבטיחות בעבודה (הרמת בני אדם במלגזות)",
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%94%D7%A8%D7%9E%D7%AA_%D7%91%D7%A0%D7%99_%D7%90%D7%93%D7%9D_%D7%91%D7%9E%D7%9C%D7%92%D7%96%D7%95%D7%AA)",
+          "bucket": "statute",
+          "role": "binding_case_law",
+          "tier": "statute_mirror",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "consolidated_statute_mirror"
+          ]
+        },
+        {
+          "rank": 13,
+          "title": "Overview // בית המשפט העליון",
+          "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
+          "bucket": "primary_judgment_metadata_only",
+          "role": "binding_case_law",
+          "tier": "primary_mirror",
+          "citable_as": "judgment",
+          "text_usability": "metadata_only",
+          "synthesis_role": "leading_candidate",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "official_host_non_specific_path"
+          ]
+        },
+        {
+          "rank": 14,
+          "title": "פרק ו': הרמת המסך",
+          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 15,
+          "title": "2.49 תהליך הרמת המסך",
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=102951716&nTocEntryID=102953088",
+          "bucket": "listing_not_citable",
+          "role": "scholarship",
+          "tier": "index_or_listing",
+          "citable_as": "not_citable",
+          "text_usability": "listing_page",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": [
+            "listing_or_pagination_page"
+          ]
+        },
+        {
+          "rank": 16,
+          "title": "המאגר המשפטי – מדור הנחיות, הוראות וחוזרים",
+          "url": "https://www.nevo.co.il/FilesFolderPermalink.aspx?b=files&r=%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA,+%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA+%D7%95%D7%97%D7%95%D7%96%D7%A8%D7%99%D7%9D%5C%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA+%D7%A0%D7%A9%D7%99%D7%90+%D7%91%D7%99%D7%AA-%D7%94%D7%9E%D7%A9%D7%A4%D7%98+%D7%94%D7%A2%D7%9C%D7%99%D7%95%D7%9F",
+          "bucket": "primary_judgment_metadata_only",
+          "role": "binding_case_law",
+          "tier": "primary_mirror",
+          "citable_as": "judgment",
+          "text_usability": "metadata_only",
+          "synthesis_role": "leading_candidate",
+          "origin": null,
+          "verifier": [
+            "tangential"
+          ],
+          "flags": [
+            "official_host_non_specific_path"
+          ]
+        },
+        {
+          "rank": 17,
+          "title": "ר-צ פלסטק בע\"מ נ' איפראימוב",
+          "url": "https://www.nevo.co.il/law_word/law01/495_304.doc",
+          "bucket": "primary_judgment_metadata_only",
+          "role": "binding_case_law",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "metadata_only",
+          "synthesis_role": "leading_candidate",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 18,
+          "title": "חוק המרכז לגביית קנסות, אגרות והוצאות",
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%9E%D7%A8%D7%9B%D7%96_%D7%9C%D7%92%D7%91%D7%99%D7%99%D7%AA_%D7%A7%D7%A0%D7%A1%D7%95%D7%AA%2C_%D7%90%D7%92%D7%A8%D7%95%D7%AA_%D7%95%D7%94%D7%95%D7%A6%D7%90%D7%95%D7%AA",
+          "bucket": "statute",
+          "role": "persuasive_case_law",
+          "tier": "statute_mirror",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "consolidated_statute_mirror"
+          ]
+        },
+        {
+          "rank": 19,
+          "title": "על כללים והצדקות: הבעיה הקשה",
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_b26aea9ddc9847faba0ba144f82626dc.pdf",
+          "bucket": "scholarship",
+          "role": "persuasive_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "tangential"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 20,
+          "title": "קהילות מגורים חדשות בישראל – בין הפרטה להפרדה | אמנון להבי (כרך ב)",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/b1_5.pdf",
+          "bucket": "scholarship",
+          "role": "persuasive_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 21,
+          "title": "עוני להשכרה: הצד האפל של שוק הדיור",
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_e1749cd30798455080a852c656349933.pdf",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 22,
+          "title": "ע\"א 7721-22 ד\"ר עופר ולטר נגד טוטנהם השקעות (יו\"ש) בע\"מ פסק דין",
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-7721-22-%d7%93%d7%a8-%d7%a2%d7%95%d7%a4%d7%a8-%d7%95%d7%9c%d7%98%d7%a8-%d7%a0%d7%92%d7%93-%d7%98%d7%95%d7%98%d7%a0%d7%94%d7%9d-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%99%d7%95%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": [
+            "judgment_text_acquired",
+            "judgment_identity_confirmed_in_body",
+            "holding_text_present"
+          ]
+        },
+        {
+          "rank": 23,
+          "title": "ע\"א 7721-22 ד\"ר עופר ולטר נ׳ טוטנהם השקעות (יו\"ש) בע\"מ פסק דין",
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-7721-22-%d7%93%d7%a8-%d7%a2%d7%95%d7%a4%d7%a8-%d7%95%d7%9c%d7%98%d7%a8-%d7%a0-%d7%98%d7%95%d7%98%d7%a0%d7%94%d7%9d-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%99%d7%95%d7%a9-%d7%91/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": [
+            "judgment_text_acquired",
+            "judgment_identity_confirmed_in_body",
+            "holding_text_present"
+          ]
+        },
+        {
+          "rank": 24,
+          "title": "בג\"ץ 6939/20 עידן מרכז דימונה בע\"מ נ׳ ממשלת ישראל פסק דין (02.02.2021)",
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-6939-20-%d7%a2%d7%99%d7%93%d7%9f-%d7%9e%d7%a8%d7%9b%d7%96-%d7%93%d7%99%d7%9e%d7%95%d7%a0%d7%94-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%9e%d7%9e%d7%a9%d7%9c%d7%aa-%d7%99%d7%a9%d7%a8%d7%90/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 25,
+          "title": "תקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות)",
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%A9%D7%95%D7%95%D7%99%D7%95%D7%9F_%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA_%D7%9C%D7%90%D7%A0%D7%A9%D7%99%D7%9D_%D7%A2%D7%9D_%D7%9E%D7%95%D7%92%D7%91%D7%9C%D7%95%D7%AA_(%D7%94%D7%AA%D7%90%D7%9E%D7%95%D7%AA_%D7%A0%D7%92%D7%99%D7%A9%D7%95%D7%AA_%D7%9C%D7%A9%D7%99%D7%A8%D7%95%D7%AA)",
+          "bucket": "statute",
+          "role": "binding_case_law",
+          "tier": "statute_mirror",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "consolidated_statute_mirror"
+          ]
+        }
+      ]
+    },
+    "B_used_composition": {
+      "total": 11,
+      "buckets": {
+        "primary_judgment_usable": 2,
+        "statute": 4,
+        "primary_judgment_metadata_only": 2,
+        "commentary": 2,
+        "scholarship": 1
+      },
+      "primary_count": 8,
+      "secondary_count": 3,
+      "first_primary_position": 1,
+      "first_secondary_position": 9,
+      "secondary_precedes_primary": false,
+      "head5_primary": 5,
+      "head5_secondary": 0,
+      "rows": [
+        {
+          "order": 1,
+          "footnote_number": 1,
+          "title": "ע\"א 7721-22 ד\"ר עופר ולטר נגד טוטנהם השקעות (יו\"ש) בע\"מ פסק דין",
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-7721-22-%d7%93%d7%a8-%d7%a2%d7%95%d7%a4%d7%a8-%d7%95%d7%9c%d7%98%d7%a8-%d7%a0%d7%92%d7%93-%d7%98%d7%95%d7%98%d7%a0%d7%94%d7%9d-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%99%d7%95%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "bucket": "primary_judgment_usable",
+          "origin": "local_db",
+          "tier": "secondary_commentary",
+          "citable_as": "judgment",
+          "text_usability": "full_text",
+          "synthesis_role": "leading_candidate",
+          "admitted_rank": 22,
+          "verifier": [
+            "partial"
+          ]
+        },
+        {
+          "order": 2,
+          "footnote_number": 1,
+          "title": "ע\"א 7721-22 ד\"ר עופר ולטר נ׳ טוטנהם השקעות (יו\"ש) בע\"מ פסק דין",
+          "url": "https://www.toledano.co.il/%d7%a2%d7%90-7721-22-%d7%93%d7%a8-%d7%a2%d7%95%d7%a4%d7%a8-%d7%95%d7%9c%d7%98%d7%a8-%d7%a0-%d7%98%d7%95%d7%98%d7%a0%d7%94%d7%9d-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%99%d7%95%d7%a9-%d7%91/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "bucket": "primary_judgment_usable",
+          "origin": "local_db",
+          "tier": "secondary_commentary",
+          "citable_as": "judgment",
+          "text_usability": "full_text",
+          "synthesis_role": "leading_candidate",
+          "admitted_rank": 23,
+          "verifier": [
+            "partial"
+          ]
+        },
+        {
+          "order": 3,
+          "footnote_number": 2,
+          "title": "חוק החברות, התשנ\"ט-1999",
+          "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+          "bucket": "statute",
+          "origin": "perplexity",
+          "tier": "official_primary",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "admitted_rank": 1,
+          "verifier": [
+            "partial"
+          ]
+        },
+        {
+          "order": 4,
+          "footnote_number": 2,
+          "title": "חוק החברות, תשנ\"ט-1999*",
+          "url": "https://www.knesset.gov.il/committees/heb/material/data/H31-03-2008_8-59-00_nosach010408.doc",
+          "bucket": "statute",
+          "origin": "perplexity",
+          "tier": "official_primary",
+          "citable_as": "statute",
+          "text_usability": "metadata_only",
+          "synthesis_role": "statutory_background",
+          "admitted_rank": 6,
+          "verifier": [
+            "partial"
+          ]
+        },
+        {
+          "order": 5,
+          "footnote_number": 3,
+          "title": "תקנות סדר הדין האזרחי, התשע\"ט-2018",
+          "url": "https://www.nevo.co.il/law_html/law00/157751.htm",
+          "bucket": "statute",
+          "origin": "perplexity",
+          "tier": "official_primary",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "admitted_rank": 4,
+          "verifier": [
+            "partial"
+          ]
+        },
+        {
+          "order": 6,
+          "footnote_number": 3,
+          "title": "שאלות ותשובות - תקנות סדר הדין האזרחי החדשות",
+          "url": "https://www.gov.il/BlobFolder/guide/guide_to_civil_procedure_01012021/he/%D7%A9%D7%90%D7%9C%D7%95%D7%AA%20%D7%95%D7%AA%D7%A9%D7%95%D7%91%D7%95%D7%AA%20-%20%D7%A2%D7%93%D7%9B%D7%95%D7%9F%20%D7%A0%D7%9B%D7%95%D7%9F%20%D7%9C-24.12.20.docx_.pdf",
+          "bucket": "statute",
+          "origin": "perplexity",
+          "tier": "official_primary",
+          "citable_as": "statute",
+          "text_usability": "metadata_only",
+          "synthesis_role": "statutory_background",
+          "admitted_rank": 5,
+          "verifier": [
+            "partial"
+          ]
+        },
+        {
+          "order": 7,
+          "footnote_number": 4,
+          "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C94%5C950%5C032%5Cz09&fileName=94032950.Z09&type=2",
+          "bucket": "primary_judgment_metadata_only",
+          "origin": "perplexity",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "metadata_only",
+          "synthesis_role": "leading_candidate",
+          "admitted_rank": 2,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 8,
+          "footnote_number": 4,
+          "title": "ר-צ פלסטק בע\"מ נ' איפראימוב",
+          "url": "https://www.nevo.co.il/law_word/law01/495_304.doc",
+          "bucket": "primary_judgment_metadata_only",
+          "origin": "perplexity",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "metadata_only",
+          "synthesis_role": "leading_candidate",
+          "admitted_rank": 17,
+          "verifier": [
+            "partial"
+          ]
+        },
+        {
+          "order": 9,
+          "footnote_number": 5,
+          "title": "פסק-דין בתיק ת\"א 2020-98",
+          "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA-%D7%90-2020-98",
+          "bucket": "commentary",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 7,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 10,
+          "footnote_number": 5,
+          "title": "הרמת מסך ההתאגדות בחברה",
+          "url": "https://www.psakdin.co.il/Document/%D7%94%D7%A8%D7%9E%D7%AA-%D7%9E%D7%A1%D7%9A-%D7%94%D7%94%D7%AA%D7%90%D7%92%D7%93%D7%95%D7%AA-%D7%91%D7%97%D7%91%D7%A8%D7%94",
+          "bucket": "commentary",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 9,
+          "verifier": [
+            "partial"
+          ]
+        },
+        {
+          "order": 11,
+          "footnote_number": 5,
+          "title": "פרק ו': הרמת המסך",
+          "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+          "bucket": "scholarship",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 14,
+          "verifier": [
+            "partial"
+          ]
+        }
+      ]
+    },
+    "C_footnotes": {
+      "total": 5,
+      "compound_count": 5,
+      "mixed_hierarchy_count": 0,
+      "secondary_leading_count": 0,
+      "rows": [
+        {
+          "number": 1,
+          "size": 2,
+          "buckets": [
+            "primary_judgment_usable",
+            "primary_judgment_usable"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 2,
+          "size": 2,
+          "buckets": [
+            "statute",
+            "statute"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 3,
+          "size": 2,
+          "buckets": [
+            "statute",
+            "statute"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 4,
+          "size": 2,
+          "buckets": [
+            "primary_judgment_metadata_only",
+            "primary_judgment_metadata_only"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 5,
+          "size": 3,
+          "buckets": [
+            "commentary",
+            "commentary",
+            "scholarship"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        }
+      ]
+    },
+    "answer_len": 1640,
+    "answer": "**שורה תחתונה**\n\nבפסק‑הדין המרכזי שנמצא (עא 7721‑22) נבחנה עילת תרמית והודגש כי הרמת מסך ההתאגדות מוצדקת במצבים שבהם יש שימוש לרעה באישיות המשפטית — כגון מצג כוזב או פעולות המכוונות להקפחת נושים — וכי בקשה כזו דורשת תשתית ראייתית שמציגה את המצג והכוונה המיוחסים למבקש.¹\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nע״א 7721‑22 ד״ר עופר ולטר נ׳ טוטנהם השקעות — בבדיקה המשפטית שעליה מבוסס המקור נדונה תרמית ודרישות הוכחה בהקשר של עוולת הטעיה בנזיקין; הדיון בפסק‑דין זה מדגיש את הצורך ביסוד ראייתי המציג מצג כוזב ובהצגת כוונה להטעות או הסתמכות ניזוקה כהנמקות מרכזיות בטענות להרמת מסך.¹\n\n**הרקע החקיקתי**\n\nחוק החברות מספק רקע חקיקתי להתערבות שיפוטית: סעיף 6 מאפשר לייחס חובות של חברה לבעלי מניות כאשר נעשה שימוש באישיות המשפטית כדי להונות או לקפח נושה, ועוסק בעילות כמו הונאה, פגיעה בתכלית החברה ונטילת סיכון בלתי סביר ביחס ליכולת לפרוע חובות.²\n\nהוראות סדר הדין האזרחי וההנחיות המסבירות אותן מסדירות את האספקטים הפרוצדורליים של הגשת טענות להרמת מסך — מבנה כתב הטענות, דרישות גילוי ומידת הבירור הראייתי — אך התקנות אינן קובעות מבחן מהותי להרמת מסך אלא מסדירות את מסגרת ההליך והאמצעים הראייתיים שיישומם צפוי להשפיע על הכרעה בשאלה.³\n\n**מה לא ניתן לקבוע מהמקורות**\n\nנמצא אזכור ופסקי‑דאטה למקורות נוספים (כולל מסמכים שמוזכרים כפסיקה רשמית) אך אינם כוללים טקסט אופרטיבי מספק להפקת הלכות נוספות או מבחנים מדויקים; ביניהם מקורות מטא‑דאטה שהוזכרו אך לא ניתנו בצורת פסק‑דין שמיש ולכן לא משמשים לגזירת הלכה.⁴\n\nיש גם מקורות פרשניים ופסקי‑דין מדרג משני המספקים דוגמאות וניתוחים (סיכומים ויישומים עיוניים של מבחני שימוש לרעה, תרמית, ערבוב נכסים וכד׳), אך אלה משמשים להמחשה והסבר בלבד ואינם תחליף להלכה פסוקה מחייבת; לטקסט ההלכה המלא של פסקי‑הדין המרכזיים לא היה בידינו.⁵"
+  },
+  {
+    "id": "R09",
+    "query": "כתוב סקירת פסיקה על מבחן ההשתלבות בדיני עבודה.",
+    "run_id": "33585647-fdae-47ae-89f4-d46fc8824c6f",
+    "total_ms": 194482,
+    "research_mode": null,
+    "deterministic_branch": "insufficient_sources_limitation",
+    "is_stub": false,
+    "sufficiency": {
+      "shape": "analysis",
+      "reason": "no_usable_judgment_authority",
+      "applied": true,
+      "category": "case_law_synthesis",
+      "sufficient": false,
+      "thin_source": false,
+      "found_titles": [
+        "הוועדה לקידום תחום התעסוקה לקראת שנת 2030 - דוח מסכם",
+        "שוק העבודה בישראל 2024",
+        "פסק-דין בתיק דמ\"ר 26126-06-11",
+        "המוציא ממעסיקו עליו הראיה?",
+        "התניה על סטטוס \"עובד\" והשלכותיה"
+      ],
+      "topical_refs": [
+        "s3",
+        "s4",
+        "s5",
+        "s6",
+        "s7"
+      ],
+      "topic_phrases": [
+        "מבחן ההשתלבות בדיני עבודה",
+        "ההשתלבות בדיני עבודה",
+        "מבחן ההשתלבות בדיני",
+        "ההשתלבות בדיני",
+        "מבחן ההשתלבות",
+        "בדיני עבודה",
+        "כתוב סקירת"
+      ],
+      "case_law_required": true,
+      "statute_only_answer": false,
+      "sufficiency_profile": "case_law_synthesis",
+      "usable_judgment_refs": [],
+      "exact_amounts_allowed": false,
+      "governing_statute_refs": [],
+      "topical_authority_refs": [
+        "s3",
+        "s7"
+      ],
+      "morphology_domain_match": false,
+      "normalized_source_tokens": [],
+      "governing_regulation_refs": [],
+      "normalized_question_tokens": [
+        "תוב",
+        "סקיר",
+        "בחן",
+        "שתלב",
+        "דיני",
+        "עבוד"
+      ],
+      "sufficiency_authority_basis": "insufficient",
+      "thin_governing_statute_refs": [],
+      "thin_governing_regulation_refs": [],
+      "authority_type_sufficiency_passed": false,
+      "case_law_missing_but_not_required": false,
+      "practical_steps_thin_authority_passed": false
+    },
+    "commentary_share_of_admitted_pack": 0.5,
+    "A_admitted_composition": {
+      "total": 26,
+      "buckets": {
+        "primary_judgment_usable": 1,
+        "official_other": 3,
+        "commentary": 4,
+        "listing_not_citable": 1,
+        "statute": 7,
+        "unclassified": 1,
+        "scholarship": 9
+      },
+      "primary_count": 11,
+      "secondary_count": 13,
+      "noise_count": 1,
+      "verifier_counts": {
+        "by_support": {
+          "direct": 1,
+          "partial": 8,
+          "unrelated": 13,
+          "tangential": 4
+        },
+        "by_role_match": {
+          "true": 26,
+          "false": 0
+        },
+        "model_verdicts": 26,
+        "by_support_model": {
+          "direct": 1,
+          "partial": 8,
+          "unrelated": 13,
+          "tangential": 4
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "rows": [
+        {
+          "rank": 1,
+          "title": "בג\"ץ 1758/11",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C11/580/017/n05&fileName=11017580.n05&type=4",
+          "bucket": "primary_judgment_usable",
+          "role": "binding_case_law",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "full_text",
+          "synthesis_role": "leading_candidate",
+          "origin": null,
+          "verifier": [
+            "tangential"
+          ],
+          "flags": [
+            "judgment_document",
+            "judgment_text_acquired",
+            "judgment_identity_confirmed_in_body",
+            "holding_text_present"
+          ]
+        },
+        {
+          "rank": 2,
+          "title": "הוועדה לקידום תחום התעסוקה לקראת שנת 2030 - דוח מסכם",
+          "url": "https://www.gov.il/BlobFolder/reports/employment_report_2030/he/2030-report_2030report-acc.pdf",
+          "bucket": "official_other",
+          "role": "government_report",
+          "tier": "official_primary",
+          "citable_as": "unknown",
+          "text_usability": "metadata_only",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 3,
+          "title": "שוק העבודה בישראל 2024",
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/employment-report-2024/he/strategy_annual-employment-report24-full.pdf",
+          "bucket": "official_other",
+          "role": "government_report",
+          "tier": "official_primary",
+          "citable_as": "unknown",
+          "text_usability": "metadata_only",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 4,
+          "title": "2021-Shilton-202-Welfare.docx - מבקר המדינה",
+          "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2021/Shilton/2021-Shilton-202-Welfare.docx",
+          "bucket": "official_other",
+          "role": "government_report",
+          "tier": "official_primary",
+          "citable_as": "unknown",
+          "text_usability": "metadata_only",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "tangential"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 5,
+          "title": "פסק-דין בתיק דמ\"ר 26126-06-11",
+          "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%93%D7%9E%22%D7%A8-26126-06-11",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 6,
+          "title": "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)",
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+          "bucket": "listing_not_citable",
+          "role": "persuasive_case_law",
+          "tier": "index_or_listing",
+          "citable_as": "not_citable",
+          "text_usability": "listing_page",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "listing_or_pagination_page"
+          ]
+        },
+        {
+          "rank": 7,
+          "title": "תקנות ביטוח בריאות ממלכתי (הוראות מיוחדות בדבר תשלום דמי ביטוח בריאות)",
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9E%D7%9E%D7%9C%D7%9B%D7%AA%D7%99_(%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%9E%D7%99%D7%95%D7%97%D7%93%D7%95%D7%AA_%D7%91%D7%93%D7%91%D7%A8_%D7%AA%D7%A9%D7%9C%D7%95%D7%9D_%D7%93%D7%9E%D7%99_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA)",
+          "bucket": "statute",
+          "role": "binding_case_law",
+          "tier": "statute_mirror",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "consolidated_statute_mirror"
+          ]
+        },
+        {
+          "rank": 8,
+          "title": "יישום התוכנית הלאומית להתמודדות עם מחלת האלצהיימר ודמנציות אחרות",
+          "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7457&businessType=1",
+          "bucket": "unclassified",
+          "role": "binding_case_law",
+          "tier": "primary_mirror",
+          "citable_as": "unknown",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "official_host_non_specific_path"
+          ]
+        },
+        {
+          "rank": 9,
+          "title": "תקנות ביטוח בריאות ממלכתי (העברת דמי ביטוח בידי משרד הבטחון כמשלם תגמול)",
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9E%D7%9E%D7%9C%D7%9B%D7%AA%D7%99_(%D7%94%D7%A2%D7%91%D7%A8%D7%AA_%D7%93%D7%9E%D7%99_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%99%D7%93%D7%99_%D7%9E%D7%A9%D7%A8%D7%93_%D7%94%D7%91%D7%98%D7%97%D7%95%D7%9F_%D7%9B%D7%9E%D7%A9%D7%9C%D7%9D_%D7%AA%D7%92%D7%9E%D7%95%D7%9C)",
+          "bucket": "statute",
+          "role": "binding_case_law",
+          "tier": "statute_mirror",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "consolidated_statute_mirror"
+          ]
+        },
+        {
+          "rank": 10,
+          "title": "תקנות ביטוח בריאות ממלכתי (פטור מתשלום דמי ביטוח בריאות למתגורר במעון)",
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9E%D7%9E%D7%9C%D7%9B%D7%AA%D7%99_(%D7%A4%D7%98%D7%95%D7%A8_%D7%9E%D7%AA%D7%A9%D7%9C%D7%95%D7%9D_%D7%93%D7%9E%D7%99_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9C%D7%9E%D7%AA%D7%92%D7%95%D7%A8%D7%A8_%D7%91%D7%9E%D7%A2%D7%95%D7%9F)",
+          "bucket": "statute",
+          "role": "binding_case_law",
+          "tier": "statute_mirror",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "consolidated_statute_mirror"
+          ]
+        },
+        {
+          "rank": 11,
+          "title": "תקנות הבטיחות בעבודה (עבודה בגובה)",
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%91%D7%95%D7%93%D7%94_%D7%91%D7%92%D7%95%D7%91%D7%94)",
+          "bucket": "statute",
+          "role": "binding_case_law",
+          "tier": "statute_mirror",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "consolidated_statute_mirror"
+          ]
+        },
+        {
+          "rank": 12,
+          "title": "ההסכמים הבילטרליים של ישראל עם מדינות המוצא של מהגרי עבודה: במה הם עוסקים, ממה הם מתעלמים ומה הסיבות לכך",
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_9d7c812e9e9a4133b0cb59488862bcb0.pdf",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 13,
+          "title": "תקנות הביטוח הלאומי (ביטוח נכות) (צמצום בהשתכרות)",
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%94%D7%9C%D7%90%D7%95%D7%9E%D7%99_(%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%A0%D7%9B%D7%95%D7%AA)_(%D7%A6%D7%9E%D7%A6%D7%95%D7%9D_%D7%91%D7%94%D7%A9%D7%AA%D7%9B%D7%A8%D7%95%D7%AA)",
+          "bucket": "statute",
+          "role": "binding_case_law",
+          "tier": "statute_mirror",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "consolidated_statute_mirror"
+          ]
+        },
+        {
+          "rank": 14,
+          "title": "תקנות הבטיחות בעבודה (עזרה ראשונה במקומות עבודה)",
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%96%D7%A8%D7%94_%D7%A8%D7%90%D7%A9%D7%95%D7%A0%D7%94_%D7%91%D7%9E%D7%A7%D7%95%D7%9E%D7%95%D7%AA_%D7%A2%D7%91%D7%95%D7%93%D7%94)",
+          "bucket": "statute",
+          "role": "binding_case_law",
+          "tier": "statute_mirror",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "consolidated_statute_mirror"
+          ]
+        },
+        {
+          "rank": 15,
+          "title": "תקנות הבטיחות בעבודה (עבודה על גגות שבירים או תלולים)",
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%91%D7%95%D7%93%D7%94_%D7%A2%D7%9C_%D7%92%D7%92%D7%95%D7%AA_%D7%A9%D7%91%D7%99%D7%A8%D7%99%D7%9D_%D7%90%D7%95_%D7%AA%D7%9C%D7%95%D7%9C%D7%99%D7%9D)",
+          "bucket": "statute",
+          "role": "binding_case_law",
+          "tier": "statute_mirror",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "consolidated_statute_mirror"
+          ]
+        },
+        {
+          "rank": 16,
+          "title": "המוציא ממעסיקו עליו הראיה?",
+          "url": "https://www.runi.ac.il/media/f2lnrngl/frenkel2022.pdf",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 17,
+          "title": "התניה על סטטוס \"עובד\" והשלכותיה",
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%A1%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 18,
+          "title": "נטל השכנוע וחובת הראיה בדיני המסים",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/13-bain.pdf",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 19,
+          "title": "התעמרות בעבודה: בין פסיכולוגיה למשפט, בין חקיקה לפסיקה | אורית קמיר (כרך כא)",
+          "url": "https://runilawreview.org/2017/12/13/vol21_kamir/",
+          "bucket": "commentary",
+          "role": "persuasive_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 20,
+          "title": "בג\"ץ 2883/20 אברהם נתיב נ׳ בית הדין הארצי לעבודה פסק דין (29.06.2020)",
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2883-20-%d7%90%d7%91%d7%a8%d7%94%d7%9d-%d7%a0%d7%aa%d7%99%d7%91-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6%d7%99-%d7%9c%d7%a2%d7%91%d7%95%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "bucket": "commentary",
+          "role": "persuasive_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "tangential"
+          ],
+          "flags": [
+            "judgment_text_acquired",
+            "judgment_identity_confirmed_in_body",
+            "holding_text_present"
+          ]
+        },
+        {
+          "rank": 21,
+          "title": "עובד או קבלן",
+          "url": "https://lawjournal.huji.ac.il/article/12/1244",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 22,
+          "title": "עבודה אסורה: בין הפרטי לציבורי, בעקבות עשור לבג&quot;ץ שדות",
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e96c3e479ee044cab2e73c919a8c8fed.pdf",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "tangential"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 23,
+          "title": "בין אינטימיות נדרשת ובלתי־מוגבלת לכפייה: המקרה של עובדות בית",
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d0b116eaa8ff4f9fa620a4790ba4733a.pdf",
+          "bucket": "scholarship",
+          "role": "persuasive_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 24,
+          "title": "מיהו עובד: מבחני הסף",
+          "url": "https://lawjournal.huji.ac.il/article/12/1911",
+          "bucket": "scholarship",
+          "role": "persuasive_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 25,
+          "title": "חוזר הממונה בביטוח סיעודי | אמיר ויצנבליט (כרך לב)",
+          "url": "https://runilawreview.org/2025/12/08/vol32-weizenbluth/",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 26,
+          "title": "על ההתאמה בין ההיבט הנזיקי להיבט החוזי של הסדר הפיצוי לנפגעי תאונות-דרכים",
+          "url": "https://lawjournal.huji.ac.il/article/12/896",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        }
+      ]
+    },
+    "B_used_composition": {
+      "total": 0,
+      "buckets": {},
+      "primary_count": 0,
+      "secondary_count": 0,
+      "first_primary_position": null,
+      "first_secondary_position": null,
+      "secondary_precedes_primary": false,
+      "head5_primary": 0,
+      "head5_secondary": 0,
+      "rows": []
+    },
+    "C_footnotes": {
+      "total": 0,
+      "compound_count": 0,
+      "mixed_hierarchy_count": 0,
+      "secondary_leading_count": 0,
+      "rows": []
+    },
+    "answer_len": 402,
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): הוועדה לקידום תחום התעסוקה לקראת שנת 2030 - דוח מסכם; שוק העבודה בישראל 2024; פסק-דין בתיק דמ\"ר 26126-06-11; המוציא ממעסיקו עליו הראיה?."
+  },
+  {
+    "id": "R02",
+    "query": "מה נקבע בבנק המזרחי ביחס לסמכות בית המשפט לבטל חקיקה?",
+    "run_id": "75115f5b-e918-43f1-887b-be8e22dfa848",
+    "total_ms": 177936,
+    "research_mode": null,
+    "deterministic_branch": null,
+    "is_stub": false,
+    "sufficiency": {
+      "shape": "case_holding",
+      "reason": "shape_not_gated",
+      "applied": false,
+      "category": "not_applicable",
+      "sufficient": true,
+      "thin_source": false,
+      "found_titles": [
+        "תקציר פסק הדין בעניין בנק המזרחי נגד מגדל (התיקון ל\"חוק גל\")",
+        "מברגמן וקול\"העם לבנק המזרחי: הדרך לביקורת שיפוטית על חוקים הפוגעים בזכויות אדם",
+        "מסמך מאתר אתר אקדמי (cris.biu.ac.il)",
+        "חצי יובל לפסק דין בנק המזרחי : שאון תופי המהפכה וקולו של הפיקולו",
+        "בעקבות פסק הדין בנק המזרחי — הסמכות המכוננת בראי בית המשפט העליון"
+      ],
+      "topical_refs": [],
+      "topic_phrases": [
+        "בבנק המזרחי ביחס לסמכות",
+        "המזרחי ביחס לסמכות בית",
+        "נקבע בבנק המזרחי ביחס",
+        "המזרחי ביחס לסמכות",
+        "נקבע בבנק המזרחי",
+        "בבנק המזרחי ביחס",
+        "ביחס לסמכות בית",
+        "בבנק המזרחי",
+        "המזרחי ביחס",
+        "ביחס לסמכות",
+        "לסמכות בית",
+        "לבטל חקיקה",
+        "נקבע בבנק"
+      ],
+      "case_law_required": false,
+      "statute_only_answer": false,
+      "sufficiency_profile": "not_applicable",
+      "usable_judgment_refs": [
+        "s1",
+        "s10",
+        "s13"
+      ],
+      "exact_amounts_allowed": true,
+      "governing_statute_refs": [],
+      "topical_authority_refs": [],
+      "morphology_domain_match": true,
+      "normalized_source_tokens": [
+        "יעקב",
+        "נחמני",
+        "עמידר",
+        "חבר",
+        "אומי",
+        "שיכון",
+        "פסק",
+        "דין",
+        "נדרש",
+        "שיפוטי",
+        "יסוד",
+        "שתוקפ",
+        "טענ",
+        "זאת",
+        "שיוגש",
+        "ערעור",
+        "סגר",
+        "עלותן",
+        "ויש",
+        "בית",
+        "תנהל",
+        "שפטי",
+        "ליך",
+        "שנפלו",
+        "חוו",
+        "חבקין",
+        "נון",
+        "אלישקוב",
+        "ישראל",
+        "אויר",
+        "נתיבי",
+        "ארז",
+        "ברק",
+        "שופט",
+        "דינ",
+        "נוס",
+        "תקוף",
+        "קשת",
+        "שבמהות",
+        "פנינו"
+      ],
+      "governing_regulation_refs": [],
+      "normalized_question_tokens": [
+        "נקבע",
+        "בנק",
+        "זרחי",
+        "יחס",
+        "סמכ",
+        "בית",
+        "בטל",
+        "חקיק"
+      ],
+      "sufficiency_authority_basis": "usable_judgment",
+      "thin_governing_statute_refs": [],
+      "thin_governing_regulation_refs": [],
+      "authority_type_sufficiency_passed": true,
+      "case_law_missing_but_not_required": false,
+      "practical_steps_thin_authority_passed": false
+    },
+    "commentary_share_of_admitted_pack": 0.76,
+    "A_admitted_composition": {
+      "total": 21,
+      "buckets": {
+        "listing_not_citable": 2,
+        "statute": 1,
+        "unclassified": 1,
+        "scholarship": 10,
+        "commentary": 6,
+        "primary_judgment_usable": 1
+      },
+      "primary_count": 2,
+      "secondary_count": 16,
+      "noise_count": 2,
+      "verifier_counts": {
+        "by_support": {
+          "direct": 3,
+          "partial": 11,
+          "unrelated": 6,
+          "tangential": 1
+        },
+        "by_role_match": {
+          "true": 21,
+          "false": 0
+        },
+        "model_verdicts": 21,
+        "by_support_model": {
+          "direct": 3,
+          "partial": 11,
+          "unrelated": 6,
+          "tangential": 1
+        },
+        "synthetic_verdicts": 0,
+        "by_support_synthetic": {
+          "direct": 0,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        }
+      },
+      "rows": [
+        {
+          "rank": 1,
+          "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+          "bucket": "listing_not_citable",
+          "role": "binding_case_law",
+          "tier": "index_or_listing",
+          "citable_as": "not_citable",
+          "text_usability": "listing_page",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "listing_or_pagination_page"
+          ]
+        },
+        {
+          "rank": 2,
+          "title": "תקנות הביטוח הלאומי (ביטוח מפני פגיעה בעבודה)",
+          "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%94%D7%9C%D7%90%D7%95%D7%9E%D7%99_(%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%9E%D7%A4%D7%A0%D7%99_%D7%A4%D7%92%D7%99%D7%A2%D7%94_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94)",
+          "bucket": "statute",
+          "role": "binding_case_law",
+          "tier": "statute_mirror",
+          "citable_as": "statute",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "statutory_background",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "consolidated_statute_mirror"
+          ]
+        },
+        {
+          "rank": 3,
+          "title": "שירי ספקטור-בן ארי, מרכז המחקר והמידע",
+          "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6084&businessType=1",
+          "bucket": "unclassified",
+          "role": "binding_case_law",
+          "tier": "primary_mirror",
+          "citable_as": "unknown",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "tangential"
+          ],
+          "flags": [
+            "official_host_non_specific_path"
+          ]
+        },
+        {
+          "rank": 4,
+          "title": "תקציר פסק הדין בעניין בנק המזרחי נגד מגדל (התיקון ל\"חוק גל\")",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/12-mizrahi.pdf",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": [
+            "judgment_text_acquired",
+            "holding_text_present"
+          ]
+        },
+        {
+          "rank": 5,
+          "title": "מברגמן וקול\"העם לבנק המזרחי: הדרך לביקורת שיפוטית על חוקים הפוגעים בזכויות אדם",
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%9E%D7%91%D7%A8%D7%92%D7%9E%D7%9F%20%D7%95%D7%A7%D7%95%D7%9C-%D7%94%D7%A2%D7%9D%20%D7%9C%D7%91%D7%A0%D7%A7%20%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99%20-%20%D7%94%D7%93%D7%A8%D7%9A%20%D7%9C%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA%20%D7%A2%D7%9C%20%D7%97%D7%95%D7%A7%D7%99%D7%9D%20%D7%94%D7%A4%D7%95%D7%92%D7%A2%D7%99%D7%9D%20%D7%91%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%20%D7%90%D7%93%D7%9D.pdf",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 6,
+          "title": "מהפכה או המשכיות: מקומו של פסק-דין בנק המזרחי בהתפתחות המודלים של ביקורת שיפוטית בישראל",
+          "url": "https://cris.biu.ac.il/en/publications/%D7%9E%D7%94%D7%A4%D7%9B%D7%94-%D7%90%D7%95-%D7%94%D7%9E%D7%A9%D7%9B%D7%99%D7%95%D7%AA-%D7%9E%D7%A7%D7%95%D7%9E%D7%95-%D7%A9%D7%9C-%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%91%D7%94%D7%AA%D7%A4%D7%AA%D7%97%D7%95%D7%AA-%D7%94%D7%9E%D7%95%D7%93%D7%9C%D7%99%D7%9D-%D7%A9%D7%9C-",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 7,
+          "title": "חצי יובל לפסק דין בנק המזרחי : שאון תופי המהפכה וקולו של הפיקולו",
+          "url": "https://www.runi.ac.il/media/cqkldvpg/dotan.pdf",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 8,
+          "title": "בעקבות פסק הדין בנק המזרחי — הסמכות המכוננת בראי בית המשפט העליון",
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA%20%D7%A4%D7%A1%D7%A7%20%D7%94%D7%93%D7%99%D7%9F%20%D7%91%D7%A0%D7%A7%20%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99%20-%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%המכוננת%20ב%20ראי%20בי%20המשפט%20העליון.pdf",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 9,
+          "title": "הדרך לביקורת שיפוטית על חוקתיות של חוקים",
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%93%D7%A8%D7%9A%20%D7%9C%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA%20%D7%A2%D7%9C%20%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%A9%D7%9C%20%D7%97%D7%95%D7%A7%D7%99%D7%9D%20-%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%9C%D7%94%D7%9B%D7%A8%D7%99%D7%96%20%D7%A2%D7%9C%20%D7%90%D7%99-%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%97%D7%A7%D7%99%D7%A7%D7%94%20-%20%D7%9C%D7%9E%D7%99.pdf",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 10,
+          "title": "מתן חוקה לישראל בדרך פםיקת בית־המשפט",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/14-landoy.pdf",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 11,
+          "title": "פרק שני ביקורת שיפוטית על חקיקת הכנסת (פסילת חוקים בידי בג\"ץ)",
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=111914229&nTocEntryID=111914423",
+          "bucket": "listing_not_citable",
+          "role": "scholarship",
+          "tier": "index_or_listing",
+          "citable_as": "not_citable",
+          "text_usability": "listing_page",
+          "synthesis_role": "unknown",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": [
+            "listing_or_pagination_page"
+          ]
+        },
+        {
+          "rank": 12,
+          "title": "דיון בסעיף 15(ג) לחוק-יסוד: השפיטה לאור בג\"ץ 5658/23 בעניין הסבירות",
+          "url": "https://www.taulawreview.sites.tau.ac.il/post/_rosilio",
+          "bucket": "scholarship",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 13,
+          "title": "עיון היסטוריוגרפי בפסק-הדין בפרשת בנק המזרחי",
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3695477",
+          "bucket": "commentary",
+          "role": "scholarship",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "direct"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 14,
+          "title": "בג\"ץ 8638-03 - סימה אמיר נ. בית הדין הרבני הגדול בירושלים",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_6_8638-03.pdf&type=2",
+          "bucket": "primary_judgment_usable",
+          "role": "binding_case_law",
+          "tier": "official_primary",
+          "citable_as": "judgment",
+          "text_usability": "full_text",
+          "synthesis_role": "leading_candidate",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": [
+            "judgment_document",
+            "judgment_text_acquired",
+            "judgment_identity_confirmed_in_body",
+            "holding_text_present"
+          ]
+        },
+        {
+          "rank": 15,
+          "title": "המשפט העברי: בין נומוס לנרטיב, בין משפט לצדק, בין דין לרחמים – על המשפט העברי בפסיקתו של השופט י’ טירקל | נעם סולברג וחגי שלזינגר (כרך י\"ד)",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11//DI04.pdf",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 16,
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 17,
+          "title": "מוניטין ואסטרטגיה בבית המשפט העליון על סף המאה העשרים ואחת | שי דותן (כרך כג)",
+          "url": "https://runilawreview.org/2019/06/11/vol23_dotan/",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 18,
+          "title": "דיני החקיקה",
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_41100d0de3fc4f59a9cead1e6acbcd06.pdf",
+          "bucket": "scholarship",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 19,
+          "title": "עע\"מ 8536/21 יעקב נחמני נ׳ עמידר – החברה הלאומית לשיכון בישראל בע\"מ פסק דין (28.11.2021)",
+          "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-8536-21-%d7%99%d7%a2%d7%a7%d7%91-%d7%a0%d7%97%d7%9e%d7%a0%d7%99-%d7%a0-%d7%a2%d7%9e%d7%99%d7%93%d7%a8-%d7%94%d7%97%d7%91%d7%a8%d7%94-%d7%94%d7%9c%d7%90%d7%95%d7%9e%d7%99%d7%aa/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "partial"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 20,
+          "title": "תרופות בגין נזק רכוש הנתון באי-ודאות – מבט תיאורטי ודוקטרינרי | יובל פרוקצ&#8217;יה, רונית לוין-שנור ואסף יעקב (כרך כב)",
+          "url": "https://runilawreview.org/2020/01/02/vol22_levine-schnur-jacov-procaccia/",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        },
+        {
+          "rank": 21,
+          "title": "\"משנים מפני השלום\": חופש הציווי או חופש החוזים? חופש החוזים עדיף – היבטים עיוניים ומעשיים בהסדרתה של הצוואה ההדדית | עירית רייך־זיו (כרך כד)",
+          "url": "https://runilawreview.org/2021/05/27/vol24-reich-ziv/",
+          "bucket": "commentary",
+          "role": "binding_case_law",
+          "tier": "secondary_commentary",
+          "citable_as": "scholarship",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "origin": null,
+          "verifier": [
+            "unrelated"
+          ],
+          "flags": []
+        }
+      ]
+    },
+    "B_used_composition": {
+      "total": 8,
+      "buckets": {
+        "scholarship": 6,
+        "commentary": 2
+      },
+      "primary_count": 0,
+      "secondary_count": 8,
+      "first_primary_position": null,
+      "first_secondary_position": 1,
+      "secondary_precedes_primary": true,
+      "head5_primary": 0,
+      "head5_secondary": 5,
+      "rows": [
+        {
+          "order": 1,
+          "footnote_number": 1,
+          "title": "תקציר פסק הדין בעניין בנק המזרחי נגד מגדל (התיקון ל\"חוק גל\")",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/12-mizrahi.pdf",
+          "bucket": "scholarship",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "full_text",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 4,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 2,
+          "footnote_number": 1,
+          "title": "מסמך מאתר אתר אקדמי (cris.biu.ac.il)",
+          "url": "https://cris.biu.ac.il/en/publications/%D7%9E%D7%94%D7%A4%D7%9B%D7%94-%D7%90%D7%95-%D7%94%D7%9E%D7%A9%D7%9B%D7%99%D7%95%D7%AA-%D7%9E%D7%A7%D7%95%D7%9E%D7%95-%D7%A9%D7%9C-%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%91%D7%94%D7%AA%D7%A4%D7%AA%D7%97%D7%95%D7%AA-%D7%94%D7%9E%D7%95%D7%93%D7%9C%D7%99%D7%9D-%D7%A9%D7%9C-",
+          "bucket": "scholarship",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 6,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 3,
+          "footnote_number": 2,
+          "title": "הדרך לביקורת שיפוטית על חוקתיות של חוקים",
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%93%D7%A8%D7%9A%20%D7%9C%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA%20%D7%A2%D7%9C%20%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%A9%D7%9C%20%D7%97%D7%95%D7%A7%D7%99%D7%9D%20-%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%9C%D7%94%D7%9B%D7%A8%D7%99%D7%96%20%D7%A2%D7%9C%20%D7%90%D7%99-%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%95%D7%AA%20%D7%97%D7%A7%D7%99%D7%A7%D7%94%20-%20%D7%9C%D7%9E%D7%99.pdf",
+          "bucket": "scholarship",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 9,
+          "verifier": [
+            "partial"
+          ]
+        },
+        {
+          "order": 4,
+          "footnote_number": 3,
+          "title": "עיון היסטוריוגרפי בפסק-הדין בפרשת בנק המזרחי",
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3695477",
+          "bucket": "commentary",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 13,
+          "verifier": [
+            "direct"
+          ]
+        },
+        {
+          "order": 5,
+          "footnote_number": 3,
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "bucket": "commentary",
+          "origin": "local_db",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "substantive_excerpt",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 16,
+          "verifier": [
+            "partial"
+          ]
+        },
+        {
+          "order": 6,
+          "footnote_number": 5,
+          "title": "מברגמן וקול\"העם לבנק המזרחי: הדרך לביקורת שיפוטית על חוקים הפוגעים בזכויות אדם",
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%9E%D7%91%D7%A8%D7%92%D7%9E%D7%9F%20%D7%95%D7%A7%D7%95%D7%9C-%D7%94%D7%A2%D7%9D%20%D7%9C%D7%91%D7%A0%D7%A7%20%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99%20-%20%D7%94%D7%93%D7%A8%D7%9A%20%D7%9C%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA%20%D7%A2%D7%9C%20%D7%97%D7%95%D7%A7%D7%99%D7%9D%20%D7%94%D7%A4%D7%95%D7%92%D7%A2%D7%99%D7%9D%20%D7%91%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA%20%D7%90%D7%93%D7%9D.pdf",
+          "bucket": "scholarship",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 5,
+          "verifier": [
+            "partial"
+          ]
+        },
+        {
+          "order": 7,
+          "footnote_number": 5,
+          "title": "חצי יובל לפסק דין בנק המזרחי : שאון תופי המהפכה וקולו של הפיקולו",
+          "url": "https://www.runi.ac.il/media/cqkldvpg/dotan.pdf",
+          "bucket": "scholarship",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 7,
+          "verifier": [
+            "partial"
+          ]
+        },
+        {
+          "order": 8,
+          "footnote_number": 5,
+          "title": "בעקבות פסק הדין בנק המזרחי — הסמכות המכוננת בראי בית המשפט העליון",
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA%20%D7%A4%D7%A1%D7%A7%20%D7%94%D7%93%D7%99%D7%9F%20%D7%91%D7%A0%D7%A7%20%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99%20-%20%D7%94%D7%A1%D7%9E%D7%9B%D7%95%D7%AA%20%D7%המכוננת%20ב%20ראי%20בי%20המשפט%20העליון.pdf",
+          "bucket": "scholarship",
+          "origin": "perplexity",
+          "tier": "secondary_commentary",
+          "citable_as": "commentary",
+          "text_usability": "metadata_only",
+          "synthesis_role": "secondary_commentary",
+          "admitted_rank": 8,
+          "verifier": [
+            "partial"
+          ]
+        }
+      ]
+    },
+    "C_footnotes": {
+      "total": 5,
+      "compound_count": 5,
+      "mixed_hierarchy_count": 0,
+      "secondary_leading_count": 0,
+      "rows": [
+        {
+          "number": 1,
+          "size": 2,
+          "buckets": [
+            "scholarship",
+            "scholarship"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 2,
+          "size": 2,
+          "buckets": [
+            "scholarship",
+            "scholarship"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 3,
+          "size": 3,
+          "buckets": [
+            "scholarship",
+            "commentary",
+            "commentary"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 4,
+          "size": 2,
+          "buckets": [
+            "scholarship",
+            "commentary"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        },
+        {
+          "number": 5,
+          "size": 3,
+          "buckets": [
+            "scholarship",
+            "scholarship",
+            "scholarship"
+          ],
+          "compound": true,
+          "mixes_primary_and_secondary": false,
+          "leads_with_secondary": false
+        }
+      ]
+    },
+    "answer_len": 1692,
+    "answer": "**הכרעת בית‑המשפט בעניין «בנק המזרחי»**\n\nבפסק‑דין בנק המזרחי קבע בית‑המשפט העליון כי הוא מוסמך לבחון את תוקפה של חקיקה רגילה אל מול הוראות חוקי היסוד, וכי חקיקה העולה על הוראות אלה עלולה להיחשב כבלתי תקינה ולמוקעת כחסרת תוקף; פסק‑דין זה הוביל לאימוץ מודל סובסטנטיבי של ביקורת שיפוטית השם דגש על בדיקת עמדת החוק ביחס לזכויות יסוד.¹\n\n**תשתית נורמטיבית ונימוקים**\n\nההכרעה נשענה בראש וראשונה על הוראות חוק‑יסוד: כבוד האדם וחירותו כעוגן לבדיקת חקיקה שנעשתה הן טרם חקיקת חוקי היסוד והן לאחריהן; יחד עם זאת, בספרות הוצע כי בית‑המשפט בנקז נימוקים פרשניים ותוכניים — בדיקת תכלית החוק, יחסיות והצדקה — כדי להצדיק את התערבותו, אם כי טענה זו נתונה לתמיכה חלקית בספרות.²\n\n**היקף וסייגי הסמכות**\n\nבית‑המשפט לא קיבל סמכות בלתי מוגבלת לפסול חקיקה; בפסק‑דין זה הובן כי ההתערבות מצויה בתחום שבו החקיקה פוגעת בזכויות יסוד מהותיות, חורגת ממסגרת הסמכות המחוקקת או אינה עומדת בבדיקות של תכלית ויחסיות. לצד זאת, המחקר ההיסטורי והמשפטי מצביעים על קיומה של דאגה לגבי גבולות מעשיים ופרגמטיים של ההתערבות השיפוטית, והעלו טיעונים על הצורך בסייגים פרוצדורליים ומתח בין שיקולי ההיקף הסמכותי לבין עצמאות הרשות המחוקקת.³\n\n**הסעד המעשי שניתן**\n\nבאופן מעשי פסק‑הדין הוביל להכרזה על אי‑תוקפן של הוראות שנכרתו בחוק המתקן אשר לא עמדו בדרישות שנקבעו בפסק‑הדין; בפועל נוצרה פרקטיקה של שימוש בסעדי אי‑תוקף, לצד כלים פרשניים מצמצמים שנועדו להקטין פגיעה בחקיקה כאשר הדבר אפשרי מבלי לפגוע בהגנת זכויות יסוד.⁴\n\n**מחלוקת אקדמית והמשך ההתפתחות**\n\nישנה סכמה אקדמית רחבה המזהה בפסק‑דין בנק המזרחי תחילתה של מהפכה בביקורת השיפוטית בישראל, אך קיימת מחלוקת ביחס לעוצמתה ולמגבלותיה; מאמרים וניתוחים מצביעים בזהירות על יצירת 'סמכות מכוננת' ועל מתחים פרגמטיים בין שאיפת בית‑המשפט להגן על זכויות יסוד לבין הצורך לשמור על תחום טבעי למשילות המחוקק.⁵"
+  }
+]

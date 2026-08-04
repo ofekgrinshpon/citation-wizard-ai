@@ -1,0 +1,575 @@
+{
+  "id": "R09",
+  "query": "כתוב סקירת פסיקה על מבחן ההשתלבות בדיני עבודה.",
+  "run_id": "33585647-fdae-47ae-89f4-d46fc8824c6f",
+  "total_ms": 194482,
+  "research_mode": null,
+  "deterministic_branch": "insufficient_sources_limitation",
+  "is_stub": false,
+  "sufficiency": {
+    "shape": "analysis",
+    "reason": "no_usable_judgment_authority",
+    "applied": true,
+    "category": "case_law_synthesis",
+    "sufficient": false,
+    "thin_source": false,
+    "found_titles": [
+      "הוועדה לקידום תחום התעסוקה לקראת שנת 2030 - דוח מסכם",
+      "שוק העבודה בישראל 2024",
+      "פסק-דין בתיק דמ\"ר 26126-06-11",
+      "המוציא ממעסיקו עליו הראיה?",
+      "התניה על סטטוס \"עובד\" והשלכותיה"
+    ],
+    "topical_refs": [
+      "s3",
+      "s4",
+      "s5",
+      "s6",
+      "s7"
+    ],
+    "topic_phrases": [
+      "מבחן ההשתלבות בדיני עבודה",
+      "ההשתלבות בדיני עבודה",
+      "מבחן ההשתלבות בדיני",
+      "ההשתלבות בדיני",
+      "מבחן ההשתלבות",
+      "בדיני עבודה",
+      "כתוב סקירת"
+    ],
+    "case_law_required": true,
+    "statute_only_answer": false,
+    "sufficiency_profile": "case_law_synthesis",
+    "usable_judgment_refs": [],
+    "exact_amounts_allowed": false,
+    "governing_statute_refs": [],
+    "topical_authority_refs": [
+      "s3",
+      "s7"
+    ],
+    "morphology_domain_match": false,
+    "normalized_source_tokens": [],
+    "governing_regulation_refs": [],
+    "normalized_question_tokens": [
+      "תוב",
+      "סקיר",
+      "בחן",
+      "שתלב",
+      "דיני",
+      "עבוד"
+    ],
+    "sufficiency_authority_basis": "insufficient",
+    "thin_governing_statute_refs": [],
+    "thin_governing_regulation_refs": [],
+    "authority_type_sufficiency_passed": false,
+    "case_law_missing_but_not_required": false,
+    "practical_steps_thin_authority_passed": false
+  },
+  "commentary_share_of_admitted_pack": 0.5,
+  "A_admitted_composition": {
+    "total": 26,
+    "buckets": {
+      "primary_judgment_usable": 1,
+      "official_other": 3,
+      "commentary": 4,
+      "listing_not_citable": 1,
+      "statute": 7,
+      "unclassified": 1,
+      "scholarship": 9
+    },
+    "primary_count": 11,
+    "secondary_count": 13,
+    "noise_count": 1,
+    "verifier_counts": {
+      "by_support": {
+        "direct": 1,
+        "partial": 8,
+        "unrelated": 13,
+        "tangential": 4
+      },
+      "by_role_match": {
+        "true": 26,
+        "false": 0
+      },
+      "model_verdicts": 26,
+      "by_support_model": {
+        "direct": 1,
+        "partial": 8,
+        "unrelated": 13,
+        "tangential": 4
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "rows": [
+      {
+        "rank": 1,
+        "title": "בג\"ץ 1758/11",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C11/580/017/n05&fileName=11017580.n05&type=4",
+        "bucket": "primary_judgment_usable",
+        "role": "binding_case_law",
+        "tier": "official_primary",
+        "citable_as": "judgment",
+        "text_usability": "full_text",
+        "synthesis_role": "leading_candidate",
+        "origin": null,
+        "verifier": [
+          "tangential"
+        ],
+        "flags": [
+          "judgment_document",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ]
+      },
+      {
+        "rank": 2,
+        "title": "הוועדה לקידום תחום התעסוקה לקראת שנת 2030 - דוח מסכם",
+        "url": "https://www.gov.il/BlobFolder/reports/employment_report_2030/he/2030-report_2030report-acc.pdf",
+        "bucket": "official_other",
+        "role": "government_report",
+        "tier": "official_primary",
+        "citable_as": "unknown",
+        "text_usability": "metadata_only",
+        "synthesis_role": "unknown",
+        "origin": null,
+        "verifier": [
+          "partial"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 3,
+        "title": "שוק העבודה בישראל 2024",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/employment-report-2024/he/strategy_annual-employment-report24-full.pdf",
+        "bucket": "official_other",
+        "role": "government_report",
+        "tier": "official_primary",
+        "citable_as": "unknown",
+        "text_usability": "metadata_only",
+        "synthesis_role": "unknown",
+        "origin": null,
+        "verifier": [
+          "partial"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 4,
+        "title": "2021-Shilton-202-Welfare.docx - מבקר המדינה",
+        "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2021/Shilton/2021-Shilton-202-Welfare.docx",
+        "bucket": "official_other",
+        "role": "government_report",
+        "tier": "official_primary",
+        "citable_as": "unknown",
+        "text_usability": "metadata_only",
+        "synthesis_role": "unknown",
+        "origin": null,
+        "verifier": [
+          "tangential"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 5,
+        "title": "פסק-דין בתיק דמ\"ר 26126-06-11",
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%93%D7%9E%22%D7%A8-26126-06-11",
+        "bucket": "commentary",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "direct"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 6,
+        "title": "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+        "bucket": "listing_not_citable",
+        "role": "persuasive_case_law",
+        "tier": "index_or_listing",
+        "citable_as": "not_citable",
+        "text_usability": "listing_page",
+        "synthesis_role": "unknown",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": [
+          "listing_or_pagination_page"
+        ]
+      },
+      {
+        "rank": 7,
+        "title": "תקנות ביטוח בריאות ממלכתי (הוראות מיוחדות בדבר תשלום דמי ביטוח בריאות)",
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9E%D7%9E%D7%9C%D7%9B%D7%AA%D7%99_(%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%9E%D7%99%D7%95%D7%97%D7%93%D7%95%D7%AA_%D7%91%D7%93%D7%91%D7%A8_%D7%AA%D7%A9%D7%9C%D7%95%D7%9D_%D7%93%D7%9E%D7%99_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA)",
+        "bucket": "statute",
+        "role": "binding_case_law",
+        "tier": "statute_mirror",
+        "citable_as": "statute",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "statutory_background",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": [
+          "consolidated_statute_mirror"
+        ]
+      },
+      {
+        "rank": 8,
+        "title": "יישום התוכנית הלאומית להתמודדות עם מחלת האלצהיימר ודמנציות אחרות",
+        "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7457&businessType=1",
+        "bucket": "unclassified",
+        "role": "binding_case_law",
+        "tier": "primary_mirror",
+        "citable_as": "unknown",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "unknown",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": [
+          "official_host_non_specific_path"
+        ]
+      },
+      {
+        "rank": 9,
+        "title": "תקנות ביטוח בריאות ממלכתי (העברת דמי ביטוח בידי משרד הבטחון כמשלם תגמול)",
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9E%D7%9E%D7%9C%D7%9B%D7%AA%D7%99_(%D7%94%D7%A2%D7%91%D7%A8%D7%AA_%D7%93%D7%9E%D7%99_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%99%D7%93%D7%99_%D7%9E%D7%A9%D7%A8%D7%93_%D7%94%D7%91%D7%98%D7%97%D7%95%D7%9F_%D7%9B%D7%9E%D7%A9%D7%9C%D7%9D_%D7%AA%D7%92%D7%9E%D7%95%D7%9C)",
+        "bucket": "statute",
+        "role": "binding_case_law",
+        "tier": "statute_mirror",
+        "citable_as": "statute",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "statutory_background",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": [
+          "consolidated_statute_mirror"
+        ]
+      },
+      {
+        "rank": 10,
+        "title": "תקנות ביטוח בריאות ממלכתי (פטור מתשלום דמי ביטוח בריאות למתגורר במעון)",
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9E%D7%9E%D7%9C%D7%9B%D7%AA%D7%99_(%D7%A4%D7%98%D7%95%D7%A8_%D7%9E%D7%AA%D7%A9%D7%9C%D7%95%D7%9D_%D7%93%D7%9E%D7%99_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9C%D7%9E%D7%AA%D7%92%D7%95%D7%A8%D7%A8_%D7%91%D7%9E%D7%A2%D7%95%D7%9F)",
+        "bucket": "statute",
+        "role": "binding_case_law",
+        "tier": "statute_mirror",
+        "citable_as": "statute",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "statutory_background",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": [
+          "consolidated_statute_mirror"
+        ]
+      },
+      {
+        "rank": 11,
+        "title": "תקנות הבטיחות בעבודה (עבודה בגובה)",
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%91%D7%95%D7%93%D7%94_%D7%91%D7%92%D7%95%D7%91%D7%94)",
+        "bucket": "statute",
+        "role": "binding_case_law",
+        "tier": "statute_mirror",
+        "citable_as": "statute",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "statutory_background",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": [
+          "consolidated_statute_mirror"
+        ]
+      },
+      {
+        "rank": 12,
+        "title": "ההסכמים הבילטרליים של ישראל עם מדינות המוצא של מהגרי עבודה: במה הם עוסקים, ממה הם מתעלמים ומה הסיבות לכך",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_9d7c812e9e9a4133b0cb59488862bcb0.pdf",
+        "bucket": "scholarship",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "scholarship",
+        "text_usability": "full_text",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 13,
+        "title": "תקנות הביטוח הלאומי (ביטוח נכות) (צמצום בהשתכרות)",
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%94%D7%9C%D7%90%D7%95%D7%9E%D7%99_(%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%A0%D7%9B%D7%95%D7%AA)_(%D7%A6%D7%9E%D7%A6%D7%95%D7%9D_%D7%91%D7%94%D7%A9%D7%AA%D7%9B%D7%A8%D7%95%D7%AA)",
+        "bucket": "statute",
+        "role": "binding_case_law",
+        "tier": "statute_mirror",
+        "citable_as": "statute",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "statutory_background",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": [
+          "consolidated_statute_mirror"
+        ]
+      },
+      {
+        "rank": 14,
+        "title": "תקנות הבטיחות בעבודה (עזרה ראשונה במקומות עבודה)",
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%96%D7%A8%D7%94_%D7%A8%D7%90%D7%A9%D7%95%D7%A0%D7%94_%D7%91%D7%9E%D7%A7%D7%95%D7%9E%D7%95%D7%AA_%D7%A2%D7%91%D7%95%D7%93%D7%94)",
+        "bucket": "statute",
+        "role": "binding_case_law",
+        "tier": "statute_mirror",
+        "citable_as": "statute",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "statutory_background",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": [
+          "consolidated_statute_mirror"
+        ]
+      },
+      {
+        "rank": 15,
+        "title": "תקנות הבטיחות בעבודה (עבודה על גגות שבירים או תלולים)",
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%91%D7%95%D7%93%D7%94_%D7%A2%D7%9C_%D7%92%D7%92%D7%95%D7%AA_%D7%A9%D7%91%D7%99%D7%A8%D7%99%D7%9D_%D7%90%D7%95_%D7%AA%D7%9C%D7%95%D7%9C%D7%99%D7%9D)",
+        "bucket": "statute",
+        "role": "binding_case_law",
+        "tier": "statute_mirror",
+        "citable_as": "statute",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "statutory_background",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": [
+          "consolidated_statute_mirror"
+        ]
+      },
+      {
+        "rank": 16,
+        "title": "המוציא ממעסיקו עליו הראיה?",
+        "url": "https://www.runi.ac.il/media/f2lnrngl/frenkel2022.pdf",
+        "bucket": "scholarship",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "partial"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 17,
+        "title": "התניה על סטטוס \"עובד\" והשלכותיה",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2019-08/%D7%94%D7%AA%D7%A0%D7%99%D7%94%20%D7%A2%D7%9C%20%D7%A1%D7%98%D7%98%D7%95%D7%A1%20''%D7%A2%D7%95%D7%91%D7%93''%20%D7%95%D7%94%D7%A9%D7%9C%D7%9B%D7%95%D7%AA%D7%99%D7%94.pdf",
+        "bucket": "scholarship",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "partial"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 18,
+        "title": "נטל השכנוע וחובת הראיה בדיני המסים",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/13-bain.pdf",
+        "bucket": "scholarship",
+        "role": "scholarship",
+        "tier": "secondary_commentary",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "partial"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 19,
+        "title": "התעמרות בעבודה: בין פסיכולוגיה למשפט, בין חקיקה לפסיקה | אורית קמיר (כרך כא)",
+        "url": "https://runilawreview.org/2017/12/13/vol21_kamir/",
+        "bucket": "commentary",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "scholarship",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 20,
+        "title": "בג\"ץ 2883/20 אברהם נתיב נ׳ בית הדין הארצי לעבודה פסק דין (29.06.2020)",
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2883-20-%d7%90%d7%91%d7%a8%d7%94%d7%9d-%d7%a0%d7%aa%d7%99%d7%91-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%90%d7%a8%d7%a6%d7%99-%d7%9c%d7%a2%d7%91%d7%95%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "bucket": "commentary",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "commentary",
+        "text_usability": "full_text",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "tangential"
+        ],
+        "flags": [
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ]
+      },
+      {
+        "rank": 21,
+        "title": "עובד או קבלן",
+        "url": "https://lawjournal.huji.ac.il/article/12/1244",
+        "bucket": "scholarship",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "scholarship",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "partial"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 22,
+        "title": "עבודה אסורה: בין הפרטי לציבורי, בעקבות עשור לבג&quot;ץ שדות",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e96c3e479ee044cab2e73c919a8c8fed.pdf",
+        "bucket": "scholarship",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "scholarship",
+        "text_usability": "full_text",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "tangential"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 23,
+        "title": "בין אינטימיות נדרשת ובלתי־מוגבלת לכפייה: המקרה של עובדות בית",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d0b116eaa8ff4f9fa620a4790ba4733a.pdf",
+        "bucket": "scholarship",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "scholarship",
+        "text_usability": "full_text",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "partial"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 24,
+        "title": "מיהו עובד: מבחני הסף",
+        "url": "https://lawjournal.huji.ac.il/article/12/1911",
+        "bucket": "scholarship",
+        "role": "persuasive_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "scholarship",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "partial"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 25,
+        "title": "חוזר הממונה בביטוח סיעודי | אמיר ויצנבליט (כרך לב)",
+        "url": "https://runilawreview.org/2025/12/08/vol32-weizenbluth/",
+        "bucket": "commentary",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "scholarship",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": []
+      },
+      {
+        "rank": 26,
+        "title": "על ההתאמה בין ההיבט הנזיקי להיבט החוזי של הסדר הפיצוי לנפגעי תאונות-דרכים",
+        "url": "https://lawjournal.huji.ac.il/article/12/896",
+        "bucket": "scholarship",
+        "role": "binding_case_law",
+        "tier": "secondary_commentary",
+        "citable_as": "scholarship",
+        "text_usability": "substantive_excerpt",
+        "synthesis_role": "secondary_commentary",
+        "origin": null,
+        "verifier": [
+          "unrelated"
+        ],
+        "flags": []
+      }
+    ]
+  },
+  "B_used_composition": {
+    "total": 0,
+    "buckets": {},
+    "primary_count": 0,
+    "secondary_count": 0,
+    "first_primary_position": null,
+    "first_secondary_position": null,
+    "secondary_precedes_primary": false,
+    "head5_primary": 0,
+    "head5_secondary": 0,
+    "rows": []
+  },
+  "C_footnotes": {
+    "total": 0,
+    "compound_count": 0,
+    "mixed_hierarchy_count": 0,
+    "secondary_leading_count": 0,
+    "rows": []
+  },
+  "answer_len": 402,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): הוועדה לקידום תחום התעסוקה לקראת שנת 2030 - דוח מסכם; שוק העבודה בישראל 2024; פסק-דין בתיק דמ\"ר 26126-06-11; המוציא ממעסיקו עליו הראיה?."
+}
