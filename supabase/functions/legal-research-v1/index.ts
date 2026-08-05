@@ -544,21 +544,79 @@ async function handle(req: Request): Promise<Response> {
   // ─── P3: Retrieval (local DB + Perplexity) ───────────────────────────────
   await markStage("retrieval");
   const tRetrieval = Date.now();
+
+  const researchMode = plannerStage.mode_plan?.mode ?? null;
+  // Specific-case runs with an explicit docket take the deterministic fast
+  // lane: exact-docket resolution runs *before* broad web retrieval, so the
+  // expensive path is only paid for when the cheap one fails.
+  const fastLaneDockets = researchMode === "specific_case" ? detectDockets(question) : [];
+  const fastLaneEligible = fastLaneDockets.length > 0;
+
+  const budget = new RetrievalBudget(
+    fastLaneEligible ? RETRIEVAL_BUDGET.SPECIFIC_CASE_DEADLINE_MS : RETRIEVAL_BUDGET.DEFAULT_DEADLINE_MS,
+    (checkpoints) => {
+      // Heartbeat: survives an isolate kill so we can see where retrieval died.
+      void setJobStatus({
+        result: { run_id, phase: "retrieval", retrieval_checkpoints: checkpoints },
+      });
+    },
+  );
+  budget.mark("retrieval_started", {
+    mode: researchMode,
+    fast_lane_eligible: fastLaneEligible,
+    dockets: fastLaneDockets.map((d) => d.display ?? String(d)),
+  });
+
+  // ── Fast lane: deterministic exact-docket resolution ────────────────────
+  const fastLaneCandidates: Candidate[] = [];
+  let fastLane: SpecificCaseResolution | null = null;
+  if (fastLaneEligible) {
+    budget.mark("deterministic_resolution_started");
+    fastLane = await runSpecificCaseResolution({
+      admin,
+      research_mode: researchMode,
+      question,
+      candidates: fastLaneCandidates,
+    });
+    budget.mark("derived_urls_probed", { count: fastLane.derived_urls_probed?.length ?? 0 });
+    if (fastLane.acquisition_success) {
+      budget.mark("derived_url_resolved", {
+        methods: fastLane.acquisition_methods_attempted,
+      });
+    }
+  }
+  const fastLaneHit = fastLane?.acquisition_success === true;
+
+  // ── Broad retrieval (skipped/narrowed once the fast lane already won) ───
+  budget.mark("broad_retrieval_started", { fast_lane_hit: fastLaneHit });
+  const localQueries = fastLaneHit ? allQueries.slice(0, 3) : allQueries;
   const [local, pplx] = await Promise.all([
-    runLocalRetrieval(admin, allQueries, { question, claims: analyzer.claims }),
-    runPerplexityRetrieval(allQueries),
+    runLocalRetrieval(admin, localQueries, { question, claims: analyzer.claims }),
+    // Perplexity is the dominant CPU/wall cost. A resolved exact-docket body
+    // already answers the question, so don't spend it.
+    runPerplexityRetrieval(fastLaneHit ? [] : allQueries),
   ]);
   stage_runs.push(...local.stage_runs, ...pplx.stage_runs);
   const pool = buildCandidatePool([...local.candidates, ...pplx.candidates]);
+  // Fast-lane candidates bypass pool filtering exactly as before: they are
+  // docket-verified official bodies, not search results.
+  if (fastLaneCandidates.length > 0) pool.candidates.unshift(...fastLaneCandidates);
+  budget.mark("broad_retrieval_done", { pool_size: pool.candidates.length });
 
   // ─── Judgment-body acquisition (first-class stage) ───────────────────────
   // Bounded, fail-closed attempt to obtain real judgment text for high-value
   // judgment candidates in every judgment-bearing mode, with per-role budgets.
+  // When the fast lane or the deadline already settled it, spend nothing.
+  const skipAcquisition = fastLaneHit || budget.exceeded();
   const judgmentAcquisition = await runJudgmentTextAcquisition({
     admin,
-    research_mode: plannerStage.mode_plan?.mode ?? null,
+    research_mode: researchMode,
     question,
-    candidates: pool.candidates,
+    candidates: skipAcquisition ? [] : pool.candidates,
+  });
+  budget.mark("judgment_acquisition_done", {
+    skipped: skipAcquisition,
+    successes: judgmentAcquisition.successes,
   });
 
   if (judgmentAcquisition.successes > 0) {
@@ -580,12 +638,21 @@ async function handle(req: Request): Promise<Response> {
   // Exact-docket guard + bounded judgment-text acquisition. Fail-closed: when
   // no admitted source carries the exact requested docket with usable text,
   // the drafter fires `docket_limitation` regardless of pool size.
-  const specificCase = await runSpecificCaseResolution({
-    admin,
-    research_mode: plannerStage.mode_plan?.mode ?? null,
-    question,
-    candidates: pool.candidates,
+  const specificCase = fastLaneHit && fastLane
+    ? fastLane
+    : await runSpecificCaseResolution({
+      admin,
+      research_mode: researchMode,
+      question,
+      candidates: pool.candidates,
+      skip_derived_urls: fastLaneEligible,
+      prior_derived_urls: fastLane?.derived_urls_probed ?? [],
+    });
+  budget.mark("specific_case_resolution_done", {
+    acquisition_success: specificCase.acquisition_success,
+    fast_lane_hit: fastLaneHit,
   });
+
 
   // ─── Specific-case judgment identity + title recovery ───────────────────
   // A case-holding answer requires a usable judgment body that provably is the
