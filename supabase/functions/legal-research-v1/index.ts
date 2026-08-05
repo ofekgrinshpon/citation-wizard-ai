@@ -785,10 +785,67 @@ async function handle(req: Request): Promise<Response> {
         return Math.round((commentary / rows.length) * 100) / 100;
       })(),
     },
-
-
-
+    fast_lane: {
+      eligible: fastLaneEligible,
+      hit: fastLaneHit,
+      dockets: fastLaneDockets.map((d) => `${d.prefix_he} ${d.number}`),
+      web_retrieval_skipped: fastLaneHit,
+      acquisition_skipped: skipAcquisition,
+    },
+    retrieval_budget: budget.report(),
   };
+
+  // ─── Retrieval CPU guard (specific_case) ─────────────────────────────────
+  // Fail closed instead of letting the isolate get killed mid-retrieval: if the
+  // deadline passed and we still have no docket-verified judgment body, refuse
+  // with explicit acquisition telemetry rather than drafting from whatever the
+  // pool happens to contain.
+  if (
+    mode === "answer" && fastLaneEligible && budget.exceeded() &&
+    !specificCase.acquisition_success
+  ) {
+    budget.trigger("post_retrieval");
+    const docketLabel = fastLaneDockets.map((d) => `${d.prefix_he} ${d.number}`).join(", ");
+    const answer =
+      `לא הצלחתי לאתר בתוך זמן העיבוד שהוקצב את נוסח פסק הדין ${docketLabel} ממקור רשמי, ולכן איני יכול למסור מה נקבע בו. ` +
+      `כדי להימנע ממסירת תוכן שאינו מבוסס על גוף פסק הדין עצמו, אני נמנע מתשובה לגופה. ` +
+      `ניתן לצרף את פסק הדין כקובץ ואשיב על בסיס הנוסח המצורף, או להריץ את השאילתה שוב.`;
+    await completeAllStages();
+    await writeTelemetry(admin, {
+      ...telemetryBase,
+      answer,
+      footnotes: [],
+      task_mode: "legal_research",
+      metadata: {
+        pipeline: "legal-research-v1",
+        phase: "retrieval_cpu_guard",
+        run_id,
+        total_ms: Date.now() - t_start,
+        stage_runs,
+        planning: planningMeta,
+        claims: analyzer.claims,
+        queries: allQueries,
+        retrieval: { ...retrievalMeta, retrieval_budget: budget.report() },
+        limitation: {
+          reason: "retrieval_timeout",
+          deterministic_branch: "retrieval_timeout",
+          dockets: fastLaneDockets.map((d) => `${d.prefix_he} ${d.number}`),
+          specific_case: specificCase,
+        },
+      },
+    });
+    return jsonResponse(200, {
+      answer,
+      footnotes: [],
+      debug: {
+        run_id,
+        phase: "retrieval_cpu_guard",
+        stage_runs,
+        retrieval: { ...retrievalMeta, retrieval_budget: budget.report() },
+      },
+    });
+  }
+
 
   // ─── P4: Source Verifier ─────────────────────────────────────────────────
   await markStage("verifier");
