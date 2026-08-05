@@ -38,10 +38,20 @@ export const ACQUISITION_LIMITS = {
   /** Never store more than this — the snippet budget caps display anyway. */
   MAX_TEXT: 6000,
   /** Max bytes downloaded per file. */
-  MAX_BYTES: 8 * 1024 * 1024,
+  MAX_BYTES: 3 * 1024 * 1024,
+  /**
+   * CPU guard: never decode/normalize more than this many bytes of a raw
+   * download. Judgment bodies we keep are capped at MAX_TEXT anyway, but
+   * running Hebrew decoding + HTML stripping over multi-megabyte court files
+   * is a real CPU sink and was killing the isolate mid-retrieval.
+   */
+  MAX_DECODE_BYTES: 1_200_000,
+  /** CPU guard: cap the character length fed to the text-cleaning regexes. */
+  MAX_RAW_CHARS: 300_000,
   /** Legacy global cap (kept for reference; per-role budgets are used now). */
   MAX_ATTEMPTS: 2,
 } as const;
+
 
 /** Per-mode acquisition budgets (attempts, not sources). */
 export const ACQUISITION_BUDGETS: Record<string, { leading: number; other: number; total: number }> = {
@@ -307,22 +317,42 @@ async function fetchBytes(url: string): Promise<{ bytes: Uint8Array; contentType
   return { bytes: buf, contentType };
 }
 
-/** Decode Hebrew bytes safely: UTF-8 first, windows-1255 fallback. */
+/**
+ * Decode Hebrew bytes safely: UTF-8 first, windows-1255 fallback.
+ *
+ * CPU guard: only the first `MAX_DECODE_BYTES` are decoded, and the encoding
+ * decision is made on a small head sample rather than the whole buffer. A
+ * judgment's identity, docket line and holding all sit far inside that window,
+ * and we never store more than `MAX_TEXT` anyway.
+ */
 export function decodeHebrew(bytes: Uint8Array): string {
-  const utf8 = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
-  const replacementRatio = (utf8.match(/\uFFFD/g)?.length ?? 0) / Math.max(utf8.length, 1);
-  const hasHebrew = /[\u0590-\u05FF]/.test(utf8);
-  if (hasHebrew && replacementRatio < 0.01) return utf8;
+  const capped = bytes.byteLength > ACQUISITION_LIMITS.MAX_DECODE_BYTES
+    ? bytes.subarray(0, ACQUISITION_LIMITS.MAX_DECODE_BYTES)
+    : bytes;
+  const sample = capped.subarray(0, Math.min(capped.byteLength, 65_536));
+  const utf8Sample = new TextDecoder("utf-8", { fatal: false }).decode(sample);
+  const replacementRatio = (utf8Sample.match(/\uFFFD/g)?.length ?? 0) /
+    Math.max(utf8Sample.length, 1);
+  const hasHebrew = /[\u0590-\u05FF]/.test(utf8Sample);
+  if (hasHebrew && replacementRatio < 0.01) {
+    return new TextDecoder("utf-8", { fatal: false }).decode(capped);
+  }
   try {
-    const cp1255 = new TextDecoder("windows-1255", { fatal: false }).decode(bytes);
-    if (/[\u0590-\u05FF]/.test(cp1255)) return cp1255;
+    const cp1255Sample = new TextDecoder("windows-1255", { fatal: false }).decode(sample);
+    if (/[\u0590-\u05FF]/.test(cp1255Sample)) {
+      return new TextDecoder("windows-1255", { fatal: false }).decode(capped);
+    }
   } catch { /* decoder unavailable */ }
-  return utf8;
+  return new TextDecoder("utf-8", { fatal: false }).decode(capped);
 }
 
 /** Strip HTML/RTF-ish wrappers a court .txt file may still carry. */
 function plainTextFromTxt(raw: string): string {
-  let s = raw;
+  // CPU guard: the cleaning regexes below are O(n) with heavy backtracking
+  // potential on huge inputs. Bound the working string first.
+  let s = (raw || "").length > ACQUISITION_LIMITS.MAX_RAW_CHARS
+    ? raw.slice(0, ACQUISITION_LIMITS.MAX_RAW_CHARS)
+    : raw;
   if (/<\s*(html|body|p|div|br)\b/i.test(s)) {
     s = s.replace(/<script[\s\S]*?<\/script>/gi, " ")
       .replace(/<style[\s\S]*?<\/style>/gi, " ")
@@ -333,6 +363,7 @@ function plainTextFromTxt(raw: string): string {
   }
   return normText(s);
 }
+
 
 export interface DirectFileOptions {
   /**

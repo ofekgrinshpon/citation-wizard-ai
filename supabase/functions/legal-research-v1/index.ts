@@ -19,7 +19,10 @@ import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRole.ts";
 import { runJudgmentTextAcquisition } from "./stages/judgmentTextAcquisition.ts";
 import { buildJudgmentDiscoveryQueries } from "./stages/judgmentDiscovery.ts";
-import { runSpecificCaseResolution } from "./stages/specificCaseResolution.ts";
+import { runSpecificCaseResolution, type SpecificCaseResolution } from "./stages/specificCaseResolution.ts";
+import { detectDockets } from "./stages/docketDetection.ts";
+import { RetrievalBudget, RETRIEVAL_BUDGET } from "./stages/retrievalBudget.ts";
+
 import { runSpecificCaseIdentity } from "./stages/specificCaseIdentity.ts";
 import { runVerifier } from "./stages/verifier.ts";
 import { runDrafter } from "./stages/drafter.ts";
@@ -36,7 +39,7 @@ import {
 import { detectStatuteSections } from "./stages/statuteSectionDetection.ts";
 import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
-import { StageRun } from "./lib/types.ts";
+import { StageRun, type Candidate } from "./lib/types.ts";
 import { buildSourcesOnlyPayload } from "./lib/sourcesOnly.ts";
 
 type PipelineMode = "answer" | "sources_only";
@@ -541,21 +544,79 @@ async function handle(req: Request): Promise<Response> {
   // ─── P3: Retrieval (local DB + Perplexity) ───────────────────────────────
   await markStage("retrieval");
   const tRetrieval = Date.now();
+
+  const researchMode = plannerStage.mode_plan?.mode ?? null;
+  // Specific-case runs with an explicit docket take the deterministic fast
+  // lane: exact-docket resolution runs *before* broad web retrieval, so the
+  // expensive path is only paid for when the cheap one fails.
+  const fastLaneDockets = researchMode === "specific_case" ? detectDockets(question) : [];
+  const fastLaneEligible = fastLaneDockets.length > 0;
+
+  const budget = new RetrievalBudget(
+    fastLaneEligible ? RETRIEVAL_BUDGET.SPECIFIC_CASE_DEADLINE_MS : RETRIEVAL_BUDGET.DEFAULT_DEADLINE_MS,
+    (checkpoints) => {
+      // Heartbeat: survives an isolate kill so we can see where retrieval died.
+      void setJobStatus({
+        result: { run_id, phase: "retrieval", retrieval_checkpoints: checkpoints },
+      });
+    },
+  );
+  budget.mark("retrieval_started", {
+    mode: researchMode,
+    fast_lane_eligible: fastLaneEligible,
+    dockets: fastLaneDockets.map((d) => `${d.prefix_he} ${d.number}`),
+  });
+
+  // ── Fast lane: deterministic exact-docket resolution ────────────────────
+  const fastLaneCandidates: Candidate[] = [];
+  let fastLane: SpecificCaseResolution | null = null;
+  if (fastLaneEligible) {
+    budget.mark("deterministic_resolution_started");
+    fastLane = await runSpecificCaseResolution({
+      admin,
+      research_mode: researchMode,
+      question,
+      candidates: fastLaneCandidates,
+    });
+    budget.mark("derived_urls_probed", { count: fastLane.derived_urls_probed?.length ?? 0 });
+    if (fastLane.acquisition_success) {
+      budget.mark("derived_url_resolved", {
+        methods: fastLane.acquisition_methods_attempted,
+      });
+    }
+  }
+  const fastLaneHit = fastLane?.acquisition_success === true;
+
+  // ── Broad retrieval (skipped/narrowed once the fast lane already won) ───
+  budget.mark("broad_retrieval_started", { fast_lane_hit: fastLaneHit });
+  const localQueries = fastLaneHit ? allQueries.slice(0, 3) : allQueries;
   const [local, pplx] = await Promise.all([
-    runLocalRetrieval(admin, allQueries, { question, claims: analyzer.claims }),
-    runPerplexityRetrieval(allQueries),
+    runLocalRetrieval(admin, localQueries, { question, claims: analyzer.claims }),
+    // Perplexity is the dominant CPU/wall cost. A resolved exact-docket body
+    // already answers the question, so don't spend it.
+    runPerplexityRetrieval(fastLaneHit ? [] : allQueries),
   ]);
   stage_runs.push(...local.stage_runs, ...pplx.stage_runs);
   const pool = buildCandidatePool([...local.candidates, ...pplx.candidates]);
+  // Fast-lane candidates bypass pool filtering exactly as before: they are
+  // docket-verified official bodies, not search results.
+  if (fastLaneCandidates.length > 0) pool.candidates.unshift(...fastLaneCandidates);
+  budget.mark("broad_retrieval_done", { pool_size: pool.candidates.length });
 
   // ─── Judgment-body acquisition (first-class stage) ───────────────────────
   // Bounded, fail-closed attempt to obtain real judgment text for high-value
   // judgment candidates in every judgment-bearing mode, with per-role budgets.
+  // When the fast lane or the deadline already settled it, spend nothing.
+  const skipAcquisition = fastLaneHit || budget.exceeded();
   const judgmentAcquisition = await runJudgmentTextAcquisition({
     admin,
-    research_mode: plannerStage.mode_plan?.mode ?? null,
+    research_mode: researchMode,
     question,
-    candidates: pool.candidates,
+    candidates: skipAcquisition ? [] : pool.candidates,
+  });
+  budget.mark("judgment_acquisition_done", {
+    skipped: skipAcquisition,
+    successes: judgmentAcquisition.successes,
   });
 
   if (judgmentAcquisition.successes > 0) {
@@ -577,12 +638,21 @@ async function handle(req: Request): Promise<Response> {
   // Exact-docket guard + bounded judgment-text acquisition. Fail-closed: when
   // no admitted source carries the exact requested docket with usable text,
   // the drafter fires `docket_limitation` regardless of pool size.
-  const specificCase = await runSpecificCaseResolution({
-    admin,
-    research_mode: plannerStage.mode_plan?.mode ?? null,
-    question,
-    candidates: pool.candidates,
+  const specificCase = fastLaneHit && fastLane
+    ? fastLane
+    : await runSpecificCaseResolution({
+      admin,
+      research_mode: researchMode,
+      question,
+      candidates: pool.candidates,
+      skip_derived_urls: fastLaneEligible,
+      prior_derived_urls: fastLane?.derived_urls_probed ?? [],
+    });
+  budget.mark("specific_case_resolution_done", {
+    acquisition_success: specificCase.acquisition_success,
+    fast_lane_hit: fastLaneHit,
   });
+
 
   // ─── Specific-case judgment identity + title recovery ───────────────────
   // A case-holding answer requires a usable judgment body that provably is the
@@ -715,10 +785,67 @@ async function handle(req: Request): Promise<Response> {
         return Math.round((commentary / rows.length) * 100) / 100;
       })(),
     },
-
-
-
+    fast_lane: {
+      eligible: fastLaneEligible,
+      hit: fastLaneHit,
+      dockets: fastLaneDockets.map((d) => `${d.prefix_he} ${d.number}`),
+      web_retrieval_skipped: fastLaneHit,
+      acquisition_skipped: skipAcquisition,
+    },
+    retrieval_budget: budget.report(),
   };
+
+  // ─── Retrieval CPU guard (specific_case) ─────────────────────────────────
+  // Fail closed instead of letting the isolate get killed mid-retrieval: if the
+  // deadline passed and we still have no docket-verified judgment body, refuse
+  // with explicit acquisition telemetry rather than drafting from whatever the
+  // pool happens to contain.
+  if (
+    !is_sources_only && fastLaneEligible && budget.exceeded() &&
+    !specificCase.acquisition_success
+  ) {
+    budget.trigger("post_retrieval");
+    const docketLabel = fastLaneDockets.map((d) => `${d.prefix_he} ${d.number}`).join(", ");
+    const answer =
+      `לא הצלחתי לאתר בתוך זמן העיבוד שהוקצב את נוסח פסק הדין ${docketLabel} ממקור רשמי, ולכן איני יכול למסור מה נקבע בו. ` +
+      `כדי להימנע ממסירת תוכן שאינו מבוסס על גוף פסק הדין עצמו, אני נמנע מתשובה לגופה. ` +
+      `ניתן לצרף את פסק הדין כקובץ ואשיב על בסיס הנוסח המצורף, או להריץ את השאילתה שוב.`;
+    await completeAllStages();
+    await writeTelemetry(admin, {
+      ...telemetryBase,
+      answer,
+      footnotes: [],
+      task_mode: "legal_research",
+      metadata: {
+        pipeline: "legal-research-v1",
+        phase: "retrieval_cpu_guard",
+        run_id,
+        total_ms: Date.now() - t_start,
+        stage_runs,
+        planning: planningMeta,
+        claims: analyzer.claims,
+        queries: allQueries,
+        retrieval: { ...retrievalMeta, retrieval_budget: budget.report() },
+        limitation: {
+          reason: "retrieval_timeout",
+          deterministic_branch: "retrieval_timeout",
+          dockets: fastLaneDockets.map((d) => `${d.prefix_he} ${d.number}`),
+          specific_case: specificCase,
+        },
+      },
+    });
+    return jsonResponse(200, {
+      answer,
+      footnotes: [],
+      debug: {
+        run_id,
+        phase: "retrieval_cpu_guard",
+        stage_runs,
+        retrieval: { ...retrievalMeta, retrieval_budget: budget.report() },
+      },
+    });
+  }
+
 
   // ─── P4: Source Verifier ─────────────────────────────────────────────────
   await markStage("verifier");
