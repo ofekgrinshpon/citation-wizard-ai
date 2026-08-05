@@ -241,7 +241,15 @@ export interface SpecificCaseInput {
   research_mode: string | null;
   question: string;
   candidates: Candidate[];
+  /**
+   * Fast lane already probed the derived court URLs for this run — do not
+   * spend the CPU/network budget probing them a second time.
+   */
+  skip_derived_urls?: boolean;
+  /** Carried over for telemetry when `skip_derived_urls` is set. */
+  prior_derived_urls?: string[];
 }
+
 
 export async function runSpecificCaseResolution(
   input: SpecificCaseInput,
