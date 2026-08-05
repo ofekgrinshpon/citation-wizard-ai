@@ -38,10 +38,20 @@ export const ACQUISITION_LIMITS = {
   /** Never store more than this — the snippet budget caps display anyway. */
   MAX_TEXT: 6000,
   /** Max bytes downloaded per file. */
-  MAX_BYTES: 8 * 1024 * 1024,
+  MAX_BYTES: 3 * 1024 * 1024,
+  /**
+   * CPU guard: never decode/normalize more than this many bytes of a raw
+   * download. Judgment bodies we keep are capped at MAX_TEXT anyway, but
+   * running Hebrew decoding + HTML stripping over multi-megabyte court files
+   * is a real CPU sink and was killing the isolate mid-retrieval.
+   */
+  MAX_DECODE_BYTES: 1_200_000,
+  /** CPU guard: cap the character length fed to the text-cleaning regexes. */
+  MAX_RAW_CHARS: 300_000,
   /** Legacy global cap (kept for reference; per-role budgets are used now). */
   MAX_ATTEMPTS: 2,
 } as const;
+
 
 /** Per-mode acquisition budgets (attempts, not sources). */
 export const ACQUISITION_BUDGETS: Record<string, { leading: number; other: number; total: number }> = {
