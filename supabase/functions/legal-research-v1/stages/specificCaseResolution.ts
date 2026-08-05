@@ -451,7 +451,12 @@ export async function runSpecificCaseResolution(
   // landmark judgment can be acquired even when no search result exposes its
   // download URL. Every body is validated against the requested docket, so a
   // wrong guess can never be adopted.
-  if (!res.acquisition_success && Date.now() - t0 <= SPECIFIC_CASE_LIMITS.TOTAL_MS) {
+  if (input.skip_derived_urls) {
+    // Fast lane already probed these; carry the telemetry, spend nothing.
+    res.derived_urls_probed = input.prior_derived_urls ?? [];
+    recordFailure(res, "derived_urls_already_probed_in_fast_lane");
+  } else if (!res.acquisition_success && Date.now() - t0 <= SPECIFIC_CASE_LIMITS.TOTAL_MS) {
+
     const derived: string[] = [];
     for (const d of dockets) {
       for (const u of deriveSupremeCourtFileUrls(d)) {
