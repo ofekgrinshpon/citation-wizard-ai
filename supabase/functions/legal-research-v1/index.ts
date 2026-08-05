@@ -39,7 +39,7 @@ import {
 import { detectStatuteSections } from "./stages/statuteSectionDetection.ts";
 import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
-import { StageRun } from "./lib/types.ts";
+import { StageRun, type Candidate } from "./lib/types.ts";
 import { buildSourcesOnlyPayload } from "./lib/sourcesOnly.ts";
 
 type PipelineMode = "answer" | "sources_only";
@@ -564,7 +564,7 @@ async function handle(req: Request): Promise<Response> {
   budget.mark("retrieval_started", {
     mode: researchMode,
     fast_lane_eligible: fastLaneEligible,
-    dockets: fastLaneDockets.map((d) => d.display ?? String(d)),
+    dockets: fastLaneDockets.map((d) => `${d.prefix_he} ${d.number}`),
   });
 
   // ── Fast lane: deterministic exact-docket resolution ────────────────────
