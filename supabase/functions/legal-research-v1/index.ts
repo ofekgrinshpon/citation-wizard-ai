@@ -801,7 +801,7 @@ async function handle(req: Request): Promise<Response> {
   // with explicit acquisition telemetry rather than drafting from whatever the
   // pool happens to contain.
   if (
-    mode === "answer" && fastLaneEligible && budget.exceeded() &&
+    !is_sources_only && fastLaneEligible && budget.exceeded() &&
     !specificCase.acquisition_success
   ) {
     budget.trigger("post_retrieval");
