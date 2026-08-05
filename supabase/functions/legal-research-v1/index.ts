@@ -19,7 +19,10 @@ import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRole.ts";
 import { runJudgmentTextAcquisition } from "./stages/judgmentTextAcquisition.ts";
 import { buildJudgmentDiscoveryQueries } from "./stages/judgmentDiscovery.ts";
-import { runSpecificCaseResolution } from "./stages/specificCaseResolution.ts";
+import { runSpecificCaseResolution, type SpecificCaseResolution } from "./stages/specificCaseResolution.ts";
+import { detectDockets } from "./stages/docketDetection.ts";
+import { RetrievalBudget, RETRIEVAL_BUDGET } from "./stages/retrievalBudget.ts";
+
 import { runSpecificCaseIdentity } from "./stages/specificCaseIdentity.ts";
 import { runVerifier } from "./stages/verifier.ts";
 import { runDrafter } from "./stages/drafter.ts";
