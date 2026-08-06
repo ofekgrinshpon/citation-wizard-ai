@@ -59,6 +59,18 @@ export const SPECIFIC_CASE_LIMITS = {
   MAX_DERIVED_URLS: 4,
 } as const;
 
+/**
+ * Classify a derived-URL probe failure. Network-layer aborts get explicit
+ * reasons so a stalled court host is distinguishable from a 404 / bad body.
+ */
+function derivedFailureReason(err: unknown): string {
+  const name = (err as { name?: string } | null)?.name ?? "";
+  const msg = err instanceof Error ? err.message : String(err);
+  if (name === "TimeoutError" || /timeout/i.test(msg)) return "derived_url_fetch_timeout";
+  if (name === "AbortError" || /abort/i.test(msg)) return "derived_url_fetch_aborted";
+  return `derived_url:${msg}`;
+}
+
 const CASE_LIKE_TYPES = new Set([
   "caselaw",
   "case",
