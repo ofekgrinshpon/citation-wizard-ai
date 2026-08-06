@@ -577,14 +577,20 @@ async function handle(req: Request): Promise<Response> {
       research_mode: researchMode,
       question,
       candidates: fastLaneCandidates,
+      budget,
     });
-    budget.mark("derived_urls_probed", { count: fastLane.derived_urls_probed?.length ?? 0 });
+    budget.mark("derived_urls_probed", {
+      count: fastLane.derived_urls_probed?.length ?? 0,
+      budget_exceeded: fastLane.budget_exceeded,
+      probe_stages: fastLane.probe_stages.slice(-20),
+    });
     if (fastLane.acquisition_success) {
       budget.mark("derived_url_resolved", {
         methods: fastLane.acquisition_methods_attempted,
       });
     }
   }
+
   const fastLaneHit = fastLane?.acquisition_success === true;
 
   // ── Broad retrieval (skipped/narrowed once the fast lane already won) ───
