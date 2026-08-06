@@ -305,15 +305,51 @@ export async function withTimeout<T>(p: Promise<T>, ms: number, label: string): 
   }
 }
 
-async function fetchBytes(url: string): Promise<{ bytes: Uint8Array; contentType: string }> {
+async function fetchBytes(
+  url: string,
+  signal?: AbortSignal,
+): Promise<{ bytes: Uint8Array; contentType: string }> {
   const res = await fetch(url, {
     redirect: "follow",
     headers: { "User-Agent": "Mozilla/5.0 (compatible; ReLexBot/1.0)" },
+    ...(signal ? { signal } : {}),
   });
   if (!res.ok) throw new Error(`http_${res.status}`);
   const contentType = (res.headers.get("content-type") || "").toLowerCase();
-  const buf = new Uint8Array(await res.arrayBuffer());
-  if (buf.byteLength > ACQUISITION_LIMITS.MAX_BYTES) throw new Error("file_too_large");
+  // Read with a hard byte cap and cancel the rest of the stream: court hosts
+  // serve multi-MB bodies slowly, and buffering all of them is the dominant
+  // wall/CPU cost. Text bodies are capped at the decode window (nothing beyond
+  // it is ever decoded); binary documents keep the full MAX_BYTES envelope
+  // because truncating a PDF/DOCX would break extraction.
+  const binary = /pdf|wordprocessingml|officedocument|msword|octet-stream/.test(contentType) ||
+    /\.(pdf|docx?|zip)(\?|#|$)/i.test(url);
+  const CAP = binary
+    ? ACQUISITION_LIMITS.MAX_BYTES
+    : Math.min(ACQUISITION_LIMITS.MAX_BYTES, ACQUISITION_LIMITS.MAX_DECODE_BYTES + 65_536);
+  const reader = res.body?.getReader();
+  if (!reader) return { bytes: new Uint8Array(0), contentType };
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  try {
+    while (total < CAP) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (value) {
+        chunks.push(value);
+        total += value.byteLength;
+      }
+    }
+  } finally {
+    try {
+      await reader.cancel();
+    } catch { /* stream already closed */ }
+  }
+  const buf = new Uint8Array(total);
+  let off = 0;
+  for (const c of chunks) {
+    buf.set(c, off);
+    off += c.byteLength;
+  }
   return { bytes: buf, contentType };
 }
 
@@ -373,11 +409,13 @@ export interface DirectFileOptions {
   allowPlainText?: boolean;
   /** Extra gate applied to plain-text downloads (e.g. exact-docket check). */
   validateText?: (text: string) => boolean;
+  /** Hard network-layer abort for the underlying fetch. */
+  signal?: AbortSignal;
 }
 
 /** Method 1 — the URL already points at a judgment file. */
 export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): Promise<string> {
-  const { bytes, contentType } = await fetchBytes(url);
+  const { bytes, contentType } = await fetchBytes(url, opts.signal);
   // Content-type first, then extension, then magic bytes (court download
   // endpoints often serve octet-stream with no extension in the URL).
   const head = new TextDecoder("latin1").decode(bytes.slice(0, 8));
@@ -530,6 +568,7 @@ export async function tryWrapperResolve(
   const res = await fetch(url, {
     redirect: "follow",
     headers: { "User-Agent": "Mozilla/5.0 (compatible; ReLexBot/1.0)" },
+    ...(opts.signal ? { signal: opts.signal } : {}),
   });
   if (!res.ok) throw new Error(`http_${res.status}`);
   const html = (await res.text()).slice(0, 400_000);

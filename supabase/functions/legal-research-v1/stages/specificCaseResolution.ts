@@ -47,8 +47,9 @@ export const SPECIFIC_CASE_LIMITS = {
   MIN_USABLE_TEXT: 400,
   /** Per-method time box. */
   PER_METHOD_MS: 8000,
-  /** Per derived-URL probe time box. */
-  PER_DERIVED_URL_MS: 6000,
+  /** Per derived-URL probe time box (now a real network abort; court.gov.il
+   *  legitimately needs ~9 s for large archive bodies). */
+  PER_DERIVED_URL_MS: 12000,
   /** Whole-stage time box. */
   TOTAL_MS: 32000,
   /** Never store more than this. */
@@ -58,6 +59,18 @@ export const SPECIFIC_CASE_LIMITS = {
   /** Max derived court URLs probed per run. */
   MAX_DERIVED_URLS: 4,
 } as const;
+
+/**
+ * Classify a derived-URL probe failure. Network-layer aborts get explicit
+ * reasons so a stalled court host is distinguishable from a 404 / bad body.
+ */
+function derivedFailureReason(err: unknown): string {
+  const name = (err as { name?: string } | null)?.name ?? "";
+  const msg = err instanceof Error ? err.message : String(err);
+  if (name === "TimeoutError" || /timeout/i.test(msg)) return "derived_url_fetch_timeout";
+  if (name === "AbortError" || /abort/i.test(msg)) return "derived_url_fetch_aborted";
+  return `derived_url:${msg}`;
+}
 
 const CASE_LIKE_TYPES = new Set([
   "caselaw",
@@ -390,6 +403,9 @@ export async function runSpecificCaseResolution(
       allowPlainText: true,
       validateText: (text: string) =>
         dockets.some((d) => textContainsExactDocket(text.slice(0, 20000), d)),
+      // Hard network-layer teardown: `withTimeout` alone is advisory
+      // (Promise.race), so a stalled court host could leak past it.
+      signal: AbortSignal.timeout(SPECIFIC_CASE_LIMITS.PER_METHOD_MS),
     };
     const plan: SpecificCaseAcquisitionMethod[] = [];
     if (url && isDirectFileUrl(url)) plan.push("direct_file_fetch");
@@ -509,6 +525,8 @@ export async function runSpecificCaseResolution(
             allowPlainText: true,
             validateText: (text: string) =>
               dockets.some((d) => textContainsExactDocket(text.slice(0, 20000), d)),
+            // Real abort: tears the socket down instead of leaking past the race.
+            signal: AbortSignal.timeout(SPECIFIC_CASE_LIMITS.PER_DERIVED_URL_MS),
           }),
           SPECIFIC_CASE_LIMITS.PER_DERIVED_URL_MS,
           "court_url_derivation",
@@ -529,7 +547,7 @@ export async function runSpecificCaseResolution(
         }
         recordFailure(res, "derived_url_text_below_threshold");
       } catch (err) {
-        recordFailure(res, `derived_url:${err instanceof Error ? err.message : String(err)}`);
+        recordFailure(res, `${derivedFailureReason(err)}:${url}`);
       }
     }
   }

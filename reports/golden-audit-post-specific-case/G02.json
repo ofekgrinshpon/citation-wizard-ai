@@ -1,0 +1,115 @@
+{
+  "id": "G02",
+  "category": "specific_case_holding",
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי ביחס לסמכות בית המשפט לבטל חוק הסותר חוק יסוד?",
+  "run_id": "0bc712f9-ebbb-4c07-b1a1-958b9ce47927",
+  "job_id": "49ebfda9-8121-4992-b2c1-0075f3baaff7",
+  "job_status": "done",
+  "job_error": null,
+  "wall_ms": 126346,
+  "pipeline_total_ms": 122922,
+  "retrieval_elapsed_ms": 5121,
+  "guard_triggered": false,
+  "research_mode": "specific_case",
+  "shape": "case_holding",
+  "branch": null,
+  "drafted": true,
+  "sufficiency_profile": "not_applicable",
+  "sufficiency_passed": true,
+  "fast_lane": null,
+  "exact_docket_source_found": true,
+  "exact_docket_source_usable": true,
+  "specific_case_identity_passed": true,
+  "metadata_only_sources_used_as_holdings": null,
+  "commentary_carries_holding": null,
+  "synthesis_rendering": {
+    "groups": {
+      "secondary_context": [],
+      "usable_authorities": [],
+      "found_but_not_usable": [],
+      "statutory_background": []
+    },
+    "reason": "not_synthesis_mode",
+    "group_counts": {
+      "secondary_context": 0,
+      "usable_authorities": 0,
+      "found_but_not_usable": 0,
+      "statutory_background": 0
+    },
+    "named_case_keys": [],
+    "named_cases_in_body": 0,
+    "usable_judgments_named": 0,
+    "synthesis_rendering_applied": false,
+    "commentary_used_as_primary_authority": false,
+    "metadata_only_sources_used_as_holdings": false
+  },
+  "pool": {
+    "admitted": 3,
+    "tier_counts": {
+      "index_or_listing": 1,
+      "official_primary": 1,
+      "secondary_commentary": 1
+    },
+    "judgment_documents": 0,
+    "judgments_with_holding_text": 0
+  },
+  "text_usability_counts": {
+    "listing_page": 1,
+    "substantive_excerpt": 2
+  },
+  "role_counts": {
+    "binding_case_law": 3
+  },
+  "used_sources": [
+    {
+      "title": "ע\"א 6821/93",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=EnglishVerdicts/93/210/068/Z01&type=4",
+      "type": "caselaw",
+      "tier": "official_primary",
+      "usability": "full_text"
+    },
+    {
+      "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+      "url": "https://lawjournal.huji.ac.il/article/12/1930",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "substantive_excerpt"
+    }
+  ],
+  "used_sources_count": 2,
+  "footnotes_count": 2,
+  "footnote1": {
+    "title": "ע\"א 6821/93",
+    "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=EnglishVerdicts/93/210/068/Z01&type=4",
+    "type": "caselaw"
+  },
+  "is_stub": false,
+  "verifier": {
+    "by_support": {
+      "direct": 1,
+      "partial": 1,
+      "unrelated": 2,
+      "tangential": 0
+    },
+    "by_role_match": {
+      "true": 4,
+      "false": 0
+    },
+    "model_verdicts": 4,
+    "by_support_model": {
+      "direct": 1,
+      "partial": 1,
+      "unrelated": 2,
+      "tangential": 0
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "answer_len": 1477,
+  "answer": "**תמצית ההכרעה**\n\nבע״א 6821/93 נקבע במפורש כי לחוקי היסוד מעמד חוקתי ביחס לחקיקה רגילה וכי בית המשפט העליון רשאי לדון בהתנגשות בין חוק רגיל לחוק יסוד ולבטל או להמנע מיישום חוק הסותר.¹\n\n**סטנדרט ופרשנות**\n\nהפסק דין קבע את הסמכות השיפוטית להכריע בסתירות בין חקיקה רגילה לחוק יסוד, אך הוא לא פירש בפירוט נוהל חקיקה-פרשני ברמת מבחן מפורש מקיף; ההכרעה עצמה מציינת את הסמכות לבחינה ולפעולה במקרה של הסתירה.¹\n\nבנוסף, במחקר פרשני שניתן כעיון תומך יש התייחסות לרעיון שהמנגנון השיפוטי ינסה פרשנות תקינה של החוק לפני פינויו או ביטולו, וכי להצדקת חריגה מפירוש כזה נדרש ציון מפורש או הסתירה ברורה; טענה זו נמסרת במאמר ניתוחי בהיקף חלקי ולא מהווה נוסח מפורש מתוך ההחלטה עצמה.²\n\n**סעד מעשי שניתן**\n\nבית המשפט קבע כי כאשר מתקיימת הסתירה בין חוק לחוק יסוד הוא יכול, לפי נסיבות המקרה, לבטל את החוק או להמנע מיישומו במצב הפרטני — כלומר הסעד יכול להיות הכרזה על בטלות או אי־יישום מצטבר בהתאם לממצא בדבר הסתירה.¹\n\n**ריסון שיפוטי, ייצוגיות ואיזון הרשויות**\n\nההכרעה בע״א 6821/93 הצהירה סמכותית לגבי ביקורת שיפוטית על חקיקה שאינה תואמת חוק יסוד, אך לא ניסחה כללים מפורשים ומוחלטים לגבי היקף הריסון השיפוטי או משקל שיקולי ייצוגיות דמוקרטית; ניתוחים תאורטיים וספקולטיביים על עקרונות אלה נמצאים במאמרי רקע ותמיכה, אך הם אינם מהווים חלק מלשון ההכרעה המקורית.¹\n\nמסקנה קצרה: ע״א 6821/93 היא ההכרעה התקדימית שקיבעה את מעמדם החוקתי של חוקי היסוד ואת סמכות בית המשפט לבחון סתירות ולבטל או שלא ליישם חקיקה סותרת; היחס השיטתי לפרשנות מונחת בעיקר בפיתוחים פרשניים שנלוו לפסיקה ולא בנוסח מפורש אחד בפסק הדין עצמו.¹"
+}
