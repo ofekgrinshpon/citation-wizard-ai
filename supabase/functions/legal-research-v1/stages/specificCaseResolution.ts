@@ -512,6 +512,8 @@ export async function runSpecificCaseResolution(
             allowPlainText: true,
             validateText: (text: string) =>
               dockets.some((d) => textContainsExactDocket(text.slice(0, 20000), d)),
+            // Real abort: tears the socket down instead of leaking past the race.
+            signal: AbortSignal.timeout(SPECIFIC_CASE_LIMITS.PER_DERIVED_URL_MS),
           }),
           SPECIFIC_CASE_LIMITS.PER_DERIVED_URL_MS,
           "court_url_derivation",
@@ -532,7 +534,7 @@ export async function runSpecificCaseResolution(
         }
         recordFailure(res, "derived_url_text_below_threshold");
       } catch (err) {
-        recordFailure(res, `derived_url:${err instanceof Error ? err.message : String(err)}`);
+        recordFailure(res, `${derivedFailureReason(err)}:${url}`);
       }
     }
   }
