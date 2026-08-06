@@ -488,8 +488,19 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
     head.charCodeAt(0) === 0xd0 && head.charCodeAt(1) === 0xcf;
   if (isPdf || isDocx) {
     gate("before_binary_extract");
+    if (bytes.byteLength > ACQUISITION_LIMITS.MAX_EXTRACT_BYTES) {
+      // Deterministic refusal beats an isolate kill: extraction of a body this
+      // large reliably exhausts the edge CPU quota.
+      onStage("binary_too_large_for_extraction", {
+        bytes: bytes.byteLength,
+        limit: ACQUISITION_LIMITS.MAX_EXTRACT_BYTES,
+      });
+      throw new Error("binary_too_large_for_extraction");
+    }
     onStage("binary_extract_start", { kind: isPdf ? "pdf" : "docx", bytes: bytes.byteLength });
     const extracted = await extractDocumentText(bytes, isPdf ? "pdf" : "docx");
+    onStage("binary_extract_done", { chars: extracted.length });
+
     onStage("binary_extract_done", { chars: extracted.length });
     // Never clean/normalize/identity-match a multi-hundred-kilochar extraction
     // in one synchronous pass — that is what killed the isolate.
