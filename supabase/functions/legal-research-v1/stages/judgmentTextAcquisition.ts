@@ -40,7 +40,7 @@ export const ACQUISITION_LIMITS = {
   /** Never store more than this — the snippet budget caps display anyway. */
   MAX_TEXT: 6000,
   /** Max bytes downloaded per file. */
-  MAX_BYTES: 3 * 1024 * 1024,
+  MAX_BYTES: 4 * 1024 * 1024,
   /**
    * CPU guard: never decode/normalize more than this many bytes of a raw
    * download. Judgment bodies we keep are capped at MAX_TEXT anyway, but
@@ -49,11 +49,18 @@ export const ACQUISITION_LIMITS = {
    */
   MAX_DECODE_BYTES: 1_200_000,
   /**
-   * CPU guard: PDF/DOCX extraction is the single most expensive synchronous
-   * step in the isolate. Above this size we refuse deterministically
-   * (`binary_too_large_for_extraction`) instead of being killed mid-run.
+   * Above this size a PDF/DOCX is routed through the bounded/chunked
+   * post-extract path with an explicit budget check between chunks, rather
+   * than the straight-through path. Extraction itself still runs.
    */
-  MAX_EXTRACT_BYTES: 1_600_000,
+  BOUNDED_EXTRACT_BYTES: 1_600_000,
+  /**
+   * Hard ceiling. Beyond this we fail closed with
+   * `binary_too_large_for_extraction` — extraction of a binary this large
+   * reliably exhausts the edge CPU quota.
+   */
+  MAX_EXTRACT_BYTES: 4 * 1024 * 1024,
+
 
   /** CPU guard: cap the character length fed to the text-cleaning regexes. */
   MAX_RAW_CHARS: 300_000,
@@ -489,21 +496,30 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
   if (isPdf || isDocx) {
     gate("before_binary_extract");
     if (bytes.byteLength > ACQUISITION_LIMITS.MAX_EXTRACT_BYTES) {
-      // Deterministic refusal beats an isolate kill: extraction of a body this
-      // large reliably exhausts the edge CPU quota.
+      // Hard ceiling only: fail closed rather than risk an isolate kill.
       onStage("binary_too_large_for_extraction", {
         bytes: bytes.byteLength,
         limit: ACQUISITION_LIMITS.MAX_EXTRACT_BYTES,
       });
       throw new Error("binary_too_large_for_extraction");
     }
-    onStage("binary_extract_start", { kind: isPdf ? "pdf" : "docx", bytes: bytes.byteLength });
+    const bounded = bytes.byteLength > ACQUISITION_LIMITS.BOUNDED_EXTRACT_BYTES;
+    if (bounded) {
+      // Mid-size official PDFs (e.g. the 2.34 MB court.gov.il verdict) are
+      // extracted, then processed through the chunked post-extract path with a
+      // budget check between chunks — never rejected up front.
+      onStage("binary_bounded_extract_path", {
+        bytes: bytes.byteLength,
+        threshold: ACQUISITION_LIMITS.BOUNDED_EXTRACT_BYTES,
+      });
+    }
+    gate("before_binary_extract_run");
+    onStage("binary_extract_start", { kind: isPdf ? "pdf" : "docx", bytes: bytes.byteLength, bounded });
     const extracted = await extractDocumentText(bytes, isPdf ? "pdf" : "docx");
-    onStage("binary_extract_done", { chars: extracted.length });
-
-    onStage("binary_extract_done", { chars: extracted.length });
+    onStage("binary_extract_done", { chars: extracted.length, bounded });
     // Never clean/normalize/identity-match a multi-hundred-kilochar extraction
     // in one synchronous pass — that is what killed the isolate.
+    gate("after_binary_extract");
     const processed = await processExtractedBody(extracted, {
       onStage,
       budgetExceeded: opts.budgetExceeded,
@@ -511,6 +527,7 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
     });
     gate("after_post_extract");
     return processed.text;
+
   }
 
   if (isLegacyDoc && !head.startsWith("PK")) {
