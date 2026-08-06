@@ -47,8 +47,9 @@ export const SPECIFIC_CASE_LIMITS = {
   MIN_USABLE_TEXT: 400,
   /** Per-method time box. */
   PER_METHOD_MS: 8000,
-  /** Per derived-URL probe time box. */
-  PER_DERIVED_URL_MS: 6000,
+  /** Per derived-URL probe time box (now a real network abort; court.gov.il
+   *  legitimately needs ~9 s for large archive bodies). */
+  PER_DERIVED_URL_MS: 12000,
   /** Whole-stage time box. */
   TOTAL_MS: 32000,
   /** Never store more than this. */
