@@ -131,6 +131,12 @@ export interface SpecificCaseResolution {
   /** Derived official court URLs probed (deterministic, docket-validated). */
   derived_urls_probed: string[];
   derived_url_resolved: string | null;
+  /** True when the stage stopped because the retrieval budget ran out. */
+  budget_exceeded: boolean;
+  /** Fine-grained probe markers (diagnostics for silent-hang triage). */
+  probe_stages: Array<{ name: string; at_ms: number; detail?: Record<string, unknown> }>;
+
+
 
 
   /** Why the caller will (or will not) fire `docket_limitation`. */
