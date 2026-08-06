@@ -1478,10 +1478,27 @@ async function handle(req: Request): Promise<Response> {
   });
   }; // end runPipeline
 
+  // Terminal-state watchdog: a job row must never be left `running` with a
+  // NULL error. If the pipeline neither resolves nor throws within the hard
+  // wall budget, persist a controlled failure.
+  const WATCHDOG_MS = 9 * 60_000;
+  let settled = false;
+  const watchdog = setTimeout(() => {
+    if (settled) return;
+    settled = true;
+    void setJobStatus({
+      status: "error",
+      error: "pipeline_watchdog_timeout",
+      current_stage: null,
+    });
+  }, WATCHDOG_MS) as unknown as number;
+
   const bg = (async () => {
     try {
       const resp = await runPipeline();
       const payload = await resp.clone().json().catch(() => null);
+      if (settled) return;
+      settled = true;
       if (resp.status === 200) {
         await setJobStatus({ status: "done", result: payload });
       } else {
@@ -1493,12 +1510,17 @@ async function handle(req: Request): Promise<Response> {
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       console.error("[lrv1 bg]", msg);
+      if (settled) return;
+      settled = true;
       await setJobStatus({ status: "error", error: msg });
+    } finally {
+      clearTimeout(watchdog);
     }
   })();
   if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
     EdgeRuntime.waitUntil(bg);
   }
+
   return jsonResponse(202, {
     ok: true,
     run_id,
