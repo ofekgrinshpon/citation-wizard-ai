@@ -648,10 +648,40 @@ async function handle(req: Request): Promise<Response> {
       skip_derived_urls: fastLaneEligible,
       prior_derived_urls: fastLane?.derived_urls_probed ?? [],
     });
+  // The post-retrieval pass may add telemetry but must never *downgrade* a
+  // successful fast-lane result (R01/B2: the fast-lane body was being lost).
+  if (fastLane && specificCase !== fastLane) {
+    if (fastLane.derived_urls_probed.length > 0 && specificCase.derived_urls_probed.length === 0) {
+      specificCase.derived_urls_probed = fastLane.derived_urls_probed;
+    }
+    specificCase.derived_url_resolved ??= fastLane.derived_url_resolved;
+    if (fastLane.exact_docket_source_found && !specificCase.exact_docket_source_found) {
+      specificCase.exact_docket_source_found = true;
+      specificCase.exact_docket_source_title ??= fastLane.exact_docket_source_title;
+      specificCase.exact_docket_source_url ??= fastLane.exact_docket_source_url;
+    }
+    if (fastLane.exact_docket_source_usable && !specificCase.exact_docket_source_usable) {
+      specificCase.exact_docket_source_usable = true;
+      specificCase.allow_case_holding_answer = true;
+      specificCase.final_docket_branch_reason = fastLane.final_docket_branch_reason;
+      specificCase.acquisition_success = specificCase.acquisition_success ||
+        fastLane.acquisition_success;
+      specificCase.acquisition_method ??= fastLane.acquisition_method;
+      specificCase.acquisition_method_successful ??= fastLane.acquisition_method_successful;
+    }
+    if (fastLane.acquired_text_length > specificCase.acquired_text_length) {
+      specificCase.acquired_text_length = fastLane.acquired_text_length;
+    }
+    specificCase.injected_candidate_id ??= fastLane.injected_candidate_id;
+    specificCase.exact_docket_candidate_id ??= fastLane.exact_docket_candidate_id;
+  }
   budget.mark("specific_case_resolution_done", {
     acquisition_success: specificCase.acquisition_success,
+    exact_docket_source_usable: specificCase.exact_docket_source_usable,
+    exact_docket_candidate_id: specificCase.exact_docket_candidate_id,
     fast_lane_hit: fastLaneHit,
   });
+
 
 
   // ─── Specific-case judgment identity + title recovery ───────────────────
