@@ -697,7 +697,11 @@ async function handle(req: Request): Promise<Response> {
     specificCase.enabled || specificCaseIdentity.specific_case_identity_required
       ? {
           allow:
-            (!specificCase.enabled || specificCase.allow_case_holding_answer) &&
+            (!specificCase.enabled ||
+              // Key on usable exact-docket text, never on the post-retrieval
+              // `acquisition_success` flag alone.
+              specificCase.exact_docket_source_usable ||
+              specificCase.allow_case_holding_answer) &&
             specificCaseIdentity.specific_case_identity_passed,
           docket_display:
             specificCase.requested_docket_display ?? specificCaseIdentity.requested_docket,
@@ -706,6 +710,7 @@ async function handle(req: Request): Promise<Response> {
             : specificCase.final_docket_branch_reason,
         }
       : null;
+
 
   const role_corrections = pplx.per_query.flatMap((pq) =>
     pq.results
