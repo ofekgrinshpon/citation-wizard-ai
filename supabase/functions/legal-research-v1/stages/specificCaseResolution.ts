@@ -153,6 +153,7 @@ function disabled(
     near_match_sources_ignored_count: 0,
     near_match_sources_ignored: [],
     injected_candidate_id: null,
+    exact_docket_candidate_id: null,
     ms: 0,
   };
 }
