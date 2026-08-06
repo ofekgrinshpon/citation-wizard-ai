@@ -626,6 +626,8 @@ export async function tryWrapperResolve(
   url: string,
   opts: DirectFileOptions = {},
 ): Promise<string> {
+  const onStage = opts.onStage ?? (() => {});
+  onStage("wrapper_fetch_start", { url });
   const res = await fetch(url, {
     redirect: "follow",
     headers: { "User-Agent": "Mozilla/5.0 (compatible; ReLexBot/1.0)" },
@@ -633,10 +635,16 @@ export async function tryWrapperResolve(
   });
   if (!res.ok) throw new Error(`http_${res.status}`);
   const html = (await res.text()).slice(0, 400_000);
+  onStage("wrapper_body_read_done", { chars: html.length });
+  if (opts.budgetExceeded?.()) {
+    onStage("budget_exceeded", { where: "wrapper_resolve" });
+    throw new Error("retrieval_timeout");
+  }
   const hrefs = Array.from(html.matchAll(/href\s*=\s*["']([^"']+)["']/gi)).map((m) => m[1]);
   const fileHref = hrefs.find((h) => FILE_URL_RE.test(h) || DIRECT_DOWNLOAD_RE.test(h));
   if (!fileHref) throw new Error("no_downloadable_file_on_wrapper");
   const abs = new URL(fileHref, url).toString();
+  onStage("wrapper_resolved_file", { abs });
   return await tryDirectFile(abs, opts);
 }
 
