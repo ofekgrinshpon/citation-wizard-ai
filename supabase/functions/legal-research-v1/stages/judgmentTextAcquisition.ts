@@ -433,11 +433,32 @@ export interface DirectFileOptions {
   validateText?: (text: string) => boolean;
   /** Hard network-layer abort for the underlying fetch. */
   signal?: AbortSignal;
+  /** Fine-grained stage markers (diagnostics for silent-hang triage). */
+  onStage?: StageSink;
+  /** Shape gate: refuse bodies larger than this instead of buffering them. */
+  maxBytes?: number;
+  /**
+   * Time-budget gate consulted before every expensive synchronous step
+   * (decode, clean, PDF/DOCX extraction). Returning true fails closed.
+   */
+  budgetExceeded?: () => boolean;
 }
 
 /** Method 1 — the URL already points at a judgment file. */
 export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): Promise<string> {
-  const { bytes, contentType } = await fetchBytes(url, opts.signal);
+  const onStage = opts.onStage ?? (() => {});
+  const gate = (where: string) => {
+    if (opts.budgetExceeded?.()) {
+      onStage("budget_exceeded", { where });
+      throw new Error("retrieval_timeout");
+    }
+  };
+  gate("before_fetch");
+  const { bytes, contentType } = await fetchBytes(url, opts.signal, {
+    onStage,
+    maxBytes: opts.maxBytes,
+  });
+  gate("after_fetch");
   // Content-type first, then extension, then magic bytes (court download
   // endpoints often serve octet-stream with no extension in the URL).
   const head = new TextDecoder("latin1").decode(bytes.slice(0, 8));
@@ -453,11 +474,18 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
     /\.doc(\?|#|$)/i.test(url) ||
     head.charCodeAt(0) === 0xd0 && head.charCodeAt(1) === 0xcf;
   if (isPdf || isDocx) {
-    return normText(await extractDocumentText(bytes, isPdf ? "pdf" : "docx"));
+    gate("before_binary_extract");
+    onStage("binary_extract_start", { kind: isPdf ? "pdf" : "docx", bytes: bytes.byteLength });
+    const out = normText(await extractDocumentText(bytes, isPdf ? "pdf" : "docx"));
+    onStage("binary_extract_done", { chars: out.length });
+    return out;
   }
   if (isLegacyDoc && !head.startsWith("PK")) {
     // mammoth cannot read OLE2 .doc; salvage readable Hebrew runs instead.
+    gate("before_legacy_doc_decode");
+    onStage("legacy_doc_decode_start", { bytes: bytes.byteLength });
     const salvaged = plainTextFromTxt(decodeHebrew(bytes)).replace(/[^\S\n]{3,}/g, " ");
+    onStage("legacy_doc_decode_done", { chars: salvaged.length });
     if (salvaged.length >= ACQUISITION_LIMITS.MIN_USABLE_TEXT && JUDGMENT_BODY_RE.test(salvaged)) {
       if (opts.validateText && !opts.validateText(salvaged)) {
         throw new Error("legacy_doc_docket_mismatch");
@@ -474,15 +502,26 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
   if (!opts.allowPlainText || !looksTextual) throw new Error("not_a_document_file");
   if (!isTrustedCourtTextHost(url)) throw new Error("plain_text_host_not_trusted");
 
-  const text = plainTextFromTxt(decodeHebrew(bytes));
+  gate("before_decode");
+  onStage("decode_start", { bytes: bytes.byteLength });
+  const decoded = decodeHebrew(bytes);
+  onStage("decode_done", { chars: decoded.length });
+  gate("before_clean");
+  onStage("clean_start", { chars: decoded.length });
+  const text = plainTextFromTxt(decoded);
+  onStage("clean_done", { chars: text.length });
+  gate("after_clean");
   if (text.length < ACQUISITION_LIMITS.MIN_USABLE_TEXT) {
     throw new Error("plain_text_below_threshold");
   }
   if (!JUDGMENT_BODY_RE.test(text)) throw new Error("plain_text_not_judgment_like");
+  onStage("identity_check_start");
   if (opts.validateText && !opts.validateText(text)) {
     throw new Error("plain_text_docket_mismatch");
   }
+  onStage("identity_check_passed", { chars: text.length });
   return text;
+
 }
 
 /** Method 2 — pull the full text we already store locally, by docket / title. */
