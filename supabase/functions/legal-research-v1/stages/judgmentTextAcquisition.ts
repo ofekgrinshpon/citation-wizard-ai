@@ -377,11 +377,13 @@ export interface DirectFileOptions {
   allowPlainText?: boolean;
   /** Extra gate applied to plain-text downloads (e.g. exact-docket check). */
   validateText?: (text: string) => boolean;
+  /** Hard network-layer abort for the underlying fetch. */
+  signal?: AbortSignal;
 }
 
 /** Method 1 — the URL already points at a judgment file. */
 export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): Promise<string> {
-  const { bytes, contentType } = await fetchBytes(url);
+  const { bytes, contentType } = await fetchBytes(url, opts.signal);
   // Content-type first, then extension, then magic bytes (court download
   // endpoints often serve octet-stream with no extension in the URL).
   const head = new TextDecoder("latin1").decode(bytes.slice(0, 8));
