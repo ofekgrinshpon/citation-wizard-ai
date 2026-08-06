@@ -58,7 +58,22 @@ export const SPECIFIC_CASE_LIMITS = {
   MAX_TARGETS: 2,
   /** Max derived court URLs probed per run. */
   MAX_DERIVED_URLS: 4,
+  /** Shape gate: largest body the deterministic lane will buffer/decode. */
+  MAX_PROBE_BYTES: 1_500_000,
+  /** When less than this remains on the stage budget, only tiny bodies. */
+  LOW_BUDGET_MS: 12_000,
+  LOW_BUDGET_MAX_BYTES: 300_000,
 } as const;
+
+/**
+ * Minimal view of the retrieval budget the deterministic lane consults.
+ * Kept structural so this module never imports the pipeline.
+ */
+export interface ProbeBudget {
+  exceeded(): boolean;
+  remaining(): number;
+  mark(name: string, detail?: Record<string, unknown>): void;
+}
 
 /**
  * Classify a derived-URL probe failure. Network-layer aborts get explicit
@@ -67,10 +82,13 @@ export const SPECIFIC_CASE_LIMITS = {
 function derivedFailureReason(err: unknown): string {
   const name = (err as { name?: string } | null)?.name ?? "";
   const msg = err instanceof Error ? err.message : String(err);
+  if (msg === "retrieval_timeout") return "retrieval_timeout";
+  if (msg === "body_too_large_for_budget") return "derived_url_body_too_large";
   if (name === "TimeoutError" || /timeout/i.test(msg)) return "derived_url_fetch_timeout";
   if (name === "AbortError" || /abort/i.test(msg)) return "derived_url_fetch_aborted";
   return `derived_url:${msg}`;
 }
+
 
 const CASE_LIKE_TYPES = new Set([
   "caselaw",
