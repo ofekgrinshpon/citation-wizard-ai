@@ -68,7 +68,8 @@ export type SpecificCaseAcquisitionMethod =
   | "direct_file_fetch"
   | "local_db_docket_lookup"
   | "wrapper_file_resolve"
-  | "court_url_derivation";
+  | "court_url_derivation"
+  | "pool_exact_docket_text";
 
 
 export interface SpecificCaseResolution {
