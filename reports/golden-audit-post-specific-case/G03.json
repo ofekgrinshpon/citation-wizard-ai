@@ -1,0 +1,81 @@
+{
+  "id": "G03",
+  "category": "specific_case_holding",
+  "query": "מה נקבע בע\"א 99887-04-22 לוי נ' כהן ביחס לאחריות פלטפורמה מקוונת לתוכן משתמשים?",
+  "run_id": "b2af28d0-935d-4740-865d-9101c0c4ab83",
+  "job_id": "78d382e5-b291-4e65-8b94-8f7901bb3abb",
+  "job_status": "done",
+  "job_error": null,
+  "wall_ms": 222438,
+  "pipeline_total_ms": 217160,
+  "retrieval_elapsed_ms": 27477,
+  "guard_triggered": false,
+  "research_mode": "specific_case",
+  "shape": "case_holding",
+  "branch": "docket_limitation",
+  "drafted": false,
+  "sufficiency_profile": null,
+  "sufficiency_passed": null,
+  "fast_lane": null,
+  "exact_docket_source_found": false,
+  "exact_docket_source_usable": false,
+  "specific_case_identity_passed": false,
+  "metadata_only_sources_used_as_holdings": null,
+  "commentary_carries_holding": null,
+  "synthesis_rendering": null,
+  "pool": {
+    "admitted": 25,
+    "tier_counts": {
+      "primary_mirror": 3,
+      "index_or_listing": 4,
+      "official_primary": 8,
+      "secondary_commentary": 10
+    },
+    "judgment_documents": 2,
+    "judgments_with_holding_text": 0
+  },
+  "text_usability_counts": {
+    "metadata_only": 10,
+    "substantive_excerpt": 9,
+    "listing_page": 4,
+    "full_text": 2
+  },
+  "role_counts": {
+    "persuasive_case_law": 11,
+    "primary_statute": 5,
+    "binding_case_law": 9
+  },
+  "used_sources": [],
+  "used_sources_count": 0,
+  "footnotes_count": 0,
+  "footnote1": null,
+  "is_stub": false,
+  "verifier": {
+    "by_support": {
+      "direct": 0,
+      "partial": 8,
+      "unrelated": 11,
+      "tangential": 6
+    },
+    "by_role_match": {
+      "true": 24,
+      "false": 1
+    },
+    "model_verdicts": 25,
+    "by_support_model": {
+      "direct": 0,
+      "partial": 8,
+      "unrelated": 11,
+      "tangential": 6
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "answer_len": 345,
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}
