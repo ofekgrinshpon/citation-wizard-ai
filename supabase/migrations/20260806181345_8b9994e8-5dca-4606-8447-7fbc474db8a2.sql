@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.reap_stale_research_jobs(interval) TO postgres;
