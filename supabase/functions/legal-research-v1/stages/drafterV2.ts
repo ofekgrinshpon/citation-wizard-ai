@@ -1101,13 +1101,28 @@ export async function runDrafterV2(
     missingAnchors.push(...synthesizedDocketMissing);
   }
 
-  const statuteSectionLimitationActive =
-    missingAnchors.some((a) => a.is_statute_section) &&
-    (shape === "definition" || shape === "quote");
   // Specific-case gate: in `specific_case` mode the exact requested docket
   // must have been resolved with usable text. Otherwise refuse, whatever the
   // analyzer's shape guess was (P02: noisy pool must not defeat the guard).
   const specificCaseGate = opts?.specificCaseGate ?? null;
+  // Conversely: when the gate *did* resolve the exact docket with usable text
+  // (fast lane or pool), the defensive docket guard must not re-synthesize a
+  // missing anchor for that same docket — the body is in hand (R01/B2).
+  if (specificCaseGate?.allow === true && specificCaseGate.docket_display) {
+    const resolvedNumbers = requestedDockets.map((d) => d.number);
+    const display = specificCaseGate.docket_display;
+    for (let i = missingAnchors.length - 1; i >= 0; i--) {
+      const a = missingAnchors[i];
+      if (!a.is_docket) continue;
+      const matchesResolved = a.description.includes(display) ||
+        resolvedNumbers.some((n) => a.description.includes(n));
+      if (matchesResolved) missingAnchors.splice(i, 1);
+    }
+  }
+
+  const statuteSectionLimitationActive =
+    missingAnchors.some((a) => a.is_statute_section) &&
+    (shape === "definition" || shape === "quote");
   const specificCaseRefusal = !!specificCaseGate && specificCaseGate.allow === false;
   if (specificCaseRefusal && specificCaseGate?.docket_display) {
     const display = specificCaseGate.docket_display;
