@@ -498,7 +498,7 @@ export async function runSpecificCaseResolution(
           break;
         }
         if (got.length >= SPECIFIC_CASE_LIMITS.MIN_USABLE_TEXT) {
-          applyText(c, normText(got), method);
+          applyText(c, got, method);
           break;
         }
         recordFailure(res, "extracted_text_below_threshold");
@@ -630,12 +630,12 @@ export async function runSpecificCaseResolution(
           res.derived_url_resolved = url;
           markStage("candidate_normalization_start", { url });
           const target = targets[0];
-          if (target) applyText(target, normText(got), "court_url_derivation");
+          if (target) applyText(target, got, "court_url_derivation");
           else {
             injectFromText(
               res.requested_docket_display ?? "פסק דין",
               url,
-              normText(got),
+              got,
               "court_url_derivation",
             );
           }
