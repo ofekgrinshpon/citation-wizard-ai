@@ -1271,6 +1271,8 @@ async function handle(req: Request): Promise<Response> {
     last_acquisition_failure_reason: specificCase.last_acquisition_failure_reason,
     acquisition_success: specificCase.acquisition_success,
     acquired_text_length: specificCase.acquired_text_length,
+    exact_docket_candidate_id: specificCase.exact_docket_candidate_id,
+    specific_case_forced_usable,
     final_docket_branch_reason: specificCase.final_docket_branch_reason,
     near_match_sources_ignored_count: specificCase.near_match_sources_ignored_count,
     statute_section_limitation_fired: drafter.deterministic_branch === "statute_section_limitation",
