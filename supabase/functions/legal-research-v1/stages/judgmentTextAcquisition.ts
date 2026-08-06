@@ -536,6 +536,7 @@ export async function tryWrapperResolve(
   const res = await fetch(url, {
     redirect: "follow",
     headers: { "User-Agent": "Mozilla/5.0 (compatible; ReLexBot/1.0)" },
+    ...(opts.signal ? { signal: opts.signal } : {}),
   });
   if (!res.ok) throw new Error(`http_${res.status}`);
   const html = (await res.text()).slice(0, 400_000);
