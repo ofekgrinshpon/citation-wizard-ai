@@ -87,6 +87,7 @@ function derivedFailureReason(err: unknown): string {
   const msg = err instanceof Error ? err.message : String(err);
   if (msg === "retrieval_timeout") return "retrieval_timeout";
   if (msg === "body_too_large_for_budget") return "derived_url_body_too_large";
+  if (msg === "binary_too_large_for_extraction") return "derived_url_binary_too_large_for_extraction";
   if (name === "TimeoutError" || /timeout/i.test(msg)) return "derived_url_fetch_timeout";
   if (name === "AbortError" || /abort/i.test(msg)) return "derived_url_fetch_aborted";
   return `derived_url:${msg}`;
@@ -498,7 +499,7 @@ export async function runSpecificCaseResolution(
           break;
         }
         if (got.length >= SPECIFIC_CASE_LIMITS.MIN_USABLE_TEXT) {
-          applyText(c, normText(got), method);
+          applyText(c, got, method);
           break;
         }
         recordFailure(res, "extracted_text_below_threshold");
@@ -630,12 +631,12 @@ export async function runSpecificCaseResolution(
           res.derived_url_resolved = url;
           markStage("candidate_normalization_start", { url });
           const target = targets[0];
-          if (target) applyText(target, normText(got), "court_url_derivation");
+          if (target) applyText(target, got, "court_url_derivation");
           else {
             injectFromText(
               res.requested_docket_display ?? "פסק דין",
               url,
-              normText(got),
+              got,
               "court_url_derivation",
             );
           }

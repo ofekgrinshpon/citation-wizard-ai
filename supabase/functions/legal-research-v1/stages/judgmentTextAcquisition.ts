@@ -27,6 +27,8 @@ import {
   type JudgmentRank,
   type RankInput,
 } from "./judgmentCandidateRanking.ts";
+import { processExtractedBody } from "./postExtract.ts";
+
 
 export const ACQUISITION_LIMITS = {
   /** Per-method time box. */
@@ -46,6 +48,13 @@ export const ACQUISITION_LIMITS = {
    * is a real CPU sink and was killing the isolate mid-retrieval.
    */
   MAX_DECODE_BYTES: 1_200_000,
+  /**
+   * CPU guard: PDF/DOCX extraction is the single most expensive synchronous
+   * step in the isolate. Above this size we refuse deterministically
+   * (`binary_too_large_for_extraction`) instead of being killed mid-run.
+   */
+  MAX_EXTRACT_BYTES: 1_600_000,
+
   /** CPU guard: cap the character length fed to the text-cleaning regexes. */
   MAX_RAW_CHARS: 300_000,
   /** Legacy global cap (kept for reference; per-role budgets are used now). */
@@ -479,11 +488,31 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
     head.charCodeAt(0) === 0xd0 && head.charCodeAt(1) === 0xcf;
   if (isPdf || isDocx) {
     gate("before_binary_extract");
+    if (bytes.byteLength > ACQUISITION_LIMITS.MAX_EXTRACT_BYTES) {
+      // Deterministic refusal beats an isolate kill: extraction of a body this
+      // large reliably exhausts the edge CPU quota.
+      onStage("binary_too_large_for_extraction", {
+        bytes: bytes.byteLength,
+        limit: ACQUISITION_LIMITS.MAX_EXTRACT_BYTES,
+      });
+      throw new Error("binary_too_large_for_extraction");
+    }
     onStage("binary_extract_start", { kind: isPdf ? "pdf" : "docx", bytes: bytes.byteLength });
-    const out = normText(await extractDocumentText(bytes, isPdf ? "pdf" : "docx"));
-    onStage("binary_extract_done", { chars: out.length });
-    return out;
+    const extracted = await extractDocumentText(bytes, isPdf ? "pdf" : "docx");
+    onStage("binary_extract_done", { chars: extracted.length });
+
+    onStage("binary_extract_done", { chars: extracted.length });
+    // Never clean/normalize/identity-match a multi-hundred-kilochar extraction
+    // in one synchronous pass — that is what killed the isolate.
+    const processed = await processExtractedBody(extracted, {
+      onStage,
+      budgetExceeded: opts.budgetExceeded,
+      validateText: opts.validateText,
+    });
+    gate("after_post_extract");
+    return processed.text;
   }
+
   if (isLegacyDoc && !head.startsWith("PK")) {
     // mammoth cannot read OLE2 .doc; salvage readable Hebrew runs instead.
     gate("before_legacy_doc_decode");

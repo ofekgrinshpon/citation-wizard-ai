@@ -893,6 +893,14 @@ export type Database = {
           read_ct: number
         }[]
       }
+      reap_stale_research_jobs: {
+        Args: { _max_age?: string }
+        Returns: {
+          prior_stage: string
+          reaped_id: string
+          stale_seconds: number
+        }[]
+      }
       rebuild_hnsw_index: { Args: never; Returns: undefined }
       refund_credits: {
         Args: { _reason: string; _request_id: string }
