@@ -480,10 +480,19 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
   if (isPdf || isDocx) {
     gate("before_binary_extract");
     onStage("binary_extract_start", { kind: isPdf ? "pdf" : "docx", bytes: bytes.byteLength });
-    const out = normText(await extractDocumentText(bytes, isPdf ? "pdf" : "docx"));
-    onStage("binary_extract_done", { chars: out.length });
-    return out;
+    const extracted = await extractDocumentText(bytes, isPdf ? "pdf" : "docx");
+    onStage("binary_extract_done", { chars: extracted.length });
+    // Never clean/normalize/identity-match a multi-hundred-kilochar extraction
+    // in one synchronous pass — that is what killed the isolate.
+    const processed = await processExtractedBody(extracted, {
+      onStage,
+      budgetExceeded: opts.budgetExceeded,
+      validateText: opts.validateText,
+    });
+    gate("after_post_extract");
+    return processed.text;
   }
+
   if (isLegacyDoc && !head.startsWith("PK")) {
     // mammoth cannot read OLE2 .doc; salvage readable Hebrew runs instead.
     gate("before_legacy_doc_decode");
