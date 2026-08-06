@@ -66,3 +66,33 @@ Not: job creation failure (rows exist), not verifier-specific hang (stalls at th
 2. **Continue G04–G20 strictly one at a time** (no parallel triggering) — the audit runner's batching is what produced the stranded rows, not a product defect.
 3. No backend code fix is required to proceed; the concurrency limit is worth a separate track if real users may run parallel research jobs.
 4. Optional hygiene: mark the pre-existing stale `running` rows as failed so they stop polluting audit tables.
+
+## 6. Addendum — G02 solo rerun (13:34Z, CONC=1, no code changes)
+
+| field | value |
+|---|---|
+| run_id | `80f64f4c-6215-4d79-a6f6-4a37f915089e` |
+| job_id | `261bcbf6-10e4-4547-a337-ee3e1f998513` |
+| launched | 13:34:51Z, **strictly alone** (no other fixture in flight) |
+| status after ~19 min | `running`, stage `retrieval`, `error` NULL |
+| qa_logs row | none |
+| outcome | `poll_timeout` |
+
+**This falsifies the concurrency-only classification.** G02 stalls in `retrieval`
+even as the only in-flight job, so the earlier stranded runs are not fully explained
+by batch parallelism; parallelism at most aggravates a G02-specific retrieval hang
+(query: `ע"א 6821/93` Bank Mizrahi, the heaviest specific-case fixture — it previously
+completed only once, at 09:47 in 3m22s).
+
+### Audit status
+- **Batch-parallel execution remains unsupported for this audit** — all fixtures run one at a time.
+- **G04–G20 NOT started.** Per the stop rule ("if a single sequential run gets stuck, stop and investigate"),
+  the audit is paused pending investigation of the G02 retrieval hang.
+- Pre-existing stale `running` rows (2026-07-31 → 2026-08-06 12:57) are old parallel jobs and are ignored.
+
+### Per-fixture results so far
+| id | run_id | job_id | branch | drafted/refused | grade | source pack | primary leads | metadata-only holding | commentary-carried | runtime | stale/verifier-fail/stub | bottleneck |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| G01 Ka'adan | `4a47b287…` | recorded | fast-lane exact docket | drafted | good | official Supreme Court body + 3 supports | yes | no | no | ~3–4 min | no | none |
+| G02 Mizrahi | `80f64f4c…` | `261bcbf6…` | — | neither (hung) | technical failure | n/a | n/a | n/a | n/a | >19 min, no completion | **stale job: yes** | retrieval stage hang |
+| G03 fake docket | `78d382e5…` | recorded | `docket_limitation` | refused | good | 0 sources (correct) | n/a | no | no | ~2 min | no | none |
