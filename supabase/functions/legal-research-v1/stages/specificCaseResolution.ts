@@ -390,6 +390,9 @@ export async function runSpecificCaseResolution(
       allowPlainText: true,
       validateText: (text: string) =>
         dockets.some((d) => textContainsExactDocket(text.slice(0, 20000), d)),
+      // Hard network-layer teardown: `withTimeout` alone is advisory
+      // (Promise.race), so a stalled court host could leak past it.
+      signal: AbortSignal.timeout(SPECIFIC_CASE_LIMITS.PER_METHOD_MS),
     };
     const plan: SpecificCaseAcquisitionMethod[] = [];
     if (url && isDirectFileUrl(url)) plan.push("direct_file_fetch");
