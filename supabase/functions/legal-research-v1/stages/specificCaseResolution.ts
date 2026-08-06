@@ -325,6 +325,34 @@ export async function runSpecificCaseResolution(
     allow_case_holding_answer: false,
   };
 
+  // ── Budget + diagnostics plumbing ──────────────────────────────────────
+  const markStage = (name: string, detail?: Record<string, unknown>) => {
+    if (res.probe_stages.length < 120) {
+      res.probe_stages.push({ name, at_ms: Date.now() - t0, ...(detail ? { detail } : {}) });
+    }
+    input.budget?.mark(`probe:${name}`, detail);
+  };
+  /** Time left on the tighter of the stage box and the retrieval budget. */
+  const remainingMs = (): number => {
+    const stage = SPECIFIC_CASE_LIMITS.TOTAL_MS - (Date.now() - t0);
+    const outer = input.budget ? input.budget.remaining() : Number.POSITIVE_INFINITY;
+    return Math.min(stage, outer);
+  };
+  /** True when no further expensive work may start. */
+  const outOfBudget = (): boolean => remainingMs() <= 0;
+  /** Shape gate: how many bytes we can still afford to buffer/decode. */
+  const probeMaxBytes = (): number =>
+    remainingMs() < SPECIFIC_CASE_LIMITS.LOW_BUDGET_MS
+      ? SPECIFIC_CASE_LIMITS.LOW_BUDGET_MAX_BYTES
+      : SPECIFIC_CASE_LIMITS.MAX_PROBE_BYTES;
+  const budgetStop = (where: string) => {
+    res.budget_exceeded = true;
+    markStage("budget_exhausted", { where });
+    recordFailure(res, "retrieval_timeout");
+  };
+
+
+
   // ── Partition the admitted pool ────────────────────────────────────────
   const exact: Candidate[] = [];
   for (const c of input.candidates) {
