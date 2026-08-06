@@ -318,8 +318,14 @@ async function fetchBytes(
   const contentType = (res.headers.get("content-type") || "").toLowerCase();
   // Read with a hard byte cap and cancel the rest of the stream: court hosts
   // serve multi-MB bodies slowly, and buffering all of them is the dominant
-  // wall/CPU cost. Nothing beyond MAX_DECODE_BYTES is ever decoded anyway.
-  const CAP = Math.min(ACQUISITION_LIMITS.MAX_BYTES, ACQUISITION_LIMITS.MAX_DECODE_BYTES + 65_536);
+  // wall/CPU cost. Text bodies are capped at the decode window (nothing beyond
+  // it is ever decoded); binary documents keep the full MAX_BYTES envelope
+  // because truncating a PDF/DOCX would break extraction.
+  const binary = /pdf|wordprocessingml|officedocument|msword|octet-stream/.test(contentType) ||
+    /\.(pdf|docx?|zip)(\?|#|$)/i.test(url);
+  const CAP = binary
+    ? ACQUISITION_LIMITS.MAX_BYTES
+    : Math.min(ACQUISITION_LIMITS.MAX_BYTES, ACQUISITION_LIMITS.MAX_DECODE_BYTES + 65_536);
   const reader = res.body?.getReader();
   if (!reader) return { bytes: new Uint8Array(0), contentType };
   const chunks: Uint8Array[] = [];
