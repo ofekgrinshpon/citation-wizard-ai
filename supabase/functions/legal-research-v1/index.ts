@@ -653,7 +653,9 @@ async function handle(req: Request): Promise<Response> {
       candidates: pool.candidates,
       skip_derived_urls: fastLaneEligible,
       prior_derived_urls: fastLane?.derived_urls_probed ?? [],
+      budget,
     });
+
   // The post-retrieval pass may add telemetry but must never *downgrade* a
   // successful fast-lane result (R01/B2: the fast-lane body was being lost).
   if (fastLane && specificCase !== fastLane) {
