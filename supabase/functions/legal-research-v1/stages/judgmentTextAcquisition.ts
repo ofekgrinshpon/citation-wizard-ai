@@ -48,6 +48,13 @@ export const ACQUISITION_LIMITS = {
    * is a real CPU sink and was killing the isolate mid-retrieval.
    */
   MAX_DECODE_BYTES: 1_200_000,
+  /**
+   * CPU guard: PDF/DOCX extraction is the single most expensive synchronous
+   * step in the isolate. Above this size we refuse deterministically
+   * (`binary_too_large_for_extraction`) instead of being killed mid-run.
+   */
+  MAX_EXTRACT_BYTES: 1_600_000,
+
   /** CPU guard: cap the character length fed to the text-cleaning regexes. */
   MAX_RAW_CHARS: 300_000,
   /** Legacy global cap (kept for reference; per-role budgets are used now). */
