@@ -306,29 +306,26 @@ export async function runSpecificCaseResolution(
     res.exact_docket_source_url = exact[0].source_url ?? null;
   }
 
-  const alreadyUsable = exact.find(isUsableJudgmentText);
-  if (alreadyUsable) {
-    res.exact_docket_source_title = alreadyUsable.title;
-    res.exact_docket_source_url = alreadyUsable.source_url ?? null;
-    res.exact_docket_source_usable = true;
-    res.allow_case_holding_answer = true;
-    res.final_docket_branch_reason = "exact_docket_usable_text";
-    res.acquired_text_length = availableText(alreadyUsable).length;
-    res.ms = Date.now() - t0;
-    return res;
-  }
-
-  // ── Bounded acquisition ────────────────────────────────────────────────
-  res.text_acquisition_attempted = true;
-  const targets = exact.slice(0, SPECIFIC_CASE_LIMITS.MAX_TARGETS);
-
-  const applyText = (c: Candidate, text: string, method: SpecificCaseAcquisitionMethod) => {
+  /**
+   * Stamp an exact-docket judgment body onto a candidate so every downstream
+   * gate (identity, sufficiency, drafter input-source builder) can see that
+   * this candidate *is* the requested judgment with real text. Used both for
+   * acquired bodies and for pool candidates that already carried usable text.
+   */
+  const stampBody = (c: Candidate, text: string, method: SpecificCaseAcquisitionMethod) => {
     const stored = text.slice(0, SPECIFIC_CASE_LIMITS.MAX_TEXT);
     const integ = integrityOf(c);
     const usability = stored.length >= 1200 ? "full_text" : "substantive_excerpt";
     if (integ) {
       integ.text_usability = usability as SourceIntegrity["text_usability"];
       integ.has_holding_text = integ.has_holding_text || HOLDING_TEXT_RE.test(stored);
+      integ.citable_as = "judgment";
+      integ.is_judgment_document = true;
+      integ.reject = false;
+      delete integ.reject_reason;
+      if (OFFICIAL_HOST_RE.test(String(c.source_url ?? ""))) {
+        integ.authority_tier = "official_primary";
+      }
       integ.integrity_flags = [
         ...(integ.integrity_flags ?? []),
         "specific_case_text_acquired",
@@ -341,20 +338,42 @@ export async function runSpecificCaseResolution(
       exact_docket_match: true,
       docket_match: true,
       text_usability: usability,
+      usable_for_holding: true,
       specific_case_text_acquired: true,
       specific_case_acquisition_method: method,
     };
     if ((c.snippet || "").length < 300) c.snippet = stored.slice(0, 800);
-    res.acquisition_method = method;
-    res.acquisition_method_successful = method;
-    res.acquisition_success = true;
     res.acquired_text_length = stored.length;
     res.exact_docket_source_title = c.title;
     res.exact_docket_source_url = c.source_url ?? null;
     res.exact_docket_source_usable = true;
     res.allow_case_holding_answer = true;
+    res.exact_docket_candidate_id = c.candidate_id;
+  };
+
+  const alreadyUsable = exact.find(isUsableJudgmentText);
+  if (alreadyUsable) {
+    // The body is already in hand: stamp it so it survives to the drafter.
+    // `acquisition_success` stays false (nothing was fetched) — the refusal
+    // decision keys on `exact_docket_source_usable` / the branch reason.
+    stampBody(alreadyUsable, availableText(alreadyUsable), "pool_exact_docket_text");
+    res.final_docket_branch_reason = "exact_docket_usable_text";
+    res.ms = Date.now() - t0;
+    return res;
+  }
+
+  // ── Bounded acquisition ────────────────────────────────────────────────
+  res.text_acquisition_attempted = true;
+  const targets = exact.slice(0, SPECIFIC_CASE_LIMITS.MAX_TARGETS);
+
+  const applyText = (c: Candidate, text: string, method: SpecificCaseAcquisitionMethod) => {
+    stampBody(c, text, method);
+    res.acquisition_method = method;
+    res.acquisition_method_successful = method;
+    res.acquisition_success = true;
     res.final_docket_branch_reason = "exact_docket_text_acquired";
   };
+
 
   for (const c of targets) {
     if (res.acquisition_success) break;
