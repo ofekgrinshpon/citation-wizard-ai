@@ -52,6 +52,12 @@ export class RetrievalBudget {
     return this.elapsed() > this.deadline_ms;
   }
 
+  /** Milliseconds left before the hard deadline (never negative-infinite). */
+  remaining(): number {
+    return this.deadline_ms - this.elapsed();
+  }
+
+
   /** Record a checkpoint and (fire-and-forget) persist the trail. */
   mark(name: string, detail?: Record<string, unknown>): void {
     this.checkpoints.push({ name, at_ms: this.elapsed(), ...(detail ? { detail } : {}) });
