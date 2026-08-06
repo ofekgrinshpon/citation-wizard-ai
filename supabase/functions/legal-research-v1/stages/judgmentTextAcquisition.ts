@@ -329,8 +329,15 @@ async function fetchBytes(
   // wall/CPU cost. Text bodies are capped at the decode window (nothing beyond
   // it is ever decoded); binary documents keep the full MAX_BYTES envelope
   // because truncating a PDF/DOCX would break extraction.
-  const binary = /pdf|wordprocessingml|officedocument|msword|octet-stream/.test(contentType) ||
-    /\.(pdf|docx?|zip)(\?|#|$)/i.test(url);
+  // court.gov.il serves plain .txt verdict downloads as application/octet-stream,
+  // so the URL extension wins over the content-type when it is explicit: a .txt
+  // body must stay on the truncatable text path, never the binary one.
+  const textExt = /\.(txt|htm|html)(\?|&|#|$)/i.test(url) || /type=[24](&|$)/i.test(url);
+  const binaryExt = /\.(pdf|docx?|zip|z01)(\?|&|#|$)/i.test(url);
+  const binary = binaryExt ||
+    (!textExt &&
+      /pdf|wordprocessingml|officedocument|msword|octet-stream/.test(contentType));
+
   let CAP = binary
     ? ACQUISITION_LIMITS.MAX_BYTES
     : Math.min(ACQUISITION_LIMITS.MAX_BYTES, ACQUISITION_LIMITS.MAX_DECODE_BYTES + 65_536);
