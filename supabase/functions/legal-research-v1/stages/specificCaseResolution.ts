@@ -39,6 +39,9 @@ import {
 
 const SPECIFIC_CASE_MODE = "specific_case";
 
+/** Official judgment hosts — tier upgrades are limited to these. */
+const OFFICIAL_HOST_RE = /(^|\/\/|\.)((supremedecisions|elyon\d*)\.court\.gov\.il|court\.gov\.il|gov\.il)(\/|$)/i;
+
 export const SPECIFIC_CASE_LIMITS = {
   /** Minimum characters that count as real judgment text. */
   MIN_USABLE_TEXT: 400,
