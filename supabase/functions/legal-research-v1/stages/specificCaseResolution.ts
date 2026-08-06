@@ -187,6 +187,10 @@ function disabled(
     acquired_text_length: 0,
     derived_urls_probed: [],
     derived_url_resolved: null,
+    budget_exceeded: false,
+    probe_stages: [],
+
+
 
     final_docket_branch_reason: reason,
     allow_case_holding_answer: true,
