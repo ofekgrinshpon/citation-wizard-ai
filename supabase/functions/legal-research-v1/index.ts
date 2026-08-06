@@ -992,9 +992,29 @@ async function handle(req: Request): Promise<Response> {
 
 
   await markStage("drafter");
+  // Specific-case handoff: the docket-verified judgment body must reach the
+  // drafter's input sources even if the verifier never marked it usable — it
+  // is the one source the question is about (identity already validated).
+  const exactDocketCandidateId = specificCase.exact_docket_candidate_id ??
+    specificCase.injected_candidate_id;
+  let specific_case_forced_usable: string | null = null;
+  if (
+    specificCaseGate?.allow === true && exactDocketCandidateId &&
+    pool.candidates.some((c) => c.candidate_id === exactDocketCandidateId) &&
+    !verifier.usable.some((u) => u.candidate_id === exactDocketCandidateId)
+  ) {
+    verifier.usable.unshift({
+      candidate_id: exactDocketCandidateId,
+      best_support: "direct",
+      role_match: true,
+      verdict_claim_ids: [],
+    });
+    specific_case_forced_usable = exactDocketCandidateId;
+  }
   // Pre-compute required-anchor statuses (before drafter; used set is empty
   // here — recomputed post-drafter for the final debug record).
   const usableIdSet = new Set(verifier.usable.map((u) => u.candidate_id));
+
   const preDraftAnchorStatuses = computeRequiredAnchorStatuses({
     anchors: requiredAnchors,
     candidates: pool.candidates,
