@@ -1,0 +1,92 @@
+{
+  "id": "G12",
+  "category": "statute_section_analysis",
+  "query": "מהו הנוסח המדויק של סעיף 8 לחוק יסוד: כבוד האדם וחירותו (פסקת ההגבלה)?",
+  "run_id": "a6dcc7c5-42ac-4bbd-b330-ec995f511a2b",
+  "job_id": "9224a6df-4b3a-41ba-aeb9-1fdb41fd8657",
+  "job_status": "done",
+  "job_error": null,
+  "wall_ms": 117896,
+  "pipeline_total_ms": 107240,
+  "retrieval_elapsed_ms": 12280,
+  "guard_triggered": false,
+  "research_mode": "canonical_quote",
+  "shape": "quote",
+  "branch": "statute_section_quote_refusal",
+  "drafted": false,
+  "sufficiency_profile": null,
+  "sufficiency_passed": null,
+  "fast_lane": null,
+  "exact_docket_source_found": false,
+  "exact_docket_source_usable": false,
+  "specific_case_identity_passed": true,
+  "metadata_only_sources_used_as_holdings": null,
+  "commentary_carries_holding": null,
+  "synthesis_rendering": null,
+  "pool": {
+    "admitted": 14,
+    "tier_counts": {
+      "primary_mirror": 1,
+      "index_or_listing": 1,
+      "official_primary": 6,
+      "secondary_commentary": 6
+    },
+    "judgment_documents": 0,
+    "judgments_with_holding_text": 0
+  },
+  "text_usability_counts": {
+    "metadata_only": 5,
+    "substantive_excerpt": 5,
+    "full_text": 3,
+    "listing_page": 1
+  },
+  "role_counts": {
+    "primary_statute": 12,
+    "government_report": 2
+  },
+  "used_sources": [
+    {
+      "title": "חוק יסוד: כבוד האדם וחירותו",
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "type": "legislation",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    }
+  ],
+  "used_sources_count": 1,
+  "footnotes_count": 1,
+  "footnote1": {
+    "title": "חוק יסוד: כבוד האדם וחירותו",
+    "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+    "type": "legislation"
+  },
+  "is_stub": false,
+  "verifier": {
+    "by_support": {
+      "direct": 2,
+      "partial": 8,
+      "unrelated": 1,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 13,
+      "false": 1
+    },
+    "model_verdicts": 14,
+    "by_support_model": {
+      "direct": 2,
+      "partial": 8,
+      "unrelated": 1,
+      "tangential": 3
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "answer_len": 264,
+  "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 8 לחוק-יסוד: כבוד האדם וחירותו; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
+}
