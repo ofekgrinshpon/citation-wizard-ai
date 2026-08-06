@@ -648,10 +648,40 @@ async function handle(req: Request): Promise<Response> {
       skip_derived_urls: fastLaneEligible,
       prior_derived_urls: fastLane?.derived_urls_probed ?? [],
     });
+  // The post-retrieval pass may add telemetry but must never *downgrade* a
+  // successful fast-lane result (R01/B2: the fast-lane body was being lost).
+  if (fastLane && specificCase !== fastLane) {
+    if (fastLane.derived_urls_probed.length > 0 && specificCase.derived_urls_probed.length === 0) {
+      specificCase.derived_urls_probed = fastLane.derived_urls_probed;
+    }
+    specificCase.derived_url_resolved ??= fastLane.derived_url_resolved;
+    if (fastLane.exact_docket_source_found && !specificCase.exact_docket_source_found) {
+      specificCase.exact_docket_source_found = true;
+      specificCase.exact_docket_source_title ??= fastLane.exact_docket_source_title;
+      specificCase.exact_docket_source_url ??= fastLane.exact_docket_source_url;
+    }
+    if (fastLane.exact_docket_source_usable && !specificCase.exact_docket_source_usable) {
+      specificCase.exact_docket_source_usable = true;
+      specificCase.allow_case_holding_answer = true;
+      specificCase.final_docket_branch_reason = fastLane.final_docket_branch_reason;
+      specificCase.acquisition_success = specificCase.acquisition_success ||
+        fastLane.acquisition_success;
+      specificCase.acquisition_method ??= fastLane.acquisition_method;
+      specificCase.acquisition_method_successful ??= fastLane.acquisition_method_successful;
+    }
+    if (fastLane.acquired_text_length > specificCase.acquired_text_length) {
+      specificCase.acquired_text_length = fastLane.acquired_text_length;
+    }
+    specificCase.injected_candidate_id ??= fastLane.injected_candidate_id;
+    specificCase.exact_docket_candidate_id ??= fastLane.exact_docket_candidate_id;
+  }
   budget.mark("specific_case_resolution_done", {
     acquisition_success: specificCase.acquisition_success,
+    exact_docket_source_usable: specificCase.exact_docket_source_usable,
+    exact_docket_candidate_id: specificCase.exact_docket_candidate_id,
     fast_lane_hit: fastLaneHit,
   });
+
 
 
   // ─── Specific-case judgment identity + title recovery ───────────────────
@@ -667,7 +697,11 @@ async function handle(req: Request): Promise<Response> {
     specificCase.enabled || specificCaseIdentity.specific_case_identity_required
       ? {
           allow:
-            (!specificCase.enabled || specificCase.allow_case_holding_answer) &&
+            (!specificCase.enabled ||
+              // Key on usable exact-docket text, never on the post-retrieval
+              // `acquisition_success` flag alone.
+              specificCase.exact_docket_source_usable ||
+              specificCase.allow_case_holding_answer) &&
             specificCaseIdentity.specific_case_identity_passed,
           docket_display:
             specificCase.requested_docket_display ?? specificCaseIdentity.requested_docket,
@@ -676,6 +710,7 @@ async function handle(req: Request): Promise<Response> {
             : specificCase.final_docket_branch_reason,
         }
       : null;
+
 
   const role_corrections = pplx.per_query.flatMap((pq) =>
     pq.results
@@ -957,9 +992,29 @@ async function handle(req: Request): Promise<Response> {
 
 
   await markStage("drafter");
+  // Specific-case handoff: the docket-verified judgment body must reach the
+  // drafter's input sources even if the verifier never marked it usable — it
+  // is the one source the question is about (identity already validated).
+  const exactDocketCandidateId = specificCase.exact_docket_candidate_id ??
+    specificCase.injected_candidate_id;
+  let specific_case_forced_usable: string | null = null;
+  if (
+    specificCaseGate?.allow === true && exactDocketCandidateId &&
+    pool.candidates.some((c) => c.candidate_id === exactDocketCandidateId) &&
+    !verifier.usable.some((u) => u.candidate_id === exactDocketCandidateId)
+  ) {
+    verifier.usable.unshift({
+      candidate_id: exactDocketCandidateId,
+      best_support: "direct",
+      role_match: true,
+      verdict_claim_ids: [],
+    });
+    specific_case_forced_usable = exactDocketCandidateId;
+  }
   // Pre-compute required-anchor statuses (before drafter; used set is empty
   // here — recomputed post-drafter for the final debug record).
   const usableIdSet = new Set(verifier.usable.map((u) => u.candidate_id));
+
   const preDraftAnchorStatuses = computeRequiredAnchorStatuses({
     anchors: requiredAnchors,
     candidates: pool.candidates,
@@ -1216,6 +1271,8 @@ async function handle(req: Request): Promise<Response> {
     last_acquisition_failure_reason: specificCase.last_acquisition_failure_reason,
     acquisition_success: specificCase.acquisition_success,
     acquired_text_length: specificCase.acquired_text_length,
+    exact_docket_candidate_id: specificCase.exact_docket_candidate_id,
+    specific_case_forced_usable,
     final_docket_branch_reason: specificCase.final_docket_branch_reason,
     near_match_sources_ignored_count: specificCase.near_match_sources_ignored_count,
     statute_section_limitation_fired: drafter.deterministic_branch === "statute_section_limitation",
