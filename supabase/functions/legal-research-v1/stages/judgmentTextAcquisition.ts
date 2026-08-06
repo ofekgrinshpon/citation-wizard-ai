@@ -27,6 +27,8 @@ import {
   type JudgmentRank,
   type RankInput,
 } from "./judgmentCandidateRanking.ts";
+import { processExtractedBody } from "./postExtract.ts";
+
 
 export const ACQUISITION_LIMITS = {
   /** Per-method time box. */
