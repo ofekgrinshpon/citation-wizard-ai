@@ -316,8 +316,34 @@ async function fetchBytes(
   });
   if (!res.ok) throw new Error(`http_${res.status}`);
   const contentType = (res.headers.get("content-type") || "").toLowerCase();
-  const buf = new Uint8Array(await res.arrayBuffer());
-  if (buf.byteLength > ACQUISITION_LIMITS.MAX_BYTES) throw new Error("file_too_large");
+  // Read with a hard byte cap and cancel the rest of the stream: court hosts
+  // serve multi-MB bodies slowly, and buffering all of them is the dominant
+  // wall/CPU cost. Nothing beyond MAX_DECODE_BYTES is ever decoded anyway.
+  const CAP = Math.min(ACQUISITION_LIMITS.MAX_BYTES, ACQUISITION_LIMITS.MAX_DECODE_BYTES + 65_536);
+  const reader = res.body?.getReader();
+  if (!reader) return { bytes: new Uint8Array(0), contentType };
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  try {
+    while (total < CAP) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (value) {
+        chunks.push(value);
+        total += value.byteLength;
+      }
+    }
+  } finally {
+    try {
+      await reader.cancel();
+    } catch { /* stream already closed */ }
+  }
+  const buf = new Uint8Array(total);
+  let off = 0;
+  for (const c of chunks) {
+    buf.set(c, off);
+    off += c.byteLength;
+  }
   return { bytes: buf, contentType };
 }
 
