@@ -305,10 +305,16 @@ export async function withTimeout<T>(p: Promise<T>, ms: number, label: string): 
   }
 }
 
+/** Fine-grained stage marker sink (diagnostics only). */
+export type StageSink = (name: string, detail?: Record<string, unknown>) => void;
+
 async function fetchBytes(
   url: string,
   signal?: AbortSignal,
+  opts: { onStage?: StageSink; maxBytes?: number } = {},
 ): Promise<{ bytes: Uint8Array; contentType: string }> {
+  const onStage = opts.onStage ?? (() => {});
+  onStage("fetch_start", { url });
   const res = await fetch(url, {
     redirect: "follow",
     headers: { "User-Agent": "Mozilla/5.0 (compatible; ReLexBot/1.0)" },
@@ -316,6 +322,8 @@ async function fetchBytes(
   });
   if (!res.ok) throw new Error(`http_${res.status}`);
   const contentType = (res.headers.get("content-type") || "").toLowerCase();
+  const declaredLength = Number(res.headers.get("content-length") || "0") || 0;
+  onStage("response_headers", { status: res.status, contentType, declaredLength });
   // Read with a hard byte cap and cancel the rest of the stream: court hosts
   // serve multi-MB bodies slowly, and buffering all of them is the dominant
   // wall/CPU cost. Text bodies are capped at the decode window (nothing beyond
@@ -323,9 +331,21 @@ async function fetchBytes(
   // because truncating a PDF/DOCX would break extraction.
   const binary = /pdf|wordprocessingml|officedocument|msword|octet-stream/.test(contentType) ||
     /\.(pdf|docx?|zip)(\?|#|$)/i.test(url);
-  const CAP = binary
+  let CAP = binary
     ? ACQUISITION_LIMITS.MAX_BYTES
     : Math.min(ACQUISITION_LIMITS.MAX_BYTES, ACQUISITION_LIMITS.MAX_DECODE_BYTES + 65_536);
+  if (opts.maxBytes && opts.maxBytes > 0) {
+    // Explicit shape gate (fast lane): a body declared larger than the caller
+    // can afford is refused up front instead of being buffered and decoded.
+    if (binary && declaredLength > opts.maxBytes) {
+      try {
+        await res.body?.cancel();
+      } catch { /* already closed */ }
+      onStage("body_too_large", { declaredLength, maxBytes: opts.maxBytes });
+      throw new Error("body_too_large_for_budget");
+    }
+    CAP = Math.min(CAP, opts.maxBytes);
+  }
   const reader = res.body?.getReader();
   if (!reader) return { bytes: new Uint8Array(0), contentType };
   const chunks: Uint8Array[] = [];
@@ -350,8 +370,10 @@ async function fetchBytes(
     buf.set(c, off);
     off += c.byteLength;
   }
+  onStage("body_read_done", { bytes: total, capped: total >= CAP });
   return { bytes: buf, contentType };
 }
+
 
 /**
  * Decode Hebrew bytes safely: UTF-8 first, windows-1255 fallback.
