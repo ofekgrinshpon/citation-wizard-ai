@@ -451,7 +451,7 @@ export async function runSpecificCaseResolution(
 
 
   for (const c of targets) {
-    if (res.acquisition_success) break;
+    if (res.acquisition_success || res.budget_exceeded) break;
     const url = c.source_url ?? null;
     // Identity already carries the exact docket (that is why `c` is a target),
     // so plain-text court downloads are permitted for it; the text itself must
@@ -464,35 +464,53 @@ export async function runSpecificCaseResolution(
         dockets.some((d) => textContainsExactDocket(text.slice(0, 20000), d)),
       // Hard network-layer teardown: `withTimeout` alone is advisory
       // (Promise.race), so a stalled court host could leak past it.
-      signal: AbortSignal.timeout(SPECIFIC_CASE_LIMITS.PER_METHOD_MS),
+      signal: AbortSignal.timeout(
+        Math.max(1000, Math.min(SPECIFIC_CASE_LIMITS.PER_METHOD_MS, remainingMs())),
+      ),
+      onStage: (n: string, d?: Record<string, unknown>) => markStage(`target:${n}`, d),
+      maxBytes: probeMaxBytes(),
+      budgetExceeded: outOfBudget,
     };
     const plan: SpecificCaseAcquisitionMethod[] = [];
     if (url && isDirectFileUrl(url)) plan.push("direct_file_fetch");
     if (url && WRAPPER_HOST_RE.test(url) && !isDirectFileUrl(url)) plan.push("wrapper_file_resolve");
     for (const method of plan) {
-      if (Date.now() - t0 > SPECIFIC_CASE_LIMITS.TOTAL_MS) {
-        recordFailure(res, "stage_time_budget_exhausted");
+      if (outOfBudget()) {
+        budgetStop(`target_probe:${method}`);
         break;
       }
       res.acquisition_methods_attempted.push(method);
+      markStage("target_probe_start", { method, url });
       try {
         const got = await withTimeout(
           method === "direct_file_fetch"
             ? tryDirectFile(url!, fileOpts)
             : tryWrapperResolve(url!, fileOpts),
-          SPECIFIC_CASE_LIMITS.PER_METHOD_MS,
+          Math.max(1000, Math.min(SPECIFIC_CASE_LIMITS.PER_METHOD_MS, remainingMs())),
           method,
         );
+        markStage("target_probe_returned", { method, chars: got.length });
+        if (outOfBudget()) {
+          budgetStop(`after_target_probe:${method}`);
+          break;
+        }
         if (got.length >= SPECIFIC_CASE_LIMITS.MIN_USABLE_TEXT) {
           applyText(c, normText(got), method);
           break;
         }
         recordFailure(res, "extracted_text_below_threshold");
       } catch (err) {
-        recordFailure(res, err instanceof Error ? err.message : String(err));
+        const reason = err instanceof Error ? err.message : String(err);
+        markStage("target_probe_failed", { method, reason });
+        recordFailure(res, reason);
+        if (reason === "retrieval_timeout") {
+          budgetStop(`target_probe_inner:${method}`);
+          break;
+        }
       }
     }
   }
+
 
   /**
    * Inject an acquired judgment body as a first-class candidate (used when the
