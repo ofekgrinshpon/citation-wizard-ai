@@ -578,8 +578,10 @@ export async function runSpecificCaseResolution(
     // Fast lane already probed these; carry the telemetry, spend nothing.
     res.derived_urls_probed = input.prior_derived_urls ?? [];
     recordFailure(res, "derived_urls_already_probed_in_fast_lane");
-  } else if (!res.acquisition_success && Date.now() - t0 <= SPECIFIC_CASE_LIMITS.TOTAL_MS) {
-
+  } else if (res.budget_exceeded) {
+    markStage("derived_urls_skipped_budget");
+  } else if (!res.acquisition_success && !outOfBudget()) {
+    markStage("derived_url_construction_start");
     const derived: string[] = [];
     for (const d of dockets) {
       for (const u of deriveSupremeCourtFileUrls(d)) {
@@ -587,15 +589,24 @@ export async function runSpecificCaseResolution(
       }
     }
     res.derived_urls_probed = derived.slice(0, SPECIFIC_CASE_LIMITS.MAX_DERIVED_URLS);
+    // Persist the probe list up front: the checkpoint must exist even if the
+    // isolate dies later in the loop.
+    markStage("derived_urls_constructed", { count: res.derived_urls_probed.length });
+    input.budget?.mark("derived_urls_probed", { count: res.derived_urls_probed.length });
     if (res.derived_urls_probed.length > 0) {
       res.acquisition_methods_attempted.push("court_url_derivation");
     }
     for (const url of res.derived_urls_probed) {
       if (res.acquisition_success) break;
-      if (Date.now() - t0 > SPECIFIC_CASE_LIMITS.TOTAL_MS) {
-        recordFailure(res, "stage_time_budget_exhausted");
+      if (outOfBudget()) {
+        budgetStop("derived_probe_loop");
         break;
       }
+      const perUrlMs = Math.max(
+        1000,
+        Math.min(SPECIFIC_CASE_LIMITS.PER_DERIVED_URL_MS, remainingMs()),
+      );
+      markStage("derived_probe_start", { url, per_url_ms: perUrlMs, max_bytes: probeMaxBytes() });
       try {
         const got = await withTimeout(
           tryDirectFile(url, {
@@ -603,13 +614,18 @@ export async function runSpecificCaseResolution(
             validateText: (text: string) =>
               dockets.some((d) => textContainsExactDocket(text.slice(0, 20000), d)),
             // Real abort: tears the socket down instead of leaking past the race.
-            signal: AbortSignal.timeout(SPECIFIC_CASE_LIMITS.PER_DERIVED_URL_MS),
+            signal: AbortSignal.timeout(perUrlMs),
+            onStage: (n, d) => markStage(`derived:${n}`, d),
+            maxBytes: probeMaxBytes(),
+            budgetExceeded: outOfBudget,
           }),
-          SPECIFIC_CASE_LIMITS.PER_DERIVED_URL_MS,
+          perUrlMs,
           "court_url_derivation",
         );
+        markStage("derived_probe_returned", { url, chars: got.length });
         if (got.length >= SPECIFIC_CASE_LIMITS.MIN_USABLE_TEXT) {
           res.derived_url_resolved = url;
+          markStage("candidate_normalization_start", { url });
           const target = targets[0];
           if (target) applyText(target, normText(got), "court_url_derivation");
           else {
@@ -620,23 +636,35 @@ export async function runSpecificCaseResolution(
               "court_url_derivation",
             );
           }
+          markStage("candidate_normalization_done", { url });
           break;
         }
         recordFailure(res, "derived_url_text_below_threshold");
       } catch (err) {
-        recordFailure(res, `${derivedFailureReason(err)}:${url}`);
+        const reason = derivedFailureReason(err);
+        markStage("derived_probe_failed", { url, reason });
+        recordFailure(res, `${reason}:${url}`);
+        if (reason === "retrieval_timeout") {
+          budgetStop("derived_probe_inner");
+          break;
+        }
       }
     }
+    markStage("derived_urls_probed_done", {
+      probed: res.derived_urls_probed.length,
+      resolved: res.derived_url_resolved,
+    });
   }
 
   // Local DB by normalized docket variants — also the only path when the pool
   // contains no exact-docket source at all.
-  if (!res.acquisition_success && Date.now() - t0 <= SPECIFIC_CASE_LIMITS.TOTAL_MS) {
+  if (!res.acquisition_success && !res.budget_exceeded && !outOfBudget()) {
     res.acquisition_methods_attempted.push("local_db_docket_lookup");
+    markStage("local_db_lookup_start");
     try {
       const local = await withTimeout(
         lookupLocalJudgment(input.admin, dockets),
-        SPECIFIC_CASE_LIMITS.PER_METHOD_MS,
+        Math.max(1000, Math.min(SPECIFIC_CASE_LIMITS.PER_METHOD_MS, remainingMs())),
         "local_db_docket_lookup",
       );
       if (local) {
@@ -652,7 +680,9 @@ export async function runSpecificCaseResolution(
     } catch (err) {
       recordFailure(res, err instanceof Error ? err.message : String(err));
     }
+    markStage("local_db_lookup_done", { success: res.acquisition_success });
   }
+
 
 
   if (!res.acquisition_success) {
