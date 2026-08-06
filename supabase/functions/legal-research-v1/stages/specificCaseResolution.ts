@@ -300,6 +300,8 @@ export interface SpecificCaseInput {
   skip_derived_urls?: boolean;
   /** Carried over for telemetry when `skip_derived_urls` is set. */
   prior_derived_urls?: string[];
+  /** Retrieval-stage budget; consulted around every probe and decode. */
+  budget?: ProbeBudget;
 }
 
 
@@ -312,6 +314,7 @@ export async function runSpecificCaseResolution(
 
   const dockets = detectDockets(input.question);
   if (dockets.length === 0) return disabled(mode, "no_docket_in_question");
+
 
   const res: SpecificCaseResolution = {
     ...disabled(mode, "no_exact_docket_source"),
