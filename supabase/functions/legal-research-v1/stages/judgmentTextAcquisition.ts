@@ -40,7 +40,7 @@ export const ACQUISITION_LIMITS = {
   /** Never store more than this — the snippet budget caps display anyway. */
   MAX_TEXT: 6000,
   /** Max bytes downloaded per file. */
-  MAX_BYTES: 3 * 1024 * 1024,
+  MAX_BYTES: 4 * 1024 * 1024,
   /**
    * CPU guard: never decode/normalize more than this many bytes of a raw
    * download. Judgment bodies we keep are capped at MAX_TEXT anyway, but
@@ -49,11 +49,18 @@ export const ACQUISITION_LIMITS = {
    */
   MAX_DECODE_BYTES: 1_200_000,
   /**
-   * CPU guard: PDF/DOCX extraction is the single most expensive synchronous
-   * step in the isolate. Above this size we refuse deterministically
-   * (`binary_too_large_for_extraction`) instead of being killed mid-run.
+   * Above this size a PDF/DOCX is routed through the bounded/chunked
+   * post-extract path with an explicit budget check between chunks, rather
+   * than the straight-through path. Extraction itself still runs.
    */
-  MAX_EXTRACT_BYTES: 1_600_000,
+  BOUNDED_EXTRACT_BYTES: 1_600_000,
+  /**
+   * Hard ceiling. Beyond this we fail closed with
+   * `binary_too_large_for_extraction` — extraction of a binary this large
+   * reliably exhausts the edge CPU quota.
+   */
+  MAX_EXTRACT_BYTES: 4 * 1024 * 1024,
+
 
   /** CPU guard: cap the character length fed to the text-cleaning regexes. */
   MAX_RAW_CHARS: 300_000,
