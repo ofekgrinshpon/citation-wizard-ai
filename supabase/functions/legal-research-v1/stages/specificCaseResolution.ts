@@ -113,6 +113,12 @@ export interface SpecificCaseResolution {
   near_match_sources_ignored: Array<{ title: string; url: string | null; reason: string }>;
   /** Candidate injected from the local DB, if any. */
   injected_candidate_id: string | null;
+  /**
+   * Candidate that actually carries the exact-docket judgment body — whether
+   * it was injected by acquisition or was already in the pool with usable
+   * text. Downstream gates key on this, never on `acquisition_success` alone.
+   */
+  exact_docket_candidate_id: string | null;
   ms: number;
 }
 
