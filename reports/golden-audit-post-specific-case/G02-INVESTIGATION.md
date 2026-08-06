@@ -96,3 +96,93 @@ completed only once, at 09:47 in 3m22s).
 | G01 Ka'adan | `4a47b287…` | recorded | fast-lane exact docket | drafted | good | official Supreme Court body + 3 supports | yes | no | no | ~3–4 min | no | none |
 | G02 Mizrahi | `80f64f4c…` | `261bcbf6…` | — | neither (hung) | technical failure | n/a | n/a | n/a | n/a | >19 min, no completion | **stale job: yes** | retrieval stage hang |
 | G03 fake docket | `78d382e5…` | recorded | `docket_limitation` | refused | good | 0 sources (correct) | n/a | no | no | ~2 min | no | none |
+
+---
+
+## 7. G02 retrieval-hang root cause (read-only, no code changes)
+
+### 7.1 Fixture
+- Question: `מה נקבע בע"א 6821/93 בנק המזרחי נ' מגדל כפר שיתופי ביחס לסמכות בית המשפט לבטל חוק הסותר חוק יסוד?`
+- Detected mode: `specific_case` (from checkpoint detail)
+- Detected docket: `ע"א 6821/93` → `aa:6821/93`, `fast_lane_eligible: true`
+- Wording **differs** from the passing R02 fixture (`מה נקבע בע"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?`) — longer, extra holding clause, "המזרחי" without "המאוחד". Docket detection and derived URLs are nevertheless identical.
+- Analyzer + planner both completed (`completed_stages = {analyzer, planner}`), so neither is implicated.
+
+### 7.2 Retrieval checkpoints (job `261bcbf6…`, run `80f64f4c…`)
+| checkpoint | present | at_ms |
+|---|---|---|
+| retrieval_started | yes | 0 |
+| deterministic_resolution_started | yes | 0 |
+| derived_urls_probed | **no** | — |
+| derived_url_resolved | no | — |
+| broad_retrieval_started | no | — |
+| broad_retrieval_done | no | — |
+| judgment_acquisition_done | no | — |
+| specific_case_resolution_done | no | — |
+| guard_triggered / retrieval_timeout | **no** | — |
+
+Job `created_at 13:34:51`, last write `13:35:59` (~68 s), `error` NULL. The identical
+signature appears on the earlier parallel run `85dcdf05…` (last checkpoint
+`deterministic_resolution_started`, ~82 s). Reproducible, not random.
+
+### 7.3 Where it stopped
+**Inside derived-URL probing.** In the fast lane `input.candidates` is empty, so
+`runSpecificCaseResolution` has no pool partition work and no `targets` loop; the
+only code between `deterministic_resolution_started` and the never-emitted
+`derived_urls_probed` mark is the `deriveSupremeCourtFileUrls` probe loop
+(`specificCaseResolution.ts:479–534`) — fetch → decode → text clean of up to 4
+court.gov.il URLs.
+
+### 7.4 Why the 90 s deadline produced no clean refusal
+- Run **was** classified `specific_case`; `RetrievalBudget` **was** created with
+  `deadline_ms = 90000` (`index.ts:555`).
+- The guard is only consulted **after** the fast lane returns: `budget.exceeded()`
+  at `index.ts:610` and the `budget.trigger("post_retrieval")` at `index.ts:839`.
+  Nothing inside `runSpecificCaseResolution` sees the budget — it enforces only its
+  own `SPECIFIC_CASE_LIMITS.TOTAL_MS = 32 s` / `PER_DERIVED_URL_MS = 6 s`.
+- Those inner boxes are `withTimeout` = `Promise.race` + `setTimeout`. They are
+  **advisory, not abortive**: `fetchBytes` passes no `AbortSignal`, so a stalled or
+  slow-trickling `res.arrayBuffer()` keeps running after the race rejects, and any
+  synchronous work (`decodeHebrew` up to 1.2 MB, `plainTextFromTxt`/`normText`
+  regexes up to 300 k chars, PDF/DOCX extraction) blocks the event loop so the
+  timer **cannot fire at all**.
+- Consequence: max theoretical async cost of the loop is 4 × 6 s ≈ 24 s, yet the run
+  produced no further checkpoint for 68 s and then went silent with no error —
+  i.e. the isolate was killed (CPU/wall limit) while inside a non-preemptible probe.
+  Nothing after it ever runs, so no `retrieval_timeout`, no failure write, row stays `running`.
+
+### 7.5 Comparison with passing R02 `5acd0dcb…`
+| | R02 (pass) | G02 (hang) |
+|---|---|---|
+| question | short, no holding clause | long, holding clause |
+| docket detection | `ע"א 6821/93` | identical |
+| fast_lane_hit | true | never reached |
+| derived_urls_probed | 4 | loop entered, never completed |
+| derived_url_resolved | EnglishVerdicts `93068210_Z01.txt` at 3462 ms | none |
+| retrieval elapsed | 4 462 ms | ≥ 68 s, no completion |
+| Perplexity | skipped (fast lane hit) | never reached |
+| local queries | 3 | 0 |
+| candidate pool | 6 | never built |
+| divergence point | — | inside the same probe loop R02 completed in 3.5 s |
+
+The two runs execute the *same* URL list; only the upstream court.gov.il response
+differs (R02 got a small 6 000-char English body; G02's probe never returned in
+bounded time). So the difference is environmental, and the code has no hard bound
+to contain it.
+
+### 7.6 Classification
+**Derived URL probe hang + deadline guard not enforced around the awaited retrieval call.**
+Both are the same defect: the fast-lane probe is time-boxed only by an
+un-abortable `Promise.race`, and the 90 s `RetrievalBudget` is never checked inside
+the fast lane. Not a fixture-wording bypass, not a docket-detection failure, not
+Perplexity, not the candidate pool, not a persistence bug (the heartbeat wrote
+exactly what it could before the isolate died).
+
+### 7.7 Minimal recommended fix (one)
+Make the derived-URL probe genuinely abortable: pass
+`signal: AbortSignal.timeout(SPECIFIC_CASE_LIMITS.PER_DERIVED_URL_MS)` into
+`fetchBytes` (and thread the same deadline through `tryDirectFile`), so a stalled
+court.gov.il response is torn down at the network layer instead of leaking past a
+`Promise.race`. The loop then always reaches `derived_urls_probed`, the 90 s budget
+guard is reached, and G02 either drafts or fires a persisted
+`retrieval_timeout` / `docket_limitation` — never stale `running`.
