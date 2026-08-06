@@ -1,0 +1,93 @@
+[
+  {
+    "id": "R01",
+    "run_id": "51823652-83de-4e4c-8790-586743e7554e",
+    "total_ms": 190595,
+    "pipeline_total_ms": 186257,
+    "job_status": null,
+    "job_error": null,
+    "mode": null,
+    "deterministic_branch": null,
+    "drafted": true,
+    "retrieval_elapsed_ms": 22254,
+    "guard_triggered": false,
+    "fast_lane": null,
+    "exact_docket_source_found": true,
+    "exact_docket_source_usable": true,
+    "exact_docket_candidate_id": "86536925-e288-49a0-a84e-bd266660587c",
+    "injected_candidate_id": null,
+    "specific_case_forced_usable": null,
+    "acquisition_success": false,
+    "acquired_text_length": 6000,
+    "final_docket_branch_reason": "exact_docket_usable_text",
+    "specific_case_identity_passed": true,
+    "identity_failure_reason": null,
+    "used_sources_count": 2,
+    "footnotes": [
+      {
+        "title": "פסק דין מתוך אתר ממשלתי (gov.il); חוק-יסוד: כבוד האדם וחירותו",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C95%5C980%5C066%5CA14&fileName=95066980_a14.txt&type=2",
+        "type": "compound"
+      },
+      {
+        "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C95%5C980%5C066%5CA14&fileName=95066980_a14.txt&type=2",
+        "type": "caselaw"
+      }
+    ],
+    "is_stub": false,
+    "verifier_failure": null,
+    "answer_head": "**עיקרי ההחלטה**\n\nבית המשפט קבע כי מינהל מקרקעי ישראל חייב לפעול בהקצאת מקרקעי מדינה על‑פי אמות‑מידה שוויוניות, וכי מדיניות המפליה או ההדרה של מבקשים על יסוד השתייכות דתית־לאומית היא פסולה מבחינה משפטית.¹\n\nבג\"ץ 6698/95 דן בתלונתם של עאדל ואימאן קעדאן על הדרתם ממנגנון הקבלה ליישוב קהילתי שהוקם על קרקע מדינה; בפסק‑הדין נקבע כי הדרתם מחמת היותם ערבים או לא‑יהודים איננה יסוד חוקי לקבלה ליישוב הנשען על נכס ציבורי.²\n\nבית המשפט לא הורה על קבלה מיידית של העותרים ליישוב; הסעד שניתן הוא הוראה למינהל לשקול מחדש את בקשותיהם בהתאם לקריטריונים שוויוניים וללא שימוש בקריטריונים מפלים.²\n\nההכרעה מדגישה את חובת השוויון החלה על הרשות המינהלית עצמה. לעומת זאת, בשאלה האם הסדר של העברת סמכויות לגוף פרטי או אחר עלו"
+  },
+  {
+    "id": "B2",
+    "run_id": "4062e868-656e-43aa-a9a9-97f9e3d8daa4",
+    "total_ms": 200166,
+    "pipeline_total_ms": 198192,
+    "job_status": null,
+    "job_error": null,
+    "mode": null,
+    "deterministic_branch": null,
+    "drafted": true,
+    "retrieval_elapsed_ms": 15914,
+    "guard_triggered": false,
+    "fast_lane": null,
+    "exact_docket_source_found": true,
+    "exact_docket_source_usable": true,
+    "exact_docket_candidate_id": "defec6c7-c3f6-46d8-a93f-073275767688",
+    "injected_candidate_id": null,
+    "specific_case_forced_usable": null,
+    "acquisition_success": false,
+    "acquired_text_length": 6000,
+    "final_docket_branch_reason": "exact_docket_usable_text",
+    "specific_case_identity_passed": true,
+    "identity_failure_reason": null,
+    "used_sources_count": 4,
+    "footnotes": [
+      {
+        "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C95%5C980%5C066%5CA14&fileName=95066980_a14.txt&type=2",
+        "type": "caselaw"
+      },
+      {
+        "title": "מסמך מאתר he.wikisource.org",
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%A8%D7%A9%D7%95%D7%AA_%D7%9E%D7%A7%D7%A8%D7%A7%D7%A2%D7%99_%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+        "type": "israeli_law"
+      },
+      {
+        "title": "עשרים שנה לבנק הזמרחי: סיפורה הפיקנטי של חוקת הכלאיים הישראלית; בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_de4b01f3397b42efbccf10f0c3de1167.pdf",
+        "type": "compound"
+      }
+    ],
+    "is_stub": false,
+    "verifier_failure": null,
+    "answer_head": "**פסק‑דין בג\"ץ קעדאן (בג\"ץ 6698/95)**\n\nבית המשפט קבע כי הקצאת מקרקעי מדינה למגורים המיועדת ליהודים בלבד מהווה הפליה ופוגעת בעקרון השוויון, ולכן אינה חוקית; פסק‑דין זה מחייב את מינהל מקרקעי ישראל ביחס למדיניות הקצאות למגורים.¹\n\nבהכרעתו בית המשפט הורה על בחינה מחודשת של בקשות העותרים להתיישב בשטח שנדון, והכריע כי יש לשקול בקשות להתקבלות למגורים על בסיס שוויוני — אין לדחות בקשה רק משום שאינה נובעת משייכות ל\"קהילה יהודית\".¹\n\nניתן לפרש את פסק‑הדין גם כמשדר מסר עקרוני כלפי אמצעי עקיפה: העברת סמכויות או שימוש בגורמים מתווכים לא יכולים לשמש כדרך לעקוף איסור הפליה המוטל על השלטון; טענה זו נתמכת ברקע החקיקתי ובהספרות בנוגע להעברות מקרקעין ולחובות הרשות, אך יש לראות בה פרשנות משלימה לטקסט הפסוק ולא כהצ"
+  },
+  {
+    "id": "R02",
+    "run_id": "45993574-8ebc-4093-819b-032945e723f5",
+    "error": "poll_timeout",
+    "job": null
+  }
+]
