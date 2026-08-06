@@ -59,9 +59,11 @@ export const SPECIFIC_CASE_LIMITS = {
   /** Max derived court URLs probed per run. */
   MAX_DERIVED_URLS: 4,
   /** Shape gate: largest body the deterministic lane will buffer/decode.
-   *  Must stay above real Supreme Court judgment PDFs (~2.4 MB) — the stall
-   *  protection comes from abort signals and budget gates, not from this cap. */
-  MAX_PROBE_BYTES: 3 * 1024 * 1024,
+   *  Must stay at/above the extraction hard ceiling (4 MB) so real Supreme
+   *  Court judgment PDFs (~2.4 MB) are never rejected before extraction — the
+   *  stall protection comes from abort signals, chunking and budget gates. */
+  MAX_PROBE_BYTES: 4 * 1024 * 1024,
+
 
   /** When less than this remains on the stage budget, only tiny bodies. */
   LOW_BUDGET_MS: 12_000,
