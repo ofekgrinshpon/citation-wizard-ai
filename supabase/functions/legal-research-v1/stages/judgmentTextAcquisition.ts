@@ -305,10 +305,14 @@ export async function withTimeout<T>(p: Promise<T>, ms: number, label: string): 
   }
 }
 
-async function fetchBytes(url: string): Promise<{ bytes: Uint8Array; contentType: string }> {
+async function fetchBytes(
+  url: string,
+  signal?: AbortSignal,
+): Promise<{ bytes: Uint8Array; contentType: string }> {
   const res = await fetch(url, {
     redirect: "follow",
     headers: { "User-Agent": "Mozilla/5.0 (compatible; ReLexBot/1.0)" },
+    ...(signal ? { signal } : {}),
   });
   if (!res.ok) throw new Error(`http_${res.status}`);
   const contentType = (res.headers.get("content-type") || "").toLowerCase();
