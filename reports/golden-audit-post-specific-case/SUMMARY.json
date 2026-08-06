@@ -430,5 +430,245 @@
     },
     "answer_len": 2202,
     "answer": "**שורה תחתונה**\n\nבית המשפט מתקשה להרימו של מסך ההתאגדות אלא בנסיבות חריגות; מפסק‑דין מרכזי שנמצא עולה שדיוק ראייתי ומסמכים מבניים לגבי בעלות ושליטה הם מרכיב מרכזי בבקשה להרים את המסך.²\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nרע\"א 7614/21 (איטנים י.ר. בניה וחיזוק מבנים בע\"מ נ׳ מגרש 901 בגוש 6158) דן בעיקר בהיבטים פרוצדורליים ובמשמעות של רישום בעלי מניות וזכויות כראיות מבניות בעת בקשת הרמת מסך, ומספק דוגמאות ראייתיות שניתן לדרוש בבקשה כזו.²\n\nע\"א 5028/22 (יצחק סיבוני נ׳ עו\"ד שגיא רוזנק בתפקידו כנאמן לנכסי החייב יצח) מטפל בנסיבות של הסתרת נכסים והעברת נכסים במסגרת הליכים כונס/נאמן; בפסק‑דין זה מודגש שתיעוד העברות וראיות למסירת נכסים עשויים לחזק בקשה להרמת מסך, אך לא קיים בו נוסח מחייב מבחינה כללית שנקבע ככלל יחידני.³\n\n**יישומים בפסיקה שנמצאה**\n\n- רע\"א 7614/21 – פסק‑דין מאופיין יישם את ההסתכלות הראייתית: בית המשפט הדגיש את חשיבות דוחי רישום, דיווחים שנתיים ומסמכים הנוגעים לבעלות ולזכויות כשאלמנטים מבניים שתומכים בטענת התחמקות או ניצול צורת ההתאגדות.²\n- ע\"א 5028/22 – הדיון בענייני הסתרת נכסים וניעות נכסים על‑ידי נאמן שימש כהנחיה לאופן שבו בתי המשפט בוחנים מסמכים לגבי העברות נכסים שעשויות להעיד על תכלית תחמקות, אם כי הפסק‑דין אינו מולבש כנוסח מבחן יחיד.³\n\n**מגבלות והבחנות**\n\nמהחומר הממוצא בפסק‑דין 7614/21 ניכר שכריח לשים דגש על הליכי גילוי וראיות מוסמכות; ההרמה אינה אוטומטית גם כאשר קיימת שליטה מוחלטת פורמלית, וככלל בתי המשפט מתמקדים בלשון הראיות ובקשר הסיבתי בין השימוש בצורת ההתאגדות לבין הפגיעה בנושים.²\n\nפסק‑דין 5028/22 ממחיש הבחנה נוספת: כאשר הדיון נסוב סביב העברות נכסים בין גורמים או פעולות נאמנות, בית המשפט בוחן את עובדות ההעברה וההליכים הכספיים במלואם וכך נמנע מהקביעה הכללית על הרמת מסך ללא בחינה פרטנית של נסיבות ההעברה.³\n\n**הרקע החקיקתי**\n\nחוק החברות קובע את המסגרת החוקית הרלוונטית לאחריות מוגבלת ולהרמת מסך; בימינו סעיף 6 בחוק מהווה עוגן נורמטיבי המעניק לבית‑המשפט סמכות לייחס חובות של חברה לבעל מניה בנסיבות מתאימות.⁴\n\nרקע היסטורי וסקירת נוסחי פקודת החברות מספקים את המסגרת של עקרון האחריות המוגבלת וההגנות שנועדו לו, ומשמשים לקונטקסט פרשני בעת בחינת בקשות להרמה.⁵\n\n**מה לא ניתן לקבוע מהמקורות**\n\nנמצא אזכור ומקור מטא‑דאטה לפסק‑דין בתיק ת\"א 2020‑98, אך הטקסט המלא לא חולץ ולכן אינו מאפשר לגזור ממנו הלכה, יישום או סייג עובדתי; אי‑זמינות זו מהווה פער בבחינת חלוקת ההלכות שנמצאו.¹"
+  },
+  {
+    "id": "G07",
+    "category": "case_law_synthesis",
+    "query": "מה הפסיקה אומרת על מבחן ההשתלבות לקביעת יחסי עובד-מעביד?",
+    "run_id": "56549b47-c24d-4389-987a-012455369159",
+    "error": "job_failed",
+    "job": {
+      "id": "3f45c561-c99d-44a5-974f-a098bc4fdfbe",
+      "status": "failed",
+      "current_stage": "retrieval",
+      "error": "stale_worker_timeout",
+      "created_at": "2026-08-06T21:52:46.585826+00:00"
+    }
+  },
+  {
+    "id": "G08",
+    "category": "case_law_synthesis",
+    "query": "מה הפסיקה אומרת על מבחני המידתיות בביקורת חוקתית?",
+    "run_id": "fa76766a-184a-4d98-ae4c-3895837de47a",
+    "job_id": "76e03a9c-72d6-4a8b-92ed-84db9179f4fd",
+    "job_status": "done",
+    "job_error": null,
+    "wall_ms": 149602,
+    "pipeline_total_ms": 139817,
+    "retrieval_elapsed_ms": 26944,
+    "guard_triggered": false,
+    "research_mode": "case_law_synthesis",
+    "shape": "analysis",
+    "branch": "insufficient_sources_limitation",
+    "drafted": false,
+    "sufficiency_profile": "case_law_synthesis",
+    "sufficiency_passed": false,
+    "fast_lane": null,
+    "exact_docket_source_found": false,
+    "exact_docket_source_usable": false,
+    "specific_case_identity_passed": true,
+    "metadata_only_sources_used_as_holdings": null,
+    "commentary_carries_holding": null,
+    "synthesis_rendering": null,
+    "pool": {
+      "admitted": 26,
+      "tier_counts": {
+        "primary_mirror": 2,
+        "statute_mirror": 2,
+        "index_or_listing": 3,
+        "official_primary": 3,
+        "secondary_commentary": 16
+      },
+      "judgment_documents": 3,
+      "judgments_with_holding_text": 1
+    },
+    "text_usability_counts": {
+      "full_text": 8,
+      "metadata_only": 9,
+      "listing_page": 3,
+      "substantive_excerpt": 6
+    },
+    "role_counts": {
+      "binding_case_law": 10,
+      "primary_statute": 2,
+      "scholarship": 10,
+      "persuasive_case_law": 4
+    },
+    "used_sources": [],
+    "used_sources_count": 0,
+    "footnotes_count": 0,
+    "footnote1": null,
+    "is_stub": false,
+    "verifier": {
+      "by_support": {
+        "direct": 7,
+        "partial": 12,
+        "unrelated": 4,
+        "tangential": 3
+      },
+      "by_role_match": {
+        "true": 24,
+        "false": 2
+      },
+      "model_verdicts": 26,
+      "by_support_model": {
+        "direct": 7,
+        "partial": 12,
+        "unrelated": 4,
+        "tangential": 3
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "answer_len": 395,
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): בג\"ץ 3752/10; פסק-דין בתיק בג\"ץ 1308/17; בג\"ץ 3390/16; המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות."
+  },
+  {
+    "id": "G09",
+    "category": "statute_section_analysis",
+    "query": "מהי חובת תום הלב במשא ומתן לפי סעיף 12 לחוק החוזים (חלק כללי), תשל\"ג-1973?",
+    "run_id": "8ace9a8b-ab36-4b9b-8ac3-abf46f7f731e",
+    "job_id": "f63ea078-c18a-4743-92e7-656a2eca624a",
+    "job_status": "done",
+    "job_error": null,
+    "wall_ms": 170160,
+    "pipeline_total_ms": 168966,
+    "retrieval_elapsed_ms": 12044,
+    "guard_triggered": false,
+    "research_mode": "statute_section_definition",
+    "shape": "definition",
+    "branch": null,
+    "drafted": true,
+    "sufficiency_profile": "statute_section_definition",
+    "sufficiency_passed": true,
+    "fast_lane": null,
+    "exact_docket_source_found": false,
+    "exact_docket_source_usable": false,
+    "specific_case_identity_passed": true,
+    "metadata_only_sources_used_as_holdings": null,
+    "commentary_carries_holding": null,
+    "synthesis_rendering": {
+      "groups": {
+        "secondary_context": [],
+        "usable_authorities": [],
+        "found_but_not_usable": [],
+        "statutory_background": []
+      },
+      "reason": "not_synthesis_mode",
+      "group_counts": {
+        "secondary_context": 0,
+        "usable_authorities": 0,
+        "found_but_not_usable": 0,
+        "statutory_background": 0
+      },
+      "named_case_keys": [],
+      "named_cases_in_body": 0,
+      "usable_judgments_named": 0,
+      "synthesis_rendering_applied": false,
+      "commentary_used_as_primary_authority": false,
+      "metadata_only_sources_used_as_holdings": false
+    },
+    "pool": {
+      "admitted": 23,
+      "tier_counts": {
+        "primary_mirror": 1,
+        "statute_mirror": 2,
+        "index_or_listing": 1,
+        "official_primary": 4,
+        "secondary_commentary": 15
+      },
+      "judgment_documents": 1,
+      "judgments_with_holding_text": 0
+    },
+    "text_usability_counts": {
+      "metadata_only": 9,
+      "substantive_excerpt": 10,
+      "listing_page": 1,
+      "full_text": 3
+    },
+    "role_counts": {
+      "primary_statute": 9,
+      "scholarship": 8,
+      "binding_case_law": 5,
+      "persuasive_case_law": 1
+    },
+    "used_sources": [
+      {
+        "title": "חוק החוזים (חלק כללי) – סעיף 12",
+        "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+        "type": "legislation",
+        "tier": "official_primary",
+        "usability": "metadata_only"
+      },
+      {
+        "title": "ע\"א 1463-22 הפטריארכיה היוונית אורתודוכסית של ירושלים נ׳ הימנותא בע\"מ פסק דין (14.12.2021)",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-1463-22-%d7%94%d7%a4%d7%98%d7%a8%d7%99%d7%90%d7%a8%d7%9b%d7%99%d7%94-%d7%94%d7%99%d7%95%d7%95%d7%a0%d7%99%d7%aa-%d7%90%d7%95%d7%a8%d7%aa%d7%95%d7%93%d7%95%d7%9b%d7%a1%d7%99%d7%aa-%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "type": "caselaw",
+        "tier": "secondary_commentary",
+        "usability": "substantive_excerpt"
+      },
+      {
+        "title": "תום לב בחוזים ואשם ביצירת החוזה",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%D7%94_0.pdf",
+        "type": "other",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only"
+      },
+      {
+        "title": "סעיף 12 לחוק החתים: תום לב גמשא ומתן",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%97%D7%95%D7%A7%20%D7%94%D7%97%D7%AA%D7%99%D7%9D%20%D7%94%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%99%D7%9D%20%E2%80%94%20%D7%9B%D7%95%D7%A8%D7%97%20%D7%94%D7%9E%D7%A6%D7%99%D7%90%D7%95%D7%AA.pdf",
+        "type": "other",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only"
+      },
+      {
+        "title": "סעיף 12 לחוק החתים: תום לב במשא ומתן",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+        "type": "academic",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only"
+      }
+    ],
+    "used_sources_count": 5,
+    "footnotes_count": 5,
+    "footnote1": {
+      "title": "חוק החוזים (חלק כללי) – סעיף 12",
+      "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+      "type": "legislation"
+    },
+    "is_stub": false,
+    "verifier": {
+      "by_support": {
+        "direct": 4,
+        "partial": 12,
+        "unrelated": 7,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 23,
+        "false": 0
+      },
+      "model_verdicts": 23,
+      "by_support_model": {
+        "direct": 4,
+        "partial": 12,
+        "unrelated": 7,
+        "tangential": 0
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "answer_len": 2298,
+    "answer": "**סעיף 12 לחוק החוזים — נוסח והגדרה**\n\nסעיף 12 קובע: \"במשא ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך מקובלת ובתום לב. צד שלא נהג בדרך מקובלת ולא בתום לב חייב לצד השני פיצויים בעד הנזק שנגרם לו עקב המשא ומתן או עקב כריתת החוזה.\".¹\n\nהגדרת החובה לפי נוסח הסעיף היא חובה התנהגותית במישור המשא ומתן — חובת נהיגה ‘‘בדרך מקובלת ובתום לב’’ שנועדה לסדר את אופני ההתנהלות בין הצדדים בשלב הקדם־חוזי.¹\n\nבאשר לתוכן המעמדי של התום־לב במשא ומתן, בספרות מזהים באופן מקובל מספר מרכיבים מעשיים: כנות בהצגת העובדות והכוונות, איסור הטעיה והצגה חלקית מטעה, הימנעות מניצול אפשרויות לניגודי עניינים או מנצלות של חוסר מודעות הצד השני, ובמקרים מסוימים חובת גילוי מוגבלת לגבי עובדות מהותיות. טענות אלה נתמכות בפרשנות ספרותית לסעיף 12 אך יש להן אופי פרשני ולא נוסח משפטי מפורט בסעיף עצמו.⁴\n\nהיקף החובה: לפי הנוסח החקיקתי החובה חלה \"במשא ומתן לקראת כריתתו של חוזה\" — כלומר בשלב שבו ניהול המשא ומתן מיועד להוליך לכריתת חוזה. שאלות פרטניות לגבי מי חלה עליו החובה (למשל צד שה inició או צד שסיים משא ומתן) ובאיזה מידה היא נמשכת לאחר כריתת החוזה נדונות בפירושים ספרותיים ובפסיקה ואין להוראות המפרשות במפורש בסעיף.¹\n\nההשלכות המשפטיות: הסעיף קובע סעד פיצויים לצד שנפגע מהמשא ומתן או מכריתת החוזה; בפסיקה ובספרות הפיצוי המובהק שנדון הוא פיצויי הסתמכות ביחס לנזק שנגרם עקב ההסתמכות על המשא ומתן, אך בפסיקה נדונו גם פתרונות חריגים כגון פיצויי קיום במקרים מיוחדים. נקיטת הסעד מותנית בהוכחת נזק וקשר סיבתי בין ההפרה לבין הנזק.²\n\nהוכחת קשר סיבתי ונזק: בתי המשפט דורשים הוכחה עובדית של הנזק וקשר סיבתי מעשה־מעשה בין המעשים החסרי תום הלב לבין ההסתמכות או ההפסד שנגרם. גישות כלכליות וספרותיות דנו בכלים לקביעת נזק ובהערכת הקשר הסיבתי, אך הדרישות הבסיסיות להוכחה מוכרות בפסיקה כמבחן עובדתי.³\n\nגבולות והחרגות: לא תיתכן חובת גילוי מוחלטת בכל משא ומתן; בספרות מציינים כי חובת גילוי תגבר במצבים של הונאה או הצגה חלקית מטעה, וכן ביחסי אמון מיוחדים בין הצדדים, וזאת במקום ובמידה שבהן היעדר גילוי הותיר את הצד השני במצב של תלות משמעותית. יש דיון ספרותי בשאלה אם מבחן תום הלב הוא בעיקר אובייקטיבי או משלב שיקול סובייקטיבי, ואין על כך נוסח אחד בחוק.⁵\n\nסיכום קצר: מעמדו של סעיף 12 הוא חובת התנהגות קדם־חוזית המחייבת נהיגה בדרך מקובלת ובתום לב והסעד הוא פיצוי על נזק שנגרם מהמשא ומתן או מכריתת החוזה; פרטיו המעשיים, היקפם והגבולות שלהם מפותחים בפרשנות הספרותית ובפסיקה, כאשר בתי המשפט בוחנים הוכחת נזק וקשר סיבתי ובמקרים יוצאי דופן שוקלים סעד חלופי.¹"
   }
 ]
