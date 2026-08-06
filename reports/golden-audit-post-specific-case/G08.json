@@ -1,0 +1,83 @@
+{
+  "id": "G08",
+  "category": "case_law_synthesis",
+  "query": "מה הפסיקה אומרת על מבחני המידתיות בביקורת חוקתית?",
+  "run_id": "fa76766a-184a-4d98-ae4c-3895837de47a",
+  "job_id": "76e03a9c-72d6-4a8b-92ed-84db9179f4fd",
+  "job_status": "done",
+  "job_error": null,
+  "wall_ms": 149602,
+  "pipeline_total_ms": 139817,
+  "retrieval_elapsed_ms": 26944,
+  "guard_triggered": false,
+  "research_mode": "case_law_synthesis",
+  "shape": "analysis",
+  "branch": "insufficient_sources_limitation",
+  "drafted": false,
+  "sufficiency_profile": "case_law_synthesis",
+  "sufficiency_passed": false,
+  "fast_lane": null,
+  "exact_docket_source_found": false,
+  "exact_docket_source_usable": false,
+  "specific_case_identity_passed": true,
+  "metadata_only_sources_used_as_holdings": null,
+  "commentary_carries_holding": null,
+  "synthesis_rendering": null,
+  "pool": {
+    "admitted": 26,
+    "tier_counts": {
+      "primary_mirror": 2,
+      "statute_mirror": 2,
+      "index_or_listing": 3,
+      "official_primary": 3,
+      "secondary_commentary": 16
+    },
+    "judgment_documents": 3,
+    "judgments_with_holding_text": 1
+  },
+  "text_usability_counts": {
+    "full_text": 8,
+    "metadata_only": 9,
+    "listing_page": 3,
+    "substantive_excerpt": 6
+  },
+  "role_counts": {
+    "binding_case_law": 10,
+    "primary_statute": 2,
+    "scholarship": 10,
+    "persuasive_case_law": 4
+  },
+  "used_sources": [],
+  "used_sources_count": 0,
+  "footnotes_count": 0,
+  "footnote1": null,
+  "is_stub": false,
+  "verifier": {
+    "by_support": {
+      "direct": 7,
+      "partial": 12,
+      "unrelated": 4,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 24,
+      "false": 2
+    },
+    "model_verdicts": 26,
+    "by_support_model": {
+      "direct": 7,
+      "partial": 12,
+      "unrelated": 4,
+      "tangential": 3
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "answer_len": 395,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): בג\"ץ 3752/10; פסק-דין בתיק בג\"ץ 1308/17; בג\"ץ 3390/16; המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות."
+}
