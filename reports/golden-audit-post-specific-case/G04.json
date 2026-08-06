@@ -1,0 +1,81 @@
+{
+  "id": "G04",
+  "category": "specific_case_holding",
+  "query": "מה נקבע בת\"א 1234/09 כהן נ' לוי בעניין הפרת חוזה?",
+  "run_id": "ff2f39c8-5a66-4c3d-bb3b-0db525d48ce3",
+  "job_id": "23514fd8-db1e-4747-95f0-404ce68abe76",
+  "job_status": "done",
+  "job_error": null,
+  "wall_ms": 202653,
+  "pipeline_total_ms": 196417,
+  "retrieval_elapsed_ms": 23236,
+  "guard_triggered": false,
+  "research_mode": "specific_case",
+  "shape": "case_holding",
+  "branch": "docket_limitation",
+  "drafted": false,
+  "sufficiency_profile": null,
+  "sufficiency_passed": null,
+  "fast_lane": null,
+  "exact_docket_source_found": false,
+  "exact_docket_source_usable": false,
+  "specific_case_identity_passed": false,
+  "metadata_only_sources_used_as_holdings": null,
+  "commentary_carries_holding": null,
+  "synthesis_rendering": null,
+  "pool": {
+    "admitted": 24,
+    "tier_counts": {
+      "primary_mirror": 2,
+      "index_or_listing": 4,
+      "official_primary": 4,
+      "secondary_commentary": 14
+    },
+    "judgment_documents": 1,
+    "judgments_with_holding_text": 0
+  },
+  "text_usability_counts": {
+    "metadata_only": 12,
+    "listing_page": 4,
+    "full_text": 2,
+    "substantive_excerpt": 6
+  },
+  "role_counts": {
+    "primary_statute": 3,
+    "binding_case_law": 6,
+    "persuasive_case_law": 15
+  },
+  "used_sources": [],
+  "used_sources_count": 0,
+  "footnotes_count": 0,
+  "footnote1": null,
+  "is_stub": false,
+  "verifier": {
+    "by_support": {
+      "direct": 0,
+      "partial": 7,
+      "unrelated": 8,
+      "tangential": 9
+    },
+    "by_role_match": {
+      "true": 22,
+      "false": 2
+    },
+    "model_verdicts": 24,
+    "by_support_model": {
+      "direct": 0,
+      "partial": 7,
+      "unrelated": 8,
+      "tangential": 9
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "answer_len": 341,
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ת\"א 1234/09 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}
