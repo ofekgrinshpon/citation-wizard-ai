@@ -844,9 +844,12 @@ async function handle(req: Request): Promise<Response> {
   // with explicit acquisition telemetry rather than drafting from whatever the
   // pool happens to contain.
   if (
-    !is_sources_only && fastLaneEligible && budget.exceeded() &&
+    !is_sources_only && fastLaneEligible &&
+    (budget.exceeded() || specificCase.budget_exceeded === true ||
+      fastLane?.budget_exceeded === true) &&
     !specificCase.acquisition_success
   ) {
+
     budget.trigger("post_retrieval");
     const docketLabel = fastLaneDockets.map((d) => `${d.prefix_he} ${d.number}`).join(", ");
     const answer =
