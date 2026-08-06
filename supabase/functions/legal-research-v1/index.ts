@@ -577,14 +577,20 @@ async function handle(req: Request): Promise<Response> {
       research_mode: researchMode,
       question,
       candidates: fastLaneCandidates,
+      budget,
     });
-    budget.mark("derived_urls_probed", { count: fastLane.derived_urls_probed?.length ?? 0 });
+    budget.mark("derived_urls_probed", {
+      count: fastLane.derived_urls_probed?.length ?? 0,
+      budget_exceeded: fastLane.budget_exceeded,
+      probe_stages: fastLane.probe_stages.slice(-20),
+    });
     if (fastLane.acquisition_success) {
       budget.mark("derived_url_resolved", {
         methods: fastLane.acquisition_methods_attempted,
       });
     }
   }
+
   const fastLaneHit = fastLane?.acquisition_success === true;
 
   // ── Broad retrieval (skipped/narrowed once the fast lane already won) ───
@@ -647,7 +653,9 @@ async function handle(req: Request): Promise<Response> {
       candidates: pool.candidates,
       skip_derived_urls: fastLaneEligible,
       prior_derived_urls: fastLane?.derived_urls_probed ?? [],
+      budget,
     });
+
   // The post-retrieval pass may add telemetry but must never *downgrade* a
   // successful fast-lane result (R01/B2: the fast-lane body was being lost).
   if (fastLane && specificCase !== fastLane) {
@@ -836,9 +844,12 @@ async function handle(req: Request): Promise<Response> {
   // with explicit acquisition telemetry rather than drafting from whatever the
   // pool happens to contain.
   if (
-    !is_sources_only && fastLaneEligible && budget.exceeded() &&
+    !is_sources_only && fastLaneEligible &&
+    (budget.exceeded() || specificCase.budget_exceeded === true ||
+      fastLane?.budget_exceeded === true) &&
     !specificCase.acquisition_success
   ) {
+
     budget.trigger("post_retrieval");
     const docketLabel = fastLaneDockets.map((d) => `${d.prefix_he} ${d.number}`).join(", ");
     const answer =
@@ -1472,10 +1483,27 @@ async function handle(req: Request): Promise<Response> {
   });
   }; // end runPipeline
 
+  // Terminal-state watchdog: a job row must never be left `running` with a
+  // NULL error. If the pipeline neither resolves nor throws within the hard
+  // wall budget, persist a controlled failure.
+  const WATCHDOG_MS = 9 * 60_000;
+  let settled = false;
+  const watchdog = setTimeout(() => {
+    if (settled) return;
+    settled = true;
+    void setJobStatus({
+      status: "error",
+      error: "pipeline_watchdog_timeout",
+      current_stage: null,
+    });
+  }, WATCHDOG_MS) as unknown as number;
+
   const bg = (async () => {
     try {
       const resp = await runPipeline();
       const payload = await resp.clone().json().catch(() => null);
+      if (settled) return;
+      settled = true;
       if (resp.status === 200) {
         await setJobStatus({ status: "done", result: payload });
       } else {
@@ -1487,12 +1515,17 @@ async function handle(req: Request): Promise<Response> {
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       console.error("[lrv1 bg]", msg);
+      if (settled) return;
+      settled = true;
       await setJobStatus({ status: "error", error: msg });
+    } finally {
+      clearTimeout(watchdog);
     }
   })();
   if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
     EdgeRuntime.waitUntil(bg);
   }
+
   return jsonResponse(202, {
     ok: true,
     run_id,

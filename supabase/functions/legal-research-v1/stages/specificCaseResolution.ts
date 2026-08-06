@@ -58,7 +58,25 @@ export const SPECIFIC_CASE_LIMITS = {
   MAX_TARGETS: 2,
   /** Max derived court URLs probed per run. */
   MAX_DERIVED_URLS: 4,
+  /** Shape gate: largest body the deterministic lane will buffer/decode.
+   *  Must stay above real Supreme Court judgment PDFs (~2.4 MB) — the stall
+   *  protection comes from abort signals and budget gates, not from this cap. */
+  MAX_PROBE_BYTES: 3 * 1024 * 1024,
+
+  /** When less than this remains on the stage budget, only tiny bodies. */
+  LOW_BUDGET_MS: 12_000,
+  LOW_BUDGET_MAX_BYTES: 300_000,
 } as const;
+
+/**
+ * Minimal view of the retrieval budget the deterministic lane consults.
+ * Kept structural so this module never imports the pipeline.
+ */
+export interface ProbeBudget {
+  exceeded(): boolean;
+  remaining(): number;
+  mark(name: string, detail?: Record<string, unknown>): void;
+}
 
 /**
  * Classify a derived-URL probe failure. Network-layer aborts get explicit
@@ -67,10 +85,13 @@ export const SPECIFIC_CASE_LIMITS = {
 function derivedFailureReason(err: unknown): string {
   const name = (err as { name?: string } | null)?.name ?? "";
   const msg = err instanceof Error ? err.message : String(err);
+  if (msg === "retrieval_timeout") return "retrieval_timeout";
+  if (msg === "body_too_large_for_budget") return "derived_url_body_too_large";
   if (name === "TimeoutError" || /timeout/i.test(msg)) return "derived_url_fetch_timeout";
   if (name === "AbortError" || /abort/i.test(msg)) return "derived_url_fetch_aborted";
   return `derived_url:${msg}`;
 }
+
 
 const CASE_LIKE_TYPES = new Set([
   "caselaw",
@@ -113,6 +134,12 @@ export interface SpecificCaseResolution {
   /** Derived official court URLs probed (deterministic, docket-validated). */
   derived_urls_probed: string[];
   derived_url_resolved: string | null;
+  /** True when the stage stopped because the retrieval budget ran out. */
+  budget_exceeded: boolean;
+  /** Fine-grained probe markers (diagnostics for silent-hang triage). */
+  probe_stages: Array<{ name: string; at_ms: number; detail?: Record<string, unknown> }>;
+
+
 
 
   /** Why the caller will (or will not) fire `docket_limitation`. */
@@ -163,6 +190,10 @@ function disabled(
     acquired_text_length: 0,
     derived_urls_probed: [],
     derived_url_resolved: null,
+    budget_exceeded: false,
+    probe_stages: [],
+
+
 
     final_docket_branch_reason: reason,
     allow_case_holding_answer: true,
@@ -272,6 +303,8 @@ export interface SpecificCaseInput {
   skip_derived_urls?: boolean;
   /** Carried over for telemetry when `skip_derived_urls` is set. */
   prior_derived_urls?: string[];
+  /** Retrieval-stage budget; consulted around every probe and decode. */
+  budget?: ProbeBudget;
 }
 
 
@@ -285,6 +318,7 @@ export async function runSpecificCaseResolution(
   const dockets = detectDockets(input.question);
   if (dockets.length === 0) return disabled(mode, "no_docket_in_question");
 
+
   const res: SpecificCaseResolution = {
     ...disabled(mode, "no_exact_docket_source"),
     enabled: true,
@@ -293,6 +327,34 @@ export async function runSpecificCaseResolution(
     requested_docket_display: `${dockets[0].prefix_he} ${dockets[0].number}`,
     allow_case_holding_answer: false,
   };
+
+  // ── Budget + diagnostics plumbing ──────────────────────────────────────
+  const markStage = (name: string, detail?: Record<string, unknown>) => {
+    if (res.probe_stages.length < 120) {
+      res.probe_stages.push({ name, at_ms: Date.now() - t0, ...(detail ? { detail } : {}) });
+    }
+    input.budget?.mark(`probe:${name}`, detail);
+  };
+  /** Time left on the tighter of the stage box and the retrieval budget. */
+  const remainingMs = (): number => {
+    const stage = SPECIFIC_CASE_LIMITS.TOTAL_MS - (Date.now() - t0);
+    const outer = input.budget ? input.budget.remaining() : Number.POSITIVE_INFINITY;
+    return Math.min(stage, outer);
+  };
+  /** True when no further expensive work may start. */
+  const outOfBudget = (): boolean => remainingMs() <= 0;
+  /** Shape gate: how many bytes we can still afford to buffer/decode. */
+  const probeMaxBytes = (): number =>
+    remainingMs() < SPECIFIC_CASE_LIMITS.LOW_BUDGET_MS
+      ? SPECIFIC_CASE_LIMITS.LOW_BUDGET_MAX_BYTES
+      : SPECIFIC_CASE_LIMITS.MAX_PROBE_BYTES;
+  const budgetStop = (where: string) => {
+    res.budget_exceeded = true;
+    markStage("budget_exhausted", { where });
+    recordFailure(res, "retrieval_timeout");
+  };
+
+
 
   // ── Partition the admitted pool ────────────────────────────────────────
   const exact: Candidate[] = [];
@@ -392,7 +454,7 @@ export async function runSpecificCaseResolution(
 
 
   for (const c of targets) {
-    if (res.acquisition_success) break;
+    if (res.acquisition_success || res.budget_exceeded) break;
     const url = c.source_url ?? null;
     // Identity already carries the exact docket (that is why `c` is a target),
     // so plain-text court downloads are permitted for it; the text itself must
@@ -405,35 +467,53 @@ export async function runSpecificCaseResolution(
         dockets.some((d) => textContainsExactDocket(text.slice(0, 20000), d)),
       // Hard network-layer teardown: `withTimeout` alone is advisory
       // (Promise.race), so a stalled court host could leak past it.
-      signal: AbortSignal.timeout(SPECIFIC_CASE_LIMITS.PER_METHOD_MS),
+      signal: AbortSignal.timeout(
+        Math.max(1000, Math.min(SPECIFIC_CASE_LIMITS.PER_METHOD_MS, remainingMs())),
+      ),
+      onStage: (n: string, d?: Record<string, unknown>) => markStage(`target:${n}`, d),
+      maxBytes: probeMaxBytes(),
+      budgetExceeded: outOfBudget,
     };
     const plan: SpecificCaseAcquisitionMethod[] = [];
     if (url && isDirectFileUrl(url)) plan.push("direct_file_fetch");
     if (url && WRAPPER_HOST_RE.test(url) && !isDirectFileUrl(url)) plan.push("wrapper_file_resolve");
     for (const method of plan) {
-      if (Date.now() - t0 > SPECIFIC_CASE_LIMITS.TOTAL_MS) {
-        recordFailure(res, "stage_time_budget_exhausted");
+      if (outOfBudget()) {
+        budgetStop(`target_probe:${method}`);
         break;
       }
       res.acquisition_methods_attempted.push(method);
+      markStage("target_probe_start", { method, url });
       try {
         const got = await withTimeout(
           method === "direct_file_fetch"
             ? tryDirectFile(url!, fileOpts)
             : tryWrapperResolve(url!, fileOpts),
-          SPECIFIC_CASE_LIMITS.PER_METHOD_MS,
+          Math.max(1000, Math.min(SPECIFIC_CASE_LIMITS.PER_METHOD_MS, remainingMs())),
           method,
         );
+        markStage("target_probe_returned", { method, chars: got.length });
+        if (outOfBudget()) {
+          budgetStop(`after_target_probe:${method}`);
+          break;
+        }
         if (got.length >= SPECIFIC_CASE_LIMITS.MIN_USABLE_TEXT) {
           applyText(c, normText(got), method);
           break;
         }
         recordFailure(res, "extracted_text_below_threshold");
       } catch (err) {
-        recordFailure(res, err instanceof Error ? err.message : String(err));
+        const reason = err instanceof Error ? err.message : String(err);
+        markStage("target_probe_failed", { method, reason });
+        recordFailure(res, reason);
+        if (reason === "retrieval_timeout") {
+          budgetStop(`target_probe_inner:${method}`);
+          break;
+        }
       }
     }
   }
+
 
   /**
    * Inject an acquired judgment body as a first-class candidate (used when the
@@ -501,8 +581,10 @@ export async function runSpecificCaseResolution(
     // Fast lane already probed these; carry the telemetry, spend nothing.
     res.derived_urls_probed = input.prior_derived_urls ?? [];
     recordFailure(res, "derived_urls_already_probed_in_fast_lane");
-  } else if (!res.acquisition_success && Date.now() - t0 <= SPECIFIC_CASE_LIMITS.TOTAL_MS) {
-
+  } else if (res.budget_exceeded) {
+    markStage("derived_urls_skipped_budget");
+  } else if (!res.acquisition_success && !outOfBudget()) {
+    markStage("derived_url_construction_start");
     const derived: string[] = [];
     for (const d of dockets) {
       for (const u of deriveSupremeCourtFileUrls(d)) {
@@ -510,15 +592,24 @@ export async function runSpecificCaseResolution(
       }
     }
     res.derived_urls_probed = derived.slice(0, SPECIFIC_CASE_LIMITS.MAX_DERIVED_URLS);
+    // Persist the probe list up front: the checkpoint must exist even if the
+    // isolate dies later in the loop.
+    markStage("derived_urls_constructed", { count: res.derived_urls_probed.length });
+    input.budget?.mark("derived_urls_probed", { count: res.derived_urls_probed.length });
     if (res.derived_urls_probed.length > 0) {
       res.acquisition_methods_attempted.push("court_url_derivation");
     }
     for (const url of res.derived_urls_probed) {
       if (res.acquisition_success) break;
-      if (Date.now() - t0 > SPECIFIC_CASE_LIMITS.TOTAL_MS) {
-        recordFailure(res, "stage_time_budget_exhausted");
+      if (outOfBudget()) {
+        budgetStop("derived_probe_loop");
         break;
       }
+      const perUrlMs = Math.max(
+        1000,
+        Math.min(SPECIFIC_CASE_LIMITS.PER_DERIVED_URL_MS, remainingMs()),
+      );
+      markStage("derived_probe_start", { url, per_url_ms: perUrlMs, max_bytes: probeMaxBytes() });
       try {
         const got = await withTimeout(
           tryDirectFile(url, {
@@ -526,13 +617,18 @@ export async function runSpecificCaseResolution(
             validateText: (text: string) =>
               dockets.some((d) => textContainsExactDocket(text.slice(0, 20000), d)),
             // Real abort: tears the socket down instead of leaking past the race.
-            signal: AbortSignal.timeout(SPECIFIC_CASE_LIMITS.PER_DERIVED_URL_MS),
+            signal: AbortSignal.timeout(perUrlMs),
+            onStage: (n, d) => markStage(`derived:${n}`, d),
+            maxBytes: probeMaxBytes(),
+            budgetExceeded: outOfBudget,
           }),
-          SPECIFIC_CASE_LIMITS.PER_DERIVED_URL_MS,
+          perUrlMs,
           "court_url_derivation",
         );
+        markStage("derived_probe_returned", { url, chars: got.length });
         if (got.length >= SPECIFIC_CASE_LIMITS.MIN_USABLE_TEXT) {
           res.derived_url_resolved = url;
+          markStage("candidate_normalization_start", { url });
           const target = targets[0];
           if (target) applyText(target, normText(got), "court_url_derivation");
           else {
@@ -543,23 +639,35 @@ export async function runSpecificCaseResolution(
               "court_url_derivation",
             );
           }
+          markStage("candidate_normalization_done", { url });
           break;
         }
         recordFailure(res, "derived_url_text_below_threshold");
       } catch (err) {
-        recordFailure(res, `${derivedFailureReason(err)}:${url}`);
+        const reason = derivedFailureReason(err);
+        markStage("derived_probe_failed", { url, reason });
+        recordFailure(res, `${reason}:${url}`);
+        if (reason === "retrieval_timeout") {
+          budgetStop("derived_probe_inner");
+          break;
+        }
       }
     }
+    markStage("derived_urls_probed_done", {
+      probed: res.derived_urls_probed.length,
+      resolved: res.derived_url_resolved,
+    });
   }
 
   // Local DB by normalized docket variants — also the only path when the pool
   // contains no exact-docket source at all.
-  if (!res.acquisition_success && Date.now() - t0 <= SPECIFIC_CASE_LIMITS.TOTAL_MS) {
+  if (!res.acquisition_success && !res.budget_exceeded && !outOfBudget()) {
     res.acquisition_methods_attempted.push("local_db_docket_lookup");
+    markStage("local_db_lookup_start");
     try {
       const local = await withTimeout(
         lookupLocalJudgment(input.admin, dockets),
-        SPECIFIC_CASE_LIMITS.PER_METHOD_MS,
+        Math.max(1000, Math.min(SPECIFIC_CASE_LIMITS.PER_METHOD_MS, remainingMs())),
         "local_db_docket_lookup",
       );
       if (local) {
@@ -575,7 +683,9 @@ export async function runSpecificCaseResolution(
     } catch (err) {
       recordFailure(res, err instanceof Error ? err.message : String(err));
     }
+    markStage("local_db_lookup_done", { success: res.acquisition_success });
   }
+
 
 
   if (!res.acquisition_success) {
