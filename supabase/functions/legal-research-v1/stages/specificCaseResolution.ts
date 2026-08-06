@@ -87,6 +87,7 @@ function derivedFailureReason(err: unknown): string {
   const msg = err instanceof Error ? err.message : String(err);
   if (msg === "retrieval_timeout") return "retrieval_timeout";
   if (msg === "body_too_large_for_budget") return "derived_url_body_too_large";
+  if (msg === "binary_too_large_for_extraction") return "derived_url_binary_too_large_for_extraction";
   if (name === "TimeoutError" || /timeout/i.test(msg)) return "derived_url_fetch_timeout";
   if (name === "AbortError" || /abort/i.test(msg)) return "derived_url_fetch_aborted";
   return `derived_url:${msg}`;
