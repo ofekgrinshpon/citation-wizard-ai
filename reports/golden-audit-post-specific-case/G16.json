@@ -1,0 +1,142 @@
+{
+  "id": "G16",
+  "category": "doctrine_explanation",
+  "query": "מהו השתק הבטחה (הבטחה מנהלית) במשפט הישראלי?",
+  "run_id": "448524b0-62d1-4613-b7d8-cb11a4e8c891",
+  "job_id": "2e8a5726-bbbf-485b-ba7d-d3cefc6b2bef",
+  "job_status": "done",
+  "job_error": null,
+  "wall_ms": 264968,
+  "pipeline_total_ms": 255866,
+  "retrieval_elapsed_ms": 16765,
+  "guard_triggered": false,
+  "research_mode": "doctrine_explanation",
+  "shape": "definition",
+  "branch": null,
+  "drafted": true,
+  "sufficiency_profile": "statutory_institution",
+  "sufficiency_passed": true,
+  "fast_lane": null,
+  "exact_docket_source_found": false,
+  "exact_docket_source_usable": false,
+  "specific_case_identity_passed": true,
+  "metadata_only_sources_used_as_holdings": null,
+  "commentary_carries_holding": null,
+  "synthesis_rendering": {
+    "groups": {
+      "secondary_context": [],
+      "usable_authorities": [],
+      "found_but_not_usable": [],
+      "statutory_background": []
+    },
+    "reason": "not_synthesis_mode",
+    "group_counts": {
+      "secondary_context": 0,
+      "usable_authorities": 0,
+      "found_but_not_usable": 0,
+      "statutory_background": 0
+    },
+    "named_case_keys": [],
+    "named_cases_in_body": 0,
+    "usable_judgments_named": 0,
+    "synthesis_rendering_applied": false,
+    "commentary_used_as_primary_authority": false,
+    "metadata_only_sources_used_as_holdings": false
+  },
+  "pool": {
+    "admitted": 21,
+    "tier_counts": {
+      "index_or_listing": 2,
+      "official_primary": 4,
+      "secondary_commentary": 15
+    },
+    "judgment_documents": 1,
+    "judgments_with_holding_text": 1
+  },
+  "text_usability_counts": {
+    "full_text": 10,
+    "listing_page": 2,
+    "metadata_only": 7,
+    "substantive_excerpt": 2
+  },
+  "role_counts": {
+    "binding_case_law": 9,
+    "persuasive_case_law": 4,
+    "primary_statute": 1,
+    "scholarship": 4,
+    "government_report": 3
+  },
+  "used_sources": [
+    {
+      "title": "בג\"ץ 5517/17",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C17%5C170%5C055%5Ck11&fileName=17055170.K11&type=4",
+      "type": "caselaw",
+      "tier": "official_primary",
+      "usability": "full_text"
+    },
+    {
+      "title": "הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_ebbf6fda97d74731a9cea34d71d369e4.pdf",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "full_text"
+    },
+    {
+      "title": "הגנת ההסתמכות במשפט המנהלי",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+      "type": "other",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "הבטחה, השתק ותום-לב",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94,%20%D7%94%D7%A9%D7%AA%D7%A7%20%D7%95%D7%AA%D7%95%D7%9D-%D7%9C%D7%91.pdf",
+      "type": "other",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "השתק שיפוטי כעילת התערבות בהליכי בג\"ץ",
+      "url": "https://www.taulawreview.sites.tau.ac.il/post/addad",
+      "type": "other",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    }
+  ],
+  "used_sources_count": 5,
+  "footnotes_count": 7,
+  "footnote1": {
+    "title": "בג\"ץ 5517/17",
+    "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C17%5C170%5C055%5Ck11&fileName=17055170.K11&type=4",
+    "type": "caselaw"
+  },
+  "is_stub": false,
+  "verifier": {
+    "by_support": {
+      "direct": 2,
+      "partial": 6,
+      "unrelated": 10,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 20,
+      "false": 1
+    },
+    "model_verdicts": 21,
+    "by_support_model": {
+      "direct": 2,
+      "partial": 6,
+      "unrelated": 10,
+      "tangential": 3
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "answer_len": 2454,
+  "answer": "**מהו \"השתק הבטחה\" (הבטחה מנהלית)?**\n\nהשתק הבטחה במשפט הישראלי הוא דוקטרינה מנהלית אשר אוסרת על רשות ציבורית לחזור בה מהבטחה או מהצגה מדיניותית כלפי אדם כאשר הובילו להסתמכות ממשית והחזר ההבטחה יוצר עוול; הפסיקה מזהה דרישת תשתית עובדתית והצגת הבטחה מפורשת, ברורה ומסוימת כיסוד לקבלתה.¹\n\n**היסודות הפרקטיים לקבלת השתק הבטחה**\n\n- הצגת הבטחה או מדיניות מצד הרשות — נדרשת תשתית עובדתית שמוכיחה שהבטחה אכן ניתנה, ובתוכן ההבטחה נדרשת בהירות ומימושיות.¹\n- הסתמכות סבירה של האזרח — פעולה או הימנעות שנעשו בגלל ההבטחה, כך שהצד הסתמך בפועל על התחייבותה של הרשות.⁵\n- גרימת נזק או עיוות כתוצאה מחזרת הרשות — יש להראות כי החזרת ההבטחה יוצרת פגיעה תוצאתית מציאותית שראוי להמתק אותה באמצעות כללי ההשתק.⁶\n\nהמשקל היחסי של כל יסוד והקשרם תלוי בנסיבות המקרה; בפסיקה הודגשו דרישות ההוכחה של התשתית העובדתית ושל בהירות ההבטחה כפעוטות קובעות בקבלת ההשתק.¹\n\n**אפקט משפטי וסעדים אופייניים**\n\nבהשתק הבטחה הסעד המקובל הוא תוצאתי או תיקוני: צווים שימנעו מהרשות לחזור בה או יחייבו נקיטת פעולות לשימור המצב שההבטחה יצרה; בדיון על פיצוי כספי קיים ויכוח והבחנה בין סעד כספי שאפשר להעניק לבין יצירת מסלול חדש של אחריות מדינתית — אין בהשתק בהכרח עילת חוב חוזית עצמאית.²\n\nהמימוש הפסיקתי של הסעדים נקבע לפי איזון בין זכויות ההסתמכות של האזרח לבין שיקולים תקציביים וציבוריים, ולפעמים יורכב מהציווי לשינוי מדיניות או לתגמול הסתמכות במקום מניעת החזרה בה.³\n\n**הבחנה מדוקטרינית: השתק הבטחה מול ציפייה לגיטימית ו-promissory estoppel**\n\nהדוקטרינה של השתק הבטחה קרובה באופייה למושגים כמו \"ציפייה לגיטימית\" ו-promissory estoppel בשפה הזרה; חלק מהכותבים והדיונים הפסיקתיים מציגים אותן כזוויות שונות על אותו רעיון של הגנת הסתמכות, אך בפסיקה והספרות קיימת שונות בגישות ובטווח ההגנה שניתן להעניק.⁷\n\nחשוב להבחין גם במבחן המעשי: בעוד שהמונח האנגלו־סקסי מבליט את האלמנט החוזי־התחייבותי, במשפט המנהלי הישראלי ההגנה נתפסת כעיקרון של ציפייה הסתמכותית שפועלת בתוך תחום ביקורתיות המנהל ולא כיצירת עילת תביעה חוזית חדשה.⁶\n\n**מגבלות וחריגים**\n\nהפעלת ההשתק מוגבלת כאשר יש התנגשות עם אינטרסים ציבוריים כבדת משקל, שינוי מהותי של מסגרת חקיקה או מדיניות, או כאשר הרשות פעלה מחוץ לסמכותה — שיקולים אלה יכולים להצדיק חזרה בה ואף למנוע השתק.¹\n\nכמו כן קיימות חששות פרשניות שלא להפוך את ההשתק למסלול עוקף לאחריות ניסקית רגילה של המדינה, ולכן בתי המשפט שוקלים בזהירות את ההיקף שבו יעניקו סעד כספי או יחייבו שינוי מדיניות.⁴\n\nהערת הסתייגות: הטקסטים שסופקו כחומר תמיכה קצרים וחלקיים, ואינן מכילים כאן נוסח מלא ומפורט של ההלכה בפסקי הדין; לכן ניסוח זה מבוסס על קטעים מובחרים וניתן לראות בו תקציר מבוסס אך לא את נוסח ההחלטה המלא."
+}

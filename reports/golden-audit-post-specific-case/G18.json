@@ -1,0 +1,85 @@
+{
+  "id": "G18",
+  "category": "academic_survey",
+  "query": "כתוב סקירה משפטית על השימוש בהרמת מסך בחברות משפחתיות.",
+  "run_id": "c4c1ba3e-192c-4ef2-9719-3c31aca63689",
+  "job_id": "19ce9ee0-0bf1-4ef0-9860-2b3d45e342b9",
+  "job_status": "done",
+  "job_error": null,
+  "wall_ms": 200630,
+  "pipeline_total_ms": 191502,
+  "retrieval_elapsed_ms": 34322,
+  "guard_triggered": false,
+  "research_mode": "doctrine_explanation",
+  "shape": "analysis",
+  "branch": "insufficient_sources_limitation",
+  "drafted": false,
+  "sufficiency_profile": "statutory_institution",
+  "sufficiency_passed": false,
+  "fast_lane": null,
+  "exact_docket_source_found": false,
+  "exact_docket_source_usable": false,
+  "specific_case_identity_passed": true,
+  "metadata_only_sources_used_as_holdings": null,
+  "commentary_carries_holding": null,
+  "synthesis_rendering": null,
+  "pool": {
+    "admitted": 30,
+    "tier_counts": {
+      "primary_mirror": 2,
+      "statute_mirror": 2,
+      "index_or_listing": 7,
+      "official_primary": 13,
+      "secondary_commentary": 6
+    },
+    "judgment_documents": 5,
+    "judgments_with_holding_text": 2
+  },
+  "text_usability_counts": {
+    "metadata_only": 14,
+    "full_text": 4,
+    "listing_page": 7,
+    "substantive_excerpt": 5
+  },
+  "role_counts": {
+    "primary_statute": 4,
+    "binding_case_law": 15,
+    "factual_report": 3,
+    "government_report": 4,
+    "scholarship": 2,
+    "persuasive_case_law": 2
+  },
+  "used_sources": [],
+  "used_sources_count": 0,
+  "footnotes_count": 0,
+  "footnote1": null,
+  "is_stub": false,
+  "verifier": {
+    "by_support": {
+      "direct": 0,
+      "partial": 11,
+      "unrelated": 8,
+      "tangential": 11
+    },
+    "by_role_match": {
+      "true": 28,
+      "false": 2
+    },
+    "model_verdicts": 30,
+    "by_support_model": {
+      "direct": 0,
+      "partial": 11,
+      "unrelated": 8,
+      "tangential": 11
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "answer_len": 391,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): הצעת חוק החברות, התשס\"ב 2002; חוק החברות, התשנ\"ט–1999; מסמך מאתר אתר ממשלתי (gov.il); ממשל תאגידי חדש לחברות בקשיים פיננסיים."
+}
