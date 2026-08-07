@@ -105,5 +105,55 @@
     "cpu_kill": false,
     "pass": true,
     "failures": []
+  },
+  {
+    "id": "G14",
+    "query": "כיצד מיושם עקרון תום הלב בדיני חוזים בפסיקה?",
+    "job_id": "a15ec183-68a9-44f0-a48e-65b6061aaf9d",
+    "run_id": "b51a8548-318d-431c-a2b4-73fb6cd3de1d",
+    "ms": 303183,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": null,
+    "drafted": true,
+    "answer_length": 3327,
+    "used_sources_count": 6,
+    "footnotes_count": 9,
+    "judgments_cited": 1,
+    "metadata_only_cited": 0,
+    "metadata_only_cited_titles": [],
+    "source_split": {
+      "read_in_full": [
+        "ע\"א 9225/01 זיימן נ'"
+      ],
+      "reference_only": []
+    },
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [
+          "s2"
+        ],
+        "reference_only": []
+      },
+      "blocks_stripped": 0,
+      "source_split_counts": {
+        "read_in_full": 1,
+        "reference_only": 0
+      },
+      "reference_only_sources": [],
+      "blocks_left_unsupported": 0,
+      "stripped_ref_occurrences": 0,
+      "unsupported_block_samples": [],
+      "metadata_only_judgment_refs": [],
+      "metadata_only_holdings_remaining": 0
+    },
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": []
   }
 ]
