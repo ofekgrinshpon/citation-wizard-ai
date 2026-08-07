@@ -1422,6 +1422,15 @@ async function handle(req: Request): Promise<Response> {
     synthesis_rendering: drafter.synthesis_rendering ?? null,
     synthesis_rendering_applied:
       drafter.synthesis_rendering?.synthesis_rendering_applied ?? false,
+    // metadata_only_holding_gate_v1 telemetry.
+    metadata_only_holding_gate: drafter.metadata_only_holding_gate ?? null,
+    metadata_only_holdings_remaining:
+      drafter.metadata_only_holding_gate?.metadata_only_holdings_remaining ?? 0,
+    source_split_read_in_full:
+      drafter.metadata_only_holding_gate?.source_split_counts.read_in_full ?? 0,
+    source_split_reference_only:
+      drafter.metadata_only_holding_gate?.source_split_counts.reference_only ?? 0,
+
 
 
 
