@@ -1,0 +1,14 @@
+{
+  "id": "FAKE",
+  "query": "מה הפסיקה אומרת על הלכת הכוכב הכחול הכפול?",
+  "run_id": "b19c3467-1a82-4bf6-86ec-e13fa33b3b00",
+  "ms": 116364,
+  "terminal": true,
+  "deterministic_branch": null,
+  "research_mode": null,
+  "used_sources_count": 0,
+  "forbidden_hits": [],
+  "pass": true,
+  "answer_head": "",
+  "answer": ""
+}

@@ -1,0 +1,14 @@
+{
+  "id": "G07",
+  "query": "מהו מבחן ההשתלבות ביחסי עובד-מעביד?",
+  "run_id": "49fd1dc1-e574-44e8-ad05-4aaf55bf2cde",
+  "ms": 55362,
+  "terminal": true,
+  "deterministic_branch": null,
+  "research_mode": null,
+  "used_sources_count": 0,
+  "forbidden_hits": [],
+  "pass": true,
+  "answer_head": "",
+  "answer": ""
+}

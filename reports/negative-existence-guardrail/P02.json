@@ -1,0 +1,14 @@
+{
+  "id": "P02",
+  "query": "מה נקבע בע\"א 99999/99 פלוני נ' אלמוני?",
+  "run_id": "149a8180-dfaa-459b-b9af-047c361f7a6f",
+  "ms": 43777,
+  "terminal": true,
+  "deterministic_branch": null,
+  "research_mode": null,
+  "used_sources_count": 0,
+  "forbidden_hits": [],
+  "pass": true,
+  "answer_head": "",
+  "answer": ""
+}

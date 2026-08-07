@@ -53,6 +53,10 @@ import {
   type NamedDoctrineFraming,
 } from "./namedDoctrine.ts";
 import {
+  scrubNegativeExistenceClaims,
+  NEGATIVE_EXISTENCE_PROMPT_RULE,
+} from "./negativeExistenceGuard.ts";
+import {
   planSynthesisRendering,
   reportSynthesisRendering,
   type SynthesisRenderingPlan,
@@ -218,18 +222,19 @@ function buildUserMessage(
   lines.push(
     "מסגרת התשובה חייבת להישאר נאמנה לשאלה כפי שנשאלה. אם המקורות עוסקים בנושא סמוך אך לא זהה — ציין זאת במפורש ואל תחליף את שאלת המשתמש.",
   );
+  lines.push(NEGATIVE_EXISTENCE_PROMPT_RULE);
   if (framing?.framing_correction_required && framing.named_doctrine_phrase) {
     const named = framing.named_doctrine_phrase;
     const subject = framing.subject_phrase ?? named;
     lines.push("");
     lines.push(
-      `הערה קריטית — תיקון מסגור (premise): המשתמש ניסח את השאלה כאילו קיימת הלכה/דוקטרינה בשם "${named}", אך אף מקור בר-ציטוט מבין אלה שסופקו לך אינו משתמש בשם הזה כשם של הלכה מוכרת. עם זאת, המקורות כן עוסקים במוסד/הסדר משפטי אמיתי בעניין "${subject}".`,
+      `הערה קריטית — תיקון מסגור (premise): המשתמש ניסח את השאלה כאילו קיימת הלכה/דוקטרינה בשם "${named}", אך אף מקור בר-ציטוט מבין אלה שסופקו לך אינו משתמש בשם הזה. זהו ממצא על המקורות שאותרו בלבד — ולא קביעה שהדוקטרינה אינה קיימת. המקורות כן עוסקים במוסד/הסדר משפטי אמיתי בעניין "${subject}".`,
     );
     lines.push(
-      `לכן מבנה התשובה חייב להיות, בסדר הזה: (1) משפט פתיחה שקובע במפורש שלא נמצאה הלכה מוכרת בשם "${named}"; (2) משפט שמזהה את ההסדר/המוסד המשפטי הקרוב שכן קיים לפי המקורות (למשל הוראת חוק ספציפית) ונוקב בשמו ובמקורו; (3) גוף התשובה — הדין לגבי אותו הסדר, רק ככל שהמקורות תומכים בו; (4) משפט סיום שמזמין את המשתמש לחדד אם התכוון להלכה אחרת או להעלות מקור.`,
+      `לכן מבנה התשובה חייב להיות, בסדר הזה: (1) משפט פתיחה שקובע במפורש שבמקורות שאותרו לא נמצא עיגון מספק לשם "${named}" (ניסוח מחייב: "במקורות שאותרו לא נמצא עיגון מספק ל…"), בלי לקבוע שההלכה אינה קיימת; (2) משפט שמזהה את ההסדר/המוסד המשפטי הקרוב שכן קיים לפי המקורות (למשל הוראת חוק ספציפית) ונוקב בשמו ובמקורו; (3) גוף התשובה — הדין לגבי אותו הסדר, רק ככל שהמקורות תומכים בו; (4) משפט סיום שמזמין את המשתמש לחדד אם התכוון להלכה אחרת או להעלות מקור.`,
     );
     lines.push(
-      `אין לפתוח בכותרת או במשפט שמציג את "${named}" כהלכה מוכרת, ואין להשתמש בניסוחים כמו "הפסיקה מכירה בהלכת…" ביחס לשם הזה. כלל התיקון הזה גובר על כלל "שורה תחתונה בפתיחה".`,
+      `אין לפתוח בכותרת או במשפט שמציג את "${named}" כהלכה מוכרת, ואין להשתמש בניסוחים כמו "הפסיקה מכירה בהלכת…" ביחס לשם הזה. במקביל אין לכתוב או לרמוז ש"אין הלכה מוכרת בשם זה", ש"לא קיימת הלכה כזו" או שהדוקטרינה אינה קיימת — הניסוח חייב להיות מוגבל למקורות שאותרו. כלל התיקון הזה גובר על כלל "שורה תחתונה בפתיחה".`,
     );
   }
   if (sufficiency?.statute_only_answer) {
@@ -1163,7 +1168,7 @@ export async function runDrafterV2(
     const built = validation.draft
       ? buildFootnotedAnswer(validation.draft, inputSources)
       : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined };
-    const answer = built.answer_markdown;
+    const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
     return {
       snippet_budget_report,
       ok: validation.report.ok,
@@ -1216,7 +1221,7 @@ export async function runDrafterV2(
       const built = validation.draft
         ? buildFootnotedAnswer(validation.draft, inputSources)
         : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined };
-      const answer = built.answer_markdown;
+      const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
       return {
         ok: validation.report.ok,
         ms: Date.now() - t_total,
@@ -1264,7 +1269,7 @@ export async function runDrafterV2(
     const built = validation.draft
       ? buildFootnotedAnswer(validation.draft, inputSources)
       : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined };
-    const answer = built.answer_markdown;
+    const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
     return {
       snippet_budget_report,
       ok: validation.report.ok,
@@ -1327,7 +1332,7 @@ export async function runDrafterV2(
       const built = validation.draft
         ? buildFootnotedAnswer(validation.draft, inputSources)
         : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined };
-      const answer = built.answer_markdown;
+      const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
       return {
         ok: validation.report.ok,
         ms: Date.now() - t_total,
@@ -1385,7 +1390,7 @@ export async function runDrafterV2(
     const built = validation.draft
       ? buildFootnotedAnswer(validation.draft, inputSources)
       : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined };
-    const answer = built.answer_markdown;
+    const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
     return {
       snippet_budget_report,
       ok: validation.report.ok,
@@ -1472,7 +1477,7 @@ export async function runDrafterV2(
     const built = validation.draft
       ? buildFootnotedAnswer(validation.draft, inputSources)
       : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined };
-    const answer = built.answer_markdown;
+    const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
     return {
       snippet_budget_report,
       ok: validation.report.ok,
@@ -1716,7 +1721,9 @@ export async function runDrafterV2(
 
 
   // Rule 1.10 — Hebrew number ranges must be written high→low in source order.
-  const answer_markdown = normalizeHebrewNumberRanges(built.answer_markdown);
+  const answer_markdown = scrubNegativeExistenceClaims(
+    normalizeHebrewNumberRanges(built.answer_markdown),
+  ).text;
   const synthesis_rendering = reportSynthesisRendering({
     plan: synthesisPlan,
     answerMarkdown: answer_markdown,

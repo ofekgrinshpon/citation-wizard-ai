@@ -1,0 +1,93 @@
+[
+  {
+    "id": "G15",
+    "query": "מהי דוקטרינת השיתוף הספציפי בדירת מגורים?",
+    "run_id": "533e1688-93a7-489e-bf60-862f4f166050",
+    "ms": 54249,
+    "terminal": true,
+    "deterministic_branch": null,
+    "research_mode": null,
+    "used_sources_count": 0,
+    "forbidden_hits": [],
+    "pass": true,
+    "answer_head": ""
+  },
+  {
+    "id": "G07",
+    "query": "מהו מבחן ההשתלבות ביחסי עובד-מעביד?",
+    "run_id": "49fd1dc1-e574-44e8-ad05-4aaf55bf2cde",
+    "ms": 55362,
+    "terminal": true,
+    "deterministic_branch": null,
+    "research_mode": null,
+    "used_sources_count": 0,
+    "forbidden_hits": [],
+    "pass": true,
+    "answer_head": ""
+  },
+  {
+    "id": "G08",
+    "query": "מה הפסיקה אומרת על מבחני המידתיות בביקורת חוקתית?",
+    "run_id": "7d284eab-1794-46e5-a779-795360de11b5",
+    "ms": 74926,
+    "terminal": true,
+    "deterministic_branch": null,
+    "research_mode": null,
+    "used_sources_count": 0,
+    "forbidden_hits": [],
+    "pass": true,
+    "answer_head": ""
+  },
+  {
+    "id": "FAKE",
+    "query": "מה הפסיקה אומרת על הלכת הכוכב הכחול הכפול?",
+    "run_id": "b19c3467-1a82-4bf6-86ec-e13fa33b3b00",
+    "ms": 116364,
+    "terminal": true,
+    "deterministic_branch": null,
+    "research_mode": null,
+    "used_sources_count": 0,
+    "forbidden_hits": [],
+    "pass": true,
+    "answer_head": ""
+  },
+  {
+    "id": "P02",
+    "query": "מה נקבע בע\"א 99999/99 פלוני נ' אלמוני?",
+    "run_id": "149a8180-dfaa-459b-b9af-047c361f7a6f",
+    "ms": 43777,
+    "terminal": true,
+    "deterministic_branch": null,
+    "research_mode": null,
+    "used_sources_count": 0,
+    "forbidden_hits": [],
+    "pass": true,
+    "answer_head": ""
+  },
+  {
+    "id": "R02",
+    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+    "run_id": "7d9088c2-b8e7-4624-9e43-8e62b1148abb",
+    "ms": 109766,
+    "terminal": true,
+    "deterministic_branch": null,
+    "research_mode": null,
+    "used_sources_count": 0,
+    "forbidden_hits": [],
+    "pass": true,
+    "answer_head": ""
+  },
+  {
+    "id": "B8",
+    "query": "צטט את סעיף 1 לחוק יסוד: כבוד האדם וחירותו",
+    "run_id": "dcac2e7d-da18-46c9-b906-d2770178b24b",
+    "ms": 49140,
+    "terminal": true,
+    "deterministic_branch": null,
+    "research_mode": null,
+    "used_sources_count": 0,
+    "forbidden_hits": [],
+    "pass": true,
+    "answer_head": ""
+  }
+]
