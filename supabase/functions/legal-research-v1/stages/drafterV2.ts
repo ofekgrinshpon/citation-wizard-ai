@@ -890,6 +890,10 @@ export interface DrafterV2Result {
   snippet_budget_report?: SnippetBudgetReport;
   /** Case-law synthesis rendering telemetry (synthesis runs only). */
   synthesis_rendering?: SynthesisRenderingReport;
+  /** metadata_only_holding_gate_v1 telemetry (model-drafted answers only). */
+  metadata_only_holding_gate?: MetadataOnlyHoldingGateReport;
+
+
 
 
   schema_failure_reason?:
