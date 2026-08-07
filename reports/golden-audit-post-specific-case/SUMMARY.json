@@ -1,44 +1,272 @@
 [
   {
+    "id": "G05",
+    "category": "case_law_synthesis",
+    "query": "מה הפסיקה אומרת על הלכת השיתוף בנכסים בין בני זוג?",
+    "run_id": "f215d541-d8c6-4888-b821-df8ce0e2101a",
+    "job_id": "659706d2-fb8b-4958-9d50-197846b50818",
+    "job_status": "done",
+    "job_error": null,
+    "wall_ms": 152247,
+    "pipeline_total_ms": 146739,
+    "retrieval_elapsed_ms": 34419,
+    "guard_triggered": false,
+    "research_mode": "case_law_synthesis",
+    "shape": "analysis",
+    "branch": null,
+    "drafted": true,
+    "sufficiency_profile": "case_law_synthesis",
+    "sufficiency_passed": true,
+    "fast_lane": null,
+    "exact_docket_source_found": false,
+    "exact_docket_source_usable": false,
+    "specific_case_identity_passed": true,
+    "metadata_only_sources_used_as_holdings": null,
+    "commentary_carries_holding": null,
+    "synthesis_rendering": {
+      "groups": {
+        "secondary_context": [
+          "s5",
+          "s6",
+          "s7",
+          "s8",
+          "s9",
+          "s10",
+          "s11",
+          "s13",
+          "s14",
+          "s15",
+          "s16"
+        ],
+        "usable_authorities": [
+          "s2"
+        ],
+        "found_but_not_usable": [
+          "s3",
+          "s4",
+          "s12"
+        ],
+        "statutory_background": [
+          "s1"
+        ]
+      },
+      "reason": "applied",
+      "group_counts": {
+        "secondary_context": 11,
+        "usable_authorities": 1,
+        "found_but_not_usable": 3,
+        "statutory_background": 1
+      },
+      "named_case_keys": [
+        "4623/04"
+      ],
+      "named_cases_in_body": 1,
+      "usable_judgments_named": 1,
+      "synthesis_rendering_applied": true,
+      "commentary_used_as_primary_authority": false,
+      "metadata_only_sources_used_as_holdings": false
+    },
+    "pool": {
+      "admitted": 25,
+      "tier_counts": {
+        "primary_mirror": 2,
+        "statute_mirror": 1,
+        "index_or_listing": 2,
+        "official_primary": 4,
+        "secondary_commentary": 16
+      },
+      "judgment_documents": 4,
+      "judgments_with_holding_text": 1
+    },
+    "text_usability_counts": {
+      "metadata_only": 10,
+      "full_text": 4,
+      "substantive_excerpt": 9,
+      "listing_page": 2
+    },
+    "role_counts": {
+      "primary_statute": 1,
+      "persuasive_case_law": 10,
+      "binding_case_law": 9,
+      "scholarship": 5
+    },
+    "used_sources": [
+      {
+        "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+        "type": "caselaw",
+        "tier": "official_primary",
+        "usability": "substantive_excerpt"
+      },
+      {
+        "title": "בע\"מ 5620/24 פלוני נ' פלונית",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision60178-12-20/he/60178-12-20.docx",
+        "type": "caselaw",
+        "tier": "official_primary",
+        "usability": "metadata_only"
+      },
+      {
+        "title": "רע\"א 8672/00 אבו רומי נ' אבו רומי",
+        "url": "https://www.psakdin.co.il/Document/%D7%90%D7%99%D7%96%D7%95%D7%9F-%D7%9E%D7%A9%D7%90%D7%91%D7%99%D7%9D--%D7%94%D7%9C%D7%9B%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%94%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99%D7%AA--%D7%94%D7%95%D7%9B%D7%97%D7%AA-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%A0%D7%9B%D7%A1-%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99",
+        "type": "caselaw",
+        "tier": "primary_mirror",
+        "usability": "metadata_only"
+      },
+      {
+        "title": "פסק-דין בתיק בע\"מ 4623/04",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+        "type": "caselaw",
+        "tier": "official_primary",
+        "usability": "full_text"
+      },
+      {
+        "title": "תחולה ויישום הלכת השיתוף בנכסים בין ידועים בציבור (שיתוף כללי ושיתוף ספציפי) וכן במזונות משקמים",
+        "url": "https://www.psakdin.co.il/Court/%D7%AA%D7%97%D7%95%D7%9C%D7%94-%D7%95%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%94%D7%9C%D7%9B%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%A0%D7%9B%D7%A1%D7%99%D7%9D-%D7%91%D7%99%D7%9F-%D7%99%D7%93%D7%95%D7%A2%D7%99%D7%9D-%D7%91%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%9B%D7%9C%D7%9C%D7%99-%D7%95%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%A1%D7%A4%D7%A6%D7%99%D7%A4",
+        "type": "caselaw",
+        "tier": "secondary_commentary",
+        "usability": "substantive_excerpt"
+      },
+      {
+        "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+        "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+        "type": "legislation",
+        "tier": "official_primary",
+        "usability": "metadata_only"
+      }
+    ],
+    "used_sources_count": 6,
+    "footnotes_count": 4,
+    "footnote1": {
+      "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן; בע\"מ 5620/24 פלוני נ' פלונית; רע\"א 8672/00 אבו רומי נ' אבו רומי",
+      "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
+      "type": "compound"
+    },
+    "is_stub": false,
+    "verifier": {
+      "by_support": {
+        "direct": 10,
+        "partial": 7,
+        "unrelated": 8,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 24,
+        "false": 1
+      },
+      "model_verdicts": 25,
+      "by_support_model": {
+        "direct": 10,
+        "partial": 7,
+        "unrelated": 8,
+        "tangential": 0
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "answer_len": 2034,
+    "answer": "**שורה תחתונה**\n\nבית המשפט העליון דן בהיתכנות הלכת השיתוף ובחן את היקפה; בפסק‑דין בע\"מ 4623/04 הוצגה גישה מתונה המאפשרת הכרה בשיתוף בנכסים שנצברו במהלך הקשר אך מייתרת שיתוף אוטומטי של נכסים אישיים כגון כושר השתכרות ומוניטין, אלא אם נתגלה קשר מהותי וראייתי המשען על כוונת שיתוף או תרומה מהותית.²\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nפסק‑דין בתיק בע\"מ 4623/04 — בית המשפט העליון דן בשאלת חלות הלכת השיתוף ובהיקפה לגבי נכסים שהושגו בזמן הקשר ובהתייחס לנכסים אישיים ולכושר השתכרות/מוניטין; פסק‑דין זה מהווה את מקור הפסיקה השמיש היחיד שנמצא להסקת מסקנות תחומות.²\n\n**יישומים בפסיקה שנמצאה**\n\nבע\"מ 4623/04 הוחל המבחן על עובדות המקרה: בית המשפט שקל את נסיבות רכישת הנכסים, התרומה הכלכלית וההתנהלות המשותפת של הצדדים וביסס את החובה לחלוקה רק אם התקיימה זיקה משותפת ממשית או כוונת שיתוף שניתנו לעיתים על‑ידי ראיות כגון תשלומי משכנתא, שיפוצים או מעורבות בניהול הנכס.²\n\n**מגבלות והבחנות**\n\nמהפסיקה ניכרת זהירות כלפי הרחבת השיתוף לנכסים אופיים אישיים: בית המשפט לא מטיל שיתוף אוטומטי על קריירה, מוניטין או נכסים שקיבלו בירושה/במתנה אלא בוחן האם הוכחה כוונת שיתוף, תרומה מהותית של הצד השני או זיקה מעשית בין הנכס לבין המשק המשותף של הזוג.²\n\n**הרקע החקיקתי**\n\nחוק יחסי ממון בין בני זוג, תשל\"ג‑1973 מהווה מסגרת חקיקתית רלוונטית ליחסי רכוש בין בני זוג ומנסח מנגנון איזון משאבים; יש לראות את הפסיקה ביחס למסגרת החוקית הזו, אך יש להבחין בין הוראת החוק לבין מסגרת ההכרעה הפסיקתית על חלות השיתוף.⁴\n\n**מה לא ניתן לקבוע מהמקורות**\n\nקו הפסיקה השמיש שנמצא מצטמצם לפסק‑דין יחיד (בע\"מ 4623/04), ולכן אין בידי פסיקה מפורטת ומקיפה להסיק כלל גורף על היקף הלכת השיתוף בכל סוגי הנכסים, אמות־מידה ראייתיות אחידות או נוהלי סעד סטנדרטיים שישימות בכל מקרה.²\n\nנמצא אזכור/מקור מטא‑דאטה לפסקי דין נוספים אך לא אותר בהם טקסט אופרטיבי מספיק כדי לגזור מהם הלכה, יישום או סייג: מסמכים אלה מצויים כמקורות מטא‑דאטה בלבד ולכן יש להתייחס אליהם בזהירות.¹\n\nספרות ומשאבים משניים מציעים קריטריונים פרשניים (למשל מבחני כוונה, תרומה וזיקה מעשית) ודן בתחולת השיתוף לידועים בציבור ובמאמצי הפרשנות ביחס לחוק איזון המשאבים, אך הם מהווים רק בסיס אנליטי ולא תחליף לפסיקה שמיישמת הלכה באופן מחייב.³"
+  },
+  {
     "id": "G07",
     "category": "case_law_synthesis",
     "query": "מה הפסיקה אומרת על מבחן ההשתלבות לקביעת יחסי עובד-מעביד?",
-    "run_id": "23ed7f71-5456-4a09-93d7-9538f98ca6d6",
-    "job_id": "d18dffbd-30e6-4beb-9abb-727c1fa947bd",
-    "job_status": "running",
+    "run_id": "f8e54379-c48f-4b84-91b2-f4692ebf3c7f",
+    "job_id": "c47bfa5d-e9fc-4aa6-8837-03bb4c0e0381",
+    "job_status": "done",
     "job_error": null,
-    "wall_ms": 105565,
-    "pipeline_total_ms": null,
-    "retrieval_elapsed_ms": null,
-    "guard_triggered": null,
+    "wall_ms": 224410,
+    "pipeline_total_ms": 212918,
+    "retrieval_elapsed_ms": 39704,
+    "guard_triggered": false,
     "research_mode": "case_law_synthesis",
-    "shape": null,
-    "branch": null,
-    "drafted": true,
-    "sufficiency_profile": null,
-    "sufficiency_passed": null,
+    "shape": "analysis",
+    "branch": "insufficient_sources_limitation",
+    "drafted": false,
+    "sufficiency_profile": "case_law_synthesis",
+    "sufficiency_passed": false,
     "fast_lane": null,
-    "exact_docket_source_found": null,
-    "exact_docket_source_usable": null,
-    "specific_case_identity_passed": null,
+    "exact_docket_source_found": false,
+    "exact_docket_source_usable": false,
+    "specific_case_identity_passed": true,
     "metadata_only_sources_used_as_holdings": null,
     "commentary_carries_holding": null,
     "synthesis_rendering": null,
     "pool": {
-      "admitted": 0,
-      "tier_counts": null,
-      "judgment_documents": null,
-      "judgments_with_holding_text": null
+      "admitted": 30,
+      "tier_counts": {
+        "primary_mirror": 3,
+        "statute_mirror": 4,
+        "index_or_listing": 2,
+        "official_primary": 11,
+        "secondary_commentary": 10
+      },
+      "judgment_documents": 1,
+      "judgments_with_holding_text": 1
     },
-    "text_usability_counts": {},
-    "role_counts": {},
+    "text_usability_counts": {
+      "substantive_excerpt": 6,
+      "metadata_only": 21,
+      "full_text": 2,
+      "listing_page": 1
+    },
+    "role_counts": {
+      "primary_statute": 7,
+      "binding_case_law": 9,
+      "government_report": 2,
+      "factual_report": 3,
+      "scholarship": 9
+    },
     "used_sources": [],
     "used_sources_count": 0,
     "footnotes_count": 0,
     "footnote1": null,
     "is_stub": false,
-    "verifier": null,
-    "answer_len": 0,
-    "answer": ""
+    "verifier": {
+      "by_support": {
+        "direct": 3,
+        "partial": 12,
+        "unrelated": 8,
+        "tangential": 7
+      },
+      "by_role_match": {
+        "true": 27,
+        "false": 3
+      },
+      "model_verdicts": 30,
+      "by_support_model": {
+        "direct": 3,
+        "partial": 12,
+        "unrelated": 8,
+        "tangential": 7
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "answer_len": 451,
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק הביטוח הלאומי [נוסח משולב], התשנ\"ה-1995; חוק הביטוח הלאומי [נוסח משולב], תשנ\"ה-1995; מעמדם המשפטי של עובדים המצויים בתחום ביניים שבין שכירים לעצמאים – סקירה משווה; דמ\"ר 26126-06-11."
+  },
+  {
+    "id": "G15",
+    "category": "doctrine_explanation",
+    "query": "מהי דוקטרינת השיתוף הספציפי בדירת מגורים?",
+    "run_id": "4147978a-9dad-4a37-b7a9-502a2be90749",
+    "error": "job_failed",
+    "job": {
+      "id": "4d7db6d3-8902-458b-b889-f453d2fdf904",
+      "status": "failed",
+      "current_stage": "retrieval",
+      "error": "stale_worker_timeout",
+      "created_at": "2026-08-07T07:17:40.267497+00:00"
+    }
   }
 ]
