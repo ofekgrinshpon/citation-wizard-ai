@@ -37,9 +37,12 @@ export class RetrievalBudget {
   readonly deadline_ms: number;
   readonly checkpoints: RetrievalCheckpoint[] = [];
   private guard_at: string | null = null;
-  private readonly persist?: (checkpoints: RetrievalCheckpoint[]) => void;
+  private readonly persist?: (checkpoints: RetrievalCheckpoint[]) => void | Promise<void>;
 
-  constructor(deadlineMs: number, persist?: (c: RetrievalCheckpoint[]) => void) {
+  constructor(
+    deadlineMs: number,
+    persist?: (c: RetrievalCheckpoint[]) => void | Promise<void>,
+  ) {
     this.deadline_ms = deadlineMs;
     this.persist = persist;
   }
@@ -67,6 +70,21 @@ export class RetrievalBudget {
       /* checkpoint persistence must never break retrieval */
     }
   }
+
+  /**
+   * Record a checkpoint and AWAIT its persistence. Used for the first
+   * checkpoint of a stage, so an isolate killed immediately afterwards still
+   * leaves a durable trail showing where it died.
+   */
+  async markDurable(name: string, detail?: Record<string, unknown>): Promise<void> {
+    this.checkpoints.push({ name, at_ms: this.elapsed(), ...(detail ? { detail } : {}) });
+    try {
+      await this.persist?.(this.checkpoints);
+    } catch {
+      /* checkpoint persistence must never break retrieval */
+    }
+  }
+
 
   /** Mark the hard deadline as hit at a named place in the pipeline. */
   trigger(where: string): void {

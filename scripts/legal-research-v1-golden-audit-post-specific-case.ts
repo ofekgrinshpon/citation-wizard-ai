@@ -59,7 +59,8 @@ async function jobRow(question: string, sinceIso: string) {
   return Array.isArray(jr) ? jr[0] ?? null : null;
 }
 async function qaRow(run_id: string) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/qa_logs?select=id,created_at,metadata,answer,footnotes&metadata->>run_id=eq.${run_id}&order=created_at.desc&limit=1`, { headers });
+  // Skip the in-progress observability trace row (metadata.trace_status).
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/qa_logs?select=id,created_at,metadata,answer,footnotes&metadata->>run_id=eq.${run_id}&metadata->>trace_status=neq.in_progress&order=created_at.desc&limit=1`, { headers });
   if (!r.ok) return null;
   const rows = await r.json();
   return Array.isArray(rows) && rows.length ? rows[0] : null;

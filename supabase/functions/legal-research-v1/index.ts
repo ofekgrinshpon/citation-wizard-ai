@@ -37,7 +37,7 @@ import {
   resolveRequiredAnchors,
 } from "./stages/requiredAnchors.ts";
 import { detectStatuteSections } from "./stages/statuteSectionDetection.ts";
-import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
+import { makeAdminClient, writeTelemetry, beginTraceRow } from "./lib/telemetry.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
 import { StageRun, type Candidate } from "./lib/types.ts";
 import { buildSourcesOnlyPayload } from "./lib/sourcesOnly.ts";
@@ -51,6 +51,11 @@ const corsHeaders = {
 };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// Observability only: stable per-isolate id + in-flight run counter, so we can
+// tell whether a death correlates with concurrent load in the same isolate.
+const ISOLATE_ID = crypto.randomUUID().slice(0, 8);
+let IN_FLIGHT = 0;
 
 const STUB_ANSWER = "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.";
 const VERIFIER_FAILURE_ANSWER = "השלב שאמור לאמת את המקורות לא הושלם בהצלחה, ולכן לא ניתן להפיק תשובה משפטית אמינה מהמקורות שנמצאו. נסו להריץ שוב, או צרפו מקור רלוונטי.";
@@ -72,6 +77,10 @@ async function handle(req: Request): Promise<Response> {
 
   // job row helper (declared early so runPipeline closure can use it)
   let jobId: string | null = null;
+  // Observability: id of the in-progress qa_logs trace row for this run. When
+  // set, terminal telemetry UPDATEs that row instead of inserting a new one.
+  let traceRowId: string | null = null;
+  const concurrencyHint = req.headers.get("x-conc-hint");
   const adminEarly = makeAdminClient();
   const setJobStatus = async (patch: Record<string, unknown>) => {
     if (!jobId) return;
@@ -283,6 +292,7 @@ async function handle(req: Request): Promise<Response> {
     const msg = e instanceof Error ? e.message : String(e);
     await writeTelemetry(admin, {
       ...telemetryBase,
+      row_id: traceRowId,
       metadata: {
         pipeline: "legal-research-v1",
         phase: "P2",
@@ -311,6 +321,7 @@ async function handle(req: Request): Promise<Response> {
     };
     await writeTelemetry(admin, {
       ...telemetryBase,
+      row_id: traceRowId,
       metadata: {
         pipeline: "legal-research-v1",
         phase: "P2",
@@ -419,6 +430,7 @@ async function handle(req: Request): Promise<Response> {
 
     await writeTelemetry(admin, {
       ...telemetryBase,
+      row_id: traceRowId,
       metadata: {
         pipeline: "legal-research-v1",
         phase: "P2",
@@ -476,6 +488,7 @@ async function handle(req: Request): Promise<Response> {
     };
     await writeTelemetry(admin, {
       ...telemetryBase,
+      row_id: traceRowId,
       metadata: {
         pipeline: "legal-research-v1",
         phase: "P2",
@@ -556,11 +569,41 @@ async function handle(req: Request): Promise<Response> {
     fastLaneEligible ? RETRIEVAL_BUDGET.SPECIFIC_CASE_DEADLINE_MS : RETRIEVAL_BUDGET.DEFAULT_DEADLINE_MS,
     (checkpoints) => {
       // Heartbeat: survives an isolate kill so we can see where retrieval died.
-      void setJobStatus({
+      // Returned so `markDurable` can await the first checkpoint of the stage.
+      return setJobStatus({
         result: { run_id, phase: "retrieval", retrieval_checkpoints: checkpoints },
       });
     },
   );
+
+  // Durable in-progress trace row + first checkpoint, written BEFORE any
+  // expensive retrieval work. An isolate killed after this point still leaves
+  // a qa_logs row and a persisted checkpoint saying where it died.
+  traceRowId = await beginTraceRow(admin, {
+    user_id: user.id,
+    project_id,
+    question,
+    run_id,
+    task_mode: is_sources_only ? "legal_source_search" : undefined,
+    trace_stage: "retrieval_entering",
+    detail: {
+      research_mode: researchMode,
+      fast_lane_eligible: fastLaneEligible,
+      isolate: ISOLATE_ID,
+      concurrency_hint: concurrencyHint,
+      in_flight_at_retrieval: IN_FLIGHT,
+    },
+  });
+
+  await budget.markDurable("retrieval_entered", {
+    mode: researchMode,
+    fast_lane_eligible: fastLaneEligible,
+    dockets: fastLaneDockets.map((d) => `${d.prefix_he} ${d.number}`),
+    isolate: ISOLATE_ID,
+    concurrency_hint: concurrencyHint,
+    in_flight: IN_FLIGHT,
+    trace_row_id: traceRowId,
+  });
   budget.mark("retrieval_started", {
     mode: researchMode,
     fast_lane_eligible: fastLaneEligible,
@@ -571,6 +614,7 @@ async function handle(req: Request): Promise<Response> {
   const fastLaneCandidates: Candidate[] = [];
   let fastLane: SpecificCaseResolution | null = null;
   if (fastLaneEligible) {
+    await budget.markDurable("deterministic_start");
     budget.mark("deterministic_resolution_started");
     fastLane = await runSpecificCaseResolution({
       admin,
@@ -589,6 +633,9 @@ async function handle(req: Request): Promise<Response> {
         methods: fastLane.acquisition_methods_attempted,
       });
     }
+    budget.mark("deterministic_done", {
+      acquisition_success: fastLane.acquisition_success,
+    });
   }
 
   const fastLaneHit = fastLane?.acquisition_success === true;
@@ -596,18 +643,34 @@ async function handle(req: Request): Promise<Response> {
   // ── Broad retrieval (skipped/narrowed once the fast lane already won) ───
   budget.mark("broad_retrieval_started", { fast_lane_hit: fastLaneHit });
   const localQueries = fastLaneHit ? allQueries.slice(0, 3) : allQueries;
+  await budget.markDurable("local_db_start", { queries: localQueries.length });
+  const pplxQueries = fastLaneHit ? [] : allQueries;
   const [local, pplx] = await Promise.all([
-    runLocalRetrieval(admin, localQueries, { question, claims: analyzer.claims }),
+    runLocalRetrieval(admin, localQueries, { question, claims: analyzer.claims })
+      .then((r) => {
+        budget.mark("local_db_done", { candidates: r.candidates.length });
+        return r;
+      }),
     // Perplexity is the dominant CPU/wall cost. A resolved exact-docket body
     // already answers the question, so don't spend it.
-    runPerplexityRetrieval(fastLaneHit ? [] : allQueries),
+    (async () => {
+      budget.mark("perplexity_start", { queries: pplxQueries.length, skipped: fastLaneHit });
+      const r = await runPerplexityRetrieval(pplxQueries);
+      budget.mark("perplexity_done", { candidates: r.candidates.length });
+      return r;
+    })(),
   ]);
   stage_runs.push(...local.stage_runs, ...pplx.stage_runs);
+  budget.mark("candidate_pool_start", {
+    local: local.candidates.length,
+    perplexity: pplx.candidates.length,
+  });
   const pool = buildCandidatePool([...local.candidates, ...pplx.candidates]);
   // Fast-lane candidates bypass pool filtering exactly as before: they are
   // docket-verified official bodies, not search results.
   if (fastLaneCandidates.length > 0) pool.candidates.unshift(...fastLaneCandidates);
   budget.mark("broad_retrieval_done", { pool_size: pool.candidates.length });
+
 
   // ─── Judgment-body acquisition (first-class stage) ───────────────────────
   // Bounded, fail-closed attempt to obtain real judgment text for high-value
@@ -859,6 +922,7 @@ async function handle(req: Request): Promise<Response> {
     await completeAllStages();
     await writeTelemetry(admin, {
       ...telemetryBase,
+      row_id: traceRowId,
       answer,
       footnotes: [],
       task_mode: "legal_research",
@@ -966,6 +1030,7 @@ async function handle(req: Request): Promise<Response> {
 
     await writeTelemetry(admin, {
       ...telemetryBase,
+      row_id: traceRowId,
       // Non-null answer so the existing history sidebar query
       // (.not("answer","is",null)) still surfaces these runs.
       answer: "(חיפוש מקורות)",
@@ -1364,6 +1429,7 @@ async function handle(req: Request): Promise<Response> {
   // ─── Telemetry write (always) ────────────────────────────────────────────
   await writeTelemetry(admin, {
     ...telemetryBase,
+    row_id: traceRowId,
     answer: finalAnswer,
     footnotes: finalFootnotes,
     metadata: {
@@ -1499,6 +1565,7 @@ async function handle(req: Request): Promise<Response> {
   }, WATCHDOG_MS) as unknown as number;
 
   const bg = (async () => {
+    IN_FLIGHT += 1;
     try {
       const resp = await runPipeline();
       const payload = await resp.clone().json().catch(() => null);
@@ -1519,6 +1586,7 @@ async function handle(req: Request): Promise<Response> {
       settled = true;
       await setJobStatus({ status: "error", error: msg });
     } finally {
+      IN_FLIGHT = Math.max(0, IN_FLIGHT - 1);
       clearTimeout(watchdog);
     }
   })();
