@@ -66,6 +66,17 @@ export const ACQUISITION_LIMITS = {
    * reliably exhausts the edge CPU quota.
    */
   MAX_EXTRACT_BYTES: 4 * 1024 * 1024,
+  /**
+   * Conservative pre-extract inline limit for *speculative* acquisition:
+   * doctrine/survey candidates with no requested docket. `extractDocumentText`
+   * is one uninterruptible synchronous CPU step — no budget check can preempt
+   * it — so for candidates that are not the target authority we skip the file
+   * instead of risking the worker. Exact-docket / requested-authority flows
+   * keep the higher BOUNDED/MAX ceilings (G02/R02 official court PDFs).
+   */
+  MAX_INLINE_EXTRACTION_BYTES: 900_000,
+
+
 
 
   /** CPU guard: cap the character length fed to the text-cleaning regexes. */
@@ -469,6 +480,12 @@ export interface DirectFileOptions {
   /** Shape gate: refuse bodies larger than this instead of buffering them. */
   maxBytes?: number;
   /**
+   * Pre-extract inline gate. When set and the downloaded binary exceeds it,
+   * `extractDocumentText` is never called and the attempt fails closed with
+   * `binary_too_large_for_inline_extraction`.
+   */
+  maxInlineExtractionBytes?: number;
+  /**
    * Time-budget gate consulted before every expensive synchronous step
    * (decode, clean, PDF/DOCX extraction). Returning true fails closed.
    */
@@ -514,6 +531,22 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
       });
       throw new Error("binary_too_large_for_extraction");
     }
+    if (
+      opts.maxInlineExtractionBytes !== undefined &&
+      bytes.byteLength > opts.maxInlineExtractionBytes
+    ) {
+      // Speculative (non-docket) acquisition: extraction is uninterruptible,
+      // so skip rather than enter it.
+      await onStage("binary_too_large_for_inline_extraction", {
+        reason: "binary_too_large_for_inline_extraction",
+        bytes: bytes.byteLength,
+        limit: opts.maxInlineExtractionBytes,
+        content_type: contentType,
+        kind: isPdf ? "pdf" : "docx",
+      });
+      throw new Error("binary_too_large_for_inline_extraction");
+    }
+
     const bounded = bytes.byteLength > ACQUISITION_LIMITS.BOUNDED_EXTRACT_BYTES;
     if (bounded) {
       // Mid-size official PDFs (e.g. the 2.34 MB court.gov.il verdict) are
@@ -1000,6 +1033,7 @@ export async function runJudgmentTextAcquisition(
     post_extract_done: "judgment_attempt_post_extract_done",
     post_extract_too_large: "judgment_attempt_post_extract_done",
     post_extract_budget_exceeded: "judgment_attempt_post_extract_done",
+    binary_too_large_for_inline_extraction: "judgment_attempt_skipped",
   };
   let stage_stop_reason: string | null = null;
   let retrieval_budget_exceeded = false;
@@ -1196,12 +1230,23 @@ export async function runJudgmentTextAcquisition(
         Math.min(ACQUISITION_LIMITS.PER_METHOD_MS, attemptDeadline - Date.now()),
       );
       // Real network-layer abort — a hung socket can never outlive the attempt.
+      // Speculative acquisition (no requested docket, no docket signal at all —
+      // i.e. doctrine/survey candidates) gets the conservative pre-extract
+      // inline limit; exact-docket / requested-authority acquisition keeps the
+      // existing bounded path up to the hard ceiling.
+      // Speculative = the *question* names no docket (doctrine/survey
+      // acquisition). Candidate-level docket signals do not count: they are
+      // discovered, not requested.
+      const speculative = requestedDockets.length === 0 && !e.isRequested;
       const fileOpts: DirectFileOptions = {
         allowPlainText: true,
         validateText: docketGate,
         onStage,
         signal: AbortSignal.timeout(methodMs),
         budgetExceeded: attemptOverBudget,
+        ...(speculative
+          ? { maxInlineExtractionBytes: ACQUISITION_LIMITS.MAX_INLINE_EXTRACTION_BYTES }
+          : {}),
       };
       try {
         const run = method === "direct_file_fetch"
