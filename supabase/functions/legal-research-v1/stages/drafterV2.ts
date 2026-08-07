@@ -57,6 +57,12 @@ import {
   NEGATIVE_EXISTENCE_PROMPT_RULE,
 } from "./negativeExistenceGuard.ts";
 import {
+  applyMetadataOnlyHoldingGate,
+  referenceOnlySection,
+  type MetadataOnlyHoldingGateReport,
+} from "./metadataOnlyHoldingGate.ts";
+
+import {
   planSynthesisRendering,
   reportSynthesisRendering,
   type SynthesisRenderingPlan,
