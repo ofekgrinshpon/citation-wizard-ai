@@ -1,0 +1,158 @@
+{
+  "id": "G15",
+  "category": "doctrine_explanation",
+  "query": "מהי דוקטרינת השיתוף הספציפי בדירת מגורים?",
+  "run_id": "ac5dfa67-0707-4574-a3de-dd437c39972b",
+  "job_id": "574fdec3-7d2f-49ad-90dc-0d1af8bc3fee",
+  "job_status": "done",
+  "job_error": null,
+  "wall_ms": 264961,
+  "pipeline_total_ms": 261936,
+  "retrieval_elapsed_ms": 34557,
+  "guard_triggered": false,
+  "research_mode": "doctrine_explanation",
+  "shape": "definition",
+  "branch": null,
+  "drafted": true,
+  "sufficiency_profile": "statutory_institution",
+  "sufficiency_passed": true,
+  "fast_lane": null,
+  "exact_docket_source_found": false,
+  "exact_docket_source_usable": false,
+  "specific_case_identity_passed": true,
+  "metadata_only_sources_used_as_holdings": null,
+  "commentary_carries_holding": null,
+  "synthesis_rendering": {
+    "groups": {
+      "secondary_context": [],
+      "usable_authorities": [],
+      "found_but_not_usable": [],
+      "statutory_background": []
+    },
+    "reason": "not_synthesis_mode",
+    "group_counts": {
+      "secondary_context": 0,
+      "usable_authorities": 0,
+      "found_but_not_usable": 0,
+      "statutory_background": 0
+    },
+    "named_case_keys": [],
+    "named_cases_in_body": 0,
+    "usable_judgments_named": 0,
+    "synthesis_rendering_applied": false,
+    "commentary_used_as_primary_authority": false,
+    "metadata_only_sources_used_as_holdings": false
+  },
+  "pool": {
+    "admitted": 22,
+    "tier_counts": {
+      "primary_mirror": 3,
+      "statute_mirror": 2,
+      "index_or_listing": 1,
+      "official_primary": 4,
+      "secondary_commentary": 12
+    },
+    "judgment_documents": 1,
+    "judgments_with_holding_text": 0
+  },
+  "text_usability_counts": {
+    "metadata_only": 12,
+    "listing_page": 1,
+    "full_text": 4,
+    "substantive_excerpt": 5
+  },
+  "role_counts": {
+    "primary_statute": 2,
+    "binding_case_law": 10,
+    "persuasive_case_law": 4,
+    "factual_report": 3,
+    "scholarship": 3
+  },
+  "used_sources": [
+    {
+      "title": "חוק הגנת הדייר [נוסח משולב], תשל\"ב-1972",
+      "url": "https://www.nevo.co.il/law_html/law00/71616.htm",
+      "type": "legislation",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "דנג\"ץ 8537/18",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/18/370/085/v30&fileName=18085370.V30&type=4",
+      "type": "caselaw",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "מקור חקיקה מתוך אתר הכנסת",
+      "url": "https://fs.knesset.gov.il/6/law/6_lsr_208977.PDF",
+      "type": "legislation",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "פס\"ד במחלוקת שעיקרה טענה לקיומה של שיתוף ספציפי בדירה",
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%91%D7%9E%D7%97%D7%9C%D7%95%D7%A7%D7%AA-%D7%A9%D7%A2%D7%99%D7%A7%D7%A8%D7%94-%D7%98%D7%A2%D7%A0%D7%94-%D7%9C%D7%A7%D7%99%D7%95%D7%9E%D7%94-%D7%A9%D7%9C-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99-%D7%91%D7%93%D7%99%D7%A8%D7%94",
+      "type": "caselaw",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "פס\"ד בעניין כוונת שיתוף ספציפי ברבע דירה",
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%91%D7%A2%D7%A0%D7%99%D7%99%D7%9F-%D7%9B%D7%95%D7%95%D7%A0%D7%AA-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99-%D7%91%D7%A8%D7%91%D7%A2-%D7%93%D7%99%D7%A8%D7%94",
+      "type": "caselaw",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "הגשת תביעות וניהול הליכים בפני המפקח על רישום המקרקעין (הליך שיפוטי - בתים משותפים)",
+      "url": "https://www.gov.il/he/service/condominiums-supervisor-claims",
+      "type": "other",
+      "tier": "primary_mirror",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2021/71C/2021-71c-305-RMI-Rishum.pdf",
+      "type": "other",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    }
+  ],
+  "used_sources_count": 7,
+  "footnotes_count": 4,
+  "footnote1": {
+    "title": "חוק הגנת הדייר [נוסח משולב], תשל\"ב-1972; דנג\"ץ 8537/18",
+    "url": "https://www.nevo.co.il/law_html/law00/71616.htm",
+    "type": "compound"
+  },
+  "is_stub": false,
+  "verifier": {
+    "by_support": {
+      "direct": 4,
+      "partial": 12,
+      "unrelated": 4,
+      "tangential": 2
+    },
+    "by_role_match": {
+      "true": 22,
+      "false": 0
+    },
+    "model_verdicts": 22,
+    "by_support_model": {
+      "direct": 4,
+      "partial": 12,
+      "unrelated": 4,
+      "tangential": 2
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "answer_len": 2558,
+  "answer": "לא נמצאה הלכה מוכרת בשם \"דוקטרינת השיתוף הספציפי בדירת מגורים\". במקום זאת, במקורות שסופקו נדון מוסד מעשי המוכר בפסיקה כ'שיתוף ספציפי' בדירת מגורים — הכרה במצב שבו מי שאינו רשום כבעל נכס טוען לזכויות בעלות או שימוש מהותיות בנכס; בהקשר זה הוראות חוק הגנת הדייר רלוונטיות להגבלות על יישום ההסדר.¹\n\n**הגדרה ותכלית**\n\nבמובן המעשי, שיתוף ספציפי בדירת מגורים מתייחס להכרה של בית המשפט בקיום מעמד יחסי של שותפות או בעלות מעשית בנכס המגורים אף על פי שהזכויות הרשומות שייכות לצד אחד בלבד. תכלית ההכרה היא למנוע עוול מיוחד שנגרם למי שהשקיע, התנהג כלפי הציבור כבעל־שותף או יצר תלות כלכלית ורגשית בנכס, ולספק אמצעים משפטיים לאיזון זכויות במקום ניסוח טכני של רישום מקרקעין.³\n\n**תנאים ועקרונות לשימוש בהכרה**\n\nהפסיקה מזהה פרמטרים כמנחים בבחינת בקשה להכרה בשיתוף ספציפי: מקור רכישת הדירה, משך ושכיחות המגורים, קיומה של משכנתא משותפת או התחייבויות כלכליות משותפות, היקף שיפוצים והשקעות, וההתנהגות וההצגות של הצדדים כלפי עצמם וכלפי ציבור. בנוסף הועלתה דרישה לכך שייתכן ויידרש 'דבר מה נוסף' נסיבתי כדי להצדיק חריגה מהרישום. בתי המשפט שוקלים את כל המרכיבים הללו באיזון ואינם מסתמכים על מבחן יחיד ואחיד.³\n\n**סעדים שנידונים בפסיקה**\n\nבמקרים שבהם מוכרת ההכרה בשיתוף ספציפי, הפסיקה והתיאוריה דנים בסעדים מעשיים למימוש הזכויות: קביעת זכויות שימוש (למשל הקצאת שימוש בלעדי בחלק מהנכס), חיוב בתשלום פיצוי או שכר־דירה לצורך תשלום הוגן לצד הרשום, והליכי חלוקה או מכירה של הנכס עם קביעת חלקי תמורה בהתאם לנסיבות ההשקעה והתרומה. נטל ההוכחה ותנאי שיקוף ההשקעה משפיעים על סוג וסדר הסעדים.³\n\n**מגע עם זכויות צדדים שלישיים והגנות חוקיות**\n\nהכפפה של ההכרה בשיתוף לסמכויות אחרות בולטת: חוק הגנת הדייר עשוי למנוע או להגביל יישום שיתוף ספציפי נגד דייר מוגן ולשמר למשכיר או לדייר המשכיות שכירות; רישום במרשם המקרקעין משפיע על מעמדם של צדדים שלישיים ויש לבדוק תיעוד רישומי והשלכותיו על אפשרות ההכרה; בזיקות משפחתיות — זכויות ילדים וזכויות משפחתיות מצריכות איזון בין האינטרסים ובהחלטות יינתן משקל להגנה על דירת המשפחה.²\n\n**שיקולים פרוצדורליים ועובדתיים**\n\nמי שטוען לשיתוף ספציפי צריך להגיש ראיות מגובות: מסמכים המעידים על מקור רכישה או השתתפות בתשלומים, ראיות להשקעות ושיפוצים, מסמכים פיננסיים (כגון משכנתא משותפת) והוכחות להתנהגות והצגות כלפי צדדים שלישיים. יש לבדוק מצב רישום במרשם המקרקעין ולעיתים להעלות מקרים בפני המפקח על רישום מקרקעין או להציג מסמכים רלוונטיים במסגרת ההליך. בתי המשפט יאפשרו התדיינות על חלופות לחלוקה ויקחו בחשבון גם שיקולי יעילות ונטל ראייתי.⁴\n\nהערה וסיכום קצר: המענה מבוסס על קטעי פסיקה והסברים מקצועיים שסופקו במקורות, אך הטקסט המלא של ההלכות והנוסח המדויק של החלטות הפסק־דין לא היה ברשותי; אם כוונתך להלכה ספציפית בשם אחר או לפסק דין מסוים, אנא ציין/י אותו ואפנה לפרט נוסף."
+}
