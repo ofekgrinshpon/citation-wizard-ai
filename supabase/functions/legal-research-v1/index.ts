@@ -670,6 +670,11 @@ async function handle(req: Request): Promise<Response> {
   // docket-verified official bodies, not search results.
   if (fastLaneCandidates.length > 0) pool.candidates.unshift(...fastLaneCandidates);
   budget.mark("broad_retrieval_done", { pool_size: pool.candidates.length });
+  await budget.markDurable("post_retrieval_start", {
+    pool_size: pool.candidates.length,
+    integrity_rows: pool.integrity.length,
+    integrity_rejects: pool.integrity_rejects,
+  });
 
 
   // ─── Judgment-body acquisition (first-class stage) ───────────────────────
@@ -677,17 +682,24 @@ async function handle(req: Request): Promise<Response> {
   // judgment candidates in every judgment-bearing mode, with per-role budgets.
   // When the fast lane or the deadline already settled it, spend nothing.
   const skipAcquisition = fastLaneHit || budget.exceeded();
+  await budget.markDurable("judgment_acquisition_start", {
+    skipped: skipAcquisition,
+    candidates: skipAcquisition ? 0 : pool.candidates.length,
+  });
   const judgmentAcquisition = await runJudgmentTextAcquisition({
     admin,
     research_mode: researchMode,
     question,
     candidates: skipAcquisition ? [] : pool.candidates,
   });
-  budget.mark("judgment_acquisition_done", {
+  await budget.markDurable("judgment_acquisition_done", {
     skipped: skipAcquisition,
     successes: judgmentAcquisition.successes,
   });
 
+  await budget.markDurable("candidate_enrichment_start", {
+    successes: judgmentAcquisition.successes,
+  });
   if (judgmentAcquisition.successes > 0) {
     // Refresh the integrity telemetry rows for upgraded candidates.
     const byId = new Map(pool.candidates.map((c) => [c.candidate_id, c]));
@@ -702,11 +714,13 @@ async function handle(req: Request): Promise<Response> {
       row.integrity_flags = integ.integrity_flags ?? row.integrity_flags;
     }
   }
+  await budget.markDurable("candidate_enrichment_done");
 
   // ─── Specific-case authority resolution (specific_case mode only) ───────
   // Exact-docket guard + bounded judgment-text acquisition. Fail-closed: when
   // no admitted source carries the exact requested docket with usable text,
   // the drafter fires `docket_limitation` regardless of pool size.
+  await budget.markDurable("specific_case_resolution_start", { fast_lane_hit: fastLaneHit });
   const specificCase = fastLaneHit && fastLane
     ? fastLane
     : await runSpecificCaseResolution({
@@ -746,7 +760,7 @@ async function handle(req: Request): Promise<Response> {
     specificCase.injected_candidate_id ??= fastLane.injected_candidate_id;
     specificCase.exact_docket_candidate_id ??= fastLane.exact_docket_candidate_id;
   }
-  budget.mark("specific_case_resolution_done", {
+  await budget.markDurable("specific_case_resolution_done", {
     acquisition_success: specificCase.acquisition_success,
     exact_docket_source_usable: specificCase.exact_docket_source_usable,
     exact_docket_candidate_id: specificCase.exact_docket_candidate_id,
@@ -758,10 +772,17 @@ async function handle(req: Request): Promise<Response> {
   // ─── Specific-case judgment identity + title recovery ───────────────────
   // A case-holding answer requires a usable judgment body that provably is the
   // requested case. Generic-titled official documents get a recovered title.
+  await budget.markDurable("specific_case_identity_start", {
+    candidates: pool.candidates.length,
+  });
   const specificCaseIdentity = runSpecificCaseIdentity({
     research_mode: plannerStage.mode_plan?.mode ?? null,
     question,
     candidates: pool.candidates,
+  });
+  await budget.markDurable("specific_case_identity_done", {
+    required: specificCaseIdentity.specific_case_identity_required,
+    passed: specificCaseIdentity.specific_case_identity_passed,
   });
 
   const specificCaseGate =
@@ -782,6 +803,11 @@ async function handle(req: Request): Promise<Response> {
         }
       : null;
 
+  await budget.markDurable("verifier_input_build_start", {
+    pool_size: pool.candidates.length,
+    pplx_queries: pplx.per_query.length,
+    pool_drops: pool.drops.length,
+  });
 
   const role_corrections = pplx.per_query.flatMap((pq) =>
     pq.results
@@ -796,6 +822,7 @@ async function handle(req: Request): Promise<Response> {
       })),
   );
   const retrievalMeta = {
+
     ms: Date.now() - tRetrieval,
     local: {
       ms: local.ms,
@@ -900,6 +927,11 @@ async function handle(req: Request): Promise<Response> {
     },
     retrieval_budget: budget.report(),
   };
+  await budget.markDurable("verifier_input_build_done", {
+    pool_size: pool.candidates.length,
+  });
+
+
 
   // ─── Retrieval CPU guard (specific_case) ─────────────────────────────────
   // Fail closed instead of letting the isolate get killed mid-retrieval: if the
@@ -959,6 +991,7 @@ async function handle(req: Request): Promise<Response> {
 
   // ─── P4: Source Verifier ─────────────────────────────────────────────────
   await markStage("verifier");
+  await budget.markDurable("verifier_start", { candidates: pool.candidates.length });
   const forceSplit = (req.headers.get("x-verifier-force-split") ?? "") === "1";
   const verifier = await runVerifier(question, analyzer.claims, pool.candidates, { forceSplit });
   stage_runs.push(...verifier.stage_runs);
