@@ -13,7 +13,6 @@
 // are demoted to "reference only — case located, body not read" and are
 // removed from proposition footnotes.
 
-import type { DrafterInputSource } from "./drafter.ts";
 import type { StructuredDraft } from "./structuredValidation.ts";
 
 const BODY_ACQUIRED_USABILITY = new Set([
@@ -116,7 +115,7 @@ export function referenceOnlySection(
  */
 export function applyMetadataOnlyHoldingGate(
   draft: StructuredDraft | null,
-  inputSources: Array<DrafterInputSource | GateSourceLike>,
+  inputSources: GateSourceLike[],
 ): { draft: StructuredDraft | null; report: MetadataOnlyHoldingGateReport } {
   const report = emptyGateReport();
 
