@@ -1371,5 +1371,168 @@
     },
     "answer_len": 2050,
     "answer": "**מבחן המידתיות — התשתית הדוקטרינלית**\n\nמבחן המידתיות במשפט החוקתי הישראלי מורכב משלושה שלבים: התאמה (קשר רציונלי בין המטרה לאמצעי), הכרחיות או אמצעי שפגיעתו פחותה, ומידתיות במובן הצר (איזון בין התועלת לנזק).¹\n\nהשלב הראשון בוחן האם האמצעי נועד להשיג מטרה ראויה וקשור אליה באופן סביר; השלב השני בוחן אם קיים אמצעי חלופי שפוגע פחות בזכות; והשלב השלישי שוקל באופן כמותי ואיכותי את מידת הפגיעה מול התועלת הציבורית, ויכול להוביל לפסילת ההסדר אף אם עבר את שני השלבים הקודמים.¹\n\n**התפתחות היסטורית**\n\nהמעבר לאמות מידתיות במשפט הישראלי נרשם בעיקר לאחר 'המהפכה החוקתית' ובעקבות עיגון זכויות בחוקי היסוד: בשנות התשעים התחיל בית המשפט לאמץ בדיקה מבנית של מידתיות במקום גישת רציונליות־פנימית בלבד.³\n\nניתן לתאר התקיימות מקבילה של חזקת התאמה פרשנית ומעבר מפורמליות לשיטתית בפסיקה ובספרות, כאשר ההיסטוריה הפרשנית והעיגון של זכויות בחוקי היסוד תרמו להצדקת המודל התלת‑שלבי, אם כי יש המחמירים בזהירות בציון השלב שבו החזקה הפרשנית חלה במלואה.⁴\n\n**יישום נוכחי ודוגמאות עקרוניות**\n\nבפסיקה העכשווית בית המשפט משתמש במבחן המידתיות כמסגרת מובנית לשקלול זכויות מול אינטרסים ציבוריים: השופט בוחן את עומק הפגיעה בזכות, בוחן את כוונת המחוקק והצורך הציבורי, ומשקלל אלטרנטיבות פחות פוגעות לפני קבלת פסק‑דין שמאשר את ההסדר.²\n\nמקרים תכנוניים ואחרות מדגימים את הגישה המהותית: בתי המשפט מבצעים איזון בין צורך ציבורי בתכנון או בהפקעה לבין פגיעה בזכויות נכסים, בוחנים תחליפים והיקף ההוכחה ביחס לצורך הציבורי, ולעיתים נוטים לאיזון שקול במקום גישת רציונליות צרה.²\n\n**ביקורת והצעות רפורמה**\n\nהיו משמעויות ביקורתיות על יישום מבחני המידתיות: נטען כי באמצעותם נוצרה שיפוטיות יתר, חוסר ודאות במדידת המשקל הפסיקתי וחשש ל'הטיית פריימינג' של המחוקק שמכתיב מה ייחשב כ'מטרה ראויה'.⁵\n\nכתבי ביקורת מציעים דרכי רפורמה שונות — למשל החלת מבחני איזון חלופיים ברמות שונות של ביקורת או שילוב מבחני הסתברות מסורתיים בתהליך המידתיות — על מנת לצמצם חוסר־ודאות ולמנוע כניסה מיותרת לשיקול מדיניות שניתן להשאיר למחוקק.⁶\n\nלסיכום, מבחן המידתיות הפך למסגרת מובנית ועמוקה בבירור חקיקה ופגיעה בזכויות; לצד תרומתו לשיטה ביקורתית יש לשקול התאמות פרוצדורליות ותיאורטיות שיקטינו מתחים בין תפקידי בית המשפט ותפקידי המחוקק."
+  },
+  {
+    "id": "G20",
+    "category": "academic_survey",
+    "query": "כתוב סקירת פסיקה על חובת תום הלב במשא ומתן.",
+    "run_id": "6d618bac-f404-4da7-ac09-2f506ae31464",
+    "job_id": "f53ad433-4d40-483e-9c31-602795426cd0",
+    "job_status": "done",
+    "job_error": null,
+    "wall_ms": 369045,
+    "pipeline_total_ms": 360985,
+    "retrieval_elapsed_ms": 24158,
+    "guard_triggered": false,
+    "research_mode": "doctrine_explanation",
+    "shape": "analysis",
+    "branch": null,
+    "drafted": true,
+    "sufficiency_profile": "case_law_synthesis",
+    "sufficiency_passed": true,
+    "fast_lane": null,
+    "exact_docket_source_found": false,
+    "exact_docket_source_usable": false,
+    "specific_case_identity_passed": true,
+    "metadata_only_sources_used_as_holdings": null,
+    "commentary_carries_holding": null,
+    "synthesis_rendering": {
+      "groups": {
+        "secondary_context": [],
+        "usable_authorities": [],
+        "found_but_not_usable": [],
+        "statutory_background": []
+      },
+      "reason": "not_synthesis_mode",
+      "group_counts": {
+        "secondary_context": 0,
+        "usable_authorities": 0,
+        "found_but_not_usable": 0,
+        "statutory_background": 0
+      },
+      "named_case_keys": [],
+      "named_cases_in_body": 0,
+      "usable_judgments_named": 0,
+      "synthesis_rendering_applied": false,
+      "commentary_used_as_primary_authority": false,
+      "metadata_only_sources_used_as_holdings": false
+    },
+    "pool": {
+      "admitted": 20,
+      "tier_counts": {
+        "primary_mirror": 2,
+        "index_or_listing": 1,
+        "official_primary": 6,
+        "secondary_commentary": 11
+      },
+      "judgment_documents": 5,
+      "judgments_with_holding_text": 3
+    },
+    "text_usability_counts": {
+      "metadata_only": 8,
+      "full_text": 7,
+      "substantive_excerpt": 4,
+      "listing_page": 1
+    },
+    "role_counts": {
+      "primary_statute": 2,
+      "binding_case_law": 13,
+      "persuasive_case_law": 1,
+      "scholarship": 4
+    },
+    "used_sources": [
+      {
+        "title": "ע\"א 6952/15",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C15/520/069/t05&fileName=15069520.t05&type=4",
+        "type": "caselaw",
+        "tier": "official_primary",
+        "usability": "full_text"
+      },
+      {
+        "title": "בבית משפט השלום – 4189b.pdf",
+        "url": "https://elyon1.court.gov.il/heb/tovanot_y/4189b.pdf",
+        "type": "caselaw",
+        "tier": "official_primary",
+        "usability": "full_text"
+      },
+      {
+        "title": "ת.א. 53861/07",
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA-%D7%90-53861-07",
+        "type": "caselaw",
+        "tier": "secondary_commentary",
+        "usability": "substantive_excerpt"
+      },
+      {
+        "title": "חוסר תום לב – 4302b.pdf",
+        "url": "https://elyon1.court.gov.il/heb/tovanot_y/4302b.pdf",
+        "type": "caselaw",
+        "tier": "official_primary",
+        "usability": "metadata_only"
+      },
+      {
+        "title": "Damages for Breach of the Obligation to Act in Good Faith in the Pre-Contractual Stage",
+        "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4900302",
+        "type": "other",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only"
+      },
+      {
+        "title": "החובה לנהוג בתום לב במשא ומתן בראי הגישה הכלכלית",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%97%D7%95%D7%91%D7%94%20%D7%9C%D7%A0%D7%94%D7%95%D7%92%20%D7%91%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%9E%D7%A9%D7%90%20%D7%95%D7%9E%D7%AA%D7%9F%20%D7%91%D7%A8%D7%90%D7%99%20%D7%94%D7%92%D7%99%D7%A9%D7%94%20%D7%94%D7%9B%D7%9C%D7%9B%D7%9C%D7%99%D7%AA.pdf",
+        "type": "other",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only"
+      },
+      {
+        "title": "סעיף 12 לחוק החתים: תום לב במשא ומתן",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/mishpatim-07-1-117_0.pdf",
+        "type": "other",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only"
+      },
+      {
+        "title": "תום לב בחוזים ואשם ביצירת החוזה",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94_0.pdf",
+        "type": "other",
+        "tier": "secondary_commentary",
+        "usability": "metadata_only"
+      }
+    ],
+    "used_sources_count": 8,
+    "footnotes_count": 7,
+    "footnote1": {
+      "title": "ע\"א 6952/15; בבית משפט השלום – 4189b.pdf",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C15/520/069/t05&fileName=15069520.t05&type=4",
+      "type": "compound"
+    },
+    "is_stub": false,
+    "verifier": {
+      "by_support": {
+        "direct": 3,
+        "partial": 11,
+        "unrelated": 6,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 18,
+        "false": 2
+      },
+      "model_verdicts": 20,
+      "by_support_model": {
+        "direct": 3,
+        "partial": 11,
+        "unrelated": 6,
+        "tangential": 0
+      },
+      "synthetic_verdicts": 0,
+      "by_support_synthetic": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      }
+    },
+    "answer_len": 1862,
+    "answer": "הדין הישראלי מכיר בחובת תום לב במשא ומתן טרום‑חוזי. העוגן הנורמטיבי מצוי בסעיף 12(א) לחוק החוזים (חלק כללי), והפסיקה יישמה והעמיקה חובה זו; כך, בע\"א 6952/15 נדונה חובת תום הלב בהקשר טרום‑חוזי בבית המשפט העליון.¹\n\n**תוכן חובת תום הלב במשא ומתן**\n\nתוכן החובה כולל, בין היתר, חובת גילוי של עובדות מהותיות במהלך המו\"מ. מסירת מידע הדרוש לצד האחר לקבלת החלטה מודעת היא חלק מהנהגה בתום לב, והימנעות מגילוי מידע מהותי עלולה להיחשב כהטעיה.⁴\n\nבהמשך לעקרונות סעיף 12(א) ולחובת תום הלב בקיום החוזה לפי סעיף 39, נדרשים הצדדים לנהוג בדרך מקובלת ולהימנע מהתנהגות מטעה או מניפולטיבית במהלך המו\"מ; התנהגות שבטיפוח ציפיות שווא או בהצגת מצגים חלקיים עשויה להקים הפרה של החובה.²\n\n**סעדים בהפרת החובה**\n\nהפרת חובת תום הלב במשא ומתן עשויה לזכות את הנפגע בפיצויים. בספרות מודגש כי במישור הטרום‑חוזי נקודת המוקד היא בפיצויי הסתמכות והחזר הוצאות שנגרמו עקב ניהול מו\"מ שלא בתום לב, ובנסיבות מתאימות יישקלו סעדים נוספים בהתאם לאופי ההפרה ולנזק שנגרם.³\n\nבהערכת הנזק נבחנים, בין היתר, היקף ההסתמכות הסבירה, הקשר הסיבתי בין ההפרה לנזק, ומידת הקונקרטיות של המצגים שעליהם הסתמך הצד הנפגע. הספרות מצביעה על שיקולים אלה כמנחים את בחירת הסעד והיקפו בשלב הטרום‑חוזי.⁵\n\n**גבולות והבחנות יישומיות**\n\nהיקף החובה מתכייל מול חופש החוזים ופרקטיקות מו\"מ לגיטימיות. ניתן להצביע על גישה שלפיה עוצמת חובת הגילוי וההגינות גוברת ככל שהמו\"מ מתקדם ונוצרות ציפיות סבירות להסתמכות, תוך שמירה על מרחב תמרון עסקי סביר.⁶\n\nבספרות הובעה גם תפיסה הרואה בעקרון תום הלב עיקרון רחב היקף, שמקרין מעבר לצדדים הישירים למו\"מ. עם זאת, היקף האימוץ של תפיסה זו בפסיקה נותר שאלה נקודתית התלויה במבנה הנורמטיבי של סעיף 12 ובהקשר המקרה.⁷\n\nבמבט מסכם, חובת תום הלב במשא ומתן משמשת כלי נורמטיבי למיתון אסימטריות מידע ולהכוונת התנהגות הוגנת בשלב הטרום‑חוזי, תוך איזון עם אוטונומיית הרצון וחופש החוזים. יישומה נעשה על בסיס נסיבותיו הקונקרטיות של כל מקרה.\n\nהערת מקור: טקסט ההלכה המלא לא היה בפניי, והסקירה התבססה על מקטעים ואזכורים חלקיים."
   }
 ]
