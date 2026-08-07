@@ -1,0 +1,95 @@
+{
+  "id": "G11",
+  "category": "statute_section_analysis",
+  "query": "מה קובע סעיף 6 לחוק החברות, תשנ\"ט-1999 בעניין הרמת מסך?",
+  "run_id": "6fcc64f2-fd31-4946-b1cb-4775e7253a5b",
+  "job_id": "b3b11176-eec1-48e8-ab49-80066de69984",
+  "job_status": "done",
+  "job_error": null,
+  "wall_ms": 274547,
+  "pipeline_total_ms": 273491,
+  "retrieval_elapsed_ms": 19153,
+  "guard_triggered": false,
+  "research_mode": "statute_section_definition",
+  "shape": "definition",
+  "branch": "statute_section_limitation",
+  "drafted": false,
+  "sufficiency_profile": null,
+  "sufficiency_passed": null,
+  "fast_lane": null,
+  "exact_docket_source_found": false,
+  "exact_docket_source_usable": false,
+  "specific_case_identity_passed": true,
+  "metadata_only_sources_used_as_holdings": null,
+  "commentary_carries_holding": null,
+  "synthesis_rendering": null,
+  "pool": {
+    "admitted": 21,
+    "tier_counts": {
+      "primary_mirror": 1,
+      "statute_mirror": 1,
+      "index_or_listing": 3,
+      "official_primary": 8,
+      "secondary_commentary": 8
+    },
+    "judgment_documents": 0,
+    "judgments_with_holding_text": 0
+  },
+  "text_usability_counts": {
+    "metadata_only": 9,
+    "listing_page": 3,
+    "full_text": 4,
+    "substantive_excerpt": 5
+  },
+  "role_counts": {
+    "primary_statute": 11,
+    "scholarship": 3,
+    "persuasive_case_law": 1,
+    "binding_case_law": 6
+  },
+  "used_sources": [
+    {
+      "title": "חוק החברות, התשנ״ט–1999 – נוסח מלא ומעודכן",
+      "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+      "type": "legislation",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    }
+  ],
+  "used_sources_count": 1,
+  "footnotes_count": 1,
+  "footnote1": {
+    "title": "חוק החברות, התשנ״ט–1999 – נוסח מלא ומעודכן",
+    "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+    "type": "legislation"
+  },
+  "is_stub": false,
+  "verifier": {
+    "by_support": {
+      "direct": 1,
+      "partial": 6,
+      "unrelated": 10,
+      "tangential": 4
+    },
+    "by_role_match": {
+      "true": 20,
+      "false": 1
+    },
+    "model_verdicts": 20,
+    "by_support_model": {
+      "direct": 1,
+      "partial": 6,
+      "unrelated": 9,
+      "tangential": 4
+    },
+    "synthetic_verdicts": 1,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 1,
+      "tangential": 0
+    }
+  },
+  "answer_len": 247,
+  "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 6 לחוק החברות; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
+}
