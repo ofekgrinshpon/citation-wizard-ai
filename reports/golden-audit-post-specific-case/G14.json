@@ -1,0 +1,203 @@
+{
+  "id": "G14",
+  "category": "doctrine_explanation",
+  "query": "מהו עקרון תום הלב במשפט הישראלי וכיצד הוא מיושם?",
+  "run_id": "ff0bd68b-265a-4916-a3f3-8037065a709e",
+  "job_id": "1a97cb19-233e-4028-929c-61c410003401",
+  "job_status": "done",
+  "job_error": null,
+  "wall_ms": 254390,
+  "pipeline_total_ms": 245535,
+  "retrieval_elapsed_ms": 21610,
+  "guard_triggered": false,
+  "research_mode": "doctrine_explanation",
+  "shape": "analysis",
+  "branch": null,
+  "drafted": true,
+  "sufficiency_profile": "statutory_institution",
+  "sufficiency_passed": true,
+  "fast_lane": null,
+  "exact_docket_source_found": false,
+  "exact_docket_source_usable": false,
+  "specific_case_identity_passed": true,
+  "metadata_only_sources_used_as_holdings": null,
+  "commentary_carries_holding": null,
+  "synthesis_rendering": {
+    "groups": {
+      "secondary_context": [],
+      "usable_authorities": [],
+      "found_but_not_usable": [],
+      "statutory_background": []
+    },
+    "reason": "not_synthesis_mode",
+    "group_counts": {
+      "secondary_context": 0,
+      "usable_authorities": 0,
+      "found_but_not_usable": 0,
+      "statutory_background": 0
+    },
+    "named_case_keys": [],
+    "named_cases_in_body": 0,
+    "usable_judgments_named": 0,
+    "synthesis_rendering_applied": false,
+    "commentary_used_as_primary_authority": false,
+    "metadata_only_sources_used_as_holdings": false
+  },
+  "pool": {
+    "admitted": 18,
+    "tier_counts": {
+      "index_or_listing": 1,
+      "official_primary": 5,
+      "secondary_commentary": 12
+    },
+    "judgment_documents": 1,
+    "judgments_with_holding_text": 1
+  },
+  "text_usability_counts": {
+    "metadata_only": 8,
+    "full_text": 6,
+    "substantive_excerpt": 4
+  },
+  "role_counts": {
+    "primary_statute": 1,
+    "government_report": 3,
+    "binding_case_law": 10,
+    "scholarship": 4
+  },
+  "used_sources": [
+    {
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/3&fileName=SG3_9_1021-07.pdf&type=2",
+      "type": "supreme_court_il",
+      "tier": "official_primary",
+      "usability": "full_text"
+    },
+    {
+      "title": "בית משפט השלום ת\"א-יפו, השופט אביים ברקאי: פסק דין בנושא ניגוד עניינים בניהול פרויקט התחדשות עירונית (ת\"א 22191-01-21)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=60",
+      "type": "caselaw",
+      "tier": "official_primary",
+      "usability": "full_text"
+    },
+    {
+      "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "type": "caselaw",
+      "tier": "secondary_commentary",
+      "usability": "full_text"
+    },
+    {
+      "title": "תום לב בניהול משא ומתן - Gov.il",
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/rosh_memchala-rubinstein/he/rosh%20memchala-rubinstein.doc",
+      "type": "other",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "מעודכן נייר עמדה – סעיפים 1-5, הצעת חוק דיני ממונות",
+      "url": "https://www.knesset.gov.il/committees/heb/material/data/H27-12-2011_12-58-10_Einhorn27122011.pdf",
+      "type": "legislation",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "מסמך מאתר אתר אקדמי (lawjournal.huji.ac.il)",
+      "url": "https://lawjournal.huji.ac.il/article/12/1906",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "substantive_excerpt"
+    },
+    {
+      "title": "אכיפה בהעדר חוזה מחייב ופריזמת ההסכמה - מבט תרופתי על חוקי איסור הפליה",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_1e3c705231af49c3954729b75b471e65.pdf",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "full_text"
+    },
+    {
+      "title": "כבוד האדם ותרופתו",
+      "url": "https://lawjournal.huji.ac.il/article/12/1602",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "substantive_excerpt"
+    },
+    {
+      "title": "בין אינטימיות נדרשת ובלתי־מוגבלת לכפייה: המקרה של עובדות בית",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d0b116eaa8ff4f9fa620a4790ba4733a.pdf",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "full_text"
+    },
+    {
+      "title": "מיהו עובד: מבחני הסף",
+      "url": "https://lawjournal.huji.ac.il/article/12/1911",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "substantive_excerpt"
+    },
+    {
+      "title": "תום לב בחוזים ואשם ביצירת החוזה",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%AA%D7%95%D7%9D%20%D7%9C%D7%91%20%D7%91%D7%97%D7%95%D7%96%D7%99%D7%9D%20%D7%95%D7%90%D7%A9%D7%9D%20%D7%91%D7%99%D7%A6%D7%99%D7%A8%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%D7%94_0.pdf",
+      "type": "other",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "תום הלב בפרשנות החוזה - עיון תלמודי בהשוואה למשפט הישראלי",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2392045",
+      "type": "other",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "על דיני המכר כמכורתם של עקרון תום הלב ועל עקרון תום הלב כמעוז דיני האמון במשפט הישראלי",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2025-11/%D7%A2%D7%9C%20%D7%93%D7%99%D7%A0%D7%99%20%D7%94%D7%9E%D7%9B%D7%A8%20%D7%9B%D7%9E%D7%9B%D7%95%D7%A8%D7%AA%D7%9D%20%D7%A9%D7%9C%20%D7%A2%D7%A7%D7%A8%D7%95%D7%9F%20%D7%AA%D7%95%D7%9D%20%D7%94%D7%9C%D7%91%20%20%20%D7%95%D7%A2%D7%9C%20%D7%A2%D7%A7%D7%A8%D7%95%D7%9F%20%D7%AA%D7%95%D7%9D%20%D7%94%D7%9C%D7%91%20%D7%9B%D7%9E%D7%A2%D7%95%D7%96%20%D7%93%D7%99%D7%A0%D7%99%20%D7%94%D7%90%D7%9E%D7%95%D7%9F%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%99%D7%A9%D7%A8%D7%90%D7%9C%D7%99%20%20%20.pdf",
+      "type": "other",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "מסמך מאתר אתר אקדמי (daat.ac.il)",
+      "url": "https://www.daat.ac.il/mishpat-ivri/skirot/184-2.htm",
+      "type": "other",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    }
+  ],
+  "used_sources_count": 14,
+  "footnotes_count": 10,
+  "footnote1": {
+    "title": "מסמך מאתר אתר ממשלתי (gov.il); בית משפט השלום ת\"א-יפו, השופט אביים ברקאי: פסק דין בנושא ניגוד עניינים בניהול פרויקט התחדשות עירונית (ת\"א 22191-01-21); רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+    "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/3&fileName=SG3_9_1021-07.pdf&type=2",
+    "type": "compound"
+  },
+  "is_stub": false,
+  "verifier": {
+    "by_support": {
+      "direct": 1,
+      "partial": 14,
+      "unrelated": 1,
+      "tangential": 2
+    },
+    "by_role_match": {
+      "true": 17,
+      "false": 1
+    },
+    "model_verdicts": 18,
+    "by_support_model": {
+      "direct": 1,
+      "partial": 14,
+      "unrelated": 1,
+      "tangential": 2
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "answer_len": 3062,
+  "answer": "**הגדרה ותכלית**\n\nבסיסי: עקרון תום הלב במשפט הישראלי הוא כלל נורמטיבי המחייב התנהלות יושרת, שיתוף־מידע הולם והימנעות מניצול לרעה של זכויות או מעמד ביחסי משפטיים. עיקרו שמעשה משפטי או התנהלות נבחנים לא רק לפי ציות לצורות פורמליות אלא לפי התנהלות סבירה ונאמנה ביחסים בין הצדדים.¹⁰\n\n**מקורות והיקף סמכות**\n\nמקורות מעשיים: העיקרון נתמך הן במחקר ובספרות המשפטית והן במסמכים מוסדיים; יש הצעות חקיקה שניסו להטמיע חובת תום הלב כעיקרון כללי בדיני ממונות, אך מדובר בתמיכה חלקית ומתמשכת במסגרת הדיון הפרלמנטרי.³\n\nמקורות שיפוטיים: בתי־משפט על כל הדרגים נוכחו להפעיל את רעיון תום הלב במקרים פרטניים — הן כבסיס להטלת חובת גילוי ויושר והן ככלי פרשני בעת הכרעת סעד — אך אופי היישום והיקף החובה נקבעים בהקשר המקרה ובשיקול שיקולים מכווני־הצדק של שופט כללי.¹\n\n**יישום בסוגיות חוזיות**\n\nחובת תום הלב במשא־ומתן: בדיני החוזים עיקרון התום־לב בא לידי ביטוי בעיקר בחובת גילוי והימנעות מהטעיה או מניצול יחסי כוחות; לגבי המשא־ומתן לפני כריתת חוזה נטען במקורות כי סעיף 12 לחוק החוזים מטמיע חובת גילוי ותום לב בהקשר זה, וכי הספרות מנתחת את תכולת החובה (יושר, שיתוף מידע, הימנעות ממניפולציה).⁹\n\nפרשנות וסעדים חוזיים: בתי־משפט מפרשים הוראות חוזיות תוך שאיפה למנוע ניצול לרעה של זכויות פורמליות; אפשרות סעדית כוללת פיצוי בגין נזק, התאמה או שינוי של יחסי החוזה באיזון תכליות הצדדים, ואף אמצעים שיפוטיים אחרים שנדונים בפרקטיקה התורפתית ובספרות המשפטית.⁵\n\n**התאמות בתחומי דין אחרים**\n\nדיני נזיקין: בעילות כגון רשלנות או אשם יש מקום ליישום עקרון תום הלב בהערכת התנהגות סבירה ובקביעת חומרת האשם ובהיקף הפיצוי; המחקרים הצביעו על פרמטרים משולבים בין תום לב ואשם להעמדת אחריות.⁶\n\nדין מנהלי וציבורי: במגזר הציבורי ובעבודת הרשות ניכרת דרישה להתנהלות בהירה ושקופה; יש הנחיות ומסמכים ממשלתיים המנסחים קווים מנחים לניהול משא־ומתן ופיתוח מדיניות על בסיס עקרונות דומים לתום הלב, והפסיקה בחנה מצבי ניגוד עניינים דרך משקפיים אלה.²\n\nדיני עבודה: בתחום העבודה נדרשים לעתים איזונים מיוחדים בין חובת נאמנות/יושר של העובד לבין זכויות המעסיק; ספרות ופסקי דין עוסקים בהתאמת מבחנים פרשניים ובהטמעת חובות התנהגותיות במערכות חינוכיות ובהעסקה.⁷\n\nמיסים ובנקאות: במקורות שסופקו אין התייחסות ישירה ומפורטת ליישום העיקרון במיסוי או בפיקוח בנקאי ולכן אי־אפשר להסיק מהמאגרים הנוכחיים מסקנה מחייבת לגבי התאמות מיוחדות בתחומים אלה.\n\n**מבחנים מעשיים ובחינות הוכחה**\n\nקריטריונים שבפסיקה ובספרות: בית המשפט ובכותבים מזהים רכיבים מרכזיים לבדיקה — האם התנהגות הצד הייתה יושרת ונאמן לציפיות המקובלות, האם הוסתר מידע מהותי או נעשה ניצול לרעה של זכות פורמלית, והאם התנהלותו גרמה נזק סביר שניתן לתלות בו את הסעד. מבחנים אלה מנוסחים בדגש פרגמטי ולא כפורמולות אוטומטיות.⁸\n\nהשלכות פרקטיות והמלצות: מייעצים לצדדים ותומכיהם לכלול בחוזים סעיפי גילוי והצהרות תום־לב מפורשות, לתעד משא־ומתן רלוונטי, להגדיר מנגנוני פתרון סכסוכים ולקבוע גבולות לשימוש בזכויות פורמליות; במגזר הציבורי מומלצים נהלי שקיפות ונוהלים לניהול ניגודי עניינים. הנחיות אלו נתמכות גם במסמכים ממשלתיים ובפרקטיקה משפטית.⁴\n\nמגבלות ראייתיות והזהרות מחקריות: יש להיזהר מהכללות נחרצות — חלק מהתמיכה בעקרון היא חלקית או תיאורטית, והיקפו החוקי המוחלט כעיקרון מחייב בכל תחום עדיין נתון לדיון פרשני ולנסיבות המקרה. מסקנות כלכליות־פרקטיות צריכות להיבנות ביחס לסניפי הדין ולפסיקה הרלוונטית.³"
+}
