@@ -57,6 +57,12 @@ import {
   NEGATIVE_EXISTENCE_PROMPT_RULE,
 } from "./negativeExistenceGuard.ts";
 import {
+  applyMetadataOnlyHoldingGate,
+  referenceOnlySection,
+  type MetadataOnlyHoldingGateReport,
+} from "./metadataOnlyHoldingGate.ts";
+
+import {
   planSynthesisRendering,
   reportSynthesisRendering,
   type SynthesisRenderingPlan,
@@ -890,6 +896,10 @@ export interface DrafterV2Result {
   snippet_budget_report?: SnippetBudgetReport;
   /** Case-law synthesis rendering telemetry (synthesis runs only). */
   synthesis_rendering?: SynthesisRenderingReport;
+  /** metadata_only_holding_gate_v1 telemetry (model-drafted answers only). */
+  metadata_only_holding_gate?: MetadataOnlyHoldingGateReport;
+
+
 
 
   schema_failure_reason?:
@@ -1717,13 +1727,20 @@ export async function runDrafterV2(
     truncation_retry.retry_ms = Date.now() - t_retry;
   }
 
-  const built = buildFootnotedAnswer(parsed.draft, inputSources);
+  // metadata_only_holding_gate_v1 — strip metadata-only judgment refs from
+  // every cited segment before footnotes are built, so no proposition can rest
+  // on a judgment whose body was never read.
+  const gated = applyMetadataOnlyHoldingGate(parsed.draft, inputSources);
+  const metadata_only_holding_gate = gated.report;
+  const built = buildFootnotedAnswer(gated.draft ?? parsed.draft, inputSources);
 
 
   // Rule 1.10 — Hebrew number ranges must be written high→low in source order.
   const answer_markdown = scrubNegativeExistenceClaims(
     normalizeHebrewNumberRanges(built.answer_markdown),
-  ).text;
+  ).text +
+    referenceOnlySection(metadata_only_holding_gate.reference_only_sources);
+
   const synthesis_rendering = reportSynthesisRendering({
     plan: synthesisPlan,
     answerMarkdown: answer_markdown,
@@ -1772,6 +1789,8 @@ export async function runDrafterV2(
     sufficiency,
     named_doctrine_framing: framing,
     synthesis_rendering,
+    metadata_only_holding_gate,
+
 
 
     completeness,

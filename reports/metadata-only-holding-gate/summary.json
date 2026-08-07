@@ -1,0 +1,234 @@
+[
+  {
+    "id": "G15",
+    "query": "מהי דוקטרינת השיתוף הספציפי בדירת מגורים?",
+    "job_id": "6624fa9b-afa6-48ca-892b-fa133f929a9f",
+    "run_id": "05b07215-f0f7-4734-a897-c0e450523887",
+    "ms": 294693,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": null,
+    "drafted": true,
+    "answer_length": 2263,
+    "used_sources_count": 3,
+    "footnotes_count": 4,
+    "judgments_cited": 0,
+    "metadata_only_cited": 0,
+    "metadata_only_cited_titles": [],
+    "source_split": {
+      "read_in_full": [],
+      "reference_only": []
+    },
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [],
+        "reference_only": [
+          "s3"
+        ]
+      },
+      "blocks_stripped": 1,
+      "source_split_counts": {
+        "read_in_full": 0,
+        "reference_only": 1
+      },
+      "reference_only_sources": [
+        {
+          "ref": "s3",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/18/370/085/v30&fileName=18085370.V30&type=4",
+          "title": "דנג\"ץ 8537/18",
+          "candidate_id": "7f4e3503-b37b-470e-892c-8059eccd9bf0"
+        }
+      ],
+      "blocks_left_unsupported": 0,
+      "stripped_ref_occurrences": 1,
+      "unsupported_block_samples": [],
+      "metadata_only_judgment_refs": [
+        "s3"
+      ],
+      "metadata_only_holdings_remaining": 0
+    },
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": []
+  },
+  {
+    "id": "G13",
+    "query": "מהי דוקטרינת הבטלות היחסית במשפט המנהלי?",
+    "job_id": "b948277b-8755-4a91-9b5b-697db0042ac4",
+    "run_id": "91089171-7511-4b23-b941-2781f4700277",
+    "ms": 182316,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": null,
+    "drafted": true,
+    "answer_length": 2734,
+    "used_sources_count": 6,
+    "footnotes_count": 5,
+    "judgments_cited": 1,
+    "metadata_only_cited": 0,
+    "metadata_only_cited_titles": [],
+    "source_split": {
+      "read_in_full": [
+        "פסק-דין (הבטלות היחסית)"
+      ],
+      "reference_only": []
+    },
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [
+          "s1"
+        ],
+        "reference_only": []
+      },
+      "blocks_stripped": 0,
+      "source_split_counts": {
+        "read_in_full": 1,
+        "reference_only": 0
+      },
+      "reference_only_sources": [],
+      "blocks_left_unsupported": 0,
+      "stripped_ref_occurrences": 0,
+      "unsupported_block_samples": [],
+      "metadata_only_judgment_refs": [],
+      "metadata_only_holdings_remaining": 0
+    },
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": []
+  },
+  {
+    "id": "G14",
+    "query": "כיצד מיושם עקרון תום הלב בדיני חוזים בפסיקה?",
+    "job_id": "a15ec183-68a9-44f0-a48e-65b6061aaf9d",
+    "run_id": "b51a8548-318d-431c-a2b4-73fb6cd3de1d",
+    "ms": 303183,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": null,
+    "drafted": true,
+    "answer_length": 3327,
+    "used_sources_count": 6,
+    "footnotes_count": 9,
+    "judgments_cited": 1,
+    "metadata_only_cited": 0,
+    "metadata_only_cited_titles": [],
+    "source_split": {
+      "read_in_full": [
+        "ע\"א 9225/01 זיימן נ'"
+      ],
+      "reference_only": []
+    },
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [
+          "s2"
+        ],
+        "reference_only": []
+      },
+      "blocks_stripped": 0,
+      "source_split_counts": {
+        "read_in_full": 1,
+        "reference_only": 0
+      },
+      "reference_only_sources": [],
+      "blocks_left_unsupported": 0,
+      "stripped_ref_occurrences": 0,
+      "unsupported_block_samples": [],
+      "metadata_only_judgment_refs": [],
+      "metadata_only_holdings_remaining": 0
+    },
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": []
+  },
+  {
+    "id": "G17",
+    "query": "מהם התנאים להכרה בהסכם ממון שלא אושר בבית משפט?",
+    "job_id": "31afe35e-d217-4ff6-9144-bfb52f7aed11",
+    "run_id": "dfe07811-12e3-4f89-ad66-21889c38c896",
+    "ms": 262996,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": null,
+    "drafted": true,
+    "answer_length": 1748,
+    "used_sources_count": 2,
+    "footnotes_count": 2,
+    "judgments_cited": 0,
+    "metadata_only_cited": 0,
+    "metadata_only_cited_titles": [],
+    "source_split": {
+      "read_in_full": [],
+      "reference_only": []
+    },
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [],
+        "reference_only": []
+      },
+      "blocks_stripped": 0,
+      "source_split_counts": {
+        "read_in_full": 0,
+        "reference_only": 0
+      },
+      "reference_only_sources": [],
+      "blocks_left_unsupported": 0,
+      "stripped_ref_occurrences": 0,
+      "unsupported_block_samples": [],
+      "metadata_only_judgment_refs": [],
+      "metadata_only_holdings_remaining": 0
+    },
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": []
+  },
+  {
+    "id": "G07",
+    "query": "מה הפסיקה אומרת על מבחן ההשתלבות לקביעת יחסי עובד-מעביד?",
+    "job_id": "b1520aad-60b0-4cfe-88ea-d4f5f8b57657",
+    "run_id": "62e14751-b2d7-4a2a-8dd0-a2e122d59963",
+    "ms": 212746,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": "insufficient_sources_limitation",
+    "drafted": false,
+    "answer_length": 407,
+    "used_sources_count": 0,
+    "footnotes_count": 0,
+    "judgments_cited": 0,
+    "metadata_only_cited": 0,
+    "metadata_only_cited_titles": [],
+    "source_split": {
+      "read_in_full": [],
+      "reference_only": []
+    },
+    "gate_report": null,
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": []
+  }
+]
