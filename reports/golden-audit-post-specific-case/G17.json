@@ -1,0 +1,193 @@
+{
+  "id": "G17",
+  "category": "academic_survey",
+  "query": "כתוב סקירת פסיקה על מבחן ההשתלבות בדיני עבודה.",
+  "run_id": "3d58b5b2-2efa-46fb-8e1a-4d8e04b49bed",
+  "job_id": "9e5b03bf-0833-4059-b76d-1a8e6b7812f8",
+  "job_status": "done",
+  "job_error": null,
+  "wall_ms": 263581,
+  "pipeline_total_ms": 255401,
+  "retrieval_elapsed_ms": 32441,
+  "guard_triggered": false,
+  "research_mode": "doctrine_explanation",
+  "shape": "analysis",
+  "branch": null,
+  "drafted": true,
+  "sufficiency_profile": "case_law_synthesis",
+  "sufficiency_passed": true,
+  "fast_lane": null,
+  "exact_docket_source_found": false,
+  "exact_docket_source_usable": false,
+  "specific_case_identity_passed": true,
+  "metadata_only_sources_used_as_holdings": null,
+  "commentary_carries_holding": null,
+  "synthesis_rendering": {
+    "groups": {
+      "secondary_context": [],
+      "usable_authorities": [],
+      "found_but_not_usable": [],
+      "statutory_background": []
+    },
+    "reason": "not_synthesis_mode",
+    "group_counts": {
+      "secondary_context": 0,
+      "usable_authorities": 0,
+      "found_but_not_usable": 0,
+      "statutory_background": 0
+    },
+    "named_case_keys": [],
+    "named_cases_in_body": 0,
+    "usable_judgments_named": 0,
+    "synthesis_rendering_applied": false,
+    "commentary_used_as_primary_authority": false,
+    "metadata_only_sources_used_as_holdings": false
+  },
+  "pool": {
+    "admitted": 26,
+    "tier_counts": {
+      "primary_mirror": 1,
+      "statute_mirror": 3,
+      "index_or_listing": 2,
+      "official_primary": 9,
+      "secondary_commentary": 11
+    },
+    "judgment_documents": 1,
+    "judgments_with_holding_text": 1
+  },
+  "text_usability_counts": {
+    "substantive_excerpt": 9,
+    "metadata_only": 10,
+    "full_text": 5,
+    "listing_page": 2
+  },
+  "role_counts": {
+    "primary_statute": 6,
+    "binding_case_law": 13,
+    "factual_report": 2,
+    "scholarship": 1,
+    "persuasive_case_law": 4
+  },
+  "used_sources": [
+    {
+      "title": "חוק פיצויי פיטורים, תשכ\"ג-1963",
+      "url": "https://www.nevo.co.il/law_html/law00/4566.htm",
+      "type": "legislation",
+      "tier": "official_primary",
+      "usability": "substantive_excerpt"
+    },
+    {
+      "title": "הבדלים עיקריים בזכויות ובחובות של עצמאים ושכירים בביטוח הלאומי",
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/50615434-5681-e511-80d0-00155d0acb9e/2_50615434-5681-e511-80d0-00155d0acb9e_11_7830.pdf",
+      "type": "legislation",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "פסק-דין בתיק דמ\"ר 26126-06-11",
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%93%D7%9E%22%D7%A8-26126-06-11",
+      "type": "caselaw",
+      "tier": "secondary_commentary",
+      "usability": "substantive_excerpt"
+    },
+    {
+      "title": "כלכלת הפלטפורמה",
+      "url": "https://www.gov.il/BlobFolder/guide/platform-sessions/he/platform_kazenelson.pdf",
+      "type": "other",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "פסק-דין בתיק תע\"א 1149-09",
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%D7%A2%22%D7%90-1149-09_1",
+      "type": "caselaw",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "התקשרות קופות החולים עם רופאים עצמאים למתן שירותים בקהילה",
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/b852899c-fc9b-ed11-8157-005056aa4246/2_b852899c-fc9b-ed11-8157-005056aa4246_11_20568.pdf",
+      "type": "legislation",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "חוק פיצויי פיטורים (תיקון מס' 12), התשמ\"ו-1985",
+      "url": "https://fs.knesset.gov.il/%5C11%5Claw%5C11_ls1_291133.PDF",
+      "type": "legislation",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "הנחיות ליישום סעיף 28 לחוק פיצויי פיטורים, תשכ\"ג-1963",
+      "url": "https://www.gov.il/BlobFolder/servicequestionnaire/approval-agreement-section28-request/he/guidelines-implementation-article28.pdf",
+      "type": "legislation",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "מקור חקיקה מתוך אתר הכנסת",
+      "url": "https://fs.knesset.gov.il/globaldocs/MMM/a1489602-e9e0-f011-a866-005056aa9911/2_a1489602-e9e0-f011-a866-005056aa9911_11_21367.pdf",
+      "type": "legislation",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "מסמך מאתר אתר הכנסת",
+      "url": "https://main.knesset.gov.il/apps/committees/4196/news/8951",
+      "type": "other",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "עובד או קבלן",
+      "url": "https://lawjournal.huji.ac.il/article/12/1244",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "substantive_excerpt"
+    },
+    {
+      "title": "מיהו עובד: מבחני הסף",
+      "url": "https://lawjournal.huji.ac.il/article/12/1911",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "substantive_excerpt"
+    }
+  ],
+  "used_sources_count": 12,
+  "footnotes_count": 11,
+  "footnote1": {
+    "title": "חוק פיצויי פיטורים, תשכ\"ג-1963",
+    "url": "https://www.nevo.co.il/law_html/law00/4566.htm",
+    "type": "legislation"
+  },
+  "is_stub": false,
+  "verifier": {
+    "by_support": {
+      "direct": 5,
+      "partial": 9,
+      "unrelated": 9,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 23,
+      "false": 3
+    },
+    "model_verdicts": 26,
+    "by_support_model": {
+      "direct": 5,
+      "partial": 9,
+      "unrelated": 9,
+      "tangential": 3
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "answer_len": 3641,
+  "answer": "**מבחן ההשתלבות — הגדרה מרכזית**\n\nמבחן ההשתלבות הוא מרכיב דומיננטי במבחן המעורב לקביעת מעמדו של מבצע עבודה; הוא בוחן האם הפעולה מבוצעת בתוך 'מפעל' והמבצע מהווה חלק מן המערך הארגוני הרגיל של אותו מפעל כך שאינו גוף חיצוני.⁴\n\nהתכלית של מבחן ההשתלבות היא לזהות השתייכות ארגונית־תפקודית ולאבחן מצבים שבהם האופי והנסיבות של העיסוק מקשרים את המבצע אל סירוג פעולות הארגון יותר מאשר אל יחסי שוק אוטונומיים.¹¹\n\n**הקשר למבחנים אחרים ודוקטרינות משלימות**\n\nמבחן ההשתלבות פועל בדרך כלל לצד מבחנים אחרים — שליטה או סובורדינציה (control), תלות כלכלית ושיקולי עצמאות מקצועית — ולא תמיד כחלופה יחידה; הפסיקה מתייחסת אל המבחנים הללו כחלק ממכלול שיקולים במבחן המעורב.⁴\n\n**כיצד יישמו בתי המשפט את מבחן ההשתלבות בפועל**\n\nהפסיקה אימצה את מודל המבחן המעורב, שבו מבחן ההשתלבות מהווה מרכיב מרכזי אבל נשקל ביחד עם גורמים נוספים; לאורך הזמן ניכרת בכתיבה הפסיקתית התגבשות של רשימת גורמים שמותאמת להקשר העובדתי־כלכלי.⁵\n\nגורמי המבחן הנפוצים שמוזכרים בפסיקה כוללים: קיומו של 'מפעל' או גוף קיבוצי בו ניתן להשתלב, האם העבודה מהווה חלק מהפעילות הרגילה של אותו מפעל, מידת השילוב במערך הארגוני, אמצעי הפיקוח וההוראה, אמצעי התשלום והיחס לכללי עבודה פנימיים, וכן תלות כלכלית בפועל.⁴\n\n**ממשק המבחן עם חקיקה וזכויות עובדיות**\n\nזכאות לזכויות המוגדרות בחוק, ובפרט זכאות לפיצויי פיטורים, נקבעת בעשייה על פי מעמד העובד; חוק פיצויי פיטורים קובע את המסגרת החוקתית לזכאות ופועל כעוגן לזכויות שמשתנות בהתאם למעמד המועסק.¹\n\nעל שילוב יישומי חקיקה יש להסתייג: תיקונים ונהלים בפרטי החקיקה ובהנחיות הביצוע עשויים להשפיע על קביעת הזכאות ודרך החישוב, ולכן יש להציג טענות הקשורות לשינויים אלה בזהירות ובהסתמך על נוסחי התיקונים וההנחיות המתאימים.⁷\n\nבהיבט המעשי, מסמכים חיצוניים כגון דיווחים לביטוח הלאומי, תיעוד תשלומים והבחנה בין תשלומי שכר לבין קבלות כעצמאי עשויים לשמש ראיות תומכות; עם זאת המסמכים האלה אינם מחליפים מבחן מהותי של השתלבות ארגונית.²\n\n**יישום במצבים מיוחדים: פלטפורמות, קבלני משנה ועסקאות דרך חברות**\n\nבמקרי כלכלת הפלטפורמות ומתן שירות דרך מתווכים עולים אתגרים ייחודיים: מקורות מדיניים ודוחות רקע מצביעים על כך שמבחן ההשתלבות עשוי להיות כלי מרכזי לקביעת מעמד, אך יש להיזהר משום שמסמכים אלה מאפשרים רק מסקנות זהירות לגבי פתרונות פרקטיים ולא מהווים הכרעה משפטית סופית.⁸\n\nהיקף ההתקשרות דרך חברות־ביניים, הסכם קבלן או הסדרים עם קופות חולים ממחיש את חשיבות ניתוח המעשים בפועל; סעיפים חוזיים שמצהירים על עצמאות עלולים שלא להספיק אם העובד מעשי משתלב בארגון — הפסיקה משתמשת במבחן ההשתלבות כדי לבחון את המציאות מעבר לטקסט ההסכם.⁶\n\n**השלכות טקטיות והמלצות פרקטיות לעורכי דין ומגשרים**\n\nראיות שיש לאסוף במוקדם: הוראות עבודה ונהלים, דוא״לים/הודעות פיקוח, שיבוצים ברשימות עבודה, דוחות תשלום מול חשבוניות וקבלות, דוחות לביטוח הלאומי ולמיסוי, וכרטיסי נוכחות — אלה מסייעים להציג את מידת השילוב הארגוני וההתממשקות הכלכלית.⁹\n\nבכתיבת הסכמים רצוי לכלול ניסוחים ברורים לגבי היקף השירות, סמכות פיקוח ודרכי דיווח; יחד עם זאת יש להמליץ ללקוחות על תיעוד התנהלות יומיומי התואם את ההצהרות בחוזה, מאחר שהפסיקה בוחנת את המציאות ולא רק את הלשון החוזית.¹⁰\n\nבאסטרטגיית טיעון ובהליך: בעמדת העובד יש להדגיש את גורמי ההשתלבות והחוסר בעצמאות מעשית; בעמדת המעסיק יש להדגיש הסכמות חוזיות, ריבוי לקוחות ותיעוד חשבונאי של עצמאות. במקרים מעורבים ראוי להעלות טענות חלופיות (למשל תביעות על בסיס אי־התיישנות של חובת שכר, או תביעות אזרחיות חלופיות) ולתכנן ראיות שיחברו בין גורמים פרוצדורליים למהותיים.⁴\n\n**מסקנות וסייגים**\n\nמבחן ההשתלבות נותר כלי מרכזי בקביעת מעמד עובד־עצמאי במסגרת המבחן המעורב: הפסיקה מקדמת בחינה משקלית של גורמים ארגוניים, תפקודיים וכלכליים, ולמשמעויות החקיקתיות יש השלכות מעשיות על זכויות כגון פיצויי פיטורים.³\n\nהסקירה הזו נשענת אך ורק על המקורות שנמסרו; בייחוד כאשר הראיות או המסמכים שסופקו מדורגים כתמיכה חלקית יש לנהוג בזהירות בפרשנות ולהשלימה בבחינת נוסחי חקיקה, הנחיות ביצוע ופסיקה מלאה במקרה קונקרטי."
+}
