@@ -1,0 +1,169 @@
+{
+  "id": "G13",
+  "category": "doctrine_explanation",
+  "query": "מהי דוקטרינת הבטלות היחסית במשפט המנהלי הישראלי?",
+  "run_id": "5ecd29ff-fa45-452f-b47a-f4314ae81a05",
+  "job_id": "f78b4f4b-2e5b-4f8e-8145-2fab001aafb6",
+  "job_status": "done",
+  "job_error": null,
+  "wall_ms": 211716,
+  "pipeline_total_ms": 206898,
+  "retrieval_elapsed_ms": 15488,
+  "guard_triggered": false,
+  "research_mode": "doctrine_explanation",
+  "shape": "definition",
+  "branch": null,
+  "drafted": true,
+  "sufficiency_profile": "statutory_institution",
+  "sufficiency_passed": true,
+  "fast_lane": null,
+  "exact_docket_source_found": false,
+  "exact_docket_source_usable": false,
+  "specific_case_identity_passed": true,
+  "metadata_only_sources_used_as_holdings": null,
+  "commentary_carries_holding": null,
+  "synthesis_rendering": {
+    "groups": {
+      "secondary_context": [],
+      "usable_authorities": [],
+      "found_but_not_usable": [],
+      "statutory_background": []
+    },
+    "reason": "not_synthesis_mode",
+    "group_counts": {
+      "secondary_context": 0,
+      "usable_authorities": 0,
+      "found_but_not_usable": 0,
+      "statutory_background": 0
+    },
+    "named_case_keys": [],
+    "named_cases_in_body": 0,
+    "usable_judgments_named": 0,
+    "synthesis_rendering_applied": false,
+    "commentary_used_as_primary_authority": false,
+    "metadata_only_sources_used_as_holdings": false
+  },
+  "pool": {
+    "admitted": 20,
+    "tier_counts": {
+      "index_or_listing": 1,
+      "official_primary": 2,
+      "secondary_commentary": 17
+    },
+    "judgment_documents": 1,
+    "judgments_with_holding_text": 0
+  },
+  "text_usability_counts": {
+    "metadata_only": 9,
+    "full_text": 7,
+    "listing_page": 1,
+    "substantive_excerpt": 3
+  },
+  "role_counts": {
+    "primary_statute": 1,
+    "binding_case_law": 8,
+    "scholarship": 8,
+    "persuasive_case_law": 3
+  },
+  "used_sources": [
+    {
+      "title": "סמכות רשות מנהלית לשנות החלטתה בעקבות שינוי נסיבות ובשל האינטרס הציבורי",
+      "url": "https://www.psakdin.co.il/Court/%D7%A1%D7%9E%D7%9B%D7%95%D7%AA-%D7%A8%D7%A9%D7%95%D7%AA-%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA-%D7%9C%D7%A9%D7%A0%D7%95%D7%AA-%D7%94%D7%97%D7%9C%D7%98%D7%AA%D7%94-%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA-%D7%A9%D7%99%D7%A0%D7%95%D7%99-%D7%A0%D7%A1%D7%99%D7%91%D7%95%D7%AA-%D7%95%D7%91%D7%A9%D7%9C-%D7%94%D7%90%D7%99%D7%A0%D7%98%D7%A8%D7%A1-%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99",
+      "type": "caselaw",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "רע\"א 7598/20 פלוני נ׳ פלוני החלטה (29.06.2021)",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-7598-20-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-29-06-2021/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "type": "caselaw",
+      "tier": "secondary_commentary",
+      "usability": "substantive_excerpt"
+    },
+    {
+      "title": "הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_ebbf6fda97d74731a9cea34d71d369e4.pdf",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "full_text"
+    },
+    {
+      "title": "בעקבות ירידת הפורמליזם ועליית הערכים: ריאליזם דוקטרינרי והיפר-ריאליזם במשפט הישראלי",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_1e059e14ba474ef7b33d561ad9488277.pdf",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "full_text"
+    },
+    {
+      "title": "בטלות יחסית ושיקול דעת שיפוטי",
+      "url": "http://lawjournal.huji.ac.il/article/12/923",
+      "type": "other",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "הגנת ההסתמכות במשפט המנהלי",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+      "type": "other",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "במקום בטלות יחסית",
+      "url": "http://lawjournal.huji.ac.il/article/12/1259",
+      "type": "other",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "מסמך מאתר אתר אקדמי (netanya.ac.il)",
+      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/managers/sharonwintel/%D7%9E%D7%A9%D7%A4%D7%98%20%D7%9E%D7%A0%D7%94%D7%9C%D7%99%20%D7%AA%D7%A8%D7%92%D7%95%D7%9C%20%D7%AA%D7%A9%D7%A2%D7%91.doc",
+      "type": "other",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "השעיית הכרזת הבטלות",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/2-marzel.pdf",
+      "type": "other",
+      "tier": "secondary_commentary",
+      "usability": "substantive_excerpt"
+    }
+  ],
+  "used_sources_count": 9,
+  "footnotes_count": 7,
+  "footnote1": {
+    "title": "סמכות רשות מנהלית לשנות החלטתה בעקבות שינוי נסיבות ובשל האינטרס הציבורי; רע\"א 7598/20 פלוני נ׳ פלוני החלטה (29.06.2021)",
+    "url": "https://www.psakdin.co.il/Court/%D7%A1%D7%9E%D7%9B%D7%95%D7%AA-%D7%A8%D7%A9%D7%95%D7%AA-%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA-%D7%9C%D7%A9%D7%A0%D7%95%D7%AA-%D7%94%D7%97%D7%9C%D7%98%D7%AA%D7%94-%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA-%D7%A9%D7%99%D7%A0%D7%95%D7%99-%D7%A0%D7%A1%D7%99%D7%91%D7%95%D7%AA-%D7%95%D7%91%D7%A9%D7%9C-%D7%94%D7%90%D7%99%D7%A0%D7%98%D7%A8%D7%A1-%D7%94%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99",
+    "type": "compound"
+  },
+  "is_stub": false,
+  "verifier": {
+    "by_support": {
+      "direct": 6,
+      "partial": 5,
+      "unrelated": 6,
+      "tangential": 3
+    },
+    "by_role_match": {
+      "true": 19,
+      "false": 1
+    },
+    "model_verdicts": 20,
+    "by_support_model": {
+      "direct": 6,
+      "partial": 5,
+      "unrelated": 6,
+      "tangential": 3
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "answer_len": 2267,
+  "answer": "בטלות יחסית במשפט המנהלי היא דוקטרינה שמכירה בכך שמעשה מנהלי פגום אינו תמיד \"בטל מכל וכל\" באופן אוטומטי, ומשאירה לבית המשפט מנהלי שיקול דעת לבחירת סעד שאינו תמיד ביטול מוחלט של המעשה; ההכרעה נועדה לאזן בין שמירת חוקיות ההחלטה לבין הגנה על אינטרסים ציבוריים והסתמכות של צדדים שלישיים.²\n\n**תכליות ועקרונות מנחים**\n\nמטרות הדוקטרינה הן לאפשר גמישות פרקטית כדי למנוע נזק בלתי נדרש שנגרם מהכרזה על בטלות מוחלטת, לשמור על הגנת ההסתמכות של אזרחים ושל גופים פרטיים, ולהשאיר במסגרת המשפט הציבורי כלי שיפוטי שמאזן בין אכיפת הלכות-חוק לבין שיקולי תכלית ציבורית ופרטית.³\n\n**סעדים אופרטיביים**\n\nביישום מעשי הדוקטרינה ננקטות חלופות לסעד הביטול המוחלט: ביטול מותנה או ביטול המותנה בפתיחת הליכים מחדש, צו לחידוש או תיקון ההליך המנהלי, השעיית הכרזת הבטלות במקום ביטול מלא, וכן אפשרות לשקול אישור בדיעבד או סעדים שמגנים על הסתמכות כגון פיצוי או תקופת מעבר.⁵\n\nההיתכנות לאישור בדיעבד ולמאפייני הרטרואקטיביות תלויה בשיקולים של תום לב והרמת הסתמכות: במקרים מסוימים בית המשפט עשוי לאפשר \"שיקום\" של ההחלטה או למתן לה השפעה מוגבלת יחסית כדי שלא לפגוע בזכויות שעליהן הסתמכו צדדים שלישיים, וזאת תוך שקלול מטרות הציבוריות של ההחלטה לעומת הנזק הצפוי מהכרזה על בטלות מוחלטת.⁶\n\n**תנאי פתיחה, מי רשאי ומה זמן פעולה**\n\nהפעלת דוקטרינת הבטלות היחסית עומדת ותלויה בהליך: מי שיבקש שיבחר בית המשפט בסעד גמיש צריך להעלות טענות אלה בבקשה או בעתירה ובמועד סביר; יש לשקול השפעת טענות־שיהוי, עקרון תום הלב והסתמכות של הציבור או של גורמים פרטיים. נקודה זו נתמכת בפסירה וניתוח פרשני של התופעה, אך חלק מהמקורות המספרים את אופן ההפעלת הדוקטרינה מציגים תמיכה חלקית בלבד בעניינים פרוצדורליים אלה ולכן יש לנסחה בזהירות במקרה־מקרה.¹\n\n**התפתחות פסיקתית ועמימות דוקטרינרית**\n\nהספרות והפסיקה הציגו שתי זרמים: זרם שמקבל הקניית שיקול דעת שיפוטי רחב לקבוע תוצאתית מתי להכריז על בטלות יחסית, וזרם ביקורתי שמתריע מפני הרחבת שיקול הדעת השיפוטי על חשבון קביעת תקינות הפרוצדורה; קיימת מחלוקת לגבי המבחנים המדויקים וכיצד לשקלל אינטרסים סותרים, ונושא זה נדון בהרחבה בספרות ביקורתית ובניתוחי פסיקה.⁴\n\nלסיכום: דוקטרינת הבטלות היחסית היא כלי גמיש של בית המשפט המנהלי/עליון שמאפשר להעדיף פתרונות מותנים על פני ביטול מוחלט כאשר שיקולי הסתמכות וציבוריים מצדיקים זאת; עם זאת, יישומה נתון לשיקול הדעת השיפוטי והפסיקה לא אחידה לגביו, ולכן בהליך מעשי יש לבחון בנפרד את מאזן האינטרסים, זמן ההופעה וטיב ההסתמכות בטרם יינתן סעד שאינו ביטול מלא.⁷"
+}

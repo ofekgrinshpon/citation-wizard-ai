@@ -1,0 +1,150 @@
+{
+  "id": "G10",
+  "category": "statute_section_analysis",
+  "query": "מה הדין ביחס לצוואות הדדיות וביטולן לפי סעיף 8א לחוק הירושה?",
+  "run_id": "f43d284b-a282-417a-9240-468cf7dfe6d3",
+  "job_id": "9822cb99-5d91-4d0e-953f-bfe480cd1157",
+  "job_status": "done",
+  "job_error": null,
+  "wall_ms": 228066,
+  "pipeline_total_ms": 219882,
+  "retrieval_elapsed_ms": 22546,
+  "guard_triggered": false,
+  "research_mode": "doctrine_explanation",
+  "shape": "analysis",
+  "branch": null,
+  "drafted": true,
+  "sufficiency_profile": "statutory_institution",
+  "sufficiency_passed": true,
+  "fast_lane": null,
+  "exact_docket_source_found": false,
+  "exact_docket_source_usable": false,
+  "specific_case_identity_passed": true,
+  "metadata_only_sources_used_as_holdings": null,
+  "commentary_carries_holding": null,
+  "synthesis_rendering": {
+    "groups": {
+      "secondary_context": [],
+      "usable_authorities": [],
+      "found_but_not_usable": [],
+      "statutory_background": []
+    },
+    "reason": "not_synthesis_mode",
+    "group_counts": {
+      "secondary_context": 0,
+      "usable_authorities": 0,
+      "found_but_not_usable": 0,
+      "statutory_background": 0
+    },
+    "named_case_keys": [],
+    "named_cases_in_body": 0,
+    "usable_judgments_named": 0,
+    "synthesis_rendering_applied": false,
+    "commentary_used_as_primary_authority": false,
+    "metadata_only_sources_used_as_holdings": false
+  },
+  "pool": {
+    "admitted": 22,
+    "tier_counts": {
+      "primary_mirror": 1,
+      "index_or_listing": 1,
+      "official_primary": 5,
+      "secondary_commentary": 15
+    },
+    "judgment_documents": 1,
+    "judgments_with_holding_text": 0
+  },
+  "text_usability_counts": {
+    "metadata_only": 8,
+    "full_text": 6,
+    "substantive_excerpt": 7,
+    "listing_page": 1
+  },
+  "role_counts": {
+    "primary_statute": 7,
+    "binding_case_law": 9,
+    "persuasive_case_law": 2,
+    "factual_report": 2,
+    "scholarship": 2
+  },
+  "used_sources": [
+    {
+      "title": "חוק הירושה, תשכ\"ה-1965",
+      "url": "https://www.nevo.co.il/law_html/law00/72178.htm",
+      "type": "legislation",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "פס\"ד של העליון בנושא טעות בצוואות הדדיות",
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%A9%D7%9C-%D7%94%D7%A2%D7%9C%D7%99%D7%95%D7%9F-%D7%91%D7%A0%D7%95%D7%A9%D7%90-%D7%98%D7%A2%D7%95%D7%AA-%D7%91%D7%A6%D7%95%D7%95%D7%90%D7%95%D7%AA-%D7%94%D7%93%D7%93%D7%99%D7%95%D7%AA",
+      "type": "caselaw",
+      "tier": "secondary_commentary",
+      "usability": "substantive_excerpt"
+    },
+    {
+      "title": "פס\"ד בערעור על ביטול צוואה הדדית",
+      "url": "https://www.psakdin.co.il/Court/12539-05-23",
+      "type": "caselaw",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "פס\"ד בנוגע לצוואות הדדיות",
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%91%D7%A0%D7%95%D7%92%D7%A2-%D7%9C%D7%A6%D7%95%D7%95%D7%90%D7%95%D7%AA-%D7%94%D7%93%D7%93%D7%99%D7%95%D7%AA",
+      "type": "caselaw",
+      "tier": "secondary_commentary",
+      "usability": "substantive_excerpt"
+    },
+    {
+      "title": "65652-12-22.docx",
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision65652-12-22/he/65652-12-22.docx",
+      "type": "other",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "12539-05-23.doc",
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision12539-05-23a/he/12539-05-23.doc",
+      "type": "other",
+      "tier": "official_primary",
+      "usability": "metadata_only"
+    }
+  ],
+  "used_sources_count": 6,
+  "footnotes_count": 6,
+  "footnote1": {
+    "title": "חוק הירושה, תשכ\"ה-1965",
+    "url": "https://www.nevo.co.il/law_html/law00/72178.htm",
+    "type": "legislation"
+  },
+  "is_stub": false,
+  "verifier": {
+    "by_support": {
+      "direct": 4,
+      "partial": 7,
+      "unrelated": 10,
+      "tangential": 1
+    },
+    "by_role_match": {
+      "true": 22,
+      "false": 0
+    },
+    "model_verdicts": 22,
+    "by_support_model": {
+      "direct": 4,
+      "partial": 7,
+      "unrelated": 10,
+      "tangential": 1
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "answer_len": 3036,
+  "answer": "בישראל מוכר המושג 'צוואות הדדיות' כיצירה עצמאית במישור החוקי: סעיף 8א לחוק הירושה קובע הוראות מיוחדות לגבי אופן הביטול והשינוי של צוואות שהוכרזו כהדדיות, ולכן הדין מטפל בהן כביטוי מיוחד של צוואה ולא כחוזה מחייב אוטומטי בין הצדדים.¹\n\n**הבחנה בין צוואות הדדיות לחוזה צוואה**\n\nהבחנה עיקרית היא שמבחינה פורמלית סעיף 8א ממשיך לראות בצוואות ההדדיות סוג של צוואות (ולא קובע שאלו חוזים שבאופן עקרוני חוסמים שינויים חד־צדדיים); עם זאת הסטטוט מביא למערכת כללים מיוחדים שמגבילים או מסדירים את אפשרות הביטול, ומשכך המשפט העברי־אזרחי מטפל בהן ככלל בצמידות לצוואה ולא כ'חוזה צוואה' בעל כוחות חוזיים מלאים.¹\n\n**מה קובע סעיף 8א לגבי ביטול ושינוי**\n\nסעיף 8א מנסח שליטה מצומצמת על אפשרות הביטול: במהלך חייהם של שני בני הזוג ביטול של צוואה הדדית דורש מסירה בכתב של הודעת הביטול אל המצווה השני, והודעה שנמסרה לפי ההוראה מבטלת את הצוואות ההדדיות של שניהם; הוראות אלה חלות אלא אם בצוואות ההדדיות נכתבה הוראה אחרת, אך סעיף קטן שימנע לחלוטין זכות ביטול בחיי שני המצווים יבטל עצמו לפי הפסיקה.²\n\nהדין לאחר מות אחד המצווים פחות מוחלט: החוק קובע תנאים מסוימים לביטול לאחר פטירת אחד מבני הזוג, שבהם נבחנים מעשי ההשבה או הסתלקות של הצד שנטען שביטל את הצוואה, ולפיכך השפעת הביטול לאחר המוות תלויה ביישום מעשי של ההוראות ובהוכחת תנאים אלה בפני בית המשפט.¹\n\n**עילות אכיפה ודרכי תגובה משפטיות כאשר נעשה ביטול חד־צדדי**\n\nישנן כמה דרכים משפטיות שהופיעו בדיון התיאורטי ובפסיקה: ערעור על תוקף הצוואה או טענות ראייתיות על אי־עמידה בתנאי הסעיף; טענות לגבי חוזה צוואה או הבטחות צוואתיות במקרים שבהם ניתן להראות כי הייתה כוונה לחיוב חוזי; וטענות להסתמכות ונזק שנגרם בעקבות שינוי חד־צדדי — אך ההכרה בפועל בחוזה צוואה נגזרת מפסיקה ודוקטרינה, ולכן מימוש תביעות כאלה תלוי בנסיבות ובלטענות הראייתיות.³\n\nבפסיקה נראו יישומים מעשיים שבהם בית המשפט מטיל השלכות על יורש שנכשל בהתחייבויותיו או 'הסתלק' מחלקו בעיזבון של בן הזוג, לרבות יישום הוראות כגון סעיף 6 לחוק הירושה כדי לראות בו כמי שלא היה יורש מלכתחילה — מה שממחיש כי בתי המשפט יכולים להיעזר בכללי ירושה כדי לאכוף או להסיק תוצאות בעקבות התנהגות הצדדים לאחר ביטול לכאורה.⁴\n\n**שיקולי הוכחה, מועד ביצוע והשלכות מעשיות ליורשים ולרשם העיזבון**\n\nבמחלוקות על ביטול צוואה הדדית עומדים במרכז הוכחות לנקיטת הצעדים המהותיים בסעיף: הוכחת מסירת ההודעה בכתב בתקופה שבה שני המצווים בחיים; הוכחת הסתלקות או החזרת נכסי עיזבון לאחר פטירת אחד; ותיעוד מעשי של חלוקת העיזבון — כל אלה קובעים האם הביטול יכירו בו או יסתבר כבלתי תקף.⁵\n\nמבחינה פרקטית רשמי העזבון והיורשים מצויים לעתים במצב של חוסר ודאות: חלוקת נכסים עשויה להידחות עד הכרעה שיפוטית, פעולות שבוצעו לאחר ביטול לכאורה עלולות לעורר הליכי שיקום או הזכות להחזרת נכסים, ובית המשפט עשוי לקבוע השפעה רטרוספקטיבית של הסתלקות או השבה במידה ויוכחו.⁶\n\n**מסקנה מעשית והמלצות קצרות**\n\nלסיכום: החוק מגדיר צוואות הדדיות ככלל וצורך עמידה בתנאים משורטטים בסעיף 8א כדי שביטול יהיה תקף; הוא אינו הופך אותן אוטומטית ל'חוזה צוואה' מחייב מבחינת כל ההשלכות החוזיות, והאכיפה נעשית בעיקר דרך כלי הירושה והפסיקה וכן — בתנאים מסוימים ובנסיבות מתאימות — באמצעות טענות חוזיות או של הסתמכות. במקרה של מחלוקת יש להעמיד הוכחות ברורות לגבי מסירת ההודעה, הסתלקות או השבה, ולהשאיר את עניין חלוקת העיזבון לפתיחה שיפוטית אם נדרש.¹"
+}
