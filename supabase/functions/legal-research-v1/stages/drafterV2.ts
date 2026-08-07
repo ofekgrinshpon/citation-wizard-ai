@@ -1789,6 +1789,8 @@ export async function runDrafterV2(
     sufficiency,
     named_doctrine_framing: framing,
     synthesis_rendering,
+    metadata_only_holding_gate,
+
 
 
     completeness,
