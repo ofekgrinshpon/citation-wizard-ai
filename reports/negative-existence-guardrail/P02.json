@@ -1,14 +1,37 @@
 {
   "id": "P02",
-  "query": "מה נקבע בע\"א 99999/99 פלוני נ' אלמוני?",
-  "run_id": "149a8180-dfaa-459b-b9af-047c361f7a6f",
-  "ms": 43777,
-  "terminal": true,
-  "deterministic_branch": null,
-  "research_mode": null,
+  "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+  "job_id": "6ce80051-c72c-40ba-8b8b-6739f8e63f99",
+  "run_id": "df5c088c-84a7-477c-94b3-cd805cdc9711",
+  "ms": 212557,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "stale": false,
+  "placeholder_rows_rejected": 0,
+  "branch": "docket_limitation",
+  "drafted": false,
+  "answer_length": 345,
   "used_sources_count": 0,
+  "footnotes_count": 0,
   "forbidden_hits": [],
+  "forbidden_count": 0,
+  "source_scoped_phrases": [
+    "לא אותר במקורות",
+    "לא אותר במקורות הזמינים"
+  ],
+  "source_scoped_when_limiting": true,
+  "baseline_changed": {
+    "branch": false,
+    "drafted": false,
+    "footnotes": false,
+    "used_sources": false
+  },
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
   "pass": true,
-  "answer_head": "",
-  "answer": ""
+  "failures": [],
+  "answer_head": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.",
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
 }

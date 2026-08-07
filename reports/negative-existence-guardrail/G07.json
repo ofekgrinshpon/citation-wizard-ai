@@ -1,14 +1,38 @@
 {
   "id": "G07",
-  "query": "מהו מבחן ההשתלבות ביחסי עובד-מעביד?",
-  "run_id": "49fd1dc1-e574-44e8-ad05-4aaf55bf2cde",
-  "ms": 55362,
-  "terminal": true,
-  "deterministic_branch": null,
-  "research_mode": null,
+  "query": "מה הפסיקה אומרת על מבחן ההשתלבות לקביעת יחסי עובד-מעביד?",
+  "job_id": "db3ccfca-f308-40ac-b0af-258c760a4f60",
+  "run_id": "b17c1e87-54f1-4307-88b2-6ac754dff49a",
+  "ms": 131852,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "stale": false,
+  "placeholder_rows_rejected": 0,
+  "branch": "insufficient_sources_limitation",
+  "drafted": false,
+  "answer_length": 384,
   "used_sources_count": 0,
+  "footnotes_count": 0,
   "forbidden_hits": [],
+  "forbidden_count": 0,
+  "source_scoped_phrases": [
+    "לא נמצאה במקורות",
+    "נמצא במקורות"
+  ],
+  "source_scoped_when_limiting": true,
+  "baseline_changed": {
+    "branch": false,
+    "drafted": false,
+    "footnotes": false,
+    "used_sources": false
+  },
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
   "pass": true,
-  "answer_head": "",
-  "answer": ""
+  "failures": [],
+  "answer_head": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): עובד או קבלן; מיהו עובד: מבחני הסף; מיהו המעביד - הגדרת יחסי עובד-מעביד בתבניות העסקה מודולאריות; Who Is an Employee?.",
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): עובד או קבלן; מיהו עובד: מבחני הסף; מיהו המעביד - הגדרת יחסי עובד-מעביד בתבניות העסקה מודולאריות; Who Is an Employee?.",
+  "rescored_by_runner_phrase_list": true
 }

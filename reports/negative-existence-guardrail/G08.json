@@ -1,14 +1,38 @@
 {
   "id": "G08",
   "query": "מה הפסיקה אומרת על מבחני המידתיות בביקורת חוקתית?",
-  "run_id": "7d284eab-1794-46e5-a779-795360de11b5",
-  "ms": 74926,
-  "terminal": true,
-  "deterministic_branch": null,
-  "research_mode": null,
+  "job_id": "fca603ea-b17b-45c9-a78d-a3706a61be2b",
+  "run_id": "c24dc0a7-7fca-41d1-8899-089713230eb0",
+  "ms": 142026,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "stale": false,
+  "placeholder_rows_rejected": 0,
+  "branch": "insufficient_sources_limitation",
+  "drafted": false,
+  "answer_length": 409,
   "used_sources_count": 0,
+  "footnotes_count": 0,
   "forbidden_hits": [],
+  "forbidden_count": 0,
+  "source_scoped_phrases": [
+    "לא נמצאה במקורות",
+    "נמצא במקורות"
+  ],
+  "source_scoped_when_limiting": true,
+  "baseline_changed": {
+    "branch": false,
+    "drafted": false,
+    "footnotes": false,
+    "used_sources": false
+  },
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
   "pass": true,
-  "answer_head": "",
-  "answer": ""
+  "failures": [],
+  "answer_head": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): פסק דין מתוך אתר ממשלתי (gov.il); ביטאון בית המשפט העליון, 2012; פסק-דין בתיק בג\"ץ 1308/17; רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\".",
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): פסק דין מתוך אתר ממשלתי (gov.il); ביטאון בית המשפט העליון, 2012; פסק-דין בתיק בג\"ץ 1308/17; רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\".",
+  "rescored_by_runner_phrase_list": true
 }
