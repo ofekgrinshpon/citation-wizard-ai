@@ -1,0 +1,14 @@
+{
+  "id": "B8",
+  "query": "צטט את סעיף 1 לחוק יסוד: כבוד האדם וחירותו",
+  "run_id": "dcac2e7d-da18-46c9-b906-d2770178b24b",
+  "ms": 49140,
+  "terminal": true,
+  "deterministic_branch": null,
+  "research_mode": null,
+  "used_sources_count": 0,
+  "forbidden_hits": [],
+  "pass": true,
+  "answer_head": "",
+  "answer": ""
+}

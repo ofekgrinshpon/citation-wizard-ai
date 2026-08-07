@@ -1,0 +1,14 @@
+{
+  "id": "G15",
+  "query": "מהי דוקטרינת השיתוף הספציפי בדירת מגורים?",
+  "run_id": "533e1688-93a7-489e-bf60-862f4f166050",
+  "ms": 54249,
+  "terminal": true,
+  "deterministic_branch": null,
+  "research_mode": null,
+  "used_sources_count": 0,
+  "forbidden_hits": [],
+  "pass": true,
+  "answer_head": "",
+  "answer": ""
+}

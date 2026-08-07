@@ -1,0 +1,14 @@
+{
+  "id": "G08",
+  "query": "מה הפסיקה אומרת על מבחני המידתיות בביקורת חוקתית?",
+  "run_id": "7d284eab-1794-46e5-a779-795360de11b5",
+  "ms": 74926,
+  "terminal": true,
+  "deterministic_branch": null,
+  "research_mode": null,
+  "used_sources_count": 0,
+  "forbidden_hits": [],
+  "pass": true,
+  "answer_head": "",
+  "answer": ""
+}
