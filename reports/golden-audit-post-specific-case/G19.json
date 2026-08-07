@@ -1,0 +1,178 @@
+{
+  "id": "G19",
+  "category": "academic_survey",
+  "query": "כתוב סקירה משפטית קצרה על התפתחות מבחני המידתיות במשפט החוקתי הישראלי.",
+  "run_id": "9b86afc3-226a-46b1-91b4-b069b9852e37",
+  "job_id": "2133bb45-4422-4287-890f-b2aa1d1e912a",
+  "job_status": "done",
+  "job_error": null,
+  "wall_ms": 284743,
+  "pipeline_total_ms": 276524,
+  "retrieval_elapsed_ms": 27697,
+  "guard_triggered": false,
+  "research_mode": "doctrine_explanation",
+  "shape": "analysis",
+  "branch": null,
+  "drafted": true,
+  "sufficiency_profile": "statutory_institution",
+  "sufficiency_passed": true,
+  "fast_lane": null,
+  "exact_docket_source_found": false,
+  "exact_docket_source_usable": false,
+  "specific_case_identity_passed": true,
+  "metadata_only_sources_used_as_holdings": null,
+  "commentary_carries_holding": null,
+  "synthesis_rendering": {
+    "groups": {
+      "secondary_context": [],
+      "usable_authorities": [],
+      "found_but_not_usable": [],
+      "statutory_background": []
+    },
+    "reason": "not_synthesis_mode",
+    "group_counts": {
+      "secondary_context": 0,
+      "usable_authorities": 0,
+      "found_but_not_usable": 0,
+      "statutory_background": 0
+    },
+    "named_case_keys": [],
+    "named_cases_in_body": 0,
+    "usable_judgments_named": 0,
+    "synthesis_rendering_applied": false,
+    "commentary_used_as_primary_authority": false,
+    "metadata_only_sources_used_as_holdings": false
+  },
+  "pool": {
+    "admitted": 23,
+    "tier_counts": {
+      "primary_mirror": 1,
+      "statute_mirror": 1,
+      "index_or_listing": 3,
+      "official_primary": 3,
+      "secondary_commentary": 15
+    },
+    "judgment_documents": 1,
+    "judgments_with_holding_text": 0
+  },
+  "text_usability_counts": {
+    "metadata_only": 5,
+    "substantive_excerpt": 9,
+    "listing_page": 3,
+    "full_text": 6
+  },
+  "role_counts": {
+    "primary_statute": 4,
+    "binding_case_law": 12,
+    "persuasive_case_law": 1,
+    "scholarship": 6
+  },
+  "used_sources": [
+    {
+      "title": "בג\"ץ 1877/14",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/14/770/018/c29&fileName=14018770.C29&type=4",
+      "type": "caselaw",
+      "tier": "official_primary",
+      "usability": "substantive_excerpt"
+    },
+    {
+      "title": "עע\"מ 3411/19 חברת בית בע\"מ נ׳ הועדה המקומית לתכנון פסק דין (19.10.2021)",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-3411-19-%d7%97%d7%91%d7%a8%d7%aa-%d7%91%d7%99%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%94%d7%95%d7%a2%d7%93%d7%94-%d7%94%d7%9e%d7%a7%d7%95%d7%9e%d7%99%d7%aa-%d7%9c%d7%aa%d7%9b%d7%a0/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "type": "caselaw",
+      "tier": "secondary_commentary",
+      "usability": "full_text"
+    },
+    {
+      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "full_text"
+    },
+    {
+      "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+      "url": "https://lawjournal.huji.ac.il/article/12/1930",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "substantive_excerpt"
+    },
+    {
+      "title": "תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_469150003ab945cab43278c021cb754f.pdf",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "full_text"
+    },
+    {
+      "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "full_text"
+    },
+    {
+      "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+      "url": "https://lawjournal.huji.ac.il/article/12/1550",
+      "type": "journal_article",
+      "tier": "secondary_commentary",
+      "usability": "substantive_excerpt"
+    },
+    {
+      "title": "המובן הפורמלי והמובן המהותי של מבחני המידתיות בפסיקת בג\"ץ",
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/P_MChoen.pdf",
+      "type": "other",
+      "tier": "secondary_commentary",
+      "usability": "substantive_excerpt"
+    },
+    {
+      "title": "עליית המידתיות, ירידת ההסתברות והשלכותיה הבלתי-צפויות של המהפכה החוקתית על המשפט החוקתי הישראלי",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3245792",
+      "type": "other",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "יתרונותיו של מבחן האיזון האנכי על פני מבחני המידתיות בהגנה על זכויות אדם",
+      "url": "https://www.academia.edu/39775094/%D7%99%D7%AA%D7%A8%D7%95%D7%A0%D7%D7%95%D7%AA%D7%99%D7%95_%D7%A9%D7%9C_%D7%9E%D7%91%D7%97%D7%9F_%D7%94%D7%90%D7%99%D7%96%D7%95%D7%9F_%D7%94%D7%90%D7%A0%D7%9B%D7%99_%D7%A2%D7%9C_%D7%A4%D7%A0%D7%99_%D7%9E%D7%91%D7%97%D7%A0%D7%99_%D7%94%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA_%D7%91%D7%94%D7%92%D7%A0%D7%94_%D7%A2%D7%9C_%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA_%D7%90%D7%93%D7%9D",
+      "type": "other",
+      "tier": "secondary_commentary",
+      "usability": "metadata_only"
+    }
+  ],
+  "used_sources_count": 10,
+  "footnotes_count": 6,
+  "footnote1": {
+    "title": "בג\"ץ 1877/14",
+    "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/14/770/018/c29&fileName=14018770.C29&type=4",
+    "type": "caselaw"
+  },
+  "is_stub": false,
+  "verifier": {
+    "by_support": {
+      "direct": 8,
+      "partial": 9,
+      "unrelated": 5,
+      "tangential": 1
+    },
+    "by_role_match": {
+      "true": 21,
+      "false": 2
+    },
+    "model_verdicts": 23,
+    "by_support_model": {
+      "direct": 8,
+      "partial": 9,
+      "unrelated": 5,
+      "tangential": 1
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "answer_len": 2050,
+  "answer": "**מבחן המידתיות — התשתית הדוקטרינלית**\n\nמבחן המידתיות במשפט החוקתי הישראלי מורכב משלושה שלבים: התאמה (קשר רציונלי בין המטרה לאמצעי), הכרחיות או אמצעי שפגיעתו פחותה, ומידתיות במובן הצר (איזון בין התועלת לנזק).¹\n\nהשלב הראשון בוחן האם האמצעי נועד להשיג מטרה ראויה וקשור אליה באופן סביר; השלב השני בוחן אם קיים אמצעי חלופי שפוגע פחות בזכות; והשלב השלישי שוקל באופן כמותי ואיכותי את מידת הפגיעה מול התועלת הציבורית, ויכול להוביל לפסילת ההסדר אף אם עבר את שני השלבים הקודמים.¹\n\n**התפתחות היסטורית**\n\nהמעבר לאמות מידתיות במשפט הישראלי נרשם בעיקר לאחר 'המהפכה החוקתית' ובעקבות עיגון זכויות בחוקי היסוד: בשנות התשעים התחיל בית המשפט לאמץ בדיקה מבנית של מידתיות במקום גישת רציונליות־פנימית בלבד.³\n\nניתן לתאר התקיימות מקבילה של חזקת התאמה פרשנית ומעבר מפורמליות לשיטתית בפסיקה ובספרות, כאשר ההיסטוריה הפרשנית והעיגון של זכויות בחוקי היסוד תרמו להצדקת המודל התלת‑שלבי, אם כי יש המחמירים בזהירות בציון השלב שבו החזקה הפרשנית חלה במלואה.⁴\n\n**יישום נוכחי ודוגמאות עקרוניות**\n\nבפסיקה העכשווית בית המשפט משתמש במבחן המידתיות כמסגרת מובנית לשקלול זכויות מול אינטרסים ציבוריים: השופט בוחן את עומק הפגיעה בזכות, בוחן את כוונת המחוקק והצורך הציבורי, ומשקלל אלטרנטיבות פחות פוגעות לפני קבלת פסק‑דין שמאשר את ההסדר.²\n\nמקרים תכנוניים ואחרות מדגימים את הגישה המהותית: בתי המשפט מבצעים איזון בין צורך ציבורי בתכנון או בהפקעה לבין פגיעה בזכויות נכסים, בוחנים תחליפים והיקף ההוכחה ביחס לצורך הציבורי, ולעיתים נוטים לאיזון שקול במקום גישת רציונליות צרה.²\n\n**ביקורת והצעות רפורמה**\n\nהיו משמעויות ביקורתיות על יישום מבחני המידתיות: נטען כי באמצעותם נוצרה שיפוטיות יתר, חוסר ודאות במדידת המשקל הפסיקתי וחשש ל'הטיית פריימינג' של המחוקק שמכתיב מה ייחשב כ'מטרה ראויה'.⁵\n\nכתבי ביקורת מציעים דרכי רפורמה שונות — למשל החלת מבחני איזון חלופיים ברמות שונות של ביקורת או שילוב מבחני הסתברות מסורתיים בתהליך המידתיות — על מנת לצמצם חוסר־ודאות ולמנוע כניסה מיותרת לשיקול מדיניות שניתן להשאיר למחוקק.⁶\n\nלסיכום, מבחן המידתיות הפך למסגרת מובנית ועמוקה בבירור חקיקה ופגיעה בזכויות; לצד תרומתו לשיטה ביקורתית יש לשקול התאמות פרוצדורליות ותיאורטיות שיקטינו מתחים בין תפקידי בית המשפט ותפקידי המחוקק."
+}
