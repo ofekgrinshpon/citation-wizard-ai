@@ -3,14 +3,14 @@
     "id": "G15",
     "category": "doctrine_explanation",
     "query": "מהי דוקטרינת השיתוף הספציפי בדירת מגורים?",
-    "run_id": "f2e56319-da34-4a01-b2d0-32ed4c3fa89a",
-    "error": "job_failed",
+    "run_id": "b576c253-c1bd-4ef7-a20b-079cd5aea21c",
+    "error": "poll_timeout",
     "job": {
-      "id": "e4b52e2a-28b2-4dec-8220-06e7f7a18e13",
-      "status": "failed",
-      "current_stage": "retrieval",
-      "error": "stale_worker_timeout",
-      "created_at": "2026-08-07T08:38:12.684163+00:00"
+      "id": "963ac2da-5809-4b29-b361-57e97fe840c7",
+      "status": "running",
+      "current_stage": "analyzer",
+      "error": null,
+      "created_at": "2026-08-07T09:15:59.098753+00:00"
     }
   }
 ]

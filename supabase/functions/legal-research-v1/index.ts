@@ -691,11 +691,16 @@ async function handle(req: Request): Promise<Response> {
     research_mode: researchMode,
     question,
     candidates: skipAcquisition ? [] : pool.candidates,
+    retrieval_budget: budget,
+    markDurable: (name, detail) => budget.markDurable(name, detail),
   });
   await budget.markDurable("judgment_acquisition_done", {
     skipped: skipAcquisition,
     successes: judgmentAcquisition.successes,
+    stop_reason: judgmentAcquisition.stage_stop_reason,
+    retrieval_budget_exceeded: judgmentAcquisition.retrieval_budget_exceeded,
   });
+
 
   await budget.markDurable("candidate_enrichment_start", {
     successes: judgmentAcquisition.successes,

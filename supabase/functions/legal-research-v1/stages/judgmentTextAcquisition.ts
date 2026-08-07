@@ -33,6 +33,12 @@ import { processExtractedBody } from "./postExtract.ts";
 export const ACQUISITION_LIMITS = {
   /** Per-method time box. */
   PER_METHOD_MS: 7000,
+  /**
+   * Hard per-candidate deadline. One candidate must never be able to consume
+   * the whole isolate: fetch + decode + extract + post-extract for a single
+   * attempt are all bounded by this.
+   */
+  PER_ATTEMPT_MS: 12_000,
   /** Whole-stage time box. */
   TOTAL_MS: 26000,
   /** Below this many chars the candidate counts as "not enough real text". */
@@ -218,7 +224,8 @@ export interface AcquisitionSkipLog {
     | "already_has_usable_text"
     | "budget_exhausted"
     | "docket_mismatch_specific_case"
-    | "stage_time_budget_exhausted";
+    | "stage_time_budget_exhausted"
+    | "retrieval_budget_exceeded";
 }
 
 /** Part 1 — per-candidate eligibility diagnostics for non-attempted judgments. */
@@ -276,6 +283,10 @@ export interface AcquisitionResult {
   institutional_pages_excluded_before_budget: number;
   official_judgment_documents_found: number;
   official_judgment_documents_acquired: number;
+  /** Controlled reason the loop stopped early (null = ran to completion). */
+  stage_stop_reason: string | null;
+  /** True when the pipeline retrieval budget stopped acquisition. */
+  retrieval_budget_exceeded: boolean;
 }
 
 
@@ -322,7 +333,7 @@ export async function withTimeout<T>(p: Promise<T>, ms: number, label: string): 
 }
 
 /** Fine-grained stage marker sink (diagnostics only). */
-export type StageSink = (name: string, detail?: Record<string, unknown>) => void;
+export type StageSink = (name: string, detail?: Record<string, unknown>) => void | Promise<void>;
 
 async function fetchBytes(
   url: string,
@@ -514,7 +525,10 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
       });
     }
     gate("before_binary_extract_run");
-    onStage("binary_extract_start", { kind: isPdf ? "pdf" : "docx", bytes: bytes.byteLength, bounded });
+    // Awaited: extraction is a long synchronous CPU step that can block the
+    // event loop hard enough that a fire-and-forget checkpoint never leaves
+    // the isolate. The trail must be durable *before* we enter it.
+    await onStage("binary_extract_start", { kind: isPdf ? "pdf" : "docx", bytes: bytes.byteLength, bounded });
     const extracted = await extractDocumentText(bytes, isPdf ? "pdf" : "docx");
     onStage("binary_extract_done", { chars: extracted.length, bounded });
     // Never clean/normalize/identity-match a multi-hundred-kilochar extraction
@@ -704,7 +718,19 @@ export interface AcquisitionInput {
   candidates: Candidate[];
   /** Question text — used to prioritise the exact requested docket. */
   question?: string | null;
+  /**
+   * The pipeline-level retrieval budget. When supplied, the acquisition loop
+   * consults it before every attempt and between every expensive step, and
+   * stops with a controlled reason instead of letting the isolate die.
+   */
+  retrieval_budget?: { exceeded(): boolean; remaining(): number } | null;
+  /**
+   * Durable checkpoint sink (awaited). Used for per-attempt observability so a
+   * killed isolate still leaves a trail of exactly where acquisition was.
+   */
+  markDurable?: (name: string, detail?: Record<string, unknown>) => Promise<void> | void;
 }
+
 
 interface Eligible {
   c: Candidate;
@@ -736,6 +762,8 @@ function disabledResult(mode: string | null): AcquisitionResult {
     institutional_pages_excluded_before_budget: 0,
     official_judgment_documents_found: 0,
     official_judgment_documents_acquired: 0,
+    stage_stop_reason: null,
+    retrieval_budget_exceeded: false,
   };
 }
 
@@ -938,7 +966,66 @@ export async function runJudgmentTextAcquisition(
   let leadingUsed = 0;
   let otherUsed = 0;
 
+  // ── Observability / liveness plumbing (no behavioural change to ranking,
+  //    eligibility or per-role budgets) ──────────────────────────────────────
+  const retrievalBudget = input.retrieval_budget ?? null;
+  const markDurable = input.markDurable;
+  const mark = async (name: string, detail?: Record<string, unknown>) => {
+    try {
+      await markDurable?.(name, detail);
+    } catch {
+      /* checkpointing must never break acquisition */
+    }
+  };
+  const hostOf = (u: string | null): string | null => {
+    if (!u) return null;
+    try {
+      return new URL(u).host;
+    } catch {
+      return null;
+    }
+  };
+  /** Durable checkpoint names emitted from the inner fetch/decode sink. */
+  const DURABLE_STAGE_MAP: Record<string, string> = {
+    fetch_start: "judgment_attempt_fetch_start",
+    body_read_done: "judgment_attempt_fetch_done",
+    body_too_large: "judgment_attempt_fetch_done",
+    binary_extract_start: "judgment_attempt_extract_start",
+    binary_extract_done: "judgment_attempt_extract_done",
+    legacy_doc_decode_start: "judgment_attempt_extract_start",
+    legacy_doc_decode_done: "judgment_attempt_extract_done",
+    decode_start: "judgment_attempt_extract_start",
+    decode_done: "judgment_attempt_extract_done",
+    post_extract_start: "judgment_attempt_post_extract_start",
+    post_extract_done: "judgment_attempt_post_extract_done",
+    post_extract_too_large: "judgment_attempt_post_extract_done",
+    post_extract_budget_exceeded: "judgment_attempt_post_extract_done",
+  };
+  let stage_stop_reason: string | null = null;
+  let retrieval_budget_exceeded = false;
+
+  let attemptIndex = 0;
   for (const e of eligible) {
+    // Pipeline-level budget: stop the whole loop with a controlled reason
+    // rather than letting the isolate be killed mid-attempt.
+    if (retrievalBudget?.exceeded()) {
+      retrieval_budget_exceeded = true;
+      stage_stop_reason = "retrieval_budget_exceeded";
+      await mark("judgment_acquisition_budget_exceeded", {
+        attempts_made: attempts.length,
+        remaining_candidates: eligible.length - attemptIndex,
+        remaining_ms: retrievalBudget.remaining(),
+      });
+      excluded.push({
+        candidate_id: e.c.candidate_id,
+        title: e.c.title,
+        url: e.c.source_url ?? null,
+        reason: "retrieval_budget_exceeded",
+      });
+      e.diag.excluded_reason = "retrieval_budget_exceeded";
+      e.diag.ineligible_reason = "retrieval_budget_exceeded";
+      break;
+    }
     if (attempts.length >= budget.total) {
       excluded.push({
         candidate_id: e.c.candidate_id,
@@ -949,9 +1036,16 @@ export async function runJudgmentTextAcquisition(
       e.diag.excluded_reason = "budget_exhausted";
       e.diag.ineligible_reason = "budget_exhausted";
       e.diag.would_have_been_attempted_under_relaxed_rule = true;
+      await mark("judgment_attempt_skipped", {
+        candidate_id: e.c.candidate_id,
+        index: attemptIndex++,
+        host: hostOf(e.c.source_url ?? null),
+        reason: "budget_exhausted",
+      });
       continue;
     }
     if (Date.now() - t0 > ACQUISITION_LIMITS.TOTAL_MS) {
+      stage_stop_reason = stage_stop_reason ?? "stage_time_budget_exhausted";
       excluded.push({
         candidate_id: e.c.candidate_id,
         title: e.c.title,
@@ -961,6 +1055,12 @@ export async function runJudgmentTextAcquisition(
       e.diag.excluded_reason = "stage_time_budget_exhausted";
       e.diag.ineligible_reason = "stage_time_budget_exhausted";
       e.diag.would_have_been_attempted_under_relaxed_rule = true;
+      await mark("judgment_attempt_skipped", {
+        candidate_id: e.c.candidate_id,
+        index: attemptIndex++,
+        host: hostOf(e.c.source_url ?? null),
+        reason: "stage_time_budget_exhausted",
+      });
       continue;
     }
     const isLeading = e.isRequested || e.role === "leading_candidate";
@@ -974,6 +1074,12 @@ export async function runJudgmentTextAcquisition(
       e.diag.excluded_reason = "budget_exhausted";
       e.diag.ineligible_reason = "budget_exhausted";
       e.diag.would_have_been_attempted_under_relaxed_rule = true;
+      await mark("judgment_attempt_skipped", {
+        candidate_id: e.c.candidate_id,
+        index: attemptIndex++,
+        host: hostOf(e.c.source_url ?? null),
+        reason: "leading_budget_exhausted",
+      });
       continue;
     }
     if (!isLeading && otherUsed >= budget.other) {
@@ -986,6 +1092,12 @@ export async function runJudgmentTextAcquisition(
       e.diag.excluded_reason = "budget_exhausted";
       e.diag.ineligible_reason = "budget_exhausted";
       e.diag.would_have_been_attempted_under_relaxed_rule = true;
+      await mark("judgment_attempt_skipped", {
+        candidate_id: e.c.candidate_id,
+        index: attemptIndex++,
+        host: hostOf(e.c.source_url ?? null),
+        reason: "other_budget_exhausted",
+      });
       continue;
     }
     if (isLeading) leadingUsed++;
@@ -999,12 +1111,55 @@ export async function runJudgmentTextAcquisition(
     let text = "";
     let succeeded: AcquisitionMethod | null = null;
 
+    const thisIndex = attemptIndex++;
+    // Hard per-candidate deadline, further clipped by whatever remains of the
+    // pipeline retrieval budget.
+    const attemptMs = Math.max(
+      1000,
+      Math.min(
+        ACQUISITION_LIMITS.PER_ATTEMPT_MS,
+        retrievalBudget ? retrievalBudget.remaining() - 1000 : ACQUISITION_LIMITS.PER_ATTEMPT_MS,
+      ),
+    );
+    const attemptDeadline = tAttempt + attemptMs;
+    const attemptOverBudget = () =>
+      Date.now() > attemptDeadline ||
+      Date.now() - t0 > ACQUISITION_LIMITS.TOTAL_MS ||
+      !!retrievalBudget?.exceeded();
+
+    await mark("judgment_attempt_start", {
+      candidate_id: e.c.candidate_id,
+      index: thisIndex,
+      rank: e.rank?.rank ?? -1,
+      host: hostOf(url),
+      role: e.role,
+      trigger: e.trigger,
+      is_requested: e.isRequested,
+      attempt_deadline_ms: attemptMs,
+    });
+
     const docketGate = e.dockets.length > 0
       ? (t: string) => e.dockets.some((d) => textContainsExactDocket(t.slice(0, 30000), d))
       : undefined;
-    const fileOpts: DirectFileOptions = {
-      allowPlainText: true,
-      validateText: docketGate,
+
+    // Fine-grained sink → durable per-attempt checkpoints. The sink itself is
+    // synchronous, so writes are chained and awaited after each method.
+    const stageTrail: Array<{ name: string; detail?: Record<string, unknown> }> = [];
+    let pending: Promise<void> = Promise.resolve();
+    const onStage: StageSink = (name, detail) => {
+      stageTrail.push({ name, detail });
+      const durable = DURABLE_STAGE_MAP[name];
+      if (!durable) return;
+      // Returned so callers may await the checkpoint before an expensive step.
+      return (pending = pending.then(() =>
+        mark(durable, {
+          candidate_id: e.c.candidate_id,
+          index: thisIndex,
+          host: hostOf(url),
+          inner_stage: name,
+          ...(detail ?? {}),
+        }) as Promise<void>
+      ));
     };
 
     const isSummaryHost = SUMMARY_HOST_RE.test(url ?? "");
@@ -1026,7 +1181,28 @@ export async function runJudgmentTextAcquisition(
         failures.push("stage_time_budget_exhausted");
         break;
       }
+      if (retrievalBudget?.exceeded()) {
+        retrieval_budget_exceeded = true;
+        failures.push("retrieval_budget_exceeded");
+        break;
+      }
+      if (Date.now() >= attemptDeadline) {
+        failures.push("attempt_deadline_exceeded");
+        break;
+      }
       methods.push(method);
+      const methodMs = Math.max(
+        500,
+        Math.min(ACQUISITION_LIMITS.PER_METHOD_MS, attemptDeadline - Date.now()),
+      );
+      // Real network-layer abort — a hung socket can never outlive the attempt.
+      const fileOpts: DirectFileOptions = {
+        allowPlainText: true,
+        validateText: docketGate,
+        onStage,
+        signal: AbortSignal.timeout(methodMs),
+        budgetExceeded: attemptOverBudget,
+      };
       try {
         const run = method === "direct_file_fetch"
           ? tryDirectFile(url!, fileOpts)
@@ -1035,7 +1211,8 @@ export async function runJudgmentTextAcquisition(
           : e.dockets.length > 0
           ? tryLocalDbByDockets(input.admin, e.dockets)
           : tryLocalDb(input.admin, null, e.c.title);
-        const got = await withTimeout(run, ACQUISITION_LIMITS.PER_METHOD_MS, method);
+        const got = await withTimeout(run, methodMs, method);
+        await pending;
         if (got.length >= ACQUISITION_LIMITS.MIN_USABLE_TEXT) {
           text = normText(got);
           succeeded = method;
@@ -1043,9 +1220,13 @@ export async function runJudgmentTextAcquisition(
         }
         failures.push("extracted_text_below_threshold");
       } catch (err) {
+        await pending.catch(() => {});
         failures.push(err instanceof Error ? err.message : String(err));
       }
     }
+    await pending.catch(() => {});
+
+
 
     const before = String(e.integ.text_usability ?? "unknown");
     let after = before;
@@ -1154,7 +1335,30 @@ export async function runJudgmentTextAcquisition(
       failure_reason: succeeded ? null : (failures[failures.length - 1] ?? "no_method_available"),
       ms: Date.now() - tAttempt,
     });
+
+    await mark("judgment_attempt_done", {
+      candidate_id: e.c.candidate_id,
+      index: thisIndex,
+      host: hostOf(url),
+      methods: methods,
+      method_succeeded: succeeded,
+      success: !!succeeded,
+      chars: text.length,
+      failure_reason: succeeded ? null : (failures[failures.length - 1] ?? "no_method_available"),
+      inner_stages: stageTrail.map((s) => s.name),
+      ms: Date.now() - tAttempt,
+    });
+
+    if (retrieval_budget_exceeded) {
+      stage_stop_reason = stage_stop_reason ?? "retrieval_budget_exceeded";
+      await mark("judgment_acquisition_budget_exceeded", {
+        attempts_made: attempts.length,
+        where: "after_attempt",
+      });
+      break;
+    }
   }
+
 
   return {
     enabled: true,
@@ -1184,5 +1388,7 @@ export async function runJudgmentTextAcquisition(
     official_judgment_documents_acquired: budget_spent_on.filter(
       (b) => b.success && b.official_judgment_document,
     ).length,
+    stage_stop_reason,
+    retrieval_budget_exceeded,
   };
 }
