@@ -1721,13 +1721,20 @@ export async function runDrafterV2(
     truncation_retry.retry_ms = Date.now() - t_retry;
   }
 
-  const built = buildFootnotedAnswer(parsed.draft, inputSources);
+  // metadata_only_holding_gate_v1 — strip metadata-only judgment refs from
+  // every cited segment before footnotes are built, so no proposition can rest
+  // on a judgment whose body was never read.
+  const gated = applyMetadataOnlyHoldingGate(parsed.draft, inputSources);
+  const metadata_only_holding_gate = gated.report;
+  const built = buildFootnotedAnswer(gated.draft ?? parsed.draft, inputSources);
 
 
   // Rule 1.10 — Hebrew number ranges must be written high→low in source order.
   const answer_markdown = scrubNegativeExistenceClaims(
     normalizeHebrewNumberRanges(built.answer_markdown),
-  ).text;
+  ).text +
+    referenceOnlySection(metadata_only_holding_gate.reference_only_sources);
+
   const synthesis_rendering = reportSynthesisRendering({
     plan: synthesisPlan,
     answerMarkdown: answer_markdown,
