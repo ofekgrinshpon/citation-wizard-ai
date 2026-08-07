@@ -2,41 +2,83 @@
   "id": "G07",
   "category": "case_law_synthesis",
   "query": "מה הפסיקה אומרת על מבחן ההשתלבות לקביעת יחסי עובד-מעביד?",
-  "run_id": "23ed7f71-5456-4a09-93d7-9538f98ca6d6",
-  "job_id": "d18dffbd-30e6-4beb-9abb-727c1fa947bd",
-  "job_status": "running",
+  "run_id": "f8e54379-c48f-4b84-91b2-f4692ebf3c7f",
+  "job_id": "c47bfa5d-e9fc-4aa6-8837-03bb4c0e0381",
+  "job_status": "done",
   "job_error": null,
-  "wall_ms": 105565,
-  "pipeline_total_ms": null,
-  "retrieval_elapsed_ms": null,
-  "guard_triggered": null,
+  "wall_ms": 224410,
+  "pipeline_total_ms": 212918,
+  "retrieval_elapsed_ms": 39704,
+  "guard_triggered": false,
   "research_mode": "case_law_synthesis",
-  "shape": null,
-  "branch": null,
-  "drafted": true,
-  "sufficiency_profile": null,
-  "sufficiency_passed": null,
+  "shape": "analysis",
+  "branch": "insufficient_sources_limitation",
+  "drafted": false,
+  "sufficiency_profile": "case_law_synthesis",
+  "sufficiency_passed": false,
   "fast_lane": null,
-  "exact_docket_source_found": null,
-  "exact_docket_source_usable": null,
-  "specific_case_identity_passed": null,
+  "exact_docket_source_found": false,
+  "exact_docket_source_usable": false,
+  "specific_case_identity_passed": true,
   "metadata_only_sources_used_as_holdings": null,
   "commentary_carries_holding": null,
   "synthesis_rendering": null,
   "pool": {
-    "admitted": 0,
-    "tier_counts": null,
-    "judgment_documents": null,
-    "judgments_with_holding_text": null
+    "admitted": 30,
+    "tier_counts": {
+      "primary_mirror": 3,
+      "statute_mirror": 4,
+      "index_or_listing": 2,
+      "official_primary": 11,
+      "secondary_commentary": 10
+    },
+    "judgment_documents": 1,
+    "judgments_with_holding_text": 1
   },
-  "text_usability_counts": {},
-  "role_counts": {},
+  "text_usability_counts": {
+    "substantive_excerpt": 6,
+    "metadata_only": 21,
+    "full_text": 2,
+    "listing_page": 1
+  },
+  "role_counts": {
+    "primary_statute": 7,
+    "binding_case_law": 9,
+    "government_report": 2,
+    "factual_report": 3,
+    "scholarship": 9
+  },
   "used_sources": [],
   "used_sources_count": 0,
   "footnotes_count": 0,
   "footnote1": null,
   "is_stub": false,
-  "verifier": null,
-  "answer_len": 0,
-  "answer": ""
+  "verifier": {
+    "by_support": {
+      "direct": 3,
+      "partial": 12,
+      "unrelated": 8,
+      "tangential": 7
+    },
+    "by_role_match": {
+      "true": 27,
+      "false": 3
+    },
+    "model_verdicts": 30,
+    "by_support_model": {
+      "direct": 3,
+      "partial": 12,
+      "unrelated": 8,
+      "tangential": 7
+    },
+    "synthetic_verdicts": 0,
+    "by_support_synthetic": {
+      "direct": 0,
+      "partial": 0,
+      "unrelated": 0,
+      "tangential": 0
+    }
+  },
+  "answer_len": 451,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק הביטוח הלאומי [נוסח משולב], התשנ\"ה-1995; חוק הביטוח הלאומי [נוסח משולב], תשנ\"ה-1995; מעמדם המשפטי של עובדים המצויים בתחום ביניים שבין שכירים לעצמאים – סקירה משווה; דמ\"ר 26126-06-11."
 }

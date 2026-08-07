@@ -2,13 +2,13 @@
   "id": "G05",
   "category": "case_law_synthesis",
   "query": "מה הפסיקה אומרת על הלכת השיתוף בנכסים בין בני זוג?",
-  "run_id": "0b8149ee-d93b-443f-86c5-946126063791",
-  "job_id": "3ed537e3-fc13-4c65-b93e-1b67c3f8b94c",
+  "run_id": "f215d541-d8c6-4888-b821-df8ce0e2101a",
+  "job_id": "659706d2-fb8b-4958-9d50-197846b50818",
   "job_status": "done",
   "job_error": null,
-  "wall_ms": 191822,
-  "pipeline_total_ms": 188592,
-  "retrieval_elapsed_ms": 34440,
+  "wall_ms": 152247,
+  "pipeline_total_ms": 146739,
+  "retrieval_elapsed_ms": 34419,
   "guard_triggered": false,
   "research_mode": "case_law_synthesis",
   "shape": "analysis",
@@ -24,118 +24,140 @@
   "commentary_carries_holding": null,
   "synthesis_rendering": {
     "groups": {
-      "secondary_context": [],
-      "usable_authorities": [],
-      "found_but_not_usable": [],
-      "statutory_background": []
+      "secondary_context": [
+        "s5",
+        "s6",
+        "s7",
+        "s8",
+        "s9",
+        "s10",
+        "s11",
+        "s13",
+        "s14",
+        "s15",
+        "s16"
+      ],
+      "usable_authorities": [
+        "s2"
+      ],
+      "found_but_not_usable": [
+        "s3",
+        "s4",
+        "s12"
+      ],
+      "statutory_background": [
+        "s1"
+      ]
     },
-    "reason": "framing_correction_active",
+    "reason": "applied",
     "group_counts": {
-      "secondary_context": 0,
-      "usable_authorities": 0,
-      "found_but_not_usable": 0,
-      "statutory_background": 0
+      "secondary_context": 11,
+      "usable_authorities": 1,
+      "found_but_not_usable": 3,
+      "statutory_background": 1
     },
-    "named_case_keys": [],
-    "named_cases_in_body": 0,
-    "usable_judgments_named": 0,
-    "synthesis_rendering_applied": false,
+    "named_case_keys": [
+      "4623/04"
+    ],
+    "named_cases_in_body": 1,
+    "usable_judgments_named": 1,
+    "synthesis_rendering_applied": true,
     "commentary_used_as_primary_authority": false,
     "metadata_only_sources_used_as_holdings": false
   },
   "pool": {
-    "admitted": 17,
+    "admitted": 25,
     "tier_counts": {
-      "primary_mirror": 1,
+      "primary_mirror": 2,
       "statute_mirror": 1,
-      "index_or_listing": 1,
-      "official_primary": 2,
-      "secondary_commentary": 12
+      "index_or_listing": 2,
+      "official_primary": 4,
+      "secondary_commentary": 16
     },
-    "judgment_documents": 1,
+    "judgment_documents": 4,
     "judgments_with_holding_text": 1
   },
   "text_usability_counts": {
-    "full_text": 2,
-    "metadata_only": 7,
-    "substantive_excerpt": 7,
-    "listing_page": 1
+    "metadata_only": 10,
+    "full_text": 4,
+    "substantive_excerpt": 9,
+    "listing_page": 2
   },
   "role_counts": {
-    "persuasive_case_law": 6,
-    "binding_case_law": 7,
-    "scholarship": 3,
-    "primary_statute": 1
+    "primary_statute": 1,
+    "persuasive_case_law": 10,
+    "binding_case_law": 9,
+    "scholarship": 5
   },
   "used_sources": [
-    {
-      "title": "פס\"ד בנוגע לחלוקת רכוש שנצבר טרם הנישואים",
-      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%91%D7%A0%D7%95%D7%92%D7%A2-%D7%9C%D7%97%D7%9C%D7%95%D7%A7%D7%AA-%D7%A8%D7%9B%D7%95%D7%A9-%D7%A9%D7%A0%D7%A6%D7%91%D7%A8-%D7%98%D7%A8%D7%9D-%D7%94%D7%A0%D7%99%D7%A9%D7%95%D7%90%D7%99%D7%9D",
-      "type": "caselaw",
-      "tier": "secondary_commentary",
-      "usability": "metadata_only"
-    },
     {
       "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
       "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
       "type": "caselaw",
       "tier": "official_primary",
+      "usability": "substantive_excerpt"
+    },
+    {
+      "title": "בע\"מ 5620/24 פלוני נ' פלונית",
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision60178-12-20/he/60178-12-20.docx",
+      "type": "caselaw",
+      "tier": "official_primary",
       "usability": "metadata_only"
     },
     {
-      "title": "ע\"א 8672/00 אבו רומי נ' אבו רומי",
-      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%91%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA-%D7%A8%D7%9B%D7%95%D7%A9%D7%99%D7%95%D7%AA-%D7%91%D7%99%D7%9F-%D7%91%D7%A0%D7%99-%D7%96%D7%95%D7%92-%D7%A9%D7%A2%D7%A0%D7%99%D7%99%D7%A0%D7%9F-%D7%90%D7%99%D7%96%D7%95%D7%9F-%D7%9E%D7%A9%D7%90%D7%91%D7%99%D7%9D-%D7%A4%D7%99%D7%A8%D7%95%D7%A7-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%95%D7%97%D7%99%D7%95%D7%91-%D7%91",
+      "title": "רע\"א 8672/00 אבו רומי נ' אבו רומי",
+      "url": "https://www.psakdin.co.il/Document/%D7%90%D7%99%D7%96%D7%95%D7%9F-%D7%9E%D7%A9%D7%90%D7%91%D7%99%D7%9D--%D7%94%D7%9C%D7%9B%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%94%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99%D7%AA--%D7%94%D7%95%D7%9B%D7%97%D7%AA-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%A0%D7%9B%D7%A1-%D7%A1%D7%A4%D7%A6%D7%99%D7%A4%D7%99",
+      "type": "caselaw",
+      "tier": "primary_mirror",
+      "usability": "metadata_only"
+    },
+    {
+      "title": "פסק-דין בתיק בע\"מ 4623/04",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C04/230/046/p06&fileName=04046230.p06&type=4",
+      "type": "caselaw",
+      "tier": "official_primary",
+      "usability": "full_text"
+    },
+    {
+      "title": "תחולה ויישום הלכת השיתוף בנכסים בין ידועים בציבור (שיתוף כללי ושיתוף ספציפי) וכן במזונות משקמים",
+      "url": "https://www.psakdin.co.il/Court/%D7%AA%D7%97%D7%95%D7%9C%D7%94-%D7%95%D7%99%D7%99%D7%A9%D7%95%D7%9D-%D7%94%D7%9C%D7%9B%D7%AA-%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%A0%D7%9B%D7%A1%D7%99%D7%9D-%D7%91%D7%99%D7%9F-%D7%99%D7%93%D7%95%D7%A2%D7%99%D7%9D-%D7%91%D7%A6%D7%99%D7%91%D7%95%D7%A8-%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%9B%D7%9C%D7%9C%D7%99-%D7%95%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%A1%D7%A4%D7%A6%D7%99%D7%A4",
       "type": "caselaw",
       "tier": "secondary_commentary",
       "usability": "substantive_excerpt"
     },
     {
-      "title": "פיצוי נזיקי בעת הגירושין: שייך לנפגע או משותף לבני הזוג?",
-      "url": "https://www.psakdin.co.il/Document/%D7%A4%D7%99%D7%A6%D7%95%D7%99-%D7%A0%D7%96%D7%99%D7%A7%D7%99-%D7%91%D7%A2%D7%AA-%D7%94%D7%92%D7%99%D7%A8%D7%95%D7%A9%D7%99%D7%9F-%D7%A9%D7%99%D7%99%D7%9A-%D7%9C%D7%A0%D7%A4%D7%92%D7%A2-%D7%90%D7%95-%D7%9E%D7%A9%D7%95%D7%AA%D7%A3-%D7%9C%D7%91%D7%A0%D7%99-%D7%94%D7%96%D7%95%D7%92",
-      "type": "caselaw",
-      "tier": "secondary_commentary",
-      "usability": "metadata_only"
-    },
-    {
-      "title": "נטל הוכחת שיתוף בדירה להשקעה שנקנתה בתקופת הנישואין מכספי ירושה",
-      "url": "https://daat.ac.il/daat/psk/psk.asp?id=3454",
-      "type": "caselaw",
-      "tier": "secondary_commentary",
-      "usability": "metadata_only"
-    },
-    {
-      "title": "שיתוף בנכסים או הפרדה רכושית ב\"ידועים בציבור\"",
-      "url": "https://www.psakdin.co.il/Court/%D7%A9%D7%99%D7%AA%D7%95%D7%A3-%D7%91%D7%A0%D7%9B%D7%A1%D7%99%D7%9D-%D7%90%D7%95-%D7%94%D7%A4%D7%A8%D7%93%D7%94-%D7%A8%D7%9B%D7%95%D7%A9%D7%99%D7%AA-%D7%91-%D7%99%D7%93%D7%95%D7%A2%D7%99%D7%9D-%D7%בציבור",
-      "type": "caselaw",
-      "tier": "secondary_commentary",
+      "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+      "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+      "type": "legislation",
+      "tier": "official_primary",
       "usability": "metadata_only"
     }
   ],
   "used_sources_count": 6,
-  "footnotes_count": 5,
+  "footnotes_count": 4,
   "footnote1": {
-    "title": "פס\"ד בנוגע לחלוקת רכוש שנצבר טרם הנישואים; ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן",
-    "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1-%D7%93-%D7%91%D7%A0%D7%95%D7%92%D7%A2-%D7%9C%D7%97%D7%9C%D7%95%D7%A7%D7%AA-%D7%A8%D7%9B%D7%95%D7%A9-%D7%A9%D7%A0%D7%A6%D7%91%D7%A8-%D7%98%D7%A8%D7%9D-%D7%94%D7%A0%D7%99%D7%A9%D7%95%D7%90%D7%99%D7%9D",
+    "title": "ע\"א 52/80 ישעיהו שחר נ' מנדל פרידמן; בע\"מ 5620/24 פלוני נ' פלונית; רע\"א 8672/00 אבו רומי נ' אבו רומי",
+    "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater-2/he/sf-21.pdf",
     "type": "compound"
   },
   "is_stub": false,
   "verifier": {
     "by_support": {
-      "direct": 5,
-      "partial": 5,
-      "unrelated": 5,
-      "tangential": 2
+      "direct": 10,
+      "partial": 7,
+      "unrelated": 8,
+      "tangential": 0
     },
     "by_role_match": {
-      "true": 17,
-      "false": 0
+      "true": 24,
+      "false": 1
     },
-    "model_verdicts": 17,
+    "model_verdicts": 25,
     "by_support_model": {
-      "direct": 5,
-      "partial": 5,
-      "unrelated": 5,
-      "tangential": 2
+      "direct": 10,
+      "partial": 7,
+      "unrelated": 8,
+      "tangential": 0
     },
     "synthetic_verdicts": 0,
     "by_support_synthetic": {
@@ -145,6 +167,6 @@
       "tangential": 0
     }
   },
-  "answer_len": 1703,
-  "answer": "לא נמצאה הלכה מוכרת בשם \"הלכת השיתוף בנכסים\" בתוך המקורות שסופקו.\n\nהמוסד המשפטי שאליו מתייחסים המקורות קרוב לחזקת השיתוף או לקונסטרוקציה של סכם משתמע בין בני זוג; הפסיקה המרכזית פורשה כבסיס לכך בע״א ישעיהו שחר נ׳ מנדל פרידמן וניסוחה של החזקה נמצא גם בפסיקה שמדגישה שיתוף גם כאשר הרישום נעשה על שם אחד הצדדים.¹\n\nבתיאור הדוקטרינלי, החזקה נבנית כהסכמה משתמעת שמשקפת שותפות זכויות בנכסים שצמחו מתוך מאמץ משותף של בני הזוג; מודל זה מקנה לזולת כלפי נכסים מסוימים מעמד של בעלות משותפת או חלקית למרות רישום פורמאלי בשמו של בן זוג אחד.¹\n\nהיקף החזקה אינו מוחלט: בפסיקה הובהר שניתן להפעיל מושגי הדין הכללי — דיני קניין, חוזים ונאמנות — כדי להטיל שיתוף, אך נושא זה נתון לבחינה עובדתית ולמבחנים פרשניים; ספרות משפטית מספקת תמיכה חלקית בהחלת שיתוף על נכסים מלפני הנישואים או על נכסים שהתקבלו בירושה או במתנה, אולם סעדים כאלה אינם אוטומטיים ודורשים הוכחה חזקתית מתאימה.²\n\nבהשלכות מעשיות בעת פירוד או גירושין הפסיקה רואה בחזקת השיתוף מי שמעניקה בסיס לחלוקה של זכויות או להכרת זכות לגבי נכסים מסוימים — במקרים אף נאמר על שותפות שווה לפי הסכם משתמע — ולעתים נידונים סעדי פיצוי, חשבונות וקיזוזים; שאלת סיווג פיצויים נזיקיים כפיצוי אישי או כרכוש משותף נדונה גם היא בספרות ובפסיקה.³\n\nנטל ההוכחה לגבי כוונת השיתוף מוטל על בן הזוג הטוען לשיתוף; בתי המשפט בוחנים ראיות כלכליות ועובדתיות — למשל מקור הממון שמשמש לרכישה, קיום משכנתא, אופן הרישום, משך המגורים המשותפים ושיפוצים — בעת קביעת אם הוטלה חזקה של שיתוף.⁴\n\nקיימים טיפול ודיונים נפרדים לגבי מצבי ידועים בציבור: חומר זה עוסק בשאלת שיתוף או הפרדה בין בני זוג שאינם נשואים, ומכיוון שמדובר בסובייקט שונה אין להכלילו אוטומטית בתוך אותה דוקטרינה של שיתוף בנכסי נישואין.⁵\n\nאם בכוונתך הלכה בשם אחר, פסק־דין מסוים, או מקור חקיקתי שברצונך שאציין או שאנתח — העבר/י אותו ואדייק בהתאם."
+  "answer_len": 2034,
+  "answer": "**שורה תחתונה**\n\nבית המשפט העליון דן בהיתכנות הלכת השיתוף ובחן את היקפה; בפסק‑דין בע\"מ 4623/04 הוצגה גישה מתונה המאפשרת הכרה בשיתוף בנכסים שנצברו במהלך הקשר אך מייתרת שיתוף אוטומטי של נכסים אישיים כגון כושר השתכרות ומוניטין, אלא אם נתגלה קשר מהותי וראייתי המשען על כוונת שיתוף או תרומה מהותית.²\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nפסק‑דין בתיק בע\"מ 4623/04 — בית המשפט העליון דן בשאלת חלות הלכת השיתוף ובהיקפה לגבי נכסים שהושגו בזמן הקשר ובהתייחס לנכסים אישיים ולכושר השתכרות/מוניטין; פסק‑דין זה מהווה את מקור הפסיקה השמיש היחיד שנמצא להסקת מסקנות תחומות.²\n\n**יישומים בפסיקה שנמצאה**\n\nבע\"מ 4623/04 הוחל המבחן על עובדות המקרה: בית המשפט שקל את נסיבות רכישת הנכסים, התרומה הכלכלית וההתנהלות המשותפת של הצדדים וביסס את החובה לחלוקה רק אם התקיימה זיקה משותפת ממשית או כוונת שיתוף שניתנו לעיתים על‑ידי ראיות כגון תשלומי משכנתא, שיפוצים או מעורבות בניהול הנכס.²\n\n**מגבלות והבחנות**\n\nמהפסיקה ניכרת זהירות כלפי הרחבת השיתוף לנכסים אופיים אישיים: בית המשפט לא מטיל שיתוף אוטומטי על קריירה, מוניטין או נכסים שקיבלו בירושה/במתנה אלא בוחן האם הוכחה כוונת שיתוף, תרומה מהותית של הצד השני או זיקה מעשית בין הנכס לבין המשק המשותף של הזוג.²\n\n**הרקע החקיקתי**\n\nחוק יחסי ממון בין בני זוג, תשל\"ג‑1973 מהווה מסגרת חקיקתית רלוונטית ליחסי רכוש בין בני זוג ומנסח מנגנון איזון משאבים; יש לראות את הפסיקה ביחס למסגרת החוקית הזו, אך יש להבחין בין הוראת החוק לבין מסגרת ההכרעה הפסיקתית על חלות השיתוף.⁴\n\n**מה לא ניתן לקבוע מהמקורות**\n\nקו הפסיקה השמיש שנמצא מצטמצם לפסק‑דין יחיד (בע\"מ 4623/04), ולכן אין בידי פסיקה מפורטת ומקיפה להסיק כלל גורף על היקף הלכת השיתוף בכל סוגי הנכסים, אמות־מידה ראייתיות אחידות או נוהלי סעד סטנדרטיים שישימות בכל מקרה.²\n\nנמצא אזכור/מקור מטא‑דאטה לפסקי דין נוספים אך לא אותר בהם טקסט אופרטיבי מספיק כדי לגזור מהם הלכה, יישום או סייג: מסמכים אלה מצויים כמקורות מטא‑דאטה בלבד ולכן יש להתייחס אליהם בזהירות.¹\n\nספרות ומשאבים משניים מציעים קריטריונים פרשניים (למשל מבחני כוונה, תרומה וזיקה מעשית) ודן בתחולת השיתוף לידועים בציבור ובמאמצי הפרשנות ביחס לחוק איזון המשאבים, אך הם מהווים רק בסיס אנליטי ולא תחליף לפסיקה שמיישמת הלכה באופן מחייב.³"
 }
