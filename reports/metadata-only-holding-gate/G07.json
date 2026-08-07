@@ -1,0 +1,30 @@
+{
+  "id": "G07",
+  "query": "מה הפסיקה אומרת על מבחן ההשתלבות לקביעת יחסי עובד-מעביד?",
+  "job_id": "b1520aad-60b0-4cfe-88ea-d4f5f8b57657",
+  "run_id": "62e14751-b2d7-4a2a-8dd0-a2e122d59963",
+  "ms": 212746,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": "insufficient_sources_limitation",
+  "drafted": false,
+  "answer_length": 407,
+  "used_sources_count": 0,
+  "footnotes_count": 0,
+  "judgments_cited": 0,
+  "metadata_only_cited": 0,
+  "metadata_only_cited_titles": [],
+  "source_split": {
+    "read_in_full": [],
+    "reference_only": []
+  },
+  "gate_report": null,
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק פיצויי פיטורים, תשכ\"ג-1963; חוק הודעה מוקדמת לפיטורים ולהתפטרות, התשס\"א-2001; חוק חופשה שנתית, התשי\"א-1951; חוק חופשה שנתית, התשי\"א–1951."
+}

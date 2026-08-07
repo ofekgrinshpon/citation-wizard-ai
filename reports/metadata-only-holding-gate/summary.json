@@ -155,5 +155,80 @@
     "cpu_kill": false,
     "pass": true,
     "failures": []
+  },
+  {
+    "id": "G17",
+    "query": "מהם התנאים להכרה בהסכם ממון שלא אושר בבית משפט?",
+    "job_id": "31afe35e-d217-4ff6-9144-bfb52f7aed11",
+    "run_id": "dfe07811-12e3-4f89-ad66-21889c38c896",
+    "ms": 262996,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": null,
+    "drafted": true,
+    "answer_length": 1748,
+    "used_sources_count": 2,
+    "footnotes_count": 2,
+    "judgments_cited": 0,
+    "metadata_only_cited": 0,
+    "metadata_only_cited_titles": [],
+    "source_split": {
+      "read_in_full": [],
+      "reference_only": []
+    },
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [],
+        "reference_only": []
+      },
+      "blocks_stripped": 0,
+      "source_split_counts": {
+        "read_in_full": 0,
+        "reference_only": 0
+      },
+      "reference_only_sources": [],
+      "blocks_left_unsupported": 0,
+      "stripped_ref_occurrences": 0,
+      "unsupported_block_samples": [],
+      "metadata_only_judgment_refs": [],
+      "metadata_only_holdings_remaining": 0
+    },
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": []
+  },
+  {
+    "id": "G07",
+    "query": "מה הפסיקה אומרת על מבחן ההשתלבות לקביעת יחסי עובד-מעביד?",
+    "job_id": "b1520aad-60b0-4cfe-88ea-d4f5f8b57657",
+    "run_id": "62e14751-b2d7-4a2a-8dd0-a2e122d59963",
+    "ms": 212746,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": "insufficient_sources_limitation",
+    "drafted": false,
+    "answer_length": 407,
+    "used_sources_count": 0,
+    "footnotes_count": 0,
+    "judgments_cited": 0,
+    "metadata_only_cited": 0,
+    "metadata_only_cited_titles": [],
+    "source_split": {
+      "read_in_full": [],
+      "reference_only": []
+    },
+    "gate_report": null,
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": []
   }
 ]
