@@ -1,9 +1,9 @@
 {
   "id": "B8",
   "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
-  "job_id": "4c36af9d-8e01-4c22-baa7-bb1a67e85178",
-  "run_id": "653251a6-573a-4499-a464-93eb8057d3a4",
-  "ms": 101255,
+  "job_id": "a8a665b8-cdd1-4064-866c-d31a241a0e87",
+  "run_id": "67f3dab0-7cdb-4421-aace-20a003b842cc",
+  "ms": 91056,
   "terminal_status": "done",
   "job_error": null,
   "last_stage": null,
