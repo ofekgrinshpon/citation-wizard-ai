@@ -1047,26 +1047,11 @@ export async function runDrafterV2(
     forbidden_text_hits: [],
   };
 
-  if (sources_passed === 0) {
-    return {
-      snippet_budget_report,
-      ok: false,
-      ms: Date.now() - t_total,
-      model_initial: forceModel ?? MODEL_MINI,
-      model_final: MODEL_MINI,
-      provider,
-      escalated: false,
-      sources_passed: 0,
-      sources_used: 0,
-      answer_markdown: "",
-      used_sources: [],
-      footnotes: [],
-      stage_runs,
-      error: "no_usable_candidates",
-      structured_validation: emptyValidation,
-      schema_failure_reason: "no_usable_candidates",
-    };
-  }
+  // NOTE: the generic empty-candidate early return is intentionally deferred
+  // until after the deterministic missing-docket evaluation below, so that a
+  // fake/unresolved docket returns the `docket_limitation` refusal instead of
+  // a stub (missing_docket_limitation_before_empty_candidate_guard_v1).
+
 
   const missingAnchors = (opts?.missingRequiredAnchors ?? []).filter((a) =>
     !canonicalQuoteRefs.some((ref) => a.anchor_id === `statute_section:${ref.ref_id}`)
@@ -1160,6 +1145,29 @@ export async function runDrafterV2(
     missingAnchors.some((a) => a.is_docket),
     missingAnchors.some((a) => a.is_statute_section),
   );
+
+  // Deferred generic empty-candidate guard: only fires when no deterministic
+  // missing-docket refusal applies.
+  if (sources_passed === 0 && !docketLimitationActive) {
+    return {
+      snippet_budget_report,
+      ok: false,
+      ms: Date.now() - t_total,
+      model_initial: forceModel ?? MODEL_MINI,
+      model_final: MODEL_MINI,
+      provider,
+      escalated: false,
+      sources_passed: 0,
+      sources_used: 0,
+      answer_markdown: "",
+      used_sources: [],
+      footnotes: [],
+      stage_runs,
+      error: "no_usable_candidates",
+      structured_validation: emptyValidation,
+      schema_failure_reason: "no_usable_candidates",
+    };
+  }
 
   if (docketLimitationActive) {
     const t0 = Date.now();

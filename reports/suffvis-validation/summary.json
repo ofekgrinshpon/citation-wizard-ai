@@ -1,61 +1,36 @@
 [
   {
-    "id": "R02",
-    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
-    "job_id": "55074fa2-7608-4b60-aff5-11ade81cccb6",
-    "run_id": "f89c7a3b-858e-4046-883f-5398a31113a3",
-    "ms": 151348,
+    "id": "P02",
+    "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+    "job_id": "143d4eff-d5c8-4929-8e6a-e9a6c9a3b9b8",
+    "run_id": "73b416c5-af35-4930-8744-e43f30d21dd4",
+    "ms": 152320,
     "terminal_status": "done",
     "job_error": null,
     "last_stage": null,
     "placeholder_rows_rejected": 0,
-    "branch": null,
-    "drafted": true,
-    "answer_length": 1537,
-    "used_sources_count": 1,
-    "footnotes_count": 1,
-    "judgments_cited": 1,
-    "body_acquired_judgments": 1,
+    "branch": "docket_limitation",
+    "drafted": false,
+    "answer_length": 345,
+    "used_sources_count": 0,
+    "footnotes_count": 0,
+    "judgments_cited": 0,
+    "body_acquired_judgments": 0,
     "metadata_only_judgments": 0,
     "metadata_only_titles": [],
     "statute_text_acquired_count": 0,
     "statute_section_text_located": false,
     "statute_acquisition": null,
-    "sufficiency_used_acquired_body": true,
+    "sufficiency_used_acquired_body": false,
     "sufficiency_profile": null,
     "sufficiency_passed": null,
     "metadata_only_holdings_remaining": 0,
-    "gate_report": {
-      "applied": true,
-      "source_split": {
-        "read_in_full": [
-          "s1"
-        ],
-        "reference_only": []
-      },
-      "blocks_stripped": 0,
-      "source_split_counts": {
-        "read_in_full": 1,
-        "reference_only": 0
-      },
-      "reference_only_sources": [],
-      "blocks_left_unsupported": 0,
-      "stripped_ref_occurrences": 0,
-      "unsupported_block_samples": [],
-      "metadata_only_judgment_refs": [],
-      "metadata_only_holdings_remaining": 0
-    },
+    "gate_report": null,
     "is_stub": false,
     "verifier_failed": false,
     "cpu_kill": false,
     "pass": true,
     "failures": [],
-    "used_source_titles": [
-      {
-        "title": "ע\"א 6821/93",
-        "citable_as": "judgment",
-        "text_usability": "full_text"
-      }
-    ]
+    "used_source_titles": []
   }
 ]

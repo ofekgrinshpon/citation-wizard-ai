@@ -1,16 +1,16 @@
 {
   "id": "P02",
   "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
-  "job_id": "e3631f40-76c8-471a-92af-8d962425fc7f",
-  "run_id": "ed6b2804-04fa-40dc-9a5e-a4483fc8d313",
-  "ms": 121160,
+  "job_id": "143d4eff-d5c8-4929-8e6a-e9a6c9a3b9b8",
+  "run_id": "73b416c5-af35-4930-8744-e43f30d21dd4",
+  "ms": 152320,
   "terminal_status": "done",
   "job_error": null,
   "last_stage": null,
   "placeholder_rows_rejected": 0,
-  "branch": null,
+  "branch": "docket_limitation",
   "drafted": false,
-  "answer_length": 82,
+  "answer_length": 345,
   "used_sources_count": 0,
   "footnotes_count": 0,
   "judgments_cited": 0,
@@ -28,10 +28,8 @@
   "is_stub": false,
   "verifier_failed": false,
   "cpu_kill": false,
-  "pass": false,
-  "failures": [
-    "p02_not_deterministic_docket_refusal"
-  ],
+  "pass": true,
+  "failures": [],
   "used_source_titles": [],
-  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
 }
