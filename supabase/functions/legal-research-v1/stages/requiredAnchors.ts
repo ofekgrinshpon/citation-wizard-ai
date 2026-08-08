@@ -198,6 +198,17 @@ export function buildRequiredAnchorQueries(
   return out;
 }
 
+/**
+ * Acquired statutory body text for a candidate (F5). Present only when
+ * `statuteTextAcquisition` downloaded the text from an allow-listed official
+ * statute source; metadata-only and commentary candidates return "".
+ */
+function acquiredStatuteText(c: Candidate): string {
+  const meta = (c.metadata ?? {}) as Record<string, unknown>;
+  if (meta.statute_text_acquired !== true) return "";
+  return typeof meta.extended_text === "string" ? meta.extended_text : "";
+}
+
 // After retrieval/verifier/drafter, compute the status of each required anchor
 // by inspecting candidates (tagged via metadata.required_anchor_id from the
 // originating Query), verifier verdicts/usable, the drafter's used set, and
@@ -256,10 +267,16 @@ export function computeRequiredAnchorStatuses(args: {
       // wrong statutes out — so Q03-style regressions are prevented.
       anchorCands = candidates.filter((c) =>
         candidateSatisfiesStatuteSection(
-          { title: c.title, snippet: c.snippet, url: c.source_url },
+          {
+            title: c.title,
+            snippet: c.snippet,
+            url: c.source_url,
+            body_text: acquiredStatuteText(c),
+          },
           ref,
         ));
     }
+
     const candidate_ids = anchorCands.map((c) => c.candidate_id);
     const reached_verifier = anchorCands.some((c) => usableIds.has(c.candidate_id));
     let verified_support: RequiredAnchorStatus["verified_support"] = "none";
@@ -271,11 +288,17 @@ export function computeRequiredAnchorStatuses(args: {
           a.statute_section_ref &&
           verdict.support === "direct" &&
           !candidateHasDirectStatuteSectionText(
-            { title: c.title, snippet: c.snippet, url: c.source_url },
+            {
+              title: c.title,
+              snippet: c.snippet,
+              url: c.source_url,
+              body_text: acquiredStatuteText(c),
+            },
             a.statute_section_ref,
           )
             ? "partial"
             : verdict.support;
+
         if ((supportRank[normalizedSupport] ?? 0) > (supportRank[verified_support] ?? 0)) {
           verified_support = normalizedSupport as RequiredAnchorStatus["verified_support"];
         }

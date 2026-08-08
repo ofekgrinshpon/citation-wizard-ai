@@ -24,6 +24,8 @@
  */
 
 import type { DrafterInputSource } from "./drafter.ts";
+import { detectStatuteSections } from "./statuteSectionDetection.ts";
+
 
 export type SufficiencyCategory =
   | "case_law_synthesis"
@@ -93,7 +95,15 @@ export interface SufficiencyAssessment {
   practical_steps_thin_authority_passed: boolean;
   /** Whether exact amounts / fees / deadlines may be stated. */
   exact_amounts_allowed: boolean;
+
+  // ── F1 / F4 telemetry ───────────────────────────────────────────────────
+  /** Refs whose topical hit came only from the acquired body window. */
+  body_topical_refs: string[];
+  body_text_topical_match: boolean;
+  /** The question names a specific statute section (drives F4 profile). */
+  statute_section_requested: boolean;
 }
+
 
 const META_TOKENS = new Set([
   "הפסיקה", "פסיקה", "הדין", "המשפט", "אומרת", "אומר", "אומרים", "קובעת", "קובע",
@@ -182,10 +192,39 @@ function phraseMatches(phrase: string, haystack: string): boolean {
   return toks.every((t) => haystack.includes(t));
 }
 
+// ── F1: bounded body-text topical window ──────────────────────────────────
+// A judgment or statute body that was actually acquired is truncated hard
+// before it reaches the drafter, so the doctrine phrase frequently survives
+// only inside the acquired text and never in title/snippet. Topical matching
+// may therefore read a *capped* window of the acquired body — but only for
+// sources whose body was genuinely acquired (never metadata-only, never
+// commentary).
+const TOPICAL_BODY_WINDOW_CHARS = 20_000;
+
+function hasAcquiredBody(s: DrafterInputSource): boolean {
+  const body = String(s.topical_text ?? "");
+  if (body.length < 200) return false;
+  const usability = String(s.text_usability || "unknown");
+  if (usability === "metadata_only" || usability === "listing_page") return false;
+  return isUsableJudgment(s) || isGoverningStatuteLike(s);
+}
+
+function topicalHaystack(s: DrafterInputSource): string {
+  const base = normalize(`${s.title} ${s.snippet ?? ""}`);
+  if (!hasAcquiredBody(s)) return base;
+  return `${base} ${normalize(String(s.topical_text).slice(0, TOPICAL_BODY_WINDOW_CHARS))}`;
+}
 
 function isTopical(s: DrafterInputSource, phrases: string[]): boolean {
-  const hay = normalize(`${s.title} ${s.snippet ?? ""}`);
-  return phrases.some((p) => phraseMatches(p, hay));
+  return phrases.some((p) => phraseMatches(p, topicalHaystack(s)));
+}
+
+/** True when the topical hit exists only inside the acquired body window. */
+function isBodyOnlyTopical(s: DrafterInputSource, phrases: string[]): boolean {
+  if (!hasAcquiredBody(s)) return false;
+  const base = normalize(`${s.title} ${s.snippet ?? ""}`);
+  if (phrases.some((p) => phraseMatches(p, base))) return false;
+  return isTopical(s, phrases);
 }
 
 /**
@@ -198,39 +237,79 @@ function isTopical(s: DrafterInputSource, phrases: string[]): boolean {
  */
 function isDomainMatch(s: DrafterInputSource, phrases: string[], tokens: string[]): boolean {
   if (isTopical(s, phrases)) return true;
-  const hay = normalize(`${s.title} ${s.snippet ?? ""}`);
+  const hay = topicalHaystack(s);
   return tokens.some((t) => hay.includes(t));
 }
 
-// ── Morphology-tolerant Hebrew stemming (domain matching ONLY) ────────────
+// ── F3: conservative Hebrew inflection variants (domain matching ONLY) ────
 // Never used for docket matching, quote matching, or anchor resolution.
-const HEB_PREFIXES = ["ו", "ב", "ל", "ה", "כ", "מ"];
+//
+// The previous implementation stripped prefixes and suffixes aggressively and
+// replaced the token with the residue, which destroyed real legal terms
+// ("מידתיות" → "ידת") and produced silent sufficiency false negatives. The
+// rule now: always keep the original token, add only conservative variants,
+// and reject residues that are too short or obviously destructive.
+const HEB_CLITIC_PREFIXES = ["ו", "ב", "ל", "כ", "ה", "מ", "ש"];
 const HEB_SUFFIXES = ["יות", "ות", "ים", "יה", "ה", "ת"];
+/** Minimum length of any derived (non-original) variant. */
+const MIN_VARIANT_LEN = 4;
+/** Minimum residue length before a prefix AND a suffix may both be stripped. */
+const MIN_DOUBLE_STRIP_LEN = 5;
 
-export function stemHebrew(tokenRaw: string): string | null {
-  let tok = String(tokenRaw || "").replace(/["'׳״]/g, "");
-  if (!HEBREW_TOKEN_RE.test(tok)) return null;
-  // Strip at most two stacked prefixes (e.g. "ובתביעות").
-  for (let i = 0; i < 2; i++) {
-    const p = HEB_PREFIXES.find((pref) => tok.startsWith(pref));
-    if (p && tok.length - p.length >= 3) tok = tok.slice(p.length);
-    else break;
-  }
+function stripOnePrefix(tok: string): string | null {
+  const p = HEB_CLITIC_PREFIXES.find((pref) => tok.startsWith(pref));
+  if (!p) return null;
+  const rest = tok.slice(p.length);
+  return rest.length >= MIN_VARIANT_LEN ? rest : null;
+}
+
+function stripOneSuffix(tok: string): string | null {
   for (const suf of HEB_SUFFIXES) {
-    if (tok.endsWith(suf) && tok.length - suf.length >= 3) {
-      tok = tok.slice(0, tok.length - suf.length);
-      break;
+    if (tok.endsWith(suf) && tok.length - suf.length >= MIN_VARIANT_LEN) {
+      return tok.slice(0, tok.length - suf.length);
     }
   }
-  return tok.length >= 3 ? tok : null;
+  return null;
+}
+
+/**
+ * Conservative variant set for one token: the original plus at most a
+ * prefix-stripped form, a suffix-stripped form, and (only for long tokens) the
+ * doubly-stripped form. Destructive residues are dropped.
+ */
+export function hebrewVariants(tokenRaw: string): string[] {
+  const tok = String(tokenRaw || "").replace(/["'׳״]/g, "");
+  if (!HEBREW_TOKEN_RE.test(tok) || tok.length < 3) return [];
+  const out = new Set<string>([tok]);
+  const noPrefix = stripOnePrefix(tok);
+  if (noPrefix) out.add(noPrefix);
+  const noSuffix = stripOneSuffix(tok);
+  if (noSuffix) out.add(noSuffix);
+  if (noPrefix && noSuffix) {
+    const both = stripOneSuffix(noPrefix);
+    if (both && both.length >= MIN_DOUBLE_STRIP_LEN) out.add(both);
+  }
+  return [...out];
+}
+
+/**
+ * Backwards-compatible single-stem accessor. Returns the most conservative
+ * non-destructive stem (suffix-stripped when available, otherwise the token
+ * itself) and never a residue shorter than MIN_VARIANT_LEN.
+ */
+export function stemHebrew(tokenRaw: string): string | null {
+  const variants = hebrewVariants(tokenRaw);
+  if (variants.length === 0) return null;
+  const tok = variants[0];
+  const suffixStripped = stripOneSuffix(tok);
+  return suffixStripped ?? (tok.length >= 3 ? tok : null);
 }
 
 export function stemSet(text: string): string[] {
   const out = new Set<string>();
   for (const tok of normalize(text).split(" ")) {
     if (tok.length < 3 || META_TOKENS.has(tok)) continue;
-    const st = stemHebrew(tok);
-    if (st) out.add(st);
+    for (const v of hebrewVariants(tok)) out.add(v);
   }
   return [...out];
 }
@@ -239,12 +318,13 @@ function stemsIntersect(qStems: string[], sStems: string[]): boolean {
   const set = new Set(sStems);
   for (const q of qStems) {
     if (set.has(q)) return true;
-    if (q.length >= 4 && sStems.some((s) => s.includes(q) || (s.length >= 4 && q.includes(s)))) {
+    if (q.length >= 5 && sStems.some((s) => s.length >= 5 && (s.includes(q) || q.includes(s)))) {
       return true;
     }
   }
   return false;
 }
+
 
 function isGoverningStatuteLike(s: DrafterInputSource, opts?: { allowThinText?: boolean }): boolean {
   const t = String(s.source_type || "").toLowerCase();
@@ -303,6 +383,7 @@ export function classifySufficiencyCategory(
 function resolveProfile(
   researchMode: string | null | undefined,
   category: SufficiencyCategory,
+  statuteSectionRequested: boolean,
 ): SufficiencyProfile {
   switch (researchMode) {
     case "case_law_synthesis":
@@ -312,15 +393,24 @@ function resolveProfile(
     case "practical_steps":
       return "practical_steps";
     case "doctrine_explanation":
-      return category === "case_law_synthesis" ? "case_law_synthesis" : "statutory_institution";
+      if (category === "case_law_synthesis") return "case_law_synthesis";
+      // F4 — mode-consistent statute expectations: a question that names a
+      // specific statute section gets the statute-section sufficiency
+      // contract regardless of whether the planner labelled it
+      // `doctrine_explanation` or `statute_section_definition`. This changes
+      // only *sufficiency expectations*; the direct section-text requirement
+      // for definitions/quotes lives in the anchor guard and is untouched.
+      return statuteSectionRequested ? "statute_section_definition" : "statutory_institution";
     default:
       break;
   }
   if (category === "case_law_synthesis") return "case_law_synthesis";
   if (category === "practical_list") return "practical_steps";
+  if (statuteSectionRequested) return "statute_section_definition";
   if (category === "doctrine") return "statutory_institution";
   return "not_applicable";
 }
+
 
 export function assessSourceSufficiency(args: {
   question: string;
@@ -338,9 +428,12 @@ export function assessSourceSufficiency(args: {
   const phrases = extractTopicPhrases(question);
   const tokens = contentTokens(question);
   const anchorIds = args.requiredAnchorCandidateIds ?? new Set<string>();
-  const profile = resolveProfile(args.researchMode, category);
+  const statuteSectionRequested = detectStatuteSections(question).length > 0;
+  const profile = resolveProfile(args.researchMode, category, statuteSectionRequested);
 
   const topical = sources.filter((s) => isTopical(s, phrases));
+  const bodyOnlyTopical = sources.filter((s) => isBodyOnlyTopical(s, phrases));
+
   const topicalAuthority = topical.filter((s) => {
     const t = String(s.source_type || "").toLowerCase();
     const typeOk = CASE_TYPES.has(t) || STATUTE_TYPES.has(t) || DOCTRINAL_TYPES.has(t);
@@ -361,8 +454,9 @@ export function assessSourceSufficiency(args: {
   const sourceStemsSeen = new Set<string>();
   const domainMatch = (s: DrafterInputSource): boolean => {
     if (isDomainMatch(s, phrases, tokens)) return true;
-    const sStems = stemSet(`${s.title} ${s.snippet ?? ""}`);
+    const sStems = stemSet(topicalHaystack(s));
     for (const st of sStems.slice(0, 40)) sourceStemsSeen.add(st);
+
     if (stemsIntersect(qStems, sStems)) {
       morphologyDomainMatch = true;
       return true;
@@ -400,7 +494,11 @@ export function assessSourceSufficiency(args: {
     thin_governing_regulation_refs: thinGoverningRegulations.map((s) => s.ref),
     normalized_question_tokens: qStems,
     normalized_source_tokens: [...sourceStemsSeen].slice(0, 60),
+    body_topical_refs: bodyOnlyTopical.map((s) => s.ref),
+    body_text_topical_match: bodyOnlyTopical.length > 0,
+    statute_section_requested: statuteSectionRequested,
   };
+
 
   const caseLawRequired = profile === "case_law_synthesis";
 

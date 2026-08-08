@@ -223,7 +223,14 @@ export interface DrafterInputSource {
   snippet_length?: number;
   available_text_length?: number;
   has_statutory_text?: boolean;
+  /**
+   * Bounded window of genuinely acquired body text (judgment or statute).
+   * Used only by deterministic topical matching in sourceSufficiency — never
+   * rendered, never sent to the model. Empty for metadata-only sources.
+   */
+  topical_text?: string;
 }
+
 
 
 
@@ -338,6 +345,12 @@ export function buildInputSources(
       snippet_length: snippetText ? snippetText.length : 0,
       available_text_length: availableText.length,
       has_statutory_text: hasStatutoryText(availableText),
+      // F1 — bounded acquired-body window for deterministic topical matching.
+      topical_text: (meta0.judgment_text_acquired === true ||
+          meta0.statute_text_acquired === true)
+        ? String(extendedText || "").slice(0, 20_000)
+        : undefined,
+
 
 
     });

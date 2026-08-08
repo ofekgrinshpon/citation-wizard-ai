@@ -241,37 +241,57 @@ export function detectStatuteSections(text: string): StatuteSectionRef[] {
  * that is what causes drafters to answer from the wrong section.
  */
 export function candidateSatisfiesStatuteSection(
-  fields: { title?: string | null; snippet?: string | null; url?: string | null },
+  fields: {
+    title?: string | null;
+    snippet?: string | null;
+    url?: string | null;
+    /**
+     * Genuinely acquired statutory body text (see statuteTextAcquisition.ts).
+     * Never a search snippet, never commentary — only text downloaded from an
+     * allow-listed official statute source.
+     */
+    body_text?: string | null;
+  },
   ref: StatuteSectionRef,
 ): boolean {
   const title = String(fields.title ?? "");
   const snippet = String(fields.snippet ?? "");
+  const body = String(fields.body_text ?? "");
   const titleOk = ref.title_patterns.some((re) => re.test(title));
   if (!titleOk) return false;
-  const hay = `${title}\n${snippet}`;
+  const hay = `${title}\n${snippet}\n${body}`;
   return ref.section_variants.some((v) => v.length >= 2 && hay.includes(v));
 }
 
 /**
  * Stronger predicate for definition/quote safety: a candidate may satisfy the
  * statute-section anchor partially by title+section marker, but it should only
- * count as direct section text if the extracted title/snippet also exposes the
- * actual provision language (or a curated marker set for that section).
+ * count as direct section text if the extracted title/snippet/acquired body
+ * also exposes the actual provision language (or a curated marker set for that
+ * section).
  */
 export function candidateHasDirectStatuteSectionText(
-  fields: { title?: string | null; snippet?: string | null; url?: string | null },
+  fields: {
+    title?: string | null;
+    snippet?: string | null;
+    url?: string | null;
+    body_text?: string | null;
+  },
   ref: StatuteSectionRef,
 ): boolean {
   if (!candidateSatisfiesStatuteSection(fields, ref)) return false;
   const rule = directTextRuleFor(ref);
   if (!rule) return true;
 
-  const hay = normalizeForDirectText(`${fields.title ?? ""}\n${fields.snippet ?? ""}`);
+  const hay = normalizeForDirectText(
+    `${fields.title ?? ""}\n${fields.snippet ?? ""}\n${fields.body_text ?? ""}`,
+  );
   const allOk = (rule.all ?? []).every((term) => hay.includes(normalizeForDirectText(term)));
   const anyTerms = rule.any ?? [];
   const anyOk = anyTerms.length === 0 || anyTerms.some((term) => hay.includes(normalizeForDirectText(term)));
   return allOk && anyOk;
 }
+
 
 /**
  * Canonical statutory-section text registry — used exclusively by the
