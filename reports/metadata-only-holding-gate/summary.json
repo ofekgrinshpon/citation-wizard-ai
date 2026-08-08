@@ -169,5 +169,63 @@
     "cpu_kill": false,
     "pass": true,
     "failures": []
+  },
+  {
+    "id": "P02",
+    "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+    "job_id": "6401f794-43b6-442e-958c-564bbfb91acd",
+    "run_id": "f4234980-7bc6-437c-b666-947475115c63",
+    "ms": 111535,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": "docket_limitation",
+    "drafted": false,
+    "answer_length": 345,
+    "used_sources_count": 0,
+    "footnotes_count": 0,
+    "judgments_cited": 0,
+    "metadata_only_cited": 0,
+    "metadata_only_cited_titles": [],
+    "source_split": {
+      "read_in_full": [],
+      "reference_only": []
+    },
+    "gate_report": null,
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": []
+  },
+  {
+    "id": "B8",
+    "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+    "job_id": "9441cf0b-550a-4b99-a0f8-ecee4a61f32e",
+    "run_id": "32713942-c25c-4e79-bbf6-a5cb02cf4b1d",
+    "ms": 91338,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": "canonical_quote_registry",
+    "drafted": true,
+    "answer_length": 294,
+    "used_sources_count": 1,
+    "footnotes_count": 1,
+    "judgments_cited": 0,
+    "metadata_only_cited": 0,
+    "metadata_only_cited_titles": [],
+    "source_split": {
+      "read_in_full": [],
+      "reference_only": []
+    },
+    "gate_report": null,
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": []
   }
 ]
