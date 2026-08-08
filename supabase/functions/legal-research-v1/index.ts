@@ -18,6 +18,8 @@ import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRole.ts";
 import { runJudgmentTextAcquisition } from "./stages/judgmentTextAcquisition.ts";
+import { runStatuteTextAcquisition } from "./stages/statuteTextAcquisition.ts";
+
 import { buildJudgmentDiscoveryQueries } from "./stages/judgmentDiscovery.ts";
 import { runSpecificCaseResolution, type SpecificCaseResolution } from "./stages/specificCaseResolution.ts";
 import { detectDockets } from "./stages/docketDetection.ts";
@@ -721,6 +723,42 @@ async function handle(req: Request): Promise<Response> {
   }
   await budget.markDurable("candidate_enrichment_done");
 
+  // ─── Statute-text acquisition (bounded, admitted candidates only) ────────
+  // When the question names a specific statute section, make the official
+  // statute text visible to the deterministic anchor predicates. No new
+  // retrieval: only candidates already in the admitted pool are fetched.
+  const statuteSectionRefsForAcquisition = detectStatuteSections(question);
+  const skipStatuteAcquisition = statuteSectionRefsForAcquisition.length === 0 ||
+    budget.exceeded();
+  await budget.markDurable("statute_text_acquisition_start", {
+    skipped: skipStatuteAcquisition,
+    refs: statuteSectionRefsForAcquisition.map((r) => r.ref_id),
+  });
+  const statuteAcquisition = await runStatuteTextAcquisition({
+    candidates: skipStatuteAcquisition ? [] : pool.candidates,
+    statuteSectionRefs: statuteSectionRefsForAcquisition,
+    retrieval_budget: budget,
+    markDurable: (name, detail) => budget.markDurable(name, detail),
+  });
+  await budget.markDurable("statute_text_acquisition_done", {
+    attempted: statuteAcquisition.attempted,
+    successes: statuteAcquisition.successes,
+    stop_reason: statuteAcquisition.stage_stop_reason,
+  });
+  if (statuteAcquisition.successes > 0) {
+    const byId = new Map(pool.candidates.map((c) => [c.candidate_id, c]));
+    for (const row of pool.integrity) {
+      const c = byId.get(row.candidate_id);
+      const integ = ((c?.metadata ?? {}) as Record<string, unknown>).source_integrity as
+        | { text_usability?: string; integrity_flags?: string[] }
+        | undefined;
+      if (!integ) continue;
+      row.text_usability = String(integ.text_usability ?? row.text_usability);
+      row.integrity_flags = integ.integrity_flags ?? row.integrity_flags;
+    }
+  }
+
+
   // ─── Specific-case authority resolution (specific_case mode only) ───────
   // Exact-docket guard + bounded judgment-text acquisition. Fail-closed: when
   // no admitted source carries the exact requested docket with usable text,
@@ -891,6 +929,15 @@ async function handle(req: Request): Promise<Response> {
         .map((r) => ({ candidate_id: r.candidate_id, reason: r.downgrade_reason })),
     },
     judgment_text_acquisition: judgmentAcquisition,
+    statute_text_acquisition: {
+      attempted: statuteAcquisition.attempted,
+      successes: statuteAcquisition.successes,
+      stage_stop_reason: statuteAcquisition.stage_stop_reason,
+      acquired_candidate_ids: statuteAcquisition.acquired_candidate_ids,
+      attempts: statuteAcquisition.attempts,
+      ms: statuteAcquisition.ms,
+    },
+
     specific_case_resolution: specificCase,
     specific_case_identity: specificCaseIdentity,
     judgment_discovery: {

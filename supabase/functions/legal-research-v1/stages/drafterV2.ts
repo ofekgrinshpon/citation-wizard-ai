@@ -1477,6 +1477,10 @@ export async function runDrafterV2(
       normalized_source_tokens: sufficiency?.normalized_source_tokens ?? [],
       practical_steps_thin_authority_passed: false,
       exact_amounts_allowed: false,
+      body_topical_refs: sufficiency?.body_topical_refs ?? [],
+      body_text_topical_match: sufficiency?.body_text_topical_match ?? false,
+      statute_section_requested: sufficiency?.statute_section_requested ?? false,
+
     };
 
     const draft = buildInsufficientSourcesDraft(synthSufficiency);
