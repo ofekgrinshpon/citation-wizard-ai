@@ -198,5 +198,241 @@
         "text_usability": "metadata_only"
       }
     ]
+  },
+  {
+    "id": "G12",
+    "query": "מהו הנוסח המדויק של סעיף 8 לחוק יסוד: כבוד האדם וחירותו (פסקת ההגבלה)?",
+    "job_id": "43346489-82f2-44be-8a24-9a0c62123fa8",
+    "run_id": "1fa68e7f-8a17-4c63-bfd4-fd177adab3e9",
+    "ms": 181977,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": "statute_section_quote_refusal",
+    "drafted": true,
+    "answer_length": 264,
+    "used_sources_count": 1,
+    "footnotes_count": 1,
+    "judgments_cited": 0,
+    "body_acquired_judgments": 0,
+    "metadata_only_judgments": 0,
+    "metadata_only_titles": [],
+    "statute_text_acquired_count": 0,
+    "statute_section_text_located": false,
+    "statute_acquisition": null,
+    "sufficiency_used_acquired_body": false,
+    "sufficiency_profile": null,
+    "sufficiency_passed": null,
+    "metadata_only_holdings_remaining": 0,
+    "gate_report": null,
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": [],
+    "used_source_titles": [
+      {
+        "title": "חוק-יסוד: כבוד האדם וחירותו",
+        "citable_as": "statute",
+        "text_usability": "substantive_excerpt"
+      }
+    ]
+  },
+  {
+    "id": "G10",
+    "query": "מה הדין ביחס לצוואות הדדיות וביטולן לפי סעיף 8א לחוק הירושה?",
+    "job_id": "59300ace-af0d-4940-b1e6-dd84fb014bf1",
+    "run_id": "b25bdc71-d4c3-485a-8d2f-9e56da9e3a1d",
+    "ms": 202165,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": null,
+    "drafted": true,
+    "answer_length": 2298,
+    "used_sources_count": 7,
+    "footnotes_count": 8,
+    "judgments_cited": 0,
+    "body_acquired_judgments": 0,
+    "metadata_only_judgments": 0,
+    "metadata_only_titles": [],
+    "statute_text_acquired_count": 0,
+    "statute_section_text_located": false,
+    "statute_acquisition": null,
+    "sufficiency_used_acquired_body": false,
+    "sufficiency_profile": null,
+    "sufficiency_passed": null,
+    "metadata_only_holdings_remaining": 0,
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [],
+        "reference_only": []
+      },
+      "blocks_stripped": 0,
+      "source_split_counts": {
+        "read_in_full": 0,
+        "reference_only": 0
+      },
+      "reference_only_sources": [],
+      "blocks_left_unsupported": 0,
+      "stripped_ref_occurrences": 0,
+      "unsupported_block_samples": [],
+      "metadata_only_judgment_refs": [],
+      "metadata_only_holdings_remaining": 0
+    },
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": [],
+    "used_source_titles": [
+      {
+        "title": "חוק הירושה, תשכ\"ה-1965 - נבו",
+        "citable_as": "statute",
+        "text_usability": "metadata_only"
+      },
+      {
+        "title": "חוק הירושה, תשכ\"ה-1965 - Gov.il",
+        "citable_as": "statute",
+        "text_usability": "metadata_only"
+      },
+      {
+        "title": "פס\"ד בערעור על ביטול צוואה הדדית",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only"
+      },
+      {
+        "title": "צוואות הדדיות - פרק מתוך ספרו החדש של פרופ' קורינאלדי",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only"
+      },
+      {
+        "title": "פס\"ד בעניין צוואות הדדיות",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only"
+      },
+      {
+        "title": "\"משנים מפני השלום\": חופש הציווי או חופש החוזים? חופש החוזים עדיף – היבטים עיוניים ומעשיים בהסדרתה של הצוואה ההדדית | עירית רייך־זיו (כרך כד)",
+        "citable_as": "scholarship",
+        "text_usability": "substantive_excerpt"
+      },
+      {
+        "title": "סעיף 8א לחוק הירושה (צוואות הדדיות) – האם הסדר שולל?",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only"
+      }
+    ]
+  },
+  {
+    "id": "G13",
+    "query": "מהי דוקטרינת הבטלות היחסית במשפט המנהלי הישראלי?",
+    "job_id": "c97065e0-7a80-479b-99a1-addce93d9e05",
+    "run_id": "eb22b57d-4a80-46b3-97e8-0f4afd06fb1d",
+    "ms": 111418,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": "insufficient_sources_limitation",
+    "drafted": false,
+    "answer_length": 570,
+    "used_sources_count": 0,
+    "footnotes_count": 0,
+    "judgments_cited": 0,
+    "body_acquired_judgments": 0,
+    "metadata_only_judgments": 0,
+    "metadata_only_titles": [],
+    "statute_text_acquired_count": 0,
+    "statute_section_text_located": false,
+    "statute_acquisition": null,
+    "sufficiency_used_acquired_body": false,
+    "sufficiency_profile": null,
+    "sufficiency_passed": null,
+    "metadata_only_holdings_remaining": 0,
+    "gate_report": null,
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": [],
+    "used_source_titles": []
+  },
+  {
+    "id": "G15",
+    "query": "מהי דוקטרינת השיתוף הספציפי בדירת מגורים?",
+    "job_id": "6343f53f-eb80-4031-a2fd-c876236e3233",
+    "run_id": "6202af80-d9aa-4f46-a61a-3ae31aa0f693",
+    "ms": 191881,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": null,
+    "drafted": true,
+    "answer_length": 2838,
+    "used_sources_count": 2,
+    "footnotes_count": 2,
+    "judgments_cited": 0,
+    "body_acquired_judgments": 0,
+    "metadata_only_judgments": 0,
+    "metadata_only_titles": [],
+    "statute_text_acquired_count": 0,
+    "statute_section_text_located": false,
+    "statute_acquisition": null,
+    "sufficiency_used_acquired_body": false,
+    "sufficiency_profile": null,
+    "sufficiency_passed": null,
+    "metadata_only_holdings_remaining": 0,
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [],
+        "reference_only": [
+          "s1"
+        ]
+      },
+      "blocks_stripped": 4,
+      "source_split_counts": {
+        "read_in_full": 0,
+        "reference_only": 1
+      },
+      "reference_only_sources": [
+        {
+          "ref": "s1",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/18/370/085/v30&fileName=18085370.V30&type=4",
+          "title": "דנג\"ץ 8537/18",
+          "candidate_id": "4187cb54-d25b-4cca-a4f8-bd082bdf7086"
+        }
+      ],
+      "blocks_left_unsupported": 1,
+      "stripped_ref_occurrences": 4,
+      "unsupported_block_samples": [
+        "במקום זאת, במקורות שאותרו קיים הסדר משפטי הקרוב במונח 'שיתוף ספציפי' (recognition of specific partition) — בעיקר בפסיקה בתיק דנג\"ץ 8537/18 שנזכרת כהכרה באפשרות "
+      ],
+      "metadata_only_judgment_refs": [
+        "s1"
+      ],
+      "metadata_only_holdings_remaining": 0
+    },
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": [],
+    "used_source_titles": [
+      {
+        "title": "גדרי הלכת שיתוף ספציפי בדירת מגורים",
+        "citable_as": "commentary",
+        "text_usability": "substantive_excerpt"
+      },
+      {
+        "title": "פירוק שיתוף במקרקעין",
+        "citable_as": "scholarship",
+        "text_usability": "substantive_excerpt"
+      }
+    ]
   }
 ]

@@ -1,0 +1,41 @@
+{
+  "id": "G12",
+  "query": "מהו הנוסח המדויק של סעיף 8 לחוק יסוד: כבוד האדם וחירותו (פסקת ההגבלה)?",
+  "job_id": "43346489-82f2-44be-8a24-9a0c62123fa8",
+  "run_id": "1fa68e7f-8a17-4c63-bfd4-fd177adab3e9",
+  "ms": 181977,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": "statute_section_quote_refusal",
+  "drafted": true,
+  "answer_length": 264,
+  "used_sources_count": 1,
+  "footnotes_count": 1,
+  "judgments_cited": 0,
+  "body_acquired_judgments": 0,
+  "metadata_only_judgments": 0,
+  "metadata_only_titles": [],
+  "statute_text_acquired_count": 0,
+  "statute_section_text_located": false,
+  "statute_acquisition": null,
+  "sufficiency_used_acquired_body": false,
+  "sufficiency_profile": null,
+  "sufficiency_passed": null,
+  "metadata_only_holdings_remaining": 0,
+  "gate_report": null,
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "used_source_titles": [
+    {
+      "title": "חוק-יסוד: כבוד האדם וחירותו",
+      "citable_as": "statute",
+      "text_usability": "substantive_excerpt"
+    }
+  ],
+  "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 8 לחוק-יסוד: כבוד האדם וחירותו; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
+}
