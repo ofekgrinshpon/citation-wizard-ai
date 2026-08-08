@@ -1,0 +1,40 @@
+{
+  "id": "B8",
+  "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+  "job_id": "4c36af9d-8e01-4c22-baa7-bb1a67e85178",
+  "run_id": "653251a6-573a-4499-a464-93eb8057d3a4",
+  "ms": 101255,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": "canonical_quote_registry",
+  "drafted": true,
+  "answer_length": 294,
+  "used_sources_count": 1,
+  "footnotes_count": 1,
+  "judgments_cited": 0,
+  "body_acquired_judgments": 0,
+  "metadata_only_judgments": 0,
+  "metadata_only_titles": [],
+  "statute_text_acquired_count": 0,
+  "statute_section_text_located": false,
+  "statute_acquisition": null,
+  "sufficiency_used_acquired_body": false,
+  "sufficiency_profile": null,
+  "sufficiency_passed": null,
+  "metadata_only_holdings_remaining": 0,
+  "gate_report": null,
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "used_source_titles": [
+    {
+      "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+      "text_usability": null
+    }
+  ],
+  "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹"
+}
