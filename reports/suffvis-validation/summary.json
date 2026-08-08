@@ -1,31 +1,50 @@
 [
   {
-    "id": "B8",
-    "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
-    "job_id": "4c36af9d-8e01-4c22-baa7-bb1a67e85178",
-    "run_id": "653251a6-573a-4499-a464-93eb8057d3a4",
-    "ms": 101255,
+    "id": "R02",
+    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+    "job_id": "55074fa2-7608-4b60-aff5-11ade81cccb6",
+    "run_id": "f89c7a3b-858e-4046-883f-5398a31113a3",
+    "ms": 151348,
     "terminal_status": "done",
     "job_error": null,
     "last_stage": null,
     "placeholder_rows_rejected": 0,
-    "branch": "canonical_quote_registry",
+    "branch": null,
     "drafted": true,
-    "answer_length": 294,
+    "answer_length": 1537,
     "used_sources_count": 1,
     "footnotes_count": 1,
-    "judgments_cited": 0,
-    "body_acquired_judgments": 0,
+    "judgments_cited": 1,
+    "body_acquired_judgments": 1,
     "metadata_only_judgments": 0,
     "metadata_only_titles": [],
     "statute_text_acquired_count": 0,
     "statute_section_text_located": false,
     "statute_acquisition": null,
-    "sufficiency_used_acquired_body": false,
+    "sufficiency_used_acquired_body": true,
     "sufficiency_profile": null,
     "sufficiency_passed": null,
     "metadata_only_holdings_remaining": 0,
-    "gate_report": null,
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [
+          "s1"
+        ],
+        "reference_only": []
+      },
+      "blocks_stripped": 0,
+      "source_split_counts": {
+        "read_in_full": 1,
+        "reference_only": 0
+      },
+      "reference_only_sources": [],
+      "blocks_left_unsupported": 0,
+      "stripped_ref_occurrences": 0,
+      "unsupported_block_samples": [],
+      "metadata_only_judgment_refs": [],
+      "metadata_only_holdings_remaining": 0
+    },
     "is_stub": false,
     "verifier_failed": false,
     "cpu_kill": false,
@@ -33,8 +52,9 @@
     "failures": [],
     "used_source_titles": [
       {
-        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
-        "text_usability": null
+        "title": "ע\"א 6821/93",
+        "citable_as": "judgment",
+        "text_usability": "full_text"
       }
     ]
   }
