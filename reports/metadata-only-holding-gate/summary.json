@@ -1,19 +1,92 @@
 [
   {
-    "id": "G15",
-    "query": "מהי דוקטרינת השיתוף הספציפי בדירת מגורים?",
-    "job_id": "6624fa9b-afa6-48ca-892b-fa133f929a9f",
-    "run_id": "05b07215-f0f7-4734-a897-c0e450523887",
-    "ms": 294693,
+    "id": "G08",
+    "query": "מה הפסיקה אומרת על מבחני המידתיות בביקורת חוקתית?",
+    "job_id": "9a21a306-e10c-4f60-a46e-f42116b60595",
+    "run_id": "8c4d1ef2-ee0d-46f0-b87b-53afdf8e48b4",
+    "ms": 142606,
     "terminal_status": "done",
     "job_error": null,
     "last_stage": null,
     "placeholder_rows_rejected": 0,
     "branch": null,
     "drafted": true,
-    "answer_length": 2263,
+    "answer_length": 2928,
+    "used_sources_count": 4,
+    "footnotes_count": 5,
+    "judgments_cited": 2,
+    "metadata_only_cited": 0,
+    "metadata_only_cited_titles": [],
+    "source_split": {
+      "read_in_full": [
+        "החלטה בתיק בג\"ץ 6732/20 - Gov",
+        "פסק דין מתוך אתר ממשלתי (gov.il)"
+      ],
+      "reference_only": []
+    },
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [
+          "s1",
+          "s5"
+        ],
+        "reference_only": [
+          "s4",
+          "s6"
+        ]
+      },
+      "blocks_stripped": 1,
+      "source_split_counts": {
+        "read_in_full": 2,
+        "reference_only": 2
+      },
+      "reference_only_sources": [
+        {
+          "ref": "s4",
+          "url": "https://supreme.court.gov.il/museum/Magazine/201204.pdf",
+          "title": "בית המשפט העליון - מוזיאון/ביטאון 201204",
+          "candidate_id": "ef414ea2-1979-4df8-9592-21d1806d980e"
+        },
+        {
+          "ref": "s6",
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision3390-16/he/3390-16.pdf",
+          "title": "בג\"ץ 3390/16",
+          "candidate_id": "b6a14646-b6e3-4e91-bc0a-0b25ca876f3d"
+        }
+      ],
+      "blocks_left_unsupported": 1,
+      "stripped_ref_occurrences": 2,
+      "unsupported_block_samples": [
+        "נמצאו אזכורים לפסקי דין נוספים (ממסמכים שסומנו כ־metadata בלבד) אך הטקסט האופרטיבי המלא שלהם לא היה זמין במחקר זה; בין מקורות אלה: s4 ו‑s6, שאינם שמישים לגזירת "
+      ],
+      "metadata_only_judgment_refs": [
+        "s4",
+        "s6"
+      ],
+      "metadata_only_holdings_remaining": 0
+    },
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": []
+  },
+  {
+    "id": "G10",
+    "query": "מה הדין לגבי צוואות הדדיות וביטולן לאחר פטירת אחד מבני הזוג?",
+    "job_id": "3485fae8-11b3-4d36-9cff-0ea87cee37b9",
+    "run_id": "6c89ba42-b0ba-446b-b80a-f17eff090a2f",
+    "ms": 151538,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": null,
+    "drafted": true,
+    "answer_length": 2481,
     "used_sources_count": 3,
-    "footnotes_count": 4,
+    "footnotes_count": 3,
     "judgments_cited": 0,
     "metadata_only_cited": 0,
     "metadata_only_cited_titles": [],
@@ -25,72 +98,11 @@
       "applied": true,
       "source_split": {
         "read_in_full": [],
-        "reference_only": [
-          "s3"
-        ]
-      },
-      "blocks_stripped": 1,
-      "source_split_counts": {
-        "read_in_full": 0,
-        "reference_only": 1
-      },
-      "reference_only_sources": [
-        {
-          "ref": "s3",
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/18/370/085/v30&fileName=18085370.V30&type=4",
-          "title": "דנג\"ץ 8537/18",
-          "candidate_id": "7f4e3503-b37b-470e-892c-8059eccd9bf0"
-        }
-      ],
-      "blocks_left_unsupported": 0,
-      "stripped_ref_occurrences": 1,
-      "unsupported_block_samples": [],
-      "metadata_only_judgment_refs": [
-        "s3"
-      ],
-      "metadata_only_holdings_remaining": 0
-    },
-    "is_stub": false,
-    "verifier_failed": false,
-    "cpu_kill": false,
-    "pass": true,
-    "failures": []
-  },
-  {
-    "id": "G13",
-    "query": "מהי דוקטרינת הבטלות היחסית במשפט המנהלי?",
-    "job_id": "b948277b-8755-4a91-9b5b-697db0042ac4",
-    "run_id": "91089171-7511-4b23-b941-2781f4700277",
-    "ms": 182316,
-    "terminal_status": "done",
-    "job_error": null,
-    "last_stage": null,
-    "placeholder_rows_rejected": 0,
-    "branch": null,
-    "drafted": true,
-    "answer_length": 2734,
-    "used_sources_count": 6,
-    "footnotes_count": 5,
-    "judgments_cited": 1,
-    "metadata_only_cited": 0,
-    "metadata_only_cited_titles": [],
-    "source_split": {
-      "read_in_full": [
-        "פסק-דין (הבטלות היחסית)"
-      ],
-      "reference_only": []
-    },
-    "gate_report": {
-      "applied": true,
-      "source_split": {
-        "read_in_full": [
-          "s1"
-        ],
         "reference_only": []
       },
       "blocks_stripped": 0,
       "source_split_counts": {
-        "read_in_full": 1,
+        "read_in_full": 0,
         "reference_only": 0
       },
       "reference_only_sources": [],
@@ -107,26 +119,27 @@
     "failures": []
   },
   {
-    "id": "G14",
-    "query": "כיצד מיושם עקרון תום הלב בדיני חוזים בפסיקה?",
-    "job_id": "a15ec183-68a9-44f0-a48e-65b6061aaf9d",
-    "run_id": "b51a8548-318d-431c-a2b4-73fb6cd3de1d",
-    "ms": 303183,
+    "id": "R02",
+    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+    "job_id": "c3d0f34b-d112-4a48-af77-e58711ae4d41",
+    "run_id": "4ce388b1-cf20-4893-a25a-3d1e61b6537b",
+    "ms": 221942,
     "terminal_status": "done",
     "job_error": null,
     "last_stage": null,
     "placeholder_rows_rejected": 0,
     "branch": null,
     "drafted": true,
-    "answer_length": 3327,
-    "used_sources_count": 6,
-    "footnotes_count": 9,
-    "judgments_cited": 1,
+    "answer_length": 1376,
+    "used_sources_count": 2,
+    "footnotes_count": 2,
+    "judgments_cited": 2,
     "metadata_only_cited": 0,
     "metadata_only_cited_titles": [],
     "source_split": {
       "read_in_full": [
-        "ע\"א 9225/01 זיימן נ'"
+        "ע\"א 6821/93",
+        "מסמך מאתר אתר ממשלתי (gov.il)"
       ],
       "reference_only": []
     },
@@ -134,13 +147,14 @@
       "applied": true,
       "source_split": {
         "read_in_full": [
+          "s1",
           "s2"
         ],
         "reference_only": []
       },
       "blocks_stripped": 0,
       "source_split_counts": {
-        "read_in_full": 1,
+        "read_in_full": 2,
         "reference_only": 0
       },
       "reference_only_sources": [],
@@ -157,20 +171,20 @@
     "failures": []
   },
   {
-    "id": "G17",
-    "query": "מהם התנאים להכרה בהסכם ממון שלא אושר בבית משפט?",
-    "job_id": "31afe35e-d217-4ff6-9144-bfb52f7aed11",
-    "run_id": "dfe07811-12e3-4f89-ad66-21889c38c896",
-    "ms": 262996,
+    "id": "P02",
+    "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+    "job_id": "6401f794-43b6-442e-958c-564bbfb91acd",
+    "run_id": "f4234980-7bc6-437c-b666-947475115c63",
+    "ms": 111535,
     "terminal_status": "done",
     "job_error": null,
     "last_stage": null,
     "placeholder_rows_rejected": 0,
-    "branch": null,
-    "drafted": true,
-    "answer_length": 1748,
-    "used_sources_count": 2,
-    "footnotes_count": 2,
+    "branch": "docket_limitation",
+    "drafted": false,
+    "answer_length": 345,
+    "used_sources_count": 0,
+    "footnotes_count": 0,
     "judgments_cited": 0,
     "metadata_only_cited": 0,
     "metadata_only_cited_titles": [],
@@ -178,24 +192,7 @@
       "read_in_full": [],
       "reference_only": []
     },
-    "gate_report": {
-      "applied": true,
-      "source_split": {
-        "read_in_full": [],
-        "reference_only": []
-      },
-      "blocks_stripped": 0,
-      "source_split_counts": {
-        "read_in_full": 0,
-        "reference_only": 0
-      },
-      "reference_only_sources": [],
-      "blocks_left_unsupported": 0,
-      "stripped_ref_occurrences": 0,
-      "unsupported_block_samples": [],
-      "metadata_only_judgment_refs": [],
-      "metadata_only_holdings_remaining": 0
-    },
+    "gate_report": null,
     "is_stub": false,
     "verifier_failed": false,
     "cpu_kill": false,
@@ -203,20 +200,20 @@
     "failures": []
   },
   {
-    "id": "G07",
-    "query": "מה הפסיקה אומרת על מבחן ההשתלבות לקביעת יחסי עובד-מעביד?",
-    "job_id": "b1520aad-60b0-4cfe-88ea-d4f5f8b57657",
-    "run_id": "62e14751-b2d7-4a2a-8dd0-a2e122d59963",
-    "ms": 212746,
+    "id": "B8",
+    "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+    "job_id": "9441cf0b-550a-4b99-a0f8-ecee4a61f32e",
+    "run_id": "32713942-c25c-4e79-bbf6-a5cb02cf4b1d",
+    "ms": 91338,
     "terminal_status": "done",
     "job_error": null,
     "last_stage": null,
     "placeholder_rows_rejected": 0,
-    "branch": "insufficient_sources_limitation",
-    "drafted": false,
-    "answer_length": 407,
-    "used_sources_count": 0,
-    "footnotes_count": 0,
+    "branch": "canonical_quote_registry",
+    "drafted": true,
+    "answer_length": 294,
+    "used_sources_count": 1,
+    "footnotes_count": 1,
     "judgments_cited": 0,
     "metadata_only_cited": 0,
     "metadata_only_cited_titles": [],

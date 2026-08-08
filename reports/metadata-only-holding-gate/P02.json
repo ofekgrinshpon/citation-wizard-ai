@@ -1,0 +1,30 @@
+{
+  "id": "P02",
+  "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+  "job_id": "6401f794-43b6-442e-958c-564bbfb91acd",
+  "run_id": "f4234980-7bc6-437c-b666-947475115c63",
+  "ms": 111535,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": "docket_limitation",
+  "drafted": false,
+  "answer_length": 345,
+  "used_sources_count": 0,
+  "footnotes_count": 0,
+  "judgments_cited": 0,
+  "metadata_only_cited": 0,
+  "metadata_only_cited_titles": [],
+  "source_split": {
+    "read_in_full": [],
+    "reference_only": []
+  },
+  "gate_report": null,
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}
