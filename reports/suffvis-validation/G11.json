@@ -1,0 +1,41 @@
+{
+  "id": "G11",
+  "query": "מה קובע סעיף 6 לחוק החברות, תשנ\"ט-1999 בעניין הרמת מסך?",
+  "job_id": "f56b658d-db01-46df-9412-eda8b3eeb358",
+  "run_id": "fa452484-5c9b-490c-ab5a-7f53523156db",
+  "ms": 121745,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": "statute_section_limitation",
+  "drafted": true,
+  "answer_length": 247,
+  "used_sources_count": 1,
+  "footnotes_count": 1,
+  "judgments_cited": 0,
+  "body_acquired_judgments": 0,
+  "metadata_only_judgments": 0,
+  "metadata_only_titles": [],
+  "statute_text_acquired_count": 0,
+  "statute_section_text_located": false,
+  "statute_acquisition": null,
+  "sufficiency_used_acquired_body": false,
+  "sufficiency_profile": null,
+  "sufficiency_passed": null,
+  "metadata_only_holdings_remaining": 0,
+  "gate_report": null,
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "used_source_titles": [
+    {
+      "title": "חוק החברות, התשנ\"ט-1999",
+      "citable_as": "statute",
+      "text_usability": "metadata_only"
+    }
+  ],
+  "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 6 לחוק החברות; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
+}

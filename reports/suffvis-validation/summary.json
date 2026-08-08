@@ -1,0 +1,202 @@
+[
+  {
+    "id": "G07",
+    "query": "מה הפסיקה אומרת על מבחן ההשתלבות לקביעת יחסי עובד-מעביד?",
+    "job_id": "e40fb13f-61b9-4fd7-84cf-6f1f26bf262d",
+    "run_id": "0b178d54-f064-482e-b256-90acd595404d",
+    "ms": 192445,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": null,
+    "drafted": true,
+    "answer_length": 2185,
+    "used_sources_count": 5,
+    "footnotes_count": 3,
+    "judgments_cited": 2,
+    "body_acquired_judgments": 2,
+    "metadata_only_judgments": 0,
+    "metadata_only_titles": [],
+    "statute_text_acquired_count": 0,
+    "statute_section_text_located": false,
+    "statute_acquisition": null,
+    "sufficiency_used_acquired_body": true,
+    "sufficiency_profile": null,
+    "sufficiency_passed": null,
+    "metadata_only_holdings_remaining": 0,
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [
+          "s1",
+          "s6"
+        ],
+        "reference_only": []
+      },
+      "blocks_stripped": 0,
+      "source_split_counts": {
+        "read_in_full": 2,
+        "reference_only": 0
+      },
+      "reference_only_sources": [],
+      "blocks_left_unsupported": 0,
+      "stripped_ref_occurrences": 0,
+      "unsupported_block_samples": [],
+      "metadata_only_judgment_refs": [],
+      "metadata_only_holdings_remaining": 0
+    },
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": [],
+    "used_source_titles": [
+      {
+        "title": "תובענה ייצוגית 298/08",
+        "citable_as": "judgment",
+        "text_usability": "full_text"
+      },
+      {
+        "title": "המיזוג וההסכם הקיבוצי – &quot;הילכו שניים יחדיו בלתי אם נועדו&quot;? בעקבות עס&quot;ק 70/05 ארגון עובדי בנק המזרחי המאוחד נ' בנק המזרחי המאוחד בע&quot;מ",
+        "citable_as": "judgment",
+        "text_usability": "full_text"
+      },
+      {
+        "title": "מיהו עובד: מבחני הסף",
+        "citable_as": "scholarship",
+        "text_usability": "substantive_excerpt"
+      },
+      {
+        "title": "עובד או קבלן",
+        "citable_as": "scholarship",
+        "text_usability": "substantive_excerpt"
+      },
+      {
+        "title": "מיהו המעביד - הגדרת יחסי עובד-מעביד בתבניות העסקה מודולאריות",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only"
+      }
+    ]
+  },
+  {
+    "id": "G08",
+    "query": "מה הפסיקה אומרת על מבחני המידתיות בביקורת חוקתית?",
+    "job_id": "c0553b53-2db8-4ba1-a084-140b288f4d01",
+    "run_id": "fb529749-e638-46da-8a14-53f3f41561c7",
+    "ms": 202229,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": null,
+    "drafted": true,
+    "answer_length": 1994,
+    "used_sources_count": 5,
+    "footnotes_count": 4,
+    "judgments_cited": 2,
+    "body_acquired_judgments": 2,
+    "metadata_only_judgments": 0,
+    "metadata_only_titles": [],
+    "statute_text_acquired_count": 0,
+    "statute_section_text_located": false,
+    "statute_acquisition": null,
+    "sufficiency_used_acquired_body": true,
+    "sufficiency_profile": null,
+    "sufficiency_passed": null,
+    "metadata_only_holdings_remaining": 0,
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [
+          "s1",
+          "s17"
+        ],
+        "reference_only": []
+      },
+      "blocks_stripped": 0,
+      "source_split_counts": {
+        "read_in_full": 2,
+        "reference_only": 0
+      },
+      "reference_only_sources": [],
+      "blocks_left_unsupported": 0,
+      "stripped_ref_occurrences": 0,
+      "unsupported_block_samples": [],
+      "metadata_only_judgment_refs": [],
+      "metadata_only_holdings_remaining": 0
+    },
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": [],
+    "used_source_titles": [
+      {
+        "title": "עע\"מ 861/19",
+        "citable_as": "judgment",
+        "text_usability": "full_text"
+      },
+      {
+        "title": "בג\"ץ 6732/20 האגודה לזכויות האזרח בישראל נ׳ הכנסת פסק דין (01.03.2021)",
+        "citable_as": "judgment",
+        "text_usability": "full_text"
+      },
+      {
+        "title": "המובן הפורמלי והמובן המהותי של מבחני המידתיות בפסיקת בג\"ץ",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only"
+      },
+      {
+        "title": "על המידתיות של המידתיות",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only"
+      },
+      {
+        "title": "ומחוקק היורה תרבות ההצדקה, אילוץ דאונטולוגי בקרים למ תשובה",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only"
+      }
+    ]
+  },
+  {
+    "id": "G11",
+    "query": "מה קובע סעיף 6 לחוק החברות, תשנ\"ט-1999 בעניין הרמת מסך?",
+    "job_id": "f56b658d-db01-46df-9412-eda8b3eeb358",
+    "run_id": "fa452484-5c9b-490c-ab5a-7f53523156db",
+    "ms": 121745,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": "statute_section_limitation",
+    "drafted": true,
+    "answer_length": 247,
+    "used_sources_count": 1,
+    "footnotes_count": 1,
+    "judgments_cited": 0,
+    "body_acquired_judgments": 0,
+    "metadata_only_judgments": 0,
+    "metadata_only_titles": [],
+    "statute_text_acquired_count": 0,
+    "statute_section_text_located": false,
+    "statute_acquisition": null,
+    "sufficiency_used_acquired_body": false,
+    "sufficiency_profile": null,
+    "sufficiency_passed": null,
+    "metadata_only_holdings_remaining": 0,
+    "gate_report": null,
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": [],
+    "used_source_titles": [
+      {
+        "title": "חוק החברות, התשנ\"ט-1999",
+        "citable_as": "statute",
+        "text_usability": "metadata_only"
+      }
+    ]
+  }
+]
