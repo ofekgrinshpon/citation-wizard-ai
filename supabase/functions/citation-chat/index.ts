@@ -1708,8 +1708,8 @@ serve(async (req) => {
 
     // When disambiguation selection has a case number, allow the normal case-number search to proceed
     // — UNLESS we already built the hint from a data blob.
-    const shouldSearchCaseLaw = isCaseLaw && !hasVerifiedCandidates && (caseNumberMatch || partyMatch) && !(isDisambiguationSelection && !caseNumberMatch) && !selectionDataBlob;
-    console.log(`[case-law] isCaseLaw=${isCaseLaw}, isDisambiguationSelection=${isDisambiguationSelection}, caseNumberMatch=${caseNumberMatch?.[0] ?? 'null'}, partyMatch=${partyMatch ? 'yes' : 'no'}, hasVerifiedCandidates=${hasVerifiedCandidates}, hasBlob=${!!selectionDataBlob}`);
+    const shouldSearchCaseLaw = isCaseLaw && !hasVerifiedCandidates && (docketQuery || partyMatch) && !(isDisambiguationSelection && !docketQuery) && !selectionDataBlob;
+    console.log(`[case-law] isCaseLaw=${isCaseLaw}, isDisambiguationSelection=${isDisambiguationSelection}, docket=${docketQuery ? `${docketQuery.caseType} ${docketQuery.caseNum}`.trim() : 'null'}, bare_docket=${bareDocket ? 'yes' : 'no'}, partyMatch=${partyMatch ? 'yes' : 'no'}, hasVerifiedCandidates=${hasVerifiedCandidates}, hasBlob=${!!selectionDataBlob}`);
 
     if (shouldSearchCaseLaw) {
       try {
@@ -1717,13 +1717,14 @@ serve(async (req) => {
         if (PERPLEXITY_API_KEY) {
 
           // ── Branch A: Search by case number (existing logic) ──
-          if (caseNumberMatch) {
-            const caseType = caseNumberMatch[1];
+          if (docketQuery) {
+            const caseType = docketQuery.caseType;
             // Preserve original docket separator: lower-courts use dashes (e.g. סע"ש 50358-09-16),
             // Supreme historical use slashes (e.g. ע"א 158/77). Don't normalize.
-            const caseNum = caseNumberMatch[2];
-            const fullCaseRef = `${caseType} ${caseNum}`;
-            const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. חשוב מאוד: בדוק קודם כל האם פסק הדין פורסם בפד"י (פסקי דין של בית המשפט העליון). חפש את מספר התיק יחד עם המילה "פ"ד" וכרך. רק אם וידאת שהוא לא מופיע בפד"י, ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. ענה בעברית בלבד.`;
+            const caseNum = docketQuery.caseNum;
+            const fullCaseRef = `${caseType} ${caseNum}`.trim();
+            const query = `מצא את פסק הדין הישראלי ${fullCaseRef}.${caseType ? "" : ` מספר התיק הוא ${caseNum} וסוג ההליך (הקידומת) לא צוין — עליך לזהות את סוג ההליך המדויק (למשל בג"ץ, ע"א, רע"א, ע"פ) עבור מספר תיק זה בדיוק. אסור להחזיר פסק דין אחר עם מספר תיק אחר.`} חשוב מאוד: בדוק קודם כל האם פסק הדין פורסם בפד"י (פסקי דין של בית המשפט העליון). חפש את מספר התיק יחד עם המילה "פ"ד" וכרך. רק אם וידאת שהוא לא מופיע בפד"י, ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) סוג ההליך (caseType) בקיצור הרשמי, 5) פרסום בפד"י: כרך, חלק ועמוד ראשון. ענה בעברית בלבד.`;
+
 
             const caseSearchBody: Record<string, unknown> = {
               model: "sonar-pro",
