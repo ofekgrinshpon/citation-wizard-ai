@@ -67,3 +67,45 @@ export const CASE_DOCKET_RE = new RegExp(
 
 /** Just the prefix — for free-text input validation. */
 export const CASE_TYPE_PREFIX_RE = new RegExp(`(?:${buildPrefixAlternation()})`);
+
+/**
+ * Bare docket (no case-type prefix), e.g. "5555/18" or "50358-09-16".
+ * Only used as a FALLBACK when CASE_DOCKET_RE finds nothing — users often
+ * paste "5555/18 חסון נ' כנסת ישראל" without the בג"ץ prefix, and without
+ * this the input degrades to a party-name search that can return a
+ * different case entirely.
+ *
+ * Guards (see findBareDocket): rejects matches preceded by a
+ * pinpoint/section marker (ס', סעיף, עמ', פס', ה"ש, תק'), and rejects the
+ * two-part dashed form (which is usually a page/paragraph range like 4-6).
+ */
+const BARE_DOCKET_SLASH_RE = /(?<![\d\/\-.])(\d{1,6}\/\d{2,4})(?![\d\/\-])/;
+const BARE_DOCKET_DASH_RE = /(?<![\d\/\-.])(\d{1,6}-\d{1,2}-\d{2,4})(?![\d\/\-])/;
+
+const PINPOINT_MARKER_RE =
+  /(?:ס['׳]|סעיף|סע['׳]|עמ['׳]|עמוד|פס['׳]|פסקה|ה["״]ש|תק['׳]|תקנה|כרך|חלק)\s*$/;
+
+export interface BareDocketMatch {
+  /** The bare docket string, e.g. "5555/18". */
+  docket: string;
+  /** Index of the docket inside the searched text. */
+  index: number;
+}
+
+/**
+ * Find a bare docket in free text, applying the pinpoint-marker guard.
+ * Returns null when nothing safe was found.
+ */
+export function findBareDocket(text: string): BareDocketMatch | null {
+  for (const re of [BARE_DOCKET_SLASH_RE, BARE_DOCKET_DASH_RE]) {
+    const g = new RegExp(re.source, "g");
+    let m: RegExpExecArray | null;
+    while ((m = g.exec(text)) !== null) {
+      const before = text.slice(Math.max(0, m.index - 12), m.index);
+      if (PINPOINT_MARKER_RE.test(before)) continue;
+      return { docket: m[1], index: m.index };
+    }
+  }
+  return null;
+}
+
