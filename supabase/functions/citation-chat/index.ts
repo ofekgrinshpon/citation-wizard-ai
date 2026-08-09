@@ -1956,6 +1956,35 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   }
                   console.log(`[case-law] party_verification=${partyVerification} party_mismatch=${partyMismatch} docket_anchored=${docketAnchored} for ${fullCaseRef}`);
 
+                  // ── Caption recovery from a docket-adjacent citation ──
+                  // Other judgments citing this case spell its caption out in
+                  // full ("בג\"ץ 5555/18 חסון נ' כנסת ישראל"), which is more
+                  // reliable than the model's paraphrase ("הכנסת"). Only used
+                  // when the caption sits immediately after our exact docket.
+                  if (docketAnchor && anchoredResultsOuter.length > 0) {
+                    const HEB = "\u0590-\u05FF";
+                    const capRe = new RegExp(
+                      `${docketAnchor.num}\\s*/\\s*${docketAnchor.year}\\s+([${HEB}][${HEB}"'\u05F3\u05F4\\s]{1,40}?)\\s+נ['\u05F3\u05F4]?\\s+([${HEB}][${HEB}"'\u05F3\u05F4\\s]{1,50}?)\\s*(?=[,.()]|פסק|פס['\u05F3]|$)`,
+                    );
+                    for (const r of anchoredResultsOuter) {
+                      const txt = `${typeof r.title === "string" ? r.title : ""} ${typeof r.snippet === "string" ? r.snippet : ""}`;
+                      const cm = txt.match(capRe);
+                      if (!cm) continue;
+                      const cap1 = cm[1].trim();
+                      const cap2 = cm[2].trim();
+                      if (cap1.length < 2 || cap2.length < 2) continue;
+                      if (cap1 !== parsed.party1 || cap2 !== parsed.party2) {
+                        console.log(`[case-law] caption_recovered from source: "${cap1}" נ' "${cap2}" (model had "${parsed.party1 ?? ""}" נ' "${parsed.party2 ?? ""}")`);
+                      }
+                      parsed.party1 = cap1;
+                      parsed.party2 = cap2;
+                      partyMismatch = false;
+                      partyVerification = "both";
+                      break;
+                    }
+                  }
+
+
                   // ── Old-docket retry for pre-electronic-era Supreme Court cases ──
                   // When the standard search couldn't anchor the docket (parties were
                   // dropped), try once more with a stronger query and broader trusted
