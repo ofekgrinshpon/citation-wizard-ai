@@ -147,3 +147,51 @@ export function validateArticleCitation(
   out = out.replace(/\s+/g, " ").trim();
   return out;
 }
+
+/**
+ * Rule 24.11 / 23.7 — editors belong inside the trailing parentheses, before
+ * the year, never in the book-author slot (between the article title and the
+ * book title).
+ *
+ * Detects `<names> עורך/עורכת/עורכים/עורכות` occurring right after the closing
+ * quote of the article title and splices it into the trailing parentheses.
+ * Idempotent: a citation whose editors are already inside the parentheses is
+ * returned unchanged.
+ */
+const EDITOR_ROLE = "עורכים|עורכות|עורכת|עורך";
+
+export function normalizeEditorPlacement(citation: string): string {
+  if (!citation) return citation;
+  let out = citation;
+
+  // Only act on lines that look like an article-in-book: quoted title present.
+  const quoteRe = /["״][^"״\n]{2,}["״]/;
+  if (!quoteRe.test(out)) return out;
+
+  const misplaced = new RegExp(
+    `(["״][^"״\\n]{2,}["״]\\s*)((?:[^"״()\\n]{2,120}?)\\s(?:${EDITOR_ROLE})(?:\\s+ראשי)?)\\s+`,
+    "u",
+  );
+  const m = out.match(misplaced);
+  if (!m) return out;
+
+  const editorPhrase = m[2].trim().replace(/^[,\s]+|[,\s]+$/g, "");
+  if (!editorPhrase) return out;
+
+  // Remove from the misplaced position.
+  const withoutEditors = out.replace(misplaced, "$1");
+
+  // Splice into the trailing parentheses (before the year), or create them.
+  const parenRe = /\(([^()]*)\)\s*\.?\s*$/u;
+  const pm = withoutEditors.match(parenRe);
+  if (pm) {
+    const inner = pm[1].trim();
+    if (new RegExp(EDITOR_ROLE, "u").test(inner)) return out; // already there
+    const merged = inner ? `${editorPhrase} ${inner}` : editorPhrase;
+    out = withoutEditors.replace(parenRe, `(${merged}).`);
+  } else {
+    out = `${withoutEditors.replace(/\s*\.?\s*$/, "")} (${editorPhrase}).`;
+  }
+
+  return out.replace(/\s+/g, " ").replace(/\s+\./g, ".").trim();
+}
