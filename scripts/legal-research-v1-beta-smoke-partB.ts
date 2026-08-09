@@ -32,7 +32,7 @@ async function poll(run_id: string, since: string, timeoutMs = 900_000) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/qa_logs?select=id,created_at,metadata,answer,footnotes&metadata->>run_id=eq.${run_id}&created_at=gte.${since}&order=created_at.desc&limit=1`, { headers });
-    if (r.ok) { const rows = await r.json(); if (Array.isArray(rows) && rows.length) return rows[0]; }
+    if (r.ok) { const rows = await r.json(); if (Array.isArray(rows) && rows.length && String(rows[0].answer ?? "").trim().length > 0 && rows[0]?.metadata?.drafter) return rows[0]; }
     const j = await fetch(`${SUPABASE_URL}/rest/v1/legal_research_jobs?select=status,current_stage,error&run_id=eq.${run_id}&limit=1`, { headers });
     if (j.ok) { const jr = await j.json(); if (Array.isArray(jr) && jr[0]?.status === "failed") return { failed: jr[0] }; }
     await new Promise((res) => setTimeout(res, 5000));
