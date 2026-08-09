@@ -116,5 +116,17 @@ export async function resolveSourceType(rawText: string): Promise<{
   if (ambiguous && llm.confidence >= 0.6 && llm.sourceType !== "unknown") {
     return { sourceType: llm.sourceType, source: "llm", llm };
   }
+
+  // Weak legislation guesses (mid-title "חוק", no statute year / marker at the
+  // start) may be overridden by a confident LLM verdict. Strong statute-shaped
+  // matches are never overridden.
+  if (
+    isWeakLegislationGuess(rawText, regexType) &&
+    llm.confidence >= 0.7 &&
+    llm.sourceType !== "unknown"
+  ) {
+    return { sourceType: llm.sourceType, source: "llm", llm };
+
+  }
   return { sourceType: regexType, source: "regex", llm };
 }
