@@ -41,7 +41,7 @@ function normalizeDatabaseName(urls: unknown, fallback: unknown): string {
   }
   return "";
 }
-import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES } from "../_shared/caseTypePrefixes.ts";
+import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES, findBareDocket } from "../_shared/caseTypePrefixes.ts";
 import {
   TRUSTED_LEGAL,
   TRUSTED_PUB,
@@ -1619,8 +1619,29 @@ serve(async (req) => {
     // ── Check if this is a disambiguation selection (skip Perplexity) ──
     const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(userInput);
 
+    // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern
+    const cleanedForParty = userInput
+      .replace(/\[סיווג אוטומטי:.*?\]\n?/, "")
+      .replace(/\[בחירת תוצאה\]\s*/, "")
+      .replace(/\n?══[\s\S]*?══+\s*/g, "")
+      .trim();
+
     const caseNumberMatch = userInput.match(CASE_DOCKET_RE);
-    const isCaseLaw = Boolean((classMatch && /פסיקה/.test(classMatch[1])) || caseNumberMatch);
+    // Bare docket fallback: users routinely paste "5555/18 חסון נ' כנסת ישראל"
+    // without the בג"ץ prefix. Without this the input degraded to a party-name
+    // search, which could return a DIFFERENT case between the same parties and
+    // silently substitute its docket.
+    const bareDocket = caseNumberMatch ? null : findBareDocket(cleanedForParty);
+    if (bareDocket) {
+      console.log(`[case-law] bare_docket_detected=${bareDocket.docket} (no case-type prefix in input)`);
+    }
+    const docketQuery: { caseType: string; caseNum: string } | null = caseNumberMatch
+      ? { caseType: caseNumberMatch[1], caseNum: caseNumberMatch[2] }
+      : bareDocket
+        ? { caseType: "", caseNum: bareDocket.docket }
+        : null;
+
+    const isCaseLaw = Boolean((classMatch && /פסיקה/.test(classMatch[1])) || docketQuery);
 
     // Extract embedded data blob (carried over from a prior party-search disambiguation list)
     let selectionDataBlob: Record<string, unknown> | null = null;
@@ -1636,17 +1657,14 @@ serve(async (req) => {
       }
     }
 
-    // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern
-    const cleanedForParty = userInput
-      .replace(/\[סיווג אוטומטי:.*?\]\n?/, "")
-      .replace(/\[בחירת תוצאה\]\s*/, "")
-      .replace(/\n?══[\s\S]*?══+\s*/g, "")
-      .trim();
     // Accepts: "X נגד Y", "X נ' Y", "X נ״ Y", and bare "X נ Y".
     // Length guard: each side must contain ≥2 Hebrew letters to avoid
     // a stray middle-word `נ` triggering false positives.
     const PARTY_RE = /([\u0590-\u05FF][\u0590-\u05FF\s'"״׳]*[\u0590-\u05FF])\s+(?:נגד|נ['׳״"\u2018\u2019\u05F3]?)\s+([\u0590-\u05FF][\u0590-\u05FF\s'"״׳]*[\u0590-\u05FF])/;
-    const partyMatch = !caseNumberMatch ? cleanedForParty.match(PARTY_RE) : null;
+    // Never let the party-name branch run when the user supplied a docket
+    // (prefixed OR bare) — it is the path that can override the docket.
+    const partyMatch = !docketQuery ? cleanedForParty.match(PARTY_RE) : null;
+
 
     // If we have a data blob from prior party-search, use it directly — no Perplexity re-search
     if (isDisambiguationSelection && isCaseLaw && selectionDataBlob) {
@@ -1669,8 +1687,8 @@ serve(async (req) => {
       details += `══ השתמש אך ורק בנתונים שלמעלה. אם נתון חסר — סמן [חסר:...]. ══`;
       caseLawHint = details;
       console.log("[case-law] Using selection data blob — skipping Perplexity");
-    } else if (isDisambiguationSelection && isCaseLaw && caseNumberMatch) {
-      console.log(`[case-law] Disambiguation selection detected (no blob), doing focused search for ${caseNumberMatch[0]}`);
+    } else if (isDisambiguationSelection && isCaseLaw && docketQuery) {
+      console.log(`[case-law] Disambiguation selection detected (no blob), doing focused search for ${docketQuery.caseType} ${docketQuery.caseNum}`.trim());
     } else if (isDisambiguationSelection && isCaseLaw) {
       // No case number found in selection — build hint from text
       const selectionText = userInput.replace(/\[סיווג אוטומטי:.*?\]\n?/, "").replace(/\[בחירת תוצאה\]\s*/, "").trim();
@@ -1690,8 +1708,8 @@ serve(async (req) => {
 
     // When disambiguation selection has a case number, allow the normal case-number search to proceed
     // — UNLESS we already built the hint from a data blob.
-    const shouldSearchCaseLaw = isCaseLaw && !hasVerifiedCandidates && (caseNumberMatch || partyMatch) && !(isDisambiguationSelection && !caseNumberMatch) && !selectionDataBlob;
-    console.log(`[case-law] isCaseLaw=${isCaseLaw}, isDisambiguationSelection=${isDisambiguationSelection}, caseNumberMatch=${caseNumberMatch?.[0] ?? 'null'}, partyMatch=${partyMatch ? 'yes' : 'no'}, hasVerifiedCandidates=${hasVerifiedCandidates}, hasBlob=${!!selectionDataBlob}`);
+    const shouldSearchCaseLaw = isCaseLaw && !hasVerifiedCandidates && (docketQuery || partyMatch) && !(isDisambiguationSelection && !docketQuery) && !selectionDataBlob;
+    console.log(`[case-law] isCaseLaw=${isCaseLaw}, isDisambiguationSelection=${isDisambiguationSelection}, docket=${docketQuery ? `${docketQuery.caseType} ${docketQuery.caseNum}`.trim() : 'null'}, bare_docket=${bareDocket ? 'yes' : 'no'}, partyMatch=${partyMatch ? 'yes' : 'no'}, hasVerifiedCandidates=${hasVerifiedCandidates}, hasBlob=${!!selectionDataBlob}`);
 
     if (shouldSearchCaseLaw) {
       try {
@@ -1699,13 +1717,14 @@ serve(async (req) => {
         if (PERPLEXITY_API_KEY) {
 
           // ── Branch A: Search by case number (existing logic) ──
-          if (caseNumberMatch) {
-            const caseType = caseNumberMatch[1];
+          if (docketQuery) {
+            const caseType = docketQuery.caseType;
             // Preserve original docket separator: lower-courts use dashes (e.g. סע"ש 50358-09-16),
             // Supreme historical use slashes (e.g. ע"א 158/77). Don't normalize.
-            const caseNum = caseNumberMatch[2];
-            const fullCaseRef = `${caseType} ${caseNum}`;
-            const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. חשוב מאוד: בדוק קודם כל האם פסק הדין פורסם בפד"י (פסקי דין של בית המשפט העליון). חפש את מספר התיק יחד עם המילה "פ"ד" וכרך. רק אם וידאת שהוא לא מופיע בפד"י, ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. ענה בעברית בלבד.`;
+            const caseNum = docketQuery.caseNum;
+            const fullCaseRef = `${caseType} ${caseNum}`.trim();
+            const query = `מצא את פסק הדין הישראלי ${fullCaseRef}.${caseType ? "" : ` מספר התיק הוא ${caseNum} וסוג ההליך (הקידומת) לא צוין — עליך לזהות את סוג ההליך המדויק (למשל בג"ץ, ע"א, רע"א, ע"פ) עבור מספר תיק זה בדיוק. אסור להחזיר פסק דין אחר עם מספר תיק אחר.`} חשוב מאוד: בדוק קודם כל האם פסק הדין פורסם בפד"י (פסקי דין של בית המשפט העליון). חפש את מספר התיק יחד עם המילה "פ"ד" וכרך. רק אם וידאת שהוא לא מופיע בפד"י, ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) סוג ההליך (caseType) בקיצור הרשמי, 5) פרסום בפד"י: כרך, חלק ועמוד ראשון. ענה בעברית בלבד.`;
+
 
             const caseSearchBody: Record<string, unknown> = {
               model: "sonar-pro",
@@ -1718,15 +1737,22 @@ serve(async (req) => {
 חשוב ביותר: עדיפות ראשונה היא לבדוק פרסום בפד"י (פסקי דין). רוב פסקי הדין של בית המשפט העליון פורסמו בפד"י. אל תסתמך רק על מאגרי מידע אלקטרוניים - חפש במיוחד אם יש ציון "פ"ד" עם כרך ועמוד.
 סמן isPublished: false רק אם חיפשת במפורש פרסום בפד"י ווידאת שהוא לא קיים.
 הפורמט:
-{"found":true/false,"party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY","confidence":"high/low"}
+{"found":true/false,"caseType":"קיצור סוג ההליך","party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY","confidence":"high/low"}
 שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
+caseType: הקיצור הרשמי של סוג ההליך לפי כללי האזכור האחיד (בג"ץ, ע"א, רע"א, ע"פ, עת"מ וכו'). אם לא אומת — השאר ריק.
+אסור להחזיר פסק דין שמספר התיק שלו שונה ממספר התיק שהתבקש. אם לא מצאת את מספר התיק המדויק — החזר found:false.
 confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות רבים, "low" אם יש ספק או מקור יחיד.
 חשוב: שדה year/date חייב להיות תאריך/שנת מתן פסק הדין על ידי בית המשפט, ולא שנת הוצאת כרך פ"ד.`,
                 },
                 { role: "user", content: query },
               ],
             };
-            const docketAnchor = extractDocket(fullCaseRef);
+            // extractDocket() requires a Hebrew case-type prefix, so for a bare
+            // docket we build the anchor directly from the number/year pair.
+            const docketAnchor = extractDocket(fullCaseRef) ?? (() => {
+              const m = caseNum.match(/^(\d{1,6})[\/\-\u2013](\d{2,4})$/);
+              return m ? { full: `${m[1]}/${m[2]}`, num: m[1], year: m[2] } : null;
+            })();
             const caseSearchRun = await perplexityWithFallback(
               PERPLEXITY_API_KEY,
               caseSearchBody,
@@ -1976,8 +2002,22 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   const dataIsUsable = parsed.found && (hasValidParties || partyMismatch) && (hasValidDate || hasValidPublication);
                   
                   if (dataIsUsable) {
+                    // For a bare docket (no prefix in the user's input) the case-type
+                    // comes from the search — but the DOCKET NUMBER always stays the
+                    // one the user asked for.
+                    const resolvedCaseType = caseType
+                      || (typeof parsed.caseType === "string" && CASE_TYPE_PREFIX_RE.test(parsed.caseType.trim())
+                        ? parsed.caseType.trim()
+                        : "");
+                    const displayRef = `${resolvedCaseType} ${caseNum}`.trim();
+                    if (!caseType) {
+                      console.log(`[case-law] bare_docket_case_type_resolved=${resolvedCaseType || 'none'} for ${caseNum}`);
+                    }
                     let details = `\n\n══ נתוני פסק דין שנמצאו בחיפוש ══\n`;
-                    details += `תיק: ${fullCaseRef}\n`;
+                    details += `תיק: ${displayRef}\n`;
+                    if (!resolvedCaseType) details += `סוג הליך: [חסר: סוג הליך]\n`;
+                    details += `⚠️ מספר התיק חייב להישאר ${caseNum} בדיוק. אסור להחליף למספר תיק אחר.\n`;
+
                     if (hasValidParties) {
                       details += `צדדים: **${parsed.party1}** נ' **${parsed.party2}**\n`;
                     } else if (partyMismatch) {
@@ -2020,7 +2060,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
               }
             } else {
               console.error("Perplexity search failed:", perplexityResp.status);
-              caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו נתונים מאומתים עבור ${caseNumberMatch[0]}.\nחובה להשתמש ב-[חסר:...] עבור כל שדה שאינו ידוע.\n══`;
+              caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו נתונים מאומתים עבור ${fullCaseRef}.\nחובה להשתמש ב-[חסר:...] עבור כל שדה שאינו ידוע.\n══`;
             }
 
           // ── Branch B: Search by party names (multi-result) ──
