@@ -2002,8 +2002,22 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   const dataIsUsable = parsed.found && (hasValidParties || partyMismatch) && (hasValidDate || hasValidPublication);
                   
                   if (dataIsUsable) {
+                    // For a bare docket (no prefix in the user's input) the case-type
+                    // comes from the search — but the DOCKET NUMBER always stays the
+                    // one the user asked for.
+                    const resolvedCaseType = caseType
+                      || (typeof parsed.caseType === "string" && CASE_TYPE_PREFIX_RE.test(parsed.caseType.trim())
+                        ? parsed.caseType.trim()
+                        : "");
+                    const displayRef = `${resolvedCaseType} ${caseNum}`.trim();
+                    if (!caseType) {
+                      console.log(`[case-law] bare_docket_case_type_resolved=${resolvedCaseType || 'none'} for ${caseNum}`);
+                    }
                     let details = `\n\n══ נתוני פסק דין שנמצאו בחיפוש ══\n`;
-                    details += `תיק: ${fullCaseRef}\n`;
+                    details += `תיק: ${displayRef}\n`;
+                    if (!resolvedCaseType) details += `סוג הליך: [חסר: סוג הליך]\n`;
+                    details += `⚠️ מספר התיק חייב להישאר ${caseNum} בדיוק. אסור להחליף למספר תיק אחר.\n`;
+
                     if (hasValidParties) {
                       details += `צדדים: **${parsed.party1}** נ' **${parsed.party2}**\n`;
                     } else if (partyMismatch) {
