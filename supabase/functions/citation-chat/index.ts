@@ -2082,7 +2082,29 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   // First-pass `date`/`year` is often the volume's print year or fabricated.
                   await reconcilePublishedDate(PERPLEXITY_API_KEY, caseType, caseNum, parsed);
 
-
+                  // ── Anchored-result date fallback ──
+                  // Trusted search results carry their own `date` for the judgment
+                  // page (e.g. the court PDF for בג"ץ 5555/18 reports 2021-07-08).
+                  // When the model's date was dropped as unverified, use that
+                  // instead of leaving the field empty — an empty date is what
+                  // tempts the drafting model to invent a year.
+                  const hasDateNow = typeof parsed.date === "string" && parsed.date.trim() !== "";
+                  if (!hasDateNow && docketAnchor && anchoredResultsOuter.length > 0) {
+                    for (const r of anchoredResultsOuter) {
+                      const raw = typeof r.date === "string" ? r.date.trim() : "";
+                      const m = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                      if (!m) continue;
+                      if (typeof r.url !== "string" || !isTrustedHost(r.url, TRUSTED_LEGAL)) continue;
+                      const y = parseInt(m[1], 10);
+                      const filed = docketFilingYear(docketAnchor.year);
+                      // A judgment cannot predate its own docket.
+                      if (filed !== null && (y < filed || y > filed + 25)) continue;
+                      parsed.date = `${parseInt(m[3], 10)}.${parseInt(m[2], 10)}.${m[1]}`;
+                      parsed.year = m[1];
+                      console.log(`[case-law] anchored_date_fallback=${parsed.date} from ${r.url}`);
+                      break;
+                    }
+                  }
 
                   // Normalize databaseName from Perplexity citation URLs (lite.takdin → תקדין,
                   // supremedecisions.court.gov.il → אר״ש, etc). Overrides free-form strings.
@@ -2090,6 +2112,8 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     const normalized = normalizeDatabaseName(pData.citations, parsed.databaseName);
                     if (normalized) parsed.databaseName = normalized;
                   }
+
+
 
                   // Validate data quality: reject bogus results with empty/placeholder fields
                   const hasValidDate = parsed.date && !/^0+\.0+\.0+$/.test(parsed.date) && parsed.date.trim() !== "";
