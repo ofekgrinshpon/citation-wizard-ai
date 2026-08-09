@@ -1619,8 +1619,29 @@ serve(async (req) => {
     // ── Check if this is a disambiguation selection (skip Perplexity) ──
     const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(userInput);
 
+    // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern
+    const cleanedForParty = userInput
+      .replace(/\[סיווג אוטומטי:.*?\]\n?/, "")
+      .replace(/\[בחירת תוצאה\]\s*/, "")
+      .replace(/\n?══[\s\S]*?══+\s*/g, "")
+      .trim();
+
     const caseNumberMatch = userInput.match(CASE_DOCKET_RE);
-    const isCaseLaw = Boolean((classMatch && /פסיקה/.test(classMatch[1])) || caseNumberMatch);
+    // Bare docket fallback: users routinely paste "5555/18 חסון נ' כנסת ישראל"
+    // without the בג"ץ prefix. Without this the input degraded to a party-name
+    // search, which could return a DIFFERENT case between the same parties and
+    // silently substitute its docket.
+    const bareDocket = caseNumberMatch ? null : findBareDocket(cleanedForParty);
+    if (bareDocket) {
+      console.log(`[case-law] bare_docket_detected=${bareDocket.docket} (no case-type prefix in input)`);
+    }
+    const docketQuery: { caseType: string; caseNum: string } | null = caseNumberMatch
+      ? { caseType: caseNumberMatch[1], caseNum: caseNumberMatch[2] }
+      : bareDocket
+        ? { caseType: "", caseNum: bareDocket.docket }
+        : null;
+
+    const isCaseLaw = Boolean((classMatch && /פסיקה/.test(classMatch[1])) || docketQuery);
 
     // Extract embedded data blob (carried over from a prior party-search disambiguation list)
     let selectionDataBlob: Record<string, unknown> | null = null;
@@ -1636,17 +1657,14 @@ serve(async (req) => {
       }
     }
 
-    // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern
-    const cleanedForParty = userInput
-      .replace(/\[סיווג אוטומטי:.*?\]\n?/, "")
-      .replace(/\[בחירת תוצאה\]\s*/, "")
-      .replace(/\n?══[\s\S]*?══+\s*/g, "")
-      .trim();
     // Accepts: "X נגד Y", "X נ' Y", "X נ״ Y", and bare "X נ Y".
     // Length guard: each side must contain ≥2 Hebrew letters to avoid
     // a stray middle-word `נ` triggering false positives.
     const PARTY_RE = /([\u0590-\u05FF][\u0590-\u05FF\s'"״׳]*[\u0590-\u05FF])\s+(?:נגד|נ['׳״"\u2018\u2019\u05F3]?)\s+([\u0590-\u05FF][\u0590-\u05FF\s'"״׳]*[\u0590-\u05FF])/;
-    const partyMatch = !caseNumberMatch ? cleanedForParty.match(PARTY_RE) : null;
+    // Never let the party-name branch run when the user supplied a docket
+    // (prefixed OR bare) — it is the path that can override the docket.
+    const partyMatch = !docketQuery ? cleanedForParty.match(PARTY_RE) : null;
+
 
     // If we have a data blob from prior party-search, use it directly — no Perplexity re-search
     if (isDisambiguationSelection && isCaseLaw && selectionDataBlob) {
