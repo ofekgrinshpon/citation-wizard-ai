@@ -246,6 +246,62 @@ const PADI_VOLUME_YEAR_RANGES: Record<string, [number, number]> = {
   "סה": [2011, 2013],
 };
 
+// Last פ"ד volume we know of; anything filed well after this window was never
+// printed in פ"ד at all (the series effectively wound down in the mid-2010s).
+const PADI_LAST_KNOWN_YEAR = 2013;
+
+/** "18" → 2018, "93" → 1993, "2018" → 2018. Returns null when unparsable. */
+function docketFilingYear(docketYear: string | undefined | null): number | null {
+  if (!docketYear) return null;
+  const raw = String(docketYear).trim();
+  if (/^\d{4}$/.test(raw)) return parseInt(raw, 10);
+  if (!/^\d{2}$/.test(raw)) return null;
+  const n = parseInt(raw, 10);
+  return n < 70 ? 2000 + n : 1900 + n;
+}
+
+/**
+ * A פ"ד volume is impossible for a docket filed after the volume's window.
+ * Volume נד covers 1999–2001, so a .../18 docket can never appear there —
+ * this is the check that catches a fabricated publication even when the
+ * (also fabricated) decision year happens to match the volume.
+ *
+ * Returns a reason string when the publication must be dropped, else null.
+ */
+function padiVolumeDocketConflict(
+  volume: string,
+  docketYear: string | undefined | null,
+): string | null {
+  const vol = (volume || "").trim();
+  if (!vol) return null;
+  const filed = docketFilingYear(docketYear);
+  if (filed === null) return null;
+  const range = PADI_VOLUME_YEAR_RANGES[vol];
+  if (range) {
+    // +1 year of slack: a case filed in December can be decided the next year.
+    if (filed > range[1] + 1) {
+      return `volume ${vol} covers ${range[0]}-${range[1]} but docket was filed ${filed}`;
+    }
+    return null;
+  }
+  // Unknown volume: only trust it for dockets from the printed-פ"ד era.
+  if (filed > PADI_LAST_KNOWN_YEAR) {
+    return `volume ${vol} unknown and docket filed ${filed} (after פ"ד era)`;
+  }
+  return null;
+}
+
+/** Clear every publication field so the citation falls back to the database form. */
+function dropPublication(parsed: Record<string, unknown>, reason: string): void {
+  console.log(`[case-law] publication_dropped: ${reason}`);
+  parsed.isPublished = false;
+  parsed.padi_volume = "";
+  parsed.padi_part = "";
+  parsed.padi_page = "";
+}
+
+
+
 // ── Focused decision-date verification for published Supreme Court cases ──
 // Perplexity's first-pass `date`/`year` for פ"ד citations is often the
 // volume's print year (or fabricated). This re-asks specifically for the
