@@ -1,0 +1,60 @@
+[
+  {
+    "id": "S1",
+    "branch": "insufficient_sources_limitation",
+    "drafted": true,
+    "is_stub": false,
+    "used_sources_count": 0,
+    "footnotes_count": 0,
+    "read_in_full": [],
+    "reference_only": []
+  },
+  {
+    "id": "S2",
+    "branch": null,
+    "drafted": true,
+    "is_stub": false,
+    "used_sources_count": 4,
+    "footnotes_count": 2,
+    "read_in_full": [
+      "s1 — ",
+      "s3 — "
+    ],
+    "reference_only": []
+  },
+  {
+    "id": "S3",
+    "branch": "statute_section_limitation",
+    "drafted": true,
+    "is_stub": false,
+    "used_sources_count": 1,
+    "footnotes_count": 1,
+    "read_in_full": [],
+    "reference_only": []
+  },
+  {
+    "id": "S4",
+    "branch": null,
+    "drafted": true,
+    "is_stub": false,
+    "used_sources_count": 3,
+    "footnotes_count": 4,
+    "read_in_full": [
+      "s2 — "
+    ],
+    "reference_only": []
+  },
+  {
+    "id": "S5",
+    "branch": null,
+    "drafted": true,
+    "is_stub": false,
+    "used_sources_count": 5,
+    "footnotes_count": 4,
+    "read_in_full": [
+      "s1 — ",
+      "s2 — "
+    ],
+    "reference_only": []
+  }
+]

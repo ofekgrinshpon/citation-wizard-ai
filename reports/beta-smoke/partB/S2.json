@@ -1,0 +1,226 @@
+{
+  "id": "S2",
+  "query": "מה נקבע בבג\"ץ חסון לגבי חוק יסוד: ישראל — מדינת הלאום?",
+  "run_id": "b823c9b7-ee17-46ed-a311-b1edc28a34be",
+  "branch": null,
+  "drafted": true,
+  "is_stub": false,
+  "used_sources": [
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+      "number": 1,
+      "origin": "local_db",
+      "citable_as": "judgment",
+      "source_type": "caselaw",
+      "candidate_id": "1c0441d6-9e6a-4e0a-a878-61d0ca9b9b55",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "leading_candidate",
+      "text_usability": "full_text",
+      "integrity_flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
+      ],
+      "has_holding_text": false,
+      "is_judgment_document": true,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/2&fileName=SH2_1_466-07.pdf&type=2",
+      "title": "בג\"ץ 466-07 - ח\"כ זהבה גלאון-יו\"ר סיעת מר\"צ-יחד נ. היועץ המשפטי לממשלה",
+      "number": 1,
+      "origin": "local_db",
+      "citable_as": "judgment",
+      "source_type": "supreme_court_il",
+      "candidate_id": "fd85edd7-b284-4f5d-b5c1-d7fd682fba60",
+      "authority_tier": "official_primary",
+      "synthesis_role": "leading_candidate",
+      "text_usability": "full_text",
+      "integrity_flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
+      ],
+      "has_holding_text": false,
+      "is_judgment_document": true,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2905-20-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 2905/20 התנועה למען איכות השלטון בישראל נ׳ כנסת ישראל פסק דין",
+      "number": 2,
+      "origin": "local_db",
+      "citable_as": "commentary",
+      "source_type": "caselaw",
+      "candidate_id": "279acc19-3427-4253-b3f6-e6cee125be84",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2412-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 2412/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת פסק דין",
+      "number": 2,
+      "origin": "local_db",
+      "citable_as": "commentary",
+      "source_type": "caselaw",
+      "candidate_id": "98a21a27-6c00-410f-af7f-15b6f2ca1d15",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": true,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    }
+  ],
+  "used_sources_count": 4,
+  "footnotes": [
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021); בג\"ץ 466-07 - ח\"כ זהבה גלאון-יו\"ר סיעת מר\"צ-יחד נ. היועץ המשפטי לממשלה",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/2&fileName=SH2_1_466-07.pdf&type=2",
+          "title": "בג\"ץ 466-07 - ח\"כ זהבה גלאון-יו\"ר סיעת מר\"צ-יחד נ. היועץ המשפטי לממשלה",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2905-20-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 2905/20 התנועה למען איכות השלטון בישראל נ׳ כנסת ישראל פסק דין; בג\"ץ 2412/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת פסק דין",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2905-20-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 2905/20 התנועה למען איכות השלטון בישראל נ׳ כנסת ישראל פסק דין",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2412-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 2412/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "footnotes_count": 2,
+  "sufficiency": {
+    "shape": "case_holding",
+    "reason": "shape_not_gated",
+    "applied": false,
+    "category": "not_applicable",
+    "sufficient": true,
+    "thin_source": false,
+    "found_titles": [
+      "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+      "תקציב המדינה ועקרונות המיסוי: השפעות אִגְבּוּר וביקורת שיפוטית | יוסף אדרעי (כרך י\"ח)",
+      "בג\"ץ 466-07 - ח\"כ זהבה גלאון-יו\"ר סיעת מר\"צ-יחד נ. היועץ המשפטי לממשלה",
+      "הערות על זכויות קבוצתיות בישראל על רקע ספרו של נתן לרנר על זכויות קבוצתיות והפליה במשפט הבין-לאומי | הילי מודריק-אבן חן (כרך כה)",
+      "בג\"ץ 2905/20 התנועה למען איכות השלטון בישראל נ׳ כנסת ישראל פסק דין"
+    ],
+    "topical_refs": [
+      "s1",
+      "s3",
+      "s4",
+      "s5",
+      "s6"
+    ],
+    "topic_phrases": [
+      "יסוד ישראל מדינת הלאום",
+      "חוק יסוד ישראל מדינת",
+      "ישראל מדינת הלאום",
+      "יסוד ישראל מדינת",
+      "חוק יסוד ישראל",
+      "ישראל מדינת",
+      "מדינת הלאום",
+      "יסוד ישראל",
+      "נקבע בבג",
+      "חוק יסוד"
+    ],
+    "body_topical_refs": [
+      "s1"
+    ],
+    "case_law_required": false,
+    "statute_only_answer": false,
+    "sufficiency_profile": "not_applicable",
+    "usable_judgment_refs": [
+      "s1",
+      "s3",
+      "s5",
+      "s6"
+    ],
+    "exact_amounts_allowed": true,
+    "governing_statute_refs": [],
+    "topical_authority_refs": [
+      "s1",
+      "s3",
+      "s4",
+      "s5",
+      "s6"
+    ],
+    "body_text_topical_match": true,
+    "morphology_domain_match": false,
+    "normalized_source_tokens": [],
+    "governing_regulation_refs": [],
+    "statute_section_requested": false,
+    "normalized_question_tokens": [
+      "נקבע",
+      "בבג",
+      "חסון",
+      "חוק",
+      "יסוד",
+      "ישראל",
+      "מדינת",
+      "דינת",
+      "מדינ",
+      "הלאום",
+      "לאום"
+    ],
+    "sufficiency_authority_basis": "usable_judgment",
+    "thin_governing_statute_refs": [],
+    "thin_governing_regulation_refs": [],
+    "authority_type_sufficiency_passed": true,
+    "case_law_missing_but_not_required": false,
+    "practical_steps_thin_authority_passed": false
+  },
+  "gate_report": {
+    "applied": true,
+    "source_split": {
+      "read_in_full": [
+        "s1",
+        "s3"
+      ],
+      "reference_only": []
+    },
+    "blocks_stripped": 0,
+    "source_split_counts": {
+      "read_in_full": 2,
+      "reference_only": 0
+    },
+    "reference_only_sources": [],
+    "blocks_left_unsupported": 0,
+    "stripped_ref_occurrences": 0,
+    "unsupported_block_samples": [],
+    "metadata_only_judgment_refs": [],
+    "metadata_only_holdings_remaining": 0
+  },
+  "read_in_full": [
+    "s1 — ",
+    "s3 — "
+  ],
+  "reference_only": [],
+  "answer": "**מסקנות מרכזיות מפסק‑דין בג\"ץ חסון**\n\nהתשובה התמציתית: בבג\"ץ חסון נדחו העתירות נגד חוק יסוד: ישראל — מדינת הלאום של העם היהודי, ובית המשפט לא פסל את החוק.¹\n\nבית המשפט הציג באופן עקרוני אפשרות מצומצמת לביקורת שיפוטית על חקיקת יסוד בטענת 'שימוש לרעה בסמכות המכוננת', אך הדגיש כי הכרה כזו תיתכן רק בנסיבות קיצוניות מאוד והסף להכרה גבוה; במקרה הנדון לא נמצאו אותן נסיבות שימשו בסיס לפסילה.²\n\nהחלטת בית המשפט הדגישה כי פרשנות חוק היסוד צריכה להיעשות בהרמוניה עם עקרונות יסוד אחרים, ובפרט עם עקרון השוויון שמגולם בחוק יסוד: כבוד האדם וחירותו; בהתאם לכך פסק הדין קובע באופן מעשי כי החוק כשלעצמו אינו מהווה גזר דין נגד זכויות הפרט ולא צריך להיתפס כגורע זכויות ללא בדיקה פרשנית.¹\n\nלגבי הוראות ספציפיות כגון מעמד השפה הערבית וסעיף המתיר קידום התיישבות, פסק הדין נקט פרשנות מצמצמת: הוראות אלה לא ניתנות לפרשנות כמעניקות סמכות להפלייה או להדרה, לערבית נשמר מעמד מיוחד וקידום התיישבות ייבחן ויושם תוך כיבוד עקרון השוויון ואיסור אפליה.¹\n\nהערה על טיב המקורות: ברשימת המסמכים שסופקו יש פסק‑דין ישיר של בג\"ץ חסון וכן פסקי דין ומאמרים שנותנים הקשר דוקטרינלי; לנקודות שעוררות דוקטרינות תיאורטיות (למשל היקף 'שימוש לרעה בסמכות המכוננת') נעשה שימוש במקורות שתמיכתם מוגדרת כתמיכה חלקית, ועל כן ניסוח הנקודות הללו מנוסח בזהירות.¹"
+}

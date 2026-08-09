@@ -1,0 +1,275 @@
+{
+  "id": "S4",
+  "query": "כתוב סקירת פסיקה קצרה על חובת תום הלב במשא ומתן לפי סעיף 12 לחוק החוזים",
+  "run_id": "c4f02453-127e-40ce-8824-28aa7b25bcce",
+  "branch": null,
+  "drafted": true,
+  "is_stub": false,
+  "used_sources": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/1&fileName=SG1_10_1445-04.pdf&type=2",
+      "title": "ע\"א 1445-04 - בייזמן השקעות בעמ נ. משה חליוה (חליבה)",
+      "number": 1,
+      "origin": "local_db",
+      "citable_as": "judgment",
+      "source_type": "supreme_court_il",
+      "candidate_id": "08507ff3-be13-487d-9225-45a8ef2405f5",
+      "authority_tier": "official_primary",
+      "synthesis_role": "applying_candidate",
+      "text_usability": "full_text",
+      "integrity_flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "has_holding_text": true,
+      "is_judgment_document": true,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+      "title": "חוק החוזים (חלק כללי)",
+      "number": 1,
+      "origin": "local_db",
+      "citable_as": "statute",
+      "source_type": "israeli_law",
+      "candidate_id": "448eb51f-ed30-4d72-afd7-28f32d11d035",
+      "authority_tier": "statute_mirror",
+      "synthesis_role": "statutory_background",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [
+        "consolidated_statute_mirror"
+      ],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%aa%d7%9e%d7%a9-15-04-15594-%d7%90-%d7%a0-%d7%90-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%91%d7%a2%d7%a0%d7%99%d7%99%d7%9f-%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%a4%d7%a0%d7%a1%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "תמ\"ש 15- 04 – 15594 א' נ׳ א' פסק דין",
+      "number": 2,
+      "origin": "local_db",
+      "citable_as": "commentary",
+      "source_type": "caselaw",
+      "candidate_id": "2125d1be-2e87-4c53-a37e-671cde7b51ef",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    }
+  ],
+  "used_sources_count": 3,
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/1&fileName=SG1_10_1445-04.pdf&type=2",
+      "title": "ע\"א 1445-04 - בייזמן השקעות בעמ נ. משה חליוה (חליבה); חוק החוזים (חלק כללי)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/1&fileName=SG1_10_1445-04.pdf&type=2",
+          "title": "ע\"א 1445-04 - בייזמן השקעות בעמ נ. משה חליוה (חליבה)",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+          "title": "חוק החוזים (חלק כללי)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/1&fileName=SG1_10_1445-04.pdf&type=2",
+      "title": "ע\"א 1445-04 - בייזמן השקעות בעמ נ. משה חליוה (חליבה); חוק החוזים (חלק כללי); תמ\"ש 15- 04 – 15594 א' נ׳ א' פסק דין",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/1&fileName=SG1_10_1445-04.pdf&type=2",
+          "title": "ע\"א 1445-04 - בייזמן השקעות בעמ נ. משה חליוה (חליבה)",
+          "source_type": "supreme_court_il"
+        },
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+          "title": "חוק החוזים (חלק כללי)",
+          "source_type": "israeli_law"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%aa%d7%9e%d7%a9-15-04-15594-%d7%90-%d7%a0-%d7%90-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%91%d7%a2%d7%a0%d7%99%d7%99%d7%9f-%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%a4%d7%a0%d7%a1%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "תמ\"ש 15- 04 – 15594 א' נ׳ א' פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+      "title": "חוק החוזים (חלק כללי)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+          "title": "חוק החוזים (חלק כללי)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "israeli_law"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%aa%d7%9e%d7%a9-15-04-15594-%d7%90-%d7%a0-%d7%90-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%91%d7%a2%d7%a0%d7%99%d7%99%d7%9f-%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%a4%d7%a0%d7%a1%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "תמ\"ש 15- 04 – 15594 א' נ׳ א' פסק דין",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%aa%d7%9e%d7%a9-15-04-15594-%d7%90-%d7%a0-%d7%90-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%91%d7%a2%d7%a0%d7%99%d7%99%d7%9f-%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%a4%d7%a0%d7%a1%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "תמ\"ש 15- 04 – 15594 א' נ׳ א' פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    }
+  ],
+  "footnotes_count": 4,
+  "sufficiency": {
+    "shape": "analysis",
+    "reason": "required_anchor_satisfied",
+    "applied": true,
+    "category": "case_law_synthesis",
+    "sufficient": true,
+    "thin_source": false,
+    "found_titles": [
+      "חוק החוזים (חלק כללי)",
+      "ע\"א 1445-04 - בייזמן השקעות בעמ נ. משה חליוה (חליבה)",
+      "אריאל בן-נון: חוק החוזים האחידים, התשמ״ג-1982 (פירוש לחוקי החוזים בעריכת ג' טדסקי)",
+      "תמ\"ש 15- 04 – 15594 א' נ׳ א' פסק דין"
+    ],
+    "topical_refs": [
+      "s1",
+      "s3"
+    ],
+    "topic_phrases": [
+      "חובת תום הלב במשא",
+      "תום הלב במשא ומתן",
+      "הלב במשא ומתן",
+      "חובת תום הלב",
+      "תום הלב במשא",
+      "לחוק החוזים",
+      "כתוב סקירת",
+      "במשא ומתן",
+      "חובת תום",
+      "הלב במשא",
+      "תום הלב"
+    ],
+    "body_topical_refs": [],
+    "case_law_required": true,
+    "statute_only_answer": false,
+    "sufficiency_profile": "case_law_synthesis",
+    "usable_judgment_refs": [
+      "s2",
+      "s4"
+    ],
+    "exact_amounts_allowed": true,
+    "governing_statute_refs": [
+      "s1"
+    ],
+    "topical_authority_refs": [
+      "s1",
+      "s3"
+    ],
+    "body_text_topical_match": false,
+    "morphology_domain_match": true,
+    "normalized_source_tokens": [
+      "פסק",
+      "דין",
+      "תום",
+      "ושינה",
+      "שינה",
+      "ושינ",
+      "מצבו",
+      "לרעה",
+      "וכך",
+      "נמנע",
+      "תובע",
+      "לתבוע",
+      "תבוע",
+      "זכויותיו",
+      "במשך",
+      "זמן",
+      "ניכר",
+      "בנסיבות",
+      "נסיבות",
+      "בנסיב",
+      "שניתן",
+      "ניתן",
+      "להבין",
+      "הבין",
+      "בהן",
+      "מכך",
+      "שוב",
+      "יעמוד",
+      "והנתבע",
+      "הנתבע",
+      "הסתמך",
+      "סתמך",
+      "עשויה",
+      "עשוי",
+      "לעמוד",
+      "עמוד",
+      "לנתבע",
+      "נתבע",
+      "טענת",
+      "שיהוי"
+    ],
+    "governing_regulation_refs": [],
+    "statute_section_requested": true,
+    "normalized_question_tokens": [
+      "כתוב",
+      "סקירת",
+      "סקיר",
+      "קצרה",
+      "חובת",
+      "תום",
+      "הלב",
+      "במשא",
+      "ומתן",
+      "סעיף",
+      "לחוק",
+      "החוזים",
+      "חוזים",
+      "החוז"
+    ],
+    "sufficiency_authority_basis": "usable_judgment",
+    "thin_governing_statute_refs": [],
+    "thin_governing_regulation_refs": [],
+    "authority_type_sufficiency_passed": true,
+    "case_law_missing_but_not_required": false,
+    "practical_steps_thin_authority_passed": false
+  },
+  "gate_report": {
+    "applied": true,
+    "source_split": {
+      "read_in_full": [
+        "s2"
+      ],
+      "reference_only": []
+    },
+    "blocks_stripped": 0,
+    "source_split_counts": {
+      "read_in_full": 1,
+      "reference_only": 0
+    },
+    "reference_only_sources": [],
+    "blocks_left_unsupported": 0,
+    "stripped_ref_occurrences": 0,
+    "unsupported_block_samples": [],
+    "metadata_only_judgment_refs": [],
+    "metadata_only_holdings_remaining": 0
+  },
+  "read_in_full": [
+    "s2 — "
+  ],
+  "reference_only": [],
+  "answer": "**חובת תום הלב במשא ומתן — סקירת פסיקה קצרה**\n\nשורה תחתונה: סעיף 12 לחוק החוזים קובע במפורש כי במשא־ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך מקובלת ובתום לב, וסעיף 12(ב) מטיל חבות לפיצוי על מי שלא נהג כך ומפנה להוראות סעיפים 10, 13 ו־14 בנוגע לסעדים.³\n\nתכולת החובה: הסעיף נוסח באופן כללי — \"דרך מקובלת ובתום לב\" — ומכאן שהדין מזהה מרכיבים מעשיים כגון הימנעות מהטעיה או ממעשים שיוצרים ציפיות בלתי־מבוססות של הצד שכנגד; הדיון הדוקטרינרי מייחס גם תפקיד לכלי כמו השתק ושיהוי בהערכת הליך המשא־ומתן.³\n\nמבחנים שהמשפט משתמש בהם בעת בחינת הפרה: בתי המשפט בוחנים את טיב המידע שנמסר או הושמט, האם הייתה הסתמכות סבירה של הצד הנפגע, יחס הכוחות והנסיבות הפרטניות של המשא־ומתן, וכן האם התנהגות הצד חרגה מ'הדרך המקובלת' בתעשייה או בהקשר הספציפי.⁴\n\nסעדים ותוצאות משפטיות: סעיף 12(ב) קובע זכות לפיצוי בעד הנזק שנגרם עקב המשא־ומתן או עקב כריתת החוזה, והסעיף מפנה ליישום הוראות סעיפים 10, 13 ו־14 (הנוגעות לסעדי הפרת חוזה, בין השאר פיצוי והשבה). בפסיקה נרמזו יישומים של סעדי השבה והערכת נזק על‑פי עקרונות הסתמכות, אם כי מקורות פסיקתיים שתומכים בפרטים עלולים להיות חלקיים ומחייבים זהירות בפרשנות.¹\n\nגבולות וחריגים: מהפסיקה והדוקטרינה עולה בזהירות כי לא כל משא־ומתן מחייב גילוי מלא; יש הבדלה בין מקרה של הטעיה פעילה או מעילה לבין משא־ומתן תחרותי שבו אין חובה פלילית או חוזית לחשוף כל פרט. בתי המשפט שוקלים גם את מידת ההסתמכות, היעדר סיכון סביר לשלם והיחס בין הצדדים בבואם להחליט אם לייחס חובת גילוי או לפסוק פיצוי.⁴\n\nהערה מתודולוגית ומגבלות הסקירה: הסקירה נשענת בראש ובראשונה על נוסח סעיף 12 וחומר דוקטרינרי ופסקי דין חלקיים שניתנו להסתמך; במקורות שאותרו לא תמיד נמצא עיגון פסיקתי נרחב שמפרט מבחנים אחידים ליישום הסעיף, ולכן יש להיזהר בהכללות וייתכן שקיימת פסיקה נוספת שלא אותרה כאן.²"
+}
