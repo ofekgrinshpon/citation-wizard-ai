@@ -246,6 +246,62 @@ const PADI_VOLUME_YEAR_RANGES: Record<string, [number, number]> = {
   "סה": [2011, 2013],
 };
 
+// Last פ"ד volume we know of; anything filed well after this window was never
+// printed in פ"ד at all (the series effectively wound down in the mid-2010s).
+const PADI_LAST_KNOWN_YEAR = 2013;
+
+/** "18" → 2018, "93" → 1993, "2018" → 2018. Returns null when unparsable. */
+function docketFilingYear(docketYear: string | undefined | null): number | null {
+  if (!docketYear) return null;
+  const raw = String(docketYear).trim();
+  if (/^\d{4}$/.test(raw)) return parseInt(raw, 10);
+  if (!/^\d{2}$/.test(raw)) return null;
+  const n = parseInt(raw, 10);
+  return n < 70 ? 2000 + n : 1900 + n;
+}
+
+/**
+ * A פ"ד volume is impossible for a docket filed after the volume's window.
+ * Volume נד covers 1999–2001, so a .../18 docket can never appear there —
+ * this is the check that catches a fabricated publication even when the
+ * (also fabricated) decision year happens to match the volume.
+ *
+ * Returns a reason string when the publication must be dropped, else null.
+ */
+function padiVolumeDocketConflict(
+  volume: string,
+  docketYear: string | undefined | null,
+): string | null {
+  const vol = (volume || "").trim();
+  if (!vol) return null;
+  const filed = docketFilingYear(docketYear);
+  if (filed === null) return null;
+  const range = PADI_VOLUME_YEAR_RANGES[vol];
+  if (range) {
+    // +1 year of slack: a case filed in December can be decided the next year.
+    if (filed > range[1] + 1) {
+      return `volume ${vol} covers ${range[0]}-${range[1]} but docket was filed ${filed}`;
+    }
+    return null;
+  }
+  // Unknown volume: only trust it for dockets from the printed-פ"ד era.
+  if (filed > PADI_LAST_KNOWN_YEAR) {
+    return `volume ${vol} unknown and docket filed ${filed} (after פ"ד era)`;
+  }
+  return null;
+}
+
+/** Clear every publication field so the citation falls back to the database form. */
+function dropPublication(parsed: Record<string, unknown>, reason: string): void {
+  console.log(`[case-law] publication_dropped: ${reason}`);
+  parsed.isPublished = false;
+  parsed.padi_volume = "";
+  parsed.padi_part = "";
+  parsed.padi_page = "";
+}
+
+
+
 // ── Focused decision-date verification for published Supreme Court cases ──
 // Perplexity's first-pass `date`/`year` for פ"ד citations is often the
 // volume's print year (or fabricated). This re-asks specifically for the
@@ -330,16 +386,22 @@ async function reconcilePublishedDate(
     parsed.year = v.year || "";
     action = "override";
   } else if (v) {
-    // Verification returned an empty result → clear hallucinated values
+    // Verification returned an empty result → clear hallucinated values.
+    // The פ"ד reference itself came from the same unverified payload, so it
+    // must go too: leaving the volume behind lets the drafting model
+    // back-fill a year that merely "fits" the volume.
     parsed.date = "";
     parsed.year = "";
     parsed.confidence = "low";
+    dropPublication(parsed, `decision date for ${caseType} ${caseNumber} could not be verified (vol ${vol})`);
     action = "clear";
   }
   console.log(
     `[case-law] date verification: original={date:${origDate},year:${origYear}} ` +
     `verified=${JSON.stringify(v)} action=${action}`,
   );
+
+  if (!parsed.isPublished) return;
 
   // Volume plausibility guard
   const range = PADI_VOLUME_YEAR_RANGES[vol];
@@ -352,8 +414,10 @@ async function reconcilePublishedDate(
     parsed.year = "";
     parsed.date = "";
     parsed.confidence = "low";
+    dropPublication(parsed, `volume ${vol} inconsistent with decision year ${yNum}`);
   }
 }
+
 
 // ── Old-docket retry (pre-electronic era, year < 1995) ──
 // Triggered only when the standard Tier-1/Tier-2 case-number search returns
@@ -1790,6 +1854,10 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   let partyMismatch = false;
                   let partyVerification: "both" | "caption_marker" | "insufficient_snippet" | "no_anchor" | "n/a" = "n/a";
                   let docketAnchored = false;
+                  // Hoisted so the publication gate and the anchored-date
+                  // fallback below can reuse the same anchored source set.
+                  let anchoredResultsOuter: Array<Record<string, unknown>> = [];
+                  let citationUrlsOuter: string[] = [];
                   if (docketAnchor) {
                     // Anchor against BOTH structured search_results AND raw citation URLs.
                     // Some sonar-pro responses populate only `citations` (no
@@ -1821,6 +1889,9 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                       urlContainsDocket(u, docketAnchor),
                     );
                     docketAnchored = anchoredResults.length > 0 || anchoredCitationUrls.length > 0;
+                    anchoredResultsOuter = anchoredResults;
+                    citationUrlsOuter = citationUrls;
+
 
                     if (parsed.found && parsed.party1 && parsed.party2) {
                       if (anchoredResults.length === 0) {
@@ -1885,6 +1956,35 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   }
                   console.log(`[case-law] party_verification=${partyVerification} party_mismatch=${partyMismatch} docket_anchored=${docketAnchored} for ${fullCaseRef}`);
 
+                  // ── Caption recovery from a docket-adjacent citation ──
+                  // Other judgments citing this case spell its caption out in
+                  // full ("בג\"ץ 5555/18 חסון נ' כנסת ישראל"), which is more
+                  // reliable than the model's paraphrase ("הכנסת"). Only used
+                  // when the caption sits immediately after our exact docket.
+                  if (docketAnchor && anchoredResultsOuter.length > 0) {
+                    const HEB = "\u0590-\u05FF";
+                    const capRe = new RegExp(
+                      `${docketAnchor.num}\\s*/\\s*${docketAnchor.year}\\s+([${HEB}][${HEB}"'\u05F3\u05F4\\s]{1,40}?)\\s+נ['\u05F3\u05F4]?\\s+([${HEB}][${HEB}"'\u05F3\u05F4\\s]{1,50}?)\\s*(?=[,.()]|פסק|פס['\u05F3]|$)`,
+                    );
+                    for (const r of anchoredResultsOuter) {
+                      const txt = `${typeof r.title === "string" ? r.title : ""} ${typeof r.snippet === "string" ? r.snippet : ""}`;
+                      const cm = txt.match(capRe);
+                      if (!cm) continue;
+                      const cap1 = cm[1].trim();
+                      const cap2 = cm[2].trim();
+                      if (cap1.length < 2 || cap2.length < 2) continue;
+                      if (cap1 !== parsed.party1 || cap2 !== parsed.party2) {
+                        console.log(`[case-law] caption_recovered from source: "${cap1}" נ' "${cap2}" (model had "${parsed.party1 ?? ""}" נ' "${parsed.party2 ?? ""}")`);
+                      }
+                      parsed.party1 = cap1;
+                      parsed.party2 = cap2;
+                      partyMismatch = false;
+                      partyVerification = "both";
+                      break;
+                    }
+                  }
+
+
                   // ── Old-docket retry for pre-electronic-era Supreme Court cases ──
                   // When the standard search couldn't anchor the docket (parties were
                   // dropped), try once more with a stronger query and broader trusted
@@ -1911,8 +2011,33 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     }
                   }
 
+                  // ── First-pass publication gate ──
+                  // The SECOND-pass path below already validates an פ"ד override
+                  // (known volume + year fit + docket in a citation URL), but a
+                  // first-pass `isPublished:true` used to bypass all of it — which
+                  // is how בג"ץ 5555/18 acquired a fabricated "פ"ד נד(1) 1".
+                  if (parsed.found && parsed.isPublished && parsed.padi_volume) {
+                    const vol = String(parsed.padi_volume).trim();
+                    const conflict = padiVolumeDocketConflict(vol, docketAnchor?.year);
+                    if (conflict) {
+                      dropPublication(parsed, `first_pass ${fullCaseRef}: ${conflict}`);
+                      parsed.confidence = "low";
+                    } else if (docketAnchor) {
+                      // The volume must be corroborated by a trusted source that
+                      // actually mentions this docket alongside "פ"ד".
+                      const padiCorroborated = anchoredResultsOuter.some((r) => {
+                        const txt = `${typeof r.title === "string" ? r.title : ""} ${typeof r.snippet === "string" ? r.snippet : ""}`;
+                        return /פ["״]ד|פד["״]י/.test(txt);
+                      }) || citationUrlsOuter.some((u) => /PediVerdicts/i.test(u));
+                      if (!padiCorroborated) {
+                        dropPublication(parsed, `first_pass ${fullCaseRef}: volume ${vol} not corroborated by any docket-anchored trusted source`);
+                        parsed.confidence = "low";
+                      }
+                    }
+                  }
 
                   // ── Secondary verification: if Perplexity says not published, double-check with a focused query ──
+
                   if (parsed.found && !parsed.isPublished) {
                     console.log(`[case-law] First search says unpublished for ${fullCaseRef}, running verification search...`);
                     try {
@@ -1962,7 +2087,8 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                             const docketOk = !docketAnchor
                               || anyUrlContainsDocket(vData.citations, docketAnchor);
                             const volKnown = !!range; // unknown vol → don't trust the override
-                            if (yearOk && docketOk && volKnown) {
+                            const docketConflict = padiVolumeDocketConflict(vol, docketAnchor?.year);
+                            if (yearOk && docketOk && volKnown && !docketConflict) {
                               console.log(`[case-law] Verification found פד"י publication! Overriding.`);
                               parsed.isPublished = true;
                               parsed.padi_volume = vParsed.padi_volume;
@@ -1970,8 +2096,9 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                               parsed.padi_page = vParsed.padi_page || parsed.padi_page;
                               parsed.confidence = "high";
                             } else {
-                              console.log(`[case-law] padi_override_rejected vol=${vol} year=${decisionYearStr} vol_known=${volKnown} year_ok=${yearOk} docket_ok=${docketOk}`);
+                              console.log(`[case-law] padi_override_rejected vol=${vol} year=${decisionYearStr} vol_known=${volKnown} year_ok=${yearOk} docket_ok=${docketOk} docket_conflict=${docketConflict ?? "none"}`);
                             }
+
                           }
                         }
                       }
@@ -1984,6 +2111,49 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   // First-pass `date`/`year` is often the volume's print year or fabricated.
                   await reconcilePublishedDate(PERPLEXITY_API_KEY, caseType, caseNum, parsed);
 
+                  // ── Own-case page date (authoritative) ──
+                  // A trusted result whose URL or TITLE identifies *this* docket
+                  // is the judgment's own page, and its `date` is the decision
+                  // date (the court PDF for בג"ץ 5555/18 reports 2021-07-08).
+                  // It outranks the model's date, which is routinely lifted from
+                  // a neighbouring judgment in the same result set.
+                  if (docketAnchor && anchoredResultsOuter.length > 0) {
+                    const ownCase = anchoredResultsOuter.filter((r) =>
+                      typeof r.url === "string"
+                      && isTrustedHost(r.url, TRUSTED_LEGAL)
+                      && (urlContainsDocket(r.url, docketAnchor) || textContainsDocket(r.title, docketAnchor)),
+                    );
+                    const filed = docketFilingYear(docketAnchor.year);
+                    for (const r of ownCase) {
+                      const m = (typeof r.date === "string" ? r.date.trim() : "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                      if (!m) continue;
+                      const y = parseInt(m[1], 10);
+                      // A judgment cannot predate its own docket.
+                      if (filed !== null && (y < filed || y > filed + 25)) continue;
+                      const own = `${parseInt(m[3], 10)}.${parseInt(m[2], 10)}.${m[1]}`;
+                      if (own !== parsed.date) {
+                        console.log(`[case-law] own_case_date=${own} overrides model date="${parsed.date ?? ""}" (source ${r.url})`);
+                      }
+                      parsed.date = own;
+                      parsed.year = m[1];
+                      break;
+                    }
+                  }
+
+                  // ── Role words are not party names ──
+                  // "העותרים" / "המשיבים" and friends are procedural roles the
+                  // model falls back to when it cannot read the caption; they
+                  // must render as [חסר: שמות צדדים], never as a party.
+                  const ROLE_WORDS = /^(?:ה?עותר(?:ים|ת)?|ה?משיב(?:ים|ה)?|ה?מערער(?:ים|ת)?|ה?מבקש(?:ים|ת)?|ה?נאשם|ה?נאשמים|ה?תובע(?:ים|ת)?|ה?נתבע(?:ים|ת)?|פלוני|אלמוני|צד א|צד ב)$/;
+                  const p1Role = typeof parsed.party1 === "string" && ROLE_WORDS.test(parsed.party1.trim());
+                  const p2Role = typeof parsed.party2 === "string" && ROLE_WORDS.test(parsed.party2.trim());
+                  if (p1Role || p2Role) {
+                    console.log(`[case-law] role_word_parties_dropped party1="${parsed.party1}" party2="${parsed.party2}"`);
+                    parsed.party1 = "";
+                    parsed.party2 = "";
+                    partyMismatch = true;
+                    parsed.confidence = "low";
+                  }
 
 
                   // Normalize databaseName from Perplexity citation URLs (lite.takdin → תקדין,
@@ -1992,6 +2162,8 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     const normalized = normalizeDatabaseName(pData.citations, parsed.databaseName);
                     if (normalized) parsed.databaseName = normalized;
                   }
+
+
 
                   // Validate data quality: reject bogus results with empty/placeholder fields
                   const hasValidDate = parsed.date && !/^0+\.0+\.0+$/.test(parsed.date) && parsed.date.trim() !== "";
@@ -2037,7 +2209,11 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                         details += `⚠️ הערה: לא ניתן לאמת בוודאות אם פסק הדין פורסם בפ"ד. מוצג כפסיקה ממאגר. אם ידוע לך שפורסם בפ"ד, נא לציין כרך וחלק.\n`;
                       }
                     }
-                    if (hasValidDate) details += `תאריך: ${parsed.date}\n`;
+                    if (hasValidDate) {
+                      details += `תאריך: ${parsed.date}\n`;
+                    } else {
+                      details += `תאריך: [חסר: תאריך] — לא אומת תאריך מתן פסק הדין. כתוב [חסר: תאריך] ואל תסיק שנה מכרך פ"ד או מכל מקור אחר.\n`;
+                    }
                     if (parsed.year && parsed.year.trim() !== "") details += `שנה: ${parsed.year}\n`;
                     if (caseLawOverrideLabel === "פסיקה (דפוס)") {
                       details += `══ נמצא פרסום בפ"ד, לכן חובה לעצב את האזכור כפסיקה (דפוס) לפי כלל 18. אין לציין מאגר או תאריך בסוגריים במקום פ"ד. ══`;
