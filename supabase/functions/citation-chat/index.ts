@@ -386,16 +386,22 @@ async function reconcilePublishedDate(
     parsed.year = v.year || "";
     action = "override";
   } else if (v) {
-    // Verification returned an empty result → clear hallucinated values
+    // Verification returned an empty result → clear hallucinated values.
+    // The פ"ד reference itself came from the same unverified payload, so it
+    // must go too: leaving the volume behind lets the drafting model
+    // back-fill a year that merely "fits" the volume.
     parsed.date = "";
     parsed.year = "";
     parsed.confidence = "low";
+    dropPublication(parsed, `decision date for ${caseType} ${caseNumber} could not be verified (vol ${vol})`);
     action = "clear";
   }
   console.log(
     `[case-law] date verification: original={date:${origDate},year:${origYear}} ` +
     `verified=${JSON.stringify(v)} action=${action}`,
   );
+
+  if (!parsed.isPublished) return;
 
   // Volume plausibility guard
   const range = PADI_VOLUME_YEAR_RANGES[vol];
@@ -408,8 +414,10 @@ async function reconcilePublishedDate(
     parsed.year = "";
     parsed.date = "";
     parsed.confidence = "low";
+    dropPublication(parsed, `volume ${vol} inconsistent with decision year ${yNum}`);
   }
 }
+
 
 // ── Old-docket retry (pre-electronic era, year < 1995) ──
 // Triggered only when the standard Tier-1/Tier-2 case-number search returns
