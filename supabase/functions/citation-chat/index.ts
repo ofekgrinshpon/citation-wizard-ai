@@ -1687,8 +1687,8 @@ serve(async (req) => {
       details += `══ השתמש אך ורק בנתונים שלמעלה. אם נתון חסר — סמן [חסר:...]. ══`;
       caseLawHint = details;
       console.log("[case-law] Using selection data blob — skipping Perplexity");
-    } else if (isDisambiguationSelection && isCaseLaw && caseNumberMatch) {
-      console.log(`[case-law] Disambiguation selection detected (no blob), doing focused search for ${caseNumberMatch[0]}`);
+    } else if (isDisambiguationSelection && isCaseLaw && docketQuery) {
+      console.log(`[case-law] Disambiguation selection detected (no blob), doing focused search for ${docketQuery.caseType} ${docketQuery.caseNum}`.trim());
     } else if (isDisambiguationSelection && isCaseLaw) {
       // No case number found in selection — build hint from text
       const selectionText = userInput.replace(/\[סיווג אוטומטי:.*?\]\n?/, "").replace(/\[בחירת תוצאה\]\s*/, "").trim();
