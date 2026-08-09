@@ -449,14 +449,18 @@ export function detectSourceType(text: string): SourceType {
   if (/רשם\s+הפטנטים|בקשה\s+לביטול\s+תיקון|בקשת\s+עיצוב|התנגדות\s+לרישום\s+סימן|בקשות\s+מתחרות/.test(hebrewText)) return 'government_decision';
   if (/ועדת\s+ערר\s+לתכנון/.test(hebrewText)) return 'government_decision';
 
-  // Check for legislation
-  if (/חוק[- ]יסוד/.test(hebrewText)) return 'basic_law';
-  if (/תקנות/.test(hebrewText)) return 'secondary_legislation';
+  // Check for legislation (skipped when the input is scholarship-shaped and the
+  // statute word only appears mid-title)
+  if (!literatureShape) {
+    if (/חוק[- ־]?\s?יסוד/.test(hebrewText)) return 'basic_law';
+    if (/תקנות/.test(hebrewText)) return 'secondary_legislation';
+  }
   if (/הצעת חוק/.test(hebrewText)) return 'bill';
   if (/ד["״]כ|דברי הכנסת|דברי כנסת|מועצת המדינה(?:\s+הזמנית)?/.test(hebrewText)) return 'other';
   if (/אמנה|אמנת|הסכם.+(?:ממלכ|מדינ)|כ["״]א\s+\d/.test(hebrewText)) return 'treaty';
   if (/תקנון/.test(hebrewText)) return 'regulation';
-  if (/חוק |פקודת /.test(hebrewText)) return 'primary_legislation';
+  if (!literatureShape && /חוק |פקודת /.test(hebrewText)) return 'primary_legislation';
+
   
   // Check for correspondence (Rule 32.1)
   if (/מכתב מ|דואר אלקטרוני מ|מזכר מ/.test(hebrewText)) return 'correspondence';
