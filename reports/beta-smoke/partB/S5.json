@@ -2,21 +2,325 @@
   "id": "S5",
   "query": "מה ההבדל בין בטלות יחסית לבטלות מוחלטת במשפט המינהלי?",
   "run_id": "91c2a629-fd3c-4458-822d-5a142a5d4573",
-  "total_ms": 41399,
-  "research_mode": "doctrine_explanation",
-  "shape": null,
-  "drafted": false,
-  "deterministic_branch": null,
-  "is_stub": true,
-  "sufficiency": null,
-  "gate_report": null,
-  "read_in_full": [],
+  "branch": null,
+  "drafted": true,
+  "is_stub": false,
+  "used_sources": [
+    {
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+      "number": 1,
+      "origin": "local_db",
+      "citable_as": "judgment",
+      "source_type": "caselaw",
+      "candidate_id": "54f4165a-6c74-4420-8835-d9a9cc5d475e",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "applying_candidate",
+      "text_usability": "full_text",
+      "integrity_flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "has_holding_text": true,
+      "is_judgment_document": true,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/2&fileName=SD2_10_6824-07.pdf&type=2",
+      "title": "בג\"ץ 6824-07 - ד\"ר עאדל מנאע נ. רשות המסים",
+      "number": 2,
+      "origin": "local_db",
+      "citable_as": "judgment",
+      "source_type": "supreme_court_il",
+      "candidate_id": "70af7a90-a35e-4e65-8b9b-dc1778502960",
+      "authority_tier": "official_primary",
+      "synthesis_role": "applying_candidate",
+      "text_usability": "full_text",
+      "integrity_flags": [
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body"
+      ],
+      "has_holding_text": false,
+      "is_judgment_document": true,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "number": 3,
+      "origin": "local_db",
+      "citable_as": "commentary",
+      "source_type": "caselaw",
+      "candidate_id": "e91ef7c1-433e-4d37-ad63-9c7513412104",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/923",
+      "title": "בטלות יחסית ושיקול דעת שיפוטי",
+      "number": 4,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "2bf2e597-4ae7-45d1-876e-ac64592b6e1f",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    },
+    {
+      "url": "https://runilawreview.org/2014/12/22/volume18_klement/",
+      "title": "חריגה מסמכות עניינית בהליך האזרחי | אלון קלמנט (כרך יח)",
+      "number": 4,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "ddca7cfd-d533-47b7-baf1-7ca4e3b0ade5",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "substantive_excerpt",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    }
+  ],
+  "used_sources_count": 5,
+  "footnotes": [
+    {
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/2&fileName=SD2_10_6824-07.pdf&type=2",
+      "title": "בג\"ץ 6824-07 - ד\"ר עאדל מנאע נ. רשות המסים",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/2&fileName=SD2_10_6824-07.pdf&type=2",
+          "title": "בג\"ץ 6824-07 - ד\"ר עאדל מנאע נ. רשות המסים",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "supreme_court_il"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023); בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/923",
+      "title": "בטלות יחסית ושיקול דעת שיפוטי; חריגה מסמכות עניינית בהליך האזרחי | אלון קלמנט (כרך יח)",
+      "number": 4,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/923",
+          "title": "בטלות יחסית ושיקול דעת שיפוטי",
+          "source_type": "journal_article"
+        },
+        {
+          "url": "https://runilawreview.org/2014/12/22/volume18_klement/",
+          "title": "חריגה מסמכות עניינית בהליך האזרחי | אלון קלמנט (כרך יח)",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "footnotes_count": 4,
+  "sufficiency": {
+    "shape": "analysis",
+    "reason": "doctrinal_anchor_present",
+    "applied": true,
+    "category": "doctrine",
+    "sufficient": true,
+    "thin_source": false,
+    "found_titles": [
+      "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+      "בג\"ץ 6824-07 - ד\"ר עאדל מנאע נ. רשות המסים",
+      "בטלות יחסית ושיקול דעת שיפוטי",
+      "הביקורת השיפוטית על החלטות מנהליות: מפרקטיקה לתיאוריה | יצחק זמיר (כרך טו)",
+      "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין"
+    ],
+    "topical_refs": [
+      "s3"
+    ],
+    "topic_phrases": [
+      "לבטלות מוחלטת במשפט המינהלי",
+      "בטלות יחסית לבטלות מוחלטת",
+      "יחסית לבטלות מוחלטת במשפט",
+      "מוחלטת במשפט המינהלי",
+      "יחסית לבטלות מוחלטת",
+      "לבטלות מוחלטת במשפט",
+      "בטלות יחסית לבטלות",
+      "לבטלות מוחלטת",
+      "במשפט המינהלי",
+      "יחסית לבטלות",
+      "מוחלטת במשפט",
+      "בטלות יחסית"
+    ],
+    "body_topical_refs": [],
+    "case_law_required": false,
+    "statute_only_answer": false,
+    "sufficiency_profile": "statutory_institution",
+    "usable_judgment_refs": [
+      "s1",
+      "s2",
+      "s5"
+    ],
+    "exact_amounts_allowed": true,
+    "governing_statute_refs": [],
+    "topical_authority_refs": [
+      "s3"
+    ],
+    "body_text_topical_match": false,
+    "morphology_domain_match": true,
+    "normalized_source_tokens": [
+      "אליעזר",
+      "זילברברג",
+      "ליאורה",
+      "יאורה",
+      "ליאור",
+      "פרו",
+      "פסק",
+      "דין",
+      "ינית",
+      "הסמכות",
+      "סמכות",
+      "הסמכ",
+      "כללי",
+      "ליישום",
+      "יישום",
+      "המתייחס",
+      "מתייחס",
+      "אלו",
+      "לשיקולים",
+      "שיקולים",
+      "לשיקול",
+      "שיקול",
+      "נכבד",
+      "משקל",
+      "ניתן",
+      "משפט",
+      "בית",
+      "בפסיקת",
+      "פסיקת",
+      "בפסיק",
+      "המחוזי",
+      "מחוזי",
+      "לבית",
+      "השלום",
+      "שלום",
+      "המקרים",
+      "מקרים",
+      "המקר",
+      "מגוון",
+      "גוון",
+      "התנועה",
+      "תנועה",
+      "התנוע",
+      "למען",
+      "איכות",
+      "איכו",
+      "השלטון",
+      "שלטון",
+      "הכנסת",
+      "כנסת",
+      "הכנס",
+      "עתירות",
+      "עתיר",
+      "ביטול",
+      "יטול",
+      "חוק",
+      "יסוד",
+      "לביטול",
+      "עילת",
+      "הסבירות"
+    ],
+    "governing_regulation_refs": [],
+    "statute_section_requested": false,
+    "normalized_question_tokens": [
+      "ההבדל",
+      "הבדל",
+      "בטלות",
+      "טלות",
+      "בטלו",
+      "יחסית",
+      "יחסי",
+      "לבטלות",
+      "לבטל",
+      "מוחלטת",
+      "וחלטת",
+      "מוחלט",
+      "במשפט",
+      "משפט",
+      "המינהלי",
+      "מינהלי"
+    ],
+    "sufficiency_authority_basis": "usable_judgment",
+    "thin_governing_statute_refs": [],
+    "thin_governing_regulation_refs": [],
+    "authority_type_sufficiency_passed": true,
+    "case_law_missing_but_not_required": false,
+    "practical_steps_thin_authority_passed": false
+  },
+  "gate_report": {
+    "applied": true,
+    "source_split": {
+      "read_in_full": [
+        "s1",
+        "s2"
+      ],
+      "reference_only": []
+    },
+    "blocks_stripped": 0,
+    "source_split_counts": {
+      "read_in_full": 2,
+      "reference_only": 0
+    },
+    "reference_only_sources": [],
+    "blocks_left_unsupported": 0,
+    "stripped_ref_occurrences": 0,
+    "unsupported_block_samples": [],
+    "metadata_only_judgment_refs": [],
+    "metadata_only_holdings_remaining": 0
+  },
+  "read_in_full": [
+    "s1 — ",
+    "s2 — "
+  ],
   "reference_only": [],
-  "used_sources": [],
-  "used_sources_count": 0,
-  "footnotes": [],
-  "footnotes_count": 0,
-  "verifier_call_failed": false,
-  "answer_len": 0,
-  "answer": ""
+  "answer": "**הבחנה תמציתית**\n\nבפרקטיקה השיפוטית מקובל להבחין בין שתי קטגוריות של פגמים בעשה מנהלי: \"בטלות מוחלטת\" — מעשה שאינו מייצר תוצאה משפטית תקפה ואינו פתוח לאישור או תיקון שיחזירו לו תוקף, ו\"בטלות יחסית\" — מעשה שנושא פגם שיפוטי או פרוצדורלי אך שבו קיימת אפשרות לאישור, תיקון או השארת ההשלכות בשל שיקולי איזון ונזק לצדדים.¹\n\n**הגדרת \"בטלות מוחלטת\" ותוצאותיה**\n\nבטלות מוחלטת מתייחסת למעשה שנמצא מחוץ להיקף הסמכות המוקנה על‑ידי המחוקק או שסותר מניעה מפורשת, כך שאין לו תוצאה משפטית תקפה; מעשה כזה, בדרך כלל, לא ניתן לאישור רטרואקטיבי על‑ידי הרשות ואינו ניתפס כ\"תיקון\" באמצעות הליכים שוליים.¹\n\nבמקרים שבהם נקבע שהפגם נובע מחוסר סמכות מהותי — כלומר הרשות פעלה לתחום שלא הוענק לה על‑ידי המחוקק — השיפוט נוטה להתייחס לכך כביטול מוחלט בשל כוונת המחוקק להגביל את הסמכות; יחד עם זאת בתי המשפט שמים לב לשאלת מידת הפגיעה בזכויות ונזקים לצדדים בעת הכרעתם על סעד.²\n\n**הגדרת \"בטלות יחסית\" ותכונותיה**\n\nבטלות יחסית מתארת מצב שבו קיים פגם פורמלי או מהותי בעשייה המנהלית, אך הפגם אינו חוסם per se את אפשרות קיומו של מעשה תקף: קיימת אפשרות שהרשות או בית המשפט יאשרו, יתנו תוקף או יתאמו תיקון שיחזיר את ההליך למסלול תקין, במקרים שבהם שיקולי היעילות, ההסתמכות של צדדים שלישיים ותכליות הפיקוח השיפוטי מצדיקים זאת.¹\n\nמאפייניה המעשיים של בטלות יחסית כוללים שיקול שיפוטי לטובת אישור או תיקון, בחינת הנזק שנגרם לצדדים השלישיים, והערכת הכוונה המחוקקת ביחס להעדר פגם כ\"חסם סופי\" לתוצאה המשפטית.⁴\n\n**שיקולים ומבחנים שבהם בתי המשפט נוטים להכריע בין שתי הקטגוריות**\n\nבתי המשפט שוקלים כמה קריטריונים לאבחנה: טיב הפגם (האם מדובר בחוסר סמכות מהותי או בעיקוף פרוצדורלי), חומרת הפגיעה בזכויות יסוד ומבחן המידתיות, כוונת המחוקק ביחס להגבלת הסמכות, והיקף הנזק וההסתמכות של צדדים שלישיים — כל אלה משפיעים האם הפגם יוביל לבטלות מוחלטת או יחסית.²\n\nבנוסף ניכרת במשפט דוקטרינה של שיקול דעת שיפוטי: גם אם הפגם משמעותי, שיקולים של איזון פונקציות שלטוניות, תכליות ציבוריות והשלכות מעשיות יכולים להביא לאישור חלקי או לביטול מותנה במקום לביטול מוחלט.¹\n\n**השלכות מעשיות לגבי סעד ויחסי צד שלישי**\n\nכשמדובר בבטלות מוחלטת הסעד הטבעי הוא ביטול מלא של המעשה המנהלתי והסרת תוצאותיו; בבטלות יחסית השופטים נוטים להיעזר בסעד מותנה, באפשרות לאשר רטרואקטיבית, או בגיבוי פשרני בהתחשב בהסתמכות של צדדים שלישיים והמשמעות הציבורית של ביטול חלוט.³\n\nהבחנה זו משפיעה גם על שאלות של תיישנות והעלאת טענות סמכות: כאשר הפגם ניתן לתיקון ייתכן שיישומם של כללים פרוצדורליים ועמדות תמריץ ישפיעו על תגובת הצדדים והסיכוי שהטענה תועלה במועד הולם.⁴\n\n**מגבלות הדיון והערת מסגרת מקורות**\n\nבמקורות שאותרו נמצאו התייחסויות ודעות עקרוניות בנוגע להבחנה בין בטלות מוחלטת ליחסית והן משמשות כבסיס אנליטי לדיון המוצג כאן; יחד עם זאת לא אותר נוסח חקיקתי אחיד המעגן באופן חד־משמעי את הקטגוריות הללו, ולכן הדיון משקף עמדות דוקטרינליות וניתוחים פסיקתיים שאינם בהכרח סופי.¹"
 }

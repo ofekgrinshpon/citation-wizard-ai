@@ -2,21 +2,47 @@
   "id": "S3",
   "query": "מה התנאים להרמת מסך לפי סעיף 6 לחוק החברות?",
   "run_id": "790f08f2-9d17-45bb-9b97-f9f372171d96",
-  "total_ms": 46444,
-  "research_mode": "statute_section_definition",
-  "shape": null,
-  "drafted": false,
-  "deterministic_branch": null,
-  "is_stub": true,
+  "branch": "statute_section_limitation",
+  "drafted": true,
+  "is_stub": false,
+  "used_sources": [
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/958",
+      "title": "חילוט מניות",
+      "number": 1,
+      "origin": "local_db",
+      "citable_as": "scholarship",
+      "source_type": "journal_article",
+      "candidate_id": "67362b5b-ad60-441b-ad66-c3e16139befa",
+      "authority_tier": "secondary_commentary",
+      "synthesis_role": "secondary_commentary",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": false
+    }
+  ],
+  "used_sources_count": 1,
+  "footnotes": [
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/958",
+      "title": "חילוט מניות",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/958",
+          "title": "חילוט מניות",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    }
+  ],
+  "footnotes_count": 1,
   "sufficiency": null,
   "gate_report": null,
   "read_in_full": [],
   "reference_only": [],
-  "used_sources": [],
-  "used_sources_count": 0,
-  "footnotes": [],
-  "footnotes_count": 0,
-  "verifier_call_failed": false,
-  "answer_len": 0,
-  "answer": ""
+  "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 6 לחוק החברות; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
 }
