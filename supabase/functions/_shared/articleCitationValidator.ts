@@ -145,6 +145,7 @@ export function validateArticleCitation(
   }
 
   out = out.replace(/\s+/g, " ").trim();
+  out = normalizeEditorPlacement(out);
   return out;
 }
 
