@@ -41,7 +41,7 @@ function normalizeDatabaseName(urls: unknown, fallback: unknown): string {
   }
   return "";
 }
-import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES } from "../_shared/caseTypePrefixes.ts";
+import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES, findBareDocket } from "../_shared/caseTypePrefixes.ts";
 import {
   TRUSTED_LEGAL,
   TRUSTED_PUB,
