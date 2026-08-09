@@ -509,9 +509,11 @@ export function detectSourceType(text: string): SourceType {
   const strippedForBook = hebrewText.trim().replace(/['׳"״`]/g, '');
   if (/^[\u0590-\u05FF]+\s+[\u0590-\u05FF]+\s+[\u0590-\u05FF]/.test(strippedForBook) && 
       hebrewText.trim().split(/\s+/).length >= 4 &&
-      !/נ['']|נגד|חוק|פקוד|תקנ|הצעת|אמנ|ד["״]כ|חוות\s+דעת|הסכם\s+קיבוצי/.test(hebrewText)) {
+      (literatureShape ||
+        !/נ['']|נגד|חוק|פקוד|תקנ|הצעת|אמנ|ד["״]כ|חוות\s+דעת|הסכם\s+קיבוצי/.test(hebrewText))) {
     return 'book';
   }
+
   
   // Religious sources (Rules 28–30)
   if (/תלמוד|משנה|גמרא|שו"ת|מקרא|בראשית|שמות|ויקרא|במדבר|דברים|בבלי|ירושלמי|שולחן ערוך|מכילתא|רש"י|רמב"ם|משנה תורה|טורים|קוראן|סורת|סורה|הבשורה על פי|האיגרת אל|שמות רבה|בראשית רבה|ויקרא רבה|אוצר הגאונים|ספר הישר/.test(hebrewText)) return 'religious';
