@@ -3019,6 +3019,12 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     content = normalizeArticleYearByRule2492(content);
     // Rule 1.10: Hebrew number ranges must be high→low (renders low on the right in RTL).
     content = normalizeHebrewNumberRanges(content);
+    // Rule 24.11 / 23.7: editors belong inside the trailing parentheses, not
+    // in the book-author slot before the book title.
+    content = content
+      .split("\n")
+      .map((line) => normalizeEditorPlacement(line))
+      .join("\n");
     content = ensureCitationTrailingPeriod(content);
     // Strip persona/preamble openings if the model regresses
     content = content.replace(
