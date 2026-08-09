@@ -1,5 +1,10 @@
 import { supabase } from "@/integrations/supabase/client";
-import { detectSourceType, type SourceType } from "@/data/abbreviations";
+import {
+  detectSourceType,
+  hasStrongStatuteSignal,
+  looksLikeLiteratureShape,
+  type SourceType,
+} from "@/data/abbreviations";
 
 export interface ClassifyResult {
   sourceType: SourceType;
@@ -7,11 +12,24 @@ export interface ClassifyResult {
   reason: string;
 }
 
+/** Legislation guess that rests only on a mid-title statute word. */
+export function isWeakLegislationGuess(rawText: string, regexType: SourceType): boolean {
+  const isLegislation =
+    regexType === "primary_legislation" ||
+    regexType === "basic_law" ||
+    regexType === "secondary_legislation";
+  if (!isLegislation) return false;
+  return !hasStrongStatuteSignal(rawText);
+}
+
 /**
  * Decide whether to call the Gemini classifier for this input.
  * Skip when the regex already returns a high-confidence non-literature type.
  */
 export function shouldUseLLMClassifier(rawText: string, regexType: SourceType): boolean {
+  // Scholarship-shaped input always deserves the LLM's opinion.
+  if (looksLikeLiteratureShape(rawText) && !hasStrongStatuteSignal(rawText)) return true;
+
   // Strong, reliable regex signals — skip LLM.
   if (
     regexType === "case_law_published" ||
@@ -32,6 +50,8 @@ export function shouldUseLLMClassifier(rawText: string, regexType: SourceType): 
     regexType === "planning_plan" ||
     regexType === "collective_agreement"
   ) {
+    // A weak legislation guess (mid-title "חוק") must go to the LLM.
+    if (isWeakLegislationGuess(rawText, regexType)) return true;
     // Even for caselaw/legislation, if no docket / no חוק/תקנות/הצעת etc. — let LLM check
     if (/\d+\/\d+/.test(rawText)) return false;
     if (/חוק[- ]יסוד|תקנות|הצעת חוק|פקודת|חוק\s+\S/.test(rawText)) return false;
@@ -43,6 +63,7 @@ export function shouldUseLLMClassifier(rawText: string, regexType: SourceType): 
   // Ambiguous family — always use LLM
   return true;
 }
+
 
 /**
  * Call the classify-source edge function. Fails soft: returns null on error.
@@ -94,6 +115,18 @@ export async function resolveSourceType(rawText: string): Promise<{
 
   if (ambiguous && llm.confidence >= 0.6 && llm.sourceType !== "unknown") {
     return { sourceType: llm.sourceType, source: "llm", llm };
+  }
+
+  // Weak legislation guesses (mid-title "חוק", no statute year / marker at the
+  // start) may be overridden by a confident LLM verdict. Strong statute-shaped
+  // matches are never overridden.
+  if (
+    isWeakLegislationGuess(rawText, regexType) &&
+    llm.confidence >= 0.7 &&
+    llm.sourceType !== "unknown"
+  ) {
+    return { sourceType: llm.sourceType, source: "llm", llm };
+
   }
   return { sourceType: regexType, source: "regex", llm };
 }

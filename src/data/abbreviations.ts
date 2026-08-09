@@ -329,10 +329,87 @@ function normalizeQuotes(text: string): string {
     .replace(/[\u2018\u2019\u201A]/g, "'"); // smart single quotes
 }
 
+// ---------------------------------------------------------------------------
+// Statute-signal strength helpers
+//
+// A statute marker (חוק / פקודת / תקנות) at the START of the input is a STRONG
+// legislation signal, even without a Hebrew year or official formatting
+// ("חוק הלאום", "חוק יסוד הלאום", "פקודת הנזיקין").
+// The same word appearing mid-title is WEAK — it is usually part of a
+// scholarship title ("אורי אהרונסון חוק הלאום בראי חוקי היסוד האחרים").
+// ---------------------------------------------------------------------------
+
+/** Hebrew statute year, e.g. התשל"ג-1973 / תש"ן-1990. */
+const STATUTE_YEAR_RE = /הת?ש[\u05D0-\u05EA]{0,3}["'׳״]?[\u05D0-\u05EA]?["'׳״]?\s*[-–־]\s*\d{4}/;
+/** Input opens with a statute marker (leading quotes/brackets ignored). */
+const STATUTE_START_RE = /^[\s"'״׳(\[]*(חוק|פקודת|פקודה|תקנות)(?=[\s\-־:,(\[]|$)/;
+const NUSACH_RE = /נוסח\s+(?:חדש|משולב)/;
+
+/** True when the input starts with a statute marker such as חוק / פקודת / תקנות. */
+export function startsWithStatuteMarker(text: string): boolean {
+  return STATUTE_START_RE.test(normalizeQuotes(text).trim());
+}
+
+/**
+ * Strong statute signal: leading statute marker, a Hebrew statute year, or a
+ * נוסח חדש/משולב qualifier. Strong matches are never overridden by the LLM.
+ */
+export function hasStrongStatuteSignal(text: string): boolean {
+  const t = normalizeQuotes(text).trim();
+  return startsWithStatuteMarker(t) || STATUTE_YEAR_RE.test(t) || NUSACH_RE.test(t);
+}
+
+/**
+ * Literature shape: Hebrew personal name (2–3 words) followed by a longer
+ * descriptive title, with no docket, no statute year, no URL, and no leading
+ * statute marker. Signals scholarship even when "חוק" appears in the title.
+ */
+export function looksLikeLiteratureShape(text: string): boolean {
+  const t = normalizeQuotes(text).trim();
+  if (!t) return false;
+  if (startsWithStatuteMarker(t)) return false;
+  if (STATUTE_YEAR_RE.test(t) || NUSACH_RE.test(t)) return false;
+  if (/\d+\/\d+/.test(t)) return false;              // docket
+  if (/https?:\/\//.test(t)) return false;           // url
+  if (/נ['׳]|נגד/.test(t)) return false;             // case caption
+  const stripped = t.replace(/["'״׳`]/g, "");
+  const words = stripped.split(/\s+/).filter(Boolean);
+  if (words.length < 3) return false;
+  // First two tokens look like a personal name (pure Hebrew, no statute marker)
+  const nameLike = /^[\u05D0-\u05EA]{2,}$/;
+  if (!nameLike.test(words[0]) || !nameLike.test(words[1])) return false;
+  if (/^(חוק|פקודת|פקודה|תקנות|הצעת)$/.test(words[0])) return false;
+  return true;
+}
+
+const LEGISLATION_TYPES: SourceType[] = [
+  "primary_legislation",
+  "basic_law",
+  "secondary_legislation",
+];
+
+/**
+ * detectSourceType + a strength flag for legislation guesses.
+ * `weak` means the legislation type came only from a mid-title statute word.
+ */
+export function detectSourceTypeWithStrength(text: string): {
+  sourceType: SourceType;
+  strength: "strong" | "weak";
+} {
+  const sourceType = detectSourceType(text);
+  if (!LEGISLATION_TYPES.includes(sourceType)) {
+    return { sourceType, strength: "strong" };
+  }
+  return { sourceType, strength: hasStrongStatuteSignal(text) ? "strong" : "weak" };
+}
+
 // Detect source type from free text
 export function detectSourceType(text: string): SourceType {
   const normalized = text.toLowerCase();
   const hebrewText = normalizeQuotes(text);
+  // Scholarship title that merely mentions a statute mid-title → not legislation.
+  const literatureShape = looksLikeLiteratureShape(text) && !hasStrongStatuteSignal(text);
+
   
   // Check for foreign sources
   if (/[a-zA-Z]{3,}/.test(text) && /v\.|vs\./.test(normalized)) return 'foreign';
@@ -372,14 +449,18 @@ export function detectSourceType(text: string): SourceType {
   if (/רשם\s+הפטנטים|בקשה\s+לביטול\s+תיקון|בקשת\s+עיצוב|התנגדות\s+לרישום\s+סימן|בקשות\s+מתחרות/.test(hebrewText)) return 'government_decision';
   if (/ועדת\s+ערר\s+לתכנון/.test(hebrewText)) return 'government_decision';
 
-  // Check for legislation
-  if (/חוק[- ]יסוד/.test(hebrewText)) return 'basic_law';
-  if (/תקנות/.test(hebrewText)) return 'secondary_legislation';
+  // Check for legislation (skipped when the input is scholarship-shaped and the
+  // statute word only appears mid-title)
+  if (!literatureShape) {
+    if (/חוק[- ־]?\s?יסוד/.test(hebrewText)) return 'basic_law';
+    if (/תקנות/.test(hebrewText)) return 'secondary_legislation';
+  }
   if (/הצעת חוק/.test(hebrewText)) return 'bill';
   if (/ד["״]כ|דברי הכנסת|דברי כנסת|מועצת המדינה(?:\s+הזמנית)?/.test(hebrewText)) return 'other';
   if (/אמנה|אמנת|הסכם.+(?:ממלכ|מדינ)|כ["״]א\s+\d/.test(hebrewText)) return 'treaty';
   if (/תקנון/.test(hebrewText)) return 'regulation';
-  if (/חוק |פקודת /.test(hebrewText)) return 'primary_legislation';
+  if (!literatureShape && /חוק |פקודת /.test(hebrewText)) return 'primary_legislation';
+
   
   // Check for correspondence (Rule 32.1)
   if (/מכתב מ|דואר אלקטרוני מ|מזכר מ/.test(hebrewText)) return 'correspondence';
@@ -428,9 +509,11 @@ export function detectSourceType(text: string): SourceType {
   const strippedForBook = hebrewText.trim().replace(/['׳"״`]/g, '');
   if (/^[\u0590-\u05FF]+\s+[\u0590-\u05FF]+\s+[\u0590-\u05FF]/.test(strippedForBook) && 
       hebrewText.trim().split(/\s+/).length >= 4 &&
-      !/נ['']|נגד|חוק|פקוד|תקנ|הצעת|אמנ|ד["״]כ|חוות\s+דעת|הסכם\s+קיבוצי/.test(hebrewText)) {
+      (literatureShape ||
+        !/נ['']|נגד|חוק|פקוד|תקנ|הצעת|אמנ|ד["״]כ|חוות\s+דעת|הסכם\s+קיבוצי/.test(hebrewText))) {
     return 'book';
   }
+
   
   // Religious sources (Rules 28–30)
   if (/תלמוד|משנה|גמרא|שו"ת|מקרא|בראשית|שמות|ויקרא|במדבר|דברים|בבלי|ירושלמי|שולחן ערוך|מכילתא|רש"י|רמב"ם|משנה תורה|טורים|קוראן|סורת|סורה|הבשורה על פי|האיגרת אל|שמות רבה|בראשית רבה|ויקרא רבה|אוצר הגאונים|ספר הישר/.test(hebrewText)) return 'religious';
