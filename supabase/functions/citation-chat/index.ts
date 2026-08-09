@@ -2058,7 +2058,8 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                             const docketOk = !docketAnchor
                               || anyUrlContainsDocket(vData.citations, docketAnchor);
                             const volKnown = !!range; // unknown vol → don't trust the override
-                            if (yearOk && docketOk && volKnown) {
+                            const docketConflict = padiVolumeDocketConflict(vol, docketAnchor?.year);
+                            if (yearOk && docketOk && volKnown && !docketConflict) {
                               console.log(`[case-law] Verification found פד"י publication! Overriding.`);
                               parsed.isPublished = true;
                               parsed.padi_volume = vParsed.padi_volume;
@@ -2066,8 +2067,9 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                               parsed.padi_page = vParsed.padi_page || parsed.padi_page;
                               parsed.confidence = "high";
                             } else {
-                              console.log(`[case-law] padi_override_rejected vol=${vol} year=${decisionYearStr} vol_known=${volKnown} year_ok=${yearOk} docket_ok=${docketOk}`);
+                              console.log(`[case-law] padi_override_rejected vol=${vol} year=${decisionYearStr} vol_known=${volKnown} year_ok=${yearOk} docket_ok=${docketOk} docket_conflict=${docketConflict ?? "none"}`);
                             }
+
                           }
                         }
                       }
