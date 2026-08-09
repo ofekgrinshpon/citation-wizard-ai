@@ -1854,6 +1854,10 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   let partyMismatch = false;
                   let partyVerification: "both" | "caption_marker" | "insufficient_snippet" | "no_anchor" | "n/a" = "n/a";
                   let docketAnchored = false;
+                  // Hoisted so the publication gate and the anchored-date
+                  // fallback below can reuse the same anchored source set.
+                  let anchoredResultsOuter: Array<Record<string, unknown>> = [];
+                  let citationUrlsOuter: string[] = [];
                   if (docketAnchor) {
                     // Anchor against BOTH structured search_results AND raw citation URLs.
                     // Some sonar-pro responses populate only `citations` (no
@@ -1885,6 +1889,9 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                       urlContainsDocket(u, docketAnchor),
                     );
                     docketAnchored = anchoredResults.length > 0 || anchoredCitationUrls.length > 0;
+                    anchoredResultsOuter = anchoredResults;
+                    citationUrlsOuter = citationUrls;
+
 
                     if (parsed.found && parsed.party1 && parsed.party2) {
                       if (anchoredResults.length === 0) {
