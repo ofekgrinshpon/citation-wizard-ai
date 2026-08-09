@@ -2111,29 +2111,50 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   // First-pass `date`/`year` is often the volume's print year or fabricated.
                   await reconcilePublishedDate(PERPLEXITY_API_KEY, caseType, caseNum, parsed);
 
-                  // ── Anchored-result date fallback ──
-                  // Trusted search results carry their own `date` for the judgment
-                  // page (e.g. the court PDF for בג"ץ 5555/18 reports 2021-07-08).
-                  // When the model's date was dropped as unverified, use that
-                  // instead of leaving the field empty — an empty date is what
-                  // tempts the drafting model to invent a year.
-                  const hasDateNow = typeof parsed.date === "string" && parsed.date.trim() !== "";
-                  if (!hasDateNow && docketAnchor && anchoredResultsOuter.length > 0) {
-                    for (const r of anchoredResultsOuter) {
-                      const raw = typeof r.date === "string" ? r.date.trim() : "";
-                      const m = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                  // ── Own-case page date (authoritative) ──
+                  // A trusted result whose URL or TITLE identifies *this* docket
+                  // is the judgment's own page, and its `date` is the decision
+                  // date (the court PDF for בג"ץ 5555/18 reports 2021-07-08).
+                  // It outranks the model's date, which is routinely lifted from
+                  // a neighbouring judgment in the same result set.
+                  if (docketAnchor && anchoredResultsOuter.length > 0) {
+                    const ownCase = anchoredResultsOuter.filter((r) =>
+                      typeof r.url === "string"
+                      && isTrustedHost(r.url, TRUSTED_LEGAL)
+                      && (urlContainsDocket(r.url, docketAnchor) || textContainsDocket(r.title, docketAnchor)),
+                    );
+                    const filed = docketFilingYear(docketAnchor.year);
+                    for (const r of ownCase) {
+                      const m = (typeof r.date === "string" ? r.date.trim() : "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
                       if (!m) continue;
-                      if (typeof r.url !== "string" || !isTrustedHost(r.url, TRUSTED_LEGAL)) continue;
                       const y = parseInt(m[1], 10);
-                      const filed = docketFilingYear(docketAnchor.year);
                       // A judgment cannot predate its own docket.
                       if (filed !== null && (y < filed || y > filed + 25)) continue;
-                      parsed.date = `${parseInt(m[3], 10)}.${parseInt(m[2], 10)}.${m[1]}`;
+                      const own = `${parseInt(m[3], 10)}.${parseInt(m[2], 10)}.${m[1]}`;
+                      if (own !== parsed.date) {
+                        console.log(`[case-law] own_case_date=${own} overrides model date="${parsed.date ?? ""}" (source ${r.url})`);
+                      }
+                      parsed.date = own;
                       parsed.year = m[1];
-                      console.log(`[case-law] anchored_date_fallback=${parsed.date} from ${r.url}`);
                       break;
                     }
                   }
+
+                  // ── Role words are not party names ──
+                  // "העותרים" / "המשיבים" and friends are procedural roles the
+                  // model falls back to when it cannot read the caption; they
+                  // must render as [חסר: שמות צדדים], never as a party.
+                  const ROLE_WORDS = /^(?:ה?עותר(?:ים|ת)?|ה?משיב(?:ים|ה)?|ה?מערער(?:ים|ת)?|ה?מבקש(?:ים|ת)?|ה?נאשם|ה?נאשמים|ה?תובע(?:ים|ת)?|ה?נתבע(?:ים|ת)?|פלוני|אלמוני|צד א|צד ב)$/;
+                  const p1Role = typeof parsed.party1 === "string" && ROLE_WORDS.test(parsed.party1.trim());
+                  const p2Role = typeof parsed.party2 === "string" && ROLE_WORDS.test(parsed.party2.trim());
+                  if (p1Role || p2Role) {
+                    console.log(`[case-law] role_word_parties_dropped party1="${parsed.party1}" party2="${parsed.party2}"`);
+                    parsed.party1 = "";
+                    parsed.party2 = "";
+                    partyMismatch = true;
+                    parsed.confidence = "low";
+                  }
+
 
                   // Normalize databaseName from Perplexity citation URLs (lite.takdin → תקדין,
                   // supremedecisions.court.gov.il → אר״ש, etc). Overrides free-form strings.
