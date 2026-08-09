@@ -1982,8 +1982,33 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     }
                   }
 
+                  // ── First-pass publication gate ──
+                  // The SECOND-pass path below already validates an פ"ד override
+                  // (known volume + year fit + docket in a citation URL), but a
+                  // first-pass `isPublished:true` used to bypass all of it — which
+                  // is how בג"ץ 5555/18 acquired a fabricated "פ"ד נד(1) 1".
+                  if (parsed.found && parsed.isPublished && parsed.padi_volume) {
+                    const vol = String(parsed.padi_volume).trim();
+                    const conflict = padiVolumeDocketConflict(vol, docketAnchor?.year);
+                    if (conflict) {
+                      dropPublication(parsed, `first_pass ${fullCaseRef}: ${conflict}`);
+                      parsed.confidence = "low";
+                    } else if (docketAnchor) {
+                      // The volume must be corroborated by a trusted source that
+                      // actually mentions this docket alongside "פ"ד".
+                      const padiCorroborated = anchoredResultsOuter.some((r) => {
+                        const txt = `${typeof r.title === "string" ? r.title : ""} ${typeof r.snippet === "string" ? r.snippet : ""}`;
+                        return /פ["״]ד|פד["״]י/.test(txt);
+                      }) || citationUrlsOuter.some((u) => /PediVerdicts/i.test(u));
+                      if (!padiCorroborated) {
+                        dropPublication(parsed, `first_pass ${fullCaseRef}: volume ${vol} not corroborated by any docket-anchored trusted source`);
+                        parsed.confidence = "low";
+                      }
+                    }
+                  }
 
                   // ── Secondary verification: if Perplexity says not published, double-check with a focused query ──
+
                   if (parsed.found && !parsed.isPublished) {
                     console.log(`[case-law] First search says unpublished for ${fullCaseRef}, running verification search...`);
                     try {
