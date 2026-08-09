@@ -1737,15 +1737,22 @@ serve(async (req) => {
 חשוב ביותר: עדיפות ראשונה היא לבדוק פרסום בפד"י (פסקי דין). רוב פסקי הדין של בית המשפט העליון פורסמו בפד"י. אל תסתמך רק על מאגרי מידע אלקטרוניים - חפש במיוחד אם יש ציון "פ"ד" עם כרך ועמוד.
 סמן isPublished: false רק אם חיפשת במפורש פרסום בפד"י ווידאת שהוא לא קיים.
 הפורמט:
-{"found":true/false,"party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY","confidence":"high/low"}
+{"found":true/false,"caseType":"קיצור סוג ההליך","party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY","confidence":"high/low"}
 שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
+caseType: הקיצור הרשמי של סוג ההליך לפי כללי האזכור האחיד (בג"ץ, ע"א, רע"א, ע"פ, עת"מ וכו'). אם לא אומת — השאר ריק.
+אסור להחזיר פסק דין שמספר התיק שלו שונה ממספר התיק שהתבקש. אם לא מצאת את מספר התיק המדויק — החזר found:false.
 confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות רבים, "low" אם יש ספק או מקור יחיד.
 חשוב: שדה year/date חייב להיות תאריך/שנת מתן פסק הדין על ידי בית המשפט, ולא שנת הוצאת כרך פ"ד.`,
                 },
                 { role: "user", content: query },
               ],
             };
-            const docketAnchor = extractDocket(fullCaseRef);
+            // extractDocket() requires a Hebrew case-type prefix, so for a bare
+            // docket we build the anchor directly from the number/year pair.
+            const docketAnchor = extractDocket(fullCaseRef) ?? (() => {
+              const m = caseNum.match(/^(\d{1,6})[\/\-\u2013](\d{2,4})$/);
+              return m ? { full: `${m[1]}/${m[2]}`, num: m[1], year: m[2] } : null;
+            })();
             const caseSearchRun = await perplexityWithFallback(
               PERPLEXITY_API_KEY,
               caseSearchBody,
