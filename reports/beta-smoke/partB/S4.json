@@ -1,0 +1,22 @@
+{
+  "id": "S4",
+  "query": "כתוב סקירת פסיקה קצרה על חובת תום הלב במשא ומתן לפי סעיף 12 לחוק החוזים",
+  "run_id": "c4f02453-127e-40ce-8824-28aa7b25bcce",
+  "total_ms": 41287,
+  "research_mode": "doctrine_explanation",
+  "shape": null,
+  "drafted": false,
+  "deterministic_branch": null,
+  "is_stub": true,
+  "sufficiency": null,
+  "gate_report": null,
+  "read_in_full": [],
+  "reference_only": [],
+  "used_sources": [],
+  "used_sources_count": 0,
+  "footnotes": [],
+  "footnotes_count": 0,
+  "verifier_call_failed": false,
+  "answer_len": 0,
+  "answer": ""
+}

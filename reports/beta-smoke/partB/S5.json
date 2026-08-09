@@ -1,0 +1,22 @@
+{
+  "id": "S5",
+  "query": "מה ההבדל בין בטלות יחסית לבטלות מוחלטת במשפט המינהלי?",
+  "run_id": "91c2a629-fd3c-4458-822d-5a142a5d4573",
+  "total_ms": 41399,
+  "research_mode": "doctrine_explanation",
+  "shape": null,
+  "drafted": false,
+  "deterministic_branch": null,
+  "is_stub": true,
+  "sufficiency": null,
+  "gate_report": null,
+  "read_in_full": [],
+  "reference_only": [],
+  "used_sources": [],
+  "used_sources_count": 0,
+  "footnotes": [],
+  "footnotes_count": 0,
+  "verifier_call_failed": false,
+  "answer_len": 0,
+  "answer": ""
+}

@@ -1,0 +1,22 @@
+{
+  "id": "S2",
+  "query": "מה נקבע בבג\"ץ חסון לגבי חוק יסוד: ישראל — מדינת הלאום?",
+  "run_id": "b823c9b7-ee17-46ed-a311-b1edc28a34be",
+  "total_ms": 113159,
+  "research_mode": "specific_case",
+  "shape": null,
+  "drafted": false,
+  "deterministic_branch": null,
+  "is_stub": true,
+  "sufficiency": null,
+  "gate_report": null,
+  "read_in_full": [],
+  "reference_only": [],
+  "used_sources": [],
+  "used_sources_count": 0,
+  "footnotes": [],
+  "footnotes_count": 0,
+  "verifier_call_failed": false,
+  "answer_len": 0,
+  "answer": ""
+}

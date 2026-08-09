@@ -1,0 +1,22 @@
+{
+  "id": "S1",
+  "query": "הסבר את הלכת אפרופים והשפעתה על פרשנות חוזים בישראל",
+  "run_id": "aa377057-b8e9-4eb7-bf0a-ea6f9413f974",
+  "total_ms": 88597,
+  "research_mode": "case_law_synthesis",
+  "shape": null,
+  "drafted": false,
+  "deterministic_branch": null,
+  "is_stub": true,
+  "sufficiency": null,
+  "gate_report": null,
+  "read_in_full": [],
+  "reference_only": [],
+  "used_sources": [],
+  "used_sources_count": 0,
+  "footnotes": [],
+  "footnotes_count": 0,
+  "verifier_call_failed": false,
+  "answer_len": 0,
+  "answer": ""
+}
