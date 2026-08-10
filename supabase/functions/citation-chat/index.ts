@@ -3356,8 +3356,23 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     });
     content = fixHebrewYearPrefix(content);
     content = normalizeArticleYearByRule2492(content);
+    // Rule 15: a Knesset term ordinal must match the decision date, or be
+    // dropped when no date anchors it. The model must never assert a term.
+    content = content
+      .split("\n")
+      .map((line) => {
+        const r = normalizeKnessetTerm(line);
+        if (r.action !== "none") {
+          console.log(
+            `[decision] knesset_term_${r.action} claimed=${r.claimed} resolved=${r.resolved}`,
+          );
+        }
+        return r.text;
+      })
+      .join("\n");
     // Rule 1.10: Hebrew number ranges must be high→low (renders low on the right in RTL).
     content = normalizeHebrewNumberRanges(content);
+
     // Rule 24.11 / 23.7: editors belong inside the trailing parentheses, not
     // in the book-author slot before the book title.
     content = content
