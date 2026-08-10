@@ -401,12 +401,31 @@ const OTHER_MISSING_FIELD_LABELS: Record<string, string> = {
   fullDate: "תאריך לועזי מלא",
 };
 
+/** Fallback labels so an unmapped internal key is never printed to the user. */
+const GENERIC_FIELD_LABELS: Record<string, string> = {
+  decidingBody: "שם הגוף המחליט (כלל 15.1)",
+  decisionName: "שם ההחלטה במירכאות (כלל 15.1)",
+  decisionNumber: "מספר ההחלטה (כלל 15.1)",
+};
+
+
 function detectOtherSubtype(response: string): OtherSubtype | null {
   const citationLine = getCitationLine(response);
   if (/מועצת המדינה(?:\s+הזמנית)?/.test(citationLine)) return "provisional_council";
   if (/ד["״]כ|דברי הכנסת|דברי כנסת/.test(citationLine)) return "knesset";
   return null;
 }
+
+/**
+ * Rule-15 decision shape: "החלטה [מספר] של {גוף} "{שם}" ({תאריך})",
+ * with or without a decision number (Rule 15.2).
+ */
+export function looksLikeGovernmentDecision(response: string): boolean {
+  const line = getCitationLine(response);
+  if (!/^\s*החלטה\b/.test(line)) return false;
+  return /\bשל\s+\S/.test(line) && /["״][^"״]{2,}["״]/.test(line);
+}
+
 
 function validateOtherResponse(response: string): string[] {
   const citationLine = getCitationLine(response);
@@ -493,6 +512,26 @@ export function validateAIResponse(
         ruleSet,
       };
     }
+
+    // Rule-15 decision shape rendered under the generic "אחר" type
+    // (e.g. החלטה 40 של הכנסת "כינון חוקה לישראל" (13.6.1950)).
+    // Validate it against the government-decision rule set instead of the
+    // generic `other` engine, whose synthetic `citation` field is never
+    // extracted and therefore always reported as missing.
+    if (looksLikeGovernmentDecision(response)) {
+      const decisionRuleSet = getRuleSet("government_decision") || ruleSet;
+      const decisionFields = extractFieldsFromResponse(response, "government_decision");
+      const missingFields = validateCitation("government_decision", decisionFields);
+      return {
+        isComplete: missingFields.length === 0,
+        missingFields,
+        primaryRule: decisionRuleSet.primaryRule,
+        ruleTitle: decisionRuleSet.ruleTitle,
+        template: decisionRuleSet.template,
+        ruleSet: decisionRuleSet,
+        effectiveSourceType: "government_decision",
+      };
+    }
   }
 
   // Infer the actual rendered type from the citation line so we don't validate
@@ -504,7 +543,21 @@ export function validateAIResponse(
 
   const engineKey = ENGINE_KEY_MAP[effectiveType] || ENGINE_KEY_MAP[sourceType];
   const extractedFields = extractFieldsFromResponse(response, effectiveType);
+  // The generic `other` engine has a single synthetic required component named
+  // `citation` that no extractor ever fills. Never report it as missing.
+  if (engineKey === "other") {
+    return {
+      isComplete: true,
+      missingFields: [],
+      primaryRule: effectiveRuleSet.primaryRule,
+      ruleTitle: effectiveRuleSet.ruleTitle,
+      template: effectiveRuleSet.template,
+      ruleSet: effectiveRuleSet,
+      effectiveSourceType: effectiveType,
+    };
+  }
   const missingFields = validateCitation(engineKey, extractedFields);
+
 
   return {
     isComplete: missingFields.length === 0,
@@ -526,21 +579,30 @@ export function getMissingFieldsSummary(
 ): string {
   if (missingFields.length === 0) return "";
 
+  // Never surface an internal field key to the user.
+  const labelFor = (field: string, fromRuleSet?: string): string =>
+    fromRuleSet || OTHER_MISSING_FIELD_LABELS[field] || GENERIC_FIELD_LABELS[field] || "";
+
   if (sourceType === "other") {
-    const descriptions = missingFields.map(field => OTHER_MISSING_FIELD_LABELS[field] || field);
+    const descriptions = missingFields.map(field => labelFor(field)).filter(Boolean);
+    if (descriptions.length === 0) return "";
     return `חסרים ${descriptions.length} רכיבי חובה: ${descriptions.join("، ")}`;
   }
 
   const ruleSet = getRuleSet(sourceType);
   if (!ruleSet) return "";
 
-  const descriptions = missingFields.map(field => {
-    const component = ruleSet.components.find(c => c.field === field);
-    return component ? `${component.description} (כלל ${component.rule})` : field;
-  });
+  const descriptions = missingFields
+    .map(field => {
+      const component = ruleSet.components.find(c => c.field === field);
+      return labelFor(field, component ? `${component.description} (כלל ${component.rule})` : undefined);
+    })
+    .filter(Boolean);
 
+  if (descriptions.length === 0) return "";
   return `חסרים ${descriptions.length} רכיבי חובה: ${descriptions.join("، ")}`;
 }
+
 
 /**
  * Build a structured prompt enhancement for the AI based on the detected source type.

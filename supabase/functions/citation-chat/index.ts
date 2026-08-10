@@ -3165,7 +3165,101 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       }
     }
 
+    // ── Government / Knesset decision (כלל 15) search via Perplexity ──
+    // The "אחר" engine previously had no grounded search branch, so decisions
+    // such as "החלטת הררי" were generated ungrounded. Search official
+    // Knesset / government sources and pass verified fields to the drafter.
+    let decisionHint = "";
+    const isOtherClass = !!classMatch && /אחר/.test(classMatch[1]);
+    const decisionShaped = /החלט(?:ה|ת|ות)\s|החלטת\s|מזכר|כינון חוקה/.test(userInput);
+    if ((isOtherClass || decisionShaped) && !hasVerifiedCandidates) {
+      try {
+        const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
+        if (PERPLEXITY_API_KEY) {
+          const decisionQuery = userInput
+            .replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "")
+            .replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
+            .trim();
+
+          if (decisionQuery.length > 2) {
+            console.log(`[decision] Searching Perplexity for: ${decisionQuery}`);
+            const decRun = await perplexityWithFallback(
+              PERPLEXITY_API_KEY,
+              {
+                model: "sonar-pro",
+                search_domain_filter: [
+                  "knesset.gov.il",
+                  "main.knesset.gov.il",
+                  "fs.knesset.gov.il",
+                  "gov.il",
+                  "pmo.gov.il",
+                  "reshumot.gov.il",
+                ],
+                messages: [
+                  {
+                    role: "system",
+                    content: `אתה עוזר מחקר משפטי ישראלי. החזר JSON בלבד.
+חפש החלטה רשמית של הכנסת / הממשלה / גוף ציבורי, לפי כלל 15 של כללי האזכור האחיד.
+הפורמט:
+{"found":true,"decidingBody":"שם הגוף המחליט המדויק","decisionNumber":"מספר ההחלטה אם קיים","decisionName":"שם ההחלטה המדויק","fullDate":"ד.מ.שנה","sourceUrl":"כתובת מקור רשמי"}
+כללים מחייבים:
+- אל תמציא מספר החלטה. אם לא מצאת מספר רשמי מפורש, החזר decisionNumber:"".
+- אל תמציא שם גוף. אם ההחלטה התקבלה במליאת הכנסת, ציין "הכנסת".
+- התאריך חייב להופיע במקור רשמי.
+- אם לא מצאת מקור רשמי, החזר {"found":false}.`,
+                  },
+                  {
+                    role: "user",
+                    content: `מצא את ההחלטה הרשמית: "${decisionQuery}". ציין את הגוף המחליט, מספר ההחלטה (רק אם רשמי ומפורש), שם ההחלטה המדויק, ותאריך מלא.`,
+                  },
+                ],
+              },
+              "decision",
+            );
+
+            const decResp = decRun.resp;
+            if (decResp && decResp.ok) {
+              const decData = await decResp.json();
+              const decContent = decData.choices?.[0]?.message?.content || "";
+              const decCitations: string[] = Array.isArray(decData.citations) ? decData.citations : [];
+              const trustedDecUrls = decCitations.filter((u) =>
+                /(^|\.)knesset\.gov\.il|(^|\.)gov\.il|reshumot\.gov\.il/i.test(String(u)),
+              );
+              const decMatch = decContent.match(/\{[\s\S]*?\}/);
+              if (decMatch) {
+                try {
+                  const dec = JSON.parse(decMatch[0]);
+                  if (dec.found && dec.decisionName && trustedDecUrls.length > 0) {
+                    decisionHint =
+                      `\n\n══ חיפוש החלטה רשמית (כלל 15) ══\n` +
+                      `גוף מחליט: ${dec.decidingBody || "[חסר: גוף מחליט]"}\n` +
+                      `מספר החלטה: ${dec.decisionNumber || "[חסר: מספר החלטה]"}\n` +
+                      `שם ההחלטה: ${dec.decisionName}\n` +
+                      `תאריך: ${dec.fullDate || "[חסר: תאריך]"}\n` +
+                      `מקורות רשמיים: ${trustedDecUrls.slice(0, 3).join(" | ")}\n` +
+                      `══ עצב את האזכור לפי כלל 15. אם מספר ההחלטה מסומן [חסר...], השמט אותו לחלוטין מהאזכור (כלל 15.2) ואל תמציא מספר. אל תמציא תאריך או שם גוף. ══`;
+                  } else {
+                    decisionHint =
+                      `\n\n══ חיפוש החלטה רשמית (כלל 15) ══\n` +
+                      `לא נמצאו נתונים מאומתים ממקור רשמי עבור "${decisionQuery}".\n` +
+                      `אל תמציא מספר החלטה, תאריך או שם גוף. סמן [חסר:...] לכל שדה שאינו מאומת.\n══`;
+                  }
+                } catch (e) {
+                  console.error("[decision] Failed to parse JSON:", e);
+                }
+              }
+            } else {
+              console.error("[decision] Perplexity search failed:", decResp?.status);
+            }
+          }
+        }
+      } catch (e) {
+        console.error("[decision] search error:", e);
+      }
+    }
+
     const enhancedMessages = messages.map((m: { role: string; content: string }, i: number) => {
+
       if (i === messages.length - 1 && m.role === "user") {
         let content = m.content;
         if (caseLawOverrideLabel) {
@@ -3176,7 +3270,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
 
         // Inject engine hint + verified source hints + case law search + legislation search + regulation search + book search + article search into the last user message
         const engineHint = extractEngineHint(content);
-        const allHints = engineHint + (verifiedHint || "") + caseLawHint + legislationHint + regulationHint + bookHint + articleHint;
+        const allHints = engineHint + (verifiedHint || "") + caseLawHint + legislationHint + regulationHint + bookHint + articleHint + decisionHint;
         if (allHints || content !== m.content) {
           return { ...m, content: content + allHints };
         }
