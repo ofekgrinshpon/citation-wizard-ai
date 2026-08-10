@@ -571,21 +571,30 @@ export function getMissingFieldsSummary(
 ): string {
   if (missingFields.length === 0) return "";
 
+  // Never surface an internal field key to the user.
+  const labelFor = (field: string, fromRuleSet?: string): string =>
+    fromRuleSet || OTHER_MISSING_FIELD_LABELS[field] || GENERIC_FIELD_LABELS[field] || "";
+
   if (sourceType === "other") {
-    const descriptions = missingFields.map(field => OTHER_MISSING_FIELD_LABELS[field] || field);
+    const descriptions = missingFields.map(field => labelFor(field)).filter(Boolean);
+    if (descriptions.length === 0) return "";
     return `חסרים ${descriptions.length} רכיבי חובה: ${descriptions.join("، ")}`;
   }
 
   const ruleSet = getRuleSet(sourceType);
   if (!ruleSet) return "";
 
-  const descriptions = missingFields.map(field => {
-    const component = ruleSet.components.find(c => c.field === field);
-    return component ? `${component.description} (כלל ${component.rule})` : field;
-  });
+  const descriptions = missingFields
+    .map(field => {
+      const component = ruleSet.components.find(c => c.field === field);
+      return labelFor(field, component ? `${component.description} (כלל ${component.rule})` : undefined);
+    })
+    .filter(Boolean);
 
+  if (descriptions.length === 0) return "";
   return `חסרים ${descriptions.length} רכיבי חובה: ${descriptions.join("، ")}`;
 }
+
 
 /**
  * Build a structured prompt enhancement for the AI based on the detected source type.
