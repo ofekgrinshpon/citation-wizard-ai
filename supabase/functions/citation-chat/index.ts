@@ -3010,7 +3010,21 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                     }
                     if (bookParsed.hebrewYear && !bookParsed.year) details += `שנה עברית: ${bookParsed.hebrewYear}\n`;
                     if (bookParsed.edition) details += `מהדורה: ${bookParsed.edition}\n`;
+                    // ── Editor grounding gate (rule 23.7) ──
+                    if (bookParsed.editor) {
+                      const editorOk = editorGroundedInSources(
+                        bookParsed.editor,
+                        bookParsed.author || "",
+                        bookCitations,
+                        bookSearchResults,
+                      );
+                      if (!editorOk) {
+                        console.log(`[book] editor_dropped ungrounded="${bookParsed.editor}"`);
+                        bookParsed.editor = "";
+                      }
+                    }
                     if (bookParsed.editor) details += `עורך: ${bookParsed.editor}\n`;
+                    else details += `עורך: אין. אל תוסיף שם עורך כלשהו לאזכור (כלל 23.7 – עורך הוא רכיב רשות; עורך לשון/עורך סדרה אינם מאוזכרים כלל).\n`;
                     if (bookParsed.translator) details += `מתרגם: ${bookParsed.translator}\n`;
                     if (bookParsed.volumes) details += `כרכים: ${bookParsed.volumes}\n`;
                     if (bookParsed.publisher) details += `הוצאה לאור: ${bookParsed.publisher}\n`;
