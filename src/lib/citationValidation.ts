@@ -408,6 +408,17 @@ function detectOtherSubtype(response: string): OtherSubtype | null {
   return null;
 }
 
+/**
+ * Rule-15 decision shape: "החלטה [מספר] של {גוף} "{שם}" ({תאריך})",
+ * with or without a decision number (Rule 15.2).
+ */
+export function looksLikeGovernmentDecision(response: string): boolean {
+  const line = getCitationLine(response);
+  if (!/^\s*החלטה\b/.test(line)) return false;
+  return /\bשל\s+\S/.test(line) && /["״][^"״]{2,}["״]/.test(line);
+}
+
+
 function validateOtherResponse(response: string): string[] {
   const citationLine = getCitationLine(response);
   const subtype = detectOtherSubtype(response);
