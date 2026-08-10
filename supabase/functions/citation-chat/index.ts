@@ -3270,7 +3270,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
 
         // Inject engine hint + verified source hints + case law search + legislation search + regulation search + book search + article search into the last user message
         const engineHint = extractEngineHint(content);
-        const allHints = engineHint + (verifiedHint || "") + caseLawHint + legislationHint + regulationHint + bookHint + articleHint;
+        const allHints = engineHint + (verifiedHint || "") + caseLawHint + legislationHint + regulationHint + bookHint + articleHint + decisionHint;
         if (allHints || content !== m.content) {
           return { ...m, content: content + allHints };
         }
