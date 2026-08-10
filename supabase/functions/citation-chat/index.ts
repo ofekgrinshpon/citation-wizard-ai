@@ -711,6 +711,65 @@ function authorsAgree(a: string, b: string): boolean {
   return false;
 }
 
+// ── Editor grounding gate (rule 23.7) ──
+// A model-supplied editor name is emitted only if it actually appears in the
+// retrieved sources *next to* an editor marker (עורך/עורכת/עורכים/עורכות).
+// This blocks the common failure where a co-author of a different book of the
+// same author is hallucinated into the editor slot.
+function editorGroundedInSources(
+  editor: string,
+  author: string,
+  citations: unknown,
+  searchResults: unknown,
+): boolean {
+  const raw = normalizeHe(editor).replace(/עורכ(?:ים|ות|ת)?|עורך/g, " ").trim();
+  if (raw.length < 2) return false;
+  // Never allow the book's own author to be re-used as its editor
+  if (author && authorsAgree(raw, author)) return false;
+
+  const names = raw.split(/[,;]|\sו/).map((n) => n.trim()).filter((n) => n.length >= 2);
+  const probes = new Set<string>();
+  for (const n of names) {
+    probes.add(n);
+    const last = n.split(" ").filter(Boolean).pop();
+    if (last && last.length >= 2) probes.add(last);
+  }
+  if (probes.size === 0) return false;
+
+  const blobs: string[] = [];
+  if (Array.isArray(citations)) {
+    for (const u of citations as unknown[]) {
+      if (typeof u === "string") blobs.push(normalizeHe(decodeUrlSafe(u)));
+    }
+  }
+  if (Array.isArray(searchResults)) {
+    for (const r of searchResults as Array<Record<string, unknown>>) {
+      blobs.push(normalizeHe([
+        typeof r.title === "string" ? r.title : "",
+        typeof r.snippet === "string" ? r.snippet : "",
+        decodeUrlSafe(typeof r.url === "string" ? r.url : ""),
+      ].join(" ")));
+    }
+  }
+
+  const MARK = /עורכ(?:ים|ות|ת)?|עורך/;
+  for (const blob of blobs) {
+    for (const p of probes) {
+      let idx = blob.indexOf(p);
+      while (idx !== -1) {
+        const window = blob.slice(Math.max(0, idx - 80), idx + p.length + 80);
+        if (MARK.test(window)) {
+          // Reject if the same window labels this person as the author
+          const authorLabelled = /מחבר/.test(window) && !MARK.test(window.replace(/מחבר\S*/g, ""));
+          if (!authorLabelled) return true;
+        }
+        idx = blob.indexOf(p, idx + p.length);
+      }
+    }
+  }
+  return false;
+}
+
 // Focused single-call cross-check: ask Perplexity strictly for the author of
 // the given title, on the same trusted domain set. Used to confirm/reject the
 // first call's author. Returns "" on failure or low confidence.
