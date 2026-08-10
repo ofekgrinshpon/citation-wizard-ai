@@ -59,6 +59,13 @@ import {
 } from "../_shared/trustedHosts.ts";
 import { normalizeHebrewNumberRanges } from "../_shared/hebrewNumberRange.ts";
 import { normalizeEditorPlacement } from "../_shared/articleCitationValidator.ts";
+import {
+  isProvisionalCouncilDate,
+  knessetLabel,
+  knessetTermForDate,
+  normalizeKnessetTerm,
+} from "../_shared/knessetTerms.ts";
+
 
 // ── Tier-2 open-web fallback (flag-gated) ──────────────────────────────────
 // Tier-1 = existing call with `search_domain_filter` (high-authority legal
