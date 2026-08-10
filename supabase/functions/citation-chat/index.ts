@@ -3181,7 +3181,21 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                       if (art.bookTitle) details += `שם הספר: ${art.bookTitle}\n`;
                       if (art.volume) details += `כרך: ${art.volume}\n`;
                       if (art.firstPage) details += `עמוד ראשון: ${art.firstPage}\n`;
+                      // ── Editor grounding gate (rule 23.7) ──
+                      if (art.editor) {
+                        const editorOk = editorGroundedInSources(
+                          art.editor,
+                          art.bookAuthor || art.author || "",
+                          artCitations,
+                          artSearchResults,
+                        );
+                        if (!editorOk) {
+                          console.log(`[article] editor_dropped ungrounded="${art.editor}"`);
+                          art.editor = "";
+                        }
+                      }
                       if (art.editor) details += `עורך: ${art.editor}\n`;
+                      else details += `עורך: אין. אל תוסיף שם עורך כלשהו לאזכור (כלל 23.7 – רכיב רשות).\n`;
                       if (art.year) details += `שנה: ${art.year}\n`;
                       if (art.sameAuthor) details += `מחבר זהה: כן (לפי כלל 24.11 – אין לחזור על שם המחבר לפני שם הספר)\n`;
                       if (art.editor) details += `הנחיה מחייבת (כלל 23.7): שמות העורכים יופיעו אך ורק בתוך הסוגריים בסוף האזכור, לפני השנה. אין לכתוב אותם לפני שם הספר.\n`;
