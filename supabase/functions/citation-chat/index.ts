@@ -711,6 +711,65 @@ function authorsAgree(a: string, b: string): boolean {
   return false;
 }
 
+// ── Editor grounding gate (rule 23.7) ──
+// A model-supplied editor name is emitted only if it actually appears in the
+// retrieved sources *next to* an editor marker (עורך/עורכת/עורכים/עורכות).
+// This blocks the common failure where a co-author of a different book of the
+// same author is hallucinated into the editor slot.
+function editorGroundedInSources(
+  editor: string,
+  author: string,
+  citations: unknown,
+  searchResults: unknown,
+): boolean {
+  const raw = normalizeHe(editor).replace(/עורכ(?:ים|ות|ת)?|עורך/g, " ").trim();
+  if (raw.length < 2) return false;
+  // Never allow the book's own author to be re-used as its editor
+  if (author && authorsAgree(raw, author)) return false;
+
+  const names = raw.split(/[,;]|\sו/).map((n) => n.trim()).filter((n) => n.length >= 2);
+  const probes = new Set<string>();
+  for (const n of names) {
+    probes.add(n);
+    const last = n.split(" ").filter(Boolean).pop();
+    if (last && last.length >= 2) probes.add(last);
+  }
+  if (probes.size === 0) return false;
+
+  const blobs: string[] = [];
+  if (Array.isArray(citations)) {
+    for (const u of citations as unknown[]) {
+      if (typeof u === "string") blobs.push(normalizeHe(decodeUrlSafe(u)));
+    }
+  }
+  if (Array.isArray(searchResults)) {
+    for (const r of searchResults as Array<Record<string, unknown>>) {
+      blobs.push(normalizeHe([
+        typeof r.title === "string" ? r.title : "",
+        typeof r.snippet === "string" ? r.snippet : "",
+        decodeUrlSafe(typeof r.url === "string" ? r.url : ""),
+      ].join(" ")));
+    }
+  }
+
+  const MARK = /עורכ(?:ים|ות|ת)?|עורך/;
+  for (const blob of blobs) {
+    for (const p of probes) {
+      let idx = blob.indexOf(p);
+      while (idx !== -1) {
+        const window = blob.slice(Math.max(0, idx - 80), idx + p.length + 80);
+        if (MARK.test(window)) {
+          // Reject if the same window labels this person as the author
+          const authorLabelled = /מחבר/.test(window) && !MARK.test(window.replace(/מחבר\S*/g, ""));
+          if (!authorLabelled) return true;
+        }
+        idx = blob.indexOf(p, idx + p.length);
+      }
+    }
+  }
+  return false;
+}
+
 // Focused single-call cross-check: ask Perplexity strictly for the author of
 // the given title, on the same trusted domain set. Used to confirm/reject the
 // first call's author. Returns "" on failure or low confidence.
@@ -1403,7 +1462,7 @@ const SYSTEM_PROMPT = `אתה מומחה לכללי האזכור האחיד בכ
 *** חשוב מאוד: בהפניה נקודתית לסעיף בחקיקה, תמיד כתוב "ס'" (עם גרש) ולא "סעיף". דוגמה: ס' 3 לחוק-יסוד: הממשלה, התשס"א–2001, ס"ח 158. ***
 כלל 4.3: חוק-יסוד עם מקף. כלל 4.5: [נוסח חדש]. כלל 4.6: [נוסח משולב]. כלל 2.7: שנת קובץ לחוקי יסוד.
 ספרים (כלל 23): [שם המחבר] **[שם הספר]** [מספר הכרך] [הפניה ספציפית] ([המהדורה] [שם העורך] [שם המתרגם] [שנת פרסום הספר]).
-כלל 23.2.1: שם פרטי + משפחה כמו במקור. קיצורים בגרש/גרשיים (לא נקודות). כלל 23.2.2: 2 מחברים = ו"ו לפני השני. 3 = פסיקים + ו"ו לפני האחרון. 4+ = אופציונלי ראשון + "ואח'". כלל 23.2.3: ללא תארים אקדמיים/צבאיים/אחרים. כלל 23.2.4: מוסד כמחבר – שם הגוף/הוועדה בלבד, ללא שמות חברים. כלל 23.3: שם הספר מודגש. כלל 23.4: כרך תמיד מצוין, כפי שבספר, ללא הדגשה, ללא גרש אחרי אות (כרך א, כרך שני). כלל 23.5.2: עמוד כמו בספר, ללא "בעמ'". כלל 23.5.3: פרק/סעיף עם תווית (פרק, ס', §). § רק אם מספור רצוף. כלל 23.5.4: ה"ש/טבלה/תרשים = עמוד, פסיק, כינוי + מספר (158, ה"ש 69). אין פסיק בין שם ספר/כרך להפניה (אלא לפי כלל 1.9). כלל 23.6: מהדורה רק אם 2+, כמו במקור. כלל 23.7: שמות עורכים + עורך/עורכת/עורכים/עורכות. כלל 23.8: שמות מתרגמים + מתרגם/מתרגמת/מתרגמים/מתרגמות. ללא שפת מקור. כלל 23.9: שנה עברית בלבד → עברית (עם ה', ללא גרש: התשמ"ז). לועזית בלבד → לועזית. שתיהן מצוינות → לועזית בלבד. מהדורה חדשה → שנת המהדורה החדשה. כלל 1.9: פסיק מפריד בין שני מספרים/מילים עוקבים ללא הבחנה חזותית (הדגשה/מירכאות).
+כלל 23.2.1: שם פרטי + משפחה כמו במקור. קיצורים בגרש/גרשיים (לא נקודות). כלל 23.2.2: 2 מחברים = ו"ו לפני השני. 3 = פסיקים + ו"ו לפני האחרון. 4+ = אופציונלי ראשון + "ואח'". כלל 23.2.3: ללא תארים אקדמיים/צבאיים/אחרים. כלל 23.2.4: מוסד כמחבר – שם הגוף/הוועדה בלבד, ללא שמות חברים. כלל 23.3: שם הספר מודגש. כלל 23.4: כרך תמיד מצוין, כפי שבספר, ללא הדגשה, ללא גרש אחרי אות (כרך א, כרך שני). כלל 23.5.2: עמוד כמו בספר, ללא "בעמ'". כלל 23.5.3: פרק/סעיף עם תווית (פרק, ס', §). § רק אם מספור רצוף. כלל 23.5.4: ה"ש/טבלה/תרשים = עמוד, פסיק, כינוי + מספר (158, ה"ש 69). אין פסיק בין שם ספר/כרך להפניה (אלא לפי כלל 1.9). כלל 23.6: מהדורה רק אם 2+, כמו במקור. כלל 23.7: שמות עורכים + עורך/עורכת/עורכים/עורכות. עורך הוא רכיב רשות – יש לציינו רק אם הספר הוא קובץ ערוך ושם העורך אומת מול מקור. עורך לשון, עורך סדרה או עורך אחראי בהוצאה אינם מאוזכרים. אין להפוך מחבר-שותף או מחבר של ספר אחר לעורך. כלל 23.8: שמות מתרגמים + מתרגם/מתרגמת/מתרגמים/מתרגמות. ללא שפת מקור. כלל 23.9: שנה עברית בלבד → עברית (עם ה', ללא גרש: התשמ"ז). לועזית בלבד → לועזית. שתיהן מצוינות → לועזית בלבד. מהדורה חדשה → שנת המהדורה החדשה. כלל 1.9: פסיק מפריד בין שני מספרים/מילים עוקבים ללא הבחנה חזותית (הדגשה/מירכאות).
 דוגמות ספרים: אוריאל פרוקצ'יה **דיני חברות חדשים בישראל: דין נוהג, דין רצוי והדרך לחקיקה** (1989). | דניאל פרידמן ואלרן שפירא בר-אור **דיני עשיית עושר ולא במשפט** כרך ב (מהדורה שלישית 2017). | חאלד גנאים, מרדכי קרמניצר ובועז שנור **דיני לשון הרע: הדין המצוי והדין הרצוי** (מהדורה שנייה מורחבת 2019). | בנג'מין לי וורף **שפה, מחשבה, מציאות** (מהדורה שנייה מתוקנת ומעודכנת, יאיר אור עורך, איתמר אוסטרייכר ואח' מתרגמים 2018). | אריאל בן נון **חוק החוזים האחידים, התשמ"ג–1982** 73 (1987). | גבריאל קלינג **אתיקה בעריכת דין** 158, ה"ש 69 (2001). | ש"ז פלר **יסודות בדיני עונשין** כרך א, ז–ח (1984). | מנחם אלון **המשפט העברי: תולדותיו, מקורותיו, עקרונותיו** כרך שלישי (מהדורה שלישית מורחבת ומתוקנת התשנ"ב). | קתרין מקינון **פמיניזם משפטי בתיאוריה ובפרקטיקה** (דפנה ברק-ארז עורכת, עידית שורר מתרגמת 2005). | משרד המשפטים **דין וחשבון הועדה לפישוט הענינים ולשיפור ההליכים בתביעות נזיקין** (1972).
 מאמרים (כלל 24): [שם המחבר] "[שם המאמר]" **[שם כתב העת]** [כרך][(חוברת)] [עמוד תחילת המאמר][, הפניה ספציפית] ([שנה]).
 כלל 24.2: שמות מחברים לפי 23.2 (שם פרטי + משפחה, ללא תארים). כלל 24.3: שם מאמר במירכאות; שם משני בנקודתיים (24.3.3). כלל 24.4: כתב עת מודגש; עיתון יומי עם חלק: **שם:חלק** (הכל מודגש). דוגמה: יעל גרוס "נקנה ביום חול" **מעריב: עסקים** 2.4.2004, 10. כלל 24.5: כרך לא מודגש, כמו במקור (אותיות או מספרים). כלל 24.6: חוברת בסוגריים ללא רווח – רק אם כל חוברת מעמוד 1. דוגמה: ה(2) 27. כלל 24.7.1: עמוד תחילת חובה. כלל 24.7.2: אין עמוד ראשון אם: מאמר יחיד בגיליון, כולם מעמוד 1, אין עמודים. כלל 24.8: הפניה ספציפית אחרי פסיק. דוגמה: לד 569, 584–586. כלל 24.9.1: שנה רק אם לא הופיעה ככרך. 24.9.2: עברית בלבד → עברית (עם ה'). שתיהן → לועזית. כלל 24.10: מקוון – כמו מודפס. כלל 24.12.1: "משפט, חברה ותרבות" – לפני 2018 מאמר בספר (24.11), אחרי 2018 מאמר בכתב עת. כלל 24.12.2: "פרשת השבוע" – פרשה לפני השנה, ללא עמוד ראשון. דוגמה: פרשת השבוע 398 (פרשת וירא התשע"ב).
@@ -2951,7 +3010,21 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                     }
                     if (bookParsed.hebrewYear && !bookParsed.year) details += `שנה עברית: ${bookParsed.hebrewYear}\n`;
                     if (bookParsed.edition) details += `מהדורה: ${bookParsed.edition}\n`;
+                    // ── Editor grounding gate (rule 23.7) ──
+                    if (bookParsed.editor) {
+                      const editorOk = editorGroundedInSources(
+                        bookParsed.editor,
+                        bookParsed.author || "",
+                        bookCitations,
+                        bookSearchResults,
+                      );
+                      if (!editorOk) {
+                        console.log(`[book] editor_dropped ungrounded="${bookParsed.editor}"`);
+                        bookParsed.editor = "";
+                      }
+                    }
                     if (bookParsed.editor) details += `עורך: ${bookParsed.editor}\n`;
+                    else details += `עורך: אין. אל תוסיף שם עורך כלשהו לאזכור (כלל 23.7 – עורך הוא רכיב רשות; עורך לשון/עורך סדרה אינם מאוזכרים כלל).\n`;
                     if (bookParsed.translator) details += `מתרגם: ${bookParsed.translator}\n`;
                     if (bookParsed.volumes) details += `כרכים: ${bookParsed.volumes}\n`;
                     if (bookParsed.publisher) details += `הוצאה לאור: ${bookParsed.publisher}\n`;
@@ -3108,7 +3181,21 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                       if (art.bookTitle) details += `שם הספר: ${art.bookTitle}\n`;
                       if (art.volume) details += `כרך: ${art.volume}\n`;
                       if (art.firstPage) details += `עמוד ראשון: ${art.firstPage}\n`;
+                      // ── Editor grounding gate (rule 23.7) ──
+                      if (art.editor) {
+                        const editorOk = editorGroundedInSources(
+                          art.editor,
+                          art.bookAuthor || art.author || "",
+                          artCitations,
+                          artSearchResults,
+                        );
+                        if (!editorOk) {
+                          console.log(`[article] editor_dropped ungrounded="${art.editor}"`);
+                          art.editor = "";
+                        }
+                      }
                       if (art.editor) details += `עורך: ${art.editor}\n`;
+                      else details += `עורך: אין. אל תוסיף שם עורך כלשהו לאזכור (כלל 23.7 – רכיב רשות).\n`;
                       if (art.year) details += `שנה: ${art.year}\n`;
                       if (art.sameAuthor) details += `מחבר זהה: כן (לפי כלל 24.11 – אין לחזור על שם המחבר לפני שם הספר)\n`;
                       if (art.editor) details += `הנחיה מחייבת (כלל 23.7): שמות העורכים יופיעו אך ורק בתוך הסוגריים בסוף האזכור, לפני השנה. אין לכתוב אותם לפני שם הספר.\n`;
