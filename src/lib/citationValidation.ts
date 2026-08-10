@@ -401,6 +401,14 @@ const OTHER_MISSING_FIELD_LABELS: Record<string, string> = {
   fullDate: "תאריך לועזי מלא",
 };
 
+/** Fallback labels so an unmapped internal key is never printed to the user. */
+const GENERIC_FIELD_LABELS: Record<string, string> = {
+  decidingBody: "שם הגוף המחליט (כלל 15.1)",
+  decisionName: "שם ההחלטה במירכאות (כלל 15.1)",
+  decisionNumber: "מספר ההחלטה (כלל 15.1)",
+};
+
+
 function detectOtherSubtype(response: string): OtherSubtype | null {
   const citationLine = getCitationLine(response);
   if (/מועצת המדינה(?:\s+הזמנית)?/.test(citationLine)) return "provisional_council";
