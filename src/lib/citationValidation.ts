@@ -493,6 +493,26 @@ export function validateAIResponse(
         ruleSet,
       };
     }
+
+    // Rule-15 decision shape rendered under the generic "אחר" type
+    // (e.g. החלטה 40 של הכנסת "כינון חוקה לישראל" (13.6.1950)).
+    // Validate it against the government-decision rule set instead of the
+    // generic `other` engine, whose synthetic `citation` field is never
+    // extracted and therefore always reported as missing.
+    if (looksLikeGovernmentDecision(response)) {
+      const decisionRuleSet = getRuleSet("government_decision") || ruleSet;
+      const decisionFields = extractFieldsFromResponse(response, "government_decision");
+      const missingFields = validateCitation("government_decision", decisionFields);
+      return {
+        isComplete: missingFields.length === 0,
+        missingFields,
+        primaryRule: decisionRuleSet.primaryRule,
+        ruleTitle: decisionRuleSet.ruleTitle,
+        template: decisionRuleSet.template,
+        ruleSet: decisionRuleSet,
+        effectiveSourceType: "government_decision",
+      };
+    }
   }
 
   // Infer the actual rendered type from the citation line so we don't validate
@@ -504,7 +524,21 @@ export function validateAIResponse(
 
   const engineKey = ENGINE_KEY_MAP[effectiveType] || ENGINE_KEY_MAP[sourceType];
   const extractedFields = extractFieldsFromResponse(response, effectiveType);
+  // The generic `other` engine has a single synthetic required component named
+  // `citation` that no extractor ever fills. Never report it as missing.
+  if (engineKey === "other") {
+    return {
+      isComplete: true,
+      missingFields: [],
+      primaryRule: effectiveRuleSet.primaryRule,
+      ruleTitle: effectiveRuleSet.ruleTitle,
+      template: effectiveRuleSet.template,
+      ruleSet: effectiveRuleSet,
+      effectiveSourceType: effectiveType,
+    };
+  }
   const missingFields = validateCitation(engineKey, extractedFields);
+
 
   return {
     isComplete: missingFields.length === 0,
