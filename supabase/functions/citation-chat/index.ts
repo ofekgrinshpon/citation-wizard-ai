@@ -3208,16 +3208,17 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                     content: `אתה עוזר מחקר משפטי ישראלי. החזר JSON בלבד.
 חפש החלטה רשמית של הכנסת / הממשלה / גוף ציבורי, לפי כלל 15 של כללי האזכור האחיד.
 הפורמט:
-{"found":true,"decidingBody":"שם הגוף המחליט המדויק","decisionNumber":"מספר ההחלטה אם קיים","decisionName":"שם ההחלטה המדויק","fullDate":"ד.מ.שנה","sourceUrl":"כתובת מקור רשמי"}
+{"found":true,"decidingBody":"שם הגוף המחליט המדויק","knessetTerm":"מספר הכנסת כמספר בלבד, אם ההחלטה היא של הכנסת","decisionNumber":"מספר ההחלטה אם קיים","decisionName":"שם ההחלטה המדויק","fullDate":"ד.מ.שנה","sourceUrl":"כתובת מקור רשמי"}
 כללים מחייבים:
 - אל תמציא מספר החלטה. אם לא מצאת מספר רשמי מפורש, החזר decisionNumber:"".
 - אל תמציא שם גוף. אם ההחלטה התקבלה במליאת הכנסת, ציין "הכנסת".
+- knessetTerm חייב להופיע במקור רשמי. אם אינו מופיע במפורש, החזר knessetTerm:"".
 - התאריך חייב להופיע במקור רשמי.
 - אם לא מצאת מקור רשמי, החזר {"found":false}.`,
                   },
                   {
                     role: "user",
-                    content: `מצא את ההחלטה הרשמית: "${decisionQuery}". ציין את הגוף המחליט, מספר ההחלטה (רק אם רשמי ומפורש), שם ההחלטה המדויק, ותאריך מלא.`,
+                    content: `מצא את ההחלטה הרשמית: "${decisionQuery}". ציין את הגוף המחליט, מספר הכנסת (רק אם מופיע במקור רשמי), מספר ההחלטה (רק אם רשמי ומפורש), שם ההחלטה המדויק, ותאריך מלא.`,
                   },
                 ],
               },
@@ -3237,20 +3238,41 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                 try {
                   const dec = JSON.parse(decMatch[0]);
                   if (dec.found && dec.decisionName && trustedDecUrls.length > 0) {
+                    // ── Knesset term: derived from the verified date, never
+                    // taken from the model. A search-reported term that
+                    // disagrees with the date is discarded and logged.
+                    const verifiedDate = String(dec.fullDate || "").trim();
+                    const derivedTerm = verifiedDate ? knessetTermForDate(verifiedDate) : null;
+                    const reportedTerm = Number(String(dec.knessetTerm || "").replace(/\D/g, "")) || null;
+                    if (reportedTerm && derivedTerm && reportedTerm !== derivedTerm) {
+                      console.log(
+                        `[decision] knesset_term_conflict reported=${reportedTerm} derived=${derivedTerm} date=${verifiedDate}`,
+                      );
+                    }
+                    const provisional = verifiedDate ? isProvisionalCouncilDate(verifiedDate) : false;
+                    const termLine = provisional
+                      ? `גוף: מועצת המדינה הזמנית (כלל 8.2) — אין מספר כנסת.`
+                      : derivedTerm
+                      ? `מספר כנסת (נגזר מהתאריך המאומת — חובה להשתמש בדיוק בערך זה): ${knessetLabel(derivedTerm)}`
+                      : `מספר כנסת: לא אומת — אסור לציין מספר כנסת כלשהו באזכור.`;
+
                     decisionHint =
                       `\n\n══ חיפוש החלטה רשמית (כלל 15) ══\n` +
                       `גוף מחליט: ${dec.decidingBody || "[חסר: גוף מחליט]"}\n` +
+                      `${termLine}\n` +
                       `מספר החלטה: ${dec.decisionNumber || "[חסר: מספר החלטה]"}\n` +
                       `שם ההחלטה: ${dec.decisionName}\n` +
-                      `תאריך: ${dec.fullDate || "[חסר: תאריך]"}\n` +
+                      `תאריך: ${verifiedDate || "[חסר: תאריך]"}\n` +
                       `מקורות רשמיים: ${trustedDecUrls.slice(0, 3).join(" | ")}\n` +
-                      `══ עצב את האזכור לפי כלל 15. אם מספר ההחלטה מסומן [חסר...], השמט אותו לחלוטין מהאזכור (כלל 15.2) ואל תמציא מספר. אל תמציא תאריך או שם גוף. ══`;
+                      `══ עצב את האזכור לפי כלל 15. אם מספר ההחלטה מסומן [חסר...], השמט אותו לחלוטין מהאזכור (כלל 15.2) ואל תמציא מספר. ` +
+                      `אל תשנה ואל תמציא מספר כנסת — השתמש רק בערך שצוין לעיל, ואם לא אומת אל תציין מספר כנסת כלל. אל תמציא תאריך או שם גוף. ══`;
                   } else {
                     decisionHint =
                       `\n\n══ חיפוש החלטה רשמית (כלל 15) ══\n` +
                       `לא נמצאו נתונים מאומתים ממקור רשמי עבור "${decisionQuery}".\n` +
-                      `אל תמציא מספר החלטה, תאריך או שם גוף. סמן [חסר:...] לכל שדה שאינו מאומת.\n══`;
+                      `אל תמציא מספר החלטה, מספר כנסת, תאריך או שם גוף. סמן [חסר:...] לכל שדה שאינו מאומת.\n══`;
                   }
+
                 } catch (e) {
                   console.error("[decision] Failed to parse JSON:", e);
                 }
