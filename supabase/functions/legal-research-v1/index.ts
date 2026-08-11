@@ -1674,6 +1674,8 @@ async function handle(req: Request): Promise<Response> {
     },
   });
 
+  // A real drafted answer keeps the charge; refusals/stubs are refunded.
+  if (drafter.ok) pipelineDelivered = true;
   return jsonResponse(200, {
     answer: finalAnswer,
     footnotes: finalFootnotes,
