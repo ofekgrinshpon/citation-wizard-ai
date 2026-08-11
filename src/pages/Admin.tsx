@@ -44,6 +44,12 @@ interface UserProfile {
   referred_by_user_id?: string | null;
 }
 
+export interface UserUsage {
+  spent: number;
+  lastChargeAt: string | null;
+  lastActivityAt: string | null;
+}
+
 type MainTab = "analytics" | "sources" | "users" | "knowledge";
 type SourceSubTab = "caselaw" | "legislation" | "literature" | "other" | "verified";
 
@@ -53,6 +59,9 @@ const Admin = () => {
   const [citations, setCitations] = useState<CitationRecord[]>([]);
   const [verifiedSources, setVerifiedSources] = useState<VerifiedSourceRow[]>([]);
   const [users, setUsers] = useState<UserProfile[]>([]);
+  const [userUsage, setUserUsage] = useState<Record<string, UserUsage>>({});
+  const [adminUserIds, setAdminUserIds] = useState<Set<string>>(new Set());
+  const [usersRefreshedAt, setUsersRefreshedAt] = useState<Date | null>(null);
   const [activeTab, setActiveTab] = useState<MainTab>("analytics");
   const [sourceSubTab, setSourceSubTab] = useState<SourceSubTab>("caselaw");
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -110,16 +119,60 @@ const Admin = () => {
     setSourcesLoaded(true);
   }, [sourcesLoaded, analyticsLoaded, fetchAnalytics]);
 
-  const fetchUsers = useCallback(async () => {
-    if (usersLoaded) return;
+  const fetchUsers = useCallback(async (force = false) => {
+    if (usersLoaded && !force) return;
     try {
-      const { data } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
-      setUsers(data ?? []);
+      const [profilesRes, rolesRes, ledgerRes, citRes, qaRes] = await Promise.all([
+        supabase.from("profiles").select("*").order("created_at", { ascending: false }),
+        supabase.from("user_roles").select("user_id, role").eq("role", "admin"),
+        supabase
+          .from("credit_ledger")
+          .select("user_id, event_type, amount, created_at")
+          .in("event_type", ["consume", "refund"])
+          .order("created_at", { ascending: false })
+          .limit(5000),
+        supabase
+          .from("citation_history")
+          .select("user_id, created_at")
+          .order("created_at", { ascending: false })
+          .limit(3000),
+        supabase
+          .from("qa_logs")
+          .select("user_id, created_at")
+          .order("created_at", { ascending: false })
+          .limit(3000),
+      ]);
+
+      const usage: Record<string, UserUsage> = {};
+      const bump = (id: string | null | undefined): UserUsage | null => {
+        if (!id) return null;
+        usage[id] ??= { spent: 0, lastChargeAt: null, lastActivityAt: null };
+        return usage[id];
+      };
+
+      for (const row of ledgerRes.data ?? []) {
+        const u = bump(row.user_id);
+        if (!u) continue;
+        // consume rows store a negative amount; refunds store the positive mirror
+        u.spent += -(row.amount ?? 0);
+        if (row.event_type === "consume" && !u.lastChargeAt) u.lastChargeAt = row.created_at;
+      }
+      for (const row of [...(citRes.data ?? []), ...(qaRes.data ?? [])]) {
+        const u = bump(row.user_id);
+        if (!u) continue;
+        if (!u.lastActivityAt || row.created_at > u.lastActivityAt) u.lastActivityAt = row.created_at;
+      }
+
+      setUserUsage(usage);
+      setAdminUserIds(new Set((rolesRes.data ?? []).map((r) => r.user_id)));
+      setUsers(profilesRes.data ?? []);
+      setUsersRefreshedAt(new Date());
       setUsersLoaded(true);
     } catch (err) {
       console.error("[Admin] fetchUsers failed:", err);
     }
   }, [usersLoaded]);
+
 
   const fetchKnowledge = useCallback(async () => {
     if (knowledgeLoaded) return;
@@ -175,6 +228,14 @@ const Admin = () => {
       case "knowledge": void fetchKnowledge(); break;
     }
   }, [isAdmin, activeTab, fetchAnalytics, fetchSources, fetchUsers, fetchKnowledge]);
+
+  // Credits must never look stale: refresh the users tab whenever the window regains focus
+  useEffect(() => {
+    if (activeTab !== "users") return;
+    const onFocus = () => void fetchUsers(true);
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [activeTab, fetchUsers]);
 
   // Reload all loaded tabs
   const reloadAll = useCallback(async () => {
@@ -751,13 +812,26 @@ const Admin = () => {
                 color="text-primary"
               />
             </div>
-            <h3 className="text-foreground font-bold text-base">רשימת משתמשים</h3>
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-foreground font-bold text-base">רשימת משתמשים</h3>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                {usersRefreshedAt && (
+                  <span>עודכן: {usersRefreshedAt.toLocaleTimeString("he-IL")}</span>
+                )}
+                <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => void fetchUsers(true)}>
+                  רענן נתונים
+                </Button>
+              </div>
+            </div>
             <UsersTable
               users={users}
+              usage={userUsage}
+              adminUserIds={adminUserIds}
               onUserUpdated={(userId, patch) => {
                 setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, ...patch } : u));
               }}
             />
+
           </div>
           )
         )}

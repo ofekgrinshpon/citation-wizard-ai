@@ -1609,6 +1609,9 @@ serve(async (req) => {
     );
   }
   // ── End auth gate ──
+  const userId = (claimsData.claims as Record<string, unknown>).sub as string | undefined;
+
+
 
   // Build a per-request user-scoped client for credit RPCs
   const userClient = createClient(SUPABASE_URL_ENV, SUPABASE_ANON_KEY, {
@@ -1699,6 +1702,9 @@ serve(async (req) => {
             const bestMatch = rankedMatches[0]?.candidate as { full_citation: string } | undefined;
             const hasPinpoint = PINPOINT_REGEX.test(userInput);
             if (bestMatch && !hasPinpoint) {
+              console.log(
+                `[credit] free_path=verified_source_hit user=${userId ?? "unknown"} request_id=${creditRequestId} amount=0`,
+              );
               return new Response(JSON.stringify({ content: bestMatch.full_citation }), {
                 headers: { ...corsHeaders, "Content-Type": "application/json" },
               });
@@ -1725,6 +1731,12 @@ serve(async (req) => {
       _request_id: creditRequestId,
     });
     const consumeData = (consumeRes.data ?? {}) as Record<string, unknown>;
+    console.log(
+      `[credit] fn=citation-chat user=${userId ?? "unknown"} request_id=${creditRequestId} amount=1 ` +
+      `ok=${consumeData.ok === true} admin=${consumeData.admin === true} replayed=${consumeData.replayed === true} ` +
+      `rpc_error=${consumeRes.error?.message ?? "none"} app_error=${(consumeData.error as string) ?? "none"} ` +
+      `remaining_included=${consumeData.remaining_included ?? "?"} remaining_topup=${consumeData.remaining_topup ?? "?"}`,
+    );
     if (consumeRes.error || !consumeData.ok) {
       if (consumeData.error === "INSUFFICIENT_CREDITS") {
         return new Response(
@@ -1737,10 +1749,18 @@ serve(async (req) => {
           { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       }
-      console.error("consume_credits failed:", consumeRes.error, consumeData);
-      // Don't block on RPC errors — proceed without charging
+      // Fail closed: never serve a paid AI call that could not be recorded.
+      console.error("[credit] consume_credits failed — refusing request", consumeRes.error, consumeData);
       creditRequestId = null;
+      return new Response(
+        JSON.stringify({
+          error: "CREDIT_CHARGE_FAILED",
+          message: "לא ניתן היה לחייב קרדיטים כרגע. נסו שוב בעוד רגע.",
+        }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
+
 
     let caseLawHint = "";
     let caseLawOverrideLabel: string | null = null;

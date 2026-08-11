@@ -9,10 +9,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { PLANS, type PlanId } from "@/lib/plans";
-import { Coins } from "lucide-react";
+import { Coins, AlertTriangle } from "lucide-react";
 
 interface UserProfile {
   id: string;
@@ -23,25 +29,68 @@ interface UserProfile {
   citation_count?: number;
   plan?: PlanId | string;
   included_credits_remaining?: number;
+  included_credits_total?: number;
   topup_credits_remaining?: number;
   referral_code?: string | null;
   referred_by_user_id?: string | null;
 }
 
+interface UserUsage {
+  spent: number;
+  lastChargeAt: string | null;
+  lastActivityAt: string | null;
+}
+
+interface LedgerRow {
+  id: string;
+  event_type: string;
+  amount: number;
+  reason: string | null;
+  created_at: string;
+  balance_after_included: number;
+  balance_after_topup: number;
+}
+
 interface UsersTableProps {
   users: UserProfile[];
+  usage?: Record<string, UserUsage>;
+  adminUserIds?: Set<string>;
   onUserUpdated?: (userId: string, patch: Partial<UserProfile>) => void;
 }
 
 const PLAN_OPTIONS: PlanId[] = ["basic", "pro_monthly", "pro_semester", "pro_annual", "admin"];
 
-const UsersTable = ({ users, onUserUpdated }: UsersTableProps) => {
+const fmtDate = (iso: string | null) =>
+  iso ? new Date(iso).toLocaleString("he-IL", { dateStyle: "short", timeStyle: "short" }) : "—";
+
+const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated }: UsersTableProps) => {
   const [search, setSearch] = useState("");
   const [busyUserId, setBusyUserId] = useState<string | null>(null);
   const [topupDrafts, setTopupDrafts] = useState<Record<string, string>>({});
+  const [ledgerUser, setLedgerUser] = useState<UserProfile | null>(null);
+  const [ledgerRows, setLedgerRows] = useState<LedgerRow[]>([]);
+  const [ledgerLoading, setLedgerLoading] = useState(false);
 
   // Build a quick lookup for "referred by" rendering
   const userById = new Map(users.map((u) => [u.id, u]));
+
+  const openLedger = async (u: UserProfile) => {
+    setLedgerUser(u);
+    setLedgerLoading(true);
+    setLedgerRows([]);
+    const { data, error } = await supabase
+      .from("credit_ledger")
+      .select("id, event_type, amount, reason, created_at, balance_after_included, balance_after_topup")
+      .eq("user_id", u.id)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    setLedgerLoading(false);
+    if (error) {
+      toast.error("שגיאה בטעינת תנועות: " + error.message);
+      return;
+    }
+    setLedgerRows((data ?? []) as LedgerRow[]);
+  };
 
   const filtered = users.filter((u) => {
     if (!search) return true;
@@ -52,6 +101,7 @@ const UsersTable = ({ users, onUserUpdated }: UsersTableProps) => {
       u.referral_code?.toLowerCase().includes(q)
     );
   });
+
 
   const handlePlanChange = async (userId: string, newPlan: PlanId) => {
     setBusyUserId(userId);
@@ -122,16 +172,18 @@ const UsersTable = ({ users, onUserUpdated }: UsersTableProps) => {
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">משתמש</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">תכנית</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">קרדיטים</th>
+                <th className="text-right px-4 py-3 font-medium text-muted-foreground">שימוש אחרון / חיוב אחרון</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">הוסף Top-up</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">קוד הזמנה</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">הוזמן ע"י</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">תאריך הצטרפות</th>
+
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-8 text-muted-foreground">
+                  <td colSpan={8} className="text-center py-8 text-muted-foreground">
                     אין משתמשים תואמים
                   </td>
                 </tr>
@@ -139,12 +191,20 @@ const UsersTable = ({ users, onUserUpdated }: UsersTableProps) => {
                 filtered.map((u) => {
                   const referrer = u.referred_by_user_id ? userById.get(u.referred_by_user_id) : null;
                   const planValue = (u.plan ?? "basic") as PlanId;
+                  const stats = usage[u.id];
+                  const isUnlimited = planValue === "admin" || Boolean(adminUserIds?.has(u.id));
+                  // Recent activity with no matching charge = the counter is not doing its job
+                  const suspicious =
+                    !isUnlimited &&
+                    Boolean(stats?.lastActivityAt) &&
+                    (!stats?.lastChargeAt || stats.lastChargeAt < (stats.lastActivityAt as string));
                   return (
                     <tr key={u.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors align-top">
                       <td className="px-4 py-3">
                         <div className="text-foreground">{u.email || "—"}</div>
                         {u.full_name && <div className="text-xs text-muted-foreground">{u.full_name}</div>}
                       </td>
+
                       <td className="px-4 py-3">
                         <Select
                           value={planValue}
@@ -165,18 +225,50 @@ const UsersTable = ({ users, onUserUpdated }: UsersTableProps) => {
                         </Select>
                       </td>
                       <td className="px-4 py-3 text-xs">
+                        {isUnlimited ? (
+                          <Badge variant="secondary" className="text-xs">ללא הגבלה (לא מחויב)</Badge>
+                        ) : (
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-foreground">
+                              {u.included_credits_remaining ?? 0}
+                              <span className="text-muted-foreground">
+                                {" "}/ {u.included_credits_total ?? 0} כלולים
+                              </span>
+                            </span>
+                            <span className="text-foreground flex items-center gap-1">
+                              <Coins className="w-3 h-3 text-primary" />
+                              {u.topup_credits_remaining ?? 0}
+                              <span className="text-muted-foreground">Top-up</span>
+                            </span>
+                            <span className="text-muted-foreground">נוצלו: {stats?.spent ?? 0}</span>
+                          </div>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="link"
+                          className="h-auto p-0 mt-1 text-xs"
+                          onClick={() => void openLedger(u)}
+                        >
+                          תנועות
+                        </Button>
+                      </td>
+                      <td className="px-4 py-3 text-xs whitespace-nowrap">
                         <div className="flex flex-col gap-0.5">
-                          <span className="text-foreground">
-                            {u.included_credits_remaining ?? 0}
-                            <span className="text-muted-foreground"> כלולים</span>
+                          <span className="text-muted-foreground">
+                            שימוש: <span className="text-foreground">{fmtDate(stats?.lastActivityAt ?? null)}</span>
                           </span>
-                          <span className="text-foreground flex items-center gap-1">
-                            <Coins className="w-3 h-3 text-primary" />
-                            {u.topup_credits_remaining ?? 0}
-                            <span className="text-muted-foreground">Top-up</span>
+                          <span className="text-muted-foreground">
+                            חיוב: <span className="text-foreground">{fmtDate(stats?.lastChargeAt ?? null)}</span>
                           </span>
+                          {suspicious && (
+                            <span className="flex items-center gap-1 text-destructive">
+                              <AlertTriangle className="w-3 h-3" />
+                              שימוש ללא חיוב
+                            </span>
+                          )}
                         </div>
                       </td>
+
                       <td className="px-4 py-3">
                         <div className="flex gap-1">
                           <Input
@@ -228,8 +320,51 @@ const UsersTable = ({ users, onUserUpdated }: UsersTableProps) => {
           </table>
         </div>
       </div>
+
+      <Dialog open={Boolean(ledgerUser)} onOpenChange={(open) => !open && setLedgerUser(null)}>
+        <DialogContent className="max-w-2xl" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-base">
+              תנועות קרדיט — {ledgerUser?.email ?? ledgerUser?.id.slice(0, 8)}
+            </DialogTitle>
+          </DialogHeader>
+          {ledgerLoading ? (
+            <p className="text-sm text-muted-foreground py-6 text-center">טוען…</p>
+          ) : ledgerRows.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-6 text-center">אין תנועות קרדיט למשתמש זה</p>
+          ) : (
+            <div className="max-h-[60vh] overflow-y-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border text-muted-foreground">
+                    <th className="text-right py-2">תאריך</th>
+                    <th className="text-right py-2">סוג</th>
+                    <th className="text-right py-2">כמות</th>
+                    <th className="text-right py-2">סיבה</th>
+                    <th className="text-right py-2">יתרה</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ledgerRows.map((row) => (
+                    <tr key={row.id} className="border-b border-border/50">
+                      <td className="py-2 whitespace-nowrap">{fmtDate(row.created_at)}</td>
+                      <td className="py-2">{row.event_type}</td>
+                      <td className="py-2">{row.amount}</td>
+                      <td className="py-2 text-muted-foreground">{row.reason ?? "—"}</td>
+                      <td className="py-2">
+                        {row.balance_after_included} + {row.balance_after_topup}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
+
 };
 
 export default UsersTable;
