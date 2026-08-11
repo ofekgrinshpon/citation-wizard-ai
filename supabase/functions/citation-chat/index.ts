@@ -1609,6 +1609,9 @@ serve(async (req) => {
     );
   }
   // ── End auth gate ──
+  const userId = (claimsData.claims as Record<string, unknown>).sub as string | undefined;
+
+
 
   // Build a per-request user-scoped client for credit RPCs
   const userClient = createClient(SUPABASE_URL_ENV, SUPABASE_ANON_KEY, {
