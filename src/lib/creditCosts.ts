@@ -9,6 +9,8 @@ export const CREDIT_COSTS = {
   batchPerCitation: 1,
   /** Per-source cost in bibliography generator. */
   bibliographyPerSource: 1,
+  /** Single Legal Research v1 query (full research pipeline). */
+  research: 5,
   /** Single Legal QA question (research / memo / case summary / pleading audit). */
   legalQa: 5,
   /** Academic writing wizard chapter generation. */

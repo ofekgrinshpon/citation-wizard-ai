@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useCredits } from "@/hooks/useCredits";
+import { InsufficientCreditsDialog } from "@/components/InsufficientCreditsDialog";
+import { CREDIT_COSTS } from "@/lib/creditCosts";
 import { ReLexLogo } from "@/components/ReLexLogo";
 import { useProjects } from "@/hooks/useProjects";
 import { Button } from "@/components/ui/button";
@@ -84,6 +87,7 @@ export function LegalResearchV1Panel({
   onConsumeExternalResult,
 }: LegalResearchV1PanelProps = {}) {
   const { currentProject } = useProjects();
+  const credits = useCredits();
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentStage, setCurrentStage] = useState<string | null>(null);
@@ -95,6 +99,11 @@ export function LegalResearchV1Panel({
   const [files, setFiles] = useState<StagedFile[]>([]);
   const [useAsSource, setUseAsSource] = useState(true);
   const [uploadingFiles, setUploadingFiles] = useState(false);
+  const [insufficient, setInsufficient] = useState<{ open: boolean; required: number; remaining: number }>({
+    open: false,
+    required: CREDIT_COSTS.research,
+    remaining: 0,
+  });
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const progressTimerRef = useRef<number | null>(null);
@@ -312,6 +321,15 @@ export function LegalResearchV1Panel({
       setError("השאלה קצרה מדי. נסו לפרט יותר.");
       return;
     }
+    // Credit pre-flight: the server charges 5 credits per research query.
+    if (!credits.hasEnough(CREDIT_COSTS.research)) {
+      setInsufficient({
+        open: true,
+        required: CREDIT_COSTS.research,
+        remaining: Number.isFinite(credits.totalCreditsAvailable) ? credits.totalCreditsAvailable : 0,
+      });
+      return;
+    }
     setError(null);
     setResult(null);
 
@@ -349,6 +367,16 @@ export function LegalResearchV1Panel({
       if (invokeErr || !data?.job_id) {
         stopAll();
         setLoading(false);
+        // Server-side insufficient-credits safety net (race with balance change).
+        if (invokeErr && /402|INSUFFICIENT_CREDITS/i.test(invokeErr.message)) {
+          await credits.refresh();
+          setInsufficient({
+            open: true,
+            required: CREDIT_COSTS.research,
+            remaining: Number.isFinite(credits.totalCreditsAvailable) ? credits.totalCreditsAvailable : 0,
+          });
+          return;
+        }
         setError(invokeErr?.message || "לא הצלחנו לפתוח את הבקשה.");
         return;
       }
@@ -758,6 +786,13 @@ export function LegalResearchV1Panel({
           </div>
         )}
       </div>
+
+      <InsufficientCreditsDialog
+        open={insufficient.open}
+        onOpenChange={(open) => setInsufficient((prev) => ({ ...prev, open }))}
+        required={insufficient.required}
+        remaining={insufficient.remaining}
+      />
     </div>
   );
 }

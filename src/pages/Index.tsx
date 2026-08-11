@@ -373,7 +373,7 @@ const Index = () => {
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
       setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
-      await subscription.incrementCount();
+      // Credit already charged server-side by citation-chat (no frontend double-charge).
 
       const extractedCitation = extractCitationFromResponse(reply);
       supabase.from("citation_history").insert([{
@@ -429,7 +429,7 @@ const Index = () => {
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
       setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
-      await subscription.incrementCount();
+      // Credit already charged server-side by citation-chat (no frontend double-charge).
 
       const extractedCitation = extractCitationFromResponse(reply);
       supabase.from("citation_history").insert([{
@@ -496,7 +496,7 @@ const Index = () => {
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
       setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawInput }));
-      await subscription.incrementCount();
+      // Credit already charged server-side by citation-chat (no frontend double-charge).
 
       const extractedCitation = extractCitationFromResponse(reply);
       supabase.from("citation_history").insert([{
@@ -686,8 +686,7 @@ const Index = () => {
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
       setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: effectiveSourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
-      // Increment guest counter
-      await subscription.incrementCount();
+      // Credit already charged server-side by citation-chat (no frontend double-charge).
 
       // Extract the actual citation from the AI response (skip step explanations, rules, warnings)
       const extractedCitation = extractCitationFromResponse(reply);
