@@ -374,6 +374,11 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
         _reason: `legal-qa:${taskMode || "unknown"}${hasGroundingDoc ? "+doc" : ""}`,
         _request_id: creditRequestId,
       });
+      console.log(
+        `[credit] fn=legal-qa mode=${taskMode || "unknown"} request_id=${creditRequestId} amount=${creditCost} ` +
+        `ok=${(consumeData as Record<string, unknown> | null)?.ok === true} rpc_error=${consumeErr?.message ?? "none"} ` +
+        `app_error=${((consumeData as Record<string, unknown> | null)?.error as string) ?? "none"}`,
+      );
       if (consumeErr) {
         console.error("consume_credits error:", consumeErr);
         return new Response(JSON.stringify({ error: "שגיאה בחיוב קרדיטים. נסו שוב." }), {
