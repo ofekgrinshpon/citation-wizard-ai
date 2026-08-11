@@ -1196,6 +1196,8 @@ async function handle(req: Request): Promise<Response> {
       },
     });
 
+    // sources_only mode delivers a curated source list → keep the charge.
+    pipelineDelivered = true;
     return jsonResponse(200, {
       ...sourcesPayload,
       debug: debugBlock,
