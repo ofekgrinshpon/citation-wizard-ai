@@ -306,10 +306,12 @@ async function handle(req: Request): Promise<Response> {
       .single();
     if (jobErr || !jobRow) {
       console.error("[lrv1] job insert failed:", jobErr);
+      await refundCredits("job_insert_failed");
       return jsonResponse(500, { error: "job_insert_failed", detail: jobErr?.message });
     }
     jobId = (jobRow as { id: string }).id;
   } catch (e) {
+    await refundCredits("job_insert_threw");
     return jsonResponse(500, { error: "job_insert_threw", detail: e instanceof Error ? e.message : String(e) });
   }
 
