@@ -786,6 +786,13 @@ export function LegalResearchV1Panel({
           </div>
         )}
       </div>
+
+      <InsufficientCreditsDialog
+        open={insufficient.open}
+        onOpenChange={(open) => setInsufficient((prev) => ({ ...prev, open }))}
+        required={insufficient.required}
+        remaining={insufficient.remaining}
+      />
     </div>
   );
 }
