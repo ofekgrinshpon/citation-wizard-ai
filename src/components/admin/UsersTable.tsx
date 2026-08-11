@@ -183,7 +183,7 @@ const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated }: UsersTab
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-8 text-muted-foreground">
+                  <td colSpan={8} className="text-center py-8 text-muted-foreground">
                     אין משתמשים תואמים
                   </td>
                 </tr>
@@ -191,12 +191,20 @@ const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated }: UsersTab
                 filtered.map((u) => {
                   const referrer = u.referred_by_user_id ? userById.get(u.referred_by_user_id) : null;
                   const planValue = (u.plan ?? "basic") as PlanId;
+                  const stats = usage[u.id];
+                  const isUnlimited = planValue === "admin" || Boolean(adminUserIds?.has(u.id));
+                  // Recent activity with no matching charge = the counter is not doing its job
+                  const suspicious =
+                    !isUnlimited &&
+                    Boolean(stats?.lastActivityAt) &&
+                    (!stats?.lastChargeAt || stats.lastChargeAt < (stats.lastActivityAt as string));
                   return (
                     <tr key={u.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors align-top">
                       <td className="px-4 py-3">
                         <div className="text-foreground">{u.email || "—"}</div>
                         {u.full_name && <div className="text-xs text-muted-foreground">{u.full_name}</div>}
                       </td>
+
                       <td className="px-4 py-3">
                         <Select
                           value={planValue}
