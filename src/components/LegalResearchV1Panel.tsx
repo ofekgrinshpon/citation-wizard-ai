@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useCredits } from "@/hooks/useCredits";
+import { InsufficientCreditsDialog } from "@/components/InsufficientCreditsDialog";
+import { CREDIT_COSTS } from "@/lib/creditCosts";
 import { ReLexLogo } from "@/components/ReLexLogo";
 import { useProjects } from "@/hooks/useProjects";
 import { Button } from "@/components/ui/button";
