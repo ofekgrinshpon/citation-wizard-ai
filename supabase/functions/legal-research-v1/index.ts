@@ -1706,6 +1706,7 @@ async function handle(req: Request): Promise<Response> {
   const watchdog = setTimeout(() => {
     if (settled) return;
     settled = true;
+    void refundCredits("watchdog_timeout");
     void setJobStatus({
       status: "error",
       error: "pipeline_watchdog_timeout",
@@ -1721,8 +1722,14 @@ async function handle(req: Request): Promise<Response> {
       if (settled) return;
       settled = true;
       if (resp.status === 200) {
+        // Refund when the pipeline did not deliver a real answer/source-list
+        // (refusal, stub, or limitation branch).
+        if (!pipelineDelivered) {
+          await refundCredits("no_answer_delivered");
+        }
         await setJobStatus({ status: "done", result: payload });
       } else {
+        await refundCredits(`pipeline_status_${resp.status}`);
         const errMsg = (payload && typeof payload === "object")
           ? JSON.stringify(payload).slice(0, 4000)
           : `http_${resp.status}`;
@@ -1731,6 +1738,7 @@ async function handle(req: Request): Promise<Response> {
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       console.error("[lrv1 bg]", msg);
+      await refundCredits("pipeline_threw");
       if (settled) return;
       settled = true;
       await setJobStatus({ status: "error", error: msg });
