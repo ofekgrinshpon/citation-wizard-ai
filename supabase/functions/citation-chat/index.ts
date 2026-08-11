@@ -1699,6 +1699,9 @@ serve(async (req) => {
             const bestMatch = rankedMatches[0]?.candidate as { full_citation: string } | undefined;
             const hasPinpoint = PINPOINT_REGEX.test(userInput);
             if (bestMatch && !hasPinpoint) {
+              console.log(
+                `[credit] free_path=verified_source_hit user=${userId ?? "unknown"} request_id=${creditRequestId} amount=0`,
+              );
               return new Response(JSON.stringify({ content: bestMatch.full_citation }), {
                 headers: { ...corsHeaders, "Content-Type": "application/json" },
               });
