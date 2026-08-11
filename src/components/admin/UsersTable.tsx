@@ -320,8 +320,51 @@ const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated }: UsersTab
           </table>
         </div>
       </div>
+
+      <Dialog open={Boolean(ledgerUser)} onOpenChange={(open) => !open && setLedgerUser(null)}>
+        <DialogContent className="max-w-2xl" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="text-base">
+              תנועות קרדיט — {ledgerUser?.email ?? ledgerUser?.id.slice(0, 8)}
+            </DialogTitle>
+          </DialogHeader>
+          {ledgerLoading ? (
+            <p className="text-sm text-muted-foreground py-6 text-center">טוען…</p>
+          ) : ledgerRows.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-6 text-center">אין תנועות קרדיט למשתמש זה</p>
+          ) : (
+            <div className="max-h-[60vh] overflow-y-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border text-muted-foreground">
+                    <th className="text-right py-2">תאריך</th>
+                    <th className="text-right py-2">סוג</th>
+                    <th className="text-right py-2">כמות</th>
+                    <th className="text-right py-2">סיבה</th>
+                    <th className="text-right py-2">יתרה</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ledgerRows.map((row) => (
+                    <tr key={row.id} className="border-b border-border/50">
+                      <td className="py-2 whitespace-nowrap">{fmtDate(row.created_at)}</td>
+                      <td className="py-2">{row.event_type}</td>
+                      <td className="py-2">{row.amount}</td>
+                      <td className="py-2 text-muted-foreground">{row.reason ?? "—"}</td>
+                      <td className="py-2">
+                        {row.balance_after_included} + {row.balance_after_topup}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
+
 };
 
 export default UsersTable;
