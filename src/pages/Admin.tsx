@@ -59,6 +59,9 @@ const Admin = () => {
   const [citations, setCitations] = useState<CitationRecord[]>([]);
   const [verifiedSources, setVerifiedSources] = useState<VerifiedSourceRow[]>([]);
   const [users, setUsers] = useState<UserProfile[]>([]);
+  const [userUsage, setUserUsage] = useState<Record<string, UserUsage>>({});
+  const [adminUserIds, setAdminUserIds] = useState<Set<string>>(new Set());
+  const [usersRefreshedAt, setUsersRefreshedAt] = useState<Date | null>(null);
   const [activeTab, setActiveTab] = useState<MainTab>("analytics");
   const [sourceSubTab, setSourceSubTab] = useState<SourceSubTab>("caselaw");
   const [showAddDialog, setShowAddDialog] = useState(false);
