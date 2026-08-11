@@ -44,6 +44,12 @@ interface UserProfile {
   referred_by_user_id?: string | null;
 }
 
+export interface UserUsage {
+  spent: number;
+  lastChargeAt: string | null;
+  lastActivityAt: string | null;
+}
+
 type MainTab = "analytics" | "sources" | "users" | "knowledge";
 type SourceSubTab = "caselaw" | "legislation" | "literature" | "other" | "verified";
 
