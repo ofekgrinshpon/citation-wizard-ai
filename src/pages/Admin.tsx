@@ -110,16 +110,60 @@ const Admin = () => {
     setSourcesLoaded(true);
   }, [sourcesLoaded, analyticsLoaded, fetchAnalytics]);
 
-  const fetchUsers = useCallback(async () => {
-    if (usersLoaded) return;
+  const fetchUsers = useCallback(async (force = false) => {
+    if (usersLoaded && !force) return;
     try {
-      const { data } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
-      setUsers(data ?? []);
+      const [profilesRes, rolesRes, ledgerRes, citRes, qaRes] = await Promise.all([
+        supabase.from("profiles").select("*").order("created_at", { ascending: false }),
+        supabase.from("user_roles").select("user_id, role").eq("role", "admin"),
+        supabase
+          .from("credit_ledger")
+          .select("user_id, event_type, amount, created_at")
+          .in("event_type", ["consume", "refund"])
+          .order("created_at", { ascending: false })
+          .limit(5000),
+        supabase
+          .from("citation_history")
+          .select("user_id, created_at")
+          .order("created_at", { ascending: false })
+          .limit(3000),
+        supabase
+          .from("qa_logs")
+          .select("user_id, created_at")
+          .order("created_at", { ascending: false })
+          .limit(3000),
+      ]);
+
+      const usage: Record<string, UserUsage> = {};
+      const bump = (id: string | null | undefined): UserUsage | null => {
+        if (!id) return null;
+        usage[id] ??= { spent: 0, lastChargeAt: null, lastActivityAt: null };
+        return usage[id];
+      };
+
+      for (const row of ledgerRes.data ?? []) {
+        const u = bump(row.user_id);
+        if (!u) continue;
+        // consume rows store a negative amount; refunds store the positive mirror
+        u.spent += -(row.amount ?? 0);
+        if (row.event_type === "consume" && !u.lastChargeAt) u.lastChargeAt = row.created_at;
+      }
+      for (const row of [...(citRes.data ?? []), ...(qaRes.data ?? [])]) {
+        const u = bump(row.user_id);
+        if (!u) continue;
+        if (!u.lastActivityAt || row.created_at > u.lastActivityAt) u.lastActivityAt = row.created_at;
+      }
+
+      setUserUsage(usage);
+      setAdminUserIds(new Set((rolesRes.data ?? []).map((r) => r.user_id)));
+      setUsers(profilesRes.data ?? []);
+      setUsersRefreshedAt(new Date());
       setUsersLoaded(true);
     } catch (err) {
       console.error("[Admin] fetchUsers failed:", err);
     }
   }, [usersLoaded]);
+
 
   const fetchKnowledge = useCallback(async () => {
     if (knowledgeLoaded) return;
