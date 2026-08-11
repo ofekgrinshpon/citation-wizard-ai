@@ -804,13 +804,26 @@ const Admin = () => {
                 color="text-primary"
               />
             </div>
-            <h3 className="text-foreground font-bold text-base">רשימת משתמשים</h3>
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-foreground font-bold text-base">רשימת משתמשים</h3>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                {usersRefreshedAt && (
+                  <span>עודכן: {usersRefreshedAt.toLocaleTimeString("he-IL")}</span>
+                )}
+                <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => void fetchUsers(true)}>
+                  רענן נתונים
+                </Button>
+              </div>
+            </div>
             <UsersTable
               users={users}
+              usage={userUsage}
+              adminUserIds={adminUserIds}
               onUserUpdated={(userId, patch) => {
                 setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, ...patch } : u));
               }}
             />
+
           </div>
           )
         )}
