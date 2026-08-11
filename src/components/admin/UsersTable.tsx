@@ -172,10 +172,12 @@ const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated }: UsersTab
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">משתמש</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">תכנית</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">קרדיטים</th>
+                <th className="text-right px-4 py-3 font-medium text-muted-foreground">שימוש אחרון / חיוב אחרון</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">הוסף Top-up</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">קוד הזמנה</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">הוזמן ע"י</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">תאריך הצטרפות</th>
+
               </tr>
             </thead>
             <tbody>
