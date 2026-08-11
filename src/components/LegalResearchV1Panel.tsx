@@ -321,6 +321,15 @@ export function LegalResearchV1Panel({
       setError("השאלה קצרה מדי. נסו לפרט יותר.");
       return;
     }
+    // Credit pre-flight: the server charges 5 credits per research query.
+    if (!credits.hasEnough(CREDIT_COSTS.research)) {
+      setInsufficient({
+        open: true,
+        required: CREDIT_COSTS.research,
+        remaining: Number.isFinite(credits.totalCreditsAvailable) ? credits.totalCreditsAvailable : 0,
+      });
+      return;
+    }
     setError(null);
     setResult(null);
 
@@ -358,6 +367,16 @@ export function LegalResearchV1Panel({
       if (invokeErr || !data?.job_id) {
         stopAll();
         setLoading(false);
+        // Server-side insufficient-credits safety net (race with balance change).
+        if (invokeErr && /402|INSUFFICIENT_CREDITS/i.test(invokeErr.message)) {
+          await credits.refresh();
+          setInsufficient({
+            open: true,
+            required: CREDIT_COSTS.research,
+            remaining: Number.isFinite(credits.totalCreditsAvailable) ? credits.totalCreditsAvailable : 0,
+          });
+          return;
+        }
         setError(invokeErr?.message || "לא הצלחנו לפתוח את הבקשה.");
         return;
       }
