@@ -686,8 +686,7 @@ const Index = () => {
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
       setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: effectiveSourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
-      // Increment guest counter
-      await subscription.incrementCount();
+      // Credit already charged server-side by citation-chat (no frontend double-charge).
 
       // Extract the actual citation from the AI response (skip step explanations, rules, warnings)
       const extractedCitation = extractCitationFromResponse(reply);
