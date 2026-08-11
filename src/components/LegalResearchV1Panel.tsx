@@ -87,6 +87,7 @@ export function LegalResearchV1Panel({
   onConsumeExternalResult,
 }: LegalResearchV1PanelProps = {}) {
   const { currentProject } = useProjects();
+  const credits = useCredits();
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentStage, setCurrentStage] = useState<string | null>(null);
@@ -98,6 +99,11 @@ export function LegalResearchV1Panel({
   const [files, setFiles] = useState<StagedFile[]>([]);
   const [useAsSource, setUseAsSource] = useState(true);
   const [uploadingFiles, setUploadingFiles] = useState(false);
+  const [insufficient, setInsufficient] = useState<{ open: boolean; required: number; remaining: number }>({
+    open: false,
+    required: CREDIT_COSTS.research,
+    remaining: 0,
+  });
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const progressTimerRef = useRef<number | null>(null);
