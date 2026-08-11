@@ -193,11 +193,16 @@ const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated }: UsersTab
                   const planValue = (u.plan ?? "basic") as PlanId;
                   const stats = usage[u.id];
                   const isUnlimited = planValue === "admin" || Boolean(adminUserIds?.has(u.id));
-                  // Recent activity with no matching charge = the counter is not doing its job
+                  // Activity with no charge ever recorded = the counter is not doing its job.
+                  // We only flag "never charged" (not every timestamp gap) so that legitimately
+                  // free paths — verified-source citation hits and free academic sub-steps, which
+                  // still write citation_history/qa_logs but never consume a credit — do not
+                  // trip a false "usage without charge" alert. A regression where a previously
+                  // charged user stops being charged is still surfaced by the raw balance column.
                   const suspicious =
                     !isUnlimited &&
                     Boolean(stats?.lastActivityAt) &&
-                    (!stats?.lastChargeAt || stats.lastChargeAt < (stats.lastActivityAt as string));
+                    !stats?.lastChargeAt;
                   return (
                     <tr key={u.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors align-top">
                       <td className="px-4 py-3">
