@@ -9,10 +9,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { PLANS, type PlanId } from "@/lib/plans";
-import { Coins } from "lucide-react";
+import { Coins, AlertTriangle } from "lucide-react";
 
 interface UserProfile {
   id: string;
@@ -23,25 +29,68 @@ interface UserProfile {
   citation_count?: number;
   plan?: PlanId | string;
   included_credits_remaining?: number;
+  included_credits_total?: number;
   topup_credits_remaining?: number;
   referral_code?: string | null;
   referred_by_user_id?: string | null;
 }
 
+interface UserUsage {
+  spent: number;
+  lastChargeAt: string | null;
+  lastActivityAt: string | null;
+}
+
+interface LedgerRow {
+  id: string;
+  event_type: string;
+  amount: number;
+  reason: string | null;
+  created_at: string;
+  balance_after_included: number;
+  balance_after_topup: number;
+}
+
 interface UsersTableProps {
   users: UserProfile[];
+  usage?: Record<string, UserUsage>;
+  adminUserIds?: Set<string>;
   onUserUpdated?: (userId: string, patch: Partial<UserProfile>) => void;
 }
 
 const PLAN_OPTIONS: PlanId[] = ["basic", "pro_monthly", "pro_semester", "pro_annual", "admin"];
 
-const UsersTable = ({ users, onUserUpdated }: UsersTableProps) => {
+const fmtDate = (iso: string | null) =>
+  iso ? new Date(iso).toLocaleString("he-IL", { dateStyle: "short", timeStyle: "short" }) : "—";
+
+const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated }: UsersTableProps) => {
   const [search, setSearch] = useState("");
   const [busyUserId, setBusyUserId] = useState<string | null>(null);
   const [topupDrafts, setTopupDrafts] = useState<Record<string, string>>({});
+  const [ledgerUser, setLedgerUser] = useState<UserProfile | null>(null);
+  const [ledgerRows, setLedgerRows] = useState<LedgerRow[]>([]);
+  const [ledgerLoading, setLedgerLoading] = useState(false);
 
   // Build a quick lookup for "referred by" rendering
   const userById = new Map(users.map((u) => [u.id, u]));
+
+  const openLedger = async (u: UserProfile) => {
+    setLedgerUser(u);
+    setLedgerLoading(true);
+    setLedgerRows([]);
+    const { data, error } = await supabase
+      .from("credit_ledger")
+      .select("id, event_type, amount, reason, created_at, balance_after_included, balance_after_topup")
+      .eq("user_id", u.id)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    setLedgerLoading(false);
+    if (error) {
+      toast.error("שגיאה בטעינת תנועות: " + error.message);
+      return;
+    }
+    setLedgerRows((data ?? []) as LedgerRow[]);
+  };
 
   const filtered = users.filter((u) => {
     if (!search) return true;
@@ -52,6 +101,7 @@ const UsersTable = ({ users, onUserUpdated }: UsersTableProps) => {
       u.referral_code?.toLowerCase().includes(q)
     );
   });
+
 
   const handlePlanChange = async (userId: string, newPlan: PlanId) => {
     setBusyUserId(userId);
