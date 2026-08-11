@@ -229,6 +229,14 @@ const Admin = () => {
     }
   }, [isAdmin, activeTab, fetchAnalytics, fetchSources, fetchUsers, fetchKnowledge]);
 
+  // Credits must never look stale: refresh the users tab whenever the window regains focus
+  useEffect(() => {
+    if (activeTab !== "users") return;
+    const onFocus = () => void fetchUsers(true);
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [activeTab, fetchUsers]);
+
   // Reload all loaded tabs
   const reloadAll = useCallback(async () => {
     setAnalyticsLoaded(false);
