@@ -225,18 +225,50 @@ const UsersTable = ({ users, usage = {}, adminUserIds, onUserUpdated }: UsersTab
                         </Select>
                       </td>
                       <td className="px-4 py-3 text-xs">
+                        {isUnlimited ? (
+                          <Badge variant="secondary" className="text-xs">ללא הגבלה (לא מחויב)</Badge>
+                        ) : (
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-foreground">
+                              {u.included_credits_remaining ?? 0}
+                              <span className="text-muted-foreground">
+                                {" "}/ {u.included_credits_total ?? 0} כלולים
+                              </span>
+                            </span>
+                            <span className="text-foreground flex items-center gap-1">
+                              <Coins className="w-3 h-3 text-primary" />
+                              {u.topup_credits_remaining ?? 0}
+                              <span className="text-muted-foreground">Top-up</span>
+                            </span>
+                            <span className="text-muted-foreground">נוצלו: {stats?.spent ?? 0}</span>
+                          </div>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="link"
+                          className="h-auto p-0 mt-1 text-xs"
+                          onClick={() => void openLedger(u)}
+                        >
+                          תנועות
+                        </Button>
+                      </td>
+                      <td className="px-4 py-3 text-xs whitespace-nowrap">
                         <div className="flex flex-col gap-0.5">
-                          <span className="text-foreground">
-                            {u.included_credits_remaining ?? 0}
-                            <span className="text-muted-foreground"> כלולים</span>
+                          <span className="text-muted-foreground">
+                            שימוש: <span className="text-foreground">{fmtDate(stats?.lastActivityAt ?? null)}</span>
                           </span>
-                          <span className="text-foreground flex items-center gap-1">
-                            <Coins className="w-3 h-3 text-primary" />
-                            {u.topup_credits_remaining ?? 0}
-                            <span className="text-muted-foreground">Top-up</span>
+                          <span className="text-muted-foreground">
+                            חיוב: <span className="text-foreground">{fmtDate(stats?.lastChargeAt ?? null)}</span>
                           </span>
+                          {suspicious && (
+                            <span className="flex items-center gap-1 text-destructive">
+                              <AlertTriangle className="w-3 h-3" />
+                              שימוש ללא חיוב
+                            </span>
+                          )}
                         </div>
                       </td>
+
                       <td className="px-4 py-3">
                         <div className="flex gap-1">
                           <Input
