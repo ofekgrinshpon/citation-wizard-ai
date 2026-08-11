@@ -261,6 +261,11 @@ serve(async (req) => {
       _request_id: requestId,
     });
     const consumeData = (consumeRes.data ?? {}) as Record<string, unknown>;
+    console.log(
+      `[credit] fn=bibliography-lookup request_id=${requestId} amount=1 ok=${consumeData.ok === true} ` +
+      `admin=${consumeData.admin === true} rpc_error=${consumeRes.error?.message ?? "none"} ` +
+      `app_error=${(consumeData.error as string) ?? "none"} remaining_included=${consumeData.remaining_included ?? "?"}`,
+    );
     if (consumeRes.error || !consumeData.ok) {
       if (consumeData.error === "INSUFFICIENT_CREDITS") {
         return new Response(
@@ -273,9 +278,17 @@ serve(async (req) => {
           { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       }
-      console.error("consume_credits failed:", consumeRes.error, consumeData);
-      creditRequestId = null;
+      // Fail closed: never serve a paid lookup that could not be recorded.
+      console.error("[credit] consume_credits failed — refusing request", consumeRes.error, consumeData);
+      return new Response(
+        JSON.stringify({
+          error: "CREDIT_CHARGE_FAILED",
+          message: "לא ניתן היה לחייב קרדיטים כרגע. נסו שוב בעוד רגע.",
+        }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
+
 
     // ── 3. Perplexity fallback ──
     try {
