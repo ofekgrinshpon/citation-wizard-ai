@@ -217,25 +217,74 @@ async function handle(req: Request): Promise<Response> {
   const useAsSource = body.use_as_source !== false; // default true
   // (x-atomic-markers header and atomic mode were removed with the Phase 3 cleanup.)
 
-  // ─── Credit pre-flight (skipped in smoke mode) ───────────────────────────
-  if (!smokeMode && userClient) {
+  // ─── Credit charge (skipped in smoke mode) ───────────────────────────────
+  // Charge the per-query cost up front. The pipeline runs in the background
+  // after we return 202; if it does not deliver a real answer (refusal, stub,
+  // limitation, or error) we refund the charge asynchronously in the bg block.
+  const RESEARCH_COST = 5;
+  let creditsCharged = false;
+  let creditRequestId: string | null = null;
+  // Set to true by runPipeline right before a return that delivers real value
+  // (a drafted answer or a sources_only list). Anything else triggers a refund.
+  let pipelineDelivered = false;
+  const refundCredits = async (reason: string) => {
+    if (!creditsCharged || !creditRequestId || !userClient) return;
     try {
-      const { data: profile } = await userClient
-        .from("profiles")
-        .select("included_credits_remaining, topup_credits_remaining, plan")
-        .eq("id", user.id)
-        .maybeSingle();
-      if (profile) {
-        const plan = (profile as { plan?: string }).plan;
-        const total =
-          ((profile as { included_credits_remaining?: number }).included_credits_remaining ?? 0) +
-          ((profile as { topup_credits_remaining?: number }).topup_credits_remaining ?? 0);
-        if (plan !== "admin" && total < 5) {
-          return jsonResponse(402, { error: "INSUFFICIENT_CREDITS", required: 5, remaining: total });
+      const { data: refundData, error: refundErr } = await userClient.rpc(
+        "refund_credits",
+        { _request_id: creditRequestId, _reason: `auto-refund: ${reason}` },
+      );
+      const ok = Boolean((refundData as Record<string, unknown> | null)?.ok);
+      if (refundErr || !ok) {
+        console.error("[lrv1 refund failed]", refundErr?.message ?? "no_ok");
+        return;
+      }
+      creditsCharged = false;
+      console.log("[lrv1 refund ok]", reason);
+    } catch (e) {
+      console.error("[lrv1 refund threw]", e instanceof Error ? e.message : e);
+    }
+  };
+
+  if (!smokeMode && userClient) {
+    const reqId = crypto.randomUUID();
+    creditRequestId = reqId;
+    try {
+      const { data: consumeData, error: consumeErr } = await userClient.rpc(
+        "consume_credits",
+        { _amount: RESEARCH_COST, _reason: "legal-research-v1", _request_id: reqId },
+      );
+      if (consumeErr) {
+        creditRequestId = null;
+        return jsonResponse(500, { error: "credit_charge_failed", detail: consumeErr.message });
+      }
+      const cr = (consumeData ?? {}) as Record<string, unknown>;
+      if (!cr.ok) {
+        creditRequestId = null;
+        if (cr.error === "INSUFFICIENT_CREDITS") {
+          return jsonResponse(402, {
+            error: "INSUFFICIENT_CREDITS",
+            required: (cr.required as number) ?? RESEARCH_COST,
+            remaining_included: (cr.remaining_included as number) ?? 0,
+            remaining_topup: (cr.remaining_topup as number) ?? 0,
+          });
         }
+        return jsonResponse(500, { error: (cr.error as string) || "CREDIT_ERROR" });
+      }
+      // Admin accounts record a zero-delta consume; never refund those.
+      if (cr.admin) {
+        creditRequestId = null;
+        creditsCharged = false;
+      } else {
+        creditsCharged = true;
       }
     } catch (e) {
-      console.warn("[legal-research-v1] credit pre-flight skipped:", e);
+      creditRequestId = null;
+      console.error("[legal-research-v1] credit charge threw:", e);
+      return jsonResponse(500, {
+        error: "credit_charge_error",
+        detail: e instanceof Error ? e.message : String(e),
+      });
     }
   }
 
