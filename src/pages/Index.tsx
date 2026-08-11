@@ -496,7 +496,7 @@ const Index = () => {
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
       setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawInput }));
-      await subscription.incrementCount();
+      // Credit already charged server-side by citation-chat (no frontend double-charge).
 
       const extractedCitation = extractCitationFromResponse(reply);
       supabase.from("citation_history").insert([{
