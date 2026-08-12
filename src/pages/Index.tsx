@@ -753,16 +753,18 @@ const Index = () => {
         }
       }
     } catch (err) {
-      const e = err as Error & { isInvalidInput?: boolean; message?: string };
+      const e = err as Error & { isInvalidInput?: boolean; handled?: boolean; userMessage?: string; message?: string };
       if (e?.isInvalidInput || e?.message === "INVALID_INPUT" || e?.message === "INSUFFICIENT_CREDITS") {
         // Already toasted by callAPI. Roll back the user message bubble — nothing was processed.
         setMessages(messages);
       } else {
         setMessages([
           ...newMessages,
-          { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." },
+          { role: "assistant", content: e?.userMessage || "שגיאה בחיבור לשרת. אנא נסה שנית." },
         ]);
+        if (!e?.handled) toast.error(e?.userMessage || "שגיאה בחיבור לשרת. אנא נסה שנית.");
       }
+
     } finally {
       setLoading(false);
       setLoadingMessage(null);
