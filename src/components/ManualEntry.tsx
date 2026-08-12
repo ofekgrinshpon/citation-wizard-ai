@@ -109,21 +109,21 @@ export function ManualEntry() {
 
     try {
       const prompt = buildPromptFromFields(sourceType, fields);
-      const { data, error } = await supabase.functions.invoke("citation-chat", {
-        body: {
-          messages: [{ role: "user", content: prompt }],
-        },
+      const { data, errorInfo } = await invokeFunction<{ content?: string }>("citation-chat", {
+        messages: [{ role: "user", content: prompt }],
       });
 
-      if (error) throw error;
+      if (errorInfo) {
+        toast.error(errorInfo.message);
+        return;
+      }
       setOutput(data?.content || "שגיאה בייצור האזכור");
       setRuleRef(RULE_REFERENCES[sourceType]);
-    } catch {
-      toast.error("שגיאה בחיבור לשרת");
     } finally {
       setLoading(false);
     }
   };
+
 
   const copyToClipboard = () => {
     if (!output) return;
