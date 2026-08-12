@@ -4,6 +4,7 @@ import { useBibliography, CATEGORY_LABELS, classifyCitation, type BibSourceCateg
 import { FormattedCitation } from "./FormattedCitation";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
+import { invokeFunction } from "@/lib/functionError";
 
 type ReviewStatus = "ok" | "needs_choice" | "error" | "loading";
 
@@ -106,17 +107,18 @@ export function BibliographyGenerator() {
     sourceTypeHint?: BibSourceCategory,
   ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
     try {
-      const { data, error } = await supabase.functions.invoke("bibliography-lookup", {
-        body: {
+      const { data, errorInfo } = await invokeFunction<Record<string, unknown>>(
+        "bibliography-lookup",
+        {
           rawSource: rawInput,
           requestId: crypto.randomUUID(),
           ...(sourceTypeHint && sourceTypeHint !== "unknown"
             ? { sourceTypeHint }
             : {}),
         },
-      });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      );
+      if (errorInfo) throw new Error(errorInfo.message);
+
 
       if (data?.isDisambiguation && Array.isArray(data?.options) && data.options.length > 0) {
         return {

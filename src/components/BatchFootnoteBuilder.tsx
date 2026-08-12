@@ -12,6 +12,7 @@ import { useOffice } from "@/hooks/useOffice";
 import { insertCitationAsFootnote } from "@/lib/wordInsertion";
 import { toast } from "sonner";
 import { copyPlainText } from "@/lib/clipboard";
+import { invokeFunction } from "@/lib/functionError";
 import { ensureVerifiedSources } from "@/lib/verifiedSources";
 import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, type YearPreferences } from "@/lib/citationUtils";
 
@@ -183,11 +184,16 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
     }
 
-    const { data, error } = await supabase.functions.invoke("citation-chat", {
-      body: { messages: [{ role: "user", content: prompt }] },
+    const { data, errorInfo } = await invokeFunction<{ content?: string }>("citation-chat", {
+      messages: [{ role: "user", content: prompt }],
     });
-    if (error) throw error;
+    if (errorInfo) {
+      const err = new Error(errorInfo.code || "EDGE_ERROR") as Error & { userMessage?: string };
+      err.userMessage = errorInfo.message;
+      throw err;
+    }
     return data?.content || "";
+
   };
 
   // Phase 1: draft all cells. No repeat-citation rules, no persistence — that
@@ -246,8 +252,11 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
       setPhase("review");
 
-      const failed = results.filter((r) => r.status === "rejected").length;
-      if (failed > 0) toast.error(`${failed} מקורות נכשלו — נסה שוב`);
+      const rejected = results.filter((r) => r.status === "rejected") as PromiseRejectedResult[];
+      if (rejected.length > 0) {
+        const reason = (rejected[0].reason as { userMessage?: string })?.userMessage;
+        toast.error(`${rejected.length} מקורות נכשלו — נסה שוב`, { description: reason });
+      }
     } catch {
       setCells((prev) =>
         prev.map((c) => (c.status === "loading" ? { ...c, status: "error", output: null } : c))
@@ -288,11 +297,13 @@ export function BatchFootnoteBuilder({}: BatchProps) {
         );
         return applyRepeatCitationRules(updated);
       });
-    } catch {
+    } catch (e) {
       setCells((prev) =>
         prev.map((c) => (c.id === id ? { ...c, status: "error", output: null } : c))
       );
-      toast.error(`הפקה מחדש של הערה ${id} נכשלה`);
+      toast.error(`הפקה מחדש של הערה ${id} נכשלה`, {
+        description: (e as { userMessage?: string })?.userMessage,
+      });
     }
   };
 

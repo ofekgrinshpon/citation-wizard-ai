@@ -42,6 +42,8 @@ interface Message {
 }
 
 import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, extractCitationFromResponse, type YearPreferences } from "@/lib/citationUtils";
+import { invokeFunction } from "@/lib/functionError";
+
 import { validateCitationInput } from "@/lib/citationInputValidation";
 import { handleRefundResponse } from "@/lib/refundResponse";
 
@@ -216,44 +218,39 @@ const Index = () => {
 
   const callAPI = async (userMessage: string, history: Message[]) => {
     const requestId = crypto.randomUUID();
-    const { data, error } = await supabase.functions.invoke("citation-chat", {
-      body: {
+    const { data, errorInfo } = await invokeFunction<{ content?: string } & Record<string, unknown>>(
+      "citation-chat",
+      {
         messages: [
           ...history.map((m) => ({ role: m.role, content: m.content })),
           { role: "user", content: userMessage },
         ],
         requestId,
       },
-    });
+      { projectId },
+    );
 
-    if (error) throw error;
-
-    if (data?.error) {
-      if (data.error === "INVALID_INPUT") {
-        toast.error(data.messageHe || "לא ניתן לעבד את הבקשה כי לא זוהה טקסט משפטי ברור לאזכור.", {
-          description: "לא בוצע חיוב בקרדיטים.",
-        });
-        const err = new Error("INVALID_INPUT") as Error & { isInvalidInput?: boolean };
-        err.isInvalidInput = true;
-        throw err;
-      }
-      if (data.error === "INSUFFICIENT_CREDITS") {
-        toast.error("אין מספיק קרדיטים — שדרגו תוכנית או הוסיפו טופ-אפ.");
-        throw new Error("INSUFFICIENT_CREDITS");
-      }
-      if (data.error.includes("Rate limit")) {
-        toast.error("מגבלת קצב – נסה שוב בעוד רגע");
-      } else if (data.error.includes("Payment")) {
-        toast.error("נדרשת הוספת קרדיטים");
-      }
-      throw new Error(data.error);
+    if (errorInfo) {
+      toast.error(errorInfo.message, {
+        description: errorInfo.isInvalidInput ? "לא בוצע חיוב בקרדיטים." : undefined,
+      });
+      const err = new Error(errorInfo.code || `HTTP_${errorInfo.status ?? "ERR"}`) as Error & {
+        isInvalidInput?: boolean;
+        handled?: boolean;
+        userMessage?: string;
+      };
+      err.isInvalidInput = errorInfo.isInvalidInput;
+      err.handled = true;
+      err.userMessage = errorInfo.message;
+      throw err;
     }
 
     // Server signaled it auto-refunded the credit (e.g. AI returned a refusal).
     handleRefundResponse(data);
 
-    return data?.content || "אירעה שגיאה בעיבוד הבקשה.";
+    return (data?.content as string) || "אירעה שגיאה בעיבוד הבקשה.";
   };
+
 
   const saveVerifiedSource = async (
     rawInput: string,
@@ -758,16 +755,18 @@ const Index = () => {
         }
       }
     } catch (err) {
-      const e = err as Error & { isInvalidInput?: boolean; message?: string };
+      const e = err as Error & { isInvalidInput?: boolean; handled?: boolean; userMessage?: string; message?: string };
       if (e?.isInvalidInput || e?.message === "INVALID_INPUT" || e?.message === "INSUFFICIENT_CREDITS") {
         // Already toasted by callAPI. Roll back the user message bubble — nothing was processed.
         setMessages(messages);
       } else {
         setMessages([
           ...newMessages,
-          { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." },
+          { role: "assistant", content: e?.userMessage || "שגיאה בחיבור לשרת. אנא נסה שנית." },
         ]);
+        if (!e?.handled) toast.error(e?.userMessage || "שגיאה בחיבור לשרת. אנא נסה שנית.");
       }
+
     } finally {
       setLoading(false);
       setLoadingMessage(null);
