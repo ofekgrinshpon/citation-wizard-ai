@@ -4,6 +4,7 @@ import { useBibliography, CATEGORY_LABELS, classifyCitation, type BibSourceCateg
 import { FormattedCitation } from "./FormattedCitation";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
+import { invokeFunction } from "@/lib/functionError";
 
 type ReviewStatus = "ok" | "needs_choice" | "error" | "loading";
 
