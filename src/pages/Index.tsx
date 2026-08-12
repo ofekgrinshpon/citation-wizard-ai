@@ -42,6 +42,8 @@ interface Message {
 }
 
 import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, extractCitationFromResponse, type YearPreferences } from "@/lib/citationUtils";
+import { invokeFunction } from "@/lib/functionError";
+
 import { validateCitationInput } from "@/lib/citationInputValidation";
 import { handleRefundResponse } from "@/lib/refundResponse";
 
