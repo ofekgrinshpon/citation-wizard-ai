@@ -351,35 +351,38 @@ export function LegalResearchV1Panel({
     startProgress();
 
     try {
-      const { data, error: invokeErr } = await supabase.functions.invoke<{
+      const { data, errorInfo } = await invokeFunction<{
         job_id: string;
         run_id: string;
         status: string;
-      }>("legal-research-v1", {
-        body: {
+      }>(
+        "legal-research-v1",
+        {
           question: q,
           project_id: currentProject?.id ?? null,
           attachments: attachmentsPayload,
           use_as_source: useAsSource,
         },
-      });
+        { projectId: currentProject?.id ?? null },
+      );
 
-      if (invokeErr || !data?.job_id) {
+      if (errorInfo || !data?.job_id) {
         stopAll();
         setLoading(false);
         // Server-side insufficient-credits safety net (race with balance change).
-        if (invokeErr && /402|INSUFFICIENT_CREDITS/i.test(invokeErr.message)) {
+        if (errorInfo?.isInsufficientCredits) {
           await credits.refresh();
           setInsufficient({
             open: true,
-            required: CREDIT_COSTS.research,
+            required: errorInfo.required ?? CREDIT_COSTS.research,
             remaining: Number.isFinite(credits.totalCreditsAvailable) ? credits.totalCreditsAvailable : 0,
           });
           return;
         }
-        setError(invokeErr?.message || "לא הצלחנו לפתוח את הבקשה.");
+        setError(errorInfo?.message || "לא הצלחנו לפתוח את הבקשה.");
         return;
       }
+
       setJobId(data.job_id);
       try {
         sessionStorage.setItem(
