@@ -8,7 +8,7 @@ import {
   SOURCE_TYPE_LABELS,
   RULE_REFERENCES,
 } from "@/data/abbreviations";
-import { supabase } from "@/integrations/supabase/client";
+import { invokeFunction } from "@/lib/functionError";
 import { FormattedCitation } from "./FormattedCitation";
 import { toast } from "sonner";
 
