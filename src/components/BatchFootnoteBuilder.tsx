@@ -183,11 +183,16 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
     }
 
-    const { data, error } = await supabase.functions.invoke("citation-chat", {
-      body: { messages: [{ role: "user", content: prompt }] },
+    const { data, errorInfo } = await invokeFunction<{ content?: string }>("citation-chat", {
+      messages: [{ role: "user", content: prompt }],
     });
-    if (error) throw error;
+    if (errorInfo) {
+      const err = new Error(errorInfo.code || "EDGE_ERROR") as Error & { userMessage?: string };
+      err.userMessage = errorInfo.message;
+      throw err;
+    }
     return data?.content || "";
+
   };
 
   // Phase 1: draft all cells. No repeat-citation rules, no persistence — that
