@@ -129,6 +129,12 @@ const UsageDashboard = ({ librarySection }: Props) => {
         </div>
       </div>
 
+      {excludeInternal && stats.internalActions > 0 && (
+        <p className="text-xs text-muted-foreground bg-muted/40 rounded-lg px-3 py-2">
+          הוסתרו {stats.internalActions} פעולות פנימיות (חשבונות אדמין והרצות בדיקה/רגרסיה).
+        </p>
+      )}
+
       {/* 1. Headline numbers */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="space-y-1">
