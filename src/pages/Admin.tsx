@@ -11,6 +11,7 @@ import ApifyIngestionPanel from "@/components/admin/ApifyIngestionPanel";
 import BatchEmbeddingPanel from "@/components/admin/BatchEmbeddingPanel";
 import AdminHeader from "@/components/admin/AdminHeader";
 import StatCard from "@/components/admin/StatCard";
+import UsageDashboard from "@/components/admin/UsageDashboard";
 import SourceCategoryView from "@/components/admin/SourceCategoryView";
 import UsersTable from "@/components/admin/UsersTable";
 import VerifiedSourcesTable, { type VerifiedSourceRow } from "@/components/admin/VerifiedSourcesTable";
