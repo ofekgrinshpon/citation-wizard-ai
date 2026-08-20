@@ -263,7 +263,7 @@ export function BibliographyGenerator() {
         if (it.id !== id) return it;
         const v = it.editValue.trim();
         if (!v) return it;
-        return { ...it, isEditing: false, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined };
+        return { ...it, isEditing: false, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined };
       }),
     );
   };
