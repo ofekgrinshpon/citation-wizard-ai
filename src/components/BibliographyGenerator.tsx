@@ -37,28 +37,20 @@ const CATEGORY_OPTIONS: { value: BibSourceCategory; label: string; icon: string 
   { value: "unknown", label: "אחר", icon: "❔" },
 ];
 
-const CONCURRENCY = 4;
+const CONCURRENCY = 2;
 
-async function processInPool<T, R>(items: T[], worker: (item: T) => Promise<R>, limit: number, onProgress?: (done: number) => void): Promise<R[]> {
-  const results: R[] = new Array(items.length);
-  let cursor = 0;
-  let done = 0;
-  const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
-    while (true) {
-      const i = cursor++;
-      if (i >= items.length) break;
-      try {
-        results[i] = await worker(items[i]);
-      } catch (e) {
-        results[i] = e as R;
-      }
-      done++;
-      onProgress?.(done);
-    }
-  });
-  await Promise.all(runners);
-  return results;
-}
+/**
+ * Bibliography categories → citation-engine source types. Supreme-court rows
+ * stay unmapped so the engine can decide between פ"ד (published) and database.
+ */
+const CATEGORY_TO_SOURCE_TYPE: Partial<Record<BibSourceCategory, SourceType>> = {
+  legislation_primary: "primary_legislation",
+  legislation_secondary: "secondary_legislation",
+  caselaw_district: "case_law_database",
+  caselaw_magistrate: "case_law_database",
+  caselaw_specialized: "case_law_database",
+};
+
 
 export function BibliographyGenerator() {
   const { sortedEntries, addEntries, removeEntry, clearAll } = useBibliography();
