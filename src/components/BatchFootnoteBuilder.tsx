@@ -229,14 +229,17 @@ export function BatchFootnoteBuilder({}: BatchProps) {
           isTransientError(e) && !(e as CitationRunError)?.isInsufficientCredits,
         onSettled: (index, result) => {
           const cellId = activeCells[index].id;
-          setCells((prev) =>
-            prev.map((c) => {
-              if (c.id !== cellId) return c;
-              return result.ok
-                ? applyResultToCell(c, result.value)
-                : { ...c, status: "error" as const, output: null, errorMsg: errorMessageOf(result.error) };
-            })
-          );
+          if (result.ok) {
+            const value = result.value;
+            setCells((prev) => prev.map((c) => (c.id === cellId ? applyResultToCell(c, value) : c)));
+          } else {
+            const message = errorMessageOf(result.error);
+            setCells((prev) =>
+              prev.map((c) =>
+                c.id === cellId ? { ...c, status: "error" as const, output: null, errorMsg: message } : c
+              )
+            );
+          }
         },
       }
     );
