@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType } from "@/data/abbreviations";
-import { buildEnginePromptHint } from "@/lib/citationValidation";
 import { FormattedCitation } from "./FormattedCitation";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
 import { PublicationIntegrityCard } from "./PublicationIntegrityCard";
@@ -12,7 +11,6 @@ import { useOffice } from "@/hooks/useOffice";
 import { insertCitationAsFootnote } from "@/lib/wordInsertion";
 import { toast } from "sonner";
 import { copyPlainText } from "@/lib/clipboard";
-import { invokeFunction } from "@/lib/functionError";
 import { ensureVerifiedSources } from "@/lib/verifiedSources";
 import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, type YearPreferences } from "@/lib/citationUtils";
 import { runCitation, CitationRunError, type RunCitationResult } from "@/lib/runCitation";
@@ -351,7 +349,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       for (const cell of updatedCells) {
         if (!cell.output) continue;
 
-        const sourceType = cell.sourceTypeOverride ?? detectSourceType(normalizeAbbreviations(cell.input));
+        const sourceType = cell.sourceTypeOverride ?? cell.detectedType ?? detectSourceType(normalizeAbbreviations(cell.input));
         const label = SOURCE_TYPE_LABELS[sourceType];
         let fullCitation = extractCitationOnly(cell.output);
         const isVerified = cell.status === "valid" && !/\[חסר:/.test(cell.output);
@@ -844,31 +842,6 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       )}
     </div>
   );
-}
-
-function parseFootnotes(content: string, expectedCount: number): string[] {
-  const parts = content.split(/---FOOTNOTE\s*\d+---/i).filter((s) => s.trim());
-  if (parts.length >= expectedCount) {
-    return parts.slice(0, expectedCount).map((p) => p.trim());
-  }
-
-  const lines = content.split("\n");
-  const footnotes: string[] = [];
-  let current = "";
-  for (const line of lines) {
-    const match = line.match(/^\s*(\d+)\.\s+/);
-    if (match && parseInt(match[1]) === footnotes.length + 1) {
-      if (current) footnotes.push(current.trim());
-      current = line;
-    } else {
-      current += "\n" + line;
-    }
-  }
-  if (current) footnotes.push(current.trim());
-
-  if (footnotes.length >= expectedCount) return footnotes.slice(0, expectedCount);
-
-  return Array(expectedCount).fill(content);
 }
 
 function applyRepeatCitationRules(cells: FootnoteCell[]): FootnoteCell[] {
