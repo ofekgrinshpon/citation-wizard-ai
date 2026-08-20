@@ -675,6 +675,15 @@ function ReviewRow({
             ⚠ חסרים פרטים — תקן ידנית או חפש שוב
           </span>
         )}
+        {!hasMissing && item.status === "ok" && item.warningMsg && (
+          <span
+            className="text-[10px] font-medium text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded"
+            title={item.warningMsg}
+          >
+            ⚠ {item.warningMsg}
+          </span>
+        )}
+
 
         {item.status === "ok" && (
           <Popover>
