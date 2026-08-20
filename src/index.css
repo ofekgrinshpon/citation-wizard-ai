@@ -54,6 +54,15 @@
     --gradient-primary: linear-gradient(135deg, hsl(204 70% 53%), hsl(168 55% 42%));
     --gradient-secondary: linear-gradient(135deg, hsl(204 60% 93%), hsl(210 20% 96%));
     --shadow-glow: 0 2px 12px rgba(52, 152, 219, 0.25);
+
+    /* Analytics chart series */
+    --chart-1: 204 70% 53%;
+    --chart-2: 168 55% 42%;
+    --chart-3: 262 60% 60%;
+    --chart-4: 38 85% 55%;
+    --chart-5: 340 65% 58%;
+    --chart-6: 215 14% 55%;
+    --chart-7: 12 70% 58%;
   }
 }
 
