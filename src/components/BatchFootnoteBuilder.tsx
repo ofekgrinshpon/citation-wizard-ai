@@ -15,6 +15,8 @@ import { copyPlainText } from "@/lib/clipboard";
 import { invokeFunction } from "@/lib/functionError";
 import { ensureVerifiedSources } from "@/lib/verifiedSources";
 import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, type YearPreferences } from "@/lib/citationUtils";
+import { runCitation, CitationRunError, type RunCitationResult } from "@/lib/runCitation";
+import { runPool, isTransientError } from "@/lib/concurrency";
 
 interface FootnoteCell {
   id: number;
@@ -22,6 +24,7 @@ interface FootnoteCell {
   output: string | null;
   status: "empty" | "loading" | "valid" | "warning" | "verified" | "error";
   warningMsg?: string;
+  errorMsg?: string;
   verifiedCitation?: string;
   approved?: boolean;
   sourceTypeOverride?: SourceType;
