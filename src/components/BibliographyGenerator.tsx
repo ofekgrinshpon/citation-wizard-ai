@@ -283,7 +283,7 @@ export function BibliographyGenerator() {
     if (!query) return;
     const hint = hintOverride ?? item.sourceTypeOverride;
     updateItem(id, { status: "loading", isEditing: false, sourceTypeOverride: hint });
-    const r = await lookupOne(query, hint);
+    const r = await lookupOneSafe(query, hint);
     setReviewItems((prev) =>
       prev.map((it) =>
         it.id === id
