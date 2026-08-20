@@ -1,6 +1,12 @@
-# Usage statistics section for the management panel
+# Usage statistics in the management panel
 
-A new **סטטיסטיקה** tab in the admin panel, showing how the app is actually being used — over time, per feature, and per user.
+The panel already has a **📊 סטטיסטיקות** tab. Rather than adding a second one, this rebuilds that existing tab into a real usage dashboard — how the app is actually being used, over time, per feature, and per user.
+
+## What's there today, and what changes
+
+Today the tab shows seven static counters (total citations, verified sources, counts per source category, registered users) plus a "most cited sources" list. They describe the *source library*, not app usage: no time dimension, no per-feature breakdown, no activity or reliability signal.
+
+The existing counters are kept — moved into a compact "מאגר המקורות" strip at the bottom of the tab, along with the most-cited-sources list — and the usage dashboard below becomes the top of the tab.
 
 ## What I checked
 
@@ -8,9 +14,10 @@ Live data volumes today: 2,781 QA runs, 1,983 credit ledger rows, 1,259 research
 
 At these volumes the numbers can be computed in the browser from a few bounded queries; no new database objects are needed.
 
-## The statistics tab
+## The rebuilt tab
 
 **Time range selector** at the top: 7 days / 30 days / 90 days / all time. Every panel below respects it.
+
 
 ### 1. Headline numbers
 - Total actions in range (citations + QA runs + research jobs)
