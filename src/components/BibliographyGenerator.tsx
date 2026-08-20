@@ -308,7 +308,7 @@ export function BibliographyGenerator() {
       if (!it.isEditing) return it;
       const v = it.editValue?.trim();
       if (!v) return { ...it, isEditing: false };
-      return { ...it, isEditing: false, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined };
+      return { ...it, isEditing: false, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined };
     });
     if (flushed !== reviewItems) setReviewItems(flushed);
 
