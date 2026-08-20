@@ -98,39 +98,56 @@ export function BibliographyGenerator() {
     toast.success(`${items.length} מקורות הוחזרו לשלב 2 לעריכה`);
   };
 
+  /**
+   * Single source lookup — runs the exact same pipeline as the Citation Wizard
+   * (input validation → source-type classification → verified store → the
+   * citation-chat engine with all its grounding gates → rule validation).
+   */
   const lookupOne = async (
     rawInput: string,
     sourceTypeHint?: BibSourceCategory,
   ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
+    const overrideType =
+      sourceTypeHint && sourceTypeHint !== "unknown"
+        ? CATEGORY_TO_SOURCE_TYPE[sourceTypeHint]
+        : undefined;
+
+    const result = await runCitation({
+      rawInput,
+      overrideType,
+      useVerifiedStore: true,
+    });
+
+    const citation = cleanCitation(result.citation);
+    if (!citation) {
+      return {
+        rawInput,
+        status: "error",
+        citation: "",
+        isVerified: false,
+        options: [],
+        errorMsg: "לא הוחזר אזכור",
+        sourceTypeOverride: sourceTypeHint,
+      };
+    }
+    return {
+      rawInput,
+      status: "ok",
+      citation,
+      isVerified: result.fromVerifiedStore,
+      options: [],
+      warningMsg: result.warningMsg,
+      sourceTypeOverride: sourceTypeHint,
+    };
+  };
+
+  /** Wraps lookupOne so a thrown engine error becomes an error row. */
+  const lookupOneSafe = async (
+    rawInput: string,
+    sourceTypeHint?: BibSourceCategory,
+  ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
     try {
-      const { data, errorInfo } = await invokeFunction<Record<string, unknown>>(
-        "bibliography-lookup",
-        {
-          rawSource: rawInput,
-          requestId: crypto.randomUUID(),
-          ...(sourceTypeHint && sourceTypeHint !== "unknown"
-            ? { sourceTypeHint }
-            : {}),
-        },
-      );
-      if (errorInfo) throw new Error(errorInfo.message);
-
-
-      if (data?.isDisambiguation && Array.isArray(data?.options) && data.options.length > 0) {
-        return {
-          rawInput,
-          status: "needs_choice",
-          citation: "",
-          isVerified: false,
-          options: data.options.map((s: string) => cleanCitation(String(s))),
-          sourceTypeOverride: sourceTypeHint,
-        };
-      }
-      const citation = cleanCitation(String(data?.citation || ""));
-      if (!citation) {
-        return { rawInput, status: "error", citation: "", isVerified: false, options: [], errorMsg: "לא הוחזר אזכור", sourceTypeOverride: sourceTypeHint };
-      }
-      return { rawInput, status: "ok", citation, isVerified: Boolean(data?.isVerified), options: [], sourceTypeOverride: sourceTypeHint };
+      return await lookupOne(rawInput, sourceTypeHint);
     } catch (e) {
       return {
         rawInput,
@@ -138,7 +155,12 @@ export function BibliographyGenerator() {
         citation: "",
         isVerified: false,
         options: [],
-        errorMsg: e instanceof Error ? e.message : "unknown",
+        errorMsg:
+          e instanceof CitationRunError
+            ? e.userMessage
+            : e instanceof Error
+              ? e.message
+              : "שגיאה לא ידועה",
         sourceTypeOverride: sourceTypeHint,
       };
     }
@@ -158,16 +180,44 @@ export function BibliographyGenerator() {
     setProgress({ done: 0, total: lines.length });
 
     try {
-      const results = await processInPool(lines, lookupOne, CONCURRENCY, (done) =>
-        setProgress({ done, total: lines.length }),
+      let done = 0;
+      const results = await runPool(
+        lines,
+        (line) => lookupOne(line),
+        {
+          concurrency: CONCURRENCY,
+          retries: 1,
+          onSettled: () => {
+            done += 1;
+            setProgress({ done, total: lines.length });
+          },
+        },
       );
 
-      const newItems: ReviewItem[] = results.map((r) => ({
-        id: crypto.randomUUID(),
-        ...r,
-        isEditing: false,
-        editValue: r.citation || r.rawInput,
-      }));
+      const newItems: ReviewItem[] = results.map((r, i) => {
+        const base: Omit<ReviewItem, "id" | "isEditing" | "editValue"> = r.ok
+          ? r.value!
+          : {
+              rawInput: lines[i],
+              status: "error",
+              citation: "",
+              isVerified: false,
+              options: [],
+              errorMsg:
+                r.error instanceof CitationRunError
+                  ? r.error.userMessage
+                  : r.error instanceof Error
+                    ? r.error.message
+                    : "שגיאה לא ידועה",
+            };
+        return {
+          id: crypto.randomUUID(),
+          ...base,
+          isEditing: false,
+          editValue: base.citation || base.rawInput,
+        };
+      });
+
 
       setReviewItems((prev) => [...prev, ...newItems]);
       setRawText("");
