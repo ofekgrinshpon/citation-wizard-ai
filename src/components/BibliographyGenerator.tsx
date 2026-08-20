@@ -4,7 +4,9 @@ import { useBibliography, CATEGORY_LABELS, classifyCitation, type BibSourceCateg
 import { FormattedCitation } from "./FormattedCitation";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
-import { invokeFunction } from "@/lib/functionError";
+import { runCitation, CitationRunError } from "@/lib/runCitation";
+import { runPool } from "@/lib/concurrency";
+import type { SourceType } from "@/data/abbreviations";
 
 type ReviewStatus = "ok" | "needs_choice" | "error" | "loading";
 
@@ -16,10 +18,12 @@ interface ReviewItem {
   isVerified: boolean;
   options: string[];
   errorMsg?: string;
+  warningMsg?: string;
   isEditing: boolean;
   editValue: string;
   sourceTypeOverride?: BibSourceCategory;
 }
+
 
 const CATEGORY_OPTIONS: { value: BibSourceCategory; label: string; icon: string }[] = [
   { value: "legislation_primary", label: "חקיקה ראשית", icon: "📜" },
