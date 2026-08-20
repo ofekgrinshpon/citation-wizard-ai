@@ -172,29 +172,27 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     setDragIndex(null);
   }, []);
 
-  // Run citation-chat for a single cell. Respects sourceTypeOverride if set.
-  const runSingleCitation = async (input: string, overrideType?: SourceType): Promise<string> => {
-    const normalized = normalizeAbbreviations(input);
-    const sourceType = overrideType ?? detectSourceType(normalized);
-    const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
+  // Run the shared citation pipeline for a single cell (same one the
+  // citation wizard uses). Respects sourceTypeOverride if set.
+  const runSingleCitation = async (
+    input: string,
+    overrideType?: SourceType
+  ): Promise<RunCitationResult> =>
+    runCitation({ rawInput: input, overrideType, projectId, useVerifiedStore: true });
 
-    let prompt = normalized;
-    if (sourceType !== "unknown") {
-      const engineHint = buildEnginePromptHint(sourceType as SourceType);
-      prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
-    }
+  const applyResultToCell = (c: FootnoteCell, res: RunCitationResult): FootnoteCell => ({
+    ...c,
+    output: res.reply,
+    status: res.status,
+    warningMsg: res.status === "warning" ? res.warningMsg : undefined,
+    errorMsg: undefined,
+    verifiedCitation: res.fromVerifiedStore ? res.citation : undefined,
+    detectedType: res.sourceType,
+    approved: false,
+  });
 
-    const { data, errorInfo } = await invokeFunction<{ content?: string }>("citation-chat", {
-      messages: [{ role: "user", content: prompt }],
-    });
-    if (errorInfo) {
-      const err = new Error(errorInfo.code || "EDGE_ERROR") as Error & { userMessage?: string };
-      err.userMessage = errorInfo.message;
-      throw err;
-    }
-    return data?.content || "";
-
-  };
+  const errorMessageOf = (e: unknown) =>
+    (e as { userMessage?: string })?.userMessage || "ההפקה נכשלה. נסו שוב.";
 
   // Phase 1: draft all cells. No repeat-citation rules, no persistence — that
   // happens later in finalizeApproved after the user reviews each card.
@@ -211,59 +209,46 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     setCells((prev) =>
       prev.map((c) =>
         c.input.trim() && c.status !== "verified"
-          ? { ...c, status: "loading", output: null, approved: false }
+          ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false }
           : c
       )
     );
 
-    try {
-      const results = await Promise.allSettled(
-        activeCells.map(async (cell) => {
-          const content = await runSingleCitation(cell.input, cell.sourceTypeOverride);
-          return { cellId: cell.id, content };
-        })
-      );
-
-      const resultMap = new Map<number, string>();
-      for (const r of results) {
-        if (r.status === "fulfilled") resultMap.set(r.value.cellId, r.value.content);
+    // Bounded concurrency: each citation-chat call does grounded web lookups,
+    // so firing every row at once gets the batch rate-limited.
+    const results = await runPool(
+      activeCells,
+      (cell) => runSingleCitation(cell.input, cell.sourceTypeOverride),
+      {
+        concurrency: 2,
+        retries: 1,
+        shouldRetry: (e) =>
+          isTransientError(e) && !(e as CitationRunError)?.isInsufficientCredits,
+        onSettled: (index, result) => {
+          const cellId = activeCells[index].id;
+          setCells((prev) =>
+            prev.map((c) => {
+              if (c.id !== cellId) return c;
+              return result.ok
+                ? applyResultToCell(c, result.value)
+                : { ...c, status: "error" as const, output: null, errorMsg: errorMessageOf(result.error) };
+            })
+          );
+        },
       }
+    );
 
-      setCells((prev) => {
-        const updated = prev.map((c) => {
-          if (!c.input.trim() || c.status === "verified") return c;
-          const content = resultMap.get(c.id);
-          if (content === undefined) {
-            return { ...c, status: "error" as const, output: null };
-          }
-          const detected = detectSourceType(normalizeAbbreviations(c.input));
-          const hasWarning = /\[חסר:/.test(content) || /⚠️/.test(content);
-          return {
-            ...c,
-            output: content,
-            status: hasWarning ? ("warning" as const) : ("valid" as const),
-            warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
-            detectedType: detected,
-            approved: false,
-          };
-        });
-        return applyRepeatCitationRules(updated);
-      });
+    setCells((prev) => applyRepeatCitationRules(prev));
+    setPhase("review");
+    setGlobalLoading(false);
 
-      setPhase("review");
-
-      const rejected = results.filter((r) => r.status === "rejected") as PromiseRejectedResult[];
-      if (rejected.length > 0) {
-        const reason = (rejected[0].reason as { userMessage?: string })?.userMessage;
-        toast.error(`${rejected.length} מקורות נכשלו — נסה שוב`, { description: reason });
-      }
-    } catch {
-      setCells((prev) =>
-        prev.map((c) => (c.status === "loading" ? { ...c, status: "error", output: null } : c))
-      );
-      toast.error("שגיאה בחיבור לשרת");
-    } finally {
-      setGlobalLoading(false);
+    const failed = results.filter((r) => !r.ok).length;
+    const verified = results.filter((r) => r.ok && r.value.fromVerifiedStore).length;
+    if (verified > 0) {
+      toast.success(`${verified} מקורות הושלמו ממאגר המקורות המאומתים (ללא חיוב)`);
+    }
+    if (failed > 0) {
+      toast.error(`${failed} מקורות נכשלו — ראו את הסיבה בכל כרטיס`);
     }
   };
 
@@ -274,38 +259,24 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
     setCells((prev) =>
       prev.map((c) =>
-        c.id === id ? { ...c, status: "loading", output: null, approved: false } : c
+        c.id === id ? { ...c, status: "loading", output: null, errorMsg: undefined, approved: false } : c
       )
     );
 
     try {
-      const content = await runSingleCitation(cell.input, cell.sourceTypeOverride);
-      const detected = detectSourceType(normalizeAbbreviations(cell.input));
-      const hasWarning = /\[חסר:/.test(content) || /⚠️/.test(content);
-      setCells((prev) => {
-        const updated = prev.map((c) =>
-          c.id === id
-            ? {
-                ...c,
-                output: content,
-                status: hasWarning ? ("warning" as const) : ("valid" as const),
-                warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
-                detectedType: detected,
-                approved: false,
-              }
-            : c
-        );
-        return applyRepeatCitationRules(updated);
-      });
-    } catch (e) {
+      const res = await runSingleCitation(cell.input, cell.sourceTypeOverride);
       setCells((prev) =>
-        prev.map((c) => (c.id === id ? { ...c, status: "error", output: null } : c))
+        applyRepeatCitationRules(prev.map((c) => (c.id === id ? applyResultToCell(c, res) : c)))
       );
-      toast.error(`הפקה מחדש של הערה ${id} נכשלה`, {
-        description: (e as { userMessage?: string })?.userMessage,
-      });
+    } catch (e) {
+      const message = errorMessageOf(e);
+      setCells((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, status: "error", output: null, errorMsg: message } : c))
+      );
+      toast.error(`הפקה מחדש של הערה ${id} נכשלה`, { description: message });
     }
   };
+
 
   // Per-cell handlers used by the review card.
   const handleReviewOutputChange = useCallback((id: number, value: string) => {
