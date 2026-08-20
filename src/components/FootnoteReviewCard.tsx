@@ -9,6 +9,7 @@ export interface ReviewCardCell {
   output: string | null;
   status: "empty" | "loading" | "valid" | "warning" | "verified" | "error";
   warningMsg?: string;
+  errorMsg?: string;
   approved?: boolean;
   sourceTypeOverride?: SourceType;
   detectedType?: SourceType;
@@ -157,7 +158,16 @@ export function FootnoteReviewCard({
             <span>מפיק מחדש…</span>
           </div>
         ) : isError ? (
-          <div className="text-xs text-destructive py-2">לא ניתן להפיק. נסה שוב.</div>
+          <div className="py-2 space-y-2">
+            <div className="text-xs text-destructive">{cell.errorMsg || "לא ניתן להפיק. נסה שוב."}</div>
+            <button
+              onClick={() => onRegenerate(cell.id)}
+              disabled={disabled || !cell.input.trim()}
+              className="text-[11px] px-2.5 py-1 rounded-md bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-40 font-medium transition-colors"
+            >
+              🔄 נסה שוב
+            </button>
+          </div>
         ) : (
           <>
             <textarea
@@ -171,6 +181,9 @@ export function FootnoteReviewCard({
               className="w-full bg-background border border-border rounded-md px-2 py-1.5 text-sm leading-relaxed resize-y"
               style={{ direction: "rtl" }}
             />
+            {cell.status === "warning" && cell.warningMsg && (
+              <div className="mt-1.5 text-[11px] text-amber-700">⚠️ {cell.warningMsg}</div>
+            )}
             {cell.output && (
               <div className="mt-1.5 text-[11px] text-muted-foreground">
                 תצוגה מעוצבת:{" "}
