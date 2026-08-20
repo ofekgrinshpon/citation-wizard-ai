@@ -342,8 +342,12 @@ export function BibliographyGenerator() {
     const verified = reviewItems.filter((i) => i.status === "ok" && i.isVerified).length;
     const ok = reviewItems.filter((i) => i.status === "ok").length;
     const needsFix = reviewItems.filter(
-      (i) => i.status === "needs_choice" || i.status === "error" || (i.status === "ok" && /\[חסר:/.test(i.citation)),
+      (i) =>
+        i.status === "needs_choice" ||
+        i.status === "error" ||
+        (i.status === "ok" && (Boolean(i.warningMsg) || /\[חסר:/.test(i.citation))),
     ).length;
+
     return { total, verified, ok, needsFix };
   }, [reviewItems]);
 
