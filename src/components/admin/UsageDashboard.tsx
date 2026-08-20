@@ -12,6 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import StatCard from "@/components/admin/StatCard";
+import UserUsageDrilldown from "@/components/admin/UserUsageDrilldown";
 import {
   useUsageStats,
   RANGE_OPTIONS,
@@ -65,7 +66,8 @@ interface Props {
 
 const UsageDashboard = ({ librarySection }: Props) => {
   const [range, setRange] = useState<RangeKey>("30d");
-  const { stats, loading, refreshedAt, refresh, hasComparison } = useUsageStats(range);
+  const [excludeInternal, setExcludeInternal] = useState(true);
+  const { stats, loading, refreshedAt, refresh, hasComparison } = useUsageStats(range, excludeInternal);
 
   const maxFeatureActions = Math.max(1, ...stats.byFeature.map((f) => f.actions));
 
@@ -104,6 +106,15 @@ const UsageDashboard = ({ librarySection }: Props) => {
           ))}
         </div>
         <div className="flex items-center gap-3">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+            <input
+              type="checkbox"
+              checked={excludeInternal}
+              onChange={(e) => setExcludeInternal(e.target.checked)}
+              className="accent-primary"
+            />
+            שימוש אמיתי בלבד
+          </label>
           {refreshedAt && (
             <span className="text-xs text-muted-foreground">
               עודכן {refreshedAt.toLocaleTimeString("he-IL")}
@@ -117,6 +128,12 @@ const UsageDashboard = ({ librarySection }: Props) => {
           </Button>
         </div>
       </div>
+
+      {excludeInternal && stats.internalActions > 0 && (
+        <p className="text-xs text-muted-foreground bg-muted/40 rounded-lg px-3 py-2">
+          הוסתרו {stats.internalActions} פעולות פנימיות (חשבונות אדמין והרצות בדיקה/רגרסיה).
+        </p>
+      )}
 
       {/* 1. Headline numbers */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -331,6 +348,8 @@ const UsageDashboard = ({ librarySection }: Props) => {
       </div>
 
       {/* 6. Source library (kept from the previous panel) */}
+      <UserUsageDrilldown users={stats.allUsers} range={range} />
+
       {librarySection}
     </div>
   );

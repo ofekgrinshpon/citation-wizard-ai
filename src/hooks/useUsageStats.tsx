@@ -75,6 +75,7 @@ export interface DayPoint {
 export interface TopUser {
   id: string;
   name: string;
+  email: string;
   plan: string;
   actions: number;
   credits: number;
@@ -103,6 +104,10 @@ export interface UsageStats {
   jobFailureRate: number;
   failedRequests: { code: string; count: number }[];
   refunds: { reason: string; count: number }[];
+  /** Rows excluded as internal/admin/test traffic in the current window. */
+  internalActions: number;
+  /** Every user with activity in range, for the search box. */
+  allUsers: TopUser[];
 }
 
 const EMPTY: UsageStats = {
@@ -128,6 +133,8 @@ const EMPTY: UsageStats = {
   jobFailureRate: 0,
   failedRequests: [],
   refunds: [],
+  internalActions: 0,
+  allUsers: [],
 };
 
 const ROW_CAP = 20000;
@@ -136,13 +143,14 @@ interface Event {
   at: string;
   userId: string | null;
   feature: FeatureKey;
+  internal: boolean;
 }
 
 function dayKey(iso: string) {
   return iso.slice(0, 10);
 }
 
-export function useUsageStats(range: RangeKey) {
+export function useUsageStats(range: RangeKey, excludeInternal = true) {
   const [stats, setStats] = useState<UsageStats>(EMPTY);
   const [loading, setLoading] = useState(true);
   const [refreshedAt, setRefreshedAt] = useState<Date | null>(null);
@@ -167,7 +175,7 @@ export function useUsageStats(range: RangeKey) {
         return (from ? query.gte("created_at", from) : query) as T;
       };
 
-      const [citRes, qaRes, ledgerRes, jobsRes, logsRes, profilesRes] = await Promise.all([
+      const [citRes, qaRes, ledgerRes, jobsRes, logsRes, profilesRes, rolesRes] = await Promise.all([
         bound(
           supabase
             .from("citation_history")
@@ -205,7 +213,15 @@ export function useUsageStats(range: RangeKey) {
             .limit(ROW_CAP),
         ),
         supabase.from("profiles").select("id, email, full_name, plan, created_at").limit(5000),
+        supabase.from("user_roles").select("user_id").eq("role", "admin"),
       ]);
+
+      // Admin accounts run the regression/validation batches; their rows are
+      // internal traffic, not customer usage.
+      const adminIds = new Set(
+        ((rolesRes.data ?? []) as { user_id: string }[]).map((r) => r.user_id),
+      );
+      const isInternal = (userId: string | null) => !!userId && adminIds.has(userId);
 
       const inRange = (at: string) => (since ? at >= since : true);
       const inPrev = (at: string) => (since && prevSince ? at >= prevSince && at < since : false);
@@ -213,13 +229,19 @@ export function useUsageStats(range: RangeKey) {
       // --- Build the unified action stream -------------------------------
       const events: Event[] = [];
       for (const row of citRes.data ?? []) {
-        events.push({ at: row.created_at, userId: row.user_id, feature: "citation" });
+        events.push({
+          at: row.created_at,
+          userId: row.user_id,
+          feature: "citation",
+          internal: isInternal(row.user_id),
+        });
       }
       for (const row of qaRes.data ?? []) {
         events.push({
           at: row.created_at,
           userId: row.user_id,
           feature: featureFromTaskMode(row.task_mode as string | null),
+          internal: isInternal(row.user_id),
         });
       }
       const ledger = (ledgerRes.data ?? []) as {
@@ -232,12 +254,19 @@ export function useUsageStats(range: RangeKey) {
       // Bibliography has no table of its own — its ledger charges are the record.
       for (const row of ledger) {
         if (row.event_type === "consume" && featureFromReason(row.reason) === "bibliography") {
-          events.push({ at: row.created_at, userId: row.user_id, feature: "bibliography" });
+          events.push({
+            at: row.created_at,
+            userId: row.user_id,
+            feature: "bibliography",
+            internal: isInternal(row.user_id),
+          });
         }
       }
 
-      const current = events.filter((e) => inRange(e.at));
-      const previous = events.filter((e) => inPrev(e.at));
+      const visible = excludeInternal ? events.filter((e) => !e.internal) : events;
+      const current = visible.filter((e) => inRange(e.at));
+      const previous = visible.filter((e) => inPrev(e.at));
+      const internalActions = events.filter((e) => e.internal && inRange(e.at)).length;
 
       // --- Daily buckets --------------------------------------------------
       const dayMap = new Map<string, DayPoint>();
@@ -288,6 +317,7 @@ export function useUsageStats(range: RangeKey) {
       const creditsByUser = new Map<string, number>();
       const refundReasons = new Map<string, number>();
       for (const row of ledger) {
+        if (excludeInternal && isInternal(row.user_id)) continue;
         const spent = row.event_type === "consume" ? Math.max(0, -(row.amount ?? 0)) : 0;
         if (inRange(row.created_at)) {
           if (row.event_type === "consume") {
@@ -343,19 +373,20 @@ export function useUsageStats(range: RangeKey) {
       }[];
       const profileById = new Map(profiles.map((p) => [p.id, p]));
 
-      const topUsers: TopUser[] = [...actionsByUser.entries()]
+      const allUsers: TopUser[] = [...actionsByUser.entries()]
         .sort((a, b) => b[1] - a[1])
-        .slice(0, 10)
         .map(([id, actions]) => {
           const p = profileById.get(id);
           return {
             id,
             name: p?.full_name || p?.email || id.slice(0, 8),
+            email: p?.email || "",
             plan: p?.plan || "—",
             actions,
             credits: creditsByUser.get(id) ?? 0,
           };
         });
+      const topUsers = allUsers.slice(0, 10);
 
       const planMap = new Map<string, number>();
       for (const p of profiles) {
@@ -366,14 +397,14 @@ export function useUsageStats(range: RangeKey) {
         .map(([plan, count]) => ({ plan, count }))
         .sort((a, b) => b.count - a.count);
 
-      const everActive = new Set(events.filter((e) => e.userId).map((e) => e.userId as string));
+      const everActive = new Set(visible.filter((e) => e.userId).map((e) => e.userId as string));
       const neverActive = profiles.filter((p) => !everActive.has(p.id)).length;
 
       const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
       const twoWeeksAgo = new Date(Date.now() - 14 * 86400000).toISOString();
       const thisWeek = new Set<string>();
       const lastWeek = new Set<string>();
-      for (const e of events) {
+      for (const e of visible) {
         if (!e.userId) continue;
         if (e.at >= weekAgo) thisWeek.add(e.userId);
         else if (e.at >= twoWeeksAgo) lastWeek.add(e.userId);
@@ -435,6 +466,8 @@ export function useUsageStats(range: RangeKey) {
         jobFailureRate: jobsInRange ? (jobsFailed / jobsInRange) * 100 : 0,
         failedRequests,
         refunds,
+        internalActions,
+        allUsers,
       });
       setRefreshedAt(new Date());
     } catch (err) {
@@ -442,7 +475,7 @@ export function useUsageStats(range: RangeKey) {
     } finally {
       setLoading(false);
     }
-  }, [range, since, prevSince]);
+  }, [range, since, prevSince, excludeInternal]);
 
   useEffect(() => {
     void fetchStats();

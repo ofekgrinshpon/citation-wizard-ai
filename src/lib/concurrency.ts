@@ -3,7 +3,13 @@
  * for transient failures (rate limits / timeouts). Results are reported as
  * each task settles so the UI can update progressively.
  */
-export type PoolResult<T> = { ok: true; value: T } | { ok: false; error: unknown };
+export interface PoolResult<T> {
+  ok: boolean;
+  /** Present when ok is true. */
+  value?: T;
+  /** Present when ok is false. */
+  error?: unknown;
+}
 
 export interface RunPoolOptions<T> {
   concurrency?: number;
