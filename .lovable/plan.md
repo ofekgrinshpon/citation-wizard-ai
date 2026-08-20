@@ -1,88 +1,88 @@
-# Google Workspace setup on relexlm.com (real inboxes)
+# תנאי שימוש + מדיניות פרטיות — pages, signup consent checkbox, acceptance record
 
-## Where the domain is registered
+## What gets built
 
-- **Purchased through Lovable** (domain status: `mode: "buy"`, active ~139 days).
-- **Underlying DNS host: Name.com** — confirmed by live NS lookup (`ns1.name.com`, `ns2fln.name.com`, …) and SOA (`ns1.name.com`). Google Workspace detected this and offered "automatic verification via Name.com sign-in."
-- You do **not** have a direct Name.com account — Lovable holds the registrar/reseller account and you manage DNS through Lovable's UI. So the **automatic Name.com sign-in verification will not work** for you.
-- DNS is managed at: **Workspace settings → Workspace domains → Configure → DNS records** (supports A, AAAA, CNAME, **MX**, TXT, SRV, NS).
+1. Two public legal pages with your exact Hebrew text: `/terms` (תנאי שימוש) and `/privacy` (מדיניות פרטיות).
+2. A required consent checkbox on the signup form (email signup **and** Google signup) linking to both pages.
+3. A durable record of who accepted what, and when, stored on the user's profile.
+4. Footer links to both pages so they are reachable outside signup.
 
-## Current DNS state (verified live)
+## Current state (verified)
+
+- `src/pages/Auth.tsx` — single page toggling between login/signup via `isLogin`. Signup collects שם מלא / אימייל / סיסמה, plus a Google OAuth button used for both modes. No consent UI today.
+- `src/App.tsx` — routes list; no `/terms` or `/privacy` route exists.
+- `src/hooks/useAuth.tsx` — `signUp(email, password, fullName, referralCode)` calls `supabase.auth.signUp` and passes `full_name` / `referral_code` through `options.data`.
+- Database trigger `handle_new_user` reads `raw_user_meta_data` and inserts into `public.profiles`.
+- `public.profiles` columns: id, email, full_name, created_at, is_subscribed, citation_count, plan, credit fields, billing fields, referral fields. **No consent columns exist.**
+- No legal text currently exists anywhere in the app (no terms/privacy strings found in `src/`).
+
+## 1. Legal content
+
+Create `src/content/legal/terms.ts` and `src/content/legal/privacy.ts` holding your Hebrew markdown verbatim, exported as strings. Both include the "עודכן לאחרונה: 21 באוגוסט 2026" date.
+
+Add a shared version constant in `src/content/legal/version.ts`:
 
 ```text
-relexlm.com          NS  → ns1/ns2/ns3/ns4 .name.com   (Name.com-hosted zone)
-relexlm.com          A   → 185.158.133.1                (Lovable site)
-relexlm.com          MX  → (none)                       ← safe to add Google MX here
-relexlm.com          TXT → (none)                       ← safe to add SPF here
-notify.relexlm.com   NS  → ns3/ns4 .lovable.cloud       (Lovable email infra — DO NOT TOUCH)
-notify.relexlm.com   MX  → mailgun (Lovable outbound)
+LEGAL_VERSION = "2026-08-21"
 ```
 
-Because Lovable's outbound email lives on the **delegated subdomain** `notify.relexlm.com`, adding Google's MX/SPF/DKIM to the **root** `relexlm.com` zone does **not conflict** with existing app email. The two zones are independent.
+This is what gets recorded on acceptance, so a future policy update can be detected.
 
-## Goal (per your answers)
+## 2. Pages
 
-Real inboxes only — `support@relexlm.com`, `privacy@relexlm.com` — for receiving mail in Google Workspace. Keep Lovable outbound email on `notify.relexlm.com` exactly as-is. No app code changes needed.
+New `src/pages/Legal.tsx` — one RTL document layout component rendering markdown, reused by both routes:
 
-## Plan — all steps done by you in the Lovable DNS manager + Google Workspace admin
+- `/terms` → תנאי שימוש
+- `/privacy` → מדיניות פרטיות
 
-### Step 1 — Verify domain ownership (manual TXT)
-1. In Google Workspace verification screen, choose **"אפשרויות אימות אחרות"** (other methods) → **"Add a TXT record"** (not the automatic Name.com sign-in).
-2. Copy the verification token, e.g. `google-site-verification=…`.
-3. In **Workspace settings → Workspace domains → Configure → DNS records**, add:
-   - Type: `TXT`
-   - Host: `@` (root, i.e. `relexlm.com`)
-   - Value: the verification token
-   - TTL: default
-4. Wait 5–60 min, then click **Verify** in Google Workspace.
+Details:
+- Public routes (no auth guard), registered in `src/App.tsx` above the catch-all.
+- RTL (`direction: rtl`), readable prose width, semantic headings, single `<h1>` per page.
+- Per-page `<title>` and `<meta name="description">` set on mount.
+- `mailto:` links for support@ / privacy@ / billing@ render as real links.
+- "← חזרה" back button, matching the existing Auth page styling and design tokens.
 
-### Step 2 — Create the inboxes
-In Google Workspace admin, create user accounts (or aliases on your primary account):
-- `support@relexlm.com`
-- `privacy@relexlm.com`
+## 3. Signup consent checkbox
 
-### Step 3 — Enable incoming mail (Google MX records on root)
-In the Lovable DNS manager, add Google's MX records to root `relexlm.com` (Host `@`):
+In `src/pages/Auth.tsx`, shown **only when `!isLogin`**:
+
+- A single required checkbox, unchecked by default:
+  > קראתי ואני מסכים/ה ל[תנאי השימוש](/terms) ול[מדיניות הפרטיות](/privacy)
+- Links open in a new tab so an in-progress signup form is not lost.
+- The "הירשמ/י" submit button is **disabled** until it is checked.
+- The Google button, while in signup mode, is also blocked until checked — clicking it unchecked shows a Hebrew toast (`יש לאשר את תנאי השימוש ומדיניות הפרטיות`) instead of starting OAuth. In login mode Google behaves exactly as today.
+- Login mode is untouched — no new friction for existing users.
+
+## 4. Recording acceptance
+
+Database migration adding to `public.profiles`:
+
 ```text
-MX  relexlm.com   aspmx.l.google.com       Priority 1
-MX  relexlm.com   alt1.aspmx.l.google.com  Priority 5
-MX  relexlm.com   alt2.aspmx.l.google.com  Priority 5
-MX  relexlm.com   alt3.aspmx.l.google.com  Priority 10
-MX  relexlm.com   alt4.aspmx.l.google.com  Priority 10
+terms_accepted_at    timestamptz
+terms_version        text
+privacy_accepted_at  timestamptz
+privacy_version      text
 ```
-(Use the exact MX values Google Workspace shows in its setup wizard — they are standard but confirm the list there.)
 
-### Step 4 — SPF for Google (root TXT)
-Add to root:
-```text
-TXT  relexlm.com  v=spf1 include:_spf.google.com ~all
-```
-Note: root currently has no SPF, so no merge needed. The `notify.relexlm.com` SPF (mailgun) lives on its own hostname and is untouched.
+Wiring:
+- `signUp()` in `useAuth.tsx` gains an `acceptedLegal` flag and passes `legal_version` + `legal_accepted_at` through `options.data`.
+- `handle_new_user` is updated so its `INSERT INTO public.profiles` also populates the four new columns from `raw_user_meta_data`. Existing behaviour (referral code resolution, referral_code generation) is preserved exactly.
+- Google OAuth signup does not flow through `signUp()`, so consent for that path is stamped after the session lands: on `/auth-redirect`, if the profile has no `terms_accepted_at` and the browser recorded consent for this signup attempt (sessionStorage flag set when the checkbox was ticked), write the acceptance to the profile.
 
-### Step 5 — DKIM (Google Workspace → Gmail → Authenticate email)
-1. In Google Workspace admin, generate the DKIM record (2048-bit).
-2. Add it in the Lovable DNS manager as either a CNAME or TXT (Google tells you which):
-   - CNAME: `google._domainkey.relexlm.com` → `<long>.dkim.googlehosted.com`
-   - or TXT: `google._domainkey` = `v=DKIM1; k=rsa; p=…`
+Existing users keep `NULL` in these columns — they are not blocked or re-prompted. Re-consent on policy change is out of scope for this plan.
 
-### Step 6 — DMARC (recommended)
-```text
-TXT  _dmarc.relexlm.com  v=DMARC1; p=quarantine; rua=mailto:support@relexlm.com
-```
-Start with `p=quarantine`; tighten to `p=reject` after a few weeks once mail flows cleanly.
+## 5. Footer links
 
-## What stays unchanged
-- Lovable outbound app/auth email on `notify.relexlm.com` — untouched.
-- The ReLex site (A record 185.158.133.1) — untouched.
-- No code changes, no edge function changes, no app wiring in this plan.
+Add תנאי שימוש / מדיניות פרטיות links to the Landing page footer so both documents are reachable without signing up.
 
-## Verification / acceptance
-- `dig MX relexlm.com` returns Google's `aspmx.l.google.com`.
-- `dig TXT relexlm.com` returns the Google verification token + SPF.
-- Email sent to `support@relexlm.com` arrives in the Google Workspace inbox.
-- App still sends outbound email successfully (Lovable queue healthy).
+## Out of scope
 
-## Caveats
-- I cannot add DNS records for you — the Lovable DNS manager is UI-only; you add them in Workspace settings → Workspace domains → Configure.
-- DNS propagation: TXT/MX changes are usually live within minutes at Name.com, occasionally up to 72h globally.
-- Once `support@` and `privacy@` are live, we can wire them into the app (Privacy Policy contact, Terms contact, contact form) as a follow-up.
+- Re-consent prompts for existing users when `LEGAL_VERSION` changes.
+- An English translation (your text states the Hebrew version is binding).
+- Account-deletion self-service and the retention automations the policy describes — the policy correctly says some deletions are handled manually on request to privacy@.
+
+## Technical notes
+
+- Markdown rendering reuses the project's existing renderer where possible rather than adding a dependency; if none is suitable, the content renders through a small RTL-aware markdown component.
+- Consent state is client-side UI gating **plus** a server-side record; the checkbox is not a security control, it is an evidentiary record of acceptance.
+- Migration includes `GRANT` review: `profiles` already has grants and RLS; adding columns does not change policies, and the new columns are covered by the existing "users read/update own profile" policies.
