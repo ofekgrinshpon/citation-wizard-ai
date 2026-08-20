@@ -535,35 +535,41 @@ const Admin = () => {
 
         {activeTab === "analytics" && (
           isTabLoading("analytics") ? <TabSpinner /> : (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <StatCard icon="📄" label="סה״כ אזכורים" value={totalCitations} />
-              <StatCard icon="✅" label="מקורות מאומתים" value={verifiedCount} color="text-primary" />
-              <StatCard icon="⚖️" label="פסיקה" value={caselawCitations.length} />
-              <StatCard icon="📜" label="חקיקה" value={legislationCitations.length} />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <StatCard icon="📖" label="ספרות" value={literatureCitations.length} />
-              <StatCard icon="👥" label="משתמשים רשומים" value={users.length} color="text-primary" />
-              <StatCard icon="🗃️" label="מקורות מאומתים במאגר" value={verifiedSources.length} color="text-primary" />
-            </div>
-
-            {topLaws.length > 0 && (
-              <div className="bg-card border border-border rounded-xl p-5 shadow-sm">
-                <h3 className="text-foreground font-bold text-sm mb-4">🏆 מקורות הכי מצוטטים</h3>
-                <div className="space-y-2">
-                  {topLaws.map(([name, count], index) => (
-                    <div key={index} className="flex items-center justify-between py-2 border-b border-border/50 last:border-b-0">
-                      <span className="text-sm text-foreground truncate max-w-[70%]">{name}</span>
-                      <Badge variant="secondary">{count} פעמים</Badge>
-                    </div>
-                  ))}
+          <UsageDashboard
+            librarySection={
+              <div className="space-y-4">
+                <div className="bg-card border border-border rounded-xl p-5 shadow-sm">
+                  <h3 className="text-foreground font-bold text-sm mb-4">🗂️ מאגר המקורות</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <StatCard icon="📄" label="סה״כ אזכורים" value={totalCitations} />
+                    <StatCard icon="✅" label="מקורות מאומתים" value={verifiedCount} color="text-primary" />
+                    <StatCard icon="⚖️" label="פסיקה" value={caselawCitations.length} />
+                    <StatCard icon="📜" label="חקיקה" value={legislationCitations.length} />
+                    <StatCard icon="📖" label="ספרות" value={literatureCitations.length} />
+                    <StatCard icon="👥" label="משתמשים רשומים" value={users.length} color="text-primary" />
+                    <StatCard icon="🗃️" label="מקורות מאומתים במאגר" value={verifiedSources.length} color="text-primary" />
+                  </div>
                 </div>
+
+                {topLaws.length > 0 && (
+                  <div className="bg-card border border-border rounded-xl p-5 shadow-sm">
+                    <h3 className="text-foreground font-bold text-sm mb-4">🏆 מקורות הכי מצוטטים</h3>
+                    <div className="space-y-2">
+                      {topLaws.map(([name, count], index) => (
+                        <div key={index} className="flex items-center justify-between py-2 border-b border-border/50 last:border-b-0">
+                          <span className="text-sm text-foreground truncate max-w-[70%]">{name}</span>
+                          <Badge variant="secondary">{count} פעמים</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            }
+          />
           )
         )}
+
 
         {activeTab === "sources" && (
           isTabLoading("sources") ? <TabSpinner /> : (
