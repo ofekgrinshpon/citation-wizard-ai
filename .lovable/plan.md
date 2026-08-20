@@ -43,13 +43,17 @@ Horizontal bar list: action count, share of total, credits spent, and distinct u
 - Failed requests from the activity log (`request_failed`), grouped by error code — the same signal that surfaced the Shira/Yoel charging bug
 - Refund count and reasons
 
-### 6. Export
+### 6. מאגר המקורות (kept from today)
+The current counters — total citations, verified sources, per-category counts, registered users — condensed into one compact strip, with the existing "מקורות הכי מצוטטים" list beneath it. Nothing that exists today is lost.
+
+### 7. Export
 A "הורדת CSV" button exporting the daily-activity table for the selected range, so the numbers can be taken into a spreadsheet.
 
 ## Technical notes
 
-- New `src/pages/Admin.tsx` tab `stats`, lazily loaded like the existing tabs, with the fetch living in a new `useUsageStats(range)` hook.
-- Queries: date-bounded selects of `citation_history`, `qa_logs` (id, user_id, task_mode, created_at), `credit_ledger` (user_id, event_type, amount, reason, created_at), `legal_research_jobs` (status, created_at), `activity_logs` (action, details, created_at), `profiles` (created_at, plan). Only the columns needed, capped and bucketed client-side by day.
+- Rewrites the `activeTab === "analytics"` block in `src/pages/Admin.tsx`; the tab id, label, and lazy-loading pattern stay as they are. The heavy markup moves into a new `src/components/admin/UsageDashboard.tsx` so `Admin.tsx` doesn't grow further, with the data fetch in a new `useUsageStats(range)` hook.
+- `fetchAnalytics` gains the range-bounded queries: `citation_history`, `qa_logs` (id, user_id, task_mode, created_at), `credit_ledger` (user_id, event_type, amount, reason, created_at), `legal_research_jobs` (status, created_at), `activity_logs` (action, details, created_at), `profiles` (created_at, plan). Only the columns needed, refetched when the range changes and bucketed client-side by day.
+
 - Charts use the `recharts` setup already in the project; cards reuse `StatCard` and shadcn components with existing semantic tokens (no hardcoded colours).
 - Admin-only, behind the existing `isAdmin` gate. Read-only — no schema changes, no migrations, no writes.
 - If volumes grow past a comfortable client-side aggregation (roughly 50k rows), the same panels can be moved behind a single security-definer aggregate function later without changing the UI.
