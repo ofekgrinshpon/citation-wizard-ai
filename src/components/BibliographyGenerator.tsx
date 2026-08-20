@@ -4,7 +4,9 @@ import { useBibliography, CATEGORY_LABELS, classifyCitation, type BibSourceCateg
 import { FormattedCitation } from "./FormattedCitation";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
-import { invokeFunction } from "@/lib/functionError";
+import { runCitation, CitationRunError } from "@/lib/runCitation";
+import { runPool } from "@/lib/concurrency";
+import type { SourceType } from "@/data/abbreviations";
 
 type ReviewStatus = "ok" | "needs_choice" | "error" | "loading";
 
@@ -16,10 +18,12 @@ interface ReviewItem {
   isVerified: boolean;
   options: string[];
   errorMsg?: string;
+  warningMsg?: string;
   isEditing: boolean;
   editValue: string;
   sourceTypeOverride?: BibSourceCategory;
 }
+
 
 const CATEGORY_OPTIONS: { value: BibSourceCategory; label: string; icon: string }[] = [
   { value: "legislation_primary", label: "חקיקה ראשית", icon: "📜" },
@@ -33,28 +37,20 @@ const CATEGORY_OPTIONS: { value: BibSourceCategory; label: string; icon: string 
   { value: "unknown", label: "אחר", icon: "❔" },
 ];
 
-const CONCURRENCY = 4;
+const CONCURRENCY = 2;
 
-async function processInPool<T, R>(items: T[], worker: (item: T) => Promise<R>, limit: number, onProgress?: (done: number) => void): Promise<R[]> {
-  const results: R[] = new Array(items.length);
-  let cursor = 0;
-  let done = 0;
-  const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
-    while (true) {
-      const i = cursor++;
-      if (i >= items.length) break;
-      try {
-        results[i] = await worker(items[i]);
-      } catch (e) {
-        results[i] = e as R;
-      }
-      done++;
-      onProgress?.(done);
-    }
-  });
-  await Promise.all(runners);
-  return results;
-}
+/**
+ * Bibliography categories → citation-engine source types. Supreme-court rows
+ * stay unmapped so the engine can decide between פ"ד (published) and database.
+ */
+const CATEGORY_TO_SOURCE_TYPE: Partial<Record<BibSourceCategory, SourceType>> = {
+  legislation_primary: "primary_legislation",
+  legislation_secondary: "secondary_legislation",
+  caselaw_district: "case_law_database",
+  caselaw_magistrate: "case_law_database",
+  caselaw_specialized: "case_law_database",
+};
+
 
 export function BibliographyGenerator() {
   const { sortedEntries, addEntries, removeEntry, clearAll } = useBibliography();
@@ -102,39 +98,56 @@ export function BibliographyGenerator() {
     toast.success(`${items.length} מקורות הוחזרו לשלב 2 לעריכה`);
   };
 
+  /**
+   * Single source lookup — runs the exact same pipeline as the Citation Wizard
+   * (input validation → source-type classification → verified store → the
+   * citation-chat engine with all its grounding gates → rule validation).
+   */
   const lookupOne = async (
     rawInput: string,
     sourceTypeHint?: BibSourceCategory,
   ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
+    const overrideType =
+      sourceTypeHint && sourceTypeHint !== "unknown"
+        ? CATEGORY_TO_SOURCE_TYPE[sourceTypeHint]
+        : undefined;
+
+    const result = await runCitation({
+      rawInput,
+      overrideType,
+      useVerifiedStore: true,
+    });
+
+    const citation = cleanCitation(result.citation);
+    if (!citation) {
+      return {
+        rawInput,
+        status: "error",
+        citation: "",
+        isVerified: false,
+        options: [],
+        errorMsg: "לא הוחזר אזכור",
+        sourceTypeOverride: sourceTypeHint,
+      };
+    }
+    return {
+      rawInput,
+      status: "ok",
+      citation,
+      isVerified: result.fromVerifiedStore,
+      options: [],
+      warningMsg: result.warningMsg,
+      sourceTypeOverride: sourceTypeHint,
+    };
+  };
+
+  /** Wraps lookupOne so a thrown engine error becomes an error row. */
+  const lookupOneSafe = async (
+    rawInput: string,
+    sourceTypeHint?: BibSourceCategory,
+  ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
     try {
-      const { data, errorInfo } = await invokeFunction<Record<string, unknown>>(
-        "bibliography-lookup",
-        {
-          rawSource: rawInput,
-          requestId: crypto.randomUUID(),
-          ...(sourceTypeHint && sourceTypeHint !== "unknown"
-            ? { sourceTypeHint }
-            : {}),
-        },
-      );
-      if (errorInfo) throw new Error(errorInfo.message);
-
-
-      if (data?.isDisambiguation && Array.isArray(data?.options) && data.options.length > 0) {
-        return {
-          rawInput,
-          status: "needs_choice",
-          citation: "",
-          isVerified: false,
-          options: data.options.map((s: string) => cleanCitation(String(s))),
-          sourceTypeOverride: sourceTypeHint,
-        };
-      }
-      const citation = cleanCitation(String(data?.citation || ""));
-      if (!citation) {
-        return { rawInput, status: "error", citation: "", isVerified: false, options: [], errorMsg: "לא הוחזר אזכור", sourceTypeOverride: sourceTypeHint };
-      }
-      return { rawInput, status: "ok", citation, isVerified: Boolean(data?.isVerified), options: [], sourceTypeOverride: sourceTypeHint };
+      return await lookupOne(rawInput, sourceTypeHint);
     } catch (e) {
       return {
         rawInput,
@@ -142,7 +155,12 @@ export function BibliographyGenerator() {
         citation: "",
         isVerified: false,
         options: [],
-        errorMsg: e instanceof Error ? e.message : "unknown",
+        errorMsg:
+          e instanceof CitationRunError
+            ? e.userMessage
+            : e instanceof Error
+              ? e.message
+              : "שגיאה לא ידועה",
         sourceTypeOverride: sourceTypeHint,
       };
     }
@@ -162,24 +180,53 @@ export function BibliographyGenerator() {
     setProgress({ done: 0, total: lines.length });
 
     try {
-      const results = await processInPool(lines, lookupOne, CONCURRENCY, (done) =>
-        setProgress({ done, total: lines.length }),
+      let done = 0;
+      const results = await runPool(
+        lines,
+        (line) => lookupOne(line),
+        {
+          concurrency: CONCURRENCY,
+          retries: 1,
+          onSettled: () => {
+            done += 1;
+            setProgress({ done, total: lines.length });
+          },
+        },
       );
 
-      const newItems: ReviewItem[] = results.map((r) => ({
-        id: crypto.randomUUID(),
-        ...r,
-        isEditing: false,
-        editValue: r.citation || r.rawInput,
-      }));
+      const newItems: ReviewItem[] = results.map((r, i) => {
+        const base: Omit<ReviewItem, "id" | "isEditing" | "editValue"> = r.ok
+          ? r.value!
+          : {
+              rawInput: lines[i],
+              status: "error",
+              citation: "",
+              isVerified: false,
+              options: [],
+              errorMsg:
+                r.error instanceof CitationRunError
+                  ? r.error.userMessage
+                  : r.error instanceof Error
+                    ? r.error.message
+                    : "שגיאה לא ידועה",
+            };
+        return {
+          id: crypto.randomUUID(),
+          ...base,
+          isEditing: false,
+          editValue: base.citation || base.rawInput,
+        };
+      });
+
 
       setReviewItems((prev) => [...prev, ...newItems]);
       setRawText("");
 
       const okCount = newItems.filter((i) => i.status === "ok").length;
-      const needsChoice = newItems.filter((i) => i.status === "needs_choice").length;
+      const warnCount = newItems.filter((i) => i.status === "ok" && (i.warningMsg || /\[חסר:/.test(i.citation))).length;
       const errorCount = newItems.filter((i) => i.status === "error").length;
-      toast.success(`עובדו ${newItems.length} מקורות · ${okCount} מוכנים, ${needsChoice} דורשים בחירה, ${errorCount} נכשלו`);
+      toast.success(`עובדו ${newItems.length} מקורות · ${okCount} מוכנים, ${warnCount} דורשים בדיקה, ${errorCount} נכשלו`);
+
     } catch {
       toast.error("שגיאה בעיבוד הרשימה");
     } finally {
@@ -216,7 +263,7 @@ export function BibliographyGenerator() {
         if (it.id !== id) return it;
         const v = it.editValue.trim();
         if (!v) return it;
-        return { ...it, isEditing: false, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined };
+        return { ...it, isEditing: false, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined };
       }),
     );
   };
@@ -236,7 +283,7 @@ export function BibliographyGenerator() {
     if (!query) return;
     const hint = hintOverride ?? item.sourceTypeOverride;
     updateItem(id, { status: "loading", isEditing: false, sourceTypeOverride: hint });
-    const r = await lookupOne(query, hint);
+    const r = await lookupOneSafe(query, hint);
     setReviewItems((prev) =>
       prev.map((it) =>
         it.id === id
@@ -261,7 +308,7 @@ export function BibliographyGenerator() {
       if (!it.isEditing) return it;
       const v = it.editValue?.trim();
       if (!v) return { ...it, isEditing: false };
-      return { ...it, isEditing: false, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined };
+      return { ...it, isEditing: false, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined, warningMsg: undefined };
     });
     if (flushed !== reviewItems) setReviewItems(flushed);
 
@@ -295,8 +342,12 @@ export function BibliographyGenerator() {
     const verified = reviewItems.filter((i) => i.status === "ok" && i.isVerified).length;
     const ok = reviewItems.filter((i) => i.status === "ok").length;
     const needsFix = reviewItems.filter(
-      (i) => i.status === "needs_choice" || i.status === "error" || (i.status === "ok" && /\[חסר:/.test(i.citation)),
+      (i) =>
+        i.status === "needs_choice" ||
+        i.status === "error" ||
+        (i.status === "ok" && (Boolean(i.warningMsg) || /\[חסר:/.test(i.citation))),
     ).length;
+
     return { total, verified, ok, needsFix };
   }, [reviewItems]);
 
@@ -624,6 +675,15 @@ function ReviewRow({
             ⚠ חסרים פרטים — תקן ידנית או חפש שוב
           </span>
         )}
+        {!hasMissing && item.status === "ok" && item.warningMsg && (
+          <span
+            className="text-[10px] font-medium text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded"
+            title={item.warningMsg}
+          >
+            ⚠ {item.warningMsg}
+          </span>
+        )}
+
 
         {item.status === "ok" && (
           <Popover>
