@@ -223,9 +223,10 @@ export function BibliographyGenerator() {
       setRawText("");
 
       const okCount = newItems.filter((i) => i.status === "ok").length;
-      const needsChoice = newItems.filter((i) => i.status === "needs_choice").length;
+      const warnCount = newItems.filter((i) => i.status === "ok" && (i.warningMsg || /\[חסר:/.test(i.citation))).length;
       const errorCount = newItems.filter((i) => i.status === "error").length;
-      toast.success(`עובדו ${newItems.length} מקורות · ${okCount} מוכנים, ${needsChoice} דורשים בחירה, ${errorCount} נכשלו`);
+      toast.success(`עובדו ${newItems.length} מקורות · ${okCount} מוכנים, ${warnCount} דורשים בדיקה, ${errorCount} נכשלו`);
+
     } catch {
       toast.error("שגיאה בעיבוד הרשימה");
     } finally {
