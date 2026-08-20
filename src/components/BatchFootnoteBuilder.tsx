@@ -227,7 +227,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
           isTransientError(e) && !(e as CitationRunError)?.isInsufficientCredits,
         onSettled: (index, result) => {
           const cellId = activeCells[index].id;
-          if (result.ok) {
+          if (result.ok && result.value) {
             const value = result.value;
             setCells((prev) => prev.map((c) => (c.id === cellId ? applyResultToCell(c, value) : c)));
           } else {
