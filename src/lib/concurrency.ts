@@ -3,6 +3,8 @@
  * for transient failures (rate limits / timeouts). Results are reported as
  * each task settles so the UI can update progressively.
  */
+export type PoolResult<T> = { ok: true; value: T } | { ok: false; error: unknown };
+
 export interface RunPoolOptions<T> {
   concurrency?: number;
   /** Retry attempts per task (0 = no retry). */
@@ -12,7 +14,7 @@ export interface RunPoolOptions<T> {
   /** Return true when the error is worth retrying. */
   shouldRetry?: (error: unknown) => boolean;
   /** Called as soon as a task settles. */
-  onSettled?: (index: number, result: { ok: true; value: T } | { ok: false; error: unknown }) => void;
+  onSettled?: (index: number, result: PoolResult<T>) => void;
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -29,15 +31,13 @@ export async function runPool<TIn, TOut>(
   items: TIn[],
   task: (item: TIn, index: number) => Promise<TOut>,
   options: RunPoolOptions<TOut> = {}
-): Promise<Array<{ ok: true; value: TOut } | { ok: false; error: unknown }>> {
+): Promise<Array<PoolResult<TOut>>> {
   const concurrency = Math.max(1, options.concurrency ?? 2);
   const retries = options.retries ?? 1;
   const backoffMs = options.backoffMs ?? 1200;
   const shouldRetry = options.shouldRetry ?? isTransientError;
 
-  const results: Array<{ ok: true; value: TOut } | { ok: false; error: unknown }> = new Array(
-    items.length
-  );
+  const results: Array<PoolResult<TOut>> = new Array(items.length);
   let cursor = 0;
 
   const worker = async () => {
