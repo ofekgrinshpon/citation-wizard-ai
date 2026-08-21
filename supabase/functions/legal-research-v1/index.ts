@@ -953,6 +953,11 @@ async function handle(req: Request): Promise<Response> {
         return acc;
       }, {} as Record<string, number>),
       counts: pool.counts,
+      url_dedupe: {
+        identity_source_counts: pool.url_dedupe_identity_source_counts,
+        rescued_from_legacy_collapse: pool.url_dedupe_rescued_from_legacy_collapse,
+        rows: pool.url_dedupe.filter((r) => r.dedupe_identity_source !== "normal_url"),
+      },
     },
     source_integrity: {
       rejects: pool.integrity_rejects,
