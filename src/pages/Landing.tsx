@@ -106,7 +106,7 @@ const PRICING_PLANS: { id: PlanId; highlight?: boolean; perks: string[] }[] = [
   {
     id: "basic",
     perks: [
-      "20 קרדיטים בחודש",
+      "10 קרדיטים בחודש",
       "אזכורים אחידים, ביבליוגרפיה, העוזר המשפטי",
       "ללא רכישת קרדיטים נוספת",
     ],
@@ -123,7 +123,7 @@ const PRICING_PLANS: { id: PlanId; highlight?: boolean; perks: string[] }[] = [
     id: "pro_semester",
     highlight: true,
     perks: [
-      "1,100 קרדיטים ל-4 חודשים",
+      "900 קרדיטים ל-3 חודשים",
       "החיסכון הגדול ביותר לסטודנטים",
       "Top-up זמין לפי צורך",
     ],
@@ -131,7 +131,7 @@ const PRICING_PLANS: { id: PlanId; highlight?: boolean; perks: string[] }[] = [
   {
     id: "pro_annual",
     perks: [
-      "3,600 קרדיטים בשנה",
+      "3,000 קרדיטים בשנה",
       "המחיר הטוב ביותר לקרדיט",
       "אידיאלי למשרדים ולעבודה שוטפת",
     ],
@@ -353,7 +353,14 @@ const Landing = () => {
                   </div>
                 )}
                 <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-foreground">{plan.label}</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-bold text-foreground">{plan.label}</h3>
+                    {id !== "basic" && (
+                      <span className="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[9px] font-bold border border-primary/20">
+                        בטא
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-muted-foreground">{plan.tagline}</p>
                 </div>
                 <div className="space-y-1">
