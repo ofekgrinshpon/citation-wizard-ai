@@ -1,0 +1,189 @@
+{
+  "id": "F01",
+  "query": "מה נטל ההוכחה בעתירות לבג״ץ? על מי מוטל הנטל? על העותר תמיד?",
+  "job_id": "5fda3911-7596-4755-aa62-86e1c7802b08",
+  "run_id": "f1cd135a-4144-4a3f-95c6-72e045623e36",
+  "ms": 142424,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": null,
+  "drafted": true,
+  "answer_length": 2135,
+  "used_sources_count": 3,
+  "footnotes_count": 3,
+  "judgments_cited": 0,
+  "body_acquired_judgments": 0,
+  "metadata_only_judgments": 0,
+  "metadata_only_titles": [],
+  "statute_text_acquired_count": 0,
+  "statute_section_text_located": false,
+  "statute_acquisition": null,
+  "sufficiency_used_acquired_body": false,
+  "claim_facet_expansion": {
+    "facets": [
+      {
+        "facet_id": "F1",
+        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+        "sources_used": 1,
+        "sources_found": 7,
+        "commentary_only": false,
+        "doctrinal_label": "נטל ראשוני על העותר בעתירת בג\"ץ",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "הנטל הראשוני המוטל על העותר בעתירה לבג\"ץ"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 1,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "binding_case_law"
+      },
+      {
+        "facet_id": "F2",
+        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+        "sources_used": 0,
+        "sources_found": 2,
+        "commentary_only": false,
+        "doctrinal_label": "חזקת התקינות המנהלית",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "חזקת התקינות המנהלית נטל הסתירה"
+        ],
+        "best_support_level": "tangential",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "binding_case_law"
+      },
+      {
+        "facet_id": "F3",
+        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+        "sources_used": 0,
+        "sources_found": 8,
+        "commentary_only": false,
+        "doctrinal_label": "חובת ההסבר / חובת ההנמקה של הרשות",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "חובת ההנמקה של הרשות המינהלית חוק לתיקון סדרי המינהל הנמקות"
+        ],
+        "best_support_level": "tangential",
+        "metadata_only_count": 1,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "primary_statute"
+      },
+      {
+        "facet_id": "F4",
+        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+        "sources_used": 0,
+        "sources_found": 2,
+        "commentary_only": false,
+        "doctrinal_label": "צו על תנאי והעברת נטל מעשית למשיב",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "צו על תנאי בבג\"ץ נטל התשובה של המשיב"
+        ],
+        "best_support_level": "unrelated",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "procedure_rules"
+      },
+      {
+        "facet_id": "F5",
+        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+        "sources_used": 3,
+        "sources_found": 9,
+        "commentary_only": false,
+        "doctrinal_label": "סעד זמני בבג\"ץ: ראיות לכאורה ומאזן נוחות",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "סעד זמני בבג\"ץ מאזן הנוחות סיכויי העתירה"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "application",
+        "primary_support_found": true,
+        "required_source_preference": "procedure_rules"
+      },
+      {
+        "facet_id": "F6",
+        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+        "sources_used": 1,
+        "sources_found": 5,
+        "commentary_only": false,
+        "doctrinal_label": "הבחנה בין נטל שכנוע לנטל הבאת ראיות",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "ההבחנה בין נטל השכנוע לנטל הבאת הראיות במשפט המינהלי"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "background_only",
+        "primary_support_found": true,
+        "required_source_preference": "scholarship_secondary"
+      }
+    ],
+    "enabled": true,
+    "version": "claim_facet_expansion_v1",
+    "facet_count": 6,
+    "gate_reason": "mode=doctrine_explanation;shape=analysis",
+    "legal_area_lock": "public_law_hcj",
+    "directive_applied": true,
+    "facet_queries_count": 5,
+    "facets_commentary_only": 0,
+    "facets_without_primary_support": 0
+  },
+  "sufficiency_profile": null,
+  "sufficiency_passed": null,
+  "metadata_only_holdings_remaining": 0,
+  "gate_report": {
+    "applied": true,
+    "source_split": {
+      "read_in_full": [],
+      "reference_only": []
+    },
+    "blocks_stripped": 0,
+    "source_split_counts": {
+      "read_in_full": 0,
+      "reference_only": 0
+    },
+    "reference_only_sources": [],
+    "blocks_left_unsupported": 0,
+    "stripped_ref_occurrences": 0,
+    "unsupported_block_samples": [],
+    "metadata_only_judgment_refs": [],
+    "metadata_only_holdings_remaining": 0
+  },
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "used_source_titles": [
+    {
+      "title": "רמאל נ' טרודי ואח' - פסקדין",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only"
+    },
+    {
+      "title": "דיני הראיות",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only"
+    },
+    {
+      "title": "דרכי הוכחה בבג״ץ",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only"
+    }
+  ],
+  "answer": "שורה תחתונה: בעתירות לבג״ץ הנטל להוכיח את העובדות המרכזיות שעליהן מבוססת העתירה מוטל בדרך כלל על העותר — עליו להציג ראיות התומכות בקיומן של טענותיו ובעילת ההתערבות כדי שיתקבלו סעדיו.¹\n\nנטל ראשוני על העותר: פסיקה עוסקת במפורש בכך שהעותר הוא זה שנושא בנטל הראשוני להציג עילה משפטית להתערבות ולפרט את העובדות המניחות אותה; כאשר המאזן עובדתי או המחלוקת עובדתית מהותית, שאלת נטל השכנוע נעשית מכרעת.¹\n\nחזקת התקינות המנהלית וההשלכות על הנטל: לצד הנטל הראשוני על העותר פועלת חזקת התקינות של ההליך המנהלי, שאליה שופט עשוי להתייחס על‑ידי דרישה מהמשיב להציג מסמכים או הנמקות; בפועל הנטל יכול לעבור או להתחלק בהתאם לנסיבות כדי לאפשר בדיקה מלאה של חוקיות ההחלטה המנהלית.¹\n\nחובת ההנמקה של הרשות: קיימת בדיון הפסיקתי והאקדמי הדרישה לספק הנמקה מספקת להחלטה מנהלית; בבחינה שיפוטית כפיית ההנמקה עוברת תדיר על ידי בקשת בית המשפט למסמכים או להבהרות מהמשיב, מה שמאפשר להעריך אם נדרש ביטול או תיקון ההחלטה.²\n\nצו על תנאי והעברת נטל פרקטית: במקורות שסופקו לא אותרה טקסטואציה חקיקתית או תקדינית מפורשת המתווה מנגנון רשמי של 'העברת נטל' בשל הצו על תנאי; ייתכן שבפסיקה משתמשים בכלים פרוצדורליים כאלה כדי להורות על הפקדת חומר על ידי המשיב, אך בטענה זו יש להחיל זהירות מכיוון שאין מפורשותיה המקוריות ברשימה שנמסרה כאן.\n\nסעד זמני, ראיות לכאורה ומאזן נוחות: ביחס לבקשות לצווים זמניים הנסיבות מעשיות דוחות דרישה לעילות והראיות — נהוג לבחון סיכוי סביר להצלחת העתירה (ראיות לכאורה), נזק שלא ניתן לתקנו או פיצוי, ומאזן נוחות בין הצדדים; הספרות שהוצגה מדגישה את הצורך בגמישות שיפוטית ובהתאמת דרגת ההוכחה לחומרת הפגיעה בזכויות.³\n\nהבחנה בין נטל שכנוע לנטל הבאת ראיות: יש להבחין בין שני מונחים — מי נושא בנטל להציג ראיות (נטל הבאת ראיות) ומי חייב להישכנע על יסודן (נטל השכנוע); הדוקטרינה והספרות מצביעות שהעותר נושא בדרך‑כלל בנטל הבאת הראיות, ואילו רמת השכנוע הנדרשת משתנה לפי סוג הטענה וחומרת הפגיעה בזכויות.³\n\nמסקנה מעשית והסתייגות לגבי חומר המקורות: באופן מעשי, כללית העותר נושא בנטל להוכיח את עילת העתירה והעובדות התומכות בה, אך בית המשפט רשאי להורות על הפקת מסמכים או להעביר חלק מהנטל לפרטי המשיב לפי נסיבות המקרה; יש להיזהר מהכללות־יתר — במקורות שאותרו כאן הטקסט המלא של חלק מההלכות והדיונים האקדמיים לא נמסר ולכן ניסוח זה מבוסס על הקטעים המובאים ועל ניתוח אקדמי חלקי."
+}
