@@ -58,6 +58,8 @@ export function BibliographyGenerator() {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [reviewItems, setReviewItems] = useState<ReviewItem[]>([]);
+  /** Set when every row failed with the same service-level error (AI provider outage). */
+  const [serviceOutage, setServiceOutage] = useState<string | null>(null);
 
   const sendEntryBackToReview = (id: string) => {
     const entry = sortedEntries.find((e) => e.id === id);
@@ -177,7 +179,9 @@ export function BibliographyGenerator() {
     }
 
     setLoading(true);
+    setServiceOutage(null);
     setProgress({ done: 0, total: lines.length });
+
 
     try {
       let done = 0;
@@ -218,6 +222,17 @@ export function BibliographyGenerator() {
         };
       });
 
+      // One shared service-level failure (AI provider outage / rate limit) →
+      // show a single banner instead of a wall of identical red rows.
+      const serviceCodes = new Set(["AI_UNAVAILABLE", "AI_RATE_LIMITED", "CREDIT_CHARGE_FAILED"]);
+      const failedCodes = results
+        .filter((r) => !r.ok && r.error instanceof CitationRunError)
+        .map((r) => (r.error as CitationRunError).code);
+      const allFailedSameService =
+        failedCodes.length === results.length &&
+        failedCodes.length > 0 &&
+        serviceCodes.has(failedCodes[0]) &&
+        failedCodes.every((c) => c === failedCodes[0]);
 
       setReviewItems((prev) => [...prev, ...newItems]);
       setRawText("");
@@ -225,7 +240,14 @@ export function BibliographyGenerator() {
       const okCount = newItems.filter((i) => i.status === "ok").length;
       const warnCount = newItems.filter((i) => i.status === "ok" && (i.warningMsg || /\[חסר:/.test(i.citation))).length;
       const errorCount = newItems.filter((i) => i.status === "error").length;
-      toast.success(`עובדו ${newItems.length} מקורות · ${okCount} מוכנים, ${warnCount} דורשים בדיקה, ${errorCount} נכשלו`);
+
+      if (allFailedSameService) {
+        const first = results.find((r) => !r.ok)?.error as CitationRunError;
+        setServiceOutage(first.userMessage);
+        toast.error(first.userMessage);
+      } else {
+        toast.success(`עובדו ${newItems.length} מקורות · ${okCount} מוכנים, ${warnCount} דורשים בדיקה, ${errorCount} נכשלו`);
+      }
 
     } catch {
       toast.error("שגיאה בעיבוד הרשימה");
@@ -404,6 +426,9 @@ export function BibliographyGenerator() {
             ReLex הוא AI ויכול לעשות טעויות. יש לבדוק שנית את הפלט לפני השימוש בו.
           </p>
         </div>
+
+
+
         {sortedEntries.length > 0 && (
           <div className="flex items-center gap-2">
             <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md">
@@ -418,6 +443,24 @@ export function BibliographyGenerator() {
           </div>
         )}
       </div>
+
+      {serviceOutage && (
+        <div
+          role="alert"
+          className="mb-4 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2.5 text-xs text-destructive flex items-start justify-between gap-3"
+        >
+          <span className="leading-relaxed">{serviceOutage}</span>
+          <button
+            onClick={() => setServiceOutage(null)}
+            className="shrink-0 text-destructive/70 hover:text-destructive"
+            aria-label="סגור"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+
 
       {/* Step indicator */}
       <div className="flex items-center gap-2 mb-4 text-xs">
