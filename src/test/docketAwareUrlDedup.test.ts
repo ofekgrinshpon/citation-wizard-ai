@@ -15,7 +15,7 @@ describe("docket_aware_url_dedup_v1", () => {
       'בג"ץ 1000/92 בבלי',
     );
     expect(a.identity_source).toBe("query_param");
-    expect(a.dedupe_identity_params_used ?? a.identity_params_used).toContain("filename");
+    expect(a.identity_params_used).toContain("filename");
     expect(a.key).not.toBe(b.key);
     expect(a.normalized_url_old).toBe(b.normalized_url_old);
   });
