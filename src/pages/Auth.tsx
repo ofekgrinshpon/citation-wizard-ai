@@ -90,7 +90,11 @@ const Auth = () => {
         const target = isOfficeAddin ? "/app?addin=1" : "/app";
         navigate(target, { replace: true });
       } else {
-        const { error } = await signUp(email, password, fullName, refCode || undefined);
+        if (!acceptedLegal) {
+          toast.error("יש לאשר את תנאי השימוש ומדיניות הפרטיות");
+          return;
+        }
+        const { error } = await signUp(email, password, fullName, refCode || undefined, true);
         if (error) throw error;
         toast.success("נרשמת בהצלחה! בדוק את האימייל לאימות.");
         try { sessionStorage.removeItem("relex_ref_code"); } catch { /* ignore */ }
@@ -180,20 +184,31 @@ const Auth = () => {
                 </button>
               </div>
             )}
+            {!isLogin && (
+              <label className="flex items-start gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={acceptedLegal}
+                  onChange={(e) => setAcceptedLegal(e.target.checked)}
+                  required
+                  className="mt-0.5 w-3.5 h-3.5 rounded border-border text-primary focus:ring-primary/20"
+                />
+                <span className="text-xs text-muted-foreground leading-5">
+                  קראתי ואני מסכים/ה ל
+                  <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">תנאי השימוש</a>
+                  {" "}ול
+                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">מדיניות הפרטיות</a>
+                </span>
+              </label>
+            )}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (!isLogin && !acceptedLegal)}
               className="w-full py-3 rounded-xl font-semibold text-sm text-primary-foreground transition-all disabled:opacity-50"
               style={{ background: "var(--gradient-primary)" }}
             >
               {loading ? "מעבד..." : isLogin ? "התחבר/י" : "הירשמ/י"}
             </button>
-          </form>
-
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
-            <div className="relative flex justify-center text-xs"><span className="bg-card px-2 text-muted-foreground">או</span></div>
-          </div>
 
           <button
             onClick={async () => {
