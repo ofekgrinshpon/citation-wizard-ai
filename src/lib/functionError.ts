@@ -44,11 +44,18 @@ async function extractBody(error: unknown): Promise<Record<string, unknown> | nu
 
 function messageFor(status: number | null, code: string | null, body: Record<string, unknown> | null): string {
   const serverHe = (body?.messageHe ?? body?.message) as string | undefined;
-  if (code === "INSUFFICIENT_CREDITS" || status === 402) {
+  if (code === "AI_UNAVAILABLE") {
+    return serverHe || "שירות ה-AI אינו זמין כרגע עקב מגבלת ספק. לא חויבתם — נסו שוב מאוחר יותר.";
+  }
+  if (code === "INSUFFICIENT_CREDITS") {
     const required = body?.required;
     return required
       ? `אין מספיק קרדיטים — הפעולה דורשת ${required} קרדיטים.`
       : "אין מספיק קרדיטים — שדרגו תוכנית או הוסיפו טופ-אפ.";
+  }
+  if (status === 402) {
+    // 402 without our own credit code = upstream AI provider billing block, not the user's credits.
+    return serverHe || "שירות ה-AI אינו זמין כרגע עקב מגבלת ספק. נסו שוב מאוחר יותר.";
   }
   if (code === "CREDIT_CHARGE_FAILED" || status === 503) {
     return serverHe || "לא ניתן היה לחייב קרדיטים כרגע. נסו שוב בעוד רגע.";
@@ -57,7 +64,7 @@ function messageFor(status: number | null, code: string | null, body: Record<str
     return "פג תוקף ההתחברות. התחברו מחדש ונסו שוב.";
   }
   if (status === 429) {
-    return "מגבלת קצב — נסו שוב בעוד רגע.";
+    return serverHe || "מגבלת קצב — נסו שוב בעוד רגע.";
   }
   if (code === "INVALID_INPUT" || status === 400) {
     return serverHe || "לא זוהה טקסט משפטי ברור לאזכור. נסחו מחדש ונסו שוב.";
