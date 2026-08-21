@@ -7,6 +7,7 @@ import { GeometricBackground } from "@/components/GeometricBackground";
 import { ChevronDown, Check, Sparkles } from "lucide-react";
 import { PLANS, type PlanId } from "@/lib/plans";
 import howItWorksVideo from "@/assets/relex-how-it-works.mp4.asset.json";
+import howItWorksPoster from "@/assets/relex-how-it-works-poster.jpg.asset.json";
 
 function useInView(ref: RefObject<HTMLElement | null>, threshold = 0.15) {
   const [visible, setVisible] = useState(false);
