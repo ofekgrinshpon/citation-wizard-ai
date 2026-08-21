@@ -13,6 +13,12 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
 import { runClaimAnalyzer } from "./stages/claimAnalyzer.ts";
 import { runQueryPlanner } from "./stages/queryPlanner.ts";
+import {
+  buildFacetDirective,
+  computeFacetCoverage,
+  expandClaimFacets,
+  FacetSourceView,
+} from "./stages/claimFacetExpansion.ts";
 import { runLocalRetrieval } from "./stages/localRetrieval.ts";
 import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
@@ -584,7 +590,18 @@ async function handle(req: Request): Promise<Response> {
     plannerStage.mode_plan?.mode ?? null,
     analyzer,
   );
-  const allQueries = [...planner!.queries, ...anchorQueries, ...judgmentDiscovery.queries];
+  // ─── claim_facet_expansion_v1 — doctrinal facets + area-locked queries ───
+  const facetExpansion = expandClaimFacets(question, analyzer, {
+    mode: plannerStage.mode_plan?.mode ?? null,
+    outputShape: plannerStage.mode_plan?.output_shape ?? null,
+  });
+  const facetDirective = buildFacetDirective(facetExpansion);
+  const allQueries = [
+    ...planner!.queries,
+    ...anchorQueries,
+    ...judgmentDiscovery.queries,
+    ...facetExpansion.queries,
+  ];
   const requiredAnchorsMeta = {
     enabled: true,
     count: requiredAnchors.length,
@@ -1293,9 +1310,52 @@ async function handle(req: Request): Promise<Response> {
       satisfiedStatuteSectionAnchors,
       researchMode: plannerStage.mode_plan?.mode ?? null,
       specificCaseGate,
+      facetDirective,
     },
   );
   stage_runs.push(...drafter.stage_runs);
+
+  // claim_facet_expansion_v1 — per-facet coverage telemetry (no behavior).
+  const facetUsedIds = new Set(drafter.used_sources.map((u) => u.candidate_id));
+  const facetSupportById = new Map<string, string>();
+  for (const v of verifier.verdicts) {
+    facetSupportById.set(
+      (v as { candidate_id: string }).candidate_id,
+      String((v as { support?: string }).support ?? "unknown"),
+    );
+  }
+  const facetSourceViews: FacetSourceView[] = pool.candidates.map((c) => ({
+    candidate_id: c.candidate_id,
+    title: c.title ?? "",
+    snippet: c.snippet ?? "",
+    source_type: String(c.source_type ?? ""),
+    role: String(c.role ?? ""),
+    support: facetSupportById.get(c.candidate_id) ?? "unknown",
+    citable_as: (c.metadata as Record<string, unknown> | undefined)?.citable_as as string | undefined,
+    text_usability: (c.metadata as Record<string, unknown> | undefined)?.text_usability as
+      | string
+      | undefined,
+    used: facetUsedIds.has(c.candidate_id),
+    query_he: c.query_he,
+    facet_id: ((c.metadata as Record<string, unknown> | undefined)?.facet_id ?? null) as
+      | string
+      | null,
+  }));
+  const facetTelemetry = facetExpansion.enabled
+    ? computeFacetCoverage(facetExpansion.facets, facetSourceViews)
+    : [];
+  const claimFacetExpansionMeta = {
+    version: "claim_facet_expansion_v1" as const,
+    enabled: facetExpansion.enabled,
+    gate_reason: facetExpansion.gate_reason,
+    legal_area_lock: facetExpansion.legal_area_lock,
+    facet_count: facetExpansion.facets.length,
+    facet_queries_count: facetExpansion.queries.length,
+    directive_applied: facetDirective.length > 0,
+    facets: facetTelemetry,
+    facets_without_primary_support: facetTelemetry.filter((f) => !f.primary_support_found).length,
+    facets_commentary_only: facetTelemetry.filter((f) => f.commentary_only).length,
+  };
 
   // Re-compute statuses post-drafter to reflect citation outcome.
   const usedIdSetForAnchors = new Set(drafter.used_sources.map((u) => u.candidate_id));
@@ -1519,6 +1579,8 @@ async function handle(req: Request): Promise<Response> {
     practical_steps_thin_authority_passed:
       drafter.sufficiency?.practical_steps_thin_authority_passed ?? false,
     exact_amounts_allowed: drafter.sufficiency?.exact_amounts_allowed ?? null,
+    // claim_facet_expansion_v1 telemetry.
+    claim_facet_expansion: claimFacetExpansionMeta,
     // Named-doctrine premise/framing telemetry.
     named_doctrine_framing: drafter.named_doctrine_framing ?? null,
     framing_correction_required:

@@ -222,6 +222,7 @@ function buildUserMessage(
   sufficiency?: SufficiencyAssessment,
   framing?: NamedDoctrineFraming,
   synthesisRendering?: SynthesisRenderingPlan,
+  facetDirective?: string[],
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
@@ -274,6 +275,11 @@ function buildUserMessage(
 
   if (synthesisRendering?.applied) {
     for (const l of synthesisRendering.directive_lines) lines.push(l);
+  }
+
+  // claim_facet_expansion_v1 — facet-scoped structure + footnote discipline.
+  if (facetDirective && facetDirective.length > 0) {
+    for (const l of facetDirective) lines.push(l);
   }
 
 
@@ -980,6 +986,11 @@ export async function runDrafterV2(
      * substantive holding may be drafted from near-name commentary, listing
      * pages, or adjacent cases, regardless of how large the source pack is.
      */
+    /**
+     * claim_facet_expansion_v1 — facet-scoped directive lines appended to the
+     * drafter user message (doctrine/analysis runs only). Purely additive.
+     */
+    facetDirective?: string[];
     specificCaseGate?: {
       allow: boolean;
       docket_display: string | null;
@@ -1548,6 +1559,7 @@ export async function runDrafterV2(
     sufficiency,
     framing,
     synthesisPlan,
+    opts?.facetDirective,
   );
 
 
