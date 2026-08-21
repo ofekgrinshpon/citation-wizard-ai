@@ -411,8 +411,14 @@ const Landing = () => {
         <p className="text-center text-xs text-muted-foreground mt-8">
           תוכלו לשדרג, להוסיף קרדיטי Top-up, או לעבור תכנית בכל עת.
         </p>
+      </section>
 
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-3 text-[11px] text-muted-foreground">
+      {/* Contact Section */}
+      <ContactSection ref={contactRef} />
+
+      <footer className="pb-16 px-4 max-w-6xl mx-auto relative z-10">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-[11px] text-muted-foreground">
+
           <a href="/terms" className="hover:text-foreground transition-colors">תנאי שימוש</a>
           <span>·</span>
           <a href="/privacy" className="hover:text-foreground transition-colors">מדיניות פרטיות</a>
