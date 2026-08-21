@@ -7,6 +7,7 @@ import { GeometricBackground } from "@/components/GeometricBackground";
 import { ChevronDown, Check, Sparkles } from "lucide-react";
 import { PLANS, type PlanId } from "@/lib/plans";
 import howItWorksVideo from "@/assets/relex-how-it-works.mp4.asset.json";
+import howItWorksPoster from "@/assets/relex-how-it-works-poster.jpg.asset.json";
 
 function useInView(ref: RefObject<HTMLElement | null>, threshold = 0.15) {
   const [visible, setVisible] = useState(false);
@@ -299,7 +300,8 @@ const Landing = () => {
             controls
             playsInline
             preload="metadata"
-            className="w-full max-w-xs md:max-w-sm rounded-2xl border border-border/60 shadow-lg bg-black"
+            poster={howItWorksPoster.url}
+            className="w-full max-w-4xl rounded-2xl border border-border/60 shadow-xl bg-background"
             aria-label="סרטון הסבר: איך ReLex עובד"
           />
         </div>
