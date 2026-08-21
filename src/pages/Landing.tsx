@@ -169,6 +169,12 @@ const Landing = () => {
     pricingRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const scrollToContact = () => {
+    contactRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
