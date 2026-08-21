@@ -498,10 +498,14 @@ export type Database = {
           included_credits_total: number
           is_subscribed: boolean
           plan: string
+          privacy_accepted_at: string | null
+          privacy_version: string | null
           referral_bonus_granted: boolean
           referral_code: string
           referral_first_action_at: string | null
           referred_by_user_id: string | null
+          terms_accepted_at: string | null
+          terms_version: string | null
           topup_credits_remaining: number
         }
         Insert: {
@@ -517,10 +521,14 @@ export type Database = {
           included_credits_total?: number
           is_subscribed?: boolean
           plan?: string
+          privacy_accepted_at?: string | null
+          privacy_version?: string | null
           referral_bonus_granted?: boolean
           referral_code: string
           referral_first_action_at?: string | null
           referred_by_user_id?: string | null
+          terms_accepted_at?: string | null
+          terms_version?: string | null
           topup_credits_remaining?: number
         }
         Update: {
@@ -536,10 +544,14 @@ export type Database = {
           included_credits_total?: number
           is_subscribed?: boolean
           plan?: string
+          privacy_accepted_at?: string | null
+          privacy_version?: string | null
           referral_bonus_granted?: boolean
           referral_code?: string
           referral_first_action_at?: string | null
           referred_by_user_id?: string | null
+          terms_accepted_at?: string | null
+          terms_version?: string | null
           topup_credits_remaining?: number
         }
         Relationships: []
@@ -902,6 +914,7 @@ export type Database = {
         }[]
       }
       rebuild_hnsw_index: { Args: never; Returns: undefined }
+      record_legal_acceptance: { Args: { _version: string }; Returns: Json }
       refund_credits: {
         Args: { _reason: string; _request_id: string }
         Returns: Json

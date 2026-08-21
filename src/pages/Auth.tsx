@@ -8,6 +8,7 @@ import { signInWithOfficeDialog } from "@/lib/officeAuth";
 import { isCanonicalHost, PUBLIC_SITE_URL, shouldRedirectOAuthToCanonicalHost } from "@/lib/publicUrl";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
+import { LEGAL_VERSION } from "@/content/legal/version";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -17,6 +18,7 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [acceptedLegal, setAcceptedLegal] = useState(false);
   const [loading, setLoading] = useState(false);
   const { signIn, signUp, user, loading: authLoading } = useAuth();
   const { isOfficeAddin } = useOffice();
@@ -46,6 +48,10 @@ const Auth = () => {
     const cleaned = new URLSearchParams(searchParams);
     cleaned.delete("oauth");
     window.history.replaceState({}, "", `${window.location.pathname}${cleaned.toString() ? `?${cleaned}` : ""}`);
+    // Consent was ticked on the originating host; carry it into this host's session.
+    if (searchParams.get("mode") === "signup") {
+      try { sessionStorage.setItem("relex_legal_accepted", LEGAL_VERSION); } catch { /* ignore */ }
+    }
     (async () => {
       try {
         const result = await lovable.auth.signInWithOAuth("google", {
@@ -89,7 +95,11 @@ const Auth = () => {
         const target = isOfficeAddin ? "/app?addin=1" : "/app";
         navigate(target, { replace: true });
       } else {
-        const { error } = await signUp(email, password, fullName, refCode || undefined);
+        if (!acceptedLegal) {
+          toast.error("יש לאשר את תנאי השימוש ומדיניות הפרטיות");
+          return;
+        }
+        const { error } = await signUp(email, password, fullName, refCode || undefined, true);
         if (error) throw error;
         toast.success("נרשמת בהצלחה! בדוק את האימייל לאימות.");
         try { sessionStorage.removeItem("relex_ref_code"); } catch { /* ignore */ }
@@ -179,9 +189,26 @@ const Auth = () => {
                 </button>
               </div>
             )}
+            {!isLogin && (
+              <label className="flex items-start gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={acceptedLegal}
+                  onChange={(e) => setAcceptedLegal(e.target.checked)}
+                  required
+                  className="mt-0.5 w-3.5 h-3.5 rounded border-border text-primary focus:ring-primary/20"
+                />
+                <span className="text-xs text-muted-foreground leading-5">
+                  קראתי ואני מסכים/ה ל
+                  <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">תנאי השימוש</a>
+                  {" "}ול
+                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">מדיניות הפרטיות</a>
+                </span>
+              </label>
+            )}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (!isLogin && !acceptedLegal)}
               className="w-full py-3 rounded-xl font-semibold text-sm text-primary-foreground transition-all disabled:opacity-50"
               style={{ background: "var(--gradient-primary)" }}
             >
@@ -194,8 +221,17 @@ const Auth = () => {
             <div className="relative flex justify-center text-xs"><span className="bg-card px-2 text-muted-foreground">או</span></div>
           </div>
 
+
           <button
             onClick={async () => {
+              if (!isLogin && !acceptedLegal) {
+                toast.error("יש לאשר את תנאי השימוש ומדיניות הפרטיות");
+                return;
+              }
+              if (!isLogin) {
+                // Consent survives the OAuth round-trip; stamped on /auth-redirect.
+                try { sessionStorage.setItem("relex_legal_accepted", LEGAL_VERSION); } catch { /* ignore */ }
+              }
               if (isOfficeAddin) {
                 try {
                   await signInWithOfficeDialog();

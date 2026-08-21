@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, MemoryRouter, Route, Routes, Navigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,6 +19,7 @@ import NotFound from "./pages/NotFound.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import AuthDialog from "./pages/AuthDialog.tsx";
 import VerifiedSources from "./pages/VerifiedSources.tsx";
+import Legal from "./pages/Legal.tsx";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +65,18 @@ function AuthLoadingSpinner() {
 function AuthRedirect() {
   const { user, isAdmin, loading, isAdminResolved } = useAuth();
 
+  // Google signup doesn't go through signUp(), so stamp the consent the user
+  // gave on the Auth page once their session exists. The RPC only ever fills
+  // NULL consent fields, so this is safe to run on every login.
+  useEffect(() => {
+    if (!user) return;
+    let version: string | null = null;
+    try { version = sessionStorage.getItem("relex_legal_accepted"); } catch { /* ignore */ }
+    if (!version) return;
+    void supabase.rpc("record_legal_acceptance", { _version: version })
+      .then(() => { try { sessionStorage.removeItem("relex_legal_accepted"); } catch { /* ignore */ } });
+  }, [user]);
+
   // Wait for both session hydration AND role resolution
   if (loading || (user && !isAdminResolved)) {
     return <AuthLoadingSpinner />;
@@ -96,6 +111,8 @@ const App = () => (
                   <Route path="/legal-qa" element={<LegalQARedirect />} />
                   <Route path="/auth-redirect" element={<AuthRedirect />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/terms" element={<Legal doc="terms" />} />
+                  <Route path="/privacy" element={<Legal doc="privacy" />} />
                   <Route path="/auth-dialog" element={<AuthDialog />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
