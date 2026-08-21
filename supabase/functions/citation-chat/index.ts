@@ -3456,6 +3456,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       }
       const t = await response.text();
       console.error("AI gateway error:", response.status, t);
+      await refundIfCharged("ai_gateway_error");
       return new Response(
         JSON.stringify({ error: "AI gateway error" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
