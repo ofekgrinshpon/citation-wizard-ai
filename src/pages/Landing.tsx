@@ -429,7 +429,8 @@ const Landing = () => {
         <p className="text-[10px] text-muted-foreground text-center mt-4">
           © 2026 ReLex. כל הזכויות שמורות.
         </p>
-      </section>
+      </footer>
+
     </div>
   );
 };
