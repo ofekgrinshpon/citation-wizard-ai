@@ -222,6 +222,17 @@ export function BibliographyGenerator() {
         };
       });
 
+      // One shared service-level failure (AI provider outage / rate limit) →
+      // show a single banner instead of a wall of identical red rows.
+      const serviceCodes = new Set(["AI_UNAVAILABLE", "AI_RATE_LIMITED", "CREDIT_CHARGE_FAILED"]);
+      const failedCodes = results
+        .filter((r) => !r.ok && r.error instanceof CitationRunError)
+        .map((r) => (r.error as CitationRunError).code);
+      const allFailedSameService =
+        failedCodes.length === results.length &&
+        failedCodes.length > 0 &&
+        serviceCodes.has(failedCodes[0]) &&
+        failedCodes.every((c) => c === failedCodes[0]);
 
       setReviewItems((prev) => [...prev, ...newItems]);
       setRawText("");
@@ -229,7 +240,14 @@ export function BibliographyGenerator() {
       const okCount = newItems.filter((i) => i.status === "ok").length;
       const warnCount = newItems.filter((i) => i.status === "ok" && (i.warningMsg || /\[חסר:/.test(i.citation))).length;
       const errorCount = newItems.filter((i) => i.status === "error").length;
-      toast.success(`עובדו ${newItems.length} מקורות · ${okCount} מוכנים, ${warnCount} דורשים בדיקה, ${errorCount} נכשלו`);
+
+      if (allFailedSameService) {
+        const first = results.find((r) => !r.ok)?.error as CitationRunError;
+        setServiceOutage(first.userMessage);
+        toast.error(first.userMessage);
+      } else {
+        toast.success(`עובדו ${newItems.length} מקורות · ${okCount} מוכנים, ${warnCount} דורשים בדיקה, ${errorCount} נכשלו`);
+      }
 
     } catch {
       toast.error("שגיאה בעיבוד הרשימה");
