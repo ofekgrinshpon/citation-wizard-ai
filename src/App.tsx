@@ -97,6 +97,8 @@ const App = () => (
                   <Route path="/legal-qa" element={<LegalQARedirect />} />
                   <Route path="/auth-redirect" element={<AuthRedirect />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/terms" element={<Legal doc="terms" />} />
+                  <Route path="/privacy" element={<Legal doc="privacy" />} />
                   <Route path="/auth-dialog" element={<AuthDialog />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />

@@ -113,7 +113,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error as Error | null };
   };
 
-  const signUp = async (email: string, password: string, fullName?: string, referralCode?: string) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    fullName?: string,
+    referralCode?: string,
+    acceptedLegal?: boolean,
+  ) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -121,6 +127,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data: {
           full_name: fullName,
           ...(referralCode ? { referral_code: referralCode } : {}),
+          // Evidentiary record of the consent checkbox ticked at signup.
+          ...(acceptedLegal
+            ? { legal_version: LEGAL_VERSION, legal_accepted_at: new Date().toISOString() }
+            : {}),
         },
         emailRedirectTo: `${getAuthRedirectOrigin()}/auth-redirect`,
       },
