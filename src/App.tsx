@@ -63,6 +63,18 @@ function AuthLoadingSpinner() {
 function AuthRedirect() {
   const { user, isAdmin, loading, isAdminResolved } = useAuth();
 
+  // Google signup doesn't go through signUp(), so stamp the consent the user
+  // gave on the Auth page once their session exists. The RPC only ever fills
+  // NULL consent fields, so this is safe to run on every login.
+  useEffect(() => {
+    if (!user) return;
+    let version: string | null = null;
+    try { version = sessionStorage.getItem("relex_legal_accepted"); } catch { /* ignore */ }
+    if (!version) return;
+    void supabase.rpc("record_legal_acceptance", { _version: version })
+      .then(() => { try { sessionStorage.removeItem("relex_legal_accepted"); } catch { /* ignore */ } });
+  }, [user]);
+
   // Wait for both session hydration AND role resolution
   if (loading || (user && !isAdminResolved)) {
     return <AuthLoadingSpinner />;
