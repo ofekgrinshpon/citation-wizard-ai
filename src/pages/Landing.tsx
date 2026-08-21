@@ -4,6 +4,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useOffice } from "@/hooks/useOffice";
 import { ReLexLogo } from "@/components/ReLexLogo";
 import { GeometricBackground } from "@/components/GeometricBackground";
+import { ContactSection } from "@/components/ContactSection";
+
 import { ChevronDown, Check, Sparkles } from "lucide-react";
 import { PLANS, type PlanId } from "@/lib/plans";
 import howItWorksVideo from "@/assets/relex-how-it-works.mp4.asset.json";
@@ -144,6 +146,8 @@ const Landing = () => {
   const navigate = useNavigate();
   const howRef = useRef<HTMLDivElement>(null);
   const pricingRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
+
 
   if (authLoading) {
     return (
@@ -166,6 +170,12 @@ const Landing = () => {
   const scrollToPricing = () => {
     pricingRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  const scrollToContact = () => {
+    contactRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -206,7 +216,14 @@ const Landing = () => {
             >
               כמה זה עולה
             </button>
+            <button
+              onClick={scrollToContact}
+              className="px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors"
+            >
+              יצירת קשר
+            </button>
           </div>
+
 
           {/* Spacer pushes the login button to the far left edge */}
           <div className="flex-1" />
@@ -396,8 +413,14 @@ const Landing = () => {
         <p className="text-center text-xs text-muted-foreground mt-8">
           תוכלו לשדרג, להוסיף קרדיטי Top-up, או לעבור תכנית בכל עת.
         </p>
+      </section>
 
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-3 text-[11px] text-muted-foreground">
+      {/* Contact Section */}
+      <ContactSection ref={contactRef} />
+
+      <footer className="pb-16 px-4 max-w-6xl mx-auto relative z-10">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-[11px] text-muted-foreground">
+
           <a href="/terms" className="hover:text-foreground transition-colors">תנאי שימוש</a>
           <span>·</span>
           <a href="/privacy" className="hover:text-foreground transition-colors">מדיניות פרטיות</a>
@@ -408,7 +431,8 @@ const Landing = () => {
         <p className="text-[10px] text-muted-foreground text-center mt-4">
           © 2026 ReLex. כל הזכויות שמורות.
         </p>
-      </section>
+      </footer>
+
     </div>
   );
 };

@@ -20,6 +20,8 @@ import ResetPassword from "./pages/ResetPassword.tsx";
 import AuthDialog from "./pages/AuthDialog.tsx";
 import VerifiedSources from "./pages/VerifiedSources.tsx";
 import Legal from "./pages/Legal.tsx";
+import Unsubscribe from "./pages/Unsubscribe.tsx";
+
 
 const queryClient = new QueryClient();
 
@@ -113,6 +115,8 @@ const App = () => (
                   <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/terms" element={<Legal doc="terms" />} />
                   <Route path="/privacy" element={<Legal doc="privacy" />} />
+                  <Route path="/unsubscribe" element={<Unsubscribe />} />
+
                   <Route path="/auth-dialog" element={<AuthDialog />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
