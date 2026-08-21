@@ -1,0 +1,170 @@
+{
+  "id": "F02",
+  "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי?",
+  "job_id": "67fe8937-b61e-4dd5-a1d8-e648974a0cb6",
+  "run_id": "77847136-719e-49df-bcec-2bb0bd2a177c",
+  "ms": 152655,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": null,
+  "drafted": true,
+  "answer_length": 2556,
+  "used_sources_count": 6,
+  "footnotes_count": 5,
+  "judgments_cited": 1,
+  "body_acquired_judgments": 1,
+  "metadata_only_judgments": 0,
+  "metadata_only_titles": [],
+  "statute_text_acquired_count": 0,
+  "statute_section_text_located": false,
+  "statute_acquisition": null,
+  "sufficiency_used_acquired_body": true,
+  "claim_facet_expansion": {
+    "facets": [
+      {
+        "facet_id": "F1",
+        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+        "sources_used": 5,
+        "sources_found": 26,
+        "commentary_only": false,
+        "doctrinal_label": "עילת ההתערבות של בג\"ץ בבית דין דתי",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "binding_case_law"
+      },
+      {
+        "facet_id": "F2",
+        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+        "sources_used": 6,
+        "sources_found": 28,
+        "commentary_only": false,
+        "doctrinal_label": "תחולת הדין האזרחי על בית הדין הרבני",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "primary_statute"
+      },
+      {
+        "facet_id": "F3",
+        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+        "sources_used": 2,
+        "sources_found": 17,
+        "commentary_only": false,
+        "doctrinal_label": "שיקול זר וחריגה מסמכות",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+        ],
+        "best_support_level": "partial",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "binding_case_law"
+      },
+      {
+        "facet_id": "F4",
+        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+        "sources_used": 4,
+        "sources_found": 14,
+        "commentary_only": false,
+        "doctrinal_label": "איזון משאבים וחלוקת רכוש",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "חוק יחסי ממון בין בני זוג איזון משאבים"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "primary_statute"
+      }
+    ],
+    "enabled": true,
+    "version": "claim_facet_expansion_v1",
+    "facet_count": 4,
+    "gate_reason": "mode=doctrine_explanation;shape=analysis",
+    "legal_area_lock": "public_law_hcj",
+    "directive_applied": true,
+    "facet_queries_count": 4,
+    "facets_commentary_only": 0,
+    "facets_without_primary_support": 0
+  },
+  "sufficiency_profile": null,
+  "sufficiency_passed": null,
+  "metadata_only_holdings_remaining": 0,
+  "gate_report": {
+    "applied": true,
+    "source_split": {
+      "read_in_full": [
+        "s10"
+      ],
+      "reference_only": []
+    },
+    "blocks_stripped": 0,
+    "source_split_counts": {
+      "read_in_full": 1,
+      "reference_only": 0
+    },
+    "reference_only_sources": [],
+    "blocks_left_unsupported": 0,
+    "stripped_ref_occurrences": 0,
+    "unsupported_block_samples": [],
+    "metadata_only_judgment_refs": [],
+    "metadata_only_holdings_remaining": 0
+  },
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "used_source_titles": [
+    {
+      "title": "רע\"א 4179/20 בסט קאר חברה לשירותי רכב בע\"מ נ׳ איי. די .איי חברה לביטוח בע פסק דין",
+      "citable_as": "judgment",
+      "text_usability": "full_text"
+    },
+    {
+      "title": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשי\"ג-1953",
+      "citable_as": "statute",
+      "text_usability": "metadata_only"
+    },
+    {
+      "title": "מקור חקיקה מתוך מאגר נבו",
+      "citable_as": "statute",
+      "text_usability": "substantive_excerpt"
+    },
+    {
+      "title": "קובץ חיקוקים והנחיות לבתי הדין הרבניים 2025",
+      "citable_as": "unknown",
+      "text_usability": "metadata_only"
+    },
+    {
+      "title": "סדרי מינהל בבתי הדין הרבניים - משרד המשפטים - מבקר המדינה",
+      "citable_as": "unknown",
+      "text_usability": "metadata_only"
+    },
+    {
+      "title": "השירות לציבור בבתי הדין הרבניים - מבקר המדינה",
+      "citable_as": "unknown",
+      "text_usability": "metadata_only"
+    }
+  ],
+  "answer": "**תשובה קצרה וממוקדת**\n\nבג\"ץ יכול לבחון החלטות בתי־דין רבניים בענייני חלוקת רכוש במסגרת ביקורת מנהלית; האמת המידה המרכזית היא האם התוצאה נובעת מטעות משפטית או מחריגה סמכותית — במיוחד הסתמכות על שיקול שאינו רלוונטי לדין האזרחי. ההערכה כוללת בחינה של הליך ההכרעה, עילות האחריות הסמכותיות והראיות ההלכתיות/מנהלתיות בתיק.⁵\n\n**עילת ההתערבות של בג\"ץ (C1)**\n\nהבסיס הנורמטיבי לביקורת שיפוטית על בתי־דין רבניים נמצא במסגרת חוק שיפוט בתי־הדין הרבניים, שתורמת לסמכות בג\"ץ לבחינת חריגות סמכות או שגיאות משפטיות בהחלטות רבניות, אם כי החוק עצמו אינו פורש במלים מפורשות את ה'אמת מידה' המפורטת לביקורת מסוג זה.⁵\n\n**אמת המידה הדוקטרינית כשהחשד הוא שיקול חיצוני (C2)**\n\nבפרשנות דוקטרינרית ובפסיקה משוערת על־פי המקורות שאותרו, בג\"ץ יבחן האם הדיון והרציונל של בית־הדין נשאו אופי של טעות משפטית או של שימוש בשיקול בלתי רלוונטי שהסיט את ההכרעה מחומר הדין החומרי; הבחינה מבדילה בין טעות פרשנית סבירה לבין סייגים המעידים על חריגה סמכותית שמצדיקה התערבות רחבה יותר.¹\n\n**השלכות משפטיות וסעד אפשרי כאשר נמצאה הסתמכות על שיקול חיצוני (C3)**\n\nאם ההסתמכות היא מהותית עד כדי שחריגה מסמכות ההכרעה של בית־הדין — בג\"ץ עשוי להורות על ביטול או על הפיכת ההחלטה כ\"בטלה\" ולהחזיר את העניין להכרעה מחדש; כאשר מדובר בטעות פרשנית פחותה, בית־המשפט נוטה להשיב את הדיון לבית־הדין לצורך תיקון או להורות על הכרעה חדשה במקרים חריגים בלבד, בהתאם לעקרונות ההתערבות שנידונו בפסיקה יישומית.²\n\n**סף הראיות והאמצעים המעשייים לפתיחת בחינה שיפוטית (C4)**\n\nעילות פתיחה לבחינה שיפוטית יישענו על ראיות פורמליות של מהלך הדיון: פרוטוקול מלא של הדיון, מסמכים מסומנים שצורפו לתיק ורשומות הצהרות בעלי־הדין והעדים — כפי שנקבע בתקנות הדיון ובהנחיות התיעוד של בתי־הדין; חוסר ברישום מפורט מקל על השגת בחינה שיפוטית אך אינו פסול מדעית כשיש ראיות נוספות.³\n\nבמעשה פרקטי יש להראות טענת יסוד עובדית ומשפטית מינימלית (prima facie) שההכרעה התבססה על שיקול חיצוני: תצהירים/עדויות, עותקי מסמכים שסומנו בתיק, קבצי הקלטות או דו\"חות מנהליים (כולל מסמכים מנהליים של הנהלת בתי־הדין או דו\"חות מבקר) שיכולים לקשור בין ההחלטה לשיקול החיצוני המיוחס.⁴\n\nמגבלות ראייתיות ומקורות מצומצמים: במקורות שאותרו לא נמצא עיגון אחיד וממצה המנסח אמת־מידה חד־משמעית אחת לשאלת שיקול חיצוני בבתי־דין רבניים; המסקנות הדוקטריניות שצוטטו כאן נשענות על שילוב חוקתי‑מנהלי, עבודת מחקר ופסיקה שצוטטה בהיקף חלקי, ולכן ראוי לחפש פסיקה נוספת והקשר עובדי־תיק ספציפי לפני מסקנה חד־משמעית.⁵\n\nמסקנה קצרה מעשית: כדי להפעיל ביקורת בג\"ץ יש לבסס בתיק רישום מסודר (פרוטוקול ומסמכים מצורפים) או ראיות אחרות שמציבות טענה קונקרטית של הסתמכות על שיקול שאינו חלק מהדין האזרחי; בעת ניסוח עתירה יש להדגיש גם את ההיבט הסמכותי (ultra vires) וגם את הטענה על טעות משפטית בפרשנות/יישום הדין."
+}

@@ -1,0 +1,83 @@
+{
+  "id": "F04",
+  "query": "מה נקבע בבג\"ץ 2232/03 פלונית נ' בית הדין הרבני האזורי תל אביב (עניין אמיר)?",
+  "job_id": "3e86ad1a-915c-4d01-9dde-096c541c7175",
+  "run_id": "4c1189b0-54f2-4331-95b5-fa432ab105c7",
+  "ms": 151247,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": null,
+  "drafted": true,
+  "answer_length": 1626,
+  "used_sources_count": 3,
+  "footnotes_count": 2,
+  "judgments_cited": 2,
+  "body_acquired_judgments": 2,
+  "metadata_only_judgments": 0,
+  "metadata_only_titles": [],
+  "statute_text_acquired_count": 0,
+  "statute_section_text_located": false,
+  "statute_acquisition": null,
+  "sufficiency_used_acquired_body": true,
+  "claim_facet_expansion": {
+    "facets": [],
+    "enabled": false,
+    "version": "claim_facet_expansion_v1",
+    "facet_count": 0,
+    "gate_reason": "mode_excluded:specific_case",
+    "legal_area_lock": "public_law_hcj",
+    "directive_applied": false,
+    "facet_queries_count": 0,
+    "facets_commentary_only": 0,
+    "facets_without_primary_support": 0
+  },
+  "sufficiency_profile": null,
+  "sufficiency_passed": null,
+  "metadata_only_holdings_remaining": 0,
+  "gate_report": {
+    "applied": true,
+    "source_split": {
+      "read_in_full": [
+        "s1",
+        "s2"
+      ],
+      "reference_only": []
+    },
+    "blocks_stripped": 0,
+    "source_split_counts": {
+      "read_in_full": 2,
+      "reference_only": 0
+    },
+    "reference_only_sources": [],
+    "blocks_left_unsupported": 0,
+    "stripped_ref_occurrences": 0,
+    "unsupported_block_samples": [],
+    "metadata_only_judgment_refs": [],
+    "metadata_only_holdings_remaining": 0
+  },
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "used_source_titles": [
+    {
+      "title": "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו",
+      "citable_as": "judgment",
+      "text_usability": "full_text"
+    },
+    {
+      "title": "בג\"ץ 8638-03 - סימה אמיר נ. בית הדין הרבני הגדול בירושלים",
+      "citable_as": "judgment",
+      "text_usability": "substantive_excerpt"
+    },
+    {
+      "title": "בג\"ץ 2350/20 פלוני נ׳ בית הדין הרבני הגדול לערעורים פסק דין (10.09.2020)",
+      "citable_as": "commentary",
+      "text_usability": "substantive_excerpt"
+    }
+  ],
+  "answer": "**עיקרי ההחלטה — בג\"ץ 2232/03 (עניין אמיר)**\n\nבג\"ץ 2232/03 קבע כי לבית הדין הרבני אין סמכות עניינית לדון בתביעות נזיקיות או אזרחיות כלליות \"בכריכה\" במסגרת הליך גירושין, אלא אם ניתנה הסכמה מפורשת של שני הצדדים או ניתנה הסמכה מפורשת בחוק.¹\n\nהערעור הדגיש את גבולות רעיון \"הכריכה\": הסמכות של בתי הדין הרבניים לשפוט עניינים נלווים לגירושין מתייחסת לעניינים שהן מהותית וחיונית להליך הגירושין (מזונות, עניינים רכושיים שנובעים מהגירושין וכיוצא בזה), אך איננה מתרחבת באופן אוטומטי לתביעות נזיקיות שאינן חלק אינהרנטי מהליך הגירושין.¹\n\nבנסיבות המקרה ביטל בג\"ץ את החלטת בית הדין הרבני ופסק כי הדיון בעילות הנזיקיות–האזרחיות יתקיים בפני הערכאה האזרחית המוסמכת (למשל בית המשפט לענייני משפחה), בהיות זהו המדיום המתאים להכרעה בסוגי תביעות אלה וכפוף לעיקרון החוקיות החולש על בתי דין דתיים.¹\n\nעוד קבע בג\"ץ כי גם כאשר קימת הסכמה לשיפוט בית הדין הרבני בסכסוך אזרחי בין בני זוג, יש להגביל את סמכותו בהתאם למה שהוסכמה ובהתאם לדין החילוני הרלוונטי; בית הדין הרבני אינו רשאי להחיל כללים דתיים המנוגדים לדין האזרחי במישור שבו הופקעה סמכות הערכאה האזרחית.¹\n\nניתן למצוא תמיכה חלקית בקווים אלה גם בפסיקה נוספת העוסקת בהשפעת הסכמת הצדדים על קניית סמכות לבתי דין דתיים, לרבות בג\"ץ סימה אמיר ובפסיקה מאוחרת יותר שנדונה כהלכה; מקורות אלה מספקים חיזוק תומך אך יש לנסח תמיכה זו בזהירות שכן הם אינם זהים בנסיבות ובנסיבות ההחלטה שבמוקד.²\n\nסיכום קצר: פסק הדין של בג\"ץ 2232/03 קובע גבול ברור לסמכות הכריכה של בתי הדין הרבניים בכל הקשור לתביעות נזיקיות/אזרחיות בין בני זוג, ומורה שהערכאות האזרחיות הן הכתובת הראויה לטיפול בטיעונים אלה אלא אם הסכמה מפורשת או הוראה חוקית מורה אחרת. ייתכן שיש פסיקה נוספת שלא אותרה כאן; כל התייחסות בהודעה זו מסתמכת על המסמכים שצוינו."
+}
