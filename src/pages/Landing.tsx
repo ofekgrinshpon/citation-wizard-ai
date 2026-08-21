@@ -4,6 +4,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useOffice } from "@/hooks/useOffice";
 import { ReLexLogo } from "@/components/ReLexLogo";
 import { GeometricBackground } from "@/components/GeometricBackground";
+import { ContactSection } from "@/components/ContactSection";
+
 import { ChevronDown, Check, Sparkles } from "lucide-react";
 import { PLANS, type PlanId } from "@/lib/plans";
 import howItWorksVideo from "@/assets/relex-how-it-works.mp4.asset.json";
