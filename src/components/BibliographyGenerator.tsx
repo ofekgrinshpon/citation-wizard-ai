@@ -179,7 +179,9 @@ export function BibliographyGenerator() {
     }
 
     setLoading(true);
+    setServiceOutage(null);
     setProgress({ done: 0, total: lines.length });
+
 
     try {
       let done = 0;
