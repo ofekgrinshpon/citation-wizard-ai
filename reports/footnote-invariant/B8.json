@@ -1,0 +1,40 @@
+{
+  "id": "B8",
+  "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+  "job_id": "1889be25-16cc-46d6-810d-d58b61c7cf0f",
+  "run_id": "39f0d767-2ad4-4d6d-a7dd-be60292d39d6",
+  "ms": 91103,
+  "terminal_status": "done",
+  "job_error": null,
+  "branch": "canonical_quote_registry",
+  "answer_length": 294,
+  "inline_marker_count": 2,
+  "distinct_markers": 1,
+  "max_marker": 1,
+  "footnotes_length": 1,
+  "used_sources_length": 1,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "compound_footnote_rows": 0,
+  "invariant_passed": true,
+  "builder_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 1,
+    "invariant_passed": true,
+    "inline_marker_count": 2,
+    "used_sources_length": 1,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "pass": true,
+  "failures": [],
+  "footnote_rows": [
+    {
+      "number": 1,
+      "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+      "sub_sources": 1
+    }
+  ],
+  "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹"
+}

@@ -1527,6 +1527,14 @@ async function handle(req: Request): Promise<Response> {
     structured_validation: drafter.structured_validation,
 
     builder_report: drafter.builder_report,
+    // footnote_rendering_invariant_v1 telemetry.
+    footnote_render_report: drafter.footnote_render_report ?? null,
+    inline_marker_count: drafter.footnote_render_report?.inline_marker_count ?? 0,
+    footnotes_length: drafter.footnote_render_report?.footnotes_length ?? 0,
+    used_sources_length: drafter.footnote_render_report?.used_sources_length ?? 0,
+    dangling_marker_count: drafter.footnote_render_report?.dangling_marker_count ?? 0,
+    orphan_source_row_count: drafter.footnote_render_report?.orphan_source_row_count ?? 0,
+    footnote_invariant_passed: drafter.footnote_render_report?.invariant_passed ?? true,
     schema_failure_reason: drafter.schema_failure_reason,
     quality_warning: drafter.quality_warning,
     missing_anchor_caveat_injected: drafter.missing_anchor_caveat_injected ?? false,

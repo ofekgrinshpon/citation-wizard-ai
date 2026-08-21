@@ -51,11 +51,24 @@ export interface HierarchyReport {
   usable_primary_count: number;
 }
 
+export interface FootnoteRenderReport {
+  version: "footnote_rendering_invariant_v1";
+  inline_marker_count: number;
+  footnotes_length: number;
+  used_sources_length: number;
+  dangling_marker_count: number;
+  orphan_source_row_count: number;
+  invariant_passed: boolean;
+  renumbered: boolean;
+}
+
 export interface BuildResult {
   answer_markdown: string;
   footnotes: Footnote[];
   used_sources: UsedSource[];
   hierarchy_report: HierarchyReport;
+  footnote_render_report: FootnoteRenderReport;
+
   builder_report: {
     paragraph_count: number;
     list_item_count: number;
@@ -331,6 +344,144 @@ export function buildFootnotedAnswer(
     }
   }
 
+  // ── footnote_rendering_invariant_v1 ──────────────────────────────────────
+  // The user-facing source list is rendered from `footnotes` (one row per
+  // footnote number, sub-sources nested). Guarantee here that the markers in
+  // the answer and the footnote rows are in exact 1:1 correspondence:
+  //   * a marker with no footnote row is stripped   (dangling_marker_count)
+  //   * a footnote row with no marker is dropped    (orphan_source_row_count)
+  //   * survivors are renumbered 1..N in first-appearance order
+  // used_sources is remapped onto the final numbering (analytics array only).
+  const SUP_DIGIT_MAP: Record<string, string> = {
+    "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4",
+    "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9",
+  };
+  const MARKER_RUN_RE = /[⁰¹²³⁴⁵⁶⁷⁸⁹]+/gu;
+  const validNumbers = new Set(footnotes.map((f) => f.number));
+
+  /** Greedy longest-match split of a superscript run into footnote numbers.
+   *  -1 marks a digit that matches no known footnote (dangling). */
+  const splitRun = (run: string): number[] => {
+    const digits = run.split("").map((c) => SUP_DIGIT_MAP[c] ?? c).join("");
+    const out: number[] = [];
+    let i = 0;
+    while (i < digits.length) {
+      let matched = -1;
+      let matchedLen = 1;
+      for (let len = Math.min(digits.length - i, 4); len >= 1; len--) {
+        const n = parseInt(digits.slice(i, i + len), 10);
+        if (Number.isFinite(n) && validNumbers.has(n)) {
+          matched = n;
+          matchedLen = len;
+          break;
+        }
+      }
+      out.push(matched);
+      i += matchedLen;
+    }
+    return out;
+  };
+
+  let inline_marker_count = 0;
+  let dangling_marker_count = 0;
+  const appearanceOrder: number[] = [];
+  const seenMarkers = new Set<number>();
+  for (const m of answer_markdown.matchAll(MARKER_RUN_RE)) {
+    for (const n of splitRun(m[0])) {
+      inline_marker_count++;
+      if (n < 0) {
+        dangling_marker_count++;
+        continue;
+      }
+      if (!seenMarkers.has(n)) {
+        seenMarkers.add(n);
+        appearanceOrder.push(n);
+      }
+    }
+  }
+
+  const orphan_source_row_count = footnotes.filter((f) => !seenMarkers.has(f.number)).length;
+  const needsRebuild =
+    dangling_marker_count > 0 ||
+    orphan_source_row_count > 0 ||
+    footnotes.length !== seenMarkers.size;
+
+  let finalAnswer = answer_markdown;
+  let finalFootnotes = footnotes;
+  let finalUsedSources = used_sources;
+
+  if (needsRebuild) {
+    // Renumber survivors while PRESERVING the hierarchy numbering order
+    // (footnote 1 = most authoritative), only closing the gaps left by
+    // dropped orphan rows.
+    const remap = new Map<number, number>();
+    footnotes
+      .filter((f) => seenMarkers.has(f.number))
+      .map((f) => f.number)
+      .sort((a, b) => a - b)
+      .forEach((oldNum, i) => remap.set(oldNum, i + 1));
+
+
+    finalAnswer = answer_markdown.replace(MARKER_RUN_RE, (run) => {
+      const nums = splitRun(run)
+        .map((n) => (n >= 0 ? remap.get(n) : undefined))
+        .filter((n): n is number => typeof n === "number");
+      return nums.map((n) => toSuperscript(n)).join("");
+    });
+
+    finalFootnotes = footnotes
+      .filter((f) => remap.has(f.number))
+      .map((f) => ({ ...f, number: remap.get(f.number)! }))
+      .sort((a, b) => a.number - b.number);
+
+    finalUsedSources = used_sources
+      .filter((u) => remap.has(u.number))
+      .map((u) => ({ ...u, number: remap.get(u.number)! }))
+      .sort((a, b) => a.number - b.number);
+  }
+
+  // Recount markers on the final text for the invariant.
+  let finalMarkerCount = 0;
+  let maxMarker = 0;
+  const finalValid = new Set(finalFootnotes.map((f) => f.number));
+  for (const m of finalAnswer.matchAll(MARKER_RUN_RE)) {
+    const digits = m[0].split("").map((c) => SUP_DIGIT_MAP[c] ?? c).join("");
+    let i = 0;
+    while (i < digits.length) {
+      let matched = -1;
+      let len = 1;
+      for (let l = Math.min(digits.length - i, 4); l >= 1; l--) {
+        const n = parseInt(digits.slice(i, i + l), 10);
+        if (Number.isFinite(n) && finalValid.has(n)) {
+          matched = n;
+          len = l;
+          break;
+        }
+      }
+      if (matched > 0) {
+        finalMarkerCount++;
+        if (matched > maxMarker) maxMarker = matched;
+      }
+      i += len;
+    }
+  }
+
+  const invariant_passed =
+    finalFootnotes.length === 0 ? maxMarker === 0 : maxMarker === finalFootnotes.length;
+
+  const footnote_render_report: FootnoteRenderReport = {
+    version: "footnote_rendering_invariant_v1",
+    inline_marker_count,
+    footnotes_length: finalFootnotes.length,
+    used_sources_length: finalUsedSources.length,
+    dangling_marker_count,
+    orphan_source_row_count,
+    invariant_passed,
+    renumbered: needsRebuild,
+  };
+
+
+
   // Adjacent marker invariant check (telemetry only — must be 0).
   // A "marker" is a maximal superscript run (so multi-digit numerals like
   // ¹⁰, ¹¹, ¹² count as ONE marker, not two). Adjacency means two such
@@ -340,10 +491,10 @@ export function buildFootnotedAnswer(
   const SUP_RUN_RE = /[\u2070-\u209F\u00B2\u00B3\u00B9]+/gu;
   let adjacent_marker_count = 0;
   let prevEnd = -1;
-  for (const m of answer_markdown.matchAll(SUP_RUN_RE)) {
+  for (const m of finalAnswer.matchAll(SUP_RUN_RE)) {
     const start = (m.index ?? 0);
     if (prevEnd >= 0) {
-      const between = answer_markdown.slice(prevEnd, start);
+      const between = finalAnswer.slice(prevEnd, start);
       if (/^\s*$/.test(between)) adjacent_marker_count++;
     }
     prevEnd = start + m[0].length;
@@ -356,22 +507,22 @@ export function buildFootnotedAnswer(
   const used_sources_hierarchy_counts: Record<string, number> = {};
   let first_primary_position: number | null = null;
   let first_secondary_position: number | null = null;
-  used_sources.forEach((u, i) => {
+  finalUsedSources.forEach((u, i) => {
     const tier = hierarchyTierOf(u as never);
     used_sources_hierarchy_counts[tier] = (used_sources_hierarchy_counts[tier] ?? 0) + 1;
     const klass = hierarchyClassOf(tier);
     if (klass === "primary" && first_primary_position === null) first_primary_position = i + 1;
     if (klass === "secondary" && first_secondary_position === null) first_secondary_position = i + 1;
   });
-  const usable_primary_count = used_sources.filter(
+  const usable_primary_count = finalUsedSources.filter(
     (u) => hierarchyClassOf(hierarchyTierOf(u as never)) === "primary",
   ).length;
   const primary_before_secondary_passed =
     first_primary_position === null ||
     first_secondary_position === null ||
     (first_primary_position as number) < (first_secondary_position as number);
-  const head = used_sources.slice(0, 3);
-  const head5 = used_sources.slice(0, 5);
+  const head = finalUsedSources.slice(0, 3);
+  const head5 = finalUsedSources.slice(0, 5);
   const commentary_head_count = head.filter(
     (u) => hierarchyClassOf(hierarchyTierOf(u as never)) === "secondary",
   ).length;
@@ -403,10 +554,11 @@ export function buildFootnotedAnswer(
   };
 
   return {
-    answer_markdown,
-    footnotes,
-    used_sources,
+    answer_markdown: finalAnswer,
+    footnotes: finalFootnotes,
+    used_sources: finalUsedSources,
     hierarchy_report,
+    footnote_render_report,
 
     builder_report: {
       paragraph_count,
@@ -415,7 +567,7 @@ export function buildFootnotedAnswer(
       cited_segment_count,
       compound_segment_count,
       marker_count,
-      distinct_source_count: used_sources.length,
+      distinct_source_count: finalUsedSources.length,
       compound_footnote_count,
       adjacent_marker_count,
       avg_sources_per_cited_segment:
