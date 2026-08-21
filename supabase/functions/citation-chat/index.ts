@@ -3434,15 +3434,24 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
 
     if (!response.ok) {
       if (response.status === 429) {
+        await refundIfCharged("ai_gateway_429");
         return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Try again later." }),
+          JSON.stringify({
+            error: "AI_RATE_LIMITED",
+            message: "מגבלת קצב זמנית של ספק ה-AI. נסו שוב בעוד רגע.",
+          }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       }
-      if (response.status === 402) {
+      if (response.status === 402 || response.status === 403) {
+        await refundIfCharged("ai_gateway_unavailable");
+        console.error("[ai-gateway] blocked", response.status);
         return new Response(
-          JSON.stringify({ error: "Payment required." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+          JSON.stringify({
+            error: "AI_UNAVAILABLE",
+            message: "שירות ה-AI אינו זמין כרגע (מגבלת ספק). לא חויבתם — נסו שוב מאוחר יותר.",
+          }),
+          { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       }
       const t = await response.text();
