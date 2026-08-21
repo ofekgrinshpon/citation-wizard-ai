@@ -219,6 +219,14 @@ const Auth = () => {
 
           <button
             onClick={async () => {
+              if (!isLogin && !acceptedLegal) {
+                toast.error("יש לאשר את תנאי השימוש ומדיניות הפרטיות");
+                return;
+              }
+              if (!isLogin) {
+                // Consent survives the OAuth round-trip; stamped on /auth-redirect.
+                try { sessionStorage.setItem("relex_legal_accepted", LEGAL_VERSION); } catch { /* ignore */ }
+              }
               if (isOfficeAddin) {
                 try {
                   await signInWithOfficeDialog();
