@@ -58,6 +58,8 @@ export function BibliographyGenerator() {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [reviewItems, setReviewItems] = useState<ReviewItem[]>([]);
+  /** Set when every row failed with the same service-level error (AI provider outage). */
+  const [serviceOutage, setServiceOutage] = useState<string | null>(null);
 
   const sendEntryBackToReview = (id: string) => {
     const entry = sortedEntries.find((e) => e.id === id);
