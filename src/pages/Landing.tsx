@@ -214,7 +214,14 @@ const Landing = () => {
             >
               כמה זה עולה
             </button>
+            <button
+              onClick={scrollToContact}
+              className="px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors"
+            >
+              יצירת קשר
+            </button>
           </div>
+
 
           {/* Spacer pushes the login button to the far left edge */}
           <div className="flex-1" />
