@@ -17,6 +17,7 @@ import NotFound from "./pages/NotFound.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import AuthDialog from "./pages/AuthDialog.tsx";
 import VerifiedSources from "./pages/VerifiedSources.tsx";
+import Legal from "./pages/Legal.tsx";
 
 const queryClient = new QueryClient();
 
