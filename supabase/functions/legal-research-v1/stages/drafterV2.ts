@@ -874,6 +874,7 @@ export interface DrafterV2Result {
   input_sources?: DrafterInputSource[];
   builder_report?: ReturnType<typeof buildFootnotedAnswer>["builder_report"];
   hierarchy_report?: ReturnType<typeof buildFootnotedAnswer>["hierarchy_report"];
+  footnote_render_report?: ReturnType<typeof buildFootnotedAnswer>["footnote_render_report"];
   quality_warning?: QualityWarning;
   usage?: { input_tokens?: number; output_tokens?: number };
   // Debug: whether the missing-required-anchor caveat instruction was injected.
@@ -1196,7 +1197,7 @@ export async function runDrafterV2(
       : validationRaw;
     const built = validation.draft
       ? buildFootnotedAnswer(validation.draft, inputSources)
-      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined };
+      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined };
     const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
     return {
       snippet_budget_report,
@@ -1222,6 +1223,7 @@ export async function runDrafterV2(
       input_sources: inputSources,
       builder_report: built.builder_report,
       hierarchy_report: built.hierarchy_report,
+      footnote_render_report: built.footnote_render_report,
       quality_warning: computeQualityWarning(answer, { question }),
       missing_anchor_caveat_injected: true,
       lead_ref: leadSelection,
@@ -1249,7 +1251,7 @@ export async function runDrafterV2(
       const validation = validateStructuredDraft(draft, allowedRefs);
       const built = validation.draft
         ? buildFootnotedAnswer(validation.draft, inputSources)
-        : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined };
+        : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined };
       const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
       return {
         ok: validation.report.ok,
@@ -1274,6 +1276,7 @@ export async function runDrafterV2(
         input_sources: inputSources,
         builder_report: built.builder_report,
       hierarchy_report: built.hierarchy_report,
+      footnote_render_report: built.footnote_render_report,
         quality_warning: computeQualityWarning(answer, { question }),
         missing_anchor_caveat_injected: false,
         lead_ref: { ref: registrySource.ref, reason: "canonical_registry_statute_section", shape },
@@ -1297,7 +1300,7 @@ export async function runDrafterV2(
     const validation = validateStructuredDraft(draft, allowedRefs);
     const built = validation.draft
       ? buildFootnotedAnswer(validation.draft, inputSources)
-      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined };
+      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined };
     const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
     return {
       snippet_budget_report,
@@ -1323,6 +1326,7 @@ export async function runDrafterV2(
       input_sources: inputSources,
       builder_report: built.builder_report,
       hierarchy_report: built.hierarchy_report,
+      footnote_render_report: built.footnote_render_report,
       quality_warning: computeQualityWarning(answer, { question }),
       missing_anchor_caveat_injected: true,
       lead_ref: leadSelection,
@@ -1360,7 +1364,7 @@ export async function runDrafterV2(
       const validation = validateStructuredDraft(draft, allowedRefs);
       const built = validation.draft
         ? buildFootnotedAnswer(validation.draft, inputSources)
-        : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined };
+        : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined };
       const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
       return {
         ok: validation.report.ok,
@@ -1387,6 +1391,7 @@ export async function runDrafterV2(
         input_sources: inputSources,
         builder_report: built.builder_report,
       hierarchy_report: built.hierarchy_report,
+      footnote_render_report: built.footnote_render_report,
         quality_warning: computeQualityWarning(answer, { question }),
         missing_anchor_caveat_injected: !canonical,
         lead_ref: leadSelection,
@@ -1418,7 +1423,7 @@ export async function runDrafterV2(
       : validationRaw;
     const built = validation.draft
       ? buildFootnotedAnswer(validation.draft, inputSources)
-      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined };
+      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined };
     const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
     return {
       snippet_budget_report,
@@ -1444,6 +1449,7 @@ export async function runDrafterV2(
       input_sources: inputSources,
       builder_report: built.builder_report,
       hierarchy_report: built.hierarchy_report,
+      footnote_render_report: built.footnote_render_report,
       quality_warning: computeQualityWarning(answer, { question }),
       missing_anchor_caveat_injected: true,
       lead_ref: leadSelection,
@@ -1509,7 +1515,7 @@ export async function runDrafterV2(
       : validationRaw;
     const built = validation.draft
       ? buildFootnotedAnswer(validation.draft, inputSources)
-      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined };
+      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined };
     const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
     return {
       snippet_budget_report,
@@ -1535,6 +1541,7 @@ export async function runDrafterV2(
       input_sources: inputSources,
       builder_report: built.builder_report,
       hierarchy_report: built.hierarchy_report,
+      footnote_render_report: built.footnote_render_report,
       quality_warning: computeQualityWarning(answer, { question }),
       missing_anchor_caveat_injected: true,
       lead_ref: leadSelection,
@@ -1799,6 +1806,7 @@ export async function runDrafterV2(
     input_sources: inputSources,
     builder_report: built.builder_report,
       hierarchy_report: built.hierarchy_report,
+      footnote_render_report: built.footnote_render_report,
     quality_warning: computeQualityWarning(answer_markdown, {
       question,
       source_context: inputSources
