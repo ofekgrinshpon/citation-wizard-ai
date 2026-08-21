@@ -1,0 +1,72 @@
+{
+  "id": "P02",
+  "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+  "job_id": "3f184ea1-bd95-4116-ab39-f33ba3310f88",
+  "run_id": "a9216856-7d6c-476a-ad5b-6b3c4ebb5e74",
+  "ms": 121166,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": "docket_limitation",
+  "drafted": false,
+  "answer_length": 345,
+  "admitted_sources_count": 0,
+  "rescued_count": 4,
+  "rescued": [
+    {
+      "title": "פסק-דין בתיק ע\"פ 2092/21",
+      "url": "https://www.toledano.co.il/wp-content/uploads/2022/10/%D7%90%D7%9C%D7%9B%D7%A1%D7%A0%D7%93%D7%A8-%D7%9C%D7%95%D7%96%D7%A7%D7%99%D7%9F-%D7%A0.-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C.pdf",
+      "rescued_as": "judgment",
+      "original_classification": "unknown",
+      "original_query_role": "binding_case_law",
+      "matched_docket": "2092/21",
+      "matched_in": "title",
+      "admitted": true
+    },
+    {
+      "title": "ע\"פ 798/22 – דוד לוי נגד מדינת ישראל",
+      "url": "https://www.verdicts.co.il/%D7%A2-%D7%A4-798-22-%D7%93%D7%95%D7%93-%D7%9C%D7%95%D7%99-%D7%A0%D7%92%D7%93-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-02-07-2023/",
+      "rescued_as": "judgment",
+      "original_classification": "unknown",
+      "original_query_role": "binding_case_law",
+      "matched_docket": "798/22",
+      "matched_in": "title",
+      "admitted": true
+    },
+    {
+      "rescued_as": "judgment",
+      "original_classification": "unknown",
+      "original_query_role": "binding_case_law",
+      "matched_docket": "2092/21",
+      "matched_in": "title",
+      "admitted": true
+    },
+    {
+      "rescued_as": "judgment",
+      "original_classification": "unknown",
+      "original_query_role": "binding_case_law",
+      "matched_docket": "798/22",
+      "matched_in": "title",
+      "admitted": true
+    }
+  ],
+  "amir_8638_03_in_pool": false,
+  "amir_8638_03_used": false,
+  "bavli_1000_92_in_pool": false,
+  "bavli_1000_92_used": false,
+  "verdict_distribution": {},
+  "used_sources_count": 0,
+  "footnotes_count": 0,
+  "judgments_cited": 0,
+  "body_acquired_judgments": 0,
+  "metadata_only_judgments": 0,
+  "metadata_only_titles": [],
+  "used_source_titles": [],
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}

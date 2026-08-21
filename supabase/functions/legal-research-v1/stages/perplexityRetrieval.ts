@@ -20,6 +20,10 @@ import {
   type PplxHygiene,
   type PplxHygieneCounts,
 } from "./perplexityHygiene.ts";
+import {
+  detectPrimaryAuthorityShape,
+  type PrimaryShapeRescue,
+} from "./primaryShapeRescue.ts";
 
 const PPLX_TIMEOUT_MS = 25_000;
 
@@ -328,6 +332,13 @@ interface PplxResultRow {
   hygiene_enforced?: boolean;          // true when action was applied (default mode)
   raw_pplx_source_type?: string;
   normalized_source_type?: string;
+  // class_unknown_primary_shape_rescue_v1 telemetry
+  original_classification?: string;
+  rescue_reason?: string;
+  rescued_as?: string;
+  original_query_role?: SourceRole;
+  rescue_matched_docket?: string;
+  rescue_matched_in?: string;
 }
 
 function processRaw(
@@ -352,16 +363,28 @@ function processRaw(
         admitted_to_candidate_pool: false, drop_reason: "no_url" });
       continue;
     }
-    const cls = classify(url, title);
+    let cls = classify(url, title);
     if (cls === "bad") {
       rows.push({ title, url, domain, classified_source_class: cls,
         admitted_to_candidate_pool: false, drop_reason: "bad_source" });
       continue;
     }
 
+    // class_unknown_primary_shape_rescue_v1 — an `unknown` source whose title
+    // or URL carries an unambiguous Israeli judgment shape is routed to the
+    // case-law lane instead of being dropped. Admission only: verifier,
+    // source-integrity and the metadata-only holding gate still apply.
+    let rescue: PrimaryShapeRescue | null = null;
+    if (cls === "unknown") {
+      rescue = detectPrimaryAuthorityShape({ url, title, snippet: s.snippet });
+      if (rescue) cls = "court_case";
+    }
+    const originalQueryRole = query.role;
+
     // P3.2 #4: role correction before admission
     const { role: effectiveRole, corrected_from } = correctRoleForClass(query.role, cls);
     const admit = admitFor(effectiveRole, cls);
+
     if (!admit) {
       const followup = cls === "discovery_only" ? extractFollowupTerms(title, s.snippet) : [];
       followup.forEach((t) => followupTerms.add(t));
@@ -439,6 +462,14 @@ function processRaw(
       hygiene_enforced: !reportOnly && hygiene.hygiene_action !== "keep",
       raw_pplx_source_type: rawSt,
       normalized_source_type: st.normalized,
+      ...(rescue ? {
+        original_classification: rescue.original_classification,
+        rescue_reason: rescue.rescue_reason,
+        rescued_as: rescue.rescued_as,
+        original_query_role: originalQueryRole,
+        rescue_matched_docket: rescue.matched_docket,
+        rescue_matched_in: rescue.matched_in,
+      } : {}),
     });
     admitted.push({
       candidate_id: crypto.randomUUID(),
@@ -466,6 +497,14 @@ function processRaw(
         raw_pplx_source_type: rawSt,
         source_type_normalized: st.was_normalized,
         ...(docket_match ? { docket_match: true } : {}),
+        ...(rescue ? {
+          original_classification: rescue.original_classification,
+          rescue_reason: rescue.rescue_reason,
+          rescued_as: rescue.rescued_as,
+          original_query_role: originalQueryRole,
+          rescue_matched_docket: rescue.matched_docket,
+          rescue_matched_in: rescue.matched_in,
+        } : {}),
         ...(query.metadata?.required_anchor_id
           ? { required_anchor_id: query.metadata.required_anchor_id }
           : {}),

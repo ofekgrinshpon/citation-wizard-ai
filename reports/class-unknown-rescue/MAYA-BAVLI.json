@@ -1,0 +1,109 @@
+{
+  "id": "MAYA-BAVLI",
+  "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי? התייחסו להלכת בבלי.",
+  "job_id": "fdc735d9-b488-4345-9c39-689a98fbf27f",
+  "run_id": "cf3552f6-226d-4456-a66e-ae1d04ddd7be",
+  "ms": 191553,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": null,
+  "drafted": true,
+  "answer_length": 2303,
+  "admitted_sources_count": 0,
+  "rescued_count": 4,
+  "rescued": [
+    {
+      "title": "בג\"ץ 4796/20 פלוני נ' בית הדין הרבני הגדול",
+      "url": "https://www.toledano.co.il/wp-content/uploads/2020/08/%D7%A4%D7%9C%D7%95%D7%A0%D7%99-%D7%A0.-%D7%91%D7%99%D7%AA-%D7%94%D7%93%D7%99%D7%9F-%D7%94%D7%A8%D7%91%D7%A0%D7%99-%D7%94%D7%92%D7%93%D7%95%D7%9C.pdf",
+      "rescued_as": "judgment",
+      "original_classification": "unknown",
+      "original_query_role": "scholarship",
+      "matched_docket": "4796/20",
+      "matched_in": "title",
+      "admitted": true
+    },
+    {
+      "title": "בג\"ץ 2162/20",
+      "url": "https://a7.org/?file=20200402150227.pdf",
+      "rescued_as": "judgment",
+      "original_classification": "unknown",
+      "original_query_role": "scholarship",
+      "matched_docket": "2162/20",
+      "matched_in": "title",
+      "admitted": true
+    },
+    {
+      "rescued_as": "judgment",
+      "original_classification": "unknown",
+      "original_query_role": "scholarship",
+      "matched_docket": "4796/20",
+      "matched_in": "title",
+      "admitted": true
+    },
+    {
+      "rescued_as": "judgment",
+      "original_classification": "unknown",
+      "original_query_role": "scholarship",
+      "matched_docket": "2162/20",
+      "matched_in": "title",
+      "admitted": true
+    }
+  ],
+  "amir_8638_03_in_pool": false,
+  "amir_8638_03_used": false,
+  "bavli_1000_92_in_pool": false,
+  "bavli_1000_92_used": false,
+  "verdict_distribution": {},
+  "used_sources_count": 6,
+  "footnotes_count": 6,
+  "judgments_cited": 2,
+  "body_acquired_judgments": 2,
+  "metadata_only_judgments": 0,
+  "metadata_only_titles": [],
+  "used_source_titles": [
+    {
+      "title": "בג\"ץ 9734/03 פלונית נ' בית הדין הרבני הגדול ואח'",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/plonitmamon-1.pdf",
+      "citable_as": "judgment",
+      "text_usability": "full_text"
+    },
+    {
+      "title": "פסק דין מתוך toledano.co.il",
+      "url": "https://www.toledano.co.il/wp-content/uploads/2020/08/%D7%A4%D7%9C%D7%95%D7%A0%D7%99-%D7%A0.-%D7%91%D7%99%D7%AA-%D7%94%D7%93%D7%99%D7%9F-%D7%94%D7%A8%D7%91%D7%A0%D7%99-%D7%94%D7%92%D7%93%D7%95%D7%9C.pdf",
+      "citable_as": "judgment",
+      "text_usability": "full_text"
+    },
+    {
+      "title": "חוק-יסוד: השפיטה",
+      "url": "https://www.nevo.co.il/law_html/law00/73911.htm",
+      "citable_as": "statute",
+      "text_usability": "metadata_only"
+    },
+    {
+      "title": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשי\"ג-1953",
+      "url": "https://www.nevo.co.il/law_html/law00/73178.htm",
+      "citable_as": "statute",
+      "text_usability": "metadata_only"
+    },
+    {
+      "title": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+      "url": "https://www.nevo.co.il/law_html/law01/500_045.htm",
+      "citable_as": "statute",
+      "text_usability": "metadata_only"
+    },
+    {
+      "title": "סיכום פסיקה בעניין סעדים זמניים/עיקול זמני",
+      "url": "https://www.gov.il/BlobFolder/legalinfo/law4193-21/he/4193-21.pdf",
+      "citable_as": "statute",
+      "text_usability": "metadata_only"
+    }
+  ],
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "answer": "**שורה תחתונה**\n\nבהלכת בבלי — כפי שפורטה בפסק הדין המרכזי שנמצא (בג\"ץ 4796/20) — אמת המידה היא ביקורת מצומצמת של בג\"ץ על הכרעות מהותיות של בתי הדין הרבניים; התערבות מהותית תתאפשר בעיקר כאשר הסתמכות על שיקול חיצוני מהדין האזרחי מהווה חריגה מסמכות, פגם פרוצדורלי מהותי או פגיעה בזכויות יסוד.²\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nהמקור המרכזי שניתן להסתמך עליו הוא בג\"ץ 4796/20, אשר דן בבחינת הכרעות בית דין רבני וטיעוני הסתמכות על סוגי דין חיצוניים; בפסק הדין הוצגו מבחנים ועקרונות לבחינת השאלה אם הסתמכות כזו חרגה מסמכותו או פגמה באופן הדיון, והדגישו את הצורך בבחינה פרטנית של נסיבות המקרה.²\n\n**יישומים בפסיקה שנמצאה**\n\nבג\"ץ בתיק הנדון בחן בפרטיות אם החלטת בית הדין התבססה על 'הסכם מכללא' או על יישום דין אזרחי באופן שהשפיע על טיב ההחלטה; היישום הממשי היה בדיקה האם ההסתמכות שינתה את טווח הסמכות או פגעה בנורמות הדיון כך שמקימה פגם הניתן לתיקון על ידי בג\"ץ.²\n\n**מגבלות והבחנות**\n\nפסק הדין מזהיר מפני הרחבה של סמכות הביקורת: בג\"ץ אינו מחליף שיקול דעת מהותי של בית דין רבני אלא אם נפל פגם המפלס את ההתערבות — למשל חריגה ממשית מהסמכות, הסתמכות על שיקולים זרים שסילקו את הבסיס ההלכתי המוסמך או הפרה של כללי צדק פורמלי; יחד עם זאת סמכות החקיקה והסמכות לפקח על יחידות שיפוטיות עומדות ברקע ומגבילות את הטווח שבו בית המשפט העליון יימנע מבחינה.³\n\n**הרקע החקיקתי**\n\nחוק שיפוט בתי דין רבניים (נישואין וגירושין), תשי\"ג-1953 מקנה לבתי הדין הרבניים סמכות ייחודית לדון בענייני נישואין וגירושין, וזהו המסגרת המקצועית־מוסדית שבה נבחנת שאלת התערבות בג\"ץ.⁴\n\nחוק יחסי ממון בין בני זוג, תשל\"ג-1973 קובע את המסגרת החוקית לחלוקת רכוש עם פקיעת הנישואין, ולכן מהווה רקע רלוונטי כאשר נשקלת השאלה מי הסמכות המוסמכת להכריע בדיני ממון לאחר גירושין.⁵\n\nחוק-יסוד: השפיטה מהווה את העיגון החוקתי ליכולתו של בית המשפט העליון לתת צווים לגופים שיפוטיים ובכך רלוונטי להערכת טווח הפיקוח של בג\"ץ על בתי הדין הרבניים.⁶\n\n**מה לא ניתן לקבוע מהמקורות**\n\nבמקורות שאותרו לא נמצא עיגון מספק לקו פסיקה רחב ומקיף מעבר לפסק הדין היחיד שניתן לצטט באופן שמיש; שני מקורות שזוהו כקיימים (s4, s9) אינם כוללים טקסט אופרטיבי מספק, ולכן לא ניתן לגזור מהם הלכה משלימה או הרחבה מעבר לדיון שבתיק 4796/20.¹\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- SimaAmirHighCourt.docx — https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/SimaAmirHighCourt.docx"
+}
