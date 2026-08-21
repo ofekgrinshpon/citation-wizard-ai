@@ -1,0 +1,70 @@
+{
+  "id": "G08",
+  "query": "מה הפסיקה אומרת על מבחני המידתיות בביקורת חוקתית?",
+  "job_id": "439b07c9-cf58-40ae-91b0-8a9fc4f6536c",
+  "run_id": "2cdf1bed-d159-4d84-9f3d-56cb1edf3cf3",
+  "ms": 152176,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": null,
+  "drafted": true,
+  "answer_length": 3128,
+  "admitted_sources_count": 0,
+  "rescued_count": 0,
+  "rescued": [],
+  "amir_8638_03_in_pool": false,
+  "amir_8638_03_used": false,
+  "bavli_1000_92_in_pool": false,
+  "bavli_1000_92_used": false,
+  "dedupe": {
+    "identity_source_counts": null,
+    "rescued_from_legacy_collapse": null,
+    "identity_rows": 0,
+    "dup_url_drops": 0,
+    "dup_url_drop_keys": [],
+    "distinct_supreme_pdfs_admitted": 0,
+    "pool_found": null,
+    "pool_after_dedup": null
+  },
+  "verdict_distribution": {},
+  "used_sources_count": 4,
+  "footnotes_count": 5,
+  "judgments_cited": 3,
+  "body_acquired_judgments": 3,
+  "metadata_only_judgments": 0,
+  "metadata_only_titles": [],
+  "used_source_titles": [
+    {
+      "title": "בית המשפט העליון, אב\"ד השופט יצחק עמית, השופט עפר גרוסקופף, השופטת גילה כנפי-שטייניץ: פסק דין בעניין החזקת גופת המחבל וליד דקה (בג\"ץ 3289-24)",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1500",
+      "citable_as": "judgment",
+      "text_usability": "full_text"
+    },
+    {
+      "title": "בג\"ץ 3390/16 נאור נ' יו\"ר הכנסת",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/16/900/033/k46&fileName=16033900.k46&type=2",
+      "citable_as": "judgment",
+      "text_usability": "full_text"
+    },
+    {
+      "title": "פסק דין מתוך אתר ממשלתי (gov.il)",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+      "citable_as": "judgment",
+      "text_usability": "substantive_excerpt"
+    },
+    {
+      "title": "חוק יסוד: כבוד האדם וחירותו",
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "citable_as": "statute",
+      "text_usability": "substantive_excerpt"
+    }
+  ],
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "answer": "**שורה תחתונה**\n\nבית המשפט העליון מוציא לפועל מבחן מידתיות רב־שלבי הכולל בדיקת תכלית ראויה, מבחן הקשר רציונלי/התאמה של האמצעי לתכלית, בחינה של צורך וחיסכון באמצעים, ולעיתים בחינה איזונית סופית של הפגיעה בזכויות; בבג.¹\n\n**המקור הפסיקתי המרכזי שנמצא**\n\nבג\"ץ 3289/24 (סנא דקה ואח' נ' קובי יעקובי ואחרים) — בפסק‑דין זה קבע בית המשפט העליון במפורש את הצורך ביישום מבחן הקשר הרציונלי וביישום מבחן המידתיות במובן הצר ובהקשר העובדתי של החזקת גופת מחבל, והסמיך את השופטים לבחון את התאמת האמצעים לתכלית ולשקול את מידת הפגיעה בזכויות.²\n\nבג\"ץ 3390/16 (נאור נ' יו\"ר הכנסת) — בפסק‑דין זה נדונו שאלות על היקף הביקורת השיפוטית על חקיקה ובמיוחד על פגיעות בזכויות בעקבות תיקוני חקיקה; הטקסט שסופק מרמז על פניה לניתוח מבחני המידתיות, אך החומר המובא אינו מפורט דיו כדי לתאר נוסח מלא ומנוסח של שלבי המבחן.⁴\n\n**יישומים בפסיקה שנמצאה**\n\nבג\"ץ 3289/24 החל לפועל את מבחן הקשר הרציונלי והמבחן הצר של מידתיות בנסיבות שלטוניות ובטחוניות שבמרכזן החזקת גופת מחבל, והדגים כי בית המשפט בוחן גם את ההקשר ההיסטורי והמעשי של המדיניות בעת בחינת חוקיות ההגבלה.²\n\nבג\"ץ 3390/16 מופיעות הכרעות שנוגעות לביקורת חקיקה ולשאלת פגיעת זכויות בשל תיקוני חקיקה; עם זאת, מהחלק המובא לא ניתן לנסח יישום מפורט של כל שלבי מבחן המידתיות כפי שמופיע בפסקי‑דין אחרים.⁴\n\n**מגבלות והבחנות**\n\nמהמקרים עם טקסט שמיש עולה הבחנה במידת עוצמת הביקורת: מבחן הקשר הרציונלי מיושם כבדיקה מקילה יותר בהקשרים של מדיניות ציבורית או ביטחונית, בעוד שמבחן המידתיות הצר ובחינה איזונית מעמיקה יותר נדרשים כשהמדובר בזכויות יסוד מהותיות — תמיכה בעמדה זו נראית בבג\"ץ 3289/24 ובניתוח התיאורטי שבספרות.¹\n\n**הרקע החקיקתי**\n\nבסעיף 8 של חוק יסוד: כבוד האדם וחירותו נקבע העיקרון החוקתי שמאפשר פגיעה בזכויות רק בחוק ההולם את ערכיה של המדינה, שכוונתו תכלית ראויה, ובמידה שאינה עולה על הנדרש — נוסח המסגרת החוקתית שמעמיד את מבחן המידתיות ככלי לביקורת חקיקה והגבלות.⁵\n\n**מה לא ניתן לקבוע מהמקורות**\n\nבמקורות שאותרו לא נמצא עיגון מספק כדי לנסח גרסה אחת אחידה ומפורטת של כל שלבי מבחן המידתיות בכל תחומי הדין, וכן לא ניתן לקבוע במדויק את מפת היישום והעוצמה של הבדיקה בכל אפשרות שעשויה להתקיים; ייתכן שקיימת פסיקה נוספת שלא אותרה בחיפוש זה.\n\nנמצא אזכור/מקור מטא־דאטה לפסקי דין שבהם עשויה להופיע הבהרה נוספת על נוסחי מבחן המידתיות, אך לא די טקסט אופרטיבי כדי לגזור מהם הלכה: מקורות אלה כוללים את הפסק‑דין המוצג בכתובת המתועדת כ‑s5, s6 ו‑s7.³\n\nנמצא גם אזכור/מקור מטא־דאטה לפסקי דין נוספים (מסומנים כאן כ‑s8 ו‑s9), אך הטקסט שנמצא אינו מאפשר להסיק מהם עיקרי דין אופרטיביים נוספים לגבי שלבי או עוצמת מבחן המידתיות.\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- בג\"ץ 2996/17 — https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C17%5C960%5C029%5Ck35&fileName=17029960.K35&type=2\n- חסן ואח' — https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C65%5C1&fileName=SH1_13_10662-04.pdf&type=4\n- בג\"ץ 3752/10 — https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C10/520/037/b19&fileName=10037520.b19&type=4\n- Microsoft Word - 02007690.A34 — https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C02%5C690%5C007%5Ca34&fileName=02007690.a34&type=4"
+}

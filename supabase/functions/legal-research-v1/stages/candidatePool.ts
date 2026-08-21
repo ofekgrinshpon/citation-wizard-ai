@@ -7,6 +7,7 @@ import {
   type SourceIntegrity,
 } from "./sourceIntegrity.ts";
 import { assignSynthesisRole } from "./synthesisRole.ts";
+import { buildUrlDedupeKey } from "./docketAwareUrlKey.ts";
 
 
 function normTitle(t: string): string {
@@ -18,15 +19,21 @@ function normTitle(t: string): string {
     .trim();
 }
 
-function normUrl(u: string | null | undefined): string {
-  if (!u) return "";
-  try {
-    const x = new URL(u);
-    return (x.hostname + x.pathname).replace(/\/+$/, "").toLowerCase();
-  } catch {
-    return (u || "").toLowerCase().trim();
-  }
+
+
+
+/** docket_aware_url_dedup_v1 — per-candidate dedupe-key telemetry. */
+export interface UrlDedupeLogRow {
+  candidate_id: string;
+  title: string;
+  original_url: string | null;
+  normalized_url_old: string;
+  dedupe_key: string;
+  dedupe_identity_params_used: string[];
+  dedupe_identity_source: "query_param" | "title_docket" | "normal_url";
+  admitted: boolean;
 }
+
 
 // Extract a statute "title§section" key when discoverable.
 const STATUTE_SECTION_RE = /סעיף\s*(\d+[א-ת]?)/;
@@ -98,6 +105,9 @@ export interface PoolResult {
   drops: PoolDrop[];
   integrity: IntegrityLogRow[];
   integrity_rejects: number;
+  url_dedupe: UrlDedupeLogRow[];
+  url_dedupe_identity_source_counts: Record<string, number>;
+  url_dedupe_rescued_from_legacy_collapse: number;
   counts: {
     by_origin: Record<string, number>;
     by_role: Record<string, number>;
@@ -179,6 +189,12 @@ export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
     else all.push(c);
   }
 
+  // docket_aware_url_dedup_v1 — compute the dedupe key once per candidate.
+  const dedupeKeyById = new Map<string, ReturnType<typeof buildUrlDedupeKey>>();
+  for (const c of all) {
+    dedupeKeyById.set(c.candidate_id, buildUrlDedupeKey(c.source_url, c.title));
+  }
+
   const seenDoc = new Set<string>();
   const seenUrl = new Set<string>();
   const seenStatute = new Set<string>();
@@ -238,8 +254,11 @@ export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
       }
     }
     const docId = c.document_id ? `doc:${c.document_id}` : "";
-    const url = normUrl(c.source_url);
-    const urlKey = url ? `url:${url}` : "";
+    // docket_aware_url_dedup_v1 — identity-bearing key for recognised
+    // court/gov document endpoints; host+path elsewhere (unchanged).
+    const dedupe = dedupeKeyById.get(c.candidate_id)!;
+    const urlKey = dedupe.key ? `url:${dedupe.key}` : "";
+
     const stKey = statuteKey(c);
     const stK = stKey ? `st:${stKey}` : "";
     const dkKey = docketKey(c);
@@ -357,6 +376,32 @@ export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
     };
   });
 
+  // docket_aware_url_dedup_v1 telemetry.
+  const admittedIdSet = new Set(out.map((c) => c.candidate_id));
+  const url_dedupe: UrlDedupeLogRow[] = [];
+  const identityCounts: Record<string, number> = {};
+  const legacyCollapseSeen = new Set<string>();
+  let rescued = 0;
+  for (const c of all) {
+    const d = dedupeKeyById.get(c.candidate_id)!;
+    identityCounts[d.identity_source] = (identityCounts[d.identity_source] ?? 0) + 1;
+    if (d.identity_source !== "normal_url" && admittedIdSet.has(c.candidate_id)) {
+      // Admitted candidates that would have collided under the legacy key.
+      if (legacyCollapseSeen.has(d.normalized_url_old)) rescued++;
+      legacyCollapseSeen.add(d.normalized_url_old);
+    }
+    url_dedupe.push({
+      candidate_id: c.candidate_id,
+      title: c.title,
+      original_url: c.source_url ?? null,
+      normalized_url_old: d.normalized_url_old,
+      dedupe_key: d.key,
+      dedupe_identity_params_used: d.identity_params_used,
+      dedupe_identity_source: d.identity_source,
+      admitted: admittedIdSet.has(c.candidate_id),
+    });
+  }
+
   return {
     candidates: out,
     found: allRaw.length,
@@ -365,6 +410,9 @@ export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
     drops,
     integrity,
     integrity_rejects: rejected.length,
+    url_dedupe,
+    url_dedupe_identity_source_counts: identityCounts,
+    url_dedupe_rescued_from_legacy_collapse: rescued,
     counts,
   };
 }
