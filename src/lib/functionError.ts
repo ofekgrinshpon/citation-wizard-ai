@@ -91,7 +91,7 @@ export async function parseFunctionError(
     message: messageFor(status, code, body),
     requestId,
     required: typeof body?.required === "number" ? (body.required as number) : undefined,
-    isInsufficientCredits: code === "INSUFFICIENT_CREDITS" || status === 402,
+    isInsufficientCredits: code === "INSUFFICIENT_CREDITS",
     isAuthExpired: status === 401 || status === 403,
     isInvalidInput: code === "INVALID_INPUT" || status === 400,
     body,
