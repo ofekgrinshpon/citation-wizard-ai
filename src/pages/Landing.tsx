@@ -144,6 +144,8 @@ const Landing = () => {
   const navigate = useNavigate();
   const howRef = useRef<HTMLDivElement>(null);
   const pricingRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
+
 
   if (authLoading) {
     return (
