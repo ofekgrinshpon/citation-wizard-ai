@@ -425,23 +425,8 @@ export function BibliographyGenerator() {
           <p className="text-muted-foreground text-xs mt-0.5">
             ReLex הוא AI ויכול לעשות טעויות. יש לבדוק שנית את הפלט לפני השימוש בו.
           </p>
-      </div>
-
-      {serviceOutage && (
-        <div
-          role="alert"
-          className="mb-4 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2.5 text-xs text-destructive flex items-start justify-between gap-3"
-        >
-          <span className="leading-relaxed">{serviceOutage}</span>
-          <button
-            onClick={() => setServiceOutage(null)}
-            className="shrink-0 text-destructive/70 hover:text-destructive"
-            aria-label="סגור"
-          >
-            ✕
-          </button>
         </div>
-      )}
+
 
 
         {sortedEntries.length > 0 && (
