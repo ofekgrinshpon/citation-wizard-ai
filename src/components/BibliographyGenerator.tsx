@@ -444,6 +444,24 @@ export function BibliographyGenerator() {
         )}
       </div>
 
+      {serviceOutage && (
+        <div
+          role="alert"
+          className="mb-4 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2.5 text-xs text-destructive flex items-start justify-between gap-3"
+        >
+          <span className="leading-relaxed">{serviceOutage}</span>
+          <button
+            onClick={() => setServiceOutage(null)}
+            className="shrink-0 text-destructive/70 hover:text-destructive"
+            aria-label="סגור"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+
+
       {/* Step indicator */}
       <div className="flex items-center gap-2 mb-4 text-xs">
         <StepBadge n={1} label="הדבק" active={reviewItems.length === 0 && !loading} done={reviewItems.length > 0} />
