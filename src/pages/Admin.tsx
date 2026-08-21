@@ -14,6 +14,7 @@ import StatCard from "@/components/admin/StatCard";
 import UsageDashboard from "@/components/admin/UsageDashboard";
 import SourceCategoryView from "@/components/admin/SourceCategoryView";
 import UsersTable from "@/components/admin/UsersTable";
+import { ContactMessagesTable } from "@/components/admin/ContactMessagesTable";
 import VerifiedSourcesTable, { type VerifiedSourceRow } from "@/components/admin/VerifiedSourcesTable";
 import {
   classifyVerifiedSource,
@@ -51,7 +52,7 @@ export interface UserUsage {
   lastActivityAt: string | null;
 }
 
-type MainTab = "analytics" | "sources" | "users" | "knowledge";
+type MainTab = "analytics" | "sources" | "users" | "knowledge" | "contact";
 type SourceSubTab = "caselaw" | "legislation" | "literature" | "other" | "verified";
 
 const Admin = () => {
@@ -493,6 +494,7 @@ const Admin = () => {
       case "sources": return !sourcesLoaded;
       case "users": return !usersLoaded;
       case "knowledge": return !knowledgeLoaded;
+      case "contact": return false;
     }
   };
 
@@ -507,6 +509,7 @@ const Admin = () => {
     { id: "sources" as const, label: "📚 ניהול מקורות" },
     { id: "knowledge" as const, label: "🧠 מאגר ידע" },
     { id: "users" as const, label: "👥 משתמשים" },
+    { id: "contact" as const, label: "📬 פניות" },
   ];
 
   const sourceSubTabs = [
@@ -842,6 +845,8 @@ const Admin = () => {
           </div>
           )
         )}
+
+        {activeTab === "contact" && <ContactMessagesTable />}
       </div>
     </div>
   );
