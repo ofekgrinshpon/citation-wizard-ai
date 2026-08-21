@@ -8,6 +8,7 @@ import { signInWithOfficeDialog } from "@/lib/officeAuth";
 import { isCanonicalHost, PUBLIC_SITE_URL, shouldRedirectOAuthToCanonicalHost } from "@/lib/publicUrl";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
+import { LEGAL_VERSION } from "@/content/legal/version";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
