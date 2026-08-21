@@ -1,0 +1,41 @@
+{
+  "id": "B8",
+  "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+  "job_id": "05af8a9d-bc3a-4d60-989c-0df3dcefb407",
+  "run_id": "9d80f912-c7cd-4f25-859f-2ba39cc43a97",
+  "ms": 91136,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": "canonical_quote_registry",
+  "drafted": true,
+  "answer_length": 294,
+  "admitted_sources_count": 0,
+  "rescued_count": 0,
+  "rescued": [],
+  "amir_8638_03_in_pool": false,
+  "amir_8638_03_used": false,
+  "bavli_1000_92_in_pool": false,
+  "bavli_1000_92_used": false,
+  "verdict_distribution": {},
+  "used_sources_count": 1,
+  "footnotes_count": 1,
+  "judgments_cited": 0,
+  "body_acquired_judgments": 0,
+  "metadata_only_judgments": 0,
+  "metadata_only_titles": [],
+  "used_source_titles": [
+    {
+      "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "text_usability": null
+    }
+  ],
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹"
+}
