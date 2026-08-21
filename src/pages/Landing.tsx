@@ -293,6 +293,18 @@ const Landing = () => {
           </p>
         </div>
 
+        <div className="mb-12 flex justify-center">
+          <video
+            src={howItWorksVideo.url}
+            controls
+            playsInline
+            preload="metadata"
+            className="w-full max-w-xs md:max-w-sm rounded-2xl border border-border/60 shadow-lg bg-black"
+            aria-label="סרטון הסבר: איך ReLex עובד"
+          />
+        </div>
+
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {capabilities.map((cap, i) => (
             <CapabilityCard key={cap.title} cap={cap} index={i} />
