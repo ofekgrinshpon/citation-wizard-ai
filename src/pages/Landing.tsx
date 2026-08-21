@@ -375,7 +375,15 @@ const Landing = () => {
           תוכלו לשדרג, להוסיף קרדיטי Top-up, או לעבור תכנית בכל עת.
         </p>
 
-        <p className="text-[10px] text-muted-foreground text-center mt-12">
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-3 text-[11px] text-muted-foreground">
+          <a href="/terms" className="hover:text-foreground transition-colors">תנאי שימוש</a>
+          <span>·</span>
+          <a href="/privacy" className="hover:text-foreground transition-colors">מדיניות פרטיות</a>
+          <span>·</span>
+          <a href="mailto:support@relexlm.com" className="hover:text-foreground transition-colors" dir="ltr">support@relexlm.com</a>
+        </div>
+
+        <p className="text-[10px] text-muted-foreground text-center mt-4">
           © 2026 ReLex. כל הזכויות שמורות.
         </p>
       </section>
