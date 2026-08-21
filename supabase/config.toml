@@ -33,3 +33,5 @@ project_id = "ioktiqcffungtlsmlkcv"
     verify_jwt = false
   [functions.verify-case-fulltext]
     verify_jwt = false
+  [functions.process-email-queue]
+    verify_jwt = true
