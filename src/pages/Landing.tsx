@@ -299,7 +299,8 @@ const Landing = () => {
             controls
             playsInline
             preload="metadata"
-            className="w-full max-w-xs md:max-w-sm rounded-2xl border border-border/60 shadow-lg bg-black"
+            poster={howItWorksPoster.url}
+            className="w-full max-w-4xl rounded-2xl border border-border/60 shadow-xl bg-background"
             aria-label="סרטון הסבר: איך ReLex עובד"
           />
         </div>
