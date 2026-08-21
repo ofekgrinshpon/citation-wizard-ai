@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import { supabase } from "@/integrations/supabase/client";
 import { withTimeout, supabaseWithTimeout } from "@/lib/queryTimeout";
 import { getAuthRedirectOrigin } from "@/lib/publicUrl";
+import { LEGAL_VERSION } from "@/content/legal/version";
 import type { User, Session } from "@supabase/supabase-js";
 
 const ROLE_TIMEOUT_MS = 6000;
@@ -13,7 +14,7 @@ interface AuthContextType {
   isAdmin: boolean;
   isAdminResolved: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signUp: (email: string, password: string, fullName?: string, referralCode?: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, fullName?: string, referralCode?: string, acceptedLegal?: boolean) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
 
