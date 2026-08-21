@@ -48,6 +48,10 @@ const Auth = () => {
     const cleaned = new URLSearchParams(searchParams);
     cleaned.delete("oauth");
     window.history.replaceState({}, "", `${window.location.pathname}${cleaned.toString() ? `?${cleaned}` : ""}`);
+    // Consent was ticked on the originating host; carry it into this host's session.
+    if (searchParams.get("mode") === "signup") {
+      try { sessionStorage.setItem("relex_legal_accepted", LEGAL_VERSION); } catch { /* ignore */ }
+    }
     (async () => {
       try {
         const result = await lovable.auth.signInWithOAuth("google", {
