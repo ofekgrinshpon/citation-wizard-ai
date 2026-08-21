@@ -1,0 +1,64 @@
+{
+  "id": "R02",
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+  "job_id": "74e883d6-6243-406c-84d1-d6d30f383f0b",
+  "run_id": "e54d7489-940f-48ac-a48b-cd6bf7e8d27f",
+  "ms": 196771,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": null,
+  "drafted": true,
+  "answer_length": 1413,
+  "admitted_sources_count": 0,
+  "rescued_count": 0,
+  "rescued": [],
+  "amir_8638_03_in_pool": false,
+  "amir_8638_03_used": false,
+  "bavli_1000_92_in_pool": false,
+  "bavli_1000_92_used": false,
+  "dedupe": {
+    "identity_source_counts": null,
+    "rescued_from_legacy_collapse": null,
+    "identity_rows": 0,
+    "dup_url_drops": 0,
+    "dup_url_drop_keys": [],
+    "distinct_supreme_pdfs_admitted": 0,
+    "pool_found": null,
+    "pool_after_dedup": null
+  },
+  "verdict_distribution": {},
+  "used_sources_count": 3,
+  "footnotes_count": 2,
+  "judgments_cited": 2,
+  "body_acquired_judgments": 2,
+  "metadata_only_judgments": 0,
+  "metadata_only_titles": [],
+  "used_source_titles": [
+    {
+      "title": "ע\"א 6821/93",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=EnglishVerdicts/93/210/068/Z01&type=4",
+      "citable_as": "judgment",
+      "text_usability": "full_text"
+    },
+    {
+      "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2",
+      "citable_as": "judgment",
+      "text_usability": "substantive_excerpt"
+    },
+    {
+      "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "citable_as": "commentary",
+      "text_usability": "substantive_excerpt"
+    }
+  ],
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "answer": "**מה נקבע בע\"א 6821/93 — בנק המזרחי המאוחד נ' מגדל כפר שיתופי**\n\nשורה תחתונה: בפסק הדין ע\"א 6821/93 קבע בית המשפט העליון כי לכנסת סמכות מכוננת לחוקק חוקי יסוד, שלחוקי היסוד מעמד נורמטיבי‑חוקתי הגבוה על חוק רגיל, וכי לבית המשפט העליון סמכות ביקורת שיפוטית על חקיקה הסותרת חוקי היסוד — ובמיוחד במקרים של פגיעה בזכויות המוגנות, יש להבחן את ההסדר לפי הוראות פסקת ההגבלה.¹\n\nהיקף התחולה בזמן: בפסק הדין נידונו גם שאלות לגבי יחסה של חקיקה לסדר החדש של חוקי היסוד — חקיקה שנחקקה לאחר חוקי היסוד כפופה לביקורת שיפוטית מלאה בהתאם לכללים שנקבעו בפסקת ההגבלה, בעוד שחוקים שנקבעו טרם חוקי היסוד נשמרים במידת מה אך חייבים להתפרש ולאפיין ברוח ערכי חוקי היסוד.¹\n\nהמבחן בענייננו וההכרעה המהותית: בגופו של המהותי של התיק — הסדר חקיקתי להסדרת חובות במגזר החקלאי — הוכרכה פגיעה בזכות הקניין של נושים לצד הכרה ביכולת של הכנסת להסדיר נושאים ציבוריים; בית המשפט קבע כי ההסדר עומד בתנאי פסקת ההגבלה ולכן נשמר בתוקפו.¹\n\nהשפעה על דיני הפרט: בפסק הדין בא לידי ביטוי עיקרון לפיו ערכי חוקי היסוד והזכויות המוגנות בהם משפיעים על פרשנות ופיתוח דיני הפרט — כלומר אפקט אופקי עקיף שבו חוקי היסוד מנחים פרשנות דינים בינאישיים — אך זה לא הוכר כיצירת עילת תביעה חוקתית ישירה בין פרטים כאוטומה אחת.¹\n\nמסקנות והערות ניסוחיות: זוהי תמצית ההלכה וההשלכות המרכזיות כפי שנוסחו בפסק הדין; מאמרים ופסקי דין מאוחרים מנתחים ומבהירים היבטים של תחולה, כללי פרשנות והשפעה על מערכת החקיקה והפסיקה, וכדאי לעיין בהם כשמנסים למקם את ההחלטה בתוך המהפכה החוקתית הכוללת.²"
+}
