@@ -1,145 +1,36 @@
 [
   {
-    "id": "F01",
-    "query": "מה נטל ההוכחה בעתירות לבג״ץ? על מי מוטל הנטל? על העותר תמיד?",
-    "job_id": "5fda3911-7596-4755-aa62-86e1c7802b08",
-    "run_id": "f1cd135a-4144-4a3f-95c6-72e045623e36",
-    "ms": 142424,
+    "id": "R02",
+    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+    "job_id": "a7b1020e-bf16-444b-a331-4f7bc828ef21",
+    "run_id": "b5d8848b-7f31-4fc9-9856-8bac3d4cc9a2",
+    "ms": 161274,
     "terminal_status": "done",
     "job_error": null,
     "last_stage": null,
     "placeholder_rows_rejected": 0,
     "branch": null,
     "drafted": true,
-    "answer_length": 2135,
-    "used_sources_count": 3,
-    "footnotes_count": 3,
-    "judgments_cited": 0,
-    "body_acquired_judgments": 0,
+    "answer_length": 1303,
+    "used_sources_count": 2,
+    "footnotes_count": 2,
+    "judgments_cited": 2,
+    "body_acquired_judgments": 2,
     "metadata_only_judgments": 0,
     "metadata_only_titles": [],
     "statute_text_acquired_count": 0,
     "statute_section_text_located": false,
     "statute_acquisition": null,
-    "sufficiency_used_acquired_body": false,
+    "sufficiency_used_acquired_body": true,
     "claim_facet_expansion": {
-      "facets": [
-        {
-          "facet_id": "F1",
-          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
-          "sources_used": 1,
-          "sources_found": 7,
-          "commentary_only": false,
-          "doctrinal_label": "נטל ראשוני על העותר בעתירת בג\"ץ",
-          "parent_claim_id": "C1",
-          "generated_queries": [
-            "הנטל הראשוני המוטל על העותר בעתירה לבג\"ץ"
-          ],
-          "best_support_level": "direct",
-          "metadata_only_count": 1,
-          "insufficiency_reason": null,
-          "expected_support_type": "direct_rule",
-          "primary_support_found": true,
-          "required_source_preference": "binding_case_law"
-        },
-        {
-          "facet_id": "F2",
-          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
-          "sources_used": 0,
-          "sources_found": 2,
-          "commentary_only": false,
-          "doctrinal_label": "חזקת התקינות המנהלית",
-          "parent_claim_id": "C1",
-          "generated_queries": [
-            "חזקת התקינות המנהלית נטל הסתירה"
-          ],
-          "best_support_level": "tangential",
-          "metadata_only_count": 0,
-          "insufficiency_reason": null,
-          "expected_support_type": "direct_rule",
-          "primary_support_found": true,
-          "required_source_preference": "binding_case_law"
-        },
-        {
-          "facet_id": "F3",
-          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
-          "sources_used": 0,
-          "sources_found": 8,
-          "commentary_only": false,
-          "doctrinal_label": "חובת ההסבר / חובת ההנמקה של הרשות",
-          "parent_claim_id": "C1",
-          "generated_queries": [
-            "חובת ההנמקה של הרשות המינהלית חוק לתיקון סדרי המינהל הנמקות"
-          ],
-          "best_support_level": "tangential",
-          "metadata_only_count": 1,
-          "insufficiency_reason": null,
-          "expected_support_type": "direct_rule",
-          "primary_support_found": true,
-          "required_source_preference": "primary_statute"
-        },
-        {
-          "facet_id": "F4",
-          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
-          "sources_used": 0,
-          "sources_found": 2,
-          "commentary_only": false,
-          "doctrinal_label": "צו על תנאי והעברת נטל מעשית למשיב",
-          "parent_claim_id": "C1",
-          "generated_queries": [
-            "צו על תנאי בבג\"ץ נטל התשובה של המשיב"
-          ],
-          "best_support_level": "unrelated",
-          "metadata_only_count": 0,
-          "insufficiency_reason": null,
-          "expected_support_type": "direct_rule",
-          "primary_support_found": true,
-          "required_source_preference": "procedure_rules"
-        },
-        {
-          "facet_id": "F5",
-          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
-          "sources_used": 3,
-          "sources_found": 9,
-          "commentary_only": false,
-          "doctrinal_label": "סעד זמני בבג\"ץ: ראיות לכאורה ומאזן נוחות",
-          "parent_claim_id": "C1",
-          "generated_queries": [
-            "סעד זמני בבג\"ץ מאזן הנוחות סיכויי העתירה"
-          ],
-          "best_support_level": "direct",
-          "metadata_only_count": 0,
-          "insufficiency_reason": null,
-          "expected_support_type": "application",
-          "primary_support_found": true,
-          "required_source_preference": "procedure_rules"
-        },
-        {
-          "facet_id": "F6",
-          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
-          "sources_used": 1,
-          "sources_found": 5,
-          "commentary_only": false,
-          "doctrinal_label": "הבחנה בין נטל שכנוע לנטל הבאת ראיות",
-          "parent_claim_id": "C1",
-          "generated_queries": [
-            "ההבחנה בין נטל השכנוע לנטל הבאת הראיות במשפט המינהלי"
-          ],
-          "best_support_level": "direct",
-          "metadata_only_count": 0,
-          "insufficiency_reason": null,
-          "expected_support_type": "background_only",
-          "primary_support_found": true,
-          "required_source_preference": "scholarship_secondary"
-        }
-      ],
-      "enabled": true,
+      "facets": [],
+      "enabled": false,
       "version": "claim_facet_expansion_v1",
-      "facet_count": 6,
-      "gate_reason": "mode=doctrine_explanation;shape=analysis",
+      "facet_count": 0,
+      "gate_reason": "mode_excluded:specific_case",
       "legal_area_lock": "public_law_hcj",
-      "directive_applied": true,
-      "facet_queries_count": 5,
+      "directive_applied": false,
+      "facet_queries_count": 0,
       "facets_commentary_only": 0,
       "facets_without_primary_support": 0
     },
@@ -149,12 +40,15 @@
     "gate_report": {
       "applied": true,
       "source_split": {
-        "read_in_full": [],
+        "read_in_full": [
+          "s1",
+          "s2"
+        ],
         "reference_only": []
       },
       "blocks_stripped": 0,
       "source_split_counts": {
-        "read_in_full": 0,
+        "read_in_full": 2,
         "reference_only": 0
       },
       "reference_only_sources": [],
@@ -171,19 +65,14 @@
     "failures": [],
     "used_source_titles": [
       {
-        "title": "רמאל נ' טרודי ואח' - פסקדין",
-        "citable_as": "commentary",
-        "text_usability": "metadata_only"
+        "title": "ע\"א 6821/93",
+        "citable_as": "judgment",
+        "text_usability": "full_text"
       },
       {
-        "title": "דיני הראיות",
-        "citable_as": "commentary",
-        "text_usability": "metadata_only"
-      },
-      {
-        "title": "דרכי הוכחה בבג״ץ",
-        "citable_as": "commentary",
-        "text_usability": "metadata_only"
+        "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "citable_as": "judgment",
+        "text_usability": "substantive_excerpt"
       }
     ]
   }

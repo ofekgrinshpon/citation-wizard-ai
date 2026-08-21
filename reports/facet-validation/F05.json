@@ -1,0 +1,88 @@
+{
+  "id": "F05",
+  "query": "מה קובע סעיף 6 לחוק החברות, תשנ\"ט-1999 בעניין הרמת מסך?",
+  "job_id": "6a98cf31-c11d-4100-9e2b-656e8b1a7481",
+  "run_id": "5840afd3-43d1-403a-b143-5b260154f412",
+  "ms": 181404,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": null,
+  "drafted": true,
+  "answer_length": 2080,
+  "used_sources_count": 4,
+  "footnotes_count": 5,
+  "judgments_cited": 1,
+  "body_acquired_judgments": 1,
+  "metadata_only_judgments": 0,
+  "metadata_only_titles": [],
+  "statute_text_acquired_count": 0,
+  "statute_section_text_located": false,
+  "statute_acquisition": null,
+  "sufficiency_used_acquired_body": true,
+  "claim_facet_expansion": {
+    "facets": [],
+    "enabled": false,
+    "version": "claim_facet_expansion_v1",
+    "facet_count": 0,
+    "gate_reason": "mode_excluded:statute_section_definition",
+    "legal_area_lock": "companies",
+    "directive_applied": false,
+    "facet_queries_count": 0,
+    "facets_commentary_only": 0,
+    "facets_without_primary_support": 0
+  },
+  "sufficiency_profile": null,
+  "sufficiency_passed": null,
+  "metadata_only_holdings_remaining": 0,
+  "gate_report": {
+    "applied": true,
+    "source_split": {
+      "read_in_full": [
+        "s5",
+        "s6"
+      ],
+      "reference_only": []
+    },
+    "blocks_stripped": 0,
+    "source_split_counts": {
+      "read_in_full": 2,
+      "reference_only": 0
+    },
+    "reference_only_sources": [],
+    "blocks_left_unsupported": 0,
+    "stripped_ref_occurrences": 0,
+    "unsupported_block_samples": [],
+    "metadata_only_judgment_refs": [],
+    "metadata_only_holdings_remaining": 0
+  },
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "used_source_titles": [
+    {
+      "title": "ע\"א 4263-04 - קיבוץ משמר העמק נ. עו\"ד טומי מנור, מפרק אפרוחי הצפון",
+      "citable_as": "judgment",
+      "text_usability": "substantive_excerpt"
+    },
+    {
+      "title": "חוק החברות, התשנ\"ט-1999 – רשות ניירות ערך",
+      "citable_as": "statute",
+      "text_usability": "full_text"
+    },
+    {
+      "title": "חוק החברות, התשנ\"ט-1999 – gov.il (PDF)",
+      "citable_as": "statute",
+      "text_usability": "metadata_only"
+    },
+    {
+      "title": "פרק ו': הרמת המסך",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only"
+    }
+  ],
+  "answer": "**סעיף 6 — עיקרי ההוראה**\n\nסעיף 6 לחוק החברות, התשנ\"ט-1999 מעגן עיקרון יסודי ביחס לזהות המשפטית של החברה ומשמש כתשתית משפטית ביחס לשאלת היחסיות בין התאגיד לבין בעלי עניין בו; נוסח הסעיף מופיע בחוק.³\n\nנוסח הסעיף מופיע בנוסח החוק הרשמי ולכן יש להתייחס לטקסט המלא שבחוק לצורך פירוש מילולי מדויק של ההוראה וליישומה בעילות של הרמת מסך.⁴\n\n**תנאים ועילות לפרשנות הרמת המסך לפי פסיקה וספרות**\n\nמהפסיקה ומהספרות עולה כי חריג הרמת המסך מופעל בדרך כלל בנסיבות החריגות שבהן קיומה של זהות עסקית בין החברה לבין בעליה משמשת ככלי להונות, להתחמקות מהתחייבויות או לניצול לרעה של היוקרה התאגידית; בפסיקה הועלתה במיוחד סוגיית 'מימון דק' ומבנים שבהם הון החברה דל באופן קיצוני כמקרה המעניק שיקול להרמת המסך.¹\n\nהספרות האקדמית מסבירה מבחנים תיאורטיים לשלילת ההפרדה התאגידית (למשל התמקדות בכוונה להטעות, בייחוס שליטה ובקשר בין מבנה ההון לבין זכויות הנושים), אולם ניסוחם וההדגשים משתנים בין המחברים והם מהווים עזר לפרשנות הפסיקה.⁵\n\n**ההשלכות והסעדים לאחר הרמת המסך**\n\nבפסיקה נקבע כי בעת שהרמת המסך מוצדקת בית המשפט רשאי לייחס התחייבויות של החברה לאנשים בשראיהם — למשל בעלי מניות או מי שמנהל למעשה את החברה — ולהטיל עליהם אחריות אישית, ובנסיבות מסוימות אף לדרוש מהבחינה הראייתית מהמעורבים להסביר את אופן מימון החברה.¹\n\nהחוק עצמו אינו יוצר בהכרח חובה סטטוטורית להזרים הון; המשפט השיפוטי הבלתי-סטטוטורי מפעיל את החריג רק כאשר נסיבות המקרה מצדיקות חיוב אישי או תיקון של הפגיעה בזכויות נושים או זולתים.¹\n\n**מגבלות פרוצדורליות ועקרוניות בפרשנות**\n\nבית המשפט העליון הדגיש שהרמת המסך היא חריג שישווק במשורה ושהחלתו תלויה בבחינה עובדתית וראייתית; בפסיקה צוינה האפשרות להעביר בנסיבות מסוימות את הנטל הראייתי אל בעלי המניות, אך בדרך כלל נדרשת הוכחה של כוונה להונות או פגיעה בזכויות הזולת.¹\n\nהספרות מוסיפה כי יש להקפיד על כללי ההליך והזכות להתדיין של המעורבים ולהעריך את ההשלכות הפורמליות של חריגה מעיקרון האישיות הנפרדת, כך שהטענה להרמת המסך לא תהפוך לכלי נרחב בלי בדיקה מוקפדת של נסיבות המקרה.⁵\n\nמסקנה קצרה: נוסח סעיף 6 בחוק החברות מהווה את המסגרות החוקית הבסיסית שדרכה יש לפרש טענות על הרמת מסך; לפרקטיקה המפורטת יש להסתמך בעיקר על פסיקה בעלת משקל (ביניהן החלטות עליונות) וספרות עיונית שמבהירות את המבחנים והסעדים.²"
+}

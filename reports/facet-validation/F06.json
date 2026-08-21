@@ -1,0 +1,252 @@
+{
+  "id": "F06",
+  "query": "מהו היקף חובת תום הלב במשא ומתן לפי סעיף 12 לחוק החוזים (חלק כללי)?",
+  "job_id": "11d74c41-06ce-431d-973e-e055f07b1a9d",
+  "run_id": "14b60cfd-7ab7-4180-a01a-066d50051472",
+  "ms": 242847,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": null,
+  "drafted": true,
+  "answer_length": 3451,
+  "used_sources_count": 8,
+  "footnotes_count": 8,
+  "judgments_cited": 1,
+  "body_acquired_judgments": 1,
+  "metadata_only_judgments": 0,
+  "metadata_only_titles": [],
+  "statute_text_acquired_count": 0,
+  "statute_section_text_located": false,
+  "statute_acquisition": null,
+  "sufficiency_used_acquired_body": true,
+  "claim_facet_expansion": {
+    "facets": [
+      {
+        "facet_id": "F1",
+        "legal_area": "דיני חוזים",
+        "sources_used": 7,
+        "sources_found": 20,
+        "commentary_only": false,
+        "doctrinal_label": "ההוראה המחייבת בבסיס: מהי הנוסחאות וההיקף החוקי של סעיף 12 לחוק החוזים",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "מהי הנוסחאות וההיקף החוקי של סעיף 12 לחוק החוזים דיני חוזים הוראת החוק"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "primary_statute"
+      },
+      {
+        "facet_id": "F2",
+        "legal_area": "דיני חוזים",
+        "sources_used": 7,
+        "sources_found": 27,
+        "commentary_only": false,
+        "doctrinal_label": "הלכה מחייבת בסוגיה: מהי הנוסחאות וההיקף החוקי של סעיף 12 לחוק החוזים",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "מהי הנוסחאות וההיקף החוקי של סעיף 12 לחוק החוזים דיני חוזים בית המשפט העליון הלכה"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "binding_case_law"
+      },
+      {
+        "facet_id": "F3",
+        "legal_area": "דיני חוזים",
+        "sources_used": 7,
+        "sources_found": 20,
+        "commentary_only": false,
+        "doctrinal_label": "יישום וסייגים: מהי הנוסחאות וההיקף החוקי של סעיף 12 לחוק החוזים",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "מהי הנוסחאות וההיקף החוקי של סעיף 12 לחוק החוזים דיני חוזים חריגים וסייגים"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "application",
+        "primary_support_found": true,
+        "required_source_preference": "binding_case_law"
+      },
+      {
+        "facet_id": "F4",
+        "legal_area": "דיני חוזים",
+        "sources_used": 8,
+        "sources_found": 22,
+        "commentary_only": false,
+        "doctrinal_label": "רקע עיוני: מהי הנוסחאות וההיקף החוקי של סעיף 12 לחוק החוזים",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "מהי הנוסחאות וההיקף החוקי של סעיף 12 לחוק החוזים דיני חוזים מאמר אקדמי"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "background_only",
+        "primary_support_found": true,
+        "required_source_preference": "scholarship_secondary"
+      },
+      {
+        "facet_id": "F5",
+        "legal_area": "דיני חוזים",
+        "sources_used": 8,
+        "sources_found": 27,
+        "commentary_only": false,
+        "doctrinal_label": "ההוראה המחייבת בבסיס: כיצד פותחו גבולות וסייגים של חובת תום הלב במשא",
+        "parent_claim_id": "C2",
+        "generated_queries": [
+          "כיצד פותחו גבולות וסייגים של חובת תום הלב במשא דיני חוזים הוראת החוק"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "primary_statute"
+      },
+      {
+        "facet_id": "F6",
+        "legal_area": "דיני חוזים",
+        "sources_used": 8,
+        "sources_found": 27,
+        "commentary_only": false,
+        "doctrinal_label": "הלכה מחייבת בסוגיה: כיצד פותחו גבולות וסייגים של חובת תום הלב במשא",
+        "parent_claim_id": "C2",
+        "generated_queries": [
+          "כיצד פותחו גבולות וסייגים של חובת תום הלב במשא דיני חוזים בית המשפט העליון הלכה"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "binding_case_law"
+      },
+      {
+        "facet_id": "F7",
+        "legal_area": "דיני חוזים",
+        "sources_used": 7,
+        "sources_found": 21,
+        "commentary_only": false,
+        "doctrinal_label": "יישום וסייגים: כיצד פותחו גבולות וסייגים של חובת תום הלב במשא",
+        "parent_claim_id": "C2",
+        "generated_queries": [
+          "כיצד פותחו גבולות וסייגים של חובת תום הלב במשא דיני חוזים חריגים וסייגים"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "application",
+        "primary_support_found": true,
+        "required_source_preference": "binding_case_law"
+      },
+      {
+        "facet_id": "F8",
+        "legal_area": "דיני חוזים",
+        "sources_used": 7,
+        "sources_found": 21,
+        "commentary_only": false,
+        "doctrinal_label": "רקע עיוני: כיצד פותחו גבולות וסייגים של חובת תום הלב במשא",
+        "parent_claim_id": "C2",
+        "generated_queries": [
+          "כיצד פותחו גבולות וסייגים של חובת תום הלב במשא דיני חוזים מאמר אקדמי"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "background_only",
+        "primary_support_found": true,
+        "required_source_preference": "scholarship_secondary"
+      }
+    ],
+    "enabled": true,
+    "version": "claim_facet_expansion_v1",
+    "facet_count": 8,
+    "gate_reason": "mode=doctrine_explanation;shape=analysis",
+    "legal_area_lock": "contracts",
+    "directive_applied": true,
+    "facet_queries_count": 6,
+    "facets_commentary_only": 0,
+    "facets_without_primary_support": 0
+  },
+  "sufficiency_profile": null,
+  "sufficiency_passed": null,
+  "metadata_only_holdings_remaining": 0,
+  "gate_report": {
+    "applied": true,
+    "source_split": {
+      "read_in_full": [
+        "s5"
+      ],
+      "reference_only": []
+    },
+    "blocks_stripped": 0,
+    "source_split_counts": {
+      "read_in_full": 1,
+      "reference_only": 0
+    },
+    "reference_only_sources": [],
+    "blocks_left_unsupported": 0,
+    "stripped_ref_occurrences": 0,
+    "unsupported_block_samples": [],
+    "metadata_only_judgment_refs": [],
+    "metadata_only_holdings_remaining": 0
+  },
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "used_source_titles": [
+    {
+      "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+      "citable_as": "judgment",
+      "text_usability": "full_text"
+    },
+    {
+      "title": "חוק החוזים (חלק כללי) - נוסח/הצעת חוק בכנסת (PDF)",
+      "citable_as": "statute",
+      "text_usability": "full_text"
+    },
+    {
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו",
+      "citable_as": "statute",
+      "text_usability": "full_text"
+    },
+    {
+      "title": "חוק החוזים (חלק כללי)",
+      "citable_as": "statute",
+      "text_usability": "substantive_excerpt"
+    },
+    {
+      "title": "חוק החוזים (חלק כללי), התשל\"ג-1973",
+      "citable_as": "statute",
+      "text_usability": "metadata_only"
+    },
+    {
+      "title": "תקנת השוק במכר על ידי רשות שנפל בהליכיו פגם חוקי",
+      "citable_as": "scholarship",
+      "text_usability": "full_text"
+    },
+    {
+      "title": "סעיף 12 לחוק החוזים : תום לב במשא ומתן",
+      "citable_as": "unknown",
+      "text_usability": "metadata_only"
+    },
+    {
+      "title": "תום לב בחוזים ואשם ביצירת החוזה",
+      "citable_as": "unknown",
+      "text_usability": "metadata_only"
+    }
+  ],
+  "answer": "שורה תחתונה: סעיף 12 לחוק החוזים (חלק כללי) קובע כי במשא ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך מקובלת ובתום‑לב, וכי צד שלא נהג כך יחויב בפיצויים בעד הנזק שנגרם לו עקב המשא ומתן או עקב כריתת החוזה; הוראות סעיפים 10, 13 ו‑14 יחולו בשינויים המחוייבים.³\n\n**המשמעות החוקית של נוסח הסעיף**\n\nהוראת הסעיף היא כלל תנהגות כללי בשלב הטרום‑חוזי: היא מטילה חובה על המעורבים במשא ומתן לנהוג בתום‑לב ובדרך מקובלת, ומקנה עילת פיצויים בגין נזק הנובע מהמשא ומתן או מהכריתת החוזה. נוסח הסעיף אינו מפרט בתוך עצמו מבחנים מדויקים של חובת גילוי או פעולות חובותיות ספציפיות — הוא מפנה לכללי התרופות בחוק החוזים.⁴\n\n**פסיקה ויישום בפועל**\n\nבמקורות שאותרו קיימת התייחסות שיפוטית ליישום עקרון תום‑הלב במשא ומתן: פסק‑דין מחוזי דן בטענות של חוסר תום‑לב ובהסתרת עובדות בהקשר של הסדר פשרה, ומדגים את אופן ההסתמכות על הוראת הסעיף בעת בחינת התנהלות המשא ומתן.¹\n\nעם זאת, במקורות שסופקו ניכר שיש חוסר־בהירות וביקורת אקדמית לגבי גבולות החובה והניסוח של מבחנים סטנדרטיים שניתן להחיל באופן גורף; הספרות מציינת כי הפסיקה והדוקטרינה טרם התגבשו לגדרים אחידים של חובת גילוי חיובית או של מבחן אחיד לאיסור הטעיה במשא ומתן.⁷\n\nמכלול המקורות והדיון האקדמי המסופק מצביע על מגמה פרשנית שמשקלה מעורב: יש דגש שיפוטי‑מעשי באיסור הטעיה ובהסתה להלכים מטעות, בעוד שאלת חובת פעולה חיובית (חובת גילוי) נקבעת בדרך כלל בהתאם לנסיבות, למשקל המידע ולתלות בין הצדדים — אך אין במקורות האלה נוסח אחד ברור ומקובל שמנחה כל המקרים.⁸\n\n**סייגים, תחולת החובה ומבחני יישום**\n\nהחובה לתום‑לב איננה בלתי מוגבלת: יישומה בפועל מותאם לנסיבות המקרה — טבע המשא ומתן, סוג הענף, גודל ההשפעה של המידע המוסתר או המוטעה, והאם הצד שהשתמש במידע פעל במטרה לפגוע או לנצל. במקורות שסופקו נטען במפורש שהגבולות עדיין נתונים לדיון ולא הוסכמו מבחנים אחידים.⁷\n\nככלל מעשי שנגזר מהדיון התיאורטי והיישומי: איסור על הגרמה להטעיה (מניפולציה של עובדות או הצגה מטעה) הוא ציון מרכזי; חובת גילוי חיובית תתקיים לעתים במצבים שבהם מידע מהותי שהיה בידיו של צד נדרש כבר כדי לאפשר קבלת החלטה מושכלת, אך ההיקף והאבחנה בין מידע מהותי לטפל נשארים תלויי‑נסיבות.⁸\n\n**סעדים והשלכות משפטיות של הפרת החובה**\n\nסעיף 12 מכוון לכך שהפרת תום‑הלב במשא ומתן תיחשב להפרת חובת משפטית המזכה בתרופות: הסעיף מפנה ליישום הוראות התרופות בחוק החוזים (סעיפים 10, 13 ו‑14) בשינויים המחוייבים, ומשמעו האפשרות לפיצויים על נזקים שנגרמו עקב המשא ומתן או הכריתת החוזה.⁵\n\nבמקורות שסופקו נידונה גם האפשרות של ביטול או פגיעה בתקפות של הסכמים/הצעות במקרים חריגים שבהם נפל פגם יסודי שנבע מחוסר תום‑לב; עם זאת, תמיכת המקורות שנמצאו בשאלה זו חלקית, ויש להיזהר מלהכליל מבחני ביטול ללא פנייה לפסיקה ממוקדת ושיטתית.²\n\nלגבי הסתמכות/עקרון ה‑reliance: הספרות המטיבה לפתח ניתוחים מציגה אפשרות שבהתנהלות מסוימת במשא ומתן תיווצר תום‑לב של הסתמכות שיכולה להצדיק סעד של פיצוי; בבדיקה המעשית יש להכריע לפי נסיבות המקרה והמבחנים שנקבעו בפסיקה הרלוונטית — במקורות שסופקו לא אותר ניסוח חד‑משמעי המעניק עילת estoppel אוטומטית.⁶\n\n**הגבלות פרקטיות ועקרוניות לאכיפה נרחבת**\n\nישנן סיבות עקרוניות ומעשיות למתן גבולות לחובת תום‑הלב במשא ומתן: חשש מגריטת פעילות מסחרית רגילה, הקושי לקבוע חובת גילוי מוחלטת בכל ענף, והצורך להבחין בין מידע מהותי לבין מידע טריוויאלי. המחקר והביקורת שבמקורות שסופקו מדגישים כי מערכת המשפט נוטה לאכוף דרישות חיוביות רק בהתקיים תנאים של רלוונטיות, תלות וסדרון הגיוני של קבלת ההחלטה על‑ידי הצד הנגדי.⁷\n\nסיכום: סעיף 12 יוצר חובת תום‑לב במשא ומתן ומספק בסיס לתרופות של פיצוי ובמקרים מסוימים להשפעה על תקפות הסכמים; עם זאת, במקורות שאותרו היקף החובה ודרגות החובה‑לגילוי אינם מוגדרים במונחים חד‑משמעיים, והיישום בפועל נשען על פרשנות שיפוטית נסיבתית ובחינה של מהות המידע ומשקלו ביחסי הצדדים."
+}

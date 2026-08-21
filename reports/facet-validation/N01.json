@@ -1,0 +1,233 @@
+{
+  "id": "N01",
+  "query": "על מי מוטל נטל ההוכחה בתביעה אזרחית כספית רגילה?",
+  "job_id": "a6323332-4072-4f3e-8391-a48c2849e2fe",
+  "run_id": "a52b174e-d3b3-4396-b60d-845b6f4cbc6c",
+  "ms": 141839,
+  "terminal_status": "done",
+  "job_error": null,
+  "last_stage": null,
+  "placeholder_rows_rejected": 0,
+  "branch": null,
+  "drafted": true,
+  "answer_length": 1904,
+  "used_sources_count": 4,
+  "footnotes_count": 4,
+  "judgments_cited": 2,
+  "body_acquired_judgments": 2,
+  "metadata_only_judgments": 0,
+  "metadata_only_titles": [],
+  "statute_text_acquired_count": 0,
+  "statute_section_text_located": false,
+  "statute_acquisition": null,
+  "sufficiency_used_acquired_body": true,
+  "claim_facet_expansion": {
+    "facets": [
+      {
+        "facet_id": "F1",
+        "legal_area": "סדר דין אזרחי",
+        "sources_used": 1,
+        "sources_found": 16,
+        "commentary_only": false,
+        "doctrinal_label": "ההוראה המחייבת בבסיס: הכלל הבסיסי: בתביעה אזרחית כספית רגילה מוטל על התובע",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "הכלל הבסיסי: בתביעה אזרחית כספית רגילה מוטל על התובע  הוראת החוק"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "primary_statute"
+      },
+      {
+        "facet_id": "F2",
+        "legal_area": "סדר דין אזרחי",
+        "sources_used": 3,
+        "sources_found": 25,
+        "commentary_only": false,
+        "doctrinal_label": "הלכה מחייבת בסוגיה: הכלל הבסיסי: בתביעה אזרחית כספית רגילה מוטל על התובע",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "הכלל הבסיסי: בתביעה אזרחית כספית רגילה מוטל על התובע  בית המשפט העליון הלכה"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "binding_case_law"
+      },
+      {
+        "facet_id": "F3",
+        "legal_area": "סדר דין אזרחי",
+        "sources_used": 1,
+        "sources_found": 15,
+        "commentary_only": false,
+        "doctrinal_label": "יישום וסייגים: הכלל הבסיסי: בתביעה אזרחית כספית רגילה מוטל על התובע",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "הכלל הבסיסי: בתביעה אזרחית כספית רגילה מוטל על התובע  חריגים וסייגים"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "application",
+        "primary_support_found": true,
+        "required_source_preference": "binding_case_law"
+      },
+      {
+        "facet_id": "F4",
+        "legal_area": "סדר דין אזרחי",
+        "sources_used": 2,
+        "sources_found": 14,
+        "commentary_only": false,
+        "doctrinal_label": "רקע עיוני: הכלל הבסיסי: בתביעה אזרחית כספית רגילה מוטל על התובע",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "הכלל הבסיסי: בתביעה אזרחית כספית רגילה מוטל על התובע  מאמר אקדמי"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "background_only",
+        "primary_support_found": true,
+        "required_source_preference": "scholarship_secondary"
+      },
+      {
+        "facet_id": "F5",
+        "legal_area": "סדר דין אזרחי",
+        "sources_used": 4,
+        "sources_found": 20,
+        "commentary_only": false,
+        "doctrinal_label": "ההוראה המחייבת בבסיס: נטל ההוכחה לגבי הגנות טענות הצד השני (למשל טענות",
+        "parent_claim_id": "C2",
+        "generated_queries": [
+          "נטל ההוכחה לגבי הגנות טענות הצד השני (למשל טענות  הוראת החוק"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "primary_statute"
+      },
+      {
+        "facet_id": "F6",
+        "legal_area": "סדר דין אזרחי",
+        "sources_used": 3,
+        "sources_found": 24,
+        "commentary_only": false,
+        "doctrinal_label": "הלכה מחייבת בסוגיה: נטל ההוכחה לגבי הגנות טענות הצד השני (למשל טענות",
+        "parent_claim_id": "C2",
+        "generated_queries": [
+          "נטל ההוכחה לגבי הגנות טענות הצד השני (למשל טענות  בית המשפט העליון הלכה"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "binding_case_law"
+      },
+      {
+        "facet_id": "F7",
+        "legal_area": "סדר דין אזרחי",
+        "sources_used": 3,
+        "sources_found": 14,
+        "commentary_only": false,
+        "doctrinal_label": "יישום וסייגים: נטל ההוכחה לגבי הגנות טענות הצד השני (למשל טענות",
+        "parent_claim_id": "C2",
+        "generated_queries": [
+          "נטל ההוכחה לגבי הגנות טענות הצד השני (למשל טענות  חריגים וסייגים"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "application",
+        "primary_support_found": true,
+        "required_source_preference": "binding_case_law"
+      },
+      {
+        "facet_id": "F8",
+        "legal_area": "סדר דין אזרחי",
+        "sources_used": 3,
+        "sources_found": 13,
+        "commentary_only": false,
+        "doctrinal_label": "רקע עיוני: נטל ההוכחה לגבי הגנות טענות הצד השני (למשל טענות",
+        "parent_claim_id": "C2",
+        "generated_queries": [
+          "נטל ההוכחה לגבי הגנות טענות הצד השני (למשל טענות  מאמר אקדמי"
+        ],
+        "best_support_level": "direct",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "background_only",
+        "primary_support_found": true,
+        "required_source_preference": "scholarship_secondary"
+      }
+    ],
+    "enabled": true,
+    "version": "claim_facet_expansion_v1",
+    "facet_count": 8,
+    "gate_reason": "mode=doctrine_explanation;shape=definition",
+    "legal_area_lock": null,
+    "directive_applied": true,
+    "facet_queries_count": 6,
+    "facets_commentary_only": 0,
+    "facets_without_primary_support": 0
+  },
+  "sufficiency_profile": null,
+  "sufficiency_passed": null,
+  "metadata_only_holdings_remaining": 0,
+  "gate_report": {
+    "applied": true,
+    "source_split": {
+      "read_in_full": [
+        "s2",
+        "s4"
+      ],
+      "reference_only": []
+    },
+    "blocks_stripped": 0,
+    "source_split_counts": {
+      "read_in_full": 2,
+      "reference_only": 0
+    },
+    "reference_only_sources": [],
+    "blocks_left_unsupported": 0,
+    "stripped_ref_occurrences": 0,
+    "unsupported_block_samples": [],
+    "metadata_only_judgment_refs": [],
+    "metadata_only_holdings_remaining": 0
+  },
+  "is_stub": false,
+  "verifier_failed": false,
+  "cpu_kill": false,
+  "pass": true,
+  "failures": [],
+  "used_source_titles": [
+    {
+      "title": "ביהמ\"ש השלום ברחובות, השופט ישראל פת: פס\"ד בשאלה האם מתווך זכאי לדמי תיווך חרף העדר השלמת העסקה בשל מסירת נתונים שאינם מדוייקים ע\"י המתווך (ת\"א 42940-12-19)",
+      "citable_as": "judgment",
+      "text_usability": "full_text"
+    },
+    {
+      "title": "בימ\"ש המחוזי מרכז-לוד, השופטת מירב בן-ארי: פס\"ד בתביעה כספית נגררת של שתי אחיות נגד אדם שביצע בהן פגיעות מיניות לאורך שנים (ת\"א 59419-02-22)",
+      "citable_as": "judgment",
+      "text_usability": "full_text"
+    },
+    {
+      "title": "פקודת הראיות [נוסח חדש], תשל\"א-1971",
+      "citable_as": "statute",
+      "text_usability": "metadata_only"
+    },
+    {
+      "title": "דיני ראיות",
+      "citable_as": "unknown",
+      "text_usability": "metadata_only"
+    }
+  ],
+  "answer": "**מסקנה קצרה**\n\nבדרך כלל בתביעה אזרחית כספית רגילה מוטל נטל ההוכחה על התובע להוכיח את יסודות תביעתו — העובדות שמקימות את הזכאות לתשלום או לפיצוי ואת היקף הסכום הנתבע.³\n\nעוגן חקיקתי בדיני הראיות קובע את המסגרת של הבאת הראיות והמשקל שהן זכאיות לקבל, אך בסניפטים הזמינים אין נוסח אחד שמתאר חלוקה מפורשת וכוללת של נטל ההוכחה לגבי כל סוגי הטענות; פקודת הראיות מטפלת בכלליות בכללי הראיה ולכן תורמת להבנת מי נדרש להעמיד ראיות ולהשכנע בבתי המשפט.³\n\nפסיקה מחייבת שנמצאה תומכת במגמה שהנטל להוכיח את יסודות התביעה נופל על התובע; בפסקי דין שנבדקו הובהר כי חובת ההוכחה וההצגה של ראיות חלות על העותר/תובע, וכי הויתור על הצגת טענה חוסך מהצד הנטל לנסות ולהוכיחה.¹\n\nיש חריגים חקיקתיים שבהם המחוקק מפחית את דרישת ההוכחה או קובע אפשרות לפיצוי ללא הוכחת נזק מלא — דוגמה שנמצאה היא הוראות בתחום החוק למניעת הטרדה מינית שמאפשרות פסיקת פיצוי גם מבלי להוכיח נזק בפרטיות היקפים מסוימים, ויש להתייחס לחריגים אלה באופן פרטני.²\n\nלגבי הגנות וטענות נגדיות: במקרים שנבדקו נטען כי נטל ההוכחה לגבי טענה הגנתית מוטל בדרך כלל על מי שמעלה אותה; כאשר הנתבע אינו מציג טענה בהליכים (למשל בכתבי הטענות) עלולה ההסתלקות מהצגתה להתפרש כוויתור על עמדתו והעדר העמדה מקשה על ריבון הנטל להוכיחה.¹\n\nיש להבחין בין שני היבטים של הנטל: נטל הופעה (חובת הבאת ראיות) ונטל שכנוע (חובת ההוכחה בפני בית המשפט). בספרות דיני הראיות מוסבר שהסטנדרט בתביעות אזרחיות רגילות הוא סטנדרט של רוב הסבירות, ולשאלת מי חייב לשכנע בהן חלה ההבחנה הזו בעת הקצאת הנטל.⁴\n\nיישום פרקטי שנמצא בפסיקה מצביע כי היבטי הליך (למשל האם טענה הועלתה בכתב הטענות) משפיעים על טיפול בית המשפט בנטל; כנגזרת מעקרונות אלה, חובות הטיעון וההצגה משמעותיות מבחינה פרוצדורלית ויכולות לגרור ויתור מעשי על הצגת ראיות.¹\n\nהסתייגות וסיכום קצר: התשובה בנויה על הסניפטים שנמסרו — טקסט מלא של ההוראות וההלכות לא היה ברשותי, ולכן ניסוח זה משקף את התמצית מתוך המקורות שצוינו ולא בהכרח את מכלול הפסיקה או הנוסח המלא של החקיקה; ייתכן שיש פסקי דין או נוסחים מלאים שלא אותרו כאן שמבהירים היבטים נוספים או יוצאי דופן."
+}
