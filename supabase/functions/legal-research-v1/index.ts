@@ -33,7 +33,7 @@ import { RetrievalBudget, RETRIEVAL_BUDGET } from "./stages/retrievalBudget.ts";
 
 import { runSpecificCaseIdentity } from "./stages/specificCaseIdentity.ts";
 import { runVerifier } from "./stages/verifier.ts";
-import { runDrafter } from "./stages/drafter.ts";
+import { labelCpuStats, runDrafter } from "./stages/drafter.ts";
 import { runDrafterV2 } from "./stages/drafterV2.ts";
 import { evaluateAnswerStyle } from "./stages/answerStyleGate.ts";
 import {
