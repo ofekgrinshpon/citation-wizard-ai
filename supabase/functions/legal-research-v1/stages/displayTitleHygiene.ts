@@ -350,7 +350,16 @@ export function computeDisplayTitle(input: DisplayTitleInput): DisplayTitleResul
     const fb = buildFallback(input, raw);
     // over_fallback_fix_v1 — only swap in the fallback when it is strictly more
     // informative than the raw title. Otherwise keep the original label.
-    const rawScore = status === "fallback_empty" ? -1 : specificityScore(raw);
+    // Hard-junk statuses (empty / junk-meta / filename / bare institution) carry
+    // no information at all — any fallback beats them. Soft statuses (truncated,
+    // too-short) must be strictly improved upon.
+    const HARD: string[] = [
+      "fallback_empty",
+      "fallback_junk_meta",
+      "fallback_filename",
+      "fallback_bare_institution",
+    ];
+    const rawScore = HARD.includes(status) ? -1 : specificityScore(raw);
     const fbScore = specificityScore(fb.title, fb.fallback_used);
     if (fbScore <= rawScore) {
       return {
