@@ -161,7 +161,26 @@ export interface SpecificCaseResolution {
   /** Fine-grained probe markers (diagnostics for silent-hang triage). */
   probe_stages: Array<{ name: string; at_ms: number; detail?: Record<string, unknown> }>;
 
-
+  // ── large_pdf_extraction_preemption_v1 telemetry ──────────────────────
+  /**
+   * The requested judgment was located at its official archive path (the URL
+   * responded with a real document), independently of whether its body could
+   * be read. Identity must never be lost to an extraction failure.
+   */
+  exact_case_source_found: boolean;
+  /** Located, but the body could not be read within the processing limits. */
+  exact_case_body_unavailable: boolean;
+  exact_case_body_unavailable_url: string | null;
+  body_unavailable_reason: string | null;
+  /** Size (bytes) of the largest binary the preflight assessed. */
+  pdf_preflight_size: number | null;
+  pdf_preflight_decision: string | null;
+  extraction_skipped_reason: string | null;
+  large_pdf_skipped: boolean;
+  /** v1 chose the "skip" strategy; no async offload path exists yet. */
+  extraction_offloaded: boolean;
+  text_endpoint_attempted: number;
+  text_endpoint_stub_detected: number;
 
 
   /** Why the caller will (or will not) fire `docket_limitation`. */
