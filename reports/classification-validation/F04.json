@@ -1,251 +1,49 @@
 {
   "id": "F04",
-  "classification_changed": [
-    {
-      "title": "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו",
-      "before": "judgment",
-      "after": "commentary",
-      "reason": "uncertain_judgment_identity_prefer_commentary"
-    },
-    {
-      "title": "בג\"ץ 8638-03 - סימה אמיר נ. בית הדין הרבני הגדול בירושלים",
-      "before": "judgment",
-      "after": "commentary",
-      "reason": "uncertain_judgment_identity_prefer_commentary"
-    }
-  ],
-  "classification_rows": [
-    {
-      "title": "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו",
-      "classification_before": "judgment",
-      "classification_after": "commentary",
-      "judgment_identity_signals": [
-        "official_judgment_endpoint",
-        "case_prefix",
-        "party_names",
-        "court_vocabulary",
-        "upstream_case_type"
-      ],
-      "commentary_identity_signals": [],
-      "uncertain_identity": true,
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2"
-    },
-    {
-      "title": "בג\"ץ 8638-03 - סימה אמיר נ. בית הדין הרבני הגדול בירושלים",
-      "classification_before": "judgment",
-      "classification_after": "commentary",
-      "judgment_identity_signals": [
-        "official_judgment_endpoint",
-        "case_prefix",
-        "court_vocabulary",
-        "upstream_case_type"
-      ],
-      "commentary_identity_signals": [],
-      "uncertain_identity": true,
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_6_8638-03.pdf&type=2"
-    },
-    {
-      "title": "בג\"ץ 2350/20 פלוני נ׳ בית הדין הרבני הגדול לערעורים פסק דין (10.09.2020)",
-      "classification_before": "judgment",
-      "classification_after": "judgment",
-      "judgment_identity_signals": [
-        "docket_in_text",
-        "case_prefix",
-        "party_names",
-        "court_vocabulary",
-        "upstream_case_type"
-      ],
-      "commentary_identity_signals": [],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2350-20-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%a8%d7%91%d7%a0%d7%99-%d7%94%d7%92%d7%93%d7%95%d7%9c-%d7%9c%d7%a2%d7%a8%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
-    }
-  ],
-  "uncertain_identity_count": 2,
-  "downgrades": [
-    {
-      "title": "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו",
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
-    },
-    {
-      "title": "בג\"ץ 8638-03 - סימה אמיר נ. בית הדין הרבני הגדול בירושלים",
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
-    }
-  ],
+  "retrieval_budget": {
+    "retrieval_budget_ms": null,
+    "retrieval_elapsed_ms": null,
+    "budget_exceeded": null,
+    "partial_retrieval_used": null,
+    "disclosure_shown": false,
+    "aborted_tasks_count": null,
+    "ignored_late_tasks_count": null,
+    "body_acquisition_count": null,
+    "extraction_count": null,
+    "extraction_bytes": null,
+    "longest_retrieval_step": null,
+    "candidate_count_by_facet": null
+  },
+  "classification_changed": [],
+  "classification_rows": [],
+  "uncertain_identity_count": 0,
+  "downgrades": [],
   "query": "מה נקבע בבג\"ץ 2232/03 פלונית נ' בית הדין הרבני האזורי תל אביב (עניין אמיר)?",
-  "job_id": "d06b3536-540d-46b8-9e4e-5e62cc3c707b",
-  "run_id": "c7c0360c-f3e9-4f7e-90d4-b071d05e633c",
-  "ms": 121088,
-  "terminal_status": "done",
-  "job_error": null,
+  "job_id": "2c78585c-5c44-473f-987a-d0b8042596bf",
+  "run_id": "ac0972af-6e28-41b0-b5cb-9290d933d2cc",
+  "ms": 50771,
+  "terminal_status": "error",
+  "job_error": "{\"answer\":\"[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.\",\"footnotes\":[],\"debug\":{\"run_id\":\"ac0972af-6e28-41b0-b5cb-9290d933d2cc\",\"phase\":\"P2\",\"stage_runs\":[{\"stage\":\"claim_analyzer.initial\",\"model\":\"openai/gpt-5-mini\",\"ms\":14963,\"ok\":true,\"http_status\":200},{\"stage\":\"claim_analyzer.escalated\",\"model\":\"openai/gpt-5\",\"ms\":29211,\"ok\":true,\"escalated\":true,\"http_status\":200}],\"planning_error\":{\"stage\":\"claim_analyzer\",\"reasons\":[\"B1:schema_invalid\",\"answer_type: invalid (case_holding)\"],\"transport_failed\":false,\"attempts\":[{\"attempt\":1,\"ms\":29211,\"http_status\":200,\"got_data\":true}]},\"claims\":[{\"claim_id\":\"C1\",\"text_he\":\"פסק הדין \\\"עניין אמיר\\\" מגדיר ומגביל את סמכותם העניינית של בתי הדין הרבניים בעניינים נלווים לגירושין (כריכה), וקובע כי כאשר הכריכה אינה עומדת בתנאים (תום-לב, כנות הרצון להתגרש וקשר ענייני), לבית הדין הרבני אין סמכות לדון באותם עניינים ויש לבטל החלטות שניתנו בחוסר סמכות.\",\"required_roles\":[\"binding_case_law\",\"primary_statute\"],\"is_black_letter\":true,\"reason\":\"הטענה נשענת על הלכת בית המשפט העליון ביחס לכריכת עניינים לבית הדין הרבני ועל פירוש חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשי\\\"ג-1953; לכן נדרשים מקור נורמטיבי ראשי והלכה מחייבת.\"},{\"claim_id\":\"C2\",\"text_he\":\"ההלכה קובעת כי לבית הדין הרבני אין סמכות שיורית או 'סמכות טבועה' להוציא צווים הפוגעים בזכויות יסוד או בצדדים שלישיים ללא עיגון מפורש בחוק; סמכות כזו חייבת להיגזר מחקיקה מסמיכה.\",\"required_roles\":[\"binding_case_law\",\"primary_statute\"],\"is_black_letter\":true,\"reason\":\"שאלת היקף הסמכות של טריבונל דתי והצורך בהסמכה סטטוטורית היא סוגיה דוקטרינרית הנסמכת על פסיקת העליון ועל לשון החוקים המסדירים סמכויות בתי הדין.\"},{\"claim_id\":\"C3\",\"text_he\":\"פסק הדין מחדד את אמת המידה להתערבות בג\\\"ץ בהחלטות בתי הדין הדתיים: התערבות תיעשה בעיקר בטענות חוסר סמכות, פגיעה מהותית בכללי הצדק הטבעי, או חריגה קיצונית ממתחם הסבירות.\",\"required_roles\":[\"binding_case_law\",\"scholarship\"],\"is_black_letter\":true,\"reason\":\"אמות המידה לביקורת שיפוטית של בג\\\"ץ על בתי הדין הדתיים מעוגנות בהלכה מחייבת, ולעיתים נתמכות בניתוח דוקטרינרי בספרות.\"},{\"claim_id\":\"C4\",\"text_he\":\"בענייני קטינים (משמורת, זמני שהות וכד'), ההכרעה תיעשה לפי טובת הילד ובמסגרות הסמכות שהחוק קובע; כאשר אין לבית הדין הרבני סמכות תקפה לדון, הסמכות נתונה לבית המשפט לענייני משפחה, ובית הדין הרבני אינו רשאי להוציא צווים ביניים באותם עניינים.\",\"required_roles\":[\"primary_statute\",\"binding_case_law\"],\"is_black_letter\":true,\"reason\":\"הטענה מחייבת עיגון בחוק הכשרות המשפטית והאפוטרופסות ובחוק בית המשפט לענייני משפחה, לצד הלכה מחייבת המסדירה את חלוקת הסמכויות והפעלת עקרון טובת הילד.\"}],\"queries\":[]}}",
   "branch": null,
-  "answer_length": 1253,
-  "inline_marker_count": 4,
-  "max_marker": 2,
-  "footnotes_length": 2,
-  "used_sources_length": 2,
+  "answer_length": 82,
+  "inline_marker_count": 0,
+  "max_marker": 0,
+  "footnotes_length": 0,
+  "used_sources_length": 0,
   "dangling_marker_count": 0,
   "orphan_source_row_count": 0,
   "invariant_passed": true,
-  "rendered_rows": [
-    {
-      "number": 1,
-      "title": "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו",
-      "citable_as": null,
-      "sub_titles": [
-        "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו"
-      ]
-    },
-    {
-      "number": 2,
-      "title": "בג\"ץ 2350/20 פלוני נ׳ בית הדין הרבני הגדול לערעורים פסק דין (10.09.2020)",
-      "citable_as": null,
-      "sub_titles": [
-        "בג\"ץ 2350/20 פלוני נ׳ בית הדין הרבני הגדול לערעורים פסק דין (10.09.2020)"
-      ]
-    }
-  ],
-  "label_report": {
-    "rows": [
-      {
-        "ref": "s1",
-        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2",
-        "title": "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו",
-        "raw_title": "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו",
-        "candidate_id": "specific-case:bagatz:2232/3",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": true,
-        "classification_after": "commentary",
-        "title_hygiene_action": "kept",
-        "classification_before": "judgment",
-        "classification_reason": "uncertain_judgment_identity_prefer_commentary",
-        "title_hygiene_reasons": [],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "official_judgment_endpoint",
-          "case_prefix",
-          "party_names",
-          "court_vocabulary",
-          "upstream_case_type"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s2",
-        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_6_8638-03.pdf&type=2",
-        "title": "בג\"ץ 8638-03 - סימה אמיר נ. בית הדין הרבני הגדול בירושלים",
-        "raw_title": "בג\"ץ 8638-03 - סימה אמיר נ. בית הדין הרבני הגדול בירושלים",
-        "candidate_id": "452910ec-0a15-4f2b-839e-e065539c6fcd",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": true,
-        "classification_after": "commentary",
-        "title_hygiene_action": "kept",
-        "classification_before": "judgment",
-        "classification_reason": "uncertain_judgment_identity_prefer_commentary",
-        "title_hygiene_reasons": [],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "official_judgment_endpoint",
-          "case_prefix",
-          "court_vocabulary",
-          "upstream_case_type"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s3",
-        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2350-20-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%a8%d7%91%d7%a0%d7%99-%d7%94%d7%92%d7%93%d7%95%d7%9c-%d7%9c%d7%a2%d7%a8%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-        "title": "בג\"ץ 2350/20 פלוני נ׳ בית הדין הרבני הגדול לערעורים פסק דין (10.09.2020)",
-        "raw_title": "בג\"ץ 2350/20 פלוני נ׳ בית הדין הרבני הגדול לערעורים פסק דין (10.09.2020)",
-        "candidate_id": "c5b9f6e6-7cbe-468c-9651-7883cdfa65c2",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": null,
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": false,
-        "classification_after": "judgment",
-        "title_hygiene_action": "kept",
-        "classification_before": "judgment",
-        "classification_reason": null,
-        "title_hygiene_reasons": [
-          "legal_title_protected"
-        ],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "docket_in_text",
-          "case_prefix",
-          "party_names",
-          "court_vocabulary",
-          "upstream_case_type"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [],
-        "fallback_improvement_reason": null
-      }
-    ],
-    "total": 3,
-    "reclassified_count": 2,
-    "fallback_used_count": 0,
-    "classification_rerun_count": 0,
-    "classification_rerun_reason": [],
-    "classification_cache_hit_count": 3,
-    "source_label_cpu_guard_applied": true
-  },
+  "rendered_rows": [],
+  "label_report": null,
   "filename_titles": [],
   "bare_institution_titles": [],
   "ocr_duplicate_pairs": [],
   "scholarship_as_statute": [],
-  "commentary_as_judgment": [
-    "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו"
-  ],
+  "commentary_as_judgment": [],
   "metadata_only_holdings": 0,
-  "used_sources": [
-    {
-      "number": 1,
-      "title": "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו",
-      "citable_as": "judgment",
-      "text_usability": "full_text",
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2"
-    },
-    {
-      "number": 2,
-      "title": "בג\"ץ 2350/20 פלוני נ׳ בית הדין הרבני הגדול לערעורים פסק דין (10.09.2020)",
-      "citable_as": "judgment",
-      "text_usability": "substantive_excerpt",
-      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2350-20-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%a8%d7%91%d7%a0%d7%99-%d7%94%d7%92%d7%93%d7%95%d7%9c-%d7%9c%d7%a2%d7%a8%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
-    }
-  ],
-  "footnote_render_report": {
-    "version": "footnote_rendering_invariant_v1",
-    "renumbered": false,
-    "footnotes_length": 2,
-    "invariant_passed": true,
-    "inline_marker_count": 4,
-    "used_sources_length": 2,
-    "dangling_marker_count": 0,
-    "orphan_source_row_count": 0
-  },
-  "pass": false,
-  "failures": [
-    "commentary_labelled_judgment"
-  ],
-  "answer": "**החזקת בג\"ץ 2232/03 (עניין אמיר)**\n\nבג\"ץ 2232/03 (עניין אמיר) קבע כי לבתי הדין הרבניים אין סמכות שיפוט עניינית לדון ולהכריע בסכסוכי רכוש וממון בין בני זוג כאשר ענייני הרכוש לא נכרכו כדין במסגרת תביעת הגירושין, וכי הסכמת הצדדים כשלעצמה אינה מקנה סמכות שיפוטית כזו.¹\n\nפסק הדין הבהיר כי אם הצדדים מבקשים שהדין הרבני ידון ויכריע בענייני רכוש מחוץ למסגרת הסמכות הסטטוטורית, הרי שקיומה של הסכמה פשוטה בלבד אינו מספיק; הדיון בפסקי דין נלוים מעלה כי אפשרות כזו תוכל להתממש רק במידה שעוגנה בהסכם בוררות תקף העומד בתנאי חוק הבוררות.¹\n\nבמקורות שאותרו נדונה גם שאלת ה'סמכות הנמשכת' של בתי הדין הרבניים בענייני רכוש לאחר סיום הליך הגירושין או בהיעדר כריכה כדין; בפסיקה המשנית ישנה נטייה להבחין בין סמכות מעוגנת על-פי חוק בוררות לבין ניסיון לתת בית דין רבני סמכות מתמשכת באופן חד־צדדי, ויש להתייחס לטענות אלה בזהירות מפני שהן נתמכות רק באופן חלקי.²\n\nבג\"ץ הורה כי חריגה מסמכות על-ידי בית הדין הדתי כפופה לביקורת שיפוטית, וכי החלטות שניתנו בחוסר סמכות עלולות להיות בטלות וניתנות לביטול בפקודת בג\"ץ המתאימה.¹\n\nהבהרה לגבי היקף התשובה: המסקנות מנסחות את ההחזקות המרכזיות של בג\"ץ 2232/03 ובהרחבתן מצביעות על קווי דמיון בפסיקה אחרת; עם זאת, במקורות שאותרו לא הובא פירוט כל פסקי הדין או דעות נוספות שעשויות לחדד או להבחין בעניינים המשניים, ולכן ייתכן שיש עוד חומר שטרם אותר."
+  "used_sources": [],
+  "footnote_render_report": null,
+  "pass": true,
+  "failures": [],
+  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
 }

@@ -1,153 +1,68 @@
 {
   "id": "F01",
+  "retrieval_budget": {
+    "retrieval_budget_ms": 200000,
+    "retrieval_elapsed_ms": 103374,
+    "budget_exceeded": false,
+    "partial_retrieval_used": false,
+    "disclosure_shown": false,
+    "aborted_tasks_count": 0,
+    "ignored_late_tasks_count": 0,
+    "body_acquisition_count": 1,
+    "extraction_count": 0,
+    "extraction_bytes": 0,
+    "longest_retrieval_step": {
+      "ms": 6191,
+      "name": "perplexity_retrieval"
+    },
+    "candidate_count_by_facet": {
+      "unfaceted": 30
+    }
+  },
   "classification_changed": [],
   "classification_rows": [
     {
-      "title": "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
-      "classification_before": "statute",
-      "classification_after": "statute",
-      "judgment_identity_signals": [
-        "court_vocabulary"
-      ],
-      "commentary_identity_signals": [],
-      "uncertain_identity": true,
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-      "url": "https://www.nevo.co.il/law_html/law00/98565.htm"
-    },
-    {
-      "title": "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה",
+      "title": "דרכי הוכחה בבג״ץ",
       "classification_before": "commentary",
       "classification_after": "commentary",
       "judgment_identity_signals": [
-        "judgment_mirror_host",
-        "party_names",
-        "upstream_case_type"
-      ],
-      "commentary_identity_signals": [],
-      "uncertain_identity": false,
-      "downgrade_reason": "caselaw_type_without_judgment_authority",
-      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%9B%D7%A9%D7%A8%D7%94-%D7%97%D7%91%D7%A8%D7%94-%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%97-%D7%91%D7%A2-%D7%9E-%D7%A0-%D7%A2%D7%99%D7%A8%D7%99%D7%99%D7%AA-%D7%A0%D7%AA%D7%A0%D7%99%D7%94"
-    },
-    {
-      "title": "פסק-דין בתיק ע\"א 3886/12",
-      "classification_before": "judgment",
-      "classification_after": "judgment",
-      "judgment_identity_signals": [
-        "docket_in_text",
-        "case_prefix",
-        "document_file",
-        "court_vocabulary",
-        "upstream_case_type"
+        "document_file"
       ],
       "commentary_identity_signals": [],
       "uncertain_identity": false,
       "downgrade_reason": null,
-      "url": "https://www.capitax.co.il/Attachments/3886-12.pdf"
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/5-dorner.pdf"
     }
   ],
-  "uncertain_identity_count": 1,
-  "downgrades": [
-    {
-      "title": "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
-    },
-    {
-      "title": "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה",
-      "downgrade_reason": "caselaw_type_without_judgment_authority"
-    }
-  ],
+  "uncertain_identity_count": 0,
+  "downgrades": [],
   "query": "מה נטל ההוכחה בעתירות לבג״ץ? על מי מוטל הנטל? על העותר תמיד?",
-  "job_id": "27b3a115-7cad-4cf9-afcd-e7d30973f6c1",
-  "run_id": "077f33bf-9270-48b4-98bb-3b06bb4ea0b0",
-  "ms": 163269,
+  "job_id": "9e010ef1-aaa7-4157-9ca2-3ad4bca0814f",
+  "run_id": "dcf4b20a-d7fe-4c95-b9f4-1f8135a1837b",
+  "ms": 152034,
   "terminal_status": "done",
   "job_error": null,
-  "branch": null,
-  "answer_length": 2488,
-  "inline_marker_count": 5,
-  "max_marker": 4,
-  "footnotes_length": 4,
-  "used_sources_length": 3,
+  "branch": "insufficient_sources_limitation",
+  "answer_length": 283,
+  "inline_marker_count": 0,
+  "max_marker": 0,
+  "footnotes_length": 0,
+  "used_sources_length": 0,
   "dangling_marker_count": 0,
   "orphan_source_row_count": 0,
   "invariant_passed": true,
-  "rendered_rows": [
-    {
-      "number": 1,
-      "title": "פסק-דין בתיק ע\"א 3886/12; הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה; תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
-      "citable_as": null,
-      "sub_titles": [
-        "פסק-דין בתיק ע\"א 3886/12",
-        "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה",
-        "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9"
-      ]
-    },
-    {
-      "number": 2,
-      "title": "פסק-דין בתיק ע\"א 3886/12; תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
-      "citable_as": null,
-      "sub_titles": [
-        "פסק-דין בתיק ע\"א 3886/12",
-        "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9"
-      ]
-    },
-    {
-      "number": 3,
-      "title": "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה; תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
-      "citable_as": null,
-      "sub_titles": [
-        "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה",
-        "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9"
-      ]
-    },
-    {
-      "number": 4,
-      "title": "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
-      "citable_as": null,
-      "sub_titles": [
-        "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9"
-      ]
-    }
-  ],
+  "rendered_rows": [],
   "label_report": {
     "rows": [
       {
         "ref": "s1",
-        "url": "https://www.nevo.co.il/law_html/law00/98565.htm",
-        "title": "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
-        "raw_title": "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
-        "candidate_id": "8bae6f83-933e-4fb7-a1a9-d3fc27adad70",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/5-dorner.pdf",
+        "title": "דרכי הוכחה בבג״ץ",
+        "raw_title": "דרכי הוכחה בבג״ץ",
+        "candidate_id": "3e93afba-97c9-455b-aa22-e469b56f6c6b",
         "title_status": "ok",
         "fallback_used": "none",
-        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": true,
-        "classification_after": "statute",
-        "title_hygiene_action": "kept",
-        "classification_before": "statute",
-        "classification_reason": null,
-        "title_hygiene_reasons": [
-          "legal_title_protected"
-        ],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "court_vocabulary"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s2",
-        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%9B%D7%A9%D7%A8%D7%94-%D7%97%D7%91%D7%A8%D7%94-%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%97-%D7%91%D7%A2-%D7%9E-%D7%A0-%D7%A2%D7%99%D7%A8%D7%99%D7%99%D7%AA-%D7%A0%D7%AA%D7%A0%D7%99%D7%94",
-        "title": "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה",
-        "raw_title": "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה",
-        "candidate_id": "0c392711-58f8-45d8-9711-c27c804691bb",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": "caselaw_type_without_judgment_authority",
+        "downgrade_reason": null,
         "fallback_applied": false,
         "fallback_candidate": null,
         "uncertain_identity": false,
@@ -155,59 +70,23 @@
         "title_hygiene_action": "kept",
         "classification_before": "commentary",
         "classification_reason": null,
-        "title_hygiene_reasons": [
-          "legal_title_protected"
-        ],
+        "title_hygiene_reasons": [],
         "classification_cache_hit": true,
         "fallback_rejected_reason": null,
         "judgment_identity_signals": [
-          "judgment_mirror_host",
-          "party_names",
-          "upstream_case_type"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s3",
-        "url": "https://www.capitax.co.il/Attachments/3886-12.pdf",
-        "title": "פסק-דין בתיק ע\"א 3886/12",
-        "raw_title": "פסק-דין בתיק ע\"א 3886/12",
-        "candidate_id": "7b262f69-312f-4bc6-868e-171232e0209a",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": null,
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": false,
-        "classification_after": "judgment",
-        "title_hygiene_action": "kept",
-        "classification_before": "judgment",
-        "classification_reason": null,
-        "title_hygiene_reasons": [
-          "legal_title_protected"
-        ],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "docket_in_text",
-          "case_prefix",
-          "document_file",
-          "court_vocabulary",
-          "upstream_case_type"
+          "document_file"
         ],
         "classification_rerun_reason": null,
         "commentary_identity_signals": [],
         "fallback_improvement_reason": null
       }
     ],
-    "total": 3,
+    "total": 1,
     "reclassified_count": 0,
     "fallback_used_count": 0,
     "classification_rerun_count": 0,
     "classification_rerun_reason": [],
-    "classification_cache_hit_count": 6,
+    "classification_cache_hit_count": 3,
     "source_label_cpu_guard_applied": true
   },
   "filename_titles": [],
@@ -216,40 +95,18 @@
   "scholarship_as_statute": [],
   "commentary_as_judgment": [],
   "metadata_only_holdings": 0,
-  "used_sources": [
-    {
-      "number": 1,
-      "title": "פסק-דין בתיק ע\"א 3886/12",
-      "citable_as": "judgment",
-      "text_usability": "full_text",
-      "url": "https://www.capitax.co.il/Attachments/3886-12.pdf"
-    },
-    {
-      "number": 1,
-      "title": "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה",
-      "citable_as": "commentary",
-      "text_usability": "substantive_excerpt",
-      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%9B%D7%A9%D7%A8%D7%94-%D7%97%D7%91%D7%A8%D7%94-%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%97-%D7%91%D7%A2-%D7%9E-%D7%A0-%D7%A2%D7%99%D7%A8%D7%99%D7%99%D7%AA-%D7%A0%D7%AA%D7%A0%D7%99%D7%94"
-    },
-    {
-      "number": 1,
-      "title": "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
-      "citable_as": "statute",
-      "text_usability": "metadata_only",
-      "url": "https://www.nevo.co.il/law_html/law00/98565.htm"
-    }
-  ],
+  "used_sources": [],
   "footnote_render_report": {
     "version": "footnote_rendering_invariant_v1",
     "renumbered": false,
-    "footnotes_length": 4,
+    "footnotes_length": 0,
     "invariant_passed": true,
-    "inline_marker_count": 5,
-    "used_sources_length": 3,
+    "inline_marker_count": 0,
+    "used_sources_length": 0,
     "dangling_marker_count": 0,
     "orphan_source_row_count": 0
   },
   "pass": true,
   "failures": [],
-  "answer": "**מסקנה תמציתית**\n\nברוב המקרים בעתירת בג״ץ הנטל הראשוני להעמיד תשתית עובדתית ולהציג ראיות וזיהוי טענות מהותיות מוטל על העותר; יחד עם זאת הנטל יכול לחלוף, להתחלק או לעבור אל הרשות בהתאם לנסיבות, ובמקרים שבהם המידע המרכזי בידי הרשות או כשנגרם לה נזק ראייתי בשל התנהלותה עשוי בית המשפט להטיל על המשיב חובת הבאת ראיה או לשקול העברת נטל שכנוע ביחס לעובדות מסוימות.¹\n\n**נטל ראשוני על העותר בעתירת בג״ץ**\n\nההליך בבג״ץ נבנה סביב תצהירים ומסמכים שמגיש העותר, ולכן הוא נדרש להעמיד בפני בית המשפט את העובדות המפרטות את טענת האי־חוקיות או הפגם שנפגעו; תקנה 9 להסדרי סדר הדין ממחישה כי ההליך מצפה להצגת תשתית עובדתית על ידי מי שמבקש את הסעד.⁴\n\n**חזקת התקינות המנהלית**\n\nבמקורות שאותרו לא נימצא עיגון מקורי מחייב בדבר נוסח חזקת תקינות מנהלית מפורש בתוך החומר שסופק כאן; לכן אין ביכולתי להציג נוסח חזקת־תקינות מחייב או קביעה דוקטרינרית מלאה על יסוד החומר המסופק, ואם קיימת פסיקה נוספת בנושא היא לא אותרה בחיפוש זה.\n\n**חובת ההנמקה וחובת ההסבר של הרשות**\n\nקיימת פסיקה המתחייבת כי יש לדרוש מהרשות להציג את התשתית הראייתית שבעטיה התקבלה ההחלטה המינהלית, ולפחות בחלק מהמקרים מטיל בית המשפט חובת הבהרה או הצגה של בסיס עובדתי על הרשות כאשר ההכרעה נשענת על עובדות אלה; זאת בגיבוי של הכרעות שדרשו את הצגת התשתית הראייתית שמאחורי החלטות מנהליות וכן תוך התייחסות לצורך בתצהירים ותגובות במסגרת סדר הדין.²\n\n**צו על תנאי והעברת נטל מעשית למשיב**\n\nהוראות סדר הדין לגבי צווי־על־תנאי מדגימות מנגנון מעשי שבו נדרשת תגובת המשיב בתוך פרק זמן קצוב ודרך זו יכולה להטיל למעשה על המשיב חובת גיבוי עובדתי מיידי; במצבים נוספים הפסיקה דנה במעבר נטלי ביחס לעובדות שהוכחו או שהוכחדו בשל התנהלות הנתבע, כך שבתנאים אלה יתכן שהנטל המעשי על הוכחה יועבר אל המשיב.³\n\n**סעד זמני בבג״ץ: ראיות לכאורה ומאזן נוחות**\n\nתקנה 9 מצביעה על חשיבות הצגת עובדות במסגרת בקשות לצווים זמניים, ומשם אפשר להסיק באופן זהיר כי לבקשה לצו־ביניים נדרשת תשתית עובדתית מסוימת (כגון הופעת עילה או ראיות לכאורה) לצד שיקול של מאזן נוחות; עם זאת הטקסט המלא של מבחני הצו או ניסוחים מפורטים לא חולצו במקורות שסופקו כאן ולכן יש להפעיל שיקול דעת בהתאם לפסיקה המלאה שלא הובאה.⁴\n\n**הבחנה בין נטל שכנוע לנטל הבאת ראיות**\n\nבמסגרת החומר המסופק לא נמצאה ספרות פרשנית מקיפה שמבחינה באופן מפורש בין נטל שכנוע לבין נטל הבאת ראיות בבג״ץ; על כן לא ניתן להעמיק בהבחנה תיאורטית נרחבת על יסוד המקורות הללו בלבד, וזאת מבלי לעיין בטקסטים ובלשונות פסיקה וספרות משלימות.\n\nהסתייגות לגבי דלילות המקורות: בחומר שניתן הטקסטים המלאים של פסיקה או נוסחי כללים מפורטים לא תמיד היו זמינים; לכן הניסוח המוצג כאן מותנה בחומר שאותר ועשוי שלא לשקף קטעי פסיקה או ניסוחים שלא הובאו במפורש במסמכים שסופקו."
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): דרכי הוכחה בבג״ץ."
 }

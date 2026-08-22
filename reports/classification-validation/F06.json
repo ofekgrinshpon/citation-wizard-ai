@@ -1,0 +1,478 @@
+{
+  "id": "F06",
+  "retrieval_budget": {
+    "retrieval_budget_ms": 200000,
+    "retrieval_elapsed_ms": 111345,
+    "budget_exceeded": false,
+    "partial_retrieval_used": false,
+    "disclosure_shown": false,
+    "aborted_tasks_count": 0,
+    "ignored_late_tasks_count": 0,
+    "body_acquisition_count": 1,
+    "extraction_count": 1,
+    "extraction_bytes": 1128295,
+    "longest_retrieval_step": {
+      "ms": 27917,
+      "name": "perplexity_retrieval"
+    },
+    "candidate_count_by_facet": {
+      "unfaceted": 30
+    }
+  },
+  "classification_changed": [],
+  "classification_rows": [
+    {
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו",
+      "classification_before": "statute",
+      "classification_after": "statute",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.nevo.co.il/law_html/law00/71888.htm"
+    },
+    {
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו",
+      "classification_before": "statute",
+      "classification_after": "statute",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF"
+    },
+    {
+      "title": "חוק החוזים (תרופות בשל הפרת חוזה), תשל\"א-1970",
+      "classification_before": "statute",
+      "classification_after": "statute",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.nevo.co.il/law_html/law00/71887.htm"
+    },
+    {
+      "title": "שושני נ' י' ואח'",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "judgment_mirror_host",
+        "party_names",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": "caselaw_type_without_judgment_authority",
+      "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-9967-08-22-%D7%A9%D7%95%D7%A9%D7%A0%D7%99-%D7%95%D7%90%D7%97-%D7%A0-%D7%99-%D7%95%D7%90%D7%97_16"
+    },
+    {
+      "title": "חוק החוזים (חלק כללי)",
+      "classification_before": "statute",
+      "classification_after": "statute",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)"
+    },
+    {
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973, סעיף 12",
+      "classification_before": "statute",
+      "classification_after": "statute",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.nevo.co.il/law_html/law01/999_001.htm"
+    },
+    {
+      "title": "סעיף 12 לחוק החוזים: תום לב במשא ומתן",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [
+        "commentary_path"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "http://lawjournal.huji.ac.il/article/12/373"
+    },
+    {
+      "title": "תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "document_file",
+        "court_vocabulary"
+      ],
+      "commentary_identity_signals": [
+        "commentary_snippet_shape"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf"
+    }
+  ],
+  "uncertain_identity_count": 0,
+  "downgrades": [
+    {
+      "title": "שושני נ' י' ואח'",
+      "downgrade_reason": "caselaw_type_without_judgment_authority"
+    }
+  ],
+  "query": "מהו היקף חובת תום הלב במשא ומתן לפי סעיף 12 לחוק החוזים (חלק כללי)?",
+  "job_id": "442563fa-52ef-4bc6-9f1f-2c29a4290be5",
+  "run_id": "be8b2b0d-422a-4258-9921-12f5d3d676a2",
+  "ms": 161636,
+  "terminal_status": "done",
+  "job_error": null,
+  "branch": null,
+  "answer_length": 2718,
+  "inline_marker_count": 10,
+  "max_marker": 5,
+  "footnotes_length": 5,
+  "used_sources_length": 6,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "invariant_passed": true,
+  "rendered_rows": [
+    {
+      "number": 1,
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו; חוק החוזים (חלק כללי)",
+      "citable_as": null,
+      "sub_titles": [
+        "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו",
+        "חוק החוזים (חלק כללי)"
+      ]
+    },
+    {
+      "number": 2,
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו; חוק החוזים (חלק כללי), תשל\"ג-1973, סעיף 12",
+      "citable_as": null,
+      "sub_titles": [
+        "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו",
+        "חוק החוזים (חלק כללי), תשל\"ג-1973, סעיף 12"
+      ]
+    },
+    {
+      "number": 3,
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו",
+      "citable_as": null,
+      "sub_titles": [
+        "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו"
+      ]
+    },
+    {
+      "number": 4,
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו; חוק החוזים (תרופות בשל הפרת חוזה), תשל\"א-1970",
+      "citable_as": null,
+      "sub_titles": [
+        "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו",
+        "חוק החוזים (תרופות בשל הפרת חוזה), תשל\"א-1970"
+      ]
+    },
+    {
+      "number": 5,
+      "title": "תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן; סעיף 12 לחוק החוזים: תום לב במשא ומתן",
+      "citable_as": null,
+      "sub_titles": [
+        "תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן",
+        "סעיף 12 לחוק החוזים: תום לב במשא ומתן"
+      ]
+    }
+  ],
+  "label_report": {
+    "rows": [
+      {
+        "ref": "s1",
+        "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+        "title": "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו",
+        "raw_title": "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו",
+        "candidate_id": "7c1ccc08-c66a-4745-8e72-72a090b0e2f7",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "statute",
+        "title_hygiene_action": "kept",
+        "classification_before": "statute",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s2",
+        "url": "https://fs.knesset.gov.il/%5C7%5Claw%5C7_ls1_289922.PDF",
+        "title": "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו",
+        "raw_title": "חוק החוזים (חלק כללי), תשל\"ג-1973 – PDF",
+        "candidate_id": "f7ebb1c7-6493-478b-b0e0-a909f17341c0",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "statute",
+        "title_hygiene_action": "kept",
+        "classification_before": "statute",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected",
+          "near_duplicate_title_collapsed"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s3",
+        "url": "https://www.nevo.co.il/law_html/law00/71887.htm",
+        "title": "חוק החוזים (תרופות בשל הפרת חוזה), תשל\"א-1970",
+        "raw_title": "חוק החוזים (תרופות בשל הפרת חוזה), תשל\"א-1970",
+        "candidate_id": "d3978f1e-f767-41c4-9872-a3f7302188ff",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "statute",
+        "title_hygiene_action": "kept",
+        "classification_before": "statute",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s4",
+        "url": "https://www.psakdin.co.il/Court/%D7%AA-%D7%90-9967-08-22-%D7%A9%D7%95%D7%A9%D7%A0%D7%99-%D7%95%D7%90%D7%97-%D7%A0-%D7%99-%D7%95%D7%90%D7%97_16",
+        "title": "שושני נ' י' ואח'",
+        "raw_title": "שושני נ' י' ואח'",
+        "candidate_id": "8e0ff712-fb0d-49f0-b346-7b17f269d107",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "caselaw_type_without_judgment_authority",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "judgment_mirror_host",
+          "party_names",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s5",
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)",
+        "title": "חוק החוזים (חלק כללי)",
+        "raw_title": "חוק החוזים (חלק כללי)",
+        "candidate_id": "f806b1a4-01e2-45ae-bbf9-68b3cb9310ad",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "statute",
+        "title_hygiene_action": "kept",
+        "classification_before": "statute",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s6",
+        "url": "https://www.nevo.co.il/law_html/law01/999_001.htm",
+        "title": "חוק החוזים (חלק כללי), תשל\"ג-1973, סעיף 12",
+        "raw_title": "חוק החוזים (חלק כללי), תשל\"ג-1973, סעיף 12",
+        "candidate_id": "c8a5c6b1-5af1-4531-b9cf-a61541019d5f",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "statute",
+        "title_hygiene_action": "kept",
+        "classification_before": "statute",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s7",
+        "url": "http://lawjournal.huji.ac.il/article/12/373",
+        "title": "סעיף 12 לחוק החוזים: תום לב במשא ומתן",
+        "raw_title": "סעיף 12 לחוק החוזים: תום לב במשא ומתן",
+        "candidate_id": "8c4255ca-76c9-46a6-9041-221c09863a85",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_path"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s8",
+        "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf",
+        "title": "תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן",
+        "raw_title": "תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן",
+        "candidate_id": "db65d499-878b-4ddb-9bf6-6cc479cb557e",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file",
+          "court_vocabulary"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_snippet_shape"
+        ],
+        "fallback_improvement_reason": null
+      }
+    ],
+    "total": 8,
+    "reclassified_count": 0,
+    "fallback_used_count": 0,
+    "classification_rerun_count": 0,
+    "classification_rerun_reason": [],
+    "classification_cache_hit_count": 13,
+    "source_label_cpu_guard_applied": true
+  },
+  "filename_titles": [],
+  "bare_institution_titles": [],
+  "ocr_duplicate_pairs": [],
+  "scholarship_as_statute": [],
+  "commentary_as_judgment": [],
+  "metadata_only_holdings": 0,
+  "used_sources": [
+    {
+      "number": 1,
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו",
+      "citable_as": "statute",
+      "text_usability": "full_text",
+      "url": "https://www.nevo.co.il/law_html/law00/71888.htm"
+    },
+    {
+      "number": 1,
+      "title": "חוק החוזים (חלק כללי)",
+      "citable_as": "statute",
+      "text_usability": "substantive_excerpt",
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%97%D7%9C%D7%A7_%D7%9B%D7%9C%D7%9C%D7%99)"
+    },
+    {
+      "number": 2,
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973, סעיף 12",
+      "citable_as": "statute",
+      "text_usability": "metadata_only",
+      "url": "https://www.nevo.co.il/law_html/law01/999_001.htm"
+    },
+    {
+      "number": 4,
+      "title": "חוק החוזים (תרופות בשל הפרת חוזה), תשל\"א-1970",
+      "citable_as": "statute",
+      "text_usability": "full_text",
+      "url": "https://www.nevo.co.il/law_html/law00/71887.htm"
+    },
+    {
+      "number": 5,
+      "title": "תרומתה של השופטת בן-פורת לעיצובו של תום הלב במשא ומתן",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only",
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/%D7%A0%D7%99%D7%9C%D7%99-%D7%9B%D7%94%D7%9F.pdf"
+    },
+    {
+      "number": 5,
+      "title": "סעיף 12 לחוק החוזים: תום לב במשא ומתן",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only",
+      "url": "http://lawjournal.huji.ac.il/article/12/373"
+    }
+  ],
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 5,
+    "invariant_passed": true,
+    "inline_marker_count": 10,
+    "used_sources_length": 6,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "**מסקנה תקצירית**\n\nסעיף 12 לחוק החוזים (חלק כללי) מקנה חובה מפורשת של תום לב בהתנהלות במשא־ומתן לקראת כריתת חוזה, ומכיר בסעד פיצויים לעותר שניזוק עקב הפרת חובה זו; הוראות סעיפים 10, 13 ו‑14 לחוק התרופות בשל הפרת חוזה יחולות בשינויים המחויבים.¹\n\n**הוראה מחייבת — היקף סמכותי בחוק**\n\nנוסח סעיף 12(א) קובע במפורש חובת התנהגות: \"במשא ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך מקובלת ובתום לב\"; סעיף 12(ב) קובע סעד של פיצויים וחיבור להוראות התרופות של חוק החוזים (תרופות בשל הפרת חוזה).²\n\nלא מוצגת כאן סקירת פסיקה; במסגרת המקורות שסופקו לא אותרו פסקי‑דין ברי‑שימוש להמחשת יישום פרטני של סעיף 12, ולכן התשובה נשענת על נוסח החוק והניתוח התיאורטי של מקורות המשנה בלבד.\n\n**תוכן חובת תום הלב — מה שהחוק קובע במפורש**\n\nהחוק נוסח בפיסקה קצרה ולא מפרט סוגי פעולות אסורות או חיוביות: החובה היא ל״נהוג בדרך מקובלת ובתום לב״ במשא‑ומתן לקראת כריתת חוזה — ניסוח תקני ועמום יחסית שמכתיב סטנדרט התנהגות כללי במקום חובת גילוי או איסור פעולה מפורש.¹\n\nממילות הסעיף עולה שמה שמבחין את תחולת החובה הוא ההקשר הזמן־תכליתי (משא‑ומתן לקראת כריתה) והסטנדרט הנורמטיבי («דרך מקובלת ובתום לב»); פירושים פרקטיים של מה שנכלל בסטנדרט זה (למשל האם חובת גילוי, איסור הטעיה פעילה, איסור ניצול חולשה או חובת נמנום מסוימת מוטלים) אינם מפורשים בטקסט והינם עניין פרשני.³\n\n**סעדים ומדד החבות**\n\nסעיף 12(ב) קובע פיצויים בעד הנזק שנגרם לצד השני עקב המשא‑ומתן או עקב כריתת החוזה, ומפנה להוראות סעיפים 10, 13 ו‑14 לחוק התרופות — כלומר, הפיצוי יימדד לפי כללי הנזיקין/הפרת חוזה כפי שמותאמים למקרה של משא‑ומתן.⁴\n\nהוראות חוק התרופות שקושרות אליהן את סעיף 12 מאפשרות משפטית להכיר בפיצויים גם בעד נזק שאינו ממוני ושלמשל להחיל הנמכה של פיצויים כאשר התמורה שכנגד החיוב בלתי סבירה; החוק עצמו אינו מפרט נוסחת חישוב פרטנית מעבר להפנייה להוראות אלה.⁴\n\n**יישום וסייגים — גבולות התחולה**\n\nתחולת סעיף 12 מוגבלת במליםיו ל׳משא‑ומתן לקראת כריתתו של חוזה׳, ומשמעותה הפרטנית תלויה בקונטקסט ובמבחנים פרשניים; אין בסעיף פירוט הוראות חריג מפורשות (למשל להחלתו רק במקרים מסוימים של ציפייה להסכמה או בשל שוויון כוחות).³\n\nבמקורות שאותרו לא נמצא עיגון סטטוטורי למפקחי חריגים מפורשים כגון הפטור במו״מ תחרותי או כאשר אין ציפייה סבירה להסכמה; שאלת היקף החריגים ותיחום המקרה שבו חובת התנהגות מצטמצמת היא שאלת פרשנות שנידונה בספרות האקדמית ולא פורשה בחוק עצמו.³\n\nבהיעדר סקירת פסיקה כאן, יש להדגיש כי פרטים מעשיים של יישום וסייגים (כגון איזון אינטרסים עסקיים לגיטימיים מול איסור ניצול, או הטווח המעשי של חובת גילוי) מצויים בעיקר בניתוחים אקדמיים ובהחלטות שטרם הובאו בתמצית זו.⁵\n\n**סיכום קצר והשלכות לפרקטיקה משפטית**\n\nסעיף 12 קובע חובת תום לב במשא‑ומתן ומעניק סעד פיצויים לעותר שניזוק; עם זאת, החוק נוסח בקווים כלליים בלבד — הוא קובע סטנדרט כללי («דרך מקובלת ובתום לב») ומפנה להוראות התרופות לגבי מדידת הפיצויים, בעוד שכללי היישום המעשיים מפותחים בעיקר בספרות והפסיקה שעבורה לא הוצגה כאן סקירה.⁴"
+}

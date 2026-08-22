@@ -1,5 +1,24 @@
 {
   "id": "R02",
+  "retrieval_budget": {
+    "retrieval_budget_ms": 90000,
+    "retrieval_elapsed_ms": 54740,
+    "budget_exceeded": false,
+    "partial_retrieval_used": false,
+    "disclosure_shown": false,
+    "aborted_tasks_count": 0,
+    "ignored_late_tasks_count": 0,
+    "body_acquisition_count": 0,
+    "extraction_count": 0,
+    "extraction_bytes": 0,
+    "longest_retrieval_step": {
+      "ms": 1925,
+      "name": "local_retrieval"
+    },
+    "candidate_count_by_facet": {
+      "unfaceted": 11
+    }
+  },
   "classification_changed": [],
   "classification_rows": [
     {
@@ -16,22 +35,57 @@
       "uncertain_identity": false,
       "downgrade_reason": null,
       "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=EnglishVerdicts/93/210/068/Z01&type=4"
+    },
+    {
+      "title": "תנאי מקפח בחוזה בנקאי – הערכה שיפוטית (בעקבות ע”ש (י-ם) 195/97 היועץ המשפטי לממשלה נ’ בנק לאומי) | ריקרדו בן אוליאל (כרך ב)",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [
+        "document_file",
+        "court_vocabulary"
+      ],
+      "commentary_identity_signals": [
+        "commentary_title_shape",
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/b2_9.pdf"
+    },
+    {
+      "title": "שטר ביטחון וזיכוי חשבון בנק כמתן ערך בשטרות: ע״א 83/665 בנק לאומי לישראל בע\"מ נ׳ אליהו בן עליזה",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [
+        "docket_in_text",
+        "case_prefix",
+        "party_names"
+      ],
+      "commentary_identity_signals": [
+        "commentary_snippet_shape",
+        "commentary_path",
+        "upstream_scholarship_type",
+        "scholarship_shape"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://lawjournal.huji.ac.il/article/12/975"
     }
   ],
   "uncertain_identity_count": 0,
   "downgrades": [],
   "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
-  "job_id": "a5956009-fbee-43c7-a6f9-fa3a8f373262",
-  "run_id": "2c543370-7ff5-437c-b85c-c9ddc9b6b2ad",
-  "ms": 92474,
+  "job_id": "3517f251-19f1-4559-8fae-0ae5beabcfcd",
+  "run_id": "7998d7d4-b186-4197-bae5-d165efad1da8",
+  "ms": 91293,
   "terminal_status": "done",
   "job_error": null,
   "branch": null,
-  "answer_length": 1243,
+  "answer_length": 1537,
   "inline_marker_count": 6,
-  "max_marker": 1,
-  "footnotes_length": 1,
-  "used_sources_length": 1,
+  "max_marker": 2,
+  "footnotes_length": 2,
+  "used_sources_length": 3,
   "dangling_marker_count": 0,
   "orphan_source_row_count": 0,
   "invariant_passed": true,
@@ -42,6 +96,15 @@
       "citable_as": null,
       "sub_titles": [
         "ע\"א 6821/93"
+      ]
+    },
+    {
+      "number": 2,
+      "title": "תנאי מקפח בחוזה בנקאי – הערכה שיפוטית (בעקבות ע”ש (י-ם) 195/97 היועץ המשפטי לממשלה נ’ בנק לאומי) | ריקרדו בן אוליאל (כרך ב); שטר ביטחון וזיכוי חשבון בנק כמתן ערך בשטרות: ע״א 83/665 בנק לאומי לישראל בע\"מ נ׳ אליהו בן עליזה",
+      "citable_as": null,
+      "sub_titles": [
+        "תנאי מקפח בחוזה בנקאי – הערכה שיפוטית (בעקבות ע”ש (י-ם) 195/97 היועץ המשפטי לממשלה נ’ בנק לאומי) | ריקרדו בן אוליאל (כרך ב)",
+        "שטר ביטחון וזיכוי חשבון בנק כמתן ערך בשטרות: ע״א 83/665 בנק לאומי לישראל בע\"מ נ׳ אליהו בן עליזה"
       ]
     }
   ],
@@ -77,14 +140,79 @@
         "classification_rerun_reason": null,
         "commentary_identity_signals": [],
         "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s2",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/b2_9.pdf",
+        "title": "תנאי מקפח בחוזה בנקאי – הערכה שיפוטית (בעקבות ע”ש (י-ם) 195/97 היועץ המשפטי לממשלה נ’ בנק לאומי) | ריקרדו בן אוליאל (כרך ב)",
+        "raw_title": "תנאי מקפח בחוזה בנקאי – הערכה שיפוטית (בעקבות ע”ש (י-ם) 195/97 היועץ המשפטי לממשלה נ’ בנק לאומי) | ריקרדו בן אוליאל (כרך ב)",
+        "candidate_id": "2ec74190-1b12-4494-bd7c-92b58a6be2f5",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file",
+          "court_vocabulary"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_title_shape",
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s3",
+        "url": "https://lawjournal.huji.ac.il/article/12/975",
+        "title": "שטר ביטחון וזיכוי חשבון בנק כמתן ערך בשטרות: ע״א 83/665 בנק לאומי לישראל בע\"מ נ׳ אליהו בן עליזה",
+        "raw_title": "שטר ביטחון וזיכוי חשבון בנק כמתן ערך בשטרות: ע״א 83/665 בנק לאומי לישראל בע\"מ נ׳ אליהו בן עליזה",
+        "candidate_id": "9d54d66e-ac2d-43d8-b6a3-d51ce1e29450",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "docket_in_text",
+          "case_prefix",
+          "party_names"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_snippet_shape",
+          "commentary_path",
+          "upstream_scholarship_type",
+          "scholarship_shape"
+        ],
+        "fallback_improvement_reason": null
       }
     ],
-    "total": 1,
+    "total": 3,
     "reclassified_count": 0,
     "fallback_used_count": 0,
     "classification_rerun_count": 0,
     "classification_rerun_reason": [],
-    "classification_cache_hit_count": 1,
+    "classification_cache_hit_count": 3,
     "source_label_cpu_guard_applied": true
   },
   "filename_titles": [],
@@ -100,19 +228,33 @@
       "citable_as": "judgment",
       "text_usability": "full_text",
       "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=EnglishVerdicts/93/210/068/Z01&type=4"
+    },
+    {
+      "number": 2,
+      "title": "תנאי מקפח בחוזה בנקאי – הערכה שיפוטית (בעקבות ע”ש (י-ם) 195/97 היועץ המשפטי לממשלה נ’ בנק לאומי) | ריקרדו בן אוליאל (כרך ב)",
+      "citable_as": "scholarship",
+      "text_usability": "full_text",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/b2_9.pdf"
+    },
+    {
+      "number": 2,
+      "title": "שטר ביטחון וזיכוי חשבון בנק כמתן ערך בשטרות: ע״א 83/665 בנק לאומי לישראל בע\"מ נ׳ אליהו בן עליזה",
+      "citable_as": "scholarship",
+      "text_usability": "substantive_excerpt",
+      "url": "https://lawjournal.huji.ac.il/article/12/975"
     }
   ],
   "footnote_render_report": {
     "version": "footnote_rendering_invariant_v1",
     "renumbered": false,
-    "footnotes_length": 1,
+    "footnotes_length": 2,
     "invariant_passed": true,
     "inline_marker_count": 6,
-    "used_sources_length": 1,
+    "used_sources_length": 3,
     "dangling_marker_count": 0,
     "orphan_source_row_count": 0
   },
   "pass": true,
   "failures": [],
-  "answer": "**סיכום ההכרעה המרכזית (holding)**\n\nשורה תחתונה: בפסק‑דין ע\"א 6821/93 בית המשפט העליון קבע את ההכרעה המרכזית כפי שהיא מנוסחת בטקסט של פסק‑דין זה.¹\n\nהכרעה זו מופיעה באופן מפורש בטקסט המלא של פסק‑דין ע\"א 6821/93; הנימוקים וההיגיון המשפטי שבבסיס ההכרעה מפורטים בסעיפים השונים של ההחלטה.¹\n\nרקע זיהוי הצדדים והתיק: התיק מובא בשם United Mizrahi Bank Ltd. v. Migdal Cooperative Village (בניגוד לאיותים שונים בשפה האנגלית), והמסמך מכיל את הכותרת ואת רשימת בעלי הדין המעורבים בהליך.¹\n\nרקע עובדתי, נדון הערעור והבקשות: פרטי המחלוקת העובדתית וההליכי, בקשת הערעור ומה שנדרש להוכחה לקיומה מפורטים בטקסט ההחלטה; הטקסט הוא המקור לקביעת העובדות ההלכתיות ולנימוקי בית המשפט.¹\n\nנימוק משפטי מרכזי ומשקל קודמיי: בפסק‑דין זה מופיעים הנימוקים המשפטיים שבהם הסתמך בית המשפט — פירוש הדין, יישום עקרונות תקדימיים ונימוקים משפטיים אחרים — וכל אלה מפורטים בפסק‑דין המלא.¹\n\nחשיבות תקדימית: פסק‑דין ע\"א 6821/93 מהווה הכרעה של בית המשפט העליון והטקסט עצמו משמש כבסיס לקביעה האם ובאיזו מידה הוחדרו בו עקרונות נקודתיים שהשפיעו על הפסיקה לאחר מכן; לכך משמש הפסק‑דין כמקור תקדימי ישיר.¹\n\nבקשה להעמקה: אם תרצה/י, אביא כאן ציטוט מדויק מהפסק‑דין של ההכרעה (holding), אצטט את קטעי הנימוקים הרלוונטיים, ואתמצת את הרקע העובדתי והמשמעויות התקדימיות — כולם מתוך הטקסט המלא שמצוין ב‑s1."
+  "answer": "בשורה התחתונה: בפסק‑דין ע\"א 6821/93 הכריע בית המשפט העליון בסכסוך בין בנק המזרחי המאוחד לכפר מגדל השיתופי, וההכרעה המרכזית מופיעה בטקסט פסק‑הדין עצמו.¹\n\nעיון בעובדות ובסיוע ההחלטה: המחלוקת נגעה ליחסי הבנק עם ישות שיתופית חקלאית ולהיקף זכויות הביטחון והחיוב שהעניק הבנק או שהטיל על הגורמים המעורבים; פסק‑הדין מפרט את עובדות הרקע, ההתדיינות בבתי המשפט הערכאות הנמוכות ואת שאלות המשפט שהובאו לערעור.¹\n\nהלכה מרכזית ורציונליה משפטית: בפסק‑דין זה בית המשפט העליון קבע והנמק את הכרעתו על בסיס עקרונות המאזנים בין זכויות בנקאיות של נושים לבין ההגנה על בעלי עניין שיתופיים; ההנמקות בפסיקה מתמקדות בפרשנות הוראות החיוב והביטחון החוזי, בהערכת היקף מתן הערבות או השטרות וביישום מבחנים משפטיים שנועדו לבדוק את חוקיות ההסדרים החוזיים שבין הבנק לכפר השיתופי.¹\n\nתוצאה פרוצדורלית וסעדים: בפסק‑דין מפורט זה נקבע מה הדין ביחס לעתירות והבקשות שהוגשו; הטקסט מפרט אם הערעור התקבל או נדחה, וקובע את הסעד שניתן לצדדים המעורבים (למשל ביטול/אישור של פעולת בנק, פיצוי, הצמדת זכויות ביטוח או הנחיות לגבי הליך ביצוע).¹\n\nהבהרה מקורתית ושימוש נוסף: התמצית הנ\"ל מבוססת על הטקסט המלא של פסק‑הדין המצוי בקובץ שלעיל; מי שדרש ניסוח מדויק של הלכות נקודות ספציפיות, סעדים מדויקים או ניסוחים משפטיים מתוך ההחלטה — ראוי לעיין במלוא הפסק‑דין שב‑s1 לציטוט מילולי והפניות הסמכותיות המפורטות שם.¹\n\nרקע דוקטרינלי רלוונטי (לצורך הבהרה ולא כהחלפה לפסק‑הדין): מאמרים משפטיים שעוסקים בתנאים מקפחים בחוזה בנקאי ובשאלות שטר ביטחון וזיכוי חשבון עשויים לסייע בהבנת ההקשר התיאורטי והמעשי של ההכרעה ויש בהם ניתוחים שימושיים, אך הם אינם תחליף למניין הנימוקים וההכרעות המפורטות בפסק‑הדין עצמו.²"
 }

@@ -248,6 +248,12 @@ for (const q of QUERIES) {
   if (isStub) failures.push("stub_answer");
   if (verifierFailed) failures.push("verifier_failure");
   if (cpuKill) failures.push("cpu_kill");
+  {
+    const pr = md.retrieval_budget_enforcement?.partial_retrieval_used === true;
+    if (pr && answer && !answer.includes("החיפוש הופסק עקב מגבלת זמן")) {
+      failures.push("partial_retrieval_without_disclosure");
+    }
+  }
   if (q.id === "B8" && answer && !answer.includes(B8_CANON)) failures.push("b8_canonical_quote_changed");
   if (q.id === "P02" && branch !== "docket_limitation") failures.push("p02_not_deterministic_docket_refusal");
   if (q.id === "R02" && !(answer.includes("6821/93") || answer.includes("המזרחי"))) {
@@ -261,8 +267,24 @@ for (const q of QUERIES) {
   const downgrades = labelRows.filter((r: any) => r.downgrade_reason)
     .map((r: any) => ({ title: r.title, downgrade_reason: r.downgrade_reason }));
 
+  const budgetTel: any = md.retrieval_budget_enforcement ?? {};
+  const DISCLOSURE = "החיפוש הופסק עקב מגבלת זמן";
   const rec = {
     id: q.id,
+    retrieval_budget: {
+      retrieval_budget_ms: budgetTel.retrieval_budget_ms ?? null,
+      retrieval_elapsed_ms: budgetTel.retrieval_elapsed_ms ?? null,
+      budget_exceeded: budgetTel.budget_exceeded ?? null,
+      partial_retrieval_used: budgetTel.partial_retrieval_used ?? null,
+      disclosure_shown: answer.includes(DISCLOSURE),
+      aborted_tasks_count: budgetTel.aborted_tasks_count ?? null,
+      ignored_late_tasks_count: budgetTel.ignored_late_tasks_count ?? null,
+      body_acquisition_count: budgetTel.body_acquisition_count ?? null,
+      extraction_count: budgetTel.extraction_count ?? null,
+      extraction_bytes: budgetTel.extraction_bytes ?? null,
+      longest_retrieval_step: budgetTel.longest_retrieval_step ?? null,
+      candidate_count_by_facet: budgetTel.candidate_count_by_facet ?? null,
+    },
     classification_changed: changed.map((r: any) => ({
       title: r.title, before: r.classification_before, after: r.classification_after,
       reason: r.classification_reason ?? null,
@@ -326,6 +348,9 @@ for (const q of QUERIES) {
     invariant_passed: r.invariant_passed,
     fallback_used_count: r.label_report?.fallback_used_count ?? null,
     reclassified_count: r.label_report?.reclassified_count ?? null,
+    ms: r.ms,
+    terminal_status: r.terminal_status,
+    budget: r.retrieval_budget,
   })), null, 2));
 }
 console.log("done");

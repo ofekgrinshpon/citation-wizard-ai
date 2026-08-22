@@ -1,8 +1,27 @@
 {
   "id": "F05",
+  "retrieval_budget": {
+    "retrieval_budget_ms": 200000,
+    "retrieval_elapsed_ms": 100637,
+    "budget_exceeded": false,
+    "partial_retrieval_used": false,
+    "disclosure_shown": false,
+    "aborted_tasks_count": 0,
+    "ignored_late_tasks_count": 0,
+    "body_acquisition_count": 1,
+    "extraction_count": 1,
+    "extraction_bytes": 184261,
+    "longest_retrieval_step": {
+      "ms": 5690,
+      "name": "perplexity_retrieval"
+    },
+    "candidate_count_by_facet": {
+      "unfaceted": 30
+    }
+  },
   "classification_changed": [
     {
-      "title": "חוק - משקל הימים מן ביום לו נידרש שאפשר \"",
+      "title": "ע\"א 4263-04 - קיבוץ משמר העמק נ. עו\"ד טומי מנור, מפרק אפרוחי הצפון",
       "before": "judgment",
       "after": "commentary",
       "reason": "uncertain_judgment_identity_prefer_commentary"
@@ -10,48 +29,31 @@
   ],
   "classification_rows": [
     {
-      "title": "טלטלת המסך - בין הרמה מוצדקת לצדק מורם",
-      "classification_before": "commentary",
-      "classification_after": "commentary",
-      "judgment_identity_signals": [
-        "judgment_mirror_host",
-        "upstream_case_type"
-      ],
-      "commentary_identity_signals": [],
-      "uncertain_identity": false,
-      "downgrade_reason": "caselaw_type_without_judgment_authority",
-      "url": "https://www.psakdin.co.il/Document/%D7%98%D7%9C%D7%98%D7%9C%D7%AA-%D7%94%D7%9E%D7%A1%D7%9A--%D7%91%D7%99%D7%9F-%D7%94%D7%A8%D7%9E%D7%94-%D7%9E%D7%95%D7%A6%D7%93%D7%A7%D7%AA-%D7%9C%D7%A6%D7%93%D7%A7-%D7%9E%D7%95%D7%A8%D7%9D"
-    },
-    {
-      "title": "פרק ו': הרמת המסך",
-      "classification_before": "commentary",
-      "classification_after": "commentary",
+      "title": "חוק החברות, סעיף 6",
+      "classification_before": "statute",
+      "classification_after": "statute",
       "judgment_identity_signals": [
         "document_file"
       ],
       "commentary_identity_signals": [],
       "uncertain_identity": false,
       "downgrade_reason": null,
-      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc"
+      "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf"
     },
     {
-      "title": "חוק - משקל הימים מן ביום לו נידרש שאפשר \"",
-      "classification_before": "judgment",
-      "classification_after": "commentary",
+      "title": "חוק החברות, התשנ\"ט-1999",
+      "classification_before": "statute",
+      "classification_after": "statute",
       "judgment_identity_signals": [
-        "official_judgment_endpoint",
-        "case_prefix",
-        "party_names",
-        "court_vocabulary",
-        "upstream_case_type"
+        "document_file"
       ],
       "commentary_identity_signals": [],
-      "uncertain_identity": true,
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/1&fileName=SD1_4_619-05.pdf&type=2"
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf"
     },
     {
-      "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+      "title": "צמצום שלא כפשוטו: אחריותם של נושאי משרה בחברה בסמיכות לחדלות פירעון | עמיר ליכט (כרך כד(2))",
       "classification_before": "scholarship",
       "classification_after": "scholarship",
       "judgment_identity_signals": [],
@@ -60,29 +62,39 @@
       ],
       "uncertain_identity": false,
       "downgrade_reason": null,
-      "url": "https://runilawreview.org/2025/06/30/vol31-levi/"
+      "url": "https://runilawreview.org/2022/01/16/vol24-licht/"
+    },
+    {
+      "title": "ע\"א 4263-04 - קיבוץ משמר העמק נ. עו\"ד טומי מנור, מפרק אפרוחי הצפון",
+      "classification_before": "judgment",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "official_judgment_endpoint",
+        "case_prefix",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": true,
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/1&fileName=SG1_13_4263-04.pdf&type=2"
     }
   ],
   "uncertain_identity_count": 1,
   "downgrades": [
     {
-      "title": "טלטלת המסך - בין הרמה מוצדקת לצדק מורם",
-      "downgrade_reason": "caselaw_type_without_judgment_authority"
-    },
-    {
-      "title": "חוק - משקל הימים מן ביום לו נידרש שאפשר \"",
+      "title": "ע\"א 4263-04 - קיבוץ משמר העמק נ. עו\"ד טומי מנור, מפרק אפרוחי הצפון",
       "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
     }
   ],
   "query": "מה קובע סעיף 6 לחוק החברות, תשנ\"ט-1999 בעניין הרמת מסך?",
-  "job_id": "fdb26ede-9d92-4377-8f11-89a29bba4ac1",
-  "run_id": "822af40d-9c9d-4588-b3f8-a805c56a445a",
-  "ms": 101435,
+  "job_id": "ed5bca93-f257-416e-97f8-89b0e3fa9f5d",
+  "run_id": "391b7791-f719-475c-8935-3c109f606c6b",
+  "ms": 141517,
   "terminal_status": "done",
   "job_error": null,
-  "branch": "statute_section_limitation",
-  "answer_length": 247,
-  "inline_marker_count": 1,
+  "branch": null,
+  "answer_length": 1834,
+  "inline_marker_count": 5,
   "max_marker": 1,
   "footnotes_length": 1,
   "used_sources_length": 1,
@@ -92,10 +104,10 @@
   "rendered_rows": [
     {
       "number": 1,
-      "title": "טלטלת המסך - בין הרמה מוצדקת לצדק מורם",
+      "title": "חוק החברות, סעיף 6",
       "citable_as": null,
       "sub_titles": [
-        "טלטלת המסך - בין הרמה מוצדקת לצדק מורם"
+        "חוק החברות, סעיף 6"
       ]
     }
   ],
@@ -103,26 +115,27 @@
     "rows": [
       {
         "ref": "s1",
-        "url": "https://www.psakdin.co.il/Document/%D7%98%D7%9C%D7%98%D7%9C%D7%AA-%D7%94%D7%9E%D7%A1%D7%9A--%D7%91%D7%99%D7%9F-%D7%94%D7%A8%D7%9E%D7%94-%D7%9E%D7%95%D7%A6%D7%93%D7%A7%D7%AA-%D7%9C%D7%A6%D7%93%D7%A7-%D7%9E%D7%95%D7%A8%D7%9D",
-        "title": "טלטלת המסך - בין הרמה מוצדקת לצדק מורם",
-        "raw_title": "טלטלת המסך - בין הרמה מוצדקת לצדק מורם",
-        "candidate_id": "155436b5-565f-46e5-a4af-2a227eca6121",
+        "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf",
+        "title": "חוק החברות, סעיף 6",
+        "raw_title": "חוק החברות, סעיף 6",
+        "candidate_id": "5d36a6cb-3f2e-4a27-addd-a0bb0164bf87",
         "title_status": "ok",
         "fallback_used": "none",
-        "downgrade_reason": "caselaw_type_without_judgment_authority",
+        "downgrade_reason": null,
         "fallback_applied": false,
         "fallback_candidate": null,
         "uncertain_identity": false,
-        "classification_after": "commentary",
+        "classification_after": "statute",
         "title_hygiene_action": "kept",
-        "classification_before": "commentary",
+        "classification_before": "statute",
         "classification_reason": null,
-        "title_hygiene_reasons": [],
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
         "classification_cache_hit": true,
         "fallback_rejected_reason": null,
         "judgment_identity_signals": [
-          "judgment_mirror_host",
-          "upstream_case_type"
+          "document_file"
         ],
         "classification_rerun_reason": null,
         "commentary_identity_signals": [],
@@ -130,21 +143,23 @@
       },
       {
         "ref": "s2",
-        "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
-        "title": "פרק ו': הרמת המסך",
-        "raw_title": "פרק ו': הרמת המסך",
-        "candidate_id": "6593a74f-4b2b-47ff-873b-c1b5e49ae1d8",
+        "url": "https://www.new.isa.gov.il/images/Fittings/isa/asset_library_pic/al_lobby/al_lobby-628ce07f9490d/Compan01.pdf",
+        "title": "חוק החברות, התשנ\"ט-1999",
+        "raw_title": "חוק החברות, התשנ\"ט-1999",
+        "candidate_id": "e2323ef4-fdd4-41b1-8600-9320d968a4be",
         "title_status": "ok",
         "fallback_used": "none",
         "downgrade_reason": null,
         "fallback_applied": false,
         "fallback_candidate": null,
         "uncertain_identity": false,
-        "classification_after": "commentary",
+        "classification_after": "statute",
         "title_hygiene_action": "kept",
-        "classification_before": "commentary",
+        "classification_before": "statute",
         "classification_reason": null,
-        "title_hygiene_reasons": [],
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
         "classification_cache_hit": true,
         "fallback_rejected_reason": null,
         "judgment_identity_signals": [
@@ -156,42 +171,10 @@
       },
       {
         "ref": "s3",
-        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/1&fileName=SD1_4_619-05.pdf&type=2",
-        "title": "חוק - משקל הימים מן ביום לו נידרש שאפשר \"",
-        "raw_title": "ע\"א 619-05 - עופר נמרודי נ. מדינת ישראל",
-        "candidate_id": "fc726de2-4fe4-44b2-ab7d-0bd1ad27fb88",
-        "title_status": "fallback_truncated",
-        "fallback_used": "statute_name",
-        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-        "fallback_applied": true,
-        "fallback_candidate": "חוק - משקל הימים מן ביום לו נידרש שאפשר \"",
-        "uncertain_identity": true,
-        "classification_after": "commentary",
-        "title_hygiene_action": "title_truncated_mid_word",
-        "classification_before": "judgment",
-        "classification_reason": "uncertain_judgment_identity_prefer_commentary",
-        "title_hygiene_reasons": [
-          "title_truncated_mid_word"
-        ],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "official_judgment_endpoint",
-          "case_prefix",
-          "party_names",
-          "court_vocabulary",
-          "upstream_case_type"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [],
-        "fallback_improvement_reason": "statute_name:7>raw:3"
-      },
-      {
-        "ref": "s4",
-        "url": "https://runilawreview.org/2025/06/30/vol31-levi/",
-        "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
-        "raw_title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
-        "candidate_id": "67abc7fa-df14-47e2-8894-9fb978d7e6da",
+        "url": "https://runilawreview.org/2022/01/16/vol24-licht/",
+        "title": "צמצום שלא כפשוטו: אחריותם של נושאי משרה בחברה בסמיכות לחדלות פירעון | עמיר ליכט (כרך כד(2))",
+        "raw_title": "צמצום שלא כפשוטו: אחריותם של נושאי משרה בחברה בסמיכות לחדלות פירעון | עמיר ליכט (כרך כד(2))",
+        "candidate_id": "f1d4e754-ddef-41ab-a9eb-f278a2ad2f5d",
         "title_status": "ok",
         "fallback_used": "none",
         "downgrade_reason": null,
@@ -211,14 +194,42 @@
           "upstream_scholarship_type"
         ],
         "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s4",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/1&fileName=SG1_13_4263-04.pdf&type=2",
+        "title": "ע\"א 4263-04 - קיבוץ משמר העמק נ. עו\"ד טומי מנור, מפרק אפרוחי הצפון",
+        "raw_title": "ע\"א 4263-04 - קיבוץ משמר העמק נ. עו\"ד טומי מנור, מפרק אפרוחי הצפון",
+        "candidate_id": "c20762c3-b710-4769-b5d5-e4eecde081d6",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": true,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": "uncertain_judgment_identity_prefer_commentary",
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "official_judgment_endpoint",
+          "case_prefix",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
       }
     ],
     "total": 4,
     "reclassified_count": 1,
-    "fallback_used_count": 1,
+    "fallback_used_count": 0,
     "classification_rerun_count": 0,
     "classification_rerun_reason": [],
-    "classification_cache_hit_count": 5,
+    "classification_cache_hit_count": 4,
     "source_label_cpu_guard_applied": true
   },
   "filename_titles": [],
@@ -230,10 +241,10 @@
   "used_sources": [
     {
       "number": 1,
-      "title": "טלטלת המסך - בין הרמה מוצדקת לצדק מורם",
-      "citable_as": "commentary",
+      "title": "חוק החברות, סעיף 6",
+      "citable_as": "statute",
       "text_usability": "metadata_only",
-      "url": "https://www.psakdin.co.il/Document/%D7%98%D7%9C%D7%98%D7%9C%D7%AA-%D7%94%D7%9E%D7%A1%D7%9A--%D7%91%D7%99%D7%9F-%D7%94%D7%A8%D7%9E%D7%94-%D7%9E%D7%95%D7%A6%D7%93%D7%A7%D7%AA-%D7%9C%D7%A6%D7%93%D7%A7-%D7%9E%D7%95%D7%A8%D7%9D"
+      "url": "https://www.gov.il/BlobFolder/legalinfo/info-and-regulation-15/he/files_InformationAndRegulation_15-law_companieslaw.pdf"
     }
   ],
   "footnote_render_report": {
@@ -241,12 +252,12 @@
     "renumbered": false,
     "footnotes_length": 1,
     "invariant_passed": true,
-    "inline_marker_count": 1,
+    "inline_marker_count": 5,
     "used_sources_length": 1,
     "dangling_marker_count": 0,
     "orphan_source_row_count": 0
   },
   "pass": true,
   "failures": [],
-  "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 6 לחוק החברות; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
+  "answer": "**נוסח ועיקרון מרכזי**\n\nסעיף 6 לחוק החברות קובע כי הרמת המסך של ההתאגדות היא ייחוס זכויות וחובות של החברה לבעל מניות בה, או ייחוס תכונות, זכויות וחובות של בעל מניות לחברה; סעיף זה מהווה את המסגרת החוקית והגבולות המבניים לשימוש בתפיסה של שיוב חובות וזכויות בין החברה לבין בעל המניות.¹\n\n**נסיבות ועילות להוראת הרמת מסך**\n\nבהבחנה העובדתית־משפטית שנעשית תחת מסגרת סעיף 6, בתי המשפט נוטים להורות על הרמת מסך כשהשימוש בצורת ההתאגדות נעשה לצורך התחמקות מהתחייבויות, להטעיה של נושים או צדדים שלישיים, או כאשר מבנה ההתאגדות נוצל לצורך פגיעה בזכויותיהם של נושים; פסיקה עליונה דנה בהיקף השיוך בין יחסי בעלי המניות לבין חובות החברה ומנתחת מתי היחוס נחוץ כדי לממש זכויות נושים ולהגנות יסודיות אחרות.¹\n\n**השלכות וסעדים**\n\nההוראה המעשית של הרמת מסך יכולה להתבטא בייחוס תחייבויות החברה לבעל המניות ובחיובו האישי בתשלום חובות, בהשבה או בהוראות נוספות שהוסמכו על־ידי בית המשפט; משמעות הדבר בפועל היא שנושים עשויים לטעון לזכויות כנגד נכסיו של בעל המניות בהתאם להכרעה העובדתית ושליטה שיפוטית על מידה והיקף הייחוס.¹\n\n**מגבלות, הגנות ודרישות פרוצדורליות**\n\nהפעלת סעיף 6 כפופה למגבלות פרוצדורליות ועקרוניות: לא מדובר בסעד אוטומטי אלא במבחן עובדתי־משפטי שמצדד בייחוס; הנטל להוכיח ניצול או הטעיה בדרך כלל מוטל על המבקש; בית המשפט ישקול את יחס המידה בין שמירת העקרון של הפרדה תאגידית לבין צורך במניעת עיוותי דין, ויידרש לתת הזדמנות להליך ואם יש צורך לקבוע סעד מצומצם המתאים לנסיבות המקרה.¹\n\n**סיכום והסתייגות לגבי מקורות**\n\nלסיכום: סעיף 6 מהווה את המסגרת החוקית ליחוס זכויות וחובות בין החברה לבעל מניות, ובמקרים שבהם יש ראיות לניצול ציני של מבנה התאגדות — כגון הטעיה, התחמקות מחובות או פגיעה בנושים — בתי המשפט רשאים, על פי בחינה עובדית, להורות על הרמת מסך ולייחס לאחריות אישית. הערה: טקסט ההלכה המלא ונוסחיהן המלאים של הכרעות הפסיקה לא הובאו בסניפטים המוצגים כאן; התמצית מבוססת על נוסח סעיף 6 וסניפטי פסיקה וספרות שסופקו, ועשויה שלא לכלול נוסח מלא של הכרעות.¹"
 }
