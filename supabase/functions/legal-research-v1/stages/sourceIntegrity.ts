@@ -60,7 +60,12 @@ export interface SourceIntegrity {
   is_judgment_document?: boolean;
   /** Snippet carries operative judgment/holding language. */
   has_holding_text?: boolean;
+  /** source_label_quality_v1 — classification before the label-quality pass. */
+  classification_before?: CitableAs;
+  /** source_label_quality_v1 — why the classification was changed. */
+  classification_reason?: string;
 }
+
 
 export interface IntegrityInput {
   url?: string | null;
