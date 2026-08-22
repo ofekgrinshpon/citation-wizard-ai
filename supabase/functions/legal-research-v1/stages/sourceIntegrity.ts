@@ -60,7 +60,12 @@ export interface SourceIntegrity {
   is_judgment_document?: boolean;
   /** Snippet carries operative judgment/holding language. */
   has_holding_text?: boolean;
+  /** source_label_quality_v1 — classification before the label-quality pass. */
+  classification_before?: CitableAs;
+  /** source_label_quality_v1 — why the classification was changed. */
+  classification_reason?: string;
 }
+
 
 export interface IntegrityInput {
   url?: string | null;
@@ -156,16 +161,48 @@ function detectJudgmentDocument(
   const fileDoc = !!u && /\.(pdf|docx?|rtf)$/i.test(u.pathname);
   const caseType = CASE_TYPES.has(sourceType);
 
-  const is_judgment =
-    (hostJudgment && (hasDocket || hasPhrase || fileDoc)) ||
-    ((official_host || mirror_host) && fileDoc && hasDocket && (hasPhrase || has_holding_text)) ||
-    ((official_host || mirror_host) && hasDocket && hasPhrase && caseType) ||
-    (fileDoc && hasDocket && hasPhrase && caseType);
+  // source_label_quality_v1 — judgment shape must be identity-bearing.
+  // Courtroom vocabulary alone ("פסק דין", "בית המשפט העליון") never suffices.
+  const hasParties = /\sנ['׳"״]?\s|\sנגד\s/.test(`${title} ${snippet}`);
+  const casePrefix = CASE_PREFIX_RE.test(`${title} ${snippet}`);
+  const identityParams = JUDGMENT_IDENTITY_PARAM_RE.test(urlPath);
+  const strongJudgmentIdentity = hasDocket ||
+    (casePrefix && hasParties) ||
+    (hostJudgment && identityParams);
+
+  const is_judgment = strongJudgmentIdentity &&
+    (hostJudgment || official_host || mirror_host || fileDoc || caseType || hasPhrase);
 
   return { is_judgment, has_holding_text, official_host };
 }
 
+/** Recognized Israeli case prefixes (without a docket number). */
+const CASE_PREFIX_RE =
+  /(^|\s)(בג["״׳']?ץ|בגץ|דנג["״׳']?ץ|דנ["״׳']?א|ע["״׳']?א|רע["״׳']?א|ע["״׳']?פ|רע["״׳']?פ|בש["״׳']?פ|עע["״׳']?ם|עה["״׳']?ס|תמ["״׳']?ש|ע["״׳']?מ)(\s|$)/;
+
+/** Official judgment endpoints carrying an identity-bearing parameter. */
+const JUDGMENT_IDENTITY_PARAM_RE =
+  /[?&](case|caseid|casenum|casenumber|filenumber|fileno|verdictid|docid|decisionid|id)=[\w%.\-]{3,}/i;
+
+
 const STATUTE_MIRROR_HOSTS = ["wikisource.org", "he.wikisource.org", "wikitext.org"];
+
+// ── source_label_quality_v1 — statute / scholarship title shapes ───────────
+/** A real statute title starts with a statutory noun. */
+const STATUTE_TITLE_SHAPE_RE =
+  /(^|["״׳'(\s])(חוק[- ]יסוד|חוק|פקודת|פקודה|תקנות|צו|כללי|תקנון|הצעת\s+חוק)\s/;
+
+/** URL shapes of official law texts / statute databases. */
+const STATUTE_URL_SHAPE_RE =
+  /(lawitemid|lawsuggestionssearch|\/laws?\/|\/chok|\/legislation\/|reshumot|\/takanot|wikisource)/i;
+
+/** Indicators that the body really is official statutory text. */
+const OFFICIAL_STATUTE_TEXT_RE = /(נוסח\s+מלא|ספר\s+החוקים|רשומות|תיקון\s+מס|סעיף\s+\d)/;
+
+/** Scholarship / research-paper shape (author, research centre, paper files). */
+const SCHOLARSHIP_SHAPE_RE =
+  /(מרכז\s+המחקר\s+והמידע|ממ["״]מ|מסמך\s+רקע|נייר\s+עמדה|סקירה\s+משווה|מחקר\s+השוואתי|כתב\s+עת|עיוני\s+משפט|משפט\s+וממשל|הפרקליט|מאמר|רשימה\s+אקדמית|working\s+paper|abstract)/i;
+
 
 const COMMENTARY_HOSTS = [
   "wikipedia.org",
@@ -406,6 +443,37 @@ export function classifySourceIntegrity(input: IntegrityInput): SourceIntegrity 
     citable = tier === "official_primary" || tier === "primary_mirror" ? "unknown" : "commentary";
   }
 
+  // ── source_label_quality_v1 — title shape overrides host ─────────────────
+  // A gov.il / official host alone can never make a document a statute, and a
+  // case-typed source without judgment identity can never be a judgment.
+  const classification_before = citable;
+  let classification_reason: string | undefined;
+  const hay = `${title} ${snippet}`;
+  const statuteShape = STATUTE_TITLE_SHAPE_RE.test(title) ||
+    (!!u && STATUTE_URL_SHAPE_RE.test(u.href)) ||
+    (STATUTE_TITLE_SHAPE_RE.test(hay) && OFFICIAL_STATUTE_TEXT_RE.test(hay));
+  const scholarshipShape = SCHOLARSHIP_SHAPE_RE.test(hay) ||
+    /\.(pdf|docx?)$/i.test(title.trim()) ||
+    /(^|\/)(research|pubs?|publications?|papers?|lst|articles?)(\/|_)/i.test(u?.pathname ?? "");
+
+  if (citable === "statute" && tier !== "statute_mirror" && !statuteShape) {
+    citable = scholarshipShape ? "scholarship" : "commentary";
+    classification_reason = "statute_requires_title_shape_not_host";
+    flags.push("statute_label_rejected_host_only");
+  } else if (citable === "judgment" && !judg.is_judgment) {
+    citable = scholarshipShape ? "scholarship" : "commentary";
+    classification_reason = "judgment_requires_docket_or_case_identity";
+    flags.push("judgment_label_rejected_no_identity");
+  } else if (
+    (citable === "statute" || citable === "unknown") &&
+    scholarshipShape && !statuteShape && !judg.is_judgment
+  ) {
+    citable = "scholarship";
+    classification_reason = "scholarship_shape_overrides_official_host";
+    flags.push("scholarship_shape_detected");
+  }
+
+
   // ── downgrade reason (source_type over-claims authority) ─────────────────
   let downgrade_reason: string | undefined;
   if (CASE_TYPES.has(sourceType) && citable !== "judgment") {
@@ -429,7 +497,10 @@ export function classifySourceIntegrity(input: IntegrityInput): SourceIntegrity 
     downgrade_reason,
     is_judgment_document: judg.is_judgment,
     has_holding_text: judg.has_holding_text,
+    classification_before,
+    classification_reason,
   };
+
 }
 
 /**

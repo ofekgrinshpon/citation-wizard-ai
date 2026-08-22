@@ -195,7 +195,20 @@ export interface DrafterInputSource {
   /** Raw upstream title — debug only, never user-facing. */
   raw_title: string;
   /** Display-title hygiene status (see displayTitleHygiene.ts). */
-  title_status: "ok" | "fallback_junk_meta" | "fallback_truncated" | "fallback_empty" | "fallback_generic";
+  title_status:
+    | "ok"
+    | "fallback_junk_meta"
+    | "fallback_truncated"
+    | "fallback_empty"
+    | "fallback_generic"
+    | "fallback_filename"
+    | "fallback_bare_institution";
+  /** source_label_quality_v1 telemetry. */
+  title_hygiene_action?: string;
+  fallback_used?: string;
+  classification_before?: string;
+  classification_after?: string;
+  classification_reason?: string;
   title_hygiene_reasons: string[];
   url: string | null;
   source_type: string;
@@ -240,6 +253,7 @@ interface RawDraft {
 }
 
 import { computeDisplayTitle } from "./displayTitleHygiene.ts";
+import { collapseNearDuplicateTitles } from "./sourceLabelQuality.ts";
 import { canSatisfyRole, classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
 import { assignSynthesisRole } from "./synthesisRole.ts";
 import {
@@ -272,15 +286,16 @@ export function buildInputSources(
     // Source-integrity gate: index/pagination/archive-listing pages and other
     // non-citable artifacts never become citable sources for the drafter.
     const meta0 = (c.metadata ?? {}) as Record<string, unknown>;
-    const integ0 =
-      (meta0.source_integrity as SourceIntegrity | undefined) ??
-      classifySourceIntegrity({
-        url: c.source_url,
-        title: c.title,
-        snippet: c.snippet,
-        source_type: c.source_type,
-        role: c.role,
-      });
+    const integ0: SourceIntegrity = {
+      ...((meta0.source_integrity as SourceIntegrity | undefined) ??
+        classifySourceIntegrity({
+          url: c.source_url,
+          title: c.title,
+          snippet: c.snippet,
+          source_type: c.source_type,
+          role: c.role,
+        })),
+    };
     if (integ0.citable_as === "not_citable") continue;
     const vs = (verdictsByCand.get(u.candidate_id) ?? []).filter(
       (v) => v.support === "direct" || v.support === "partial",
@@ -294,7 +309,32 @@ export function buildInputSources(
       url: c.source_url ?? null,
       source_type: c.source_type,
       origin: c.origin,
+      snippet: c.snippet,
     });
+    // source_label_quality_v1 — re-derive the label classification so that
+    // stale/host-only labels carried in metadata cannot over-claim authority.
+    const fresh = classifySourceIntegrity({
+      url: c.source_url,
+      title: c.title,
+      snippet: c.snippet,
+      source_type: c.source_type,
+      role: c.role,
+    });
+    let classification_reason: string | undefined;
+    const classification_before = integ0.citable_as;
+    if (
+      fresh.classification_reason &&
+      (integ0.citable_as === "judgment" || integ0.citable_as === "statute") &&
+      fresh.citable_as !== integ0.citable_as
+    ) {
+      integ0.citable_as = fresh.citable_as;
+      integ0.is_judgment_document = fresh.is_judgment_document ?? false;
+      integ0.integrity_flags = Array.from(
+        new Set([...(integ0.integrity_flags ?? []), ...fresh.integrity_flags]),
+      );
+      classification_reason = fresh.classification_reason;
+    }
+
     const synthesisRole = assignSynthesisRole({
       role: c.role,
       integrity: integ0,
@@ -323,6 +363,13 @@ export function buildInputSources(
       raw_title: dt.raw_title,
       title_status: dt.title_status,
       title_hygiene_reasons: dt.title_hygiene_reasons,
+      title_hygiene_action: dt.title_status === "ok"
+        ? "kept"
+        : dt.title_hygiene_reasons[0] ?? dt.title_status,
+      fallback_used: dt.fallback_used,
+      classification_before,
+      classification_after: integ0.citable_as,
+      classification_reason,
       url: c.source_url ?? null,
       source_type: c.source_type,
       role: c.role,
@@ -356,6 +403,9 @@ export function buildInputSources(
     });
 
   }
+  // source_label_quality_v1 — collapse OCR-corrupted near-duplicate labels
+  // (retrieved sources only; user documents keep their own titles).
+  collapseNearDuplicateTitles(out);
   if (useAsSource) {
     for (const d of userDocs) {
       if (d.chunks.length === 0) continue;
