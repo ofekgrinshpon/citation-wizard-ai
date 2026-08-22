@@ -285,15 +285,16 @@ export function buildInputSources(
     // Source-integrity gate: index/pagination/archive-listing pages and other
     // non-citable artifacts never become citable sources for the drafter.
     const meta0 = (c.metadata ?? {}) as Record<string, unknown>;
-    const integ0 =
-      (meta0.source_integrity as SourceIntegrity | undefined) ??
-      classifySourceIntegrity({
-        url: c.source_url,
-        title: c.title,
-        snippet: c.snippet,
-        source_type: c.source_type,
-        role: c.role,
-      });
+    const integ0: SourceIntegrity = {
+      ...((meta0.source_integrity as SourceIntegrity | undefined) ??
+        classifySourceIntegrity({
+          url: c.source_url,
+          title: c.title,
+          snippet: c.snippet,
+          source_type: c.source_type,
+          role: c.role,
+        })),
+    };
     if (integ0.citable_as === "not_citable") continue;
     const vs = (verdictsByCand.get(u.candidate_id) ?? []).filter(
       (v) => v.support === "direct" || v.support === "partial",
