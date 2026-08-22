@@ -58,6 +58,7 @@ import {
 } from "./negativeExistenceGuard.ts";
 import {
   applyMetadataOnlyHoldingGate,
+
   referenceOnlySection,
   type MetadataOnlyHoldingGateReport,
 } from "./metadataOnlyHoldingGate.ts";
@@ -1846,6 +1847,8 @@ export async function runDrafterV2(
     named_doctrine_framing: framing,
     synthesis_rendering,
     metadata_only_holding_gate,
+    claim_source_match,
+
 
 
 
