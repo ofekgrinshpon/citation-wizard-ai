@@ -78,6 +78,9 @@ export interface ProbeBudget {
   exceeded(): boolean;
   remaining(): number;
   mark(name: string, detail?: Record<string, unknown>): void;
+  /** Run-level extraction ledger (large_pdf_extraction_preemption_v1). */
+  allowExtraction?(bytes: number, opts?: { speculative?: boolean }): boolean;
+  noteExtractionOutput?(chars: number, opts?: { speculative?: boolean }): void;
 }
 
 /**
@@ -88,12 +91,28 @@ function derivedFailureReason(err: unknown): string {
   const name = (err as { name?: string } | null)?.name ?? "";
   const msg = err instanceof Error ? err.message : String(err);
   if (msg === "retrieval_timeout") return "retrieval_timeout";
+  if (msg === "pdf_extraction_preempted") return "pdf_extraction_preempted";
+  if (msg === "extraction_budget_spent") return "extraction_budget_spent";
+  if (msg === "plain_text_below_threshold") return "text_endpoint_stub";
   if (msg === "body_too_large_for_budget") return "derived_url_body_too_large";
   if (msg === "binary_too_large_for_extraction") return "derived_url_binary_too_large_for_extraction";
   if (name === "TimeoutError" || /timeout/i.test(msg)) return "derived_url_fetch_timeout";
   if (name === "AbortError" || /abort/i.test(msg)) return "derived_url_fetch_aborted";
   return `derived_url:${msg}`;
 }
+
+/**
+ * Failure reasons that prove the requested judgment *was located* at its
+ * derived official archive path — the document responded, but its body could
+ * not be read within the processing limits. Identity must survive this.
+ */
+const BODY_UNAVAILABLE_REASONS = new Set([
+  "pdf_extraction_preempted",
+  "extraction_budget_spent",
+  "derived_url_body_too_large",
+  "derived_url_binary_too_large_for_extraction",
+]);
+
 
 
 const CASE_LIKE_TYPES = new Set([
