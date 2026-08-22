@@ -1,0 +1,30 @@
+[
+  {
+    "id": "F01",
+    "pass": false,
+    "failures": [
+      "no_terminal_qa_row",
+      "empty_answer_body",
+      "cpu_kill"
+    ],
+    "branch": null,
+    "footnotes_length": 0,
+    "used_sources_length": 0,
+    "dangling": 0,
+    "orphan": 0,
+    "fallback_used_count": null,
+    "reclassified_count": null
+  },
+  {
+    "id": "F02",
+    "pass": true,
+    "failures": [],
+    "branch": "insufficient_sources_limitation",
+    "footnotes_length": 0,
+    "used_sources_length": 0,
+    "dangling": 0,
+    "orphan": 0,
+    "fallback_used_count": 8,
+    "reclassified_count": 0
+  }
+]
