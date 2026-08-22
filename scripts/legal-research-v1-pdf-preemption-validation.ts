@@ -23,6 +23,7 @@ const ALL = [
   { id: "R02", query: `מה נקבע בע"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?` },
   { id: "P02", query: `מה נקבע בע"א 99887-04-22 לוי נ' מדינת ישראל?` },
   { id: "B8", query: `צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.` },
+  { id: "F07", query: `מהם מבחני המידתיות בביקורת חוקתית בישראל?` },
 ];
 const only = process.argv.slice(2).filter((a) => !a.startsWith("-"));
 const QUERIES = only.length ? ALL.filter((q) => only.includes(q.id)) : ALL;
@@ -146,6 +147,22 @@ for (const q of QUERIES) {
   const report = d.footnote_render_report ?? md.footnote_render_report ?? null;
   const branch = d.deterministic_branch ?? md.deterministic_branch ?? null;
   const csm = d.claim_source_match ?? md.claim_source_match ?? null;
+  // large_pdf_extraction_preemption_v1 telemetry
+  const sc: any = md.limitation?.specific_case ?? md.specific_case ?? d.specific_case ?? {};
+  const preflight = {
+    exact_case_source_found: sc.exact_case_source_found ?? null,
+    exact_case_body_unavailable: sc.exact_case_body_unavailable ?? null,
+    body_unavailable_reason: sc.body_unavailable_reason ?? null,
+    extraction_skipped_reason: sc.extraction_skipped_reason ?? null,
+    large_pdf_skipped: sc.large_pdf_skipped ?? null,
+    pdf_preflight_size: sc.pdf_preflight_size ?? null,
+    pdf_preflight_decision: sc.pdf_preflight_decision ?? null,
+    text_endpoint_attempted: sc.text_endpoint_attempted ?? null,
+    text_endpoint_stub_detected: sc.text_endpoint_stub_detected ?? null,
+    derived_url_resolved: sc.derived_url_resolved ?? null,
+    acquisition_success: sc.acquisition_success ?? null,
+  };
+  const phase = md.phase ?? null;
 
   const valid = new Set<number>(fns.map((f: any) => Number(f.number)));
   const { found, dangling } = markersIn(answer, valid);
@@ -171,9 +188,17 @@ for (const q of QUERIES) {
   if (cpuKill) failures.push("cpu_kill");
   if (q.id === "B8" && answer && !answer.includes(B8_CANON)) failures.push("b8_canonical_quote_changed");
   if (q.id === "P02" && branch !== "docket_limitation") failures.push("p02_not_deterministic_docket_refusal");
-  if (q.id === "R02" && !(answer.includes("6821/93") || answer.includes("המזרחי"))) {
-    failures.push("r02_missing_exact_body");
+  if (q.id === "R02") {
+    if (!(answer.includes("6821/93") || answer.includes("המזרחי"))) {
+      failures.push("r02_missing_exact_docket_reference");
+    }
+    // Acceptable outcomes: real body, or the precise body-unavailable
+    // limitation. A generic reaper interruption is a failure.
+    if (phase === "retrieval_cpu_guard" || /interrupted/i.test(String(branch ?? ""))) {
+      failures.push("r02_generic_interruption");
+    }
   }
+  if (/interrupted/i.test(String(md.limitation?.reason ?? ""))) failures.push("retrieval_interrupted");
 
   const rec = {
     id: q.id,
@@ -196,6 +221,8 @@ for (const q of QUERIES) {
     invariant_passed: failures.filter((f) => f.startsWith("dangling") || f.startsWith("orphan") || f.startsWith("invariant")).length === 0,
     builder_report: report,
     claim_source_match: csm,
+    phase,
+    preflight,
     pass: failures.length === 0,
     failures,
     footnote_rows: fns.map((f: any) => ({
@@ -213,7 +240,7 @@ for (const q of QUERIES) {
 }
 
 writeFileSync(`${OUT}/SUMMARY.json`, JSON.stringify(results.map((r) => ({
-  id: r.id, pass: r.pass, failures: r.failures, max_marker: r.max_marker,
+  id: r.id, pass: r.pass, failures: r.failures, phase: r.phase, preflight: r.preflight, max_marker: r.max_marker,
   footnotes_length: r.footnotes_length, used_sources_length: r.used_sources_length,
   dangling: r.dangling_marker_count, orphan: r.orphan_source_row_count,
 })), null, 2));
