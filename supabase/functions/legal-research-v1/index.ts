@@ -1535,6 +1535,28 @@ async function handle(req: Request): Promise<Response> {
     dangling_marker_count: drafter.footnote_render_report?.dangling_marker_count ?? 0,
     orphan_source_row_count: drafter.footnote_render_report?.orphan_source_row_count ?? 0,
     footnote_invariant_passed: drafter.footnote_render_report?.invariant_passed ?? true,
+    // source_label_quality_v1 telemetry (per-source label audit trail).
+    source_label_quality: {
+      total: (drafter.input_sources ?? []).length,
+      fallback_used_count: (drafter.input_sources ?? []).filter((s) => !!s.fallback_used).length,
+      reclassified_count: (drafter.input_sources ?? []).filter((s) => !!s.classification_reason)
+        .length,
+      rows: (drafter.input_sources ?? []).map((s) => ({
+        ref: s.ref,
+        candidate_id: s.candidate_id,
+        raw_title: s.raw_title,
+        title: s.title,
+        title_status: s.title_status,
+        title_hygiene_action: s.title_hygiene_action ?? null,
+        title_hygiene_reasons: s.title_hygiene_reasons ?? [],
+        fallback_used: s.fallback_used ?? null,
+        classification_before: s.classification_before ?? null,
+        classification_after: s.classification_after ?? null,
+        classification_reason: s.classification_reason ?? null,
+        url: s.url,
+      })),
+    },
+
     schema_failure_reason: drafter.schema_failure_reason,
     quality_warning: drafter.quality_warning,
     missing_anchor_caveat_injected: drafter.missing_anchor_caveat_injected ?? false,
