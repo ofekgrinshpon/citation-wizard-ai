@@ -1798,7 +1798,7 @@ export async function runDrafterV2(
   // claim_source_match_validation_v1 — a source may only stay attached to a
   // block whose claim/facet/legal-area it was actually verified for.
   const matched = applyClaimSourceMatch(gated.draft ?? parsed.draft, inputSources, {
-    mainClaimIds: claims.map((c) => c.id),
+    mainClaimIds: claims.map((c) => c.claim_id),
   });
   const claim_source_match = matched.report;
 
