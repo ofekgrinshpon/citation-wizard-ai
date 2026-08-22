@@ -1,0 +1,17 @@
+[
+  {
+    "id": "F01",
+    "pass": true,
+    "failures": [],
+    "branch": null,
+    "footnotes_length": 5,
+    "used_sources_length": 5,
+    "dangling": 0,
+    "orphan": 0,
+    "uncertain_identity_count": 1,
+    "metadata_only_holdings": 0,
+    "invariant_passed": true,
+    "fallback_used_count": 0,
+    "reclassified_count": 1
+  }
+]
