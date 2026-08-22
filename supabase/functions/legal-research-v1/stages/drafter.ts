@@ -307,7 +307,32 @@ export function buildInputSources(
       url: c.source_url ?? null,
       source_type: c.source_type,
       origin: c.origin,
+      snippet: c.snippet,
     });
+    // source_label_quality_v1 — re-derive the label classification so that
+    // stale/host-only labels carried in metadata cannot over-claim authority.
+    const fresh = classifySourceIntegrity({
+      url: c.source_url,
+      title: c.title,
+      snippet: c.snippet,
+      source_type: c.source_type,
+      role: c.role,
+    });
+    let classification_reason: string | undefined;
+    const classification_before = integ0.citable_as;
+    if (
+      fresh.classification_reason &&
+      (integ0.citable_as === "judgment" || integ0.citable_as === "statute") &&
+      fresh.citable_as !== integ0.citable_as
+    ) {
+      integ0.citable_as = fresh.citable_as;
+      integ0.is_judgment_document = fresh.is_judgment_document ?? false;
+      integ0.integrity_flags = Array.from(
+        new Set([...(integ0.integrity_flags ?? []), ...fresh.integrity_flags]),
+      );
+      classification_reason = fresh.classification_reason;
+    }
+
     const synthesisRole = assignSynthesisRole({
       role: c.role,
       integrity: integ0,
