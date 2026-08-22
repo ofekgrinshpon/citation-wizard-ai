@@ -1777,14 +1777,24 @@ export async function runDrafterV2(
   // on a judgment whose body was never read.
   const gated = applyMetadataOnlyHoldingGate(parsed.draft, inputSources);
   const metadata_only_holding_gate = gated.report;
-  const built = buildFootnotedAnswer(gated.draft ?? parsed.draft, inputSources);
+
+  // claim_source_match_validation_v1 — a source may only stay attached to a
+  // block whose claim/facet/legal-area it was actually verified for.
+  const matched = applyClaimSourceMatch(gated.draft ?? parsed.draft, inputSources, {
+    mainClaimIds: claims.map((c) => c.id),
+  });
+  const claim_source_match = matched.report;
+
+  const built = buildFootnotedAnswer(matched.draft ?? gated.draft ?? parsed.draft, inputSources);
 
 
   // Rule 1.10 — Hebrew number ranges must be written high→low in source order.
   const answer_markdown = scrubNegativeExistenceClaims(
     normalizeHebrewNumberRanges(built.answer_markdown),
   ).text +
-    referenceOnlySection(metadata_only_holding_gate.reference_only_sources);
+    referenceOnlySection(metadata_only_holding_gate.reference_only_sources) +
+    matched.limitation_text;
+
 
   const synthesis_rendering = reportSynthesisRendering({
     plan: synthesisPlan,
