@@ -256,7 +256,22 @@ export interface DrafterInputSource {
    * rendered, never sent to the model. Empty for metadata-only sources.
    */
   topical_text?: string;
+
+  // ── claim_source_match_validation_v1 — verifier binding metadata ──────────
+  /** claim_ids this source was actually verified as direct/partial for. */
+  verified_claim_ids?: string[];
+  /** Facet ids this source was bound to (empty when facets are not in play). */
+  facet_ids?: string[];
+  /** Inferred legal-area lock id (see claimFacetExpansion.inferLegalAreaId). */
+  legal_area?: string | null;
+  /** Normalized support subtype used by the per-block claim gate. */
+  support_subtype?: "direct_rule" | "application" | "analogy" | "background" | "commentary";
+  /** Best verifier verdict across this source's verdicts. */
+  verifier_verdict?: string;
+  /** True when real body text (judgment/statute) was acquired for this source. */
+  body_acquired?: boolean;
 }
+
 
 
 
