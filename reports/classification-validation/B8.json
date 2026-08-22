@@ -1,0 +1,432 @@
+{
+  "id": "B8",
+  "classification_changed": [],
+  "classification_rows": [
+    {
+      "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+      "classification_before": null,
+      "classification_after": null,
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf"
+    },
+    {
+      "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח מעודכן)",
+      "classification_before": "statute",
+      "classification_after": "statute",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://main.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf"
+    },
+    {
+      "title": "חוק יסוד - כבוד האדם וחירותו",
+      "classification_before": "statute",
+      "classification_after": "statute",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf"
+    },
+    {
+      "title": "הכנסת - פרסום חקיקה (PDF)",
+      "classification_before": "statute",
+      "classification_after": "statute",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf"
+    },
+    {
+      "title": "חוק יסוד - כבוד האדם וחירותו",
+      "classification_before": "statute",
+      "classification_after": "statute",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf"
+    },
+    {
+      "title": "חוק יסוד - כבוד האדם וחירותו",
+      "classification_before": "statute",
+      "classification_after": "statute",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95"
+    },
+    {
+      "title": "חוקי היסוד של מדינת ישראל - אתר הכנסת",
+      "classification_before": "statute",
+      "classification_after": "statute",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://main.knesset.gov.il/Activity/Legislation/pages/basiclaws.aspx"
+    },
+    {
+      "title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [
+        "docket_in_text",
+        "case_prefix",
+        "party_names"
+      ],
+      "commentary_identity_signals": [
+        "commentary_path",
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://lawjournal.huji.ac.il/article/12/1527"
+    },
+    {
+      "title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [
+        "case_prefix",
+        "party_names",
+        "document_file",
+        "court_vocabulary"
+      ],
+      "commentary_identity_signals": [
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_3.pdf"
+    }
+  ],
+  "uncertain_identity_count": 0,
+  "downgrades": [],
+  "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+  "job_id": "b455196f-3616-4efd-b76a-f4c4bf3fa8d8",
+  "run_id": "18c21b81-21c9-41f1-8518-5028f9fe27f9",
+  "ms": 80831,
+  "terminal_status": "done",
+  "job_error": null,
+  "branch": "canonical_quote_registry",
+  "answer_length": 294,
+  "inline_marker_count": 2,
+  "max_marker": 1,
+  "footnotes_length": 1,
+  "used_sources_length": 1,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "invariant_passed": true,
+  "rendered_rows": [
+    {
+      "number": 1,
+      "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+      "citable_as": null,
+      "sub_titles": [
+        "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)"
+      ]
+    }
+  ],
+  "label_report": {
+    "rows": [
+      {
+        "ref": "r_basic_law_dignity-s1",
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+        "raw_title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+        "candidate_id": "canonical:basic_law_dignity-s1",
+        "title_status": "ok",
+        "fallback_used": null,
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": null,
+        "title_hygiene_action": null,
+        "classification_before": null,
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": null,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s1",
+        "url": "https://main.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח מעודכן)",
+        "raw_title": "חוק-יסוד: כבוד האדם וחירותו (נוסח מעודכן)",
+        "candidate_id": "eda9e0ec-e7d8-4b60-8934-7698308565de",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "statute",
+        "title_hygiene_action": "kept",
+        "classification_before": "statute",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s2",
+        "url": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+        "title": "חוק יסוד - כבוד האדם וחירותו",
+        "raw_title": "חוקי היסוד של מדינת ישראל",
+        "candidate_id": "50eba9a6-842f-474e-8d31-47ab5f48340e",
+        "title_status": "fallback_truncated",
+        "fallback_used": "statute_name",
+        "downgrade_reason": null,
+        "fallback_applied": true,
+        "fallback_candidate": "חוק-יסוד: כבוד האדם וחירותו",
+        "uncertain_identity": false,
+        "classification_after": "statute",
+        "title_hygiene_action": "title_truncated_mid_word",
+        "classification_before": "statute",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "title_truncated_mid_word",
+          "near_duplicate_title_collapsed"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": "statute_name:7>raw:3"
+      },
+      {
+        "ref": "s3",
+        "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf",
+        "title": "הכנסת - פרסום חקיקה (PDF)",
+        "raw_title": "הכנסת - פרסום חקיקה (PDF)",
+        "candidate_id": "71633528-ede9-4310-8534-24ebfb867f32",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "statute",
+        "title_hygiene_action": "kept",
+        "classification_before": "statute",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s4",
+        "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+        "title": "חוק יסוד - כבוד האדם וחירותו",
+        "raw_title": "חוק יסוד - כבוד האדם וחירותו",
+        "candidate_id": "06d3f0ac-fe16-4864-870a-0135122768e1",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "statute",
+        "title_hygiene_action": "kept",
+        "classification_before": "statute",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s5",
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+        "title": "חוק יסוד - כבוד האדם וחירותו",
+        "raw_title": "חוק-יסוד: כבוד האדם וחירותו",
+        "candidate_id": "f94dac81-5e4a-44c1-97dd-e46bdf2b055c",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "statute",
+        "title_hygiene_action": "kept",
+        "classification_before": "statute",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected",
+          "near_duplicate_title_collapsed"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s6",
+        "url": "https://main.knesset.gov.il/Activity/Legislation/pages/basiclaws.aspx",
+        "title": "חוקי היסוד של מדינת ישראל - אתר הכנסת",
+        "raw_title": "חוקי היסוד של מדינת ישראל - אתר הכנסת",
+        "candidate_id": "a357eee6-20a2-4b27-9103-9e8def501723",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "statute",
+        "title_hygiene_action": "kept",
+        "classification_before": "statute",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s7",
+        "url": "https://lawjournal.huji.ac.il/article/12/1527",
+        "title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+        "raw_title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+        "candidate_id": "0cd2c6d5-2dcc-4267-a2f3-fead0efdd792",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "docket_in_text",
+          "case_prefix",
+          "party_names"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_path",
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s8",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_3.pdf",
+        "title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+        "raw_title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+        "candidate_id": "19a2b2e5-8182-4c78-b8bc-b4ccb79f6450",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "case_prefix",
+          "party_names",
+          "document_file",
+          "court_vocabulary"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": null
+      }
+    ],
+    "total": 9,
+    "reclassified_count": 0,
+    "fallback_used_count": 1,
+    "classification_rerun_count": 0,
+    "classification_rerun_reason": [],
+    "classification_cache_hit_count": 9,
+    "source_label_cpu_guard_applied": true
+  },
+  "filename_titles": [],
+  "bare_institution_titles": [],
+  "ocr_duplicate_pairs": [],
+  "scholarship_as_statute": [],
+  "commentary_as_judgment": [],
+  "metadata_only_holdings": 0,
+  "used_sources": [
+    {
+      "number": 1,
+      "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf"
+    }
+  ],
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 1,
+    "invariant_passed": true,
+    "inline_marker_count": 2,
+    "used_sources_length": 1,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹"
+}

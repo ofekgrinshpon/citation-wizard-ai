@@ -1,39 +1,626 @@
 {
   "id": "F02",
-  "classification_changed": [],
-  "classification_rows": [],
-  "uncertain_identity_count": 0,
-  "downgrades": [],
+  "classification_changed": [
+    {
+      "title": "סדרי מינהל בבתי הדין הרבניים - משרד המשפטים",
+      "before": "unknown",
+      "after": "commentary",
+      "reason": "commentary_identity"
+    },
+    {
+      "title": "השירות לציבור בבתי הדין הרבניים - מבקר המדינה",
+      "before": "unknown",
+      "after": "commentary",
+      "reason": "commentary_identity"
+    },
+    {
+      "title": "דין וחשבון שנתי 2023 - משרד המשפטים",
+      "before": "unknown",
+      "after": "commentary",
+      "reason": "commentary_identity"
+    }
+  ],
+  "classification_rows": [
+    {
+      "title": "חוק הבוררות, ולא בעתירה כוללת",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "judgment_mirror_host",
+        "court_vocabulary",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": true,
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%A9%D7%92%D7%94-%D7%A2%D7%9C-%D7%A4%D7%A1%D7%A7-%D7%91%D7%95%D7%A8%D7%A8%D7%95%D7%AA-%D7%A9%D7%9C-%D7%91%D7%99%22%D7%93-%D7%A8%D7%91%D7%A0%D7%99-%D7%94%D7%99%D7%90-%D7%91%D7%A4%D7%A0%D7%99%D7%94-%D7%9C%D7%91%D7%99%D7%94%D7%9E%22%D7%A9-%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%91%D7%91%D7%A7%D7%A9%D7%94-%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%9C-%D7%94%D7%A4%D7%A1%D7%A7"
+    },
+    {
+      "title": "נושאים לבקורת בתי הדין הרבניים",
+      "classification_before": "unknown",
+      "classification_after": "unknown",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://fs.knesset.gov.il/%5C17%5CCommittees%5C17_cs_bg_336212.doc"
+    },
+    {
+      "title": "סדרי מינהל בבתי הדין הרבניים - משרד המשפטים",
+      "classification_before": "unknown",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [
+        "commentary_snippet_shape"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/1746-37.aspx"
+    },
+    {
+      "title": "השירות לציבור בבתי הדין הרבניים - מבקר המדינה",
+      "classification_before": "unknown",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [
+        "commentary_snippet_shape"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2021/71C/2021-71c-212-Batey-Din-Rabaniyim.pdf"
+    },
+    {
+      "title": "קובץ חיקוקים והנחיות לבתי הדין הרבניים 2025",
+      "classification_before": "unknown",
+      "classification_after": "unknown",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.gov.il/BlobFolder/legalinfo/rules_and_guidelines/he/%D7%A1%D7%A4%D7%A8%20%D7%A7%D7%95%D7%91%D7%A5%20%D7%97%D7%99%D7%A7%D7%95%D7%A7%D7%99%D7%9D%20%D7%95%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA%20%D7%9C%D7%91%D7%AA%D7%99%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%D7%99%D7%9D%20-%20%D7%94%D7%AA%D7%A9%D7%A4\"%D7%94%205.6.2025%20%D7%A9%D7%A2%D7%94%2023.00.pdf"
+    },
+    {
+      "title": "דין וחשבון שנתי 2023 - משרד המשפטים",
+      "classification_before": "unknown",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [
+        "commentary_title_shape"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/2023-report/he/2023%20Hoveret%20Misrad%20Mishpatim_09.pdf"
+    },
+    {
+      "title": "נישואין, גירושין וערכאות השיפוט – נתונים למחשבה",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-rozen.pdf"
+    },
+    {
+      "title": "שינויים טכניים צפויים בגרסת המאמר המודפסת",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [
+        "commentary_title_shape",
+        "scholarship_shape"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-09/%D7%95%D7%90%D7%A3-%D7%A2%D7%9C-%D7%A4%D7%99%20%D7%9B%D7%9F%20-%20%D7%9E%D7%A8%D7%95%D7%A5%20%D7%A1%D7%9E%D7%9B%D7%95%D7%99%D7%95%D7%AA_0.pdf"
+    },
+    {
+      "title": "\"מלחמה ושלום\": תביעות שלום-בית בבתי-הדין הרבניים וכשלונן ביישוב משברי נישואים | יוסף שרעבי (כרך יט)",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://runilawreview.org/2017/08/08/volume19_sharabi/"
+    },
+    {
+      "title": "חוק המסמיך",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [
+        "party_names",
+        "court_vocabulary"
+      ],
+      "commentary_identity_signals": [
+        "commentary_path",
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://lawjournal.huji.ac.il/article/12/760"
+    },
+    {
+      "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+      "classification_before": "judgment",
+      "classification_after": "judgment",
+      "judgment_identity_signals": [
+        "docket_in_text",
+        "case_prefix",
+        "party_names",
+        "court_vocabulary",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
+    }
+  ],
+  "uncertain_identity_count": 1,
+  "downgrades": [
+    {
+      "title": "חוק הבוררות, ולא בעתירה כוללת",
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
+    }
+  ],
   "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי?",
-  "job_id": "9f21ec51-aa65-461e-9374-b8bd899bca5c",
-  "run_id": "1541df04-6f53-42cd-a053-00a3f17aaea2",
-  "ms": 824520,
-  "terminal_status": "failed",
-  "job_error": "stale_worker_timeout",
+  "job_id": "e95eee03-c507-47c8-bb7e-c3b07729c90a",
+  "run_id": "d21ac223-2b1a-4a2a-89a0-56eafe31c0e7",
+  "ms": 131723,
+  "terminal_status": "done",
+  "job_error": null,
   "branch": null,
-  "answer_length": 0,
-  "inline_marker_count": 0,
-  "max_marker": 0,
-  "footnotes_length": 0,
-  "used_sources_length": 0,
+  "answer_length": 3213,
+  "inline_marker_count": 12,
+  "max_marker": 7,
+  "footnotes_length": 7,
+  "used_sources_length": 4,
   "dangling_marker_count": 0,
   "orphan_source_row_count": 0,
   "invariant_passed": true,
-  "rendered_rows": [],
-  "label_report": null,
+  "rendered_rows": [
+    {
+      "number": 1,
+      "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+      "citable_as": null,
+      "sub_titles": [
+        "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)"
+      ]
+    },
+    {
+      "number": 2,
+      "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023); קובץ חיקוקים והנחיות לבתי הדין הרבניים 2025",
+      "citable_as": null,
+      "sub_titles": [
+        "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+        "קובץ חיקוקים והנחיות לבתי הדין הרבניים 2025"
+      ]
+    },
+    {
+      "number": 3,
+      "title": "חוק הבוררות, ולא בעתירה כוללת",
+      "citable_as": null,
+      "sub_titles": [
+        "חוק הבוררות, ולא בעתירה כוללת"
+      ]
+    },
+    {
+      "number": 4,
+      "title": "חוק הבוררות, ולא בעתירה כוללת; נושאים לבקורת בתי הדין הרבניים",
+      "citable_as": null,
+      "sub_titles": [
+        "חוק הבוררות, ולא בעתירה כוללת",
+        "נושאים לבקורת בתי הדין הרבניים"
+      ]
+    },
+    {
+      "number": 5,
+      "title": "קובץ חיקוקים והנחיות לבתי הדין הרבניים 2025",
+      "citable_as": null,
+      "sub_titles": [
+        "קובץ חיקוקים והנחיות לבתי הדין הרבניים 2025"
+      ]
+    },
+    {
+      "number": 6,
+      "title": "נושאים לבקורת בתי הדין הרבניים",
+      "citable_as": null,
+      "sub_titles": [
+        "נושאים לבקורת בתי הדין הרבניים"
+      ]
+    },
+    {
+      "number": 7,
+      "title": "קובץ חיקוקים והנחיות לבתי הדין הרבניים 2025; נושאים לבקורת בתי הדין הרבניים",
+      "citable_as": null,
+      "sub_titles": [
+        "קובץ חיקוקים והנחיות לבתי הדין הרבניים 2025",
+        "נושאים לבקורת בתי הדין הרבניים"
+      ]
+    }
+  ],
+  "label_report": {
+    "rows": [
+      {
+        "ref": "s1",
+        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%A9%D7%92%D7%94-%D7%A2%D7%9C-%D7%A4%D7%A1%D7%A7-%D7%91%D7%95%D7%A8%D7%A8%D7%95%D7%AA-%D7%A9%D7%9C-%D7%91%D7%99%22%D7%93-%D7%A8%D7%91%D7%A0%D7%99-%D7%94%D7%99%D7%90-%D7%91%D7%A4%D7%A0%D7%99%D7%94-%D7%9C%D7%91%D7%99%D7%94%D7%9E%22%D7%A9-%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%91%D7%91%D7%A7%D7%A9%D7%94-%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%9C-%D7%94%D7%A4%D7%A1%D7%A7",
+        "title": "חוק הבוררות, ולא בעתירה כוללת",
+        "raw_title": "השגה על פסק בוררות של בי\"ד רבני היא בפניה לביהמ\"ש המחוזי בבקשה לביטול הפסק",
+        "candidate_id": "cfe055fb-ccc3-4792-8294-8d556c067f9a",
+        "title_status": "fallback_truncated",
+        "fallback_used": "statute_name",
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "fallback_applied": true,
+        "fallback_candidate": "חוק הבוררות, ולא בעתירה כוללת",
+        "uncertain_identity": true,
+        "classification_after": "commentary",
+        "title_hygiene_action": "title_truncated_mid_word",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "title_truncated_mid_word"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "judgment_mirror_host",
+          "court_vocabulary",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": "statute_name:7>raw:3"
+      },
+      {
+        "ref": "s2",
+        "url": "https://fs.knesset.gov.il/%5C17%5CCommittees%5C17_cs_bg_336212.doc",
+        "title": "נושאים לבקורת בתי הדין הרבניים",
+        "raw_title": "נושאים לבקורת בתי הדין הרבניים",
+        "candidate_id": "45a22b52-b287-4700-934f-61b959dd7d6f",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "unknown",
+        "title_hygiene_action": "kept",
+        "classification_before": "unknown",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s3",
+        "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/1746-37.aspx",
+        "title": "סדרי מינהל בבתי הדין הרבניים - משרד המשפטים",
+        "raw_title": "סדרי מינהל בבתי הדין הרבניים - משרד המשפטים",
+        "candidate_id": "aa902aa3-b31f-4898-b078-46c682a254c8",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "unknown",
+        "classification_reason": "commentary_identity",
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_snippet_shape"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s4",
+        "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2021/71C/2021-71c-212-Batey-Din-Rabaniyim.pdf",
+        "title": "השירות לציבור בבתי הדין הרבניים - מבקר המדינה",
+        "raw_title": "השירות לציבור בבתי הדין הרבניים - מבקר המדינה",
+        "candidate_id": "1e24b8ba-90d4-49aa-a4b2-670cce1a8b9e",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "unknown",
+        "classification_reason": "commentary_identity",
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_snippet_shape"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s5",
+        "url": "https://www.gov.il/BlobFolder/legalinfo/rules_and_guidelines/he/%D7%A1%D7%A4%D7%A8%20%D7%A7%D7%95%D7%91%D7%A5%20%D7%97%D7%99%D7%A7%D7%95%D7%A7%D7%99%D7%9D%20%D7%95%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA%20%D7%9C%D7%91%D7%AA%D7%99%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%D7%99%D7%9D%20-%20%D7%94%D7%AA%D7%A9%D7%A4\"%D7%94%205.6.2025%20%D7%A9%D7%A2%D7%94%2023.00.pdf",
+        "title": "קובץ חיקוקים והנחיות לבתי הדין הרבניים 2025",
+        "raw_title": "קובץ חיקוקים והנחיות לבתי הדין הרבניים 2025",
+        "candidate_id": "1d4bc34b-0d42-41a3-968c-dd2ea3200ac0",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "unknown",
+        "title_hygiene_action": "kept",
+        "classification_before": "unknown",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s6",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/2023-report/he/2023%20Hoveret%20Misrad%20Mishpatim_09.pdf",
+        "title": "דין וחשבון שנתי 2023 - משרד המשפטים",
+        "raw_title": "דין וחשבון שנתי 2023 - משרד המשפטים",
+        "candidate_id": "d6f47c54-0bc7-4565-b907-34a75dec52aa",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "unknown",
+        "classification_reason": "commentary_identity",
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_title_shape"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s7",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-rozen.pdf",
+        "title": "נישואין, גירושין וערכאות השיפוט – נתונים למחשבה",
+        "raw_title": "נישואין, גירושין וערכאות השיפוט – נתונים למחשבה",
+        "candidate_id": "895d428c-099c-484f-9972-e3df46e6b7a7",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s8",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2023-09/%D7%95%D7%90%D7%A3-%D7%A2%D7%9C-%D7%A4%D7%99%20%D7%9B%D7%9F%20-%20%D7%9E%D7%A8%D7%95%D7%A5%20%D7%A1%D7%9E%D7%9B%D7%95%D7%99%D7%95%D7%AA_0.pdf",
+        "title": "שינויים טכניים צפויים בגרסת המאמר המודפסת",
+        "raw_title": "שינויים טכניים צפויים בגרסת המאמר המודפסת",
+        "candidate_id": "ec575fbe-60db-43a4-977a-5880520602c5",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_title_shape",
+          "scholarship_shape"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s9",
+        "url": "https://runilawreview.org/2017/08/08/volume19_sharabi/",
+        "title": "\"מלחמה ושלום\": תביעות שלום-בית בבתי-הדין הרבניים וכשלונן ביישוב משברי נישואים | יוסף שרעבי (כרך יט)",
+        "raw_title": "\"מלחמה ושלום\": תביעות שלום-בית בבתי-הדין הרבניים וכשלונן ביישוב משברי נישואים | יוסף שרעבי (כרך יט)",
+        "candidate_id": "590cde3d-15f7-4fd6-ab69-de6ac4ddbf53",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s10",
+        "url": "https://lawjournal.huji.ac.il/article/12/760",
+        "title": "חוק המסמיך",
+        "raw_title": "מכתבים למערכת, שיקול־דעת מוחלט",
+        "candidate_id": "bb68474c-4e59-486a-9182-1183df768b3c",
+        "title_status": "fallback_truncated",
+        "fallback_used": "statute_name",
+        "downgrade_reason": null,
+        "fallback_applied": true,
+        "fallback_candidate": "חוק המסמיך",
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "title_truncated_mid_word",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "title_truncated_mid_word"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "party_names",
+          "court_vocabulary"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_path",
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": "statute_name:5>raw:3"
+      },
+      {
+        "ref": "s11",
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+        "raw_title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+        "candidate_id": "11679352-e11b-43c8-9af4-3e3d8591dfec",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "judgment",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "docket_in_text",
+          "case_prefix",
+          "party_names",
+          "court_vocabulary",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      }
+    ],
+    "total": 11,
+    "reclassified_count": 3,
+    "fallback_used_count": 2,
+    "classification_rerun_count": 0,
+    "classification_rerun_reason": [],
+    "classification_cache_hit_count": 16,
+    "source_label_cpu_guard_applied": true
+  },
   "filename_titles": [],
   "bare_institution_titles": [],
   "ocr_duplicate_pairs": [],
   "scholarship_as_statute": [],
   "commentary_as_judgment": [],
   "metadata_only_holdings": 0,
-  "used_sources": [],
-  "footnote_render_report": null,
-  "pass": false,
-  "failures": [
-    "no_terminal_qa_row",
-    "empty_answer_body",
-    "cpu_kill"
+  "used_sources": [
+    {
+      "number": 1,
+      "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+      "citable_as": "judgment",
+      "text_usability": "full_text",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
+    },
+    {
+      "number": 2,
+      "title": "קובץ חיקוקים והנחיות לבתי הדין הרבניים 2025",
+      "citable_as": "unknown",
+      "text_usability": "metadata_only",
+      "url": "https://www.gov.il/BlobFolder/legalinfo/rules_and_guidelines/he/%D7%A1%D7%A4%D7%A8%20%D7%A7%D7%95%D7%91%D7%A5%20%D7%97%D7%99%D7%A7%D7%95%D7%A7%D7%99%D7%9D%20%D7%95%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA%20%D7%9C%D7%91%D7%AA%D7%99%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%D7%99%D7%9D%20-%20%D7%94%D7%AA%D7%A9%D7%A4\"%D7%94%205.6.2025%20%D7%A9%D7%A2%D7%94%2023.00.pdf"
+    },
+    {
+      "number": 3,
+      "title": "חוק הבוררות, ולא בעתירה כוללת",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only",
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%A9%D7%92%D7%94-%D7%A2%D7%9C-%D7%A4%D7%A1%D7%A7-%D7%91%D7%95%D7%A8%D7%A8%D7%95%D7%AA-%D7%A9%D7%9C-%D7%91%D7%99%22%D7%93-%D7%A8%D7%91%D7%A0%D7%99-%D7%94%D7%99%D7%90-%D7%91%D7%A4%D7%A0%D7%99%D7%94-%D7%9C%D7%91%D7%99%D7%94%D7%9E%22%D7%A9-%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%91%D7%91%D7%A7%D7%A9%D7%94-%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%9C-%D7%94%D7%A4%D7%A1%D7%A7"
+    },
+    {
+      "number": 4,
+      "title": "נושאים לבקורת בתי הדין הרבניים",
+      "citable_as": "unknown",
+      "text_usability": "metadata_only",
+      "url": "https://fs.knesset.gov.il/%5C17%5CCommittees%5C17_cs_bg_336212.doc"
+    }
   ],
-  "answer": ""
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 7,
+    "invariant_passed": true,
+    "inline_marker_count": 12,
+    "used_sources_length": 4,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "**תקציר תשובה**\n\nבג״ץ בוחן את החלטות בית הדין הרבני בדרך ביקורת של חוקיות וסבירות משפטית ולא כהחלפה של שיקול מקצועי ענייני; התערבות תתאפשר כאשר מתקיימת טעות מהותית בדין, חריגה מסמכות או הסתמכות על שיקול שאינו רלוונטי למטרת הסמכות.¹\n\n**עילת ההתערבות של בג״ץ**\n\nהעיקרון המנחה הוא שלטון החוק: בג״ץ מפקח על חוקיות השיקול ולא על מסקנות עובדתיות טכניות, ובמועד הביקורת הוא בוחן האם השיקול נפל בתוך גבולות הסמכות והאם חלה טעות בדין או שימוש לרעה בסמכות.¹\n\n**תחולת הדין האזרחי על פסיקות בענייני רכוש בבתי הדין הרבניים**\n\nבמקרים רבים ענייני ממון המובאים בפני בתי הדין הרבניים מוכרעים לפי הדין האזרחי הכללי, ולכן הסתמכות על שיקולים שאינם חלק מהמסגרת האזרחית הרלוונטית מערערת את ההלכה המשפטית שחלה על ההכרעה.⁵\n\nעם זאת, במקורות שאותרו לא נמצא עיגון דוקטרינלי אחד חד־משמעי המתייחס בדיוק לשאלה אילו הסתמכויות של בית הדין הרבני ייחשבו בעיניי בג״ץ כ'שיקול חיצוני'—ולכן יש לנסח מסקנות אלו בזהירות בהתאם למבחני משפט מינהלי כלליים.\n\n**האם הסתמכות על שיקול חיצוני מהווה עילת ביטול?**\n\nתלוי בעוצמה והקשר: אם השיקול הזר סתום את הבחינה המשפטית, חורג ממטרת הסמכות או מהדינים המתחייבים, בתי המשפט המינהליים קיבלו שרעיון כזה יכול להיחשב כטעות בדין או שימוש לרעה בסמכות — עובדה שמצויה בעקרונות הביקורת המינהלית והפסיקה שנכללה במקורות.¹\n\nיתרה מזאת, בהיעדר ניסוח חריג בבתי הדין הרבניים עצמם או בהיעדר פסיקה ספציפית בעניינם, תוצאת הבדיקה תשתנה לפי עובדות המקרה ומידת הראיות המצביעות על ההסתמכות הזרה.\n\n**מבחן ראייתי־משפטי שיש להראות בבג״ץ**\n\n- זיהוי ברור של השיקול החיצוני: הצגת הטענה הקונקרטית מה שדחף את ההכרעה (למשל לחצים בעניינים אישיים, שיקולים ציבוריים שאינם רלוונטיים לרכוש ועוד), ככל שיש לכך מסמכים או פרוטוקולים פנימיים.⁶\n- קשר סיבתי בין השיקול לבין ההכרעה: ראיות שהשיקול הזר היה גורם עובד ומכריע בהחלטה (למשל הסתמכות מילולית/כתובה בפסק הדין על אותו שיקול, או פגם מובנה בנימוקים שמצביע כי שיקול זה קבע את התוצאה).¹\n- היעדר סיבה חלופית סבירה: הפגנת כך שההכרעה לא ניתנה על בסיס נימוקים משפטיים מקובלים (דין אזרחי) או שהנימוקים הרשמיים אינם מספקים להסביר את התוצאה, כך שניתן להסיק כי השיקול הזר הוא ההסבר הסביר ביותר.¹\n- תמיכה עובדתית חיצונית: דו״חות, הנחיות או ראיות מערכתיות שידועות על דפוסים של התנהלות בבתי הדין (הודעות הנהלה, הנחיות פנימיות או דפוסי החלטה) שיכולות לגבות את טענת ההסתמכות על שיקולים חיצוניים.⁷\n\n**סעדים שהמבחן עשוי להוליך אליהם**\n\nאם בג״ץ ימצא כי התקיימה טעות בדין או שימוש לרעה בסמכות עקב הסתמכות על שיקול חיצוני, הסעדים האפשריים יחולו על פי הדרג המשפטי והנהלים המתאימים ויכללו ביטול/הכרעה על בטלות ההחלטה או החזרת העניין לערכאה בעלת הסמכות להכריע מחדש במסגרת החוקית.¹\n\nבמקרים של פסק בוררות שניתן בבית הדין הרבני, יש לשים לב להוראת הסדרי הבוררות: הדרך הפרוצדורלית הנכונה להשיג על פסק בוררות קונקרטי היא באמצעות בקשת ביטול לבית המשפט המחוזי לפי חוק הבוררות; משמעות הדבר היא שהסעד המעשי עשוי לעבור דרך הליך כזה ולא בהכרח בעתירה ישירה לבג״ץ.³\n\nבנוסף ניתן לבקש צעדים זמניים (צו מניעה או צו לשימור מצב) כדי למנוע ביצוע פסק דין שנשען על שיקול חשוד עד להכרעה שיפוטית, וזאת בהתאם לסמכות בתי המשפט ולנסיבות העניין.²\n\nלסיכום פרקטי ושימת דגש ראייתית: הנטל מוטל על המערער להראות בצורה קונקרטית את נוכחותו והשפעתו של השיקול הזר; ראיות מעינות דו״חיות־מינהליות, פרוטוקולי דיון והנחיות פנימיות מחזקות את הטענה. בהיעדר ראיות חזקות, בג״ץ יירתע ממעשה התערבות במקום בו מדובר בסמכות שיפוטית ובשיקולים ענייניים שהמבוססים על הדין האזרחי.⁴"
 }

@@ -3,6 +3,7 @@
 // For useful clues in discovery-only items (docket, statute+section), one
 // follow-up search is run to surface the canonical/official source.
 
+import type { RetrievalGovernor } from "./retrievalGovernor.ts";
 import {
   Candidate,
   CAPS,
@@ -230,7 +231,11 @@ interface PplxSource {
   snippet_full?: string;
 }
 
-async function callPerplexity(query: Query, queryOverride?: string): Promise<{
+async function callPerplexity(
+  query: Query,
+  queryOverride?: string,
+  budget?: RetrievalGovernor | null,
+): Promise<{
   raw: PplxSource[];
   ms: number;
   ok: boolean;
@@ -279,7 +284,7 @@ async function callPerplexity(query: Query, queryOverride?: string): Promise<{
           },
         },
       }),
-      signal: AbortSignal.timeout(PPLX_TIMEOUT_MS),
+      signal: budget ? budget.callSignal(PPLX_TIMEOUT_MS) : AbortSignal.timeout(PPLX_TIMEOUT_MS),
     });
     const ms = Date.now() - t0;
     if (!r.ok) return { raw: [], ms, ok: false, http: r.status };
@@ -557,8 +562,9 @@ async function runOneQuery(
   q: Query,
   index: number,
   hygieneCounts: PplxHygieneCounts,
+  budget?: RetrievalGovernor | null,
 ): Promise<PerQueryWorkResult> {
-  const first = await callPerplexity(q);
+  const first = await callPerplexity(q, undefined, budget);
   const { admitted, rows, followupTerms } = processRaw(q, first.raw, hygieneCounts);
   const allCandidates: Candidate[] = [...admitted];
   let totalMs = first.ms;
@@ -566,9 +572,9 @@ async function runOneQuery(
   let rate_limited = first.http === 429;
 
   // One follow-up using the most promising extracted term, if any.
-  if (followupTerms.length > 0) {
+  if (followupTerms.length > 0 && (!budget || budget.canLaunch())) {
     const term = followupTerms[0];
-    const second = await callPerplexity(q, `${term} ${q.query_he}`.slice(0, 200));
+    const second = await callPerplexity(q, `${term} ${q.query_he}`.slice(0, 200), budget);
     totalMs += second.ms;
     if (second.http === 429) rate_limited = true;
     const second_p = processRaw(q, second.raw, hygieneCounts);
@@ -613,7 +619,9 @@ async function runOneQuery(
 
 export async function runPerplexityRetrieval(
   queries: Query[],
+  opts: { budget?: RetrievalGovernor | null } = {},
 ): Promise<PerplexityRetrievalResult> {
+  const budget = opts.budget ?? null;
   const t0 = Date.now();
   const key = Deno.env.get("PERPLEXITY_API_KEY");
   const concEnv = Number(Deno.env.get("PERPLEXITY_CONCURRENCY") ?? "4");
@@ -642,7 +650,13 @@ export async function runPerplexityRetrieval(
     while (true) {
       const i = next++;
       if (i >= targets.length) return;
-      results[i] = await runOneQuery(targets[i], i, hygieneCounts);
+      // retrieval_budget_enforcement_v1: never START a new web query once the
+      // launch window has closed — the remaining ones are abandoned, counted.
+      if (budget && !budget.canLaunch()) {
+        budget.noteAborted();
+        continue;
+      }
+      results[i] = await runOneQuery(targets[i], i, hygieneCounts, budget);
     }
   }
   const workerCount = Math.max(1, Math.min(concurrency_limit, targets.length));

@@ -3,6 +3,7 @@
 // - FTS uses compact_query_he (4–8 core legal terms), not the full normalized model text.
 // - Vector recall capped: max 2 per claim (applied in candidatePool too); ordering ensured by score weights.
 
+import type { RetrievalGovernor } from "./retrievalGovernor.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { Candidate, CAPS, Claim, Query, StageRun } from "../lib/types.ts";
 
@@ -619,7 +620,9 @@ export async function runLocalRetrieval(
   admin: Admin,
   queries: Query[],
   ctx: { question: string; claims: Claim[] },
+  opts: { budget?: RetrievalGovernor | null } = {},
 ): Promise<LocalRetrievalResult> {
+  const budget = opts.budget ?? null;
   const t0 = Date.now();
   const targets = queries.filter((q) => q.targets.includes("local_db"));
   const candidates: Candidate[] = [];
@@ -632,8 +635,9 @@ export async function runLocalRetrieval(
   );
   const ctxCorpus = [ctx.question, ...(ctx.claims || []).map((c) => c.text_he)].join(" ");
 
-  await Promise.all(
-    targets.map(async (q) => {
+  // retrieval_budget_enforcement_v1: bounded worker pool instead of an
+  // unbounded Promise.all over every planner/facet query, plus a launch gate.
+  const runOneLocalQuery = async (q: Query) => {
       const qStart = Date.now();
       const compact = buildCompactQuery(q.query_he, ctxCorpus);
       const plannerClues = detectExactClues(q.query_he, "planner_query");
@@ -826,8 +830,27 @@ export async function runLocalRetrieval(
           top_vector_titles: vecRows.slice(0, 5).map((r) => r.document_title),
         },
       });
-    }),
-  );
+  };
+
+  {
+    const LOCAL_CONCURRENCY = 4;
+    let next = 0;
+    const worker = async () => {
+      while (true) {
+        const i = next++;
+        if (i >= targets.length) return;
+        if (budget && !budget.canLaunch()) {
+          budget.noteAborted();
+          continue;
+        }
+        await runOneLocalQuery(targets[i]);
+      }
+    };
+    await Promise.all(
+      Array.from({ length: Math.max(1, Math.min(LOCAL_CONCURRENCY, targets.length)) }, worker),
+    );
+  }
+
 
   const wallMs = Date.now() - t0;
 

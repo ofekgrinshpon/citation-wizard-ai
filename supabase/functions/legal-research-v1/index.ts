@@ -715,20 +715,36 @@ async function handle(req: Request): Promise<Response> {
   const localQueries = fastLaneHit ? allQueries.slice(0, 3) : allQueries;
   await budget.markDurable("local_db_start", { queries: localQueries.length });
   const pplxQueries = fastLaneHit ? [] : allQueries;
+  // retrieval_budget_enforcement_v1: both legs are raced against the hard
+  // wall-clock budget. A leg that has not settled by the deadline is ignored
+  // (counted) and retrieval continues with whatever is already in hand.
+  const emptyLocal = { candidates: [], stage_runs: [] } as unknown as
+    Awaited<ReturnType<typeof runLocalRetrieval>>;
+  const emptyPplx = { candidates: [], stage_runs: [] } as unknown as
+    Awaited<ReturnType<typeof runPerplexityRetrieval>>;
   const [local, pplx] = await Promise.all([
-    runLocalRetrieval(admin, localQueries, { question, claims: analyzer.claims })
-      .then((r) => {
-        budget.mark("local_db_done", { candidates: r.candidates.length });
-        return r;
-      }),
+    budget.raceDeadline(
+      "local_retrieval",
+      budget.timed("local_retrieval", () =>
+        runLocalRetrieval(admin, localQueries, { question, claims: analyzer.claims }, { budget })
+          .then((r) => {
+            budget.mark("local_db_done", { candidates: r.candidates.length });
+            return r;
+          })),
+      emptyLocal,
+    ),
     // Perplexity is the dominant CPU/wall cost. A resolved exact-docket body
     // already answers the question, so don't spend it.
-    (async () => {
-      budget.mark("perplexity_start", { queries: pplxQueries.length, skipped: fastLaneHit });
-      const r = await runPerplexityRetrieval(pplxQueries);
-      budget.mark("perplexity_done", { candidates: r.candidates.length });
-      return r;
-    })(),
+    budget.raceDeadline(
+      "perplexity_retrieval",
+      budget.timed("perplexity_retrieval", async () => {
+        budget.mark("perplexity_start", { queries: pplxQueries.length, skipped: fastLaneHit });
+        const r = await runPerplexityRetrieval(pplxQueries, { budget });
+        budget.mark("perplexity_done", { candidates: r.candidates.length });
+        return r;
+      }),
+      emptyPplx,
+    ),
   ]);
   stage_runs.push(...local.stage_runs, ...pplx.stage_runs);
   budget.mark("candidate_pool_start", {
@@ -756,6 +772,7 @@ async function handle(req: Request): Promise<Response> {
     skipped: skipAcquisition,
     candidates: skipAcquisition ? 0 : pool.candidates.length,
   });
+  if (!skipAcquisition) budget.noteBodyAcquisition();
   const judgmentAcquisition = await runJudgmentTextAcquisition({
     admin,
     research_mode: researchMode,
@@ -1356,6 +1373,14 @@ async function handle(req: Request): Promise<Response> {
     facets_without_primary_support: facetTelemetry.filter((f) => !f.primary_support_found).length,
     facets_commentary_only: facetTelemetry.filter((f) => f.commentary_only).length,
   };
+  // retrieval_budget_enforcement_v1: candidates admitted per doctrinal facet.
+  const candidateCountByFacet: Record<string, number> = {};
+  for (const c of pool.candidates) {
+    const fid = ((c.metadata as Record<string, unknown> | undefined)?.facet_id ?? "unfaceted") as string;
+    candidateCountByFacet[fid] = (candidateCountByFacet[fid] ?? 0) + 1;
+  }
+
+
 
   // Re-compute statuses post-drafter to reflect citation outcome.
   const usedIdSetForAnchors = new Set(drafter.used_sources.map((u) => u.candidate_id));
@@ -1676,8 +1701,19 @@ async function handle(req: Request): Promise<Response> {
   const verifierFailedNoDrafter = !drafter.ok
     && drafter.error === "no_usable_candidates"
     && verifier.call_failed;
+  const budgetReport = budget.report();
+  budget.dispose();
+  // retrieval_budget_enforcement_v1: when retrieval was cut short by the hard
+  // wall-clock budget, the answer must disclose that the source search was
+  // incomplete. Presentation-only: no change to drafting or source selection.
+  const PARTIAL_RETRIEVAL_NOTE =
+    "\n\n> החיפוש הופסק עקב מגבלת זמן, ולכן ייתכן שלא אותרו כל המקורות הרלוונטיים.";
+  const partialRetrieval = budgetReport.partial_retrieval_used ||
+    budgetReport.budget_exceeded;
   const finalAnswer = drafter.ok
-    ? drafter.answer_markdown
+    ? (partialRetrieval
+        ? `${drafter.answer_markdown}${PARTIAL_RETRIEVAL_NOTE}`
+        : drafter.answer_markdown)
     : (verifierFailedNoDrafter ? VERIFIER_FAILURE_ANSWER : STUB_ANSWER);
   const finalFootnotes = drafter.ok ? drafter.footnotes : [];
 
@@ -1698,6 +1734,23 @@ async function handle(req: Request): Promise<Response> {
       run_id,
       total_ms: Date.now() - t_start,
       stage_runs,
+      // retrieval_budget_enforcement_v1 telemetry.
+      retrieval_budget_enforcement: {
+        version: "retrieval_budget_enforcement_v1",
+        retrieval_budget_ms: budgetReport.retrieval_budget_ms,
+        retrieval_elapsed_ms: budgetReport.retrieval_elapsed_ms,
+        budget_exceeded: budgetReport.budget_exceeded,
+        aborted_tasks_count: budgetReport.aborted_tasks_count,
+        ignored_late_tasks_count: budgetReport.ignored_late_tasks_count,
+        partial_retrieval_used: partialRetrieval,
+        partial_sources_count: partialRetrieval ? pool.candidates.length : 0,
+        body_acquisition_count: budgetReport.body_acquisition_count,
+        extraction_count: budgetReport.extraction_count,
+        extraction_bytes: budgetReport.extraction_bytes,
+        longest_retrieval_step: budgetReport.longest_retrieval_step,
+        candidate_count_by_facet: candidateCountByFacet,
+        terminal_result_written: true,
+      },
       planning: planningMeta,
       claims: analyzer.claims,
       queries: allQueries,

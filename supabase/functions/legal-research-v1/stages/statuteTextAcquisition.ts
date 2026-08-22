@@ -189,6 +189,7 @@ async function acquireOne(
   url: string,
   budgetExceeded: () => boolean,
   onStage: StatuteStageSink,
+  allowExtraction?: (bytes: number) => boolean,
 ): Promise<string> {
   const signal = AbortSignal.timeout(STATUTE_ACQUISITION_LIMITS.PER_ATTEMPT_MS);
   const gate = (where: string) => {
@@ -213,6 +214,10 @@ async function acquireOne(
       });
       throw new Error("statute_binary_too_large_for_inline_extraction");
     }
+    if (allowExtraction && !allowExtraction(bytes.byteLength)) {
+      await onStage("statute_extraction_budget_spent", { bytes: bytes.byteLength });
+      throw new Error("statute_extraction_budget_spent");
+    }
     gate("before_binary_extract");
     await onStage("statute_binary_extract_start", {
       kind: isPdf ? "pdf" : "docx",
@@ -226,6 +231,18 @@ async function acquireOne(
     return processed.text;
   }
 
+  // retrieval_budget_enforcement_v1: never decode/clean an opaque binary
+  // (legacy OLE2 .doc, archives, images). Running the Hebrew decoder and the
+  // markup-stripping regexes over binary noise is a synchronous CPU sink and
+  // was killing the isolate mid-retrieval (F05: knesset .doc).
+  if (looksBinary(bytes)) {
+    await onStage("statute_binary_not_text_extractable", {
+      bytes: bytes.byteLength,
+      content_type: contentType,
+    });
+    throw new Error("statute_binary_not_text_extractable");
+  }
+
   gate("before_decode");
   const decoded = decodeHebrew(bytes.slice(0, STATUTE_ACQUISITION_LIMITS.MAX_DECODE_BYTES));
   gate("after_decode");
@@ -236,10 +253,29 @@ async function acquireOne(
   return processed.text;
 }
 
+/**
+ * Cheap binary sniff over a bounded prefix: OLE2/RTF/archive magic bytes, or a
+ * high ratio of control/NUL bytes. Bounded work — never scans the whole file.
+ */
+export function looksBinary(bytes: Uint8Array): boolean {
+  if (bytes.byteLength === 0) return true;
+  const b = bytes.subarray(0, Math.min(4096, bytes.byteLength));
+  // OLE2 compound file (legacy .doc/.xls): D0 CF 11 E0
+  if (b[0] === 0xd0 && b[1] === 0xcf && b[2] === 0x11 && b[3] === 0xe0) return true;
+  let control = 0;
+  for (let i = 0; i < b.length; i++) {
+    const c = b[i];
+    if (c === 0) return true;
+    if (c < 9 || (c > 13 && c < 32)) control++;
+  }
+  return control / b.length > 0.05;
+}
+
+
 export interface StatuteAcquisitionInput {
   candidates: Candidate[];
   statuteSectionRefs: StatuteSectionRef[];
-  retrieval_budget?: { exceeded: () => boolean };
+  retrieval_budget?: { exceeded: () => boolean; allowExtraction?: (bytes: number) => boolean };
   markDurable?: StatuteStageSink;
 }
 
@@ -334,7 +370,12 @@ export async function runStatuteTextAcquisition(
       ref_id: e.ref.ref_id,
     });
     try {
-      const text = await acquireOne(url, budgetExceeded, onStage);
+      const text = await acquireOne(
+        url,
+        budgetExceeded,
+        onStage,
+        (bytes: number) => input.retrieval_budget?.allowExtraction?.(bytes) ?? true,
+      );
       if (text.length < STATUTE_ACQUISITION_LIMITS.MIN_USABLE_TEXT) {
         throw new Error("statute_text_below_threshold");
       }

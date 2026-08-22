@@ -1,0 +1,311 @@
+{
+  "id": "P02",
+  "classification_changed": [
+    {
+      "title": "ע\"א 8954-11 - פלוני נ. פלוני",
+      "before": "judgment",
+      "after": "commentary",
+      "reason": "uncertain_judgment_identity_prefer_commentary"
+    },
+    {
+      "title": "ע\"א 409-13 - שידורי קשת בע\"מ נ. שמעון קופר",
+      "before": "judgment",
+      "after": "commentary",
+      "reason": "uncertain_judgment_identity_prefer_commentary"
+    }
+  ],
+  "classification_rows": [
+    {
+      "title": "עקרון התקדים המחייב בדין הישראלי",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "judgment_mirror_host",
+        "court_vocabulary",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": true,
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+      "url": "https://www.psakdin.co.il/Court/%D7%9C%D7%95%D7%99-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C_23"
+    },
+    {
+      "title": "מדינת ישראל נ' לוי - פסקדין",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "judgment_mirror_host",
+        "case_prefix",
+        "party_names",
+        "court_vocabulary",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": true,
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+      "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'-%D7%9C%D7%95%D7%99_83?IsMobile=false"
+    },
+    {
+      "title": "ע\"א 4628/93 הלכת אפרופים",
+      "classification_before": "judgment",
+      "classification_after": "judgment",
+      "judgment_identity_signals": [
+        "official_judgment_endpoint",
+        "docket_in_text",
+        "case_prefix",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4"
+    },
+    {
+      "title": "ע\"א 8954-11 - פלוני נ. פלוני",
+      "classification_before": "judgment",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "official_judgment_endpoint",
+        "case_prefix",
+        "party_names",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": true,
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/3&fileName=SV3_12_8954-11.pdf&type=2"
+    },
+    {
+      "title": "ע\"א 409-13 - שידורי קשת בע\"מ נ. שמעון קופר",
+      "classification_before": "judgment",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "official_judgment_endpoint",
+        "case_prefix",
+        "party_names",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": true,
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_4_409-13.pdf&type=2"
+    }
+  ],
+  "uncertain_identity_count": 4,
+  "downgrades": [
+    {
+      "title": "עקרון התקדים המחייב בדין הישראלי",
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
+    },
+    {
+      "title": "מדינת ישראל נ' לוי - פסקדין",
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
+    },
+    {
+      "title": "ע\"א 8954-11 - פלוני נ. פלוני",
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
+    },
+    {
+      "title": "ע\"א 409-13 - שידורי קשת בע\"מ נ. שמעון קופר",
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
+    }
+  ],
+  "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+  "job_id": "5a91948e-114e-4c16-ab4d-56c3e5405063",
+  "run_id": "0fcb60f2-6e5b-4798-80c8-67d0a126d3b8",
+  "ms": 121173,
+  "terminal_status": "done",
+  "job_error": null,
+  "branch": "docket_limitation",
+  "answer_length": 345,
+  "inline_marker_count": 0,
+  "max_marker": 0,
+  "footnotes_length": 0,
+  "used_sources_length": 0,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "invariant_passed": true,
+  "rendered_rows": [],
+  "label_report": {
+    "rows": [
+      {
+        "ref": "s1",
+        "url": "https://www.psakdin.co.il/Court/%D7%9C%D7%95%D7%99-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C_23",
+        "title": "עקרון התקדים המחייב בדין הישראלי",
+        "raw_title": "עקרון התקדים המחייב בדין הישראלי",
+        "candidate_id": "54ee8b47-c7f5-429e-a468-525ae7ef6478",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": true,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "judgment_mirror_host",
+          "court_vocabulary",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s2",
+        "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'-%D7%9C%D7%95%D7%99_83?IsMobile=false",
+        "title": "מדינת ישראל נ' לוי - פסקדין",
+        "raw_title": "מדינת ישראל נ' לוי - פסקדין",
+        "candidate_id": "13a5ed83-c691-406a-9186-47a419a9f2b7",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": true,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "judgment_mirror_host",
+          "case_prefix",
+          "party_names",
+          "court_vocabulary",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s3",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
+        "title": "ע\"א 4628/93 הלכת אפרופים",
+        "raw_title": "ע\"א 4628/93 הלכת אפרופים",
+        "candidate_id": "1de19d78-6284-4840-8497-09fd6800a718",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "judgment",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "official_judgment_endpoint",
+          "docket_in_text",
+          "case_prefix",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s4",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/3&fileName=SV3_12_8954-11.pdf&type=2",
+        "title": "ע\"א 8954-11 - פלוני נ. פלוני",
+        "raw_title": "ע\"א 8954-11 - פלוני נ. פלוני",
+        "candidate_id": "be32fb1a-ce8e-4260-a02d-5a67f77f19e6",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": true,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": "uncertain_judgment_identity_prefer_commentary",
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "official_judgment_endpoint",
+          "case_prefix",
+          "party_names",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s5",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_4_409-13.pdf&type=2",
+        "title": "ע\"א 409-13 - שידורי קשת בע\"מ נ. שמעון קופר",
+        "raw_title": "ע\"א 409-13 - שידורי קשת בע\"מ נ. שמעון קופר",
+        "candidate_id": "7bd97f61-7f55-42f8-9e9a-49a8af1a9036",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "fallback_applied": false,
+        "fallback_candidate": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "uncertain_identity": true,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": "uncertain_judgment_identity_prefer_commentary",
+        "title_hygiene_reasons": [
+          "title_truncated_mid_word"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": "fallback_not_more_informative(host:1<=raw:3)",
+        "judgment_identity_signals": [
+          "official_judgment_endpoint",
+          "case_prefix",
+          "party_names",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      }
+    ],
+    "total": 5,
+    "reclassified_count": 2,
+    "fallback_used_count": 0,
+    "classification_rerun_count": 0,
+    "classification_rerun_reason": [],
+    "classification_cache_hit_count": 5,
+    "source_label_cpu_guard_applied": true
+  },
+  "filename_titles": [],
+  "bare_institution_titles": [],
+  "ocr_duplicate_pairs": [],
+  "scholarship_as_statute": [],
+  "commentary_as_judgment": [],
+  "metadata_only_holdings": 0,
+  "used_sources": [],
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 0,
+    "invariant_passed": true,
+    "inline_marker_count": 0,
+    "used_sources_length": 0,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}

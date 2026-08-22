@@ -28,6 +28,7 @@ import {
   type RankInput,
 } from "./judgmentCandidateRanking.ts";
 import { processExtractedBody } from "./postExtract.ts";
+import { looksBinary } from "./statuteTextAcquisition.ts";
 
 
 export const ACQUISITION_LIMITS = {
@@ -490,6 +491,11 @@ export interface DirectFileOptions {
    * (decode, clean, PDF/DOCX extraction). Returning true fails closed.
    */
   budgetExceeded?: () => boolean;
+  /**
+   * Run-level ledger for uninterruptible binary extraction. Returning false
+   * means this run has already spent its extraction allowance.
+   */
+  allowExtraction?: (bytes: number) => boolean;
 }
 
 /** Method 1 — the URL already points at a judgment file. */
@@ -557,6 +563,10 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
         threshold: ACQUISITION_LIMITS.BOUNDED_EXTRACT_BYTES,
       });
     }
+    if (opts.allowExtraction && !opts.allowExtraction(bytes.byteLength)) {
+      await onStage("binary_extraction_budget_spent", { bytes: bytes.byteLength });
+      throw new Error("extraction_budget_spent");
+    }
     gate("before_binary_extract_run");
     // Awaited: extraction is a long synchronous CPU step that can block the
     // event loop hard enough that a fire-and-forget checkpoint never leaves
@@ -578,10 +588,18 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
   }
 
   if (isLegacyDoc && !head.startsWith("PK")) {
-    // mammoth cannot read OLE2 .doc; salvage readable Hebrew runs instead.
+    // mammoth cannot read OLE2 .doc; salvage readable Hebrew runs instead —
+    // but only over a bounded prefix, and never for opaque binaries whose
+    // decode + cleaning regexes are a synchronous CPU sink.
     gate("before_legacy_doc_decode");
+    if (bytes.byteLength > ACQUISITION_LIMITS.MAX_DECODE_BYTES) {
+      onStage("legacy_doc_too_large", { bytes: bytes.byteLength });
+      throw new Error("legacy_doc_too_large");
+    }
     onStage("legacy_doc_decode_start", { bytes: bytes.byteLength });
-    const salvaged = plainTextFromTxt(decodeHebrew(bytes)).replace(/[^\S\n]{3,}/g, " ");
+    const salvaged = plainTextFromTxt(
+      decodeHebrew(bytes.subarray(0, ACQUISITION_LIMITS.MAX_DECODE_BYTES)),
+    ).replace(/[^\S\n]{3,}/g, " ");
     onStage("legacy_doc_decode_done", { chars: salvaged.length });
     if (salvaged.length >= ACQUISITION_LIMITS.MIN_USABLE_TEXT && JUDGMENT_BODY_RE.test(salvaged)) {
       if (opts.validateText && !opts.validateText(salvaged)) {
@@ -599,6 +617,10 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
   if (!opts.allowPlainText || !looksTextual) throw new Error("not_a_document_file");
   if (!isTrustedCourtTextHost(url)) throw new Error("plain_text_host_not_trusted");
 
+  if (looksBinary(bytes)) {
+    onStage("binary_not_text_extractable", { bytes: bytes.byteLength, content_type: contentType });
+    throw new Error("binary_not_text_extractable");
+  }
   gate("before_decode");
   onStage("decode_start", { bytes: bytes.byteLength });
   const decoded = decodeHebrew(bytes);
@@ -756,7 +778,12 @@ export interface AcquisitionInput {
    * consults it before every attempt and between every expensive step, and
    * stops with a controlled reason instead of letting the isolate die.
    */
-  retrieval_budget?: { exceeded(): boolean; remaining(): number } | null;
+  retrieval_budget?: {
+    exceeded(): boolean;
+    remaining(): number;
+    allowExtraction?(bytes: number): boolean;
+    noteBodyAcquisition?(n?: number): void;
+  } | null;
   /**
    * Durable checkpoint sink (awaited). Used for per-attempt observability so a
    * killed isolate still leaves a trail of exactly where acquisition was.
@@ -1244,6 +1271,9 @@ export async function runJudgmentTextAcquisition(
         onStage,
         signal: AbortSignal.timeout(methodMs),
         budgetExceeded: attemptOverBudget,
+        allowExtraction: (bytes: number) =>
+          (retrievalBudget as { allowExtraction?: (b: number) => boolean } | null)
+            ?.allowExtraction?.(bytes) ?? true,
         ...(speculative
           ? { maxInlineExtractionBytes: ACQUISITION_LIMITS.MAX_INLINE_EXTRACTION_BYTES }
           : {}),

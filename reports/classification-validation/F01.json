@@ -1,191 +1,111 @@
 {
   "id": "F01",
-  "classification_changed": [
-    {
-      "title": "Overview - בית המשפט העליון / הרשות השופטת",
-      "before": "judgment",
-      "after": "commentary",
-      "reason": "uncertain_judgment_identity_prefer_commentary"
-    }
-  ],
+  "classification_changed": [],
   "classification_rows": [
     {
-      "title": "תקנות בתי משפט לעניינים מינהליים (סדרי דין), התשס\"א–2000",
+      "title": "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
       "classification_before": "statute",
       "classification_after": "statute",
-      "judgment_identity_signals": [],
-      "commentary_identity_signals": [],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://www.nevo.co.il/law_html/law00/98562.htm"
-    },
-    {
-      "title": "פסק-דין בתיק בג\"ץ 6411/16",
-      "classification_before": "judgment",
-      "classification_after": "judgment",
       "judgment_identity_signals": [
-        "docket_in_text",
-        "case_prefix",
-        "document_file",
-        "court_vocabulary",
-        "upstream_case_type"
-      ],
-      "commentary_identity_signals": [],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://www.adalah.org/uploads/uploads/JNF_Court_decision_21062018.pdf"
-    },
-    {
-      "title": "תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?",
-      "classification_before": "scholarship",
-      "classification_after": "scholarship",
-      "judgment_identity_signals": [
-        "document_file",
         "court_vocabulary"
-      ],
-      "commentary_identity_signals": [
-        "upstream_scholarship_type"
-      ],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_469150003ab945cab43278c021cb754f.pdf"
-    },
-    {
-      "title": "Overview - בית המשפט העליון / הרשות השופטת",
-      "classification_before": "judgment",
-      "classification_after": "commentary",
-      "judgment_identity_signals": [
-        "party_names",
-        "court_vocabulary",
-        "upstream_case_type"
       ],
       "commentary_identity_signals": [],
       "uncertain_identity": true,
       "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-      "url": "https://supreme.court.gov.il/Pages/Overview.aspx"
+      "url": "https://www.nevo.co.il/law_html/law00/98565.htm"
     },
     {
-      "title": "דיני ראיות",
+      "title": "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה",
       "classification_before": "commentary",
       "classification_after": "commentary",
       "judgment_identity_signals": [
-        "document_file"
+        "judgment_mirror_host",
+        "party_names",
+        "upstream_case_type"
       ],
       "commentary_identity_signals": [],
       "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://law.huji.ac.il/sites/default/files/law/files/130harnon-049-080.pdf"
+      "downgrade_reason": "caselaw_type_without_judgment_authority",
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%9B%D7%A9%D7%A8%D7%94-%D7%97%D7%91%D7%A8%D7%94-%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%97-%D7%91%D7%A2-%D7%9E-%D7%A0-%D7%A2%D7%99%D7%A8%D7%99%D7%99%D7%AA-%D7%A0%D7%AA%D7%A0%D7%99%D7%94"
     },
     {
-      "title": "ראיות מנהליות – בין המשפט העברי למשפט המדינה",
-      "classification_before": "commentary",
-      "classification_after": "commentary",
-      "judgment_identity_signals": [
-        "judgment_identity_param"
-      ],
-      "commentary_identity_signals": [
-        "commentary_snippet_shape"
-      ],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://www.daat.ac.il/mishpat-ivri/skirot/skira.asp?id=363"
-    },
-    {
-      "title": "בג\"ץ 3182/20 פלוני נ׳ משטרת ישראל פסק דין (09.07.2020)",
+      "title": "פסק-דין בתיק ע\"א 3886/12",
       "classification_before": "judgment",
       "classification_after": "judgment",
       "judgment_identity_signals": [
         "docket_in_text",
         "case_prefix",
-        "party_names",
+        "document_file",
         "court_vocabulary",
         "upstream_case_type"
       ],
       "commentary_identity_signals": [],
       "uncertain_identity": false,
       "downgrade_reason": null,
-      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3182-20-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%9e%d7%a9%d7%98%d7%a8%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d-09-07-2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
-    },
-    {
-      "title": "זיהוי כעיבוד של מידע: התאמת החסמים השיפוטיים לגורמי הסיכון לטעויות של עדי ראייה | גל רוזנצוויג (כרך י\"ח)",
-      "classification_before": "scholarship",
-      "classification_after": "scholarship",
-      "judgment_identity_signals": [
-        "document_file"
-      ],
-      "commentary_identity_signals": [
-        "upstream_scholarship_type"
-      ],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2025/09/din18-06-gal.pdf"
+      "url": "https://www.capitax.co.il/Attachments/3886-12.pdf"
     }
   ],
   "uncertain_identity_count": 1,
   "downgrades": [
     {
-      "title": "Overview - בית המשפט העליון / הרשות השופטת",
+      "title": "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
       "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
+    },
+    {
+      "title": "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה",
+      "downgrade_reason": "caselaw_type_without_judgment_authority"
     }
   ],
   "query": "מה נטל ההוכחה בעתירות לבג״ץ? על מי מוטל הנטל? על העותר תמיד?",
-  "job_id": "663e62d1-8901-4fef-849c-d47fdafb0bdc",
-  "run_id": "5664e95f-c42d-41a3-b848-06f3c3a982e9",
-  "ms": 122079,
+  "job_id": "27b3a115-7cad-4cf9-afcd-e7d30973f6c1",
+  "run_id": "077f33bf-9270-48b4-98bb-3b06bb4ea0b0",
+  "ms": 163269,
   "terminal_status": "done",
   "job_error": null,
   "branch": null,
-  "answer_length": 2695,
-  "inline_marker_count": 9,
-  "max_marker": 5,
-  "footnotes_length": 5,
-  "used_sources_length": 5,
+  "answer_length": 2488,
+  "inline_marker_count": 5,
+  "max_marker": 4,
+  "footnotes_length": 4,
+  "used_sources_length": 3,
   "dangling_marker_count": 0,
   "orphan_source_row_count": 0,
   "invariant_passed": true,
   "rendered_rows": [
     {
       "number": 1,
-      "title": "בג\"ץ 3182/20 פלוני נ׳ משטרת ישראל פסק דין (09.07.2020); תקנות בתי משפט לעניינים מינהליים (סדרי דין), התשס\"א–2000",
+      "title": "פסק-דין בתיק ע\"א 3886/12; הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה; תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
       "citable_as": null,
       "sub_titles": [
-        "בג\"ץ 3182/20 פלוני נ׳ משטרת ישראל פסק דין (09.07.2020)",
-        "תקנות בתי משפט לעניינים מינהליים (סדרי דין), התשס\"א–2000"
+        "פסק-דין בתיק ע\"א 3886/12",
+        "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה",
+        "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9"
       ]
     },
     {
       "number": 2,
-      "title": "בג\"ץ 3182/20 פלוני נ׳ משטרת ישראל פסק דין (09.07.2020); פסק-דין בתיק בג\"ץ 6411/16",
+      "title": "פסק-דין בתיק ע\"א 3886/12; תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
       "citable_as": null,
       "sub_titles": [
-        "בג\"ץ 3182/20 פלוני נ׳ משטרת ישראל פסק דין (09.07.2020)",
-        "פסק-דין בתיק בג\"ץ 6411/16"
+        "פסק-דין בתיק ע\"א 3886/12",
+        "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9"
       ]
     },
     {
       "number": 3,
-      "title": "פסק-דין בתיק בג\"ץ 6411/16; תקנות בתי משפט לעניינים מינהליים (סדרי דין), התשס\"א–2000",
+      "title": "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה; תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
       "citable_as": null,
       "sub_titles": [
-        "פסק-דין בתיק בג\"ץ 6411/16",
-        "תקנות בתי משפט לעניינים מינהליים (סדרי דין), התשס\"א–2000"
+        "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה",
+        "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9"
       ]
     },
     {
       "number": 4,
-      "title": "תקנות בתי משפט לעניינים מינהליים (סדרי דין), התשס\"א–2000",
+      "title": "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
       "citable_as": null,
       "sub_titles": [
-        "תקנות בתי משפט לעניינים מינהליים (סדרי דין), התשס\"א–2000"
-      ]
-    },
-    {
-      "number": 5,
-      "title": "דיני ראיות; ראיות מנהליות – בין המשפט העברי למשפט המדינה",
-      "citable_as": null,
-      "sub_titles": [
-        "דיני ראיות",
-        "ראיות מנהליות – בין המשפט העברי למשפט המדינה"
+        "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9"
       ]
     }
   ],
@@ -193,16 +113,16 @@
     "rows": [
       {
         "ref": "s1",
-        "url": "https://www.nevo.co.il/law_html/law00/98562.htm",
-        "title": "תקנות בתי משפט לעניינים מינהליים (סדרי דין), התשס\"א–2000",
-        "raw_title": "תקנות בתי משפט לעניינים מינהליים (סדרי דין), התשס\"א–2000",
-        "candidate_id": "f964a8ab-2b72-46f8-9ab0-6eadc1294d52",
+        "url": "https://www.nevo.co.il/law_html/law00/98565.htm",
+        "title": "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
+        "raw_title": "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
+        "candidate_id": "8bae6f83-933e-4fb7-a1a9-d3fc27adad70",
         "title_status": "ok",
         "fallback_used": "none",
-        "downgrade_reason": null,
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
         "fallback_applied": false,
         "fallback_candidate": null,
-        "uncertain_identity": false,
+        "uncertain_identity": true,
         "classification_after": "statute",
         "title_hygiene_action": "kept",
         "classification_before": "statute",
@@ -212,26 +132,28 @@
         ],
         "classification_cache_hit": true,
         "fallback_rejected_reason": null,
-        "judgment_identity_signals": [],
+        "judgment_identity_signals": [
+          "court_vocabulary"
+        ],
         "classification_rerun_reason": null,
         "commentary_identity_signals": [],
         "fallback_improvement_reason": null
       },
       {
         "ref": "s2",
-        "url": "https://www.adalah.org/uploads/uploads/JNF_Court_decision_21062018.pdf",
-        "title": "פסק-דין בתיק בג\"ץ 6411/16",
-        "raw_title": "פסק-דין בתיק בג\"ץ 6411/16",
-        "candidate_id": "b523070d-90e9-4516-9390-49da698c752b",
+        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%9B%D7%A9%D7%A8%D7%94-%D7%97%D7%91%D7%A8%D7%94-%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%97-%D7%91%D7%A2-%D7%9E-%D7%A0-%D7%A2%D7%99%D7%A8%D7%99%D7%99%D7%AA-%D7%A0%D7%AA%D7%A0%D7%99%D7%94",
+        "title": "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה",
+        "raw_title": "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה",
+        "candidate_id": "0c392711-58f8-45d8-9711-c27c804691bb",
         "title_status": "ok",
         "fallback_used": "none",
-        "downgrade_reason": null,
+        "downgrade_reason": "caselaw_type_without_judgment_authority",
         "fallback_applied": false,
         "fallback_candidate": null,
         "uncertain_identity": false,
-        "classification_after": "judgment",
+        "classification_after": "commentary",
         "title_hygiene_action": "kept",
-        "classification_before": "judgment",
+        "classification_before": "commentary",
         "classification_reason": null,
         "title_hygiene_reasons": [
           "legal_title_protected"
@@ -239,10 +161,8 @@
         "classification_cache_hit": true,
         "fallback_rejected_reason": null,
         "judgment_identity_signals": [
-          "docket_in_text",
-          "case_prefix",
-          "document_file",
-          "court_vocabulary",
+          "judgment_mirror_host",
+          "party_names",
           "upstream_case_type"
         ],
         "classification_rerun_reason": null,
@@ -251,121 +171,10 @@
       },
       {
         "ref": "s3",
-        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_469150003ab945cab43278c021cb754f.pdf",
-        "title": "תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?",
-        "raw_title": "תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?",
-        "candidate_id": "6e152406-f3bc-4701-b12e-adc1b5c69629",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": null,
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": false,
-        "classification_after": "scholarship",
-        "title_hygiene_action": "kept",
-        "classification_before": "scholarship",
-        "classification_reason": null,
-        "title_hygiene_reasons": [],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "document_file",
-          "court_vocabulary"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [
-          "upstream_scholarship_type"
-        ],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s4",
-        "url": "https://supreme.court.gov.il/Pages/Overview.aspx",
-        "title": "Overview - בית המשפט העליון / הרשות השופטת",
-        "raw_title": "Overview - בית המשפט העליון / הרשות השופטת",
-        "candidate_id": "450d86c9-c3ba-489c-b303-9677e2a38c69",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": true,
-        "classification_after": "commentary",
-        "title_hygiene_action": "kept",
-        "classification_before": "judgment",
-        "classification_reason": "uncertain_judgment_identity_prefer_commentary",
-        "title_hygiene_reasons": [],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "party_names",
-          "court_vocabulary",
-          "upstream_case_type"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s5",
-        "url": "https://law.huji.ac.il/sites/default/files/law/files/130harnon-049-080.pdf",
-        "title": "דיני ראיות",
-        "raw_title": "דיני ראיות",
-        "candidate_id": "6ab86b01-b206-4326-b8af-b03ac73458c7",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": null,
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": false,
-        "classification_after": "commentary",
-        "title_hygiene_action": "kept",
-        "classification_before": "commentary",
-        "classification_reason": null,
-        "title_hygiene_reasons": [],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "document_file"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s6",
-        "url": "https://www.daat.ac.il/mishpat-ivri/skirot/skira.asp?id=363",
-        "title": "ראיות מנהליות – בין המשפט העברי למשפט המדינה",
-        "raw_title": "ראיות מנהליות – בין המשפט העברי למשפט המדינה",
-        "candidate_id": "b9e846ec-5d90-4cbc-9338-d1ec71a54609",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": null,
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": false,
-        "classification_after": "commentary",
-        "title_hygiene_action": "kept",
-        "classification_before": "commentary",
-        "classification_reason": null,
-        "title_hygiene_reasons": [],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "judgment_identity_param"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [
-          "commentary_snippet_shape"
-        ],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s7",
-        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3182-20-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%9e%d7%a9%d7%98%d7%a8%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d-09-07-2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
-        "title": "בג\"ץ 3182/20 פלוני נ׳ משטרת ישראל פסק דין (09.07.2020)",
-        "raw_title": "בג\"ץ 3182/20 פלוני נ׳ משטרת ישראל פסק דין (09.07.2020)",
-        "candidate_id": "cba3fbbf-4a52-4929-aa4b-5f1be862e6b9",
+        "url": "https://www.capitax.co.il/Attachments/3886-12.pdf",
+        "title": "פסק-דין בתיק ע\"א 3886/12",
+        "raw_title": "פסק-דין בתיק ע\"א 3886/12",
+        "candidate_id": "7b262f69-312f-4bc6-868e-171232e0209a",
         "title_status": "ok",
         "fallback_used": "none",
         "downgrade_reason": null,
@@ -384,49 +193,21 @@
         "judgment_identity_signals": [
           "docket_in_text",
           "case_prefix",
-          "party_names",
+          "document_file",
           "court_vocabulary",
           "upstream_case_type"
         ],
         "classification_rerun_reason": null,
         "commentary_identity_signals": [],
         "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s8",
-        "url": "https://law.haifa.ac.il/wp-content/uploads/2025/09/din18-06-gal.pdf",
-        "title": "זיהוי כעיבוד של מידע: התאמת החסמים השיפוטיים לגורמי הסיכון לטעויות של עדי ראייה | גל רוזנצוויג (כרך י\"ח)",
-        "raw_title": "זיהוי כעיבוד של מידע: התאמת החסמים השיפוטיים לגורמי הסיכון לטעויות של עדי ראייה | גל רוזנצוויג (כרך י\"ח)",
-        "candidate_id": "4363df6b-1ed4-47c0-ac30-5e508307e7e5",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": null,
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": false,
-        "classification_after": "scholarship",
-        "title_hygiene_action": "kept",
-        "classification_before": "scholarship",
-        "classification_reason": null,
-        "title_hygiene_reasons": [],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "document_file"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [
-          "upstream_scholarship_type"
-        ],
-        "fallback_improvement_reason": null
       }
     ],
-    "total": 8,
-    "reclassified_count": 1,
+    "total": 3,
+    "reclassified_count": 0,
     "fallback_used_count": 0,
     "classification_rerun_count": 0,
     "classification_rerun_reason": [],
-    "classification_cache_hit_count": 12,
+    "classification_cache_hit_count": 6,
     "source_label_cpu_guard_applied": true
   },
   "filename_titles": [],
@@ -438,51 +219,37 @@
   "used_sources": [
     {
       "number": 1,
-      "title": "בג\"ץ 3182/20 פלוני נ׳ משטרת ישראל פסק דין (09.07.2020)",
+      "title": "פסק-דין בתיק ע\"א 3886/12",
       "citable_as": "judgment",
       "text_usability": "full_text",
-      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3182-20-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%9e%d7%a9%d7%98%d7%a8%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d-09-07-2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
+      "url": "https://www.capitax.co.il/Attachments/3886-12.pdf"
     },
     {
       "number": 1,
-      "title": "תקנות בתי משפט לעניינים מינהליים (סדרי דין), התשס\"א–2000",
+      "title": "הכשרה חברה לביטוח בע\"מ נ' עיריית נתניה",
+      "citable_as": "commentary",
+      "text_usability": "substantive_excerpt",
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%9B%D7%A9%D7%A8%D7%94-%D7%97%D7%91%D7%A8%D7%94-%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%97-%D7%91%D7%A2-%D7%9E-%D7%A0-%D7%A2%D7%99%D7%A8%D7%99%D7%99%D7%AA-%D7%A0%D7%AA%D7%A0%D7%99%D7%94"
+    },
+    {
+      "number": 1,
+      "title": "תקנות סדר הדין בבית המשפט הגבוה לצדק, תשמ\"ד-1984 – תקנה 9",
       "citable_as": "statute",
       "text_usability": "metadata_only",
-      "url": "https://www.nevo.co.il/law_html/law00/98562.htm"
-    },
-    {
-      "number": 2,
-      "title": "פסק-דין בתיק בג\"ץ 6411/16",
-      "citable_as": "judgment",
-      "text_usability": "full_text",
-      "url": "https://www.adalah.org/uploads/uploads/JNF_Court_decision_21062018.pdf"
-    },
-    {
-      "number": 5,
-      "title": "דיני ראיות",
-      "citable_as": "commentary",
-      "text_usability": "metadata_only",
-      "url": "https://law.huji.ac.il/sites/default/files/law/files/130harnon-049-080.pdf"
-    },
-    {
-      "number": 5,
-      "title": "ראיות מנהליות – בין המשפט העברי למשפט המדינה",
-      "citable_as": "commentary",
-      "text_usability": "metadata_only",
-      "url": "https://www.daat.ac.il/mishpat-ivri/skirot/skira.asp?id=363"
+      "url": "https://www.nevo.co.il/law_html/law00/98565.htm"
     }
   ],
   "footnote_render_report": {
     "version": "footnote_rendering_invariant_v1",
     "renumbered": false,
-    "footnotes_length": 5,
+    "footnotes_length": 4,
     "invariant_passed": true,
-    "inline_marker_count": 9,
-    "used_sources_length": 5,
+    "inline_marker_count": 5,
+    "used_sources_length": 3,
     "dangling_marker_count": 0,
     "orphan_source_row_count": 0
   },
   "pass": true,
   "failures": [],
-  "answer": "שורה תחתונה: בנטל ההוכחה בעתירות לבג\"ץ מוטל בראש ובראשונה על העותר להציג קיום עילה סבירה לעתירה — הצגת עובדות ותשתית משפטית שמצדיקות ביקורת שיפוטית; יחד עם זאת הנטל אינו מוחלט ויכולה להיווצר חלוקה או העברה מעשית של נטל ההוכחה/הבאת הראיות בהתאם לנסיבות ולפעולות בית המשפט.¹\n\n**ניתוח לפי רכיבים**\n\n**נטל ראשוני על העותר**\n\nהעיקרון המעשי הוא שהעותר צריך להציג בתחילת ההליך את יסודות העתירה: כשירות לעתור, זיקה עניינית ו'עילה' שאינה רק טענה תיאוריה. בפסיקה שנכללה בחומר נמצאות החלטות שבהן העתירה נדחתה מחוסר עילה או חוסר ראיות וכן דיון בתנאי־על להוספת צו בעתירה, מה שמגביר את הדרישה להצגה ראשונית של עובדות ותשתית משפטית.²\n\n**חזקת התקינות המנהלית**\n\nבג\"ץ במקרים רבים נוקט בזהירות לפני שהוא מתערב בשיקול דעת מנהלי: קיימת נטייה לא לשבש החלטות של הרשות אלא אם מוצגת עילה מפורשת לפגם; במקורות שאותרו הביטוי לכך מופיע בפסיקה המעמידה דגש על הצורך ביסוד עובדתי־משפטי משכנע להתערבות שיפוטית.²\n\n**חובת ההסבר והנמקה של הרשות**\n\nתקנות סדרי הדין והמקרה הפסיקתי מעידות על חשיבות ההנמקה של החלטות שלטוניות, אך במקורות שאותרו לא נמצא טקסט אחד ממצה שמנסח נוסחת חובת הנמקה כוללת בכל המקרים; לפיכך נכון לומר שהדגשת ההנמקה נתמכת הן בסדרי הדין והן בפסיקה, אולם היקף החובה ותנאיה מפותחים בפסיקה ולא תמיד מעוגנים בנוסח תקנות יחיד ונרחב.³\n\n**צו על תנאי והעברת נטל מעשית למשיב**\n\nבפועל בתי המשפט נוהגים להנפיק צו על תנאי כדרך פרוצדורלית שמיישמת את העיקרון שהעותר מציג טענת יסוד ראשונית, והמשיב נדרש להעלות חומר שיסתור או יבהיר את החלטתו; התקנות והפסיקה הרלבנטית תומכות בשימוש בצו על תנאי כאמצעי להקצאת נטל הבאת הראיות בפועל.³\n\n**סעד זמני: ראיות לכאורה ומאזן נוחות**\n\nלשקול מתן סעד זמני בבג\"ץ נדרש בדרך כלל להראות כי קיימת 'תמונה ראשונית' של הצלחה (ראיות לכאורה) וכן לשקול את מאזן הנוחות/נזק; תקנות הסדרי הדין מספקות מסגרת פרוצדורלית לכך, ואקדמיה ולפסקי־דין הרלוונטיים מדגישים את הצורך בהצגת חומר ראייתי חד־משמעי מספיק לעתירה זמנית.⁴\n\n**הבחנה בין נטל שכנוע לנטל הבאת ראיות**\n\nראוי להבחין: נטל הבאת הראיות (מי חייב להטיל ראיות על שולחן בית המשפט) שונה מנטל השכנוע (מי צריך לשכנע את בית המשפט מבחינת משקל הסבירות). בסביבת בג\"ץ העותר נושא לרוב בנטל הבאת הראיות הראשוני ובנטל השכנוע ברמת ה'סבירות' או 'הצגה ראשונית' — אך הבחנה זו ותיחומה מוסברים בעיקר בספרות דיני הראיות ובהנחיות פרשניות, ולא תמיד בנוסח פסק‑דין יחיד וחותך.⁵\n\nכלים פרוצדורליים מעשיים: בית המשפט יכול לצוות הבאת מסמכים, להזמין חוות דעת מומחים, לקבוע לוחות זמנים להצהרות עובדתיות ולמנות ועדות בירור; כלים אלה משמשים לקביעת מי בפועל נושא בנטל הבאת הראיות ולמילוי הפערים שיצר דיון ראשוני חסר עובדות.⁴\n\nהבהרה שיטתית והתייחסות להיקף המקורות: חלק מהטענות כאן נשענות על פסיקה עקרונית ודברי תקנות סדרי הדין שמהווים מסגרת פרוצדורלית; במקורות שאותרו לא תמיד נמצא נוסח מחייב אחד לכל רכיב הדוקטרינלי, ולכן הניסוחים לעיל מנוסחים בזהירות ומתבססים על שילוב פסיקה, תקנות וספרות.¹"
+  "answer": "**מסקנה תמציתית**\n\nברוב המקרים בעתירת בג״ץ הנטל הראשוני להעמיד תשתית עובדתית ולהציג ראיות וזיהוי טענות מהותיות מוטל על העותר; יחד עם זאת הנטל יכול לחלוף, להתחלק או לעבור אל הרשות בהתאם לנסיבות, ובמקרים שבהם המידע המרכזי בידי הרשות או כשנגרם לה נזק ראייתי בשל התנהלותה עשוי בית המשפט להטיל על המשיב חובת הבאת ראיה או לשקול העברת נטל שכנוע ביחס לעובדות מסוימות.¹\n\n**נטל ראשוני על העותר בעתירת בג״ץ**\n\nההליך בבג״ץ נבנה סביב תצהירים ומסמכים שמגיש העותר, ולכן הוא נדרש להעמיד בפני בית המשפט את העובדות המפרטות את טענת האי־חוקיות או הפגם שנפגעו; תקנה 9 להסדרי סדר הדין ממחישה כי ההליך מצפה להצגת תשתית עובדתית על ידי מי שמבקש את הסעד.⁴\n\n**חזקת התקינות המנהלית**\n\nבמקורות שאותרו לא נימצא עיגון מקורי מחייב בדבר נוסח חזקת תקינות מנהלית מפורש בתוך החומר שסופק כאן; לכן אין ביכולתי להציג נוסח חזקת־תקינות מחייב או קביעה דוקטרינרית מלאה על יסוד החומר המסופק, ואם קיימת פסיקה נוספת בנושא היא לא אותרה בחיפוש זה.\n\n**חובת ההנמקה וחובת ההסבר של הרשות**\n\nקיימת פסיקה המתחייבת כי יש לדרוש מהרשות להציג את התשתית הראייתית שבעטיה התקבלה ההחלטה המינהלית, ולפחות בחלק מהמקרים מטיל בית המשפט חובת הבהרה או הצגה של בסיס עובדתי על הרשות כאשר ההכרעה נשענת על עובדות אלה; זאת בגיבוי של הכרעות שדרשו את הצגת התשתית הראייתית שמאחורי החלטות מנהליות וכן תוך התייחסות לצורך בתצהירים ותגובות במסגרת סדר הדין.²\n\n**צו על תנאי והעברת נטל מעשית למשיב**\n\nהוראות סדר הדין לגבי צווי־על־תנאי מדגימות מנגנון מעשי שבו נדרשת תגובת המשיב בתוך פרק זמן קצוב ודרך זו יכולה להטיל למעשה על המשיב חובת גיבוי עובדתי מיידי; במצבים נוספים הפסיקה דנה במעבר נטלי ביחס לעובדות שהוכחו או שהוכחדו בשל התנהלות הנתבע, כך שבתנאים אלה יתכן שהנטל המעשי על הוכחה יועבר אל המשיב.³\n\n**סעד זמני בבג״ץ: ראיות לכאורה ומאזן נוחות**\n\nתקנה 9 מצביעה על חשיבות הצגת עובדות במסגרת בקשות לצווים זמניים, ומשם אפשר להסיק באופן זהיר כי לבקשה לצו־ביניים נדרשת תשתית עובדתית מסוימת (כגון הופעת עילה או ראיות לכאורה) לצד שיקול של מאזן נוחות; עם זאת הטקסט המלא של מבחני הצו או ניסוחים מפורטים לא חולצו במקורות שסופקו כאן ולכן יש להפעיל שיקול דעת בהתאם לפסיקה המלאה שלא הובאה.⁴\n\n**הבחנה בין נטל שכנוע לנטל הבאת ראיות**\n\nבמסגרת החומר המסופק לא נמצאה ספרות פרשנית מקיפה שמבחינה באופן מפורש בין נטל שכנוע לבין נטל הבאת ראיות בבג״ץ; על כן לא ניתן להעמיק בהבחנה תיאורטית נרחבת על יסוד המקורות הללו בלבד, וזאת מבלי לעיין בטקסטים ובלשונות פסיקה וספרות משלימות.\n\nהסתייגות לגבי דלילות המקורות: בחומר שניתן הטקסטים המלאים של פסיקה או נוסחי כללים מפורטים לא תמיד היו זמינים; לכן הניסוח המוצג כאן מותנה בחומר שאותר ועשוי שלא לשקף קטעי פסיקה או ניסוחים שלא הובאו במפורש במסמכים שסופקו."
 }

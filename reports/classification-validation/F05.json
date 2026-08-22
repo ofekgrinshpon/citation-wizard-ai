@@ -1,39 +1,252 @@
 {
   "id": "F05",
-  "classification_changed": [],
-  "classification_rows": [],
-  "uncertain_identity_count": 0,
-  "downgrades": [],
+  "classification_changed": [
+    {
+      "title": "חוק - משקל הימים מן ביום לו נידרש שאפשר \"",
+      "before": "judgment",
+      "after": "commentary",
+      "reason": "uncertain_judgment_identity_prefer_commentary"
+    }
+  ],
+  "classification_rows": [
+    {
+      "title": "טלטלת המסך - בין הרמה מוצדקת לצדק מורם",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "judgment_mirror_host",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": "caselaw_type_without_judgment_authority",
+      "url": "https://www.psakdin.co.il/Document/%D7%98%D7%9C%D7%98%D7%9C%D7%AA-%D7%94%D7%9E%D7%A1%D7%9A--%D7%91%D7%99%D7%9F-%D7%94%D7%A8%D7%9E%D7%94-%D7%9E%D7%95%D7%A6%D7%93%D7%A7%D7%AA-%D7%9C%D7%A6%D7%93%D7%A7-%D7%9E%D7%95%D7%A8%D7%9D"
+    },
+    {
+      "title": "פרק ו': הרמת המסך",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc"
+    },
+    {
+      "title": "חוק - משקל הימים מן ביום לו נידרש שאפשר \"",
+      "classification_before": "judgment",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "official_judgment_endpoint",
+        "case_prefix",
+        "party_names",
+        "court_vocabulary",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": true,
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/1&fileName=SD1_4_619-05.pdf&type=2"
+    },
+    {
+      "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://runilawreview.org/2025/06/30/vol31-levi/"
+    }
+  ],
+  "uncertain_identity_count": 1,
+  "downgrades": [
+    {
+      "title": "טלטלת המסך - בין הרמה מוצדקת לצדק מורם",
+      "downgrade_reason": "caselaw_type_without_judgment_authority"
+    },
+    {
+      "title": "חוק - משקל הימים מן ביום לו נידרש שאפשר \"",
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
+    }
+  ],
   "query": "מה קובע סעיף 6 לחוק החברות, תשנ\"ט-1999 בעניין הרמת מסך?",
-  "job_id": "3490a2f0-205c-4601-a72f-5427ee08b084",
-  "run_id": "feb245bd-e671-4bc8-9ce6-83edff598633",
-  "ms": 844283,
-  "terminal_status": "failed",
-  "job_error": "stale_worker_timeout",
-  "branch": null,
-  "answer_length": 0,
-  "inline_marker_count": 0,
-  "max_marker": 0,
-  "footnotes_length": 0,
-  "used_sources_length": 0,
+  "job_id": "fdb26ede-9d92-4377-8f11-89a29bba4ac1",
+  "run_id": "822af40d-9c9d-4588-b3f8-a805c56a445a",
+  "ms": 101435,
+  "terminal_status": "done",
+  "job_error": null,
+  "branch": "statute_section_limitation",
+  "answer_length": 247,
+  "inline_marker_count": 1,
+  "max_marker": 1,
+  "footnotes_length": 1,
+  "used_sources_length": 1,
   "dangling_marker_count": 0,
   "orphan_source_row_count": 0,
   "invariant_passed": true,
-  "rendered_rows": [],
-  "label_report": null,
+  "rendered_rows": [
+    {
+      "number": 1,
+      "title": "טלטלת המסך - בין הרמה מוצדקת לצדק מורם",
+      "citable_as": null,
+      "sub_titles": [
+        "טלטלת המסך - בין הרמה מוצדקת לצדק מורם"
+      ]
+    }
+  ],
+  "label_report": {
+    "rows": [
+      {
+        "ref": "s1",
+        "url": "https://www.psakdin.co.il/Document/%D7%98%D7%9C%D7%98%D7%9C%D7%AA-%D7%94%D7%9E%D7%A1%D7%9A--%D7%91%D7%99%D7%9F-%D7%94%D7%A8%D7%9E%D7%94-%D7%9E%D7%95%D7%A6%D7%93%D7%A7%D7%AA-%D7%9C%D7%A6%D7%93%D7%A7-%D7%9E%D7%95%D7%A8%D7%9D",
+        "title": "טלטלת המסך - בין הרמה מוצדקת לצדק מורם",
+        "raw_title": "טלטלת המסך - בין הרמה מוצדקת לצדק מורם",
+        "candidate_id": "155436b5-565f-46e5-a4af-2a227eca6121",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "caselaw_type_without_judgment_authority",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "judgment_mirror_host",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s2",
+        "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yearb/companies/havivsegel/%D7%A4%D7%A8%D7%A7_%D7%95_%D7%94%D7%A8%D7%9E%D7%AA_%D7%9E%D7%A1%D7%9A.doc",
+        "title": "פרק ו': הרמת המסך",
+        "raw_title": "פרק ו': הרמת המסך",
+        "candidate_id": "6593a74f-4b2b-47ff-873b-c1b5e49ae1d8",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s3",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/1&fileName=SD1_4_619-05.pdf&type=2",
+        "title": "חוק - משקל הימים מן ביום לו נידרש שאפשר \"",
+        "raw_title": "ע\"א 619-05 - עופר נמרודי נ. מדינת ישראל",
+        "candidate_id": "fc726de2-4fe4-44b2-ab7d-0bd1ad27fb88",
+        "title_status": "fallback_truncated",
+        "fallback_used": "statute_name",
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "fallback_applied": true,
+        "fallback_candidate": "חוק - משקל הימים מן ביום לו נידרש שאפשר \"",
+        "uncertain_identity": true,
+        "classification_after": "commentary",
+        "title_hygiene_action": "title_truncated_mid_word",
+        "classification_before": "judgment",
+        "classification_reason": "uncertain_judgment_identity_prefer_commentary",
+        "title_hygiene_reasons": [
+          "title_truncated_mid_word"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "official_judgment_endpoint",
+          "case_prefix",
+          "party_names",
+          "court_vocabulary",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": "statute_name:7>raw:3"
+      },
+      {
+        "ref": "s4",
+        "url": "https://runilawreview.org/2025/06/30/vol31-levi/",
+        "title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+        "raw_title": "עניין אישי ומעמדם של בעלי השליטה בדיני חברות | שירלי לוי (כרך לא)",
+        "candidate_id": "67abc7fa-df14-47e2-8894-9fb978d7e6da",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": null
+      }
+    ],
+    "total": 4,
+    "reclassified_count": 1,
+    "fallback_used_count": 1,
+    "classification_rerun_count": 0,
+    "classification_rerun_reason": [],
+    "classification_cache_hit_count": 5,
+    "source_label_cpu_guard_applied": true
+  },
   "filename_titles": [],
   "bare_institution_titles": [],
   "ocr_duplicate_pairs": [],
   "scholarship_as_statute": [],
   "commentary_as_judgment": [],
   "metadata_only_holdings": 0,
-  "used_sources": [],
-  "footnote_render_report": null,
-  "pass": false,
-  "failures": [
-    "no_terminal_qa_row",
-    "empty_answer_body",
-    "cpu_kill"
+  "used_sources": [
+    {
+      "number": 1,
+      "title": "טלטלת המסך - בין הרמה מוצדקת לצדק מורם",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only",
+      "url": "https://www.psakdin.co.il/Document/%D7%98%D7%9C%D7%98%D7%9C%D7%AA-%D7%94%D7%9E%D7%A1%D7%9A--%D7%91%D7%99%D7%9F-%D7%94%D7%A8%D7%9E%D7%94-%D7%9E%D7%95%D7%A6%D7%93%D7%A7%D7%AA-%D7%9C%D7%A6%D7%93%D7%A7-%D7%9E%D7%95%D7%A8%D7%9D"
+    }
   ],
-  "answer": ""
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 1,
+    "invariant_passed": true,
+    "inline_marker_count": 1,
+    "used_sources_length": 1,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "לא אותר במקורות שעברו אימות נוסח מוסמך ומלא של הנוסח המחייב של סעיף 6 לחוק החברות; לכן לא ניתן להביא כאן הגדרה מחייבת, ציטוט מחייב או רשימת תנאים מצטברים מתוך הסעיף. אין לשחזר את ההגדרה ממקורות משניים, ממסמכים סמוכים, מהצעות חוק או מסעיפים אחרים.¹"
 }
