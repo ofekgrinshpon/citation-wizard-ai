@@ -217,6 +217,11 @@ export interface DrafterInputSource {
   classification_before?: string;
   classification_after?: string;
   classification_reason?: string;
+  /** commentary_vs_judgment_classification_v1 telemetry. */
+  judgment_identity_signals?: string[];
+  commentary_identity_signals?: string[];
+  uncertain_identity?: boolean;
+  downgrade_reason?: string;
   title_hygiene_reasons: string[];
 
   url: string | null;
