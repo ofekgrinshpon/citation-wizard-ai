@@ -10,5 +10,19 @@
     "orphan": 0,
     "fallback_used_count": 0,
     "reclassified_count": 0
+  },
+  {
+    "id": "F02",
+    "pass": false,
+    "failures": [
+      "commentary_labelled_judgment"
+    ],
+    "branch": null,
+    "footnotes_length": 6,
+    "used_sources_length": 6,
+    "dangling": 0,
+    "orphan": 0,
+    "fallback_used_count": 0,
+    "reclassified_count": 0
   }
 ]
