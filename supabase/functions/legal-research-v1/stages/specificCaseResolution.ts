@@ -26,7 +26,8 @@ import {
   type DocketRef,
 } from "./docketDetection.ts";
 import { classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
-import { deriveSupremeCourtFileUrls } from "./courtFileUrls.ts";
+import { deriveSupremeCourtFileUrls, isTextEndpointUrl } from "./courtFileUrls.ts";
+import { assessPdfExtraction, isTextEndpointStub } from "./pdfExtractionPreflight.ts";
 import {
   HOLDING_TEXT_RE,
   isDirectFileUrl,
