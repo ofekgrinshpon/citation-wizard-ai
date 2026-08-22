@@ -195,7 +195,20 @@ export interface DrafterInputSource {
   /** Raw upstream title — debug only, never user-facing. */
   raw_title: string;
   /** Display-title hygiene status (see displayTitleHygiene.ts). */
-  title_status: "ok" | "fallback_junk_meta" | "fallback_truncated" | "fallback_empty" | "fallback_generic";
+  title_status:
+    | "ok"
+    | "fallback_junk_meta"
+    | "fallback_truncated"
+    | "fallback_empty"
+    | "fallback_generic"
+    | "fallback_filename"
+    | "fallback_bare_institution";
+  /** source_label_quality_v1 telemetry. */
+  title_hygiene_action?: string;
+  fallback_used?: string;
+  classification_before?: string;
+  classification_after?: string;
+  classification_reason?: string;
   title_hygiene_reasons: string[];
   url: string | null;
   source_type: string;
