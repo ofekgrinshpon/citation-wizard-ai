@@ -497,7 +497,10 @@ export function classifySourceIntegrity(input: IntegrityInput): SourceIntegrity 
     downgrade_reason,
     is_judgment_document: judg.is_judgment,
     has_holding_text: judg.has_holding_text,
+    classification_before,
+    classification_reason,
   };
+
 }
 
 /**
