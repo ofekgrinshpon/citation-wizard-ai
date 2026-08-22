@@ -402,6 +402,9 @@ export function buildInputSources(
     });
 
   }
+  // source_label_quality_v1 — collapse OCR-corrupted near-duplicate labels
+  // (retrieved sources only; user documents keep their own titles).
+  collapseNearDuplicateTitles(out);
   if (useAsSource) {
     for (const d of userDocs) {
       if (d.chunks.length === 0) continue;
