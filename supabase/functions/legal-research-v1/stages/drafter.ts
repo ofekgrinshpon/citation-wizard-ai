@@ -433,6 +433,13 @@ export function buildInputSources(
       best_support: u.best_support === "direct" ? "direct" : "partial",
       supported_points,
       claim_ids: vs.map((v) => v.claim_id),
+      verified_claim_ids: Array.from(new Set(vs.map((v) => v.claim_id))),
+      facet_ids: [],
+      legal_area: inferLegalAreaId(`${c.title ?? ""} ${c.snippet ?? ""}`),
+      support_subtype: normalizeSupportSubtype(vs, integ0, meta0),
+      verifier_verdict: u.best_support === "direct" ? "direct" : "partial",
+      body_acquired: meta0.judgment_text_acquired === true || meta0.statute_text_acquired === true,
+
       snippet: snippetText,
       authority_tier: integ0.authority_tier,
       text_usability: integ0.text_usability,
