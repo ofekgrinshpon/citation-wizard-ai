@@ -28,6 +28,7 @@ import {
   type RankInput,
 } from "./judgmentCandidateRanking.ts";
 import { processExtractedBody } from "./postExtract.ts";
+import { assessPdfExtraction } from "./pdfExtractionPreflight.ts";
 import { looksBinary } from "./statuteTextAcquisition.ts";
 
 
