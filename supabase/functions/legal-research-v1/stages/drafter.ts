@@ -272,6 +272,19 @@ import {
 } from "./synthesisSnippetBudget.ts";
 
 
+/** CPU hot-path guard telemetry for the last buildInputSources() call. */
+export const labelCpuStats: {
+  classification_cache_hit_count: number;
+  classification_rerun_count: number;
+  classification_rerun_reason: string[];
+  source_label_cpu_guard_applied: boolean;
+} = {
+  classification_cache_hit_count: 0,
+  classification_rerun_count: 0,
+  classification_rerun_reason: [],
+  source_label_cpu_guard_applied: false,
+};
+
 export function buildInputSources(
   candidates: Candidate[],
   verdicts: Verdict[],
