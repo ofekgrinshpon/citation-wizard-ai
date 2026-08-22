@@ -206,10 +206,19 @@ export interface DrafterInputSource {
   /** source_label_quality_v1 telemetry. */
   title_hygiene_action?: string;
   fallback_used?: string;
+  /** over_fallback_fix_v1 telemetry. */
+  fallback_applied?: boolean;
+  fallback_candidate?: string;
+  fallback_rejected_reason?: string;
+  fallback_improvement_reason?: string;
+  /** cpu hot-path guard telemetry. */
+  classification_cache_hit?: boolean;
+  classification_rerun_reason?: string;
   classification_before?: string;
   classification_after?: string;
   classification_reason?: string;
   title_hygiene_reasons: string[];
+
   url: string | null;
   source_type: string;
   role: string;
