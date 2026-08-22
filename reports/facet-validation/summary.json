@@ -1,21 +1,21 @@
 [
   {
-    "id": "R02",
-    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
-    "job_id": "a7b1020e-bf16-444b-a331-4f7bc828ef21",
-    "run_id": "b5d8848b-7f31-4fc9-9856-8bac3d4cc9a2",
-    "ms": 161274,
+    "id": "F02",
+    "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי?",
+    "job_id": "57ddd7cf-c7d0-497c-9caf-276e9e102d46",
+    "run_id": "0741b032-0c39-4e4d-af7c-7fa8c62877af",
+    "ms": 143116,
     "terminal_status": "done",
     "job_error": null,
     "last_stage": null,
     "placeholder_rows_rejected": 0,
     "branch": null,
     "drafted": true,
-    "answer_length": 1303,
-    "used_sources_count": 2,
-    "footnotes_count": 2,
-    "judgments_cited": 2,
-    "body_acquired_judgments": 2,
+    "answer_length": 3120,
+    "used_sources_count": 3,
+    "footnotes_count": 4,
+    "judgments_cited": 1,
+    "body_acquired_judgments": 1,
     "metadata_only_judgments": 0,
     "metadata_only_titles": [],
     "statute_text_acquired_count": 0,
@@ -23,14 +23,544 @@
     "statute_acquisition": null,
     "sufficiency_used_acquired_body": true,
     "claim_facet_expansion": {
-      "facets": [],
-      "enabled": false,
+      "facets": [
+        {
+          "facet_id": "F1",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 2,
+          "sources_found": 20,
+          "commentary_only": false,
+          "doctrinal_label": "עילת ההתערבות של בג\"ץ בבית דין דתי",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "binding_case_law"
+        },
+        {
+          "facet_id": "F2",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 2,
+          "sources_found": 24,
+          "commentary_only": false,
+          "doctrinal_label": "תחולת הדין האזרחי על בית הדין הרבני",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "primary_statute"
+        },
+        {
+          "facet_id": "F3",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 1,
+          "sources_found": 17,
+          "commentary_only": false,
+          "doctrinal_label": "שיקול זר וחריגה מסמכות",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+          ],
+          "best_support_level": "partial",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "binding_case_law"
+        },
+        {
+          "facet_id": "F4",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 0,
+          "sources_found": 8,
+          "commentary_only": false,
+          "doctrinal_label": "איזון משאבים וחלוקת רכוש",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "חוק יחסי ממון בין בני זוג איזון משאבים"
+          ],
+          "best_support_level": "partial",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "primary_statute"
+        }
+      ],
+      "enabled": true,
       "version": "claim_facet_expansion_v1",
-      "facet_count": 0,
-      "gate_reason": "mode_excluded:specific_case",
+      "facet_count": 4,
+      "gate_reason": "mode=doctrine_explanation;shape=analysis",
       "legal_area_lock": "public_law_hcj",
-      "directive_applied": false,
-      "facet_queries_count": 0,
+      "directive_applied": true,
+      "facet_queries_count": 4,
+      "facets_commentary_only": 0,
+      "facets_without_primary_support": 0
+    },
+    "sufficiency_profile": null,
+    "sufficiency_passed": null,
+    "metadata_only_holdings_remaining": 0,
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [
+          "s9"
+        ],
+        "reference_only": [
+          "s1",
+          "s3",
+          "s4"
+        ]
+      },
+      "blocks_stripped": 6,
+      "source_split_counts": {
+        "read_in_full": 1,
+        "reference_only": 3
+      },
+      "reference_only_sources": [
+        {
+          "ref": "s1",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts\\24\\20\\056\\k02&fileName=24056200_k02.txt&type=3",
+          "title": "בע\"מ 5620/24",
+          "candidate_id": "fdc6a2fa-96fe-4d5f-bb12-7f2eb3630ac4"
+        },
+        {
+          "ref": "s3",
+          "url": "https://www.nevo.co.il/law_html/law01/999_001.htm",
+          "title": "בג\"ץ 1000/92 בבלי נ' בית הדין הרבני הגדול",
+          "candidate_id": "b7ecd5de-b14b-4cd5-9c7d-249cf10f88bf"
+        },
+        {
+          "ref": "s4",
+          "url": "https://www.nevo.co.il/law_html/law01/999_999.htm",
+          "title": "בע\"מ 1398/11 פלוני נ' פלונית",
+          "candidate_id": "b0a025d0-3154-4b43-ab23-07674842ffaa"
+        }
+      ],
+      "blocks_left_unsupported": 0,
+      "stripped_ref_occurrences": 7,
+      "unsupported_block_samples": [],
+      "metadata_only_judgment_refs": [
+        "s1",
+        "s3",
+        "s4"
+      ],
+      "metadata_only_holdings_remaining": 0
+    },
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": [],
+    "used_source_titles": [
+      {
+        "title": "צו הוצא עתירתו שהגיש לאחר , המשך על המורה בשב כרופא העסקתו\"ס",
+        "citable_as": "judgment",
+        "text_usability": "full_text"
+      },
+      {
+        "title": "Judicial review of the rabbinical establishment - religion, nationality and law (Heb.)",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only"
+      },
+      {
+        "title": "בשבחו של מבחן התוחלת: עקרון המהותיות והתמודדות עם חוסר ...",
+        "citable_as": "commentary",
+        "text_usability": "substantive_excerpt"
+      }
+    ]
+  },
+  {
+    "id": "F06",
+    "query": "מהו היקף חובת תום הלב במשא ומתן לפי סעיף 12 לחוק החוזים (חלק כללי)?",
+    "job_id": "7647598d-4ef7-4f9c-8957-11f4c67e36d4",
+    "run_id": "f6281472-1674-4c90-89ab-e6a836ffaa24",
+    "ms": 192154,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": null,
+    "drafted": true,
+    "answer_length": 3782,
+    "used_sources_count": 7,
+    "footnotes_count": 11,
+    "judgments_cited": 4,
+    "body_acquired_judgments": 4,
+    "metadata_only_judgments": 0,
+    "metadata_only_titles": [],
+    "statute_text_acquired_count": 0,
+    "statute_section_text_located": false,
+    "statute_acquisition": null,
+    "sufficiency_used_acquired_body": true,
+    "claim_facet_expansion": {
+      "facets": [
+        {
+          "facet_id": "F1",
+          "legal_area": "דיני חוזים",
+          "sources_used": 7,
+          "sources_found": 27,
+          "commentary_only": false,
+          "doctrinal_label": "ההוראה המחייבת בבסיס: סעיף 12 לחוק החוזים (חלק כללי) מטיל חובת תום",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "סעיף 12 לחוק החוזים (חלק כללי) מטיל חובת תום דיני חוזים הוראת החוק"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 2,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "primary_statute"
+        },
+        {
+          "facet_id": "F2",
+          "legal_area": "דיני חוזים",
+          "sources_used": 7,
+          "sources_found": 29,
+          "commentary_only": false,
+          "doctrinal_label": "הלכה מחייבת בסוגיה: סעיף 12 לחוק החוזים (חלק כללי) מטיל חובת תום",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "סעיף 12 לחוק החוזים (חלק כללי) מטיל חובת תום דיני חוזים בית המשפט העליון הלכה"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 2,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "binding_case_law"
+        },
+        {
+          "facet_id": "F3",
+          "legal_area": "דיני חוזים",
+          "sources_used": 7,
+          "sources_found": 27,
+          "commentary_only": false,
+          "doctrinal_label": "יישום וסייגים: סעיף 12 לחוק החוזים (חלק כללי) מטיל חובת תום",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "סעיף 12 לחוק החוזים (חלק כללי) מטיל חובת תום דיני חוזים חריגים וסייגים"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 2,
+          "insufficiency_reason": null,
+          "expected_support_type": "application",
+          "primary_support_found": true,
+          "required_source_preference": "binding_case_law"
+        },
+        {
+          "facet_id": "F4",
+          "legal_area": "דיני חוזים",
+          "sources_used": 7,
+          "sources_found": 27,
+          "commentary_only": false,
+          "doctrinal_label": "רקע עיוני: סעיף 12 לחוק החוזים (חלק כללי) מטיל חובת תום",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "סעיף 12 לחוק החוזים (חלק כללי) מטיל חובת תום דיני חוזים מאמר אקדמי"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 2,
+          "insufficiency_reason": null,
+          "expected_support_type": "background_only",
+          "primary_support_found": true,
+          "required_source_preference": "scholarship_secondary"
+        },
+        {
+          "facet_id": "F5",
+          "legal_area": "דיני חוזים",
+          "sources_used": 7,
+          "sources_found": 25,
+          "commentary_only": false,
+          "doctrinal_label": "ההוראה המחייבת בבסיס: מה מהווה הפרה של חובת תום הלב במשא ומתן",
+          "parent_claim_id": "C2",
+          "generated_queries": [
+            "מה מהווה הפרה של חובת תום הלב במשא ומתן דיני חוזים הוראת החוק"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 2,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "primary_statute"
+        },
+        {
+          "facet_id": "F6",
+          "legal_area": "דיני חוזים",
+          "sources_used": 7,
+          "sources_found": 26,
+          "commentary_only": false,
+          "doctrinal_label": "הלכה מחייבת בסוגיה: מה מהווה הפרה של חובת תום הלב במשא ומתן",
+          "parent_claim_id": "C2",
+          "generated_queries": [
+            "מה מהווה הפרה של חובת תום הלב במשא ומתן דיני חוזים בית המשפט העליון הלכה"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 2,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "binding_case_law"
+        },
+        {
+          "facet_id": "F7",
+          "legal_area": "דיני חוזים",
+          "sources_used": 7,
+          "sources_found": 24,
+          "commentary_only": false,
+          "doctrinal_label": "יישום וסייגים: מה מהווה הפרה של חובת תום הלב במשא ומתן",
+          "parent_claim_id": "C2",
+          "generated_queries": [
+            "מה מהווה הפרה של חובת תום הלב במשא ומתן דיני חוזים חריגים וסייגים"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 2,
+          "insufficiency_reason": null,
+          "expected_support_type": "application",
+          "primary_support_found": true,
+          "required_source_preference": "binding_case_law"
+        },
+        {
+          "facet_id": "F8",
+          "legal_area": "דיני חוזים",
+          "sources_used": 7,
+          "sources_found": 24,
+          "commentary_only": false,
+          "doctrinal_label": "רקע עיוני: מה מהווה הפרה של חובת תום הלב במשא ומתן",
+          "parent_claim_id": "C2",
+          "generated_queries": [
+            "מה מהווה הפרה של חובת תום הלב במשא ומתן דיני חוזים מאמר אקדמי"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 2,
+          "insufficiency_reason": null,
+          "expected_support_type": "background_only",
+          "primary_support_found": true,
+          "required_source_preference": "scholarship_secondary"
+        }
+      ],
+      "enabled": true,
+      "version": "claim_facet_expansion_v1",
+      "facet_count": 8,
+      "gate_reason": "mode=doctrine_explanation;shape=analysis",
+      "legal_area_lock": "contracts",
+      "directive_applied": true,
+      "facet_queries_count": 6,
+      "facets_commentary_only": 0,
+      "facets_without_primary_support": 0
+    },
+    "sufficiency_profile": null,
+    "sufficiency_passed": null,
+    "metadata_only_holdings_remaining": 0,
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [
+          "s4",
+          "s5",
+          "s7",
+          "s8"
+        ],
+        "reference_only": [
+          "s2",
+          "s6",
+          "s9"
+        ]
+      },
+      "blocks_stripped": 11,
+      "source_split_counts": {
+        "read_in_full": 4,
+        "reference_only": 3
+      },
+      "reference_only_sources": [
+        {
+          "ref": "s2",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PdfViewer%2F04-91-294-g2.pdf",
+          "title": "ע\"א 294/91 חברת קדישא גחש\"א 'קהילת ירושלים' נ' קסטנבאום",
+          "candidate_id": "b981d427-bc46-4742-956f-ee5aac53e492"
+        },
+        {
+          "ref": "s6",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts\\89\\990\\006\\m08&fileName=89006990_M08.txt",
+          "title": "ע\"א 416/89 גל אור נ' חברת ברקאי",
+          "candidate_id": "333b9180-922d-4fa3-9fc1-8b46d02c5b6e"
+        },
+        {
+          "ref": "s9",
+          "url": "https://img.haarets.co.il/bs/00000185-7672-de47-afdf-f6f3baae0000/f4/91/2c7a3ddf410e84b39136f39f8946/00.pdf",
+          "title": "ע\"א 2274/21",
+          "candidate_id": "9c974e44-3878-41ad-8b49-39440196dc87"
+        }
+      ],
+      "blocks_left_unsupported": 0,
+      "stripped_ref_occurrences": 12,
+      "unsupported_block_samples": [],
+      "metadata_only_judgment_refs": [
+        "s2",
+        "s6",
+        "s9"
+      ],
+      "metadata_only_holdings_remaining": 0
+    },
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": [],
+    "used_source_titles": [
+      {
+        "title": "ע\"א 1569/93 מאיה נ' פנפורד (ישראל) בע\"מ",
+        "citable_as": "judgment",
+        "text_usability": "substantive_excerpt"
+      },
+      {
+        "title": "ע\"א 651/82 בן ציון עזרא נ' גיל טייכר",
+        "citable_as": "judgment",
+        "text_usability": "substantive_excerpt"
+      },
+      {
+        "title": "ע\"א 154/80 פרידמן נ' שם טוב",
+        "citable_as": "judgment",
+        "text_usability": "substantive_excerpt"
+      },
+      {
+        "title": "ע\"א 579/83 המגן חברה לביטוח בע\"מ נ' סלמאן",
+        "citable_as": "judgment",
+        "text_usability": "substantive_excerpt"
+      },
+      {
+        "title": "חוק החוזים (חלק כללי), תשל\"ג-1973, סעיף 12",
+        "citable_as": "statute",
+        "text_usability": "full_text"
+      },
+      {
+        "title": "חוק החוזים (חלק כללי), תשל\"ג-1973",
+        "citable_as": "statute",
+        "text_usability": "metadata_only"
+      },
+      {
+        "title": "החובה לנהוג בתום לב במשא ומתן בראי הגישה הכלכלית",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only"
+      }
+    ]
+  },
+  {
+    "id": "N02",
+    "query": "מהי עילת הסבירות במשפט המינהלי הישראלי?",
+    "job_id": "6cf81a72-bc4e-41b7-90a5-ce614dd43121",
+    "run_id": "cdb44ad3-fe1e-4806-972f-f1c9ba645efa",
+    "ms": 121711,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": null,
+    "drafted": true,
+    "answer_length": 2638,
+    "used_sources_count": 5,
+    "footnotes_count": 7,
+    "judgments_cited": 4,
+    "body_acquired_judgments": 4,
+    "metadata_only_judgments": 0,
+    "metadata_only_titles": [],
+    "statute_text_acquired_count": 0,
+    "statute_section_text_located": false,
+    "statute_acquisition": null,
+    "sufficiency_used_acquired_body": true,
+    "claim_facet_expansion": {
+      "facets": [
+        {
+          "facet_id": "F1",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 4,
+          "sources_found": 23,
+          "commentary_only": false,
+          "doctrinal_label": "עילת ההתערבות של בג\"ץ בבית דין דתי",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "binding_case_law"
+        },
+        {
+          "facet_id": "F2",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 1,
+          "sources_found": 15,
+          "commentary_only": false,
+          "doctrinal_label": "תחולת הדין האזרחי על בית הדין הרבני",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+          ],
+          "best_support_level": "partial",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "primary_statute"
+        },
+        {
+          "facet_id": "F3",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 5,
+          "sources_found": 19,
+          "commentary_only": false,
+          "doctrinal_label": "שיקול זר וחריגה מסמכות",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "binding_case_law"
+        },
+        {
+          "facet_id": "F4",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 0,
+          "sources_found": 2,
+          "commentary_only": false,
+          "doctrinal_label": "איזון משאבים וחלוקת רכוש",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "חוק יחסי ממון בין בני זוג איזון משאבים"
+          ],
+          "best_support_level": "unrelated",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "primary_statute"
+        }
+      ],
+      "enabled": true,
+      "version": "claim_facet_expansion_v1",
+      "facet_count": 4,
+      "gate_reason": "mode=doctrine_explanation;shape=definition",
+      "legal_area_lock": "public_law_hcj",
+      "directive_applied": true,
+      "facet_queries_count": 4,
       "facets_commentary_only": 0,
       "facets_without_primary_support": 0
     },
@@ -42,13 +572,15 @@
       "source_split": {
         "read_in_full": [
           "s1",
-          "s2"
+          "s2",
+          "s6",
+          "s7"
         ],
         "reference_only": []
       },
       "blocks_stripped": 0,
       "source_split_counts": {
-        "read_in_full": 2,
+        "read_in_full": 4,
         "reference_only": 0
       },
       "reference_only_sources": [],
@@ -65,13 +597,28 @@
     "failures": [],
     "used_source_titles": [
       {
-        "title": "ע\"א 6821/93",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
         "citable_as": "judgment",
         "text_usability": "full_text"
       },
       {
-        "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "title": "בג\"ץ 5309/18 התאחדות המלונות בישראל נ׳ משרד הפנים פסק דין (06.01.2021)",
         "citable_as": "judgment",
+        "text_usability": "substantive_excerpt"
+      },
+      {
+        "title": "ע\"א 5858/19 פסגות קופות גמל פנסיה בע\"מ נ׳ חיים אופיר פס\"ד פסק דין (05.07.2022)",
+        "citable_as": "judgment",
+        "text_usability": "full_text"
+      },
+      {
+        "title": "פסק-דין בתיק ע\"א 6913/19",
+        "citable_as": "judgment",
+        "text_usability": "full_text"
+      },
+      {
+        "title": "סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
+        "citable_as": "scholarship",
         "text_usability": "substantive_excerpt"
       }
     ]
