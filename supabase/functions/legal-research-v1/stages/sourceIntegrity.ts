@@ -161,14 +161,29 @@ function detectJudgmentDocument(
   const fileDoc = !!u && /\.(pdf|docx?|rtf)$/i.test(u.pathname);
   const caseType = CASE_TYPES.has(sourceType);
 
-  const is_judgment =
-    (hostJudgment && (hasDocket || hasPhrase || fileDoc)) ||
-    ((official_host || mirror_host) && fileDoc && hasDocket && (hasPhrase || has_holding_text)) ||
-    ((official_host || mirror_host) && hasDocket && hasPhrase && caseType) ||
-    (fileDoc && hasDocket && hasPhrase && caseType);
+  // source_label_quality_v1 — judgment shape must be identity-bearing.
+  // Courtroom vocabulary alone ("פסק דין", "בית המשפט העליון") never suffices.
+  const hasParties = /\sנ['׳"״]?\s|\sנגד\s/.test(`${title} ${snippet}`);
+  const casePrefix = CASE_PREFIX_RE.test(`${title} ${snippet}`);
+  const identityParams = JUDGMENT_IDENTITY_PARAM_RE.test(urlPath);
+  const strongJudgmentIdentity = hasDocket ||
+    (casePrefix && hasParties) ||
+    (hostJudgment && identityParams);
+
+  const is_judgment = strongJudgmentIdentity &&
+    (hostJudgment || official_host || mirror_host || fileDoc || caseType || hasPhrase);
 
   return { is_judgment, has_holding_text, official_host };
 }
+
+/** Recognized Israeli case prefixes (without a docket number). */
+const CASE_PREFIX_RE =
+  /(^|\s)(בג["״׳']?ץ|בגץ|דנג["״׳']?ץ|דנ["״׳']?א|ע["״׳']?א|רע["״׳']?א|ע["״׳']?פ|רע["״׳']?פ|בש["״׳']?פ|עע["״׳']?ם|עה["״׳']?ס|תמ["״׳']?ש|ע["״׳']?מ)(\s|$)/;
+
+/** Official judgment endpoints carrying an identity-bearing parameter. */
+const JUDGMENT_IDENTITY_PARAM_RE =
+  /[?&](case|caseid|casenum|casenumber|filenumber|fileno|verdictid|docid|decisionid|id)=[\w%.\-]{3,}/i;
+
 
 const STATUTE_MIRROR_HOSTS = ["wikisource.org", "he.wikisource.org", "wikitext.org"];
 
