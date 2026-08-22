@@ -283,6 +283,32 @@ interface RawDraft {
 
 import { computeDisplayTitle } from "./displayTitleHygiene.ts";
 import { collapseNearDuplicateTitles } from "./sourceLabelQuality.ts";
+import { inferLegalAreaId } from "./claimFacetExpansion.ts";
+
+/**
+ * claim_source_match_validation_v1 — normalize verifier subtypes + integrity
+ * classification into the five support subtypes used by the per-block gate.
+ */
+function normalizeSupportSubtype(
+  vs: Verdict[],
+  integ: SourceIntegrity,
+  meta: Record<string, unknown>,
+): "direct_rule" | "application" | "analogy" | "background" | "commentary" {
+  const subtypes = new Set(vs.map((v) => v.support_subtype).filter(Boolean) as string[]);
+  const citable = String(integ.citable_as ?? "");
+  const primary = citable === "statute" || citable === "regulation" || citable === "judgment";
+  const hasBody = meta.judgment_text_acquired === true || meta.statute_text_acquired === true ||
+    integ.has_holding_text === true;
+  if (subtypes.has("background")) return "background";
+  if (subtypes.has("analogical")) return "analogy";
+  if (!primary) return "commentary";
+  if (subtypes.has("same_domain")) return "application";
+  if (subtypes.has("exact_subject") || vs.some((v) => v.support === "direct")) {
+    return citable === "statute" || citable === "regulation" || hasBody ? "direct_rule" : "application";
+  }
+  return "application";
+}
+
 import { canSatisfyRole, classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
 import { assignSynthesisRole } from "./synthesisRole.ts";
 import {
