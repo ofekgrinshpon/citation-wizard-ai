@@ -426,6 +426,37 @@ export function classifySourceIntegrity(input: IntegrityInput): SourceIntegrity 
     citable = tier === "official_primary" || tier === "primary_mirror" ? "unknown" : "commentary";
   }
 
+  // ── source_label_quality_v1 — title shape overrides host ─────────────────
+  // A gov.il / official host alone can never make a document a statute, and a
+  // case-typed source without judgment identity can never be a judgment.
+  const classification_before = citable;
+  let classification_reason: string | undefined;
+  const hay = `${title} ${snippet}`;
+  const statuteShape = STATUTE_TITLE_SHAPE_RE.test(title) ||
+    (!!u && STATUTE_URL_SHAPE_RE.test(u.href)) ||
+    (STATUTE_TITLE_SHAPE_RE.test(hay) && OFFICIAL_STATUTE_TEXT_RE.test(hay));
+  const scholarshipShape = SCHOLARSHIP_SHAPE_RE.test(hay) ||
+    /\.(pdf|docx?)$/i.test(title.trim()) ||
+    /(^|\/)(research|pubs?|publications?|papers?|lst|articles?)(\/|_)/i.test(u?.pathname ?? "");
+
+  if (citable === "statute" && tier !== "statute_mirror" && !statuteShape) {
+    citable = scholarshipShape ? "scholarship" : "commentary";
+    classification_reason = "statute_requires_title_shape_not_host";
+    flags.push("statute_label_rejected_host_only");
+  } else if (citable === "judgment" && !judg.is_judgment) {
+    citable = scholarshipShape ? "scholarship" : "commentary";
+    classification_reason = "judgment_requires_docket_or_case_identity";
+    flags.push("judgment_label_rejected_no_identity");
+  } else if (
+    (citable === "statute" || citable === "unknown") &&
+    scholarshipShape && !statuteShape && !judg.is_judgment
+  ) {
+    citable = "scholarship";
+    classification_reason = "scholarship_shape_overrides_official_host";
+    flags.push("scholarship_shape_detected");
+  }
+
+
   // ── downgrade reason (source_type over-claims authority) ─────────────────
   let downgrade_reason: string | undefined;
   if (CASE_TYPES.has(sourceType) && citable !== "judgment") {
