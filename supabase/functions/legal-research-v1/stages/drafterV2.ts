@@ -449,6 +449,14 @@ function buildUserMessage(
   }
   lines.push("");
   lines.push(
+    "תיוג בלוקים (חובה בכל פסקה/פריט רשימה): הוסף claim_id (מזהה הטענה שהבלוק מבסס, מתוך רשימת הטענות), " +
+      "facet_id אם הבלוק עוסק בהיבט דוקטרינרי ספציפי, ו-proposition_type אחד מתוך " +
+      "black_letter_rule (קביעת הלכה/דין), application (יישום/נסיבות), background (רקע), " +
+      "practical_guidance (הנחיה מעשית), limitation (סייג/מגבלה). " +
+      "צרף ל-source_refs רק מקורות שאומתו לאותה טענה — ספרות ומקורות רקע אינם אסמכתה לקביעת הלכה.",
+  );
+
+  lines.push(
     "החזר אובייקט {blocks: [...]} דרך הכלי emit_structured_draft. זכור: אסור סימני הערות שוליים בתוך text — הקוד מוסיף אותם דטרמיניסטית לפי source_refs.",
   );
   return lines.join("\n");
