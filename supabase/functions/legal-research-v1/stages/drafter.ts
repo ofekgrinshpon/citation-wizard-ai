@@ -362,6 +362,13 @@ export function buildInputSources(
       raw_title: dt.raw_title,
       title_status: dt.title_status,
       title_hygiene_reasons: dt.title_hygiene_reasons,
+      title_hygiene_action: dt.title_status === "ok"
+        ? "kept"
+        : dt.title_hygiene_reasons[0] ?? dt.title_status,
+      fallback_used: dt.fallback_used,
+      classification_before,
+      classification_after: integ0.citable_as,
+      classification_reason,
       url: c.source_url ?? null,
       source_type: c.source_type,
       role: c.role,
