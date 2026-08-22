@@ -1,136 +1,31 @@
 {
   "id": "F07",
-  "classification_changed": [
-    {
-      "title": "חוק-יסוד: כבוד האדם וחירותו ובחוק-יסוד",
-      "before": "unknown",
-      "after": "scholarship",
-      "reason": "scholarship_shape_overrides_official_host"
-    }
-  ],
-  "classification_rows": [
-    {
-      "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
-      "classification_before": "scholarship",
-      "classification_after": "scholarship",
-      "judgment_identity_signals": [
-        "document_file"
-      ],
-      "commentary_identity_signals": [
-        "commentary_snippet_shape",
-        "upstream_scholarship_type"
-      ],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf"
-    },
-    {
-      "title": "המובן הפורמלי והמובן המהוהי של מבחני המידתיות בפסיקת בג\"ץ",
-      "classification_before": "commentary",
-      "classification_after": "commentary",
-      "judgment_identity_signals": [
-        "case_prefix",
-        "document_file"
-      ],
-      "commentary_identity_signals": [],
-      "uncertain_identity": true,
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/P_MChoen.pdf"
-    },
-    {
-      "title": "עקרון המידתיות במשפט העברי",
-      "classification_before": "commentary",
-      "classification_after": "commentary",
-      "judgment_identity_signals": [],
-      "commentary_identity_signals": [],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://www.daat.ac.il/mishpat-ivri/skirot/342-2.htm"
-    },
-    {
-      "title": "חוק-יסוד: כבוד האדם וחירותו ובחוק-יסוד",
-      "classification_before": "unknown",
-      "classification_after": "scholarship",
-      "judgment_identity_signals": [],
-      "commentary_identity_signals": [
-        "commentary_title_shape",
-        "commentary_path"
-      ],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "http://lawjournal.huji.ac.il/article/12/1550"
-    },
-    {
-      "title": "האם המחוקק ירה בתותח כדי לפגוע בזבוב? על מידתיות במשפט",
-      "classification_before": "commentary",
-      "classification_after": "commentary",
-      "judgment_identity_signals": [
-        "document_file"
-      ],
-      "commentary_identity_signals": [
-        "commentary_path"
-      ],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://www.runi.ac.il/media/elzhhkck/weill.pdf"
-    },
-    {
-      "title": "דיון אינטגרטיבי - מידתיות וניתוח מדיניות",
-      "classification_before": "commentary",
-      "classification_after": "commentary",
-      "judgment_identity_signals": [
-        "document_file"
-      ],
-      "commentary_identity_signals": [],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://law.haifa.ac.il/images/lawGov/Vol20/21d.pdf"
-    },
-    {
-      "title": "הזכות הטבועה להגנה עצמית ומידתיות במסגרת Jus ad Bellum | דוד קרצמר (כרך יז)",
-      "classification_before": "scholarship",
-      "classification_after": "scholarship",
-      "judgment_identity_signals": [],
-      "commentary_identity_signals": [
-        "upstream_scholarship_type"
-      ],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://runilawreview.org/2014/06/30/volume17_kretzmer/"
-    },
-    {
-      "title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
-      "classification_before": "scholarship",
-      "classification_after": "scholarship",
-      "judgment_identity_signals": [
-        "docket_in_text",
-        "case_prefix",
-        "party_names"
-      ],
-      "commentary_identity_signals": [
-        "commentary_path",
-        "upstream_scholarship_type"
-      ],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://lawjournal.huji.ac.il/article/12/1527"
-    }
-  ],
-  "uncertain_identity_count": 1,
-  "downgrades": [
-    {
-      "title": "המובן הפורמלי והמובן המהוהי של מבחני המידתיות בפסיקת בג\"ץ",
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
-    }
-  ],
+  "retrieval_budget": {
+    "retrieval_budget_ms": null,
+    "retrieval_elapsed_ms": null,
+    "budget_exceeded": null,
+    "partial_retrieval_used": null,
+    "disclosure_shown": false,
+    "aborted_tasks_count": null,
+    "ignored_late_tasks_count": null,
+    "body_acquisition_count": null,
+    "extraction_count": null,
+    "extraction_bytes": null,
+    "longest_retrieval_step": null,
+    "candidate_count_by_facet": null
+  },
+  "classification_changed": [],
+  "classification_rows": [],
+  "uncertain_identity_count": 0,
+  "downgrades": [],
   "query": "מהם מבחני המידתיות בביקורת חוקתית בישראל?",
-  "job_id": "602129be-5319-46ad-89d6-794378271769",
-  "run_id": "653fab58-2f38-4485-9bd5-0709afb09f48",
-  "ms": 80899,
-  "terminal_status": "done",
-  "job_error": null,
-  "branch": "insufficient_sources_limitation",
-  "answer_length": 518,
+  "job_id": "9292bb4a-dd24-4970-b0cd-858ef21e4baa",
+  "run_id": "2d3a1233-7a06-4b8e-b340-1ed05b803e1a",
+  "ms": 827223,
+  "terminal_status": "failed",
+  "job_error": "stale_worker_timeout",
+  "branch": null,
+  "answer_length": 0,
   "inline_marker_count": 0,
   "max_marker": 0,
   "footnotes_length": 0,
@@ -139,241 +34,7 @@
   "orphan_source_row_count": 0,
   "invariant_passed": true,
   "rendered_rows": [],
-  "label_report": {
-    "rows": [
-      {
-        "ref": "s1",
-        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
-        "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
-        "raw_title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
-        "candidate_id": "38c92f67-9601-4f2c-8b3a-6c6b88afc66e",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": null,
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": false,
-        "classification_after": "scholarship",
-        "title_hygiene_action": "kept",
-        "classification_before": "scholarship",
-        "classification_reason": null,
-        "title_hygiene_reasons": [],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "document_file"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [
-          "commentary_snippet_shape",
-          "upstream_scholarship_type"
-        ],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s2",
-        "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/P_MChoen.pdf",
-        "title": "המובן הפורמלי והמובן המהוהי של מבחני המידתיות בפסיקת בג\"ץ",
-        "raw_title": "המובן הפורמלי והמובן המהוהי של מבחני המידתיות בפסיקת בג\"ץ",
-        "candidate_id": "9f74c1c6-10dc-47c6-b2fa-2f52c059f328",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": true,
-        "classification_after": "commentary",
-        "title_hygiene_action": "kept",
-        "classification_before": "commentary",
-        "classification_reason": null,
-        "title_hygiene_reasons": [],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "case_prefix",
-          "document_file"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s3",
-        "url": "https://www.daat.ac.il/mishpat-ivri/skirot/342-2.htm",
-        "title": "עקרון המידתיות במשפט העברי",
-        "raw_title": "עקרון המידתיות במשפט העברי",
-        "candidate_id": "ceaf6cca-9708-448a-a134-3146f64b6be1",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": null,
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": false,
-        "classification_after": "commentary",
-        "title_hygiene_action": "kept",
-        "classification_before": "commentary",
-        "classification_reason": null,
-        "title_hygiene_reasons": [],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s4",
-        "url": "http://lawjournal.huji.ac.il/article/12/1550",
-        "title": "חוק-יסוד: כבוד האדם וחירותו ובחוק-יסוד",
-        "raw_title": "בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות ...",
-        "candidate_id": "6d099ce5-4475-4e3a-bef8-70df852b6833",
-        "title_status": "fallback_truncated",
-        "fallback_used": "statute_name",
-        "downgrade_reason": null,
-        "fallback_applied": true,
-        "fallback_candidate": "חוק-יסוד: כבוד האדם וחירותו ובחוק-יסוד",
-        "uncertain_identity": false,
-        "classification_after": "scholarship",
-        "title_hygiene_action": "title_truncated_mid_word",
-        "classification_before": "unknown",
-        "classification_reason": "scholarship_shape_overrides_official_host",
-        "title_hygiene_reasons": [
-          "title_truncated_mid_word"
-        ],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [
-          "commentary_title_shape",
-          "commentary_path"
-        ],
-        "fallback_improvement_reason": "statute_name:7>raw:3"
-      },
-      {
-        "ref": "s5",
-        "url": "https://www.runi.ac.il/media/elzhhkck/weill.pdf",
-        "title": "האם המחוקק ירה בתותח כדי לפגוע בזבוב? על מידתיות במשפט",
-        "raw_title": "האם המחוקק ירה בתותח כדי לפגוע בזבוב? על מידתיות במשפט",
-        "candidate_id": "85952879-2a14-4b54-b7a0-0695f2ec1bad",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": null,
-        "fallback_applied": false,
-        "fallback_candidate": "מסמך מאתר אתר אקדמי (runi.ac.il)",
-        "uncertain_identity": false,
-        "classification_after": "commentary",
-        "title_hygiene_action": "kept",
-        "classification_before": "commentary",
-        "classification_reason": null,
-        "title_hygiene_reasons": [
-          "title_truncated_mid_word"
-        ],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": "fallback_not_more_informative(host:1<=raw:3)",
-        "judgment_identity_signals": [
-          "document_file"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [
-          "commentary_path"
-        ],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s6",
-        "url": "https://law.haifa.ac.il/images/lawGov/Vol20/21d.pdf",
-        "title": "דיון אינטגרטיבי - מידתיות וניתוח מדיניות",
-        "raw_title": "דיון אינטגרטיבי - מידתיות וניתוח מדיניות",
-        "candidate_id": "d41d15da-855c-41fb-853f-dec958c45438",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": null,
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": false,
-        "classification_after": "commentary",
-        "title_hygiene_action": "kept",
-        "classification_before": "commentary",
-        "classification_reason": null,
-        "title_hygiene_reasons": [],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "document_file"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s7",
-        "url": "https://runilawreview.org/2014/06/30/volume17_kretzmer/",
-        "title": "הזכות הטבועה להגנה עצמית ומידתיות במסגרת Jus ad Bellum | דוד קרצמר (כרך יז)",
-        "raw_title": "הזכות הטבועה להגנה עצמית ומידתיות במסגרת Jus ad Bellum | דוד קרצמר (כרך יז)",
-        "candidate_id": "4fcee0c1-b495-45e1-9561-21642cfb344b",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": null,
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": false,
-        "classification_after": "scholarship",
-        "title_hygiene_action": "kept",
-        "classification_before": "scholarship",
-        "classification_reason": null,
-        "title_hygiene_reasons": [],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [
-          "upstream_scholarship_type"
-        ],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s8",
-        "url": "https://lawjournal.huji.ac.il/article/12/1527",
-        "title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
-        "raw_title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
-        "candidate_id": "cfc2c619-d22a-424a-ad0d-3a8131026c9d",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": null,
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": false,
-        "classification_after": "scholarship",
-        "title_hygiene_action": "kept",
-        "classification_before": "scholarship",
-        "classification_reason": null,
-        "title_hygiene_reasons": [
-          "legal_title_protected"
-        ],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "docket_in_text",
-          "case_prefix",
-          "party_names"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [
-          "commentary_path",
-          "upstream_scholarship_type"
-        ],
-        "fallback_improvement_reason": null
-      }
-    ],
-    "total": 8,
-    "reclassified_count": 1,
-    "fallback_used_count": 1,
-    "classification_rerun_count": 0,
-    "classification_rerun_reason": [],
-    "classification_cache_hit_count": 11,
-    "source_label_cpu_guard_applied": true
-  },
+  "label_report": null,
   "filename_titles": [],
   "bare_institution_titles": [],
   "ocr_duplicate_pairs": [],
@@ -381,17 +42,12 @@
   "commentary_as_judgment": [],
   "metadata_only_holdings": 0,
   "used_sources": [],
-  "footnote_render_report": {
-    "version": "footnote_rendering_invariant_v1",
-    "renumbered": false,
-    "footnotes_length": 0,
-    "invariant_passed": true,
-    "inline_marker_count": 0,
-    "used_sources_length": 0,
-    "dangling_marker_count": 0,
-    "orphan_source_row_count": 0
-  },
-  "pass": true,
-  "failures": [],
-  "answer": "לא נמצאו במקורות מקורות משפטיים ייעודיים לנושא שנשאל, אלא חומר כללי בלבד. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור צעדים משפטיים קונקרטיים לנושא שנשאל ממקורות מתחום אחר או מחומר פרוצדורלי כללי; לכן לא מוצגת כאן הנחיה משפטית לשאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות; המובן הפורמלי והמובן המהוהי של מבחני המידתיות בפסיקת בג\"ץ; עקרון המידתיות במשפט העברי; חוק-יסוד: כבוד האדם וחירותו ובחוק-יסוד."
+  "footnote_render_report": null,
+  "pass": false,
+  "failures": [
+    "no_terminal_qa_row",
+    "empty_answer_body",
+    "cpu_kill"
+  ],
+  "answer": ""
 }
