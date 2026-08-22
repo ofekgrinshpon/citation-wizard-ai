@@ -1,0 +1,131 @@
+{
+  "id": "R02",
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+  "job_id": "9b54d9db-ad7b-4128-ae8c-8a1a1fef4f7e",
+  "run_id": "d4705c51-b006-48c1-9ceb-6efa0c776289",
+  "ms": 181377,
+  "terminal_status": "done",
+  "job_error": null,
+  "branch": null,
+  "answer_length": 2138,
+  "inline_marker_count": 3,
+  "distinct_markers": 1,
+  "max_marker": 1,
+  "footnotes_length": 1,
+  "used_sources_length": 1,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "compound_footnote_rows": 0,
+  "invariant_passed": true,
+  "builder_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 1,
+    "invariant_passed": true,
+    "inline_marker_count": 3,
+    "used_sources_length": 1,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "claim_source_match": {
+    "applied": true,
+    "mismatch_reason": [
+      "unrelated_legal_area",
+      "claim_mismatch"
+    ],
+    "limitation_added": true,
+    "tagged_block_count": 6,
+    "dropped_source_refs": [
+      {
+        "ref": "s1",
+        "reason": "unrelated_legal_area",
+        "block_index": 3,
+        "block_claim_id": "C3",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s1",
+        "reason": "unrelated_legal_area",
+        "block_index": 4,
+        "block_claim_id": "C4",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s3",
+        "reason": "claim_mismatch",
+        "block_index": 4,
+        "block_claim_id": "C4",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C2"
+        ],
+        "source_legal_area": "constitutional"
+      },
+      {
+        "ref": "s2",
+        "reason": "claim_mismatch",
+        "block_index": 5,
+        "block_claim_id": "C5",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C2"
+        ],
+        "source_legal_area": "constitutional"
+      },
+      {
+        "ref": "s5",
+        "reason": "claim_mismatch",
+        "block_index": 6,
+        "block_claim_id": "C1",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C5"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s6",
+        "reason": "claim_mismatch",
+        "block_index": 6,
+        "block_claim_id": "C1",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C4"
+        ],
+        "source_legal_area": null
+      }
+    ],
+    "commentary_only_claims": [],
+    "unsupported_block_count": 2,
+    "source_ref_mismatch_count": 6,
+    "primary_support_by_main_claim": true
+  },
+  "phase": "P5",
+  "preflight": {
+    "exact_case_source_found": null,
+    "exact_case_body_unavailable": null,
+    "body_unavailable_reason": null,
+    "extraction_skipped_reason": null,
+    "large_pdf_skipped": null,
+    "pdf_preflight_size": null,
+    "pdf_preflight_decision": null,
+    "text_endpoint_attempted": null,
+    "text_endpoint_stub_detected": null,
+    "derived_url_resolved": null,
+    "acquisition_success": null
+  },
+  "pass": true,
+  "failures": [],
+  "footnote_rows": [
+    {
+      "number": 1,
+      "title": "ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+      "sub_sources": 1
+    }
+  ],
+  "answer": "**הלכות מרכזיות שנקבעו בע\"א 6821/93 (בנק המזרחי המאוחד נ' מגדל כפר שיתופי)**\n\nבית המשפט קבע כי לכנסת יש מעמד של סמכות מכוננת הנבדלת מסמכותה כחוקקת רגילה — יש להבחין בין 'כובע' מכונן ובין 'כובע' מחוקק, ומשמעות הבחנה זו היא שבמקרים מסוימים חקיקה רגילה אינה יכולה לעוקף את נורמות היסוד של המדינה.¹\n\nנקבע בכך גם כי חוקי היסוד מחזיקים במעלה נורמטיבית על־חוקית ביחס לחקיקה רגילה, ובמסגרת זו הוכרה לבית המשפט הסמכות לקיים ביקורת שיפוטית ולהכריז על תוקף חוקי שנמצא בסתירה לחוק יסוד.¹\n\nבית המשפט הורה על גישה בדיקה של פגיעה בזכויות יסוד הכוללת עקרונות תכליתיים ומידתיים: יש לבחון תכלית ראויה וכן נקבעו שלבי משנה לבחינת מידתיות ובחירת האמצעי (כולל בחינת קיומו של קשר רציונלי בין הממוצא למטרה ובחינת אמצעים שפגיעתם פחותה), כאשר יישום הפרמטרים מותנה בנסיבות המקרה.\n\nהוקדש מקום במחלוקת גם למעמדן של הוראות התגברות והוראות שמירת דינים בחוקי היסוד; בית המשפט דן באופן שבו הוראות כאלה משפיעות על יחסי הגומלין בין חוק יסוד לחוק רגיל וכיצד יש לפרשן בעת־קיום סתירה מתוכננת.\n\nנדגשה חובת פרשנות תכליתית של חקיקה רגילה לאור חוקי היסוד: ככל שניתן, יש לפרש חוקים רגילים באופן שיתאים לכללי היסוד ולמטרותיהן, וזאת הן כמנוע לפרשני והן כדי לצמצם עימותים נורמטיביים.¹\n\nמגבלות היקף והרשאת המקורות: האמור לעיל מסתמך על נוסחי ההחלטה והסניפטים שצוינו; חלק מההיבטים התיאורטיים והפרשניים נדונים גם בספרות ובמסמכי חוק היסוד עצמם, והם תומכים או מפרשים את ההלכות שהובאו כאן, אך לא כל סעיף־יישום מפורט בפסק הדין כפי שסופק.\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי — https://judgments.org.il/judgments/%D7%A2%D7%90-6821-93-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%94%D7%9E%D7%90%D7%95%D7%97%D7%93-%D7%91%D7%A2%D7%9E-%D7%A0-%D7%9E%D7%92%D7%93%D7%9C-%D7%9B%D7%A4%D7%A8-%D7%A9/\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> החיפוש הופסק עקב מגבלת זמן, ולכן ייתכן שלא אותרו כל המקורות הרלוונטיים."
+}
