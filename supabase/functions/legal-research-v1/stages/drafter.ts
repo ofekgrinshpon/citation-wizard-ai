@@ -378,10 +378,17 @@ export function buildInputSources(
       title_hygiene_action: dt.title_status === "ok"
         ? "kept"
         : dt.title_hygiene_reasons[0] ?? dt.title_status,
-      fallback_used: dt.fallback_used,
+      fallback_used: dt.fallback_applied ? dt.fallback_used : "none",
+      fallback_applied: dt.fallback_applied === true,
+      fallback_candidate: dt.fallback_candidate,
+      fallback_rejected_reason: dt.fallback_rejected_reason,
+      fallback_improvement_reason: dt.fallback_improvement_reason,
+      classification_cache_hit: cacheUsable,
+      classification_rerun_reason: cacheUsable ? undefined : (rerunReason ?? undefined),
       classification_before,
       classification_after: integ0.citable_as,
       classification_reason,
+
       url: c.source_url ?? null,
       source_type: c.source_type,
       role: c.role,
