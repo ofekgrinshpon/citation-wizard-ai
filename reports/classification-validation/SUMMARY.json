@@ -1,21 +1,23 @@
 [
   {
-    "id": "F01",
-    "pass": true,
-    "failures": [],
+    "id": "F04",
+    "pass": false,
+    "failures": [
+      "commentary_labelled_judgment"
+    ],
     "branch": null,
-    "footnotes_length": 5,
-    "used_sources_length": 5,
+    "footnotes_length": 2,
+    "used_sources_length": 2,
     "dangling": 0,
     "orphan": 0,
-    "uncertain_identity_count": 1,
+    "uncertain_identity_count": 2,
     "metadata_only_holdings": 0,
     "invariant_passed": true,
     "fallback_used_count": 0,
-    "reclassified_count": 1
+    "reclassified_count": 2
   },
   {
-    "id": "F02",
+    "id": "F05",
     "pass": false,
     "failures": [
       "no_terminal_qa_row",
@@ -32,20 +34,5 @@
     "invariant_passed": true,
     "fallback_used_count": null,
     "reclassified_count": null
-  },
-  {
-    "id": "F03",
-    "pass": true,
-    "failures": [],
-    "branch": "docket_limitation",
-    "footnotes_length": 0,
-    "used_sources_length": 0,
-    "dangling": 0,
-    "orphan": 0,
-    "uncertain_identity_count": 1,
-    "metadata_only_holdings": 0,
-    "invariant_passed": true,
-    "fallback_used_count": 1,
-    "reclassified_count": 0
   }
 ]
