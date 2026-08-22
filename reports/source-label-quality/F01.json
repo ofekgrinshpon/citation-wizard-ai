@@ -1,35 +1,354 @@
 {
   "id": "F01",
   "query": "מה נטל ההוכחה בעתירות לבג״ץ? על מי מוטל הנטל? על העותר תמיד?",
-  "job_id": "2e4b882e-4333-4271-bca8-bb2cf9c5c86f",
-  "run_id": "40a0ae15-fb4d-410f-b1cf-4903100b4a65",
-  "ms": 839438,
-  "terminal_status": "failed",
-  "job_error": "stale_worker_timeout",
+  "job_id": "8585293a-0822-42d3-9448-ae0f447480f9",
+  "run_id": "0612fe58-153b-4ed8-8404-61a02ace556f",
+  "ms": 132619,
+  "terminal_status": "done",
+  "job_error": null,
   "branch": null,
-  "answer_length": 0,
-  "inline_marker_count": 0,
-  "max_marker": 0,
-  "footnotes_length": 0,
-  "used_sources_length": 0,
+  "answer_length": 3028,
+  "inline_marker_count": 9,
+  "max_marker": 8,
+  "footnotes_length": 8,
+  "used_sources_length": 8,
   "dangling_marker_count": 0,
   "orphan_source_row_count": 0,
   "invariant_passed": true,
-  "rendered_rows": [],
-  "label_report": null,
+  "rendered_rows": [
+    {
+      "number": 1,
+      "title": "ע\"פ 930/22 אוסמה חטיב נ׳ מדינת ישראל פס\"ד פסק דין (31.07.2022); רבינוביץ ואח' נ' ורטל ואח'",
+      "citable_as": null,
+      "sub_titles": [
+        "ע\"פ 930/22 אוסמה חטיב נ׳ מדינת ישראל פס\"ד פסק דין (31.07.2022)",
+        "רבינוביץ ואח' נ' ורטל ואח'"
+      ]
+    },
+    {
+      "number": 2,
+      "title": "ע\"פ 930/22 אוסמה חטיב נ׳ מדינת ישראל פס\"ד פסק דין (31.07.2022); ע\"א 7300/21 משה מישל אסרף נ׳ כפיר בובליל פסק דין (21.09.2021); רבינוביץ ואח' נ' ורטל ואח'",
+      "citable_as": null,
+      "sub_titles": [
+        "ע\"פ 930/22 אוסמה חטיב נ׳ מדינת ישראל פס\"ד פסק דין (31.07.2022)",
+        "ע\"א 7300/21 משה מישל אסרף נ׳ כפיר בובליל פסק דין (21.09.2021)",
+        "רבינוביץ ואח' נ' ורטל ואח'"
+      ]
+    },
+    {
+      "number": 3,
+      "title": "פסק-דין בתיק בג\"ץ 466/07; ע\"פ 930/22 אוסמה חטיב נ׳ מדינת ישראל פס\"ד פסק דין (31.07.2022)",
+      "citable_as": null,
+      "sub_titles": [
+        "פסק-דין בתיק בג\"ץ 466/07",
+        "ע\"פ 930/22 אוסמה חטיב נ׳ מדינת ישראל פס\"ד פסק דין (31.07.2022)"
+      ]
+    },
+    {
+      "number": 4,
+      "title": "ע\"פ 930/22 אוסמה חטיב נ׳ מדינת ישראל פס\"ד פסק דין (31.07.2022); ע\"א 7300/21 משה מישל אסרף נ׳ כפיר בובליל פסק דין (21.09.2021); פסק-דין בתיק בג\"ץ 466/07",
+      "citable_as": null,
+      "sub_titles": [
+        "ע\"פ 930/22 אוסמה חטיב נ׳ מדינת ישראל פס\"ד פסק דין (31.07.2022)",
+        "ע\"א 7300/21 משה מישל אסרף נ׳ כפיר בובליל פסק דין (21.09.2021)",
+        "פסק-דין בתיק בג\"ץ 466/07"
+      ]
+    },
+    {
+      "number": 5,
+      "title": "החלטה בתיק ת\"ק 32639-01-11; רבינוביץ ואח' נ' ורטל ואח'; עלי נ' זבידאת ואח'",
+      "citable_as": null,
+      "sub_titles": [
+        "החלטה בתיק ת\"ק 32639-01-11",
+        "רבינוביץ ואח' נ' ורטל ואח'",
+        "עלי נ' זבידאת ואח'"
+      ]
+    },
+    {
+      "number": 6,
+      "title": "החלטה בתיק ת\"ק 32639-01-11; רבינוביץ ואח' נ' ורטל ואח'",
+      "citable_as": null,
+      "sub_titles": [
+        "החלטה בתיק ת\"ק 32639-01-11",
+        "רבינוביץ ואח' נ' ורטל ואח'"
+      ]
+    },
+    {
+      "number": 7,
+      "title": "רבינוביץ ואח' נ' ורטל ואח'",
+      "citable_as": null,
+      "sub_titles": [
+        "רבינוביץ ואח' נ' ורטל ואח'"
+      ]
+    },
+    {
+      "number": 8,
+      "title": "דרכי הוכחה בבג״ץ; ראיות בבית״המשפט הגבוה לצדק",
+      "citable_as": null,
+      "sub_titles": [
+        "דרכי הוכחה בבג״ץ",
+        "ראיות בבית״המשפט הגבוה לצדק"
+      ]
+    }
+  ],
+  "label_report": {
+    "rows": [
+      {
+        "ref": "s1",
+        "url": "https://www.psakdin.co.il/Court/%D7%A8%D7%91%D7%99%D7%A0%D7%95%D7%91%D7%99%D7%A5-%D7%95%D7%90%D7%97'%D7%A0'%D7%95%D7%A8%D7%98%D7%9C-%D7%95%D7%90%D7%97'",
+        "title": "רבינוביץ ואח' נ' ורטל ואח'",
+        "raw_title": "רבינוביץ ואח' נ' ורטל ואח'",
+        "candidate_id": "5542b658-9020-4eb2-9c92-e93733dc14a8",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s2",
+        "url": "https://www.adalah.org/uploads/uploads/HCJ466_07_ruling.pdf",
+        "title": "פסק-דין בתיק בג\"ץ 466/07",
+        "raw_title": "פסק-דין בתיק בג\"ץ 466/07",
+        "candidate_id": "0407593e-2ed3-44e9-961d-ff404b9ad5e9",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "classification_after": "judgment",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s3",
+        "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%22%D7%A7-32639-01-11",
+        "title": "החלטה בתיק ת\"ק 32639-01-11",
+        "raw_title": "החלטה בתיק ת\"ק 32639-01-11",
+        "candidate_id": "a691516e-012e-43d3-b92a-fb104bb0ca90",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s4",
+        "url": "https://www.psakdin.co.il/Court/%D7%A2%D7%9C%D7%99-%D7%A0'-%D7%96%D7%91%D7%99%D7%93%D7%90%D7%AA-%D7%95%D7%90%D7%97'",
+        "title": "עלי נ' זבידאת ואח'",
+        "raw_title": "עלי נ' זבידאת ואח'",
+        "candidate_id": "f6753e06-8bc5-4b4a-8327-fe262df81e52",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s5",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/5-dorner.pdf",
+        "title": "דרכי הוכחה בבג״ץ",
+        "raw_title": "דרכי הוכחה בבג״ץ",
+        "candidate_id": "a0234c81-13f6-4d2b-bf63-1df00ad69800",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s6",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/4-zamir-2.pdf",
+        "title": "ראיות בבית״המשפט הגבוה לצדק",
+        "raw_title": "ראיות בבית״המשפט הגבוה לצדק",
+        "candidate_id": "4e028791-f6c6-4e3c-9173-661b3cd685b0",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "fallback_applied": false,
+        "fallback_candidate": "מסמך מאתר אתר אקדמי (law.haifa.ac.il)",
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "title_truncated_mid_word"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": "fallback_not_more_informative(host:1<=raw:3)",
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s7",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a4-930-22-%d7%90%d7%95%d7%a1%d7%9e%d7%94-%d7%97%d7%98%d7%99%d7%91-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%93-%d7%9e%d7%99%d7%95%d7%9d-31-7-2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"פ 930/22 אוסמה חטיב נ׳ מדינת ישראל פס\"ד פסק דין (31.07.2022)",
+        "raw_title": "ע\"פ 930/22 אוסמה חטיב נ׳ מדינת ישראל פס\"ד פסק דין (31.07.2022)",
+        "candidate_id": "6c9cfb3c-23f5-437c-a57a-aff38c83056e",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "classification_after": "judgment",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s8",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-7300-21-%d7%9e%d7%a9%d7%94-%d7%9e%d7%99%d7%a9%d7%9c-%d7%90%d7%a1%d7%a8%d7%a3-%d7%a0-%d7%9b%d7%a4%d7%99%d7%a8-%d7%91%d7%95%d7%91%d7%9c%d7%99%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"א 7300/21 משה מישל אסרף נ׳ כפיר בובליל פסק דין (21.09.2021)",
+        "raw_title": "ע\"א 7300/21 משה מישל אסרף נ׳ כפיר בובליל פסק דין (21.09.2021)",
+        "candidate_id": "ab87090e-8a7d-4e86-a850-46c97469761c",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "classification_after": "judgment",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
+      }
+    ],
+    "total": 8,
+    "reclassified_count": 0,
+    "fallback_used_count": 0,
+    "classification_rerun_count": 0,
+    "classification_rerun_reason": [],
+    "classification_cache_hit_count": 12,
+    "source_label_cpu_guard_applied": true
+  },
   "filename_titles": [],
   "bare_institution_titles": [],
   "ocr_duplicate_pairs": [],
   "scholarship_as_statute": [],
   "commentary_as_judgment": [],
   "metadata_only_holdings": 0,
-  "used_sources": [],
-  "footnote_render_report": null,
-  "pass": false,
-  "failures": [
-    "no_terminal_qa_row",
-    "empty_answer_body",
-    "cpu_kill"
+  "used_sources": [
+    {
+      "number": 1,
+      "title": "ע\"פ 930/22 אוסמה חטיב נ׳ מדינת ישראל פס\"ד פסק דין (31.07.2022)",
+      "citable_as": "judgment",
+      "text_usability": "substantive_excerpt",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%a4-930-22-%d7%90%d7%95%d7%a1%d7%9e%d7%94-%d7%97%d7%98%d7%99%d7%91-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%93-%d7%9e%d7%99%d7%95%d7%9d-31-7-2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
+    },
+    {
+      "number": 1,
+      "title": "רבינוביץ ואח' נ' ורטל ואח'",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only",
+      "url": "https://www.psakdin.co.il/Court/%D7%A8%D7%91%D7%99%D7%A0%D7%95%D7%91%D7%99%D7%A5-%D7%95%D7%90%D7%97'%D7%A0'%D7%95%D7%A8%D7%98%D7%9C-%D7%95%D7%90%D7%97'"
+    },
+    {
+      "number": 2,
+      "title": "ע\"א 7300/21 משה מישל אסרף נ׳ כפיר בובליל פסק דין (21.09.2021)",
+      "citable_as": "judgment",
+      "text_usability": "substantive_excerpt",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-7300-21-%d7%9e%d7%a9%d7%94-%d7%9e%d7%99%d7%a9%d7%9c-%d7%90%d7%a1%d7%a8%d7%a3-%d7%a0-%d7%9b%d7%a4%d7%99%d7%a8-%d7%91%d7%95%d7%91%d7%9c%d7%99%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
+    },
+    {
+      "number": 3,
+      "title": "פסק-דין בתיק בג\"ץ 466/07",
+      "citable_as": "judgment",
+      "text_usability": "full_text",
+      "url": "https://www.adalah.org/uploads/uploads/HCJ466_07_ruling.pdf"
+    },
+    {
+      "number": 5,
+      "title": "החלטה בתיק ת\"ק 32639-01-11",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only",
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%22%D7%A7-32639-01-11"
+    },
+    {
+      "number": 5,
+      "title": "עלי נ' זבידאת ואח'",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only",
+      "url": "https://www.psakdin.co.il/Court/%D7%A2%D7%9C%D7%99-%D7%A0'-%D7%96%D7%91%D7%99%D7%93%D7%90%D7%AA-%D7%95%D7%90%D7%97'"
+    },
+    {
+      "number": 8,
+      "title": "דרכי הוכחה בבג״ץ",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/5-dorner.pdf"
+    },
+    {
+      "number": 8,
+      "title": "ראיות בבית״המשפט הגבוה לצדק",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/4-zamir-2.pdf"
+    }
   ],
-  "answer": ""
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 8,
+    "invariant_passed": true,
+    "inline_marker_count": 9,
+    "used_sources_length": 8,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "**שורה תחתונה**\n\nבעתירות לבג״ץ נטל ההוכחה הראשוני נוטה להיטל על העותר: עליו לפתוח טענתו ולהביא ראיות תומכות בסמכות שיפוטית, בעילות העתירה ובעובדות שמהן נגזרת בקשת הסעד; עם זאת מדובר בנטל תהליכי ולא מוחלט — בית המשפט רשאי, בנסיבות מתאימות, להטיל על המשיב חובת הצגה או הפרכה של ראיות, ובמקרים של בקשה לצו זמני הסטנדרט הראייתי שונה ומבוסס לעתים על ראיות לכאורה, איזון נוחות וסיכון לנזק בלתי הפיך.⁵\n\nהנטל הראשוני של העותר (פתיחת העתירה): העותר נדרש להראות ביסודיות את עמדתו הבסיסית — עניין וסמכות שיפוט, עילת העתירה ועובדות ממשיות התומכות בבקשה לפתיחה; אם העותר נכשל בהבאת ראיות מספיקות בית המשפט עשוי לדחות את העתירה כבר בשלב המוקדמות או בתום הדיון המקדמי.⁶\n\nחזקת התקינות המנהלית והשלכותיה על הנטל: קיימת בגישה הפסיקתית נטייה להניח תקינות לנוהל מנהלי או להחלטת רשות, כך שבשלבים מסוימים הנטל להפריך חזקות אלה או להראות פגם מעשי ביסוד ההחלטה מוטל על מי שטוען לאי־תקינות; היקף החזקות והשלכותיהן תלויות בנסיבות ובמכלול הראיות.¹\n\nהסטת נטל הבאת ראיות והטלת חובת ההפרכה על המשיב: בית המשפט רשאי לדרוש מהצד שאצלו מרוכזות הראיות־מפתח להציגן או להפריך חזקות, ובמקרים של הימנעות סבירה מהבאת ראיה ניתן להסיק מסקנות עובדתיות או לשנות את הוראות ההליך; משמעות מעשית היא כי העמוד הראייתי עלול לעבור חלקית אל המשיב, ולא תמיד נותר על העותר בלבד.²\n\nחובת ההנמקה של הרשות: בבחינה ראשונית של המקורות שסופקו לא נמצא עיגון סטטוטורי ישיר המובא כאן כנוסח חוקי ברור שחובה להנמיק בכל מקרה; עם זאת ספרות מקצועית ודיונים פסיקתיים המתייחסים לדרישות הנמקה והצורך בהסבר משמשים כתמיכה לכך שבית המשפט מצפה לנמקה סבירה והגיונית, אך לא ניתן להסיק ממקורות אלה נוסח חקיקתי מחייב מתוך החומר שנמסר.⁸\n\nצו על תנאי והעברת נטל מעשית: בפרקטיקה המנהלית־שיפוטית מקובל להנפיק צווים על תנאי או אמצעים פרוצדורליים אחרים שיכולים להטיל על המשיב חובה להציג מסמכים, הבטחות או ראיות במסגרת זמן מוגדרת; זהו כלי שמשרת העברת נטל מעשית מבלי לשנות בהכרח את הנטל המשפטי האולטימטיבי של השכנוע.³\n\nסעד זמני בבג״ץ — הסטנדרט הראייתי: בבקשות לצו מניעה זמני או סיוע זמני בתי המשפט נוטים לפעול על בסיס ראיות לכאורה (prima facie), תוך שקלול שלוש השקולות עיקריות — סיכויי הצלחה של התביעה על פי ראיות מוקדמות, איזון נוחות (balance of convenience) והסיכון לנזק בלתי הפיך; הנטל בשלב זה קל יחסית בהשוואה להוכחה סופית, אך עדיין מחייב הצגת בסיס ראייתי ראוי לפתיחה.⁷\n\nאמצעים שיפוטיים להטלת חובת ראייה: בית המשפט יכול לצוות גילוי מסמכים, להזמין חוות דעת מומחה, להטיל צווים על תנאי או לדרוש הצגת מסמכים שנמצאים בשליטת המשיב; החלטה להשתמש באמצעים אלה תלוית צורך הוכחתי, פרופורציה ויחס בין העלות התהליכית לבין החשיבות הציבורית של הסעד.⁴\n\nהבחנה בין נטל הבאת הראיות לנטל השכנוע: מבחינה דוקטרינרית יש להפריד בין חובת ההבאה (מי מביא ראיות לעמידת הטענה) לבין חובת השכנוע (מי משכנע את בית המשפט על עובדה מסויימת)—העותר לרוב נושא בשני רכיבים בתחילת ההליך, אך בהערכת מכלול הראיות ובמצבים של הימנעות מהצגה הפסיקה מאפשרת מסלולים שונים להשלכות ראייתיות.⁶\n\nסיכום זה מבוסס על העיון במקורות המפורטים; יש להבחין כי החומר שסופק הוא חלקי ומשקף תמיכה מצומצמת ולעתים חלקית בטענות שונות, ולכן לא יכול להחליף סקר פסיקה וחקיקה מקיף יותר בעת הצורך. אם תבקש, אבצע פירוט מקרים עיקריים או נוסחאות פרוצדורליות ספציפיות מתוך פסקי דין מסוימים."
 }

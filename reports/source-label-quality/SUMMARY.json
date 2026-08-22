@@ -1,42 +1,14 @@
 [
   {
     "id": "F01",
-    "pass": false,
-    "failures": [
-      "no_terminal_qa_row",
-      "empty_answer_body",
-      "cpu_kill"
-    ],
+    "pass": true,
+    "failures": [],
     "branch": null,
-    "footnotes_length": 0,
-    "used_sources_length": 0,
+    "footnotes_length": 8,
+    "used_sources_length": 8,
     "dangling": 0,
     "orphan": 0,
-    "fallback_used_count": null,
-    "reclassified_count": null
-  },
-  {
-    "id": "F02",
-    "pass": true,
-    "failures": [],
-    "branch": "insufficient_sources_limitation",
-    "footnotes_length": 0,
-    "used_sources_length": 0,
-    "dangling": 0,
-    "orphan": 0,
-    "fallback_used_count": 8,
-    "reclassified_count": 0
-  },
-  {
-    "id": "F03",
-    "pass": true,
-    "failures": [],
-    "branch": "docket_limitation",
-    "footnotes_length": 0,
-    "used_sources_length": 0,
-    "dangling": 0,
-    "orphan": 0,
-    "fallback_used_count": 6,
+    "fallback_used_count": 0,
     "reclassified_count": 0
   }
 ]
