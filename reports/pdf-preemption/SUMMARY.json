@@ -1,0 +1,122 @@
+[
+  {
+    "id": "F06",
+    "pass": true,
+    "failures": [],
+    "phase": "P5",
+    "preflight": {
+      "exact_case_source_found": null,
+      "exact_case_body_unavailable": null,
+      "body_unavailable_reason": null,
+      "extraction_skipped_reason": null,
+      "large_pdf_skipped": null,
+      "pdf_preflight_size": null,
+      "pdf_preflight_decision": null,
+      "text_endpoint_attempted": null,
+      "text_endpoint_stub_detected": null,
+      "derived_url_resolved": null,
+      "acquisition_success": null
+    },
+    "max_marker": 5,
+    "footnotes_length": 5,
+    "used_sources_length": 8,
+    "dangling": 0,
+    "orphan": 0
+  },
+  {
+    "id": "R02",
+    "pass": true,
+    "failures": [],
+    "phase": "P5",
+    "preflight": {
+      "exact_case_source_found": null,
+      "exact_case_body_unavailable": null,
+      "body_unavailable_reason": null,
+      "extraction_skipped_reason": null,
+      "large_pdf_skipped": null,
+      "pdf_preflight_size": null,
+      "pdf_preflight_decision": null,
+      "text_endpoint_attempted": null,
+      "text_endpoint_stub_detected": null,
+      "derived_url_resolved": null,
+      "acquisition_success": null
+    },
+    "max_marker": 1,
+    "footnotes_length": 1,
+    "used_sources_length": 1,
+    "dangling": 0,
+    "orphan": 0
+  },
+  {
+    "id": "P02",
+    "pass": true,
+    "failures": [],
+    "phase": "P5",
+    "preflight": {
+      "exact_case_source_found": null,
+      "exact_case_body_unavailable": null,
+      "body_unavailable_reason": null,
+      "extraction_skipped_reason": null,
+      "large_pdf_skipped": null,
+      "pdf_preflight_size": null,
+      "pdf_preflight_decision": null,
+      "text_endpoint_attempted": null,
+      "text_endpoint_stub_detected": null,
+      "derived_url_resolved": null,
+      "acquisition_success": null
+    },
+    "max_marker": 0,
+    "footnotes_length": 0,
+    "used_sources_length": 0,
+    "dangling": 0,
+    "orphan": 0
+  },
+  {
+    "id": "B8",
+    "pass": true,
+    "failures": [],
+    "phase": "P5",
+    "preflight": {
+      "exact_case_source_found": null,
+      "exact_case_body_unavailable": null,
+      "body_unavailable_reason": null,
+      "extraction_skipped_reason": null,
+      "large_pdf_skipped": null,
+      "pdf_preflight_size": null,
+      "pdf_preflight_decision": null,
+      "text_endpoint_attempted": null,
+      "text_endpoint_stub_detected": null,
+      "derived_url_resolved": null,
+      "acquisition_success": null
+    },
+    "max_marker": 1,
+    "footnotes_length": 1,
+    "used_sources_length": 1,
+    "dangling": 0,
+    "orphan": 0
+  },
+  {
+    "id": "F07",
+    "pass": true,
+    "failures": [],
+    "phase": "P5",
+    "preflight": {
+      "exact_case_source_found": null,
+      "exact_case_body_unavailable": null,
+      "body_unavailable_reason": null,
+      "extraction_skipped_reason": null,
+      "large_pdf_skipped": null,
+      "pdf_preflight_size": null,
+      "pdf_preflight_decision": null,
+      "text_endpoint_attempted": null,
+      "text_endpoint_stub_detected": null,
+      "derived_url_resolved": null,
+      "acquisition_success": null
+    },
+    "max_marker": 0,
+    "footnotes_length": 0,
+    "used_sources_length": 0,
+    "dangling": 0,
+    "orphan": 0
+  }
+]
