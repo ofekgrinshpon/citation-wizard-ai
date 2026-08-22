@@ -1802,7 +1802,7 @@ export async function runDrafterV2(
   });
   const claim_source_match = matched.report;
 
-  const built = buildFootnotedAnswer(matched.draft ?? gated.draft ?? parsed.draft, inputSources);
+  const built = buildFootnotedAnswer(matched.draft ?? gated.draft ?? parsed.draft as StructuredDraft, inputSources);
 
 
   // Rule 1.10 — Hebrew number ranges must be written high→low in source order.
