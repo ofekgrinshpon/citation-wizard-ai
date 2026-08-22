@@ -738,16 +738,33 @@ export async function runSpecificCaseResolution(
           markStage("candidate_normalization_done", { url });
           break;
         }
+        if (textEndpoint && isTextEndpointStub(got.length)) {
+          res.text_endpoint_stub_detected++;
+          markStage("text_endpoint_stub_detected", { url, chars: got.length });
+        }
         recordFailure(res, "derived_url_text_below_threshold");
       } catch (err) {
         const reason = derivedFailureReason(err);
         markStage("derived_probe_failed", { url, reason });
         recordFailure(res, `${reason}:${url}`);
+        if (textEndpoint && reason === "text_endpoint_stub") {
+          res.text_endpoint_stub_detected++;
+          markStage("text_endpoint_stub_detected", { url });
+        }
+        if (BODY_UNAVAILABLE_REASONS.has(reason)) {
+          // Located at its official archive path, body unreadable within the
+          // processing limits — a distinct outcome from "not found".
+          res.exact_case_source_found = true;
+          res.exact_case_body_unavailable = true;
+          res.exact_case_body_unavailable_url ??= url;
+          res.body_unavailable_reason = reason;
+        }
         if (reason === "retrieval_timeout") {
           budgetStop("derived_probe_inner");
           break;
         }
       }
+
     }
     markStage("derived_urls_probed_done", {
       probed: res.derived_urls_probed.length,
