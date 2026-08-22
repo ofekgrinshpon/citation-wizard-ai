@@ -253,6 +253,7 @@ interface RawDraft {
 }
 
 import { computeDisplayTitle } from "./displayTitleHygiene.ts";
+import { collapseNearDuplicateTitles } from "./sourceLabelQuality.ts";
 import { canSatisfyRole, classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
 import { assignSynthesisRole } from "./synthesisRole.ts";
 import {
