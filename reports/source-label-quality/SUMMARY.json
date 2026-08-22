@@ -26,5 +26,17 @@
     "orphan": 0,
     "fallback_used_count": 8,
     "reclassified_count": 0
+  },
+  {
+    "id": "F03",
+    "pass": true,
+    "failures": [],
+    "branch": "docket_limitation",
+    "footnotes_length": 0,
+    "used_sources_length": 0,
+    "dangling": 0,
+    "orphan": 0,
+    "fallback_used_count": 6,
+    "reclassified_count": 0
   }
 ]
