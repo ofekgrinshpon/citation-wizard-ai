@@ -42,7 +42,13 @@ export interface DisplayTitleResult {
     | "type_and_host"
     | "host"
     | "generic";
+  /** over_fallback_fix_v1 telemetry */
+  fallback_applied?: boolean;
+  fallback_candidate?: string;
+  fallback_rejected_reason?: string;
+  fallback_improvement_reason?: string;
 }
+
 
 export interface DisplayTitleInput {
   title?: string | null;
