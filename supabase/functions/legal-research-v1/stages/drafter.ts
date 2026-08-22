@@ -279,7 +279,11 @@ export function buildInputSources(
     verdictsByCand.set(v.candidate_id, arr);
   }
   const out: DrafterInputSource[] = [];
+  let cacheHits = 0;
+  let reruns = 0;
+  const rerunReasons: string[] = [];
   let n = 1;
+
   for (const u of usable) {
     const c = candById.get(u.candidate_id);
     if (!c) continue;
