@@ -1,0 +1,118 @@
+{
+  "id": "R02",
+  "classification_changed": [],
+  "classification_rows": [
+    {
+      "title": "ע\"א 6821/93",
+      "classification_before": "judgment",
+      "classification_after": "judgment",
+      "judgment_identity_signals": [
+        "official_judgment_endpoint",
+        "docket_in_text",
+        "case_prefix",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=EnglishVerdicts/93/210/068/Z01&type=4"
+    }
+  ],
+  "uncertain_identity_count": 0,
+  "downgrades": [],
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+  "job_id": "a5956009-fbee-43c7-a6f9-fa3a8f373262",
+  "run_id": "2c543370-7ff5-437c-b85c-c9ddc9b6b2ad",
+  "ms": 92474,
+  "terminal_status": "done",
+  "job_error": null,
+  "branch": null,
+  "answer_length": 1243,
+  "inline_marker_count": 6,
+  "max_marker": 1,
+  "footnotes_length": 1,
+  "used_sources_length": 1,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "invariant_passed": true,
+  "rendered_rows": [
+    {
+      "number": 1,
+      "title": "ע\"א 6821/93",
+      "citable_as": null,
+      "sub_titles": [
+        "ע\"א 6821/93"
+      ]
+    }
+  ],
+  "label_report": {
+    "rows": [
+      {
+        "ref": "s1",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=EnglishVerdicts/93/210/068/Z01&type=4",
+        "title": "ע\"א 6821/93",
+        "raw_title": "ע\"א 6821/93",
+        "candidate_id": "specific-case:aa:6821/93",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "judgment",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "official_judgment_endpoint",
+          "docket_in_text",
+          "case_prefix",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      }
+    ],
+    "total": 1,
+    "reclassified_count": 0,
+    "fallback_used_count": 0,
+    "classification_rerun_count": 0,
+    "classification_rerun_reason": [],
+    "classification_cache_hit_count": 1,
+    "source_label_cpu_guard_applied": true
+  },
+  "filename_titles": [],
+  "bare_institution_titles": [],
+  "ocr_duplicate_pairs": [],
+  "scholarship_as_statute": [],
+  "commentary_as_judgment": [],
+  "metadata_only_holdings": 0,
+  "used_sources": [
+    {
+      "number": 1,
+      "title": "ע\"א 6821/93",
+      "citable_as": "judgment",
+      "text_usability": "full_text",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=EnglishVerdicts/93/210/068/Z01&type=4"
+    }
+  ],
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 1,
+    "invariant_passed": true,
+    "inline_marker_count": 6,
+    "used_sources_length": 1,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "**סיכום ההכרעה המרכזית (holding)**\n\nשורה תחתונה: בפסק‑דין ע\"א 6821/93 בית המשפט העליון קבע את ההכרעה המרכזית כפי שהיא מנוסחת בטקסט של פסק‑דין זה.¹\n\nהכרעה זו מופיעה באופן מפורש בטקסט המלא של פסק‑דין ע\"א 6821/93; הנימוקים וההיגיון המשפטי שבבסיס ההכרעה מפורטים בסעיפים השונים של ההחלטה.¹\n\nרקע זיהוי הצדדים והתיק: התיק מובא בשם United Mizrahi Bank Ltd. v. Migdal Cooperative Village (בניגוד לאיותים שונים בשפה האנגלית), והמסמך מכיל את הכותרת ואת רשימת בעלי הדין המעורבים בהליך.¹\n\nרקע עובדתי, נדון הערעור והבקשות: פרטי המחלוקת העובדתית וההליכי, בקשת הערעור ומה שנדרש להוכחה לקיומה מפורטים בטקסט ההחלטה; הטקסט הוא המקור לקביעת העובדות ההלכתיות ולנימוקי בית המשפט.¹\n\nנימוק משפטי מרכזי ומשקל קודמיי: בפסק‑דין זה מופיעים הנימוקים המשפטיים שבהם הסתמך בית המשפט — פירוש הדין, יישום עקרונות תקדימיים ונימוקים משפטיים אחרים — וכל אלה מפורטים בפסק‑דין המלא.¹\n\nחשיבות תקדימית: פסק‑דין ע\"א 6821/93 מהווה הכרעה של בית המשפט העליון והטקסט עצמו משמש כבסיס לקביעה האם ובאיזו מידה הוחדרו בו עקרונות נקודתיים שהשפיעו על הפסיקה לאחר מכן; לכך משמש הפסק‑דין כמקור תקדימי ישיר.¹\n\nבקשה להעמקה: אם תרצה/י, אביא כאן ציטוט מדויק מהפסק‑דין של ההכרעה (holding), אצטט את קטעי הנימוקים הרלוונטיים, ואתמצת את הרקע העובדתי והמשמעויות התקדימיות — כולם מתוך הטקסט המלא שמצוין ב‑s1."
+}

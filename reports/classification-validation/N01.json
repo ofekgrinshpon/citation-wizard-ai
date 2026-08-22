@@ -1,0 +1,293 @@
+{
+  "id": "N01",
+  "classification_changed": [
+    {
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "before": "unknown",
+      "after": "scholarship",
+      "reason": "scholarship_shape_overrides_official_host"
+    }
+  ],
+  "classification_rows": [
+    {
+      "title": "אוסובצקי ואח' נ' חבקה ואח'",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "judgment_mirror_host",
+        "party_names",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": "caselaw_type_without_judgment_authority",
+      "url": "https://www.psakdin.co.il/Court/%D7%90%D7%95%D7%A1%D7%95%D7%91%D7%A6%D7%A7%D7%99-%D7%95%D7%90%D7%97'%20%D7%A0'%20%D7%97%D7%91%D7%A7%D7%94%20%D7%95%D7%90%D7%97'"
+    },
+    {
+      "title": "טאהא נ' אליאס ואח'",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "judgment_mirror_host",
+        "party_names",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": "caselaw_type_without_judgment_authority",
+      "url": "https://www.psakdin.co.il/Court/%D7%98%D7%90%D7%94%D7%90-%D7%A0'%D7%90%D7%9C%D7%99%D7%90%D7%A1-%D7%95%D7%90%D7%97'"
+    },
+    {
+      "title": "ג'ודי נ' סע - גל תחבורה בע\"מ ואח'",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "judgment_mirror_host",
+        "party_names",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": "caselaw_type_without_judgment_authority",
+      "url": "https://www.psakdin.co.il/Court/%D7%92'%D7%95%D7%93%D7%99-%D7%A0'-%D7%A1%D7%A2--%D7%92%D7%9C-%D7%AA%D7%97%D7%91%D7%95%D7%A8%D7%94-%D7%91%D7%A2%22%D7%9E-%D7%95%D7%90%D7%97'"
+    },
+    {
+      "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+      "classification_before": "unknown",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision51268-09-20/he/51268-09-20.docx"
+    },
+    {
+      "title": "פסק-דין בתיק א 8665/03",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "judgment_mirror_host",
+        "court_vocabulary",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": true,
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%90-8665-03"
+    }
+  ],
+  "uncertain_identity_count": 1,
+  "downgrades": [
+    {
+      "title": "אוסובצקי ואח' נ' חבקה ואח'",
+      "downgrade_reason": "caselaw_type_without_judgment_authority"
+    },
+    {
+      "title": "טאהא נ' אליאס ואח'",
+      "downgrade_reason": "caselaw_type_without_judgment_authority"
+    },
+    {
+      "title": "ג'ודי נ' סע - גל תחבורה בע\"מ ואח'",
+      "downgrade_reason": "caselaw_type_without_judgment_authority"
+    },
+    {
+      "title": "פסק-דין בתיק א 8665/03",
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
+    }
+  ],
+  "query": "על מי מוטל נטל ההוכחה בתביעה אזרחית כספית רגילה?",
+  "job_id": "5f947c15-b266-4842-935f-b3775aa7ac4c",
+  "run_id": "e86a7bb9-aa9d-4969-b8e5-b45cf582bf37",
+  "ms": 90998,
+  "terminal_status": "done",
+  "job_error": null,
+  "branch": "insufficient_sources_limitation",
+  "answer_length": 379,
+  "inline_marker_count": 0,
+  "max_marker": 0,
+  "footnotes_length": 0,
+  "used_sources_length": 0,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "invariant_passed": true,
+  "rendered_rows": [],
+  "label_report": {
+    "rows": [
+      {
+        "ref": "s1",
+        "url": "https://www.psakdin.co.il/Court/%D7%90%D7%95%D7%A1%D7%95%D7%91%D7%A6%D7%A7%D7%99-%D7%95%D7%90%D7%97'%20%D7%A0'%20%D7%97%D7%91%D7%A7%D7%94%20%D7%95%D7%90%D7%97'",
+        "title": "אוסובצקי ואח' נ' חבקה ואח'",
+        "raw_title": "אוסובצקי ואח' נ' חבקה ואח'",
+        "candidate_id": "27204a49-8fca-4180-9649-fb1441237201",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "caselaw_type_without_judgment_authority",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "judgment_mirror_host",
+          "party_names",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s2",
+        "url": "https://www.psakdin.co.il/Court/%D7%98%D7%90%D7%94%D7%90-%D7%A0'%D7%90%D7%9C%D7%99%D7%90%D7%A1-%D7%95%D7%90%D7%97'",
+        "title": "טאהא נ' אליאס ואח'",
+        "raw_title": "טאהא נ' אליאס ואח'",
+        "candidate_id": "b2dd88da-90d0-431f-ae81-1d2579910d17",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "caselaw_type_without_judgment_authority",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "judgment_mirror_host",
+          "party_names",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s3",
+        "url": "https://www.psakdin.co.il/Court/%D7%92'%D7%95%D7%93%D7%99-%D7%A0'-%D7%A1%D7%A2--%D7%92%D7%9C-%D7%AA%D7%97%D7%91%D7%95%D7%A8%D7%94-%D7%91%D7%A2%22%D7%9E-%D7%95%D7%90%D7%97'",
+        "title": "ג'ודי נ' סע - גל תחבורה בע\"מ ואח'",
+        "raw_title": "ג'ודי נ' סע - גל תחבורה בע\"מ ואח'",
+        "candidate_id": "25b6c9f0-4234-4310-97dd-6dc88b35bb1f",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "caselaw_type_without_judgment_authority",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "judgment_mirror_host",
+          "party_names",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s4",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision51268-09-20/he/51268-09-20.docx",
+        "title": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "raw_title": "51268-09-20.docx",
+        "candidate_id": "96630286-8356-45e3-a59a-049577f8cc38",
+        "title_status": "fallback_filename",
+        "fallback_used": "host",
+        "downgrade_reason": null,
+        "fallback_applied": true,
+        "fallback_candidate": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "title_raw_filename",
+        "classification_before": "unknown",
+        "classification_reason": "scholarship_shape_overrides_official_host",
+        "title_hygiene_reasons": [
+          "title_raw_filename"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": "host:1>raw:-1"
+      },
+      {
+        "ref": "s5",
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%AA%D7%99%D7%A7-%D7%90-8665-03",
+        "title": "פסק-דין בתיק א 8665/03",
+        "raw_title": "פסק-דין בתיק א 8665/03",
+        "candidate_id": "684429d7-4cb2-42a8-9cec-2f7095fda83b",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": true,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "judgment_mirror_host",
+          "court_vocabulary",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      }
+    ],
+    "total": 5,
+    "reclassified_count": 1,
+    "fallback_used_count": 1,
+    "classification_rerun_count": 0,
+    "classification_rerun_reason": [],
+    "classification_cache_hit_count": 16,
+    "source_label_cpu_guard_applied": true
+  },
+  "filename_titles": [],
+  "bare_institution_titles": [],
+  "ocr_duplicate_pairs": [],
+  "scholarship_as_statute": [],
+  "commentary_as_judgment": [],
+  "metadata_only_holdings": 0,
+  "used_sources": [],
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 0,
+    "invariant_passed": true,
+    "inline_marker_count": 0,
+    "used_sources_length": 0,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): אוסובצקי ואח' נ' חבקה ואח'; טאהא נ' אליאס ואח'; ג'ודי נ' סע - גל תחבורה בע\"מ ואח'; מסמך מאתר אתר ממשלתי (gov.il)."
+}

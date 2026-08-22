@@ -1,0 +1,622 @@
+{
+  "id": "N02",
+  "classification_changed": [],
+  "classification_rows": [
+    {
+      "title": "עילת הסבירות – מסמך הכנה (הצעת חוק יסוד: השפיטה, תיקון מס' 6)",
+      "classification_before": "statute",
+      "classification_after": "statute",
+      "judgment_identity_signals": [
+        "document_file",
+        "court_vocabulary"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": true,
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_2749036.pdf"
+    },
+    {
+      "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+      "classification_before": "not_citable",
+      "classification_after": "not_citable",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [
+        "listing_page"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": "caselaw_type_on_listing_page",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30"
+    },
+    {
+      "title": "עילת אי-הסבירות במשפט המנהלי: היבטים השוואתיים והערות נורמטיביות אחדות",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "court_vocabulary"
+      ],
+      "commentary_identity_signals": [
+        "commentary_snippet_shape",
+        "commentary_path",
+        "scholarship_shape"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://cris.huji.ac.il/en/publications/%D7%A2%D7%99%D7%9C%D7%AA-%D7%90%D7%99-%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA-%D7%91%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99-%D7%94%D7%99%D7%91%D7%98%D7%99%D7%9D-%D7%94%D7%A9%D7%95%D7%95%D7%90%D7%AA%D7%99%D7%99%D7%9D-%D7%95%D7%94%D7%A2%D7%A8%D7%95%D7%AA-%D7%A0%D7%95%D7%A8%D7%9E%D7%98%D7%99%D7%91%D7%99%D7%95%D7%AA-%D7%90/"
+    },
+    {
+      "title": "עילת אי־הסבירות במשפט המינהלי",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [
+        "commentary_path"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://lawjournal.huji.ac.il/article/12/1042"
+    },
+    {
+      "title": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוטית",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [
+        "commentary_path"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.taulawreview.sites.tau.ac.il/post/weill2"
+    },
+    {
+      "title": "עילת אי־הסבירות במשפט המינהלי",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [
+        "commentary_snippet_shape",
+        "scholarship_shape"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%9C%D7%AA%20%D7%90%D7%99%D6%BE%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%94%D7%9C%D7%99.pdf"
+    },
+    {
+      "title": "פסק דין הסבירות: עיונים ראשונים",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "document_file",
+        "court_vocabulary"
+      ],
+      "commentary_identity_signals": [
+        "commentary_title_shape",
+        "commentary_path"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.runi.ac.il/media/xgqbcm1v/18-%D7%94%D7%95%D7%A1%D7%98%D7%95%D7%91%D7%A1%D7%A7%D7%99-%D7%A8%D7%95%D7%96%D7%A0%D7%90%D7%99.pdf"
+    },
+    {
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "docket_in_text",
+        "case_prefix",
+        "party_names",
+        "court_vocabulary",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [
+        "commentary_snippet_shape"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": "commentary_identity:commentary_snippet_shape",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
+    },
+    {
+      "title": "מי קובע את עקרונות היסוד של השיטה המשפטית? פסקי-הדין בעניין ביטול עילת הסבירות ובעניין נבצרות ראש הממשלה (כרך נה)",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [
+        "commentary_path",
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://lawjournal.huji.ac.il/article/12/1956"
+    },
+    {
+      "title": "חצי יובל לפסק דין בנק המזרחי: שאון תופי המהפכה וקולו של הפיקולו – מורשתו החוקתית של השופט מישאל חשין | יואב דותן (כרך כו)",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [
+        "court_vocabulary",
+        "judgment_form_body"
+      ],
+      "commentary_identity_signals": [
+        "commentary_snippet_shape",
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": "commentary_identity:commentary_snippet_shape+upstream_scholarship_type",
+      "url": "https://runilawreview.org/2021/01/21/vol26-dotan/"
+    }
+  ],
+  "uncertain_identity_count": 1,
+  "downgrades": [
+    {
+      "title": "עילת הסבירות – מסמך הכנה (הצעת חוק יסוד: השפיטה, תיקון מס' 6)",
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
+    },
+    {
+      "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+      "downgrade_reason": "caselaw_type_on_listing_page"
+    },
+    {
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "downgrade_reason": "commentary_identity:commentary_snippet_shape"
+    },
+    {
+      "title": "חצי יובל לפסק דין בנק המזרחי: שאון תופי המהפכה וקולו של הפיקולו – מורשתו החוקתית של השופט מישאל חשין | יואב דותן (כרך כו)",
+      "downgrade_reason": "commentary_identity:commentary_snippet_shape+upstream_scholarship_type"
+    }
+  ],
+  "query": "מהי עילת הסבירות במשפט המינהלי הישראלי?",
+  "job_id": "fdfe34ae-0843-4310-a3a0-c99cb8c47ddc",
+  "run_id": "c9d3d446-42e7-4d87-9cc1-beb445c73301",
+  "ms": 141339,
+  "terminal_status": "done",
+  "job_error": null,
+  "branch": null,
+  "answer_length": 3576,
+  "inline_marker_count": 8,
+  "max_marker": 7,
+  "footnotes_length": 7,
+  "used_sources_length": 8,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "invariant_passed": true,
+  "rendered_rows": [
+    {
+      "number": 1,
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין; עילת הסבירות – מסמך הכנה (הצעת חוק יסוד: השפיטה, תיקון מס' 6)",
+      "citable_as": null,
+      "sub_titles": [
+        "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "עילת הסבירות – מסמך הכנה (הצעת חוק יסוד: השפיטה, תיקון מס' 6)"
+      ]
+    },
+    {
+      "number": 2,
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "citable_as": null,
+      "sub_titles": [
+        "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין"
+      ]
+    },
+    {
+      "number": 3,
+      "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+      "citable_as": null,
+      "sub_titles": [
+        "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)"
+      ]
+    },
+    {
+      "number": 4,
+      "title": "עילת הסבירות – מסמך הכנה (הצעת חוק יסוד: השפיטה, תיקון מס' 6)",
+      "citable_as": null,
+      "sub_titles": [
+        "עילת הסבירות – מסמך הכנה (הצעת חוק יסוד: השפיטה, תיקון מס' 6)"
+      ]
+    },
+    {
+      "number": 5,
+      "title": "מי קובע את עקרונות היסוד של השיטה המשפטית? פסקי-הדין בעניין ביטול עילת הסבירות ובעניין נבצרות ראש הממשלה (כרך נה)",
+      "citable_as": null,
+      "sub_titles": [
+        "מי קובע את עקרונות היסוד של השיטה המשפטית? פסקי-הדין בעניין ביטול עילת הסבירות ובעניין נבצרות ראש הממשלה (כרך נה)"
+      ]
+    },
+    {
+      "number": 6,
+      "title": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוטית; עילת אי-הסבירות במשפט המנהלי: היבטים השוואתיים והערות נורמטיביות אחדות",
+      "citable_as": null,
+      "sub_titles": [
+        "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוטית",
+        "עילת אי-הסבירות במשפט המנהלי: היבטים השוואתיים והערות נורמטיביות אחדות"
+      ]
+    },
+    {
+      "number": 7,
+      "title": "עילת אי-הסבירות במשפט המנהלי: היבטים השוואתיים והערות נורמטיביות אחדות; עילת אי־הסבירות במשפט המינהלי; פסק דין הסבירות: עיונים ראשונים",
+      "citable_as": null,
+      "sub_titles": [
+        "עילת אי-הסבירות במשפט המנהלי: היבטים השוואתיים והערות נורמטיביות אחדות",
+        "עילת אי־הסבירות במשפט המינהלי",
+        "פסק דין הסבירות: עיונים ראשונים"
+      ]
+    }
+  ],
+  "label_report": {
+    "rows": [
+      {
+        "ref": "s1",
+        "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_2749036.pdf",
+        "title": "עילת הסבירות – מסמך הכנה (הצעת חוק יסוד: השפיטה, תיקון מס' 6)",
+        "raw_title": "עילת הסבירות – מסמך הכנה (הצעת חוק יסוד: השפיטה, תיקון מס' 6)",
+        "candidate_id": "8984f6c4-df25-46a8-b7e4-eeaab45f4700",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": true,
+        "classification_after": "statute",
+        "title_hygiene_action": "kept",
+        "classification_before": "statute",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file",
+          "court_vocabulary"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s2",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+        "raw_title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+        "candidate_id": "09896eba-7249-41a6-8ee6-fed7be57ee2d",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "caselaw_type_on_listing_page",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "not_citable",
+        "title_hygiene_action": "kept",
+        "classification_before": "not_citable",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "listing_page"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s3",
+        "url": "https://cris.huji.ac.il/en/publications/%D7%A2%D7%99%D7%9C%D7%AA-%D7%90%D7%99-%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA-%D7%91%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99-%D7%94%D7%99%D7%91%D7%98%D7%99%D7%9D-%D7%94%D7%A9%D7%95%D7%95%D7%90%D7%AA%D7%99%D7%99%D7%9D-%D7%95%D7%94%D7%A2%D7%A8%D7%95%D7%AA-%D7%A0%D7%95%D7%A8%D7%9E%D7%98%D7%99%D7%91%D7%99%D7%95%D7%AA-%D7%90/",
+        "title": "עילת אי-הסבירות במשפט המנהלי: היבטים השוואתיים והערות נורמטיביות אחדות",
+        "raw_title": "עילת אי-הסבירות במשפט המנהלי: היבטים השוואתיים והערות נורמטיביות אחדות",
+        "candidate_id": "2b05f312-a928-4953-a9e4-e3c1be0e0c29",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "court_vocabulary"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_snippet_shape",
+          "commentary_path",
+          "scholarship_shape"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s4",
+        "url": "https://lawjournal.huji.ac.il/article/12/1042",
+        "title": "עילת אי־הסבירות במשפט המינהלי",
+        "raw_title": "עילת אי־הסבירות במשפט המנהלי",
+        "candidate_id": "254f7cfe-37c0-4551-b54f-26e16375c1c7",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "near_duplicate_title_collapsed"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_path"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s5",
+        "url": "https://www.taulawreview.sites.tau.ac.il/post/weill2",
+        "title": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוטית",
+        "raw_title": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוטית",
+        "candidate_id": "64e1197d-a397-464a-8fb3-b131e2692622",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_path"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s6",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%9C%D7%AA%20%D7%90%D7%99%D6%BE%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%94%D7%9C%D7%99.pdf",
+        "title": "עילת אי־הסבירות במשפט המינהלי",
+        "raw_title": "עילת אי־הסבירות במשפט המינהלי",
+        "candidate_id": "0cf32679-80a8-4893-acb0-adf845833245",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_snippet_shape",
+          "scholarship_shape"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s7",
+        "url": "https://www.runi.ac.il/media/xgqbcm1v/18-%D7%94%D7%95%D7%A1%D7%98%D7%95%D7%91%D7%A1%D7%A7%D7%99-%D7%A8%D7%95%D7%96%D7%A0%D7%90%D7%99.pdf",
+        "title": "פסק דין הסבירות: עיונים ראשונים",
+        "raw_title": "פסק דין הסבירות: עיונים ראשונים",
+        "candidate_id": "0b81d3e0-ac01-43c4-8a3c-5f1d79714c85",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file",
+          "court_vocabulary"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_title_shape",
+          "commentary_path"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s8",
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "raw_title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "candidate_id": "321a1512-7043-4078-afe5-699da6d95b87",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "commentary_identity:commentary_snippet_shape",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "docket_in_text",
+          "case_prefix",
+          "party_names",
+          "court_vocabulary",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_snippet_shape"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s9",
+        "url": "https://lawjournal.huji.ac.il/article/12/1956",
+        "title": "מי קובע את עקרונות היסוד של השיטה המשפטית? פסקי-הדין בעניין ביטול עילת הסבירות ובעניין נבצרות ראש הממשלה (כרך נה)",
+        "raw_title": "מי קובע את עקרונות היסוד של השיטה המשפטית? פסקי-הדין בעניין ביטול עילת הסבירות ובעניין נבצרות ראש הממשלה (כרך נה)",
+        "candidate_id": "fcf0419d-4764-4085-b0ff-bd355bddfeef",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_path",
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s10",
+        "url": "https://runilawreview.org/2021/01/21/vol26-dotan/",
+        "title": "חצי יובל לפסק דין בנק המזרחי: שאון תופי המהפכה וקולו של הפיקולו – מורשתו החוקתית של השופט מישאל חשין | יואב דותן (כרך כו)",
+        "raw_title": "חצי יובל לפסק דין בנק המזרחי: שאון תופי המהפכה וקולו של הפיקולו – מורשתו החוקתית של השופט מישאל חשין | יואב דותן (כרך כו)",
+        "candidate_id": "32223572-27ca-4910-9919-a8737d6d06cb",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "commentary_identity:commentary_snippet_shape+upstream_scholarship_type",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "court_vocabulary",
+          "judgment_form_body"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_snippet_shape",
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": null
+      }
+    ],
+    "total": 10,
+    "reclassified_count": 0,
+    "fallback_used_count": 0,
+    "classification_rerun_count": 0,
+    "classification_rerun_reason": [],
+    "classification_cache_hit_count": 11,
+    "source_label_cpu_guard_applied": true
+  },
+  "filename_titles": [],
+  "bare_institution_titles": [],
+  "ocr_duplicate_pairs": [],
+  "scholarship_as_statute": [],
+  "commentary_as_judgment": [],
+  "metadata_only_holdings": 0,
+  "used_sources": [
+    {
+      "number": 1,
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "citable_as": "judgment",
+      "text_usability": "full_text",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
+    },
+    {
+      "number": 1,
+      "title": "עילת הסבירות – מסמך הכנה (הצעת חוק יסוד: השפיטה, תיקון מס' 6)",
+      "citable_as": "statute",
+      "text_usability": "substantive_excerpt",
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_2749036.pdf"
+    },
+    {
+      "number": 3,
+      "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
+      "citable_as": "judgment",
+      "text_usability": "full_text",
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30"
+    },
+    {
+      "number": 5,
+      "title": "מי קובע את עקרונות היסוד של השיטה המשפטית? פסקי-הדין בעניין ביטול עילת הסבירות ובעניין נבצרות ראש הממשלה (כרך נה)",
+      "citable_as": "scholarship",
+      "text_usability": "substantive_excerpt",
+      "url": "https://lawjournal.huji.ac.il/article/12/1956"
+    },
+    {
+      "number": 6,
+      "title": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוטית",
+      "citable_as": "commentary",
+      "text_usability": "substantive_excerpt",
+      "url": "https://www.taulawreview.sites.tau.ac.il/post/weill2"
+    },
+    {
+      "number": 6,
+      "title": "עילת אי-הסבירות במשפט המנהלי: היבטים השוואתיים והערות נורמטיביות אחדות",
+      "citable_as": "commentary",
+      "text_usability": "substantive_excerpt",
+      "url": "https://cris.huji.ac.il/en/publications/%D7%A2%D7%99%D7%9C%D7%AA-%D7%90%D7%99-%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA-%D7%91%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99-%D7%94%D7%99%D7%91%D7%98%D7%99%D7%9D-%D7%94%D7%A9%D7%95%D7%95%D7%90%D7%AA%D7%99%D7%99%D7%9D-%D7%95%D7%94%D7%A2%D7%A8%D7%95%D7%AA-%D7%A0%D7%95%D7%A8%D7%9E%D7%98%D7%99%D7%91%D7%99%D7%95%D7%AA-%D7%90/"
+    },
+    {
+      "number": 7,
+      "title": "עילת אי־הסבירות במשפט המינהלי",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only",
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%9C%D7%AA%20%D7%90%D7%99%D6%BE%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%94%D7%9C%D7%99.pdf"
+    },
+    {
+      "number": 7,
+      "title": "פסק דין הסבירות: עיונים ראשונים",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only",
+      "url": "https://www.runi.ac.il/media/xgqbcm1v/18-%D7%94%D7%95%D7%A1%D7%98%D7%95%D7%91%D7%A1%D7%A7%D7%99-%D7%A8%D7%95%D7%96%D7%A0%D7%90%D7%99.pdf"
+    }
+  ],
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 7,
+    "invariant_passed": true,
+    "inline_marker_count": 8,
+    "used_sources_length": 8,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "**הגדרה ותכלית**\n\nעילת הסבירות במשפט המינהלי היא עילה עצמאית לביקורת שיפוטית של החלטה מינהלית, אשר מטרתה לבדוק האם החלטת הרשות חורגת מן התחום שניתן לה להישען עליו מבחינה תבונית והולמת ביחס למטרותיה; כאשר מתקיים חוסר סבירות משמעותי — כגון החלטה שסטתה סטייה קיצונית מן ההיגיון המשמעותי או שנקבעה על יסוד שיקולים זרים או חוסר ראיות — בית המשפט רשאי לבטל את ההחלטה.⁴\n\n**בסיס משפטי ומעמד החוקתי של העילה**\n\nבפסיקה ובמתווה החוקתי העדכני עילת הסבירות נתפסה כמעמד פסיקתי־משמעותי ויש לה מקום במסגרת סמכויות הביקורת של בג\"ץ על המנהל; מסמך ההכנה להצעת חוק יסוד: השפיטה מדגיש את מעמדה ואת הקשר לפסיקת עדות כגון פסקי דפי זהב.¹\n\nעוד קיימת מחלוקת ונימוקי טעם לגבי עיגון מעמדה החוקתי של העילה וגבולותיה ביחס לביקורת על החקיקה והמוסדות המכוננים; במקורות שאותרו נמצאים טיעונים ותיאורים שונים על בסיסים משפטיים שונים ועל מידת התמיכה החוקתית בעילה, ויש לגשת אליהם בזהירות בהתאם להבחנה בין טיעוני פסיקה לטיעוני פרשנות.⁵\n\n**מהותה ההיסטורית והמשפטית של העילה**\n\nהדיון התיאורטי מזהה שתי תפיסות מרכזיות: תפיסה של 'סבירות איזונית' המושפעת מההלכה האנגלית‑קלאסית (Wednesbury), המעמידה רף של אי־היגיון קיצוני כקריטריון להתערבות, ותפיסה שמשמעותה היא דרישה לאיזון בין הגנה על זכויות לבין יעילות המינהל; מחקרים השוואתיים ומשפטניים מספקים מסגרת להבנת מקורה ותכליתה.⁶\n\n**קריטריונים מעשיים לזיהוי חוסר סבירות**\n\nבפרקטיקה ובספרות מצטברים קווים מנחים לזיהוי חוסר סבירות: שיקולים זרים ביסוד ההחלטה, חוסר ראיות או היעדר נתונים תומכים, סטייה קיצונית מהנוהל התקין או מהשיקולים הסבירים שהיו צריכים להוביל להחלטה, ולעתים גם בחינת יחסי הגומלין בין הפגיעה בזכויות לבין המטרות הציבוריות — אולם המקורות מנחים לנקוט זהירות בשימוש בקריטריונים אלה ולהגדיר את רף ההתערבות באופן שמותיר מקום לסמכות השיפוטית והיעילות המנהלית.⁷\n\n**יחס העילה לעקרונות ביקורתיים אחרים**\n\nעילת הסבירות פועלת בשליחות עם עקרונות אחרים של ביקורת שיפוטית: היא משלימה שיקולים של שיעור התערבות, דה־פרופורציה ל־יעילות המינהל, והבחנה בין שיקולים משפטיים לענייניים; בפסיקה ובדיון האקדמי מודגש הצורך לאזן בין הגנת זכויות לבין מתן מרחב שיקול דעת לרשויות המינהל.³\n\n**סעדים ותרגום מעשי של ממצא חוסר סבירות**\n\nכאשר נמצא חוסר סבירות, בתי המשפט נוקטים בסעדים מקובלים: ביטול או קיזוז של ההחלטה הפוגעת (ביטול פסק הדין המנהלי), ולעתים הוחזקה בפרקטיקה גם אפשרות להחזיר את העניין להכרעת הרשות המינהלית לתיקון או להכרעה מחדש; הדוקטרינה איננה אחידה בכל המקרים ויש שיח על הנטייה להימנע מהחלפת שיקול הדעת המנהלי אלא להורות על תיקון או החלטה חליפית רק במצבים ברורים.²\n\n**היבטי ספציפיות לפי רכיבים שביקשת לבחון**\n\nעילת ההתערבות של בג\"ץ ביחס להחלטות בתי דין דתיים: במקורות שסופקו לא נמצא תיאור מפורש או פסיקה ספציפית הייצגתית שנכתבה במיוחד לגבי היקף עילת הסבירות בכל הנוגע להחלטות בתי דין דתיים; ייתכן שיש פסיקה שלא אותרה בחיפוש זה ולכן השרשו את הנקודה בזהירות.\n\nתחולת הדין האזרחי על בית הדין הרבני: במקורות שאותרו לא זוהה טקסט חוקי או פסק‑דין ראשוני המפרש במפורש את תחולת הדין האזרחי על בתי דין רבניים בהקשר של עילת הסבירות; הנושא נדון באופן תיאורטי בספרות אך לא אותר כאן מקור מעוגן ישיר בסמכויות שסופקו.\n\nאיזון משאבים וחלוקת רכוש כמרכיב בבחינת סבירות: בין המקורות שסופקו לא נמצא עיגון חוקי מפורש המתייחס ל'איזון משאבים וחלוקת רכוש' כקריטריון נבדל לעילת הסבירות; אם הכוונה לשקלול שיקולים כלכליים וציבוריים בהחלטות מנהליות, מקורות כלליים על שיקול דעת מינהלי עוסקים בכך, אך אין במקורות שאותרו כאן טקסט חוקי ספציפי שתמך בטענה זו.\n\nהערת סיכום ותיחום היקף המסקנות: התמונה שעולה מהמקורות המובאים מראה שעילת הסבירות נתפסת כעילה משמעותית ובעלת תכלית של הגנה על סבירות ההחלטה המנהלית, אך קיימת מחלוקת לגבי היקף העיגון החוקתי שלה, בתנאי המבחן המדויק, ובמקרים פרטניים כגון יחסי בתי דין דתיים או התייחסות מפורשת לאיזון משאבים; לציין כי ייתכן שיש פסיקה נוספת שלא אותרה שלא תשנה מסקנות אלו.⁴"
+}
