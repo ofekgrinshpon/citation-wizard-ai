@@ -329,31 +329,13 @@ export function buildInputSources(
       origin: c.origin,
       snippet: c.snippet,
     });
-    // source_label_quality_v1 — re-derive the label classification only when we
-    // did not already have a trustworthy cached verdict (CPU hot-path guard).
-    let classification_reason: string | undefined;
+    // source_label_quality_v1 — classification already reflects a single pass:
+    // cached when trustworthy, otherwise freshly computed above. No second run.
+    const classification_reason: string | undefined = cacheUsable
+      ? undefined
+      : integ0.classification_reason;
     const classification_before = integ0.citable_as;
-    if (!cacheUsable) {
-      const fresh = classifySourceIntegrity({
-        url: c.source_url,
-        title: c.title,
-        snippet: c.snippet,
-        source_type: c.source_type,
-        role: c.role,
-      });
-      if (
-        fresh.classification_reason &&
-        (integ0.citable_as === "judgment" || integ0.citable_as === "statute") &&
-        fresh.citable_as !== integ0.citable_as
-      ) {
-        integ0.citable_as = fresh.citable_as;
-        integ0.is_judgment_document = fresh.is_judgment_document ?? false;
-        integ0.integrity_flags = Array.from(
-          new Set([...(integ0.integrity_flags ?? []), ...fresh.integrity_flags]),
-        );
-        classification_reason = fresh.classification_reason;
-      }
-    }
+
 
 
     const synthesisRole = assignSynthesisRole({
