@@ -503,7 +503,20 @@ export interface DirectFileOptions {
   allowExtraction?: (bytes: number) => boolean;
   /** Charge the extracted character count back to the run ledger. */
   noteExtractionOutput?: (chars: number) => void;
+  /**
+   * large_pdf_extraction_preemption_v1 — final gate immediately before the
+   * uninterruptible `extractDocumentText` call. Returning `allow: false` means
+   * extraction is never entered and the attempt fails closed with
+   * `pdf_extraction_preempted`.
+   */
+  preflight?: (info: {
+    bytes: number;
+    contentType: string;
+    url: string;
+    kind: "pdf" | "docx";
+  }) => { allow: boolean; reason: string | null; detail?: Record<string, unknown> };
 }
+
 
 
 /** Method 1 — the URL already points at a judgment file. */
