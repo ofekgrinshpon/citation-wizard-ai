@@ -64,6 +64,14 @@ export interface SourceIntegrity {
   classification_before?: CitableAs;
   /** source_label_quality_v1 — why the classification was changed. */
   classification_reason?: string;
+  /** commentary_vs_judgment_classification_v1 — final classification. */
+  classification_after?: CitableAs;
+  /** commentary_vs_judgment_classification_v1 — judgment-identity evidence. */
+  judgment_identity_signals?: string[];
+  /** commentary_vs_judgment_classification_v1 — commentary-identity evidence. */
+  commentary_identity_signals?: string[];
+  /** commentary_vs_judgment_classification_v1 — no confident identity either way. */
+  uncertain_identity?: boolean;
 }
 
 
