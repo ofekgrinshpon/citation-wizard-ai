@@ -187,6 +187,23 @@ const JUDGMENT_IDENTITY_PARAM_RE =
 
 const STATUTE_MIRROR_HOSTS = ["wikisource.org", "he.wikisource.org", "wikitext.org"];
 
+// ── source_label_quality_v1 — statute / scholarship title shapes ───────────
+/** A real statute title starts with a statutory noun. */
+const STATUTE_TITLE_SHAPE_RE =
+  /(^|["״׳'(\s])(חוק[- ]יסוד|חוק|פקודת|פקודה|תקנות|צו|כללי|תקנון|הצעת\s+חוק)\s/;
+
+/** URL shapes of official law texts / statute databases. */
+const STATUTE_URL_SHAPE_RE =
+  /(lawitemid|lawsuggestionssearch|\/laws?\/|\/chok|\/legislation\/|reshumot|\/takanot|wikisource)/i;
+
+/** Indicators that the body really is official statutory text. */
+const OFFICIAL_STATUTE_TEXT_RE = /(נוסח\s+מלא|ספר\s+החוקים|רשומות|תיקון\s+מס|סעיף\s+\d)/;
+
+/** Scholarship / research-paper shape (author, research centre, paper files). */
+const SCHOLARSHIP_SHAPE_RE =
+  /(מרכז\s+המחקר\s+והמידע|ממ["״]מ|מסמך\s+רקע|נייר\s+עמדה|סקירה\s+משווה|מחקר\s+השוואתי|כתב\s+עת|עיוני\s+משפט|משפט\s+וממשל|הפרקליט|מאמר|רשימה\s+אקדמית|working\s+paper|abstract)/i;
+
+
 const COMMENTARY_HOSTS = [
   "wikipedia.org",
   "medium.com",
