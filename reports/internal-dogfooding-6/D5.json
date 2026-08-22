@@ -1,0 +1,29 @@
+{
+  "id": "D5",
+  "topic": "הרמת מסך / סעיף 6",
+  "query": "באילו נסיבות בית המשפט יורה על הרמת מסך לפי סעיף 6 לחוק החברות, ומה ההבדל בין הרמת מסך לבין אחריות אישית של נושא משרה?",
+  "job_id": "5c603fd5-171b-4f6f-bb03-da7593a405bf",
+  "run_id": "9956f952-e7c9-469e-b51c-3f8f470c0c65",
+  "ms": 824594,
+  "terminal_status": "done",
+  "branch": null,
+  "answer": "החיפוש אחר מקורות הופסק באמצע העיבוד ולא ניתן היה להשלים תשובה משפטית מבוססת. ייתכן שאיתור גוף פסקי הדין דרש עיבוד כבד מדי. נסו להריץ שוב, לצמצם את השאלה, או לצרף את המסמך הרלוונטי.",
+  "footnotes": [],
+  "footnotes_length": 0,
+  "used_sources_length": 0,
+  "inline_marker_count": 0,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "metadata_only_holdings": null,
+  "limitation_notices": [],
+  "claim_source_match": null,
+  "footnote_render_report": null,
+  "interruption": {
+    "job_error": "retrieval_interrupted_limitation",
+    "retrieval_interrupted": null,
+    "partial_retrieval": null,
+    "extraction_ledger": null,
+    "pdf_preflight": null,
+    "cpu_or_stale": true
+  }
+}
