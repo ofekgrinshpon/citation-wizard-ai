@@ -1,0 +1,392 @@
+{
+  "id": "F03",
+  "classification_changed": [],
+  "classification_rows": [
+    {
+      "title": "חוק יחסי ממון בין בני זוג (תיקון",
+      "classification_before": "judgment",
+      "classification_after": "judgment",
+      "judgment_identity_signals": [
+        "docket_in_text",
+        "case_prefix",
+        "party_names",
+        "document_file",
+        "court_vocabulary"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": "statute_type_without_official_text",
+      "url": "https://fs.knesset.gov.il/24/law/24_lst_600476.docx"
+    },
+    {
+      "title": "בג\"ץ 1000/92 – חוה/חנה בבלי נ' בית הדין הרבני הגדול",
+      "classification_before": "judgment",
+      "classification_after": "judgment",
+      "judgment_identity_signals": [
+        "docket_in_text",
+        "case_prefix",
+        "party_names",
+        "document_file",
+        "court_vocabulary",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc"
+    },
+    {
+      "title": "בג\"ץ 1000/92 בבלי נ' בית הדין הרבני (מסמך סרוק)",
+      "classification_before": "judgment",
+      "classification_after": "judgment",
+      "judgment_identity_signals": [
+        "docket_in_text",
+        "case_prefix",
+        "party_names",
+        "document_file",
+        "court_vocabulary",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%201000-92%20%D7%91%D7%91%D7%9C%D7%99%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99.doc"
+    },
+    {
+      "title": "פרשת בבלי - חקיקה שפוטית - פסק דין עליון",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "judgment_mirror_host",
+        "case_prefix",
+        "court_vocabulary",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": true,
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+      "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%AA-%D7%91%D7%91%D7%9C%D7%99--%D7%97%D7%A7%D7%99%D7%A7%D7%94-%D7%A9%D7%A4%D7%95%D7%98%D7%99%D7%AA--%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%A2%D7%9C%D7%99%D7%95%D7%9F"
+    },
+    {
+      "title": "בג\"ץ 8214/07 פלונית נ' פלוני",
+      "classification_before": "judgment",
+      "classification_after": "judgment",
+      "judgment_identity_signals": [
+        "docket_in_text",
+        "case_prefix",
+        "party_names",
+        "document_file",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208214-07%20%D7%A4%D7%9C%D7%95%D7%A0%D7%99%D7%AA%20%D7%A0'%20%D7%A4%D7%9C%D7%95%D7%A0%D7%99.doc"
+    },
+    {
+      "title": "“ידיד בית המשפט” במשפט העברי ובבתי הדין הרבניים | שי פרבר ויצחק כהן (כרך ט\"ז)",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [
+        "document_file",
+        "court_vocabulary"
+      ],
+      "commentary_identity_signals": [
+        "commentary_snippet_shape",
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/08/dd-2022-16-farber-cohen.pdf"
+    },
+    {
+      "title": "השותפות הנישואית והערבות ההדדית בין בני הזוג בפשיטת רגיל – עיון מחדש | דוד מינץ (כרך ט)",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/l1_3.pdf"
+    }
+  ],
+  "uncertain_identity_count": 1,
+  "downgrades": [
+    {
+      "title": "חוק יחסי ממון בין בני זוג (תיקון",
+      "downgrade_reason": "statute_type_without_official_text"
+    },
+    {
+      "title": "פרשת בבלי - חקיקה שפוטית - פסק דין עליון",
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
+    }
+  ],
+  "query": "מה נקבע בבג\"ץ 1000/92 בבלי נ' בית הדין הרבני הגדול?",
+  "job_id": "e4c9d8f2-e82a-43c6-ac0d-adf004348bab",
+  "run_id": "1f39863a-f67b-489c-93e6-105d9c01e228",
+  "ms": 161409,
+  "terminal_status": "done",
+  "job_error": null,
+  "branch": "docket_limitation",
+  "answer_length": 342,
+  "inline_marker_count": 0,
+  "max_marker": 0,
+  "footnotes_length": 0,
+  "used_sources_length": 0,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "invariant_passed": true,
+  "rendered_rows": [],
+  "label_report": {
+    "rows": [
+      {
+        "ref": "s1",
+        "url": "https://fs.knesset.gov.il/24/law/24_lst_600476.docx",
+        "title": "חוק יחסי ממון בין בני זוג (תיקון",
+        "raw_title": "24_lst_600476.docx",
+        "candidate_id": "6eb763a2-7950-46af-b517-db314933d844",
+        "title_status": "fallback_filename",
+        "fallback_used": "statute_name",
+        "downgrade_reason": "statute_type_without_official_text",
+        "fallback_applied": true,
+        "fallback_candidate": "חוק יחסי ממון בין בני זוג (תיקון",
+        "uncertain_identity": false,
+        "classification_after": "judgment",
+        "title_hygiene_action": "title_raw_filename",
+        "classification_before": "judgment",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "title_raw_filename"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "docket_in_text",
+          "case_prefix",
+          "party_names",
+          "document_file",
+          "court_vocabulary"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": "statute_name:7>raw:-1"
+      },
+      {
+        "ref": "s2",
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+        "title": "בג\"ץ 1000/92 – חוה/חנה בבלי נ' בית הדין הרבני הגדול",
+        "raw_title": "בג\"ץ 1000/92 – חוה/חנה בבלי נ' בית הדין הרבני הגדול",
+        "candidate_id": "75927ee8-bef1-459f-9ba5-e8e447f59a06",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "judgment",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "docket_in_text",
+          "case_prefix",
+          "party_names",
+          "document_file",
+          "court_vocabulary",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s3",
+        "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%201000-92%20%D7%91%D7%91%D7%9C%D7%99%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99.doc",
+        "title": "בג\"ץ 1000/92 בבלי נ' בית הדין הרבני (מסמך סרוק)",
+        "raw_title": "בג\"ץ 1000/92 בבלי נ' בית הדין הרבני (מסמך סרוק)",
+        "candidate_id": "d10d7996-a245-44b0-93c9-455975ed9853",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "judgment",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "docket_in_text",
+          "case_prefix",
+          "party_names",
+          "document_file",
+          "court_vocabulary",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s4",
+        "url": "https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%AA-%D7%91%D7%91%D7%9C%D7%99--%D7%97%D7%A7%D7%99%D7%A7%D7%94-%D7%A9%D7%A4%D7%95%D7%98%D7%99%D7%AA--%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%A2%D7%9C%D7%99%D7%95%D7%9F",
+        "title": "פרשת בבלי - חקיקה שפוטית - פסק דין עליון",
+        "raw_title": "פרשת בבלי - חקיקה שפוטית - פסק דין עליון",
+        "candidate_id": "b2c0df3f-dd69-4b4b-a5d1-2420abd036e6",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": true,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "judgment_mirror_host",
+          "case_prefix",
+          "court_vocabulary",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s5",
+        "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208214-07%20%D7%A4%D7%9C%D7%95%D7%A0%D7%99%D7%AA%20%D7%A0'%20%D7%A4%D7%9C%D7%95%D7%A0%D7%99.doc",
+        "title": "בג\"ץ 8214/07 פלונית נ' פלוני",
+        "raw_title": "בג\"ץ 8214/07 פלונית נ' פלוני",
+        "candidate_id": "926485d8-3181-45f3-9d84-835eacd59999",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "judgment",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "docket_in_text",
+          "case_prefix",
+          "party_names",
+          "document_file",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s6",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/08/dd-2022-16-farber-cohen.pdf",
+        "title": "“ידיד בית המשפט” במשפט העברי ובבתי הדין הרבניים | שי פרבר ויצחק כהן (כרך ט\"ז)",
+        "raw_title": "“ידיד בית המשפט” במשפט העברי ובבתי הדין הרבניים | שי פרבר ויצחק כהן (כרך ט\"ז)",
+        "candidate_id": "7dd072fd-dc28-42e3-8990-b2a652ed7900",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file",
+          "court_vocabulary"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_snippet_shape",
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s7",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/l1_3.pdf",
+        "title": "השותפות הנישואית והערבות ההדדית בין בני הזוג בפשיטת רגיל – עיון מחדש | דוד מינץ (כרך ט)",
+        "raw_title": "השותפות הנישואית והערבות ההדדית בין בני הזוג בפשיטת רגיל – עיון מחדש | דוד מינץ (כרך ט)",
+        "candidate_id": "0b9f1c56-b939-469f-b6f1-c544bf62400e",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": null
+      }
+    ],
+    "total": 7,
+    "reclassified_count": 0,
+    "fallback_used_count": 1,
+    "classification_rerun_count": 0,
+    "classification_rerun_reason": [],
+    "classification_cache_hit_count": 7,
+    "source_label_cpu_guard_applied": true
+  },
+  "filename_titles": [],
+  "bare_institution_titles": [],
+  "ocr_duplicate_pairs": [],
+  "scholarship_as_statute": [],
+  "commentary_as_judgment": [],
+  "metadata_only_holdings": 0,
+  "used_sources": [],
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 0,
+    "invariant_passed": true,
+    "inline_marker_count": 0,
+    "used_sources_length": 0,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין בג\"ץ 1000/92 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}

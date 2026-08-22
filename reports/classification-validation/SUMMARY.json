@@ -13,5 +13,39 @@
     "invariant_passed": true,
     "fallback_used_count": 0,
     "reclassified_count": 1
+  },
+  {
+    "id": "F02",
+    "pass": false,
+    "failures": [
+      "no_terminal_qa_row",
+      "empty_answer_body",
+      "cpu_kill"
+    ],
+    "branch": null,
+    "footnotes_length": 0,
+    "used_sources_length": 0,
+    "dangling": 0,
+    "orphan": 0,
+    "uncertain_identity_count": 0,
+    "metadata_only_holdings": 0,
+    "invariant_passed": true,
+    "fallback_used_count": null,
+    "reclassified_count": null
+  },
+  {
+    "id": "F03",
+    "pass": true,
+    "failures": [],
+    "branch": "docket_limitation",
+    "footnotes_length": 0,
+    "used_sources_length": 0,
+    "dangling": 0,
+    "orphan": 0,
+    "uncertain_identity_count": 1,
+    "metadata_only_holdings": 0,
+    "invariant_passed": true,
+    "fallback_used_count": 1,
+    "reclassified_count": 0
   }
 ]
