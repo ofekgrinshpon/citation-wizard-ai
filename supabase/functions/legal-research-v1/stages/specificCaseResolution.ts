@@ -26,7 +26,8 @@ import {
   type DocketRef,
 } from "./docketDetection.ts";
 import { classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
-import { deriveSupremeCourtFileUrls } from "./courtFileUrls.ts";
+import { deriveSupremeCourtFileUrls, isTextEndpointUrl } from "./courtFileUrls.ts";
+import { assessPdfExtraction, isTextEndpointStub } from "./pdfExtractionPreflight.ts";
 import {
   HOLDING_TEXT_RE,
   isDirectFileUrl,
@@ -78,6 +79,9 @@ export interface ProbeBudget {
   exceeded(): boolean;
   remaining(): number;
   mark(name: string, detail?: Record<string, unknown>): void;
+  /** Run-level extraction ledger (large_pdf_extraction_preemption_v1). */
+  allowExtraction?(bytes: number, opts?: { speculative?: boolean }): boolean;
+  noteExtractionOutput?(chars: number, opts?: { speculative?: boolean }): void;
 }
 
 /**
@@ -88,12 +92,28 @@ function derivedFailureReason(err: unknown): string {
   const name = (err as { name?: string } | null)?.name ?? "";
   const msg = err instanceof Error ? err.message : String(err);
   if (msg === "retrieval_timeout") return "retrieval_timeout";
+  if (msg === "pdf_extraction_preempted") return "pdf_extraction_preempted";
+  if (msg === "extraction_budget_spent") return "extraction_budget_spent";
+  if (msg === "plain_text_below_threshold") return "text_endpoint_stub";
   if (msg === "body_too_large_for_budget") return "derived_url_body_too_large";
   if (msg === "binary_too_large_for_extraction") return "derived_url_binary_too_large_for_extraction";
   if (name === "TimeoutError" || /timeout/i.test(msg)) return "derived_url_fetch_timeout";
   if (name === "AbortError" || /abort/i.test(msg)) return "derived_url_fetch_aborted";
   return `derived_url:${msg}`;
 }
+
+/**
+ * Failure reasons that prove the requested judgment *was located* at its
+ * derived official archive path — the document responded, but its body could
+ * not be read within the processing limits. Identity must survive this.
+ */
+const BODY_UNAVAILABLE_REASONS = new Set([
+  "pdf_extraction_preempted",
+  "extraction_budget_spent",
+  "derived_url_body_too_large",
+  "derived_url_binary_too_large_for_extraction",
+]);
+
 
 
 const CASE_LIKE_TYPES = new Set([
@@ -142,7 +162,26 @@ export interface SpecificCaseResolution {
   /** Fine-grained probe markers (diagnostics for silent-hang triage). */
   probe_stages: Array<{ name: string; at_ms: number; detail?: Record<string, unknown> }>;
 
-
+  // ── large_pdf_extraction_preemption_v1 telemetry ──────────────────────
+  /**
+   * The requested judgment was located at its official archive path (the URL
+   * responded with a real document), independently of whether its body could
+   * be read. Identity must never be lost to an extraction failure.
+   */
+  exact_case_source_found: boolean;
+  /** Located, but the body could not be read within the processing limits. */
+  exact_case_body_unavailable: boolean;
+  exact_case_body_unavailable_url: string | null;
+  body_unavailable_reason: string | null;
+  /** Size (bytes) of the largest binary the preflight assessed. */
+  pdf_preflight_size: number | null;
+  pdf_preflight_decision: string | null;
+  extraction_skipped_reason: string | null;
+  large_pdf_skipped: boolean;
+  /** v1 chose the "skip" strategy; no async offload path exists yet. */
+  extraction_offloaded: boolean;
+  text_endpoint_attempted: number;
+  text_endpoint_stub_detected: number;
 
 
   /** Why the caller will (or will not) fire `docket_limitation`. */
@@ -195,6 +234,19 @@ function disabled(
     derived_url_resolved: null,
     budget_exceeded: false,
     probe_stages: [],
+
+    exact_case_source_found: false,
+    exact_case_body_unavailable: false,
+    exact_case_body_unavailable_url: null,
+    body_unavailable_reason: null,
+    pdf_preflight_size: null,
+    pdf_preflight_decision: null,
+    extraction_skipped_reason: null,
+    large_pdf_skipped: false,
+    extraction_offloaded: false,
+    text_endpoint_attempted: 0,
+    text_endpoint_stub_detected: 0,
+
 
 
 
@@ -612,7 +664,14 @@ export async function runSpecificCaseResolution(
         1000,
         Math.min(SPECIFIC_CASE_LIMITS.PER_DERIVED_URL_MS, remainingMs()),
       );
-      markStage("derived_probe_start", { url, per_url_ms: perUrlMs, max_bytes: probeMaxBytes() });
+      const textEndpoint = isTextEndpointUrl(url);
+      if (textEndpoint) res.text_endpoint_attempted++;
+      markStage("derived_probe_start", {
+        url,
+        per_url_ms: perUrlMs,
+        max_bytes: probeMaxBytes(),
+        text_endpoint: textEndpoint,
+      });
       try {
         const got = await withTimeout(
           tryDirectFile(url, {
@@ -624,10 +683,45 @@ export async function runSpecificCaseResolution(
             onStage: (n, d) => markStage(`derived:${n}`, d),
             maxBytes: probeMaxBytes(),
             budgetExceeded: outOfBudget,
+            // large_pdf_extraction_preemption_v1: charge the run ledger and
+            // refuse to enter synchronous extraction we cannot afford.
+            allowExtraction: (bytes) =>
+              input.budget?.allowExtraction?.(bytes, { speculative: false }) ?? true,
+            noteExtractionOutput: (chars) =>
+              input.budget?.noteExtractionOutput?.(chars, { speculative: false }),
+            preflight: (info) => {
+              const verdict = assessPdfExtraction({
+                bytes: info.bytes,
+                contentType: info.contentType,
+                url: info.url,
+                exactCase: true,
+                remainingMs: remainingMs(),
+              });
+              res.pdf_preflight_size = verdict.size;
+              res.pdf_preflight_decision = verdict.decision;
+              if (!verdict.allow) {
+                res.extraction_skipped_reason = verdict.reason;
+                res.large_pdf_skipped = true;
+                // The archive path answered with a real document: identity is
+                // established even though the body stays unread.
+                res.exact_case_source_found = true;
+                res.exact_case_body_unavailable_url = info.url;
+              }
+              return {
+                allow: verdict.allow,
+                reason: verdict.reason,
+                detail: {
+                  limit: verdict.limit,
+                  estimated_chars: verdict.estimated_chars,
+                  kind: info.kind,
+                },
+              };
+            },
           }),
           perUrlMs,
           "court_url_derivation",
         );
+
         markStage("derived_probe_returned", { url, chars: got.length });
         if (got.length >= SPECIFIC_CASE_LIMITS.MIN_USABLE_TEXT) {
           res.derived_url_resolved = url;
@@ -645,16 +739,33 @@ export async function runSpecificCaseResolution(
           markStage("candidate_normalization_done", { url });
           break;
         }
+        if (textEndpoint && isTextEndpointStub(got.length)) {
+          res.text_endpoint_stub_detected++;
+          markStage("text_endpoint_stub_detected", { url, chars: got.length });
+        }
         recordFailure(res, "derived_url_text_below_threshold");
       } catch (err) {
         const reason = derivedFailureReason(err);
         markStage("derived_probe_failed", { url, reason });
         recordFailure(res, `${reason}:${url}`);
+        if (textEndpoint && reason === "text_endpoint_stub") {
+          res.text_endpoint_stub_detected++;
+          markStage("text_endpoint_stub_detected", { url });
+        }
+        if (BODY_UNAVAILABLE_REASONS.has(reason)) {
+          // Located at its official archive path, body unreadable within the
+          // processing limits — a distinct outcome from "not found".
+          res.exact_case_source_found = true;
+          res.exact_case_body_unavailable = true;
+          res.exact_case_body_unavailable_url ??= url;
+          res.body_unavailable_reason = reason;
+        }
         if (reason === "retrieval_timeout") {
           budgetStop("derived_probe_inner");
           break;
         }
       }
+
     }
     markStage("derived_urls_probed_done", {
       probed: res.derived_urls_probed.length,
@@ -691,7 +802,12 @@ export async function runSpecificCaseResolution(
 
 
 
-  if (!res.acquisition_success) {
+  if (res.acquisition_success) {
+    // A later method produced the body after all — the earlier extraction
+    // refusal is no longer the outcome of this run.
+    res.exact_case_body_unavailable = false;
+    res.body_unavailable_reason = null;
+  } else {
     res.allow_case_holding_answer = false;
     res.acquisition_method = null;
     res.acquisition_method_successful = null;
@@ -700,6 +816,7 @@ export async function runSpecificCaseResolution(
       : "no_exact_docket_source";
     if (!res.acquisition_failure_reason) recordFailure(res, "no_method_available");
   }
+
 
 
   res.ms = Date.now() - t0;

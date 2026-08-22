@@ -28,6 +28,7 @@ import {
   type RankInput,
 } from "./judgmentCandidateRanking.ts";
 import { processExtractedBody } from "./postExtract.ts";
+import { assessPdfExtraction } from "./pdfExtractionPreflight.ts";
 import { looksBinary } from "./statuteTextAcquisition.ts";
 
 
@@ -503,7 +504,20 @@ export interface DirectFileOptions {
   allowExtraction?: (bytes: number) => boolean;
   /** Charge the extracted character count back to the run ledger. */
   noteExtractionOutput?: (chars: number) => void;
+  /**
+   * large_pdf_extraction_preemption_v1 — final gate immediately before the
+   * uninterruptible `extractDocumentText` call. Returning `allow: false` means
+   * extraction is never entered and the attempt fails closed with
+   * `pdf_extraction_preempted`.
+   */
+  preflight?: (info: {
+    bytes: number;
+    contentType: string;
+    url: string;
+    kind: "pdf" | "docx";
+  }) => { allow: boolean; reason: string | null; detail?: Record<string, unknown> };
 }
+
 
 
 /** Method 1 — the URL already points at a judgment file. */
@@ -575,7 +589,28 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
       await onStage("binary_extraction_budget_spent", { bytes: bytes.byteLength });
       throw new Error("extraction_budget_spent");
     }
+    // large_pdf_extraction_preemption_v1: last gate before the uninterruptible
+    // synchronous step. Once `extractDocumentText` is entered nothing — not the
+    // abort signal, not the deadline — can stop it, so an unaffordable body
+    // must be refused *here*, with a durable checkpoint.
+    if (opts.preflight) {
+      const pf = opts.preflight({
+        bytes: bytes.byteLength,
+        contentType,
+        url,
+        kind: isPdf ? "pdf" : "docx",
+      });
+      if (!pf.allow) {
+        await onStage("binary_extraction_preempted", {
+          bytes: bytes.byteLength,
+          reason: pf.reason,
+          ...(pf.detail ?? {}),
+        });
+        throw new Error("pdf_extraction_preempted");
+      }
+    }
     gate("before_binary_extract_run");
+
     // Awaited: extraction is a long synchronous CPU step that can block the
     // event loop hard enough that a fire-and-forget checkpoint never leaves
     // the isolate. The trail must be durable *before* we enter it.
@@ -1320,6 +1355,26 @@ export async function runJudgmentTextAcquisition(
           retrievalBudget?.allowExtraction?.(bytes, { speculative }) ?? true,
         noteExtractionOutput: (chars: number) =>
           retrievalBudget?.noteExtractionOutput?.(chars, { speculative }),
+        // large_pdf_extraction_preemption_v1: size/budget preflight immediately
+        // before the uninterruptible synchronous extraction call.
+        preflight: (info) => {
+          const verdict = assessPdfExtraction({
+            bytes: info.bytes,
+            contentType: info.contentType,
+            url: info.url,
+            exactCase: !speculative,
+            remainingMs: attemptDeadline - Date.now(),
+          });
+          if (!verdict.allow) {
+            failures.push(verdict.reason ?? "pdf_extraction_preempted");
+          }
+          return {
+            allow: verdict.allow,
+            reason: verdict.reason,
+            detail: { limit: verdict.limit, estimated_chars: verdict.estimated_chars },
+          };
+        },
+
         ...(speculative
           ? { maxInlineExtractionBytes: ACQUISITION_LIMITS.MAX_INLINE_EXTRACTION_BYTES }
           : {}),

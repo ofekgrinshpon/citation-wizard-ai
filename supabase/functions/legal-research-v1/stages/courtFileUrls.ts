@@ -62,8 +62,25 @@ function parts(d: DocketRef, suffix: number): Parts | null {
 }
 
 /**
- * Bounded list of candidate document URLs for a docket (Hebrew corpus first,
- * then English, then the legacy elyon1 mirror).
+ * True when a derived archive URL is expected to serve *text* (Hebrew corpus
+ * `type=2`, or an elyon1 `.htm` mirror) rather than a binary document.
+ *
+ * large_pdf_extraction_preemption_v1: the `type=4` English corpus URL carries a
+ * `.txt` fileName but actually serves a multi-megabyte PDF, so the fileName
+ * extension must never be used for this decision — only the `type` parameter.
+ */
+export function isTextEndpointUrl(u: string): boolean {
+  const m = String(u).match(/[?&]type=(\d+)/);
+  if (m) return m[1] === "2";
+  return /\.html?($|[?#])/i.test(String(u));
+}
+
+/**
+ * Bounded list of candidate document URLs for a docket.
+ *
+ * Text endpoints are returned first (stable within their group): synchronous
+ * binary extraction is the CPU sink that kills the isolate, so a plain-text
+ * body must always be attempted before a PDF one.
  */
 export function deriveSupremeCourtFileUrls(
   d: DocketRef,
@@ -83,5 +100,8 @@ export function deriveSupremeCourtFileUrls(
       `https://elyon1.court.gov.il/files/${seg}/z01/${p.id}.z01.htm`,
     );
   }
-  return urls.slice(0, max);
+  const text = urls.filter(isTextEndpointUrl);
+  const binary = urls.filter((u) => !isTextEndpointUrl(u));
+  return [...text, ...binary].slice(0, max);
 }
+

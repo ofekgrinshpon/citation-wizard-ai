@@ -1073,6 +1073,64 @@ async function handle(req: Request): Promise<Response> {
     pool_size: pool.candidates.length,
   });
 
+  // ─── Exact-case body unavailable (large_pdf_extraction_preemption_v1) ────
+  // The requested judgment *was* located at its official archive path, but its
+  // body was too large to extract inside the isolate. This is a different fact
+  // from "not found", and the user is told so precisely — never a silent
+  // fallback to secondary sources for a case-holding question.
+  if (
+    !is_sources_only && fastLaneEligible &&
+    !specificCase.acquisition_success &&
+    specificCase.exact_case_body_unavailable === true
+  ) {
+    const docketLabel = fastLaneDockets.map((d) => `${d.prefix_he} ${d.number}`).join(", ");
+    const answer =
+      `איתרתי את פסק הדין ${docketLabel} במאגר הרשמי של בית המשפט, אך קובץ פסק הדין גדול מכדי שניתן לחלץ ממנו את הנוסח המלא בתוך משאבי העיבוד שהוקצו לשאילתה. ` +
+      `מכיוון שאין בידי את גוף פסק הדין, איני מוסר מה נקבע בו כדי שלא להסתמך על מקורות משניים או על ידע כללי. ` +
+      `ניתן לצרף את קובץ פסק הדין לשאילתה ואשיב על בסיס הנוסח המצורף.`;
+    await completeAllStages();
+    const limitation = {
+      reason: "exact_case_body_unavailable",
+      deterministic_branch: "exact_case_body_unavailable",
+      dockets: fastLaneDockets.map((d) => `${d.prefix_he} ${d.number}`),
+      source_url: specificCase.exact_case_body_unavailable_url,
+      body_unavailable_reason: specificCase.body_unavailable_reason,
+      extraction_skipped_reason: specificCase.extraction_skipped_reason,
+      pdf_preflight_size: specificCase.pdf_preflight_size,
+      pdf_preflight_decision: specificCase.pdf_preflight_decision,
+      specific_case: specificCase,
+    };
+    await writeTelemetry(admin, {
+      ...telemetryBase,
+      row_id: traceRowId,
+      answer,
+      footnotes: [],
+      task_mode: "legal_research",
+      metadata: {
+        pipeline: "legal-research-v1",
+        phase: "exact_case_body_unavailable",
+        run_id,
+        total_ms: Date.now() - t_start,
+        stage_runs,
+        planning: planningMeta,
+        claims: analyzer.claims,
+        queries: allQueries,
+        retrieval: { ...retrievalMeta, retrieval_budget: budget.report() },
+        limitation,
+      },
+    });
+    return jsonResponse(200, {
+      answer,
+      footnotes: [],
+      debug: {
+        run_id,
+        phase: "exact_case_body_unavailable",
+        stage_runs,
+        limitation,
+        retrieval: { ...retrievalMeta, retrieval_budget: budget.report() },
+      },
+    });
+  }
 
 
   // ─── Retrieval CPU guard (specific_case) ─────────────────────────────────
