@@ -663,7 +663,14 @@ export async function runSpecificCaseResolution(
         1000,
         Math.min(SPECIFIC_CASE_LIMITS.PER_DERIVED_URL_MS, remainingMs()),
       );
-      markStage("derived_probe_start", { url, per_url_ms: perUrlMs, max_bytes: probeMaxBytes() });
+      const textEndpoint = isTextEndpointUrl(url);
+      if (textEndpoint) res.text_endpoint_attempted++;
+      markStage("derived_probe_start", {
+        url,
+        per_url_ms: perUrlMs,
+        max_bytes: probeMaxBytes(),
+        text_endpoint: textEndpoint,
+      });
       try {
         const got = await withTimeout(
           tryDirectFile(url, {
@@ -675,10 +682,45 @@ export async function runSpecificCaseResolution(
             onStage: (n, d) => markStage(`derived:${n}`, d),
             maxBytes: probeMaxBytes(),
             budgetExceeded: outOfBudget,
+            // large_pdf_extraction_preemption_v1: charge the run ledger and
+            // refuse to enter synchronous extraction we cannot afford.
+            allowExtraction: (bytes) =>
+              input.budget?.allowExtraction?.(bytes, { speculative: false }) ?? true,
+            noteExtractionOutput: (chars) =>
+              input.budget?.noteExtractionOutput?.(chars, { speculative: false }),
+            preflight: (info) => {
+              const verdict = assessPdfExtraction({
+                bytes: info.bytes,
+                contentType: info.contentType,
+                url: info.url,
+                exactCase: true,
+                remainingMs: remainingMs(),
+              });
+              res.pdf_preflight_size = verdict.size;
+              res.pdf_preflight_decision = verdict.decision;
+              if (!verdict.allow) {
+                res.extraction_skipped_reason = verdict.reason;
+                res.large_pdf_skipped = true;
+                // The archive path answered with a real document: identity is
+                // established even though the body stays unread.
+                res.exact_case_source_found = true;
+                res.exact_case_body_unavailable_url = info.url;
+              }
+              return {
+                allow: verdict.allow,
+                reason: verdict.reason,
+                detail: {
+                  limit: verdict.limit,
+                  estimated_chars: verdict.estimated_chars,
+                  kind: info.kind,
+                },
+              };
+            },
           }),
           perUrlMs,
           "court_url_derivation",
         );
+
         markStage("derived_probe_returned", { url, chars: got.length });
         if (got.length >= SPECIFIC_CASE_LIMITS.MIN_USABLE_TEXT) {
           res.derived_url_resolved = url;
