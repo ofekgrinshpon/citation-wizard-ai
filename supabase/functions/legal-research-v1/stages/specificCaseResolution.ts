@@ -802,7 +802,12 @@ export async function runSpecificCaseResolution(
 
 
 
-  if (!res.acquisition_success) {
+  if (res.acquisition_success) {
+    // A later method produced the body after all — the earlier extraction
+    // refusal is no longer the outcome of this run.
+    res.exact_case_body_unavailable = false;
+    res.body_unavailable_reason = null;
+  } else {
     res.allow_case_holding_answer = false;
     res.acquisition_method = null;
     res.acquisition_method_successful = null;
@@ -811,6 +816,7 @@ export async function runSpecificCaseResolution(
       : "no_exact_docket_source";
     if (!res.acquisition_failure_reason) recordFailure(res, "no_method_available");
   }
+
 
 
   res.ms = Date.now() - t0;
