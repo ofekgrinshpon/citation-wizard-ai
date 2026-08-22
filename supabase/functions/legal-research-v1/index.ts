@@ -1538,9 +1538,14 @@ async function handle(req: Request): Promise<Response> {
     // source_label_quality_v1 telemetry (per-source label audit trail).
     source_label_quality: {
       total: (drafter.input_sources ?? []).length,
-      fallback_used_count: (drafter.input_sources ?? []).filter((s) => !!s.fallback_used).length,
+      fallback_used_count: (drafter.input_sources ?? []).filter((s) => s.fallback_applied === true)
+        .length,
       reclassified_count: (drafter.input_sources ?? []).filter((s) => !!s.classification_reason)
         .length,
+      classification_cache_hit_count: labelCpuStats.classification_cache_hit_count,
+      classification_rerun_count: labelCpuStats.classification_rerun_count,
+      classification_rerun_reason: labelCpuStats.classification_rerun_reason,
+      source_label_cpu_guard_applied: labelCpuStats.source_label_cpu_guard_applied,
       rows: (drafter.input_sources ?? []).map((s) => ({
         ref: s.ref,
         candidate_id: s.candidate_id,
@@ -1550,12 +1555,19 @@ async function handle(req: Request): Promise<Response> {
         title_hygiene_action: s.title_hygiene_action ?? null,
         title_hygiene_reasons: s.title_hygiene_reasons ?? [],
         fallback_used: s.fallback_used ?? null,
+        fallback_applied: s.fallback_applied === true,
+        fallback_candidate: s.fallback_candidate ?? null,
+        fallback_rejected_reason: s.fallback_rejected_reason ?? null,
+        fallback_improvement_reason: s.fallback_improvement_reason ?? null,
+        classification_cache_hit: s.classification_cache_hit ?? null,
+        classification_rerun_reason: s.classification_rerun_reason ?? null,
         classification_before: s.classification_before ?? null,
         classification_after: s.classification_after ?? null,
         classification_reason: s.classification_reason ?? null,
         url: s.url,
       })),
     },
+
 
     schema_failure_reason: drafter.schema_failure_reason,
     quality_warning: drafter.quality_warning,
