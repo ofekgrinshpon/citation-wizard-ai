@@ -1,0 +1,29 @@
+{
+  "id": "D3",
+  "topic": "בג״ץ ובית דין רבני / רכוש",
+  "query": "מתי בג״ץ יתערב בהחלטה של בית דין רבני בענייני רכוש בין בני זוג, במיוחד כאשר נטען שבית הדין החיל דין דתי במקום דין אזרחי?",
+  "job_id": "d2f11a86-592e-4112-9c4a-f5d4c7e4cc39",
+  "run_id": "90d760e6-1804-4372-b8c4-1c1ccc4c0cdd",
+  "ms": 834632,
+  "terminal_status": "done",
+  "branch": null,
+  "answer": "החיפוש אחר מקורות הופסק באמצע העיבוד ולא ניתן היה להשלים תשובה משפטית מבוססת. ייתכן שאיתור גוף פסקי הדין דרש עיבוד כבד מדי. נסו להריץ שוב, לצמצם את השאלה, או לצרף את המסמך הרלוונטי.",
+  "footnotes": [],
+  "footnotes_length": 0,
+  "used_sources_length": 0,
+  "inline_marker_count": 0,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "metadata_only_holdings": null,
+  "limitation_notices": [],
+  "claim_source_match": null,
+  "footnote_render_report": null,
+  "interruption": {
+    "job_error": "retrieval_interrupted_limitation",
+    "retrieval_interrupted": null,
+    "partial_retrieval": null,
+    "extraction_ledger": null,
+    "pdf_preflight": null,
+    "cpu_or_stale": true
+  }
+}

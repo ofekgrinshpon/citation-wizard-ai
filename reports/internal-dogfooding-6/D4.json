@@ -1,0 +1,122 @@
+{
+  "id": "D4",
+  "topic": "תום לב במו״מ / סעיף 12",
+  "query": "מהו היקף חובת תום הלב במשא ומתן לפי סעיף 12 לחוק החוזים, ומהם הסעדים האפשריים בגין הפרתה?",
+  "job_id": "c348ed1d-a3db-49c9-bafb-8bc3921c9686",
+  "run_id": "1816b70d-399d-4705-a518-ddd171a8f731",
+  "ms": 251695,
+  "terminal_status": "done",
+  "branch": null,
+  "answer": "סעיף 12(א) לחוק החוזים (חלק כללי), תשל\"ג-1973, מטיל בשלב המשא ומתן לקראת כריתת חוזה חובה לנהוג בדרך מקובלת ובתום לב. החובה היא נורמה מחייבת בשלב הטרום‑חוזי.¹\n\nלא מוצגת כאן סקירת פסיקה מחייבת או הלכה שיפוטית, משום שלא נמצאו פסקי דין ברי‑שימוש במסגרת זו; המענה נשען על לשון החוק בלבד.\n\nיישום החובה על נסיבות קונקרטיות והפעלת מבחנים שיפוטיים אינם מובאים כאן, מאחר שהתשובה מוגבלת לנוסח החוק בלא הסתמכות על פסיקה.\n\nרקע עיוני וכללי אינו נפרש כאן, שכן לא סופקו מקורות ספרותיים רלוונטיים; ההצגה להלן מתמקדת בהוראה הסטטוטורית בלבד.\n\nמהות היקף החובה לפי החוק עצמו היא סטנדרט כפול של 'דרך מקובלת' ו'תום לב'. החוק אינו מונה רשימת התנהגויות קונקרטיות או חובות גילוי ספציפיות, אלא מציב אמת‑מידה כללית לשלב המשא ומתן.\n\nלעניין הבהרת היקף החובה באמצעות הלכות מחייבות אין התייחסות כאן, בהיעדר פסיקה ברת‑שימוש במסגרת זו.\n\nדוגמאות יישומיות או סייגים יישומיים להיקף החובה אינם מובאים aquí, מאחר שהדיון מוגבל ללשון סעיף 12 בלבד.\n\nסקירה עיונית משלימה על תום לב במשא ומתן אינה ניתנת כאן, בהיעדר מקורות ספרותיים מסופקים.\n\nסעד עיקרי: סעיף 12(ב) קובע כי צד שלא נהג בדרך מקובלת ובתום לב חייב לצד שכנגד פיצויים בעד הנזק שנגרם לו עקב המשא ומתן או עקב כריתת החוזה. לצורך חישוב והיקף הפיצויים מוחלות בשינויים המחויבים הוראות סעיפים 10, 13 ו‑14 לחוק החוזים (תרופות בשל הפרת חוזה), תשל\"א‑1970.\n\nהערכת הנזק, היקף הפיצוי ותנאיו נגזרים מהחלת סעיפים 10, 13 ו‑14 לחוק החוזים (תרופות) בשינויים המחויבים, כמצוות סעיף 12(ב). סעיף 12 עצמו אינו מפרט מבחנים נוספים מעבר להפניה זו.\n\nלשון סעיף 12 מתייחסת לסעד של פיצויים בלבד; אין בו הוראה מפורשת בדבר צווי מניעה, אכיפה או ביטול הנסמכים על הפרת חובת תום‑הלב בשלב המשא ומתן.\n\nתחולת החובה מוגדרת בלשון החוק לשלב של 'משא ומתן לקראת כריתתו של חוזה'. מכאן שמדובר בסטנדרט התנהגות טרום‑חוזי; לשון הסעיף אינה קובעת חובת כריתת חוזה, אלא חובה לנהל את המשא ומתן בדרך מקובלת ובתום לב.\n\nסייגים והגנות שנגזרו בפסיקה או נסיבות מעשיות המשפיעות על אכיפת החובה אינם נדונים כאן, בשל היעדר הסתמכות על פסיקה במסגרת זו.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+          "title": "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "legislation"
+    }
+  ],
+  "footnotes_length": 1,
+  "used_sources_length": 1,
+  "inline_marker_count": 1,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "metadata_only_holdings": null,
+  "limitation_notices": [
+    "**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+  ],
+  "claim_source_match": {
+    "applied": true,
+    "mismatch_reason": [
+      "claim_mismatch"
+    ],
+    "limitation_added": true,
+    "tagged_block_count": 13,
+    "dropped_source_refs": [
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 4,
+        "block_claim_id": "C2",
+        "block_legal_area": "contracts",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "contracts"
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 8,
+        "block_claim_id": "C3",
+        "block_legal_area": "contracts",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "contracts"
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 9,
+        "block_claim_id": "C3",
+        "block_legal_area": "contracts",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "contracts"
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 10,
+        "block_claim_id": "C3",
+        "block_legal_area": "contracts",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "contracts"
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 11,
+        "block_claim_id": "C4",
+        "block_legal_area": "contracts",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "contracts"
+      }
+    ],
+    "commentary_only_claims": [],
+    "unsupported_block_count": 4,
+    "source_ref_mismatch_count": 5,
+    "primary_support_by_main_claim": true
+  },
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 1,
+    "invariant_passed": true,
+    "inline_marker_count": 1,
+    "used_sources_length": 1,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "interruption": {
+    "job_error": null,
+    "retrieval_interrupted": null,
+    "partial_retrieval": null,
+    "extraction_ledger": null,
+    "pdf_preflight": null,
+    "cpu_or_stale": false
+  }
+}
