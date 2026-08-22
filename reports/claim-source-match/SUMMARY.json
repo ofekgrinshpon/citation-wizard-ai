@@ -1,0 +1,76 @@
+[
+  {
+    "id": "F02",
+    "pass": true,
+    "failures": [],
+    "max_marker": 3,
+    "footnotes_length": 3,
+    "used_sources_length": 4,
+    "dangling": 0,
+    "orphan": 0
+  },
+  {
+    "id": "F05",
+    "pass": true,
+    "failures": [],
+    "max_marker": 2,
+    "footnotes_length": 2,
+    "used_sources_length": 2,
+    "dangling": 0,
+    "orphan": 0
+  },
+  {
+    "id": "F06",
+    "pass": true,
+    "failures": [],
+    "max_marker": 0,
+    "footnotes_length": 0,
+    "used_sources_length": 0,
+    "dangling": 0,
+    "orphan": 0
+  },
+  {
+    "id": "N02",
+    "pass": true,
+    "failures": [],
+    "max_marker": 1,
+    "footnotes_length": 1,
+    "used_sources_length": 3,
+    "dangling": 0,
+    "orphan": 0
+  },
+  {
+    "id": "R02",
+    "pass": false,
+    "failures": [
+      "job_not_terminal_or_stale",
+      "empty_answer_body",
+      "r02_missing_exact_body"
+    ],
+    "max_marker": 0,
+    "footnotes_length": 0,
+    "used_sources_length": 0,
+    "dangling": 0,
+    "orphan": 0
+  },
+  {
+    "id": "P02",
+    "pass": true,
+    "failures": [],
+    "max_marker": 0,
+    "footnotes_length": 0,
+    "used_sources_length": 0,
+    "dangling": 0,
+    "orphan": 0
+  },
+  {
+    "id": "B8",
+    "pass": true,
+    "failures": [],
+    "max_marker": 1,
+    "footnotes_length": 1,
+    "used_sources_length": 1,
+    "dangling": 0,
+    "orphan": 0
+  }
+]
