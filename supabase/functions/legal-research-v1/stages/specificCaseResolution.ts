@@ -234,6 +234,19 @@ function disabled(
     budget_exceeded: false,
     probe_stages: [],
 
+    exact_case_source_found: false,
+    exact_case_body_unavailable: false,
+    exact_case_body_unavailable_url: null,
+    body_unavailable_reason: null,
+    pdf_preflight_size: null,
+    pdf_preflight_decision: null,
+    extraction_skipped_reason: null,
+    large_pdf_skipped: false,
+    extraction_offloaded: false,
+    text_endpoint_attempted: 0,
+    text_endpoint_stub_detected: 0,
+
+
 
 
     final_docket_branch_reason: reason,
