@@ -1,14 +1,29 @@
 // V2.1 — validation for the structured drafter output.
 // Rejects ANYTHING that would let the model emit citation markup itself.
 
+/** claim_source_match_validation_v1 — optional per-block claim tags. */
+export interface BlockClaimTags {
+  claim_id?: string | null;
+  facet_id?: string | null;
+  proposition_type?:
+    | "black_letter_rule"
+    | "application"
+    | "background"
+    | "practical_guidance"
+    | "limitation"
+    | null;
+  legal_area?: string | null;
+}
+
 export type StructuredBlock =
   | { kind: "heading"; level: 2 | 3; text: string }
-  | { kind: "paragraph"; text: string; source_refs: string[] }
-  | { kind: "list_item"; text: string; source_refs: string[] };
+  | ({ kind: "paragraph"; text: string; source_refs: string[] } & BlockClaimTags)
+  | ({ kind: "list_item"; text: string; source_refs: string[] } & BlockClaimTags);
 
 export interface StructuredDraft {
   blocks: StructuredBlock[];
 }
+
 
 export interface StructuredValidation {
   ok: boolean;
