@@ -557,9 +557,12 @@ export function classifySourceIntegrity(input: IntegrityInput): SourceIntegrity 
     classification_reason = "statute_requires_title_shape_not_host";
     flags.push("statute_label_rejected_host_only");
   } else if (citable === "judgment" && !judg.is_judgment) {
-    citable = scholarshipShape ? "scholarship" : "commentary";
-    classification_reason = "judgment_requires_docket_or_case_identity";
-    flags.push("judgment_label_rejected_no_identity");
+    const commentaryShaped = judg.commentary_identity_signals.length > 0;
+    citable = scholarshipShape && !commentaryShaped ? "scholarship" : "commentary";
+    classification_reason = judg.downgrade_reason ?? "judgment_requires_docket_or_case_identity";
+    flags.push(
+      commentaryShaped ? "judgment_label_rejected_commentary_identity" : "judgment_label_rejected_no_identity",
+    );
   } else if (
     (citable === "statute" || citable === "unknown") &&
     scholarshipShape && !statuteShape && !judg.is_judgment
@@ -567,6 +570,14 @@ export function classifySourceIntegrity(input: IntegrityInput): SourceIntegrity 
     citable = "scholarship";
     classification_reason = "scholarship_shape_overrides_official_host";
     flags.push("scholarship_shape_detected");
+  } else if (
+    !judg.is_judgment &&
+    judg.commentary_identity_signals.length > 0 &&
+    (citable === "unknown" || citable === "judgment")
+  ) {
+    citable = "commentary";
+    classification_reason = judg.downgrade_reason ?? "commentary_identity";
+    flags.push("commentary_identity_detected");
   }
 
 
@@ -576,12 +587,14 @@ export function classifySourceIntegrity(input: IntegrityInput): SourceIntegrity 
     downgrade_reason =
       tier === "index_or_listing"
         ? "caselaw_type_on_listing_page"
-        : "caselaw_type_without_judgment_authority";
+        : judg.downgrade_reason ?? "caselaw_type_without_judgment_authority";
   } else if (STATUTE_TYPES.has(sourceType) && citable !== "statute") {
     downgrade_reason =
       tier === "index_or_listing"
         ? "statute_type_on_listing_page"
         : "statute_type_without_official_text";
+  } else if (!judg.is_judgment && judg.downgrade_reason) {
+    downgrade_reason = judg.downgrade_reason;
   }
 
   return {
@@ -595,6 +608,10 @@ export function classifySourceIntegrity(input: IntegrityInput): SourceIntegrity 
     has_holding_text: judg.has_holding_text,
     classification_before,
     classification_reason,
+    classification_after: citable,
+    judgment_identity_signals: judg.judgment_identity_signals,
+    commentary_identity_signals: judg.commentary_identity_signals,
+    uncertain_identity: judg.uncertain_identity,
   };
 
 }
