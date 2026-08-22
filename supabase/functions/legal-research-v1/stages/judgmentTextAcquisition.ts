@@ -588,7 +588,28 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
       await onStage("binary_extraction_budget_spent", { bytes: bytes.byteLength });
       throw new Error("extraction_budget_spent");
     }
+    // large_pdf_extraction_preemption_v1: last gate before the uninterruptible
+    // synchronous step. Once `extractDocumentText` is entered nothing — not the
+    // abort signal, not the deadline — can stop it, so an unaffordable body
+    // must be refused *here*, with a durable checkpoint.
+    if (opts.preflight) {
+      const pf = opts.preflight({
+        bytes: bytes.byteLength,
+        contentType,
+        url,
+        kind: isPdf ? "pdf" : "docx",
+      });
+      if (!pf.allow) {
+        await onStage("binary_extraction_preempted", {
+          bytes: bytes.byteLength,
+          reason: pf.reason,
+          ...(pf.detail ?? {}),
+        });
+        throw new Error("pdf_extraction_preempted");
+      }
+    }
     gate("before_binary_extract_run");
+
     // Awaited: extraction is a long synchronous CPU step that can block the
     // event loop hard enough that a fire-and-forget checkpoint never leaves
     // the isolate. The trail must be durable *before* we enter it.
