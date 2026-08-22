@@ -62,6 +62,11 @@ import {
   referenceOnlySection,
   type MetadataOnlyHoldingGateReport,
 } from "./metadataOnlyHoldingGate.ts";
+import {
+  applyClaimSourceMatch,
+  type ClaimSourceMatchReport,
+} from "./claimSourceMatch.ts";
+
 
 import {
   planSynthesisRendering,
@@ -911,6 +916,9 @@ export interface DrafterV2Result {
     | "statute_section_quote_refusal"
     | "insufficient_sources_limitation";
   /** Deterministic source-sufficiency assessment (telemetry + gate result). */
+  /** claim_source_match_validation_v1 — per-block claim/source gate telemetry. */
+  claim_source_match?: ClaimSourceMatchReport;
+
   sufficiency?: SufficiencyAssessment;
   /** Named-doctrine premise/framing signal (telemetry + drafter directive). */
   named_doctrine_framing?: NamedDoctrineFraming;
