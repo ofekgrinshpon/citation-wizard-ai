@@ -449,7 +449,12 @@ export function buildInputSources(
       }
     }
   }
+  labelCpuStats.classification_cache_hit_count = cacheHits;
+  labelCpuStats.classification_rerun_count = reruns;
+  labelCpuStats.classification_rerun_reason = Array.from(new Set(rerunReasons));
+  labelCpuStats.source_label_cpu_guard_applied = cacheHits > 0;
   return out;
+
 }
 
 function buildUserMessage(
