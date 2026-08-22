@@ -1,5 +1,24 @@
 {
   "id": "B8",
+  "retrieval_budget": {
+    "retrieval_budget_ms": 200000,
+    "retrieval_elapsed_ms": 43916,
+    "budget_exceeded": false,
+    "partial_retrieval_used": false,
+    "disclosure_shown": false,
+    "aborted_tasks_count": 0,
+    "ignored_late_tasks_count": 0,
+    "body_acquisition_count": 1,
+    "extraction_count": 1,
+    "extraction_bytes": 42066,
+    "longest_retrieval_step": {
+      "ms": 5285,
+      "name": "perplexity_retrieval"
+    },
+    "candidate_count_by_facet": {
+      "unfaceted": 13
+    }
+  },
   "classification_changed": [],
   "classification_rows": [
     {
@@ -13,43 +32,32 @@
       "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf"
     },
     {
-      "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח מעודכן)",
+      "title": "חוק-יסוד: כבוד האדם וחירותו",
       "classification_before": "statute",
       "classification_after": "statute",
-      "judgment_identity_signals": [
-        "document_file"
-      ],
+      "judgment_identity_signals": [],
       "commentary_identity_signals": [],
       "uncertain_identity": false,
       "downgrade_reason": null,
-      "url": "https://main.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf"
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95"
     },
     {
-      "title": "חוק יסוד - כבוד האדם וחירותו",
-      "classification_before": "statute",
-      "classification_after": "statute",
+      "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
       "judgment_identity_signals": [
         "document_file"
       ],
-      "commentary_identity_signals": [],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf"
-    },
-    {
-      "title": "הכנסת - פרסום חקיקה (PDF)",
-      "classification_before": "statute",
-      "classification_after": "statute",
-      "judgment_identity_signals": [
-        "document_file"
+      "commentary_identity_signals": [
+        "commentary_snippet_shape",
+        "upstream_scholarship_type"
       ],
-      "commentary_identity_signals": [],
       "uncertain_identity": false,
       "downgrade_reason": null,
-      "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf"
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf"
     },
     {
-      "title": "חוק יסוד - כבוד האדם וחירותו",
+      "title": "חוק-יסוד: כבוד האדם וחירותו",
       "classification_before": "statute",
       "classification_after": "statute",
       "judgment_identity_signals": [
@@ -59,16 +67,6 @@
       "uncertain_identity": false,
       "downgrade_reason": null,
       "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf"
-    },
-    {
-      "title": "חוק יסוד - כבוד האדם וחירותו",
-      "classification_before": "statute",
-      "classification_after": "statute",
-      "judgment_identity_signals": [],
-      "commentary_identity_signals": [],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95"
     },
     {
       "title": "חוקי היסוד של מדינת ישראל - אתר הכנסת",
@@ -113,14 +111,29 @@
       "uncertain_identity": false,
       "downgrade_reason": null,
       "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_3.pdf"
+    },
+    {
+      "title": "זכויות אדם והמשפט הפלילי המהותי",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [
+        "party_names"
+      ],
+      "commentary_identity_signals": [
+        "commentary_path",
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://lawjournal.huji.ac.il/article/12/1834"
     }
   ],
   "uncertain_identity_count": 0,
   "downgrades": [],
   "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
-  "job_id": "b455196f-3616-4efd-b76a-f4c4bf3fa8d8",
-  "run_id": "18c21b81-21c9-41f1-8518-5028f9fe27f9",
-  "ms": 80831,
+  "job_id": "9467e834-1120-42e2-a336-bb11a1ef4b8e",
+  "run_id": "d5031ec5-dbb8-4ee8-a638-3591bea7c3ac",
+  "ms": 81207,
   "terminal_status": "done",
   "job_error": null,
   "branch": "canonical_quote_registry",
@@ -170,10 +183,10 @@
       },
       {
         "ref": "s1",
-        "url": "https://main.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
-        "title": "חוק-יסוד: כבוד האדם וחירותו (נוסח מעודכן)",
-        "raw_title": "חוק-יסוד: כבוד האדם וחירותו (נוסח מעודכן)",
-        "candidate_id": "eda9e0ec-e7d8-4b60-8934-7698308565de",
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+        "title": "חוק-יסוד: כבוד האדם וחירותו",
+        "raw_title": "חוק-יסוד: כבוד האדם וחירותו",
+        "candidate_id": "837a5000-0fd8-49fe-b143-ee830b42ab44",
         "title_status": "ok",
         "fallback_used": "none",
         "downgrade_reason": null,
@@ -189,57 +202,26 @@
         ],
         "classification_cache_hit": true,
         "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "document_file"
-        ],
+        "judgment_identity_signals": [],
         "classification_rerun_reason": null,
         "commentary_identity_signals": [],
         "fallback_improvement_reason": null
       },
       {
         "ref": "s2",
-        "url": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
-        "title": "חוק יסוד - כבוד האדם וחירותו",
-        "raw_title": "חוקי היסוד של מדינת ישראל",
-        "candidate_id": "50eba9a6-842f-474e-8d31-47ab5f48340e",
-        "title_status": "fallback_truncated",
-        "fallback_used": "statute_name",
-        "downgrade_reason": null,
-        "fallback_applied": true,
-        "fallback_candidate": "חוק-יסוד: כבוד האדם וחירותו",
-        "uncertain_identity": false,
-        "classification_after": "statute",
-        "title_hygiene_action": "title_truncated_mid_word",
-        "classification_before": "statute",
-        "classification_reason": null,
-        "title_hygiene_reasons": [
-          "title_truncated_mid_word",
-          "near_duplicate_title_collapsed"
-        ],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "document_file"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [],
-        "fallback_improvement_reason": "statute_name:7>raw:3"
-      },
-      {
-        "ref": "s3",
-        "url": "https://fs.knesset.gov.il/13/law/13_ls1_830916.pdf",
-        "title": "הכנסת - פרסום חקיקה (PDF)",
-        "raw_title": "הכנסת - פרסום חקיקה (PDF)",
-        "candidate_id": "71633528-ede9-4310-8534-24ebfb867f32",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+        "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+        "raw_title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+        "candidate_id": "210977b1-d180-47a4-8be9-ff9418f22dde",
         "title_status": "ok",
         "fallback_used": "none",
         "downgrade_reason": null,
         "fallback_applied": false,
         "fallback_candidate": null,
         "uncertain_identity": false,
-        "classification_after": "statute",
+        "classification_after": "scholarship",
         "title_hygiene_action": "kept",
-        "classification_before": "statute",
+        "classification_before": "scholarship",
         "classification_reason": null,
         "title_hygiene_reasons": [],
         "classification_cache_hit": true,
@@ -248,43 +230,18 @@
           "document_file"
         ],
         "classification_rerun_reason": null,
-        "commentary_identity_signals": [],
+        "commentary_identity_signals": [
+          "commentary_snippet_shape",
+          "upstream_scholarship_type"
+        ],
         "fallback_improvement_reason": null
       },
       {
-        "ref": "s4",
+        "ref": "s3",
         "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
-        "title": "חוק יסוד - כבוד האדם וחירותו",
-        "raw_title": "חוק יסוד - כבוד האדם וחירותו",
-        "candidate_id": "06d3f0ac-fe16-4864-870a-0135122768e1",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": null,
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": false,
-        "classification_after": "statute",
-        "title_hygiene_action": "kept",
-        "classification_before": "statute",
-        "classification_reason": null,
-        "title_hygiene_reasons": [
-          "legal_title_protected"
-        ],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "document_file"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s5",
-        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
-        "title": "חוק יסוד - כבוד האדם וחירותו",
-        "raw_title": "חוק-יסוד: כבוד האדם וחירותו",
-        "candidate_id": "f94dac81-5e4a-44c1-97dd-e46bdf2b055c",
+        "title": "חוק-יסוד: כבוד האדם וחירותו",
+        "raw_title": "חוק יסוד: כבוד האדם וחירותו",
+        "candidate_id": "79ee2dde-97ed-4ae7-a585-1311a9293122",
         "title_status": "ok",
         "fallback_used": "none",
         "downgrade_reason": null,
@@ -301,17 +258,19 @@
         ],
         "classification_cache_hit": true,
         "fallback_rejected_reason": null,
-        "judgment_identity_signals": [],
+        "judgment_identity_signals": [
+          "document_file"
+        ],
         "classification_rerun_reason": null,
         "commentary_identity_signals": [],
         "fallback_improvement_reason": null
       },
       {
-        "ref": "s6",
+        "ref": "s4",
         "url": "https://main.knesset.gov.il/Activity/Legislation/pages/basiclaws.aspx",
         "title": "חוקי היסוד של מדינת ישראל - אתר הכנסת",
         "raw_title": "חוקי היסוד של מדינת ישראל - אתר הכנסת",
-        "candidate_id": "a357eee6-20a2-4b27-9103-9e8def501723",
+        "candidate_id": "a9bf7233-75c2-4baa-81b9-f6df76772791",
         "title_status": "ok",
         "fallback_used": "none",
         "downgrade_reason": null,
@@ -331,11 +290,11 @@
         "fallback_improvement_reason": null
       },
       {
-        "ref": "s7",
+        "ref": "s5",
         "url": "https://lawjournal.huji.ac.il/article/12/1527",
         "title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
         "raw_title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
-        "candidate_id": "0cd2c6d5-2dcc-4267-a2f3-fead0efdd792",
+        "candidate_id": "d29d7e02-385e-4a64-a33c-62ac4daa7f9b",
         "title_status": "ok",
         "fallback_used": "none",
         "downgrade_reason": null,
@@ -364,11 +323,11 @@
         "fallback_improvement_reason": null
       },
       {
-        "ref": "s8",
+        "ref": "s6",
         "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_3.pdf",
         "title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
         "raw_title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
-        "candidate_id": "19a2b2e5-8182-4c78-b8bc-b4ccb79f6450",
+        "candidate_id": "4dca41dc-cdb3-485b-a2f0-0f41674006d3",
         "title_status": "ok",
         "fallback_used": "none",
         "downgrade_reason": null,
@@ -393,14 +352,43 @@
           "upstream_scholarship_type"
         ],
         "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s7",
+        "url": "https://lawjournal.huji.ac.il/article/12/1834",
+        "title": "זכויות אדם והמשפט הפלילי המהותי",
+        "raw_title": "זכויות אדם והמשפט הפלילי המהותי",
+        "candidate_id": "5ff973a4-e0f1-4e9e-b8fd-e588e646ee21",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "party_names"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_path",
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": null
       }
     ],
-    "total": 9,
+    "total": 8,
     "reclassified_count": 0,
-    "fallback_used_count": 1,
+    "fallback_used_count": 0,
     "classification_rerun_count": 0,
     "classification_rerun_reason": [],
-    "classification_cache_hit_count": 9,
+    "classification_cache_hit_count": 8,
     "source_label_cpu_guard_applied": true
   },
   "filename_titles": [],

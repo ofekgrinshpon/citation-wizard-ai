@@ -32,11 +32,26 @@ export const RETRIEVAL_BUDGET = {
   DEFAULT_DEADLINE_MS: 200_000,
   /** Fraction of the deadline after which no *new* retrieval work is started. */
   LAUNCH_STOP_RATIO: 0.75,
-  /** Max uninterruptible binary extractions per run. */
+  /** Max uninterruptible binary extractions per run (requested authority). */
   MAX_EXTRACTIONS_PER_RUN: 3,
-  /** Max total bytes fed to binary extraction per run. */
+  /** Max total bytes fed to binary extraction per run (requested authority). */
   MAX_EXTRACTION_BYTES_PER_RUN: 5 * 1024 * 1024,
+  /**
+   * f07_extraction_stability_v1 — speculative (non-requested-docket)
+   * acquisition is the CPU sink that kills isolates: several individually
+   * legal extractions add up to more synchronous CPU than the isolate has.
+   * Speculative extraction therefore gets its own, much tighter ledger.
+   */
+  MAX_SPECULATIVE_EXTRACTIONS_PER_RUN: 1,
+  MAX_SPECULATIVE_EXTRACTION_BYTES_PER_RUN: 1_200_000,
+  /**
+   * Extracted characters are charged back to the byte ledger through this
+   * divisor: post-extract cleaning/normalisation of a 164 K-char body costs
+   * real CPU that input bytes alone never accounted for.
+   */
+  EXTRACTED_CHAR_BYTE_COST: 1,
 } as const;
+
 
 export interface RetrievalBudgetReport {
   retrieval_budget_ms: number;
@@ -47,6 +62,13 @@ export interface RetrievalBudgetReport {
   body_acquisition_count: number;
   extraction_count: number;
   extraction_bytes: number;
+  /** f07_extraction_stability_v1 telemetry. */
+  extraction_attempt_count: number;
+  extraction_success_count: number;
+  extraction_input_bytes: number;
+  extraction_output_chars: number;
+  extraction_ledger_exhausted: boolean;
+  speculative_extraction_stopped: boolean;
   longest_retrieval_step: { name: string; ms: number } | null;
   partial_retrieval_used: boolean;
   // legacy shape (kept so existing telemetry readers keep working)
@@ -54,6 +76,7 @@ export interface RetrievalBudgetReport {
   elapsed_ms: number;
   exceeded: boolean;
   guard_triggered: boolean;
+
   guard_triggered_at: string | null;
   checkpoints: RetrievalCheckpoint[];
 }
@@ -73,7 +96,18 @@ export class RetrievalBudget {
   body_acquisitions = 0;
   extraction_count = 0;
   extraction_bytes = 0;
+  // f07_extraction_stability_v1 counters
+  extraction_attempt_count = 0;
+  extraction_success_count = 0;
+  extraction_input_bytes = 0;
+  extraction_output_chars = 0;
+  extraction_ledger_exhausted = false;
+  speculative_extraction_stopped = false;
+  speculative_extraction_count = 0;
+  speculative_extraction_bytes = 0;
+  private speculative_body_acquired = false;
   partial_retrieval_used = false;
+
   private longest: { name: string; ms: number } | null = null;
 
   constructor(
@@ -144,14 +178,71 @@ export class RetrievalBudget {
    * Run-level ledger for uninterruptible binary extraction. Returns false when
    * this run has already spent its extraction allowance — the caller must skip
    * extraction instead of risking an isolate kill.
+   *
+   * f07_extraction_stability_v1: speculative acquisition (the question names no
+   * docket, the candidate is not the requested authority) is charged against a
+   * much tighter sub-ledger, and is stopped entirely once one usable body has
+   * already been acquired.
    */
-  allowExtraction(bytes: number): boolean {
-    if (this.extraction_count >= RETRIEVAL_BUDGET.MAX_EXTRACTIONS_PER_RUN) return false;
-    if (this.extraction_bytes + bytes > RETRIEVAL_BUDGET.MAX_EXTRACTION_BYTES_PER_RUN) return false;
+  allowExtraction(bytes: number, opts?: { speculative?: boolean }): boolean {
+    const speculative = opts?.speculative === true;
+    this.extraction_attempt_count++;
+    if (speculative && this.speculative_body_acquired) {
+      this.speculative_extraction_stopped = true;
+      return false;
+    }
+    if (speculative) {
+      if (
+        this.speculative_extraction_count >=
+          RETRIEVAL_BUDGET.MAX_SPECULATIVE_EXTRACTIONS_PER_RUN ||
+        this.speculative_extraction_bytes + bytes >
+          RETRIEVAL_BUDGET.MAX_SPECULATIVE_EXTRACTION_BYTES_PER_RUN
+      ) {
+        this.extraction_ledger_exhausted = true;
+        this.speculative_extraction_stopped = true;
+        return false;
+      }
+    }
+    if (
+      this.extraction_count >= RETRIEVAL_BUDGET.MAX_EXTRACTIONS_PER_RUN ||
+      this.extraction_bytes + bytes > RETRIEVAL_BUDGET.MAX_EXTRACTION_BYTES_PER_RUN
+    ) {
+      this.extraction_ledger_exhausted = true;
+      return false;
+    }
     this.extraction_count++;
     this.extraction_bytes += bytes;
+    this.extraction_input_bytes += bytes;
+    if (speculative) {
+      this.speculative_extraction_count++;
+      this.speculative_extraction_bytes += bytes;
+    }
     return true;
   }
+
+  /**
+   * Charge the *output* of an extraction back to the ledger. Post-extract
+   * cleaning of a very large body costs CPU that input bytes never captured.
+   */
+  noteExtractionOutput(chars: number, opts?: { speculative?: boolean }): void {
+    const cost = Math.max(0, Math.round(chars * RETRIEVAL_BUDGET.EXTRACTED_CHAR_BYTE_COST));
+    this.extraction_success_count++;
+    this.extraction_output_chars += chars;
+    this.extraction_bytes += cost;
+    if (opts?.speculative) this.speculative_extraction_bytes += cost;
+  }
+
+  /** One usable body already acquired — stop speculative extraction. */
+  noteSpeculativeBodyAcquired(): void {
+    this.speculative_body_acquired = true;
+  }
+
+  /** True once speculative extraction must no longer be attempted. */
+  speculativeExtractionBlocked(): boolean {
+    return this.speculative_body_acquired ||
+      this.speculative_extraction_count >= RETRIEVAL_BUDGET.MAX_SPECULATIVE_EXTRACTIONS_PER_RUN;
+  }
+
 
   /** Record how long a named retrieval step took (tracks the longest). */
   recordStep(name: string, ms: number): void {
@@ -239,7 +330,14 @@ export class RetrievalBudget {
       body_acquisition_count: this.body_acquisitions,
       extraction_count: this.extraction_count,
       extraction_bytes: this.extraction_bytes,
+      extraction_attempt_count: this.extraction_attempt_count,
+      extraction_success_count: this.extraction_success_count,
+      extraction_input_bytes: this.extraction_input_bytes,
+      extraction_output_chars: this.extraction_output_chars,
+      extraction_ledger_exhausted: this.extraction_ledger_exhausted,
+      speculative_extraction_stopped: this.speculative_extraction_stopped,
       longest_retrieval_step: this.longest,
+
       partial_retrieval_used: this.partial_retrieval_used,
       deadline_ms: this.deadline_ms,
       elapsed_ms: this.elapsed(),

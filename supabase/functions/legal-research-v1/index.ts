@@ -1708,12 +1708,18 @@ async function handle(req: Request): Promise<Response> {
   // incomplete. Presentation-only: no change to drafting or source selection.
   const PARTIAL_RETRIEVAL_NOTE =
     "\n\n> החיפוש הופסק עקב מגבלת זמן, ולכן ייתכן שלא אותרו כל המקורות הרלוונטיים.";
+  // f07_extraction_stability_v1: the same disclosure duty applies when body
+  // extraction (not the clock) was cut short by the CPU-safety ledger.
+  const EXTRACTION_CUT_SHORT_NOTE =
+    "\n\n> קריאת גוף פסקי הדין הופסקה מטעמי מגבלת עיבוד, ולכן ייתכן שחלק מהמקורות נותחו לפי מטא-נתונים בלבד.";
+  const extractionCutShort = budgetReport.extraction_ledger_exhausted ||
+    budgetReport.speculative_extraction_stopped;
   const partialRetrieval = budgetReport.partial_retrieval_used ||
     budgetReport.budget_exceeded;
   const finalAnswer = drafter.ok
-    ? (partialRetrieval
-        ? `${drafter.answer_markdown}${PARTIAL_RETRIEVAL_NOTE}`
-        : drafter.answer_markdown)
+    ? `${drafter.answer_markdown}${partialRetrieval ? PARTIAL_RETRIEVAL_NOTE : ""}${
+        extractionCutShort ? EXTRACTION_CUT_SHORT_NOTE : ""
+      }`
     : (verifierFailedNoDrafter ? VERIFIER_FAILURE_ANSWER : STUB_ANSWER);
   const finalFootnotes = drafter.ok ? drafter.footnotes : [];
 
@@ -1747,6 +1753,16 @@ async function handle(req: Request): Promise<Response> {
         body_acquisition_count: budgetReport.body_acquisition_count,
         extraction_count: budgetReport.extraction_count,
         extraction_bytes: budgetReport.extraction_bytes,
+        // f07_extraction_stability_v1
+        extraction_attempt_count: budgetReport.extraction_attempt_count,
+        extraction_success_count: budgetReport.extraction_success_count,
+        extraction_input_bytes: budgetReport.extraction_input_bytes,
+        extraction_output_chars: budgetReport.extraction_output_chars,
+        extraction_ledger_exhausted: budgetReport.extraction_ledger_exhausted,
+        speculative_extraction_stopped: budgetReport.speculative_extraction_stopped ||
+          judgmentAcquisition.speculative_extraction_stopped === true,
+        extraction_cut_short_disclosure_shown: extractionCutShort,
+        reaper_terminal_limitation_written: false,
         longest_retrieval_step: budgetReport.longest_retrieval_step,
         candidate_count_by_facet: candidateCountByFacet,
         terminal_result_written: true,

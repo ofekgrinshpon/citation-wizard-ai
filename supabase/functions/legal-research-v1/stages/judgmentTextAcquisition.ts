@@ -237,7 +237,9 @@ export interface AcquisitionSkipLog {
     | "budget_exhausted"
     | "docket_mismatch_specific_case"
     | "stage_time_budget_exhausted"
+    | "speculative_extraction_stopped"
     | "retrieval_budget_exceeded";
+
 }
 
 /** Part 1 — per-candidate eligibility diagnostics for non-attempted judgments. */
@@ -299,6 +301,9 @@ export interface AcquisitionResult {
   stage_stop_reason: string | null;
   /** True when the pipeline retrieval budget stopped acquisition. */
   retrieval_budget_exceeded: boolean;
+  /** f07_extraction_stability_v1 — speculative acquisition stopped early. */
+  speculative_extraction_stopped: boolean;
+
 }
 
 
@@ -496,7 +501,10 @@ export interface DirectFileOptions {
    * means this run has already spent its extraction allowance.
    */
   allowExtraction?: (bytes: number) => boolean;
+  /** Charge the extracted character count back to the run ledger. */
+  noteExtractionOutput?: (chars: number) => void;
 }
+
 
 /** Method 1 — the URL already points at a judgment file. */
 export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): Promise<string> {
@@ -573,7 +581,11 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
     // the isolate. The trail must be durable *before* we enter it.
     await onStage("binary_extract_start", { kind: isPdf ? "pdf" : "docx", bytes: bytes.byteLength, bounded });
     const extracted = await extractDocumentText(bytes, isPdf ? "pdf" : "docx");
+    // f07_extraction_stability_v1: charge the real cost (extracted chars, not
+    // only input bytes) back to the run ledger before any cleaning work.
+    opts.noteExtractionOutput?.(extracted.length);
     onStage("binary_extract_done", { chars: extracted.length, bounded });
+
     // Never clean/normalize/identity-match a multi-hundred-kilochar extraction
     // in one synchronous pass — that is what killed the isolate.
     gate("after_binary_extract");
@@ -781,9 +793,13 @@ export interface AcquisitionInput {
   retrieval_budget?: {
     exceeded(): boolean;
     remaining(): number;
-    allowExtraction?(bytes: number): boolean;
+    allowExtraction?(bytes: number, opts?: { speculative?: boolean }): boolean;
+    noteExtractionOutput?(chars: number, opts?: { speculative?: boolean }): void;
+    noteSpeculativeBodyAcquired?(): void;
+    speculativeExtractionBlocked?(): boolean;
     noteBodyAcquisition?(n?: number): void;
   } | null;
+
   /**
    * Durable checkpoint sink (awaited). Used for per-attempt observability so a
    * killed isolate still leaves a trail of exactly where acquisition was.
@@ -824,6 +840,7 @@ function disabledResult(mode: string | null): AcquisitionResult {
     official_judgment_documents_acquired: 0,
     stage_stop_reason: null,
     retrieval_budget_exceeded: false,
+    speculative_extraction_stopped: false,
   };
 }
 
@@ -1064,6 +1081,7 @@ export async function runJudgmentTextAcquisition(
   };
   let stage_stop_reason: string | null = null;
   let retrieval_budget_exceeded = false;
+  let speculative_extraction_stopped = false;
 
   let attemptIndex = 0;
   for (const e of eligible) {
@@ -1124,7 +1142,34 @@ export async function runJudgmentTextAcquisition(
       });
       continue;
     }
+    // f07_extraction_stability_v1 — speculative acquisition stops entirely once
+    // one usable body has already been acquired in this run. Further bodies buy
+    // little and cost uninterruptible synchronous CPU that can kill the isolate.
+    if (
+      !e.isRequested && requestedDockets.length === 0 && successes > 0 &&
+      (retrievalBudget?.speculativeExtractionBlocked?.() ?? false)
+    ) {
+      stage_stop_reason = stage_stop_reason ?? "speculative_extraction_stopped";
+      speculative_extraction_stopped = true;
+      excluded.push({
+        candidate_id: e.c.candidate_id,
+        title: e.c.title,
+        url: e.c.source_url ?? null,
+        reason: "speculative_extraction_stopped",
+      });
+      e.diag.excluded_reason = "speculative_extraction_stopped";
+      e.diag.ineligible_reason = "speculative_extraction_stopped";
+      e.diag.would_have_been_attempted_under_relaxed_rule = true;
+      await mark("judgment_attempt_skipped", {
+        candidate_id: e.c.candidate_id,
+        index: attemptIndex++,
+        host: hostOf(e.c.source_url ?? null),
+        reason: "speculative_extraction_stopped",
+      });
+      continue;
+    }
     const isLeading = e.isRequested || e.role === "leading_candidate";
+
     if (isLeading && leadingUsed >= budget.leading) {
       excluded.push({
         candidate_id: e.c.candidate_id,
@@ -1272,12 +1317,14 @@ export async function runJudgmentTextAcquisition(
         signal: AbortSignal.timeout(methodMs),
         budgetExceeded: attemptOverBudget,
         allowExtraction: (bytes: number) =>
-          (retrievalBudget as { allowExtraction?: (b: number) => boolean } | null)
-            ?.allowExtraction?.(bytes) ?? true,
+          retrievalBudget?.allowExtraction?.(bytes, { speculative }) ?? true,
+        noteExtractionOutput: (chars: number) =>
+          retrievalBudget?.noteExtractionOutput?.(chars, { speculative }),
         ...(speculative
           ? { maxInlineExtractionBytes: ACQUISITION_LIMITS.MAX_INLINE_EXTRACTION_BYTES }
           : {}),
       };
+
       try {
         const run = method === "direct_file_fetch"
           ? tryDirectFile(url!, fileOpts)
@@ -1359,6 +1406,11 @@ export async function runJudgmentTextAcquisition(
         e.c.snippet = stored.slice(0, 600);
       }
       successes++;
+      // f07_extraction_stability_v1 — one usable body is enough for speculative
+      // (non-requested-docket) acquisition; block further binary extraction.
+      if (requestedDockets.length === 0) {
+        retrievalBudget?.noteSpeculativeBodyAcquired?.();
+      }
     } else {
       e.c.metadata = {
         ...(e.c.metadata ?? {}),
@@ -1465,5 +1517,6 @@ export async function runJudgmentTextAcquisition(
     ).length,
     stage_stop_reason,
     retrieval_budget_exceeded,
+    speculative_extraction_stopped,
   };
 }
