@@ -1354,6 +1354,26 @@ export async function runJudgmentTextAcquisition(
           retrievalBudget?.allowExtraction?.(bytes, { speculative }) ?? true,
         noteExtractionOutput: (chars: number) =>
           retrievalBudget?.noteExtractionOutput?.(chars, { speculative }),
+        // large_pdf_extraction_preemption_v1: size/budget preflight immediately
+        // before the uninterruptible synchronous extraction call.
+        preflight: (info) => {
+          const verdict = assessPdfExtraction({
+            bytes: info.bytes,
+            contentType: info.contentType,
+            url: info.url,
+            exactCase: !speculative,
+            remainingMs: attemptDeadline - Date.now(),
+          });
+          if (!verdict.allow) {
+            failures.push(verdict.reason ?? "pdf_extraction_preempted");
+          }
+          return {
+            allow: verdict.allow,
+            reason: verdict.reason,
+            detail: { limit: verdict.limit, estimated_chars: verdict.estimated_chars },
+          };
+        },
+
         ...(speculative
           ? { maxInlineExtractionBytes: ACQUISITION_LIMITS.MAX_INLINE_EXTRACTION_BYTES }
           : {}),
