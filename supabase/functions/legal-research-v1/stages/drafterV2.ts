@@ -200,9 +200,23 @@ const DRAFTER_V2_TOOL_PARAMETERS: Record<string, unknown> = {
             type: "array",
             items: { type: "string" },
           },
+          claim_id: { type: "string" },
+          facet_id: { type: "string" },
+          proposition_type: {
+            type: "string",
+            enum: [
+              "black_letter_rule",
+              "application",
+              "background",
+              "practical_guidance",
+              "limitation",
+            ],
+          },
+          legal_area: { type: "string" },
         },
         required: ["kind", "text"],
         additionalProperties: false,
+
       },
     },
   },

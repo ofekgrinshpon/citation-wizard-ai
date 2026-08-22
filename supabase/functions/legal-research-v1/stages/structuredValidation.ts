@@ -139,13 +139,22 @@ export function validateStructuredDraft(
       }
       total_source_ref_count += refs.length;
       if (refs.length > 0) cited_segment_count++;
+      // claim_source_match_validation_v1 — carry optional block tags through.
+      const str = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : null);
+      const tags: BlockClaimTags = {
+        claim_id: str(o.claim_id),
+        facet_id: str(o.facet_id),
+        proposition_type: str(o.proposition_type) as BlockClaimTags["proposition_type"],
+        legal_area: str(o.legal_area),
+      };
       if (kind === "paragraph") {
         paragraph_count++;
-        blocks.push({ kind: "paragraph", text, source_refs: refs });
+        blocks.push({ kind: "paragraph", text, source_refs: refs, ...tags });
       } else {
         list_item_count++;
-        blocks.push({ kind: "list_item", text, source_refs: refs });
+        blocks.push({ kind: "list_item", text, source_refs: refs, ...tags });
       }
+
     } else {
       errors.push(`block[${idx}] unknown kind: ${String(kind)}`);
     }
