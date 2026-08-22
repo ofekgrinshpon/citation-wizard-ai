@@ -38,8 +38,11 @@ Deno.test("truncated mid-word → fallback", () => {
     url: "https://nevo.co.il/x",
     source_type: "academic",
   });
-  assertEquals(r.title_status, "fallback_truncated");
-  assertEquals(r.display_title.includes("אקדמי"), true);
+  // over_fallback_fix_v1: the generic "מקור אקדמי מתוך …" fallback is less
+  // informative than the (clipped) real article title, so the title is kept.
+  assertEquals(r.title_status, "ok");
+  assertEquals(r.fallback_applied, false);
+  assertEquals(r.display_title, "האחריות הנזיקית של רופאים במשפט הישרא");
 });
 
 Deno.test("ellipsis end → truncated", () => {
@@ -47,7 +50,9 @@ Deno.test("ellipsis end → truncated", () => {
     title: "פסק דין בעניין פלוני נגד אלמוני…",
     url: "https://example.com",
   });
-  assertEquals(r.title_status, "fallback_truncated");
+  // over_fallback_fix_v1: titles carrying parties ("נגד") are protected.
+  assertEquals(r.title_status, "ok");
+  assertEquals(r.fallback_applied, false);
 });
 
 Deno.test("normal Hebrew title stays as-is", () => {
