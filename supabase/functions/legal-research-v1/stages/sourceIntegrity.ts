@@ -64,6 +64,14 @@ export interface SourceIntegrity {
   classification_before?: CitableAs;
   /** source_label_quality_v1 — why the classification was changed. */
   classification_reason?: string;
+  /** commentary_vs_judgment_classification_v1 — final classification. */
+  classification_after?: CitableAs;
+  /** commentary_vs_judgment_classification_v1 — judgment-identity evidence. */
+  judgment_identity_signals?: string[];
+  /** commentary_vs_judgment_classification_v1 — commentary-identity evidence. */
+  commentary_identity_signals?: string[];
+  /** commentary_vs_judgment_classification_v1 — no confident identity either way. */
+  uncertain_identity?: boolean;
 }
 
 
@@ -129,15 +137,49 @@ const JUDGMENT_URL_RE =
 const HOLDING_TEXT_RE =
   /(אנו\s+פוסקים|הערעור\s+(מתקבל|נדחה)|העתירה\s+(מתקבלת|נדחית)|ניתן\s+היום|אשר\s+על\s+כן|לפיכך\s|נפסק\s+כי|קובע[ת]?\s+כי|הלכה\s+ש|בדעת\s+(רוב|מיעוט)|דעת\s+הרוב)/;
 
+// ── commentary_vs_judgment_classification_v1 ──────────────────────────────
+/**
+ * Titles/phrases that mark writing *about* a judgment rather than the judgment
+ * itself. Deterministic shapes only — no doctrine names, no case lists.
+ */
+const COMMENTARY_TITLE_RE =
+  /(בעקבות|ניתוח\s+פסק|ניתוח\s+פסיקה|עיון\s+ב|עיונים\s|הערות?\s+על|הערת\s+פסיקה|רשימה\s+על|מאמר|טור\s|דעה[:\s]|פרשנות|ביקורת\s+על|סקירת?\s+פסיקה|סקירה\s+משפטית|מה\s+פסק|מה\s+קבע\s+בית|כל\s+מה\s+שצריך|בלוג|פוסט|חוות\s+דעת|נייר\s+עמדה|מסמך\s+רקע|דין\s+וחשבון|דו["״]ח|תגובה\s+ל)/;
+
+/** URL path shapes that mark editorial / academic / news publishing. */
+const COMMENTARY_PATH_RE =
+  /(^|\/)(blog|blogs|news|article|articles|opinion|opinions|column|columns|post|posts|magazine|press|media|research|publications?|papers?|academic|studies|maamar|maamarim|kattava|item)(\/|_|-|$)/i;
+
+/** Official judgment endpoints that are trustworthy on their own. */
+const OFFICIAL_JUDGMENT_HOST_RE =
+  /supremedecisions\.court\.gov\.il|elyon[12]\.court\.gov\.il/;
+
 function detectJudgmentDocument(
   u: URL | null,
   title: string,
   snippet: string,
   sourceType: string,
   listing: boolean,
-): { is_judgment: boolean; has_holding_text: boolean; official_host: boolean } {
+): {
+  is_judgment: boolean;
+  has_holding_text: boolean;
+  official_host: boolean;
+  judgment_identity_signals: string[];
+  commentary_identity_signals: string[];
+  uncertain_identity: boolean;
+  downgrade_reason?: string;
+} {
   const has_holding_text = HOLDING_TEXT_RE.test(snippet) || HOLDING_TEXT_RE.test(title);
-  if (listing) return { is_judgment: false, has_holding_text, official_host: false };
+  if (listing) {
+    return {
+      is_judgment: false,
+      has_holding_text,
+      official_host: false,
+      judgment_identity_signals: [],
+      commentary_identity_signals: ["listing_page"],
+      uncertain_identity: false,
+      downgrade_reason: "listing_page_not_judgment",
+    };
+  }
 
   const host = u ? hostOf(u) : "";
   const official_host = !!host && hostMatches(host, OFFICIAL_HOSTS);
@@ -153,27 +195,81 @@ function detectJudgmentDocument(
     hay += ` ${urlPath}`;
   }
 
-  const hostJudgment =
-    /supremedecisions\.court\.gov\.il|elyon[12]\.court\.gov\.il/.test(host) ||
-    (!!u && JUDGMENT_URL_RE.test(urlPath));
+  const officialJudgmentEndpoint = OFFICIAL_JUDGMENT_HOST_RE.test(host);
+  const judgmentUrlShape = !!u && JUDGMENT_URL_RE.test(urlPath);
+  const hostJudgment = officialJudgmentEndpoint || judgmentUrlShape;
   const hasDocket = DOCKET_RE.test(hay);
   const hasPhrase = JUDGMENT_PHRASE_RE.test(`${title} ${snippet}`);
   const fileDoc = !!u && /\.(pdf|docx?|rtf)$/i.test(u.pathname);
   const caseType = CASE_TYPES.has(sourceType);
-
-  // source_label_quality_v1 — judgment shape must be identity-bearing.
-  // Courtroom vocabulary alone ("פסק דין", "בית המשפט העליון") never suffices.
   const hasParties = /\sנ['׳"״]?\s|\sנגד\s/.test(`${title} ${snippet}`);
   const casePrefix = CASE_PREFIX_RE.test(`${title} ${snippet}`);
   const identityParams = JUDGMENT_IDENTITY_PARAM_RE.test(urlPath);
-  const strongJudgmentIdentity = hasDocket ||
-    (casePrefix && hasParties) ||
-    (hostJudgment && identityParams);
+  /** Judgment-form markers in the body itself (caption + operative language). */
+  const judgmentFormBody = hasPhrase && has_holding_text;
 
-  const is_judgment = strongJudgmentIdentity &&
+  const judgment_identity_signals: string[] = [];
+  if (officialJudgmentEndpoint) judgment_identity_signals.push("official_judgment_endpoint");
+  if (judgmentUrlShape) judgment_identity_signals.push("judgment_url_shape");
+  if (mirror_host) judgment_identity_signals.push("judgment_mirror_host");
+  if (hasDocket) judgment_identity_signals.push("docket_in_text");
+  if (casePrefix) judgment_identity_signals.push("case_prefix");
+  if (hasParties) judgment_identity_signals.push("party_names");
+  if (identityParams) judgment_identity_signals.push("judgment_identity_param");
+  if (fileDoc) judgment_identity_signals.push("document_file");
+  if (hasPhrase) judgment_identity_signals.push("court_vocabulary");
+  if (judgmentFormBody) judgment_identity_signals.push("judgment_form_body");
+  if (caseType) judgment_identity_signals.push("upstream_case_type");
+
+  // ── commentary identity ────────────────────────────────────────────────
+  const commentary_identity_signals: string[] = [];
+  if (COMMENTARY_TITLE_RE.test(title)) commentary_identity_signals.push("commentary_title_shape");
+  else if (COMMENTARY_TITLE_RE.test(snippet)) commentary_identity_signals.push("commentary_snippet_shape");
+  if (host && hostMatches(host, COMMENTARY_HOSTS)) commentary_identity_signals.push("commentary_host");
+  if (u && COMMENTARY_PATH_RE.test(u.pathname)) commentary_identity_signals.push("commentary_path");
+  if (SCHOLARSHIP_TYPES.has(sourceType)) commentary_identity_signals.push("upstream_scholarship_type");
+  if (SCHOLARSHIP_SHAPE_RE.test(hay)) commentary_identity_signals.push("scholarship_shape");
+  if (host && hostMatches(host, ACADEMIC_ID_HOSTS)) commentary_identity_signals.push("academic_repository_host");
+
+  // Strong judgment identity (rule 1).
+  const strongJudgmentIdentity =
+    (officialJudgmentEndpoint && (identityParams || hasDocket)) ||
+    (judgmentUrlShape && (hasDocket || (casePrefix && hasParties))) ||
+    (hasDocket && (official_host || mirror_host || fileDoc)) ||
+    (casePrefix && hasParties && hasDocket) ||
+    judgmentFormBody;
+
+  let is_judgment = strongJudgmentIdentity &&
     (hostJudgment || official_host || mirror_host || fileDoc || caseType || hasPhrase);
 
-  return { is_judgment, has_holding_text, official_host };
+  let downgrade_reason: string | undefined;
+
+  // Rule 2/3: commentary about a judgment is never the judgment. An official
+  // court judgment endpoint is the only signal that overrides commentary shape.
+  if (is_judgment && commentary_identity_signals.length > 0 && !officialJudgmentEndpoint) {
+    is_judgment = false;
+    downgrade_reason = `commentary_identity:${commentary_identity_signals.join("+")}`;
+  }
+
+  // Rule 4: prefer commentary when identity is not confident.
+  const uncertain_identity = !is_judgment &&
+    (hasDocket || casePrefix || hasPhrase) &&
+    commentary_identity_signals.length === 0 &&
+    !strongJudgmentIdentity;
+  if (uncertain_identity && !downgrade_reason) {
+    downgrade_reason = "uncertain_judgment_identity_prefer_commentary";
+  }
+
+  return {
+    is_judgment,
+    // Uncertain / commentary sources may not carry black-letter holding text.
+    has_holding_text: is_judgment ? has_holding_text : false,
+    official_host,
+    judgment_identity_signals,
+    commentary_identity_signals,
+    uncertain_identity,
+    downgrade_reason,
+  };
 }
 
 /** Recognized Israeli case prefixes (without a docket number). */
@@ -461,9 +557,12 @@ export function classifySourceIntegrity(input: IntegrityInput): SourceIntegrity 
     classification_reason = "statute_requires_title_shape_not_host";
     flags.push("statute_label_rejected_host_only");
   } else if (citable === "judgment" && !judg.is_judgment) {
-    citable = scholarshipShape ? "scholarship" : "commentary";
-    classification_reason = "judgment_requires_docket_or_case_identity";
-    flags.push("judgment_label_rejected_no_identity");
+    const commentaryShaped = judg.commentary_identity_signals.length > 0;
+    citable = scholarshipShape && !commentaryShaped ? "scholarship" : "commentary";
+    classification_reason = judg.downgrade_reason ?? "judgment_requires_docket_or_case_identity";
+    flags.push(
+      commentaryShaped ? "judgment_label_rejected_commentary_identity" : "judgment_label_rejected_no_identity",
+    );
   } else if (
     (citable === "statute" || citable === "unknown") &&
     scholarshipShape && !statuteShape && !judg.is_judgment
@@ -471,6 +570,14 @@ export function classifySourceIntegrity(input: IntegrityInput): SourceIntegrity 
     citable = "scholarship";
     classification_reason = "scholarship_shape_overrides_official_host";
     flags.push("scholarship_shape_detected");
+  } else if (
+    !judg.is_judgment &&
+    judg.commentary_identity_signals.length > 0 &&
+    (citable === "unknown" || citable === "judgment")
+  ) {
+    citable = "commentary";
+    classification_reason = judg.downgrade_reason ?? "commentary_identity";
+    flags.push("commentary_identity_detected");
   }
 
 
@@ -480,12 +587,14 @@ export function classifySourceIntegrity(input: IntegrityInput): SourceIntegrity 
     downgrade_reason =
       tier === "index_or_listing"
         ? "caselaw_type_on_listing_page"
-        : "caselaw_type_without_judgment_authority";
+        : judg.downgrade_reason ?? "caselaw_type_without_judgment_authority";
   } else if (STATUTE_TYPES.has(sourceType) && citable !== "statute") {
     downgrade_reason =
       tier === "index_or_listing"
         ? "statute_type_on_listing_page"
         : "statute_type_without_official_text";
+  } else if (!judg.is_judgment && judg.downgrade_reason) {
+    downgrade_reason = judg.downgrade_reason;
   }
 
   return {
@@ -499,6 +608,10 @@ export function classifySourceIntegrity(input: IntegrityInput): SourceIntegrity 
     has_holding_text: judg.has_holding_text,
     classification_before,
     classification_reason,
+    classification_after: citable,
+    judgment_identity_signals: judg.judgment_identity_signals,
+    commentary_identity_signals: judg.commentary_identity_signals,
+    uncertain_identity: judg.uncertain_identity,
   };
 
 }

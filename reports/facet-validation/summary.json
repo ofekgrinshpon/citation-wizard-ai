@@ -1,21 +1,422 @@
 [
   {
-    "id": "R02",
-    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
-    "job_id": "a7b1020e-bf16-444b-a331-4f7bc828ef21",
-    "run_id": "b5d8848b-7f31-4fc9-9856-8bac3d4cc9a2",
-    "ms": 161274,
+    "id": "F01",
+    "query": "מה נטל ההוכחה בעתירות לבג״ץ? על מי מוטל הנטל? על העותר תמיד?",
+    "job_id": "c9765b5f-85aa-4162-ae5b-579476adc07c",
+    "run_id": "50c4dcb3-7a51-468d-aef6-345dbcb9487d",
+    "ms": 121780,
     "terminal_status": "done",
     "job_error": null,
     "last_stage": null,
     "placeholder_rows_rejected": 0,
     "branch": null,
     "drafted": true,
-    "answer_length": 1303,
-    "used_sources_count": 2,
-    "footnotes_count": 2,
+    "answer_length": 2662,
+    "used_sources_count": 4,
+    "footnotes_count": 5,
+    "judgments_cited": 1,
+    "body_acquired_judgments": 1,
+    "metadata_only_judgments": 0,
+    "metadata_only_titles": [],
+    "statute_text_acquired_count": 0,
+    "statute_section_text_located": false,
+    "statute_acquisition": null,
+    "sufficiency_used_acquired_body": true,
+    "claim_facet_expansion": {
+      "facets": [
+        {
+          "facet_id": "F1",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 2,
+          "sources_found": 9,
+          "commentary_only": false,
+          "doctrinal_label": "נטל ראשוני על העותר בעתירת בג\"ץ",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "הנטל הראשוני המוטל על העותר בעתירה לבג\"ץ"
+          ],
+          "best_support_level": "partial",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "binding_case_law"
+        },
+        {
+          "facet_id": "F2",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 0,
+          "sources_found": 2,
+          "commentary_only": false,
+          "doctrinal_label": "חזקת התקינות המנהלית",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "חזקת התקינות המנהלית נטל הסתירה"
+          ],
+          "best_support_level": "tangential",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "binding_case_law"
+        },
+        {
+          "facet_id": "F3",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 0,
+          "sources_found": 7,
+          "commentary_only": false,
+          "doctrinal_label": "חובת ההסבר / חובת ההנמקה של הרשות",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "חובת ההנמקה של הרשות המינהלית חוק לתיקון סדרי המינהל הנמקות"
+          ],
+          "best_support_level": "partial",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "primary_statute"
+        },
+        {
+          "facet_id": "F4",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 0,
+          "sources_found": 3,
+          "commentary_only": false,
+          "doctrinal_label": "צו על תנאי והעברת נטל מעשית למשיב",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "צו על תנאי בבג\"ץ נטל התשובה של המשיב"
+          ],
+          "best_support_level": "unrelated",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "procedure_rules"
+        },
+        {
+          "facet_id": "F5",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 1,
+          "sources_found": 7,
+          "commentary_only": false,
+          "doctrinal_label": "סעד זמני בבג\"ץ: ראיות לכאורה ומאזן נוחות",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "סעד זמני בבג\"ץ מאזן הנוחות סיכויי העתירה"
+          ],
+          "best_support_level": "partial",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "application",
+          "primary_support_found": true,
+          "required_source_preference": "procedure_rules"
+        },
+        {
+          "facet_id": "F6",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 1,
+          "sources_found": 2,
+          "commentary_only": false,
+          "doctrinal_label": "הבחנה בין נטל שכנוע לנטל הבאת ראיות",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "ההבחנה בין נטל השכנוע לנטל הבאת הראיות במשפט המינהלי"
+          ],
+          "best_support_level": "partial",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "background_only",
+          "primary_support_found": true,
+          "required_source_preference": "scholarship_secondary"
+        }
+      ],
+      "enabled": true,
+      "version": "claim_facet_expansion_v1",
+      "facet_count": 6,
+      "gate_reason": "mode=doctrine_explanation;shape=analysis",
+      "legal_area_lock": "public_law_hcj",
+      "directive_applied": true,
+      "facet_queries_count": 5,
+      "facets_commentary_only": 0,
+      "facets_without_primary_support": 0
+    },
+    "sufficiency_profile": null,
+    "sufficiency_passed": null,
+    "metadata_only_holdings_remaining": 0,
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [
+          "s4"
+        ],
+        "reference_only": []
+      },
+      "blocks_stripped": 0,
+      "source_split_counts": {
+        "read_in_full": 1,
+        "reference_only": 0
+      },
+      "reference_only_sources": [],
+      "blocks_left_unsupported": 0,
+      "stripped_ref_occurrences": 0,
+      "unsupported_block_samples": [],
+      "metadata_only_judgment_refs": [],
+      "metadata_only_holdings_remaining": 0
+    },
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": [],
+    "used_source_titles": [
+      {
+        "title": "בג\"ץ 4940/20 פלוני נ׳ בית הדין הרבני הגדול לערעורים פסק דין (29.04.2021)",
+        "citable_as": "judgment",
+        "text_usability": "full_text"
+      },
+      {
+        "title": "חוק בתי משפט לענינים מינהליים, תש\"ס-2000",
+        "citable_as": "statute",
+        "text_usability": "metadata_only"
+      },
+      {
+        "title": "תקנות בתי משפט לענינים מינהליים (סדרי דין), התשס\"א-2000",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only"
+      },
+      {
+        "title": "דיני הראיות",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only"
+      }
+    ]
+  },
+  {
+    "id": "F02",
+    "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי?",
+    "job_id": "4fc619ec-ffab-41bd-9048-005af25cf289",
+    "run_id": "bf41acd0-3982-4b7c-8c30-6d6148952f0a",
+    "ms": 121641,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": null,
+    "drafted": true,
+    "answer_length": 2796,
+    "used_sources_count": 4,
+    "footnotes_count": 4,
     "judgments_cited": 2,
     "body_acquired_judgments": 2,
+    "metadata_only_judgments": 0,
+    "metadata_only_titles": [],
+    "statute_text_acquired_count": 0,
+    "statute_section_text_located": false,
+    "statute_acquisition": null,
+    "sufficiency_used_acquired_body": true,
+    "claim_facet_expansion": {
+      "facets": [
+        {
+          "facet_id": "F1",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 2,
+          "sources_found": 20,
+          "commentary_only": false,
+          "doctrinal_label": "עילת ההתערבות של בג\"ץ בבית דין דתי",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "binding_case_law"
+        },
+        {
+          "facet_id": "F2",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 4,
+          "sources_found": 28,
+          "commentary_only": false,
+          "doctrinal_label": "תחולת הדין האזרחי על בית הדין הרבני",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "primary_statute"
+        },
+        {
+          "facet_id": "F3",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 2,
+          "sources_found": 17,
+          "commentary_only": false,
+          "doctrinal_label": "שיקול זר וחריגה מסמכות",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "binding_case_law"
+        },
+        {
+          "facet_id": "F4",
+          "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+          "sources_used": 1,
+          "sources_found": 9,
+          "commentary_only": false,
+          "doctrinal_label": "איזון משאבים וחלוקת רכוש",
+          "parent_claim_id": "C1",
+          "generated_queries": [
+            "חוק יחסי ממון בין בני זוג איזון משאבים"
+          ],
+          "best_support_level": "direct",
+          "metadata_only_count": 0,
+          "insufficiency_reason": null,
+          "expected_support_type": "direct_rule",
+          "primary_support_found": true,
+          "required_source_preference": "primary_statute"
+        }
+      ],
+      "enabled": true,
+      "version": "claim_facet_expansion_v1",
+      "facet_count": 4,
+      "gate_reason": "mode=doctrine_explanation;shape=analysis",
+      "legal_area_lock": "public_law_hcj",
+      "directive_applied": true,
+      "facet_queries_count": 4,
+      "facets_commentary_only": 0,
+      "facets_without_primary_support": 0
+    },
+    "sufficiency_profile": null,
+    "sufficiency_passed": null,
+    "metadata_only_holdings_remaining": 0,
+    "gate_report": {
+      "applied": true,
+      "source_split": {
+        "read_in_full": [
+          "s5",
+          "s7"
+        ],
+        "reference_only": []
+      },
+      "blocks_stripped": 0,
+      "source_split_counts": {
+        "read_in_full": 2,
+        "reference_only": 0
+      },
+      "reference_only_sources": [],
+      "blocks_left_unsupported": 0,
+      "stripped_ref_occurrences": 0,
+      "unsupported_block_samples": [],
+      "metadata_only_judgment_refs": [],
+      "metadata_only_holdings_remaining": 0
+    },
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": [],
+    "used_source_titles": [
+      {
+        "title": "תקנות האם",
+        "citable_as": "judgment",
+        "text_usability": "substantive_excerpt"
+      },
+      {
+        "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+        "citable_as": "judgment",
+        "text_usability": "full_text"
+      },
+      {
+        "title": "היסוד החוקתי של עילות הביקורת השיפוטית המינהליות",
+        "citable_as": "scholarship",
+        "text_usability": "metadata_only"
+      },
+      {
+        "title": "חלק ראשון – ביקורת שיפוטית: יתרונות וחסרונות",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only"
+      }
+    ]
+  },
+  {
+    "id": "F03",
+    "query": "מה נקבע בבג\"ץ 1000/92 בבלי נ' בית הדין הרבני הגדול?",
+    "job_id": "f3385f07-d759-4a60-bbe6-7b5fa2f5f0ee",
+    "run_id": "5b6bf30c-f5d3-4fb3-860e-48d22223b03b",
+    "ms": 151786,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": "docket_limitation",
+    "drafted": false,
+    "answer_length": 342,
+    "used_sources_count": 0,
+    "footnotes_count": 0,
+    "judgments_cited": 0,
+    "body_acquired_judgments": 0,
+    "metadata_only_judgments": 0,
+    "metadata_only_titles": [],
+    "statute_text_acquired_count": 0,
+    "statute_section_text_located": false,
+    "statute_acquisition": null,
+    "sufficiency_used_acquired_body": false,
+    "claim_facet_expansion": {
+      "facets": [],
+      "enabled": false,
+      "version": "claim_facet_expansion_v1",
+      "facet_count": 0,
+      "gate_reason": "mode_excluded:specific_case",
+      "legal_area_lock": "public_law_hcj",
+      "directive_applied": false,
+      "facet_queries_count": 0,
+      "facets_commentary_only": 0,
+      "facets_without_primary_support": 0
+    },
+    "sufficiency_profile": null,
+    "sufficiency_passed": null,
+    "metadata_only_holdings_remaining": 0,
+    "gate_report": null,
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": [],
+    "used_source_titles": []
+  },
+  {
+    "id": "F04",
+    "query": "מה נקבע בבג\"ץ 2232/03 פלונית נ' בית הדין הרבני האזורי תל אביב (עניין אמיר)?",
+    "job_id": "52338158-3d12-4888-beae-aff65632209f",
+    "run_id": "7d31169b-d1f3-4e5c-b590-4d6fb4c0d48c",
+    "ms": 121449,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": null,
+    "drafted": true,
+    "answer_length": 2756,
+    "used_sources_count": 2,
+    "footnotes_count": 2,
+    "judgments_cited": 1,
+    "body_acquired_judgments": 1,
     "metadata_only_judgments": 0,
     "metadata_only_titles": [],
     "statute_text_acquired_count": 0,
@@ -41,14 +442,13 @@
       "applied": true,
       "source_split": {
         "read_in_full": [
-          "s1",
-          "s2"
+          "s1"
         ],
         "reference_only": []
       },
       "blocks_stripped": 0,
       "source_split_counts": {
-        "read_in_full": 2,
+        "read_in_full": 1,
         "reference_only": 0
       },
       "reference_only_sources": [],
@@ -65,14 +465,66 @@
     "failures": [],
     "used_source_titles": [
       {
-        "title": "ע\"א 6821/93",
+        "title": "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו",
         "citable_as": "judgment",
         "text_usability": "full_text"
       },
       {
-        "title": "מסמך מאתר אתר ממשלתי (gov.il)",
-        "citable_as": "judgment",
+        "title": "בג\"ץ 8638-03 - סימה אמיר נ. בית הדין הרבני הגדול בירושלים",
+        "citable_as": "commentary",
         "text_usability": "substantive_excerpt"
+      }
+    ]
+  },
+  {
+    "id": "F05",
+    "query": "מה קובע סעיף 6 לחוק החברות, תשנ\"ט-1999 בעניין הרמת מסך?",
+    "job_id": "f075e7f9-a2bd-4a58-80eb-cae44ae8281a",
+    "run_id": "0fb29c6d-b2f4-471e-a0c2-a322838149e6",
+    "ms": 101343,
+    "terminal_status": "done",
+    "job_error": null,
+    "last_stage": null,
+    "placeholder_rows_rejected": 0,
+    "branch": "statute_section_limitation",
+    "drafted": true,
+    "answer_length": 247,
+    "used_sources_count": 1,
+    "footnotes_count": 1,
+    "judgments_cited": 0,
+    "body_acquired_judgments": 0,
+    "metadata_only_judgments": 0,
+    "metadata_only_titles": [],
+    "statute_text_acquired_count": 0,
+    "statute_section_text_located": false,
+    "statute_acquisition": null,
+    "sufficiency_used_acquired_body": false,
+    "claim_facet_expansion": {
+      "facets": [],
+      "enabled": false,
+      "version": "claim_facet_expansion_v1",
+      "facet_count": 0,
+      "gate_reason": "mode_excluded:statute_section_definition",
+      "legal_area_lock": "companies",
+      "directive_applied": false,
+      "facet_queries_count": 0,
+      "facets_commentary_only": 0,
+      "facets_without_primary_support": 0
+    },
+    "sufficiency_profile": null,
+    "sufficiency_passed": null,
+    "metadata_only_holdings_remaining": 0,
+    "gate_report": null,
+    "is_stub": false,
+    "verifier_failed": false,
+    "cpu_kill": false,
+    "pass": true,
+    "failures": [],
+    "used_source_titles": [
+      {
+        "title": "פרק ו': הרמת מסך (חומר לימוד/פרק)",
+        "citable_as": "commentary",
+        "text_usability": "metadata_only"
       }
     ]
   }

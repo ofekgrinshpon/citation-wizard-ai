@@ -217,6 +217,11 @@ export interface DrafterInputSource {
   classification_before?: string;
   classification_after?: string;
   classification_reason?: string;
+  /** commentary_vs_judgment_classification_v1 telemetry. */
+  judgment_identity_signals?: string[];
+  commentary_identity_signals?: string[];
+  uncertain_identity?: boolean;
+  downgrade_reason?: string;
   title_hygiene_reasons: string[];
 
   url: string | null;
@@ -398,9 +403,13 @@ export function buildInputSources(
       fallback_improvement_reason: dt.fallback_improvement_reason,
       classification_cache_hit: cacheUsable,
       classification_rerun_reason: cacheUsable ? undefined : (rerunReason ?? undefined),
-      classification_before,
-      classification_after: integ0.citable_as,
-      classification_reason,
+      classification_before: integ0.classification_before ?? classification_before,
+      classification_after: integ0.classification_after ?? integ0.citable_as,
+      classification_reason: classification_reason ?? integ0.classification_reason,
+      judgment_identity_signals: integ0.judgment_identity_signals ?? [],
+      commentary_identity_signals: integ0.commentary_identity_signals ?? [],
+      uncertain_identity: integ0.uncertain_identity === true,
+      downgrade_reason: integ0.downgrade_reason,
 
       url: c.source_url ?? null,
       source_type: c.source_type,

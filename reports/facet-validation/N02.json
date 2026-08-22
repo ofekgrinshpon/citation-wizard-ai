@@ -1,20 +1,20 @@
 {
   "id": "N02",
   "query": "מהי עילת הסבירות במשפט המינהלי הישראלי?",
-  "job_id": "d42e0a9d-62b0-4f4a-be2c-e9acb501017a",
-  "run_id": "d6340454-850e-4bc9-94d6-523d32109f45",
-  "ms": 141132,
+  "job_id": "6cf81a72-bc4e-41b7-90a5-ce614dd43121",
+  "run_id": "cdb44ad3-fe1e-4806-972f-f1c9ba645efa",
+  "ms": 121711,
   "terminal_status": "done",
   "job_error": null,
   "last_stage": null,
   "placeholder_rows_rejected": 0,
   "branch": null,
   "drafted": true,
-  "answer_length": 3175,
-  "used_sources_count": 8,
-  "footnotes_count": 8,
-  "judgments_cited": 2,
-  "body_acquired_judgments": 2,
+  "answer_length": 2638,
+  "used_sources_count": 5,
+  "footnotes_count": 7,
+  "judgments_cited": 4,
+  "body_acquired_judgments": 4,
   "metadata_only_judgments": 0,
   "metadata_only_titles": [],
   "statute_text_acquired_count": 0,
@@ -26,155 +26,83 @@
       {
         "facet_id": "F1",
         "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
-        "sources_used": 8,
-        "sources_found": 28,
+        "sources_used": 4,
+        "sources_found": 23,
         "commentary_only": false,
-        "doctrinal_label": "ההוראה המחייבת בבסיס: מהו המובן הכללי של 'עילת הסבירות' במשפט המינהלי הישראלי",
+        "doctrinal_label": "עילת ההתערבות של בג\"ץ בבית דין דתי",
         "parent_claim_id": "C1",
         "generated_queries": [
-          "מהו המובן הכללי של 'עילת הסבירות' במשפט המינהלי הישראלי בג\"ץ הוראת החוק"
+          "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
         ],
         "best_support_level": "direct",
-        "metadata_only_count": 1,
-        "insufficiency_reason": null,
-        "expected_support_type": "direct_rule",
-        "primary_support_found": true,
-        "required_source_preference": "primary_statute"
-      },
-      {
-        "facet_id": "F2",
-        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
-        "sources_used": 8,
-        "sources_found": 29,
-        "commentary_only": false,
-        "doctrinal_label": "הלכה מחייבת בסוגיה: מהו המובן הכללי של 'עילת הסבירות' במשפט המינהלי הישראלי",
-        "parent_claim_id": "C1",
-        "generated_queries": [
-          "מהו המובן הכללי של 'עילת הסבירות' במשפט המינהלי הישראלי בג\"ץ בית המשפט העליון הלכה"
-        ],
-        "best_support_level": "direct",
-        "metadata_only_count": 1,
+        "metadata_only_count": 0,
         "insufficiency_reason": null,
         "expected_support_type": "direct_rule",
         "primary_support_found": true,
         "required_source_preference": "binding_case_law"
       },
       {
-        "facet_id": "F3",
+        "facet_id": "F2",
         "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
-        "sources_used": 8,
-        "sources_found": 27,
+        "sources_used": 1,
+        "sources_found": 15,
         "commentary_only": false,
-        "doctrinal_label": "יישום וסייגים: מהו המובן הכללי של 'עילת הסבירות' במשפט המינהלי הישראלי",
+        "doctrinal_label": "תחולת הדין האזרחי על בית הדין הרבני",
         "parent_claim_id": "C1",
         "generated_queries": [
-          "מהו המובן הכללי של 'עילת הסבירות' במשפט המינהלי הישראלי בג\"ץ חריגים וסייגים"
+          "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+        ],
+        "best_support_level": "partial",
+        "metadata_only_count": 0,
+        "insufficiency_reason": null,
+        "expected_support_type": "direct_rule",
+        "primary_support_found": true,
+        "required_source_preference": "primary_statute"
+      },
+      {
+        "facet_id": "F3",
+        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
+        "sources_used": 5,
+        "sources_found": 19,
+        "commentary_only": false,
+        "doctrinal_label": "שיקול זר וחריגה מסמכות",
+        "parent_claim_id": "C1",
+        "generated_queries": [
+          "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
         ],
         "best_support_level": "direct",
-        "metadata_only_count": 1,
+        "metadata_only_count": 0,
         "insufficiency_reason": null,
-        "expected_support_type": "application",
+        "expected_support_type": "direct_rule",
         "primary_support_found": true,
         "required_source_preference": "binding_case_law"
       },
       {
         "facet_id": "F4",
         "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
-        "sources_used": 8,
-        "sources_found": 26,
+        "sources_used": 0,
+        "sources_found": 2,
         "commentary_only": false,
-        "doctrinal_label": "רקע עיוני: מהו המובן הכללי של 'עילת הסבירות' במשפט המינהלי הישראלי",
+        "doctrinal_label": "איזון משאבים וחלוקת רכוש",
         "parent_claim_id": "C1",
         "generated_queries": [
-          "מהו המובן הכללי של 'עילת הסבירות' במשפט המינהלי הישראלי בג\"ץ מאמר אקדמי"
+          "חוק יחסי ממון בין בני זוג איזון משאבים"
         ],
-        "best_support_level": "direct",
-        "metadata_only_count": 1,
-        "insufficiency_reason": null,
-        "expected_support_type": "background_only",
-        "primary_support_found": true,
-        "required_source_preference": "scholarship_secondary"
-      },
-      {
-        "facet_id": "F5",
-        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
-        "sources_used": 8,
-        "sources_found": 27,
-        "commentary_only": false,
-        "doctrinal_label": "ההוראה המחייבת בבסיס: מהם מבחני הסבירות שנוהגים בתי המשפט הישראליים (למשל: 'מבחן",
-        "parent_claim_id": "C2",
-        "generated_queries": [
-          "מהם מבחני הסבירות שנוהגים בתי המשפט הישראליים (למשל: 'מבחן בג\"ץ הוראת החוק"
-        ],
-        "best_support_level": "direct",
-        "metadata_only_count": 1,
+        "best_support_level": "unrelated",
+        "metadata_only_count": 0,
         "insufficiency_reason": null,
         "expected_support_type": "direct_rule",
         "primary_support_found": true,
         "required_source_preference": "primary_statute"
-      },
-      {
-        "facet_id": "F6",
-        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
-        "sources_used": 8,
-        "sources_found": 28,
-        "commentary_only": false,
-        "doctrinal_label": "הלכה מחייבת בסוגיה: מהם מבחני הסבירות שנוהגים בתי המשפט הישראליים (למשל: 'מבחן",
-        "parent_claim_id": "C2",
-        "generated_queries": [
-          "מהם מבחני הסבירות שנוהגים בתי המשפט הישראליים (למשל: 'מבחן בג\"ץ בית המשפט העליון הלכה"
-        ],
-        "best_support_level": "direct",
-        "metadata_only_count": 1,
-        "insufficiency_reason": null,
-        "expected_support_type": "direct_rule",
-        "primary_support_found": true,
-        "required_source_preference": "binding_case_law"
-      },
-      {
-        "facet_id": "F7",
-        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
-        "sources_used": 8,
-        "sources_found": 27,
-        "commentary_only": false,
-        "doctrinal_label": "יישום וסייגים: מהם מבחני הסבירות שנוהגים בתי המשפט הישראליים (למשל: 'מבחן",
-        "parent_claim_id": "C2",
-        "generated_queries": [
-          "מהם מבחני הסבירות שנוהגים בתי המשפט הישראליים (למשל: 'מבחן בג\"ץ חריגים וסייגים"
-        ],
-        "best_support_level": "direct",
-        "metadata_only_count": 1,
-        "insufficiency_reason": null,
-        "expected_support_type": "application",
-        "primary_support_found": true,
-        "required_source_preference": "binding_case_law"
-      },
-      {
-        "facet_id": "F8",
-        "legal_area": "משפט מינהלי/חוקתי — בג\"ץ",
-        "sources_used": 8,
-        "sources_found": 27,
-        "commentary_only": false,
-        "doctrinal_label": "רקע עיוני: מהם מבחני הסבירות שנוהגים בתי המשפט הישראליים (למשל: 'מבחן",
-        "parent_claim_id": "C2",
-        "generated_queries": [
-          "מהם מבחני הסבירות שנוהגים בתי המשפט הישראליים (למשל: 'מבחן בג\"ץ מאמר אקדמי"
-        ],
-        "best_support_level": "direct",
-        "metadata_only_count": 1,
-        "insufficiency_reason": null,
-        "expected_support_type": "background_only",
-        "primary_support_found": true,
-        "required_source_preference": "scholarship_secondary"
       }
     ],
     "enabled": true,
     "version": "claim_facet_expansion_v1",
-    "facet_count": 8,
-    "gate_reason": "mode=doctrine_explanation;shape=analysis",
+    "facet_count": 4,
+    "gate_reason": "mode=doctrine_explanation;shape=definition",
     "legal_area_lock": "public_law_hcj",
     "directive_applied": true,
-    "facet_queries_count": 6,
+    "facet_queries_count": 4,
     "facets_commentary_only": 0,
     "facets_without_primary_support": 0
   },
@@ -185,14 +113,16 @@
     "applied": true,
     "source_split": {
       "read_in_full": [
+        "s1",
         "s2",
-        "s12"
+        "s6",
+        "s7"
       ],
       "reference_only": []
     },
     "blocks_stripped": 0,
     "source_split_counts": {
-      "read_in_full": 2,
+      "read_in_full": 4,
       "reference_only": 0
     },
     "reference_only_sources": [],
@@ -209,45 +139,30 @@
   "failures": [],
   "used_source_titles": [
     {
-      "title": "בית המשפט העליון",
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
       "citable_as": "judgment",
       "text_usability": "full_text"
     },
     {
-      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
-      "citable_as": "commentary",
+      "title": "בג\"ץ 5309/18 התאחדות המלונות בישראל נ׳ משרד הפנים פסק דין (06.01.2021)",
+      "citable_as": "judgment",
       "text_usability": "substantive_excerpt"
     },
     {
-      "title": "פסק דין הסבירות: עיונים ראשונים | בעקבות בג\"ץ 5658/23 התנועה למען איכות השלטון נ' הכנסת",
+      "title": "ע\"א 5858/19 פסגות קופות גמל פנסיה בע\"מ נ׳ חיים אופיר פס\"ד פסק דין (05.07.2022)",
       "citable_as": "judgment",
       "text_usability": "full_text"
     },
     {
-      "title": "עילת הסבירות בהיבט השוואתי פרופ' טליה איינהורן",
-      "citable_as": "statute",
-      "text_usability": "metadata_only"
+      "title": "פסק-דין בתיק ע\"א 6913/19",
+      "citable_as": "judgment",
+      "text_usability": "full_text"
     },
     {
-      "title": "25_lst_2970619.docx",
-      "citable_as": "statute",
-      "text_usability": "metadata_only"
-    },
-    {
-      "title": "עילת אי־הסבירות במשפט המנהלי",
-      "citable_as": "commentary",
-      "text_usability": "metadata_only"
-    },
-    {
-      "title": "עילת אי־הסבירות במשפט הממהלי*",
-      "citable_as": "commentary",
-      "text_usability": "metadata_only"
-    },
-    {
-      "title": "הערות על ביקורת הסבירות במשפט המינהלי",
-      "citable_as": "commentary",
-      "text_usability": "metadata_only"
+      "title": "סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
+      "citable_as": "scholarship",
+      "text_usability": "substantive_excerpt"
     }
   ],
-  "answer": "שורה תחתונה: עילת הסבירות במשפט המינהלי היא כלי ביקורת שיפוטית שבאמצעותו בוחנים בתי המשפט האם החלטה מנהלית חורגת בסבירות קבילה — כשהמבחנים שונו ופוצלו בפסיקה החדשה האחרונה, בתי המשפט נוטים להתערב במקרים של חוסר סבירות קיצוני או חריגה מסמכות שהמשמעות שלה תוצאתית.⁵\n\n**ההוראה המחייבת — הגדרה ותכלית**\n\nבהגדרה משפטית בסיסית עילת הסבירות מוצגת כעילת‑ביקורת שמסמיכה את בית המשפט לפסול החלטה מנהלית כאשר היא אינה עומדת בקנה מידה של סבירות; מסמך חקיקתי/סיכומי המקורות מנסח זאת כשכלי לביקורת שיפוטית, ויש לגשת אליו כאל אמצעי לבחינת תוצאת ההחלטה ולאו דווקא רק של טעות פרשנית טכנית.⁵\n\n**הלכה מחייבת — מסגרת פסיקתית עיקרית**\n\nהפסיקה העליונה הציבה במסגרת מחייבת את עילת הסבירות כמרכיב בביקורת על חריגה קיצונית מסמכות: בית המשפט העליון אישר את האפשרות להתערבות רק במצבים יוצאי דופן של חוסר סבירות קיצוני ובמקרים שבהם התוצאה פוגעת בעקרונות היסוד של שלטון החוק.¹\n\n**יישום וסייגים — הלכה**\n\nהפסיקה מזהה סייגים ברורים לבחינת הסבירות: לדוגמה, כאשר המחוקק קבע בעצמו אמות מידה שונות או כאשר מעורבים עקרונות יסוד שלטוניים — בתי המשפט נזהרים מלגזור ביקורת סבירות סטנדרטית, וכך מוסדר היקפה של ההתערבות השיפוטית.²\n\n**רקע עיוני — דיון דוקטרינרי ומחלוקת**\n\nהספרות הישראלית רחבה ומנתחת את עילת הסבירות הן כתיאוריה והן כיישום: יש עבודות שמנסחות את העילה כמסגרת ביקורתית עצמאית ויש ביקורת שמציגה אותה כעמומה או כנטולת אמות מידה ברורות, וכן ניתוחים המתמקדים בהתפתחות ההיסטורית ובחלוקת התפקידים בין שיקול דעת מנהלי לבין ביקורת שיפוטית.⁸\n\n**מבחני הסבירות — הוראה משפטית ותיאור סוגי מבחנים**\n\nבמקורות חקיקתיים ותחיקתיים שנבדקו מופיעה אמירה כללית על תפקיד הסבירות ככלי ביקורתי, אולם אין במקורות אלה פירוט אחיד של סדרת מבחנים; לשם ניסוח מעשי משתמשים במונחים שמתייחסים ל'חוסר סבירות קיצוני', אבחנה בין שיקולים רלוונטיים ובלתי‑רלוונטיים, ובדיקת טעות עובדתית או טעות במיון, כך שנדרשת השוואה לפסיקה ולעבודה האקדמית לצורך פירוטם.⁶\n\nבפסיקה הישראלית המבחנים עוצבו בתכלית פרקטית: בתי המשפט מעדיפים עתה מסגרת של בדיקה בקנה‑מידה מצומצם במרבית המקרים, ונוטים להתערב בעיקר כאשר אפשר לתאר את ההחלטה כחורגת במידה מהותית עד ל'חוסר סבירות קיצוני'.¹\n\nבהליך היישום מודגשת חשיבות ההקשר: המבחן אינו אחיד בכל סוגי ההחלטות — מבחני הסבירות מוחמרים או מתרככים לפי חומרת הפגיעה בזכויות יסוד, דרגת השיקול המנהלית והוראות המחוקק, כך שבפועל יש מקום לשיקול איזון בין מידת התערבותו של בית המשפט לבין תחומי הסמכות של הרשות.³\n\n**יחסי הסבירות לשיטת השקילות/המידתיות**\n\nקיימת התאוריה והביקורת שהסבירות והמידתיות אינם תמיד מבחנים נפרדים אלא מופעים של אותו מערך ביקורת על חריגה מסמכות; עבודות השוואתיות והספרות הישראלית מצביעות כי לעתים המבחן שיוחל יהיה מבחן של מידתיות או מבחן סבירות בהתאם להקשר הפורמאלי והעקרוני של המקרה.⁷\n\n**השלכות פרקטיות — סעד וסייגים בבחינת מימוש הסבירות**\n\nהשלכות מעשיות של עילת הסבירות נוגעות לטווח הסעדים: בית המשפט נותן במקרים מתאימים צו ביטול או החזרה להכרעה מחודשת, ובמקרים חריגים גם צווי מניעה או צווי שעה; עם זאת הענקת סעד מוסדרת על־ידי שקילת חומרת חוסר הסבירות, תכליות ההחלטה והטלת תנאים לפרסום ההחלטה או לביצועה.⁴\n\nאזהרה מתודולוגית ומגבלות: במקורות שאותרו לא נמצא פירוט חקיקתי מלא ואחיד של כל מבחני הסבירות, וישנו ויכוח עיוני‑מעשי על קריטריונים מדויקים; לפיכך תיאור זה מבוסס על פסיקה מרכזית ועמדה דוקטרינרית שנמצאה, ואינו מציג תמונה אשר טענה שהיא ממצה את כל הלכה או כל עבודת פסיקה פוטנציאלית שלא אותרה בחיפוש זה."
+  "answer": "**הגדרה קצרה**\n\nעילת הסבירות היא עיקרון של ביקורת שיפוטית המאפשר לבית המשפט לבחון האם החלטה או שיקול של רשות מנהלית נופלים בתוך טווח סביר של אפשרויות שהמחוקק נתן לרשות; החלטה החורגת מטווח זה עלולה להימחק או להיות מותקנת מחדש על ידי בית המשפט כלא סבירה.¹\n\nמבחינה דוקטרינרית ההגדרה כוללת הן בדיקה של ההיגיון העובדתי וההוכחתי של ההחלטה והן בדיקה של התאמת השיקול לתכלית שהסמיכה נועדה להשיג; בחלק מן הניתוחים המשווים היא נדונה ביחס או בהשוואה למדד המידתיות.¹\n\n**מרכיבי הבדיקה המעשיים**\n\nבפסיקה ובספרות מונחות כמה קטגוריות של חוסר סבירות שנבדקות בשלב הביקורת: החלטה 'מופרזת' או 'פראית' ביחס למטרה, שיקול זר או התחשבות באינטרסים שאינם רלוונטיים, חוסר הסבר סביר שמקשה על ביקורת עניינית, וחוסר התאמה בין אמצעים לתכלית — גישות הנדונות כגרסה מקומית של מבחן Wednesbury/המבחן האימפרטיבי.⁴\n\n**עילת ההתערבות של בג\"ץ ביחס להכרעות בתי דין דתיים**\n\nבג\"ץ אימץ במקרים מסוימים את עילת הסבירות כבסיס להתערבות בהחלטות של בתי דין דתיים אם מתקיים חוסר סבירות ממשי בעמדה שננקטה, וזאת במסגרת הבדיקה השיפוטית על סמכויות ובטיפולי זכויות יסוד.¹\n\n**תחולת הדין האזרחי על בית הדין הרבני**\n\nבמקורות שאותרו לא נמצא עיגון חקיקתי ראשוני ברור שמסדיר במפורש את תחולתו של הדין האזרחי על בתי הדין הרבניים; הנושא מטופל בעיקר באמצעות ניתוחים משפטיים ודיונים על סמכות שיפוטית שאינם מהווים כאן תחליף לעיגון חקיקתי או לפסיקה קונקרטית.⁷\n\n**שיקול זר וחריגה מסמכות**\n\nשיקול זר (irrelevant consideration) וחריגה מסמכות מתבטאים כאשר המינהל התבסס על שיקולים שאינם רלוונטיים למטרה המוסמכת או חרג מהיקף הסמכות המוקנה לו; פסיקת בג\"ץ דנה בהבחנה זו ומשייכת אותה לקטגוריות של חוסר סבירות שמצדק התערבות שיפוטית.²\n\n**איזון משאבים וחלוקת רכוש**\n\nבמקורות שאותרו לא נמצא עיגון חקיקתי ישיר שמנסח כלל כללי באשר לאיזון משאבים או לחלוקת רכוש בהקשר של עילת הסבירות; בפסיקה ובפרקטיקה השאלות האלה נדונות בהקשרים ספציפיים של תכנון, ביטול אישורים והחלטות כלכליות של רשות.⁵\n\n**השלכות משפטיות וסעדים**\n\nכשבית המשפט מוצא חוסר סבירות עומדים לנגדו סעדים תיקוניים שונים: ביטול או השבה של ההחלטה, צו לשוב ולשקול עם הנחיות, צו להסבר מנומק או צו מניעה זמני; פיצוי כספי נדון בפסיקה אך נחשב סעד יוצא דופן שתלוי בנסיבות חריגות.³\n\n**גבולות הביקורת השיפוטית**\n\nבתי המשפט נזהרים להתערב בשיקולים מדיניים, בשיקולים מקצועיים המצריך ניסיון או שיקול כלכלי מובנה, ובמקרים שבהם החוק מצמצם במפורש את טווח הבדיקה; להבחנה בין התערבות מותרת להתפרשות אסורה משקל אינסטיטוציונלי של הישות המחליטה, תוכן הסמכות הסטטוטורית והטבע של השיקול.⁶\n\nלסיכום: עילת הסבירות במשפט המינהלי היא כלי ביקורתי שבמרכזו בדיקה האם החלטת רשות נשמעת כמתבקשת בתוך טווח הסבירות; לגבי שאלות מסוימות — כמו המעבר של הדין האזרחי על בתי דין דתיים או עיגון חקיקתי לאיזון משאבים — במקורות שאותרו לא נמצא עיגון ראשוני חד־משמעי, ויש להסתכל בפסיקה ובספרות שהתפתחו בהקשרים אלה."
 }
