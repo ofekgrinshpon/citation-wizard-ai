@@ -293,6 +293,44 @@ function buildFallback(input: DisplayTitleInput, rawTitle: string): Fallback {
   return { title: "מקור משפטי", fallback_used: "generic" };
 }
 
+// ── Legitimacy / specificity scoring (over_fallback_fix_v1) ────────────────
+const PARTIES_RE = /\s(נ['׳"״]?|נגד)\s/;
+
+/** A title that is clearly a legitimate legal document title. */
+export function looksLikeLegalTitle(t: string): boolean {
+  const s = t.trim();
+  if (!s) return false;
+  if (DOCKET_RE.test(s)) return true;
+  if (PARTIES_RE.test(s)) return true;
+  const st = s.match(STATUTE_NAME_RE);
+  if (st && st.index !== undefined && st.index <= 2) return true;
+  return false;
+}
+
+/**
+ * Rough specificity score. Higher = more informative label.
+ * Used to guarantee a fallback is only applied when strictly better.
+ */
+export function specificityScore(
+  t: string,
+  kind?: DisplayTitleResult["fallback_used"],
+): number {
+  const s = (t ?? "").trim();
+  if (!s) return -1;
+  if (kind === "generic") return 0;
+  if (kind === "host") return 1;
+  if (kind === "type_and_host") return 2;
+  let score = 0;
+  if (DOCKET_RE.test(s)) score += 5;
+  if (PARTIES_RE.test(s)) score += 3;
+  if (STATUTE_NAME_RE.test(s)) score += 4;
+  const hebWords = s.split(/\s+/).filter((w) => HEB.test(w)).length;
+  if (hebWords >= 4) score += 2;
+  else if (hebWords >= 2) score += 1;
+  if (s.length >= 25) score += 1;
+  return score;
+}
+
 // ── Main evaluator ──────────────────────────────────────────────────────────
 export function computeDisplayTitle(input: DisplayTitleInput): DisplayTitleResult {
   const raw = String(input.title ?? "").trim();
@@ -304,14 +342,42 @@ export function computeDisplayTitle(input: DisplayTitleInput): DisplayTitleResul
   ): DisplayTitleResult => {
     reasons.push(reason);
     const fb = buildFallback(input, raw);
+    // over_fallback_fix_v1 — only swap in the fallback when it is strictly more
+    // informative than the raw title. Otherwise keep the original label.
+    const rawScore = status === "fallback_empty" ? -1 : specificityScore(raw);
+    const fbScore = specificityScore(fb.title, fb.fallback_used);
+    if (fbScore <= rawScore) {
+      return {
+        raw_title: raw,
+        display_title: raw,
+        title_status: "ok",
+        title_hygiene_reasons: reasons,
+        fallback_used: "none",
+        fallback_applied: false,
+        fallback_candidate: fb.title,
+        fallback_rejected_reason: `fallback_not_more_informative(${fb.fallback_used}:${fbScore}<=raw:${rawScore})`,
+      };
+    }
     return {
       raw_title: raw,
       display_title: fb.title,
       title_status: status,
       title_hygiene_reasons: reasons,
       fallback_used: fb.fallback_used,
+      fallback_applied: true,
+      fallback_candidate: fb.title,
+      fallback_improvement_reason: `${fb.fallback_used}:${fbScore}>raw:${rawScore}`,
     };
   };
+
+  const ok = (): DisplayTitleResult => ({
+    raw_title: raw,
+    display_title: raw,
+    title_status: "ok",
+    title_hygiene_reasons: reasons,
+    fallback_used: "none",
+    fallback_applied: false,
+  });
 
   // Empty.
   if (!raw) return fail("fallback_empty", "title_empty");
@@ -322,10 +388,17 @@ export function computeDisplayTitle(input: DisplayTitleInput): DisplayTitleResul
     return fail("fallback_junk_meta", "title_junk_meta");
   }
 
-  // Raw filenames / storage keys.
+  // Raw filenames / storage keys — always rejectable.
   if (looksLikeFilename(raw)) return fail("fallback_filename", "title_raw_filename");
 
-  // Bare institution names.
+  // over_fallback_fix_v1 — legitimate legal titles (docket, parties, statute)
+  // are never rejected for institution/truncation heuristics.
+  if (looksLikeLegalTitle(raw)) {
+    reasons.push("legal_title_protected");
+    return ok();
+  }
+
+  // Bare institution names (only when nothing else is in the title).
   if (isBareInstitutionTitle(raw)) {
     return fail("fallback_bare_institution", "title_bare_institution");
   }
@@ -336,14 +409,9 @@ export function computeDisplayTitle(input: DisplayTitleInput): DisplayTitleResul
   // Very short non-Hebrew non-numeric titles → generic.
   if (raw.length < 4 && !HEB.test(raw)) return fail("fallback_generic", "title_too_short");
 
-  return {
-    raw_title: raw,
-    display_title: raw,
-    title_status: "ok",
-    title_hygiene_reasons: [],
-    fallback_used: "none",
-  };
+  return ok();
 }
+
 
 // ── Aggregate counters (debug) ──────────────────────────────────────────────
 export interface DisplayTitleCounts {
