@@ -15,9 +15,10 @@ Deno.test("raw filename title is rejected", () => {
 });
 
 Deno.test("storage-like key is rejected", () => {
-  const r = computeDisplayTitle({ title: "doc_1234567", url: "https://gov.il/a/b" });
+  const r = computeDisplayTitle({ title: "a3f9b2c1d4e5f6a7b8c9.pdf", url: "https://gov.il/a/b" });
   assertEquals(r.title_status, "fallback_filename");
 });
+
 
 Deno.test("bare institution title is rejected", () => {
   const r = computeDisplayTitle({
