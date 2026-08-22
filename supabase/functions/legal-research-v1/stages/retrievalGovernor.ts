@@ -15,7 +15,14 @@ export interface RetrievalGovernor {
   /** Count a body-acquisition attempt. */
   noteBodyAcquisition?(n?: number): void;
   /** Run-level ledger for uninterruptible binary extraction. */
-  allowExtraction?(bytes: number): boolean;
+  allowExtraction?(bytes: number, opts?: { speculative?: boolean }): boolean;
+  /** Charge extracted characters back to the extraction ledger. */
+  noteExtractionOutput?(chars: number, opts?: { speculative?: boolean }): void;
+  /** Record that a usable body was acquired (stops speculative extraction). */
+  noteSpeculativeBodyAcquired?(): void;
+  /** True once speculative extraction must no longer be attempted. */
+  speculativeExtractionBlocked?(): boolean;
+
   /** Record how long a named retrieval step took. */
   recordStep?(name: string, ms: number): void;
 }

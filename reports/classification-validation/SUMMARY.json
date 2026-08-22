@@ -1,248 +1,40 @@
 [
   {
-    "id": "F01",
-    "pass": true,
-    "failures": [],
-    "branch": "insufficient_sources_limitation",
-    "footnotes_length": 0,
-    "used_sources_length": 0,
-    "dangling": 0,
-    "orphan": 0,
-    "uncertain_identity_count": 0,
-    "metadata_only_holdings": 0,
-    "invariant_passed": true,
-    "fallback_used_count": 0,
-    "reclassified_count": 0,
-    "ms": 152034,
-    "terminal_status": "done",
-    "budget": {
-      "retrieval_budget_ms": 200000,
-      "retrieval_elapsed_ms": 103374,
-      "budget_exceeded": false,
-      "partial_retrieval_used": false,
-      "disclosure_shown": false,
-      "aborted_tasks_count": 0,
-      "ignored_late_tasks_count": 0,
-      "body_acquisition_count": 1,
-      "extraction_count": 0,
-      "extraction_bytes": 0,
-      "longest_retrieval_step": {
-        "ms": 6191,
-        "name": "perplexity_retrieval"
-      },
-      "candidate_count_by_facet": {
-        "unfaceted": 30
-      }
-    }
-  },
-  {
-    "id": "F02",
-    "pass": true,
-    "failures": [],
-    "branch": null,
-    "footnotes_length": 5,
-    "used_sources_length": 6,
-    "dangling": 0,
-    "orphan": 0,
-    "uncertain_identity_count": 0,
-    "metadata_only_holdings": 0,
-    "invariant_passed": true,
-    "fallback_used_count": 0,
-    "reclassified_count": 0,
-    "ms": 131623,
-    "terminal_status": "done",
-    "budget": {
-      "retrieval_budget_ms": 200000,
-      "retrieval_elapsed_ms": 68734,
-      "budget_exceeded": false,
-      "partial_retrieval_used": false,
-      "disclosure_shown": false,
-      "aborted_tasks_count": 0,
-      "ignored_late_tasks_count": 0,
-      "body_acquisition_count": 1,
-      "extraction_count": 0,
-      "extraction_bytes": 0,
-      "longest_retrieval_step": {
-        "ms": 7738,
-        "name": "perplexity_retrieval"
-      },
-      "candidate_count_by_facet": {
-        "unfaceted": 27
-      }
-    }
-  },
-  {
-    "id": "F03",
-    "pass": true,
-    "failures": [],
-    "branch": "docket_limitation",
-    "footnotes_length": 0,
-    "used_sources_length": 0,
-    "dangling": 0,
-    "orphan": 0,
-    "uncertain_identity_count": 0,
-    "metadata_only_holdings": 0,
-    "invariant_passed": true,
-    "fallback_used_count": 2,
-    "reclassified_count": 0,
-    "ms": 101341,
-    "terminal_status": "done",
-    "budget": {
-      "retrieval_budget_ms": 90000,
-      "retrieval_elapsed_ms": 56790,
-      "budget_exceeded": false,
-      "partial_retrieval_used": false,
-      "disclosure_shown": false,
-      "aborted_tasks_count": 0,
-      "ignored_late_tasks_count": 0,
-      "body_acquisition_count": 1,
-      "extraction_count": 0,
-      "extraction_bytes": 0,
-      "longest_retrieval_step": {
-        "ms": 10139,
-        "name": "perplexity_retrieval"
-      },
-      "candidate_count_by_facet": {
-        "unfaceted": 30
-      }
-    }
-  },
-  {
-    "id": "F04",
-    "pass": true,
-    "failures": [],
-    "branch": null,
-    "footnotes_length": 0,
-    "used_sources_length": 0,
-    "dangling": 0,
-    "orphan": 0,
-    "uncertain_identity_count": 0,
-    "metadata_only_holdings": 0,
-    "invariant_passed": true,
-    "fallback_used_count": null,
-    "reclassified_count": null,
-    "ms": 50771,
-    "terminal_status": "error",
-    "budget": {
-      "retrieval_budget_ms": null,
-      "retrieval_elapsed_ms": null,
-      "budget_exceeded": null,
-      "partial_retrieval_used": null,
-      "disclosure_shown": false,
-      "aborted_tasks_count": null,
-      "ignored_late_tasks_count": null,
-      "body_acquisition_count": null,
-      "extraction_count": null,
-      "extraction_bytes": null,
-      "longest_retrieval_step": null,
-      "candidate_count_by_facet": null
-    }
-  },
-  {
-    "id": "F05",
-    "pass": true,
-    "failures": [],
-    "branch": null,
-    "footnotes_length": 1,
-    "used_sources_length": 1,
-    "dangling": 0,
-    "orphan": 0,
-    "uncertain_identity_count": 1,
-    "metadata_only_holdings": 0,
-    "invariant_passed": true,
-    "fallback_used_count": 0,
-    "reclassified_count": 1,
-    "ms": 141517,
-    "terminal_status": "done",
-    "budget": {
-      "retrieval_budget_ms": 200000,
-      "retrieval_elapsed_ms": 100637,
-      "budget_exceeded": false,
-      "partial_retrieval_used": false,
-      "disclosure_shown": false,
-      "aborted_tasks_count": 0,
-      "ignored_late_tasks_count": 0,
-      "body_acquisition_count": 1,
-      "extraction_count": 1,
-      "extraction_bytes": 184261,
-      "longest_retrieval_step": {
-        "ms": 5690,
-        "name": "perplexity_retrieval"
-      },
-      "candidate_count_by_facet": {
-        "unfaceted": 30
-      }
-    }
-  },
-  {
-    "id": "F06",
-    "pass": true,
-    "failures": [],
-    "branch": null,
-    "footnotes_length": 5,
-    "used_sources_length": 6,
-    "dangling": 0,
-    "orphan": 0,
-    "uncertain_identity_count": 0,
-    "metadata_only_holdings": 0,
-    "invariant_passed": true,
-    "fallback_used_count": 0,
-    "reclassified_count": 0,
-    "ms": 161636,
-    "terminal_status": "done",
-    "budget": {
-      "retrieval_budget_ms": 200000,
-      "retrieval_elapsed_ms": 111345,
-      "budget_exceeded": false,
-      "partial_retrieval_used": false,
-      "disclosure_shown": false,
-      "aborted_tasks_count": 0,
-      "ignored_late_tasks_count": 0,
-      "body_acquisition_count": 1,
-      "extraction_count": 1,
-      "extraction_bytes": 1128295,
-      "longest_retrieval_step": {
-        "ms": 27917,
-        "name": "perplexity_retrieval"
-      },
-      "candidate_count_by_facet": {
-        "unfaceted": 30
-      }
-    }
-  },
-  {
     "id": "F07",
     "pass": false,
     "failures": [
-      "no_terminal_qa_row",
-      "empty_answer_body",
-      "cpu_kill"
+      "raw_filename_visible"
     ],
     "branch": null,
-    "footnotes_length": 0,
-    "used_sources_length": 0,
+    "footnotes_length": 9,
+    "used_sources_length": 8,
     "dangling": 0,
     "orphan": 0,
-    "uncertain_identity_count": 0,
+    "uncertain_identity_count": 3,
     "metadata_only_holdings": 0,
     "invariant_passed": true,
-    "fallback_used_count": null,
-    "reclassified_count": null,
-    "ms": 827223,
-    "terminal_status": "failed",
+    "fallback_used_count": 0,
+    "reclassified_count": 3,
+    "ms": 102847,
+    "terminal_status": "done",
     "budget": {
-      "retrieval_budget_ms": null,
-      "retrieval_elapsed_ms": null,
-      "budget_exceeded": null,
-      "partial_retrieval_used": null,
+      "retrieval_budget_ms": 200000,
+      "retrieval_elapsed_ms": 53415,
+      "budget_exceeded": false,
+      "partial_retrieval_used": false,
       "disclosure_shown": false,
-      "aborted_tasks_count": null,
-      "ignored_late_tasks_count": null,
-      "body_acquisition_count": null,
-      "extraction_count": null,
-      "extraction_bytes": null,
-      "longest_retrieval_step": null,
-      "candidate_count_by_facet": null
+      "aborted_tasks_count": 0,
+      "ignored_late_tasks_count": 0,
+      "body_acquisition_count": 1,
+      "extraction_count": 0,
+      "extraction_bytes": 0,
+      "longest_retrieval_step": {
+        "ms": 6072,
+        "name": "perplexity_retrieval"
+      },
+      "candidate_count_by_facet": {
+        "unfaceted": 26
+      }
     }
   },
   {
@@ -254,16 +46,16 @@
     "used_sources_length": 3,
     "dangling": 0,
     "orphan": 0,
-    "uncertain_identity_count": 0,
+    "uncertain_identity_count": 2,
     "metadata_only_holdings": 0,
     "invariant_passed": true,
     "fallback_used_count": 0,
-    "reclassified_count": 0,
-    "ms": 91293,
+    "reclassified_count": 2,
+    "ms": 132040,
     "terminal_status": "done",
     "budget": {
       "retrieval_budget_ms": 90000,
-      "retrieval_elapsed_ms": 54740,
+      "retrieval_elapsed_ms": 52768,
       "budget_exceeded": false,
       "partial_retrieval_used": false,
       "disclosure_shown": false,
@@ -273,11 +65,83 @@
       "extraction_count": 0,
       "extraction_bytes": 0,
       "longest_retrieval_step": {
-        "ms": 1925,
+        "ms": 1625,
         "name": "local_retrieval"
       },
       "candidate_count_by_facet": {
-        "unfaceted": 11
+        "unfaceted": 14
+      }
+    }
+  },
+  {
+    "id": "P02",
+    "pass": true,
+    "failures": [],
+    "branch": "docket_limitation",
+    "footnotes_length": 0,
+    "used_sources_length": 0,
+    "dangling": 0,
+    "orphan": 0,
+    "uncertain_identity_count": 0,
+    "metadata_only_holdings": 0,
+    "invariant_passed": true,
+    "fallback_used_count": 0,
+    "reclassified_count": 0,
+    "ms": 121500,
+    "terminal_status": "done",
+    "budget": {
+      "retrieval_budget_ms": 90000,
+      "retrieval_elapsed_ms": 61653,
+      "budget_exceeded": false,
+      "partial_retrieval_used": false,
+      "disclosure_shown": false,
+      "aborted_tasks_count": 0,
+      "ignored_late_tasks_count": 0,
+      "body_acquisition_count": 1,
+      "extraction_count": 0,
+      "extraction_bytes": 0,
+      "longest_retrieval_step": {
+        "ms": 21862,
+        "name": "local_retrieval"
+      },
+      "candidate_count_by_facet": {
+        "unfaceted": 30
+      }
+    }
+  },
+  {
+    "id": "B8",
+    "pass": true,
+    "failures": [],
+    "branch": "canonical_quote_registry",
+    "footnotes_length": 1,
+    "used_sources_length": 1,
+    "dangling": 0,
+    "orphan": 0,
+    "uncertain_identity_count": 0,
+    "metadata_only_holdings": 0,
+    "invariant_passed": true,
+    "fallback_used_count": 0,
+    "reclassified_count": 0,
+    "ms": 81207,
+    "terminal_status": "done",
+    "budget": {
+      "retrieval_budget_ms": 200000,
+      "retrieval_elapsed_ms": 43916,
+      "budget_exceeded": false,
+      "partial_retrieval_used": false,
+      "disclosure_shown": false,
+      "aborted_tasks_count": 0,
+      "ignored_late_tasks_count": 0,
+      "body_acquisition_count": 1,
+      "extraction_count": 1,
+      "extraction_bytes": 42066,
+      "longest_retrieval_step": {
+        "ms": 5285,
+        "name": "perplexity_retrieval"
+      },
+      "candidate_count_by_facet": {
+        "unfaceted": 13
       }
     }
   }

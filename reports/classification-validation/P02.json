@@ -1,49 +1,41 @@
 {
   "id": "P02",
-  "classification_changed": [
-    {
-      "title": "ע\"א 8954-11 - פלוני נ. פלוני",
-      "before": "judgment",
-      "after": "commentary",
-      "reason": "uncertain_judgment_identity_prefer_commentary"
+  "retrieval_budget": {
+    "retrieval_budget_ms": 90000,
+    "retrieval_elapsed_ms": 61653,
+    "budget_exceeded": false,
+    "partial_retrieval_used": false,
+    "disclosure_shown": false,
+    "aborted_tasks_count": 0,
+    "ignored_late_tasks_count": 0,
+    "body_acquisition_count": 1,
+    "extraction_count": 0,
+    "extraction_bytes": 0,
+    "longest_retrieval_step": {
+      "ms": 21862,
+      "name": "local_retrieval"
     },
-    {
-      "title": "ע\"א 409-13 - שידורי קשת בע\"מ נ. שמעון קופר",
-      "before": "judgment",
-      "after": "commentary",
-      "reason": "uncertain_judgment_identity_prefer_commentary"
+    "candidate_count_by_facet": {
+      "unfaceted": 30
     }
-  ],
+  },
+  "classification_changed": [],
   "classification_rows": [
     {
-      "title": "עקרון התקדים המחייב בדין הישראלי",
-      "classification_before": "commentary",
-      "classification_after": "commentary",
+      "title": "לוי נ' מדינת ישראל - פסקדין",
+      "classification_before": "judgment",
+      "classification_after": "judgment",
       "judgment_identity_signals": [
         "judgment_mirror_host",
-        "court_vocabulary",
-        "upstream_case_type"
-      ],
-      "commentary_identity_signals": [],
-      "uncertain_identity": true,
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-      "url": "https://www.psakdin.co.il/Court/%D7%9C%D7%95%D7%99-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C_23"
-    },
-    {
-      "title": "מדינת ישראל נ' לוי - פסקדין",
-      "classification_before": "commentary",
-      "classification_after": "commentary",
-      "judgment_identity_signals": [
-        "judgment_mirror_host",
-        "case_prefix",
         "party_names",
         "court_vocabulary",
+        "judgment_form_body",
         "upstream_case_type"
       ],
       "commentary_identity_signals": [],
-      "uncertain_identity": true,
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-      "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'-%D7%9C%D7%95%D7%99_83?IsMobile=false"
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.psakdin.co.il/Court/%D7%9C%D7%95%D7%99-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C_23"
     },
     {
       "title": "ע\"א 4628/93 הלכת אפרופים",
@@ -61,59 +53,43 @@
       "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4"
     },
     {
-      "title": "ע\"א 8954-11 - פלוני נ. פלוני",
+      "title": "ע\"פ 7516/20 עזרא פלק נ׳ מדינת ישראל פסק דין (16.11.2020)",
       "classification_before": "judgment",
-      "classification_after": "commentary",
+      "classification_after": "judgment",
       "judgment_identity_signals": [
-        "official_judgment_endpoint",
+        "docket_in_text",
+        "case_prefix",
+        "party_names",
+        "court_vocabulary",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.toledano.co.il/%d7%a2%d7%a4-7516-20-%d7%a2%d7%96%d7%a8%d7%90-%d7%a4%d7%9c%d7%a7-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
+    },
+    {
+      "title": "רע\"פ 4561/20 גלעד הולי אור נ׳ מדינת ישראל החלטה (15.07.2020)",
+      "classification_before": "judgment",
+      "classification_after": "judgment",
+      "judgment_identity_signals": [
+        "docket_in_text",
         "case_prefix",
         "party_names",
         "upstream_case_type"
       ],
       "commentary_identity_signals": [],
-      "uncertain_identity": true,
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/3&fileName=SV3_12_8954-11.pdf&type=2"
-    },
-    {
-      "title": "ע\"א 409-13 - שידורי קשת בע\"מ נ. שמעון קופר",
-      "classification_before": "judgment",
-      "classification_after": "commentary",
-      "judgment_identity_signals": [
-        "official_judgment_endpoint",
-        "case_prefix",
-        "party_names",
-        "upstream_case_type"
-      ],
-      "commentary_identity_signals": [],
-      "uncertain_identity": true,
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_4_409-13.pdf&type=2"
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-4561-20-%d7%92%d7%9c%d7%a2%d7%93-%d7%94%d7%95%d7%9c%d7%99-%d7%90%d7%95%d7%a8-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
     }
   ],
-  "uncertain_identity_count": 4,
-  "downgrades": [
-    {
-      "title": "עקרון התקדים המחייב בדין הישראלי",
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
-    },
-    {
-      "title": "מדינת ישראל נ' לוי - פסקדין",
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
-    },
-    {
-      "title": "ע\"א 8954-11 - פלוני נ. פלוני",
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
-    },
-    {
-      "title": "ע\"א 409-13 - שידורי קשת בע\"מ נ. שמעון קופר",
-      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
-    }
-  ],
+  "uncertain_identity_count": 0,
+  "downgrades": [],
   "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
-  "job_id": "5a91948e-114e-4c16-ab4d-56c3e5405063",
-  "run_id": "0fcb60f2-6e5b-4798-80c8-67d0a126d3b8",
-  "ms": 121173,
+  "job_id": "ae6ca6fa-5975-4b7d-947a-3f39f4944e3c",
+  "run_id": "753fe9ed-27c2-4dcb-bfce-3546dd3737f3",
+  "ms": 121500,
   "terminal_status": "done",
   "job_error": null,
   "branch": "docket_limitation",
@@ -131,46 +107,18 @@
       {
         "ref": "s1",
         "url": "https://www.psakdin.co.il/Court/%D7%9C%D7%95%D7%99-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C_23",
-        "title": "עקרון התקדים המחייב בדין הישראלי",
-        "raw_title": "עקרון התקדים המחייב בדין הישראלי",
-        "candidate_id": "54ee8b47-c7f5-429e-a468-525ae7ef6478",
+        "title": "לוי נ' מדינת ישראל - פסקדין",
+        "raw_title": "לוי נ' מדינת ישראל - פסקדין",
+        "candidate_id": "f98dd171-029a-4ffe-ae05-351c1ca8e49f",
         "title_status": "ok",
         "fallback_used": "none",
-        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "downgrade_reason": null,
         "fallback_applied": false,
         "fallback_candidate": null,
-        "uncertain_identity": true,
-        "classification_after": "commentary",
+        "uncertain_identity": false,
+        "classification_after": "judgment",
         "title_hygiene_action": "kept",
-        "classification_before": "commentary",
-        "classification_reason": null,
-        "title_hygiene_reasons": [],
-        "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "judgment_mirror_host",
-          "court_vocabulary",
-          "upstream_case_type"
-        ],
-        "classification_rerun_reason": null,
-        "commentary_identity_signals": [],
-        "fallback_improvement_reason": null
-      },
-      {
-        "ref": "s2",
-        "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'-%D7%9C%D7%95%D7%99_83?IsMobile=false",
-        "title": "מדינת ישראל נ' לוי - פסקדין",
-        "raw_title": "מדינת ישראל נ' לוי - פסקדין",
-        "candidate_id": "13a5ed83-c691-406a-9186-47a419a9f2b7",
-        "title_status": "ok",
-        "fallback_used": "none",
-        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
-        "fallback_applied": false,
-        "fallback_candidate": null,
-        "uncertain_identity": true,
-        "classification_after": "commentary",
-        "title_hygiene_action": "kept",
-        "classification_before": "commentary",
+        "classification_before": "judgment",
         "classification_reason": null,
         "title_hygiene_reasons": [
           "legal_title_protected"
@@ -179,9 +127,9 @@
         "fallback_rejected_reason": null,
         "judgment_identity_signals": [
           "judgment_mirror_host",
-          "case_prefix",
           "party_names",
           "court_vocabulary",
+          "judgment_form_body",
           "upstream_case_type"
         ],
         "classification_rerun_reason": null,
@@ -189,11 +137,11 @@
         "fallback_improvement_reason": null
       },
       {
-        "ref": "s3",
+        "ref": "s2",
         "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
         "title": "ע\"א 4628/93 הלכת אפרופים",
         "raw_title": "ע\"א 4628/93 הלכת אפרופים",
-        "candidate_id": "1de19d78-6284-4840-8497-09fd6800a718",
+        "candidate_id": "9cbdfed5-15fd-4b43-b03c-dcdefb575778",
         "title_status": "ok",
         "fallback_used": "none",
         "downgrade_reason": null,
@@ -220,28 +168,31 @@
         "fallback_improvement_reason": null
       },
       {
-        "ref": "s4",
-        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/3&fileName=SV3_12_8954-11.pdf&type=2",
-        "title": "ע\"א 8954-11 - פלוני נ. פלוני",
-        "raw_title": "ע\"א 8954-11 - פלוני נ. פלוני",
-        "candidate_id": "be32fb1a-ce8e-4260-a02d-5a67f77f19e6",
+        "ref": "s3",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a4-7516-20-%d7%a2%d7%96%d7%a8%d7%90-%d7%a4%d7%9c%d7%a7-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e%d7%99%d7%95%d7%9d/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"פ 7516/20 עזרא פלק נ׳ מדינת ישראל פסק דין (16.11.2020)",
+        "raw_title": "ע\"פ 7516/20 עזרא פלק נ׳ מדינת ישראל פסק דין (16.11.2020)",
+        "candidate_id": "88474a5d-4bc5-43c2-b604-82f242d23da4",
         "title_status": "ok",
         "fallback_used": "none",
-        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "downgrade_reason": null,
         "fallback_applied": false,
         "fallback_candidate": null,
-        "uncertain_identity": true,
-        "classification_after": "commentary",
+        "uncertain_identity": false,
+        "classification_after": "judgment",
         "title_hygiene_action": "kept",
         "classification_before": "judgment",
-        "classification_reason": "uncertain_judgment_identity_prefer_commentary",
-        "title_hygiene_reasons": [],
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
         "classification_cache_hit": true,
         "fallback_rejected_reason": null,
         "judgment_identity_signals": [
-          "official_judgment_endpoint",
+          "docket_in_text",
           "case_prefix",
           "party_names",
+          "court_vocabulary",
           "upstream_case_type"
         ],
         "classification_rerun_reason": null,
@@ -249,28 +200,28 @@
         "fallback_improvement_reason": null
       },
       {
-        "ref": "s5",
-        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_4_409-13.pdf&type=2",
-        "title": "ע\"א 409-13 - שידורי קשת בע\"מ נ. שמעון קופר",
-        "raw_title": "ע\"א 409-13 - שידורי קשת בע\"מ נ. שמעון קופר",
-        "candidate_id": "7bd97f61-7f55-42f8-9e9a-49a8af1a9036",
+        "ref": "s4",
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-4561-20-%d7%92%d7%9c%d7%a2%d7%93-%d7%94%d7%95%d7%9c%d7%99-%d7%90%d7%95%d7%a8-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"פ 4561/20 גלעד הולי אור נ׳ מדינת ישראל החלטה (15.07.2020)",
+        "raw_title": "רע\"פ 4561/20 גלעד הולי אור נ׳ מדינת ישראל החלטה (15.07.2020)",
+        "candidate_id": "9079fac3-10dd-473f-aab8-a2b27049856a",
         "title_status": "ok",
         "fallback_used": "none",
-        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "downgrade_reason": null,
         "fallback_applied": false,
-        "fallback_candidate": "מסמך מאתר אתר ממשלתי (gov.il)",
-        "uncertain_identity": true,
-        "classification_after": "commentary",
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "judgment",
         "title_hygiene_action": "kept",
         "classification_before": "judgment",
-        "classification_reason": "uncertain_judgment_identity_prefer_commentary",
+        "classification_reason": null,
         "title_hygiene_reasons": [
-          "title_truncated_mid_word"
+          "legal_title_protected"
         ],
         "classification_cache_hit": true,
-        "fallback_rejected_reason": "fallback_not_more_informative(host:1<=raw:3)",
+        "fallback_rejected_reason": null,
         "judgment_identity_signals": [
-          "official_judgment_endpoint",
+          "docket_in_text",
           "case_prefix",
           "party_names",
           "upstream_case_type"
@@ -280,8 +231,8 @@
         "fallback_improvement_reason": null
       }
     ],
-    "total": 5,
-    "reclassified_count": 2,
+    "total": 4,
+    "reclassified_count": 0,
     "fallback_used_count": 0,
     "classification_rerun_count": 0,
     "classification_rerun_reason": [],

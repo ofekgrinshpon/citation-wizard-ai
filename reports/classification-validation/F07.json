@@ -1,53 +1,848 @@
 {
   "id": "F07",
   "retrieval_budget": {
-    "retrieval_budget_ms": null,
-    "retrieval_elapsed_ms": null,
-    "budget_exceeded": null,
-    "partial_retrieval_used": null,
+    "retrieval_budget_ms": 200000,
+    "retrieval_elapsed_ms": 53415,
+    "budget_exceeded": false,
+    "partial_retrieval_used": false,
     "disclosure_shown": false,
-    "aborted_tasks_count": null,
-    "ignored_late_tasks_count": null,
-    "body_acquisition_count": null,
-    "extraction_count": null,
-    "extraction_bytes": null,
-    "longest_retrieval_step": null,
-    "candidate_count_by_facet": null
+    "aborted_tasks_count": 0,
+    "ignored_late_tasks_count": 0,
+    "body_acquisition_count": 1,
+    "extraction_count": 0,
+    "extraction_bytes": 0,
+    "longest_retrieval_step": {
+      "ms": 6072,
+      "name": "perplexity_retrieval"
+    },
+    "candidate_count_by_facet": {
+      "unfaceted": 26
+    }
   },
-  "classification_changed": [],
-  "classification_rows": [],
-  "uncertain_identity_count": 0,
-  "downgrades": [],
+  "classification_changed": [
+    {
+      "title": "בג״ץ/ע״א בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+      "before": "judgment",
+      "after": "commentary",
+      "reason": "uncertain_judgment_identity_prefer_commentary"
+    },
+    {
+      "title": "בג״ץ/פסקי דין מרכזיים בדוקטרינת המידתיות",
+      "before": "judgment",
+      "after": "commentary",
+      "reason": "uncertain_judgment_identity_prefer_commentary"
+    },
+    {
+      "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+      "before": "judgment",
+      "after": "commentary",
+      "reason": "uncertain_judgment_identity_prefer_commentary"
+    }
+  ],
+  "classification_rows": [
+    {
+      "title": "חוק-יסוד: כבוד האדם וחירותו",
+      "classification_before": "statute",
+      "classification_after": "statute",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.nevo.co.il/law_html/law00/70320.htm"
+    },
+    {
+      "title": "בג״ץ/ע״א בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+      "classification_before": "judgment",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "official_judgment_endpoint",
+        "party_names",
+        "court_vocabulary",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": true,
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4"
+    },
+    {
+      "title": "בג״ץ/פסקי דין מרכזיים בדוקטרינת המידתיות",
+      "classification_before": "judgment",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "official_judgment_endpoint",
+        "court_vocabulary",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": true,
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/v31&fileName=23056580.V31&type=2"
+    },
+    {
+      "title": "בג״ץ 8987/22",
+      "classification_before": "judgment",
+      "classification_after": "judgment",
+      "judgment_identity_signals": [
+        "docket_in_text",
+        "case_prefix",
+        "document_file",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision8987-22/he/%D7%A4%D7%A1%D7%93%208987-22.docx"
+    },
+    {
+      "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [
+        "commentary_snippet_shape",
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf"
+    },
+    {
+      "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [
+        "court_vocabulary"
+      ],
+      "commentary_identity_signals": [
+        "commentary_path",
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://lawjournal.huji.ac.il/article/12/1930"
+    },
+    {
+      "title": "Microsoft Word - Barak.doc",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf"
+    },
+    {
+      "title": "עקרון המידתיות במשפט העברי / אביעד הכהן",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.daat.ac.il/mishpat-ivri/skirot/342-2.htm"
+    },
+    {
+      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [
+        "document_file",
+        "court_vocabulary"
+      ],
+      "commentary_identity_signals": [
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf"
+    },
+    {
+      "title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [
+        "party_names",
+        "document_file"
+      ],
+      "commentary_identity_signals": [
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_3.pdf"
+    },
+    {
+      "title": "אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו)",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [
+        "commentary_snippet_shape",
+        "upstream_scholarship_type",
+        "scholarship_shape"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://runilawreview.org/2012/11/26/volume15_barak/"
+    },
+    {
+      "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+      "classification_before": "judgment",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "official_judgment_endpoint",
+        "case_prefix",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": true,
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2"
+    },
+    {
+      "title": "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [],
+      "commentary_identity_signals": [
+        "commentary_path",
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://lawjournal.huji.ac.il/index.php/article/12/1307"
+    },
+    {
+      "title": "בג\"ץ 6732/20 האגודה לזכויות האזרח בישראל נ׳ הכנסת פסק דין (01.03.2021)",
+      "classification_before": "commentary",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "docket_in_text",
+        "case_prefix",
+        "party_names",
+        "court_vocabulary",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [
+        "commentary_snippet_shape"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": "commentary_identity:commentary_snippet_shape",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-6732-20-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%94%d7%9b/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
+    }
+  ],
+  "uncertain_identity_count": 3,
+  "downgrades": [
+    {
+      "title": "בג״ץ/ע״א בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
+    },
+    {
+      "title": "בג״ץ/פסקי דין מרכזיים בדוקטרינת המידתיות",
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
+    },
+    {
+      "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
+    },
+    {
+      "title": "בג\"ץ 6732/20 האגודה לזכויות האזרח בישראל נ׳ הכנסת פסק דין (01.03.2021)",
+      "downgrade_reason": "commentary_identity:commentary_snippet_shape"
+    }
+  ],
   "query": "מהם מבחני המידתיות בביקורת חוקתית בישראל?",
-  "job_id": "9292bb4a-dd24-4970-b0cd-858ef21e4baa",
-  "run_id": "2d3a1233-7a06-4b8e-b340-1ed05b803e1a",
-  "ms": 827223,
-  "terminal_status": "failed",
-  "job_error": "stale_worker_timeout",
+  "job_id": "9ef832e0-592b-4074-981c-ebce3b3cdafa",
+  "run_id": "14cf7e81-bfe1-431b-a172-525a803ea709",
+  "ms": 102847,
+  "terminal_status": "done",
+  "job_error": null,
   "branch": null,
-  "answer_length": 0,
-  "inline_marker_count": 0,
-  "max_marker": 0,
-  "footnotes_length": 0,
-  "used_sources_length": 0,
+  "answer_length": 2668,
+  "inline_marker_count": 9,
+  "max_marker": 9,
+  "footnotes_length": 9,
+  "used_sources_length": 8,
   "dangling_marker_count": 0,
   "orphan_source_row_count": 0,
   "invariant_passed": true,
-  "rendered_rows": [],
-  "label_report": null,
-  "filename_titles": [],
+  "rendered_rows": [
+    {
+      "number": 1,
+      "title": "חוק-יסוד: כבוד האדם וחירותו; בג״ץ/ע״א בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+      "citable_as": null,
+      "sub_titles": [
+        "חוק-יסוד: כבוד האדם וחירותו",
+        "בג״ץ/ע״א בנק המזרחי המאוחד נ' מגדל כפר שיתופי"
+      ]
+    },
+    {
+      "number": 2,
+      "title": "חוק-יסוד: כבוד האדם וחירותו; בג״ץ/פסקי דין מרכזיים בדוקטרינת המידתיות",
+      "citable_as": null,
+      "sub_titles": [
+        "חוק-יסוד: כבוד האדם וחירותו",
+        "בג״ץ/פסקי דין מרכזיים בדוקטרינת המידתיות"
+      ]
+    },
+    {
+      "number": 3,
+      "title": "חוק-יסוד: כבוד האדם וחירותו; בג\"ץ 6732/20 האגודה לזכויות האזרח בישראל נ׳ הכנסת פסק דין (01.03.2021); בג״ץ/פסקי דין מרכזיים בדוקטרינת המידתיות",
+      "citable_as": null,
+      "sub_titles": [
+        "חוק-יסוד: כבוד האדם וחירותו",
+        "בג\"ץ 6732/20 האגודה לזכויות האזרח בישראל נ׳ הכנסת פסק דין (01.03.2021)",
+        "בג״ץ/פסקי דין מרכזיים בדוקטרינת המידתיות"
+      ]
+    },
+    {
+      "number": 4,
+      "title": "בג\"ץ 6732/20 האגודה לזכויות האזרח בישראל נ׳ הכנסת פסק דין (01.03.2021); בג״ץ/פסקי דין מרכזיים בדוקטרינת המידתיות",
+      "citable_as": null,
+      "sub_titles": [
+        "בג\"ץ 6732/20 האגודה לזכויות האזרח בישראל נ׳ הכנסת פסק דין (01.03.2021)",
+        "בג״ץ/פסקי דין מרכזיים בדוקטרינת המידתיות"
+      ]
+    },
+    {
+      "number": 5,
+      "title": "בג״ץ/ע״א בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+      "citable_as": null,
+      "sub_titles": [
+        "בג״ץ/ע״א בנק המזרחי המאוחד נ' מגדל כפר שיתופי"
+      ]
+    },
+    {
+      "number": 6,
+      "title": "בג\"ץ 6732/20 האגודה לזכויות האזרח בישראל נ׳ הכנסת פסק דין (01.03.2021)",
+      "citable_as": null,
+      "sub_titles": [
+        "בג\"ץ 6732/20 האגודה לזכויות האזרח בישראל נ׳ הכנסת פסק דין (01.03.2021)"
+      ]
+    },
+    {
+      "number": 7,
+      "title": "בג״ץ/פסקי דין מרכזיים בדוקטרינת המידתיות",
+      "citable_as": null,
+      "sub_titles": [
+        "בג״ץ/פסקי דין מרכזיים בדוקטרינת המידתיות"
+      ]
+    },
+    {
+      "number": 8,
+      "title": "אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו); נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו); Microsoft Word - Barak.doc",
+      "citable_as": null,
+      "sub_titles": [
+        "אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו)",
+        "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "Microsoft Word - Barak.doc"
+      ]
+    },
+    {
+      "number": 9,
+      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו); אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו); המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+      "citable_as": null,
+      "sub_titles": [
+        "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו)",
+        "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות"
+      ]
+    }
+  ],
+  "label_report": {
+    "rows": [
+      {
+        "ref": "s1",
+        "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+        "title": "חוק-יסוד: כבוד האדם וחירותו",
+        "raw_title": "חוק-יסוד: כבוד האדם וחירותו",
+        "candidate_id": "cb0a89f9-b8cd-4669-aa82-49609a7864c8",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "statute",
+        "title_hygiene_action": "kept",
+        "classification_before": "statute",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s2",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4",
+        "title": "בג״ץ/ע״א בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+        "raw_title": "בג״ץ/ע״א בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+        "candidate_id": "39ed323f-a139-4eaf-8162-900973f5f893",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": true,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": "uncertain_judgment_identity_prefer_commentary",
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "official_judgment_endpoint",
+          "party_names",
+          "court_vocabulary",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s3",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/v31&fileName=23056580.V31&type=2",
+        "title": "בג״ץ/פסקי דין מרכזיים בדוקטרינת המידתיות",
+        "raw_title": "בג״ץ/פסקי דין מרכזיים בדוקטרינת המידתיות",
+        "candidate_id": "326112de-f597-4e8b-a782-eb373fbb5e77",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": true,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": "uncertain_judgment_identity_prefer_commentary",
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "official_judgment_endpoint",
+          "court_vocabulary",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s4",
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision8987-22/he/%D7%A4%D7%A1%D7%93%208987-22.docx",
+        "title": "בג״ץ 8987/22",
+        "raw_title": "בג״ץ 8987/22",
+        "candidate_id": "449b2a2a-fb4f-4033-a341-54ebb397889d",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "judgment",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "docket_in_text",
+          "case_prefix",
+          "document_file",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s5",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+        "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+        "raw_title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+        "candidate_id": "be4feabd-0f9c-49cf-b7ab-3f27fcb79434",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_snippet_shape",
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s6",
+        "url": "https://lawjournal.huji.ac.il/article/12/1930",
+        "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+        "raw_title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+        "candidate_id": "c4db4dd4-8ea2-4ade-8db3-ce6c004cb6ff",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "court_vocabulary"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_path",
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s7",
+        "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
+        "title": "Microsoft Word - Barak.doc",
+        "raw_title": "Microsoft Word - Barak.doc",
+        "candidate_id": "d4c4e7e0-c019-4ff2-8e91-c8e01e892902",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s8",
+        "url": "https://www.daat.ac.il/mishpat-ivri/skirot/342-2.htm",
+        "title": "עקרון המידתיות במשפט העברי / אביעד הכהן",
+        "raw_title": "עקרון המידתיות במשפט העברי / אביעד הכהן",
+        "candidate_id": "c2891849-63c1-468e-987f-d4537e8f443e",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s9",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "raw_title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "candidate_id": "db4228e0-d3f2-4fb9-9581-a5b78a8846ef",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "document_file",
+          "court_vocabulary"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s10",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/j1_3.pdf",
+        "title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+        "raw_title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+        "candidate_id": "900521df-d813-458a-aba6-5487a3106777",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "party_names",
+          "document_file"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s11",
+        "url": "https://runilawreview.org/2012/11/26/volume15_barak/",
+        "title": "אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו)",
+        "raw_title": "אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו)",
+        "candidate_id": "7fe8252b-adbf-481b-9633-4de539283b57",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_snippet_shape",
+          "upstream_scholarship_type",
+          "scholarship_shape"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s12",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2",
+        "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+        "raw_title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+        "candidate_id": "509398e3-4731-47ec-b348-feb77a6a0e23",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": true,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": "uncertain_judgment_identity_prefer_commentary",
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "official_judgment_endpoint",
+          "case_prefix",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s13",
+        "url": "https://lawjournal.huji.ac.il/index.php/article/12/1307",
+        "title": "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+        "raw_title": "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+        "candidate_id": "8156dad4-81a6-4bb3-ad25-fcb6ff047a47",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": null,
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "scholarship",
+        "title_hygiene_action": "kept",
+        "classification_before": "scholarship",
+        "classification_reason": null,
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_path",
+          "upstream_scholarship_type"
+        ],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s14",
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-6732-20-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%94%d7%9b/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 6732/20 האגודה לזכויות האזרח בישראל נ׳ הכנסת פסק דין (01.03.2021)",
+        "raw_title": "בג\"ץ 6732/20 האגודה לזכויות האזרח בישראל נ׳ הכנסת פסק דין (01.03.2021)",
+        "candidate_id": "e67c0333-b186-45fe-85b5-483a8fa11b91",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "commentary_identity:commentary_snippet_shape",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": false,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "commentary",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "docket_in_text",
+          "case_prefix",
+          "party_names",
+          "court_vocabulary",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [
+          "commentary_snippet_shape"
+        ],
+        "fallback_improvement_reason": null
+      }
+    ],
+    "total": 14,
+    "reclassified_count": 3,
+    "fallback_used_count": 0,
+    "classification_rerun_count": 0,
+    "classification_rerun_reason": [],
+    "classification_cache_hit_count": 16,
+    "source_label_cpu_guard_applied": true
+  },
+  "filename_titles": [
+    "אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו); נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו); Microsoft Word - Barak.doc",
+    "Microsoft Word - Barak.doc"
+  ],
   "bare_institution_titles": [],
   "ocr_duplicate_pairs": [],
   "scholarship_as_statute": [],
   "commentary_as_judgment": [],
   "metadata_only_holdings": 0,
-  "used_sources": [],
-  "footnote_render_report": null,
+  "used_sources": [
+    {
+      "number": 1,
+      "title": "חוק-יסוד: כבוד האדם וחירותו",
+      "citable_as": "statute",
+      "text_usability": "metadata_only",
+      "url": "https://www.nevo.co.il/law_html/law00/70320.htm"
+    },
+    {
+      "number": 1,
+      "title": "בג״ץ/ע״א בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_9_2605-05.pdf&type=4"
+    },
+    {
+      "number": 2,
+      "title": "בג״ץ/פסקי דין מרכזיים בדוקטרינת המידתיות",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/v31&fileName=23056580.V31&type=2"
+    },
+    {
+      "number": 3,
+      "title": "בג\"ץ 6732/20 האגודה לזכויות האזרח בישראל נ׳ הכנסת פסק דין (01.03.2021)",
+      "citable_as": "commentary",
+      "text_usability": "substantive_excerpt",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-6732-20-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%94%d7%9b/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
+    },
+    {
+      "number": 8,
+      "title": "אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו)",
+      "citable_as": "scholarship",
+      "text_usability": "substantive_excerpt",
+      "url": "https://runilawreview.org/2012/11/26/volume15_barak/"
+    },
+    {
+      "number": 8,
+      "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+      "citable_as": "scholarship",
+      "text_usability": "full_text",
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf"
+    },
+    {
+      "number": 8,
+      "title": "Microsoft Word - Barak.doc",
+      "citable_as": "commentary",
+      "text_usability": "metadata_only",
+      "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf"
+    },
+    {
+      "number": 9,
+      "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+      "citable_as": "scholarship",
+      "text_usability": "full_text",
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf"
+    }
+  ],
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 9,
+    "invariant_passed": true,
+    "inline_marker_count": 9,
+    "used_sources_length": 8,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
   "pass": false,
   "failures": [
-    "no_terminal_qa_row",
-    "empty_answer_body",
-    "cpu_kill"
+    "raw_filename_visible"
   ],
-  "answer": ""
+  "answer": "- שורה תחתונה: עיקרון המידתיות הוא לב פסקת ההגבלה שבסעיף 8 לחוק‑יסוד: כבוד האדם וחירותו — הוא קובע כי פגיעה בזכויות מותרת רק בחוק ההולם את ערכיה של מדינת ישראל, שנועדה לתכלית ראויה ובמידה שאינה עולה על הנדרש, ומשמש כלי לביקורת שיפוטית על פעולות המחוקק והממשלה.¹\n- תצורת המבחן: במקורות שאותרו דוהרת תצורה תלת‑שלבית שמזוהה במרבית הדיונים המשפטיים — שלבי התאמה (suitability), נחיצות/הפשרה הקטנה ביותר (necessity/least restrictive means) ומידתיות במובן הצר (איזון בין תועלת לנזק) — אך ניסוח והדגשים משתנים בפסיקה ובספרות.²\n- התאמה (suitability): שלב זה בוחן האם האמצעי החוקתי יכול לקדם את התכלית המוצהרת; בבג״צים החשובים ראו התייחסות לדרישה שברור וקיים יישור סיבתי בין האמצעי לתכלית ולעתים נבחן במונחים של הגיוניות התכלית ביחס לאמצעי.⁴\n- נחיצות וחלופה פחות פוגענית: בית המשפט בוחן האם קיימת חלופה חלשה‑פוגענית יותר שעדיין משיגה את התכלית; דרישת ה'הפעלת המינימליזם' הזו נגזרת גם מלשון סעיף 8 ומוזכרת בפסיקה המכרעת על מידתיות.³\n- מידתיות במובן הצר (איזון): השלב התוצאתי משקלל את תועלת האמצעי מול הפגיעה בזכויות — מבחן תוצאתי זה פורט והובהר בכתביהם של מבקרי ועלי דיינים (בכלל זה פירושו של אהרן ברק למידתיות) ובפסיקה שניסתה לכמת את ה'נזק' לעומת ה'תועלת'.⁷\n- ווריאציות דוקטרינליות: בפסיקה ובספרות מופיעות נוסחאות שונות — גישת פרופורציונליות מובנית שמיוחסת לאהרן ברק, גישות המדברות בעוצמת ביקורת שיפוטית משתנה (margin of appreciation / מרווח הערכה), וכן ניסוחים דקים המבדילים בין מבחן מידתיות לבין דוקטרינות כמו סבירות מנהלית; הדיון בהבדלים אלה מתועד בספרות המחקרית הישראלית.⁸\n- יישום מעשי — נטל ההוכחה ועוצמת הביקורת: בבתי המשפט המחייבים את פסקת ההגבלה נטל ההוכחה להשִׂיג את הצדקת המגבלה מוטל ברוב המקרים על העותר/המטיל את השאלה על החוק (והרשות המוציאה היא שצריכה להציג את התכלית וההתאמה), והשיפוט נע בין ביקורת קפדנית בזכויות מרכזיות לבין רועי deferential במצבים המעריכים מומחיות ממשלתית.⁵\n- נסיבות מיוחדות — ביטחון וחירום, ואוכלוסיות מוחלשות: במצבי ביטחון, חירום או כאשר השיקול נוגע לפעולות טכניות־מומחיות, ניכרת נטייה במקורות להקטין את עוצמת הביקורת ולתת מרווח הערכה רחב יותר לרשות; פסיקה העוסקת באסירים והגבולות על השתלבות תנאי ההגבלה מדגימה את המתח הזה.⁶\n- ביקורת תאורטית והצעות רפורמה: בספרות ובמאמרים נעשות ביקורות על המבחן — טענות לגבי פוטנציאל ל'שיפוטיות יתר', בעיות בהיררכיית זכויות והצעות אלטרנטיביות (באמצעות דגשים על עקרון השוויון, סבירות מנהלית או נוסחים בהירים יותר לעומק הבדיקה); הכותבים מציעים גם הבהרות פרוצדורליות ושיפור העיגון החוקי, אך במקורות שאותרו יש שונות בגישות ובמסקנות.⁹\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- בג״ץ 8987/22 — https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision8987-22/he/%D7%A4%D7%A1%D7%93%208987-22.docx"
 }

@@ -2,7 +2,7 @@
   "id": "R02",
   "retrieval_budget": {
     "retrieval_budget_ms": 90000,
-    "retrieval_elapsed_ms": 54740,
+    "retrieval_elapsed_ms": 52768,
     "budget_exceeded": false,
     "partial_retrieval_used": false,
     "disclosure_shown": false,
@@ -12,14 +12,27 @@
     "extraction_count": 0,
     "extraction_bytes": 0,
     "longest_retrieval_step": {
-      "ms": 1925,
+      "ms": 1625,
       "name": "local_retrieval"
     },
     "candidate_count_by_facet": {
-      "unfaceted": 11
+      "unfaceted": 14
     }
   },
-  "classification_changed": [],
+  "classification_changed": [
+    {
+      "title": "בש\"פ 7052-05 - אברהם ביטון נ. מדינת ישראל",
+      "before": "judgment",
+      "after": "commentary",
+      "reason": "uncertain_judgment_identity_prefer_commentary"
+    },
+    {
+      "title": "בג\"ץ 466-07 - ח\"כ זהבה גלאון-יו\"ר סיעת מר\"צ-יחד נ. היועץ המשפטי לממשלה",
+      "before": "judgment",
+      "after": "commentary",
+      "reason": "uncertain_judgment_identity_prefer_commentary"
+    }
+  ],
   "classification_rows": [
     {
       "title": "ע\"א 6821/93",
@@ -37,52 +50,82 @@
       "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=EnglishVerdicts/93/210/068/Z01&type=4"
     },
     {
-      "title": "תנאי מקפח בחוזה בנקאי – הערכה שיפוטית (בעקבות ע”ש (י-ם) 195/97 היועץ המשפטי לממשלה נ’ בנק לאומי) | ריקרדו בן אוליאל (כרך ב)",
-      "classification_before": "scholarship",
-      "classification_after": "scholarship",
+      "title": "בש\"פ 7052-05 - אברהם ביטון נ. מדינת ישראל",
+      "classification_before": "judgment",
+      "classification_after": "commentary",
       "judgment_identity_signals": [
-        "document_file",
-        "court_vocabulary"
+        "official_judgment_endpoint",
+        "case_prefix",
+        "upstream_case_type"
       ],
-      "commentary_identity_signals": [
-        "commentary_title_shape",
-        "upstream_scholarship_type"
-      ],
-      "uncertain_identity": false,
-      "downgrade_reason": null,
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/b2_9.pdf"
+      "commentary_identity_signals": [],
+      "uncertain_identity": true,
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/2&fileName=SA2_3_7052-03.pdf&type=2"
     },
     {
-      "title": "שטר ביטחון וזיכוי חשבון בנק כמתן ערך בשטרות: ע״א 83/665 בנק לאומי לישראל בע\"מ נ׳ אליהו בן עליזה",
+      "title": "אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו)",
       "classification_before": "scholarship",
       "classification_after": "scholarship",
-      "judgment_identity_signals": [
-        "docket_in_text",
-        "case_prefix",
-        "party_names"
-      ],
+      "judgment_identity_signals": [],
       "commentary_identity_signals": [
         "commentary_snippet_shape",
-        "commentary_path",
         "upstream_scholarship_type",
         "scholarship_shape"
       ],
       "uncertain_identity": false,
       "downgrade_reason": null,
-      "url": "https://lawjournal.huji.ac.il/article/12/975"
+      "url": "https://runilawreview.org/2012/11/26/volume15_barak/"
+    },
+    {
+      "title": "בג\"ץ 466-07 - ח\"כ זהבה גלאון-יו\"ר סיעת מר\"צ-יחד נ. היועץ המשפטי לממשלה",
+      "classification_before": "judgment",
+      "classification_after": "commentary",
+      "judgment_identity_signals": [
+        "official_judgment_endpoint",
+        "case_prefix",
+        "upstream_case_type"
+      ],
+      "commentary_identity_signals": [],
+      "uncertain_identity": true,
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/2&fileName=SH2_1_466-07.pdf&type=2"
+    },
+    {
+      "title": "כיבוד האדם והמשפט החוקתי בישראל",
+      "classification_before": "scholarship",
+      "classification_after": "scholarship",
+      "judgment_identity_signals": [
+        "document_file"
+      ],
+      "commentary_identity_signals": [
+        "upstream_scholarship_type"
+      ],
+      "uncertain_identity": false,
+      "downgrade_reason": null,
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e2da55232b5b4276bf6fa40956c1e141.pdf"
     }
   ],
-  "uncertain_identity_count": 0,
-  "downgrades": [],
+  "uncertain_identity_count": 2,
+  "downgrades": [
+    {
+      "title": "בש\"פ 7052-05 - אברהם ביטון נ. מדינת ישראל",
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
+    },
+    {
+      "title": "בג\"ץ 466-07 - ח\"כ זהבה גלאון-יו\"ר סיעת מר\"צ-יחד נ. היועץ המשפטי לממשלה",
+      "downgrade_reason": "uncertain_judgment_identity_prefer_commentary"
+    }
+  ],
   "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
-  "job_id": "3517f251-19f1-4559-8fae-0ae5beabcfcd",
-  "run_id": "7998d7d4-b186-4197-bae5-d165efad1da8",
-  "ms": 91293,
+  "job_id": "6c81f1df-51e6-4a89-af04-544746b624d0",
+  "run_id": "ff00ee8f-8878-451d-b8a2-b9698fe2c6c0",
+  "ms": 132040,
   "terminal_status": "done",
   "job_error": null,
   "branch": null,
-  "answer_length": 1537,
-  "inline_marker_count": 6,
+  "answer_length": 892,
+  "inline_marker_count": 4,
   "max_marker": 2,
   "footnotes_length": 2,
   "used_sources_length": 3,
@@ -100,11 +143,11 @@
     },
     {
       "number": 2,
-      "title": "תנאי מקפח בחוזה בנקאי – הערכה שיפוטית (בעקבות ע”ש (י-ם) 195/97 היועץ המשפטי לממשלה נ’ בנק לאומי) | ריקרדו בן אוליאל (כרך ב); שטר ביטחון וזיכוי חשבון בנק כמתן ערך בשטרות: ע״א 83/665 בנק לאומי לישראל בע\"מ נ׳ אליהו בן עליזה",
+      "title": "כיבוד האדם והמשפט החוקתי בישראל; בש\"פ 7052-05 - אברהם ביטון נ. מדינת ישראל",
       "citable_as": null,
       "sub_titles": [
-        "תנאי מקפח בחוזה בנקאי – הערכה שיפוטית (בעקבות ע”ש (י-ם) 195/97 היועץ המשפטי לממשלה נ’ בנק לאומי) | ריקרדו בן אוליאל (כרך ב)",
-        "שטר ביטחון וזיכוי חשבון בנק כמתן ערך בשטרות: ע״א 83/665 בנק לאומי לישראל בע\"מ נ׳ אליהו בן עליזה"
+        "כיבוד האדם והמשפט החוקתי בישראל",
+        "בש\"פ 7052-05 - אברהם ביטון נ. מדינת ישראל"
       ]
     }
   ],
@@ -143,10 +186,40 @@
       },
       {
         "ref": "s2",
-        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/b2_9.pdf",
-        "title": "תנאי מקפח בחוזה בנקאי – הערכה שיפוטית (בעקבות ע”ש (י-ם) 195/97 היועץ המשפטי לממשלה נ’ בנק לאומי) | ריקרדו בן אוליאל (כרך ב)",
-        "raw_title": "תנאי מקפח בחוזה בנקאי – הערכה שיפוטית (בעקבות ע”ש (י-ם) 195/97 היועץ המשפטי לממשלה נ’ בנק לאומי) | ריקרדו בן אוליאל (כרך ב)",
-        "candidate_id": "2ec74190-1b12-4494-bd7c-92b58a6be2f5",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/2&fileName=SA2_3_7052-03.pdf&type=2",
+        "title": "בש\"פ 7052-05 - אברהם ביטון נ. מדינת ישראל",
+        "raw_title": "בש\"פ 7052-05 - אברהם ביטון נ. מדינת ישראל",
+        "candidate_id": "ca6956c2-be61-4add-8ab1-86659a33923b",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "fallback_applied": false,
+        "fallback_candidate": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "uncertain_identity": true,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": "uncertain_judgment_identity_prefer_commentary",
+        "title_hygiene_reasons": [
+          "title_truncated_mid_word"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": "fallback_not_more_informative(host:1<=raw:3)",
+        "judgment_identity_signals": [
+          "official_judgment_endpoint",
+          "case_prefix",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s3",
+        "url": "https://runilawreview.org/2012/11/26/volume15_barak/",
+        "title": "אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו)",
+        "raw_title": "אילוץ דאונטולוגי, תרבות ההצדקה ומחוקק היורה בתותח: תשובה למבקרים | אהרן ברק (כרך טו)",
+        "candidate_id": "acf904ee-418f-4c4e-a5e4-eb5beb72dee7",
         "title_status": "ok",
         "fallback_used": "none",
         "downgrade_reason": null,
@@ -160,59 +233,80 @@
         "title_hygiene_reasons": [],
         "classification_cache_hit": true,
         "fallback_rejected_reason": null,
-        "judgment_identity_signals": [
-          "document_file",
-          "court_vocabulary"
-        ],
+        "judgment_identity_signals": [],
         "classification_rerun_reason": null,
         "commentary_identity_signals": [
-          "commentary_title_shape",
-          "upstream_scholarship_type"
+          "commentary_snippet_shape",
+          "upstream_scholarship_type",
+          "scholarship_shape"
         ],
         "fallback_improvement_reason": null
       },
       {
-        "ref": "s3",
-        "url": "https://lawjournal.huji.ac.il/article/12/975",
-        "title": "שטר ביטחון וזיכוי חשבון בנק כמתן ערך בשטרות: ע״א 83/665 בנק לאומי לישראל בע\"מ נ׳ אליהו בן עליזה",
-        "raw_title": "שטר ביטחון וזיכוי חשבון בנק כמתן ערך בשטרות: ע״א 83/665 בנק לאומי לישראל בע\"מ נ׳ אליהו בן עליזה",
-        "candidate_id": "9d54d66e-ac2d-43d8-b6a3-d51ce1e29450",
+        "ref": "s4",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/65/2&fileName=SH2_1_466-07.pdf&type=2",
+        "title": "בג\"ץ 466-07 - ח\"כ זהבה גלאון-יו\"ר סיעת מר\"צ-יחד נ. היועץ המשפטי לממשלה",
+        "raw_title": "בג\"ץ 466-07 - ח\"כ זהבה גלאון-יו\"ר סיעת מר\"צ-יחד נ. היועץ המשפטי לממשלה",
+        "candidate_id": "3f0f8318-be39-479b-84db-a498fda4ea96",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "downgrade_reason": "uncertain_judgment_identity_prefer_commentary",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "uncertain_identity": true,
+        "classification_after": "commentary",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": "uncertain_judgment_identity_prefer_commentary",
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "judgment_identity_signals": [
+          "official_judgment_endpoint",
+          "case_prefix",
+          "upstream_case_type"
+        ],
+        "classification_rerun_reason": null,
+        "commentary_identity_signals": [],
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s5",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e2da55232b5b4276bf6fa40956c1e141.pdf",
+        "title": "כיבוד האדם והמשפט החוקתי בישראל",
+        "raw_title": "כיבוד האדם והמשפט החוקתי בישראל",
+        "candidate_id": "fb61c44e-118e-42a0-a64e-fb0ea293a864",
         "title_status": "ok",
         "fallback_used": "none",
         "downgrade_reason": null,
         "fallback_applied": false,
-        "fallback_candidate": null,
+        "fallback_candidate": "מסמך מאתר אתר אקדמי (taulawreview.sites.tau.ac.il)",
         "uncertain_identity": false,
         "classification_after": "scholarship",
         "title_hygiene_action": "kept",
         "classification_before": "scholarship",
         "classification_reason": null,
         "title_hygiene_reasons": [
-          "legal_title_protected"
+          "title_truncated_mid_word"
         ],
         "classification_cache_hit": true,
-        "fallback_rejected_reason": null,
+        "fallback_rejected_reason": "fallback_not_more_informative(host:1<=raw:3)",
         "judgment_identity_signals": [
-          "docket_in_text",
-          "case_prefix",
-          "party_names"
+          "document_file"
         ],
         "classification_rerun_reason": null,
         "commentary_identity_signals": [
-          "commentary_snippet_shape",
-          "commentary_path",
-          "upstream_scholarship_type",
-          "scholarship_shape"
+          "upstream_scholarship_type"
         ],
         "fallback_improvement_reason": null
       }
     ],
-    "total": 3,
-    "reclassified_count": 0,
+    "total": 5,
+    "reclassified_count": 2,
     "fallback_used_count": 0,
     "classification_rerun_count": 0,
     "classification_rerun_reason": [],
-    "classification_cache_hit_count": 3,
+    "classification_cache_hit_count": 5,
     "source_label_cpu_guard_applied": true
   },
   "filename_titles": [],
@@ -231,17 +325,17 @@
     },
     {
       "number": 2,
-      "title": "תנאי מקפח בחוזה בנקאי – הערכה שיפוטית (בעקבות ע”ש (י-ם) 195/97 היועץ המשפטי לממשלה נ’ בנק לאומי) | ריקרדו בן אוליאל (כרך ב)",
+      "title": "כיבוד האדם והמשפט החוקתי בישראל",
       "citable_as": "scholarship",
       "text_usability": "full_text",
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/b2_9.pdf"
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e2da55232b5b4276bf6fa40956c1e141.pdf"
     },
     {
       "number": 2,
-      "title": "שטר ביטחון וזיכוי חשבון בנק כמתן ערך בשטרות: ע״א 83/665 בנק לאומי לישראל בע\"מ נ׳ אליהו בן עליזה",
-      "citable_as": "scholarship",
+      "title": "בש\"פ 7052-05 - אברהם ביטון נ. מדינת ישראל",
+      "citable_as": "commentary",
       "text_usability": "substantive_excerpt",
-      "url": "https://lawjournal.huji.ac.il/article/12/975"
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/2&fileName=SA2_3_7052-03.pdf&type=2"
     }
   ],
   "footnote_render_report": {
@@ -249,12 +343,12 @@
     "renumbered": false,
     "footnotes_length": 2,
     "invariant_passed": true,
-    "inline_marker_count": 6,
+    "inline_marker_count": 4,
     "used_sources_length": 3,
     "dangling_marker_count": 0,
     "orphan_source_row_count": 0
   },
   "pass": true,
   "failures": [],
-  "answer": "בשורה התחתונה: בפסק‑דין ע\"א 6821/93 הכריע בית המשפט העליון בסכסוך בין בנק המזרחי המאוחד לכפר מגדל השיתופי, וההכרעה המרכזית מופיעה בטקסט פסק‑הדין עצמו.¹\n\nעיון בעובדות ובסיוע ההחלטה: המחלוקת נגעה ליחסי הבנק עם ישות שיתופית חקלאית ולהיקף זכויות הביטחון והחיוב שהעניק הבנק או שהטיל על הגורמים המעורבים; פסק‑הדין מפרט את עובדות הרקע, ההתדיינות בבתי המשפט הערכאות הנמוכות ואת שאלות המשפט שהובאו לערעור.¹\n\nהלכה מרכזית ורציונליה משפטית: בפסק‑דין זה בית המשפט העליון קבע והנמק את הכרעתו על בסיס עקרונות המאזנים בין זכויות בנקאיות של נושים לבין ההגנה על בעלי עניין שיתופיים; ההנמקות בפסיקה מתמקדות בפרשנות הוראות החיוב והביטחון החוזי, בהערכת היקף מתן הערבות או השטרות וביישום מבחנים משפטיים שנועדו לבדוק את חוקיות ההסדרים החוזיים שבין הבנק לכפר השיתופי.¹\n\nתוצאה פרוצדורלית וסעדים: בפסק‑דין מפורט זה נקבע מה הדין ביחס לעתירות והבקשות שהוגשו; הטקסט מפרט אם הערעור התקבל או נדחה, וקובע את הסעד שניתן לצדדים המעורבים (למשל ביטול/אישור של פעולת בנק, פיצוי, הצמדת זכויות ביטוח או הנחיות לגבי הליך ביצוע).¹\n\nהבהרה מקורתית ושימוש נוסף: התמצית הנ\"ל מבוססת על הטקסט המלא של פסק‑הדין המצוי בקובץ שלעיל; מי שדרש ניסוח מדויק של הלכות נקודות ספציפיות, סעדים מדויקים או ניסוחים משפטיים מתוך ההחלטה — ראוי לעיין במלוא הפסק‑דין שב‑s1 לציטוט מילולי והפניות הסמכותיות המפורטות שם.¹\n\nרקע דוקטרינלי רלוונטי (לצורך הבהרה ולא כהחלפה לפסק‑הדין): מאמרים משפטיים שעוסקים בתנאים מקפחים בחוזה בנקאי ובשאלות שטר ביטחון וזיכוי חשבון עשויים לסייע בהבנת ההקשר התיאורטי והמעשי של ההכרעה ויש בהם ניתוחים שימושיים, אך הם אינם תחליף למניין הנימוקים וההכרעות המפורטות בפסק‑הדין עצמו.²"
+  "answer": "**הכרעת בית המשפט בע\"א 6821/93 (בנק המזרחי המאוחד נ' מגדל כפר שיתופי)**\n\nבית המשפט העליון קבע בע\"א 6821/93 כי חוקי היסוד זוכים למעמד נורמטיבי‑על ביחס לחקיקה רגילה: הוראות חוק יסוד יכולות לגבור על חוק רגיל, ובית המשפט מוסמך להפעיל כללי פרשנות וסמכויות ביקורת כאשר נבחנת חקיקה לאור חוקי היסוד.¹\n\nהכרעה זו מדגימה דפוס של היררכיה נורמטיבית שבה חוקי היסוד משמשים נקודת ייחוס לפרשנות חקיקה רגילה ולהכרעה בסתירות בין חוקים רגילים לבין הוראות בחוקי יסוד.¹\n\nבהקשר הרחב יותר, בפסיקה ובספרות שלאחר מכן מזהים שימוש בכלים של ביקורת שיפוטית, לרבות בחינות מידתיות לצורך הערכת פגיעות בזכויות יסוד; טענה זו נתמכת בחלק מהמקורות המשניים שדנו ביישום מבחני המידתיות ובהנמקות שיפוטיות.²\n\nמגבלות התמצית: במקורות שאותרו למענה זה מופיע ההלכה העקרונית המוזכרת מעלה, אך אם נחוץ תאור מפורט של תוצאת הערעור בעיני עצמו (כגון החלטה ספציפית על ביטול או שמירת הוראה בחקיקה), יש לעיין בטקסט המלא של פסק הדין לעיון פרטני (s1).¹"
 }
