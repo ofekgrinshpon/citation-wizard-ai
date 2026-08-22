@@ -286,16 +286,30 @@ export function buildInputSources(
     // Source-integrity gate: index/pagination/archive-listing pages and other
     // non-citable artifacts never become citable sources for the drafter.
     const meta0 = (c.metadata ?? {}) as Record<string, unknown>;
-    const integ0: SourceIntegrity = {
-      ...((meta0.source_integrity as SourceIntegrity | undefined) ??
-        classifySourceIntegrity({
-          url: c.source_url,
-          title: c.title,
-          snippet: c.snippet,
-          source_type: c.source_type,
-          role: c.role,
-        })),
-    };
+    const cached = meta0.source_integrity as SourceIntegrity | undefined;
+    const cacheStale = meta0.source_integrity_stale === true;
+    const cacheUsable = !!cached && !cacheStale &&
+      typeof cached.citable_as === "string" &&
+      typeof cached.authority_tier !== "undefined";
+    let rerunReason: string | null = null;
+    if (!cached) rerunReason = "no_cached_classification";
+    else if (cacheStale) rerunReason = "cache_marked_stale";
+    else if (!cacheUsable) rerunReason = "cache_incomplete";
+
+    const integ0: SourceIntegrity = cacheUsable
+      ? { ...(cached as SourceIntegrity) }
+      : classifySourceIntegrity({
+        url: c.source_url,
+        title: c.title,
+        snippet: c.snippet,
+        source_type: c.source_type,
+        role: c.role,
+      });
+    if (cacheUsable) cacheHits++;
+    else {
+      reruns++;
+      if (rerunReason) rerunReasons.push(rerunReason);
+    }
     if (integ0.citable_as === "not_citable") continue;
     const vs = (verdictsByCand.get(u.candidate_id) ?? []).filter(
       (v) => v.support === "direct" || v.support === "partial",
@@ -311,29 +325,32 @@ export function buildInputSources(
       origin: c.origin,
       snippet: c.snippet,
     });
-    // source_label_quality_v1 — re-derive the label classification so that
-    // stale/host-only labels carried in metadata cannot over-claim authority.
-    const fresh = classifySourceIntegrity({
-      url: c.source_url,
-      title: c.title,
-      snippet: c.snippet,
-      source_type: c.source_type,
-      role: c.role,
-    });
+    // source_label_quality_v1 — re-derive the label classification only when we
+    // did not already have a trustworthy cached verdict (CPU hot-path guard).
     let classification_reason: string | undefined;
     const classification_before = integ0.citable_as;
-    if (
-      fresh.classification_reason &&
-      (integ0.citable_as === "judgment" || integ0.citable_as === "statute") &&
-      fresh.citable_as !== integ0.citable_as
-    ) {
-      integ0.citable_as = fresh.citable_as;
-      integ0.is_judgment_document = fresh.is_judgment_document ?? false;
-      integ0.integrity_flags = Array.from(
-        new Set([...(integ0.integrity_flags ?? []), ...fresh.integrity_flags]),
-      );
-      classification_reason = fresh.classification_reason;
+    if (!cacheUsable) {
+      const fresh = classifySourceIntegrity({
+        url: c.source_url,
+        title: c.title,
+        snippet: c.snippet,
+        source_type: c.source_type,
+        role: c.role,
+      });
+      if (
+        fresh.classification_reason &&
+        (integ0.citable_as === "judgment" || integ0.citable_as === "statute") &&
+        fresh.citable_as !== integ0.citable_as
+      ) {
+        integ0.citable_as = fresh.citable_as;
+        integ0.is_judgment_document = fresh.is_judgment_document ?? false;
+        integ0.integrity_flags = Array.from(
+          new Set([...(integ0.integrity_flags ?? []), ...fresh.integrity_flags]),
+        );
+        classification_reason = fresh.classification_reason;
+      }
     }
+
 
     const synthesisRole = assignSynthesisRole({
       role: c.role,
