@@ -1,158 +1,364 @@
 {
   "id": "F02",
   "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי?",
-  "job_id": "99766652-5419-443e-b17d-2e6a6deff9fb",
-  "run_id": "c2230f47-22bd-4a2e-b1f8-e0d7192b6a26",
-  "ms": 91455,
+  "job_id": "7eb97f33-3443-40ae-a551-456583d55cee",
+  "run_id": "602fb7bc-8964-46a5-ab62-73f64ccc0071",
+  "ms": 121413,
   "terminal_status": "done",
   "job_error": null,
-  "branch": "insufficient_sources_limitation",
-  "answer_length": 486,
-  "inline_marker_count": 0,
-  "max_marker": 0,
-  "footnotes_length": 0,
-  "used_sources_length": 0,
+  "branch": null,
+  "answer_length": 2942,
+  "inline_marker_count": 8,
+  "max_marker": 6,
+  "footnotes_length": 6,
+  "used_sources_length": 6,
   "dangling_marker_count": 0,
   "orphan_source_row_count": 0,
   "invariant_passed": true,
-  "rendered_rows": [],
+  "rendered_rows": [
+    {
+      "number": 1,
+      "title": "בג״ץ 8928/06 פלונית נ' בית הדין הרבני הגדול; בג\"ץ 6929-10 - פלוני נ. בית הדין הרבני הגדול",
+      "citable_as": null,
+      "sub_titles": [
+        "בג״ץ 8928/06 פלונית נ' בית הדין הרבני הגדול",
+        "בג\"ץ 6929-10 - פלוני נ. בית הדין הרבני הגדול"
+      ]
+    },
+    {
+      "number": 2,
+      "title": "בג״ץ 8928/06 פלונית נ' בית הדין הרבני הגדול; בג\"ץ 6929-10 - פלוני נ. בית הדין הרבני הגדול; עע\"מ 5427/21 מדינת ישראל- משרד הבריאות, משטרת ישראל ובית החולים נ׳ פלוני פס\"ד פסק דין (31.05.2022)",
+      "citable_as": null,
+      "sub_titles": [
+        "בג״ץ 8928/06 פלונית נ' בית הדין הרבני הגדול",
+        "בג\"ץ 6929-10 - פלוני נ. בית הדין הרבני הגדול",
+        "עע\"מ 5427/21 מדינת ישראל- משרד הבריאות, משטרת ישראל ובית החולים נ׳ פלוני פס\"ד פסק דין (31.05.2022)"
+      ]
+    },
+    {
+      "number": 3,
+      "title": "בג\"ץ 6929-10 - פלוני נ. בית הדין הרבני הגדול",
+      "citable_as": null,
+      "sub_titles": [
+        "בג\"ץ 6929-10 - פלוני נ. בית הדין הרבני הגדול"
+      ]
+    },
+    {
+      "number": 4,
+      "title": "בג״ץ 8928/06 פלונית נ' בית הדין הרבני הגדול",
+      "citable_as": null,
+      "sub_titles": [
+        "בג״ץ 8928/06 פלונית נ' בית הדין הרבני הגדול"
+      ]
+    },
+    {
+      "number": 5,
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "citable_as": null,
+      "sub_titles": [
+        "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין"
+      ]
+    },
+    {
+      "number": 6,
+      "title": "רע\"א 2401/21 סאמי ג'אעוני נ׳ נחלת שמעון בע\"מ פסק דין; ע\"א 1044/20 י.ש. נצר (1999) בע\"מ נ׳ פלוני החלטה (29.06.2020)",
+      "citable_as": null,
+      "sub_titles": [
+        "רע\"א 2401/21 סאמי ג'אעוני נ׳ נחלת שמעון בע\"מ פסק דין",
+        "ע\"א 1044/20 י.ש. נצר (1999) בע\"מ נ׳ פלוני החלטה (29.06.2020)"
+      ]
+    }
+  ],
   "label_report": {
     "rows": [
       {
         "ref": "s1",
-        "url": "https://fs.knesset.gov.il/25/Committees/25_cs_bg_10154957.pdf",
-        "title": "השלכות הרחבת סמכויות בתי הדין הרבניים",
-        "raw_title": "השלכות הרחבת סמכויות בתי הדין הרבניים",
-        "candidate_id": "cc5112c0-43c7-4f52-8393-a2dd6ca9e839",
+        "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208928-06%20%D7%A4%D7%9C%D7%95%D7%A0%D7%99%D7%AA%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99.doc",
+        "title": "בג״ץ 8928/06 פלונית נ' בית הדין הרבני הגדול",
+        "raw_title": "בג״ץ 8928/06 פלונית נ' בית הדין הרבני הגדול",
+        "candidate_id": "7713fbc9-14ac-48c6-a853-82a88000d3eb",
         "title_status": "ok",
         "fallback_used": "none",
-        "classification_after": "commentary",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "classification_after": "judgment",
         "title_hygiene_action": "kept",
-        "classification_before": "commentary",
+        "classification_before": "judgment",
         "classification_reason": null,
-        "title_hygiene_reasons": []
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
       },
       {
         "ref": "s2",
-        "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/2374-27.aspx",
-        "title": "בתי הדין הרבניים - מבקר המדינה",
-        "raw_title": "בתי הדין הרבניים - מבקר המדינה",
-        "candidate_id": "65e1a572-399d-45ca-a300-568aea9208e3",
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%9C%D7%AA%20%D7%90%D7%99%D6%BE%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+        "title": "עילת אי־הסבירות במשפט המינהלי",
+        "raw_title": "עילת אי־הסבירות במשפט המינהלי",
+        "candidate_id": "f8981a87-20e9-4b8f-8412-b986dfdc5eca",
         "title_status": "ok",
         "fallback_used": "none",
-        "classification_after": "unknown",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "classification_after": "commentary",
         "title_hygiene_action": "kept",
-        "classification_before": "unknown",
+        "classification_before": "commentary",
         "classification_reason": null,
-        "title_hygiene_reasons": []
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
       },
       {
         "ref": "s3",
-        "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Documents/2021/71C/2021-71c-212-Batey-Din-Rabaniyim.pdf",
-        "title": "השירות לציבור בבתי הדין הרבניים - מבקר המדינה",
-        "raw_title": "השירות לציבור בבתי הדין הרבניים - מבקר המדינה",
-        "candidate_id": "1ec717da-0d49-474f-9fd4-3690bccd1b3e",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "title": "מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת",
+        "raw_title": "מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת",
+        "candidate_id": "af1846b9-797b-45e5-8a42-35aa24f38cc7",
         "title_status": "ok",
         "fallback_used": "none",
-        "classification_after": "unknown",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "classification_after": "commentary",
         "title_hygiene_action": "kept",
-        "classification_before": "unknown",
+        "classification_before": "commentary",
         "classification_reason": null,
-        "title_hygiene_reasons": []
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
       },
       {
         "ref": "s4",
-        "url": "https://lawjournal.huji.ac.il/article/12/1928",
-        "title": "דיני מזונות אישה בין בית הדין השרעי לבית המשפט לענייני משפחה: סיפורה של מהפכה שמרנית במחלצות ליברליות",
-        "raw_title": "דיני מזונות אישה בין בית הדין השרעי לבית המשפט לענייני משפחה: סיפורה של מהפכה שמרנית במחלצות ליברליות",
-        "candidate_id": "d5395ecd-858d-4d92-95bc-b8bf3f98a764",
+        "url": "https://www.runi.ac.il/media/10wlqudx/cohen.pdf",
+        "title": "סמכות נמשכת בדיני המשפחה לאחר אישור הסכם בין - זוג",
+        "raw_title": "סמכות נמשכת בדיני המשפחה לאחר אישור הסכם בין - זוג",
+        "candidate_id": "028851cc-0b25-4bbc-be09-790e656c792e",
         "title_status": "ok",
         "fallback_used": "none",
-        "classification_after": "scholarship",
+        "fallback_applied": false,
+        "fallback_candidate": "מסמך מאתר אתר אקדמי (runi.ac.il)",
+        "classification_after": "commentary",
         "title_hygiene_action": "kept",
-        "classification_before": "scholarship",
+        "classification_before": "commentary",
         "classification_reason": null,
-        "title_hygiene_reasons": []
+        "title_hygiene_reasons": [
+          "title_truncated_mid_word"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": "fallback_not_more_informative(host:1<=raw:3)",
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
       },
       {
         "ref": "s5",
-        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%91%D7%98%D7%9C%D7%95%D7%AA%20%D7%99%D7%97%D7%A1%D7%99%D7%AA%20%D7%95%D7%A9%D7%99%D7%A7%D7%95%D7%9C%20%D7%93%D7%A2%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99.pdf",
-        "title": "בטלות יחסית ושיקול דעת שיפוטי",
-        "raw_title": "בטלות יחסית ושיקול דעת שיפוטי",
-        "candidate_id": "8abc6ec6-2445-4d13-a266-35edeb7280db",
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2401-21-%d7%a1%d7%90%d7%9e%d7%99-%d7%92%d7%90%d7%a2%d7%95%d7%a0%d7%99-%d7%a0-%d7%a0%d7%97%d7%9c%d7%aa-%d7%a9%d7%9e%d7%a2%d7%95%d7%9f-%d7%91%d7%a2%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"א 2401/21 סאמי ג'אעוני נ׳ נחלת שמעון בע\"מ פסק דין",
+        "raw_title": "רע\"א 2401/21 סאמי ג'אעוני נ׳ נחלת שמעון בע\"מ פסק דין",
+        "candidate_id": "aaa2e2cf-bdb3-487c-9716-66865cc7ea2c",
         "title_status": "ok",
         "fallback_used": "none",
-        "classification_after": "commentary",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "classification_after": "judgment",
         "title_hygiene_action": "kept",
-        "classification_before": "commentary",
+        "classification_before": "judgment",
         "classification_reason": null,
-        "title_hygiene_reasons": []
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
       },
       {
         "ref": "s6",
-        "url": "https://cris.haifa.ac.il/en/publications/the-distinction-between-mistake-of-law-and-mistake-of-fact/",
-        "title": "ההבחנה בין טעות במצב משפטי לבין טעות במצב דברים",
-        "raw_title": "ההבחנה בין טעות במצב משפטי לבין טעות במצב דברים",
-        "candidate_id": "c17d04f5-c3be-47f2-b87d-2d1b5757e5df",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%90-1044-20-%d7%99-%d7%a9-%d7%a0%d7%a6%d7%a8-1999-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-29-06-2020/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "ע\"א 1044/20 י.ש. נצר (1999) בע\"מ נ׳ פלוני החלטה (29.06.2020)",
+        "raw_title": "ע\"א 1044/20 י.ש. נצר (1999) בע\"מ נ׳ פלוני החלטה (29.06.2020)",
+        "candidate_id": "6d5d53fc-d10c-41d6-99f2-b001f5f20741",
         "title_status": "ok",
         "fallback_used": "none",
-        "classification_after": "commentary",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "classification_after": "judgment",
         "title_hygiene_action": "kept",
-        "classification_before": "commentary",
+        "classification_before": "judgment",
         "classification_reason": null,
-        "title_hygiene_reasons": []
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
       },
       {
         "ref": "s7",
-        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%98%D7%A2%D7%95%D7%AA%20%D7%91%D7%9B%D7%93%D7%90%D7%99%D7%95%D7%AA%20%D7%94%D7%A2%D7%A1%D7%A7%D7%94.pdf",
-        "title": "טעות, מהי טעות בחוזה? / טעות והטעיה בדיני חוזים",
-        "raw_title": "טעות, מהי טעות בחוזה? / טעות והטעיה בדיני חוזים",
-        "candidate_id": "bf1de11b-1d23-4335-a145-0905fa394001",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m8.pdf",
+        "title": "תביעות חוזיות בגין סרבנות גט | בנימין שמואלי ומשה פוקס (כרך י)",
+        "raw_title": "תביעות חוזיות בגין סרבנות גט | בנימין שמואלי ומשה פוקס (כרך י)",
+        "candidate_id": "a3e25edf-9203-4dd5-b964-de60e2b4edae",
         "title_status": "ok",
         "fallback_used": "none",
-        "classification_after": "commentary",
-        "title_hygiene_action": "kept",
-        "classification_before": "commentary",
-        "classification_reason": null,
-        "title_hygiene_reasons": []
-      },
-      {
-        "ref": "s8",
-        "url": "https://law.haifa.ac.il/wp-content/uploads/2025/11/dinu-20251125-kaplan.pdf",
-        "title": "דת או DATA: מדיניות הרבנות בהליכי בירור יהדות | אלעד קפלן (כרך י\"ח)",
-        "raw_title": "דת או DATA: מדיניות הרבנות בהליכי בירור יהדות | אלעד קפלן (כרך י\"ח)",
-        "candidate_id": "a067ba6f-350b-46ca-b1f8-a9c40f41b149",
-        "title_status": "ok",
-        "fallback_used": "none",
+        "fallback_applied": false,
+        "fallback_candidate": null,
         "classification_after": "scholarship",
         "title_hygiene_action": "kept",
         "classification_before": "scholarship",
         "classification_reason": null,
-        "title_hygiene_reasons": []
+        "title_hygiene_reasons": [],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s8",
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_1_6929-10.pdf&type=2",
+        "title": "בג\"ץ 6929-10 - פלוני נ. בית הדין הרבני הגדול",
+        "raw_title": "בג\"ץ 6929-10 - פלוני נ. בית הדין הרבני הגדול",
+        "candidate_id": "952550a6-ecbb-46f6-8306-412a14dc4962",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "fallback_applied": false,
+        "fallback_candidate": "מסמך מאתר אתר ממשלתי (gov.il)",
+        "classification_after": "judgment",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "title_truncated_mid_word"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": "fallback_not_more_informative(host:1<=raw:3)",
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s9",
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "raw_title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "candidate_id": "d8558d72-b968-4d0e-bdc3-6a4b76a460b1",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "classification_after": "judgment",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
+      },
+      {
+        "ref": "s10",
+        "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-5427-21-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%9e%d7%a9%d7%98%d7%a8%d7%aa-%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "עע\"מ 5427/21 מדינת ישראל- משרד הבריאות, משטרת ישראל ובית החולים נ׳ פלוני פס\"ד פסק דין (31.05.2022)",
+        "raw_title": "עע\"מ 5427/21 מדינת ישראל- משרד הבריאות, משטרת ישראל ובית החולים נ׳ פלוני פס\"ד פסק דין (31.05.2022)",
+        "candidate_id": "04326352-8203-401d-b707-e55870af940c",
+        "title_status": "ok",
+        "fallback_used": "none",
+        "fallback_applied": false,
+        "fallback_candidate": null,
+        "classification_after": "judgment",
+        "title_hygiene_action": "kept",
+        "classification_before": "judgment",
+        "classification_reason": null,
+        "title_hygiene_reasons": [
+          "legal_title_protected"
+        ],
+        "classification_cache_hit": true,
+        "fallback_rejected_reason": null,
+        "classification_rerun_reason": null,
+        "fallback_improvement_reason": null
       }
     ],
-    "total": 8,
+    "total": 10,
     "reclassified_count": 0,
-    "fallback_used_count": 8
+    "fallback_used_count": 0,
+    "classification_rerun_count": 0,
+    "classification_rerun_reason": [],
+    "classification_cache_hit_count": 15,
+    "source_label_cpu_guard_applied": true
   },
   "filename_titles": [],
   "bare_institution_titles": [],
   "ocr_duplicate_pairs": [],
   "scholarship_as_statute": [],
-  "commentary_as_judgment": [],
+  "commentary_as_judgment": [
+    "בג\"ץ 6929-10 - פלוני נ. בית הדין הרבני הגדול"
+  ],
   "metadata_only_holdings": 0,
-  "used_sources": [],
+  "used_sources": [
+    {
+      "number": 1,
+      "title": "בג״ץ 8928/06 פלונית נ' בית הדין הרבני הגדול",
+      "citable_as": "judgment",
+      "text_usability": "full_text",
+      "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208928-06%20%D7%A4%D7%9C%D7%95%D7%A0%D7%99%D7%AA%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99.doc"
+    },
+    {
+      "number": 1,
+      "title": "בג\"ץ 6929-10 - פלוני נ. בית הדין הרבני הגדול",
+      "citable_as": "judgment",
+      "text_usability": "full_text",
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/66/2&fileName=SV2_1_6929-10.pdf&type=2"
+    },
+    {
+      "number": 2,
+      "title": "עע\"מ 5427/21 מדינת ישראל- משרד הבריאות, משטרת ישראל ובית החולים נ׳ פלוני פס\"ד פסק דין (31.05.2022)",
+      "citable_as": "judgment",
+      "text_usability": "substantive_excerpt",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%a2%d7%9e-5427-21-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%91%d7%a8%d7%99%d7%90%d7%95%d7%aa-%d7%9e%d7%a9%d7%98%d7%a8%d7%aa-%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
+    },
+    {
+      "number": 5,
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+      "citable_as": "judgment",
+      "text_usability": "substantive_excerpt",
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
+    },
+    {
+      "number": 6,
+      "title": "רע\"א 2401/21 סאמי ג'אעוני נ׳ נחלת שמעון בע\"מ פסק דין",
+      "citable_as": "judgment",
+      "text_usability": "full_text",
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2401-21-%d7%a1%d7%90%d7%9e%d7%99-%d7%92%d7%90%d7%a2%d7%95%d7%a0%d7%99-%d7%a0-%d7%a0%d7%97%d7%9c%d7%aa-%d7%a9%d7%9e%d7%a2%d7%95%d7%9f-%d7%91%d7%a2%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
+    },
+    {
+      "number": 6,
+      "title": "ע\"א 1044/20 י.ש. נצר (1999) בע\"מ נ׳ פלוני החלטה (29.06.2020)",
+      "citable_as": "judgment",
+      "text_usability": "substantive_excerpt",
+      "url": "https://www.toledano.co.il/%d7%a2%d7%90-1044-20-%d7%99-%d7%a9-%d7%a0%d7%a6%d7%a8-1999-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-29-06-2020/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/"
+    }
+  ],
   "footnote_render_report": {
     "version": "footnote_rendering_invariant_v1",
     "renumbered": false,
-    "footnotes_length": 0,
+    "footnotes_length": 6,
     "invariant_passed": true,
-    "inline_marker_count": 0,
-    "used_sources_length": 0,
+    "inline_marker_count": 8,
+    "used_sources_length": 6,
     "dangling_marker_count": 0,
     "orphan_source_row_count": 0
   },
-  "pass": true,
-  "failures": [],
-  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): השלכות הרחבת סמכויות בתי הדין הרבניים; בתי הדין הרבניים - מבקר המדינה; השירות לציבור בבתי הדין הרבניים - מבקר המדינה; דיני מזונות אישה בין בית הדין השרעי לבית המשפט לענייני משפחה: סיפורה של מהפכה שמרנית במחלצות ליברליות."
+  "pass": false,
+  "failures": [
+    "commentary_labelled_judgment"
+  ],
+  "answer": "מסקנה עיקרית: בג\"ץ יכול לעיין בהחלטות בתי הדין הרבניים בסכסוכי רכוש לאחר גירושין; כאשר נטען כי ההכרעה הרבנית נשענה על \"שיקול חיצוני לדין האזרחי\" תבחן הביקורת השיפוטית האם נפל פגם סמכותי או פגם משפטי (שיקול שלא כדין/חריגה מסמכות) ולעיתים גם האם ההכרעה בלתי סבירה במובן המינהלי, כאשר היקף הבדיקה נקבע לפי עקרונות הפסיקה על סמכות וביקורת בענייני משפחה והרכוש שנדונו בפני בג\"ץ.¹\n\n**עילת ההתערבות של בג\"ץ**\n\nהבסיס לעילת ההתערבות הוא סמכות הביקורת השיפוטית של בית המשפט העליון/בג\"ץ לעיין בהחלטות ערכאות מוסמכות כאשר נשקלת שאלת סמכות, הלכתית-משפטית או פגם מהותי בהחלטה; בפסיקה שנדונה בענייני הסכמי גירושין וחלוקת רכוש נידונה במפורש סמכותו של בג\"ץ לעיין בהחלטות בתי הדין הרבניים בתחום הממוני לאחר אישור הסכמים רבניים והענקת תוקף פסק־דין להסכמים אלה.¹\n\n**אמת המידה המשפטית שבג\"ץ יישם כשנטען \"שיקול חיצוני\"**\n\nמבחן ראשוני יהיה בחינת הלגיטימיות של שיקול הדעת: האם בית הדין הרבני פעל בתוך המסגרת הסמכותית שניתנה לו, כלומר לא חרג מסמכותו ולא שקל שיקולים שאינם נוגעים לנימוקי הדין החלים על העניין; זאת בחינת חוקיות/חריגה מסמכות כפי שנדונה בפסיקה על סמכות בתי הדין הרבניים והיחסים בינהם לבין הערכאות האזרחיות.¹\n\nבנוסף ניתנת בחינה תפקודית של מידת הסבירות/הקיצוניות של ההחלטה (המבחן המוכר כ־Wednesbury או מבחן אי־הסבירות), וכן מסגרת מידתיות שעשויה להכיל בדיקה צורנית־מהותית של ההליכים וההכרעות; עם זאת מקורות אקדמיים ומשפטיים אך לא תמיד פסיקה אחידה מספקים רק בסיס תיאורטי ליישום מבחנים אלה בענייני משפחה, ויש להציג את המסקנות בזהירות בהתאם לתפיסת הביקורת שבפסיקה העוסקת בסמכות ובגבולותיה.⁵\n\n**תנאים פורמליים ומהותיים לפני שהתערבות תתקבל**\n\nלפני שבג\"ץ יתערב נפוצות דרישות של זהות פלוגתא מספיקה בין טענות העתירה ואותה הכרעה קמא, סופיות מסוימת של ההכרעה (או היותה פסק־דין שניתן לאכיפה), והזדמנות ממשית להתדיין על השיקולים בבית הדין הרבני; במקרים דומים הפסיקה הציבה גם דרישות פרוצדורליות לגבי היקף ההתדיינות והשלבים בהם ניתן לממש ערעור או בקשת רשות.⁶\n\n**סעדי בג\"ץ כשנמצא הסתמכות על שיקול חיצוני בלתי־תקין**\n\nבג\"ץ יוכל לבטל או להשיב את ההחלטה לדיון (רמולנד), לתת צו הבהרה, לבטל את אישור ההסכם/פסק־הדין הרבני במידה ונמצא פגם מהותי, או להנחות את בית הדין ליישם את הדין האזרחי הרלוונטי תוך כיבוד המגבלות הדתיות־מעמדיות; בחלק מהמקרים יינתנו הוראות ממוקדות שיאפשרו פתרון חלופי ללא פגיעה בעקרונות הלכתיים שאינם בסמכות הבג\"ץ לשנותם ישירות.²\n\nחשוב להדגיש כי בסכסוכי משפחה קיימת רמת מתינות בביקורת עקב רגישותם והיאלמות שיפוטית בנושאים אישיים־חברתיים, ולכן מזעור הפגיעה בסמכות הרבנית נעשה בדרך כלל באמצעות סעד מדוד (הבהרה או החזרה), אלא אם נחשף לחריגה מהותית או להסתמכות על שיקולים שאינם נוגעים לדין — אז ירחיב בג\"ץ את הבדיקה וייסע את הסעד המתאים.³\n\nהסתייגות מקורותית: במקורות שאותרו יש עיגון ברור לסמכותו של בג\"ץ לעיין בהחלטות בתי הדין הרבניים בענייני ממון וביחסי ממון לאחר אישור הסכמים, וכן יש דיון תיאורטי ומקרים שבהם מובאים מבחני אי־סבירות ומידתיות; עם זאת במקורות שאותרו לא נמצא נוסח אחיד אחד שמנסח מבחן מוגדר־למפרע ל\"שיקול חיצוני\" בהקשר המדויק של חלוקת רכוש אחרי גירושין, ולכן חלק מסיגנונות הבדיקה מועברים בצורתם התאורטית או באמצעות התאמת מבחנים קיימים למקרה הספציפי.⁴"
 }

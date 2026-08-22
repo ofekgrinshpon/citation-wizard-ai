@@ -206,10 +206,19 @@ export interface DrafterInputSource {
   /** source_label_quality_v1 telemetry. */
   title_hygiene_action?: string;
   fallback_used?: string;
+  /** over_fallback_fix_v1 telemetry. */
+  fallback_applied?: boolean;
+  fallback_candidate?: string;
+  fallback_rejected_reason?: string;
+  fallback_improvement_reason?: string;
+  /** cpu hot-path guard telemetry. */
+  classification_cache_hit?: boolean;
+  classification_rerun_reason?: string;
   classification_before?: string;
   classification_after?: string;
   classification_reason?: string;
   title_hygiene_reasons: string[];
+
   url: string | null;
   source_type: string;
   role: string;
@@ -263,6 +272,19 @@ import {
 } from "./synthesisSnippetBudget.ts";
 
 
+/** CPU hot-path guard telemetry for the last buildInputSources() call. */
+export const labelCpuStats: {
+  classification_cache_hit_count: number;
+  classification_rerun_count: number;
+  classification_rerun_reason: string[];
+  source_label_cpu_guard_applied: boolean;
+} = {
+  classification_cache_hit_count: 0,
+  classification_rerun_count: 0,
+  classification_rerun_reason: [],
+  source_label_cpu_guard_applied: false,
+};
+
 export function buildInputSources(
   candidates: Candidate[],
   verdicts: Verdict[],
@@ -279,23 +301,41 @@ export function buildInputSources(
     verdictsByCand.set(v.candidate_id, arr);
   }
   const out: DrafterInputSource[] = [];
+  let cacheHits = 0;
+  let reruns = 0;
+  const rerunReasons: string[] = [];
   let n = 1;
+
   for (const u of usable) {
     const c = candById.get(u.candidate_id);
     if (!c) continue;
     // Source-integrity gate: index/pagination/archive-listing pages and other
     // non-citable artifacts never become citable sources for the drafter.
     const meta0 = (c.metadata ?? {}) as Record<string, unknown>;
-    const integ0: SourceIntegrity = {
-      ...((meta0.source_integrity as SourceIntegrity | undefined) ??
-        classifySourceIntegrity({
-          url: c.source_url,
-          title: c.title,
-          snippet: c.snippet,
-          source_type: c.source_type,
-          role: c.role,
-        })),
-    };
+    const cached = meta0.source_integrity as SourceIntegrity | undefined;
+    const cacheStale = meta0.source_integrity_stale === true;
+    const cacheUsable = !!cached && !cacheStale &&
+      typeof cached.citable_as === "string" &&
+      typeof cached.authority_tier !== "undefined";
+    let rerunReason: string | null = null;
+    if (!cached) rerunReason = "no_cached_classification";
+    else if (cacheStale) rerunReason = "cache_marked_stale";
+    else if (!cacheUsable) rerunReason = "cache_incomplete";
+
+    const integ0: SourceIntegrity = cacheUsable
+      ? { ...(cached as SourceIntegrity) }
+      : classifySourceIntegrity({
+        url: c.source_url,
+        title: c.title,
+        snippet: c.snippet,
+        source_type: c.source_type,
+        role: c.role,
+      });
+    if (cacheUsable) cacheHits++;
+    else {
+      reruns++;
+      if (rerunReason) rerunReasons.push(rerunReason);
+    }
     if (integ0.citable_as === "not_citable") continue;
     const vs = (verdictsByCand.get(u.candidate_id) ?? []).filter(
       (v) => v.support === "direct" || v.support === "partial",
@@ -311,29 +351,14 @@ export function buildInputSources(
       origin: c.origin,
       snippet: c.snippet,
     });
-    // source_label_quality_v1 — re-derive the label classification so that
-    // stale/host-only labels carried in metadata cannot over-claim authority.
-    const fresh = classifySourceIntegrity({
-      url: c.source_url,
-      title: c.title,
-      snippet: c.snippet,
-      source_type: c.source_type,
-      role: c.role,
-    });
-    let classification_reason: string | undefined;
+    // source_label_quality_v1 — classification already reflects a single pass:
+    // cached when trustworthy, otherwise freshly computed above. No second run.
+    const classification_reason: string | undefined = cacheUsable
+      ? undefined
+      : integ0.classification_reason;
     const classification_before = integ0.citable_as;
-    if (
-      fresh.classification_reason &&
-      (integ0.citable_as === "judgment" || integ0.citable_as === "statute") &&
-      fresh.citable_as !== integ0.citable_as
-    ) {
-      integ0.citable_as = fresh.citable_as;
-      integ0.is_judgment_document = fresh.is_judgment_document ?? false;
-      integ0.integrity_flags = Array.from(
-        new Set([...(integ0.integrity_flags ?? []), ...fresh.integrity_flags]),
-      );
-      classification_reason = fresh.classification_reason;
-    }
+
+
 
     const synthesisRole = assignSynthesisRole({
       role: c.role,
@@ -366,10 +391,17 @@ export function buildInputSources(
       title_hygiene_action: dt.title_status === "ok"
         ? "kept"
         : dt.title_hygiene_reasons[0] ?? dt.title_status,
-      fallback_used: dt.fallback_used,
+      fallback_used: dt.fallback_applied ? dt.fallback_used : "none",
+      fallback_applied: dt.fallback_applied === true,
+      fallback_candidate: dt.fallback_candidate,
+      fallback_rejected_reason: dt.fallback_rejected_reason,
+      fallback_improvement_reason: dt.fallback_improvement_reason,
+      classification_cache_hit: cacheUsable,
+      classification_rerun_reason: cacheUsable ? undefined : (rerunReason ?? undefined),
       classification_before,
       classification_after: integ0.citable_as,
       classification_reason,
+
       url: c.source_url ?? null,
       source_type: c.source_type,
       role: c.role,
@@ -430,7 +462,12 @@ export function buildInputSources(
       }
     }
   }
+  labelCpuStats.classification_cache_hit_count = cacheHits;
+  labelCpuStats.classification_rerun_count = reruns;
+  labelCpuStats.classification_rerun_reason = Array.from(new Set(rerunReasons));
+  labelCpuStats.source_label_cpu_guard_applied = cacheHits > 0;
   return out;
+
 }
 
 function buildUserMessage(
