@@ -256,7 +256,22 @@ export interface DrafterInputSource {
    * rendered, never sent to the model. Empty for metadata-only sources.
    */
   topical_text?: string;
+
+  // ── claim_source_match_validation_v1 — verifier binding metadata ──────────
+  /** claim_ids this source was actually verified as direct/partial for. */
+  verified_claim_ids?: string[];
+  /** Facet ids this source was bound to (empty when facets are not in play). */
+  facet_ids?: string[];
+  /** Inferred legal-area lock id (see claimFacetExpansion.inferLegalAreaId). */
+  legal_area?: string | null;
+  /** Normalized support subtype used by the per-block claim gate. */
+  support_subtype?: "direct_rule" | "application" | "analogy" | "background" | "commentary";
+  /** Best verifier verdict across this source's verdicts. */
+  verifier_verdict?: string;
+  /** True when real body text (judgment/statute) was acquired for this source. */
+  body_acquired?: boolean;
 }
+
 
 
 
@@ -268,6 +283,32 @@ interface RawDraft {
 
 import { computeDisplayTitle } from "./displayTitleHygiene.ts";
 import { collapseNearDuplicateTitles } from "./sourceLabelQuality.ts";
+import { inferLegalAreaId } from "./claimFacetExpansion.ts";
+
+/**
+ * claim_source_match_validation_v1 — normalize verifier subtypes + integrity
+ * classification into the five support subtypes used by the per-block gate.
+ */
+function normalizeSupportSubtype(
+  vs: Verdict[],
+  integ: SourceIntegrity,
+  meta: Record<string, unknown>,
+): "direct_rule" | "application" | "analogy" | "background" | "commentary" {
+  const subtypes = new Set(vs.map((v) => v.support_subtype).filter(Boolean) as string[]);
+  const citable = String(integ.citable_as ?? "");
+  const primary = citable === "statute" || citable === "regulation" || citable === "judgment";
+  const hasBody = meta.judgment_text_acquired === true || meta.statute_text_acquired === true ||
+    integ.has_holding_text === true;
+  if (subtypes.has("background")) return "background";
+  if (subtypes.has("analogical")) return "analogy";
+  if (!primary) return "commentary";
+  if (subtypes.has("same_domain")) return "application";
+  if (subtypes.has("exact_subject") || vs.some((v) => v.support === "direct")) {
+    return citable === "statute" || citable === "regulation" || hasBody ? "direct_rule" : "application";
+  }
+  return "application";
+}
+
 import { canSatisfyRole, classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
 import { assignSynthesisRole } from "./synthesisRole.ts";
 import {
@@ -418,6 +459,13 @@ export function buildInputSources(
       best_support: u.best_support === "direct" ? "direct" : "partial",
       supported_points,
       claim_ids: vs.map((v) => v.claim_id),
+      verified_claim_ids: Array.from(new Set(vs.map((v) => v.claim_id))),
+      facet_ids: [],
+      legal_area: inferLegalAreaId(`${c.title ?? ""} ${c.snippet ?? ""}`),
+      support_subtype: normalizeSupportSubtype(vs, integ0, meta0),
+      verifier_verdict: u.best_support === "direct" ? "direct" : "partial",
+      body_acquired: meta0.judgment_text_acquired === true || meta0.statute_text_acquired === true,
+
       snippet: snippetText,
       authority_tier: integ0.authority_tier,
       text_usability: integ0.text_usability,

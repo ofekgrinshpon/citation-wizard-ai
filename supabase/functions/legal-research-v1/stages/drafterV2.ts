@@ -58,9 +58,15 @@ import {
 } from "./negativeExistenceGuard.ts";
 import {
   applyMetadataOnlyHoldingGate,
+
   referenceOnlySection,
   type MetadataOnlyHoldingGateReport,
 } from "./metadataOnlyHoldingGate.ts";
+import {
+  applyClaimSourceMatch,
+  type ClaimSourceMatchReport,
+} from "./claimSourceMatch.ts";
+
 
 import {
   planSynthesisRendering,
@@ -200,9 +206,23 @@ const DRAFTER_V2_TOOL_PARAMETERS: Record<string, unknown> = {
             type: "array",
             items: { type: "string" },
           },
+          claim_id: { type: "string" },
+          facet_id: { type: "string" },
+          proposition_type: {
+            type: "string",
+            enum: [
+              "black_letter_rule",
+              "application",
+              "background",
+              "practical_guidance",
+              "limitation",
+            ],
+          },
+          legal_area: { type: "string" },
         },
         required: ["kind", "text"],
         additionalProperties: false,
+
       },
     },
   },
@@ -428,6 +448,14 @@ function buildUserMessage(
     }
   }
   lines.push("");
+  lines.push(
+    "תיוג בלוקים (חובה בכל פסקה/פריט רשימה): הוסף claim_id (מזהה הטענה שהבלוק מבסס, מתוך רשימת הטענות), " +
+      "facet_id אם הבלוק עוסק בהיבט דוקטרינרי ספציפי, ו-proposition_type אחד מתוך " +
+      "black_letter_rule (קביעת הלכה/דין), application (יישום/נסיבות), background (רקע), " +
+      "practical_guidance (הנחיה מעשית), limitation (סייג/מגבלה). " +
+      "צרף ל-source_refs רק מקורות שאומתו לאותה טענה — ספרות ומקורות רקע אינם אסמכתה לקביעת הלכה.",
+  );
+
   lines.push(
     "החזר אובייקט {blocks: [...]} דרך הכלי emit_structured_draft. זכור: אסור סימני הערות שוליים בתוך text — הקוד מוסיף אותם דטרמיניסטית לפי source_refs.",
   );
@@ -896,6 +924,9 @@ export interface DrafterV2Result {
     | "statute_section_quote_refusal"
     | "insufficient_sources_limitation";
   /** Deterministic source-sufficiency assessment (telemetry + gate result). */
+  /** claim_source_match_validation_v1 — per-block claim/source gate telemetry. */
+  claim_source_match?: ClaimSourceMatchReport;
+
   sufficiency?: SufficiencyAssessment;
   /** Named-doctrine premise/framing signal (telemetry + drafter directive). */
   named_doctrine_framing?: NamedDoctrineFraming;
@@ -1763,14 +1794,24 @@ export async function runDrafterV2(
   // on a judgment whose body was never read.
   const gated = applyMetadataOnlyHoldingGate(parsed.draft, inputSources);
   const metadata_only_holding_gate = gated.report;
-  const built = buildFootnotedAnswer(gated.draft ?? parsed.draft, inputSources);
+
+  // claim_source_match_validation_v1 — a source may only stay attached to a
+  // block whose claim/facet/legal-area it was actually verified for.
+  const matched = applyClaimSourceMatch(gated.draft ?? parsed.draft, inputSources, {
+    mainClaimIds: claims.map((c) => c.claim_id),
+  });
+  const claim_source_match = matched.report;
+
+  const built = buildFootnotedAnswer(matched.draft ?? gated.draft ?? parsed.draft as StructuredDraft, inputSources);
 
 
   // Rule 1.10 — Hebrew number ranges must be written high→low in source order.
   const answer_markdown = scrubNegativeExistenceClaims(
     normalizeHebrewNumberRanges(built.answer_markdown),
   ).text +
-    referenceOnlySection(metadata_only_holding_gate.reference_only_sources);
+    referenceOnlySection(metadata_only_holding_gate.reference_only_sources) +
+    matched.limitation_text;
+
 
   const synthesis_rendering = reportSynthesisRendering({
     plan: synthesisPlan,
@@ -1822,6 +1863,8 @@ export async function runDrafterV2(
     named_doctrine_framing: framing,
     synthesis_rendering,
     metadata_only_holding_gate,
+    claim_source_match,
+
 
 
 

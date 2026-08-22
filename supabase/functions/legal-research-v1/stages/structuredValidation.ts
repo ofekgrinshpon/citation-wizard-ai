@@ -1,14 +1,29 @@
 // V2.1 — validation for the structured drafter output.
 // Rejects ANYTHING that would let the model emit citation markup itself.
 
+/** claim_source_match_validation_v1 — optional per-block claim tags. */
+export interface BlockClaimTags {
+  claim_id?: string | null;
+  facet_id?: string | null;
+  proposition_type?:
+    | "black_letter_rule"
+    | "application"
+    | "background"
+    | "practical_guidance"
+    | "limitation"
+    | null;
+  legal_area?: string | null;
+}
+
 export type StructuredBlock =
   | { kind: "heading"; level: 2 | 3; text: string }
-  | { kind: "paragraph"; text: string; source_refs: string[] }
-  | { kind: "list_item"; text: string; source_refs: string[] };
+  | ({ kind: "paragraph"; text: string; source_refs: string[] } & BlockClaimTags)
+  | ({ kind: "list_item"; text: string; source_refs: string[] } & BlockClaimTags);
 
 export interface StructuredDraft {
   blocks: StructuredBlock[];
 }
+
 
 export interface StructuredValidation {
   ok: boolean;
@@ -124,13 +139,22 @@ export function validateStructuredDraft(
       }
       total_source_ref_count += refs.length;
       if (refs.length > 0) cited_segment_count++;
+      // claim_source_match_validation_v1 — carry optional block tags through.
+      const str = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : null);
+      const tags: BlockClaimTags = {
+        claim_id: str(o.claim_id),
+        facet_id: str(o.facet_id),
+        proposition_type: str(o.proposition_type) as BlockClaimTags["proposition_type"],
+        legal_area: str(o.legal_area),
+      };
       if (kind === "paragraph") {
         paragraph_count++;
-        blocks.push({ kind: "paragraph", text, source_refs: refs });
+        blocks.push({ kind: "paragraph", text, source_refs: refs, ...tags });
       } else {
         list_item_count++;
-        blocks.push({ kind: "list_item", text, source_refs: refs });
+        blocks.push({ kind: "list_item", text, source_refs: refs, ...tags });
       }
+
     } else {
       errors.push(`block[${idx}] unknown kind: ${String(kind)}`);
     }

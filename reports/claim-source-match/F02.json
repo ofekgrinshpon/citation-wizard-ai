@@ -1,0 +1,178 @@
+{
+  "id": "F02",
+  "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי?",
+  "job_id": "91010584-f574-4a83-9266-73163a3492ce",
+  "run_id": "f1557039-4585-4be4-8f8b-bb4197d71e4e",
+  "ms": 122098,
+  "terminal_status": "done",
+  "job_error": null,
+  "branch": null,
+  "answer_length": 3645,
+  "inline_marker_count": 5,
+  "distinct_markers": 3,
+  "max_marker": 3,
+  "footnotes_length": 3,
+  "used_sources_length": 4,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "compound_footnote_rows": 1,
+  "invariant_passed": true,
+  "builder_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 3,
+    "invariant_passed": true,
+    "inline_marker_count": 5,
+    "used_sources_length": 4,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "claim_source_match": {
+    "applied": true,
+    "mismatch_reason": [
+      "claim_mismatch",
+      "commentary_in_substantive_block"
+    ],
+    "limitation_added": true,
+    "tagged_block_count": 10,
+    "dropped_source_refs": [
+      {
+        "ref": "s9",
+        "reason": "claim_mismatch",
+        "block_index": 1,
+        "block_claim_id": "C1",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C4"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s9",
+        "reason": "claim_mismatch",
+        "block_index": 2,
+        "block_claim_id": "C1",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C4"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s2",
+        "reason": "claim_mismatch",
+        "block_index": 2,
+        "block_claim_id": "C1",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C2"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s9",
+        "reason": "claim_mismatch",
+        "block_index": 3,
+        "block_claim_id": "C2",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C4"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s3",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 3,
+        "block_claim_id": "C2",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C2"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s3",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 4,
+        "block_claim_id": "C2",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C2"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s2",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 4,
+        "block_claim_id": "C2",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C2"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s5",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 5,
+        "block_claim_id": "C3",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C3"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s8",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 7,
+        "block_claim_id": "C4",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C4"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s7",
+        "reason": "claim_mismatch",
+        "block_index": 9,
+        "block_claim_id": "C2",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C3"
+        ],
+        "source_legal_area": "public_law_hcj"
+      }
+    ],
+    "commentary_only_claims": [
+      "C3",
+      "C2"
+    ],
+    "unsupported_block_count": 4,
+    "source_ref_mismatch_count": 10,
+    "primary_support_by_main_claim": true
+  },
+  "pass": true,
+  "failures": [],
+  "footnote_rows": [
+    {
+      "number": 1,
+      "title": "בג\"ץ 8638-03 - סימה אמיר נ. בית הדין הרבני הגדול בירושלים",
+      "sub_sources": 1
+    },
+    {
+      "number": 2,
+      "title": "ראיות בבית״המשפט הגבוה לצדק",
+      "sub_sources": 1
+    },
+    {
+      "number": 3,
+      "title": "Judicial review of the rabbinical establishment - religion, nationality and law (Heb.); בתי־הדין הרבניים - לאן?",
+      "sub_sources": 2
+    }
+  ],
+  "answer": "סיכום קצר: בג\"ץ יכול לסקור פסקי בתי־דין רבניים בענייני חלוקת רכוש אם קימות עילות משפטיות ממשיות — כגון חריגה מסמכות, שגיאת דין בהחלת הכללות אזרחיות, פגם נימוקי או הסתמכות על שיקול זר שאיננו חלק מהדין הרלוונטי; הסטנדרט המדויק לשיפוט תלוי בטבע הפגם שנטען (סמכותי, פרשני או של חוסר סבירות) ובהיקף הפגיעה בזכויות לצדדים.\n\nעילת ההתערבות והבסיס הסמכותי של בג\"ץ: בג\"ץ מבסס את סמכותו לבחון החלטות בתי־דין רבניים כשהנטען הוא שעברו על גבולות סמכותם או שנעשו בהם פגמים מהותיים בתהליך ההכרעה; בפסקי דין היסודיים שדן בכך נקבע כי יש מקום להתערבות במקרים של פגם סמכותי או כשזכויות יסוד נפגעות, תוך איזון מוסדי בין הסמכות הדתית לבין סמכות השיפוט הציבורית.\n\nתחולת הדין האזרחי על הכרעות רבניות בענייני רכוש: בג\"ץ בוחן את השאלה האם ופעם כיצד הוראות דין אזרחי רלוונטיות חלות על הכרעת בית־דין רבני, אך במקורות שאותרו לא נמצא טקסט חקיקתי בודד המסדיר באופן ממצה את תחולת הדין האזרחי על הכרעות רבניות בענייני רכוש; בפסיקה עצמה נדונה שאלת גבולות הסמכות ומקומם של כללי הפרשנות האזרחית בבחינת הליכים רבניים.\n\nאמת המידה המשפטית לביקורת כשנטען שעתוּק שיקול חיצוני: המבחן המרכזי הוא האם ההסתמכות על שיקול זר מהווה שגיאת דין או חריגה מסמכות (ultra vires) — כלומר אם הוכלה לקבוע כי ההחלטה לא נשענה על הכללים החוקיים וההלכתיים החלים על סוגיה זו; במצבים מסוימים תיבחן גם סבירות ההחלטה (מבחן חוסר סבירות או \"שיקול דעת קיצוני\"), אך השימוש במבחן זה מפורש במקורות האנליטיים בעיקר כנקודת איזון ולא כמדד תמידי, ולכן יש לנסחו בזהירות בהתאם לנסיבות המקרה.\n\nאיזה היבט מעשי יכריע איזה מבחן יחל: אם הטענה היא שדבר נעשה מחוץ למסגרת הסמכות (לדוגמה החלפת יסוד סמכותי או יישום חוק שאינו רלוונטי) — בג\"ץ יפעל בעיקר על בסיס חריגה מסמכות או שגיאת דין; אם הטענה נוגעת לפרופורציה, להטרדה שיפוטית או להכרעה קיצונית שאינה נתמכת בראיות — בג\"ץ עשוי להפעיל מבחן חוסר סבירות. מקורות הפרשנות מזהירים שיש להתאים את הסטנדרט לאופי הפגם ולא להרחיב את התערבות בג\"ץ באופן הפוגע בעקרון ההסמכה הדתית.\n\nאינדיקטורים מעשיים שבג\"ץ יבחן כדי להסיק על הסתמכות על שיקול חיצוני: הכרזות מפורשות של דיין כי הוחלט \"מטעמים דתיים\" או התייחסות להפעלת שיקולים שאינם נלמדים מהחוק; קונפליקט בולט בין המסקנה לבין עקרונות הדין האזרחי והכלליים שחלים על חלוקת רכוש; העדר נימוק או נימוק סותר שאינו מפרט את הבסיס המשפטי למסקנה; שימוש בעדויות או בראיות שאינן בנסיבות המקרה או הפעלת מדיניות מוסדית שלא ניתנה על דעת הצדדים.²\n\nמבחני ראיה וסולם ההוכחה: כדי לקבוע שההחלטה נסמכה על שיקול זר יש צורך בעובדות תומכות — מסמכים, הקלטות או נוסח פסק־דין מפורש; עבודת הוכחה זו מנוהלת על‑ידי בג\"ץ במתודולוגיה דומה להוכחת פגם מנהלי אחר, כאשר המקורות האקדמיים מציעים התמקדות ברמזים ישירים ובהתנהלות פורמלית של ההליך.²\n\nאמצעי הסעד הסבירים והאיזון עם עקרון ההסמכה הדתית: בפסיקה נקבע שכשמוצאים פגם סמכותי או הסתמכות על שיקולים זרים — בג\"ץ יכול לבטל את פסק־דין הרבני או להחזיר את העניין לבית־הדין לשיקול מחודש; בהרבה מקרים יידרש איזון בין ביטול מוחלט לבין הצעות הלכתיות או הוראות להליך מחודש כדי לשמר את עצמאות ההכרעה הדתית ככל האפשר.¹\n\nמגבלות מעשיות שנגזרות מהממשק המוסדי: גם כאשר בג\"ץ מעניק סעד — הפסיקה ודעות המחקר מדגישות כי יש להימנע ממעורבות מיותרת בתוכן הלכתי טהור ולמקד את הסעד בתיקון הליך או בהסרת פגם סמכותי או ראייתי, לא בשינוי הכרעה הלכתית מהיסוד; במקורות שאותרו ניתנה עדיפות לפתרונות שמכבדות את עקרון ההסמכה הדתית כל עוד זכויות יסוד אינן נפגעות באופן מהותי.¹\n\nהערת סיכום וזהירות ראייתית: המסקנות לעיל נשענות על הפסיקה המרכזית והניתוח האקדמי שקוימו במקורות שנמסרו; ביחס למקורות הספרותיים יש לנסח את הטענות בזהירות שכן הם תומכים באופן חלקי בניתוח הסטנדרטים והאינדיקטורים ולא מהווים תחליף לטקסט חקיקתי מפורש.³\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+}

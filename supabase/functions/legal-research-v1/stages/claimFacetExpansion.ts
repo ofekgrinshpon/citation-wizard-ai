@@ -511,3 +511,15 @@ export function computeFacetCoverage(
     };
   });
 }
+
+/**
+ * claim_source_match_validation_v1 — deterministic legal-area inference for a
+ * free-text blob (source title + snippet, or a drafted block's text). Returns
+ * an AREA_LOCKS id, or null when no area vocabulary is present.
+ */
+export function inferLegalAreaId(text: string): string | null {
+  if (!text) return null;
+  const hay = text.slice(0, 4000);
+  for (const a of AREA_LOCKS) if (a.trigger.test(hay)) return a.id;
+  return null;
+}

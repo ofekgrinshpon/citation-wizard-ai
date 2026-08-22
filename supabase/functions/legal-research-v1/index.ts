@@ -1660,8 +1660,17 @@ async function handle(req: Request): Promise<Response> {
     synthesis_rendering: drafter.synthesis_rendering ?? null,
     synthesis_rendering_applied:
       drafter.synthesis_rendering?.synthesis_rendering_applied ?? false,
+    // claim_source_match_validation_v1 telemetry.
+    claim_source_match: drafter.claim_source_match ?? null,
+    claim_source_mismatch_count: drafter.claim_source_match?.source_ref_mismatch_count ?? 0,
+    claim_source_mismatch_reasons: drafter.claim_source_match?.mismatch_reason ?? [],
+    claim_source_unsupported_blocks: drafter.claim_source_match?.unsupported_block_count ?? 0,
+    claim_source_limitation_added: drafter.claim_source_match?.limitation_added ?? false,
+    primary_support_by_main_claim: drafter.claim_source_match?.primary_support_by_main_claim ?? false,
+    commentary_only_claims: drafter.claim_source_match?.commentary_only_claims ?? [],
     // metadata_only_holding_gate_v1 telemetry.
     metadata_only_holding_gate: drafter.metadata_only_holding_gate ?? null,
+
     metadata_only_holdings_remaining:
       drafter.metadata_only_holding_gate?.metadata_only_holdings_remaining ?? 0,
     source_split_read_in_full:
