@@ -18,7 +18,14 @@ import {
   computeFacetCoverage,
   expandClaimFacets,
   FacetSourceView,
+  inferLegalAreaId,
 } from "./stages/claimFacetExpansion.ts";
+import {
+  admitQueries,
+  selectRouterProfile,
+  STATUTE_FIRST_LIMITATION,
+} from "./stages/routerProfiles.ts";
+
 import { runLocalRetrieval } from "./stages/localRetrieval.ts";
 import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
