@@ -1,0 +1,238 @@
+{
+  "id": "D1",
+  "topic": "מידתיות / ביקורת חוקתית",
+  "query": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם מיושמים כאשר חוק פוגע בזכות יסוד?",
+  "core_authority_registry": {
+    "area": "constitutional",
+    "queries": [
+      "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי מבחני המידתיות",
+      "בג\"ץ 1715/97 לשכת מנהלי ההשקעות בישראל נ' שר האוצר מבחני המידתיות"
+    ],
+    "triggered": true,
+    "authorities": [
+      {
+        "kind": "statute",
+        "role": "primary_statute",
+        "used": false,
+        "label": "חוק-יסוד: כבוד האדם וחירותו, סעיף 8 (פסקת ההגבלה)",
+        "docket": null,
+        "admitted": true,
+        "query_he": null,
+        "retrieved": true,
+        "authority_id": "basic_law_dignity_s8",
+        "body_acquired": false,
+        "source_type_expected": "statute",
+        "skipped_because_already_present": true
+      },
+      {
+        "kind": "case",
+        "role": "binding_case_law",
+        "used": false,
+        "label": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+        "docket": "6821/93",
+        "admitted": true,
+        "query_he": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי מבחני המידתיות",
+        "retrieved": true,
+        "authority_id": "hcj_6821_93_mizrahi",
+        "body_acquired": false,
+        "source_type_expected": "case",
+        "skipped_because_already_present": false
+      },
+      {
+        "kind": "case",
+        "role": "binding_case_law",
+        "used": false,
+        "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות נ' שר האוצר",
+        "docket": "1715/97",
+        "admitted": false,
+        "query_he": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות בישראל נ' שר האוצר מבחני המידתיות",
+        "retrieved": false,
+        "authority_id": "hcj_1715_97_investment_managers",
+        "body_acquired": false,
+        "source_type_expected": "case",
+        "skipped_because_already_present": false
+      }
+    ],
+    "doctrine_id": "proportionality",
+    "matched_facet": "F1",
+    "queries_added": 2,
+    "doctrine_label": "מבחני המידתיות",
+    "trigger_reason": "doctrine_trigger_match:proportionality",
+    "registry_version": "core_authority_registry_v1",
+    "authority_candidates": [
+      "basic_law_dignity_s8",
+      "hcj_6821_93_mizrahi",
+      "hcj_1715_97_investment_managers"
+    ],
+    "statute_title_normalization": {
+      "applied": false,
+      "rewrites": [],
+      "rewritten_count": 0
+    },
+    "skipped_because_already_present": [
+      "basic_law_dignity_s8"
+    ]
+  },
+  "support_distribution": {
+    "direct": 2,
+    "unrelated": 11,
+    "partial": 4,
+    "tangential": 1
+  },
+  "candidate_count": 0,
+  "listing_page_candidates": 0,
+  "metadata_only_candidates": 0,
+  "job_id": "41660352-0ef0-475d-9f11-0f30a0d98775",
+  "run_id": "81bdcf27-b0b0-48cb-a7b0-6f99bd25c7ac",
+  "ms": 142278,
+  "terminal_status": "done",
+  "branch": null,
+  "answer": "**מבחני המידתיות בביקורת חוקתית — תשובה תמציתית**\n\nלפי נוסח חוק-יסוד: כבוד האדם וחירותו, בחינת מידתיות של פגיעה בזכות כוללת שלושה מרכיבים ברורים שמופיעים באופן חוקתי: קיום מטרה ראויה; שההגבלה תהיה באמצעות \"חוק ההולם את ערכיה של מדינת ישראל\" ושאינו \"עולה על הנדרש\" — כלומר דרישה למידתיות של האמצעי ביחס למטרה. מהדברים בחוק-יסוד נגזרת חלוקת בדיקת המידתיות לעקרונות מרכזיים: מטרה ראויה, התאמה/סבירות של האמצעי, נחיצות/מזעריות של המרסר, ואיזון בין הפגיעה לבין תכליתה.\n\nיישום פרגמטי כאשר חוק פוגע בזכות: ראשית יש לזהות את הזכות והפגיעה המיוחסת; שנית לבדוק האם הפגיעה מבוססת על \"חוק ההולם\" לפי נוסח חוק‑היסוד — כלומר האם החוק נועד לתכלית שניתן לראותה כראויה; שלישית יש להעריך את התאמתו והאם האמצעי לוגית מצמצם את אותו נזק; רביעית לבחון האם קיימת חלופה פחות פוגעת (נחיצות/מזעריות); ולבסוף לשקול את יחס התועלת/הפגיעה בהיקף הנתון. יש לציין שהחוק עצמו קובע את רוח המבחנים החוקתיים אך לא מפרט בו הוראות צווי סעד משפטיים או פירוט בכתב לגבי תוצאות מובהקות של בדיקה זו.\n\nהנטל והעוצמה של הביקורת אינם מוסדרים בפרטי בפרק של חוק‑היסוד שסופק כאן; ממסמך החקיקה נגזרת דרישה שהחוק יעמוד בתנאי ה\"הולם\" ו\"לא עולה על הנדרש\", אך החוק שאותר אינו מפרט מי נושא בנטל ההוכחה או את מנגנון המידתיות בשיפוט. על כן בשאלות של עוצמת בדיקה והנטל יש מגבלות על מסקנות שניתן להסיק רק מהטקסט החוקי.\n\nמקורות אקדמיים שציינו התפתחות פרשנית של מבחן המידתיות ומה שנקרא \"תרבות ההצדקה\" מצביעים בזהירות כי במשפט הישראלי נדגשת בגרסה המודרנית חלוקת השלבים (מטרה, התאמה, נחיצות, איזון) וכי בשטח הפוליטי והביטחוני ניתנת לעתים רמת דפרנציה (deference) שונה; מאמרים אלה מספקים תמיכה רק באופן חלקי ותיאורטי ולא מהווים מקור מחייב במקום פסק‑דין. יש להשתמש בהם בזהירות ובמגבלות שפורטו.\n\nחריגים וניואנסים בחוקי היסוד: נוסח סעיף ההגבלה בחוק‑היסוד מצביע מפורשות על שני עוגני מפתח — הלגיטימציה של המטרה (תכלית ראויה למדינה יהודית‑דמוקרטית) והדרישה שלא לחרוג ממה שנדרש. על בסיס ניסוח זה ניתן להסיק בכך שיש מקום להבחין ביישום המידתיות לפי סוג הזכות (משקל זכויות אישיות לעומת שיקולי ביטחון/מדיניות) אך מקורות חקיקתיים שסופקו אינם מפרטים מבחנים מיוחדים או טקסטים נוהליים להפרדת רמות הבדיקה.\n\nהערת דלילות מקורות: הטקסט התומך שנמצא לצורך מענה זה קצר ומבוסס בעיקר על נוסח חוק‑היסוד; לא הובאה כאן נוסחאות פסיקה מלאות מכיוון שלא הוצגו לציטוט בפנינו פסקי‑דין ברי‑שימוש, וטקסט פרשני מלא של ההלכה לא היה בידינו. לכן הניסוח כאן שואב בעיקר מהמנגנון החוקי הכללי כפי שהוא מופיע בחוק‑היסוד וממאמרים אקדמיים שתמיכתם חלקית.¹\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1930",
+      "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/article/12/1930",
+          "title": "רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    }
+  ],
+  "footnotes_length": 1,
+  "used_sources_length": 1,
+  "inline_marker_count": 1,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "metadata_only_holdings": null,
+  "limitation_notices": [
+    "**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+  ],
+  "claim_source_match": {
+    "applied": true,
+    "mismatch_reason": [
+      "commentary_in_substantive_block",
+      "claim_mismatch"
+    ],
+    "limitation_added": true,
+    "tagged_block_count": 6,
+    "dropped_source_refs": [
+      {
+        "ref": "s1",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 1,
+        "block_claim_id": "C1",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "constitutional"
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 2,
+        "block_claim_id": "C3",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "constitutional"
+      },
+      {
+        "ref": "s4",
+        "reason": "claim_mismatch",
+        "block_index": 2,
+        "block_claim_id": "C3",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "constitutional"
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 3,
+        "block_claim_id": "C2",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "constitutional"
+      },
+      {
+        "ref": "s5",
+        "reason": "claim_mismatch",
+        "block_index": 4,
+        "block_claim_id": "C2",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "constitutional"
+      },
+      {
+        "ref": "s6",
+        "reason": "claim_mismatch",
+        "block_index": 4,
+        "block_claim_id": "C2",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C3"
+        ],
+        "source_legal_area": "constitutional"
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 5,
+        "block_claim_id": "C4",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "constitutional"
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 6,
+        "block_claim_id": "C4",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "constitutional"
+      }
+    ],
+    "commentary_only_claims": [
+      "C4"
+    ],
+    "unsupported_block_count": 4,
+    "source_ref_mismatch_count": 8,
+    "primary_support_by_main_claim": false
+  },
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 1,
+    "invariant_passed": true,
+    "inline_marker_count": 1,
+    "used_sources_length": 1,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "interruption": {
+    "job_error": null,
+    "retrieval_interrupted": null,
+    "partial_retrieval": null,
+    "extraction_ledger": null,
+    "pdf_preflight": null,
+    "cpu_or_stale": false
+  }
+}
