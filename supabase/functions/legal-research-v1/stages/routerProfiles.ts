@@ -268,9 +268,9 @@ export interface BlockTrimReport {
 }
 
 interface TrimmableBlock {
-  source_refs?: unknown;
-  [k: string]: unknown;
+  source_refs?: string[];
 }
+
 
 /**
  * Deterministically enforce the profile's block ceiling *before* footnotes are
