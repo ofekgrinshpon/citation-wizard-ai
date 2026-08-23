@@ -738,3 +738,61 @@ _none_
 | P02 |  |  |  |  |  |  |  |  |  |  |
 | B8 |  |  |  |  |  |  |  |  |  |  |
 | NOISE |  |  |  |  |  |  |  |  |  |  |
+
+---
+
+# type4_last_resort_probe_v1 — acceptance report
+
+## Stability (9 runs: D1–D5, R02, P02, B8, NOISE)
+All terminal. Zero CPU kills, zero dangling footnote markers, zero orphan source rows.
+Runtimes 71–161 s, in line with the pre-change baseline. Acquisition stage cost
+1.7–3.5 s per run (0.13–2.1 s per probe). Controls unchanged: P02 refusal preserved,
+B8 canonical quote intact, NOISE `registry_not_triggered` (no seeding).
+
+## Per-authority recall (the question this subtrack had to answer)
+
+| run | authority | docket | type=4 derived | type=4 probe reached | body acquired | terminal probe outcome |
+|---|---|---|---|---|---|---|
+| D1 / R02 | בג"ץ 6821/93 בנק המזרחי | 6821/93 | ✔ | ✔ | ✘ | **real PDF, 2,344,190 B** → `extraction_failed / extraction_budget_spent` |
+| D1 / R02 | בג"ץ 1715/97 לשכת מנהלי ההשקעות | 1715/97 | ✔ | ✔ | ✘ | `blocked_by_origin` (1,787 B WAF page) |
+| D2 | בג"ץ 389/80 דפי זהב | 389/80 | ✔ | ✔ | ✘ | `blocked_by_origin` |
+| D2 | בג"ץ 935/89 גנור | 935/89 | ✔ | ✔ | ✘ | `blocked_by_origin` |
+| D3 | בג"ץ 1000/92 בבלי | 1000/92 | ✔ | ✔ | ✘ | `blocked_by_origin` |
+| D4 | ע"א 6370/00 קל בנין | 6370/00 | – | – | – | `docket_cap_zero` (eligible, not attempted) |
+| D5 | ע"א 4263/04 משמר העמק, ע"א 2773/04 עטר | – | – | – | – | `docket_cap_zero` |
+
+`type4_probe_reached_count` = `type4_derived_count` in every run (2/2, 2/2, 1/1, 2/2):
+**the cap that previously truncated the `type=4` URL is gone — the fix works as specified.**
+`type4_body_acquired_count` = 0 in every run.
+
+## What the new telemetry proves
+1. **Not a derivation bug.** For 6821/93 the derived `type=4` URL returns
+   `application/pdf`, 2.34 MB — the actual judgment file. Derivation is correct.
+2. **The remaining blocker for 6821/93 is the extraction ledger, not the network.**
+   The probe is reached, the file is downloaded, and extraction is then refused with
+   `extraction_budget_spent` because the run's single speculative extraction
+   (`f07_extraction_stability_v1`) was already consumed earlier in the pipeline.
+3. **For the other four dockets the archive itself is unreachable.** Every endpoint —
+   `type=2`, the `.z01` variant, the `elyon1` mirror and now `type=4` — returns the same
+   1,786–1,878 B WAF page (`חסימת בקשה לא מורשת`) with HTTP 200. No derivation change can
+   fix this; the origin refuses the request.
+4. **No integrity regression.** `citations_without_body_acquired` is 1 in D1/R02 and 0
+   elsewhere; `bodyless_judgment_citations` and `metadata_only_holdings` are 0 in all runs.
+   Block pages are classified and discarded, never extracted, never cited.
+
+## Verdict
+`type4_last_resort_probe_v1` is **accepted on its own scope** (reach the derived `type=4`
+URL, classify block pages, per-probe telemetry) and **does not yet move recall**:
+0 of 5 attempted authorities reached `body_acquired`.
+
+The parent track `canonical_judgment_text_acquisition_v1` therefore stays **not accepted**.
+
+## Next candidates (not implemented)
+- `exact_case_extraction_priority_v1` — let a registry-seeded canonical docket with a
+  confirmed real PDF (content-type + size known before extraction) claim the run's
+  speculative-extraction slot ahead of opportunistic pool candidates. This is the only
+  change that would unblock 6821/93 today.
+- `origin_block_backoff_v1` — once a docket returns the WAF signature on its first probe,
+  skip the remaining derived URLs for that docket (saves ~1 s and 3 requests per authority).
+- Origin access itself (headers/UA/referer or an official feed) for the four blocked
+  dockets — a separate investigation, not a derivation fix.
