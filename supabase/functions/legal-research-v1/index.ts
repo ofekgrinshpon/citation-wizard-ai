@@ -570,6 +570,89 @@ async function handle(req: Request): Promise<Response> {
     });
   }
 
+  // ─── router_profiles_v1 — select the pipeline path ───────────────────────
+  // The existing research-mode classification now drives real budgets, caps
+  // and ceilings instead of every question walking the maximal heavy path.
+  // No gate is removed: every deterministic branch downstream still runs.
+  const router = selectRouterProfile({
+    question,
+    research_mode: plannerStage.mode_plan?.mode ?? null,
+    output_shape: analyzer.answer_intent?.output_shape ?? null,
+    claim_count: analyzer.claims.length,
+    is_sources_only,
+  });
+
+  // ─── Profile E — citation_only: bypass retrieval/verifier/drafter ────────
+  // Delegated to the existing citation engine; the research charge is refunded
+  // (the citation engine bills its own). Any failure falls through to the
+  // normal pipeline so behaviour can only improve, never regress.
+  let citationOnlyFellThrough: string | null = null;
+  if (router.selected_router_profile === "citation_only" && !is_sources_only) {
+    if (!userClient || !authHeader) {
+      citationOnlyFellThrough = "no_user_token";
+    } else {
+      try {
+        const resp = await fetch(
+          `${Deno.env.get("SUPABASE_URL")}/functions/v1/citation-chat`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: authHeader },
+            body: JSON.stringify({ messages: [{ role: "user", content: question }] }),
+          },
+        );
+        const payload = await resp.json().catch(() => null) as
+          | { content?: string; answer?: string; footnotes?: unknown[] }
+          | null;
+        const answer = payload?.content ?? payload?.answer ?? "";
+        if (!resp.ok || !answer) {
+          citationOnlyFellThrough = `citation_engine_status_${resp.status}`;
+        } else {
+          await completeAllStages();
+          await writeTelemetry(admin, {
+            ...telemetryBase,
+            row_id: traceRowId,
+            answer,
+            footnotes: (payload?.footnotes ?? []) as unknown[],
+            task_mode: "legal_research",
+            metadata: {
+              pipeline: "legal-research-v1",
+              phase: "citation_only",
+              run_id,
+              total_ms: Date.now() - t_start,
+              stage_runs,
+              planning: planningMeta,
+              router_profiles: { ...router, retrieval_query_count: 0,
+                speculative_acquisition_count: 0, verifier_candidate_count: 0 },
+            },
+          });
+          // The citation engine charges separately → refund the research charge.
+          pipelineDelivered = false;
+          return jsonResponse(200, {
+            answer,
+            footnotes: (payload?.footnotes ?? []) as unknown[],
+            debug: { run_id, phase: "citation_only", router_profiles: router },
+          });
+        }
+      } catch (e) {
+        citationOnlyFellThrough = e instanceof Error ? e.message : String(e);
+      }
+    }
+  }
+  if (citationOnlyFellThrough) {
+    router.selected_router_profile = "doctrine_explainer";
+    router.profile_reason = `citation_only_fallthrough:${citationOnlyFellThrough}`;
+    router.skipped_stages = [];
+    router.path_budget_ms = 140_000;
+    router.max_retrieval_queries = 14;
+    router.max_speculative_acquisitions = 2;
+    router.max_facets = 3;
+    router.verifier_same_area_only = true;
+    router.drafter_block_ceiling = 7;
+    router.drop_unsupported_blocks = true;
+  }
+
+
+
   // ─── Required anchors — append deterministic primary-source queries ───────
   // Interpretation-note anchors (registry-driven, e.g. Mandate-era) +
   // docket-anchored-judgment anchors (deterministic from the question text
