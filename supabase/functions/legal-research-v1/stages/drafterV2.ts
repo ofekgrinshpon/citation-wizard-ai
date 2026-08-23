@@ -1624,6 +1624,8 @@ export async function runDrafterV2(
     framing,
     synthesisPlan,
     opts?.facetDirective,
+    opts?.blockCeiling ?? null,
+
   );
 
 
