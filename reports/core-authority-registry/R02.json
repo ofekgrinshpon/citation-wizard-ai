@@ -1,0 +1,244 @@
+{
+  "id": "R02",
+  "topic": "control — exact body (בנק המזרחי)",
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+  "core_authority_registry": {
+    "area": "constitutional",
+    "queries": [
+      "בג\"ץ 1715/97 לשכת מנהלי ההשקעות בישראל נ' שר האוצר מבחני המידתיות"
+    ],
+    "triggered": true,
+    "authorities": [
+      {
+        "kind": "statute",
+        "role": "primary_statute",
+        "used": false,
+        "label": "חוק-יסוד: כבוד האדם וחירותו, סעיף 8 (פסקת ההגבלה)",
+        "docket": null,
+        "admitted": true,
+        "query_he": null,
+        "retrieved": true,
+        "authority_id": "basic_law_dignity_s8",
+        "body_acquired": false,
+        "source_type_expected": "statute",
+        "skipped_because_already_present": true
+      },
+      {
+        "kind": "case",
+        "role": "binding_case_law",
+        "used": false,
+        "label": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+        "docket": "6821/93",
+        "admitted": true,
+        "query_he": null,
+        "retrieved": true,
+        "authority_id": "hcj_6821_93_mizrahi",
+        "body_acquired": true,
+        "source_type_expected": "case",
+        "skipped_because_already_present": true
+      },
+      {
+        "kind": "case",
+        "role": "binding_case_law",
+        "used": false,
+        "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות נ' שר האוצר",
+        "docket": "1715/97",
+        "admitted": false,
+        "query_he": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות בישראל נ' שר האוצר מבחני המידתיות",
+        "retrieved": false,
+        "authority_id": "hcj_1715_97_investment_managers",
+        "body_acquired": false,
+        "source_type_expected": "case",
+        "skipped_because_already_present": false
+      }
+    ],
+    "doctrine_id": "proportionality",
+    "matched_facet": null,
+    "queries_added": 1,
+    "doctrine_label": "מבחני המידתיות",
+    "trigger_reason": "doctrine_trigger_match:proportionality",
+    "registry_version": "core_authority_registry_v1",
+    "authority_candidates": [
+      "basic_law_dignity_s8",
+      "hcj_6821_93_mizrahi",
+      "hcj_1715_97_investment_managers"
+    ],
+    "statute_title_normalization": {
+      "applied": false,
+      "rewrites": [],
+      "rewritten_count": 0
+    },
+    "skipped_because_already_present": [
+      "basic_law_dignity_s8",
+      "hcj_6821_93_mizrahi"
+    ]
+  },
+  "support_distribution": {
+    "direct": 2,
+    "tangential": 4,
+    "partial": 6,
+    "unrelated": 18
+  },
+  "candidate_count": 0,
+  "listing_page_candidates": 0,
+  "metadata_only_candidates": 0,
+  "job_id": "3d8aa8c2-1272-47c7-82da-0e3c47315bdd",
+  "run_id": "ec54ec2d-d302-4774-b124-2d12dfb47daf",
+  "ms": 211673,
+  "terminal_status": "done",
+  "branch": null,
+  "answer": "**מסקנה עיקרית**\n\nבע״א 6821/93 קבע בית המשפט העליון כי פסק־דין זה דן במעמדם של חוקי היסוד ובקשרם לחקיקה רגילה, ובמהותו בחן את סמכות בית המשפט לבחון חקיקה רגילה יחסית להוראות חוקי היסוד באמצעות מבחני פסקת ההגבלה.\n\nהעותר והמשיב בתיק היו בנק מסחרי וקיבוץ/מוסד חקלאי, והסכסוך עסק בהשלכות חקיקה והסדרים להסדרת חובות המגזר החקלאי על זכויות קניין של הבנקים; פסק‑הדין מתועד בפסקי‑דין (פ\"ד מט(4) 221) ובהפניות לעיל.\n\nבמהלך הכרעתו התייחס בית המשפט לטענה כי הכנסת פועלת כרשות מכוננת וממנו נובעות השלכות ביחס ליחס שבין חוקי היסוד לחקיקה רגילה; הדיון בפסק‑דין זה ממקם את סוגיית מעמד הכנסת וכוחם של חוקי היסוד במרכז הבדיקה המשפטית.\n\nחוק‑יסוד: כבוד האדם וחירותו כולל הוראות על הגנת הקניין וסעיף פסקת ההגבלה, ובפסק‑דין זה בית המשפט שקל את משמעות ההגנות הכלליות הללו ביחס לפגיעה אפשרית בזכויות קניין הנובעות מהסדרים חקיקתיים; יחד עם זאת, במקורות שאותרו לא נמצא עיגון מפורש בפסק‑הדין המרחיב את ההגדרה של \"קניין\" לנושא זכויות נושים באופן ספציפי — לשאלת ההיקף המדויק של המושג יש לעיין בטקסט המלא של ההכרעה.\n\nבאשר ליישום המבחנים: פסק‑הדין בחן האם ההסדרים להסדרת חובות המגזר החקלאי עומדים בתנאי פסקת ההגבלה מבחינת תכלית ראויה, מידתיות והולמת ערכי היסוד, והכריע בשאלות של פגיעה בזכויות קניין והאיזונים בין אינטרסים ציבורים לפרטיים.\n\nלגבי הסעד: במקורות הספרותיים שסופקו מופיע דיון תיאורטי על סעד חוקה והאפשרויות ההיקפיות של סעד המחיקה או התאמה, אך לשם הבהרה מדויקת של הסעד שניתן בתיק זה יש לעיין בפסק‑דין המלא; הספרות מסייעת להעמקת ההבנה לגבי שיקולי סעד אך אינה מחליפה את נוסח ההכרעה.\n\nאם בכוונתך נוסח מפורט של ההחלטה (שופטים, הנמקות מדויקות, נוסח פסקה מסוימת או הכרעת הסעד), יש לעיין בפסק‑הדין המלא המצוי בקובץ הרשמי שהופנה (המקור הראשי לעיון הוא קובץ פסק‑הדין בפרוטוקול המופיע בקישור המופיע במקור).\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- ע\"א 6821/93 – בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי — https://judgments.org.il/judgments/%D7%A2%D7%90-6821-93-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%94%D7%9E%D7%90%D7%95%D7%97%D7%93-%D7%91%D7%A2%D7%9E-%D7%A0-%D7%9E%D7%92%D7%93%D7%9C-%D7%9B%D7%A4%D7%A8-%D7%A9/\n- ע\"א 6821/93 – בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי — https://judgments.org.il/judgments/%D7%A2%D7%90-6821-93-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%94%D7%9E%D7%90%D7%95%D7%97%D7%93-%D7%91%D7%A2%D7%9D-%D7%A0-%D7%9E%D7%92%D7%93%D7%9C-%D7%9B%D7%A4%D7%A8-%D7%A9/\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> החיפוש הופסק עקב מגבלת זמן, ולכן ייתכן שלא אותרו כל המקורות הרלוונטיים.",
+  "footnotes": [],
+  "footnotes_length": 0,
+  "used_sources_length": 0,
+  "inline_marker_count": 0,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "metadata_only_holdings": null,
+  "limitation_notices": [
+    "**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+  ],
+  "claim_source_match": {
+    "applied": true,
+    "mismatch_reason": [
+      "claim_mismatch",
+      "unrelated_legal_area"
+    ],
+    "limitation_added": true,
+    "tagged_block_count": 7,
+    "dropped_source_refs": [
+      {
+        "ref": "s2",
+        "reason": "claim_mismatch",
+        "block_index": 1,
+        "block_claim_id": "C2",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s2",
+        "reason": "unrelated_legal_area",
+        "block_index": 3,
+        "block_claim_id": "C1",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 3,
+        "block_claim_id": "C1",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C5"
+        ],
+        "source_legal_area": "constitutional"
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 4,
+        "block_claim_id": "C3",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C5"
+        ],
+        "source_legal_area": "constitutional"
+      },
+      {
+        "ref": "s2",
+        "reason": "claim_mismatch",
+        "block_index": 4,
+        "block_claim_id": "C3",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s2",
+        "reason": "claim_mismatch",
+        "block_index": 5,
+        "block_claim_id": "C5",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s5",
+        "reason": "claim_mismatch",
+        "block_index": 6,
+        "block_claim_id": "C2",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s6",
+        "reason": "claim_mismatch",
+        "block_index": 6,
+        "block_claim_id": "C2",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s2",
+        "reason": "claim_mismatch",
+        "block_index": 6,
+        "block_claim_id": "C2",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s2",
+        "reason": "claim_mismatch",
+        "block_index": 7,
+        "block_claim_id": "C5",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      }
+    ],
+    "commentary_only_claims": [],
+    "unsupported_block_count": 4,
+    "source_ref_mismatch_count": 10,
+    "primary_support_by_main_claim": false
+  },
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 0,
+    "invariant_passed": true,
+    "inline_marker_count": 0,
+    "used_sources_length": 0,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "interruption": {
+    "job_error": null,
+    "retrieval_interrupted": null,
+    "partial_retrieval": null,
+    "extraction_ledger": null,
+    "pdf_preflight": null,
+    "cpu_or_stale": false
+  }
+}
