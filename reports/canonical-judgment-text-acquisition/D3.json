@@ -1,0 +1,338 @@
+{
+  "id": "D3",
+  "topic": "בג״ץ ובית דין רבני / רכוש",
+  "query": "מתי בג״ץ יתערב בהחלטה של בית דין רבני בענייני רכוש בין בני זוג, במיוחד כאשר נטען שבית הדין החיל דין דתי במקום דין אזרחי?",
+  "core_authority_registry": {
+    "area": "family_property",
+    "queries": [
+      "בג\"ץ 1000/92 בבלי נ' בית הדין הרבני הגדול הלכת השיתוף",
+      "בג\"ץ 8638/03 סימה אמיר נ' בית הדין הרבני הגדול בירושלים"
+    ],
+    "triggered": true,
+    "authorities": [
+      {
+        "kind": "case",
+        "role": "binding_case_law",
+        "used": false,
+        "label": "בג\"ץ 1000/92 בבלי נ' בית הדין הרבני הגדול",
+        "docket": "1000/92",
+        "admitted": false,
+        "query_he": "בג\"ץ 1000/92 בבלי נ' בית הדין הרבני הגדול הלכת השיתוף",
+        "retrieved": false,
+        "authority_id": "hcj_1000_92_bavli",
+        "body_acquired": false,
+        "source_type_expected": "case",
+        "skipped_because_already_present": false
+      },
+      {
+        "kind": "case",
+        "role": "binding_case_law",
+        "used": true,
+        "label": "בג\"ץ 8638/03 סימה אמיר נ' בית הדין הרבני הגדול",
+        "docket": "8638/03",
+        "admitted": true,
+        "query_he": "בג\"ץ 8638/03 סימה אמיר נ' בית הדין הרבני הגדול בירושלים",
+        "retrieved": true,
+        "authority_id": "hcj_8638_03_sima_amir",
+        "body_acquired": false,
+        "source_type_expected": "case",
+        "skipped_because_already_present": false
+      },
+      {
+        "kind": "statute",
+        "role": "primary_statute",
+        "used": false,
+        "label": "חוק יחסי ממון בין בני זוג, תשל\"ג-1973",
+        "docket": null,
+        "admitted": false,
+        "query_he": null,
+        "retrieved": false,
+        "authority_id": "law_spousal_property",
+        "body_acquired": false,
+        "source_type_expected": "statute",
+        "skipped_because_already_present": false
+      },
+      {
+        "kind": "statute",
+        "role": "primary_statute",
+        "used": false,
+        "label": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשי\"ג-1953",
+        "docket": null,
+        "admitted": false,
+        "query_he": null,
+        "retrieved": true,
+        "authority_id": "law_rabbinical_jurisdiction",
+        "body_acquired": false,
+        "source_type_expected": "statute",
+        "skipped_because_already_present": true
+      }
+    ],
+    "doctrine_id": "rabbinical_civil_property",
+    "matched_facet": null,
+    "queries_added": 2,
+    "doctrine_label": "בית הדין הרבני וחלוקת רכוש לפי הדין האזרחי",
+    "trigger_reason": "doctrine_trigger_match:rabbinical_civil_property",
+    "registry_version": "core_authority_registry_v1",
+    "authority_candidates": [
+      "hcj_1000_92_bavli",
+      "hcj_8638_03_sima_amir",
+      "law_spousal_property",
+      "law_rabbinical_jurisdiction"
+    ],
+    "statute_title_normalization": {
+      "applied": true,
+      "rewrites": [
+        {
+          "after": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשי\"ג-1953 סמכויות בענייני רכוש בין בני זוג הוראות סמכות שיפוטית של בית הדין הרבני לגבי ממון ואכיפת פסקי דין",
+          "before": "חוק בתי הדין הרבניים סמכויות בענייני רכוש בין בני זוג הוראות סמכות שיפוטית של בית הדין הרבני לגבי ממון ואכיפת פסקי דין"
+        },
+        {
+          "after": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשי\"ג-1953 הוראות לגבי סדר הדין ותחולת דין דתי או דין אזרחי בסכסוכי רכוש בין בני זוג סמכויות הכרעה",
+          "before": "חוק בתי הדין הרבניים הוראות לגבי סדר הדין ותחולת דין דתי או דין אזרחי בסכסוכי רכוש בין בני זוג סמכויות הכרעה"
+        },
+        {
+          "after": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשי\"ג-1953 הוראות ערעור לבית הדין הרבני הגדול ונהלים לערעור פנימי האם דרישה למיצוי דרכים פנימיות לפני פנייה לבג\"ץ",
+          "before": "חוק בתי הדין הרבניים הוראות ערעור לבית הדין הרבני הגדול ונהלים לערעור פנימי האם דרישה למיצוי דרכים פנימיות לפני פנייה לבג\"ץ"
+        }
+      ],
+      "rewritten_count": 3
+    },
+    "skipped_because_already_present": [
+      "law_rabbinical_jurisdiction"
+    ]
+  },
+  "support_distribution": {
+    "direct": 1,
+    "unrelated": 12,
+    "partial": 11,
+    "tangential": 1
+  },
+  "candidate_count": 0,
+  "listing_page_candidates": 0,
+  "metadata_only_candidates": 0,
+  "job_id": "47b12743-b545-44dc-afe2-47d20e33aed4",
+  "run_id": "1f5abb97-7a06-4901-9769-5ab2351ad02d",
+  "ms": 100924,
+  "terminal_status": "done",
+  "branch": null,
+  "answer": "**מתי יתערב בג\"ץ בהחלטת בית דין רבני בענייני רכוש בין בני זוג — עיקר הדברים**\n\nבג\"ץ יכול לסקור החלטות של בתי דין רבניים בענייני רכוש בין בני זוג כשמדובר בהתערבות שמוגדרת כחסימת סמכות או פגיעה בזכויות יסוד או בעקרונות ההליך ההוגן; הפסיקה הראשית שמדגימה את האפשרות הזו מצויה בפסק־דין שבו נדונה היתירות של ביקורת שיפוטית על הכרעות בתי הדין הרבניים בסכסוכי בני זוג.¹\n\nהקריטריונים שאותם בג\"ץ שוקל כוללים בעיקר חריגה מסמכות (ultra vires), הפרה של כללי הצדק הטבעי והליך בלתי הוגן, פגיעה מהותית בזכויות יסוד וכן שגיאה משפטית מהותית או התעלמות מלאה מדין אזרחי רלוונטי; בספרות והנחיות שיפוטיות מצוין כי אלה הם הנסיבות שבהן הנטייה להתערב מתגבשת, אך חלק מהנחות אלה נתונות בפסיקה ובפרשנות אקדמית ולכן יש לנסח את הכללים הזהירים.\n\nמבחן מתי בית הדין 'החיל דין דתי במקום דין אזרחי' תלוי בשאלה עובדתית־משפטית: יש לבחון האם הכרעת בית הדין התבססה על דין הלכתי במקום להחיל כלל אזרחי רלוונטי או האם נמנעה בחינה של נתח משמעותי של הדין האזרחי שבסיסו הסכסוך; במקורות שאותרו אין נוסח חקיקתי מפורש המחייב תמיד יישום דין אזרחי בסכסוכי רכוש זוגיים, ולכן השאלה נשענת על בחינה של טיב ההכרעה והאם חרגה מסמכותה של הרשות הדתית.\n\nלפני פנייה לבג\"ץ נבחנת זמינות דרכי ערעור ו'מוצא משפטי חלופי' — כולל ערעור לבית הדין הרבני הגדול או פנייה לערכאות אזרחיות שבהן ניתן להכריע בסוגיית הרכוש; בתי המשפט מתייחסים לנסיבות הספציפיות כדי לקבוע האם קיפוח המערער או חסרון של נגישות לערכאות אחרות מצדיק פנייה ישירה לבג\"ץ, ובמקרים מסוימים המעמד הפרוצדורלי של החלטת בית הדין (האם היא 'דין פסק' או החלטה זמנית) משפיע על סוג הסעד הזמין.\n\nבסעד מעשי בג\"ץ יכול, בהתאם לנסיבות ולמבחן שנקבע, לבטל החלטת בית דין רבני שנמצאה כחורגת מסמכות או פוגעת בהליך הוגן, להשיב את המצב לקדמותו או להנפיק צו המורה לדיון חוזר תוך עמידה בכללי ההליך וההבחנה בדין האזרחי; עם זאת בג\"ץ נמנע מלערוך הכרעה הלכתית במקום בית הדין והרוב להעניק סעד הכוונתי תוך שמירה על תחום השיפוט הדתי־הלכתי ככל שטרם חרג מסמכותו.²\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9E%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9C.doc",
+      "title": "בג\"ץ 8638-03 סימה אמיר נ' בית הדין הרבני הגדול.doc",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9E%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9C.doc",
+          "title": "בג\"ץ 8638-03 סימה אמיר נ' בית הדין הרבני הגדול.doc",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-2150-23-%d7%90%d7%a8%d7%aa%d7%95%d7%a8-%d7%a7%d7%95%d7%96%d7%a0%d7%a6%d7%95%d7%91-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%98%d7%a8/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "רע\"פ 2150/23 ארתור קוזנצוב נ׳ מדינת ישראל – משטרת ישראל החלטה (06.03.2023)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-2150-23-%d7%90%d7%a8%d7%aa%d7%95%d7%a8-%d7%a7%d7%95%d7%96%d7%a0%d7%a6%d7%95%d7%91-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%98%d7%a8/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "רע\"פ 2150/23 ארתור קוזנצוב נ׳ מדינת ישראל – משטרת ישראל החלטה (06.03.2023)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    }
+  ],
+  "footnotes_length": 2,
+  "used_sources_length": 2,
+  "inline_marker_count": 2,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "metadata_only_holdings": null,
+  "limitation_notices": [
+    "**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+  ],
+  "claim_source_match": {
+    "applied": true,
+    "mismatch_reason": [
+      "commentary_in_substantive_block",
+      "claim_mismatch"
+    ],
+    "limitation_added": true,
+    "tagged_block_count": 5,
+    "dropped_source_refs": [
+      {
+        "ref": "s2",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 2,
+        "block_claim_id": "C2",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C2"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 2,
+        "block_claim_id": "C2",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s3",
+        "reason": "claim_mismatch",
+        "block_index": 2,
+        "block_claim_id": "C2",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C5"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s2",
+        "reason": "claim_mismatch",
+        "block_index": 3,
+        "block_claim_id": "C3",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C2"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 3,
+        "block_claim_id": "C3",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 4,
+        "block_claim_id": "C4",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s3",
+        "reason": "claim_mismatch",
+        "block_index": 4,
+        "block_claim_id": "C4",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C5"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 5,
+        "block_claim_id": "C5",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s2",
+        "reason": "claim_mismatch",
+        "block_index": 5,
+        "block_claim_id": "C5",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C2"
+        ],
+        "source_legal_area": "public_law_hcj"
+      }
+    ],
+    "commentary_only_claims": [
+      "C5"
+    ],
+    "unsupported_block_count": 1,
+    "source_ref_mismatch_count": 9,
+    "primary_support_by_main_claim": true
+  },
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 2,
+    "invariant_passed": true,
+    "inline_marker_count": 2,
+    "used_sources_length": 2,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "interruption": {
+    "job_error": null,
+    "retrieval_interrupted": null,
+    "partial_retrieval": null,
+    "extraction_ledger": null,
+    "pdf_preflight": null,
+    "cpu_or_stale": false
+  },
+  "canonical": {
+    "ms": 1121,
+    "enabled": true,
+    "version": "canonical_judgment_text_acquisition_v1",
+    "attempts": [
+      {
+        "ms": 1098,
+        "cited": false,
+        "docket": "1000/92",
+        "source": "registry_seed",
+        "query_id": "core_authority_registry:rabbinical_civil_property:hcj_1000_92_bavli",
+        "body_chars": 0,
+        "doctrine_id": "rabbinical_civil_property",
+        "authority_id": "hcj_1000_92_bavli",
+        "endpoint_type": "html",
+        "attempted_urls": [
+          "https://supremedecisions.court.gov.il/Home/Download?fileName=92010000_Z01.txt&path=HebrewVerdicts/92/000/010/Z01&type=2",
+          "https://supremedecisions.court.gov.il/Home/Download?fileName=92010000.z01&path=HebrewVerdicts/92/000/010/z01&type=2",
+          "https://elyon1.court.gov.il/files/92/000/010/z01/92010000.z01.htm"
+        ],
+        "authority_name": "בג\"ץ 1000/92 בבלי נ' בית הדין הרבני הגדול",
+        "used_in_answer": false,
+        "rejection_reason": "plain_text_below_threshold",
+        "docket_normalized": "bagatz:1000/92",
+        "acquisition_result": "fetch_failed",
+        "attempted_urls_count": 3,
+        "injected_candidate_id": null,
+        "body_identity_validated": false,
+        "canonical_acquisition_attempted": true
+      }
+    ],
+    "doctrine_id": "rabbinical_civil_property",
+    "skip_reason": null,
+    "attempted_count": 1,
+    "body_acquired_count": 0,
+    "eligible_authorities": [
+      "hcj_1000_92_bavli",
+      "hcj_8638_03_sima_amir"
+    ],
+    "skipped_not_derivable": [],
+    "injected_candidate_ids": [],
+    "metadata_only_holdings": 0,
+    "bodyless_judgment_citations": 0,
+    "skipped_already_body_acquired": [
+      "hcj_8638_03_sima_amir"
+    ],
+    "citations_without_body_acquired": 0
+  }
+}
