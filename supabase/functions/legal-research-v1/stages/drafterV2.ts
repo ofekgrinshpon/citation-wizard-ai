@@ -1041,6 +1041,14 @@ export async function runDrafterV2(
      * drafter user message (doctrine/analysis runs only). Purely additive.
      */
     facetDirective?: string[];
+    /**
+     * router_profiles_v1 — max structured blocks for the selected path.
+     * Enforced twice: as a prompt instruction, and deterministically on the
+     * parsed draft before any gate or footnote building runs.
+     */
+    blockCeiling?: number | null;
+    dropUnsupportedBlocks?: boolean;
+
     specificCaseGate?: {
       allow: boolean;
       docket_display: string | null;
