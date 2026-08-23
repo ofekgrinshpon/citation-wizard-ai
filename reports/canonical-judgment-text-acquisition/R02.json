@@ -1,11 +1,10 @@
 {
-  "id": "D1",
-  "topic": "מידתיות / ביקורת חוקתית",
-  "query": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם מיושמים כאשר חוק פוגע בזכות יסוד?",
+  "id": "R02",
+  "topic": "control — exact body (בנק המזרחי)",
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
   "core_authority_registry": {
     "area": "constitutional",
     "queries": [
-      "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי מבחני המידתיות",
       "בג\"ץ 1715/97 לשכת מנהלי ההשקעות בישראל נ' שר האוצר מבחני המידתיות"
     ],
     "triggered": true,
@@ -31,12 +30,12 @@
         "label": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
         "docket": "6821/93",
         "admitted": true,
-        "query_he": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי מבחני המידתיות",
+        "query_he": null,
         "retrieved": true,
         "authority_id": "hcj_6821_93_mizrahi",
-        "body_acquired": false,
+        "body_acquired": true,
         "source_type_expected": "case",
-        "skipped_because_already_present": false
+        "skipped_because_already_present": true
       },
       {
         "kind": "case",
@@ -54,8 +53,8 @@
       }
     ],
     "doctrine_id": "proportionality",
-    "matched_facet": "F1",
-    "queries_added": 2,
+    "matched_facet": null,
+    "queries_added": 1,
     "doctrine_label": "מבחני המידתיות",
     "trigger_reason": "doctrine_trigger_match:proportionality",
     "registry_version": "core_authority_registry_v1",
@@ -70,37 +69,37 @@
       "rewritten_count": 0
     },
     "skipped_because_already_present": [
-      "basic_law_dignity_s8"
+      "basic_law_dignity_s8",
+      "hcj_6821_93_mizrahi"
     ]
   },
   "support_distribution": {
-    "direct": 3,
-    "unrelated": 13,
-    "partial": 4,
-    "tangential": 1
+    "direct": 4,
+    "partial": 17,
+    "unrelated": 9
   },
   "candidate_count": 0,
   "listing_page_candidates": 0,
   "metadata_only_candidates": 0,
-  "job_id": "3c9cc35e-8435-4a22-bed9-c43136387b1d",
-  "run_id": "9cb0e704-1c09-4660-889f-6c2c64278026",
-  "ms": 152509,
+  "job_id": "3adac6fa-83a7-4738-9177-2a83eb77f7d1",
+  "run_id": "06f19f2f-1faa-4e79-a320-93086a971195",
+  "ms": 161392,
   "terminal_status": "done",
   "branch": null,
-  "answer": "**מבחן המידתיות — מבנה ועקרונות**\n\nלא מוצגת כאן סקירת פסיקה משום שלא נמצאו פסקי דין ברי‑שימוש; התשובה נשענת בעיקר על הוראות חוק ומאמרים שסופקו. על בסיס חומר זה, מבחן המידתיות מתואר בדוקטרינה ובספרות כבחינה בעלת שלבים עוקבים: בסיס החוק או ההרשאה המשפטית, קביעת מטרה לגיטימית, בדיקת התאמה או רלוונטיות של האמצעי להשגת המטרה, מבחן הנחיצות או החסכנות (האם יש אמצעי חלופי פחות מגביל) ולבסוף איזון בין חומרת הפגיעה לתועלת הציבורית.\n\nדרישת החוקיות עומדת בלב המבחן: חוק‑יסוד: כבוד האדם וחירותו כולל פסקת הגבלה שמציינת כי פגיעה בזכויות מותרת רק ‘בחוק ובמידה הנדרשת’. מכאן שנדרש מקור משפטי להתרת הפגיעה, אך מתוך המסמכים שנמסרו לא ניתן להפיק נוסח חקיקתי אחיד או הוראה מפורשת המגדירה מתי די בסמכות מנהלית רגילה ומתי נדרשת חקיקה ראשית.¹\n\nיישום שלבי המבחן בפועל כרוך בחלוקת תפקידים ובהתאמת רמת הבדיקה להקשר: עבודת הספרות המושגית מדגישה כי עוצמת הבדיקה משתנה לפי הטבע של הזכות, חומרת הפגיעה והמקור החוקי (רעיון ה‑varying intensity). על פי גישה זו, הנטל להראות שהפגיעה עומדת בדרישות יוטל בעיקר על הרשות המגבילה; בשלב המטרה בוחנים אם המטרה לגיטימית וסבירה, בשלב ההתאמה אם האמצעי אכן משיג את המטרה, בשלב הנחיצות אם אין אמצעי חלופי פחות מגביל, ובשלב האיזון שוקלים האם התועלת הציבורית מצדקת את הפגיעה הפרטית. פרטים פרקטיים ויישומים מדויקים תלויים בפרשנות שבית המשפט או הרשות יאמץ, אשר אינם מוצגים כאן.\n\nאם חוק או אמצעי אינם עומדים במבחן המידתיות, המקורות החוקתיים והספרות שהוצגו מדברים על מספר אופנים מעשיים: פרשנות מצמצמת של הוראה החוקית, הגבלת תחולתה, או ביטול/שבירת ההוראה ככל שהדבר מקובל לפי סדרי הדין. עם זאת, בחומר שסופק לא מצאתי נוסח מפורש המורה מה יהיה הסעד החייב להינתן ומאיזה שיקולים תעדיף ההכרעה בין סעדים אלה; לפיכך אין כאן הנחיה חקיקתית‑פורמלית ברורה לגבי עדיפות סוגי הסעד.\n\nהגבלה והסתייגות סופית: הטקסט התומך שנמצא קצר ואף חלקי; נוסחי החקיקה המלאים ופסקי‑ הדין המלאים לא היו ברשותי, ולכן ניסוחי זהירותי ומתמצת — בפרטים מעשיים או בשאלות של חלוקת נטל והיקף הסעד יש חשיבות להסתכלות על נוסחי חקיקה מלאים ופסקי‑דין רלוונטיים שלא הופיעו כאן.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> קריאת גוף פסקי הדין הופסקה מטעמי מגבלת עיבוד, ולכן ייתכן שחלק מהמקורות נותחו לפי מטא-נתונים בלבד.",
+  "answer": "**ע\"א 6821/93 — תמצית ההכרעה**\n\nבית המשפט העליון קבע שבעצם חקיקת חוקי היסוד הכנסת יכולה לעצב מסגרת חוקתית; לחוקי היסוד מעמד נורמטיבי על‑חוקי ביחס לחקיקה רגילה.\n\nבפסק‑דין אומץ מבחן פורמלי לזיהוי ״חוק יסוד״, שייחודו בהסתמכות על הכותרת ותכלית המכוננת של הסעיף עצמו ולא על מבחן מהותי בלבד; ההכרעה הורתה להבחין בין תפקידי המחוקק הרגיל לבין כובעו כגוף מכונן.\n\nהפסק‑דין אישר את סמכות בית‑המשפט לבצע ביקורת שיפוטית על חקיקה המושווית לחוק יסוד ולבטלה אם היא סותרת אותו, תוך החלת מבחני מידתיות בעת בחינת הלגיטימציה של הפגיעה בזכויות.\n\nבהתייחס לטענות לגבי פגיעה בזכות הקניין נקבע כי הזכות מוכרת כזכות מוגנת במסגרת חוק‑יסוד: כבוד האדם והחירות; בפסק‑דין שנבחן העילה לפגיעה נמצאה במסגרת ההגבלות ולכן החוק שנדון לא בוטל.\n\nבנוגע ל׳שמירת הדינים׳ קבע בית‑המשפט כי הוראת שמירת הדינים (סעיף 10 לחוק‑יסוד: כבוד האדם והחירות) חלה על דינים שהיו קיימים ערב תחילתו של חוק‑היסוד והיא אינה מעניקה, לפי קריאה זו, הסמכה כללית לפגיעה עתידית בזכויות בלא בחינה נוספת.¹\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי — https://judgments.org.il/judgments/%D7%A2%D7%90-6821-93-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%94%D7%9E%D7%90%D7%95%D7%97%D7%93-%D7%91%D7%A2%D7%9E-%D7%A0-%D7%9E%D7%92%D7%93%D7%9C-%D7%9B%D7%A4%D7%A8-%D7%A9/\n- ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי - judgments.org.il — https://judgments.org.il/judgments/%D7%A2%D7%90-6821-93-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%94%D7%9E%D7%90%D7%95%D7%97%D7%93-%D7%91%D7%A2%D7%9D-%D7%A0-%D7%9E%D7%92%D7%93%D7%9C-%D7%9B%D7%A4%D7%A8-%D7%A9/\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> קריאת גוף פסקי הדין הופסקה מטעמי מגבלת עיבוד, ולכן ייתכן שחלק מהמקורות נותחו לפי מטא-נתונים בלבד.",
   "footnotes": [
     {
-      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
-      "title": "חוק-יסוד: כבוד האדם וחירותו",
+      "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+      "title": "חוק יסוד - כבוד האדם וחירותו",
       "number": 1,
       "sources": [
         {
-          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
-          "title": "חוק-יסוד: כבוד האדם וחירותו",
-          "source_type": "israeli_law"
+          "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+          "title": "חוק יסוד - כבוד האדם וחירותו",
+          "source_type": "legislation"
         }
       ],
-      "source_type": "israeli_law"
+      "source_type": "legislation"
     }
   ],
   "footnotes_length": 1,
@@ -115,104 +114,71 @@
   "claim_source_match": {
     "applied": true,
     "mismatch_reason": [
-      "commentary_in_substantive_block",
+      "unrelated_legal_area",
       "claim_mismatch"
     ],
     "limitation_added": true,
     "tagged_block_count": 5,
     "dropped_source_refs": [
       {
-        "ref": "s5",
-        "reason": "commentary_in_substantive_block",
+        "ref": "s2",
+        "reason": "unrelated_legal_area",
         "block_index": 1,
         "block_claim_id": "C1",
         "block_legal_area": "constitutional",
         "source_claim_ids": [
           "C1"
         ],
-        "source_legal_area": "constitutional"
+        "source_legal_area": "public_law_hcj"
       },
       {
-        "ref": "s4",
+        "ref": "s2",
         "reason": "claim_mismatch",
-        "block_index": 1,
-        "block_claim_id": "C1",
-        "block_legal_area": "constitutional",
-        "source_claim_ids": [
-          "C3"
-        ],
-        "source_legal_area": null
-      },
-      {
-        "ref": "s6",
-        "reason": "commentary_in_substantive_block",
         "block_index": 2,
-        "block_claim_id": "C2",
-        "block_legal_area": "constitutional",
-        "source_claim_ids": [
-          "C2"
-        ],
-        "source_legal_area": "constitutional"
-      },
-      {
-        "ref": "s4",
-        "reason": "commentary_in_substantive_block",
-        "block_index": 3,
-        "block_claim_id": "C3",
-        "block_legal_area": "constitutional",
-        "source_claim_ids": [
-          "C3"
-        ],
-        "source_legal_area": null
-      },
-      {
-        "ref": "s5",
-        "reason": "claim_mismatch",
-        "block_index": 3,
-        "block_claim_id": "C3",
-        "block_legal_area": "constitutional",
-        "source_claim_ids": [
-          "C1"
-        ],
-        "source_legal_area": "constitutional"
-      },
-      {
-        "ref": "s6",
-        "reason": "claim_mismatch",
-        "block_index": 4,
         "block_claim_id": "C4",
         "block_legal_area": "constitutional",
         "source_claim_ids": [
-          "C2"
+          "C1"
         ],
-        "source_legal_area": "constitutional"
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s2",
+        "reason": "claim_mismatch",
+        "block_index": 3,
+        "block_claim_id": "C2",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
       },
       {
         "ref": "s2",
         "reason": "claim_mismatch",
         "block_index": 4,
-        "block_claim_id": "C4",
+        "block_claim_id": "C3",
         "block_legal_area": "constitutional",
         "source_claim_ids": [
-          "C2"
+          "C1"
         ],
-        "source_legal_area": null
+        "source_legal_area": "public_law_hcj"
       },
       {
-        "ref": "s3",
+        "ref": "s2",
         "reason": "claim_mismatch",
         "block_index": 5,
-        "block_claim_id": "C4",
+        "block_claim_id": "C5",
         "block_legal_area": "constitutional",
         "source_claim_ids": [
-          "C2"
+          "C1"
         ],
-        "source_legal_area": "constitutional"
+        "source_legal_area": "public_law_hcj"
       }
     ],
     "commentary_only_claims": [],
-    "unsupported_block_count": 3,
-    "source_ref_mismatch_count": 8,
+    "unsupported_block_count": 4,
+    "source_ref_mismatch_count": 5,
     "primary_support_by_main_claim": true
   },
   "footnote_render_report": {
@@ -234,17 +200,17 @@
     "cpu_or_stale": false
   },
   "canonical": {
-    "ms": 3476,
+    "ms": 3281,
     "enabled": true,
     "version": "canonical_judgment_text_acquisition_v1",
     "attempts": [
       {
-        "ms": 2106,
+        "ms": 2064,
         "cited": false,
         "docket": "6821/93",
         "probes": [
           {
-            "ms": 133,
+            "ms": 126,
             "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=HebrewVerdicts/93/210/068/Z01&type=2",
             "detail": "plain_text_below_threshold",
             "result": "blocked_by_origin",
@@ -260,7 +226,7 @@
             "body_title_or_signature": "חסימת בקשה לא מורשת"
           },
           {
-            "ms": 320,
+            "ms": 343,
             "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210.z01&path=HebrewVerdicts/93/210/068/z01&type=2",
             "detail": "plain_text_below_threshold",
             "result": "blocked_by_origin",
@@ -276,14 +242,14 @@
             "body_title_or_signature": "חסימת בקשה לא מורשת"
           },
           {
-            "ms": 326,
+            "ms": 290,
             "url": "https://elyon1.court.gov.il/files/93/210/068/z01/93068210.z01.htm",
             "detail": "plain_text_below_threshold",
             "result": "blocked_by_origin",
             "url_kind": "html",
             "url_type": null,
-            "body_chars": 224,
-            "byte_length": 1878,
+            "body_chars": 223,
+            "byte_length": 1877,
             "http_status": 200,
             "last_resort": false,
             "probe_index": 2,
@@ -292,7 +258,7 @@
             "body_title_or_signature": "חסימת בקשה לא מורשת"
           },
           {
-            "ms": 1327,
+            "ms": 1305,
             "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=EnglishVerdicts/93/210/068/Z01&type=4",
             "detail": "extraction_budget_spent",
             "result": "extraction_failed",
@@ -335,12 +301,12 @@
         "canonical_acquisition_attempted": true
       },
       {
-        "ms": 1326,
+        "ms": 1181,
         "cited": false,
         "docket": "1715/97",
         "probes": [
           {
-            "ms": 136,
+            "ms": 133,
             "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150_Z01.txt&path=HebrewVerdicts/97/150/017/Z01&type=2",
             "detail": "plain_text_below_threshold",
             "result": "blocked_by_origin",
@@ -356,7 +322,7 @@
             "body_title_or_signature": "חסימת בקשה לא מורשת"
           },
           {
-            "ms": 559,
+            "ms": 375,
             "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150.z01&path=HebrewVerdicts/97/150/017/z01&type=2",
             "detail": "plain_text_below_threshold",
             "result": "blocked_by_origin",
@@ -372,7 +338,7 @@
             "body_title_or_signature": "חסימת בקשה לא מורשת"
           },
           {
-            "ms": 298,
+            "ms": 283,
             "url": "https://elyon1.court.gov.il/files/97/150/017/z01/97017150.z01.htm",
             "detail": "plain_text_below_threshold",
             "result": "blocked_by_origin",
@@ -388,7 +354,7 @@
             "body_title_or_signature": "חסימת בקשה לא מורשת"
           },
           {
-            "ms": 333,
+            "ms": 390,
             "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150_Z01.txt&path=EnglishVerdicts/97/150/017/Z01&type=4",
             "detail": "plain_text_below_threshold",
             "result": "blocked_by_origin",

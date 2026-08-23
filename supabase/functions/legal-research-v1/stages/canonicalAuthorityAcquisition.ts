@@ -29,6 +29,7 @@ import {
 } from "./docketDetection.ts";
 import { classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
 import {
+  deriveSupremeCourtBinaryUrls,
   deriveSupremeCourtFileUrls,
   isSupremeCourtDocket,
   isTextEndpointUrl,
@@ -47,8 +48,13 @@ export const CANONICAL_ACQUISITION_VERSION = "canonical_judgment_text_acquisitio
 export const CANONICAL_ACQUISITION_LIMITS = {
   /** Max seeded dockets probed per run. */
   MAX_DOCKETS: 2,
-  /** Max derived URLs probed per docket (text endpoints come first). */
+  /** Max derived *text* URLs probed per docket (always first). */
   MAX_URLS_PER_DOCKET: 3,
+  /**
+   * type4_last_resort_probe_v1 — max derived binary (`type=4` corpus) URLs
+   * probed per docket, only after every text endpoint has failed.
+   */
+  MAX_BINARY_URLS_PER_DOCKET: 1,
   /** Per-URL network + decode box. */
   PER_URL_MS: 10_000,
   /** Whole-stage box. */
@@ -61,15 +67,44 @@ export const CANONICAL_ACQUISITION_LIMITS = {
   MAX_TEXT: 6_000,
   /** Largest body buffered/decoded per probe. */
   MAX_PROBE_BYTES: 4 * 1024 * 1024,
+  /** A short HTML body at/below this size is a block/stub page, not a judgment. */
+  BLOCK_PAGE_MAX_CHARS: 4_000,
 } as const;
+
+/** Signatures of the origin's "unauthorised request" interstitial (HTTP 200). */
+const BLOCK_PAGE_SIGNATURES = [
+  "חסימת בקשה לא מורשת",
+  "בקשה לא מורשת",
+  "access denied",
+  "request blocked",
+];
 
 export type CanonicalAcquisitionResult =
   | "body_acquired"
+  | "blocked_by_origin"
+  | "below_threshold"
   | "identity_mismatch"
   | "timeout"
   | "fetch_failed"
   | "extraction_failed"
   | "not_found";
+
+export interface CanonicalProbeRecord {
+  probe_index: number;
+  url: string;
+  url_kind: "text" | "html" | "doc" | "pdf";
+  url_type: string | null;
+  last_resort: boolean;
+  http_status: number | null;
+  content_type: string | null;
+  byte_length: number | null;
+  body_chars: number | null;
+  body_title_or_signature: string | null;
+  result: CanonicalAcquisitionResult | "skipped_cap";
+  detail: string | null;
+  skipped_due_to_cap: boolean;
+  ms: number;
+}
 
 export interface CanonicalAcquisitionAttempt {
   canonical_acquisition_attempted: true;
@@ -91,6 +126,12 @@ export interface CanonicalAcquisitionAttempt {
   used_in_answer: boolean;
   cited: boolean;
   rejection_reason: string | null;
+  /** type4_last_resort_probe_v1 */
+  probes: CanonicalProbeRecord[];
+  type4_derived: boolean;
+  type4_probe_reached: boolean;
+  type4_body_acquired: boolean;
+  blocked_by_origin_count: number;
   ms: number;
 }
 
@@ -105,9 +146,15 @@ export interface CanonicalAuthorityAcquisitionReport {
   attempts: CanonicalAcquisitionAttempt[];
   attempted_count: number;
   body_acquired_count: number;
+  /** type4_last_resort_probe_v1 aggregates */
+  type4_derived_count: number;
+  type4_probe_reached_count: number;
+  type4_body_acquired_count: number;
+  blocked_by_origin_count: number;
   injected_candidate_ids: string[];
   ms: number;
 }
+
 
 function emptyReport(
   skip_reason: string | null,
@@ -124,6 +171,10 @@ function emptyReport(
     attempts: [],
     attempted_count: 0,
     body_acquired_count: 0,
+    type4_derived_count: 0,
+    type4_probe_reached_count: 0,
+    type4_body_acquired_count: 0,
+    blocked_by_origin_count: 0,
     injected_candidate_ids: [],
     ms: 0,
   };
@@ -261,12 +312,40 @@ export async function runCanonicalAuthorityAcquisition(
   report.attempted_count = report.attempts.length;
   report.body_acquired_count = report.attempts
     .filter((a) => a.acquisition_result === "body_acquired").length;
+  report.type4_derived_count = report.attempts.filter((a) => a.type4_derived).length;
+  report.type4_probe_reached_count = report.attempts.filter((a) => a.type4_probe_reached).length;
+  report.type4_body_acquired_count = report.attempts.filter((a) => a.type4_body_acquired).length;
+  report.blocked_by_origin_count = report.attempts
+    .reduce((n, a) => n + a.blocked_by_origin_count, 0);
   report.ms = Date.now() - t0;
   await input.markDurable?.("canonical_authority_acquisition_done", {
     attempted: report.attempted_count,
     body_acquired: report.body_acquired_count,
+    type4_reached: report.type4_probe_reached_count,
+    type4_body_acquired: report.type4_body_acquired_count,
+    blocked_by_origin: report.blocked_by_origin_count,
   });
   return report;
+}
+
+function urlTypeParam(url: string): string | null {
+  const m = String(url).match(/[?&]type=(\d+)/);
+  return m ? m[1] : null;
+}
+
+function isType4Url(url: string): boolean {
+  return urlTypeParam(url) === "4";
+}
+
+/** Detects the origin's short block/stub page (HTTP 200, no judgment body). */
+function blockPageSignature(textPrefix: string, docket: DocketRef): string | null {
+  const t = textPrefix.trim();
+  if (t.length > CANONICAL_ACQUISITION_LIMITS.BLOCK_PAGE_MAX_CHARS) return null;
+  for (const sig of BLOCK_PAGE_SIGNATURES) {
+    if (t.toLowerCase().includes(sig.toLowerCase())) return sig;
+  }
+  if (t.length > 0 && !textContainsExactDocket(t, docket)) return "short_page_without_docket";
+  return null;
 }
 
 async function probeAuthority(
@@ -277,9 +356,15 @@ async function probeAuthority(
 ): Promise<CanonicalAcquisitionAttempt> {
   const tA = Date.now();
   const { auth, docket } = target;
-  const urls = deriveSupremeCourtFileUrls(docket, {
+  const textUrls = deriveSupremeCourtFileUrls(docket, {
     maxUrls: CANONICAL_ACQUISITION_LIMITS.MAX_URLS_PER_DOCKET,
+  }).filter((u) => isTextEndpointUrl(u) || /\.html?($|[?#])/i.test(u));
+  // type4_last_resort_probe_v1: the corpus endpoint proven to serve bodies,
+  // probed only after every text endpoint has failed.
+  const binaryUrls = deriveSupremeCourtBinaryUrls(docket, {
+    maxUrls: CANONICAL_ACQUISITION_LIMITS.MAX_BINARY_URLS_PER_DOCKET,
   });
+  const urls = [...textUrls, ...binaryUrls];
   const attempt: CanonicalAcquisitionAttempt = {
     canonical_acquisition_attempted: true,
     authority_id: auth.authority_id,
@@ -299,6 +384,11 @@ async function probeAuthority(
     used_in_answer: false,
     cited: false,
     rejection_reason: null,
+    probes: [],
+    type4_derived: binaryUrls.some(isType4Url),
+    type4_probe_reached: false,
+    type4_body_acquired: false,
+    blocked_by_origin_count: 0,
     ms: 0,
   };
   if (urls.length === 0) {
@@ -308,11 +398,40 @@ async function probeAuthority(
   }
 
   let identitySeen = false;
-  for (const url of urls) {
+  let stopped = false;
+  for (let i = 0; i < urls.length; i++) {
+    const url = urls[i];
+    const lastResort = isType4Url(url);
+    const probe: CanonicalProbeRecord = {
+      probe_index: i,
+      url,
+      url_kind: endpointType(url) ?? "text",
+      url_type: urlTypeParam(url),
+      last_resort: lastResort,
+      http_status: null,
+      content_type: null,
+      byte_length: null,
+      body_chars: null,
+      body_title_or_signature: null,
+      result: "skipped_cap",
+      detail: null,
+      skipped_due_to_cap: false,
+      ms: 0,
+    };
+    if (stopped) {
+      probe.skipped_due_to_cap = true;
+      probe.detail = "budget_or_earlier_success";
+      attempt.probes.push(probe);
+      continue;
+    }
     if (input.budget?.exceeded()) {
       attempt.acquisition_result = "timeout";
       attempt.rejection_reason = "retrieval_budget_exceeded";
-      break;
+      probe.result = "timeout";
+      probe.detail = "retrieval_budget_exceeded";
+      attempt.probes.push(probe);
+      stopped = true;
+      continue;
     }
     const perUrlMs = Math.max(
       1000,
@@ -321,14 +440,44 @@ async function probeAuthority(
     if (perUrlMs <= 1000 && remainingMs() < 1000) {
       attempt.acquisition_result = "timeout";
       attempt.rejection_reason = "stage_budget_exhausted";
-      break;
+      probe.result = "timeout";
+      probe.detail = "stage_budget_exhausted";
+      attempt.probes.push(probe);
+      stopped = true;
+      continue;
     }
     attempt.endpoint_type = endpointType(url);
-    input.budget?.mark("canonical_probe_start", { url, authority: auth.authority_id });
+    if (lastResort) attempt.type4_probe_reached = true;
+    const tP = Date.now();
+    input.budget?.mark("canonical_probe_start", {
+      url,
+      authority: auth.authority_id,
+      probe_index: i,
+      last_resort: lastResort,
+    });
+    const blockState: { sig: string | null } = { sig: null };
     try {
       const got = await withTimeout(
         tryDirectFile(url, {
           allowPlainText: true,
+          onStage: (name: string, detail?: Record<string, unknown>) => {
+            if (name === "response_headers" && detail) {
+              probe.http_status = Number(detail.status ?? 0) || null;
+              probe.content_type = detail.contentType ? String(detail.contentType) : null;
+              const declared = Number(detail.declaredLength ?? 0) || 0;
+              if (declared) probe.byte_length = declared;
+            }
+            if (detail && typeof detail.bytes === "number" && detail.bytes > 0) {
+              probe.byte_length = detail.bytes;
+            }
+            if (name === "clean_done" && detail && typeof detail.chars === "number") {
+              probe.body_chars = detail.chars;
+            }
+          },
+          inspectText: (prefix: string) => {
+            blockState.sig = blockPageSignature(prefix, docket);
+            if (blockState.sig) probe.body_title_or_signature = blockState.sig;
+          },
           // Identity must be proven *inside* the body before it is treated as
           // this authority — a derived path alone is never enough.
           validateText: (text: string) => {
@@ -364,26 +513,48 @@ async function probeAuthority(
         attempt.body_identity_validated = true;
         attempt.body_chars = Math.min(got.length, CANONICAL_ACQUISITION_LIMITS.MAX_TEXT);
         attempt.injected_candidate_id = injectAuthorityBody(input, auth, docket, url, got);
-        break;
+        if (lastResort) attempt.type4_body_acquired = true;
+        probe.result = "body_acquired";
+        probe.body_chars = got.length;
+        probe.ms = Date.now() - tP;
+        attempt.probes.push(probe);
+        stopped = true;
+        continue;
       }
-      attempt.acquisition_result = "extraction_failed";
+      attempt.acquisition_result = "below_threshold";
       attempt.rejection_reason = "body_below_threshold";
+      probe.result = "below_threshold";
+      probe.body_chars = got.length;
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       const name = (err as { name?: string } | null)?.name ?? "";
-      if (/docket_mismatch/i.test(msg)) {
-        attempt.acquisition_result = "identity_mismatch";
+      let result: CanonicalAcquisitionResult;
+      if (blockState.sig) {
+        // A short WAF/stub page is an origin block, not an empty archive slot.
+        result = "blocked_by_origin";
+      } else if (/docket_mismatch/i.test(msg)) {
+        result = "identity_mismatch";
+      } else if (/below_threshold/i.test(msg)) {
+        result = "below_threshold";
       } else if (
         msg === "retrieval_timeout" || name === "TimeoutError" || /timeout|abort/i.test(msg)
       ) {
-        attempt.acquisition_result = "timeout";
+        result = "timeout";
       } else if (/extraction|pdf/i.test(msg)) {
-        attempt.acquisition_result = "extraction_failed";
+        result = "extraction_failed";
       } else {
-        attempt.acquisition_result = "fetch_failed";
+        result = "fetch_failed";
       }
-      attempt.rejection_reason = msg.slice(0, 200);
+      attempt.acquisition_result = result;
+      attempt.rejection_reason = blockState.sig
+        ? `blocked_by_origin:${blockState.sig}`
+        : msg.slice(0, 200);
+      probe.result = result;
+      probe.detail = msg.slice(0, 200);
+      if (result === "blocked_by_origin") attempt.blocked_by_origin_count++;
     }
+    probe.ms = Date.now() - tP;
+    attempt.probes.push(probe);
   }
 
   if (attempt.acquisition_result !== "body_acquired") {

@@ -72,69 +72,38 @@
     "skipped_because_already_present": []
   },
   "support_distribution": {
-    "direct": 9,
-    "unrelated": 12,
-    "tangential": 1,
-    "partial": 7
+    "partial": 5,
+    "direct": 5,
+    "unrelated": 15,
+    "tangential": 4
   },
   "candidate_count": 0,
   "listing_page_candidates": 0,
   "metadata_only_candidates": 0,
-  "job_id": "fc87c437-ab4b-4b90-b7a7-a29cf842594c",
-  "run_id": "1fde5caf-5741-4971-8233-c9d6a003c3cf",
-  "ms": 140963,
+  "job_id": "587cf4af-f72c-490e-a61a-e2a7cd913d13",
+  "run_id": "d631c1c0-86ba-4c3d-b0a9-cd9b20263f14",
+  "ms": 121263,
   "terminal_status": "done",
   "branch": null,
-  "answer": "**עילת הסבירות במשפט המנהלי — מושג כללי**\n\nעילת אי‑הסבירות היא עילת ביקורת שיפוטית במינהל שדרכה בוחן בית המשפט האם החלטה מנהלית נופלת בתוך טווח ההחלטות הסבירות שהרשות הייתה רשאית לקבל; החלטה החורגת באופן מובהק מטווח זה עלולה להימצא בלתי סבירה ולמנוע מעיקרון קיום ההחלטה. בפסיקה מרכזית נסחו בתי המשפט מבחנים לבחינת אי‑סבירות והבהירו את תפקיד הביקורת השיפוטית בהקשר זה.¹\n\nבהשוואה לקריטריון האנגלי של Wednesbury, הספרות והפסיקה בישראל מבחינות בין שתי תמות: סבירות במובן של העדר מופרכות קיצונית, וסבירות כמבחן איזוני שמתחשב ביחסי תועלת‑נזק ובהגנת זכויות יסוד; במקרים שבהם מעורבות זכויות יסוד הבדיקה השיפוטית נוטה להיות מחמירה יותר מאשר בבחינת סבירות גרידא.²\n\nביום‑יום של הביקורת השיפוטית בג\"ץ מפעיל את עילת הסבירות גם כשנשאלת שאלת ההתערבות בהכרעות של בתי דין או גופים שיפוטיים מקומיים; בפסקי‑דין מרכזיים הוצגו הקריטריונים הללו כבסיס להכרעה בבקשות התערבות. עם זאת, במקורות שסופקו לא נכללו נוסחים ספציפיים של פסקי‑דין המתמקדים רק בהתערבות בג\"ץ בהכרעות בית הדין הרבני, ולכן יש לזקק את היישום הקונקרטי של הקריטריונים האלה בנסיבות של בתי דין רבניים בזהירות.¹\n\nבנוגע לשאלה האם הדין האזרחי חלים על בית הדין הרבני — במקורות שאותרו לא נמצא מקור חקיקתי ראשוני שמסדיר במפורש את תחולת הדין האזרחי על בתי הדין הרבניים; עם זאת, ספרות מקצועית דנה במתח שבין סמכות הדיון הדתי לבין היישום של כללים אזרחיים ופירושם תוך שימת לב להגבלות החוקיות והפרוצדורליות.³\n\nההבחנה בין סבירות לשיקול זר או חריגה מסמכות מתמקדת בשלושה היבטים: ראשית, שיקול זר — שימוש בשיקול שאינו רלוונטי למטרה החוקית של הסמכות — מוביל לבחינה עצמאית של רשאות הרשות; שנית, התעלמות משיקול מהותי יכולה להצביע על החלטה בלתי‑סבירה; שלישית, חריגה מסמכות חלה כאשר ההחלטה עצמה חורגת מהסמכות הנתונה (או ננקטת למטרה זרה) ולרוב נבחנת לצד עילת הסבירות, כך שיש מקרים שבהם טיעון של חריגה מסמכות ושל אי‑סבירות חפיפה אך כל אחת נושאת השלכות משפטיות שונות.\n\nבמהלך בקשה לביטול החלטה על בסיס אי‑סבירות, שיקול זר או חריגה מסמכות, הסעד השכיח הוא ביטול ההחלטה (צו ביטול/פסק דין מבטל); במצבים מתאימים יינתנו גם צווים הוראתיים, צווי מניעה זמניים או צווי פסול חלקי לפי נסיבות המעשה ועקרון המידתיות. בבחירת הסעד השופט שוקל את חומרת הפגם, תוצאות הביטול והצורך בשימור יציבות מנהלית, כאשר בפגיעה בזכויות יסוד נטייתו של בית המשפט להקל בכיוון ההגנה על הזכויות.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "answer": "עילת הסבירות במשפט המנהלי היא עיקרון ביקורת שיפוטית שמטרתו לבדוק האם החלטה מנהלית נמצאת בתוך טווח התוצאות הסבירות־הראציונליות שניתן לצפות מרשות המוסמכת; היא משמשת כמסנן נגד החלטות קיצוניות, בלתי‑מוצדקות או שאינן שומרות על יחס הולם בין אמצעים לתכלית.¹\n\nהקריטריונים שבבתי המשפט נלקחים בחשבון כוללים נוסחאות שונות: מבחן הסבירות האיזונית או יחסיות בין אמצעי לתכלית; דחיית גישת ה‑absurdity טהורה לטובת בדיקה מעמיקה של ההנמקה והיחסיות; וכן בדיקה של ההיקף העובדתי והמידה שבה הרשות שקלה שיקולים רלוונטיים. פרשנויות אלה מופיעות הן בדיון אקדמי על נוסחאות המבחן והן בפסיקה עכשווית המשתמשת במושג סבירות איזונית.\n\nישנה גם מתכונת של מדרג חומרה בבחינת סבירות: כאשר נפגעות זכויות יסוד, כאשר ההחלטה נובעת מהסמכה מיוחדת או כאשר יש חוסר בהנמקה, בתי המשפט נוטים לערוך בדיקה אינטנסיבית יותר מאשר במקרים טכניים־פורמליים; פסיקה עדכנית מדגישה כי סמכות סטטוטורית קיימת אינה חוסמת ביקורת על סבירות הכרעה.\n\nשיקול זר, במובן המקובל, הוא שיקול שאינו רלוונטי לתכלית ההסמכה החוקית — כלומר שימוש בשיקול שהמחוקק לא התכוון שיגיע להשפיע על ההחלטה. שיקול כזה נוטה להוביל לביטול החלטה משום שהרשות פעלה על יסוד מוטעה של רלוונטיות; לעומת זאת, עילת הסבירות בוחנת את נכונות היחסיות והתוצאה ולא תמיד תזהה בעדיפות הראשונה את היותו של שיקול 'זר'. במקורות שאותרו לא נמצא עיגון פסיקתי אחד־מוחלט שקובע את הקו האופייני בין שני העקרונות, והעניין נדון בעיקר בספרות ובניתוח התאורטי.\n\nחריגה מסמכות משמעותה כי הרשות חרגה מהסמכות החוקית עצמה — פעולה שבוצעה ללא סמכות או שמעבר למה שהיא נתונה לעשות; תוצאתה המשפטית הרגילה היא ביטול החלטה על יסוד אי‑סמכות. ההבחנה מהסבירות היא יסודית: סבירות מניחה שקיימת סמכות ובוחנת את אופן השימוש בה, ואילו חריגה מסמכות מערערת על קיום ההרשאה החוקית. עם זאת יכולות להיות חפיפות מעשיות — החלטה שכלכלתה סבירה מבחינת תוצאה עלולה אף להיחשב כחריגה אם נמצאה חוסר סמכות פורמלית או חריגה מהעוגן החוקי.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
   "footnotes": [
     {
-      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/990/056/N45&fileName=07056990_n45.txt&type=4",
-      "title": "בג\"ץ 5699/07 - פסק דין (supremedecisions.court.gov.il)",
+      "url": "https://fs.knesset.gov.il/25/law/25_lst_2970619.docx",
+      "title": "חוק-יסוד: השפיטה, אשר מקנה לבג\"ץ את \"הסמכות לדון בעניינים אשר הוא רואה צורך לתת",
       "number": 1,
       "sources": [
         {
-          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/07/990/056/N45&fileName=07056990_n45.txt&type=4",
-          "title": "בג\"ץ 5699/07 - פסק דין (supremedecisions.court.gov.il)",
-          "source_type": "caselaw"
+          "url": "https://fs.knesset.gov.il/25/law/25_lst_2970619.docx",
+          "title": "חוק-יסוד: השפיטה, אשר מקנה לבג\"ץ את \"הסמכות לדון בעניינים אשר הוא רואה צורך לתת",
+          "source_type": "legislation"
         }
       ],
-      "source_type": "caselaw"
-    },
-    {
-      "url": "https://www.taulawreview.sites.tau.ac.il/post/weill2",
-      "title": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוטית; עילת אי-הסבירות במשפט המנהלי: היבטים השוואתיים והערות נורמטיביות אחדות",
-      "number": 2,
-      "sources": [
-        {
-          "url": "https://www.taulawreview.sites.tau.ac.il/post/weill2",
-          "title": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוטית",
-          "source_type": "other"
-        },
-        {
-          "url": "https://cris.huji.ac.il/en/publications/%D7%A2%D7%99%D7%9C%D7%AA-%D7%90%D7%99-%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA-%D7%91%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99-%D7%94%D7%99%D7%91%D7%98%D7%99%D7%9D-%D7%94%D7%A9%D7%95%D7%95%D7%90%D7%AA%D7%99%D7%99%D7%9D-%D7%95%D7%94%D7%A2%D7%A8%D7%95%D7%AA-%D7%A0%D7%95%D7%A8%D7%9E%D7%98%D7%99%D7%91%D7%99%D7%95%D7%AA-%D7%90/",
-          "title": "עילת אי-הסבירות במשפט המנהלי: היבטים השוואתיים והערות נורמטיביות אחדות",
-          "source_type": "other"
-        }
-      ],
-      "source_type": "compound"
-    },
-    {
-      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/4-zamir.pdf",
-      "title": "הסמכות המינהלית",
-      "number": 3,
-      "sources": [
-        {
-          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/4-zamir.pdf",
-          "title": "הסמכות המינהלית",
-          "source_type": "academic"
-        }
-      ],
-      "source_type": "academic"
+      "source_type": "legislation"
     }
   ],
-  "footnotes_length": 3,
-  "used_sources_length": 4,
-  "inline_marker_count": 4,
+  "footnotes_length": 1,
+  "used_sources_length": 1,
+  "inline_marker_count": 1,
   "dangling_marker_count": 0,
   "orphan_source_row_count": 0,
   "metadata_only_holdings": null,
@@ -148,12 +117,12 @@
       "claim_mismatch"
     ],
     "limitation_added": true,
-    "tagged_block_count": 6,
+    "tagged_block_count": 5,
     "dropped_source_refs": [
       {
-        "ref": "s3",
+        "ref": "s5",
         "reason": "commentary_in_substantive_block",
-        "block_index": 1,
+        "block_index": 0,
         "block_claim_id": "C1",
         "block_legal_area": "public_law_hcj",
         "source_claim_ids": [
@@ -163,20 +132,97 @@
       },
       {
         "ref": "s6",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 0,
+        "block_claim_id": "C1",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s5",
+        "reason": "claim_mismatch",
+        "block_index": 1,
+        "block_claim_id": "C2",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s3",
+        "reason": "claim_mismatch",
+        "block_index": 1,
+        "block_claim_id": "C2",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s6",
+        "reason": "claim_mismatch",
+        "block_index": 1,
+        "block_claim_id": "C2",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s3",
+        "reason": "claim_mismatch",
+        "block_index": 2,
+        "block_claim_id": "C2",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s4",
+        "reason": "claim_mismatch",
+        "block_index": 2,
+        "block_claim_id": "C2",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s5",
         "reason": "claim_mismatch",
         "block_index": 3,
-        "block_claim_id": "C1",
+        "block_claim_id": "C3",
         "block_legal_area": "public_law_hcj",
         "source_claim_ids": [
-          "C2"
+          "C1"
         ],
         "source_legal_area": null
       },
       {
-        "ref": "s2",
+        "ref": "s1",
         "reason": "claim_mismatch",
-        "block_index": 5,
+        "block_index": 3,
         "block_claim_id": "C3",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s4",
+        "reason": "claim_mismatch",
+        "block_index": 4,
+        "block_claim_id": "C4",
         "block_legal_area": "public_law_hcj",
         "source_claim_ids": [
           "C1"
@@ -184,53 +230,40 @@
         "source_legal_area": "public_law_hcj"
       },
       {
-        "ref": "s6",
-        "reason": "claim_mismatch",
-        "block_index": 5,
-        "block_claim_id": "C3",
-        "block_legal_area": "public_law_hcj",
-        "source_claim_ids": [
-          "C2"
-        ],
-        "source_legal_area": null
-      },
-      {
         "ref": "s2",
         "reason": "claim_mismatch",
-        "block_index": 6,
+        "block_index": 4,
         "block_claim_id": "C4",
-        "block_legal_area": "constitutional",
+        "block_legal_area": "public_law_hcj",
         "source_claim_ids": [
           "C1"
         ],
         "source_legal_area": "public_law_hcj"
       },
       {
-        "ref": "s6",
+        "ref": "s5",
         "reason": "claim_mismatch",
-        "block_index": 6,
+        "block_index": 4,
         "block_claim_id": "C4",
-        "block_legal_area": "constitutional",
+        "block_legal_area": "public_law_hcj",
         "source_claim_ids": [
-          "C2"
+          "C1"
         ],
         "source_legal_area": null
       }
     ],
-    "commentary_only_claims": [
-      "C2"
-    ],
-    "unsupported_block_count": 2,
-    "source_ref_mismatch_count": 6,
+    "commentary_only_claims": [],
+    "unsupported_block_count": 3,
+    "source_ref_mismatch_count": 12,
     "primary_support_by_main_claim": true
   },
   "footnote_render_report": {
     "version": "footnote_rendering_invariant_v1",
     "renumbered": false,
-    "footnotes_length": 3,
+    "footnotes_length": 1,
     "invariant_passed": true,
-    "inline_marker_count": 4,
-    "used_sources_length": 4,
+    "inline_marker_count": 1,
+    "used_sources_length": 1,
     "dangling_marker_count": 0,
     "orphan_source_row_count": 0
   },
@@ -243,57 +276,199 @@
     "cpu_or_stale": false
   },
   "canonical": {
-    "ms": 1737,
+    "ms": 2790,
     "enabled": true,
     "version": "canonical_judgment_text_acquisition_v1",
     "attempts": [
       {
-        "ms": 856,
+        "ms": 1460,
         "cited": false,
         "docket": "389/80",
+        "probes": [
+          {
+            "ms": 403,
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=80003890_Z01.txt&path=HebrewVerdicts/80/890/003/Z01&type=2",
+            "detail": "plain_text_below_threshold",
+            "result": "blocked_by_origin",
+            "url_kind": "text",
+            "url_type": "2",
+            "body_chars": 224,
+            "byte_length": 1787,
+            "http_status": 200,
+            "last_resort": false,
+            "probe_index": 0,
+            "content_type": "text/html; charset=utf-8",
+            "skipped_due_to_cap": false,
+            "body_title_or_signature": "חסימת בקשה לא מורשת"
+          },
+          {
+            "ms": 327,
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=80003890.z01&path=HebrewVerdicts/80/890/003/z01&type=2",
+            "detail": "plain_text_below_threshold",
+            "result": "blocked_by_origin",
+            "url_kind": "text",
+            "url_type": "2",
+            "body_chars": 224,
+            "byte_length": 1787,
+            "http_status": 200,
+            "last_resort": false,
+            "probe_index": 1,
+            "content_type": "text/html; charset=utf-8",
+            "skipped_due_to_cap": false,
+            "body_title_or_signature": "חסימת בקשה לא מורשת"
+          },
+          {
+            "ms": 376,
+            "url": "https://elyon1.court.gov.il/files/80/890/003/z01/80003890.z01.htm",
+            "detail": "plain_text_below_threshold",
+            "result": "blocked_by_origin",
+            "url_kind": "html",
+            "url_type": null,
+            "body_chars": 224,
+            "byte_length": 1878,
+            "http_status": 200,
+            "last_resort": false,
+            "probe_index": 2,
+            "content_type": "text/html; charset=utf-8",
+            "skipped_due_to_cap": false,
+            "body_title_or_signature": "חסימת בקשה לא מורשת"
+          },
+          {
+            "ms": 354,
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=80003890_Z01.txt&path=EnglishVerdicts/80/890/003/Z01&type=4",
+            "detail": "plain_text_below_threshold",
+            "result": "blocked_by_origin",
+            "url_kind": "pdf",
+            "url_type": "4",
+            "body_chars": 224,
+            "byte_length": 1787,
+            "http_status": 200,
+            "last_resort": true,
+            "probe_index": 3,
+            "content_type": "text/html; charset=utf-8",
+            "skipped_due_to_cap": false,
+            "body_title_or_signature": "חסימת בקשה לא מורשת"
+          }
+        ],
         "source": "registry_seed",
         "query_id": "core_authority_registry:reasonableness:hcj_389_80_dapei_zahav",
         "body_chars": 0,
         "doctrine_id": "reasonableness",
         "authority_id": "hcj_389_80_dapei_zahav",
-        "endpoint_type": "html",
+        "endpoint_type": "pdf",
+        "type4_derived": true,
         "attempted_urls": [
           "https://supremedecisions.court.gov.il/Home/Download?fileName=80003890_Z01.txt&path=HebrewVerdicts/80/890/003/Z01&type=2",
           "https://supremedecisions.court.gov.il/Home/Download?fileName=80003890.z01&path=HebrewVerdicts/80/890/003/z01&type=2",
-          "https://elyon1.court.gov.il/files/80/890/003/z01/80003890.z01.htm"
+          "https://elyon1.court.gov.il/files/80/890/003/z01/80003890.z01.htm",
+          "https://supremedecisions.court.gov.il/Home/Download?fileName=80003890_Z01.txt&path=EnglishVerdicts/80/890/003/Z01&type=4"
         ],
         "authority_name": "בג\"ץ 389/80 דפי זהב נ' רשות השידור",
         "used_in_answer": false,
-        "rejection_reason": "plain_text_below_threshold",
+        "rejection_reason": "blocked_by_origin:חסימת בקשה לא מורשת",
         "docket_normalized": "bagatz:389/80",
-        "acquisition_result": "fetch_failed",
-        "attempted_urls_count": 3,
+        "acquisition_result": "blocked_by_origin",
+        "type4_body_acquired": false,
+        "type4_probe_reached": true,
+        "attempted_urls_count": 4,
         "injected_candidate_id": null,
+        "blocked_by_origin_count": 4,
         "body_identity_validated": false,
         "canonical_acquisition_attempted": true
       },
       {
-        "ms": 856,
+        "ms": 1295,
         "cited": false,
         "docket": "935/89",
+        "probes": [
+          {
+            "ms": 322,
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=89009350_Z01.txt&path=HebrewVerdicts/89/350/009/Z01&type=2",
+            "detail": "plain_text_below_threshold",
+            "result": "blocked_by_origin",
+            "url_kind": "text",
+            "url_type": "2",
+            "body_chars": 224,
+            "byte_length": 1787,
+            "http_status": 200,
+            "last_resort": false,
+            "probe_index": 0,
+            "content_type": "text/html; charset=utf-8",
+            "skipped_due_to_cap": false,
+            "body_title_or_signature": "חסימת בקשה לא מורשת"
+          },
+          {
+            "ms": 348,
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=89009350.z01&path=HebrewVerdicts/89/350/009/z01&type=2",
+            "detail": "plain_text_below_threshold",
+            "result": "blocked_by_origin",
+            "url_kind": "text",
+            "url_type": "2",
+            "body_chars": 224,
+            "byte_length": 1787,
+            "http_status": 200,
+            "last_resort": false,
+            "probe_index": 1,
+            "content_type": "text/html; charset=utf-8",
+            "skipped_due_to_cap": false,
+            "body_title_or_signature": "חסימת בקשה לא מורשת"
+          },
+          {
+            "ms": 288,
+            "url": "https://elyon1.court.gov.il/files/89/350/009/z01/89009350.z01.htm",
+            "detail": "plain_text_below_threshold",
+            "result": "blocked_by_origin",
+            "url_kind": "html",
+            "url_type": null,
+            "body_chars": 224,
+            "byte_length": 1878,
+            "http_status": 200,
+            "last_resort": false,
+            "probe_index": 2,
+            "content_type": "text/html; charset=utf-8",
+            "skipped_due_to_cap": false,
+            "body_title_or_signature": "חסימת בקשה לא מורשת"
+          },
+          {
+            "ms": 337,
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=89009350_Z01.txt&path=EnglishVerdicts/89/350/009/Z01&type=4",
+            "detail": "plain_text_below_threshold",
+            "result": "blocked_by_origin",
+            "url_kind": "pdf",
+            "url_type": "4",
+            "body_chars": 224,
+            "byte_length": 1787,
+            "http_status": 200,
+            "last_resort": true,
+            "probe_index": 3,
+            "content_type": "text/html; charset=utf-8",
+            "skipped_due_to_cap": false,
+            "body_title_or_signature": "חסימת בקשה לא מורשת"
+          }
+        ],
         "source": "registry_seed",
         "query_id": "core_authority_registry:reasonableness:hcj_935_89_ganor",
         "body_chars": 0,
         "doctrine_id": "reasonableness",
         "authority_id": "hcj_935_89_ganor",
-        "endpoint_type": "html",
+        "endpoint_type": "pdf",
+        "type4_derived": true,
         "attempted_urls": [
           "https://supremedecisions.court.gov.il/Home/Download?fileName=89009350_Z01.txt&path=HebrewVerdicts/89/350/009/Z01&type=2",
           "https://supremedecisions.court.gov.il/Home/Download?fileName=89009350.z01&path=HebrewVerdicts/89/350/009/z01&type=2",
-          "https://elyon1.court.gov.il/files/89/350/009/z01/89009350.z01.htm"
+          "https://elyon1.court.gov.il/files/89/350/009/z01/89009350.z01.htm",
+          "https://supremedecisions.court.gov.il/Home/Download?fileName=89009350_Z01.txt&path=EnglishVerdicts/89/350/009/Z01&type=4"
         ],
         "authority_name": "בג\"ץ 935/89 גנור נ' היועץ המשפטי לממשלה",
         "used_in_answer": false,
-        "rejection_reason": "plain_text_below_threshold",
+        "rejection_reason": "blocked_by_origin:חסימת בקשה לא מורשת",
         "docket_normalized": "bagatz:935/89",
-        "acquisition_result": "fetch_failed",
-        "attempted_urls_count": 3,
+        "acquisition_result": "blocked_by_origin",
+        "type4_body_acquired": false,
+        "type4_probe_reached": true,
+        "attempted_urls_count": 4,
         "injected_candidate_id": null,
+        "blocked_by_origin_count": 4,
         "body_identity_validated": false,
         "canonical_acquisition_attempted": true
       }
@@ -302,6 +477,7 @@
     "skip_reason": null,
     "attempted_count": 2,
     "body_acquired_count": 0,
+    "type4_derived_count": 2,
     "eligible_authorities": [
       "hcj_389_80_dapei_zahav",
       "hcj_935_89_ganor",
@@ -310,8 +486,11 @@
     "skipped_not_derivable": [],
     "injected_candidate_ids": [],
     "metadata_only_holdings": 0,
+    "blocked_by_origin_count": 8,
+    "type4_body_acquired_count": 0,
+    "type4_probe_reached_count": 2,
     "bodyless_judgment_citations": 0,
     "skipped_already_body_acquired": [],
-    "citations_without_body_acquired": 2
+    "citations_without_body_acquired": 0
   }
 }
