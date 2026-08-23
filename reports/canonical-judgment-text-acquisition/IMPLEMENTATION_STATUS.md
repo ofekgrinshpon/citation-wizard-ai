@@ -25,3 +25,11 @@ and telemetry are correct; the URL derivation for these older dockets is what ne
 (suffix/corpus variants, and the `type=4`/PDF fallback currently blocked by the text-first cap).
 
 Not accepted. Next step is a derivation-only fix, no gate changes.
+
+## Update — type4_last_resort_probe_v1 (see REPORT.md acceptance section)
+
+The `type=4` corpus URL is now reached on every attempt (probe 4/4). Result: derivation
+confirmed correct (6821/93 serves a real 2.34 MB PDF), but 0 bodies acquired —
+6821/93 is stopped by `extraction_budget_spent`, and 1715/97, 389/80, 935/89, 1000/92
+are `blocked_by_origin` on *all four* endpoints (1.8 KB WAF page, HTTP 200).
+Stability and controls unchanged. Parent track still **not accepted**.
