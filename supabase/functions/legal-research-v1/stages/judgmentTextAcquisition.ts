@@ -918,7 +918,16 @@ export async function runJudgmentTextAcquisition(
   const mode = input.research_mode ?? null;
   if (!mode || !JUDGMENT_BEARING_MODES.has(mode)) return disabledResult(mode);
 
-  const budget = ACQUISITION_BUDGETS[mode] ?? ACQUISITION_BUDGETS.generic;
+  const modeBudget = ACQUISITION_BUDGETS[mode] ?? ACQUISITION_BUDGETS.generic;
+  // router_profiles_v1 — the path ceiling can only tighten the mode budget.
+  const cap = typeof input.max_acquisitions === "number" ? input.max_acquisitions : null;
+  if (cap === 0) return disabledResult(mode);
+  const budget = cap === null ? modeBudget : {
+    leading: Math.min(modeBudget.leading, cap),
+    other: Math.min(modeBudget.other, cap),
+    total: Math.min(modeBudget.total, cap),
+  };
+
   const requestedDockets = detectDockets(input.question ?? "");
   const excluded: AcquisitionSkipLog[] = [];
   const diagnostics: EligibilityDiagnostic[] = [];
