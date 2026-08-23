@@ -741,7 +741,13 @@ async function handle(req: Request): Promise<Response> {
   const fastLaneEligible = fastLaneDockets.length > 0;
 
   const budget = new RetrievalBudget(
-    fastLaneEligible ? RETRIEVAL_BUDGET.SPECIFIC_CASE_DEADLINE_MS : RETRIEVAL_BUDGET.DEFAULT_DEADLINE_MS,
+    // router_profiles_v1 — per-path wall-clock budget. Specific-case runs keep
+    // the tight deterministic fast-lane deadline.
+    fastLaneEligible
+      ? Math.min(router.path_budget_ms || RETRIEVAL_BUDGET.SPECIFIC_CASE_DEADLINE_MS,
+        RETRIEVAL_BUDGET.SPECIFIC_CASE_DEADLINE_MS)
+      : (router.path_budget_ms || RETRIEVAL_BUDGET.DEFAULT_DEADLINE_MS),
+
     (checkpoints) => {
       // Heartbeat: survives an isolate kill so we can see where retrieval died.
       // Returned so `markDurable` can await the first checkpoint of the stage.
