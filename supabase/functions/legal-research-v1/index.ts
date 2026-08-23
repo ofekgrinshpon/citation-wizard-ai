@@ -1844,6 +1844,25 @@ async function handle(req: Request): Promise<Response> {
     exact_amounts_allowed: drafter.sufficiency?.exact_amounts_allowed ?? null,
     // claim_facet_expansion_v1 telemetry.
     claim_facet_expansion: claimFacetExpansionMeta,
+    // router_profiles_v1 telemetry.
+    router_profiles: {
+      version: router.version,
+      selected_router_profile: router.selected_router_profile,
+      profile_reason: router.profile_reason,
+      skipped_stages: router.skipped_stages,
+      retrieval_query_count: allQueries.length,
+      retrieval_queries_dropped: queryAdmission.dropped_count,
+      speculative_acquisition_count: judgmentAcquisition.successes ?? 0,
+      verifier_candidate_count: verifierCandidates.length,
+      verifier_area_filtered_count: verifierAreaFiltered,
+      drafter_block_ceiling: router.drafter_block_ceiling,
+      path_budget_ms: router.path_budget_ms,
+      downgraded_from_research_memo: router.downgraded_from_research_memo,
+      facets_dropped_by_router: facetsDroppedByRouter,
+      block_trim: drafter.router_block_trim ?? null,
+      signals: router.signals,
+    },
+
     // Named-doctrine premise/framing telemetry.
     named_doctrine_framing: drafter.named_doctrine_framing ?? null,
     framing_correction_required:
