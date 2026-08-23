@@ -37,6 +37,10 @@ import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRole.ts";
 import { runJudgmentTextAcquisition } from "./stages/judgmentTextAcquisition.ts";
 import { runStatuteTextAcquisition } from "./stages/statuteTextAcquisition.ts";
+import {
+  annotateCanonicalUsage,
+  runCanonicalAuthorityAcquisition,
+} from "./stages/canonicalAuthorityAcquisition.ts";
 
 import { buildJudgmentDiscoveryQueries } from "./stages/judgmentDiscovery.ts";
 import { runSpecificCaseResolution, type SpecificCaseResolution } from "./stages/specificCaseResolution.ts";
@@ -987,6 +991,22 @@ async function handle(req: Request): Promise<Response> {
     }
   }
 
+  // ─── canonical_judgment_text_acquisition_v1 (Option B) ───────────────────
+  // Registry-seeded canonical judgment dockets get the same deterministic
+  // court-file exact-body lane that user-typed dockets already get — but only
+  // when normal retrieval produced no body-acquired judgment for them.
+  // Acquisition only: every gate downstream still decides admission/citation.
+  const canonicalAcquisition = await runCanonicalAuthorityAcquisition({
+    registry: coreAuthorityRegistry,
+    candidates: pool.candidates,
+    integrity: pool.integrity,
+    budget,
+    max_dockets: fastLaneHit
+      ? 0
+      : Math.min(2, Math.max(0, router.max_speculative_acquisitions ?? 2)),
+    markDurable: (name, detail) => budget.markDurable(name, detail),
+  });
+
 
   // ─── Specific-case authority resolution (specific_case mode only) ───────
   // Exact-docket guard + bounded judgment-text acquisition. Fail-closed: when
@@ -1163,6 +1183,7 @@ async function handle(req: Request): Promise<Response> {
         .map((r) => ({ candidate_id: r.candidate_id, reason: r.downgrade_reason })),
     },
     judgment_text_acquisition: judgmentAcquisition,
+    canonical_authority_acquisition: canonicalAcquisition,
     statute_text_acquisition: {
       attempted: statuteAcquisition.attempted,
       successes: statuteAcquisition.successes,
@@ -1623,6 +1644,31 @@ async function handle(req: Request): Promise<Response> {
     authorities: coreAuthorityRegistry.authorities,
     statute_title_normalization: statuteNorm.report,
   };
+
+  // canonical_judgment_text_acquisition_v1 — post-draft measurement only.
+  const citedCandidateIds = new Set<string>(
+    (drafter.footnotes ?? []).flatMap((f) =>
+      ((f as unknown as { source_candidate_ids?: string[] }).source_candidate_ids ?? []) as string[]
+    ),
+  );
+  const canonicalAcquisitionMeta = annotateCanonicalUsage(canonicalAcquisition, {
+    usedCandidateIds: facetUsedIds,
+    citedCandidateIds,
+    citedSources: drafter.used_sources.map((u) => {
+      const usability = String(u.text_usability ?? "unknown");
+      const bodyAcquired = /full_text|substantive_excerpt/.test(usability);
+      return {
+        candidate_id: u.candidate_id,
+        citable_as: u.citable_as ? String(u.citable_as) : null,
+        body_acquired: bodyAcquired,
+        metadata_only: /metadata_only/.test(usability) &&
+          String(u.citable_as ?? "") === "judgment",
+      };
+    }),
+  });
+  (retrievalMeta as Record<string, unknown>).canonical_authority_acquisition =
+    canonicalAcquisitionMeta;
+
 
 
 

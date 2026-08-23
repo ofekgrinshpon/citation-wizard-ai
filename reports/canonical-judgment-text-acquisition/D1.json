@@ -1,0 +1,189 @@
+{
+  "id": "D1",
+  "topic": "מידתיות / ביקורת חוקתית",
+  "query": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם מיושמים כאשר חוק פוגע בזכות יסוד?",
+  "core_authority_registry": {
+    "area": "constitutional",
+    "queries": [
+      "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי מבחני המידתיות",
+      "בג\"ץ 1715/97 לשכת מנהלי ההשקעות בישראל נ' שר האוצר מבחני המידתיות"
+    ],
+    "triggered": true,
+    "authorities": [
+      {
+        "kind": "statute",
+        "role": "primary_statute",
+        "used": false,
+        "label": "חוק-יסוד: כבוד האדם וחירותו, סעיף 8 (פסקת ההגבלה)",
+        "docket": null,
+        "admitted": false,
+        "query_he": null,
+        "retrieved": false,
+        "authority_id": "basic_law_dignity_s8",
+        "body_acquired": false,
+        "source_type_expected": "statute",
+        "skipped_because_already_present": true
+      },
+      {
+        "kind": "case",
+        "role": "binding_case_law",
+        "used": false,
+        "label": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+        "docket": "6821/93",
+        "admitted": true,
+        "query_he": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי מבחני המידתיות",
+        "retrieved": true,
+        "authority_id": "hcj_6821_93_mizrahi",
+        "body_acquired": false,
+        "source_type_expected": "case",
+        "skipped_because_already_present": false
+      },
+      {
+        "kind": "case",
+        "role": "binding_case_law",
+        "used": false,
+        "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות נ' שר האוצר",
+        "docket": "1715/97",
+        "admitted": false,
+        "query_he": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות בישראל נ' שר האוצר מבחני המידתיות",
+        "retrieved": false,
+        "authority_id": "hcj_1715_97_investment_managers",
+        "body_acquired": false,
+        "source_type_expected": "case",
+        "skipped_because_already_present": false
+      }
+    ],
+    "doctrine_id": "proportionality",
+    "matched_facet": "F1",
+    "queries_added": 2,
+    "doctrine_label": "מבחני המידתיות",
+    "trigger_reason": "doctrine_trigger_match:proportionality",
+    "registry_version": "core_authority_registry_v1",
+    "authority_candidates": [
+      "basic_law_dignity_s8",
+      "hcj_6821_93_mizrahi",
+      "hcj_1715_97_investment_managers"
+    ],
+    "statute_title_normalization": {
+      "applied": false,
+      "rewrites": [],
+      "rewritten_count": 0
+    },
+    "skipped_because_already_present": [
+      "basic_law_dignity_s8"
+    ]
+  },
+  "support_distribution": {
+    "direct": 5,
+    "unrelated": 12,
+    "partial": 5,
+    "tangential": 1
+  },
+  "candidate_count": 0,
+  "listing_page_candidates": 0,
+  "metadata_only_candidates": 0,
+  "job_id": "a48c34ca-2a2d-49a9-b2cb-dd4b32d82e56",
+  "run_id": "1b96d97b-abc7-4be7-8f5b-3a9257d40e91",
+  "ms": 102104,
+  "terminal_status": "done",
+  "branch": "insufficient_sources_limitation",
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): ע\"א 6821/93 – בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי; רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"; Microsoft Word - Barak_Aharon.doc; עליית המידתיות, ירידת ההסתברות והשלכותיה הבלתי-צפויות של המהפכה החוקתית על המשפט החוקתי הישראלי.",
+  "footnotes": [],
+  "footnotes_length": 0,
+  "used_sources_length": 0,
+  "inline_marker_count": 0,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "metadata_only_holdings": null,
+  "limitation_notices": [],
+  "claim_source_match": null,
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 0,
+    "invariant_passed": true,
+    "inline_marker_count": 0,
+    "used_sources_length": 0,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "interruption": {
+    "job_error": null,
+    "retrieval_interrupted": null,
+    "partial_retrieval": null,
+    "extraction_ledger": null,
+    "pdf_preflight": null,
+    "cpu_or_stale": false
+  },
+  "canonical": {
+    "ms": 1697,
+    "enabled": true,
+    "version": "canonical_judgment_text_acquisition_v1",
+    "attempts": [
+      {
+        "ms": 958,
+        "cited": false,
+        "docket": "6821/93",
+        "source": "registry_seed",
+        "query_id": "core_authority_registry:proportionality:hcj_6821_93_mizrahi",
+        "body_chars": 0,
+        "doctrine_id": "proportionality",
+        "authority_id": "hcj_6821_93_mizrahi",
+        "endpoint_type": "html",
+        "attempted_urls": [
+          "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=HebrewVerdicts/93/210/068/Z01&type=2",
+          "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210.z01&path=HebrewVerdicts/93/210/068/z01&type=2",
+          "https://elyon1.court.gov.il/files/93/210/068/z01/93068210.z01.htm"
+        ],
+        "authority_name": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+        "used_in_answer": false,
+        "rejection_reason": "plain_text_below_threshold",
+        "docket_normalized": "bagatz:6821/93",
+        "acquisition_result": "fetch_failed",
+        "attempted_urls_count": 3,
+        "injected_candidate_id": null,
+        "body_identity_validated": false,
+        "canonical_acquisition_attempted": true
+      },
+      {
+        "ms": 710,
+        "cited": false,
+        "docket": "1715/97",
+        "source": "registry_seed",
+        "query_id": "core_authority_registry:proportionality:hcj_1715_97_investment_managers",
+        "body_chars": 0,
+        "doctrine_id": "proportionality",
+        "authority_id": "hcj_1715_97_investment_managers",
+        "endpoint_type": "html",
+        "attempted_urls": [
+          "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150_Z01.txt&path=HebrewVerdicts/97/150/017/Z01&type=2",
+          "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150.z01&path=HebrewVerdicts/97/150/017/z01&type=2",
+          "https://elyon1.court.gov.il/files/97/150/017/z01/97017150.z01.htm"
+        ],
+        "authority_name": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות נ' שר האוצר",
+        "used_in_answer": false,
+        "rejection_reason": "plain_text_below_threshold",
+        "docket_normalized": "bagatz:1715/97",
+        "acquisition_result": "fetch_failed",
+        "attempted_urls_count": 3,
+        "injected_candidate_id": null,
+        "body_identity_validated": false,
+        "canonical_acquisition_attempted": true
+      }
+    ],
+    "doctrine_id": "proportionality",
+    "skip_reason": null,
+    "attempted_count": 2,
+    "body_acquired_count": 0,
+    "eligible_authorities": [
+      "hcj_6821_93_mizrahi",
+      "hcj_1715_97_investment_managers"
+    ],
+    "skipped_not_derivable": [],
+    "injected_candidate_ids": [],
+    "metadata_only_holdings": 0,
+    "bodyless_judgment_citations": 0,
+    "skipped_already_body_acquired": [],
+    "citations_without_body_acquired": 0
+  }
+}
