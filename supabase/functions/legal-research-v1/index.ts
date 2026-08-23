@@ -891,6 +891,9 @@ async function handle(req: Request): Promise<Response> {
     candidates: skipAcquisition ? [] : pool.candidates,
     retrieval_budget: budget,
     markDurable: (name, detail) => budget.markDurable(name, detail),
+    // router_profiles_v1 — path ceiling on speculative judgment acquisition.
+    max_acquisitions: router.max_speculative_acquisitions,
+
   });
   await budget.markDurable("judgment_acquisition_done", {
     skipped: skipAcquisition,
