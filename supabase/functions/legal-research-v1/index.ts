@@ -1858,7 +1858,7 @@ async function handle(req: Request): Promise<Response> {
       profile_reason: router.profile_reason,
       skipped_stages: router.skipped_stages,
       retrieval_query_count: allQueries.length,
-      retrieval_queries_dropped: queryAdmission.dropped_count,
+      retrieval_queries_dropped: queryAdmission.report.dropped,
       speculative_acquisition_count: judgmentAcquisition.successes ?? 0,
       verifier_candidate_count: verifierCandidates.length,
       verifier_area_filtered_count: verifierAreaFiltered,
