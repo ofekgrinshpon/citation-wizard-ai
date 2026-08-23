@@ -1307,9 +1307,25 @@ async function handle(req: Request): Promise<Response> {
   await markStage("verifier");
   await budget.markDurable("verifier_start", { candidates: pool.candidates.length });
   const forceSplit = (req.headers.get("x-verifier-force-split") ?? "") === "1";
-  const verifier = await runVerifier(question, analyzer.claims, pool.candidates, { forceSplit });
+  // router_profiles_v1 — on the doctrine path the verifier only spends calls on
+  // candidates inside the locked legal area. Area-neutral candidates (no area
+  // vocabulary at all) are kept: the filter drops cross-area contamination
+  // only, never silently starves the pool.
+  const verifierAreaLock = router.verifier_same_area_only
+    ? (facetExpansion.legal_area_lock ?? inferLegalAreaId(question))
+    : null;
+  const verifierPool = verifierAreaLock
+    ? pool.candidates.filter((c) => {
+      const area = inferLegalAreaId(`${c.title ?? ""} ${c.snippet ?? ""}`);
+      return area === null || area === verifierAreaLock;
+    })
+    : pool.candidates;
+  const verifierCandidates = verifierPool.length > 0 ? verifierPool : pool.candidates;
+  const verifierAreaFiltered = pool.candidates.length - verifierCandidates.length;
+  const verifier = await runVerifier(question, analyzer.claims, verifierCandidates, { forceSplit });
   stage_runs.push(...verifier.stage_runs);
   const verifierMeta = {
+
     ms: verifier.ms,
     model_initial: verifier.model_initial,
     model_final: verifier.model_final,
