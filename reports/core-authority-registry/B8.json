@@ -1,0 +1,80 @@
+{
+  "id": "B8",
+  "topic": "control — canonical quote",
+  "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+  "core_authority_registry": {
+    "area": null,
+    "queries": [],
+    "triggered": false,
+    "authorities": [],
+    "doctrine_id": null,
+    "matched_facet": null,
+    "queries_added": 0,
+    "doctrine_label": null,
+    "trigger_reason": "no_doctrine_match",
+    "registry_version": "core_authority_registry_v1",
+    "authority_candidates": [],
+    "statute_title_normalization": {
+      "applied": false,
+      "rewrites": [],
+      "rewritten_count": 0
+    },
+    "skipped_because_already_present": []
+  },
+  "support_distribution": {
+    "direct": 1,
+    "partial": 11,
+    "unrelated": 4,
+    "tangential": 2
+  },
+  "candidate_count": 0,
+  "listing_page_candidates": 0,
+  "metadata_only_candidates": 0,
+  "job_id": "8bc2e466-f934-4e27-8e9e-884e48cea47e",
+  "run_id": "a9bffdf9-8e72-4cb8-9f82-b0cecc7cd1b9",
+  "ms": 80895,
+  "terminal_status": "done",
+  "branch": "canonical_quote_registry",
+  "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹\n\n> לא אותרה פסיקה ברת-שימוש במסגרת החיפוש; התשובה מתמקדת בלשון הסעיף.",
+  "footnotes": [
+    {
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+          "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "israeli_law"
+    }
+  ],
+  "footnotes_length": 1,
+  "used_sources_length": 1,
+  "inline_marker_count": 2,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "metadata_only_holdings": null,
+  "limitation_notices": [],
+  "claim_source_match": null,
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 1,
+    "invariant_passed": true,
+    "inline_marker_count": 2,
+    "used_sources_length": 1,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "interruption": {
+    "job_error": null,
+    "retrieval_interrupted": null,
+    "partial_retrieval": null,
+    "extraction_ledger": null,
+    "pdf_preflight": null,
+    "cpu_or_stale": false
+  }
+}
