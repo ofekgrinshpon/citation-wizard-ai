@@ -951,6 +951,9 @@ export interface DrafterV2Result {
   synthesis_rendering?: SynthesisRenderingReport;
   /** metadata_only_holding_gate_v1 telemetry (model-drafted answers only). */
   metadata_only_holding_gate?: MetadataOnlyHoldingGateReport;
+  /** router_profiles_v1 — block-ceiling trim telemetry. */
+  router_block_trim?: BlockTrimReport;
+
 
 
 
