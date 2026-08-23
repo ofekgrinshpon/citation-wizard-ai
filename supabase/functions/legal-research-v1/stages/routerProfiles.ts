@@ -294,23 +294,21 @@ export function applyBlockCeiling<T extends TrimmableBlock>(
   if (!ceiling || before <= ceiling) return { blocks, report: noop };
 
   const supported = (b: T) => Array.isArray(b.source_refs) && b.source_refs.length > 0;
-  let out = blocks;
+  let out = blocks.slice();
   let dropped_unsupported = 0;
   if (opts.dropUnsupported) {
-    const keep: T[] = [];
-    for (let i = 0; i < blocks.length; i++) {
-      const b = blocks[i];
-      if (i === 0 || supported(b) || keep.length + (blocks.length - i - 1) < ceiling) {
-        keep.push(b);
-      } else {
+    // Drop unsupported blocks from the end inwards until we fit the ceiling.
+    // The first block is always kept (it carries the direct answer).
+    for (let i = out.length - 1; i > 0 && out.length > ceiling; i--) {
+      if (!supported(out[i])) {
+        out.splice(i, 1);
         dropped_unsupported++;
       }
-      if (keep.length >= ceiling && dropped_unsupported >= before - ceiling) break;
     }
-    out = keep;
   }
   const dropped_overflow = Math.max(0, out.length - ceiling);
   out = out.slice(0, ceiling);
+
   return {
     blocks: out,
     report: {
