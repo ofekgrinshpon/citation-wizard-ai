@@ -21,6 +21,11 @@ import {
   inferLegalAreaId,
 } from "./stages/claimFacetExpansion.ts";
 import {
+  computeAuthorityOutcomes,
+  normalizeStatuteTitles,
+  seedCoreAuthorityQueries,
+} from "./stages/coreAuthorityRegistry.ts";
+import {
   admitQueries,
   selectRouterProfile,
   STATUTE_FIRST_LIMITATION,
@@ -705,13 +710,31 @@ async function handle(req: Request): Promise<Response> {
   };
   const facetsDroppedByRouter = facetExpansionRaw.facets.length - keptFacets.length;
   const facetDirective = buildFacetDirective(facetExpansion);
-  // router_profiles_v1 — path-scoped query admission. Required-anchor queries
-  // are never dropped (they carry the deterministic primary-source duties).
-  const queryAdmission = admitQueries(router, anchorQueries, [
+  // ─── core_authority_registry_v1 ──────────────────────────────────────────
+  // Stage 2(a): normalise informal statute names inside planner-side query
+  // text. Stage 1: seed at most 2 name-anchored canonical-authority queries
+  // for the highest-priority doctrine that fires. Seeding affects retrieval
+  // only — no gate, verifier, drafter or footnote behaviour changes.
+  const statuteNorm = normalizeStatuteTitles([
     ...planner!.queries,
     ...judgmentDiscovery.queries,
     ...facetExpansion.queries,
   ]);
+  const normalizedQueries = statuteNorm.queries;
+  let coreAuthorityRegistry = seedCoreAuthorityQueries(
+    question,
+    analyzer,
+    facetExpansion.facets,
+    [...anchorQueries, ...normalizedQueries],
+  );
+  // router_profiles_v1 — path-scoped query admission. Required-anchor queries
+  // are never dropped (they carry the deterministic primary-source duties).
+  // Registry-seeded queries ride alongside them (hard-capped at 2).
+  const queryAdmission = admitQueries(
+    router,
+    [...anchorQueries, ...coreAuthorityRegistry.queries],
+    normalizedQueries,
+  );
   const allQueries = queryAdmission.queries;
 
   const requiredAnchorsMeta = {
@@ -1579,6 +1602,29 @@ async function handle(req: Request): Promise<Response> {
     candidateCountByFacet[fid] = (candidateCountByFacet[fid] ?? 0) + 1;
   }
 
+  // core_authority_registry_v1 — per-authority outcome telemetry (no behaviour).
+  coreAuthorityRegistry = computeAuthorityOutcomes(coreAuthorityRegistry, {
+    candidates: pool.candidates,
+    usableIds: usableIdSet,
+    usedCandidateIds: facetUsedIds,
+  });
+  const coreAuthorityRegistryMeta = {
+    registry_version: coreAuthorityRegistry.registry_version,
+    triggered: coreAuthorityRegistry.triggered,
+    doctrine_id: coreAuthorityRegistry.doctrine_id,
+    doctrine_label: coreAuthorityRegistry.doctrine_label,
+    matched_facet: coreAuthorityRegistry.matched_facet,
+    trigger_reason: coreAuthorityRegistry.trigger_reason,
+    area: coreAuthorityRegistry.area,
+    authority_candidates: coreAuthorityRegistry.authority_candidates,
+    queries_added: coreAuthorityRegistry.queries_added,
+    queries: coreAuthorityRegistry.queries.map((q) => q.query_he),
+    skipped_because_already_present: coreAuthorityRegistry.skipped_because_already_present,
+    authorities: coreAuthorityRegistry.authorities,
+    statute_title_normalization: statuteNorm.report,
+  };
+
+
 
 
   // Re-compute statuses post-drafter to reflect citation outcome.
@@ -1851,6 +1897,8 @@ async function handle(req: Request): Promise<Response> {
     exact_amounts_allowed: drafter.sufficiency?.exact_amounts_allowed ?? null,
     // claim_facet_expansion_v1 telemetry.
     claim_facet_expansion: claimFacetExpansionMeta,
+    // core_authority_registry_v1 telemetry.
+    core_authority_registry: coreAuthorityRegistryMeta,
     // router_profiles_v1 telemetry.
     router_profiles: {
       version: router.version,

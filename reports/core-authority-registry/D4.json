@@ -1,0 +1,221 @@
+{
+  "id": "D4",
+  "topic": "תום לב במו״מ / סעיף 12",
+  "query": "מהו היקף חובת תום הלב במשא ומתן לפי סעיף 12 לחוק החוזים, ומהם הסעדים האפשריים בגין הפרתה?",
+  "core_authority_registry": {
+    "area": "contracts",
+    "queries": [
+      "ד\"נ 7/81 פנידר נ' קסטרו תום לב במשא ומתן",
+      "ע\"א 6370/00 קל בנין בע\"מ נ' ע.ר.מ. רעננה לביצוע פרויקטים תום לב"
+    ],
+    "triggered": true,
+    "authorities": [
+      {
+        "kind": "statute",
+        "role": "primary_statute",
+        "used": true,
+        "label": "חוק החוזים (חלק כללי), תשל\"ג-1973, סעיף 12",
+        "docket": null,
+        "admitted": true,
+        "query_he": null,
+        "retrieved": true,
+        "authority_id": "contracts_law_s12",
+        "body_acquired": true,
+        "source_type_expected": "statute",
+        "skipped_because_already_present": true
+      },
+      {
+        "kind": "case",
+        "role": "binding_case_law",
+        "used": false,
+        "label": "ד\"נ 7/81 פנידר נ' קסטרו",
+        "docket": "7/81",
+        "admitted": false,
+        "query_he": "ד\"נ 7/81 פנידר נ' קסטרו תום לב במשא ומתן",
+        "retrieved": false,
+        "authority_id": "dn_7_81_pnidar",
+        "body_acquired": false,
+        "source_type_expected": "case",
+        "skipped_because_already_present": false
+      },
+      {
+        "kind": "case",
+        "role": "binding_case_law",
+        "used": false,
+        "label": "ע\"א 6370/00 קל בנין בע\"מ נ' ע.ר.מ. רעננה",
+        "docket": "6370/00",
+        "admitted": false,
+        "query_he": "ע\"א 6370/00 קל בנין בע\"מ נ' ע.ר.מ. רעננה לביצוע פרויקטים תום לב",
+        "retrieved": false,
+        "authority_id": "ca_6370_00_kal_binyan",
+        "body_acquired": false,
+        "source_type_expected": "case",
+        "skipped_because_already_present": false
+      }
+    ],
+    "doctrine_id": "precontractual_good_faith",
+    "matched_facet": null,
+    "queries_added": 2,
+    "doctrine_label": "תום לב במשא ומתן — סעיף 12 לחוק החוזים",
+    "trigger_reason": "doctrine_trigger_match:precontractual_good_faith",
+    "registry_version": "core_authority_registry_v1",
+    "authority_candidates": [
+      "contracts_law_s12",
+      "dn_7_81_pnidar",
+      "ca_6370_00_kal_binyan"
+    ],
+    "statute_title_normalization": {
+      "applied": true,
+      "rewrites": [
+        {
+          "after": "בית המשפט העליון פסק דין \"תום הלב במשא ומתן\" ״סעיף 12 לחוק החוזים (חלק כללי), תשל\"ג-1973\" עקרונות הקביעה של תוכן החובה הנורמטיבי",
+          "before": "בית המשפט העליון פסק דין \"תום הלב במשא ומתן\" ״סעיף 12 לחוק החוזים\" עקרונות הקביעה של תוכן החובה הנורמטיבי"
+        },
+        {
+          "after": "מאמר אקדמי \"תום הלב במשא ומתן\" סקירה דוקטרינלית על סעיף 12 לחוק החוזים (חלק כללי), תשל\"ג-1973 כתב עת למשפטים",
+          "before": "מאמר אקדמי \"תום הלב במשא ומתן\" סקירה דוקטרינלית על סעיף 12 לחוק החוזים כתב עת למשפטים"
+        }
+      ],
+      "rewritten_count": 2
+    },
+    "skipped_because_already_present": [
+      "contracts_law_s12"
+    ]
+  },
+  "support_distribution": {
+    "direct": 3,
+    "unrelated": 6,
+    "partial": 6
+  },
+  "candidate_count": 0,
+  "listing_page_candidates": 0,
+  "metadata_only_candidates": 0,
+  "job_id": "ca43e3c7-80d4-4dc1-810b-ae6ad861404a",
+  "run_id": "b89a640f-d6fb-4738-8abc-30a7d4e35f06",
+  "ms": 111093,
+  "terminal_status": "done",
+  "branch": null,
+  "answer": "הסעיף קובע באופן ישיר: במשא ומתן לקראת כריתתו של חוזה חייב אדם לנהוג בדרך מקובלת ובתום לב, ובמידה שלא עשה כך יחויב בפיצויים בעד הנזק שנגרם לו עקב המשא ומתן או עקב כריתת החוזה; הוראות סעיפים 10, 13 ו־14 יחולו בשינויים המחוייבים. זוהי הנוסחאות המנחות את ההכרעה המשפטית לגבי תוכן החובה והסעד העיקרי שמסופק בחוק.¹\n\nמה המשמעות המעשית של החובה ומתי היא חלה: הסעיף מקשר את החובה ל'משא ומתן לקראת כריתתו של חוזה' — כלומר היא חלה במסגרת משא ומתן שמכוון לכינון חוזה; החובה חלה על הצדדים המעורבים במשא ומתן ויש לה מימד יחסי בין משא ומתן לבין תוצאה חוזית צפויה. עם זאת, במקורות שאותרו לא קיימת נוסחאות מפורטות לגבי קו ההתחלה והסיום המדויק של החובה או לגבי כל מצב ביניים (כגון משא ומתן ראשוני נטול התחייבות או משא ומתן בלעדי), ולכן שאלות מעשיות אלה נידונות בפירוט בספרות ובפסיקה השונים.\n\nמה ייחשב הפרה: בחלק מן פסיקה וספרות נזכרות התנהגויות שבגינן ייתכן שיוכר כישלון בתום הלב — מצג כוזב או הטעיה על עובדות מהותיות של העסקה, הסתרת מידע חיוני במצבים שבהם גילויו מצופה לפי 'דרך מקובלת', והתחייבות או מצג כוזב שמטרתו להביא את הצד השני להשקעה בזמן או משאבים ואז סירוב מכוון לכונן חוזה. בתי המשפט משתמשים בפועל בקריטריון של התנהגות סבירה ובלבד שההפרה תגרום נזק שניתן לכימות; עם זאת מאחר שסעיף 12 נוסח באופן תכליתי, גבולות המבחן והאופן שבו מימד הוראותיו מיושם מפורטים ונסקרם בספרות ובפסיקה (ולכן יש לנסוח מסקנות אלה בזהירות).\n\nסעדים אפשריים: החוק עצמו קובע פיצויים בעד הנזק שנגרם עקב המשא ומתן או עקב כריתת החוזה וכותב שהוראות סעיפים 10, 13 ו־14 יחולו בשינויים המחוייבים — מכלילה זו נובעת אפשרות להסתכל על סעדי דיני החוזים הרגילים לצד פיצויים (כפי שהדבר נדון בספרות ובפסיקה). ספרות ופסיקה שהתייחסו לנושא מדגישות כי סוגי הנזק הנדונים כוללים פיצויי הסתמכות והוצאות שהוצאו במשא ומתן, וכן לעתים דיון על אובדן הזדמנות; יחד עם זאת, היקף הסעדים בפועל תלוי בתנאי הוכחה רגיליים (קשר סיבתי, קליטת נזק והתחייבות לפעול להפחתה), ובהחלה המותנית של הוראות 10, 13 ו־14 — ולכן אי־אפשר להסיק מתוך סעיף 12 לבדו על זכות ספציפית ל'ציפייה' או צווי מניעה ללא הסתמכות מפורשת בפסיקה לגבי אותן תרופות. ההשלכות הפרקטיות והמגבלות נעשו נושא לדיון בספרות ובמקרים שנדונו בבתי המשפט העליונים.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> לא אותרה פסיקה ברת-שימוש במסגרת החיפוש; התשובה מתמקדת בלשון הסעיף.",
+  "footnotes": [
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+      "title": "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/71888.htm",
+          "title": "חוק החוזים (חלק כללי), תשל\"ג-1973 - נבו",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "legislation"
+    }
+  ],
+  "footnotes_length": 1,
+  "used_sources_length": 1,
+  "inline_marker_count": 1,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "metadata_only_holdings": null,
+  "limitation_notices": [
+    "**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+  ],
+  "claim_source_match": {
+    "applied": true,
+    "mismatch_reason": [
+      "claim_mismatch"
+    ],
+    "limitation_added": true,
+    "tagged_block_count": 4,
+    "dropped_source_refs": [
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 1,
+        "block_claim_id": "C2",
+        "block_legal_area": "contracts",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "contracts"
+      },
+      {
+        "ref": "s4",
+        "reason": "claim_mismatch",
+        "block_index": 1,
+        "block_claim_id": "C2",
+        "block_legal_area": "contracts",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "contracts"
+      },
+      {
+        "ref": "s4",
+        "reason": "claim_mismatch",
+        "block_index": 2,
+        "block_claim_id": "C3",
+        "block_legal_area": "contracts",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "contracts"
+      },
+      {
+        "ref": "s5",
+        "reason": "claim_mismatch",
+        "block_index": 2,
+        "block_claim_id": "C3",
+        "block_legal_area": "contracts",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 3,
+        "block_claim_id": "C4",
+        "block_legal_area": "contracts",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "contracts"
+      },
+      {
+        "ref": "s4",
+        "reason": "claim_mismatch",
+        "block_index": 3,
+        "block_claim_id": "C4",
+        "block_legal_area": "contracts",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "contracts"
+      }
+    ],
+    "commentary_only_claims": [],
+    "unsupported_block_count": 3,
+    "source_ref_mismatch_count": 6,
+    "primary_support_by_main_claim": true
+  },
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 1,
+    "invariant_passed": true,
+    "inline_marker_count": 1,
+    "used_sources_length": 1,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "interruption": {
+    "job_error": null,
+    "retrieval_interrupted": null,
+    "partial_retrieval": null,
+    "extraction_ledger": null,
+    "pdf_preflight": null,
+    "cpu_or_stale": false
+  }
+}
