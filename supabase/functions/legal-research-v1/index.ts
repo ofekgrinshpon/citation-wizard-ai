@@ -1943,12 +1943,26 @@ async function handle(req: Request): Promise<Response> {
     budgetReport.speculative_extraction_stopped;
   const partialRetrieval = budgetReport.partial_retrieval_used ||
     budgetReport.budget_exceeded;
+  // router_profiles_v1 / statute_first — a statute-text answer is a complete
+  // answer. It carries an explicit "no usable case law" notice instead of a
+  // generic retrieval-interruption message, and never a partial-retrieval note.
+  const statuteFirstPath = router.selected_router_profile === "statute_first";
+  const statuteFirstNoCaseLaw = statuteFirstPath && drafter.ok &&
+    !(drafter.footnotes ?? []).some((f) =>
+      (f as { source_type?: string }).source_type === "case"
+    );
+  const suppressInterruptionNotes = statuteFirstPath && statuteAcquisition.successes > 0;
   const finalAnswer = drafter.ok
-    ? `${drafter.answer_markdown}${partialRetrieval ? PARTIAL_RETRIEVAL_NOTE : ""}${
-        extractionCutShort ? EXTRACTION_CUT_SHORT_NOTE : ""
+    ? `${drafter.answer_markdown}${
+        partialRetrieval && !suppressInterruptionNotes ? PARTIAL_RETRIEVAL_NOTE : ""
+      }${extractionCutShort && !suppressInterruptionNotes ? EXTRACTION_CUT_SHORT_NOTE : ""}${
+        statuteFirstNoCaseLaw && !drafter.answer_markdown.includes(STATUTE_FIRST_LIMITATION)
+          ? `\n\n> ${STATUTE_FIRST_LIMITATION}`
+          : ""
       }`
     : (verifierFailedNoDrafter ? VERIFIER_FAILURE_ANSWER : STUB_ANSWER);
   const finalFootnotes = drafter.ok ? drafter.footnotes : [];
+
 
 
   // Mark final stage (footnote rendering / finalize) as active then complete.
