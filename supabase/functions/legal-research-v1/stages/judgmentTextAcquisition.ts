@@ -840,6 +840,14 @@ export interface AcquisitionInput {
    * killed isolate still leaves a trail of exactly where acquisition was.
    */
   markDurable?: (name: string, detail?: Record<string, unknown>) => Promise<void> | void;
+
+  /**
+   * router_profiles_v1 — hard ceiling on acquisition attempts for the selected
+   * router path. Never raises the mode budget, only lowers it. `0` disables
+   * speculative judgment acquisition entirely (statute-first path).
+   */
+  max_acquisitions?: number | null;
+
 }
 
 
