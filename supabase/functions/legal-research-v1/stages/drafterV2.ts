@@ -1903,6 +1903,8 @@ export async function runDrafterV2(
     named_doctrine_framing: framing,
     synthesis_rendering,
     metadata_only_holding_gate,
+    router_block_trim,
+
     claim_source_match,
 
 
