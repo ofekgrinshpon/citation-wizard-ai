@@ -245,6 +245,8 @@ function buildUserMessage(
   framing?: NamedDoctrineFraming,
   synthesisRendering?: SynthesisRenderingPlan,
   facetDirective?: string[],
+  blockCeiling?: number | null,
+
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
