@@ -267,17 +267,15 @@ export interface BlockTrimReport {
   dropped_overflow: number;
 }
 
-interface TrimmableBlock {
-  source_refs?: string[];
-}
-
-
 /**
  * Deterministically enforce the profile's block ceiling *before* footnotes are
  * built. Unsupported blocks (no source_refs) are dropped first — a light path
  * should say less, not pad. The first block is always kept.
+ *
+ * Structurally typed on purpose: block shapes are drafter-owned unions, and
+ * this helper only ever reads `source_refs`.
  */
-export function applyBlockCeiling<T extends TrimmableBlock>(
+export function applyBlockCeiling<T>(
   blocks: T[],
   opts: { ceiling: number | null; dropUnsupported: boolean },
 ): { blocks: T[]; report: BlockTrimReport } {
@@ -293,7 +291,11 @@ export function applyBlockCeiling<T extends TrimmableBlock>(
   };
   if (!ceiling || before <= ceiling) return { blocks, report: noop };
 
-  const supported = (b: T) => Array.isArray(b.source_refs) && b.source_refs.length > 0;
+  const supported = (b: T) => {
+    const refs = (b as { source_refs?: unknown } | null)?.source_refs;
+    return Array.isArray(refs) && refs.length > 0;
+  };
+
   let out = blocks.slice();
   let dropped_unsupported = 0;
   if (opts.dropUnsupported) {
