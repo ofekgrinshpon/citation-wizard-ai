@@ -82,12 +82,8 @@ export function isTextEndpointUrl(u: string): boolean {
  * binary extraction is the CPU sink that kills the isolate, so a plain-text
  * body must always be attempted before a PDF one.
  */
-export function deriveSupremeCourtFileUrls(
-  d: DocketRef,
-  opts: { maxUrls?: number } = {},
-): string[] {
+function allDerivedUrls(d: DocketRef): string[] {
   if (!isSupremeCourtDocket(d)) return [];
-  const max = opts.maxUrls ?? 6;
   const urls: string[] = [];
   for (const suffix of [0, 1]) {
     const p = parts(d, suffix);
@@ -100,8 +96,35 @@ export function deriveSupremeCourtFileUrls(
       `https://elyon1.court.gov.il/files/${seg}/z01/${p.id}.z01.htm`,
     );
   }
+  return urls;
+}
+
+export function deriveSupremeCourtFileUrls(
+  d: DocketRef,
+  opts: { maxUrls?: number } = {},
+): string[] {
+  const urls = allDerivedUrls(d);
+  const max = opts.maxUrls ?? 6;
   const text = urls.filter(isTextEndpointUrl);
   const binary = urls.filter((u) => !isTextEndpointUrl(u));
   return [...text, ...binary].slice(0, max);
 }
+
+/**
+ * type4_last_resort_probe_v1 — the binary/corpus (`type=4`) derived URLs only.
+ *
+ * Production logs prove this endpoint is the one that actually serves judgment
+ * bodies for Supreme Court dockets, while the text (`type=2` / elyon1) slice
+ * frequently returns a short WAF block page. Callers probe these *after* every
+ * text endpoint has failed, behind the existing PDF preflight and byte caps.
+ */
+export function deriveSupremeCourtBinaryUrls(
+  d: DocketRef,
+  opts: { maxUrls?: number } = {},
+): string[] {
+  return allDerivedUrls(d)
+    .filter((u) => !isTextEndpointUrl(u))
+    .slice(0, opts.maxUrls ?? 1);
+}
+
 

@@ -516,6 +516,13 @@ export interface DirectFileOptions {
     url: string;
     kind: "pdf" | "docx";
   }) => { allow: boolean; reason: string | null; detail?: Record<string, unknown> };
+  /**
+   * type4_last_resort_probe_v1 — read-only peek at a bounded prefix of the
+   * cleaned plain-text body, called *before* the usable-length threshold so a
+   * caller can tell a WAF/block page apart from an empty or stub response.
+   * Must not throw and must not mutate anything.
+   */
+  inspectText?: (textPrefix: string) => void;
 }
 
 
@@ -676,6 +683,9 @@ export async function tryDirectFile(url: string, opts: DirectFileOptions = {}): 
   onStage("clean_start", { chars: decoded.length });
   const text = plainTextFromTxt(decoded);
   onStage("clean_done", { chars: text.length });
+  try {
+    opts.inspectText?.(text.slice(0, 4000));
+  } catch { /* telemetry only */ }
   gate("after_clean");
   if (text.length < ACQUISITION_LIMITS.MIN_USABLE_TEXT) {
     throw new Error("plain_text_below_threshold");
