@@ -1516,6 +1516,10 @@ async function handle(req: Request): Promise<Response> {
       researchMode: plannerStage.mode_plan?.mode ?? null,
       specificCaseGate,
       facetDirective,
+      // router_profiles_v1 — path-scoped answer shape.
+      blockCeiling: router.drafter_block_ceiling,
+      dropUnsupportedBlocks: router.drop_unsupported_blocks,
+
     },
   );
   stage_runs.push(...drafter.stage_runs);
