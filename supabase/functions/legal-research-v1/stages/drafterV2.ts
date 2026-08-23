@@ -1819,14 +1819,15 @@ export async function runDrafterV2(
 
   // router_profiles_v1 — enforce the path's block ceiling deterministically,
   // before any downstream gate or the footnote builder sees the draft.
-  const trimmed = applyBlockCeiling(parsed.draft.blocks, {
+  const trimmed = applyBlockCeiling(parsed.draft?.blocks ?? [], {
     ceiling: opts?.blockCeiling ?? null,
     dropUnsupported: opts?.dropUnsupportedBlocks === true,
   });
   const router_block_trim = trimmed.report;
-  if (router_block_trim.applied) {
+  if (router_block_trim.applied && parsed.draft) {
     parsed = { ...parsed, draft: { ...parsed.draft, blocks: trimmed.blocks } };
   }
+
 
   // metadata_only_holding_gate_v1 — strip metadata-only judgment refs from
   // every cited segment before footnotes are built, so no proposition can rest
