@@ -668,23 +668,45 @@ async function handle(req: Request): Promise<Response> {
   // Source-type targeting for case-law synthesis / doctrine / survey-like
   // questions: real judgment documents must be discoverable before the
   // acquisition budget is spent. No case names, no doctrine dictionaries.
-  const judgmentDiscovery = buildJudgmentDiscoveryQueries(
-    question,
-    plannerStage.mode_plan?.mode ?? null,
-    analyzer,
-  );
+  const skipJudgmentDiscovery = router.skipped_stages.includes("judgment_discovery");
+  const judgmentDiscovery = skipJudgmentDiscovery
+    ? { enabled: false, survey_like: false, topic: null, layers: [], queries: [],
+        judgment_discovery_queries: 0 } as unknown as ReturnType<typeof buildJudgmentDiscoveryQueries>
+    : buildJudgmentDiscoveryQueries(
+      question,
+      plannerStage.mode_plan?.mode ?? null,
+      analyzer,
+    );
   // ─── claim_facet_expansion_v1 — doctrinal facets + area-locked queries ───
-  const facetExpansion = expandClaimFacets(question, analyzer, {
-    mode: plannerStage.mode_plan?.mode ?? null,
-    outputShape: plannerStage.mode_plan?.output_shape ?? null,
-  });
+  // router_profiles_v1 caps the facet fan-out per path (0 = disabled).
+  const facetExpansionRaw = router.max_facets === 0
+    ? { enabled: false, gate_reason: `router_profile:${router.selected_router_profile}`,
+        legal_area_lock: null, lock_terms: [], facets: [], queries: [] }
+    : expandClaimFacets(question, analyzer, {
+      mode: plannerStage.mode_plan?.mode ?? null,
+      outputShape: plannerStage.mode_plan?.output_shape ?? null,
+    });
+  const keptFacets = facetExpansionRaw.facets.slice(0, router.max_facets);
+  const keptFacetIds = new Set(keptFacets.map((f) => f.facet_id));
+  const facetExpansion = {
+    ...facetExpansionRaw,
+    facets: keptFacets,
+    queries: facetExpansionRaw.queries.filter((q) => {
+      const fid = (q.metadata as Record<string, unknown> | undefined)?.facet_id;
+      return typeof fid === "string" ? keptFacetIds.has(fid) : true;
+    }),
+  };
+  const facetsDroppedByRouter = facetExpansionRaw.facets.length - keptFacets.length;
   const facetDirective = buildFacetDirective(facetExpansion);
-  const allQueries = [
+  // router_profiles_v1 — path-scoped query admission. Required-anchor queries
+  // are never dropped (they carry the deterministic primary-source duties).
+  const queryAdmission = admitQueries(router, anchorQueries, [
     ...planner!.queries,
-    ...anchorQueries,
     ...judgmentDiscovery.queries,
     ...facetExpansion.queries,
-  ];
+  ]);
+  const allQueries = queryAdmission.queries;
+
   const requiredAnchorsMeta = {
     enabled: true,
     count: requiredAnchors.length,
