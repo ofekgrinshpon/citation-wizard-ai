@@ -18,7 +18,14 @@ import {
   computeFacetCoverage,
   expandClaimFacets,
   FacetSourceView,
+  inferLegalAreaId,
 } from "./stages/claimFacetExpansion.ts";
+import {
+  admitQueries,
+  selectRouterProfile,
+  STATUTE_FIRST_LIMITATION,
+} from "./stages/routerProfiles.ts";
+
 import { runLocalRetrieval } from "./stages/localRetrieval.ts";
 import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
@@ -570,6 +577,89 @@ async function handle(req: Request): Promise<Response> {
     });
   }
 
+  // ─── router_profiles_v1 — select the pipeline path ───────────────────────
+  // The existing research-mode classification now drives real budgets, caps
+  // and ceilings instead of every question walking the maximal heavy path.
+  // No gate is removed: every deterministic branch downstream still runs.
+  const router = selectRouterProfile({
+    question,
+    research_mode: plannerStage.mode_plan?.mode ?? null,
+    output_shape: analyzer.answer_intent?.output_shape ?? null,
+    claim_count: analyzer.claims.length,
+    is_sources_only,
+  });
+
+  // ─── Profile E — citation_only: bypass retrieval/verifier/drafter ────────
+  // Delegated to the existing citation engine; the research charge is refunded
+  // (the citation engine bills its own). Any failure falls through to the
+  // normal pipeline so behaviour can only improve, never regress.
+  let citationOnlyFellThrough: string | null = null;
+  if (router.selected_router_profile === "citation_only" && !is_sources_only) {
+    if (!userClient || !authHeader) {
+      citationOnlyFellThrough = "no_user_token";
+    } else {
+      try {
+        const resp = await fetch(
+          `${Deno.env.get("SUPABASE_URL")}/functions/v1/citation-chat`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: authHeader },
+            body: JSON.stringify({ messages: [{ role: "user", content: question }] }),
+          },
+        );
+        const payload = await resp.json().catch(() => null) as
+          | { content?: string; answer?: string; footnotes?: unknown[] }
+          | null;
+        const answer = payload?.content ?? payload?.answer ?? "";
+        if (!resp.ok || !answer) {
+          citationOnlyFellThrough = `citation_engine_status_${resp.status}`;
+        } else {
+          await completeAllStages();
+          await writeTelemetry(admin, {
+            ...telemetryBase,
+            row_id: traceRowId,
+            answer,
+            footnotes: (payload?.footnotes ?? []) as unknown[],
+            task_mode: "legal_research",
+            metadata: {
+              pipeline: "legal-research-v1",
+              phase: "citation_only",
+              run_id,
+              total_ms: Date.now() - t_start,
+              stage_runs,
+              planning: planningMeta,
+              router_profiles: { ...router, retrieval_query_count: 0,
+                speculative_acquisition_count: 0, verifier_candidate_count: 0 },
+            },
+          });
+          // The citation engine charges separately → refund the research charge.
+          pipelineDelivered = false;
+          return jsonResponse(200, {
+            answer,
+            footnotes: (payload?.footnotes ?? []) as unknown[],
+            debug: { run_id, phase: "citation_only", router_profiles: router },
+          });
+        }
+      } catch (e) {
+        citationOnlyFellThrough = e instanceof Error ? e.message : String(e);
+      }
+    }
+  }
+  if (citationOnlyFellThrough) {
+    router.selected_router_profile = "doctrine_explainer";
+    router.profile_reason = `citation_only_fallthrough:${citationOnlyFellThrough}`;
+    router.skipped_stages = [];
+    router.path_budget_ms = 140_000;
+    router.max_retrieval_queries = 14;
+    router.max_speculative_acquisitions = 2;
+    router.max_facets = 3;
+    router.verifier_same_area_only = true;
+    router.drafter_block_ceiling = 7;
+    router.drop_unsupported_blocks = true;
+  }
+
+
+
   // ─── Required anchors — append deterministic primary-source queries ───────
   // Interpretation-note anchors (registry-driven, e.g. Mandate-era) +
   // docket-anchored-judgment anchors (deterministic from the question text
@@ -585,23 +675,45 @@ async function handle(req: Request): Promise<Response> {
   // Source-type targeting for case-law synthesis / doctrine / survey-like
   // questions: real judgment documents must be discoverable before the
   // acquisition budget is spent. No case names, no doctrine dictionaries.
-  const judgmentDiscovery = buildJudgmentDiscoveryQueries(
-    question,
-    plannerStage.mode_plan?.mode ?? null,
-    analyzer,
-  );
+  const skipJudgmentDiscovery = router.skipped_stages.includes("judgment_discovery");
+  const judgmentDiscovery = skipJudgmentDiscovery
+    ? { enabled: false, survey_like: false, topic: null, layers: [], queries: [],
+        judgment_discovery_queries: 0 } as unknown as ReturnType<typeof buildJudgmentDiscoveryQueries>
+    : buildJudgmentDiscoveryQueries(
+      question,
+      plannerStage.mode_plan?.mode ?? null,
+      analyzer,
+    );
   // ─── claim_facet_expansion_v1 — doctrinal facets + area-locked queries ───
-  const facetExpansion = expandClaimFacets(question, analyzer, {
-    mode: plannerStage.mode_plan?.mode ?? null,
-    outputShape: plannerStage.mode_plan?.output_shape ?? null,
-  });
+  // router_profiles_v1 caps the facet fan-out per path (0 = disabled).
+  const facetExpansionRaw = router.max_facets === 0
+    ? { enabled: false, gate_reason: `router_profile:${router.selected_router_profile}`,
+        legal_area_lock: null, lock_terms: [], facets: [], queries: [] }
+    : expandClaimFacets(question, analyzer, {
+      mode: plannerStage.mode_plan?.mode ?? null,
+      outputShape: plannerStage.mode_plan?.output_shape ?? null,
+    });
+  const keptFacets = facetExpansionRaw.facets.slice(0, router.max_facets);
+  const keptFacetIds = new Set(keptFacets.map((f) => f.facet_id));
+  const facetExpansion = {
+    ...facetExpansionRaw,
+    facets: keptFacets,
+    queries: facetExpansionRaw.queries.filter((q) => {
+      const fid = (q.metadata as Record<string, unknown> | undefined)?.facet_id;
+      return typeof fid === "string" ? keptFacetIds.has(fid) : true;
+    }),
+  };
+  const facetsDroppedByRouter = facetExpansionRaw.facets.length - keptFacets.length;
   const facetDirective = buildFacetDirective(facetExpansion);
-  const allQueries = [
+  // router_profiles_v1 — path-scoped query admission. Required-anchor queries
+  // are never dropped (they carry the deterministic primary-source duties).
+  const queryAdmission = admitQueries(router, anchorQueries, [
     ...planner!.queries,
-    ...anchorQueries,
     ...judgmentDiscovery.queries,
     ...facetExpansion.queries,
-  ];
+  ]);
+  const allQueries = queryAdmission.queries;
+
   const requiredAnchorsMeta = {
     enabled: true,
     count: requiredAnchors.length,
@@ -636,7 +748,13 @@ async function handle(req: Request): Promise<Response> {
   const fastLaneEligible = fastLaneDockets.length > 0;
 
   const budget = new RetrievalBudget(
-    fastLaneEligible ? RETRIEVAL_BUDGET.SPECIFIC_CASE_DEADLINE_MS : RETRIEVAL_BUDGET.DEFAULT_DEADLINE_MS,
+    // router_profiles_v1 — per-path wall-clock budget. Specific-case runs keep
+    // the tight deterministic fast-lane deadline.
+    fastLaneEligible
+      ? Math.min(router.path_budget_ms || RETRIEVAL_BUDGET.SPECIFIC_CASE_DEADLINE_MS,
+        RETRIEVAL_BUDGET.SPECIFIC_CASE_DEADLINE_MS)
+      : (router.path_budget_ms || RETRIEVAL_BUDGET.DEFAULT_DEADLINE_MS),
+
     (checkpoints) => {
       // Heartbeat: survives an isolate kill so we can see where retrieval died.
       // Returned so `markDurable` can await the first checkpoint of the stage.
@@ -780,6 +898,9 @@ async function handle(req: Request): Promise<Response> {
     candidates: skipAcquisition ? [] : pool.candidates,
     retrieval_budget: budget,
     markDurable: (name, detail) => budget.markDurable(name, detail),
+    // router_profiles_v1 — path ceiling on speculative judgment acquisition.
+    max_acquisitions: router.max_speculative_acquisitions,
+
   });
   await budget.markDurable("judgment_acquisition_done", {
     skipped: skipAcquisition,
@@ -1193,9 +1314,25 @@ async function handle(req: Request): Promise<Response> {
   await markStage("verifier");
   await budget.markDurable("verifier_start", { candidates: pool.candidates.length });
   const forceSplit = (req.headers.get("x-verifier-force-split") ?? "") === "1";
-  const verifier = await runVerifier(question, analyzer.claims, pool.candidates, { forceSplit });
+  // router_profiles_v1 — on the doctrine path the verifier only spends calls on
+  // candidates inside the locked legal area. Area-neutral candidates (no area
+  // vocabulary at all) are kept: the filter drops cross-area contamination
+  // only, never silently starves the pool.
+  const verifierAreaLock = router.verifier_same_area_only
+    ? (facetExpansion.legal_area_lock ?? inferLegalAreaId(question))
+    : null;
+  const verifierPool = verifierAreaLock
+    ? pool.candidates.filter((c) => {
+      const area = inferLegalAreaId(`${c.title ?? ""} ${c.snippet ?? ""}`);
+      return area === null || area === verifierAreaLock;
+    })
+    : pool.candidates;
+  const verifierCandidates = verifierPool.length > 0 ? verifierPool : pool.candidates;
+  const verifierAreaFiltered = pool.candidates.length - verifierCandidates.length;
+  const verifier = await runVerifier(question, analyzer.claims, verifierCandidates, { forceSplit });
   stage_runs.push(...verifier.stage_runs);
   const verifierMeta = {
+
     ms: verifier.ms,
     model_initial: verifier.model_initial,
     model_final: verifier.model_final,
@@ -1386,6 +1523,10 @@ async function handle(req: Request): Promise<Response> {
       researchMode: plannerStage.mode_plan?.mode ?? null,
       specificCaseGate,
       facetDirective,
+      // router_profiles_v1 — path-scoped answer shape.
+      blockCeiling: router.drafter_block_ceiling,
+      dropUnsupportedBlocks: router.drop_unsupported_blocks,
+
     },
   );
   stage_runs.push(...drafter.stage_runs);
@@ -1710,6 +1851,25 @@ async function handle(req: Request): Promise<Response> {
     exact_amounts_allowed: drafter.sufficiency?.exact_amounts_allowed ?? null,
     // claim_facet_expansion_v1 telemetry.
     claim_facet_expansion: claimFacetExpansionMeta,
+    // router_profiles_v1 telemetry.
+    router_profiles: {
+      version: router.version,
+      selected_router_profile: router.selected_router_profile,
+      profile_reason: router.profile_reason,
+      skipped_stages: router.skipped_stages,
+      retrieval_query_count: allQueries.length,
+      retrieval_queries_dropped: queryAdmission.report.dropped,
+      speculative_acquisition_count: judgmentAcquisition.successes ?? 0,
+      verifier_candidate_count: verifierCandidates.length,
+      verifier_area_filtered_count: verifierAreaFiltered,
+      drafter_block_ceiling: router.drafter_block_ceiling,
+      path_budget_ms: router.path_budget_ms,
+      downgraded_from_research_memo: router.downgraded_from_research_memo,
+      facets_dropped_by_router: facetsDroppedByRouter,
+      block_trim: drafter.router_block_trim ?? null,
+      signals: router.signals,
+    },
+
     // Named-doctrine premise/framing telemetry.
     named_doctrine_framing: drafter.named_doctrine_framing ?? null,
     framing_correction_required:
@@ -1783,12 +1943,26 @@ async function handle(req: Request): Promise<Response> {
     budgetReport.speculative_extraction_stopped;
   const partialRetrieval = budgetReport.partial_retrieval_used ||
     budgetReport.budget_exceeded;
+  // router_profiles_v1 / statute_first — a statute-text answer is a complete
+  // answer. It carries an explicit "no usable case law" notice instead of a
+  // generic retrieval-interruption message, and never a partial-retrieval note.
+  const statuteFirstPath = router.selected_router_profile === "statute_first";
+  const statuteFirstNoCaseLaw = statuteFirstPath && drafter.ok &&
+    !(drafter.footnotes ?? []).some((f) =>
+      (f as { source_type?: string }).source_type === "case"
+    );
+  const suppressInterruptionNotes = statuteFirstPath && statuteAcquisition.successes > 0;
   const finalAnswer = drafter.ok
-    ? `${drafter.answer_markdown}${partialRetrieval ? PARTIAL_RETRIEVAL_NOTE : ""}${
-        extractionCutShort ? EXTRACTION_CUT_SHORT_NOTE : ""
+    ? `${drafter.answer_markdown}${
+        partialRetrieval && !suppressInterruptionNotes ? PARTIAL_RETRIEVAL_NOTE : ""
+      }${extractionCutShort && !suppressInterruptionNotes ? EXTRACTION_CUT_SHORT_NOTE : ""}${
+        statuteFirstNoCaseLaw && !drafter.answer_markdown.includes(STATUTE_FIRST_LIMITATION)
+          ? `\n\n> ${STATUTE_FIRST_LIMITATION}`
+          : ""
       }`
     : (verifierFailedNoDrafter ? VERIFIER_FAILURE_ANSWER : STUB_ANSWER);
   const finalFootnotes = drafter.ok ? drafter.footnotes : [];
+
 
 
   // Mark final stage (footnote rendering / finalize) as active then complete.

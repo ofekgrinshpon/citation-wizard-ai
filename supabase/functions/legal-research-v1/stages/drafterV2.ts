@@ -66,6 +66,8 @@ import {
   applyClaimSourceMatch,
   type ClaimSourceMatchReport,
 } from "./claimSourceMatch.ts";
+import { applyBlockCeiling, type BlockTrimReport } from "./routerProfiles.ts";
+
 
 
 import {
@@ -243,6 +245,8 @@ function buildUserMessage(
   framing?: NamedDoctrineFraming,
   synthesisRendering?: SynthesisRenderingPlan,
   facetDirective?: string[],
+  blockCeiling?: number | null,
+
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
@@ -301,6 +305,17 @@ function buildUserMessage(
   if (facetDirective && facetDirective.length > 0) {
     for (const l of facetDirective) lines.push(l);
   }
+
+  // router_profiles_v1 — per-path block ceiling. Light paths must say less,
+  // not pad: a block without a verified source should be omitted entirely.
+  if (blockCeiling && blockCeiling > 0) {
+    lines.push(
+      `מגבלת אורך (מסלול תשובה): החזר לכל היותר ${blockCeiling} בלוקים. ` +
+        "אל תמלא מכסה: אם אין מקור מאומת לקביעה — השמט את הבלוק במקום לנסח פסקה ריקה או לחזור על מה שכבר נאמר. " +
+        "אין לחזור על אותה קביעה בניסוח אחר.",
+    );
+  }
+
 
 
 
@@ -936,6 +951,9 @@ export interface DrafterV2Result {
   synthesis_rendering?: SynthesisRenderingReport;
   /** metadata_only_holding_gate_v1 telemetry (model-drafted answers only). */
   metadata_only_holding_gate?: MetadataOnlyHoldingGateReport;
+  /** router_profiles_v1 — block-ceiling trim telemetry. */
+  router_block_trim?: BlockTrimReport;
+
 
 
 
@@ -1023,6 +1041,14 @@ export async function runDrafterV2(
      * drafter user message (doctrine/analysis runs only). Purely additive.
      */
     facetDirective?: string[];
+    /**
+     * router_profiles_v1 — max structured blocks for the selected path.
+     * Enforced twice: as a prompt instruction, and deterministically on the
+     * parsed draft before any gate or footnote building runs.
+     */
+    blockCeiling?: number | null;
+    dropUnsupportedBlocks?: boolean;
+
     specificCaseGate?: {
       allow: boolean;
       docket_display: string | null;
@@ -1598,6 +1624,8 @@ export async function runDrafterV2(
     framing,
     synthesisPlan,
     opts?.facetDirective,
+    opts?.blockCeiling ?? null,
+
   );
 
 
@@ -1789,11 +1817,24 @@ export async function runDrafterV2(
     truncation_retry.retry_ms = Date.now() - t_retry;
   }
 
+  // router_profiles_v1 — enforce the path's block ceiling deterministically,
+  // before any downstream gate or the footnote builder sees the draft.
+  const trimmed = applyBlockCeiling(parsed.draft?.blocks ?? [], {
+    ceiling: opts?.blockCeiling ?? null,
+    dropUnsupported: opts?.dropUnsupportedBlocks === true,
+  });
+  const router_block_trim = trimmed.report;
+  if (router_block_trim.applied && parsed.draft) {
+    parsed = { ...parsed, draft: { ...parsed.draft, blocks: trimmed.blocks } };
+  }
+
+
   // metadata_only_holding_gate_v1 — strip metadata-only judgment refs from
   // every cited segment before footnotes are built, so no proposition can rest
   // on a judgment whose body was never read.
   const gated = applyMetadataOnlyHoldingGate(parsed.draft, inputSources);
   const metadata_only_holding_gate = gated.report;
+
 
   // claim_source_match_validation_v1 — a source may only stay attached to a
   // block whose claim/facet/legal-area it was actually verified for.
@@ -1863,6 +1904,8 @@ export async function runDrafterV2(
     named_doctrine_framing: framing,
     synthesis_rendering,
     metadata_only_holding_gate,
+    router_block_trim,
+
     claim_source_match,
 
 
