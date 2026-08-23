@@ -306,6 +306,17 @@ function buildUserMessage(
     for (const l of facetDirective) lines.push(l);
   }
 
+  // router_profiles_v1 — per-path block ceiling. Light paths must say less,
+  // not pad: a block without a verified source should be omitted entirely.
+  if (blockCeiling && blockCeiling > 0) {
+    lines.push(
+      `מגבלת אורך (מסלול תשובה): החזר לכל היותר ${blockCeiling} בלוקים. ` +
+        "אל תמלא מכסה: אם אין מקור מאומת לקביעה — השמט את הבלוק במקום לנסח פסקה ריקה או לחזור על מה שכבר נאמר. " +
+        "אין לחזור על אותה קביעה בניסוח אחר.",
+    );
+  }
+
+
 
 
 
