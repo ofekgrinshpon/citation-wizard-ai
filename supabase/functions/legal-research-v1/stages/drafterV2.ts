@@ -1817,11 +1817,23 @@ export async function runDrafterV2(
     truncation_retry.retry_ms = Date.now() - t_retry;
   }
 
+  // router_profiles_v1 — enforce the path's block ceiling deterministically,
+  // before any downstream gate or the footnote builder sees the draft.
+  const trimmed = applyBlockCeiling(parsed.draft.blocks, {
+    ceiling: opts?.blockCeiling ?? null,
+    dropUnsupported: opts?.dropUnsupportedBlocks === true,
+  });
+  const router_block_trim = trimmed.report;
+  if (router_block_trim.applied) {
+    parsed = { ...parsed, draft: { ...parsed.draft, blocks: trimmed.blocks } };
+  }
+
   // metadata_only_holding_gate_v1 — strip metadata-only judgment refs from
   // every cited segment before footnotes are built, so no proposition can rest
   // on a judgment whose body was never read.
   const gated = applyMetadataOnlyHoldingGate(parsed.draft, inputSources);
   const metadata_only_holding_gate = gated.report;
+
 
   // claim_source_match_validation_v1 — a source may only stay attached to a
   // block whose claim/facet/legal-area it was actually verified for.
