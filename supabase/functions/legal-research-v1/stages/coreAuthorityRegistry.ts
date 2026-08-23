@@ -130,8 +130,12 @@ export const DOCTRINE_REGISTRY: DoctrineEntry[] = [
     label: "בית הדין הרבני וחלוקת רכוש לפי הדין האזרחי",
     area: "family_property",
     priority: 3,
+    // Court phrase tolerates the missing definite article ("בית דין רבני")
+    // and plural forms. Over-trigger control: a civil-property signal
+    // (רכוש/ממון/שיתוף/איזון משאבים/חלוקת רכוש) must appear within 80 chars —
+    // generic גט/כתובה/גירושין questions therefore never trigger.
     trigger:
-      /(בית\s+הדין\s+הרבני|בתי\s+הדין\s+הרבניים)[\s\S]{0,80}(רכוש|ממון|שיתוף|איזון)|((רכוש|ממון|שיתוף|איזון)[\s\S]{0,80}(בית\s+הדין\s+הרבני|בתי\s+הדין\s+הרבניים))|הלכת\s+בבלי/,
+      /((?:בית|בתי)[\s\u05be-]+ה?דין[\s\u05be-]+ה?רבני(?:ים)?)[\s\S]{0,80}(רכוש|ממון|שיתוף|איזון)|((רכוש|ממון|שיתוף|איזון)[\s\S]{0,80}((?:בית|בתי)[\s\u05be-]+ה?דין[\s\u05be-]+ה?רבני(?:ים)?))|הלכת\s+בבלי/,
     canonical_authorities: [
       A({
         authority_id: "hcj_1000_92_bavli",

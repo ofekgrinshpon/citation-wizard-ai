@@ -1,0 +1,178 @@
+{
+  "id": "NOISE",
+  "topic": "control — generic legal query",
+  "query": "מהם השלבים העיקריים בהגשת תביעה אזרחית בבית משפט השלום בישראל?",
+  "core_authority_registry": {
+    "area": null,
+    "queries": [],
+    "triggered": false,
+    "authorities": [],
+    "doctrine_id": null,
+    "matched_facet": null,
+    "queries_added": 0,
+    "doctrine_label": null,
+    "trigger_reason": "no_doctrine_match",
+    "registry_version": "core_authority_registry_v1",
+    "authority_candidates": [],
+    "statute_title_normalization": {
+      "applied": false,
+      "rewrites": [],
+      "rewritten_count": 0
+    },
+    "skipped_because_already_present": []
+  },
+  "support_distribution": {
+    "direct": 5,
+    "unrelated": 9,
+    "partial": 9,
+    "tangential": 7
+  },
+  "candidate_count": 0,
+  "listing_page_candidates": 0,
+  "metadata_only_candidates": 0,
+  "job_id": "8172e573-b41c-42be-93d7-f203592430c1",
+  "run_id": "de08cc3e-8db6-462e-bcb4-1f227fcfdefb",
+  "ms": 151300,
+  "terminal_status": "done",
+  "branch": null,
+  "answer": "- בדיקת סמכות — לפני הגשת התביעה יש לוודא שבית משפט השלום הוא הדיוני המתאים מבחינת סמכות עניינית ומקומית (מקום מגוריו או מקום עסקו של הנתבע, מקום המעשה/המחדל או מקרקעין), ולשקול האם קיים הסכם שיפוט או סמכות של בית משפט אחר שיש להכיר בו.¹\n- ניסוח כתב תביעה — להכין כתב תביעה שמכיל זהות הצדדים, טענות עובדתיות וחוקיות ברורות, הסבר על עילת התביעה, הסעד המבוקש ונספחים מתויגים וממוספרים; יש להקפיד על הדרישות הפורמליות וההנחיות המפורשות לגבי ניסוח ונספחים.\n- הגשה פורמלית ותשלום אגרה — להגיש את כתב התביעה בלשכת בית המשפט או באמצעים הממוחשבים המקובלים, לשלם את האגרה הנדרשת ולהקפיד על צירוף עותקים ופרוטוקול ההגשה בהתאם להוראות הרלוונטיות.\n- מסירת כתב התביעה לנתבע — מסירה של כתב התביעה לנתבע היא שלב מרכזי שמניע את מועדי ההגנה; עם זאת, במקורות שאותרו לא נמצא עיגון מפורש וכולל לטקסט המפרט את דרכי המסירה וההשלכות הספציפיות של כל אמצעי מסירה, ויש לבדוק את נוסח הדין המלא והכללים המעוגנים בתקנות ובפסיקה הרלוונטית.\n- הליכים מקדמיים, ראיות ופסק דין — לאחר מענה של הנתבע מתקיימים שלבים מקדמיים (דיון מקדמי, גילוי מסמכים וטפסי דיווח), לשופט נתונות סמכויות קדם-משפטיות, ואחריהם נערכת הלכה של הוכחות ודיונים שיכולים להוביל לפסק דין; על פסק הדין חלות אפשרויות ערעור וההוצאה לפועל הרגילות.\n\nהערת דלילות מקורות: הטקסט החוקי והתמיכה שנמצאו כאן קצרים וחלקיים, וטקסט ההוראה המלא של תקנות, סעיפים או פסיקה לא היה בידינו במלואו; יתכן שיש נוסחים או פסקי דין נוספים שלא אותרו בחיפוש זה.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://www.toledano.co.il/%d7%a9%d7%9c%d7%94-%d7%90%d7%9e%d7%99%d7%9f-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%9e%d7%a1%d7%97%d7%a8-%d7%95%d7%94%d7%aa%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "ע\"א 7791/19 שלה אמין נ׳ מדינת ישראל- משרד המסחר והתעשייה פסק דין (03.06.2020); תקנות סדר הדין האזרחי, תשע\"ט-2018 - נבו",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%a9%d7%9c%d7%94-%d7%90%d7%9e%d7%99%d7%9f-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%9e%d7%a9%d7%a8%d7%93-%d7%94%d7%9e%d7%a1%d7%97%d7%a8-%d7%95%d7%94%d7%aa%d7%a2/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "ע\"א 7791/19 שלה אמין נ׳ מדינת ישראל- משרד המסחר והתעשייה פסק דין (03.06.2020)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/157751.htm",
+          "title": "תקנות סדר הדין האזרחי, תשע\"ט-2018 - נבו",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ],
+  "footnotes_length": 1,
+  "used_sources_length": 2,
+  "inline_marker_count": 1,
+  "dangling_marker_count": 0,
+  "orphan_source_row_count": 0,
+  "metadata_only_holdings": null,
+  "limitation_notices": [
+    "**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+  ],
+  "claim_source_match": {
+    "applied": true,
+    "mismatch_reason": [
+      "commentary_in_substantive_block",
+      "claim_mismatch"
+    ],
+    "limitation_added": true,
+    "tagged_block_count": 6,
+    "dropped_source_refs": [
+      {
+        "ref": "s3",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 1,
+        "block_claim_id": "C2",
+        "block_legal_area": null,
+        "source_claim_ids": [
+          "C2"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s3",
+        "reason": "claim_mismatch",
+        "block_index": 2,
+        "block_claim_id": "C3",
+        "block_legal_area": null,
+        "source_claim_ids": [
+          "C2"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s1",
+        "reason": "claim_mismatch",
+        "block_index": 2,
+        "block_claim_id": "C3",
+        "block_legal_area": null,
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s4",
+        "reason": "claim_mismatch",
+        "block_index": 3,
+        "block_claim_id": "C4",
+        "block_legal_area": null,
+        "source_claim_ids": [
+          "C2"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s2",
+        "reason": "claim_mismatch",
+        "block_index": 4,
+        "block_claim_id": "C5",
+        "block_legal_area": null,
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s4",
+        "reason": "claim_mismatch",
+        "block_index": 4,
+        "block_claim_id": "C5",
+        "block_legal_area": null,
+        "source_claim_ids": [
+          "C2"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s3",
+        "reason": "claim_mismatch",
+        "block_index": 4,
+        "block_claim_id": "C5",
+        "block_legal_area": null,
+        "source_claim_ids": [
+          "C2"
+        ],
+        "source_legal_area": null
+      }
+    ],
+    "commentary_only_claims": [],
+    "unsupported_block_count": 3,
+    "source_ref_mismatch_count": 7,
+    "primary_support_by_main_claim": true
+  },
+  "footnote_render_report": {
+    "version": "footnote_rendering_invariant_v1",
+    "renumbered": false,
+    "footnotes_length": 1,
+    "invariant_passed": true,
+    "inline_marker_count": 1,
+    "used_sources_length": 2,
+    "dangling_marker_count": 0,
+    "orphan_source_row_count": 0
+  },
+  "interruption": {
+    "job_error": null,
+    "retrieval_interrupted": null,
+    "partial_retrieval": null,
+    "extraction_ledger": null,
+    "pdf_preflight": null,
+    "cpu_or_stale": false
+  }
+}
