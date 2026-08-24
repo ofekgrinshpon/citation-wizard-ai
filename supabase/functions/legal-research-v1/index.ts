@@ -729,21 +729,56 @@ async function handle(req: Request): Promise<Response> {
     ...facetExpansion.queries,
   ]);
   const normalizedQueries = statuteNorm.queries;
+  // Split the normalised block back into its producers (order is preserved).
+  const nPlanner = planner!.queries.length;
+  const nDiscovery = judgmentDiscovery.queries.length;
+  const plannerQueriesNorm = normalizedQueries.slice(0, nPlanner);
+  const discoveryQueriesNorm = normalizedQueries.slice(nPlanner, nPlanner + nDiscovery);
+  const facetQueriesNorm = normalizedQueries.slice(nPlanner + nDiscovery);
   let coreAuthorityRegistry = seedCoreAuthorityQueries(
     question,
     analyzer,
     facetExpansion.facets,
     [...anchorQueries, ...normalizedQueries],
   );
+
+  // ─── source_nomination_v1 ────────────────────────────────────────────────
+  // "What sources would a competent Israeli legal researcher expect to
+  // obtain here?" — nominated sources are never citations: each one must
+  // still be retrieved, acquired, validated and admitted by every gate.
+  const nominationSkip = router.skipped_stages.includes("source_nomination") ||
+    plannerStage.mode_plan?.mode === "canonical_quote";
+  const sourceNomination = await runSourceNomination({
+    question,
+    analyzer,
+    mode: plannerStage.mode_plan?.mode ?? null,
+    max_candidates: router.max_retrieval_queries <= 8 ? 3 : 5,
+    skip: nominationSkip,
+    skip_reason: nominationSkip ? "router_or_mode_skip" : undefined,
+  });
+  stage_runs.push(...sourceNomination.stage_runs);
+
+  // ─── query_merge_and_budget ──────────────────────────────────────────────
+  // Single funnel over every query producer: normalise, dedupe (exact +
+  // near), priority-sort, cap. Required-anchor queries are never dropped.
+  const queryMerge = mergeAndBudgetQueries([
+    { producer: "required_anchors", queries: anchorQueries },
+    { producer: "source_nomination", queries: sourceNomination.queries, cap: 4 },
+    { producer: "core_authority_registry", queries: coreAuthorityRegistry.queries, cap: 2 },
+    { producer: "planner", queries: plannerQueriesNorm },
+    { producer: "facets", queries: facetQueriesNorm },
+    { producer: "judgment_discovery", queries: discoveryQueriesNorm },
+  ], { max_total: Math.max(4, router.max_retrieval_queries) });
+
   // router_profiles_v1 — path-scoped query admission. Required-anchor queries
   // are never dropped (they carry the deterministic primary-source duties).
-  // Registry-seeded queries ride alongside them (hard-capped at 2).
   const queryAdmission = admitQueries(
     router,
-    [...anchorQueries, ...coreAuthorityRegistry.queries],
-    normalizedQueries,
+    queryMerge.protectedQueries,
+    queryMerge.queries,
   );
   const allQueries = queryAdmission.queries;
+
 
   const requiredAnchorsMeta = {
     enabled: true,
