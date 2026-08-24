@@ -1,0 +1,134 @@
+{
+  "id": "R02",
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+  "run_id": "0e0ca8d7-bf0c-4a98-b6c6-6ac013cc2bda",
+  "terminal": true,
+  "ms": 161359,
+  "total_ms": 155160,
+  "branch": "docket_limitation",
+  "nomination": {
+    "actionable_count": 4,
+    "category_mix": {
+      "statute": 2,
+      "judgment": 2,
+      "scholarship": 3
+    },
+    "statute_nominations": [
+      {
+        "year": 1992,
+        "bucket": "actionable",
+        "docket": null,
+        "authors": [],
+        "demoted": false,
+        "category": "statute",
+        "label_he": "חוק יסוד: כבוד האדם וחירותו",
+        "confidence": 0.9,
+        "institution": "הכנסת",
+        "must_verify": true,
+        "topic_query": "חוק יסוד: כבוד האדם וחירותו טקסט חוק הכנסת",
+        "nominated_by": "source_nomination_v2",
+        "actionability": "known_identifier",
+        "nomination_id": "N2",
+        "statute_title": "חוק יסוד: כבוד האדם וחירותו",
+        "demoted_reason": null,
+        "role_in_answer": "בסיס משפטי לבחינת חקיקת זכויות והגבלותיה",
+        "statute_section": null,
+        "stripped_fields": [],
+        "journal_or_publisher": null,
+        "relevance_confidence": 0.9,
+        "identifier_confidence": 0.95
+      },
+      {
+        "year": 1994,
+        "bucket": "actionable",
+        "docket": null,
+        "authors": [],
+        "demoted": false,
+        "category": "statute",
+        "label_he": "חוק יסוד: חופש העיסוק",
+        "confidence": 0.85,
+        "institution": "הכנסת",
+        "must_verify": true,
+        "topic_query": "חוק יסוד: חופש העיסוק טקסט חוק הכנסת",
+        "nominated_by": "source_nomination_v2",
+        "actionability": "known_identifier",
+        "nomination_id": "N3",
+        "statute_title": "חוק יסוד: חופש העיסוק",
+        "demoted_reason": null,
+        "role_in_answer": "מקור שנדון בפסק הדין ביחס למעמד חוקי היסוד",
+        "statute_section": null,
+        "stripped_fields": [],
+        "journal_or_publisher": null,
+        "relevance_confidence": 0.85,
+        "identifier_confidence": 0.95
+      }
+    ]
+  },
+  "discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 1,
+    "cache_hits": 0,
+    "cache_misses": 1,
+    "cache_writes": 0,
+    "injected_candidate_ids": [
+      "nominated-source:N2"
+    ],
+    "attempts": [
+      {
+        "ms": 40,
+        "label": "ע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+        "reason": "cooldown_until:2026-08-31T09:14:11.322Z",
+        "result": "not_attempted",
+        "category": "judgment",
+        "body_chars": 0,
+        "cache_lookup": "cooldown",
+        "cache_status": "blocked",
+        "cache_written": false,
+        "nomination_id": "N1",
+        "urls_attempted": [],
+        "acquisition_path": "none",
+        "cache_write_error": null,
+        "normalized_docket": "aa:6821/93",
+        "injected_candidate_id": null
+      },
+      {
+        "ms": 934,
+        "label": "חוק יסוד: כבוד האדם וחירותו",
+        "reason": null,
+        "result": "body_acquired",
+        "statute": {
+          "lane": "statute",
+          "section": null,
+          "title_raw": "חוק יסוד: כבוד האדם וחירותו",
+          "section_found": null,
+          "title_normalized": "חוק יסוד: כבוד האדם וחירותו",
+          "identity_tokens_matched": 3,
+          "title_normalization_changed": false
+        },
+        "category": "statute",
+        "body_chars": 1974,
+        "cache_lookup": "miss",
+        "cache_status": null,
+        "cache_written": false,
+        "nomination_id": "N2",
+        "urls_attempted": [
+          "https://fs.knesset.gov.il/13/law/13_lsr_186603.PDF",
+          "https://www.nevo.co.il/law_html/law00/70320.htm"
+        ],
+        "acquisition_path": "statute_official_url",
+        "cache_write_error": "there is no unique or exclusion constraint matching the ON CONFLICT specification",
+        "normalized_docket": null,
+        "injected_candidate_id": "nominated-source:N2"
+      }
+    ]
+  },
+  "statute_acquisition": null,
+  "used_sources": [],
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 320,
+  "answer": "לא אותר במקורות הזמינים ע\"א 6821/93. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.",
+  "footnotes": []
+}

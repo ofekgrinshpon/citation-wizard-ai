@@ -159,6 +159,11 @@ export async function lookupVerifiedSource(
       q = q.eq("normalized_docket", key.normalized_docket);
     } else if (key.statute_title && key.statute_section) {
       q = q.eq("statute_title", key.statute_title).eq("statute_section", key.statute_section);
+    } else if (key.statute_title) {
+      // Statute nominated without a specific section: the whole-statute body
+      // is a valid hit. Scope stays statute-only.
+      q = q.eq("statute_title", key.statute_title);
+
     } else if (key.canonical_title) {
       q = q.ilike("canonical_title", `%${key.canonical_title.slice(0, 60)}%`);
     } else {
