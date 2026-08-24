@@ -1,0 +1,204 @@
+{
+  "id": "P02",
+  "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+  "run_id": "4dd93e64-b63f-4b9b-8494-b21130e95b7e",
+  "terminal": true,
+  "ms": 106060,
+  "total_ms": 101240,
+  "branch": "docket_limitation",
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 6,
+    "mini_after": 6,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 256,
+    "parse_error": null,
+    "candidates_count": 6,
+    "dropped_count": 0,
+    "dropped_reasons": [],
+    "identifier_bearing_count": 2,
+    "category_mix": {
+      "other": 1,
+      "statute": 2,
+      "judgment": 1,
+      "scholarship": 2
+    },
+    "actionable_count": 3,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 2,
+      "known_name_no_docket": 1
+    },
+    "known_name_no_docket_count": 1,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 4,
+      "0.8-1.0": 2
+    },
+    "stripped_identifiers": [],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 3,
+      "exploratory": 2
+    },
+    "actionable_queries_preserved": 3,
+    "exploratory_queries_preserved": 2,
+    "ms": 7907
+  },
+  "query_merge": {
+    "final_query_count": 17,
+    "from_nomination": 5,
+    "skipped_duplicate": 2,
+    "skipped_budget": 0,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "duplicate_exact",
+          "producer": "required_anchors",
+          "query_he": "ע״א 99887/04/22",
+          "duplicate_of": "ע\"א 99887/04/22"
+        },
+        {
+          "reason": "duplicate_near",
+          "producer": "required_anchors",
+          "query_he": "ע\"א 99887-04-22",
+          "duplicate_of": "ע\"א 99887/04/22"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 12,
+        "other": 1,
+        "statute": 3,
+        "academic": 1
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 2,
+        "known_name_no_docket": 1
+      },
+      "final_query_count": 17,
+      "actionable_queries": 3,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 2,
+      "queries_by_producer": {
+        "planner": 7,
+        "required_anchors": 2,
+        "source_nomination": 5,
+        "judgment_discovery": 3
+      },
+      "stripped_identifiers": 0,
+      "planner_queries_count": 7,
+      "queries_skipped_budget": 0,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 2,
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 4,
+        "0.8-1.0": 2
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 1,
+    "injected_candidate_ids": [
+      "nominated-source:N3"
+    ],
+    "cache_lookups": 2,
+    "cache_hits": 0,
+    "cache_misses": 2,
+    "cache_writes": 1,
+    "attempts": [
+      {
+        "label": "חוק סדר הדין האזרחי, תשל\"ה-1976",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "urls": [
+          "https://www.nevo.co.il/law_html/law00/157751.htm",
+          "https://www.gov.il/BlobFolder/news/16122020/he/16.12-explanatory.pdf",
+          "https://fs.knesset.gov.il/10/law/10_lsr_311020.PDF"
+        ],
+        "path": "statute_official_url",
+        "result": "body_acquired",
+        "body_chars": 113930,
+        "cache_written": true,
+        "cache_write_error": null,
+        "reason": null,
+        "ms": 782
+      },
+      {
+        "label": "חוק סדר הדין הפלילי, התשל\"ז-1977",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "retrieval_already_has_body",
+        "ms": 41
+      }
+    ]
+  },
+  "official_fetch": {
+    "version": "official_fetch_profile_v1",
+    "official_calls": 0,
+    "max_per_run": 5,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "rate_limited_events": 0,
+    "attempts": [
+      {
+        "ms": 469,
+        "url": "https://www.nevo.co.il/law_html/law00/157751.htm",
+        "host": "www.nevo.co.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=utf-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      }
+    ]
+  },
+  "court_egress": {
+    "version": "official_court_egress_path_v1",
+    "configured": true,
+    "calls": 0,
+    "max_per_run": 3,
+    "stopped_reason": null,
+    "attempts": []
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 345,
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.",
+  "footnotes": []
+}
