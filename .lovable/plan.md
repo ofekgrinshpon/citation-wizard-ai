@@ -1,103 +1,158 @@
-# authority_nomination_v1 + verified authority cache
+# source_nomination_v1 + verified source cache — architecture diagnosis
 
-Direction change: stop growing a hand-maintained landmark-case list. Nominate authorities dynamically, search official sources for them, validate identity inside the acquired body, and remember what worked in a persistent verified-authority cache.
+Read-only design. No code written. Replaces the previous `authority_nomination_v1` draft.
 
-## 1. Landmark-case registry seeding: disable, don't delete
+## 1. Where the current pipeline does each thing
 
-- `coreAuthorityRegistry.ts` currently does two things: doctrine → canonical case seeding, and statute-title normalization. They get split.
-- **Case seeding → telemetry-only.** Keep the doctrine match and the `authority_candidates` telemetry, but stop appending case-name queries to the plan (`queries_added` becomes 0 for case authorities). Flag: `CASE_SEEDING_MODE = "telemetry_only"`. Keeps the D1–D6 comparison baseline readable without a code delete.
-- **Statute-title normalization stays on.** It is a bounded linguistic normalization layer (informal name → official title), not case recall.
-- **`canonicalAuthorityAcquisition.ts` (the type=4 / archive-probe lane) is retired from the run path** once nomination + official search is live. Its per-probe telemetry helpers move into the new discovery stage. No manual 20-URL fallback table is introduced.
+All in `supabase/functions/legal-research-v1/`, orchestrated linearly by `index.ts`:
 
-## 2. Verified authority cache — schema
-
-Two tables in the backend, written only by the edge function (service role), read by it too. No client access.
-
-**`verified_legal_authorities`**
-
-| column | type | notes |
+| concern | location | notes |
 |---|---|---|
-| id | uuid pk | |
-| authority_type | text | `judgment` \| `statute` |
-| normalized_docket | text | canonical `prefix/number/year` form, null for statutes |
-| case_prefix | text | בג"ץ / ע"א / עה"ס … |
-| canonical_title | text | recovered from body, not from search snippet |
-| party_names | text[] | |
-| court | text | |
-| year | int | |
-| official_url | text | the URL the body actually came from |
-| source_host | text | |
-| source_kind | text | `official_court` \| `official_translation` \| `official_gov` \| `high_trust_mirror` |
-| language | text | `he` \| `en` |
-| is_translation | bool | |
-| body_text_hash | text | sha-256 of normalized body |
-| body_chars | int | |
-| identity_terms_matched | text[] | docket / party / court tokens found inside the body |
-| identity_validated | bool | only `true` rows are citable |
-| acquisition_method | text | `official_search` \| `exact_body` \| `local_corpus` \| `other` |
-| status | text | `verified` \| `stale` \| `failed` \| `blocked` \| `identity_mismatch` |
-| verified_at / last_success_at / last_used_at | timestamptz | |
-| failure_count | int | |
-| last_failure_reason | text | |
-| created_at / updated_at | timestamptz | updated_at trigger |
+| analyzer | `stages/claimAnalyzer.ts` (index.ts:361) | claims, legal_area, answer_type, `answer_intent.output_shape` |
+| research-mode detection | `stages/researchMode.ts`, consumed at index.ts:770 | modes: canonical_quote, specific_case, statute_section_definition, case_law_synthesis, practical_steps, doctrine_explanation, generic |
+| planner | `stages/queryPlanner.ts` (index.ts:497) | mode-aware; emits `query_he` + role + expected_source_type |
+| claim/subquestion decomposition | analyzer claims + `stages/claimFacetExpansion.ts` (index.ts:696) | facets with `AREA_LOCKS` |
+| query generation | planner + required anchors (index.ts:672) + judgment discovery (`stages/judgmentDiscovery.ts`, index.ts:683) + facets + registry (index.ts:717) | five separate append points, **no merge/budget stage** |
+| coreAuthorityRegistry | `stages/coreAuthorityRegistry.ts` | doctrine → canonical case seeding (≤2 queries) + statute-title normalization |
+| statute-title normalization | same file, `normalizeStatuteTitles` (index.ts:722) | bounded linguistic rewrite |
+| local retrieval | `stages/localRetrieval.ts` (index.ts:766+) | pgvector + text over `legal_documents` / `legal_document_chunks` |
+| web retrieval | `stages/perplexityRetrieval.ts` (index.ts:887) | + `perplexityHygiene.ts` |
+| candidate pool | `stages/candidatePool.ts` | applies source integrity at admission |
+| source integrity | `stages/sourceIntegrity.ts` | tiering, judgment-vs-commentary classification, listing/institutional vetoes |
+| body acquisition | `judgmentTextAcquisition.ts`, `statuteTextAcquisition.ts`, `canonicalAuthorityAcquisition.ts`, `specificCaseResolution.ts`, `courtFileUrls.ts`, `pdfExtractionPreflight.ts`, budgets in `retrievalBudget.ts` / `retrievalGovernor.ts` | |
+| verifier | `stages/verifier.ts` (index.ts:1357) | per-claim support levels |
+| claim-source-match | `stages/claimSourceMatch.ts`, inside `drafterV2` | drops refs whose claim/area don't match the block |
+| sufficiency | `stages/sourceSufficiency.ts`, inside `drafterV2` | + `metadataOnlyHoldingGate.ts`, `negativeExistenceGuard.ts` |
+| drafter | `stages/drafterV2.ts` (index.ts:1555) | structured blocks |
+| footnote builder | `stages/footnoteBuilder.ts` (called from drafterV2) | rendering invariant, renumbering |
 
-Indexes: unique `(authority_type, normalized_docket, body_text_hash)` for dedupe; btree on `normalized_docket`; trigram on `canonical_title` for title/party lookup; partial index on `status = 'verified'`.
+**The gap.** The planner answers *"what search strings should we run?"* — it paraphrases doctrine. Nothing in the pipeline answers *"what sources would a competent Israeli legal researcher expect to obtain here?"* The only component that ever names a concrete authority is the hand-maintained doctrine registry, which by construction covers only the doctrines someone typed in. For a question like "כיצד הזהות הלאומית מבוטאת במשפט הישראלי?" the pipeline never forms the intent to look for חוק-יסוד: ישראל — מדינת הלאום, בג"ץ 5555/18 חסון, or the scholarship around them.
 
-**`verified_authority_texts`** — `id`, `authority_id` fk cascade, `chunk_index`, `text`, `source_url`, `created_at`, and `embedding vector(1536)` **nullable and left null in v1**. Unique `(authority_id, chunk_index)`.
+## 2. Separate stage, not folded into the planner
 
-Grants: `service_role` only (no anon/authenticated grants), RLS enabled with no permissive policy — the function reaches it through service role, the client never does.
+Recommendation: **separate stage**, `source_nomination_v1`, running after the planner.
 
-## 3. Runtime flow
+Reasons: different output type (source objects, not query strings); different failure mode (a bad nomination must be droppable without destabilising the query plan); the planner is already mode-conditioned and escalation-governed, and widening its schema risks the existing C1–C5 escalation triggers; and nomination must be independently skippable and independently measurable.
+
+Nominates: statutes, statutory sections, regulations, judgments, doctrines, Knesset MMM research reports, State Comptroller reports, government reports, regulator guidelines, AG/prosecution guidelines, bills and explanatory notes, scholarship, books, chapters, policy papers, comparative sources.
+
+## 3. Model
+
+- **`openai/gpt-5-mini`**, strict JSON tool-call via the existing `lib/openai.ts` helper, `max_completion_tokens` capped (~1500).
+- Cost: roughly one extra mini call per run — negligible next to the drafter/verifier calls already in the run.
+- Latency: +2–5s. Acceptable against 90–210s runs.
+- **Escalate to `openai/gpt-5` once** only when: schema validation fails; or mode is a complex research/memo question **and** nominations come back empty or all below confidence 0.5. Never more than one retry, matching `lib/escalation.ts` discipline.
+- **Skip nomination entirely** for: profile E / citation_only, bibliography-only, `canonical_quote` (B8 must stay byte-identical), the fake-docket refusal branch (P02), and pure statute-section definition where required anchors already name the statute.
+
+## 4. Pipeline placement
 
 ```text
-claims/facets
-  └─ authority_nomination_v1        → candidate authorities (statute+section, docket, doctrine)
-       └─ cache lookup              → normalized_docket, then title/party trigram
-            ├─ hit (verified)       → inject cached body/chunks as a candidate; touch last_used_at
-            └─ miss                 → official search-first discovery (bounded, official hosts only)
-                 └─ acquire body    → existing caps, PDF preflight, extraction ledger
-                      └─ identity validation inside body (docket + party/court tokens)
-                           ├─ pass  → inject candidate + write cache row + chunks
-                           └─ fail  → write status row (blocked/identity_mismatch/failed), no cache body
+analyzer → planner → source_nomination_v1 → query_merge_and_budget
+  → verified-source cache lookup (identifier-bearing nominations only)
+  → retrieval / official discovery (cache misses)
+  → body acquisition (existing caps, preflight, extraction ledger)
+  → identity / bibliographic validation → cache write
+  → candidate pool → source integrity → verifier
+  → claim-source-match → sufficiency → drafter → footnote builder
 ```
 
-Everything injected — cached or fresh — then flows through the unchanged gates: source-integrity, verifier, claim-source-match, sufficiency, metadata-only-holding.
+Cache lookup: **option A for identifier-bearing candidates** (docket, statute+section, title+author+year, institution+title+date) — checked before any live discovery, because a hit removes a search, up to four fetches and an extraction slot. Nominations with only a `topic_query` and no identifier skip the lookup and go straight into normal retrieval (option B behaviour) — there is nothing stable to key on.
 
-Cache-entry rules: never write block pages, listing pages, metadata-only pages, or identity-mismatch bodies. Negative outcomes are recorded as status rows with `failure_count` so a repeatedly blocked docket is skipped early (cheap negative caching) but never cited. `verified` rows go `stale` after 180 days and are re-validated on next use.
+## 5. Nomination output schema
 
-## 4. Guardrails (unchanged invariants)
+The schema in the request is adopted as-is, with these hardening rules:
 
-- A nomination is never a citation. Citation requires body/substantive text plus `identity_validated`.
-- No holding from metadata-only or listing-only sources.
-- No broad crawling: discovery is search-first against an allowlist of official hosts, capped at N queries and M fetches per run inside the existing retrieval governor budget.
-- No unbounded PDF extraction — existing preflight and extraction ledger apply to cache-miss paths; cache hits cost zero extraction.
-- P02 (fake docket → refusal), R02 (exact body), B8 (byte-identical canonical quote) must be unchanged.
+- Strict JSON tool schema: every property present in `required`, optional fields nullable rather than omitted, `additionalProperties: false`.
+- `docket` may be non-null **only** at `confidence >= 0.8`; below that the model must nominate by party/case name and `topic_query`. A `docket` at lower confidence is stripped deterministically after parsing, not trusted to prompt compliance.
+- Same rule for `authors`, `journal_or_publisher`, `year` on scholarship — dropped below threshold rather than passed downstream, so nothing invented can leak into a label.
+- `must_verify` is always forced to `true` regardless of model output.
+- Nominations carry `nominated_by: "source_nomination_v1"` in candidate metadata all the way through, so a nominated source can never be counted as retrieved evidence by itself, and so telemetry can attribute every citation.
 
-## 5. Cost impact
+## 6. query_merge_and_budget
 
-- Storage: a Hebrew judgment body is ~40–300 KB. 500 cached authorities ≈ 50–100 MB of text — negligible on the current plan.
-- Embeddings: **skipped in v1.** The column exists but stays null; lookup is by docket/title, and retrieval reuses the stored body directly. If added later, ~500 authorities × ~30 chunks ≈ 15k embeddings, a one-off cost of a few cents.
-- Savings: each cache hit removes 1 search + 1–4 fetches + one extraction slot from the run — this is the main win, since extraction slots are the scarce resource that has been killing runs.
-- Dedupe by `(normalized_docket, body_text_hash)` prevents duplicate bodies when the same judgment is reached via different URLs.
+A new deterministic stage that becomes the **single** funnel for all five current query-append points (planner, required anchors, judgment discovery, facets, registry) plus nomination.
 
-## 6. Minimal v1 implementation scope
+Behaviour: normalize (whitespace, niqqud, quote marks, Hebrew morphology reuse from `specificCaseIdentity.ts`) → exact dedupe → near-dedupe by token-set similarity → priority sort by question type (§7) → per-mode caps → emit, with a skip reason recorded for everything dropped.
 
-1. Migration: the two tables, grants, RLS, updated_at trigger, indexes.
-2. `stages/authorityNomination.ts` — from claims/facets, propose statutes+sections and judgment candidates (docket and/or party-name form) with confidence and area; caps per run; full telemetry.
-3. `stages/verifiedAuthorityCache.ts` — `lookup()`, `recordSuccess()`, `recordFailure()`, chunking, hashing, staleness.
-4. `stages/officialJudgmentSearch.ts` — search-first discovery over official hosts, reusing existing acquisition + preflight + block-page classification; replaces the archive-guessing lane.
-5. Identity validation inside the body, reusing `specificCaseIdentity.ts` matchers.
-6. `coreAuthorityRegistry.ts`: case seeding flag-off (telemetry-only), statute normalization retained.
-7. `index.ts` wiring + telemetry block `authority_nomination` / `verified_authority_cache` (hit/miss/write/reject counts).
+V1 caps: ≤5 nominated sources total; ≤2 judgment candidates to official discovery; ≤2 statute/section; ≤2 scholarship/institutional; ≤4 nomination-added queries; tighter for simple modes; zero for the skip list in §3.
 
-Not in v1: embeddings, statute caching beyond metadata, admin UI over the cache, cross-project sharing.
+Telemetry: `planner_queries_count`, `nomination_candidates_count`, `nomination_queries_count`, `queries_added_from_nomination`, `queries_skipped_duplicate`, `queries_skipped_low_confidence`, `queries_skipped_budget`, `final_query_count`, `source_type_mix`.
 
-## 7. Validation plan
+## 7. Source policy by question type
 
-Sequential, no parallel runs.
+| type | priority | ceiling |
+|---|---|---|
+| legal rule / holding / standard of review | statutes, regulations, judgments | scholarship + reports background only; no primary authority → limitation notice |
+| academic / theoretical | primary law + scholarship | scholarship may be central but never labelled binding |
+| policy / empirical / institutional | MMM, State Comptroller, government reports, regulator materials, scholarship | primary law still pulled when doctrine is involved |
+| practical / compliance | statutes, regulations, official guidance, regulator pages | |
+| comparative | foreign sources only when the question asks for them | never as Israeli binding law |
 
-- Cold pass D1–D6 (empty cache): record nominations, discovery attempts, bodies acquired, identity outcomes, cache writes, footnotes, runtime, terminal status.
-- Warm pass D1–D6 (populated cache): expect cache hits, lower runtime, zero extraction on hits, identical-or-better footnote quality.
-- Controls: R02 exact body still resolves; P02 fake docket still gives the deterministic refusal with zero cache writes; B8 quote byte-identical; NOISE triggers no nomination-driven fetch.
+Enforcement is by existing machinery: `sourceIntegrity` tiers + `claimSourceMatch` area/claim binding + `sourceSufficiency`. Nomination sets `role_in_answer`, which is carried as an additional signal into those gates — it never overrides them.
 
-Acceptance: every run terminal, no CPU kills; ≥1 canonical judgment body acquired and cited across D1–D6 where one exists (today: 0); zero dangling markers, zero orphan rows, zero metadata-only holdings; zero cached rows that are block/listing/mismatch pages; warm-pass runtime lower than cold.
+## 8. `verified_legal_sources` cache — schema
+
+Two service-role-only tables, RLS enabled with no permissive policy, no client access.
+
+`verified_legal_sources` — the field list from the request is adopted verbatim (id, source_category, source_type, authority_type, normalized_docket, case_prefix, canonical_title, party_names[], statute_title, statute_section, authors[], journal_or_publisher, court, institution, year, official_url, source_host, source_kind, language, is_translation, body_text_hash, body_chars, identity_terms_matched[], identity_validated, bibliographic_validated, acquisition_method, status, verified_at, last_success_at, last_used_at, failure_count, last_failure_reason, created_at, updated_at).
+
+Constraints and indexes: unique `(source_category, coalesce(normalized_docket,''), coalesce(statute_title,''), coalesce(statute_section,''), body_text_hash)` for dedupe; btree on `normalized_docket`; btree on `(statute_title, statute_section)`; trigram on `canonical_title`; partial index on `status = 'verified'`; `updated_at` trigger.
+
+`verified_legal_source_texts` — id, source_id (fk cascade), chunk_index, text, source_url, created_at, `embedding vector` **nullable, null in v1**. Unique `(source_id, chunk_index)`.
+
+## 9. Cache runtime behaviour
+
+Lookup keys by category: judgments → normalized docket, else title+party trigram; statutes → title+section; scholarship → title+author+year; reports → institution+title+date.
+
+Hit (`status = 'verified'`, `identity_validated`) → inject stored body/chunks as a candidate, touch `last_used_at`, still run every downstream gate. Miss → official/high-trust discovery → body acquisition under existing caps → validation → write.
+
+Validation before write: judgments need docket/party/court terms inside the body; statutes need title+section text; scholarship needs bibliographic metadata plus abstract/substantive excerpt if relied on substantively; reports need institution/title/date plus body.
+
+Never cached as a body: block/WAF pages, listing pages, metadata-only pages, identity mismatches. Those are recorded as negative rows (`blocked` / `failed` / `identity_mismatch` / `bibliographic_mismatch`) with `failure_count` and a **cooldown** (e.g. 7 days, doubling to a 60-day ceiling) — never permanent suppression, never citable.
+
+Staleness: `verified` → `stale` after 180 days for judgments (still usable when `body_text_hash` exists, revalidated opportunistically); 30 days for statutes and regulator guidance, which change.
+
+## 10. Discovery rules by source type
+
+- **Judgments** — official court/gov hosts first, search by docket *and* case name, parse result URLs instead of guessing archive object codes (the diagnosed root cause of the current 0/5 recall), prefer the Hebrew original, allow official English only marked `official_translation`.
+- **MMM / Knesset** — local corpus first, then official Knesset hosts; validate institution/title/date/body.
+- **Scholarship** — local corpus first, then university repositories / journal sites / SSRN; no invented bibliographic detail; citation requires reliable metadata, substantive reliance requires body or abstract.
+- **Government / regulator** — official domains only; validate title/institution/date.
+
+No broad crawling. No unbounded PDF extraction. No mirror fallback in v1.
+
+## 11. coreAuthorityRegistry disposition
+
+- **Disable landmark-case query seeding** behind a flag (`CASE_SEEDING_MODE = "telemetry_only"`). Keep the doctrine match and `authority_candidates` telemetry so nomination quality can be compared against the old hand list.
+- **Keep `normalizeStatuteTitles` active** — bounded linguistic normalization, not case recall.
+- **Do not grow the case list. Do not add a URL override table.**
+- **Retire `canonicalAuthorityAcquisition.ts` from the run path** once official search-first discovery lands; salvage its per-probe/block-page telemetry into the new discovery stage. Delete nothing yet.
+
+## 12. Guardrails (unchanged)
+
+Nomination is never citation. No citation without body/substantive text or category-appropriate reliable bibliographic metadata. No holding from metadata-only or listing-only sources. No fabricated docket in a final answer. Scholarship and MMM reports are never binding law. Legal-rule questions with only secondary sources produce the Hebrew limitation notice. P02 fake-docket refusal, R02 exact-body, B8 byte-identical quote all intact. No crawling, no unbounded extraction, no loosening of verifier / source-integrity / drafter / footnote gates.
+
+## 13. Cost impact
+
+Per run: +1 mini call, plus up to 4 extra bounded queries. Cache hits *reduce* cost — each removes a search, 1–4 fetches, and one extraction slot (the scarce resource that has been killing runs). Storage: 500 cached sources ≈ 50–100 MB of text. Embeddings deferred; if added later, ~15k chunks is a few cents one-off.
+
+## 14. Minimal v1 implementation plan
+
+1. Migration: the two tables, indexes, `updated_at` trigger, service-role grants, RLS with no permissive policy.
+2. `stages/sourceNomination.ts` — mini call, strict schema, deterministic post-parse hardening (confidence thresholds, docket/author stripping, `must_verify` force).
+3. `stages/queryMergeAndBudget.ts` — funnels all six query producers, dedupe, priority, caps, skip telemetry.
+4. `stages/verifiedSourceCache.ts` — `lookup`, `recordSuccess`, `recordFailure`, chunking, hashing, staleness, cooldown.
+5. `stages/officialSourceDiscovery.ts` — search-first, per-category host allowlists, reusing acquisition + preflight + block-page classification.
+6. Validation hooks: identity validation reusing `specificCaseIdentity.ts`; bibliographic validation for scholarship/report categories.
+7. `coreAuthorityRegistry`: case seeding to telemetry-only; statute normalization kept.
+8. `index.ts` wiring + telemetry blocks `source_nomination`, `query_merge`, `verified_source_cache`.
+
+Deferred: embeddings and semantic cache lookup, book/chapter acquisition, comparative-source discovery beyond nomination, admin UI over the cache, mirror fallback, extraction-priority reordering (revisit only if cache hits don't already relieve the extraction budget).
+
+## 15. Validation plan
+
+Set: A–F from the request, D1–D6, MAYA, MAYA-AMIR, R02, P02, B8, NOISE. Sequential runs only. Cold pass (empty cache) then warm pass (populated).
+
+Per run record: planner queries; nominations and their categories; filtered nominations; added queries; cache hits/misses; discovery attempts and URLs; body acquired; identity/bibliographic result; cache writes; warm-pass reuse; sources cited; role respected; `citations_without_body_acquired`; metadata-only holdings; runtime/cost delta; CPU/stale/stub/verifier failures.
+
+Acceptance: broad questions nominate plausible sources unprompted; more than case law nominated where appropriate; MMM/institutional reports nominated for policy questions; no nominated source cited without acquisition and validation; no invented docket in any answer; no scholarship or report treated as binding law; cache writes only verified sources; warm pass reuses cache and runs faster; P02/R02/B8 intact; zero metadata-only holdings, CPU kills, stale jobs, stubs, dangling markers, orphan rows or verifier failures.
