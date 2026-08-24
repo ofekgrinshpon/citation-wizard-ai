@@ -1030,21 +1030,38 @@ async function handle(req: Request): Promise<Response> {
     }
   }
 
-  // ─── canonical_judgment_text_acquisition_v1 (Option B) ───────────────────
-  // Registry-seeded canonical judgment dockets get the same deterministic
-  // court-file exact-body lane that user-typed dockets already get — but only
-  // when normal retrieval produced no body-acquired judgment for them.
-  // Acquisition only: every gate downstream still decides admission/citation.
+  // ─── canonical_judgment_text_acquisition_v1 (Option B) — retired ─────────
+  // The hand-maintained landmark-case list no longer seeds queries
+  // (CASE_SEEDING_MODE = "telemetry_only"), so this lane is off the run path.
+  // The stage is kept for its per-probe / block-page telemetry shape; the
+  // acquisition work moved to official_source_discovery below.
   const canonicalAcquisition = await runCanonicalAuthorityAcquisition({
     registry: coreAuthorityRegistry,
     candidates: pool.candidates,
     integrity: pool.integrity,
     budget,
-    max_dockets: fastLaneHit
+    max_dockets: 0,
+    markDurable: (name, detail) => budget.markDurable(name, detail),
+  });
+
+  // ─── official_source_discovery + verified_legal_sources cache ────────────
+  // Identifier-bearing nominations: cache lookup first (a hit costs no fetch
+  // and no extraction slot), then official URLs retrieval already surfaced,
+  // then deterministic court-file derivation. Identity is proven inside the
+  // body before anything is injected or cached.
+  const officialDiscovery = await runOfficialSourceDiscovery({
+    admin,
+    nomination: sourceNomination,
+    candidates: pool.candidates,
+    integrity: pool.integrity,
+    budget,
+    max_targets: fastLaneHit
       ? 0
       : Math.min(2, Math.max(0, router.max_speculative_acquisitions ?? 2)),
     markDurable: (name, detail) => budget.markDurable(name, detail),
   });
+
+
 
 
   // ─── Specific-case authority resolution (specific_case mode only) ───────
