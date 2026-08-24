@@ -50,6 +50,7 @@ Deno.serve(async (req) => {
       }
     } catch { /* ignore */ }
     out.convertapi = {
+      secret_len: secret.length,
       status: r.status,
       ms: Date.now() - t0,
       chars,
@@ -65,11 +66,11 @@ Deno.serve(async (req) => {
     const t0 = Date.now();
     const token = Deno.env.get("APIFY_API_TOKEN") ?? "";
     const r = await fetch(
-      `https://apify--super-scraper-api.apify.actor/?url=${encodeURIComponent(url)}&token=${token}`,
-      { headers: { "User-Agent": UA } },
+      `https://apify--super-scraper-api.apify.actor/?url=${encodeURIComponent(url)}`,
+      { headers: { "User-Agent": UA, Authorization: `Bearer ${token}` } },
     );
     const t = await r.text();
-    out.apify_standby = { status: r.status, ms: Date.now() - t0, len: t.length, sample: t.slice(0, 300) };
+    out.apify_standby = { status: r.status, ms: Date.now() - t0, len: t.length, sample: t.slice(0, 300), token_len: token.length };
   } catch (e) {
     out.apify_standby = { error: String(e) };
   }
