@@ -6,11 +6,17 @@
  * URL per request and streams the bytes back. Nothing else.
  *
  *   PORT=8787 RELAY_TOKEN=<long-random-string> node server.mjs
+ *   RELAY_DEBUG=1 -> logs curl argv / target / headers / stderr (never the token)
  *
  * Why curl and not Node fetch: undici (Node's fetch) fails against
- * supremedecisions.court.gov.il with a bare "fetch failed" (TLS/ALPN/HTTP
- * quirk) on the exact same host where `curl -L` returns the real PDF.
- * So the internal fetch path shells out to curl with no shell interpolation.
+ * supremedecisions.court.gov.il with a bare "fetch failed" on the exact same
+ * host where `curl -L` returns the real PDF. So we shell out to curl with an
+ * argv array (no shell interpolation).
+ *
+ * IMPORTANT (the curl_exit_56 bug): the target URL must be taken from the RAW
+ * query string, not via URL.searchParams — searchParams percent-DECODES, which
+ * turns `HebrewVerdicts%5C15/...` into a literal backslash and makes the origin
+ * reset the connection. We slice the raw `url=` value out of req.url instead.
  *
  * Guarantees enforced here as well as on the ReLex side:
  *   - only https URLs on *.court.gov.il;
@@ -27,10 +33,28 @@ import path from "node:path";
 
 const PORT = Number(process.env.PORT || 8787);
 const TOKEN = process.env.RELAY_TOKEN || "";
+const DEBUG = process.env.RELAY_DEBUG === "1";
 const ALLOW = /(^|\.)court\.gov\.il$/i;
 const MAX_BYTES = 25 * 1024 * 1024;
 const TIMEOUT_MS = 30_000;
 const MIN_SPACING_MS = 1_000;
+
+// Exactly the headers of the known-good direct VPS curl, canonical casing.
+const DEFAULT_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+  Accept:
+    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+  "Accept-Language": "he-IL,he;q=0.9,en;q=0.8",
+  Referer: "https://supremedecisions.court.gov.il/Home/Search",
+};
+
+const CANONICAL = {
+  "user-agent": "User-Agent",
+  accept: "Accept",
+  "accept-language": "Accept-Language",
+  referer: "Referer",
+};
 
 if (!TOKEN) {
   console.error("RELAY_TOKEN is required");
@@ -47,28 +71,57 @@ const deny = (res, code, msg) => {
 };
 
 /**
+ * Pull the `url=` parameter out of the RAW request line, preserving the
+ * caller's percent-encoding except for one single decode of the value itself.
+ * `?url=https%3A%2F%2Fhost%2FDownload%3Fpath%3DA%255C15` decodes once to
+ * `https://host/Download?path=A%5C15` — the exact byte string curl needs.
+ */
+function rawTargetFromRequestLine(requestLine) {
+  const q = requestLine.indexOf("?");
+  if (q === -1) return "";
+  const raw = requestLine.slice(q + 1);
+  for (const pair of raw.split("&")) {
+    if (!pair.startsWith("url=")) continue;
+    const value = pair.slice(4);
+    try {
+      return decodeURIComponent(value);
+    } catch {
+      return value;
+    }
+  }
+  // Not properly encoded by the caller: everything after `url=` is the target
+  // (its own &fileName=/&type= parts were split above). Rejoin them verbatim.
+  const at = raw.indexOf("url=");
+  return at === -1 ? "" : raw.slice(at + 4);
+}
+
+/**
  * Fetch `target` with curl. Returns { status, contentType, body(Buffer), finalUrl }.
- * Arguments are passed as an argv array — never through a shell.
+ * Flags kept byte-identical in spirit to the known-good direct curl:
+ *   -sS -L -H ... -o file -w fmt --url <target>   (+ max-time / max-filesize caps)
  */
 async function curlFetch(target, headers) {
   const dir = await mkdtemp(path.join(tmpdir(), "court-egress-"));
   const bodyPath = path.join(dir, "body.bin");
   try {
-    const args = [
-      "-sS",
-      "-L",
-      "--max-redirs", "5",
-      "--max-time", String(Math.ceil(TIMEOUT_MS / 1000)),
-      "--max-filesize", String(MAX_BYTES),
-      "--compressed",
-      "-o", bodyPath,
-      "-w", "%{http_code}\\n%{content_type}\\n%{url_effective}\\n%{size_download}\\n",
-    ];
+    const args = ["-sS", "-L"];
     for (const [k, v] of Object.entries(headers)) {
       if (v == null || v === "") continue;
       args.push("-H", `${k}: ${v}`);
     }
-    args.push("--url", target);
+    args.push(
+      "--max-time", String(Math.ceil(TIMEOUT_MS / 1000)),
+      "--max-filesize", String(MAX_BYTES),
+      "-o", bodyPath,
+      "-w", "%{http_code}\\n%{content_type}\\n%{url_effective}\\n",
+      "--url", target,
+    );
+
+    if (DEBUG) {
+      console.log("[relay][debug] target =", JSON.stringify(target));
+      console.log("[relay][debug] headers =", JSON.stringify(headers, null, 0));
+      console.log("[relay][debug] argv =", JSON.stringify(args));
+    }
 
     const { code, stdout, stderr } = await new Promise((resolve, reject) => {
       const child = spawn("curl", args, { stdio: ["ignore", "pipe", "pipe"] });
@@ -81,8 +134,14 @@ async function curlFetch(target, headers) {
       child.on("close", (c) => { clearTimeout(killer); resolve({ code: c, stdout: out, stderr: err }); });
     });
 
+    if (DEBUG) {
+      console.log("[relay][debug] curl exit =", code);
+      console.log("[relay][debug] curl stderr =", stderr.trim());
+      console.log("[relay][debug] curl stdout =", stdout.trim());
+    }
+
     if (code !== 0) {
-      throw new Error(`curl_exit_${code}:${stderr.trim().slice(0, 160)}`);
+      throw new Error(`curl_exit_${code}:${stderr.trim().slice(0, 200)}`);
     }
 
     const [statusRaw, ctypeRaw, finalUrl] = stdout.trim().split("\n");
@@ -116,21 +175,22 @@ function rejectionReason(result) {
 http.createServer(async (req, res) => {
   if (req.method !== "GET") return deny(res, 405, "method_not_allowed");
 
-  const reqUrl = new URL(req.url, "http://localhost");
-  if (reqUrl.pathname === "/healthz") {
+  const pathname = req.url.split("?")[0];
+  if (pathname === "/healthz") {
     res.writeHead(200, { "Content-Type": "application/json" });
-    return res.end(JSON.stringify({ ok: true, busy }));
+    return res.end(JSON.stringify({ ok: true, busy, debug: DEBUG }));
   }
-  if (reqUrl.pathname !== "/fetch") return deny(res, 404, "not_found");
+  if (pathname !== "/fetch") return deny(res, 404, "not_found");
 
   const auth = req.headers["authorization"] || "";
   if (auth !== `Bearer ${TOKEN}`) return deny(res, 401, "unauthorized");
 
-  const target = reqUrl.searchParams.get("url") || "";
+  const target = rawTargetFromRequestLine(req.url);
   let u;
   try {
     u = new URL(target);
   } catch {
+    if (DEBUG) console.log("[relay][debug] bad_url raw =", JSON.stringify(target));
     return deny(res, 400, "bad_url");
   }
   if (u.protocol !== "https:" || !ALLOW.test(u.hostname)) {
@@ -144,13 +204,16 @@ http.createServer(async (req, res) => {
     if (since < MIN_SPACING_MS) await sleep(MIN_SPACING_MS - since);
     lastAt = Date.now();
 
-    // Forward only the browser-like profile headers ReLex sends under X-Fwd-*.
-    const headers = {};
+    // Start from the known-good header set; allow ReLex to override individual
+    // values via X-Fwd-*. Node lowercases header names, so re-canonicalize.
+    const headers = { ...DEFAULT_HEADERS };
     for (const [k, v] of Object.entries(req.headers)) {
-      if (k.toLowerCase().startsWith("x-fwd-")) {
-        const name = k.slice(6);
-        headers[name] = Array.isArray(v) ? v[0] : v;
-      }
+      const lower = k.toLowerCase();
+      if (!lower.startsWith("x-fwd-")) continue;
+      const bare = lower.slice(6);
+      const name = CANONICAL[bare];
+      if (!name) continue; // ignore anything outside the four known-good headers
+      headers[name] = Array.isArray(v) ? v[0] : v;
     }
 
     const result = await curlFetch(target, headers);
@@ -174,10 +237,10 @@ http.createServer(async (req, res) => {
     res.end(result.body);
     console.log(`[relay] ${result.status} ${result.contentType} ${result.body.length}B ${u.hostname}`);
   } catch (err) {
-    const msg = String(err?.message || err).slice(0, 160);
+    const msg = String(err?.message || err).slice(0, 200);
     console.error(`[relay] error ${msg}`);
     deny(res, 502, `upstream_error:${msg}`);
   } finally {
     busy = false;
   }
-}).listen(PORT, () => console.log(`court-egress relay (curl path) on :${PORT}`));
+}).listen(PORT, () => console.log(`court-egress relay (curl path) on :${PORT} debug=${DEBUG}`));
