@@ -1,0 +1,258 @@
+{
+  "id": "P02",
+  "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+  "run_id": "03b02aa4-7057-473f-90dc-c0c444010067",
+  "terminal": true,
+  "ms": 117002,
+  "total_ms": 112142,
+  "branch": "docket_limitation",
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 6,
+    "mini_after": 6,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 320,
+    "parse_error": null,
+    "candidates_count": 6,
+    "dropped_count": 0,
+    "dropped_reasons": [],
+    "identifier_bearing_count": 3,
+    "category_mix": {
+      "statute": 2,
+      "judgment": 1,
+      "scholarship": 2,
+      "government_report": 1
+    },
+    "actionable_count": 3,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 3,
+      "known_name_no_docket": 0
+    },
+    "known_name_no_docket_count": 0,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 3,
+      "0.8-1.0": 3
+    },
+    "stripped_identifiers": [],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 3,
+      "exploratory": 2
+    },
+    "actionable_queries_preserved": 3,
+    "exploratory_queries_preserved": 2,
+    "ms": 8885
+  },
+  "query_merge": {
+    "final_query_count": 20,
+    "from_nomination": 5,
+    "skipped_duplicate": 2,
+    "skipped_budget": 0,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "duplicate_exact",
+          "producer": "required_anchors",
+          "query_he": "ע״א 99887/04/22",
+          "duplicate_of": "ע\"א 99887/04/22"
+        },
+        {
+          "reason": "duplicate_near",
+          "producer": "required_anchors",
+          "query_he": "ע\"א 99887-04-22",
+          "duplicate_of": "ע\"א 99887/04/22"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 13,
+        "report": 2,
+        "statute": 3,
+        "academic": 2
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 0
+      },
+      "final_query_count": 20,
+      "actionable_queries": 3,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 2,
+      "queries_by_producer": {
+        "planner": 10,
+        "required_anchors": 2,
+        "source_nomination": 5,
+        "judgment_discovery": 3
+      },
+      "stripped_identifiers": 0,
+      "planner_queries_count": 10,
+      "queries_skipped_budget": 0,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 2,
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 3,
+        "0.8-1.0": 3
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 1,
+    "injected_candidate_ids": [
+      "nominated-source:N2"
+    ],
+    "cache_lookups": 2,
+    "cache_hits": 0,
+    "cache_misses": 2,
+    "cache_writes": 1,
+    "attempts": [
+      {
+        "label": "ע\"א 99887-04-22 לוי נ' מדינת ישראל",
+        "category": "judgment",
+        "docket": "aa:99887/4/22",
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "search_first": {
+          "ms": 3468,
+          "ran": true,
+          "queries": [
+            "99887-04-22 ע\"א 99887-04-22 לוי נ' מדינת ישראל פסק דין מלא מקור רשמי supremedecisions.court.gov.il OR court.gov.il"
+          ],
+          "mirror_urls": 3,
+          "skip_reason": null,
+          "official_urls": 2
+        },
+        "urls": [
+          "https://www.gov.il/he/Departments/DynamicCollectors/verdict_the_rabbinical_courts",
+          "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf",
+          "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'-%D7%9C%D7%95%D7%99_85",
+          "https://lite.takdin.co.il/%D7%99%D7%94%D7%95%D7%A9%D7%A2%20%D7%9C%D7%95%D7%99%20%D7%91%D7%A9%D7%9D%20%D7%94%D7%A0%D7%90%D7%A9%D7%9D_s.html"
+        ],
+        "path": "none",
+        "result": "fetch_failed",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "plain_text_host_not_trusted",
+        "ms": 4459
+      },
+      {
+        "label": "חוק סדר הדין האזרחי, תשמ\"ד-1984",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "urls": [
+          "https://www.gov.il/BlobFolder/news/16122020/he/16.12-explanatory.pdf",
+          "https://www.nevo.co.il/law_html/law00/157751.htm"
+        ],
+        "path": "statute_official_url",
+        "result": "body_acquired",
+        "body_chars": 113930,
+        "cache_written": true,
+        "cache_write_error": null,
+        "reason": null,
+        "ms": 821
+      }
+    ]
+  },
+  "official_fetch": {
+    "version": "official_fetch_profile_v1",
+    "official_calls": 0,
+    "max_per_run": 5,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "rate_limited_events": 0,
+    "attempts": [
+      {
+        "ms": 77,
+        "url": "https://www.gov.il/he/Departments/DynamicCollectors/verdict_the_rabbinical_courts",
+        "host": "www.gov.il",
+        "error": null,
+        "status": 403,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=UTF-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 8,
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf",
+        "host": "www.gov.il",
+        "error": null,
+        "status": 403,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=UTF-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 10,
+        "url": "https://www.gov.il/BlobFolder/news/16122020/he/16.12-explanatory.pdf",
+        "host": "www.gov.il",
+        "error": null,
+        "status": 403,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=UTF-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 463,
+        "url": "https://www.nevo.co.il/law_html/law00/157751.htm",
+        "host": "www.nevo.co.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=utf-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      }
+    ]
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 345,
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.",
+  "footnotes": []
+}

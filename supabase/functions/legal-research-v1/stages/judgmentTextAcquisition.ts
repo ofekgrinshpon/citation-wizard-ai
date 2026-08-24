@@ -29,6 +29,7 @@ import {
 } from "./judgmentCandidateRanking.ts";
 import { processExtractedBody } from "./postExtract.ts";
 import { assessPdfExtraction } from "./pdfExtractionPreflight.ts";
+import { officialFetch } from "../lib/officialFetch.ts";
 import { looksBinary } from "./statuteTextAcquisition.ts";
 
 
@@ -360,11 +361,7 @@ async function fetchBytes(
 ): Promise<{ bytes: Uint8Array; contentType: string }> {
   const onStage = opts.onStage ?? (() => {});
   onStage("fetch_start", { url });
-  const res = await fetch(url, {
-    redirect: "follow",
-    headers: { "User-Agent": "Mozilla/5.0 (compatible; ReLexBot/1.0)" },
-    ...(signal ? { signal } : {}),
-  });
+  const res = await officialFetch(url, { ...(signal ? { signal } : {}) });
   if (!res.ok) throw new Error(`http_${res.status}`);
   const contentType = (res.headers.get("content-type") || "").toLowerCase();
   const declaredLength = Number(res.headers.get("content-length") || "0") || 0;
@@ -804,11 +801,7 @@ export async function tryWrapperResolve(
 ): Promise<string> {
   const onStage = opts.onStage ?? (() => {});
   onStage("wrapper_fetch_start", { url });
-  const res = await fetch(url, {
-    redirect: "follow",
-    headers: { "User-Agent": "Mozilla/5.0 (compatible; ReLexBot/1.0)" },
-    ...(opts.signal ? { signal: opts.signal } : {}),
-  });
+  const res = await officialFetch(url, { ...(opts.signal ? { signal: opts.signal } : {}) });
   if (!res.ok) throw new Error(`http_${res.status}`);
   const html = (await res.text()).slice(0, 400_000);
   onStage("wrapper_body_read_done", { chars: html.length });

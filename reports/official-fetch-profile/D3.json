@@ -1,0 +1,304 @@
+{
+  "id": "D3",
+  "query": "מתי בג״ץ יתערב בהחלטה של בית דין רבני בענייני רכוש בין בני זוג, במיוחד כאשר נטען שבית הדין החיל דין דתי במקום דין אזרחי?",
+  "run_id": "4191e023-90e2-4fc0-bc50-3357a0937f06",
+  "terminal": true,
+  "ms": 150557,
+  "total_ms": 145734,
+  "branch": null,
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 8,
+    "mini_after": 7,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 512,
+    "parse_error": null,
+    "candidates_count": 7,
+    "dropped_count": 0,
+    "dropped_reasons": [],
+    "identifier_bearing_count": 2,
+    "category_mix": {
+      "statute": 2,
+      "judgment": 1,
+      "scholarship": 2,
+      "knesset_report": 1,
+      "government_report": 1
+    },
+    "actionable_count": 4,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 2,
+      "known_name_no_docket": 2
+    },
+    "known_name_no_docket_count": 2,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 5,
+      "0.8-1.0": 2
+    },
+    "stripped_identifiers": [],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 3,
+      "exploratory": 2
+    },
+    "actionable_queries_preserved": 3,
+    "exploratory_queries_preserved": 2,
+    "ms": 15210
+  },
+  "query_merge": {
+    "final_query_count": 14,
+    "from_nomination": 5,
+    "skipped_duplicate": 0,
+    "skipped_budget": 12,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "בג\"ץ סעדים מותאמים במקרה של פגם בפסק דין בית דין רבני ביטול החזרה להכרעה מחודשת צו מניעה צו פסיקת ביניים 'בתי דין רבניים' 'סעד'"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "חוק בתי דין רבניים (נישואין וגירושין) תשט\"ו-1955 הוראות לגבי השלכות ביטול פסק דין רבני וסעדים לאחר ביטול/החזרה להכרעה"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "בג\"ץ שיקולים להתערבות כאשר יש הסכמה בין הצדדים להכרעה על פי דין דתי פגיעה בזכויות יסוד חירות דת שוויון היקף נזק כלכלי 'בתי דין רבניים' 'הסכמה' 'חופש דת'"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "פסקי דין מחוזיים/שלום שעסקו בשיקולים מעשיים בהתערבות בפסקי בתי דין רבניים 'הסכמה בין הצדדים' 'נזק כלכלי' 'שוויון בין בני זוג'"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "דו\"ח משרד המשפטים או דו\"ח ועדה הכנסת על סמכויות בתי הדין הרבניים ודיני ממון בין בני זוג דו\"ח ועדת חוקה/משרד המשפטים 'בתי דין רבניים' 'ממונות'"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני פסק דין עליון"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני site:supremedecisions.court.gov.il Download"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני site:court.gov.il filetype:pdf פסק דין"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 5,
+        "statute": 5,
+        "academic": 4
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 2,
+        "known_name_no_docket": 2
+      },
+      "final_query_count": 14,
+      "actionable_queries": 3,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 2,
+      "queries_by_producer": {
+        "planner": 9,
+        "source_nomination": 5
+      },
+      "stripped_identifiers": 0,
+      "planner_queries_count": 14,
+      "queries_skipped_budget": 12,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 0,
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 5,
+        "0.8-1.0": 2
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 1,
+    "injected_candidate_ids": [
+      "nominated-source:N2"
+    ],
+    "cache_lookups": 2,
+    "cache_hits": 0,
+    "cache_misses": 2,
+    "cache_writes": 1,
+    "attempts": [
+      {
+        "label": "חוק בתי הדין הרבניים (נישואין וגירושין), התשכ\"ח-1968",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "retrieval_already_has_body",
+        "ms": 56
+      },
+      {
+        "label": "חוק-יסוד: כבוד האדם וחירותו",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 1,
+        "urls": [
+          "https://fs.knesset.gov.il/13/law/13_ls1_183986.PDF",
+          "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawPrimary.aspx?t=law&st=law&lawitemid=2000702",
+          "https://www.nevo.co.il/law_html/law01/500_002.htm"
+        ],
+        "path": "statute_official_url",
+        "result": "body_acquired",
+        "body_chars": 28396,
+        "cache_written": true,
+        "cache_write_error": null,
+        "reason": null,
+        "ms": 1110
+      }
+    ]
+  },
+  "official_fetch": {
+    "version": "official_fetch_profile_v1",
+    "official_calls": 1,
+    "max_per_run": 5,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "rate_limited_events": 1,
+    "attempts": [
+      {
+        "ms": 3600,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.82.71:50088 for https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2 (84.110.173.93:443): client error (SendRe",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "block_page_detected": false
+      },
+      {
+        "ms": 149,
+        "url": "https://fs.knesset.gov.il/13/law/13_ls1_183986.PDF",
+        "host": "fs.knesset.gov.il",
+        "error": null,
+        "status": 404,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html",
+        "rate_limited": false,
+        "content_length": 1245,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 181,
+        "url": "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawPrimary.aspx?t=law&st=law&lawitemid=2000702",
+        "host": "main.knesset.gov.il",
+        "error": null,
+        "status": 247,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=utf-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 595,
+        "url": "https://www.nevo.co.il/law_html/law01/500_002.htm",
+        "host": "www.nevo.co.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": true,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=utf-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      }
+    ]
+  },
+  "footnotes_count": 1,
+  "dangling_markers": 0,
+  "answer_len": 2465,
+  "answer": "בג\"ץ ייטה להתערב בהחלטות בתי‑דין רבניים בענייני רכוש בין בני זוג כאשר מתקיים קיום של חריגה מסמכות או פגם משפטי מהותי בהליך הרבני שמשמעותו פגיעה בזכויות יסוד או בהליכים שיפוטיים מחייבים; כאשר הנטען הוא שהוחל דין דתי במקום דין אזרחי, השאלה האם תינתן התערבות נדונה לפי האם ההחלה מהווה חריגה מסמכות או פגם בשיקול הדין הרבני ולא לפי השוני שבבסיסי הדין בלבד.¹\n\nהיקף העילות: בג\"ץ מכיר בעילות שונות להתערבות — בין השאר חוסר סמכות של בית הדין, חריגה מסמכות שנובעת מהחלת כללים לא רלוונטיים או מהפעלת שיקול שלא הוסמך לו, פגם מהותי בהליך (לרבות פגיעה בזכות להישמע או פגיעה בנוהלי דיון בסיסיים) ופגיעה בזכויות יסוד כגון שוויון או זכויות קנייניות; בשאלות אלו הפסיקה של בית המשפט העליון מספקת מסד להסרת החלטות שניתנו שלא על פי הסמכות או שנפל בהן פגם משפטי מהותי.\n\nהאם \"החלת דין דתי במקום דין אזרחי\" מהווה עילת התערבות עצמאית תלוי בהקשר: אם הטענה מתמצה בכך שבית הדין בחר בנורמות הלכתיות במקום בחוק האזרחי אך הפעולה נעשתה במסגרת שיקול שיפוטי ענייני סביר — בג\"ץ נוטה לכבד החלטות שיפוטיות פנימיות; אם לעומת זאת ההחלה מעידה על חוסר סמכות, על חריגה מהתחום המותר או על שימוש שגוי בענייני משפט אזרחי באופן הפוגע בזכויות יסוד — הדבר עלול להצדיק התערבות שיפוטית.\n\nתנאים פרוצדורליים ופנייה לבג\"ץ: בג\"ץ פועל כבית משפט ביקורתי וצפוי לדרוש, בדרך כלל, הצגה ברורה של טענות משפטיות (למשל טענת חריגה מסמכות או פגם פורמלי/מהותי) והוכחה כי המערער ביקש את הסעד המתאים בערכאות הרבניות או שנוצר סיטואציה שבה פסק הדין רבני הוא פסק דין חלוט המצדיק פנייה תוך ציון הנזק ומהותו; מקורות מחקר מראים גם על חשיבות מיצוי הליכים פנימיים כגורם שיפוטי שנלקח בחשבון בבחינת הצורך בהתערבות.\n\nסעדים אפשריים והיקף הבדיקה של בג\"ץ: אם ימצא פגם משפטי או חריגה מסמכות — בג\"ץ יכול להביא לביטול החלטת בית הדין הרבני, להחזיר הדיון להכרעה מחודשת בידי הרכב ראוי, ולהורות על צווי מניעה/צו ביניים במקרים המתאימים; יחד עם זאת בג\"ץ נזהר לצלול לדיון עובדתי מעמיק בעניינים של שיקול מגורי ראיות ועובדות משפחתיות אלא אם נדרש הדבר כדי לבדוק פגם משפטי מוחלט או פגיעה בזכויות יסוד.\n\nשיקולים מעשיים שהשפעתם נבחנת בבג\"ץ כוללים — הסכמה מפורשת של הצדדים להכרעה על‑פי דין דתי, משקל חירות הדת וזכות הקהילות להכריע בענייניהן, אופי הפגיעה בזכויות אזרחיות (שוויון, זכויות קנייניות), והיקף הנזק הכלכלי או הציבורי; בספרות נידונים שיקולים אלה ברגישות לאיזון בין כיבוד מערכת הרבנות לבין שמירת זכויות יסוד אזרחיות.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2",
+      "title": "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2",
+          "title": "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "supreme_court_il"
+    }
+  ]
+}

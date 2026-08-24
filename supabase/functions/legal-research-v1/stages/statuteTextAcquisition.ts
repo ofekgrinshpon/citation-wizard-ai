@@ -20,6 +20,7 @@ import { extractDocumentText } from "../lib/attachments.ts";
 import type { SourceIntegrity } from "./sourceIntegrity.ts";
 import { processExtractedBody } from "./postExtract.ts";
 import { decodeHebrew } from "./judgmentTextAcquisition.ts";
+import { officialFetch } from "../lib/officialFetch.ts";
 import type { StatuteSectionRef } from "./statuteSectionDetection.ts";
 
 export const STATUTE_ACQUISITION_LIMITS = {
@@ -121,11 +122,7 @@ async function fetchCapped(
   onStage: StatuteStageSink,
 ): Promise<{ bytes: Uint8Array; contentType: string }> {
   onStage("statute_fetch_start", { url });
-  const res = await fetch(url, {
-    redirect: "follow",
-    headers: { "User-Agent": "Mozilla/5.0 (compatible; ReLexBot/1.0)" },
-    signal,
-  });
+  const res = await officialFetch(url, { signal });
   if (!res.ok) throw new Error(`http_${res.status}`);
   const contentType = (res.headers.get("content-type") || "").toLowerCase();
   const declared = Number(res.headers.get("content-length") || "0") || 0;

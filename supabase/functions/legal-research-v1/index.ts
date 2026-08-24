@@ -44,6 +44,10 @@ import {
 import { runSourceNomination } from "./stages/sourceNomination.ts";
 import { mergeAndBudgetQueries } from "./stages/queryMergeAndBudget.ts";
 import { runOfficialSourceDiscovery } from "./stages/officialSourceDiscovery.ts";
+import {
+  officialFetchTelemetry,
+  resetOfficialFetchLedger,
+} from "./lib/officialFetch.ts";
 
 
 import { buildJudgmentDiscoveryQueries } from "./stages/judgmentDiscovery.ts";
@@ -315,6 +319,8 @@ async function handle(req: Request): Promise<Response> {
   }
 
   const admin = adminEarly;
+  // official_fetch_profile_v1 — per-run serialisation/cap ledger.
+  resetOfficialFetchLedger();
   const telemetryBase = {
     user_id: user.id,
     project_id,
@@ -2071,6 +2077,8 @@ async function handle(req: Request): Promise<Response> {
       cache_writes: officialDiscovery.cache_writes,
     },
     official_source_discovery: officialDiscovery,
+    // official_fetch_profile_v1 telemetry.
+    official_fetch: officialFetchTelemetry(),
     // router_profiles_v1 telemetry.
     router_profiles: {
       version: router.version,
