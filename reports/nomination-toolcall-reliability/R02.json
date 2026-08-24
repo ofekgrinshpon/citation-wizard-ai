@@ -1,54 +1,113 @@
 {
   "id": "R02",
   "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
-  "run_id": "40896eb0-3a08-48dd-9513-06c185269f39",
+  "run_id": "a377d02b-e419-455c-abf3-3d343f1dff62",
   "terminal": true,
-  "ms": 835878,
-  "total_ms": null,
+  "ms": 184594,
+  "total_ms": 181691,
   "branch": null,
   "source_nomination": {
-    "enabled": null,
+    "enabled": true,
     "skipped": false,
     "skip_reason": null,
-    "stage_failed": null,
-    "model_first": null,
-    "model_final": null,
-    "escalated": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
     "escalation_reason": null,
-    "mini_retry_used": null,
-    "mini_before": null,
-    "mini_after": null,
-    "fallback_to_mini_used": null,
-    "finish_reason": null,
-    "reasoning_tokens": null,
+    "mini_retry_used": false,
+    "mini_before": 7,
+    "mini_after": 5,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 448,
     "parse_error": null,
-    "candidates_count": null,
-    "dropped_count": null,
-    "dropped_reasons": [],
-    "identifier_bearing_count": null,
-    "category_mix": {},
-    "ms": null
+    "candidates_count": 5,
+    "dropped_count": 2,
+    "dropped_reasons": [
+      "low_confidence",
+      "statute_cap"
+    ],
+    "identifier_bearing_count": 1,
+    "category_mix": {
+      "statute": 2,
+      "judgment": 1,
+      "knesset_report": 1,
+      "regulator_guidance": 1
+    },
+    "ms": 8865
   },
   "query_merge": {
-    "final_query_count": null,
-    "from_nomination": null,
-    "skipped_duplicate": null,
-    "skipped_budget": null,
-    "raw": {}
+    "final_query_count": 16,
+    "from_nomination": 4,
+    "skipped_duplicate": 2,
+    "skipped_budget": 0,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "duplicate_exact",
+          "producer": "required_anchors",
+          "query_he": "ע״א 6821/93",
+          "duplicate_of": "ע\"א 6821/93"
+        },
+        {
+          "reason": "duplicate_near",
+          "producer": "required_anchors",
+          "query_he": "ע\"א 6821-93",
+          "duplicate_of": "ע\"א 6821/93"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 11,
+        "report": 1,
+        "statute": 2,
+        "academic": 1,
+        "regulation": 1
+      },
+      "final_query_count": 16,
+      "queries_by_producer": {
+        "planner": 7,
+        "required_anchors": 2,
+        "source_nomination": 4,
+        "judgment_discovery": 3
+      },
+      "planner_queries_count": 7,
+      "queries_skipped_budget": 0,
+      "nomination_queries_count": 4,
+      "queries_skipped_duplicate": 2,
+      "queries_added_from_nomination": 4
+    }
   },
   "official_discovery": {
-    "enabled": null,
+    "enabled": true,
     "skip_reason": null,
-    "targets": null,
-    "bodies_acquired": null,
-    "injected_candidate_ids": [],
-    "cache_lookups": 0,
-    "cache_hits": null,
-    "cache_misses": null
+    "targets": 1,
+    "bodies_acquired": 1,
+    "injected_candidate_ids": [
+      "nominated-source:N1"
+    ],
+    "cache_lookups": 1,
+    "cache_hits": 0,
+    "cache_misses": 1
   },
-  "footnotes_count": 0,
+  "footnotes_count": 1,
   "dangling_markers": 0,
-  "answer_len": 181,
-  "answer": "החיפוש אחר מקורות הופסק באמצע העיבוד ולא ניתן היה להשלים תשובה משפטית מבוססת. ייתכן שאיתור גוף פסקי הדין דרש עיבוד כבד מדי. נסו להריץ שוב, לצמצם את השאלה, או לצרף את המסמך הרלוונטי.",
-  "footnotes": []
+  "answer_len": 2446,
+  "answer": "**סיכום ההכרעה המרכזית**\n\nבית המשפט קבע כי חוקי היסוד תופסים מעמד על־חוקי ביחס לחקיקה רגילה, וכי לבית המשפט העליון סמכות לביקורת שיפוטית על חוקים הנוגדים חוקי היסוד — תוך התייחסות להיקף הביקורת בהקשר לפסקת ההגבלה; בפסק הדין גם הובהר מעמדה של הכנסת כ'רשות מכוננת' שמקנה לחוקי היסוד תוקף מיוחד.¹\n\n**עובדות ומהלך פרוצדורלי**\n\nהתיק הוגש כערעור אזרחי בשמו המסחרי של המערער (בנק המזרחי המאוחד בע\"מ) נגד מגדל כפר שיתופי, מספר ההליך עא 6821/93; בתיעוד שחולץ מופיע גם תאריך פסק הדין ופרטי ההרכב השיפוטי.¹\n\nבמקורות שאותרו לא נמצא תיאור מפורט של העובדות המהותיות שבסיס המחלוקת או של החלטת הערכאה הקודמת בתוך הסניפטים שסופקו, כך שלא ניתן להציג כאן תיאור של טענות הצדדים או של רצף ההליך התחתון מעבר למה שהזוהה בכותרת הסעיף.¹\n\n**עיקרי ההנמקה המשפטית**\n\nההנמקה המרכזית בפסק הדין נשענה על רעיון מדרג נורמות שבו חוקי היסוד מוכרים כבעלי מעמד על־חוקי המאפשר לבית המשפט לבדוק חקיקה רגילה אל מול הוראות היסוד, תוך בחינה של התאמתה לפסקת ההגבלה שבה נבחנות הגבלות על זכויות.¹\n\nבנוסף להכרעה המהותית, דיונים ומקורות משניים מצביעים כי פסיקה זו שימשה גם כבסיס לעיגון עקרונות כלליים לגבי היקף הביקורת והשיח על אמצעי סעד תיקוניים (לרבות הדיון התיאורטי בסוגיית סעד החובה לחוקק), אם כי רשימות אלו תומכות בזהירות בלבד בפרשנות זו.\n\n**סעדים והתוצאה הפרקטית**\n\nבסניפטים הציבוריים שסופקו לא נמצא נוסח מפורש של סעדים שהוטלו בפסק הדין — אין בסניפטים הללו פירוט אם ניתן צו לביטול החוק, צו פגיעה או צו אחר, או הוראות בנוגע לפיצוי או הוצאות.¹\n\nלסיכום: ההכרעה המרכזית של הפסיקה היא קביעת מעמד על־חוקי לחוקי היסוד וסמכותו של בית המשפט לערוך ביקורת שיפוטית על חקיקה שאינה עומדת בחוקי היסוד; לגבי העובדות המפורטות של המחלוקת והסעדים הקונקרטיים, במקורות שאותרו לא נמצא פירוט מספק ולכן יש לעיין בטקסט המלא של פסק הדין לצורך אמירה קונקרטית נוספת.\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי — https://judgments.org.il/judgments/%D7%A2%D7%90-6821-93-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%94%D7%9E%D7%90%D7%95%D7%97%D7%93-%D7%A2%D7%9E-%D7%A0-%D7%9E%D7%92%D7%93%D7%9C-%D7%9B%D7%A4%D7%A8-%D7%A9/\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> החיפוש הופסק עקב מגבלת זמן, ולכן ייתכן שלא אותרו כל המקורות הרלוונטיים.",
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07/260/013/p34&fileName=07013260.p34&type=4",
+      "title": "ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07/260/013/p34&fileName=07013260.p34&type=4",
+          "title": "ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    }
+  ]
 }

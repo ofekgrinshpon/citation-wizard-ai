@@ -1,0 +1,97 @@
+{
+  "id": "P02",
+  "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+  "run_id": "8f6cd468-24f5-4567-a860-053b8184aa4d",
+  "terminal": true,
+  "ms": 122136,
+  "total_ms": 119731,
+  "branch": "docket_limitation",
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 7,
+    "mini_after": 4,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 512,
+    "parse_error": null,
+    "candidates_count": 4,
+    "dropped_count": 3,
+    "dropped_reasons": [
+      "low_confidence",
+      "low_confidence",
+      "secondary_cap"
+    ],
+    "identifier_bearing_count": 0,
+    "category_mix": {
+      "other": 2,
+      "statute": 1,
+      "judgment": 1
+    },
+    "ms": 11603
+  },
+  "query_merge": {
+    "final_query_count": 18,
+    "from_nomination": 4,
+    "skipped_duplicate": 2,
+    "skipped_budget": 0,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "duplicate_exact",
+          "producer": "required_anchors",
+          "query_he": "ע״א 99887/04/22",
+          "duplicate_of": "ע\"א 99887/04/22"
+        },
+        {
+          "reason": "duplicate_near",
+          "producer": "required_anchors",
+          "query_he": "ע\"א 99887-04-22",
+          "duplicate_of": "ע\"א 99887/04/22"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 12,
+        "other": 2,
+        "report": 1,
+        "statute": 2,
+        "academic": 1
+      },
+      "final_query_count": 18,
+      "queries_by_producer": {
+        "planner": 9,
+        "required_anchors": 2,
+        "source_nomination": 4,
+        "judgment_discovery": 3
+      },
+      "planner_queries_count": 9,
+      "queries_skipped_budget": 0,
+      "nomination_queries_count": 4,
+      "queries_skipped_duplicate": 2,
+      "queries_added_from_nomination": 4
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": "no_identifier_bearing_nominations",
+    "targets": 0,
+    "bodies_acquired": 0,
+    "injected_candidate_ids": [],
+    "cache_lookups": 0,
+    "cache_hits": 0,
+    "cache_misses": 0
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 345,
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.",
+  "footnotes": []
+}
