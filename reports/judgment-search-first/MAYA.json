@@ -1,0 +1,218 @@
+{
+  "id": "MAYA",
+  "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי?",
+  "run_id": "cc89e750-61e2-472e-a761-cc2f4927e05c",
+  "terminal": true,
+  "ms": 156312,
+  "total_ms": 152532,
+  "branch": null,
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 9,
+    "mini_after": 6,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 0,
+    "parse_error": null,
+    "candidates_count": 6,
+    "dropped_count": 2,
+    "dropped_reasons": [
+      "judgment_cap",
+      "judgment_cap"
+    ],
+    "identifier_bearing_count": 3,
+    "category_mix": {
+      "statute": 1,
+      "judgment": 2,
+      "scholarship": 3
+    },
+    "actionable_count": 3,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 3,
+      "known_name_no_docket": 0
+    },
+    "known_name_no_docket_count": 0,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 3,
+      "0.8-1.0": 3
+    },
+    "stripped_identifiers": [],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 3,
+      "exploratory": 2
+    },
+    "actionable_queries_preserved": 3,
+    "exploratory_queries_preserved": 2,
+    "ms": 10983
+  },
+  "query_merge": {
+    "final_query_count": 14,
+    "from_nomination": 5,
+    "skipped_duplicate": 0,
+    "skipped_budget": 7,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, פסק דין עליון"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:supremedecisions.court.gov.il Download"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:court.gov.il filetype:pdf פסק דין"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 7,
+        "statute": 3,
+        "academic": 4
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 0
+      },
+      "final_query_count": 14,
+      "actionable_queries": 3,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 2,
+      "queries_by_producer": {
+        "planner": 9,
+        "source_nomination": 5
+      },
+      "stripped_identifiers": 0,
+      "planner_queries_count": 9,
+      "queries_skipped_budget": 7,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 0,
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 3,
+        "0.8-1.0": 3
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 0,
+    "injected_candidate_ids": [],
+    "cache_lookups": 2,
+    "cache_hits": 0,
+    "cache_misses": 2,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "חוק בתי דין רבניים (נישואין וגירושין), התשמ\"א-1981",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "retrieval_already_has_body",
+        "ms": 54
+      },
+      {
+        "label": "בג\"ץ 5555/18 חסון נ' כנסת ישראל",
+        "category": "judgment",
+        "docket": "bagatz:5555/18",
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "retrieval_already_has_body",
+        "ms": 41
+      }
+    ]
+  },
+  "footnotes_count": 2,
+  "dangling_markers": 0,
+  "answer_len": 2742,
+  "answer": "**תמצית קצרה**\n\nקצרה: בג\"ץ יכול להתערב בפסקי בתי‑הדין הרבניים בענייני חלוקת רכוש כאשר מתקיימת חריגה מסמכות או שימוש בשיקול שאינו חלק מהדין האזרחי; העיקר הוא הבחנה בין פגם סמכותי (jurisdictional error) לבין שיקול דעת בלתי סביר/שימוש בסמכות שלא כדין, כאשר לפסיקה המרכזית יש משקל בהבחנה זו אך נקודות יישום פרוצדורליות נשענות גם על עקרונות ביקורת שיקול‑דעת מנהלי.¹\n\nעילת ההתערבות של בג\"ץ: מן הפסיקה שצוינה עולה בכל זאת עיקרון מחייב כי ערכאה דתית אינה נדונה להכריע בעניינים שאינם בתוך מעגל סמכויותיה החוקיות; במישור זה בג\"ץ רשאי לבחון אם החלטת בית הדין הרבני נבעה מתחום סמכותו או חרג ממנו, והיעדר סמכות שכזו מייסד עילה לתיקון או לביטול פעולתו של בית הדין על ידי בית המשפט המינהלי.\n\nאמת‑המידה התוקפנית/השיפוטית: מבחנית יש להבחין בין שלבי ביקורת שונים — ראשית, בדיקת טווח הסמכות (שאלה של דין, שבה בג\"ץ יורש לבטל החלטה שחוץ מטעמו כיון לסמכות); שנית, כאשר נמצאת הסמכות אך נטענת הסתמכות על שיקול חיצוני שאינו רלוונטי, יש למקם את העילה בין שימוש בסמכות שלא כדין ובין ביקורת על סבירות/אי־הגיון החלטתי; במעשים אלה בית המשפט נוטה להיעזר בכלים אנלוגיים של שיקול‑דעת וסבירות ואף ב'תחם הביניים' שבו לא תמיד מדובר באי‑סמכות טהורה אלא בפגם בשיקול הדעת עצמו.\n\nעובדות ופרוצדורה נדרשות להוכחה: המיועד המבקש עיון צריך לנקוט בדרך ראייתית ממוקדת — הצגת מסמכים, רישומי דיון, עדויות או נימוקים מפורשים מההכרעה שמצביעים על שיקול חיצוני; במצבים של טענה לסמכות זרה, דרגת ההוכחה אינה מוגדרת כפוסלת בחדווה בפסיקה הספציפית, אך ההליך יידרש להראות קשר סיבתי בין ההסתמכות על השיקול החיצוני לבין החלטת החלוקה; כמו כן בג\"ץ עשוי לדרוש נימוק מסוים או פירוט יסודי מן הערכאה הרבנית שבה נטען שימוש בשיקול חיצוני, אם כי רוב התשתית למימוש חובת נימוק מגיעה מאנלוגיות לעקרונות ביקורת מנהלית ולא מפסק דין רבני ספציפי במקורות שאותרו.\n\nסעד אפשרי ומגבלותיו: אם בג\"ץ ימצא שימוש בשיקול חיצוני שפגם בהחלטת בית הדין הרבני, הסעדים המקובלים שנדונו בפסיקה ובפרקטיקה הם ביטול ההחלטה או החזרת הדיון לערכאה הרבנית להכרעה חוזרת בנוסח מצומצם (remand), ולעתים צווי מניעה או צווי תיקון צורתי; כאשר הטענה נוגעת לחוסר סמכות מהותי־טוען, התוצאה עלולה להיות שההכרעה תהא בלתי מחייבת מעיקרה. עם זאת, בית המשפט ישקל גם שיקולי הפרדה בין רשויות, התאמת סעד פורמאלי לתכלית ותוצאתי, והעדפת פתרון מצומצם ופרוסדי במקום התערבות מהותית בכל מקרה.²\n\nמגבלות השאלה והראיות: במקורות שאותרו נמצאת תמיכה ישירה במגבלת הסמכות של בתי‑הדין הרבניים ובעקרונות ביקורת שיקול‑דעת כאנלוגיה, אך לא אותר טקסט מעוגן בפסיקה המחייבת כללים פרקטיים מלאים המיוחדים לפסיקת בתי‑דין רבניים בענייני חלוקת רכוש; לפיכך יש לפרש את היישום הלכתי בזהירות ולנתח כל מקרה על יסוד עובדותיו ונסיבותיו הפרוצדורליות המיוחדות.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-876-23-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-12-02-2023/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בש\"פ 876/23 פלוני נ׳ מדינת ישראל החלטה (12.02.2023); בג\"ץ 8638-03 סימה אמיר נ' בית הדין הרבני הגדול",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-876-23-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99%d7%95%d7%9d-12-02-2023/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בש\"פ 876/23 פלוני נ׳ מדינת ישראל החלטה (12.02.2023)",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1ימה%20אמיר%20נ'%20בית%20הדין%20הרבני%20הגדול.doc",
+          "title": "בג\"ץ 8638-03 סימה אמיר נ' בית הדין הרבני הגדול",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-7127-22-%d7%98%d7%90%d7%a8%d7%a7-%d7%a2%d7%91%d7%93-%d7%90%d7%9c%d7%97%d7%99-%d7%a0-%d7%a6%d7%90%d7%9c%d7%97-%d7%9e%d7%a0%d7%a1%d7%95%d7%a8-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "רע\"א 7127/22 טארק עבד אלחי נ׳ צאלח מנסור פסק דין (29.01.2023)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-7127-22-%d7%98%d7%90%d7%a8%d7%a7-%d7%a2%d7%91%d7%93-%d7%90%d7%9c%d7%97%d7%99-%d7%a0-%d7%a6%d7%90%d7%9c%d7%97-%d7%9e%d7%a0%d7%a1%d7%95%d7%a8-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "רע\"א 7127/22 טארק עבד אלחי נ׳ צאלח מנסור פסק דין (29.01.2023)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    }
+  ]
+}
