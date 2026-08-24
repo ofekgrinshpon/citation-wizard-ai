@@ -2001,6 +2001,32 @@ async function handle(req: Request): Promise<Response> {
     claim_facet_expansion: claimFacetExpansionMeta,
     // core_authority_registry_v1 telemetry.
     core_authority_registry: coreAuthorityRegistryMeta,
+    // source_nomination_v1 telemetry.
+    source_nomination: {
+      version: sourceNomination.version,
+      enabled: sourceNomination.enabled,
+      skip_reason: sourceNomination.skip_reason,
+      model_final: sourceNomination.model_final,
+      escalated: sourceNomination.escalated,
+      parse_error: sourceNomination.parse_error,
+      nomination_candidates_count: sourceNomination.candidates.length,
+      identifier_bearing_count: sourceNomination.identifier_bearing_count,
+      category_mix: sourceNomination.category_mix,
+      candidates: sourceNomination.candidates,
+      dropped: sourceNomination.dropped,
+      ms: sourceNomination.ms,
+    },
+    // query_merge_and_budget telemetry.
+    query_merge: queryMerge.report,
+    // official_source_discovery + verified_legal_sources cache telemetry.
+    verified_source_cache: {
+      version: officialDiscovery.cache_version,
+      cache_hits: officialDiscovery.cache_hits,
+      cache_misses: officialDiscovery.cache_misses,
+      cache_cooldowns: officialDiscovery.cache_cooldowns,
+      cache_writes: officialDiscovery.cache_writes,
+    },
+    official_source_discovery: officialDiscovery,
     // router_profiles_v1 telemetry.
     router_profiles: {
       version: router.version,
