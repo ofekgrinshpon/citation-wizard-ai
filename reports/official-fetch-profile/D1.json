@@ -1,0 +1,236 @@
+{
+  "id": "D1",
+  "query": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם מיושמים כאשר חוק פוגע בזכות יסוד?",
+  "run_id": "122777ab-8440-4e3c-852b-b5273f7a813e",
+  "terminal": true,
+  "ms": 123911,
+  "total_ms": 117418,
+  "branch": "insufficient_sources_limitation",
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 9,
+    "mini_after": 7,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 0,
+    "parse_error": null,
+    "candidates_count": 7,
+    "dropped_count": 1,
+    "dropped_reasons": [
+      "judgment_cap"
+    ],
+    "identifier_bearing_count": 3,
+    "category_mix": {
+      "statute": 1,
+      "judgment": 2,
+      "scholarship": 3,
+      "knesset_report": 1
+    },
+    "actionable_count": 4,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 3,
+      "known_name_no_docket": 1
+    },
+    "known_name_no_docket_count": 1,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 4,
+      "0.8-1.0": 3
+    },
+    "stripped_identifiers": [
+      {
+        "label": "Ariel Porat & Iddo Porat, \"The Principle of Proportionality in Israeli Law\"",
+        "fields": [
+          "authors",
+          "journal_or_publisher",
+          "year"
+        ],
+        "nomination_id": "N5"
+      }
+    ],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 3,
+      "exploratory": 2
+    },
+    "actionable_queries_preserved": 3,
+    "exploratory_queries_preserved": 2,
+    "ms": 9630
+  },
+  "query_merge": {
+    "final_query_count": 14,
+    "from_nomination": 5,
+    "skipped_duplicate": 0,
+    "skipped_budget": 13,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "בית המשפט העליון 'פרופורציונליות' 'איזון בין חומרת הפגיעה לחשיבות המטרה' 'ביטול חוק' 'צמצום פרשני' פסקי דין שמגייסים סעד של ביטול/צמצום פרשני/השעיה"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "חוק יסוד: חופש העיסוק חוק יסוד חופש העיסוק הוראות הגבלת זכויות ופסיקה רלוונטית 'הגבלת חופש העיסוק'"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "מאמר סקירה על 'השלכות פרוטרוקטיביות של כשל במידתיות' בישראל: ביטול חוק, צמצום פרשני, צווים זמניים וסעד תיקון"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "בית המשפט העליון 'נטל ההוכחה' 'margin of appreciation' 'מצב חירום' 'מבחן המידתיות' פסקי דין בנושא חלוקת נטל והיקף שיקול דעת המחוקק בזמנים מיוחדים"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "מאמר אקדמי 'margin of appreciation' בישראל 'נטל הראיה' 'מצבי חירום' השפעת ההקשר על מידת הביקורת השיפוטית"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "בית משפט מחוזי 'מצב חירום' 'מבחן המידתיות' החלטות שבחנו הגבלות בהקשר חירום ורמת הדיוק של הביקורת"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "להסביר את מבנה מבחן המידתיות המקובל בביקורת חוקתית בישראל: משפט חוקתי הוראת החוק"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "להסביר את מבנה מבחן המידתיות המקובל בביקורת חוקתית בישראל: משפט חוקתי בית המשפט העליון הלכה"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "להסביר את מבנה מבחן המידתיות המקובל בביקורת חוקתית בישראל: משפט חוקתי חריגים וסייגים"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם פסק דין עליון"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם site:supremedecisions.court.gov.il Download"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם site:court.gov.il filetype:pdf פסק דין"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 6,
+        "report": 1,
+        "statute": 3,
+        "academic": 4
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 1
+      },
+      "final_query_count": 14,
+      "actionable_queries": 3,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 2,
+      "queries_by_producer": {
+        "planner": 9,
+        "source_nomination": 5
+      },
+      "stripped_identifiers": 1,
+      "planner_queries_count": 15,
+      "queries_skipped_budget": 13,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 0,
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 4,
+        "0.8-1.0": 3
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 0,
+    "injected_candidate_ids": [],
+    "cache_lookups": 1,
+    "cache_hits": 0,
+    "cache_misses": 1,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "חוק יסוד: כבוד האדם וחירותו",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "urls": [],
+        "path": "none",
+        "result": "unsupported_statute_source",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "unsupported_statute_source:no_official_statute_url",
+        "ms": 38
+      },
+      {
+        "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+        "category": "judgment",
+        "docket": "bagatz:1715/97",
+        "cache_lookup": "cooldown",
+        "cooldown_strategy": "search_first_judgment",
+        "ignored_other_strategy_failures": 1,
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "cooldown_until:2026-08-31T10:45:53.093Z",
+        "ms": 35
+      }
+    ]
+  },
+  "official_fetch": {
+    "version": "official_fetch_profile_v1",
+    "official_calls": 0,
+    "max_per_run": 5,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "rate_limited_events": 0,
+    "attempts": []
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 546,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות; תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?; אהרן ברק, מידתיות במשפט: הפגיעה בזכות החוקתית והגבלותיה; מבחן המידתיות במשפט החוקתי הישראלי (אהרן ברק).",
+  "footnotes": []
+}

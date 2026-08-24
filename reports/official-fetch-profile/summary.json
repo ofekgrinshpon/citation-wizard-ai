@@ -1,0 +1,1822 @@
+[
+  {
+    "id": "D1",
+    "query": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם מיושמים כאשר חוק פוגע בזכות יסוד?",
+    "run_id": "122777ab-8440-4e3c-852b-b5273f7a813e",
+    "terminal": true,
+    "ms": 123911,
+    "total_ms": 117418,
+    "branch": "insufficient_sources_limitation",
+    "source_nomination": {
+      "enabled": true,
+      "skipped": false,
+      "skip_reason": null,
+      "stage_failed": false,
+      "model_first": "openai/gpt-5-mini",
+      "model_final": "openai/gpt-5-mini",
+      "escalated": false,
+      "escalation_reason": null,
+      "mini_retry_used": false,
+      "mini_before": 9,
+      "mini_after": 7,
+      "fallback_to_mini_used": false,
+      "finish_reason": "tool_calls",
+      "reasoning_tokens": 0,
+      "parse_error": null,
+      "candidates_count": 7,
+      "dropped_count": 1,
+      "dropped_reasons": [
+        "judgment_cap"
+      ],
+      "identifier_bearing_count": 3,
+      "category_mix": {
+        "statute": 1,
+        "judgment": 2,
+        "scholarship": 3,
+        "knesset_report": 1
+      },
+      "actionable_count": 4,
+      "exploratory_count": 3,
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 1
+      },
+      "known_name_no_docket_count": 1,
+      "topic_only_count": 3,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 4,
+        "0.8-1.0": 3
+      },
+      "stripped_identifiers": [
+        {
+          "label": "Ariel Porat & Iddo Porat, \"The Principle of Proportionality in Israeli Law\"",
+          "fields": [
+            "authors",
+            "journal_or_publisher",
+            "year"
+          ],
+          "nomination_id": "N5"
+        }
+      ],
+      "demoted_identifiers": [],
+      "queries_by_bucket": {
+        "actionable": 3,
+        "exploratory": 2
+      },
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "ms": 9630
+    },
+    "query_merge": {
+      "final_query_count": 14,
+      "from_nomination": 5,
+      "skipped_duplicate": 0,
+      "skipped_budget": 13,
+      "raw": {
+        "dropped": [
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "בית המשפט העליון 'פרופורציונליות' 'איזון בין חומרת הפגיעה לחשיבות המטרה' 'ביטול חוק' 'צמצום פרשני' פסקי דין שמגייסים סעד של ביטול/צמצום פרשני/השעיה"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "חוק יסוד: חופש העיסוק חוק יסוד חופש העיסוק הוראות הגבלת זכויות ופסיקה רלוונטית 'הגבלת חופש העיסוק'"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "מאמר סקירה על 'השלכות פרוטרוקטיביות של כשל במידתיות' בישראל: ביטול חוק, צמצום פרשני, צווים זמניים וסעד תיקון"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "בית המשפט העליון 'נטל ההוכחה' 'margin of appreciation' 'מצב חירום' 'מבחן המידתיות' פסקי דין בנושא חלוקת נטל והיקף שיקול דעת המחוקק בזמנים מיוחדים"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "מאמר אקדמי 'margin of appreciation' בישראל 'נטל הראיה' 'מצבי חירום' השפעת ההקשר על מידת הביקורת השיפוטית"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "בית משפט מחוזי 'מצב חירום' 'מבחן המידתיות' החלטות שבחנו הגבלות בהקשר חירום ורמת הדיוק של הביקורת"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "להסביר את מבנה מבחן המידתיות המקובל בביקורת חוקתית בישראל: משפט חוקתי הוראת החוק"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "להסביר את מבנה מבחן המידתיות המקובל בביקורת חוקתית בישראל: משפט חוקתי בית המשפט העליון הלכה"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "להסביר את מבנה מבחן המידתיות המקובל בביקורת חוקתית בישראל: משפט חוקתי חריגים וסייגים"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם פסק דין עליון"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם site:supremedecisions.court.gov.il Download"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם site:court.gov.il filetype:pdf פסק דין"
+          }
+        ],
+        "version": "query_merge_and_budget_v1",
+        "source_type_mix": {
+          "case": 6,
+          "report": 1,
+          "statute": 3,
+          "academic": 4
+        },
+        "actionability_mix": {
+          "topic_only": 3,
+          "known_identifier": 3,
+          "known_name_no_docket": 1
+        },
+        "final_query_count": 14,
+        "actionable_queries": 3,
+        "demoted_identifiers": 0,
+        "exploratory_queries": 2,
+        "queries_by_producer": {
+          "planner": 9,
+          "source_nomination": 5
+        },
+        "stripped_identifiers": 1,
+        "planner_queries_count": 15,
+        "queries_skipped_budget": 13,
+        "nomination_queries_count": 5,
+        "queries_skipped_duplicate": 0,
+        "actionable_queries_preserved": 3,
+        "exploratory_queries_preserved": 2,
+        "queries_added_from_nomination": 5,
+        "identifier_confidence_histogram": {
+          "0.0-0.4": 4,
+          "0.8-1.0": 3
+        }
+      }
+    },
+    "official_discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 0,
+      "injected_candidate_ids": [],
+      "cache_lookups": 1,
+      "cache_hits": 0,
+      "cache_misses": 1,
+      "cache_writes": 0,
+      "attempts": [
+        {
+          "label": "חוק יסוד: כבוד האדם וחירותו",
+          "category": "statute",
+          "docket": null,
+          "cache_lookup": "miss",
+          "cooldown_strategy": null,
+          "ignored_other_strategy_failures": 0,
+          "urls": [],
+          "path": "none",
+          "result": "unsupported_statute_source",
+          "body_chars": 0,
+          "cache_written": false,
+          "cache_write_error": null,
+          "reason": "unsupported_statute_source:no_official_statute_url",
+          "ms": 38
+        },
+        {
+          "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+          "category": "judgment",
+          "docket": "bagatz:1715/97",
+          "cache_lookup": "cooldown",
+          "cooldown_strategy": "search_first_judgment",
+          "ignored_other_strategy_failures": 1,
+          "urls": [],
+          "path": "none",
+          "result": "not_attempted",
+          "body_chars": 0,
+          "cache_written": false,
+          "cache_write_error": null,
+          "reason": "cooldown_until:2026-08-31T10:45:53.093Z",
+          "ms": 35
+        }
+      ]
+    },
+    "official_fetch": {
+      "version": "official_fetch_profile_v1",
+      "official_calls": 0,
+      "max_per_run": 5,
+      "stopped_reason": null,
+      "block_pages_detected": 0,
+      "rate_limited_events": 0,
+      "attempts": []
+    },
+    "footnotes_count": 0,
+    "dangling_markers": 0,
+    "answer_len": 546
+  },
+  {
+    "id": "D3",
+    "query": "מתי בג״ץ יתערב בהחלטה של בית דין רבני בענייני רכוש בין בני זוג, במיוחד כאשר נטען שבית הדין החיל דין דתי במקום דין אזרחי?",
+    "run_id": "4191e023-90e2-4fc0-bc50-3357a0937f06",
+    "terminal": true,
+    "ms": 150557,
+    "total_ms": 145734,
+    "branch": null,
+    "source_nomination": {
+      "enabled": true,
+      "skipped": false,
+      "skip_reason": null,
+      "stage_failed": false,
+      "model_first": "openai/gpt-5-mini",
+      "model_final": "openai/gpt-5-mini",
+      "escalated": false,
+      "escalation_reason": null,
+      "mini_retry_used": false,
+      "mini_before": 8,
+      "mini_after": 7,
+      "fallback_to_mini_used": false,
+      "finish_reason": "tool_calls",
+      "reasoning_tokens": 512,
+      "parse_error": null,
+      "candidates_count": 7,
+      "dropped_count": 0,
+      "dropped_reasons": [],
+      "identifier_bearing_count": 2,
+      "category_mix": {
+        "statute": 2,
+        "judgment": 1,
+        "scholarship": 2,
+        "knesset_report": 1,
+        "government_report": 1
+      },
+      "actionable_count": 4,
+      "exploratory_count": 3,
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 2,
+        "known_name_no_docket": 2
+      },
+      "known_name_no_docket_count": 2,
+      "topic_only_count": 3,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 5,
+        "0.8-1.0": 2
+      },
+      "stripped_identifiers": [],
+      "demoted_identifiers": [],
+      "queries_by_bucket": {
+        "actionable": 3,
+        "exploratory": 2
+      },
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "ms": 15210
+    },
+    "query_merge": {
+      "final_query_count": 14,
+      "from_nomination": 5,
+      "skipped_duplicate": 0,
+      "skipped_budget": 12,
+      "raw": {
+        "dropped": [
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "בג\"ץ סעדים מותאמים במקרה של פגם בפסק דין בית דין רבני ביטול החזרה להכרעה מחודשת צו מניעה צו פסיקת ביניים 'בתי דין רבניים' 'סעד'"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "חוק בתי דין רבניים (נישואין וגירושין) תשט\"ו-1955 הוראות לגבי השלכות ביטול פסק דין רבני וסעדים לאחר ביטול/החזרה להכרעה"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "בג\"ץ שיקולים להתערבות כאשר יש הסכמה בין הצדדים להכרעה על פי דין דתי פגיעה בזכויות יסוד חירות דת שוויון היקף נזק כלכלי 'בתי דין רבניים' 'הסכמה' 'חופש דת'"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "פסקי דין מחוזיים/שלום שעסקו בשיקולים מעשיים בהתערבות בפסקי בתי דין רבניים 'הסכמה בין הצדדים' 'נזק כלכלי' 'שוויון בין בני זוג'"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "דו\"ח משרד המשפטים או דו\"ח ועדה הכנסת על סמכויות בתי הדין הרבניים ודיני ממון בין בני זוג דו\"ח ועדת חוקה/משרד המשפטים 'בתי דין רבניים' 'ממונות'"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני פסק דין עליון"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני site:supremedecisions.court.gov.il Download"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני site:court.gov.il filetype:pdf פסק דין"
+          }
+        ],
+        "version": "query_merge_and_budget_v1",
+        "source_type_mix": {
+          "case": 5,
+          "statute": 5,
+          "academic": 4
+        },
+        "actionability_mix": {
+          "topic_only": 3,
+          "known_identifier": 2,
+          "known_name_no_docket": 2
+        },
+        "final_query_count": 14,
+        "actionable_queries": 3,
+        "demoted_identifiers": 0,
+        "exploratory_queries": 2,
+        "queries_by_producer": {
+          "planner": 9,
+          "source_nomination": 5
+        },
+        "stripped_identifiers": 0,
+        "planner_queries_count": 14,
+        "queries_skipped_budget": 12,
+        "nomination_queries_count": 5,
+        "queries_skipped_duplicate": 0,
+        "actionable_queries_preserved": 3,
+        "exploratory_queries_preserved": 2,
+        "queries_added_from_nomination": 5,
+        "identifier_confidence_histogram": {
+          "0.0-0.4": 5,
+          "0.8-1.0": 2
+        }
+      }
+    },
+    "official_discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 1,
+      "injected_candidate_ids": [
+        "nominated-source:N2"
+      ],
+      "cache_lookups": 2,
+      "cache_hits": 0,
+      "cache_misses": 2,
+      "cache_writes": 1,
+      "attempts": [
+        {
+          "label": "חוק בתי הדין הרבניים (נישואין וגירושין), התשכ\"ח-1968",
+          "category": "statute",
+          "docket": null,
+          "cache_lookup": "miss",
+          "cooldown_strategy": null,
+          "ignored_other_strategy_failures": 0,
+          "urls": [],
+          "path": "none",
+          "result": "not_attempted",
+          "body_chars": 0,
+          "cache_written": false,
+          "cache_write_error": null,
+          "reason": "retrieval_already_has_body",
+          "ms": 56
+        },
+        {
+          "label": "חוק-יסוד: כבוד האדם וחירותו",
+          "category": "statute",
+          "docket": null,
+          "cache_lookup": "miss",
+          "cooldown_strategy": null,
+          "ignored_other_strategy_failures": 1,
+          "urls": [
+            "https://fs.knesset.gov.il/13/law/13_ls1_183986.PDF",
+            "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawPrimary.aspx?t=law&st=law&lawitemid=2000702",
+            "https://www.nevo.co.il/law_html/law01/500_002.htm"
+          ],
+          "path": "statute_official_url",
+          "result": "body_acquired",
+          "body_chars": 28396,
+          "cache_written": true,
+          "cache_write_error": null,
+          "reason": null,
+          "ms": 1110
+        }
+      ]
+    },
+    "official_fetch": {
+      "version": "official_fetch_profile_v1",
+      "official_calls": 1,
+      "max_per_run": 5,
+      "stopped_reason": null,
+      "block_pages_detected": 0,
+      "rate_limited_events": 1,
+      "attempts": [
+        {
+          "ms": 3600,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2",
+          "host": "supremedecisions.court.gov.il",
+          "error": "error sending request from 10.32.82.71:50088 for https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2 (84.110.173.93:443): client error (SendRe",
+          "status": null,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": null,
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": true,
+          "block_page_detected": false
+        },
+        {
+          "ms": 149,
+          "url": "https://fs.knesset.gov.il/13/law/13_ls1_183986.PDF",
+          "host": "fs.knesset.gov.il",
+          "error": null,
+          "status": 404,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": "text/html",
+          "rate_limited": false,
+          "content_length": 1245,
+          "skipped_reason": null,
+          "connection_reset": false,
+          "block_page_detected": false
+        },
+        {
+          "ms": 181,
+          "url": "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawPrimary.aspx?t=law&st=law&lawitemid=2000702",
+          "host": "main.knesset.gov.il",
+          "error": null,
+          "status": 247,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": "text/html; charset=utf-8",
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": false,
+          "block_page_detected": false
+        },
+        {
+          "ms": 595,
+          "url": "https://www.nevo.co.il/law_html/law01/500_002.htm",
+          "host": "www.nevo.co.il",
+          "error": null,
+          "status": 200,
+          "profile": "official_browser_like",
+          "redirected": true,
+          "url_origin": "unknown",
+          "content_type": "text/html; charset=utf-8",
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": false,
+          "block_page_detected": false
+        }
+      ]
+    },
+    "footnotes_count": 1,
+    "dangling_markers": 0,
+    "answer_len": 2465
+  },
+  {
+    "id": "MAYA-AMIR",
+    "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי? התייחסו לעניין סימה אמיר.",
+    "run_id": "5498dd74-1cf6-412c-9950-b0a0a131db21",
+    "terminal": true,
+    "ms": 139719,
+    "total_ms": 137069,
+    "branch": null,
+    "source_nomination": {
+      "enabled": true,
+      "skipped": false,
+      "skip_reason": null,
+      "stage_failed": false,
+      "model_first": "openai/gpt-5-mini",
+      "model_final": "openai/gpt-5-mini",
+      "escalated": false,
+      "escalation_reason": null,
+      "mini_retry_used": false,
+      "mini_before": 8,
+      "mini_after": 5,
+      "fallback_to_mini_used": false,
+      "finish_reason": "tool_calls",
+      "reasoning_tokens": 0,
+      "parse_error": null,
+      "candidates_count": 5,
+      "dropped_count": 2,
+      "dropped_reasons": [
+        "low_relevance_confidence",
+        "judgment_cap"
+      ],
+      "identifier_bearing_count": 2,
+      "category_mix": {
+        "judgment": 2,
+        "scholarship": 2,
+        "government_report": 1
+      },
+      "actionable_count": 2,
+      "exploratory_count": 3,
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 2,
+        "known_name_no_docket": 0
+      },
+      "known_name_no_docket_count": 0,
+      "topic_only_count": 3,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 3,
+        "0.8-1.0": 2
+      },
+      "stripped_identifiers": [],
+      "demoted_identifiers": [],
+      "queries_by_bucket": {
+        "actionable": 2,
+        "exploratory": 3
+      },
+      "actionable_queries_preserved": 2,
+      "exploratory_queries_preserved": 3,
+      "ms": 8635
+    },
+    "query_merge": {
+      "final_query_count": 14,
+      "from_nomination": 5,
+      "skipped_duplicate": 0,
+      "skipped_budget": 7,
+      "raw": {
+        "dropped": [
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, פסק דין עליון"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:supremedecisions.court.gov.il Download"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:court.gov.il filetype:pdf פסק דין"
+          }
+        ],
+        "version": "query_merge_and_budget_v1",
+        "source_type_mix": {
+          "case": 7,
+          "report": 1,
+          "statute": 2,
+          "academic": 4
+        },
+        "actionability_mix": {
+          "topic_only": 3,
+          "known_identifier": 2,
+          "known_name_no_docket": 0
+        },
+        "final_query_count": 14,
+        "actionable_queries": 2,
+        "demoted_identifiers": 0,
+        "exploratory_queries": 3,
+        "queries_by_producer": {
+          "planner": 9,
+          "source_nomination": 5
+        },
+        "stripped_identifiers": 0,
+        "planner_queries_count": 9,
+        "queries_skipped_budget": 7,
+        "nomination_queries_count": 5,
+        "queries_skipped_duplicate": 0,
+        "actionable_queries_preserved": 2,
+        "exploratory_queries_preserved": 3,
+        "queries_added_from_nomination": 5,
+        "identifier_confidence_histogram": {
+          "0.0-0.4": 3,
+          "0.8-1.0": 2
+        }
+      }
+    },
+    "official_discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 0,
+      "injected_candidate_ids": [],
+      "cache_lookups": 0,
+      "cache_hits": 0,
+      "cache_misses": 0,
+      "cache_writes": 0,
+      "attempts": [
+        {
+          "label": "בג\"ץ 8497/00 סימה אמיר",
+          "category": "judgment",
+          "docket": "bagatz:8497/0",
+          "cache_lookup": "cooldown",
+          "cooldown_strategy": "search_first_judgment",
+          "ignored_other_strategy_failures": 1,
+          "urls": [],
+          "path": "none",
+          "result": "not_attempted",
+          "body_chars": 0,
+          "cache_written": false,
+          "cache_write_error": null,
+          "reason": "cooldown_until:2026-08-31T12:04:11.444Z",
+          "ms": 102
+        },
+        {
+          "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+          "category": "judgment",
+          "docket": "bagatz:1715/97",
+          "cache_lookup": "cooldown",
+          "cooldown_strategy": "search_first_judgment",
+          "ignored_other_strategy_failures": 1,
+          "urls": [],
+          "path": "none",
+          "result": "not_attempted",
+          "body_chars": 0,
+          "cache_written": false,
+          "cache_write_error": null,
+          "reason": "cooldown_until:2026-08-31T10:45:53.093Z",
+          "ms": 80
+        }
+      ]
+    },
+    "official_fetch": {
+      "version": "official_fetch_profile_v1",
+      "official_calls": 1,
+      "max_per_run": 5,
+      "stopped_reason": null,
+      "block_pages_detected": 0,
+      "rate_limited_events": 1,
+      "attempts": [
+        {
+          "ms": 359,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/1&fileName=SB1_19_10078-03.pdf&type=2",
+          "host": "supremedecisions.court.gov.il",
+          "error": "error sending request from 10.32.84.149:55188 for https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/1&fileName=SB1_19_10078-03.pdf&type=2 (84.110.173.93:443): client error (Send",
+          "status": null,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": null,
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": true,
+          "block_page_detected": false
+        }
+      ]
+    },
+    "footnotes_count": 2,
+    "dangling_markers": 0,
+    "answer_len": 2706
+  },
+  {
+    "id": "R02",
+    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+    "run_id": "3bb099c8-4e2b-4821-9ca3-a5675d69c242",
+    "terminal": true,
+    "ms": 161705,
+    "total_ms": 155994,
+    "branch": "docket_limitation",
+    "source_nomination": {
+      "enabled": true,
+      "skipped": false,
+      "skip_reason": null,
+      "stage_failed": false,
+      "model_first": "openai/gpt-5-mini",
+      "model_final": "openai/gpt-5-mini",
+      "escalated": false,
+      "escalation_reason": null,
+      "mini_retry_used": false,
+      "mini_before": 5,
+      "mini_after": 5,
+      "fallback_to_mini_used": false,
+      "finish_reason": "tool_calls",
+      "reasoning_tokens": 320,
+      "parse_error": null,
+      "candidates_count": 5,
+      "dropped_count": 0,
+      "dropped_reasons": [],
+      "identifier_bearing_count": 2,
+      "category_mix": {
+        "statute": 1,
+        "judgment": 1,
+        "scholarship": 3
+      },
+      "actionable_count": 2,
+      "exploratory_count": 3,
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 2,
+        "known_name_no_docket": 0
+      },
+      "known_name_no_docket_count": 0,
+      "topic_only_count": 3,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 3,
+        "0.8-1.0": 2
+      },
+      "stripped_identifiers": [],
+      "demoted_identifiers": [],
+      "queries_by_bucket": {
+        "actionable": 2,
+        "exploratory": 3
+      },
+      "actionable_queries_preserved": 2,
+      "exploratory_queries_preserved": 3,
+      "ms": 9515
+    },
+    "query_merge": {
+      "final_query_count": 21,
+      "from_nomination": 5,
+      "skipped_duplicate": 2,
+      "skipped_budget": 0,
+      "raw": {
+        "dropped": [
+          {
+            "reason": "duplicate_exact",
+            "producer": "required_anchors",
+            "query_he": "ע״א 6821/93",
+            "duplicate_of": "ע\"א 6821/93"
+          },
+          {
+            "reason": "duplicate_near",
+            "producer": "required_anchors",
+            "query_he": "ע\"א 6821-93",
+            "duplicate_of": "ע\"א 6821/93"
+          }
+        ],
+        "version": "query_merge_and_budget_v1",
+        "source_type_mix": {
+          "case": 11,
+          "statute": 7,
+          "academic": 3
+        },
+        "actionability_mix": {
+          "topic_only": 3,
+          "known_identifier": 2,
+          "known_name_no_docket": 0
+        },
+        "final_query_count": 21,
+        "actionable_queries": 2,
+        "demoted_identifiers": 0,
+        "exploratory_queries": 3,
+        "queries_by_producer": {
+          "planner": 11,
+          "required_anchors": 2,
+          "source_nomination": 5,
+          "judgment_discovery": 3
+        },
+        "stripped_identifiers": 0,
+        "planner_queries_count": 11,
+        "queries_skipped_budget": 0,
+        "nomination_queries_count": 5,
+        "queries_skipped_duplicate": 2,
+        "actionable_queries_preserved": 2,
+        "exploratory_queries_preserved": 3,
+        "queries_added_from_nomination": 5,
+        "identifier_confidence_histogram": {
+          "0.0-0.4": 3,
+          "0.8-1.0": 2
+        }
+      }
+    },
+    "official_discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 0,
+      "injected_candidate_ids": [
+        "nominated-source:N2"
+      ],
+      "cache_lookups": 1,
+      "cache_hits": 1,
+      "cache_misses": 0,
+      "cache_writes": 0,
+      "attempts": [
+        {
+          "label": "ע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+          "category": "judgment",
+          "docket": "aa:6821/93",
+          "cache_lookup": "cooldown",
+          "cooldown_strategy": "search_first_judgment",
+          "ignored_other_strategy_failures": 1,
+          "urls": [],
+          "path": "none",
+          "result": "not_attempted",
+          "body_chars": 0,
+          "cache_written": false,
+          "cache_write_error": null,
+          "reason": "cooldown_until:2026-08-31T10:50:32.164Z",
+          "ms": 50
+        },
+        {
+          "label": "חוק-יסוד: כבוד האדם וחירותו",
+          "category": "statute",
+          "docket": null,
+          "cache_lookup": "hit",
+          "cooldown_strategy": null,
+          "ignored_other_strategy_failures": 0,
+          "urls": [],
+          "path": "cache",
+          "result": "cache_hit",
+          "body_chars": 28396,
+          "cache_written": false,
+          "cache_write_error": null,
+          "reason": null,
+          "ms": 107
+        }
+      ]
+    },
+    "official_fetch": {
+      "version": "official_fetch_profile_v1",
+      "official_calls": 3,
+      "max_per_run": 5,
+      "stopped_reason": "repeated_connection_reset",
+      "block_pages_detected": 0,
+      "rate_limited_events": 3,
+      "attempts": [
+        {
+          "ms": 322,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=HebrewVerdicts/93/210/068/Z01&type=2",
+          "host": "supremedecisions.court.gov.il",
+          "error": "error sending request from 10.32.83.189:51006 for https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=HebrewVerdicts/93/210/068/Z01&type=2 (84.110.173.93:443): client er",
+          "status": null,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": null,
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": true,
+          "block_page_detected": false
+        },
+        {
+          "ms": 1187,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210.z01&path=HebrewVerdicts/93/210/068/z01&type=2",
+          "host": "supremedecisions.court.gov.il",
+          "error": "error sending request from 10.32.83.189:51014 for https://supremedecisions.court.gov.il/Home/Download?fileName=93068210.z01&path=HebrewVerdicts/93/210/068/z01&type=2 (84.110.173.93:443): client error ",
+          "status": null,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": null,
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": true,
+          "block_page_detected": false
+        },
+        {
+          "ms": 2169,
+          "url": "https://elyon1.court.gov.il/files/93/210/068/z01/93068210.z01.htm",
+          "host": "elyon1.court.gov.il",
+          "error": "error sending request from 10.32.83.189:51208 for https://elyon1.court.gov.il/files/93/210/068/z01/93068210.z01.htm (84.110.173.108:443): client error (SendRequest): connection error: Connection reset",
+          "status": null,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": null,
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": true,
+          "block_page_detected": false
+        },
+        {
+          "ms": 0,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068211_Z01.txt&path=HebrewVerdicts/93/211/068/Z01&type=2",
+          "host": "supremedecisions.court.gov.il",
+          "error": null,
+          "status": null,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": null,
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": "repeated_connection_reset",
+          "connection_reset": false,
+          "block_page_detected": false
+        },
+        {
+          "ms": 300,
+          "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
+          "host": "m.knesset.gov.il",
+          "error": null,
+          "status": 200,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": "application/msword",
+          "rate_limited": false,
+          "content_length": 207360,
+          "skipped_reason": null,
+          "connection_reset": false,
+          "block_page_detected": false
+        }
+      ]
+    },
+    "footnotes_count": 0,
+    "dangling_markers": 0,
+    "answer_len": 320
+  },
+  {
+    "id": "MAYA",
+    "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי?",
+    "run_id": "d6c205f4-89da-4caf-ad11-5b3938144d35",
+    "terminal": true,
+    "ms": 122478,
+    "total_ms": 117752,
+    "branch": "insufficient_sources_limitation",
+    "source_nomination": {
+      "enabled": true,
+      "skipped": false,
+      "skip_reason": null,
+      "stage_failed": false,
+      "model_first": "openai/gpt-5-mini",
+      "model_final": "openai/gpt-5-mini",
+      "escalated": false,
+      "escalation_reason": null,
+      "mini_retry_used": false,
+      "mini_before": 9,
+      "mini_after": 7,
+      "fallback_to_mini_used": false,
+      "finish_reason": "tool_calls",
+      "reasoning_tokens": 0,
+      "parse_error": null,
+      "candidates_count": 7,
+      "dropped_count": 1,
+      "dropped_reasons": [
+        "judgment_cap"
+      ],
+      "identifier_bearing_count": 4,
+      "category_mix": {
+        "statute": 2,
+        "judgment": 2,
+        "scholarship": 3
+      },
+      "actionable_count": 4,
+      "exploratory_count": 3,
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 4,
+        "known_name_no_docket": 0
+      },
+      "known_name_no_docket_count": 0,
+      "topic_only_count": 3,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 3,
+        "0.8-1.0": 4
+      },
+      "stripped_identifiers": [],
+      "demoted_identifiers": [],
+      "queries_by_bucket": {
+        "actionable": 3,
+        "exploratory": 2
+      },
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "ms": 11486
+    },
+    "query_merge": {
+      "final_query_count": 14,
+      "from_nomination": 5,
+      "skipped_duplicate": 0,
+      "skipped_budget": 11,
+      "raw": {
+        "dropped": [
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "בג\"ץ סעד ביטול פסק דין של בית דין רבני החזרת הדיון פסיקה עוקבת פסקי דין שבה נקבעו הסעדים העומדים לזכות המבקש כאשר נחשף שיקול חיצוני (חיפוש פסיקה על אופי הסעד שניתן על ידי בית המשפט העליון)"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "בג\"ץ רמת הוכחה שיקול חיצוני בהליכים נגד פסקי דין של בתי דין רבניים האם נדרשת הודעה מפורשת בפסק הדין ראיות נסיבתיות 'בהירות סבירה' בפסק דין כדי להצדיק בירור שיפוטי"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "ערעורים מחוזיים סף ראייתי להעלאת טענת שיקול חיצוני נגד בית דין רבני ראיות נסיבתיות 'חשד סביר' פסקי דין של בתי משפט מתחת לבית המשפט העליון בנושא סף ההצגה"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "מאמרים על נטל ההוכחה בביקורת שיפוטית של פסקי דין של גופים שיפוטיים פנימיים: כיצד להעריך הודעות בפסק הדין וראיות נסיבתיות בבתי דין דתיים (חיפוש במאמרים משפטיים ישראלים ובינלאומיים)"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, פסק דין עליון"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:supremedecisions.court.gov.il Download"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:court.gov.il filetype:pdf פסק דין"
+          }
+        ],
+        "version": "query_merge_and_budget_v1",
+        "source_type_mix": {
+          "case": 7,
+          "statute": 3,
+          "academic": 4
+        },
+        "actionability_mix": {
+          "topic_only": 3,
+          "known_identifier": 4,
+          "known_name_no_docket": 0
+        },
+        "final_query_count": 14,
+        "actionable_queries": 3,
+        "demoted_identifiers": 0,
+        "exploratory_queries": 2,
+        "queries_by_producer": {
+          "planner": 9,
+          "source_nomination": 5
+        },
+        "stripped_identifiers": 0,
+        "planner_queries_count": 13,
+        "queries_skipped_budget": 11,
+        "nomination_queries_count": 5,
+        "queries_skipped_duplicate": 0,
+        "actionable_queries_preserved": 3,
+        "exploratory_queries_preserved": 2,
+        "queries_added_from_nomination": 5,
+        "identifier_confidence_histogram": {
+          "0.0-0.4": 3,
+          "0.8-1.0": 4
+        }
+      }
+    },
+    "official_discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 1,
+      "injected_candidate_ids": [
+        "nominated-source:N4"
+      ],
+      "cache_lookups": 1,
+      "cache_hits": 0,
+      "cache_misses": 1,
+      "cache_writes": 1,
+      "attempts": [
+        {
+          "label": "חוק בתי דין רבניים (נישואין וגירושין), התשכ\"ח-1968",
+          "category": "statute",
+          "docket": null,
+          "cache_lookup": "miss",
+          "cooldown_strategy": null,
+          "ignored_other_strategy_failures": 0,
+          "urls": [
+            "https://www.nevo.co.il/law_html/law00/73178.htm",
+            "https://fs.knesset.gov.il/%5C2%5Claw%5C2_ls1_288528.PDF",
+            "https://www.gov.il/BlobFolder/legalinfo/hok2/he/%D7%97%D7%95%D7%A7%20%D7%91%D7%AA%D7%99%20%D7%93%D7%99%D7%9F%20%D7%A8%D7%91%D7%A0%D7%99%D7%99%D7%9D.pdf"
+          ],
+          "path": "statute_official_url",
+          "result": "body_acquired",
+          "body_chars": 10813,
+          "cache_written": true,
+          "cache_write_error": null,
+          "reason": null,
+          "ms": 641
+        },
+        {
+          "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+          "category": "judgment",
+          "docket": "bagatz:1715/97",
+          "cache_lookup": "cooldown",
+          "cooldown_strategy": "search_first_judgment",
+          "ignored_other_strategy_failures": 1,
+          "urls": [],
+          "path": "none",
+          "result": "not_attempted",
+          "body_chars": 0,
+          "cache_written": false,
+          "cache_write_error": null,
+          "reason": "cooldown_until:2026-08-31T10:45:53.093Z",
+          "ms": 39
+        }
+      ]
+    },
+    "official_fetch": {
+      "version": "official_fetch_profile_v1",
+      "official_calls": 1,
+      "max_per_run": 5,
+      "stopped_reason": null,
+      "block_pages_detected": 0,
+      "rate_limited_events": 1,
+      "attempts": [
+        {
+          "ms": 274,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C15%5C390%5C073%5Ct06&fileName=15073390.t06&type=4",
+          "host": "supremedecisions.court.gov.il",
+          "error": "error sending request from 10.32.83.224:48744 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C15%5C390%5C073%5Ct06&fileName=15073390.t06&type=4 (84.110.173.93:443): clien",
+          "status": null,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": null,
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": true,
+          "block_page_detected": false
+        },
+        {
+          "ms": 437,
+          "url": "https://www.nevo.co.il/law_html/law00/73178.htm",
+          "host": "www.nevo.co.il",
+          "error": null,
+          "status": 200,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": "text/html; charset=utf-8",
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": false,
+          "block_page_detected": false
+        }
+      ]
+    },
+    "footnotes_count": 0,
+    "dangling_markers": 0,
+    "answer_len": 407
+  },
+  {
+    "id": "NATION-STATE",
+    "query": "מה נקבע בבג\"ץ 5555/18 חסון נ' כנסת ישראל בעניין חוק יסוד: ישראל - מדינת הלאום של העם היהודי?",
+    "run_id": "70e8db3b-79ba-4ccc-af05-77685491a7ff",
+    "terminal": true,
+    "ms": 127678,
+    "total_ms": 125630,
+    "branch": null,
+    "source_nomination": {
+      "enabled": true,
+      "skipped": false,
+      "skip_reason": null,
+      "stage_failed": false,
+      "model_first": "openai/gpt-5-mini",
+      "model_final": "openai/gpt-5-mini",
+      "escalated": false,
+      "escalation_reason": null,
+      "mini_retry_used": false,
+      "mini_before": 7,
+      "mini_after": 6,
+      "fallback_to_mini_used": false,
+      "finish_reason": "tool_calls",
+      "reasoning_tokens": 0,
+      "parse_error": null,
+      "candidates_count": 6,
+      "dropped_count": 0,
+      "dropped_reasons": [],
+      "identifier_bearing_count": 2,
+      "category_mix": {
+        "statute": 1,
+        "judgment": 2,
+        "scholarship": 3
+      },
+      "actionable_count": 3,
+      "exploratory_count": 3,
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 2,
+        "known_name_no_docket": 1
+      },
+      "known_name_no_docket_count": 1,
+      "topic_only_count": 3,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 4,
+        "0.8-1.0": 2
+      },
+      "stripped_identifiers": [],
+      "demoted_identifiers": [],
+      "queries_by_bucket": {
+        "actionable": 3,
+        "exploratory": 2
+      },
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "ms": 8002
+    },
+    "query_merge": {
+      "final_query_count": 19,
+      "from_nomination": 5,
+      "skipped_duplicate": 2,
+      "skipped_budget": 0,
+      "raw": {
+        "dropped": [
+          {
+            "reason": "duplicate_exact",
+            "producer": "required_anchors",
+            "query_he": "בג״ץ 5555/18",
+            "duplicate_of": "בג\"ץ 5555/18"
+          },
+          {
+            "reason": "duplicate_near",
+            "producer": "required_anchors",
+            "query_he": "בג\"ץ 5555-18",
+            "duplicate_of": "בג\"ץ 5555/18"
+          }
+        ],
+        "version": "query_merge_and_budget_v1",
+        "source_type_mix": {
+          "case": 13,
+          "statute": 3,
+          "academic": 3
+        },
+        "actionability_mix": {
+          "topic_only": 3,
+          "known_identifier": 2,
+          "known_name_no_docket": 1
+        },
+        "final_query_count": 19,
+        "actionable_queries": 3,
+        "demoted_identifiers": 0,
+        "exploratory_queries": 2,
+        "queries_by_producer": {
+          "planner": 9,
+          "required_anchors": 2,
+          "source_nomination": 5,
+          "judgment_discovery": 3
+        },
+        "stripped_identifiers": 0,
+        "planner_queries_count": 9,
+        "queries_skipped_budget": 0,
+        "nomination_queries_count": 5,
+        "queries_skipped_duplicate": 2,
+        "actionable_queries_preserved": 3,
+        "exploratory_queries_preserved": 2,
+        "queries_added_from_nomination": 5,
+        "identifier_confidence_histogram": {
+          "0.0-0.4": 4,
+          "0.8-1.0": 2
+        }
+      }
+    },
+    "official_discovery": {
+      "enabled": false,
+      "skip_reason": "target_cap_zero",
+      "targets": 0,
+      "bodies_acquired": 0,
+      "injected_candidate_ids": [],
+      "cache_lookups": 0,
+      "cache_hits": 0,
+      "cache_misses": 0,
+      "cache_writes": 0,
+      "attempts": []
+    },
+    "official_fetch": {
+      "version": "official_fetch_profile_v1",
+      "official_calls": 3,
+      "max_per_run": 5,
+      "stopped_reason": "repeated_connection_reset",
+      "block_pages_detected": 0,
+      "rate_limited_events": 3,
+      "attempts": [
+        {
+          "ms": 278,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=18055550_Z01.txt&path=HebrewVerdicts/18/550/055/Z01&type=2",
+          "host": "supremedecisions.court.gov.il",
+          "error": "error sending request from 10.32.87.37:36028 for https://supremedecisions.court.gov.il/Home/Download?fileName=18055550_Z01.txt&path=HebrewVerdicts/18/550/055/Z01&type=2 (84.110.173.93:443): client err",
+          "status": null,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": null,
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": true,
+          "block_page_detected": false
+        },
+        {
+          "ms": 1174,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=18055550.z01&path=HebrewVerdicts/18/550/055/z01&type=2",
+          "host": "supremedecisions.court.gov.il",
+          "error": "error sending request from 10.32.87.37:36032 for https://supremedecisions.court.gov.il/Home/Download?fileName=18055550.z01&path=HebrewVerdicts/18/550/055/z01&type=2 (84.110.173.93:443): client error (",
+          "status": null,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": null,
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": true,
+          "block_page_detected": false
+        },
+        {
+          "ms": 2063,
+          "url": "https://elyon1.court.gov.il/files/18/550/055/z01/18055550.z01.htm",
+          "host": "elyon1.court.gov.il",
+          "error": "error sending request from 10.32.87.37:49200 for https://elyon1.court.gov.il/files/18/550/055/z01/18055550.z01.htm (84.110.173.108:443): client error (SendRequest): connection error: Connection reset ",
+          "status": null,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": null,
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": true,
+          "block_page_detected": false
+        },
+        {
+          "ms": 0,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=18055551_Z01.txt&path=HebrewVerdicts/18/551/055/Z01&type=2",
+          "host": "supremedecisions.court.gov.il",
+          "error": null,
+          "status": null,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": null,
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": "repeated_connection_reset",
+          "connection_reset": false,
+          "block_page_detected": false
+        }
+      ]
+    },
+    "footnotes_count": 1,
+    "dangling_markers": 0,
+    "answer_len": 2305
+  },
+  {
+    "id": "P02",
+    "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+    "run_id": "03b02aa4-7057-473f-90dc-c0c444010067",
+    "terminal": true,
+    "ms": 117002,
+    "total_ms": 112142,
+    "branch": "docket_limitation",
+    "source_nomination": {
+      "enabled": true,
+      "skipped": false,
+      "skip_reason": null,
+      "stage_failed": false,
+      "model_first": "openai/gpt-5-mini",
+      "model_final": "openai/gpt-5-mini",
+      "escalated": false,
+      "escalation_reason": null,
+      "mini_retry_used": false,
+      "mini_before": 6,
+      "mini_after": 6,
+      "fallback_to_mini_used": false,
+      "finish_reason": "tool_calls",
+      "reasoning_tokens": 320,
+      "parse_error": null,
+      "candidates_count": 6,
+      "dropped_count": 0,
+      "dropped_reasons": [],
+      "identifier_bearing_count": 3,
+      "category_mix": {
+        "statute": 2,
+        "judgment": 1,
+        "scholarship": 2,
+        "government_report": 1
+      },
+      "actionable_count": 3,
+      "exploratory_count": 3,
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 0
+      },
+      "known_name_no_docket_count": 0,
+      "topic_only_count": 3,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 3,
+        "0.8-1.0": 3
+      },
+      "stripped_identifiers": [],
+      "demoted_identifiers": [],
+      "queries_by_bucket": {
+        "actionable": 3,
+        "exploratory": 2
+      },
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "ms": 8885
+    },
+    "query_merge": {
+      "final_query_count": 20,
+      "from_nomination": 5,
+      "skipped_duplicate": 2,
+      "skipped_budget": 0,
+      "raw": {
+        "dropped": [
+          {
+            "reason": "duplicate_exact",
+            "producer": "required_anchors",
+            "query_he": "ע״א 99887/04/22",
+            "duplicate_of": "ע\"א 99887/04/22"
+          },
+          {
+            "reason": "duplicate_near",
+            "producer": "required_anchors",
+            "query_he": "ע\"א 99887-04-22",
+            "duplicate_of": "ע\"א 99887/04/22"
+          }
+        ],
+        "version": "query_merge_and_budget_v1",
+        "source_type_mix": {
+          "case": 13,
+          "report": 2,
+          "statute": 3,
+          "academic": 2
+        },
+        "actionability_mix": {
+          "topic_only": 3,
+          "known_identifier": 3,
+          "known_name_no_docket": 0
+        },
+        "final_query_count": 20,
+        "actionable_queries": 3,
+        "demoted_identifiers": 0,
+        "exploratory_queries": 2,
+        "queries_by_producer": {
+          "planner": 10,
+          "required_anchors": 2,
+          "source_nomination": 5,
+          "judgment_discovery": 3
+        },
+        "stripped_identifiers": 0,
+        "planner_queries_count": 10,
+        "queries_skipped_budget": 0,
+        "nomination_queries_count": 5,
+        "queries_skipped_duplicate": 2,
+        "actionable_queries_preserved": 3,
+        "exploratory_queries_preserved": 2,
+        "queries_added_from_nomination": 5,
+        "identifier_confidence_histogram": {
+          "0.0-0.4": 3,
+          "0.8-1.0": 3
+        }
+      }
+    },
+    "official_discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 1,
+      "injected_candidate_ids": [
+        "nominated-source:N2"
+      ],
+      "cache_lookups": 2,
+      "cache_hits": 0,
+      "cache_misses": 2,
+      "cache_writes": 1,
+      "attempts": [
+        {
+          "label": "ע\"א 99887-04-22 לוי נ' מדינת ישראל",
+          "category": "judgment",
+          "docket": "aa:99887/4/22",
+          "cache_lookup": "miss",
+          "cooldown_strategy": null,
+          "ignored_other_strategy_failures": 0,
+          "search_first": {
+            "ms": 3468,
+            "ran": true,
+            "queries": [
+              "99887-04-22 ע\"א 99887-04-22 לוי נ' מדינת ישראל פסק דין מלא מקור רשמי supremedecisions.court.gov.il OR court.gov.il"
+            ],
+            "mirror_urls": 3,
+            "skip_reason": null,
+            "official_urls": 2
+          },
+          "urls": [
+            "https://www.gov.il/he/Departments/DynamicCollectors/verdict_the_rabbinical_courts",
+            "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf",
+            "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'-%D7%9C%D7%95%D7%99_85",
+            "https://lite.takdin.co.il/%D7%99%D7%94%D7%95%D7%A9%D7%A2%20%D7%9C%D7%95%D7%99%20%D7%91%D7%A9%D7%9D%20%D7%94%D7%A0%D7%90%D7%A9%D7%9D_s.html"
+          ],
+          "path": "none",
+          "result": "fetch_failed",
+          "body_chars": 0,
+          "cache_written": false,
+          "cache_write_error": null,
+          "reason": "plain_text_host_not_trusted",
+          "ms": 4459
+        },
+        {
+          "label": "חוק סדר הדין האזרחי, תשמ\"ד-1984",
+          "category": "statute",
+          "docket": null,
+          "cache_lookup": "miss",
+          "cooldown_strategy": null,
+          "ignored_other_strategy_failures": 0,
+          "urls": [
+            "https://www.gov.il/BlobFolder/news/16122020/he/16.12-explanatory.pdf",
+            "https://www.nevo.co.il/law_html/law00/157751.htm"
+          ],
+          "path": "statute_official_url",
+          "result": "body_acquired",
+          "body_chars": 113930,
+          "cache_written": true,
+          "cache_write_error": null,
+          "reason": null,
+          "ms": 821
+        }
+      ]
+    },
+    "official_fetch": {
+      "version": "official_fetch_profile_v1",
+      "official_calls": 0,
+      "max_per_run": 5,
+      "stopped_reason": null,
+      "block_pages_detected": 0,
+      "rate_limited_events": 0,
+      "attempts": [
+        {
+          "ms": 77,
+          "url": "https://www.gov.il/he/Departments/DynamicCollectors/verdict_the_rabbinical_courts",
+          "host": "www.gov.il",
+          "error": null,
+          "status": 403,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": "text/html; charset=UTF-8",
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": false,
+          "block_page_detected": false
+        },
+        {
+          "ms": 8,
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf",
+          "host": "www.gov.il",
+          "error": null,
+          "status": 403,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": "text/html; charset=UTF-8",
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": false,
+          "block_page_detected": false
+        },
+        {
+          "ms": 10,
+          "url": "https://www.gov.il/BlobFolder/news/16122020/he/16.12-explanatory.pdf",
+          "host": "www.gov.il",
+          "error": null,
+          "status": 403,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": "text/html; charset=UTF-8",
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": false,
+          "block_page_detected": false
+        },
+        {
+          "ms": 463,
+          "url": "https://www.nevo.co.il/law_html/law00/157751.htm",
+          "host": "www.nevo.co.il",
+          "error": null,
+          "status": 200,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": "text/html; charset=utf-8",
+          "rate_limited": false,
+          "content_length": null,
+          "skipped_reason": null,
+          "connection_reset": false,
+          "block_page_detected": false
+        }
+      ]
+    },
+    "footnotes_count": 0,
+    "dangling_markers": 0,
+    "answer_len": 345
+  },
+  {
+    "id": "B8",
+    "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+    "run_id": "cfab286a-aa5e-438a-bb54-61b5abd0cdc8",
+    "terminal": true,
+    "ms": 83779,
+    "total_ms": 79620,
+    "branch": "canonical_quote_registry",
+    "source_nomination": {
+      "enabled": false,
+      "skipped": true,
+      "skip_reason": "router_or_mode_skip",
+      "stage_failed": false,
+      "model_first": null,
+      "model_final": null,
+      "escalated": false,
+      "escalation_reason": null,
+      "mini_retry_used": false,
+      "mini_before": 0,
+      "mini_after": 0,
+      "fallback_to_mini_used": false,
+      "finish_reason": null,
+      "reasoning_tokens": null,
+      "parse_error": null,
+      "candidates_count": 0,
+      "dropped_count": 0,
+      "dropped_reasons": [],
+      "identifier_bearing_count": 0,
+      "category_mix": {},
+      "actionable_count": 0,
+      "exploratory_count": 0,
+      "actionability_mix": {
+        "topic_only": 0,
+        "known_identifier": 0,
+        "known_name_no_docket": 0
+      },
+      "known_name_no_docket_count": 0,
+      "topic_only_count": 0,
+      "identifier_confidence_histogram": {},
+      "stripped_identifiers": [],
+      "demoted_identifiers": [],
+      "queries_by_bucket": {
+        "actionable": 0,
+        "exploratory": 0
+      },
+      "actionable_queries_preserved": 0,
+      "exploratory_queries_preserved": 0,
+      "ms": 0
+    },
+    "query_merge": {
+      "final_query_count": 8,
+      "from_nomination": 0,
+      "skipped_duplicate": 0,
+      "skipped_budget": 0,
+      "raw": {
+        "dropped": [],
+        "version": "query_merge_and_budget_v1",
+        "source_type_mix": {
+          "report": 2,
+          "statute": 6
+        },
+        "actionability_mix": {
+          "topic_only": 0,
+          "known_identifier": 0,
+          "known_name_no_docket": 0
+        },
+        "final_query_count": 8,
+        "actionable_queries": 0,
+        "demoted_identifiers": 0,
+        "exploratory_queries": 0,
+        "queries_by_producer": {
+          "planner": 5,
+          "required_anchors": 3
+        },
+        "stripped_identifiers": 0,
+        "planner_queries_count": 5,
+        "queries_skipped_budget": 0,
+        "nomination_queries_count": 0,
+        "queries_skipped_duplicate": 0,
+        "actionable_queries_preserved": 0,
+        "exploratory_queries_preserved": 0,
+        "queries_added_from_nomination": 0,
+        "identifier_confidence_histogram": {}
+      }
+    },
+    "official_discovery": {
+      "enabled": false,
+      "skip_reason": "nomination_skipped",
+      "targets": 0,
+      "bodies_acquired": 0,
+      "injected_candidate_ids": [],
+      "cache_lookups": 0,
+      "cache_hits": 0,
+      "cache_misses": 0,
+      "cache_writes": 0,
+      "attempts": []
+    },
+    "official_fetch": {
+      "version": "official_fetch_profile_v1",
+      "official_calls": 0,
+      "max_per_run": 5,
+      "stopped_reason": null,
+      "block_pages_detected": 0,
+      "rate_limited_events": 0,
+      "attempts": [
+        {
+          "ms": 163,
+          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+          "host": "m.knesset.gov.il",
+          "error": null,
+          "status": 200,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": "application/pdf",
+          "rate_limited": false,
+          "content_length": 61995,
+          "skipped_reason": null,
+          "connection_reset": false,
+          "block_page_detected": false
+        }
+      ]
+    },
+    "footnotes_count": 1,
+    "dangling_markers": 0,
+    "answer_len": 364
+  }
+]

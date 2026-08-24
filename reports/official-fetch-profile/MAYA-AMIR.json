@@ -1,0 +1,240 @@
+{
+  "id": "MAYA-AMIR",
+  "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי? התייחסו לעניין סימה אמיר.",
+  "run_id": "5498dd74-1cf6-412c-9950-b0a0a131db21",
+  "terminal": true,
+  "ms": 139719,
+  "total_ms": 137069,
+  "branch": null,
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 8,
+    "mini_after": 5,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 0,
+    "parse_error": null,
+    "candidates_count": 5,
+    "dropped_count": 2,
+    "dropped_reasons": [
+      "low_relevance_confidence",
+      "judgment_cap"
+    ],
+    "identifier_bearing_count": 2,
+    "category_mix": {
+      "judgment": 2,
+      "scholarship": 2,
+      "government_report": 1
+    },
+    "actionable_count": 2,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 2,
+      "known_name_no_docket": 0
+    },
+    "known_name_no_docket_count": 0,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 3,
+      "0.8-1.0": 2
+    },
+    "stripped_identifiers": [],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 2,
+      "exploratory": 3
+    },
+    "actionable_queries_preserved": 2,
+    "exploratory_queries_preserved": 3,
+    "ms": 8635
+  },
+  "query_merge": {
+    "final_query_count": 14,
+    "from_nomination": 5,
+    "skipped_duplicate": 0,
+    "skipped_budget": 7,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, פסק דין עליון"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:supremedecisions.court.gov.il Download"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:court.gov.il filetype:pdf פסק דין"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 7,
+        "report": 1,
+        "statute": 2,
+        "academic": 4
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 2,
+        "known_name_no_docket": 0
+      },
+      "final_query_count": 14,
+      "actionable_queries": 2,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 3,
+      "queries_by_producer": {
+        "planner": 9,
+        "source_nomination": 5
+      },
+      "stripped_identifiers": 0,
+      "planner_queries_count": 9,
+      "queries_skipped_budget": 7,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 0,
+      "actionable_queries_preserved": 2,
+      "exploratory_queries_preserved": 3,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 3,
+        "0.8-1.0": 2
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 0,
+    "injected_candidate_ids": [],
+    "cache_lookups": 0,
+    "cache_hits": 0,
+    "cache_misses": 0,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "בג\"ץ 8497/00 סימה אמיר",
+        "category": "judgment",
+        "docket": "bagatz:8497/0",
+        "cache_lookup": "cooldown",
+        "cooldown_strategy": "search_first_judgment",
+        "ignored_other_strategy_failures": 1,
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "cooldown_until:2026-08-31T12:04:11.444Z",
+        "ms": 102
+      },
+      {
+        "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+        "category": "judgment",
+        "docket": "bagatz:1715/97",
+        "cache_lookup": "cooldown",
+        "cooldown_strategy": "search_first_judgment",
+        "ignored_other_strategy_failures": 1,
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "cooldown_until:2026-08-31T10:45:53.093Z",
+        "ms": 80
+      }
+    ]
+  },
+  "official_fetch": {
+    "version": "official_fetch_profile_v1",
+    "official_calls": 1,
+    "max_per_run": 5,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "rate_limited_events": 1,
+    "attempts": [
+      {
+        "ms": 359,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/1&fileName=SB1_19_10078-03.pdf&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.84.149:55188 for https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/1&fileName=SB1_19_10078-03.pdf&type=2 (84.110.173.93:443): client error (Send",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "block_page_detected": false
+      }
+    ]
+  },
+  "footnotes_count": 2,
+  "dangling_markers": 0,
+  "answer_len": 2706,
+  "answer": "שורה תחתונה: בג\"ץ יבחן פסקי בתי הדין הרבניים בענייני חלוקת רכוש לאחר גירושין באמצעות בקרת חוקיות וסבירות רגולטורית — כלומר יוכל להתערב כאשר מתגלה פגם משפטי מהותי (למשל היעדר יישום הדין האזרחי הרלוונטי, חריגה מסמכות או הסתמכות על שיקול זר שקטלגוגי משפיע על ההכרעה) או חוסר סבירות קיצוני בשיקול הדעת של בית הדין; במקרים שבהם הותקפה רק ההשקפה הערכית או נימוק דתי נטו בג\"ץ נוטה להימנע מהחלפה ישירה של שיקול הדין ולדרוש הבהרות או החזרת הדיון בביה\"ד הרלוונטי.\n\nבסיס סמכותי ועקרוני להתערבות: כאשר נטען שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי, בג\"ץ בוחן האם הכרעת בית הדין חרגה מתחום סמכותה המשפטית או לא השתמשה בדין הרלוונטי — הביקורת מתקיימת במסגרת בדיקת חוקיות (האם בוצע פירוש/יישום שגוי של הדין) ובדיקת סבירות/הגינות ההליך (האם ההחלטה סבירה בהתחשב בנסיבות ובאמות המידה המשפטיות). היקף הביקורת מושפע מן העקרון הדיכוטומי בין נטייה למתן פתח להליך פנימי לבין מניעת פגיעה בזכויות אזרחיות שנובע מטעמי טעם משפטי.\n\nקריטריונים מעשיים שבג\"ץ ישקול כדי לקבוע התערבות: א. חריגה מסמכות או שיקול שאין לו ביסוס בדין האזרחי; ב. אי־יישום של כלל משפטי רלוונטי או טעות מהותית ביישום הדין; ג. חוסר סבירות קיצוני בתוצאה ובהיקף הפגיעה בזכויות; ד. פגם פרוצדורלי משמעותי בחובת הנימוק או בקיום הליך הוגן; ה. הוכחה לעיוות עובדתי מהותי שניכר בפסק הדין. כדי לקבוע פגם ממשי בג\"ץ ישתמש בכלי בדיקת הסבירות וההגינות כפי שהם נהוגים בפסיקה המנהלית והחוקתית.¹\n\nהערה על מקרה סימה אמיר: במקורות שאותרו למענה זה לא נמצא טקסט של פסק דין בשם סימה אמיר או תמצית החלטה מפורשת שמובאת בו; אי־אפשר לפעול להסקת הלכה ספציפית לגבי החזקה או אמת המידה שהונהגה בתיק זה ללא הפניה ישירה לפסק הדין או לציטוט מהימן שלו. במידה ותרצו, אפשר להעלות את הטקסט/מסמך התיק לצורך ניתוח ישיר של הלכת המקרה.\n\nסעד אפשרי ותכלית ההתערבות: כאשר בג\"ץ קובע שהיתה הסתמכות על שיקול חיצוני או פגם מהותי, הוא יכול לפסול את פסק בית הדין, להחזיר את התיק לדיון נוסף בבית הדין הרבני עם הוראות ממוקדות (למשל ליישם כללים אזרחיים ספציפיים או להשלים הליך הוכחות), לדרוש נימוקים נוספים, או לתת צווי תיקון נקודתיים; במקרים נדירים ובהתאם לעקרונות ההגינות המנהלית, ובפרט אם העניין נמצא במסגרת בחינת זכויות יסוד, בג\"ץ רשאי להחליף שיקול דעת ביחס לתוצאה אך המגמה היא להעדיף החזרה לפסק בית הדין לתיקון או להבהרה במקום החלפה מלאה של שיקול הדין.\n\nמגבלת זהירות מתודולוגית: יש לנסח מסקנות על יסוד העקרונות התאורטיים של ביקורת שיפוטית ויישומן בזהירות — בפרקטיקה קיימת מתיחות בין הנטייה להעניק מידה של איפוק לגבי גופים דתיים ובין הצורך להגן על זכויות אזרחיות ויישום הדין האזרחי; לכן כל מקרה יתפספר על פי נסיבותיו והטענות העובדתיות והמשפטיות שהוצגו לפני בג\"ץ.²\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/1&fileName=SB1_19_10078-03.pdf&type=2",
+      "title": "ע\"א 10078-03 - אורי שתיל נ. מקורות חברת מים בע\"מ",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/1&fileName=SB1_19_10078-03.pdf&type=2",
+          "title": "ע\"א 10078-03 - אורי שתיל נ. מקורות חברת מים בע\"מ",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "supreme_court_il"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
+      "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
+          "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
+          "source_type": "journal_article"
+        }
+      ],
+      "source_type": "journal_article"
+    }
+  ]
+}

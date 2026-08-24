@@ -1,0 +1,143 @@
+{
+  "id": "B8",
+  "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+  "run_id": "cfab286a-aa5e-438a-bb54-61b5abd0cdc8",
+  "terminal": true,
+  "ms": 83779,
+  "total_ms": 79620,
+  "branch": "canonical_quote_registry",
+  "source_nomination": {
+    "enabled": false,
+    "skipped": true,
+    "skip_reason": "router_or_mode_skip",
+    "stage_failed": false,
+    "model_first": null,
+    "model_final": null,
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 0,
+    "mini_after": 0,
+    "fallback_to_mini_used": false,
+    "finish_reason": null,
+    "reasoning_tokens": null,
+    "parse_error": null,
+    "candidates_count": 0,
+    "dropped_count": 0,
+    "dropped_reasons": [],
+    "identifier_bearing_count": 0,
+    "category_mix": {},
+    "actionable_count": 0,
+    "exploratory_count": 0,
+    "actionability_mix": {
+      "topic_only": 0,
+      "known_identifier": 0,
+      "known_name_no_docket": 0
+    },
+    "known_name_no_docket_count": 0,
+    "topic_only_count": 0,
+    "identifier_confidence_histogram": {},
+    "stripped_identifiers": [],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 0,
+      "exploratory": 0
+    },
+    "actionable_queries_preserved": 0,
+    "exploratory_queries_preserved": 0,
+    "ms": 0
+  },
+  "query_merge": {
+    "final_query_count": 8,
+    "from_nomination": 0,
+    "skipped_duplicate": 0,
+    "skipped_budget": 0,
+    "raw": {
+      "dropped": [],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "report": 2,
+        "statute": 6
+      },
+      "actionability_mix": {
+        "topic_only": 0,
+        "known_identifier": 0,
+        "known_name_no_docket": 0
+      },
+      "final_query_count": 8,
+      "actionable_queries": 0,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 0,
+      "queries_by_producer": {
+        "planner": 5,
+        "required_anchors": 3
+      },
+      "stripped_identifiers": 0,
+      "planner_queries_count": 5,
+      "queries_skipped_budget": 0,
+      "nomination_queries_count": 0,
+      "queries_skipped_duplicate": 0,
+      "actionable_queries_preserved": 0,
+      "exploratory_queries_preserved": 0,
+      "queries_added_from_nomination": 0,
+      "identifier_confidence_histogram": {}
+    }
+  },
+  "official_discovery": {
+    "enabled": false,
+    "skip_reason": "nomination_skipped",
+    "targets": 0,
+    "bodies_acquired": 0,
+    "injected_candidate_ids": [],
+    "cache_lookups": 0,
+    "cache_hits": 0,
+    "cache_misses": 0,
+    "cache_writes": 0,
+    "attempts": []
+  },
+  "official_fetch": {
+    "version": "official_fetch_profile_v1",
+    "official_calls": 0,
+    "max_per_run": 5,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "rate_limited_events": 0,
+    "attempts": [
+      {
+        "ms": 163,
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "host": "m.knesset.gov.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "application/pdf",
+        "rate_limited": false,
+        "content_length": 61995,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      }
+    ]
+  },
+  "footnotes_count": 1,
+  "dangling_markers": 0,
+  "answer_len": 364,
+  "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹\n\n> לא אותרה פסיקה ברת-שימוש במסגרת החיפוש; התשובה מתמקדת בלשון הסעיף.",
+  "footnotes": [
+    {
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+          "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "israeli_law"
+    }
+  ]
+}
