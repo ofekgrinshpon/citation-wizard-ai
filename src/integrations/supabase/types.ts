@@ -756,6 +756,11 @@ export type Database = {
           case_prefix: string | null
           court: string | null
           created_at: string
+          dedupe_docket: string | null
+          dedupe_statute_section: string | null
+          dedupe_statute_title: string | null
+          discovery_strategy: string
+          discovery_version: string
           failure_count: number
           id: string
           identity_terms_matched: string[]
@@ -792,6 +797,11 @@ export type Database = {
           case_prefix?: string | null
           court?: string | null
           created_at?: string
+          dedupe_docket?: string | null
+          dedupe_statute_section?: string | null
+          dedupe_statute_title?: string | null
+          discovery_strategy?: string
+          discovery_version?: string
           failure_count?: number
           id?: string
           identity_terms_matched?: string[]
@@ -828,6 +838,11 @@ export type Database = {
           case_prefix?: string | null
           court?: string | null
           created_at?: string
+          dedupe_docket?: string | null
+          dedupe_statute_section?: string | null
+          dedupe_statute_title?: string | null
+          discovery_strategy?: string
+          discovery_version?: string
           failure_count?: number
           id?: string
           identity_terms_matched?: string[]

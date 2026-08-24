@@ -56,12 +56,328 @@ import {
   recordVerifiedSource,
   VERIFIED_SOURCE_CACHE_VERSION,
 } from "./verifiedSourceCache.ts";
+// judgment_search_first_discovery_v1
+//
+// Deterministic URL derivation from a *model-supplied* docket is fragile: the
+// docket may be wrong (Sima Amir was nominated as 8497/00 while the real case
+// is 8638/03) and the Supreme Court archive object code cannot be guessed for
+// older judgments. This module replaces guessing with searching: it asks the
+// search provider for the official document URL of a named judgment, keeps
+// only official / high-trust hosts, and hands the URLs back for bounded
+// acquisition. Identity is then proven *inside the acquired body*.
+//
+// This module never cites, never drafts, never relaxes a gate. It performs at
+// most one bounded search call per target and returns URLs only.
+
+export const JUDGMENT_SEARCH_FIRST_VERSION = "judgment_search_first_discovery_v1";
+
+export const SEARCH_FIRST_LIMITS = {
+  /** One search call per target; the whole point is to be cheap. */
+  TIMEOUT_MS: 12_000,
+  MAX_URLS: 6,
+  MAX_RESULTS: 8,
+} as const;
+
+/** Official Israeli court / legislature hosts — always preferred. */
+const OFFICIAL_JUDGMENT_HOST_RE =
+  /(^|\.)(supremedecisions\.court\.gov\.il|elyon1\.court\.gov\.il|elyon2\.court\.gov\.il|supreme\.court\.gov\.il|court\.gov\.il|justice\.gov\.il|gov\.il|knesset\.gov\.il)$/i;
+
+/**
+ * High-trust judgment mirrors. Only used when no official URL could be
+ * acquired, and only if source integrity later accepts the row — nothing here
+ * makes a mirror citable on its own.
+ */
+const HIGH_TRUST_MIRROR_HOST_RE =
+  /(^|\.)(nevo\.co\.il|takdin\.co\.il|lite\.takdin\.co\.il|psakdin\.co\.il|din\.org\.il)$/i;
+
+/** Never worth a fetch for a judgment body. */
+const NON_BODY_HOST_RE =
+  /(wikipedia\.org|scholar\.google|facebook\.com|twitter\.com|x\.com|youtube\.com|linkedin\.com)/i;
+
+const LISTING_PATH_RE =
+  /(search|results|list|index|category|tags?|archive|rss)(\/|\?|$)/i;
+
+export type SearchUrlTrust = "official" | "high_trust_mirror";
+
+export interface SearchFirstUrl {
+  url: string;
+  host: string;
+  trust: SearchUrlTrust;
+  title: string;
+  /** True when the result page is an official English translation. */
+  official_translation: boolean;
+}
+
+export interface JudgmentSearchFirstResult {
+  version: typeof JUDGMENT_SEARCH_FIRST_VERSION;
+  ran: boolean;
+  skip_reason: string | null;
+  queries: string[];
+  results_seen: number;
+  official_urls: SearchFirstUrl[];
+  mirror_urls: SearchFirstUrl[];
+  http: number | null;
+  ms: number;
+}
+
+export interface JudgmentSearchFirstInput {
+  /** Model-supplied docket — a *hint* only, never a derivation key. */
+  docket_display?: string | null;
+  /** Case / party label, e.g. `בג"ץ 8638/03 סימה אמיר נ' בית הדין הרבני`. */
+  label: string;
+  party_names?: string[];
+  court?: string | null;
+  year?: number | null;
+  timeout_ms?: number;
+  signal?: AbortSignal;
+}
+
+function hostOf(url: string): string {
+  try {
+    return new URL(url).hostname.toLowerCase();
+  } catch {
+    return "";
+  }
+}
+
+function pathOf(url: string): string {
+  try {
+    return new URL(url).pathname.toLowerCase();
+  } catch {
+    return "";
+  }
+}
+
+/** Build one compact Hebrew search query targeting the official document. */
+export function buildSearchFirstQuery(input: JudgmentSearchFirstInput): string {
+  const parts = [
+    input.docket_display?.trim() || "",
+    input.label.trim().slice(0, 90),
+    input.year ? String(input.year) : "",
+    "פסק דין מלא מקור רשמי supremedecisions.court.gov.il OR court.gov.il",
+  ].filter(Boolean);
+  return parts.join(" ").slice(0, 300);
+}
+
+function classifyUrl(url: string, title: string): SearchFirstUrl | null {
+  const host = hostOf(url);
+  if (!host || NON_BODY_HOST_RE.test(host)) return null;
+  const path = pathOf(url);
+  if (LISTING_PATH_RE.test(path) && !/download|doc|file|verdict/i.test(path)) return null;
+  const official = OFFICIAL_JUDGMENT_HOST_RE.test(host);
+  const mirror = HIGH_TRUST_MIRROR_HOST_RE.test(host);
+  if (!official && !mirror) return null;
+  return {
+    url,
+    host,
+    trust: official ? "official" : "high_trust_mirror",
+    title: String(title ?? "").slice(0, 200),
+    official_translation: official && /\/eng|english|_e\b|translat/i.test(`${path} ${title}`),
+  };
+}
+
+/**
+ * Search for the official document URL of a named judgment.
+ *
+ * Returns URLs only — nothing is fetched, extracted, cached or cited here.
+ * The docket, when present, is used as a search hint, not as a derivation key,
+ * so a wrong model docket can still be corrected by name/party signals.
+ */
+export async function searchOfficialJudgmentUrls(
+  input: JudgmentSearchFirstInput,
+): Promise<JudgmentSearchFirstResult> {
+  const t0 = Date.now();
+  const out: JudgmentSearchFirstResult = {
+    version: JUDGMENT_SEARCH_FIRST_VERSION,
+    ran: false,
+    skip_reason: null,
+    queries: [],
+    results_seen: 0,
+    official_urls: [],
+    mirror_urls: [],
+    http: null,
+    ms: 0,
+  };
+  const key = Deno.env.get("PERPLEXITY_API_KEY");
+  if (!key) {
+    out.skip_reason = "no_search_provider_key";
+    out.ms = Date.now() - t0;
+    return out;
+  }
+  if (!input.label || input.label.trim().length < 3) {
+    out.skip_reason = "no_label";
+    out.ms = Date.now() - t0;
+    return out;
+  }
+
+  const query = buildSearchFirstQuery(input);
+  out.queries.push(query);
+  const timeout = Math.max(2_000, input.timeout_ms ?? SEARCH_FIRST_LIMITS.TIMEOUT_MS);
+  const sys =
+    "אתה מאתר את המסמך הרשמי של פסק דין ישראלי. החזר קישורים ישירים למסמך פסק הדין " +
+    "(supremedecisions.court.gov.il, elyon1.court.gov.il, court.gov.il, gov.il), " +
+    "ורק אם אין — למאגר פסיקה מוכר. אל תמציא קישורים. אם מספר התיק שסופק שגוי, " +
+    "החזר את מספר התיק והקישור הנכונים לפי שמות הצדדים.";
+
+  try {
+    out.ran = true;
+    const r = await fetch("https://api.perplexity.ai/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "sonar",
+        messages: [
+          { role: "system", content: sys },
+          { role: "user", content: query },
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "judgment_documents",
+            schema: {
+              type: "object",
+              properties: {
+                documents: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      title: { type: "string" },
+                      docket: { type: "string" },
+                      url: { type: "string" },
+                    },
+                    required: ["title"],
+                  },
+                },
+              },
+              required: ["documents"],
+            },
+          },
+        },
+      }),
+      signal: input.signal ?? AbortSignal.timeout(timeout),
+    });
+    out.http = r.status;
+    if (!r.ok) {
+      out.skip_reason = `search_http_${r.status}`;
+      out.ms = Date.now() - t0;
+      return out;
+    }
+    const j = await r.json();
+    const content = j?.choices?.[0]?.message?.content ?? "";
+    const citations: string[] = Array.isArray(j?.citations) ? j.citations : [];
+    let parsed: { documents?: Array<{ title?: string; url?: string; docket?: string }> } = {};
+    try {
+      parsed = JSON.parse(content);
+    } catch { /* tolerate non-JSON */ }
+    const docs = Array.isArray(parsed.documents) ? parsed.documents : [];
+    out.results_seen = docs.length + citations.length;
+
+    const seen = new Set<string>();
+    const push = (url: string, title: string) => {
+      const u = String(url ?? "").trim();
+      if (!u || seen.has(u)) return;
+      seen.add(u);
+      const c = classifyUrl(u, title);
+      if (!c) return;
+      if (c.trust === "official") out.official_urls.push(c);
+      else out.mirror_urls.push(c);
+    };
+    for (const d of docs.slice(0, SEARCH_FIRST_LIMITS.MAX_RESULTS)) {
+      push(String(d.url ?? ""), String(d.title ?? ""));
+    }
+    for (const c of citations.slice(0, SEARCH_FIRST_LIMITS.MAX_RESULTS)) push(c, "");
+
+    out.official_urls = out.official_urls.slice(0, SEARCH_FIRST_LIMITS.MAX_URLS);
+    out.mirror_urls = out.mirror_urls.slice(0, SEARCH_FIRST_LIMITS.MAX_URLS);
+  } catch (e) {
+    out.skip_reason = `search_failed:${e instanceof Error ? e.message : String(e)}`.slice(0, 160);
+  }
+  out.ms = Date.now() - t0;
+  return out;
+}
+
+// ── Identity validation inside the acquired body ───────────────────────────
+
+export interface JudgmentIdentityInput {
+  text: string;
+  /** Normalized docket, when the nomination supplied one. */
+  docket_present: boolean;
+  docket_in_text: boolean;
+  name_tokens: string[];
+  year?: number | null;
+  court?: string | null;
+}
+
+export interface JudgmentIdentityResult {
+  validated: boolean;
+  docket_match: boolean;
+  name_hits: number;
+  name_required: number;
+  year_match: boolean;
+  court_match: boolean;
+  reason: string;
+}
+
+const COURT_MARKER_RE =
+  /(בבית\s+המשפט\s+העליון|בית\s+המשפט\s+העליון|בשבתו\s+כבית\s+משפט\s+גבוה\s+לצדק|בית\s+הדין|בית\s+המשפט\s+המחוזי)/;
+
+export function nameHitCount(text: string, toks: string[]): number {
+  const t = String(text ?? "").replace(/["'`׳״]/g, "");
+  let n = 0;
+  for (const tok of toks) if (t.includes(tok)) n++;
+  return n;
+}
+
+/**
+ * A judgment body is accepted only when its identity is provable in the text.
+ *
+ *  - docket present and found in the body → accepted (strongest signal);
+ *  - no usable docket → at least two distinctive party/name tokens **plus** a
+ *    court marker or the year, so a different case with one shared surname
+ *    cannot pass.
+ */
+export function validateJudgmentIdentity(
+  input: JudgmentIdentityInput,
+): JudgmentIdentityResult {
+  const head = String(input.text ?? "").slice(0, 40_000);
+  const hits = nameHitCount(head, input.name_tokens);
+  const required = input.name_tokens.length >= 2 ? 2 : 1;
+  const year_match = !!input.year && head.includes(String(input.year));
+  const court_match = COURT_MARKER_RE.test(head);
+
+  const base: Omit<JudgmentIdentityResult, "validated" | "reason"> = {
+    docket_match: input.docket_in_text,
+    name_hits: hits,
+    name_required: required,
+    year_match,
+    court_match,
+  };
+
+  if (input.docket_present && input.docket_in_text) {
+    return { ...base, validated: true, reason: "docket_in_body" };
+  }
+  if (input.name_tokens.length === 0) {
+    return { ...base, validated: false, reason: "no_distinctive_tokens" };
+  }
+  if (hits < required) {
+    return { ...base, validated: false, reason: "insufficient_name_tokens" };
+  }
+  if (!court_match && !year_match) {
+    return { ...base, validated: false, reason: "no_court_or_year_corroboration" };
+  }
+  return { ...base, validated: true, reason: "name_tokens_with_corroboration" };
+}
+
 
 export const OFFICIAL_DISCOVERY_VERSION = "official_source_discovery_v1";
 
 export const DISCOVERY_LIMITS = {
   MAX_TARGETS: 2,
   MAX_URLS_PER_TARGET: 3,
+  /** judgment_search_first_discovery_v1: one extra slot for searched URLs. */
+  MAX_URLS_PER_JUDGMENT: 4,
+  SEARCH_FIRST_MS: 12_000,
   PER_URL_MS: 12_000,
   TOTAL_MS: 45_000,
   MIN_BUDGET_MS: 6_000,
@@ -70,6 +386,7 @@ export const DISCOVERY_LIMITS = {
   MAX_TEXT: 400_000,
   BLOCK_PAGE_MAX_CHARS: 4_000,
 } as const;
+
 
 const BLOCK_PAGE_SIGNATURES = [
   "חסימת בקשה לא מורשת",
@@ -93,6 +410,8 @@ export interface DiscoveryAttempt {
   acquisition_path:
     | "cache"
     | "retrieved_official_url"
+    | "search_first_official"
+    | "search_first_mirror"
     | "derived_court_url"
     | "statute_official_url"
     | "none";
@@ -113,6 +432,29 @@ export interface DiscoveryAttempt {
   cache_written: boolean;
   cache_write_error: string | null;
   reason: string | null;
+  /** Cooldown scoping trace (verified_source_cache_v2). */
+  cooldown_strategy?: string | null;
+  cooldown_strategy_scoped?: boolean;
+  ignored_other_strategy_failures?: number;
+  /** judgment_search_first_discovery_v1 trace. */
+  search_first?: {
+    ran: boolean;
+    skip_reason: string | null;
+    queries: string[];
+    official_urls: number;
+    mirror_urls: number;
+    ms: number;
+  };
+  /** Identity proof inside the acquired body. */
+  identity?: {
+    validated: boolean;
+    docket_match: boolean;
+    name_hits: number;
+    name_required: number;
+    year_match: boolean;
+    court_match: boolean;
+    reason: string;
+  };
   /** statute lane only — normalization / validation trace. */
   statute?: {
     title_raw: string | null;
@@ -125,6 +467,7 @@ export interface DiscoveryAttempt {
   };
   ms: number;
 }
+
 
 
 export interface OfficialDiscoveryReport {
@@ -404,6 +747,12 @@ async function handleTarget(
     : "other";
 
   // ── 1. Cache lookup ────────────────────────────────────────────────────
+  // Cooldowns are scoped to the strategy this run will actually use, so an old
+  // derivation failure can never suppress the new search-first lane.
+  const strategy = category === "judgment" ? "search_first_judgment" : "statute_official_url";
+  const discovery_version = category === "judgment"
+    ? JUDGMENT_SEARCH_FIRST_VERSION
+    : OFFICIAL_DISCOVERY_VERSION;
   const lookup = await lookupVerifiedSource(input.admin, {
     category,
     normalized_docket: attempt.normalized_docket,
@@ -413,8 +762,13 @@ async function handleTarget(
     authors: n.authors,
     institution: n.institution,
     year: n.year,
+    strategy,
+    discovery_version,
   });
   attempt.cache_status = lookup.status;
+  attempt.cooldown_strategy = lookup.cooldown_strategy;
+  attempt.cooldown_strategy_scoped = lookup.cooldown_strategy_scoped;
+  attempt.ignored_other_strategy_failures = lookup.ignored_other_strategy_failures;
   if (lookup.hit && lookup.source) {
     attempt.cache_lookup = "hit";
     attempt.acquisition_path = "cache";
@@ -434,6 +788,7 @@ async function handleTarget(
     attempt.ms = Date.now() - tA;
     return attempt;
   }
+
 
   // Judgments with a docket get the full ladder (identity provable inside the
   // body). v2 adds a search-first-only lane for `known_name_no_docket`
@@ -464,8 +819,31 @@ async function handleTarget(
     return attempt;
   }
 
-  // ── 2/3. Official URLs from retrieval, then derived court-file URLs ─────
+  // ── 2. Retrieved official URLs → searched official URLs → mirrors →
+  //      deterministic derivation (last resort; the derived object code is a
+  //      guess and is exactly what fails on older judgments).
   const retrieved = retrievedOfficialUrls(input.candidates, docket);
+  let searched: JudgmentSearchFirstResult | null = null;
+  if (remainingMs() > DISCOVERY_LIMITS.MIN_BUDGET_MS && !input.budget?.exceeded()) {
+    input.budget?.mark("judgment_search_first", { nomination: n.nomination_id });
+    searched = await searchOfficialJudgmentUrls({
+      docket_display: n.docket ?? null,
+      label: n.label_he,
+      court: null,
+      year: n.year ?? null,
+      timeout_ms: Math.min(DISCOVERY_LIMITS.SEARCH_FIRST_MS, Math.max(2000, remainingMs() - 4000)),
+    });
+    attempt.search_first = {
+      ran: searched.ran,
+      skip_reason: searched.skip_reason,
+      queries: searched.queries,
+      official_urls: searched.official_urls.length,
+      mirror_urls: searched.mirror_urls.length,
+      ms: searched.ms,
+    };
+  }
+  const searchOfficial = (searched?.official_urls ?? []).map((u) => u.url);
+  const searchMirror = (searched?.mirror_urls ?? []).map((u) => u.url);
   const derived = isSupremeCourtDocket(docket)
     ? [
       ...deriveSupremeCourtFileUrls(docket, { maxUrls: 3 })
@@ -473,13 +851,16 @@ async function handleTarget(
       ...deriveSupremeCourtBinaryUrls(docket, { maxUrls: 1 }),
     ]
     : [];
-  const urls = [...retrieved, ...derived].slice(0, DISCOVERY_LIMITS.MAX_URLS_PER_TARGET);
+  const urls = [...new Set([...retrieved, ...searchOfficial, ...searchMirror, ...derived])]
+    .slice(0, DISCOVERY_LIMITS.MAX_URLS_PER_JUDGMENT);
   attempt.urls_attempted = urls;
   if (urls.length === 0) {
     attempt.reason = "no_official_url_available";
     attempt.ms = Date.now() - tA;
     return attempt;
   }
+  const toks = nameTokens(n.label_he);
+
 
   let lastFailure = "no_body_acquired";
   let blockedByOrigin = false;
@@ -499,7 +880,15 @@ async function handleTarget(
           inspectText: (prefix: string) => {
             blockState.sig = blockPageSignature(prefix, docket);
           },
-          validateText: (text: string) => textContainsExactDocket(text.slice(0, 20_000), docket),
+          // The nominated docket can be wrong (a model guess); accept the body
+          // when either the docket OR enough distinctive name tokens appear,
+          // then prove identity properly below.
+          validateText: (text: string) => {
+            const head = text.slice(0, 20_000);
+            return textContainsExactDocket(head, docket) ||
+              (toks.length > 0 && nameMatchCount(head, toks) >= requiredNameHits(toks));
+          },
+
           signal: AbortSignal.timeout(perUrlMs),
           maxBytes: DISCOVERY_LIMITS.MAX_PROBE_BYTES,
           budgetExceeded: () => input.budget?.exceeded() ?? false,
@@ -522,15 +911,34 @@ async function handleTarget(
         "official_source_discovery",
       );
       if (got.length >= DISCOVERY_LIMITS.MIN_BODY_CHARS) {
+        const identity = validateJudgmentIdentity({
+          text: got,
+          docket_present: true,
+          docket_in_text: textContainsExactDocket(got.slice(0, 40_000), docket),
+          name_tokens: toks,
+          year: n.year ?? null,
+          court: null,
+        });
+        attempt.identity = identity;
+        if (!identity.validated) {
+          attempt.result = "identity_mismatch";
+          lastFailure = `identity_unproven:${identity.reason}`;
+          continue;
+        }
         attempt.result = "body_acquired";
         attempt.body_chars = got.length;
         attempt.acquisition_path = retrieved.includes(url)
           ? "retrieved_official_url"
+          : searchOfficial.includes(url)
+          ? "search_first_official"
+          : searchMirror.includes(url)
+          ? "search_first_mirror"
           : "derived_court_url";
         attempt.injected_candidate_id = injectBody(input, n, docket, {
           url,
           text: got,
           from_cache: false,
+          acquisition_path: attempt.acquisition_path,
         });
         const write = await recordVerifiedSource(input.admin, {
           category: "judgment",
@@ -541,9 +949,15 @@ async function handleTarget(
           official_url: url,
           court: /elyon|supremedecisions/i.test(url) ? "בית המשפט העליון" : null,
           year: n.year,
-          identity_terms_matched: [normalizedDocketId(docket)],
+          identity_terms_matched: identity.docket_match ? [normalizedDocketId(docket)] : toks,
           identity_validated: true,
           acquisition_method: attempt.acquisition_path,
+          strategy: attempt.acquisition_path === "derived_court_url"
+            ? "derived_court_url"
+            : attempt.acquisition_path === "retrieved_official_url"
+            ? "retrieved_official_url"
+            : "search_first_judgment",
+          discovery_version: JUDGMENT_SEARCH_FIRST_VERSION,
           text: got,
         });
         attempt.cache_written = write.ok;
@@ -551,6 +965,7 @@ async function handleTarget(
         attempt.ms = Date.now() - tA;
         return attempt;
       }
+
       lastFailure = "below_threshold";
       attempt.result = "below_threshold";
     } catch (err) {
@@ -586,7 +1001,10 @@ async function handleTarget(
       ? "identity_mismatch"
       : "failed",
     reason: lastFailure,
+    strategy: "search_first_judgment",
+    discovery_version: JUDGMENT_SEARCH_FIRST_VERSION,
   });
+
   attempt.ms = Date.now() - tA;
   return attempt;
 }
@@ -734,13 +1152,40 @@ async function handleNamedJudgment(
     return attempt;
   }
 
-  const urls = retrievedOfficialUrlsByName(input.candidates, toks)
-    .slice(0, DISCOVERY_LIMITS.MAX_URLS_PER_TARGET);
+  // Retrieval-surfaced official URLs first, then an explicit name-based search
+  // for the official document (judgment_search_first_discovery_v1).
+  let searched: JudgmentSearchFirstResult | null = null;
+  if (remainingMs() > DISCOVERY_LIMITS.MIN_BUDGET_MS && !input.budget?.exceeded()) {
+    input.budget?.mark("judgment_search_first_named", { nomination: n.nomination_id });
+    searched = await searchOfficialJudgmentUrls({
+      docket_display: null,
+      label: n.label_he,
+      court: null,
+      year: n.year ?? null,
+      timeout_ms: Math.min(DISCOVERY_LIMITS.SEARCH_FIRST_MS, Math.max(2000, remainingMs() - 4000)),
+    });
+    attempt.search_first = {
+      ran: searched.ran,
+      skip_reason: searched.skip_reason,
+      queries: searched.queries,
+      official_urls: searched.official_urls.length,
+      mirror_urls: searched.mirror_urls.length,
+      ms: searched.ms,
+    };
+  }
+  const searchOfficial = (searched?.official_urls ?? []).map((u) => u.url);
+  const searchMirror = (searched?.mirror_urls ?? []).map((u) => u.url);
+  const urls = [...new Set([
+    ...retrievedOfficialUrlsByName(input.candidates, toks),
+    ...searchOfficial,
+    ...searchMirror,
+  ])].slice(0, DISCOVERY_LIMITS.MAX_URLS_PER_JUDGMENT);
   attempt.urls_attempted = urls;
   if (urls.length === 0) {
     attempt.reason = "no_official_url_from_search";
     return attempt;
   }
+
 
   let lastFailure = "no_body_acquired";
   for (const url of urls) {
@@ -779,13 +1224,32 @@ async function handleNamedJudgment(
         "official_source_discovery_named",
       );
       if (got.length >= DISCOVERY_LIMITS.MIN_BODY_CHARS) {
+        const identity = validateJudgmentIdentity({
+          text: got,
+          docket_present: false,
+          docket_in_text: false,
+          name_tokens: toks,
+          year: n.year ?? null,
+          court: null,
+        });
+        attempt.identity = identity;
+        if (!identity.validated) {
+          attempt.result = "identity_mismatch";
+          lastFailure = `identity_unproven:${identity.reason}`;
+          continue;
+        }
         attempt.result = "body_acquired";
         attempt.body_chars = got.length;
-        attempt.acquisition_path = "retrieved_official_url";
+        attempt.acquisition_path = searchOfficial.includes(url)
+          ? "search_first_official"
+          : searchMirror.includes(url)
+          ? "search_first_mirror"
+          : "retrieved_official_url";
         attempt.injected_candidate_id = injectBody(input, n, null, {
           url,
           text: got,
           from_cache: false,
+          acquisition_path: attempt.acquisition_path,
         });
         const write = await recordVerifiedSource(input.admin, {
           category: "judgment",
@@ -798,13 +1262,16 @@ async function handleNamedJudgment(
           year: n.year,
           identity_terms_matched: toks,
           identity_validated: true,
-          acquisition_method: "retrieved_official_url_by_name",
+          acquisition_method: `${attempt.acquisition_path}_by_name`,
+          strategy: "search_first_judgment",
+          discovery_version: JUDGMENT_SEARCH_FIRST_VERSION,
           text: got,
         });
         attempt.cache_written = write.ok;
         attempt.cache_write_error = write.error;
         return attempt;
       }
+
       lastFailure = "below_threshold";
       attempt.result = "below_threshold";
     } catch (err) {
@@ -831,6 +1298,9 @@ async function handleNamedJudgment(
     official_url: attempt.urls_attempted[0] ?? null,
     status: attempt.result === "identity_mismatch" ? "identity_mismatch" : "failed",
     reason: lastFailure,
+    strategy: "search_first_judgment",
+    discovery_version: JUDGMENT_SEARCH_FIRST_VERSION,
+
   });
   return attempt;
 }
@@ -1045,7 +1515,10 @@ async function handleStatuteNomination(
         identity_terms_matched: toks.slice(0, 8),
         identity_validated: true,
         acquisition_method: "statute_official_url",
+        strategy: "statute_official_url",
+        discovery_version: OFFICIAL_DISCOVERY_VERSION,
         text: stored,
+
       });
       attempt.cache_written = write.ok;
       attempt.cache_write_error = write.error;
@@ -1074,6 +1547,9 @@ async function handleStatuteNomination(
     official_url: attempt.urls_attempted[0] ?? null,
     status: lastResult === "identity_mismatch" ? "identity_mismatch" : "failed",
     reason: lastFailure,
+    strategy: "statute_official_url",
+    discovery_version: OFFICIAL_DISCOVERY_VERSION,
+
   });
   return attempt;
 }
