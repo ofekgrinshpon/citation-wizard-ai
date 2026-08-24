@@ -15,6 +15,15 @@ export const CORE_AUTHORITY_REGISTRY_VERSION = "core_authority_registry_v1";
 /** Hard cap: at most this many registry-seeded queries per run. */
 export const MAX_REGISTRY_QUERIES = 2;
 
+/**
+ * source_nomination_v1 supersedes the hand-maintained landmark-case list as
+ * the recall mechanism. Case seeding is kept in the code purely as telemetry
+ * so nomination quality can be compared against the old list; it no longer
+ * injects queries. Statute-title normalisation (Stage 2a) stays active — it is
+ * bounded linguistic normalisation, not case recall.
+ */
+export const CASE_SEEDING_MODE: "query_seeding" | "telemetry_only" = "telemetry_only";
+
 export type AuthorityKind = "case" | "statute";
 
 export interface CanonicalAuthority {
