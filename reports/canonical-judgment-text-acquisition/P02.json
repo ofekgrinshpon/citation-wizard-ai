@@ -22,16 +22,15 @@
     "skipped_because_already_present": []
   },
   "support_distribution": {
-    "unrelated": 25,
-    "tangential": 3,
-    "partial": 2
+    "unrelated": 22,
+    "tangential": 3
   },
   "candidate_count": 0,
   "listing_page_candidates": 0,
   "metadata_only_candidates": 0,
-  "job_id": "62011940-39c1-430f-8788-e7f4d9252c35",
-  "run_id": "e4bac793-db98-448a-a9a9-c4fb325aed5a",
-  "ms": 121128,
+  "job_id": "23ac837d-eb41-4d18-98da-6f1a741f850b",
+  "run_id": "7f50f2b6-9eb2-44d7-810e-2cb788d770e0",
+  "ms": 121021,
   "terminal_status": "done",
   "branch": "docket_limitation",
   "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.",
