@@ -1,0 +1,774 @@
+[
+  {
+    "id": "D1",
+    "query": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם מיושמים כאשר חוק פוגע בזכות יסוד?",
+    "run_id": "4bf006c7-66f6-4be3-85ed-2c2a89956eaf",
+    "terminal": true,
+    "ms": 118457,
+    "total_ms": 115392,
+    "branch": "insufficient_sources_limitation",
+    "nomination": {
+      "actionable_count": 3,
+      "category_mix": {
+        "statute": 1,
+        "judgment": 2,
+        "scholarship": 3
+      },
+      "statute_nominations": [
+        {
+          "year": 1992,
+          "bucket": "actionable",
+          "docket": null,
+          "authors": [],
+          "demoted": false,
+          "category": "statute",
+          "label_he": "חוק-יסוד: כבוד האדם וחירותו",
+          "confidence": 0.95,
+          "institution": "הכנסת",
+          "must_verify": true,
+          "topic_query": "חוק-יסוד: כבוד האדם וחירותו",
+          "nominated_by": "source_nomination_v2",
+          "actionability": "known_identifier",
+          "nomination_id": "N4",
+          "statute_title": "חוק-יסוד: כבוד האדם וחירותו",
+          "demoted_reason": null,
+          "role_in_answer": "הבסיס החוקתי למגבלות על זכויות (סעיף 8)",
+          "statute_section": null,
+          "stripped_fields": [],
+          "journal_or_publisher": null,
+          "relevance_confidence": 0.95,
+          "identifier_confidence": 0.99
+        }
+      ]
+    },
+    "discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 0,
+      "cache_hits": 0,
+      "cache_misses": 1,
+      "cache_writes": 0,
+      "injected_candidate_ids": [],
+      "attempts": [
+        {
+          "ms": 287,
+          "label": "חוק-יסוד: כבוד האדם וחירותו",
+          "reason": "acquisition_failed:statute_binary_not_text_extractable",
+          "result": "fetch_failed",
+          "statute": {
+            "lane": "statute",
+            "section": null,
+            "title_raw": "חוק-יסוד: כבוד האדם וחירותו",
+            "section_found": null,
+            "title_normalized": "חוק-יסוד: כבוד האדם וחירותו",
+            "identity_tokens_matched": 0,
+            "title_normalization_changed": false
+          },
+          "category": "statute",
+          "body_chars": 0,
+          "cache_lookup": "miss",
+          "cache_status": null,
+          "cache_written": false,
+          "nomination_id": "N4",
+          "urls_attempted": [
+            "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc"
+          ],
+          "acquisition_path": "none",
+          "cache_write_error": null,
+          "normalized_docket": null,
+          "injected_candidate_id": null
+        },
+        {
+          "ms": 36,
+          "label": "ע\"א 6821/93 בנק המזרחי נ' טופלס",
+          "reason": "cooldown_until:2026-08-31T09:14:11.322Z",
+          "result": "not_attempted",
+          "category": "judgment",
+          "body_chars": 0,
+          "cache_lookup": "cooldown",
+          "cache_status": "blocked",
+          "cache_written": false,
+          "nomination_id": "N3",
+          "urls_attempted": [],
+          "acquisition_path": "none",
+          "cache_write_error": null,
+          "normalized_docket": "aa:6821/93",
+          "injected_candidate_id": null
+        }
+      ]
+    },
+    "statute_acquisition": null,
+    "used_sources": [],
+    "footnotes_count": 0,
+    "dangling_markers": 0,
+    "answer_len": 465
+  },
+  {
+    "id": "D3",
+    "query": "מתי בג״ץ יתערב בהחלטה של בית דין רבני בענייני רכוש בין בני זוג, במיוחד כאשר נטען שבית הדין החיל דין דתי במקום דין אזרחי?",
+    "run_id": "ed6a6f44-52bc-4bd7-a202-f7fc4afda550",
+    "terminal": true,
+    "ms": 128567,
+    "total_ms": 127225,
+    "branch": null,
+    "nomination": {
+      "actionable_count": 3,
+      "category_mix": {
+        "statute": 1,
+        "judgment": 2,
+        "scholarship": 2,
+        "government_report": 1
+      },
+      "statute_nominations": [
+        {
+          "year": 1988,
+          "bucket": "actionable",
+          "docket": null,
+          "authors": [],
+          "demoted": false,
+          "category": "statute",
+          "label_he": "חוק בתי דין רבניים (נישואין וגירושין), תשמ\"ח-1988",
+          "confidence": 0.9,
+          "institution": "הכנסת",
+          "must_verify": true,
+          "topic_query": "חוק בתי דין רבניים (נישואין וגירושין) תשמ\"ח-1988",
+          "nominated_by": "source_nomination_v2",
+          "actionability": "known_identifier",
+          "nomination_id": "N3",
+          "statute_title": "חוק בתי דין רבניים (נישואין וגירושין)",
+          "demoted_reason": null,
+          "role_in_answer": "המסגרת החוקית לסמכויות בתי הדין הרבניים",
+          "statute_section": null,
+          "stripped_fields": [],
+          "journal_or_publisher": null,
+          "relevance_confidence": 0.9,
+          "identifier_confidence": 0.95
+        }
+      ]
+    },
+    "discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 1,
+      "cache_hits": 0,
+      "cache_misses": 1,
+      "cache_writes": 0,
+      "injected_candidate_ids": [
+        "nominated-source:N3"
+      ],
+      "attempts": [
+        {
+          "ms": 446,
+          "label": "חוק בתי דין רבניים (נישואין וגירושין), תשמ\"ח-1988",
+          "reason": null,
+          "result": "body_acquired",
+          "statute": {
+            "lane": "statute",
+            "section": null,
+            "title_raw": "חוק בתי דין רבניים (נישואין וגירושין)",
+            "section_found": null,
+            "title_normalized": "חוק בתי דין רבניים (נישואין וגירושין)",
+            "identity_tokens_matched": 5,
+            "title_normalization_changed": false
+          },
+          "category": "statute",
+          "body_chars": 10813,
+          "cache_lookup": "miss",
+          "cache_status": null,
+          "cache_written": false,
+          "nomination_id": "N3",
+          "urls_attempted": [
+            "https://www.nevo.co.il/law_html/law00/73178.htm",
+            "https://fs.knesset.gov.il/2/law/2_lsr_209652.pdf",
+            "https://www.gov.il/BlobFolder/legalinfo/hok2/he/%D7%97%D7%95%D7%A7%20%D7%91%D7%AA%D7%99%20%D7%93%D7%99%D7%9F%20%D7%A8%D7%91%D7%A0%D7%99%D7%99%D7%9D.pdf"
+          ],
+          "acquisition_path": "statute_official_url",
+          "cache_write_error": "there is no unique or exclusion constraint matching the ON CONFLICT specification",
+          "normalized_docket": null,
+          "injected_candidate_id": "nominated-source:N3"
+        },
+        {
+          "ms": 41,
+          "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+          "reason": "cooldown_until:2026-08-31T09:23:23.728Z",
+          "result": "not_attempted",
+          "category": "judgment",
+          "body_chars": 0,
+          "cache_lookup": "cooldown",
+          "cache_status": "blocked",
+          "cache_written": false,
+          "nomination_id": "N1",
+          "urls_attempted": [],
+          "acquisition_path": "none",
+          "cache_write_error": null,
+          "normalized_docket": "bagatz:1715/97",
+          "injected_candidate_id": null
+        }
+      ]
+    },
+    "statute_acquisition": null,
+    "used_sources": [
+      {
+        "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9E%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9C.doc",
+        "title": "בג\"ץ 8638-03 סימה אמיר נ' בית הדין הרבני הגדול",
+        "number": 1,
+        "origin": "perplexity",
+        "citable_as": "judgment",
+        "source_type": "caselaw",
+        "candidate_id": "73d2fb07-2e0b-45f6-8e9e-22c506c34d19",
+        "authority_tier": "primary_mirror",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_document",
+          "holding_text_present",
+          "judgment_tier_promoted",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body",
+          "holding_text_present"
+        ],
+        "has_holding_text": true,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": true
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/legalinfo/hok2/he/%D7%97%D7%95%D7%A7%20%D7%91%D7%AA%D7%99%20%D7%93%D7%99%D7%9F%20%D7%A8%D7%91%D7%A0%D7%99%D7%99%D7%9D.pdf",
+        "title": "חוק בתי דין רבניים - Gov.il",
+        "number": 1,
+        "origin": "perplexity",
+        "citable_as": "statute",
+        "source_type": "legislation",
+        "candidate_id": "64fd2f75-925d-4031-afaf-df2f8a5c869b",
+        "authority_tier": "official_primary",
+        "synthesis_role": "statutory_background",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      }
+    ],
+    "footnotes_count": 1,
+    "dangling_markers": 0,
+    "answer_len": 1882
+  },
+  {
+    "id": "R02",
+    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+    "run_id": "0e0ca8d7-bf0c-4a98-b6c6-6ac013cc2bda",
+    "terminal": true,
+    "ms": 161359,
+    "total_ms": 155160,
+    "branch": "docket_limitation",
+    "nomination": {
+      "actionable_count": 4,
+      "category_mix": {
+        "statute": 2,
+        "judgment": 2,
+        "scholarship": 3
+      },
+      "statute_nominations": [
+        {
+          "year": 1992,
+          "bucket": "actionable",
+          "docket": null,
+          "authors": [],
+          "demoted": false,
+          "category": "statute",
+          "label_he": "חוק יסוד: כבוד האדם וחירותו",
+          "confidence": 0.9,
+          "institution": "הכנסת",
+          "must_verify": true,
+          "topic_query": "חוק יסוד: כבוד האדם וחירותו טקסט חוק הכנסת",
+          "nominated_by": "source_nomination_v2",
+          "actionability": "known_identifier",
+          "nomination_id": "N2",
+          "statute_title": "חוק יסוד: כבוד האדם וחירותו",
+          "demoted_reason": null,
+          "role_in_answer": "בסיס משפטי לבחינת חקיקת זכויות והגבלותיה",
+          "statute_section": null,
+          "stripped_fields": [],
+          "journal_or_publisher": null,
+          "relevance_confidence": 0.9,
+          "identifier_confidence": 0.95
+        },
+        {
+          "year": 1994,
+          "bucket": "actionable",
+          "docket": null,
+          "authors": [],
+          "demoted": false,
+          "category": "statute",
+          "label_he": "חוק יסוד: חופש העיסוק",
+          "confidence": 0.85,
+          "institution": "הכנסת",
+          "must_verify": true,
+          "topic_query": "חוק יסוד: חופש העיסוק טקסט חוק הכנסת",
+          "nominated_by": "source_nomination_v2",
+          "actionability": "known_identifier",
+          "nomination_id": "N3",
+          "statute_title": "חוק יסוד: חופש העיסוק",
+          "demoted_reason": null,
+          "role_in_answer": "מקור שנדון בפסק הדין ביחס למעמד חוקי היסוד",
+          "statute_section": null,
+          "stripped_fields": [],
+          "journal_or_publisher": null,
+          "relevance_confidence": 0.85,
+          "identifier_confidence": 0.95
+        }
+      ]
+    },
+    "discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 1,
+      "cache_hits": 0,
+      "cache_misses": 1,
+      "cache_writes": 0,
+      "injected_candidate_ids": [
+        "nominated-source:N2"
+      ],
+      "attempts": [
+        {
+          "ms": 40,
+          "label": "ע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+          "reason": "cooldown_until:2026-08-31T09:14:11.322Z",
+          "result": "not_attempted",
+          "category": "judgment",
+          "body_chars": 0,
+          "cache_lookup": "cooldown",
+          "cache_status": "blocked",
+          "cache_written": false,
+          "nomination_id": "N1",
+          "urls_attempted": [],
+          "acquisition_path": "none",
+          "cache_write_error": null,
+          "normalized_docket": "aa:6821/93",
+          "injected_candidate_id": null
+        },
+        {
+          "ms": 934,
+          "label": "חוק יסוד: כבוד האדם וחירותו",
+          "reason": null,
+          "result": "body_acquired",
+          "statute": {
+            "lane": "statute",
+            "section": null,
+            "title_raw": "חוק יסוד: כבוד האדם וחירותו",
+            "section_found": null,
+            "title_normalized": "חוק יסוד: כבוד האדם וחירותו",
+            "identity_tokens_matched": 3,
+            "title_normalization_changed": false
+          },
+          "category": "statute",
+          "body_chars": 1974,
+          "cache_lookup": "miss",
+          "cache_status": null,
+          "cache_written": false,
+          "nomination_id": "N2",
+          "urls_attempted": [
+            "https://fs.knesset.gov.il/13/law/13_lsr_186603.PDF",
+            "https://www.nevo.co.il/law_html/law00/70320.htm"
+          ],
+          "acquisition_path": "statute_official_url",
+          "cache_write_error": "there is no unique or exclusion constraint matching the ON CONFLICT specification",
+          "normalized_docket": null,
+          "injected_candidate_id": "nominated-source:N2"
+        }
+      ]
+    },
+    "statute_acquisition": null,
+    "used_sources": [],
+    "footnotes_count": 0,
+    "dangling_markers": 0,
+    "answer_len": 320
+  },
+  {
+    "id": "MAYA",
+    "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי?",
+    "run_id": "f0aaf0ef-40ec-4f48-9635-a0220b847bff",
+    "terminal": true,
+    "ms": 156018,
+    "total_ms": 152659,
+    "branch": null,
+    "nomination": {
+      "actionable_count": 3,
+      "category_mix": {
+        "statute": 2,
+        "judgment": 1,
+        "scholarship": 2,
+        "knesset_report": 1
+      },
+      "statute_nominations": [
+        {
+          "year": null,
+          "bucket": "actionable",
+          "docket": null,
+          "authors": [],
+          "demoted": false,
+          "category": "statute",
+          "label_he": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)",
+          "confidence": 0.95,
+          "institution": "הכנסת",
+          "must_verify": true,
+          "topic_query": "חוק שיפוט בתי דין רבניים (נישואין וגירושין) טקסט מלא",
+          "nominated_by": "source_nomination_v2",
+          "actionability": "known_identifier",
+          "nomination_id": "N1",
+          "statute_title": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)",
+          "demoted_reason": null,
+          "role_in_answer": "מסגרת סמכויות בתי הדין הרבניים וסייגי הסמכות האזרחית",
+          "statute_section": null,
+          "stripped_fields": [],
+          "journal_or_publisher": null,
+          "relevance_confidence": 0.95,
+          "identifier_confidence": 0.9
+        },
+        {
+          "year": null,
+          "bucket": "actionable",
+          "docket": null,
+          "authors": [],
+          "demoted": false,
+          "category": "statute",
+          "label_he": "חוק-יסוד: כבוד האדם וחירותו",
+          "confidence": 0.7,
+          "institution": "הכנסת",
+          "must_verify": true,
+          "topic_query": "חוק-יסוד: כבוד האדם וחירותו סעיף 8 טקסט",
+          "nominated_by": "source_nomination_v2",
+          "actionability": "known_identifier",
+          "nomination_id": "N3",
+          "statute_title": "חוק-יסוד: כבוד האדם וחירותו",
+          "demoted_reason": null,
+          "role_in_answer": "בסיס לעקרונות של ביקורת שיפוטית וצמצום סמכויות",
+          "statute_section": "סעיף 8",
+          "stripped_fields": [],
+          "journal_or_publisher": null,
+          "relevance_confidence": 0.7,
+          "identifier_confidence": 0.9
+        }
+      ]
+    },
+    "discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 1,
+      "cache_hits": 0,
+      "cache_misses": 2,
+      "cache_writes": 0,
+      "injected_candidate_ids": [
+        "nominated-source:N1"
+      ],
+      "attempts": [
+        {
+          "ms": 481,
+          "label": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)",
+          "reason": null,
+          "result": "body_acquired",
+          "statute": {
+            "lane": "statute",
+            "section": null,
+            "title_raw": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)",
+            "section_found": null,
+            "title_normalized": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)",
+            "identity_tokens_matched": 6,
+            "title_normalization_changed": false
+          },
+          "category": "statute",
+          "body_chars": 10813,
+          "cache_lookup": "miss",
+          "cache_status": null,
+          "cache_written": false,
+          "nomination_id": "N1",
+          "urls_attempted": [
+            "https://www.nevo.co.il/law_html/law00/73178.htm",
+            "https://fs.knesset.gov.il/2/law/2_lsr_209652.pdf",
+            "https://fs.knesset.gov.il/17/law/17_lst_596469.docx"
+          ],
+          "acquisition_path": "statute_official_url",
+          "cache_write_error": "there is no unique or exclusion constraint matching the ON CONFLICT specification",
+          "normalized_docket": null,
+          "injected_candidate_id": "nominated-source:N1"
+        },
+        {
+          "ms": 33,
+          "label": "חוק-יסוד: כבוד האדם וחירותו",
+          "reason": "unsupported_statute_source:no_official_statute_url",
+          "result": "unsupported_statute_source",
+          "statute": {
+            "lane": "statute",
+            "section": "8",
+            "title_raw": "חוק-יסוד: כבוד האדם וחירותו",
+            "section_found": null,
+            "title_normalized": "חוק-יסוד: כבוד האדם וחירותו",
+            "identity_tokens_matched": 0,
+            "title_normalization_changed": false
+          },
+          "category": "statute",
+          "body_chars": 0,
+          "cache_lookup": "miss",
+          "cache_status": null,
+          "cache_written": false,
+          "nomination_id": "N3",
+          "urls_attempted": [],
+          "acquisition_path": "none",
+          "cache_write_error": null,
+          "normalized_docket": null,
+          "injected_candidate_id": null
+        }
+      ]
+    },
+    "statute_acquisition": null,
+    "used_sources": [],
+    "footnotes_count": 0,
+    "dangling_markers": 0,
+    "answer_len": 1308
+  },
+  {
+    "id": "MAYA-AMIR",
+    "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי? התייחסו לעניין סימה אמיר.",
+    "run_id": "3e13181e-8f99-4806-8327-e3d7f787d4a5",
+    "terminal": true,
+    "ms": 172518,
+    "total_ms": 168365,
+    "branch": null,
+    "nomination": {
+      "actionable_count": 3,
+      "category_mix": {
+        "statute": 1,
+        "judgment": 2,
+        "scholarship": 2,
+        "government_report": 1
+      },
+      "statute_nominations": [
+        {
+          "year": 1968,
+          "bucket": "actionable",
+          "docket": null,
+          "authors": [],
+          "demoted": false,
+          "category": "statute",
+          "label_he": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), התשכ\"ח-1968",
+          "confidence": 0.9,
+          "institution": "הכנסת",
+          "must_verify": true,
+          "topic_query": "חוק שיפוט בתי דין רבניים (נישואין וגירושין) 1968",
+          "nominated_by": "source_nomination_v2",
+          "actionability": "known_identifier",
+          "nomination_id": "N3",
+          "statute_title": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)",
+          "demoted_reason": null,
+          "role_in_answer": "מסגרת סמכות בתי הדין הרבניים בענייני גירושין ועניינים נלווים",
+          "statute_section": null,
+          "stripped_fields": [],
+          "journal_or_publisher": null,
+          "relevance_confidence": 0.9,
+          "identifier_confidence": 0.95
+        }
+      ]
+    },
+    "discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 0,
+      "cache_hits": 0,
+      "cache_misses": 1,
+      "cache_writes": 0,
+      "injected_candidate_ids": [],
+      "attempts": [
+        {
+          "ms": 60,
+          "label": "בג\"ץ 8497/00 סימה אמיר",
+          "reason": "cooldown_until:2026-08-31T09:26:13.922Z",
+          "result": "not_attempted",
+          "category": "judgment",
+          "body_chars": 0,
+          "cache_lookup": "cooldown",
+          "cache_status": "blocked",
+          "cache_written": false,
+          "nomination_id": "N1",
+          "urls_attempted": [],
+          "acquisition_path": "none",
+          "cache_write_error": null,
+          "normalized_docket": "bagatz:8497/0",
+          "injected_candidate_id": null
+        },
+        {
+          "ms": 97,
+          "label": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), התשכ\"ח-1968",
+          "reason": "retrieval_already_has_body",
+          "result": "not_attempted",
+          "statute": {
+            "lane": "statute",
+            "section": null,
+            "title_raw": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)",
+            "section_found": null,
+            "title_normalized": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)",
+            "identity_tokens_matched": 0,
+            "title_normalization_changed": false
+          },
+          "category": "statute",
+          "body_chars": 0,
+          "cache_lookup": "miss",
+          "cache_status": null,
+          "cache_written": false,
+          "nomination_id": "N3",
+          "urls_attempted": [],
+          "acquisition_path": "none",
+          "cache_write_error": null,
+          "normalized_docket": null,
+          "injected_candidate_id": null
+        }
+      ]
+    },
+    "statute_acquisition": null,
+    "used_sources": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2",
+        "title": "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו",
+        "number": 1,
+        "origin": "local_db",
+        "citable_as": "judgment",
+        "source_type": "supreme_court_il",
+        "candidate_id": "3ddc6d8a-8343-49a0-90e6-8591b38d94ef",
+        "authority_tier": "official_primary",
+        "synthesis_role": "applying_candidate",
+        "text_usability": "full_text",
+        "integrity_flags": [
+          "judgment_label_rejected_no_identity",
+          "judgment_text_acquired",
+          "judgment_identity_confirmed_in_body"
+        ],
+        "has_holding_text": false,
+        "is_judgment_document": true,
+        "can_satisfy_authority_role": false
+      },
+      {
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e0fd911f3330499c855c4357d1edbb33.pdf",
+        "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
+        "number": 2,
+        "origin": "local_db",
+        "citable_as": "scholarship",
+        "source_type": "journal_article",
+        "candidate_id": "6e9b1437-3f79-489c-a0db-353c566f858b",
+        "authority_tier": "secondary_commentary",
+        "synthesis_role": "secondary_commentary",
+        "text_usability": "full_text",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": false
+      }
+    ],
+    "footnotes_count": 2,
+    "dangling_markers": 0,
+    "answer_len": 1582
+  },
+  {
+    "id": "B8",
+    "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+    "run_id": "d48fbe05-412f-4360-b6cf-79b15526bd8b",
+    "terminal": true,
+    "ms": 83418,
+    "total_ms": 81730,
+    "branch": "canonical_quote_registry",
+    "nomination": {
+      "actionable_count": 0,
+      "category_mix": {},
+      "statute_nominations": []
+    },
+    "discovery": {
+      "enabled": false,
+      "skip_reason": "nomination_skipped",
+      "targets": 0,
+      "bodies_acquired": 0,
+      "cache_hits": 0,
+      "cache_misses": 0,
+      "cache_writes": 0,
+      "injected_candidate_ids": [],
+      "attempts": []
+    },
+    "statute_acquisition": null,
+    "used_sources": [
+      {
+        "url": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+        "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (כנסת)",
+        "number": 1,
+        "origin": "perplexity",
+        "citable_as": "statute",
+        "source_type": "legislation",
+        "candidate_id": "78887ac4-db7d-4f1b-b0ea-002a80605464",
+        "authority_tier": "official_primary",
+        "synthesis_role": "statutory_background",
+        "text_usability": "metadata_only",
+        "integrity_flags": [],
+        "has_holding_text": false,
+        "is_judgment_document": false,
+        "can_satisfy_authority_role": true
+      }
+    ],
+    "footnotes_count": 1,
+    "dangling_markers": 0,
+    "answer_len": 364
+  },
+  {
+    "id": "P02",
+    "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+    "run_id": "a2225940-0452-415f-9063-ae84324d991d",
+    "terminal": true,
+    "ms": 151987,
+    "total_ms": 149003,
+    "branch": "docket_limitation",
+    "nomination": {
+      "actionable_count": 1,
+      "category_mix": {
+        "other": 1,
+        "judgment": 1,
+        "scholarship": 2
+      },
+      "statute_nominations": []
+    },
+    "discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 1,
+      "bodies_acquired": 0,
+      "cache_hits": 0,
+      "cache_misses": 1,
+      "cache_writes": 0,
+      "injected_candidate_ids": [],
+      "attempts": [
+        {
+          "ms": 188,
+          "label": "לוי נ' מדינת ישראל",
+          "reason": "http_403",
+          "result": "fetch_failed",
+          "category": "judgment",
+          "body_chars": 0,
+          "cache_lookup": "miss",
+          "cache_status": null,
+          "cache_written": false,
+          "nomination_id": "N1",
+          "urls_attempted": [
+            "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf"
+          ],
+          "acquisition_path": "none",
+          "cache_write_error": null,
+          "normalized_docket": null,
+          "injected_candidate_id": null
+        }
+      ]
+    },
+    "statute_acquisition": null,
+    "used_sources": [],
+    "footnotes_count": 0,
+    "dangling_markers": 0,
+    "answer_len": 345
+  }
+]

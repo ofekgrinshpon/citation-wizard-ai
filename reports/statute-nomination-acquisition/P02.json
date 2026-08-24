@@ -1,0 +1,56 @@
+{
+  "id": "P02",
+  "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+  "run_id": "a2225940-0452-415f-9063-ae84324d991d",
+  "terminal": true,
+  "ms": 151987,
+  "total_ms": 149003,
+  "branch": "docket_limitation",
+  "nomination": {
+    "actionable_count": 1,
+    "category_mix": {
+      "other": 1,
+      "judgment": 1,
+      "scholarship": 2
+    },
+    "statute_nominations": []
+  },
+  "discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 1,
+    "bodies_acquired": 0,
+    "cache_hits": 0,
+    "cache_misses": 1,
+    "cache_writes": 0,
+    "injected_candidate_ids": [],
+    "attempts": [
+      {
+        "ms": 188,
+        "label": "לוי נ' מדינת ישראל",
+        "reason": "http_403",
+        "result": "fetch_failed",
+        "category": "judgment",
+        "body_chars": 0,
+        "cache_lookup": "miss",
+        "cache_status": null,
+        "cache_written": false,
+        "nomination_id": "N1",
+        "urls_attempted": [
+          "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf"
+        ],
+        "acquisition_path": "none",
+        "cache_write_error": null,
+        "normalized_docket": null,
+        "injected_candidate_id": null
+      }
+    ]
+  },
+  "statute_acquisition": null,
+  "used_sources": [],
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 345,
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.",
+  "footnotes": []
+}

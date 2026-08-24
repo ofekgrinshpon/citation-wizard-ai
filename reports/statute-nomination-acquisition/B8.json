@@ -1,0 +1,63 @@
+{
+  "id": "B8",
+  "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+  "run_id": "d48fbe05-412f-4360-b6cf-79b15526bd8b",
+  "terminal": true,
+  "ms": 83418,
+  "total_ms": 81730,
+  "branch": "canonical_quote_registry",
+  "nomination": {
+    "actionable_count": 0,
+    "category_mix": {},
+    "statute_nominations": []
+  },
+  "discovery": {
+    "enabled": false,
+    "skip_reason": "nomination_skipped",
+    "targets": 0,
+    "bodies_acquired": 0,
+    "cache_hits": 0,
+    "cache_misses": 0,
+    "cache_writes": 0,
+    "injected_candidate_ids": [],
+    "attempts": []
+  },
+  "statute_acquisition": null,
+  "used_sources": [
+    {
+      "url": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+      "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (כנסת)",
+      "number": 1,
+      "origin": "perplexity",
+      "citable_as": "statute",
+      "source_type": "legislation",
+      "candidate_id": "78887ac4-db7d-4f1b-b0ea-002a80605464",
+      "authority_tier": "official_primary",
+      "synthesis_role": "statutory_background",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    }
+  ],
+  "footnotes_count": 1,
+  "dangling_markers": 0,
+  "answer_len": 364,
+  "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹\n\n> לא אותרה פסיקה ברת-שימוש במסגרת החיפוש; התשובה מתמקדת בלשון הסעיף.",
+  "footnotes": [
+    {
+      "url": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+      "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (כנסת)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://main.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+          "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (כנסת)",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "legislation"
+    }
+  ]
+}
