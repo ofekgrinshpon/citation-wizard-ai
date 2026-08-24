@@ -1,0 +1,954 @@
+[
+  {
+    "id": "D1",
+    "query": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם מיושמים כאשר חוק פוגע בזכות יסוד?",
+    "run_id": "5087d4fd-9f6f-4288-b264-3aa04a44e2c8",
+    "terminal": true,
+    "ms": 124308,
+    "total_ms": 120394,
+    "branch": "insufficient_sources_limitation",
+    "source_nomination": {
+      "enabled": true,
+      "skipped": false,
+      "skip_reason": null,
+      "stage_failed": false,
+      "model_first": "openai/gpt-5-mini",
+      "model_final": "openai/gpt-5-mini",
+      "escalated": false,
+      "escalation_reason": null,
+      "mini_retry_used": false,
+      "mini_before": 9,
+      "mini_after": 6,
+      "fallback_to_mini_used": false,
+      "finish_reason": "tool_calls",
+      "reasoning_tokens": 0,
+      "parse_error": null,
+      "candidates_count": 6,
+      "dropped_count": 2,
+      "dropped_reasons": [
+        "judgment_cap",
+        "judgment_cap"
+      ],
+      "identifier_bearing_count": 3,
+      "category_mix": {
+        "statute": 1,
+        "judgment": 2,
+        "scholarship": 2,
+        "government_report": 1
+      },
+      "actionable_count": 3,
+      "exploratory_count": 3,
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 0
+      },
+      "known_name_no_docket_count": 0,
+      "topic_only_count": 3,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 3,
+        "0.8-1.0": 3
+      },
+      "stripped_identifiers": [],
+      "demoted_identifiers": [],
+      "queries_by_bucket": {
+        "actionable": 3,
+        "exploratory": 2
+      },
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "ms": 10503
+    },
+    "query_merge": {
+      "final_query_count": 14,
+      "from_nomination": 5,
+      "skipped_duplicate": 0,
+      "skipped_budget": 9,
+      "raw": {
+        "dropped": [
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "בית המשפט העליון 'מבחן המידתיות' דוגמאות מרכזיות פסקי דין ישומיות 'חופש הביטוי' 'חופש העיסוק' 'ביטחון' הוכחת חוסר התאמה/חוסר דחיפות/חוסר איזון"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "בית המשפט המחוזי פסק דין 'חוסר התאמה' 'חוסר דחיפות' 'חוסר איזון' דוגמאות מעשיות להוכחת השלבים המעשיים של מבחן המידתיות"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "מהן היסודות והשלבים של מבחן המידתיות בביקורת חוקתית בישראל משפט חוקתי הוראת החוק"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "מהן היסודות והשלבים של מבחן המידתיות בביקורת חוקתית בישראל משפט חוקתי בית המשפט העליון הלכה"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "מהן היסודות והשלבים של מבחן המידתיות בביקורת חוקתית בישראל משפט חוקתי חריגים וסייגים"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם פסק דין עליון"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם site:supremedecisions.court.gov.il Download"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם site:court.gov.il filetype:pdf פסק דין"
+          }
+        ],
+        "version": "query_merge_and_budget_v1",
+        "source_type_mix": {
+          "case": 8,
+          "report": 1,
+          "statute": 2,
+          "academic": 3
+        },
+        "actionability_mix": {
+          "topic_only": 3,
+          "known_identifier": 3,
+          "known_name_no_docket": 0
+        },
+        "final_query_count": 14,
+        "actionable_queries": 3,
+        "demoted_identifiers": 0,
+        "exploratory_queries": 2,
+        "queries_by_producer": {
+          "planner": 9,
+          "source_nomination": 5
+        },
+        "stripped_identifiers": 0,
+        "planner_queries_count": 11,
+        "queries_skipped_budget": 9,
+        "nomination_queries_count": 5,
+        "queries_skipped_duplicate": 0,
+        "actionable_queries_preserved": 3,
+        "exploratory_queries_preserved": 2,
+        "queries_added_from_nomination": 5,
+        "identifier_confidence_histogram": {
+          "0.0-0.4": 3,
+          "0.8-1.0": 3
+        }
+      }
+    },
+    "official_discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 0,
+      "injected_candidate_ids": [],
+      "cache_lookups": 2,
+      "cache_hits": 0,
+      "cache_misses": 2
+    },
+    "footnotes_count": 0,
+    "dangling_markers": 0,
+    "answer_len": 514
+  },
+  {
+    "id": "D3",
+    "query": "מתי בג״ץ יתערב בהחלטה של בית דין רבני בענייני רכוש בין בני זוג, במיוחד כאשר נטען שבית הדין החיל דין דתי במקום דין אזרחי?",
+    "run_id": "86757492-4c47-440a-a437-717b90b6bbec",
+    "terminal": true,
+    "ms": 156037,
+    "total_ms": 152014,
+    "branch": null,
+    "source_nomination": {
+      "enabled": true,
+      "skipped": false,
+      "skip_reason": null,
+      "stage_failed": false,
+      "model_first": "openai/gpt-5-mini",
+      "model_final": "openai/gpt-5-mini",
+      "escalated": false,
+      "escalation_reason": null,
+      "mini_retry_used": false,
+      "mini_before": 7,
+      "mini_after": 6,
+      "fallback_to_mini_used": false,
+      "finish_reason": "tool_calls",
+      "reasoning_tokens": 512,
+      "parse_error": null,
+      "candidates_count": 6,
+      "dropped_count": 0,
+      "dropped_reasons": [],
+      "identifier_bearing_count": 2,
+      "category_mix": {
+        "statute": 2,
+        "judgment": 1,
+        "scholarship": 3
+      },
+      "actionable_count": 3,
+      "exploratory_count": 3,
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 2,
+        "known_name_no_docket": 1
+      },
+      "known_name_no_docket_count": 1,
+      "topic_only_count": 3,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 4,
+        "0.8-1.0": 2
+      },
+      "stripped_identifiers": [],
+      "demoted_identifiers": [],
+      "queries_by_bucket": {
+        "actionable": 3,
+        "exploratory": 2
+      },
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "ms": 13442
+    },
+    "query_merge": {
+      "final_query_count": 14,
+      "from_nomination": 5,
+      "skipped_duplicate": 1,
+      "skipped_budget": 11,
+      "raw": {
+        "dropped": [
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "חוק הבוררות, התשמ\"א-1981 הוראות לגבי הסכמת צדדים ליישוב לפי הלכה והיחס לפסקי דין של בתי דין דתיים; חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשי\"ג-1953 (נישואין וגירושין), התשי\"ג-1953 הוראות הסכמות ובית הדין כבורר"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "מאמרים על מבחן ההבחנה בין הכרעה הלכתית להכרעה על יסוד דין אזרחי בבתי דין רבניים; ניתוח משפטי על הצבת גבולות להסכמה ליישוב לפי הלכה והשפעתה על זכויות יסוד"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "בג\"ץ פסקי דין חובת מיצוי הליכים בבתי דין רבניים לפני פנייה לבג\"ץ; צווי ביניים ותנאי זמנים/התיישנות בבקשות נגד החלטות בתי דין רבניים בענייני רכוש בין בני זוג"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשי\"ג-1953 (נישואין וגירושין), התשי\"ג-1953 הוראות על ערעורים וסמכויות בבית הדין הרבני; חוק בתי המשפט, התשמ\"ד-1984 הוראות על סמכות בית המשפט העליון להוציא צווים בתיקי פיקוח שיפוטי"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "דו\"ח משרד המשפטים או דו\"ח הכנסת על בתי הדין הרבניים הליכי ערעור ומיצוי הליכים המלצות לפרוצדורה לפני פנייה לבג\"ץ 'דו\"ח משרד המשפטים בתי דין רבניים'"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+          },
+          {
+            "reason": "duplicate_near",
+            "producer": "facets",
+            "query_he": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות",
+            "duplicate_of": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני פסק דין עליון"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני site:supremedecisions.court.gov.il Download"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני site:court.gov.il filetype:pdf פסק דין"
+          }
+        ],
+        "version": "query_merge_and_budget_v1",
+        "source_type_mix": {
+          "case": 5,
+          "statute": 4,
+          "academic": 5
+        },
+        "actionability_mix": {
+          "topic_only": 3,
+          "known_identifier": 2,
+          "known_name_no_docket": 1
+        },
+        "final_query_count": 14,
+        "actionable_queries": 3,
+        "demoted_identifiers": 0,
+        "exploratory_queries": 2,
+        "queries_by_producer": {
+          "planner": 9,
+          "source_nomination": 5
+        },
+        "stripped_identifiers": 0,
+        "planner_queries_count": 14,
+        "queries_skipped_budget": 11,
+        "nomination_queries_count": 5,
+        "queries_skipped_duplicate": 1,
+        "actionable_queries_preserved": 3,
+        "exploratory_queries_preserved": 2,
+        "queries_added_from_nomination": 5,
+        "identifier_confidence_histogram": {
+          "0.0-0.4": 4,
+          "0.8-1.0": 2
+        }
+      }
+    },
+    "official_discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 0,
+      "injected_candidate_ids": [],
+      "cache_lookups": 2,
+      "cache_hits": 0,
+      "cache_misses": 2
+    },
+    "footnotes_count": 3,
+    "dangling_markers": 0,
+    "answer_len": 2447
+  },
+  {
+    "id": "R02",
+    "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+    "run_id": "797f9627-104f-43f6-a70e-81a1bb6746ca",
+    "terminal": true,
+    "ms": 161321,
+    "total_ms": 156320,
+    "branch": "docket_limitation",
+    "source_nomination": {
+      "enabled": true,
+      "skipped": false,
+      "skip_reason": null,
+      "stage_failed": false,
+      "model_first": "openai/gpt-5-mini",
+      "model_final": "openai/gpt-5-mini",
+      "escalated": false,
+      "escalation_reason": null,
+      "mini_retry_used": false,
+      "mini_before": 8,
+      "mini_after": 7,
+      "fallback_to_mini_used": false,
+      "finish_reason": "tool_calls",
+      "reasoning_tokens": 384,
+      "parse_error": null,
+      "candidates_count": 7,
+      "dropped_count": 0,
+      "dropped_reasons": [],
+      "identifier_bearing_count": 3,
+      "category_mix": {
+        "statute": 1,
+        "judgment": 2,
+        "scholarship": 3,
+        "knesset_report": 1
+      },
+      "actionable_count": 4,
+      "exploratory_count": 3,
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 1
+      },
+      "known_name_no_docket_count": 1,
+      "topic_only_count": 3,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 4,
+        "0.8-1.0": 3
+      },
+      "stripped_identifiers": [],
+      "demoted_identifiers": [],
+      "queries_by_bucket": {
+        "actionable": 3,
+        "exploratory": 2
+      },
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "ms": 13387
+    },
+    "query_merge": {
+      "final_query_count": 20,
+      "from_nomination": 5,
+      "skipped_duplicate": 2,
+      "skipped_budget": 0,
+      "raw": {
+        "dropped": [
+          {
+            "reason": "duplicate_exact",
+            "producer": "required_anchors",
+            "query_he": "ע״א 6821/93",
+            "duplicate_of": "ע\"א 6821/93"
+          },
+          {
+            "reason": "duplicate_near",
+            "producer": "required_anchors",
+            "query_he": "ע\"א 6821-93",
+            "duplicate_of": "ע\"א 6821/93"
+          }
+        ],
+        "version": "query_merge_and_budget_v1",
+        "source_type_mix": {
+          "case": 13,
+          "statute": 5,
+          "academic": 2
+        },
+        "actionability_mix": {
+          "topic_only": 3,
+          "known_identifier": 3,
+          "known_name_no_docket": 1
+        },
+        "final_query_count": 20,
+        "actionable_queries": 3,
+        "demoted_identifiers": 0,
+        "exploratory_queries": 2,
+        "queries_by_producer": {
+          "planner": 10,
+          "required_anchors": 2,
+          "source_nomination": 5,
+          "judgment_discovery": 3
+        },
+        "stripped_identifiers": 0,
+        "planner_queries_count": 10,
+        "queries_skipped_budget": 0,
+        "nomination_queries_count": 5,
+        "queries_skipped_duplicate": 2,
+        "actionable_queries_preserved": 3,
+        "exploratory_queries_preserved": 2,
+        "queries_added_from_nomination": 5,
+        "identifier_confidence_histogram": {
+          "0.0-0.4": 4,
+          "0.8-1.0": 3
+        }
+      }
+    },
+    "official_discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 0,
+      "injected_candidate_ids": [],
+      "cache_lookups": 1,
+      "cache_hits": 0,
+      "cache_misses": 1
+    },
+    "footnotes_count": 0,
+    "dangling_markers": 0,
+    "answer_len": 341
+  },
+  {
+    "id": "P02",
+    "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+    "run_id": "b522fe6f-3fb6-488f-a77a-6353e2af1c09",
+    "terminal": true,
+    "ms": 45252,
+    "total_ms": null,
+    "branch": null,
+    "source_nomination": {
+      "enabled": null,
+      "skipped": false,
+      "skip_reason": null,
+      "stage_failed": null,
+      "model_first": null,
+      "model_final": null,
+      "escalated": null,
+      "escalation_reason": null,
+      "mini_retry_used": null,
+      "mini_before": null,
+      "mini_after": null,
+      "fallback_to_mini_used": null,
+      "finish_reason": null,
+      "reasoning_tokens": null,
+      "parse_error": null,
+      "candidates_count": null,
+      "dropped_count": null,
+      "dropped_reasons": [],
+      "identifier_bearing_count": null,
+      "category_mix": {},
+      "actionable_count": null,
+      "exploratory_count": null,
+      "actionability_mix": {},
+      "known_name_no_docket_count": null,
+      "topic_only_count": null,
+      "identifier_confidence_histogram": {},
+      "stripped_identifiers": [],
+      "demoted_identifiers": [],
+      "queries_by_bucket": {},
+      "actionable_queries_preserved": null,
+      "exploratory_queries_preserved": null,
+      "ms": null
+    },
+    "query_merge": {
+      "final_query_count": null,
+      "from_nomination": null,
+      "skipped_duplicate": null,
+      "skipped_budget": null,
+      "raw": {}
+    },
+    "official_discovery": {
+      "enabled": null,
+      "skip_reason": null,
+      "targets": null,
+      "bodies_acquired": null,
+      "injected_candidate_ids": [],
+      "cache_lookups": 0,
+      "cache_hits": null,
+      "cache_misses": null
+    },
+    "footnotes_count": 0,
+    "dangling_markers": 0,
+    "answer_len": 82
+  },
+  {
+    "id": "B8",
+    "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+    "run_id": "d9f44edf-2618-4106-b539-147471134cde",
+    "terminal": true,
+    "ms": 77744,
+    "total_ms": 76693,
+    "branch": "canonical_quote_registry",
+    "source_nomination": {
+      "enabled": false,
+      "skipped": true,
+      "skip_reason": "router_or_mode_skip",
+      "stage_failed": false,
+      "model_first": null,
+      "model_final": null,
+      "escalated": false,
+      "escalation_reason": null,
+      "mini_retry_used": false,
+      "mini_before": 0,
+      "mini_after": 0,
+      "fallback_to_mini_used": false,
+      "finish_reason": null,
+      "reasoning_tokens": null,
+      "parse_error": null,
+      "candidates_count": 0,
+      "dropped_count": 0,
+      "dropped_reasons": [],
+      "identifier_bearing_count": 0,
+      "category_mix": {},
+      "actionable_count": 0,
+      "exploratory_count": 0,
+      "actionability_mix": {
+        "topic_only": 0,
+        "known_identifier": 0,
+        "known_name_no_docket": 0
+      },
+      "known_name_no_docket_count": 0,
+      "topic_only_count": 0,
+      "identifier_confidence_histogram": {},
+      "stripped_identifiers": [],
+      "demoted_identifiers": [],
+      "queries_by_bucket": {
+        "actionable": 0,
+        "exploratory": 0
+      },
+      "actionable_queries_preserved": 0,
+      "exploratory_queries_preserved": 0,
+      "ms": 0
+    },
+    "query_merge": {
+      "final_query_count": 7,
+      "from_nomination": 0,
+      "skipped_duplicate": 0,
+      "skipped_budget": 0,
+      "raw": {
+        "dropped": [],
+        "version": "query_merge_and_budget_v1",
+        "source_type_mix": {
+          "report": 2,
+          "statute": 5
+        },
+        "actionability_mix": {
+          "topic_only": 0,
+          "known_identifier": 0,
+          "known_name_no_docket": 0
+        },
+        "final_query_count": 7,
+        "actionable_queries": 0,
+        "demoted_identifiers": 0,
+        "exploratory_queries": 0,
+        "queries_by_producer": {
+          "planner": 4,
+          "required_anchors": 3
+        },
+        "stripped_identifiers": 0,
+        "planner_queries_count": 4,
+        "queries_skipped_budget": 0,
+        "nomination_queries_count": 0,
+        "queries_skipped_duplicate": 0,
+        "actionable_queries_preserved": 0,
+        "exploratory_queries_preserved": 0,
+        "queries_added_from_nomination": 0,
+        "identifier_confidence_histogram": {}
+      }
+    },
+    "official_discovery": {
+      "enabled": false,
+      "skip_reason": "nomination_skipped",
+      "targets": 0,
+      "bodies_acquired": 0,
+      "injected_candidate_ids": [],
+      "cache_lookups": 0,
+      "cache_hits": 0,
+      "cache_misses": 0
+    },
+    "footnotes_count": 1,
+    "dangling_markers": 0,
+    "answer_len": 364
+  },
+  {
+    "id": "MAYA",
+    "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי?",
+    "run_id": "13dfd1b9-157f-4491-bbc1-31f28ab0ce55",
+    "terminal": true,
+    "ms": 161486,
+    "total_ms": 160435,
+    "branch": null,
+    "source_nomination": {
+      "enabled": true,
+      "skipped": false,
+      "skip_reason": null,
+      "stage_failed": false,
+      "model_first": "openai/gpt-5-mini",
+      "model_final": "openai/gpt-5-mini",
+      "escalated": false,
+      "escalation_reason": null,
+      "mini_retry_used": false,
+      "mini_before": 8,
+      "mini_after": 6,
+      "fallback_to_mini_used": false,
+      "finish_reason": "tool_calls",
+      "reasoning_tokens": 0,
+      "parse_error": null,
+      "candidates_count": 6,
+      "dropped_count": 1,
+      "dropped_reasons": [
+        "judgment_cap"
+      ],
+      "identifier_bearing_count": 3,
+      "category_mix": {
+        "statute": 1,
+        "judgment": 2,
+        "scholarship": 3
+      },
+      "actionable_count": 3,
+      "exploratory_count": 3,
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 0
+      },
+      "known_name_no_docket_count": 0,
+      "topic_only_count": 3,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 3,
+        "0.8-1.0": 3
+      },
+      "stripped_identifiers": [],
+      "demoted_identifiers": [],
+      "queries_by_bucket": {
+        "actionable": 3,
+        "exploratory": 2
+      },
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "ms": 10779
+    },
+    "query_merge": {
+      "final_query_count": 14,
+      "from_nomination": 5,
+      "skipped_duplicate": 0,
+      "skipped_budget": 8,
+      "raw": {
+        "dropped": [
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "בג\"ץ פסק דין סעד נגד בית דין רבני הסתמכות על שיקול חיצוני ביטול והחזקה במקום השבת הדיון מתן סעד חליפי"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, פסק דין עליון"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:supremedecisions.court.gov.il Download"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:court.gov.il filetype:pdf פסק דין"
+          }
+        ],
+        "version": "query_merge_and_budget_v1",
+        "source_type_mix": {
+          "case": 7,
+          "statute": 3,
+          "academic": 4
+        },
+        "actionability_mix": {
+          "topic_only": 3,
+          "known_identifier": 3,
+          "known_name_no_docket": 0
+        },
+        "final_query_count": 14,
+        "actionable_queries": 3,
+        "demoted_identifiers": 0,
+        "exploratory_queries": 2,
+        "queries_by_producer": {
+          "planner": 9,
+          "source_nomination": 5
+        },
+        "stripped_identifiers": 0,
+        "planner_queries_count": 10,
+        "queries_skipped_budget": 8,
+        "nomination_queries_count": 5,
+        "queries_skipped_duplicate": 0,
+        "actionable_queries_preserved": 3,
+        "exploratory_queries_preserved": 2,
+        "queries_added_from_nomination": 5,
+        "identifier_confidence_histogram": {
+          "0.0-0.4": 3,
+          "0.8-1.0": 3
+        }
+      }
+    },
+    "official_discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 0,
+      "injected_candidate_ids": [],
+      "cache_lookups": 2,
+      "cache_hits": 0,
+      "cache_misses": 2
+    },
+    "footnotes_count": 0,
+    "dangling_markers": 0,
+    "answer_len": 2376
+  },
+  {
+    "id": "MAYA-AMIR",
+    "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי? התייחסו לעניין סימה אמיר.",
+    "run_id": "767c6514-ad31-4cfd-87dd-57fdcb09bc4c",
+    "terminal": true,
+    "ms": 144162,
+    "total_ms": 140294,
+    "branch": null,
+    "source_nomination": {
+      "enabled": true,
+      "skipped": false,
+      "skip_reason": null,
+      "stage_failed": false,
+      "model_first": "openai/gpt-5-mini",
+      "model_final": "openai/gpt-5-mini",
+      "escalated": false,
+      "escalation_reason": null,
+      "mini_retry_used": false,
+      "mini_before": 8,
+      "mini_after": 7,
+      "fallback_to_mini_used": false,
+      "finish_reason": "tool_calls",
+      "reasoning_tokens": 0,
+      "parse_error": null,
+      "candidates_count": 7,
+      "dropped_count": 0,
+      "dropped_reasons": [],
+      "identifier_bearing_count": 3,
+      "category_mix": {
+        "statute": 2,
+        "judgment": 2,
+        "scholarship": 3
+      },
+      "actionable_count": 4,
+      "exploratory_count": 3,
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 1
+      },
+      "known_name_no_docket_count": 1,
+      "topic_only_count": 3,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 4,
+        "0.6-0.8": 1,
+        "0.8-1.0": 2
+      },
+      "stripped_identifiers": [
+        {
+          "label": "בג\"ץ 5555/18 חסון נ' כנסת ישראל",
+          "fields": [
+            "docket"
+          ],
+          "nomination_id": "N2"
+        }
+      ],
+      "demoted_identifiers": [
+        {
+          "label": "בג\"ץ 5555/18 חסון נ' כנסת ישראל",
+          "reason": "identifier_stripped:docket",
+          "nomination_id": "N2"
+        }
+      ],
+      "queries_by_bucket": {
+        "actionable": 3,
+        "exploratory": 2
+      },
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "ms": 9318
+    },
+    "query_merge": {
+      "final_query_count": 14,
+      "from_nomination": 5,
+      "skipped_duplicate": 0,
+      "skipped_budget": 10,
+      "raw": {
+        "dropped": [
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "בית המשפט העליון סעדי תיקון כאשר נקבע שימוש בשיקול חיצוני בפסק בית דין רבני ביטול פסק החזרה להכרעה מחדש צו ביניים פסקי דין רלוונטיים"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשי\"ג-1953 הוראות על ביטול פסקי הדין סמכויות הערעור והקשר לצווים אזרחיים; חוק סדר הדין האזרחי סמכויות מתן צו ביניים והסדרי ביצוע"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "planner",
+            "query_he": "מאמרים על גבולות התיקון השיפוטי כשבג\"ץ מבטל או מתקין פסקי בתי דין רבניים 'סעדים' 'ביטול פסק' 'החזרה להכרעה'"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "facets",
+            "query_he": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, פסק דין עליון"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:supremedecisions.court.gov.il Download"
+          },
+          {
+            "reason": "total_cap",
+            "producer": "judgment_discovery",
+            "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:court.gov.il filetype:pdf פסק דין"
+          }
+        ],
+        "version": "query_merge_and_budget_v1",
+        "source_type_mix": {
+          "case": 5,
+          "report": 1,
+          "statute": 3,
+          "academic": 5
+        },
+        "actionability_mix": {
+          "topic_only": 3,
+          "known_identifier": 3,
+          "known_name_no_docket": 1
+        },
+        "final_query_count": 14,
+        "actionable_queries": 3,
+        "demoted_identifiers": 1,
+        "exploratory_queries": 2,
+        "queries_by_producer": {
+          "planner": 9,
+          "source_nomination": 5
+        },
+        "stripped_identifiers": 1,
+        "planner_queries_count": 12,
+        "queries_skipped_budget": 10,
+        "nomination_queries_count": 5,
+        "queries_skipped_duplicate": 0,
+        "actionable_queries_preserved": 3,
+        "exploratory_queries_preserved": 2,
+        "queries_added_from_nomination": 5,
+        "identifier_confidence_histogram": {
+          "0.0-0.4": 4,
+          "0.6-0.8": 1,
+          "0.8-1.0": 2
+        }
+      }
+    },
+    "official_discovery": {
+      "enabled": true,
+      "skip_reason": null,
+      "targets": 2,
+      "bodies_acquired": 0,
+      "injected_candidate_ids": [],
+      "cache_lookups": 2,
+      "cache_hits": 0,
+      "cache_misses": 2
+    },
+    "footnotes_count": 2,
+    "dangling_markers": 0,
+    "answer_len": 2396
+  }
+]

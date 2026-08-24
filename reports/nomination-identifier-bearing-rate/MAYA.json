@@ -1,0 +1,155 @@
+{
+  "id": "MAYA",
+  "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי?",
+  "run_id": "13dfd1b9-157f-4491-bbc1-31f28ab0ce55",
+  "terminal": true,
+  "ms": 161486,
+  "total_ms": 160435,
+  "branch": null,
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 8,
+    "mini_after": 6,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 0,
+    "parse_error": null,
+    "candidates_count": 6,
+    "dropped_count": 1,
+    "dropped_reasons": [
+      "judgment_cap"
+    ],
+    "identifier_bearing_count": 3,
+    "category_mix": {
+      "statute": 1,
+      "judgment": 2,
+      "scholarship": 3
+    },
+    "actionable_count": 3,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 3,
+      "known_name_no_docket": 0
+    },
+    "known_name_no_docket_count": 0,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 3,
+      "0.8-1.0": 3
+    },
+    "stripped_identifiers": [],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 3,
+      "exploratory": 2
+    },
+    "actionable_queries_preserved": 3,
+    "exploratory_queries_preserved": 2,
+    "ms": 10779
+  },
+  "query_merge": {
+    "final_query_count": 14,
+    "from_nomination": 5,
+    "skipped_duplicate": 0,
+    "skipped_budget": 8,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "בג\"ץ פסק דין סעד נגד בית דין רבני הסתמכות על שיקול חיצוני ביטול והחזקה במקום השבת הדיון מתן סעד חליפי"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, פסק דין עליון"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:supremedecisions.court.gov.il Download"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:court.gov.il filetype:pdf פסק דין"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 7,
+        "statute": 3,
+        "academic": 4
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 0
+      },
+      "final_query_count": 14,
+      "actionable_queries": 3,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 2,
+      "queries_by_producer": {
+        "planner": 9,
+        "source_nomination": 5
+      },
+      "stripped_identifiers": 0,
+      "planner_queries_count": 10,
+      "queries_skipped_budget": 8,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 0,
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 3,
+        "0.8-1.0": 3
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 0,
+    "injected_candidate_ids": [],
+    "cache_lookups": 2,
+    "cache_hits": 0,
+    "cache_misses": 2
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 2376,
+  "answer": "**ביקורת בג\"ץ על הכרעות בתי דין רבניים בענייני חלוקת רכוש — עקרונות כלליים**\n\nבג\"ץ יכול, עקרונית, לפקח על החלטות של בית הדין הרבני בענייני חלוקת רכוש כאשר מתקיימת עילת ביקורת מנהלית מוכרת — לדוגמה חריגה מסמכות, טעות משפטית או פגם הליכי מהותי; עם זאת, במקורות שאותרו לא נמצא פסיקה עוגנת שמפרשת בפירוט את גבולות הפיקוח הספציפיים על בתי הדין הרבניים בענייני רכוש, ולכן יש להפעיל זהירות בפרשנות הכללית של העיקרון.\n\nאמת המידה שבה בג\"ץ יבחן טענה כי בית הדין הרבני הסתמך על 'שיקול חיצוני' היא בדרך כלל משולבת: בדיקת חוקיות ההחלטה (כולל טעות משפטית וחריגה מסמכות) ובדיקת סבירות השימוש בשיקול דעת — כאשר שימוש בידע או בעקרון שאינו רלוונטי לדין הרבני עלול להיחשב כהפרת סמכות או כעוולה משפטית שמצדיקה התערבות; מסגרת מבחני ה'אי־סבירות' והטעות המשפטית כפי שנדונה בפסיקה ובספרות ניתנת ליישום אנלוגי, אך תומכת בצורה חלקית בלבד במישום הספציפי לבתי דין דתיים.\n\nביחס לבדיקה העובדתית — בג\"ץ בדרך כלל לא מבצע בדיקה עובדתית חופשית וכוללת של כל שיקול שנעשה בבית הדין הרבני אלא מתמקד בתקינות ההליך, בהנחות העובדתיות המרכזיות שיש להן משקל משפטי ובשאילת האם בית הדין חרג מהיקף סמכותו; עם זאת, במצבים שבהם עובדות מהותיות מוטלות בספק ממשי או שבהן חוסר ההיקשר העובדתי פוגע בהכרעה, ייתכן שבג\"ץ ייכנס לבחינה מעמיקה יותר של הראיות.\n\nבחירת הסעד תלויה בעוצמת הפגם: הסעד השגרתי הוא ביטול/פרוק של ההחלטה והחזרת העניין לבית הדין הרבני להכרעה מחודשת (remittal); במקרים בהם ניתן לתקן את הליקוי משפטית או להכריע על בסיס מסמכים ועובדות ברורות, בג\"ץ עשוי, במצבים חריגים, להכריע בעצמו או להנחות באופן מפורש את בית הדין; ההשגת סעד חליפי על ידי בג\"ץ נחשבת חריגה ומותנית בנסיבות יוצאות דופן.\n\nמגבלות ושיקוף למקורות: במקורות שאותרו כאן לא נחשפה פסיקה מפורשת של בג\"ץ המתווה גבולות ספציפיים וחד־משמעיים לביקורת על בתי הדין הרבניים בענייני חלוקת רכוש; התשובות לעיל מבוססות על כללי ביקורת שיפוטית כלליים, על ניתוח תיאורטי ועל מסמכים העוסקים בהליכי בתי הדין הרבניים, ולפיכך יש להימנע ממסקנות גורפות ללא עיון בפסיקה נרחבת נוספת.\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- בג\"ץ 1715/97 - לשכת מנהלי ההשקעות בישראל ואח' נ' שר האוצר — https://hamoked.org.il/document.php?dID=2910\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": []
+}

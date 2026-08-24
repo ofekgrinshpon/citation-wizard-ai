@@ -1,0 +1,212 @@
+{
+  "id": "MAYA-AMIR",
+  "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי? התייחסו לעניין סימה אמיר.",
+  "run_id": "767c6514-ad31-4cfd-87dd-57fdcb09bc4c",
+  "terminal": true,
+  "ms": 144162,
+  "total_ms": 140294,
+  "branch": null,
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 8,
+    "mini_after": 7,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 0,
+    "parse_error": null,
+    "candidates_count": 7,
+    "dropped_count": 0,
+    "dropped_reasons": [],
+    "identifier_bearing_count": 3,
+    "category_mix": {
+      "statute": 2,
+      "judgment": 2,
+      "scholarship": 3
+    },
+    "actionable_count": 4,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 3,
+      "known_name_no_docket": 1
+    },
+    "known_name_no_docket_count": 1,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 4,
+      "0.6-0.8": 1,
+      "0.8-1.0": 2
+    },
+    "stripped_identifiers": [
+      {
+        "label": "בג\"ץ 5555/18 חסון נ' כנסת ישראל",
+        "fields": [
+          "docket"
+        ],
+        "nomination_id": "N2"
+      }
+    ],
+    "demoted_identifiers": [
+      {
+        "label": "בג\"ץ 5555/18 חסון נ' כנסת ישראל",
+        "reason": "identifier_stripped:docket",
+        "nomination_id": "N2"
+      }
+    ],
+    "queries_by_bucket": {
+      "actionable": 3,
+      "exploratory": 2
+    },
+    "actionable_queries_preserved": 3,
+    "exploratory_queries_preserved": 2,
+    "ms": 9318
+  },
+  "query_merge": {
+    "final_query_count": 14,
+    "from_nomination": 5,
+    "skipped_duplicate": 0,
+    "skipped_budget": 10,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "בית המשפט העליון סעדי תיקון כאשר נקבע שימוש בשיקול חיצוני בפסק בית דין רבני ביטול פסק החזרה להכרעה מחדש צו ביניים פסקי דין רלוונטיים"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשי\"ג-1953 הוראות על ביטול פסקי הדין סמכויות הערעור והקשר לצווים אזרחיים; חוק סדר הדין האזרחי סמכויות מתן צו ביניים והסדרי ביצוע"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "מאמרים על גבולות התיקון השיפוטי כשבג\"ץ מבטל או מתקין פסקי בתי דין רבניים 'סעדים' 'ביטול פסק' 'החזרה להכרעה'"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, פסק דין עליון"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:supremedecisions.court.gov.il Download"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:court.gov.il filetype:pdf פסק דין"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 5,
+        "report": 1,
+        "statute": 3,
+        "academic": 5
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 1
+      },
+      "final_query_count": 14,
+      "actionable_queries": 3,
+      "demoted_identifiers": 1,
+      "exploratory_queries": 2,
+      "queries_by_producer": {
+        "planner": 9,
+        "source_nomination": 5
+      },
+      "stripped_identifiers": 1,
+      "planner_queries_count": 12,
+      "queries_skipped_budget": 10,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 0,
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 4,
+        "0.6-0.8": 1,
+        "0.8-1.0": 2
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 0,
+    "injected_candidate_ids": [],
+    "cache_lookups": 2,
+    "cache_hits": 0,
+    "cache_misses": 2
+  },
+  "footnotes_count": 2,
+  "dangling_markers": 0,
+  "answer_len": 2396,
+  "answer": "שורה תחתונה: כאשר נטען שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי ביחס לחלוקת רכוש לאחר גירושין, אמת המידה שמפעיל בג\"ץ היא מבחן החריגה מסמכות — כלומר האם ההסתמכות על השיקול הובילה לחריגה מתחולת הדין האזרחי שעליה יכלו בתי‑דין רבניים להכריע, כך שההחלטה חרגה מסמכותן ושוללת את הלגיטימציה להכרעה שיפוטית בענייני ממונות.\n\nדגשים לבחינת ההבחנה בין שיקול לגיטימי לשיקול חיצוני: בג\"ץ בוחן אם השיקול שהופעל היה רלוונטי למשפט המחייב (האם הוא נחוץ לפי הדין האזרחי או לפי סמכות בוררות/הלכתית של בית הדין), האם השיקול עמד כתשתית נימוקית בפסק או סותר את עקרונות היישום של הדין האזרחי, והאם השיקול הופעל באופן מהותי להכרעת הדין ולא כסייג שולי.\n\nתשתית ראייתית נדרשת: כדי לקבוע שימוש בשיקול חיצוני דרוש רישום נימוקי בפסק הדין או במסמכי הכרעה אחרים המראה שהשיקול הנדון היה גורם מכריע; כאשר ההחלטה היא פסק בוררות רבני, יש להעלות את המחלוקת באמצעות המנגנונים הפרוצדורליים הרלוונטיים (למשל פניית בית המשפט המחוזי בבקשת ביטול/אישור של פסק הבוררות) כדי להביא בחינה שיפוטית של טענת החריגה.\n\nמה קבע בג\"ץ בסימה אמיר: בבג\"ץ 8638/03 נקבע כי בתי‑דין רבניים חרגו מסמכותם כאשר שפטו בתביעת אכיפת תניית שיפוי שלא הייתה בתחום סמכותם בענייני ממונות לאחר גירושין, ועל כן הוחלט לבטל את החלטות בתי‑הדין הרלוונטיים.¹\n\nהשלכות אמיר על תיקים דומים כיום: פסיקת אמיר מדגישה כי בג\"ץ יתערב כאשר מתקיימים מיצקי חריגה מסמכות ולא על בסיס זהירות מופלגת בלבד; יש לכך משמעות מעשית בהתכווננות ההיבטים הפרוצדורליים והראייתיים הנדרשים כדי להוכיח שהשיקול החיצוני אכן שינה את תוצאת ההכרעה, וכי אין בכך כדי לשנות את תחולת הכלל על מחלוקות שבתחום סמכותם של בתי‑דין דתיים.²\n\nסעדיים מקובלים בעת גילוי שימוש בשיקול חיצוני: בג\"ץ יכול לבטל את פסק‑דין בית הדין הרבני או את פסק הבוררות, להורות על החזרה להכרעה מחודשת תוך קביעת מסגרת ראייתית ונימוקית, ולנקט בצעדים זמניים או צווי מניעה במקרים המתאימים; הליכי ערעור/ביטול של פסקי בוררות רבניים מצויים בערכאות האזוריות והמחוזיות בהתאם לפרוצדורה שהועלתה.\n\nגבולות התיקון השיפוטי: בג\"ץ אינו נדרש או ראוי להחליף שיקול ראוי שבית הדין הרבני נטל במסגרת סמכותו מהותית, ומגבלות אלה מוחזקות באמצעות הדוקטרינה הכללית על שיקול דעת שיפוטי — תיקון שיפוטי עומד כאשר זוהתה חריגה ממשית בסמכות או שימוש בשל שיקולים שאינם רלוונטיים לפי הדין, ולא לשם שיפוט מחדש של שיקול מקצועי־הלכתי תקין.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9D%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9ל.doc",
+      "title": "בג\"ץ 8638/03 סימה אמיר נ' בית הדין הרבני הגדול; בג\"ץ 8638/03 סימה אמיר נ' בית הדין הרבני הגדול",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9D%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9ל.doc",
+          "title": "בג\"ץ 8638/03 סימה אמיר נ' בית הדין הרבני הגדול",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9E%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%ל.doc",
+          "title": "בג\"ץ 8638/03 סימה אמיר נ' בית הדין הרבני הגדול",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "compound"
+    },
+    {
+      "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9D%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9ל.doc",
+      "title": "בג\"ץ 8638/03 סימה אמיר נ' בית הדין הרבני הגדול",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9D%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9ל.doc",
+          "title": "בג\"ץ 8638/03 סימה אמיר נ' בית הדין הרבני הגדול",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    }
+  ]
+}
