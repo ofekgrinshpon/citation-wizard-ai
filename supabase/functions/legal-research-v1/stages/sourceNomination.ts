@@ -29,7 +29,12 @@ export const NOMINATION_LIMITS = {
   MAX_JUDGMENTS: 2,
   MAX_STATUTES: 2,
   MAX_SECONDARY: 2,
-  MAX_COMPLETION_TOKENS: 1500,
+  /** Budget must cover reasoning tokens AND the tool call. At 1500 the gpt-5
+   *  family burned the whole budget on reasoning and returned finish_reason
+   *  "length" with no tool call — that was the nomination outage. */
+  MAX_COMPLETION_TOKENS: 6000,
+  RETRY_COMPLETION_TOKENS: 8000,
+  ESCALATION_COMPLETION_TOKENS: 10000,
   /** A docket / bibliographic detail below this confidence is stripped. */
   IDENTIFIER_CONFIDENCE: 0.8,
   /** Nominations below this confidence are dropped entirely. */
@@ -74,6 +79,14 @@ export interface SourceNominationResult {
   model_initial: string | null;
   model_final: string | null;
   escalated: boolean;
+  escalation_reason: string | null;
+  stage_failed: boolean;
+  mini_retry_used: boolean;
+  fallback_to_mini_used: boolean;
+  mini_candidates_count_before_hardening: number;
+  mini_candidates_count_after_hardening: number;
+  finish_reason: string | null;
+  reasoning_tokens: number | null;
   parse_error: string | null;
   http_status: number | null;
   candidates: NominatedSource[];
@@ -182,6 +195,14 @@ function emptyResult(skip_reason: string | null): SourceNominationResult {
     model_initial: null,
     model_final: null,
     escalated: false,
+    escalation_reason: null,
+    stage_failed: false,
+    mini_retry_used: false,
+    fallback_to_mini_used: false,
+    mini_candidates_count_before_hardening: 0,
+    mini_candidates_count_after_hardening: 0,
+    finish_reason: null,
+    reasoning_tokens: null,
     parse_error: null,
     http_status: null,
     candidates: [],
@@ -410,7 +431,7 @@ export async function runSourceNomination(
   ].filter(Boolean).join("\n\n");
 
   const stage_runs: StageRun[] = [];
-  const call = async (model: string) => {
+  const call = async (model: string, effort: "low" | "medium", tokens: number) => {
     const tA = Date.now();
     const r = await callOpenAIJsonTool<{ nominations?: RawNomination[] }>({
       model,
@@ -421,60 +442,128 @@ export async function runSourceNomination(
         description: "רשימת מקורות משפטיים מועמדים לאימות",
         parameters: TOOL_PARAMETERS as unknown as Record<string, unknown>,
       },
-      maxCompletionTokens: NOMINATION_LIMITS.MAX_COMPLETION_TOKENS,
+      reasoningEffort: effort,
+      maxCompletionTokens: tokens,
     });
     stage_runs.push({
-      stage: `source_nomination.${model}`,
+      stage: `source_nomination.${model}.${effort}`,
       ms: Date.now() - tA,
       ok: !!r.data,
     } as StageRun);
     return r;
   };
 
-  let res = await call(MODEL_MINI);
+  type Attempt = Awaited<ReturnType<typeof call>>;
+  /** Parse + harden + cap one attempt. */
+  const digest = (res: Attempt) => {
+    const list = Array.isArray(res.data?.nominations) ? res.data!.nominations! : [];
+    const dropped: Array<{ label: string; reason: string }> = [];
+    const hardened: NominatedSource[] = [];
+    list.slice(0, 8).forEach((raw, i) => {
+      const out = harden(raw, i);
+      if ("drop" in out) {
+        dropped.push({ label: String(raw.label_he ?? "?"), reason: out.drop });
+        return;
+      }
+      hardened.push(out);
+    });
+    const capped = applyCategoryCaps(hardened);
+    const kept = capped.kept.slice(0, input.max_candidates ?? NOMINATION_LIMITS.MAX_CANDIDATES);
+    dropped.push(...capped.dropped);
+    return {
+      res,
+      raw_count: list.length,
+      hardened_count: hardened.length,
+      kept,
+      dropped,
+      /** Structural failure: nothing parseable came back at all. */
+      structural_failure: !res.data,
+    };
+  };
+
+  const complexMode = input.mode === "case_law_synthesis" ||
+    input.mode === "doctrine_explanation" || input.mode === "legal_memo";
+
+  // ── Attempt 1: mini, low reasoning effort, realistic budget ──────────────
+  let attempt = digest(
+    await call(MODEL_MINI, "low", NOMINATION_LIMITS.MAX_COMPLETION_TOKENS),
+  );
+  let model_final = MODEL_MINI;
   let escalated = false;
-  const rawList = Array.isArray(res.data?.nominations) ? res.data!.nominations! : [];
-  const complexMode = input.mode === "case_law_synthesis" || input.mode === "doctrine_explanation";
-  const emptyOrWeak = rawList.length === 0 ||
-    rawList.every((n) => (n.confidence ?? 0) < 0.5);
-  if ((!res.data || (complexMode && emptyOrWeak))) {
-    // One bounded escalation, matching lib/escalation.ts discipline.
-    escalated = true;
-    const second = await call(MODEL_FULL);
-    if (second.data) res = second;
+  let escalation_reason: string | null = null;
+  let mini_retry_used = false;
+  let fallback_to_mini_used = false;
+  const mini_before = attempt.raw_count;
+  const mini_after_first = attempt.kept.length;
+
+  // ── Attempt 2 (cheap): one bounded mini repair retry, only on a structural
+  //    failure. Never a 30s escalation for a parse/budget hiccup.
+  if (attempt.structural_failure) {
+    mini_retry_used = true;
+    const retry = digest(
+      await call(MODEL_MINI, "medium", NOMINATION_LIMITS.RETRY_COMPLETION_TOKENS),
+    );
+    if (!retry.structural_failure) attempt = retry;
+    else attempt = retry.kept.length ? retry : attempt;
   }
 
-  const list = Array.isArray(res.data?.nominations) ? res.data!.nominations! : [];
-  const dropped: Array<{ label: string; reason: string }> = [];
-  const hardened: NominatedSource[] = [];
-  list.slice(0, 8).forEach((raw, i) => {
-    const out = harden(raw, i);
-    if ("drop" in out) {
-      dropped.push({ label: String(raw.label_he ?? "?"), reason: out.drop });
-      return;
+  // ── Attempt 3 (expensive): escalate ONLY when mini produced nothing usable.
+  const miniFallback = attempt.kept.length > 0 ? attempt : null;
+  if (!miniFallback) {
+    escalation_reason = attempt.structural_failure
+      ? "mini_structural_failure"
+      : complexMode
+      ? "mini_zero_usable_candidates_complex_mode"
+      : "mini_zero_usable_candidates";
+    escalated = true;
+    const full = digest(
+      await call(MODEL_FULL, "low", NOMINATION_LIMITS.ESCALATION_COMPLETION_TOKENS),
+    );
+    if (full.kept.length > 0 || !full.structural_failure) {
+      attempt = full;
+      model_final = MODEL_FULL;
+    } else {
+      model_final = MODEL_FULL;
     }
-    hardened.push(out);
-  });
+  }
+  if (escalated && attempt.kept.length === 0 && miniFallback) {
+    attempt = miniFallback;
+    fallback_to_mini_used = true;
+  }
 
-  const capped = applyCategoryCaps(hardened);
-  const kept = capped.kept.slice(0, input.max_candidates ?? NOMINATION_LIMITS.MAX_CANDIDATES);
-  dropped.push(...capped.dropped);
-
+  const kept = attempt.kept;
+  const dropped = attempt.dropped;
   const claimId = input.analyzer.claims?.[0]?.claim_id ?? "C1";
   const queries = buildQueries(kept, claimId);
 
   const category_mix: Record<string, number> = {};
   for (const n of kept) category_mix[n.category] = (category_mix[n.category] ?? 0) + 1;
 
+  // A parse / tool-call failure is NOT a valid "no nominations" result.
+  const parse_error = attempt.res.parse_error ?? null;
+  const stage_failed = kept.length === 0 && (attempt.structural_failure || !!parse_error);
+
   return {
     version: SOURCE_NOMINATION_VERSION,
     enabled: true,
-    skip_reason: null,
+    skip_reason: stage_failed
+      ? "nomination_parse_failure"
+      : kept.length === 0
+      ? "valid_no_nominations"
+      : null,
+    stage_failed,
     model_initial: MODEL_MINI,
-    model_final: escalated ? MODEL_FULL : MODEL_MINI,
+    model_final,
     escalated,
-    parse_error: res.parse_error ?? null,
-    http_status: res.http_status ?? null,
+    escalation_reason,
+    mini_retry_used,
+    fallback_to_mini_used,
+    mini_candidates_count_before_hardening: mini_before,
+    mini_candidates_count_after_hardening: mini_after_first,
+    finish_reason: attempt.res.finish_reason ?? null,
+    reasoning_tokens: attempt.res.reasoning_tokens ?? null,
+    parse_error,
+    http_status: attempt.res.http_status ?? null,
     candidates: kept,
     dropped,
     queries,
