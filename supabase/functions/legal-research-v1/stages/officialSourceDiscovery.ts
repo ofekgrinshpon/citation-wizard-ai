@@ -203,7 +203,15 @@ export async function runOfficialSourceDiscovery(
   const t0 = Date.now();
   const nom = input.nomination;
   if (!nom?.enabled || nom.candidates.length === 0) {
-    return emptyReport("no_nominations");
+    // A parse / tool-call failure upstream is not a valid "no nominations"
+    // result — keep the two apart so acceptance runs are auditable.
+    return emptyReport(
+      !nom?.enabled
+        ? "nomination_skipped"
+        : nom.stage_failed
+        ? "nomination_parse_failure"
+        : "valid_no_nominations",
+    );
   }
   const cap = Math.max(0, Math.min(input.max_targets ?? DISCOVERY_LIMITS.MAX_TARGETS, DISCOVERY_LIMITS.MAX_TARGETS));
   if (cap === 0) return emptyReport("target_cap_zero");

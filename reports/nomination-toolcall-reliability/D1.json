@@ -1,0 +1,107 @@
+{
+  "id": "D1",
+  "query": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם מיושמים כאשר חוק פוגע בזכות יסוד?",
+  "run_id": "b99d0776-3083-42e8-8067-2bea90030462",
+  "terminal": true,
+  "ms": 115321,
+  "total_ms": 108053,
+  "branch": "insufficient_sources_limitation",
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 7,
+    "mini_after": 5,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 640,
+    "parse_error": null,
+    "candidates_count": 5,
+    "dropped_count": 2,
+    "dropped_reasons": [
+      "low_confidence",
+      "total_cap"
+    ],
+    "identifier_bearing_count": 0,
+    "category_mix": {
+      "statute": 1,
+      "judgment": 2,
+      "scholarship": 1,
+      "knesset_report": 1
+    },
+    "ms": 12862
+  },
+  "query_merge": {
+    "final_query_count": 14,
+    "from_nomination": 4,
+    "skipped_duplicate": 0,
+    "skipped_budget": 5,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "מהו מבנה מבחן המידתיות (proportionality) בביקורת חוקתית בישראל: חלקיו משפט חוקתי חריגים וסייגים"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם פסק דין עליון"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם site:supremedecisions.court.gov.il Download"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם site:court.gov.il filetype:pdf פסק דין"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 8,
+        "statute": 3,
+        "academic": 3
+      },
+      "final_query_count": 14,
+      "queries_by_producer": {
+        "facets": 2,
+        "planner": 8,
+        "source_nomination": 4
+      },
+      "planner_queries_count": 8,
+      "queries_skipped_budget": 5,
+      "nomination_queries_count": 4,
+      "queries_skipped_duplicate": 0,
+      "queries_added_from_nomination": 4
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": "no_identifier_bearing_nominations",
+    "targets": 0,
+    "bodies_acquired": 0,
+    "injected_candidate_ids": [],
+    "cache_lookups": 0,
+    "cache_hits": 0,
+    "cache_misses": 0
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 444,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק-יסוד: כבוד האדם וחירותו; רבע מאה למהפכה החוקתית: תמונת מצב של ה\"חוקה בהרצה\"; חוק-יסוד: כבוד האדם וחירותו ובחוק-יסוד; אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה.",
+  "footnotes": []
+}
