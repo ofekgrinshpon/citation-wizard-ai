@@ -1,0 +1,145 @@
+{
+  "id": "MAYA",
+  "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי?",
+  "run_id": "f0aaf0ef-40ec-4f48-9635-a0220b847bff",
+  "terminal": true,
+  "ms": 156018,
+  "total_ms": 152659,
+  "branch": null,
+  "nomination": {
+    "actionable_count": 3,
+    "category_mix": {
+      "statute": 2,
+      "judgment": 1,
+      "scholarship": 2,
+      "knesset_report": 1
+    },
+    "statute_nominations": [
+      {
+        "year": null,
+        "bucket": "actionable",
+        "docket": null,
+        "authors": [],
+        "demoted": false,
+        "category": "statute",
+        "label_he": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)",
+        "confidence": 0.95,
+        "institution": "הכנסת",
+        "must_verify": true,
+        "topic_query": "חוק שיפוט בתי דין רבניים (נישואין וגירושין) טקסט מלא",
+        "nominated_by": "source_nomination_v2",
+        "actionability": "known_identifier",
+        "nomination_id": "N1",
+        "statute_title": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)",
+        "demoted_reason": null,
+        "role_in_answer": "מסגרת סמכויות בתי הדין הרבניים וסייגי הסמכות האזרחית",
+        "statute_section": null,
+        "stripped_fields": [],
+        "journal_or_publisher": null,
+        "relevance_confidence": 0.95,
+        "identifier_confidence": 0.9
+      },
+      {
+        "year": null,
+        "bucket": "actionable",
+        "docket": null,
+        "authors": [],
+        "demoted": false,
+        "category": "statute",
+        "label_he": "חוק-יסוד: כבוד האדם וחירותו",
+        "confidence": 0.7,
+        "institution": "הכנסת",
+        "must_verify": true,
+        "topic_query": "חוק-יסוד: כבוד האדם וחירותו סעיף 8 טקסט",
+        "nominated_by": "source_nomination_v2",
+        "actionability": "known_identifier",
+        "nomination_id": "N3",
+        "statute_title": "חוק-יסוד: כבוד האדם וחירותו",
+        "demoted_reason": null,
+        "role_in_answer": "בסיס לעקרונות של ביקורת שיפוטית וצמצום סמכויות",
+        "statute_section": "סעיף 8",
+        "stripped_fields": [],
+        "journal_or_publisher": null,
+        "relevance_confidence": 0.7,
+        "identifier_confidence": 0.9
+      }
+    ]
+  },
+  "discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 1,
+    "cache_hits": 0,
+    "cache_misses": 2,
+    "cache_writes": 0,
+    "injected_candidate_ids": [
+      "nominated-source:N1"
+    ],
+    "attempts": [
+      {
+        "ms": 481,
+        "label": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)",
+        "reason": null,
+        "result": "body_acquired",
+        "statute": {
+          "lane": "statute",
+          "section": null,
+          "title_raw": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)",
+          "section_found": null,
+          "title_normalized": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)",
+          "identity_tokens_matched": 6,
+          "title_normalization_changed": false
+        },
+        "category": "statute",
+        "body_chars": 10813,
+        "cache_lookup": "miss",
+        "cache_status": null,
+        "cache_written": false,
+        "nomination_id": "N1",
+        "urls_attempted": [
+          "https://www.nevo.co.il/law_html/law00/73178.htm",
+          "https://fs.knesset.gov.il/2/law/2_lsr_209652.pdf",
+          "https://fs.knesset.gov.il/17/law/17_lst_596469.docx"
+        ],
+        "acquisition_path": "statute_official_url",
+        "cache_write_error": "there is no unique or exclusion constraint matching the ON CONFLICT specification",
+        "normalized_docket": null,
+        "injected_candidate_id": "nominated-source:N1"
+      },
+      {
+        "ms": 33,
+        "label": "חוק-יסוד: כבוד האדם וחירותו",
+        "reason": "unsupported_statute_source:no_official_statute_url",
+        "result": "unsupported_statute_source",
+        "statute": {
+          "lane": "statute",
+          "section": "8",
+          "title_raw": "חוק-יסוד: כבוד האדם וחירותו",
+          "section_found": null,
+          "title_normalized": "חוק-יסוד: כבוד האדם וחירותו",
+          "identity_tokens_matched": 0,
+          "title_normalization_changed": false
+        },
+        "category": "statute",
+        "body_chars": 0,
+        "cache_lookup": "miss",
+        "cache_status": null,
+        "cache_written": false,
+        "nomination_id": "N3",
+        "urls_attempted": [],
+        "acquisition_path": "none",
+        "cache_write_error": null,
+        "normalized_docket": null,
+        "injected_candidate_id": null
+      }
+    ]
+  },
+  "statute_acquisition": null,
+  "used_sources": [],
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 1308,
+  "answer": "בג״ץ כפוף לפיקוח שיפוטי על החלטות בתי־דין רבניים בענייני חלוקת רכוש כאשר נטענת פגיעה בסמכות, חוסר רלוונטיות של השיקול או חריגה מהתחום המותרים; באופן פרקטי העותר נושא בנטל הראשוני להצביע על פגם ממשי בהחלטה שימקם את ההכרעה מחוץ לגבולות הסמכות או שיהפוך אותה לבלתי עניינית.\n\nשיקול חיצוני יהפוך את הכרעת בית־הדין לבלתי-חוקית כאשר הוא אינו רלוונטי להליך, משמש להצדקת החלטה על יסוד אינטרס זר, או כשהרבני הכריע בשאלה אזרחית הכפופה אך ורק לערכאה אחרת — קריטריונים אלה מסגירים חריגה מסמכות או שיקול דעת פסול.\n\nבמעשה הביקורת הפורמלי בג״ץ נוטה לבחון: (א) האם נעדרה סמכות מהותית; (ב) האם השיקול הזר היה מהותי ומכריע להחלטה; ו(ג) האם ההחלטה סבירה באופן קיצוני. המשקל בין מבחנים אלה עשוי להשתנות; בנטל ההוכחה עומד בראשית הדבר העותר להצביע על טעות מהותית, ורק אז נדרש המשיב להציג הצדקת ההליך.\n\nהסעדים המקובלים במקרה של גילוי הסתמכות על שיקול חיצוני הם ביטול ההכרעה והרשאת החזרת העניין לבית־הדין הרבני להכרעה מחדש בהנחיות. החלפת ההכרעה על ידי בג״ץ אפשרית רק במצבים יוצאי דופן שבהם הדיון הטכני, הראיות והסמכות מאפשרים זאת; מדיניות זו שואפת להמנע מפגיעה בריבונות שיפוטית של ערכאה אחרת.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": []
+}

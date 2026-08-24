@@ -121,11 +121,11 @@ const STATUTE_REGISTRY: StatuteDef[] = [
 // parenthesized parts).
 const SECTION_RE_G = /סעיף\s+(\d+[א-ת]?(?:\s*\([^)]{1,10}\))*)/g;
 
-function normalizeSectionMarker(raw: string): string {
+export function normalizeSectionMarker(raw: string): string {
   return raw.replace(/\s+/g, "");
 }
 
-function buildSectionVariants(section: string): string[] {
+export function buildSectionVariants(section: string): string[] {
   // Accept several ways the marker may appear in a snippet.
   const s = normalizeSectionMarker(section);
   const out = new Set<string>([

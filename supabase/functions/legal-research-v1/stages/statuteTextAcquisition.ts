@@ -48,7 +48,7 @@ export const STATUTE_ACQUISITION_LIMITS = {
 } as const;
 
 /** Official statute hosts only — no aggregators, no commentary sites. */
-const STATUTE_HOST_RE =
+export const STATUTE_HOST_RE =
   /(^|\.)(knesset\.gov\.il|gov\.il|nevo\.co\.il|justice\.gov\.il|mishpatim\.gov\.il)$/i;
 
 const STATUTE_TYPES = new Set(["israeli_law", "statute", "regulation", "legislation"]);
@@ -185,7 +185,7 @@ function stripMarkup(s: string): string {
     .trim();
 }
 
-async function acquireOne(
+export async function acquireStatuteTextFromUrl(
   url: string,
   budgetExceeded: () => boolean,
   onStage: StatuteStageSink,
@@ -370,7 +370,7 @@ export async function runStatuteTextAcquisition(
       ref_id: e.ref.ref_id,
     });
     try {
-      const text = await acquireOne(
+      const text = await acquireStatuteTextFromUrl(
         url,
         budgetExceeded,
         onStage,

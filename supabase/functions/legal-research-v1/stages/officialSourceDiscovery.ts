@@ -39,6 +39,18 @@ import {
 } from "./sourceNomination.ts";
 
 import {
+  acquireStatuteTextFromUrl,
+  STATUTE_HOST_RE,
+} from "./statuteTextAcquisition.ts";
+import { normalizeStatuteTitleText } from "./coreAuthorityRegistry.ts";
+import {
+  buildSectionVariants,
+  detectStatuteSections,
+  getStatuteSectionCanonicalEntry,
+  normalizeSectionMarker,
+} from "./statuteSectionDetection.ts";
+
+import {
   lookupVerifiedSource,
   recordSourceFailure,
   recordVerifiedSource,
@@ -78,7 +90,12 @@ export interface DiscoveryAttempt {
   cache_lookup: "hit" | "miss" | "cooldown" | "skipped";
   cache_status: string | null;
   urls_attempted: string[];
-  acquisition_path: "cache" | "retrieved_official_url" | "derived_court_url" | "none";
+  acquisition_path:
+    | "cache"
+    | "retrieved_official_url"
+    | "derived_court_url"
+    | "statute_official_url"
+    | "none";
   result:
     | "cache_hit"
     | "body_acquired"
@@ -87,14 +104,28 @@ export interface DiscoveryAttempt {
     | "below_threshold"
     | "fetch_failed"
     | "timeout"
+    | "statute_not_found"
+    | "section_not_found"
+    | "unsupported_statute_source"
     | "not_attempted";
   body_chars: number;
   injected_candidate_id: string | null;
   cache_written: boolean;
   cache_write_error: string | null;
   reason: string | null;
+  /** statute lane only — normalization / validation trace. */
+  statute?: {
+    title_raw: string | null;
+    title_normalized: string | null;
+    title_normalization_changed: boolean;
+    section: string | null;
+    section_found: boolean | null;
+    identity_tokens_matched: number;
+    lane: "statute";
+  };
   ms: number;
 }
+
 
 export interface OfficialDiscoveryReport {
   version: typeof OFFICIAL_DISCOVERY_VERSION;
@@ -409,6 +440,14 @@ async function handleTarget(
   // judgments: official URLs retrieval already surfaced, identity proven by
   // distinctive name tokens. Deterministic derivation is never used there.
   if (!docket) {
+    // statute_nomination_to_text_acquisition_v1 — statutes never have a
+    // docket; route them to the official statute acquisition path instead of
+    // dropping them as `no_docket_no_live_lane`.
+    if (isStatuteNomination(n)) {
+      const out = await handleStatuteNomination(n, input, attempt, remainingMs);
+      out.ms = Date.now() - tA;
+      return out;
+    }
     if (n.category === "judgment" && n.actionability === "known_name_no_docket") {
       const out = await handleNamedJudgment(n, input, attempt, remainingMs);
       out.ms = Date.now() - tA;
@@ -562,24 +601,34 @@ function injectBody(
   input: OfficialDiscoveryInput,
   n: NominatedSource,
   docket: DocketRef | null,
-  src: { url: string; text: string; from_cache: boolean },
+  src: {
+    url: string;
+    text: string;
+    from_cache: boolean;
+    kind?: "judgment" | "statute";
+    acquisition_path?: string;
+    statute_title?: string | null;
+    statute_section?: string | null;
+    statute_section_found?: boolean;
+  },
 ): string {
+  const isStatute = src.kind === "statute";
   const stored = src.text.slice(0, DISCOVERY_LIMITS.MAX_TEXT);
   const candidate_id = `nominated-source:${n.nomination_id}`;
   const base = input.candidates[0];
   const injected: Candidate = {
     candidate_id,
     claim_id: base?.claim_id ?? "C1",
-    role: "binding_case_law",
+    role: isStatute ? "primary_statute" : "binding_case_law",
     origin: "perplexity",
     retrieval_method: "perplexity",
     title: n.label_he,
-    source_type: "caselaw",
+    source_type: isStatute ? "israeli_law" : "caselaw",
     source_url: src.url || null,
     snippet: stored.slice(0, 800),
     query_he: n.topic_query ?? n.label_he,
     score: 1,
-    expected_source_type: "case",
+    expected_source_type: isStatute ? "statute" : "case",
     metadata: {},
   } as Candidate;
 
@@ -593,15 +642,18 @@ function injectBody(
   integ.text_usability = (stored.length >= 1200
     ? "full_text"
     : "substantive_excerpt") as SourceIntegrity["text_usability"];
-  integ.has_holding_text = integ.has_holding_text || HOLDING_TEXT_RE.test(stored);
-  integ.citable_as = "judgment";
-  integ.is_judgment_document = true;
+  integ.has_holding_text = isStatute
+    ? integ.has_holding_text
+    : (integ.has_holding_text || HOLDING_TEXT_RE.test(stored));
+  integ.citable_as = isStatute ? "statute" : "judgment";
+  integ.is_judgment_document = !isStatute;
   integ.authority_tier = "official_primary";
   integ.reject = false;
   delete integ.reject_reason;
   integ.integrity_flags = [
     ...(integ.integrity_flags ?? []),
     src.from_cache ? "verified_source_cache_hit" : "official_discovery_body_acquired",
+    ...(isStatute ? ["statute_text_acquired", "body_acquired"] : []),
   ];
 
   injected.metadata = {
@@ -611,7 +663,20 @@ function injectBody(
     docket_match: !!docket,
     body_acquired: true,
     text_usability: integ.text_usability,
-    usable_for_holding: true,
+    final_text_usability: integ.text_usability,
+    usable_for_holding: !isStatute,
+    ...(isStatute
+      ? {
+        statute_text_acquired: true,
+        statute_title: src.statute_title ?? null,
+        statute_section: src.statute_section ?? null,
+        statute_section_text_located: !!src.statute_section_found,
+      }
+      : {}),
+    actionability: n.actionability,
+    acquisition_path: src.acquisition_path ?? (src.from_cache ? "cache" : "official_discovery"),
+    source_kind: "official",
+    body_chars: stored.length,
     nominated_by: n.nominated_by,
     nomination_id: n.nomination_id,
     nomination_role_in_answer: n.role_in_answer,
@@ -632,7 +697,7 @@ function injectBody(
     citable_as: String(integ.citable_as),
     integrity_flags: integ.integrity_flags ?? [],
     can_satisfy_role: true,
-    is_judgment_document: true,
+    is_judgment_document: !isStatute,
     has_holding_text: !!integ.has_holding_text,
     synthesis_role: "leading_candidate",
     synthesis_role_seeded_from: src.from_cache
@@ -765,6 +830,249 @@ async function handleNamedJudgment(
     canonical_title: n.label_he,
     official_url: attempt.urls_attempted[0] ?? null,
     status: attempt.result === "identity_mismatch" ? "identity_mismatch" : "failed",
+    reason: lastFailure,
+  });
+  return attempt;
+}
+
+
+// ── statute_nomination_to_text_acquisition_v1 ──────────────────────────────
+//
+// A nominated statute has no docket, so the judgment ladder cannot serve it.
+// This lane routes statute / statutory-section nominations to the official
+// statute acquisition path (the same bounded fetch/extract used by
+// `statuteTextAcquisition`), validates statute identity (and the section when
+// one was nominated) inside the acquired text, and only then injects a
+// candidate. Nothing downstream is relaxed: the injected row runs through
+// source integrity, verifier, claim-source-match, sufficiency and the
+// footnote invariant like any retrieved row.
+
+const STATUTE_TOKEN_STOP = new Set([
+  "חוק", "חוקי", "יסוד", "פקודת", "פקודה", "תקנות", "סעיף", "של", "בין", "על",
+  "לחוק", "כללי", "חלק", "נוסח", "חדש", "התשי", "תשי", "תשל", "תשנ", "תשע",
+]);
+
+export function isStatuteNomination(n: NominatedSource): boolean {
+  if (n.category !== "statute") return false;
+  return !!(n.statute_title || n.label_he);
+}
+
+function statuteTitleTokens(title: string): string[] {
+  return String(title ?? "")
+    .replace(/[\u0591-\u05C7]/g, "")
+    .replace(/["'`׳״]/g, "")
+    .split(/[^\p{L}\p{N}]+/u)
+    .map((t) => t.trim())
+    .filter((t) => t.length >= 3 && !/^\d+$/.test(t) && !STATUTE_TOKEN_STOP.has(t));
+}
+
+function statuteHost(url: string): boolean {
+  try {
+    return STATUTE_HOST_RE.test(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+}
+
+function cleanSection(raw: string | null): string | null {
+  if (!raw) return null;
+  const m = String(raw).match(/\d+[א-ת]?(?:\s*\([^)]{1,10}\))*/);
+  return m ? normalizeSectionMarker(m[0]) : null;
+}
+
+/** Official statute URLs retrieval already surfaced for this statute title. */
+function retrievedStatuteUrls(candidates: Candidate[], toks: string[]): string[] {
+  if (toks.length === 0) return [];
+  const need = toks.length >= 2 ? 2 : 1;
+  const urls: string[] = [];
+  for (const c of candidates) {
+    const url = String(c.source_url ?? "");
+    if (!url || !statuteHost(url)) continue;
+    if (isListingPage(url)) continue;
+    if (nameMatchCount(`${c.title ?? ""} ${c.snippet ?? ""}`, toks) < need) continue;
+    if (!urls.includes(url)) urls.push(url);
+  }
+  return urls;
+}
+
+/** True when retrieval already produced usable statutory body text. */
+function poolHasStatuteBody(candidates: Candidate[], toks: string[], variants: string[]): boolean {
+  if (toks.length === 0) return false;
+  const need = toks.length >= 2 ? 2 : 1;
+  for (const c of candidates) {
+    if (nameMatchCount(`${c.title ?? ""}`, toks) < need) continue;
+    const md = (c.metadata ?? {}) as Record<string, unknown>;
+    const integ = md.source_integrity as SourceIntegrity | undefined;
+    const usability = String(integ?.text_usability ?? md.text_usability ?? "");
+    if (/listing|metadata|unusable|none/i.test(usability)) continue;
+    const text = candidateText(c);
+    if (text.trim().length < DISCOVERY_LIMITS.MIN_BODY_CHARS) continue;
+    if (variants.length > 0 && !variants.some((v) => v.length >= 2 && text.includes(v))) continue;
+    return true;
+  }
+  return false;
+}
+
+async function handleStatuteNomination(
+  n: NominatedSource,
+  input: OfficialDiscoveryInput,
+  attempt: DiscoveryAttempt,
+  remainingMs: () => number,
+): Promise<DiscoveryAttempt> {
+  const rawTitle = n.statute_title ?? n.label_he ?? null;
+  const norm = normalizeStatuteTitleText(rawTitle);
+  const title = norm.normalized || String(rawTitle ?? "");
+  const section = cleanSection(n.statute_section);
+  const variants = section ? buildSectionVariants(section) : [];
+  const toks = statuteTitleTokens(title);
+  attempt.statute = {
+    title_raw: rawTitle,
+    title_normalized: title || null,
+    title_normalization_changed: norm.changed,
+    section,
+    section_found: null,
+    identity_tokens_matched: 0,
+    lane: "statute",
+  };
+
+  if (!title || toks.length === 0) {
+    attempt.result = "statute_not_found";
+    attempt.reason = "statute_not_found:no_normalizable_title";
+    return attempt;
+  }
+
+  // A section already covered by the canonical-quote registry is served by the
+  // deterministic quote path; probing it here would duplicate a verbatim
+  // source without adding anything.
+  if (section) {
+    const ref = detectStatuteSections(`${title} סעיף ${section}`)[0];
+    if (ref && getStatuteSectionCanonicalEntry(ref)) {
+      attempt.reason = "canonical_quote_registry_covers_section";
+      return attempt;
+    }
+  }
+
+  if (poolHasStatuteBody(input.candidates, toks, variants)) {
+    attempt.reason = "retrieval_already_has_body";
+    return attempt;
+  }
+
+  const urls = retrievedStatuteUrls(input.candidates, toks)
+    .slice(0, DISCOVERY_LIMITS.MAX_URLS_PER_TARGET);
+  attempt.urls_attempted = urls;
+  if (urls.length === 0) {
+    attempt.result = "unsupported_statute_source";
+    attempt.reason = "unsupported_statute_source:no_official_statute_url";
+    return attempt;
+  }
+
+  const need = toks.length >= 2 ? 2 : 1;
+  let lastFailure = "acquisition_failed";
+  let lastResult: DiscoveryAttempt["result"] = "fetch_failed";
+  for (const url of urls) {
+    if (input.budget?.exceeded() || remainingMs() < 2000) {
+      lastResult = "timeout";
+      lastFailure = "acquisition_failed:budget_exhausted";
+      break;
+    }
+    input.budget?.mark("statute_nomination_probe", { url, nomination: n.nomination_id });
+    try {
+      const text = await withTimeout(
+        acquireStatuteTextFromUrl(
+          url,
+          () => (input.budget?.exceeded() ?? false) || remainingMs() < 1000,
+          (name: string, detail?: Record<string, unknown>) =>
+            input.budget?.mark(name, detail),
+          (bytes: number) => input.budget?.allowExtraction?.(bytes) ?? true,
+        ),
+        Math.max(2000, Math.min(DISCOVERY_LIMITS.PER_URL_MS, remainingMs())),
+        "statute_nomination_acquisition",
+      );
+      input.budget?.noteExtractionOutput?.(text.length);
+      if (text.length < DISCOVERY_LIMITS.MIN_BODY_CHARS) {
+        lastResult = "below_threshold";
+        lastFailure = "acquisition_failed:below_threshold";
+        continue;
+      }
+      const matched = nameMatchCount(text.slice(0, 60_000), toks);
+      attempt.statute.identity_tokens_matched = Math.max(
+        attempt.statute.identity_tokens_matched,
+        matched,
+      );
+      if (matched < need) {
+        lastResult = "identity_mismatch";
+        lastFailure = "identity_mismatch:statute_title_not_in_text";
+        continue;
+      }
+      let stored = text;
+      let sectionFound: boolean | null = null;
+      if (variants.length > 0) {
+        const hit = variants.find((v) => v.length >= 2 && text.includes(v));
+        sectionFound = !!hit;
+        attempt.statute.section_found = sectionFound;
+        if (!hit) {
+          lastResult = "section_not_found";
+          lastFailure = `section_not_found:${section}`;
+          continue;
+        }
+        const i = text.indexOf(hit);
+        stored = text.slice(Math.max(0, i - 400), Math.max(0, i - 400) + 12_000);
+      }
+
+      attempt.result = "body_acquired";
+      attempt.body_chars = stored.length;
+      attempt.acquisition_path = "statute_official_url";
+      attempt.injected_candidate_id = injectBody(input, n, null, {
+        url,
+        text: stored,
+        from_cache: false,
+        kind: "statute",
+        acquisition_path: "statute_official_url",
+        statute_title: title,
+        statute_section: section,
+        statute_section_found: !!sectionFound,
+      });
+      const write = await recordVerifiedSource(input.admin, {
+        category: "statute",
+        source_type: "israeli_law",
+        authority_type: "statute",
+        normalized_docket: null,
+        canonical_title: title,
+        statute_title: title,
+        statute_section: section,
+        official_url: url,
+        year: n.year,
+        identity_terms_matched: toks.slice(0, 8),
+        identity_validated: true,
+        acquisition_method: "statute_official_url",
+        text: stored,
+      });
+      attempt.cache_written = write.ok;
+      attempt.cache_write_error = write.error;
+      return attempt;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (/timeout|abort/i.test(msg)) {
+        lastResult = "timeout";
+        lastFailure = "acquisition_failed:timeout";
+      } else {
+        lastResult = "fetch_failed";
+        lastFailure = `acquisition_failed:${msg.slice(0, 160)}`;
+      }
+    }
+  }
+
+  attempt.result = lastResult;
+  attempt.reason = lastFailure;
+  await recordSourceFailure(input.admin, {
+    category: "statute",
+    source_type: "israeli_law",
+    normalized_docket: null,
+    statute_title: title,
+    statute_section: section,
+    canonical_title: title,
+    official_url: attempt.urls_attempted[0] ?? null,
+    status: lastResult === "identity_mismatch" ? "identity_mismatch" : "failed",
     reason: lastFailure,
   });
   return attempt;

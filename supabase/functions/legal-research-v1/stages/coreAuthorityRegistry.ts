@@ -320,6 +320,26 @@ const STATUTE_ALIASES: StatuteAlias[] = [
   },
 ];
 
+/**
+ * Normalize a bare statute title (not a query) to its exact statutory title.
+ * Shared with the nominated-statute acquisition lane so a nomination like
+ * "חוק יחסי ממון" is looked up / validated under the canonical title.
+ */
+export function normalizeStatuteTitleText(
+  title: string | null | undefined,
+): { normalized: string; changed: boolean } {
+  let text = String(title ?? "");
+  const before = text;
+  for (const a of STATUTE_ALIASES) {
+    if (a.present.test(text)) continue;
+    a.alias.lastIndex = 0;
+    if (!a.alias.test(text)) continue;
+    a.alias.lastIndex = 0;
+    text = text.replace(a.alias, a.canonical);
+  }
+  return { normalized: text.trim(), changed: text.trim() !== before.trim() };
+}
+
 export interface StatuteNormalizationReport {
   applied: boolean;
   rewritten_count: number;

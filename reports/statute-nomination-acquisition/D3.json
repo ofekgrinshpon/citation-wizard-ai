@@ -1,0 +1,171 @@
+{
+  "id": "D3",
+  "query": "מתי בג״ץ יתערב בהחלטה של בית דין רבני בענייני רכוש בין בני זוג, במיוחד כאשר נטען שבית הדין החיל דין דתי במקום דין אזרחי?",
+  "run_id": "ed6a6f44-52bc-4bd7-a202-f7fc4afda550",
+  "terminal": true,
+  "ms": 128567,
+  "total_ms": 127225,
+  "branch": null,
+  "nomination": {
+    "actionable_count": 3,
+    "category_mix": {
+      "statute": 1,
+      "judgment": 2,
+      "scholarship": 2,
+      "government_report": 1
+    },
+    "statute_nominations": [
+      {
+        "year": 1988,
+        "bucket": "actionable",
+        "docket": null,
+        "authors": [],
+        "demoted": false,
+        "category": "statute",
+        "label_he": "חוק בתי דין רבניים (נישואין וגירושין), תשמ\"ח-1988",
+        "confidence": 0.9,
+        "institution": "הכנסת",
+        "must_verify": true,
+        "topic_query": "חוק בתי דין רבניים (נישואין וגירושין) תשמ\"ח-1988",
+        "nominated_by": "source_nomination_v2",
+        "actionability": "known_identifier",
+        "nomination_id": "N3",
+        "statute_title": "חוק בתי דין רבניים (נישואין וגירושין)",
+        "demoted_reason": null,
+        "role_in_answer": "המסגרת החוקית לסמכויות בתי הדין הרבניים",
+        "statute_section": null,
+        "stripped_fields": [],
+        "journal_or_publisher": null,
+        "relevance_confidence": 0.9,
+        "identifier_confidence": 0.95
+      }
+    ]
+  },
+  "discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 1,
+    "cache_hits": 0,
+    "cache_misses": 1,
+    "cache_writes": 0,
+    "injected_candidate_ids": [
+      "nominated-source:N3"
+    ],
+    "attempts": [
+      {
+        "ms": 446,
+        "label": "חוק בתי דין רבניים (נישואין וגירושין), תשמ\"ח-1988",
+        "reason": null,
+        "result": "body_acquired",
+        "statute": {
+          "lane": "statute",
+          "section": null,
+          "title_raw": "חוק בתי דין רבניים (נישואין וגירושין)",
+          "section_found": null,
+          "title_normalized": "חוק בתי דין רבניים (נישואין וגירושין)",
+          "identity_tokens_matched": 5,
+          "title_normalization_changed": false
+        },
+        "category": "statute",
+        "body_chars": 10813,
+        "cache_lookup": "miss",
+        "cache_status": null,
+        "cache_written": false,
+        "nomination_id": "N3",
+        "urls_attempted": [
+          "https://www.nevo.co.il/law_html/law00/73178.htm",
+          "https://fs.knesset.gov.il/2/law/2_lsr_209652.pdf",
+          "https://www.gov.il/BlobFolder/legalinfo/hok2/he/%D7%97%D7%95%D7%A7%20%D7%91%D7%AA%D7%99%20%D7%93%D7%99%D7%9F%20%D7%A8%D7%91%D7%A0%D7%99%D7%99%D7%9D.pdf"
+        ],
+        "acquisition_path": "statute_official_url",
+        "cache_write_error": "there is no unique or exclusion constraint matching the ON CONFLICT specification",
+        "normalized_docket": null,
+        "injected_candidate_id": "nominated-source:N3"
+      },
+      {
+        "ms": 41,
+        "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+        "reason": "cooldown_until:2026-08-31T09:23:23.728Z",
+        "result": "not_attempted",
+        "category": "judgment",
+        "body_chars": 0,
+        "cache_lookup": "cooldown",
+        "cache_status": "blocked",
+        "cache_written": false,
+        "nomination_id": "N1",
+        "urls_attempted": [],
+        "acquisition_path": "none",
+        "cache_write_error": null,
+        "normalized_docket": "bagatz:1715/97",
+        "injected_candidate_id": null
+      }
+    ]
+  },
+  "statute_acquisition": null,
+  "used_sources": [
+    {
+      "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9E%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9C.doc",
+      "title": "בג\"ץ 8638-03 סימה אמיר נ' בית הדין הרבני הגדול",
+      "number": 1,
+      "origin": "perplexity",
+      "citable_as": "judgment",
+      "source_type": "caselaw",
+      "candidate_id": "73d2fb07-2e0b-45f6-8e9e-22c506c34d19",
+      "authority_tier": "primary_mirror",
+      "synthesis_role": "applying_candidate",
+      "text_usability": "full_text",
+      "integrity_flags": [
+        "judgment_document",
+        "holding_text_present",
+        "judgment_tier_promoted",
+        "judgment_text_acquired",
+        "judgment_identity_confirmed_in_body",
+        "holding_text_present"
+      ],
+      "has_holding_text": true,
+      "is_judgment_document": true,
+      "can_satisfy_authority_role": true
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/legalinfo/hok2/he/%D7%97%D7%95%D7%A7%20%D7%91%D7%AA%D7%99%20%D7%93%D7%99%D7%9F%20%D7%A8%D7%91%D7%A0%D7%99%D7%99%D7%9D.pdf",
+      "title": "חוק בתי דין רבניים - Gov.il",
+      "number": 1,
+      "origin": "perplexity",
+      "citable_as": "statute",
+      "source_type": "legislation",
+      "candidate_id": "64fd2f75-925d-4031-afaf-df2f8a5c869b",
+      "authority_tier": "official_primary",
+      "synthesis_role": "statutory_background",
+      "text_usability": "metadata_only",
+      "integrity_flags": [],
+      "has_holding_text": false,
+      "is_judgment_document": false,
+      "can_satisfy_authority_role": true
+    }
+  ],
+  "footnotes_count": 1,
+  "dangling_markers": 0,
+  "answer_len": 1882,
+  "answer": "מסקנה מהותית: בית המשפט הגבוה לצדק רשאי לעיין ולהתערב בפסקי בית דין רבני בענייני רכוש בין בני זוג כאשר מתקיימת עילת התערבות ממשית — למשל חריגה מסמכות של בית הדין, שגיאה מהותית ביישום הדין (כולל יישום דין דתי במקום דין שאמור להיות אזרחי) או פגיעה בזכויות יסוד והליך הוגן; פסיקת בג\"ץ בסוגיה זו מודגשת בהחלטה בסימה אמיר.¹\n\n**עילות התערבות — קריטריונים עיקריים**\n\nשגיאה מהותית בדיון הדין או ביישום הדין: בג\"ץ נכנס לבחון החלטת בית דין רבני כאשר קיים טענת שגיאה מהותית בפרשנות או ביישום הדין, ובכלל זה טענה כי בוצע היפוך דין — שהוחל דין דתי במקום דין אזרחי הרלוונטי לעניין הרכושי.\n\nחריגה מסמכות ושיקול זר: בג\"ץ מתערב כאשר ההחלטה הרבנית נבדלת באופן שמצביע על חריגה מסמכות מוסמכת של בית הדין (ultra vires) או על שימוש בשיקול שאינו בתחום סמכותו, שכן אלה פוגעים בלגיטימיות ההכרעה ובמסגרת השיפוטית שהחוק קובע.\n\nפגיעה בזכויות יסוד והליך הוגן: כאשר הכרעת בית הדין הרבני מובילה לפגיעה בזכויות יסוד או בפרוצדורות הדיוניות הבסיסיות (למשל הזדמנות סבירה להתדיין, הוכחות שבוצעו בצורה שפוגעת בזכויות הצד), בג\"ץ שוקל התערבות כדי להבטיח שמירה על זכויות הוריות ציבוריות ואישיות.\n\nסעדות אופרטיביות: במקרים שנמצא בהם עילת התערבות, בג\"ץ יכול לתת סעד מבני או תיקוני — למשל ביטול ההחלטה הרבנית, שימוע לפסיקה מחודשת, צו ביניים או הוראה להשיב את הדיון למסגרת המתאימה של הדין האזרחי; היקף התיקון מותנה בנסיבות המקרה, במידת החריגה ובמסגרת הסמכות שהחוק מעניק לבתי הדין.\n\nשיקולים פורמליים ופרוצדורליים: בבחינת בקשת בג\"ץ יתיחסו בתי המשפט לשאלות של תום לב, זכות להתדיין בביה\"ד הרבני והזדמנות לערעור או לתיקון בהליכים הרגילים; כמו כן יש לשקול נימוקי זמניות והספקת חלופות משפטיות — בקשר זה חוק בתי הדין הרבניים מספק מסגרת סמכותית אך תמיכתו בפרטים פרוצדורליים נדרשת לפרשנות זהירה.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9E%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9C.doc",
+      "title": "בג\"ץ 8638-03 סימה אמיר נ' בית הדין הרבני הגדול; חוק בתי דין רבניים - Gov.il",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9E%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9C.doc",
+          "title": "בג\"ץ 8638-03 סימה אמיר נ' בית הדין הרבני הגדול",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/hok2/he/%D7%97%D7%95%D7%A7%20%D7%91%D7%AA%D7%99%20%D7%93%D7%99%D7%9F%20%D7%A8%D7%91%D7%A0%D7%99%D7%99%D7%9D.pdf",
+          "title": "חוק בתי דין רבניים - Gov.il",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ]
+}
