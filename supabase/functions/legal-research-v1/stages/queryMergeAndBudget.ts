@@ -63,6 +63,15 @@ export interface QueryMergeReport {
   queries_skipped_budget: number;
   final_query_count: number;
   source_type_mix: Record<string, number>;
+  /** source_nomination_v2 bucket accounting. */
+  actionable_queries: number;
+  exploratory_queries: number;
+  actionable_queries_preserved: number;
+  exploratory_queries_preserved: number;
+  actionability_mix: Record<string, number>;
+  identifier_confidence_histogram: Record<string, number>;
+  stripped_identifiers: number;
+  demoted_identifiers: number;
   dropped: DroppedQuery[];
 }
 
@@ -71,6 +80,14 @@ export interface QueryMergeResult {
   protectedQueries: Query[];
   report: QueryMergeReport;
 }
+
+type Meta = Record<string, unknown>;
+const meta = (q: Query): Meta => ((q?.metadata ?? {}) as Meta);
+const bucketOf = (q: Query): string | null => {
+  const b = meta(q).nomination_bucket;
+  return typeof b === "string" ? b : null;
+};
+
 
 const NIQQUD_RE = /[\u0591-\u05C7]/g;
 
@@ -104,7 +121,25 @@ export interface MergeOptions {
   max_total: number;
   /** Token-set similarity above which two queries are considered duplicates. */
   near_threshold?: number;
+  /** Lanes reserved for actionable nomination queries (default 2). */
+  reserve_actionable?: number;
+  /** Lanes reserved for exploratory nomination queries (default 2). */
+  reserve_exploratory?: number;
+  /**
+   * Doctrinal/legal-rule runs keep >= 1 exploratory query, academic/policy
+   * runs keep >= 2 — exploratory searches are first-class output, never a
+   * fallback that budget pressure may silently delete.
+   */
+  min_exploratory?: number;
+  /** Nomination-stage hardening counters, surfaced in the merge report. */
+  nomination_stats?: {
+    actionability_mix?: Record<string, number>;
+    identifier_confidence_histogram?: Record<string, number>;
+    stripped_identifiers?: number;
+    demoted_identifiers?: number;
+  };
 }
+
 
 export function mergeAndBudgetQueries(
   producers: ProducerInput[],
@@ -119,7 +154,17 @@ export function mergeAndBudgetQueries(
     query: Query;
     norm: string;
     toks: Set<string>;
+    bucket: string | null;
+    reserved: boolean;
   }
+
+  const reserveActionable = opts.reserve_actionable ?? 2;
+  const reserveExploratory = Math.max(
+    opts.reserve_exploratory ?? 2,
+    opts.min_exploratory ?? 0,
+  );
+  let actionableSeen = 0;
+  let exploratorySeen = 0;
 
   const entries: Entry[] = [];
   for (const p of producers) {
@@ -137,16 +182,40 @@ export function mergeAndBudgetQueries(
         continue;
       }
       taken++;
-      entries.push({ producer: p.producer, query: q, norm: normalizeQueryText(text), toks: tokens(text) });
+      // Source-mix budgeting: reserve lanes for both nomination buckets so
+      // neither actionable targets nor exploratory literature searches can be
+      // squeezed out by planner/facet volume.
+      const bucket = bucketOf(q);
+      let reserved = false;
+      if (bucket === "actionable") {
+        reserved = actionableSeen < reserveActionable;
+        actionableSeen++;
+      } else if (bucket === "exploratory") {
+        reserved = exploratorySeen < reserveExploratory;
+        exploratorySeen++;
+      }
+      entries.push({
+        producer: p.producer,
+        query: q,
+        norm: normalizeQueryText(text),
+        toks: tokens(text),
+        bucket,
+        reserved,
+      });
     }
   }
 
-  entries.sort((a, b) => PRODUCER_PRIORITY[a.producer] - PRODUCER_PRIORITY[b.producer]);
+  entries.sort((a, b) =>
+    PRODUCER_PRIORITY[a.producer] - PRODUCER_PRIORITY[b.producer] ||
+    (a.reserved === b.reserved ? 0 : a.reserved ? -1 : 1)
+  );
 
   const keptProtected: Query[] = [];
   const kept: Query[] = [];
   const keptEntries: Entry[] = [];
   const seenExact = new Map<string, string>();
+  let actionableKept = 0;
+  let exploratoryKept = 0;
 
   for (const e of entries) {
     const isProtected = PROTECTED.includes(e.producer);
@@ -170,16 +239,20 @@ export function mergeAndBudgetQueries(
       });
       continue;
     }
-    if (!isProtected && kept.length >= opts.max_total) {
+    // Reserved bucket lanes survive the global ceiling.
+    if (!isProtected && !e.reserved && kept.length >= opts.max_total) {
       dropped.push({ producer: e.producer, query_he: e.query.query_he, reason: "total_cap" });
       continue;
     }
     seenExact.set(e.norm, e.query.query_he);
     keptEntries.push(e);
     byProducer[e.producer] = (byProducer[e.producer] ?? 0) + 1;
+    if (e.bucket === "actionable") actionableKept++;
+    else if (e.bucket === "exploratory") exploratoryKept++;
     if (isProtected) keptProtected.push(e.query);
     else kept.push(e.query);
   }
+
 
   const source_type_mix: Record<string, number> = {};
   for (const q of [...keptProtected, ...kept]) {
@@ -206,7 +279,17 @@ export function mergeAndBudgetQueries(
       ).length,
       final_query_count: keptProtected.length + kept.length,
       source_type_mix,
+      actionable_queries: actionableSeen,
+      exploratory_queries: exploratorySeen,
+      actionable_queries_preserved: actionableKept,
+      exploratory_queries_preserved: exploratoryKept,
+      actionability_mix: opts.nomination_stats?.actionability_mix ?? {},
+      identifier_confidence_histogram:
+        opts.nomination_stats?.identifier_confidence_histogram ?? {},
+      stripped_identifiers: opts.nomination_stats?.stripped_identifiers ?? 0,
+      demoted_identifiers: opts.nomination_stats?.demoted_identifiers ?? 0,
       dropped,
+
     },
   };
 }
