@@ -1,0 +1,262 @@
+{
+  "id": "FRESH-SC",
+  "query": "מה נקבע בבג\"ץ 6427/02 התנועה למען איכות השלטון בישראל נ' הכנסת בעניין חוק דחיית שירות לתלמידי ישיבות?",
+  "run_id": "5a74c2e0-e293-4776-9791-9cc4fd7b43d0",
+  "terminal": true,
+  "ms": 205257,
+  "total_ms": 201626,
+  "branch": null,
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 6,
+    "mini_after": 5,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 448,
+    "parse_error": null,
+    "candidates_count": 5,
+    "dropped_count": 0,
+    "dropped_reasons": [],
+    "identifier_bearing_count": 2,
+    "category_mix": {
+      "statute": 1,
+      "judgment": 1,
+      "scholarship": 2,
+      "knesset_report": 1
+    },
+    "actionable_count": 2,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 2,
+      "known_name_no_docket": 0
+    },
+    "known_name_no_docket_count": 0,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 3,
+      "0.8-1.0": 2
+    },
+    "stripped_identifiers": [],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 2,
+      "exploratory": 3
+    },
+    "actionable_queries_preserved": 2,
+    "exploratory_queries_preserved": 3,
+    "ms": 8018
+  },
+  "query_merge": {
+    "final_query_count": 15,
+    "from_nomination": 5,
+    "skipped_duplicate": 2,
+    "skipped_budget": 0,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "duplicate_exact",
+          "producer": "required_anchors",
+          "query_he": "בג״ץ 6427/02",
+          "duplicate_of": "בג\"ץ 6427/02"
+        },
+        {
+          "reason": "duplicate_near",
+          "producer": "required_anchors",
+          "query_he": "בג\"ץ 6427-02",
+          "duplicate_of": "בג\"ץ 6427/02"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 10,
+        "report": 1,
+        "statute": 2,
+        "academic": 2
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 2,
+        "known_name_no_docket": 0
+      },
+      "final_query_count": 15,
+      "actionable_queries": 2,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 3,
+      "queries_by_producer": {
+        "planner": 5,
+        "required_anchors": 2,
+        "source_nomination": 5,
+        "judgment_discovery": 3
+      },
+      "stripped_identifiers": 0,
+      "planner_queries_count": 5,
+      "queries_skipped_budget": 0,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 2,
+      "actionable_queries_preserved": 2,
+      "exploratory_queries_preserved": 3,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 3,
+        "0.8-1.0": 2
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": false,
+    "skip_reason": "target_cap_zero",
+    "targets": 0,
+    "bodies_acquired": 0,
+    "injected_candidate_ids": [],
+    "cache_lookups": 0,
+    "cache_hits": 0,
+    "cache_misses": 0,
+    "cache_writes": 0,
+    "attempts": []
+  },
+  "official_fetch": {
+    "version": "official_fetch_profile_v1",
+    "official_calls": 3,
+    "max_per_run": 5,
+    "stopped_reason": "repeated_connection_reset",
+    "block_pages_detected": 0,
+    "rate_limited_events": 3,
+    "attempts": [
+      {
+        "ms": 276,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=02064270_Z01.txt&path=HebrewVerdicts/02/270/064/Z01&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.85.230:38224 for https://supremedecisions.court.gov.il/Home/Download?fileName=02064270_Z01.txt&path=HebrewVerdicts/02/270/064/Z01&type=2 (84.110.173.93:443): client er",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": null,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": null
+      },
+      {
+        "ms": 1185,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=02064270.z01&path=HebrewVerdicts/02/270/064/z01&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.85.230:38236 for https://supremedecisions.court.gov.il/Home/Download?fileName=02064270.z01&path=HebrewVerdicts/02/270/064/z01&type=2 (84.110.173.93:443): client error ",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": null,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": null
+      },
+      {
+        "ms": 2064,
+        "url": "https://elyon1.court.gov.il/files/02/270/064/z01/02064270.z01.htm",
+        "host": "elyon1.court.gov.il",
+        "error": "error sending request from 10.32.85.230:50766 for https://elyon1.court.gov.il/files/02/270/064/z01/02064270.z01.htm (84.110.173.108:443): client error (SendRequest): connection error: Connection reset",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": null,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": null
+      },
+      {
+        "ms": 0,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=02064271_Z01.txt&path=HebrewVerdicts/02/271/064/Z01&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": null,
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": "repeated_connection_reset",
+        "connection_reset": false,
+        "block_page_detected": false
+      }
+    ]
+  },
+  "court_egress": {
+    "version": "official_court_egress_path_v1",
+    "configured": true,
+    "calls": 2,
+    "max_per_run": 3,
+    "stopped_reason": "repeated_egress_failure",
+    "attempts": [
+      {
+        "ms": 451,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=02064270_Z01.txt&path=HebrewVerdicts/02/270/064/Z01&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 502,
+        "content_type": "application/json",
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false
+      },
+      {
+        "ms": 337,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=02064270.z01&path=HebrewVerdicts/02/270/064/z01&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 502,
+        "content_type": "application/json",
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false
+      },
+      {
+        "ms": 0,
+        "url": "https://elyon1.court.gov.il/files/02/270/064/z01/02064270.z01.htm",
+        "host": "elyon1.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": null,
+        "content_type": null,
+        "content_length": null,
+        "skipped_reason": "repeated_egress_failure",
+        "connection_reset": false
+      }
+    ]
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 1462,
+  "answer": "**סיכום הלכת בג\"ץ 6427/02**\n\nבשורה מהותית פסק בית המשפט כי הסדר דחיית השירות לתלמידי ישיבות יוצר הפליה ופוגע בעיקרון השוויון הנגזר מכבוד האדם, והפגיעה כפופה לניתוח על פי פסקת ההגבלה של חוק-יסוד: כבוד האדם וחירותו; הדיון נעשה במסגרת מבחני המידתיות.\n\nבית המשפט ניתח את הפגיעה במסגרת דוקטרינרית של פסקת ההגבלה — כלומר בחן את השאלה האם ההגבלה נובעת מסמכות ראויה, האם היא משרתת מטרה ראויה, והאם היא עומדת במבחני המידתיות הרלוונטיים; ההכרעה נסבה סביב בחינת מידתיות ההגבלה כלפי זכות השוויון/כבוד האדם.\n\nביחס לסעד נקבע במפורש את מסקנות ההלכה לגבי טבע הפגיעה בזכויות, אך במקורות שאותרו לא נמצא ניסוח מפורש או טקסט שהתמצת סעד פרקטי מדויק (למשל ביטול מיידי של הוראות החוק או השארתן לתקופה מוגבלת); לפיכך לא ניתן במקורות אלה לנסח באופן סופי איזה צעד תקדימי ננקט כפועל יוצא מההכרעה.\n\nלשאלת אמות המידה להמשך: ההלכה קבעה כי פגיעה בזכויות אלה תיבחן לפי מסגרת מבחני המידתיות של פסקת ההגבלה, אך במקורות שאותרו לא נמצאו הוראות מפורשות לגבי מועד בחינה מחודשת, מנגנוני יישום ספציפיים או קריטריונים פרוצדורליים מחייבים; מסגרות אלה צוינו והופנו אליהן גם בפסקי דין מאוחרים שמזכירים את עניין חוק טל ומאמצים את מסגרת הבחינה, אך עוצמת ההוראות המעשיות משתנה במקורות המשניים.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> החיפוש הופסק עקב מגבלת זמן, ולכן ייתכן שלא אותרו כל המקורות הרלוונטיים.",
+  "footnotes": []
+}

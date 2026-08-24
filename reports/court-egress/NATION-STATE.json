@@ -1,0 +1,290 @@
+{
+  "id": "NATION-STATE",
+  "query": "מה נקבע בבג\"ץ 5555/18 חסון נ' כנסת ישראל בעניין חוק יסוד: ישראל - מדינת הלאום של העם היהודי?",
+  "run_id": "3cd06319-3750-487d-869b-6ee56600cbef",
+  "terminal": true,
+  "ms": 111240,
+  "total_ms": 107850,
+  "branch": null,
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 6,
+    "mini_after": 6,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 0,
+    "parse_error": null,
+    "candidates_count": 6,
+    "dropped_count": 0,
+    "dropped_reasons": [],
+    "identifier_bearing_count": 2,
+    "category_mix": {
+      "statute": 1,
+      "judgment": 2,
+      "scholarship": 2,
+      "government_report": 1
+    },
+    "actionable_count": 3,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 2,
+      "known_name_no_docket": 1
+    },
+    "known_name_no_docket_count": 1,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 4,
+      "0.8-1.0": 2
+    },
+    "stripped_identifiers": [],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 3,
+      "exploratory": 2
+    },
+    "actionable_queries_preserved": 3,
+    "exploratory_queries_preserved": 2,
+    "ms": 6665
+  },
+  "query_merge": {
+    "final_query_count": 22,
+    "from_nomination": 5,
+    "skipped_duplicate": 2,
+    "skipped_budget": 3,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "duplicate_exact",
+          "producer": "required_anchors",
+          "query_he": "בג״ץ 5555/18",
+          "duplicate_of": "בג\"ץ 5555/18"
+        },
+        {
+          "reason": "duplicate_near",
+          "producer": "required_anchors",
+          "query_he": "בג\"ץ 5555-18",
+          "duplicate_of": "בג\"ץ 5555/18"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בג\"ץ 5555/18 site:supremedecisions.court.gov.il Download"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "\"5555/18\" בג\"ץ 5555/18 פסק דין טקסט מלא"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בג\"ץ 5555/18 site:court.gov.il פסק דין"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 10,
+        "report": 2,
+        "statute": 5,
+        "academic": 5
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 2,
+        "known_name_no_docket": 1
+      },
+      "final_query_count": 22,
+      "actionable_queries": 3,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 2,
+      "queries_by_producer": {
+        "planner": 15,
+        "required_anchors": 2,
+        "source_nomination": 5
+      },
+      "stripped_identifiers": 0,
+      "planner_queries_count": 15,
+      "queries_skipped_budget": 3,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 2,
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 4,
+        "0.8-1.0": 2
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": false,
+    "skip_reason": "target_cap_zero",
+    "targets": 0,
+    "bodies_acquired": 0,
+    "injected_candidate_ids": [],
+    "cache_lookups": 0,
+    "cache_hits": 0,
+    "cache_misses": 0,
+    "cache_writes": 0,
+    "attempts": []
+  },
+  "official_fetch": {
+    "version": "official_fetch_profile_v1",
+    "official_calls": 3,
+    "max_per_run": 5,
+    "stopped_reason": "repeated_connection_reset",
+    "block_pages_detected": 0,
+    "rate_limited_events": 3,
+    "attempts": [
+      {
+        "ms": 342,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=18055550_Z01.txt&path=HebrewVerdicts/18/550/055/Z01&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.81.54:57058 for https://supremedecisions.court.gov.il/Home/Download?fileName=18055550_Z01.txt&path=HebrewVerdicts/18/550/055/Z01&type=2 (84.110.173.93:443): client err",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": null,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": null
+      },
+      {
+        "ms": 1159,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=18055550.z01&path=HebrewVerdicts/18/550/055/z01&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.81.54:57072 for https://supremedecisions.court.gov.il/Home/Download?fileName=18055550.z01&path=HebrewVerdicts/18/550/055/z01&type=2 (84.110.173.93:443): client error (",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": null,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": null
+      },
+      {
+        "ms": 2115,
+        "url": "https://elyon1.court.gov.il/files/18/550/055/z01/18055550.z01.htm",
+        "host": "elyon1.court.gov.il",
+        "error": "error sending request from 10.32.81.54:38362 for https://elyon1.court.gov.il/files/18/550/055/z01/18055550.z01.htm (84.110.173.108:443): client error (SendRequest): connection error: Connection reset ",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": null,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": null
+      },
+      {
+        "ms": 0,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=18055551_Z01.txt&path=HebrewVerdicts/18/551/055/Z01&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": null,
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": "repeated_connection_reset",
+        "connection_reset": false,
+        "block_page_detected": false
+      }
+    ]
+  },
+  "court_egress": {
+    "version": "official_court_egress_path_v1",
+    "configured": true,
+    "calls": 2,
+    "max_per_run": 3,
+    "stopped_reason": "repeated_egress_failure",
+    "attempts": [
+      {
+        "ms": 568,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=18055550_Z01.txt&path=HebrewVerdicts/18/550/055/Z01&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 502,
+        "content_type": "application/json",
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false
+      },
+      {
+        "ms": 346,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=18055550.z01&path=HebrewVerdicts/18/550/055/z01&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 502,
+        "content_type": "application/json",
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false
+      },
+      {
+        "ms": 0,
+        "url": "https://elyon1.court.gov.il/files/18/550/055/z01/18055550.z01.htm",
+        "host": "elyon1.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": null,
+        "content_type": null,
+        "content_length": null,
+        "skipped_reason": "repeated_egress_failure",
+        "connection_reset": false
+      }
+    ]
+  },
+  "footnotes_count": 1,
+  "dangling_markers": 0,
+  "answer_len": 1721,
+  "answer": "**סיכום ההכרעה העיקרית**\n\nבית המשפט העליון דחה את עתירות הביטול נגד חוק יסוד: \"ישראל — מדינת הלאום של העם היהודי\" וקבע כי החוק לא יבוטל; עם זאת הורה בית המשפט כי פרשנותו תתבצע בגבולות ערכי היסוד וחובות השוויון, כדי למנוע שימוש בחוק כצידוק לאפליה.¹\n\nבאשר להגדרת הזכות של העם היהודי להגדרה עצמית והדגשת הלאומיות, פסק הרוב כי החוק מצהיר על אופיה הלאומי של המדינה אך אין הוא נותן אוטומטית עדיפות מוחלטת לזכויות לאומיות על פני זכויות השוויון של קבוצות מיעוט; יש ליישם ולפרש את הוראות החוק באופן שמקיים איזון בין ערכי הלאום לערכי יסוד אחרים.‏\n\nלגבי הסעיף העוסק בעידוד יישוב יהודי — בית המשפט קבע שהוא מהווה קביעת מדיניות/ערך מדיני לגבי עידוד יישוב יהודי, אך יש לפרשו כך שלא יהווה בסיס להפליה בהקצאת קרקע, בשירותים ציבוריים או במדיניות ציבורית אחרת; פעולות המנוסחות או מוצדקות על‑פי סעיף זה יהיו נתונות לבחינה שיפוטית ביחס לחובות השוויון.\n\nהנחיות לרשויות: פסק הדין קבע כי בתי המשפט ובגופים המנהליים יפרשו ויחילו את חוק היסוד בתיאום עם ערכי היסוד והתחייבויות השוויון; רשויות מקומיות אינן רשאיות לנקוט מדיניות מבדילה בשם החוק, ובתי המשפט ימשיכו לפקח על יישום החוק כדי למנוע פגיעה בזכויות יסוד. בנוסף צוין כי הכנסת והרשויות החקיקתיות עשויות לבחון תיקונים או הוראות משלימות במידת הצורך כדי להבהיר יחסי הגומלין בין הוראות החוק לבין זכויות יסוד אחרות.\n\nהיקף וסייגים: תמצית זו מבוססת על ההכרעה כפי שהיא מוצגת בפסק‑הדין הרשמי; פירוט נימוקים והבחנות תמצאו בגוף פסק‑הדין עצמו. אם יש צורך בניואנסים נוספים (למשל לגבי מקרים פרטניים של הקצאת משאבים או יישום מנהלי), יש לעיין בנימוקים המלאים של ההרכב.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    }
+  ]
+}

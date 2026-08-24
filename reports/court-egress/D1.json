@@ -1,0 +1,337 @@
+{
+  "id": "D1",
+  "query": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם מיושמים כאשר חוק פוגע בזכות יסוד?",
+  "run_id": "cb660750-ec07-4a27-aaef-3446f9067909",
+  "terminal": true,
+  "ms": 101175,
+  "total_ms": 98146,
+  "branch": "insufficient_sources_limitation",
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 8,
+    "mini_after": 6,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 0,
+    "parse_error": null,
+    "candidates_count": 6,
+    "dropped_count": 1,
+    "dropped_reasons": [
+      "judgment_cap"
+    ],
+    "identifier_bearing_count": 1,
+    "category_mix": {
+      "statute": 1,
+      "judgment": 2,
+      "scholarship": 3
+    },
+    "actionable_count": 3,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 1,
+      "known_name_no_docket": 2
+    },
+    "known_name_no_docket_count": 2,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 5,
+      "0.8-1.0": 1
+    },
+    "stripped_identifiers": [
+      {
+        "label": "בג\"ץ 834/91 אולמרט נ' המדינה",
+        "fields": [
+          "docket"
+        ],
+        "nomination_id": "N1"
+      },
+      {
+        "label": "בג\"ץ 2533/99 רוסינסקי נ' משרד החינוך",
+        "fields": [
+          "docket"
+        ],
+        "nomination_id": "N2"
+      }
+    ],
+    "demoted_identifiers": [
+      {
+        "label": "בג\"ץ 834/91 אולמרט נ' המדינה",
+        "reason": "identifier_stripped:docket",
+        "nomination_id": "N1"
+      },
+      {
+        "label": "בג\"ץ 2533/99 רוסינסקי נ' משרד החינוך",
+        "reason": "identifier_stripped:docket",
+        "nomination_id": "N2"
+      }
+    ],
+    "queries_by_bucket": {
+      "actionable": 3,
+      "exploratory": 2
+    },
+    "actionable_queries_preserved": 3,
+    "exploratory_queries_preserved": 2,
+    "ms": 5809
+  },
+  "query_merge": {
+    "final_query_count": 14,
+    "from_nomination": 5,
+    "skipped_duplicate": 0,
+    "skipped_budget": 7,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "להסביר את מסגרת מבחן המידתיות כפי שנתגלתה בשיטת המשפט משפט חוקתי הוראת החוק"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "להסביר את מסגרת מבחן המידתיות כפי שנתגלתה בשיטת המשפט משפט חוקתי בית המשפט העליון הלכה"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "להסביר את מסגרת מבחן המידתיות כפי שנתגלתה בשיטת המשפט משפט חוקתי חריגים וסייגים"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם פסק דין עליון"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם site:supremedecisions.court.gov.il Download"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם site:court.gov.il filetype:pdf פסק דין"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 7,
+        "statute": 3,
+        "academic": 4
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 1,
+        "known_name_no_docket": 2
+      },
+      "final_query_count": 14,
+      "actionable_queries": 3,
+      "demoted_identifiers": 2,
+      "exploratory_queries": 2,
+      "queries_by_producer": {
+        "planner": 9,
+        "source_nomination": 5
+      },
+      "stripped_identifiers": 2,
+      "planner_queries_count": 9,
+      "queries_skipped_budget": 7,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 0,
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 5,
+        "0.8-1.0": 1
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 1,
+    "injected_candidate_ids": [
+      "nominated-source:N1"
+    ],
+    "cache_lookups": 2,
+    "cache_hits": 0,
+    "cache_misses": 2,
+    "cache_writes": 1,
+    "attempts": [
+      {
+        "label": "חוק יסוד: כבוד האדם וחירותו",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "urls": [
+          "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+          "https://fs.knesset.gov.il/12/law/12_lsr_211801.PDF"
+        ],
+        "path": "none",
+        "result": "section_not_found",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "section_not_found:8",
+        "ms": 450
+      },
+      {
+        "label": "בג\"ץ 834/91 אולמרט נ' המדינה",
+        "category": "judgment",
+        "docket": null,
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "search_first": {
+          "ms": 2492,
+          "ran": true,
+          "queries": [
+            "בג\"ץ 834/91 אולמרט נ' המדינה 1995 פסק דין מלא מקור רשמי supremedecisions.court.gov.il OR court.gov.il"
+          ],
+          "mirror_urls": 0,
+          "skip_reason": null,
+          "official_urls": 1
+        },
+        "urls": [
+          "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=2870&businessType=1",
+          "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/14/560/044/l30&fileName=14044560_l30.txt&type=2"
+        ],
+        "path": "search_first_official",
+        "result": "body_acquired",
+        "identity": {
+          "reason": "name_tokens_with_corroboration",
+          "name_hits": 2,
+          "validated": true,
+          "year_match": false,
+          "court_match": true,
+          "docket_match": false,
+          "name_required": 2
+        },
+        "body_chars": 13298,
+        "cache_written": true,
+        "cache_write_error": null,
+        "reason": null,
+        "ms": 6235
+      }
+    ]
+  },
+  "official_fetch": {
+    "version": "official_fetch_profile_v1",
+    "official_calls": 1,
+    "max_per_run": 5,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "rate_limited_events": 1,
+    "attempts": [
+      {
+        "ms": 188,
+        "url": "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+        "host": "fs.knesset.gov.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "application/pdf",
+        "rate_limited": false,
+        "content_length": 75171,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 61,
+        "url": "https://fs.knesset.gov.il/12/law/12_lsr_211801.PDF",
+        "host": "fs.knesset.gov.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "application/pdf",
+        "rate_limited": false,
+        "content_length": 64745,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 129,
+        "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=2870&businessType=1",
+        "host": "main.knesset.gov.il",
+        "error": null,
+        "status": 247,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=utf-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 404,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/14/560/044/l30&fileName=14044560_l30.txt&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.86.146:34088 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/14/560/044/l30&fileName=14044560_l30.txt&type=2 (84.110.173.93:443): client er",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": 200,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": "html"
+      }
+    ]
+  },
+  "court_egress": {
+    "version": "official_court_egress_path_v1",
+    "configured": true,
+    "calls": 1,
+    "max_per_run": 3,
+    "stopped_reason": null,
+    "attempts": [
+      {
+        "ms": 2975,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/14/560/044/l30&fileName=14044560_l30.txt&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 200,
+        "content_type": "html",
+        "content_length": 6899227,
+        "skipped_reason": null,
+        "connection_reset": false
+      }
+    ]
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 536,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): חוק-יסוד: כבוד האדם וחירותו, סעיף 8 (כנסת); המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות; הזכות לקיום בכבוד בראי המשפט העברי: מעמדה החוקתי; תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?.",
+  "footnotes": []
+}

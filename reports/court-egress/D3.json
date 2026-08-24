@@ -1,0 +1,227 @@
+{
+  "id": "D3",
+  "query": "מתי בג״ץ יתערב בהחלטה של בית דין רבני בענייני רכוש בין בני זוג, במיוחד כאשר נטען שבית הדין החיל דין דתי במקום דין אזרחי?",
+  "run_id": "764c01d0-1bb3-4486-b7bb-d6dc291c9b5d",
+  "terminal": true,
+  "ms": 155901,
+  "total_ms": 150369,
+  "branch": null,
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 8,
+    "mini_after": 6,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 0,
+    "parse_error": null,
+    "candidates_count": 6,
+    "dropped_count": 1,
+    "dropped_reasons": [
+      "judgment_cap"
+    ],
+    "identifier_bearing_count": 3,
+    "category_mix": {
+      "statute": 1,
+      "judgment": 2,
+      "scholarship": 2,
+      "government_report": 1
+    },
+    "actionable_count": 3,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 3,
+      "known_name_no_docket": 0
+    },
+    "known_name_no_docket_count": 0,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 3,
+      "0.8-1.0": 3
+    },
+    "stripped_identifiers": [],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 3,
+      "exploratory": 2
+    },
+    "actionable_queries_preserved": 3,
+    "exploratory_queries_preserved": 2,
+    "ms": 8478
+  },
+  "query_merge": {
+    "final_query_count": 14,
+    "from_nomination": 5,
+    "skipped_duplicate": 0,
+    "skipped_budget": 9,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "פסקי דין של בתי משפט מחוזיים/שלום שהתייחסו לדרישות פרוצדורליות בעתירות נגד בתי דין רבניים 'מיצוי ערוצים' 'סבירות' 'ערעור פנימי בבית הדין הרבני'"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "מאמר משפטי דרישות פרוצדורליות בעתירת בג\"ץ נגד בתי דין רבניים 'מיצוי הליכים' 'צו ביניים' ניתוח פרקטי"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני פסק דין עליון"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני site:supremedecisions.court.gov.il Download"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני site:court.gov.il filetype:pdf פסק דין"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 6,
+        "statute": 4,
+        "academic": 4
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 0
+      },
+      "final_query_count": 14,
+      "actionable_queries": 3,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 2,
+      "queries_by_producer": {
+        "planner": 9,
+        "source_nomination": 5
+      },
+      "stripped_identifiers": 0,
+      "planner_queries_count": 11,
+      "queries_skipped_budget": 9,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 0,
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 3,
+        "0.8-1.0": 3
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 0,
+    "injected_candidate_ids": [],
+    "cache_lookups": 1,
+    "cache_hits": 0,
+    "cache_misses": 1,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+        "category": "judgment",
+        "docket": "bagatz:1715/97",
+        "cache_lookup": "cooldown",
+        "cooldown_strategy": "search_first_judgment",
+        "ignored_other_strategy_failures": 1,
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "cooldown_until:2026-08-31T10:45:53.093Z",
+        "ms": 38
+      },
+      {
+        "label": "חוק סמכויות בתי הדין הרבניים (נישואין וגירושין), התשכ\"ה-1964",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "retrieval_already_has_body",
+        "ms": 41
+      }
+    ]
+  },
+  "official_fetch": {
+    "version": "official_fetch_profile_v1",
+    "official_calls": 0,
+    "max_per_run": 5,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "rate_limited_events": 0,
+    "attempts": []
+  },
+  "court_egress": {
+    "version": "official_court_egress_path_v1",
+    "configured": true,
+    "calls": 0,
+    "max_per_run": 3,
+    "stopped_reason": null,
+    "attempts": []
+  },
+  "footnotes_count": 1,
+  "dangling_markers": 0,
+  "answer_len": 2076,
+  "answer": "בשורה התחתונה: בג\"ץ יתערב בהחלטת בית דין דתי בענייני רכוש בין בני זוג רק במקרים מצומצמים במסגרת ביקורת שיפוטית מנהלית — למשל כשהתערבות נדרשת בשל חריגה מסמכות, סטייה מהוראת חוק הממלכתית, או פגיעה בעקרונות הצדק הטבעי וזכויות יסוד; הוא בדרך כלל לא יתערב בפירושים הלכתיים פנימיים שנמצאים בגבולות סמכות בית הדין.¹\n\nתחולת הדין האזרחי והסמכות לדון ברכוש: במקורות שאותרו נמצא כי סמכותם של בתי דין דתיים לדון בסכסוכי רכוש בין בני זוג אינה בלתי מוגבלת — בדרך כלל סוגיות רכוש הן חלק ממערכת בתי המשפט האזרחיים, ואפשרות שדין דתי יחול תלויה בנסיבות ובהסכמת הצדדים או בסמכות מיוחדת שניתנה לבית הדין; מקורות מרמזים על תלות ההכרעה בהסכמה או בהסדר המוסדי, אך לא אותר נוסח מחייב אחד שמכריע את כל המקרים.\n\nמתי הנטען שהוחל דין דתי במקום דין אזרחי מצדד בהתערבות בג\"ץ: בקווים כלליים — כאשר החלת הדין הדתי משמשת כדרך לעקוף חקיקה מדינתית רלוונטית, כאשר הכרעת בית הדין חורגת מסמכותו באופן שבא לידי ביטוי ב\"חריגה מסמכות\" או ביישום שיש בו אפקט של אכיפה אזרחית שלא נתמכת בחוק, וכן אם היישום פוגע בזכויות יסוד; במצבים אלה נטען כי הביקורת המינהלית של בג\"ץ מתרחבת וההתערבות תתמוך בסעד.\n\nשיקולים פרוצדורליים מעשיים לפני הגשת עתירה לבג\"ץ: יש לבחון קיום ואפקטיביות של ערוצי תיקון פנימיים בבתי הדין (ערעורים פנימיים או בקשות תיקון), להראות מידיות ופגיעה ממשית בזכויות עם חוסר סעד אזרחי חלופי, ולהבהיר את טיב הטעות — שגיאת סמכות או פגיעה בעקרונות היסוד ולא רק מחלוקת הלכתית; מסמכי הנחיה ומקרים אמפיריים תומכים בכך שאלה שיקולים שקובעים את סיכויי ההתערבות, ולא די בכך שנטען \"הוחל דין דתי במקום דין אזרחי\" ללא ביסוס של חריגה או פגיעה בזכויות.\n\nהסתייגות לגבי חומר המקורות: החומר שנבדק קצר וחלקי — חלק מן המקורות הם קטעים לא מלאים או מסמכים מדעיים רקעיים. במקורות שאותרו לא נמצא נוסח חקיקה או פסיקה אחת מקיפה המכריעה את כל הנוהגים המעשיים בשאלת סמכות בתי הדין בדיני רכוש; אי־מציאת טקסט מלא במקורות אלה אינה ראיה לאי־קיום פסיקה או דוקטרינה אחרת שעשויה להתגלות בבדיקה נרחבת יותר.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9E%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9C.doc",
+      "title": "בג\"ץ 8638/03 סימה אמיר נ' בית הדין הרבני הגדול בירושלים ואח'",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9E%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9C.doc",
+          "title": "בג\"ץ 8638/03 סימה אמיר נ' בית הדין הרבני הגדול בירושלים ואח'",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    }
+  ]
+}
