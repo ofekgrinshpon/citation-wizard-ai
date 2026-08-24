@@ -1,0 +1,127 @@
+{
+  "id": "D3",
+  "query": "מתי בג״ץ יתערב בהחלטה של בית דין רבני בענייני רכוש בין בני זוג, במיוחד כאשר נטען שבית הדין החיל דין דתי במקום דין אזרחי?",
+  "run_id": "9f3f1df6-8951-4cdc-844e-153ddfe34b43",
+  "terminal": true,
+  "ms": 138816,
+  "total_ms": 135216,
+  "nominations": {
+    "count": 6,
+    "judgments": 2,
+    "actionable": 3
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [],
+    "suppressed": 0,
+    "guessed_detected": 0,
+    "total_candidates": 0,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 0
+  },
+  "official_discovery": {
+    "bodies_acquired": 0,
+    "cache_hits": 0,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "חוק בתי דין רבניים (נישואין וגירושין), תש\"כ\"א-1961",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "urls": [
+          "https://www.nevo.co.il/law_html/law00/73178.htm",
+          "https://fs.knesset.gov.il/2/law/2_lsr_209652.pdf",
+          "https://www.gov.il/BlobFolder/legalinfo/hok2/he/%D7%97%D7%95%D7%A7%20%D7%91%D7%AA%D7%99%20%D7%93%D7%99%D7%9F%20%D7%A8%D7%91%D7%A0%D7%99%D7%99%D7%9D.pdf"
+        ],
+        "path": "none",
+        "result": "fetch_failed",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "acquisition_failed:http_403",
+        "ms": 926
+      },
+      {
+        "label": "בג\"ץ 1000/92 בבלי",
+        "category": "judgment",
+        "docket": "bagatz:1000/92",
+        "cache_lookup": "cooldown",
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "cooldown_until:2026-08-31T10:47:45.664Z",
+        "ms": 30
+      }
+    ]
+  },
+  "official_fetch": {
+    "official_calls": 0,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": [
+      {
+        "ms": 428,
+        "url": "https://www.nevo.co.il/law_html/law00/73178.htm",
+        "host": "www.nevo.co.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=utf-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 154,
+        "url": "https://fs.knesset.gov.il/2/law/2_lsr_209652.pdf",
+        "host": "fs.knesset.gov.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "application/pdf",
+        "rate_limited": false,
+        "content_length": 78336,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 111,
+        "url": "https://www.gov.il/BlobFolder/legalinfo/hok2/he/%D7%97%D7%95%D7%A7%20%D7%91%D7%AA%D7%99%20%D7%93%D7%99%D7%9F%20%D7%A8%D7%91%D7%A0%D7%99%D7%99%D7%9D.pdf",
+        "host": "www.gov.il",
+        "error": null,
+        "status": 403,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=UTF-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      }
+    ]
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 0,
+    "stopped_reason": null,
+    "attempts": []
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 2411,
+  "answer": "מבחן בסיסי: בית המשפט הגבוה לצדק יכול להתערב בהחלטות בתי הדין הרבניים בענייני רכוש בין בני זוג כאשר ההחלטה נתונה לבדיקה שיפוטית לפי עקרונות הביקורת השיפוטית — ובפרט כאשר עולה טענה של חוסר סמכות, טעות דין יסודית, או פגיעה בזכויות בסיסיות שמצדיקת פיקוח שיפוטי. זוהי נקודת פתיחה מסכמת; פירוט הקריטריונים והגבולות מפורט בלהלן.\n\nעילות מרכזיות להתערבות שנזכרות בדוקטרינה ובפסיקה הן: חריגה או שקיעת סמכות של בית הדין, טעות דין מהותית (כולל טעות בפרשנות החוק החל), פגמים מהותיים בהליך שפגעו בהליך הוגן, ופגיעה בזכויות יסוד הנובעת מהחלטה של הערכאה. על היקף וכוח הביקורת יש לאזן מול כבוד לערכאת המינהלית והרבנית ולמניעת פגיעה מוגזמת ביעילות הסדרת ענייני משפחה.\n\nהחלת דין דתי במקום דין אזרחי תיחשב כעילה להתערבות בעיקר כאשר היא עומדת באחת מהחלופות הבאות: ההחלה חרגה מסמכות בית הדין הרבני או נוגדת את המסגרת החוקית שהצדדים סיכמו בהסכמתם; ההחלה הביאה לטעויות משפטיות יסודיות בשיוך הזכויות; או שההחלה יצאה לפועל באופן שפוגע בזכויות יסוד של אחד הצדדים. יש לנסח את העילה ביחס ספציפי לעובדות ולשאלת הסמכות ולא כקטגוריה אוטומטית רחבה.\n\nהיבט פרוצדורלי חשוב: במקורות שאותרו לא נמצא עיגון חד‑משמעי המסדיר את השפעת הסכמת הצדדים להעברה לבית דין רבני או את כללי 'שחיקת' המחויבות להמצאת אלטרנטיבות טרום פנייה לבג\"ץ; יש לציין שמאמרים ומחקרים מספקים רקע על תפקוד בתי הדין הרבניים בסכסוכי משפחה אך אינם מחליפים מקור פסיקתי ישיר בנושא זה. לפיכך, כל מקרה נבחן על יסוד ההסכמה, אופיו הבוררותי של ההסדר, ונסיבות פניה לבית המשפט הגבוה.\n\nסעדים שבג\"ץ יכול להורות — בהינתן עילה מתאימה — כוללים ביטול או הקפאת פסק דין רבני שאיננו בגדר סמכות, צו לרחיבה או להחזרת ההליך לערכאה כדי להכריע בחומרה של הדין האזרחי, צווי ביניים ושמירה עד להכרעה, וכן הוראות נוהליות להבטחת הליך הוגן. מתן הסעד מותנה במשקל הפגיעה, באיזון אינטרסים ובאפשרות לתיקון הליךית או מהותית על‑ידי הערכאה הרבנית.\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- פרשת בבלי - חקיקה שפוטית - פסק דין עליון - psakdin.co.il — https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%AA-%D7%91%D7%91%D7%9C%D7%99--%D7%97%D7%A7%D7%99%D7%A7%D7%94-%D7%A9%D7%A4%D7%95%D7%98%D7%99%D7%AA--%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%A2%D7%9C%D7%99%D7%95%D7%ן\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": []
+}

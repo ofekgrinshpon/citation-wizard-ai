@@ -1,0 +1,366 @@
+[
+  {
+    "id": "D1",
+    "query": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם מיושמים כאשר חוק פוגע בזכות יסוד?",
+    "run_id": "bc37d62c-1f90-4472-bf7e-7a71cc6307b3",
+    "terminal": true,
+    "ms": 129196,
+    "total_ms": 124490,
+    "nominations": {
+      "count": 6,
+      "judgments": 2,
+      "actionable": 3
+    },
+    "judgment_url_eligibility": {
+      "version": "judgment_url_guess_suppression_v1",
+      "candidates": [],
+      "suppressed": 0,
+      "guessed_detected": 0,
+      "total_candidates": 0,
+      "relay_slots_saved": 0,
+      "relay_slots_spent": 0
+    },
+    "official_discovery": {
+      "bodies_acquired": 0,
+      "cache_hits": 0,
+      "cache_writes": 0,
+      "attempts": [
+        {
+          "label": "חוק-יסוד: כבוד האדם וחירותו",
+          "category": "statute",
+          "docket": null,
+          "cache_lookup": "miss",
+          "urls": [
+            "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+            "https://fs.knesset.gov.il/12/law/12_lsr_211801.PDF"
+          ],
+          "path": "none",
+          "result": "section_not_found",
+          "body_chars": 0,
+          "cache_written": false,
+          "injected": null,
+          "reason": "section_not_found:8",
+          "ms": 527
+        },
+        {
+          "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+          "category": "judgment",
+          "docket": "bagatz:1715/97",
+          "cache_lookup": "cooldown",
+          "urls": [],
+          "path": "none",
+          "result": "not_attempted",
+          "body_chars": 0,
+          "cache_written": false,
+          "injected": null,
+          "reason": "cooldown_until:2026-08-31T21:36:31.472Z",
+          "ms": 33
+        }
+      ]
+    },
+    "official_fetch": {
+      "official_calls": 0,
+      "stopped_reason": null,
+      "block_pages_detected": 0,
+      "attempts": [
+        {
+          "ms": 176,
+          "url": "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+          "host": "fs.knesset.gov.il",
+          "error": null,
+          "status": 200,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": "application/pdf",
+          "rate_limited": false,
+          "content_length": 75171,
+          "skipped_reason": null,
+          "connection_reset": false,
+          "block_page_detected": false
+        },
+        {
+          "ms": 76,
+          "url": "https://fs.knesset.gov.il/12/law/12_lsr_211801.PDF",
+          "host": "fs.knesset.gov.il",
+          "error": null,
+          "status": 200,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": "application/pdf",
+          "rate_limited": false,
+          "content_length": 64745,
+          "skipped_reason": null,
+          "connection_reset": false,
+          "block_page_detected": false
+        }
+      ]
+    },
+    "court_egress": {
+      "configured": true,
+      "calls": 0,
+      "stopped_reason": null,
+      "attempts": []
+    },
+    "footnotes_count": 0,
+    "dangling_markers": 0,
+    "answer_len": 550
+  },
+  {
+    "id": "D3",
+    "query": "מתי בג״ץ יתערב בהחלטה של בית דין רבני בענייני רכוש בין בני זוג, במיוחד כאשר נטען שבית הדין החיל דין דתי במקום דין אזרחי?",
+    "run_id": "3a79e38f-901b-408a-8d39-8ce2be99e327",
+    "terminal": true,
+    "ms": 134152,
+    "total_ms": 131411,
+    "nominations": {
+      "count": 7,
+      "judgments": 2,
+      "actionable": 4
+    },
+    "judgment_url_eligibility": {
+      "version": "judgment_url_guess_suppression_v1",
+      "candidates": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/4&fileName=SB4_16_2123-08.pdf&type=2",
+          "cache": null,
+          "body_chars": null,
+          "url_source": "unknown",
+          "final_cited": null,
+          "fetch_result": null,
+          "relay_eligible": false,
+          "guessed_pattern": false,
+          "relay_slot_spent": true,
+          "guessed_pattern_id": null,
+          "identity_validated": null,
+          "injected_candidate": null,
+          "suppression_reason": "url_source_not_trusted:unknown"
+        }
+      ],
+      "suppressed": 0,
+      "guessed_detected": 0,
+      "total_candidates": 1,
+      "relay_slots_saved": 0,
+      "relay_slots_spent": 1
+    },
+    "official_discovery": {
+      "bodies_acquired": 0,
+      "cache_hits": 0,
+      "cache_writes": 0,
+      "attempts": [
+        {
+          "label": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשכ\"ד-1964",
+          "category": "statute",
+          "docket": null,
+          "cache_lookup": "miss",
+          "urls": [],
+          "path": "none",
+          "result": "not_attempted",
+          "body_chars": 0,
+          "cache_written": false,
+          "injected": null,
+          "reason": "retrieval_already_has_body",
+          "ms": 33
+        },
+        {
+          "label": "בג\"צ 1715/97 לשכת מנהלי ההשקעות",
+          "category": "judgment",
+          "docket": null,
+          "cache_lookup": "miss",
+          "urls": [],
+          "path": "none",
+          "result": "not_attempted",
+          "body_chars": 0,
+          "cache_written": false,
+          "injected": null,
+          "reason": "no_docket_no_live_lane",
+          "ms": 0
+        }
+      ]
+    },
+    "official_fetch": {
+      "official_calls": 1,
+      "stopped_reason": null,
+      "block_pages_detected": 0,
+      "attempts": [
+        {
+          "ms": 281,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/4&fileName=SB4_16_2123-08.pdf&type=2",
+          "host": "supremedecisions.court.gov.il",
+          "error": "error sending request from 10.32.132.177:57278 for https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/4&fileName=SB4_16_2123-08.pdf&type=2 (84.110.173.93:443): client error (Send",
+          "status": null,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": null,
+          "rate_limited": false,
+          "content_length": null,
+          "relay_eligible": true,
+          "skipped_reason": null,
+          "connection_reset": true,
+          "relay_url_source": "unknown",
+          "alt_egress_reason": "edge_connection_reset",
+          "alt_egress_status": 200,
+          "block_page_detected": false,
+          "alt_egress_attempted": true,
+          "alt_egress_content_type": "html"
+        }
+      ]
+    },
+    "court_egress": {
+      "configured": true,
+      "calls": 1,
+      "stopped_reason": null,
+      "attempts": [
+        {
+          "ms": 5625,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/4&fileName=SB4_16_2123-08.pdf&type=2",
+          "host": "supremedecisions.court.gov.il",
+          "error": null,
+          "reason": "edge_connection_reset",
+          "status": 200,
+          "content_type": "html",
+          "content_length": 342188,
+          "skipped_reason": null,
+          "connection_reset": false
+        }
+      ]
+    },
+    "footnotes_count": 2,
+    "dangling_markers": 0,
+    "answer_len": 1985
+  },
+  {
+    "id": "MAYA-AMIR",
+    "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי? התייחסו לעניין סימה אמיר.",
+    "run_id": "6f70bc81-cb4a-451d-8f74-e05e701dcc3c",
+    "terminal": true,
+    "ms": 139191,
+    "total_ms": 137061,
+    "nominations": {
+      "count": 7,
+      "judgments": 2,
+      "actionable": 4
+    },
+    "judgment_url_eligibility": {
+      "version": "judgment_url_guess_suppression_v1",
+      "candidates": [],
+      "suppressed": 0,
+      "guessed_detected": 0,
+      "total_candidates": 0,
+      "relay_slots_saved": 0,
+      "relay_slots_spent": 0
+    },
+    "official_discovery": {
+      "bodies_acquired": 0,
+      "cache_hits": 0,
+      "cache_writes": 0,
+      "attempts": [
+        {
+          "label": "בג\"ץ 8497/00 סימה אמיר",
+          "category": "judgment",
+          "docket": "bagatz:8497/0",
+          "cache_lookup": "cooldown",
+          "urls": [],
+          "path": "none",
+          "result": "not_attempted",
+          "body_chars": 0,
+          "cache_written": false,
+          "injected": null,
+          "reason": "cooldown_until:2026-08-31T21:39:30.789Z",
+          "ms": 24
+        },
+        {
+          "label": "חוק בתי דין רבניים (נישואין וגירושין), תשי\"ג-1953",
+          "category": "statute",
+          "docket": null,
+          "cache_lookup": "miss",
+          "urls": [],
+          "path": "none",
+          "result": "not_attempted",
+          "body_chars": 0,
+          "cache_written": false,
+          "injected": null,
+          "reason": "retrieval_already_has_body",
+          "ms": 29
+        }
+      ]
+    },
+    "official_fetch": {
+      "official_calls": 0,
+      "stopped_reason": null,
+      "block_pages_detected": 0,
+      "attempts": []
+    },
+    "court_egress": {
+      "configured": true,
+      "calls": 0,
+      "stopped_reason": null,
+      "attempts": []
+    },
+    "footnotes_count": 1,
+    "dangling_markers": 0,
+    "answer_len": 2437
+  },
+  {
+    "id": "B8",
+    "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+    "run_id": "18bd556c-67bd-45f6-bc6a-3d44bb7d4729",
+    "terminal": true,
+    "ms": 67269,
+    "total_ms": 64390,
+    "nominations": {
+      "count": 0,
+      "judgments": null,
+      "actionable": 0
+    },
+    "judgment_url_eligibility": {
+      "version": "judgment_url_guess_suppression_v1",
+      "candidates": [],
+      "suppressed": 0,
+      "guessed_detected": 0,
+      "total_candidates": 0,
+      "relay_slots_saved": 0,
+      "relay_slots_spent": 0
+    },
+    "official_discovery": {
+      "bodies_acquired": 0,
+      "cache_hits": 0,
+      "cache_writes": 0,
+      "attempts": []
+    },
+    "official_fetch": {
+      "official_calls": 0,
+      "stopped_reason": null,
+      "block_pages_detected": 0,
+      "attempts": [
+        {
+          "ms": 334,
+          "url": "https://m.knesset.gov.il/Activity/Legislation/documents/knesset_laws.pdf",
+          "host": "m.knesset.gov.il",
+          "error": null,
+          "status": 200,
+          "profile": "official_browser_like",
+          "redirected": false,
+          "url_origin": "unknown",
+          "content_type": "application/pdf",
+          "rate_limited": false,
+          "content_length": 5448935,
+          "skipped_reason": null,
+          "connection_reset": false,
+          "block_page_detected": false
+        }
+      ]
+    },
+    "court_egress": {
+      "configured": true,
+      "calls": 0,
+      "stopped_reason": null,
+      "attempts": []
+    },
+    "footnotes_count": 1,
+    "dangling_markers": 0,
+    "answer_len": 364
+  }
+]

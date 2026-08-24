@@ -24,6 +24,11 @@ import {
 } from "./docketDetection.ts";
 import { classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
 import {
+  isGuessedCourtUrl,
+  noteJudgmentUrlOutcome,
+  registerJudgmentUrl,
+} from "../lib/judgmentUrlEligibility.ts";
+import {
   deriveSupremeCourtBinaryUrls,
   deriveSupremeCourtFileUrls,
   isSupremeCourtDocket,
@@ -407,6 +412,14 @@ export interface DiscoveryAttempt {
   cache_lookup: "hit" | "miss" | "cooldown" | "skipped";
   cache_status: string | null;
   urls_attempted: string[];
+  /** judgment_url_guess_suppression_v1 — per-URL provenance / suppression. */
+  url_candidates?: Array<{
+    url: string;
+    url_source: string;
+    suppressed: boolean;
+    suppression_reason: string | null;
+  }>;
+  guessed_urls_suppressed?: number;
   acquisition_path:
     | "cache"
     | "retrieved_official_url"
@@ -771,6 +784,10 @@ async function handleTarget(
   attempt.ignored_other_strategy_failures = lookup.ignored_other_strategy_failures;
   if (lookup.hit && lookup.source) {
     attempt.cache_lookup = "hit";
+    if (lookup.source.official_url) {
+      registerJudgmentUrl(lookup.source.official_url, "verified_cache");
+      noteJudgmentUrlOutcome(lookup.source.official_url, { cache: "hit", injected_candidate: true });
+    }
     attempt.acquisition_path = "cache";
     attempt.result = "cache_hit";
     attempt.body_chars = lookup.source.text.length;
@@ -844,6 +861,9 @@ async function handleTarget(
   }
   const searchOfficial = (searched?.official_urls ?? []).map((u) => u.url);
   const searchMirror = (searched?.mirror_urls ?? []).map((u) => u.url);
+  // judgment_url_guess_suppression_v1 — deterministic derivation is retained
+  // for telemetry/diagnostics only. Its guessed object codes (z01/_z01) are
+  // never fetched and never allowed to spend an official or relay slot.
   const derived = isSupremeCourtDocket(docket)
     ? [
       ...deriveSupremeCourtFileUrls(docket, { maxUrls: 3 })
@@ -851,9 +871,35 @@ async function handleTarget(
       ...deriveSupremeCourtBinaryUrls(docket, { maxUrls: 1 }),
     ]
     : [];
-  const urls = [...new Set([...retrieved, ...searchOfficial, ...searchMirror, ...derived])]
-    .slice(0, DISCOVERY_LIMITS.MAX_URLS_PER_JUDGMENT);
+  for (const u of derived) registerJudgmentUrl(u, "derivation");
+  const trusted: Array<[string, "retrieved" | "search_first"]> = [
+    ...retrieved.map((u) => [u, "retrieved"] as [string, "retrieved"]),
+    ...searchOfficial.map((u) => [u, "search_first"] as [string, "search_first"]),
+    ...searchMirror.map((u) => [u, "search_first"] as [string, "search_first"]),
+  ];
+  const suppressed: Array<{ url: string; reason: string | null }> = [];
+  const seen = new Set<string>();
+  const urls: string[] = [];
+  for (const [u, src] of trusted) {
+    if (seen.has(u)) continue;
+    seen.add(u);
+    const c = registerJudgmentUrl(u, src);
+    if (isGuessedCourtUrl(u)) {
+      suppressed.push({ url: u, reason: c.suppression_reason ?? "guessed_url_pattern" });
+      continue;
+    }
+    urls.push(u);
+    if (urls.length >= DISCOVERY_LIMITS.MAX_URLS_PER_JUDGMENT) break;
+  }
+  for (const u of derived) {
+    if (!seen.has(u)) suppressed.push({ url: u, reason: "derivation_telemetry_only" });
+  }
   attempt.urls_attempted = urls;
+  attempt.url_candidates = [
+    ...urls.map((u) => ({ url: u, url_source: searchOfficial.includes(u) || searchMirror.includes(u) ? "search_first" : "retrieved", suppressed: false, suppression_reason: null as string | null })),
+    ...suppressed.map((s) => ({ url: s.url, url_source: "derivation", suppressed: true, suppression_reason: s.reason })),
+  ];
+  attempt.guessed_urls_suppressed = suppressed.length;
   if (urls.length === 0) {
     attempt.reason = "no_official_url_available";
     attempt.ms = Date.now() - tA;
@@ -962,6 +1008,13 @@ async function handleTarget(
         });
         attempt.cache_written = write.ok;
         attempt.cache_write_error = write.error;
+        noteJudgmentUrlOutcome(url, {
+          fetch_result: "body_acquired",
+          body_chars: got.length,
+          identity_validated: true,
+          cache: write.ok ? "write" : "write_failed",
+          injected_candidate: !!attempt.injected_candidate_id,
+        });
         attempt.ms = Date.now() - tA;
         return attempt;
       }
@@ -1179,8 +1232,12 @@ async function handleNamedJudgment(
     ...retrievedOfficialUrlsByName(input.candidates, toks),
     ...searchOfficial,
     ...searchMirror,
-  ])].slice(0, DISCOVERY_LIMITS.MAX_URLS_PER_JUDGMENT);
+  ])]
+    .filter((u) => !isGuessedCourtUrl(u))
+    .slice(0, DISCOVERY_LIMITS.MAX_URLS_PER_JUDGMENT);
+  for (const u of urls) registerJudgmentUrl(u, "search_first");
   attempt.urls_attempted = urls;
+  attempt.url_candidates = urls.map((u) => ({ url: u, url_source: "search_first", suppressed: false, suppression_reason: null }));
   if (urls.length === 0) {
     attempt.reason = "no_official_url_from_search";
     return attempt;
@@ -1269,6 +1326,13 @@ async function handleNamedJudgment(
         });
         attempt.cache_written = write.ok;
         attempt.cache_write_error = write.error;
+        noteJudgmentUrlOutcome(url, {
+          fetch_result: "body_acquired",
+          body_chars: got.length,
+          identity_validated: true,
+          cache: write.ok ? "write" : "write_failed",
+          injected_candidate: !!attempt.injected_candidate_id,
+        });
         return attempt;
       }
 

@@ -1,0 +1,316 @@
+{
+  "id": "R02",
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+  "run_id": "b591083b-003d-46e3-9d08-16a1099155b6",
+  "terminal": true,
+  "ms": 205652,
+  "total_ms": 200509,
+  "nominations": {
+    "count": 6,
+    "judgments": 1,
+    "actionable": 3
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4",
+        "cache": "write",
+        "body_chars": 100924,
+        "url_source": "retrieved",
+        "final_cited": null,
+        "fetch_result": "body_acquired",
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": true,
+        "guessed_pattern_id": null,
+        "identity_validated": true,
+        "injected_candidate": true,
+        "suppression_reason": null
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=HebrewVerdicts/93/210/068/Z01&type=2",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210.z01&path=HebrewVerdicts/93/210/068/z01&type=2",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://elyon1.court.gov.il/files/93/210/068/z01/93068210.z01.htm",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=EnglishVerdicts/93/210/068/Z01&type=4",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+        "cache": "hit",
+        "body_chars": null,
+        "url_source": "verified_cache",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": true,
+        "suppression_reason": null
+      }
+    ],
+    "suppressed": 4,
+    "guessed_detected": 4,
+    "total_candidates": 6,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 1
+  },
+  "official_discovery": {
+    "bodies_acquired": 1,
+    "cache_hits": 1,
+    "cache_writes": 1,
+    "attempts": [
+      {
+        "label": "ע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+        "category": "judgment",
+        "docket": "aa:6821/93",
+        "cache_lookup": "miss",
+        "search_first": {
+          "ms": 4007,
+          "ran": true,
+          "queries": [
+            "ע\"א 6821/93 ע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי 1995 פסק דין מלא מקור רשמי supremedecisions.court.gov.il OR court.gov.il"
+          ],
+          "mirror_urls": 0,
+          "skip_reason": null,
+          "official_urls": 0
+        },
+        "urls": [
+          "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4"
+        ],
+        "url_candidates": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4",
+            "suppressed": false,
+            "url_source": "retrieved",
+            "suppression_reason": null
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=HebrewVerdicts/93/210/068/Z01&type=2",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210.z01&path=HebrewVerdicts/93/210/068/z01&type=2",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          },
+          {
+            "url": "https://elyon1.court.gov.il/files/93/210/068/z01/93068210.z01.htm",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=EnglishVerdicts/93/210/068/Z01&type=4",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          }
+        ],
+        "guessed_urls_suppressed": 4,
+        "path": "retrieved_official_url",
+        "result": "body_acquired",
+        "identity": {
+          "reason": "docket_in_body",
+          "name_hits": 6,
+          "validated": true,
+          "year_match": true,
+          "court_match": false,
+          "docket_match": true,
+          "name_required": 2
+        },
+        "body_chars": 100924,
+        "cache_written": true,
+        "injected": "nominated-source:N1",
+        "reason": null,
+        "ms": 7926
+      },
+      {
+        "label": "חוק יסוד: כבוד האדם וחירותו",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "hit",
+        "urls": [],
+        "path": "cache",
+        "result": "cache_hit",
+        "body_chars": 1353,
+        "cache_written": false,
+        "injected": "nominated-source:N2",
+        "reason": null,
+        "ms": 66
+      }
+    ]
+  },
+  "official_fetch": {
+    "official_calls": 2,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": [
+      {
+        "ms": 322,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.129.209:59812 for https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4 (84.110.173.93:443): client error (S",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "relay_eligible": true,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "relay_url_source": "unknown",
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": null,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": null
+      },
+      {
+        "ms": 1141,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.129.209:48266 for https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4 (84.110.173.93:443): client error (S",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "relay_eligible": true,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "relay_url_source": "retrieved",
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": 200,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": "application/pdf"
+      }
+    ]
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 2,
+    "stopped_reason": null,
+    "attempts": [
+      {
+        "ms": 6679,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "error": "Signal timed out.",
+        "reason": "edge_connection_reset",
+        "status": null,
+        "content_type": null,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false
+      },
+      {
+        "ms": 688,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 200,
+        "content_type": "application/pdf",
+        "content_length": 462985,
+        "skipped_reason": null,
+        "connection_reset": false
+      }
+    ]
+  },
+  "footnotes_count": 2,
+  "dangling_markers": 0,
+  "answer_len": 2654,
+  "answer": "**עיקרי החלטת בית המשפט בע\"א 6821/93 (בנק המזרחי המאוחד נ' מגדל כפר שיתופי)**\n\nבית המשפט העליון קבע בע\"א 6821/93 כי בפסק‑דין זה נקלטה דוקטרינת המידתיות ככלי לבחינת פגיעה בזכויות לפי פסקת ההגבלה של חוק‑יסוד: כבוד האדם וחירותו, והדיון עסק גם ביחסן של חוקי היסוד לדינים שקדמו להם ובאופן יישום סעיף ה'שמירה על דינים'.\n\nהפסיקה אימצה שימוש בבחינת מידתיות בבחינת חוקיות הפגיעה: בית המשפט בדק האם הפגיעה נעשתה למטרה ראויה, האם האמצעים נדרשים ובמידתיותם בהשוואה לתכלית (מבחן יחסיות/מידתיות) ו‑כך פסק כי מבחן זה הוא כללי פרשני מרכזי כשנבחנות פגיעות בזכויות בכוח פסקת ההגבלה.\n\nבמישור 'שמירת הדינים' הדיון בע\"א 6821/93 התייחס לסעיף 10 של חוק‑יסוד: כבוד האדם וחירותו ולמוסד שבו דינים שקדמו לחוק היסוד אינם נחלשים אוטומטית עקב קביעת חוק היסוד אלא נבחנים ביחס אליו; לפיכך הפסיקה בחנה האם וכיצד חוק יסוד משפיע על תוקפו של דין קודם במסגרת העקרונות שנקבעו (כולל מבחן המידתיות).²\n\nהפסק‑דין עסק גם במעמדן התיאורטי‑מוסדי של חוקי היסוד וכיצד הם משמשים נדבך בחוקה בהתהוות; בית המשפט נתן משקל לעובדה שחוקי היסוד מעמידים מסגרת פרשנית לעיגון זכויות, אך יש לנסח מסקנות על היקף מעמדם המפורש בזהירות ולא להסיק מהפסק‑דין טיעונים שלא נתמכים במפורש בכתובתו.\n\nלגבי שאלת העליונות והביקורת השיפוטית: בפסק‑דין נדונו היבטים של היחס בין חוקי היסוד לחקיקה רגילה ובין תפקיד המחוקק לתפקיד בתי‑המשפט, אך במקורות שאותרו לא נמצא טקסט המנסח באופן גורף שכל חוק רגיל הסותר חוק יסוד ייפסל מיידית ללא בדיקה פרוסליגטיבית; מסקנות על היקף סמכות הביקורת השיפוטית דורשות ביאור נוסף וייחוס לפסיקה משלימה.\n\nלסיכום: ע\"א 6821/93 מוכר כפסיקת 'מגדל' שבה התקבל מקום מרכזי למבחן המידתיות במסגרת פסקת ההגבלה ולוויכוחים הקשורים לשמירת דינים ולמעמדם של חוקי היסוד, אך טענות הרחבה יותר על סדרי עדיפויות חקיקתיים וביקורת שיפוטית צריך להישען על דיון בפסיקה משלימה ובטקסטים החוקתיים עצמם.¹\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי בע\"מ — https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4\n- ע\"א 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי בע\"מ — https://judgments.org.il/judgments/%D7%A2%D7%90-6821-93-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%94%D7%9E%D7%90%D7%95%D7%97%D7%93-%D7%91%D7%A2%D7%9E-%D7%A0-%D7%9E%D7%92%D7%93%D7%9C-%D7%9B%D7%A4%D7%A8-%D7%A9/\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> החיפוש הופסק עקב מגבלת זמן, ולכן ייתכן שלא אותרו כל המקורות הרלוונטיים.",
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4",
+      "title": "ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4",
+          "title": "ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+      "title": "חוק יסוד - כבוד האדם וחירותו",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+          "title": "חוק יסוד - כבוד האדם וחירותו",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    }
+  ]
+}

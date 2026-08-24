@@ -1,0 +1,93 @@
+{
+  "id": "MAYA",
+  "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי?",
+  "run_id": "5b589857-c747-4a42-9b79-65da8ed88f49",
+  "terminal": true,
+  "ms": 139301,
+  "total_ms": 133344,
+  "nominations": {
+    "count": 7,
+    "judgments": 2,
+    "actionable": 4
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [],
+    "suppressed": 0,
+    "guessed_detected": 0,
+    "total_candidates": 0,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 0
+  },
+  "official_discovery": {
+    "bodies_acquired": 0,
+    "cache_hits": 0,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "retrieval_already_has_body",
+        "ms": 33
+      },
+      {
+        "label": "חוק יסוד: כבוד האדם וחירותו, סעיף 8",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "urls": [
+          "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf"
+        ],
+        "path": "none",
+        "result": "section_not_found",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "section_not_found:8",
+        "ms": 543
+      }
+    ]
+  },
+  "official_fetch": {
+    "official_calls": 0,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": [
+      {
+        "ms": 186,
+        "url": "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+        "host": "fs.knesset.gov.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "application/pdf",
+        "rate_limited": false,
+        "content_length": 75171,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      }
+    ]
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 0,
+    "stopped_reason": null,
+    "attempts": []
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 1897,
+  "answer": "בג״ץ אכן יכול לעיין בבקשות שנוגעות להכרעות בתי־דין רבניים בענייני חלוקת רכוש לאחר גירושין כאשר הנטען הוא שההכרעה נסמכה על שיקול חיצוני לדין הייעודי; במקורות מצויה תמיכה בעיקרון כי בג״ץ מפקח על הלגיטימיות של גופים שיפוטיים אחרים וביכולתו לזהות פגמים של שיקול זר או חוסר סמכות שמצדיקים התערבות שיפוטית.\n\nאמת המידה שמיושמת בעשייה הדוקטרינרית מתחלקת: במקרים שבהם מעורבת חורגת סמכותי-פורמלית יש לאמץ מבחן של \"חוסר סמכות/חריגה מסמכות\" (illegality/ultra vires); במקום שבו הנטען הוא כי ההחלטה סוטה מאמות הדין המקובלות או נשענת על שיקול שאינו רלוונטי המבחן המרכזי שמצוי במקורות הוא מבחן הסבירות/אי־סבירות (patently unreasonable) — כלומר זיהוי החלטה שעומדת מחוץ לטווח ההחלטות התקפות, תוך שימת לב להבדל בין טעות עניינית הגיונית לבין פגם מהותי שמערער את הלגיטימיות של ההכרעה.\n\nמדדים מעשיים לזיהוי \"שיקול חיצוני\" שניתן להפעילם בהקשר של חלוקת רכוש: האם השיקול אינו חלק מתשתית ההלכתית או המשפטית המתאימה להכרעה; האם השיקול סותר הוראה מפורשת של הדין הדתי החיוני להכרעה; האם נעשה שימוש בעובדות חיצוניות שנועדו לקדם אינטרס שלא נוגע להבחנה המשפטית; והאם ההסתמכות על אותו שיקול נתנה הכרעה שאינה סבירה ביחס לטווח ההכרעות התקפות — קריטריונים אלה נתמכים בהנחיות לזיהוי שיקולים זרים ובדוגמאות מעשיות על שימוש לא־נדרש בעילת סיום נישואים בבתי־דין רבניים.\n\nסעדים שבג״ץ עשוי להעניק כאשר מתקבלת טענה על הסתמכות על שיקול חיצוני כוללים ביטול ההחלטה (quashing), החזרה להכרעה מחודשת בפני בית־דין־הרבני בהנחיות ברורות, וצווי מניעה מפני אכיפת ההכרעה או גיבוש סעד זמני; יחד עם זאת חל שיקול שיפוטי ביחס לסעד המתאים — ובמיוחד יש לשקול מגבלות הנובעות מהבחינה בין סמכויות ערכאות, מהצורך לשמר מרחב פטרוני לבתי־דין דתיים ומההוראות המוסדיות לגבי מידת התערבות הכנסת והמשפט החוקתי בעיצוב תחום הביקורת.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": []
+}

@@ -1,0 +1,59 @@
+{
+  "id": "FRESH-SC",
+  "query": "מה נקבע בבג\"ץ 6427/02 התנועה למען איכות השלטון בישראל נ' הכנסת בעניין חוק דחיית שירות לתלמידי ישיבות?",
+  "run_id": "25b9b1c6-dfd8-48b7-849e-344d3bc9282c",
+  "terminal": true,
+  "ms": 122888,
+  "total_ms": 121342,
+  "nominations": {
+    "count": 5,
+    "judgments": 1,
+    "actionable": 2
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [],
+    "suppressed": 0,
+    "guessed_detected": 0,
+    "total_candidates": 0,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 0
+  },
+  "official_discovery": {
+    "bodies_acquired": 0,
+    "cache_hits": 0,
+    "cache_writes": 0,
+    "attempts": []
+  },
+  "official_fetch": {
+    "official_calls": 0,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": []
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 0,
+    "stopped_reason": null,
+    "attempts": []
+  },
+  "footnotes_count": 1,
+  "dangling_markers": 0,
+  "answer_len": 1048,
+  "answer": "**תקציר החלטת בג\"ץ 6427/02**\n\nבית המשפט קבע כי העתירות נגד חוק דחיית שירות לתלמידי ישיבות נדחו, והחוק לא בוטל באותו מועד.¹\n\nבית המשפט מצא כי ההסדר בחוק מעורר פגיעה קשה בעיקרון השוויון הנגזר מחוק־יסוד: כבוד האדם וחירותו, אך קבע כי בפסק הדין שניתן הפגיעה הוכשרה במסגרת מבחן פסקת ההגבלה לאור אופיו הזמני והניסיוני של החוק וכן נוכח האמצעים שנועדו לעודד שירות ותעסוקה בקרב החוגים הרלוונטיים.\n\nבית המשפט הדגיש כי המשך תוקפו או הארכתו של הסדר דומה תותנה בהוכחת שינוי ממשי ותוצאות אפקטיביות; הובהר כי בהיעדר התקדמות מספקת עלולות הסדרים מסוג זה להיתקל בביקורת חוקתית בעתיד.\n\nנקבע גם כי למחוקק מוקנה מרחב תמרון בענייני ביטחון וחברה, אך מרחב זה אינו חסין מביקורת שיפוטית: בתי המשפט ישגיחו כי פגיעות בשוויון יעמדו בתנאי פסקת ההגבלה, ובמידה שלא — שמורה לבית המשפט הסמכות לנקוט בצעדים כגון ביטול או תיקון ההסדרים הפוגעים.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2",
+      "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2",
+          "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    }
+  ]
+}

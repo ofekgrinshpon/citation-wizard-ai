@@ -1,0 +1,90 @@
+{
+  "id": "P02",
+  "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+  "run_id": "5c464a5b-5304-465b-a52a-36a2787d6b55",
+  "terminal": true,
+  "ms": 134200,
+  "total_ms": 129668,
+  "nominations": {
+    "count": 5,
+    "judgments": 1,
+    "actionable": 2
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [
+      {
+        "url": "https://www.nevo.co.il/law_html/law00/157751.htm",
+        "cache": "hit",
+        "body_chars": null,
+        "url_source": "verified_cache",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": true,
+        "suppression_reason": null
+      }
+    ],
+    "suppressed": 0,
+    "guessed_detected": 0,
+    "total_candidates": 1,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 0
+  },
+  "official_discovery": {
+    "bodies_acquired": 0,
+    "cache_hits": 1,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "חוק סדר הדין האזרחי, תשמ\"ד-1984",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "hit",
+        "urls": [],
+        "path": "cache",
+        "result": "cache_hit",
+        "body_chars": 113930,
+        "cache_written": false,
+        "injected": "nominated-source:N1",
+        "reason": null,
+        "ms": 69
+      },
+      {
+        "label": "לוי נ' מדינת ישראל",
+        "category": "judgment",
+        "docket": null,
+        "cache_lookup": "cooldown",
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "cooldown_until:2026-08-31T17:09:16.051Z",
+        "ms": 32
+      }
+    ]
+  },
+  "official_fetch": {
+    "official_calls": 0,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": []
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 0,
+    "stopped_reason": null,
+    "attempts": []
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 345,
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.",
+  "footnotes": []
+}

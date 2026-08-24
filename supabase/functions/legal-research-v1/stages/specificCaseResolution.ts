@@ -27,6 +27,7 @@ import {
 } from "./docketDetection.ts";
 import { classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
 import { deriveSupremeCourtFileUrls, isTextEndpointUrl } from "./courtFileUrls.ts";
+import { isGuessedCourtUrl } from "../lib/judgmentUrlEligibility.ts";
 import { assessPdfExtraction, isTextEndpointStub } from "./pdfExtractionPreflight.ts";
 import {
   HOLDING_TEXT_RE,
@@ -643,6 +644,9 @@ export async function runSpecificCaseResolution(
     const derived: string[] = [];
     for (const d of dockets) {
       for (const u of deriveSupremeCourtFileUrls(d)) {
+        // judgment_url_guess_suppression_v1 — guessed archive object codes are
+        // telemetry-only; never probed, never relayed.
+        if (isGuessedCourtUrl(u)) continue;
         if (!derived.includes(u)) derived.push(u);
       }
     }
