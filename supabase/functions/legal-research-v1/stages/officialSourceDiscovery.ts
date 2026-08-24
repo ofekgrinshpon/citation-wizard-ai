@@ -56,12 +56,21 @@ import {
   recordVerifiedSource,
   VERIFIED_SOURCE_CACHE_VERSION,
 } from "./verifiedSourceCache.ts";
+import {
+  JUDGMENT_SEARCH_FIRST_VERSION,
+  type JudgmentSearchFirstResult,
+  searchOfficialJudgmentUrls,
+  validateJudgmentIdentity,
+} from "./judgmentSearchFirst.ts";
 
 export const OFFICIAL_DISCOVERY_VERSION = "official_source_discovery_v1";
 
 export const DISCOVERY_LIMITS = {
   MAX_TARGETS: 2,
   MAX_URLS_PER_TARGET: 3,
+  /** judgment_search_first_discovery_v1: one extra slot for searched URLs. */
+  MAX_URLS_PER_JUDGMENT: 4,
+  SEARCH_FIRST_MS: 12_000,
   PER_URL_MS: 12_000,
   TOTAL_MS: 45_000,
   MIN_BUDGET_MS: 6_000,
@@ -70,6 +79,7 @@ export const DISCOVERY_LIMITS = {
   MAX_TEXT: 400_000,
   BLOCK_PAGE_MAX_CHARS: 4_000,
 } as const;
+
 
 const BLOCK_PAGE_SIGNATURES = [
   "חסימת בקשה לא מורשת",
@@ -93,6 +103,8 @@ export interface DiscoveryAttempt {
   acquisition_path:
     | "cache"
     | "retrieved_official_url"
+    | "search_first_official"
+    | "search_first_mirror"
     | "derived_court_url"
     | "statute_official_url"
     | "none";
@@ -113,6 +125,29 @@ export interface DiscoveryAttempt {
   cache_written: boolean;
   cache_write_error: string | null;
   reason: string | null;
+  /** Cooldown scoping trace (verified_source_cache_v2). */
+  cooldown_strategy?: string | null;
+  cooldown_strategy_scoped?: boolean;
+  ignored_other_strategy_failures?: number;
+  /** judgment_search_first_discovery_v1 trace. */
+  search_first?: {
+    ran: boolean;
+    skip_reason: string | null;
+    queries: string[];
+    official_urls: number;
+    mirror_urls: number;
+    ms: number;
+  };
+  /** Identity proof inside the acquired body. */
+  identity?: {
+    validated: boolean;
+    docket_match: boolean;
+    name_hits: number;
+    name_required: number;
+    year_match: boolean;
+    court_match: boolean;
+    reason: string;
+  };
   /** statute lane only — normalization / validation trace. */
   statute?: {
     title_raw: string | null;
@@ -125,6 +160,7 @@ export interface DiscoveryAttempt {
   };
   ms: number;
 }
+
 
 
 export interface OfficialDiscoveryReport {
@@ -404,6 +440,12 @@ async function handleTarget(
     : "other";
 
   // ── 1. Cache lookup ────────────────────────────────────────────────────
+  // Cooldowns are scoped to the strategy this run will actually use, so an old
+  // derivation failure can never suppress the new search-first lane.
+  const strategy = category === "judgment" ? "search_first_judgment" : "statute_official_url";
+  const discovery_version = category === "judgment"
+    ? JUDGMENT_SEARCH_FIRST_VERSION
+    : OFFICIAL_DISCOVERY_VERSION;
   const lookup = await lookupVerifiedSource(input.admin, {
     category,
     normalized_docket: attempt.normalized_docket,
@@ -413,8 +455,13 @@ async function handleTarget(
     authors: n.authors,
     institution: n.institution,
     year: n.year,
+    strategy,
+    discovery_version,
   });
   attempt.cache_status = lookup.status;
+  attempt.cooldown_strategy = lookup.cooldown_strategy;
+  attempt.cooldown_strategy_scoped = lookup.cooldown_strategy_scoped;
+  attempt.ignored_other_strategy_failures = lookup.ignored_other_strategy_failures;
   if (lookup.hit && lookup.source) {
     attempt.cache_lookup = "hit";
     attempt.acquisition_path = "cache";
@@ -434,6 +481,7 @@ async function handleTarget(
     attempt.ms = Date.now() - tA;
     return attempt;
   }
+
 
   // Judgments with a docket get the full ladder (identity provable inside the
   // body). v2 adds a search-first-only lane for `known_name_no_docket`
@@ -464,8 +512,31 @@ async function handleTarget(
     return attempt;
   }
 
-  // ── 2/3. Official URLs from retrieval, then derived court-file URLs ─────
+  // ── 2. Retrieved official URLs → searched official URLs → mirrors →
+  //      deterministic derivation (last resort; the derived object code is a
+  //      guess and is exactly what fails on older judgments).
   const retrieved = retrievedOfficialUrls(input.candidates, docket);
+  let searched: JudgmentSearchFirstResult | null = null;
+  if (remainingMs() > DISCOVERY_LIMITS.MIN_BUDGET_MS && !input.budget?.exceeded()) {
+    input.budget?.mark("judgment_search_first", { nomination: n.nomination_id });
+    searched = await searchOfficialJudgmentUrls({
+      docket_display: n.docket ?? null,
+      label: n.label_he,
+      court: null,
+      year: n.year ?? null,
+      timeout_ms: Math.min(DISCOVERY_LIMITS.SEARCH_FIRST_MS, Math.max(2000, remainingMs() - 4000)),
+    });
+    attempt.search_first = {
+      ran: searched.ran,
+      skip_reason: searched.skip_reason,
+      queries: searched.queries,
+      official_urls: searched.official_urls.length,
+      mirror_urls: searched.mirror_urls.length,
+      ms: searched.ms,
+    };
+  }
+  const searchOfficial = (searched?.official_urls ?? []).map((u) => u.url);
+  const searchMirror = (searched?.mirror_urls ?? []).map((u) => u.url);
   const derived = isSupremeCourtDocket(docket)
     ? [
       ...deriveSupremeCourtFileUrls(docket, { maxUrls: 3 })
@@ -473,13 +544,16 @@ async function handleTarget(
       ...deriveSupremeCourtBinaryUrls(docket, { maxUrls: 1 }),
     ]
     : [];
-  const urls = [...retrieved, ...derived].slice(0, DISCOVERY_LIMITS.MAX_URLS_PER_TARGET);
+  const urls = [...new Set([...retrieved, ...searchOfficial, ...searchMirror, ...derived])]
+    .slice(0, DISCOVERY_LIMITS.MAX_URLS_PER_JUDGMENT);
   attempt.urls_attempted = urls;
   if (urls.length === 0) {
     attempt.reason = "no_official_url_available";
     attempt.ms = Date.now() - tA;
     return attempt;
   }
+  const toks = nameTokens(n.label_he);
+
 
   let lastFailure = "no_body_acquired";
   let blockedByOrigin = false;
@@ -499,7 +573,15 @@ async function handleTarget(
           inspectText: (prefix: string) => {
             blockState.sig = blockPageSignature(prefix, docket);
           },
-          validateText: (text: string) => textContainsExactDocket(text.slice(0, 20_000), docket),
+          // The nominated docket can be wrong (a model guess); accept the body
+          // when either the docket OR enough distinctive name tokens appear,
+          // then prove identity properly below.
+          validateText: (text: string) => {
+            const head = text.slice(0, 20_000);
+            return textContainsExactDocket(head, docket) ||
+              (toks.length > 0 && nameMatchCount(head, toks) >= requiredNameHits(toks));
+          },
+
           signal: AbortSignal.timeout(perUrlMs),
           maxBytes: DISCOVERY_LIMITS.MAX_PROBE_BYTES,
           budgetExceeded: () => input.budget?.exceeded() ?? false,
@@ -522,15 +604,34 @@ async function handleTarget(
         "official_source_discovery",
       );
       if (got.length >= DISCOVERY_LIMITS.MIN_BODY_CHARS) {
+        const identity = validateJudgmentIdentity({
+          text: got,
+          docket_present: true,
+          docket_in_text: textContainsExactDocket(got.slice(0, 40_000), docket),
+          name_tokens: toks,
+          year: n.year ?? null,
+          court: null,
+        });
+        attempt.identity = identity;
+        if (!identity.validated) {
+          attempt.result = "identity_mismatch";
+          lastFailure = `identity_unproven:${identity.reason}`;
+          continue;
+        }
         attempt.result = "body_acquired";
         attempt.body_chars = got.length;
         attempt.acquisition_path = retrieved.includes(url)
           ? "retrieved_official_url"
+          : searchOfficial.includes(url)
+          ? "search_first_official"
+          : searchMirror.includes(url)
+          ? "search_first_mirror"
           : "derived_court_url";
         attempt.injected_candidate_id = injectBody(input, n, docket, {
           url,
           text: got,
           from_cache: false,
+          acquisition_path: attempt.acquisition_path,
         });
         const write = await recordVerifiedSource(input.admin, {
           category: "judgment",
@@ -541,9 +642,15 @@ async function handleTarget(
           official_url: url,
           court: /elyon|supremedecisions/i.test(url) ? "בית המשפט העליון" : null,
           year: n.year,
-          identity_terms_matched: [normalizedDocketId(docket)],
+          identity_terms_matched: identity.docket_match ? [normalizedDocketId(docket)] : toks,
           identity_validated: true,
           acquisition_method: attempt.acquisition_path,
+          strategy: attempt.acquisition_path === "derived_court_url"
+            ? "derived_court_url"
+            : attempt.acquisition_path === "retrieved_official_url"
+            ? "retrieved_official_url"
+            : "search_first_judgment",
+          discovery_version: JUDGMENT_SEARCH_FIRST_VERSION,
           text: got,
         });
         attempt.cache_written = write.ok;
@@ -551,6 +658,7 @@ async function handleTarget(
         attempt.ms = Date.now() - tA;
         return attempt;
       }
+
       lastFailure = "below_threshold";
       attempt.result = "below_threshold";
     } catch (err) {
@@ -586,7 +694,10 @@ async function handleTarget(
       ? "identity_mismatch"
       : "failed",
     reason: lastFailure,
+    strategy: "search_first_judgment",
+    discovery_version: JUDGMENT_SEARCH_FIRST_VERSION,
   });
+
   attempt.ms = Date.now() - tA;
   return attempt;
 }
@@ -734,13 +845,40 @@ async function handleNamedJudgment(
     return attempt;
   }
 
-  const urls = retrievedOfficialUrlsByName(input.candidates, toks)
-    .slice(0, DISCOVERY_LIMITS.MAX_URLS_PER_TARGET);
+  // Retrieval-surfaced official URLs first, then an explicit name-based search
+  // for the official document (judgment_search_first_discovery_v1).
+  let searched: JudgmentSearchFirstResult | null = null;
+  if (remainingMs() > DISCOVERY_LIMITS.MIN_BUDGET_MS && !input.budget?.exceeded()) {
+    input.budget?.mark("judgment_search_first_named", { nomination: n.nomination_id });
+    searched = await searchOfficialJudgmentUrls({
+      docket_display: null,
+      label: n.label_he,
+      court: null,
+      year: n.year ?? null,
+      timeout_ms: Math.min(DISCOVERY_LIMITS.SEARCH_FIRST_MS, Math.max(2000, remainingMs() - 4000)),
+    });
+    attempt.search_first = {
+      ran: searched.ran,
+      skip_reason: searched.skip_reason,
+      queries: searched.queries,
+      official_urls: searched.official_urls.length,
+      mirror_urls: searched.mirror_urls.length,
+      ms: searched.ms,
+    };
+  }
+  const searchOfficial = (searched?.official_urls ?? []).map((u) => u.url);
+  const searchMirror = (searched?.mirror_urls ?? []).map((u) => u.url);
+  const urls = [...new Set([
+    ...retrievedOfficialUrlsByName(input.candidates, toks),
+    ...searchOfficial,
+    ...searchMirror,
+  ])].slice(0, DISCOVERY_LIMITS.MAX_URLS_PER_JUDGMENT);
   attempt.urls_attempted = urls;
   if (urls.length === 0) {
     attempt.reason = "no_official_url_from_search";
     return attempt;
   }
+
 
   let lastFailure = "no_body_acquired";
   for (const url of urls) {
@@ -779,13 +917,32 @@ async function handleNamedJudgment(
         "official_source_discovery_named",
       );
       if (got.length >= DISCOVERY_LIMITS.MIN_BODY_CHARS) {
+        const identity = validateJudgmentIdentity({
+          text: got,
+          docket_present: false,
+          docket_in_text: false,
+          name_tokens: toks,
+          year: n.year ?? null,
+          court: null,
+        });
+        attempt.identity = identity;
+        if (!identity.validated) {
+          attempt.result = "identity_mismatch";
+          lastFailure = `identity_unproven:${identity.reason}`;
+          continue;
+        }
         attempt.result = "body_acquired";
         attempt.body_chars = got.length;
-        attempt.acquisition_path = "retrieved_official_url";
+        attempt.acquisition_path = searchOfficial.includes(url)
+          ? "search_first_official"
+          : searchMirror.includes(url)
+          ? "search_first_mirror"
+          : "retrieved_official_url";
         attempt.injected_candidate_id = injectBody(input, n, null, {
           url,
           text: got,
           from_cache: false,
+          acquisition_path: attempt.acquisition_path,
         });
         const write = await recordVerifiedSource(input.admin, {
           category: "judgment",
@@ -798,13 +955,16 @@ async function handleNamedJudgment(
           year: n.year,
           identity_terms_matched: toks,
           identity_validated: true,
-          acquisition_method: "retrieved_official_url_by_name",
+          acquisition_method: `${attempt.acquisition_path}_by_name`,
+          strategy: "search_first_judgment",
+          discovery_version: JUDGMENT_SEARCH_FIRST_VERSION,
           text: got,
         });
         attempt.cache_written = write.ok;
         attempt.cache_write_error = write.error;
         return attempt;
       }
+
       lastFailure = "below_threshold";
       attempt.result = "below_threshold";
     } catch (err) {
@@ -831,6 +991,9 @@ async function handleNamedJudgment(
     official_url: attempt.urls_attempted[0] ?? null,
     status: attempt.result === "identity_mismatch" ? "identity_mismatch" : "failed",
     reason: lastFailure,
+    strategy: "search_first_judgment",
+    discovery_version: JUDGMENT_SEARCH_FIRST_VERSION,
+
   });
   return attempt;
 }
@@ -1045,7 +1208,10 @@ async function handleStatuteNomination(
         identity_terms_matched: toks.slice(0, 8),
         identity_validated: true,
         acquisition_method: "statute_official_url",
+        strategy: "statute_official_url",
+        discovery_version: OFFICIAL_DISCOVERY_VERSION,
         text: stored,
+
       });
       attempt.cache_written = write.ok;
       attempt.cache_write_error = write.error;
@@ -1074,6 +1240,9 @@ async function handleStatuteNomination(
     official_url: attempt.urls_attempted[0] ?? null,
     status: lastResult === "identity_mismatch" ? "identity_mismatch" : "failed",
     reason: lastFailure,
+    strategy: "statute_official_url",
+    discovery_version: OFFICIAL_DISCOVERY_VERSION,
+
   });
   return attempt;
 }

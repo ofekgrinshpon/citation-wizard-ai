@@ -15,7 +15,21 @@
 // deno-lint-ignore no-explicit-any
 type Admin = any;
 
-export const VERIFIED_SOURCE_CACHE_VERSION = "verified_source_cache_v1";
+export const VERIFIED_SOURCE_CACHE_VERSION = "verified_source_cache_v2";
+
+/**
+ * Discovery strategies are cooldown-scoped: a failure recorded by one strategy
+ * must never suppress a *different* (usually newer, better) strategy for the
+ * same identifier. Legacy rows carry `unknown`/`v0` and therefore match no
+ * current strategy — old derivation failures cannot block search-first.
+ */
+export type DiscoveryStrategy =
+  | "derived_court_url"
+  | "retrieved_official_url"
+  | "search_first_judgment"
+  | "statute_official_url"
+  | "unknown";
+
 
 export const CACHE_LIMITS = {
   MAX_TEXT: 400_000,
@@ -55,7 +69,11 @@ export interface CacheLookupKey {
   authors?: string[];
   institution?: string | null;
   year?: number | null;
+  /** Cooldown scope. Omit to fall back to the legacy (any-strategy) behaviour. */
+  strategy?: DiscoveryStrategy | null;
+  discovery_version?: string | null;
 }
+
 
 export interface CachedSource {
   id: string;
@@ -91,8 +109,15 @@ export interface CacheLookupResult {
   cooldown_until: string | null;
   stale: boolean;
   reason: string;
+  /** Strategy the suppressing negative row belongs to, when any. */
+  cooldown_strategy: string | null;
+  /** True when the cooldown decision was scoped to the requested strategy. */
+  cooldown_strategy_scoped: boolean;
+  /** Negative rows that existed but belonged to another strategy/version. */
+  ignored_other_strategy_failures: number;
   ms: number;
 }
+
 
 export async function sha256Hex(text: string): Promise<string> {
   const bytes = new TextEncoder().encode(text);
@@ -130,18 +155,23 @@ function chunkText(text: string): string[] {
 const SELECT_COLS =
   "id,source_category,source_type,normalized_docket,canonical_title,statute_title,statute_section," +
   "official_url,source_host,court,institution,year,language,is_translation,body_chars," +
-  "identity_validated,bibliographic_validated,status,verified_at,updated_at,failure_count,last_failure_reason";
+  "identity_validated,bibliographic_validated,status,verified_at,updated_at,failure_count,last_failure_reason," +
+  "discovery_strategy,discovery_version";
 
 /**
  * Identifier-keyed lookup. Nominations with only a topic query have nothing
  * stable to key on and must not reach this function.
+ *
+ * A verified row always wins, regardless of which strategy produced it.
+ * A negative row only suppresses the *same* strategy at the *same* discovery
+ * version — otherwise it is counted and ignored.
  */
 export async function lookupVerifiedSource(
   admin: Admin,
   key: CacheLookupKey,
 ): Promise<CacheLookupResult> {
   const t0 = Date.now();
-  const miss = (reason: string): CacheLookupResult => ({
+  const miss = (reason: string, ignored = 0): CacheLookupResult => ({
     hit: false,
     source: null,
     status: null,
@@ -149,6 +179,9 @@ export async function lookupVerifiedSource(
     cooldown_until: null,
     stale: false,
     reason,
+    cooldown_strategy: null,
+    cooldown_strategy_scoped: !!key.strategy,
+    ignored_other_strategy_failures: ignored,
     ms: Date.now() - t0,
   });
 
@@ -169,7 +202,7 @@ export async function lookupVerifiedSource(
     } else {
       return miss("no_lookup_key");
     }
-    const { data, error } = await q.order("updated_at", { ascending: false }).limit(3);
+    const { data, error } = await q.order("updated_at", { ascending: false }).limit(6);
     if (error) return miss(`lookup_error:${error.message}`);
     const rows = (data ?? []) as Array<Record<string, unknown>>;
     if (rows.length === 0) return miss("not_cached");
@@ -178,7 +211,18 @@ export async function lookupVerifiedSource(
       (r.status === "verified" || r.status === "stale") && r.identity_validated === true
     );
     if (!verified) {
-      const negative = rows[0];
+      const negatives = rows;
+      const sameStrategy = key.strategy
+        ? negatives.filter((r) =>
+          String(r.discovery_strategy ?? "unknown") === key.strategy &&
+          String(r.discovery_version ?? "v0") === (key.discovery_version ?? "v0")
+        )
+        : negatives;
+      const ignored = negatives.length - sameStrategy.length;
+      if (sameStrategy.length === 0) {
+        return miss("negative_other_strategy_only", ignored);
+      }
+      const negative = sameStrategy[0];
       const failures = Number(negative.failure_count ?? 1);
       const updated = new Date(String(negative.updated_at ?? new Date().toISOString()));
       const days = cooldownDays(failures);
@@ -192,6 +236,9 @@ export async function lookupVerifiedSource(
         cooldown_until: until.toISOString(),
         stale: false,
         reason: active ? "negative_cooldown_active" : "negative_cooldown_expired",
+        cooldown_strategy: String(negative.discovery_strategy ?? "unknown"),
+        cooldown_strategy_scoped: !!key.strategy,
+        ignored_other_strategy_failures: ignored,
         ms: Date.now() - t0,
       };
     }
@@ -224,8 +271,12 @@ export async function lookupVerifiedSource(
       cooldown_until: null,
       stale,
       reason: "cache_hit",
+      cooldown_strategy: null,
+      cooldown_strategy_scoped: !!key.strategy,
+      ignored_other_strategy_failures: 0,
       ms: Date.now() - t0,
     };
+
   } catch (e) {
     return miss(`lookup_threw:${e instanceof Error ? e.message : String(e)}`);
   }
@@ -253,7 +304,10 @@ export interface RecordSuccessInput {
   identity_validated: boolean;
   bibliographic_validated?: boolean;
   acquisition_method: string;
+  strategy?: DiscoveryStrategy | null;
+  discovery_version?: string | null;
   text: string;
+
 }
 
 export async function recordVerifiedSource(
@@ -302,6 +356,8 @@ export async function recordVerifiedSource(
         identity_validated: true,
         bibliographic_validated: input.bibliographic_validated ?? false,
         acquisition_method: input.acquisition_method,
+        discovery_strategy: input.strategy ?? "unknown",
+        discovery_version: input.discovery_version ?? "v0",
         status: "verified",
         verified_at: now,
         last_success_at: now,
@@ -309,12 +365,15 @@ export async function recordVerifiedSource(
         failure_count: 0,
         last_failure_reason: null,
       }, {
+        // Must match `verified_legal_sources_dedupe2_idx` exactly: the index is
+        // over generated plain columns, so bare column inference works.
         onConflict:
-          "source_category,normalized_docket,statute_title,statute_section,body_text_hash",
+          "source_category,dedupe_docket,dedupe_statute_title,dedupe_statute_section,body_text_hash",
         ignoreDuplicates: false,
       })
       .select("id")
       .maybeSingle();
+
 
     if (error || !data) {
       return { ok: false, id: null, error: error?.message ?? "upsert_returned_no_row" };
@@ -348,6 +407,10 @@ export interface RecordFailureInput {
   official_url?: string | null;
   status: Extract<CacheStatus, "blocked" | "failed" | "identity_mismatch" | "bibliographic_mismatch">;
   reason: string;
+  /** Cooldown scope — a failure only ever suppresses its own strategy. */
+  strategy?: DiscoveryStrategy | null;
+  discovery_version?: string | null;
+
 }
 
 /**
@@ -365,9 +428,13 @@ export async function recordSourceFailure(
         host = new URL(input.official_url).hostname;
       } catch { /* ignore */ }
     }
+    const strategy = input.strategy ?? "unknown";
+    const version = input.discovery_version ?? "v0";
     let q = admin.from("verified_legal_sources").select("id,failure_count")
       .eq("source_category", input.category)
-      .neq("status", "verified");
+      .neq("status", "verified")
+      .eq("discovery_strategy", strategy)
+      .eq("discovery_version", version);
     if (input.normalized_docket) q = q.eq("normalized_docket", input.normalized_docket);
     else if (input.statute_title) q = q.eq("statute_title", input.statute_title);
     else if (input.canonical_title) q = q.eq("canonical_title", input.canonical_title);
@@ -396,13 +463,16 @@ export async function recordSourceFailure(
       canonical_title: input.canonical_title ?? null,
       official_url: input.official_url ?? null,
       source_host: host,
-      body_text_hash: `failure:${input.normalized_docket ?? input.canonical_title ?? input.statute_title ?? "?"}:${now}`,
+      body_text_hash: `failure:${strategy}:${input.normalized_docket ?? input.canonical_title ?? input.statute_title ?? "?"}:${now}`,
       body_chars: 0,
       identity_validated: false,
       status: input.status,
+      discovery_strategy: strategy,
+      discovery_version: version,
       failure_count: 1,
       last_failure_reason: input.reason.slice(0, 300),
     });
+
     return { ok: !error, error: error?.message ?? null };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
