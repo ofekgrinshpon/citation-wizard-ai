@@ -1,0 +1,234 @@
+{
+  "id": "D3",
+  "query": "מתי בג״ץ יתערב בהחלטה של בית דין רבני בענייני רכוש בין בני זוג, במיוחד כאשר נטען שבית הדין החיל דין דתי במקום דין אזרחי?",
+  "run_id": "4cc114da-1363-4073-b9f4-8af47de50cc3",
+  "terminal": true,
+  "ms": 138666,
+  "total_ms": 135862,
+  "branch": null,
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 8,
+    "mini_after": 7,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 512,
+    "parse_error": null,
+    "candidates_count": 7,
+    "dropped_count": 0,
+    "dropped_reasons": [],
+    "identifier_bearing_count": 3,
+    "category_mix": {
+      "statute": 1,
+      "judgment": 2,
+      "scholarship": 2,
+      "knesset_report": 1,
+      "government_report": 1
+    },
+    "actionable_count": 4,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 3,
+      "known_name_no_docket": 1
+    },
+    "known_name_no_docket_count": 1,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 4,
+      "0.8-1.0": 3
+    },
+    "stripped_identifiers": [],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 3,
+      "exploratory": 2
+    },
+    "actionable_queries_preserved": 3,
+    "exploratory_queries_preserved": 2,
+    "ms": 12450
+  },
+  "query_merge": {
+    "final_query_count": 14,
+    "from_nomination": 5,
+    "skipped_duplicate": 0,
+    "skipped_budget": 11,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "מאמר אקדמי על בחירת הדין והפעלת דין דתי במקום דין אזרחי: סטנדרטים להוכחה, תיאוריות choice of law בהקשר בתי דין דתיים מאמר/פרק ספר"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "החלטות של בתי משפט מחוזיים או שלום שבהן נדונה טענת הפעלת דין דתי במקום דין אזרחי והסטנדרט להוכחה (\"בית משפט מחוזי\" \"בית דין רבני\" \"בחירת הדין\")"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "בג\"ץ סעדי רשות וביצועיים נגד החלטות בתי דין רבניים בענייני רכוש: צו בטלות, צו מניעה, פיצויים והוראות פרוצדורליות בתיקים אלה בפסיקה"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "חוק בתי דין רבניים (נישואין וגירושין) והוראות סדרי דין לגבי ערעורים, פנייה לבג\"ץ ומימוש סעדים; הוראות רלוונטיות בחוק בתי המשפט לגבי סמכויות בג\"ץ ותחולת עתירות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני פסק דין עליון"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני site:supremedecisions.court.gov.il Download"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני site:court.gov.il filetype:pdf פסק דין"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 7,
+        "statute": 3,
+        "academic": 4
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 1
+      },
+      "final_query_count": 14,
+      "actionable_queries": 3,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 2,
+      "queries_by_producer": {
+        "planner": 9,
+        "source_nomination": 5
+      },
+      "stripped_identifiers": 0,
+      "planner_queries_count": 13,
+      "queries_skipped_budget": 11,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 0,
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 4,
+        "0.8-1.0": 3
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 0,
+    "injected_candidate_ids": [],
+    "cache_lookups": 2,
+    "cache_hits": 0,
+    "cache_misses": 2,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "חוק בתי הדין הרבניים (נישואין וגירושין), תשי\"ג-1953",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "retrieval_already_has_body",
+        "ms": 26
+      },
+      {
+        "label": "בג\"ץ 1000/92 בבלי",
+        "category": "judgment",
+        "docket": "bagatz:1000/92",
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "search_first": {
+          "ms": 5254,
+          "ran": true,
+          "queries": [
+            "1000/92 בג\"ץ 1000/92 בבלי פסק דין מלא מקור רשמי supremedecisions.court.gov.il OR court.gov.il"
+          ],
+          "mirror_urls": 0,
+          "skip_reason": null,
+          "official_urls": 1
+        },
+        "urls": [
+          "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+          "https://supremedecisions.court.gov.il/Home/Download?fileName=92010000_Z01.txt&path=HebrewVerdicts/92/000/010/Z01&type=2",
+          "https://supremedecisions.court.gov.il/Home/Download?fileName=92010000.z01&path=HebrewVerdicts/92/000/010/z01&type=2",
+          "https://elyon1.court.gov.il/files/92/000/010/z01/92010000.z01.htm"
+        ],
+        "path": "none",
+        "result": "blocked_by_origin",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "blocked_by_origin:חסימת בקשה לא מורשת",
+        "ms": 6169
+      }
+    ]
+  },
+  "footnotes_count": 1,
+  "dangling_markers": 0,
+  "answer_len": 2511,
+  "answer": "בשורה התחתונה: בג\"ץ רשאי לערוך ביקורת שיפוטית על החלטות בתי דין רבניים בענייני רכוש בין בני זוג כאשר עולה טענה של פגם סמכותי או פגיעה בזכויות יסוד; ההלכה הפסיקתית הקובעת את סמכות הביקורת הזו נדונה בפסיקה המכרעת בנושא (במקרים כגון פרשת \"בבלי\" ובג\"ץ 5918-07) ומממשת את עקרון הביקורת השיפוטית על הליכים רבניים במצבים מסוימים.¹\n\nעילות מרכזיות המצדיקות התערבות בג\"ץ הן: חוסר סמכות או חריגה מסמכות של בית הדין, פגם מהותי בהליך שהשפיע על תקינות הכרעתו, והפרה של זכויות יסוד או של עקרונות היסוד של ההליך ההוגן; פסיקה עוסקת בבחינת סוגיות אלה ובהפעלת מבחני שגיאה וסמכות בעת בחינה שיפוטית של הליכים רבניים.\n\nהיקף הביקורת משתנה לפי מעמדו של בית הדין: כאשר הוא פועל בפועל כשופט ממונה על פי חוק (שיפוט מינהלי/מוסמך) הביקורת השיפוטית רגישה יותר להיבטי סמכות וציות לכללי המנהל, ואילו במקרה שבו הצדדים פנו להסדר בוררות דתי בהסכמה פרטית הביקורת על עצם בחירת הסמכות ועל תוקף פסק הבוררות מוגבלת יותר — נקודות אלו נדונות ברקע של דיונים על חפיפת סמכויות והשלכותיה, אם כי מסמכים חקיקתיים עדכניים בנושא הבוררות הרבנית עדיין מהווים מקור חלקי בלבד להבנת המשמעויות הפרקטיות.\n\nטענה כי בית הדין הרבני \"הפעיל דין דתי במקום דין אזרחי\" יכולה להוות שורש לעילת ביקורת כאשר היא ממקדת פגם מהותי בבחירת הדין או בהיקף הסמכות — כלומר יש להראות שהכרעת בית הדין התבססה על יסוד משפטי שהוציא את הדיון מחוק או מהמסגרת שהוסכמה או הוטלה עליו; בפסיקה נבחנים קריטריונים של חריגה מסמכות ושגיאת דין כדי להכריע מתי טעות בבחירת הדין מצדיקה התערבות שיפוטית.\n\nסעדים שבג\"ץ עשוי להעניק כוללים ביטול/הפסד של החלטת בית הדין, צווי מניעה או צו לשבת-על-היד, צו להחזיר הדיון לבית המשפט הרלוונטי או צו להורות על הליך חוזר; לקבלת סעד כזה יש להעמיד בדרך כלל עילת ביקורת מוצקה, לנהוג בהתאם לכללי התובע (ככל שמדובר בבקשה שיפוטית יש לשקול קיום ערוצים מינהליים מוחלפים והצורך במיצוי הליכים) ולפעול במסגרת המועדים הרלבנטיים — ההדגשים הפרוצדורליים והיקפי הסעד נדונים בפסיקה על הביקורת השיפוטית ובמבחני מידתיות בזכויות היסוד.\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- פרשת בבלי - חקיקה שפוטית - פסק דין עליון — https://www.psakdin.co.il/Court/%D7%A4%D7%A8%D7%A9%D7%AA-%D7%91%D7%91%D7%9C%D7%99--%D7%97%D7%A7%D7%99%D7%A7%D7%94-%D7%A9%D7%A4%D7%95%D7%98%D7%99%D7%AA--%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%A2%D7%9C%D7%99%D7%95%D7%ן\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_4_5918-07.pdf&type=2",
+      "title": "בג\"ץ 5918-07 - פלוני נ. בית הדין הרבני הגדול",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/63/2&fileName=SG2_4_5918-07.pdf&type=2",
+          "title": "בג\"ץ 5918-07 - פלוני נ. בית הדין הרבני הגדול",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "supreme_court_il"
+    }
+  ]
+}
