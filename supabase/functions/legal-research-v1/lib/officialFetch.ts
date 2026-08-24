@@ -19,6 +19,12 @@
  * no cookies are minted, no login is performed, no challenge is solved.
  */
 
+import {
+  courtEgressConfigured,
+  courtEgressFetch,
+  isEgressAllowedHost,
+} from "./courtEgress.ts";
+
 export const OFFICIAL_FETCH_VERSION = "official_fetch_profile_v1";
 
 export const OFFICIAL_FETCH_LIMITS = {
@@ -279,6 +285,8 @@ export async function officialFetch(
         rec.rate_limited = res.status === 429;
         rec.block_page_detected = res.status === 403;
         ledger.consecutive_hard_failures++;
+        const alt = await tryAltEgress(url, opts, rec, `origin_status_${res.status}`);
+        if (alt) return alt;
       } else {
         ledger.consecutive_hard_failures = 0;
       }
@@ -295,6 +303,8 @@ export async function officialFetch(
       ledger.attempts.push(rec);
       if (rec.connection_reset) {
         ledger.consecutive_hard_failures++;
+        const alt = await tryAltEgress(url, opts, rec, "edge_connection_reset");
+        if (alt) return alt;
         if (
           ledger.consecutive_hard_failures >= OFFICIAL_FETCH_LIMITS.MAX_CONSECUTIVE_HARD_FAILURES
         ) {
@@ -308,6 +318,39 @@ export async function officialFetch(
   ledger.chain = run.then(() => undefined, () => undefined);
   return await run;
 }
+
+/**
+ * official_court_egress_path_v1 — fallback only, allowlisted court hosts only,
+ * only after the direct edge fetch already failed.
+ */
+async function tryAltEgress(
+  url: string,
+  opts: OfficialFetchOptions,
+  rec: OfficialFetchAttempt & Record<string, unknown>,
+  reason: string,
+): Promise<Response | null> {
+  rec.alt_egress_attempted = false;
+  if (!courtEgressConfigured() || !isEgressAllowedHost(url)) {
+    rec.alt_egress_skipped = courtEgressConfigured() ? "host_not_allowlisted" : "egress_not_configured";
+    return null;
+  }
+  rec.alt_egress_attempted = true;
+  rec.alt_egress_reason = reason;
+  const res = await courtEgressFetch(url, {
+    reason,
+    headers: officialHeaders(url, opts.headers),
+    ...(opts.signal ? { signal: opts.signal } : {}),
+  });
+  rec.alt_egress_status = res?.status ?? null;
+  rec.alt_egress_content_type = res?.headers.get("content-type") ?? null;
+  if (res) {
+    // A successful alternative-egress fetch clears the origin-failure streak
+    // for this run: the origin itself is reachable, only the edge IP is not.
+    ledger.consecutive_hard_failures = 0;
+  }
+  return res;
+}
+
 
 function describe(
   url: string,
