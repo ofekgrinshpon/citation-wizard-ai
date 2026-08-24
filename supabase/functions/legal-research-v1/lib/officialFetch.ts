@@ -19,6 +19,12 @@
  * no cookies are minted, no login is performed, no challenge is solved.
  */
 
+import {
+  courtEgressConfigured,
+  courtEgressFetch,
+  isEgressAllowedHost,
+} from "./courtEgress.ts";
+
 export const OFFICIAL_FETCH_VERSION = "official_fetch_profile_v1";
 
 export const OFFICIAL_FETCH_LIMITS = {
