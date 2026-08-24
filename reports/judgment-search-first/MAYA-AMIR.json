@@ -1,0 +1,243 @@
+{
+  "id": "MAYA-AMIR",
+  "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי? התייחסו לעניין סימה אמיר.",
+  "run_id": "c53d621b-873e-47b2-ae44-43f80b75233b",
+  "terminal": true,
+  "ms": 150068,
+  "total_ms": 146619,
+  "branch": null,
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 8,
+    "mini_after": 6,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 0,
+    "parse_error": null,
+    "candidates_count": 6,
+    "dropped_count": 1,
+    "dropped_reasons": [
+      "low_relevance_confidence"
+    ],
+    "identifier_bearing_count": 3,
+    "category_mix": {
+      "statute": 1,
+      "judgment": 2,
+      "scholarship": 3
+    },
+    "actionable_count": 3,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 3,
+      "known_name_no_docket": 0
+    },
+    "known_name_no_docket_count": 0,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 3,
+      "0.8-1.0": 3
+    },
+    "stripped_identifiers": [],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 3,
+      "exploratory": 2
+    },
+    "actionable_queries_preserved": 3,
+    "exploratory_queries_preserved": 2,
+    "ms": 7675
+  },
+  "query_merge": {
+    "final_query_count": 14,
+    "from_nomination": 5,
+    "skipped_duplicate": 0,
+    "skipped_budget": 9,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשי\"ג-1953 טקסט החוק הליכי פסקי דין זכות להתדיין סמכויות תיקון החלטות הוראות פרוצדורליות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "מאמר פרוצדורלי 'ביקורת שיפוטית' על בתי דין רבניים 'הזדמנות להתדיין' 'הבאת ראיות' 'סמכותי' 'תוצאות התערבות' עיוני משפט"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, פסק דין עליון"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:supremedecisions.court.gov.il Download"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, site:court.gov.il filetype:pdf פסק דין"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 7,
+        "report": 1,
+        "statute": 2,
+        "academic": 4
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 0
+      },
+      "final_query_count": 14,
+      "actionable_queries": 3,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 2,
+      "queries_by_producer": {
+        "planner": 9,
+        "source_nomination": 5
+      },
+      "stripped_identifiers": 0,
+      "planner_queries_count": 11,
+      "queries_skipped_budget": 9,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 0,
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 3,
+        "0.8-1.0": 3
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 0,
+    "injected_candidate_ids": [],
+    "cache_lookups": 2,
+    "cache_hits": 0,
+    "cache_misses": 2,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "בג\"ץ 8497/00 סימה אמיר",
+        "category": "judgment",
+        "docket": "bagatz:8497/0",
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 1,
+        "search_first": {
+          "ms": 3020,
+          "ran": true,
+          "queries": [
+            "8497/00 בג\"ץ 8497/00 סימה אמיר 2002 פסק דין מלא מקור רשמי supremedecisions.court.gov.il OR court.gov.il"
+          ],
+          "mirror_urls": 0,
+          "skip_reason": null,
+          "official_urls": 4
+        },
+        "urls": [
+          "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/00/497/084/c10&fileName=00084970_c10.txt&type=4",
+          "https://www.court.gov.il/",
+          "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+          "https://fs.knesset.gov.il/20/Committees/20_cs_bg_388212.docx"
+        ],
+        "path": "none",
+        "result": "fetch_failed",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "extraction_budget_spent",
+        "ms": 13217
+      },
+      {
+        "label": "חוק בתי הדין הרבניים (נישואין וגירושין), התשמ\"ד-1984",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "cache_write_error": null,
+        "reason": "retrieval_already_has_body",
+        "ms": 52
+      }
+    ]
+  },
+  "footnotes_count": 2,
+  "dangling_markers": 0,
+  "answer_len": 2577,
+  "answer": "שורה תחתונה: בבג״ץ נקבע שבעת בחינת החלטת בית דין רבני בענייני חלוקת רכוש לאחר גירושין תתקיים התערבות שיפוטית כאשר נמצאת שגיאה משפטית מהותית, פירוש דין שגוי או כאשר ההכרעה נשענה על שיקול בלתי רלוונטי או שחורג מסמכות בית הדין — אמות‑מידה אלה נוסחו ובוצעו בפרשת סימה אמיר.¹\n\nאמת המידה הכללית: בג״ץ בוחן האם פסק‑דין של בית דין רבני סבל מטעות משפטית או מפרשנות שגויה של דין, וכן האם בית הדין חרג מסמכותו בפועל; כאשר אחת מעילות אלה מתקיימת מדובר בעילת התערבות מינהלית סטנדרטית, שנועדה להבטיח שמוסד שיפוטי יעמוד במסגרת סמכותו החוקית.²\n\nהמשמעות של \"שיקול חיצוני\" ומידת הביקורת: בפרשת סימה אמיר הכיר בג״ץ באפשרות כי בית דין רבני ישתמש בשיקולים המונחים במערכת הדין האזרחי; שימוש כזה יעמיד את ההחלטה בסכנה של ביקורת מוגברת אם ניתן להראות שהשיקול היה מהותי להכרעה או שחרג מהסמכות ההלכתית שהותרה לבית הדין — אך יש להבחין בין דיון מתקבל על הדעת בשיקולים רבניים לבין הסתמכות על נורמות אזרחיות שאין להן אחיזה בסמכותו של בית הדין.\n\nמה נתקבע בפרשת סימה אמיר: בבג״ץ (סעיפי ההכרעה במסמך) הוצגו העובדות המתאימות ובית המשפט קבע את האמות‑מידה לבחינת החלטות בתי דין רבניים בענייני רכוש, בין היתר בכך שאם ההכרעה נשענה על שיקול בלתי רלוונטי או על פירוש דין שגוי — ראוי להפעיל ביקורת שיפוטית; פסק‑הדין משמש כמקרה מבחן לפרשנות הגבולות בין סמכות בתי הדין לבין כללים אזרחיים בתחום החלוקה.\n\nסייגים פרוצדורליים ותוצאות אפשריות: בבג״ץ הודגש הצורך בהוכחה שאותו שיקול חיצוני היה חיוני להכרעה, שישותפה של העתירה הוא צד רלוונטי ובעל תחולה להגיש בקשה, וכי התקיימה הזדמנות לדיון כנטען; מבחינת סעד — בג״ץ יכול לבטל את החלטת בית הדין, להשיב את הדיון לבית הדין להכרעה מחודשת או לקבוע תיקון נקודתי לפסק‑הדין, בהתאם לחומרת הפגם ולמבחני מידתיות שנזכרים בפסיקה ובכללי האיזון.\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- בג\"ץ 8638/03 (psakdin.co.il) — https://www.psakdin.co.il/Court/%D7%94%D7%A9%D7%92%D7%94-%D7%A2%D7%9C-%D7%A4%D7%A1%D7%A7-%D7%91%D7%95%D7%A8%D7%A8%D7%95%D7%AA-%D7%A9%D7%9C-%D7%91%D7%99%22%D7%93-%D7%A8%D7%91%D7%A0%D7%99-%D7%94%D7%99%D7%90-%D7%91%D7%A4%D7%A0%D7%99%D7%94-%D7%9C%D7%91%D7%99%D7%94%D7%9E%22%D7%A9-%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%91%D7%91%D7%A7%D7%A9%D7%94-%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%9C-%D7%94%D7%A4%D7%A1%D7%A7?IsMobile=false\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> קריאת גוף פסקי הדין הופסקה מטעמי מגבלת עיבוד, ולכן ייתכן שחלק מהמקורות נותחו לפי מטא-נתונים בלבד.",
+  "footnotes": [
+    {
+      "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9E%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9C.doc",
+      "title": "בגץ 8638-03 סימה אמיר נ' בית הדין הרבני הגדול.doc",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9E%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9C.doc",
+          "title": "בגץ 8638-03 סימה אמיר נ' בית הדין הרבני הגדול.doc",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9E%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9C.doc",
+      "title": "בגץ 8638-03 סימה אמיר נ' בית הדין הרבני הגדול.doc; חוק בתי דין רבניים",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208638-03%20%D7%A1%D7%99%D7%9E%D7%94%20%D7%90%D7%9E%D7%99%D7%A8%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99%20%D7%94%D7%92%D7%93%D7%95%D7%9C.doc",
+          "title": "בגץ 8638-03 סימה אמיר נ' בית הדין הרבני הגדול.doc",
+          "source_type": "caselaw"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/legalinfo/hok2/he/%D7%97%D7%95%D7%A7%20%D7%91%D7%AA%D7%99%20%D7%93%D7%99%D7%9F%20%D7%A8%D7%91%D7%A0%D7%99%D7%99%D7%9D.pdf",
+          "title": "חוק בתי דין רבניים",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "compound"
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "id": "R02",
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+  "run_id": "f97810b0-84b6-42dd-8b80-e59387563dae",
+  "terminal": true,
+  "ms": 167103,
+  "total_ms": 164468,
+  "branch": "docket_limitation",
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 7,
+    "mini_after": 6,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 0,
+    "parse_error": null,
+    "candidates_count": 6,
+    "dropped_count": 0,
+    "dropped_reasons": [],
+    "identifier_bearing_count": 3,
+    "category_mix": {
+      "statute": 2,
+      "judgment": 1,
+      "scholarship": 3
+    },
+    "actionable_count": 3,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 3,
+      "known_name_no_docket": 0
+    },
+    "known_name_no_docket_count": 0,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 3,
+      "0.8-1.0": 3
+    },
+    "stripped_identifiers": [],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 3,
+      "exploratory": 2
+    },
+    "actionable_queries_preserved": 3,
+    "exploratory_queries_preserved": 2,
+    "ms": 7163
+  },
+  "query_merge": {
+    "final_query_count": 19,
+    "from_nomination": 5,
+    "skipped_duplicate": 2,
+    "skipped_budget": 0,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "duplicate_exact",
+          "producer": "required_anchors",
+          "query_he": "ע״א 6821/93",
+          "duplicate_of": "ע\"א 6821/93"
+        },
+        {
+          "reason": "duplicate_near",
+          "producer": "required_anchors",
+          "query_he": "ע\"א 6821-93",
+          "duplicate_of": "ע\"א 6821/93"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 11,
+        "statute": 6,
+        "academic": 2
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 0
+      },
+      "final_query_count": 19,
+      "actionable_queries": 3,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 2,
+      "queries_by_producer": {
+        "planner": 9,
+        "required_anchors": 2,
+        "source_nomination": 5,
+        "judgment_discovery": 3
+      },
+      "stripped_identifiers": 0,
+      "planner_queries_count": 9,
+      "queries_skipped_budget": 0,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 2,
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 3,
+        "0.8-1.0": 3
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 2,
+    "injected_candidate_ids": [
+      "nominated-source:N2",
+      "nominated-source:N3"
+    ],
+    "cache_lookups": 2,
+    "cache_hits": 0,
+    "cache_misses": 2,
+    "cache_writes": 2,
+    "attempts": [
+      {
+        "label": "חוק יסוד: כבוד האדם וחירותו",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "urls": [
+          "https://www.nevo.co.il/law_html/law00/70320.htm",
+          "https://fs.knesset.gov.il/20/law/20_lst_519565.docx",
+          "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc"
+        ],
+        "path": "statute_official_url",
+        "result": "body_acquired",
+        "body_chars": 1353,
+        "cache_written": true,
+        "cache_write_error": null,
+        "reason": null,
+        "ms": 509
+      },
+      {
+        "label": "חוק יסוד: חופש העיסוק",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "cooldown_strategy": null,
+        "ignored_other_strategy_failures": 0,
+        "urls": [
+          "https://www.nevo.co.il/law_html/law00/71905.htm",
+          "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/360/059/l08&fileName=97059360.l08&type=4"
+        ],
+        "path": "statute_official_url",
+        "result": "body_acquired",
+        "body_chars": 1314,
+        "cache_written": true,
+        "cache_write_error": null,
+        "reason": null,
+        "ms": 230
+      }
+    ]
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 320,
+  "answer": "לא אותר במקורות הזמינים ע\"א 6821/93. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.",
+  "footnotes": []
+}
