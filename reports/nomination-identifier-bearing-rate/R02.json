@@ -1,0 +1,128 @@
+{
+  "id": "R02",
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+  "run_id": "797f9627-104f-43f6-a70e-81a1bb6746ca",
+  "terminal": true,
+  "ms": 161321,
+  "total_ms": 156320,
+  "branch": "docket_limitation",
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 8,
+    "mini_after": 7,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 384,
+    "parse_error": null,
+    "candidates_count": 7,
+    "dropped_count": 0,
+    "dropped_reasons": [],
+    "identifier_bearing_count": 3,
+    "category_mix": {
+      "statute": 1,
+      "judgment": 2,
+      "scholarship": 3,
+      "knesset_report": 1
+    },
+    "actionable_count": 4,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 3,
+      "known_name_no_docket": 1
+    },
+    "known_name_no_docket_count": 1,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 4,
+      "0.8-1.0": 3
+    },
+    "stripped_identifiers": [],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 3,
+      "exploratory": 2
+    },
+    "actionable_queries_preserved": 3,
+    "exploratory_queries_preserved": 2,
+    "ms": 13387
+  },
+  "query_merge": {
+    "final_query_count": 20,
+    "from_nomination": 5,
+    "skipped_duplicate": 2,
+    "skipped_budget": 0,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "duplicate_exact",
+          "producer": "required_anchors",
+          "query_he": "ע״א 6821/93",
+          "duplicate_of": "ע\"א 6821/93"
+        },
+        {
+          "reason": "duplicate_near",
+          "producer": "required_anchors",
+          "query_he": "ע\"א 6821-93",
+          "duplicate_of": "ע\"א 6821/93"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 13,
+        "statute": 5,
+        "academic": 2
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 3,
+        "known_name_no_docket": 1
+      },
+      "final_query_count": 20,
+      "actionable_queries": 3,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 2,
+      "queries_by_producer": {
+        "planner": 10,
+        "required_anchors": 2,
+        "source_nomination": 5,
+        "judgment_discovery": 3
+      },
+      "stripped_identifiers": 0,
+      "planner_queries_count": 10,
+      "queries_skipped_budget": 0,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 2,
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 4,
+        "0.8-1.0": 3
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 0,
+    "injected_candidate_ids": [],
+    "cache_lookups": 1,
+    "cache_hits": 0,
+    "cache_misses": 1
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 341,
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 6821/93 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.",
+  "footnotes": []
+}

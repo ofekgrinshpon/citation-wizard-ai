@@ -1,0 +1,214 @@
+{
+  "id": "D3",
+  "query": "מתי בג״ץ יתערב בהחלטה של בית דין רבני בענייני רכוש בין בני זוג, במיוחד כאשר נטען שבית הדין החיל דין דתי במקום דין אזרחי?",
+  "run_id": "86757492-4c47-440a-a437-717b90b6bbec",
+  "terminal": true,
+  "ms": 156037,
+  "total_ms": 152014,
+  "branch": null,
+  "source_nomination": {
+    "enabled": true,
+    "skipped": false,
+    "skip_reason": null,
+    "stage_failed": false,
+    "model_first": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "escalated": false,
+    "escalation_reason": null,
+    "mini_retry_used": false,
+    "mini_before": 7,
+    "mini_after": 6,
+    "fallback_to_mini_used": false,
+    "finish_reason": "tool_calls",
+    "reasoning_tokens": 512,
+    "parse_error": null,
+    "candidates_count": 6,
+    "dropped_count": 0,
+    "dropped_reasons": [],
+    "identifier_bearing_count": 2,
+    "category_mix": {
+      "statute": 2,
+      "judgment": 1,
+      "scholarship": 3
+    },
+    "actionable_count": 3,
+    "exploratory_count": 3,
+    "actionability_mix": {
+      "topic_only": 3,
+      "known_identifier": 2,
+      "known_name_no_docket": 1
+    },
+    "known_name_no_docket_count": 1,
+    "topic_only_count": 3,
+    "identifier_confidence_histogram": {
+      "0.0-0.4": 4,
+      "0.8-1.0": 2
+    },
+    "stripped_identifiers": [],
+    "demoted_identifiers": [],
+    "queries_by_bucket": {
+      "actionable": 3,
+      "exploratory": 2
+    },
+    "actionable_queries_preserved": 3,
+    "exploratory_queries_preserved": 2,
+    "ms": 13442
+  },
+  "query_merge": {
+    "final_query_count": 14,
+    "from_nomination": 5,
+    "skipped_duplicate": 1,
+    "skipped_budget": 11,
+    "raw": {
+      "dropped": [
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "חוק הבוררות, התשמ\"א-1981 הוראות לגבי הסכמת צדדים ליישוב לפי הלכה והיחס לפסקי דין של בתי דין דתיים; חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשי\"ג-1953 (נישואין וגירושין), התשי\"ג-1953 הוראות הסכמות ובית הדין כבורר"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "מאמרים על מבחן ההבחנה בין הכרעה הלכתית להכרעה על יסוד דין אזרחי בבתי דין רבניים; ניתוח משפטי על הצבת גבולות להסכמה ליישוב לפי הלכה והשפעתה על זכויות יסוד"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "בג\"ץ פסקי דין חובת מיצוי הליכים בבתי דין רבניים לפני פנייה לבג\"ץ; צווי ביניים ותנאי זמנים/התיישנות בבקשות נגד החלטות בתי דין רבניים בענייני רכוש בין בני זוג"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשי\"ג-1953 (נישואין וגירושין), התשי\"ג-1953 הוראות על ערעורים וסמכויות בבית הדין הרבני; חוק בתי המשפט, התשמ\"ד-1984 הוראות על סמכות בית המשפט העליון להוציא צווים בתיקי פיקוח שיפוטי"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "planner",
+          "query_he": "דו\"ח משרד המשפטים או דו\"ח הכנסת על בתי הדין הרבניים הליכי ערעור ומיצוי הליכים המלצות לפרוצדורה לפני פנייה לבג\"ץ 'דו\"ח משרד המשפטים בתי דין רבניים'"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "התערבות בג\"ץ בפסיקת בית הדין הרבני חריגה מסמכות"
+        },
+        {
+          "reason": "duplicate_near",
+          "producer": "facets",
+          "query_he": "חוק שיפוט בתי דין רבניים נישואין וגירושין סמכות",
+          "duplicate_of": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "facets",
+          "query_he": "שיקול זר בהחלטת בית דין רבני ביטול בבג\"ץ"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני פסק דין עליון"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני הלכה פסוקה ע\"א בג\"ץ דנ\"א"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני site:supremedecisions.court.gov.il Download"
+        },
+        {
+          "reason": "total_cap",
+          "producer": "judgment_discovery",
+          "query_he": "מתי בג״ץ יתערב בהחלטה של בית דין רבני site:court.gov.il filetype:pdf פסק דין"
+        }
+      ],
+      "version": "query_merge_and_budget_v1",
+      "source_type_mix": {
+        "case": 5,
+        "statute": 4,
+        "academic": 5
+      },
+      "actionability_mix": {
+        "topic_only": 3,
+        "known_identifier": 2,
+        "known_name_no_docket": 1
+      },
+      "final_query_count": 14,
+      "actionable_queries": 3,
+      "demoted_identifiers": 0,
+      "exploratory_queries": 2,
+      "queries_by_producer": {
+        "planner": 9,
+        "source_nomination": 5
+      },
+      "stripped_identifiers": 0,
+      "planner_queries_count": 14,
+      "queries_skipped_budget": 11,
+      "nomination_queries_count": 5,
+      "queries_skipped_duplicate": 1,
+      "actionable_queries_preserved": 3,
+      "exploratory_queries_preserved": 2,
+      "queries_added_from_nomination": 5,
+      "identifier_confidence_histogram": {
+        "0.0-0.4": 4,
+        "0.8-1.0": 2
+      }
+    }
+  },
+  "official_discovery": {
+    "enabled": true,
+    "skip_reason": null,
+    "targets": 2,
+    "bodies_acquired": 0,
+    "injected_candidate_ids": [],
+    "cache_lookups": 2,
+    "cache_hits": 0,
+    "cache_misses": 2
+  },
+  "footnotes_count": 3,
+  "dangling_markers": 0,
+  "answer_len": 2447,
+  "answer": "הקו המרכזי לתכלית התשובה: בג״ץ עשוי להתערב בהחלטת בית דין רבני בענייני רכוש בין בני זוג כאשר מתקיימת אחת מהבעיות המרכזיות — חוסר סמכות של בית הדין, חריגה מסמכות שהוסכמה או שהוענקה לו, פגיעה בזכויות יסוד או בהליך הוגן מהותי — והמעורבות תיבחן בשאלת ההלימה והסבירות של החלטת בית הדין במסגרת שיפוט מינהלי.\n\nמבחן התחולה והיקף הסמכות של בתי דין רבניים בענייני ממון בין בני זוג נגזר בעיקר מההסכמה בין הצדדים ובין הוראות השיפוט; בפסיקה שנבדקה יש דגש על כך שסכסוכים רכושיים יוכלו להידון בבית דין רבני במסגרת שבה הוצגה סמכות (כגון בוררות על יסוד הסכם) או שבה יש עיגון שיפוטי מתאים, אך לא נמצא במקורות שהובאו נוסח חוק שיפרש באופן גורף את כל ההיקף — יש לפרש כל מקרה על פי הסמכות המוצהרת והנסיבות שנקבעו.²\n\nהעילות הפרטניות שבהן בג״ץ נוטה להתערב כוללות: הוכחה לחריגה מפורשת מסמכות שניתנה, הכרעה שבוצעה בחוסר סמכות, הפרת עקרונות של הליך הוגן או פגיעה בזכויות יסוד; בפסיקה שנבדקה הוצגו שיקולים לשמירה על גבולות הסמכות ושימת משקל על הימנעות מהתערבות אלא כאשר הפגם מהותי ואינו ניתן לתיקון בתוך מערכת ערכאות החוץ־מנהלית.³\n\nסטנדרט הבדיקה של בג״ץ הוא בדיקת הלימה וסבירות ״מינהלית״ ולא החלפת שיקול דעתו של בית הדין הרוחני; רק כאשר מתקיים פגם מהותי (כגון פסיקה שניתנה מחוץ לסמכות, הליך שלא הקנה עקרונות משפטיים בסיסיים או פגיעה בזכויות יסוד) יימצא פגם המוביל לסעדים כמו ביטול הפסיקה, צו להורות על דיון חוזר או צו מניעה/הצהרה לפי נסיבות המקרה; בפסיקה הנוגעת לשמירת סמכות ולמועד העלאת הטענות ניכרת זהירות בבחינת מתי להצדק התערבות.\n\nטענת הצד שמ־'הוחל דין דתי במקום דין אזרחי' נבחנת לפי שאלות עובדתיות ותהליךיות: האם הצדדים הסכימו מראש על יישוב מחלוקות לפי דין דתי או בוררות על יסוד ההלכה, האם ההכרעה התבססה על פרשנות מוסכמת של ההסכם או על הוראות substantive של הדין האזרחי, והאם יש בכך פגיעה מהותית בזכויות אזרחיות שאינן ניתנות להחלפה בהסכמה; העומס להראות כי הוחל דין שלא על יסוד סמכות או הסכמה מוטל על המערער, וכי הפגם הגיע לרמת מהות שמצדיקה התערבות שיפוטית.¹\n\nלפני פנייה לבג״ץ ראוי לנקוט צעדים מעשיים: לקבוע ולממש את כל ערוצי הערעור/ההסדרה הפנימיים בבית הדין הרבני, להעלות טענות סמכות בהקדם (מתוך החשיבות שנראתה בפסיקה לגבי מועד ההעלאה), לשקול צו ביניים כדי למנוע ביצוע פסיקה שגורמת לנזק בלתי־שיחרורי, ולאסוף ראיות משפטיות ועובדתיות שממפות הסכמות הצדדים, ההיקף שהוסכם וההליכים שננקטו — כל אלה נדרשים להצגת ריבונות ההליך בפני בג״ץ.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-3017-20-%d7%a2%d7%a1%d7%90%d7%9d-%d7%a0%d7%a2%d7%90%d7%9e%d7%a0%d7%94-%d7%a0-%d7%94%d7%99%d7%97%d7%99%d7%93%d7%94-%d7%94%d7%90%d7%a8%d7%a6%d7%99%d7%aa-%d7%9c%d7%90%d7%9b%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "רע\"פ 3017/20 עסאם נעאמנה נ׳ היחידה הארצית לאכיפה דיני התכנון והבנייה החלטה (20.04.2020)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-3017-20-%d7%a2%d7%a1%d7%90%d7%9d-%d7%a0%d7%a2%d7%90%d7%9e%d7%a0%d7%94-%d7%a0-%d7%94%d7%99%d7%97%d7%99%d7%93%d7%94-%d7%94%d7%90%d7%a8%d7%a6%d7%99%d7%aa-%d7%9c%d7%90%d7%9b%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "רע\"פ 3017/20 עסאם נעאמנה נ׳ היחידה הארצית לאכיפה דיני התכנון והבנייה החלטה (20.04.2020)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/4&fileName=SB4_16_2123-08.pdf&type=2",
+      "title": "בג\"ץ 2123-08 - פלוני נ. פלוני",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/4&fileName=SB4_16_2123-08.pdf&type=2",
+          "title": "בג\"ץ 2123-08 - פלוני נ. פלוני",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "supreme_court_il"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+      "number": 3,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-2299-23-%d7%90%d7%9c%d7%99%d7%a2%d7%96%d7%a8-%d7%96%d7%99%d7%9c%d7%91%d7%a8%d7%91%d7%a8%d7%92-%d7%a0-%d7%9c%d7%99%d7%90%d7%95%d7%a8%d7%94-%d7%a4%d7%a8%d7%95-%d7%a4%d7%a1%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "רע\"א 2299/23 אליעזר זילברברג נ׳ ליאורה פרו פסק דין (17.01.2023)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    }
+  ]
+}

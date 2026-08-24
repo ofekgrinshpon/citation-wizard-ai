@@ -32,10 +32,12 @@ import {
 import { assessPdfExtraction } from "./pdfExtractionPreflight.ts";
 import { HOLDING_TEXT_RE, isListingPage, tryDirectFile, withTimeout } from "./judgmentTextAcquisition.ts";
 import {
+  isDiscoveryEligible,
   isIdentifierBearing,
   type NominatedSource,
   type SourceNominationResult,
 } from "./sourceNomination.ts";
+
 import {
   lookupVerifiedSource,
   recordSourceFailure,
@@ -187,6 +189,65 @@ function retrievedOfficialUrls(candidates: Candidate[], d: DocketRef): string[] 
   return urls;
 }
 
+// ── known_name_no_docket: search-first identity by party/case name ─────────
+const NAME_STOPWORDS = new Set([
+  "בגץ", "בגצ", "עא", "עפ", "בשא", "רעא", "דנא", "עהס", "תא", "נגד", "נ",
+  "פסק", "דין", "פרשת", "עניין", "ענין", "בית", "המשפט", "העליון", "של", "על",
+  "מדינת", "ישראל", "כנסת", "היועץ", "המשפטי", "לממשלה", "ואח",
+]);
+
+function nameTokens(label: string): string[] {
+  return String(label ?? "")
+    .replace(/[\u0591-\u05C7]/g, "")
+    .replace(/["'`׳״]/g, "")
+    .split(/[^\p{L}\p{N}]+/u)
+    .map((t) => t.trim())
+    .filter((t) => t.length >= 3 && !/^\d+$/.test(t) && !NAME_STOPWORDS.has(t));
+}
+
+function nameMatchCount(text: string, toks: string[]): number {
+  const t = String(text ?? "").replace(/["'`׳״]/g, "");
+  let n = 0;
+  for (const tok of toks) if (t.includes(tok)) n++;
+  return n;
+}
+
+/** Minimum distinctive name tokens required to accept identity. */
+function requiredNameHits(toks: string[]): number {
+  return toks.length >= 2 ? 2 : 1;
+}
+
+/** Official URLs retrieval already found for a named (docket-less) case. */
+function retrievedOfficialUrlsByName(candidates: Candidate[], toks: string[]): string[] {
+  if (toks.length === 0) return [];
+  const need = requiredNameHits(toks);
+  const urls: string[] = [];
+  for (const c of candidates) {
+    const url = String(c.source_url ?? "");
+    if (!url || !OFFICIAL_HOST_RE.test(url)) continue;
+    if (isListingPage(url)) continue;
+    if (nameMatchCount(`${c.title ?? ""} ${c.snippet ?? ""}`, toks) < need) continue;
+    if (!urls.includes(url)) urls.push(url);
+  }
+  return urls;
+}
+
+/** True when retrieval already produced a usable body for this named case. */
+function poolHasBodyByName(candidates: Candidate[], toks: string[]): boolean {
+  if (toks.length === 0) return false;
+  const need = requiredNameHits(toks);
+  for (const c of candidates) {
+    if (nameMatchCount(`${c.title ?? ""}`, toks) < need) continue;
+    const md = (c.metadata ?? {}) as Record<string, unknown>;
+    const integ = md.source_integrity as SourceIntegrity | undefined;
+    const usability = String(integ?.text_usability ?? md.text_usability ?? "");
+    if (/listing|metadata|unusable|none/i.test(usability)) continue;
+    if (/full_text|substantive_excerpt/.test(usability)) return true;
+    if (candidateText(c).trim().length >= DISCOVERY_LIMITS.MIN_BODY_CHARS) return true;
+  }
+  return false;
+}
+
 function blockPageSignature(prefix: string, d: DocketRef): string | null {
   const t = prefix.trim();
   if (t.length > DISCOVERY_LIMITS.BLOCK_PAGE_MAX_CHARS) return null;
@@ -229,16 +290,23 @@ export async function runOfficialSourceDiscovery(
     return report;
   }
 
+  // v2: actionable nominations only. `known_identifier` may use the full
+  // ladder (cache → retrieved official URL → deterministic derivation);
+  // `known_name_no_docket` is search-first ONLY — it never reaches
+  // deterministic docket derivation, because identity cannot be proven from a
+  // derived URL without a docket. Exploratory topic searches never get here.
   const targets = nom.candidates
-    .filter((n) => isIdentifierBearing(n))
-    .filter((n) => n.category === "judgment" ? !!n.docket : true)
+    .filter((n) => isDiscoveryEligible(n))
+    .filter((n) => isIdentifierBearing(n) || n.actionability === "known_name_no_docket")
+    .filter((n) => n.category === "judgment" ? (!!n.docket || !!n.label_he) : true)
     .slice(0, cap);
   report.targets = targets.length;
   if (targets.length === 0) {
-    report.skip_reason = "no_identifier_bearing_nominations";
+    report.skip_reason = "no_actionable_nominations";
     report.ms = Date.now() - t0;
     return report;
   }
+
 
   await input.markDurable?.("official_source_discovery_start", {
     targets: targets.map((t) => t.nomination_id),
@@ -336,14 +404,21 @@ async function handleTarget(
     return attempt;
   }
 
-  // Only judgments with a docket get a live acquisition lane in v1: identity
-  // can be proven deterministically inside the body. Everything else relies
-  // on ordinary retrieval and its existing gates.
+  // Judgments with a docket get the full ladder (identity provable inside the
+  // body). v2 adds a search-first-only lane for `known_name_no_docket`
+  // judgments: official URLs retrieval already surfaced, identity proven by
+  // distinctive name tokens. Deterministic derivation is never used there.
   if (!docket) {
+    if (n.category === "judgment" && n.actionability === "known_name_no_docket") {
+      const out = await handleNamedJudgment(n, input, attempt, remainingMs);
+      out.ms = Date.now() - tA;
+      return out;
+    }
     attempt.reason = "no_docket_no_live_lane";
     attempt.ms = Date.now() - tA;
     return attempt;
   }
+
   if (poolHasBody(input.candidates, docket)) {
     attempt.reason = "retrieval_already_has_body";
     attempt.ms = Date.now() - tA;
@@ -566,4 +641,131 @@ function injectBody(
     synthesis_role_overridden: false,
   } as IntegrityLogRow);
   return candidate_id;
+}
+
+/**
+ * Search-first-only acquisition for a `known_name_no_docket` judgment.
+ *
+ * No docket exists, so deterministic court-file derivation is out of reach by
+ * construction: identity is proven only by distinctive name tokens found
+ * inside the fetched body of an official-host URL that ordinary retrieval
+ * already surfaced. Everything else (budget, byte caps, PDF preflight, block
+ * detection, negative caching, downstream gates) is unchanged.
+ */
+async function handleNamedJudgment(
+  n: NominatedSource,
+  input: OfficialDiscoveryInput,
+  attempt: DiscoveryAttempt,
+  remainingMs: () => number,
+): Promise<DiscoveryAttempt> {
+  const toks = nameTokens(n.label_he);
+  const need = requiredNameHits(toks);
+  if (toks.length === 0) {
+    attempt.reason = "no_distinctive_name_tokens";
+    return attempt;
+  }
+  if (poolHasBodyByName(input.candidates, toks)) {
+    attempt.reason = "retrieval_already_has_body";
+    return attempt;
+  }
+
+  const urls = retrievedOfficialUrlsByName(input.candidates, toks)
+    .slice(0, DISCOVERY_LIMITS.MAX_URLS_PER_TARGET);
+  attempt.urls_attempted = urls;
+  if (urls.length === 0) {
+    attempt.reason = "no_official_url_from_search";
+    return attempt;
+  }
+
+  let lastFailure = "no_body_acquired";
+  for (const url of urls) {
+    if (input.budget?.exceeded() || remainingMs() < 2000) {
+      attempt.result = "timeout";
+      lastFailure = "budget_exhausted";
+      break;
+    }
+    const perUrlMs = Math.max(2000, Math.min(DISCOVERY_LIMITS.PER_URL_MS, remainingMs()));
+    input.budget?.mark("official_discovery_probe_named", { url, nomination: n.nomination_id });
+    try {
+      const got = await withTimeout(
+        tryDirectFile(url, {
+          allowPlainText: true,
+          validateText: (text: string) =>
+            nameMatchCount(text.slice(0, 20_000), toks) >= need,
+          signal: AbortSignal.timeout(perUrlMs),
+          maxBytes: DISCOVERY_LIMITS.MAX_PROBE_BYTES,
+          budgetExceeded: () => input.budget?.exceeded() ?? false,
+          allowExtraction: (bytes: number) =>
+            input.budget?.allowExtraction?.(bytes, { speculative: true }) ?? true,
+          noteExtractionOutput: (chars: number) =>
+            input.budget?.noteExtractionOutput?.(chars, { speculative: true }),
+          preflight: (info: { bytes: number; contentType: string; url: string; kind: "pdf" | "docx" }) => {
+            const verdict = assessPdfExtraction({
+              bytes: info.bytes,
+              contentType: info.contentType,
+              url: info.url,
+              exactCase: false,
+              remainingMs: remainingMs(),
+            });
+            return { allow: verdict.allow, reason: verdict.reason };
+          },
+        }),
+        perUrlMs,
+        "official_source_discovery_named",
+      );
+      if (got.length >= DISCOVERY_LIMITS.MIN_BODY_CHARS) {
+        attempt.result = "body_acquired";
+        attempt.body_chars = got.length;
+        attempt.acquisition_path = "retrieved_official_url";
+        attempt.injected_candidate_id = injectBody(input, n, null, {
+          url,
+          text: got,
+          from_cache: false,
+        });
+        const write = await recordVerifiedSource(input.admin, {
+          category: "judgment",
+          source_type: "caselaw",
+          authority_type: "judgment",
+          normalized_docket: null,
+          canonical_title: n.label_he,
+          official_url: url,
+          court: /elyon|supremedecisions/i.test(url) ? "בית המשפט העליון" : null,
+          year: n.year,
+          identity_terms_matched: toks,
+          identity_validated: true,
+          acquisition_method: "retrieved_official_url_by_name",
+          text: got,
+        });
+        attempt.cache_written = write.ok;
+        attempt.cache_write_error = write.error;
+        return attempt;
+      }
+      lastFailure = "below_threshold";
+      attempt.result = "below_threshold";
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (/mismatch|validate/i.test(msg)) {
+        attempt.result = "identity_mismatch";
+        lastFailure = "name_identity_mismatch";
+      } else if (/timeout|abort/i.test(msg)) {
+        attempt.result = "timeout";
+        lastFailure = "timeout";
+      } else {
+        attempt.result = "fetch_failed";
+        lastFailure = msg.slice(0, 200);
+      }
+    }
+  }
+
+  attempt.reason = lastFailure;
+  await recordSourceFailure(input.admin, {
+    category: "judgment",
+    source_type: "caselaw",
+    normalized_docket: null,
+    canonical_title: n.label_he,
+    official_url: attempt.urls_attempted[0] ?? null,
+    status: attempt.result === "identity_mismatch" ? "identity_mismatch" : "failed",
+    reason: lastFailure,
+  });
+  return attempt;
 }

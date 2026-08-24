@@ -761,14 +761,32 @@ async function handle(req: Request): Promise<Response> {
   // ─── query_merge_and_budget ──────────────────────────────────────────────
   // Single funnel over every query producer: normalise, dedupe (exact +
   // near), priority-sort, cap. Required-anchor queries are never dropped.
+  // source_nomination_v2 — academic/policy questions treat exploratory
+  // literature searches as the primary output; doctrinal runs still keep at
+  // least one exploratory scholarship/institutional lane.
+  const nominationMode = plannerStage.mode_plan?.mode ?? "";
+  const academicish =
+    /academic|policy|theor|comparative|literature|research_survey/i.test(nominationMode);
   const queryMerge = mergeAndBudgetQueries([
     { producer: "required_anchors", queries: anchorQueries },
-    { producer: "source_nomination", queries: sourceNomination.queries, cap: 4 },
+    { producer: "source_nomination", queries: sourceNomination.queries, cap: 5 },
     { producer: "core_authority_registry", queries: coreAuthorityRegistry.queries, cap: 2 },
     { producer: "planner", queries: plannerQueriesNorm },
     { producer: "facets", queries: facetQueriesNorm },
     { producer: "judgment_discovery", queries: discoveryQueriesNorm },
-  ], { max_total: Math.max(4, router.max_retrieval_queries) });
+  ], {
+    max_total: Math.max(4, router.max_retrieval_queries),
+    reserve_actionable: 2,
+    reserve_exploratory: 2,
+    min_exploratory: academicish ? 2 : 1,
+    nomination_stats: {
+      actionability_mix: sourceNomination.actionability_mix,
+      identifier_confidence_histogram: sourceNomination.identifier_confidence_histogram,
+      stripped_identifiers: sourceNomination.stripped_identifiers.length,
+      demoted_identifiers: sourceNomination.demoted_identifiers.length,
+    },
+  });
+
 
   // router_profiles_v1 — path-scoped query admission. Required-anchor queries
   // are never dropped (they carry the deterministic primary-source duties).
@@ -2025,9 +2043,22 @@ async function handle(req: Request): Promise<Response> {
       nomination_candidates_count: sourceNomination.candidates.length,
       identifier_bearing_count: sourceNomination.identifier_bearing_count,
       category_mix: sourceNomination.category_mix,
+      // source_nomination_v2 bucket telemetry.
+      actionable_count: sourceNomination.actionable_count,
+      exploratory_count: sourceNomination.exploratory_count,
+      actionability_mix: sourceNomination.actionability_mix,
+      known_name_no_docket_count: sourceNomination.known_name_no_docket_count,
+      topic_only_count: sourceNomination.topic_only_count,
+      identifier_confidence_histogram: sourceNomination.identifier_confidence_histogram,
+      stripped_identifiers: sourceNomination.stripped_identifiers,
+      demoted_identifiers: sourceNomination.demoted_identifiers,
+      source_nomination_queries_by_bucket: sourceNomination.queries_by_bucket,
+      exploratory_queries_preserved: queryMerge.report.exploratory_queries_preserved,
+      actionable_queries_preserved: queryMerge.report.actionable_queries_preserved,
       candidates: sourceNomination.candidates,
       dropped: sourceNomination.dropped,
       ms: sourceNomination.ms,
+
     },
     // query_merge_and_budget telemetry.
     query_merge: queryMerge.report,
