@@ -448,7 +448,7 @@ export function seedCoreAuthorityQueries(
   for (const auth of doctrine.canonical_authorities) {
     const present = alreadyPresent(auth, existing);
     const room = queries.length < MAX_REGISTRY_QUERIES;
-    const seed = !present && room;
+    const seed = !present && room && CASE_SEEDING_MODE === "query_seeding";
     if (present) skipped.push(auth.authority_id);
     authorities.push({
       authority_id: auth.authority_id,
