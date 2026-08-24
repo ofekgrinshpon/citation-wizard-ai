@@ -41,6 +41,10 @@ import {
   annotateCanonicalUsage,
   runCanonicalAuthorityAcquisition,
 } from "./stages/canonicalAuthorityAcquisition.ts";
+import { runSourceNomination } from "./stages/sourceNomination.ts";
+import { mergeAndBudgetQueries } from "./stages/queryMergeAndBudget.ts";
+import { runOfficialSourceDiscovery } from "./stages/officialSourceDiscovery.ts";
+
 
 import { buildJudgmentDiscoveryQueries } from "./stages/judgmentDiscovery.ts";
 import { runSpecificCaseResolution, type SpecificCaseResolution } from "./stages/specificCaseResolution.ts";
@@ -725,21 +729,56 @@ async function handle(req: Request): Promise<Response> {
     ...facetExpansion.queries,
   ]);
   const normalizedQueries = statuteNorm.queries;
+  // Split the normalised block back into its producers (order is preserved).
+  const nPlanner = planner!.queries.length;
+  const nDiscovery = judgmentDiscovery.queries.length;
+  const plannerQueriesNorm = normalizedQueries.slice(0, nPlanner);
+  const discoveryQueriesNorm = normalizedQueries.slice(nPlanner, nPlanner + nDiscovery);
+  const facetQueriesNorm = normalizedQueries.slice(nPlanner + nDiscovery);
   let coreAuthorityRegistry = seedCoreAuthorityQueries(
     question,
     analyzer,
     facetExpansion.facets,
     [...anchorQueries, ...normalizedQueries],
   );
+
+  // ─── source_nomination_v1 ────────────────────────────────────────────────
+  // "What sources would a competent Israeli legal researcher expect to
+  // obtain here?" — nominated sources are never citations: each one must
+  // still be retrieved, acquired, validated and admitted by every gate.
+  const nominationSkip = router.skipped_stages.includes("source_nomination") ||
+    plannerStage.mode_plan?.mode === "canonical_quote";
+  const sourceNomination = await runSourceNomination({
+    question,
+    analyzer,
+    mode: plannerStage.mode_plan?.mode ?? null,
+    max_candidates: router.max_retrieval_queries <= 8 ? 3 : 5,
+    skip: nominationSkip,
+    skip_reason: nominationSkip ? "router_or_mode_skip" : undefined,
+  });
+  stage_runs.push(...sourceNomination.stage_runs);
+
+  // ─── query_merge_and_budget ──────────────────────────────────────────────
+  // Single funnel over every query producer: normalise, dedupe (exact +
+  // near), priority-sort, cap. Required-anchor queries are never dropped.
+  const queryMerge = mergeAndBudgetQueries([
+    { producer: "required_anchors", queries: anchorQueries },
+    { producer: "source_nomination", queries: sourceNomination.queries, cap: 4 },
+    { producer: "core_authority_registry", queries: coreAuthorityRegistry.queries, cap: 2 },
+    { producer: "planner", queries: plannerQueriesNorm },
+    { producer: "facets", queries: facetQueriesNorm },
+    { producer: "judgment_discovery", queries: discoveryQueriesNorm },
+  ], { max_total: Math.max(4, router.max_retrieval_queries) });
+
   // router_profiles_v1 — path-scoped query admission. Required-anchor queries
   // are never dropped (they carry the deterministic primary-source duties).
-  // Registry-seeded queries ride alongside them (hard-capped at 2).
   const queryAdmission = admitQueries(
     router,
-    [...anchorQueries, ...coreAuthorityRegistry.queries],
-    normalizedQueries,
+    queryMerge.protectedQueries,
+    queryMerge.queries,
   );
   const allQueries = queryAdmission.queries;
+
 
   const requiredAnchorsMeta = {
     enabled: true,
@@ -991,21 +1030,38 @@ async function handle(req: Request): Promise<Response> {
     }
   }
 
-  // ─── canonical_judgment_text_acquisition_v1 (Option B) ───────────────────
-  // Registry-seeded canonical judgment dockets get the same deterministic
-  // court-file exact-body lane that user-typed dockets already get — but only
-  // when normal retrieval produced no body-acquired judgment for them.
-  // Acquisition only: every gate downstream still decides admission/citation.
+  // ─── canonical_judgment_text_acquisition_v1 (Option B) — retired ─────────
+  // The hand-maintained landmark-case list no longer seeds queries
+  // (CASE_SEEDING_MODE = "telemetry_only"), so this lane is off the run path.
+  // The stage is kept for its per-probe / block-page telemetry shape; the
+  // acquisition work moved to official_source_discovery below.
   const canonicalAcquisition = await runCanonicalAuthorityAcquisition({
     registry: coreAuthorityRegistry,
     candidates: pool.candidates,
     integrity: pool.integrity,
     budget,
-    max_dockets: fastLaneHit
+    max_dockets: 0,
+    markDurable: (name, detail) => budget.markDurable(name, detail),
+  });
+
+  // ─── official_source_discovery + verified_legal_sources cache ────────────
+  // Identifier-bearing nominations: cache lookup first (a hit costs no fetch
+  // and no extraction slot), then official URLs retrieval already surfaced,
+  // then deterministic court-file derivation. Identity is proven inside the
+  // body before anything is injected or cached.
+  const officialDiscovery = await runOfficialSourceDiscovery({
+    admin,
+    nomination: sourceNomination,
+    candidates: pool.candidates,
+    integrity: pool.integrity,
+    budget,
+    max_targets: fastLaneHit
       ? 0
       : Math.min(2, Math.max(0, router.max_speculative_acquisitions ?? 2)),
     markDurable: (name, detail) => budget.markDurable(name, detail),
   });
+
+
 
 
   // ─── Specific-case authority resolution (specific_case mode only) ───────
@@ -1945,6 +2001,32 @@ async function handle(req: Request): Promise<Response> {
     claim_facet_expansion: claimFacetExpansionMeta,
     // core_authority_registry_v1 telemetry.
     core_authority_registry: coreAuthorityRegistryMeta,
+    // source_nomination_v1 telemetry.
+    source_nomination: {
+      version: sourceNomination.version,
+      enabled: sourceNomination.enabled,
+      skip_reason: sourceNomination.skip_reason,
+      model_final: sourceNomination.model_final,
+      escalated: sourceNomination.escalated,
+      parse_error: sourceNomination.parse_error,
+      nomination_candidates_count: sourceNomination.candidates.length,
+      identifier_bearing_count: sourceNomination.identifier_bearing_count,
+      category_mix: sourceNomination.category_mix,
+      candidates: sourceNomination.candidates,
+      dropped: sourceNomination.dropped,
+      ms: sourceNomination.ms,
+    },
+    // query_merge_and_budget telemetry.
+    query_merge: queryMerge.report,
+    // official_source_discovery + verified_legal_sources cache telemetry.
+    verified_source_cache: {
+      version: officialDiscovery.cache_version,
+      cache_hits: officialDiscovery.cache_hits,
+      cache_misses: officialDiscovery.cache_misses,
+      cache_cooldowns: officialDiscovery.cache_cooldowns,
+      cache_writes: officialDiscovery.cache_writes,
+    },
+    official_source_discovery: officialDiscovery,
     // router_profiles_v1 telemetry.
     router_profiles: {
       version: router.version,

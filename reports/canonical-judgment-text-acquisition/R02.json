@@ -4,15 +4,13 @@
   "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
   "core_authority_registry": {
     "area": "constitutional",
-    "queries": [
-      "בג\"ץ 1715/97 לשכת מנהלי ההשקעות בישראל נ' שר האוצר מבחני המידתיות"
-    ],
+    "queries": [],
     "triggered": true,
     "authorities": [
       {
         "kind": "statute",
         "role": "primary_statute",
-        "used": true,
+        "used": false,
         "label": "חוק-יסוד: כבוד האדם וחירותו, סעיף 8 (פסקת ההגבלה)",
         "docket": null,
         "admitted": true,
@@ -33,7 +31,7 @@
         "query_he": null,
         "retrieved": true,
         "authority_id": "hcj_6821_93_mizrahi",
-        "body_acquired": true,
+        "body_acquired": false,
         "source_type_expected": "case",
         "skipped_because_already_present": true
       },
@@ -44,7 +42,7 @@
         "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות נ' שר האוצר",
         "docket": "1715/97",
         "admitted": false,
-        "query_he": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות בישראל נ' שר האוצר מבחני המידתיות",
+        "query_he": null,
         "retrieved": false,
         "authority_id": "hcj_1715_97_investment_managers",
         "body_acquired": false,
@@ -54,7 +52,7 @@
     ],
     "doctrine_id": "proportionality",
     "matched_facet": null,
-    "queries_added": 1,
+    "queries_added": 0,
     "doctrine_label": "מבחני המידתיות",
     "trigger_reason": "doctrine_trigger_match:proportionality",
     "registry_version": "core_authority_registry_v1",
@@ -74,120 +72,35 @@
     ]
   },
   "support_distribution": {
-    "direct": 4,
-    "partial": 17,
-    "unrelated": 9
+    "partial": 12,
+    "unrelated": 9,
+    "tangential": 3
   },
   "candidate_count": 0,
   "listing_page_candidates": 0,
   "metadata_only_candidates": 0,
-  "job_id": "3adac6fa-83a7-4738-9177-2a83eb77f7d1",
-  "run_id": "06f19f2f-1faa-4e79-a320-93086a971195",
-  "ms": 161392,
+  "job_id": "669b0926-d3ad-46f4-b9ac-65b680bb5c2a",
+  "run_id": "ac01eee5-fd5a-4750-ae51-ff30a663f8ba",
+  "ms": 160987,
   "terminal_status": "done",
-  "branch": null,
-  "answer": "**ע\"א 6821/93 — תמצית ההכרעה**\n\nבית המשפט העליון קבע שבעצם חקיקת חוקי היסוד הכנסת יכולה לעצב מסגרת חוקתית; לחוקי היסוד מעמד נורמטיבי על‑חוקי ביחס לחקיקה רגילה.\n\nבפסק‑דין אומץ מבחן פורמלי לזיהוי ״חוק יסוד״, שייחודו בהסתמכות על הכותרת ותכלית המכוננת של הסעיף עצמו ולא על מבחן מהותי בלבד; ההכרעה הורתה להבחין בין תפקידי המחוקק הרגיל לבין כובעו כגוף מכונן.\n\nהפסק‑דין אישר את סמכות בית‑המשפט לבצע ביקורת שיפוטית על חקיקה המושווית לחוק יסוד ולבטלה אם היא סותרת אותו, תוך החלת מבחני מידתיות בעת בחינת הלגיטימציה של הפגיעה בזכויות.\n\nבהתייחס לטענות לגבי פגיעה בזכות הקניין נקבע כי הזכות מוכרת כזכות מוגנת במסגרת חוק‑יסוד: כבוד האדם והחירות; בפסק‑דין שנבחן העילה לפגיעה נמצאה במסגרת ההגבלות ולכן החוק שנדון לא בוטל.\n\nבנוגע ל׳שמירת הדינים׳ קבע בית‑המשפט כי הוראת שמירת הדינים (סעיף 10 לחוק‑יסוד: כבוד האדם והחירות) חלה על דינים שהיו קיימים ערב תחילתו של חוק‑היסוד והיא אינה מעניקה, לפי קריאה זו, הסמכה כללית לפגיעה עתידית בזכויות בלא בחינה נוספת.¹\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי — https://judgments.org.il/judgments/%D7%A2%D7%90-6821-93-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%94%D7%9E%D7%90%D7%95%D7%97%D7%93-%D7%91%D7%A2%D7%9E-%D7%A0-%D7%9E%D7%92%D7%93%D7%9C-%D7%9B%D7%A4%D7%A8-%D7%A9/\n- ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי - judgments.org.il — https://judgments.org.il/judgments/%D7%A2%D7%90-6821-93-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%94%D7%9E%D7%90%D7%95%D7%97%D7%93-%D7%91%D7%A2%D7%9D-%D7%A0-%D7%9E%D7%92%D7%93%D7%9C-%D7%9B%D7%A4%D7%A8-%D7%A9/\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> קריאת גוף פסקי הדין הופסקה מטעמי מגבלת עיבוד, ולכן ייתכן שחלק מהמקורות נותחו לפי מטא-נתונים בלבד.",
-  "footnotes": [
-    {
-      "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
-      "title": "חוק יסוד - כבוד האדם וחירותו",
-      "number": 1,
-      "sources": [
-        {
-          "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
-          "title": "חוק יסוד - כבוד האדם וחירותו",
-          "source_type": "legislation"
-        }
-      ],
-      "source_type": "legislation"
-    }
-  ],
-  "footnotes_length": 1,
-  "used_sources_length": 1,
-  "inline_marker_count": 1,
+  "branch": "docket_limitation",
+  "answer": "לא אותר במקורות הזמינים ע\"א 6821/93. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.",
+  "footnotes": [],
+  "footnotes_length": 0,
+  "used_sources_length": 0,
+  "inline_marker_count": 0,
   "dangling_marker_count": 0,
   "orphan_source_row_count": 0,
   "metadata_only_holdings": null,
-  "limitation_notices": [
-    "**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
-  ],
-  "claim_source_match": {
-    "applied": true,
-    "mismatch_reason": [
-      "unrelated_legal_area",
-      "claim_mismatch"
-    ],
-    "limitation_added": true,
-    "tagged_block_count": 5,
-    "dropped_source_refs": [
-      {
-        "ref": "s2",
-        "reason": "unrelated_legal_area",
-        "block_index": 1,
-        "block_claim_id": "C1",
-        "block_legal_area": "constitutional",
-        "source_claim_ids": [
-          "C1"
-        ],
-        "source_legal_area": "public_law_hcj"
-      },
-      {
-        "ref": "s2",
-        "reason": "claim_mismatch",
-        "block_index": 2,
-        "block_claim_id": "C4",
-        "block_legal_area": "constitutional",
-        "source_claim_ids": [
-          "C1"
-        ],
-        "source_legal_area": "public_law_hcj"
-      },
-      {
-        "ref": "s2",
-        "reason": "claim_mismatch",
-        "block_index": 3,
-        "block_claim_id": "C2",
-        "block_legal_area": "public_law_hcj",
-        "source_claim_ids": [
-          "C1"
-        ],
-        "source_legal_area": "public_law_hcj"
-      },
-      {
-        "ref": "s2",
-        "reason": "claim_mismatch",
-        "block_index": 4,
-        "block_claim_id": "C3",
-        "block_legal_area": "constitutional",
-        "source_claim_ids": [
-          "C1"
-        ],
-        "source_legal_area": "public_law_hcj"
-      },
-      {
-        "ref": "s2",
-        "reason": "claim_mismatch",
-        "block_index": 5,
-        "block_claim_id": "C5",
-        "block_legal_area": "constitutional",
-        "source_claim_ids": [
-          "C1"
-        ],
-        "source_legal_area": "public_law_hcj"
-      }
-    ],
-    "commentary_only_claims": [],
-    "unsupported_block_count": 4,
-    "source_ref_mismatch_count": 5,
-    "primary_support_by_main_claim": true
-  },
+  "limitation_notices": [],
+  "claim_source_match": null,
   "footnote_render_report": {
     "version": "footnote_rendering_invariant_v1",
     "renumbered": false,
-    "footnotes_length": 1,
+    "footnotes_length": 0,
     "invariant_passed": true,
-    "inline_marker_count": 1,
-    "used_sources_length": 1,
+    "inline_marker_count": 0,
+    "used_sources_length": 0,
     "dangling_marker_count": 0,
     "orphan_source_row_count": 0
   },
@@ -200,208 +113,15 @@
     "cpu_or_stale": false
   },
   "canonical": {
-    "ms": 3281,
+    "ms": 3,
     "enabled": true,
     "version": "canonical_judgment_text_acquisition_v1",
-    "attempts": [
-      {
-        "ms": 2064,
-        "cited": false,
-        "docket": "6821/93",
-        "probes": [
-          {
-            "ms": 126,
-            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=HebrewVerdicts/93/210/068/Z01&type=2",
-            "detail": "plain_text_below_threshold",
-            "result": "blocked_by_origin",
-            "url_kind": "text",
-            "url_type": "2",
-            "body_chars": 224,
-            "byte_length": 1787,
-            "http_status": 200,
-            "last_resort": false,
-            "probe_index": 0,
-            "content_type": "text/html; charset=utf-8",
-            "skipped_due_to_cap": false,
-            "body_title_or_signature": "חסימת בקשה לא מורשת"
-          },
-          {
-            "ms": 343,
-            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210.z01&path=HebrewVerdicts/93/210/068/z01&type=2",
-            "detail": "plain_text_below_threshold",
-            "result": "blocked_by_origin",
-            "url_kind": "text",
-            "url_type": "2",
-            "body_chars": 224,
-            "byte_length": 1787,
-            "http_status": 200,
-            "last_resort": false,
-            "probe_index": 1,
-            "content_type": "text/html; charset=utf-8",
-            "skipped_due_to_cap": false,
-            "body_title_or_signature": "חסימת בקשה לא מורשת"
-          },
-          {
-            "ms": 290,
-            "url": "https://elyon1.court.gov.il/files/93/210/068/z01/93068210.z01.htm",
-            "detail": "plain_text_below_threshold",
-            "result": "blocked_by_origin",
-            "url_kind": "html",
-            "url_type": null,
-            "body_chars": 223,
-            "byte_length": 1877,
-            "http_status": 200,
-            "last_resort": false,
-            "probe_index": 2,
-            "content_type": "text/html; charset=utf-8",
-            "skipped_due_to_cap": false,
-            "body_title_or_signature": "חסימת בקשה לא מורשת"
-          },
-          {
-            "ms": 1305,
-            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=EnglishVerdicts/93/210/068/Z01&type=4",
-            "detail": "extraction_budget_spent",
-            "result": "extraction_failed",
-            "url_kind": "pdf",
-            "url_type": "4",
-            "body_chars": null,
-            "byte_length": 2344190,
-            "http_status": 200,
-            "last_resort": true,
-            "probe_index": 3,
-            "content_type": "application/pdf",
-            "skipped_due_to_cap": false,
-            "body_title_or_signature": null
-          }
-        ],
-        "source": "registry_seed",
-        "query_id": "core_authority_registry:proportionality:hcj_6821_93_mizrahi",
-        "body_chars": 0,
-        "doctrine_id": "proportionality",
-        "authority_id": "hcj_6821_93_mizrahi",
-        "endpoint_type": "pdf",
-        "type4_derived": true,
-        "attempted_urls": [
-          "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=HebrewVerdicts/93/210/068/Z01&type=2",
-          "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210.z01&path=HebrewVerdicts/93/210/068/z01&type=2",
-          "https://elyon1.court.gov.il/files/93/210/068/z01/93068210.z01.htm",
-          "https://supremedecisions.court.gov.il/Home/Download?fileName=93068210_Z01.txt&path=EnglishVerdicts/93/210/068/Z01&type=4"
-        ],
-        "authority_name": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
-        "used_in_answer": false,
-        "rejection_reason": "extraction_budget_spent",
-        "docket_normalized": "bagatz:6821/93",
-        "acquisition_result": "extraction_failed",
-        "type4_body_acquired": false,
-        "type4_probe_reached": true,
-        "attempted_urls_count": 4,
-        "injected_candidate_id": null,
-        "blocked_by_origin_count": 3,
-        "body_identity_validated": false,
-        "canonical_acquisition_attempted": true
-      },
-      {
-        "ms": 1181,
-        "cited": false,
-        "docket": "1715/97",
-        "probes": [
-          {
-            "ms": 133,
-            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150_Z01.txt&path=HebrewVerdicts/97/150/017/Z01&type=2",
-            "detail": "plain_text_below_threshold",
-            "result": "blocked_by_origin",
-            "url_kind": "text",
-            "url_type": "2",
-            "body_chars": 224,
-            "byte_length": 1787,
-            "http_status": 200,
-            "last_resort": false,
-            "probe_index": 0,
-            "content_type": "text/html; charset=utf-8",
-            "skipped_due_to_cap": false,
-            "body_title_or_signature": "חסימת בקשה לא מורשת"
-          },
-          {
-            "ms": 375,
-            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150.z01&path=HebrewVerdicts/97/150/017/z01&type=2",
-            "detail": "plain_text_below_threshold",
-            "result": "blocked_by_origin",
-            "url_kind": "text",
-            "url_type": "2",
-            "body_chars": 224,
-            "byte_length": 1787,
-            "http_status": 200,
-            "last_resort": false,
-            "probe_index": 1,
-            "content_type": "text/html; charset=utf-8",
-            "skipped_due_to_cap": false,
-            "body_title_or_signature": "חסימת בקשה לא מורשת"
-          },
-          {
-            "ms": 283,
-            "url": "https://elyon1.court.gov.il/files/97/150/017/z01/97017150.z01.htm",
-            "detail": "plain_text_below_threshold",
-            "result": "blocked_by_origin",
-            "url_kind": "html",
-            "url_type": null,
-            "body_chars": 224,
-            "byte_length": 1878,
-            "http_status": 200,
-            "last_resort": false,
-            "probe_index": 2,
-            "content_type": "text/html; charset=utf-8",
-            "skipped_due_to_cap": false,
-            "body_title_or_signature": "חסימת בקשה לא מורשת"
-          },
-          {
-            "ms": 390,
-            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150_Z01.txt&path=EnglishVerdicts/97/150/017/Z01&type=4",
-            "detail": "plain_text_below_threshold",
-            "result": "blocked_by_origin",
-            "url_kind": "pdf",
-            "url_type": "4",
-            "body_chars": 224,
-            "byte_length": 1787,
-            "http_status": 200,
-            "last_resort": true,
-            "probe_index": 3,
-            "content_type": "text/html; charset=utf-8",
-            "skipped_due_to_cap": false,
-            "body_title_or_signature": "חסימת בקשה לא מורשת"
-          }
-        ],
-        "source": "registry_seed",
-        "query_id": "core_authority_registry:proportionality:hcj_1715_97_investment_managers",
-        "body_chars": 0,
-        "doctrine_id": "proportionality",
-        "authority_id": "hcj_1715_97_investment_managers",
-        "endpoint_type": "pdf",
-        "type4_derived": true,
-        "attempted_urls": [
-          "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150_Z01.txt&path=HebrewVerdicts/97/150/017/Z01&type=2",
-          "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150.z01&path=HebrewVerdicts/97/150/017/z01&type=2",
-          "https://elyon1.court.gov.il/files/97/150/017/z01/97017150.z01.htm",
-          "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150_Z01.txt&path=EnglishVerdicts/97/150/017/Z01&type=4"
-        ],
-        "authority_name": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות נ' שר האוצר",
-        "used_in_answer": false,
-        "rejection_reason": "blocked_by_origin:חסימת בקשה לא מורשת",
-        "docket_normalized": "bagatz:1715/97",
-        "acquisition_result": "blocked_by_origin",
-        "type4_body_acquired": false,
-        "type4_probe_reached": true,
-        "attempted_urls_count": 4,
-        "injected_candidate_id": null,
-        "blocked_by_origin_count": 4,
-        "body_identity_validated": false,
-        "canonical_acquisition_attempted": true
-      }
-    ],
+    "attempts": [],
     "doctrine_id": "proportionality",
-    "skip_reason": null,
-    "attempted_count": 2,
+    "skip_reason": "docket_cap_zero",
+    "attempted_count": 0,
     "body_acquired_count": 0,
-    "type4_derived_count": 2,
+    "type4_derived_count": 0,
     "eligible_authorities": [
       "hcj_6821_93_mizrahi",
       "hcj_1715_97_investment_managers"
@@ -409,11 +129,11 @@
     "skipped_not_derivable": [],
     "injected_candidate_ids": [],
     "metadata_only_holdings": 0,
-    "blocked_by_origin_count": 7,
+    "blocked_by_origin_count": 0,
     "type4_body_acquired_count": 0,
-    "type4_probe_reached_count": 2,
+    "type4_probe_reached_count": 0,
     "bodyless_judgment_citations": 0,
     "skipped_already_body_acquired": [],
-    "citations_without_body_acquired": 1
+    "citations_without_body_acquired": 0
   }
 }

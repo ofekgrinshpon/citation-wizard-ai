@@ -706,6 +706,155 @@ export type Database = {
         }
         Relationships: []
       }
+      verified_legal_source_texts: {
+        Row: {
+          chunk_index: number
+          created_at: string
+          embedding: string | null
+          id: string
+          source_id: string
+          source_url: string | null
+          text: string
+        }
+        Insert: {
+          chunk_index: number
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          source_id: string
+          source_url?: string | null
+          text: string
+        }
+        Update: {
+          chunk_index?: number
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          source_id?: string
+          source_url?: string | null
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verified_legal_source_texts_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "verified_legal_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      verified_legal_sources: {
+        Row: {
+          acquisition_method: string | null
+          authority_type: string | null
+          authors: string[]
+          bibliographic_validated: boolean
+          body_chars: number
+          body_text_hash: string
+          canonical_title: string | null
+          case_prefix: string | null
+          court: string | null
+          created_at: string
+          failure_count: number
+          id: string
+          identity_terms_matched: string[]
+          identity_validated: boolean
+          institution: string | null
+          is_translation: boolean
+          journal_or_publisher: string | null
+          language: string | null
+          last_failure_reason: string | null
+          last_success_at: string | null
+          last_used_at: string | null
+          normalized_docket: string | null
+          official_url: string | null
+          party_names: string[]
+          source_category: string
+          source_host: string | null
+          source_kind: string | null
+          source_type: string
+          status: string
+          statute_section: string | null
+          statute_title: string | null
+          updated_at: string
+          verified_at: string | null
+          year: number | null
+        }
+        Insert: {
+          acquisition_method?: string | null
+          authority_type?: string | null
+          authors?: string[]
+          bibliographic_validated?: boolean
+          body_chars?: number
+          body_text_hash: string
+          canonical_title?: string | null
+          case_prefix?: string | null
+          court?: string | null
+          created_at?: string
+          failure_count?: number
+          id?: string
+          identity_terms_matched?: string[]
+          identity_validated?: boolean
+          institution?: string | null
+          is_translation?: boolean
+          journal_or_publisher?: string | null
+          language?: string | null
+          last_failure_reason?: string | null
+          last_success_at?: string | null
+          last_used_at?: string | null
+          normalized_docket?: string | null
+          official_url?: string | null
+          party_names?: string[]
+          source_category: string
+          source_host?: string | null
+          source_kind?: string | null
+          source_type: string
+          status?: string
+          statute_section?: string | null
+          statute_title?: string | null
+          updated_at?: string
+          verified_at?: string | null
+          year?: number | null
+        }
+        Update: {
+          acquisition_method?: string | null
+          authority_type?: string | null
+          authors?: string[]
+          bibliographic_validated?: boolean
+          body_chars?: number
+          body_text_hash?: string
+          canonical_title?: string | null
+          case_prefix?: string | null
+          court?: string | null
+          created_at?: string
+          failure_count?: number
+          id?: string
+          identity_terms_matched?: string[]
+          identity_validated?: boolean
+          institution?: string | null
+          is_translation?: boolean
+          journal_or_publisher?: string | null
+          language?: string | null
+          last_failure_reason?: string | null
+          last_success_at?: string | null
+          last_used_at?: string | null
+          normalized_docket?: string | null
+          official_url?: string | null
+          party_names?: string[]
+          source_category?: string
+          source_host?: string | null
+          source_kind?: string | null
+          source_type?: string
+          status?: string
+          statute_section?: string | null
+          statute_title?: string | null
+          updated_at?: string
+          verified_at?: string | null
+          year?: number | null
+        }
+        Relationships: []
+      }
       verified_sources: {
         Row: {
           auto_verified: boolean | null
