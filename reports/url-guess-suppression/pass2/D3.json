@@ -1,0 +1,336 @@
+{
+  "id": "D3",
+  "query": "מתי בג״ץ יתערב בהחלטה של בית דין רבני בענייני רכוש בין בני זוג, במיוחד כאשר נטען שבית הדין החיל דין דתי במקום דין אזרחי?",
+  "run_id": "306c62cc-2e05-4cb6-ab97-8522dd54df53",
+  "terminal": true,
+  "ms": 178252,
+  "total_ms": 173791,
+  "nominations": {
+    "count": 6,
+    "judgments": 2,
+    "actionable": 3
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150_Z01.txt&path=HebrewVerdicts/97/150/017/Z01&type=2",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150.z01&path=HebrewVerdicts/97/150/017/z01&type=2",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://elyon1.court.gov.il/files/97/150/017/z01/97017150.z01.htm",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150_Z01.txt&path=EnglishVerdicts/97/150/017/Z01&type=4",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/150/017/a15&fileName=97017150.a15&type=4",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": true,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": null
+      },
+      {
+        "url": "https://court.gov.il",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": true,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": null
+      }
+    ],
+    "suppressed": 4,
+    "guessed_detected": 4,
+    "total_candidates": 6,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 2
+  },
+  "official_discovery": {
+    "bodies_acquired": 0,
+    "cache_hits": 0,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "חוק בית הדין הרבני (נישואין וגירושין), התש\"ך-1960",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "urls": [
+          "https://www.nevo.co.il/law_html/law00/73178.htm",
+          "https://fs.knesset.gov.il/2/law/2_lsr_209652.pdf"
+        ],
+        "path": "none",
+        "result": "section_not_found",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "section_not_found:35ב",
+        "ms": 717
+      },
+      {
+        "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+        "category": "judgment",
+        "docket": "bagatz:1715/97",
+        "cache_lookup": "miss",
+        "search_first": {
+          "ms": 3237,
+          "ran": true,
+          "queries": [
+            "1715/97 בג\"ץ 1715/97 לשכת מנהלי ההשקעות 1998 פסק דין מלא מקור רשמי supremedecisions.court.gov.il OR court.gov.il"
+          ],
+          "mirror_urls": 0,
+          "skip_reason": null,
+          "official_urls": 2
+        },
+        "urls": [
+          "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/150/017/a15&fileName=97017150.a15&type=4",
+          "https://court.gov.il"
+        ],
+        "url_candidates": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/150/017/a15&fileName=97017150.a15&type=4",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          },
+          {
+            "url": "https://court.gov.il",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150_Z01.txt&path=HebrewVerdicts/97/150/017/Z01&type=2",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150.z01&path=HebrewVerdicts/97/150/017/z01&type=2",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          },
+          {
+            "url": "https://elyon1.court.gov.il/files/97/150/017/z01/97017150.z01.htm",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=97017150_Z01.txt&path=EnglishVerdicts/97/150/017/Z01&type=4",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          }
+        ],
+        "guessed_urls_suppressed": 4,
+        "path": "none",
+        "result": "fetch_failed",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "error sending request from 10.32.133.108:34742 for https://court.gov.il/ (84.110.173.72:443): client error (SendRequest): connection error: Connection reset by peer (os error 104)",
+        "ms": 15221
+      }
+    ]
+  },
+  "official_fetch": {
+    "official_calls": 2,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": [
+      {
+        "ms": 333,
+        "url": "https://www.nevo.co.il/law_html/law00/73178.htm",
+        "host": "www.nevo.co.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=utf-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 192,
+        "url": "https://fs.knesset.gov.il/2/law/2_lsr_209652.pdf",
+        "host": "fs.knesset.gov.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "application/pdf",
+        "rate_limited": false,
+        "content_length": 78336,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 272,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/150/017/a15&fileName=97017150.a15&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.133.108:56362 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/150/017/a15&fileName=97017150.a15&type=4 (84.110.173.93:443): client err",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "relay_eligible": true,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "relay_url_source": "search_first",
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": 200,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": "application/pdf"
+      },
+      {
+        "ms": 262,
+        "url": "https://court.gov.il",
+        "host": "court.gov.il",
+        "error": "error sending request from 10.32.133.108:34742 for https://court.gov.il/ (84.110.173.72:443): client error (SendRequest): connection error: Connection reset by peer (os error 104)",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "relay_eligible": true,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "relay_url_source": "search_first",
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": null,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": null
+      }
+    ]
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 2,
+    "stopped_reason": null,
+    "attempts": [
+      {
+        "ms": 1345,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C97/150/017/a15&fileName=97017150.a15&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 200,
+        "content_type": "application/pdf",
+        "content_length": 442079,
+        "skipped_reason": null,
+        "connection_reset": false
+      },
+      {
+        "ms": 9935,
+        "url": "https://court.gov.il",
+        "host": "court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 502,
+        "content_type": "application/json",
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false
+      }
+    ]
+  },
+  "footnotes_count": 1,
+  "dangling_markers": 0,
+  "answer_len": 2109,
+  "answer": "קביעה מהותית: בג\"ץ יתערב בהחלטות בתי הדין הרבניים בענייני רכוש בין בני זוג רק במקרים חריגים — למשל כאשר קיימת חריגה מסמכות, סטייה מהוראות החוק או פגיעה בכללי הצדק הטבעי.¹\n\nעילות להתערבות: ההוראות הפסיקתיות מצביעות שההתערבות תעמוד על יסודות כגון חריגה מסמכות של בית הדין, סטייה מהוראת הדין שמגבילה את סמכותו, פגיעה בעקרון של דיון הוגן וצדק טבעי, וכן שגיאה מהותית בדין או חוסר סבירות קיצוני שמערער את תקפות ההכרעה.\n\nתחולת הדין האזרחי בענייני רכוש: כאשר סכסוך בין בני זוג נוגע למהותו של הרכוש העומד לחלוקה, בית הדין הרבני מחויב להכריע לפי הכללים של הדין האזרחי הכללי — כלומר שאלות מהותיות של קניין, שיתוף וחלוקה יוכרעו על יסוד הדין האזרחי.\n\nהחלת דין דתי במקום דין אזרחי — מתי זו חריגה: החלת דין דתי במקום מסגרת אזרחית אינה מהווה חריגה אוטומטית בפני עצמה; יש לבחון כל מקרה לגופו — האם ההכרעה נעשתה במסגרת הסמכות שהוענקה לבית הדין והאם היא עומדת בהתאמה להוראות החוק. רק כאשר ההכרעה ניתנה ללא סמכות שבדין או בסתירה להוראות החוק תיחשב חריגה מסמכות.\n\nסעדים אפשריים — הגבלה ראייתית של המקורות: במקורות שסופקו לא נמצא פירוט על סוגי הסעדים שיינתנו ספציפית כנגד החלטות בתי הדין הרבניים בענייני רכוש; לכן אין בידי המקורות האלה כדי לנסח כאן רשימת סעדין מחייבת או להצהיר על גבולות פרקטיים מדויקים של כל סעד.\n\nסייגים פרוצדורליים ומעשיים: הפסיקה מדגישה נטייה להמנעות מהתערבות משנית מטעמי נימוס שיפוטי אלא אם יש פגם ממשי בסמכות או בהליך; עם זאת במקורות שנבדקו לא נמצאו הוראות מפורשות לגבי דרישת מיצוי הליכים חלופיים או כללים מפורטים בנוגע לשיקול הראיות לפני הגשת העתירה — מסקנות פרוצדורליות כאלה תלויות בבחינה פסיקתית רחבה יותר.\n\nהנחיה מעשית קצרה: בעת הגשת עתירה יש למקד את הטענות ביסודות שהפסיקה מזהה כמצדיקים התערבות — הוכחה לחריגה מסמכות, לסטייה מהוראות חוק החלות על בתי הדין הרבניים, או לפגיעה בכלליות של הדין הטבעי — וכן להראות שהסכסוך נוגע למהותו של הרכוש על פי מבחן הדין האזרחי.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> קריאת גוף פסקי הדין הופסקה מטעמי מגבלת עיבוד, ולכן ייתכן שחלק מהמקורות נותחו לפי מטא-נתונים בלבד.",
+  "footnotes": [
+    {
+      "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208928-06%20%D7%A4%D7%9C%D7%95%D7%A0%D7%99%D7%AA%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99.doc",
+      "title": "בג\"ץ 8928/06 פלונית נ' בית הדין הרבני",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.cwj.org.il/sites/default/files/%D7%91%D7%92%D7%A5%208928-06%20%D7%A4%D7%9C%D7%95%D7%A0%D7%99%D7%AA%20%D7%A0'%20%D7%91%D7%99%D7%AA%20%D7%94%D7%93%D7%99%D7%9F%20%D7%94%D7%A8%D7%91%D7%A0%D7%99.doc",
+          "title": "בג\"ץ 8928/06 פלונית נ' בית הדין הרבני",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    }
+  ]
+}

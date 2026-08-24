@@ -1,0 +1,153 @@
+{
+  "id": "D3",
+  "query": "מתי בג״ץ יתערב בהחלטה של בית דין רבני בענייני רכוש בין בני זוג, במיוחד כאשר נטען שבית הדין החיל דין דתי במקום דין אזרחי?",
+  "run_id": "3a79e38f-901b-408a-8d39-8ce2be99e327",
+  "terminal": true,
+  "ms": 134152,
+  "total_ms": 131411,
+  "nominations": {
+    "count": 7,
+    "judgments": 2,
+    "actionable": 4
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/4&fileName=SB4_16_2123-08.pdf&type=2",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "unknown",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": false,
+        "relay_slot_spent": true,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "url_source_not_trusted:unknown"
+      }
+    ],
+    "suppressed": 0,
+    "guessed_detected": 0,
+    "total_candidates": 1,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 1
+  },
+  "official_discovery": {
+    "bodies_acquired": 0,
+    "cache_hits": 0,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), תשכ\"ד-1964",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "retrieval_already_has_body",
+        "ms": 33
+      },
+      {
+        "label": "בג\"צ 1715/97 לשכת מנהלי ההשקעות",
+        "category": "judgment",
+        "docket": null,
+        "cache_lookup": "miss",
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "no_docket_no_live_lane",
+        "ms": 0
+      }
+    ]
+  },
+  "official_fetch": {
+    "official_calls": 1,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": [
+      {
+        "ms": 281,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/4&fileName=SB4_16_2123-08.pdf&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.132.177:57278 for https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/4&fileName=SB4_16_2123-08.pdf&type=2 (84.110.173.93:443): client error (Send",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "relay_eligible": true,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "relay_url_source": "unknown",
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": 200,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": "html"
+      }
+    ]
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 1,
+    "stopped_reason": null,
+    "attempts": [
+      {
+        "ms": 5625,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/4&fileName=SB4_16_2123-08.pdf&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 200,
+        "content_type": "html",
+        "content_length": 342188,
+        "skipped_reason": null,
+        "connection_reset": false
+      }
+    ]
+  },
+  "footnotes_count": 2,
+  "dangling_markers": 0,
+  "answer_len": 1985,
+  "answer": "**מתי בג״ץ יתערב בהחלטת בית דין רבני בענייני רכוש**\n\nשורה תחתונה: בג״ץ יכול לסקור החלטות של בתי דין רבניים בענייני רכוש כאשר נבחנת סמכותם או כשקיימים פגמים מהותיים בהליך או בתכלית ההכרעה; במקורות מרכזיים נקבע כי הוראת סעיף 3 לחוק השיפוט אינה מונעת את תחולתו של המשפט האזרחי לקביעת היקף רכוש שנכרך בגירושין, ולפיכך שאלת הסמכות והיישום היא לב חקירת בג״ץ.\n\nהאם החלת דין דתי על סכסוך רכושי חורגת מסמכות בית הדין הרבני: טיעון כי הוחל \"דין דתי במקום דין אזרחי\" עלול להצדיק התערבות רק אם עולה כי בית הדין חרג מסמכותו המתוקנת בחוק או שפירוש הדין הדתי מוביל לסתירה מוחשית לעקרונות הדין האזרחי הרלוונטיים. בבג\"ץ בבלי הובהר ששאלת היקף הרכוש יכולה להיבחן גם לפי הדין האזרחי, ומשכך עצם יישום נימוקים הלכתיים אינו בהכרח חריגה סמכותית, אלא יש לבחון את ההיקף שבו הסמכות הוקנתה והאם נותר מקום ליישום הדין האזרחי במקרה הנדון; יש לנסח זאת בזהירות, מפני שמקרים מעשיים מבוססים על פרטי סמכות ומציאות עובדתית ספציפית.¹\n\nעילות ותקני ההתערבות הנדונים בבג״ץ: אפשר לזהות במקורות קריטריונים מובחנים שבג\"ץ ישתמש בהם בבחינת החלטת בית דין רבני — בין השאר חוסר סמכות (ultra vires), חריגה מהליכי צדק טבעי, וטעות מהותית או אי־סבירות של ההחלטה. המקורות המפורשים ביותר מצביעים על בדיקה פונקציונלית של מקור הסמכות והאם נקבעו הליכים יסודיים; חלק מהטיעונים והניסוחים התיאורטיים נתמכים בספרות והחלטות עדכניות, ולכן יש לנסח מסקנות אלה בשומת זהירות פרשנית לגבי יישומן המפורט.²\n\nמשקל הסכמת הצדדים, בוררות ופשרה: הסכמת בני הזוג ליישוב בפני בית דין רבני, הליך גישור או בוררות משפיעה על מנגנון האכיפה והמנגנון העיוני של הסכסוך אך אינה, לפי המקורות שאותרו, חוסמת אוטומטית את האפשרות לבקשת סקירת בג\"ץ אם מתעלים עניינים של חוסר סמכות, פגם מהותי בהליך או פגיעה בזכויות יסוד; יש לנסח זאת במשורה שכן הספרות הסוקרת את תביעות שלום־בית מספקת רק תמיכה חלקית ומעוגנת ברקע הדוקטרינלי ולא כתחיקה מחייבת.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2369-21-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%a9%d7%a8%d7%a2%d7%99-%d7%9c%d7%a2%d7%a8%d7%a2%d7%95%d7%a8%d7%99%d7%9d-%d7%91/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "בג\"ץ 2369/21 פלוני נ׳ בית הדין השרעי לערעורים בירושלים פסק דין (24.11.2021)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-2369-21-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%a9%d7%a8%d7%a2%d7%99-%d7%9c%d7%a2%d7%a8%d7%a2%d7%95%d7%a8%d7%99%d7%9d-%d7%91/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 2369/21 פלוני נ׳ בית הדין השרעי לערעורים בירושלים פסק דין (24.11.2021)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-2161-21-%d7%90%d7%9e%d7%99%d7%a8-%d7%9e%d7%a9%d7%90%d7%99%d7%9a-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+      "title": "רע\"פ 2161/21 אמיר משאיך נ׳ מדינת ישראל החלטה (18.07.2021)",
+      "number": 2,
+      "sources": [
+        {
+          "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-2161-21-%d7%90%d7%9e%d7%99%d7%a8-%d7%9e%d7%a9%d7%90%d7%99%d7%9a-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "רע\"פ 2161/21 אמיר משאיך נ׳ מדינת ישראל החלטה (18.07.2021)",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    }
+  ]
+}

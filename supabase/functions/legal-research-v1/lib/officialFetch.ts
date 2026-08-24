@@ -24,6 +24,11 @@ import {
   courtEgressFetch,
   isEgressAllowedHost,
 } from "./courtEgress.ts";
+import {
+  markExceptionPageUrl,
+  noteRelaySlotSpent,
+  relayGate,
+} from "./judgmentUrlEligibility.ts";
 
 export const OFFICIAL_FETCH_VERSION = "official_fetch_profile_v1";
 
@@ -334,8 +339,19 @@ async function tryAltEgress(
     rec.alt_egress_skipped = courtEgressConfigured() ? "host_not_allowlisted" : "egress_not_configured";
     return null;
   }
+  // judgment_url_guess_suppression_v1 — never spend a relay slot on a guessed
+  // derived URL or one the origin already answered with an Exception page.
+  const gate = relayGate(url, opts.url_origin);
+  rec.relay_url_source = gate.url_source;
+  rec.relay_eligible = gate.allowed;
+  if (!gate.allowed) {
+    rec.alt_egress_skipped = gate.reason;
+    rec.suppression_reason = gate.reason;
+    return null;
+  }
   rec.alt_egress_attempted = true;
   rec.alt_egress_reason = reason;
+  noteRelaySlotSpent(url);
   const res = await courtEgressFetch(url, {
     reason,
     headers: officialHeaders(url, opts.headers),
@@ -343,6 +359,7 @@ async function tryAltEgress(
   });
   rec.alt_egress_status = res?.status ?? null;
   rec.alt_egress_content_type = res?.headers.get("content-type") ?? null;
+  if (res && (res.status === 502 || res.status === 404)) markExceptionPageUrl(url);
   if (res) {
     // A successful alternative-egress fetch clears the origin-failure streak
     // for this run: the origin itself is reachable, only the edge IP is not.

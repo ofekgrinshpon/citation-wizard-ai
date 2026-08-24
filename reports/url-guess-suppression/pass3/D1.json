@@ -1,0 +1,110 @@
+{
+  "id": "D1",
+  "query": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם מיושמים כאשר חוק פוגע בזכות יסוד?",
+  "run_id": "bc37d62c-1f90-4472-bf7e-7a71cc6307b3",
+  "terminal": true,
+  "ms": 129196,
+  "total_ms": 124490,
+  "nominations": {
+    "count": 6,
+    "judgments": 2,
+    "actionable": 3
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [],
+    "suppressed": 0,
+    "guessed_detected": 0,
+    "total_candidates": 0,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 0
+  },
+  "official_discovery": {
+    "bodies_acquired": 0,
+    "cache_hits": 0,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "חוק-יסוד: כבוד האדם וחירותו",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "urls": [
+          "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+          "https://fs.knesset.gov.il/12/law/12_lsr_211801.PDF"
+        ],
+        "path": "none",
+        "result": "section_not_found",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "section_not_found:8",
+        "ms": 527
+      },
+      {
+        "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+        "category": "judgment",
+        "docket": "bagatz:1715/97",
+        "cache_lookup": "cooldown",
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "cooldown_until:2026-08-31T21:36:31.472Z",
+        "ms": 33
+      }
+    ]
+  },
+  "official_fetch": {
+    "official_calls": 0,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": [
+      {
+        "ms": 176,
+        "url": "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+        "host": "fs.knesset.gov.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "application/pdf",
+        "rate_limited": false,
+        "content_length": 75171,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 76,
+        "url": "https://fs.knesset.gov.il/12/law/12_lsr_211801.PDF",
+        "host": "fs.knesset.gov.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "application/pdf",
+        "rate_limited": false,
+        "content_length": 64745,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      }
+    ]
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 0,
+    "stopped_reason": null,
+    "attempts": []
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 550,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): בג\"ץ 1715/97 - לשכת מנהלי ההשקעות בישראל נ' שר האוצר; בג\"ץ 1715/97 - שר האוצר נ' לשכת מנהלי ההשקעות בישראל; המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות; תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?.",
+  "footnotes": []
+}

@@ -1,0 +1,325 @@
+{
+  "id": "MAYA-AMIR",
+  "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי? התייחסו לעניין סימה אמיר.",
+  "run_id": "c105a44e-ede9-4b37-8963-6c2e74fb04e4",
+  "terminal": true,
+  "ms": 168135,
+  "total_ms": 164723,
+  "nominations": {
+    "count": 6,
+    "judgments": 2,
+    "actionable": 3
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=00084970_Z01.txt&path=HebrewVerdicts/00/970/084/Z01&type=2",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=00084970.z01&path=HebrewVerdicts/00/970/084/z01&type=2",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://elyon1.court.gov.il/files/00/970/084/z01/00084970.z01.htm",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=00084970_Z01.txt&path=EnglishVerdicts/00/970/084/Z01&type=4",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/00/497/084/c11&fileName=00084970_c11.txt&type=4",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": true,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": null
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/03/638/086/c09&fileName=03086380_c09.txt&type=4",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "derived_filename_suffix",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:derived_filename_suffix"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/20/Committees/20_cs_bg_388212.docx",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": null
+      }
+    ],
+    "suppressed": 5,
+    "guessed_detected": 5,
+    "total_candidates": 7,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 1
+  },
+  "official_discovery": {
+    "bodies_acquired": 1,
+    "cache_hits": 0,
+    "cache_writes": 1,
+    "attempts": [
+      {
+        "label": "בג\"ץ 8497/00 סימה אמיר",
+        "category": "judgment",
+        "docket": "bagatz:8497/0",
+        "cache_lookup": "miss",
+        "search_first": {
+          "ms": 3594,
+          "ran": true,
+          "queries": [
+            "8497/00 בג\"ץ 8497/00 סימה אמיר 2002 פסק דין מלא מקור רשמי supremedecisions.court.gov.il OR court.gov.il"
+          ],
+          "mirror_urls": 0,
+          "skip_reason": null,
+          "official_urls": 3
+        },
+        "urls": [
+          "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/00/497/084/c11&fileName=00084970_c11.txt&type=4",
+          "https://fs.knesset.gov.il/20/Committees/20_cs_bg_388212.docx"
+        ],
+        "url_candidates": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/00/497/084/c11&fileName=00084970_c11.txt&type=4",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          },
+          {
+            "url": "https://fs.knesset.gov.il/20/Committees/20_cs_bg_388212.docx",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/03/638/086/c09&fileName=03086380_c09.txt&type=4",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "guessed_url_pattern:derived_filename_suffix"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=00084970_Z01.txt&path=HebrewVerdicts/00/970/084/Z01&type=2",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=00084970.z01&path=HebrewVerdicts/00/970/084/z01&type=2",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          },
+          {
+            "url": "https://elyon1.court.gov.il/files/00/970/084/z01/00084970.z01.htm",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=00084970_Z01.txt&path=EnglishVerdicts/00/970/084/Z01&type=4",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          }
+        ],
+        "guessed_urls_suppressed": 5,
+        "path": "none",
+        "result": "fetch_failed",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "extraction_budget_spent",
+        "ms": 4530
+      },
+      {
+        "label": "חוק יחסי ממון בין בני זוג, התשכ\"ט–1973",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "urls": [
+          "https://www.nevo.co.il/law_html/law00/72138.htm",
+          "https://www.gov.il/BlobFolder/legalinfo/laws-and-regulations-druze/he/99-99.pdf"
+        ],
+        "path": "statute_official_url",
+        "result": "body_acquired",
+        "body_chars": 9502,
+        "cache_written": true,
+        "injected": "nominated-source:N2",
+        "reason": null,
+        "ms": 447
+      }
+    ]
+  },
+  "official_fetch": {
+    "official_calls": 1,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": [
+      {
+        "ms": 159,
+        "url": "https://fs.knesset.gov.il/20/Committees/20_cs_bg_393127.docx",
+        "host": "fs.knesset.gov.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "rate_limited": false,
+        "content_length": 64283,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 296,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/00/497/084/c11&fileName=00084970_c11.txt&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.129.181:44060 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/00/497/084/c11&fileName=00084970_c11.txt&type=4 (84.110.173.93:443): client e",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "relay_eligible": true,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "relay_url_source": "search_first",
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": null,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": null
+      },
+      {
+        "ms": 77,
+        "url": "https://fs.knesset.gov.il/20/Committees/20_cs_bg_388212.docx",
+        "host": "fs.knesset.gov.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "rate_limited": false,
+        "content_length": 62282,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 323,
+        "url": "https://www.nevo.co.il/law_html/law00/72138.htm",
+        "host": "www.nevo.co.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=utf-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      }
+    ]
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 1,
+    "stopped_reason": null,
+    "attempts": [
+      {
+        "ms": 464,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/00/497/084/c11&fileName=00084970_c11.txt&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 502,
+        "content_type": "application/json",
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false
+      }
+    ]
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 2129,
+  "answer": "שורה תחתונה: בבג״ץ נקבע כי אמת המידה לביקורת שיפוטית על הכרעות בתי הדין הרבניים בענייני רכוש היא ביקורת מצומצמת שאינה ערעורית; עם זאת, בג״ץ יתערב כאשר קיימת חריגה מסמכות, פגיעה בכללי הצדק הטבעי או הסתמכות על שיקולים זרים שאינם חלק מהדין האזרחי.\n\nבמקרה של הכרעה בדבר חלוקת רכוש לאחר גירושין, בית הדין הרבני החייב להכריע על פי הדין האזרחי החל; לא יתכן שהכרעה נכסית תבוסס על שיקולים הלכתיים או נורמות דתיות שמעמידות במחלוקת הוראות חוקי היחסים הכלכליים בין בני זוג.\n\nכאשר נראה כי בית הדין הרבני הסתמך בהכרעתו על שיקולים חיצוניים לדין האזרחי — כגון שיקולי סירוב גט, חלוקת אשמה או שיקולי 'שלום בית' — רואים בבג״ץ בכך פגם מהותי המקים עילת התערבות; ההשלכות יכולות לכלול ביטול ההכרעה או השבת הדיון להכרעה שתתבסס רק על הדין האזרחי.\n\nבעניין סימה אמיר הובהרה הגישה הזו בפועל: בג״ץ דן בסמכות בתי הדין הרבניים לשבת כבוררים בענייני ממונות לאחר גירושין והדגיש כי אין להתנות או לשלול זכויות רכושיות מכוח הדין האזרחי על בסיס שיקולים הלכתיים הקשורים להליכי הגירושין; כאשר הדבר נעשה — בג״ץ מתערב.\n\nסייג מקורות: הטקסטים שסופקו כוללים תקציר ותמליל של פסק‑דין סימה אמיר, אך לא תמיד מצוטט נוסח מלא של כל ההכרעות; לפיכך הניסוח לעיל מבוסס על החומרים המסוכמים שנמצאו ולא על הצגת נוסח פסק‑דין מלא.\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- פסקדין - השגה על פסק בוררות של בי\"ד רבני — https://www.psakdin.co.il/Court/%D7%94%D7%A9%D7%92%D7%94-%D7%A2%D7%9C-%D7%A4%D7%A1%D7%A7-%D7%91%D7%95%D7%A8%D7%A8%D7%95%D7%AA-%D7%A9%D7%9C-%D7%91%D7%99%22%D7%93-%D7%A8%D7%91%D7%A0%D7%99-%D7%94%D7%99%D7%90-%D7%91%D7%A4%D7%A0%D7%99%D7%94-%D7%9C%D7%91%D7%99%D7%94%D7%9E%22%D7%A9-%D7%94%D7%9E%D7%97%D7%95%D7%96%D7%99-%D7%91%D7%91%D7%A7%D7%A9%D7%94-%D7%9C%D7%91%D7%99%D7%98%D7%95%D7%9C-%D7%94%D7%A4%D7%A1%D7%A7?IsMobile=false\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> קריאת גוף פסקי הדין הופסקה מטעמי מגבלת עיבוד, ולכן ייתכן שחלק מהמקורות נותחו לפי מטא-נתונים בלבד.",
+  "footnotes": []
+}

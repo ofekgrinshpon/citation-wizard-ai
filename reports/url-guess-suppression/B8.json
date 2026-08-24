@@ -1,0 +1,108 @@
+{
+  "id": "B8",
+  "query": "צטטו את סעיף 1 לחוק יסוד: כבוד האדם וחירותו.",
+  "run_id": "1f35c9c0-15cf-4dc8-a489-c96b968bae28",
+  "terminal": true,
+  "ms": 67296,
+  "total_ms": 62225,
+  "nominations": {
+    "count": 0,
+    "judgments": null,
+    "actionable": 0
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [],
+    "suppressed": 0,
+    "guessed_detected": 0,
+    "total_candidates": 0,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 0
+  },
+  "official_discovery": {
+    "bodies_acquired": 0,
+    "cache_hits": 0,
+    "cache_writes": 0,
+    "attempts": []
+  },
+  "official_fetch": {
+    "official_calls": 0,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": [
+      {
+        "ms": 352,
+        "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+        "host": "www.btl.gov.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "application/pdf",
+        "rate_limited": false,
+        "content_length": 42066,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 166,
+        "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+        "host": "m.knesset.gov.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "application/pdf",
+        "rate_limited": false,
+        "content_length": 61995,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 77,
+        "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/11.doc",
+        "host": "m.knesset.gov.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "application/msword",
+        "rate_limited": false,
+        "content_length": 38400,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      }
+    ]
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 0,
+    "stopped_reason": null,
+    "attempts": []
+  },
+  "footnotes_count": 1,
+  "dangling_markers": 0,
+  "answer_len": 364,
+  "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹\n\n> לא אותרה פסיקה ברת-שימוש במסגרת החיפוש; התשובה מתמקדת בלשון הסעיף.",
+  "footnotes": [
+    {
+      "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+      "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+          "title": "חוק-יסוד: כבוד האדם וחירותו – נוסח רשמי (PDF)",
+          "source_type": "israeli_law"
+        }
+      ],
+      "source_type": "israeli_law"
+    }
+  ]
+}

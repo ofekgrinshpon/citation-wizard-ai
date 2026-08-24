@@ -45,6 +45,7 @@ import { runSourceNomination } from "./stages/sourceNomination.ts";
 import { mergeAndBudgetQueries } from "./stages/queryMergeAndBudget.ts";
 import { runOfficialSourceDiscovery } from "./stages/officialSourceDiscovery.ts";
 import { courtEgressTelemetry, resetCourtEgressLedger } from "./lib/courtEgress.ts";
+import { judgmentUrlTelemetry, resetJudgmentUrlLedger } from "./lib/judgmentUrlEligibility.ts";
 import {
   officialFetchTelemetry,
   resetOfficialFetchLedger,
@@ -323,6 +324,8 @@ async function handle(req: Request): Promise<Response> {
   // official_fetch_profile_v1 — per-run serialisation/cap ledger.
   resetOfficialFetchLedger();
   resetCourtEgressLedger();
+  // judgment_url_guess_suppression_v1 — per-run URL provenance ledger.
+  resetJudgmentUrlLedger();
   const telemetryBase = {
     user_id: user.id,
     project_id,
@@ -2082,6 +2085,8 @@ async function handle(req: Request): Promise<Response> {
     // official_fetch_profile_v1 telemetry.
     official_fetch: officialFetchTelemetry(),
     court_egress: courtEgressTelemetry(),
+    // judgment_url_guess_suppression_v1 telemetry.
+    judgment_url_eligibility: judgmentUrlTelemetry(),
     // router_profiles_v1 telemetry.
     router_profiles: {
       version: router.version,

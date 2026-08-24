@@ -1,0 +1,442 @@
+{
+  "id": "P02",
+  "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+  "run_id": "7e85e760-f4c9-479c-8a4d-8de3654c850d",
+  "terminal": true,
+  "ms": 139454,
+  "total_ms": 135868,
+  "nominations": {
+    "count": 5,
+    "judgments": 2,
+    "actionable": 2
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07/260/013/p34&fileName=07013260.p34&type=4",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "unknown",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": false,
+        "relay_slot_spent": true,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "url_source_not_trusted:unknown"
+      },
+      {
+        "url": "https://supreme.court.gov.il/Pages/%D7%AA%D7%95%D7%A6%D7%90%D7%95%D7%AA%20%D7%97%D7%99%D7%A4%D7%95%D7%A9.aspx",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "unknown",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": false,
+        "relay_slot_spent": true,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "url_source_not_trusted:unknown"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": null
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": null
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%9C%D7%95%D7%99-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C_23",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": null
+      },
+      {
+        "url": "https://www.takdin.co.il/",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": null
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5158-05-20/he/5158-05-20.pdf",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": null
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/legalinfo/law6922-08/he/LegalInformation_kesher_6922-08.pdf",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": null
+      },
+      {
+        "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'-%D7%9C%D7%95%D7%99-%D7%A2%D7%A6%D7%99%D7%A8_11",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": null
+      }
+    ],
+    "suppressed": 0,
+    "guessed_detected": 0,
+    "total_candidates": 9,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 2
+  },
+  "official_discovery": {
+    "bodies_acquired": 0,
+    "cache_hits": 0,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "ע״א 99887-04-22 לוי נ' מדינת ישראל",
+        "category": "judgment",
+        "docket": null,
+        "cache_lookup": "miss",
+        "search_first": {
+          "ms": 3454,
+          "ran": true,
+          "queries": [
+            "ע״א 99887-04-22 לוי נ' מדינת ישראל פסק דין מלא מקור רשמי supremedecisions.court.gov.il OR court.gov.il"
+          ],
+          "mirror_urls": 5,
+          "skip_reason": null,
+          "official_urls": 2
+        },
+        "urls": [
+          "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf",
+          "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+          "https://www.psakdin.co.il/Court/%D7%9C%D7%95%D7%99-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C_23",
+          "https://www.takdin.co.il/"
+        ],
+        "url_candidates": [
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%9C%D7%95%D7%99-%D7%A0'-%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C_23",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          },
+          {
+            "url": "https://www.takdin.co.il/",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          }
+        ],
+        "path": "none",
+        "result": "fetch_failed",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "plain_text_host_not_trusted",
+        "ms": 4471
+      },
+      {
+        "label": "להשאר כחלופה: ע\"א לוי נגד מדינת ישראל (שם פרשה בלבד)",
+        "category": "judgment",
+        "docket": null,
+        "cache_lookup": "miss",
+        "search_first": {
+          "ms": 3325,
+          "ran": true,
+          "queries": [
+            "להשאר כחלופה: ע\"א לוי נגד מדינת ישראל (שם פרשה בלבד) פסק דין מלא מקור רשמי supremedecisions.court.gov.il OR court.gov.il"
+          ],
+          "mirror_urls": 1,
+          "skip_reason": null,
+          "official_urls": 3
+        },
+        "urls": [
+          "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf",
+          "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5158-05-20/he/5158-05-20.pdf",
+          "https://www.gov.il/BlobFolder/legalinfo/law6922-08/he/LegalInformation_kesher_6922-08.pdf",
+          "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'-%D7%9C%D7%95%D7%99-%D7%A2%D7%A6%D7%99%D7%A8_11"
+        ],
+        "url_candidates": [
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5158-05-20/he/5158-05-20.pdf",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          },
+          {
+            "url": "https://www.gov.il/BlobFolder/legalinfo/law6922-08/he/LegalInformation_kesher_6922-08.pdf",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          },
+          {
+            "url": "https://www.psakdin.co.il/Court/%D7%9E%D7%93%D7%99%D7%A0%D7%AA-%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0'-%D7%9C%D7%95%D7%99-%D7%A2%D7%A6%D7%99%D7%A8_11",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          }
+        ],
+        "path": "none",
+        "result": "fetch_failed",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "plain_text_host_not_trusted",
+        "ms": 3604
+      }
+    ]
+  },
+  "official_fetch": {
+    "official_calls": 2,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": [
+      {
+        "ms": 327,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07/260/013/p34&fileName=07013260.p34&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.131.183:52574 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07/260/013/p34&fileName=07013260.p34&type=4 (84.110.173.93:443): client err",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "relay_eligible": true,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "relay_url_source": "unknown",
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": 200,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": "application/pdf"
+      },
+      {
+        "ms": 259,
+        "url": "https://supreme.court.gov.il/Pages/%D7%AA%D7%95%D7%A6%D7%90%D7%95%D7%AA%20%D7%97%D7%99%D7%A4%D7%95%D7%A9.aspx",
+        "host": "supreme.court.gov.il",
+        "error": "error sending request from 10.32.131.183:48978 for https://supreme.court.gov.il/Pages/%D7%AA%D7%95%D7%A6%D7%90%D7%95%D7%AA%20%D7%97%D7%99%D7%A4%D7%95%D7%A9.aspx (84.110.173.94:443): client error (Send",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "relay_eligible": true,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "relay_url_source": "unknown",
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": null,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": null
+      },
+      {
+        "ms": 77,
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf",
+        "host": "www.gov.il",
+        "error": null,
+        "status": 403,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=UTF-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 7,
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+        "host": "www.gov.il",
+        "error": null,
+        "status": 403,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=UTF-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 7,
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision43003-10-19/he/43003-10-19.pdf",
+        "host": "www.gov.il",
+        "error": null,
+        "status": 403,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=UTF-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 6,
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5158-05-20/he/5158-05-20.pdf",
+        "host": "www.gov.il",
+        "error": null,
+        "status": 403,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=UTF-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 6,
+        "url": "https://www.gov.il/BlobFolder/legalinfo/law6922-08/he/LegalInformation_kesher_6922-08.pdf",
+        "host": "www.gov.il",
+        "error": null,
+        "status": 403,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=UTF-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      }
+    ]
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 2,
+    "stopped_reason": null,
+    "attempts": [
+      {
+        "ms": 767,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C07/260/013/p34&fileName=07013260.p34&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 200,
+        "content_type": "application/pdf",
+        "content_length": 575222,
+        "skipped_reason": null,
+        "connection_reset": false
+      },
+      {
+        "ms": 960,
+        "url": "https://supreme.court.gov.il/Pages/%D7%AA%D7%95%D7%A6%D7%90%D7%95%D7%AA%20%D7%97%D7%99%D7%A4%D7%95%D7%A9.aspx",
+        "host": "supreme.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 502,
+        "content_type": "application/json",
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false
+      }
+    ]
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 345,
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.",
+  "footnotes": []
+}

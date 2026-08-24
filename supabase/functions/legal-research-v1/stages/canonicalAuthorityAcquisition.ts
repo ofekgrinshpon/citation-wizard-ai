@@ -28,6 +28,7 @@ import {
   type DocketRef,
 } from "./docketDetection.ts";
 import { classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
+import { isGuessedCourtUrl } from "../lib/judgmentUrlEligibility.ts";
 import {
   deriveSupremeCourtBinaryUrls,
   deriveSupremeCourtFileUrls,
@@ -364,7 +365,8 @@ async function probeAuthority(
   const binaryUrls = deriveSupremeCourtBinaryUrls(docket, {
     maxUrls: CANONICAL_ACQUISITION_LIMITS.MAX_BINARY_URLS_PER_DOCKET,
   });
-  const urls = [...textUrls, ...binaryUrls];
+  // judgment_url_guess_suppression_v1 — derived guesses are not fetched.
+  const urls = [...textUrls, ...binaryUrls].filter((u) => !isGuessedCourtUrl(u));
   const attempt: CanonicalAcquisitionAttempt = {
     canonical_acquisition_attempted: true,
     authority_id: auth.authority_id,
