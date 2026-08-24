@@ -41,6 +41,10 @@ import {
   annotateCanonicalUsage,
   runCanonicalAuthorityAcquisition,
 } from "./stages/canonicalAuthorityAcquisition.ts";
+import { runSourceNomination } from "./stages/sourceNomination.ts";
+import { mergeAndBudgetQueries } from "./stages/queryMergeAndBudget.ts";
+import { runOfficialSourceDiscovery } from "./stages/officialSourceDiscovery.ts";
+
 
 import { buildJudgmentDiscoveryQueries } from "./stages/judgmentDiscovery.ts";
 import { runSpecificCaseResolution, type SpecificCaseResolution } from "./stages/specificCaseResolution.ts";
