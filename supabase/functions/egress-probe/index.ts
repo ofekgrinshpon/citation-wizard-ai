@@ -31,9 +31,9 @@ Deno.serve(async (req) => {
   try {
     const t0 = Date.now();
     const secret = Deno.env.get("CONVERTAPI_SECRET") ?? "";
-    const r = await fetch(`https://v2.convertapi.com/convert/pdf/to/txt?Secret=${secret}&StoreFile=false`, {
+    const r = await fetch(`https://v2.convertapi.com/convert/pdf/to/txt?StoreFile=false`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${secret}` },
       body: JSON.stringify({ Parameters: [{ Name: "File", FileValue: { Url: url } }] }),
     });
     const txt = await r.text();
@@ -65,10 +65,9 @@ Deno.serve(async (req) => {
   try {
     const t0 = Date.now();
     const token = Deno.env.get("APIFY_API_TOKEN") ?? "";
-    const r = await fetch(
-      `https://apify--super-scraper-api.apify.actor/?url=${encodeURIComponent(url)}`,
-      { headers: { "User-Agent": UA, Authorization: `Bearer ${token}` } },
-    );
+    const r = await fetch(`https://api.apify.com/v2/users/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     const t = await r.text();
     out.apify_standby = { status: r.status, ms: Date.now() - t0, len: t.length, sample: t.slice(0, 300), token_len: token.length };
   } catch (e) {
