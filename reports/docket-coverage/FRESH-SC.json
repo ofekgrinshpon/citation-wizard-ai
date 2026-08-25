@@ -1,0 +1,80 @@
+{
+  "id": "FRESH-SC",
+  "query": "מה נקבע בבג\"ץ 6427/02 התנועה למען איכות השלטון בישראל נ' הכנסת בעניין חוק דחיית שירות לתלמידי ישיבות?",
+  "run_id": "7e87e79f-0869-41c3-85e3-cac529ec834a",
+  "terminal": true,
+  "ms": 139277,
+  "total_ms": 133794,
+  "nominations": {
+    "count": 6,
+    "judgments": 2,
+    "actionable": 3
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [],
+    "suppressed": 0,
+    "guessed_detected": 0,
+    "total_candidates": 0,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 0
+  },
+  "explicit_docket_guard": {
+    "ms": 1,
+    "dockets": [
+      {
+        "action": "merged",
+        "docket": "6427/02",
+        "case_name": "התנועה למען איכות השלטון בישראל נ' הכנסת בעניין חוק דחיית שירות לתלמידי ישיבות",
+        "raw_prefix": "בג\"ץ",
+        "nomination_id": "N1",
+        "already_nominated": true,
+        "normalized_docket": "bagatz:6427/2",
+        "matched_nomination_id": "N1"
+      }
+    ],
+    "enabled": true,
+    "version": "judgment_nomination_coverage_for_named_dockets_v1",
+    "added_count": 0,
+    "skip_reason": null,
+    "merged_count": 1,
+    "detected_count": 1
+  },
+  "official_discovery": {
+    "bodies_acquired": 0,
+    "cache_hits": 0,
+    "cache_writes": 0,
+    "attempts": []
+  },
+  "official_fetch": {
+    "official_calls": 0,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": []
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 0,
+    "stopped_reason": null,
+    "attempts": []
+  },
+  "footnotes_count": 1,
+  "dangling_markers": 0,
+  "answer_len": 1311,
+  "answer": "**בג\"ץ 6427/02 — עיקר ההכרעה**\n\nבית המשפט העליון דחה את העתירות נגד חוק דחיית שירות לתלמידי ישיבות (״חוק טל״) והשאיר את ההסדר בתוקף בשלב הניסוי שלו עד לפקיעתו הקרובה, מבלי לבטל את החוק באותו זמן.¹\n\nבית המשפט הכיר במתח בין ההסדר לעקרון השוויון הנגזר מחוק‑יסוד: כבוד האדם וחירותו, אך בשלב היישום המוקדם קבע כי לא הוצגה תמונה ניסיונית מספקת שתאפשר לבטל את ההסדר מתוך בחינה של מידתיותו בשלב זה; על כן הוענקה איפכא דחייה של הכרעה מהותית.\n\nהשופטות והשופטים התריעו במפורש כי החלטת ההמתנה היא מותנית: אם יימצא בהמשך שהחוק לא משיג את מטרותיו או כי הפליה נמשכת ללא צידוק מידתי, ניתן ויישקול בית המשפט, בבחינה עתידית, לבטל או לשנות את ההסדר.\n\nאופיו של ההסדר כהוראת שעה וניסוי חקיקתי שימש נימוק מרכזי לריסון שיפוטי ולהימנעות מביטול מיידי: בית המשפט דרש מעקב מדידי, איסוף נתונים ועדכון מבוסס לפני החלטה על הארכה או ביטול, תוך התראה כי הארכות עתידיות ייבחנו בעין ביקורתית מבחינת מידתיות וסבירות.\n\nסיכום פרוצדורלי: פסק‑הדין הוא ההחלטה המרכזית שנדונה בבקשה זו ועמד לה בו סיווג ההחלטה כשומרת על ההסדר בשל ניסיונו; זאת עד למועד שבו תתבהר התוצאה המעשית של ההסדר וייבחן שוב שיקול המידתיות.¹\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2",
+      "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2",
+          "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    }
+  ]
+}

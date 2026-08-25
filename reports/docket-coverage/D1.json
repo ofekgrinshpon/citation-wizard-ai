@@ -1,0 +1,119 @@
+{
+  "id": "D1",
+  "query": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד הם מיושמים כאשר חוק פוגע בזכות יסוד?",
+  "run_id": "50f7d7e7-dd84-44dc-9ff3-016c4d95b7d4",
+  "terminal": true,
+  "ms": 150242,
+  "total_ms": 148019,
+  "nominations": {
+    "count": 7,
+    "judgments": 2,
+    "actionable": 4
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [],
+    "suppressed": 0,
+    "guessed_detected": 0,
+    "total_candidates": 0,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 0
+  },
+  "explicit_docket_guard": {
+    "ms": 0,
+    "dockets": [],
+    "enabled": true,
+    "version": "judgment_nomination_coverage_for_named_dockets_v1",
+    "added_count": 0,
+    "skip_reason": "no_explicit_docket",
+    "merged_count": 0,
+    "detected_count": 0
+  },
+  "official_discovery": {
+    "bodies_acquired": 1,
+    "cache_hits": 0,
+    "cache_writes": 1,
+    "attempts": [
+      {
+        "label": "חוק-יסוד: כבוד האדם וחירותו",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "urls": [
+          "https://fs.knesset.gov.il/25/law/25_lst_1437471.docx",
+          "https://m.knesset.gov.il/Activity/Legislation/Documents/yesod3.pdf",
+          "https://m.knesset.gov.il/Activity/Constitution/Documents/11.doc"
+        ],
+        "path": "statute_official_url",
+        "result": "body_acquired",
+        "body_chars": 2460,
+        "cache_written": true,
+        "injected": "nominated-source:N2",
+        "reason": null,
+        "ms": 446
+      },
+      {
+        "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+        "category": "judgment",
+        "docket": "bagatz:1715/97",
+        "cache_lookup": "cooldown",
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "cooldown_until:2026-08-31T21:36:31.472Z",
+        "ms": 26
+      }
+    ]
+  },
+  "official_fetch": {
+    "official_calls": 0,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": [
+      {
+        "ms": 189,
+        "url": "https://fs.knesset.gov.il/25/law/25_lst_1437471.docx",
+        "host": "fs.knesset.gov.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "rate_limited": false,
+        "content_length": 30854,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      }
+    ]
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 0,
+    "stopped_reason": null,
+    "attempts": []
+  },
+  "footnotes_count": 1,
+  "dangling_markers": 0,
+  "answer_len": 2373,
+  "answer": "הקצרה: הבסיס הנורמטיבי למבחני המידתיות בחקיקה היסודית נמצא בסעיף ההגבלה של חוק יסוד: כבוד האדם וחירותו, אשר מאפשר פגיעה בזכויות רק בחוק ההולם, שנועד לתכלית ראויה ובמידה שאינה עולה על הנדרש. אין כאן סקירת פסיקה — במסגרת החומרים שסופקו לא הוצגה סקירת פסקי־דין ברי־שימוש.\n\nמהנוסח החוקי עולות שתי דרישות ליבתיות: דרישת 'תכלית ראויה' ודרישת 'מידה שאינה עולה על הנדרש'. נוסח זה מספק את עיגון ההרמז לעקרון המידתיות, אך חלוקות מעשיות של המבחן—כמו הבחנה בין התאמה, הכרחיות והאיזון הפרופורציונלי—אינן מפורטות בלשון החוק; סוגיות אלה נדונות גם בכתיבה המשפטית והאקדמית שסופקה.¹\n\nיישום מעשי — שלבי בדיקה מקובלים שניתן להבחין בהם תוך הסתמכות על נוסח ההגבלה והדיונים הספרותיים: (א) זיהוי הזכות ויקפה; (ב) אימות קיומו של 'חוק ההולם' או סמכה פורמלית; (ג) קביעת תכלית הלגיטימית המבוססת על ההצדקה שנוצה בחוק; (ד) בדיקת התאמה: האם הצעד הממשי מקדם את התכלית; (ה) בדיקת הכרחיות/הפחתת הפגיעה: האם קיימים אמצעים חלופיים פחות פוגעים שיממשו את אותה תכלית; (ו) איזון פרופורציונלי צר/משוקלל בין מידת הפגיעה לבין חשיבות התכלית. יש להדגיש כי נוסח סעיף ההגבלה מספק עוגנים נורמטיביים לכל שלב, אך פירוט פרוצדורלי מלא לא נכלל בחוק עצמו ולכן שלבים אלה מוצגים כאן כקווים מנחים המבוססים גם על הספרות.\n\nשיעור הביקורת (grading of scrutiny): במקורות החוקיים שסופקו אין עיגון מפורש למנגנון של 'עוצמות בדיקה' מוסדר — כלומר, לא נמצא בחומרים אלה נוסח קבוע הקובע קריטריונים מפורשים לצמצום או להעמקת מידת הביקורת לפי סוג זכות או מעמד המחוקק. נושא זה מופיע כעניין לדיון ותיאוריה בספרות שהובאה, אבל בחומר החקיקתי עצמו לא אותרו נוסחים מפורשים שמקנים כללים ברורים בנושא.\n\nסעד והשלכות על בחירת התרופה המשפטית: בחומר החוקי שסופק אין הוראות מפורשות המגדירות סעד קונקרטי במקרה של חוסר מידתיות; מהספרות המנהלית והמשפטית שבידינו ניתן להסיק באופן חלקי אפשרויות טיפוסיות שנדונות בהקשר זה (ביטול חוק או שינוים בחקיקה, קריאה מצמצמת, השעיה זמנית או סעד מותנה), אך אין בחומרים אלה מקור ראשוני מחייב המנחה מבחינה רגולטורית את בחירת הסעד.\n\nהערת דלילות מקורות ומגבלות: הטקסט התומך שאותר קצר ומקוטע — לא נמסרה כאן נוסחאות מלאות של פסקי־דין או פירוטי פסיקה; לכן הניתוח מתבסס על נוסח סעיף ההגבלה בחוקי היסוד והעלאות שהופיעו בספרות שסופקה, והצגת השלבים והסעדים נעשתה בזהירות בהתאם למידת התמיכה בחומרים.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_lst_1437471.docx",
+      "title": "חוק יסוד: כבוד האדם וחירותו",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://fs.knesset.gov.il/25/law/25_lst_1437471.docx",
+          "title": "חוק יסוד: כבוד האדם וחירותו",
+          "source_type": "legislation"
+        }
+      ],
+      "source_type": "legislation"
+    }
+  ]
+}

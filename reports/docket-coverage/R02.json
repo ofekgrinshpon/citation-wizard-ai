@@ -1,0 +1,161 @@
+{
+  "id": "R02",
+  "query": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+  "run_id": "a7edcea8-ffae-456c-a633-8246e96b5c07",
+  "terminal": true,
+  "ms": 234439,
+  "total_ms": 229226,
+  "nominations": {
+    "count": 6,
+    "judgments": 2,
+    "actionable": 3
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4",
+        "cache": "hit",
+        "body_chars": null,
+        "url_source": "verified_cache",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": true,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": true,
+        "suppression_reason": null
+      }
+    ],
+    "suppressed": 0,
+    "guessed_detected": 0,
+    "total_candidates": 1,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 1
+  },
+  "explicit_docket_guard": {
+    "ms": 1,
+    "dockets": [
+      {
+        "action": "merged",
+        "docket": "6821/93",
+        "case_name": "בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+        "raw_prefix": "ע\"א",
+        "nomination_id": "N1",
+        "already_nominated": true,
+        "normalized_docket": "aa:6821/93",
+        "matched_nomination_id": "N1"
+      }
+    ],
+    "enabled": true,
+    "version": "judgment_nomination_coverage_for_named_dockets_v1",
+    "added_count": 0,
+    "skip_reason": null,
+    "merged_count": 1,
+    "detected_count": 1
+  },
+  "official_discovery": {
+    "bodies_acquired": 0,
+    "cache_hits": 1,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "ע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+        "category": "judgment",
+        "docket": "aa:6821/93",
+        "cache_lookup": "hit",
+        "urls": [],
+        "path": "cache",
+        "result": "cache_hit",
+        "body_chars": 100924,
+        "cache_written": false,
+        "injected": "nominated-source:N1",
+        "reason": null,
+        "ms": 58
+      },
+      {
+        "label": "חוק יסוד: כבוד האדם וחירותו",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "urls": [],
+        "path": "none",
+        "result": "unsupported_statute_source",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "unsupported_statute_source:no_official_statute_url",
+        "ms": 41
+      }
+    ]
+  },
+  "official_fetch": {
+    "official_calls": 1,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": [
+      {
+        "ms": 396,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.129.40:57444 for https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4 (84.110.173.93:443): client error (Se",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "relay_eligible": true,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "relay_url_source": "unknown",
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": 200,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": "application/pdf"
+      }
+    ]
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 1,
+    "stopped_reason": null,
+    "attempts": [
+      {
+        "ms": 1321,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4",
+        "host": "supremedecisions.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 200,
+        "content_type": "application/pdf",
+        "content_length": 462985,
+        "skipped_reason": null,
+        "connection_reset": false
+      }
+    ]
+  },
+  "footnotes_count": 1,
+  "dangling_markers": 0,
+  "answer_len": 1518,
+  "answer": "**עיקר החלטת בית המשפט בע\"א 6821/93**\n\nבית המשפט קבע כי לכנסת, כרשות מכוננת, סמכות לחוקק חוקי-יסוד.¹\n\nנקבע כי לבית המשפט העליון סמכות ביקורת שיפוטית על חקיקה רגילה, ובמסגרת זו ניתן לבחון ולהכריז על בטלותה של חקיקה הסותרת חוק יסוד על בסיס מבחן ההגבלה הכולל ערכי היסוד, תכלית ראויה ומידתיות.\n\nהודגש בפסק‑הדין שמעמדם העליון של חוקי‑היסוד גובר על חקיקה רגילה: חוקים רגילים יתפרשו לאור חוקי‑היסוד ובמקרה של סתירה יעמדו בחקיקה זו כאמצעי משני או ייפסלו במידת הצורך.\n\nביישום עקרונות אלה לחוק שנדון בתיק הוחלה ביקורת שיפוטית ובפרשנות מצמצמת; נקבע כי הוראות החוק עמדו בתנאי פסקת ההגבלה ולא נפסלו בעילה של סתירה לחוקי‑היסוד.\n\nבמקורות שאותרו פסק‑הדין הנ\"ל מהווה את המקור הראשי להחזקה אלה; אם רצוי לצטט נוסחי שיקול הדעת או סעיפי נימוק מדויקים, יש לעיין בטקסט המלא של פסק‑הדין.\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי — https://judgments.org.il/judgments/%D7%A2%D7%90-6821-93-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%94%D7%9E%D7%90%D7%95%D7%97%D7%93-%D7%91%D7%A2%D7%9E-%D7%A0-%D7%9E%D7%92%D7%93%D7%9C-%D7%9B%D7%A4%D7%A8-%D7%A9/\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> החיפוש הופסק עקב מגבלת זמן, ולכן ייתכן שלא אותרו כל המקורות הרלוונטיים.",
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4",
+      "title": "ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts%5C62%5C1&fileName=SB1_1_8276-05.pdf&type=4",
+          "title": "ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+          "source_type": "caselaw"
+        }
+      ],
+      "source_type": "caselaw"
+    }
+  ]
+}
