@@ -14,6 +14,12 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { runClaimAnalyzer } from "./stages/claimAnalyzer.ts";
 import { runQueryPlanner } from "./stages/queryPlanner.ts";
 import {
+  classifySourceDepth,
+  disabledSourceDepth,
+  SOURCE_DEPTH_VERSION,
+  type SourceDepthDecision,
+} from "./stages/sourceDepthPolicy.ts";
+import {
   buildFacetDirective,
   computeFacetCoverage,
   expandClaimFacets,
@@ -513,11 +519,22 @@ async function handle(req: Request): Promise<Response> {
 
 
 
+  // ─── five_mode_source_depth_policy_v1 ────────────────────────────────────
+  // Research-depth decision, taken *before* planning, nomination, discovery
+  // and acquisition. Raises source-type diversity floors only; router budgets
+  // and every downstream gate stay authoritative.
+  // Smoke-only control switch used by the A/B validation runner.
+  const depthControlRun = req.headers.get("x-smoke-mode") === "1" &&
+    req.headers.get("x-disable-source-depth") === "1";
+  const sourceDepth: SourceDepthDecision = depthControlRun
+    ? disabledSourceDepth()
+    : classifySourceDepth({ question, analyzer });
+
   // ─── P2: Research Query Planner ──────────────────────────────────────────
   await markStage("planner");
   let plannerStage;
   try {
-    plannerStage = await runQueryPlanner(question, analyzer);
+    plannerStage = await runQueryPlanner(question, analyzer, sourceDepth);
 
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -767,6 +784,10 @@ async function handle(req: Request): Promise<Response> {
     question,
     analyzer,
     mode: plannerStage.mode_plan?.mode ?? null,
+    depth_mode: sourceDepth.depth_mode,
+    depth_mix_line_he: Object.entries(sourceDepth.source_mix)
+      .map(([k, v]) => `${k}=${v[0]}-${v[1]}`)
+      .join(", "),
     max_candidates: router.max_retrieval_queries <= 8 ? 3 : 5,
     skip: nominationSkip,
     skip_reason: nominationSkip ? "router_or_mode_skip" : undefined,
@@ -815,6 +836,7 @@ async function handle(req: Request): Promise<Response> {
     max_total: Math.max(4, router.max_retrieval_queries),
     reserve_actionable: 2,
     reserve_exploratory: 2,
+    min_slots_by_source_type: sourceDepth.min_slots_by_source_type,
     min_exploratory: academicish ? 2 : 1,
     nomination_stats: {
       actionability_mix: sourceNomination.actionability_mix,
@@ -953,7 +975,25 @@ async function handle(req: Request): Promise<Response> {
   budget.mark("broad_retrieval_started", { fast_lane_hit: fastLaneHit });
   const localQueries = fastLaneHit ? allQueries.slice(0, 3) : allQueries;
   await budget.markDurable("local_db_start", { queries: localQueries.length });
-  const pplxQueries = fastLaneHit ? [] : allQueries;
+  // five_mode_source_depth_policy_v1 — Perplexity is gated by research depth.
+  // `never` (exact_source) skips the open-web leg entirely unless nothing else
+  // is available; `targeted` keeps a small slice; `allowed` keeps everything.
+  let perplexityReason = "depth_allowed";
+  let pplxQueries = fastLaneHit ? [] : allQueries;
+  if (fastLaneHit) {
+    perplexityReason = "fast_lane_hit";
+  } else if (sourceDepth.perplexity_policy === "never") {
+    if (allQueries.length === 0) {
+      perplexityReason = "depth_never_no_queries";
+    } else {
+      pplxQueries = [];
+      perplexityReason = "depth_never";
+    }
+  } else if (sourceDepth.perplexity_policy === "targeted") {
+    pplxQueries = allQueries.slice(0, Math.min(allQueries.length, 4));
+    perplexityReason = "depth_targeted";
+  }
+  const perplexityCalled = pplxQueries.length > 0;
   // retrieval_budget_enforcement_v1: both legs are raced against the hard
   // wall-clock budget. A leg that has not settled by the deadline is ignored
   // (counted) and retrieval continues with whatever is already in hand.
@@ -2101,6 +2141,26 @@ async function handle(req: Request): Promise<Response> {
     },
     // query_merge_and_budget telemetry.
     query_merge: queryMerge.report,
+    // five_mode_source_depth_policy_v1 telemetry.
+    source_depth_policy: {
+      version: SOURCE_DEPTH_VERSION,
+      depth_mode: sourceDepth.depth_mode,
+      reasons: sourceDepth.reasons,
+      signals: sourceDepth.signals,
+      source_mix: sourceDepth.source_mix,
+      min_slots_by_source_type: sourceDepth.min_slots_by_source_type,
+      planner_depth_audit: plannerStage.depth_audit,
+      planner_queries_by_source_type:
+        plannerStage.depth_audit?.planner_queries_by_source_type ?? {},
+      nomination_targets_by_source_type: sourceNomination.category_mix ?? {},
+      merge_kept_by_source_type: queryMerge.report.kept_by_source_type,
+      merge_dropped_by_source_type: queryMerge.report.dropped_by_source_type,
+      depth_slots_preserved: queryMerge.report.depth_slots_preserved,
+      perplexity_policy: sourceDepth.perplexity_policy,
+      perplexity_called: perplexityCalled,
+      perplexity_reason: perplexityReason,
+      control_run: !sourceDepth.enabled,
+    },
     // official_source_discovery + verified_legal_sources cache telemetry.
     verified_source_cache: {
       version: officialDiscovery.cache_version,

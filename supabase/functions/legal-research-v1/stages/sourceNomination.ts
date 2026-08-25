@@ -672,6 +672,9 @@ export interface SourceNominationInput {
   question: string;
   analyzer: AnalyzerOutput;
   mode: string | null;
+  /** five_mode_source_depth_policy_v1 — research-depth mode + target mix. */
+  depth_mode?: string | null;
+  depth_mix_line_he?: string | null;
   /** Router-scoped: 0 disables the stage. */
   max_candidates?: number;
   /** Deterministic branches that must not be perturbed. */
@@ -694,6 +697,8 @@ export async function runSourceNomination(
     input.analyzer.legal_area ? `תחום משפטי: ${input.analyzer.legal_area}` : "",
     claims ? `טענות:\n${claims}` : "",
     input.mode ? `סוג שאלה: ${input.mode}` : "",
+    input.depth_mode ? `עומק מחקר: ${input.depth_mode}` : "",
+    input.depth_mix_line_he ? `יעדי מקורות (ניסיונות, לא ציטוטים): ${input.depth_mix_line_he}` : "",
   ].filter(Boolean).join("\n\n");
 
   const stage_runs: StageRun[] = [];
@@ -772,7 +777,8 @@ export async function runSourceNomination(
   };
 
   const complexMode = input.mode === "case_law_synthesis" ||
-    input.mode === "doctrine_explanation" || input.mode === "legal_memo";
+    input.mode === "doctrine_explanation" || input.mode === "legal_memo" ||
+    input.depth_mode === "broad_research" || input.depth_mode === "academic_research";
 
   // ── Attempt 1: mini, low reasoning effort, realistic budget ──────────────
   let attempt = digest(

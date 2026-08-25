@@ -17,6 +17,12 @@ import {
   TargetEnforcementReport,
 } from "./researchMode.ts";
 import {
+  applyDepthToPlannerQueries,
+  classifySourceDepth,
+  DepthPlannerAudit,
+  SourceDepthDecision,
+} from "./sourceDepthPolicy.ts";
+import {
   AnalyzerOutput,
   MODEL_FULL,
   MODEL_MINI,
@@ -80,6 +86,9 @@ export interface PlannerStageResult {
     audit: ObligationAudit | null;
     target_enforcement: TargetEnforcementReport;
   };
+  /** five_mode_source_depth_policy_v1 */
+  depth: SourceDepthDecision;
+  depth_audit: DepthPlannerAudit | null;
 }
 
 
@@ -87,6 +96,7 @@ function plannerUserMessage(
   analyzer: AnalyzerOutput,
   question: string,
   decision: ResearchModeDecision,
+  depth: SourceDepthDecision,
 ): string {
   const payload: Record<string, unknown> = {
     question_he: question,
@@ -103,18 +113,21 @@ function plannerUserMessage(
     payload.interpretation_note = analyzer.interpretation_note;
   }
   payload.research_mode = decision.mode;
+  payload.source_depth_mode = depth.depth_mode;
   if (decision.output_shape) payload.output_shape = decision.output_shape;
-  return `ניתוח הטענות:\n${JSON.stringify(payload, null, 2)}\n\n${modePlannerDirective(decision)}\n\nצור שאילתות מחקר בהתאם לחובות מצב המחקר.`;
+  return `ניתוח הטענות:\n${JSON.stringify(payload, null, 2)}\n\n${modePlannerDirective(decision)}\n\n${depth.enabled ? depth.planner_directive_he + "\n\n" : ""}צור שאילתות מחקר בהתאם לחובות מצב המחקר ולעומק המחקר.`;
 }
 
 
 export async function runQueryPlanner(
   question: string,
   analyzer: AnalyzerOutput,
+  depthDecision?: SourceDepthDecision,
 ): Promise<PlannerStageResult> {
   const knownClaimIds = analyzer.claims.map((c) => c.claim_id);
   const decision = classifyResearchMode(question, analyzer);
-  const userMsg = plannerUserMessage(analyzer, question, decision);
+  const depth = depthDecision ?? classifySourceDepth({ question, analyzer });
+  const userMsg = plannerUserMessage(analyzer, question, decision, depth);
   const obligations_required = decision.obligations.map((o) => o.id);
 
   const finalize = (
@@ -122,15 +135,20 @@ export async function runQueryPlanner(
   ): {
     result: ValidationResult<PlannerOutput>;
     mode_plan: PlannerStageResult["mode_plan"];
+    depth_audit: DepthPlannerAudit | null;
   } => {
     let enforced: TargetEnforcementReport = { applied: false, widened_query_count: 0 };
     let audit: ObligationAudit | null = null;
+    let depthAudit: DepthPlannerAudit | null = null;
     let out = result;
     if (result.value && result.value.queries.length > 0) {
       const e = enforceModeTargets(decision, result.value.queries);
       enforced = e.report;
-      out = { ...result, value: { ...result.value, queries: e.queries } };
-      audit = auditPlannerObligations(decision, e.queries);
+      // five_mode_source_depth_policy_v1 — deterministic diversity floor/trim.
+      const d = applyDepthToPlannerQueries(depth, e.queries, analyzer, question);
+      depthAudit = d.audit;
+      out = { ...result, value: { ...result.value, queries: d.queries } };
+      audit = auditPlannerObligations(decision, d.queries);
     }
     return {
       result: out,
@@ -143,6 +161,7 @@ export async function runQueryPlanner(
         audit,
         target_enforcement: enforced,
       },
+      depth_audit: depthAudit,
     };
   };
 
@@ -175,6 +194,8 @@ export async function runQueryPlanner(
     return {
       result: f.result,
       mode_plan: f.mode_plan,
+      depth,
+      depth_audit: f.depth_audit,
       model_initial: MODEL_MINI,
       model_final: MODEL_MINI,
       escalated: false,
@@ -211,6 +232,8 @@ export async function runQueryPlanner(
   return {
     result: f.result,
     mode_plan: f.mode_plan,
+    depth,
+    depth_audit: f.depth_audit,
     model_initial: MODEL_MINI,
     model_final: MODEL_FULL,
     escalated: true,
