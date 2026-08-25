@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.4"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -763,9 +763,14 @@ export type Database = {
           discovery_version: string
           failure_count: number
           id: string
+          identity_confidence: string | null
+          identity_evidence_summary: string | null
+          identity_evidence_type: string[]
           identity_terms_matched: string[]
           identity_validated: boolean
+          identity_validation_version: string | null
           institution: string | null
+          invalidated_reason: string | null
           is_translation: boolean
           journal_or_publisher: string | null
           language: string | null
@@ -783,6 +788,9 @@ export type Database = {
           statute_section: string | null
           statute_title: string | null
           updated_at: string
+          validated_docket: string | null
+          validated_title: string | null
+          validation_source: string | null
           verified_at: string | null
           year: number | null
         }
@@ -804,9 +812,14 @@ export type Database = {
           discovery_version?: string
           failure_count?: number
           id?: string
+          identity_confidence?: string | null
+          identity_evidence_summary?: string | null
+          identity_evidence_type?: string[]
           identity_terms_matched?: string[]
           identity_validated?: boolean
+          identity_validation_version?: string | null
           institution?: string | null
+          invalidated_reason?: string | null
           is_translation?: boolean
           journal_or_publisher?: string | null
           language?: string | null
@@ -824,6 +837,9 @@ export type Database = {
           statute_section?: string | null
           statute_title?: string | null
           updated_at?: string
+          validated_docket?: string | null
+          validated_title?: string | null
+          validation_source?: string | null
           verified_at?: string | null
           year?: number | null
         }
@@ -845,9 +861,14 @@ export type Database = {
           discovery_version?: string
           failure_count?: number
           id?: string
+          identity_confidence?: string | null
+          identity_evidence_summary?: string | null
+          identity_evidence_type?: string[]
           identity_terms_matched?: string[]
           identity_validated?: boolean
+          identity_validation_version?: string | null
           institution?: string | null
+          invalidated_reason?: string | null
           is_translation?: boolean
           journal_or_publisher?: string | null
           language?: string | null
@@ -865,6 +886,9 @@ export type Database = {
           statute_section?: string | null
           statute_title?: string | null
           updated_at?: string
+          validated_docket?: string | null
+          validated_title?: string | null
+          validation_source?: string | null
           verified_at?: string | null
           year?: number | null
         }

@@ -93,6 +93,15 @@ export interface CachedSource {
   body_chars: number;
   identity_validated: boolean;
   bibliographic_validated: boolean;
+  /** identity_hardening_and_cache_purge_v1 */
+  identity_validation_version: string | null;
+  identity_evidence_type: string[] | null;
+  identity_evidence_summary: string | null;
+  identity_confidence: string | null;
+  validated_docket: string | null;
+  validated_title: string | null;
+  validation_source: string | null;
+  identity_terms_matched: string[] | null;
   status: string;
   verified_at: string | null;
   failure_count: number;
@@ -156,7 +165,9 @@ const SELECT_COLS =
   "id,source_category,source_type,normalized_docket,canonical_title,statute_title,statute_section," +
   "official_url,source_host,court,institution,year,language,is_translation,body_chars," +
   "identity_validated,bibliographic_validated,status,verified_at,updated_at,failure_count,last_failure_reason," +
-  "discovery_strategy,discovery_version";
+  "discovery_strategy,discovery_version," +
+  "identity_validation_version,identity_evidence_type,identity_evidence_summary,identity_confidence," +
+  "validated_docket,validated_title,validation_source,identity_terms_matched";
 
 /**
  * Identifier-keyed lookup. Nominations with only a topic query have nothing
@@ -302,6 +313,14 @@ export interface RecordSuccessInput {
   is_translation?: boolean;
   identity_terms_matched?: string[];
   identity_validated: boolean;
+  /** identity_hardening_and_cache_purge_v1 — evidence provenance. */
+  identity_validation_version?: string | null;
+  identity_evidence_type?: string[];
+  identity_evidence_summary?: string | null;
+  identity_confidence?: string | null;
+  validated_docket?: string | null;
+  validated_title?: string | null;
+  validation_source?: string | null;
   bibliographic_validated?: boolean;
   acquisition_method: string;
   strategy?: DiscoveryStrategy | null;
@@ -354,6 +373,14 @@ export async function recordVerifiedSource(
         body_chars: text.length,
         identity_terms_matched: input.identity_terms_matched ?? [],
         identity_validated: true,
+        identity_validation_version: input.identity_validation_version ?? null,
+        identity_evidence_type: input.identity_evidence_type ?? [],
+        identity_evidence_summary: input.identity_evidence_summary ?? null,
+        identity_confidence: input.identity_confidence ?? null,
+        validated_docket: input.validated_docket ?? null,
+        validated_title: input.validated_title ?? null,
+        validation_source: input.validation_source ?? null,
+        invalidated_reason: null,
         bibliographic_validated: input.bibliographic_validated ?? false,
         acquisition_method: input.acquisition_method,
         discovery_strategy: input.strategy ?? "unknown",
@@ -473,6 +500,36 @@ export async function recordSourceFailure(
       last_failure_reason: input.reason.slice(0, 300),
     });
 
+    return { ok: !error, error: error?.message ?? null };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+/**
+ * identity_hardening_and_cache_purge_v1 — hard invalidation of a cached row
+ * whose body failed re-validation. The body chunks are deleted so the wrong
+ * text can never be served again, and the row becomes a negative row.
+ */
+export async function invalidateVerifiedSource(
+  admin: Admin,
+  id: string,
+  reason: string,
+): Promise<{ ok: boolean; error: string | null }> {
+  try {
+    await admin.from("verified_legal_source_texts").delete().eq("source_id", id);
+    const { error } = await admin.from("verified_legal_sources").update({
+      identity_validated: false,
+      status: "identity_mismatch",
+      body_chars: 0,
+      identity_terms_matched: [],
+      identity_evidence_type: [],
+      identity_confidence: "none",
+      identity_validation_version: "identity_hardening_v1",
+      invalidated_reason: reason.slice(0, 300),
+      last_failure_reason: reason.slice(0, 300),
+      updated_at: new Date().toISOString(),
+    }).eq("id", id);
     return { ok: !error, error: error?.message ?? null };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
