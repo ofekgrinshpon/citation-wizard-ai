@@ -56,11 +56,18 @@ import {
 } from "./statuteSectionDetection.ts";
 
 import {
+  invalidateVerifiedSource,
   lookupVerifiedSource,
   recordSourceFailure,
   recordVerifiedSource,
   VERIFIED_SOURCE_CACHE_VERSION,
 } from "./verifiedSourceCache.ts";
+import {
+  IDENTITY_VALIDATION_VERSION,
+  identityTermsFor,
+  type StrictIdentityResult,
+  validateJudgmentIdentityStrict,
+} from "./judgmentIdentity.ts";
 // judgment_search_first_discovery_v1
 //
 // Deterministic URL derivation from a *model-supplied* docket is fragile: the
@@ -343,35 +350,32 @@ export function nameHitCount(text: string, toks: string[]): number {
  *    cannot pass.
  */
 export function validateJudgmentIdentity(
-  input: JudgmentIdentityInput,
-): JudgmentIdentityResult {
-  const head = String(input.text ?? "").slice(0, 40_000);
-  const hits = nameHitCount(head, input.name_tokens);
-  const required = input.name_tokens.length >= 2 ? 2 : 1;
-  const year_match = !!input.year && head.includes(String(input.year));
-  const court_match = COURT_MARKER_RE.test(head);
-
-  const base: Omit<JudgmentIdentityResult, "validated" | "reason"> = {
-    docket_match: input.docket_in_text,
-    name_hits: hits,
-    name_required: required,
-    year_match,
-    court_match,
+  input: JudgmentIdentityInput & {
+    docket?: DocketRef | null;
+    label?: string | null;
+    url?: string | null;
+    url_from_official_search?: boolean;
+  },
+): JudgmentIdentityResult & { strict: StrictIdentityResult } {
+  const strict = validateJudgmentIdentityStrict({
+    text: input.text,
+    docket: input.docket ?? null,
+    label: input.label ?? null,
+    url: input.url ?? null,
+    url_from_official_search: input.url_from_official_search ?? false,
+    name_tokens: input.name_tokens,
+    year: input.year ?? null,
+  });
+  return {
+    validated: strict.validated,
+    docket_match: strict.docket_match,
+    name_hits: strict.name_hits,
+    name_required: strict.name_required,
+    year_match: strict.year_match,
+    court_match: strict.court_match,
+    reason: strict.reason,
+    strict,
   };
-
-  if (input.docket_present && input.docket_in_text) {
-    return { ...base, validated: true, reason: "docket_in_body" };
-  }
-  if (input.name_tokens.length === 0) {
-    return { ...base, validated: false, reason: "no_distinctive_tokens" };
-  }
-  if (hits < required) {
-    return { ...base, validated: false, reason: "insufficient_name_tokens" };
-  }
-  if (!court_match && !year_match) {
-    return { ...base, validated: false, reason: "no_court_or_year_corroboration" };
-  }
-  return { ...base, validated: true, reason: "name_tokens_with_corroboration" };
 }
 
 
@@ -420,6 +424,19 @@ export interface DiscoveryAttempt {
     suppression_reason: string | null;
   }>;
   guessed_urls_suppressed?: number;
+  /** identity_hardening_and_cache_purge_v1 — cache reuse re-validation. */
+  cache_revalidation?: {
+    ran: boolean;
+    row_identity_validation_version: string | null;
+    row_identity_terms_matched: string[];
+    passed: boolean;
+    evidence: string[];
+    confidence: string;
+    reason: string;
+    official_url: string | null;
+    body_chars: number;
+    invalidated: boolean;
+  };
   acquisition_path:
     | "cache"
     | "retrieved_official_url"
@@ -783,6 +800,55 @@ async function handleTarget(
   attempt.cooldown_strategy_scoped = lookup.cooldown_strategy_scoped;
   attempt.ignored_other_strategy_failures = lookup.ignored_other_strategy_failures;
   if (lookup.hit && lookup.source) {
+    // identity_hardening_and_cache_purge_v1 — a judgment cache hit is never
+    // reused on trust. The cached body is re-validated with the current strict
+    // rules; a failure invalidates the row (body deleted) and the run falls
+    // through to fresh acquisition.
+    if (category === "judgment") {
+      const cachedToks = nameTokens(n.label_he);
+      const reval = validateJudgmentIdentityStrict({
+        text: lookup.source.text,
+        docket,
+        label: n.label_he,
+        url: lookup.source.official_url,
+        // A stored row proves nothing about how its URL was discovered.
+        url_from_official_search: false,
+        name_tokens: cachedToks,
+        year: n.year ?? null,
+      });
+      attempt.cache_revalidation = {
+        ran: true,
+        row_identity_validation_version: lookup.source.identity_validation_version ?? null,
+        row_identity_terms_matched: lookup.source.identity_terms_matched ?? [],
+        passed: reval.validated,
+        evidence: [...reval.evidence, reval.validated ? "cache_revalidation_passed" : "cache_revalidation_failed"],
+        confidence: reval.confidence,
+        reason: reval.reason,
+        official_url: lookup.source.official_url,
+        body_chars: lookup.source.text.length,
+        invalidated: false,
+      };
+      if (!reval.validated) {
+        const inv = await invalidateVerifiedSource(
+          input.admin,
+          lookup.source.id,
+          `cache_revalidation_failed:${reval.reason}`,
+        );
+        attempt.cache_revalidation.invalidated = inv.ok;
+        attempt.cache_lookup = "miss";
+        attempt.cache_status = "identity_invalidated";
+        if (lookup.source.official_url) {
+          noteJudgmentUrlOutcome(lookup.source.official_url, {
+            identity_validated: false,
+          });
+        }
+        // Fall through to fresh acquisition below.
+      } else {
+        attempt.cache_lookup = "hit";
+      }
+    }
+  }
+  if (lookup.hit && lookup.source && attempt.cache_lookup !== "miss") {
     attempt.cache_lookup = "hit";
     if (lookup.source.official_url) {
       registerJudgmentUrl(lookup.source.official_url, "verified_cache");
@@ -961,6 +1027,10 @@ async function handleTarget(
           text: got,
           docket_present: true,
           docket_in_text: textContainsExactDocket(got.slice(0, 40_000), docket),
+          docket,
+          label: n.label_he,
+          url,
+          url_from_official_search: searchOfficial.includes(url) || searchMirror.includes(url),
           name_tokens: toks,
           year: n.year ?? null,
           court: null,
@@ -995,8 +1065,15 @@ async function handleTarget(
           official_url: url,
           court: /elyon|supremedecisions/i.test(url) ? "בית המשפט העליון" : null,
           year: n.year,
-          identity_terms_matched: identity.docket_match ? [normalizedDocketId(docket)] : toks,
+          identity_terms_matched: identityTermsFor(identity.strict, toks),
           identity_validated: true,
+          identity_validation_version: IDENTITY_VALIDATION_VERSION,
+          identity_evidence_type: identity.strict.evidence,
+          identity_evidence_summary: identity.strict.evidence_summary,
+          identity_confidence: identity.strict.confidence,
+          validated_docket: identity.strict.validated_docket,
+          validated_title: n.label_he,
+          validation_source: identity.strict.validation_source,
           acquisition_method: attempt.acquisition_path,
           strategy: attempt.acquisition_path === "derived_court_url"
             ? "derived_court_url"
@@ -1285,6 +1362,11 @@ async function handleNamedJudgment(
           text: got,
           docket_present: false,
           docket_in_text: false,
+          // The label of a "known name, no docket" nomination may still carry a
+          // docket; when it does, strict docket evidence is required.
+          label: n.label_he,
+          url,
+          url_from_official_search: searchOfficial.includes(url) || searchMirror.includes(url),
           name_tokens: toks,
           year: n.year ?? null,
           court: null,
@@ -1317,8 +1399,15 @@ async function handleNamedJudgment(
           official_url: url,
           court: /elyon|supremedecisions/i.test(url) ? "בית המשפט העליון" : null,
           year: n.year,
-          identity_terms_matched: toks,
+          identity_terms_matched: identityTermsFor(identity.strict, toks),
           identity_validated: true,
+          identity_validation_version: IDENTITY_VALIDATION_VERSION,
+          identity_evidence_type: identity.strict.evidence,
+          identity_evidence_summary: identity.strict.evidence_summary,
+          identity_confidence: identity.strict.confidence,
+          validated_docket: identity.strict.validated_docket,
+          validated_title: n.label_he,
+          validation_source: identity.strict.validation_source,
           acquisition_method: `${attempt.acquisition_path}_by_name`,
           strategy: "search_first_judgment",
           discovery_version: JUDGMENT_SEARCH_FIRST_VERSION,
