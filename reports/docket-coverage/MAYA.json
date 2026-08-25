@@ -1,0 +1,256 @@
+{
+  "id": "MAYA",
+  "query": "בסוגייה של חלוקת רכוש לאחר גירושי בני זוג, מה היא אמת המידה לביקורת שיפוטית של בג״ץ כאשר יש חשד שבית הדין הרבני הסתמך על שיקול חיצוני לדין האזרחי?",
+  "run_id": "9119734d-9b76-4a0b-85ed-d4674adf3fad",
+  "terminal": true,
+  "ms": 123264,
+  "total_ms": 118405,
+  "nominations": {
+    "count": 5,
+    "judgments": 1,
+    "actionable": 2
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=92010000_Z01.txt&path=HebrewVerdicts/92/000/010/Z01&type=2",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=92010000.z01&path=HebrewVerdicts/92/000/010/z01&type=2",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://elyon1.court.gov.il/files/92/000/010/z01/92010000.z01.htm",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=92010000_Z01.txt&path=EnglishVerdicts/92/000/010/Z01&type=4",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "derivation",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": true,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": "z01_object_code",
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "guessed_url_pattern:z01_object_code"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "retrieved",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": null
+      }
+    ],
+    "suppressed": 4,
+    "guessed_detected": 4,
+    "total_candidates": 5,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 0
+  },
+  "explicit_docket_guard": {
+    "ms": 0,
+    "dockets": [],
+    "enabled": true,
+    "version": "judgment_nomination_coverage_for_named_dockets_v1",
+    "added_count": 0,
+    "skip_reason": "no_explicit_docket",
+    "merged_count": 0,
+    "detected_count": 0
+  },
+  "official_discovery": {
+    "bodies_acquired": 0,
+    "cache_hits": 0,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "חוק-יסוד: כבוד האדם וחירותו",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "urls": [
+          "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf"
+        ],
+        "path": "none",
+        "result": "section_not_found",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "section_not_found:8",
+        "ms": 505
+      },
+      {
+        "label": "בג\"ץ 1000/92 בבלי",
+        "category": "judgment",
+        "docket": "bagatz:1000/92",
+        "cache_lookup": "miss",
+        "search_first": {
+          "ms": 2619,
+          "ran": true,
+          "queries": [
+            "1000/92 בג\"ץ 1000/92 בבלי 1992 פסק דין מלא מקור רשמי supremedecisions.court.gov.il OR court.gov.il"
+          ],
+          "mirror_urls": 0,
+          "skip_reason": null,
+          "official_urls": 1
+        },
+        "urls": [
+          "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc"
+        ],
+        "url_candidates": [
+          {
+            "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=92010000_Z01.txt&path=HebrewVerdicts/92/000/010/Z01&type=2",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=92010000.z01&path=HebrewVerdicts/92/000/010/z01&type=2",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          },
+          {
+            "url": "https://elyon1.court.gov.il/files/92/000/010/z01/92010000.z01.htm",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          },
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=92010000_Z01.txt&path=EnglishVerdicts/92/000/010/Z01&type=4",
+            "suppressed": true,
+            "url_source": "derivation",
+            "suppression_reason": "derivation_telemetry_only"
+          }
+        ],
+        "guessed_urls_suppressed": 4,
+        "path": "none",
+        "result": "fetch_failed",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "http_403",
+        "ms": 2725
+      }
+    ]
+  },
+  "official_fetch": {
+    "official_calls": 0,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": [
+      {
+        "ms": 86,
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+        "host": "www.gov.il",
+        "error": null,
+        "status": 403,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=UTF-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 274,
+        "url": "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+        "host": "fs.knesset.gov.il",
+        "error": null,
+        "status": 200,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "application/pdf",
+        "rate_limited": false,
+        "content_length": 75171,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 6,
+        "url": "https://www.gov.il/BlobFolder/generalpage/spotify-floater/he/1000-92.doc",
+        "host": "www.gov.il",
+        "error": null,
+        "status": 403,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=UTF-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      }
+    ]
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 0,
+    "stopped_reason": null,
+    "attempts": []
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 530,
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): בג\"ץ 1000/92 - חוה בבלי נ' בית הדין הרבני הגדול; המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות; דיני מזונות אישה בין בית הדין השרעי לבית המשפט לענייני משפחה: סיפורה של מהפכה שמרנית במחלצות ליברליות; שאול שיפמן – בתי־הדין הרבניים - לאן?.",
+  "footnotes": []
+}

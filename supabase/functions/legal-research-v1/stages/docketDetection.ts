@@ -33,8 +33,9 @@ const PREFIX_TABLE: PrefixDef[] = [
   { slug: "ap", canonicalHe: 'ע"פ', he: ['ע"פ', "ע״פ"], en: ["CrimA"] },
   { slug: "raa", canonicalHe: 'רע"א', he: ['רע"א', "רע״א"], en: ["LCA"] },
   { slug: "rap", canonicalHe: 'רע"פ', he: ['רע"פ', "רע״פ"], en: ["LCrimA"] },
-  { slug: "aam", canonicalHe: 'עע"מ', he: ['עע"מ', "עע״מ"], en: ["AAA"] },
+  { slug: "aam", canonicalHe: 'עע"מ', he: ['עע"מ', "עע״מ", 'עע"ם', "עע״ם"], en: ["AAA"] },
   { slug: "am", canonicalHe: 'ע"מ', he: ['ע"מ', "ע״מ"] },
+  { slug: "atm", canonicalHe: 'עת"ם', he: ['עת"ם', "עת״ם", 'עת"מ', "עת״מ"] },
   { slug: "ahas", canonicalHe: 'עה"ס', he: ['עה"ס', "עה״ס", "עהס"], en: ["HCJAdmin"] },
   { slug: "dna", canonicalHe: 'דנ"א', he: ['דנ"א', "דנ״א"], en: ["FH"] },
   { slug: "dnp", canonicalHe: 'דנ"פ', he: ['דנ"פ', "דנ״פ"] },
@@ -49,6 +50,7 @@ const PREFIX_TABLE: PrefixDef[] = [
   { slug: "ta", canonicalHe: 'ת"א', he: ['ת"א', "ת״א"] },
   { slug: "tap", canonicalHe: 'ת"פ', he: ['ת"פ', "ת״פ"] },
   { slug: "hpb", canonicalHe: 'הפ"ב', he: ['הפ"ב', "הפ״ב"] },
+
 ];
 
 // Build a single Hebrew alternation. Prefixes with ASCII `"` or Hebrew `״`
@@ -65,6 +67,37 @@ const COURT_DESCRIPTOR_RE_SRC = String.raw`(?:\s*\([^)]{1,40}\))?`;
 const NUM_RE_SRC = String.raw`\d{1,6}(?:[\/\-]\d{1,4}){1,2}`;
 
 const HEB_DOCKET_RE = new RegExp(`(${HEB_PREFIX_ALT})${COURT_DESCRIPTOR_RE_SRC}\\s*(${NUM_RE_SRC})`, "g");
+
+// Un-punctuated forms users type in free text (`בגץ 5555/18`, `עא 6821/93`).
+// Deliberately narrow: only distinctive abbreviations, and only when not glued
+// to another Hebrew word (a single attached prefix letter ב/ל/ו/ה/ש/כ/מ is ok).
+const NOQUOTE_MAP: Record<string, string> = {
+  "בגץ": 'בג"ץ',
+  "דנגץ": 'דנג"ץ',
+  "עא": 'ע"א',
+  "עפ": 'ע"פ',
+  "רעא": 'רע"א',
+  "רעפ": 'רע"פ',
+  "עעם": 'עע"מ',
+  "עעמ": 'עע"מ',
+  "עתם": 'עת"ם',
+  "עתמ": 'עת"ם',
+  "דנא": 'דנ"א',
+  "דנפ": 'דנ"פ',
+  "בשפ": 'בש"פ',
+  "בשא": 'בש"א',
+  "תמש": 'תמ"ש',
+  "ברם": 'בר"ם',
+  "עהס": 'עה"ס',
+};
+const NOQUOTE_ALT = Object.keys(NOQUOTE_MAP)
+  .sort((a, b) => b.length - a.length)
+  .map(escapeRe)
+  .join("|");
+const NOQUOTE_DOCKET_RE = new RegExp(
+  `(?<![\\u0590-\\u05FF])[\u05D1\u05DC\u05D5\u05D4\u05E9\u05DB\u05DE]?(${NOQUOTE_ALT})${COURT_DESCRIPTOR_RE_SRC}\\s*(${NUM_RE_SRC})`,
+  "g",
+);
 const EN_DOCKET_RE = new RegExp(`\\b(${EN_PREFIX_ALT})\\s*(${NUM_RE_SRC})\\b`, "gi");
 
 function escapeRe(s: string): string {
@@ -129,6 +162,7 @@ export function detectDockets(text: string): DocketRef[] {
 
   for (const m of src.matchAll(HEB_DOCKET_RE)) push(m[1], m[2]);
   for (const m of src.matchAll(EN_DOCKET_RE)) push(m[1], m[2]);
+  for (const m of src.matchAll(NOQUOTE_DOCKET_RE)) push(NOQUOTE_MAP[m[1]] ?? m[1], m[2]);
   return [...found.values()];
 }
 

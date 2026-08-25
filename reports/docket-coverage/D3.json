@@ -1,0 +1,150 @@
+{
+  "id": "D3",
+  "query": "מתי בג״ץ יתערב בהחלטה של בית דין רבני בענייני רכוש בין בני זוג, במיוחד כאשר נטען שבית הדין החיל דין דתי במקום דין אזרחי?",
+  "run_id": "ac036ce4-3af9-4938-b909-86b9eea5300e",
+  "terminal": true,
+  "ms": 151387,
+  "total_ms": 145013,
+  "nominations": {
+    "count": 7,
+    "judgments": 2,
+    "actionable": 4
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "unknown",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": false,
+        "relay_slot_spent": true,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "url_source_not_trusted:unknown"
+      }
+    ],
+    "suppressed": 0,
+    "guessed_detected": 0,
+    "total_candidates": 1,
+    "relay_slots_saved": 0,
+    "relay_slots_spent": 1
+  },
+  "explicit_docket_guard": {
+    "ms": 0,
+    "dockets": [],
+    "enabled": true,
+    "version": "judgment_nomination_coverage_for_named_dockets_v1",
+    "added_count": 0,
+    "skip_reason": "no_explicit_docket",
+    "merged_count": 0,
+    "detected_count": 0
+  },
+  "official_discovery": {
+    "bodies_acquired": 0,
+    "cache_hits": 0,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "חוק בתי הדין הרבניים, התש\"ך-1953",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "retrieval_already_has_body",
+        "ms": 26
+      },
+      {
+        "label": "חוק שיפוט בתי דין רבניים (נישואין וגירושין), התשנ\"ה-1995",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "miss",
+        "urls": [],
+        "path": "none",
+        "result": "not_attempted",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "retrieval_already_has_body",
+        "ms": 25
+      }
+    ]
+  },
+  "official_fetch": {
+    "official_calls": 1,
+    "stopped_reason": null,
+    "block_pages_detected": 0,
+    "attempts": [
+      {
+        "ms": 382,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.128.27:46204 for https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2 (84.110.173.93:443): client error (SendR",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "relay_eligible": true,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "relay_url_source": "unknown",
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": 200,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": "html"
+      }
+    ]
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 1,
+    "stopped_reason": null,
+    "attempts": [
+      {
+        "ms": 865,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2",
+        "host": "supremedecisions.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 200,
+        "content_type": "html",
+        "content_length": 376969,
+        "skipped_reason": null,
+        "connection_reset": false
+      }
+    ]
+  },
+  "footnotes_count": 1,
+  "dangling_markers": 0,
+  "answer_len": 1870,
+  "answer": "שורה תחתונה: בג\"ץ רשאי לעיין בהחלטות בתי הדין הרבניים בענייני רכוש בין בני זוג כאשר קיימת עילת התערבות מנהלית — למשל טענת אי־סמכות, שגיאת דין מהותית, או הפרה של עקרונות הליך הוגן וזכויות יסוד; סמכות זו נתמכת הן בפסיקה והן בניתוח דוקטרינרי אקדמי.¹\n\nקריטריונים מרכזיים שבג\"ץ בוחן בעת שקילה האם להתערב: חריגה מסמכות או חציית גבולות הסמכות שהוקנו לבית הדין, שגיאת דין מהותית (כולל יישום דין שאינו רלוונטי או טעות בפרשנות הדין החיובית), פגם מהותי בפרוצדורה שפגע בזכויות המהותיות של אחד הצדדים, והתעלמות מממצאי עובדה מהותיים; החלטה שעומדת בניגוד לכללים ציבוריים מחייבים עלולה אף היא להצדיק התערבות.\n\nהטענת כי \"הוחל דין דתי במקום דין אזרחי\" תיחשב לעתירה לא־סמכות או לשגיאה מהותית כשמהותה היא שהחלת הדין שינתה את היקף סמכותו של בית הדין או מנעה יישום של כללי דין אזרחיים מחייבים; במקרה כזה בג\"ץ יכול לבחון את ההכרעה ולבטל או לתקן אותה. יש הבחנה פרוצדורלית בין הכרעה שניתנה בהליכי בוררות/הסכמה פרטית, שבה בתי משפט נוקשים בפגיעה רק כאשר הופר מידי ציבורי או חלה חריגה ברורה, לבין הכרעה סמכותית רגילה שבה עומד לבג\"ץ קו ביקורת רחב יותר.\n\nסעדים ודרכי פעולה פרוצדורליות: מושא התיקון הוא בדרך כלל עתירה מנהלית (עתירה לבג\"ץ) נגד החלטת בית הדין; בקשה לעיכוב ביצוע או צו ביניים היא הסעד הביניים השכיח שיש לפנות אליו מרשים מראש, וכאשר נדרש ניתן לבחון גם סעד ראייתי או צו הצהרתי לגבי סמכות. בחירת האפיק תלויה בנסיבות העובדתיות, בהסכמות הצדדים (בוררות) ובצורך להגן על זכויות מידיות.\n\nמגבלות וסייגים: חלק מהמקורות שעניינם אנלוגי או בעל תמיכה חלקית — הן מבחינת מדיניות הרבנות והן מבחינת ערכאות דתיות אחרות — ולכן יש להיזהר מהכללות מוחלטות; במקורות שאותרו יש שילוב של פסיקה מייצגת, מאמרי־ניתוח ודוגמאות אנלוגיות אך לא תמיד ניסוח חקיקתי אחיד לכל מצב פרטי.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2",
+      "title": "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו",
+      "number": 1,
+      "sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/3&fileName=SA3_12_2232-03.pdf&type=2",
+          "title": "בג\"ץ 2232-03 - פלוני נ. בית הדין הרבני האזורי ת\"א יפו",
+          "source_type": "supreme_court_il"
+        }
+      ],
+      "source_type": "supreme_court_il"
+    }
+  ]
+}

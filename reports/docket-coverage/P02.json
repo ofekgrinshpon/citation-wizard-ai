@@ -1,0 +1,320 @@
+{
+  "id": "P02",
+  "query": "מה נקבע בע\"א 99887-04-22 לוי נ' מדינת ישראל?",
+  "run_id": "18c404d6-f6ff-40e6-af43-3a39536bad78",
+  "terminal": true,
+  "ms": 212075,
+  "total_ms": 207356,
+  "nominations": {
+    "count": 6,
+    "judgments": 2,
+    "actionable": 3
+  },
+  "judgment_url_eligibility": {
+    "version": "judgment_url_guess_suppression_v1",
+    "candidates": [
+      {
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": true,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": null
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": null
+      },
+      {
+        "url": "https://supreme.court.gov.il/Pages/fullsearch.aspx",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": true,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": null
+      },
+      {
+        "url": "https://supreme.court.gov.il/",
+        "cache": null,
+        "body_chars": null,
+        "url_source": "search_first",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": false,
+        "guessed_pattern": false,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": null,
+        "suppression_reason": "not_a_document_url"
+      },
+      {
+        "url": "https://fs.knesset.gov.il/25/law/25_lst_1437471.docx",
+        "cache": "hit",
+        "body_chars": null,
+        "url_source": "verified_cache",
+        "final_cited": null,
+        "fetch_result": null,
+        "relay_eligible": true,
+        "guessed_pattern": false,
+        "relay_slot_spent": false,
+        "guessed_pattern_id": null,
+        "identity_validated": null,
+        "injected_candidate": true,
+        "suppression_reason": null
+      }
+    ],
+    "suppressed": 1,
+    "guessed_detected": 0,
+    "total_candidates": 5,
+    "relay_slots_saved": 1,
+    "relay_slots_spent": 2
+  },
+  "explicit_docket_guard": {
+    "ms": 0,
+    "dockets": [
+      {
+        "action": "added",
+        "docket": "99887/04/22",
+        "case_name": null,
+        "raw_prefix": "ע\"א",
+        "nomination_id": "G1",
+        "already_nominated": false,
+        "normalized_docket": "aa:99887/4/22",
+        "matched_nomination_id": null
+      }
+    ],
+    "enabled": true,
+    "version": "judgment_nomination_coverage_for_named_dockets_v1",
+    "added_count": 1,
+    "skip_reason": null,
+    "merged_count": 0,
+    "detected_count": 1
+  },
+  "official_discovery": {
+    "bodies_acquired": 0,
+    "cache_hits": 1,
+    "cache_writes": 0,
+    "attempts": [
+      {
+        "label": "ע\"א 99887/04/22",
+        "category": "judgment",
+        "docket": "aa:99887/4/22",
+        "cache_lookup": "miss",
+        "search_first": {
+          "ms": 3860,
+          "ran": true,
+          "queries": [
+            "ע\"א 99887/04/22 ע\"א 99887/04/22 פסק דין מלא מקור רשמי supremedecisions.court.gov.il OR court.gov.il"
+          ],
+          "mirror_urls": 1,
+          "skip_reason": null,
+          "official_urls": 6
+        },
+        "urls": [
+          "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts",
+          "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+          "https://supreme.court.gov.il/Pages/fullsearch.aspx",
+          "https://supreme.court.gov.il/"
+        ],
+        "url_candidates": [
+          {
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          },
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          },
+          {
+            "url": "https://supreme.court.gov.il/Pages/fullsearch.aspx",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          },
+          {
+            "url": "https://supreme.court.gov.il/",
+            "suppressed": false,
+            "url_source": "search_first",
+            "suppression_reason": null
+          }
+        ],
+        "guessed_urls_suppressed": 0,
+        "path": "none",
+        "result": "fetch_failed",
+        "body_chars": 0,
+        "cache_written": false,
+        "injected": null,
+        "reason": "error sending request from 10.32.132.120:52964 for https://supreme.court.gov.il/ (84.110.173.94:443): client error (SendRequest): connection error: Connection reset by peer (os error 104)",
+        "ms": 10464
+      },
+      {
+        "label": "חוק-יסוד: כבוד האדם וחירותו",
+        "category": "statute",
+        "docket": null,
+        "cache_lookup": "hit",
+        "urls": [],
+        "path": "cache",
+        "result": "cache_hit",
+        "body_chars": 2460,
+        "cache_written": false,
+        "injected": "nominated-source:N2",
+        "reason": null,
+        "ms": 63
+      }
+    ]
+  },
+  "official_fetch": {
+    "official_calls": 3,
+    "stopped_reason": "repeated_connection_reset",
+    "block_pages_detected": 0,
+    "attempts": [
+      {
+        "ms": 368,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts",
+        "host": "supremedecisions.court.gov.il",
+        "error": "error sending request from 10.32.132.120:56634 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts (84.110.173.93:443): client error (SendRequest): connection error: Connection",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "relay_eligible": true,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "relay_url_source": "search_first",
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": null,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": null
+      },
+      {
+        "ms": 73,
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
+        "host": "www.gov.il",
+        "error": null,
+        "status": 403,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": "text/html; charset=UTF-8",
+        "rate_limited": false,
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false,
+        "block_page_detected": false
+      },
+      {
+        "ms": 1164,
+        "url": "https://supreme.court.gov.il/Pages/fullsearch.aspx",
+        "host": "supreme.court.gov.il",
+        "error": "error sending request from 10.32.132.120:43932 for https://supreme.court.gov.il/Pages/fullsearch.aspx (84.110.173.94:443): client error (SendRequest): connection error: Connection reset by peer (os er",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "relay_eligible": true,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "relay_url_source": "search_first",
+        "alt_egress_reason": "edge_connection_reset",
+        "alt_egress_status": null,
+        "block_page_detected": false,
+        "alt_egress_attempted": true,
+        "alt_egress_content_type": null
+      },
+      {
+        "ms": 2037,
+        "url": "https://supreme.court.gov.il/",
+        "host": "supreme.court.gov.il",
+        "error": "error sending request from 10.32.132.120:52964 for https://supreme.court.gov.il/ (84.110.173.94:443): client error (SendRequest): connection error: Connection reset by peer (os error 104)",
+        "status": null,
+        "profile": "official_browser_like",
+        "redirected": false,
+        "url_origin": "unknown",
+        "content_type": null,
+        "rate_limited": false,
+        "content_length": null,
+        "relay_eligible": false,
+        "skipped_reason": null,
+        "connection_reset": true,
+        "relay_url_source": "search_first",
+        "alt_egress_skipped": "not_a_document_url",
+        "suppression_reason": "not_a_document_url",
+        "block_page_detected": false,
+        "alt_egress_attempted": false
+      }
+    ]
+  },
+  "court_egress": {
+    "configured": true,
+    "calls": 2,
+    "stopped_reason": "repeated_egress_failure",
+    "attempts": [
+      {
+        "ms": 405,
+        "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts",
+        "host": "supremedecisions.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 502,
+        "content_type": "application/json",
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false
+      },
+      {
+        "ms": 1261,
+        "url": "https://supreme.court.gov.il/Pages/fullsearch.aspx",
+        "host": "supreme.court.gov.il",
+        "error": null,
+        "reason": "edge_connection_reset",
+        "status": 502,
+        "content_type": "application/json",
+        "content_length": null,
+        "skipped_reason": null,
+        "connection_reset": false
+      }
+    ]
+  },
+  "footnotes_count": 0,
+  "dangling_markers": 0,
+  "answer_len": 420,
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.\n\n> החיפוש הופסק עקב מגבלת זמן, ולכן ייתכן שלא אותרו כל המקורות הרלוונטיים.",
+  "footnotes": []
+}

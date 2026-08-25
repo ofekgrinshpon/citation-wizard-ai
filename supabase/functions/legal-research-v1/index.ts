@@ -42,6 +42,10 @@ import {
   runCanonicalAuthorityAcquisition,
 } from "./stages/canonicalAuthorityAcquisition.ts";
 import { runSourceNomination } from "./stages/sourceNomination.ts";
+import {
+  EXPLICIT_DOCKET_GUARD_VERSION,
+  runExplicitDocketGuard,
+} from "./stages/explicitDocketGuard.ts";
 import { mergeAndBudgetQueries } from "./stages/queryMergeAndBudget.ts";
 import { runOfficialSourceDiscovery } from "./stages/officialSourceDiscovery.ts";
 import { courtEgressTelemetry, resetCourtEgressLedger } from "./lib/courtEgress.ts";
@@ -759,7 +763,7 @@ async function handle(req: Request): Promise<Response> {
   // still be retrieved, acquired, validated and admitted by every gate.
   const nominationSkip = router.skipped_stages.includes("source_nomination") ||
     plannerStage.mode_plan?.mode === "canonical_quote";
-  const sourceNomination = await runSourceNomination({
+  const nominationRaw = await runSourceNomination({
     question,
     analyzer,
     mode: plannerStage.mode_plan?.mode ?? null,
@@ -767,7 +771,29 @@ async function handle(req: Request): Promise<Response> {
     skip: nominationSkip,
     skip_reason: nominationSkip ? "router_or_mode_skip" : undefined,
   });
-  stage_runs.push(...sourceNomination.stage_runs);
+  stage_runs.push(...nominationRaw.stage_runs);
+
+  // ─── judgment_nomination_coverage_for_named_dockets_v1 ───────────────────
+  // Deterministic coverage guard: an explicit docket in the user question
+  // always yields an actionable judgment target (dedupe-merged when nomination
+  // already emitted it). Opens the lane only — no URL guessing, no citation.
+  const explicitDocketGuard = nominationSkip
+    ? { nomination: nominationRaw, report: {
+        version: EXPLICIT_DOCKET_GUARD_VERSION,
+        enabled: false,
+        skip_reason: "router_or_mode_skip",
+        detected_count: 0,
+        added_count: 0,
+        merged_count: 0,
+        dockets: [],
+        ms: 0,
+      } }
+    : runExplicitDocketGuard(
+      question,
+      nominationRaw,
+      analyzer.claims?.[0]?.claim_id ?? "C1",
+    );
+  const sourceNomination = explicitDocketGuard.nomination;
 
   // ─── query_merge_and_budget ──────────────────────────────────────────────
   // Single funnel over every query producer: normalise, dedupe (exact +
@@ -2030,6 +2056,8 @@ async function handle(req: Request): Promise<Response> {
     claim_facet_expansion: claimFacetExpansionMeta,
     // core_authority_registry_v1 telemetry.
     core_authority_registry: coreAuthorityRegistryMeta,
+    // judgment_nomination_coverage_for_named_dockets_v1 telemetry.
+    explicit_docket_guard: explicitDocketGuard.report,
     // source_nomination_v1 telemetry.
     source_nomination: {
       version: sourceNomination.version,
