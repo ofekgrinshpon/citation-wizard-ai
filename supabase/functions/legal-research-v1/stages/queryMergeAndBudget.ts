@@ -72,6 +72,11 @@ export interface QueryMergeReport {
   identifier_confidence_histogram: Record<string, number>;
   stripped_identifiers: number;
   demoted_identifiers: number;
+  /** five_mode_source_depth_policy_v1 accounting. */
+  min_slots_by_source_type: Record<string, number>;
+  kept_by_source_type: Record<string, number>;
+  dropped_by_source_type: Record<string, number>;
+  depth_slots_preserved: number;
   dropped: DroppedQuery[];
 }
 
@@ -131,6 +136,12 @@ export interface MergeOptions {
    * fallback that budget pressure may silently delete.
    */
   min_exploratory?: number;
+  /**
+   * five_mode_source_depth_policy_v1 — minimum kept queries per
+   * expected_source_type. Applied as a reserved lane *before* the global cap;
+   * it never raises `max_total` and never protects duplicates.
+   */
+  min_slots_by_source_type?: Record<string, number>;
   /** Nomination-stage hardening counters, surfaced in the merge report. */
   nomination_stats?: {
     actionability_mix?: Record<string, number>;
@@ -156,8 +167,11 @@ export function mergeAndBudgetQueries(
     toks: Set<string>;
     bucket: string | null;
     reserved: boolean;
+    source_type: string;
   }
 
+  const minSlots = opts.min_slots_by_source_type ?? {};
+  const slotsTaken: Record<string, number> = {};
   const reserveActionable = opts.reserve_actionable ?? 2;
   const reserveExploratory = Math.max(
     opts.reserve_exploratory ?? 2,
@@ -201,12 +215,28 @@ export function mergeAndBudgetQueries(
         toks: tokens(text),
         bucket,
         reserved,
+        source_type: String(q.expected_source_type ?? "other"),
       });
+    }
+  }
+
+  // Depth floor pass: mark the first `min_slots` entries of each required
+  // source type so the ordering below admits them before overflow queries.
+  const floorMarks = new Set<Entry>();
+  if (Object.keys(minSlots).length > 0) {
+    const filled: Record<string, number> = {};
+    for (const e of entries) {
+      const need = minSlots[e.source_type] ?? 0;
+      if (need > 0 && (filled[e.source_type] ?? 0) < need) {
+        filled[e.source_type] = (filled[e.source_type] ?? 0) + 1;
+        floorMarks.add(e);
+      }
     }
   }
 
   entries.sort((a, b) =>
     PRODUCER_PRIORITY[a.producer] - PRODUCER_PRIORITY[b.producer] ||
+    (floorMarks.has(a) === floorMarks.has(b) ? 0 : floorMarks.has(a) ? -1 : 1) ||
     (a.reserved === b.reserved ? 0 : a.reserved ? -1 : 1)
   );
 
@@ -216,6 +246,7 @@ export function mergeAndBudgetQueries(
   const seenExact = new Map<string, string>();
   let actionableKept = 0;
   let exploratoryKept = 0;
+  let depthSlotsPreserved = 0;
 
   for (const e of entries) {
     const isProtected = PROTECTED.includes(e.producer);
@@ -239,12 +270,22 @@ export function mergeAndBudgetQueries(
       });
       continue;
     }
+    // Depth-policy diversity floor: queries filling an unmet depth slot are
+    // admitted *before* the rest (see the two-pass ordering below). They count
+    // against `max_total` like everything else — the floor changes ordering,
+    // never the ceiling.
+    const need = minSlots[e.source_type] ?? 0;
+    const depthReserved = (slotsTaken[e.source_type] ?? 0) < need;
     // Reserved bucket lanes survive the global ceiling.
     if (!isProtected && !e.reserved && kept.length >= opts.max_total) {
       dropped.push({ producer: e.producer, query_he: e.query.query_he, reason: "total_cap" });
       continue;
     }
     seenExact.set(e.norm, e.query.query_he);
+    if (depthReserved) {
+      slotsTaken[e.source_type] = (slotsTaken[e.source_type] ?? 0) + 1;
+      depthSlotsPreserved++;
+    }
     keptEntries.push(e);
     byProducer[e.producer] = (byProducer[e.producer] ?? 0) + 1;
     if (e.bucket === "actionable") actionableKept++;
@@ -258,6 +299,16 @@ export function mergeAndBudgetQueries(
   for (const q of [...keptProtected, ...kept]) {
     const t = String(q.expected_source_type ?? "other");
     source_type_mix[t] = (source_type_mix[t] ?? 0) + 1;
+  }
+
+  const kept_by_source_type: Record<string, number> = { ...source_type_mix };
+  const dropped_by_source_type: Record<string, number> = {};
+  for (const p of producers) {
+    for (const q of p.queries ?? []) {
+      const t = String(q.expected_source_type ?? "other");
+      const wasKept = [...keptProtected, ...kept].includes(q);
+      if (!wasKept) dropped_by_source_type[t] = (dropped_by_source_type[t] ?? 0) + 1;
+    }
   }
 
   const plannerCount = producers.find((p) => p.producer === "planner")?.queries.length ?? 0;
@@ -288,6 +339,10 @@ export function mergeAndBudgetQueries(
         opts.nomination_stats?.identifier_confidence_histogram ?? {},
       stripped_identifiers: opts.nomination_stats?.stripped_identifiers ?? 0,
       demoted_identifiers: opts.nomination_stats?.demoted_identifiers ?? 0,
+      min_slots_by_source_type: minSlots,
+      kept_by_source_type,
+      dropped_by_source_type,
+      depth_slots_preserved: depthSlotsPreserved,
       dropped,
 
     },
