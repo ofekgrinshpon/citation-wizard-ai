@@ -68,6 +68,10 @@ export interface ClaimSupportCategoryEntry {
 
 export interface ClaimSourceMatchReport {
   applied: boolean;
+  /** doctrinal_sufficiency_telemetry_persistence_v1 — set on branches that
+   *  return before this stage runs. Absent/false means the stage ran. */
+  stage_not_run?: boolean;
+  stage_not_run_reason?: string;
   source_ref_mismatch_count: number;
   dropped_source_refs: DroppedSourceRef[];
   mismatch_reason: MismatchReason[];
