@@ -278,6 +278,17 @@ export function applyClaimSourceMatch(
         reason = "unrelated_legal_area";
       }
 
+      // Rule E (substance_based_doctrinal_sufficiency_v1) — the claim's
+      // substance category defines the authority level it needs. A court
+      // holding cannot rest on secondary material; a statutory claim cannot
+      // rest on commentary alone.
+      if (!reason && prof && !categoryAccepts(category, prof)) {
+        reason = "insufficient_authority_for_claim_category";
+        if (category === "court_holding" && prof.doctrinal_authority) {
+          overstatementDrops.push(ref);
+        }
+      }
+
       if (reason) {
         report.source_ref_mismatch_count++;
         if (!report.mismatch_reason.includes(reason)) report.mismatch_reason.push(reason);
@@ -289,9 +300,11 @@ export function applyClaimSourceMatch(
           source_claim_ids: m.verified_claim_ids.slice(0, 6),
           block_legal_area: tags.legal_area,
           source_legal_area: m.legal_area,
+          claim_category: category,
         });
         continue;
       }
+
 
       kept.push(ref);
       if (blockClaim) {
