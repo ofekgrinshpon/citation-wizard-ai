@@ -2211,6 +2211,12 @@ async function handle(req: Request): Promise<Response> {
     claim_source_limitation_added: drafter.claim_source_match?.limitation_added ?? false,
     primary_support_by_main_claim: drafter.claim_source_match?.primary_support_by_main_claim ?? false,
     commentary_only_claims: drafter.claim_source_match?.commentary_only_claims ?? [],
+    // substance_based_doctrinal_sufficiency_v1 telemetry.
+    doctrinal_typing: drafter.doctrinal_typing ?? null,
+    claim_support_categories: drafter.claim_source_match?.claim_categories ?? [],
+    authority_overstatements: drafter.claim_source_match?.authority_overstatements ?? [],
+    limited_doctrinal_answer: drafter.sufficiency?.limited_doctrinal_answer ?? false,
+    doctrinal_fallback_combination: drafter.sufficiency?.doctrinal_fallback_combination ?? null,
     // metadata_only_holding_gate_v1 telemetry.
     metadata_only_holding_gate: drafter.metadata_only_holding_gate ?? null,
 
