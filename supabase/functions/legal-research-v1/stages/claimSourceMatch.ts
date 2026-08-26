@@ -34,7 +34,8 @@ export type MismatchReason =
   | "claim_mismatch"
   | "commentary_in_substantive_block"
   | "analogical_for_black_letter"
-  | "unrelated_legal_area";
+  | "unrelated_legal_area"
+  | "insufficient_authority_for_claim_category";
 
 export interface DroppedSourceRef {
   ref: string;
@@ -44,6 +45,16 @@ export interface DroppedSourceRef {
   source_claim_ids?: string[];
   block_legal_area?: string | null;
   source_legal_area?: string | null;
+  /** substance_based_doctrinal_sufficiency_v1 */
+  claim_category?: ClaimSupportCategory;
+}
+
+export interface ClaimSupportCategoryEntry {
+  block_index: number;
+  category: ClaimSupportCategory;
+  basis: string;
+  kept_refs: string[];
+  support_levels: string[];
 }
 
 export interface ClaimSourceMatchReport {
@@ -56,7 +67,13 @@ export interface ClaimSourceMatchReport {
   primary_support_by_main_claim: boolean;
   commentary_only_claims: string[];
   tagged_block_count: number;
+  /** substance_based_doctrinal_sufficiency_v1 telemetry. */
+  claim_categories: ClaimSupportCategoryEntry[];
+  authority_overstatements: AuthorityOverstatement[];
+  secondary_supported_block_count: number;
+  primary_supported_block_count: number;
 }
+
 
 const SUBSTANTIVE: PropositionType[] = ["black_letter_rule", "application", "practical_guidance"];
 
