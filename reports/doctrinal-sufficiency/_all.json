@@ -1,0 +1,394 @@
+[
+  {
+    "id": "D1",
+    "question": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד יישם אותם בית המשפט העליון?",
+    "run_id": "e4d64ade-1005-4d72-9875-3ca2c58e89c3",
+    "qa_log_id": "0238abf1-77e1-4b55-8e04-bc445cfee670",
+    "ms": 138030,
+    "branch": null,
+    "official_discovery": null,
+    "specific_case": null,
+    "claim_source_match": null,
+    "sufficiency": null,
+    "doctrinal_typing": null,
+    "footnotes": [],
+    "footnote_count": 0,
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות; חוק-יסוד: כבוד האדם וחירותו; נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו); הפללה של התנכלות מקוונת ומקרי המבחן של התנכלות כלפי עובדי ציבור וקטינים במרחב המקוון | חיים ויסמונסקי (כרך כג)."
+  },
+  {
+    "id": "B8",
+    "question": "מהי דוקטרינת ההבטחה המנהלית?",
+    "run_id": "0cb2f1d0-3089-4043-aea4-93075eb2a10f",
+    "qa_log_id": "fa2ef19a-b2a7-4a89-b5aa-2920e0353f79",
+    "ms": 121749,
+    "branch": null,
+    "official_discovery": null,
+    "specific_case": null,
+    "claim_source_match": null,
+    "sufficiency": null,
+    "doctrinal_typing": null,
+    "footnotes": [],
+    "footnote_count": 0,
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): הבטחה מינהלית - כתב העת משפטים; הגנת ההסתמכות במשפט המנהלי - כתב העת משפטים; כריש, תנין ולוויתן: על הבטחות מנהליות, חוזים רגולטוריים וחיות אחרות במתווה ...; על ההבטחה המנהלית.\n\n> קריאת גוף פסקי הדין הופסקה מטעמי מגבלת עיבוד, ולכן ייתכן שחלק מהמקורות נותחו לפי מטא-נתונים בלבד."
+  },
+  {
+    "id": "D3",
+    "question": "מה הדין לגבי פיטורי עובדת בהיריון, ומהו היקף ההגנה?",
+    "run_id": "9a4ad92c-62bb-4294-bce4-52c950be07ee",
+    "qa_log_id": "6cb5107d-b09b-45e2-b12b-ff466c07e78f",
+    "ms": 157230,
+    "branch": null,
+    "official_discovery": null,
+    "specific_case": null,
+    "claim_source_match": null,
+    "sufficiency": null,
+    "doctrinal_typing": {
+      "applied": true,
+      "remapped": [],
+      "eligibility": [
+        {
+          "ref": "s1",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 20000,
+          "source_type": "israeli_law"
+        },
+        {
+          "ref": "s2",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 95,
+          "source_type": "legislation"
+        },
+        {
+          "ref": "s3",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 147,
+          "source_type": "legislation"
+        },
+        {
+          "ref": "s4",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 130,
+          "source_type": "legislation"
+        },
+        {
+          "ref": "s5",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 195,
+          "source_type": "legislation"
+        },
+        {
+          "ref": "s6",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 88,
+          "source_type": "legislation"
+        }
+      ],
+      "eligible_refs": [],
+      "ineligible_reason_counts": {
+        "not_doctrinal_type": 6
+      }
+    },
+    "footnotes": [
+      {
+        "url": "https://www.btl.gov.il/Laws1/00_0019_000000.pdf",
+        "title": "חוק עבודת נשים, התשי\"ח-1958",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.btl.gov.il/Laws1/00_0019_000000.pdf",
+            "title": "חוק עבודת נשים, התשי\"ח-1958",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "israeli_law"
+      }
+    ],
+    "footnote_count": 1,
+    "answer": "תשובה מקוצרת: לפי הוראות חוק עבודת נשים העובדת בהריון וטרם יצאה לחופשת לידה מוגנת מפני פיטורים — פיטורין כאלה יתאפשרו רק בהיתר מן שר העבודה והרווחה; בנוסף חוק שוויון ההזדמנויות בעבודה אוסר אפליה מחמת הריון, ותומך באיסור מעשי על פיטורים בעקבות הריונה של עובדת.¹\n\nאין כאן סקירת פסיקה משום שלא אותרו פסקי דין ברי-שימוש; המענה מבוסס אך ורק על הוראות החקיקה והמידע המנהלי שסופקו (ולא על פסקי דין או פרשנות שיפוטית).\n\nהיקף ההגנה והמרחב הזמני: חוק עבודת נשים קובע כי ההגנה חלה על תקופת ההריון וטרם היציאה לחופשת לידה — הפיטורים אסורים אלא בהיתר; עמוד השירות המשרדי המתאר את הליך בקשת היתר מפרט את הדרישה לפרוצדורה וכולל החרגה מפורשת שלא יינתן היתר במהלך חופשת הלידה; חוק שוויון ההזדמנויות מחזק את האיסור הכללי על אפליה בשל הריון.\n\nנטל הראייה: במקורות שסופקו לא נמצא עיגון מפורש הנוגע להקלה, להנחה או להיפוך נטל הראייה במקרה של פיטורים בתקופה המוגנת; על כן לא ניתן לקבוע מתוך החומר החקיקתי והמנהלי שנמסר הנהגה חד־משמעית ביחס לנטל הראייה בסכסוך כזה.\n\nחריגים וסייגים וסעדים: הסייג המרכזי בחקיקה הוא אופציית ההיתר שניתן על ידי שר העבודה והרווחה — פיטורין בהיתר אינם אסורים לפי נוסח החוק; עמוד השירות מציין מצבים שבהם היתר לא יינתן (למשל במהלך חופשת הלידה). בחומרים שסופקו לא נתגלתה הנחיה מפורשת המסדירה באופן מלא את הסעדים המשפטיים במקרה של פיטורים אסורים (כגון שיבוץ מחדש, החזר למצב קודם או נוסח פיצוי ספציפי), ולכן לא ניתן להפיק מהחומרים הללו מסקנה מוחלטת לגבי אופי וסדר הדין של הסעדים.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+  },
+  {
+    "id": "ACADEMIC",
+    "question": "אני כותב סמינריון על עילת הסבירות במשפט המנהלי — אילו מקורות מרכזיים כדאי לקרוא?",
+    "run_id": "a3733783-9c4b-41d3-a574-5cc44c20fae1",
+    "qa_log_id": "6384d43d-c45a-46cb-bff5-34234c49cd37",
+    "ms": 152007,
+    "branch": null,
+    "official_discovery": null,
+    "specific_case": null,
+    "claim_source_match": null,
+    "sufficiency": null,
+    "doctrinal_typing": null,
+    "footnotes": [],
+    "footnote_count": 0,
+    "answer": "לא נמצאו במקורות מקורות משפטיים ייעודיים לנושא שנשאל, אלא חומר כללי בלבד. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור צעדים משפטיים קונקרטיים לנושא שנשאל ממקורות מתחום אחר או מחומר פרוצדורלי כללי; לכן לא מוצגת כאן הנחיה משפטית לשאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): בג\"ץ 1715/97 - לשכת מנהלי ההשקעות בישראל נ' שר האוצר; ביקורת שיפוטית על רשויות אכיפת החוק: בין מינהלי לפלילי; בג\"ץ 2905/20 התנועה למען איכות השלטון בישראל נ׳ כנסת ישראל פסק דין; Proportionality, Unreasonableness and a Unified Model: Reframing the Spectrum of Intensity of Judicial Review."
+  },
+  {
+    "id": "FRESH-SC",
+    "question": "מה נקבע בבג\"ץ 1892/14 האגודה לזכויות האזרח נ' השר לביטחון פנים?",
+    "run_id": "33fffa71-ae8a-4b6a-af47-df81710e892c",
+    "qa_log_id": "d218305a-3429-4eb0-bc85-bac6ec1cf093",
+    "ms": 126822,
+    "branch": null,
+    "official_discovery": null,
+    "specific_case": null,
+    "claim_source_match": null,
+    "sufficiency": null,
+    "doctrinal_typing": {
+      "applied": true,
+      "remapped": [],
+      "eligibility": [
+        {
+          "ref": "s1",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 800,
+          "source_type": "caselaw"
+        },
+        {
+          "ref": "s2",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 0,
+          "source_type": "caselaw"
+        },
+        {
+          "ref": "s3",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 1097,
+          "source_type": "knesset_research"
+        },
+        {
+          "ref": "s4",
+          "reason": "eligible_doctrinal_secondary",
+          "eligible": true,
+          "remapped": false,
+          "body_chars": 1178,
+          "source_type": "journal_article"
+        },
+        {
+          "ref": "s5",
+          "reason": "eligible_doctrinal_secondary",
+          "eligible": true,
+          "remapped": false,
+          "body_chars": 1178,
+          "source_type": "journal_article"
+        },
+        {
+          "ref": "s6",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 1182,
+          "source_type": "caselaw"
+        }
+      ],
+      "eligible_refs": [
+        "s4",
+        "s5"
+      ],
+      "ineligible_reason_counts": {
+        "not_doctrinal_type": 4
+      }
+    },
+    "footnotes": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1892-14-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%94%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 1892/14 האגודה לזכויות האזרח בישראל נ׳ השר לביטחון פנים פסק דין (13.06.2017)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1892-14-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%94%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 1892/14 האגודה לזכויות האזרח בישראל נ׳ השר לביטחון פנים פסק דין (13.06.2017)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      }
+    ],
+    "footnote_count": 1,
+    "answer": "**פסיקת בג\"ץ 1892/14 — סיכום ההכרעה**\n\nבית המשפט העליון דן בפסק דין מיום 13.6.2017 בעתירות שהגישה האגודה לזכויות האזרח ואחרים נגד השר לביטחון פנים ובגורמי כליאה, בעניין מדיניות ותנאי הכליאה; בפסק הדין ניתנה הכרעה מנומקת שהתייחסה לבקשות ולסעדים שהועלו, לעמדת המדינה ולמהלכי התדיינות שננקטו בבתי המשפט הקדמיים.\n\nעו\"ד האגודה לזכויות האזרח ואחרים הופיעו כעותרים; המשיבים הם משרד הפנים/השר לביטחון פנים וגורמי ניהול בתי הסוהר. העתירות ביקשו בין השאר הורות וצווים הנוגעים לתנאי כליאה ולמדיניות כליאה; לפני הדיון בעליון התקיימה תדיינות בבתי משפט השלום והמחוזי שבהן ניתנו החלטות וצעדים פרוצדורליים שהובאו בפני העליון.¹\n\nהשאלות המשפטיות המרכזיות שעמדו לדיון כללו חוקיות מדיניות ותנאי כליאה ביחס לזכויות יסוד והיקף הסעד המבוקש בצורת צווים הנוגעים לניהול מתקני כליאה ותנאי משמעת/מרחב מחיה; העותרים טענו לפגיעה בזכויות יסוד והציעו סעדים מבצעיים, והמדינה הציגה עמדות מדיניות ונימוקים פרוצדורליים.\n\nבית המשפט נימק את הכרעתו בפסק הדין באופן שנוגע הן לעובדות המקרה והן להערכת מידת הפגיעה בזכויות שעל הפרק; בפסק הדין הוצגו נימוקים משפטיים מפורטים וכן התייחסות להחלטות קודמות ולממצאים עובדתיים שנמסרו לצדדים, כפי שמשתקף מהטקסט והממצאים שבפסק הדין.\n\nמניתוח ההכרעה עולה גם היבט ביצועי: בפסק הדין מופיעות התייחסויות לתהליכי יישום ולמהלכים פרוצדורליים שקדמו ולביצוע ההחלטות הנדרשות מטעם המשיבים, ובמקורות שנמצאו תועדו הוראות ותביעות להציג תוכניות ולוחות זמנים לביצוע צעדים לשיפור תנאי הכליאה.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+  },
+  {
+    "id": "R02",
+    "question": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+    "run_id": "5198fc34-7d8d-45f0-83b5-910fdbb79d90",
+    "qa_log_id": "e2d3526f-dd01-478c-8c39-a4fb81c03de6",
+    "ms": 157334,
+    "branch": null,
+    "official_discovery": null,
+    "specific_case": null,
+    "claim_source_match": null,
+    "sufficiency": null,
+    "doctrinal_typing": null,
+    "footnotes": [],
+    "footnote_count": 0,
+    "answer": "לא אותר במקורות הזמינים ע\"א 6821/93. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+  },
+  {
+    "id": "NATION-STATE",
+    "question": "מה נקבע בבג\"ץ 5555/18 חסון נ' כנסת ישראל?",
+    "run_id": "af6635cf-2f52-40e8-b43a-bbc372083c08",
+    "qa_log_id": "70e9fc75-f5aa-4c61-8b68-b2876396c2cc",
+    "ms": 121732,
+    "branch": null,
+    "official_discovery": null,
+    "specific_case": null,
+    "claim_source_match": null,
+    "sufficiency": null,
+    "doctrinal_typing": {
+      "applied": true,
+      "remapped": [],
+      "eligibility": [
+        {
+          "ref": "s1",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 800,
+          "source_type": "caselaw"
+        },
+        {
+          "ref": "s2",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 0,
+          "source_type": "caselaw"
+        }
+      ],
+      "eligible_refs": [],
+      "ineligible_reason_counts": {
+        "not_doctrinal_type": 2
+      }
+    },
+    "footnotes": [],
+    "footnote_count": 0,
+    "answer": "**בג\"ץ 5555/18 — ח״כ אכרם חסון נ׳ כנסת ישראל**\n\nבית המשפט קבע כי העתירות המבקשות לבטל את חוק יסוד: ישראל — מדינת הלאום של העם היהודי נדחו, ואין עילה לבטל את חוק היסוד במסגרת ההליכים הנדונים בפסק‑דין זה.\n\nבית המשפט עיגן באופן עקרוני את סמכותו להשמיע ביקורת שיפוטית על חוקי יסוד ולבחון שימוש בלתי סביר או שימוש לרעה בסמכות המכוננת, אך הוסיף כי בנסיבות המקרה נקבע שרף הסמכות שנדרש כדי להביא לביטול החוק לא התקיים.\n\nבהתייחס לסעיפי השפה בתיק, נקבע כי הוראת הסעיף הנוגעת למעמד השפה הערבית פורשה כך שהיא אינה מפחיתה מהזכויות הקיימות של דוברי הערבית ויש לפרשה בהרמוניה עם עקרון השוויון וזכויות המוגנות מכוח חוקי היסוד האחרים.\n\nבית המשפט קבע כי ניסוח ההוראה המעודד התיישבות יהודית אינו מהווה הסמכה להפליה פסולה, ואין לראות בו יסוד להתנהלות של הדרה, הקצאה או מדיניות מפלה; יש לפרש הוראה מעין זו בהתאם להלכות הקובעות איסור הפליה.\n\nבית המשפט הכיר בעקרון השוויון כעיקרון יסוד בחוקה הישראלית, וקבע כי חוק יסוד לא מבטל או מוריד מערכו של עיקרון זה — משקלו של השוויון נשמר גם במסגרת פרשנות החוקה והחקיקה.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+  },
+  {
+    "id": "P02",
+    "question": "מה נקבע בבג\"ץ 9999/99 פלוני נ' אלמוני?",
+    "run_id": "96cb25c1-8e6d-4b5f-a8de-b912b31f0cbf",
+    "ms": 902000,
+    "error": "poll_timeout"
+  },
+  {
+    "id": "MAYA-AMIR",
+    "question": "מה נקבע בע\"א 5320/90 ברנוביץ נ' רשות ניירות ערך?",
+    "run_id": "2a0e93e8-12fd-490d-9c5a-cc753025937d",
+    "qa_log_id": "e9549a26-4c71-4862-974b-d5b38c906f44",
+    "ms": 121376,
+    "branch": null,
+    "official_discovery": null,
+    "specific_case": null,
+    "claim_source_match": null,
+    "sufficiency": null,
+    "doctrinal_typing": {
+      "applied": true,
+      "remapped": [],
+      "eligibility": [
+        {
+          "ref": "s1",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 66,
+          "source_type": "legislation"
+        },
+        {
+          "ref": "s2",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 61,
+          "source_type": "caselaw"
+        },
+        {
+          "ref": "s3",
+          "reason": "no_acquired_body_text",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 385,
+          "source_type": "journal_article"
+        },
+        {
+          "ref": "s4",
+          "reason": "no_acquired_body_text",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 384,
+          "source_type": "journal_article"
+        },
+        {
+          "ref": "s5",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 1180,
+          "source_type": "caselaw"
+        },
+        {
+          "ref": "s6",
+          "reason": "eligible_doctrinal_secondary",
+          "eligible": true,
+          "remapped": false,
+          "body_chars": 1082,
+          "source_type": "journal_article"
+        },
+        {
+          "ref": "s7",
+          "reason": "eligible_doctrinal_secondary",
+          "eligible": true,
+          "remapped": false,
+          "body_chars": 1181,
+          "source_type": "journal_article"
+        },
+        {
+          "ref": "s8",
+          "reason": "eligible_doctrinal_secondary",
+          "eligible": true,
+          "remapped": false,
+          "body_chars": 976,
+          "source_type": "journal_article"
+        },
+        {
+          "ref": "s9",
+          "reason": "eligible_doctrinal_secondary",
+          "eligible": true,
+          "remapped": false,
+          "body_chars": 1160,
+          "source_type": "journal_article"
+        }
+      ],
+      "eligible_refs": [
+        "s6",
+        "s7",
+        "s8",
+        "s9"
+      ],
+      "ineligible_reason_counts": {
+        "not_doctrinal_type": 3,
+        "no_acquired_body_text": 2
+      }
+    },
+    "footnotes": [],
+    "footnote_count": 0,
+    "answer": "לא אותר במקורות הזמינים ע\"א 5320/90. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+  }
+]
