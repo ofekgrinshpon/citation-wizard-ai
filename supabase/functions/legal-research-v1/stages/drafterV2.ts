@@ -67,6 +67,12 @@ import {
   type ClaimSourceMatchReport,
 } from "./claimSourceMatch.ts";
 import { applyBlockCeiling, type BlockTrimReport } from "./routerProfiles.ts";
+import {
+  buildDoctrinalTypingReport,
+  type DoctrinalTypingReport,
+  remapDoctrinalSourceTypes,
+} from "./doctrinalSourceTyping.ts";
+import { LIMITED_DOCTRINAL_ANSWER_NOTICE_HE } from "./claimSupportCategory.ts";
 
 
 
@@ -1069,6 +1075,8 @@ export async function runDrafterV2(
      */
     blockCeiling?: number | null;
     dropUnsupportedBlocks?: boolean;
+    /** five_mode_source_depth_policy_v1 depth mode (doctrinal sufficiency fallback). */
+    depthMode?: string | null;
 
     specificCaseGate?: {
       allow: boolean;
@@ -1095,6 +1103,13 @@ export async function runDrafterV2(
     useAsSource,
     opts?.researchMode ?? null,
   );
+  // substance_based_doctrinal_sufficiency_v1 — re-type acquired `other`
+  // sources that are genuinely doctrinal material, then report eligibility.
+  const doctrinal_typing: DoctrinalTypingReport = buildDoctrinalTypingReport(
+    inputSources,
+    remapDoctrinalSourceTypes(inputSources),
+  );
+
   const snippet_budget_report = summarizeSnippetBudget(
     opts?.researchMode ?? null,
     inputSources.map((s) => ({
@@ -1490,6 +1505,7 @@ export async function runDrafterV2(
     sources: inputSources,
     requiredAnchorCandidateIds,
     researchMode: opts?.researchMode ?? null,
+    depthMode: opts?.depthMode ?? null,
   });
 
   if (sufficiency.applied && !sufficiency.sufficient) {
@@ -1583,7 +1599,12 @@ export async function runDrafterV2(
       body_topical_refs: sufficiency?.body_topical_refs ?? [],
       body_text_topical_match: sufficiency?.body_text_topical_match ?? false,
       statute_section_requested: sufficiency?.statute_section_requested ?? false,
-
+      depth_mode: opts?.depthMode ?? null,
+      doctrinal_secondary_refs: sufficiency?.doctrinal_secondary_refs ?? [],
+      doctrinal_ineligible_reasons: sufficiency?.doctrinal_ineligible_reasons ?? {},
+      limited_doctrinal_answer: false,
+      doctrinal_fallback_combination: null,
+      doctrinal_fallback_declined_reason: sufficiency?.doctrinal_fallback_declined_reason ?? null,
     };
 
     const draft = buildInsufficientSourcesDraft(synthSufficiency);
@@ -1861,6 +1882,7 @@ export async function runDrafterV2(
   // block whose claim/facet/legal-area it was actually verified for.
   const matched = applyClaimSourceMatch(gated.draft ?? parsed.draft, inputSources, {
     mainClaimIds: claims.map((c) => c.claim_id),
+    limitedDoctrinalAnswer: sufficiency?.limited_doctrinal_answer === true,
   });
   const claim_source_match = matched.report;
 
@@ -1871,7 +1893,16 @@ export async function runDrafterV2(
   const answer_markdown = scrubNegativeExistenceClaims(
     normalizeHebrewNumberRanges(built.answer_markdown),
   ).text +
-    referenceOnlySection(metadata_only_holding_gate.reference_only_sources) +
+    // substance_based_doctrinal_sufficiency_v1 (guardrail 2) — the
+    // "found only" list is not emitted mechanically. It appears only when the
+    // answer actually rests on a limited pack, or when the gate stripped
+    // support from the draft, i.e. when the limitation is material.
+    ((sufficiency?.limited_doctrinal_answer === true ||
+        metadata_only_holding_gate.blocks_stripped > 0 ||
+        metadata_only_holding_gate.blocks_left_unsupported > 0)
+      ? referenceOnlySection(metadata_only_holding_gate.reference_only_sources)
+      : "") +
+    (sufficiency?.limited_doctrinal_answer === true ? LIMITED_DOCTRINAL_ANSWER_NOTICE_HE : "") +
     matched.limitation_text;
 
 
