@@ -172,7 +172,7 @@ function parentClaimOfFacet(facet_id: string): string | null {
 export function applyClaimSourceMatch(
   draft: StructuredDraft | null,
   inputSources: DrafterInputSource[],
-  opts?: { mainClaimIds?: string[] },
+  opts?: { mainClaimIds?: string[]; limitedDoctrinalAnswer?: boolean },
 ): { draft: StructuredDraft | null; report: ClaimSourceMatchReport; limitation_text: string } {
   const report: ClaimSourceMatchReport = {
     applied: false,
@@ -184,15 +184,23 @@ export function applyClaimSourceMatch(
     primary_support_by_main_claim: false,
     commentary_only_claims: [],
     tagged_block_count: 0,
+    claim_categories: [],
+    authority_overstatements: [],
+    secondary_supported_block_count: 0,
+    primary_supported_block_count: 0,
   };
   if (!draft) return { draft, report, limitation_text: "" };
 
   const metas = inputSources.map(buildSourceMatchMeta);
   const byRef = new Map(metas.map((m) => [m.ref, m]));
+  const profiles = new Map<string, SourceSupportProfile>(
+    inputSources.map((s) => [s.ref, profileSource(s)]),
+  );
   report.applied = true;
 
   const claimSupport = new Map<string, { primary: boolean; any: boolean }>();
   const blocks: StructuredBlock[] = [];
+
 
   draft.blocks.forEach((b, idx) => {
     if (b.kind === "heading" || !("source_refs" in b)) {
