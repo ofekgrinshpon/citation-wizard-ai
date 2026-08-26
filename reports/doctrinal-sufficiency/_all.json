@@ -1,0 +1,97 @@
+[
+  {
+    "id": "P02",
+    "question": "מה נקבע בבג\"ץ 9999/99 פלוני נ' אלמוני?",
+    "run_id": "ac0e79e7-7b5f-4238-b8e7-254fe275535f",
+    "qa_log_id": "662c8e5f-cbe8-494d-935e-16a2372ad1d4",
+    "ms": 147115,
+    "branch": null,
+    "official_discovery": {
+      "ms": 1,
+      "enabled": true,
+      "targets": 0,
+      "version": "official_source_discovery_v1",
+      "attempts": [],
+      "cache_hits": 0,
+      "skip_reason": "no_actionable_nominations",
+      "cache_misses": 0,
+      "cache_writes": 0,
+      "cache_version": "verified_source_cache_v2",
+      "bodies_acquired": 0,
+      "cache_cooldowns": 0,
+      "injected_candidate_ids": []
+    },
+    "specific_case": null,
+    "claim_source_match": {
+      "applied": false,
+      "stage_not_run": true,
+      "mismatch_reason": [],
+      "claim_categories": [],
+      "limitation_added": false,
+      "tagged_block_count": 0,
+      "dropped_source_refs": [],
+      "stage_not_run_reason": "deterministic_branch:docket_limitation",
+      "commentary_only_claims": [],
+      "unsupported_block_count": 0,
+      "authority_overstatements": [],
+      "source_ref_mismatch_count": 0,
+      "primary_support_by_main_claim": false,
+      "primary_supported_block_count": 0,
+      "secondary_supported_block_count": 0
+    },
+    "sufficiency": null,
+    "doctrinal_typing": {
+      "applied": true,
+      "remapped": [],
+      "eligibility": [
+        {
+          "ref": "s1",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 1200,
+          "source_type": "caselaw"
+        },
+        {
+          "ref": "s2",
+          "reason": "eligible_doctrinal_secondary",
+          "eligible": true,
+          "remapped": false,
+          "body_chars": 1177,
+          "source_type": "journal_article"
+        }
+      ],
+      "eligible_refs": [
+        "s2"
+      ],
+      "ineligible_reason_counts": {
+        "not_doctrinal_type": 1
+      }
+    },
+    "trace": {
+      "ran": true,
+      "depth_mode": "specific_case_or_statute",
+      "sufficient": null,
+      "typing_ran": true,
+      "footnote_count": 0,
+      "claim_match_ran": false,
+      "sufficiency_ran": false,
+      "input_source_count": 2,
+      "sufficiency_reason": null,
+      "claim_category_count": 0,
+      "deterministic_branch": "docket_limitation",
+      "typing_remapped_count": 0,
+      "doctrinal_eligible_count": 0,
+      "doctrinal_secondary_refs": [],
+      "limited_doctrinal_answer": false,
+      "claim_match_not_run_reason": "deterministic_branch:docket_limitation",
+      "doctrinal_ineligible_reasons": {},
+      "authority_overstatement_count": 0,
+      "doctrinal_fallback_combination": null,
+      "doctrinal_fallback_declined_reason": null
+    },
+    "footnotes": [],
+    "footnote_count": 0,
+    "answer": "לא אותר במקורות הזמינים פסק הדין בעניין בג\"ץ 9999/99 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+  }
+]

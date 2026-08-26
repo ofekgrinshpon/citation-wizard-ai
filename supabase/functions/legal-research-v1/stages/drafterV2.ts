@@ -89,6 +89,33 @@ import {
 // most tokens on hidden reasoning; the default gateway cap has been observed
 // to cut Hebrew answers mid-word. These values reserve enough room for
 // reasoning + a structured JSON tool call for a long legal answer.
+
+/**
+ * doctrinal_sufficiency_telemetry_persistence_v1 — telemetry only.
+ * Deterministic branches return before claimSourceMatch runs. Emit an explicit
+ * stage_not_run marker instead of leaving the field null, so a validation run
+ * can always be attributed to a stage.
+ */
+function claimSourceMatchNotRun(branch: string): ClaimSourceMatchReport {
+  return {
+    applied: false,
+    stage_not_run: true,
+    stage_not_run_reason: `deterministic_branch:${branch}`,
+    source_ref_mismatch_count: 0,
+    dropped_source_refs: [],
+    mismatch_reason: [],
+    unsupported_block_count: 0,
+    limitation_added: false,
+    primary_support_by_main_claim: false,
+    commentary_only_claims: [],
+    tagged_block_count: 0,
+    claim_categories: [],
+    authority_overstatements: [],
+    secondary_supported_block_count: 0,
+    primary_supported_block_count: 0,
+  };
+}
+
 const DRAFTER_V2_BUDGET_INITIAL = 8000;
 const DRAFTER_V2_BUDGET_RETRY = 16000;
 
@@ -1337,6 +1364,8 @@ export async function runDrafterV2(
       lead_ref: leadSelection,
       missing_anchor_descriptions: missingAnchors.map((a) => a.description),
       deterministic_branch: "docket_limitation",
+      doctrinal_typing,
+      claim_source_match: claimSourceMatchNotRun(String("docket_limitation")),
       schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
     };
   }
@@ -1390,6 +1419,8 @@ export async function runDrafterV2(
         lead_ref: { ref: registrySource.ref, reason: "canonical_registry_statute_section", shape },
         missing_anchor_descriptions: [],
         deterministic_branch: "canonical_quote_registry",
+      doctrinal_typing,
+      claim_source_match: claimSourceMatchNotRun(String("canonical_quote_registry")),
         schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
       };
     }
@@ -1440,6 +1471,8 @@ export async function runDrafterV2(
       lead_ref: leadSelection,
       missing_anchor_descriptions: missingAnchors.map((a) => a.description),
       deterministic_branch: "statute_section_limitation",
+      doctrinal_typing,
+      claim_source_match: claimSourceMatchNotRun(String("statute_section_limitation")),
       schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
     };
   }
@@ -1505,6 +1538,8 @@ export async function runDrafterV2(
         lead_ref: leadSelection,
         missing_anchor_descriptions: canonical ? [] : [anchor.description],
         deterministic_branch: canonical ? "canonical_quote_verified" : "statute_section_quote_refusal",
+      doctrinal_typing,
+      claim_source_match: claimSourceMatchNotRun(String(canonical ? "canonical_quote_verified" : "statute_section_quote_refusal")),
         schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
       };
     }
@@ -1564,6 +1599,8 @@ export async function runDrafterV2(
       lead_ref: leadSelection,
       missing_anchor_descriptions: missingAnchors.map((a) => a.description),
       deterministic_branch: "insufficient_sources_limitation",
+      doctrinal_typing,
+      claim_source_match: claimSourceMatchNotRun(String("insufficient_sources_limitation")),
       sufficiency,
       schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
     };
@@ -1661,6 +1698,8 @@ export async function runDrafterV2(
       lead_ref: leadSelection,
       missing_anchor_descriptions: missingAnchors.map((a) => a.description),
       deterministic_branch: "insufficient_sources_limitation",
+      doctrinal_typing,
+      claim_source_match: claimSourceMatchNotRun(String("insufficient_sources_limitation")),
       sufficiency: synthSufficiency,
       schema_failure_reason: validation.report.ok ? undefined : "schema_invalid",
     };

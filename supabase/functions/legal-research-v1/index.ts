@@ -396,6 +396,11 @@ async function handle(req: Request): Promise<Response> {
       metadata: {
         pipeline: "legal-research-v1",
         phase: "P2",
+        doctrinal_sufficiency_trace: {
+          ran: false,
+          reason: "pipeline_exit_before_drafter",
+          exit_phase: "P2",
+        },
         run_id,
         stage_runs,
         error: { stage: "claim_analyzer", message: msg },
@@ -425,6 +430,11 @@ async function handle(req: Request): Promise<Response> {
       metadata: {
         pipeline: "legal-research-v1",
         phase: "P2",
+        doctrinal_sufficiency_trace: {
+          ran: false,
+          reason: "pipeline_exit_before_drafter",
+          exit_phase: "P2",
+        },
         run_id,
         stage_runs,
         planning: {
@@ -467,6 +477,11 @@ async function handle(req: Request): Promise<Response> {
       debug: {
         run_id,
         phase: "P2",
+        doctrinal_sufficiency_trace: {
+          ran: false,
+          reason: "pipeline_exit_before_drafter",
+          exit_phase: "P2",
+        },
         stage_runs,
         planning_error,
         claims: analyzer?.claims ?? [],
@@ -545,6 +560,11 @@ async function handle(req: Request): Promise<Response> {
       metadata: {
         pipeline: "legal-research-v1",
         phase: "P2",
+        doctrinal_sufficiency_trace: {
+          ran: false,
+          reason: "pipeline_exit_before_drafter",
+          exit_phase: "P2",
+        },
         run_id,
         stage_runs,
         error: { stage: "query_planner", message: msg },
@@ -603,6 +623,11 @@ async function handle(req: Request): Promise<Response> {
       metadata: {
         pipeline: "legal-research-v1",
         phase: "P2",
+        doctrinal_sufficiency_trace: {
+          ran: false,
+          reason: "pipeline_exit_before_drafter",
+          exit_phase: "P2",
+        },
         run_id,
         stage_runs,
         planning: { ...planningMeta, planning_error },
@@ -614,6 +639,11 @@ async function handle(req: Request): Promise<Response> {
       debug: {
         run_id,
         phase: "P2",
+        doctrinal_sufficiency_trace: {
+          ran: false,
+          reason: "pipeline_exit_before_drafter",
+          exit_phase: "P2",
+        },
         stage_runs,
         planning_error,
         claims: analyzer.claims,
@@ -1425,6 +1455,11 @@ async function handle(req: Request): Promise<Response> {
       metadata: {
         pipeline: "legal-research-v1",
         phase: "exact_case_body_unavailable",
+        doctrinal_sufficiency_trace: {
+          ran: false,
+          reason: "pipeline_exit_before_drafter",
+          exit_phase: "exact_case_body_unavailable",
+        },
         run_id,
         total_ms: Date.now() - t_start,
         stage_runs,
@@ -1441,6 +1476,11 @@ async function handle(req: Request): Promise<Response> {
       debug: {
         run_id,
         phase: "exact_case_body_unavailable",
+        doctrinal_sufficiency_trace: {
+          ran: false,
+          reason: "pipeline_exit_before_drafter",
+          exit_phase: "exact_case_body_unavailable",
+        },
         stage_runs,
         limitation,
         retrieval: { ...retrievalMeta, retrieval_budget: budget.report() },
@@ -1477,6 +1517,11 @@ async function handle(req: Request): Promise<Response> {
       metadata: {
         pipeline: "legal-research-v1",
         phase: "retrieval_cpu_guard",
+        doctrinal_sufficiency_trace: {
+          ran: false,
+          reason: "pipeline_exit_before_drafter",
+          exit_phase: "retrieval_cpu_guard",
+        },
         run_id,
         total_ms: Date.now() - t_start,
         stage_runs,
@@ -1498,6 +1543,11 @@ async function handle(req: Request): Promise<Response> {
       debug: {
         run_id,
         phase: "retrieval_cpu_guard",
+        doctrinal_sufficiency_trace: {
+          ran: false,
+          reason: "pipeline_exit_before_drafter",
+          exit_phase: "retrieval_cpu_guard",
+        },
         stage_runs,
         retrieval: { ...retrievalMeta, retrieval_budget: budget.report() },
       },
@@ -1608,6 +1658,11 @@ async function handle(req: Request): Promise<Response> {
         pipeline: "legal-research-v1",
         pipeline_mode: "sources_only",
         phase: "sources_only",
+        doctrinal_sufficiency_trace: {
+          ran: false,
+          reason: "pipeline_exit_before_drafter",
+          exit_phase: "sources_only",
+        },
         run_id,
         total_ms: Date.now() - t_start,
         stage_runs,
@@ -2217,6 +2272,34 @@ async function handle(req: Request): Promise<Response> {
     authority_overstatements: drafter.claim_source_match?.authority_overstatements ?? [],
     limited_doctrinal_answer: drafter.sufficiency?.limited_doctrinal_answer ?? false,
     doctrinal_fallback_combination: drafter.sufficiency?.doctrinal_fallback_combination ?? null,
+    // doctrinal_sufficiency_telemetry_persistence_v1 — one consolidated,
+    // never-null trace so any run can be attributed to a stage + reason.
+    doctrinal_sufficiency_trace: {
+      ran: true,
+      depth_mode: sourceDepth.depth_mode ?? null,
+      deterministic_branch: drafter.deterministic_branch ?? null,
+      sufficiency_ran: drafter.sufficiency ? true : false,
+      sufficient: drafter.sufficiency?.sufficient ?? null,
+      sufficiency_reason: drafter.sufficiency?.reason ?? null,
+      limited_doctrinal_answer: drafter.sufficiency?.limited_doctrinal_answer ?? false,
+      doctrinal_fallback_combination: drafter.sufficiency?.doctrinal_fallback_combination ?? null,
+      doctrinal_fallback_declined_reason:
+        drafter.sufficiency?.doctrinal_fallback_declined_reason ?? null,
+      doctrinal_secondary_refs: drafter.sufficiency?.doctrinal_secondary_refs ?? [],
+      doctrinal_eligible_count: drafter.sufficiency?.doctrinal_secondary_refs?.length ?? 0,
+      doctrinal_ineligible_reasons: drafter.sufficiency?.doctrinal_ineligible_reasons ?? {},
+      typing_ran: drafter.doctrinal_typing ? true : false,
+      typing_remapped_count: drafter.doctrinal_typing?.remapped?.length ?? 0,
+      claim_match_ran: drafter.claim_source_match
+        ? drafter.claim_source_match.stage_not_run !== true
+        : false,
+      claim_match_not_run_reason: drafter.claim_source_match?.stage_not_run_reason ?? null,
+      claim_category_count: drafter.claim_source_match?.claim_categories?.length ?? 0,
+      authority_overstatement_count:
+        drafter.claim_source_match?.authority_overstatements?.length ?? 0,
+      input_source_count: drafter.input_sources?.length ?? 0,
+      footnote_count: drafter.footnotes?.length ?? 0,
+    },
     // metadata_only_holding_gate_v1 telemetry.
     metadata_only_holding_gate: drafter.metadata_only_holding_gate ?? null,
 
