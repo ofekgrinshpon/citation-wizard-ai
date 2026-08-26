@@ -79,7 +79,7 @@ for (const q of QUERIES) {
     official_discovery: md.official_discovery ?? null,
     specific_case: md.specific_case ?? md.specific_case_identity ?? null,
     claim_source_match: md.claim_source_match ?? null,
-    sufficiency: md.sufficiency ?? null,
+    sufficiency: md.sufficiency ?? md.source_sufficiency ?? null,
     doctrinal_typing: md.doctrinal_typing ?? md.drafter?.doctrinal_typing ?? null,
     footnotes: row.footnotes ?? [],
     footnote_count: Array.isArray(row.footnotes) ? row.footnotes.length : 0,
