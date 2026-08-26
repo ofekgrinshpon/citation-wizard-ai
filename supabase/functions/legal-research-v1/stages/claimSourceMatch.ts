@@ -250,13 +250,20 @@ export function applyClaimSourceMatch(
       }
 
       // Rule B — background/commentary only for background/limitation blocks.
+      // Relaxed (substance_based_doctrinal_sufficiency_v1) for doctrinal /
+      // scholarly / background categories when the source is an eligible
+      // acquired doctrinal secondary. Court-holding claims are unaffected.
+      const prof = profiles.get(ref);
+      const doctrinalEligible = prof?.doctrinal_authority === true;
       if (
         !reason && substantive &&
         (m.support_subtype === "background" || m.support_subtype === "commentary") &&
-        !m.is_primary
+        !m.is_primary &&
+        !(doctrinalCategory && doctrinalEligible)
       ) {
         reason = "commentary_in_substantive_block";
       }
+
 
       // Rule C — analogical / same-domain never carries a black-letter rule.
       if (!reason && ptype === "black_letter_rule" && m.support_subtype === "analogy") {
