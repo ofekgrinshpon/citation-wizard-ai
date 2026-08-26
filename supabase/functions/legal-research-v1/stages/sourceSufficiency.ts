@@ -25,6 +25,7 @@
 
 import type { DrafterInputSource } from "./drafter.ts";
 import { detectStatuteSections } from "./statuteSectionDetection.ts";
+import { assessDoctrinalEligibility } from "./doctrinalSourceTyping.ts";
 
 
 export type SufficiencyCategory =
@@ -45,6 +46,7 @@ export type SufficiencyAuthorityBasis =
   | "governing_statute"
   | "governing_regulation"
   | "statute_plus_regulation"
+  | "doctrinal_secondary"
   | "insufficient";
 
 export interface SufficiencyAssessment {
@@ -102,6 +104,23 @@ export interface SufficiencyAssessment {
   body_text_topical_match: boolean;
   /** The question names a specific statute section (drives F4 profile). */
   statute_section_requested: boolean;
+
+  // ── substance_based_doctrinal_sufficiency_v1 ────────────────────────────
+  /** Depth mode the fallback was evaluated under. */
+  depth_mode: string | null;
+  /** Eligible acquired doctrinal/secondary sources (see doctrinalSourceTyping). */
+  doctrinal_secondary_refs: string[];
+  /** Ineligible-secondary reason counts (diagnosis). */
+  doctrinal_ineligible_reasons: Record<string, number>;
+  /**
+   * A refusal was converted into a limited doctrinal explanation supported by
+   * acquired statutes / doctrinal secondaries. Never licenses case-law claims.
+   */
+  limited_doctrinal_answer: boolean;
+  /** Which fallback combination fired (A/B/C), or null. */
+  doctrinal_fallback_combination: "A" | "B" | "C" | null;
+  /** Why the fallback did not fire, when it was evaluated and declined. */
+  doctrinal_fallback_declined_reason: string | null;
 }
 
 
@@ -422,6 +441,8 @@ export function assessSourceSufficiency(args: {
   requiredAnchorCandidateIds?: Set<string>;
   /** Research mode from stages/researchMode.ts (drives the sufficiency profile). */
   researchMode?: string | null;
+  /** five_mode_source_depth_policy_v1 depth mode (drives the doctrinal fallback). */
+  depthMode?: string | null;
 }): SufficiencyAssessment {
   const { question, shape, sources } = args;
   const category = classifySufficiencyCategory(shape, question);
