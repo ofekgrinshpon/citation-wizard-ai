@@ -2276,7 +2276,7 @@ async function handle(req: Request): Promise<Response> {
     // never-null trace so any run can be attributed to a stage + reason.
     doctrinal_sufficiency_trace: {
       ran: true,
-      depth_mode: drafter.source_depth_policy?.depth_mode ?? null,
+      depth_mode: sourceDepth.depth_mode ?? null,
       deterministic_branch: drafter.deterministic_branch ?? null,
       sufficiency_ran: drafter.sufficiency ? true : false,
       sufficient: drafter.sufficiency?.sufficient ?? null,
