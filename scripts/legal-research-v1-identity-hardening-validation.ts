@@ -49,7 +49,7 @@ async function poll(run_id: string, since: string, timeoutMs = 900_000) {
       if (Array.isArray(rows) && rows.length) {
         const row = rows[0];
         const body = String(row.answer ?? "").trim();
-        if (body && body !== "STUB_ANSWER") return row;
+        if (body && body !== "STUB_ANSWER" && !body.startsWith("[stub]")) return row;
       }
     }
     await new Promise((res) => setTimeout(res, 5000));
