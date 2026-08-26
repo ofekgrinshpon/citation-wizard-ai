@@ -215,7 +215,22 @@ export function applyClaimSourceMatch(
     const ptype: PropositionType = tags.proposition_type ?? "application";
     const substantive = SUBSTANTIVE.includes(ptype);
 
+    // substance_based_doctrinal_sufficiency_v1 — substance category for this
+    // block (declared tag → proposition substance → docket-identity escalation).
+    const declared = (b as unknown as Record<string, unknown>).claim_category;
+    const { category, basis } = deriveClaimCategory({
+      declared: typeof declared === "string" ? declared : null,
+      propositionType: ptype,
+      text: typeof (b as unknown as Record<string, unknown>).text === "string"
+        ? String((b as unknown as Record<string, unknown>).text)
+        : "",
+    });
+    const doctrinalCategory = category === "doctrinal_synthesis" ||
+      category === "scholarly_commentary" || category === "contextual_background";
+    const overstatementDrops: string[] = [];
+
     const kept: string[] = [];
+
     for (const ref of b.source_refs) {
       const m = byRef.get(ref);
       if (!m) {
