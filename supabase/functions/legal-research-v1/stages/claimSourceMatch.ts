@@ -320,6 +320,52 @@ export function applyClaimSourceMatch(
     if (b.source_refs.length > 0 && kept.length === 0 && substantive) {
       report.unsupported_block_count++;
     }
+
+    // substance_based_doctrinal_sufficiency_v1 — per-block category telemetry
+    // + authority-overstatement detection.
+    const keptProfiles = kept.map((r) => profiles.get(r)).filter(Boolean) as SourceSupportProfile[];
+    const hasPrimary = keptProfiles.some((p) => p.judgment_authority || p.statutory_authority);
+    const onlySecondary = keptProfiles.length > 0 && !hasPrimary &&
+      keptProfiles.every((p) => p.doctrinal_authority || p.background_only);
+    if (hasPrimary) report.primary_supported_block_count++;
+    else if (onlySecondary) report.secondary_supported_block_count++;
+
+    if (category === "court_holding" && overstatementDrops.length > 0) {
+      report.authority_overstatements.push({
+        block_index: idx,
+        category,
+        reason: "court_holding_supported_only_by_secondary",
+        refs_dropped: overstatementDrops,
+      });
+    }
+    if (
+      basis.includes("docket_identity_escalation") && kept.length > 0 &&
+      !keptProfiles.some((p) => p.judgment_authority)
+    ) {
+      report.authority_overstatements.push({
+        block_index: idx,
+        category,
+        reason: "docket_identity_without_judgment_body",
+        refs_dropped: [],
+      });
+    }
+
+    report.claim_categories.push({
+      block_index: idx,
+      category,
+      basis,
+      kept_refs: kept,
+      support_levels: keptProfiles.map((p) =>
+        p.judgment_authority
+          ? "judgment"
+          : p.statutory_authority
+          ? "statute"
+          : p.doctrinal_authority
+          ? "doctrinal_secondary"
+          : "background"
+      ),
+    });
+
     blocks.push({ ...b, source_refs: kept } as StructuredBlock);
   });
 
@@ -335,10 +381,15 @@ export function applyClaimSourceMatch(
   if (report.unsupported_block_count > 0 || report.source_ref_mismatch_count > 0) {
     limitation_text = CLAIM_SUPPORT_LIMITATION_HE;
     report.limitation_added = true;
-  } else if (report.commentary_only_claims.length > 0) {
+  } else if (report.commentary_only_claims.length > 0 && !opts?.limitedDoctrinalAnswer) {
     limitation_text = COMMENTARY_ONLY_LIMITATION_HE;
+    report.limitation_added = true;
+  }
+  if (report.authority_overstatements.length > 0) {
+    limitation_text += AUTHORITY_OVERSTATEMENT_LIMITATION_HE;
     report.limitation_added = true;
   }
 
   return { draft: { blocks }, report, limitation_text };
 }
+
