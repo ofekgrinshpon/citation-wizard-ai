@@ -13,6 +13,8 @@ export interface BlockClaimTags {
     | "limitation"
     | null;
   legal_area?: string | null;
+  /** substance_based_doctrinal_sufficiency_v1 — substance category tag. */
+  claim_category?: string | null;
 }
 
 export type StructuredBlock =
@@ -146,6 +148,7 @@ export function validateStructuredDraft(
         facet_id: str(o.facet_id),
         proposition_type: str(o.proposition_type) as BlockClaimTags["proposition_type"],
         legal_area: str(o.legal_area),
+        claim_category: str(o.claim_category),
       };
       if (kind === "paragraph") {
         paragraph_count++;

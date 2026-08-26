@@ -270,6 +270,8 @@ export interface DrafterInputSource {
   verifier_verdict?: string;
   /** True when real body text (judgment/statute) was acquired for this source. */
   body_acquired?: boolean;
+  /** substance_based_doctrinal_sufficiency_v1 — source_type was remapped. */
+  doctrinal_type_remapped?: boolean;
 }
 
 

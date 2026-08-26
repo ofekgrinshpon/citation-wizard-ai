@@ -221,6 +221,16 @@ const DRAFTER_V2_TOOL_PARAMETERS: Record<string, unknown> = {
             ],
           },
           legal_area: { type: "string" },
+          claim_category: {
+            type: "string",
+            enum: [
+              "court_holding",
+              "statutory",
+              "doctrinal_synthesis",
+              "scholarly_commentary",
+              "contextual_background",
+            ],
+          },
         },
         required: ["kind", "text"],
         additionalProperties: false,
@@ -469,6 +479,17 @@ function buildUserMessage(
       "black_letter_rule (קביעת הלכה/דין), application (יישום/נסיבות), background (רקע), " +
       "practical_guidance (הנחיה מעשית), limitation (סייג/מגבלה). " +
       "צרף ל-source_refs רק מקורות שאומתו לאותה טענה — ספרות ומקורות רקע אינם אסמכתה לקביעת הלכה.",
+  );
+
+  lines.push(
+    "תיוג מהות הטענה (claim_category, חובה בכל פסקה/פריט): סווג לפי מהות הקביעה ולא לפי ניסוחה — " +
+      "court_holding (ייחוס הלכה, מבחן, תוצאה או כלל משפטי לבית משפט או לפסיקה), " +
+      "statutory (קביעה על נוסח חוק/תקנה, תנאי, מבנה או תוצאה נורמטיבית הנובעת מהם), " +
+      "doctrinal_synthesis (הסבר דוקטרינרי, מסגרת ניתוח, סיווג מקובל או סינתזה בין מקורות), " +
+      "scholarly_commentary (מה גורסת הספרות, ביקורת אקדמית, מחלוקת בכתיבה), " +
+      "contextual_background (רקע והקשר שאינם קובעים כלל משפטי מחייב). " +
+      "רמת הניסוח חייבת להתאים לרמת הסמכות של המקור: קביעה הנשענת רק על ספרות, פרשנות או חומר מוסדי " +
+      "לא תוצג כהלכה מחייבת, ככלל פסיקתי מוגמר או כתוצאה של פסק דין מסוים.",
   );
 
   lines.push(
