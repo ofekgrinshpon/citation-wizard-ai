@@ -76,11 +76,12 @@ for (const q of QUERIES) {
     qa_log_id: row.id,
     ms,
     branch: md.branch ?? md.drafter?.branch ?? null,
-    official_discovery: md.official_discovery ?? null,
+    official_discovery: md.drafter?.official_source_discovery ?? null,
     specific_case: md.specific_case ?? md.specific_case_identity ?? null,
-    claim_source_match: md.claim_source_match ?? null,
-    sufficiency: md.sufficiency ?? md.source_sufficiency ?? null,
-    doctrinal_typing: md.doctrinal_typing ?? md.drafter?.doctrinal_typing ?? null,
+    claim_source_match: md.drafter?.claim_source_match ?? null,
+    sufficiency: md.drafter?.source_sufficiency ?? null,
+    doctrinal_typing: md.drafter?.doctrinal_typing ?? null,
+    trace: md.drafter?.doctrinal_sufficiency_trace ?? md.doctrinal_sufficiency_trace ?? null,
     footnotes: row.footnotes ?? [],
     footnote_count: Array.isArray(row.footnotes) ? row.footnotes.length : 0,
     answer: String(row.answer ?? ""),
@@ -93,11 +94,14 @@ for (const q of QUERIES) {
         `${a.label}|${a.cache_lookup}|${a.result}|${a.body_chars ?? 0}|reval=${a.cache_revalidation?.validated ?? "-"}/${a.cache_revalidation?.reason ?? "-"}/inv=${a.cache_revalidation?.invalidated ?? "-"}|id=${a.identity?.strict?.confidence ?? "-"}:${a.identity?.strict?.reason ?? "-"}`
       ).join(" ; ") +
       ` fn=${out.footnote_count}` +
-      ` depth=${out.sufficiency?.depth_mode ?? "-"}` +
+      ` depth=${out.trace?.depth_mode ?? "-"}` +
+      ` branch=${out.trace?.deterministic_branch ?? "-"}` +
+      ` cmran=${out.trace?.claim_match_ran ?? "-"}/${out.trace?.claim_match_not_run_reason ?? "-"}` +
+      ` decl=${out.trace?.doctrinal_fallback_declined_reason ?? "-"}` +
       ` suff=${out.sufficiency?.sufficient ?? "-"}/${out.sufficiency?.reason ?? "-"}` +
-      ` ltd=${out.sufficiency?.limited_doctrinal_answer ?? "-"}` +
-      ` sec=${(out.sufficiency?.doctrinal_secondary_refs ?? []).length}` +
-      ` remap=${(out.doctrinal_typing?.remapped ?? []).length}` +
+      ` ltd=${out.trace?.limited_doctrinal_answer ?? "-"}/${out.trace?.doctrinal_fallback_combination ?? "-"}` +
+      ` sec=${out.trace?.doctrinal_eligible_count ?? "-"}` +
+      ` remap=${out.trace?.typing_remapped_count ?? "-"}` +
       ` cats=${(out.claim_source_match?.claim_categories ?? []).map((c: any) => c.category).join("/")}` +
       ` over=${(out.claim_source_match?.authority_overstatements ?? []).length}`,
   );
