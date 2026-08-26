@@ -1,0 +1,80 @@
+{
+  "id": "MAYA-AMIR",
+  "question": "מה נקבע בע\"א 5320/90 ברנוביץ נ' רשות ניירות ערך?",
+  "run_id": "8b30f95c-dc78-4cb1-a336-7321eb6f58f0",
+  "qa_log_id": "33971e8d-2f61-4a9d-bdc9-2b4ba39c0147",
+  "ms": 51176,
+  "branch": null,
+  "official_discovery": null,
+  "specific_case": null,
+  "claim_source_match": null,
+  "sufficiency": null,
+  "footnotes": [],
+  "footnote_count": 0,
+  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "metadata": {
+    "phase": "P2",
+    "run_id": "8b30f95c-dc78-4cb1-a336-7321eb6f58f0",
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "analyzer": {
+        "ms": 45665,
+        "attempts": [
+          {
+            "ms": 29018,
+            "attempt": 1,
+            "got_data": true,
+            "http_status": 200
+          }
+        ],
+        "confidence": 0.9,
+        "model_final": "openai/gpt-5",
+        "schema_valid": false,
+        "model_initial": "openai/gpt-5-mini",
+        "transport_failed": false,
+        "escalated_to_gpt5": true,
+        "escalation_reason": [
+          "B1:schema_invalid"
+        ]
+      },
+      "claims_count": 4,
+      "queries_count": 0,
+      "planning_error": {
+        "stage": "claim_analyzer",
+        "reasons": [
+          "B1:schema_invalid",
+          "answer_type: invalid (case_holding)"
+        ],
+        "attempts": [
+          {
+            "ms": 29018,
+            "attempt": 1,
+            "got_data": true,
+            "http_status": 200
+          }
+        ],
+        "transport_failed": false
+      },
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "stage_runs": [
+      {
+        "ms": 16647,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 29018,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "claim_analyzer.escalated",
+        "escalated": true,
+        "http_status": 200
+      }
+    ],
+    "trace_status": "terminal"
+  }
+}
