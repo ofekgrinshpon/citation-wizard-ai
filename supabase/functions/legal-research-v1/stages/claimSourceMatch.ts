@@ -15,6 +15,15 @@
 import type { StructuredBlock, StructuredDraft } from "./structuredValidation.ts";
 import type { DrafterInputSource } from "./drafter.ts";
 import { inferLegalAreaId } from "./claimFacetExpansion.ts";
+import {
+  type AuthorityOverstatement,
+  AUTHORITY_OVERSTATEMENT_LIMITATION_HE,
+  categoryAccepts,
+  type ClaimSupportCategory,
+  deriveClaimCategory,
+  profileSource,
+  type SourceSupportProfile,
+} from "./claimSupportCategory.ts";
 
 export type PropositionType =
   | "black_letter_rule"
