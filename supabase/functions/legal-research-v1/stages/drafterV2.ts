@@ -293,6 +293,19 @@ function buildUserMessage(
       "אין להמציא פסקי דין, אין לייחס הלכות לבתי משפט, ואין להישען על ספרות/פרשנות כמקור סמכות ראשי. ציין במפורש, במשפט קצר, שלא מוצגת כאן סקירת פסיקה משום שלא נמצאו פסקי דין ברי-שימוש. שמור את התשובה בגבולות מה שהחוק/התקנות תומכים בו.",
     );
   }
+  if (sufficiency?.limited_doctrinal_answer) {
+    lines.push("");
+    lines.push(
+      "היקף סמכות מוגבל: לא אותר נוסח פסק דין מחייב בסוגיה. בסיס התשובה הוא חקיקה שאותרה ו/או ספרות משפטית, " +
+        "פרשנות או חומר מוסדי שנקראו במלואם. מותר להסביר את המסגרת הדוקטרינרית, את הסיווג המקובל ואת עמדות הכתיבה המשפטית — " +
+        "והכל תוך ייחוס מדויק לרמת הסמכות של המקור.",
+    );
+    lines.push(
+      "אסור להציג קביעה הנשענת על ספרות או פרשנות כהלכה מחייבת, ככלל פסיקתי מוגמר או כתוצאה של פסק דין מסוים; " +
+        "אסור לייחס הלכה לבית משפט ללא נוסח פסק דין שסופק לך; ואסור להמציא פסקי דין או להסתמך על אזכורי כותרת בלבד. " +
+        "אם היקף המקורות אינו מאפשר תשובה מלאה — כתוב תשובה מוגבלת וכנה במקום להרחיב.",
+    );
+  }
   if (sufficiency?.practical_steps_thin_authority_passed) {
     lines.push("");
     lines.push(
@@ -968,6 +981,8 @@ export interface DrafterV2Result {
   /** Deterministic source-sufficiency assessment (telemetry + gate result). */
   /** claim_source_match_validation_v1 — per-block claim/source gate telemetry. */
   claim_source_match?: ClaimSourceMatchReport;
+  /** substance_based_doctrinal_sufficiency_v1 telemetry. */
+  doctrinal_typing?: DoctrinalTypingReport;
 
   sufficiency?: SufficiencyAssessment;
   /** Named-doctrine premise/framing signal (telemetry + drafter directive). */
@@ -1959,6 +1974,7 @@ export async function runDrafterV2(
     router_block_trim,
 
     claim_source_match,
+    doctrinal_typing,
 
 
 
