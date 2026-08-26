@@ -1716,6 +1716,7 @@ async function handle(req: Request): Promise<Response> {
       requiredAnchorCandidateIds,
       satisfiedStatuteSectionAnchors,
       researchMode: plannerStage.mode_plan?.mode ?? null,
+      depthMode: sourceDepth.depth_mode,
       specificCaseGate,
       facetDirective,
       // router_profiles_v1 — path-scoped answer shape.
