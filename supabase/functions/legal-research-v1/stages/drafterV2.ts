@@ -67,6 +67,12 @@ import {
   type ClaimSourceMatchReport,
 } from "./claimSourceMatch.ts";
 import { applyBlockCeiling, type BlockTrimReport } from "./routerProfiles.ts";
+import {
+  buildDoctrinalTypingReport,
+  type DoctrinalTypingReport,
+  remapDoctrinalSourceTypes,
+} from "./doctrinalSourceTyping.ts";
+import { LIMITED_DOCTRINAL_ANSWER_NOTICE_HE } from "./claimSupportCategory.ts";
 
 
 
@@ -221,6 +227,16 @@ const DRAFTER_V2_TOOL_PARAMETERS: Record<string, unknown> = {
             ],
           },
           legal_area: { type: "string" },
+          claim_category: {
+            type: "string",
+            enum: [
+              "court_holding",
+              "statutory",
+              "doctrinal_synthesis",
+              "scholarly_commentary",
+              "contextual_background",
+            ],
+          },
         },
         required: ["kind", "text"],
         additionalProperties: false,
@@ -275,6 +291,19 @@ function buildUserMessage(
     );
     lines.push(
       "אין להמציא פסקי דין, אין לייחס הלכות לבתי משפט, ואין להישען על ספרות/פרשנות כמקור סמכות ראשי. ציין במפורש, במשפט קצר, שלא מוצגת כאן סקירת פסיקה משום שלא נמצאו פסקי דין ברי-שימוש. שמור את התשובה בגבולות מה שהחוק/התקנות תומכים בו.",
+    );
+  }
+  if (sufficiency?.limited_doctrinal_answer) {
+    lines.push("");
+    lines.push(
+      "היקף סמכות מוגבל: לא אותר נוסח פסק דין מחייב בסוגיה. בסיס התשובה הוא חקיקה שאותרה ו/או ספרות משפטית, " +
+        "פרשנות או חומר מוסדי שנקראו במלואם. מותר להסביר את המסגרת הדוקטרינרית, את הסיווג המקובל ואת עמדות הכתיבה המשפטית — " +
+        "והכל תוך ייחוס מדויק לרמת הסמכות של המקור.",
+    );
+    lines.push(
+      "אסור להציג קביעה הנשענת על ספרות או פרשנות כהלכה מחייבת, ככלל פסיקתי מוגמר או כתוצאה של פסק דין מסוים; " +
+        "אסור לייחס הלכה לבית משפט ללא נוסח פסק דין שסופק לך; ואסור להמציא פסקי דין או להסתמך על אזכורי כותרת בלבד. " +
+        "אם היקף המקורות אינו מאפשר תשובה מלאה — כתוב תשובה מוגבלת וכנה במקום להרחיב.",
     );
   }
   if (sufficiency?.practical_steps_thin_authority_passed) {
@@ -469,6 +498,17 @@ function buildUserMessage(
       "black_letter_rule (קביעת הלכה/דין), application (יישום/נסיבות), background (רקע), " +
       "practical_guidance (הנחיה מעשית), limitation (סייג/מגבלה). " +
       "צרף ל-source_refs רק מקורות שאומתו לאותה טענה — ספרות ומקורות רקע אינם אסמכתה לקביעת הלכה.",
+  );
+
+  lines.push(
+    "תיוג מהות הטענה (claim_category, חובה בכל פסקה/פריט): סווג לפי מהות הקביעה ולא לפי ניסוחה — " +
+      "court_holding (ייחוס הלכה, מבחן, תוצאה או כלל משפטי לבית משפט או לפסיקה), " +
+      "statutory (קביעה על נוסח חוק/תקנה, תנאי, מבנה או תוצאה נורמטיבית הנובעת מהם), " +
+      "doctrinal_synthesis (הסבר דוקטרינרי, מסגרת ניתוח, סיווג מקובל או סינתזה בין מקורות), " +
+      "scholarly_commentary (מה גורסת הספרות, ביקורת אקדמית, מחלוקת בכתיבה), " +
+      "contextual_background (רקע והקשר שאינם קובעים כלל משפטי מחייב). " +
+      "רמת הניסוח חייבת להתאים לרמת הסמכות של המקור: קביעה הנשענת רק על ספרות, פרשנות או חומר מוסדי " +
+      "לא תוצג כהלכה מחייבת, ככלל פסיקתי מוגמר או כתוצאה של פסק דין מסוים.",
   );
 
   lines.push(
@@ -941,6 +981,8 @@ export interface DrafterV2Result {
   /** Deterministic source-sufficiency assessment (telemetry + gate result). */
   /** claim_source_match_validation_v1 — per-block claim/source gate telemetry. */
   claim_source_match?: ClaimSourceMatchReport;
+  /** substance_based_doctrinal_sufficiency_v1 telemetry. */
+  doctrinal_typing?: DoctrinalTypingReport;
 
   sufficiency?: SufficiencyAssessment;
   /** Named-doctrine premise/framing signal (telemetry + drafter directive). */
@@ -1048,6 +1090,8 @@ export async function runDrafterV2(
      */
     blockCeiling?: number | null;
     dropUnsupportedBlocks?: boolean;
+    /** five_mode_source_depth_policy_v1 depth mode (doctrinal sufficiency fallback). */
+    depthMode?: string | null;
 
     specificCaseGate?: {
       allow: boolean;
@@ -1074,6 +1118,13 @@ export async function runDrafterV2(
     useAsSource,
     opts?.researchMode ?? null,
   );
+  // substance_based_doctrinal_sufficiency_v1 — re-type acquired `other`
+  // sources that are genuinely doctrinal material, then report eligibility.
+  const doctrinal_typing: DoctrinalTypingReport = buildDoctrinalTypingReport(
+    inputSources,
+    remapDoctrinalSourceTypes(inputSources),
+  );
+
   const snippet_budget_report = summarizeSnippetBudget(
     opts?.researchMode ?? null,
     inputSources.map((s) => ({
@@ -1469,6 +1520,7 @@ export async function runDrafterV2(
     sources: inputSources,
     requiredAnchorCandidateIds,
     researchMode: opts?.researchMode ?? null,
+    depthMode: opts?.depthMode ?? null,
   });
 
   if (sufficiency.applied && !sufficiency.sufficient) {
@@ -1562,7 +1614,12 @@ export async function runDrafterV2(
       body_topical_refs: sufficiency?.body_topical_refs ?? [],
       body_text_topical_match: sufficiency?.body_text_topical_match ?? false,
       statute_section_requested: sufficiency?.statute_section_requested ?? false,
-
+      depth_mode: opts?.depthMode ?? null,
+      doctrinal_secondary_refs: sufficiency?.doctrinal_secondary_refs ?? [],
+      doctrinal_ineligible_reasons: sufficiency?.doctrinal_ineligible_reasons ?? {},
+      limited_doctrinal_answer: false,
+      doctrinal_fallback_combination: null,
+      doctrinal_fallback_declined_reason: sufficiency?.doctrinal_fallback_declined_reason ?? null,
     };
 
     const draft = buildInsufficientSourcesDraft(synthSufficiency);
@@ -1840,6 +1897,7 @@ export async function runDrafterV2(
   // block whose claim/facet/legal-area it was actually verified for.
   const matched = applyClaimSourceMatch(gated.draft ?? parsed.draft, inputSources, {
     mainClaimIds: claims.map((c) => c.claim_id),
+    limitedDoctrinalAnswer: sufficiency?.limited_doctrinal_answer === true,
   });
   const claim_source_match = matched.report;
 
@@ -1850,7 +1908,16 @@ export async function runDrafterV2(
   const answer_markdown = scrubNegativeExistenceClaims(
     normalizeHebrewNumberRanges(built.answer_markdown),
   ).text +
-    referenceOnlySection(metadata_only_holding_gate.reference_only_sources) +
+    // substance_based_doctrinal_sufficiency_v1 (guardrail 2) — the
+    // "found only" list is not emitted mechanically. It appears only when the
+    // answer actually rests on a limited pack, or when the gate stripped
+    // support from the draft, i.e. when the limitation is material.
+    ((sufficiency?.limited_doctrinal_answer === true ||
+        metadata_only_holding_gate.blocks_stripped > 0 ||
+        metadata_only_holding_gate.blocks_left_unsupported > 0)
+      ? referenceOnlySection(metadata_only_holding_gate.reference_only_sources)
+      : "") +
+    (sufficiency?.limited_doctrinal_answer === true ? LIMITED_DOCTRINAL_ANSWER_NOTICE_HE : "") +
     matched.limitation_text;
 
 
@@ -1907,6 +1974,7 @@ export async function runDrafterV2(
     router_block_trim,
 
     claim_source_match,
+    doctrinal_typing,
 
 
 

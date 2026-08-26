@@ -15,6 +15,15 @@
 import type { StructuredBlock, StructuredDraft } from "./structuredValidation.ts";
 import type { DrafterInputSource } from "./drafter.ts";
 import { inferLegalAreaId } from "./claimFacetExpansion.ts";
+import {
+  type AuthorityOverstatement,
+  AUTHORITY_OVERSTATEMENT_LIMITATION_HE,
+  categoryAccepts,
+  type ClaimSupportCategory,
+  deriveClaimCategory,
+  profileSource,
+  type SourceSupportProfile,
+} from "./claimSupportCategory.ts";
 
 export type PropositionType =
   | "black_letter_rule"
@@ -34,7 +43,8 @@ export type MismatchReason =
   | "claim_mismatch"
   | "commentary_in_substantive_block"
   | "analogical_for_black_letter"
-  | "unrelated_legal_area";
+  | "unrelated_legal_area"
+  | "insufficient_authority_for_claim_category";
 
 export interface DroppedSourceRef {
   ref: string;
@@ -44,6 +54,16 @@ export interface DroppedSourceRef {
   source_claim_ids?: string[];
   block_legal_area?: string | null;
   source_legal_area?: string | null;
+  /** substance_based_doctrinal_sufficiency_v1 */
+  claim_category?: ClaimSupportCategory;
+}
+
+export interface ClaimSupportCategoryEntry {
+  block_index: number;
+  category: ClaimSupportCategory;
+  basis: string;
+  kept_refs: string[];
+  support_levels: string[];
 }
 
 export interface ClaimSourceMatchReport {
@@ -56,7 +76,13 @@ export interface ClaimSourceMatchReport {
   primary_support_by_main_claim: boolean;
   commentary_only_claims: string[];
   tagged_block_count: number;
+  /** substance_based_doctrinal_sufficiency_v1 telemetry. */
+  claim_categories: ClaimSupportCategoryEntry[];
+  authority_overstatements: AuthorityOverstatement[];
+  secondary_supported_block_count: number;
+  primary_supported_block_count: number;
 }
+
 
 const SUBSTANTIVE: PropositionType[] = ["black_letter_rule", "application", "practical_guidance"];
 
@@ -146,7 +172,7 @@ function parentClaimOfFacet(facet_id: string): string | null {
 export function applyClaimSourceMatch(
   draft: StructuredDraft | null,
   inputSources: DrafterInputSource[],
-  opts?: { mainClaimIds?: string[] },
+  opts?: { mainClaimIds?: string[]; limitedDoctrinalAnswer?: boolean },
 ): { draft: StructuredDraft | null; report: ClaimSourceMatchReport; limitation_text: string } {
   const report: ClaimSourceMatchReport = {
     applied: false,
@@ -158,15 +184,23 @@ export function applyClaimSourceMatch(
     primary_support_by_main_claim: false,
     commentary_only_claims: [],
     tagged_block_count: 0,
+    claim_categories: [],
+    authority_overstatements: [],
+    secondary_supported_block_count: 0,
+    primary_supported_block_count: 0,
   };
   if (!draft) return { draft, report, limitation_text: "" };
 
   const metas = inputSources.map(buildSourceMatchMeta);
   const byRef = new Map(metas.map((m) => [m.ref, m]));
+  const profiles = new Map<string, SourceSupportProfile>(
+    inputSources.map((s) => [s.ref, profileSource(s)]),
+  );
   report.applied = true;
 
   const claimSupport = new Map<string, { primary: boolean; any: boolean }>();
   const blocks: StructuredBlock[] = [];
+
 
   draft.blocks.forEach((b, idx) => {
     if (b.kind === "heading" || !("source_refs" in b)) {
@@ -181,7 +215,22 @@ export function applyClaimSourceMatch(
     const ptype: PropositionType = tags.proposition_type ?? "application";
     const substantive = SUBSTANTIVE.includes(ptype);
 
+    // substance_based_doctrinal_sufficiency_v1 — substance category for this
+    // block (declared tag → proposition substance → docket-identity escalation).
+    const declared = (b as unknown as Record<string, unknown>).claim_category;
+    const { category, basis } = deriveClaimCategory({
+      declared: typeof declared === "string" ? declared : null,
+      propositionType: ptype,
+      text: typeof (b as unknown as Record<string, unknown>).text === "string"
+        ? String((b as unknown as Record<string, unknown>).text)
+        : "",
+    });
+    const doctrinalCategory = category === "doctrinal_synthesis" ||
+      category === "scholarly_commentary" || category === "contextual_background";
+    const overstatementDrops: string[] = [];
+
     const kept: string[] = [];
+
     for (const ref of b.source_refs) {
       const m = byRef.get(ref);
       if (!m) {
@@ -201,13 +250,20 @@ export function applyClaimSourceMatch(
       }
 
       // Rule B — background/commentary only for background/limitation blocks.
+      // Relaxed (substance_based_doctrinal_sufficiency_v1) for doctrinal /
+      // scholarly / background categories when the source is an eligible
+      // acquired doctrinal secondary. Court-holding claims are unaffected.
+      const prof = profiles.get(ref);
+      const doctrinalEligible = prof?.doctrinal_authority === true;
       if (
         !reason && substantive &&
         (m.support_subtype === "background" || m.support_subtype === "commentary") &&
-        !m.is_primary
+        !m.is_primary &&
+        !(doctrinalCategory && doctrinalEligible)
       ) {
         reason = "commentary_in_substantive_block";
       }
+
 
       // Rule C — analogical / same-domain never carries a black-letter rule.
       if (!reason && ptype === "black_letter_rule" && m.support_subtype === "analogy") {
@@ -222,6 +278,17 @@ export function applyClaimSourceMatch(
         reason = "unrelated_legal_area";
       }
 
+      // Rule E (substance_based_doctrinal_sufficiency_v1) — the claim's
+      // substance category defines the authority level it needs. A court
+      // holding cannot rest on secondary material; a statutory claim cannot
+      // rest on commentary alone.
+      if (!reason && prof && !categoryAccepts(category, prof)) {
+        reason = "insufficient_authority_for_claim_category";
+        if (category === "court_holding" && prof.doctrinal_authority) {
+          overstatementDrops.push(ref);
+        }
+      }
+
       if (reason) {
         report.source_ref_mismatch_count++;
         if (!report.mismatch_reason.includes(reason)) report.mismatch_reason.push(reason);
@@ -233,9 +300,11 @@ export function applyClaimSourceMatch(
           source_claim_ids: m.verified_claim_ids.slice(0, 6),
           block_legal_area: tags.legal_area,
           source_legal_area: m.legal_area,
+          claim_category: category,
         });
         continue;
       }
+
 
       kept.push(ref);
       if (blockClaim) {
@@ -251,6 +320,52 @@ export function applyClaimSourceMatch(
     if (b.source_refs.length > 0 && kept.length === 0 && substantive) {
       report.unsupported_block_count++;
     }
+
+    // substance_based_doctrinal_sufficiency_v1 — per-block category telemetry
+    // + authority-overstatement detection.
+    const keptProfiles = kept.map((r) => profiles.get(r)).filter(Boolean) as SourceSupportProfile[];
+    const hasPrimary = keptProfiles.some((p) => p.judgment_authority || p.statutory_authority);
+    const onlySecondary = keptProfiles.length > 0 && !hasPrimary &&
+      keptProfiles.every((p) => p.doctrinal_authority || p.background_only);
+    if (hasPrimary) report.primary_supported_block_count++;
+    else if (onlySecondary) report.secondary_supported_block_count++;
+
+    if (category === "court_holding" && overstatementDrops.length > 0) {
+      report.authority_overstatements.push({
+        block_index: idx,
+        category,
+        reason: "court_holding_supported_only_by_secondary",
+        refs_dropped: overstatementDrops,
+      });
+    }
+    if (
+      basis.includes("docket_identity_escalation") && kept.length > 0 &&
+      !keptProfiles.some((p) => p.judgment_authority)
+    ) {
+      report.authority_overstatements.push({
+        block_index: idx,
+        category,
+        reason: "docket_identity_without_judgment_body",
+        refs_dropped: [],
+      });
+    }
+
+    report.claim_categories.push({
+      block_index: idx,
+      category,
+      basis,
+      kept_refs: kept,
+      support_levels: keptProfiles.map((p) =>
+        p.judgment_authority
+          ? "judgment"
+          : p.statutory_authority
+          ? "statute"
+          : p.doctrinal_authority
+          ? "doctrinal_secondary"
+          : "background"
+      ),
+    });
+
     blocks.push({ ...b, source_refs: kept } as StructuredBlock);
   });
 
@@ -266,10 +381,15 @@ export function applyClaimSourceMatch(
   if (report.unsupported_block_count > 0 || report.source_ref_mismatch_count > 0) {
     limitation_text = CLAIM_SUPPORT_LIMITATION_HE;
     report.limitation_added = true;
-  } else if (report.commentary_only_claims.length > 0) {
+  } else if (report.commentary_only_claims.length > 0 && !opts?.limitedDoctrinalAnswer) {
     limitation_text = COMMENTARY_ONLY_LIMITATION_HE;
+    report.limitation_added = true;
+  }
+  if (report.authority_overstatements.length > 0) {
+    limitation_text += AUTHORITY_OVERSTATEMENT_LIMITATION_HE;
     report.limitation_added = true;
   }
 
   return { draft: { blocks }, report, limitation_text };
 }
+

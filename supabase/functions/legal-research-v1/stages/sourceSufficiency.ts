@@ -25,6 +25,7 @@
 
 import type { DrafterInputSource } from "./drafter.ts";
 import { detectStatuteSections } from "./statuteSectionDetection.ts";
+import { assessDoctrinalEligibility } from "./doctrinalSourceTyping.ts";
 
 
 export type SufficiencyCategory =
@@ -45,6 +46,7 @@ export type SufficiencyAuthorityBasis =
   | "governing_statute"
   | "governing_regulation"
   | "statute_plus_regulation"
+  | "doctrinal_secondary"
   | "insufficient";
 
 export interface SufficiencyAssessment {
@@ -102,6 +104,23 @@ export interface SufficiencyAssessment {
   body_text_topical_match: boolean;
   /** The question names a specific statute section (drives F4 profile). */
   statute_section_requested: boolean;
+
+  // ── substance_based_doctrinal_sufficiency_v1 ────────────────────────────
+  /** Depth mode the fallback was evaluated under. */
+  depth_mode: string | null;
+  /** Eligible acquired doctrinal/secondary sources (see doctrinalSourceTyping). */
+  doctrinal_secondary_refs: string[];
+  /** Ineligible-secondary reason counts (diagnosis). */
+  doctrinal_ineligible_reasons: Record<string, number>;
+  /**
+   * A refusal was converted into a limited doctrinal explanation supported by
+   * acquired statutes / doctrinal secondaries. Never licenses case-law claims.
+   */
+  limited_doctrinal_answer: boolean;
+  /** Which fallback combination fired (A/B/C), or null. */
+  doctrinal_fallback_combination: "A" | "B" | "C" | null;
+  /** Why the fallback did not fire, when it was evaluated and declined. */
+  doctrinal_fallback_declined_reason: string | null;
 }
 
 
@@ -422,6 +441,8 @@ export function assessSourceSufficiency(args: {
   requiredAnchorCandidateIds?: Set<string>;
   /** Research mode from stages/researchMode.ts (drives the sufficiency profile). */
   researchMode?: string | null;
+  /** five_mode_source_depth_policy_v1 depth mode (drives the doctrinal fallback). */
+  depthMode?: string | null;
 }): SufficiencyAssessment {
   const { question, shape, sources } = args;
   const category = classifySufficiencyCategory(shape, question);
@@ -514,6 +535,43 @@ export function assessSourceSufficiency(args: {
     return "insufficient";
   };
 
+  // ── substance_based_doctrinal_sufficiency_v1 — doctrinal fallback inputs ──
+  const doctrinalEligibility = sources.map((s) => ({ s, e: assessDoctrinalEligibility(s) }));
+  const eligibleSecondaries = doctrinalEligibility
+    .filter(({ s, e }) => e.eligible && domainMatch(s))
+    .map(({ s }) => s);
+  const doctrinalIneligibleReasons: Record<string, number> = {};
+  for (const { e } of doctrinalEligibility) {
+    if (e.eligible) continue;
+    doctrinalIneligibleReasons[e.reason] = (doctrinalIneligibleReasons[e.reason] ?? 0) + 1;
+  }
+  const depthMode = args.depthMode ?? null;
+  const broadMode = depthMode === "broad_research" || depthMode === "academic_research" ||
+    args.researchMode === "broad_doctrine" || args.researchMode === "academic_research";
+
+  /**
+   * The fallback exists to stop *over-refusal*, not to force citations: it
+   * fires only when acquired, validated material can actually carry a limited
+   * doctrinal explanation. With no eligible secondary it never fires, and the
+   * refusal stands.
+   */
+  const doctrinalFallback = (): { combination: "A" | "B" | "C"; reason: string } | null => {
+    if (!broadMode) return null;
+    const statutes = governingStatutes.length + governingRegulations.length;
+    const secondaries = eligibleSecondaries.length;
+    const judgments = usableJudgments.length;
+    if (judgments >= 1 && (statutes >= 1 || secondaries >= 1)) {
+      return { combination: "C", reason: "judgment_plus_supporting_material" };
+    }
+    if (statutes >= 1 && secondaries >= 1) {
+      return { combination: "A", reason: "statute_plus_doctrinal_secondary" };
+    }
+    if (secondaries >= 2) {
+      return { combination: "B", reason: "two_doctrinal_secondaries" };
+    }
+    return null;
+  };
+
   const finish = (
     applied: boolean,
     sufficient: boolean,
@@ -525,8 +583,36 @@ export function assessSourceSufficiency(args: {
       exactAmountsAllowed?: boolean;
     },
   ): SufficiencyAssessment => {
-    const basis = opts?.basis ?? (sufficient ? basisFor() : "insufficient");
-    const statuteOnly = sufficient && basis !== "usable_judgment" && basis !== "insufficient";
+    // Doctrinal fallback: convert a would-be refusal in broad/academic modes
+    // into a limited doctrinal answer when acquired material supports one.
+    let limitedDoctrinal = false;
+    let fallbackCombination: "A" | "B" | "C" | null = null;
+    let fallbackDeclined: string | null = null;
+    if (applied && !sufficient) {
+      const fb = doctrinalFallback();
+      if (fb) {
+        limitedDoctrinal = true;
+        fallbackCombination = fb.combination;
+        sufficient = true;
+        reason = `limited_doctrinal_fallback_${fb.combination}:${fb.reason}(was:${reason})`;
+      } else {
+        fallbackDeclined = broadMode
+          ? "no_eligible_acquired_doctrinal_support"
+          : "depth_mode_not_broad";
+      }
+    }
+    const basis = opts?.basis ??
+      (limitedDoctrinal
+        ? (usableJudgments.length > 0
+          ? "usable_judgment"
+          : governingStatutes.length + governingRegulations.length > 0
+          ? basisFor()
+          : "doctrinal_secondary")
+        : sufficient
+        ? basisFor()
+        : "insufficient");
+    const statuteOnly = sufficient && !limitedDoctrinal && basis !== "usable_judgment" &&
+      basis !== "insufficient";
     const thinAuthorityPassed = opts?.thinAuthorityPassed === true;
     const exactAmountsAllowed = opts?.exactAmountsAllowed ??
       (sufficient && !thinAuthorityPassed);
@@ -544,7 +630,13 @@ export function assessSourceSufficiency(args: {
         !caseLawRequired && usableJudgments.length === 0 && statuteOnly,
       morphology_domain_match: morphologyDomainMatch,
       practical_steps_thin_authority_passed: thinAuthorityPassed,
-      exact_amounts_allowed: exactAmountsAllowed,
+      exact_amounts_allowed: limitedDoctrinal ? false : exactAmountsAllowed,
+      depth_mode: depthMode,
+      doctrinal_secondary_refs: eligibleSecondaries.map((s2) => s2.ref),
+      doctrinal_ineligible_reasons: doctrinalIneligibleReasons,
+      limited_doctrinal_answer: limitedDoctrinal,
+      doctrinal_fallback_combination: fallbackCombination,
+      doctrinal_fallback_declined_reason: fallbackDeclined,
     };
   };
 
