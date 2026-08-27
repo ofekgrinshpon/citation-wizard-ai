@@ -155,10 +155,11 @@ def build_run(name, md):
 
         if not csm_applied:
             cm = "not_run"
+        elif ref in csm_kept:
+            # kept in at least one answer block wins over per-block drops
+            cm = "passed"
         elif ref in csm_dropped:
             cm = "dropped"
-        elif ref in csm_kept:
-            cm = "passed"
         else:
             cm = "not_run"
 
