@@ -34,24 +34,44 @@ import { decodeHebrew } from "./judgmentTextAcquisition.ts";
 import { officialFetch, looksLikeBlockPage } from "../lib/officialFetch.ts";
 import { looksBinary } from "./statuteTextAcquisition.ts";
 import type { SourceIntegrity } from "./sourceIntegrity.ts";
+import {
+  assessSubstantiveBody,
+  contentHash,
+  COURT_HOST_RE,
+  extractFullTextLinks,
+  isAccessControlledUrl,
+  looksLikeMetadataPage,
+  looksLikePaywallOrLogin,
+  PAYWALLED_HOST_RE,
+  remapSecondaryType,
+  SECONDARY_WEB_LIMITS,
+  type SecondaryTypeRemap,
+} from "./secondaryWebAcquisition.ts";
 
 export const SECONDARY_BODY_LIMITS = {
   /** Hard per-web-attempt deadline (fetch + decode + extract + post-extract). */
   PER_ATTEMPT_MS: 10_000,
   /** Whole-stage time box. */
-  TOTAL_MS: 20_000,
+  TOTAL_MS: 26_000,
   /** Local corpus / cache lookups per run. */
   MAX_LOCAL_LOOKUPS: 8,
-  /** Open-web fetches per run. */
-  MAX_WEB_ATTEMPTS: 3,
+  /** Open-web fetches per run (initial URLs + full-text link follows). */
+  MAX_WEB_ATTEMPTS: SECONDARY_WEB_LIMITS.MAX_WEB_FETCHES,
   MAX_BYTES: 3 * 1024 * 1024,
-  MAX_INLINE_EXTRACTION_BYTES: 2_000_000,
-  MAX_DECODE_BYTES: 1_000_000,
+  /**
+   * Secondary acquisition is always speculative, so inline (synchronous,
+   * uninterruptible) extraction is held to the speculative preflight ceiling —
+   * larger binaries are the known isolate killer and are refused instead.
+   */
+  MAX_INLINE_EXTRACTION_BYTES: 900_000,
+  MAX_DECODE_BYTES: 600_000,
+
   /** Below this the acquisition is not substantive text. */
-  MIN_USABLE_TEXT: 800,
+  MIN_USABLE_TEXT: SECONDARY_WEB_LIMITS.MIN_BODY_CHARS,
   /** Stored body cap. */
   MAX_TEXT: 16_000,
 } as const;
+
 
 /** Modes where doctrinal secondary material is worth acquiring. */
 const ALLOWED_DEPTH_MODES = new Set([
@@ -97,10 +117,10 @@ const DOCTRINAL_HOST_RE =
   /(ac\.il|\.edu|jstor|heinonline|repository|journals?|idi\.org\.il|mevaker\.gov\.il|knesset\.gov\.il\/mmm|oecd|un\.org)/i;
 
 /** Hosts we refuse to touch from this stage (relay / court / paywalled). */
-const BLOCKED_HOST_RE =
-  /(court\.gov\.il|supremedecisions|nevo\.co\.il|takdin|pador|lawdata|psakdin)/i;
-/** Login / paywall URL shapes we never attempt. */
-const ACCESS_CONTROLLED_RE = /(login|signin|sign-in|subscribe|paywall|checkout|account)/i;
+const BLOCKED_HOST_RE = new RegExp(
+  `(${COURT_HOST_RE.source}|${PAYWALLED_HOST_RE.source})`,
+  "i",
+);
 
 export type SecondaryStageSink = (
   name: string,
@@ -110,8 +130,10 @@ export type SecondaryStageSink = (
 export type SecondaryAcquisitionPath =
   | "local_secondary_body"
   | "verified_cache_body"
+  | "secondary_cache_body"
   | "open_web_body"
   | "none";
+
 
 export interface SecondaryCandidateReport {
   candidate_id: string;
@@ -124,7 +146,7 @@ export interface SecondaryCandidateReport {
   selection_evidence: string[];
   local_lookup_attempted: boolean;
   local_body_found: boolean;
-  local_lookup_source: "legal_documents" | "verified_cache" | null;
+  local_lookup_source: "legal_documents" | "verified_cache" | "secondary_cache" | null;
   web_attempted: boolean;
   web_result: string | null;
   acquisition_path: SecondaryAcquisitionPath;
@@ -135,7 +157,30 @@ export interface SecondaryCandidateReport {
   bibliography_only: boolean;
   skipped_by_budget: boolean;
   ms: number;
+  // ── secondary_web_body_acquisition_v1 telemetry ────────────────────────
+  final_url: string | null;
+  http_status: number | null;
+  content_type: string | null;
+  bytes: number | null;
+  extraction_method: string | null;
+  metadata_page_detected: boolean;
+  fulltext_links_found: number;
+  fulltext_link_followed: string | null;
+  substantive: boolean | null;
+  substantive_reason: string | null;
+  substantive_threshold: number | null;
+  type_remap: {
+    mapped: boolean;
+    original_type: string;
+    mapped_type: string | null;
+    evidence: string[];
+    confidence: string;
+    failure_reason: string | null;
+  } | null;
+  content_hash: string | null;
+  cache_write: string | null;
 }
+
 
 export interface SecondaryBodyAcquisitionReport {
   ran: boolean;
@@ -226,7 +271,12 @@ export function selectSecondaryCandidate(
 }
 
 /** Attach an acquired body to a candidate without touching identity rules. */
-function attachBody(c: Candidate, text: string, path: SecondaryAcquisitionPath): number {
+function attachBody(
+  c: Candidate,
+  text: string,
+  path: SecondaryAcquisitionPath,
+  extra?: { remap?: SecondaryTypeRemap | null; final_url?: string | null },
+): number {
   const stored = text.slice(0, SECONDARY_BODY_LIMITS.MAX_TEXT);
   const meta = (c.metadata ?? {}) as Record<string, unknown>;
   const integ = meta.source_integrity as SourceIntegrity | undefined;
@@ -244,6 +294,16 @@ function attachBody(c: Candidate, text: string, path: SecondaryAcquisitionPath):
       delete integ.reject_reason;
     }
   }
+  // secondary_web_body_acquisition_v1 — an evidence-backed doctrinal type for
+  // an untyped candidate. Never overwrites an existing non-`other` type and
+  // never produces a primary-law type.
+  const currentType = String(c.source_type ?? "").toLowerCase();
+  if (
+    extra?.remap?.mapped && extra.remap.mapped_type &&
+    (!currentType || currentType === "other" || currentType === "unknown" || currentType === "web")
+  ) {
+    c.source_type = extra.remap.mapped_type as Candidate["source_type"];
+  }
   c.metadata = {
     ...meta,
     ...(integ ? { source_integrity: integ } : {}),
@@ -251,22 +311,38 @@ function attachBody(c: Candidate, text: string, path: SecondaryAcquisitionPath):
     secondary_body_acquired: true,
     body_acquired: true,
     acquisition_path: path,
+    ...(extra?.final_url ? { secondary_final_url: extra.final_url } : {}),
+    ...(extra?.remap ? { secondary_type_remap: extra.remap } : {}),
     final_text_usability: stored.length >= 1200 ? "full_text" : "substantive_excerpt",
   };
   if ((c.snippet || "").length < 400) c.snippet = stored.slice(0, 1200);
   return stored.length;
 }
 
+
 async function fetchCapped(
   url: string,
   signal: AbortSignal,
-): Promise<{ bytes: Uint8Array; contentType: string }> {
+): Promise<{ bytes: Uint8Array; contentType: string; finalUrl: string; status: number }> {
   const res = await officialFetch(url, { signal });
+  const finalUrl = res.url || url;
+  const status = res.status;
   if (!res.ok) {
     try {
       await res.body?.cancel();
     } catch { /* already closed */ }
     throw new Error(`http_${res.status}`);
+  }
+  // Redirect safety: a redirect that lands on a court/paywalled/login target is
+  // refused rather than followed into the judgment or subscription lanes.
+  if (
+    BLOCKED_HOST_RE.test(hostOf(finalUrl)) || PAYWALLED_HOST_RE.test(finalUrl) ||
+    isAccessControlledUrl(finalUrl)
+  ) {
+    try {
+      await res.body?.cancel();
+    } catch { /* already closed */ }
+    throw new Error("redirected_to_disallowed_host");
   }
   const contentType = (res.headers.get("content-type") || "").toLowerCase();
   const declared = Number(res.headers.get("content-length") || "0") || 0;
@@ -277,7 +353,7 @@ async function fetchCapped(
     throw new Error("secondary_body_too_large");
   }
   const reader = res.body?.getReader();
-  if (!reader) return { bytes: new Uint8Array(0), contentType };
+  if (!reader) return { bytes: new Uint8Array(0), contentType, finalUrl, status };
   const chunks: Uint8Array[] = [];
   let total = 0;
   while (true) {
@@ -300,16 +376,30 @@ async function fetchCapped(
     off += ch.byteLength;
     if (off >= total) break;
   }
-  return { bytes, contentType };
+  return { bytes, contentType, finalUrl, status };
 }
 
-/** Bounded open-web body acquisition for a public secondary source. */
-export async function acquireSecondaryBodyFromUrl(
+export interface SecondaryFetchResult {
+  text: string;
+  /** Raw markup, kept only for HTML so full-text links can be discovered. */
+  html: string | null;
+  final_url: string;
+  status: number;
+  content_type: string;
+  bytes: number;
+  extraction_method: "pdf" | "docx" | "html" | "text";
+}
+
+/**
+ * One bounded fetch + extraction of a public secondary source. No link
+ * following, no retries: the caller owns the (small) follow budget.
+ */
+export async function fetchSecondaryBody(
   url: string,
   budgetExceeded: () => boolean,
   onStage: SecondaryStageSink,
   allowExtraction?: (bytes: number) => boolean,
-): Promise<string> {
+): Promise<SecondaryFetchResult> {
   const signal = AbortSignal.timeout(SECONDARY_BODY_LIMITS.PER_ATTEMPT_MS);
   const gate = (where: string) => {
     if (budgetExceeded()) {
@@ -318,13 +408,13 @@ export async function acquireSecondaryBodyFromUrl(
     }
   };
   gate("before_fetch");
-  const { bytes, contentType } = await fetchCapped(url, signal);
+  const { bytes, contentType, finalUrl, status } = await fetchCapped(url, signal);
   gate("after_fetch");
 
   const head = new TextDecoder("latin1").decode(bytes.slice(0, 8));
-  const isPdf = /pdf/.test(contentType) || /\.pdf(\?|#|$)/i.test(url) || head.startsWith("%PDF");
+  const isPdf = /pdf/.test(contentType) || /\.pdf(\?|#|$)/i.test(finalUrl) || head.startsWith("%PDF");
   const isDocx = /wordprocessingml|officedocument/.test(contentType) ||
-    /\.docx(\?|#|$)/i.test(url) || head.startsWith("PK");
+    /\.docx(\?|#|$)/i.test(finalUrl) || head.startsWith("PK");
 
   if (isPdf || isDocx) {
     if (bytes.byteLength > SECONDARY_BODY_LIMITS.MAX_INLINE_EXTRACTION_BYTES) {
@@ -337,7 +427,15 @@ export async function acquireSecondaryBodyFromUrl(
     const extracted = await extractDocumentText(bytes, isPdf ? "pdf" : "docx");
     gate("after_binary_extract");
     const processed = await processExtractedBody(extracted, { onStage, budgetExceeded });
-    return processed.text;
+    return {
+      text: processed.text,
+      html: null,
+      final_url: finalUrl,
+      status,
+      content_type: contentType,
+      bytes: bytes.byteLength,
+      extraction_method: isPdf ? "pdf" : "docx",
+    };
   }
 
   if (looksBinary(bytes)) throw new Error("secondary_binary_not_text_extractable");
@@ -346,25 +444,65 @@ export async function acquireSecondaryBodyFromUrl(
   const decoded = decodeHebrew(bytes.slice(0, SECONDARY_BODY_LIMITS.MAX_DECODE_BYTES));
   gate("after_decode");
   if (looksLikeBlockPage(decoded.slice(0, 4000))) throw new Error("block_or_access_page");
+  const isHtml = /html/.test(contentType) || /<\s*(html|body|div|p)\b/i.test(decoded.slice(0, 2000));
   const processed = await processExtractedBody(stripMarkup(decoded), { onStage, budgetExceeded });
-  return processed.text;
+  if (looksLikePaywallOrLogin(processed.text)) throw new Error("paywall_or_login_page");
+  return {
+    text: processed.text,
+    html: isHtml ? decoded : null,
+    final_url: finalUrl,
+    status,
+    content_type: contentType,
+    bytes: bytes.byteLength,
+    extraction_method: isHtml ? "html" : "text",
+  };
 }
+
+/** Backwards-compatible wrapper: text only. */
+export async function acquireSecondaryBodyFromUrl(
+  url: string,
+  budgetExceeded: () => boolean,
+  onStage: SecondaryStageSink,
+  allowExtraction?: (bytes: number) => boolean,
+): Promise<string> {
+  const r = await fetchSecondaryBody(url, budgetExceeded, onStage, allowExtraction);
+  return r.text;
+}
+
 
 interface AdminLike {
   from: (table: string) => any;
 }
 
+type LocalBodySource = "legal_documents" | "verified_cache" | "secondary_cache";
+
 async function localBodyLookup(
   admin: AdminLike,
   c: Candidate,
-): Promise<{ text: string; source: "legal_documents" | "verified_cache" } | null> {
+): Promise<{ text: string; source: LocalBodySource } | null> {
   const meta = (c.metadata ?? {}) as Record<string, unknown>;
   const documentId = c.document_id ??
     (typeof meta.document_id === "string" ? meta.document_id : null);
   const url = c.source_url ?? null;
 
+  // 0. Previously acquired open-web secondary body (cache before refetch).
+  if (url) {
+    try {
+      const { data: cached } = await admin
+        .from("secondary_source_bodies")
+        .select("body")
+        .eq("url", url)
+        .limit(1);
+      const body = String((Array.isArray(cached) ? cached[0] : null)?.body ?? "");
+      if (body.length >= SECONDARY_BODY_LIMITS.MIN_USABLE_TEXT) {
+        return { text: body, source: "secondary_cache" };
+      }
+    } catch { /* cache is best-effort; never blocks acquisition */ }
+  }
+
   // 1. Local corpus document (full stored content).
   if (documentId || url) {
+
     let q = admin.from("legal_documents").select("id,content").limit(1);
     q = documentId ? q.eq("id", documentId) : q.eq("source_url", url);
     const { data } = await q;
@@ -520,7 +658,22 @@ export async function runSecondaryBodyAcquisition(
       bibliography_only: true,
       skipped_by_budget: false,
       ms: 0,
+      final_url: null,
+      http_status: null,
+      content_type: null,
+      bytes: null,
+      extraction_method: null,
+      metadata_page_detected: false,
+      fulltext_links_found: 0,
+      fulltext_link_followed: null,
+      substantive: null,
+      substantive_reason: null,
+      substantive_threshold: null,
+      type_remap: null,
+      content_hash: null,
+      cache_write: null,
     };
+
 
     if (budgetExceeded()) {
       row.skipped_by_budget = true;
@@ -539,17 +692,16 @@ export async function runSecondaryBodyAcquisition(
       try {
         const local = await localBodyLookup(input.admin, c);
         if (local) {
+          const path: SecondaryAcquisitionPath = local.source === "verified_cache"
+            ? "verified_cache_body"
+            : local.source === "secondary_cache"
+            ? "secondary_cache_body"
+            : "local_secondary_body";
           localHits++;
           row.local_body_found = true;
           row.local_lookup_source = local.source;
-          row.body_chars = attachBody(
-            c,
-            local.text,
-            local.source === "verified_cache" ? "verified_cache_body" : "local_secondary_body",
-          );
-          row.acquisition_path = local.source === "verified_cache"
-            ? "verified_cache_body"
-            : "local_secondary_body";
+          row.body_chars = attachBody(c, local.text, path);
+          row.acquisition_path = path;
           row.ok = true;
           row.bibliography_only = false;
           acquired.push(c.candidate_id);
@@ -572,9 +724,9 @@ export async function runSecondaryBodyAcquisition(
     // ── 2. bounded open-web acquisition ───────────────────────────────────
     if (!url) {
       row.failure_reason ??= "no_public_url";
-    } else if (BLOCKED_HOST_RE.test(host ?? "")) {
+    } else if (BLOCKED_HOST_RE.test(host ?? "") || PAYWALLED_HOST_RE.test(url)) {
       row.failure_reason = "host_not_allowed_for_secondary_fetch";
-    } else if (ACCESS_CONTROLLED_RE.test(url)) {
+    } else if (isAccessControlledUrl(url)) {
       row.failure_reason = "access_controlled_url";
     } else if (webAttempts >= SECONDARY_BODY_LIMITS.MAX_WEB_ATTEMPTS) {
       row.skipped_by_budget = true;
@@ -587,29 +739,127 @@ export async function runSecondaryBodyAcquisition(
       skippedByBudget++;
       stop = "retrieval_budget_exceeded";
     } else {
+      const allowExtraction = (bytes: number) =>
+        input.retrieval_budget?.allowExtraction?.(bytes) ?? true;
       webAttempts++;
       row.web_attempted = true;
       try {
-        const text = await acquireSecondaryBodyFromUrl(
-          url,
-          budgetExceeded,
-          onStage,
-          (bytes: number) => input.retrieval_budget?.allowExtraction?.(bytes) ?? true,
-        );
-        if (text.length < SECONDARY_BODY_LIMITS.MIN_USABLE_TEXT) {
-          throw new Error("secondary_text_below_threshold");
+        let fetched = await fetchSecondaryBody(url, budgetExceeded, onStage, allowExtraction);
+        row.final_url = fetched.final_url;
+        row.http_status = fetched.status;
+        row.content_type = fetched.content_type;
+        row.bytes = fetched.bytes;
+        row.extraction_method = fetched.extraction_method;
+
+        // ── 2a. metadata / landing page → one or two full-text link follows ──
+        if (fetched.html && looksLikeMetadataPage(fetched.text, fetched.html)) {
+          row.metadata_page_detected = true;
+          const links = extractFullTextLinks(fetched.html, fetched.final_url);
+          row.fulltext_links_found = links.length;
+          for (const link of links) {
+            if (webAttempts >= SECONDARY_BODY_LIMITS.MAX_WEB_ATTEMPTS || budgetExceeded()) {
+              row.skipped_by_budget = true;
+              break;
+            }
+            webAttempts++;
+            try {
+              const follow = await fetchSecondaryBody(
+                link.url,
+                budgetExceeded,
+                onStage,
+                allowExtraction,
+              );
+              if (follow.text.length > fetched.text.length) {
+                fetched = follow;
+                row.fulltext_link_followed = link.url;
+                row.final_url = follow.final_url;
+                row.http_status = follow.status;
+                row.content_type = follow.content_type;
+                row.bytes = follow.bytes;
+                row.extraction_method = follow.extraction_method;
+                await onStage("secondary_fulltext_link_followed", {
+                  candidate_id: c.candidate_id,
+                  link: link.url,
+                  chars: follow.text.length,
+                });
+                break;
+              }
+            } catch (err) {
+              await onStage("secondary_fulltext_link_failed", {
+                candidate_id: c.candidate_id,
+                link: link.url,
+                reason: err instanceof Error ? err.message : String(err),
+              });
+            }
+          }
         }
+
+        // ── 2b. source-type remap on the acquired body ───────────────────────
+        const remap = remapSecondaryType({
+          originalType: c.source_type,
+          title: c.title,
+          finalUrl: fetched.final_url,
+          bodyText: fetched.text,
+        });
+        row.type_remap = { ...remap };
+
+        // ── 2c. substantive-body validation ──────────────────────────────────
+        const assessment = assessSubstantiveBody(fetched.text, remap.mapped_type);
+        row.substantive = assessment.substantive;
+        row.substantive_reason = assessment.reason;
+        row.substantive_threshold = assessment.threshold;
+        if (!assessment.substantive) throw new Error(`not_substantive:${assessment.reason}`);
+
+        // A body we cannot type as doctrinal stays bibliography-only: it is
+        // never promoted into claim support on evidence we do not have.
+        const alreadyDoctrinal = SECONDARY_TYPES.has(String(c.source_type ?? "").toLowerCase());
+        if (!remap.mapped && !alreadyDoctrinal) {
+          throw new Error(`type_remap_failed:${remap.failure_reason ?? "unmapped"}`);
+        }
+
         webSuccesses++;
         row.web_result = "body_acquired";
         row.acquisition_path = "open_web_body";
-        row.body_chars = attachBody(c, text, "open_web_body");
+        row.body_chars = attachBody(c, fetched.text, "open_web_body", {
+          remap,
+          final_url: fetched.final_url,
+        });
         row.ok = true;
         row.bibliography_only = false;
         acquired.push(c.candidate_id);
+
+        // ── 2d. persist for reuse (best effort; never blocks acquisition) ────
+        try {
+          const hash = await contentHash(fetched.text);
+          row.content_hash = hash;
+          const { error } = await input.admin
+            .from("secondary_source_bodies")
+            .upsert({
+              url,
+              final_url: fetched.final_url,
+              content_hash: hash,
+              title: String(c.title ?? "").slice(0, 500),
+              source_type: row.source_type,
+              mapped_type: remap.mapped_type,
+              type_confidence: remap.confidence,
+              acquisition_path: "open_web_body",
+              extraction_method: fetched.extraction_method,
+              content_type: fetched.content_type,
+              body_chars: fetched.text.length,
+              body: fetched.text.slice(0, 200_000),
+              updated_at: new Date().toISOString(),
+            }, { onConflict: "url" });
+          row.cache_write = error ? `failed:${error.message}` : "ok";
+        } catch (err) {
+          row.cache_write = `failed:${err instanceof Error ? err.message : String(err)}`;
+        }
+
         await onStage("secondary_web_body_ok", {
           candidate_id: c.candidate_id,
           host,
           chars: row.body_chars,
+          mapped_type: remap.mapped_type,
+          followed: row.fulltext_link_followed,
         });
       } catch (err) {
         const reason = err instanceof Error ? err.message : String(err);
@@ -619,6 +869,7 @@ export async function runSecondaryBodyAcquisition(
         await onStage("secondary_web_body_failed", { candidate_id: c.candidate_id, host, reason });
       }
     }
+
 
     if (!row.ok) bibliographyOnly.push(c.candidate_id);
     rows.push({ ...row, ms: Date.now() - a0 });
