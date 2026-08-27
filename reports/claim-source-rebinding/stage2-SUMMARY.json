@@ -1,0 +1,181 @@
+[
+  {
+    "id": "B8",
+    "pass": true,
+    "failures": [],
+    "footnotes": 1,
+    "rebinding": null
+  },
+  {
+    "id": "NATION-STATE-ACADEMIC",
+    "pass": true,
+    "failures": [],
+    "footnotes": 2,
+    "rebinding": {
+      "applied": true,
+      "unbound": 1,
+      "decisions": [
+        {
+          "ref": "s1",
+          "reason": "claim_id_match",
+          "binding": "exact",
+          "block_index": 1
+        },
+        {
+          "ref": "s3",
+          "reason": "claim_id_match",
+          "binding": "exact",
+          "block_index": 1
+        },
+        {
+          "ref": "s5",
+          "reason": "claim_id_match",
+          "binding": "exact",
+          "block_index": 1
+        },
+        {
+          "ref": "s1",
+          "score": 7,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 2,
+          "matched_terms": [
+            "יקורת",
+            "נוסח",
+            "מבנה",
+            "יסוד",
+            "שוויונ",
+            "סעיפימ",
+            "זהות"
+          ]
+        },
+        {
+          "ref": "s2",
+          "score": 6,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 2,
+          "matched_terms": [
+            "לאומ",
+            "יסוד",
+            "אחרימ",
+            "קונפליקטימ",
+            "שוויונ",
+            "מספק"
+          ]
+        },
+        {
+          "ref": "s5",
+          "score": 6,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 2,
+          "matched_terms": [
+            "לאומ",
+            "החוק",
+            "דיונ",
+            "מספק",
+            "זהות",
+            "אזרחיות"
+          ]
+        },
+        {
+          "ref": "s4",
+          "score": 4,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 3,
+          "matched_terms": [
+            "לאומ",
+            "יסוד",
+            "חוקתית",
+            "גישות"
+          ]
+        },
+        {
+          "ref": "s2",
+          "score": 4,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 3,
+          "matched_terms": [
+            "לאומ",
+            "יסוד",
+            "חוקתית",
+            "סגרת"
+          ]
+        },
+        {
+          "ref": "s1",
+          "score": 5,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 4,
+          "matched_terms": [
+            "נוסח",
+            "זהות",
+            "סעיפימ",
+            "פיתוח",
+            "יהודיימ"
+          ]
+        },
+        {
+          "ref": "s3",
+          "score": 3,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 4,
+          "matched_terms": [
+            "נוסח",
+            "כנסת",
+            "סעיפימ"
+          ]
+        },
+        {
+          "ref": "s2",
+          "reason": "no_substantive_binding",
+          "binding": "unbound",
+          "block_index": 4
+        },
+        {
+          "ref": "s5",
+          "score": 3,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 5,
+          "matched_terms": [
+            "יחסי",
+            "דינה",
+            "החוק"
+          ]
+        },
+        {
+          "ref": "s4",
+          "score": 2,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 5,
+          "matched_terms": [
+            "יקורת",
+            "יסוד"
+          ]
+        }
+      ],
+      "bound_exact": 3,
+      "bound_facet": 0,
+      "bound_topical": 9,
+      "capped_ref_count": 0,
+      "bound_area_direct": 0,
+      "rebound_ref_count": 9,
+      "claim_mismatch_drops_after": 1,
+      "claim_mismatch_drops_before": 10
+    }
+  },
+  {
+    "id": "P02",
+    "pass": true,
+    "failures": [],
+    "footnotes": 0,
+    "rebinding": null
+  }
+]

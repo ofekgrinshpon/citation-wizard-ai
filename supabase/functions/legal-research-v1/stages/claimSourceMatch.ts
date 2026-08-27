@@ -24,6 +24,13 @@ import {
   profileSource,
   type SourceSupportProfile,
 } from "./claimSupportCategory.ts";
+import {
+  type BindingKind,
+  emptyRebindingSummary,
+  evaluateBinding,
+  type RebindingSummary,
+  selectBlockRefs,
+} from "./claimSourceRebinding.ts";
 
 export type PropositionType =
   | "black_letter_rule"
@@ -85,7 +92,10 @@ export interface ClaimSourceMatchReport {
   authority_overstatements: AuthorityOverstatement[];
   secondary_supported_block_count: number;
   primary_supported_block_count: number;
+  /** claim_source_rebinding_v1 telemetry. */
+  rebinding: RebindingSummary;
 }
+
 
 
 const SUBSTANTIVE: PropositionType[] = ["black_letter_rule", "application", "practical_guidance"];
@@ -112,12 +122,15 @@ export interface SourceMatchMeta {
   source_type: string;
   body_acquired: boolean;
   is_primary: boolean;
+  /** claim_source_rebinding_v1 — verifier's own statement of what it supports. */
+  supported_points: string[];
 }
 
 function isPrimaryCitable(s: DrafterInputSource): boolean {
   const c = String(s.citable_as ?? "");
   return c === "statute" || c === "regulation" || c === "judgment";
 }
+
 
 /** Derive the match metadata carried alongside each drafter source. */
 export function buildSourceMatchMeta(s: DrafterInputSource): SourceMatchMeta {
@@ -131,8 +144,10 @@ export function buildSourceMatchMeta(s: DrafterInputSource): SourceMatchMeta {
     source_type: s.source_type,
     body_acquired: s.body_acquired === true,
     is_primary: isPrimaryCitable(s),
+    supported_points: Array.isArray(s.supported_points) ? s.supported_points : [],
   };
 }
+
 
 // ─── Block-side tags ────────────────────────────────────────────────────────
 
@@ -192,8 +207,12 @@ export function applyClaimSourceMatch(
     authority_overstatements: [],
     secondary_supported_block_count: 0,
     primary_supported_block_count: 0,
+    rebinding: emptyRebindingSummary(),
   };
   if (!draft) return { draft, report, limitation_text: "" };
+  report.rebinding.applied = true;
+  const sourceByRef = new Map(inputSources.map((s) => [s.ref, s]));
+
 
   const metas = inputSources.map(buildSourceMatchMeta);
   const byRef = new Map(metas.map((m) => [m.ref, m]));
@@ -234,6 +253,10 @@ export function applyClaimSourceMatch(
     const overstatementDrops: string[] = [];
 
     const kept: string[] = [];
+    const blockBindings = new Map<string, BindingKind>();
+    const blockText = typeof (b as unknown as Record<string, unknown>).text === "string"
+      ? String((b as unknown as Record<string, unknown>).text)
+      : "";
 
     for (const ref of b.source_refs) {
       const m = byRef.get(ref);
@@ -244,14 +267,60 @@ export function applyClaimSourceMatch(
       }
       let reason: MismatchReason | null = null;
 
-      // Rule A — claim/facet binding.
-      if (
+      // Rule A — claim/facet binding (claim_source_rebinding_v1).
+      // A ref is dropped only when no substantive binding exists at all;
+      // pure id-space divergence no longer costs a good source.
+      const decision = evaluateBinding({
+        block_index: idx,
+        claim_id: tags.claim_id,
+        facet_id: tags.facet_id,
+        proposition_type: ptype,
+        claim_category: category,
+        legal_area: tags.legal_area,
+        text: blockText,
+      }, {
+        ref,
+        verified_claim_ids: m.verified_claim_ids,
+        facet_ids: m.facet_ids,
+        supported_points: m.supported_points,
+        legal_area: m.legal_area,
+        verifier_verdict: m.verifier_verdict,
+        body_acquired: m.body_acquired,
+      });
+      blockBindings.set(ref, decision.binding);
+      report.rebinding.decisions.push(decision);
+      switch (decision.binding) {
+        case "exact":
+          report.rebinding.bound_exact++;
+          break;
+        case "facet":
+          report.rebinding.bound_facet++;
+          break;
+        case "topical":
+          report.rebinding.bound_topical++;
+          break;
+        case "area_direct":
+          report.rebinding.bound_area_direct++;
+          break;
+        default:
+          report.rebinding.unbound++;
+      }
+
+      // What the pre-rebinding string-identity rule would have done.
+      const legacyMismatch = !!(
         blockClaim && m.verified_claim_ids.length > 0 &&
         !m.verified_claim_ids.includes(blockClaim) &&
         !(tags.facet_id && m.facet_ids.includes(tags.facet_id))
-      ) {
+      );
+      if (legacyMismatch) report.rebinding.claim_mismatch_drops_before++;
+
+      if (decision.binding === "unbound") {
         reason = "claim_mismatch";
+        report.rebinding.claim_mismatch_drops_after++;
+      } else if (legacyMismatch) {
+        report.rebinding.rebound_ref_count++;
       }
+
 
       // Rule B — background/commentary only for background/limitation blocks.
       // Relaxed (substance_based_doctrinal_sufficiency_v1) for doctrinal /
@@ -321,13 +390,25 @@ export function applyClaimSourceMatch(
       }
     }
 
-    if (b.source_refs.length > 0 && kept.length === 0 && substantive) {
+    // claim_source_rebinding_v1 — prefer the strongest binding / highest
+    // authority refs and cap per-block citations to avoid footnote inflation.
+    const selection = selectBlockRefs(kept, {
+      bindings: blockBindings,
+      profiles,
+      sources: sourceByRef,
+      claim_category: category,
+    });
+    const finalRefs = selection.refs;
+    report.rebinding.capped_ref_count += selection.dropped.length;
+
+    if (b.source_refs.length > 0 && finalRefs.length === 0 && substantive) {
       report.unsupported_block_count++;
     }
 
     // substance_based_doctrinal_sufficiency_v1 — per-block category telemetry
     // + authority-overstatement detection.
-    const keptProfiles = kept.map((r) => profiles.get(r)).filter(Boolean) as SourceSupportProfile[];
+    const keptProfiles = finalRefs.map((r) => profiles.get(r)).filter(Boolean) as SourceSupportProfile[];
+
     const hasPrimary = keptProfiles.some((p) => p.judgment_authority || p.statutory_authority);
     const onlySecondary = keptProfiles.length > 0 && !hasPrimary &&
       keptProfiles.every((p) => p.doctrinal_authority || p.background_only);
@@ -343,7 +424,7 @@ export function applyClaimSourceMatch(
       });
     }
     if (
-      basis.includes("docket_identity_escalation") && kept.length > 0 &&
+      basis.includes("docket_identity_escalation") && finalRefs.length > 0 &&
       !keptProfiles.some((p) => p.judgment_authority)
     ) {
       report.authority_overstatements.push({
@@ -358,7 +439,7 @@ export function applyClaimSourceMatch(
       block_index: idx,
       category,
       basis,
-      kept_refs: kept,
+      kept_refs: finalRefs,
       support_levels: keptProfiles.map((p) =>
         p.judgment_authority
           ? "judgment"
@@ -370,7 +451,7 @@ export function applyClaimSourceMatch(
       ),
     });
 
-    blocks.push({ ...b, source_refs: kept } as StructuredBlock);
+    blocks.push({ ...b, source_refs: finalRefs } as StructuredBlock);
   });
 
   for (const [claim, s] of claimSupport) {
@@ -382,13 +463,17 @@ export function applyClaimSourceMatch(
     : [...claimSupport.values()].some((s) => s.primary);
 
   let limitation_text = "";
-  if (report.unsupported_block_count > 0 || report.source_ref_mismatch_count > 0) {
+  // claim_source_rebinding_v1 — proportional limitation: a caveat is added only
+  // when a substantive block actually lost all of its support, not merely
+  // because some ref was dropped while the block kept direct support.
+  if (report.unsupported_block_count > 0) {
     limitation_text = CLAIM_SUPPORT_LIMITATION_HE;
     report.limitation_added = true;
   } else if (report.commentary_only_claims.length > 0 && !opts?.limitedDoctrinalAnswer) {
     limitation_text = COMMENTARY_ONLY_LIMITATION_HE;
     report.limitation_added = true;
   }
+
   if (report.authority_overstatements.length > 0) {
     limitation_text += AUTHORITY_OVERSTATEMENT_LIMITATION_HE;
     report.limitation_added = true;
