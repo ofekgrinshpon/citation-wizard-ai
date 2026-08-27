@@ -1,69 +1,75 @@
-# substance_based_doctrinal_sufficiency_v1
+# source_use_intent_planning_v1
 
-Goal: let acquired and validated secondary/doctrinal material carry *limited doctrinal explanations* in broad research questions, instead of refusing. No loosening of judgment identity, docket, cache or primary-law integrity rules.
+Teach the pipeline to plan *what the user is asking the system to do* — and how sources may be used for that task — instead of treating every question as a black-letter legal question. Substance-based planning only: no phrase→template mapping, no rigid output modes.
 
-## Current behaviour (verified in code)
+## Why this is needed
 
-- `stages/sourceSufficiency.ts` recognises doctrinal material only through a fixed set: `journal_article, article, scholarship, book, commentary`. Anything typed `other` is invisible to sufficiency, even with an acquired body.
-- The catch-all profile (`statutory_institution`) passes only when there is a domain-matched statute, a usable judgment, or a topical-authority source; otherwise it returns `no_statutory_caselaw_or_doctrinal_anchor`, which `drafterV2.ts` turns into the `insufficient_sources_limitation` refusal draft.
-- Even when that branch passes on doctrinal-only material, `sufficiency_authority_basis` is forced to `insufficient`, so the drafter gets no signal about which authority level it may claim.
-- `stages/claimSourceMatch.ts` classifies blocks by a `proposition_type` tag (`black_letter_rule | application | background | practical_guidance | limitation`) with a default of `application`, and Rule B drops any non-primary `background`/`commentary` source from a substantive block. That is what strips footnotes from doctrinal-only answers.
-- The five-mode depth decision (`sourceDepth.depth_mode`) is computed in `index.ts` but is **not** passed into the drafter or the sufficiency gate.
+Today the analyzer emits only a light `answer_intent.output_shape` format hint, and everything downstream (research mode, router profile, source-depth policy, sufficiency, drafter) assumes the user wants a legal ruling. Source-seeking, literature and seminar-planning questions therefore hit case-law sufficiency gates, get refused, or come back with generic law plus unrelated "found" sources.
 
-## What to build
+## What gets added
 
-### 1. Claim-support categories by substance (new `stages/claimSupportCategory.ts`)
+### 1. Analyzer contract: a source-use plan
 
-Map every drafted block to one of five support categories using structural signals already present — the block's `proposition_type` tag, its claim/facet binding, the claim's `required_roles` from the analyzer, the analyzer `answer_type` / `output_shape`, and the research + depth mode. No fixed Hebrew phrase lists.
+Extend the analyzer tool schema (`lib/schemas.ts`, `lib/types.ts`) and prompt (`stages/claimAnalyzer.ts`) with a new optional `source_use_plan` object, emitted in the same LLM call (no extra call, no extra cost):
 
-| Category | Required support |
-|---|---|
-| A court_holding | acquired judgment body + strict identity + integrity + verifier direct/partial + claim match |
-| B statutory | acquired official statute/regulation text (section/title validated where relevant) |
-| C doctrinal_synthesis | acquired + validated secondary/doctrinal, case law, statutes, or a combination |
-| D scholarly_commentary | acquired full-text scholarship/commentary + integrity + verifier direct/partial + claim match |
-| E background | acquired institutional/official/secondary material; never proves a rule |
+- `user_task_intent` — case_holding | statute_explanation | doctrinal_explanation | case_law_synthesis | source_recommendation | literature_map | seminar_planning | argument_development | practical_research | document_check
+- `source_use_intent[]` — binding_authority | statutory_text | doctrinal_support | scholarly_discussion | institutional_findings | reading_recommendations | bibliography_only
+- `answer_strategy` — explain_law | summarize_case | synthesize_doctrine | recommend_sources | map_literature | plan_research_section | compare_views | limited_answer_with_gaps
+- `authority_requirements` — requires_judgment_body, requires_official_statute, secondary_sources_can_support, found_only_allowed_as_reading_list, found_only_can_support_claims (always false)
+- `mixed_plan` + `secondary_task_intent` for questions that ask for law *and* literature
 
-`black_letter_rule` blocks split into A or B by whether the bound claim's roles are case-law or statutory; unbound/doctrinal blocks in broad modes fall to C rather than A.
+The prompt states planning principles as reasoning guidance (docket/holding → binding authority; statute → official text; doctrine → mixed; literature/seminar → recommendation), never as phrase lists.
 
-### 2. Narrow source-type remapping (new `stages/doctrinalSourceTyping.ts`)
+### 2. Deterministic safety floor (not a template)
 
-For sources that reach the drafter with `source_type: "other"` **and** an acquired body plus passing integrity, remap by provenance/content to `legal_article`, `book_or_chapter`, `doctrinal_commentary`, `institutional_report` or `scholarship`. Untyped, body-less, metadata-only, listing, block/exception, or integrity-failing sources stay non-citable. Remapping is recorded as telemetry (`original_type`, `mapped_type`, `evidence`) and consumed by sufficiency + claim match; it does not touch nomination, cache identity keys, or footnote rendering.
+A small `stages/sourceUseIntent.ts` normalizes the model output and enforces only safety-direction overrides — it can make requirements *stricter*, never looser:
 
-### 3. Secondary-source eligibility helper
+- An explicit docket or an explicit "what did the court hold" claim forces `requires_judgment_body = true` regardless of the model's plan (keeps R02/P02 safe).
+- An explicit statute section forces `requires_official_statute = true`.
+- `found_only_can_support_claims` is hard-pinned to false.
+- If the model omits the field, the stage derives a conservative default from the existing research mode / router profile, so behaviour matches today.
 
-One shared predicate used by both sufficiency and claim match: body acquired, type in the doctrinal set (after remap), integrity pass, verifier `direct`/`partial`, not Perplexity-only / snippet-only / abstract-only / metadata-only / discovered-only.
+### 3. Sufficiency becomes task-relative
 
-### 4. Mode-aware doctrinal sufficiency fallback
+`stages/sourceSufficiency.ts` receives the plan and evaluates adequacy against the planned task:
 
-Pass `depth_mode` into `assessSourceSufficiency`. For `broad_research`, `academic_research` and doctrine-shaped modes only, when the current gate would return `no_statutory_caselaw_or_doctrinal_anchor`, accept one of:
+- `requires_judgment_body` / `requires_official_statute` keep today's strict gates untouched.
+- Recommendation / literature-map / seminar-planning tasks are adequate when there are acquired secondary bodies (or, for the reading-list portion, credible found-only candidates) — they are no longer refused for lack of direct case law.
+- Any *substantive claim about what a source says* still requires acquired body text; the existing claim-source-match rules stay in force.
 
-- A: relevant statute/primary law + ≥1 eligible doctrinal secondary
-- B: ≥2 eligible doctrinal secondaries
-- C: ≥1 acquired judgment body + statute or secondary
+### 4. Source presentation buckets
 
-Result is a new basis `doctrinal_secondary` with `limited_doctrinal_answer: true`. `case_law_synthesis`, `specific_case`, statute-section, quote and docket branches are untouched.
+Candidates are partitioned into three explicit buckets carried into the drafter and telemetry:
 
-### 5. Authority-level control in the drafter
+- `read_in_full` — acquired body text (citable per existing rules)
+- `found_only` — discovered but not acquired; usable only as marked reading candidates, never as claim support
+- `dropped_unrelated` — off-topic found-only sources are suppressed from display (fixes B8 noise)
 
-When `limited_doctrinal_answer` is set, the drafter receives an instruction block stating the available authority level (statute / judgment / secondary / background) and that secondary support may explain doctrine, framing or criticism but must not be presented as binding case law. Wording stays the model's choice; a Hebrew limitation line records that the explanation rests on doctrinal literature.
+### 5. Drafter follows the plan, does not template it
 
-In `claimSourceMatch`, Rule B is relaxed **only** for category C and D blocks in the limited-doctrinal branch: an eligible secondary may support them. Categories A and B keep the current strict rule.
+`stages/drafterV2.ts` receives the plan as guidance alongside the existing evidence contract:
 
-### 6. Supported / limited / found-only separation
+- Answer the planned task naturally; no fixed sections, no forced headings.
+- For mixed plans: legal framework from primary sources first, literature/recommendations as a separate part.
+- Never present a secondary source as binding case law; never support a legal claim with a found-only source; reading candidates are clearly marked as "to be checked".
+- Existing confidence/caveat behaviour keeps deriving from evidence, not from intent.
 
-Telemetry (and, for broad answers, a short trailing section) splitting sources into cited support, limited/partial support, and found-for-further-checking. Only cited support produces footnotes; found-only never supports a legal claim.
+### 6. Telemetry
 
-### 7. Telemetry
-
-Per run: `depth_mode`, acquired sources by type, remap list, doctrinal-eligibility decisions with reasons, claim categories, sufficiency before/after (control vs new), claim-match drops, footnotes, limitation text, found-only list.
+Persist under `metadata.source_use_intent`: planned intents, strategy, authority requirements, mixed flag, source presented from the model vs. deterministic override, bucket counts, and the sufficiency decision path.
 
 ## Validation
 
-New script `scripts/legal-research-v1-doctrinal-sufficiency-validation.ts`, sequential: D1, B8, D3, ACADEMIC, FRESH-SC, R02, NATION-STATE, P02 fake docket, MAYA-AMIR. Each run also executed with the new behaviour disabled (`x-disable-doctrinal-sufficiency: 1`) for the before/after column on the four broad runs. Report to `reports/doctrinal-sufficiency/ACCEPTANCE_REPORT.md`, with the full drafted Hebrew answers exported alongside.
+Run the 10-query sequence — ACADEMIC, NATION-STATE-ACADEMIC, PAYWALL, MMM, B8, D1, D3, DARKPATTERNS, R02, P02 — via a new runner (`scripts/legal-research-v1-source-use-intent-validation.ts`), polling `qa_logs` by `metadata->>'run_id'`.
 
-Acceptance is judged against: at least one previously refusing broad run now yields a limited supported answer; D1 no longer refuses solely for lack of a judgment body when eligible secondaries exist; B8/D3 improve or log a precise reason; ACADEMIC yields a separated source list or an explicit bibliography-mode queue; R02/P02/NATION-STATE unchanged; no metadata/snippet/abstract/Perplexity-only citation; bounded runtime; no CPU kills, stubs or dangling markers.
+Per run: user_task_intent, source_use_intent, answer_strategy, authority_requirements, mixed?, read-in-full sources, found-only sources, dropped-unrelated sources, final answer shape, authority-overstatement check, footnote integrity, runtime/stability.
 
-## Explicitly out of scope
+Acceptance criteria as specified: ACADEMIC planned as recommendation/seminar/literature-map; NATION-STATE-ACADEMIC not refused for lack of case law; PAYWALL separates acquired from paywalled candidates; MMM uses acquired reports or logs precise claim-match reasons; B8 shows no unrelated found-only sources; D1/D3/DARKPATTERNS no regression; R02/P02 unchanged; no found-only source supports a claim; no secondary presented as binding; no CPU kills, stubs, dangling markers or orphan rows.
 
-Source nomination, depth policy itself, query planner, relay, cache identity rules, footnote rendering, crawling, paywalled access, landmark registry, and any relaxation for specific-case holdings.
+Report written to `reports/source-use-intent/ACCEPTANCE_REPORT.md` with a verdict of accepted / partial / not accepted.
+
+## Technical notes
+
+- Files touched: `lib/types.ts`, `lib/schemas.ts`, `stages/claimAnalyzer.ts`, new `stages/sourceUseIntent.ts`, `stages/sourceSufficiency.ts`, `stages/claimSourceMatch.ts` (bucket awareness), `stages/drafterV2.ts`, `index.ts` (wiring + telemetry), new validation script + report.
+- No changes to judgment identity validation, cache writes, official fetch/relay policy or docket detection.
+- Field absent → conservative fallback = today's behaviour, so the change is additive.
