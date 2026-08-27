@@ -1,6 +1,9 @@
 # claim_source_rebinding_v1 — Acceptance Report
 
-Verdict: **ACCEPTED (stable-initial / monitor)** — deployed to `legal-research-v1`.
+Verdict: **ACCEPTED for claim-source-rebinding mechanics; CONDITIONAL PASS for end-to-end answer quality** — deployed to `legal-research-v1`.
+
+Reason for the conditional part: in Stage 3, B8, D1 and D3 terminated in `insufficient_sources_limitation` and never reached claim-source-match. The acceptance criterion "cited footnotes rise on B8 and D1" was therefore **not satisfied**; those runs carry no evidence for or against the rebinding logic. See `REGRESSION_B8_D1.md` for the focused regression analysis.
+
 
 ## What changed
 
