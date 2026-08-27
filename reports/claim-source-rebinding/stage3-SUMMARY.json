@@ -1,0 +1,569 @@
+[
+  {
+    "id": "ACADEMIC",
+    "pass": true,
+    "failures": [],
+    "footnotes": 1,
+    "rebinding": {
+      "applied": true,
+      "unbound": 2,
+      "decisions": [
+        {
+          "ref": "s7",
+          "score": 4,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 0,
+          "matched_terms": [
+            "גביזונ",
+            "סבירות",
+            "הבנת",
+            "סגרת"
+          ]
+        },
+        {
+          "ref": "s6",
+          "score": 6,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 1,
+          "matched_terms": [
+            "יקול",
+            "ינהלי",
+            "דפנה",
+            "סבירות",
+            "דוקטרינליימ",
+            "עליונה"
+          ]
+        },
+        {
+          "ref": "s8",
+          "score": 4,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 2,
+          "matched_terms": [
+            "עילת",
+            "סבירות",
+            "ציבורי",
+            "דינה"
+          ]
+        },
+        {
+          "ref": "s7",
+          "reason": "claim_id_match",
+          "binding": "exact",
+          "block_index": 3
+        },
+        {
+          "ref": "s6",
+          "reason": "claim_id_match",
+          "binding": "exact",
+          "block_index": 3
+        },
+        {
+          "ref": "s4",
+          "score": 3,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 4,
+          "matched_terms": [
+            "קורות",
+            "אמרימ",
+            "אינדקס"
+          ]
+        },
+        {
+          "ref": "s3",
+          "reason": "no_substantive_binding",
+          "binding": "unbound",
+          "block_index": 4
+        },
+        {
+          "ref": "s2",
+          "reason": "no_substantive_binding",
+          "binding": "unbound",
+          "block_index": 4
+        },
+        {
+          "ref": "s1",
+          "score": 2,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 5,
+          "matched_terms": [
+            "סבירות",
+            "הקשר"
+          ]
+        },
+        {
+          "ref": "s9",
+          "score": 2,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 5,
+          "matched_terms": [
+            "סבירות",
+            "לאומ"
+          ]
+        }
+      ],
+      "bound_exact": 2,
+      "bound_facet": 0,
+      "bound_topical": 6,
+      "capped_ref_count": 0,
+      "bound_area_direct": 0,
+      "rebound_ref_count": 6,
+      "claim_mismatch_drops_after": 2,
+      "claim_mismatch_drops_before": 8
+    }
+  },
+  {
+    "id": "NATION-STATE-ACADEMIC",
+    "pass": true,
+    "failures": [],
+    "footnotes": 2,
+    "rebinding": {
+      "applied": true,
+      "unbound": 6,
+      "decisions": [
+        {
+          "ref": "s1",
+          "reason": "claim_id_match",
+          "binding": "exact",
+          "block_index": 0
+        },
+        {
+          "ref": "s3",
+          "reason": "claim_id_match",
+          "binding": "exact",
+          "block_index": 1
+        },
+        {
+          "ref": "s4",
+          "reason": "claim_id_match",
+          "binding": "exact",
+          "block_index": 1
+        },
+        {
+          "ref": "s1",
+          "reason": "claim_id_match",
+          "binding": "exact",
+          "block_index": 1
+        },
+        {
+          "ref": "s3",
+          "reason": "no_substantive_binding",
+          "binding": "unbound",
+          "block_index": 2
+        },
+        {
+          "ref": "s6",
+          "reason": "no_substantive_binding",
+          "binding": "unbound",
+          "block_index": 2
+        },
+        {
+          "ref": "s4",
+          "score": 2,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 3,
+          "matched_terms": [
+            "ספרות",
+            "החוק"
+          ]
+        },
+        {
+          "ref": "s6",
+          "reason": "no_substantive_binding",
+          "binding": "unbound",
+          "block_index": 3
+        },
+        {
+          "ref": "s3",
+          "reason": "no_substantive_binding",
+          "binding": "unbound",
+          "block_index": 3
+        },
+        {
+          "ref": "s5",
+          "score": 2,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 4,
+          "matched_terms": [
+            "דיונ",
+            "חוקה"
+          ]
+        },
+        {
+          "ref": "s6",
+          "reason": "claim_id_match",
+          "binding": "exact",
+          "block_index": 4
+        },
+        {
+          "ref": "s3",
+          "reason": "no_substantive_binding",
+          "binding": "unbound",
+          "block_index": 5
+        },
+        {
+          "ref": "s6",
+          "reason": "no_substantive_binding",
+          "binding": "unbound",
+          "block_index": 5
+        }
+      ],
+      "bound_exact": 5,
+      "bound_facet": 0,
+      "bound_topical": 2,
+      "capped_ref_count": 0,
+      "bound_area_direct": 0,
+      "rebound_ref_count": 2,
+      "claim_mismatch_drops_after": 6,
+      "claim_mismatch_drops_before": 8
+    }
+  },
+  {
+    "id": "PAYWALL",
+    "pass": true,
+    "failures": [],
+    "footnotes": 1,
+    "rebinding": {
+      "applied": true,
+      "unbound": 0,
+      "decisions": [
+        {
+          "ref": "s1",
+          "reason": "claim_id_match",
+          "binding": "exact",
+          "block_index": 0
+        },
+        {
+          "ref": "s1",
+          "score": 4,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 1,
+          "matched_terms": [
+            "מאמר",
+            "צביע",
+            "תכליתית",
+            "חקיקה"
+          ]
+        },
+        {
+          "ref": "s1",
+          "score": 4,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 3,
+          "matched_terms": [
+            "מאמר",
+            "תכליתית",
+            "עיגונ",
+            "נורמות"
+          ]
+        },
+        {
+          "ref": "s1",
+          "score": 3,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 4,
+          "matched_terms": [
+            "תכליתית",
+            "מאמר",
+            "Review"
+          ]
+        }
+      ],
+      "bound_exact": 1,
+      "bound_facet": 0,
+      "bound_topical": 3,
+      "capped_ref_count": 0,
+      "bound_area_direct": 0,
+      "rebound_ref_count": 3,
+      "claim_mismatch_drops_after": 0,
+      "claim_mismatch_drops_before": 3
+    }
+  },
+  {
+    "id": "MMM",
+    "pass": true,
+    "failures": [],
+    "footnotes": 0,
+    "rebinding": {
+      "applied": true,
+      "unbound": 2,
+      "decisions": [
+        {
+          "ref": "s1",
+          "reason": "claim_id_match",
+          "binding": "exact",
+          "block_index": 1
+        },
+        {
+          "ref": "s1",
+          "score": 7,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 3,
+          "matched_terms": [
+            "כנסת",
+            "מתאר",
+            "אחריות",
+            "אכיפה",
+            "חלוקת",
+            "יחידות",
+            "מבנה"
+          ]
+        },
+        {
+          "ref": "s2",
+          "score": 4,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 4,
+          "matched_terms": [
+            "אכיפה",
+            "דיני",
+            "עבודה",
+            "עיצומימ"
+          ]
+        },
+        {
+          "ref": "s1",
+          "score": 2,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 4,
+          "matched_terms": [
+            "אכיפה",
+            "עבודה"
+          ]
+        },
+        {
+          "ref": "s3",
+          "reason": "no_substantive_binding",
+          "binding": "unbound",
+          "block_index": 5
+        },
+        {
+          "ref": "s1",
+          "score": 3,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 5,
+          "matched_terms": [
+            "עבודה",
+            "כנסת",
+            "יחידות"
+          ]
+        },
+        {
+          "ref": "s1",
+          "score": 4,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 6,
+          "matched_terms": [
+            "אכיפה",
+            "מידע",
+            "יישומ",
+            "פועל"
+          ]
+        },
+        {
+          "ref": "s3",
+          "reason": "no_substantive_binding",
+          "binding": "unbound",
+          "block_index": 6
+        }
+      ],
+      "bound_exact": 1,
+      "bound_facet": 0,
+      "bound_topical": 5,
+      "capped_ref_count": 0,
+      "bound_area_direct": 0,
+      "rebound_ref_count": 5,
+      "claim_mismatch_drops_after": 2,
+      "claim_mismatch_drops_before": 7
+    }
+  },
+  {
+    "id": "B8",
+    "pass": true,
+    "failures": [],
+    "footnotes": 0,
+    "rebinding": null
+  },
+  {
+    "id": "D1",
+    "pass": true,
+    "failures": [],
+    "footnotes": 0,
+    "rebinding": null
+  },
+  {
+    "id": "D3",
+    "pass": true,
+    "failures": [],
+    "footnotes": 0,
+    "rebinding": null
+  },
+  {
+    "id": "DARKPATTERNS",
+    "pass": true,
+    "failures": [],
+    "footnotes": 1,
+    "rebinding": {
+      "applied": true,
+      "unbound": 0,
+      "decisions": [
+        {
+          "ref": "s3",
+          "reason": "claim_id_match",
+          "binding": "exact",
+          "block_index": 0
+        },
+        {
+          "ref": "s1",
+          "score": 12,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 1,
+          "matched_terms": [
+            "בסיס",
+            "וראות",
+            "הגנת",
+            "צרכנ",
+            "בלתי",
+            "הוגנ",
+            "החוק",
+            "אינו"
+          ]
+        },
+        {
+          "ref": "s2",
+          "score": 13,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 1,
+          "matched_terms": [
+            "בסיס",
+            "וראות",
+            "הגנת",
+            "צרכנ",
+            "בלתי",
+            "הוגנ",
+            "הוות",
+            "החוק"
+          ]
+        },
+        {
+          "ref": "s4",
+          "reason": "claim_id_match",
+          "binding": "exact",
+          "block_index": 2
+        },
+        {
+          "ref": "s1",
+          "score": 5,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 2,
+          "matched_terms": [
+            "צרכנ",
+            "דפוסימ",
+            "אפלימ",
+            "ולכנ",
+            "החוק"
+          ]
+        },
+        {
+          "ref": "s3",
+          "score": 6,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 3,
+          "matched_terms": [
+            "סקירה",
+            "גילוי",
+            "ניתנ",
+            "חובת",
+            "ניפולציה",
+            "נגנוני"
+          ]
+        },
+        {
+          "ref": "s3",
+          "score": 9,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 4,
+          "matched_terms": [
+            "צרכנ",
+            "סקירה",
+            "שפטית",
+            "חובת",
+            "גילוי",
+            "סגרות",
+            "ניפולציה",
+            "ספקימ"
+          ]
+        },
+        {
+          "ref": "s1",
+          "score": 3,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 4,
+          "matched_terms": [
+            "טקסט",
+            "הגנת",
+            "צרכנ"
+          ]
+        },
+        {
+          "ref": "s4",
+          "score": 2,
+          "reason": "shared_meaningful_terms",
+          "binding": "topical",
+          "block_index": 4,
+          "matched_terms": [
+            "צרכנ",
+            "פרסומ"
+          ]
+        }
+      ],
+      "bound_exact": 2,
+      "bound_facet": 0,
+      "bound_topical": 7,
+      "capped_ref_count": 0,
+      "bound_area_direct": 0,
+      "rebound_ref_count": 7,
+      "claim_mismatch_drops_after": 0,
+      "claim_mismatch_drops_before": 7
+    }
+  },
+  {
+    "id": "R02",
+    "pass": true,
+    "failures": [],
+    "footnotes": 0,
+    "rebinding": null
+  },
+  {
+    "id": "P02",
+    "pass": false,
+    "failures": [
+      "empty_answer",
+      "p02_refusal_lost"
+    ],
+    "footnotes": 0,
+    "rebinding": null
+  }
+]
