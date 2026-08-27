@@ -43,6 +43,7 @@ import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRole.ts";
 import { runJudgmentTextAcquisition } from "./stages/judgmentTextAcquisition.ts";
 import { runStatuteTextAcquisition } from "./stages/statuteTextAcquisition.ts";
+import { runSecondaryBodyAcquisition } from "./stages/secondaryBodyAcquisition.ts";
 import {
   annotateCanonicalUsage,
   runCanonicalAuthorityAcquisition,
@@ -1189,6 +1190,41 @@ async function handle(req: Request): Promise<Response> {
 
 
 
+  // ─── doctrinal_secondary_body_acquisition_v1 ────────────────────────────
+  // Broad / academic / narrow-doctrine runs only. For secondary and doctrinal
+  // candidates ALREADY admitted to the pool, obtain the substantive body text
+  // (local corpus → verified cache → one bounded open-web fetch) so the
+  // doctrinal sufficiency and claim-source-match gates can see real text
+  // instead of a snippet. Never touches judgments, statutes or the relay;
+  // anything without an acquired body stays bibliography-only.
+  await budget.markDurable("secondary_body_acquisition_gate", {
+    depth_mode: sourceDepth.depth_mode ?? null,
+    budget_exceeded: budget.exceeded(),
+  });
+  const secondaryBodyAcquisition = await runSecondaryBodyAcquisition({
+    admin,
+    candidates: pool.candidates,
+    depth_mode: sourceDepth.depth_mode ?? null,
+    enabled: !fastLaneHit && !budget.exceeded(),
+    retrieval_budget: {
+      exceeded: () => budget.exceeded(),
+      allowExtraction: (bytes: number) => budget.allowExtraction?.(bytes) ?? true,
+    },
+    markDurable: (name, detail) => budget.markDurable(name, detail),
+  });
+  if (secondaryBodyAcquisition.acquired_candidate_ids.length > 0) {
+    const byId = new Map(pool.candidates.map((c) => [c.candidate_id, c]));
+    for (const row of pool.integrity) {
+      const c = byId.get(row.candidate_id);
+      const integ = ((c?.metadata ?? {}) as Record<string, unknown>).source_integrity as
+        | { text_usability?: string; integrity_flags?: string[] }
+        | undefined;
+      if (!integ) continue;
+      row.text_usability = String(integ.text_usability ?? row.text_usability);
+      row.integrity_flags = integ.integrity_flags ?? row.integrity_flags;
+    }
+  }
+
   // ─── Specific-case authority resolution (specific_case mode only) ───────
   // Exact-docket guard + bounded judgment-text acquisition. Fail-closed: when
   // no admitted source carries the exact requested docket with usable text,
@@ -1365,6 +1401,7 @@ async function handle(req: Request): Promise<Response> {
     },
     judgment_text_acquisition: judgmentAcquisition,
     canonical_authority_acquisition: canonicalAcquisition,
+    secondary_body_acquisition: secondaryBodyAcquisition,
     statute_text_acquisition: {
       attempted: statuteAcquisition.attempted,
       successes: statuteAcquisition.successes,
@@ -2290,6 +2327,15 @@ async function handle(req: Request): Promise<Response> {
       doctrinal_ineligible_reasons: drafter.sufficiency?.doctrinal_ineligible_reasons ?? {},
       typing_ran: drafter.doctrinal_typing ? true : false,
       typing_remapped_count: drafter.doctrinal_typing?.remapped?.length ?? 0,
+      // doctrinal_secondary_body_acquisition_v1 — why doctrinal sources did or
+      // did not arrive at the drafter with substantive text.
+      secondary_body_stage_ran: secondaryBodyAcquisition.ran,
+      secondary_body_stop_reason: secondaryBodyAcquisition.stage_stop_reason,
+      secondary_bodies_acquired: secondaryBodyAcquisition.acquired_candidate_ids.length,
+      secondary_local_hits: secondaryBodyAcquisition.local_hits,
+      secondary_web_successes: secondaryBodyAcquisition.web_successes,
+      secondary_bibliography_only:
+        secondaryBodyAcquisition.bibliography_only_candidate_ids.length,
       claim_match_ran: drafter.claim_source_match
         ? drafter.claim_source_match.stage_not_run !== true
         : false,

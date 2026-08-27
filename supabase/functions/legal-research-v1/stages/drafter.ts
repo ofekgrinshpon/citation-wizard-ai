@@ -466,7 +466,10 @@ export function buildInputSources(
       legal_area: inferLegalAreaId(`${c.title ?? ""} ${c.snippet ?? ""}`),
       support_subtype: normalizeSupportSubtype(vs, integ0, meta0),
       verifier_verdict: u.best_support === "direct" ? "direct" : "partial",
-      body_acquired: meta0.judgment_text_acquired === true || meta0.statute_text_acquired === true,
+      body_acquired: meta0.judgment_text_acquired === true ||
+        meta0.statute_text_acquired === true ||
+        // doctrinal_secondary_body_acquisition_v1 — acquired secondary body.
+        meta0.secondary_body_acquired === true,
 
       snippet: snippetText,
       authority_tier: integ0.authority_tier,
@@ -485,7 +488,8 @@ export function buildInputSources(
       has_statutory_text: hasStatutoryText(availableText),
       // F1 — bounded acquired-body window for deterministic topical matching.
       topical_text: (meta0.judgment_text_acquired === true ||
-          meta0.statute_text_acquired === true)
+          meta0.statute_text_acquired === true ||
+          meta0.secondary_body_acquired === true)
         ? String(extendedText || "").slice(0, 20_000)
         : undefined,
 
