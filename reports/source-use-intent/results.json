@@ -493,19 +493,42 @@
   },
   {
     "id": "P02",
-    "run_id": "069a838c-b226-4ff0-9606-b2af3c8eb9a1",
-    "created_at": "2026-08-27T09:28:14.617961+00:00",
-    "plan": null,
-    "model_plan_present": null,
-    "overrides": null,
-    "planned_sufficiency": null,
-    "explicit_docket_detected": null,
-    "explicit_statute_section_detected": null,
-    "deterministic_branch": null,
+    "run_id": "72ca5ac7-b796-4e8b-b6bb-47199b6e51fc",
+    "created_at": "2026-08-27T09:09:06.081639+00:00",
+    "plan": {
+      "reason": "המשתמש שאל במפורש מה נקבע בתיק מסוים — יש למסור תקציר ופרטי פסיקה מבוססים על פסק הדין עצמו (מקור שיפוטי מחייב).",
+      "mixed_plan": false,
+      "answer_strategy": "summarize_case",
+      "plan_confidence": "high",
+      "user_task_intent": "case_holding",
+      "source_use_intent": [
+        "binding_authority"
+      ],
+      "authority_requirements": {
+        "requires_judgment_body": true,
+        "requires_official_statute": false,
+        "found_only_can_support_claims": false,
+        "secondary_sources_can_support": false,
+        "found_only_allowed_as_reading_list": false
+      }
+    },
+    "model_plan_present": true,
+    "overrides": [],
+    "planned_sufficiency": {
+      "source_buckets": null,
+      "sufficiency_reason": null,
+      "deterministic_branch": "docket_limitation",
+      "planned_answer_strategy": null,
+      "planned_user_task_intent": null,
+      "research_guidance_sufficiency": false
+    },
+    "explicit_docket_detected": true,
+    "explicit_statute_section_detected": false,
+    "deterministic_branch": "docket_limitation",
     "sufficiency_reason": null,
     "found_titles": null,
-    "total_ms": null,
+    "total_ms": 106224,
     "footnotes_count": 0,
-    "answer": ""
+    "answer": "לא אותר במקורות הזמינים פסק הדין בעניין בג\"ץ 9999/99 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
   }
 ]
