@@ -106,13 +106,17 @@ function bodyChars(s: DrafterInputSource): number {
  * search result, an abstract or a snippet.
  */
 export function hasAcquiredSubstantiveText(s: DrafterInputSource): boolean {
-  if (String(s.origin) === "perplexity") return false;
+  // doctrinal_secondary_body_acquisition_v1 — a body we fetched and extracted
+  // ourselves counts even when the candidate was first surfaced by Perplexity;
+  // the discovery channel is not the evidence, the acquired text is.
   if (s.body_acquired === true) return true;
+  if (String(s.origin) === "perplexity") return false;
   const chars = bodyChars(s);
   if (chars < MIN_BODY_CHARS) return false;
   // Corpus documents (local_db) and user uploads carry real stored text.
   return String(s.origin) === "local_db" || String(s.origin) === "user_upload";
 }
+
 
 function integrityOk(s: DrafterInputSource): boolean {
   const usability = String(s.text_usability || "unknown");
@@ -191,7 +195,11 @@ export function assessDoctrinalEligibility(s: DrafterInputSource): DoctrinalElig
   const no = (reason: string): DoctrinalEligibility => ({ ...base, eligible: false, reason });
 
   if (!isDoctrinalType(s.source_type)) return no("not_doctrinal_type");
-  if (String(s.origin) === "perplexity") return no("perplexity_only");
+  // Perplexity-only material stays ineligible; a source whose substantive body
+  // we actually acquired is judged on that body, not on where it surfaced.
+  if (String(s.origin) === "perplexity" && s.body_acquired !== true) {
+    return no("perplexity_only");
+  }
   if (!integrityOk(s)) return no("integrity_failed_or_metadata_only");
   if (!hasAcquiredSubstantiveText(s) && base.body_chars < MIN_CITABLE_TEXT_CHARS) {
     return no("no_acquired_body_text");
