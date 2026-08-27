@@ -2336,6 +2336,20 @@ async function handle(req: Request): Promise<Response> {
       secondary_web_successes: secondaryBodyAcquisition.web_successes,
       secondary_bibliography_only:
         secondaryBodyAcquisition.bibliography_only_candidate_ids.length,
+      // secondary_web_body_acquisition_v1 — open-web lane detail.
+      secondary_web_attempts: secondaryBodyAcquisition.web_attempts,
+      secondary_metadata_pages_detected: (secondaryBodyAcquisition.per_candidate ?? [])
+        .filter((r) => r.metadata_page_detected).length,
+      secondary_fulltext_links_followed: (secondaryBodyAcquisition.per_candidate ?? [])
+        .filter((r) => r.fulltext_link_followed).length,
+      secondary_type_remaps: (secondaryBodyAcquisition.per_candidate ?? [])
+        .filter((r) => r.type_remap?.mapped).length,
+      secondary_cache_writes: (secondaryBodyAcquisition.per_candidate ?? [])
+        .filter((r) => r.cache_write === "ok").length,
+      secondary_web_failure_reasons: (secondaryBodyAcquisition.per_candidate ?? [])
+        .filter((r) => r.web_attempted && !r.ok)
+        .map((r) => r.failure_reason ?? "unknown"),
+
       claim_match_ran: drafter.claim_source_match
         ? drafter.claim_source_match.stage_not_run !== true
         : false,

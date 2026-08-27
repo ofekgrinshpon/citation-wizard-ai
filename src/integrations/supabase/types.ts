@@ -664,6 +664,60 @@ export type Database = {
         }
         Relationships: []
       }
+      secondary_source_bodies: {
+        Row: {
+          acquisition_path: string | null
+          body: string
+          body_chars: number
+          content_hash: string
+          content_type: string | null
+          created_at: string
+          extraction_method: string | null
+          final_url: string | null
+          id: string
+          mapped_type: string | null
+          source_type: string | null
+          title: string | null
+          type_confidence: string | null
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          acquisition_path?: string | null
+          body: string
+          body_chars?: number
+          content_hash: string
+          content_type?: string | null
+          created_at?: string
+          extraction_method?: string | null
+          final_url?: string | null
+          id?: string
+          mapped_type?: string | null
+          source_type?: string | null
+          title?: string | null
+          type_confidence?: string | null
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          acquisition_path?: string | null
+          body?: string
+          body_chars?: number
+          content_hash?: string
+          content_type?: string | null
+          created_at?: string
+          extraction_method?: string | null
+          final_url?: string | null
+          id?: string
+          mapped_type?: string | null
+          source_type?: string | null
+          title?: string | null
+          type_confidence?: string | null
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string
