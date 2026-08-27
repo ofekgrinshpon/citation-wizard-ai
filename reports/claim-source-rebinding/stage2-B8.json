@@ -1,0 +1,21 @@
+{
+  "id": "B8",
+  "run_id": "8eaeae39-b892-404d-913f-fbd1307e0607",
+  "job_id": "c474f007-3dc9-4d1f-bcdc-fb1556a3ffbe",
+  "ms": 113263,
+  "status": "done",
+  "branch": "canonical_quote_registry",
+  "answer_length": 364,
+  "footnotes": 1,
+  "rebinding": null,
+  "claim_source_match": {
+    "source_ref_mismatch_count": 0,
+    "unsupported_block_count": 0,
+    "limitation_added": false,
+    "dropped_source_refs": [],
+    "authority_overstatements": []
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "הנוסח המחייב של סעיף 1 לחוק-יסוד: כבוד האדם וחירותו (נוסח מילולי): \"זכויות היסוד של האדם בישראל מושתתות על ההכרה בערך האדם, בקדושת חייו ובהיותו בן-חורין, והן יכובדו ברוח העקרונות שבהכרזה על הקמת מדינת ישראל.\".¹\n\nהציטוט מובא כלשונו מהמקור הרשמי המצוין למעלה; לא בוצע שינוי, תמצות או ניסוח מחדש.¹\n\n> לא אותרה פסיקה ברת-שימוש במסגרת החיפוש; התשובה מתמקדת בלשון הסעיף."
+}

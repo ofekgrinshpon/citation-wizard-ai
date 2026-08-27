@@ -1,0 +1,242 @@
+{
+  "id": "ACADEMIC",
+  "run_id": "df966d61-b262-42b5-b8eb-67971fb40a23",
+  "job_id": "858a1b64-4665-45e5-a935-9eee6b442746",
+  "ms": 243746,
+  "status": "done",
+  "branch": null,
+  "answer_length": 2170,
+  "footnotes": 1,
+  "rebinding": {
+    "applied": true,
+    "unbound": 2,
+    "decisions": [
+      {
+        "ref": "s7",
+        "score": 4,
+        "reason": "shared_meaningful_terms",
+        "binding": "topical",
+        "block_index": 0,
+        "matched_terms": [
+          "גביזונ",
+          "סבירות",
+          "הבנת",
+          "סגרת"
+        ]
+      },
+      {
+        "ref": "s6",
+        "score": 6,
+        "reason": "shared_meaningful_terms",
+        "binding": "topical",
+        "block_index": 1,
+        "matched_terms": [
+          "יקול",
+          "ינהלי",
+          "דפנה",
+          "סבירות",
+          "דוקטרינליימ",
+          "עליונה"
+        ]
+      },
+      {
+        "ref": "s8",
+        "score": 4,
+        "reason": "shared_meaningful_terms",
+        "binding": "topical",
+        "block_index": 2,
+        "matched_terms": [
+          "עילת",
+          "סבירות",
+          "ציבורי",
+          "דינה"
+        ]
+      },
+      {
+        "ref": "s7",
+        "reason": "claim_id_match",
+        "binding": "exact",
+        "block_index": 3
+      },
+      {
+        "ref": "s6",
+        "reason": "claim_id_match",
+        "binding": "exact",
+        "block_index": 3
+      },
+      {
+        "ref": "s4",
+        "score": 3,
+        "reason": "shared_meaningful_terms",
+        "binding": "topical",
+        "block_index": 4,
+        "matched_terms": [
+          "קורות",
+          "אמרימ",
+          "אינדקס"
+        ]
+      },
+      {
+        "ref": "s3",
+        "reason": "no_substantive_binding",
+        "binding": "unbound",
+        "block_index": 4
+      },
+      {
+        "ref": "s2",
+        "reason": "no_substantive_binding",
+        "binding": "unbound",
+        "block_index": 4
+      },
+      {
+        "ref": "s1",
+        "score": 2,
+        "reason": "shared_meaningful_terms",
+        "binding": "topical",
+        "block_index": 5,
+        "matched_terms": [
+          "סבירות",
+          "הקשר"
+        ]
+      },
+      {
+        "ref": "s9",
+        "score": 2,
+        "reason": "shared_meaningful_terms",
+        "binding": "topical",
+        "block_index": 5,
+        "matched_terms": [
+          "סבירות",
+          "לאומ"
+        ]
+      }
+    ],
+    "bound_exact": 2,
+    "bound_facet": 0,
+    "bound_topical": 6,
+    "capped_ref_count": 0,
+    "bound_area_direct": 0,
+    "rebound_ref_count": 6,
+    "claim_mismatch_drops_after": 2,
+    "claim_mismatch_drops_before": 8
+  },
+  "claim_source_match": {
+    "source_ref_mismatch_count": 9,
+    "unsupported_block_count": 5,
+    "limitation_added": true,
+    "dropped_source_refs": [
+      {
+        "ref": "s7",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 0,
+        "block_claim_id": "C3",
+        "claim_category": "scholarly_commentary",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s6",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 1,
+        "block_claim_id": "C3",
+        "claim_category": "scholarly_commentary",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s8",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 2,
+        "block_claim_id": "C3",
+        "claim_category": "scholarly_commentary",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s7",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 3,
+        "block_claim_id": "C1",
+        "claim_category": "contextual_background",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s6",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 3,
+        "block_claim_id": "C1",
+        "claim_category": "contextual_background",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s3",
+        "reason": "claim_mismatch",
+        "block_index": 4,
+        "block_claim_id": "C2",
+        "claim_category": "doctrinal_synthesis",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s2",
+        "reason": "claim_mismatch",
+        "block_index": 4,
+        "block_claim_id": "C2",
+        "claim_category": "doctrinal_synthesis",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": null
+      },
+      {
+        "ref": "s1",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 5,
+        "block_claim_id": "C3",
+        "claim_category": "scholarly_commentary",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "constitutional"
+      },
+      {
+        "ref": "s9",
+        "reason": "commentary_in_substantive_block",
+        "block_index": 5,
+        "block_claim_id": "C3",
+        "claim_category": "scholarly_commentary",
+        "block_legal_area": "constitutional",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      }
+    ],
+    "authority_overstatements": []
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "- קריאת יסוד תיאורטית: מאמרה של רות גביזון \"הסבירות במשפט המינהלי\" מהווה נקודת פתיחה קלאסית להבנת ההיסטוריה, סיווג הגישות והוויכוחים התיאורטיים סביב עילת הסבירות במשפט הישראלי; מומלץ לקרוא לצורך מסגרת דוקטרינלית ולהכוונה בבחירת פסקי־דין מרכזיים להעמקה.\n- ניתוח עקרוני של שיקול דעת מינהלי: הכתיבה של דפנה ברק־ארז בנושא שיקול דעת וסבירות מספקת הסבר על העקרונות הדוקטרינליים שהפסיקה העליונה נוטה להסתמך עליהם, ובעלת ערך להכנת פרק המתמקד במתח בין ביקורת שיפוטית לבין פריסת הסמכויות המנהליות.\n- מבט ציבורי־חוקתי: העיון ב\"עילת הסבירות במשפט הציבורי\" של ברק מדינה עוזר למקם את הדיון בדיני המינהל בתוך מסגרת של יחסי כוחות בין חקיקה, שלטון־מנהל וביקורת שיפוטית — שימושי כאשר מחברים פרק על סבירות בהקשר של זכויות, מדיניות ציבורית או הלכה מגזרית.\n- מיפוי פסקי־דין מרכזיים (הנחיה מחקרית): משום שמחקר סמינריוני דורש עוגנים פסיקתיים קונקרטיים, יש למפות ולקרוא פסקי־דין של בית המשפט העליון שמופיעים בספרות כ'מקרים דגל' של מבחן הסבירות; מאמרים כמו אלה של גביזון וברק־ארז מסייעים לזהות את התיקים שיש לכלול במיפוי ולכונן מטבלאות השוואה בין ניסוחי בדיקה.\n- מקורות השוואתיים והשפעות זרות: לצורך פרק השוואתי וקישוריות תיאורטית, כדאי לעיין בתקצירים ומאמרים באנגלית שדנים בראיית ה‑deference ובמבחנים מקבילים (למשל דיונים על Wednesbury ועל פרופורציונליות); אינדקס התקצירים והמאמרים באנגלית בחוברת האוניברסיטה העברית מהווים נקודת כניסה לקריאת הספרות ההשוואתית ולמאמרים כגון ניתוחי deference.¹\n- יישומים מגזריים ובחינה עסקית: לצורך בחינת האופן שבו מבחן הסבירות מיושם בסקטורים מסוימים, קיימים כתבים ייעודיים — למשל ניתוח של אסף הראל בהקשר של הגנה על הסביבה וניתוח עדכני על סביבות לאום וסבירות; אלה מתאימים לפרקים ענפיים או לניתוח מקרים של יישום משפטי ספציפי.\n- מחקרים אמפיריים ומקורות חקיקתיים: במקורות שאותרו כאן לא נמצא תיעוד של מחקרים אמפיריים מקיפים שמנתחים סטטיסטית את יישום מבחן הסבירות, וגם לא חולצו טקסטים חקיקתיים/תקנות שמנסחים סטנדרט סבירות חדש; מומלץ לבצע חיפוש ממוקד במסד־נתונים למאמרים אמפיריים ובמאגרי חקיקה כדי להשלים את המפה המחקרית־מוסדית.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+}

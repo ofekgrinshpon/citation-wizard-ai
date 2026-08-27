@@ -1,0 +1,21 @@
+{
+  "id": "P02",
+  "run_id": "6d815719-e926-4707-97ab-3bf410806c22",
+  "job_id": "eb6ce488-e259-45f1-a2a5-d6de010f8b65",
+  "ms": 141998,
+  "status": "done",
+  "branch": "docket_limitation",
+  "answer_length": 345,
+  "footnotes": 0,
+  "rebinding": null,
+  "claim_source_match": {
+    "source_ref_mismatch_count": 0,
+    "unsupported_block_count": 0,
+    "limitation_added": false,
+    "dropped_source_refs": [],
+    "authority_overstatements": []
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}

@@ -1,0 +1,21 @@
+{
+  "id": "D3",
+  "run_id": "1ac04964-6f82-4660-81e5-874971a301a8",
+  "job_id": "aa57ef03-fbe3-4c41-b2e4-1d2f12309a3a",
+  "ms": 202792,
+  "status": "done",
+  "branch": "insufficient_sources_limitation",
+  "answer_length": 200,
+  "footnotes": 0,
+  "rebinding": null,
+  "claim_source_match": {
+    "source_ref_mismatch_count": 0,
+    "unsupported_block_count": 0,
+    "limitation_added": false,
+    "dropped_source_refs": [],
+    "authority_overstatements": []
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה."
+}

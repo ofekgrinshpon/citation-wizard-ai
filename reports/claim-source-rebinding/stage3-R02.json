@@ -1,0 +1,21 @@
+{
+  "id": "R02",
+  "run_id": "11d472c9-dfd0-457c-9002-1ec2f37d2b32",
+  "job_id": "66ad29f7-953d-48b5-8b0c-7213dc0da0d9",
+  "ms": 111572,
+  "status": "done",
+  "branch": "docket_limitation",
+  "answer_length": 320,
+  "footnotes": 0,
+  "rebinding": null,
+  "claim_source_match": {
+    "source_ref_mismatch_count": 0,
+    "unsupported_block_count": 0,
+    "limitation_added": false,
+    "dropped_source_refs": [],
+    "authority_overstatements": []
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "לא אותר במקורות הזמינים ע\"א 6821/93. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}
