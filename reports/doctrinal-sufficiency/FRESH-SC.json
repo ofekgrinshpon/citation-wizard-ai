@@ -1,9 +1,9 @@
 {
   "id": "FRESH-SC",
   "question": "מה נקבע בבג\"ץ 1892/14 האגודה לזכויות האזרח נ' השר לביטחון פנים?",
-  "run_id": "0b15b50e-e430-4d6b-953e-3d0826939980",
-  "qa_log_id": "2c587b76-920b-481c-887d-df3b442c92d1",
-  "ms": 150243,
+  "run_id": "612c7f92-a461-41cb-b2d7-5e74fad61085",
+  "qa_log_id": "a60bf95d-8307-4a38-a0bb-1e0773577e03",
+  "ms": 146788,
   "branch": null,
   "official_discovery": {
     "ms": 0,
@@ -51,28 +51,21 @@
       },
       {
         "basis": "declared_claim_category",
-        "category": "court_holding",
+        "category": "contextual_background",
         "kept_refs": [],
         "block_index": 4,
         "support_levels": []
       },
       {
         "basis": "declared_claim_category",
-        "category": "court_holding",
+        "category": "contextual_background",
         "kept_refs": [],
         "block_index": 5,
-        "support_levels": []
-      },
-      {
-        "basis": "declared_claim_category+docket_identity_escalation",
-        "category": "court_holding",
-        "kept_refs": [],
-        "block_index": 6,
         "support_levels": []
       }
     ],
     "limitation_added": true,
-    "tagged_block_count": 6,
+    "tagged_block_count": 5,
     "dropped_source_refs": [
       {
         "ref": "s1",
@@ -92,16 +85,16 @@
         "block_index": 2,
         "block_claim_id": "C2",
         "claim_category": "court_holding",
-        "block_legal_area": "contracts",
+        "block_legal_area": "public_law_hcj",
         "source_claim_ids": [
           "C1"
         ],
         "source_legal_area": "public_law_hcj"
       },
       {
-        "ref": "s1",
+        "ref": "s4",
         "reason": "claim_mismatch",
-        "block_index": 3,
+        "block_index": 2,
         "block_claim_id": "C2",
         "claim_category": "court_holding",
         "block_legal_area": "public_law_hcj",
@@ -113,7 +106,7 @@
       {
         "ref": "s1",
         "reason": "claim_mismatch",
-        "block_index": 4,
+        "block_index": 3,
         "block_claim_id": "C3",
         "claim_category": "court_holding",
         "block_legal_area": "public_law_hcj",
@@ -125,9 +118,33 @@
       {
         "ref": "s1",
         "reason": "claim_mismatch",
-        "block_index": 5,
+        "block_index": 4,
         "block_claim_id": "C4",
-        "claim_category": "court_holding",
+        "claim_category": "contextual_background",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s3",
+        "reason": "claim_mismatch",
+        "block_index": 4,
+        "block_claim_id": "C4",
+        "claim_category": "contextual_background",
+        "block_legal_area": "public_law_hcj",
+        "source_claim_ids": [
+          "C1"
+        ],
+        "source_legal_area": "public_law_hcj"
+      },
+      {
+        "ref": "s6",
+        "reason": "claim_mismatch",
+        "block_index": 5,
+        "block_claim_id": "C2",
+        "claim_category": "contextual_background",
         "block_legal_area": "public_law_hcj",
         "source_claim_ids": [
           "C1"
@@ -136,9 +153,9 @@
       }
     ],
     "commentary_only_claims": [],
-    "unsupported_block_count": 4,
+    "unsupported_block_count": 3,
     "authority_overstatements": [],
-    "source_ref_mismatch_count": 5,
+    "source_ref_mismatch_count": 7,
     "primary_support_by_main_claim": false,
     "primary_supported_block_count": 0,
     "secondary_supported_block_count": 0
@@ -154,12 +171,14 @@
     "found_titles": [
       "בג\"ץ 1892/14 האגודה לזכויות האזרח בישראל נ׳ השר לביטחון פנים פסק דין (13.06.2017)",
       "בג\"ץ 1892/14 האגודה לזכויות האזרח בישראל נ׳ השר לביטחון פנים פסק דין (13.06.2017)",
-      "בג\"ץ 7753/23 האגודה לזכויות האזרח בישראל ואח' נגד השר לביטחון לאומי פסק דין (23.11.2023)"
+      "סוגיות בכליאה בישראל",
+      "החובה ליתן לעצורים יחס מיוחד ההולם את חזקת החפות – מבט נוסף על תנאי המעצר בישראל על רקע המשפט הבין-לאומי | מיכל טמיר וגרשון גונטובניק (כרך כה)",
+      "חוק לתיקון פקודת בתי הסוהר (מס'"
     ],
     "topical_refs": [
       "s1",
       "s2",
-      "s3"
+      "s6"
     ],
     "topic_phrases": [
       "האגודה לזכויות האזרח",
@@ -177,18 +196,20 @@
     "usable_judgment_refs": [
       "s1",
       "s2",
-      "s3"
+      "s6"
     ],
     "exact_amounts_allowed": true,
     "governing_statute_refs": [],
     "topical_authority_refs": [
       "s1",
       "s2",
-      "s3"
+      "s6"
     ],
     "body_text_topical_match": false,
     "morphology_domain_match": false,
-    "doctrinal_secondary_refs": [],
+    "doctrinal_secondary_refs": [
+      "s4"
+    ],
     "limited_doctrinal_answer": false,
     "normalized_source_tokens": [],
     "governing_regulation_refs": [],
@@ -212,7 +233,7 @@
     "sufficiency_authority_basis": "usable_judgment",
     "thin_governing_statute_refs": [],
     "doctrinal_ineligible_reasons": {
-      "not_doctrinal_type": 3
+      "not_doctrinal_type": 4
     },
     "doctrinal_fallback_combination": null,
     "thin_governing_regulation_refs": [],
@@ -246,13 +267,40 @@
         "reason": "not_doctrinal_type",
         "eligible": false,
         "remapped": false,
+        "body_chars": 1097,
+        "source_type": "knesset_research"
+      },
+      {
+        "ref": "s4",
+        "reason": "eligible_doctrinal_secondary",
+        "eligible": true,
+        "remapped": false,
+        "body_chars": 1178,
+        "source_type": "journal_article"
+      },
+      {
+        "ref": "s5",
+        "reason": "eligible_doctrinal_secondary",
+        "eligible": true,
+        "remapped": false,
+        "body_chars": 1178,
+        "source_type": "journal_article"
+      },
+      {
+        "ref": "s6",
+        "reason": "not_doctrinal_type",
+        "eligible": false,
+        "remapped": false,
         "body_chars": 1182,
         "source_type": "caselaw"
       }
     ],
-    "eligible_refs": [],
+    "eligible_refs": [
+      "s4",
+      "s5"
+    ],
     "ineligible_reason_counts": {
-      "not_doctrinal_type": 3
+      "not_doctrinal_type": 4
     }
   },
   "trace": {
@@ -263,17 +311,25 @@
     "footnote_count": 0,
     "claim_match_ran": true,
     "sufficiency_ran": true,
-    "input_source_count": 3,
+    "input_source_count": 6,
     "sufficiency_reason": "shape_not_gated",
-    "claim_category_count": 6,
+    "claim_category_count": 5,
     "deterministic_branch": null,
+    "secondary_local_hits": 0,
     "typing_remapped_count": 0,
-    "doctrinal_eligible_count": 0,
-    "doctrinal_secondary_refs": [],
+    "secondary_web_successes": 0,
+    "doctrinal_eligible_count": 1,
+    "doctrinal_secondary_refs": [
+      "s4"
+    ],
     "limited_doctrinal_answer": false,
+    "secondary_body_stage_ran": false,
+    "secondary_bodies_acquired": 0,
     "claim_match_not_run_reason": null,
+    "secondary_body_stop_reason": "stage_not_run",
+    "secondary_bibliography_only": 0,
     "doctrinal_ineligible_reasons": {
-      "not_doctrinal_type": 3
+      "not_doctrinal_type": 4
     },
     "authority_overstatement_count": 0,
     "doctrinal_fallback_combination": null,
@@ -281,13 +337,13 @@
   },
   "footnotes": [],
   "footnote_count": 0,
-  "answer": "**סיכום ההחזקה המרכזית**\n\nבית המשפט העליון בפסק‑דין בג\"ץ 1892/14 קבע כי קיימת חובת זיהוי של שוטרים ביחס לפעולות אכיפה מסוימות; חובת הזיהוי נובעת מעקרונות של שקיפות ופיקוח על כוח המדינה ומהנסיבות והאיזון שנדונו בפסק‑דין.\n\nבאשר להיקף והבסיס הנורמטיבי — בית המשפט פירש את החובה במסגרת איזון בין זכויות האדם לצורכי אכיפה ומשא ומתן של פיקוח שיפוטי; הוא קבע כי חובת הזיהוי נשענת על שיקולים נורמטיביים שנדונו בפסק‑דין ולא יכולה להיוותר מוחלטת בלי שקלול צורכי ביטחון.\n\nבית המשפט הדגיש שיש לאזן את חובת הזיהוי מול שיקולים מבצעיים וביטחוניים, וכי במצבים מיוחדים — שבהם חשיפת זהות השוטר עלולה לפגוע בביטחון או ביעילות מבצעית — עשויים לחול סייגים; ההכרעה היא מקרה‑מקרה תוך שקילת אינטרסים.\n\nתוצאת העתירה בפסק‑דין זה היתה קבלת עקרון חובת הזיהוי במידה מה: בית המשפט אימץ את הדרישה העקרונית לזיהוי והורה לנקוט צעדים תקניים וארגוניים לצורך מימוש חובה זו, כאשר צורת הסעד ופרטי היישום נקבעו בפסק‑דין.\n\nבעניין חובות יישומיות — בית המשפט הטיל על המשיבים חובות כלפי היישום המעשי: נדרשה קביעת נהלים ברורים לזיהוי בשוטרים במצבים שהוגדרו בפסק‑דין, ושיקול של סימון או מספור ועוד אמצעים ארגוניים כדי לאפשר פיקוח ובקרה על אכיפת החובה.\n\nהבהרה שיטתית: התשובות לעיל מבוססות על נוסח פסק‑דין בג\"ץ 1892/14 כפי שחולץ במקור המסומן; ייתכן שהנוסח המפורט והמלים המדויקות של ההוראות והסייגים נמצאים בפסק‑דין המלא או במסמכים נלווים שלא צוינו כאן.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
+  "answer": "**בג\"ץ 1892/14 — ההכרעה המרכזית**\n\nבית המשפט קיבל את העתירה שהגישה האגודה לזכויות האזרח והורה למדינה להגיש תוכנית מפורטת ומסגרת זמנים למימוש דרישות לגבי תנאי הכליאה, לרבות יעד לשטח מחיה מינימלי, וקבע אבני‑דרך לצעדי יישום ופיקוח על יישומן.\n\nההכרעה נשענה על שיקולים הנוגעים לזכויות היסוד ותפקידה המנחה של הרשות בפיקוח על תנאי כליאה, וקבעה כי יש להעמיד הוראות ביצוע מעשיות — בהיקף ובמועדים — כדי להשיג את השיפורים הנדרשים; בית המשפט הורה על הגשת תוכנית ולוח זמנים ועל הגדרת אבני דרך לפיקוח. בחלק מהמקורות שפורסמו מוזכר גם הדיון בפרטים כגון היקף בסיסי לשטח המחיה, כפי שמוזכר בספרות שדן בפסיקה זו.\n\nהסעד המעשי שנפסק כלל צו להמצאת תוכנית ולוח זמנים ביעדי ביצוע, ציון פעימה ראשונה ואבני דרך לביצוע, וכן הקמת מנגנוני פיקוח על יישום ההוראות והדיווח אודותיהן אל בית המשפט או רשות מוגדרת.\n\nהרקע העובדתי של העתירה הוא בעניין תנאי כליאה וצפיפות במתקני הכליאה בישראל; העתירה פנתה להיבטים של שטח מחיה לאסירים ועצורים והטענה כי הנסיבות בפועל אינן עונות על הנורמות הראויות, על רקע דיונים מדיניים ומחקריים בנושאי מדיניות כליאה וצפיפות.\n\nיש להבחין כי קיימים פסקי דין ועתירות נוספות של האגודה בזיקות לתנאי כליאה ולטיפול ציבורי בנושא; מקורות אלה נוגעים לסוגיות דומות אך לעתים שונות עובדתית, ולכן אי־אפשר להחליף את בדיקת ההשלכות העובדתיות והמשפטיות של כל תיק בבדיקה כללית בלבד.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.",
   "metadata": {
     "phase": "P5",
     "claims": [
       {
-        "reason": "השאלה עוסקת בקביעות הלכתיות בפסק דין ספציפי; יש לאתר את ההחזקה המחייבת של בג\"ץ לגבי חובת הזיהוי והמקור הנורמטיבי.",
-        "text_he": "האם נקבעה בפסק הדין חובת זיהוי לשוטרים (בשם או במספר מזהה), מה היקפה ומה המקור הנורמטיבי שלה.",
+        "reason": "כדי לענות \"מה נקבע\" יש לזהות במדויק את הקביעה המחייבת של בית המשפט העליון בפסק הדין הספציפי.",
+        "text_he": "מה ההכרעה המרכזית בבג\"ץ 1892/14 — האם העתירה התקבלה או נדחתה, ומה נקבע כתוצאה מכך (התוצאה הפורמלית של פסק הדין).",
         "claim_id": "C1",
         "required_roles": [
           "binding_case_law"
@@ -295,26 +351,27 @@
         "is_black_letter": true
       },
       {
-        "reason": "האיזון והחריגים הם חלק מהלכת פסק הדין ויש לקבוע אותם מתוך הנמקת ההרכב בפסק הדין המחייב.",
-        "text_he": "כיצד איזן בית המשפט בין חובת הזיהוי לבין צורכי ביטחון/שיקולים מבצעיים, והאם נקבעו חריגים או סייגים לדרישת הזיהוי.",
+        "reason": "הבנת הקביעה מחייבת זיהוי המקור הנורמטיבי (חוק/חוק יסוד/פקודה) וההלכות שעליהן הסתמך בית המשפט.",
+        "text_he": "מהו הבסיס הנורמטיבי והנימוקים: אילו הוראות חוק ופסיקה קודמת יושמו, ואילו עקרונות מנהליים/חוקתיים עמדו ביסוד ההכרעה.",
         "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "primary_statute"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "שאלת \"מה נקבע\" כוללת את התוצאה המעשית שהורה עליה בית המשפט כלפי הרשות והצדדים.",
+        "text_he": "מהו הסעד או התוצאה האופרטיבית שנקבעו: האם בוטלה נורמה/נוהל, ניתן צו מוחלט/הצהרתי, הותוו הנחיות או נקבעו מועדי יישום.",
+        "claim_id": "C3",
         "required_roles": [
           "binding_case_law"
         ],
         "is_black_letter": true
       },
       {
-        "reason": "זהו רכיב תוצאתי-דיוני קונקריטי הנלמד מלשון פסק הדין עצמו.",
-        "text_he": "מה היתה תוצאת העתירה והסעד שניתן: האם העתירה התקבלה, נדחתה או נמחקה, והאם הוצא צו מוחלט או שהדיון הסתיים בקבלת התחייבויות המדינה.",
-        "claim_id": "C3",
-        "required_roles": [
-          "binding_case_law"
-        ],
-        "is_black_letter": false
-      },
-      {
-        "reason": "פרטי היישום והנחיות אופרטיביות (אם נקבעו) מצויים בפסק הדין ומהווים חלק מתוצאתו והנחיותיו.",
-        "text_he": "האם הוטלו על המשטרה חובות יישומיות קונקרטיות (למשל קביעת נהלים, סימון/מספור, מועדים ליישום) ומה הן.",
+        "reason": "הבנת ההחזקה מחייבת תיאור תמציתי של העובדות הרלוונטיות כפי שנקבעו בפסק הדין, שכן הן מגדירות את גבולות ההלכה.",
+        "text_he": "מהו הרקע העובדתי המרכזי שעמד בפני בית המשפט והמסגרת המעשית אליה מתייחסת ההלכה, כדי לתחום את תחולת הקביעה.",
         "claim_id": "C4",
         "required_roles": [
           "binding_case_law"
@@ -322,9 +379,9 @@
         "is_black_letter": false
       }
     ],
-    "run_id": "0b15b50e-e430-4d6b-953e-3d0826939980",
+    "run_id": "612c7f92-a461-41cb-b2d7-5e74fad61085",
     "drafter": {
-      "ms": 29620,
+      "ms": 27503,
       "ok": true,
       "lead_ref": {
         "ref": "s1",
@@ -365,9 +422,9 @@
         ],
         "version": "query_merge_and_budget_v1",
         "source_type_mix": {
-          "case": 13,
-          "other": 1,
-          "academic": 1
+          "case": 12,
+          "statute": 1,
+          "academic": 2
         },
         "actionability_mix": {
           "topic_only": 2,
@@ -376,12 +433,12 @@
         },
         "final_query_count": 15,
         "actionable_queries": 2,
-        "demoted_identifiers": 1,
+        "demoted_identifiers": 0,
         "exploratory_queries": 2,
         "kept_by_source_type": {
-          "case": 13,
-          "other": 1,
-          "academic": 1
+          "case": 12,
+          "statute": 1,
+          "academic": 2
         },
         "queries_by_producer": {
           "planner": 6,
@@ -414,7 +471,7 @@
         "signals": [],
         "truncated": false,
         "last_block_kind": "paragraph",
-        "last_block_excerpt": "…ור המסומן; ייתכן שהנוסח המפורט והמלים המדויקות של ההוראות והסייגים נמצאים בפסק‑דין המלא או במסמכים נלווים שלא צוינו כאן."
+        "last_block_excerpt": "…גיות דומות אך לעתים שונות עובדתית, ולכן אי־אפשר להחליף את בדיקת ההשלכות העובדתיות והמשפטיות של כל תיק בבדיקה כללית בלבד."
       },
       "court_egress": {
         "calls": 0,
@@ -432,7 +489,7 @@
         "marker_count": 0,
         "heading_count": 1,
         "list_item_count": 0,
-        "paragraph_count": 6,
+        "paragraph_count": 5,
         "cited_segment_count": 0,
         "adjacent_marker_count": 0,
         "distinct_source_count": 0,
@@ -489,6 +546,45 @@
             "budget": 500,
             "reason": "not_synthesis_mode",
             "expanded": false,
+            "citable_as": "scholarship",
+            "snippet_length": 500,
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "full_text",
+            "has_holding_text": false,
+            "has_statutory_text": false,
+            "available_text_length": 1097
+          },
+          {
+            "ref": "s4",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "scholarship",
+            "snippet_length": 500,
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "full_text",
+            "has_holding_text": false,
+            "has_statutory_text": false,
+            "available_text_length": 1178
+          },
+          {
+            "ref": "s5",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
+            "citable_as": "scholarship",
+            "snippet_length": 500,
+            "synthesis_role": "secondary_commentary",
+            "text_usability": "full_text",
+            "has_holding_text": false,
+            "has_statutory_text": true,
+            "available_text_length": 1178
+          },
+          {
+            "ref": "s6",
+            "budget": 500,
+            "reason": "not_synthesis_mode",
+            "expanded": false,
             "citable_as": "judgment",
             "snippet_length": 500,
             "synthesis_role": "leading_candidate",
@@ -498,9 +594,9 @@
             "available_text_length": 1182
           }
         ],
-        "commentary_max_snippet_length": 0
+        "commentary_max_snippet_length": 500
       },
-      "sources_passed": 3,
+      "sources_passed": 6,
       "synthesis_pack": {
         "has_judgment": false,
         "statute_count": 0,
@@ -530,8 +626,8 @@
         "block_trim": {
           "applied": false,
           "ceiling": null,
-          "blocks_after": 7,
-          "blocks_before": 7,
+          "blocks_after": 6,
+          "blocks_before": 6,
           "dropped_overflow": 0,
           "dropped_unsupported": 0
         },
@@ -575,13 +671,40 @@
             "reason": "not_doctrinal_type",
             "eligible": false,
             "remapped": false,
+            "body_chars": 1097,
+            "source_type": "knesset_research"
+          },
+          {
+            "ref": "s4",
+            "reason": "eligible_doctrinal_secondary",
+            "eligible": true,
+            "remapped": false,
+            "body_chars": 1178,
+            "source_type": "journal_article"
+          },
+          {
+            "ref": "s5",
+            "reason": "eligible_doctrinal_secondary",
+            "eligible": true,
+            "remapped": false,
+            "body_chars": 1178,
+            "source_type": "journal_article"
+          },
+          {
+            "ref": "s6",
+            "reason": "not_doctrinal_type",
+            "eligible": false,
+            "remapped": false,
             "body_chars": 1182,
             "source_type": "caselaw"
           }
         ],
-        "eligible_refs": [],
+        "eligible_refs": [
+          "s4",
+          "s5"
+        ],
         "ineligible_reason_counts": {
-          "not_doctrinal_type": 3
+          "not_doctrinal_type": 4
         }
       },
       "footnotes_length": 0,
@@ -592,7 +715,7 @@
         "same_model_retry": false,
         "escalated_to_full": false
       },
-      "carried_pack_size": 6,
+      "carried_pack_size": 7,
       "case_law_required": false,
       "marker_validation": {
         "ok": true,
@@ -604,14 +727,14 @@
         "markers_in_answer": []
       },
       "source_nomination": {
-        "ms": 5986,
+        "ms": 5742,
         "dropped": [],
         "enabled": true,
         "version": "source_nomination_v2",
         "escalated": false,
         "candidates": [
           {
-            "year": 2016,
+            "year": 2015,
             "bucket": "actionable",
             "docket": "1892/14",
             "authors": [],
@@ -619,15 +742,15 @@
             "category": "judgment",
             "label_he": "בג\"ץ 1892/14 האגודה לזכויות האזרח נ' השר לביטחון פנים",
             "confidence": 0.95,
-            "institution": null,
+            "institution": "בית המשפט העליון",
             "must_verify": true,
-            "topic_query": "בג\"ץ 1892/14 האגודה לזכויות האזרח נ' השר לביטחון פנים פסק דין",
+            "topic_query": "בג\"ץ 1892/14 האגודה לזכויות האזרח נגד השר לביטחון פנים פסק דין 2015",
             "nominated_by": "source_nomination_v2+explicit_docket_guard",
             "actionability": "known_identifier",
             "nomination_id": "N1",
             "statute_title": null,
             "demoted_reason": null,
-            "role_in_answer": "פסק הדין המרכזי לענות על כל הטענות (C1-C4)",
+            "role_in_answer": "פסק הדין המרכזי שעליו נשאלו השאלות; יש לחפש את פסק הדין המלא לצורך מענה לשאלות C1–C4.",
             "statute_section": null,
             "stripped_fields": [],
             "journal_or_publisher": null,
@@ -635,53 +758,29 @@
             "identifier_confidence": 0.9
           },
           {
-            "year": 2006,
+            "year": null,
             "bucket": "actionable",
             "docket": null,
             "authors": [],
-            "demoted": true,
+            "demoted": false,
             "category": "judgment",
-            "label_he": "בג\"ץ 5284/05 אהרונוביץ' נ' משטרת ישראל",
-            "confidence": 0.6,
-            "institution": null,
+            "label_he": "ע\"א 6790/02 אלביט מערכות נ' המוסד לבטחון לאומי",
+            "confidence": 0.4,
+            "institution": "בית המשפט העליון",
             "must_verify": true,
-            "topic_query": "בג\"ץ 5284/05 אהרונוביץ' פסק דין חובת זיהוי שוטרים",
+            "topic_query": "אלביט מערכות המוסד לבטחון לאומי פסיקה",
             "nominated_by": "source_nomination_v2",
             "actionability": "known_name_no_docket",
             "nomination_id": "N2",
             "statute_title": null,
-            "demoted_reason": "identifier_stripped:docket",
-            "role_in_answer": "פסיקה משווה על זיהוי שוטרים ומשטרת ישראל",
+            "demoted_reason": null,
+            "role_in_answer": "פסיקה עקרונית אפשרית על סמכות שיפוטית בנושאי ביטחון (לרקע השוואתי אם נדרש).",
             "statute_section": null,
             "stripped_fields": [
               "docket"
             ],
             "journal_or_publisher": null,
-            "relevance_confidence": 0.6,
-            "identifier_confidence": 0
-          },
-          {
-            "year": null,
-            "bucket": "exploratory",
-            "docket": null,
-            "authors": [],
-            "demoted": false,
-            "category": "other",
-            "label_he": "בג\"ץ 1892/14 analysis article",
-            "confidence": 0.8,
-            "institution": null,
-            "must_verify": true,
-            "topic_query": "בג\"ץ 1892/14 analysis article",
-            "nominated_by": "source_nomination_v2",
-            "actionability": "topic_only",
-            "nomination_id": "E2",
-            "statute_title": null,
-            "demoted_reason": null,
-            "role_in_answer": "ניתוח מקוון/מוסדי של פסק הדין ותוצאותיו",
-            "statute_section": null,
-            "stripped_fields": [],
-            "journal_or_publisher": null,
-            "relevance_confidence": 0.8,
+            "relevance_confidence": 0.4,
             "identifier_confidence": 0
           },
           {
@@ -691,21 +790,45 @@
             "authors": [],
             "demoted": false,
             "category": "scholarship",
-            "label_he": "חובת זיהוי שוטרים פסיקה ישראלית מאמר",
-            "confidence": 0.7,
+            "label_he": "בג\"ץ 1892/14 ניתוח פסק הדין ארגוני זכויות וחוק ביטחון פנים",
+            "confidence": 0.9,
             "institution": null,
             "must_verify": true,
-            "topic_query": "חובת זיהוי שוטרים פסיקה ישראלית מאמר",
+            "topic_query": "בג\"ץ 1892/14 ניתוח פסק הדין ארגוני זכויות וחוק ביטחון פנים",
             "nominated_by": "source_nomination_v2",
             "actionability": "topic_only",
             "nomination_id": "E1",
             "statute_title": null,
             "demoted_reason": null,
-            "role_in_answer": "מחקרים וסיכומים על חובת זיהוי ויישומה במשטרה",
+            "role_in_answer": "חיפושי נושא לאיתור מאמרים או פרשנויות על פסק הדין וההשפעה המנהלית",
             "statute_section": null,
             "stripped_fields": [],
             "journal_or_publisher": null,
-            "relevance_confidence": 0.7,
+            "relevance_confidence": 0.9,
+            "identifier_confidence": 0
+          },
+          {
+            "year": null,
+            "bucket": "exploratory",
+            "docket": null,
+            "authors": [],
+            "demoted": false,
+            "category": "scholarship",
+            "label_he": "שיקול דעת מנהלי ופיקוח שיפוטי בסמכות השר לביטחון פנים מאמר",
+            "confidence": 0.8,
+            "institution": null,
+            "must_verify": true,
+            "topic_query": "שיקול דעת מנהלי ופיקוח שיפוטי בסמכות השר לביטחון פנים מאמר",
+            "nominated_by": "source_nomination_v2",
+            "actionability": "topic_only",
+            "nomination_id": "E2",
+            "statute_title": null,
+            "demoted_reason": null,
+            "role_in_answer": "חיבור לשאלות על בסיס נורמטיבי ונימוקים משפטיים",
+            "statute_section": null,
+            "stripped_fields": [],
+            "journal_or_publisher": null,
+            "relevance_confidence": 0.8,
             "identifier_confidence": 0
           }
         ],
@@ -714,9 +837,8 @@
         "parse_error": null,
         "skip_reason": null,
         "category_mix": {
-          "other": 1,
           "judgment": 2,
-          "scholarship": 1
+          "scholarship": 2
         },
         "stage_failed": false,
         "dropped_count": 0,
@@ -733,16 +855,10 @@
         },
         "escalation_reason": null,
         "exploratory_count": 2,
-        "demoted_identifiers": [
-          {
-            "label": "בג\"ץ 5284/05 אהרונוביץ' נ' משטרת ישראל",
-            "reason": "identifier_stripped:docket",
-            "nomination_id": "N2"
-          }
-        ],
+        "demoted_identifiers": [],
         "stripped_identifiers": [
           {
-            "label": "בג\"ץ 5284/05 אהרונוביץ' נ' משטרת ישראל",
+            "label": "ע\"א 6790/02 אלביט מערכות נ' המוסד לבטחון לאומי",
             "fields": [
               "docket"
             ],
@@ -797,28 +913,21 @@
           },
           {
             "basis": "declared_claim_category",
-            "category": "court_holding",
+            "category": "contextual_background",
             "kept_refs": [],
             "block_index": 4,
             "support_levels": []
           },
           {
             "basis": "declared_claim_category",
-            "category": "court_holding",
+            "category": "contextual_background",
             "kept_refs": [],
             "block_index": 5,
-            "support_levels": []
-          },
-          {
-            "basis": "declared_claim_category+docket_identity_escalation",
-            "category": "court_holding",
-            "kept_refs": [],
-            "block_index": 6,
             "support_levels": []
           }
         ],
         "limitation_added": true,
-        "tagged_block_count": 6,
+        "tagged_block_count": 5,
         "dropped_source_refs": [
           {
             "ref": "s1",
@@ -838,16 +947,16 @@
             "block_index": 2,
             "block_claim_id": "C2",
             "claim_category": "court_holding",
-            "block_legal_area": "contracts",
+            "block_legal_area": "public_law_hcj",
             "source_claim_ids": [
               "C1"
             ],
             "source_legal_area": "public_law_hcj"
           },
           {
-            "ref": "s1",
+            "ref": "s4",
             "reason": "claim_mismatch",
-            "block_index": 3,
+            "block_index": 2,
             "block_claim_id": "C2",
             "claim_category": "court_holding",
             "block_legal_area": "public_law_hcj",
@@ -859,7 +968,7 @@
           {
             "ref": "s1",
             "reason": "claim_mismatch",
-            "block_index": 4,
+            "block_index": 3,
             "block_claim_id": "C3",
             "claim_category": "court_holding",
             "block_legal_area": "public_law_hcj",
@@ -871,9 +980,33 @@
           {
             "ref": "s1",
             "reason": "claim_mismatch",
-            "block_index": 5,
+            "block_index": 4,
             "block_claim_id": "C4",
-            "claim_category": "court_holding",
+            "claim_category": "contextual_background",
+            "block_legal_area": "public_law_hcj",
+            "source_claim_ids": [
+              "C1"
+            ],
+            "source_legal_area": "public_law_hcj"
+          },
+          {
+            "ref": "s3",
+            "reason": "claim_mismatch",
+            "block_index": 4,
+            "block_claim_id": "C4",
+            "claim_category": "contextual_background",
+            "block_legal_area": "public_law_hcj",
+            "source_claim_ids": [
+              "C1"
+            ],
+            "source_legal_area": "public_law_hcj"
+          },
+          {
+            "ref": "s6",
+            "reason": "claim_mismatch",
+            "block_index": 5,
+            "block_claim_id": "C2",
+            "claim_category": "contextual_background",
             "block_legal_area": "public_law_hcj",
             "source_claim_ids": [
               "C1"
@@ -882,9 +1015,9 @@
           }
         ],
         "commentary_only_claims": [],
-        "unsupported_block_count": 4,
+        "unsupported_block_count": 3,
         "authority_overstatements": [],
-        "source_ref_mismatch_count": 5,
+        "source_ref_mismatch_count": 7,
         "primary_support_by_main_claim": false,
         "primary_supported_block_count": 0,
         "secondary_supported_block_count": 0
@@ -900,12 +1033,14 @@
         "found_titles": [
           "בג\"ץ 1892/14 האגודה לזכויות האזרח בישראל נ׳ השר לביטחון פנים פסק דין (13.06.2017)",
           "בג\"ץ 1892/14 האגודה לזכויות האזרח בישראל נ׳ השר לביטחון פנים פסק דין (13.06.2017)",
-          "בג\"ץ 7753/23 האגודה לזכויות האזרח בישראל ואח' נגד השר לביטחון לאומי פסק דין (23.11.2023)"
+          "סוגיות בכליאה בישראל",
+          "החובה ליתן לעצורים יחס מיוחד ההולם את חזקת החפות – מבט נוסף על תנאי המעצר בישראל על רקע המשפט הבין-לאומי | מיכל טמיר וגרשון גונטובניק (כרך כה)",
+          "חוק לתיקון פקודת בתי הסוהר (מס'"
         ],
         "topical_refs": [
           "s1",
           "s2",
-          "s3"
+          "s6"
         ],
         "topic_phrases": [
           "האגודה לזכויות האזרח",
@@ -923,18 +1058,20 @@
         "usable_judgment_refs": [
           "s1",
           "s2",
-          "s3"
+          "s6"
         ],
         "exact_amounts_allowed": true,
         "governing_statute_refs": [],
         "topical_authority_refs": [
           "s1",
           "s2",
-          "s3"
+          "s6"
         ],
         "body_text_topical_match": false,
         "morphology_domain_match": false,
-        "doctrinal_secondary_refs": [],
+        "doctrinal_secondary_refs": [
+          "s4"
+        ],
         "limited_doctrinal_answer": false,
         "normalized_source_tokens": [],
         "governing_regulation_refs": [],
@@ -958,7 +1095,7 @@
         "sufficiency_authority_basis": "usable_judgment",
         "thin_governing_statute_refs": [],
         "doctrinal_ineligible_reasons": {
-          "not_doctrinal_type": 3
+          "not_doctrinal_type": 4
         },
         "doctrinal_fallback_combination": null,
         "thin_governing_regulation_refs": [],
@@ -970,22 +1107,30 @@
       "acquisition_success": true,
       "answer_style_report": {
         "metrics": {
-          "block_count": 7,
+          "block_count": 6,
           "denylist_hits": [],
           "heading_count": 1,
-          "heading_ratio": 0.143,
+          "heading_ratio": 0.167,
           "cited_block_count": 5,
           "total_footnote_count": 0,
           "compound_footnote_count": 0,
           "compound_footnote_ratio": 0,
-          "unsafe_display_title_count": 0,
-          "avg_sources_per_cited_block": 1,
-          "unsafe_display_title_examples": [],
+          "unsafe_display_title_count": 1,
+          "avg_sources_per_cited_block": 1.4,
+          "unsafe_display_title_examples": [
+            {
+              "ref": "s5",
+              "status": "fallback_truncated",
+              "display_title": "חוק לתיקון פקודת בתי הסוהר (מס'"
+            }
+          ],
           "partial_supported_strong_claims": [],
-          "total_source_refs_in_cited_blocks": 5
+          "total_source_refs_in_cited_blocks": 7
         },
         "report_only": true,
-        "triggered_reasons": []
+        "triggered_reasons": [
+          "unsafe_display_title"
+        ]
       },
       "inline_marker_count": 0,
       "source_depth_policy": {
@@ -1039,7 +1184,8 @@
           "trimmed_queries": [],
           "missing_categories": [],
           "planner_queries_by_source_type": {
-            "case": 6
+            "case": 5,
+            "statute": 1
           }
         },
         "depth_slots_preserved": 1,
@@ -1047,20 +1193,20 @@
           "case": 1
         },
         "merge_kept_by_source_type": {
-          "case": 13,
-          "other": 1,
-          "academic": 1
+          "case": 12,
+          "statute": 1,
+          "academic": 2
         },
         "merge_dropped_by_source_type": {
           "case": 2
         },
         "planner_queries_by_source_type": {
-          "case": 6
+          "case": 5,
+          "statute": 1
         },
         "nomination_targets_by_source_type": {
-          "other": 1,
           "judgment": 2,
-          "scholarship": 1
+          "scholarship": 2
         }
       },
       "statute_only_answer": false,
@@ -1094,7 +1240,7 @@
         "signals": [],
         "truncated": false,
         "last_block_kind": "paragraph",
-        "last_block_excerpt": "…ור המסומן; ייתכן שהנוסח המפורט והמלים המדויקות של ההוראות והסייגים נמצאים בפסק‑דין המלא או במסמכים נלווים שלא צוינו כאן."
+        "last_block_excerpt": "…גיות דומות אך לעתים שונות עובדתית, ולכן אי־אפשר להחליף את בדיקת ההשלכות העובדתיות והמשפטיות של כל תיק בבדיקה כללית בלבד."
       },
       "deterministic_branch": null,
       "source_label_quality": {
@@ -1136,7 +1282,7 @@
             "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1892-14-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%94%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
             "title": "בג\"ץ 1892/14 האגודה לזכויות האזרח בישראל נ׳ השר לביטחון פנים פסק דין (13.06.2017)",
             "raw_title": "בג\"ץ 1892/14 האגודה לזכויות האזרח בישראל נ׳ השר לביטחון פנים פסק דין (13.06.2017)",
-            "candidate_id": "bce35e03-9c1e-4c78-bb60-44b8fd06340d",
+            "candidate_id": "e9c63397-7909-4962-bb64-bb2ca2c7a3d0",
             "title_status": "ok",
             "fallback_used": "none",
             "downgrade_reason": null,
@@ -1165,10 +1311,105 @@
           },
           {
             "ref": "s3",
+            "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6719&businessType=1",
+            "title": "סוגיות בכליאה בישראל",
+            "raw_title": "סוגיות בכליאה בישראל",
+            "candidate_id": "31b73c35-1c34-4c41-b44d-4849dacc3740",
+            "title_status": "ok",
+            "fallback_used": "none",
+            "downgrade_reason": null,
+            "fallback_applied": false,
+            "fallback_candidate": "מסמך מאתר אתר הכנסת",
+            "uncertain_identity": false,
+            "classification_after": "scholarship",
+            "title_hygiene_action": "kept",
+            "classification_before": "unknown",
+            "classification_reason": "scholarship_shape_overrides_official_host",
+            "title_hygiene_reasons": [
+              "title_truncated_mid_word"
+            ],
+            "classification_cache_hit": true,
+            "fallback_rejected_reason": "fallback_not_more_informative(host:1<=raw:1)",
+            "judgment_identity_signals": [
+              "case_prefix",
+              "court_vocabulary"
+            ],
+            "classification_rerun_reason": null,
+            "commentary_identity_signals": [
+              "commentary_snippet_shape",
+              "commentary_path"
+            ],
+            "fallback_improvement_reason": null
+          },
+          {
+            "ref": "s4",
+            "url": "https://runilawreview.org/2019/06/02/vol25_tamir_gontovnik/",
+            "title": "החובה ליתן לעצורים יחס מיוחד ההולם את חזקת החפות – מבט נוסף על תנאי המעצר בישראל על רקע המשפט הבין-לאומי | מיכל טמיר וגרשון גונטובניק (כרך כה)",
+            "raw_title": "החובה ליתן לעצורים יחס מיוחד ההולם את חזקת החפות – מבט נוסף על תנאי המעצר בישראל על רקע המשפט הבין-לאומי | מיכל טמיר וגרשון גונטובניק (כרך כה)",
+            "candidate_id": "17791a96-237a-4bbc-9b12-fe95ce195bef",
+            "title_status": "ok",
+            "fallback_used": "none",
+            "downgrade_reason": "commentary_identity:upstream_scholarship_type",
+            "fallback_applied": false,
+            "fallback_candidate": null,
+            "uncertain_identity": false,
+            "classification_after": "scholarship",
+            "title_hygiene_action": "kept",
+            "classification_before": "scholarship",
+            "classification_reason": null,
+            "title_hygiene_reasons": [],
+            "classification_cache_hit": true,
+            "fallback_rejected_reason": null,
+            "judgment_identity_signals": [
+              "docket_in_text",
+              "case_prefix",
+              "party_names",
+              "court_vocabulary"
+            ],
+            "classification_rerun_reason": null,
+            "commentary_identity_signals": [
+              "upstream_scholarship_type"
+            ],
+            "fallback_improvement_reason": null
+          },
+          {
+            "ref": "s5",
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/5fc83c_3025530eb3c3458697bf14cefe0e330a.pdf",
+            "title": "חוק לתיקון פקודת בתי הסוהר (מס'",
+            "raw_title": "מהפכת השחרור המנהלי – ממדיניות כליאה מבוססת ביקוש למדיניות מבוססת היצע",
+            "candidate_id": "377e2067-024b-495b-afba-133770ecedba",
+            "title_status": "fallback_truncated",
+            "fallback_used": "statute_name",
+            "downgrade_reason": null,
+            "fallback_applied": true,
+            "fallback_candidate": "חוק לתיקון פקודת בתי הסוהר (מס'",
+            "uncertain_identity": false,
+            "classification_after": "scholarship",
+            "title_hygiene_action": "title_truncated_mid_word",
+            "classification_before": "scholarship",
+            "classification_reason": null,
+            "title_hygiene_reasons": [
+              "title_truncated_mid_word"
+            ],
+            "classification_cache_hit": true,
+            "fallback_rejected_reason": null,
+            "judgment_identity_signals": [
+              "document_file"
+            ],
+            "classification_rerun_reason": null,
+            "commentary_identity_signals": [
+              "commentary_snippet_shape",
+              "upstream_scholarship_type",
+              "scholarship_shape"
+            ],
+            "fallback_improvement_reason": "statute_name:7>raw:3"
+          },
+          {
+            "ref": "s6",
             "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-7753-23-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%95%d7%90%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
             "title": "בג\"ץ 7753/23 האגודה לזכויות האזרח בישראל ואח' נגד השר לביטחון לאומי פסק דין (23.11.2023)",
             "raw_title": "בג\"ץ 7753/23 האגודה לזכויות האזרח בישראל ואח' נגד השר לביטחון לאומי פסק דין (23.11.2023)",
-            "candidate_id": "7d2d1a59-10b9-4d6b-8f9e-f5e51c832123",
+            "candidate_id": "cb956432-61c2-4547-8359-a50554ea10ef",
             "title_status": "ok",
             "fallback_used": "none",
             "downgrade_reason": null,
@@ -1196,12 +1437,12 @@
             "fallback_improvement_reason": null
           }
         ],
-        "total": 3,
-        "reclassified_count": 0,
-        "fallback_used_count": 0,
+        "total": 6,
+        "reclassified_count": 1,
+        "fallback_used_count": 1,
         "classification_rerun_count": 0,
         "classification_rerun_reason": [],
-        "classification_cache_hit_count": 6,
+        "classification_cache_hit_count": 7,
         "source_label_cpu_guard_applied": true
       },
       "canonical_quote_fired": false,
@@ -1243,23 +1484,24 @@
       },
       "omitted_candidate_ids": [
         "specific-case:bagatz:1892/14",
-        "bce35e03-9c1e-4c78-bb60-44b8fd06340d",
-        "a94f6055-a5b8-43b8-9c47-88bcb43181cd",
-        "2ccec33b-af8d-473d-88b6-7df52919ceac",
-        "4938f024-8ca9-4cd1-89e3-4fd619295aec",
-        "7d2d1a59-10b9-4d6b-8f9e-f5e51c832123"
+        "e9c63397-7909-4962-bb64-bb2ca2c7a3d0",
+        "31b73c35-1c34-4c41-b44d-4849dacc3740",
+        "17791a96-237a-4bbc-9b12-fe95ce195bef",
+        "fae1372d-b3eb-440e-9ede-67e72ea8e9cb",
+        "377e2067-024b-495b-afba-133770ecedba",
+        "cb956432-61c2-4547-8359-a50554ea10ef"
       ],
       "structured_validation": {
         "ok": true,
         "errors": [],
-        "block_count": 7,
+        "block_count": 6,
         "heading_count": 1,
         "list_item_count": 0,
-        "paragraph_count": 6,
+        "paragraph_count": 5,
         "cited_segment_count": 5,
         "forbidden_text_hits": [],
         "unknown_source_refs": [],
-        "total_source_ref_count": 5
+        "total_source_ref_count": 7
       },
       "verified_source_cache": {
         "version": "verified_source_cache_v2",
@@ -1293,7 +1535,7 @@
         "nearby_legal_institution_found": false
       },
       "specific_case_identity": {
-        "ms": 2,
+        "ms": 1,
         "matched_by": "docket",
         "recovered_title": null,
         "requested_docket": "בג\"ץ 1892/14",
@@ -1357,23 +1599,16 @@
         },
         {
           "basis": "declared_claim_category",
-          "category": "court_holding",
+          "category": "contextual_background",
           "kept_refs": [],
           "block_index": 4,
           "support_levels": []
         },
         {
           "basis": "declared_claim_category",
-          "category": "court_holding",
+          "category": "contextual_background",
           "kept_refs": [],
           "block_index": 5,
-          "support_levels": []
-        },
-        {
-          "basis": "declared_claim_category+docket_identity_escalation",
-          "category": "court_holding",
-          "kept_refs": [],
-          "block_index": 6,
           "support_levels": []
         }
       ],
@@ -1390,13 +1625,13 @@
       "limited_doctrinal_answer": false,
       "normalized_source_tokens": [],
       "specific_case_resolution": {
-        "ms": 1599,
+        "ms": 1604,
         "mode": "specific_case",
         "enabled": true,
         "probe_stages": [
           {
             "name": "derived_url_construction_start",
-            "at_ms": 0
+            "at_ms": 1
           },
           {
             "name": "derived_urls_constructed",
@@ -1419,7 +1654,7 @@
           },
           {
             "name": "local_db_lookup_done",
-            "at_ms": 1599,
+            "at_ms": 1604,
             "detail": {
               "success": true
             }
@@ -1493,7 +1728,7 @@
         "source_split": {
           "read_in_full": [
             "s1",
-            "s3"
+            "s6"
           ],
           "reference_only": [
             "s2"
@@ -1531,7 +1766,7 @@
       ],
       "text_acquisition_attempted": true,
       "acquisition_failure_reasons": [],
-      "claim_source_mismatch_count": 5,
+      "claim_source_mismatch_count": 7,
       "doctrinal_sufficiency_trace": {
         "ran": true,
         "depth_mode": "specific_case_or_statute",
@@ -1540,17 +1775,25 @@
         "footnote_count": 0,
         "claim_match_ran": true,
         "sufficiency_ran": true,
-        "input_source_count": 3,
+        "input_source_count": 6,
         "sufficiency_reason": "shape_not_gated",
-        "claim_category_count": 6,
+        "claim_category_count": 5,
         "deterministic_branch": null,
+        "secondary_local_hits": 0,
         "typing_remapped_count": 0,
-        "doctrinal_eligible_count": 0,
-        "doctrinal_secondary_refs": [],
+        "secondary_web_successes": 0,
+        "doctrinal_eligible_count": 1,
+        "doctrinal_secondary_refs": [
+          "s4"
+        ],
         "limited_doctrinal_answer": false,
+        "secondary_body_stage_ran": false,
+        "secondary_bodies_acquired": 0,
         "claim_match_not_run_reason": null,
+        "secondary_body_stop_reason": "stage_not_run",
+        "secondary_bibliography_only": 0,
         "doctrinal_ineligible_reasons": {
-          "not_doctrinal_type": 3
+          "not_doctrinal_type": 4
         },
         "authority_overstatement_count": 0,
         "doctrinal_fallback_combination": null,
@@ -1579,7 +1822,7 @@
       "doctrinal_fallback_combination": null,
       "missing_anchor_caveat_injected": false,
       "thin_governing_regulation_refs": [],
-      "claim_source_unsupported_blocks": 4,
+      "claim_source_unsupported_blocks": 3,
       "last_acquisition_failure_reason": null,
       "missing_docket_limitation_fired": false,
       "mixed_hierarchy_footnotes_count": 0,
@@ -1667,7 +1910,7 @@
           "must_verify": true,
           "nominated_by": "source_nomination_v2",
           "nomination_id": "N1",
-          "role_in_answer": "פסק הדין המרכזי לענות על כל הטענות (C1-C4)",
+          "role_in_answer": "פסק הדין המרכזי שעליו נשאלו השאלות; יש לחפש את פסק הדין המלא לצורך מענה לשאלות C1–C4.",
           "nomination_bucket": "actionable",
           "source_nomination": true,
           "discovery_eligible": true,
@@ -1692,43 +1935,18 @@
           "must_verify": true,
           "nominated_by": "source_nomination_v2",
           "nomination_id": "N2",
-          "role_in_answer": "פסיקה משווה על זיהוי שוטרים ומשטרת ישראל",
+          "role_in_answer": "פסיקה עקרונית אפשרית על סמכות שיפוטית בנושאי ביטחון (לרקע השוואתי אם נדרש).",
           "nomination_bucket": "actionable",
           "source_nomination": true,
           "discovery_eligible": true,
           "nomination_category": "judgment",
-          "relevance_confidence": 0.6,
+          "relevance_confidence": 0.4,
           "identifier_confidence": 0,
-          "nomination_confidence": 0.6,
+          "nomination_confidence": 0.4,
           "nomination_actionability": "known_name_no_docket"
         },
-        "query_he": "בג\"ץ 5284/05 אהרונוביץ' נ' משטרת ישראל",
+        "query_he": "ע\"א 6790/02 אלביט מערכות נ' המוסד לבטחון לאומי",
         "expected_source_type": "case"
-      },
-      {
-        "role": "factual_report",
-        "reason": "source_nomination_v2:E2",
-        "targets": [
-          "local_db",
-          "perplexity"
-        ],
-        "claim_id": "C1",
-        "metadata": {
-          "must_verify": true,
-          "nominated_by": "source_nomination_v2",
-          "nomination_id": "E2",
-          "role_in_answer": "ניתוח מקוון/מוסדי של פסק הדין ותוצאותיו",
-          "nomination_bucket": "exploratory",
-          "source_nomination": true,
-          "discovery_eligible": false,
-          "nomination_category": "other",
-          "relevance_confidence": 0.8,
-          "identifier_confidence": 0,
-          "nomination_confidence": 0.8,
-          "nomination_actionability": "topic_only"
-        },
-        "query_he": "בג\"ץ 1892/14 analysis article",
-        "expected_source_type": "other"
       },
       {
         "role": "scholarship",
@@ -1742,83 +1960,107 @@
           "must_verify": true,
           "nominated_by": "source_nomination_v2",
           "nomination_id": "E1",
-          "role_in_answer": "מחקרים וסיכומים על חובת זיהוי ויישומה במשטרה",
+          "role_in_answer": "חיפושי נושא לאיתור מאמרים או פרשנויות על פסק הדין וההשפעה המנהלית",
           "nomination_bucket": "exploratory",
           "source_nomination": true,
           "discovery_eligible": false,
           "nomination_category": "scholarship",
-          "relevance_confidence": 0.7,
+          "relevance_confidence": 0.9,
           "identifier_confidence": 0,
-          "nomination_confidence": 0.7,
+          "nomination_confidence": 0.9,
           "nomination_actionability": "topic_only"
         },
-        "query_he": "חובת זיהוי שוטרים פסיקה ישראלית מאמר",
+        "query_he": "בג\"ץ 1892/14 ניתוח פסק הדין ארגוני זכויות וחוק ביטחון פנים",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "reason": "source_nomination_v2:E2",
+        "targets": [
+          "local_db",
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "metadata": {
+          "must_verify": true,
+          "nominated_by": "source_nomination_v2",
+          "nomination_id": "E2",
+          "role_in_answer": "חיבור לשאלות על בסיס נורמטיבי ונימוקים משפטיים",
+          "nomination_bucket": "exploratory",
+          "source_nomination": true,
+          "discovery_eligible": false,
+          "nomination_category": "scholarship",
+          "relevance_confidence": 0.8,
+          "identifier_confidence": 0,
+          "nomination_confidence": 0.8,
+          "nomination_actionability": "topic_only"
+        },
+        "query_he": "שיקול דעת מנהלי ופיקוח שיפוטי בסמכות השר לביטחון פנים מאמר",
         "expected_source_type": "academic"
       },
       {
         "role": "binding_case_law",
-        "reason": "איתור מהימן של פסק‑הדין במלואו כדי לקרוא את נוסח ההכרעה והסעיפים שבהם נדונה חובת זיהוי השוטרים.",
+        "reason": "איתור הפסק‑דין המלא וההכרעה הפורמלית (קבלת/דחיית העתירה) — מקור מחייב ראשון.",
         "targets": [
           "local_db",
           "perplexity"
         ],
         "claim_id": "C1",
-        "query_he": "בג\"ץ 1892/14 האגודה לזכויות האזרח נ' השר לביטחון פנים פסק-דין מלא טקסט PDF החלטה מלאה אתר נבו/פסקדין/הרשם",
+        "query_he": "בג\"ץ 1892/14 האגודה לזכויות האזרח נ' השר לביטחון פנים פסק-דין מלא החלטה האם העתירה התקבלה או נדחתה תוצאה פורמלית של פסק הדין",
         "expected_source_type": "case"
       },
       {
         "role": "binding_case_law",
-        "reason": "שאילתה אלטרנטיבית לאיתור קטעים בפסק‑הדין המתארים את השיקולים המבצעים, החריגים והאמות מידה לאיזון.",
-        "targets": [
-          "local_db",
-          "perplexity"
-        ],
-        "claim_id": "C2",
-        "query_he": "בג\"ץ 1892/14 האגודה לזכויות האזרח נ' השר לביטחון פנים פרוטוקול/סיכום פסק‑דין נסיבות איזון בין חובת זיהוי לצורכי ביטחון חריגים סייגים",
-        "expected_source_type": "case"
-      },
-      {
-        "role": "binding_case_law",
-        "reason": "מיקוד על נוסח הפסק‑דין החוקר האם הוטלה חובת זיהוי (שם/מספר) ומה המקור החוקי/נורמטיבי שאותו העיר בית המשפט.",
+        "reason": "שאילתה חלופית לאיתור המסמך הרשמי/תקציר ההכרעה במאגרים שונים; דרישה בחובות התכנון לייצר לפחות שתי שאילתות לאיתור הפסק‑דין עם מספר ההליך.",
         "targets": [
           "local_db",
           "perplexity"
         ],
         "claim_id": "C1",
-        "query_he": "בג\"ץ 1892/14 'חובת זיהוי' 'שוטרים' 'שם' 'מספר מזהה' 'מקור נורמטיבי' חיפוש בפסק הדין תקדימים והכרעה",
+        "query_he": "בג\"ץ 1892/14 האגודה לזכויות האזרח נגד השר לביטחון פנים 'פסק דין' 'סיכום ההכרעה' אתר רשמי של בית המשפט העליון או מאגר נבו",
         "expected_source_type": "case"
       },
       {
         "role": "binding_case_law",
-        "reason": "למצוא בפסק‑הדין את הניתוח השיפוטי של האיזון בין חובת זיהוי לצורכי ביטחון והבחנה במקרה של סייגים או החרגות.",
+        "reason": "למצוא בפסק‑הדין את הנימוקים, העקרונות החוקתיים/מנהלתיים והאזכורים לפסיקה קודמת שהבית‑משפט ביסס עליהם את הכרעתו.",
         "targets": [
           "local_db",
           "perplexity"
         ],
         "claim_id": "C2",
-        "query_he": "בג\"ץ 1892/14 איזון בין זכויות לפרקטיקות ביטחוניות 'שיקולים מבצעיים' 'חריג' 'הערכת סיכון' בפסק‑דין",
+        "query_he": "בג\"ץ 1892/14 האגודה לזכויות האזרח נ' השר לביטחון פנים 'נימוקים' 'בסיס נורמטיבי' 'אזכורים לפסיקה קודמת'",
         "expected_source_type": "case"
       },
       {
+        "role": "primary_statute",
+        "reason": "איתור הוראות החוק המסוימות (חוקים/סעיפים) שהמשפט השתמש בהם — מציאת הטקסטים החוקיים המצוטטים בפסק‑דין.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "רשימת החוקים והסעיפים המצוטטים בפסק‑דין בג\"ץ 1892/14 האגודה לזכויות האזרח נ' השר לביטחון פנים — 'חוקים מצוטטים' 'סעיפים'",
+        "expected_source_type": "statute"
+      },
+      {
         "role": "binding_case_law",
-        "reason": "לאתר בפסק‑הדין את ההחלטה הסופית והסעד שניתן — צו מוחלט, צו ראייה, התחייבות משרדית או דחייה.",
+        "reason": "לבירור מה הסעד שניתן בפסק‑הדין — האם ניתנה צווי ביטול/צו הצהרתי/מועדי יישום וכו'.",
         "targets": [
           "local_db",
           "perplexity"
         ],
         "claim_id": "C3",
-        "query_he": "בג\"ץ 1892/14 תוצאת העתירה סעד שניתן האם התקבל צו מוחלט או התחייבויות המדינה 'העתירה התקבלה' 'נדחתה' 'נמחקה' בפסק‑דין",
+        "query_he": "בג\"ץ 1892/14 האגודה לזכויות האזרח נ' השר לביטחון פנים 'הסעד' 'צו' 'ביטול נוהל' 'צו על תנאי' 'צו הצהרתי'",
         "expected_source_type": "case"
       },
       {
         "role": "binding_case_law",
-        "reason": "למצוא בפסק‑הדין אם הוטלו חובות יישומיות מפורטות על המשטרה וכיצד נמסרו לוחות זמנים ונהלים ליישומן.",
+        "reason": "לאתר את הרקע העובדתי המרכזי והשדה המעשי שעליו נסבה ההלכה, כדי לתחום את תחולת הקביעה.",
         "targets": [
           "local_db",
           "perplexity"
         ],
         "claim_id": "C4",
-        "query_he": "בג\"ץ 1892/14 הוראות יישומיות למשטרה 'נהלים' 'מספור' 'סימון' 'מועדי יישום' בפסק‑דין או בהוראות בית המשפט",
+        "query_he": "בג\"ץ 1892/14 האגודה לזכויות האזרח נגד השר לביטחון פנים 'רקע עובדתי' 'עובדות המקרה' 'מהות המחלוקת'",
         "expected_source_type": "case"
       },
       {
@@ -1873,7 +2115,7 @@
     "pipeline": "legal-research-v1",
     "planning": {
       "planner": {
-        "ms": 19737,
+        "ms": 30747,
         "mode_plan": {
           "mode": "specific_case",
           "audit": {
@@ -1904,10 +2146,15 @@
             "unsatisfied": [],
             "satisfied_count": 4,
             "targets_by_role": {
+              "primary_statute": {
+                "total": 1,
+                "local_db": 0,
+                "perplexity": 1
+              },
               "binding_case_law": {
-                "total": 6,
-                "local_db": 6,
-                "perplexity": 6
+                "total": 5,
+                "local_db": 5,
+                "perplexity": 5
               }
             },
             "caselaw_includes_perplexity": true,
@@ -1937,9 +2184,9 @@
         "escalation_reason": []
       },
       "analyzer": {
-        "ms": 52744,
-        "confidence": 0.95,
-        "legal_area": "משפט מינהלי",
+        "ms": 47323,
+        "confidence": 0.9,
+        "legal_area": "משפט מנהלי",
         "answer_type": "factual_legal",
         "model_final": "openai/gpt-5",
         "schema_valid": true,
@@ -1959,15 +2206,15 @@
       "truncated_claims_count": 0,
       "truncated_queries_count": 0
     },
-    "total_ms": 146043,
+    "total_ms": 142292,
     "verifier": {
-      "ms": 33682,
+      "ms": 27747,
       "counts": {
         "by_support": {
           "direct": 1,
-          "partial": 5,
-          "unrelated": 4,
-          "tangential": 7
+          "partial": 6,
+          "unrelated": 8,
+          "tangential": 2
         },
         "by_role_match": {
           "true": 17,
@@ -1976,9 +2223,9 @@
         "model_verdicts": 17,
         "by_support_model": {
           "direct": 1,
-          "partial": 5,
-          "unrelated": 4,
-          "tangential": 7
+          "partial": 6,
+          "unrelated": 8,
+          "tangential": 2
         },
         "synthetic_verdicts": 0,
         "by_support_synthetic": {
@@ -2001,7 +2248,7 @@
         {
           "role_match": true,
           "best_support": "partial",
-          "candidate_id": "bce35e03-9c1e-4c78-bb60-44b8fd06340d",
+          "candidate_id": "e9c63397-7909-4962-bb64-bb2ca2c7a3d0",
           "verdict_claim_ids": [
             "C1"
           ]
@@ -2009,7 +2256,7 @@
         {
           "role_match": true,
           "best_support": "partial",
-          "candidate_id": "a94f6055-a5b8-43b8-9c47-88bcb43181cd",
+          "candidate_id": "31b73c35-1c34-4c41-b44d-4849dacc3740",
           "verdict_claim_ids": [
             "C1"
           ]
@@ -2017,7 +2264,7 @@
         {
           "role_match": true,
           "best_support": "partial",
-          "candidate_id": "2ccec33b-af8d-473d-88b6-7df52919ceac",
+          "candidate_id": "17791a96-237a-4bbc-9b12-fe95ce195bef",
           "verdict_claim_ids": [
             "C1"
           ]
@@ -2025,7 +2272,7 @@
         {
           "role_match": true,
           "best_support": "partial",
-          "candidate_id": "4938f024-8ca9-4cd1-89e3-4fd619295aec",
+          "candidate_id": "fae1372d-b3eb-440e-9ede-67e72ea8e9cb",
           "verdict_claim_ids": [
             "C1"
           ]
@@ -2033,7 +2280,15 @@
         {
           "role_match": true,
           "best_support": "partial",
-          "candidate_id": "7d2d1a59-10b9-4d6b-8f9e-f5e51c832123",
+          "candidate_id": "377e2067-024b-495b-afba-133770ecedba",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "cb956432-61c2-4547-8359-a50554ea10ef",
           "verdict_claim_ids": [
             "C1"
           ]
@@ -2041,7 +2296,7 @@
       ],
       "batches": [
         {
-          "ms": 33680,
+          "ms": 27747,
           "label": "batch1",
           "attempts": 1,
           "claim_ids": [
@@ -2056,37 +2311,28 @@
       "dropped": [
         {
           "role": "binding_case_law",
-          "title": "סוגיות בכליאה בישראל",
+          "title": "ביהמ\"ש העליון, אב\"ד, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופטת דפנה ברק ארז: פס\"ד בעתירות בעניין פיטורי ראש השב\"כ (בג\"ץ 54321-03-25)",
           "origin": "local_db",
-          "reason": "מסמך מחקרי עוסק בסוגיות כלליות של כליאה; אינו דן בפסק‑דין 1892/14 או בחובת זיהוי שוטרים.",
-          "candidate_id": "d03a716a-5a30-4bb7-a7d1-6a8472a2a0fa",
-          "worst_support": "tangential",
+          "reason": "מדובר בפסק‑דין שונה (עתירות בעניין פיטורי ראש השב\"כ) שאינו נוגע לפסק‑דין 1892/14 על תנאי כליאה — אין קשר.",
+          "candidate_id": "9c5b105b-f519-4565-a38b-398fe08a3285",
+          "worst_support": "unrelated",
           "retrieval_method": "text"
         },
         {
           "role": "binding_case_law",
-          "title": "החובה ליתן לעצורים יחס מיוחד ההולם את חזקת החפות – מבט נוסף על תנאי המעצר בישראל על רקע המשפט הבין-לאומי | מיכל טמיר וגרשון גונטובניק (כרך כה)",
+          "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
           "origin": "local_db",
-          "reason": "המאמר דן בזכויות עצורים ותנאי כליאה; אינו עוסק ישירות בחובת זיהוי שוטרים בפסק‑דין המדובר.",
-          "candidate_id": "9dabca77-6860-4748-b44c-b796189317a9",
-          "worst_support": "tangential",
-          "retrieval_method": "text"
-        },
-        {
-          "role": "binding_case_law",
-          "title": "מהפכת השחרור המנהלי – ממדיניות כליאה מבוססת ביקוש למדיניות מבוססת היצע",
-          "origin": "local_db",
-          "reason": "נושא המאמר איננו זיהוי שוטרים או פסק‑דין 1892/14 ולכן אינו תומך ישירות בטענה.",
-          "candidate_id": "e14a435b-1bb0-4241-89ac-67d70309b58e",
-          "worst_support": "tangential",
+          "reason": "התיק עוסק בייצוג משפטי בוועדות טיפול וערכה לקטינים — אינו קשור לפסק‑דין על תנאי כליאה 1892/14.",
+          "candidate_id": "0034579c-c5f7-49ac-9a12-5e7cfae908fd",
+          "worst_support": "unrelated",
           "retrieval_method": "text"
         },
         {
           "role": "binding_case_law",
           "title": "ביהמ\"ש העליון, מ\"מ הנשיא השופט עוזי פוגלמן, השופט יצחק עמית, השופט נעם סולברג: החלטה בבקשה לקביעת הסדר דיוני ובתגובות הצדדים (בג\"ץ 6198/23 - התנועה למען איכות השלטון בישראל נ. שר הביטחון  ועוד)",
           "origin": "local_db",
-          "reason": "קבצי סדר דין והחלטות טכניות; לא מקור לפסק‑דין מהותי על זיהוי.",
-          "candidate_id": "604f505f-1d29-4cd9-969a-ae718e8448aa",
+          "reason": "מקור פרוצדורלי/רשימת מקרים שבו מופיעות החלטות שונות; אינו מעיד ישירות על החלטת בג\"ץ 1892/14 — לכן tangential (background).",
+          "candidate_id": "c41afd12-8764-4fe9-9833-4a883e6e2823",
           "worst_support": "tangential",
           "retrieval_method": "text"
         },
@@ -2094,8 +2340,8 @@
           "role": "binding_case_law",
           "title": "ביהמ\"ש העליון, אב\"ד מ\"מ הנשיא השופט עוזי פוגלמן, השופט יצחק עמית, השופט נועם סולברג: החלטה בבקשה למתן צו ביניים בבג\"ץ 7922/23, בג\"ץ 6198/23 ועוד",
           "origin": "local_db",
-          "reason": "המסמך הוא החלטת ביניים במקרים אחרים; אינו עוסק בפסק‑דין 1892/14 או בזיהוי שוטרים.",
-          "candidate_id": "e21cfbd6-968f-417f-8191-8bb1401bf8ed",
+          "reason": "העמוד מציג החלטות/בקשות בפרוטוקולים כלליים — אזכור שולי אך לא מקור לפסק‑דין 1892/14.",
+          "candidate_id": "81c76e70-0827-47fc-950c-998f611dac88",
           "worst_support": "tangential",
           "retrieval_method": "text"
         },
@@ -2103,8 +2349,8 @@
           "role": "binding_case_law",
           "title": "בימ\"ש עליון, אב\"ד השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין: פס\"ד בעתירות בעניין הבחירות לרבנים הראשיים לישראל (בג\"ץ 4266/24)",
           "origin": "local_db",
-          "reason": "הנושא שונה במהותו (בחירות לרבנים); אין התאמה ישירה לטענה על חובת זיהוי שוטרים.",
-          "candidate_id": "407af72b-abdb-43cc-ab49-6636d231f033",
+          "reason": "תיק זה עוסק בבחירות לרבנים הראשיים — אינו קשור לפסק‑דין כליאה 1892/14.",
+          "candidate_id": "e7808dc9-8279-4030-8c2d-d81ff3040292",
           "worst_support": "unrelated",
           "retrieval_method": "text"
         },
@@ -2112,8 +2358,8 @@
           "role": "binding_case_law",
           "title": "ע\"א 4628/93 הלכת אפרופים",
           "origin": "local_db",
-          "reason": "פסק‑דין שונה בתחום משפטי שונה; לא רלוונטי לטענה.",
-          "candidate_id": "ad3be76d-b753-4a74-bbaa-776d563e20af",
+          "reason": "הלכת אפרופים (עמוד/פסק‑דין אחר) אינה נוגעת לתנאי כליאה או לפסק‑דין 1892/14 — אין קשר.",
+          "candidate_id": "6979beb0-3478-4db5-9e0b-edb30d578581",
           "worst_support": "unrelated",
           "retrieval_method": "text"
         },
@@ -2121,26 +2367,26 @@
           "role": "binding_case_law",
           "title": "תקצירים באנגלית חוברת 2",
           "origin": "local_db",
-          "reason": "מדובר בתקצירים כלליים שאינם עוסקים בפסק‑דין 1892/14 או בזיהוי שוטרים.",
-          "candidate_id": "15e5d847-51b6-4124-a542-2f09810ceb05",
-          "worst_support": "tangential",
+          "reason": "תקצירים אקדמיים כלליים באנגלית שאינם פסק‑דין 1892/14 ואינם עוסקים ישירות בו.",
+          "candidate_id": "5e0c7b89-4488-41b6-8f3d-ba9bb83f53eb",
+          "worst_support": "unrelated",
           "retrieval_method": "text"
         },
         {
           "role": "binding_case_law",
           "title": "תקצירים באנגלית - חוברת 2",
           "origin": "local_db",
-          "reason": "תוכן כללי על פני מגוון נושאים; אין בו התייחסות ישירה לחובת זיהוי שוטרים.",
-          "candidate_id": "a2ebdd65-599f-4b65-9b56-8f07210b547a",
-          "worst_support": "tangential",
+          "reason": "תקצירים אקדמיים שאינם הפסק‑דין המבוקש ואינם מתייחסים ישירות להכרעה 1892/14.",
+          "candidate_id": "7b98593d-acf8-491a-8f92-987cd4033e62",
+          "worst_support": "unrelated",
           "retrieval_method": "text"
         },
         {
           "role": "binding_case_law",
           "title": "בימ\"ש עליון, אב\"ד הנשיאה חיות, המשנה לנשיאה (בדימ') ניל הנדל, המשנה לנשיאה עוזי פוגלמן, השופטים: יצחק עמית, נעם סולברג, דפנה ברק-ארז, ענת ברון: פס\"ד בשני ערעורים שעניינם שלילת אזרחות בגין ביצוע מעשים שיש בהם משום הפרת אמונים למדינת ישראל (עע\"מ 8277/17)",
           "origin": "local_db",
-          "reason": "מדובר בפסק‑דין על אזרחות; אין בו קביעות לגבי חובת זיהוי שוטרים.",
-          "candidate_id": "42cda27b-c8c5-4521-8185-16a9dceced48",
+          "reason": "פסק‑דין בענייני שלילת אזרחות — לא קשור לפסק‑דין על תנאי כליאה (1892/14).",
+          "candidate_id": "f86a7027-8073-46ae-bb3e-b2258cef5cce",
           "worst_support": "unrelated",
           "retrieval_method": "vector"
         },
@@ -2148,205 +2394,186 @@
           "role": "binding_case_law",
           "title": "חוק האזרחות",
           "origin": "local_db",
-          "reason": "חוק האזרחות סותר את התנאים להנחה שהמקור דן בזיהוי שוטרים; נושא שונה לגמרי.",
-          "candidate_id": "3737dc17-c595-4e15-b4ef-ba7450ead032",
+          "reason": "טקסט של חוק האזרחות — אינו פסק‑דין 1892/14 ואינו עוסק בסוגיית תנאי כליאה.",
+          "candidate_id": "2dbe389e-9175-47d2-945c-907fc11e4cd6",
           "worst_support": "unrelated",
           "retrieval_method": "vector"
         }
       ],
       "batch_ms": [
-        33680
+        27747
       ],
       "parallel": true,
       "verdicts": [
         {
-          "reason": "זהו אותו פסק‑דין המדובר בטענה ולכן תומך ישירות בבירור האם ובאיזה היקף נפסקה חובת זיהוי.",
+          "reason": "זהו النص המדויק של פסק הדין המבוקש (בג\"ץ 1892/14) — אותו תיק, hence direct.",
           "support": "direct",
           "claim_id": "C1",
           "role_match": true,
           "candidate_id": "specific-case:bagatz:1892/14",
           "support_subtype": "exact_subject",
           "supported_points": [
-            "זהו פסק‑דין בג\"ץ 1892/14 עצמו — המקור המחייב לבחינת השאלה האם הוטלה חובת זיהוי על שוטרים.",
-            "הטקסט בפסק‑דין דן במישרין בסוגיית זיהוי שוטרים ובבסיס הנורמטיבי והיקפו."
+            "העתירה התקבלה/דווח עליה בפסק הדין המדובר.",
+            "בית המשפט דרש מהמדינה להגיש תוכנית ומסגרת זמנים למימוש דרישות הנורמות במקום מחיה (כולל יעד שטח מחיה מינימלי).",
+            "הפסק־דין קבע צעדים מיישמים ופיקוח על מימושם."
           ]
         },
         {
-          "reason": "מקור זה הוא אותו פסק‑דין המבוקש ולכן תומך ישירות בבחינת הטענה.",
+          "reason": "רשומה זו מציינת במפורש את אותו פסק־דין (אותו תיק ומועד) — תומך ישירות.",
           "support": "partial",
           "claim_id": "C1",
           "role_match": true,
-          "candidate_id": "bce35e03-9c1e-4c78-bb60-44b8fd06340d",
+          "candidate_id": "e9c63397-7909-4962-bb64-bb2ca2c7a3d0",
           "support_subtype": "exact_subject",
           "supported_points": [
-            "הכותרת והמקור הם פסק‑דין בג\"ץ 1892/14 — אותו מקור מחייב לשאלת חובת הזיהוי.",
-            "המסמך מכיל את הקביעות הרלוונטיות לגבי היקף והבסיס הנורמטיבי של החובה."
+            "פסק הדין המדובר — בג\"ץ 1892/14 — הוא המקור הישיר להכרעה.",
+            "החלטה כללה הוראות למדינה להגיש תוכנית ולוחות זמנים למימוש שיפורים בתנאי הכליאה.",
+            "ההכרעה קבעה אבני דרך לביצוע ופיקוח."
           ]
         },
         {
-          "reason": "מסמך מחקרי עוסק בסוגיות כלליות של כליאה; אינו דן בפסק‑דין 1892/14 או בחובת זיהוי שוטרים.",
-          "support": "tangential",
-          "claim_id": "C1",
-          "role_match": true,
-          "candidate_id": "d03a716a-5a30-4bb7-a7d1-6a8472a2a0fa",
-          "support_subtype": "background",
-          "supported_points": [
-            "דו\"ח מחקר של הכנסת בנושא כליאה ועוסק ברקע מדיני ועובדתי של מערכת הכליאה, לא בזיהוי שוטרים או בפסק‑דין 1892/14."
-          ]
-        },
-        {
-          "reason": "המאמר דן בזכויות עצורים ותנאי כליאה; אינו עוסק ישירות בחובת זיהוי שוטרים בפסק‑דין המדובר.",
-          "support": "tangential",
-          "claim_id": "C1",
-          "role_match": true,
-          "candidate_id": "9dabca77-6860-4748-b44c-b796189317a9",
-          "support_subtype": "background",
-          "supported_points": [
-            "מאמר משפטי על יחס לעצורים ותנאי מעצר — מספק הקשר כללי לזכויות עצור אך אינו מקור המחייב לפסק‑דין 1892/14 או לחובת זיהוי השוטרים."
-          ]
-        },
-        {
-          "reason": "מדובר בפסק‑דין בעל סמכות שיפוטית אך בנושא שונה; יכול לתמוך רק ברקע דוקטרינרי כללי.",
+          "reason": "דוח כנסת עוסק באותו תחום (כליאה ומדיניות) אך אינו פסק‑דין 1892/14 ולא מקור ישיר להכרעת הבג\"ץ — therefore partial.",
           "support": "partial",
           "claim_id": "C1",
           "role_match": true,
-          "candidate_id": "a94f6055-a5b8-43b8-9c47-88bcb43181cd",
+          "candidate_id": "31b73c35-1c34-4c41-b44d-4849dacc3740",
           "support_subtype": "same_domain",
           "supported_points": [
-            "פסק‑דין אחר של ביהמ\"ש העליון — רלוונטי כפסיקה כללית וכתפיסת סמכות שיפוטית אך אינו אותו פסק‑דין ולא דן בחובת זיהוי שוטרים."
+            "מסמך מחקר הכנסת עוסק בסוגיות הכליאה ובצעדי מדיניות רלוונטיים (רקע שקשור לפסקי דין על תנאי כליאה)."
           ]
         },
         {
-          "reason": "המקור עוסק בזכויות אסירים/תנאי כליאה אך לא בזיהוי שוטרים או בפסק‑דין 1892/14.",
+          "reason": "מאמר מסביר ומצטט את פסק‑הדין/תוצאה בזהות הנושא, אך אינו הפסק‑דין עצמו → partial.",
           "support": "partial",
           "claim_id": "C1",
           "role_match": true,
-          "candidate_id": "2ccec33b-af8d-473d-88b6-7df52919ceac",
+          "candidate_id": "17791a96-237a-4bbc-9b12-fe95ce195bef",
           "support_subtype": "same_domain",
           "supported_points": [
-            "פסק‑דין (בג\"ץ 2858-24) העוסק בזכויות כלואים — שימושי כרקע בתחום זכויות העצורים אך אינו מקור ישיר לקביעה על חובת זיהוי שוטרים."
+            "מאמר מתאר את הכרעות בית המשפט לגבי שטח המחיה ומזכיר דרישות של בית המשפט להגשת תוכניות ולוחות זמנים להשגת שטח של 3 מ\"ר לאסיר.",
+            "מספק ניתוח והקשר לפסק‑דין בנושאי תנאי מעצר."
           ]
         },
         {
-          "reason": "הנושא קרוב מבחינת זכויות אך לא עוסק ישירות בשאלת זיהוי השוטרים.",
+          "reason": "מדובר בפסק‑דין שונה (עתירות בעניין פיטורי ראש השב\"כ) שאינו נוגע לפסק‑דין 1892/14 על תנאי כליאה — אין קשר.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "9c5b105b-f519-4565-a38b-398fe08a3285",
+          "supported_points": []
+        },
+        {
+          "reason": "מקרה שונה באותו תחום זכויות כלואים — תומך ברקע ובדוקטרינה אך לא זהה לפסק‑דין 1892/14.",
           "support": "partial",
           "claim_id": "C1",
           "role_match": true,
-          "candidate_id": "4938f024-8ca9-4cd1-89e3-4fd619295aec",
+          "candidate_id": "fae1372d-b3eb-440e-9ede-67e72ea8e9cb",
           "support_subtype": "same_domain",
           "supported_points": [
-            "פסק‑דין על זכויות בוועדות תכנון וטיפול של קטינים — נמצא באותו תחום זכויות אך אינו דן בזיהוי שוטרים או בפסק‑דין 1892/14."
+            "פסק‑דין זה עוסק בזכויות כלואים (אסירים ביטחוניים) וחובות השירות בכפיפות לתנאי כליאה בסיסיים.",
+            "רלוונטי להקשר השיפוטי של תנאי הכליאה אך אינו אותו תיק."
           ]
         },
         {
-          "reason": "נושא המאמר איננו זיהוי שוטרים או פסק‑דין 1892/14 ולכן אינו תומך ישירות בטענה.",
-          "support": "tangential",
+          "reason": "התיק עוסק בייצוג משפטי בוועדות טיפול וערכה לקטינים — אינו קשור לפסק‑דין על תנאי כליאה 1892/14.",
+          "support": "unrelated",
           "claim_id": "C1",
           "role_match": true,
-          "candidate_id": "e14a435b-1bb0-4241-89ac-67d70309b58e",
-          "support_subtype": "background",
-          "supported_points": [
-            "מאמר מדיניות על שחרור מנהלי והיבטים מערכתיים של ענייני כליאה — רלוונטי רק כרקע כללי ולא לפסק‑דין הספציפי או לחובת זיהוי."
-          ]
+          "candidate_id": "0034579c-c5f7-49ac-9a12-5e7cfae908fd",
+          "supported_points": []
         },
         {
-          "reason": "מדובר בפסק‑דין אחר בתחום הכליאה; אין בו התייחסות ישירה לשאלת הזיהוי של שוטרים בפסק‑דין 1892/14.",
+          "reason": "מקור אקדמי על מדיניות כליאה — קשר תחומי אך לא פסק‑דין 1892/14 עצמו → partial.",
           "support": "partial",
           "claim_id": "C1",
           "role_match": true,
-          "candidate_id": "7d2d1a59-10b9-4d6b-8f9e-f5e51c832123",
+          "candidate_id": "377e2067-024b-495b-afba-133770ecedba",
           "support_subtype": "same_domain",
           "supported_points": [
-            "פסק‑דין בג\"ץ 7753/23 עוסק בתנאי כליאה — יכול לשמש להשוואה דוקטרינרית ורקע, אך אינו אותו פסק‑דין ולא דן במפורש בחובת זיהוי שוטרים."
+            "מאמר עוסק במדיניות שחרור מנהלי והיבטים של כליאה, רקע רלוונטי לדיון בתנאי כליאה ופסקי דין בתחום."
           ]
         },
         {
-          "reason": "קבצי סדר דין והחלטות טכניות; לא מקור לפסק‑דין מהותי על זיהוי.",
+          "reason": "זהו פסק‑דין נפרד (7753/23) העוסק בנושאים סמוכים — לא אותו פסק‑דין → partial.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "cb956432-61c2-4547-8359-a50554ea10ef",
+          "support_subtype": "same_domain",
+          "supported_points": [
+            "פסק‑דין אחר של האגודה לזכויות האזרח בענייני כליאה שמעלה סוגיות דומות של תנאי כליאה.",
+            "מספק השוואה/הקשר לפסק‑דין בנושא אך אינו אותו תיק."
+          ]
+        },
+        {
+          "reason": "מקור פרוצדורלי/רשימת מקרים שבו מופיעות החלטות שונות; אינו מעיד ישירות על החלטת בג\"ץ 1892/14 — לכן tangential (background).",
           "support": "tangential",
           "claim_id": "C1",
           "role_match": true,
-          "candidate_id": "604f505f-1d29-4cd9-969a-ae718e8448aa",
+          "candidate_id": "c41afd12-8764-4fe9-9833-4a883e6e2823",
           "support_subtype": "background",
           "supported_points": [
-            "החלטות סדר דיוני ובקשות בבג\"ץ — מסמכים פרוצדורליים שאינם דנים במהות חובת זיהוי שוטרים או בפסק‑דין 1892/14."
+            "הדף הוא החלטה פרוצדורלית/מינהלית ברשימות פסקי דין שונים ואינו פסק‑דין מהותי על תנאי כליאה."
           ]
         },
         {
-          "reason": "המסמך הוא החלטת ביניים במקרים אחרים; אינו עוסק בפסק‑דין 1892/14 או בזיהוי שוטרים.",
+          "reason": "העמוד מציג החלטות/בקשות בפרוטוקולים כלליים — אזכור שולי אך לא מקור לפסק‑דין 1892/14.",
           "support": "tangential",
           "claim_id": "C1",
           "role_match": true,
-          "candidate_id": "e21cfbd6-968f-417f-8191-8bb1401bf8ed",
+          "candidate_id": "81c76e70-0827-47fc-950c-998f611dac88",
           "support_subtype": "background",
           "supported_points": [
-            "פסקי דין/החלטות ביניים בהליכי בג\"ץ שונים — פרוצדורליים או ענייניים שאינם מתמקדים בחובת זיהוי שוטרים."
+            "מסמך פרוצדורלי/בקשת צו ביניים המתייחס למספר תיקים אחרים ברשימה, אינו הפסק‑דין המבוקש."
           ]
         },
         {
-          "reason": "הנושא שונה במהותו (בחירות לרבנים); אין התאמה ישירה לטענה על חובת זיהוי שוטרים.",
+          "reason": "תיק זה עוסק בבחירות לרבנים הראשיים — אינו קשור לפסק‑דין כליאה 1892/14.",
           "support": "unrelated",
           "claim_id": "C1",
           "role_match": true,
-          "candidate_id": "407af72b-abdb-43cc-ab49-6636d231f033",
-          "support_subtype": "wrong_subject",
-          "supported_points": [
-            "פסק‑דין בנושא הבחירות לרבנים הראשיים — נושא שונה לחלוטין מתחום זיהוי שוטרים או זכויות עצורים."
-          ]
+          "candidate_id": "e7808dc9-8279-4030-8c2d-d81ff3040292",
+          "supported_points": []
         },
         {
-          "reason": "פסק‑דין שונה בתחום משפטי שונה; לא רלוונטי לטענה.",
+          "reason": "הלכת אפרופים (עמוד/פסק‑דין אחר) אינה נוגעת לתנאי כליאה או לפסק‑דין 1892/14 — אין קשר.",
           "support": "unrelated",
           "claim_id": "C1",
           "role_match": true,
-          "candidate_id": "ad3be76d-b753-4a74-bbaa-776d563e20af",
-          "support_subtype": "wrong_subject",
-          "supported_points": [
-            "הלכת אפרופים (ע\"א 4628/93) היא פסיקה ישנה בענייני משפט אזרחי/הליכי ערעור — אינה דנה בזיהוי שוטרים או בפסק‑דין 1892/14."
-          ]
+          "candidate_id": "6979beb0-3478-4db5-9e0b-edb30d578581",
+          "supported_points": []
         },
         {
-          "reason": "מדובר בתקצירים כלליים שאינם עוסקים בפסק‑דין 1892/14 או בזיהוי שוטרים.",
-          "support": "tangential",
-          "claim_id": "C1",
-          "role_match": true,
-          "candidate_id": "15e5d847-51b6-4124-a542-2f09810ceb05",
-          "support_subtype": "background",
-          "supported_points": [
-            "חוברת תקצירים אקדמית — מספקת רק רקע תיאורטי והיסטורי על פעילות ה־HCJ, אינה מקור ישיר לקביעה על חובת זיהוי שוטרים."
-          ]
-        },
-        {
-          "reason": "תוכן כללי על פני מגוון נושאים; אין בו התייחסות ישירה לחובת זיהוי שוטרים.",
-          "support": "tangential",
-          "claim_id": "C1",
-          "role_match": true,
-          "candidate_id": "a2ebdd65-599f-4b65-9b56-8f07210b547a",
-          "support_subtype": "background",
-          "supported_points": [
-            "חוברת תקצירים נוספת העוסקת בנושאים שיפוטיים כלליים — רלוונטית כרקע בלבד ולא כמקור לפסק‑דין 1892/14."
-          ]
-        },
-        {
-          "reason": "מדובר בפסק‑דין על אזרחות; אין בו קביעות לגבי חובת זיהוי שוטרים.",
+          "reason": "תקצירים אקדמיים כלליים באנגלית שאינם פסק‑דין 1892/14 ואינם עוסקים ישירות בו.",
           "support": "unrelated",
           "claim_id": "C1",
           "role_match": true,
-          "candidate_id": "42cda27b-c8c5-4521-8185-16a9dceced48",
-          "support_subtype": "wrong_subject",
-          "supported_points": [
-            "פסק‑דין עע\"מ 8277/17 בנושא שלילת אזרחות — נושא שונה מהשאלה על זהות שוטרים וזיהוי בפסק‑דין 1892/14."
-          ]
+          "candidate_id": "5e0c7b89-4488-41b6-8f3d-ba9bb83f53eb",
+          "supported_points": []
         },
         {
-          "reason": "חוק האזרחות סותר את התנאים להנחה שהמקור דן בזיהוי שוטרים; נושא שונה לגמרי.",
+          "reason": "תקצירים אקדמיים שאינם הפסק‑דין המבוקש ואינם מתייחסים ישירות להכרעה 1892/14.",
           "support": "unrelated",
           "claim_id": "C1",
           "role_match": true,
-          "candidate_id": "3737dc17-c595-4e15-b4ef-ba7450ead032",
-          "support_subtype": "wrong_subject",
-          "supported_points": [
-            "טקסט של חוק האזרחות — מסגרת חקיקתית אחרת שאינה עוסקת בחובת זיהוי שוטרים."
-          ]
+          "candidate_id": "7b98593d-acf8-491a-8f92-987cd4033e62",
+          "supported_points": []
+        },
+        {
+          "reason": "פסק‑דין בענייני שלילת אזרחות — לא קשור לפסק‑דין על תנאי כליאה (1892/14).",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "f86a7027-8073-46ae-bb3e-b2258cef5cce",
+          "supported_points": []
+        },
+        {
+          "reason": "טקסט של חוק האזרחות — אינו פסק‑דין 1892/14 ואינו עוסק בסוגיית תנאי כליאה.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "2dbe389e-9175-47d2-945c-907fc11e4cd6",
+          "supported_points": []
         }
       ],
       "demotions": [
@@ -2355,40 +2582,8 @@
           "from": "direct",
           "rule": "landing_page",
           "claim_id": "C1",
-          "candidate_id": "bce35e03-9c1e-4c78-bb60-44b8fd06340d",
-          "reason_excerpt": "מקור זה הוא אותו פסק‑דין המבוקש ולכן תומך ישירות בבחינת הטענה."
-        },
-        {
-          "to": "unrelated",
-          "from": "tangential",
-          "rule": "wrong_subject",
-          "claim_id": "C1",
-          "candidate_id": "407af72b-abdb-43cc-ab49-6636d231f033",
-          "reason_excerpt": "הנושא שונה במהותו (בחירות לרבנים); אין התאמה ישירה לטענה על חובת זיהוי שוטרים."
-        },
-        {
-          "to": "unrelated",
-          "from": "tangential",
-          "rule": "wrong_subject",
-          "claim_id": "C1",
-          "candidate_id": "ad3be76d-b753-4a74-bbaa-776d563e20af",
-          "reason_excerpt": "פסק‑דין שונה בתחום משפטי שונה; לא רלוונטי לטענה."
-        },
-        {
-          "to": "unrelated",
-          "from": "tangential",
-          "rule": "wrong_subject",
-          "claim_id": "C1",
-          "candidate_id": "42cda27b-c8c5-4521-8185-16a9dceced48",
-          "reason_excerpt": "מדובר בפסק‑דין על אזרחות; אין בו קביעות לגבי חובת זיהוי שוטרים."
-        },
-        {
-          "to": "unrelated",
-          "from": "tangential",
-          "rule": "wrong_subject",
-          "claim_id": "C1",
-          "candidate_id": "3737dc17-c595-4e15-b4ef-ba7450ead032",
-          "reason_excerpt": "חוק האזרחות סותר את התנאים להנחה שהמקור דן בזיהוי שוטרים; נושא שונה לגמרי."
+          "candidate_id": "e9c63397-7909-4962-bb64-bb2ca2c7a3d0",
+          "reason_excerpt": "רשומה זו מציינת במפורש את אותו פסק־דין (אותו תיק ומועד) — תומך ישירות."
         }
       ],
       "batch_count": 1,
@@ -2396,34 +2591,34 @@
       "model_final": "openai/gpt-5-mini",
       "retry_count": 0,
       "per_claim_ms": {
-        "C1": 33680
+        "C1": 27747
       },
-      "total_sum_ms": 33680,
+      "total_sum_ms": 27747,
       "call_failures": [],
       "model_initial": "openai/gpt-5-mini",
-      "total_wall_ms": 33681,
+      "total_wall_ms": 27747,
       "retry_attempts": 0,
       "escalated_claims": [],
       "rate_limit_count": 0,
-      "candidates_usable": 6,
+      "candidates_usable": 7,
       "concurrency_limit": 2,
       "demotions_by_rule": {
         "analogical": 0,
         "background": 0,
         "landing_page": 1,
-        "wrong_subject": 4,
+        "wrong_subject": 0,
         "self_contradiction": 0
       },
       "escalated_batches": 0,
       "recovered_batches": 0,
-      "candidates_dropped": 11,
+      "candidates_dropped": 10,
       "candidates_verified": 17,
       "split_probe_attempts": 0,
       "merge_order_preserved": true,
       "fallback_to_sequential": false
     },
     "retrieval": {
-      "ms": 3884,
+      "ms": 2820,
       "pool": {
         "drops": [
           {
@@ -2436,7 +2631,7 @@
             "drop_key": "doc:9b5f761e-0a45-4a3a-a158-d44552e42fe3",
             "drop_reason": "dup_document_id",
             "source_type": "caselaw",
-            "candidate_id": "e30497e2-5130-4998-8eb1-84831c391fd2",
+            "candidate_id": "4fe11c59-e56c-4456-8835-bc34fa3afb3b",
             "rank_before_drop": 1,
             "retrieval_method": "exact_authority"
           },
@@ -2450,7 +2645,7 @@
             "drop_key": "doc:9b5f761e-0a45-4a3a-a158-d44552e42fe3",
             "drop_reason": "dup_document_id",
             "source_type": "caselaw",
-            "candidate_id": "ef46ecd4-b3aa-4c1d-8284-a6b6976a87ac",
+            "candidate_id": "6790e91f-a097-4740-88bc-fe21c4723cb1",
             "rank_before_drop": 2,
             "retrieval_method": "text"
           },
@@ -2464,7 +2659,7 @@
             "drop_key": "doc:9b5f761e-0a45-4a3a-a158-d44552e42fe3",
             "drop_reason": "dup_document_id",
             "source_type": "caselaw",
-            "candidate_id": "d13a1ac5-07af-4c73-a222-9a450e3a62ed",
+            "candidate_id": "505f9613-883a-4c69-b63a-5ab87e780bfb",
             "rank_before_drop": 4,
             "retrieval_method": "text"
           },
@@ -2478,7 +2673,7 @@
             "drop_key": "url:main.knesset.gov.il/activity/info/research/pages/incident.aspx",
             "drop_reason": "dup_url",
             "source_type": "knesset_research",
-            "candidate_id": "5ddfe7da-cc18-423e-a4f5-a9fa14c67168",
+            "candidate_id": "c4d18317-1e90-4062-b4e4-bf313e7ac7ba",
             "rank_before_drop": 6,
             "retrieval_method": "text"
           },
@@ -2492,7 +2687,7 @@
             "drop_key": "doc:2bb77d17-2a3b-4101-8762-f8a5e934bc68",
             "drop_reason": "dup_document_id",
             "source_type": "journal_article",
-            "candidate_id": "15b6242f-565b-4fcb-8339-fb503d785454",
+            "candidate_id": "495edcc9-0362-4a50-a630-5ac31755bb8f",
             "rank_before_drop": 18,
             "retrieval_method": "text"
           },
@@ -2506,7 +2701,7 @@
             "drop_key": "doc:c0faf477-d590-42da-9a91-7b9747a88f04",
             "drop_reason": "dup_document_id",
             "source_type": "journal_article",
-            "candidate_id": "66a711d0-f701-4ebf-81e5-788006a97ee6",
+            "candidate_id": "5fba2cc1-56e8-44a9-a305-b107f9f69d0f",
             "rank_before_drop": 20,
             "retrieval_method": "vector"
           },
@@ -2520,7 +2715,7 @@
             "drop_key": "url:main.knesset.gov.il/activity/info/research/pages/incident.aspx",
             "drop_reason": "dup_url",
             "source_type": "knesset_research",
-            "candidate_id": "403093fc-8016-4f0d-8bfd-7235a1d50fcf",
+            "candidate_id": "bd34ef29-fdf5-4cb0-b647-0fb9c3763407",
             "rank_before_drop": 21,
             "retrieval_method": "vector"
           },
@@ -2534,7 +2729,7 @@
             "drop_key": "vector:C1:2",
             "drop_reason": "vector_quota_per_claim",
             "source_type": "knesset_research",
-            "candidate_id": "89edda93-fa3f-4d13-a74a-2b7de857066d",
+            "candidate_id": "f1945ad0-0156-4d27-992e-1796bd4ef4a9",
             "rank_before_drop": 23,
             "retrieval_method": "vector"
           }
@@ -2557,7 +2752,7 @@
               "title": "ביהמ\"ש העליון, אב\"ד, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופטת דפנה ברק ארז: פס\"ד בעתירות בעניין פיטורי ראש השב\"כ (בג\"ץ 54321-03-25)",
               "admitted": true,
               "dedupe_key": "www.gov.il/he/departments/dynamiccollectors/spokmanship_court#בגץ:54321/03",
-              "candidate_id": "a94f6055-a5b8-43b8-9c47-88bcb43181cd",
+              "candidate_id": "9c5b105b-f519-4565-a38b-398fe08a3285",
               "original_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
               "normalized_url_old": "www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
               "dedupe_identity_source": "title_docket",
@@ -2567,7 +2762,7 @@
               "title": "בית המשפט העליון בשבתו כבג\"ץ, השופטת דפנה ברק-ארז, השופט דוד מינץ והשופט עופר גרוסקופף: פס\"ד העוסק בחובה לעמוד בדרישות החוק ביחס להספקת מזון ברמה בסיסית לכלל האסירים הביטחוניים המוחזקים בבתי הסוהר בישראל (בג\"ץ 2858-24)",
               "admitted": true,
               "dedupe_key": "www.gov.il/he/departments/dynamiccollectors/spokmanship_court#בגץ:2858/24",
-              "candidate_id": "2ccec33b-af8d-473d-88b6-7df52919ceac",
+              "candidate_id": "fae1372d-b3eb-440e-9ede-67e72ea8e9cb",
               "original_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
               "normalized_url_old": "www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
               "dedupe_identity_source": "title_docket",
@@ -2577,7 +2772,7 @@
               "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
               "admitted": true,
               "dedupe_key": "www.gov.il/he/departments/dynamiccollectors/spokmanship_court#בגץ:8647/22",
-              "candidate_id": "4938f024-8ca9-4cd1-89e3-4fd619295aec",
+              "candidate_id": "0034579c-c5f7-49ac-9a12-5e7cfae908fd",
               "original_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
               "normalized_url_old": "www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
               "dedupe_identity_source": "title_docket",
@@ -2587,7 +2782,7 @@
               "title": "ביהמ\"ש העליון, מ\"מ הנשיא השופט עוזי פוגלמן, השופט יצחק עמית, השופט נעם סולברג: החלטה בבקשה לקביעת הסדר דיוני ובתגובות הצדדים (בג\"ץ 6198/23 - התנועה למען איכות השלטון בישראל נ. שר הביטחון  ועוד)",
               "admitted": true,
               "dedupe_key": "www.gov.il/he/departments/dynamiccollectors/spokmanship_court#בגץ:6198/23",
-              "candidate_id": "604f505f-1d29-4cd9-969a-ae718e8448aa",
+              "candidate_id": "c41afd12-8764-4fe9-9833-4a883e6e2823",
               "original_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2600",
               "normalized_url_old": "www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
               "dedupe_identity_source": "title_docket",
@@ -2597,7 +2792,7 @@
               "title": "ביהמ\"ש העליון, אב\"ד מ\"מ הנשיא השופט עוזי פוגלמן, השופט יצחק עמית, השופט נועם סולברג: החלטה בבקשה למתן צו ביניים בבג\"ץ 7922/23, בג\"ץ 6198/23 ועוד",
               "admitted": true,
               "dedupe_key": "www.gov.il/he/departments/dynamiccollectors/spokmanship_court#בגץ:7922/23",
-              "candidate_id": "e21cfbd6-968f-417f-8191-8bb1401bf8ed",
+              "candidate_id": "81c76e70-0827-47fc-950c-998f611dac88",
               "original_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2550",
               "normalized_url_old": "www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
               "dedupe_identity_source": "title_docket",
@@ -2607,7 +2802,7 @@
               "title": "בימ\"ש עליון, אב\"ד השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין: פס\"ד בעתירות בעניין הבחירות לרבנים הראשיים לישראל (בג\"ץ 4266/24)",
               "admitted": true,
               "dedupe_key": "www.gov.il/he/departments/dynamiccollectors/spokmanship_court#בגץ:4266/24",
-              "candidate_id": "407af72b-abdb-43cc-ab49-6636d231f033",
+              "candidate_id": "e7808dc9-8279-4030-8c2d-d81ff3040292",
               "original_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1840",
               "normalized_url_old": "www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
               "dedupe_identity_source": "title_docket",
@@ -2617,7 +2812,7 @@
               "title": "בימ\"ש עליון, אב\"ד הנשיאה חיות, המשנה לנשיאה (בדימ') ניל הנדל, המשנה לנשיאה עוזי פוגלמן, השופטים: יצחק עמית, נעם סולברג, דפנה ברק-ארז, ענת ברון: פס\"ד בשני ערעורים שעניינם שלילת אזרחות בגין ביצוע מעשים שיש בהם משום הפרת אמונים למדינת ישראל (עע\"מ 8277/17)",
               "admitted": true,
               "dedupe_key": "www.gov.il/he/departments/dynamiccollectors/spokmanship_court#עעמ:8277/17",
-              "candidate_id": "42cda27b-c8c5-4521-8185-16a9dceced48",
+              "candidate_id": "f86a7027-8073-46ae-bb3e-b2258cef5cce",
               "original_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5350",
               "normalized_url_old": "www.gov.il/he/departments/dynamiccollectors/spokmanship_court",
               "dedupe_identity_source": "title_docket",
@@ -2627,7 +2822,7 @@
               "title": "ע\"א 4628/93 הלכת אפרופים",
               "admitted": true,
               "dedupe_key": "supremedecisions.court.gov.il/home/download?filename=93046280_z01.txt&path=englishverdicts/93/280/046/z01",
-              "candidate_id": "ad3be76d-b753-4a74-bbaa-776d563e20af",
+              "candidate_id": "6979beb0-3478-4db5-9e0b-edb30d578581",
               "original_url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
               "normalized_url_old": "supremedecisions.court.gov.il/home/download",
               "dedupe_identity_source": "query_param",
@@ -2653,27 +2848,27 @@
         }
       },
       "local": {
-        "ms": 1890,
+        "ms": 848,
         "aggregate": {
-          "wall_ms": 1890,
-          "max_query_ms": 1887,
-          "sum_query_ms": 3218,
+          "wall_ms": 848,
+          "max_query_ms": 845,
+          "sum_query_ms": 2281,
           "slowest_query": {
-            "ms": 1887,
+            "ms": 845,
             "role": "binding_case_law",
-            "text_ms": 1848,
+            "text_ms": 802,
             "claim_id": "C1",
-            "exact_ms": 495,
+            "exact_ms": 507,
             "query_he": "HCJ 1892/14",
-            "vector_ms": 38,
-            "embedding_ms": 191
+            "vector_ms": 43,
+            "embedding_ms": 150
           },
           "slowest_method": "text",
           "method_total_ms": {
-            "text": 2681,
-            "exact": 997,
-            "vector": 118,
-            "embedding": 578
+            "text": 1688,
+            "exact": 1034,
+            "vector": 163,
+            "embedding": 454
           },
           "queries_executed": 3,
           "exact_error_count": 0,
@@ -2684,18 +2879,18 @@
             "exact_authority": 2
           },
           "vector_timeout_count": 0,
-          "bottleneck_hypothesis": "single_slow_query (max=1887ms ≈ wall=1890ms)",
+          "bottleneck_hypothesis": "single_slow_query (max=845ms ≈ wall=848ms)",
           "duplicate_query_count": 0
         },
         "per_query": [
           {
-            "ms": 549,
+            "ms": 598,
             "diag": {
-              "text_ms": 87,
-              "exact_ms": 502,
-              "vector_ms": 45,
+              "text_ms": 99,
+              "exact_ms": 526,
+              "vector_ms": 70,
               "text_status": "ok",
-              "embedding_ms": 196,
+              "embedding_ms": 141,
               "exact_status": "ok",
               "vector_status": "empty",
               "top_text_titles": [
@@ -2709,7 +2904,7 @@
               "top_exact_titles": [
                 "בג\"ץ 1892/14 האגודה לזכויות האזרח בישראל נ׳ השר לביטחון פנים פסק דין (13.06.2017)"
               ],
-              "parallel_batch_ms": 501,
+              "parallel_batch_ms": 525,
               "top_vector_titles": [],
               "exact_clue_lookups": [
                 {
@@ -2875,6 +3070,28 @@
                     "supreme_court_il"
                   ],
                   "matched_document_ids": []
+                },
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק ופ",
+                  "raw_clue": "חוק ופ",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק ופ",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "ופ",
+                  "candidate_title_tokens": [
+                    "ופ"
+                  ],
+                  "title_tokens_for_ilike": []
                 }
               ],
               "role_to_source_type_filter": [
@@ -2991,6 +3208,14 @@
                 "search_terms": [
                   "1892-14"
                 ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק ופ",
+                "search_terms": [
+                  "חוק ופ"
+                ]
               }
             ],
             "vector_hits": 0,
@@ -3006,13 +3231,13 @@
             }
           },
           {
-            "ms": 782,
+            "ms": 838,
             "diag": {
-              "text_ms": 746,
-              "exact_ms": 0,
-              "vector_ms": 35,
+              "text_ms": 787,
+              "exact_ms": 1,
+              "vector_ms": 50,
               "text_status": "ok",
-              "embedding_ms": 191,
+              "embedding_ms": 163,
               "exact_status": "empty",
               "vector_status": "ok",
               "top_text_titles": [
@@ -3024,7 +3249,7 @@
               ],
               "embedding_length": 768,
               "top_exact_titles": [],
-              "parallel_batch_ms": 746,
+              "parallel_batch_ms": 787,
               "top_vector_titles": [
                 "בימ\"ש עליון, אב\"ד הנשיאה חיות, המשנה לנשיאה (בדימ') ניל הנדל, המשנה לנשיאה עוזי פוגלמן, השופטים: יצחק עמית, נעם סולברג, דפנה ברק-ארז, ענת ברון: פס\"ד בשני ערעורים שעניינם שלילת אזרחות בגין ביצוע מעשים שיש בהם משום הפרת אמונים למדינת ישראל (עע\"מ 8277/17)",
                 "בימ\"ש עליון, אב\"ד הנשיאה חיות, המשנה לנשיאה (בדימ') ניל הנדל, המשנה לנשיאה עוזי פוגלמן, השופטים: יצחק עמית, נעם סולברג, דפנה ברק-ארז, ענת ברון: פס\"ד בשני ערעורים שעניינם שלילת אזרחות בגין ביצוע מעשים שיש בהם משום הפרת אמונים למדינת ישראל (עע\"מ 8277/17)",
@@ -3032,7 +3257,30 @@
                 "סקירה משפטית משווה",
                 "חוק האזרחות"
               ],
-              "exact_clue_lookups": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק ופ",
+                  "raw_clue": "חוק ופ",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק ופ",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "ופ",
+                  "candidate_title_tokens": [
+                    "ופ"
+                  ],
+                  "title_tokens_for_ilike": []
+                }
+              ],
               "role_to_source_type_filter": [
                 "caselaw",
                 "supreme_court_il"
@@ -3043,7 +3291,16 @@
             "claim_id": "C1",
             "text_hits": 6,
             "exact_hits": 0,
-            "exact_clues": [],
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק ופ",
+                "search_terms": [
+                  "חוק ופ"
+                ]
+              }
+            ],
             "vector_hits": 6,
             "vector_budget": 6,
             "compact_query_he": "האגודה לזכויות האזרח השר לביטחון פנים בג 1892/14",
@@ -3057,13 +3314,13 @@
             }
           },
           {
-            "ms": 1887,
+            "ms": 845,
             "diag": {
-              "text_ms": 1848,
-              "exact_ms": 495,
-              "vector_ms": 38,
+              "text_ms": 802,
+              "exact_ms": 507,
+              "vector_ms": 43,
               "text_status": "ok",
-              "embedding_ms": 191,
+              "embedding_ms": 150,
               "exact_status": "ok",
               "vector_status": "empty",
               "top_text_titles": [
@@ -3077,7 +3334,7 @@
               "top_exact_titles": [
                 "בג\"ץ 1892/14 האגודה לזכויות האזרח בישראל נ׳ השר לביטחון פנים פסק דין (13.06.2017)"
               ],
-              "parallel_batch_ms": 1848,
+              "parallel_batch_ms": 802,
               "top_vector_titles": [],
               "exact_clue_lookups": [
                 {
@@ -3243,6 +3500,28 @@
                     "supreme_court_il"
                   ],
                   "matched_document_ids": []
+                },
+                {
+                  "status": "skipped_low_signal",
+                  "law_name": "חוק ופ",
+                  "raw_clue": "חוק ופ",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "skipped_reason": "too_short",
+                  "normalized_clue": "חוק ופ",
+                  "title_match_query": "",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "exact_lookup_skipped": true,
+                  "matched_document_ids": [],
+                  "body_after_head_strip": "ופ",
+                  "candidate_title_tokens": [
+                    "ופ"
+                  ],
+                  "title_tokens_for_ilike": []
                 }
               ],
               "role_to_source_type_filter": [
@@ -3359,6 +3638,14 @@
                 "search_terms": [
                   "1892-14"
                 ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק ופ",
+                "search_terms": [
+                  "חוק ופ"
+                ]
               }
             ],
             "vector_hits": 0,
@@ -3376,7 +3663,16 @@
         ],
         "candidates": 24,
         "global_exact": {
-          "clues_from_claims": [],
+          "clues_from_claims": [
+            {
+              "kind": "statute",
+              "source": "claim",
+              "law_name": "חוק ופ",
+              "search_terms": [
+                "חוק ופ"
+              ]
+            }
+          ],
           "clues_from_question": []
         }
       },
@@ -3417,26 +3713,26 @@
       },
       "retrieval_budget": {
         "exceeded": false,
-        "elapsed_ms": 3883,
+        "elapsed_ms": 2819,
         "checkpoints": [
           {
             "name": "retrieval_entered",
-            "at_ms": 31,
+            "at_ms": 24,
             "detail": {
               "mode": "specific_case",
               "dockets": [
                 "בג\"ץ 1892/14"
               ],
-              "isolate": "4e36fcee",
+              "isolate": "3679d47d",
               "in_flight": 1,
-              "trace_row_id": "2c587b76-920b-481c-887d-df3b442c92d1",
+              "trace_row_id": "a60bf95d-8307-4a38-a0bb-1e0773577e03",
               "concurrency_hint": null,
               "fast_lane_eligible": true
             }
           },
           {
             "name": "retrieval_started",
-            "at_ms": 62,
+            "at_ms": 46,
             "detail": {
               "mode": "specific_case",
               "dockets": [
@@ -3447,33 +3743,33 @@
           },
           {
             "name": "deterministic_start",
-            "at_ms": 62
+            "at_ms": 46
           },
           {
             "name": "deterministic_resolution_started",
-            "at_ms": 82
+            "at_ms": 68
           },
           {
             "name": "probe:derived_url_construction_start",
-            "at_ms": 83
+            "at_ms": 69
           },
           {
             "name": "probe:derived_urls_constructed",
-            "at_ms": 84,
+            "at_ms": 69,
             "detail": {
               "count": 0
             }
           },
           {
             "name": "derived_urls_probed",
-            "at_ms": 84,
+            "at_ms": 69,
             "detail": {
               "count": 0
             }
           },
           {
             "name": "probe:derived_urls_probed_done",
-            "at_ms": 84,
+            "at_ms": 69,
             "detail": {
               "probed": 0,
               "resolved": null
@@ -3481,24 +3777,24 @@
           },
           {
             "name": "probe:local_db_lookup_start",
-            "at_ms": 84
+            "at_ms": 69
           },
           {
             "name": "probe:local_db_lookup_done",
-            "at_ms": 1682,
+            "at_ms": 1672,
             "detail": {
               "success": true
             }
           },
           {
             "name": "derived_urls_probed",
-            "at_ms": 1682,
+            "at_ms": 1672,
             "detail": {
               "count": 0,
               "probe_stages": [
                 {
                   "name": "derived_url_construction_start",
-                  "at_ms": 0
+                  "at_ms": 1
                 },
                 {
                   "name": "derived_urls_constructed",
@@ -3521,7 +3817,7 @@
                 },
                 {
                   "name": "local_db_lookup_done",
-                  "at_ms": 1599,
+                  "at_ms": 1604,
                   "detail": {
                     "success": true
                   }
@@ -3532,7 +3828,7 @@
           },
           {
             "name": "derived_url_resolved",
-            "at_ms": 1682,
+            "at_ms": 1672,
             "detail": {
               "methods": [
                 "local_db_docket_lookup"
@@ -3541,28 +3837,28 @@
           },
           {
             "name": "deterministic_done",
-            "at_ms": 1682,
+            "at_ms": 1672,
             "detail": {
               "acquisition_success": true
             }
           },
           {
             "name": "broad_retrieval_started",
-            "at_ms": 1682,
+            "at_ms": 1672,
             "detail": {
               "fast_lane_hit": true
             }
           },
           {
             "name": "local_db_start",
-            "at_ms": 1682,
+            "at_ms": 1672,
             "detail": {
               "queries": 3
             }
           },
           {
             "name": "perplexity_start",
-            "at_ms": 1722,
+            "at_ms": 1711,
             "detail": {
               "queries": 0,
               "skipped": true
@@ -3570,21 +3866,21 @@
           },
           {
             "name": "perplexity_done",
-            "at_ms": 1722,
+            "at_ms": 1711,
             "detail": {
               "candidates": 0
             }
           },
           {
             "name": "local_db_done",
-            "at_ms": 3607,
+            "at_ms": 2555,
             "detail": {
               "candidates": 24
             }
           },
           {
             "name": "candidate_pool_start",
-            "at_ms": 3607,
+            "at_ms": 2555,
             "detail": {
               "local": 24,
               "perplexity": 0
@@ -3592,14 +3888,14 @@
           },
           {
             "name": "broad_retrieval_done",
-            "at_ms": 3617,
+            "at_ms": 2562,
             "detail": {
               "pool_size": 17
             }
           },
           {
             "name": "post_retrieval_start",
-            "at_ms": 3617,
+            "at_ms": 2562,
             "detail": {
               "pool_size": 17,
               "integrity_rows": 16,
@@ -3608,7 +3904,7 @@
           },
           {
             "name": "judgment_acquisition_start",
-            "at_ms": 3641,
+            "at_ms": 2587,
             "detail": {
               "skipped": true,
               "candidates": 0
@@ -3616,7 +3912,7 @@
           },
           {
             "name": "judgment_acquisition_done",
-            "at_ms": 3664,
+            "at_ms": 2606,
             "detail": {
               "skipped": true,
               "successes": 0,
@@ -3626,18 +3922,18 @@
           },
           {
             "name": "candidate_enrichment_start",
-            "at_ms": 3686,
+            "at_ms": 2625,
             "detail": {
               "successes": 0
             }
           },
           {
             "name": "candidate_enrichment_done",
-            "at_ms": 3706
+            "at_ms": 2644
           },
           {
             "name": "statute_text_acquisition_start",
-            "at_ms": 3726,
+            "at_ms": 2661,
             "detail": {
               "refs": [],
               "skipped": true
@@ -3645,7 +3941,7 @@
           },
           {
             "name": "statute_text_acquisition_done",
-            "at_ms": 3764,
+            "at_ms": 2681,
             "detail": {
               "attempted": 0,
               "successes": 0,
@@ -3653,15 +3949,23 @@
             }
           },
           {
+            "name": "secondary_body_acquisition_gate",
+            "at_ms": 2700,
+            "detail": {
+              "depth_mode": "specific_case_or_statute",
+              "budget_exceeded": false
+            }
+          },
+          {
             "name": "specific_case_resolution_start",
-            "at_ms": 3785,
+            "at_ms": 2720,
             "detail": {
               "fast_lane_hit": true
             }
           },
           {
             "name": "specific_case_resolution_done",
-            "at_ms": 3804,
+            "at_ms": 2739,
             "detail": {
               "fast_lane_hit": true,
               "acquisition_success": true,
@@ -3671,14 +3975,14 @@
           },
           {
             "name": "specific_case_identity_start",
-            "at_ms": 3822,
+            "at_ms": 2760,
             "detail": {
               "candidates": 17
             }
           },
           {
             "name": "specific_case_identity_done",
-            "at_ms": 3844,
+            "at_ms": 2781,
             "detail": {
               "passed": true,
               "required": true
@@ -3686,7 +3990,7 @@
           },
           {
             "name": "verifier_input_build_start",
-            "at_ms": 3864,
+            "at_ms": 2801,
             "detail": {
               "pool_size": 17,
               "pool_drops": 8,
@@ -3695,14 +3999,14 @@
           },
           {
             "name": "verifier_input_build_done",
-            "at_ms": 3883,
+            "at_ms": 2819,
             "detail": {
               "pool_size": 17
             }
           },
           {
             "name": "verifier_start",
-            "at_ms": 3923,
+            "at_ms": 2858,
             "detail": {
               "candidates": 17
             }
@@ -3716,11 +4020,11 @@
         "guard_triggered_at": null,
         "aborted_tasks_count": 0,
         "retrieval_budget_ms": 90000,
-        "retrieval_elapsed_ms": 3883,
+        "retrieval_elapsed_ms": 2819,
         "body_acquisition_count": 0,
         "extraction_input_bytes": 0,
         "longest_retrieval_step": {
-          "ms": 1890,
+          "ms": 848,
           "name": "local_retrieval"
         },
         "partial_retrieval_used": false,
@@ -3739,7 +4043,7 @@
             "role": "binding_case_law",
             "title": "בג\"ץ 1892/14 האגודה לזכויות האזרח בישראל נ׳ השר לביטחון פנים פסק דין (13.06.2017)",
             "citable_as": "judgment",
-            "candidate_id": "bce35e03-9c1e-4c78-bb60-44b8fd06340d",
+            "candidate_id": "e9c63397-7909-4962-bb64-bb2ca2c7a3d0",
             "authority_tier": "primary_mirror",
             "synthesis_role": "leading_candidate",
             "text_usability": "unknown",
@@ -3759,7 +4063,7 @@
             "role": "binding_case_law",
             "title": "סוגיות בכליאה בישראל",
             "citable_as": "scholarship",
-            "candidate_id": "d03a716a-5a30-4bb7-a7d1-6a8472a2a0fa",
+            "candidate_id": "31b73c35-1c34-4c41-b44d-4849dacc3740",
             "authority_tier": "primary_mirror",
             "synthesis_role": "secondary_commentary",
             "text_usability": "full_text",
@@ -3779,7 +4083,7 @@
             "role": "binding_case_law",
             "title": "החובה ליתן לעצורים יחס מיוחד ההולם את חזקת החפות – מבט נוסף על תנאי המעצר בישראל על רקע המשפט הבין-לאומי | מיכל טמיר וגרשון גונטובניק (כרך כה)",
             "citable_as": "scholarship",
-            "candidate_id": "9dabca77-6860-4748-b44c-b796189317a9",
+            "candidate_id": "17791a96-237a-4bbc-9b12-fe95ce195bef",
             "authority_tier": "secondary_commentary",
             "synthesis_role": "secondary_commentary",
             "text_usability": "full_text",
@@ -3797,7 +4101,7 @@
             "role": "binding_case_law",
             "title": "ביהמ\"ש העליון, אב\"ד, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופטת דפנה ברק ארז: פס\"ד בעתירות בעניין פיטורי ראש השב\"כ (בג\"ץ 54321-03-25)",
             "citable_as": "not_citable",
-            "candidate_id": "a94f6055-a5b8-43b8-9c47-88bcb43181cd",
+            "candidate_id": "9c5b105b-f519-4565-a38b-398fe08a3285",
             "authority_tier": "index_or_listing",
             "synthesis_role": "unknown",
             "text_usability": "listing_page",
@@ -3817,7 +4121,7 @@
             "role": "binding_case_law",
             "title": "בית המשפט העליון בשבתו כבג\"ץ, השופטת דפנה ברק-ארז, השופט דוד מינץ והשופט עופר גרוסקופף: פס\"ד העוסק בחובה לעמוד בדרישות החוק ביחס להספקת מזון ברמה בסיסית לכלל האסירים הביטחוניים המוחזקים בבתי הסוהר בישראל (בג\"ץ 2858-24)",
             "citable_as": "not_citable",
-            "candidate_id": "2ccec33b-af8d-473d-88b6-7df52919ceac",
+            "candidate_id": "fae1372d-b3eb-440e-9ede-67e72ea8e9cb",
             "authority_tier": "index_or_listing",
             "synthesis_role": "unknown",
             "text_usability": "listing_page",
@@ -3837,7 +4141,7 @@
             "role": "binding_case_law",
             "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנון טיפול והערכה בעניינם של קטינים בסיכון (בג\"ץ 8647/22)",
             "citable_as": "not_citable",
-            "candidate_id": "4938f024-8ca9-4cd1-89e3-4fd619295aec",
+            "candidate_id": "0034579c-c5f7-49ac-9a12-5e7cfae908fd",
             "authority_tier": "index_or_listing",
             "synthesis_role": "unknown",
             "text_usability": "listing_page",
@@ -3857,7 +4161,7 @@
             "role": "binding_case_law",
             "title": "מהפכת השחרור המנהלי – ממדיניות כליאה מבוססת ביקוש למדיניות מבוססת היצע",
             "citable_as": "scholarship",
-            "candidate_id": "e14a435b-1bb0-4241-89ac-67d70309b58e",
+            "candidate_id": "377e2067-024b-495b-afba-133770ecedba",
             "authority_tier": "secondary_commentary",
             "synthesis_role": "secondary_commentary",
             "text_usability": "full_text",
@@ -3874,7 +4178,7 @@
             "role": "binding_case_law",
             "title": "בג\"ץ 7753/23 האגודה לזכויות האזרח בישראל ואח' נגד השר לביטחון לאומי פסק דין (23.11.2023)",
             "citable_as": "judgment",
-            "candidate_id": "7d2d1a59-10b9-4d6b-8f9e-f5e51c832123",
+            "candidate_id": "cb956432-61c2-4547-8359-a50554ea10ef",
             "authority_tier": "primary_mirror",
             "synthesis_role": "leading_candidate",
             "text_usability": "full_text",
@@ -3894,7 +4198,7 @@
             "role": "binding_case_law",
             "title": "ביהמ\"ש העליון, מ\"מ הנשיא השופט עוזי פוגלמן, השופט יצחק עמית, השופט נעם סולברג: החלטה בבקשה לקביעת הסדר דיוני ובתגובות הצדדים (בג\"ץ 6198/23 - התנועה למען איכות השלטון בישראל נ. שר הביטחון  ועוד)",
             "citable_as": "not_citable",
-            "candidate_id": "604f505f-1d29-4cd9-969a-ae718e8448aa",
+            "candidate_id": "c41afd12-8764-4fe9-9833-4a883e6e2823",
             "authority_tier": "index_or_listing",
             "synthesis_role": "unknown",
             "text_usability": "listing_page",
@@ -3914,7 +4218,7 @@
             "role": "binding_case_law",
             "title": "ביהמ\"ש העליון, אב\"ד מ\"מ הנשיא השופט עוזי פוגלמן, השופט יצחק עמית, השופט נועם סולברג: החלטה בבקשה למתן צו ביניים בבג\"ץ 7922/23, בג\"ץ 6198/23 ועוד",
             "citable_as": "not_citable",
-            "candidate_id": "e21cfbd6-968f-417f-8191-8bb1401bf8ed",
+            "candidate_id": "81c76e70-0827-47fc-950c-998f611dac88",
             "authority_tier": "index_or_listing",
             "synthesis_role": "unknown",
             "text_usability": "listing_page",
@@ -3934,7 +4238,7 @@
             "role": "binding_case_law",
             "title": "בימ\"ש עליון, אב\"ד השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין: פס\"ד בעתירות בעניין הבחירות לרבנים הראשיים לישראל (בג\"ץ 4266/24)",
             "citable_as": "not_citable",
-            "candidate_id": "407af72b-abdb-43cc-ab49-6636d231f033",
+            "candidate_id": "e7808dc9-8279-4030-8c2d-d81ff3040292",
             "authority_tier": "index_or_listing",
             "synthesis_role": "unknown",
             "text_usability": "listing_page",
@@ -3954,7 +4258,7 @@
             "role": "binding_case_law",
             "title": "ע\"א 4628/93 הלכת אפרופים",
             "citable_as": "judgment",
-            "candidate_id": "ad3be76d-b753-4a74-bbaa-776d563e20af",
+            "candidate_id": "6979beb0-3478-4db5-9e0b-edb30d578581",
             "authority_tier": "official_primary",
             "synthesis_role": "leading_candidate",
             "text_usability": "full_text",
@@ -3973,7 +4277,7 @@
             "role": "binding_case_law",
             "title": "תקצירים באנגלית חוברת 2",
             "citable_as": "scholarship",
-            "candidate_id": "15e5d847-51b6-4124-a542-2f09810ceb05",
+            "candidate_id": "5e0c7b89-4488-41b6-8f3d-ba9bb83f53eb",
             "authority_tier": "secondary_commentary",
             "synthesis_role": "secondary_commentary",
             "text_usability": "full_text",
@@ -3990,7 +4294,7 @@
             "role": "binding_case_law",
             "title": "תקצירים באנגלית - חוברת 2",
             "citable_as": "scholarship",
-            "candidate_id": "a2ebdd65-599f-4b65-9b56-8f07210b547a",
+            "candidate_id": "7b98593d-acf8-491a-8f92-987cd4033e62",
             "authority_tier": "secondary_commentary",
             "synthesis_role": "secondary_commentary",
             "text_usability": "full_text",
@@ -4007,7 +4311,7 @@
             "role": "binding_case_law",
             "title": "בימ\"ש עליון, אב\"ד הנשיאה חיות, המשנה לנשיאה (בדימ') ניל הנדל, המשנה לנשיאה עוזי פוגלמן, השופטים: יצחק עמית, נעם סולברג, דפנה ברק-ארז, ענת ברון: פס\"ד בשני ערעורים שעניינם שלילת אזרחות בגין ביצוע מעשים שיש בהם משום הפרת אמונים למדינת ישראל (עע\"מ 8277/17)",
             "citable_as": "not_citable",
-            "candidate_id": "42cda27b-c8c5-4521-8185-16a9dceced48",
+            "candidate_id": "f86a7027-8073-46ae-bb3e-b2258cef5cce",
             "authority_tier": "index_or_listing",
             "synthesis_role": "unknown",
             "text_usability": "listing_page",
@@ -4027,7 +4331,7 @@
             "role": "binding_case_law",
             "title": "חוק האזרחות",
             "citable_as": "statute",
-            "candidate_id": "3737dc17-c595-4e15-b4ef-ba7450ead032",
+            "candidate_id": "2dbe389e-9175-47d2-945c-907fc11e4cd6",
             "authority_tier": "statute_mirror",
             "synthesis_role": "statutory_background",
             "text_usability": "substantive_excerpt",
@@ -4045,35 +4349,35 @@
         "downgrades": [
           {
             "reason": "commentary_identity:upstream_scholarship_type",
-            "candidate_id": "9dabca77-6860-4748-b44c-b796189317a9"
+            "candidate_id": "17791a96-237a-4bbc-9b12-fe95ce195bef"
           },
           {
             "reason": "caselaw_type_on_listing_page",
-            "candidate_id": "a94f6055-a5b8-43b8-9c47-88bcb43181cd"
+            "candidate_id": "9c5b105b-f519-4565-a38b-398fe08a3285"
           },
           {
             "reason": "caselaw_type_on_listing_page",
-            "candidate_id": "2ccec33b-af8d-473d-88b6-7df52919ceac"
+            "candidate_id": "fae1372d-b3eb-440e-9ede-67e72ea8e9cb"
           },
           {
             "reason": "caselaw_type_on_listing_page",
-            "candidate_id": "4938f024-8ca9-4cd1-89e3-4fd619295aec"
+            "candidate_id": "0034579c-c5f7-49ac-9a12-5e7cfae908fd"
           },
           {
             "reason": "caselaw_type_on_listing_page",
-            "candidate_id": "604f505f-1d29-4cd9-969a-ae718e8448aa"
+            "candidate_id": "c41afd12-8764-4fe9-9833-4a883e6e2823"
           },
           {
             "reason": "caselaw_type_on_listing_page",
-            "candidate_id": "e21cfbd6-968f-417f-8191-8bb1401bf8ed"
+            "candidate_id": "81c76e70-0827-47fc-950c-998f611dac88"
           },
           {
             "reason": "caselaw_type_on_listing_page",
-            "candidate_id": "407af72b-abdb-43cc-ab49-6636d231f033"
+            "candidate_id": "e7808dc9-8279-4030-8c2d-d81ff3040292"
           },
           {
             "reason": "caselaw_type_on_listing_page",
-            "candidate_id": "42cda27b-c8c5-4521-8185-16a9dceced48"
+            "candidate_id": "f86a7027-8073-46ae-bb3e-b2258cef5cce"
           }
         ],
         "tier_counts": {
@@ -4122,7 +4426,7 @@
         "judgment_candidate_rank_before_acquisition": []
       },
       "specific_case_identity": {
-        "ms": 2,
+        "ms": 1,
         "matched_by": "docket",
         "recovered_title": null,
         "requested_docket": "בג\"ץ 1892/14",
@@ -4139,13 +4443,13 @@
         "specific_case_identity_failure_reason": null
       },
       "specific_case_resolution": {
-        "ms": 1599,
+        "ms": 1604,
         "mode": "specific_case",
         "enabled": true,
         "probe_stages": [
           {
             "name": "derived_url_construction_start",
-            "at_ms": 0
+            "at_ms": 1
           },
           {
             "name": "derived_urls_constructed",
@@ -4168,7 +4472,7 @@
           },
           {
             "name": "local_db_lookup_done",
-            "at_ms": 1599,
+            "at_ms": 1604,
             "detail": {
               "success": true
             }
@@ -4248,6 +4552,22 @@
         "official_judgment_documents_acquired": 0,
         "institutional_pages_excluded_before_budget": 0,
         "judgment_candidate_rank_before_acquisition": []
+      },
+      "secondary_body_acquisition": {
+        "ms": 0,
+        "ran": false,
+        "reason": "disabled_control_arm",
+        "depth_mode": "specific_case_or_statute",
+        "local_hits": 0,
+        "web_attempts": 0,
+        "local_lookups": 0,
+        "per_candidate": [],
+        "web_successes": 0,
+        "skipped_by_budget": 0,
+        "stage_stop_reason": "stage_not_run",
+        "candidates_considered": 0,
+        "acquired_candidate_ids": [],
+        "bibliography_only_candidate_ids": []
       },
       "canonical_authority_acquisition": {
         "ms": 0,
@@ -4367,7 +4687,7 @@
         "source_url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-1892-14-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%94%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
         "document_id": "9b5f761e-0a45-4a3a-a158-d44552e42fe3",
         "source_type": "caselaw",
-        "candidate_id": "bce35e03-9c1e-4c78-bb60-44b8fd06340d",
+        "candidate_id": "e9c63397-7909-4962-bb64-bb2ca2c7a3d0",
         "retrieval_method": "exact_authority",
         "expected_source_type": "case"
       },
@@ -4422,7 +4742,7 @@
         "source_url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=6719&businessType=1",
         "document_id": "095676ba-449b-4171-a59b-e1333c4f1f6f",
         "source_type": "knesset_research",
-        "candidate_id": "d03a716a-5a30-4bb7-a7d1-6a8472a2a0fa",
+        "candidate_id": "31b73c35-1c34-4c41-b44d-4849dacc3740",
         "retrieval_method": "text",
         "expected_source_type": "case"
       },
@@ -4465,7 +4785,7 @@
         "source_url": "https://runilawreview.org/2019/06/02/vol25_tamir_gontovnik/",
         "document_id": "c0faf477-d590-42da-9a91-7b9747a88f04",
         "source_type": "journal_article",
-        "candidate_id": "9dabca77-6860-4748-b44c-b796189317a9",
+        "candidate_id": "17791a96-237a-4bbc-9b12-fe95ce195bef",
         "retrieval_method": "text",
         "expected_source_type": "case"
       },
@@ -4506,7 +4826,7 @@
         "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
         "document_id": "3f662eeb-5131-4eff-98c5-330f24b926c8",
         "source_type": "caselaw",
-        "candidate_id": "a94f6055-a5b8-43b8-9c47-88bcb43181cd",
+        "candidate_id": "9c5b105b-f519-4565-a38b-398fe08a3285",
         "retrieval_method": "text",
         "expected_source_type": "case"
       },
@@ -4547,7 +4867,7 @@
         "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
         "document_id": "cd906605-c12c-4998-8e35-ee6d058b99f6",
         "source_type": "caselaw",
-        "candidate_id": "2ccec33b-af8d-473d-88b6-7df52919ceac",
+        "candidate_id": "fae1372d-b3eb-440e-9ede-67e72ea8e9cb",
         "retrieval_method": "text",
         "expected_source_type": "case"
       },
@@ -4588,7 +4908,7 @@
         "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
         "document_id": "395f18af-7c3f-4ff9-a2f5-633c17b7bcc5",
         "source_type": "caselaw",
-        "candidate_id": "4938f024-8ca9-4cd1-89e3-4fd619295aec",
+        "candidate_id": "0034579c-c5f7-49ac-9a12-5e7cfae908fd",
         "retrieval_method": "text",
         "expected_source_type": "case"
       },
@@ -4630,7 +4950,7 @@
         "source_url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/5fc83c_3025530eb3c3458697bf14cefe0e330a.pdf",
         "document_id": "2bb77d17-2a3b-4101-8762-f8a5e934bc68",
         "source_type": "journal_article",
-        "candidate_id": "e14a435b-1bb0-4241-89ac-67d70309b58e",
+        "candidate_id": "377e2067-024b-495b-afba-133770ecedba",
         "retrieval_method": "text",
         "expected_source_type": "case"
       },
@@ -4682,7 +5002,7 @@
         "source_url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-7753-23-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%95%d7%90%d7%97/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
         "document_id": "bb912cb4-ef6e-4abf-b0b5-08aaca2a27cb",
         "source_type": "caselaw",
-        "candidate_id": "7d2d1a59-10b9-4d6b-8f9e-f5e51c832123",
+        "candidate_id": "cb956432-61c2-4547-8359-a50554ea10ef",
         "retrieval_method": "text",
         "expected_source_type": "case"
       },
@@ -4723,7 +5043,7 @@
         "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2600",
         "document_id": "05b6c8a1-8423-428f-a9c8-1db09c9619ad",
         "source_type": "caselaw",
-        "candidate_id": "604f505f-1d29-4cd9-969a-ae718e8448aa",
+        "candidate_id": "c41afd12-8764-4fe9-9833-4a883e6e2823",
         "retrieval_method": "text",
         "expected_source_type": "case"
       },
@@ -4764,7 +5084,7 @@
         "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2550",
         "document_id": "8f8e4d32-021a-4c28-82c9-d315928e57f9",
         "source_type": "caselaw",
-        "candidate_id": "e21cfbd6-968f-417f-8191-8bb1401bf8ed",
+        "candidate_id": "81c76e70-0827-47fc-950c-998f611dac88",
         "retrieval_method": "text",
         "expected_source_type": "case"
       },
@@ -4805,7 +5125,7 @@
         "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1840",
         "document_id": "7f5db7af-0b90-4ff4-b10d-a3a7f42b24c4",
         "source_type": "caselaw",
-        "candidate_id": "407af72b-abdb-43cc-ab49-6636d231f033",
+        "candidate_id": "e7808dc9-8279-4030-8c2d-d81ff3040292",
         "retrieval_method": "text",
         "expected_source_type": "case"
       },
@@ -4878,7 +5198,7 @@
         "source_url": "https://supremedecisions.court.gov.il/Home/Download?fileName=93046280_Z01.txt&path=EnglishVerdicts%2F93%2F280%2F046%2FZ01&type=4",
         "document_id": "c69eb1a5-7ed7-416b-8d6f-5446e363c43e",
         "source_type": "caselaw",
-        "candidate_id": "ad3be76d-b753-4a74-bbaa-776d563e20af",
+        "candidate_id": "6979beb0-3478-4db5-9e0b-edb30d578581",
         "retrieval_method": "text",
         "expected_source_type": "case"
       },
@@ -4917,7 +5237,7 @@
         "source_url": "https://lawjournal.huji.ac.il/article/12/1999",
         "document_id": "42f86683-4e96-40a7-81af-57ad33676170",
         "source_type": "journal_article",
-        "candidate_id": "15e5d847-51b6-4124-a542-2f09810ceb05",
+        "candidate_id": "5e0c7b89-4488-41b6-8f3d-ba9bb83f53eb",
         "retrieval_method": "text",
         "expected_source_type": "case"
       },
@@ -4956,7 +5276,7 @@
         "source_url": "https://lawjournal.huji.ac.il/article/12/1461",
         "document_id": "0db39927-7c47-4968-8c11-3731a73d4940",
         "source_type": "journal_article",
-        "candidate_id": "a2ebdd65-599f-4b65-9b56-8f07210b547a",
+        "candidate_id": "7b98593d-acf8-491a-8f92-987cd4033e62",
         "retrieval_method": "text",
         "expected_source_type": "case"
       },
@@ -4997,7 +5317,7 @@
         "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5350",
         "document_id": "b1d9e55f-e31f-4804-8afd-28205a413df7",
         "source_type": "caselaw",
-        "candidate_id": "42cda27b-c8c5-4521-8185-16a9dceced48",
+        "candidate_id": "f86a7027-8073-46ae-bb3e-b2258cef5cce",
         "retrieval_method": "vector",
         "expected_source_type": "case"
       },
@@ -5034,21 +5354,21 @@
         "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%90%D7%96%D7%A8%D7%97%D7%95%D7%AA",
         "document_id": "cfe15f1a-14bd-4c3e-aba5-3535e6b8857f",
         "source_type": "israeli_law",
-        "candidate_id": "3737dc17-c595-4e15-b4ef-ba7450ead032",
+        "candidate_id": "2dbe389e-9175-47d2-945c-907fc11e4cd6",
         "retrieval_method": "vector",
         "expected_source_type": "case"
       }
     ],
     "stage_runs": [
       {
-        "ms": 13677,
+        "ms": 16105,
         "ok": true,
         "model": "openai/gpt-5-mini",
         "stage": "claim_analyzer.initial",
         "http_status": 200
       },
       {
-        "ms": 39067,
+        "ms": 31218,
         "ok": true,
         "model": "openai/gpt-5",
         "stage": "claim_analyzer.escalated",
@@ -5056,18 +5376,18 @@
         "http_status": 200
       },
       {
-        "ms": 19737,
+        "ms": 30747,
         "ok": true,
         "model": "openai/gpt-5-mini",
         "stage": "query_planner.initial"
       },
       {
-        "ms": 5985,
+        "ms": 5741,
         "ok": true,
         "stage": "source_nomination.openai/gpt-5-mini.low"
       },
       {
-        "ms": 1890,
+        "ms": 848,
         "ok": true,
         "stage": "local_retrieval"
       },
@@ -5077,14 +5397,14 @@
         "stage": "perplexity_retrieval"
       },
       {
-        "ms": 33679,
+        "ms": 27745,
         "ok": true,
         "model": "openai/gpt-5-mini",
         "stage": "verifier.batch1.initial",
         "http_status": 200
       },
       {
-        "ms": 29607,
+        "ms": 27489,
         "ok": true,
         "model": "openai/gpt-5-mini",
         "stage": "drafter_v2.initial",
@@ -5132,7 +5452,7 @@
           "description": "פסק הדין בעניין בג\"ץ 1892/14 עצמו",
           "candidate_ids": [
             "specific-case:bagatz:1892/14",
-            "bce35e03-9c1e-4c78-bb60-44b8fd06340d"
+            "e9c63397-7909-4962-bb64-bb2ca2c7a3d0"
           ],
           "is_docket_anchor": true,
           "reached_verifier": true,
@@ -5197,12 +5517,12 @@
       "extraction_count": 0,
       "aborted_tasks_count": 0,
       "retrieval_budget_ms": 90000,
-      "retrieval_elapsed_ms": 67288,
+      "retrieval_elapsed_ms": 58157,
       "partial_sources_count": 0,
       "body_acquisition_count": 0,
       "extraction_input_bytes": 0,
       "longest_retrieval_step": {
-        "ms": 1890,
+        "ms": 848,
         "name": "local_retrieval"
       },
       "partial_retrieval_used": false,

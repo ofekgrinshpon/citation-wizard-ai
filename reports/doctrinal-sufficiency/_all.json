@@ -1,76 +1,24 @@
 [
   {
-    "id": "D1",
-    "question": "מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד יישם אותם בית המשפט העליון?",
-    "run_id": "98358b94-2b38-4d72-b329-eadeb7f46a6f",
-    "qa_log_id": "71d898f8-1ef1-44d2-a9ee-14cc91107048",
-    "ms": 152576,
+    "id": "FRESH-SC",
+    "question": "מה נקבע בבג\"ץ 1892/14 האגודה לזכויות האזרח נ' השר לביטחון פנים?",
+    "run_id": "612c7f92-a461-41cb-b2d7-5e74fad61085",
+    "qa_log_id": "a60bf95d-8307-4a38-a0bb-1e0773577e03",
+    "ms": 146788,
     "branch": null,
     "official_discovery": {
-      "ms": 546,
-      "enabled": true,
-      "targets": 2,
+      "ms": 0,
+      "enabled": false,
+      "targets": 0,
       "version": "official_source_discovery_v1",
-      "attempts": [
-        {
-          "ms": 495,
-          "label": "חוק יסוד: כבוד האדם וחירותו",
-          "reason": "section_not_found:8",
-          "result": "section_not_found",
-          "statute": {
-            "lane": "statute",
-            "section": "8",
-            "title_raw": "חוק-יסוד: כבוד האדם וחירותו",
-            "section_found": false,
-            "title_normalized": "חוק-יסוד: כבוד האדם וחירותו",
-            "identity_tokens_matched": 3,
-            "title_normalization_changed": false
-          },
-          "category": "statute",
-          "body_chars": 0,
-          "cache_lookup": "miss",
-          "cache_status": null,
-          "cache_written": false,
-          "nomination_id": "N4",
-          "urls_attempted": [
-            "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf"
-          ],
-          "acquisition_path": "none",
-          "cache_write_error": null,
-          "cooldown_strategy": null,
-          "normalized_docket": null,
-          "injected_candidate_id": null,
-          "cooldown_strategy_scoped": true,
-          "ignored_other_strategy_failures": 0
-        },
-        {
-          "ms": 31,
-          "label": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
-          "reason": "cooldown_until:2026-08-31T21:36:31.472Z",
-          "result": "not_attempted",
-          "category": "judgment",
-          "body_chars": 0,
-          "cache_lookup": "cooldown",
-          "cache_status": "failed",
-          "cache_written": false,
-          "nomination_id": "N2",
-          "urls_attempted": [],
-          "acquisition_path": "none",
-          "cache_write_error": null,
-          "cooldown_strategy": "search_first_judgment",
-          "normalized_docket": "bagatz:1715/97",
-          "injected_candidate_id": null,
-          "cooldown_strategy_scoped": true,
-          "ignored_other_strategy_failures": 0
-        }
-      ],
+      "attempts": [],
       "cache_hits": 0,
-      "skip_reason": null,
-      "cache_misses": 1,
+      "skip_reason": "target_cap_zero",
+      "cache_misses": 0,
       "cache_writes": 0,
       "cache_version": "verified_source_cache_v2",
       "bodies_acquired": 0,
-      "cache_cooldowns": 1,
+      "cache_cooldowns": 0,
       "injected_candidate_ids": []
     },
     "specific_case": null,
@@ -78,29 +26,15 @@
       "applied": true,
       "mismatch_reason": [
         "insufficient_authority_for_claim_category",
-        "commentary_in_substantive_block",
         "claim_mismatch"
       ],
       "claim_categories": [
         {
           "basis": "declared_claim_category",
-          "category": "statutory",
+          "category": "court_holding",
           "kept_refs": [],
-          "block_index": 0,
-          "support_levels": []
-        },
-        {
-          "basis": "declared_claim_category",
-          "category": "doctrinal_synthesis",
-          "kept_refs": [
-            "s2",
-            "s4"
-          ],
           "block_index": 1,
-          "support_levels": [
-            "doctrinal_secondary",
-            "doctrinal_secondary"
-          ]
+          "support_levels": []
         },
         {
           "basis": "declared_claim_category",
@@ -111,14 +45,14 @@
         },
         {
           "basis": "declared_claim_category",
-          "category": "scholarly_commentary",
+          "category": "court_holding",
           "kept_refs": [],
           "block_index": 3,
           "support_levels": []
         },
         {
           "basis": "declared_claim_category",
-          "category": "scholarly_commentary",
+          "category": "contextual_background",
           "kept_refs": [],
           "block_index": 4,
           "support_levels": []
@@ -132,189 +66,177 @@
         }
       ],
       "limitation_added": true,
-      "tagged_block_count": 6,
+      "tagged_block_count": 5,
       "dropped_source_refs": [
         {
           "ref": "s1",
           "reason": "insufficient_authority_for_claim_category",
-          "block_index": 0,
+          "block_index": 1,
           "block_claim_id": "C1",
-          "claim_category": "statutory",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": "constitutional"
-        },
-        {
-          "ref": "s2",
-          "reason": "commentary_in_substantive_block",
-          "block_index": 0,
-          "block_claim_id": "C1",
-          "claim_category": "statutory",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        },
-        {
-          "ref": "s4",
-          "reason": "commentary_in_substantive_block",
-          "block_index": 0,
-          "block_claim_id": "C1",
-          "claim_category": "statutory",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        },
-        {
-          "ref": "s2",
-          "reason": "claim_mismatch",
-          "block_index": 3,
-          "block_claim_id": "C3",
-          "claim_category": "scholarly_commentary",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        },
-        {
-          "ref": "s3",
-          "reason": "claim_mismatch",
-          "block_index": 3,
-          "block_claim_id": "C3",
-          "claim_category": "scholarly_commentary",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        },
-        {
-          "ref": "s2",
-          "reason": "claim_mismatch",
-          "block_index": 4,
-          "block_claim_id": "C4",
-          "claim_category": "scholarly_commentary",
+          "claim_category": "court_holding",
           "block_legal_area": "public_law_hcj",
           "source_claim_ids": [
             "C1"
           ],
-          "source_legal_area": null
-        },
-        {
-          "ref": "s4",
-          "reason": "claim_mismatch",
-          "block_index": 4,
-          "block_claim_id": "C4",
-          "claim_category": "scholarly_commentary",
-          "block_legal_area": "public_law_hcj",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
+          "source_legal_area": "public_law_hcj"
         },
         {
           "ref": "s1",
           "reason": "claim_mismatch",
-          "block_index": 5,
+          "block_index": 2,
           "block_claim_id": "C2",
-          "claim_category": "contextual_background",
-          "block_legal_area": "constitutional",
+          "claim_category": "court_holding",
+          "block_legal_area": "public_law_hcj",
           "source_claim_ids": [
             "C1"
           ],
-          "source_legal_area": "constitutional"
+          "source_legal_area": "public_law_hcj"
+        },
+        {
+          "ref": "s4",
+          "reason": "claim_mismatch",
+          "block_index": 2,
+          "block_claim_id": "C2",
+          "claim_category": "court_holding",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "public_law_hcj"
+        },
+        {
+          "ref": "s1",
+          "reason": "claim_mismatch",
+          "block_index": 3,
+          "block_claim_id": "C3",
+          "claim_category": "court_holding",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "public_law_hcj"
+        },
+        {
+          "ref": "s1",
+          "reason": "claim_mismatch",
+          "block_index": 4,
+          "block_claim_id": "C4",
+          "claim_category": "contextual_background",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "public_law_hcj"
+        },
+        {
+          "ref": "s3",
+          "reason": "claim_mismatch",
+          "block_index": 4,
+          "block_claim_id": "C4",
+          "claim_category": "contextual_background",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "public_law_hcj"
+        },
+        {
+          "ref": "s6",
+          "reason": "claim_mismatch",
+          "block_index": 5,
+          "block_claim_id": "C2",
+          "claim_category": "contextual_background",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "public_law_hcj"
         }
       ],
-      "commentary_only_claims": [
-        "C1"
-      ],
-      "unsupported_block_count": 2,
+      "commentary_only_claims": [],
+      "unsupported_block_count": 3,
       "authority_overstatements": [],
-      "source_ref_mismatch_count": 8,
+      "source_ref_mismatch_count": 7,
       "primary_support_by_main_claim": false,
       "primary_supported_block_count": 0,
-      "secondary_supported_block_count": 1
+      "secondary_supported_block_count": 0
     },
     "sufficiency": {
-      "shape": "analysis",
-      "reason": "limited_doctrinal_fallback_B:two_doctrinal_secondaries(was:no_usable_judgment_authority)",
-      "applied": true,
-      "category": "case_law_synthesis",
-      "depth_mode": "broad_research",
+      "shape": "case_holding",
+      "reason": "shape_not_gated",
+      "applied": false,
+      "category": "not_applicable",
+      "depth_mode": "specific_case_or_statute",
       "sufficient": true,
       "thin_source": false,
       "found_titles": [
-        "חוק-יסוד: כבוד האדם וחירותו, התשנ\"ב-1992",
-        "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
-        "הזכות לקיום בכבוד בראי המשפט העברי: מעמדה החוקתי",
-        "תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?"
+        "בג\"ץ 1892/14 האגודה לזכויות האזרח בישראל נ׳ השר לביטחון פנים פסק דין (13.06.2017)",
+        "בג\"ץ 1892/14 האגודה לזכויות האזרח בישראל נ׳ השר לביטחון פנים פסק דין (13.06.2017)",
+        "סוגיות בכליאה בישראל",
+        "החובה ליתן לעצורים יחס מיוחד ההולם את חזקת החפות – מבט נוסף על תנאי המעצר בישראל על רקע המשפט הבין-לאומי | מיכל טמיר וגרשון גונטובניק (כרך כה)",
+        "חוק לתיקון פקודת בתי הסוהר (מס'"
       ],
-      "topical_refs": [],
+      "topical_refs": [
+        "s1",
+        "s2",
+        "s6"
+      ],
       "topic_phrases": [
-        "מבחני המידתיות בביקורת חוקתית",
-        "וכיצד יישם אותם בית",
-        "המידתיות בביקורת חוקתית",
-        "מבחני המידתיות בביקורת",
-        "וכיצד יישם אותם",
-        "יישם אותם בית",
-        "המידתיות בביקורת",
-        "מבחני המידתיות",
-        "בביקורת חוקתית",
-        "וכיצד יישם",
-        "יישם אותם",
-        "אותם בית"
+        "האגודה לזכויות האזרח",
+        "השר לביטחון פנים",
+        "האגודה לזכויות",
+        "לזכויות האזרח",
+        "לביטחון פנים",
+        "השר לביטחון",
+        "נקבע בבג"
       ],
       "body_topical_refs": [],
-      "case_law_required": true,
+      "case_law_required": false,
       "statute_only_answer": false,
-      "sufficiency_profile": "case_law_synthesis",
-      "usable_judgment_refs": [],
-      "exact_amounts_allowed": false,
+      "sufficiency_profile": "not_applicable",
+      "usable_judgment_refs": [
+        "s1",
+        "s2",
+        "s6"
+      ],
+      "exact_amounts_allowed": true,
       "governing_statute_refs": [],
-      "topical_authority_refs": [],
+      "topical_authority_refs": [
+        "s1",
+        "s2",
+        "s6"
+      ],
       "body_text_topical_match": false,
       "morphology_domain_match": false,
       "doctrinal_secondary_refs": [
-        "s2",
-        "s3",
         "s4"
       ],
-      "limited_doctrinal_answer": true,
+      "limited_doctrinal_answer": false,
       "normalized_source_tokens": [],
       "governing_regulation_refs": [],
       "statute_section_requested": false,
       "normalized_question_tokens": [
-        "מבחני",
-        "בחני",
-        "המידתיות",
-        "מידתיות",
-        "המידת",
-        "בביקורת",
-        "ביקורת",
-        "בביקור",
-        "ביקור",
-        "חוקתית",
-        "חוקתי",
-        "וכיצד",
-        "כיצד",
-        "יישם",
-        "אותם",
-        "בית",
-        "העליון",
-        "עליון"
+        "נקבע",
+        "בבג",
+        "האגודה",
+        "אגודה",
+        "האגוד",
+        "לזכויות",
+        "זכויות",
+        "לזכו",
+        "האזרח",
+        "אזרח",
+        "השר",
+        "לביטחון",
+        "ביטחון",
+        "פנים"
       ],
-      "sufficiency_authority_basis": "insufficient",
+      "sufficiency_authority_basis": "usable_judgment",
       "thin_governing_statute_refs": [],
       "doctrinal_ineligible_reasons": {
-        "not_doctrinal_type": 1
+        "not_doctrinal_type": 4
       },
-      "doctrinal_fallback_combination": "B",
+      "doctrinal_fallback_combination": null,
       "thin_governing_regulation_refs": [],
       "authority_type_sufficiency_passed": true,
       "case_law_missing_but_not_required": false,
@@ -330,382 +252,7 @@
           "reason": "not_doctrinal_type",
           "eligible": false,
           "remapped": false,
-          "body_chars": 124,
-          "source_type": "legislation"
-        },
-        {
-          "ref": "s2",
-          "reason": "eligible_doctrinal_secondary",
-          "eligible": true,
-          "remapped": false,
-          "body_chars": 16000,
-          "source_type": "journal_article"
-        },
-        {
-          "ref": "s3",
-          "reason": "eligible_doctrinal_secondary",
-          "eligible": true,
-          "remapped": false,
-          "body_chars": 16000,
-          "source_type": "journal_article"
-        },
-        {
-          "ref": "s4",
-          "reason": "eligible_doctrinal_secondary",
-          "eligible": true,
-          "remapped": false,
-          "body_chars": 16000,
-          "source_type": "journal_article"
-        }
-      ],
-      "eligible_refs": [
-        "s2",
-        "s3",
-        "s4"
-      ],
-      "ineligible_reason_counts": {
-        "not_doctrinal_type": 1
-      }
-    },
-    "trace": {
-      "ran": true,
-      "depth_mode": "broad_research",
-      "sufficient": true,
-      "typing_ran": true,
-      "footnote_count": 1,
-      "claim_match_ran": true,
-      "sufficiency_ran": true,
-      "input_source_count": 4,
-      "sufficiency_reason": "limited_doctrinal_fallback_B:two_doctrinal_secondaries(was:no_usable_judgment_authority)",
-      "claim_category_count": 6,
-      "deterministic_branch": null,
-      "secondary_local_hits": 3,
-      "typing_remapped_count": 0,
-      "secondary_web_successes": 0,
-      "doctrinal_eligible_count": 3,
-      "doctrinal_secondary_refs": [
-        "s2",
-        "s3",
-        "s4"
-      ],
-      "limited_doctrinal_answer": true,
-      "secondary_body_stage_ran": true,
-      "secondary_bodies_acquired": 3,
-      "claim_match_not_run_reason": null,
-      "secondary_body_stop_reason": "completed",
-      "secondary_bibliography_only": 0,
-      "doctrinal_ineligible_reasons": {
-        "not_doctrinal_type": 1
-      },
-      "authority_overstatement_count": 0,
-      "doctrinal_fallback_combination": "B",
-      "doctrinal_fallback_declined_reason": null
-    },
-    "footnotes": [
-      {
-        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
-        "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות; תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?",
-        "number": 1,
-        "sources": [
-          {
-            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
-            "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
-            "source_type": "journal_article"
-          },
-          {
-            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_469150003ab945cab43278c021cb754f.pdf",
-            "title": "תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?",
-            "source_type": "journal_article"
-          }
-        ],
-        "source_type": "compound"
-      }
-    ],
-    "footnote_count": 1,
-    "answer": "שורה תחתונה: בביקורת החוקתית הישראלית העיקרון החוקתי שמניע את מבחני המידתיות נעוץ בסעיף ההגבלה של חוק־יסוד: כבוד האדם וחירותו, אך חוק היסוד עצמו אינו מפרט שלבי מבחן מפורשים; בספרות המשפטית מתואר מודל תלת־שלבי (התאמה, נחיצות ואיזון) שהוא המסגרת הדוקטרינרית המקובלת להסבר הביקורת המידתית.\n\nהמודל התיאורטי כפי שהוא מופיע בספרות שאותרה נחלק לשלושה שלבים מובחנים: בדיקת התאמה (suitability) — האם האמצעי מקדם את התכלית החוקתית המוצהרת; בדיקת נחיצות/אמצעי־מיעוט (necessity/least restrictive means) — האם קיים אמצעי פחות מגביל להשגת אותה תכלית; ובדיקה איזונית/איזון תוצאות (proportionality stricto sensu) — שיקלול בין חומרת הפגיעה בזכויות לבין עוצמת התועלת הציבורית של ההגבלה. יש לנסח תיאור זה בזהירות: הוא מיוצג בספרות ובניתוח הפרשני אך לא מופיע במפורש כנוסח בחוק היסוד שסופק.¹\n\nבמקורות הפסיקה המחייבת לא סופקו כאן נוסחים של פסקי‑דין שמנסחים הלכה מחייבת אחידה במונחי שלושת השלבים האלה; כדי לייחס נוסח הלכתי מסוים לבית המשפט העליון יש להסתמך על נוסח פסק‑דין ספציפי, שאותו לא אותר בחומרים שסופקו.\n\nלגבי היישום המעשי, הכתיבה האקדמית שהוצגה מתארת כיצד מודל המידתיות משמש כלי פרשני בתחומים שונים: בבחינת הגבלות על חופש הביטוי בוחנים התאמה ונחיצות ביחס למניעת נזק חוקתי, בנושאי חירות אישית נעשה דגש על מידת הפגיעה בגוף ובחירות הפרט, ובדיני מנהל מצוות המידתיות משמשים לאיזון בין אינטרס ציבורי לחריגים פרטניים — תיאורים אלה משקפים ניתוח ספרותי ולא נוסח פסיקה מחייב שסופק כאן.\n\nהביקורת הספרותית שמובאת במקורות מצביעה על שתי קבוצות טענות עיקריות: טענות נורמטיביות על נטיית מבחן המידתיות להעמיק בפסיקה את בואו של הערכאות לתחומי שיקול גוף־ממשל, וטענות פרגמטיות על חוסר־בהירות בניסוח ובמשקל בין שלבי המבחן; המחברים דנים גם באלטרנטיבות פרשניות (כגון דגשי סבירות או סטנדרטים די deferential יותר) ובמנגנונים להגבלת ביקורת שיפוטית — אלה הן מסקנות ספרותיות שיש לייחס לספרות ולא לפסיקה מחייבת במסגרת המקורות שסופקו.\n\nמסקנה והתראה: החוקתי הישראלי (חוק־יסוד: כבוד האדם וחירותו) מספק עיגון עקרוני להגבלות אך אינו מפרט שלבים פורמליים; במקורות שאותרו נמצאת תמיכה פרשנית וספרותית למודלי מידתיות ולביקורת המוצעת, אך לא נספק כאן נוסח פסק‑דין מחייב המנסח הלכה אחידה — לכן כל יישום מעשי מחייב עיגון או אימות בפסק‑דין ספציפי שלא סופק.\n\n**היקף התשובה:** התשובה שלהלן נסמכת על חקיקה ו/או על ספרות ופרשנות משפטית שאותרו במלואן, ולא על פסיקה שנוסחה המלא אותר. היא מסבירה את המסגרת הדוקטרינרית בלבד ואינה קובעת הלכה.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
-  },
-  {
-    "id": "B8",
-    "question": "מהי דוקטרינת ההבטחה המנהלית?",
-    "run_id": "194edc0f-1a4b-4442-9a34-f02ca971b781",
-    "qa_log_id": "3daca359-e732-404a-baf6-9f53812f7ff8",
-    "ms": 141199,
-    "branch": null,
-    "official_discovery": {
-      "ms": 55,
-      "enabled": true,
-      "targets": 2,
-      "version": "official_source_discovery_v1",
-      "attempts": [
-        {
-          "ms": 32,
-          "label": "בג\"ץ 1000/92 בבלי",
-          "reason": "cooldown_until:2026-09-01T06:22:31.823Z",
-          "result": "not_attempted",
-          "category": "judgment",
-          "body_chars": 0,
-          "cache_lookup": "cooldown",
-          "cache_status": "failed",
-          "cache_written": false,
-          "nomination_id": "N1",
-          "urls_attempted": [],
-          "acquisition_path": "none",
-          "cache_write_error": null,
-          "cooldown_strategy": "search_first_judgment",
-          "normalized_docket": "bagatz:1000/92",
-          "injected_candidate_id": null,
-          "cooldown_strategy_scoped": true,
-          "ignored_other_strategy_failures": 0
-        },
-        {
-          "ms": 0,
-          "label": "בג\"ץ סימה אמיר",
-          "reason": "no_docket_no_live_lane",
-          "result": "not_attempted",
-          "category": "judgment",
-          "body_chars": 0,
-          "cache_lookup": "miss",
-          "cache_status": null,
-          "cache_written": false,
-          "nomination_id": "N2",
-          "urls_attempted": [],
-          "acquisition_path": "none",
-          "cache_write_error": null,
-          "cooldown_strategy": null,
-          "normalized_docket": null,
-          "injected_candidate_id": null,
-          "cooldown_strategy_scoped": true,
-          "ignored_other_strategy_failures": 0
-        }
-      ],
-      "cache_hits": 0,
-      "skip_reason": null,
-      "cache_misses": 1,
-      "cache_writes": 0,
-      "cache_version": "verified_source_cache_v2",
-      "bodies_acquired": 0,
-      "cache_cooldowns": 1,
-      "injected_candidate_ids": []
-    },
-    "specific_case": null,
-    "claim_source_match": {
-      "applied": true,
-      "mismatch_reason": [
-        "commentary_in_substantive_block",
-        "claim_mismatch"
-      ],
-      "claim_categories": [
-        {
-          "basis": "declared_claim_category",
-          "category": "contextual_background",
-          "kept_refs": [],
-          "block_index": 0,
-          "support_levels": []
-        },
-        {
-          "basis": "declared_claim_category",
-          "category": "contextual_background",
-          "kept_refs": [
-            "s5",
-            "s2"
-          ],
-          "block_index": 1,
-          "support_levels": [
-            "doctrinal_secondary",
-            "judgment"
-          ]
-        },
-        {
-          "basis": "declared_claim_category",
-          "category": "court_holding",
-          "kept_refs": [],
-          "block_index": 2,
-          "support_levels": []
-        },
-        {
-          "basis": "declared_claim_category",
-          "category": "court_holding",
-          "kept_refs": [],
-          "block_index": 3,
-          "support_levels": []
-        },
-        {
-          "basis": "declared_claim_category",
-          "category": "court_holding",
-          "kept_refs": [],
-          "block_index": 4,
-          "support_levels": []
-        },
-        {
-          "basis": "declared_claim_category",
-          "category": "doctrinal_synthesis",
-          "kept_refs": [],
-          "block_index": 5,
-          "support_levels": []
-        },
-        {
-          "basis": "declared_claim_category",
-          "category": "contextual_background",
-          "kept_refs": [],
-          "block_index": 6,
-          "support_levels": []
-        }
-      ],
-      "limitation_added": true,
-      "tagged_block_count": 7,
-      "dropped_source_refs": [
-        {
-          "ref": "s5",
-          "reason": "commentary_in_substantive_block",
-          "block_index": 2,
-          "block_claim_id": "C1",
-          "claim_category": "court_holding",
-          "block_legal_area": "public_law_hcj",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": "public_law_hcj"
-        },
-        {
-          "ref": "s2",
-          "reason": "claim_mismatch",
-          "block_index": 3,
-          "block_claim_id": "C2",
-          "claim_category": "court_holding",
-          "block_legal_area": "public_law_hcj",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        },
-        {
-          "ref": "s2",
-          "reason": "claim_mismatch",
-          "block_index": 4,
-          "block_claim_id": "C3",
-          "claim_category": "court_holding",
-          "block_legal_area": "public_law_hcj",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        },
-        {
-          "ref": "s2",
-          "reason": "claim_mismatch",
-          "block_index": 5,
-          "block_claim_id": "C4",
-          "claim_category": "doctrinal_synthesis",
-          "block_legal_area": "public_law_hcj",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        },
-        {
-          "ref": "s5",
-          "reason": "claim_mismatch",
-          "block_index": 5,
-          "block_claim_id": "C4",
-          "claim_category": "doctrinal_synthesis",
-          "block_legal_area": "public_law_hcj",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": "public_law_hcj"
-        }
-      ],
-      "commentary_only_claims": [],
-      "unsupported_block_count": 3,
-      "authority_overstatements": [],
-      "source_ref_mismatch_count": 5,
-      "primary_support_by_main_claim": true,
-      "primary_supported_block_count": 1,
-      "secondary_supported_block_count": 0
-    },
-    "sufficiency": {
-      "shape": "definition",
-      "reason": "doctrinal_anchor_present",
-      "applied": true,
-      "category": "not_applicable",
-      "depth_mode": "narrow_doctrine",
-      "sufficient": true,
-      "thin_source": false,
-      "found_titles": [
-        "בג\"ץ 142/86 דישון כפר שיתופי להתיישבות חקלאית בע\"מ נ' שר החקלאות",
-        "ע\"א 6132/16 פרדקין נ' מדינת ישראל – יחידת המפקח על המכרות",
-        "חוק עמוד",
-        "מצב חירום אקלימי: הבטחה נכזבת",
-        "הבטחה מינהלית לציבור"
-      ],
-      "topical_refs": [],
-      "topic_phrases": [
-        "דוקטרינת ההבטחה המנהלית",
-        "דוקטרינת ההבטחה",
-        "ההבטחה המנהלית"
-      ],
-      "body_topical_refs": [],
-      "case_law_required": false,
-      "statute_only_answer": false,
-      "sufficiency_profile": "statutory_institution",
-      "usable_judgment_refs": [
-        "s2"
-      ],
-      "exact_amounts_allowed": true,
-      "governing_statute_refs": [],
-      "topical_authority_refs": [],
-      "body_text_topical_match": false,
-      "morphology_domain_match": true,
-      "doctrinal_secondary_refs": [
-        "s4",
-        "s5"
-      ],
-      "limited_doctrinal_answer": false,
-      "normalized_source_tokens": [],
-      "governing_regulation_refs": [],
-      "statute_section_requested": false,
-      "normalized_question_tokens": [
-        "דוקטרינת",
-        "דוקטרינ",
-        "ההבטחה",
-        "הבטחה",
-        "ההבטח",
-        "המנהלית",
-        "מנהלית",
-        "המנהלי",
-        "מנהלי"
-      ],
-      "sufficiency_authority_basis": "usable_judgment",
-      "thin_governing_statute_refs": [],
-      "doctrinal_ineligible_reasons": {
-        "not_doctrinal_type": 3
-      },
-      "doctrinal_fallback_combination": null,
-      "thin_governing_regulation_refs": [],
-      "authority_type_sufficiency_passed": true,
-      "case_law_missing_but_not_required": false,
-      "doctrinal_fallback_declined_reason": null,
-      "practical_steps_thin_authority_passed": false
-    },
-    "doctrinal_typing": {
-      "applied": true,
-      "remapped": [
-        {
-          "ref": "s5",
-          "evidence": [
-            "academic_host"
-          ],
-          "mapped_type": "scholarship",
-          "original_type": "other"
-        }
-      ],
-      "eligibility": [
-        {
-          "ref": "s1",
-          "reason": "not_doctrinal_type",
-          "eligible": false,
-          "remapped": false,
-          "body_chars": 132,
+          "body_chars": 800,
           "source_type": "caselaw"
         },
         {
@@ -713,7 +260,7 @@
           "reason": "not_doctrinal_type",
           "eligible": false,
           "remapped": false,
-          "body_chars": 6000,
+          "body_chars": 0,
           "source_type": "caselaw"
         },
         {
@@ -721,7 +268,7 @@
           "reason": "not_doctrinal_type",
           "eligible": false,
           "remapped": false,
-          "body_chars": 16000,
+          "body_chars": 1097,
           "source_type": "knesset_research"
         },
         {
@@ -729,16 +276,24 @@
           "reason": "eligible_doctrinal_secondary",
           "eligible": true,
           "remapped": false,
-          "body_chars": 16000,
+          "body_chars": 1178,
           "source_type": "journal_article"
         },
         {
           "ref": "s5",
           "reason": "eligible_doctrinal_secondary",
           "eligible": true,
-          "remapped": true,
-          "body_chars": 16000,
-          "source_type": "scholarship"
+          "remapped": false,
+          "body_chars": 1178,
+          "source_type": "journal_article"
+        },
+        {
+          "ref": "s6",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 1182,
+          "source_type": "caselaw"
         }
       ],
       "eligible_refs": [
@@ -746,107 +301,61 @@
         "s5"
       ],
       "ineligible_reason_counts": {
-        "not_doctrinal_type": 3
+        "not_doctrinal_type": 4
       }
     },
     "trace": {
       "ran": true,
-      "depth_mode": "narrow_doctrine",
+      "depth_mode": "specific_case_or_statute",
       "sufficient": true,
       "typing_ran": true,
-      "footnote_count": 1,
+      "footnote_count": 0,
       "claim_match_ran": true,
       "sufficiency_ran": true,
-      "input_source_count": 5,
-      "sufficiency_reason": "doctrinal_anchor_present",
-      "claim_category_count": 7,
+      "input_source_count": 6,
+      "sufficiency_reason": "shape_not_gated",
+      "claim_category_count": 5,
       "deterministic_branch": null,
-      "secondary_local_hits": 3,
-      "typing_remapped_count": 1,
-      "secondary_web_successes": 1,
-      "doctrinal_eligible_count": 2,
+      "secondary_local_hits": 0,
+      "typing_remapped_count": 0,
+      "secondary_web_successes": 0,
+      "doctrinal_eligible_count": 1,
       "doctrinal_secondary_refs": [
-        "s4",
-        "s5"
+        "s4"
       ],
       "limited_doctrinal_answer": false,
-      "secondary_body_stage_ran": true,
-      "secondary_bodies_acquired": 4,
+      "secondary_body_stage_ran": false,
+      "secondary_bodies_acquired": 0,
       "claim_match_not_run_reason": null,
-      "secondary_body_stop_reason": "completed",
+      "secondary_body_stop_reason": "stage_not_run",
       "secondary_bibliography_only": 0,
       "doctrinal_ineligible_reasons": {
-        "not_doctrinal_type": 3
+        "not_doctrinal_type": 4
       },
       "authority_overstatement_count": 0,
       "doctrinal_fallback_combination": null,
       "doctrinal_fallback_declined_reason": null
     },
-    "footnotes": [
-      {
-        "url": "https://www.capitax.co.il/Attachments/6062-24.pdf",
-        "title": "ע\"א 6132/16 פרדקין נ' מדינת ישראל – יחידת המפקח על המכרות",
-        "number": 1,
-        "sources": [
-          {
-            "url": "https://www.capitax.co.il/Attachments/6062-24.pdf",
-            "title": "ע\"א 6132/16 פרדקין נ' מדינת ישראל – יחידת המפקח על המכרות",
-            "source_type": "caselaw"
-          }
-        ],
-        "source_type": "caselaw"
-      }
-    ],
-    "footnote_count": 1,
-    "answer": "במקורות שאותרו לא נמצא עיגון מספק לשם \"דוקטרינת ההבטחה המנהלית\".\n\nהמוסד הקרוב המתואר במקורות נקרא בדרך כלל \"הבטחה מינהלית לציבור\" או דומה לכך, והמקורות המרכזיים העוסקים בו שעולים בחיפוש זה הם מאמר יואב דותן וכן פסקי‑דין כגון דישון כפר שיתופי להתיישבות חקלאית בע\"מ ופרדקין נ' מדינת ישראל – יחידת המפקח על המכרות.¹\n\nבהגדרה הנגזרת מהפסיקה והספרות, ה\"הבטחה המינהלית\" היא הצהרה או מדיניות של רשות ציבורית שיוצרת ציפייה אצל פרטים או ציבור כי הרשות תנהג באופן מסוים, כך שהצד המסתמך נוקט בצעדים או משנה מצבו בהסתמך על אותה הצהרה; ההכרה בהבטחה כמחייבת תלויה בעובדה שההצהרה יצרה ציפייה סבירה וניתן לראות לה כאשר נסיבות העניין מצביעות על תוקף מעשי שניתן לאכוף judicially.\n\nהפסיקה מפרטת מבחנים מצטברים שבעטיים תקום אחריות להבטחה מינהלית: סמכות להבטיח מצד הרשות, כוונה או אפשרות של ההצהרה להקנות תוקף מעשי, יכולת ביצוע של ההבטחה, הסתמכות סבירה של המסתמך ונזק ממשי שנגרם בעקבות שינוי ההבטחה, וכן היעדר צידוק משפטי או ציבורי מוחלט לשינוי. ניסוח קריטי זה מופיע בבג\"ץ דישון ולהרחבה בפסק‑דין פרדקין.\n\nהמשמעות הפרקטית בבתי המשפט היא שהכרה בהבטחה מינהלית עשויה להביא לסעדים שונים בהתאם לנסיבות: בין היתר אכיפה של ההתחייבות המנהלית או ציווי על המשך הנהיגה לפי הציפייה שנוצרה, פיצוי בעד נזקים שנגרמו מהפסקת ההבטחה, או סעד הצהרתי הקובע כי שינוי הרשות אינו מוצדק מבחינה משפטית; הבחירה בסעד נתונה לשיקול שיפוטי ומותנית במבחני ההסתמכות והנזק.\n\nקיימים סייגים משמעותיים: הבטחה מנהלית לא תחול כאשר קיים קונפליקט בלתי־יתן לפשרה עם הוראת חוק או עם מדיניות ציבורית עליונה, כאשר חל שינוי נסיבות מהותי המצדיק את השינוי, או כאשר המימוש של ההבטחה עלול לפגוע אינטרס ציבורי רחב יותר; הספרות מצביעה אף היא על המתחים שבין עצם ההבטחה לבין הצורך בשינוי מדיניות ציבורית.\n\nאם כוונתך הייתה להלכה מסוימת שקרויה בשם אחר או שיש בידך מקור ספציפי שאינו ברשימה זו, אבקש לשלוחו ואדייק את הניתוח ביחס לשם או לפסק‑דין המוצעים.\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- בג\"ץ 142/86 דישון כפר שיתופי להתיישבות חקלאית בע\"מ נ' שר החקלאות — https://jus-tice.co.il/70703-09-24/\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+    "footnotes": [],
+    "footnote_count": 0,
+    "answer": "**בג\"ץ 1892/14 — ההכרעה המרכזית**\n\nבית המשפט קיבל את העתירה שהגישה האגודה לזכויות האזרח והורה למדינה להגיש תוכנית מפורטת ומסגרת זמנים למימוש דרישות לגבי תנאי הכליאה, לרבות יעד לשטח מחיה מינימלי, וקבע אבני‑דרך לצעדי יישום ופיקוח על יישומן.\n\nההכרעה נשענה על שיקולים הנוגעים לזכויות היסוד ותפקידה המנחה של הרשות בפיקוח על תנאי כליאה, וקבעה כי יש להעמיד הוראות ביצוע מעשיות — בהיקף ובמועדים — כדי להשיג את השיפורים הנדרשים; בית המשפט הורה על הגשת תוכנית ולוח זמנים ועל הגדרת אבני דרך לפיקוח. בחלק מהמקורות שפורסמו מוזכר גם הדיון בפרטים כגון היקף בסיסי לשטח המחיה, כפי שמוזכר בספרות שדן בפסיקה זו.\n\nהסעד המעשי שנפסק כלל צו להמצאת תוכנית ולוח זמנים ביעדי ביצוע, ציון פעימה ראשונה ואבני דרך לביצוע, וכן הקמת מנגנוני פיקוח על יישום ההוראות והדיווח אודותיהן אל בית המשפט או רשות מוגדרת.\n\nהרקע העובדתי של העתירה הוא בעניין תנאי כליאה וצפיפות במתקני הכליאה בישראל; העתירה פנתה להיבטים של שטח מחיה לאסירים ועצורים והטענה כי הנסיבות בפועל אינן עונות על הנורמות הראויות, על רקע דיונים מדיניים ומחקריים בנושאי מדיניות כליאה וצפיפות.\n\nיש להבחין כי קיימים פסקי דין ועתירות נוספות של האגודה בזיקות לתנאי כליאה ולטיפול ציבורי בנושא; מקורות אלה נוגעים לסוגיות דומות אך לעתים שונות עובדתית, ולכן אי־אפשר להחליף את בדיקת ההשלכות העובדתיות והמשפטיות של כל תיק בבדיקה כללית בלבד.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
   },
   {
-    "id": "ACADEMIC",
-    "question": "אני כותב סמינריון על עילת הסבירות במשפט המנהלי — אילו מקורות מרכזיים כדאי לקרוא?",
-    "run_id": "2d4c9034-9be5-453b-a0c1-597c6e22322a",
-    "qa_log_id": "8db186e4-33e7-43cc-b2cd-0ecbe569e7dc",
-    "ms": 181713,
+    "id": "R02",
+    "question": "מה נקבע בע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי?",
+    "run_id": "c606b171-1067-4dd5-b94c-63fc16d128a6",
+    "qa_log_id": "5a832fc2-80bf-4b89-8155-ea4c9c805a0d",
+    "ms": 156872,
     "branch": null,
     "official_discovery": {
-      "ms": 473,
+      "ms": 507,
       "enabled": true,
       "targets": 2,
       "version": "official_source_discovery_v1",
       "attempts": [
         {
-          "ms": 426,
-          "label": "חוק יסוד: כבוד האדם וחירותו",
-          "reason": "section_not_found:8",
-          "result": "section_not_found",
-          "statute": {
-            "lane": "statute",
-            "section": "8",
-            "title_raw": "חוק-יסוד: כבוד האדם וחירותו",
-            "section_found": false,
-            "title_normalized": "חוק-יסוד: כבוד האדם וחירותו",
-            "identity_tokens_matched": 3,
-            "title_normalization_changed": false
-          },
-          "category": "statute",
-          "body_chars": 0,
-          "cache_lookup": "miss",
-          "cache_status": null,
-          "cache_written": false,
-          "nomination_id": "N4",
-          "urls_attempted": [
-            "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf"
-          ],
-          "acquisition_path": "none",
-          "cache_write_error": null,
-          "cooldown_strategy": null,
-          "normalized_docket": null,
-          "injected_candidate_id": null,
-          "cooldown_strategy_scoped": true,
-          "ignored_other_strategy_failures": 0
-        },
-        {
-          "ms": 28,
-          "label": "ע\"א 6821/93 בנק המזרחי נ' נאמן פנסיוני (אורטל סקלי?)",
+          "ms": 36,
+          "label": "ע\"א 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
           "reason": "cooldown_until:2026-09-02T15:04:01.703Z",
           "result": "not_attempted",
           "category": "judgment",
@@ -863,292 +372,70 @@
           "injected_candidate_id": null,
           "cooldown_strategy_scoped": true,
           "ignored_other_strategy_failures": 1
+        },
+        {
+          "ms": 444,
+          "label": "חוק-יסוד: כבוד האדם וחירותו",
+          "reason": null,
+          "result": "body_acquired",
+          "statute": {
+            "lane": "statute",
+            "section": "8",
+            "title_raw": "חוק-יסוד: כבוד האדם וחירותו",
+            "section_found": true,
+            "title_normalized": "חוק-יסוד: כבוד האדם וחירותו",
+            "identity_tokens_matched": 3,
+            "title_normalization_changed": false
+          },
+          "category": "statute",
+          "body_chars": 1353,
+          "cache_lookup": "miss",
+          "cache_status": null,
+          "cache_written": true,
+          "nomination_id": "N2",
+          "urls_attempted": [
+            "https://www.nevo.co.il/law_html/law00/70320.htm",
+            "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc"
+          ],
+          "acquisition_path": "statute_official_url",
+          "cache_write_error": null,
+          "cooldown_strategy": null,
+          "normalized_docket": null,
+          "injected_candidate_id": "nominated-source:N2",
+          "cooldown_strategy_scoped": true,
+          "ignored_other_strategy_failures": 0
         }
       ],
       "cache_hits": 0,
       "skip_reason": null,
       "cache_misses": 1,
-      "cache_writes": 0,
+      "cache_writes": 1,
       "cache_version": "verified_source_cache_v2",
-      "bodies_acquired": 0,
+      "bodies_acquired": 1,
       "cache_cooldowns": 1,
-      "injected_candidate_ids": []
+      "injected_candidate_ids": [
+        "nominated-source:N2"
+      ]
     },
     "specific_case": null,
     "claim_source_match": {
-      "applied": true,
-      "mismatch_reason": [
-        "claim_mismatch"
-      ],
-      "claim_categories": [
-        {
-          "basis": "declared_claim_category",
-          "category": "court_holding",
-          "kept_refs": [],
-          "block_index": 0,
-          "support_levels": []
-        },
-        {
-          "basis": "declared_claim_category",
-          "category": "scholarly_commentary",
-          "kept_refs": [],
-          "block_index": 1,
-          "support_levels": []
-        },
-        {
-          "basis": "declared_claim_category",
-          "category": "statutory",
-          "kept_refs": [],
-          "block_index": 2,
-          "support_levels": []
-        },
-        {
-          "basis": "declared_claim_category",
-          "category": "contextual_background",
-          "kept_refs": [],
-          "block_index": 3,
-          "support_levels": []
-        },
-        {
-          "basis": "declared_claim_category",
-          "category": "contextual_background",
-          "kept_refs": [],
-          "block_index": 4,
-          "support_levels": []
-        },
-        {
-          "basis": "declared_claim_category+docket_identity_escalation",
-          "category": "court_holding",
-          "kept_refs": [],
-          "block_index": 5,
-          "support_levels": []
-        }
-      ],
-      "limitation_added": true,
-      "tagged_block_count": 6,
-      "dropped_source_refs": [
-        {
-          "ref": "s5",
-          "reason": "claim_mismatch",
-          "block_index": 0,
-          "block_claim_id": "C1",
-          "claim_category": "court_holding",
-          "block_legal_area": "public_law_hcj",
-          "source_claim_ids": [
-            "C2"
-          ],
-          "source_legal_area": "public_law_hcj"
-        },
-        {
-          "ref": "s3",
-          "reason": "claim_mismatch",
-          "block_index": 1,
-          "block_claim_id": "C4",
-          "claim_category": "scholarly_commentary",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        },
-        {
-          "ref": "s1",
-          "reason": "claim_mismatch",
-          "block_index": 2,
-          "block_claim_id": "C2",
-          "claim_category": "statutory",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": "constitutional"
-        },
-        {
-          "ref": "s2",
-          "reason": "claim_mismatch",
-          "block_index": 3,
-          "block_claim_id": "C4",
-          "claim_category": "contextual_background",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        },
-        {
-          "ref": "s4",
-          "reason": "claim_mismatch",
-          "block_index": 3,
-          "block_claim_id": "C4",
-          "claim_category": "contextual_background",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": "constitutional"
-        },
-        {
-          "ref": "s5",
-          "reason": "claim_mismatch",
-          "block_index": 5,
-          "block_claim_id": "C5",
-          "claim_category": "court_holding",
-          "block_legal_area": "public_law_hcj",
-          "source_claim_ids": [
-            "C2"
-          ],
-          "source_legal_area": "public_law_hcj"
-        },
-        {
-          "ref": "s3",
-          "reason": "claim_mismatch",
-          "block_index": 5,
-          "block_claim_id": "C5",
-          "claim_category": "court_holding",
-          "block_legal_area": "public_law_hcj",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        }
-      ],
+      "applied": false,
+      "stage_not_run": true,
+      "mismatch_reason": [],
+      "claim_categories": [],
+      "limitation_added": false,
+      "tagged_block_count": 0,
+      "dropped_source_refs": [],
+      "stage_not_run_reason": "deterministic_branch:docket_limitation",
       "commentary_only_claims": [],
-      "unsupported_block_count": 4,
+      "unsupported_block_count": 0,
       "authority_overstatements": [],
-      "source_ref_mismatch_count": 7,
+      "source_ref_mismatch_count": 0,
       "primary_support_by_main_claim": false,
       "primary_supported_block_count": 0,
       "secondary_supported_block_count": 0
     },
-    "sufficiency": {
-      "shape": "list",
-      "reason": "statutory_procedural_pack_present",
-      "applied": true,
-      "category": "practical_list",
-      "depth_mode": "academic_research",
-      "sufficient": true,
-      "thin_source": false,
-      "found_titles": [
-        "חוק-יסוד: כבוד האדם וחירותו",
-        "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
-        "תקצירי מאמרים באנגלית - חוברת 3",
-        "עשרים שנה לבנק הזמרחי: סיפורה הפיקנטי של חוקת הכלאיים הישראלית",
-        "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין"
-      ],
-      "topical_refs": [
-        "s5"
-      ],
-      "topic_phrases": [
-        "עילת הסבירות במשפט המנהלי",
-        "הסבירות במשפט המנהלי אילו",
-        "הסבירות במשפט המנהלי",
-        "עילת הסבירות במשפט",
-        "מרכזיים כדאי לקרוא",
-        "אני כותב סמינריון",
-        "במשפט המנהלי אילו",
-        "כותב סמינריון",
-        "הסבירות במשפט",
-        "עילת הסבירות",
-        "במשפט המנהלי",
-        "מרכזיים כדאי",
-        "המנהלי אילו",
-        "כדאי לקרוא",
-        "אני כותב"
-      ],
-      "body_topical_refs": [],
-      "case_law_required": false,
-      "statute_only_answer": false,
-      "sufficiency_profile": "practical_steps",
-      "usable_judgment_refs": [
-        "s5"
-      ],
-      "exact_amounts_allowed": true,
-      "governing_statute_refs": [],
-      "topical_authority_refs": [
-        "s5"
-      ],
-      "body_text_topical_match": false,
-      "morphology_domain_match": true,
-      "doctrinal_secondary_refs": [
-        "s4"
-      ],
-      "limited_doctrinal_answer": false,
-      "normalized_source_tokens": [
-        "חוק",
-        "יסוד",
-        "כבוד",
-        "האדם",
-        "וחירותו",
-        "חירותו",
-        "התשנ",
-        "סעיף",
-        "פוגעים",
-        "פוגע",
-        "בזכויות",
-        "זכויות",
-        "בזכו",
-        "שלפי",
-        "בחוק",
-        "ההולם",
-        "הולם",
-        "ערכיה",
-        "ערכי",
-        "מדינת",
-        "דינת",
-        "מדינ",
-        "ישראל",
-        "שנועד",
-        "נועד",
-        "לתכלית",
-        "תכלית",
-        "לתכלי",
-        "ראויה",
-        "ראוי",
-        "ובמידה",
-        "במידה",
-        "ובמיד",
-        "שאינה",
-        "אינה",
-        "שאינ",
-        "עולה",
-        "הנדרש",
-        "נדרש",
-        "כאמור"
-      ],
-      "governing_regulation_refs": [],
-      "statute_section_requested": false,
-      "normalized_question_tokens": [
-        "אני",
-        "כותב",
-        "סמינריון",
-        "עילת",
-        "הסבירות",
-        "סבירות",
-        "הסביר",
-        "במשפט",
-        "משפט",
-        "המנהלי",
-        "מנהלי",
-        "אילו",
-        "מרכזיים",
-        "רכזיים",
-        "מרכזי",
-        "כדאי",
-        "לקרוא",
-        "קרוא"
-      ],
-      "sufficiency_authority_basis": "usable_judgment",
-      "thin_governing_statute_refs": [],
-      "doctrinal_ineligible_reasons": {
-        "not_doctrinal_type": 2
-      },
-      "doctrinal_fallback_combination": null,
-      "thin_governing_regulation_refs": [],
-      "authority_type_sufficiency_passed": true,
-      "case_law_missing_but_not_required": false,
-      "doctrinal_fallback_declined_reason": null,
-      "practical_steps_thin_authority_passed": false
-    },
+    "sufficiency": null,
     "doctrinal_typing": {
       "applied": true,
       "remapped": [],
@@ -1158,85 +445,222 @@
           "reason": "not_doctrinal_type",
           "eligible": false,
           "remapped": false,
-          "body_chars": 218,
-          "source_type": "legislation"
+          "body_chars": 1353,
+          "source_type": "israeli_law"
         },
         {
           "ref": "s2",
-          "reason": "eligible_doctrinal_secondary",
-          "eligible": true,
-          "remapped": false,
-          "body_chars": 16000,
-          "source_type": "journal_article"
-        },
-        {
-          "ref": "s3",
-          "reason": "eligible_doctrinal_secondary",
-          "eligible": true,
-          "remapped": false,
-          "body_chars": 16000,
-          "source_type": "journal_article"
-        },
-        {
-          "ref": "s4",
-          "reason": "eligible_doctrinal_secondary",
-          "eligible": true,
-          "remapped": false,
-          "body_chars": 16000,
-          "source_type": "journal_article"
-        },
-        {
-          "ref": "s5",
           "reason": "not_doctrinal_type",
           "eligible": false,
           "remapped": false,
-          "body_chars": 392,
+          "body_chars": 177,
+          "source_type": "legislation"
+        },
+        {
+          "ref": "s3",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 237,
+          "source_type": "legislation"
+        },
+        {
+          "ref": "s4",
+          "reason": "not_doctrinal_type",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 146,
           "source_type": "caselaw"
+        },
+        {
+          "ref": "s5",
+          "reason": "eligible_doctrinal_secondary",
+          "eligible": true,
+          "remapped": false,
+          "body_chars": 1160,
+          "source_type": "journal_article"
+        },
+        {
+          "ref": "s6",
+          "reason": "no_acquired_body_text",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 393,
+          "source_type": "journal_article"
+        },
+        {
+          "ref": "s7",
+          "reason": "no_acquired_body_text",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 382,
+          "source_type": "journal_article"
+        },
+        {
+          "ref": "s8",
+          "reason": "no_acquired_body_text",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 0,
+          "source_type": "journal_article"
+        },
+        {
+          "ref": "s9",
+          "reason": "no_acquired_body_text",
+          "eligible": false,
+          "remapped": false,
+          "body_chars": 392,
+          "source_type": "journal_article"
         }
       ],
       "eligible_refs": [
-        "s2",
-        "s3",
-        "s4"
+        "s5"
       ],
       "ineligible_reason_counts": {
-        "not_doctrinal_type": 2
+        "not_doctrinal_type": 4,
+        "no_acquired_body_text": 4
       }
     },
     "trace": {
       "ran": true,
-      "depth_mode": "academic_research",
-      "sufficient": true,
+      "depth_mode": "specific_case_or_statute",
+      "sufficient": null,
       "typing_ran": true,
       "footnote_count": 0,
-      "claim_match_ran": true,
-      "sufficiency_ran": true,
-      "input_source_count": 5,
-      "sufficiency_reason": "statutory_procedural_pack_present",
-      "claim_category_count": 6,
-      "deterministic_branch": null,
-      "secondary_local_hits": 4,
+      "claim_match_ran": false,
+      "sufficiency_ran": false,
+      "input_source_count": 9,
+      "sufficiency_reason": null,
+      "claim_category_count": 0,
+      "deterministic_branch": "docket_limitation",
+      "secondary_local_hits": 0,
       "typing_remapped_count": 0,
       "secondary_web_successes": 0,
-      "doctrinal_eligible_count": 1,
-      "doctrinal_secondary_refs": [
-        "s4"
-      ],
+      "doctrinal_eligible_count": 0,
+      "doctrinal_secondary_refs": [],
       "limited_doctrinal_answer": false,
-      "secondary_body_stage_ran": true,
-      "secondary_bodies_acquired": 4,
-      "claim_match_not_run_reason": null,
-      "secondary_body_stop_reason": "completed",
+      "secondary_body_stage_ran": false,
+      "secondary_bodies_acquired": 0,
+      "claim_match_not_run_reason": "deterministic_branch:docket_limitation",
+      "secondary_body_stop_reason": "stage_not_run",
       "secondary_bibliography_only": 0,
-      "doctrinal_ineligible_reasons": {
-        "not_doctrinal_type": 2
-      },
+      "doctrinal_ineligible_reasons": {},
       "authority_overstatement_count": 0,
       "doctrinal_fallback_combination": null,
       "doctrinal_fallback_declined_reason": null
     },
     "footnotes": [],
     "footnote_count": 0,
-    "answer": "- פסק‑דין מרכזי לקריאה ראשונית: בג\"ץ 5658/23 — התנועה למען איכות השלטון נ׳ הכנסת ושות'. פסק‑דין זה דן במישרין בשינוי חקיקתי הנוגע לעילת הסבירות וביחסי החקיקה וביקורת שיפוטית, ולכן חשוב להבנת עמדת בית המשפט לגבי השלכות של ביטול או שינוי של עילת הסבירות.\n- ניתוח תיאורטי ומושגי: Yoav Dotan, \"Two Concepts of Deference – AND REASONABLENESS\". מאמר זה מנתח בבירור את מושג הסבירות בהקשר של עקרון ה‑deference ומציע מסגרת להבנת היעדר־בהירות המושגית והדרכים ליישום מבחנים שיפוטיים; מומלץ לקראת פרק תיאורטי בסמינריון.\n- מסגרת חוקתית ורעיונית: חוק‑יסוד: כבוד האדם וחירותו — סעיף 8 (פסקת ההגבלה). סעיף זה מספק מסגרת תיאורטית לגבי קבלת החלטות ענייניות, מידתיות ותכליתיות, ורלוונטי לניתוח האופן שבו נגזרת ביקורת הסבירות; יש לנסח את הקשר הזה בזהירות לאור אופייה התמיכתי‑חלקי של ההעמקה בחומר.\n- רקע היסטורי‑מוסדי: מאמרים העוסקים בעיגון החוקתי של נורמות מוסדיות ובהתפתחות פסקת ההגבלה. קריאת עבודות אלה שימושית כדי למקם את הדיון בתהליך ההשתלשלות החוקתית ובאופן שבו בתי המשפט פיתחו כללי ביקורת כגון סבירות; יש לראותם כרקע ולא כתחליף לקריאת הפסיקה הישירה.\n- פער השוואתי בחומרים שסופקו: במקורות שאותרו לא נמצאו מקורות השוואתיים מובחנים העוסקים בגישות כגון Wednesbury או התפתחות דוקטרינת הפרופורציונליות. לצורכי סקירה השוואתית מומלץ להשלים בחיפוש חיצוני בספרות המשפטית הזרה ובמאגרי פסקי‑דין להשוואה תיאוריה‑מעשה.\n- המלצות מחקר מעשיות: התחל מקראיית פסק‑הדין המדובר (בג\"ץ 5658/23) ומאמרי ניתוח תיאורטיים (למשל Dotan) כדי לגבש מסגרת־ניתוח; השלימו בכך איסוף פסקי‑דין עדכניים במאגרי פסקי‑דין, ריכוז הצהרות עובדות וסטייטמנטים רלוונטיים, ומעקב אחרי תיקונים חקיקתיים שנוגעים לעילת הסבירות.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+    "answer": "לא אותר במקורות הזמינים ע\"א 6821/93. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+  },
+  {
+    "id": "P02",
+    "question": "מה נקבע בבג\"ץ 9999/99 פלוני נ' אלמוני?",
+    "run_id": "a7b527e1-fac3-4a14-886f-f300462516e7",
+    "qa_log_id": "a80d6da9-0c21-4e63-8144-5dada50854af",
+    "ms": 121400,
+    "branch": null,
+    "official_discovery": {
+      "ms": 51,
+      "enabled": true,
+      "targets": 1,
+      "version": "official_source_discovery_v1",
+      "attempts": [
+        {
+          "ms": 30,
+          "label": "חוק-יסוד: כבוד האדם וחירותו",
+          "reason": "unsupported_statute_source:no_official_statute_url",
+          "result": "unsupported_statute_source",
+          "statute": {
+            "lane": "statute",
+            "section": "8",
+            "title_raw": "חוק-יסוד: כבוד האדם וחירותו",
+            "section_found": null,
+            "title_normalized": "חוק-יסוד: כבוד האדם וחירותו",
+            "identity_tokens_matched": 0,
+            "title_normalization_changed": false
+          },
+          "category": "statute",
+          "body_chars": 0,
+          "cache_lookup": "miss",
+          "cache_status": null,
+          "cache_written": false,
+          "nomination_id": "N1",
+          "urls_attempted": [],
+          "acquisition_path": "none",
+          "cache_write_error": null,
+          "cooldown_strategy": null,
+          "normalized_docket": null,
+          "injected_candidate_id": null,
+          "cooldown_strategy_scoped": true,
+          "ignored_other_strategy_failures": 0
+        }
+      ],
+      "cache_hits": 0,
+      "skip_reason": null,
+      "cache_misses": 1,
+      "cache_writes": 0,
+      "cache_version": "verified_source_cache_v2",
+      "bodies_acquired": 0,
+      "cache_cooldowns": 0,
+      "injected_candidate_ids": []
+    },
+    "specific_case": null,
+    "claim_source_match": {
+      "applied": false,
+      "stage_not_run": true,
+      "mismatch_reason": [],
+      "claim_categories": [],
+      "limitation_added": false,
+      "tagged_block_count": 0,
+      "dropped_source_refs": [],
+      "stage_not_run_reason": "deterministic_branch:docket_limitation",
+      "commentary_only_claims": [],
+      "unsupported_block_count": 0,
+      "authority_overstatements": [],
+      "source_ref_mismatch_count": 0,
+      "primary_support_by_main_claim": false,
+      "primary_supported_block_count": 0,
+      "secondary_supported_block_count": 0
+    },
+    "sufficiency": null,
+    "doctrinal_typing": {
+      "applied": true,
+      "remapped": [],
+      "eligibility": [],
+      "eligible_refs": [],
+      "ineligible_reason_counts": {}
+    },
+    "trace": {
+      "ran": true,
+      "depth_mode": "specific_case_or_statute",
+      "sufficient": null,
+      "typing_ran": true,
+      "footnote_count": 0,
+      "claim_match_ran": false,
+      "sufficiency_ran": false,
+      "input_source_count": 0,
+      "sufficiency_reason": null,
+      "claim_category_count": 0,
+      "deterministic_branch": "docket_limitation",
+      "secondary_local_hits": 0,
+      "typing_remapped_count": 0,
+      "secondary_web_successes": 0,
+      "doctrinal_eligible_count": 0,
+      "doctrinal_secondary_refs": [],
+      "limited_doctrinal_answer": false,
+      "secondary_body_stage_ran": false,
+      "secondary_bodies_acquired": 0,
+      "claim_match_not_run_reason": "deterministic_branch:docket_limitation",
+      "secondary_body_stop_reason": "stage_not_run",
+      "secondary_bibliography_only": 0,
+      "doctrinal_ineligible_reasons": {},
+      "authority_overstatement_count": 0,
+      "doctrinal_fallback_combination": null,
+      "doctrinal_fallback_declined_reason": null
+    },
+    "footnotes": [],
+    "footnote_count": 0,
+    "answer": "לא אותר במקורות הזמינים פסק הדין בעניין בג\"ץ 9999/99 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
   }
 ]
