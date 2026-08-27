@@ -1,18 +1,21 @@
 {
   "id": "P02",
-  "run_id": "b0d71fff-2782-4c5b-abd5-3b9b536a1ab6",
-  "job_id": "9338484d-ad55-4fe7-9fca-860f65ec4f36",
-  "ms": 121891,
-  "status": "error",
-  "branch": null,
-  "answer_length": 0,
+  "run_id": "c131dd83-ddd0-4e7f-a4ee-80786fd42d57",
+  "job_id": "e3969ef3-b11a-4cf8-8f30-2bbec8e2b177",
+  "ms": 192777,
+  "status": "done",
+  "branch": "docket_limitation",
+  "answer_length": 518,
   "footnotes": 0,
   "rebinding": null,
-  "claim_source_match": null,
-  "pass": false,
-  "failures": [
-    "empty_answer",
-    "p02_refusal_lost"
-  ],
-  "answer": ""
+  "claim_source_match": {
+    "source_ref_mismatch_count": 0,
+    "unsupported_block_count": 0,
+    "limitation_added": false,
+    "dropped_source_refs": [],
+    "authority_overstatements": []
+  },
+  "pass": true,
+  "failures": [],
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין בג\"ץ 9999/99 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית.\n\n> החיפוש הופסק עקב מגבלת זמן, ולכן ייתכן שלא אותרו כל המקורות הרלוונטיים.\n\n> קריאת גוף פסקי הדין הופסקה מטעמי מגבלת עיבוד, ולכן ייתכן שחלק מהמקורות נותחו לפי מטא-נתונים בלבד."
 }
