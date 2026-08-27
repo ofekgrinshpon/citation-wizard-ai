@@ -2,6 +2,7 @@
   {
     "id": "ACADEMIC",
     "run_id": "5944aa95-2e2e-4563-9906-c2a70c191f7a",
+    "created_at": "2026-08-27T09:22:42.665602+00:00",
     "plan": {
       "reason": "המשתמש מבקש המלצות לקריאה בסמינריון; יש לספק רשימת מקורות משקללת פסיקה מחייבת, ספרות אקדמית ומקורות השוואתיים/מוסדיים.",
       "mixed_plan": false,
@@ -44,6 +45,7 @@
       "research_guidance_sufficiency": true
     },
     "explicit_docket_detected": false,
+    "explicit_statute_section_detected": false,
     "deterministic_branch": null,
     "sufficiency_reason": "research_guidance_task_supported:literature_map(was:generic_procedure_only)",
     "found_titles": [],
@@ -54,6 +56,7 @@
   {
     "id": "NATION-STATE-ACADEMIC",
     "run_id": "0f84f1ee-70bb-4e31-a157-3c491013d7f1",
+    "created_at": "2026-08-27T08:34:00.895633+00:00",
     "plan": {
       "reason": "המשתמש מבקש תיאור של ניתוח הספרות; משימה זו דורשת סקירה של מאמרים אקדמיים ודיונים פסיקתיים וכן בדיקה של נוסח חוק היסוד כדי למפות טיעונים, זרמים ומסקנות.",
       "mixed_plan": false,
@@ -98,6 +101,7 @@
       "research_guidance_sufficiency": false
     },
     "explicit_docket_detected": false,
+    "explicit_statute_section_detected": false,
     "deterministic_branch": null,
     "sufficiency_reason": "doctrinal_anchor_present",
     "found_titles": [
@@ -113,6 +117,7 @@
   {
     "id": "PAYWALL",
     "run_id": "973ac6aa-0133-4684-9f1e-173c249f36b7",
+    "created_at": "2026-08-27T09:15:39.555657+00:00",
     "plan": {
       "reason": "המשתמש מבקש סיכום של מה שנכתב במאמרי כתב העת, לכן יש למפות את הספרות בעיוני משפט, לתמצת טיעונים מרכזיים, ולהמליץ על מאמרים מרכזיים לקריאה המשך.",
       "mixed_plan": false,
@@ -151,6 +156,7 @@
       "research_guidance_sufficiency": true
     },
     "explicit_docket_detected": false,
+    "explicit_statute_section_detected": false,
     "deterministic_branch": null,
     "sufficiency_reason": "research_guidance_task_supported:literature_map(was:no_statutory_caselaw_or_doctrinal_anchor)",
     "found_titles": [],
@@ -161,6 +167,7 @@
   {
     "id": "MMM",
     "run_id": "51a2d753-8ab5-4cfb-8a02-4ec47e79bd5e",
+    "created_at": "2026-08-27T08:51:53.088332+00:00",
     "plan": {
       "reason": "המשתמש ביקש סיכום של ממצאים מדו\"חות מוסדיים ורגולטוריים; יש לשלב דיווחים רשמיים וניתוח מדיניות, כשמקורות משניים יכולים לתמוך.",
       "mixed_plan": false,
@@ -202,6 +209,7 @@
       "research_guidance_sufficiency": false
     },
     "explicit_docket_detected": false,
+    "explicit_statute_section_detected": false,
     "deterministic_branch": null,
     "sufficiency_reason": "thin_governing_statute_pack_present",
     "found_titles": [
@@ -218,6 +226,7 @@
   {
     "id": "B8",
     "run_id": "6259e5ba-a742-4dc1-a1cf-7218cbd2d16d",
+    "created_at": "2026-08-27T09:04:11.978337+00:00",
     "plan": {
       "reason": "הדוקטרינה היא עקרון פסיקתי בפירוש בתי המשפט; יש להסתמך על פסקי דין מחייבים ובספרות להבהרות ויישום.",
       "mixed_plan": false,
@@ -260,6 +269,7 @@
       "research_guidance_sufficiency": false
     },
     "explicit_docket_detected": false,
+    "explicit_statute_section_detected": false,
     "deterministic_branch": null,
     "sufficiency_reason": "doctrinal_anchor_present",
     "found_titles": [
@@ -273,21 +283,60 @@
   {
     "id": "D1",
     "run_id": "a60272be-af87-4502-b485-856ccc0e2120",
-    "plan": null,
-    "model_plan_present": null,
-    "overrides": null,
-    "planned_sufficiency": null,
-    "explicit_docket_detected": null,
+    "created_at": "2026-08-27T09:07:22.455023+00:00",
+    "plan": {
+      "reason": "המשתמש מבקש הסבר דוקטרינרי והדגמות יישומיות של ביהמ\"ש — יש להסתמך בפירוש על פסיקה מחייבת ולשמש בחוקי יסוד וספרות להסבר והקשר.",
+      "mixed_plan": false,
+      "answer_strategy": "synthesize_doctrine",
+      "plan_confidence": "high",
+      "user_task_intent": "doctrinal_explanation",
+      "source_use_intent": [
+        "binding_authority",
+        "statutory_text",
+        "doctrinal_support",
+        "scholarly_discussion"
+      ],
+      "authority_requirements": {
+        "requires_judgment_body": true,
+        "requires_official_statute": false,
+        "found_only_can_support_claims": false,
+        "secondary_sources_can_support": true,
+        "found_only_allowed_as_reading_list": false
+      }
+    },
+    "model_plan_present": true,
+    "overrides": [],
+    "planned_sufficiency": {
+      "source_buckets": {
+        "found_only": [],
+        "read_in_full": [
+          "s2",
+          "s4"
+        ],
+        "dropped_unrelated": [
+          "s1",
+          "s3"
+        ]
+      },
+      "sufficiency_reason": "limited_doctrinal_fallback_B:two_doctrinal_secondaries(was:no_usable_judgment_authority)",
+      "deterministic_branch": null,
+      "planned_answer_strategy": "synthesize_doctrine",
+      "planned_user_task_intent": "doctrinal_explanation",
+      "research_guidance_sufficiency": false
+    },
+    "explicit_docket_detected": false,
+    "explicit_statute_section_detected": false,
     "deterministic_branch": null,
-    "sufficiency_reason": null,
-    "found_titles": null,
-    "total_ms": null,
-    "footnotes_count": 0,
-    "answer": "החיפוש אחר מקורות הופסק באמצע העיבוד ולא ניתן היה להשלים תשובה משפטית מבוססת. ייתכן שאיתור גוף פסקי הדין דרש עיבוד כבד מדי. נסו להריץ שוב, לצמצם את השאלה, או לצרף את המסמך הרלוונטי."
+    "sufficiency_reason": "limited_doctrinal_fallback_B:two_doctrinal_secondaries(was:no_usable_judgment_authority)",
+    "found_titles": [],
+    "total_ms": 274320,
+    "footnotes_count": 2,
+    "answer": "**מבחן המידתיות — עוגן חוקתי ודוקטרינלי**\n\nבסעיף 8 לחוק־יסוד: כבוד האדם וחירותו נטועה הדרישה התכליתית והמילתית למידתיות: הפגיעה בזכות מותנית בחוק ההולם שנועד לתכלית ראויה וב\"מידה שאינה עולה על הנדרש\". נוסח זה מספק בסיס חוקתי להתייחסות למידתיות כבקרת הגבלות על זכויות, אך התמיכה בו במקורות שסופקו היא חלקית ויש לפרש אותו בתוך מסגרת הדוקטרינית הרחבה יותר של מבחן המידתיות.\n\nמבחן המידתיות בישראל מוגדר בדוקטרינה ככולל שלושה שלבים מובחנים: תכלית ראויה; התאמה של האמצעי להשגת תכלית זו; והבחינה האם קיימים אמצעים שפוגעים פחות (נחיצות/הקטנת הפגיעה), כאשר בשלב האחרון נעשית גם בחינת איזון בין חומרת הפגיעה לבין חשיבות התכלית (מידתיות במובן הצר). זהו נוסח מקובל בספרות המקצועית ומהווה את השלד לניתוח משפטי של הגבלות זכויות.¹\n\nהבהרת שלבי המבחן בקצרה: בשלב ההתאמה נבחן הקשר הסיבתי והתאמתו בין האמצעי למטרה; בשלב הנחיצות נבדקת האפשרות של חלופות שפוגעות פחות והעדפתן במידת האפשר; ובשלב האיזון נדרש שכל שקלול יהיה מושתת על הערכת חומרת הפגיעה מול התועלת החברתית של המגבלה, תוך נימוק שיפוטי מפורש לגבי ההשקלה שנעשתה.²\n\nבמאגרים שסופקו לא אותר נוסח פסק־דין מחייב המנסח הלכה קונקרטית ומפורטת של המבחן שפירוטו יכול לשמש כהלכה מחייבת במקרה זה; לפיכך התיאור של יישום המבחן בהמשך נשען בעיקר על ניתוחים ספרותיים ופרשניים ולא על נוסח פסק־דין מובא במלואו.\n\nבספרות החוקתית מתוארים קווים אופייניים ליישום המידתיות: בדיקות אינטנסיביות נדרשות בדרך כלל כלפי הגבלות על זכויות פוליטיות והגבלות ביטחוניות חותרות תחת חירויות יסוד; לעומת זאת בתחום הכלכלי־רגולטורי יש נטייה להעניק שיפוט 'רך' יותר ולזהות מרחב שיקול של המחוקק או הרשות. בנוסף, בספרות מודגשת החשיבות של התאמת רמת הבדיקה לאופי הזכות ולנסיבות הציבוריות הספציפיות.\n\nביקורת אקדמית המתמקדת במידתיות מצביעה על מספר בעיות פרשניות ופרקטיות: חוסר בשקיפות בשלב השקלול, נטייה של מבחן המידתיות להרחיב סמכות שיפוטית על חשבון מדיניות נבחרת, וקושי בהבחנה בין אינטנסיביות שיפוטית למידתיות. מחקרים קוראים להבהרת כללים וכינון סטנדרטים נימוקיים ברורים יותר למנגנון השכלולי.\n\n**היקף התשובה:** התשובה שלהלן נסמכת על חקיקה ו/או על ספרות ופרשנות משפטית שאותרו במלואן, ולא על פסיקה שנוסחה המלא אותר. היא מסבירה את המסגרת הדוקטרינרית בלבד ואינה קובעת הלכה.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> החיפוש הופסק עקב מגבלת זמן, ולכן ייתכן שלא אותרו כל המקורות הרלוונטיים."
   },
   {
     "id": "D3",
     "run_id": "31ed6bed-ee0a-4998-88fc-6ec2a4a3202d",
+    "created_at": "2026-08-27T09:12:25.39037+00:00",
     "plan": {
       "reason": "השאלה משפטית-דוקטרינית בנוגע לאיסור אפליה ופיטורי עובדת בהריון; יש להסביר את ניסוח החוק, פירושו בפסיקה המחייבת, היקף ההגנה והסעדים.",
       "mixed_plan": false,
@@ -327,6 +376,7 @@
       "research_guidance_sufficiency": false
     },
     "explicit_docket_detected": false,
+    "explicit_statute_section_detected": false,
     "deterministic_branch": "insufficient_sources_limitation",
     "sufficiency_reason": "no_statutory_caselaw_or_doctrinal_anchor",
     "found_titles": [],
@@ -337,6 +387,7 @@
   {
     "id": "DARKPATTERNS",
     "run_id": "a57e9097-3d0f-498c-ae64-3b467f5f2f00",
+    "created_at": "2026-08-27T09:15:02.107514+00:00",
     "plan": {
       "reason": "המשתמש מבקש הן הסבר דוקטרינרי על עמדת המשפט/רגולציה והן רשימת מקורות מחקריים — יש לסנתז חקיקה, פסיקה רלוונטית ודוחי רגולטורים יחד עם המלצות קריאה.",
       "mixed_plan": true,
@@ -387,6 +438,7 @@
       "research_guidance_sufficiency": false
     },
     "explicit_docket_detected": false,
+    "explicit_statute_section_detected": false,
     "deterministic_branch": null,
     "sufficiency_reason": "doctrinal_anchor_present",
     "found_titles": [
@@ -400,6 +452,7 @@
   {
     "id": "R02",
     "run_id": "ba6e9f8f-f4ec-482c-84a6-8f41c0be9d50",
+    "created_at": "2026-08-27T09:17:33.174932+00:00",
     "plan": {
       "reason": "השאלה מבקשת לדעת מה נפסק בתיק ספציפי; יש להשתמש בפסק-הדין עצמו כמקור מרכזי וסיכום ברור.",
       "mixed_plan": false,
@@ -430,6 +483,7 @@
       "research_guidance_sufficiency": false
     },
     "explicit_docket_detected": true,
+    "explicit_statute_section_detected": false,
     "deterministic_branch": "docket_limitation",
     "sufficiency_reason": null,
     "found_titles": null,
@@ -440,11 +494,13 @@
   {
     "id": "P02",
     "run_id": "7ca97ba4-92a8-4ebb-a09a-cbfd64877de2",
+    "created_at": "2026-08-27T09:20:00.804873+00:00",
     "plan": null,
     "model_plan_present": null,
     "overrides": null,
     "planned_sufficiency": null,
     "explicit_docket_detected": null,
+    "explicit_statute_section_detected": null,
     "deterministic_branch": null,
     "sufficiency_reason": null,
     "found_titles": null,
