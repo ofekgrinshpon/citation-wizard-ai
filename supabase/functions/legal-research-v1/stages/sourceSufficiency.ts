@@ -25,6 +25,13 @@
 
 import type { DrafterInputSource } from "./drafter.ts";
 import { detectStatuteSections } from "./statuteSectionDetection.ts";
+import {
+  bucketSources,
+  planAllowsResearchGuidance,
+  planRequiresLegalStatement,
+  type SourceBuckets,
+} from "./sourceUseIntent.ts";
+import type { SourceUsePlan } from "../lib/types.ts";
 import { assessDoctrinalEligibility } from "./doctrinalSourceTyping.ts";
 
 
@@ -121,6 +128,15 @@ export interface SufficiencyAssessment {
   doctrinal_fallback_combination: "A" | "B" | "C" | null;
   /** Why the fallback did not fire, when it was evaluated and declined. */
   doctrinal_fallback_declined_reason: string | null;
+
+  // ── source_use_intent_planning_v1 ───────────────────────────────────────
+  /** Planned user task the sufficiency verdict was measured against. */
+  planned_user_task_intent: string | null;
+  planned_answer_strategy: string | null;
+  /** Sufficiency was satisfied relative to a research-guidance task. */
+  research_guidance_sufficiency: boolean;
+  /** Source buckets: acquired bodies / found-only / dropped unrelated. */
+  source_buckets: SourceBuckets;
 }
 
 
@@ -443,6 +459,8 @@ export function assessSourceSufficiency(args: {
   researchMode?: string | null;
   /** five_mode_source_depth_policy_v1 depth mode (drives the doctrinal fallback). */
   depthMode?: string | null;
+  /** source_use_intent_planning_v1 — planned task / source-use contract. */
+  sourceUsePlan?: SourceUsePlan | null;
 }): SufficiencyAssessment {
   const { question, shape, sources } = args;
   const category = classifySufficiencyCategory(shape, question);
@@ -500,13 +518,46 @@ export function assessSourceSufficiency(args: {
 
   const satisfiedAnchor = sources.some((s) => anchorIds.has(s.candidate_id));
 
+  // source_use_intent_planning_v1 — never advertise unrelated found-only
+  // sources. "What was found" lists only topically related material.
+  const relatedFoundTitles = (): string[] => {
+    const related = new Set<string>([
+      ...topical.map((s) => s.ref),
+      ...topicalAuthority.map((s) => s.ref),
+      ...domainStatutes.map((s) => s.ref),
+      ...usableJudgments.map((s) => s.ref),
+      ...bodyOnlyTopical.map((s) => s.ref),
+    ]);
+    return sources.filter((s) => related.has(s.ref)).slice(0, 5).map((s) => s.title);
+  };
+
+  const plan = args.sourceUsePlan ?? null;
+  const topicalRefsForBuckets = new Set<string>([
+    ...topical.map((s) => s.ref),
+    ...topicalAuthority.map((s) => s.ref),
+    ...domainStatutes.map((s) => s.ref),
+    ...usableJudgments.map((s) => s.ref),
+    ...bodyOnlyTopical.map((s) => s.ref),
+  ]);
+  const source_buckets = bucketSources(
+    sources.map((s) => ({
+      ref: s.ref,
+      title: s.title,
+      body_acquired: s.body_acquired,
+      snippet: s.snippet,
+      topical_text: s.topical_text,
+      source_type: s.source_type,
+    })),
+    topicalRefsForBuckets,
+  );
+
   const base = {
     shape: shape ?? "unknown",
     category,
     topic_phrases: phrases,
     topical_refs: topical.map((s) => s.ref),
     topical_authority_refs: topicalAuthority.map((s) => s.ref),
-    found_titles: sources.slice(0, 5).map((s) => s.title),
+    found_titles: relatedFoundTitles(),
     sufficiency_profile: profile,
     governing_statute_refs: governingStatutes.map((s) => s.ref),
     governing_regulation_refs: governingRegulations.map((s) => s.ref),
@@ -588,6 +639,23 @@ export function assessSourceSufficiency(args: {
     let limitedDoctrinal = false;
     let fallbackCombination: "A" | "B" | "C" | null = null;
     let fallbackDeclined: string | null = null;
+    let researchGuidanceSufficiency = false;
+    if (applied && !sufficient && plan && planAllowsResearchGuidance(plan)) {
+      // A research-guidance task (source recommendation / literature map /
+      // seminar planning) is not measured against black-letter authority.
+      // It still needs at least one *acquired* body to describe, and it can
+      // never license claims about what the law is when the plan also owes a
+      // legal statement backed by primary law.
+      const acquired = source_buckets.read_in_full.length;
+      const primaryStillRequired = planRequiresLegalStatement(plan) &&
+        (plan.authority_requirements.requires_judgment_body ||
+          plan.authority_requirements.requires_official_statute);
+      if (acquired >= 1 && !primaryStillRequired) {
+        researchGuidanceSufficiency = true;
+        sufficient = true;
+        reason = `research_guidance_task_supported:${plan.user_task_intent}(was:${reason})`;
+      }
+    }
     if (applied && !sufficient) {
       const fb = doctrinalFallback();
       if (fb) {
@@ -637,6 +705,10 @@ export function assessSourceSufficiency(args: {
       limited_doctrinal_answer: limitedDoctrinal,
       doctrinal_fallback_combination: fallbackCombination,
       doctrinal_fallback_declined_reason: fallbackDeclined,
+      planned_user_task_intent: plan?.user_task_intent ?? null,
+      planned_answer_strategy: plan?.answer_strategy ?? null,
+      research_guidance_sufficiency: researchGuidanceSufficiency,
+      source_buckets,
     };
   };
 
