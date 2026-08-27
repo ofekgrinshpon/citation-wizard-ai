@@ -82,6 +82,7 @@ import {
   resolveRequiredAnchors,
 } from "./stages/requiredAnchors.ts";
 import { detectStatuteSections } from "./stages/statuteSectionDetection.ts";
+import { planSourceUseIntent } from "./stages/sourceUseIntent.ts";
 import { makeAdminClient, writeTelemetry, beginTraceRow } from "./lib/telemetry.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
 import { StageRun, type Candidate } from "./lib/types.ts";
@@ -534,6 +535,11 @@ async function handle(req: Request): Promise<Response> {
 
 
 
+
+  // ─── source_use_intent_planning_v1 ───────────────────────────────────────
+  // Normalize the analyzer's task/source-use plan and apply deterministic
+  // safety floors (docket → judgment body, statute section → official text).
+  const sourceUseIntent = planSourceUseIntent(question, analyzer);
 
   // ─── five_mode_source_depth_policy_v1 ────────────────────────────────────
   // Research-depth decision, taken *before* planning, nomination, discovery
@@ -1809,6 +1815,7 @@ async function handle(req: Request): Promise<Response> {
       satisfiedStatuteSectionAnchors,
       researchMode: plannerStage.mode_plan?.mode ?? null,
       depthMode: sourceDepth.depth_mode,
+      sourceUsePlan: sourceUseIntent.plan,
       specificCaseGate,
       facetDirective,
       // router_profiles_v1 — path-scoped answer shape.
@@ -2185,6 +2192,19 @@ async function handle(req: Request): Promise<Response> {
     practical_steps_thin_authority_passed:
       drafter.sufficiency?.practical_steps_thin_authority_passed ?? false,
     exact_amounts_allowed: drafter.sufficiency?.exact_amounts_allowed ?? null,
+    // source_use_intent_planning_v1 telemetry.
+    source_use_intent: {
+      ...sourceUseIntent,
+      planned_sufficiency: {
+        research_guidance_sufficiency:
+          drafter.sufficiency?.research_guidance_sufficiency ?? false,
+        planned_user_task_intent: drafter.sufficiency?.planned_user_task_intent ?? null,
+        planned_answer_strategy: drafter.sufficiency?.planned_answer_strategy ?? null,
+        source_buckets: drafter.sufficiency?.source_buckets ?? null,
+        sufficiency_reason: drafter.sufficiency?.reason ?? null,
+        deterministic_branch: drafter.deterministic_branch ?? null,
+      },
+    },
     // claim_facet_expansion_v1 telemetry.
     claim_facet_expansion: claimFacetExpansionMeta,
     // core_authority_registry_v1 telemetry.

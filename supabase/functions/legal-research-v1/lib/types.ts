@@ -60,6 +60,72 @@ export interface AnswerIntent {
   output_shape: OutputShape;
 }
 
+// ─── source_use_intent_planning_v1 ──────────────────────────────────────────
+// Substance-based plan of *what the user is asking the system to do* and how
+// sources may be used for that task. Planning, not templating: the drafter
+// answers naturally and never renders fixed headings per intent.
+
+export const USER_TASK_INTENTS = [
+  "case_holding",
+  "statute_explanation",
+  "doctrinal_explanation",
+  "case_law_synthesis",
+  "source_recommendation",
+  "literature_map",
+  "seminar_planning",
+  "argument_development",
+  "legal_research_guidance",
+  "document_check",
+] as const;
+export type UserTaskIntent = typeof USER_TASK_INTENTS[number];
+
+export const SOURCE_USE_INTENTS = [
+  "binding_authority",
+  "statutory_text",
+  "doctrinal_support",
+  "scholarly_discussion",
+  "institutional_findings",
+  "reading_recommendations",
+  "bibliography_only",
+] as const;
+export type SourceUseIntent = typeof SOURCE_USE_INTENTS[number];
+
+export const ANSWER_STRATEGIES = [
+  "explain_law",
+  "summarize_case",
+  "synthesize_doctrine",
+  "recommend_sources",
+  "map_literature",
+  "plan_research_section",
+  "compare_views",
+  "limited_answer_with_gaps",
+] as const;
+export type AnswerStrategy = typeof ANSWER_STRATEGIES[number];
+
+export const PLAN_CONFIDENCES = ["high", "medium", "low"] as const;
+export type PlanConfidence = typeof PLAN_CONFIDENCES[number];
+
+export interface AuthorityRequirements {
+  requires_judgment_body: boolean;
+  requires_official_statute: boolean;
+  secondary_sources_can_support: boolean;
+  found_only_allowed_as_reading_list: boolean;
+  /** Always false. Never negotiable. */
+  found_only_can_support_claims: false;
+}
+
+export interface SourceUsePlan {
+  user_task_intent: UserTaskIntent;
+  source_use_intent: SourceUseIntent[];
+  answer_strategy: AnswerStrategy;
+  authority_requirements: AuthorityRequirements;
+  plan_confidence: PlanConfidence;
+  mixed_plan: boolean;
+  secondary_task_intent?: UserTaskIntent;
+  reason?: string;
+}
+
+
 export interface AnalyzerOutput {
   confidence: number;
   legal_area: string;
@@ -79,6 +145,11 @@ export interface AnalyzerOutput {
    * compatible: absent → drafter falls back to prior behavior.
    */
   answer_intent?: AnswerIntent;
+  /**
+   * source_use_intent_planning_v1 — optional task/source-use plan emitted in
+   * the same analyzer call. Absent → deterministic conservative fallback.
+   */
+  source_use_plan?: SourceUsePlan;
 }
 
 

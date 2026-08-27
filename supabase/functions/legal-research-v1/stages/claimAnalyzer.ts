@@ -59,6 +59,32 @@ primary_statute, regulation, binding_case_law, persuasive_case_law, scholarship,
 
 אם output_shape יוצא unknown, השמט את השדה answer_intent לגמרי.
 
+תכנון שימוש במקורות (source_use_plan) — ניתוח מהותי של המשימה שהמשתמש מבקש מהמערכת לבצע, ולא זיהוי ביטויים. אין תבניות תשובה קבועות; זהו תכנון בלבד.
+- user_task_intent: מה המשתמש מבקש בפועל —
+  • case_holding — מה נפסק בתיק מסוים / מה קבע בית המשפט / השאלה מפנה למספר הליך.
+  • statute_explanation — מה קובע חוק או סעיף מסוים.
+  • doctrinal_explanation — הבנת דוקטרינה משפטית.
+  • case_law_synthesis — סינתזה של קו פסיקה.
+  • source_recommendation — אילו מקורות כדאי לקרוא.
+  • literature_map — מה אומרת הספרות האקדמית / מיפוי כתיבה אקדמית בנושא.
+  • seminar_planning — כיצד לבנות עבודה סמינריונית / פרק מחקרי.
+  • argument_development — פיתוח טיעון משפטי.
+  • legal_research_guidance — הכוונה מחקרית מעשית (היכן וכיצד לחפש).
+  • document_check — בדיקה של מסמך שהועלה.
+- source_use_intent: כיצד ישמשו המקורות (אפשר יותר מאחד): binding_authority, statutory_text, doctrinal_support, scholarly_discussion, institutional_findings, reading_recommendations, bibliography_only.
+- answer_strategy: explain_law, summarize_case, synthesize_doctrine, recommend_sources, map_literature, plan_research_section, compare_views, limited_answer_with_gaps.
+- authority_requirements: requires_judgment_body, requires_official_statute, secondary_sources_can_support, found_only_allowed_as_reading_list.
+- plan_confidence: high / medium / low.
+- mixed_plan (+ secondary_task_intent): true כאשר השאלה משלבת באמת הסבר משפטי עם הכוונה מחקרית.
+
+כללי תכנון:
+1. שאלה על מה נפסק בתיק, מה קבע בית המשפט, או שאלה שמפנה למספר הליך → case_holding + binding_authority, requires_judgment_body=true. אין לענות ממקורות משניים.
+2. שאלה על נוסח או תוכן של חוק/סעיף → statute_explanation, requires_official_statute=true.
+3. שאלה על הבנת דוקטרינה → doctrinal_explanation; מותר לשלב חקיקה, פסיקה ומקורות משניים כשירים.
+4. שאלה מה אומרת הספרות, אילו מקורות לקרוא, כיצד לכתוב סמינריון, או אילו מקורות אקדמיים קיימים → source_recommendation / literature_map / seminar_planning; אין לדרוש תמיכה ישירה בפסיקה רק כדי לספק הכוונה מחקרית.
+5. אין להפוך שאלה משפטית/דוקטרינרית רגילה לתשובה ביבליוגרפית. bibliography_only מיועד רק לבקשות מובהקות לרשימת מקורות.
+6. אם plan_confidence נמוך והשאלה עשויה לשלב הסבר משפטי עם הכוונה מחקרית — העדף mixed_plan=true על פני כפיית כוונה יחידה.
+
 החזר את התוצאה רק דרך הקריאה לכלי emit_claim_analysis.`;
 
 

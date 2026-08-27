@@ -9,6 +9,7 @@ import { callAnthropicJsonTool } from "../lib/anthropic.ts";
 import type { UserDocument } from "../lib/attachments.ts";
 import {
   AnswerIntent,
+  SourceUsePlan,
   Candidate,
   Claim,
   Footnote,
@@ -275,6 +276,17 @@ const DRAFTER_V2_TOOL_PARAMETERS: Record<string, unknown> = {
   additionalProperties: false,
 };
 
+/**
+ * source_use_intent_planning_v1 — internal source ids (s1, s3, ...) are a
+ * prompt-only addressing scheme. Recommendation-style answers occasionally
+ * leak them into prose; footnote markers are the only user-facing reference.
+ */
+function stripInternalRefTokens(text: string): string {
+  return text
+    .replace(/\s*\((?:\s*s\d{1,2}\s*)(?:,\s*s\d{1,2}\s*)*\)/g, "")
+    .replace(/\s*\[(?:\s*s\d{1,2}\s*)(?:,\s*s\d{1,2}\s*)*\]/g, "");
+}
+
 function buildUserMessage(
   question: string,
   claims: Claim[],
@@ -289,7 +301,7 @@ function buildUserMessage(
   synthesisRendering?: SynthesisRenderingPlan,
   facetDirective?: string[],
   blockCeiling?: number | null,
-
+  sourceUsePlan?: SourceUsePlan | null,
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
@@ -427,6 +439,45 @@ function buildUserMessage(
   if (answerIntent) {
     lines.push("");
     lines.push(`מבנה מבוקש (רמז פורמט): ${answerIntent.output_shape}`);
+  }
+
+  // source_use_intent_planning_v1 — planned task guidance. Guidance, not a
+  // template: no fixed headings, no fixed phrasing, proportional length.
+  if (sourceUsePlan) {
+    const p = sourceUsePlan;
+    lines.push("");
+    lines.push(
+      `תכנון המשימה: המשתמש מבקש ${p.user_task_intent}; אסטרטגיית מענה: ${p.answer_strategy}` +
+        (p.mixed_plan && p.secondary_task_intent
+          ? `; משימה משנית: ${p.secondary_task_intent}`
+          : ""),
+    );
+    if (p.mixed_plan) {
+      lines.push(
+        "זו שאלה מעורבת: ענה באופן טבעי ומידתי — תחילה המסגרת המשפטית מהמקורות הראשוניים, ולאחר מכן ההכוונה המחקרית/הספרותית. אין להשתמש בכותרות קבועות או בתבנית מוכתבת.",
+      );
+    }
+    if (p.authority_requirements.requires_judgment_body) {
+      lines.push(
+        "השאלה מחייבת גוף פסק דין שאותר ואומת. אין לגזור את שנפסק ממקורות משניים, מסיכומים או מציטוטים עקיפים.",
+      );
+    }
+    if (p.authority_requirements.requires_official_statute) {
+      lines.push("קביעות לגבי נוסח או תוכן של חוק/סעיף חייבות להישען על טקסט חקיקה רשמי שאותר.");
+    }
+    if (p.source_use_intent.length > 0) {
+      lines.push(`אופן השימוש המתוכנן במקורות: ${p.source_use_intent.join(", ")}.`);
+    }
+    lines.push(
+      "הבחן בבירור בין מקורות שנקראו במלואם (ניתן להסתמך עליהם לקביעות מהותיות) לבין מקורות שאותרו בלבד — אלה מוצגים לכל היותר כמועמדים לקריאה נוספת ואינם יכולים לתמוך בשום קביעה משפטית.",
+    );
+    if (!p.authority_requirements.found_only_allowed_as_reading_list) {
+      lines.push("אין להציג רשימת קריאה או המלצות מקורות בשאלה זו.");
+    }
+    lines.push("אין להציג מקור משני, ספרות או חומר מוסדי כפסיקה מחייבת.");
+    lines.push(
+      "אין לכתוב בתוך הטקסט מזהי מקור פנימיים (s1, s2 וכדומה) — ההפניה היחידה למשתמש היא הערת שוליים שנוצרת דטרמיניסטית מ-source_refs.",
+    );
   }
 
   const leadSource = leadRef ? sources.find((s) => s.ref === leadRef) : undefined;
@@ -1119,6 +1170,8 @@ export async function runDrafterV2(
     dropUnsupportedBlocks?: boolean;
     /** five_mode_source_depth_policy_v1 depth mode (doctrinal sufficiency fallback). */
     depthMode?: string | null;
+    /** source_use_intent_planning_v1 — planned task / source-use contract. */
+    sourceUsePlan?: SourceUsePlan | null;
 
     specificCaseGate?: {
       allow: boolean;
@@ -1556,6 +1609,7 @@ export async function runDrafterV2(
     requiredAnchorCandidateIds,
     researchMode: opts?.researchMode ?? null,
     depthMode: opts?.depthMode ?? null,
+    sourceUsePlan: opts?.sourceUsePlan ?? null,
   });
 
   if (sufficiency.applied && !sufficiency.sufficient) {
@@ -1657,6 +1711,11 @@ export async function runDrafterV2(
       limited_doctrinal_answer: false,
       doctrinal_fallback_combination: null,
       doctrinal_fallback_declined_reason: sufficiency?.doctrinal_fallback_declined_reason ?? null,
+      planned_user_task_intent: sufficiency?.planned_user_task_intent ?? null,
+      planned_answer_strategy: sufficiency?.planned_answer_strategy ?? null,
+      research_guidance_sufficiency: false,
+      source_buckets: sufficiency?.source_buckets ??
+        { read_in_full: [], found_only: [], dropped_unrelated: [] },
     };
 
     const draft = buildInsufficientSourcesDraft(synthSufficiency);
@@ -1721,7 +1780,7 @@ export async function runDrafterV2(
     synthesisPlan,
     opts?.facetDirective,
     opts?.blockCeiling ?? null,
-
+    opts?.sourceUsePlan ?? null,
   );
 
 
@@ -1944,9 +2003,11 @@ export async function runDrafterV2(
 
 
   // Rule 1.10 — Hebrew number ranges must be written high→low in source order.
-  const answer_markdown = scrubNegativeExistenceClaims(
-    normalizeHebrewNumberRanges(built.answer_markdown),
-  ).text +
+  const answer_markdown = stripInternalRefTokens(
+    scrubNegativeExistenceClaims(
+      normalizeHebrewNumberRanges(built.answer_markdown),
+    ).text,
+  ) +
     // substance_based_doctrinal_sufficiency_v1 (guardrail 2) — the
     // "found only" list is not emitted mechanically. It appears only when the
     // answer actually rests on a limited pack, or when the gate stripped

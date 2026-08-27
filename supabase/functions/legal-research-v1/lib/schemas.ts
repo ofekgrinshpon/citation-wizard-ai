@@ -4,12 +4,22 @@
 import {
   ANSWER_TYPES,
   AnalyzerOutput,
+  ANSWER_STRATEGIES,
   AnswerIntent,
+  AnswerStrategy,
+  AuthorityRequirements,
   CAPS,
   Claim,
   EXPECTED_SOURCE_TYPES,
   OUTPUT_SHAPES,
   OutputShape,
+  PLAN_CONFIDENCES,
+  PlanConfidence,
+  SOURCE_USE_INTENTS,
+  SourceUseIntent,
+  SourceUsePlan,
+  USER_TASK_INTENTS,
+  UserTaskIntent,
   PlannerOutput,
   QUERY_TARGETS,
   Query,
@@ -88,6 +98,7 @@ export function validateAnalyzer(raw: unknown): ValidationResult<AnalyzerOutput>
     : undefined;
 
   const answer_intent = parseAnswerIntent(r.answer_intent);
+  const source_use_plan = parseSourceUsePlan(r.source_use_plan);
 
   return {
     ok: errors.length === 0,
@@ -98,6 +109,7 @@ export function validateAnalyzer(raw: unknown): ValidationResult<AnalyzerOutput>
       claims,
       ...(interpretation_note ? { interpretation_note } : {}),
       ...(answer_intent ? { answer_intent } : {}),
+      ...(source_use_plan ? { source_use_plan } : {}),
     },
     errors,
     truncated_claims_count,
@@ -119,6 +131,65 @@ function parseAnswerIntent(raw: unknown): AnswerIntent | undefined {
       : "unknown";
   if (output_shape === "unknown") return undefined;
   return { output_shape };
+}
+
+// source_use_intent_planning_v1 — parse the optional task/source-use plan.
+// Tolerant: unusable payloads return undefined so the deterministic
+// normalizer (stages/sourceUseIntent.ts) supplies a conservative fallback.
+function parseSourceUsePlan(raw: unknown): SourceUsePlan | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const r = raw as Record<string, unknown>;
+  const task = r.user_task_intent;
+  if (typeof task !== "string" || !(USER_TASK_INTENTS as readonly string[]).includes(task)) {
+    return undefined;
+  }
+  const user_task_intent = task as UserTaskIntent;
+
+  const useArr = Array.isArray(r.source_use_intent) ? r.source_use_intent : [];
+  const source_use_intent = useArr.filter((x): x is SourceUseIntent =>
+    typeof x === "string" && (SOURCE_USE_INTENTS as readonly string[]).includes(x)
+  );
+
+  const stratRaw = r.answer_strategy;
+  const answer_strategy: AnswerStrategy =
+    typeof stratRaw === "string" && (ANSWER_STRATEGIES as readonly string[]).includes(stratRaw)
+      ? (stratRaw as AnswerStrategy)
+      : "limited_answer_with_gaps";
+
+  const confRaw = r.plan_confidence;
+  const plan_confidence: PlanConfidence =
+    typeof confRaw === "string" && (PLAN_CONFIDENCES as readonly string[]).includes(confRaw)
+      ? (confRaw as PlanConfidence)
+      : "low";
+
+  const ar = (r.authority_requirements ?? {}) as Record<string, unknown>;
+  const authority_requirements: AuthorityRequirements = {
+    requires_judgment_body: ar.requires_judgment_body === true,
+    requires_official_statute: ar.requires_official_statute === true,
+    secondary_sources_can_support: ar.secondary_sources_can_support === true,
+    found_only_allowed_as_reading_list: ar.found_only_allowed_as_reading_list === true,
+    // Never model-controlled.
+    found_only_can_support_claims: false,
+  };
+
+  const secondaryRaw = r.secondary_task_intent;
+  const secondary_task_intent =
+    typeof secondaryRaw === "string" &&
+      (USER_TASK_INTENTS as readonly string[]).includes(secondaryRaw) &&
+      secondaryRaw !== user_task_intent
+      ? (secondaryRaw as UserTaskIntent)
+      : undefined;
+
+  return {
+    user_task_intent,
+    source_use_intent,
+    answer_strategy,
+    authority_requirements,
+    plan_confidence,
+    mixed_plan: r.mixed_plan === true || !!secondary_task_intent,
+    ...(secondary_task_intent ? { secondary_task_intent } : {}),
+    ...(typeof r.reason === "string" && r.reason.trim() ? { reason: r.reason.trim() } : {}),
+  };
 }
 
 
@@ -225,6 +296,48 @@ export const ANALYZER_TOOL_PARAMETERS: Record<string, unknown> = {
         output_shape: { type: "string", enum: [...OUTPUT_SHAPES] },
       },
       required: ["output_shape"],
+      additionalProperties: false,
+    },
+    source_use_plan: {
+      type: "object",
+      description:
+        "Substance-based plan of what the user is asking the system to DO with sources. Judge the substance of the request, never a phrase trigger. Emit whenever you can characterise the task; omit only when genuinely unclear. Ordinary legal/doctrinal questions must NOT be planned as source_recommendation / literature_map / bibliography_only — those apply only when the user genuinely asks for research guidance, literature mapping, seminar planning or reading recommendations. Set mixed_plan=true (with secondary_task_intent) when the question genuinely combines legal explanation with research guidance, and prefer mixed_plan over forcing one intent when plan_confidence is low.",
+      properties: {
+        user_task_intent: { type: "string", enum: [...USER_TASK_INTENTS] },
+        source_use_intent: {
+          type: "array",
+          items: { type: "string", enum: [...SOURCE_USE_INTENTS] },
+        },
+        answer_strategy: { type: "string", enum: [...ANSWER_STRATEGIES] },
+        plan_confidence: { type: "string", enum: [...PLAN_CONFIDENCES] },
+        mixed_plan: { type: "boolean" },
+        secondary_task_intent: { type: "string", enum: [...USER_TASK_INTENTS] },
+        authority_requirements: {
+          type: "object",
+          properties: {
+            requires_judgment_body: { type: "boolean" },
+            requires_official_statute: { type: "boolean" },
+            secondary_sources_can_support: { type: "boolean" },
+            found_only_allowed_as_reading_list: { type: "boolean" },
+          },
+          required: [
+            "requires_judgment_body",
+            "requires_official_statute",
+            "secondary_sources_can_support",
+            "found_only_allowed_as_reading_list",
+          ],
+          additionalProperties: false,
+        },
+        reason: { type: "string" },
+      },
+      required: [
+        "user_task_intent",
+        "source_use_intent",
+        "answer_strategy",
+        "plan_confidence",
+        "mixed_plan",
+        "authority_requirements",
+      ],
       additionalProperties: false,
     },
   },
