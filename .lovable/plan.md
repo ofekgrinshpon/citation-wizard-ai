@@ -1,75 +1,54 @@
-# source_use_intent_planning_v1
+# claim_source_rebinding_v1
 
-Teach the pipeline to plan *what the user is asking the system to do* — and how sources may be used for that task — instead of treating every question as a black-letter legal question. Substance-based planning only: no phrase→template mapping, no rigid output modes.
+## Why
 
-## Why this is needed
+The funnel diagnostics showed the biggest late-stage loss in the pipeline: 4–12 source refs per run are dropped with `claim_mismatch`, including fully acquired, verifier-`direct` sources with 16,000+ characters of body text (B8, NATION-STATE-ACADEMIC, ACADEMIC, D1). The result is answers that lose their best citations at the last gate, then attach a "מגבלת ביסוס" notice they did not deserve.
 
-Today the analyzer emits only a light `answer_intent.output_shape` format hint, and everything downstream (research mode, router profile, source-depth policy, sufficiency, drafter) assumes the user wants a legal ruling. Source-seeking, literature and seminar-planning questions therefore hit case-law sufficiency gates, get refused, or come back with generic law plus unrelated "found" sources.
+Cause (in `stages/claimSourceMatch.ts`, Rule A): a source is bound to the retrieval-time `claim_id` the verifier judged it against, while the drafter tags each answer block with its own `claim_id`. When those two id-spaces diverge — reworded claims, merged claims, facet ids, blocks the drafter composed across claims — a perfectly good source fails a pure string-identity test.
 
-## What gets added
+## Goal
 
-### 1. Analyzer contract: a source-use plan
+Stop dropping sources for id-space mismatch alone. Replace the strict string comparison with a rebinding step that asks the substantive question — does this source actually support the proposition in this block? — while leaving every safety gate (judgment identity, docket limitation, statute authority, authority-overstatement, commentary-in-substantive-block) exactly as it is today.
 
-Extend the analyzer tool schema (`lib/schemas.ts`, `lib/types.ts`) and prompt (`stages/claimAnalyzer.ts`) with a new optional `source_use_plan` object, emitted in the same LLM call (no extra call, no extra cost):
+## Scope
 
-- `user_task_intent` — case_holding | statute_explanation | doctrinal_explanation | case_law_synthesis | source_recommendation | literature_map | seminar_planning | argument_development | practical_research | document_check
-- `source_use_intent[]` — binding_authority | statutory_text | doctrinal_support | scholarly_discussion | institutional_findings | reading_recommendations | bibliography_only
-- `answer_strategy` — explain_law | summarize_case | synthesize_doctrine | recommend_sources | map_literature | plan_research_section | compare_views | limited_answer_with_gaps
-- `authority_requirements` — requires_judgment_body, requires_official_statute, secondary_sources_can_support, found_only_allowed_as_reading_list, found_only_can_support_claims (always false)
-- `mixed_plan` + `secondary_task_intent` for questions that ask for law *and* literature
+Changes are confined to the claim/source binding layer:
 
-The prompt states planning principles as reasoning guidance (docket/holding → binding authority; statute → official text; doctrine → mixed; literature/seminar → recommendation), never as phrase lists.
+1. **New stage `stages/claimSourceRebinding.ts`** — deterministic, no LLM call. For each (block, source) pair it computes a rebinding decision from evidence already in telemetry:
+   - exact claim/facet id match (today's Rule A) → `bound_exact`
+   - parent/child facet relation (`claim::fN`) in either direction → `bound_facet`
+   - the verifier's `supported_points` for that source overlap the block text (normalized Hebrew token overlap, construct/prefix tolerant, reusing the normalizer from `specificCaseResolution.ts`) → `bound_topical`
+   - source legal area matches block legal area **and** verifier verdict is `direct`/`partial` **and** the source has an acquired body → `bound_area_direct`
+   - none of the above → `unbound`
 
-### 2. Deterministic safety floor (not a template)
+2. **Rule A becomes rebinding-aware** in `claimSourceMatch.ts`: a ref is dropped as `claim_mismatch` only when the rebinding decision is `unbound`. Rules B–E run unchanged on every ref that survives, so authority level, commentary use, analogy and legal-area gates keep their current strictness.
 
-A small `stages/sourceUseIntent.ts` normalizes the model output and enforces only safety-direction overrides — it can make requirements *stricter*, never looser:
+3. **Binding strength is recorded, not just kept/dropped.** Each kept ref carries `binding: exact | facet | topical | area_direct`. A `court_holding` or docket-bearing block still requires a judgment-authority source, unchanged; topical rebinding never upgrades a secondary source into primary authority.
 
-- An explicit docket or an explicit "what did the court hold" claim forces `requires_judgment_body = true` regardless of the model's plan (keeps R02/P02 safe).
-- An explicit statute section forces `requires_official_statute = true`.
-- `found_only_can_support_claims` is hard-pinned to false.
-- If the model omits the field, the stage derives a conservative default from the existing research mode / router profile, so behaviour matches today.
+4. **Limitation text becomes proportional.** `CLAIM_SUPPORT_LIMITATION_HE` currently fires whenever *any* ref was dropped. It will fire only when a substantive block ends with zero kept refs, or when a main claim keeps only non-primary support. Refs dropped while the block still holds direct support no longer trigger a caveat.
 
-### 3. Sufficiency becomes task-relative
+5. **Telemetry** under `metadata.claim_source_match`: `rebinding` block with per-decision counts (`bound_exact`, `bound_facet`, `bound_topical`, `bound_area_direct`, `unbound`), `rebound_ref_count`, `claim_mismatch_drops_before/after`, and per-ref decision + evidence (overlap score, matched points) so the next funnel run can measure the delta directly.
 
-`stages/sourceSufficiency.ts` receives the plan and evaluates adequacy against the planned task:
+## Not in scope
 
-- `requires_judgment_body` / `requires_official_statute` keep today's strict gates untouched.
-- Recommendation / literature-map / seminar-planning tasks are adequate when there are acquired secondary bodies (or, for the reading-list portion, credible found-only candidates) — they are no longer refused for lack of direct case law.
-- Any *substantive claim about what a source says* still requires acquired body text; the existing claim-source-match rules stay in force.
-
-### 4. Source presentation buckets
-
-Candidates are partitioned into three explicit buckets carried into the drafter and telemetry:
-
-- `read_in_full` — acquired body text (citable per existing rules)
-- `found_only` — discovered but not acquired; usable only as marked reading candidates, never as claim support
-- `dropped_unrelated` — off-topic found-only sources are suppressed from display (fixes B8 noise)
-
-### 5. Drafter follows the plan, does not template it
-
-`stages/drafterV2.ts` receives the plan as guidance alongside the existing evidence contract:
-
-- Answer the planned task naturally; no fixed sections, no forced headings.
-- For mixed plans: legal framework from primary sources first, literature/recommendations as a separate part.
-- Never present a secondary source as binding case law; never support a legal claim with a found-only source; reading candidates are clearly marked as "to be checked".
-- Existing confidence/caveat behaviour keeps deriving from evidence, not from intent.
-
-### 6. Telemetry
-
-Persist under `metadata.source_use_intent`: planned intents, strategy, authority requirements, mixed flag, source presented from the model vs. deterministic override, bucket counts, and the sufficiency decision path.
+No change to retrieval, ranking, nomination, acquisition, source integrity, judgment identity validation, cache rules, footnote rendering, or drafter prompts. No new LLM call. R02 and P02 refusal behaviour must be byte-identical.
 
 ## Validation
 
-Run the 10-query sequence — ACADEMIC, NATION-STATE-ACADEMIC, PAYWALL, MMM, B8, D1, D3, DARKPATTERNS, R02, P02 — via a new runner (`scripts/legal-research-v1-source-use-intent-validation.ts`), polling `qa_logs` by `metadata->>'run_id'`.
+Rerun the same 10 runs used by the funnel diagnostics: ACADEMIC, NATION-STATE-ACADEMIC, PAYWALL, MMM, B8, D1, D3, DARKPATTERNS, R02, P02. Regenerate the funnel with the existing read-only diagnostics script and compare against `reports/candidate-funnel/funnel.json`.
 
-Per run: user_task_intent, source_use_intent, answer_strategy, authority_requirements, mixed?, read-in-full sources, found-only sources, dropped-unrelated sources, final answer shape, authority-overstatement check, footnote integrity, runtime/stability.
+Acceptance:
+- `claim_mismatch` drops of acquired, verifier-`direct` sources fall to near zero.
+- Cited footnote count rises on at least ACADEMIC, B8, NATION-STATE-ACADEMIC and D1, all still traceable to acquired bodies.
+- No block cites a source whose verifier verdict is `unrelated`.
+- No `court_holding` block gains secondary-only support; `authority_overstatements` does not grow.
+- R02 still refuses without the named judgment body; P02 still refuses the fabricated docket.
+- Unwarranted "מגבלת ביסוס" notices disappear from runs that keep direct support.
 
-Acceptance criteria as specified: ACADEMIC planned as recommendation/seminar/literature-map; NATION-STATE-ACADEMIC not refused for lack of case law; PAYWALL separates acquired from paywalled candidates; MMM uses acquired reports or logs precise claim-match reasons; B8 shows no unrelated found-only sources; D1/D3/DARKPATTERNS no regression; R02/P02 unchanged; no found-only source supports a claim; no secondary presented as binding; no CPU kills, stubs, dangling markers or orphan rows.
-
-Report written to `reports/source-use-intent/ACCEPTANCE_REPORT.md` with a verdict of accepted / partial / not accepted.
+Report to `reports/claim-source-rebinding/ACCEPTANCE_REPORT.md`, with the before/after funnel diff included.
 
 ## Technical notes
 
-- Files touched: `lib/types.ts`, `lib/schemas.ts`, `stages/claimAnalyzer.ts`, new `stages/sourceUseIntent.ts`, `stages/sourceSufficiency.ts`, `stages/claimSourceMatch.ts` (bucket awareness), `stages/drafterV2.ts`, `index.ts` (wiring + telemetry), new validation script + report.
-- No changes to judgment identity validation, cache writes, official fetch/relay policy or docket detection.
-- Field absent → conservative fallback = today's behaviour, so the change is additive.
+- `SourceMatchMeta` gains `supported_points: string[]` (already present on verifier verdicts, currently not carried into the drafter source).
+- Topical overlap uses a conservative threshold; ties resolve to `unbound` (drop) so the change can only be as permissive as the evidence allows.
+- The rebinding stage is pure and unit-testable; tests go in `src/test/claimSourceRebinding.test.ts` alongside the existing gate tests.
