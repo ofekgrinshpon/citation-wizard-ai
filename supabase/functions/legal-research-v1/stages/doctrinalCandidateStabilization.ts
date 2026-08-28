@@ -261,6 +261,8 @@ export interface DoctrinalPoolSnapshot {
   doctrinal_eligible: number;
   institutional_eligible: number;
   reconsiderable_candidate_ids: string[];
+  /** Why promising direct/partial candidates were NOT reconsidered. */
+  reconsideration_rejections: Record<string, number>;
 }
 
 export function bestSupportByCandidate(verdicts: Verdict[]): Map<string, SupportLevel> {
@@ -294,6 +296,7 @@ export function buildDoctrinalPoolSnapshot(input: {
     doctrinal_eligible: 0,
     institutional_eligible: 0,
     reconsiderable_candidate_ids: [],
+    reconsideration_rejections: {},
   };
 
   for (const c of input.candidates) {
@@ -324,6 +327,9 @@ export function buildDoctrinalPoolSnapshot(input: {
     const rec = assessDoctrinalReconsideration(c, s);
     if (rec.reconsider && !attempted.has(c.candidate_id)) {
       snap.reconsiderable_candidate_ids.push(c.candidate_id);
+    } else if (promising) {
+      const key = attempted.has(c.candidate_id) ? "already_attempted" : rec.reason;
+      snap.reconsideration_rejections[key] = (snap.reconsideration_rejections[key] ?? 0) + 1;
     }
   }
   return snap;
