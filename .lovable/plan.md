@@ -1,54 +1,39 @@
-# claim_source_rebinding_v1
+# doctrinal_candidate_pool_stabilization_v1
 
-## Why
+Goal: make promising doctrinal/secondary candidates reach body acquisition and doctrinal eligibility consistently, so doctrinal and academic questions stop swinging between a real answer and `insufficient_sources_limitation`. No sufficiency threshold is relaxed, and no source type is upgraded without an acquired body plus source-integrity evidence.
 
-The funnel diagnostics showed the biggest late-stage loss in the pipeline: 4–12 source refs per run are dropped with `claim_mismatch`, including fully acquired, verifier-`direct` sources with 16,000+ characters of body text (B8, NATION-STATE-ACADEMIC, ACADEMIC, D1). The result is answers that lose their best citations at the last gate, then attach a "מגבלת ביסוס" notice they did not deserve.
+## What changes
 
-Cause (in `stages/claimSourceMatch.ts`, Rule A): a source is bound to the retrieval-time `claim_id` the verifier judged it against, while the drafter tags each answer block with its own `claim_id`. When those two id-spaces diverge — reworded claims, merged claims, facet ids, blocks the drafter composed across claims — a perfectly good source fails a pure string-identity test.
+### 1. Listing/index suppression before budget is spent
+In the secondary-acquisition candidate selection, candidates that source-integrity already marks as `index_or_listing` / `not_citable` / listing-shaped URLs (search result pages, court listing rows, category pages) are dropped from the selection list before they consume any local-lookup or web-fetch slot, and recorded as `listing_suppressed` with a reason. Selection ordering then favours verifier direct/partial doctrinal candidates. This reallocates the existing budget; it does not raise any cap.
 
-## Goal
+### 2. Conservative doctrinal candidate reconsideration (pre-sufficiency, no new retrieval)
+Candidates currently rejected by selection only because their initial `source_type` is imperfect are reconsidered when they are verifier direct/partial **and** carry doctrinal evidence (law-review / כתב עת / book chapter / treatise / commentary / academic host / academic-legal or doctrinal analysis signals, or a title or snippet that names the doctrine asked about). Reconsidered candidates enter the same existing acquisition path (local corpus → verified cache → secondary cache → one bounded web fetch). Never reconsidered: unrelated case law, index/listing/search pages, metadata-only pages with no path to a body, news/PR pages, snippet-only items with no substantive legal content, verifier-`unrelated` items. Uses existing candidates only — no broad search, no Perplexity rerun, no LLM call.
 
-Stop dropping sources for id-space mismatch alone. Replace the strict string comparison with a rebinding step that asks the substantive question — does this source actually support the proposition in this block? — while leaving every safety gate (judgment identity, docket limitation, statute authority, authority-overstatement, commentary-in-substantive-block) exactly as it is today.
+### 3. Post-acquisition typing coverage
+Type re-mapping to a doctrinal/secondary type happens only after a body is acquired and source-integrity passes, driven by evidence in the acquired body (law-review/journal shape, chapter/treatise, commentary, academic or doctrinal analysis, Hebrew legal journal, substantive legal discussion). Listing, search-result, metadata-only, unrelated case law, news/PR, and body-less institutional pages are never re-mapped. Existing non-`other` types and primary-law types are still never overwritten.
 
-## Scope
+### 4. Light recovery floor before insufficiency
+A bounded recovery pass runs only when **all** hold: the planned task is `doctrinal_explanation`, `broad_research`, `academic_research`, `literature_map` or `seminar_planning`; the pool would enter sufficiency with fewer than 2 acquired eligible doctrinal sources; there are verifier direct/partial candidates skipped as `not_doctrinal_type` or `no_body_acquisition_attempted`; and the run budget allows it. Recovery: at most 3 candidates, local/cache first, at most 2 extra local/cache attempts, at most 1 web fetch (2 in deep/academic mode), hard added wall-clock cap 10s (15s deep/academic). On exceedance it stops, does not retry, records `recovery_budget_exhausted`, and the normal insufficiency branch proceeds.
 
-Changes are confined to the claim/source binding layer:
+Recovery never runs for `case_holding`, exact/fabricated docket, statute-only or `specific_case_or_statute` runs, and never when the pack already satisfies sufficiency.
 
-1. **New stage `stages/claimSourceRebinding.ts`** — deterministic, no LLM call. For each (block, source) pair it computes a rebinding decision from evidence already in telemetry:
-   - exact claim/facet id match (today's Rule A) → `bound_exact`
-   - parent/child facet relation (`claim::fN`) in either direction → `bound_facet`
-   - the verifier's `supported_points` for that source overlap the block text (normalized Hebrew token overlap, construct/prefix tolerant, reusing the normalizer from `specificCaseResolution.ts`) → `bound_topical`
-   - source legal area matches block legal area **and** verifier verdict is `direct`/`partial` **and** the source has an acquired body → `bound_area_direct`
-   - none of the above → `unbound`
+### 5. Pre-sufficiency candidate-pool telemetry
+For the doctrinal/academic task intents, a `candidate_pool_stabilization` telemetry block is persisted before sufficiency with: total candidates; verifier direct/partial; secondary/commentary/institutional typed; blocked by `not_doctrinal_type`; skipped as `no_body_acquisition_attempted`; secondary local lookups; cache hits; web attempts; acquired bodies; doctrinal eligible; institutional eligible; `index_or_listing` / `not_citable` counts; `listing_suppressed` count; skipped by budget; and recovery fired / reason / added ms.
 
-2. **Rule A becomes rebinding-aware** in `claimSourceMatch.ts`: a ref is dropped as `claim_mismatch` only when the rebinding decision is `unbound`. Rules B–E run unchanged on every ref that survives, so authority level, commentary use, analogy and legal-area gates keep their current strictness.
-
-3. **Binding strength is recorded, not just kept/dropped.** Each kept ref carries `binding: exact | facet | topical | area_direct`. A `court_holding` or docket-bearing block still requires a judgment-authority source, unchanged; topical rebinding never upgrades a secondary source into primary authority.
-
-4. **Limitation text becomes proportional.** `CLAIM_SUPPORT_LIMITATION_HE` currently fires whenever *any* ref was dropped. It will fire only when a substantive block ends with zero kept refs, or when a main claim keeps only non-primary support. Refs dropped while the block still holds direct support no longer trigger a caveat.
-
-5. **Telemetry** under `metadata.claim_source_match`: `rebinding` block with per-decision counts (`bound_exact`, `bound_facet`, `bound_topical`, `bound_area_direct`, `unbound`), `rebound_ref_count`, `claim_mismatch_drops_before/after`, and per-ref decision + evidence (overlap score, matched points) so the next funnel run can measure the delta directly.
-
-## Not in scope
-
-No change to retrieval, ranking, nomination, acquisition, source integrity, judgment identity validation, cache rules, footnote rendering, or drafter prompts. No new LLM call. R02 and P02 refusal behaviour must be byte-identical.
-
-## Validation
-
-Rerun the same 10 runs used by the funnel diagnostics: ACADEMIC, NATION-STATE-ACADEMIC, PAYWALL, MMM, B8, D1, D3, DARKPATTERNS, R02, P02. Regenerate the funnel with the existing read-only diagnostics script and compare against `reports/candidate-funnel/funnel.json`.
-
-Acceptance:
-- `claim_mismatch` drops of acquired, verifier-`direct` sources fall to near zero.
-- Cited footnote count rises on at least ACADEMIC, B8, NATION-STATE-ACADEMIC and D1, all still traceable to acquired bodies.
-- No block cites a source whose verifier verdict is `unrelated`.
-- No `court_holding` block gains secondary-only support; `authority_overstatements` does not grow.
-- R02 still refuses without the named judgment body; P02 still refuses the fabricated docket.
-- Unwarranted "מגבלת ביסוס" notices disappear from runs that keep direct support.
-
-Report to `reports/claim-source-rebinding/ACCEPTANCE_REPORT.md`, with the before/after funnel diff included.
+## Safety (unchanged)
+Sufficiency thresholds, claim-source-match, `claimSourceRebinding`, drafter prompts, judgment identity validation, docket limitation, statute authority rules, found-only claim-support prohibition, secondary-as-primary prohibition and footnote rendering are all untouched.
 
 ## Technical notes
+- New stage `stages/doctrinalCandidateStabilization.ts`: deterministic listing suppression, reconsideration predicate, pre-sufficiency pool metrics, and the recovery trigger predicate. Pure/deterministic parts are unit-testable.
+- `stages/secondaryBodyAcquisition.ts`: selection filters out suppressed listings, admits reconsidered candidates, and re-orders by (verifier verdict, doctrinal evidence). Body-evidence typing tightened in the existing `remapSecondaryType` path; no new limits.
+- `index.ts`: after the existing secondary-acquisition stage, evaluate the recovery predicate; if it fires, run one bounded second pass with its own reduced budget and record added ms; then persist the telemetry block under `metadata.drafter.candidate_pool_stabilization`.
+- `stages/doctrinalSourceTyping.ts`: eligibility unchanged in strictness; only reads the improved types.
+- New tests in `src/test/doctrinalCandidateStabilization.test.ts` using frozen funnel fixtures.
 
-- `SourceMatchMeta` gains `supported_points: string[]` (already present on verifier verdicts, currently not carried into the drafter source).
-- Topical overlap uses a conservative threshold; ties resolve to `unbound` (drop) so the change can only be as permissive as the evidence allows.
-- The rebinding stage is pure and unit-testable; tests go in `src/test/claimSourceRebinding.test.ts` alongside the existing gate tests.
+## Validation (staged)
+- **Stage 1 — fixtures only:** D1 legal articles become doctrinal only after body + integrity evidence; B8 administrative-law scholarship reaches eligibility; listing/index stay suppressed; unrelated case law stays unrelated; metadata-only stays ineligible; found-only still cannot support claims; R02/P02 fixtures unchanged.
+- **Stage 2 — mini live smoke:** B8, D1, and one of P02/R02 as safety control. Accept when B8 reaches ≥3 acquired bodies and ≥2 eligible doctrinal sources (or logs exact per-candidate failures), D1 reaches ≥2 acquired bodies and ≥1 eligible doctrinal source (or logs exact failures), neither falls to insufficiency solely because promising direct/partial candidates were skipped, the refusal control is unchanged, added latency is within budget, and no stale jobs/CPU kills/stubs/orphans appear. Stop here on failure.
+- **Stage 3 — full 10-query sweep once, only after Stage 2 passes:** ACADEMIC, NATION-STATE-ACADEMIC, PAYWALL, MMM, B8, D1, D3, DARKPATTERNS, R02, P02, reporting before/after pool counts, lookups, cache hits, web attempts, acquired bodies, eligible doctrinal/institutional, `not_doctrinal_type`, `no_body_acquisition_attempted`, `listing_suppressed`, recovery fired/why/ms, sufficiency branch, `claim_match_ran`, footnotes, runtime and safety controls.
+
+Report to `reports/doctrinal-candidate-pool/ACCEPTANCE_REPORT.md` with an accepted / conditional / not-accepted verdict.
