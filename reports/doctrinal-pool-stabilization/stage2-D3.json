@@ -1,0 +1,71 @@
+{
+  "id": "D3",
+  "run_id": "bced62e1-96e0-43e0-bf32-a68a3d5d9eea",
+  "job_id": "9a16e724-59e0-4629-badf-7441796b11dd",
+  "ms": 141357,
+  "status": "done",
+  "branch": null,
+  "answer_length": 1296,
+  "footnotes": 1,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": true,
+        "total_ms": 15000,
+        "max_candidates": 3,
+        "max_web_attempts": 2,
+        "max_local_lookups": 2
+      },
+      "reason": "eligible_floor_already_met",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "broad_research",
+    "snapshot_after": {
+      "not_citable": 20,
+      "acquired_bodies": 4,
+      "secondary_typed": 2,
+      "verifier_direct": 2,
+      "index_or_listing": 20,
+      "total_candidates": 31,
+      "verifier_partial": 5,
+      "doctrinal_eligible": 2,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 4,
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 4
+    },
+    "snapshot_before": {
+      "not_citable": 20,
+      "acquired_bodies": 4,
+      "secondary_typed": 2,
+      "verifier_direct": 2,
+      "index_or_listing": 20,
+      "total_candidates": 31,
+      "verifier_partial": 5,
+      "doctrinal_eligible": 2,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 4,
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 4
+    },
+    "user_task_intent": "doctrinal_explanation",
+    "listing_suppressed": 0,
+    "listing_suppressed_ids": [],
+    "reconsidered_candidate_ids": []
+  },
+  "secondary_acquisition": null,
+  "pass": true,
+  "failures": [],
+  "answer": "חוק שוויון ההזדמנויות בעבודה אוסר אפליה מחמת היריון — המעסיק לא יפלה עובד/ת או דורש/ת עבודה מחמת היריון, והוראת החוק משמשת כמניע ישיר לאיסור פיטורים על רקע היריון.¹\n\nאיננה מוצגת כאן סקירת פסיקה: בסקירה זו לא נכללו פסקי-דין ברי-שימוש ולכן התשובות מבוססות על הטקסטים החקיקתיים בלבד.\n\nלגבי היקף הזמן של ההגנה — במקורות החקיקתיים שאותרו הוראת איסור האפליה עצמה מובעת אך לא נמצא במקורות אלו עיגון מפורש המגדיר מתי בדיוק מתחילה ומתי מסתיימת ההגנה מפני פיטורים בשל היריון; מכל מקום, נוסח האיסור מכסה אפליה \"מחמת היריון\" בהתאם לנוסח החוק.¹\n\nבעניין יוצאים מן הכלל — במקורות שאותרו לא נמצא סעיף בחקיקה המסמיך או מניח במפורש חריג שמאפשר לפטר עובדת בשל היותה בהריון; עם זאת החוק עצמו עוסק באיסור אפליה ואינו מבאר במסגרת החומר שסופק מתי פיטורין יהיו מותרים מטעמים ענייניים שאינם קשורים להריון, ולכן שאלות על נסיבות שיסתמו פתח לפיטורין ענייני נותרות פתוחות במסגרת מסמך זה.¹\n\nסעדי העובדת: לפי הנוסח החוקתי המקומי שנכלל בחומר שסופק, אסור לפטר מחמת היריון וניתן להפעיל הליכים ושלל סעדיים — בין השאר זכאות לפיצויי פיטורים בהתאם לחוק פיצויי פיטורים, וכן אפשרות לפנות לגורמים האחראים על אכיפת איסורי אפליה; עם זאת, במקורות שנמסרו כאן אין הוראה מפורשת המפרטת את כל סוגי הסעדים, לא צוינו מנגנוני הוכחה מיוחדים ואין הוראה מפורשת על נטל הראיה בתביעות מסוג זה, ולכן היקף הסעד המעשי ופרטי נטל הראיה אינם נקבעים בסקירה זו.¹"
+}

@@ -27,7 +27,11 @@
  *   - Mode-gated: broad_research / academic_research / narrow_doctrine only.
  */
 
-import type { Candidate } from "../lib/types.ts";
+import type { Candidate, SupportLevel } from "../lib/types.ts";
+import {
+  assessDoctrinalReconsideration,
+  assessListingSuppression,
+} from "./doctrinalCandidateStabilization.ts";
 import { extractDocumentText } from "../lib/attachments.ts";
 import { processExtractedBody } from "./postExtract.ts";
 import { decodeHebrew } from "./judgmentTextAcquisition.ts";
@@ -194,6 +198,13 @@ export interface SecondaryBodyAcquisitionReport {
   acquired_candidate_ids: string[];
   bibliography_only_candidate_ids: string[];
   skipped_by_budget: number;
+  /** doctrinal_candidate_pool_stabilization_v1 — conservative listing drops. */
+  listing_suppressed?: number;
+  listing_suppressed_ids?: string[];
+  /** Candidates admitted by the doctrinal reconsideration predicate only. */
+  reconsidered_candidate_ids?: string[];
+  /** True for the bounded post-verifier recovery pass. */
+  recovery_pass?: boolean;
   per_candidate: SecondaryCandidateReport[];
   stage_stop_reason:
     | "completed"
@@ -566,6 +577,22 @@ export interface SecondaryBodyAcquisitionInput {
   enabled?: boolean;
   retrieval_budget?: { exceeded: () => boolean; allowExtraction?: (bytes: number) => boolean };
   markDurable?: SecondaryStageSink;
+  // ── doctrinal_candidate_pool_stabilization_v1 ───────────────────────────
+  /** Conservative index/listing/search-page suppression before budget spend. */
+  suppress_listings?: boolean;
+  /**
+   * Verifier best-support per candidate. Enables the reconsideration
+   * predicate: direct/partial candidates with doctrinal signals get ONE
+   * acquisition attempt even when their initial type is imperfect. Signals
+   * never confer eligibility — only an attempt.
+   */
+  support_by_candidate?: Map<string, SupportLevel>;
+  /** Bounded recovery pass: only these candidate ids are considered. */
+  restrict_to_candidate_ids?: string[];
+  /** Per-pass budget override (recovery pass runs much tighter). */
+  limits?: { max_local_lookups?: number; max_web_attempts?: number; total_ms?: number };
+  /** Marks the report as the recovery pass (telemetry only). */
+  recovery_pass?: boolean;
 }
 
 export async function runSecondaryBodyAcquisition(
@@ -590,6 +617,10 @@ export async function runSecondaryBodyAcquisition(
     acquired_candidate_ids: [],
     bibliography_only_candidate_ids: [],
     skipped_by_budget: 0,
+    listing_suppressed: 0,
+    listing_suppressed_ids: [],
+    reconsidered_candidate_ids: [],
+    recovery_pass: input.recovery_pass === true,
     per_candidate: [],
     stage_stop_reason: stop,
     ms: Date.now() - t0,
@@ -603,17 +634,64 @@ export async function runSecondaryBodyAcquisition(
     return base("retrieval_budget_exceeded", "retrieval_budget_exceeded");
   }
 
+  const MAX_LOCAL_LOOKUPS = input.limits?.max_local_lookups ??
+    SECONDARY_BODY_LIMITS.MAX_LOCAL_LOOKUPS;
+  const MAX_WEB_ATTEMPTS = input.limits?.max_web_attempts ??
+    SECONDARY_BODY_LIMITS.MAX_WEB_ATTEMPTS;
+  const TOTAL_MS = input.limits?.total_ms ?? SECONDARY_BODY_LIMITS.TOTAL_MS;
+
   const budgetExceeded = () =>
     (input.retrieval_budget?.exceeded() ?? false) ||
-    Date.now() - t0 > SECONDARY_BODY_LIMITS.TOTAL_MS;
+    Date.now() - t0 > TOTAL_MS;
+
+  // doctrinal_candidate_pool_stabilization_v1 — restrict / suppress / reconsider.
+  const restrict = input.restrict_to_candidate_ids
+    ? new Set(input.restrict_to_candidate_ids)
+    : null;
+  const listingSuppressedIds: string[] = [];
+  const reconsideredIds: string[] = [];
 
   const selected: Array<{ c: Candidate; evidence: string[] }> = [];
   for (const c of input.candidates) {
+    if (restrict && !restrict.has(c.candidate_id)) continue;
     const sel = selectSecondaryCandidate(c);
-    if (sel.eligible) selected.push({ c, evidence: sel.evidence });
+    let evidence = sel.evidence;
+    let eligible = sel.eligible;
+
+    // Reconsideration: an imperfectly typed but clearly doctrinal-looking
+    // direct/partial candidate earns ONE acquisition attempt. This never
+    // grants doctrinal eligibility — that still requires an acquired body,
+    // source integrity and post-acquisition typing downstream.
+    if (!eligible && input.support_by_candidate) {
+      const rec = assessDoctrinalReconsideration(
+        c,
+        input.support_by_candidate.get(c.candidate_id) ?? null,
+      );
+      if (rec.reconsider) {
+        eligible = true;
+        evidence = [...evidence, ...rec.evidence.map((e) => `reconsidered:${e}`)];
+        reconsideredIds.push(c.candidate_id);
+      }
+    }
+    if (!eligible) continue;
+
+    if (input.suppress_listings !== false) {
+      const listing = assessListingSuppression(c);
+      if (listing.suppress) {
+        listingSuppressedIds.push(c.candidate_id);
+        continue;
+      }
+    }
+    selected.push({ c, evidence });
   }
   if (selected.length === 0) {
-    return { ...base("no_secondary_candidates", "no_eligible_candidates", true), ran: true };
+    return {
+      ...base("no_secondary_candidates", "no_eligible_candidates", true),
+      ran: true,
+      listing_suppressed: listingSuppressedIds.length,
+      listing_suppressed_ids: listingSuppressedIds,
+      reconsidered_candidate_ids: reconsideredIds,
+    };
   }
 
   // Richer / more clearly doctrinal candidates first.
@@ -686,7 +764,7 @@ export async function runSecondaryBodyAcquisition(
     }
 
     // ── 1. local DB / cache body first (cheapest, always preferred) ────────
-    if (localLookups < SECONDARY_BODY_LIMITS.MAX_LOCAL_LOOKUPS) {
+    if (localLookups < MAX_LOCAL_LOOKUPS) {
       localLookups++;
       row.local_lookup_attempted = true;
       try {
@@ -728,7 +806,7 @@ export async function runSecondaryBodyAcquisition(
       row.failure_reason = "host_not_allowed_for_secondary_fetch";
     } else if (isAccessControlledUrl(url)) {
       row.failure_reason = "access_controlled_url";
-    } else if (webAttempts >= SECONDARY_BODY_LIMITS.MAX_WEB_ATTEMPTS) {
+    } else if (webAttempts >= MAX_WEB_ATTEMPTS) {
       row.skipped_by_budget = true;
       row.failure_reason = "web_attempt_budget_exhausted";
       skippedByBudget++;
@@ -757,7 +835,7 @@ export async function runSecondaryBodyAcquisition(
           const links = extractFullTextLinks(fetched.html, fetched.final_url);
           row.fulltext_links_found = links.length;
           for (const link of links) {
-            if (webAttempts >= SECONDARY_BODY_LIMITS.MAX_WEB_ATTEMPTS || budgetExceeded()) {
+            if (webAttempts >= MAX_WEB_ATTEMPTS || budgetExceeded()) {
               row.skipped_by_budget = true;
               break;
             }
@@ -896,6 +974,10 @@ export async function runSecondaryBodyAcquisition(
     acquired_candidate_ids: acquired,
     bibliography_only_candidate_ids: bibliographyOnly,
     skipped_by_budget: skippedByBudget,
+    listing_suppressed: listingSuppressedIds.length,
+    listing_suppressed_ids: listingSuppressedIds,
+    reconsidered_candidate_ids: reconsideredIds,
+    recovery_pass: input.recovery_pass === true,
     per_candidate: rows,
     stage_stop_reason: stop,
     ms: Date.now() - t0,

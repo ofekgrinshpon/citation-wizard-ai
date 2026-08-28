@@ -1,0 +1,75 @@
+{
+  "id": "D1-SWEEP",
+  "run_id": "4132b280-e55f-4a6d-9a7c-f03f770e66bf",
+  "job_id": "0ef3c425-ef65-4a28-b827-8f094da2b409",
+  "ms": 151351,
+  "status": "done",
+  "branch": "insufficient_sources_limitation",
+  "answer_length": 200,
+  "footnotes": 0,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": true,
+        "total_ms": 15000,
+        "max_candidates": 3,
+        "max_web_attempts": 2,
+        "max_local_lookups": 2
+      },
+      "reason": "no_promising_skipped_candidates",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "broad_research",
+    "snapshot_after": {
+      "not_citable": 21,
+      "acquired_bodies": 4,
+      "secondary_typed": 1,
+      "verifier_direct": 2,
+      "index_or_listing": 21,
+      "total_candidates": 30,
+      "verifier_partial": 2,
+      "doctrinal_eligible": 1,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 2,
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 2
+    },
+    "snapshot_before": {
+      "not_citable": 21,
+      "acquired_bodies": 4,
+      "secondary_typed": 1,
+      "verifier_direct": 2,
+      "index_or_listing": 21,
+      "total_candidates": 30,
+      "verifier_partial": 2,
+      "doctrinal_eligible": 1,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 2,
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 2
+    },
+    "user_task_intent": "doctrinal_explanation",
+    "listing_suppressed": 1,
+    "listing_suppressed_ids": [
+      "b17949ae-8f1f-4a4d-aea4-c1a526e6d149"
+    ],
+    "reconsidered_candidate_ids": []
+  },
+  "secondary_acquisition": null,
+  "pass": false,
+  "failures": [
+    "insufficiency_branch"
+  ],
+  "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה."
+}

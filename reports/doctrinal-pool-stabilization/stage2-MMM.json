@@ -1,0 +1,71 @@
+{
+  "id": "MMM",
+  "run_id": "7b1491dc-d2b9-45fb-916a-b3af5f60d0b8",
+  "job_id": "0f65c176-8338-4b79-b16f-e9d884948fee",
+  "ms": 191424,
+  "status": "done",
+  "branch": null,
+  "answer_length": 1473,
+  "footnotes": 1,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": false,
+        "total_ms": 10000,
+        "max_candidates": 3,
+        "max_web_attempts": 1,
+        "max_local_lookups": 2
+      },
+      "reason": "eligible_floor_already_met",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "narrow_doctrine",
+    "snapshot_after": {
+      "not_citable": 1,
+      "acquired_bodies": 6,
+      "secondary_typed": 3,
+      "verifier_direct": 1,
+      "index_or_listing": 1,
+      "total_candidates": 23,
+      "verifier_partial": 13,
+      "doctrinal_eligible": 3,
+      "institutional_typed": 1,
+      "institutional_eligible": 1,
+      "blocked_not_doctrinal_type": 10,
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 6
+    },
+    "snapshot_before": {
+      "not_citable": 1,
+      "acquired_bodies": 6,
+      "secondary_typed": 3,
+      "verifier_direct": 1,
+      "index_or_listing": 1,
+      "total_candidates": 23,
+      "verifier_partial": 13,
+      "doctrinal_eligible": 3,
+      "institutional_typed": 1,
+      "institutional_eligible": 1,
+      "blocked_not_doctrinal_type": 10,
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 6
+    },
+    "user_task_intent": "doctrinal_explanation",
+    "listing_suppressed": 0,
+    "listing_suppressed_ids": [],
+    "reconsidered_candidate_ids": []
+  },
+  "secondary_acquisition": null,
+  "pass": true,
+  "failures": [],
+  "answer": "בסיכום ראשוני של מסמכי מרכז המחקר והמידע של הכנסת ושל דוחות רגולטוריים עולה תמונה ממוקדת של פערים באכיפת חוקי העבודה: מסמכים פרלמנטריים מזהים מחסור במשאבים ובקיבולת פיקוח, חוסר סנכרון מדיניותי ומגבלות סמכויות שמקשות על אכיפה אפקטיבית.\n\nדוחות רגולטוריים של מינהל הסדרה ואכיפה ושל גופים ממשלתיים מתעדים בעיות מבניות ונתוני ביצוע שמצביעים על מגבלות אכיפה: שיעורי בדיקה ועיצום המופיעים בדוחות סיכום 2025–2021 מעידים על יכולת בדיקה מוגבלת יחסית להיקף ההעסקה, וכך גם על בעיות הסדרה במשאבי האכיפה והשליטה המבצעית.\n\nהמחקרים והדוחות מדגישים קבוצות בעלות חשיפה מיוחדת לאי־אכיפה — עובדי זרים ועובדים בשכר נמוך — ומצביעים על קשיים מוכחים בשיקום פגיעות כלכליות: דוחות ממ\"מ, משרד הכלכלה ומאמרים אקדמיים מתעדים שורת בעיות פרקטיות המעצימות את פגיעותן של קבוצות אלה.¹\n\nבממסמכים אלה מופיעות המלצות ממוקדות למדיניות אכיפה — בין השאר ריכוז סמכויות אכיפה, הגדלת משאבים וקנסות מרתיעים, שיפור איסוף נתונים ושיתוף בין גופים, ומנגנוני סיוע מהירים לעובדים — אך הדיווחים מצביעים גם על מגבלות ביישום המלצות אלה ברמה המערכותית.\n\nהסתייגות חשובה: הטקסט התומך שנמצא במסמכים שסופקו קצר ואינו כולל נוסח מפורט של הלכות או שלל פסיקה מלאה; לכן ניסוח הקביעות נעשה על בסיס הממצאים והתיאוריות שבדוחות אלה בלבד, ובמקומות בהם התמיכה הייתה חלקית נוסחה ההעמדה בזהירות המתבקשת.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+}
