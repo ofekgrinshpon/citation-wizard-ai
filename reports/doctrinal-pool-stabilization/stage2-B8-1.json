@@ -1,0 +1,71 @@
+{
+  "id": "B8-1",
+  "run_id": "46a749e1-c567-4710-86b0-6dbcfd1f0d6e",
+  "job_id": "2d776ab7-1d4b-4619-a87b-5d1fff45310d",
+  "ms": 162124,
+  "status": "done",
+  "branch": null,
+  "answer_length": 1702,
+  "footnotes": 4,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": true,
+        "total_ms": 15000,
+        "max_candidates": 3,
+        "max_web_attempts": 2,
+        "max_local_lookups": 2
+      },
+      "reason": "eligible_floor_already_met",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "broad_research",
+    "snapshot_after": {
+      "not_citable": 17,
+      "acquired_bodies": 6,
+      "secondary_typed": 2,
+      "verifier_direct": 4,
+      "index_or_listing": 17,
+      "total_candidates": 31,
+      "verifier_partial": 4,
+      "doctrinal_eligible": 2,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 4,
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 3
+    },
+    "snapshot_before": {
+      "not_citable": 17,
+      "acquired_bodies": 6,
+      "secondary_typed": 2,
+      "verifier_direct": 4,
+      "index_or_listing": 17,
+      "total_candidates": 31,
+      "verifier_partial": 4,
+      "doctrinal_eligible": 2,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 4,
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 3
+    },
+    "user_task_intent": "literature_map",
+    "listing_suppressed": 0,
+    "listing_suppressed_ids": [],
+    "reconsidered_candidate_ids": []
+  },
+  "secondary_acquisition": null,
+  "pass": true,
+  "failures": [],
+  "answer": "- חוק יסוד: ישראל — מדינת הלאום של העם היהודי קובע במפורש את זהות המדינה כ\"מדינת העם היהודי\" ומכיל הוראות על סמלים, שפה ועידוד יישוב — נוסח החוק מהווה את הבסיס החוקתי לניתוח (ולכן יש להתחיל את כל פרק בסעיף זה); אין כאן סקירת פסיקה משום שלא נכללו פסקי דין ברי־שימוש בבסיס הסמכות שנקבע לתשובה זו.¹\n- קווי הביקורת הנורמטיביים המרכזיים המופיעים בספרות כוללים: טענות על חוסר התאמה לעקרונות השוויון והדמוקרטיה, חשש שהנוסח יאפשר מדיניות עדיפויות לאומית, וטענה כי החוק מעגן קביעת עדיפות לאומית על פני עקרונות שוויון במצבים מסוימים.³\n- בנוגע להשפעה על מיעוטים, עבודות מחקר מדגישות כי החוק עלול להחליש מעגלי הגנה מפני אפליה דרך פרשנויות מנהליות ומשפטיות ולהשפיע במיוחד על מעמדו של המיעוט הלא־יהודי בתוך מערכת הזכויות; זוויות אלה מוכרות בהתייחסויות אקדמיות מובילות.⁴\n- ניתוח משפטי־תאורטי במקורות בוחן את משמעות מתן תכלית לאומי כחוק יסוד, כשהדיון מתמקד בשאלות על מעמד נורמות מתנגשות, על התנגשות בין ערכי יסוד ועל מקומם של חוקי היסוד בעיצוב מעגל הביקורת החוקתית.²\n- חלק מהספרות טוענת במפורש כי ניסוח חוק היסוד עשוי ליצור מתח פרשני בין עקרון הלאום לבין זכות היסוד, ולבנות מסגרות פרשניות שבהן ערכים לאומיים ייחשבו כעוגן מנחה בבחירות סדודות של מדיניות ציבורית — טענה שיש לבחון בקפדנות בפרק דוקטרינרי על סמכות שיפוטית וביקורת שיפוטית.²\n- הצעות מעשיות לקריאת רקע לפרק: לכלול תחילה את נוסח החוק כמקור ראשי; להמשיך בעבודות ניתוח הממוקדות ביחס החוק למיעוטים ולמשפט הבין‑לאומי; כמינימום בהצעה זו מומלצים מאמרים וספרים כמו המחקרים המצוטטים כאן.¹\n\n**מגבלת ביסוס:** התמיכה שאותרה לחלק מהטענות היא ספרותית/פרשנית בלבד, ללא מקור ראשוני (חקיקה או פסיקה מחייבת) שאומת לאותה טענה. יש להתייחס לניסוח בזהירות ולאמת מול המקור הראשוני.\n\n> קריאת גוף פסקי הדין הופסקה מטעמי מגבלת עיבוד, ולכן ייתכן שחלק מהמקורות נותחו לפי מטא-נתונים בלבד."
+}

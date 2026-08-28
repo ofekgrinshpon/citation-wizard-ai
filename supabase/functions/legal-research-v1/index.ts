@@ -45,6 +45,11 @@ import { runJudgmentTextAcquisition } from "./stages/judgmentTextAcquisition.ts"
 import { runStatuteTextAcquisition } from "./stages/statuteTextAcquisition.ts";
 import { runSecondaryBodyAcquisition } from "./stages/secondaryBodyAcquisition.ts";
 import {
+  bestSupportByCandidate,
+  buildDoctrinalPoolSnapshot,
+  decideDoctrinalRecovery,
+} from "./stages/doctrinalCandidateStabilization.ts";
+import {
   annotateCanonicalUsage,
   runCanonicalAuthorityAcquisition,
 } from "./stages/canonicalAuthorityAcquisition.ts";
@@ -1212,6 +1217,9 @@ async function handle(req: Request): Promise<Response> {
     candidates: pool.candidates,
     depth_mode: sourceDepth.depth_mode ?? null,
     enabled: !fastLaneHit && !budget.exceeded(),
+    // doctrinal_candidate_pool_stabilization_v1 — drop clear index/listing
+    // pages before they consume acquisition budget.
+    suppress_listings: true,
     retrieval_budget: {
       exceeded: () => budget.exceeded(),
       allowExtraction: (bytes: number) => budget.allowExtraction?.(bytes) ?? true,
@@ -1797,6 +1805,121 @@ async function handle(req: Request): Promise<Response> {
     })
     .filter((x): x is NonNullable<typeof x> => x !== null);
 
+  // ─── doctrinal_candidate_pool_stabilization_v1 ──────────────────────────
+  // Pre-sufficiency pool snapshot + a strictly bounded recovery pass. Recovery
+  // may fail safely: nothing here forces sufficiency success — when it does not
+  // produce acquired, integrity-passing, eligible doctrinal sources the normal
+  // insufficiency branch runs and the exact failure is logged.
+  const stabilizationAttemptedIds = [
+    ...secondaryBodyAcquisition.acquired_candidate_ids,
+    ...secondaryBodyAcquisition.bibliography_only_candidate_ids,
+  ];
+  const poolSnapshotBefore = buildDoctrinalPoolSnapshot({
+    candidates: pool.candidates,
+    verdicts: verifier.verdicts,
+    attempted_candidate_ids: stabilizationAttemptedIds,
+  });
+  const recoveryDecision = decideDoctrinalRecovery({
+    snapshot: poolSnapshotBefore,
+    plan: sourceUseIntent.plan,
+    depth_mode: sourceDepth.depth_mode ?? null,
+    candidates: pool.candidates,
+    verdicts: verifier.verdicts,
+    budget_allows: !budget.exceeded(),
+  });
+  let recoveryReport: Awaited<ReturnType<typeof runSecondaryBodyAcquisition>> | null = null;
+  let poolSnapshotAfter = poolSnapshotBefore;
+  if (recoveryDecision.should_run) {
+    await budget.markDurable("doctrinal_pool_recovery_start", {
+      candidates: recoveryDecision.candidate_ids.length,
+      doctrinal_eligible_before: poolSnapshotBefore.doctrinal_eligible,
+    });
+    try {
+      recoveryReport = await runSecondaryBodyAcquisition({
+        admin,
+        candidates: pool.candidates,
+        depth_mode: sourceDepth.depth_mode ?? null,
+        enabled: true,
+        recovery_pass: true,
+        suppress_listings: true,
+        restrict_to_candidate_ids: recoveryDecision.candidate_ids,
+        support_by_candidate: bestSupportByCandidate(verifier.verdicts),
+        limits: {
+          max_local_lookups: recoveryDecision.budget.max_local_lookups,
+          max_web_attempts: recoveryDecision.budget.max_web_attempts,
+          total_ms: recoveryDecision.budget.total_ms,
+        },
+        retrieval_budget: {
+          exceeded: () => budget.exceeded(),
+          allowExtraction: (bytes: number) => budget.allowExtraction?.(bytes) ?? true,
+        },
+        markDurable: (name, detail) => budget.markDurable(name, detail),
+      });
+      if (recoveryReport.acquired_candidate_ids.length > 0) {
+        const byId = new Map(pool.candidates.map((c) => [c.candidate_id, c]));
+        for (const row of pool.integrity) {
+          const c = byId.get(row.candidate_id);
+          const integ = ((c?.metadata ?? {}) as Record<string, unknown>).source_integrity as
+            | { text_usability?: string; integrity_flags?: string[] }
+            | undefined;
+          if (!integ) continue;
+          row.text_usability = String(integ.text_usability ?? row.text_usability);
+          row.integrity_flags = integ.integrity_flags ?? row.integrity_flags;
+        }
+      }
+    } catch (err) {
+      await budget.markDurable("doctrinal_pool_recovery_failed", {
+        reason: err instanceof Error ? err.message : String(err),
+      });
+    }
+    poolSnapshotAfter = buildDoctrinalPoolSnapshot({
+      candidates: pool.candidates,
+      verdicts: verifier.verdicts,
+      attempted_candidate_ids: [
+        ...stabilizationAttemptedIds,
+        ...(recoveryReport?.acquired_candidate_ids ?? []),
+        ...(recoveryReport?.bibliography_only_candidate_ids ?? []),
+      ],
+    });
+    await budget.markDurable("doctrinal_pool_recovery_done", {
+      acquired: recoveryReport?.acquired_candidate_ids.length ?? 0,
+      doctrinal_eligible_after: poolSnapshotAfter.doctrinal_eligible,
+      stop_reason: recoveryReport?.stage_stop_reason ?? "exception",
+    });
+  }
+  const candidatePoolStabilization = {
+    version: "doctrinal_candidate_pool_stabilization_v1",
+    depth_mode: sourceDepth.depth_mode ?? null,
+    user_task_intent: sourceUseIntent.plan?.user_task_intent ?? null,
+    snapshot_before: poolSnapshotBefore,
+    snapshot_after: poolSnapshotAfter,
+    listing_suppressed: secondaryBodyAcquisition.listing_suppressed ?? 0,
+    listing_suppressed_ids: secondaryBodyAcquisition.listing_suppressed_ids ?? [],
+    reconsidered_candidate_ids: secondaryBodyAcquisition.reconsidered_candidate_ids ?? [],
+    recovery: {
+      considered: true,
+      ran: recoveryDecision.should_run,
+      reason: recoveryDecision.reason,
+      candidate_ids: recoveryDecision.candidate_ids,
+      budget: recoveryDecision.budget,
+      acquired_candidate_ids: recoveryReport?.acquired_candidate_ids ?? [],
+      bibliography_only_candidate_ids: recoveryReport?.bibliography_only_candidate_ids ?? [],
+      stop_reason: recoveryReport?.stage_stop_reason ?? null,
+      ms: recoveryReport?.ms ?? 0,
+      failures: (recoveryReport?.per_candidate ?? [])
+        .filter((r) => !r.ok)
+        .map((r) => ({
+          candidate_id: r.candidate_id,
+          url: r.url,
+          failure_reason: r.failure_reason,
+          web_result: r.web_result,
+          substantive_reason: r.substantive_reason,
+        })),
+      eligibility_gain: poolSnapshotAfter.doctrinal_eligible -
+        poolSnapshotBefore.doctrinal_eligible,
+    },
+  };
+
   // V2.1c is the default drafter (structured blocks + deterministic
   // footnoteBuilder). The legacy Markdown baseline `runDrafter` remains
   // imported for easy revert — re-point this call to `runDrafter(...)` and
@@ -2049,6 +2172,7 @@ async function handle(req: Request): Promise<Response> {
 
   const drafterMeta = {
 
+    candidate_pool_stabilization: candidatePoolStabilization,
     ok: drafter.ok,
     model_initial: drafter.model_initial,
     model_final: drafter.model_final,

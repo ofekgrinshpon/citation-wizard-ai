@@ -1,0 +1,71 @@
+{
+  "id": "ACADEMIC",
+  "run_id": "80c26172-05e8-4b19-a0b0-d996d8ec14e9",
+  "job_id": "5849d910-6922-4560-997f-03c89e023a82",
+  "ms": 201788,
+  "status": "done",
+  "branch": null,
+  "answer_length": 1794,
+  "footnotes": 2,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": true,
+        "total_ms": 15000,
+        "max_candidates": 3,
+        "max_web_attempts": 2,
+        "max_local_lookups": 2
+      },
+      "reason": "eligible_floor_already_met",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "academic_research",
+    "snapshot_after": {
+      "not_citable": 16,
+      "acquired_bodies": 6,
+      "secondary_typed": 5,
+      "verifier_direct": 6,
+      "index_or_listing": 16,
+      "total_candidates": 30,
+      "verifier_partial": 11,
+      "doctrinal_eligible": 5,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 13,
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 10
+    },
+    "snapshot_before": {
+      "not_citable": 16,
+      "acquired_bodies": 6,
+      "secondary_typed": 5,
+      "verifier_direct": 6,
+      "index_or_listing": 16,
+      "total_candidates": 30,
+      "verifier_partial": 11,
+      "doctrinal_eligible": 5,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 13,
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 10
+    },
+    "user_task_intent": "literature_map",
+    "listing_suppressed": 0,
+    "listing_suppressed_ids": [],
+    "reconsidered_candidate_ids": []
+  },
+  "secondary_acquisition": null,
+  "pass": true,
+  "failures": [],
+  "answer": "- קרא/י תחילה את פסקי־הדין המרכזיים של בית המשפט העליון שעיצבו את טיפול השופטים בעילת הסבירות; מומלץ להתמקד בין היתר בבחינת בג\"ץ לשכת מנהלי ההשקעות (1997) ובהדיונים המהותיים על ביטול־ועיגון העילה בעשורים האחרונים.\n- עיין/י בספרות המערכתית והמאמרים האקדמיים שמפרקים את התהוות הדוקטרינה ומציעים מסגרות ניתוחיות — במיוחד מאמרים המוקדשים להתפתחות עילת הסבירות ולהשלכותיה התיאורטיות והפרקטיות.²\n- למד/י את הדיון על הבחנות פרשניות מרכזיות — למשל יחס הסבירות אל מידתיות, המונח 'חוסר סבירות קיצוני' ושיטות ניתוח שונות כפי שמתוארים במאמרים ביקורתיים ופרשניים.\n- כלול/י בחומרי הקריאה מקורות השוואתיים ובינלאומיים כדי להעמיק את ההבנה ההיסטורית והתאורטית (מקורות השוואתיים על Wednesbury וביקורת שיפוטית משווים יעזרו בהשוואת סטנדרטים).¹\n- בדוק/י את המסגרת החוקית והמנהלית הרלבנטית שבה פועלות ההחלטות המנהלתיות — קרא/י חוקים ותקנות רלוונטיים כדוגמת חוק בינוי ופינוי של אזורי שיקום, וכן מאמרים המעמיקים בעיגון החוקתי של נורמות מוסדיות.\n- השלם/י את העבודה באמצעות משאבי מחקר מעשיים: מאגרי פסיקה, תקצירים של ערכאות נמוכות וחוות דעת ענפיות — וגם מאמרי סיכום וניתוח יסייעו לבחור דוגמאות ויישומים פרקטיים לעילת הסבירות.\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- בג\"ץ 1715/97 - לשכת מנהלי ההשקעות בישראל נ' שר האוצר - judgments.org.il — https://judgments.org.il/judgments/%D7%91%D7%92%D7%A5-1715-97-%D7%9C%D7%A9%D7%9B%D7%AA-%D7%9E%D7%A0%D7%94%D7%9C%D7%99-%D7%94%D7%94%D7%A9%D7%A7%D7%A2%D7%95%D7%AA-%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0-%D7%A9%D7%A8-%D7%94/\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+}

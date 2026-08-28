@@ -1,0 +1,85 @@
+{
+  "id": "D1-DIAG",
+  "run_id": "18cd0442-bd35-4b72-bc44-98e722d9df25",
+  "job_id": "265c589b-27a3-4306-a6f3-dabc4622e343",
+  "ms": 212734,
+  "status": "done",
+  "branch": null,
+  "answer_length": 2374,
+  "footnotes": 2,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": true,
+        "total_ms": 15000,
+        "max_candidates": 3,
+        "max_web_attempts": 2,
+        "max_local_lookups": 2
+      },
+      "reason": "eligible_floor_already_met",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "broad_research",
+    "snapshot_after": {
+      "not_citable": 22,
+      "acquired_bodies": 4,
+      "secondary_typed": 2,
+      "verifier_direct": 4,
+      "index_or_listing": 22,
+      "total_candidates": 30,
+      "verifier_partial": 3,
+      "doctrinal_eligible": 2,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 5,
+      "reconsideration_rejections": {
+        "already_attempted": 1,
+        "primary_law_or_case_law": 1,
+        "listing_suppressed:integrity_index_or_listing": 3
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 4
+    },
+    "snapshot_before": {
+      "not_citable": 22,
+      "acquired_bodies": 4,
+      "secondary_typed": 2,
+      "verifier_direct": 4,
+      "index_or_listing": 22,
+      "total_candidates": 30,
+      "verifier_partial": 3,
+      "doctrinal_eligible": 2,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 5,
+      "reconsideration_rejections": {
+        "already_attempted": 1,
+        "primary_law_or_case_law": 1,
+        "listing_suppressed:integrity_index_or_listing": 3
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 4
+    },
+    "user_task_intent": "doctrinal_explanation",
+    "listing_suppressed": 3,
+    "listing_suppressed_ids": [
+      "49ceff5c-bab0-429d-9266-114285c906c6",
+      "ed7b0c40-5ba8-4413-b5e6-6ae16a1fb596",
+      "7dab4198-f6d1-48ab-a978-1645afef5078"
+    ],
+    "reconsidered_candidate_ids": []
+  },
+  "secondary_acquisition": null,
+  "pass": true,
+  "failures": [],
+  "answer": "בסיס מבחן המידתיות בדוקטרינה הישראלית מצוי בחוק-יסוד: כבוד האדם וחירותו, אשר בסעיף ההגבלה קובע כי פגיעה בזכויות מותנית בחוק ההולם את ערכיה של מדינת ישראל, שנועד לתכלית ראויה ובמידה שאינה עולה על הנדרש; על בסיס נוסח זה בנויות שלושת מרכיבי המידתיות המקובלים: התאמה (suitability), נחיצות/חוסר אלטרנטיבה פחות פוגעת, ואיזון בין המטרה לזכות המוגנת.\n\nבהיבט ההיסטורי־דוקטרינרי, במקורות שאותרו לא נמצא נוסח פסק דין מחייב המובא כאן, אך הספרות המשפטית—ובמיוחד ניתוחו של אהרן ברק—מתארת את התפתחות המבחן ממבחני סבירות ו necessity פחות מובנים לעבר בנייה מובנית של שלבי מידתיות; כתיבתו מהווה את מקור ההשראה המרכזי להבניית שלבי המבחן כפי שהם נדונים כיום בספרות הישראלית.²\n\nבאישור היישום המעשי מתוכננים השלבים באופן הבא: ראשית בחינת התאמה between האמצעי והמטרה; שנית מבחן הנחיצות—האם קיים אמצעי חלופי שפוגע פחות בזכות; ושלישית שקלול ואיזון מיטבי בין חומרת הפגיעה לבין חשיבות המטרה. היישום מעשי ומתקבל הן בספרות של ברק והן בדיונים על הטמעת המידתיות במשפט המנהלי, כאשר ההבחנה לפרקטיקה משתנה על פי אופיה של הזכות והנסיבות הציבוריות; יש לציין שבמקורות שאותרו לא הובאו כאן פסקי דין קונקרטיים לדוגמא.\n\nביקורות וסייגים שנדונו בספרות מצביעים על מספר מגבלות: נטען כי המידתיות עלולה להיטמע מעבר למסגרות המתאימות ולהחליש הבחנה בין סוגי זכויות, כי היא פתוחה לפרשנות שיפוטית רחבה שעלולה להעצים שיפוטיות שיפוטית, וכי קיימת חפיפה מתוחה בין מידתיות לדרישת הסבירות במינהלי — מה שמוליד ויכוח על תחום השיפוט של בתי המשפט ושאלת מרווח השיפוט שנניח לצד הרשות המבצעת. כל הנקודות הללו מתוארות בביקורת האקדמית שנמצאה במקורות שאותרו ויש לנסח אותן בזהירות מאחר שמדובר בתגובות ספרותיות ולא בנוסח פסיקתי מחייב.¹\n\nלגבי התוצאות והסעד: במקורות החוקתיים שסופקו אין נוסח שמפרט סנקציות או הנחיות פרוצדורליות אחידות; הספרות הדנה במידתיות מתארת אפשרויות פרשניות ותרפויטיות שהבית המשפט עשוי לנקוט—כגון פסילה של הוראה שאינה עומדת במבחן, צמצום פרשני של הוראה כדי להתאיםה לזכויות, ואפשרות להשהיה או לאמצעים סדרתיים כאשר קיימים שיקולי אי־ביטחון משפטי—אך ההערות הללו אינן מעוגנות כאן בפסק דין מחייב מתוך החומר שסופק.\n\n**היקף התשובה:** התשובה שלהלן נסמכת על חקיקה ו/או על ספרות ופרשנות משפטית שאותרו במלואן, ולא על פסיקה שנוסחה המלא אותר. היא מסבירה את המסגרת הדוקטרינרית בלבד ואינה קובעת הלכה.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+}
