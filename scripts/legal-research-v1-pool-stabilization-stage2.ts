@@ -31,7 +31,13 @@ const STAGE3 = [
   { id: "P02", q: Q.P02 },
 ];
 
-const RUNS = (process.env.STAGE2_PHASE === "3"
+const D1_ONLY = [
+  { id: "D1-DIAG", q: `מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד יישם אותם בית המשפט העליון?` },
+];
+
+const RUNS = (process.env.STAGE2_PHASE === "d1"
+  ? D1_ONLY
+  : process.env.STAGE2_PHASE === "3"
   ? STAGE3
   : process.env.STAGE2_PHASE === "2"
   ? [
