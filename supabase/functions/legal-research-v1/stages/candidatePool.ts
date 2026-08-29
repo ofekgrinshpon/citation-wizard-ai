@@ -222,11 +222,17 @@ export function buildCandidatePool(
   const precisionById = new Map<string, DiscoveryPrecision>();
   const survivors: Candidate[] = [];
   const suppressed: Candidate[] = [];
+  dp.candidates_at_start = all.length;
+  dp.status = dpEnabled ? "started" : "not_started";
+  if (!dpEnabled) dp.not_run_reason = "discovery_precision_disabled";
+  // discovery_precision_stage2_blockers_v1 — hard O(n) guard: exactly one pass
+  // over the existing candidate list. No fetch, no retrieval, no pool rebuild.
   for (const c of all) {
     if (!dpEnabled) {
       survivors.push(c);
       continue;
     }
+    dp.processed++;
     const p = classifyDiscoveryPrecision({
       candidate: c,
       integrity: integrityById.get(c.candidate_id),
@@ -238,6 +244,10 @@ export function buildCandidatePool(
     dp.class_counts[p.discovery_class] = (dp.class_counts[p.discovery_class] ?? 0) + 1;
     if (p.protected && p.protection_reason) {
       dp.protected_counts[p.protection_reason] = (dp.protected_counts[p.protection_reason] ?? 0) + 1;
+    }
+    if (p.not_suppressible_reason) {
+      dp.not_suppressible_reason_counts[p.not_suppressible_reason] =
+        (dp.not_suppressible_reason_counts[p.not_suppressible_reason] ?? 0) + 1;
     }
     if (p.suppress && p.suppress_reason) {
       suppressed.push(c);
@@ -254,6 +264,8 @@ export function buildCandidatePool(
       survivors.push(c);
     }
   }
+  dp.suppression_ran = dpEnabled;
+  dp.o_n_guard_ok = !dpEnabled || dp.processed === all.length;
   const listingLike = (c: Candidate) => {
     const p = precisionById.get(c.candidate_id);
     if (p) {
@@ -263,9 +275,24 @@ export function buildCandidatePool(
     }
     return integrityById.get(c.candidate_id)?.authority_tier === "index_or_listing";
   };
-  dp.index_or_listing_ratio_before = all.length
-    ? Number((all.filter(listingLike).length / all.length).toFixed(3))
-    : 0;
+  const suppressibleListing = (c: Candidate) => {
+    const p = precisionById.get(c.candidate_id);
+    return listingLike(c) && (p ? !p.protected : true);
+  };
+  const ratio = (n: number, d: number) => (d ? Number((n / d).toFixed(3)) : 0);
+  for (const c of all) {
+    const p = precisionById.get(c.candidate_id);
+    if (listingLike(c) && p?.protected && p.protection_reason) {
+      dp.protected_listing_counts[p.protection_reason] =
+        (dp.protected_listing_counts[p.protection_reason] ?? 0) + 1;
+    }
+  }
+  dp.raw_index_or_listing_ratio = ratio(all.filter(listingLike).length, all.length);
+  dp.suppressible_index_or_listing_ratio = ratio(
+    all.filter(suppressibleListing).length,
+    all.length,
+  );
+
 
   // docket_aware_url_dedup_v1 — compute the dedupe key once per candidate.
   const dedupeKeyById = new Map<string, ReturnType<typeof buildUrlDedupeKey>>();
@@ -381,10 +408,14 @@ export function buildCandidatePool(
       vectorPerClaim.set(c.claim_id, (vectorPerClaim.get(c.claim_id) ?? 0) + 1);
     }
     if (isBackfill(c)) {
+      // Backfill only re-ranks candidates already in `all` — it never triggers
+      // retrieval, fetch, verifier passes or a pool rebuild.
       backfillsByOrigin.set(c.origin, (backfillsByOrigin.get(c.origin) ?? 0) + 1);
       dp.backfilled++;
+      dp.backfill_ran = true;
       dp.backfilled_by_origin[c.origin] = (dp.backfilled_by_origin[c.origin] ?? 0) + 1;
     }
+
     out.push(c);
     return true;
   };
@@ -529,10 +560,14 @@ export function buildCandidatePool(
   }
   dp.pool_before = all.length;
   dp.pool_after = out.length;
-  dp.index_or_listing_ratio_after = out.length
-    ? Number((out.filter(listingLike).length / out.length).toFixed(3))
-    : 0;
+  dp.final_raw_index_or_listing_ratio = ratio(out.filter(listingLike).length, out.length);
+  dp.final_suppressible_listing_ratio = ratio(
+    out.filter(suppressibleListing).length,
+    out.length,
+  );
+  if (dpEnabled) dp.status = "completed";
   dp.ms = Date.now() - dpT0;
+
 
   return {
     candidates: out,

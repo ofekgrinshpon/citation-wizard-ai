@@ -139,11 +139,13 @@ for (const run of RUNS) {
   }
   if (!dprec) failures.push("no_discovery_precision_telemetry");
   if (dprec) {
-    const before = dprec.index_or_listing_ratio_before ?? 0;
-    const after = dprec.index_or_listing_ratio_after ?? 0;
-    if (after > before + 0.001) failures.push("listing_ratio_worsened");
+    const before = dprec.suppressible_index_or_listing_ratio ?? 0;
+    const after = dprec.final_suppressible_listing_ratio ?? 0;
+    if (after > before + 0.001) failures.push("suppressible_listing_ratio_worsened");
+    if (dprec.o_n_guard_ok === false) failures.push("discovery_precision_o_n_guard_violated");
     for (const s of dprec.suppressed ?? []) if (!s.reason) failures.push("suppression_without_reason");
   }
+
   if (run.id.startsWith("B8") || run.id.startsWith("D1")) {
     if (branch === "insufficient_sources_limitation") failures.push("insufficiency_branch");
     if ((stab?.snapshot_after?.doctrinal_eligible ?? 0) < 1) failures.push("below_eligibility_floor");
@@ -198,11 +200,16 @@ writeFileSync(
           suppressed: (r.discovery_precision.suppressed ?? []).length,
           suppressed_reason_counts: r.discovery_precision.suppressed_reason_counts,
           protected_counts: r.discovery_precision.protected_counts,
+          protected_listing_counts: r.discovery_precision.protected_listing_counts,
+          not_suppressible_reason_counts: r.discovery_precision.not_suppressible_reason_counts,
           backfilled: r.discovery_precision.backfilled,
           backfilled_by_origin: r.discovery_precision.backfilled_by_origin,
-          ratio_before: r.discovery_precision.index_or_listing_ratio_before,
-          ratio_after: r.discovery_precision.index_or_listing_ratio_after,
+          raw_ratio: r.discovery_precision.raw_index_or_listing_ratio,
+          suppressible_ratio_before: r.discovery_precision.suppressible_index_or_listing_ratio,
+          suppressible_ratio_after: r.discovery_precision.final_suppressible_listing_ratio,
+          o_n_guard_ok: r.discovery_precision.o_n_guard_ok,
           pool_before: r.discovery_precision.pool_before,
+
           pool_after: r.discovery_precision.pool_after,
           ms: r.discovery_precision.ms,
         }

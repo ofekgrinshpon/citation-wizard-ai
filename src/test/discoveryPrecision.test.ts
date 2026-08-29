@@ -136,3 +136,53 @@ describe("discovery_precision_and_listing_suppression_v1", () => {
     expect(backfillOriginCap(0)).toBe(1);
   });
 });
+
+describe("discovery_precision_stage2_blockers_v1", () => {
+  const local = (over: Record<string, unknown> = {}, integrity?: unknown) =>
+    classifyDiscoveryPrecision({
+      candidate: cand({ document_id: "doc-1", origin: "local_db", retrieval_method: "text", ...over }),
+      integrity: integrity ?? null,
+      task_intent: "doctrinal_explanation",
+    } as never);
+
+  it("local corpus origin alone no longer protects a listing candidate", () => {
+    const r = local({
+      title: "ארכיון פסיקה",
+      source_url: "https://example.co.il/archive/page/3",
+      snippet: "רשימה",
+    });
+    expect(r.discovery_class).toBe("index_or_listing");
+    expect(r.protected).toBe(false);
+    expect(r.suppressible).toBe(true);
+    expect(r.suppress).toBe(true);
+  });
+
+  it("local corpus with substantive integrity stays protected", () => {
+    const r = local({ source_url: null }, {
+      citable_as: "scholarship",
+      authority_tier: "secondary",
+      text_usability: "full_text",
+    });
+    expect(r.protection_reason).toBe("local_corpus_substantive");
+    expect(r.suppressible).toBe(false);
+    expect(r.not_suppressible_reason).toContain("protected:");
+  });
+
+  it("local corpus with an acquired body is protected by the body, not the origin", () => {
+    const r = local({ metadata: { body_text: "א".repeat(900) }, title: "ארכיון פסיקה", source_url: "https://x.co.il/archive/page/2" });
+    expect(r.protection_reason).toBe("acquired_body");
+    expect(r.suppress).toBe(false);
+  });
+
+  it("records why a non-listing candidate is not suppressible", () => {
+    const r = run({
+      title: "דיון כללי בסוגיה",
+      source_url: "https://example.co.il/posts/123",
+      snippet: "טקסט מהותי ארוך על הסוגיה".repeat(30),
+    });
+    expect(r.protected).toBe(false);
+    expect(r.suppressible).toBe(false);
+    expect(r.not_suppressible_reason).toContain("class_not_suppressible");
+  });
+});
+
