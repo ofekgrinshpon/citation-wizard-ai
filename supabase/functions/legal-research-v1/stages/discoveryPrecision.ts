@@ -65,7 +65,8 @@ const LISTING_PATH_RE =
   /(^|\/)(index|indexes|list|lists|listing|listings|archive|archives|catalog|catalogue|browse|directory|sitemap|feed|rss|all)(\.[a-z]{2,4})?(\/|$)|(^|\/)page\/\d+(\/|$)/i;
 const HEB_LISTING_RE = /(חיפוש|תוצאות|קטגוריה|קטגוריות|תגית|תגיות|ארכיון|רשימת|מאגר\s+פסקי|כל\s+ה)/;
 const BODY_PATH_RE = /\.(pdf|docx?|rtf|txt)(\?|#|$)|\/(download|files?|documents?|uploads?|attachment)s?\//i;
-const DOCKET_RE = /\b(בג"?ץ|בג״ץ|ע"?א|רע"?א|ע"?פ|רע"?פ|בש"?א|עה"?ס|עע"?ם|ד"?נ)\s*\d{1,6}\/\d{2,4}\b/;
+// NOTE: no \b anchors — Hebrew letters are non-word chars for JS word boundaries.
+const DOCKET_RE = /(בג"?ץ|בג״ץ|ע"?א|רע"?א|ע"?פ|רע"?פ|בש"?א|עה"?ס|עע"?ם|ד"?נ)\s*\d{1,6}\/\d{2,4}(?!\d)/;
 
 const ARTICLE_IDENTITY_RE =
   /(מאמר|כתב\s*עת|עיוני\s*משפט|משפטים|הפרקליט|מחקר|דו"?ח|דוח|report|article|journal|working\s*paper|chapter|פרק\s+בספר)/i;
