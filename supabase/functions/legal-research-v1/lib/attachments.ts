@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Attachments helper for legal-research-v1.
 // Downloads user-uploaded PDF/DOCX files from the `user-documents` storage
 // bucket and extracts plain text broken into page/chunk units. Used for

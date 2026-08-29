@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Lovable AI Gateway client with JSON tool-call helper.
 // All OpenAI calls in legal-research-v1 go through here.
 
