@@ -25,6 +25,7 @@
 
 import type { DrafterInputSource } from "./drafter.ts";
 import { detectStatuteSections } from "./statuteSectionDetection.ts";
+import { detectDockets } from "./docketDetection.ts";
 import {
   bucketSources,
   planAllowsResearchGuidance,
