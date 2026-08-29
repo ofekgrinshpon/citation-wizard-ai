@@ -727,9 +727,10 @@ export function assessSourceSufficiency(args: {
     // Doctrinal fallback: convert a would-be refusal in broad/academic modes
     // into a limited doctrinal answer when acquired material supports one.
     let limitedDoctrinal = false;
-    let fallbackCombination: "A" | "B" | "C" | null = null;
+    let fallbackCombination: "A" | "B" | "C" | "D" | null = null;
     let fallbackDeclined: string | null = null;
     let researchGuidanceSufficiency = false;
+    const branchBefore = sufficient ? reason : "insufficient_sources_limitation";
     if (applied && !sufficient && plan && planAllowsResearchGuidance(plan)) {
       // A research-guidance task (source recommendation / literature map /
       // seminar planning) is not measured against black-letter authority.
@@ -756,12 +757,15 @@ export function assessSourceSufficiency(args: {
       } else {
         fallbackDeclined = broadMode
           ? "no_eligible_acquired_doctrinal_support"
-          : "depth_mode_not_broad";
+          : narrowDecision.reason;
       }
     }
+    const narrowLimited = limitedDoctrinal && fallbackCombination === "D";
     const basis = opts?.basis ??
       (limitedDoctrinal
-        ? (usableJudgments.length > 0
+        ? (narrowLimited
+          ? "doctrinal_secondary_limited"
+          : usableJudgments.length > 0
           ? "usable_judgment"
           : governingStatutes.length + governingRegulations.length > 0
           ? basisFor()
@@ -795,6 +799,21 @@ export function assessSourceSufficiency(args: {
       limited_doctrinal_answer: limitedDoctrinal,
       doctrinal_fallback_combination: fallbackCombination,
       doctrinal_fallback_declined_reason: fallbackDeclined,
+      limited_doctrinal_answer_allowed: narrowLimited,
+      narrow_limited_doctrinal_reason: depthMode === "narrow_doctrine"
+        ? narrowDecision.reason
+        : null,
+      acquired_doctrinal_source_count: eligibleSecondaries.length,
+      direct_doctrinal_source_count: directSecondaries.length,
+      corroborating_source_count: corroboratingCount,
+      primary_authority_missing: primaryAuthorityMissing,
+      exact_docket_or_case_holding_blocked: narrowBlocked,
+      found_only_used_for_support: false,
+      branch_before: branchBefore,
+      branch_after: sufficient
+        ? (narrowLimited ? "limited_doctrinal_answer" : reason)
+        : "insufficient_sources_limitation",
+
       planned_user_task_intent: plan?.user_task_intent ?? null,
       planned_answer_strategy: plan?.answer_strategy ?? null,
       research_guidance_sufficiency: researchGuidanceSufficiency,
