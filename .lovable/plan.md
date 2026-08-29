@@ -1,39 +1,47 @@
-# doctrinal_candidate_pool_stabilization_v1
+# discovery_precision_and_listing_suppression_v1
 
-Goal: make promising doctrinal/secondary candidates reach body acquisition and doctrinal eligibility consistently, so doctrinal and academic questions stop swinging between a real answer and `insufficient_sources_limitation`. No sufficiency threshold is relaxed, and no source type is upgraded without an acquired body plus source-integrity evidence.
+Goal: raise candidate precision in the pool build, before the verifier and before any acquisition budget is spent, so listing/index/search/category pages stop dominating doctrinal pools. No sufficiency threshold, claim-source-match, rebinding, recovery logic, identity validation, docket limitation, statute authority rule, found-only rule, drafter prompt or footnote rule is touched. No new network calls, no Perplexity rerun, no new LLM call.
+
+## Current state (verified)
+
+- `stages/candidatePool.ts` already runs `classifySourceIntegrity` on every raw candidate before dedupe, stores it at `metadata.source_integrity`, and drops only candidates where integrity sets `reject`. Everything else — including `authority_tier: "index_or_listing"` and `citable_as: "not_citable"` — is admitted and competes for the `CAPS.MAX_CANDIDATES` slots on tier + score alone.
+- Listing status is used in exactly one narrow place: `isTrustedPerplexity` refuses a reserved slot to listing/not-citable Perplexity items. They still enter through Pass B.
+- Listing suppression today happens late, inside secondary body acquisition (`suppress_listings`), i.e. after listings already consumed pool slots and verifier slots. This matches the D1-SWEEP telemetry: 21/30 admitted candidates carried `index_or_listing` and `not_citable`.
 
 ## What changes
 
-### 1. Listing/index suppression before budget is spent
-In the secondary-acquisition candidate selection, candidates that source-integrity already marks as `index_or_listing` / `not_citable` / listing-shaped URLs (search result pages, court listing rows, category pages) are dropped from the selection list before they consume any local-lookup or web-fetch slot, and recorded as `listing_suppressed` with a reason. Selection ordering then favours verifier direct/partial doctrinal candidates. This reallocates the existing budget; it does not raise any cap.
+### 1. Discovery classification (new stage)
+New `stages/discoveryPrecision.ts` computes a deterministic `discovery_class` per candidate from signals already on hand — URL path shape, title shape, existing `source_integrity`, snippet presence/length, list-likeness of the snippet, host class:
 
-### 2. Conservative doctrinal candidate reconsideration (pre-sufficiency, no new retrieval)
-Candidates currently rejected by selection only because their initial `source_type` is imperfect are reconsidered when they are verifier direct/partial **and** carry doctrinal evidence (law-review / כתב עת / book chapter / treatise / commentary / academic host / academic-legal or doctrinal analysis signals, or a title or snippet that names the doctrine asked about). Reconsidered candidates enter the same existing acquisition path (local corpus → verified cache → secondary cache → one bounded web fetch). Never reconsidered: unrelated case law, index/listing/search pages, metadata-only pages with no path to a body, news/PR pages, snippet-only items with no substantive legal content, verifier-`unrelated` items. Uses existing candidates only — no broad search, no Perplexity rerun, no LLM call.
+`citable_candidate` | `possible_body_page` | `index_or_listing` | `search_result_page` | `category_page` | `metadata_only` | `not_citable`
 
-### 3. Post-acquisition typing coverage
-Type re-mapping to a doctrinal/secondary type happens only after a body is acquired and source-integrity passes, driven by evidence in the acquired body (law-review/journal shape, chapter/treatise, commentary, academic or doctrinal analysis, Hebrew legal journal, substantive legal discussion). Listing, search-result, metadata-only, unrelated case law, news/PR, and body-less institutional pages are never re-mapped. Existing non-`other` types and primary-law types are still never overwritten.
+The class plus the matched signals are written to `metadata.discovery_precision` so downstream stages and telemetry can read it without recomputing.
 
-### 4. Light recovery floor before insufficiency
-A bounded recovery pass runs only when **all** hold: the planned task is `doctrinal_explanation`, `broad_research`, `academic_research`, `literature_map` or `seminar_planning`; the pool would enter sufficiency with fewer than 2 acquired eligible doctrinal sources; there are verifier direct/partial candidates skipped as `not_doctrinal_type` or `no_body_acquisition_attempted`; and the run budget allows it. Recovery: at most 3 candidates, local/cache first, at most 2 extra local/cache attempts, at most 1 web fetch (2 in deep/academic mode), hard added wall-clock cap 10s (15s deep/academic). On exceedance it stops, does not retry, records `recovery_budget_exhausted`, and the normal insufficiency branch proceeds.
+### 2. Conservative suppression inside pool build
+`buildCandidatePool` suppresses only `index_or_listing`, `search_result_page` and `category_page` classes. Protected and never suppressed: official statute pages, judgment body pages, article/report landing pages with a plausible PDF/body/download path, candidates with an acquired substantive body, and high-confidence exact-source / exact_authority candidates. Suppressed candidates are logged with a new `discovery_listing_suppressed` drop reason and their reason string, and are kept in a separate diagnostics list rather than deleted from the record.
 
-Recovery never runs for `case_holding`, exact/fabricated docket, statute-only or `specific_case_or_statute` runs, and never when the pack already satisfies sufficiency.
+### 3. Budget protection
+Because suppression happens at pool build, suppressed candidates never reach the verifier, secondary body acquisition, doctrinal recovery selection, or the drafter pack. The existing late `suppress_listings` path in `secondaryBodyAcquisition.ts` stays as a second net; it simply finds fewer listings to drop.
 
-### 5. Pre-sufficiency candidate-pool telemetry
-For the doctrinal/academic task intents, a `candidate_pool_stabilization` telemetry block is persisted before sufficiency with: total candidates; verifier direct/partial; secondary/commentary/institutional typed; blocked by `not_doctrinal_type`; skipped as `no_body_acquisition_attempted`; secondary local lookups; cache hits; web attempts; acquired bodies; doctrinal eligible; institutional eligible; `index_or_listing` / `not_citable` counts; `listing_suppressed` count; skipped by budget; and recovery fired / reason / added ms.
+### 4. Backfill
+Each suppressed candidate frees one slot. The pool build then walks the already-sorted remainder and admits the next eligible candidate under the existing dedupe rules, with a diversity guard so backfill does not fill every freed slot from one origin (local retrieval / nomination / official / secondary each keep representation). No new retrieval of any kind.
 
-## Safety (unchanged)
-Sufficiency thresholds, claim-source-match, `claimSourceRebinding`, drafter prompts, judgment identity validation, docket limitation, statute authority rules, found-only claim-support prohibition, secondary-as-primary prohibition and footnote rendering are all untouched.
+### 5. Ranking adjustment
+Within the existing tier/score ordering, a bounded deterministic adjustment: promote candidates with doctrine-matching substantive titles, article/report/judgment/statute identity, a body/PDF path or known citable host, and jurisdiction fit; demote generic archives, duplicate mirrors, tag/category/search pages, and low-instance unrelated case law when the planned task is doctrinal. The adjustment is a capped delta on the existing score so it can reorder within a tier but cannot promote a non-citable page above a real authority.
+
+### 6. Telemetry
+New `metadata.discovery_precision` block per run: candidates before suppression, class histogram, suppressed count with reasons and ids, backfilled count with origins, final pool size, `index_or_listing` ratio before/after, verifier direct/partial, acquired bodies, doctrinal/institutional eligible, sufficiency branch, footnote count, and runtime delta for the classification step.
+
+## Validation (staged, stop on failure)
+
+- **Stage 1 — unit/fixture tests** (`src/test/discoveryPrecision.test.ts`): index/listing/search/category fixtures suppressed; article/report landing page with a PDF/body path preserved; official statute page preserved; exact-source judgment candidate preserved; metadata-only demoted but never cited; unrelated low-instance case law demoted in doctrinal mode; backfill preserves diversity; suppression never removes a candidate with an acquired body.
+- **Stage 2 — mini live smoke:** D1 twice, B8 once, plus P02 or R02 as safety control. Accept when D1's pool no longer exceeds 50% `index_or_listing` (unless every available candidate genuinely is a listing), D1 reaches ≥2 doctrinal eligible sources or logs exact non-listing acquisition failures, B8 stays normal and is not over-suppressed, and the docket-limitation control is unchanged.
+- **Stage 3 — full 10-query sweep, only after Stage 2 passes:** ACADEMIC, NATION-STATE-ACADEMIC, PAYWALL, MMM, B8, D1, D3, DARKPATTERNS, R02, P02. Accept on a material `index_or_listing` drop for doctrinal runs, D1 not failing solely on a listing-dominated pool, B8/D1/D3 stable, no regression on ACADEMIC/NATION/PAYWALL, no harm to MMM/DARKPATTERNS, R02/P02 safe, and minimal runtime increase.
 
 ## Technical notes
-- New stage `stages/doctrinalCandidateStabilization.ts`: deterministic listing suppression, reconsideration predicate, pre-sufficiency pool metrics, and the recovery trigger predicate. Pure/deterministic parts are unit-testable.
-- `stages/secondaryBodyAcquisition.ts`: selection filters out suppressed listings, admits reconsidered candidates, and re-orders by (verifier verdict, doctrinal evidence). Body-evidence typing tightened in the existing `remapSecondaryType` path; no new limits.
-- `index.ts`: after the existing secondary-acquisition stage, evaluate the recovery predicate; if it fires, run one bounded second pass with its own reduced budget and record added ms; then persist the telemetry block under `metadata.drafter.candidate_pool_stabilization`.
-- `stages/doctrinalSourceTyping.ts`: eligibility unchanged in strictness; only reads the improved types.
-- New tests in `src/test/doctrinalCandidateStabilization.test.ts` using frozen funnel fixtures.
 
-## Validation (staged)
-- **Stage 1 — fixtures only:** D1 legal articles become doctrinal only after body + integrity evidence; B8 administrative-law scholarship reaches eligibility; listing/index stay suppressed; unrelated case law stays unrelated; metadata-only stays ineligible; found-only still cannot support claims; R02/P02 fixtures unchanged.
-- **Stage 2 — mini live smoke:** B8, D1, and one of P02/R02 as safety control. Accept when B8 reaches ≥3 acquired bodies and ≥2 eligible doctrinal sources (or logs exact per-candidate failures), D1 reaches ≥2 acquired bodies and ≥1 eligible doctrinal source (or logs exact failures), neither falls to insufficiency solely because promising direct/partial candidates were skipped, the refusal control is unchanged, added latency is within budget, and no stale jobs/CPU kills/stubs/orphans appear. Stop here on failure.
-- **Stage 3 — full 10-query sweep once, only after Stage 2 passes:** ACADEMIC, NATION-STATE-ACADEMIC, PAYWALL, MMM, B8, D1, D3, DARKPATTERNS, R02, P02, reporting before/after pool counts, lookups, cache hits, web attempts, acquired bodies, eligible doctrinal/institutional, `not_doctrinal_type`, `no_body_acquisition_attempted`, `listing_suppressed`, recovery fired/why/ms, sufficiency branch, `claim_match_ran`, footnotes, runtime and safety controls.
+- New: `stages/discoveryPrecision.ts` (pure/deterministic, unit-testable), `src/test/discoveryPrecision.test.ts`.
+- Modified: `stages/candidatePool.ts` — classify → suppress → backfill → ranking delta, plus new drop reason and diagnostics on `PoolResult`; `index.ts` — persist the telemetry block and thread the planned task intent into the pool build for the doctrinal demotion rule.
+- Reuses the Stage 2/3 runner pattern of `scripts/legal-research-v1-pool-stabilization-stage2.ts` in a new script for this track.
 
-Report to `reports/doctrinal-candidate-pool/ACCEPTANCE_REPORT.md` with an accepted / conditional / not-accepted verdict.
+Report to `reports/discovery-precision/ACCEPTANCE_REPORT.md` with an accepted / conditional / not-accepted verdict.
