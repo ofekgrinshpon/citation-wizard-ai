@@ -110,6 +110,8 @@ export interface PoolResult {
   url_dedupe: UrlDedupeLogRow[];
   url_dedupe_identity_source_counts: Record<string, number>;
   url_dedupe_rescued_from_legacy_collapse: number;
+  /** discovery_precision_and_listing_suppression_v1 */
+  discovery_precision: DiscoveryDiagnostics;
   counts: {
     by_origin: Record<string, number>;
     by_role: Record<string, number>;
