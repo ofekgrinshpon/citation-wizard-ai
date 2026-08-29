@@ -1,0 +1,88 @@
+{
+  "id": "P02",
+  "run_id": "b4814391-6b3a-483c-8815-e5c1984f1081",
+  "job_id": "56c3166a-1138-40d5-8e1b-1c1e8a4dd54a",
+  "ms": 120981,
+  "status": "done",
+  "branch": "docket_limitation",
+  "answer_length": 345,
+  "footnotes": 0,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": false,
+        "total_ms": 10000,
+        "max_candidates": 3,
+        "max_web_attempts": 1,
+        "max_local_lookups": 2
+      },
+      "reason": "task_intent_not_doctrinal:case_holding",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "specific_case_or_statute",
+    "snapshot_after": {
+      "not_citable": 22,
+      "acquired_bodies": 0,
+      "secondary_typed": 1,
+      "verifier_direct": 0,
+      "index_or_listing": 22,
+      "total_candidates": 30,
+      "verifier_partial": 16,
+      "doctrinal_eligible": 0,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 16,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 2,
+        "listing_suppressed:integrity_index_or_listing": 12
+      },
+      "reconsiderable_candidate_ids": [
+        "0d4d52f1-65f7-4817-8509-755e0eb7ba7b",
+        "d404e80a-8e28-492f-95e7-53253d65d804"
+      ],
+      "skipped_no_body_acquisition_attempted": 16
+    },
+    "snapshot_before": {
+      "not_citable": 22,
+      "acquired_bodies": 0,
+      "secondary_typed": 1,
+      "verifier_direct": 0,
+      "index_or_listing": 22,
+      "total_candidates": 30,
+      "verifier_partial": 16,
+      "doctrinal_eligible": 0,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 16,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 2,
+        "listing_suppressed:integrity_index_or_listing": 12
+      },
+      "reconsiderable_candidate_ids": [
+        "0d4d52f1-65f7-4817-8509-755e0eb7ba7b",
+        "d404e80a-8e28-492f-95e7-53253d65d804"
+      ],
+      "skipped_no_body_acquisition_attempted": 16
+    },
+    "user_task_intent": "case_holding",
+    "listing_suppressed": 0,
+    "listing_suppressed_ids": [],
+    "reconsidered_candidate_ids": []
+  },
+  "discovery_precision": null,
+  "secondary_acquisition": null,
+  "pass": false,
+  "failures": [
+    "no_discovery_precision_telemetry"
+  ],
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}

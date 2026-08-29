@@ -1,0 +1,80 @@
+{
+  "id": "R02",
+  "run_id": "8f59f505-f25d-442c-b3a5-bf80a8673212",
+  "job_id": "bcd5471e-7f90-4e91-9968-32464a6dbd3a",
+  "ms": 100966,
+  "status": "done",
+  "branch": "docket_limitation",
+  "answer_length": 320,
+  "footnotes": 0,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": false,
+        "total_ms": 10000,
+        "max_candidates": 3,
+        "max_web_attempts": 1,
+        "max_local_lookups": 2
+      },
+      "reason": "task_intent_not_doctrinal:case_holding",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "specific_case_or_statute",
+    "snapshot_after": {
+      "not_citable": 9,
+      "acquired_bodies": 0,
+      "secondary_typed": 5,
+      "verifier_direct": 0,
+      "index_or_listing": 9,
+      "total_candidates": 20,
+      "verifier_partial": 1,
+      "doctrinal_eligible": 0,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 1,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 1
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 1
+    },
+    "snapshot_before": {
+      "not_citable": 9,
+      "acquired_bodies": 0,
+      "secondary_typed": 5,
+      "verifier_direct": 0,
+      "index_or_listing": 9,
+      "total_candidates": 20,
+      "verifier_partial": 1,
+      "doctrinal_eligible": 0,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 1,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 1
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 1
+    },
+    "user_task_intent": "case_holding",
+    "listing_suppressed": 0,
+    "listing_suppressed_ids": [],
+    "reconsidered_candidate_ids": []
+  },
+  "discovery_precision": null,
+  "secondary_acquisition": null,
+  "pass": false,
+  "failures": [
+    "no_discovery_precision_telemetry"
+  ],
+  "answer": "לא אותר במקורות הזמינים ע\"א 6821/93. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}

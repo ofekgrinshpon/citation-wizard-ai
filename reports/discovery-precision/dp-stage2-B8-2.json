@@ -1,0 +1,80 @@
+{
+  "id": "B8-2",
+  "run_id": "ab674a0d-eac1-40eb-a847-18a6a52c865f",
+  "job_id": "2c3339ce-fb92-4acf-9a84-be21e38e642b",
+  "ms": 152423,
+  "status": "done",
+  "branch": null,
+  "answer_length": 1710,
+  "footnotes": 2,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": true,
+        "total_ms": 15000,
+        "max_candidates": 3,
+        "max_web_attempts": 2,
+        "max_local_lookups": 2
+      },
+      "reason": "eligible_floor_already_met",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "broad_research",
+    "snapshot_after": {
+      "not_citable": 13,
+      "acquired_bodies": 5,
+      "secondary_typed": 3,
+      "verifier_direct": 0,
+      "index_or_listing": 13,
+      "total_candidates": 26,
+      "verifier_partial": 5,
+      "doctrinal_eligible": 3,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 3,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 3
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 3
+    },
+    "snapshot_before": {
+      "not_citable": 13,
+      "acquired_bodies": 5,
+      "secondary_typed": 3,
+      "verifier_direct": 0,
+      "index_or_listing": 13,
+      "total_candidates": 26,
+      "verifier_partial": 5,
+      "doctrinal_eligible": 3,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 3,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 3
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 3
+    },
+    "user_task_intent": "literature_map",
+    "listing_suppressed": 0,
+    "listing_suppressed_ids": [],
+    "reconsidered_candidate_ids": []
+  },
+  "discovery_precision": null,
+  "secondary_acquisition": null,
+  "pass": false,
+  "failures": [
+    "no_discovery_precision_telemetry"
+  ],
+  "answer": "- מבט סכמטי: בספרות מובאת ביקורת תיאורטית מרכזית המתמקדת בכך שחוק היסוד מחדד זהות אתנית-לאומית על חשבון עקרונות אזרחיים־ליברליים, ומעלה שאלות על יחסי כוחות מערכת הוראות היסוד לאחר ה\"מהפכה החוקתית\" — כלומר האם החוק משנה את ההיררכיה הפרשנית בין זכויות לאומיות וזכויות יסוד.²\n- השפעה על מיעוטים ושוויון: מבקרי החוק טוענים שהוא מסמן נורמטיבית עדיפות לעם היהודי (ועד לפחות במחקר שסקר את נוסח החוק) ויוצר חשש להשפעות בפרקטיקה — למשל על מעמד השפה הערבית, תכניות דיור וקיבוציות של משאבים ציבוריים, וזכויות תרבותיות־קבוצתיות של מיעוטים.\n- מעמד חוק היסוד ומתח מול זכויות יסוד: בספרות נדונות השאלות האם החוק, בהיעדר נוסח שוויון מפורש, עלול להיתפס כמגבילה או משנה יחסית של הוראות היסוד האחרות; טענה זו מוצגת בזהירות כוויכוח דוקטרינרי שמצריך בדיקה של יחסי ההיררכיה, מבחני היסוד וצורות פרשנות שיפוטית.²\n- מקורות מומלצים לקריאה ראשונית בפרק: נוסח החוק עצמו (הגרסה הרשמית של חוק היסוד וגרסאות מאגדות של חוקי היסוד לצורך השוואה טכנית); תחקירי חקיקה ודיווחים פרלמנטריים; ומאמרים מסורתיים על ה\"מהפכה החוקתית\" שממקמים את חוק הלאום בתוך שינויים מערכתיים — כמקורות ראשוניים וניתוחיים לקריאה.¹\n- הצעת מתודולוגיה לפרק אקדמי: שיטת מחקר משולבת — (א) ניתוח דוקטרינרי של טקסט החוק והמשמעויות הפרשניות הפוטנציאליות, (ב) סקירת פסיקה וחקיקה משלימה להשוואת היקף זכויות, ו(ג) מחקר אמפירי/מקרי לבחינת השפעה מדיניותית; שאלות מחקר רלוונטיות: אילו זכויות עשויות להיפגע וכיצד תעמוד פסיקה מפעילה מבחני איזון\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> קריאת גוף פסקי הדין הופסקה מטעמי מגבלת עיבוד, ולכן ייתכן שחלק מהמקורות נותחו לפי מטא-נתונים בלבד."
+}

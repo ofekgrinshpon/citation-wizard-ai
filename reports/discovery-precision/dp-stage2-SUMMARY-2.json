@@ -1,0 +1,266 @@
+[
+  {
+    "id": "B8-2",
+    "pass": false,
+    "failures": [
+      "no_discovery_precision_telemetry"
+    ],
+    "branch": null,
+    "footnotes": 2,
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": true,
+        "total_ms": 15000,
+        "max_candidates": 3,
+        "max_web_attempts": 2,
+        "max_local_lookups": 2
+      },
+      "reason": "eligible_floor_already_met",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "discovery_precision": null,
+    "snapshot_before": {
+      "not_citable": 13,
+      "acquired_bodies": 5,
+      "secondary_typed": 3,
+      "verifier_direct": 0,
+      "index_or_listing": 13,
+      "total_candidates": 26,
+      "verifier_partial": 5,
+      "doctrinal_eligible": 3,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 3,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 3
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 3
+    },
+    "snapshot_after": {
+      "not_citable": 13,
+      "acquired_bodies": 5,
+      "secondary_typed": 3,
+      "verifier_direct": 0,
+      "index_or_listing": 13,
+      "total_candidates": 26,
+      "verifier_partial": 5,
+      "doctrinal_eligible": 3,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 3,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 3
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 3
+    }
+  },
+  {
+    "id": "D1-2",
+    "pass": false,
+    "failures": [
+      "no_discovery_precision_telemetry"
+    ],
+    "branch": null,
+    "footnotes": 3,
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": true,
+        "total_ms": 15000,
+        "max_candidates": 3,
+        "max_web_attempts": 2,
+        "max_local_lookups": 2
+      },
+      "reason": "eligible_floor_already_met",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "discovery_precision": null,
+    "snapshot_before": {
+      "not_citable": 13,
+      "acquired_bodies": 4,
+      "secondary_typed": 2,
+      "verifier_direct": 0,
+      "index_or_listing": 13,
+      "total_candidates": 18,
+      "verifier_partial": 2,
+      "doctrinal_eligible": 2,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 0,
+      "reconsideration_rejections": {},
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 0
+    },
+    "snapshot_after": {
+      "not_citable": 13,
+      "acquired_bodies": 4,
+      "secondary_typed": 2,
+      "verifier_direct": 0,
+      "index_or_listing": 13,
+      "total_candidates": 18,
+      "verifier_partial": 2,
+      "doctrinal_eligible": 2,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 0,
+      "reconsideration_rejections": {},
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 0
+    }
+  },
+  {
+    "id": "P02",
+    "pass": false,
+    "failures": [
+      "no_discovery_precision_telemetry"
+    ],
+    "branch": "docket_limitation",
+    "footnotes": 0,
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": false,
+        "total_ms": 10000,
+        "max_candidates": 3,
+        "max_web_attempts": 1,
+        "max_local_lookups": 2
+      },
+      "reason": "task_intent_not_doctrinal:case_holding",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "discovery_precision": null,
+    "snapshot_before": {
+      "not_citable": 22,
+      "acquired_bodies": 0,
+      "secondary_typed": 1,
+      "verifier_direct": 0,
+      "index_or_listing": 22,
+      "total_candidates": 30,
+      "verifier_partial": 16,
+      "doctrinal_eligible": 0,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 16,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 2,
+        "listing_suppressed:integrity_index_or_listing": 12
+      },
+      "reconsiderable_candidate_ids": [
+        "0d4d52f1-65f7-4817-8509-755e0eb7ba7b",
+        "d404e80a-8e28-492f-95e7-53253d65d804"
+      ],
+      "skipped_no_body_acquisition_attempted": 16
+    },
+    "snapshot_after": {
+      "not_citable": 22,
+      "acquired_bodies": 0,
+      "secondary_typed": 1,
+      "verifier_direct": 0,
+      "index_or_listing": 22,
+      "total_candidates": 30,
+      "verifier_partial": 16,
+      "doctrinal_eligible": 0,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 16,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 2,
+        "listing_suppressed:integrity_index_or_listing": 12
+      },
+      "reconsiderable_candidate_ids": [
+        "0d4d52f1-65f7-4817-8509-755e0eb7ba7b",
+        "d404e80a-8e28-492f-95e7-53253d65d804"
+      ],
+      "skipped_no_body_acquisition_attempted": 16
+    }
+  },
+  {
+    "id": "R02",
+    "pass": false,
+    "failures": [
+      "no_discovery_precision_telemetry"
+    ],
+    "branch": "docket_limitation",
+    "footnotes": 0,
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": false,
+        "total_ms": 10000,
+        "max_candidates": 3,
+        "max_web_attempts": 1,
+        "max_local_lookups": 2
+      },
+      "reason": "task_intent_not_doctrinal:case_holding",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "discovery_precision": null,
+    "snapshot_before": {
+      "not_citable": 9,
+      "acquired_bodies": 0,
+      "secondary_typed": 5,
+      "verifier_direct": 0,
+      "index_or_listing": 9,
+      "total_candidates": 20,
+      "verifier_partial": 1,
+      "doctrinal_eligible": 0,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 1,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 1
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 1
+    },
+    "snapshot_after": {
+      "not_citable": 9,
+      "acquired_bodies": 0,
+      "secondary_typed": 5,
+      "verifier_direct": 0,
+      "index_or_listing": 9,
+      "total_candidates": 20,
+      "verifier_partial": 1,
+      "doctrinal_eligible": 0,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 1,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 1
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 1
+    }
+  }
+]
