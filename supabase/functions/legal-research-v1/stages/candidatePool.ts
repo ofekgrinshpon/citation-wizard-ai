@@ -331,6 +331,14 @@ export function buildCandidatePool(
       logDrop(c, "max_candidates_cap", `cap:${CAPS.MAX_CANDIDATES}`);
       return false;
     }
+    // Backfill diversity guard — one origin may not take every freed slot.
+    if (isBackfill(c)) {
+      const n = backfillsByOrigin.get(c.origin) ?? 0;
+      if (n >= originCap) {
+        logDrop(c, "backfill_origin_diversity_cap", `${c.origin}:${originCap}`);
+        return false;
+      }
+    }
     if (c.retrieval_method === "vector") {
       const n = vectorPerClaim.get(c.claim_id) ?? 0;
       if (n >= MAX_VECTOR_PER_CLAIM) {
