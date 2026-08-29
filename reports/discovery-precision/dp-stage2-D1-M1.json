@@ -1,0 +1,101 @@
+{
+  "id": "D1-M1",
+  "run_id": "a5409b82-5217-4550-99e1-e34d81fedd35",
+  "job_id": "44662cbd-05a5-42c0-ba3c-6bd23bdad4b6",
+  "ms": 142014,
+  "status": "done",
+  "branch": null,
+  "answer_length": 1876,
+  "footnotes": 3,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": true,
+        "total_ms": 15000,
+        "max_candidates": 3,
+        "max_web_attempts": 2,
+        "max_local_lookups": 2
+      },
+      "reason": "eligible_floor_already_met",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "broad_research",
+    "snapshot_after": {
+      "not_citable": 19,
+      "acquired_bodies": 8,
+      "secondary_typed": 6,
+      "verifier_direct": 2,
+      "index_or_listing": 19,
+      "total_candidates": 30,
+      "verifier_partial": 3,
+      "doctrinal_eligible": 6,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 0,
+      "reconsideration_rejections": {},
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 0
+    },
+    "snapshot_before": {
+      "not_citable": 19,
+      "acquired_bodies": 8,
+      "secondary_typed": 6,
+      "verifier_direct": 2,
+      "index_or_listing": 19,
+      "total_candidates": 30,
+      "verifier_partial": 3,
+      "doctrinal_eligible": 6,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 0,
+      "reconsideration_rejections": {},
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 0
+    },
+    "user_task_intent": "doctrinal_explanation",
+    "listing_suppressed": 0,
+    "listing_suppressed_ids": [],
+    "reconsidered_candidate_ids": []
+  },
+  "discovery_precision": {
+    "ms": 19,
+    "version": "discovery_precision_and_listing_suppression_v1",
+    "backfilled": 0,
+    "classified": 130,
+    "pool_after": 30,
+    "suppressed": [],
+    "pool_before": 130,
+    "task_intent": "doctrinal_explanation",
+    "class_counts": {
+      "metadata_only": 6,
+      "index_or_listing": 58,
+      "citable_candidate": 52,
+      "possible_body_page": 14
+    },
+    "protected_counts": {
+      "judgment_document": 2,
+      "exact_docket_identity": 3,
+      "local_corpus_document": 124,
+      "official_primary_page": 1
+    },
+    "backfilled_by_origin": {},
+    "suppressed_reason_counts": {},
+    "index_or_listing_ratio_after": 0.633,
+    "index_or_listing_ratio_before": 0.446
+  },
+  "secondary_acquisition": null,
+  "pass": false,
+  "failures": [
+    "listing_ratio_worsened"
+  ],
+  "answer": "מבחני המידתיות בביקורת חוקתית בישראל מתורגמים בספרות לשלושה שלבים עקרוניים: (א) התאמה — קיום קשר סביר בין האמצעי לתכלית החוקית, (ב) צורך — חוסר קיום של אמצעי חלופי שפוגע פחות בזכות, ו-(ג) פרופורציונליות/איזון — שקלול חומרת הפגיעה מול התועלת הציבורית. מסגרת זו מיוצגת בספרות ככלי מרכזי לפרשנות יישום פסקת ההגבלה.¹\n\nשלב ההתאמה: הבדיקה מתמקדת בקשר עובדתי־נורמטיבי בין האמצעי שנקט המחוקק לבין התכלית המוצהרת; אין בכך מבחן לשיקול המדיניות הטובה אלא דרישה שהאמצעי יהיה הגיוני ומעשי להשגת המטרה המוצהרת.²\n\nשלב הנחיצות (אין אמצעי פחות מגביל): הבדיקה שואלת האם ניתן להשיג את אותה תכלית באמצעות אמצע שפוגע פחות בזכות היסוד; קיומו של אמצעי חלופי יעיד שהמגבלה אינה מותאמת במלואה לדרישת המידתיות.²\n\nשלב הפרופורציונליות במובן הצר (איזון): השופט מבצע שקלול נורמטיבי בין חומרת הפגיעה בזכות לבין תועלת הציבורית המושגת במגבלה; בספרות מודגש שמדובר בהערכת שווי משקל ולא במדד כמותי ישיר, והמורכבות הזו היא ליבת הביקורת החוקתית במקרה של סתירה בין זכויות לאינטרסים ציבוריים.¹\n\nיישום פעיל בבתי המשפט: בסקירות על המהפכה החוקתית מתוארת שיטת בדיקה בשלבים אלה וצוין שלעיתים דיון זה מקשר לדיון על סדר הבדיקה, נטל הראיה וסוגי הסעד (לרבות ביטול חקיקה או התאמות פרשניות). עם זאת, במקורות שאותרו לא נמצא נוסח פסק דין מחייב שמנחה באופן מלא את חלוקת נטל ההוכחה או סדרי הבדיקה בפורמט מחייב; התיאור המפורט על יישום ובחירת סעד לכן נשען על ניתוח ספרותי וסיכומי פסיקה כלליים.³\n\nעוצמת הביקורת והשיפוטיות משתנה בהתאם לטבע הזכות ולנסיבות המדיניות: בספרות מובאים הבדלים בין זכויות פוליטיות וחירויות אזרחיות (הנוטות לעורר ביקורת מחמירה) לבין סדרי עדיפויות במדיניות כלכלית או רווחתית, וכן הדגשה כי מצבי ביטחון ושעת חירום מצמצמים את מרחב ההתערבות השיפוטי; הבדלים אלה משפיעים על האופן בו מיושמים שלבי המידתיות (רמת הקפדנות בדרישות הצורך והאיזון).¹\n\n**היקף התשובה:** התשובה שלהלן נסמכת על חקיקה ו/או על ספרות ופרשנות משפטית שאותרו במלואן, ולא על פסיקה שנוסחה המלא אותר. היא מסבירה את המסגרת הדוקטרינרית בלבד ואינה קובעת הלכה."
+}

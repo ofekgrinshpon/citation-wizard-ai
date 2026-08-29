@@ -35,7 +35,16 @@ const D1_ONLY = [
   { id: "D1-DIAG", q: `מהם מבחני המידתיות בביקורת חוקתית בישראל, וכיצד יישם אותם בית המשפט העליון?` },
 ];
 
-const RUNS = (process.env.STAGE2_PHASE === "d1"
+const MINI = [
+  { id: "D1-M1", q: Q.D1 },
+  { id: "D1-M2", q: Q.D1 },
+  { id: "B8-M1", q: Q.B8 },
+  { id: "R02", q: Q.R02 },
+];
+
+const RUNS = (process.env.STAGE2_PHASE === "mini"
+  ? MINI
+  : process.env.STAGE2_PHASE === "d1"
   ? D1_ONLY
   : process.env.STAGE2_PHASE === "3"
   ? STAGE3
