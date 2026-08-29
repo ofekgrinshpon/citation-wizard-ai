@@ -1390,6 +1390,12 @@ async function handle(req: Request): Promise<Response> {
         rows: pool.url_dedupe.filter((r) => r.dedupe_identity_source !== "normal_url"),
       },
     },
+    // discovery_precision_and_listing_suppression_v1
+    discovery_precision: {
+      version: "discovery_precision_and_listing_suppression_v1",
+      task_intent: sourceUseIntent.plan?.user_task_intent ?? null,
+      ...pool.discovery_precision,
+    },
     source_integrity: {
       rejects: pool.integrity_rejects,
       admitted: pool.integrity,
