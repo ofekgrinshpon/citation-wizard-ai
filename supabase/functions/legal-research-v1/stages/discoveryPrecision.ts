@@ -34,6 +34,10 @@ export interface DiscoveryPrecision {
   /** True when the candidate may never be suppressed by this stage. */
   protected: boolean;
   protection_reason?: string;
+  /** True when this stage is allowed to suppress the candidate. */
+  suppressible: boolean;
+  /** Why the candidate is not suppressible (protection or class). */
+  not_suppressible_reason?: string;
   /** Suppress from the main pool (only ever true with a non-empty reason). */
   suppress: boolean;
   suppress_reason?: string;
@@ -41,6 +45,7 @@ export interface DiscoveryPrecision {
   rank_delta: number;
   rank_signals: string[];
 }
+
 
 export interface DiscoveryInput {
   candidate: Candidate;
@@ -94,7 +99,11 @@ function listLike(snippet: string): boolean {
 }
 
 /** exact-source / exact-authority / exact docket / exact statute protection. */
-function protectionFor(c: Candidate, integ?: SourceIntegrity | null): string | null {
+function protectionFor(
+  c: Candidate,
+  integ: SourceIntegrity | null | undefined,
+  cls: DiscoveryClass,
+): string | null {
   const meta = (c.metadata ?? {}) as Record<string, unknown>;
   const url = c.source_url ?? "";
   const hay = `${c.title} ${url}`;
@@ -106,7 +115,6 @@ function protectionFor(c: Candidate, integ?: SourceIntegrity | null): string | n
   if (typeof meta.body_text === "string" && (meta.body_text as string).length >= 800) {
     return "acquired_body";
   }
-  if (c.document_id) return "local_corpus_document";
   if (DOCKET_RE.test(hay)) return "exact_docket_identity";
   if (integ?.is_judgment_document) return "judgment_document";
   if (integ?.authority_tier === "official_primary" || integ?.authority_tier === "statute_mirror") {
@@ -122,8 +130,19 @@ function protectionFor(c: Candidate, integ?: SourceIntegrity | null): string | n
   if (BODY_PATH_RE.test(url) && ARTICLE_IDENTITY_RE.test(c.title)) {
     return "article_or_report_with_body_path";
   }
+  // discovery_precision_stage2_blockers_v1 — local-corpus origin ALONE no
+  // longer protects. A local document is protected only when its integrity
+  // says it is substantive/citable (all body/identity protections above have
+  // already been checked and did not fire).
+  if (c.document_id) {
+    const substantive = (cls === "citable_candidate" || cls === "possible_body_page") &&
+      integ?.citable_as !== "not_citable";
+    if (substantive) return "local_corpus_substantive";
+  }
+
   return null;
 }
+
 
 export function classifyDiscoveryPrecision(input: DiscoveryInput): DiscoveryPrecision {
   const c = input.candidate;
@@ -179,7 +198,7 @@ export function classifyDiscoveryPrecision(input: DiscoveryInput): DiscoveryPrec
   if (discovery_class === "not_citable") reasons.push("integrity_not_citable");
 
   // ── protection ──────────────────────────────────────────────────────────
-  const protection_reason = protectionFor(c, integ) ?? undefined;
+  const protection_reason = protectionFor(c, integ, discovery_class) ?? undefined;
   const isProtected = !!protection_reason;
 
   // ── suppression (conservative + explainable) ────────────────────────────
@@ -195,8 +214,17 @@ export function classifyDiscoveryPrecision(input: DiscoveryInput): DiscoveryPrec
     r === "listing_title_pattern" ||
     r === "integrity_index_or_listing"
   );
-  const suppress = suppressibleClass && !isProtected && clearSignals.length > 0;
+  const suppressible = suppressibleClass && !isProtected && clearSignals.length > 0;
+  const not_suppressible_reason = suppressible
+    ? undefined
+    : isProtected
+    ? `protected:${protection_reason}`
+    : !suppressibleClass
+    ? `class_not_suppressible:${discovery_class}`
+    : "no_clear_listing_signal";
+  const suppress = suppressible;
   const suppress_reason = suppress ? `${discovery_class}:${clearSignals.join("+")}` : undefined;
+
 
   // ── bounded ranking delta (applies within the existing retrieval tier) ──
   const rank_signals: string[] = [];
@@ -234,6 +262,8 @@ export function classifyDiscoveryPrecision(input: DiscoveryInput): DiscoveryPrec
     reasons,
     protected: isProtected,
     protection_reason,
+    suppressible,
+    not_suppressible_reason,
     suppress,
     suppress_reason,
     rank_delta,
@@ -242,6 +272,15 @@ export function classifyDiscoveryPrecision(input: DiscoveryInput): DiscoveryPrec
 }
 
 export interface DiscoveryDiagnostics {
+  /** Lifecycle: emitted even when the stage never ran (see `status`). */
+  status: "not_started" | "started" | "completed";
+  not_run_reason?: string;
+  candidates_at_start: number;
+  suppression_ran: boolean;
+  backfill_ran: boolean;
+  /** O(n) guard: candidates processed must equal candidates at start. */
+  processed: number;
+  o_n_guard_ok: boolean;
   classified: number;
   class_counts: Record<string, number>;
   suppressed: Array<{
@@ -253,10 +292,20 @@ export interface DiscoveryDiagnostics {
   }>;
   suppressed_reason_counts: Record<string, number>;
   protected_counts: Record<string, number>;
+  /** Why non-suppressible candidates were kept (protection / class / signal). */
+  not_suppressible_reason_counts: Record<string, number>;
+  /** Listing-class candidates that are protected, by protection reason. */
+  protected_listing_counts: Record<string, number>;
   backfilled: number;
   backfilled_by_origin: Record<string, number>;
-  index_or_listing_ratio_before: number;
-  index_or_listing_ratio_after: number;
+  /** All listing/index/search/category candidates ÷ pool before. */
+  raw_index_or_listing_ratio: number;
+  /** Only unprotected listing candidates ÷ pool before — the acceptance gate. */
+  suppressible_index_or_listing_ratio: number;
+  /** Unprotected listing candidates remaining in the final pool ÷ pool after. */
+  final_suppressible_listing_ratio: number;
+  /** Raw listing ratio in the final pool (diagnostic only). */
+  final_raw_index_or_listing_ratio: number;
   pool_before: number;
   pool_after: number;
   ms: number;
@@ -264,20 +313,31 @@ export interface DiscoveryDiagnostics {
 
 export function emptyDiscoveryDiagnostics(): DiscoveryDiagnostics {
   return {
+    status: "not_started",
+    candidates_at_start: 0,
+    suppression_ran: false,
+    backfill_ran: false,
+    processed: 0,
+    o_n_guard_ok: true,
     classified: 0,
     class_counts: {},
     suppressed: [],
     suppressed_reason_counts: {},
     protected_counts: {},
+    not_suppressible_reason_counts: {},
+    protected_listing_counts: {},
     backfilled: 0,
     backfilled_by_origin: {},
-    index_or_listing_ratio_before: 0,
-    index_or_listing_ratio_after: 0,
+    raw_index_or_listing_ratio: 0,
+    suppressible_index_or_listing_ratio: 0,
+    final_suppressible_listing_ratio: 0,
+    final_raw_index_or_listing_ratio: 0,
     pool_before: 0,
     pool_after: 0,
     ms: 0,
   };
 }
+
 
 /** Diversity guard: no single origin may take more than 60% of freed slots. */
 export function backfillOriginCap(freedSlots: number): number {

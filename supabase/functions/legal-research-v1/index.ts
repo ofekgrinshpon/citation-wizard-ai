@@ -982,6 +982,14 @@ async function handle(req: Request): Promise<Response> {
     fast_lane_eligible: fastLaneEligible,
     dockets: fastLaneDockets.map((d) => `${d.prefix_he} ${d.number}`),
   });
+  // discovery_precision_stage2_blockers_v1 — record up-front that the stage has
+  // not started yet and why, so an aborted retrieval still leaves telemetry.
+  budget.mark("discovery_precision_pending", {
+    status: "not_started",
+    not_run_reason: "awaiting_retrieval_completion",
+  });
+
+
 
   // ── Fast lane: deterministic exact-docket resolution ────────────────────
   const fastLaneCandidates: Candidate[] = [];
@@ -1072,13 +1080,35 @@ async function handle(req: Request): Promise<Response> {
     local: local.candidates.length,
     perplexity: pplx.candidates.length,
   });
+  // discovery_precision_stage2_blockers_v1 — durable lifecycle marks so the
+  // stage is auditable even when the isolate/reaper terminates the run.
+  await budget.markDurable("discovery_precision_start", {
+    candidates_at_start: local.candidates.length + pplx.candidates.length,
+    task_intent: sourceUseIntent.plan?.user_task_intent ?? null,
+  });
   const pool = buildCandidatePool([...local.candidates, ...pplx.candidates], {
     task_intent: sourceUseIntent.plan?.user_task_intent ?? null,
+  });
+  await budget.markDurable("discovery_precision_done", {
+    status: pool.discovery_precision.status,
+    candidates_at_start: pool.discovery_precision.candidates_at_start,
+    processed: pool.discovery_precision.processed,
+    o_n_guard_ok: pool.discovery_precision.o_n_guard_ok,
+    suppression_ran: pool.discovery_precision.suppression_ran,
+    backfill_ran: pool.discovery_precision.backfill_ran,
+    suppressed: pool.discovery_precision.suppressed.length,
+    backfilled: pool.discovery_precision.backfilled,
+    raw_index_or_listing_ratio: pool.discovery_precision.raw_index_or_listing_ratio,
+    suppressible_index_or_listing_ratio:
+      pool.discovery_precision.suppressible_index_or_listing_ratio,
+    final_suppressible_listing_ratio: pool.discovery_precision.final_suppressible_listing_ratio,
+    ms: pool.discovery_precision.ms,
   });
   // Fast-lane candidates bypass pool filtering exactly as before: they are
   // docket-verified official bodies, not search results.
   if (fastLaneCandidates.length > 0) pool.candidates.unshift(...fastLaneCandidates);
   budget.mark("broad_retrieval_done", { pool_size: pool.candidates.length });
+
   await budget.markDurable("post_retrieval_start", {
     pool_size: pool.candidates.length,
     integrity_rows: pool.integrity.length,
