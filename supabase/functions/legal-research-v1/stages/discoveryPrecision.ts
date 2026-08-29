@@ -146,8 +146,11 @@ export function classifyDiscoveryPrecision(input: DiscoveryInput): DiscoveryPrec
   const isCategory = CATEGORY_PATH_RE.test(path) || /^(קטגוריה|תגית|tag|category)\s*[:：]/i.test(title.trim());
   const isListingPath = LISTING_PATH_RE.test(path);
   const isListingTitle = HEB_LISTING_RE.test(title) || /^index of\b/i.test(title.trim());
-  const integrityListing =
-    integ?.authority_tier === "index_or_listing" || integ?.text_usability === "listing_page";
+  // Local corpus documents have no web URL; source-integrity defaults them to
+  // "index_or_listing", which is not a discovery signal. Ignore it for them.
+  const localCorpusDoc = !!c.document_id && !url;
+  const integrityListing = !localCorpusDoc &&
+    (integ?.authority_tier === "index_or_listing" || integ?.text_usability === "listing_page");
   const isListLike = listLike(snippet);
 
   if (isSearch) reasons.push("search_url_or_title");
