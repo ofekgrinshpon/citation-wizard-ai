@@ -1,0 +1,20 @@
+{
+  "id": "D1",
+  "run_id": "a5189c36-0286-45e2-934a-8786d5e36ae3",
+  "job_id": "3496fe2f-bf72-4385-9ae2-f264fa91e4c3",
+  "ms": 864491,
+  "status": "done",
+  "branch": null,
+  "answer_length": 181,
+  "footnotes": 0,
+  "stabilization": null,
+  "discovery_precision": null,
+  "narrow_limited": null,
+  "secondary_acquisition": null,
+  "pass": false,
+  "failures": [
+    "no_discovery_precision_telemetry",
+    "below_eligibility_floor"
+  ],
+  "answer": "החיפוש אחר מקורות הופסק באמצע העיבוד ולא ניתן היה להשלים תשובה משפטית מבוססת. ייתכן שאיתור גוף פסקי הדין דרש עיבוד כבד מדי. נסו להריץ שוב, לצמצם את השאלה, או לצרף את המסמך הרלוונטי."
+}
