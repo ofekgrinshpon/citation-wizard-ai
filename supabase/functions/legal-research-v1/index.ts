@@ -1072,7 +1072,9 @@ async function handle(req: Request): Promise<Response> {
     local: local.candidates.length,
     perplexity: pplx.candidates.length,
   });
-  const pool = buildCandidatePool([...local.candidates, ...pplx.candidates]);
+  const pool = buildCandidatePool([...local.candidates, ...pplx.candidates], {
+    task_intent: sourceUseIntent.plan?.user_task_intent ?? null,
+  });
   // Fast-lane candidates bypass pool filtering exactly as before: they are
   // docket-verified official bodies, not search results.
   if (fastLaneCandidates.length > 0) pool.candidates.unshift(...fastLaneCandidates);
