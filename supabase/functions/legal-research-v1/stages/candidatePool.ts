@@ -373,6 +373,11 @@ export function buildCandidatePool(
     if (c.retrieval_method === "vector") {
       vectorPerClaim.set(c.claim_id, (vectorPerClaim.get(c.claim_id) ?? 0) + 1);
     }
+    if (isBackfill(c)) {
+      backfillsByOrigin.set(c.origin, (backfillsByOrigin.get(c.origin) ?? 0) + 1);
+      dp.backfilled++;
+      dp.backfilled_by_origin[c.origin] = (dp.backfilled_by_origin[c.origin] ?? 0) + 1;
+    }
     out.push(c);
     return true;
   };
