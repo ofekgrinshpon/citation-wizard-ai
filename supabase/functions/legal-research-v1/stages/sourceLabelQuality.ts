@@ -87,11 +87,12 @@ export function collapseNearDuplicateTitles<T extends { title: string }>(
       report.collapsed.push({ from: loser.title, to: winner.title, similarity: Number(sim.toFixed(3)) });
       report.near_duplicate_titles_collapsed += 1;
       loser.title = winner.title;
-      const reasons = (loser.title_hygiene_reasons as string[] | undefined) ?? [];
+      const loserRec = loser as Record<string, unknown>;
+      const reasons = (loserRec.title_hygiene_reasons as string[] | undefined) ?? [];
       if (!reasons.includes("near_duplicate_title_collapsed")) {
         reasons.push("near_duplicate_title_collapsed");
       }
-      (loser as Record<string, unknown>).title_hygiene_reasons = reasons;
+      loserRec.title_hygiene_reasons = reasons;
     }
   }
   return report;
