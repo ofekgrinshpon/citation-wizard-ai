@@ -8,6 +8,13 @@ import {
 } from "./sourceIntegrity.ts";
 import { assignSynthesisRole } from "./synthesisRole.ts";
 import { buildUrlDedupeKey } from "./docketAwareUrlKey.ts";
+import {
+  backfillOriginCap,
+  classifyDiscoveryPrecision,
+  type DiscoveryDiagnostics,
+  type DiscoveryPrecision,
+  emptyDiscoveryDiagnostics,
+} from "./discoveryPrecision.ts";
 
 
 function normTitle(t: string): string {
