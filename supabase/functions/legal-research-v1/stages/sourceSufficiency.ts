@@ -125,10 +125,32 @@ export interface SufficiencyAssessment {
    * acquired statutes / doctrinal secondaries. Never licenses case-law claims.
    */
   limited_doctrinal_answer: boolean;
-  /** Which fallback combination fired (A/B/C), or null. */
-  doctrinal_fallback_combination: "A" | "B" | "C" | null;
+  /** Which fallback combination fired (A/B/C, or D for narrow doctrine), or null. */
+  doctrinal_fallback_combination: "A" | "B" | "C" | "D" | null;
   /** Why the fallback did not fire, when it was evaluated and declined. */
   doctrinal_fallback_declined_reason: string | null;
+
+  // ── narrow_doctrine_limited_doctrinal_answer_v1 ─────────────────────────
+  /** The narrow-doctrine limited answer was permitted. */
+  limited_doctrinal_answer_allowed: boolean;
+  /** Why the narrow-doctrine limited answer was allowed / declined. */
+  narrow_limited_doctrinal_reason: string | null;
+  /** Acquired, integrity-passing, verifier direct/partial doctrinal sources. */
+  acquired_doctrinal_source_count: number;
+  /** Of those, verifier `direct`. */
+  direct_doctrinal_source_count: number;
+  /** Acquired corroborating sources (other eligible doctrinal / statute / judgment). */
+  corroborating_source_count: number;
+  /** No usable judgment and no governing statute/regulation text was available. */
+  primary_authority_missing: boolean;
+  /** An explicit docket / case-holding / statutory-text requirement blocks the fallback. */
+  exact_docket_or_case_holding_blocked: boolean;
+  /** Invariant: found-only / metadata-only sources never support a claim. */
+  found_only_used_for_support: boolean;
+  /** Sufficiency branch before and after the limited-doctrinal decision. */
+  branch_before: string;
+  branch_after: string;
+
 
   // ── source_use_intent_planning_v1 ───────────────────────────────────────
   /** Planned user task the sufficiency verdict was measured against. */
