@@ -1,0 +1,113 @@
+{
+  "id": "P02",
+  "run_id": "1b617676-c067-4aea-a94f-9f2161dc3d61",
+  "job_id": "a60c9082-a68a-417a-bf1a-8ad797b5a8f6",
+  "ms": 131028,
+  "status": "done",
+  "branch": "docket_limitation",
+  "answer_length": 345,
+  "footnotes": 0,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": false,
+        "total_ms": 10000,
+        "max_candidates": 3,
+        "max_web_attempts": 1,
+        "max_local_lookups": 2
+      },
+      "reason": "task_intent_not_doctrinal:case_holding",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "specific_case_or_statute",
+    "snapshot_after": {
+      "not_citable": 11,
+      "acquired_bodies": 0,
+      "secondary_typed": 0,
+      "verifier_direct": 0,
+      "index_or_listing": 11,
+      "total_candidates": 16,
+      "verifier_partial": 0,
+      "doctrinal_eligible": 0,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 0,
+      "reconsideration_rejections": {},
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 0
+    },
+    "snapshot_before": {
+      "not_citable": 11,
+      "acquired_bodies": 0,
+      "secondary_typed": 0,
+      "verifier_direct": 0,
+      "index_or_listing": 11,
+      "total_candidates": 16,
+      "verifier_partial": 0,
+      "doctrinal_eligible": 0,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 0,
+      "reconsideration_rejections": {},
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 0
+    },
+    "user_task_intent": "case_holding",
+    "listing_suppressed": 0,
+    "listing_suppressed_ids": [],
+    "reconsidered_candidate_ids": []
+  },
+  "discovery_precision": {
+    "ms": 18,
+    "version": "discovery_precision_and_listing_suppression_v1",
+    "backfilled": 2,
+    "classified": 123,
+    "pool_after": 16,
+    "suppressed": [
+      {
+        "url": "https://www.psakdin.co.il/Court",
+        "title": "PsakDin – חיפוש פסקי דין",
+        "reason": "index_or_listing:listing_title_pattern",
+        "candidate_id": "edc4a197-a0e4-4d13-9e43-bdbe0307693c",
+        "discovery_class": "index_or_listing"
+      }
+    ],
+    "pool_before": 123,
+    "task_intent": "case_holding",
+    "class_counts": {
+      "metadata_only": 14,
+      "index_or_listing": 51,
+      "citable_candidate": 48,
+      "possible_body_page": 10
+    },
+    "protected_counts": {
+      "exact_docket_identity": 1,
+      "local_corpus_document": 118,
+      "official_primary_page": 1
+    },
+    "backfilled_by_origin": {
+      "local_db": 1,
+      "perplexity": 1
+    },
+    "suppressed_reason_counts": {
+      "index_or_listing:listing_title_pattern": 1
+    },
+    "index_or_listing_ratio_after": 0.688,
+    "index_or_listing_ratio_before": 0.415
+  },
+  "secondary_acquisition": null,
+  "pass": false,
+  "failures": [
+    "listing_ratio_worsened"
+  ],
+  "answer": "לא אותר במקורות הזמינים פסק הדין בעניין ע\"א 99887/04/22 עצמו. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
+}

@@ -8,6 +8,13 @@ import {
 } from "./sourceIntegrity.ts";
 import { assignSynthesisRole } from "./synthesisRole.ts";
 import { buildUrlDedupeKey } from "./docketAwareUrlKey.ts";
+import {
+  backfillOriginCap,
+  classifyDiscoveryPrecision,
+  type DiscoveryDiagnostics,
+  type DiscoveryPrecision,
+  emptyDiscoveryDiagnostics,
+} from "./discoveryPrecision.ts";
 
 
 function normTitle(t: string): string {
@@ -72,6 +79,8 @@ export interface PoolDrop {
     | "dup_docket"
     | "dup_role_title"
     | "max_candidates_cap"
+    | "discovery_listing_suppressed"
+    | "backfill_origin_diversity_cap"
     | "source_integrity_reject";
   drop_key: string;
   score: number;
@@ -108,6 +117,8 @@ export interface PoolResult {
   url_dedupe: UrlDedupeLogRow[];
   url_dedupe_identity_source_counts: Record<string, number>;
   url_dedupe_rescued_from_legacy_collapse: number;
+  /** discovery_precision_and_listing_suppression_v1 */
+  discovery_precision: DiscoveryDiagnostics;
   counts: {
     by_origin: Record<string, number>;
     by_role: Record<string, number>;
@@ -170,7 +181,21 @@ const TRUSTED_PPLX_CLASSES = new Set([
   "scholarship",
 ]);
 
-export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
+export interface BuildPoolOptions {
+  /** Planned task intent — enables doctrinal-mode demotions. */
+  task_intent?: string | null;
+  /** discovery_precision_and_listing_suppression_v1 — default on. */
+  discovery_precision?: boolean;
+}
+
+export function buildCandidatePool(
+  allRaw: Candidate[],
+  options: BuildPoolOptions = {},
+): PoolResult {
+  const dpEnabled = options.discovery_precision !== false;
+  const dpT0 = Date.now();
+  const dp = emptyDiscoveryDiagnostics();
+
   // ── Source-integrity classification (deterministic, pre-verifier) ────────
   const integrityById = new Map<string, SourceIntegrity>();
   const rejected: Candidate[] = [];
@@ -188,6 +213,59 @@ export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
     if (integ.reject) rejected.push(c);
     else all.push(c);
   }
+
+  // ── discovery_precision_and_listing_suppression_v1 ───────────────────────
+  // Classify every surviving candidate, then suppress ONLY clear
+  // listing/search/category pages with an explicit reason string. Protected
+  // (exact-source / exact-authority / exact-docket / exact-statute / acquired
+  // body) candidates are never suppressed; metadata_only is demoted only.
+  const precisionById = new Map<string, DiscoveryPrecision>();
+  const survivors: Candidate[] = [];
+  const suppressed: Candidate[] = [];
+  for (const c of all) {
+    if (!dpEnabled) {
+      survivors.push(c);
+      continue;
+    }
+    const p = classifyDiscoveryPrecision({
+      candidate: c,
+      integrity: integrityById.get(c.candidate_id),
+      task_intent: options.task_intent ?? null,
+    });
+    precisionById.set(c.candidate_id, p);
+    c.metadata = { ...(c.metadata ?? {}), discovery_precision: p };
+    dp.classified++;
+    dp.class_counts[p.discovery_class] = (dp.class_counts[p.discovery_class] ?? 0) + 1;
+    if (p.protected && p.protection_reason) {
+      dp.protected_counts[p.protection_reason] = (dp.protected_counts[p.protection_reason] ?? 0) + 1;
+    }
+    if (p.suppress && p.suppress_reason) {
+      suppressed.push(c);
+      dp.suppressed.push({
+        candidate_id: c.candidate_id,
+        title: c.title,
+        url: c.source_url ?? null,
+        discovery_class: p.discovery_class,
+        reason: p.suppress_reason,
+      });
+      dp.suppressed_reason_counts[p.suppress_reason] =
+        (dp.suppressed_reason_counts[p.suppress_reason] ?? 0) + 1;
+    } else {
+      survivors.push(c);
+    }
+  }
+  const listingLike = (c: Candidate) => {
+    const p = precisionById.get(c.candidate_id);
+    if (p) {
+      return p.discovery_class === "index_or_listing" ||
+        p.discovery_class === "search_result_page" ||
+        p.discovery_class === "category_page";
+    }
+    return integrityById.get(c.candidate_id)?.authority_tier === "index_or_listing";
+  };
+  dp.index_or_listing_ratio_before = all.length
+    ? Number((all.filter(listingLike).length / all.length).toFixed(3))
+    : 0;
 
   // docket_aware_url_dedup_v1 — compute the dedupe key once per candidate.
   const dedupeKeyById = new Map<string, ReturnType<typeof buildUrlDedupeKey>>();
@@ -211,15 +289,30 @@ export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
     if (c.retrieval_method === "perplexity") return 2;
     return 3; // vector
   };
-  const sorted = [...all].sort((a, b) => {
-    const t = tierOf(a) - tierOf(b);
-    if (t !== 0) return t;
-    return b.score - a.score;
-  });
+  // Bounded discovery-precision delta reorders inside a tier only.
+  const effScore = (c: Candidate): number =>
+    c.score + (precisionById.get(c.candidate_id)?.rank_delta ?? 0);
+  const orderBy = (list: Candidate[]) =>
+    [...list].sort((a, b) => {
+      const t = tierOf(a) - tierOf(b);
+      if (t !== 0) return t;
+      return effScore(b) - effScore(a);
+    });
+
+  // Baseline ordering (suppression-free) — used to identify backfilled slots.
+  const baselineRank = new Map<string, number>();
+  orderBy(all).forEach((c, i) => baselineRank.set(c.candidate_id, i));
+
+  const sorted = orderBy(survivors);
   const out: Candidate[] = [];
   let dedup_drops = 0;
   const rankOf = new Map<string, number>();
   sorted.forEach((c, i) => rankOf.set(c.candidate_id, i));
+  const freedSlots = Math.min(suppressed.length, CAPS.MAX_CANDIDATES);
+  const originCap = backfillOriginCap(freedSlots);
+  const backfillsByOrigin = new Map<string, number>();
+  const isBackfill = (c: Candidate) =>
+    freedSlots > 0 && (baselineRank.get(c.candidate_id) ?? 0) >= CAPS.MAX_CANDIDATES;
   const dropLog: PoolDrop[] = [];
   const logDrop = (c: Candidate, reason: PoolDrop["drop_reason"], key: string) => {
     dropLog.push({
@@ -244,6 +337,14 @@ export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
     if (out.length >= CAPS.MAX_CANDIDATES) {
       logDrop(c, "max_candidates_cap", `cap:${CAPS.MAX_CANDIDATES}`);
       return false;
+    }
+    // Backfill diversity guard — one origin may not take every freed slot.
+    if (isBackfill(c)) {
+      const n = backfillsByOrigin.get(c.origin) ?? 0;
+      if (n >= originCap) {
+        logDrop(c, "backfill_origin_diversity_cap", `${c.origin}:${originCap}`);
+        return false;
+      }
     }
     if (c.retrieval_method === "vector") {
       const n = vectorPerClaim.get(c.claim_id) ?? 0;
@@ -278,6 +379,11 @@ export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
     seenTitle.set(ttKey, c);
     if (c.retrieval_method === "vector") {
       vectorPerClaim.set(c.claim_id, (vectorPerClaim.get(c.claim_id) ?? 0) + 1);
+    }
+    if (isBackfill(c)) {
+      backfillsByOrigin.set(c.origin, (backfillsByOrigin.get(c.origin) ?? 0) + 1);
+      dp.backfilled++;
+      dp.backfilled_by_origin[c.origin] = (dp.backfilled_by_origin[c.origin] ?? 0) + 1;
     }
     out.push(c);
     return true;
@@ -402,6 +508,32 @@ export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
     });
   }
 
+  // discovery_precision — suppressed candidates are recorded as diagnostics
+  // drops so they are auditable but never consume any downstream budget.
+  for (const c of suppressed) {
+    const p = precisionById.get(c.candidate_id)!;
+    drops.push({
+      candidate_id: c.candidate_id,
+      title: c.title,
+      url: c.source_url ?? null,
+      source_type: c.source_type,
+      origin: c.origin,
+      retrieval_method: c.retrieval_method,
+      role: c.role,
+      claim_id: c.claim_id,
+      rank_before_drop: baselineRank.get(c.candidate_id) ?? -1,
+      drop_reason: "discovery_listing_suppressed",
+      drop_key: p.suppress_reason ?? p.discovery_class,
+      score: c.score,
+    });
+  }
+  dp.pool_before = all.length;
+  dp.pool_after = out.length;
+  dp.index_or_listing_ratio_after = out.length
+    ? Number((out.filter(listingLike).length / out.length).toFixed(3))
+    : 0;
+  dp.ms = Date.now() - dpT0;
+
   return {
     candidates: out,
     found: allRaw.length,
@@ -413,6 +545,7 @@ export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
     url_dedupe,
     url_dedupe_identity_source_counts: identityCounts,
     url_dedupe_rescued_from_legacy_collapse: rescued,
+    discovery_precision: dp,
     counts,
   };
 }

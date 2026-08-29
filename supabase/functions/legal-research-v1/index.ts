@@ -1072,7 +1072,9 @@ async function handle(req: Request): Promise<Response> {
     local: local.candidates.length,
     perplexity: pplx.candidates.length,
   });
-  const pool = buildCandidatePool([...local.candidates, ...pplx.candidates]);
+  const pool = buildCandidatePool([...local.candidates, ...pplx.candidates], {
+    task_intent: sourceUseIntent.plan?.user_task_intent ?? null,
+  });
   // Fast-lane candidates bypass pool filtering exactly as before: they are
   // docket-verified official bodies, not search results.
   if (fastLaneCandidates.length > 0) pool.candidates.unshift(...fastLaneCandidates);
@@ -1387,6 +1389,12 @@ async function handle(req: Request): Promise<Response> {
         rescued_from_legacy_collapse: pool.url_dedupe_rescued_from_legacy_collapse,
         rows: pool.url_dedupe.filter((r) => r.dedupe_identity_source !== "normal_url"),
       },
+    },
+    // discovery_precision_and_listing_suppression_v1
+    discovery_precision: {
+      version: "discovery_precision_and_listing_suppression_v1",
+      task_intent: sourceUseIntent.plan?.user_task_intent ?? null,
+      ...pool.discovery_precision,
     },
     source_integrity: {
       rejects: pool.integrity_rejects,
