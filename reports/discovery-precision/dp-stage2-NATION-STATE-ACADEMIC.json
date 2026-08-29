@@ -1,0 +1,390 @@
+{
+  "id": "NATION-STATE-ACADEMIC",
+  "run_id": "a6f70748-1ffa-4896-9444-3f44a90bad5a",
+  "job_id": "73bfdae0-ee6b-4455-a815-80ea8553a842",
+  "ms": 151390,
+  "status": "done",
+  "branch": null,
+  "answer_length": 2286,
+  "footnotes": 2,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": false,
+        "total_ms": 10000,
+        "max_candidates": 3,
+        "max_web_attempts": 1,
+        "max_local_lookups": 2
+      },
+      "reason": "eligible_floor_already_met",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "narrow_doctrine",
+    "snapshot_after": {
+      "not_citable": 7,
+      "acquired_bodies": 8,
+      "secondary_typed": 5,
+      "verifier_direct": 0,
+      "index_or_listing": 7,
+      "total_candidates": 20,
+      "verifier_partial": 5,
+      "doctrinal_eligible": 5,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 2,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 2
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 2
+    },
+    "snapshot_before": {
+      "not_citable": 7,
+      "acquired_bodies": 8,
+      "secondary_typed": 5,
+      "verifier_direct": 0,
+      "index_or_listing": 7,
+      "total_candidates": 20,
+      "verifier_partial": 5,
+      "doctrinal_eligible": 5,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 2,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 2
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 2
+    },
+    "user_task_intent": "literature_map",
+    "listing_suppressed": 0,
+    "listing_suppressed_ids": [],
+    "reconsidered_candidate_ids": []
+  },
+  "discovery_precision": {
+    "ms": 17,
+    "status": "completed",
+    "version": "discovery_precision_and_listing_suppression_v1",
+    "processed": 110,
+    "backfilled": 11,
+    "classified": 110,
+    "pool_after": 19,
+    "suppressed": [
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=100",
+        "title": "בית המשפט המחוזי ב\"ש, אב\"ד סג\"נ אריאל ואגו, ש' גאולה לוין, ש' גיל דניאל: פס\"ד בשאלת ההסדרה המשפטית של האימהות לקטין שנולד בהליך פונדקאות בחו\"ל,(עמ\"ש 22394-10-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "9eba4da9-e260-40e4-b5bc-66cf1f40b91f",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1110",
+        "title": "ביהמ\"ש המחוזי בתל אביב, השופט נפתלי שילה: פס\"ד דחיית ברע על פס\"ד בנוגע לנשיאה בעלות מטפל פרטי (רמ\"ש 54013-11-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "71a84863-f318-4e56-9e1e-325c68c61abd",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+        "title": "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 65165-12-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "121733e0-9108-4644-b963-e472f382c2bc",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+        "title": "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "09d32a88-57d3-4d7f-b29e-7a878c478f94",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "523451a3-0e48-4ab2-8c49-e31fd0d86a9e",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+        "title": "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "aba2ff2f-664a-4319-8295-8bf99f317e17",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=20",
+        "title": "בימ\"ש השלום בפתח תקווה, סג\"נ השופט ארז נוריאלי: גז\"ד לנאשם שהורשע בקובלנה פלילית בפרסום לשון הרע לפיו אביגדור ליברמן הציע לו תשלום על מנת לרצוח ניצב במשטרת ישראל (ק\"פ 6947-09-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "71aac9f0-824a-433a-b7d6-7b10cb8e05f5",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בית המשפט המחוזי ב\"ש, אב\"ד סג\"נ השופט אריאל ואגו, השופט אלון אינפלד, השופט אריאל חזק: הכרעת דין לנאשם ברצח ישראל מלכה ז\"ל באשדוד (תפ\"ח 17506-10-17)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "75d9e45f-eb51-41c0-bb05-50baee155ea6",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+        "title": "ביהמ\"ש השלום רחובות, שופט ישראל פת: פס\"ד בעניין פינוי דירה שיזן תפס בטענה שהזכויות נמכרו לו (ת\"א 19529-09-19)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "1dcfb6d0-2b43-4765-954d-b6d24ff7fe75",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בית המשפט העליון בשבתו כבג\"ץ, השופטת דפנה ברק-ארז, השופט דוד מינץ והשופט עופר גרוסקופף: פס\"ד העוסק בחובה לעמוד בדרישות החוק ביחס להספקת מזון ברמה בסיסית לכלל האסירים הביטחוניים המוחזקים בבתי הסוהר בישראל (בג\"ץ 2858-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "784a5b00-336b-4a33-a9ba-8be3d74f6cc2",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "848cd601-3706-48e8-95c1-ba07f81c7372",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=300",
+        "title": "בית המשפט המחוזי חיפה, אב\"ד חננאל שרעבי, ש' אספרנצה אלון, ש' אריה נאמן: פסק דין בערעור על החלטה כי הסכם בין הצדדים תקף עד ליום נישואיהם ומשם יחול חוק יחסי ממון (עמ\"ש 46664-10-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "3aaae198-28d0-4651-96e0-a1bd1173cdea",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1090",
+        "title": "ביהמ\"ש לעניינים מנהליים בתל אביב, השופטת יעל בלכר: פס\"ד בעניין חוק העזר לתל אביב שמירה ושיפוץ חזיתות בתים (עת\"מ 26900-09-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "b4c8c607-7885-4c8b-9880-ab82c87a8a7f",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=100",
+        "title": "בית משפט השלום ירושלים, השופט דוד שאול גבאי ריכטר: הכרעת דין לטייס לשעבר שהורשע בעבירות לפי חוק הטיס (ת\"פ 71078-11-18)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "50566ccc-a255-470f-b8fd-ac822ca3faf2",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=20",
+        "title": "בימ\"ש השלום בפתח תקווה, סג\"נ השופט ארז נוריאלי: גז\"ד לנאשם שהורשע בקובלנה פלילית בפרסום לשון הרע לפיו אביגדור ליברמן הציע לו תשלום על מנת לרצוח ניצב במשטרת ישראל (ק\"פ 6947-09-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "4ce286e3-0b16-4ad8-9134-1aee4c1942fd",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בית המשפט המחוזי ב\"ש, אב\"ד סג\"נ השופט אריאל ואגו, השופט אלון אינפלד, השופט אריאל חזק: הכרעת דין לנאשם ברצח ישראל מלכה ז\"ל באשדוד (תפ\"ח 17506-10-17)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "3a3457a1-8510-4e55-b78f-065e39aa2aee",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+        "title": "ביהמ\"ש השלום רחובות, שופט ישראל פת: פס\"ד בעניין פינוי דירה שיזן תפס בטענה שהזכויות נמכרו לו (ת\"א 19529-09-19)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "7912114b-377e-4061-a852-4482b720252c",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש העליון, אב\"ד, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופטת דפנה ברק ארז: פס\"ד בעתירות בעניין פיטורי ראש השב\"כ (בג\"ץ 54321-03-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "a5426bef-b39d-4b0a-ba9d-adf3ba306fa8",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1500",
+        "title": "בית המשפט העליון, אב\"ד השופט יצחק עמית, השופט עפר גרוסקופף, השופטת גילה כנפי-שטייניץ: פסק דין בעניין החזקת גופת המחבל וליד דקה (בג\"ץ 3289-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "c12df6f6-cd79-46c2-abf1-bf03cecf3d87",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=20",
+        "title": "בימ\"ש השלום בפתח תקווה, סג\"נ השופט ארז נוריאלי: גז\"ד לנאשם שהורשע בקובלנה פלילית בפרסום לשון הרע לפיו אביגדור ליברמן הציע לו תשלום על מנת לרצוח ניצב במשטרת ישראל (ק\"פ 6947-09-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "803e2107-e6a5-4cad-b7c9-80cede458b53",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=70",
+        "title": "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעה להצהרה על זכויות במבנה מגורים בירושלים ומנגד תביעה לסילוק יד מהנכס ע\"י בריטניה (ת\"א 42550-01-21)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "de9cbedd-299f-4c84-be9e-f36c60525224",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+        "title": "ביהמ\"ש השלום רחובות, שופט ישראל פת: פס\"ד בעניין פינוי דירה שיזן תפס בטענה שהזכויות נמכרו לו (ת\"א 19529-09-19)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "94b763a5-91cc-4924-9dd1-8d352aa4b7b3",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בית המשפט המחוזי ב\"ש, אב\"ד סג\"נ השופט אריאל ואגו, השופט אלון אינפלד, השופט אריאל חזק: הכרעת דין לנאשם ברצח ישראל מלכה ז\"ל באשדוד (תפ\"ח 17506-10-17)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "b4a67da4-5f2d-4bdd-970a-8ef18f19ff63",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בית המשפט המחוזי ב\"ש, אב\"ד סג\"נ השופט אריאל ואגו, השופט אלון אינפלד, השופט אריאל חזק: הכרעת דין לנאשם ברצח ישראל מלכה ז\"ל באשדוד (תפ\"ח 17506-10-17)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "272e7c2f-7bb0-45ee-bdf7-73b4474dffea",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+        "title": "בימ\"ש מחוזי ת\"א, אב\"ד השופט יוסי טופף, השופט עודד מאור, השופטת מעין בן-ארי: הכ\"ד לנאשם בריבוי עבירות אינוס ומעשים מגונים בקטינה בת משפחה (תפח\"ע 18392-04-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "ba38f139-6917-4bdc-a4e4-5018b06269a8",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+        "title": "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 52123-12-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "f72c96c4-5ccb-4127-98e8-9dfbd07f6174",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+        "title": "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "d5550370-b5de-4de6-900c-c91e1f439a74",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "title": "בית המשפט המחוזי באר שבע, אב\"ד סג\"נ השופט אריאל ואגו, השופט אלון אינפלד, השופט אריאל חזק: גזר דין מותר בפרסום ליוטיובר שהורשע בעבירות מין (תפח\"ע 43300-09-20)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "fd03194b-1a07-478d-a298-f6da14437e1f",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+        "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: החלטה בעניין תביעה למתן צו דחוף לאיסור פרסום (תלה\"מ 8208-02-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "d29fe294-ced6-416f-86b1-feefc77909ac",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=20",
+        "title": "בימ\"ש השלום בפתח תקווה, סג\"נ השופט ארז נוריאלי: גז\"ד לנאשם שהורשע בקובלנה פלילית בפרסום לשון הרע לפיו אביגדור ליברמן הציע לו תשלום על מנת לרצוח ניצב במשטרת ישראל (ק\"פ 6947-09-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "a53991be-7a47-42d0-8d0d-a7408e13304a",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "title": "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "13518df7-8a4d-4c19-a3e8-eb2dae0d4c7b",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+        "title": "ביהמ\"ש השלום רחובות, שופט ישראל פת: פס\"ד בעניין פינוי דירה שיזן תפס בטענה שהזכויות נמכרו לו (ת\"א 19529-09-19)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "a486e485-6de6-4edd-8671-a4bc8751ce8d",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=100",
+        "title": "בימ\"ש מחוזי לנוער באר שבע, השופטת טל לחיאני שהם: פסק דין בנושא החלטת בית משפט קמא להתיר הזנה בכפייה לקטין באמצעות זונדה (ענ\"א 70267-04-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "36ca76ab-17cf-4b1a-98a6-c44e91e0262e",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=500",
+        "title": "בימ\"ש מחוזי י-ם, אב\"ד השופטת חגית מאק-קלמנוביץ, השופטת מרים ליפשיץ-פריבס, השופט אילן סלע: גז\"ד למפגע קטין שהורשע ברצח בנסיבות מחמירות של לוחם מג\"ב (תפ\"ח 55676-02-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "5a78fcde-45a3-438c-8c77-b96f4c3d9e47",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=20",
+        "title": "בימ\"ש השלום בפתח תקווה, סג\"נ השופט ארז נוריאלי: גז\"ד לנאשם שהורשע בקובלנה פלילית בפרסום לשון הרע לפיו אביגדור ליברמן הציע לו תשלום על מנת לרצוח ניצב במשטרת ישראל (ק\"פ 6947-09-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "56f7e575-a43e-4941-9583-4c632f2be2f9",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
+        "title": "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בנושא השמה חוץ ביתית לקטין נזקק(81089-11-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "0e993808-9049-4461-97cb-5dd88bd7bb75",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=10",
+        "title": "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעת פיצויים בגין ביטול טיסה (ת\"א 65400-06-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "de5bdda7-a5c8-49ee-be80-f69cf8025198",
+        "discovery_class": "index_or_listing"
+      }
+    ],
+    "pool_before": 110,
+    "task_intent": "literature_map",
+    "backfill_ran": true,
+    "class_counts": {
+      "metadata_only": 5,
+      "index_or_listing": 52,
+      "citable_candidate": 42,
+      "possible_body_page": 11
+    },
+    "o_n_guard_ok": true,
+    "suppression_ran": true,
+    "protected_counts": {
+      "exact_docket_identity": 15,
+      "official_primary_page": 16,
+      "official_statute_page": 10,
+      "local_corpus_substantive": 28,
+      "article_or_report_with_body_path": 1
+    },
+    "candidates_at_start": 110,
+    "backfilled_by_origin": {
+      "local_db": 8,
+      "perplexity": 3
+    },
+    "protected_listing_counts": {
+      "exact_docket_identity": 5,
+      "official_statute_page": 10
+    },
+    "suppressed_reason_counts": {
+      "index_or_listing:integrity_index_or_listing": 37
+    },
+    "raw_index_or_listing_ratio": 0.473,
+    "not_suppressible_reason_counts": {
+      "protected:exact_docket_identity": 15,
+      "protected:official_primary_page": 16,
+      "protected:official_statute_page": 10,
+      "protected:local_corpus_substantive": 28,
+      "class_not_suppressible:metadata_only": 2,
+      "class_not_suppressible:possible_body_page": 1,
+      "protected:article_or_report_with_body_path": 1
+    },
+    "final_raw_index_or_listing_ratio": 0.368,
+    "final_suppressible_listing_ratio": 0,
+    "suppressible_index_or_listing_ratio": 0.336
+  },
+  "secondary_acquisition": null,
+  "pass": true,
+  "failures": [],
+  "answer": "**מפת הספרות והניתוח של חוק היסוד: מדינת הלאום**\n\nהבסיס החוקי המרכזי שעליו נסב המחקר הוא נוסח חוק היסוד עצמו: ההכרזה כי ״מדינת ישראל היא מדינת הלאום של העם היהודי״, ההדגשה של זכות ההגדרה העצמית הלאומית לסובב העם היהודי והפריטים הסמליים והרשמיים (שפה, דגל, סמל) מהווים את הציר הטקסטואלי שממנו נצמח את רוב הטענות המחקריות על החוק.\n\nבהקשר של הספרות האקדמית שנבנית סביב החוק, במקורות שאותרו זוהו למעשה שתי מסגרות עבודה ברורות: האחת — קריאה טקסטואלית־נורמטיבית שמתחילה בנוסח החוק כמקור ראשון ודן במשמעות מילולית וביחסי נורמות; השנייה — מסגרת תיאורטית של שיפוט חוקתי והגנה על זכויות, שמספקת את העוגנים התאורטיים לניתוח השפעות החוק על מעמד הזכויות. בכל האמור על ניתוחים ספציפיים של ניסוח, השלכות או מיון קווי מחקר — אין במקורות שאותרו ספרות אקדמית רחבה המתמקדת בביקורת מפורטת של כל הסעיפים; עם זאת, הן נוסח החוק והן תאוריות השיפוט מופיעות כרפרנס מחקרי מבוסס.²\n\nלגבי קיומה של הלכה מחייבת שמפרשת או קובעת את מעמד החוק בתוך מערכת חוקתית רחבה — במקורות שאותרו לא נמצא פסק דין שנדון ישירות בחוק יסוד זה ונתן הלכה ספציפית לגביו; קיימים לעומת זאת קווים דוקטרינריים כלליים בפסיקה על איזון זכויות ומעמדם של חוקים יסודיים שניתנים להפעיל באופן אנליטי בעת בחינת הקשר בין ממד לאומי לממד דמוקרטי.¹\n\nבהערכה בדבר תפקיד הרשות השיפוטית — הספרות התיאורטית והפסיקה הכללית מציעות כי בתי המשפט מחזיקים כלים לפרשנות מצמצמת או מאזן: פירוש צמצמתי של ניסוחי החוק, יישום עקרונות עליונים (כגון שוויון וכבוד האדם) באמצעות כללי פרשנות, והסתמכות על מבחנים דוקטרינריים לאיזון ערכים. מן המקורות שאותרו ניתן להסיק בזהירות כי גישות אלו משמשות מסגרת פרשנית מובילה, אך אין במקורות הללו פסק דין מחייב שמיישם את הכלים בדיוק על חוק היסוד הנדון.¹\n\nשיטות המחקר וההמלצות: מתוך המקורות המוגבלים שאותרו מומלצות שלוש גישות משלימות למחקר עתידי — ניתוח טקסטואלי מדויק של נוסח החוק וסעיפיו; ניתוח דוקטרינרי מבוסס פסיקה והשלכותיה על זכויות (כלומר שימוש בכלי איזון ושימור ערכים); והשוואה היסטורית־השוואתית שתבחן נוסחים מקבילים בחקיקה זרה. במחקר ובמדיניות הספרות מצביעה בזהירות על הצורך בפירוש שמאזן בין זהות לאומית לבין הגנה על זכויות אזרחיות, וזאת תוך תשומת לב לחריגים פרשניים ולעקרונות חוקתיים כלליים.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+}

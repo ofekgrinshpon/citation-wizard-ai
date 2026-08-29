@@ -1,0 +1,359 @@
+{
+  "id": "ACADEMIC",
+  "run_id": "5c994a02-64d0-45a7-8c34-938f50edad12",
+  "job_id": "f9ec5164-d0f9-47cb-8a69-6b8b9941c279",
+  "ms": 162666,
+  "status": "done",
+  "branch": null,
+  "answer_length": 2043,
+  "footnotes": 3,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": true,
+        "total_ms": 15000,
+        "max_candidates": 3,
+        "max_web_attempts": 2,
+        "max_local_lookups": 2
+      },
+      "reason": "eligible_floor_already_met",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "academic_research",
+    "snapshot_after": {
+      "not_citable": 9,
+      "acquired_bodies": 7,
+      "secondary_typed": 7,
+      "verifier_direct": 1,
+      "index_or_listing": 9,
+      "total_candidates": 25,
+      "verifier_partial": 9,
+      "doctrinal_eligible": 6,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 6,
+      "reconsideration_rejections": {
+        "already_attempted": 1,
+        "primary_law_or_case_law": 3,
+        "listing_suppressed:integrity_index_or_listing": 2
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 5
+    },
+    "snapshot_before": {
+      "not_citable": 9,
+      "acquired_bodies": 7,
+      "secondary_typed": 7,
+      "verifier_direct": 1,
+      "index_or_listing": 9,
+      "total_candidates": 25,
+      "verifier_partial": 9,
+      "doctrinal_eligible": 6,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 6,
+      "reconsideration_rejections": {
+        "already_attempted": 1,
+        "primary_law_or_case_law": 3,
+        "listing_suppressed:integrity_index_or_listing": 2
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 5
+    },
+    "user_task_intent": "literature_map",
+    "listing_suppressed": 0,
+    "listing_suppressed_ids": [],
+    "reconsidered_candidate_ids": []
+  },
+  "discovery_precision": {
+    "ms": 18,
+    "status": "completed",
+    "version": "discovery_precision_and_listing_suppression_v1",
+    "processed": 100,
+    "backfilled": 13,
+    "classified": 100,
+    "pool_after": 25,
+    "suppressed": [
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש העליון, אב\"ד, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופטת דפנה ברק ארז: פס\"ד בעתירות בעניין פיטורי ראש השב\"כ (בג\"ץ 54321-03-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "892ef021-7c7e-49f6-8ee0-3497f54af4ca",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=460",
+        "title": "ביהמ\"ש השלום בתל אביב יפו, ש' אביים ברקאי: פסק דין בעניין תביעה כספית נגד לשכת רישום מקרקעין בשל טענות על רשלנות, מחיקת עיקול על מקרקעין שנעשתה ברשלנות (ת\"א 26317-01-20)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "f3724c83-6aa3-4c51-b87f-e9dc8a5a693c",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1780",
+        "title": "ביהמ\"ש המחוזי מרכז לוד, סגן הנשיאה עמי קובו: החלטה בבקשה לאישור צו מעצר מנהלי על ידי שר הביטחון לפי סעיף 4 לחוק סמכויות שעת חירום (מ\"מ 9396-07-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "01f0c510-3234-412a-88ee-7b2244f1cc49",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1500",
+        "title": "בית המשפט העליון, אב\"ד השופט יצחק עמית, השופט עפר גרוסקופף, השופטת גילה כנפי-שטייניץ: פסק דין בעניין החזקת גופת המחבל וליד דקה (בג\"ץ 3289-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "b5bbd7f6-25ad-41bb-99c8-02b3c8dc7d21",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=770",
+        "title": "ביהמ\"ש לענייני משפחה בת\"א, סגן הנשיאה יהורם שקד: פס\"ד בעניין סילוק על הסף בהיעדר עילת תביעה (תמ\"ש 44392-04-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "4655251f-8fdc-46d6-be5d-fe75aed072de",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=650",
+        "title": "ביהמ\"ש לענייני משפחה בתל אביב, השופטת תמר סנונית פורר: פס\"ד תביעה לעשיית עושר ולא במשפט (תמ\"ש 30632-10-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "65db5221-c6fc-4826-bc90-433e7ff35886",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=150",
+        "title": "בית משפט השלום בנוף הגליל-נצרת, השופט הבכיר דורון פורת: החלטה בסוגיית הזכות להפגין תוך מתן ביטוי פוליטי אל מול זכויות אחרות (ע\"ק 2494-05-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "df1ad29e-c480-46d9-b111-9ca3138817c3",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4520",
+        "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "e7af730c-48f6-4f10-8ff6-31fcb37325e0",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "4343b2f1-1a06-4a36-a775-6869be8bfdd5",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=320",
+        "title": "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, יו\"ר ועדה, כבוד השופטת בדימוס אורית אפעל-גבאי: החלטה בעניין בקשתו של אסיר לשחרור על תנאי (וש\"מ 21146-11-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "06ff28a1-9756-4cf9-a983-dc7935c4ec7c",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5000",
+        "title": "ביהמ\"ש שלום חדרה, השופטת רקפת סגל מוהר: גז\"ד למבקש להתמודד בבחירות לכנסת ה-22, שהורשע על פי הודאתו בעבירה של ניסיון לקבלת דבר במרמה (ת\"פ 19633-04-20)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "9115419d-d9ae-4621-95fa-d2aa641d639f",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=650",
+        "title": "ביהמ\"ש לענייני משפחה בתל אביב, השופטת תמר סנונית פורר: פס\"ד תביעה לעשיית עושר ולא במשפט (תמ\"ש 30632-10-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "1e1c709e-efe3-41fd-adfd-3fd648e599eb",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7915&businessType=1",
+        "title": "היות שאין מקור נתונים אחד על קורבנות רצח מסיבות פליליות בפילוח לפי קבוצות אוכלוסייה בכל השנים המדוברות, הנתונים המוצגים",
+        "reason": "index_or_listing:listing_title_pattern",
+        "candidate_id": "ae8c3e47-d748-40f2-9aab-c5d7f29b21b7",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=770",
+        "title": "ביהמ\"ש לענייני משפחה בת\"א, סגן הנשיאה יהורם שקד: פס\"ד בעניין סילוק על הסף בהיעדר עילת תביעה (תמ\"ש 44392-04-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "7677a68d-cffc-4fde-8502-0c264e5f29e6",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש העליון, אב\"ד, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופטת דפנה ברק ארז: פס\"ד בעתירות בעניין פיטורי ראש השב\"כ (בג\"ץ 54321-03-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "db6abff3-6b1f-481a-807d-7d33195dbec2",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+        "title": "ביהמ\"ש השלום רחובות, שופט ישראל פת: פס\"ד בעניין פינוי דירה שיזן תפס בטענה שהזכויות נמכרו לו (ת\"א 19529-09-19)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "88e0eb43-8d62-4f5d-bb9c-f9cb91562c47",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=20",
+        "title": "בימ\"ש השלום בפתח תקווה, סג\"נ השופט ארז נוריאלי: גז\"ד לנאשם שהורשע בקובלנה פלילית בפרסום לשון הרע לפיו אביגדור ליברמן הציע לו תשלום על מנת לרצוח ניצב במשטרת ישראל (ק\"פ 6947-09-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "441442e1-92de-46b8-bf7a-c451f06c9822",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בית המשפט המחוזי ב\"ש, אב\"ד סג\"נ השופט אריאל ואגו, השופט אלון אינפלד, השופט אריאל חזק: הכרעת דין לנאשם ברצח ישראל מלכה ז\"ל באשדוד (תפ\"ח 17506-10-17)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "491a2f69-a4a5-47ee-a3c3-e46bc8bf72f7",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=320",
+        "title": "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, יו\"ר ועדה, כבוד השופטת בדימוס אורית אפעל-גבאי: החלטה בעניין בקשתו של אסיר לשחרור על תנאי (וש\"מ 21146-11-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "6332be23-5494-4488-a148-5b3b90f7e951",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בית המשפט העליון בשבתו כבג\"ץ, השופטת דפנה ברק-ארז, השופט דוד מינץ והשופט עופר גרוסקופף: פס\"ד העוסק בחובה לעמוד בדרישות החוק ביחס להספקת מזון ברמה בסיסית לכלל האסירים הביטחוניים המוחזקים בבתי הסוהר בישראל (בג\"ץ 2858-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "eebfc45d-417f-4061-b231-1e0fbe295a40",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "b108ea0d-3a7d-471f-baab-70b91e168c91",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "בימ\"ש עליון, הרכב שופטים השופטת דפנה ברק-ארז, השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין, השופט יחיאל כשר:  פס\"ד בפרשת העוברים (בע\"מ 69395-03-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "dda5c96d-97bc-453a-9ae2-d5b3d9a71e53",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש העליון, אב\"ד, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופטת דפנה ברק ארז: פס\"ד בעתירות בעניין פיטורי ראש השב\"כ (בג\"ץ 54321-03-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "2828f15b-76e7-4ee9-81e3-824f4b2ad1b3",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4520",
+        "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "a3540f0c-d7f8-4238-a45c-4b01ca83129a",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+        "title": "ביהמ\"ש המחוזי בירושלים, ש' ענת זינגר: פסק דין בעניין קבלת אזרחות מכוח גיור בבית דין פרטי (עת\"מ 65165-12-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "071c39bd-f64e-4507-8506-891be932b6c6",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש העליון, אב\"ד, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופטת דפנה ברק ארז: פס\"ד בעתירות בעניין פיטורי ראש השב\"כ (בג\"ץ 54321-03-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "e8d96ae3-1eab-4c3d-8579-dda7571ce849",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "title": "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "790e8bcf-0bbb-4cf0-8de8-4a2f8844a470",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בית המשפט המחוזי ב\"ש, אב\"ד סג\"נ השופט אריאל ואגו, השופט אלון אינפלד, השופט אריאל חזק: הכרעת דין לנאשם ברצח ישראל מלכה ז\"ל באשדוד (תפ\"ח 17506-10-17)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "c83c39de-c217-4a20-a16b-173160867468",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1020",
+        "title": "ביהמ\"ש לענייני משפחה בתל אביב יפו, ש' ורד שביט פינקלשטיין: פסק דין בעניין תביעה כספית שהגישה אפוטרופ בשם התובעת כנגד אחייניתה להשבת כספים שנטלו שלא כדין טרם מינוי אפוטרופוס על התובעת (תמ\"ש 32657-09-20)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "4e503bbc-5db0-4e4d-b036-7277b9793004",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1500",
+        "title": "ביהמ\"ש המחוזי מרכז-לוד, סג\"נ השופטת בלהה טולקובסקי: פס\"ד בתביעת הורי המנוחה בגין רשלנות רפואית ורשלנות בהליכי מתן הרישיון לעסוק ברפואה  (ת\"א 10918-10-19)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "2e990de7-496a-4969-9e14-d4a11489ea0e",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://kotar.cet.ac.il/kotarapp/index/Book.aspx?nBookID=103799703",
+        "title": "מידתיות במבט ביקורתי ומשווה",
+        "reason": "index_or_listing:listing_url_path+integrity_index_or_listing",
+        "candidate_id": "b40b78af-d4cc-4624-9cb5-87c3de6a35cd",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=102448887&nTocEntryID=102450547",
+        "title": "ב. היכרות עם שלושת מבחני המידתיות",
+        "reason": "index_or_listing:listing_url_path+integrity_index_or_listing",
+        "candidate_id": "9c8d3001-db42-4ce5-a2ea-827fb4982ce6",
+        "discovery_class": "index_or_listing"
+      }
+    ],
+    "pool_before": 100,
+    "task_intent": "literature_map",
+    "backfill_ran": true,
+    "class_counts": {
+      "metadata_only": 4,
+      "index_or_listing": 46,
+      "citable_candidate": 35,
+      "possible_body_page": 15
+    },
+    "o_n_guard_ok": true,
+    "suppression_ran": true,
+    "protected_counts": {
+      "exact_docket_identity": 10,
+      "official_primary_page": 24,
+      "official_statute_page": 8,
+      "local_corpus_substantive": 22
+    },
+    "candidates_at_start": 100,
+    "backfilled_by_origin": {
+      "local_db": 7,
+      "perplexity": 6
+    },
+    "protected_listing_counts": {
+      "exact_docket_identity": 6,
+      "official_statute_page": 8
+    },
+    "suppressed_reason_counts": {
+      "index_or_listing:listing_title_pattern": 1,
+      "index_or_listing:integrity_index_or_listing": 29,
+      "index_or_listing:listing_url_path+integrity_index_or_listing": 2
+    },
+    "raw_index_or_listing_ratio": 0.46,
+    "not_suppressible_reason_counts": {
+      "protected:exact_docket_identity": 10,
+      "protected:official_primary_page": 24,
+      "protected:official_statute_page": 8,
+      "protected:local_corpus_substantive": 22,
+      "class_not_suppressible:metadata_only": 1,
+      "class_not_suppressible:possible_body_page": 3
+    },
+    "final_raw_index_or_listing_ratio": 0.36,
+    "final_suppressible_listing_ratio": 0,
+    "suppressible_index_or_listing_ratio": 0.32
+  },
+  "secondary_acquisition": null,
+  "pass": true,
+  "failures": [],
+  "answer": "- בג\"ץ 1715/97 (לשכת מנהלי ההשקעות נ' שר האוצר) — קריאת פסק־דין ההרכב העליון חשובה להכרות עם יישום מבחני הסבירות בביקורת מנהלית ולניתוח קווים פרשניים בענייני סבירות והיקף שיקול הדעת המנהלי.\n- עילת אי־הסבירות במשפט המנהלי (מאמר סקירה) — מאמר מקיף המוקדש במיוחד להתפתחות הדוקטרינה הישראלית של אי־הסבירות, שימושי כהקשר ביקורתי וסינתטי לפסקי־דין מרכזיים ולהבחנות בין גישות פרשניות ותוצאתיות.¹\n- מאמרים ביקורתיים על עילת הסבירות ככלי לביסוס עליונות שיפוטית — ניתוחים אקדמיים המציעים ביקורת תאורטית והשוואתית על התפתחות מבחני הסבירות ותפקידם בעיצוב שיקול הדעת השיפוטי והפרדת הרשויות.\n- רקע פרשני וחוקה: מאמרים על עיגון נורמות מוסדיות וחזקת ההתאמה הפרשנית — שימושי להבנת המסגרות הפרשניות המגבירות או מצמצמות את תחולת הביקורת השיפוטית ואת הקשר בין עקרון החוק לפרשנות סבירה של סמכויות מנהליות.²\n- חקיקה דוגמת חוק הבנקאות (רישוי) — לטובת תחקיר אמפירי ומקרי בוחן: טקסט החקיקה ממחיש כיצד הוראות רישוי ורגולציה יוצרות מגרש שבו מתקיימת ביקורת שיפוטית של סבירות בהחלטות רגולטוריות.\n- הקשרים זכויותיים: הזכות לקיום בכבוד ומעמדה החוקתי — מאמרים על זכויות יסוד מספקים עוגן נורמטיבי לבחינת סבירות מהותית כאשר ההחלטה המנהלית נוגעת בזכויות יסוד או בפגיעות כלכליות־חברתיות.³\n**מקורות שאותרו אך גופם לא נקרא (לעיון בלבד)**\n\nפסקי הדין הבאים אותרו במהלך החיפוש, אך גוף פסק הדין עצמו לא נקרא ולכן לא נגזרה מהם הלכה, יישום או סייג:\n- בג\"ץ 1715/97 - לשכת מנהלי ההשקעות בישראל נ' שר האוצר — https://judgments.org.il/judgments/%D7%91%D7%92%D7%A5-1715-97-%D7%9C%D7%A9%D7%9B%D7%AA-%D7%9E%D7%A0%D7%94%D7%9C%D7%99-%D7%94%D7%94%D7%A9%D7%A7%D7%A2%D7%95%D7%AA-%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C-%D7%A0-%D7%A9%D7%A8-%D7%94/\n- בג\"ץ 1715/97, לשכת מנהלי ההשקעות בישראל ואח' נ' שר האוצר ואח' — http://www.glima.info/verdicts/97017150.a15.htm\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> קריאת גוף פסקי הדין הופסקה מטעמי מגבלת עיבוד, ולכן ייתכן שחלק מהמקורות נותחו לפי מטא-נתונים בלבד."
+}
