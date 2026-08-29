@@ -119,7 +119,7 @@ for (const run of RUNS) {
   const stab = d.candidate_pool_stabilization ?? null;
   const branch = d.deterministic_branch ?? md.deterministic_branch ?? null;
   const secondary = md.secondary_body_acquisition ?? null;
-  const dprec = md.discovery_precision ?? null;
+  const dprec = md.retrieval?.discovery_precision ?? md.discovery_precision ?? null;
 
   const failures: string[] = [];
   if (!job || !TERMINAL.has(String(job.status))) failures.push("job_not_terminal");
