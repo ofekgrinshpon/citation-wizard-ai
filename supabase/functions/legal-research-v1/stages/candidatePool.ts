@@ -174,7 +174,21 @@ const TRUSTED_PPLX_CLASSES = new Set([
   "scholarship",
 ]);
 
-export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
+export interface BuildPoolOptions {
+  /** Planned task intent — enables doctrinal-mode demotions. */
+  task_intent?: string | null;
+  /** discovery_precision_and_listing_suppression_v1 — default on. */
+  discovery_precision?: boolean;
+}
+
+export function buildCandidatePool(
+  allRaw: Candidate[],
+  options: BuildPoolOptions = {},
+): PoolResult {
+  const dpEnabled = options.discovery_precision !== false;
+  const dpT0 = Date.now();
+  const dp = emptyDiscoveryDiagnostics();
+
   // ── Source-integrity classification (deterministic, pre-verifier) ────────
   const integrityById = new Map<string, SourceIntegrity>();
   const rejected: Candidate[] = [];
@@ -192,6 +206,59 @@ export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
     if (integ.reject) rejected.push(c);
     else all.push(c);
   }
+
+  // ── discovery_precision_and_listing_suppression_v1 ───────────────────────
+  // Classify every surviving candidate, then suppress ONLY clear
+  // listing/search/category pages with an explicit reason string. Protected
+  // (exact-source / exact-authority / exact-docket / exact-statute / acquired
+  // body) candidates are never suppressed; metadata_only is demoted only.
+  const precisionById = new Map<string, DiscoveryPrecision>();
+  const survivors: Candidate[] = [];
+  const suppressed: Candidate[] = [];
+  for (const c of all) {
+    if (!dpEnabled) {
+      survivors.push(c);
+      continue;
+    }
+    const p = classifyDiscoveryPrecision({
+      candidate: c,
+      integrity: integrityById.get(c.candidate_id),
+      task_intent: options.task_intent ?? null,
+    });
+    precisionById.set(c.candidate_id, p);
+    c.metadata = { ...(c.metadata ?? {}), discovery_precision: p };
+    dp.classified++;
+    dp.class_counts[p.discovery_class] = (dp.class_counts[p.discovery_class] ?? 0) + 1;
+    if (p.protected && p.protection_reason) {
+      dp.protected_counts[p.protection_reason] = (dp.protected_counts[p.protection_reason] ?? 0) + 1;
+    }
+    if (p.suppress && p.suppress_reason) {
+      suppressed.push(c);
+      dp.suppressed.push({
+        candidate_id: c.candidate_id,
+        title: c.title,
+        url: c.source_url ?? null,
+        discovery_class: p.discovery_class,
+        reason: p.suppress_reason,
+      });
+      dp.suppressed_reason_counts[p.suppress_reason] =
+        (dp.suppressed_reason_counts[p.suppress_reason] ?? 0) + 1;
+    } else {
+      survivors.push(c);
+    }
+  }
+  const listingLike = (c: Candidate) => {
+    const p = precisionById.get(c.candidate_id);
+    if (p) {
+      return p.discovery_class === "index_or_listing" ||
+        p.discovery_class === "search_result_page" ||
+        p.discovery_class === "category_page";
+    }
+    return integrityById.get(c.candidate_id)?.authority_tier === "index_or_listing";
+  };
+  dp.index_or_listing_ratio_before = all.length
+    ? Number((all.filter(listingLike).length / all.length).toFixed(3))
+    : 0;
 
   // docket_aware_url_dedup_v1 — compute the dedupe key once per candidate.
   const dedupeKeyById = new Map<string, ReturnType<typeof buildUrlDedupeKey>>();
@@ -215,15 +282,30 @@ export function buildCandidatePool(allRaw: Candidate[]): PoolResult {
     if (c.retrieval_method === "perplexity") return 2;
     return 3; // vector
   };
-  const sorted = [...all].sort((a, b) => {
-    const t = tierOf(a) - tierOf(b);
-    if (t !== 0) return t;
-    return b.score - a.score;
-  });
+  // Bounded discovery-precision delta reorders inside a tier only.
+  const effScore = (c: Candidate): number =>
+    c.score + (precisionById.get(c.candidate_id)?.rank_delta ?? 0);
+  const orderBy = (list: Candidate[]) =>
+    [...list].sort((a, b) => {
+      const t = tierOf(a) - tierOf(b);
+      if (t !== 0) return t;
+      return effScore(b) - effScore(a);
+    });
+
+  // Baseline ordering (suppression-free) — used to identify backfilled slots.
+  const baselineRank = new Map<string, number>();
+  orderBy(all).forEach((c, i) => baselineRank.set(c.candidate_id, i));
+
+  const sorted = orderBy(survivors);
   const out: Candidate[] = [];
   let dedup_drops = 0;
   const rankOf = new Map<string, number>();
   sorted.forEach((c, i) => rankOf.set(c.candidate_id, i));
+  const freedSlots = Math.min(suppressed.length, CAPS.MAX_CANDIDATES);
+  const originCap = backfillOriginCap(freedSlots);
+  const backfillsByOrigin = new Map<string, number>();
+  const isBackfill = (c: Candidate) =>
+    freedSlots > 0 && (baselineRank.get(c.candidate_id) ?? 0) >= CAPS.MAX_CANDIDATES;
   const dropLog: PoolDrop[] = [];
   const logDrop = (c: Candidate, reason: PoolDrop["drop_reason"], key: string) => {
     dropLog.push({
