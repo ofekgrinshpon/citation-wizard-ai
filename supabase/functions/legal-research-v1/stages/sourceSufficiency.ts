@@ -623,14 +623,80 @@ export function assessSourceSufficiency(args: {
   const broadMode = depthMode === "broad_research" || depthMode === "academic_research" ||
     args.researchMode === "broad_doctrine" || args.researchMode === "academic_research";
 
+  // ── narrow_doctrine_limited_doctrinal_answer_v1 ──────────────────────────
+  const directSecondaries = eligibleSecondaries.filter(
+    (s) => String(s.verifier_verdict ?? s.best_support ?? "") === "direct",
+  );
+  const corroboratingCount = Math.max(
+    0,
+    eligibleSecondaries.length - directSecondaries.length,
+  ) + governingStatutes.length + governingRegulations.length + usableJudgments.length;
+  const primaryAuthorityMissing = usableJudgments.length === 0 &&
+    governingStatutes.length + governingRegulations.length === 0;
+
+  const explicitDocket = detectDockets(question).length > 0;
+  const caseHoldingRequested = profile === "case_law_synthesis" ||
+    plan?.user_task_intent === "case_holding" ||
+    plan?.authority_requirements?.requires_judgment_body === true;
+  const statuteTextRequired = statuteSectionRequested ||
+    profile === "statute_section_definition" ||
+    plan?.authority_requirements?.requires_official_statute === true;
+  const anchorMissing = args.hasMissingAnchor === true;
+  const narrowBlocked = explicitDocket || caseHoldingRequested || statuteTextRequired ||
+    anchorMissing;
+
+  /** Task intents that may be answered as a limited doctrinal explanation. */
+  const NARROW_OK_TASKS = new Set([
+    "doctrinal_explanation",
+    "statute_explanation",
+    "legal_research_guidance",
+    "literature_map",
+    "source_recommendation",
+    "seminar_planning",
+    "argument_development",
+  ]);
+  const taskAllowsNarrow = !plan || NARROW_OK_TASKS.has(String(plan.user_task_intent));
+
+  /**
+   * Narrow-doctrine limited answer: acquired, integrity-passing, verifier
+   * direct/partial doctrinal scholarship may carry a *doctrinal explanation*
+   * (never a holding, never statutory wording) when no exact judgment,
+   * docket, case-holding or official-statute requirement is in play.
+   */
+  const narrowLimitedDoctrinal = (): { allowed: boolean; reason: string } => {
+    if (depthMode !== "narrow_doctrine") return { allowed: false, reason: "depth_mode_not_narrow" };
+    if (explicitDocket) return { allowed: false, reason: "explicit_docket_requested" };
+    if (caseHoldingRequested) return { allowed: false, reason: "case_holding_requested" };
+    if (statuteTextRequired) {
+      return { allowed: false, reason: "official_statute_text_required" };
+    }
+    if (anchorMissing) return { allowed: false, reason: "required_anchor_missing" };
+    if (!taskAllowsNarrow) return { allowed: false, reason: "task_intent_not_doctrinal" };
+    if (directSecondaries.length === 0) {
+      return { allowed: false, reason: "no_direct_acquired_doctrinal_source" };
+    }
+    if (eligibleSecondaries.length >= 2) {
+      return { allowed: true, reason: "two_acquired_doctrinal_secondaries" };
+    }
+    if (directSecondaries.length >= 1 && corroboratingCount >= 1) {
+      return { allowed: true, reason: "direct_doctrinal_plus_corroborating_source" };
+    }
+    return { allowed: false, reason: "insufficient_acquired_doctrinal_support" };
+  };
+  const narrowDecision = narrowLimitedDoctrinal();
+
   /**
    * The fallback exists to stop *over-refusal*, not to force citations: it
    * fires only when acquired, validated material can actually carry a limited
    * doctrinal explanation. With no eligible secondary it never fires, and the
    * refusal stands.
    */
-  const doctrinalFallback = (): { combination: "A" | "B" | "C"; reason: string } | null => {
-    if (!broadMode) return null;
+  const doctrinalFallback = (): { combination: "A" | "B" | "C" | "D"; reason: string } | null => {
+    if (!broadMode) {
+      return narrowDecision.allowed
+        ? { combination: "D", reason: `narrow_doctrine:${narrowDecision.reason}` }
+        : null;
+    }
     const statutes = governingStatutes.length + governingRegulations.length;
     const secondaries = eligibleSecondaries.length;
     const judgments = usableJudgments.length;
@@ -645,6 +711,7 @@ export function assessSourceSufficiency(args: {
     }
     return null;
   };
+
 
   const finish = (
     applied: boolean,
