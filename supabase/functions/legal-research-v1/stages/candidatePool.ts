@@ -501,6 +501,32 @@ export function buildCandidatePool(
     });
   }
 
+  // discovery_precision — suppressed candidates are recorded as diagnostics
+  // drops so they are auditable but never consume any downstream budget.
+  for (const c of suppressed) {
+    const p = precisionById.get(c.candidate_id)!;
+    drops.push({
+      candidate_id: c.candidate_id,
+      title: c.title,
+      url: c.source_url ?? null,
+      source_type: c.source_type,
+      origin: c.origin,
+      retrieval_method: c.retrieval_method,
+      role: c.role,
+      claim_id: c.claim_id,
+      rank_before_drop: baselineRank.get(c.candidate_id) ?? -1,
+      drop_reason: "discovery_listing_suppressed",
+      drop_key: p.suppress_reason ?? p.discovery_class,
+      score: c.score,
+    });
+  }
+  dp.pool_before = all.length;
+  dp.pool_after = out.length;
+  dp.index_or_listing_ratio_after = out.length
+    ? Number((out.filter(listingLike).length / out.length).toFixed(3))
+    : 0;
+  dp.ms = Date.now() - dpT0;
+
   return {
     candidates: out,
     found: allRaw.length,
@@ -512,6 +538,7 @@ export function buildCandidatePool(
     url_dedupe,
     url_dedupe_identity_source_counts: identityCounts,
     url_dedupe_rescued_from_legacy_collapse: rescued,
+    discovery_precision: dp,
     counts,
   };
 }
