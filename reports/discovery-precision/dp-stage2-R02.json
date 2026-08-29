@@ -1,8 +1,8 @@
 {
   "id": "R02",
-  "run_id": "8f59f505-f25d-442c-b3a5-bf80a8673212",
-  "job_id": "bcd5471e-7f90-4e91-9968-32464a6dbd3a",
-  "ms": 100966,
+  "run_id": "7ee972a5-db30-47d1-941a-868208acae1a",
+  "job_id": "e425c3f3-fbcb-425a-8411-c3d39414c3a2",
+  "ms": 101010,
   "status": "done",
   "branch": "docket_limitation",
   "answer_length": 320,
@@ -30,51 +30,84 @@
     },
     "depth_mode": "specific_case_or_statute",
     "snapshot_after": {
-      "not_citable": 9,
+      "not_citable": 16,
       "acquired_bodies": 0,
-      "secondary_typed": 5,
+      "secondary_typed": 8,
       "verifier_direct": 0,
-      "index_or_listing": 9,
-      "total_candidates": 20,
-      "verifier_partial": 1,
+      "index_or_listing": 16,
+      "total_candidates": 30,
+      "verifier_partial": 8,
       "doctrinal_eligible": 0,
       "institutional_typed": 0,
       "institutional_eligible": 0,
-      "blocked_not_doctrinal_type": 1,
+      "blocked_not_doctrinal_type": 7,
       "reconsideration_rejections": {
-        "primary_law_or_case_law": 1
+        "no_doctrinal_signal": 1,
+        "primary_law_or_case_law": 3,
+        "listing_suppressed:integrity_index_or_listing": 2
       },
-      "reconsiderable_candidate_ids": [],
-      "skipped_no_body_acquisition_attempted": 1
+      "reconsiderable_candidate_ids": [
+        "09073dcf-217c-4247-85a1-a7504cca9d39",
+        "0df2fbc6-68ac-49b1-98f5-a27cf9479b2e"
+      ],
+      "skipped_no_body_acquisition_attempted": 8
     },
     "snapshot_before": {
-      "not_citable": 9,
+      "not_citable": 16,
       "acquired_bodies": 0,
-      "secondary_typed": 5,
+      "secondary_typed": 8,
       "verifier_direct": 0,
-      "index_or_listing": 9,
-      "total_candidates": 20,
-      "verifier_partial": 1,
+      "index_or_listing": 16,
+      "total_candidates": 30,
+      "verifier_partial": 8,
       "doctrinal_eligible": 0,
       "institutional_typed": 0,
       "institutional_eligible": 0,
-      "blocked_not_doctrinal_type": 1,
+      "blocked_not_doctrinal_type": 7,
       "reconsideration_rejections": {
-        "primary_law_or_case_law": 1
+        "no_doctrinal_signal": 1,
+        "primary_law_or_case_law": 3,
+        "listing_suppressed:integrity_index_or_listing": 2
       },
-      "reconsiderable_candidate_ids": [],
-      "skipped_no_body_acquisition_attempted": 1
+      "reconsiderable_candidate_ids": [
+        "09073dcf-217c-4247-85a1-a7504cca9d39",
+        "0df2fbc6-68ac-49b1-98f5-a27cf9479b2e"
+      ],
+      "skipped_no_body_acquisition_attempted": 8
     },
     "user_task_intent": "case_holding",
     "listing_suppressed": 0,
     "listing_suppressed_ids": [],
     "reconsidered_candidate_ids": []
   },
-  "discovery_precision": null,
+  "discovery_precision": {
+    "ms": 19,
+    "version": "discovery_precision_and_listing_suppression_v1",
+    "backfilled": 0,
+    "classified": 107,
+    "pool_after": 30,
+    "suppressed": [],
+    "pool_before": 107,
+    "task_intent": "case_holding",
+    "class_counts": {
+      "metadata_only": 3,
+      "index_or_listing": 50,
+      "citable_candidate": 36,
+      "possible_body_page": 18
+    },
+    "protected_counts": {
+      "exact_docket_identity": 3,
+      "local_corpus_document": 104
+    },
+    "backfilled_by_origin": {},
+    "suppressed_reason_counts": {},
+    "index_or_listing_ratio_after": 0.533,
+    "index_or_listing_ratio_before": 0.467
+  },
   "secondary_acquisition": null,
   "pass": false,
   "failures": [
-    "no_discovery_precision_telemetry"
+    "listing_ratio_worsened"
   ],
   "answer": "לא אותר במקורות הזמינים ע\"א 6821/93. לכן לא ניתן לקבוע באופן מוסמך מה נקבע בו, מה היו הנימוקים או מה הייתה תוצאת ההליך. אין להשיב מתיקים דומים, ממקורות רקע או מספרות משנית.\n\nאם יש לך את פסק הדין בקובץ PDF/DOCX או צילום, אפשר להעלות אותו כאן, ואנתח מתוכו את ההחזקה, הנימוקים המרכזיים, העובדות הרלוונטיות והמשמעות המשפטית."
 }
