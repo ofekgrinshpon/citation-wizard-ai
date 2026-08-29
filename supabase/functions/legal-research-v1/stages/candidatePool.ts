@@ -72,6 +72,8 @@ export interface PoolDrop {
     | "dup_docket"
     | "dup_role_title"
     | "max_candidates_cap"
+    | "discovery_listing_suppressed"
+    | "backfill_origin_diversity_cap"
     | "source_integrity_reject";
   drop_key: string;
   score: number;
