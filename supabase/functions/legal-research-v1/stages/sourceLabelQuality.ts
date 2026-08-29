@@ -69,7 +69,7 @@ export interface NearDuplicateReport {
  * Collapse near-duplicate titles in place (mutates `title` only).
  * Threshold 0.88 normalized similarity.
  */
-export function collapseNearDuplicateTitles<T extends LabelledSource>(
+export function collapseNearDuplicateTitles<T extends { title: string }>(
   sources: T[],
   threshold = 0.88,
 ): NearDuplicateReport {
