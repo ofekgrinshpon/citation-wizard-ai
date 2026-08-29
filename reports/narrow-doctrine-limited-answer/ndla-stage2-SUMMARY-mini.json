@@ -1,0 +1,147 @@
+[
+  {
+    "id": "D1",
+    "pass": false,
+    "failures": [
+      "no_discovery_precision_telemetry",
+      "below_eligibility_floor"
+    ],
+    "branch": null,
+    "footnotes": 0,
+    "recovery": null,
+    "discovery_precision": null,
+    "narrow_limited": null,
+    "snapshot_before": null,
+    "snapshot_after": null
+  },
+  {
+    "id": "R02",
+    "pass": true,
+    "failures": [],
+    "branch": "docket_limitation",
+    "footnotes": 0,
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": false,
+        "total_ms": 10000,
+        "max_candidates": 3,
+        "max_web_attempts": 1,
+        "max_local_lookups": 2
+      },
+      "reason": "task_intent_not_doctrinal:case_holding",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "discovery_precision": {
+      "classified": 107,
+      "class_counts": {
+        "metadata_only": 3,
+        "index_or_listing": 36,
+        "citable_candidate": 36,
+        "possible_body_page": 32
+      },
+      "suppressed": 31,
+      "suppressed_reason_counts": {
+        "index_or_listing:integrity_index_or_listing": 30,
+        "index_or_listing:listing_title_pattern+integrity_index_or_listing": 1
+      },
+      "protected_counts": {
+        "judgment_document": 1,
+        "exact_docket_identity": 10,
+        "official_primary_page": 6,
+        "local_corpus_substantive": 54
+      },
+      "protected_listing_counts": {
+        "exact_docket_identity": 5
+      },
+      "not_suppressible_reason_counts": {
+        "protected:judgment_document": 1,
+        "protected:exact_docket_identity": 10,
+        "protected:official_primary_page": 6,
+        "protected:local_corpus_substantive": 54,
+        "class_not_suppressible:metadata_only": 1,
+        "class_not_suppressible:possible_body_page": 4
+      },
+      "backfilled": 17,
+      "backfilled_by_origin": {
+        "local_db": 10,
+        "perplexity": 7
+      },
+      "raw_ratio": 0.336,
+      "suppressible_ratio_before": 0.29,
+      "suppressible_ratio_after": 0,
+      "o_n_guard_ok": true,
+      "pool_before": 107,
+      "pool_after": 25,
+      "ms": 18
+    },
+    "narrow_limited": null,
+    "snapshot_before": {
+      "not_citable": 2,
+      "acquired_bodies": 0,
+      "secondary_typed": 12,
+      "verifier_direct": 0,
+      "index_or_listing": 2,
+      "total_candidates": 25,
+      "verifier_partial": 14,
+      "doctrinal_eligible": 0,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 9,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 3,
+        "listing_suppressed:integrity_index_or_listing": 1
+      },
+      "reconsiderable_candidate_ids": [
+        "40d37bde-e2ad-4935-9684-7a8d35a72c9a",
+        "94575c89-cdac-41cb-91a8-0c04e0a46e22",
+        "9dd37b01-8008-4846-8f19-79164de40c9e",
+        "7a7549a0-a1fe-43cc-9d6f-47f57107f045",
+        "c8c79d80-590b-44ae-b509-806c96b52c3d",
+        "654fc3f5-ab00-4fea-86a4-cf2dbbc9842f",
+        "2d0c1a53-d92c-4f79-8ce6-c818776c941c",
+        "80ffb166-5c3a-48bf-bee2-c23123c7ba35",
+        "81a4b6bc-c51e-4002-8620-8652fcddfb10",
+        "8f4fd59f-0ac8-47fe-9428-4dac4b764edc"
+      ],
+      "skipped_no_body_acquisition_attempted": 14
+    },
+    "snapshot_after": {
+      "not_citable": 2,
+      "acquired_bodies": 0,
+      "secondary_typed": 12,
+      "verifier_direct": 0,
+      "index_or_listing": 2,
+      "total_candidates": 25,
+      "verifier_partial": 14,
+      "doctrinal_eligible": 0,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 9,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 3,
+        "listing_suppressed:integrity_index_or_listing": 1
+      },
+      "reconsiderable_candidate_ids": [
+        "40d37bde-e2ad-4935-9684-7a8d35a72c9a",
+        "94575c89-cdac-41cb-91a8-0c04e0a46e22",
+        "9dd37b01-8008-4846-8f19-79164de40c9e",
+        "7a7549a0-a1fe-43cc-9d6f-47f57107f045",
+        "c8c79d80-590b-44ae-b509-806c96b52c3d",
+        "654fc3f5-ab00-4fea-86a4-cf2dbbc9842f",
+        "2d0c1a53-d92c-4f79-8ce6-c818776c941c",
+        "80ffb166-5c3a-48bf-bee2-c23123c7ba35",
+        "81a4b6bc-c51e-4002-8620-8652fcddfb10",
+        "8f4fd59f-0ac8-47fe-9428-4dac4b764edc"
+      ],
+      "skipped_no_body_acquisition_attempted": 14
+    }
+  }
+]

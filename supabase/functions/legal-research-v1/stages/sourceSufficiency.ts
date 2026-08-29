@@ -25,6 +25,7 @@
 
 import type { DrafterInputSource } from "./drafter.ts";
 import { detectStatuteSections } from "./statuteSectionDetection.ts";
+import { detectDockets } from "./docketDetection.ts";
 import {
   bucketSources,
   planAllowsResearchGuidance,
@@ -54,6 +55,7 @@ export type SufficiencyAuthorityBasis =
   | "governing_regulation"
   | "statute_plus_regulation"
   | "doctrinal_secondary"
+  | "doctrinal_secondary_limited"
   | "insufficient";
 
 export interface SufficiencyAssessment {
@@ -124,10 +126,32 @@ export interface SufficiencyAssessment {
    * acquired statutes / doctrinal secondaries. Never licenses case-law claims.
    */
   limited_doctrinal_answer: boolean;
-  /** Which fallback combination fired (A/B/C), or null. */
-  doctrinal_fallback_combination: "A" | "B" | "C" | null;
+  /** Which fallback combination fired (A/B/C, or D for narrow doctrine), or null. */
+  doctrinal_fallback_combination: "A" | "B" | "C" | "D" | null;
   /** Why the fallback did not fire, when it was evaluated and declined. */
   doctrinal_fallback_declined_reason: string | null;
+
+  // ── narrow_doctrine_limited_doctrinal_answer_v1 ─────────────────────────
+  /** The narrow-doctrine limited answer was permitted. */
+  limited_doctrinal_answer_allowed: boolean;
+  /** Why the narrow-doctrine limited answer was allowed / declined. */
+  narrow_limited_doctrinal_reason: string | null;
+  /** Acquired, integrity-passing, verifier direct/partial doctrinal sources. */
+  acquired_doctrinal_source_count: number;
+  /** Of those, verifier `direct`. */
+  direct_doctrinal_source_count: number;
+  /** Acquired corroborating sources (other eligible doctrinal / statute / judgment). */
+  corroborating_source_count: number;
+  /** No usable judgment and no governing statute/regulation text was available. */
+  primary_authority_missing: boolean;
+  /** An explicit docket / case-holding / statutory-text requirement blocks the fallback. */
+  exact_docket_or_case_holding_blocked: boolean;
+  /** Invariant: found-only / metadata-only sources never support a claim. */
+  found_only_used_for_support: boolean;
+  /** Sufficiency branch before and after the limited-doctrinal decision. */
+  branch_before: string;
+  branch_after: string;
+
 
   // ── source_use_intent_planning_v1 ───────────────────────────────────────
   /** Planned user task the sufficiency verdict was measured against. */
@@ -600,14 +624,81 @@ export function assessSourceSufficiency(args: {
   const broadMode = depthMode === "broad_research" || depthMode === "academic_research" ||
     args.researchMode === "broad_doctrine" || args.researchMode === "academic_research";
 
+  // ── narrow_doctrine_limited_doctrinal_answer_v1 ──────────────────────────
+  const directSecondaries = eligibleSecondaries.filter(
+    (s) => String(s.verifier_verdict ?? s.best_support ?? "") === "direct",
+  );
+  const corroboratingCount = Math.max(
+    0,
+    eligibleSecondaries.length - directSecondaries.length,
+  ) + governingStatutes.length + governingRegulations.length + usableJudgments.length;
+  const primaryAuthorityMissing = usableJudgments.length === 0 &&
+    governingStatutes.length + governingRegulations.length === 0;
+
+  const explicitDocket = detectDockets(question).length > 0;
+  // Only an *explicit* case-holding request blocks the limited answer. A generic
+  // analyzer preference for judgment text does not, or every doctrinal question
+  // would be blocked.
+  const caseHoldingRequested = profile === "case_law_synthesis" ||
+    plan?.user_task_intent === "case_holding" ||
+    (explicitDocket && plan?.authority_requirements?.requires_judgment_body === true);
+  const statuteTextRequired = statuteSectionRequested ||
+    profile === "statute_section_definition" ||
+    (statuteSectionRequested && plan?.authority_requirements?.requires_official_statute === true);
+  const anchorMissing = args.hasMissingAnchor === true;
+  const narrowBlocked = explicitDocket || caseHoldingRequested || statuteTextRequired ||
+    anchorMissing;
+
+  /** Task intents that may be answered as a limited doctrinal explanation. */
+  const NARROW_OK_TASKS = new Set([
+    "doctrinal_explanation",
+    "statute_explanation",
+    "legal_research_guidance",
+    "literature_map",
+    "source_recommendation",
+    "seminar_planning",
+    "argument_development",
+  ]);
+  const taskAllowsNarrow = !plan || NARROW_OK_TASKS.has(String(plan.user_task_intent));
+
+  /**
+   * Narrow-doctrine limited answer: acquired, integrity-passing, verifier
+   * direct/partial doctrinal scholarship may carry a *doctrinal explanation*
+   * (never a holding, never statutory wording) when no exact judgment,
+   * docket, case-holding or official-statute requirement is in play.
+   */
+  const narrowLimitedDoctrinal = (): { allowed: boolean; reason: string } => {
+    if (depthMode !== "narrow_doctrine") return { allowed: false, reason: "depth_mode_not_narrow" };
+    if (explicitDocket) return { allowed: false, reason: "explicit_docket_requested" };
+    if (caseHoldingRequested) return { allowed: false, reason: "case_holding_requested" };
+    if (statuteTextRequired) {
+      return { allowed: false, reason: "official_statute_text_required" };
+    }
+    if (anchorMissing) return { allowed: false, reason: "required_anchor_missing" };
+    if (!taskAllowsNarrow) return { allowed: false, reason: "task_intent_not_doctrinal" };
+    if (eligibleSecondaries.length >= 2) {
+      return { allowed: true, reason: "two_acquired_doctrinal_secondaries" };
+    }
+    if (directSecondaries.length >= 1 && corroboratingCount >= 1) {
+      return { allowed: true, reason: "direct_doctrinal_plus_corroborating_source" };
+    }
+    return { allowed: false, reason: "insufficient_acquired_doctrinal_support" };
+  };
+
+  const narrowDecision = narrowLimitedDoctrinal();
+
   /**
    * The fallback exists to stop *over-refusal*, not to force citations: it
    * fires only when acquired, validated material can actually carry a limited
    * doctrinal explanation. With no eligible secondary it never fires, and the
    * refusal stands.
    */
-  const doctrinalFallback = (): { combination: "A" | "B" | "C"; reason: string } | null => {
-    if (!broadMode) return null;
+  const doctrinalFallback = (): { combination: "A" | "B" | "C" | "D"; reason: string } | null => {
+    if (!broadMode) {
+      return narrowDecision.allowed
+        ? { combination: "D", reason: `narrow_doctrine:${narrowDecision.reason}` }
+        : null;
+    }
     const statutes = governingStatutes.length + governingRegulations.length;
     const secondaries = eligibleSecondaries.length;
     const judgments = usableJudgments.length;
@@ -623,6 +714,7 @@ export function assessSourceSufficiency(args: {
     return null;
   };
 
+
   const finish = (
     applied: boolean,
     sufficient: boolean,
@@ -637,9 +729,10 @@ export function assessSourceSufficiency(args: {
     // Doctrinal fallback: convert a would-be refusal in broad/academic modes
     // into a limited doctrinal answer when acquired material supports one.
     let limitedDoctrinal = false;
-    let fallbackCombination: "A" | "B" | "C" | null = null;
+    let fallbackCombination: "A" | "B" | "C" | "D" | null = null;
     let fallbackDeclined: string | null = null;
     let researchGuidanceSufficiency = false;
+    const branchBefore = sufficient ? reason : "insufficient_sources_limitation";
     if (applied && !sufficient && plan && planAllowsResearchGuidance(plan)) {
       // A research-guidance task (source recommendation / literature map /
       // seminar planning) is not measured against black-letter authority.
@@ -666,12 +759,15 @@ export function assessSourceSufficiency(args: {
       } else {
         fallbackDeclined = broadMode
           ? "no_eligible_acquired_doctrinal_support"
-          : "depth_mode_not_broad";
+          : narrowDecision.reason;
       }
     }
+    const narrowLimited = limitedDoctrinal && fallbackCombination === "D";
     const basis = opts?.basis ??
       (limitedDoctrinal
-        ? (usableJudgments.length > 0
+        ? (narrowLimited
+          ? "doctrinal_secondary_limited"
+          : usableJudgments.length > 0
           ? "usable_judgment"
           : governingStatutes.length + governingRegulations.length > 0
           ? basisFor()
@@ -705,6 +801,21 @@ export function assessSourceSufficiency(args: {
       limited_doctrinal_answer: limitedDoctrinal,
       doctrinal_fallback_combination: fallbackCombination,
       doctrinal_fallback_declined_reason: fallbackDeclined,
+      limited_doctrinal_answer_allowed: narrowLimited,
+      narrow_limited_doctrinal_reason: depthMode === "narrow_doctrine"
+        ? narrowDecision.reason
+        : null,
+      acquired_doctrinal_source_count: eligibleSecondaries.length,
+      direct_doctrinal_source_count: directSecondaries.length,
+      corroborating_source_count: corroboratingCount,
+      primary_authority_missing: primaryAuthorityMissing,
+      exact_docket_or_case_holding_blocked: narrowBlocked,
+      found_only_used_for_support: false,
+      branch_before: branchBefore,
+      branch_after: sufficient
+        ? (narrowLimited ? "limited_doctrinal_answer" : reason)
+        : "insufficient_sources_limitation",
+
       planned_user_task_intent: plan?.user_task_intent ?? null,
       planned_answer_strategy: plan?.answer_strategy ?? null,
       research_guidance_sufficiency: researchGuidanceSufficiency,

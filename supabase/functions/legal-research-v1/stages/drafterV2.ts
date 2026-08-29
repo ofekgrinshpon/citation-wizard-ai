@@ -73,7 +73,10 @@ import {
   type DoctrinalTypingReport,
   remapDoctrinalSourceTypes,
 } from "./doctrinalSourceTyping.ts";
-import { LIMITED_DOCTRINAL_ANSWER_NOTICE_HE } from "./claimSupportCategory.ts";
+import {
+  LIMITED_DOCTRINAL_ANSWER_NOTICE_HE,
+  NARROW_LIMITED_DOCTRINAL_NOTICE_HE,
+} from "./claimSupportCategory.ts";
 
 
 
@@ -343,6 +346,14 @@ function buildUserMessage(
       "אסור להציג קביעה הנשענת על ספרות או פרשנות כהלכה מחייבת, ככלל פסיקתי מוגמר או כתוצאה של פסק דין מסוים; " +
         "אסור לייחס הלכה לבית משפט ללא נוסח פסק דין שסופק לך; ואסור להמציא פסקי דין או להסתמך על אזכורי כותרת בלבד. " +
         "אם היקף המקורות אינו מאפשר תשובה מלאה — כתוב תשובה מוגבלת וכנה במקום להרחיב.",
+    );
+  }
+  if (sufficiency?.limited_doctrinal_answer_allowed) {
+    lines.push(
+      "התשובה כאן היא הסבר דוקטרינרי מוגבל הנסמך על ספרות משפטית שנקראה במלואה בלבד. הסבר את הדוקטרינה כפי שהיא משתקפת בכתיבה המשפטית — יסודות מקובלים, רציונלים, מתחים וגבולות — וציין במפורש שלא אותר נוסח פסק דין מחייב או נוסח חוק רשמי שנקרא במלואו. סיים בהכוונה קצרה לאילו מקורות ראשוניים כדאי לפנות לאימות.",
+    );
+    lines.push(
+      "אין לכתוב \"בית המשפט קבע\" או ניסוח שווה ערך, אין לצטט או לשחזר נוסח סעיף חוק, ואין להציג את הספרות כמקור סמכות מחייב.",
     );
   }
   if (sufficiency?.practical_steps_thin_authority_passed) {
@@ -1711,6 +1722,16 @@ export async function runDrafterV2(
       limited_doctrinal_answer: false,
       doctrinal_fallback_combination: null,
       doctrinal_fallback_declined_reason: sufficiency?.doctrinal_fallback_declined_reason ?? null,
+      limited_doctrinal_answer_allowed: false,
+      narrow_limited_doctrinal_reason: sufficiency?.narrow_limited_doctrinal_reason ?? null,
+      acquired_doctrinal_source_count: sufficiency?.acquired_doctrinal_source_count ?? 0,
+      direct_doctrinal_source_count: sufficiency?.direct_doctrinal_source_count ?? 0,
+      corroborating_source_count: sufficiency?.corroborating_source_count ?? 0,
+      primary_authority_missing: sufficiency?.primary_authority_missing ?? true,
+      exact_docket_or_case_holding_blocked: true,
+      found_only_used_for_support: false,
+      branch_before: sufficiency?.branch_before ?? "insufficient_sources_limitation",
+      branch_after: "insufficient_sources_limitation",
       planned_user_task_intent: sufficiency?.planned_user_task_intent ?? null,
       planned_answer_strategy: sufficiency?.planned_answer_strategy ?? null,
       research_guidance_sufficiency: false,
@@ -2017,7 +2038,11 @@ export async function runDrafterV2(
         metadata_only_holding_gate.blocks_left_unsupported > 0)
       ? referenceOnlySection(metadata_only_holding_gate.reference_only_sources)
       : "") +
-    (sufficiency?.limited_doctrinal_answer === true ? LIMITED_DOCTRINAL_ANSWER_NOTICE_HE : "") +
+    (sufficiency?.limited_doctrinal_answer === true
+      ? (sufficiency?.limited_doctrinal_answer_allowed === true
+        ? NARROW_LIMITED_DOCTRINAL_NOTICE_HE
+        : LIMITED_DOCTRINAL_ANSWER_NOTICE_HE)
+      : "") +
     matched.limitation_text;
 
 
