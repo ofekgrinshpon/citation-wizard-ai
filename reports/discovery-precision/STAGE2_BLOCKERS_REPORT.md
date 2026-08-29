@@ -40,16 +40,17 @@
 | D1-M1 | 162 s | normal draft | 2 | 0.437 | 0.310 → 0.000 | 39 | 14 | ok | PASS |
 | D1-M2 | 131 s | normal draft | 2 | 0.500 | 0.402 → 0.000 | 45 | 15 | ok | PASS |
 | B8-M1 | 111 s | normal draft | 0 | 0.505 | 0.368 → 0.000 | 35 | 20 | ok | PASS |
-| R02 | 10 s | — | 0 | — | — | — | — | — | BLOCKED (AI credits 402) |
+| R02 | 90 s | docket_limitation | 0 | 0.475 | 0.406 → 0.000 | 41 | 14 | ok | PASS |
+| P02 | 131 s | docket_limitation | 0 | 0.475 | 0.418 → 0.000 | 59 | 15 | ok | PASS |
 
 - **D1 divergence resolved**: eligible 8→8 and 5→5, both runs drafted (previously 6 vs 1 with a refusal).
 - **B8 back to prior order of magnitude**: 111 s vs 884 s; no retrieval abort; telemetry present.
 - **Suppressible listing ratio drops to 0 in the final pool** in all three runs; residual listing candidates in the
   raw ratio are protected with valid reasons (`exact_docket_identity`, `official_statute_page`).
-- **R02 safety control could not run**: the AI gateway returned `402 Not enough credits` at the claim analyzer, so the
-  pipeline exited at P2. Unrelated to this track — needs re-running once credits are topped up.
+- **Safety controls preserved**: R02 and P02 both still refuse with `docket_limitation` and 0 footnotes; suppression
+  and backfill did not admit substitute authority for a named docket.
 
 ## Verdict
 
-Blockers 1–4 fixed and verified. Acceptance is complete except the R02/P02 safety control, which is blocked on AI
-credits. Full sweep still on hold.
+Blockers 1–4 fixed and verified; all Stage 2 acceptance gates pass, including both safety controls. Cleared to run
+the full sweep.
