@@ -1,8 +1,8 @@
 {
   "id": "R02",
-  "run_id": "7ee972a5-db30-47d1-941a-868208acae1a",
-  "job_id": "e425c3f3-fbcb-425a-8411-c3d39414c3a2",
-  "ms": 101010,
+  "run_id": "777a767e-8956-4f9b-96db-34cf8813a962",
+  "job_id": "87684777-f8f8-4711-8d63-fb49031661f6",
+  "ms": 101334,
   "status": "done",
   "branch": "docket_limitation",
   "answer_length": 320,
@@ -30,50 +30,42 @@
     },
     "depth_mode": "specific_case_or_statute",
     "snapshot_after": {
-      "not_citable": 16,
+      "not_citable": 19,
       "acquired_bodies": 0,
-      "secondary_typed": 8,
-      "verifier_direct": 0,
-      "index_or_listing": 16,
+      "secondary_typed": 5,
+      "verifier_direct": 1,
+      "index_or_listing": 19,
       "total_candidates": 30,
-      "verifier_partial": 8,
+      "verifier_partial": 2,
       "doctrinal_eligible": 0,
       "institutional_typed": 0,
       "institutional_eligible": 0,
-      "blocked_not_doctrinal_type": 7,
+      "blocked_not_doctrinal_type": 3,
       "reconsideration_rejections": {
-        "no_doctrinal_signal": 1,
-        "primary_law_or_case_law": 3,
-        "listing_suppressed:integrity_index_or_listing": 2
+        "primary_law_or_case_law": 2,
+        "listing_suppressed:integrity_index_or_listing": 1
       },
-      "reconsiderable_candidate_ids": [
-        "09073dcf-217c-4247-85a1-a7504cca9d39",
-        "0df2fbc6-68ac-49b1-98f5-a27cf9479b2e"
-      ],
-      "skipped_no_body_acquisition_attempted": 8
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 3
     },
     "snapshot_before": {
-      "not_citable": 16,
+      "not_citable": 19,
       "acquired_bodies": 0,
-      "secondary_typed": 8,
-      "verifier_direct": 0,
-      "index_or_listing": 16,
+      "secondary_typed": 5,
+      "verifier_direct": 1,
+      "index_or_listing": 19,
       "total_candidates": 30,
-      "verifier_partial": 8,
+      "verifier_partial": 2,
       "doctrinal_eligible": 0,
       "institutional_typed": 0,
       "institutional_eligible": 0,
-      "blocked_not_doctrinal_type": 7,
+      "blocked_not_doctrinal_type": 3,
       "reconsideration_rejections": {
-        "no_doctrinal_signal": 1,
-        "primary_law_or_case_law": 3,
-        "listing_suppressed:integrity_index_or_listing": 2
+        "primary_law_or_case_law": 2,
+        "listing_suppressed:integrity_index_or_listing": 1
       },
-      "reconsiderable_candidate_ids": [
-        "09073dcf-217c-4247-85a1-a7504cca9d39",
-        "0df2fbc6-68ac-49b1-98f5-a27cf9479b2e"
-      ],
-      "skipped_no_body_acquisition_attempted": 8
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 3
     },
     "user_task_intent": "case_holding",
     "listing_suppressed": 0,
@@ -81,28 +73,28 @@
     "reconsidered_candidate_ids": []
   },
   "discovery_precision": {
-    "ms": 19,
+    "ms": 20,
     "version": "discovery_precision_and_listing_suppression_v1",
     "backfilled": 0,
-    "classified": 107,
+    "classified": 139,
     "pool_after": 30,
     "suppressed": [],
-    "pool_before": 107,
+    "pool_before": 139,
     "task_intent": "case_holding",
     "class_counts": {
-      "metadata_only": 3,
-      "index_or_listing": 50,
-      "citable_candidate": 36,
+      "metadata_only": 2,
+      "index_or_listing": 62,
+      "citable_candidate": 57,
       "possible_body_page": 18
     },
     "protected_counts": {
-      "exact_docket_identity": 3,
-      "local_corpus_document": 104
+      "exact_docket_identity": 2,
+      "local_corpus_document": 134
     },
     "backfilled_by_origin": {},
     "suppressed_reason_counts": {},
-    "index_or_listing_ratio_after": 0.533,
-    "index_or_listing_ratio_before": 0.467
+    "index_or_listing_ratio_after": 0.633,
+    "index_or_listing_ratio_before": 0.446
   },
   "secondary_acquisition": null,
   "pass": false,
