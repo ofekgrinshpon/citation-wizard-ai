@@ -41,7 +41,7 @@ const SAFETY = [
 ];
 
 const MINI = [
-  { id: "B8-DOCTRINE", q: `מהי דוקטרינת ההבטחה המנהלית?` },
+  ...(process.env.SKIP_B8 ? [] : [{ id: "B8-DOCTRINE", q: `מהי דוקטרינת ההבטחה המנהלית?` }]),
   { id: "D1", q: Q.D1 },
   { id: "R02", q: Q.R02 },
 ];
