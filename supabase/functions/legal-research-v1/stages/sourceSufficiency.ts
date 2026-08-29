@@ -54,6 +54,7 @@ export type SufficiencyAuthorityBasis =
   | "governing_regulation"
   | "statute_plus_regulation"
   | "doctrinal_secondary"
+  | "doctrinal_secondary_limited"
   | "insufficient";
 
 export interface SufficiencyAssessment {
