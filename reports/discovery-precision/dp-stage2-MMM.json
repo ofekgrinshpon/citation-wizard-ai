@@ -1,0 +1,213 @@
+{
+  "id": "MMM",
+  "run_id": "e0d8d2db-7095-4ab5-ac15-3afec2b52cdf",
+  "job_id": "98f9228d-e7e0-4be0-8e39-af706e238dd4",
+  "ms": 211686,
+  "status": "done",
+  "branch": null,
+  "answer_length": 1721,
+  "footnotes": 0,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": false,
+        "total_ms": 10000,
+        "max_candidates": 3,
+        "max_web_attempts": 1,
+        "max_local_lookups": 2
+      },
+      "reason": "no_promising_skipped_candidates",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "narrow_doctrine",
+    "snapshot_after": {
+      "not_citable": 3,
+      "acquired_bodies": 2,
+      "secondary_typed": 0,
+      "verifier_direct": 1,
+      "index_or_listing": 3,
+      "total_candidates": 22,
+      "verifier_partial": 7,
+      "doctrinal_eligible": 0,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 8,
+      "reconsideration_rejections": {
+        "already_attempted": 2,
+        "primary_law_or_case_law": 6
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 6
+    },
+    "snapshot_before": {
+      "not_citable": 3,
+      "acquired_bodies": 2,
+      "secondary_typed": 0,
+      "verifier_direct": 1,
+      "index_or_listing": 3,
+      "total_candidates": 22,
+      "verifier_partial": 7,
+      "doctrinal_eligible": 0,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 8,
+      "reconsideration_rejections": {
+        "already_attempted": 2,
+        "primary_law_or_case_law": 6
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 6
+    },
+    "user_task_intent": "literature_map",
+    "listing_suppressed": 0,
+    "listing_suppressed_ids": [],
+    "reconsidered_candidate_ids": []
+  },
+  "discovery_precision": {
+    "ms": 22,
+    "status": "completed",
+    "version": "discovery_precision_and_listing_suppression_v1",
+    "processed": 76,
+    "backfilled": 16,
+    "classified": 76,
+    "pool_after": 21,
+    "suppressed": [
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1090",
+        "title": "ביהמ\"ש לעניינים מנהליים בתל אביב, השופטת יעל בלכר: פס\"ד בעניין חוק העזר לתל אביב שמירה ושיפוץ חזיתות בתים (עת\"מ 26900-09-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "36b1ad39-b65e-495b-8d51-df3566427b3f",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=280",
+        "title": "ביהמ\"ש השלום בתל-אביב, השופט שמאי בקר: הכרעת דין לנאשם בעבירה של יחסי מין בין מטפל נפשי למטופל (ת\"פ 64906-11-18)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "68bc27e7-59be-40ad-b3c4-e871873a74cf",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1080",
+        "title": "ביהמ\"ש לענייני משפחה בתל אביב, השופטת לורן אקוקה: פס\"ד בתיק תמ\"ש 55647-04-24",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "271dfeeb-8bc9-41d7-98ed-9edf7dcf64b9",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "title": "ביהמ\"ש המחוזי תל-אביב, השופטת אירית קלמן ברום: החלטה בבקשה לסילוק תביעה בגין פגיעות מניות בתוך ומחוץ לכותלי בית הספר (ת\"א 38909-02-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "b5dfae42-2a19-49b7-ac23-2147876cbda3",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=500",
+        "title": "ביהמ\"ש המחוזי תל אביב, סגן הנשיא שאול שוחט, השופטת עינת רביד, השופט נפתלי שילה: פס\"ד בתיק עמ\"צ 50624-12-24",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "953500c4-366d-4f02-a87b-645b2c9d386e",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "title": "ביהמ\"ש המחוזי תל-אביב, השופטת יעל בלכר: החללטה בנושא סמכות עניינית במקרה שבו חוברו יחדיו שתי תביעות בסמכות שלום, שלא היה מקום לצירופן (ת\"א 22788-05-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "7c8c46d3-12d8-4773-b1e6-ed79caa25bda",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+        "title": "בית המשפט לענייני משפחה באשדוד, השופטת הילה אוחיון גליקסמן: החלטה בבקשה לקביעת שכר טרחת המבקשים בתפקידם כמנהלי עיזבון (ת\"ע 47177-09-14)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "b70c9d1d-4577-4a41-9889-3b1cfbd91210",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+        "title": "ביהמ\"ש המחוזי מרכז לוד, שופטת אפרת פינק: זיכוי לנאשם בשורת עבירות בשל קשיים בזיהוי (ת\"פ 7776-09-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "7c302c3b-c513-4cb8-9bdc-498878f7eba1",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=20",
+        "title": "בימ\"ש השלום בפתח תקווה, סג\"נ השופט ארז נוריאלי: גז\"ד לנאשם שהורשע בקובלנה פלילית בפרסום לשון הרע לפיו אביגדור ליברמן הציע לו תשלום על מנת לרצוח ניצב במשטרת ישראל (ק\"פ 6947-09-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "fb0f3521-4dba-4e44-b812-ec6a8fa19431",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=620",
+        "title": "בימ\"ש מחוזי ת\"א, השופט יוסי טופף: גז\"ד למורשע בשתי עבירות של סחר בסם מסוכן (ת\"פ 29932-03-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "628c97da-2df0-44a7-8ca6-cdc218678d8a",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/annual-activity-reports",
+        "title": "דוחות פעילות שנתיים - מינהל הסדרה ואכיפה | משרד העבודה",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "fc1bb5e9-d0b0-42a5-93b9-84b8f6da902b",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/annual-activity-reports",
+        "title": "דוחות פעילות שנתיים - מינהל הסדרה ואכיפה | משרד העבודה",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "44fddcff-cbfd-4591-97d4-f4f2438c5eb4",
+        "discovery_class": "index_or_listing"
+      }
+    ],
+    "pool_before": 76,
+    "task_intent": "literature_map",
+    "backfill_ran": true,
+    "class_counts": {
+      "metadata_only": 2,
+      "index_or_listing": 15,
+      "citable_candidate": 50,
+      "possible_body_page": 9
+    },
+    "o_n_guard_ok": true,
+    "suppression_ran": true,
+    "protected_counts": {
+      "exact_docket_identity": 2,
+      "official_primary_page": 26,
+      "official_statute_page": 3,
+      "local_corpus_substantive": 31
+    },
+    "candidates_at_start": 76,
+    "backfilled_by_origin": {
+      "local_db": 8,
+      "perplexity": 8
+    },
+    "protected_listing_counts": {
+      "official_statute_page": 3
+    },
+    "suppressed_reason_counts": {
+      "index_or_listing:integrity_index_or_listing": 12
+    },
+    "raw_index_or_listing_ratio": 0.197,
+    "not_suppressible_reason_counts": {
+      "protected:exact_docket_identity": 2,
+      "protected:official_primary_page": 26,
+      "protected:official_statute_page": 3,
+      "protected:local_corpus_substantive": 31,
+      "class_not_suppressible:metadata_only": 2
+    },
+    "final_raw_index_or_listing_ratio": 0.143,
+    "final_suppressible_listing_ratio": 0,
+    "suppressible_index_or_listing_ratio": 0.158
+  },
+  "secondary_acquisition": null,
+  "pass": true,
+  "failures": [],
+  "answer": "בשורה התחתונה: בדוחות מינהל ההסדרה ואכיפת חוקי עבודה עולה דיווח על היקף פעולות ביקורת שנתי — דוח סיכום 2025 מציין כי נבדקו 7,234 עובדים ו‑1,682 מעסיקים — והערכת היקף האכיפה מתבססת על מדדי כיסוי אלה. להבהרה: לא מוצגת כאן סקירת פסיקה כיוון שלא אותרו במסגרת החומרים שנמסרו פסקי‑דין ברי‑שימוש בנושא; התשובה נשענת על חקיקה, תקנות ודוחות רגולטוריים בלבד.\n\nאשר לסוגי ההפרות השכיחות: בדוחות הפעילות לשנים 2025–2024 יש תיעוד של ביקורות ואכיפה, אך בסניפים שנמסרו לא נמצא פירוט כמותני ממצה שמדרג לפי תדירות את סוגי ההפרות; עקב כך אין במקורות אלה מענה חד‑משמעי לשאלה אילו הפרות מדווחות בתדירות הגבוהה ביותר, ויש לנסח מסקנות אלה בזהירות.\n\nמבנה מערכת האכיפה: המינהל להסדרה ואכיפה במשרד העבודה מופיע כגורם המבצע את הביקורות השטחיות ודוחות הפעילות מצביעים על תפקידו בארגון האכיפה; התקנות השונות תחת פקודת הבטיחות בעבודה קובעות את החובות והסמכות של מפקחי העבודה וכן מסגרת לנקיטה באמצעי אכיפה מנהליים בתחום הבטיחות בעבודה.\n\nחסמים מבניים ומשאבים: הדוחות כוללים נתונים על היקף הבדיקות השנתי, מה שמרמז על עומס בפעילות הפיקוח; בסניפים שסופקו לא נמצא ניתוח מפורט ומקושר של תקציב, כוח‑אדם או חלוקת תחומי אחריות שמראה במפורש איך חסמים אלה משפיעים כמותית על תוצאות האכיפה — משכך, מסקנות על ההשפעה המבנית חייבות להיות שמורות ונתונות לאימות נוסף.\n\nהמלצות מדיניות שמופיעות בדוחות: הדו\"ח השנתי של המינהל מצביע על צעדים מדיניותיים כלליים כגון חיזוק יכולות פיקוח, שיפור איסוף נתונים וזרימת מידע בין גופים, וכן דרישה לייעול פעולות הבדיקה; עם זאת, בסניפים המסופקים לא תועד מעקב מפורט על מידת יישום המלצות אלה בשטח.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+}

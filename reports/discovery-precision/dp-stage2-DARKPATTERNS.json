@@ -1,0 +1,143 @@
+{
+  "id": "DARKPATTERNS",
+  "run_id": "dbd0f4a7-f164-4736-8a90-a8fd4469fef8",
+  "job_id": "12c4db1e-b01e-4523-8def-9ec51d445d87",
+  "ms": 131133,
+  "status": "done",
+  "branch": null,
+  "answer_length": 2104,
+  "footnotes": 1,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": false,
+        "total_ms": 10000,
+        "max_candidates": 3,
+        "max_web_attempts": 1,
+        "max_local_lookups": 2
+      },
+      "reason": "eligible_floor_already_met",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "narrow_doctrine",
+    "snapshot_after": {
+      "not_citable": 4,
+      "acquired_bodies": 5,
+      "secondary_typed": 3,
+      "verifier_direct": 1,
+      "index_or_listing": 4,
+      "total_candidates": 13,
+      "verifier_partial": 3,
+      "doctrinal_eligible": 3,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 3,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 2,
+        "listing_suppressed:integrity_index_or_listing": 1
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 3
+    },
+    "snapshot_before": {
+      "not_citable": 4,
+      "acquired_bodies": 5,
+      "secondary_typed": 3,
+      "verifier_direct": 1,
+      "index_or_listing": 4,
+      "total_candidates": 13,
+      "verifier_partial": 3,
+      "doctrinal_eligible": 3,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 3,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 2,
+        "listing_suppressed:integrity_index_or_listing": 1
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 3
+    },
+    "user_task_intent": "doctrinal_explanation",
+    "listing_suppressed": 0,
+    "listing_suppressed_ids": [],
+    "reconsidered_candidate_ids": []
+  },
+  "discovery_precision": {
+    "ms": 17,
+    "status": "completed",
+    "version": "discovery_precision_and_listing_suppression_v1",
+    "processed": 60,
+    "backfilled": 4,
+    "classified": 60,
+    "pool_after": 12,
+    "suppressed": [
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "title": "בית המשפט לענייני משפחה בבאר שבע, השופט אריאל ממן: החלטה על איחוד הליכים בתביעות לשימוש בזרע מן המת כאשר שתי נשים מבקשות לעשות שימוש בזרע של אותו נפטר (תמ''ש 59045-03-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "fb3b5bfc-a19d-481e-be6d-0e63e5c9c9df",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=20",
+        "title": "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "00e32824-18c9-4813-9597-98a2120d9ed0",
+        "discovery_class": "index_or_listing"
+      }
+    ],
+    "pool_before": 60,
+    "task_intent": "doctrinal_explanation",
+    "backfill_ran": true,
+    "class_counts": {
+      "metadata_only": 3,
+      "index_or_listing": 12,
+      "citable_candidate": 39,
+      "possible_body_page": 6
+    },
+    "o_n_guard_ok": true,
+    "suppression_ran": true,
+    "protected_counts": {
+      "exact_docket_identity": 4,
+      "official_primary_page": 8,
+      "official_statute_page": 11,
+      "local_corpus_substantive": 34
+    },
+    "candidates_at_start": 60,
+    "backfilled_by_origin": {
+      "local_db": 2,
+      "perplexity": 2
+    },
+    "protected_listing_counts": {
+      "official_statute_page": 10
+    },
+    "suppressed_reason_counts": {
+      "index_or_listing:integrity_index_or_listing": 2
+    },
+    "raw_index_or_listing_ratio": 0.2,
+    "not_suppressible_reason_counts": {
+      "protected:exact_docket_identity": 4,
+      "protected:official_primary_page": 8,
+      "protected:official_statute_page": 11,
+      "protected:local_corpus_substantive": 34,
+      "class_not_suppressible:metadata_only": 1
+    },
+    "final_raw_index_or_listing_ratio": 0.417,
+    "final_suppressible_listing_ratio": 0,
+    "suppressible_index_or_listing_ratio": 0.033
+  },
+  "secondary_acquisition": null,
+  "pass": true,
+  "failures": [],
+  "answer": "שורה תחתונה: במסגרת חוקית ישראלית היסוד המשפטי הרלוונטי ל\"דפוסים אפלים\" הוא חוק הגנת הצרכן — ובפרט הוראות החוק האוסרות הטעיה וניצול מצוקה של הצרכן; משמע, בדיקה דוקטרינרית של דפוס אפל תתבצע ביחס לאלמנטים אלה של החוק.¹\n\nעוגני החוק הרלוונטיים (כך כפי שהם באים לידי ביטוי בטקסט החוקי שסופק) מקיפים איסורי הטעיה בפרסום ובהתנהלות מסחרית וכן איסורים על ניצול מצוקה או חולשה של הצרכן — הוראות אלה מהוות את המסגרת החוקית שבה יש לבדוק האם התנהגות ממשקית מהווה מעשה מסחרי בלתי הוגן.¹\n\nניתוח דוקטרינרי: מן הטקסט החוקי שאותר ניתן להסיק בזהירות כי תבניות עיצוב ממשק שמטרתן להטעות את הצרכן, להסתיר מידע מהותי או להפעיל על הצרכן לחץ/בלבול עשויות להיכלל בגדר ההטעיה או ניצול המצוקה; במקורות שאותרו לא נמצא עיגון מחייב בסגנון קודקסי המייצג מונח עצמאי \"דפוסים אפלים\", ולכן יש להעריך כל טענה פרטנית לפי יסודות ההטעיה והניצול בחוק.\n\nאכיפה וסעדים (יישום): חוק הגנת הצרכן מעניק כלים אכיפתיים וסעדים נגד התנהלות עוינת של עוסק; המשמעות המעשית היא שניצול או הטעיה באמצעות ממשק יכולים להצדיק פנייה לנהלים האדמיניסטרטיביים והאזרחיים המופקדים על אכיפת הוראות החוק, כפוף למיצוי הראיות הנדרשות להוכחת מרכיבי ההטעיה או הניצול.¹\n\nהבחנה חשובה: אין כאן סקירת פסיקה משום שלא אותרו למטרה זו פסקי דין ברי‑שימוש שתומכים בעיבוד דק של דפוסי עיצוב כמונח פרשני מחייב; לפיכך התשובה נשענת על טקסט החוק בלבד ולא מציגה הלכה שיפוטית ספציפית.\n\nמגבלות השוואתיות ואקדמיות: הניתוח כאן נשען על החקיקה הישראלית שנמסרה בלבד; מסגרות רגולטוריות והשוואתיות (חומרים של רגולטורים זרים או דוחות מחקר אקדמיים) אינן נבדקו במקור זה ולכן אינן מובאות כמשענת לפרשנות החוק הישראלי בתשובה זו.\n\nהנחיה למחקר נוסף (מעשית): כדי להעמיק יש לבצע מיפוי משולב — קביעת התנהגות ממשקית ספציפית, התאמתה לאלמנטים החוקיים של הטעיה וניצול מצוקה שנזרעו בחוק, ותיעוד עובדתי/אמפירי (רישומי מסך, ניסויים וכו.); בסוף יש להשוות עם ספרות אקדמית ודוחות צרכנות כדי לגבש טווחי התנהלות פרשניים — שים לב שאף מאמר אקדמי או דוח לא סופקו כאן כתמיכה משפטית מחייבת.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות."
+}
