@@ -1,66 +1,58 @@
-# academic_writing_intent_and_drafting_v1
+# academic_draft_presentation_hygiene_v1
 
-When a user asks ReLex to *write* academic text ("כתוב פרק מבוא לסמינריון…"), the system currently answers as if it were a doctrinal research question and opens with a source-gap report. This track makes the pipeline recognise academic-writing requests and return an actual academic draft in the requested genre, while keeping every existing safety rule intact.
+Follow-up to `academic_writing_intent_and_drafting_v1`. Detection and safety are correct; this track fixes how academic drafts are *presented*. Retrieval, acquisition, sufficiency thresholds, judgment identity, docket limitation, claim-source-match and citation rendering stay untouched except where they emit display text.
 
-## Scope
+## 1. Prose genre enforcement
 
-Untouched: retrieval, source acquisition, judgment identity validation, docket limitation, claim-source-match, citation rendering, found-only support rules.
+For genres `introduction`, `theoretical_background`, `topic_presentation`, `argument_paragraph`:
 
-Changed: intent vocabulary, deterministic intent detection, drafter genre instructions, and the sufficiency-refusal path for this one intent.
+- Prompt rule stays, plus a **deterministic post-draft pass** that converts leading bullet markers (`-`, `•`, `*`, `1.`) into continuous prose sentences and merges short bullet-only paragraphs into one paragraph.
+- Bullets are preserved only when the genre is `chapter_outline` or the user's question explicitly asks for a list/outline (רשימה, מתווה, ראשי פרקים, בנקודות).
+- Also strip template-like `###` sub-headings from these genres.
 
-## 1. New intent vocabulary
+## 2. Argument paragraph contract
 
-Add to the shared plan vocabulary:
+When `academic_genre = argument_paragraph`:
 
-- `user_task_intent: "academic_writing"`
-- `answer_strategy: "draft_academic_text"`
+- Prompt targets one paragraph, 150–300 words.
+- Deterministic guard: if the draft returns multiple body blocks, keep the first substantive paragraph and merge the remainder only if the total stays inside the ceiling; otherwise truncate at the paragraph boundary nearest 300 words.
+- No sub-headings, no "מבנה העבודה" framing.
 
-Both are added to the analyzer's JSON schema enums so the model can plan them, with schema guidance describing them as "the user asks the system to write academic prose (מבוא, רקע תיאורטי, פסקת טיעון, מתווה פרקים)".
+## 3. One caveat only
 
-## 2. Deterministic detection (does not depend on the model)
+Today the answer assembly can append, in sequence: `ACADEMIC_LIMITED_DRAFT_NOTICE_HE`, the reference-only section, `NARROW_LIMITED_DOCTRINAL_NOTICE_HE` / `LIMITED_DOCTRINAL_ANSWER_NOTICE_HE`, `matched.limitation_text`, and the processing-limit line appended in `index.ts`.
 
-A new deterministic detector runs inside the source-use-intent stage and can force the plan to `academic_writing` / `draft_academic_text`:
+For `user_task_intent = academic_writing` all of these are suppressed and replaced by exactly one trailing note:
 
-- writing verbs + academic object: כתוב/נסח/ניסחו/הרחב + פרק מבוא, מבוא, רקע תיאורטי, פרק תיאורטי, הצגת נושא, פסקה אקדמית, פרק ראשון, מתווה פרקים, סמינריון, עבודה אקדמית, עבודת גמר;
-- "שאלת המחקר … היא" framing combined with a writing verb.
+- thin pack (`academic_limited_draft` branch, or the limited-doctrinal/limitation paths would have fired):
+  `הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.`
+- otherwise:
+  `הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.`
 
-Guards (detection is suppressed / not applied):
+Safety-critical branches (docket limitation, judgment-identity refusal, fabricated-docket refusal) keep their own text and are not academic-writing paths, so they are unaffected.
 
-- the request is explicitly source-seeking ("תן לי מקורות", "מצא פסיקה", "ביבליוגרפיה", "רשימת קריאה") → stays `source_recommendation` / `literature_map`;
-- an explicit docket appears in the question → existing docket safety floors keep priority (`case_holding`, judgment body required); academic writing may only ride along as the secondary intent.
+## 4. URL / body hygiene
 
-When academic writing is detected the plan sets `secondary_sources_can_support: true`, keeps `found_only_can_support_claims: false`, and records an override string in telemetry (`academic_writing_intent_detected`).
+- A deterministic scrub removes bare `http(s)://…` URLs and court download links from the academic answer body (footnotes keep their URLs untouched).
+- Found-but-unread sources are not listed inline. If any are worth surfacing, they appear after the single caveat as a compact block titled `להמשך בדיקה` with at most 3 short titles and no URLs.
 
-## 3. Drafting behaviour
+## 5. Topic drift guard
 
-In the drafter, an `academic_writing` plan swaps the answer contract:
+For academic writing:
 
-- produce continuous Hebrew academic prose in the requested genre — no bullet-point research report, no "מקורות שאותרו" opening, no research-gap framing as the lead;
-- for an introduction chapter, cover (as appropriate): framing of the legal problem, doctrinal background, the research question, the central tension, why it matters, and the planned structure of the paper;
-- treat legal concepts named by the user (e.g. "עקרון הפרדת הרשויות") as the user's topic, not as claims that need source anchoring — the negative-existence "לא נמצא עיגון מספק לשם…" framing is not emitted for concepts that come from the prompt;
-- unsupported specific holdings remain forbidden: no attributing rulings to courts without an acquired judgment body, no invented citations, no citing found-only or metadata-only sources;
-- caveats are consolidated into at most one short note **after** the draft, e.g. "הטיוטה מנוסחת כמבוא אקדמי ראשוני. יש להשלים בהמשך הפניות מדויקות לפסיקה ולספרות." When citations are thin the draft is additionally labelled "טיוטה ללא השלמת הפניות מלאות". No caveat sentences scattered through the prose.
+- The drafter prompt is given the user's topic terms (from the question and the plan's claims) and instructed to use retrieved sources only to enrich that topic; unrelated doctrinal contexts must not be introduced.
+- Deterministic assist: sources whose legal area does not overlap the question's area are demoted out of the drafting context for academic tasks (they remain in the pack, so no retrieval change) — e.g. religious-court material on a ministerial-appointments prompt.
 
-## 4. Sufficiency path
+## 6. Technical notes
 
-Thin sources must not block drafting. For `academic_writing` plans the `insufficient_sources_limitation` branch is replaced by an *academic limited draft* branch: the draft is produced from the general framework, cautious formulations are required, and the post-draft note is appended. Docket limitation, statute-section limitation and canonical-quote branches keep priority and are unchanged.
+- `stages/drafterV2.ts` — new `applyAcademicPresentationHygiene()` (bullet→prose, heading strip, URL scrub, argument-paragraph ceiling), the single-note assembly for academic answers, and the genre/topic prompt additions.
+- `stages/metadataOnlyHoldingGate.ts` / `stages/claimSourceMatch.ts` — their trailing texts are suppressed by the caller for academic tasks; internal logic unchanged.
+- `supabase/functions/legal-research-v1/index.ts` — skip the processing-limit line for academic answers.
+- Telemetry: `academic_presentation_hygiene` report (bullets converted, urls stripped, notices suppressed, paragraph trimmed, sources demoted for drift).
 
-## 5. Technical notes
+## 7. Validation
 
-- `lib/types.ts` — extend `USER_TASK_INTENTS` and `ANSWER_STRATEGIES`.
-- `lib/schemas.ts` — extend the analyzer tool enums + description.
-- `stages/sourceUseIntent.ts` — new `detectAcademicWritingRequest()` and the override, plus `isAcademicWritingTask()` helper; safety floors keep their current precedence order.
-- `stages/drafterV2.ts` — genre instruction block, suppression of gap-report lead and scattered caveats, single post-draft note, new `deterministic_branch: "academic_limited_draft"`.
-- `stages/sourceSufficiency.ts` — academic-writing exemption from the refusal branch (never from the anchor/docket gates).
-- `stages/negativeExistenceGuard.ts` — skip prompt-derived concept rewriting when the plan is academic writing.
-- Telemetry: plan overrides, detected intent, branch, citation count.
-
-## 6. Validation
-
-**Stage 1 — fixture tests** (new Deno/vitest test file): the six classification fixtures from the brief (intro chapter → academic_writing; "תן לי מקורות" → literature_map/source_recommendation; "מה הדין" → doctrinal_explanation; "סכם את בג״ץ X" → case_holding + judgment body; "רקע תיאורטי" → academic_writing; "מצא פסיקה על…" → source_recommendation/case_law_synthesis).
-
-**Stage 2 — mini live smoke** (3 runs): the reading-in / separation-of-powers introduction, one literature-map prompt, one case-holding safety prompt. Acceptance exactly as specified: prose intro, no "במקורות שאותרו לא נמצא" opening, no unsupported binding case law, short post-draft note only, literature map still returns sources, case-holding safety unchanged.
-
-**Stage 3 — 5-prompt evaluation**: introduction, theoretical background, research-question refinement, chapter outline, argument paragraph. Report detected intent, output genre, citation count, caveat style, and whether the text is usable.
-
-Results written to `reports/academic-writing-intent/ACCEPTANCE_REPORT.md`.
+- Unit fixtures for the hygiene pass (bullets → prose, URL scrub, argument-paragraph ceiling, single-notice selection).
+- Live re-run of AW1, AW4, AW5, AW7, AW8 plus AW2/AW3 as controls, using the existing runner.
+- Acceptance: AW1 prose intro, no gap opener, ≤1 caveat; AW4 prose, no raw URLs, ≤1 caveat; AW5 focused on ministerial/political appointments with no religious-court drift; AW7 one paragraph (150–300 words); AW8 usable topic presentation, ≤1 caveat; AW2 still source recommendation; AW3 still fires docket limitation.
+- Report + full answers: `reports/academic-draft-presentation-hygiene/ACCEPTANCE_REPORT.md`, delivered in chat.
