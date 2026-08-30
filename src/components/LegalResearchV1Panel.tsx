@@ -182,8 +182,11 @@ export function LegalResearchV1Panel({
     setLoading(false);
     setJobId(null);
     clearResume();
-    setError("הבקשה בוטלה. הפעלת חיפוש חדשה תפתח עבודה חדשה.");
+    setJobUrlParam(null);
+    setResumed(false);
+    setError("הפסקת לעקוב אחרי המחקר הזה. הפעלת חיפוש חדשה תפתח עבודה חדשה.");
   };
+
 
   const startProgress = (startedAt?: number) => {
     startRef.current = startedAt ?? Date.now();
