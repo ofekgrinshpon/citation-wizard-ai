@@ -51,11 +51,48 @@ const ACADEMIC_STEP_LABELS: Record<string, string> = {
   write_chapter: "כתיבת פרק",
 };
 
+interface JobRecord {
+  id: string;
+  question: string;
+  status: string;
+  progress_label_he: string | null;
+  created_at: string;
+}
+
+const ACTIVE_JOB_STATUSES = ["queued", "running", "pending"];
+
 export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props) {
   const { user } = useAuth();
   const [logs, setLogs] = useState<QALogRecord[]>([]);
+  const [jobs, setJobs] = useState<JobRecord[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Running / failed research jobs come from legal_research_jobs (the source of
+  // truth while a job is in flight); finished jobs are shown from qa_logs.
+  useEffect(() => {
+    if (!user) {
+      setJobs([]);
+      return;
+    }
+    let cancelled = false;
+    const fetchJobs = async () => {
+      let q = supabase
+        .from("legal_research_jobs")
+        .select("id, question, status, progress_label_he, created_at")
+        .eq("user_id", user.id)
+        .neq("status", "done")
+        .order("created_at", { ascending: false })
+        .limit(10);
+      q = projectId ? q.eq("project_id", projectId) : q.is("project_id", null);
+      const { data, error } = await q;
+      if (!cancelled && !error) setJobs((data as JobRecord[]) || []);
+    };
+    fetchJobs();
+    const t = window.setInterval(fetchJobs, 10_000);
+    return () => { cancelled = true; window.clearInterval(t); };
+  }, [user, projectId, refreshKey]);
+
 
   useEffect(() => {
     if (!user) {
