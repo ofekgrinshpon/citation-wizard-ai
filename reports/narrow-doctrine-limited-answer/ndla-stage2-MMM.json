@@ -1,0 +1,144 @@
+{
+  "id": "MMM",
+  "run_id": "c5edf365-6e22-48cf-91bd-cf9fa72cff9e",
+  "job_id": "0ab49e2e-dc3e-4ffa-bb6a-94a387adb364",
+  "ms": 161255,
+  "status": "done",
+  "branch": null,
+  "answer_length": 2078,
+  "footnotes": 2,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": false,
+        "total_ms": 10000,
+        "max_candidates": 3,
+        "max_web_attempts": 1,
+        "max_local_lookups": 2
+      },
+      "reason": "eligible_floor_already_met",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "narrow_doctrine",
+    "snapshot_after": {
+      "not_citable": 0,
+      "acquired_bodies": 8,
+      "secondary_typed": 5,
+      "verifier_direct": 3,
+      "index_or_listing": 0,
+      "total_candidates": 18,
+      "verifier_partial": 6,
+      "doctrinal_eligible": 5,
+      "institutional_typed": 1,
+      "institutional_eligible": 1,
+      "blocked_not_doctrinal_type": 6,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 6
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 6
+    },
+    "snapshot_before": {
+      "not_citable": 0,
+      "acquired_bodies": 8,
+      "secondary_typed": 5,
+      "verifier_direct": 3,
+      "index_or_listing": 0,
+      "total_candidates": 18,
+      "verifier_partial": 6,
+      "doctrinal_eligible": 5,
+      "institutional_typed": 1,
+      "institutional_eligible": 1,
+      "blocked_not_doctrinal_type": 6,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 6
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 6
+    },
+    "user_task_intent": "literature_map",
+    "listing_suppressed": 0,
+    "listing_suppressed_ids": [],
+    "reconsidered_candidate_ids": []
+  },
+  "discovery_precision": {
+    "ms": 25,
+    "status": "completed",
+    "version": "discovery_precision_and_listing_suppression_v1",
+    "processed": 42,
+    "backfilled": 2,
+    "classified": 42,
+    "pool_after": 18,
+    "suppressed": [
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1520",
+        "title": "ביהמ\"ש השלום בירושלים, השופט מוחמד חאג' יחיא: הכרעת דין הדנה באחריות מנהל עבודה של קבלן ראשי (ת\"פ  35875-04-20)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "ff84fbe3-de35-4084-91a1-c6712a0f9a6b",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=280",
+        "title": "ביהמ\"ש לענייני משפחה בחיפה, לירון זרבל - קדשאי: פסק דין בעניין הסכם שלום בית ולחילופין גירושין (תלה\"מ 4061-06-21)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "937131d2-65cb-4cc0-b1a2-0aba71d095fb",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+        "title": "בית המשפט לענייני משפחה באשדוד, סגנית הנשיא השופטת ענת אלפסי: פסק דין שעניינו אכיפת הסכם העברת בעלות בדירה (תלה\"מ 30657-01-21)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "a29d3af1-1e45-4fd5-951c-bfa8e60e9928",
+        "discovery_class": "index_or_listing"
+      }
+    ],
+    "pool_before": 42,
+    "task_intent": "literature_map",
+    "backfill_ran": true,
+    "class_counts": {
+      "metadata_only": 5,
+      "index_or_listing": 3,
+      "citable_candidate": 26,
+      "possible_body_page": 8
+    },
+    "o_n_guard_ok": true,
+    "suppression_ran": true,
+    "protected_counts": {
+      "official_primary_page": 9,
+      "official_statute_page": 2,
+      "local_corpus_substantive": 25
+    },
+    "candidates_at_start": 42,
+    "backfilled_by_origin": {
+      "local_db": 2
+    },
+    "protected_listing_counts": {},
+    "suppressed_reason_counts": {
+      "index_or_listing:integrity_index_or_listing": 3
+    },
+    "raw_index_or_listing_ratio": 0.071,
+    "not_suppressible_reason_counts": {
+      "protected:official_primary_page": 9,
+      "protected:official_statute_page": 2,
+      "protected:local_corpus_substantive": 25,
+      "class_not_suppressible:metadata_only": 3
+    },
+    "final_raw_index_or_listing_ratio": 0,
+    "final_suppressible_listing_ratio": 0,
+    "suppressible_index_or_listing_ratio": 0.071
+  },
+  "narrow_limited": null,
+  "secondary_acquisition": null,
+  "pass": true,
+  "failures": [],
+  "answer": "ממצא מרכזי העולה מן המחקרים ומדוחות הרגולטוריים הוא שתיאור אופי האכיפה בדיני העבודה מתמקד בעיקר באכיפה תגובתית: רוב הפעילות האכיפתית מתרחשת בעקבות תלונות עובדים והחקירות הנובעות מהן, בעוד שמבצעים פרואקטיביים ושיעור הבדיקות הכלליות נמוכים יחסית.\n\nהדוחות ממקדים גם את המחסור במשאבים ובהון אנושי ברשויות המבצעות (מפקחי עבודה, אגפי פיקוח), וכן את מגבלות הסנקציות המינהליות שמקשות על אכיפה אפקטיבית; חסרונות אלה מצוינים כגורם מצמצם ליכולת לבצע בדיקות שוטפות ולהפעיל הרתעה משמעותית.\n\nהדוחות מדגישים פיצוליות באחריות ובמנגנוני הפיקוח ביחס לצורות תעסוקה חדשות ולקבוצות פגיעות (לדוגמה מהגרי עבודה ועובדות בית), ועל כך נמתחת ביקורת על קיום חורים רגולטוריים שקשה לאכוף באמצעות המסגרת הנוכחית.²\n\nנמצא גם דגש על אפקט הרתעה חלש: שיעור הקנסות המשמעותיים והאכיפה הכלכלית הדומיננטית נמוך, מה שמקשה על מניעת אי־ציות חוזר ונשנה ומוביל להמלצות להגברת כלי ההרתעה והשימוש בסנקציות משמעותיות יותר.¹\n\nהמחקרים והדוחות מציעים המלצות מדיניות חוזרות: חיזוק משאבי האכיפה, הרחבת סמכויות המפקחים, ייזום מבצעים פרואקטיביים והתאמות חקיקתיות לשוק העבודה המשתנה; עם זאת הדוחות מציינים כי מימוש המלצות אלה מותנה בהחלטות מדיניות נוספות ובסיוע תקציבי.\n\nלגבי קיומה של הלכה פסיקתית מחייבת אשר מסדירה באופן מפורש את שיטות האכיפה הפרקטיות או מספקת מבחנים חד־משמעיים, במקורות שאותרו נמצה בעיקר דוחות יישום, ניתוחי מדיניות ודוחות מבקר; במקורות אלה לא אותר טקסט פסיקתי מחייב שמנסח כלל אחיד ומפורט לעניין אופי האכיפה, ומכאן שיש להפעיל זהירות בפרשנות ההיקף הפסיקתי האפשרי.\n\nהסתייגות שיטתית: החומר שאותר ונדון כאן מבוסס על דוחות של מרכז המחקר והמידע של הכנסת, דוחות מבקר המדינה ודוחות רגולטוריים שנמסרו; טקסטי הלכות מלאים או מקורות פסיקה שלא חולצו בחיפוש זה עלולים להמציא מידע משלימים ולכן יש לראות את העילוי כסיכום מבוסס הדוחות שנמסרו ולא כמפה מלאה של כלל הפסיקה והחומר המשפטי הקיים.\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> קריאת גוף פסקי הדין הופסקה מטעמי מגבלת עיבוד, ולכן ייתכן שחלק מהמקורות נותחו לפי מטא-נתונים בלבד."
+}
