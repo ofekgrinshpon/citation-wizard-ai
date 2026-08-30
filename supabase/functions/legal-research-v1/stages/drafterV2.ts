@@ -77,6 +77,12 @@ import {
   LIMITED_DOCTRINAL_ANSWER_NOTICE_HE,
   NARROW_LIMITED_DOCTRINAL_NOTICE_HE,
 } from "./claimSupportCategory.ts";
+import { planRequestsAcademicWriting } from "./sourceUseIntent.ts";
+
+/** academic_writing_intent_and_drafting_v1 — single post-draft note when the
+ * draft was produced under thin sourcing. */
+export const ACADEMIC_LIMITED_DRAFT_NOTICE_HE =
+  "הטיוטה מנוסחת כטיוטה אקדמית ראשונית, ללא השלמת הפניות מלאות. יש להשלים בהמשך הפניות מדויקות לפסיקה ולספרות.";
 
 
 
@@ -311,7 +317,44 @@ function buildUserMessage(
   lines.push(
     "מסגרת התשובה חייבת להישאר נאמנה לשאלה כפי שנשאלה. אם המקורות עוסקים בנושא סמוך אך לא זהה — ציין זאת במפורש ואל תחליף את שאלת המשתמש.",
   );
-  lines.push(NEGATIVE_EXISTENCE_PROMPT_RULE);
+  const academicWriting = planRequestsAcademicWriting(sourceUsePlan);
+  const academicPrimary = sourceUsePlan?.user_task_intent === "academic_writing";
+  if (academicPrimary) {
+    // Academic drafts must not use retrieval-scoped phrasing about the user's
+    // own topic concepts; non-existence claims are still forbidden.
+    lines.push(
+      'אין לקבוע שדוקטרינה/הלכה "אינה קיימת" או ש"אין הלכה מוכרת בשם זה". מונחים שהמשתמש עצמו הציג (למשל "עקרון הפרדת הרשויות") הם חלק מנושא העבודה — יש להתייחס אליהם כמסגרת המחקר ולא כטענות הדורשות עיגון.',
+    );
+  } else {
+    lines.push(NEGATIVE_EXISTENCE_PROMPT_RULE);
+  }
+  if (academicWriting) {
+    const genre = sourceUsePlan?.academic_genre ?? "generic_academic";
+    lines.push("");
+    lines.push(
+      "משימת כתיבה אקדמית: המשתמש ביקש טקסט אקדמי מוכן — לא דוח מחקר ולא דיווח על מקורות. הפק פרוזה אקדמית עברית רציפה, זהירה וטבעית, בז׳אנר המבוקש.",
+    );
+    if (genre === "chapter_outline") {
+      lines.push(
+        "הז׳אנר המבוקש הוא מתווה/מבנה — כאן מותרת רשימה מסודרת של פרקים עם תיאור קצר לכל פרק.",
+      );
+    } else {
+      lines.push(
+        "אין להשתמש ברשימות תבליטים או בכותרות-משנה תבניתיות — כתוב פסקאות פרוזה רציפות (רשימות מותרות רק אם המשתמש ביקש מפורשות מתווה/מבנה).",
+      );
+    }
+    if (genre === "introduction") {
+      lines.push(
+        "לפרק מבוא כלול, במידת הצורך: מסגור הבעיה המשפטית, רקע דוקטרינלי, שאלת המחקר, המתח המרכזי, חשיבות השאלה, ומבנה העבודה המתוכנן.",
+      );
+    }
+    lines.push(
+      'אין לפתוח את הטיוטה בדיווח על המקורות (למשל "במקורות שאותרו לא נמצא…", "לא נמצא עיגון מספק…"). אין לפזר הערות זהירות בגוף הטקסט — אם נדרשת הבהרה, היא תופיע כהערה קצרה אחת לאחר הטיוטה בלבד.',
+    );
+    lines.push(
+      "אין לייחס לבית משפט הלכה ספציפית ללא גוף פסק דין שאותר, אין להמציא הפניות, ואין לצטט מקורות שאותרו בלבד. כשהתמיכה דלה — נסח בלשון זהירה ובמונחים כלליים.",
+    );
+  }
   if (framing?.framing_correction_required && framing.named_doctrine_phrase) {
     const named = framing.named_doctrine_phrase;
     const subject = framing.subject_phrase ?? named;
