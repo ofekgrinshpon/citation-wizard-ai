@@ -699,6 +699,12 @@ export function LegalResearchV1Panel({
 
         {result && !loading && (
           <div className="space-y-4">
+            {justCompleted && (
+              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-xs text-foreground">
+                {DONE_NOTICE_HE}
+              </div>
+            )}
+
             <div className="flex justify-end">
               <Button
                 variant="outline"
