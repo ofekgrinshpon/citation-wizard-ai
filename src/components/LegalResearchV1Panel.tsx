@@ -53,6 +53,41 @@ const SOFT_NOTICE_1_MS = 180_000; // 3 min
 const SOFT_NOTICE_2_MS = 300_000; // 5 min
 const RESUME_STORAGE_KEY = "lrv1:active_job";
 
+// persistent_background_research_jobs_v1 — the job lives server-side; the UI
+// must never imply the tab has to stay open.
+const RUNNING_NOTICE_HE =
+  "המחקר המשפטי רץ ברקע. אפשר לעבור מסך, לרענן, לסגור את הדפדפן או לחזור מאוחר יותר — נמשיך לעבוד והתשובה תישמר כאן ובהיסטוריית המחקרים שלך.";
+const RESUMED_NOTICE_HE = "חזרת למחקר פעיל — אנחנו ממשיכים מאיפה שהעבודה נמצאת.";
+const DONE_NOTICE_HE = "התשובה מוכנה ונשמרה בהיסטוריית המחקרים שלך.";
+const INFRA_FAILURE_HE =
+  "המחקר הופסק בגלל תקלה תשתיתית. לא מוצגת תשובת ביניים. אם חויבת, הקרדיט הוחזר או סומן להחזר.";
+
+const ACTIVE_STATUSES = ["queued", "running", "pending"];
+
+/** A reaped/watchdog job is an infrastructure failure, never a legal answer. */
+function isInfrastructureFailure(
+  status: string,
+  error?: string | null,
+  result?: Record<string, unknown> | null,
+): boolean {
+  if (status === "timed_out") return true;
+  if (result && (result.infrastructure_failure === true || result.timed_out === true)) return true;
+  const e = error || "";
+  return /stale_worker_timeout|watchdog_timeout|infrastructure_timeout/i.test(e);
+}
+
+/** Sync the active job id into the URL so a refresh resumes the same job. */
+function setJobUrlParam(jid: string | null) {
+  try {
+    const url = new URL(window.location.href);
+    if (jid) url.searchParams.set("job", jid);
+    else url.searchParams.delete("job");
+    window.history.replaceState({}, "", url.toString());
+  } catch { /* ignore */ }
+}
+
+
+
 type FootnoteSource = { title: string; url?: string | null; source_type?: string };
 type Footnote = { number: number; title: string; url?: string | null; sources?: FootnoteSource[] };
 type UsedSource = {
