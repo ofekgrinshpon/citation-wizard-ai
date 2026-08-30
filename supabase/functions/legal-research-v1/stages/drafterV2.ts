@@ -2243,6 +2243,8 @@ export async function runDrafterV2(
     missing_anchor_descriptions: missingAnchors.map((a) => a.description),
     deterministic_branch: academicLimited ? "academic_limited_draft" : undefined,
     academic_presentation_hygiene,
+    academic_style_model,
+
 
     sufficiency,
     named_doctrine_framing: framing,
