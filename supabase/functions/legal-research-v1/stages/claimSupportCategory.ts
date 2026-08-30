@@ -157,26 +157,62 @@ export function categoryAccepts(
     case "contextual_background":
       return p.judgment_authority || p.statutory_authority || p.doctrinal_authority ||
         p.background_only;
+    // academic_citation_authority_alignment_v1 — academic categories accept an
+    // acquired, eligible doctrinal secondary as well as primary authority.
+    // They never accept metadata-only/background-only material.
+    case "doctrinal_background":
+    case "academic_framing":
+    case "theoretical_explanation":
+    case "literature_synthesis":
+    case "critique_or_counterposition":
+    case "methodological_framing":
+      return p.judgment_authority || p.statutory_authority || p.doctrinal_authority;
   }
 }
 
 /**
  * Derive the effective substance category of a block.
  * `declared` is the drafter's own tag; `propositionType` is the pre-existing
- * substance tag; `text` contributes only the structural docket signal.
+ * substance tag; `text` contributes the structural docket signal and (for
+ * academic runs) the binding-law wording signal.
  */
 export function deriveClaimCategory(input: {
   declared?: string | null;
   propositionType?: string | null;
   text?: string;
+  /** academic_citation_authority_alignment_v1 */
+  academicMode?: boolean;
 }): { category: ClaimSupportCategory; basis: string } {
   const declared = isClaimSupportCategory(input.declared) ? input.declared : null;
+  const academic = input.academicMode === true;
   let category: ClaimSupportCategory;
   let basis: string;
 
   if (declared) {
     category = declared;
     basis = "declared_claim_category";
+  } else if (academic) {
+    // Academic drafts state doctrine, theory and literature — not holdings.
+    // Wording (below) is what can raise a block back to primary-required.
+    switch (input.propositionType) {
+      case "black_letter_rule":
+      case "application":
+        category = "theoretical_explanation";
+        basis = "academic_proposition_theoretical";
+        break;
+      case "practical_guidance":
+        category = "methodological_framing";
+        basis = "academic_proposition_methodological";
+        break;
+      case "background":
+      case "limitation":
+        category = "doctrinal_background";
+        basis = "academic_proposition_background";
+        break;
+      default:
+        category = "doctrinal_background";
+        basis = "academic_default_doctrinal_background";
+    }
   } else {
     switch (input.propositionType) {
       case "black_letter_rule":
@@ -202,13 +238,29 @@ export function deriveClaimCategory(input: {
     }
   }
 
+  const text = String(input.text ?? "");
+
   // Structural escalation: a block that identifies a concrete judgment by
   // docket is asserting something about that judgment, whatever it declared.
-  if (category !== "court_holding" && DOCKET_IDENTITY_RE.test(String(input.text ?? ""))) {
+  if (category !== "court_holding" && DOCKET_IDENTITY_RE.test(text)) {
     return { category: "court_holding", basis: `${basis}+docket_identity_escalation` };
+  }
+
+  // academic_citation_authority_alignment_v1 — wording escalation. A block
+  // phrased as binding law ("החוק קובע", "בית המשפט קבע", "ההלכה היא") stays
+  // primary-authority-required even in an academic draft.
+  if (category !== "court_holding" && category !== "statutory") {
+    const binding = detectBindingLawLanguage(text);
+    if (binding.binding) {
+      return {
+        category: binding.kind === "statutory" ? "statutory" : "court_holding",
+        basis: `${basis}+binding_language_escalation`,
+      };
+    }
   }
   return { category, basis };
 }
+
 
 export interface AuthorityOverstatement {
   block_index: number;
