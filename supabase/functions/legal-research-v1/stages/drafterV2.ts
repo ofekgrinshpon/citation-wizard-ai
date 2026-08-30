@@ -83,6 +83,22 @@ import {
   type AcademicHygieneReport,
   applyAcademicPresentationHygiene,
 } from "./academicPresentationHygiene.ts";
+import {
+  type AcademicStyleModelReport,
+  buildAcademicStyleGuideBlock,
+} from "./academicStyleGuide.ts";
+
+/** academic_style_model_v1 — thin-pack / footnote availability inputs. */
+function academicStyleOptions(
+  sources: DrafterInputSource[],
+  sufficiency?: SufficiencyAssessment,
+): { limitedDraft: boolean; hasFootnotes: boolean } {
+  const limitedDraft = (sufficiency?.reason ?? "").includes("academic_writing_draft_allowed") ||
+    sufficiency?.limited_doctrinal_answer === true ||
+    sources.length <= 2;
+  return { limitedDraft, hasFootnotes: sources.length > 0 };
+}
+
 
 
 /** academic_writing_intent_and_drafting_v1 — single post-draft note when the
