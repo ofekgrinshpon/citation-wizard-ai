@@ -42,8 +42,8 @@ export type StyleSectionId =
 const SECTIONS: Record<StyleSectionId, string> = {
   paragraph_rhythm:
     `**קצב פסקה ומשפט**
-- פסקה אקדמית טיפוסית: 4–7 משפטים סביב טענה אחת. פסקת משפט בודד אסורה; פסקה של 10+ משפטים מעידה על שתי טענות שלא הופרדו.
-- אורך משפט ממוצע 18–28 מילים; משפט קצר מותר להדגשה, לא יותר מאחד לפסקה.
+- פסקה אקדמית יכולה להתפתח בכמה משפטים סביב טענה אחת, אך אין צורך לנפח אותה; אל תעבור בדרך כלל 7 משפטים בפסקה. פסקה של משפט בודד אינה פסקה אקדמית.
+- העדף משפטים בהירים וקצרים יחסית; אין יעד מספרי לאורך משפט, ואין להאריך משפט כדי שיישמע אקדמי.
 - מעבר בין פסקאות = מעבר בין טענות, לא רק המשך זרימה.`,
 
   topic_sentences:
@@ -103,7 +103,11 @@ const SECTIONS: Record<StyleSectionId, string> = {
 const GENRE_SECTIONS: Record<AcademicGenre, StyleSectionId[]> = {
   introduction: ["paragraph_rhythm", "topic_sentences", "transitions", "anti_patterns"],
   theoretical_background: ["paragraph_rhythm", "topic_sentences", "transitions", "anti_patterns"],
-  argument_paragraph: ["argument_structure", "topic_sentences", "register", "anti_patterns"],
+  // argument_paragraph: the drafter prompt already carries the one-paragraph
+  // contract and the claim→counterargument structure. Stacking topic-sentence
+  // and register pressure on top of a 150–300 word budget produced clipped,
+  // formulaic compression, so this genre keeps structure + anti-patterns only.
+  argument_paragraph: ["argument_structure", "anti_patterns"],
   topic_presentation: ["brevity", "topic_sentences", "register", "anti_patterns"],
   research_question: ["brevity", "register", "anti_patterns"],
   chapter_outline: ["brevity", "register", "anti_patterns"],

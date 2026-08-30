@@ -87,6 +87,11 @@ import {
   type AcademicStyleModelReport,
   buildAcademicStyleGuideBlock,
 } from "./academicStyleGuide.ts";
+import {
+  type AcademicPromptCleanupReport,
+  applyAcademicPromptCleanup,
+  emptyAcademicPromptCleanupReport,
+} from "./academicPromptCleanup.ts";
 
 /** academic_style_model_v1 — thin-pack / footnote availability inputs. */
 function academicStyleOptions(
@@ -379,12 +384,19 @@ function buildUserMessage(
       );
     }
 
+    // academic_drafter_prompt_conflict_cleanup_v1 — the structured-block
+    // contract makes the model draft each paragraph as a self-contained unit,
+    // which reads like a list. Demand continuity explicitly.
+    lines.push(
+      "כתוב את התשובה כטקסט אקדמי רציף. גם אם מבחינה טכנית התשובה מורכבת מבלוקים, כל פסקה צריכה להמשיך את קודמתה ולא להיפתח מחדש כאילו היא פריט ברשימה.",
+    );
     lines.push(
       "מיקוד נושאי: המקורות שאותרו נועדו להעשיר את הנושא שהמשתמש הגדיר בלבד. אין לגלוש להקשרים דוקטרינריים קונקרטיים אחרים (למשל בתי דין דתיים בשאלה על מינויים פוליטיים) אלא אם המשתמש הזכיר אותם. מקור מתחום אחר מותר רק כמסגרת תיאורטית/השוואתית כללית, ורק אם אינו מוצג כסמכות ישירה לנושא הספציפי.",
     );
     lines.push(
       "אין לכתוב כתובות URL בגוף הטקסט. הפניות למקורות יופיעו בהערות השוליים בלבד.",
     );
+
 
     // academic_style_model_v1 — the style guide owns prose quality; the drafter
     // keeps only safety, source-support, envelope and citation rules.
@@ -1169,6 +1181,14 @@ export interface DrafterV2Result {
   /** academic_draft_presentation_hygiene_v1 telemetry. */
   academic_presentation_hygiene?: AcademicHygieneReport;
   academic_style_model?: AcademicStyleModelReport & { answer_words?: number };
+  /** academic_drafter_prompt_conflict_cleanup_v1 telemetry. */
+  academic_prompt_cleanup?: AcademicPromptCleanupReport & {
+    rhythm_rules_as_ceilings: boolean;
+    hygiene_softened: boolean;
+    paragraph_trimmed: boolean;
+    bullets_converted_or_preserved: string;
+    drift_paragraphs_dropped: number;
+  };
 
   /** Deterministic source-sufficiency assessment (telemetry + gate result). */
 
@@ -1908,6 +1928,17 @@ export async function runDrafterV2(
     opts?.sourceUsePlan ?? null,
   );
 
+  // academic_drafter_prompt_conflict_cleanup_v1 — academic drafts get the
+  // shared system prompt with the conflicting hedge/blacklist/bottom-line
+  // paragraphs replaced. Every other mode keeps the prompt verbatim.
+  const academicGenreForPrompt =
+    (opts?.sourceUsePlan?.academic_genre ?? "generic_academic") as AcademicGenre;
+  const isAcademicPrompt = opts?.sourceUsePlan?.user_task_intent === "academic_writing";
+  const promptCleanup = isAcademicPrompt
+    ? applyAcademicPromptCleanup(SYSTEM_PROMPT_V2, academicGenreForPrompt)
+    : { prompt: SYSTEM_PROMPT_V2, report: emptyAcademicPromptCleanupReport() };
+  const systemPrompt = promptCleanup.prompt;
+
 
   const tool = {
     name: "emit_structured_draft",
@@ -1932,7 +1963,7 @@ export async function runDrafterV2(
     if (provider === "anthropic") {
       const resp = await callAnthropicJsonTool<unknown>({
         model,
-        system: SYSTEM_PROMPT_V2,
+        system: systemPrompt,
         user: userMsg,
         tool: {
           name: tool.name,
@@ -1949,7 +1980,7 @@ export async function runDrafterV2(
     } else {
       const resp = await callOpenAIJsonTool<unknown>({
         model,
-        system: SYSTEM_PROMPT_V2,
+        system: systemPrompt,
         user: userMsg,
         tool,
         maxCompletionTokens,
@@ -2164,6 +2195,7 @@ export async function runDrafterV2(
   // and the body is normalized to prose without raw URLs.
   let academic_presentation_hygiene: AcademicHygieneReport | undefined;
   let academic_style_model: (AcademicStyleModelReport & { answer_words?: number }) | undefined;
+  let academic_prompt_cleanup: DrafterV2Report["academic_prompt_cleanup"];
   let answer_markdown: string;
 
   if (academicPrimary) {
@@ -2190,6 +2222,17 @@ export async function runDrafterV2(
       ).report,
       answer_words: answer_markdown.split(/\s+/).filter(Boolean).length,
     };
+    // academic_drafter_prompt_conflict_cleanup_v1 telemetry.
+    academic_prompt_cleanup = {
+      ...promptCleanup.report,
+      rhythm_rules_as_ceilings: true,
+      hygiene_softened: hygiene.report.hygiene_softened,
+      paragraph_trimmed: hygiene.report.paragraph_trimmed,
+      bullets_converted_or_preserved: hygiene.report.bullets_converted_or_preserved,
+      drift_paragraphs_dropped: hygiene.report.drift_paragraphs_dropped,
+    };
+
+
 
   } else {
     answer_markdown = baseAnswer + referenceOnlyText + limitedDoctrinalText +
@@ -2247,6 +2290,7 @@ export async function runDrafterV2(
     deterministic_branch: academicLimited ? "academic_limited_draft" : undefined,
     academic_presentation_hygiene,
     academic_style_model,
+    academic_prompt_cleanup,
 
 
     sufficiency,
