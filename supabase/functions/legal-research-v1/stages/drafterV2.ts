@@ -1109,7 +1109,8 @@ export interface DrafterV2Result {
     | "canonical_quote_registry"
     | "canonical_quote_verified"
     | "statute_section_quote_refusal"
-    | "insufficient_sources_limitation";
+    | "insufficient_sources_limitation"
+    | "academic_limited_draft";
   /** Deterministic source-sufficiency assessment (telemetry + gate result). */
   /** claim_source_match_validation_v1 — per-block claim/source gate telemetry. */
   claim_source_match?: ClaimSourceMatchReport;
@@ -2066,12 +2067,22 @@ export async function runDrafterV2(
   const built = buildFootnotedAnswer(matched.draft ?? gated.draft ?? parsed.draft as StructuredDraft, inputSources);
 
 
+  // academic_writing_intent_and_drafting_v1 — the negative-existence scrub
+  // rewrites prose into retrieval-scoped "במקורות שאותרו לא נמצא עיגון…"
+  // phrasing, which is exactly the register an academic draft must avoid.
+  const academicPrimary = opts?.sourceUsePlan?.user_task_intent === "academic_writing";
+  const academicLimited =
+    academicPrimary && (sufficiency?.reason ?? "").includes("academic_writing_draft_allowed");
+
   // Rule 1.10 — Hebrew number ranges must be written high→low in source order.
   const answer_markdown = stripInternalRefTokens(
-    scrubNegativeExistenceClaims(
-      normalizeHebrewNumberRanges(built.answer_markdown),
-    ).text,
+    academicPrimary
+      ? normalizeHebrewNumberRanges(built.answer_markdown)
+      : scrubNegativeExistenceClaims(
+        normalizeHebrewNumberRanges(built.answer_markdown),
+      ).text,
   ) +
+    (academicLimited ? `\n\n*${ACADEMIC_LIMITED_DRAFT_NOTICE_HE}*\n` : "") +
     // substance_based_doctrinal_sufficiency_v1 (guardrail 2) — the
     // "found only" list is not emitted mechanically. It appears only when the
     // answer actually rests on a limited pack, or when the gate stripped
