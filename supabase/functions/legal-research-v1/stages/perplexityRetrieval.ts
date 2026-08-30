@@ -174,7 +174,18 @@ function admitFor(role: SourceRole, cls: SourceClass): boolean {
 function correctRoleForClass(
   role: SourceRole,
   cls: SourceClass,
+  academicMode = false,
 ): { role: SourceRole; corrected_from?: SourceRole } {
+  // academic_citation_authority_alignment_v1 — in academic_writing runs an
+  // academic/publisher source found under a case-law or statute query is
+  // remapped to the scholarship lane instead of being dropped as
+  // role-mismatched. Integrity, hygiene and the verifier still apply.
+  if (
+    academicMode && (cls === "academic" || cls === "publisher") &&
+    role !== "scholarship"
+  ) {
+    return { role: "scholarship", corrected_from: role };
+  }
   // Knesset/gov-il legislation: always admit as primary_statute regardless of original role.
   if (cls === "legislation" && role !== "primary_statute" && role !== "regulation") {
     return { role: "primary_statute", corrected_from: role };
@@ -350,6 +361,7 @@ function processRaw(
   query: Query,
   raw: PplxSource[],
   hygieneCounts: PplxHygieneCounts,
+  academicMode = false,
 ): {
   admitted: Candidate[];
   rows: PplxResultRow[];
@@ -387,7 +399,11 @@ function processRaw(
     const originalQueryRole = query.role;
 
     // P3.2 #4: role correction before admission
-    const { role: effectiveRole, corrected_from } = correctRoleForClass(query.role, cls);
+    const { role: effectiveRole, corrected_from } = correctRoleForClass(
+      query.role,
+      cls,
+      academicMode,
+    );
     const admit = admitFor(effectiveRole, cls);
 
     if (!admit) {
