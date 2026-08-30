@@ -97,3 +97,22 @@ describe("single caveat", () => {
     expect((r.answer.match(/הערת עבודה/g) ?? []).length).toBe(1);
   });
 });
+
+describe("topic drift guard", () => {
+  it("drops a religious-courts pivot from a public-appointments draft", () => {
+    const r = run(
+      "פסקה על מינויים פוליטיים וביקורת שיפוטית.\n\nפסקה על בית דין רבני ושיפוט דתי.\n\nפסקה על סבירות מנהלית.\n\nפסקה מסכמת.",
+      { genre: "research_question", question: "נסח שאלת מחקר על מינויים פוליטיים" },
+    );
+    expect(r.report.drift_paragraphs_dropped).toBe(1);
+    expect(r.answer).not.toContain("בית דין רבני");
+  });
+
+  it("keeps the domain when the user raised it", () => {
+    const r = run(
+      "פסקה אחת.\n\nפסקה על בית דין רבני.\n\nפסקה שלישית.\n\nרביעית.",
+      { question: "כתוב רקע על ביקורת בג\"ץ על בית דין רבני" },
+    );
+    expect(r.report.drift_paragraphs_dropped).toBe(0);
+  });
+});
