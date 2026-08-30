@@ -140,11 +140,19 @@ export function LegalResearchV1Panel({
     required: CREDIT_COSTS.research,
     remaining: 0,
   });
+  const [progressLabel, setProgressLabel] = useState<string | null>(null);
+  const [resumed, setResumed] = useState(false);
+  const [infraFailure, setInfraFailure] = useState(false);
+  const [justCompleted, setJustCompleted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const progressTimerRef = useRef<number | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const startRef = useRef<number>(0);
+  // Fresh per submit attempt; reused only when that same attempt is retried
+  // (double-click / transient network retry), never a session constant.
+  const clientRequestIdRef = useRef<string | null>(null);
+
 
 
   useEffect(() => {
