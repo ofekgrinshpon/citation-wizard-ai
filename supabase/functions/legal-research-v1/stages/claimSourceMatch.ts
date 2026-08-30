@@ -229,6 +229,10 @@ export function applyClaimSourceMatch(
     primary_supported_block_count: 0,
     rebinding: emptyRebindingSummary(),
   };
+  const academicMode = opts?.academicMode === true;
+  const align = emptyAcademicAuthorityAlignment();
+  align.applied = academicMode;
+  if (academicMode) report.academic_authority_alignment = align;
   if (!draft) return { draft, report, limitation_text: "" };
   report.rebinding.applied = true;
   const sourceByRef = new Map(inputSources.map((s) => [s.ref, s]));
@@ -267,9 +271,16 @@ export function applyClaimSourceMatch(
       text: typeof (b as unknown as Record<string, unknown>).text === "string"
         ? String((b as unknown as Record<string, unknown>).text)
         : "",
+      academicMode,
     });
+    const academicCategory = isAcademicClaimCategory(category);
     const doctrinalCategory = category === "doctrinal_synthesis" ||
-      category === "scholarly_commentary" || category === "contextual_background";
+      category === "scholarly_commentary" || category === "contextual_background" ||
+      academicCategory;
+    if (academicMode) {
+      align.academic_claim_categories_used[category] =
+        (align.academic_claim_categories_used[category] ?? 0) + 1;
+    }
     const overstatementDrops: string[] = [];
 
     const kept: string[] = [];
@@ -377,8 +388,32 @@ export function applyClaimSourceMatch(
       // rest on commentary alone.
       if (!reason && prof && !categoryAccepts(category, prof)) {
         reason = "insufficient_authority_for_claim_category";
-        if (category === "court_holding" && prof.doctrinal_authority) {
+        if (
+          (category === "court_holding" || category === "statutory") && prof.doctrinal_authority
+        ) {
           overstatementDrops.push(ref);
+          if (academicMode) align.doctrinal_secondary_refs_rejected_for_primary_claims++;
+        }
+      }
+
+      // academic_citation_authority_alignment_v1
+      if (academicMode && !reason && prof?.doctrinal_authority && !m.is_primary) {
+        // (a) `partial` support may carry cautious wording only.
+        if (m.verifier_verdict !== "direct" && isCategoricalClaim(blockText)) {
+          reason = "partial_support_for_categorical_claim";
+          align.partial_support_refs_dropped++;
+        } else if (m.verifier_verdict !== "direct" && m.verifier_verdict !== "partial") {
+          reason = "insufficient_authority_for_claim_category";
+        } else {
+          // (b) subject-matter fit: a generally-legal source that shares no
+          // subject vocabulary with the question may not be cited.
+          const bindingKind = blockBindings.get(ref);
+          const strongBinding = bindingKind === "exact" || bindingKind === "facet";
+          const fit = academicTopicalFit(String(opts?.question ?? ""), blockText, sourceByRef.get(ref)!);
+          if (!strongBinding && !fit.fit) {
+            reason = "off_topic_for_academic_claim";
+            align.off_topic_refs_dropped++;
+          }
         }
       }
 
