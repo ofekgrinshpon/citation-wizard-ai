@@ -193,6 +193,44 @@ export function planSourceUseIntent(
     overrides.push("explicit_statute_section_requires_official_statute");
   }
 
+  // ── Academic writing intent (deterministic) ────────────────────────────
+  // A request to WRITE academic text must not be answered as a doctrinal
+  // explanation or a source-gap report. Priority: explicit dockets stay
+  // case_holding-primary (academic writing may ride along as secondary);
+  // source-seeking phrasing is already excluded by the detector.
+  const academicDetection = detectAcademicWritingRequest(question);
+  if (academicDetection) {
+    if (hasDocket) {
+      if (plan.user_task_intent !== "academic_writing" &&
+          plan.secondary_task_intent !== "academic_writing") {
+        plan = {
+          ...plan,
+          mixed_plan: true,
+          secondary_task_intent: "academic_writing",
+          academic_genre: academicDetection.genre,
+        };
+        overrides.push("academic_writing_intent_secondary_docket_primary");
+      }
+    } else if (!isAcademicWritingTask(plan.user_task_intent)) {
+      plan = {
+        ...plan,
+        user_task_intent: "academic_writing",
+        answer_strategy: "draft_academic_text",
+        academic_genre: academicDetection.genre,
+        // Drafting may lean on the general framework and acquired doctrinal
+        // material; found-only support remains pinned false below.
+        secondary_task_intent: isLegalStatementTask(plan.user_task_intent)
+          ? plan.user_task_intent
+          : undefined,
+        mixed_plan: isLegalStatementTask(plan.user_task_intent) ? true : plan.mixed_plan,
+      };
+      req.secondary_sources_can_support = true;
+      overrides.push("academic_writing_intent_detected");
+    } else {
+      plan = { ...plan, academic_genre: plan.academic_genre ?? academicDetection.genre };
+    }
+  }
+
   // ── Safety floor 3: case_holding never rests on secondary sources ───────
   if (plan.user_task_intent === "case_holding") {
     if (!req.requires_judgment_body) {
