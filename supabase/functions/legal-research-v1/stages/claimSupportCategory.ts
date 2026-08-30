@@ -33,7 +33,28 @@ export type ClaimSupportCategory =
   | "statutory"
   | "doctrinal_synthesis"
   | "scholarly_commentary"
-  | "contextual_background";
+  | "contextual_background"
+  // academic_citation_authority_alignment_v1 — academic-writing categories.
+  | "doctrinal_background"
+  | "academic_framing"
+  | "theoretical_explanation"
+  | "literature_synthesis"
+  | "critique_or_counterposition"
+  | "methodological_framing";
+
+/** academic_citation_authority_alignment_v1 — academic-writing categories. */
+export const ACADEMIC_CLAIM_CATEGORIES: ClaimSupportCategory[] = [
+  "doctrinal_background",
+  "academic_framing",
+  "theoretical_explanation",
+  "literature_synthesis",
+  "critique_or_counterposition",
+  "methodological_framing",
+];
+
+export function isAcademicClaimCategory(v: unknown): v is ClaimSupportCategory {
+  return typeof v === "string" && (ACADEMIC_CLAIM_CATEGORIES as string[]).includes(v);
+}
 
 export const CLAIM_SUPPORT_CATEGORIES: ClaimSupportCategory[] = [
   "court_holding",
@@ -41,6 +62,7 @@ export const CLAIM_SUPPORT_CATEGORIES: ClaimSupportCategory[] = [
   "doctrinal_synthesis",
   "scholarly_commentary",
   "contextual_background",
+  ...ACADEMIC_CLAIM_CATEGORIES,
 ];
 
 export function isClaimSupportCategory(v: unknown): v is ClaimSupportCategory {
@@ -52,6 +74,31 @@ export function isClaimSupportCategory(v: unknown): v is ClaimSupportCategory {
  * docket number. This is an identifier pattern, not a phrase list.
  */
 const DOCKET_IDENTITY_RE = /\b\d{1,5}\/\d{2}\b/;
+
+/**
+ * academic_citation_authority_alignment_v1 — binding-law wording.
+ * A block phrased as a statement of binding law requires primary authority
+ * whatever mode produced it. Two families, so the escalation can pick the
+ * right primary category.
+ */
+export const BINDING_CASELAW_LANGUAGE_RE =
+  /(בית\s+המשפט\s+(קבע|פסק|הכריע|קבעה)|בג["״']?ץ\s+קבע|ההלכה\s+היא|נפסק\s+כי|הפסיקה\s+(קבעה|הכריעה)|הלכה\s+פסוקה\s+היא|נקבעה\s+ההלכה)/;
+export const BINDING_STATUTORY_LANGUAGE_RE =
+  /(החוק\s+קובע|הדין\s+הוא|החוק\s+מחייב|סעיף\s+[\d״"'א-ת().\/]+\s+(קובע|מחייב|מורה)|התקנות\s+קובעות|הוראת\s+החוק\s+קובעת)/;
+
+export function detectBindingLawLanguage(
+  text: string,
+): { binding: boolean; kind: "caselaw" | "statutory" | null; matches: string[] } {
+  const t = String(text ?? "");
+  const matches: string[] = [];
+  const c = t.match(BINDING_CASELAW_LANGUAGE_RE);
+  const s = t.match(BINDING_STATUTORY_LANGUAGE_RE);
+  if (c) matches.push(c[0]);
+  if (s) matches.push(s[0]);
+  if (!matches.length) return { binding: false, kind: null, matches };
+  return { binding: true, kind: c ? "caselaw" : "statutory", matches };
+}
+
 
 export interface SourceSupportProfile {
   ref: string;
