@@ -77,6 +77,12 @@ import {
   LIMITED_DOCTRINAL_ANSWER_NOTICE_HE,
   NARROW_LIMITED_DOCTRINAL_NOTICE_HE,
 } from "./claimSupportCategory.ts";
+import { planRequestsAcademicWriting } from "./sourceUseIntent.ts";
+
+/** academic_writing_intent_and_drafting_v1 — single post-draft note when the
+ * draft was produced under thin sourcing. */
+export const ACADEMIC_LIMITED_DRAFT_NOTICE_HE =
+  "הטיוטה מנוסחת כטיוטה אקדמית ראשונית, ללא השלמת הפניות מלאות. יש להשלים בהמשך הפניות מדויקות לפסיקה ולספרות.";
 
 
 
@@ -311,7 +317,44 @@ function buildUserMessage(
   lines.push(
     "מסגרת התשובה חייבת להישאר נאמנה לשאלה כפי שנשאלה. אם המקורות עוסקים בנושא סמוך אך לא זהה — ציין זאת במפורש ואל תחליף את שאלת המשתמש.",
   );
-  lines.push(NEGATIVE_EXISTENCE_PROMPT_RULE);
+  const academicWriting = planRequestsAcademicWriting(sourceUsePlan);
+  const academicPrimary = sourceUsePlan?.user_task_intent === "academic_writing";
+  if (academicPrimary) {
+    // Academic drafts must not use retrieval-scoped phrasing about the user's
+    // own topic concepts; non-existence claims are still forbidden.
+    lines.push(
+      'אין לקבוע שדוקטרינה/הלכה "אינה קיימת" או ש"אין הלכה מוכרת בשם זה". מונחים שהמשתמש עצמו הציג (למשל "עקרון הפרדת הרשויות") הם חלק מנושא העבודה — יש להתייחס אליהם כמסגרת המחקר ולא כטענות הדורשות עיגון.',
+    );
+  } else {
+    lines.push(NEGATIVE_EXISTENCE_PROMPT_RULE);
+  }
+  if (academicWriting) {
+    const genre = sourceUsePlan?.academic_genre ?? "generic_academic";
+    lines.push("");
+    lines.push(
+      "משימת כתיבה אקדמית: המשתמש ביקש טקסט אקדמי מוכן — לא דוח מחקר ולא דיווח על מקורות. הפק פרוזה אקדמית עברית רציפה, זהירה וטבעית, בז׳אנר המבוקש.",
+    );
+    if (genre === "chapter_outline") {
+      lines.push(
+        "הז׳אנר המבוקש הוא מתווה/מבנה — כאן מותרת רשימה מסודרת של פרקים עם תיאור קצר לכל פרק.",
+      );
+    } else {
+      lines.push(
+        "אין להשתמש ברשימות תבליטים או בכותרות-משנה תבניתיות — כתוב פסקאות פרוזה רציפות (רשימות מותרות רק אם המשתמש ביקש מפורשות מתווה/מבנה).",
+      );
+    }
+    if (genre === "introduction") {
+      lines.push(
+        "לפרק מבוא כלול, במידת הצורך: מסגור הבעיה המשפטית, רקע דוקטרינלי, שאלת המחקר, המתח המרכזי, חשיבות השאלה, ומבנה העבודה המתוכנן.",
+      );
+    }
+    lines.push(
+      'אין לפתוח את הטיוטה בדיווח על המקורות (למשל "במקורות שאותרו לא נמצא…", "לא נמצא עיגון מספק…"). אין לפזר הערות זהירות בגוף הטקסט — אם נדרשת הבהרה, היא תופיע כהערה קצרה אחת לאחר הטיוטה בלבד.',
+    );
+    lines.push(
+      "אין לייחס לבית משפט הלכה ספציפית ללא גוף פסק דין שאותר, אין להמציא הפניות, ואין לצטט מקורות שאותרו בלבד. כשהתמיכה דלה — נסח בלשון זהירה ובמונחים כלליים.",
+    );
+  }
   if (framing?.framing_correction_required && framing.named_doctrine_phrase) {
     const named = framing.named_doctrine_phrase;
     const subject = framing.subject_phrase ?? named;
@@ -1066,7 +1109,8 @@ export interface DrafterV2Result {
     | "canonical_quote_registry"
     | "canonical_quote_verified"
     | "statute_section_quote_refusal"
-    | "insufficient_sources_limitation";
+    | "insufficient_sources_limitation"
+    | "academic_limited_draft";
   /** Deterministic source-sufficiency assessment (telemetry + gate result). */
   /** claim_source_match_validation_v1 — per-block claim/source gate telemetry. */
   claim_source_match?: ClaimSourceMatchReport;
@@ -2023,12 +2067,22 @@ export async function runDrafterV2(
   const built = buildFootnotedAnswer(matched.draft ?? gated.draft ?? parsed.draft as StructuredDraft, inputSources);
 
 
+  // academic_writing_intent_and_drafting_v1 — the negative-existence scrub
+  // rewrites prose into retrieval-scoped "במקורות שאותרו לא נמצא עיגון…"
+  // phrasing, which is exactly the register an academic draft must avoid.
+  const academicPrimary = opts?.sourceUsePlan?.user_task_intent === "academic_writing";
+  const academicLimited =
+    academicPrimary && (sufficiency?.reason ?? "").includes("academic_writing_draft_allowed");
+
   // Rule 1.10 — Hebrew number ranges must be written high→low in source order.
   const answer_markdown = stripInternalRefTokens(
-    scrubNegativeExistenceClaims(
-      normalizeHebrewNumberRanges(built.answer_markdown),
-    ).text,
+    academicPrimary
+      ? normalizeHebrewNumberRanges(built.answer_markdown)
+      : scrubNegativeExistenceClaims(
+        normalizeHebrewNumberRanges(built.answer_markdown),
+      ).text,
   ) +
+    (academicLimited ? `\n\n*${ACADEMIC_LIMITED_DRAFT_NOTICE_HE}*\n` : "") +
     // substance_based_doctrinal_sufficiency_v1 (guardrail 2) — the
     // "found only" list is not emitted mechanically. It appears only when the
     // answer actually rests on a limited pack, or when the gate stripped
@@ -2092,6 +2146,7 @@ export async function runDrafterV2(
     missing_anchor_caveat_injected: missingAnchors.length > 0,
     lead_ref: leadSelection,
     missing_anchor_descriptions: missingAnchors.map((a) => a.description),
+    deterministic_branch: academicLimited ? "academic_limited_draft" : undefined,
     sufficiency,
     named_doctrine_framing: framing,
     synthesis_rendering,

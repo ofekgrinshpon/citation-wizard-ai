@@ -76,6 +76,7 @@ export const USER_TASK_INTENTS = [
   "argument_development",
   "legal_research_guidance",
   "document_check",
+  "academic_writing",
 ] as const;
 export type UserTaskIntent = typeof USER_TASK_INTENTS[number];
 
@@ -99,6 +100,7 @@ export const ANSWER_STRATEGIES = [
   "plan_research_section",
   "compare_views",
   "limited_answer_with_gaps",
+  "draft_academic_text",
 ] as const;
 export type AnswerStrategy = typeof ANSWER_STRATEGIES[number];
 
@@ -122,6 +124,13 @@ export interface SourceUsePlan {
   plan_confidence: PlanConfidence;
   mixed_plan: boolean;
   secondary_task_intent?: UserTaskIntent;
+  /**
+   * academic_writing_intent_and_drafting_v1 — detected academic genre when
+   * the task is academic writing ("introduction" | "theoretical_background" |
+   * "argument_paragraph" | "chapter_outline" | "research_question" |
+   * "generic_academic"). Informational; drives drafter genre instructions.
+   */
+  academic_genre?: string;
   reason?: string;
 }
 

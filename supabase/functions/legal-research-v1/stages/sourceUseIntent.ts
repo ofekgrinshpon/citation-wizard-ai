@@ -96,6 +96,61 @@ function uniq<T>(xs: T[]): T[] {
   return [...new Set(xs)];
 }
 
+// ─── academic_writing_intent_and_drafting_v1 ────────────────────────────────
+
+export interface AcademicWritingDetection {
+  genre:
+    | "introduction"
+    | "theoretical_background"
+    | "argument_paragraph"
+    | "chapter_outline"
+    | "research_question"
+    | "generic_academic";
+  matched: string;
+}
+
+const ACADEMIC_WRITING_VERB_RE =
+  /(?:כתוב|כתבי|כתבו|נסח|נסחי|נסחו|ניסחו|הרחב|הרחיבי|הרחיבו|גבש|גבשי|הצג|הציגי)/;
+const ACADEMIC_OBJECT_RE =
+  /(?:פרק\s+מבוא|פרק(?:\s+ה)?\s*ראשון|מבוא|רקע\s+תיאורטי|רקע\s+תיאורטי|פרק\s+תיאורטי|הצגת\s+נושא|פסקה\s+אקדמית|פסקת\s+טיעון|מתווה\s+(?:פרקים|העבודה|הסמינריון)|סמינריון|עבודה\s+אקדמית|עבודת\s+(?:גמר|סמינר)|עבודה\s+סמינריונית|שאלת\s+(?:ה)?מחקר)/;
+const ACADEMIC_RESEARCH_QUESTION_RE = /שאלת\s+(?:ה)?מחקר/;
+/** Explicit source-seeking — suppresses the academic-writing override. */
+const SOURCE_SEEKING_RE =
+  /(?:תן\s+לי\s+מקורות|תני\s+לי\s+מקורות|מקורות\s+(?:לביבליוגרפיה|לקריאה|לסמינריון|לעבודה)|מצא\s+(?:לי\s+)?(?:פסיקה|מקורות|מאמרים|ספרות)|איתור\s+מקורות|ביבליוגרפיה|רשימת\s+קריאה|רשימת\s+מקורות|המלצות\s+לקריאה)/;
+
+/**
+ * Detects requests to WRITE academic text ("כתוב פרק מבוא לסמינריון…").
+ * Deterministic; does not depend on the model plan. Returns null when the
+ * request is explicitly source-seeking or carries no writing signal.
+ */
+export function detectAcademicWritingRequest(question: string): AcademicWritingDetection | null {
+  const q = question ?? "";
+  if (!q.trim()) return null;
+  if (SOURCE_SEEKING_RE.test(q)) return null;
+  const hasVerb = ACADEMIC_WRITING_VERB_RE.test(q);
+  const hasObject = ACADEMIC_OBJECT_RE.test(q);
+  if (!hasVerb || !hasObject) return null;
+
+  let genre: AcademicWritingDetection["genre"] = "generic_academic";
+  if (/מתווה|מבנה\s+(?:ה)?עבודה|חלוקה\s+לפרקים/.test(q)) genre = "chapter_outline";
+  else if (/פרק\s+מבוא|מבוא/.test(q)) genre = "introduction";
+  else if (/רקע\s+תיאורטי|פרק\s+תיאורטי/.test(q)) genre = "theoretical_background";
+  else if (/פסקת\s+טיעון|פסקה\s+אקדמית|טיעון/.test(q)) genre = "argument_paragraph";
+  else if (ACADEMIC_RESEARCH_QUESTION_RE.test(q) && /גבש|נסח/.test(q)) genre = "research_question";
+  return { genre, matched: "writing_verb+academic_object" };
+}
+
+export function isAcademicWritingTask(t: UserTaskIntent | null | undefined): boolean {
+  return t === "academic_writing";
+}
+
+/** True when the plan's primary or secondary task is academic writing. */
+export function planRequestsAcademicWriting(plan: SourceUsePlan | null | undefined): boolean {
+  if (!plan) return false;
+  return isAcademicWritingTask(plan.user_task_intent) ||
+    (plan.mixed_plan && isAcademicWritingTask(plan.secondary_task_intent));
+}
+
 export function planSourceUseIntent(
   question: string,
   analyzer: AnalyzerOutput | null | undefined,
@@ -136,6 +191,44 @@ export function planSourceUseIntent(
   if (hasStatuteSection && !req.requires_official_statute) {
     req.requires_official_statute = true;
     overrides.push("explicit_statute_section_requires_official_statute");
+  }
+
+  // ── Academic writing intent (deterministic) ────────────────────────────
+  // A request to WRITE academic text must not be answered as a doctrinal
+  // explanation or a source-gap report. Priority: explicit dockets stay
+  // case_holding-primary (academic writing may ride along as secondary);
+  // source-seeking phrasing is already excluded by the detector.
+  const academicDetection = detectAcademicWritingRequest(question);
+  if (academicDetection) {
+    if (hasDocket) {
+      if (plan.user_task_intent !== "academic_writing" &&
+          plan.secondary_task_intent !== "academic_writing") {
+        plan = {
+          ...plan,
+          mixed_plan: true,
+          secondary_task_intent: "academic_writing",
+          academic_genre: academicDetection.genre,
+        };
+        overrides.push("academic_writing_intent_secondary_docket_primary");
+      }
+    } else if (!isAcademicWritingTask(plan.user_task_intent)) {
+      plan = {
+        ...plan,
+        user_task_intent: "academic_writing",
+        answer_strategy: "draft_academic_text",
+        academic_genre: academicDetection.genre,
+        // Drafting may lean on the general framework and acquired doctrinal
+        // material; found-only support remains pinned false below.
+        secondary_task_intent: isLegalStatementTask(plan.user_task_intent)
+          ? plan.user_task_intent
+          : undefined,
+        mixed_plan: isLegalStatementTask(plan.user_task_intent) ? true : plan.mixed_plan,
+      };
+      req.secondary_sources_can_support = true;
+      overrides.push("academic_writing_intent_detected");
+    } else {
+      plan = { ...plan, academic_genre: plan.academic_genre ?? academicDetection.genre };
+    }
   }
 
   // ── Safety floor 3: case_holding never rests on secondary sources ───────
