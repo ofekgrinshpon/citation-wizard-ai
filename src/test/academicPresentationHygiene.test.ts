@@ -17,11 +17,22 @@ const run = (body: string, o: Partial<Parameters<typeof applyAcademicPresentatio
   });
 
 describe("prose enforcement", () => {
-  it("converts bullets into prose for prose genres", () => {
+  it("converts short bullet runs into prose for prose genres", () => {
     const r = run("פתיח.\n\n- מבחן הקשר הרציונלי\n- מבחן האמצעי שפגיעתו פחותה\n- מבחן המידתיות במובן הצר");
     expect(r.report.bullets_converted).toBe(3);
+    expect(r.report.bullets_converted_or_preserved).toBe("converted");
     expect(r.answer).not.toMatch(/^\s*-\s+/m);
     expect(r.answer).toContain("מבחן הקשר הרציונלי.");
+  });
+
+  it("preserves long bullet runs as separate prose paragraphs", () => {
+    const r = run("פתיח.\n\n- אחד ראשון\n- שניים שני\n- שלושה שלישי\n- ארבעה רביעי\n- חמישה חמישי");
+    expect(r.report.bullets_preserved).toBe(5);
+    expect(r.report.bullets_converted).toBe(0);
+    expect(r.report.bullets_converted_or_preserved).toBe("preserved");
+    expect(r.answer).not.toMatch(/^\s*-\s+/m);
+    // not flattened into one disguised list paragraph
+    expect(r.answer).toContain("אחד ראשון.\n\nשניים שני.");
   });
 
   it("keeps multiple prose paragraphs", () => {
@@ -41,10 +52,11 @@ describe("prose enforcement", () => {
     expect(r.report.prose_enforced).toBe(false);
   });
 
-  it("strips markdown headings in prose genres", () => {
-    const r = run("## רקע\nטקסט.");
+  it("folds markdown headings into the following paragraph, no orphan line", () => {
+    const r = run("## רקע\nטקסט ראשון.");
     expect(r.report.headings_stripped).toBe(1);
     expect(r.answer).not.toContain("##");
+    expect(r.answer).toContain("רקע. טקסט ראשון.");
   });
 });
 
@@ -56,6 +68,14 @@ describe("url hygiene", () => {
     expect(r.text).not.toMatch(/https?:\/\//);
     expect(r.text).toContain("פסק הדין");
     expect(r.stripped).toBe(2);
+  });
+
+  it("repairs punctuation residue left by url removal", () => {
+    const r = stripUrlsFromProse("ראו (https://a.b/c), וגם ההלכה נקבעה שם.");
+    expect(r.text).not.toContain(" , ");
+    expect(r.text).not.toContain("()");
+    expect(r.text).toContain("וגם ההלכה נקבעה שם.");
+    expect(r.repairs).toBeGreaterThan(0);
   });
 });
 
@@ -69,7 +89,21 @@ describe("argument paragraph contract", () => {
     const body = r.answer.split("\n\n")[0];
     expect(body).not.toContain("עוד עוד");
     expect(r.report.paragraph_trimmed).toBe(true);
-    expect(r.report.word_count!).toBeLessThanOrEqual(330);
+  });
+
+  it("does not trim a complete argument below the 340-word safety ceiling", () => {
+    const body = `${"מילה ".repeat(320)}.`;
+    const r = run(body, { genre: "argument_paragraph", question: "כתוב פסקת טיעון" });
+    expect(r.report.word_count!).toBeGreaterThanOrEqual(320);
+  });
+
+  it("never cuts mid-move when no sentence boundary is in range", () => {
+    const r = run(`${"מילה ".repeat(400)}.`, {
+      genre: "argument_paragraph",
+      question: "כתוב פסקת טיעון",
+    });
+    // no full stop in the first 340 words -> paragraph left intact
+    expect(r.report.word_count!).toBeGreaterThan(340);
   });
 
   it("merges short paragraphs up to the 150-word floor", () => {
@@ -106,6 +140,24 @@ describe("topic drift guard", () => {
     );
     expect(r.report.drift_paragraphs_dropped).toBe(1);
     expect(r.answer).not.toContain("בית דין רבני");
+  });
+
+  it("repairs the connective of the paragraph after a dropped one", () => {
+    const r = run(
+      "פסקה על מינויים פוליטיים.\n\nפסקה על בית דין רבני ושיפוט דתי.\n\nלעומת זאת, סבירות מנהלית נבחנת אחרת.\n\nפסקה מסכמת.",
+      { genre: "research_question", question: "נסח שאלת מחקר על מינויים פוליטיים" },
+    );
+    expect(r.answer).not.toContain("לעומת זאת");
+    expect(r.answer).toContain("סבירות מנהלית נבחנת אחרת.");
+  });
+
+  it("is position-independent and keeps at least three paragraphs", () => {
+    // two drifting paragraphs out of four -> dropping would leave 2, so no drop
+    const r = run(
+      "פסקה על בית דין רבני.\n\nפסקה על שיפוט דתי.\n\nפסקה שלישית.\n\nרביעית.",
+      { genre: "research_question", question: "נסח שאלת מחקר על מינויים פוליטיים" },
+    );
+    expect(r.report.drift_paragraphs_dropped).toBe(0);
   });
 
   it("keeps the domain when the user raised it", () => {
