@@ -143,6 +143,18 @@ async function handle(req: Request): Promise<Response> {
   };
 
   // Per-stage progress tracking for the client UI.
+  // Hebrew labels are persisted so any surface (result page, history) can show
+  // the live stage without duplicating the mapping.
+  const STAGE_LABELS_HE: Record<string, string> = {
+    analyzer: "מנתח את השאלה",
+    planner: "מתכנן מחקר",
+    retrieval: "מחפש מקורות",
+    reading: "קורא מקורות",
+    verifier: "מאמת התאמה",
+    ranking: "בודק מספיקות",
+    drafter: "מנסח תשובה",
+    finalize: "מסיים",
+  };
   const completedStages: string[] = [];
   let currentStage: string | null = null;
   const markStage = async (stage: string) => {
@@ -152,6 +164,7 @@ async function handle(req: Request): Promise<Response> {
     currentStage = stage;
     await setJobStatus({
       current_stage: stage,
+      progress_label_he: STAGE_LABELS_HE[stage] ?? null,
       completed_stages: completedStages,
     });
   };
@@ -162,9 +175,11 @@ async function handle(req: Request): Promise<Response> {
     currentStage = null;
     await setJobStatus({
       current_stage: null,
+      progress_label_he: null,
       completed_stages: completedStages,
     });
   };
+
 
   const run_id = crypto.randomUUID();
   const t_start = Date.now();
