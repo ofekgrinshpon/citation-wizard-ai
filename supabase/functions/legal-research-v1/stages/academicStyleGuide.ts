@@ -20,10 +20,13 @@ export const ACADEMIC_STYLE_MODEL_VERSION = "v1.0-lr1";
 export const ACADEMIC_STYLE_GUIDE_ENABLED_DEFAULT = true;
 
 export function styleGuideFlagEnabled(): boolean {
-  const raw = (Deno.env.get("ACADEMIC_STYLE_GUIDE_ENABLED") ?? "").trim().toLowerCase();
+  // deno-lint-ignore no-explicit-any
+  const env = (globalThis as any).Deno?.env;
+  const raw = String(env?.get?.("ACADEMIC_STYLE_GUIDE_ENABLED") ?? "").trim().toLowerCase();
   if (!raw) return ACADEMIC_STYLE_GUIDE_ENABLED_DEFAULT;
   return !(raw === "false" || raw === "0" || raw === "off" || raw === "no");
 }
+
 
 export type StyleSectionId =
   | "paragraph_rhythm"
