@@ -518,6 +518,7 @@ export function LegalResearchV1Panel({
       }
 
       setJobId(data.job_id);
+      setJobUrlParam(data.job_id);
       try {
         sessionStorage.setItem(
           RESUME_STORAGE_KEY,
@@ -525,6 +526,7 @@ export function LegalResearchV1Panel({
         );
       } catch { /* ignore quota */ }
       pollJob(data.job_id);
+
     } catch (e) {
       stopAll();
       setLoading(false);
