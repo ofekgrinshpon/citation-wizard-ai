@@ -53,6 +53,41 @@ const SOFT_NOTICE_1_MS = 180_000; // 3 min
 const SOFT_NOTICE_2_MS = 300_000; // 5 min
 const RESUME_STORAGE_KEY = "lrv1:active_job";
 
+// persistent_background_research_jobs_v1 — the job lives server-side; the UI
+// must never imply the tab has to stay open.
+const RUNNING_NOTICE_HE =
+  "המחקר המשפטי רץ ברקע. אפשר לעבור מסך, לרענן, לסגור את הדפדפן או לחזור מאוחר יותר — נמשיך לעבוד והתשובה תישמר כאן ובהיסטוריית המחקרים שלך.";
+const RESUMED_NOTICE_HE = "חזרת למחקר פעיל — אנחנו ממשיכים מאיפה שהעבודה נמצאת.";
+const DONE_NOTICE_HE = "התשובה מוכנה ונשמרה בהיסטוריית המחקרים שלך.";
+const INFRA_FAILURE_HE =
+  "המחקר הופסק בגלל תקלה תשתיתית. לא מוצגת תשובת ביניים. אם חויבת, הקרדיט הוחזר או סומן להחזר.";
+
+const ACTIVE_STATUSES = ["queued", "running", "pending"];
+
+/** A reaped/watchdog job is an infrastructure failure, never a legal answer. */
+function isInfrastructureFailure(
+  status: string,
+  error?: string | null,
+  result?: Record<string, unknown> | null,
+): boolean {
+  if (status === "timed_out") return true;
+  if (result && (result.infrastructure_failure === true || result.timed_out === true)) return true;
+  const e = error || "";
+  return /stale_worker_timeout|watchdog_timeout|infrastructure_timeout/i.test(e);
+}
+
+/** Sync the active job id into the URL so a refresh resumes the same job. */
+function setJobUrlParam(jid: string | null) {
+  try {
+    const url = new URL(window.location.href);
+    if (jid) url.searchParams.set("job", jid);
+    else url.searchParams.delete("job");
+    window.history.replaceState({}, "", url.toString());
+  } catch { /* ignore */ }
+}
+
+
+
 type FootnoteSource = { title: string; url?: string | null; source_type?: string };
 type Footnote = { number: number; title: string; url?: string | null; sources?: FootnoteSource[] };
 type UsedSource = {
@@ -105,11 +140,19 @@ export function LegalResearchV1Panel({
     required: CREDIT_COSTS.research,
     remaining: 0,
   });
+  const [progressLabel, setProgressLabel] = useState<string | null>(null);
+  const [resumed, setResumed] = useState(false);
+  const [infraFailure, setInfraFailure] = useState(false);
+  const [justCompleted, setJustCompleted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const progressTimerRef = useRef<number | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const startRef = useRef<number>(0);
+  // Fresh per submit attempt; reused only when that same attempt is retried
+  // (double-click / transient network retry), never a session constant.
+  const clientRequestIdRef = useRef<string | null>(null);
+
 
 
   useEffect(() => {
@@ -139,8 +182,11 @@ export function LegalResearchV1Panel({
     setLoading(false);
     setJobId(null);
     clearResume();
-    setError("הבקשה בוטלה. הפעלת חיפוש חדשה תפתח עבודה חדשה.");
+    setJobUrlParam(null);
+    setResumed(false);
+    setError("הפסקת לעקוב אחרי המחקר הזה. הפעלת חיפוש חדשה תפתח עבודה חדשה.");
   };
+
 
   const startProgress = (startedAt?: number) => {
     startRef.current = startedAt ?? Date.now();
@@ -153,13 +199,73 @@ export function LegalResearchV1Panel({
     }, 1000);
   };
 
+  type JobRow = {
+    id?: string;
+    question?: string | null;
+    status: string;
+    result?: ResearchResponse & Record<string, unknown>;
+    error?: string | null;
+    current_stage?: string | null;
+    completed_stages?: string[] | null;
+    progress_label_he?: string | null;
+    created_at?: string | null;
+    started_at?: string | null;
+  };
+
+  const JOB_SELECT =
+    "id, question, status, result, error, current_stage, completed_stages, progress_label_he, created_at, started_at";
+
+  /** Applies a job row to UI state. Returns true when the job is terminal. */
+  const applyJobRow = (row: JobRow): boolean => {
+    if (Array.isArray(row.completed_stages)) setCompletedStages(row.completed_stages);
+    if (typeof row.current_stage === "string" || row.current_stage === null) {
+      setCurrentStage(row.current_stage ?? null);
+    }
+    if (typeof row.progress_label_he === "string" || row.progress_label_he === null) {
+      setProgressLabel(row.progress_label_he ?? null);
+    }
+
+    if (ACTIVE_STATUSES.includes(row.status)) return false;
+
+    stopAll();
+    setLoading(false);
+    setJobId(null);
+    clearResume();
+    setJobUrlParam(null);
+
+    if (isInfrastructureFailure(row.status, row.error, row.result as Record<string, unknown> | null)) {
+      setInfraFailure(true);
+      setResult(null);
+      setError(null);
+      return true;
+    }
+
+    if (row.status === "done") {
+      setCurrentStage(null);
+      setProgressLabel(null);
+      setCompletedStages(STAGES.map((s) => s.key));
+      setResult(row.result as ResearchResponse);
+      setFiles([]);
+      setJustCompleted(true);
+      return true;
+    }
+
+    const rawErr = row.error || "";
+    if (rawErr.includes("analyzer_escalation_unavailable")) {
+      setError("מודל הניתוח המשפטי לא היה זמין רגעית. נסו שוב בעוד דקה.");
+    } else {
+      setError(rawErr || "אירעה שגיאה בעיבוד הבקשה.");
+    }
+    return true;
+  };
+
   const pollJob = (jid: string) => {
     if (pollTimerRef.current) window.clearInterval(pollTimerRef.current);
     pollTimerRef.current = window.setInterval(async () => {
       try {
         const { data, error: qErr } = await supabase
           .from("legal_research_jobs")
-          .select("status, result, error, current_stage, completed_stages")
+          .select(JOB_SELECT)
           .eq("id", jid)
           .maybeSingle();
         if (qErr) {
@@ -167,77 +273,104 @@ export function LegalResearchV1Panel({
           return;
         }
         if (!data) return;
-        const row = data as {
-          status: string;
-          result?: ResearchResponse;
-          error?: string;
-          current_stage?: string | null;
-          completed_stages?: string[] | null;
-        };
-        // Live stage progress
-        if (Array.isArray(row.completed_stages)) {
-          setCompletedStages(row.completed_stages);
-        }
-        if (typeof row.current_stage === "string" || row.current_stage === null) {
-          setCurrentStage(row.current_stage ?? null);
-        }
-        if (row.status === "done") {
-          stopAll();
-          setCurrentStage(null);
-          setCompletedStages(STAGES.map((s) => s.key));
-          setResult(row.result as ResearchResponse);
-          setLoading(false);
-          setJobId(null);
-          setFiles([]);
-          clearResume();
-        } else if (row.status === "error") {
-          stopAll();
-          setLoading(false);
-          setJobId(null);
-          clearResume();
-          const rawErr = row.error || "";
-          if (rawErr.includes("analyzer_escalation_unavailable")) {
-            setError("מודל הניתוח המשפטי לא היה זמין רגעית. נסו שוב בעוד דקה.");
-          } else {
-            setError(rawErr || "אירעה שגיאה בעיבוד הבקשה.");
-          }
-        }
+        applyJobRow(data as JobRow);
       } catch (e) {
         console.warn("[lrv1 poll threw]", e);
       }
     }, POLL_INTERVAL_MS);
   };
 
-  // Resume-on-mount: if a job was active in this tab, keep polling it.
+  /** Attach the UI to a server-side job (deep link, refresh, or auto-resume). */
+  const attachToJob = async (jid: string, opts?: { markResumed?: boolean }) => {
+    const { data, error: qErr } = await supabase
+      .from("legal_research_jobs")
+      .select(JOB_SELECT)
+      .eq("id", jid)
+      .maybeSingle();
+    if (qErr || !data) return false;
+    const row = data as JobRow;
+    if (row.question) setQuestion(row.question);
+    setError(null);
+    setInfraFailure(false);
+    setJustCompleted(false);
+    setResult(null);
+    const startedAt = row.started_at || row.created_at;
+    if (ACTIVE_STATUSES.includes(row.status)) {
+      setJobId(jid);
+      setLoading(true);
+      setJobUrlParam(jid);
+      try {
+        sessionStorage.setItem(
+          RESUME_STORAGE_KEY,
+          JSON.stringify({ jobId: jid, startedAt: startedAt ? Date.parse(startedAt) : Date.now() }),
+        );
+      } catch { /* ignore */ }
+      startProgress(startedAt ? Date.parse(startedAt) : Date.now());
+      if (opts?.markResumed) setResumed(true);
+      applyJobRow(row);
+      pollJob(jid);
+      return true;
+    }
+    applyJobRow(row);
+    return true;
+  };
+
+  // Resume-on-mount. The job lives in the database, so a refresh, a new tab or
+  // a returning session all reattach: ?job=<id> deep link first, then this
+  // tab's session hint, then the user's most recent still-running job.
   // Skip when a history-replay payload is being injected — the cached result
-  // must win over any leftover session job state.
+  // must win over any leftover job state.
   useEffect(() => {
     if (externalResult) return;
-    try {
-      const raw = sessionStorage.getItem(RESUME_STORAGE_KEY);
-      if (!raw) return;
-      const parsed = JSON.parse(raw) as { jobId: string; startedAt: number };
-      if (!parsed?.jobId) return;
-      setJobId(parsed.jobId);
-      setLoading(true);
-      setError(null);
-      setResult(null);
-      startProgress(parsed.startedAt);
-      pollJob(parsed.jobId);
-    } catch {
-      /* ignore corrupt resume state */
-    }
+    let cancelled = false;
+    (async () => {
+      let urlJob: string | null = null;
+      try {
+        urlJob = new URL(window.location.href).searchParams.get("job");
+      } catch { /* ignore */ }
+      if (urlJob) {
+        if (!cancelled) await attachToJob(urlJob, { markResumed: true });
+        return;
+      }
+      let sessionJob: string | null = null;
+      try {
+        const raw = sessionStorage.getItem(RESUME_STORAGE_KEY);
+        if (raw) sessionJob = (JSON.parse(raw) as { jobId?: string })?.jobId ?? null;
+      } catch { /* ignore */ }
+      if (sessionJob) {
+        if (!cancelled) await attachToJob(sessionJob, { markResumed: true });
+        return;
+      }
+      // No local hint: fall back to the newest active job owned by the user.
+      const { data } = await supabase
+        .from("legal_research_jobs")
+        .select("id")
+        .in("status", ACTIVE_STATUSES)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      const row = data as { id: string } | null;
+      if (row?.id && !cancelled) await attachToJob(row.id, { markResumed: true });
+    })();
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   // History replay: hydrate cached V1 answer/footnotes from the sidebar.
   useEffect(() => {
     if (!externalResult) return;
     stopAll();
     clearResume();
+    setJobUrlParam(null);
+    setInfraFailure(false);
+    setResumed(false);
+    setJustCompleted(false);
+    setProgressLabel(null);
     setLoading(false);
     setError(null);
     setJobId(null);
+
     setCurrentStage(null);
     setCompletedStages([]);
     setElapsed(0);
@@ -333,6 +466,13 @@ export function LegalResearchV1Panel({
     }
     setError(null);
     setResult(null);
+    setInfraFailure(false);
+    setResumed(false);
+    setJustCompleted(false);
+    setProgressLabel(null);
+    // Fresh idempotency key per submit attempt.
+    clientRequestIdRef.current = crypto.randomUUID();
+
 
     let attachmentsPayload: Array<{ storage_path: string; file_name: string; mime_type: string; size: number }> = [];
     if (files.length > 0) {
@@ -363,7 +503,9 @@ export function LegalResearchV1Panel({
           project_id: currentProject?.id ?? null,
           attachments: attachmentsPayload,
           use_as_source: useAsSource,
+          client_request_id: clientRequestIdRef.current,
         },
+
         { projectId: currentProject?.id ?? null },
       );
 
@@ -385,6 +527,7 @@ export function LegalResearchV1Panel({
       }
 
       setJobId(data.job_id);
+      setJobUrlParam(data.job_id);
       try {
         sessionStorage.setItem(
           RESUME_STORAGE_KEY,
@@ -392,6 +535,7 @@ export function LegalResearchV1Panel({
         );
       } catch { /* ignore quota */ }
       pollJob(data.job_id);
+
     } catch (e) {
       stopAll();
       setLoading(false);
@@ -467,18 +611,30 @@ export function LegalResearchV1Panel({
     <div className="flex flex-col h-full min-h-0" dir="rtl">
       {/* ── Top region: loading / error / result (scrollable) ── */}
       <div className="flex-1 min-h-0 overflow-y-auto space-y-4 pb-4">
-        {!loading && !error && !result && (
+        {!loading && !error && !result && !infraFailure && (
           <div className="flex flex-col items-center justify-center h-full py-12 text-center">
             <div className="mb-4"><ReLexLogo size={56} /></div>
+          </div>
+        )}
+        {infraFailure && !loading && (
+          <div className="rounded-lg border border-amber-500/40 bg-amber-500/5 p-3 text-sm text-foreground">
+            {INFRA_FAILURE_HE}
           </div>
         )}
         {loading && (
           <div className="space-y-3 animate-fade-in">
             <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-3">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">מבצע סקירה משפטית…</span>
+                <span className="font-medium text-foreground">
+                  {progressLabel ? `${progressLabel}…` : "מבצע סקירה משפטית…"}
+                </span>
                 <span>{fmtElapsed(elapsed)}</span>
               </div>
+              {resumed && (
+                <p className="text-xs text-muted-foreground">{RESUMED_NOTICE_HE}</p>
+              )}
+              <p className="text-xs text-muted-foreground leading-relaxed">{RUNNING_NOTICE_HE}</p>
+
               <ol className="space-y-2">
                 {STAGES.map((stage) => {
                   const isDone = completedStages.includes(stage.key);
@@ -519,15 +675,16 @@ export function LegalResearchV1Panel({
                 <p className="text-xs text-muted-foreground">עדיין עובד… זה לוקח יותר מהרגיל</p>
               )}
               {elapsed >= SOFT_NOTICE_2_MS && (
-                <p className="text-xs text-muted-foreground">עדיין עובד ברקע, אפשר להמתין או לבטל</p>
+                <p className="text-xs text-muted-foreground">עדיין עובד ברקע — התשובה תישמר גם אם תסגור הכול</p>
               )}
               {jobId && (
                 <div className="flex justify-end pt-1">
                   <Button onClick={handleCancel} variant="ghost" size="sm" className="h-7 px-2 text-xs">
-                    בטל
+                    הפסק מעקב
                   </Button>
                 </div>
               )}
+
             </div>
 
             <GhostAnswer />
@@ -542,6 +699,12 @@ export function LegalResearchV1Panel({
 
         {result && !loading && (
           <div className="space-y-4">
+            {justCompleted && (
+              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-xs text-foreground">
+                {DONE_NOTICE_HE}
+              </div>
+            )}
+
             <div className="flex justify-end">
               <Button
                 variant="outline"

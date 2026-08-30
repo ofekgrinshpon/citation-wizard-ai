@@ -143,6 +143,18 @@ async function handle(req: Request): Promise<Response> {
   };
 
   // Per-stage progress tracking for the client UI.
+  // Hebrew labels are persisted so any surface (result page, history) can show
+  // the live stage without duplicating the mapping.
+  const STAGE_LABELS_HE: Record<string, string> = {
+    analyzer: "מנתח את השאלה",
+    planner: "מתכנן מחקר",
+    retrieval: "מחפש מקורות",
+    reading: "קורא מקורות",
+    verifier: "מאמת התאמה",
+    ranking: "בודק מספיקות",
+    drafter: "מנסח תשובה",
+    finalize: "מסיים",
+  };
   const completedStages: string[] = [];
   let currentStage: string | null = null;
   const markStage = async (stage: string) => {
@@ -152,6 +164,7 @@ async function handle(req: Request): Promise<Response> {
     currentStage = stage;
     await setJobStatus({
       current_stage: stage,
+      progress_label_he: STAGE_LABELS_HE[stage] ?? null,
       completed_stages: completedStages,
     });
   };
@@ -162,9 +175,11 @@ async function handle(req: Request): Promise<Response> {
     currentStage = null;
     await setJobStatus({
       current_stage: null,
+      progress_label_he: null,
       completed_stages: completedStages,
     });
   };
+
 
   const run_id = crypto.randomUUID();
   const t_start = Date.now();
@@ -266,6 +281,41 @@ async function handle(req: Request): Promise<Response> {
   const useAsSource = body.use_as_source !== false; // default true
   // (x-atomic-markers header and atomic mode were removed with the Phase 3 cleanup.)
 
+  // ─── Idempotency (persistent_background_research_jobs_v1) ────────────────
+  // The client generates a fresh id per submit attempt and re-sends it only on
+  // a retry/double-submit of that same attempt. If we already have a job for
+  // (user, client_request_id) we return it without charging again.
+  const cridRaw = body.client_request_id;
+  const clientRequestId = typeof cridRaw === "string" && cridRaw.trim().length >= 8
+    ? cridRaw.trim().slice(0, 120)
+    : null;
+  if (clientRequestId && !smokeMode) {
+    try {
+      const { data: existing } = await adminEarly
+        .from("legal_research_jobs")
+        .select("id, status, created_at")
+        .eq("user_id", user.id)
+        .eq("client_request_id", clientRequestId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      const row = existing as { id: string; status: string; created_at: string } | null;
+      if (row) {
+        console.log("[lrv1 idempotent replay]", { job_id: row.id, status: row.status });
+        return jsonResponse(202, {
+          ok: true,
+          job_id: row.id,
+          status: row.status,
+          idempotent_replay: true,
+        });
+      }
+    } catch (e) {
+      console.error("[lrv1 idempotency lookup failed]", e);
+    }
+  }
+
+
+
   // ─── Credit charge (skipped in smoke mode) ───────────────────────────────
   // Charge the per-query cost up front. The pipeline runs in the background
   // after we return 202; if it does not deliver a real answer (refusal, stub,
@@ -355,10 +405,40 @@ async function handle(req: Request): Promise<Response> {
   try {
     const { data: jobRow, error: jobErr } = await admin
       .from("legal_research_jobs")
-      .insert({ user_id: user.id, project_id, question, status: "running" })
+      .insert({
+        user_id: user.id,
+        project_id,
+        question,
+        status: "running",
+        started_at: new Date().toISOString(),
+        ...(clientRequestId && !smokeMode ? { client_request_id: clientRequestId } : {}),
+      })
       .select("id")
       .single();
     if (jobErr || !jobRow) {
+      // Unique-index race on (user_id, client_request_id): a concurrent
+      // double-submit already created the job — hand back that one and refund
+      // this attempt's charge so the user is billed once.
+      if (clientRequestId && (jobErr as { code?: string } | null)?.code === "23505") {
+        await refundCredits("duplicate_submit_refund");
+        const { data: dup } = await admin
+          .from("legal_research_jobs")
+          .select("id, status")
+          .eq("user_id", user.id)
+          .eq("client_request_id", clientRequestId)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        const dupRow = dup as { id: string; status: string } | null;
+        if (dupRow) {
+          return jsonResponse(202, {
+            ok: true,
+            job_id: dupRow.id,
+            status: dupRow.status,
+            idempotent_replay: true,
+          });
+        }
+      }
       console.error("[lrv1] job insert failed:", jobErr);
       await refundCredits("job_insert_failed");
       return jsonResponse(500, { error: "job_insert_failed", detail: jobErr?.message });
@@ -368,6 +448,7 @@ async function handle(req: Request): Promise<Response> {
     await refundCredits("job_insert_threw");
     return jsonResponse(500, { error: "job_insert_threw", detail: e instanceof Error ? e.message : String(e) });
   }
+
 
   // Wrap the whole pipeline so it runs in the background.
   const runPipeline = async (): Promise<Response> => {
@@ -2787,9 +2868,20 @@ async function handle(req: Request): Promise<Response> {
     settled = true;
     void refundCredits("watchdog_timeout");
     void setJobStatus({
-      status: "error",
+      status: "timed_out",
       error: "pipeline_watchdog_timeout",
       current_stage: null,
+      progress_label_he: null,
+      completed_at: new Date().toISOString(),
+      result: {
+        answer: "",
+        footnotes: [],
+        used_sources: [],
+        branch: "infrastructure_timeout",
+        infrastructure_failure: true,
+        timed_out: true,
+        run_id,
+      },
     });
   }, WATCHDOG_MS) as unknown as number;
 
@@ -2806,13 +2898,18 @@ async function handle(req: Request): Promise<Response> {
         if (!pipelineDelivered) {
           await refundCredits("no_answer_delivered");
         }
-        await setJobStatus({ status: "done", result: payload });
+        await setJobStatus({ status: "done", result: payload, completed_at: new Date().toISOString() });
       } else {
         await refundCredits(`pipeline_status_${resp.status}`);
         const errMsg = (payload && typeof payload === "object")
           ? JSON.stringify(payload).slice(0, 4000)
           : `http_${resp.status}`;
-        await setJobStatus({ status: "error", error: errMsg, result: payload });
+        await setJobStatus({
+          status: "error",
+          error: errMsg,
+          result: payload,
+          completed_at: new Date().toISOString(),
+        });
       }
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -2820,8 +2917,9 @@ async function handle(req: Request): Promise<Response> {
       await refundCredits("pipeline_threw");
       if (settled) return;
       settled = true;
-      await setJobStatus({ status: "error", error: msg });
+      await setJobStatus({ status: "error", error: msg, completed_at: new Date().toISOString() });
     } finally {
+
       IN_FLIGHT = Math.max(0, IN_FLIGHT - 1);
       clearTimeout(watchdog);
     }

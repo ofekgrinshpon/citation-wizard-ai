@@ -51,11 +51,48 @@ const ACADEMIC_STEP_LABELS: Record<string, string> = {
   write_chapter: "כתיבת פרק",
 };
 
+interface JobRecord {
+  id: string;
+  question: string;
+  status: string;
+  progress_label_he: string | null;
+  created_at: string;
+}
+
+const ACTIVE_JOB_STATUSES = ["queued", "running", "pending"];
+
 export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props) {
   const { user } = useAuth();
   const [logs, setLogs] = useState<QALogRecord[]>([]);
+  const [jobs, setJobs] = useState<JobRecord[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Running / failed research jobs come from legal_research_jobs (the source of
+  // truth while a job is in flight); finished jobs are shown from qa_logs.
+  useEffect(() => {
+    if (!user) {
+      setJobs([]);
+      return;
+    }
+    let cancelled = false;
+    const fetchJobs = async () => {
+      let q = supabase
+        .from("legal_research_jobs")
+        .select("id, question, status, progress_label_he, created_at")
+        .eq("user_id", user.id)
+        .neq("status", "done")
+        .order("created_at", { ascending: false })
+        .limit(10);
+      q = projectId ? q.eq("project_id", projectId) : q.is("project_id", null);
+      const { data, error } = await q;
+      if (!cancelled && !error) setJobs((data as JobRecord[]) || []);
+    };
+    fetchJobs();
+    const t = window.setInterval(fetchJobs, 10_000);
+    return () => { cancelled = true; window.clearInterval(t); };
+  }, [user, projectId, refreshKey]);
+
 
   useEffect(() => {
     if (!user) {
@@ -94,6 +131,10 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
   const filtered = search.trim()
     ? logs.filter((l) => l.question.toLowerCase().includes(search.toLowerCase()))
     : logs;
+  const visibleJobs = search.trim()
+    ? jobs.filter((j) => (j.question || "").toLowerCase().includes(search.toLowerCase()))
+    : jobs;
+
 
   const handleClick = (log: QALogRecord) => {
     if (!onLoadResult || log.answer === null || log.answer === undefined) return;
@@ -176,11 +217,46 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
             <p className="text-xs text-muted-foreground text-center py-4">טוען...</p>
           )}
 
-          {!loading && filtered.length === 0 && (
+          {/* In-flight / failed research jobs — always resumable from the server */}
+          {visibleJobs.map((job) => {
+            const isActive = ACTIVE_JOB_STATUSES.includes(job.status);
+            const isTimedOut = job.status === "timed_out";
+            return (
+              <button
+                key={job.id}
+                onClick={() => { window.location.href = `/app?job=${job.id}`; }}
+                className={`w-full text-right rounded-lg px-3 py-2.5 transition-colors group border ${
+                  isTimedOut
+                    ? "border-amber-500/40 bg-amber-500/5 hover:bg-amber-500/10"
+                    : isActive
+                    ? "border-primary/30 bg-primary/5 hover:bg-primary/10"
+                    : "border-destructive/30 bg-destructive/5 hover:bg-destructive/10"
+                }`}
+              >
+                <p className="text-xs text-foreground leading-relaxed line-clamp-2">{job.question}</p>
+                <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                  <Badge variant="outline" className="text-[9px] px-1.5 py-0">
+                    {isActive
+                      ? `רץ ברקע${job.progress_label_he ? ` — ${job.progress_label_he}` : ""}`
+                      : isTimedOut
+                      ? "הופסק — תקלה תשתיתית"
+                      : "נכשל"}
+                  </Badge>
+                  <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                    <Clock className="w-2.5 h-2.5" />
+                    {formatDistanceToNow(new Date(job.created_at), { addSuffix: true, locale: he })}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+
+          {!loading && filtered.length === 0 && visibleJobs.length === 0 && (
             <p className="text-xs text-muted-foreground text-center py-4">
               {search ? "לא נמצאו תוצאות" : "אין היסטוריה עדיין"}
             </p>
           )}
+
 
           {filtered.map((log) => {
             const mode = MODE_LABELS[log.task_mode || "research"] || MODE_LABELS.research;
