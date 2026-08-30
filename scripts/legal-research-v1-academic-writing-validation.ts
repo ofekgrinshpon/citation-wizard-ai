@@ -116,6 +116,7 @@ for (const q of QUERIES) {
     deterministic_branch: md.drafter?.deterministic_branch ?? null,
     sufficiency_reason: md.drafter?.sufficiency?.reason ?? null,
     footnotes_count: Array.isArray(row.footnotes) ? row.footnotes.length : 0,
+    style_model: md.drafter?.academic_style_model ?? null,
     answer_len: answer.length,
     first_line: firstLine,
     gap_opener: gapOpener,
