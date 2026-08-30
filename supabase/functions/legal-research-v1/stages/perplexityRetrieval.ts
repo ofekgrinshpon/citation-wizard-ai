@@ -579,9 +579,10 @@ async function runOneQuery(
   index: number,
   hygieneCounts: PplxHygieneCounts,
   budget?: RetrievalGovernor | null,
+  academicMode = false,
 ): Promise<PerQueryWorkResult> {
   const first = await callPerplexity(q, undefined, budget);
-  const { admitted, rows, followupTerms } = processRaw(q, first.raw, hygieneCounts);
+  const { admitted, rows, followupTerms } = processRaw(q, first.raw, hygieneCounts, academicMode);
   const allCandidates: Candidate[] = [...admitted];
   let totalMs = first.ms;
   let followupAdmitted = 0;
@@ -593,7 +594,7 @@ async function runOneQuery(
     const second = await callPerplexity(q, `${term} ${q.query_he}`.slice(0, 200), budget);
     totalMs += second.ms;
     if (second.http === 429) rate_limited = true;
-    const second_p = processRaw(q, second.raw, hygieneCounts);
+    const second_p = processRaw(q, second.raw, hygieneCounts, academicMode);
     allCandidates.push(...second_p.admitted);
     followupAdmitted = second_p.admitted.length;
     for (const r of second_p.rows) {
@@ -635,7 +636,7 @@ async function runOneQuery(
 
 export async function runPerplexityRetrieval(
   queries: Query[],
-  opts: { budget?: RetrievalGovernor | null } = {},
+  opts: { budget?: RetrievalGovernor | null; academicMode?: boolean } = {},
 ): Promise<PerplexityRetrievalResult> {
   const budget = opts.budget ?? null;
   const t0 = Date.now();
@@ -672,7 +673,13 @@ export async function runPerplexityRetrieval(
         budget.noteAborted();
         continue;
       }
-      results[i] = await runOneQuery(targets[i], i, hygieneCounts, budget);
+      results[i] = await runOneQuery(
+        targets[i],
+        i,
+        hygieneCounts,
+        budget,
+        opts.academicMode === true,
+      );
     }
   }
   const workerCount = Math.max(1, Math.min(concurrency_limit, targets.length));
