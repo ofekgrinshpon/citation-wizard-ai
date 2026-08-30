@@ -1,58 +1,71 @@
-# academic_draft_presentation_hygiene_v1
+# academic_style_model_v1
 
-Follow-up to `academic_writing_intent_and_drafting_v1`. Detection and safety are correct; this track fixes how academic drafts are *presented*. Retrieval, acquisition, sufficiency thresholds, judgment identity, docket limitation, claim-source-match and citation rendering stay untouched except where they emit display text.
+Adapt the deleted Academic Style Guide v1 into the current `legal-research-v1` academic-writing path. Retrieval, acquisition, sufficiency thresholds, judgment identity, docket limitation, claim-source-match, citation rendering and source selection stay untouched — this track only changes prompt text, a new style asset, telemetry and validation.
 
-## 1. Prose genre enforcement
+## 1. Recover the old guide (inspection only)
 
-For genres `introduction`, `theoretical_background`, `topic_presentation`, `argument_paragraph`:
+Restore from git history into a scratch location for reading, not into the function tree:
 
-- Prompt rule stays, plus a **deterministic post-draft pass** that converts leading bullet markers (`-`, `•`, `*`, `1.`) into continuous prose sentences and merges short bullet-only paragraphs into one paragraph.
-- Bullets are preserved only when the genre is `chapter_outline` or the user's question explicitly asks for a list/outline (רשימה, מתווה, ראשי פרקים, בנקודות).
-- Also strip template-like `###` sub-headings from these genres.
+- `supabase/functions/legal-qa/academicStyleGuide.ts`
+- `.lovable/memory/features/academic-writing-mode/style-guide-v1.md`
+- `academicProfiles.ts` only if genre/paragraph rules are needed
 
-## 2. Argument paragraph contract
+The deletion commit is known (the legal-qa excision). No legal-qa pipeline code is restored; nothing from `legal-qa/` is re-added to `supabase/functions/`.
 
-When `academic_genre = argument_paragraph`:
+## 2. New genre-sliced style asset
 
-- Prompt targets one paragraph, 150–300 words.
-- Deterministic guard: if the draft returns multiple body blocks, keep the first substantive paragraph and merge the remainder only if the total stays inside the ceiling; otherwise truncate at the paragraph boundary nearest 300 words.
-- No sub-headings, no "מבנה העבודה" framing.
+`supabase/functions/legal-research-v1/stages/academicStyleGuide.ts`
 
-## 3. One caveat only
+```ts
+buildAcademicStyleGuideBlock(genre, options) -> { block: string; sections: string[]; version: string }
+```
 
-Today the answer assembly can append, in sequence: `ACADEMIC_LIMITED_DRAFT_NOTICE_HE`, the reference-only section, `NARROW_LIMITED_DOCTRINAL_NOTICE_HE` / `LIMITED_DOCTRINAL_ANSWER_NOTICE_HE`, `matched.limitation_text`, and the processing-limit line appended in `index.ts`.
+- Sections are stored as small named units (paragraph rhythm, topic sentences, typed transitions, argument structure, register, anti-patterns, citation density).
+- Each genre selects only 2–4 sections. Target block size ~2–4 KB, never the full 12K guide.
+- Genres covered: `introduction`, `theoretical_background`, `research_question`, `chapter_outline`, `argument_paragraph`, `topic_presentation`, `generic_academic`.
+- The block opens with a non-citable fence: style guidance only, do not cite it, do not copy phrases verbatim, not legal authority.
 
-For `user_task_intent = academic_writing` all of these are suppressed and replaced by exactly one trailing note:
+## 3. Deduplicate the drafter prompt
 
-- thin pack (`academic_limited_draft` branch, or the limited-doctrinal/limitation paths would have fired):
-  `הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.`
-- otherwise:
-  `הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.`
+In `stages/drafterV2.ts`, the academic branch (the `academicWriting` block in `buildUserMessage`) keeps only:
 
-Safety-critical branches (docket limitation, judgment-identity refusal, fabricated-docket refusal) keep their own text and are not academic-writing paths, so they are unaffected.
+- legal safety rules (no invented holdings/citations, no non-existence claims);
+- source-support rules;
+- genre/length envelope (including the one-paragraph rule for `argument_paragraph`);
+- citation and no-URL rules;
+- the topic-focus rule.
 
-## 4. URL / body hygiene
+Removed from the drafter and owned by the style guide: prose-vs-bullets phrasing quality, paragraph rhythm, register, transitions, argument structure, anti-patterns. `academicPresentationHygiene` stays the deterministic post-draft safety net, unchanged.
 
-- A deterministic scrub removes bare `http(s)://…` URLs and court download links from the academic answer body (footnotes keep their URLs untouched).
-- Found-but-unread sources are not listed inline. If any are worth surfacing, they appear after the single caveat as a compact block titled `להמשך בדיקה` with at most 3 short titles and no URLs.
+## 4. Gated footnote-density guidance
 
-## 5. Topic drift guard
+The citation-density section is emitted only when the pack is not thin. When `deterministic_branch = academic_limited_draft`, sufficiency is limited-doctrinal, or there are no usable footnote-bearing sources, that section is replaced by a restraint line: write cautiously, cite only acquired source-supported material, never add citations to satisfy a density target.
 
-For academic writing:
+## 5. Argument paragraph upgrade
 
-- The drafter prompt is given the user's topic terms (from the question and the plan's claims) and instructed to use retrieved sources only to enrich that topic; unrelated doctrinal contexts must not be introduced.
-- Deterministic assist: sources whose legal area does not overlap the question's area are demoted out of the drafting context for academic tasks (they remain in the pack, so no retrieval change) — e.g. religious-court material on a ministerial-appointments prompt.
+For `argument_paragraph` the guide supplies the internal structure claim → strongest counterargument → distinction → resolution, inside the existing single-paragraph, 150–300-word contract enforced by the hygiene pass.
 
-## 6. Technical notes
+## 6. Flag and telemetry
 
-- `stages/drafterV2.ts` — new `applyAcademicPresentationHygiene()` (bullet→prose, heading strip, URL scrub, argument-paragraph ceiling), the single-note assembly for academic answers, and the genre/topic prompt additions.
-- `stages/metadataOnlyHoldingGate.ts` / `stages/claimSourceMatch.ts` — their trailing texts are suppressed by the caller for academic tasks; internal logic unchanged.
-- `supabase/functions/legal-research-v1/index.ts` — skip the processing-limit line for academic answers.
-- Telemetry: `academic_presentation_hygiene` report (bullets converted, urls stripped, notices suppressed, paragraph trimmed, sources demoted for drift).
+- Env flag `ACADEMIC_STYLE_GUIDE_ENABLED` (default on in the deploy env, off disables the block entirely and restores today's prompt).
+- Telemetry `academic_style_model: { enabled, version, genre, sections_used, block_chars, limited_draft, has_footnotes }` added next to `academic_presentation_hygiene` in the drafter result and persisted to `qa_logs.metadata`.
 
 ## 7. Validation
 
-- Unit fixtures for the hygiene pass (bullets → prose, URL scrub, argument-paragraph ceiling, single-notice selection).
-- Live re-run of AW1, AW4, AW5, AW7, AW8 plus AW2/AW3 as controls, using the existing runner.
-- Acceptance: AW1 prose intro, no gap opener, ≤1 caveat; AW4 prose, no raw URLs, ≤1 caveat; AW5 focused on ministerial/political appointments with no religious-court drift; AW7 one paragraph (150–300 words); AW8 usable topic presentation, ≤1 caveat; AW2 still source recommendation; AW3 still fires docket limitation.
-- Report + full answers: `reports/academic-draft-presentation-hygiene/ACCEPTANCE_REPORT.md`, delivered in chat.
+A/B with the flag off then on, using the existing runner (`scripts/legal-research-v1-academic-writing-validation.ts`, `ONLY=AW1,AW4,AW5,AW7,AW8`).
+
+Measured per run: answer length, paragraph count, bullets, raw URLs, caveat count, footnote count, case names cited, latency, and cross-answer repetition of any guide phrase.
+
+Acceptance:
+
+- AW1 reads as a seminar introduction rather than a doctrinal listing.
+- AW4 becomes 2–3 coherent theoretical-background paragraphs with topic sentences and typed transitions.
+- AW7 is one paragraph following claim → counterargument → distinction → resolution, 150–300 words.
+- No new sources, no new case names, no authority-level strengthening, citation count unchanged or explainable.
+- No guide phrase repeated verbatim across answers.
+- Hygiene invariants hold: exactly one caveat, no URLs, no bullets in prose genres.
+- No substantial latency blow-up.
+
+Unit tests in `src/test/academicStyleGuide.test.ts`: genre slicing, block size ceiling, thin-pack suppression of density guidance, flag off = empty block.
+
+Deliverables: `reports/academic-style-model/ACCEPTANCE_REPORT.md` plus the full A/B answers, both sent in chat.
