@@ -2146,6 +2146,7 @@ export async function runDrafterV2(
     missing_anchor_caveat_injected: missingAnchors.length > 0,
     lead_ref: leadSelection,
     missing_anchor_descriptions: missingAnchors.map((a) => a.description),
+    deterministic_branch: academicLimited ? "academic_limited_draft" : undefined,
     sufficiency,
     named_doctrine_framing: framing,
     synthesis_rendering,
