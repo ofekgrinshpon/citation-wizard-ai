@@ -2163,7 +2163,9 @@ export async function runDrafterV2(
   // limitation block is suppressed and replaced by a single "הערת עבודה" note,
   // and the body is normalized to prose without raw URLs.
   let academic_presentation_hygiene: AcademicHygieneReport | undefined;
+  let academic_style_model: (AcademicStyleModelReport & { verbosity_ratio?: number }) | undefined;
   let answer_markdown: string;
+
   if (academicPrimary) {
     const suppressed = [
       academicLimited ? 1 : 0,
