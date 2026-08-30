@@ -457,6 +457,13 @@ export function LegalResearchV1Panel({
     }
     setError(null);
     setResult(null);
+    setInfraFailure(false);
+    setResumed(false);
+    setJustCompleted(false);
+    setProgressLabel(null);
+    // Fresh idempotency key per submit attempt.
+    clientRequestIdRef.current = crypto.randomUUID();
+
 
     let attachmentsPayload: Array<{ storage_path: string; file_name: string; mime_type: string; size: number }> = [];
     if (files.length > 0) {
