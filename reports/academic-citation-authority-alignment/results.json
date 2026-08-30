@@ -1,0 +1,1052 @@
+[
+  {
+    "id": "AW1",
+    "question": "כתוב פרק מבוא לסמינריון שלי ששאלת המחקר שלו היא: האם הסעד החוקתי של קריאה לתוך החוק חורג מסמכות הרשות השופטת ומפר את עקרון הפרדת הרשויות? (נוסח טיוטה)",
+    "run_id": "44de42f7-952f-43ee-9933-af74348e87d4",
+    "ms": 152415,
+    "plan": {
+      "reason": "המשימה העיקרית היא ניסוח פרק מבוא אקדמי שמבוסס על ניתוח דוקטרינרי; יש להסתמך על פסיקה מחייבת וספרות כדי לנסח ניסוח מדויק של השאלה הרלוונטית, המצב המשפטי והמבנה של העבודה.",
+      "mixed_plan": false,
+      "academic_genre": "introduction",
+      "answer_strategy": "draft_academic_text",
+      "plan_confidence": "high",
+      "user_task_intent": "academic_writing",
+      "source_use_intent": [
+        "doctrinal_support",
+        "scholarly_discussion"
+      ],
+      "authority_requirements": {
+        "requires_judgment_body": true,
+        "requires_official_statute": false,
+        "found_only_can_support_claims": false,
+        "secondary_sources_can_support": true,
+        "found_only_allowed_as_reading_list": false
+      }
+    },
+    "overrides": [],
+    "deterministic_branch": null,
+    "sufficiency_reason": null,
+    "footnotes_count": 2,
+    "style_model": null,
+    "answer_len": 3622,
+    "first_line": "מטרת עבודה זו היא לבחון באור דוקטרינרי ובמישור נורמטיבי האם הסעד החוקתי המכונה \"קריאה לתוך החוק\" חורג מסמכות הרשות השופטת ופוגע בעקרון הפרדת הרשויות או שמא יש בו גבול פרשני לגיטימי שמתיישב עם הפרדת הרשויות תוך שמירה על אפקטיביות ההגנה החוקתית. שאלה זו מציבה במרכזה מתח בין שני ערכים יסודיים של משטר חוקתי: הצורך בעיגון חוקה ובשמירה על זכויות יסוד, מול הכרה בעקרון הפריימיות של המחוקק ובאחריות הפוליטית הנושאת שלטון רוב. העבודה תנסה לפרק את הסוגיה לרכיבים דוקטריניים ברורים — הגדרת הסעד, בחינת מהותו המוסדית, זיהוי מבחנים וסייגים שניתן לזקק מהספרות והחקיקה, והערכת החלופות האפשריות — ולגבש מסקנה יחסית ומבוססת לגבי מידת הטשטוש או ההפרדה הממשית בין פרשנות לחקיקה שיפוטית.",
+    "gap_opener": false,
+    "bullet_count": 0,
+    "has_academic_notice": false,
+    "claim_source_match": {
+      "applied": true,
+      "rebinding": {
+        "applied": true,
+        "unbound": 4,
+        "decisions": [
+          {
+            "ref": "s5",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 1
+          },
+          {
+            "ref": "s6",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 1
+          },
+          {
+            "ref": "s1",
+            "score": 6,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 2,
+            "matched_terms": [
+              "חוקתי",
+              "עיגונ",
+              "נורמות",
+              "וסדיות",
+              "חקיקה",
+              "החוק"
+            ]
+          },
+          {
+            "ref": "s2",
+            "score": 4,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 2,
+            "matched_terms": [
+              "קונטקסט",
+              "חוקתי",
+              "החוק",
+              "תיאורטי"
+            ]
+          },
+          {
+            "ref": "s3",
+            "score": 3,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 2,
+            "matched_terms": [
+              "תפתחות",
+              "דיונ",
+              "החוק"
+            ]
+          },
+          {
+            "ref": "s4",
+            "reason": "no_substantive_binding",
+            "binding": "unbound",
+            "block_index": 3
+          },
+          {
+            "ref": "s7",
+            "score": 5,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 3,
+            "matched_terms": [
+              "קריאה",
+              "לתוכ",
+              "החוק",
+              "יפוטית",
+              "הסעד"
+            ]
+          },
+          {
+            "ref": "s1",
+            "score": 4,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 3,
+            "matched_terms": [
+              "קריאה",
+              "לתוכ",
+              "החוק",
+              "חקיקה"
+            ]
+          },
+          {
+            "ref": "s5",
+            "reason": "no_substantive_binding",
+            "binding": "unbound",
+            "block_index": 4
+          },
+          {
+            "ref": "s6",
+            "reason": "no_substantive_binding",
+            "binding": "unbound",
+            "block_index": 4
+          },
+          {
+            "ref": "s7",
+            "reason": "no_substantive_binding",
+            "binding": "unbound",
+            "block_index": 4
+          }
+        ],
+        "bound_exact": 2,
+        "bound_facet": 0,
+        "bound_topical": 5,
+        "capped_ref_count": 0,
+        "bound_area_direct": 0,
+        "rebound_ref_count": 5,
+        "claim_mismatch_drops_after": 4,
+        "claim_mismatch_drops_before": 9
+      },
+      "mismatch_reason": [
+        "insufficient_authority_for_claim_category",
+        "claim_mismatch",
+        "commentary_in_substantive_block"
+      ],
+      "claim_categories": [
+        {
+          "basis": "declared_claim_category",
+          "category": "contextual_background",
+          "kept_refs": [],
+          "block_index": 0,
+          "support_levels": []
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "doctrinal_synthesis",
+          "kept_refs": [],
+          "block_index": 1,
+          "support_levels": []
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "contextual_background",
+          "kept_refs": [
+            "s1",
+            "s2"
+          ],
+          "block_index": 2,
+          "support_levels": [
+            "doctrinal_secondary",
+            "doctrinal_secondary"
+          ]
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "doctrinal_synthesis",
+          "kept_refs": [
+            "s1"
+          ],
+          "block_index": 3,
+          "support_levels": [
+            "doctrinal_secondary"
+          ]
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "scholarly_commentary",
+          "kept_refs": [],
+          "block_index": 4,
+          "support_levels": []
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "contextual_background",
+          "kept_refs": [],
+          "block_index": 5,
+          "support_levels": []
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "contextual_background",
+          "kept_refs": [],
+          "block_index": 6,
+          "support_levels": []
+        }
+      ],
+      "limitation_added": false,
+      "tagged_block_count": 7,
+      "dropped_source_refs": [
+        {
+          "ref": "s5",
+          "reason": "insufficient_authority_for_claim_category",
+          "block_index": 1,
+          "block_claim_id": "C1",
+          "claim_category": "doctrinal_synthesis",
+          "block_legal_area": "constitutional",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": null
+        },
+        {
+          "ref": "s6",
+          "reason": "insufficient_authority_for_claim_category",
+          "block_index": 1,
+          "block_claim_id": "C1",
+          "claim_category": "doctrinal_synthesis",
+          "block_legal_area": "constitutional",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": null
+        },
+        {
+          "ref": "s3",
+          "reason": "insufficient_authority_for_claim_category",
+          "block_index": 2,
+          "block_claim_id": "C4",
+          "claim_category": "contextual_background",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": null
+        },
+        {
+          "ref": "s4",
+          "reason": "claim_mismatch",
+          "block_index": 3,
+          "block_claim_id": "C2",
+          "claim_category": "doctrinal_synthesis",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": null
+        },
+        {
+          "ref": "s7",
+          "reason": "commentary_in_substantive_block",
+          "block_index": 3,
+          "block_claim_id": "C2",
+          "claim_category": "doctrinal_synthesis",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "public_law_hcj"
+        },
+        {
+          "ref": "s5",
+          "reason": "claim_mismatch",
+          "block_index": 4,
+          "block_claim_id": "C3",
+          "claim_category": "scholarly_commentary",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": null
+        },
+        {
+          "ref": "s6",
+          "reason": "claim_mismatch",
+          "block_index": 4,
+          "block_claim_id": "C3",
+          "claim_category": "scholarly_commentary",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": null
+        },
+        {
+          "ref": "s7",
+          "reason": "claim_mismatch",
+          "block_index": 4,
+          "block_claim_id": "C3",
+          "claim_category": "scholarly_commentary",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "public_law_hcj"
+        }
+      ],
+      "commentary_only_claims": [
+        "C4",
+        "C2"
+      ],
+      "unsupported_block_count": 0,
+      "authority_overstatements": [],
+      "source_ref_mismatch_count": 8,
+      "academic_authority_alignment": {
+        "applied": true,
+        "rendered_footnotes": 2,
+        "source_refs_emitted": 11,
+        "source_roles_filled": [
+          "doctrinal_background_source"
+        ],
+        "source_roles_missing": [
+          "primary_legal_anchor",
+          "theoretical_normative_source",
+          "critique_or_counterposition_source",
+          "implementation_or_example_source"
+        ],
+        "source_roles_expected": [
+          "primary_legal_anchor",
+          "doctrinal_background_source",
+          "theoretical_normative_source",
+          "critique_or_counterposition_source",
+          "implementation_or_example_source"
+        ],
+        "off_topic_refs_dropped": 0,
+        "primary_language_blocks": 0,
+        "primary_language_details": [],
+        "commentary_only_claims_kept": [
+          "C4",
+          "C2"
+        ],
+        "partial_support_refs_dropped": 0,
+        "academic_claim_categories_used": {
+          "doctrinal_synthesis": 2,
+          "scholarly_commentary": 1,
+          "contextual_background": 4
+        },
+        "refs_kept_by_claim_source_match": 3,
+        "doctrinal_secondary_refs_allowed": 3,
+        "refs_dropped_by_authority_category": 3,
+        "unsupported_primary_language_suppressed": 0,
+        "doctrinal_secondary_refs_rejected_for_primary_claims": 0
+      },
+      "primary_support_by_main_claim": false,
+      "primary_supported_block_count": 0,
+      "secondary_supported_block_count": 2
+    },
+    "academic_authority_alignment": null,
+    "answer": "מטרת עבודה זו היא לבחון באור דוקטרינרי ובמישור נורמטיבי האם הסעד החוקתי המכונה \"קריאה לתוך החוק\" חורג מסמכות הרשות השופטת ופוגע בעקרון הפרדת הרשויות או שמא יש בו גבול פרשני לגיטימי שמתיישב עם הפרדת הרשויות תוך שמירה על אפקטיביות ההגנה החוקתית. שאלה זו מציבה במרכזה מתח בין שני ערכים יסודיים של משטר חוקתי: הצורך בעיגון חוקה ובשמירה על זכויות יסוד, מול הכרה בעקרון הפריימיות של המחוקק ובאחריות הפוליטית הנושאת שלטון רוב. העבודה תנסה לפרק את הסוגיה לרכיבים דוקטריניים ברורים — הגדרת הסעד, בחינת מהותו המוסדית, זיהוי מבחנים וסייגים שניתן לזקק מהספרות והחקיקה, והערכת החלופות האפשריות — ולגבש מסקנה יחסית ומבוססת לגבי מידת הטשטוש או ההפרדה הממשית בין פרשנות לחקיקה שיפוטית.\n\nראשית יש למגדיר את הסעד: בספרות התיאורטית הוצג \"קריאה לתוך החוק\" כסעד מקטגורי שבו בית המשפט נמנע מביטול חוק פגום ובמקומו מצווה לפרש את נוסחו כך שיתאים לחוקה או לנורמות-היסוד; הגדרות אלה מדגישות כי מדובר לא בחקיקה חדשה אלא בפרשנות מקבילה שמטרתה להציל את תקפותו של החוק באמצעות שינוי משמעותי של שפתו. הגדרת הסעד ככזה נתמכת בפירוט בעמדות אקדמיות שדנות בהיגיון הסעד והשלכותיו, וכדברי הכותבים הרלבנטיים הסעד מוצג כ'רדיקלי' ביחס לסעדים אחרים היות שהוא משנה את תוחמת הטקסט המחוקק במקום לבטלו.\n\nיש לבחון את הסעד בתוך הקונטקסט הרחב של עיצוב החוקתי בישראל ושל יחסי הרשויות לאחר התפתחות הדיון על עיגון נורמות מוסדיות בחקיקה; המעברים שנרשמו בשיח החוקתי בשנים האחרונות מדגישים הן את תפיסת שלטון החוק במובן המהותי והן את המתח הפוליטי המלווה מהלכים של שינוי דוקטרינלי או חקיקתי. הרקע התיאורטי והפוליטי הזה חשוב כדי להבין מדוע בתי המשפט עשויים לראות בסעד קריאה־בתוך־החוק כלי מנע של יציבות מוסדית, ואולם הוא גם מחדד את השאלה בדבר המחיר הדמוקרטי שגובה פיתוח סעד זה כאשר המחוקק בוחר בדרכי פעולה שונות.¹\n\nהמתח המהותי בסוגיה של הפרדת הרשויות עולה כאשר בוחנים האם קריאה לתוך החוק מהווה בפועל צעד של 'חקיקה שיפוטית' או שמא גבולותיה ברורים דיים כך שהמקרה נותר בפרשנות עניינית של החוק בלבד; ההבחנה הזאת אינה פורמלית בלבד, שכן אם הסעד מאפשר לשופטים להכתיב פתרונות ערכיים או כלכליים שאמורים להיות נחלת המחוקק — הרי שנוצרת פגיעה באחריות הפוליטית ובדמוקרטיה התייצבותית. הביקורת והניתוח שבספרות המשפטית מצביעים על מספר קווי מתאר מוסדיים ותיאורטיים שיכולים לשמש בסיס להבחנה בין פרשנות מורחבת ובין חציית קווים שמאפיינים חקיקה.²\n\nברמת היישום הספרות והניסוחים המוסדיים מציעים כמה סייגים מעשיים שנועדו לצמצם את הסיכון להתערבות חקיקתית־שיפוטית: דרישת קיומה של חלופה פרשנית סבירה בלבד כאשר אין אלטרנטיבה חוקתית ראויה, עיקרון התאמה מינימלית בין הפירוש המוצע לתוכן החקיקה הקיים, והעדפת פתרונות המשמרים את חלוקת התפקידים בין הרשות המחוקקת לרשות השופטת. הסתמכות על גבולות אלה מופיעה בדיונים התיאורטיים כדרך לשמור על הפרדת הרשויות מבלי לוותר על ההגנה החוקתית, אם כי ההוכחה לפסיקת גבולות אלה מוסרית ונורמטיבית ונשענת בעיקר על ניסוחי פרשנות ומאמרי יסוד בספרות.\n\nמסיבות אלה העבודה תחולק לשלושה חלקים עיקריים: פרק ראשון שיבחן מעשית את המיגדר התיאורטי של הסעד ויציג את הטיעונים המרכזיים התומכים בו ונגדו; פרק שני שיינתח את המכאניקה הדוקטרינית — מבחנים וסייגים הנדרשים לפי הספרות והעקרונות המוסדיים; ופרק שלישי שיבצע הערכה נורמטיבית־פרקטית של ההשלכות הדמוקרטיות והפרלמנטריות של אימוץ קריאה־בתוך־החוק כאסטרטגיית בנייה חוקתית. מסקנות העבודה ינסחו עמדות יחסיות לגבי המידה שבה הסעד חורג מסמכות שיפוטית וכיצד ניתן לעגן גבולות ברורים שישמרו גם את עיקרון הפרדת הרשויות וגם את עקרון ההגנה החוקתית.\n\nהבהרה קצרה: במקורות שסופקו לעבודה לא נמצא נוסח של פסק דין מחייב שמנסח הלכה חד־משמעית בנוגע לקריאה לתוך החוק, ולכן הניתוח המתוכנן מתבסס בראש ובראשונה על הגדרות ותובנות מן הספרות המשפטית ועל תיאוריות מוסדיות שניתנו במקורות; היעדר נוסח פסקי דין המחייב במקורות האלו מהווה מגבלה שפרטיה יובהרו בפרק המתודולוגי של העבודה.\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n"
+  },
+  {
+    "id": "AW4",
+    "question": "כתוב פרק רקע תיאורטי לעבודה אקדמית על עקרון המידתיות בביקורת חוקתית, הכולל את מקורותיו ואת שלבי המבחן",
+    "run_id": "0b002d28-1712-45cb-b1d2-78f6e894b8fa",
+    "ms": 187138,
+    "plan": {
+      "reason": "המשתמש ביקש פרק רקע תיאורטי לעבודה אקדמית; יש לנסח טקסט אקדמי שמשלב ניתוח תיאורטי, הצעות מקורות מרכזיים וניתוח של שלבי המבחן על בסיס פסיקה וספרות.",
+      "mixed_plan": false,
+      "academic_genre": "theoretical_background",
+      "answer_strategy": "draft_academic_text",
+      "plan_confidence": "high",
+      "user_task_intent": "academic_writing",
+      "source_use_intent": [
+        "doctrinal_support",
+        "scholarly_discussion",
+        "binding_authority"
+      ],
+      "authority_requirements": {
+        "requires_judgment_body": false,
+        "requires_official_statute": false,
+        "found_only_can_support_claims": false,
+        "secondary_sources_can_support": true,
+        "found_only_allowed_as_reading_list": false
+      }
+    },
+    "overrides": [],
+    "deterministic_branch": null,
+    "sufficiency_reason": null,
+    "footnotes_count": 4,
+    "style_model": null,
+    "answer_len": 3457,
+    "first_line": "עקרון המידתיות בביקורת חוקתית נושא את הליבה הנורמטיבית של שאלת ההיתר לפגיעה בזכויות: הוא דורש כי כל פגיעה חוקתית תהיה מבוססת על תכלית גיטימית, תתאים להשגתה, תהיה המינימלית הדרושה להשגתה ותאוזן באופן סופי מול הפגיעה בזכות המוגנת. ההגדרה הזו אינה פירוש טכני בלבד אלא כלי ניתוחי שמאפשר לבית המשפט להבחין בין דרישות נורמטיביות של חקיקה לבין פגיעות בלתי מוצדקות בזכויות היסוד, ובכך לשמש מסננת בין הרשות המחוקקת והרשות השופטת בנוכחות סכסוך ערכי־חוקתי.¹",
+    "gap_opener": false,
+    "bullet_count": 0,
+    "has_academic_notice": false,
+    "claim_source_match": {
+      "applied": true,
+      "rebinding": {
+        "applied": true,
+        "unbound": 1,
+        "decisions": [
+          {
+            "ref": "s4",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 0
+          },
+          {
+            "ref": "s5",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 0
+          },
+          {
+            "ref": "s1",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 1
+          },
+          {
+            "ref": "s2",
+            "score": 4,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 1,
+            "matched_terms": [
+              "מידתיות",
+              "עיגונ",
+              "נורמות",
+              "תכלית"
+            ]
+          },
+          {
+            "ref": "s5",
+            "score": 5,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 2,
+            "matched_terms": [
+              "מבחנ",
+              "מידתיות",
+              "שקילה",
+              "אמצעימ",
+              "תכליות"
+            ]
+          },
+          {
+            "ref": "s4",
+            "score": 5,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 2,
+            "matched_terms": [
+              "מבחנ",
+              "סבירות",
+              "יחסיות",
+              "מידתיות",
+              "משמעויות"
+            ]
+          },
+          {
+            "ref": "s5",
+            "reason": "no_substantive_binding",
+            "binding": "unbound",
+            "block_index": 3
+          },
+          {
+            "ref": "s3",
+            "score": 2,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 3,
+            "matched_terms": [
+              "רלוונטיות",
+              "מידתיות"
+            ]
+          },
+          {
+            "ref": "s4",
+            "score": 2,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 4,
+            "matched_terms": [
+              "מבחנ",
+              "מידתיות"
+            ]
+          },
+          {
+            "ref": "s6",
+            "score": 3,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 4,
+            "matched_terms": [
+              "חקיקה",
+              "דברי",
+              "הסבר"
+            ]
+          },
+          {
+            "ref": "s6",
+            "score": 2,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 5,
+            "matched_terms": [
+              "דברי",
+              "הסבר"
+            ]
+          },
+          {
+            "ref": "s5",
+            "score": 2,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 5,
+            "matched_terms": [
+              "מבחנ",
+              "מידתיות"
+            ]
+          },
+          {
+            "ref": "s7",
+            "score": 6,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 5,
+            "matched_terms": [
+              "יישומ",
+              "בחינת",
+              "יקולי",
+              "ידתיות",
+              "הקשר",
+              "כרזימ"
+            ]
+          },
+          {
+            "ref": "s4",
+            "score": 3,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 6,
+            "matched_terms": [
+              "מבחנ",
+              "מידתיות",
+              "סבירות"
+            ]
+          },
+          {
+            "ref": "s8",
+            "score": 4,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 6,
+            "matched_terms": [
+              "מבחנ",
+              "מידתיות",
+              "יפוטית",
+              "איזונ"
+            ]
+          }
+        ],
+        "bound_exact": 3,
+        "bound_facet": 0,
+        "bound_topical": 11,
+        "capped_ref_count": 0,
+        "bound_area_direct": 0,
+        "rebound_ref_count": 11,
+        "claim_mismatch_drops_after": 1,
+        "claim_mismatch_drops_before": 12
+      },
+      "mismatch_reason": [
+        "commentary_in_substantive_block",
+        "insufficient_authority_for_claim_category",
+        "claim_mismatch",
+        "unrelated_legal_area"
+      ],
+      "claim_categories": [
+        {
+          "basis": "declared_claim_category",
+          "category": "doctrinal_synthesis",
+          "kept_refs": [
+            "s4"
+          ],
+          "block_index": 0,
+          "support_levels": [
+            "doctrinal_secondary"
+          ]
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "contextual_background",
+          "kept_refs": [
+            "s2"
+          ],
+          "block_index": 1,
+          "support_levels": [
+            "doctrinal_secondary"
+          ]
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "court_holding",
+          "kept_refs": [],
+          "block_index": 2,
+          "support_levels": []
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "doctrinal_synthesis",
+          "kept_refs": [
+            "s3"
+          ],
+          "block_index": 3,
+          "support_levels": [
+            "doctrinal_secondary"
+          ]
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "doctrinal_synthesis",
+          "kept_refs": [
+            "s4",
+            "s6"
+          ],
+          "block_index": 4,
+          "support_levels": [
+            "doctrinal_secondary",
+            "doctrinal_secondary"
+          ]
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "court_holding",
+          "kept_refs": [],
+          "block_index": 5,
+          "support_levels": []
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "scholarly_commentary",
+          "kept_refs": [
+            "s4"
+          ],
+          "block_index": 6,
+          "support_levels": [
+            "doctrinal_secondary"
+          ]
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "doctrinal_synthesis",
+          "kept_refs": [],
+          "block_index": 7,
+          "support_levels": []
+        }
+      ],
+      "limitation_added": true,
+      "tagged_block_count": 8,
+      "dropped_source_refs": [
+        {
+          "ref": "s5",
+          "reason": "commentary_in_substantive_block",
+          "block_index": 0,
+          "block_claim_id": "C1",
+          "claim_category": "doctrinal_synthesis",
+          "block_legal_area": "constitutional",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "public_law_hcj"
+        },
+        {
+          "ref": "s1",
+          "reason": "insufficient_authority_for_claim_category",
+          "block_index": 1,
+          "block_claim_id": "C2",
+          "claim_category": "contextual_background",
+          "block_legal_area": "constitutional",
+          "source_claim_ids": [
+            "C2"
+          ],
+          "source_legal_area": null
+        },
+        {
+          "ref": "s5",
+          "reason": "commentary_in_substantive_block",
+          "block_index": 2,
+          "block_claim_id": "C3",
+          "claim_category": "court_holding",
+          "block_legal_area": "constitutional",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "public_law_hcj"
+        },
+        {
+          "ref": "s4",
+          "reason": "commentary_in_substantive_block",
+          "block_index": 2,
+          "block_claim_id": "C3",
+          "claim_category": "court_holding",
+          "block_legal_area": "constitutional",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "constitutional"
+        },
+        {
+          "ref": "s5",
+          "reason": "claim_mismatch",
+          "block_index": 3,
+          "block_claim_id": "C3",
+          "claim_category": "doctrinal_synthesis",
+          "block_legal_area": "constitutional",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "public_law_hcj"
+        },
+        {
+          "ref": "s6",
+          "reason": "commentary_in_substantive_block",
+          "block_index": 5,
+          "block_claim_id": "C3",
+          "claim_category": "court_holding",
+          "block_legal_area": "constitutional",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": null
+        },
+        {
+          "ref": "s5",
+          "reason": "commentary_in_substantive_block",
+          "block_index": 5,
+          "block_claim_id": "C3",
+          "claim_category": "court_holding",
+          "block_legal_area": "constitutional",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "public_law_hcj"
+        },
+        {
+          "ref": "s7",
+          "reason": "commentary_in_substantive_block",
+          "block_index": 5,
+          "block_claim_id": "C3",
+          "claim_category": "court_holding",
+          "block_legal_area": "constitutional",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "constitutional"
+        },
+        {
+          "ref": "s8",
+          "reason": "unrelated_legal_area",
+          "block_index": 6,
+          "block_claim_id": "C4",
+          "claim_category": "scholarly_commentary",
+          "block_legal_area": "constitutional",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "public_law_hcj"
+        }
+      ],
+      "commentary_only_claims": [
+        "C1",
+        "C2",
+        "C3",
+        "C4"
+      ],
+      "unsupported_block_count": 2,
+      "authority_overstatements": [],
+      "source_ref_mismatch_count": 9,
+      "academic_authority_alignment": {
+        "applied": true,
+        "rendered_footnotes": 4,
+        "source_refs_emitted": 15,
+        "source_roles_filled": [
+          "doctrinal_background_source",
+          "critique_or_counterposition_source"
+        ],
+        "source_roles_missing": [
+          "primary_legal_anchor",
+          "theoretical_normative_source",
+          "implementation_or_example_source"
+        ],
+        "source_roles_expected": [
+          "primary_legal_anchor",
+          "doctrinal_background_source",
+          "theoretical_normative_source",
+          "critique_or_counterposition_source",
+          "implementation_or_example_source"
+        ],
+        "off_topic_refs_dropped": 0,
+        "primary_language_blocks": 0,
+        "primary_language_details": [],
+        "commentary_only_claims_kept": [
+          "C1",
+          "C2",
+          "C3",
+          "C4"
+        ],
+        "partial_support_refs_dropped": 0,
+        "academic_claim_categories_used": {
+          "court_holding": 2,
+          "doctrinal_synthesis": 4,
+          "scholarly_commentary": 1,
+          "contextual_background": 1
+        },
+        "refs_kept_by_claim_source_match": 6,
+        "doctrinal_secondary_refs_allowed": 6,
+        "refs_dropped_by_authority_category": 1,
+        "unsupported_primary_language_suppressed": 0,
+        "doctrinal_secondary_refs_rejected_for_primary_claims": 0
+      },
+      "primary_support_by_main_claim": false,
+      "primary_supported_block_count": 0,
+      "secondary_supported_block_count": 5
+    },
+    "academic_authority_alignment": null,
+    "answer": "עקרון המידתיות בביקורת חוקתית נושא את הליבה הנורמטיבית של שאלת ההיתר לפגיעה בזכויות: הוא דורש כי כל פגיעה חוקתית תהיה מבוססת על תכלית גיטימית, תתאים להשגתה, תהיה המינימלית הדרושה להשגתה ותאוזן באופן סופי מול הפגיעה בזכות המוגנת. ההגדרה הזו אינה פירוש טכני בלבד אלא כלי ניתוחי שמאפשר לבית המשפט להבחין בין דרישות נורמטיביות של חקיקה לבין פגיעות בלתי מוצדקות בזכויות היסוד, ובכך לשמש מסננת בין הרשות המחוקקת והרשות השופטת בנוכחות סכסוך ערכי־חוקתי.¹\n\nשורשיו ההיסטוריים של עיקרון המידתיות נטועים במשפט הקונטיננטלי, ובייחוד במסורת המשפט הגרמנית והאירופית שבה עקרון זה זכה לעיגון ופרשנות מערכתית; בהקשרים אלה המידתיות הובנה גם כאמצעי לפרשנות והגבלת סמכויות חוקתיות ומנהליות. שימוש בעקרון במישור החקיקתי ובשיח הפרשני של חוקי יסוד והנורמות המוסדיות מעגן את דרישת התכלית והיחסיות כאלמנט הכרחי בתהליך הבדיקה השיפוטי, אם כי מקורות מסוימים שבחנו את העיגון החוקתי מדגישים שמדיון זה דורש פירוט והבהרה היסטורית וקונטקסטואלית.³\n\nבפועל השיפוטי המודרני המבחן המידתי מתמקד במספר שלבים נפרדים אך משולבים: קביעת תכלית גיטימית, בחינת ההתאמה או הסבירות של האמצעי להשגת אותה תכלית, בחינת ההכרח או חוסר־החלופה המצמצמת ביותר, ובדיקת האיזון או היחסיות במשמעות הצרה בין תועלת הפגיעה לעומק הפגיעה בזכות. גישה זו מופיעה בבסיס ההלכה הישראלית בתיקים שדנו במידתיות ובחובת השקילה בין אמצעים ותכליות, ומושפעת מהדיונים התיאורטיים והמילוליים בספרות המחקרית על המבנה והמשמעויות של דרישות היחסיות והסבירות.\n\nשלבי הסבירות וההכרח מתמקדים בשאלות של רלוונטיות ועוצמת הקשר הסיבתי בין האמצעי והתכלית: שלב הסבירות בוחן האם האמצעי אכן משרת את התכלית המוצהרת מבחינה עובדתית והגיונית, בעוד ששלב ההכרח בוחן האם ישנה חלופה מצמצמת פחות שפוגעת פחות בזכות ועדיין משיגה את המטרה. בדיקות אלה הן קרובות מבחינה רעיונית לכללי הרציונליות המנהלית ולמבחנים שנוסחו בהקשרים מנהליים, ומהוות אמצעי למיסוד השיפוטי של יישום המידתיות בחקיקה ובפעולה מנהלית.⁴\n\nהשלב הסופי של מבחן המידתיות — איזון מידתי במשמעות הצרה — הוא מבחן שקולני שמעמיד את הנטל השיפוטי של שקילת אינטרסים במרכז: בית המשפט שוקל את חומרת הפגיעה בזכות אל מול ההשפעה הציבורית או התועלת בשמירת תכלית החקיקה. שלב זה מציב גם אתגרים פרשניים כי הוא דורש הערכה ערכית במקום החלטה טכנית בלבד, ובמערכת הישראלית עולה שאלת מידת ה'דיאלוג' בין דברי ההסבר של המחוקק לבין השיפוט בעיצוב האיזון שנעשה.²\n\nביישום השוטף בתי המשפט הישראליים נעזרים הן במבנה המבחן והן בכלים פרשניים נוספים, בין היתר בבחינת דברי ההסבר והנימוק המחוקקיים כאינדיקציה לתכלית ולאיזון שנבחרו על ידו; במקרים מנהליים ופרוצדורליים ניכרת התאמה של שיקולי מידתיות לכלליו של שיקול תכליתי וסבירות, כפי שנדון בהלכות ובמאמרים העוסקים ביישומים מעשיים. יחד עם זאת, היקף התערבות השופט משתנה בהתאם להקשר הענייני ולמומחיות הרשות, כך שהבדיקות המידתיות מקבלות פרשנויות פרטניות בתחומי מינהל, מכרזים ואכיפה.\n\nהספרות והביקורת הדוקטרינרית מדגישות מספר מגבלות שיטותיות של מבחן המידתיות: חשש להתערבות שיפוטית-יתר ולקביעות ערכיות שנחוות כלא־מוסמכותיות, קושי ביישום מדדים כמותיים לאיזון ערכי, וסכנה ש'סבירות' תהפוך לאמת המידה הדומיננטית בכללם. לצד זאת מוצעים מנגנוני איזון מתונים יותר, כגון השתרעות שיפוטית מצומצמת או הענקת מרווח שיפוטי לרשויות, כדי לשמר את מעמדו של המחוקק תוך שמירה על הגנה מינימלית על זכויות היסוד.¹\n\nלסיכום, עקרון המידתיות משמש כאמצעי ניתוחי־נורמטיבי במערכת הביקורת החוקתית: הוא מספק מסגרת של שלבים שיטתיים לבחינה אך גם דורש תשומת לב פרגמטית לאופני היישום המשפטי, להיקף הסמכות השיפוטית ולמיקום תכליות המחוקק במשפט הפרשני; לכן הבנת מקורותיו, שלבי מבחנו וביקורותיו היא תנאי בסיסי לכל דיון בדוקטרינה של זכויות וחוקתיות.\n\n*הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.*\n"
+  },
+  {
+    "id": "AW7",
+    "question": "כתוב פסקת טיעון אקדמית התומכת בגישה לפיה בית המשפט רשאי להתערב במדיניות מקצועית של רשויות מנהליות במקרים חריגים",
+    "run_id": "618b9639-11e1-403b-bebd-e0680422775b",
+    "ms": 122131,
+    "plan": {
+      "reason": "המטלה היא ניסוח פסקת טיעון אקדמית: יש לבסס את הטיעון על פסיקה דוקטרינלית ופרשנות בספרות תוך שמירה על צניעות שיפוטית ולציין את הקריטריונים להתערבות.",
+      "mixed_plan": false,
+      "academic_genre": "argument_paragraph",
+      "answer_strategy": "draft_academic_text",
+      "plan_confidence": "high",
+      "user_task_intent": "academic_writing",
+      "source_use_intent": [
+        "doctrinal_support",
+        "scholarly_discussion"
+      ],
+      "authority_requirements": {
+        "requires_judgment_body": false,
+        "requires_official_statute": false,
+        "found_only_can_support_claims": false,
+        "secondary_sources_can_support": true,
+        "found_only_allowed_as_reading_list": false
+      }
+    },
+    "overrides": [],
+    "deterministic_branch": null,
+    "sufficiency_reason": null,
+    "footnotes_count": 1,
+    "style_model": null,
+    "answer_len": 1264,
+    "first_line": "בית המשפט רשאי להתערב במדיניות מקצועית של רשויות מנהליות במקרים חריגים, משם שניהול מדיניות מקצועית אינו מוחלט ולשיפוט יש תפקיד לשמירת שלטון החוק והגנה על זכויות יסוד; זאת בתנאי שהביקורת ממוקדת ומוגבלת. הטיעון החזק ביותר נגד התערבות הוא עקרון הפרדת הרשויות והמקצועיות הטכנית של הרשויות המינהליות: החלטות פוליטיות־מינהליות מחייבות לפעמים שיקולים ערכיים, אקונומיים או טכניים שהשופט אינו מצויד בהם, ולכן חריגה שיפוטית עלולה לפגוע בלגיטימציה הדמוקרטית וביעילות הניהול הציבורי. האבחנה המשפטית המכשירה התערבות נוגעת לחריגות תוכן ולא לשיקול המקצועי כשלעצמו: כאשר המדיניות חורגת מהמנדט החוקי או סובלת מפגם מהותי בשיקול הדעת — כגון אבסורדיות קיצונית, התעלמות מהוראות יסודיות של החוק או פגיעה בלתי‑פרופורציונלית בזכויות — עולה טעם לשיפוטיות; במקרים אלה בית המשפט יכול לתקן באמצעות אמצעים צרים (החזרה להחלטה, הנחיה לפרשנות חוקית או דרישה לנימוק סביר) במקום להחליף מדיניות מקצועית באופן שיטענו בוּלגיטימי את מוסד האחריות המקצועית. יחד עם זאת, קשה לפרש גבולות מדויקים של ‘חריג’ זה ללא שיח דוקטרינרי נוסף, והסכמת נורמות כללים בלבד לא מספיקה כדי לקבוע נוסחה חד‑משמעית להתערבות.¹",
+    "gap_opener": false,
+    "bullet_count": 0,
+    "has_academic_notice": false,
+    "claim_source_match": {
+      "applied": true,
+      "rebinding": {
+        "applied": true,
+        "unbound": 0,
+        "decisions": [
+          {
+            "ref": "s13",
+            "score": 8,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 0,
+            "matched_terms": [
+              "ביקורת",
+              "חלטות",
+              "חריגה",
+              "יפוטית",
+              "שיקול",
+              "המנדט",
+              "אבסורדיות",
+              "התערבות"
+            ]
+          },
+          {
+            "ref": "s14",
+            "score": 2,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 0,
+            "matched_terms": [
+              "דיניות",
+              "חלטות"
+            ]
+          }
+        ],
+        "bound_exact": 0,
+        "bound_facet": 0,
+        "bound_topical": 2,
+        "capped_ref_count": 0,
+        "bound_area_direct": 0,
+        "rebound_ref_count": 2,
+        "claim_mismatch_drops_after": 0,
+        "claim_mismatch_drops_before": 2
+      },
+      "mismatch_reason": [
+        "commentary_in_substantive_block"
+      ],
+      "claim_categories": [
+        {
+          "basis": "declared_claim_category",
+          "category": "doctrinal_synthesis",
+          "kept_refs": [
+            "s13"
+          ],
+          "block_index": 0,
+          "support_levels": [
+            "judgment"
+          ]
+        }
+      ],
+      "limitation_added": false,
+      "tagged_block_count": 1,
+      "dropped_source_refs": [
+        {
+          "ref": "s14",
+          "reason": "commentary_in_substantive_block",
+          "block_index": 0,
+          "block_claim_id": "C1",
+          "claim_category": "doctrinal_synthesis",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C3"
+          ],
+          "source_legal_area": null
+        }
+      ],
+      "commentary_only_claims": [],
+      "unsupported_block_count": 0,
+      "authority_overstatements": [],
+      "source_ref_mismatch_count": 1,
+      "academic_authority_alignment": {
+        "applied": true,
+        "rendered_footnotes": 1,
+        "source_refs_emitted": 2,
+        "source_roles_filled": [
+          "primary_legal_anchor",
+          "doctrinal_background_source",
+          "critique_or_counterposition_source",
+          "implementation_or_example_source"
+        ],
+        "source_roles_missing": [
+          "theoretical_normative_source"
+        ],
+        "source_roles_expected": [
+          "primary_legal_anchor",
+          "doctrinal_background_source",
+          "theoretical_normative_source",
+          "critique_or_counterposition_source",
+          "implementation_or_example_source"
+        ],
+        "off_topic_refs_dropped": 0,
+        "primary_language_blocks": 0,
+        "primary_language_details": [],
+        "commentary_only_claims_kept": [],
+        "partial_support_refs_dropped": 0,
+        "academic_claim_categories_used": {
+          "doctrinal_synthesis": 1
+        },
+        "refs_kept_by_claim_source_match": 1,
+        "doctrinal_secondary_refs_allowed": 0,
+        "refs_dropped_by_authority_category": 0,
+        "unsupported_primary_language_suppressed": 0,
+        "doctrinal_secondary_refs_rejected_for_primary_claims": 0
+      },
+      "primary_support_by_main_claim": true,
+      "primary_supported_block_count": 1,
+      "secondary_supported_block_count": 0
+    },
+    "academic_authority_alignment": null,
+    "answer": "בית המשפט רשאי להתערב במדיניות מקצועית של רשויות מנהליות במקרים חריגים, משם שניהול מדיניות מקצועית אינו מוחלט ולשיפוט יש תפקיד לשמירת שלטון החוק והגנה על זכויות יסוד; זאת בתנאי שהביקורת ממוקדת ומוגבלת. הטיעון החזק ביותר נגד התערבות הוא עקרון הפרדת הרשויות והמקצועיות הטכנית של הרשויות המינהליות: החלטות פוליטיות־מינהליות מחייבות לפעמים שיקולים ערכיים, אקונומיים או טכניים שהשופט אינו מצויד בהם, ולכן חריגה שיפוטית עלולה לפגוע בלגיטימציה הדמוקרטית וביעילות הניהול הציבורי. האבחנה המשפטית המכשירה התערבות נוגעת לחריגות תוכן ולא לשיקול המקצועי כשלעצמו: כאשר המדיניות חורגת מהמנדט החוקי או סובלת מפגם מהותי בשיקול הדעת — כגון אבסורדיות קיצונית, התעלמות מהוראות יסודיות של החוק או פגיעה בלתי‑פרופורציונלית בזכויות — עולה טעם לשיפוטיות; במקרים אלה בית המשפט יכול לתקן באמצעות אמצעים צרים (החזרה להחלטה, הנחיה לפרשנות חוקית או דרישה לנימוק סביר) במקום להחליף מדיניות מקצועית באופן שיטענו בוּלגיטימי את מוסד האחריות המקצועית. יחד עם זאת, קשה לפרש גבולות מדויקים של ‘חריג’ זה ללא שיח דוקטרינרי נוסף, והסכמת נורמות כללים בלבד לא מספיקה כדי לקבוע נוסחה חד‑משמעית להתערבות.¹\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n\n**להמשך בדיקה:** בג\"ץ 1715/97 - לשכת מנהלי ההשקעות בישראל נ' שר האוצר - המאגר המשפטי הטוב בישראל ובחינם ⚖️\n"
+  },
+  {
+    "id": "AW8",
+    "question": "כתוב הצגת נושא קצרה לעבודת גמר על דוקטרינת ההבטחה המנהלית והסתמכות הציבור",
+    "run_id": "7cb6d67c-38f4-44ed-827e-45464a631a48",
+    "ms": 106473,
+    "plan": {
+      "reason": "המשתמש ביקש הצגת נושא לעבודה; יש לשלב פסיקה מחייבת ותמיכה ספרותית כדי להציג דוקטרינה, יסודות, סעד ומתווה מחקר.",
+      "mixed_plan": false,
+      "academic_genre": "generic_academic",
+      "answer_strategy": "draft_academic_text",
+      "plan_confidence": "high",
+      "user_task_intent": "academic_writing",
+      "source_use_intent": [
+        "doctrinal_support",
+        "scholarly_discussion",
+        "binding_authority"
+      ],
+      "authority_requirements": {
+        "requires_judgment_body": true,
+        "requires_official_statute": false,
+        "found_only_can_support_claims": false,
+        "secondary_sources_can_support": true,
+        "found_only_allowed_as_reading_list": false
+      }
+    },
+    "overrides": [],
+    "deterministic_branch": "insufficient_sources_limitation",
+    "sufficiency_reason": null,
+    "footnotes_count": 0,
+    "style_model": null,
+    "answer_len": 300,
+    "first_line": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.",
+    "gap_opener": false,
+    "bullet_count": 0,
+    "has_academic_notice": false,
+    "claim_source_match": {
+      "applied": false,
+      "stage_not_run": true,
+      "mismatch_reason": [],
+      "claim_categories": [],
+      "limitation_added": false,
+      "tagged_block_count": 0,
+      "dropped_source_refs": [],
+      "stage_not_run_reason": "deterministic_branch:insufficient_sources_limitation",
+      "commentary_only_claims": [],
+      "unsupported_block_count": 0,
+      "authority_overstatements": [],
+      "source_ref_mismatch_count": 0,
+      "primary_support_by_main_claim": false,
+      "primary_supported_block_count": 0,
+      "secondary_supported_block_count": 0
+    },
+    "academic_authority_alignment": null,
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.\n\nמה כן נמצא במקורות (לידיעה בלבד, ללא גזירת כללים לשאלה שנשאלה): על ההבטחה המנהלית / אלישי בן יצחק."
+  }
+]
