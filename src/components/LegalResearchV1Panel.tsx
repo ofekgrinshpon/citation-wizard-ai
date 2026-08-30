@@ -196,13 +196,73 @@ export function LegalResearchV1Panel({
     }, 1000);
   };
 
+  type JobRow = {
+    id?: string;
+    question?: string | null;
+    status: string;
+    result?: ResearchResponse & Record<string, unknown>;
+    error?: string | null;
+    current_stage?: string | null;
+    completed_stages?: string[] | null;
+    progress_label_he?: string | null;
+    created_at?: string | null;
+    started_at?: string | null;
+  };
+
+  const JOB_SELECT =
+    "id, question, status, result, error, current_stage, completed_stages, progress_label_he, created_at, started_at";
+
+  /** Applies a job row to UI state. Returns true when the job is terminal. */
+  const applyJobRow = (row: JobRow): boolean => {
+    if (Array.isArray(row.completed_stages)) setCompletedStages(row.completed_stages);
+    if (typeof row.current_stage === "string" || row.current_stage === null) {
+      setCurrentStage(row.current_stage ?? null);
+    }
+    if (typeof row.progress_label_he === "string" || row.progress_label_he === null) {
+      setProgressLabel(row.progress_label_he ?? null);
+    }
+
+    if (ACTIVE_STATUSES.includes(row.status)) return false;
+
+    stopAll();
+    setLoading(false);
+    setJobId(null);
+    clearResume();
+    setJobUrlParam(null);
+
+    if (isInfrastructureFailure(row.status, row.error, row.result as Record<string, unknown> | null)) {
+      setInfraFailure(true);
+      setResult(null);
+      setError(null);
+      return true;
+    }
+
+    if (row.status === "done") {
+      setCurrentStage(null);
+      setProgressLabel(null);
+      setCompletedStages(STAGES.map((s) => s.key));
+      setResult(row.result as ResearchResponse);
+      setFiles([]);
+      setJustCompleted(true);
+      return true;
+    }
+
+    const rawErr = row.error || "";
+    if (rawErr.includes("analyzer_escalation_unavailable")) {
+      setError("מודל הניתוח המשפטי לא היה זמין רגעית. נסו שוב בעוד דקה.");
+    } else {
+      setError(rawErr || "אירעה שגיאה בעיבוד הבקשה.");
+    }
+    return true;
+  };
+
   const pollJob = (jid: string) => {
     if (pollTimerRef.current) window.clearInterval(pollTimerRef.current);
     pollTimerRef.current = window.setInterval(async () => {
       try {
         const { data, error: qErr } = await supabase
           .from("legal_research_jobs")
-          .select("status, result, error, current_stage, completed_stages")
+          .select(JOB_SELECT)
           .eq("id", jid)
           .maybeSingle();
         if (qErr) {
@@ -210,68 +270,89 @@ export function LegalResearchV1Panel({
           return;
         }
         if (!data) return;
-        const row = data as {
-          status: string;
-          result?: ResearchResponse;
-          error?: string;
-          current_stage?: string | null;
-          completed_stages?: string[] | null;
-        };
-        // Live stage progress
-        if (Array.isArray(row.completed_stages)) {
-          setCompletedStages(row.completed_stages);
-        }
-        if (typeof row.current_stage === "string" || row.current_stage === null) {
-          setCurrentStage(row.current_stage ?? null);
-        }
-        if (row.status === "done") {
-          stopAll();
-          setCurrentStage(null);
-          setCompletedStages(STAGES.map((s) => s.key));
-          setResult(row.result as ResearchResponse);
-          setLoading(false);
-          setJobId(null);
-          setFiles([]);
-          clearResume();
-        } else if (row.status === "error") {
-          stopAll();
-          setLoading(false);
-          setJobId(null);
-          clearResume();
-          const rawErr = row.error || "";
-          if (rawErr.includes("analyzer_escalation_unavailable")) {
-            setError("מודל הניתוח המשפטי לא היה זמין רגעית. נסו שוב בעוד דקה.");
-          } else {
-            setError(rawErr || "אירעה שגיאה בעיבוד הבקשה.");
-          }
-        }
+        applyJobRow(data as JobRow);
       } catch (e) {
         console.warn("[lrv1 poll threw]", e);
       }
     }, POLL_INTERVAL_MS);
   };
 
-  // Resume-on-mount: if a job was active in this tab, keep polling it.
+  /** Attach the UI to a server-side job (deep link, refresh, or auto-resume). */
+  const attachToJob = async (jid: string, opts?: { markResumed?: boolean }) => {
+    const { data, error: qErr } = await supabase
+      .from("legal_research_jobs")
+      .select(JOB_SELECT)
+      .eq("id", jid)
+      .maybeSingle();
+    if (qErr || !data) return false;
+    const row = data as JobRow;
+    if (row.question) setQuestion(row.question);
+    setError(null);
+    setInfraFailure(false);
+    setJustCompleted(false);
+    setResult(null);
+    const startedAt = row.started_at || row.created_at;
+    if (ACTIVE_STATUSES.includes(row.status)) {
+      setJobId(jid);
+      setLoading(true);
+      setJobUrlParam(jid);
+      try {
+        sessionStorage.setItem(
+          RESUME_STORAGE_KEY,
+          JSON.stringify({ jobId: jid, startedAt: startedAt ? Date.parse(startedAt) : Date.now() }),
+        );
+      } catch { /* ignore */ }
+      startProgress(startedAt ? Date.parse(startedAt) : Date.now());
+      if (opts?.markResumed) setResumed(true);
+      applyJobRow(row);
+      pollJob(jid);
+      return true;
+    }
+    applyJobRow(row);
+    return true;
+  };
+
+  // Resume-on-mount. The job lives in the database, so a refresh, a new tab or
+  // a returning session all reattach: ?job=<id> deep link first, then this
+  // tab's session hint, then the user's most recent still-running job.
   // Skip when a history-replay payload is being injected — the cached result
-  // must win over any leftover session job state.
+  // must win over any leftover job state.
   useEffect(() => {
     if (externalResult) return;
-    try {
-      const raw = sessionStorage.getItem(RESUME_STORAGE_KEY);
-      if (!raw) return;
-      const parsed = JSON.parse(raw) as { jobId: string; startedAt: number };
-      if (!parsed?.jobId) return;
-      setJobId(parsed.jobId);
-      setLoading(true);
-      setError(null);
-      setResult(null);
-      startProgress(parsed.startedAt);
-      pollJob(parsed.jobId);
-    } catch {
-      /* ignore corrupt resume state */
-    }
+    let cancelled = false;
+    (async () => {
+      let urlJob: string | null = null;
+      try {
+        urlJob = new URL(window.location.href).searchParams.get("job");
+      } catch { /* ignore */ }
+      if (urlJob) {
+        if (!cancelled) await attachToJob(urlJob, { markResumed: true });
+        return;
+      }
+      let sessionJob: string | null = null;
+      try {
+        const raw = sessionStorage.getItem(RESUME_STORAGE_KEY);
+        if (raw) sessionJob = (JSON.parse(raw) as { jobId?: string })?.jobId ?? null;
+      } catch { /* ignore */ }
+      if (sessionJob) {
+        if (!cancelled) await attachToJob(sessionJob, { markResumed: true });
+        return;
+      }
+      // No local hint: fall back to the newest active job owned by the user.
+      const { data } = await supabase
+        .from("legal_research_jobs")
+        .select("id")
+        .in("status", ACTIVE_STATUSES)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      const row = data as { id: string } | null;
+      if (row?.id && !cancelled) await attachToJob(row.id, { markResumed: true });
+    })();
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   // History replay: hydrate cached V1 answer/footnotes from the sidebar.
   useEffect(() => {
