@@ -28,6 +28,7 @@ import { detectStatuteSections } from "./statuteSectionDetection.ts";
 import { detectDockets } from "./docketDetection.ts";
 import {
   bucketSources,
+  isAcademicWritingTask,
   planAllowsResearchGuidance,
   planRequiresLegalStatement,
   type SourceBuckets,
@@ -747,6 +748,20 @@ export function assessSourceSufficiency(args: {
         researchGuidanceSufficiency = true;
         sufficient = true;
         reason = `research_guidance_task_supported:${plan.user_task_intent}(was:${reason})`;
+      }
+    }
+    // academic_writing_intent_and_drafting_v1 — thin sources must not block
+    // drafting. An academic-writing task (that owes no judgment body or
+    // official statute text) passes with a limited-draft reason; the drafter
+    // marks the output as a draft with a single post-draft note instead of
+    // refusing.
+    if (applied && !sufficient && plan && isAcademicWritingTask(plan.user_task_intent)) {
+      const primaryRequired = plan.authority_requirements.requires_judgment_body ||
+        plan.authority_requirements.requires_official_statute;
+      if (!primaryRequired) {
+        researchGuidanceSufficiency = true;
+        sufficient = true;
+        reason = `academic_writing_draft_allowed(was:${reason})`;
       }
     }
     if (applied && !sufficient) {
