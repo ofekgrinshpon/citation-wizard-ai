@@ -2690,7 +2690,12 @@ async function handle(req: Request): Promise<Response> {
     !(drafter.footnotes ?? []).some((f) =>
       (f as { source_type?: string }).source_type === "case"
     );
-  const suppressInterruptionNotes = statuteFirstPath && statuteAcquisition.successes > 0;
+  // academic_draft_presentation_hygiene_v1 — academic drafts carry exactly one
+  // trailing "הערת עבודה" note; pipeline interruption notes are suppressed.
+  const academicDraftAnswer = sourceUseIntent?.plan?.user_task_intent === "academic_writing";
+  const suppressInterruptionNotes =
+    (statuteFirstPath && statuteAcquisition.successes > 0) || academicDraftAnswer;
+
   const finalAnswer = drafter.ok
     ? `${drafter.answer_markdown}${
         partialRetrieval && !suppressInterruptionNotes ? PARTIAL_RETRIEVAL_NOTE : ""

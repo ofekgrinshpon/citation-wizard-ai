@@ -78,6 +78,12 @@ import {
   NARROW_LIMITED_DOCTRINAL_NOTICE_HE,
 } from "./claimSupportCategory.ts";
 import { planRequestsAcademicWriting } from "./sourceUseIntent.ts";
+import {
+  type AcademicGenre,
+  type AcademicHygieneReport,
+  applyAcademicPresentationHygiene,
+} from "./academicPresentationHygiene.ts";
+
 
 /** academic_writing_intent_and_drafting_v1 — single post-draft note when the
  * draft was produced under thin sourcing. */
@@ -340,7 +346,7 @@ function buildUserMessage(
       );
     } else {
       lines.push(
-        "אין להשתמש ברשימות תבליטים או בכותרות-משנה תבניתיות — כתוב פסקאות פרוזה רציפות (רשימות מותרות רק אם המשתמש ביקש מפורשות מתווה/מבנה).",
+        "אין להשתמש ברשימות תבליטים או בכותרות-משנה תבניתיות — כתוב פסקאות פרוזה רציפות. מותר ואף רצוי לחלק את הטקסט לכמה פסקאות פרוזה רגילות לצורך קריאוּת, אך לא לרשימות (רשימה מותרת רק אם המשתמש ביקש מפורשות מתווה/רשימה).",
       );
     }
     if (genre === "introduction") {
@@ -348,6 +354,18 @@ function buildUserMessage(
         "לפרק מבוא כלול, במידת הצורך: מסגור הבעיה המשפטית, רקע דוקטרינלי, שאלת המחקר, המתח המרכזי, חשיבות השאלה, ומבנה העבודה המתוכנן.",
       );
     }
+    if (genre === "argument_paragraph") {
+      lines.push(
+        "הז׳אנר המבוקש הוא פסקת טיעון אחת: כתוב פסקה אקדמית ממוקדת אחת בלבד (כ-150–300 מילים) שמשיבה ישירות לטענה שהמשתמש ביקש לבסס. אין לפצל לפרקים או לכותרות, ואין להכניס דוגמאות, הקשרים מוסדיים או תתי-נושאים שהמשתמש לא הזכיר.",
+      );
+    }
+    lines.push(
+      "מיקוד נושאי: המקורות שאותרו נועדו להעשיר את הנושא שהמשתמש הגדיר בלבד. אין לגלוש להקשרים דוקטרינריים קונקרטיים אחרים (למשל בתי דין דתיים בשאלה על מינויים פוליטיים) אלא אם המשתמש הזכיר אותם. מקור מתחום אחר מותר רק כמסגרת תיאורטית/השוואתית כללית, ורק אם אינו מוצג כסמכות ישירה לנושא הספציפי.",
+    );
+    lines.push(
+      "אין לכתוב כתובות URL בגוף הטקסט. הפניות למקורות יופיעו בהערות השוליים בלבד.",
+    );
+
     lines.push(
       'אין לפתוח את הטיוטה בדיווח על המקורות (למשל "במקורות שאותרו לא נמצא…", "לא נמצא עיגון מספק…"). אין לפזר הערות זהירות בגוף הטקסט — אם נדרשת הבהרה, היא תופיע כהערה קצרה אחת לאחר הטיוטה בלבד.',
     );
@@ -1111,7 +1129,10 @@ export interface DrafterV2Result {
     | "statute_section_quote_refusal"
     | "insufficient_sources_limitation"
     | "academic_limited_draft";
+  /** academic_draft_presentation_hygiene_v1 telemetry. */
+  academic_presentation_hygiene?: AcademicHygieneReport;
   /** Deterministic source-sufficiency assessment (telemetry + gate result). */
+
   /** claim_source_match_validation_v1 — per-block claim/source gate telemetry. */
   claim_source_match?: ClaimSourceMatchReport;
   /** substance_based_doctrinal_sufficiency_v1 telemetry. */
@@ -2075,29 +2096,57 @@ export async function runDrafterV2(
     academicPrimary && (sufficiency?.reason ?? "").includes("academic_writing_draft_allowed");
 
   // Rule 1.10 — Hebrew number ranges must be written high→low in source order.
-  const answer_markdown = stripInternalRefTokens(
+  const baseAnswer = stripInternalRefTokens(
     academicPrimary
       ? normalizeHebrewNumberRanges(built.answer_markdown)
       : scrubNegativeExistenceClaims(
         normalizeHebrewNumberRanges(built.answer_markdown),
       ).text,
-  ) +
-    (academicLimited ? `\n\n*${ACADEMIC_LIMITED_DRAFT_NOTICE_HE}*\n` : "") +
-    // substance_based_doctrinal_sufficiency_v1 (guardrail 2) — the
-    // "found only" list is not emitted mechanically. It appears only when the
-    // answer actually rests on a limited pack, or when the gate stripped
-    // support from the draft, i.e. when the limitation is material.
-    ((sufficiency?.limited_doctrinal_answer === true ||
+  );
+
+  // substance_based_doctrinal_sufficiency_v1 (guardrail 2) — the
+  // "found only" list is not emitted mechanically. It appears only when the
+  // answer actually rests on a limited pack, or when the gate stripped
+  // support from the draft, i.e. when the limitation is material.
+  const referenceOnlyText =
+    (sufficiency?.limited_doctrinal_answer === true ||
         metadata_only_holding_gate.blocks_stripped > 0 ||
         metadata_only_holding_gate.blocks_left_unsupported > 0)
       ? referenceOnlySection(metadata_only_holding_gate.reference_only_sources)
-      : "") +
-    (sufficiency?.limited_doctrinal_answer === true
-      ? (sufficiency?.limited_doctrinal_answer_allowed === true
-        ? NARROW_LIMITED_DOCTRINAL_NOTICE_HE
-        : LIMITED_DOCTRINAL_ANSWER_NOTICE_HE)
-      : "") +
-    matched.limitation_text;
+      : "";
+  const limitedDoctrinalText = sufficiency?.limited_doctrinal_answer === true
+    ? (sufficiency?.limited_doctrinal_answer_allowed === true
+      ? NARROW_LIMITED_DOCTRINAL_NOTICE_HE
+      : LIMITED_DOCTRINAL_ANSWER_NOTICE_HE)
+    : "";
+
+  // academic_draft_presentation_hygiene_v1 — for academic writing every legacy
+  // limitation block is suppressed and replaced by a single "הערת עבודה" note,
+  // and the body is normalized to prose without raw URLs.
+  let academic_presentation_hygiene: AcademicHygieneReport | undefined;
+  let answer_markdown: string;
+  if (academicPrimary) {
+    const suppressed = [
+      academicLimited ? 1 : 0,
+      referenceOnlyText ? 1 : 0,
+      limitedDoctrinalText ? 1 : 0,
+      matched.limitation_text ? 1 : 0,
+    ].reduce((a, b) => a + b, 0);
+    const hygiene = applyAcademicPresentationHygiene(baseAnswer, {
+      genre: (opts?.sourceUsePlan?.academic_genre ?? "generic_academic") as AcademicGenre,
+      question,
+      thinSources: academicLimited || sufficiency?.limited_doctrinal_answer === true ||
+        built.used_sources.length <= 2,
+      followUpTitles: metadata_only_holding_gate.reference_only_sources.map((s) => s.title),
+      noticesSuppressed: suppressed,
+    });
+    answer_markdown = hygiene.answer;
+    academic_presentation_hygiene = hygiene.report;
+  } else {
+    answer_markdown = baseAnswer + referenceOnlyText + limitedDoctrinalText +
+      matched.limitation_text;
+  }
+
 
 
   const synthesis_rendering = reportSynthesisRendering({
@@ -2147,6 +2196,8 @@ export async function runDrafterV2(
     lead_ref: leadSelection,
     missing_anchor_descriptions: missingAnchors.map((a) => a.description),
     deterministic_branch: academicLimited ? "academic_limited_draft" : undefined,
+    academic_presentation_hygiene,
+
     sufficiency,
     named_doctrine_framing: framing,
     synthesis_rendering,
