@@ -16,10 +16,19 @@ import type { StructuredBlock, StructuredDraft } from "./structuredValidation.ts
 import type { DrafterInputSource } from "./drafter.ts";
 import { inferLegalAreaId } from "./claimFacetExpansion.ts";
 import {
+  academicTopicalFit,
+  type AcademicAuthorityAlignmentReport,
+  classifyAcademicSourceRoles,
+  emptyAcademicAuthorityAlignment,
+  guardPrimaryLanguage,
+  isCategoricalClaim,
+} from "./academicAuthorityAlignment.ts";
+import {
   type AuthorityOverstatement,
   AUTHORITY_OVERSTATEMENT_LIMITATION_HE,
   categoryAccepts,
   type ClaimSupportCategory,
+  isAcademicClaimCategory,
   deriveClaimCategory,
   profileSource,
   type SourceSupportProfile,
@@ -51,7 +60,10 @@ export type MismatchReason =
   | "commentary_in_substantive_block"
   | "analogical_for_black_letter"
   | "unrelated_legal_area"
-  | "insufficient_authority_for_claim_category";
+  | "insufficient_authority_for_claim_category"
+  /** academic_citation_authority_alignment_v1 */
+  | "partial_support_for_categorical_claim"
+  | "off_topic_for_academic_claim";
 
 export interface DroppedSourceRef {
   ref: string;
@@ -94,6 +106,8 @@ export interface ClaimSourceMatchReport {
   primary_supported_block_count: number;
   /** claim_source_rebinding_v1 telemetry. */
   rebinding: RebindingSummary;
+  /** academic_citation_authority_alignment_v1 telemetry. */
+  academic_authority_alignment?: AcademicAuthorityAlignmentReport;
 }
 
 
@@ -191,7 +205,13 @@ function parentClaimOfFacet(facet_id: string): string | null {
 export function applyClaimSourceMatch(
   draft: StructuredDraft | null,
   inputSources: DrafterInputSource[],
-  opts?: { mainClaimIds?: string[]; limitedDoctrinalAnswer?: boolean },
+  opts?: {
+    mainClaimIds?: string[];
+    limitedDoctrinalAnswer?: boolean;
+    /** academic_citation_authority_alignment_v1 */
+    academicMode?: boolean;
+    question?: string;
+  },
 ): { draft: StructuredDraft | null; report: ClaimSourceMatchReport; limitation_text: string } {
   const report: ClaimSourceMatchReport = {
     applied: false,
