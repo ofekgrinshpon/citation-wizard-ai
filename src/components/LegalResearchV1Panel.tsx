@@ -359,9 +359,15 @@ export function LegalResearchV1Panel({
     if (!externalResult) return;
     stopAll();
     clearResume();
+    setJobUrlParam(null);
+    setInfraFailure(false);
+    setResumed(false);
+    setJustCompleted(false);
+    setProgressLabel(null);
     setLoading(false);
     setError(null);
     setJobId(null);
+
     setCurrentStage(null);
     setCompletedStages([]);
     setElapsed(0);
