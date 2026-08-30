@@ -483,40 +483,52 @@ export type Database = {
       }
       legal_research_jobs: {
         Row: {
+          client_request_id: string | null
+          completed_at: string | null
           completed_stages: string[]
           created_at: string
           current_stage: string | null
           error: string | null
           id: string
+          progress_label_he: string | null
           project_id: string | null
           question: string
           result: Json | null
+          started_at: string | null
           status: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          client_request_id?: string | null
+          completed_at?: string | null
           completed_stages?: string[]
           created_at?: string
           current_stage?: string | null
           error?: string | null
           id?: string
+          progress_label_he?: string | null
           project_id?: string | null
           question: string
           result?: Json | null
+          started_at?: string | null
           status?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          client_request_id?: string | null
+          completed_at?: string | null
           completed_stages?: string[]
           created_at?: string
           current_stage?: string | null
           error?: string | null
           id?: string
+          progress_label_he?: string | null
           project_id?: string | null
           question?: string
           result?: Json | null
+          started_at?: string | null
           status?: string
           updated_at?: string
           user_id?: string
