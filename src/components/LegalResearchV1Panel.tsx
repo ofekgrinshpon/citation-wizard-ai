@@ -675,15 +675,16 @@ export function LegalResearchV1Panel({
                 <p className="text-xs text-muted-foreground">עדיין עובד… זה לוקח יותר מהרגיל</p>
               )}
               {elapsed >= SOFT_NOTICE_2_MS && (
-                <p className="text-xs text-muted-foreground">עדיין עובד ברקע, אפשר להמתין או לבטל</p>
+                <p className="text-xs text-muted-foreground">עדיין עובד ברקע — התשובה תישמר גם אם תסגור הכול</p>
               )}
               {jobId && (
                 <div className="flex justify-end pt-1">
                   <Button onClick={handleCancel} variant="ghost" size="sm" className="h-7 px-2 text-xs">
-                    בטל
+                    הפסק מעקב
                   </Button>
                 </div>
               )}
+
             </div>
 
             <GhostAnswer />
