@@ -1,47 +1,57 @@
-# discovery_precision_and_listing_suppression_v1
+# persistent_background_research_jobs_v1
 
-Goal: raise candidate precision in the pool build, before the verifier and before any acquisition budget is spent, so listing/index/search/category pages stop dominating doctrinal pools. No sufficiency threshold, claim-source-match, rebinding, recovery logic, identity validation, docket limitation, statute authority rule, found-only rule, drafter prompt or footnote rule is touched. No new network calls, no Perplexity rerun, no new LLM call.
+Make legal research survive the browser: the job runs server-side, the DB row is the source of truth, and the user can refresh, switch screens, close the tab, or come back tomorrow and find the answer.
 
-## Current state (verified)
+No change to retrieval, sufficiency, claim-source-match, acquisition, drafting, or citation logic.
 
-- `stages/candidatePool.ts` already runs `classifySourceIntegrity` on every raw candidate before dedupe, stores it at `metadata.source_integrity`, and drops only candidates where integrity sets `reject`. Everything else — including `authority_tier: "index_or_listing"` and `citable_as: "not_citable"` — is admitted and competes for the `CAPS.MAX_CANDIDATES` slots on tier + score alone.
-- Listing status is used in exactly one narrow place: `isTrustedPerplexity` refuses a reserved slot to listing/not-citable Perplexity items. They still enter through Pass B.
-- Listing suppression today happens late, inside secondary body acquisition (`suppress_listings`), i.e. after listings already consumed pool slots and verifier slots. This matches the D1-SWEEP telemetry: 21/30 admitted candidates carried `index_or_listing` and `not_citable`.
+## What already exists (verified in code)
 
-## What changes
+- `legal-research-v1` already creates a `legal_research_jobs` row before the pipeline runs, executes the pipeline under `EdgeRuntime.waitUntil`, returns `202 { job_id, run_id, status }` immediately, and updates `current_stage` / `completed_stages` per stage (`index.ts` lines ~125-170, ~355, ~2790-2840).
+- Terminal states are persisted: `done` + `result` (answer/footnotes/used_sources/debug) or `error` + `error` text, with credit refunds on non-delivery, plus a 9-minute in-isolate watchdog.
+- A pg_cron reaper (`reap_stale_research_jobs`, every minute, 12-minute staleness) closes abandoned rows with a Hebrew "retrieval interrupted" limitation instead of a stub, and back-fills the `qa_logs` trace row.
+- RLS on `legal_research_jobs`: owner-only SELECT, owner-only INSERT, admin SELECT. No cross-user read path.
+- The panel already polls the job row by id.
 
-### 1. Discovery classification (new stage)
-New `stages/discoveryPrecision.ts` computes a deterministic `discovery_class` per candidate from signals already on hand — URL path shape, title shape, existing `source_integrity`, snippet presence/length, list-likeness of the snippet, host class:
+So the pipeline is already background-safe. The gaps are all at the edges: resume is tab-local, there is no shareable job URL, running jobs are invisible in history, and a double-submit creates two paid jobs.
 
-`citable_candidate` | `possible_body_page` | `index_or_listing` | `search_result_page` | `category_page` | `metadata_only` | `not_citable`
+## Gaps to close
 
-The class plus the matched signals are written to `metadata.discovery_precision` so downstream stages and telemetry can read it without recomputing.
+1. **Resume is `sessionStorage`-only** — a closed tab, a new tab, or another device loses the running job even though it is still running server-side.
+2. **No job URL** — nothing to return to; history replay only works for finished runs via `qa_logs`.
+3. **History shows completed runs only** (`qa_logs`), so running and failed jobs are invisible.
+4. **No idempotency** — a fast double-click charges credits twice and starts two pipelines.
+5. **Running-screen copy** does not tell the user it is safe to leave.
+6. **No `progress_label_he`** — the client maps stage keys ad hoc.
 
-### 2. Conservative suppression inside pool build
-`buildCandidatePool` suppresses only `index_or_listing`, `search_result_page` and `category_page` classes. Protected and never suppressed: official statute pages, judgment body pages, article/report landing pages with a plausible PDF/body/download path, candidates with an acquired substantive body, and high-confidence exact-source / exact_authority candidates. Suppressed candidates are logged with a new `discovery_listing_suppressed` drop reason and their reason string, and are kept in a separate diagnostics list rather than deleted from the record.
+## Work
 
-### 3. Budget protection
-Because suppression happens at pool build, suppressed candidates never reach the verifier, secondary body acquisition, doctrinal recovery selection, or the drafter pack. The existing late `suppress_listings` path in `secondaryBodyAcquisition.ts` stays as a second net; it simply finds fewer listings to drop.
+### Backend
 
-### 4. Backfill
-Each suppressed candidate frees one slot. The pool build then walks the already-sorted remainder and admits the next eligible candidate under the existing dedupe rules, with a diversity guard so backfill does not fill every freed slot from one origin (local retrieval / nomination / official / secondary each keep representation). No new retrieval of any kind.
+- **Migration** on `public.legal_research_jobs`:
+  - add `client_request_id text`, `progress_label_he text`, `started_at timestamptz`, `completed_at timestamptz`;
+  - partial unique index on `(user_id, client_request_id)` where `client_request_id is not null`;
+  - index on `(user_id, status)` for the "active job" lookup;
+  - no policy widening — existing owner-scoped RLS already satisfies requirement 8; re-assert grants if missing.
+- **`legal-research-v1/index.ts`** (edges only, pipeline untouched):
+  - accept `client_request_id` in the request body; before charging credits, look up a job with the same `(user_id, client_request_id)` created in the last 15 minutes — if found, return `202` with that `job_id` and do not charge again;
+  - set `started_at` on insert and `completed_at` on every terminal write;
+  - write `progress_label_he` alongside `current_stage` in `markStage`, from a fixed stage→Hebrew map (מנתח את השאלה / מתכנן מחקר / מחפש מקורות / קורא מקורות / מאמת התאמה / בודק מספיקות / מנסח תשובה / מסיים).
+- **Reaper**: keep the existing terminal-limitation semantics (it already avoids stubs and preserves `prior_stage`), and extend it to stamp `completed_at` and a `timed_out` marker inside `result` so the UI can label it distinctly.
 
-### 5. Ranking adjustment
-Within the existing tier/score ordering, a bounded deterministic adjustment: promote candidates with doctrine-matching substantive titles, article/report/judgment/statute identity, a body/PDF path or known citable host, and jurisdiction fit; demote generic archives, duplicate mirrors, tag/category/search pages, and low-instance unrelated case law when the planned task is doctrinal. The adjustment is a capped delta on the existing score so it can reorder within a tier but cannot promote a non-citable page above a real authority.
+### Frontend
 
-### 6. Telemetry
-New `metadata.discovery_precision` block per run: candidates before suppression, class histogram, suppressed count with reasons and ids, backfilled count with origins, final pool size, `index_or_listing` ratio before/after, verifier direct/partial, acquired bodies, doctrinal/institutional eligible, sufficiency branch, footnote count, and runtime delta for the classification step.
+- **Route `/research/:jobId`** rendering the existing research panel in "job view" mode: load the row by id, poll while `queued|running`, render the stored `result` when `done`, render a clean failure when `error` — never a stub.
+- **`LegalResearchV1Panel`**:
+  - after submit, send a generated `client_request_id`, then `navigate('/research/' + job_id)` (replace) so the URL itself is the resume token;
+  - on mount without a job id, query the user's most recent `queued|running` job and offer/auto-resume it (replaces the `sessionStorage` dependency; keep the key as a fallback hint only);
+  - running screen shows the required Hebrew copy plus the current `progress_label_he`;
+  - guard the submit button while a job is in flight.
+- **`QAHistorySidebar`**: merge `legal_research_jobs` rows (running / failed / timed out) with the existing `qa_logs` history, de-duplicated by `run_id`, showing question title, timestamp, and stage or completion state. Clicking a job navigates to `/research/:jobId`.
 
-## Validation (staged, stop on failure)
+## Validation
 
-- **Stage 1 — unit/fixture tests** (`src/test/discoveryPrecision.test.ts`): index/listing/search/category fixtures suppressed; article/report landing page with a PDF/body path preserved; official statute page preserved; exact-source judgment candidate preserved; metadata-only demoted but never cited; unrelated low-instance case law demoted in doctrinal mode; backfill preserves diversity; suppression never removes a candidate with an acquired body.
-- **Stage 2 — mini live smoke:** D1 twice, B8 once, plus P02 or R02 as safety control. Accept when D1's pool no longer exceeds 50% `index_or_listing` (unless every available candidate genuinely is a listing), D1 reaches ≥2 doctrinal eligible sources or logs exact non-listing acquisition failures, B8 stays normal and is not over-suppressed, and the docket-limitation control is unchanged.
-- **Stage 3 — full 10-query sweep, only after Stage 2 passes:** ACADEMIC, NATION-STATE-ACADEMIC, PAYWALL, MMM, B8, D1, D3, DARKPATTERNS, R02, P02. Accept on a material `index_or_listing` drop for doctrinal runs, D1 not failing solely on a listing-dominated pool, B8/D1/D3 stable, no regression on ACADEMIC/NATION/PAYWALL, no harm to MMM/DARKPATTERNS, R02/P02 safe, and minimal runtime increase.
+- Stage 1 — unit/fixture: idempotency resolver (same key twice → one job), stage→Hebrew label map, history merge/de-dup.
+- Stage 2 — cheap mock job: insert a synthetic job row, drive it through stages, verify the result screen reflects each stage after a hard refresh, and that a stale row is reaped and rendered as a clean failure.
+- Stage 3 — one real `legal-research-v1` run: submit, close the page mid-`reading_sources`, reopen `/research/:jobId`, confirm progress continued and the final answer matches a control run for the same input; plus a double-submit check (one job, one charge) and a cross-user read check (RLS denies).
 
-## Technical notes
-
-- New: `stages/discoveryPrecision.ts` (pure/deterministic, unit-testable), `src/test/discoveryPrecision.test.ts`.
-- Modified: `stages/candidatePool.ts` — classify → suppress → backfill → ranking delta, plus new drop reason and diagnostics on `PoolResult`; `index.ts` — persist the telemetry block and thread the planned task intent into the pool build for the doctrinal demotion rule.
-- Reuses the Stage 2/3 runner pattern of `scripts/legal-research-v1-pool-stabilization-stage2.ts` in a new script for this track.
-
-Report to `reports/discovery-precision/ACCEPTANCE_REPORT.md` with an accepted / conditional / not-accepted verdict.
+Report: `reports/persistent-background-jobs/ACCEPTANCE_REPORT.md`, delivered here when done.
