@@ -405,10 +405,40 @@ async function handle(req: Request): Promise<Response> {
   try {
     const { data: jobRow, error: jobErr } = await admin
       .from("legal_research_jobs")
-      .insert({ user_id: user.id, project_id, question, status: "running" })
+      .insert({
+        user_id: user.id,
+        project_id,
+        question,
+        status: "running",
+        started_at: new Date().toISOString(),
+        ...(clientRequestId && !smokeMode ? { client_request_id: clientRequestId } : {}),
+      })
       .select("id")
       .single();
     if (jobErr || !jobRow) {
+      // Unique-index race on (user_id, client_request_id): a concurrent
+      // double-submit already created the job — hand back that one and refund
+      // this attempt's charge so the user is billed once.
+      if (clientRequestId && (jobErr as { code?: string } | null)?.code === "23505") {
+        await refundCredits("duplicate_submit_refund");
+        const { data: dup } = await admin
+          .from("legal_research_jobs")
+          .select("id, status")
+          .eq("user_id", user.id)
+          .eq("client_request_id", clientRequestId)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        const dupRow = dup as { id: string; status: string } | null;
+        if (dupRow) {
+          return jsonResponse(202, {
+            ok: true,
+            job_id: dupRow.id,
+            status: dupRow.status,
+            idempotent_replay: true,
+          });
+        }
+      }
       console.error("[lrv1] job insert failed:", jobErr);
       await refundCredits("job_insert_failed");
       return jsonResponse(500, { error: "job_insert_failed", detail: jobErr?.message });
@@ -418,6 +448,7 @@ async function handle(req: Request): Promise<Response> {
     await refundCredits("job_insert_threw");
     return jsonResponse(500, { error: "job_insert_threw", detail: e instanceof Error ? e.message : String(e) });
   }
+
 
   // Wrap the whole pipeline so it runs in the background.
   const runPipeline = async (): Promise<Response> => {
