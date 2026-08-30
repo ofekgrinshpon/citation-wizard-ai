@@ -1,0 +1,300 @@
+{
+  "id": "DARKPATTERNS",
+  "run_id": "215fc2d9-b020-4496-a697-ef2000681b32",
+  "job_id": "4d537dd1-e5c7-4b3f-b84c-62ccc0c21e21",
+  "ms": 201355,
+  "status": "done",
+  "branch": null,
+  "answer_length": 2366,
+  "footnotes": 2,
+  "stabilization": {
+    "version": "doctrinal_candidate_pool_stabilization_v1",
+    "recovery": {
+      "ms": 0,
+      "ran": false,
+      "budget": {
+        "deep": false,
+        "total_ms": 10000,
+        "max_candidates": 3,
+        "max_web_attempts": 1,
+        "max_local_lookups": 2
+      },
+      "reason": "eligible_floor_already_met",
+      "failures": [],
+      "considered": true,
+      "stop_reason": null,
+      "candidate_ids": [],
+      "eligibility_gain": 0,
+      "acquired_candidate_ids": [],
+      "bibliography_only_candidate_ids": []
+    },
+    "depth_mode": "narrow_doctrine",
+    "snapshot_after": {
+      "not_citable": 7,
+      "acquired_bodies": 7,
+      "secondary_typed": 5,
+      "verifier_direct": 0,
+      "index_or_listing": 7,
+      "total_candidates": 23,
+      "verifier_partial": 4,
+      "doctrinal_eligible": 5,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 2,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 1,
+        "listing_suppressed:integrity_index_or_listing": 1
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 2
+    },
+    "snapshot_before": {
+      "not_citable": 7,
+      "acquired_bodies": 7,
+      "secondary_typed": 5,
+      "verifier_direct": 0,
+      "index_or_listing": 7,
+      "total_candidates": 23,
+      "verifier_partial": 4,
+      "doctrinal_eligible": 5,
+      "institutional_typed": 0,
+      "institutional_eligible": 0,
+      "blocked_not_doctrinal_type": 2,
+      "reconsideration_rejections": {
+        "primary_law_or_case_law": 1,
+        "listing_suppressed:integrity_index_or_listing": 1
+      },
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 2
+    },
+    "user_task_intent": "doctrinal_explanation",
+    "listing_suppressed": 0,
+    "listing_suppressed_ids": [],
+    "reconsidered_candidate_ids": []
+  },
+  "discovery_precision": {
+    "ms": 18,
+    "status": "completed",
+    "version": "discovery_precision_and_listing_suppression_v1",
+    "processed": 107,
+    "backfilled": 13,
+    "classified": 107,
+    "pool_after": 22,
+    "suppressed": [
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4220",
+        "title": "ביהמ\"ש השלום בתל-אביב, השופט אביים ברקאי: פס\"ד בתביעה לחיוב בנק בפיצוי בגין הנפקת ערבות בנקאית שגויה (ת\"א 44964-07-19)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "faf7bbd3-957e-466a-bec6-5eb1052388cb",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2240",
+        "title": "ביהמ\"ש לענייני משפחה חיפה, השופטת לירון זרבל קדשאי: החלטה בנושא גילוי מסמכי חשבון בנק של המנוח למועד הוקדם לפטירתו (תמ\"ש 74949-01-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "a0cb2b26-595a-49c6-be92-1a63aa753da3",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2840",
+        "title": "ביהמ\"ש המחוזי מרכז, השופט מיכאל קרשן: דחיית עתירה נגד החלטה לבחירת ספק במכרז למתן שירותי אשראי ללקוחות בנק הדואר, לאחר שחל שינוי חזיתי בטענה המרכזית שעמדה בבסיס העתירה ולא הותר לעותרת לתקן את עתירתה (עת\"מ 64774-12-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "9e68ab92-7637-4bff-ad39-60093d726c9f",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
+        "title": "בית המשפט המחוזי ב\"ש, השופט יובל ליבדרו: גזר דין לעובדת בנק מזרחי טפחות בב\"ש שהורשעה בקבלת שוחד מלקוחות הבנק (ת\"פ 59842-12-20)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "ab0d2cd8-277a-4f1f-8a64-63cc988b65b2",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4620",
+        "title": "בימ\"ש מחוזי ת\"א, אב\"ד סגן הנשיא שאול שוחט, השופטת עינת רביד, השופט נפתלי שילה: פס\"ד בערעור על פס\"ד שקבע כי קיימת כוונת שיתוף בחשבון בנק על סך 29 מיליון שקלים (עמ\"ש 33651-01-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "9496c87f-e55a-4a3f-9492-2ae00d1ebf8f",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2030",
+        "title": "בימ\"ש עליון, אב\"ד השופט נעם סולברג, השופט דוד מינץ, השופטת יעל וילנר: החלטה בהמשך לדיון שהתקיים היום בעתירה למניעת בדיקת מבקר המדינה את מלחמת \"חרבות ברזל\" (בג\"ץ 1015-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "add21337-297a-4e66-bc5e-d9926d277a2a",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש העליון, אב\"ד, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופטת דפנה ברק ארז: פס\"ד בעתירות בעניין פיטורי ראש השב\"כ (בג\"ץ 54321-03-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "aad45ab6-08a4-4d0c-bff5-190907c399da",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4520",
+        "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "288dac07-11bf-41f5-8b49-a3efd090732f",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5500",
+        "title": "ביהמ\"ש העליון, אב\"ד הנשיאה אסתר חיות, המשנה לנשיא עוזי פוגלמן והשופט יצחק עמית: פס\"ד בעתירה העוסקת במדיניות כניסתם של אזרחי אוקראינה לישראל (בג\"ץ 1765-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "aa558778-22a6-4332-9023-05c0fe00d1aa",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1210",
+        "title": "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת שירלי שי: פס\"ד הדוחה בקשות לקיום צוואה בטענות השפעה בלתי הוגנת ומעורבות פסולה ודחיית תביעה לפסק דין הצהרתי (ת\"ע 54220-09-20 ועוד)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "d3850078-f400-46e5-a5e0-f5aca00c6fe8",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5030",
+        "title": "ביהמ\"ש לענייני משפחה בקריות, השופטת שירי היימן: פסק דין בתביעה נזיקית בגין נזקים ממוניים ופגיעה בפרטיות (תלה\"מ 69248-06-21)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "36674c87-86c6-433f-ac3d-0031f70a067d",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=60",
+        "title": "ימ\"ש מחוזי ת\"א-יפו, השופט יעקב שקד: פסק דין המאשר הסדר בתביעה ייצוגית נגד חברת חזיבנק דיזיין (ת\"צ 47928-10-13)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "45d2bb46-e8ed-4216-8cc7-6123c88c6e8b",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בימ\"ש השלום לנוער רחובות, השופט בן ציון קבלר: הכרעת דין לקטין שהואשם בפציעה והחזקת סכין שלא כדין ( 35343-11-21)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "555e5184-8df2-407a-a287-56a51f7c282c",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+        "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: פסק דין לפי חוק יחסי ממון (תמ\"ש 28833-05-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "9fa1911e-d2b9-4404-b24c-20ca2ce90eb5",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+        "title": "ביהמ\"ש השלום רחובות, שופט ישראל פת: פס\"ד בעניין פינוי דירה שיזן תפס בטענה שהזכויות נמכרו לו (ת\"א 19529-09-19)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "a4804545-10d5-4432-88eb-78397364b564",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין תביעה למתן סעד הצהרתי בדבר קיומן של זכויות במקרקעין, וכן לחיוב בדמי שימוש ראויים (תמ\"ש 11810-09-21)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "3f24cd9f-9b42-48b6-a3f9-1ac03ee583a4",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' ריבי לב אוחיון: פסק דין בעניין בקשה לסילוק התובענה על הסף (תמ\"ש 25065-11-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "b3975de3-7f12-445a-ab3c-aa95c1c2a5f1",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=710",
+        "title": "בימ\"ש שלום ת\"א, השופטת דנה אמיר: גז\"ד לענבל אור שהואשמה בביצוע מגוון עבירות (ת\"פ 10115-09-19)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "17d54513-80d1-4cc0-a256-9dcc96d7f30b",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=330",
+        "title": "בית המשפט המחוזי ב\"ש, השופטת פאני גילת כהן: החלטה בעניין גילוי מסמכים (רמ\"ש 67307-01-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "d9ebada5-a671-48e4-9c5f-ed4498aef16b",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=60",
+        "title": "ימ\"ש מחוזי ת\"א-יפו, השופט יעקב שקד: פסק דין המאשר הסדר בתביעה ייצוגית נגד חברת חזיבנק דיזיין (ת\"צ 47928-10-13)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "d200f6a4-1ffc-4cdc-990c-3cb5db25d7dc",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+        "title": "ביהמ\"ש לענייני משפחה בפתח תקווה, ש' סמאח מנאסרה סבאח: פסק דין בשאלת הסמכות העניינית לבית המשפט לענייני משפחה לדון בתובענת לשון הרע שאינה בין בני משפחה כהגדרות חוק בתי המשפט לענייני משפחה (תמ\"ש 47608-04-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "b2d8180b-1de6-4587-97d6-a7c5364fe115",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=270",
+        "title": "בית משפט השלום לתעבורה באשדוד, השופטת ליאת שמיר-הירש: הכרעת דין לנאשמים בעבירת מהירות שנאכפה באמצעות מערכת א3 (תת''ע 474-04-20)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "df44a625-9aca-488e-95aa-db9ff7f4d98f",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "116de1f1-5e60-4843-873c-fa256c3f1dcd",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "c28b2f17-3caf-4cb7-b427-3c5cbb59db55",
+        "discovery_class": "index_or_listing"
+      }
+    ],
+    "pool_before": 107,
+    "task_intent": "doctrinal_explanation",
+    "backfill_ran": true,
+    "class_counts": {
+      "metadata_only": 12,
+      "index_or_listing": 38,
+      "citable_candidate": 51,
+      "possible_body_page": 6
+    },
+    "o_n_guard_ok": true,
+    "suppression_ran": true,
+    "protected_counts": {
+      "judgment_document": 1,
+      "exact_docket_identity": 9,
+      "official_primary_page": 32,
+      "official_statute_page": 12,
+      "local_corpus_substantive": 29
+    },
+    "candidates_at_start": 107,
+    "backfilled_by_origin": {
+      "local_db": 11,
+      "perplexity": 2
+    },
+    "protected_listing_counts": {
+      "exact_docket_identity": 3,
+      "official_statute_page": 11
+    },
+    "suppressed_reason_counts": {
+      "index_or_listing:integrity_index_or_listing": 24
+    },
+    "raw_index_or_listing_ratio": 0.355,
+    "not_suppressible_reason_counts": {
+      "protected:judgment_document": 1,
+      "protected:exact_docket_identity": 9,
+      "protected:official_primary_page": 32,
+      "protected:official_statute_page": 12,
+      "protected:local_corpus_substantive": 29
+    },
+    "final_raw_index_or_listing_ratio": 0.318,
+    "final_suppressible_listing_ratio": 0,
+    "suppressible_index_or_listing_ratio": 0.224
+  },
+  "narrow_limited": null,
+  "secondary_acquisition": null,
+  "pass": true,
+  "failures": [],
+  "answer": "במענה זה לא מוצגת סקירת פסיקה: במקורות שאותרו לא אותרו פסקי־דין ברי־שימוש בעניין 'דפוסים אפלים'. הבסיס לניתוח כאן הוא חקיקת חוק הגנת הצרכן ופרסומים אקדמיים שסופקו, ולכן הטיעונים המשפטיים נשענים על הוראות החוק והפרשנות האקדמית־תיאורטית ולא על הלכות בתי משפט.\n\nהגדרה והיחס למושגים מוכרים: במקורות החקיקתיים שאותרו אין הגדרה מפורשת של 'דפוסים אפלים' כקטגוריה נפרדת; עם זאת חוק הגנת הצרכן קובע עקרונות מרכזיים שנוגעים להטעיה, להמצאת מידע ולהצגת מידע מהותי לצרכן, והם מהווים מסגרת מושגית לניתוח דפוסים אלו. סעיף 4 מטיל חובת גילוי של פרטים מהותיים, והוראות כלליות בחוק עוסקות באיסור הטעיה ובחובות גילוי—עוגנים שניתן להשוות אליהם פרקטיקות של עיצוב ממשק שמטרתן להטעות או להסתיר מידע.¹\n\nמסגרת האכיפה החוקית והיסודות הנורמטיביים: חוק הגנת הצרכן קובע סמכויות אכיפה מנהלית וענישה אזרחית כלפי הפרת חובות הגילוי והטעיה, וכן מבנה מוסדי של 'הממונה' והרשות להגנת הצרכן ולסחר הוגן; מפאת אופיין של הסעודות והתיאור בחוק יש בסיס לנקוט פעולה נגד מעשים של הטעיה או השמטת מידע מהותי כאשר הם מתקיימים בפועל, אך התמיכה בקביעה שדפוסים עיצוביים ספציפיים נכללים במפורש בתחום זה היא חלקית ודורשת יישום עובדתי ותשאול רגולטורי.¹\n\nיישום וסייגי אכיפה בפועל: החוק מעניק כלים כגון אכיפה מינהלית ועיצומים, אך במקורות שאותרו לא נמצאו דוגמאות חקקיות או דוחות אכיפה מפורטים המתייחסים במפורש ל'דפוסים אפלים' בעיצוב ממשקי מסחר דיגיטלי; פירוש והכללה של דפוסים עיצוביים תחת עילות ההטעיה והשמטה מחייבת בחינה עובדית של המעשה ופרספקטיבה רגולטורית שתקבע מתי עיצוב הופך להטעיה או למסחר בלתי הוגן.¹\n\nמבט ספרותי־מחקרי והוויכוח התקין: חומר המחקר שאותר מדגיש בעיקר את סוגיית חובת הגילוי והבעייתיות של מי שנוטל על עצמו פתרון בגילוי בלבד; מאמרים ושיח אקדמי בדגימה זו בוחנים את יעילות חובת הגילוי מול צורך ברגולציה עיצובית או איסור ישיר ומצביעים על שלוש גישות רגולטוריות עיקריות שנדונות בספרות — חובת גילוי משופרת, איסור על טכניקות מסוימות, ורגולציה מבוססת עקרונות עיצוב אתי — אך ממקורות אלה (בכמות ובאופי שסופקו) ניתן להסיק זאת רק בזהירות כקו דיון אקדמי ולא כהוראה סטטוטורית מוכתבת.²\n\nהמלצות למחקר המשך ולמפת דרכים פרקטית: למחקר משפטי מעמיק יש להתחיל מבדיקת ניסוחי הוראות החוק הרלוונטיות (חובות גילוי, איסור הטעיה, סמכויות אכיפה) ולהשלים זאת במיפוי החלטות אכיפה, פניות לציבור ודוחות רשמיים של הרשות להגנת הצרכן ורשויות אחרות; המחקר שניתן להסתמך עליו כנקודת פתיחה לכלול את טקסט החוק והניתוחים המשווים של משטרי גילוי שהוצעו בספרות, אך יש להמשיך לאיסוף ראיות מבצעיות ולא לזהות מסקנות עובדתיות על אכיפה ללא מקור ראשוני תומך.¹"
+}

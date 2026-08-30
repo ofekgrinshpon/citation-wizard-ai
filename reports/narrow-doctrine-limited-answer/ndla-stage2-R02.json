@@ -1,8 +1,8 @@
 {
   "id": "R02",
-  "run_id": "3887d7f2-6ae0-49af-b8d1-7aea1814258a",
-  "job_id": "7178434f-3dbf-4ef4-912b-c438c3482cbe",
-  "ms": 141227,
+  "run_id": "25d9ebd0-9757-4263-88b9-e6b8e293d67a",
+  "job_id": "5ed6490f-f7f3-419c-98a1-932305d56cad",
+  "ms": 130922,
   "status": "done",
   "branch": "docket_limitation",
   "answer_length": 320,
@@ -30,64 +30,42 @@
     },
     "depth_mode": "specific_case_or_statute",
     "snapshot_after": {
-      "not_citable": 2,
+      "not_citable": 4,
       "acquired_bodies": 0,
-      "secondary_typed": 12,
+      "secondary_typed": 10,
       "verifier_direct": 0,
-      "index_or_listing": 2,
-      "total_candidates": 25,
-      "verifier_partial": 14,
+      "index_or_listing": 4,
+      "total_candidates": 24,
+      "verifier_partial": 2,
       "doctrinal_eligible": 0,
       "institutional_typed": 0,
       "institutional_eligible": 0,
-      "blocked_not_doctrinal_type": 9,
+      "blocked_not_doctrinal_type": 2,
       "reconsideration_rejections": {
-        "primary_law_or_case_law": 3,
+        "primary_law_or_case_law": 1,
         "listing_suppressed:integrity_index_or_listing": 1
       },
-      "reconsiderable_candidate_ids": [
-        "40d37bde-e2ad-4935-9684-7a8d35a72c9a",
-        "94575c89-cdac-41cb-91a8-0c04e0a46e22",
-        "9dd37b01-8008-4846-8f19-79164de40c9e",
-        "7a7549a0-a1fe-43cc-9d6f-47f57107f045",
-        "c8c79d80-590b-44ae-b509-806c96b52c3d",
-        "654fc3f5-ab00-4fea-86a4-cf2dbbc9842f",
-        "2d0c1a53-d92c-4f79-8ce6-c818776c941c",
-        "80ffb166-5c3a-48bf-bee2-c23123c7ba35",
-        "81a4b6bc-c51e-4002-8620-8652fcddfb10",
-        "8f4fd59f-0ac8-47fe-9428-4dac4b764edc"
-      ],
-      "skipped_no_body_acquisition_attempted": 14
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 2
     },
     "snapshot_before": {
-      "not_citable": 2,
+      "not_citable": 4,
       "acquired_bodies": 0,
-      "secondary_typed": 12,
+      "secondary_typed": 10,
       "verifier_direct": 0,
-      "index_or_listing": 2,
-      "total_candidates": 25,
-      "verifier_partial": 14,
+      "index_or_listing": 4,
+      "total_candidates": 24,
+      "verifier_partial": 2,
       "doctrinal_eligible": 0,
       "institutional_typed": 0,
       "institutional_eligible": 0,
-      "blocked_not_doctrinal_type": 9,
+      "blocked_not_doctrinal_type": 2,
       "reconsideration_rejections": {
-        "primary_law_or_case_law": 3,
+        "primary_law_or_case_law": 1,
         "listing_suppressed:integrity_index_or_listing": 1
       },
-      "reconsiderable_candidate_ids": [
-        "40d37bde-e2ad-4935-9684-7a8d35a72c9a",
-        "94575c89-cdac-41cb-91a8-0c04e0a46e22",
-        "9dd37b01-8008-4846-8f19-79164de40c9e",
-        "7a7549a0-a1fe-43cc-9d6f-47f57107f045",
-        "c8c79d80-590b-44ae-b509-806c96b52c3d",
-        "654fc3f5-ab00-4fea-86a4-cf2dbbc9842f",
-        "2d0c1a53-d92c-4f79-8ce6-c818776c941c",
-        "80ffb166-5c3a-48bf-bee2-c23123c7ba35",
-        "81a4b6bc-c51e-4002-8620-8652fcddfb10",
-        "8f4fd59f-0ac8-47fe-9428-4dac4b764edc"
-      ],
-      "skipped_no_body_acquisition_attempted": 14
+      "reconsiderable_candidate_ids": [],
+      "skipped_no_body_acquisition_attempted": 2
     },
     "user_task_intent": "case_holding",
     "listing_suppressed": 0,
@@ -95,273 +73,487 @@
     "reconsidered_candidate_ids": []
   },
   "discovery_precision": {
-    "ms": 18,
+    "ms": 19,
     "status": "completed",
     "version": "discovery_precision_and_listing_suppression_v1",
-    "processed": 107,
-    "backfilled": 17,
-    "classified": 107,
-    "pool_after": 25,
+    "processed": 123,
+    "backfilled": 13,
+    "classified": 123,
+    "pool_after": 24,
     "suppressed": [
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5630",
-        "title": "בימ\"ש עליון, אב\"ד הנשיאה אסתר חיות, המשנה לנשיאה ניל הנדל והשופטים עוזי פוגלמן, יצחק עמית, נעם סולברג, יוסף אלרון ואלכס שטיין: פסה\"ד בדיון נוסף לבקשת רפי רותם שעניינו ביקורת של ביהמ\"ש על שיקול דעת רשויות התביעה (דנ\"פ 5387/20)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "5af75be4-6378-474a-926e-dcc9e98ba1c8",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5220",
-        "title": "ביהמ\"ש המחוזי ת\"א, סגן הנשיא חגי ברנר: החלטה בשאלה האם ייעוץ משפטי שניתן לוועדת ביקורת ולוועדה בלתי תלויה של חברי דירקטוריון מוגן בחסיון עורך-דין –לקוח מפני הנאמן שמונה לחברה בעקבות קריסתה (חדל\"ת 43652-09-20)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "e12a4924-8c69-4d41-b9d8-9aa3d77c3b39",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5630",
-        "title": "בימ\"ש עליון, אב\"ד הנשיאה אסתר חיות, המשנה לנשיאה ניל הנדל והשופטים עוזי פוגלמן, יצחק עמית, נעם סולברג, יוסף אלרון ואלכס שטיין: פסה\"ד בדיון נוסף לבקשת רפי רותם שעניינו ביקורת של ביהמ\"ש על שיקול דעת רשויות התביעה (דנ\"פ 5387/20)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "e9b9bddb-2736-4c77-b145-a8103ce54b13",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5220",
-        "title": "ביהמ\"ש המחוזי ת\"א, סגן הנשיא חגי ברנר: החלטה בשאלה האם ייעוץ משפטי שניתן לוועדת ביקורת ולוועדה בלתי תלויה של חברי דירקטוריון מוגן בחסיון עורך-דין –לקוח מפני הנאמן שמונה לחברה בעקבות קריסתה (חדל\"ת 43652-09-20)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "365d7816-351f-4c01-a580-bf6b55ce37f0",
-        "discovery_class": "index_or_listing"
-      },
       {
         "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1900",
         "title": "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד לעניין חוקיות פעולה של ועדות קבלה ביישובים קהילתיים בהמשך לעתירה המבקשת על רוכשי בית מגורים לעזוב את היישוב כפר אדומים (ת\"א 42598-03-22)",
         "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "83e8a1e4-eac3-40b5-a929-77f3c3537377",
+        "candidate_id": "b9780b01-7777-4a35-b455-463bc008b588",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=330",
+        "title": "ביהמ\"ש לנוער בביהמ\"ש המחוזי בירושלים, ש' אלעזר נחלון: גזר דין בעניין השתתפות קטין בהתפרעויות ויידוי בקבוק תבערה לעבר מגדל שמירה מאויש (ת\"פ 60420-01-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "75e95ef6-9847-48fd-a81d-78d4261c9c6f",
         "discovery_class": "index_or_listing"
       },
       {
         "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2240",
         "title": "ביהמ\"ש לענייני משפחה חיפה, השופטת לירון זרבל קדשאי: החלטה בנושא גילוי מסמכי חשבון בנק של המנוח למועד הוקדם לפטירתו (תמ\"ש 74949-01-24)",
         "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "2bf85272-e9ce-4028-abd5-e47e97a8d54b",
+        "candidate_id": "396001f9-52fe-4e01-a177-84ff25a5a914",
         "discovery_class": "index_or_listing"
       },
       {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=330",
-        "title": "ביהמ\"ש לנוער בביהמ\"ש המחוזי בירושלים, ש' אלעזר נחלון: גזר דין בעניין השתתפות קטין בהתפרעויות ויידוי בקבוק תבערה לעבר מגדל שמירה מאויש (ת\"פ 60420-01-24)",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3320",
+        "title": "ביהמ\"ש לענייני משפחה קריית גת, השופט אריאל ממן: פס\"ד בתביעה לקביעת היקף עיזבון, הכולל זכויות \"בר רשות\" בבית במושב שיתופי, שטרם הסתיים בו הליך שיוך דירות  (תמ\"ש 28153-08-20)",
         "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "2e312587-f529-4e55-96d7-92e5872291e3",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=470",
-        "title": "ביהמ\"ש המחוזי בתל אביב, השופטת ירדנה סרוסי: פס\"ד פרשנות פסקה (4)(ב) שבסעיף 92(א) לפקודת מס הכנסה (ע\"מ 61183-01-22)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "0ebac529-577b-4387-8874-44e52579a51a",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
-        "title": "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "a83c4a6c-bf88-4dfa-8fe1-2facf5035659",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3670",
-        "title": "ביהמ''ש המחוזי בתל אביב, השופטת מיכל אגמון-גונן: פסק דין בעניין חיפוש בטלפונים סלולריים של המבקשים להיכנס לישראל (עמ\"נ 12780-01-23)",
-        "reason": "index_or_listing:listing_title_pattern+integrity_index_or_listing",
-        "candidate_id": "7842adf7-a54c-419f-a484-4f93bab1fca1",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3950",
-        "title": "ביהמ\"ש המחוזי מרכז לוד, השופט צבי ויצמן: פס\"ד בתביעה כספית של 77 תובעים לפצותם בגין נזקים בשל הוראות מפלות בחוק הפונדקאות ובחוק תרומת ביציות (ת\"א 33813-07-20)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "87e0cac1-ae65-4466-9ea3-697065df2e70",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
-        "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "26d699c5-dc48-49a4-b5e7-aba347c6eda5",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
-        "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "ac009677-b356-4857-ba43-0828352ad845",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
-        "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: פסק דין לפי חוק יחסי ממון (תמ\"ש 28833-05-24)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "6dd75e0a-b639-4f3f-8b53-4b97ab28724e",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
-        "title": "ביהמ\"ש לענייני משפחה בפתח תקווה, ש' סמאח מנאסרה סבאח: פסק דין בשאלת הסמכות העניינית לבית המשפט לענייני משפחה לדון בתובענת לשון הרע שאינה בין בני משפחה כהגדרות חוק בתי המשפט לענייני משפחה (תמ\"ש 47608-04-24)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "8b964f39-c20a-4b5d-86c3-dd7922a0dc75",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
-        "title": "בימ\"ש עליון, הרכב שופטים השופטת דפנה ברק-ארז, השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין, השופט יחיאל כשר:  פס\"ד בפרשת העוברים (בע\"מ 69395-03-25)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "2482309f-c3cf-41aa-9128-8d41851ca7d8",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
-        "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "6074af43-f800-45cc-96d9-e448dd8bf21b",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=60",
-        "title": "ימ\"ש מחוזי ת\"א-יפו, השופט יעקב שקד: פסק דין המאשר הסדר בתביעה ייצוגית נגד חברת חזיבנק דיזיין (ת\"צ 47928-10-13)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "85813565-d487-413c-b80f-d16e46748ece",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=330",
-        "title": "ביהמ\"ש לנוער בביהמ\"ש המחוזי בירושלים, ש' אלעזר נחלון: גזר דין בעניין השתתפות קטין בהתפרעויות ויידוי בקבוק תבערה לעבר מגדל שמירה מאויש (ת\"פ 60420-01-24)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "17ef1357-a9c6-4cb3-9586-0f501f66f888",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
-        "title": "בימ\"ש עליון, הרכב שופטים השופטת דפנה ברק-ארז, השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין, השופט יחיאל כשר:  פס\"ד בפרשת העוברים (בע\"מ 69395-03-25)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "967097a0-65d8-4281-9c87-b053b15a1cf2",
+        "candidate_id": "353e5c79-6159-4247-b8ad-4d0047b471c7",
         "discovery_class": "index_or_listing"
       },
       {
         "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
         "title": "בית המשפט המחוזי ב\"ש, השופט יובל ליבדרו: גזר דין לעובדת בנק מזרחי טפחות בב\"ש שהורשעה בקבלת שוחד מלקוחות הבנק (ת\"פ 59842-12-20)",
         "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "4df27e45-c75a-4e44-81dd-7d0a4b860c6a",
+        "candidate_id": "46ce0a2c-3028-4e1b-8bc6-36c2086dc10a",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4220",
+        "title": "ביהמ\"ש השלום בתל-אביב, השופט אביים ברקאי: פס\"ד בתביעה לחיוב בנק בפיצוי בגין הנפקת ערבות בנקאית שגויה (ת\"א 44964-07-19)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "7fa09441-fec6-4f21-b2a0-96359eb53b8f",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2240",
+        "title": "ביהמ\"ש לענייני משפחה חיפה, השופטת לירון זרבל קדשאי: החלטה בנושא גילוי מסמכי חשבון בנק של המנוח למועד הוקדם לפטירתו (תמ\"ש 74949-01-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "df02c13e-3f76-43fe-9d4e-4c6390af22c9",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2840",
+        "title": "ביהמ\"ש המחוזי מרכז, השופט מיכאל קרשן: דחיית עתירה נגד החלטה לבחירת ספק במכרז למתן שירותי אשראי ללקוחות בנק הדואר, לאחר שחל שינוי חזיתי בטענה המרכזית שעמדה בבסיס העתירה ולא הותר לעותרת לתקן את עתירתה (עת\"מ 64774-12-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "77c5f144-fb22-4dd6-a433-90edfaccce9d",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
+        "title": "בית המשפט המחוזי ב\"ש, השופט יובל ליבדרו: גזר דין לעובדת בנק מזרחי טפחות בב\"ש שהורשעה בקבלת שוחד מלקוחות הבנק (ת\"פ 59842-12-20)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "16686ec8-0aa3-4c6e-978b-cd3df9c7c925",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4620",
+        "title": "בימ\"ש מחוזי ת\"א, אב\"ד סגן הנשיא שאול שוחט, השופטת עינת רביד, השופט נפתלי שילה: פס\"ד בערעור על פס\"ד שקבע כי קיימת כוונת שיתוף בחשבון בנק על סך 29 מיליון שקלים (עמ\"ש 33651-01-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "77e61bf9-2a5a-493a-8749-f047ce178725",
         "discovery_class": "index_or_listing"
       },
       {
         "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=60",
-        "title": "ביהמ\"ש המחוזי בירושלים, השופט אביגדור דורות: פס\"ד על החלטת המשיבה  בהשגה על תשומת תשומות, שהוצאה למערערת, מובילאי טכנולוגיות ראיה בע\"מ (10835-01-22))",
+        "title": "בית משפט השלום ת\"א-יפו, השופט אביים ברקאי: פסק דין בנושא ניגוד עניינים בניהול פרויקט התחדשות עירונית (ת\"א 22191-01-21)",
         "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "9fe397ab-f2d5-4a25-b9ca-7d60a69425b2",
+        "candidate_id": "ecc7c7ad-dfba-417f-adf1-13297709193c",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1100",
+        "title": "ביהמ\"ש לענייני משפחה בראשון לציון, ש' מיכל סער: פסק דין בעניין פירוק שיתוף בנכס (תלה\"מ 13460-05-21)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "2c50694e-9a7b-49da-b362-25cc47733186",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=750",
+        "title": "ביהמ\"ש המחוזי בתל אביב - יפו, ש' יונה אטדגי: פסק דין בעניין חיוב לקוח של עורך דין בתשלום שכר טרחה כאשר לא נעשה הסכם שכר טרחה בכתב (ע\"א 32538-04-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "a0ef7b4f-06ff-4cf0-81fc-ddc58bff9a21",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=330",
+        "title": "ביהמ\"ש לנוער בביהמ\"ש המחוזי בירושלים, ש' אלעזר נחלון: גזר דין בעניין השתתפות קטין בהתפרעויות ויידוי בקבוק תבערה לעבר מגדל שמירה מאויש (ת\"פ 60420-01-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "9ee82539-ce6a-4889-b7ae-55611f994f2c",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1050",
+        "title": "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת שירלי שי: פס\"ד הדוחה תביעה לביטול פסק דין שניתן בדיון במעמד הצדדים ובהסכמתם (תלה\"מ 4818-10-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "7166a84f-f546-4541-b38c-fa7771269bca",
         "discovery_class": "index_or_listing"
       },
       {
         "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
-        "title": "ביהמ\"ש העליון, אב\"ד, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופטת דפנה ברק ארז: פס\"ד בעתירות בעניין פיטורי ראש השב\"כ (בג\"ץ 54321-03-25)",
+        "title": "ביהמ\"ש המחוזי בתל אביב- יפו, אב\"ד ש' יונה אטדגי, ש' אריאל צימרמן, ש' טל לוי-מיכאלי: פסק דין אזרחי בעניין מתי תותר הרחבת בחזית, הבחנה בין שינוי חזית בטענות עובדתיות ובטענות משפטיות (ע\"א 19249-06-23)",
         "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "7810d2c3-2b1a-4fa9-8017-ce63a8454be8",
+        "candidate_id": "79f575f7-8425-4921-bc18-5c04271bbbb8",
         "discovery_class": "index_or_listing"
       },
       {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=60",
-        "title": "ימ\"ש מחוזי ת\"א-יפו, השופט יעקב שקד: פסק דין המאשר הסדר בתביעה ייצוגית נגד חברת חזיבנק דיזיין (ת\"צ 47928-10-13)",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+        "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
         "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "a8cb4f3a-9015-42b4-a3a5-a265c3e47f93",
-        "discovery_class": "index_or_listing"
-      },
-      {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
-        "title": "בימ\"ש עליון, הרכב שופטים השופטת דפנה ברק-ארז, השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין, השופט יחיאל כשר:  פס\"ד בפרשת העוברים (בע\"מ 69395-03-25)",
-        "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "7764f35a-dc19-4ee2-a691-47aab6782c69",
+        "candidate_id": "a46b8c87-f27a-4d98-99eb-18456c620d5e",
         "discovery_class": "index_or_listing"
       },
       {
         "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
         "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
         "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "e40106ac-f16a-4cfb-8f75-58e0166bea88",
+        "candidate_id": "211457d0-61cd-4ab5-a7e1-06e90a0c6e89",
         "discovery_class": "index_or_listing"
       },
       {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=60",
-        "title": "ביהמ\"ש המחוזי בירושלים, השופט אביגדור דורות: פס\"ד על החלטת המשיבה  בהשגה על תשומת תשומות, שהוצאה למערערת, מובילאי טכנולוגיות ראיה בע\"מ (10835-01-22))",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=100",
+        "title": "בימ\"ש מחוזי לנוער באר שבע, השופטת טל לחיאני שהם: פסק דין בנושא החלטת בית משפט קמא להתיר הזנה בכפייה לקטין באמצעות זונדה (ענ\"א 70267-04-25)",
         "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "62451175-80b9-4487-b3ee-cef32fb6cd1b",
+        "candidate_id": "caa69f85-b85c-434a-be6f-34010dbe935c",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=280",
+        "title": "בית משפט לענייני משפחה בתל אביב -יפו, השופטת הבכירה  מירה דהן: החלטה בבקשה לפסק דין הצהרתי בדבר אימהות (תמ\"ש 47191-01-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "ad7d3a23-61ac-4d2e-be84-16f0f8706836",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=300",
+        "title": "ביהמ\"ש השלום בנוף הגליל-נצרת, הנשיא ניר מישורי לב טוב: גזר דין בעניין סיוע לחבלה חמורה (ת\"פ 54436-06-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "80cadb79-1ff3-45ca-8c3d-7c5a4432cf12",
         "discovery_class": "index_or_listing"
       },
       {
         "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
         "title": "בימ\"ש עליון, הרכב שופטים השופטת דפנה ברק-ארז, השופטת יעל וילנר, השופט עופר גרוסקופף, השופט אלכס שטיין, השופט יחיאל כשר:  פס\"ד בפרשת העוברים (בע\"מ 69395-03-25)",
         "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "ae7ac615-a5be-4183-8d29-278efec67bb7",
+        "candidate_id": "9be1bbdb-7916-4c74-af7a-7dcf3d8e8787",
         "discovery_class": "index_or_listing"
       },
       {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
-        "title": "בימ\"ש השלום ירושלים, הרשמת הבכירה אביגיל ון-קרפלד: פס\"ד בתביעה של משפחה נגד חברת תעופה בגין ביטול טיסה לפי חוק שירותי תעופה (ת\"ק 39168-12-24)",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "title": "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
         "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "4c39454c-ed81-4afa-b627-2658a63a05ac",
+        "candidate_id": "1ec0421c-aad7-4891-8554-de462c81a50e",
         "discovery_class": "index_or_listing"
       },
       {
-        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
-        "title": "בית המשפט העליון בשבתו כבג\"ץ, השופטת דפנה ברק-ארז, השופט דוד מינץ והשופט עופר גרוסקופף: פס\"ד העוסק בחובה לעמוד בדרישות החוק ביחס להספקת מזון ברמה בסיסית לכלל האסירים הביטחוניים המוחזקים בבתי הסוהר בישראל (בג\"ץ 2858-24)",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=60",
+        "title": "בית משפט השלום ת\"א-יפו, השופט אביים ברקאי: פסק דין בנושא ניגוד עניינים בניהול פרויקט התחדשות עירונית (ת\"א 22191-01-21)",
         "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "2bbdeb9c-3b34-4e8f-ba7f-87309d111931",
+        "candidate_id": "f147bb32-aa76-466e-b9e4-18258a0b8469",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+        "title": "בימ\"ש השלום ת\"א, השופט טל חבקין: החלטה בבקשות בשמונה תיקים לביטול פסקי דין שניתנו בהעדר הגנה של אבי דוביצקי (ת\"א 13548-01-17)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "6f1c571e-337c-4917-88c0-e1ac3657a3d5",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=20",
+        "title": "בית המשפט המחוזי ת\"א-יפו, השופט גלעד הס: פסק דין בערעור על החלטה בעניין סמכות בית המשפט בישראל לדון בבקשה לאישור הגשת תביעה ייצוגית כנגד חברת \"סנאפצ'ט\"  (ע\"ר 68900-06-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "113d09ea-7da5-4984-b815-7196ca8952da",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=50",
+        "title": "ביהמ\"ש המחוזי בתל-אביב, השופטת יעל בלכר: פס\"ד שעניינו בשאלה האם נכרת הסכם מחייב בין בעלי הדין למתן הנחה בדמי השכירות בתקופת הקורונה (ת\"א 26891-11-21)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "f2946903-b1bb-4b67-93cb-09177d3b4769",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש המחוזי בתל אביב- יפו, אב\"ד ש' יונה אטדגי, ש' אריאל צימרמן, ש' טל לוי-מיכאלי: פסק דין אזרחי בעניין מתי תותר הרחבת בחזית, הבחנה בין שינוי חזית בטענות עובדתיות ובטענות משפטיות (ע\"א 19249-06-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "614b27a0-3a64-445f-8f16-1fa5c3b350eb",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+        "title": "ביהמ\"ש לענייני משפחה בפתח תקווה, ש' סמאח מנאסרה סבאח: פסק דין בשאלת הסמכות העניינית לבית המשפט לענייני משפחה לדון בתובענת לשון הרע שאינה בין בני משפחה כהגדרות חוק בתי המשפט לענייני משפחה (תמ\"ש 47608-04-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "557cf0bd-947b-4740-bd39-9c5feefa868e",
         "discovery_class": "index_or_listing"
       },
       {
         "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
-        "title": "בית המשפט לענייני משפחה בב\"ש, השופטת דיאנה פסו-ואגו: פסק דין לפי חוק יחסי ממון (תמ\"ש 28833-05-24)",
+        "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
         "reason": "index_or_listing:integrity_index_or_listing",
-        "candidate_id": "d0a68894-dbed-4786-b570-bf37659a1c50",
+        "candidate_id": "e5c6fad1-fadf-4ab5-842f-2418af2d0f60",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=60",
+        "title": "ימ\"ש מחוזי ת\"א-יפו, השופט יעקב שקד: פסק דין המאשר הסדר בתביעה ייצוגית נגד חברת חזיבנק דיזיין (ת\"צ 47928-10-13)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "017f2513-f2da-4412-8692-2cdca2ebb5d8",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=280",
+        "title": "בית משפט השלום ת\"א-יפו, השופט אביים ברקאי: פסק דין שעניינו מחלוקת בהגדרת משק לצורך חלוקות עתידיות כ\"נחלה מלאה\" אל מול \"נחלה חסרה\" (ת\"א 45983-03-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "e37fd27a-08b2-4a34-85ea-4d700ddd5509",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+        "title": "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "38d1661b-ff23-403d-948c-c6ffec847180",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש המחוזי בתל אביב- יפו, אב\"ד ש' יונה אטדגי, ש' אריאל צימרמן, ש' טל לוי-מיכאלי: פסק דין אזרחי בעניין מתי תותר הרחבת בחזית, הבחנה בין שינוי חזית בטענות עובדתיות ובטענות משפטיות (ע\"א 19249-06-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "0e1effa8-5cc4-4ef8-9892-b1720e1e1aad",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=280",
+        "title": "בית משפט השלום ת\"א-יפו, השופט אביים ברקאי: פסק דין שעניינו מחלוקת בהגדרת משק לצורך חלוקות עתידיות כ\"נחלה מלאה\" אל מול \"נחלה חסרה\" (ת\"א 45983-03-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "4ad26b56-e2d1-4508-981b-037f707d3fe4",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+        "title": "ביהמ\"ש המחוזי בחיפה, ש' חננאל שרעבי: פסק דין בבקשת ערעור על ביהמ\"ש לענייני משפחה בחיפה (רמ\"ש 26806-04-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "af3b9748-b1bc-4b4b-9768-ea359a73393a",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1080",
+        "title": "ביהמ\"ש המחוזי מרכז-לוד, סגנית הנשיאה ש' ורדה פלאוט: פסק הדין בנושא ערעור על החלטה הדוחה בקשה לעיכוב ביצוע פסק דין חלוט, בקשה שהוגשה במסגרת תביעה (רמ\"ש 13497-09-24) למשפט אזרחי חוזר",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "7b082603-6767-4429-ad8e-53df1aea84a9",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=100",
+        "title": "בימ\"ש מחוזי לנוער באר שבע, השופטת טל לחיאני שהם: פסק דין בנושא החלטת בית משפט קמא להתיר הזנה בכפייה לקטין באמצעות זונדה (ענ\"א 70267-04-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "0c704ef2-1b01-46e5-a42c-b198d59dc343",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=510",
+        "title": "ביהמ\"ש המחוזי בירושלים, ש' אלעזר נחלון: פסק דין חלקי בנוגע למתן חלק מהסעדים שנתבעו בתובענה בעקבות אירע פיגוע משולב במרכז העיר ירושלים (ת\"א 54314-03-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "9ef74408-2771-44d1-9c16-5fa962a94cb5",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5140",
+        "title": "בימ\"ש השלום ברמלה, השופט אייל כהן: פס\"ד בתביעת פלונית כניזוקה משנית נגד מבטחת הרכב, העוסק בשאלת החבות ושאלת הנזק (ת\"א 1957-09-18)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "5be62044-5090-45a3-b89d-407cac211c53",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3000",
+        "title": "ביהמ\"ש המחוזי חיפה, השופט חננאל שרעבי: פס\"ד ערעור על החלטה שדחתה בקשה לפסיקת פיצויים בגין צו ארעי (רמ\"ש 39058-11-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "ad6b14dc-6476-4fe7-b3dd-ed4e70ea6758",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2930",
+        "title": "ביהמ\"ש המחוזי חיפה, אב\"ד חננאל שרעבי, השופטת אספרנצה אלון, השופט אריה נאמן: פס\"ד פיצוי בגין נזקים כלליים וכוונת זדון (עמ''ש 26211-07-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "05b060e6-e58d-411d-8a42-35a3866748b0",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+        "title": "בימ\"ש מחוזי ת\"א, השופטת ירדנה סרוסי: החלטה בבקשה מטעם המשיב לביטול פסק דין בערעור (ע\"מ 40050-01-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "fdec44bb-17bb-4eec-b4b4-7f163929da7d",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+        "title": "בית המשפט המחוזי ב\"ש, השופטת יעל ייטב: פסק דין בערעור על החלטה לפסילת ספריו של המערער וקביעת הכנסתו בצו ע\"פ סעיף 152(ב) לפקודת מס הכנסה (ע\"מ 39040-12-21)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "d81fb400-cfa1-4a16-ab04-0d2793857d43",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=90",
+        "title": "ביהמ\"ש המחוזי בתל-אביב, השופט אילן דפדי: החלטה בשאלה האם לבית המשפט המחוזי נתונה הסמכות לדון בתביעה לביטול פסק דין של בית המשפט העליון שנתן תוקף להסכמת הצדדים (ת\"א 32539-04-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "df7ecacf-2c9b-40e8-aeb9-6e45bcb30196",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+        "title": "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "a853bf51-b8f6-41ca-912b-a87770dd9226",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=40",
+        "title": "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "1795c498-4846-4d8e-b90e-0671291d7430",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5040",
+        "title": "בימ\"ש המחוזי ירושלים, השופט אביגדור דורות: פס\"ד בעניין מחלוקת בין מס הכנסה לבין חברה שנרכשה ע\"י קבוצת חג'ג' בהכרה בהפסדים צבורים (ע\"מ 52353-12-17)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "e7e91622-8568-499a-a89b-702585fc7ab2",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+        "title": "בית המשפט לענייני משפחה בב\"ש, סג\"נ השופטת רותם קודלר עיאש: החלטה בתביעה למתן פס\"ד הצהרתי בעניין זכויות חזקה ושימוש במגרש ומנגד בקשה להורות על סילוק התביעה על הסף (תמ\"ש 58185-07-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "7bcb82c3-9ae9-4908-9a1d-8f8893e834c5",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=250",
+        "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "67dfe0fe-ee13-4b5b-90fb-c9acac1bfd88",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
+        "title": "ביהמ\"ש לענייני משפחה פתח תקווה, השופטת הילה מלר-שלו: פסק דין משלים  בבקשה למתן פסק-דין הצהרתי לקביעת אימהות המבקשת לרך שנולד בהליך פונדקאות מחוץ לישראל (תמ\"ש 18205-05-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "a642d54e-f4c9-4221-bf9d-088314dabfc8",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1050",
+        "title": "ביהמ\"ש לענייני משפחה בתל אביב-יפו, ש' ורד שביט פינקלשטיין: פסק דין בעניין קביעת מסגרת חינוכית לקטין (תלה\"מ 20712-04-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "efef609c-a611-416a-ac99-25942fb14ad7",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=20",
+        "title": "בית המשפט המחוזי ת\"א-יפו, השופט גלעד הס: פסק דין בערעור על החלטה בעניין סמכות בית המשפט בישראל לדון בבקשה לאישור הגשת תביעה ייצוגית כנגד חברת \"סנאפצ'ט\"  (ע\"ר 68900-06-25)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "91481a7b-daef-42ff-8825-bb84d179a65c",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=300",
+        "title": "ביהמ\"ש לענייני משפחה בירושלים, ש' פליקס גורודצקי: פסק דין בעניין בקשה לביטול ו/או הפחתת דמי מזונות (תמ\"ש 38293-10-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "30005bef-c9b5-4cff-b243-3fd87481943a",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=310",
+        "title": "בימ\"ש לענייני משפחה ת\"א, השופטת לורן אקוקה: פס\"ד בתביעה לאכיפת פסק דין לפי סעיף 7 לחוק בתי המשפט לענייני משפחה (תמ\"ש 29428-09-24)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "6c582190-54ab-447d-aec7-47874a07a555",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2280",
+        "title": "ביהמ\"ש המחוזי מרכז לוד, אב\"ד סגנית הנשיאה ליאורה ברודי, השופטת מיכל ברק נבו, השופט מיכאל תמיר: גז\"ד לויקטור קטן המורשע בעבירה של רצח באדישות (תפ\"ח 30103-08-19)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "84feb5db-0020-42f4-92ba-b43f95b0dc76",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
+        "title": "ביהמ\"ש המחוזי מרכז לוד, אב\"ד ליאורה ברודי, שופטת מיכל ברק נבו, שופטת מיכאל תמיר: גז\"ד לרופא, אשר הורשע בעבירות אינוס כלפי 2 בנותיו במשך שנים רבות בהיותן ילדות (תפ\"ח 9333-04-20)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "f4559b6a-9812-4fa7-b9e2-9554fb3cdb31",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=550",
+        "title": "בית המשפט לענייני משפחה בב\"ש, השופטת שני כ\"ץ: הכרעה בתובענות הדדיות של הצדדים בעניין מזונות בנותיהן הקטינות (תלה\"מ 37183-01-23)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "454b7668-0ec0-4829-8f0c-3cead12b3ce1",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=0",
+        "title": "בית המשפט המחוזי ב\"ש, השופט יובל ליבדרו: גזר דין לעובדת בנק מזרחי טפחות בב\"ש שהורשעה בקבלת שוחד מלקוחות הבנק (ת\"פ 59842-12-20)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "91ea9b6e-b672-4044-a40a-a4645383a970",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4530",
+        "title": "בימ\"ש לענייני משפחה ת\"א, השופטת איריס אילוטוביץ'-סגל: פס\"ד בתובענה לביטול פס\"ד שניתן בנוכחות ובהסכמת הצדדים בטענה שניתנה תחת לחץ של בית המשפט (ת\"ע 46206-03-21)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "c5e1c89d-8894-4f6a-937d-265782c97596",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=110",
+        "title": "ביהמ\"ש המחוזי מרכז-לוד, ש' אבי גורמן: פסק דין בערעור בעניין שומת תשומות, שומת עסקאות, פסילת ספרים וקנס שקבע מנהל מס ערך מוסף רחובות (ע\"מ 36057-03-22)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "53401336-2e13-4f0a-83f6-c15a72303c03",
+        "discovery_class": "index_or_listing"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1720",
+        "title": "ביהמ\"ש המחוזי בבאר- שבע, השופטת יעל ייטב: פס\"ד בערעור  על החלטת  מנהל מס ערך מוסף בעניין מס תשומות, על רקע קיזוז תשומות על פי חשבוניות מס שלטענת המנהל הוצאו שלא כדין (ע\"מ 15871-05-21)",
+        "reason": "index_or_listing:integrity_index_or_listing",
+        "candidate_id": "4a1fc5bb-9551-4212-bac5-60a7cd4b9860",
         "discovery_class": "index_or_listing"
       }
     ],
-    "pool_before": 107,
+    "pool_before": 123,
     "task_intent": "case_holding",
     "backfill_ran": true,
     "class_counts": {
-      "metadata_only": 3,
-      "index_or_listing": 36,
-      "citable_candidate": 36,
-      "possible_body_page": 32
+      "metadata_only": 10,
+      "index_or_listing": 67,
+      "citable_candidate": 33,
+      "possible_body_page": 13
     },
     "o_n_guard_ok": true,
     "suppression_ran": true,
     "protected_counts": {
       "judgment_document": 1,
-      "exact_docket_identity": 10,
-      "official_primary_page": 6,
-      "local_corpus_substantive": 54
+      "exact_docket_identity": 19,
+      "official_primary_page": 20,
+      "local_corpus_substantive": 21
     },
-    "candidates_at_start": 107,
+    "candidates_at_start": 123,
     "backfilled_by_origin": {
-      "local_db": 10,
-      "perplexity": 7
+      "local_db": 11,
+      "perplexity": 2
     },
     "protected_listing_counts": {
       "exact_docket_identity": 5
     },
     "suppressed_reason_counts": {
-      "index_or_listing:integrity_index_or_listing": 30,
-      "index_or_listing:listing_title_pattern+integrity_index_or_listing": 1
+      "index_or_listing:integrity_index_or_listing": 62
     },
-    "raw_index_or_listing_ratio": 0.336,
+    "raw_index_or_listing_ratio": 0.545,
     "not_suppressible_reason_counts": {
       "protected:judgment_document": 1,
-      "protected:exact_docket_identity": 10,
-      "protected:official_primary_page": 6,
-      "protected:local_corpus_substantive": 54,
-      "class_not_suppressible:metadata_only": 1,
-      "class_not_suppressible:possible_body_page": 4
+      "protected:exact_docket_identity": 19,
+      "protected:official_primary_page": 20,
+      "protected:local_corpus_substantive": 21
     },
-    "final_raw_index_or_listing_ratio": 0.08,
+    "final_raw_index_or_listing_ratio": 0.167,
     "final_suppressible_listing_ratio": 0,
-    "suppressible_index_or_listing_ratio": 0.29
+    "suppressible_index_or_listing_ratio": 0.504
   },
   "narrow_limited": null,
   "secondary_acquisition": null,
