@@ -131,6 +131,10 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
   const filtered = search.trim()
     ? logs.filter((l) => l.question.toLowerCase().includes(search.toLowerCase()))
     : logs;
+  const visibleJobs = search.trim()
+    ? jobs.filter((j) => (j.question || "").toLowerCase().includes(search.toLowerCase()))
+    : jobs;
+
 
   const handleClick = (log: QALogRecord) => {
     if (!onLoadResult || log.answer === null || log.answer === undefined) return;
