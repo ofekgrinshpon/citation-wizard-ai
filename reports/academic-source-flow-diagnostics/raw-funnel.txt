@@ -1,0 +1,186 @@
+===== AW1 44de42f7-952f-43ee-9933-af74348e87d4
+answer_len 3622 footnotes 2 branch null suff limited_doctrinal_fallback_B:two_doctrinal_secondaries(was:no_statutory_caselaw_or_doctrinal_anchor)
+plan {"reason":"המשימה העיקרית היא ניסוח פרק מבוא אקדמי שמבוסס על ניתוח דוקטרינרי; יש להסתמך על פסיקה מחייבת וספרות כדי לנסח ניסוח מדויק של השאלה הרלוונטית, המצב המשפטי והמבנה של העבודה.","mixed_plan":false,"academic_genre":"introduction","answer_strategy":"draft_academic_text","plan_confidence":"high","user_task_intent":"academic_writing","source_use_intent":["doctrinal_support","scholarly_discussion"],"authority_requirements":{"requires_judgment_body":true,"requires_official_statute":false,"found_only_can_support_claims":false,"secondary_sources_can_support":true,"found_only_allowed_as_reading_list":false}}
+nomination {"q":6,"cat":{"statute":1,"judgment":2,"scholarship":3},"dropped":2,"reasons":["judgment_cap","judgment_cap"]}
+discovery processed 257 pool_before 257 pool_after 30 suppressed 96 class_counts {"metadata_only":25,"index_or_listing":121,"citable_candidate":81,"possible_body_page":29,"search_result_page":1} supp_reasons {"index_or_listing:listing_url_path":2,"index_or_listing:integrity_index_or_listing":93,"index_or_listing:listing_url_path+integrity_index_or_listing":1}
+dropped_sources_reasons {"discovery_only":14,"class_unknown_not_admitted_for_primary_statute":3,"bad_source":3,"class_unknown_not_admitted_for_binding_case_law":9,"class_unknown_not_admitted_for_scholarship":6,"class_government_report_not_admitted_for_binding_case_law":1} pool_drop_reasons {"dup_url":19,"dup_document_id":14,"discovery_listing_suppressed":96}
+role_corrections 13 admitted_after_remap 13
+candidates 30 integrity_admitted 30 integrity_rejects 0
+verifier {"direct":3,"partial":6,"unrelated":4,"tangential":17}
+acquisition secondary {"considered":8,"local":3,"web_ok":2,"acquired":5,"bibonly":3,"listing_suppressed":1}
+primary acq {"judg":[{"ms":5320,"url":"https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/22/350/041/x05&fileName=22041350.X05&type=2","title":"רע\"א 4135/22","success":true,"candidate_id":"ad2b194f-a3e3-4249-a9c3-9335460b8b1d","title_signal":"רע\"א 4135/22","docket_signal":"רע\"א 4135/22","failure_reason":null,"synthesis_role":"leading_candidate","trigger_reason":"metadata_only","has_hol
+acquired_text_length 0 carried_pack 9 sources_passed 7 sources_used 2 unique 2
+csm {"emitted":11,"kept":3,"dropped":8,"reasons":["insufficient_authority_for_claim_category","claim_mismatch","commentary_in_substantive_block"],"cats":{"doctrinal_synthesis":2,"scholarly_commentary":1,"contextual_background":4},"roles_missing":["primary_legal_anchor","theoretical_normative_source","critique_or_counterposition_source","implementation_or_example_source"],"roles_filled":["doctrinal_background_source"],"offtopic":0,"partial_dropped":0,"prim_lang":0}
+dropped_refs [["s5","insufficient_authority_for_claim_category","doctrinal_synthesis"],["s6","insufficient_authority_for_claim_category","doctrinal_synthesis"],["s3","insufficient_authority_for_claim_category","contextual_background"],["s4","claim_mismatch","doctrinal_synthesis"],["s7","commentary_in_substantive_block","doctrinal_synthesis"],["s5","claim_mismatch","scholarly_commentary"],["s6","claim_mismatch","scholarly_commentary"],["s7","claim_mismatch","scholarly_commentary"]]
+claim_categories [[0,"contextual_background","declared_claim_category",0],[1,"doctrinal_synthesis","declared_claim_category",0],[2,"contextual_background","declared_claim_category",2],[3,"doctrinal_synthesis","declared_claim_category",1],[4,"scholarly_commentary","declared_claim_category",0],[5,"contextual_background","declared_claim_category",0],[6,"contextual_background","declared_claim_category",0]]
+footnote_report {"version":"footnote_rendering_invariant_v1","renumbered":false,"footnotes_length":2,"invariant_passed":true,"inline_marker_count":2,"used_sources_length":2,"dangling_marker_count":0,"orphan_source_row_count":0}
+--- per-candidate table
+רע"א 4135/22 | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/full_text | acq:none | verif:unrelated | -
+בג"ץ 5769/18 | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:tangential | -
+בג"ץ 1877/14 | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:tangential | -
+ע"א 4030/03 | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:tangential | -
+ע"פ 6813/16 | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:tangential | -
+בימ"ש עליון, אב"ד השופט יצחק עמית, השופט עופר גרוס |  | binding_case_law | caselaw | integrity:not_citable/listing_page | acq:none | verif:tangential | -
+המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החו |  | primary_statute | journal_article | integrity:scholarship/full_text | acq:16000 | verif:partial | USED
+בימ"ש עליון, אב"ד הנשיאה אסתר חיות: פסקי דין בעתיר |  | binding_case_law | caselaw | integrity:not_citable/listing_page | acq:none | verif:tangential | -
+בית משפט לענייני משפחה בחיפה, השופטת העמיתה אלה מי |  | primary_statute | caselaw | integrity:not_citable/listing_page | acq:none | verif:tangential | -
+ביהמ"ש העליון, אב"ד יצחק עמית, השופטת יעל וילנר, ה |  | binding_case_law | caselaw | integrity:not_citable/listing_page | acq:none | verif:tangential | -
+בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטי |  | binding_case_law | caselaw | integrity:not_citable/listing_page | acq:none | verif:partial | -
+בית המשפט המחוזי ב"ש, השופטת גאולה לוין: החלטה שענ |  | primary_statute | caselaw | integrity:not_citable/listing_page | acq:none | verif:unrelated | -
+ביהמ״ש העליון, אב״ד השופט דוד מינץ, השופט אלכס שטי |  | binding_case_law | caselaw | integrity:not_citable/listing_page | acq:none | verif:tangential | -
+בית המשפט לענייני משפחה בב"ש, השופטת דיאנה פסו-ואג |  | primary_statute | caselaw | integrity:not_citable/listing_page | acq:none | verif:tangential | -
+בית משפט השלום ירושלים, השופט דוד שאול גבאי ריכטר: |  | primary_statute | caselaw | integrity:not_citable/listing_page | acq:none | verif:unrelated | -
+החוק להגנה על אמריקאים מפני יישומים הנשלטים |  | scholarship | knesset_research | integrity:scholarship/full_text | acq:11055 | verif:unrelated | -
+בית המשפט העליון בשבתו כבג"ץ, השופטת דפנה ברק-ארז, |  | primary_statute | caselaw | integrity:not_citable/listing_page | acq:none | verif:tangential | -
+רבע מאה למהפכה החוקתית: תמונת מצב של ה"חוקה בהרצה" |  | scholarship | journal_article | integrity:scholarship/full_text | acq:16000 | verif:partial | USED
+בג"ץ 7385/13 | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:tangential | -
+ע"א 3975/21 | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:tangential | -
+בג"ץ 3618/23 | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:tangential | -
+בג"ץ 7228/19 | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:tangential | -
+גלגולי מושג "שלטון החוק" בישראל: בין פורמליזם למהו | lawjournal.huji.ac.il | scholarship | other | integrity:commentary/metadata_only | acq:147/bibonly | verif:partial | -
+החוקה של ישראל: עבר, הווה ועתיד | law.huji.ac.il | scholarship | book_or_chapter | integrity:commentary/full_text | acq:16000 | verif:partial | -
+הדיאלוג החוקתי בישראל : שתי נקודות מבט - בל יוסף | runi.ac.il | scholarship | other | integrity:commentary/metadata_only | acq:175/bibonly | verif:direct | -
+אהרן ברק, על תורת הסעדים החוקתיים | runi.ac.il | scholarship | other | integrity:commentary/metadata_only | acq:168/bibonly | verif:direct | -
+בג"ץ או בד"ץ? מעורבות שיפוטית בסוגיות הלכתיות | runi.ac.il | scholarship | academic | integrity:commentary/full_text | acq:16000 | verif:partial | -
+בג"ץ 781/15 - ארד פנקס נ' הוועדה לאישור הסכמים לנש | law.tau.ac.il | scholarship | other | integrity:not_citable/listing_page | acq:none | verif:direct | -
+Overview - בית המשפט העליון | supreme.court.gov.il | binding_case_law | caselaw | integrity:judgment/substantive_excerpt | acq:none | verif:tangential | -
+המרכז האקדמי למשפט ולעסקים ואח' | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:commentary/metadata_only | acq:none | verif:tangential | -
+used_sources [[1,"scholarship","המהפכה החוקתית או מהפכת זכויות האדם? על "],[1,"scholarship","רבע מאה למהפכה החוקתית: תמונת מצב של ה\"ח"]]
+===== AW4 0b002d28-1712-45cb-b1d2-78f6e894b8fa
+answer_len 3457 footnotes 4 branch null suff doctrinal_anchor_present
+plan {"reason":"המשתמש ביקש פרק רקע תיאורטי לעבודה אקדמית; יש לנסח טקסט אקדמי שמשלב ניתוח תיאורטי, הצעות מקורות מרכזיים וניתוח של שלבי המבחן על בסיס פסיקה וספרות.","mixed_plan":false,"academic_genre":"theoretical_background","answer_strategy":"draft_academic_text","plan_confidence":"high","user_task_intent":"academic_writing","source_use_intent":["doctrinal_support","scholarly_discussion","binding_authority"],"authority_requirements":{"requires_judgment_body":false,"requires_official_statute":false,"found_only_can_support_claims":false,"secondary_sources_can_support":true,"found_only_allowed_as_reading_list":false}}
+nomination {"q":7,"cat":{"statute":1,"judgment":2,"scholarship":4},"dropped":1,"reasons":["judgment_cap"]}
+discovery processed 208 pool_before 208 pool_after 30 suppressed 74 class_counts {"metadata_only":22,"index_or_listing":91,"citable_candidate":66,"possible_body_page":29} supp_reasons {"index_or_listing:integrity_index_or_listing":59,"index_or_listing:listing_url_path+integrity_index_or_listing":14,"index_or_listing:listing_title_pattern+integrity_index_or_listing":1}
+dropped_sources_reasons {"discovery_only":9,"class_unknown_not_admitted_for_binding_case_law":10,"class_unknown_not_admitted_for_scholarship":4,"class_unknown_not_admitted_for_persuasive_case_law":5,"bad_source":2,"class_unknown_not_admitted_for_primary_statute":2} pool_drop_reasons {"dup_document_id":6,"dup_url":10,"discovery_listing_suppressed":74}
+role_corrections 19 admitted_after_remap 19
+candidates 30 integrity_admitted 30 integrity_rejects 0
+verifier {"direct":2,"partial":7,"unrelated":12,"tangential":9}
+acquisition secondary {"considered":11,"local":8,"web_ok":2,"acquired":10,"bibonly":1,"listing_suppressed":0}
+primary acq {"judg":[{"ms":3665,"url":"https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C13/040/077/z08&fileName=13077040.z08&type=4","title":"ע\"פ 7704/13 ואח'","success":false,"candidate_id":"67bd79d3-fce6-4f7b-b622-811cdd153185","title_signal":"ע\"פ 7704/13 ואח'","docket_signal":"ע\"פ 7704/13","failure_reason":"no_local_document_match","synthesis_role":"leading_candidate","trigger_r
+acquired_text_length 0 carried_pack 9 sources_passed 8 sources_used 4 unique 4
+csm {"emitted":15,"kept":6,"dropped":9,"reasons":["commentary_in_substantive_block","insufficient_authority_for_claim_category","claim_mismatch","unrelated_legal_area"],"cats":{"court_holding":2,"doctrinal_synthesis":4,"scholarly_commentary":1,"contextual_background":1},"roles_missing":["primary_legal_anchor","theoretical_normative_source","implementation_or_example_source"],"roles_filled":["doctrinal_background_source","critique_or_counterposition_source"],"offtopic":0,"partial_dropped":0,"prim_lang":0}
+dropped_refs [["s5","commentary_in_substantive_block","doctrinal_synthesis"],["s1","insufficient_authority_for_claim_category","contextual_background"],["s5","commentary_in_substantive_block","court_holding"],["s4","commentary_in_substantive_block","court_holding"],["s5","claim_mismatch","doctrinal_synthesis"],["s6","commentary_in_substantive_block","court_holding"],["s5","commentary_in_substantive_block","court_holding"],["s7","commentary_in_substantive_block","court_holding"],["s8","unrelated_legal_area","scholarly_commentary"]]
+claim_categories [[0,"doctrinal_synthesis","declared_claim_category",1],[1,"contextual_background","declared_claim_category",1],[2,"court_holding","declared_claim_category",0],[3,"doctrinal_synthesis","declared_claim_category",1],[4,"doctrinal_synthesis","declared_claim_category",2],[5,"court_holding","declared_claim_category",0],[6,"scholarly_commentary","declared_claim_category",1],[7,"doctrinal_synthesis","declared_claim_category",0]]
+footnote_report {"version":"footnote_rendering_invariant_v1","renumbered":false,"footnotes_length":4,"invariant_passed":true,"inline_marker_count":5,"used_sources_length":4,"dangling_marker_count":0,"orphan_source_row_count":0}
+--- per-candidate table
+ע"פ 7704/13 ואח' | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:unrelated | -
+בג"ץ 5119/23 | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/full_text | acq:none | verif:tangential | -
+בג"ץ 1195/10 | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:tangential | -
+בג"ץ 7344/17 | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:unrelated | -
+בג"ץ 8749/13 | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:unrelated | -
+בג"ץ 7385/13 – פסק-דין | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:tangential | -
+ע"א 3975/21 – פסק-דין | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:unrelated | -
+רע"א 3456/13 – פסק-דין | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:unrelated | -
+בג"ץ 4988/19 – פסק-דין | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:tangential | -
+H25-01-2012_14-34-20_mmm31012012.doc | knesset.gov.il | primary_statute | other | integrity:scholarship/metadata_only | acq:none | verif:partial | -
+בימ"ש עליון, אב"ד השופט יצחק עמית, השופט עופר גרוס |  | binding_case_law | caselaw | integrity:not_citable/listing_page | acq:none | verif:unrelated | -
+המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החו |  | primary_statute | journal_article | integrity:scholarship/full_text | acq:16000 | verif:partial | USED
+ביהמ"ש העליון, מ"מ הנשיא השופט עוזי פוגלמן, השופט  |  | binding_case_law | caselaw | integrity:not_citable/listing_page | acq:none | verif:unrelated | -
+בימ"ש עליון, אב"ד מ"מ מקום הנשיא השופט עוזי פוגלמן |  | binding_case_law | caselaw | integrity:not_citable/listing_page | acq:none | verif:partial | -
+בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטי |  | binding_case_law | caselaw | integrity:not_citable/listing_page | acq:none | verif:tangential | -
+בית משפט לענייני משפחה בחיפה, השופטת העמיתה אלה מי |  | primary_statute | caselaw | integrity:not_citable/listing_page | acq:none | verif:tangential | -
+בימ"ש עליון, אב"ד השופטת יעל וילנר, השופט עופר גרו |  | binding_case_law | caselaw | integrity:not_citable/listing_page | acq:none | verif:unrelated | -
+בית המשפט לענייני משפחה בב"ש, השופטת דיאנה פסו-ואג |  | primary_statute | caselaw | integrity:not_citable/listing_page | acq:none | verif:unrelated | -
+בית משפט השלום ירושלים, השופט דוד שאול גבאי ריכטר: |  | primary_statute | caselaw | integrity:not_citable/listing_page | acq:none | verif:unrelated | -
+יישום "חוק פיצול דירות" (חוק התכנון והבנייה |  | scholarship | knesset_research | integrity:commentary/substantive_excerpt | acq:1500/bibonly | verif:unrelated | -
+מדוע שרירותיות כשלעצמה מפלה, גם אם אינה קשורה לעיל |  | binding_case_law | journal_article | integrity:scholarship/full_text | acq:16000 | verif:partial | USED
+על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק,  |  | scholarship | journal_article | integrity:scholarship/full_text | acq:2024 | verif:direct | USED
+הנזק הראייתי ו"עונשו": בשבחי מעבר מהמודל הקיים של  |  | scholarship | journal_article | integrity:scholarship/full_text | acq:16000 | verif:unrelated | -
+תקצירי מאמרים באנגלית - חוברת 2 |  | scholarship | journal_article | integrity:scholarship/full_text | acq:12426 | verif:tangential | -
+תקצירי מאמרים באנגלית - חוברת 3 |  | scholarship | journal_article | integrity:scholarship/full_text | acq:16000 | verif:tangential | -
+בג"ץ 466-07 - ח"כ זהבה גלאון-יו"ר סיעת מר"צ-יחד נ. |  | binding_case_law | supreme_court_il | integrity:commentary/substantive_excerpt | acq:none | verif:direct | -
+פרשנות תכליתית החותרת תחת התכלית: על מעמדם של דברי |  | scholarship | journal_article | integrity:scholarship/full_text | acq:16000 | verif:partial | USED
+פגם בערבות להצעה במכרז ושאלת המידתיות בדיני המכרזי |  | scholarship | journal_article | integrity:scholarship/full_text | acq:16000 | verif:partial | -
+ביקורת שיפוטית על רשויות אכיפת החוק: בין מינהלי לפ |  | scholarship | journal_article | integrity:scholarship/full_text | acq:16000 | verif:partial | -
+תקצירים באנגלית - חוברת 1 |  | scholarship | journal_article | integrity:scholarship/full_text | acq:16000 | verif:tangential | -
+used_sources [[1,"scholarship","על המידתיות של המידתיות: בעקבות ספרו של "],[2,"scholarship","פרשנות תכליתית החותרת תחת התכלית: על מעמ"],[3,"scholarship","המהפכה החוקתית או מהפכת זכויות האדם? על "],[4,"scholarship","מדוע שרירותיות כשלעצמה מפלה, גם אם אינה "]]
+===== AW7 618b9639-11e1-403b-bebd-e0680422775b
+answer_len 1264 footnotes 1 branch null suff case_law_synthesis_supported
+plan {"reason":"המטלה היא ניסוח פסקת טיעון אקדמית: יש לבסס את הטיעון על פסיקה דוקטרינלית ופרשנות בספרות תוך שמירה על צניעות שיפוטית ולציין את הקריטריונים להתערבות.","mixed_plan":false,"academic_genre":"argument_paragraph","answer_strategy":"draft_academic_text","plan_confidence":"high","user_task_intent":"academic_writing","source_use_intent":["doctrinal_support","scholarly_discussion"],"authority_requirements":{"requires_judgment_body":false,"requires_official_statute":false,"found_only_can_support_claims":false,"secondary_sources_can_support":true,"found_only_allowed_as_reading_list":false}}
+nomination {"q":6,"cat":{"statute":1,"judgment":2,"scholarship":3},"dropped":1,"reasons":["judgment_cap"]}
+discovery processed 132 pool_before 132 pool_after 26 suppressed 57 class_counts {"metadata_only":5,"index_or_listing":70,"citable_candidate":43,"possible_body_page":14} supp_reasons {"index_or_listing:listing_url_path":2,"index_or_listing:integrity_index_or_listing":53,"index_or_listing:listing_url_path+integrity_index_or_listing":2}
+dropped_sources_reasons {"bad_source":2,"discovery_only":2,"class_unknown_not_admitted_for_primary_statute":1,"class_unknown_not_admitted_for_scholarship":1,"class_government_report_not_admitted_for_scholarship":1} pool_drop_reasons {"dup_url":11,"dup_document_id":4,"vector_quota_per_claim":34,"discovery_listing_suppressed":57}
+role_corrections 4 admitted_after_remap 4
+candidates 26 integrity_admitted 26 integrity_rejects 0
+verifier {"direct":4,"partial":14,"unrelated":4,"tangential":0}
+acquisition secondary {"considered":10,"local":8,"web_ok":2,"acquired":10,"bibonly":0,"listing_suppressed":0}
+primary acq {"judg":[{"ms":3009,"url":"https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/2&fileName=SB2_3_2887-04.pdf&type=2","title":"בג\"ץ 2887-04 - סלים אבו מדיגם נ. מינהל מקרקעי ישראל","success":true,"candidate_id":"28d29df8-ef89-4b0f-a3a5-544eeff0da66","title_signal":"בג\"ץ 2887-04 - סלים אבו מדיגם נ. מינהל מקרקעי ישראל","docket_signal":"בג\"ץ 2887/04","failure_reason":null,"synthe
+acquired_text_length 0 carried_pack 18 sources_passed 14 sources_used 1 unique 1
+csm {"emitted":2,"kept":1,"dropped":1,"reasons":["commentary_in_substantive_block"],"cats":{"doctrinal_synthesis":1},"roles_missing":["theoretical_normative_source"],"roles_filled":["primary_legal_anchor","doctrinal_background_source","critique_or_counterposition_source","implementation_or_example_source"],"offtopic":0,"partial_dropped":0,"prim_lang":0}
+dropped_refs [["s14","commentary_in_substantive_block","doctrinal_synthesis"]]
+claim_categories [[0,"doctrinal_synthesis","declared_claim_category",1]]
+footnote_report {"version":"footnote_rendering_invariant_v1","renumbered":false,"footnotes_length":1,"invariant_passed":true,"inline_marker_count":1,"used_sources_length":1,"dangling_marker_count":0,"orphan_source_row_count":0}
+--- per-candidate table
+מסמך הכנה – הצעת חוק יסוד: השפיטה (תיקון מס' 6) | fs.knesset.gov.il | primary_statute | legislation | integrity:statute/metadata_only | acq:none | verif:none | -
+בג"ץ 1715/97 - לשכת מנהלי ההשקעות בישראל נ' שר האו | judgments.org.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:direct | -
+המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החו |  | primary_statute | journal_article | integrity:scholarship/full_text | acq:16000 | verif:partial | -
+ביהמ"ש לענייני משפחה בפתח תקווה, ש' סמאח מנאסרה סב |  | primary_statute | caselaw | integrity:not_citable/listing_page | acq:none | verif:unrelated | -
+בית משפט לענייני משפחה בחיפה, השופטת העמיתה אלה מי |  | primary_statute | caselaw | integrity:not_citable/listing_page | acq:none | verif:none | -
+בימ"ש עליון, אב"ד השופטת ענת ברון, השופט יוסף אלרו |  | binding_case_law | caselaw | integrity:not_citable/listing_page | acq:none | verif:direct | -
+בימ"ש עליון, אב"ד הנשיאה אסתר חיות: פסקי דין בעתיר |  | binding_case_law | caselaw | integrity:not_citable/listing_page | acq:none | verif:partial | -
+תקנת השוק במכר על ידי רשות שנפל בהליכיו פגם חוקי |  | binding_case_law | journal_article | integrity:scholarship/full_text | acq:16000 | verif:partial | -
+בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטי |  | binding_case_law | caselaw | integrity:not_citable/listing_page | acq:none | verif:partial | -
+ביהמ״ש העליון, אב״ד השופט דוד מינץ, השופט אלכס שטי |  | binding_case_law | caselaw | integrity:not_citable/listing_page | acq:none | verif:partial | -
+בית המשפט לענייני משפחה בב"ש, השופטת דיאנה פסו-ואג |  | primary_statute | caselaw | integrity:not_citable/listing_page | acq:none | verif:unrelated | -
+החוק להגנה על אמריקאים מפני יישומים הנשלטים |  | binding_case_law | knesset_research | integrity:scholarship/substantive_excerpt | acq:none | verif:unrelated | -
+פרשנות שיפוטית של הטבות מס לעידוד השקעות |  | scholarship | journal_article | integrity:scholarship/full_text | acq:16000 | verif:partial | -
+ביקורת שיפוטית על רשויות אכיפת החוק: בין מינהלי לפ |  | scholarship | journal_article | integrity:scholarship/full_text | acq:16000 | verif:partial | -
+דיני מזונות אישה בין בית הדין השרעי לבית המשפט לענ |  | binding_case_law | journal_article | integrity:scholarship/full_text | acq:16000 | verif:unrelated | -
+דיני בנקאות.docx | akadima.biu.ac.il | scholarship | other | integrity:judgment/metadata_only | acq:none | verif:partial | -
+חוק יסוד: כבוד האדם וחירותו | daat.ac.il | scholarship | book_or_chapter | integrity:commentary/full_text | acq:2526 | verif:none | -
+בג"ץ 1715/97 - לשכת מנהלי ההשקעות בישראל ואח' נ' ש | hamoked.org.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:direct | -
+ביקורת שיפוטית על שיקול דעת מינהלי | cris.iucc.ac.il | scholarship | other | integrity:commentary/full_text | acq:7082 | verif:partial | -
+דת או DATA: מדיניות הרבנות בהליכי בירור יהדות | אל |  | primary_statute | journal_article | integrity:scholarship/full_text | acq:16000 | verif:partial | -
+נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטי |  | scholarship | journal_article | integrity:scholarship/full_text | acq:16000 | verif:none | -
+על מגבלותיהן של הזכויות החיוביות במשפט הישראלי |  | binding_case_law | journal_article | integrity:scholarship/full_text | acq:16000 | verif:partial | -
+רע"פ 1201/12 יוסף קטיעי נ׳ מדינת ישראל החלטה (20.0 |  | binding_case_law | caselaw | integrity:commentary/substantive_excerpt | acq:none | verif:partial | -
+בג"ץ 6631/20 פלוני נ׳ בית הדין הרבני הגדול לערעורי |  | binding_case_law | caselaw | integrity:judgment/substantive_excerpt | acq:none | verif:partial | -
+בג"ץ 2887-04 - סלים אבו מדיגם נ. מינהל מקרקעי ישרא |  | binding_case_law | supreme_court_il | integrity:commentary/full_text | acq:none | verif:direct | USED
+עע"מ 5116/20 המועצה המוסלמית ביפו נ׳ קרן תל אביב ל |  | binding_case_law | caselaw | integrity:commentary/substantive_excerpt | acq:none | verif:partial | -
+used_sources [[1,"judgment","חוק עצמית דין עשיית של בדרך מקרקעיה)"]]
+===== AW8 7cb6d67c-38f4-44ed-827e-45464a631a48
+answer_len 300 footnotes 0 branch insufficient_sources_limitation suff no_statutory_caselaw_or_doctrinal_anchor
+plan {"reason":"המשתמש ביקש הצגת נושא לעבודה; יש לשלב פסיקה מחייבת ותמיכה ספרותית כדי להציג דוקטרינה, יסודות, סעד ומתווה מחקר.","mixed_plan":false,"academic_genre":"generic_academic","answer_strategy":"draft_academic_text","plan_confidence":"high","user_task_intent":"academic_writing","source_use_intent":["doctrinal_support","scholarly_discussion","binding_authority"],"authority_requirements":{"requires_judgment_body":true,"requires_official_statute":false,"found_only_can_support_claims":false,"secondary_sources_can_support":true,"found_only_allowed_as_reading_list":false}}
+nomination {"q":6,"cat":{"statute":1,"judgment":2,"scholarship":3},"dropped":1,"reasons":["low_relevance_confidence"]}
+discovery processed 127 pool_before 127 pool_after 28 suppressed 55 class_counts {"metadata_only":9,"index_or_listing":65,"citable_candidate":36,"possible_body_page":17} supp_reasons {"index_or_listing:integrity_index_or_listing":54,"index_or_listing:listing_title_pattern+integrity_index_or_listing":1}
+dropped_sources_reasons {"bad_source":2,"class_unknown_not_admitted_for_binding_case_law":1,"discovery_only":2,"class_unknown_not_admitted_for_scholarship":2} pool_drop_reasons {"dup_url":5,"dup_document_id":3,"vector_quota_per_claim":36,"discovery_listing_suppressed":55}
+role_corrections 0 admitted_after_remap 0
+candidates 28 integrity_admitted 28 integrity_rejects 0
+verifier {"direct":3,"partial":7,"unrelated":13,"tangential":5}
+acquisition secondary {"considered":14,"local":6,"web_ok":3,"acquired":9,"bibonly":5,"listing_suppressed":0}
+primary acq {"judg":[{"ms":3217,"url":"https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/18/550/055/v36&fileName=18055550.V36&type=4","title":"פסק-דין בתיק בג\"ץ 5555/18","success":true,"candidate_id":"6ede6a53-4ea7-4a25-b726-8c07572bc579","title_signal":"פסק-דין בתיק בג\"ץ 5555/18","docket_signal":"בג\"ץ 5555/18","failure_reason":null,"synthesis_role":"leading_candidate","trigger_reason
+acquired_text_length 0 carried_pack 10 sources_passed 8 sources_used 0 unique 0
+csm {"dropped":0,"reasons":[]}
+dropped_refs []
+claim_categories []
+footnote_report {"version":"footnote_rendering_invariant_v1","renumbered":false,"footnotes_length":0,"invariant_passed":true,"inline_marker_count":0,"used_sources_length":0,"dangling_marker_count":0,"orphan_source_row_count":0}
+--- per-candidate table
+פסק-דין בתיק בג"ץ 5555/18 | supremedecisions.court.gov.il | binding_case_law | caselaw | integrity:judgment/full_text | acq:none | verif:unrelated | -
+תקציר בג"ץ 5555-18 | gov.il | binding_case_law | caselaw | integrity:judgment/substantive_excerpt | acq:none | verif:unrelated | -
+בג"ץ 5555/18 ח"כ אכרם חסון נ' כנסת ירושלים פסק דין | toledano.co.il | binding_case_law | caselaw | integrity:judgment/metadata_only | acq:none | verif:unrelated | -
+המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החו |  | primary_statute | journal_article | integrity:scholarship/full_text | acq:16000 | verif:tangential | -
+בית משפט לענייני משפחה בחיפה, השופטת העמיתה אלה מי |  | primary_statute | caselaw | integrity:not_citable/listing_page | acq:none | verif:unrelated | -
+הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי |  | scholarship | journal_article | integrity:scholarship/full_text | acq:16000 | verif:partial | -
+בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטי |  | binding_case_law | caselaw | integrity:not_citable/listing_page | acq:none | verif:partial | -
+בית המשפט לענייני משפחה בב"ש, השופטת דיאנה פסו-ואג |  | primary_statute | caselaw | integrity:not_citable/listing_page | acq:none | verif:unrelated | -
+הכרה במחלות נדירות כמחלות קשות – ניתוח הצעת החוק ו |  | primary_statute | knesset_research | integrity:scholarship/substantive_excerpt | acq:none | verif:unrelated | -
+בית המשפט המחוזי ב"ש, השופטת גאולה לוין: החלטה שענ |  | primary_statute | caselaw | integrity:not_citable/listing_page | acq:none | verif:unrelated | -
+בית המשפט העליון בשבתו כבג"ץ, השופטת דפנה ברק-ארז, |  | primary_statute | caselaw | integrity:not_citable/listing_page | acq:none | verif:partial | -
+ע"א 7594/16 עו"ד יצחק מולכו, המנהל המיוחד מטעם הכו |  | binding_case_law | caselaw | integrity:judgment/substantive_excerpt | acq:none | verif:unrelated | -
+תקנות הבטיחות בעבודה (גיהות תעסוקתית ובריאות הציבו |  | primary_statute | israeli_law | integrity:statute/substantive_excerpt | acq:none | verif:unrelated | -
+רות גביזון |  | scholarship | journal_article | integrity:scholarship/full_text | acq:16000 | verif:unrelated | -
+הבטחה מנהלית: לידתה, תולדותיה, אחריתה | law.haifa.ac.il | scholarship | other | integrity:commentary/metadata_only | acq:102/bibonly | verif:partial | -
+הגנת ההסתמכות במשפט המנהלי | lawjournal.huji.ac.il | scholarship | other | integrity:commentary/metadata_only | acq:135/bibonly | verif:direct | -
+הבטחה מינהלית - כתב העת משפטים | lawjournal.huji.ac.il | scholarship | academic | integrity:scholarship/full_text | acq:1283 | verif:direct | -
+על ההבטחה המנהלית / אלישי בן יצחק | daat.ac.il | scholarship | other | integrity:commentary/full_text | acq:14425 | verif:direct | -
+הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר ק |  | primary_statute | journal_article | integrity:scholarship/full_text | acq:16000 | verif:unrelated | -
+עשרים שנה לבנק הזמרחי: סיפורה הפיקנטי של חוקת הכלא |  | primary_statute | journal_article | integrity:scholarship/full_text | acq:16000 | verif:tangential | -
+אכיפה בהעדר חוזה מחייב ופריזמת ההסכמה - מבט תרופתי |  | binding_case_law | journal_article | integrity:scholarship/full_text | acq:16000 | verif:partial | -
+למכירה: זכויות והטבות ציבוריות |  | binding_case_law | journal_article | integrity:scholarship/full_text | acq:16000 | verif:unrelated | -
+הלכת פיצול הסעדים בין בתי משפט שונים והלכת העיקר ו |  | binding_case_law | journal_article | integrity:scholarship/full_text | acq:1500/bibonly | verif:tangential | -
+בג"ץ 3390/16 עדאלה – המרכז המשפטי לזכויות המיעוט ה |  | binding_case_law | caselaw | integrity:judgment/substantive_excerpt | acq:none | verif:tangential | -
+ע"פ 845-02 - מדינת ישראל נ. תנובה מרכז שיתופי לשיו |  | binding_case_law | supreme_court_il | integrity:commentary/substantive_excerpt | acq:none | verif:tangential | -
+הזכות לפרטיות בעבודה: עיון מחודש בפרשת איסקוב-ענבר |  | binding_case_law | journal_article | integrity:scholarship/substantive_excerpt | acq:1500/bibonly | verif:partial | -
+על חוקה דקלרטיבית וחוקה קונסטיטוטיבית - מעמדה של ז |  | binding_case_law | journal_article | integrity:scholarship/substantive_excerpt | acq:1500/bibonly | verif:partial | -
+חוק ארגון הפיקוח על העבודה |  | binding_case_law | israeli_law | integrity:statute/substantive_excerpt | acq:none | verif:unrelated | -
+used_sources []
