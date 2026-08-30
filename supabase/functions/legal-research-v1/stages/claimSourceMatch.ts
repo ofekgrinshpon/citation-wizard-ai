@@ -16,10 +16,19 @@ import type { StructuredBlock, StructuredDraft } from "./structuredValidation.ts
 import type { DrafterInputSource } from "./drafter.ts";
 import { inferLegalAreaId } from "./claimFacetExpansion.ts";
 import {
+  academicTopicalFit,
+  type AcademicAuthorityAlignmentReport,
+  classifyAcademicSourceRoles,
+  emptyAcademicAuthorityAlignment,
+  guardPrimaryLanguage,
+  isCategoricalClaim,
+} from "./academicAuthorityAlignment.ts";
+import {
   type AuthorityOverstatement,
   AUTHORITY_OVERSTATEMENT_LIMITATION_HE,
   categoryAccepts,
   type ClaimSupportCategory,
+  isAcademicClaimCategory,
   deriveClaimCategory,
   profileSource,
   type SourceSupportProfile,
@@ -51,7 +60,10 @@ export type MismatchReason =
   | "commentary_in_substantive_block"
   | "analogical_for_black_letter"
   | "unrelated_legal_area"
-  | "insufficient_authority_for_claim_category";
+  | "insufficient_authority_for_claim_category"
+  /** academic_citation_authority_alignment_v1 */
+  | "partial_support_for_categorical_claim"
+  | "off_topic_for_academic_claim";
 
 export interface DroppedSourceRef {
   ref: string;
@@ -94,6 +106,8 @@ export interface ClaimSourceMatchReport {
   primary_supported_block_count: number;
   /** claim_source_rebinding_v1 telemetry. */
   rebinding: RebindingSummary;
+  /** academic_citation_authority_alignment_v1 telemetry. */
+  academic_authority_alignment?: AcademicAuthorityAlignmentReport;
 }
 
 
@@ -191,7 +205,13 @@ function parentClaimOfFacet(facet_id: string): string | null {
 export function applyClaimSourceMatch(
   draft: StructuredDraft | null,
   inputSources: DrafterInputSource[],
-  opts?: { mainClaimIds?: string[]; limitedDoctrinalAnswer?: boolean },
+  opts?: {
+    mainClaimIds?: string[];
+    limitedDoctrinalAnswer?: boolean;
+    /** academic_citation_authority_alignment_v1 */
+    academicMode?: boolean;
+    question?: string;
+  },
 ): { draft: StructuredDraft | null; report: ClaimSourceMatchReport; limitation_text: string } {
   const report: ClaimSourceMatchReport = {
     applied: false,
@@ -209,6 +229,10 @@ export function applyClaimSourceMatch(
     primary_supported_block_count: 0,
     rebinding: emptyRebindingSummary(),
   };
+  const academicMode = opts?.academicMode === true;
+  const align = emptyAcademicAuthorityAlignment();
+  align.applied = academicMode;
+  if (academicMode) report.academic_authority_alignment = align;
   if (!draft) return { draft, report, limitation_text: "" };
   report.rebinding.applied = true;
   const sourceByRef = new Map(inputSources.map((s) => [s.ref, s]));
@@ -247,9 +271,16 @@ export function applyClaimSourceMatch(
       text: typeof (b as unknown as Record<string, unknown>).text === "string"
         ? String((b as unknown as Record<string, unknown>).text)
         : "",
+      academicMode,
     });
+    const academicCategory = isAcademicClaimCategory(category);
     const doctrinalCategory = category === "doctrinal_synthesis" ||
-      category === "scholarly_commentary" || category === "contextual_background";
+      category === "scholarly_commentary" || category === "contextual_background" ||
+      academicCategory;
+    if (academicMode) {
+      align.academic_claim_categories_used[category] =
+        (align.academic_claim_categories_used[category] ?? 0) + 1;
+    }
     const overstatementDrops: string[] = [];
 
     const kept: string[] = [];
@@ -357,8 +388,32 @@ export function applyClaimSourceMatch(
       // rest on commentary alone.
       if (!reason && prof && !categoryAccepts(category, prof)) {
         reason = "insufficient_authority_for_claim_category";
-        if (category === "court_holding" && prof.doctrinal_authority) {
+        if (
+          (category === "court_holding" || category === "statutory") && prof.doctrinal_authority
+        ) {
           overstatementDrops.push(ref);
+          if (academicMode) align.doctrinal_secondary_refs_rejected_for_primary_claims++;
+        }
+      }
+
+      // academic_citation_authority_alignment_v1
+      if (academicMode && !reason && prof?.doctrinal_authority && !m.is_primary) {
+        // (a) `partial` support may carry cautious wording only.
+        if (m.verifier_verdict !== "direct" && isCategoricalClaim(blockText)) {
+          reason = "partial_support_for_categorical_claim";
+          align.partial_support_refs_dropped++;
+        } else if (m.verifier_verdict !== "direct" && m.verifier_verdict !== "partial") {
+          reason = "insufficient_authority_for_claim_category";
+        } else {
+          // (b) subject-matter fit: a generally-legal source that shares no
+          // subject vocabulary with the question may not be cited.
+          const bindingKind = blockBindings.get(ref);
+          const strongBinding = bindingKind === "exact" || bindingKind === "facet";
+          const fit = academicTopicalFit(String(opts?.question ?? ""), blockText, sourceByRef.get(ref)!);
+          if (!strongBinding && !fit.fit) {
+            reason = "off_topic_for_academic_claim";
+            align.off_topic_refs_dropped++;
+          }
         }
       }
 
@@ -451,7 +506,32 @@ export function applyClaimSourceMatch(
       ),
     });
 
-    blocks.push({ ...b, source_refs: finalRefs } as StructuredBlock);
+    // academic_citation_authority_alignment_v1 — conservative primary-language
+    // guard: only for academic runs, and only for blocks that ended up with no
+    // acquired primary support.
+    let outText = blockText;
+    if (academicMode && !hasPrimary) {
+      const guarded = guardPrimaryLanguage(blockText, idx);
+      if (guarded.report) {
+        align.primary_language_blocks++;
+        align.primary_language_details.push(guarded.report);
+        if (guarded.report.action === "rewritten") {
+          align.unsupported_primary_language_suppressed++;
+          outText = guarded.text;
+        }
+      }
+    }
+    if (academicMode) {
+      align.doctrinal_secondary_refs_allowed += keptProfiles.filter((p) =>
+        p.doctrinal_authority && !p.judgment_authority && !p.statutory_authority
+      ).length;
+    }
+
+    const outBlock = { ...b, source_refs: finalRefs } as StructuredBlock;
+    if (academicMode && outText !== blockText) {
+      (outBlock as unknown as Record<string, unknown>).text = outText;
+    }
+    blocks.push(outBlock);
   });
 
   for (const [claim, s] of claimSupport) {
@@ -462,6 +542,27 @@ export function applyClaimSourceMatch(
     ? mainClaims.some((c) => claimSupport.get(c)?.primary === true)
     : [...claimSupport.values()].some((s) => s.primary);
 
+  if (academicMode) {
+    align.commentary_only_claims_kept = [...report.commentary_only_claims];
+    const eligibleRefs = new Set(
+      inputSources.filter((s2) => profiles.get(s2.ref)?.doctrinal_authority === true).map((s2) => s2.ref),
+    );
+    const roles = classifyAcademicSourceRoles(inputSources, eligibleRefs);
+    align.source_roles_filled = roles.filled;
+    align.source_roles_missing = roles.missing;
+    align.source_refs_emitted = draft.blocks.reduce(
+      (n, blk) => n + (("source_refs" in blk) ? (blk.source_refs?.length ?? 0) : 0),
+      0,
+    );
+    align.refs_kept_by_claim_source_match = report.claim_categories.reduce(
+      (n, c) => n + c.kept_refs.length,
+      0,
+    );
+    align.refs_dropped_by_authority_category = report.dropped_source_refs.filter((d) =>
+      d.reason === "insufficient_authority_for_claim_category"
+    ).length;
+  }
+
   let limitation_text = "";
   // claim_source_rebinding_v1 — proportional limitation: a caveat is added only
   // when a substantive block actually lost all of its support, not merely
@@ -469,7 +570,9 @@ export function applyClaimSourceMatch(
   if (report.unsupported_block_count > 0) {
     limitation_text = CLAIM_SUPPORT_LIMITATION_HE;
     report.limitation_added = true;
-  } else if (report.commentary_only_claims.length > 0 && !opts?.limitedDoctrinalAnswer) {
+  } else if (
+    report.commentary_only_claims.length > 0 && !opts?.limitedDoctrinalAnswer && !academicMode
+  ) {
     limitation_text = COMMENTARY_ONLY_LIMITATION_HE;
     report.limitation_added = true;
   }

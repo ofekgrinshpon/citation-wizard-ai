@@ -178,7 +178,15 @@ export interface RebindSourceInput {
 function areaFallbackAllowed(b: RebindBlockInput): boolean {
   const broadCategory = b.claim_category === "doctrinal_synthesis" ||
     b.claim_category === "scholarly_commentary" ||
-    b.claim_category === "contextual_background";
+    b.claim_category === "contextual_background" ||
+    // academic_citation_authority_alignment_v1 — academic framing/background
+    // blocks are broad in the same sense.
+    b.claim_category === "doctrinal_background" ||
+    b.claim_category === "academic_framing" ||
+    b.claim_category === "theoretical_explanation" ||
+    b.claim_category === "literature_synthesis" ||
+    b.claim_category === "critique_or_counterposition" ||
+    b.claim_category === "methodological_framing";
   const broadProposition = b.proposition_type === "background" ||
     b.proposition_type === "practical_guidance";
   return broadCategory && broadProposition;

@@ -2149,9 +2149,12 @@ export async function runDrafterV2(
 
   // claim_source_match_validation_v1 — a source may only stay attached to a
   // block whose claim/facet/legal-area it was actually verified for.
+  const academicModeForMatch = opts?.sourceUsePlan?.user_task_intent === "academic_writing";
   const matched = applyClaimSourceMatch(gated.draft ?? parsed.draft, inputSources, {
     mainClaimIds: claims.map((c) => c.claim_id),
     limitedDoctrinalAnswer: sufficiency?.limited_doctrinal_answer === true,
+    academicMode: academicModeForMatch,
+    question,
   });
   const claim_source_match = matched.report;
 
@@ -2251,6 +2254,10 @@ export async function runDrafterV2(
         .filter((r): r is string => !!r),
     ),
   });
+  if (claim_source_match.academic_authority_alignment) {
+    claim_source_match.academic_authority_alignment.rendered_footnotes = built.footnotes.length;
+  }
+
   const footnotes = built.footnotes.map((fn) => ({
     ...fn,
     text: normalizeHebrewNumberRanges(fn.text),

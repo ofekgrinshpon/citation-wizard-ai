@@ -1151,7 +1151,11 @@ async function handle(req: Request): Promise<Response> {
       "perplexity_retrieval",
       budget.timed("perplexity_retrieval", async () => {
         budget.mark("perplexity_start", { queries: pplxQueries.length, skipped: fastLaneHit });
-        const r = await runPerplexityRetrieval(pplxQueries, { budget });
+        const r = await runPerplexityRetrieval(pplxQueries, {
+          budget,
+          // academic_citation_authority_alignment_v1
+          academicMode: sourceUseIntent.plan?.user_task_intent === "academic_writing",
+        });
         budget.mark("perplexity_done", { candidates: r.candidates.length });
         return r;
       }),
