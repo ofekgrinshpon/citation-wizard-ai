@@ -1,57 +1,66 @@
-# persistent_background_research_jobs_v1
+# academic_writing_intent_and_drafting_v1
 
-Make legal research survive the browser: the job runs server-side, the DB row is the source of truth, and the user can refresh, switch screens, close the tab, or come back tomorrow and find the answer.
+When a user asks ReLex to *write* academic text ("כתוב פרק מבוא לסמינריון…"), the system currently answers as if it were a doctrinal research question and opens with a source-gap report. This track makes the pipeline recognise academic-writing requests and return an actual academic draft in the requested genre, while keeping every existing safety rule intact.
 
-No change to retrieval, sufficiency, claim-source-match, acquisition, drafting, or citation logic.
+## Scope
 
-## What already exists (verified in code)
+Untouched: retrieval, source acquisition, judgment identity validation, docket limitation, claim-source-match, citation rendering, found-only support rules.
 
-- `legal-research-v1` already creates a `legal_research_jobs` row before the pipeline runs, executes the pipeline under `EdgeRuntime.waitUntil`, returns `202 { job_id, run_id, status }` immediately, and updates `current_stage` / `completed_stages` per stage (`index.ts` lines ~125-170, ~355, ~2790-2840).
-- Terminal states are persisted: `done` + `result` (answer/footnotes/used_sources/debug) or `error` + `error` text, with credit refunds on non-delivery, plus a 9-minute in-isolate watchdog.
-- A pg_cron reaper (`reap_stale_research_jobs`, every minute, 12-minute staleness) closes abandoned rows with a Hebrew "retrieval interrupted" limitation instead of a stub, and back-fills the `qa_logs` trace row.
-- RLS on `legal_research_jobs`: owner-only SELECT, owner-only INSERT, admin SELECT. No cross-user read path.
-- The panel already polls the job row by id.
+Changed: intent vocabulary, deterministic intent detection, drafter genre instructions, and the sufficiency-refusal path for this one intent.
 
-So the pipeline is already background-safe. The gaps are all at the edges: resume is tab-local, there is no shareable job URL, running jobs are invisible in history, and a double-submit creates two paid jobs.
+## 1. New intent vocabulary
 
-## Gaps to close
+Add to the shared plan vocabulary:
 
-1. **Resume is `sessionStorage`-only** — a closed tab, a new tab, or another device loses the running job even though it is still running server-side.
-2. **No job URL** — nothing to return to; history replay only works for finished runs via `qa_logs`.
-3. **History shows completed runs only** (`qa_logs`), so running and failed jobs are invisible.
-4. **No idempotency** — a fast double-click charges credits twice and starts two pipelines.
-5. **Running-screen copy** does not tell the user it is safe to leave.
-6. **No `progress_label_he`** — the client maps stage keys ad hoc.
+- `user_task_intent: "academic_writing"`
+- `answer_strategy: "draft_academic_text"`
 
-## Work
+Both are added to the analyzer's JSON schema enums so the model can plan them, with schema guidance describing them as "the user asks the system to write academic prose (מבוא, רקע תיאורטי, פסקת טיעון, מתווה פרקים)".
 
-### Backend
+## 2. Deterministic detection (does not depend on the model)
 
-- **Migration** on `public.legal_research_jobs`:
-  - add `client_request_id text`, `progress_label_he text`, `started_at timestamptz`, `completed_at timestamptz`;
-  - partial unique index on `(user_id, client_request_id)` where `client_request_id is not null`;
-  - index on `(user_id, status)` for the "active job" lookup;
-  - no policy widening — existing owner-scoped RLS already satisfies requirement 8; re-assert grants if missing.
-- **`legal-research-v1/index.ts`** (edges only, pipeline untouched):
-  - accept `client_request_id` in the request body; before charging credits, look up a job with the same `(user_id, client_request_id)` created in the last 15 minutes — if found, return `202` with that `job_id` and do not charge again;
-  - set `started_at` on insert and `completed_at` on every terminal write;
-  - write `progress_label_he` alongside `current_stage` in `markStage`, from a fixed stage→Hebrew map (מנתח את השאלה / מתכנן מחקר / מחפש מקורות / קורא מקורות / מאמת התאמה / בודק מספיקות / מנסח תשובה / מסיים).
-- **Reaper**: keep the existing terminal-limitation semantics (it already avoids stubs and preserves `prior_stage`), and extend it to stamp `completed_at` and a `timed_out` marker inside `result` so the UI can label it distinctly.
+A new deterministic detector runs inside the source-use-intent stage and can force the plan to `academic_writing` / `draft_academic_text`:
 
-### Frontend
+- writing verbs + academic object: כתוב/נסח/ניסחו/הרחב + פרק מבוא, מבוא, רקע תיאורטי, פרק תיאורטי, הצגת נושא, פסקה אקדמית, פרק ראשון, מתווה פרקים, סמינריון, עבודה אקדמית, עבודת גמר;
+- "שאלת המחקר … היא" framing combined with a writing verb.
 
-- **Route `/research/:jobId`** rendering the existing research panel in "job view" mode: load the row by id, poll while `queued|running`, render the stored `result` when `done`, render a clean failure when `error` — never a stub.
-- **`LegalResearchV1Panel`**:
-  - after submit, send a generated `client_request_id`, then `navigate('/research/' + job_id)` (replace) so the URL itself is the resume token;
-  - on mount without a job id, query the user's most recent `queued|running` job and offer/auto-resume it (replaces the `sessionStorage` dependency; keep the key as a fallback hint only);
-  - running screen shows the required Hebrew copy plus the current `progress_label_he`;
-  - guard the submit button while a job is in flight.
-- **`QAHistorySidebar`**: merge `legal_research_jobs` rows (running / failed / timed out) with the existing `qa_logs` history, de-duplicated by `run_id`, showing question title, timestamp, and stage or completion state. Clicking a job navigates to `/research/:jobId`.
+Guards (detection is suppressed / not applied):
 
-## Validation
+- the request is explicitly source-seeking ("תן לי מקורות", "מצא פסיקה", "ביבליוגרפיה", "רשימת קריאה") → stays `source_recommendation` / `literature_map`;
+- an explicit docket appears in the question → existing docket safety floors keep priority (`case_holding`, judgment body required); academic writing may only ride along as the secondary intent.
 
-- Stage 1 — unit/fixture: idempotency resolver (same key twice → one job), stage→Hebrew label map, history merge/de-dup.
-- Stage 2 — cheap mock job: insert a synthetic job row, drive it through stages, verify the result screen reflects each stage after a hard refresh, and that a stale row is reaped and rendered as a clean failure.
-- Stage 3 — one real `legal-research-v1` run: submit, close the page mid-`reading_sources`, reopen `/research/:jobId`, confirm progress continued and the final answer matches a control run for the same input; plus a double-submit check (one job, one charge) and a cross-user read check (RLS denies).
+When academic writing is detected the plan sets `secondary_sources_can_support: true`, keeps `found_only_can_support_claims: false`, and records an override string in telemetry (`academic_writing_intent_detected`).
 
-Report: `reports/persistent-background-jobs/ACCEPTANCE_REPORT.md`, delivered here when done.
+## 3. Drafting behaviour
+
+In the drafter, an `academic_writing` plan swaps the answer contract:
+
+- produce continuous Hebrew academic prose in the requested genre — no bullet-point research report, no "מקורות שאותרו" opening, no research-gap framing as the lead;
+- for an introduction chapter, cover (as appropriate): framing of the legal problem, doctrinal background, the research question, the central tension, why it matters, and the planned structure of the paper;
+- treat legal concepts named by the user (e.g. "עקרון הפרדת הרשויות") as the user's topic, not as claims that need source anchoring — the negative-existence "לא נמצא עיגון מספק לשם…" framing is not emitted for concepts that come from the prompt;
+- unsupported specific holdings remain forbidden: no attributing rulings to courts without an acquired judgment body, no invented citations, no citing found-only or metadata-only sources;
+- caveats are consolidated into at most one short note **after** the draft, e.g. "הטיוטה מנוסחת כמבוא אקדמי ראשוני. יש להשלים בהמשך הפניות מדויקות לפסיקה ולספרות." When citations are thin the draft is additionally labelled "טיוטה ללא השלמת הפניות מלאות". No caveat sentences scattered through the prose.
+
+## 4. Sufficiency path
+
+Thin sources must not block drafting. For `academic_writing` plans the `insufficient_sources_limitation` branch is replaced by an *academic limited draft* branch: the draft is produced from the general framework, cautious formulations are required, and the post-draft note is appended. Docket limitation, statute-section limitation and canonical-quote branches keep priority and are unchanged.
+
+## 5. Technical notes
+
+- `lib/types.ts` — extend `USER_TASK_INTENTS` and `ANSWER_STRATEGIES`.
+- `lib/schemas.ts` — extend the analyzer tool enums + description.
+- `stages/sourceUseIntent.ts` — new `detectAcademicWritingRequest()` and the override, plus `isAcademicWritingTask()` helper; safety floors keep their current precedence order.
+- `stages/drafterV2.ts` — genre instruction block, suppression of gap-report lead and scattered caveats, single post-draft note, new `deterministic_branch: "academic_limited_draft"`.
+- `stages/sourceSufficiency.ts` — academic-writing exemption from the refusal branch (never from the anchor/docket gates).
+- `stages/negativeExistenceGuard.ts` — skip prompt-derived concept rewriting when the plan is academic writing.
+- Telemetry: plan overrides, detected intent, branch, citation count.
+
+## 6. Validation
+
+**Stage 1 — fixture tests** (new Deno/vitest test file): the six classification fixtures from the brief (intro chapter → academic_writing; "תן לי מקורות" → literature_map/source_recommendation; "מה הדין" → doctrinal_explanation; "סכם את בג״ץ X" → case_holding + judgment body; "רקע תיאורטי" → academic_writing; "מצא פסיקה על…" → source_recommendation/case_law_synthesis).
+
+**Stage 2 — mini live smoke** (3 runs): the reading-in / separation-of-powers introduction, one literature-map prompt, one case-holding safety prompt. Acceptance exactly as specified: prose intro, no "במקורות שאותרו לא נמצא" opening, no unsupported binding case law, short post-draft note only, literature map still returns sources, case-holding safety unchanged.
+
+**Stage 3 — 5-prompt evaluation**: introduction, theoretical background, research-question refinement, chapter outline, argument paragraph. Report detected intent, output genre, citation count, caveat style, and whether the text is usable.
+
+Results written to `reports/academic-writing-intent/ACCEPTANCE_REPORT.md`.
