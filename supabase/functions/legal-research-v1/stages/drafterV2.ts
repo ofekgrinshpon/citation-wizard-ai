@@ -1168,7 +1168,7 @@ export interface DrafterV2Result {
     | "academic_limited_draft";
   /** academic_draft_presentation_hygiene_v1 telemetry. */
   academic_presentation_hygiene?: AcademicHygieneReport;
-  academic_style_model?: AcademicStyleModelReport & { verbosity_ratio?: number };
+  academic_style_model?: AcademicStyleModelReport & { answer_words?: number };
 
   /** Deterministic source-sufficiency assessment (telemetry + gate result). */
 
@@ -2163,7 +2163,7 @@ export async function runDrafterV2(
   // limitation block is suppressed and replaced by a single "הערת עבודה" note,
   // and the body is normalized to prose without raw URLs.
   let academic_presentation_hygiene: AcademicHygieneReport | undefined;
-  let academic_style_model: (AcademicStyleModelReport & { verbosity_ratio?: number }) | undefined;
+  let academic_style_model: (AcademicStyleModelReport & { answer_words?: number }) | undefined;
   let answer_markdown: string;
 
   if (academicPrimary) {
@@ -2183,10 +2183,13 @@ export async function runDrafterV2(
     });
     answer_markdown = hygiene.answer;
     academic_presentation_hygiene = hygiene.report;
-    academic_style_model = buildAcademicStyleGuideBlock(
-      (opts?.sourceUsePlan?.academic_genre ?? "generic_academic") as AcademicGenre,
-      academicStyleOptions(inputSources, sufficiency),
-    ).report;
+    academic_style_model = {
+      ...buildAcademicStyleGuideBlock(
+        (opts?.sourceUsePlan?.academic_genre ?? "generic_academic") as AcademicGenre,
+        academicStyleOptions(inputSources, sufficiency),
+      ).report,
+      answer_words: answer_markdown.split(/\s+/).filter(Boolean).length,
+    };
 
   } else {
     answer_markdown = baseAnswer + referenceOnlyText + limitedDoctrinalText +
