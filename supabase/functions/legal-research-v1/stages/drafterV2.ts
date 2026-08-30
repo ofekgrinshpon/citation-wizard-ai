@@ -83,6 +83,22 @@ import {
   type AcademicHygieneReport,
   applyAcademicPresentationHygiene,
 } from "./academicPresentationHygiene.ts";
+import {
+  type AcademicStyleModelReport,
+  buildAcademicStyleGuideBlock,
+} from "./academicStyleGuide.ts";
+
+/** academic_style_model_v1 — thin-pack / footnote availability inputs. */
+function academicStyleOptions(
+  sources: DrafterInputSource[],
+  sufficiency?: SufficiencyAssessment,
+): { limitedDraft: boolean; hasFootnotes: boolean } {
+  const limitedDraft = (sufficiency?.reason ?? "").includes("academic_writing_draft_allowed") ||
+    sufficiency?.limited_doctrinal_answer === true ||
+    sources.length <= 2;
+  return { limitedDraft, hasFootnotes: sources.length > 0 };
+}
+
 
 
 /** academic_writing_intent_and_drafting_v1 — single post-draft note when the
@@ -358,7 +374,11 @@ function buildUserMessage(
       lines.push(
         "הז׳אנר המבוקש הוא פסקת טיעון אחת: כתוב פסקה אקדמית ממוקדת אחת בלבד (כ-150–300 מילים) שמשיבה ישירות לטענה שהמשתמש ביקש לבסס. אין לפצל לפרקים או לכותרות, ואין להכניס דוגמאות, הקשרים מוסדיים או תתי-נושאים שהמשתמש לא הזכיר.",
       );
+      lines.push(
+        "מבנה הפסקה: הצגת הטענה; הצגת הטיעון הנגדי החזק ביותר בניסוחו המיטבי; אבחנה משפטית מדויקת בין השניים; והכרעה — או הודאה מפורשת בקושי שנותר. אין לבטל את הטיעון הנגדי במשפט אחד.",
+      );
     }
+
     lines.push(
       "מיקוד נושאי: המקורות שאותרו נועדו להעשיר את הנושא שהמשתמש הגדיר בלבד. אין לגלוש להקשרים דוקטרינריים קונקרטיים אחרים (למשל בתי דין דתיים בשאלה על מינויים פוליטיים) אלא אם המשתמש הזכיר אותם. מקור מתחום אחר מותר רק כמסגרת תיאורטית/השוואתית כללית, ורק אם אינו מוצג כסמכות ישירה לנושא הספציפי.",
     );
@@ -366,13 +386,30 @@ function buildUserMessage(
       "אין לכתוב כתובות URL בגוף הטקסט. הפניות למקורות יופיעו בהערות השוליים בלבד.",
     );
 
-    lines.push(
-      'אין לפתוח את הטיוטה בדיווח על המקורות (למשל "במקורות שאותרו לא נמצא…", "לא נמצא עיגון מספק…"). אין לפזר הערות זהירות בגוף הטקסט — אם נדרשת הבהרה, היא תופיע כהערה קצרה אחת לאחר הטיוטה בלבד.',
+    // academic_style_model_v1 — the style guide owns prose quality; the drafter
+    // keeps only safety, source-support, envelope and citation rules.
+    const styleGuide = buildAcademicStyleGuideBlock(
+      genre as AcademicGenre,
+      academicStyleOptions(sources, sufficiency),
     );
+    if (styleGuide.block) {
+      lines.push(
+        'אין לפזר הערות זהירות בגוף הטקסט — אם נדרשת הבהרה, היא תופיע כהערה קצרה אחת לאחר הטיוטה בלבד.',
+      );
+    } else {
+      lines.push(
+        'אין לפתוח את הטיוטה בדיווח על המקורות (למשל "במקורות שאותרו לא נמצא…", "לא נמצא עיגון מספק…"). אין לפזר הערות זהירות בגוף הטקסט — אם נדרשת הבהרה, היא תופיע כהערה קצרה אחת לאחר הטיוטה בלבד.',
+      );
+    }
     lines.push(
       "אין לייחס לבית משפט הלכה ספציפית ללא גוף פסק דין שאותר, אין להמציא הפניות, ואין לצטט מקורות שאותרו בלבד. כשהתמיכה דלה — נסח בלשון זהירה ובמונחים כלליים.",
     );
+    if (styleGuide.block) {
+      lines.push("");
+      lines.push(styleGuide.block);
+    }
   }
+
   if (framing?.framing_correction_required && framing.named_doctrine_phrase) {
     const named = framing.named_doctrine_phrase;
     const subject = framing.subject_phrase ?? named;
@@ -1131,6 +1168,8 @@ export interface DrafterV2Result {
     | "academic_limited_draft";
   /** academic_draft_presentation_hygiene_v1 telemetry. */
   academic_presentation_hygiene?: AcademicHygieneReport;
+  academic_style_model?: AcademicStyleModelReport & { answer_words?: number };
+
   /** Deterministic source-sufficiency assessment (telemetry + gate result). */
 
   /** claim_source_match_validation_v1 — per-block claim/source gate telemetry. */
@@ -2124,7 +2163,9 @@ export async function runDrafterV2(
   // limitation block is suppressed and replaced by a single "הערת עבודה" note,
   // and the body is normalized to prose without raw URLs.
   let academic_presentation_hygiene: AcademicHygieneReport | undefined;
+  let academic_style_model: (AcademicStyleModelReport & { answer_words?: number }) | undefined;
   let answer_markdown: string;
+
   if (academicPrimary) {
     const suppressed = [
       academicLimited ? 1 : 0,
@@ -2142,6 +2183,14 @@ export async function runDrafterV2(
     });
     answer_markdown = hygiene.answer;
     academic_presentation_hygiene = hygiene.report;
+    academic_style_model = {
+      ...buildAcademicStyleGuideBlock(
+        (opts?.sourceUsePlan?.academic_genre ?? "generic_academic") as AcademicGenre,
+        academicStyleOptions(inputSources, sufficiency),
+      ).report,
+      answer_words: answer_markdown.split(/\s+/).filter(Boolean).length,
+    };
+
   } else {
     answer_markdown = baseAnswer + referenceOnlyText + limitedDoctrinalText +
       matched.limitation_text;
@@ -2197,6 +2246,8 @@ export async function runDrafterV2(
     missing_anchor_descriptions: missingAnchors.map((a) => a.description),
     deterministic_branch: academicLimited ? "academic_limited_draft" : undefined,
     academic_presentation_hygiene,
+    academic_style_model,
+
 
     sufficiency,
     named_doctrine_framing: framing,
