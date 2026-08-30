@@ -1168,6 +1168,8 @@ export interface DrafterV2Result {
     | "academic_limited_draft";
   /** academic_draft_presentation_hygiene_v1 telemetry. */
   academic_presentation_hygiene?: AcademicHygieneReport;
+  academic_style_model?: AcademicStyleModelReport & { verbosity_ratio?: number };
+
   /** Deterministic source-sufficiency assessment (telemetry + gate result). */
 
   /** claim_source_match_validation_v1 — per-block claim/source gate telemetry. */
