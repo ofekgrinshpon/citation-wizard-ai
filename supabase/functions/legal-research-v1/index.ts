@@ -2868,9 +2868,20 @@ async function handle(req: Request): Promise<Response> {
     settled = true;
     void refundCredits("watchdog_timeout");
     void setJobStatus({
-      status: "error",
+      status: "timed_out",
       error: "pipeline_watchdog_timeout",
       current_stage: null,
+      progress_label_he: null,
+      completed_at: new Date().toISOString(),
+      result: {
+        answer: "",
+        footnotes: [],
+        used_sources: [],
+        branch: "infrastructure_timeout",
+        infrastructure_failure: true,
+        timed_out: true,
+        run_id,
+      },
     });
   }, WATCHDOG_MS) as unknown as number;
 
@@ -2887,13 +2898,18 @@ async function handle(req: Request): Promise<Response> {
         if (!pipelineDelivered) {
           await refundCredits("no_answer_delivered");
         }
-        await setJobStatus({ status: "done", result: payload });
+        await setJobStatus({ status: "done", result: payload, completed_at: new Date().toISOString() });
       } else {
         await refundCredits(`pipeline_status_${resp.status}`);
         const errMsg = (payload && typeof payload === "object")
           ? JSON.stringify(payload).slice(0, 4000)
           : `http_${resp.status}`;
-        await setJobStatus({ status: "error", error: errMsg, result: payload });
+        await setJobStatus({
+          status: "error",
+          error: errMsg,
+          result: payload,
+          completed_at: new Date().toISOString(),
+        });
       }
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -2901,8 +2917,9 @@ async function handle(req: Request): Promise<Response> {
       await refundCredits("pipeline_threw");
       if (settled) return;
       settled = true;
-      await setJobStatus({ status: "error", error: msg });
+      await setJobStatus({ status: "error", error: msg, completed_at: new Date().toISOString() });
     } finally {
+
       IN_FLIGHT = Math.max(0, IN_FLIGHT - 1);
       clearTimeout(watchdog);
     }
