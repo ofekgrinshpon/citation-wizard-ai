@@ -487,6 +487,7 @@ export type Database = {
           completed_at: string | null
           completed_stages: string[]
           created_at: string
+          credit_request_id: string | null
           current_stage: string | null
           error: string | null
           id: string
@@ -504,6 +505,7 @@ export type Database = {
           completed_at?: string | null
           completed_stages?: string[]
           created_at?: string
+          credit_request_id?: string | null
           current_stage?: string | null
           error?: string | null
           id?: string
@@ -521,6 +523,7 @@ export type Database = {
           completed_at?: string | null
           completed_stages?: string[]
           created_at?: string
+          credit_request_id?: string | null
           current_stage?: string | null
           error?: string | null
           id?: string
@@ -1210,6 +1213,10 @@ export type Database = {
       record_legal_acceptance: { Args: { _version: string }; Returns: Json }
       refund_credits: {
         Args: { _reason: string; _request_id: string }
+        Returns: Json
+      }
+      refund_credits_for_user: {
+        Args: { _reason: string; _request_id: string; _user_id: string }
         Returns: Json
       }
       reset_or_renew_credits: { Args: never; Returns: number }
