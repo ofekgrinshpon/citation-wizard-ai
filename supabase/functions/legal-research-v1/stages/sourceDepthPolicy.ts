@@ -394,7 +394,32 @@ export function applyDepthToPlannerQueries(
       out.push(q);
       added.push({ role: q.role, query_he: q.query_he });
     }
+
+    // academic_citation_authority_alignment_v1 — soft academic roles.
+    // Two extra scholarship slots so an academic pack can carry a
+    // critique/counter-position source and an applied/example source.
+    // These are roles, not requirements: an empty result is reported, never
+    // fabricated and never a refusal trigger.
+    if (mode === "academic_research") {
+      const critique = mk(
+        "scholarship",
+        "academic",
+        `ביקורת אקדמית ועמדה מנוגדת — ${t}`,
+        "academic_soft_role_critique",
+      );
+      out.push(critique);
+      added.push({ role: critique.role, query_he: critique.query_he });
+      const example = mk(
+        "scholarship",
+        "academic",
+        `יישום בפועל ודוגמאות — ${t}`,
+        "academic_soft_role_example",
+      );
+      out.push(example);
+      added.push({ role: example.role, query_he: example.query_he });
+    }
   }
+
 
   const finalByType: Record<string, number> = {};
   for (const q of out) {
