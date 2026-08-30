@@ -80,6 +80,9 @@ export function dropTopicDrift(
     return true;
   });
   return { text: kept.join("\n\n"), dropped };
+}
+
+
 
 
 /** Does the user's own question explicitly ask for a list / outline? */
