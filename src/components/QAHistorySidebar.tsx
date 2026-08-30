@@ -213,11 +213,46 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
             <p className="text-xs text-muted-foreground text-center py-4">טוען...</p>
           )}
 
-          {!loading && filtered.length === 0 && (
+          {/* In-flight / failed research jobs — always resumable from the server */}
+          {visibleJobs.map((job) => {
+            const isActive = ACTIVE_JOB_STATUSES.includes(job.status);
+            const isTimedOut = job.status === "timed_out";
+            return (
+              <button
+                key={job.id}
+                onClick={() => { window.location.href = `/app?job=${job.id}`; }}
+                className={`w-full text-right rounded-lg px-3 py-2.5 transition-colors group border ${
+                  isTimedOut
+                    ? "border-amber-500/40 bg-amber-500/5 hover:bg-amber-500/10"
+                    : isActive
+                    ? "border-primary/30 bg-primary/5 hover:bg-primary/10"
+                    : "border-destructive/30 bg-destructive/5 hover:bg-destructive/10"
+                }`}
+              >
+                <p className="text-xs text-foreground leading-relaxed line-clamp-2">{job.question}</p>
+                <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                  <Badge variant="outline" className="text-[9px] px-1.5 py-0">
+                    {isActive
+                      ? `רץ ברקע${job.progress_label_he ? ` — ${job.progress_label_he}` : ""}`
+                      : isTimedOut
+                      ? "הופסק — תקלה תשתיתית"
+                      : "נכשל"}
+                  </Badge>
+                  <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                    <Clock className="w-2.5 h-2.5" />
+                    {formatDistanceToNow(new Date(job.created_at), { addSuffix: true, locale: he })}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+
+          {!loading && filtered.length === 0 && visibleJobs.length === 0 && (
             <p className="text-xs text-muted-foreground text-center py-4">
               {search ? "לא נמצאו תוצאות" : "אין היסטוריה עדיין"}
             </p>
           )}
+
 
           {filtered.map((log) => {
             const mode = MODE_LABELS[log.task_mode || "research"] || MODE_LABELS.research;
