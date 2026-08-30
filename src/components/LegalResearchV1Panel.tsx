@@ -122,7 +122,7 @@ export function LegalResearchV1Panel({
   externalResult,
   onConsumeExternalResult,
 }: LegalResearchV1PanelProps = {}) {
-  const { currentProject } = useProjects();
+  const { currentProject, loading: projectsLoading } = useProjects();
   const credits = useCredits();
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
@@ -174,7 +174,15 @@ export function LegalResearchV1Panel({
   };
 
   const clearResume = () => {
+    try { localStorage.removeItem(RESUME_STORAGE_KEY); } catch { /* ignore */ }
     try { sessionStorage.removeItem(RESUME_STORAGE_KEY); } catch { /* ignore */ }
+  };
+
+  const persistResume = (jid: string, startedAt: number) => {
+    const value = JSON.stringify({ jobId: jid, startedAt });
+    try { localStorage.setItem(RESUME_STORAGE_KEY, value); } catch { /* ignore */ }
+    // Keep the old tab-scoped copy during rollout so an already-open tab remains compatible.
+    try { sessionStorage.setItem(RESUME_STORAGE_KEY, value); } catch { /* ignore */ }
   };
 
   const handleCancel = () => {
@@ -299,12 +307,7 @@ export function LegalResearchV1Panel({
       setJobId(jid);
       setLoading(true);
       setJobUrlParam(jid);
-      try {
-        sessionStorage.setItem(
-          RESUME_STORAGE_KEY,
-          JSON.stringify({ jobId: jid, startedAt: startedAt ? Date.parse(startedAt) : Date.now() }),
-        );
-      } catch { /* ignore */ }
+      persistResume(jid, startedAt ? Date.parse(startedAt) : Date.now());
       startProgress(startedAt ? Date.parse(startedAt) : Date.now());
       if (opts?.markResumed) setResumed(true);
       applyJobRow(row);
@@ -317,44 +320,52 @@ export function LegalResearchV1Panel({
 
   // Resume-on-mount. The job lives in the database, so a refresh, a new tab or
   // a returning session all reattach: ?job=<id> deep link first, then this
-  // tab's session hint, then the user's most recent still-running job.
+  // browser-persistent hint, then the user's most recent job in this project.
   // Skip when a history-replay payload is being injected — the cached result
   // must win over any leftover job state.
   useEffect(() => {
     if (externalResult) return;
+    let urlJob: string | null = null;
+    try {
+      urlJob = new URL(window.location.href).searchParams.get("job");
+    } catch { /* ignore */ }
+    // A direct job URL is self-contained. Otherwise wait until project
+    // hydration finishes so the fallback lookup uses the correct project.
+    if (!urlJob && projectsLoading) return;
     let cancelled = false;
     (async () => {
-      let urlJob: string | null = null;
-      try {
-        urlJob = new URL(window.location.href).searchParams.get("job");
-      } catch { /* ignore */ }
       if (urlJob) {
         if (!cancelled) await attachToJob(urlJob, { markResumed: true });
         return;
       }
-      let sessionJob: string | null = null;
+      let storedJob: string | null = null;
       try {
-        const raw = sessionStorage.getItem(RESUME_STORAGE_KEY);
-        if (raw) sessionJob = (JSON.parse(raw) as { jobId?: string })?.jobId ?? null;
+        const raw = localStorage.getItem(RESUME_STORAGE_KEY) ?? sessionStorage.getItem(RESUME_STORAGE_KEY);
+        if (raw) storedJob = (JSON.parse(raw) as { jobId?: string })?.jobId ?? null;
       } catch { /* ignore */ }
-      if (sessionJob) {
-        if (!cancelled) await attachToJob(sessionJob, { markResumed: true });
-        return;
+      if (storedJob && !cancelled) {
+        const attached = await attachToJob(storedJob, { markResumed: true });
+        if (attached) return;
+        clearResume();
       }
-      // No local hint: fall back to the newest active job owned by the user.
-      const { data } = await supabase
+      // No durable hint (including jobs launched before this fix): recover the
+      // newest recent job, including one that completed while the browser was closed.
+      let query = supabase
         .from("legal_research_jobs")
         .select("id")
-        .in("status", ACTIVE_STATUSES)
+        .gte("created_at", new Date(Date.now() - 30 * 24 * 60 * 60_000).toISOString())
         .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .limit(1);
+      query = currentProject?.id
+        ? query.eq("project_id", currentProject.id)
+        : query.is("project_id", null);
+      const { data } = await query.maybeSingle();
       const row = data as { id: string } | null;
       if (row?.id && !cancelled) await attachToJob(row.id, { markResumed: true });
     })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [externalResult, projectsLoading, currentProject?.id]);
 
 
   // History replay: hydrate cached V1 answer/footnotes from the sidebar.
@@ -528,12 +539,7 @@ export function LegalResearchV1Panel({
 
       setJobId(data.job_id);
       setJobUrlParam(data.job_id);
-      try {
-        sessionStorage.setItem(
-          RESUME_STORAGE_KEY,
-          JSON.stringify({ jobId: data.job_id, startedAt: startRef.current }),
-        );
-      } catch { /* ignore quota */ }
+      persistResume(data.job_id, startRef.current);
       pollJob(data.job_id);
 
     } catch (e) {
