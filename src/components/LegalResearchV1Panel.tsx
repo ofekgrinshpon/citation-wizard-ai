@@ -494,7 +494,9 @@ export function LegalResearchV1Panel({
           project_id: currentProject?.id ?? null,
           attachments: attachmentsPayload,
           use_as_source: useAsSource,
+          client_request_id: clientRequestIdRef.current,
         },
+
         { projectId: currentProject?.id ?? null },
       );
 
