@@ -42,7 +42,45 @@ export interface AcademicHygieneReport {
   word_count: number | null;
   notice: "thin" | "sourced";
   notices_suppressed: number;
+  /** Paragraphs dropped because they pivoted to an unrelated legal domain. */
+  drift_paragraphs_dropped: number;
 }
+
+/**
+ * Off-topic domain markers. A paragraph that leans on one of these domains is
+ * dropped when the user's own question never mentions that domain — this is the
+ * deterministic half of the topic-drift guard (the prompt carries the other).
+ */
+const DRIFT_DOMAINS: Array<{ id: string; re: RegExp }> = [
+  { id: "religious_courts", re: /(בית[- ]דין רבני|בתי[- ]דין רבניים|בית[- ]דין דתי|בתי[- ]דין דתיים|שיפוט דתי|הדין העברי|בית[- ]הדין השרעי)/ },
+  { id: "family", re: /(גירושין|חלוקת רכוש|משמורת|מזונות ילדים|הסכם ממון)/ },
+  { id: "criminal", re: /(הליך פלילי|כתב אישום|עונשין|מעצר ימים)/ },
+  { id: "labor", re: /(בית הדין לעבודה|יחסי עובד[- ]מעביד|פיטורים שלא כדין)/ },
+  { id: "tax", re: /(פקודת מס הכנסה|מע"מ|שומת מס)/ },
+];
+
+/** Drops paragraphs that pivot to a legal domain the question never raised. */
+export function dropTopicDrift(
+  body: string,
+  question: string,
+): { text: string; dropped: number } {
+  const q = question ?? "";
+  const foreign = DRIFT_DOMAINS.filter((d) => !d.re.test(q));
+  if (!foreign.length) return { text: body, dropped: 0 };
+  const paras = body.split(/\n{2,}/);
+  let dropped = 0;
+  const kept = paras.filter((p) => {
+    const hits = foreign.filter((d) => d.re.test(p)).length;
+    // Conservative: only drop when the paragraph is genuinely about the foreign
+    // domain (a marker present) and enough prose remains after the drop.
+    if (hits > 0 && paras.length - dropped > 2) {
+      dropped++;
+      return false;
+    }
+    return true;
+  });
+  return { text: kept.join("\n\n"), dropped };
+
 
 /** Does the user's own question explicitly ask for a list / outline? */
 export function userAskedForList(question: string): boolean {
