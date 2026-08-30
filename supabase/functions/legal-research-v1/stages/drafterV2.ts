@@ -2183,6 +2183,11 @@ export async function runDrafterV2(
     });
     answer_markdown = hygiene.answer;
     academic_presentation_hygiene = hygiene.report;
+    academic_style_model = buildAcademicStyleGuideBlock(
+      (opts?.sourceUsePlan?.academic_genre ?? "generic_academic") as AcademicGenre,
+      academicStyleOptions(inputSources, sufficiency),
+    ).report;
+
   } else {
     answer_markdown = baseAnswer + referenceOnlyText + limitedDoctrinalText +
       matched.limitation_text;
