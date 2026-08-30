@@ -366,13 +366,30 @@ function buildUserMessage(
       "אין לכתוב כתובות URL בגוף הטקסט. הפניות למקורות יופיעו בהערות השוליים בלבד.",
     );
 
-    lines.push(
-      'אין לפתוח את הטיוטה בדיווח על המקורות (למשל "במקורות שאותרו לא נמצא…", "לא נמצא עיגון מספק…"). אין לפזר הערות זהירות בגוף הטקסט — אם נדרשת הבהרה, היא תופיע כהערה קצרה אחת לאחר הטיוטה בלבד.',
+    // academic_style_model_v1 — the style guide owns prose quality; the drafter
+    // keeps only safety, source-support, envelope and citation rules.
+    const styleGuide = buildAcademicStyleGuideBlock(
+      genre as AcademicGenre,
+      academicStyleOptions(sources, sufficiency),
     );
+    if (styleGuide.block) {
+      lines.push(
+        'אין לפזר הערות זהירות בגוף הטקסט — אם נדרשת הבהרה, היא תופיע כהערה קצרה אחת לאחר הטיוטה בלבד.',
+      );
+    } else {
+      lines.push(
+        'אין לפתוח את הטיוטה בדיווח על המקורות (למשל "במקורות שאותרו לא נמצא…", "לא נמצא עיגון מספק…"). אין לפזר הערות זהירות בגוף הטקסט — אם נדרשת הבהרה, היא תופיע כהערה קצרה אחת לאחר הטיוטה בלבד.',
+      );
+    }
     lines.push(
       "אין לייחס לבית משפט הלכה ספציפית ללא גוף פסק דין שאותר, אין להמציא הפניות, ואין לצטט מקורות שאותרו בלבד. כשהתמיכה דלה — נסח בלשון זהירה ובמונחים כלליים.",
     );
+    if (styleGuide.block) {
+      lines.push("");
+      lines.push(styleGuide.block);
+    }
   }
+
   if (framing?.framing_correction_required && framing.named_doctrine_phrase) {
     const named = framing.named_doctrine_phrase;
     const subject = framing.subject_phrase ?? named;
