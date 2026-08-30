@@ -411,6 +411,8 @@ async function handle(req: Request): Promise<Response> {
         question,
         status: "running",
         started_at: new Date().toISOString(),
+        // Lets the stale-job reaper refund this run's charge if the worker dies.
+        ...(creditsCharged && creditRequestId ? { credit_request_id: creditRequestId } : {}),
         ...(clientRequestId && !smokeMode ? { client_request_id: clientRequestId } : {}),
       })
       .select("id")
