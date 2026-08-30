@@ -226,6 +226,9 @@ export function applyAcademicPresentationHygiene(
   const u = stripUrlsFromProse(body);
   body = u.text;
 
+  const drift = dropTopicDrift(body, opts.question ?? "");
+  body = drift.text;
+
   if (isProse && genre === "argument_paragraph") {
     const p = enforceSingleParagraph(body);
     body = p.text;
@@ -257,6 +260,7 @@ export function applyAcademicPresentationHygiene(
       word_count,
       notice,
       notices_suppressed: opts.noticesSuppressed ?? 0,
+      drift_paragraphs_dropped: drift.dropped,
     },
   };
 }
