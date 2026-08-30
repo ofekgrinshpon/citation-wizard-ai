@@ -281,6 +281,41 @@ async function handle(req: Request): Promise<Response> {
   const useAsSource = body.use_as_source !== false; // default true
   // (x-atomic-markers header and atomic mode were removed with the Phase 3 cleanup.)
 
+  // ─── Idempotency (persistent_background_research_jobs_v1) ────────────────
+  // The client generates a fresh id per submit attempt and re-sends it only on
+  // a retry/double-submit of that same attempt. If we already have a job for
+  // (user, client_request_id) we return it without charging again.
+  const cridRaw = body.client_request_id;
+  const clientRequestId = typeof cridRaw === "string" && cridRaw.trim().length >= 8
+    ? cridRaw.trim().slice(0, 120)
+    : null;
+  if (clientRequestId && !smokeMode) {
+    try {
+      const { data: existing } = await adminEarly
+        .from("legal_research_jobs")
+        .select("id, status, created_at")
+        .eq("user_id", user.id)
+        .eq("client_request_id", clientRequestId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      const row = existing as { id: string; status: string; created_at: string } | null;
+      if (row) {
+        console.log("[lrv1 idempotent replay]", { job_id: row.id, status: row.status });
+        return jsonResponse(202, {
+          ok: true,
+          job_id: row.id,
+          status: row.status,
+          idempotent_replay: true,
+        });
+      }
+    } catch (e) {
+      console.error("[lrv1 idempotency lookup failed]", e);
+    }
+  }
+
+
+
   // ─── Credit charge (skipped in smoke mode) ───────────────────────────────
   // Charge the per-query cost up front. The pipeline runs in the background
   // after we return 202; if it does not deliver a real answer (refusal, stub,
