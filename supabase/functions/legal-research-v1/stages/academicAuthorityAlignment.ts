@@ -143,6 +143,34 @@ export function academicTopicalFit(
   return { fit: shared.length >= minScore, shared: shared.slice(0, 8), score: shared.length };
 }
 
+/**
+ * academic_declared_category_remap_and_body_acquisition_v2 — pack-level
+ * subject-matter fit. Removes sources that share *no* meaningful subject
+ * vocabulary with the question (e.g. family-law material in an administrative
+ * pack) before drafting. Deliberately conservative: primary authority is never
+ * dropped and the pack is never reduced below `minKeep` sources.
+ */
+export function academicPackFit(
+  question: string,
+  sources: DrafterInputSource[],
+  minKeep = 3,
+): { kept: DrafterInputSource[]; dropped: Array<{ ref: string; title: string; score: number }> } {
+  const scored = sources.map((s) => ({
+    s,
+    score: academicTopicalFit(question, "", s).score,
+    primary: isPrimaryAnchor(s),
+  }));
+  const offTopic = scored.filter((x) => !x.primary && x.score === 0);
+  if (offTopic.length === 0) return { kept: sources, dropped: [] };
+  if (scored.length - offTopic.length < minKeep) return { kept: sources, dropped: [] };
+  const dropRefs = new Set(offTopic.map((x) => x.s.ref));
+  return {
+    kept: sources.filter((s) => !dropRefs.has(s.ref)),
+    dropped: offTopic.map((x) => ({ ref: x.s.ref, title: String(x.s.title ?? ""), score: x.score })),
+  };
+}
+
+
 // ── 4. Soft academic source roles ───────────────────────────────────────────
 
 export const ACADEMIC_SOURCE_ROLES = [
