@@ -246,7 +246,12 @@ export function deriveClaimCategory(input: {
     category = mapped.category;
     basis = `academic_declared_remap(${declared})+${mapped.basis}`;
     remappedFrom = declared;
+  } else if (academic) {
+    const mapped = academicCategoryFromSignals(input.propositionType, bodyText);
+    category = mapped.category;
+    basis = mapped.basis;
   } else {
+
     switch (input.propositionType) {
       case "black_letter_rule":
         category = "court_holding";
