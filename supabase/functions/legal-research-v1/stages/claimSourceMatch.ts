@@ -18,11 +18,16 @@ import { inferLegalAreaId } from "./claimFacetExpansion.ts";
 import {
   academicTopicalFit,
   type AcademicAuthorityAlignmentReport,
+  blockAllowsReferenceOnly,
+  CATEGORY_TO_ROLE,
   classifyAcademicSourceRoles,
   emptyAcademicAuthorityAlignment,
   guardPrimaryLanguage,
+  isBibliographyOnlySource,
   isCategoricalClaim,
+  isStrongPartial,
 } from "./academicAuthorityAlignment.ts";
+
 import {
   type AuthorityOverstatement,
   AUTHORITY_OVERSTATEMENT_LIMITATION_HE,
@@ -108,7 +113,12 @@ export interface ClaimSourceMatchReport {
   rebinding: RebindingSummary;
   /** academic_citation_authority_alignment_v1 telemetry. */
   academic_authority_alignment?: AcademicAuthorityAlignmentReport;
+
+  /** academic_utilization_stabilization_v1 — refs kept as reading pointers
+   *  only (bibliography-only academic items in literature/framing blocks). */
+  reference_only_refs?: string[];
 }
+
 
 
 
@@ -245,8 +255,28 @@ export function applyClaimSourceMatch(
   );
   report.applied = true;
 
+  // academic_utilization_stabilization_v1 — role map + question, computed once.
+  const question = String(opts?.question ?? "");
+  const eligibleRefsGlobal = new Set(
+    inputSources.filter((s) => profiles.get(s.ref)?.doctrinal_authority === true).map((s) => s.ref),
+  );
+  const rolesGlobal = academicMode
+    ? classifyAcademicSourceRoles(inputSources, eligibleRefsGlobal)
+    : null;
+  const referenceOnlyRefs = new Set<string>();
+  const hasRole = (ref: string, category: ClaimSupportCategory): boolean => {
+    const role = CATEGORY_TO_ROLE[category];
+    if (!role) return false;
+    if (rolesGlobal?.by_role[role]?.includes(ref)) return true;
+    // bibliography-only items play the background/framing role by nature.
+    const src = sourceByRef.get(ref);
+    return role === "doctrinal_background_source" && !!src && isBibliographyOnlySource(src);
+  };
+
   const claimSupport = new Map<string, { primary: boolean; any: boolean }>();
   const blocks: StructuredBlock[] = [];
+
+
 
 
   draft.blocks.forEach((b, idx) => {
@@ -302,6 +332,24 @@ export function applyClaimSourceMatch(
       ? String((b as unknown as Record<string, unknown>).text)
       : "";
 
+    // academic_utilization_stabilization_v1 — per-block support context.
+    const fitOf = new Map<string, boolean>();
+    if (academicMode) {
+      for (const ref of b.source_refs) {
+        const s = sourceByRef.get(ref);
+        if (s) fitOf.set(ref, academicTopicalFit(question, blockText, s).fit);
+      }
+    }
+    const betterDirectAvailable = academicMode &&
+      b.source_refs.some((r) => {
+        const mm = byRef.get(r);
+        const pp = profiles.get(r);
+        return !!mm && mm.verifier_verdict === "direct" && fitOf.get(r) === true &&
+          !!(pp?.doctrinal_authority || pp?.judgment_authority || pp?.statutory_authority);
+      });
+
+
+
     for (const ref of b.source_refs) {
       const m = byRef.get(ref);
       if (!m) {
@@ -314,6 +362,8 @@ export function applyClaimSourceMatch(
       // Rule A — claim/facet binding (claim_source_rebinding_v1).
       // A ref is dropped only when no substantive binding exists at all;
       // pure id-space divergence no longer costs a good source.
+      const src0 = sourceByRef.get(ref);
+      const prof0 = profiles.get(ref);
       const decision = evaluateBinding({
         block_index: idx,
         claim_id: tags.claim_id,
@@ -322,6 +372,7 @@ export function applyClaimSourceMatch(
         claim_category: category,
         legal_area: tags.legal_area,
         text: blockText,
+        academic_mode: academicMode,
       }, {
         ref,
         verified_claim_ids: m.verified_claim_ids,
@@ -330,9 +381,28 @@ export function applyClaimSourceMatch(
         legal_area: m.legal_area,
         verifier_verdict: m.verifier_verdict,
         body_acquired: m.body_acquired,
+        title: String(src0?.title ?? ""),
+        snippet: String(src0?.snippet ?? ""),
+        topical_fit_passed: fitOf.get(ref) === true,
+        is_secondary_academic: !m.is_primary &&
+          (prof0?.doctrinal_authority === true || isBibliographyOnlySource(src0!)),
       });
       blockBindings.set(ref, decision.binding);
       report.rebinding.decisions.push(decision);
+      if (academicMode && decision.reason === "shared_title_subject_terms") {
+        align.hebrew_rebinding.push({
+          attempted: true,
+          source_id: ref,
+          title: String(src0?.title ?? ""),
+          old_binding_result: "unbound",
+          new_binding_result: decision.binding,
+          reason: decision.reason,
+          title_topic_match: true,
+          verifier_verdict: m.verifier_verdict,
+          topical_fit: fitOf.get(ref) === true,
+        });
+      }
+
       switch (decision.binding) {
         case "exact":
           report.rebinding.bound_exact++;
@@ -372,34 +442,92 @@ export function applyClaimSourceMatch(
       // acquired doctrinal secondary. Court-holding claims are unaffected.
       const prof = profiles.get(ref);
       const doctrinalEligible = prof?.doctrinal_authority === true;
+      const roleMatch = academicMode && hasRole(ref, category);
+      const strongPartial = academicMode &&
+        isStrongPartial({
+          verdict: m.verifier_verdict,
+          topicalFitPassed: fitOf.get(ref) === true,
+          roleMatch,
+          betterDirectAvailable,
+        });
+      let referenceOnly = false;
       if (
         !reason && substantive &&
         (m.support_subtype === "background" || m.support_subtype === "commentary") &&
         !m.is_primary &&
         !(doctrinalCategory && doctrinalEligible)
       ) {
-        reason = "commentary_in_substantive_block";
+        // academic_utilization_stabilization_v1 — a genuine bibliography-only
+        // academic item may stay in a literature/framing block as a reading
+        // pointer. It never supports a substantive legal proposition.
+        const bibOnly = academicMode && !!src0 && isBibliographyOnlySource(src0) &&
+          blockAllowsReferenceOnly(category, blockText) &&
+          fitOf.get(ref) === true &&
+          (m.verifier_verdict === "direct" || strongPartial);
+        if (bibOnly) {
+          referenceOnly = true;
+          referenceOnlyRefs.add(ref);
+          align.bib_reference_uses.push({
+            source_title: String(src0?.title ?? ""),
+            block_category: category,
+            reference_only: true,
+            reason: "bibliography_only_reading_pointer",
+          });
+        } else {
+          reason = "commentary_in_substantive_block";
+          if (academicMode && !!src0 && isBibliographyOnlySource(src0)) {
+            align.bib_reference_uses.push({
+              source_title: String(src0.title ?? ""),
+              block_category: category,
+              reference_only: false,
+              reason: fitOf.get(ref) === true
+                ? "block_does_not_allow_reference_only"
+                : "off_topic",
+            });
+          }
+        }
       }
 
 
       // Rule C — analogical / same-domain never carries a black-letter rule.
-      if (!reason && ptype === "black_letter_rule" && m.support_subtype === "analogy") {
+      if (!reason && !referenceOnly && ptype === "black_letter_rule" && m.support_subtype === "analogy") {
         reason = "analogical_for_black_letter";
       }
 
       // Rule D — unrelated legal area on a central proposition.
       if (
-        !reason && substantive && tags.legal_area && m.legal_area &&
+        !reason && !referenceOnly && substantive && tags.legal_area && m.legal_area &&
         tags.legal_area !== m.legal_area
       ) {
-        reason = "unrelated_legal_area";
+        // academic_utilization_stabilization_v1 — academic writing legitimately
+        // crosses doctrinal areas (constitutional ↔ administrative ↔ family).
+        // For academic, non-primary claim categories the area mismatch is
+        // demoted to a warning when the source is on topic and plays the role
+        // the block needs. Holdings/statutory blocks keep the hard rule.
+        const override = academicMode && academicCategory &&
+          fitOf.get(ref) === true && roleMatch &&
+          (m.verifier_verdict === "direct" || strongPartial);
+        if (academicMode) {
+          align.rule_d_area_overrides.push({
+            source_id: ref,
+            title: String(src0?.title ?? ""),
+            block_category: category,
+            source_legal_area: m.legal_area,
+            block_legal_area: tags.legal_area,
+            topical_fit_passed: fitOf.get(ref) === true,
+            overridden: override,
+            final_decision: override ? "kept_with_warning" : "dropped",
+          });
+        }
+
+        if (!override) reason = "unrelated_legal_area";
       }
 
       // Rule E (substance_based_doctrinal_sufficiency_v1) — the claim's
       // substance category defines the authority level it needs. A court
       // holding cannot rest on secondary material; a statutory claim cannot
       // rest on commentary alone.
-      if (!reason && prof && !categoryAccepts(category, prof)) {
+      if (!reason && !referenceOnly && prof && !categoryAccepts(category, prof)) {
         reason = "insufficient_authority_for_claim_category";
         if (
           (category === "court_holding" || category === "statutory") && prof.doctrinal_authority
@@ -409,8 +537,9 @@ export function applyClaimSourceMatch(
         }
       }
 
+
       // academic_citation_authority_alignment_v1
-      if (academicMode && !reason && prof?.doctrinal_authority && !m.is_primary) {
+      if (academicMode && !reason && !referenceOnly && prof?.doctrinal_authority && !m.is_primary) {
         // (a) `partial` support may carry cautious wording only.
         if (m.verifier_verdict !== "direct" && isCategoricalClaim(blockText)) {
           reason = "partial_support_for_categorical_claim";
@@ -574,7 +703,35 @@ export function applyClaimSourceMatch(
     align.refs_dropped_by_authority_category = report.dropped_source_refs.filter((d) =>
       d.reason === "insufficient_authority_for_claim_category"
     ).length;
+
+    // academic_utilization_stabilization_v1 — coverage of substantive blocks.
+    const finalRefsAll = new Set(report.claim_categories.flatMap((c) => c.kept_refs));
+    report.reference_only_refs = [...referenceOnlyRefs].filter((r) => finalRefsAll.has(r));
+    const cov = align.source_coverage;
+    const reasons = new Set<string>();
+    for (const entry of report.claim_categories) {
+      const blk = draft.blocks[entry.block_index];
+      if (!blk || blk.kind === "heading" || !("source_refs" in blk)) continue;
+      const text = String((blk as unknown as Record<string, unknown>).text ?? "");
+      if (text.trim().length < 80) continue;
+      cov.substantive_blocks++;
+      const available = inputSources.some((s2) => {
+        const p2 = profiles.get(s2.ref);
+        return !!p2 && categoryAccepts(entry.category, p2) &&
+          academicTopicalFit(question, text, s2).fit;
+      });
+      if (available) cov.blocks_with_available_source++;
+      if (entry.kept_refs.length > 0) cov.blocks_with_source_ref++;
+      else if (available) {
+        cov.blocks_missing_ref_despite_available_source++;
+        const dropped = report.dropped_source_refs.filter((d) => d.block_index === entry.block_index);
+        if (dropped.length > 0) for (const d of dropped) reasons.add(d.reason);
+        else reasons.add("no_ref_emitted_by_drafter");
+      }
+    }
+    cov.reason = [...reasons];
   }
+
 
   let limitation_text = "";
   // claim_source_rebinding_v1 — proportional limitation: a caveat is added only

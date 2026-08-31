@@ -215,6 +215,116 @@ export function classifyAcademicSourceRoles(
   return { filled: [...filled], missing: [...missing], by_role };
 }
 
+// ── 4b. academic_utilization_stabilization_v1 helpers ───────────────────────
+
+/** Block category → the academic source role that fits it. */
+export const CATEGORY_TO_ROLE: Record<string, AcademicSourceRole> = {
+  doctrinal_background: "doctrinal_background_source",
+  academic_framing: "doctrinal_background_source",
+  literature_synthesis: "doctrinal_background_source",
+  methodological_framing: "doctrinal_background_source",
+  theoretical_explanation: "theoretical_normative_source",
+  critique_or_counterposition: "critique_or_counterposition_source",
+};
+
+/**
+ * "strong partial" — deliberately narrow. A `partial` verifier verdict may be
+ * treated as usable support in academic mode only when the source is on topic,
+ * plays the role the block needs, and no better *direct* acquired source is
+ * available for that same block. Weak partials are never rescued.
+ */
+export function isStrongPartial(ctx: {
+  verdict: string;
+  topicalFitPassed: boolean;
+  roleMatch: boolean;
+  betterDirectAvailable: boolean;
+}): boolean {
+  return ctx.verdict === "partial" && ctx.topicalFitPassed && ctx.roleMatch &&
+    !ctx.betterDirectAvailable;
+}
+
+const ACADEMIC_TYPE_RE =
+  /(academic|journal|article|book|scholar|thesis|dissertation|commentary|secondary|law_review|מאמר|ספר|כתב[- ]עת)/i;
+
+/**
+ * A bibliography-only academic source: a real bibliographic item (journal
+ * article, book, chapter) whose substantive body was never acquired. Listing
+ * pages, index pages, court result pages and metadata-only junk are excluded.
+ */
+export function isBibliographyOnlySource(s: DrafterInputSource): boolean {
+  if (s.body_acquired === true) return false;
+  const usability = String(s.text_usability ?? "unknown");
+  if (usability === "listing_page") return false;
+  const citable = String(s.citable_as ?? "");
+  if (citable === "not_citable") return false;
+  if (citable === "judgment" || citable === "statute" || citable === "regulation") return false;
+  const hay = `${s.source_type ?? ""} ${s.synthesis_role ?? ""} ${s.role ?? ""} ${s.title ?? ""}`;
+  if (!ACADEMIC_TYPE_RE.test(hay)) return false;
+  return String(s.title ?? "").trim().length >= 10;
+}
+
+/** Wording that reads as a pointer to literature rather than as a legal claim. */
+const LITERATURE_POINTER_RE =
+  /(הספרות|בספרות|מלומדים|כותבים|מחברים|הכתיבה האקדמית|גישות|מאמר|מחקרים|סקירה|דיון אקדמי)/;
+
+/**
+ * Blocks in which a bibliography-only source may appear — and then only as a
+ * reading/literature pointer, never as substantive support.
+ */
+export function blockAllowsReferenceOnly(
+  category: ClaimSupportCategory,
+  blockText: string,
+): boolean {
+  if (
+    category === "literature_synthesis" || category === "academic_framing" ||
+    category === "methodological_framing"
+  ) return true;
+  if (category === "critique_or_counterposition") return LITERATURE_POINTER_RE.test(blockText);
+  return false;
+}
+
+/** Pointer-style prefix used when a footnote carries reference-only material. */
+export const REFERENCE_ONLY_FOOTNOTE_PREFIX_HE = "לדיון נוסף ראו: ";
+
+export interface RuleDOverrideEntry {
+  source_id: string;
+  title: string;
+  block_category: string;
+  source_legal_area: string | null;
+  block_legal_area: string | null;
+  topical_fit_passed: boolean;
+  overridden: boolean;
+  final_decision: string;
+}
+
+export interface BibReferenceUseEntry {
+  source_title: string;
+  block_category: string;
+  reference_only: boolean;
+  reason: string;
+}
+
+export interface HebrewRebindingEntry {
+  attempted: boolean;
+  source_id: string;
+  title: string;
+  old_binding_result: string;
+  new_binding_result: string;
+  reason: string;
+  title_topic_match: boolean;
+  verifier_verdict: string;
+  topical_fit: boolean;
+}
+
+export interface AcademicSourceCoverage {
+  substantive_blocks: number;
+  blocks_with_available_source: number;
+  blocks_with_source_ref: number;
+  blocks_missing_ref_despite_available_source: number;
+  reason: string[];
+}
+
+
 // ── 5. Telemetry ────────────────────────────────────────────────────────────
 
 export interface AcademicAuthorityAlignmentReport {
@@ -245,7 +355,13 @@ export interface AcademicAuthorityAlignmentReport {
     basis: string;
   }>;
   declared_categories_kept_primary: number;
+  /** academic_utilization_stabilization_v1 */
+  rule_d_area_overrides: RuleDOverrideEntry[];
+  bib_reference_uses: BibReferenceUseEntry[];
+  hebrew_rebinding: HebrewRebindingEntry[];
+  source_coverage: AcademicSourceCoverage;
 }
+
 
 
 export function emptyAcademicAuthorityAlignment(): AcademicAuthorityAlignmentReport {
@@ -270,8 +386,19 @@ export function emptyAcademicAuthorityAlignment(): AcademicAuthorityAlignmentRep
     declared_categories_remapped: 0,
     declared_category_remaps: [],
     declared_categories_kept_primary: 0,
+    rule_d_area_overrides: [],
+    bib_reference_uses: [],
+    hebrew_rebinding: [],
+    source_coverage: {
+      substantive_blocks: 0,
+      blocks_with_available_source: 0,
+      blocks_with_source_ref: 0,
+      blocks_missing_ref_despite_available_source: 0,
+      reason: [],
+    },
   };
 }
+
 
 export { isAcademicClaimCategory };
 export type { ClaimSupportCategory };

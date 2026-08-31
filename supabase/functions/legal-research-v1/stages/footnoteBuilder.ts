@@ -109,7 +109,14 @@ function placeMarker(text: string, marker: string): string {
 export function buildFootnotedAnswer(
   draft: StructuredDraft,
   inputSources: DrafterInputSource[],
+  opts?: { referenceOnlyRefs?: string[] },
 ): BuildResult {
+  // academic_utilization_stabilization_v1 — refs kept as reading pointers only.
+  const referenceOnlyRefs = new Set(opts?.referenceOnlyRefs ?? []);
+  const referenceOnlyIds = new Set(
+    inputSources.filter((s) => referenceOnlyRefs.has(s.ref)).map((s) => s.candidate_id),
+  );
+
   // ── Statute identity dedup (legal identity, not URL) ─────────────────────
   // Collapse mirrors of the same statute/regulation; keep the best mirror
   // (official_primary > statute_mirror > other mirror), then remap every ref
@@ -199,12 +206,18 @@ export function buildFootnotedAnswer(
     const sortedIds = [...distinct.map((s) => s.candidate_id)].sort();
     const key = sortedIds.join("|");
     if (keyToEntry.has(key)) return;
+    // Reading-pointer footnotes are labelled as such, so a bibliography-only
+    // item is never read as an authority for the sentence it follows.
+    const pointerOnly = distinct.length > 0 &&
+      distinct.every((s) => referenceOnlyIds.has(s.candidate_id));
+    const rawTitle = distinct.length === 1
+      ? distinct[0].title
+      : distinct.map((s) => s.title).join("; ");
     const entry: MarkerEntry = {
       key,
       number: 0,
-      title: distinct.length === 1
-        ? distinct[0].title
-        : distinct.map((s) => s.title).join("; "),
+      title: pointerOnly ? `לדיון נוסף ראו: ${rawTitle}` : rawTitle,
+
       // Footnote hygiene: even for compound footnotes, expose the first
       // sub-source URL as the top-level URL so downstream consumers/reports
       // never render `None`/`null`. Full per-source URL list remains in

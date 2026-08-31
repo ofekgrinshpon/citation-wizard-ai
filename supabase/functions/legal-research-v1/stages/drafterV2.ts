@@ -598,9 +598,22 @@ function buildUserMessage(
       lines.push("אין להציג רשימת קריאה או המלצות מקורות בשאלה זו.");
     }
     lines.push("אין להציג מקור משני, ספרות או חומר מוסדי כפסיקה מחייבת.");
+    // academic_utilization_stabilization_v1 — block-level source coverage.
+    if (p.user_task_intent === "academic_writing") {
+      lines.push(
+        "בכתיבה אקדמית: כל פסקה מהותית (טיעון, רקע דוקטרינרי, סקירת ספרות, ביקורת) צריכה לשאת source_refs אם קיים במאגר מקור מתאים לאותו תוכן — אל תשאיר פסקאות מהותיות ללא הפניה כאשר יש מקור רלוונטי.",
+      );
+      lines.push(
+        "העדף ספרות אקדמית ומחקר משפטי לפסקאות תיאורטיות, מושגיות וביקורתיות; שמור מקורות ראשוניים (פסיקה וחקיקה) לקביעות על הדין המחייב.",
+      );
+      lines.push(
+        "מקור שאותר ביבליוגרפית בלבד (ללא טקסט מלא) יכול להופיע בפסקת ספרות או מסגור כהפניה לקריאה נוספת בלבד — לעולם לא כביסוס לקביעה מהותית.",
+      );
+    }
     lines.push(
       "אין לכתוב בתוך הטקסט מזהי מקור פנימיים (s1, s2 וכדומה) — ההפניה היחידה למשתמש היא הערת שוליים שנוצרת דטרמיניסטית מ-source_refs.",
     );
+
   }
 
   const leadSource = leadRef ? sources.find((s) => s.ref === leadRef) : undefined;
@@ -2176,7 +2189,12 @@ export async function runDrafterV2(
   });
   const claim_source_match = matched.report;
 
-  const built = buildFootnotedAnswer(matched.draft ?? gated.draft ?? parsed.draft as StructuredDraft, inputSources);
+  const built = buildFootnotedAnswer(
+    matched.draft ?? gated.draft ?? parsed.draft as StructuredDraft,
+    inputSources,
+    { referenceOnlyRefs: claim_source_match.reference_only_refs ?? [] },
+  );
+
 
 
   // academic_writing_intent_and_drafting_v1 — the negative-existence scrub
