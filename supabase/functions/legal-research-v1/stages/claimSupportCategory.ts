@@ -171,6 +171,46 @@ export function categoryAccepts(
 }
 
 /**
+ * academic_declared_category_remap_and_body_acquisition_v2 — wording cues that
+ * pick the academic category. Used both for untagged blocks and for remapping
+ * a drafter-declared legacy category in academic mode.
+ */
+const CRITIQUE_RE = /(ביקורת|מבקרים|עמדה מנוגדת|הסתייגות|גישה חולקת|טענה שכנגד|לעומת זאת גורסים)/;
+const METHOD_RE =
+  /(שאלת המחקר|מתודולוג|שיטת המחקר|מבנה העבודה|פרק זה יבחן|העבודה תבחן|מתווה|היקף הדיון)/;
+const LITERATURE_RE = /(הספרות|מלומדים|כותבים|מחברים|הכתיבה האקדמית|גישות בספרות|מאמר)/;
+const THEORY_RE = /(תיאורי|תיאורטי|רציונל|תכלית|נורמטיב|תורת|מודל|עיקרון|דוקטרינ)/;
+
+function academicCategoryFromSignals(
+  propositionType: string | null | undefined,
+  text: string,
+): { category: ClaimSupportCategory; basis: string } {
+  if (CRITIQUE_RE.test(text)) {
+    return { category: "critique_or_counterposition", basis: "academic_wording_critique" };
+  }
+  if (METHOD_RE.test(text)) {
+    return { category: "methodological_framing", basis: "academic_wording_methodological" };
+  }
+  switch (propositionType) {
+    case "black_letter_rule":
+    case "application":
+      return { category: "theoretical_explanation", basis: "academic_proposition_theoretical" };
+    case "practical_guidance":
+      return { category: "methodological_framing", basis: "academic_proposition_methodological" };
+    case "background":
+    case "limitation":
+      return { category: "doctrinal_background", basis: "academic_proposition_background" };
+  }
+  if (LITERATURE_RE.test(text)) {
+    return { category: "literature_synthesis", basis: "academic_wording_literature" };
+  }
+  if (THEORY_RE.test(text)) {
+    return { category: "theoretical_explanation", basis: "academic_wording_theory" };
+  }
+  return { category: "doctrinal_background", basis: "academic_default_doctrinal_background" };
+}
+
+/**
  * Derive the effective substance category of a block.
  * `declared` is the drafter's own tag; `propositionType` is the pre-existing
  * substance tag; `text` contributes the structural docket signal and (for
@@ -182,38 +222,35 @@ export function deriveClaimCategory(input: {
   text?: string;
   /** academic_citation_authority_alignment_v1 */
   academicMode?: boolean;
-}): { category: ClaimSupportCategory; basis: string } {
+}): { category: ClaimSupportCategory; basis: string; remapped_from?: ClaimSupportCategory } {
   const declared = isClaimSupportCategory(input.declared) ? input.declared : null;
   const academic = input.academicMode === true;
+  const bodyText = String(input.text ?? "");
   let category: ClaimSupportCategory;
   let basis: string;
+  let remappedFrom: ClaimSupportCategory | undefined;
 
-  if (declared) {
+  if (declared && (!academic || isAcademicClaimCategory(declared))) {
     category = declared;
     basis = "declared_claim_category";
+  } else if (declared && academic) {
+    // academic_declared_category_remap_and_body_acquisition_v2 — in academic
+    // runs a legacy declared tag is not trusted: the drafter routinely tags
+    // framing/theory prose as a court holding. Wording and proposition type
+    // decide instead, and the binding-language / docket escalations below
+    // restore primary-required status whenever the prose actually asserts
+    // binding law or names a concrete judgment.
+    const mapped = declared === "scholarly_commentary"
+      ? { category: "literature_synthesis" as ClaimSupportCategory, basis: "academic_remap_commentary" }
+      : academicCategoryFromSignals(input.propositionType, bodyText);
+    category = mapped.category;
+    basis = `academic_declared_remap(${declared})+${mapped.basis}`;
+    remappedFrom = declared;
   } else if (academic) {
-    // Academic drafts state doctrine, theory and literature — not holdings.
-    // Wording (below) is what can raise a block back to primary-required.
-    switch (input.propositionType) {
-      case "black_letter_rule":
-      case "application":
-        category = "theoretical_explanation";
-        basis = "academic_proposition_theoretical";
-        break;
-      case "practical_guidance":
-        category = "methodological_framing";
-        basis = "academic_proposition_methodological";
-        break;
-      case "background":
-      case "limitation":
-        category = "doctrinal_background";
-        basis = "academic_proposition_background";
-        break;
-      default:
-        category = "doctrinal_background";
-        basis = "academic_default_doctrinal_background";
-    }
-  } else {
+    const mapped = academicCategoryFromSignals(input.propositionType, bodyText);
+    category = mapped.category;
+    basis = mapped.basis;
+
     switch (input.propositionType) {
       case "black_letter_rule":
         category = "court_holding";
