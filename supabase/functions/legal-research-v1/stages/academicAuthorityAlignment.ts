@@ -239,6 +239,9 @@ export function emptyAcademicAuthorityAlignment(): AcademicAuthorityAlignmentRep
     primary_language_details: [],
     off_topic_refs_dropped: 0,
     partial_support_refs_dropped: 0,
+    declared_categories_remapped: 0,
+    declared_category_remaps: [],
+    declared_categories_kept_primary: 0,
   };
 }
 
