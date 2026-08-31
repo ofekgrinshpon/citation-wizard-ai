@@ -2274,7 +2274,10 @@ export async function runDrafterV2(
   });
   if (claim_source_match.academic_authority_alignment) {
     claim_source_match.academic_authority_alignment.rendered_footnotes = built.footnotes.length;
+    (claim_source_match.academic_authority_alignment as unknown as Record<string, unknown>)
+      .pack_fit_dropped = academic_pack_fit_dropped;
   }
+
 
   const footnotes = built.footnotes.map((fn) => ({
     ...fn,
