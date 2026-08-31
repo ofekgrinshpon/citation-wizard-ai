@@ -112,6 +112,13 @@ function stripPunct(s: string): string {
     .trim();
 }
 
+/**
+ * Hebrew suffixes that mark plural / feminine / construct-state variation of
+ * the same lemma (חוקים ↔ חוק, סמכויות ↔ סמכות). Stripped only when a
+ * reasonable stem remains, so short words are never mangled.
+ */
+const SUFFIX_RE = /(?:יות|ויות|ותיה|ותיו|ותינו|יהם|יהן|ים|ות|יה|יו|נו|כם|כן|הם|הן)$/;
+
 function normalizeToken(t: string): string {
   let x = t;
   if (x.length > 4) {
@@ -119,12 +126,28 @@ function normalizeToken(t: string): string {
     if (stripped.length >= 3) x = stripped;
   }
   // final-letter normalization (ך ם ן ף ץ → כ מ נ פ צ)
-  return x
+  x = x
     .replace(/ך/g, "כ").replace(/ם/g, "מ").replace(/ן/g, "נ")
     .replace(/ף/g, "פ").replace(/ץ/g, "צ");
+  // plural / construct / possessive suffix normalization
+  if (x.length > 4) {
+    const stripped = x.replace(SUFFIX_RE, "");
+    if (stripped.length >= 3) x = stripped;
+  }
+  return x;
+}
+
+/** Loose stem used only as a secondary matching key (never for filtering). */
+export function looseStem(t: string): string {
+  if (t.startsWith("#")) return t;
+  return t.length > 5 ? t.slice(0, 5) : t;
 }
 
 /** Legally meaningful terms: content words + identifiers, generics removed. */
+const GENERIC_NORM = new Set(
+  [...GENERIC_TERMS].flatMap((g) => [normalizeToken(g), looseStem(normalizeToken(g))]),
+);
+
 export function meaningfulTerms(text: string): Set<string> {
   const out = new Set<string>();
   if (!text) return out;
@@ -133,17 +156,36 @@ export function meaningfulTerms(text: string): Set<string> {
     if (raw.length < 4) continue;
     if (/^\d+$/.test(raw)) continue;
     const t = normalizeToken(raw);
-    if (t.length < 4) continue;
-    if (GENERIC_TERMS.has(t)) continue;
+    if (t.length < 3) continue;
+    if (GENERIC_TERMS.has(t) || GENERIC_NORM.has(t) || GENERIC_NORM.has(looseStem(t))) continue;
     out.add(t);
   }
   return out;
+}
+
+/**
+ * Shared meaningful terms between two texts, tolerant to Hebrew morphology:
+ * exact normalized match first, then a loose stem match.
+ */
+export function sharedMeaningfulTerms(a: Set<string>, b: Set<string>): string[] {
+  const shared: string[] = [];
+  const bStems = new Map<string, string>();
+  for (const t of b) bStems.set(looseStem(t), t);
+  for (const t of a) {
+    if (b.has(t)) shared.push(t);
+    else {
+      const hit = bStems.get(looseStem(t));
+      if (hit) shared.push(t);
+    }
+  }
+  return shared;
 }
 
 /** Identifier terms carry enough signal alone. */
 function isIdentifier(t: string): boolean {
   return t.startsWith("#");
 }
+
 
 // ─── Binding evaluation ─────────────────────────────────────────────────────
 
@@ -162,7 +204,10 @@ export interface RebindBlockInput {
   claim_category: ClaimSupportCategory;
   legal_area: string | null;
   text: string;
+  /** academic_utilization_stabilization_v1 — academic_writing runs only */
+  academic_mode?: boolean;
 }
+
 
 export interface RebindSourceInput {
   ref: string;
@@ -172,7 +217,15 @@ export interface RebindSourceInput {
   legal_area: string | null;
   verifier_verdict: string;
   body_acquired: boolean;
+  /** academic_utilization_stabilization_v1 */
+  title?: string;
+  snippet?: string;
+  /** academicTopicalFit verdict against question + block text */
+  topical_fit_passed?: boolean;
+  /** doctrinal/scholarly item (never a judgment or statute) */
+  is_secondary_academic?: boolean;
 }
+
 
 /** Categories/propositions broad enough for the area_direct fallback. */
 function areaFallbackAllowed(b: RebindBlockInput): boolean {
@@ -226,12 +279,11 @@ export function evaluateBinding(
 
   // topical: legally meaningful term overlap with the verifier's own
   // supported_points for this source.
+  const blockTerms = meaningfulTerms(block.text);
   const points = source.supported_points.join(" ");
   if (points.trim()) {
-    const blockTerms = meaningfulTerms(block.text);
     const pointTerms = meaningfulTerms(points);
-    const shared: string[] = [];
-    for (const t of blockTerms) if (pointTerms.has(t)) shared.push(t);
+    const shared = sharedMeaningfulTerms(blockTerms, pointTerms);
     const hasIdentifier = shared.some(isIdentifier);
     if (hasIdentifier || shared.length >= 2) {
       return {
@@ -244,6 +296,38 @@ export function evaluateBinding(
     }
   }
 
+  // academic_utilization_stabilization_v1 — title/subject binding. Stubs and
+  // freshly acquired secondaries often carry no supported_points at all, so
+  // fall back to the source's own bibliographic subject matter. Restricted to
+  // broad academic blocks: never a holding, statute or specific application.
+  if (areaFallbackAllowed(block)) {
+    const subject = `${source.title ?? ""} ${source.snippet ?? ""}`;
+    if (subject.trim()) {
+      const subjectTerms = meaningfulTerms(subject);
+      const shared = sharedMeaningfulTerms(blockTerms, subjectTerms);
+      if (shared.some(isIdentifier) || shared.length >= 2) {
+        return {
+          ...base,
+          binding: "topical",
+          reason: "shared_title_subject_terms",
+          score: shared.length,
+          matched_terms: shared.slice(0, 8),
+        };
+      }
+    }
+  }
+
+  // academic_utilization_stabilization_v1 — an on-topic acquired secondary that
+  // the verifier judged `direct` may carry a broad academic block even when the
+  // claim-id spaces diverged entirely.
+  if (
+    block.academic_mode && areaFallbackAllowed(block) &&
+    source.is_secondary_academic && source.topical_fit_passed &&
+    source.verifier_verdict === "direct" && source.body_acquired
+  ) {
+    return { ...base, binding: "topical", reason: "academic_direct_subject_fit" };
+  }
+
   // conservative area fallback
   if (
     areaFallbackAllowed(block) &&
@@ -253,6 +337,7 @@ export function evaluateBinding(
   ) {
     return { ...base, binding: "area_direct", reason: "same_area_direct_acquired_body" };
   }
+
 
   return { ...base, binding: "unbound", reason: "no_substantive_binding" };
 }
