@@ -208,7 +208,17 @@ export interface AcademicAuthorityAlignmentReport {
   primary_language_details: PrimaryLanguageBlockReport[];
   off_topic_refs_dropped: number;
   partial_support_refs_dropped: number;
+  /** academic_declared_category_remap_and_body_acquisition_v2 */
+  declared_categories_remapped: number;
+  declared_category_remaps: Array<{
+    block_index: number;
+    from: string;
+    to: string;
+    basis: string;
+  }>;
+  declared_categories_kept_primary: number;
 }
+
 
 export function emptyAcademicAuthorityAlignment(): AcademicAuthorityAlignmentReport {
   return {
