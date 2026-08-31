@@ -665,6 +665,19 @@ export async function runSecondaryBodyAcquisition(
     let evidence = sel.evidence;
     let eligible = sel.eligible;
 
+    // academic_declared_category_remap_and_body_acquisition_v2 — a candidate
+    // whose only disqualifier is an already-acquired *stub* body gets ONE
+    // extra attempt to acquire substantive text.
+    if (
+      !eligible && sel.reason === "body_already_acquired" &&
+      typeof input.reacquire_short_bodies_under === "number" &&
+      currentBodyChars(c) < input.reacquire_short_bodies_under
+    ) {
+      eligible = true;
+      evidence = [...evidence, `short_body_reacquire:${currentBodyChars(c)}`];
+    }
+
+
     // Reconsideration: an imperfectly typed but clearly doctrinal-looking
     // direct/partial candidate earns ONE acquisition attempt. This never
     // grants doctrinal eligibility — that still requires an acquired body,
