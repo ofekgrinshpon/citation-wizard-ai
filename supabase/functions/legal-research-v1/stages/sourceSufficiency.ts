@@ -762,8 +762,23 @@ export function assessSourceSufficiency(args: {
         researchGuidanceSufficiency = true;
         sufficient = true;
         reason = `academic_writing_draft_allowed(was:${reason})`;
+      } else if (
+        // academic_declared_category_remap_and_body_acquisition_v2 — the plan's
+        // "requires primary" flag is a planning preference, not a user request.
+        // When the user did not ask for a specific judgment, a holding or
+        // statutory wording, an acquired, on-topic, verifier-direct doctrinal
+        // body is a legitimate anchor for an academic draft. Explicit primary
+        // requests (docket, holding, statute section, missing anchor) still
+        // refuse.
+        !explicitDocket && !caseHoldingRequested && !statuteTextRequired && !anchorMissing &&
+        directSecondaries.length >= 1
+      ) {
+        researchGuidanceSufficiency = true;
+        sufficient = true;
+        reason = `academic_writing_doctrinal_anchor_allowed:${directSecondaries.length}(was:${reason})`;
       }
     }
+
     if (applied && !sufficient) {
       const fb = doctrinalFallback();
       if (fb) {
