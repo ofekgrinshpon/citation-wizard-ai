@@ -2371,6 +2371,8 @@ async function handle(req: Request): Promise<Response> {
   const drafterMeta = {
 
     candidate_pool_stabilization: candidatePoolStabilization,
+    academic_short_body_reacquisition: academicShortBodyReacquisition,
+
     ok: drafter.ok,
     model_initial: drafter.model_initial,
     model_final: drafter.model_final,
