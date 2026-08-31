@@ -67,6 +67,8 @@ import {
   applyClaimSourceMatch,
   type ClaimSourceMatchReport,
 } from "./claimSourceMatch.ts";
+import { academicPackFit } from "./academicAuthorityAlignment.ts";
+
 import { applyBlockCeiling, type BlockTrimReport } from "./routerProfiles.ts";
 import {
   buildDoctrinalTypingReport,
