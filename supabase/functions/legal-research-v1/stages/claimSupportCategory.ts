@@ -246,11 +246,7 @@ export function deriveClaimCategory(input: {
     category = mapped.category;
     basis = `academic_declared_remap(${declared})+${mapped.basis}`;
     remappedFrom = declared;
-  } else if (academic) {
-    const mapped = academicCategoryFromSignals(input.propositionType, bodyText);
-    category = mapped.category;
-    basis = mapped.basis;
-
+  } else {
     switch (input.propositionType) {
       case "black_letter_rule":
         category = "court_holding";
@@ -275,12 +271,16 @@ export function deriveClaimCategory(input: {
     }
   }
 
-  const text = String(input.text ?? "");
+  const text = bodyText;
 
   // Structural escalation: a block that identifies a concrete judgment by
   // docket is asserting something about that judgment, whatever it declared.
   if (category !== "court_holding" && DOCKET_IDENTITY_RE.test(text)) {
-    return { category: "court_holding", basis: `${basis}+docket_identity_escalation` };
+    return {
+      category: "court_holding",
+      basis: `${basis}+docket_identity_escalation`,
+      remapped_from: remappedFrom,
+    };
   }
 
   // academic_citation_authority_alignment_v1 — wording escalation. A block
@@ -292,11 +292,13 @@ export function deriveClaimCategory(input: {
       return {
         category: binding.kind === "statutory" ? "statutory" : "court_holding",
         basis: `${basis}+binding_language_escalation`,
+        remapped_from: remappedFrom,
       };
     }
   }
-  return { category, basis };
+  return { category, basis, remapped_from: remappedFrom };
 }
+
 
 
 export interface AuthorityOverstatement {
