@@ -1,68 +1,52 @@
-# academic_citation_authority_alignment_v1
+# academic_declared_category_remap_and_body_acquisition_v2
 
-Align academic claim categories, available source authority, and the claim-source-match gate so academic drafts can cite the doctrinal sources they actually rest on — without ever letting secondary literature stand in for a court holding, statutory text, a docket-specific outcome, or a binding-law statement.
+Make the academic authority alignment actually fire in live runs, rescue direct short-body academic sources, remove doctrinal-sufficiency false negatives, and keep off-topic scholarship out of the drafter pack.
 
-## What changes, in plain terms
+## Why the previous track under-delivered
 
-Today an academic draft asks for "binding case law" style support, gets literature instead, writes claims tagged as court holdings, and then the safety gate strips nearly every footnote. Four moves fix that mismatch:
+`deriveClaimCategory` takes the drafter's `declared` tag first and stops there (`basis: "declared_claim_category"`). The academic branch only runs for untagged blocks — and in live runs almost every block arrives tagged. That is why live metadata still shows only `doctrinal_synthesis`, `contextual_background`, `court_holding`, `scholarly_commentary`.
 
-1. Academic blocks get their own claim categories (background, framing, theory, literature synthesis, critique, methodology) that literature can legitimately support.
-2. When no acquired primary source backs a block, the draft is required to use cautious academic phrasing instead of "בית המשפט קבע כי" / "החוק קובע".
-3. The gate learns the academic categories, and stops stripping literature from substantive academic blocks.
-4. Retrieval stops throwing away academic material just because the query slot asked for a judgment or a statute, and adds soft roles for critique/counter-position and implementation/example.
+Sufficiency profile 5 ends in `no_statutory_caselaw_or_doctrinal_anchor` unless a domain statute, usable judgment, or `topicalAuthority` entry exists — an acquired, on-topic, verifier-direct commentary body is not counted, which is the AW8 false negative.
 
-Primary-law safety is untouched: exact holdings, statutory text, docket questions, canonical quotes and binding-law claims still require acquired primary authority.
+## What changes
 
-## Technical plan
+### 1. Declared-category remap in academic mode — `stages/claimSupportCategory.ts`
+- `deriveClaimCategory` gains academic-mode inputs: `declaredCategory`, block text, `acquiredPrimaryAvailable`, `acquiredDoctrinalAvailable`.
+- In academic mode a declared **legacy** category (`doctrinal_synthesis`, `contextual_background`, `scholarly_commentary`, `court_holding`, `statutory`) is no longer trusted blindly. Order of decision:
+  1. Docket-identity escalation (unchanged) → `court_holding`.
+  2. Binding-law wording (`בית המשפט קבע`, `נפסק כי`, `ההלכה היא`, `החוק קובע`, `סעיף … קובע`, explicit docket outcome, quoted statutory text) → keep/escalate to `court_holding` / `statutory`; acquired primary is required, and if absent the language guard suppresses or reports the phrasing (no secondary substitution).
+  3. Otherwise map the block by wording + proposition type into one of the six academic categories: `academic_framing`, `doctrinal_background`, `theoretical_explanation`, `literature_synthesis`, `critique_or_counterposition`, `methodological_framing`.
+- Remap emits `basis: "academic_declared_remap"` plus the reason, so live metadata shows the new categories.
 
-### 1. Academic claim categories — `stages/claimSupportCategory.ts`
-- Extend `ClaimSupportCategory` with `doctrinal_background`, `academic_framing`, `theoretical_explanation`, `literature_synthesis`, `critique_or_counterposition`, `methodological_framing`.
-- `categoryAccepts` for all six: accept `doctrinal_authority` (eligible acquired secondary) as well as judgment/statute authority; `background_only` stays rejected.
-- `deriveClaimCategory` gains an `academicMode` input. In academic mode the default for untagged blocks becomes `doctrinal_background` instead of `doctrinal_synthesis`, and `black_letter_rule` / `application` proposition types map to `theoretical_explanation` unless the drafter explicitly declared a primary category.
-- The docket-identity escalation to `court_holding` stays active in academic mode — a block naming a concrete docket still needs a judgment body.
+Telemetry `academic_declared_category_remap`: `declared_category, final_category, basis, remap_reason, binding_language_detected, acquired_primary_available, acquired_doctrinal_available, remapped_count, kept_primary_count`.
 
-### 2. Primary-law language guard — new `stages/primaryLanguageGuard.ts`
-- Deterministic Hebrew detector for unsupported primary-law formulations ("בית המשפט קבע", "ההלכה היא", "החוק קובע", "הפסיקה הכריעה", "נפסק כי", "סעיף … קובע").
-- Applied post-draft, per block, only when `user_task_intent = academic_writing` **and** the block kept no acquired primary source: rewrite to the cautious register ("בספרות ניתן למסגר", "הדיון הדוקטרינרי מציג", "המקורות המשניים מתארים", "ניתן לטעון כי", "הטיוטה מניחה כנקודת מוצא").
-- Blocks that do keep an acquired primary ref are left alone.
-- Also add the same instruction to the academic prompt slice in `stages/academicPromptCleanup.ts` so the model mostly avoids the phrasing up front; the guard is the deterministic backstop.
+### 2. Bounded body re-acquisition — `stages/secondaryBodyAcquisition.ts` (+ hook in `index.ts`)
+- After the first acquisition pass, select sources that are verifier `direct`, subject-fit strong, academic/doctrinal/commentary typed, and under the substantive threshold (~1500 chars) while not metadata-only by nature.
+- One extra bounded attempt per source using already-known fulltext/PDF/alternate links from the same candidate record. Hard cap 3 attempts per run, budget-governed through `RetrievalGovernor`, no new crawling, no integrity loosening.
+- Still short → stays bibliography-only, with a recorded failure reason.
 
-### 3. Academic-aware claim-source-match — `stages/claimSourceMatch.ts`
-- `applyClaimSourceMatch` accepts `academicMode: boolean`.
-- Rule B (`commentary_in_substantive_block`): skipped in academic mode for the six academic categories when the source is an eligible acquired doctrinal secondary with verifier verdict `direct` or `partial`.
-- Rule E keeps rejecting doctrinal secondary for `court_holding` / `statutory` in every mode.
-- `commentary_only_claims` still recorded, but in academic mode it no longer drives the commentary-only limitation caveat (the academic "הערת עבודה" already carries the scope note).
-- Run the primary-language guard after ref selection, so the decision uses the final kept refs.
+Telemetry `academic_body_reacquisition`: `attempted_count, source_title, initial_chars, final_chars, success, failure_reason`.
 
-### 4. Source role expansion — `stages/sourceDepthPolicy.ts` / academic planning
-- For academic runs add soft roles to the source mix: primary legal anchor (if available), doctrinal background, theoretical/normative, critique/counter-position, implementation/example.
-- Add two query intents to the academic nomination/facet set targeting critique ("ביקורת על", "עמדה מנוגדת", "הסתייגות") and applied/example material.
-- Roles are advisory: unfilled roles are reported in telemetry, never fabricated and never a refusal trigger.
+### 3. Academic doctrinal anchor in sufficiency — `stages/sourceSufficiency.ts`
+- For `user_task_intent = academic_writing` and genres introduction / theoretical_background / topic_presentation / generic_academic / argument_paragraph, an acquired, on-topic, verifier-direct doctrinal **or commentary** body counts as a doctrinal anchor in profile 5 (and equivalent doctrinal profiles).
+- Not applied when the user explicitly asked for a case holding, statutory text, a docket-specific outcome, a canonical quote, or a binding-law answer — those keep today's requirements.
+- The anchor licenses academic framing/background/theory/synthesis/critique claims only; holding and statutory claims remain primary-only via claim-source-match.
 
-### 5. Discovery admission fix — `stages/perplexityRetrieval.ts`
-- Thread an `academicMode` flag from `index.ts` (already computed as `sourceUseIntent.plan.user_task_intent`) into `runPerplexityRetrieval` → `processRaw`.
-- In `correctRoleForClass`, when academicMode and the class is `academic` / `publisher` under a `binding_case_law` / `primary_statute` / `regulation` query role, remap the role to `scholarship` instead of dropping as role-mismatched; record `role_corrected_from/to`.
-- Listing/index and `discovery_only` suppression is unchanged, as is source integrity.
+Telemetry `academic_sufficiency_anchor`: `doctrinal_anchor_present, commentary_anchor_present, anchor_sources, anchor_chars, verifier_verdicts, previous_sufficiency_reason, final_sufficiency_reason, overridden_false_negative`.
 
-### 6. Primary acquisition
-No change to acquisition itself. If primary text is acquired it is used and primary-law language stays allowed; if not, the run proceeds on doctrinal sources under the language guard.
+### 4. Pack-level subject-matter fit — `stages/academicAuthorityAlignment.ts` + drafter pack assembly
+- Reuse the existing question/topic overlap scorer, applied **before** the drafter pack is built rather than only at ref level: long-but-off-topic bodies (contract-gift theory under administrative promise, family-law or interim-appeal material in an administrative pack) are rejected or demoted below on-topic material.
+- Borderline scores are kept but flagged, never silently dropped; length alone never buys admission.
 
-### 7. Telemetry — added to the drafter report and `qa_logs.metadata`
-```text
-academic_authority_alignment: {
-  academic_claim_categories_used, primary_language_blocks,
-  unsupported_primary_language_suppressed, doctrinal_secondary_refs_allowed,
-  doctrinal_secondary_refs_rejected_for_primary_claims,
-  commentary_only_claims_kept, source_roles_expected,
-  source_roles_filled, source_roles_missing
-}
-```
-Plus pre/post counters: structured source_refs emitted, refs kept by claim-source-match, refs dropped by authority category, rendered footnotes.
+Telemetry `academic_pack_subject_fit`: `passed_count, rejected_count, rejected_titles, rejected_reasons, borderline_kept`.
 
-### 8. Validation
-- Unit tests: new `src/test/academicAuthorityAlignment.test.ts` covering category acceptance, the language guard (rewrite vs. leave-alone), and the "doctrinal secondary never supports court_holding/statutory" invariant. Existing suites must stay green.
-- Live run of AW1, AW4, AW7, AW8 via the existing academic validation runner, checked against the stated acceptance criteria (AW1 no longer 10→0; AW4 keeps materially more legitimate doctrinal refs; AW7 not forced to over-cite; AW8 keeps legitimate refs; no secondary source under a holding/statutory claim; rendering invariants clean).
-- Report written to `reports/academic-citation-authority-alignment/ACCEPTANCE_REPORT.md`, including the pre/post funnel table and any off-topic doctrinal sources still surviving in AW8.
+### 5. Listing pollution — monitor only
+Report listing/index pages still occupying pool slots, whether they displaced usable academic sources, and whether a dedicated suppression track is warranted. No behavioural change here.
 
-## Explicitly out of scope
-Judgment identity validation, docket limitation, source integrity, footnote rendering, found-only support rules, and any fixed citation-count target.
+## Out of scope
+Judgment identity validation, docket limitation, source integrity, footnote rendering, found-only support rules, any fixed citation-count target. Secondary sources still never support exact holdings, statutory text, docket outcomes, canonical quotes, or binding-law claims.
+
+## Validation
+- Unit tests extending `src/test/academicAuthorityAlignment.test.ts`: declared-legacy → academic remap, binding-language override of a declared academic category, re-acquisition selection bounds, commentary-anchor sufficiency (and its explicit-holding exclusion), pack fit rejection.
+- Live run of AW1, AW4, AW7, AW8 via `scripts/legal-research-v1-authority-alignment-validation.ts`, checked against: the six academic categories present in live metadata; AW1 attempts re-acquisition for the Barak and Bel Yosef sources; AW4 no longer loses refs to spurious `court_holding` blocks; AW7 unchanged (no forced citation density); AW8 no longer refuses with `no_statutory_caselaw_or_doctrinal_anchor`; off-topic scholarship reduced; no secondary under a primary claim; rendering invariants clean.
+- Report + full answers to `reports/academic-declared-category-remap-v2/` and delivered in chat.
