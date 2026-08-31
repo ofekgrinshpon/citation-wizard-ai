@@ -2045,6 +2045,79 @@ async function handle(req: Request): Promise<Response> {
     },
   };
 
+  // ─── academic_declared_category_remap_and_body_acquisition_v2 ───────────
+  // Bounded re-acquisition: in academic runs, verifier-direct doctrinal
+  // sources that were acquired only as tiny stubs (a few hundred chars) get
+  // ONE extra attempt so they can qualify as substantive doctrinal support.
+  const academicRunForBodies = sourceUseIntent.plan?.user_task_intent === "academic_writing";
+  let academicShortBodyReacquisition:
+    | { ran: boolean; reason: string; candidate_ids: string[]; acquired: string[]; stop_reason: string | null; ms: number }
+    | null = null;
+  if (academicRunForBodies && !budget.exceeded()) {
+    const support = bestSupportByCandidate(verifier.verdicts);
+    const shortIds = pool.candidates
+      .filter((c) => {
+        if (support.get(c.candidate_id) !== "direct") return false;
+        const meta = (c.metadata ?? {}) as Record<string, unknown>;
+        const chars = Math.max(
+          typeof meta.extended_text === "string" ? meta.extended_text.length : 0,
+          String(c.snippet ?? "").length,
+        );
+        return chars > 0 && chars < 1500;
+      })
+      .slice(0, 3)
+      .map((c) => c.candidate_id);
+    if (shortIds.length === 0) {
+      academicShortBodyReacquisition = {
+        ran: false,
+        reason: "no_short_direct_doctrinal_candidates",
+        candidate_ids: [],
+        acquired: [],
+        stop_reason: null,
+        ms: 0,
+      };
+    } else {
+      const t0short = Date.now();
+      try {
+        const rep = await runSecondaryBodyAcquisition({
+          admin,
+          candidates: pool.candidates,
+          depth_mode: sourceDepth.depth_mode ?? null,
+          enabled: true,
+          suppress_listings: true,
+          restrict_to_candidate_ids: shortIds,
+          reacquire_short_bodies_under: 1500,
+          support_by_candidate: support,
+          limits: { max_local_lookups: 3, max_web_attempts: 3, total_ms: 9_000 },
+          retrieval_budget: {
+            exceeded: () => budget.exceeded(),
+            allowExtraction: (bytes: number) => budget.allowExtraction?.(bytes) ?? true,
+          },
+          markDurable: (name, detail) => budget.markDurable(name, detail),
+        });
+        academicShortBodyReacquisition = {
+          ran: true,
+          reason: rep.reason,
+          candidate_ids: shortIds,
+          acquired: rep.acquired_candidate_ids,
+          stop_reason: rep.stage_stop_reason,
+          ms: Date.now() - t0short,
+        };
+      } catch (err) {
+        academicShortBodyReacquisition = {
+          ran: false,
+          reason: err instanceof Error ? err.message : String(err),
+          candidate_ids: shortIds,
+          acquired: [],
+          stop_reason: "exception",
+          ms: Date.now() - t0short,
+        };
+      }
+    }
+  }
+
+
+
   // V2.1c is the default drafter (structured blocks + deterministic
   // footnoteBuilder). The legacy Markdown baseline `runDrafter` remains
   // imported for easy revert — re-point this call to `runDrafter(...)` and
