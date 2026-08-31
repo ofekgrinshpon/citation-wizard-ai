@@ -265,7 +265,7 @@ export function applyClaimSourceMatch(
     // substance_based_doctrinal_sufficiency_v1 — substance category for this
     // block (declared tag → proposition substance → docket-identity escalation).
     const declared = (b as unknown as Record<string, unknown>).claim_category;
-    const { category, basis } = deriveClaimCategory({
+    const { category, basis, remapped_from } = deriveClaimCategory({
       declared: typeof declared === "string" ? declared : null,
       propositionType: ptype,
       text: typeof (b as unknown as Record<string, unknown>).text === "string"
@@ -280,7 +280,20 @@ export function applyClaimSourceMatch(
     if (academicMode) {
       align.academic_claim_categories_used[category] =
         (align.academic_claim_categories_used[category] ?? 0) + 1;
+      if (remapped_from) {
+        align.declared_categories_remapped++;
+        align.declared_category_remaps.push({
+          block_index: idx,
+          from: remapped_from,
+          to: category,
+          basis,
+        });
+        if (category === "court_holding" || category === "statutory") {
+          align.declared_categories_kept_primary++;
+        }
+      }
     }
+
     const overstatementDrops: string[] = [];
 
     const kept: string[] = [];

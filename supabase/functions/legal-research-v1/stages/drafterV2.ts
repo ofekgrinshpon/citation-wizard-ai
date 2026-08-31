@@ -67,6 +67,8 @@ import {
   applyClaimSourceMatch,
   type ClaimSourceMatchReport,
 } from "./claimSourceMatch.ts";
+import { academicPackFit } from "./academicAuthorityAlignment.ts";
+
 import { applyBlockCeiling, type BlockTrimReport } from "./routerProfiles.ts";
 import {
   buildDoctrinalTypingReport,
@@ -1366,8 +1368,24 @@ export async function runDrafterV2(
       inputSources.unshift(registrySource);
     }
   }
+  // academic_declared_category_remap_and_body_acquisition_v2 — pack-level
+  // subject-matter fit for academic drafts: drop sources with no shared
+  // subject vocabulary before they reach the prompt (conservative — never
+  // primary authority, never below a 3-source floor).
+  let academic_pack_fit_dropped: Array<{ ref: string; title: string; score: number }> = [];
+  if (opts?.sourceUsePlan?.user_task_intent === "academic_writing") {
+    const fit = academicPackFit(question, inputSources);
+    if (fit.dropped.length > 0) {
+      academic_pack_fit_dropped = fit.dropped;
+      const keep = new Set(fit.kept.map((s) => s.ref));
+      for (let i = inputSources.length - 1; i >= 0; i--) {
+        if (!keep.has(inputSources[i].ref)) inputSources.splice(i, 1);
+      }
+    }
+  }
   const sources_passed = inputSources.length;
   const allowedRefs = new Set(inputSources.map((s) => s.ref));
+
 
   const emptyValidation: StructuredValidation = {
     ok: false,
@@ -2256,7 +2274,10 @@ export async function runDrafterV2(
   });
   if (claim_source_match.academic_authority_alignment) {
     claim_source_match.academic_authority_alignment.rendered_footnotes = built.footnotes.length;
+    (claim_source_match.academic_authority_alignment as unknown as Record<string, unknown>)
+      .pack_fit_dropped = academic_pack_fit_dropped;
   }
+
 
   const footnotes = built.footnotes.map((fn) => ({
     ...fn,

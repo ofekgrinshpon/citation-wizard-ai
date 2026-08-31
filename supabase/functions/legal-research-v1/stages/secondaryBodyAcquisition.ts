@@ -593,7 +593,14 @@ export interface SecondaryBodyAcquisitionInput {
   limits?: { max_local_lookups?: number; max_web_attempts?: number; total_ms?: number };
   /** Marks the report as the recovery pass (telemetry only). */
   recovery_pass?: boolean;
+  /**
+   * academic_declared_category_remap_and_body_acquisition_v2 — allow ONE extra
+   * attempt for candidates that already carry a body shorter than this many
+   * characters (stub acquisitions that are not substantive).
+   */
+  reacquire_short_bodies_under?: number;
 }
+
 
 export async function runSecondaryBodyAcquisition(
   input: SecondaryBodyAcquisitionInput,
@@ -657,6 +664,19 @@ export async function runSecondaryBodyAcquisition(
     const sel = selectSecondaryCandidate(c);
     let evidence = sel.evidence;
     let eligible = sel.eligible;
+
+    // academic_declared_category_remap_and_body_acquisition_v2 — a candidate
+    // whose only disqualifier is an already-acquired *stub* body gets ONE
+    // extra attempt to acquire substantive text.
+    if (
+      !eligible && sel.reason === "body_already_acquired" &&
+      typeof input.reacquire_short_bodies_under === "number" &&
+      currentBodyChars(c) < input.reacquire_short_bodies_under
+    ) {
+      eligible = true;
+      evidence = [...evidence, `short_body_reacquire:${currentBodyChars(c)}`];
+    }
+
 
     // Reconsideration: an imperfectly typed but clearly doctrinal-looking
     // direct/partial candidate earns ONE acquisition attempt. This never

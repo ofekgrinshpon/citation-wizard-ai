@@ -136,3 +136,47 @@ describe("categorical claims and topical fit", () => {
     expect(fit.fit).toBe(true);
   });
 });
+
+// ── academic_declared_category_remap_and_body_acquisition_v2 ────────────────
+describe("declared category remap in academic mode", () => {
+  it("remaps a declared court_holding on framing prose to an academic category", () => {
+    const r = deriveClaimCategory({
+      declared: "court_holding",
+      propositionType: "background",
+      text: "פרק זה מציג את הרקע התיאורטי לדוקטרינה ואת מקורותיה בספרות.",
+      academicMode: true,
+    });
+    expect(isAcademicClaimCategory(r.category)).toBe(true);
+    expect(r.remapped_from).toBe("court_holding");
+  });
+
+  it("keeps primary requirement when the prose asserts binding law", () => {
+    const r = deriveClaimCategory({
+      declared: "court_holding",
+      propositionType: "background",
+      text: "בית המשפט קבע כי הסעד החוקתי מותר.",
+      academicMode: true,
+    });
+    expect(r.category).toBe("court_holding");
+  });
+
+  it("keeps primary requirement when the block names a docket", () => {
+    const r = deriveClaimCategory({
+      declared: "scholarly_commentary",
+      propositionType: "background",
+      text: "בפרשה 1234/56 נדונה סוגיה זו.",
+      academicMode: true,
+    });
+    expect(r.category).toBe("court_holding");
+  });
+
+  it("does not remap declared categories outside academic mode", () => {
+    const r = deriveClaimCategory({
+      declared: "court_holding",
+      propositionType: "background",
+      text: "פרק זה מציג רקע.",
+    });
+    expect(r.category).toBe("court_holding");
+    expect(r.remapped_from).toBeUndefined();
+  });
+});
