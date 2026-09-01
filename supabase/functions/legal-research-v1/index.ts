@@ -2641,6 +2641,10 @@ async function handle(req: Request): Promise<Response> {
       drafter.synthesis_rendering?.synthesis_rendering_applied ?? false,
     // claim_source_match_validation_v1 telemetry.
     claim_source_match: drafter.claim_source_match ?? null,
+    // academic_drafter_source_ref_coverage_v2 telemetry.
+    academic_drafter_source_ref_emission: drafter.academic_drafter_source_ref_emission ?? null,
+    pre_csm_source_ref_filtering: drafter.pre_csm_source_ref_filtering ?? null,
+
     claim_source_mismatch_count: drafter.claim_source_match?.source_ref_mismatch_count ?? 0,
     claim_source_mismatch_reasons: drafter.claim_source_match?.mismatch_reason ?? [],
     claim_source_unsupported_blocks: drafter.claim_source_match?.unsupported_block_count ?? 0,

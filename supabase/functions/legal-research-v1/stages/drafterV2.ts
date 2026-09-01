@@ -94,6 +94,16 @@ import {
   applyAcademicPromptCleanup,
   emptyAcademicPromptCleanupReport,
 } from "./academicPromptCleanup.ts";
+import {
+  type AcademicDrafterSourceRefEmission,
+  buildAcademicSourceRoleMap,
+  buildLightCitationUseBlock,
+  LIGHT_CITATION_GENRES,
+  measureSourceRefEmission,
+  type PreCsmSourceRefFiltering,
+  renderSourceRoleMapBlock,
+} from "./academicSourceRoleMap.ts";
+
 
 /** academic_style_model_v1 — thin-pack / footnote availability inputs. */
 function academicStyleOptions(
@@ -322,8 +332,14 @@ const DRAFTER_V2_TOOL_PARAMETERS: Record<string, unknown> = {
 function stripInternalRefTokens(text: string): string {
   return text
     .replace(/\s*\((?:\s*s\d{1,2}\s*)(?:,\s*s\d{1,2}\s*)*\)/g, "")
-    .replace(/\s*\[(?:\s*s\d{1,2}\s*)(?:,\s*s\d{1,2}\s*)*\]/g, "");
+    .replace(/\s*\[(?:\s*s\d{1,2}\s*)(?:,\s*s\d{1,2}\s*)*\]/g, "")
+    // Internal block tags the model sometimes echoes into the prose.
+    .replace(
+      /\s*\((?:claim_id|facet_id|proposition_type|claim_category)\s*:[^()]{0,200}\)/g,
+      "",
+    );
 }
+
 
 function buildUserMessage(
   question: string,
@@ -422,7 +438,23 @@ function buildUserMessage(
       lines.push("");
       lines.push(styleGuide.block);
     }
+
+    // academic_drafter_source_ref_coverage_v2 — light citation-use section for
+    // the short / generic genres (they receive no citation section from the
+    // style guide), plus role→block steering derived from pack metadata.
+    if (LIGHT_CITATION_GENRES.includes(genre as AcademicGenre)) {
+      lines.push("");
+      lines.push(buildLightCitationUseBlock(genre as AcademicGenre));
+    }
+    const roleMapBlock = renderSourceRoleMapBlock(
+      buildAcademicSourceRoleMap(question, sources),
+    );
+    if (roleMapBlock) {
+      lines.push("");
+      lines.push(roleMapBlock);
+    }
   }
+
 
   if (framing?.framing_correction_required && framing.named_doctrine_phrase) {
     const named = framing.named_doctrine_phrase;
@@ -1204,6 +1236,11 @@ export interface DrafterV2Result {
     bullets_converted_or_preserved: string;
     drift_paragraphs_dropped: number;
   };
+  /** academic_drafter_source_ref_coverage_v2 telemetry. */
+  academic_drafter_source_ref_emission?: AcademicDrafterSourceRefEmission;
+  pre_csm_source_ref_filtering?: PreCsmSourceRefFiltering;
+
+
 
   /** Deterministic source-sufficiency assessment (telemetry + gate result). */
 
@@ -2189,6 +2226,24 @@ export async function runDrafterV2(
   });
   const claim_source_match = matched.report;
 
+  // academic_drafter_source_ref_coverage_v2 — report-only emission measurement
+  // on the pre-CSM draft, plus a separate pre-CSM filtering breakdown.
+  let academic_drafter_source_ref_emission: AcademicDrafterSourceRefEmission | undefined;
+  let pre_csm_source_ref_filtering: PreCsmSourceRefFiltering | undefined;
+  if (academicModeForMatch) {
+    academic_drafter_source_ref_emission = measureSourceRefEmission(
+      parsed.draft,
+      buildAcademicSourceRoleMap(question, inputSources),
+      String(opts?.sourceUsePlan?.academic_genre ?? "generic_academic"),
+    );
+    pre_csm_source_ref_filtering = {
+      structured_validation_unknown_refs: parsed.report.unknown_source_refs.length,
+      metadata_only_holding_gate_drops: metadata_only_holding_gate.stripped_ref_occurrences,
+      claim_source_match_drops: claim_source_match.source_ref_mismatch_count,
+    };
+  }
+
+
   const built = buildFootnotedAnswer(
     matched.draft ?? gated.draft ?? parsed.draft as StructuredDraft,
     inputSources,
@@ -2337,6 +2392,9 @@ export async function runDrafterV2(
     academic_presentation_hygiene,
     academic_style_model,
     academic_prompt_cleanup,
+    academic_drafter_source_ref_emission,
+    pre_csm_source_ref_filtering,
+
 
 
     sufficiency,
