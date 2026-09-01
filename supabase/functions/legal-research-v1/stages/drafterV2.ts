@@ -332,8 +332,14 @@ const DRAFTER_V2_TOOL_PARAMETERS: Record<string, unknown> = {
 function stripInternalRefTokens(text: string): string {
   return text
     .replace(/\s*\((?:\s*s\d{1,2}\s*)(?:,\s*s\d{1,2}\s*)*\)/g, "")
-    .replace(/\s*\[(?:\s*s\d{1,2}\s*)(?:,\s*s\d{1,2}\s*)*\]/g, "");
+    .replace(/\s*\[(?:\s*s\d{1,2}\s*)(?:,\s*s\d{1,2}\s*)*\]/g, "")
+    // Internal block tags the model sometimes echoes into the prose.
+    .replace(
+      /\s*\((?:claim_id|facet_id|proposition_type|claim_category)\s*:[^()]{0,200}\)/g,
+      "",
+    );
 }
+
 
 function buildUserMessage(
   question: string,
