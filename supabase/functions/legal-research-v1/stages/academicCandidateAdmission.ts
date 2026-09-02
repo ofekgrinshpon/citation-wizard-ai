@@ -81,6 +81,15 @@ const ACADEMIC_PUBLISHER_HOST_RE =
 const UNIVERSITY_HOST_RE = /(\.ac\.il|\.edu|\.ac\.uk|\.uni-[a-z]+\.de|\.edu\.au)$/i;
 
 /**
+ * Institutional scholarly repositories that do not sit on a `.edu`-style host
+ * (Osgoode's Digital Commons, eScholarship, SSRN mirrors, university library
+ * repositories). Host-prefix patterns only — never a generic blog platform.
+ */
+const SCHOLARLY_REPOSITORY_HOST_RE =
+  /^(digitalcommons|lawdigitalcommons|scholarship|scholarworks|openscholarship|escholarship|repository|ir|eprints|dspace|papers)\./i;
+
+
+/**
  * Recognized research institutes that publish peer-reviewed-adjacent legal
  * scholarship and policy studies. Narrow allow-list on purpose: a think tank
  * with an editorial research program, never a blog, portal or firm site.
@@ -178,23 +187,91 @@ const HE_STOP = new Set([
   "בין", "לאחר", "לפני", "בתוך", "משפט", "משפטי", "מקור", "מקורות",
 ]);
 
+/**
+ * Cross-language concept lexicon. A Hebrew question must be able to match an
+ * English-titled comparative source (and the reverse) — without it, every
+ * OUP / Cambridge / faculty-repository article on the same doctrine is scored
+ * off-topic purely because the title is not in Hebrew. General legal
+ * vocabulary only; no question-specific or source-specific entries.
+ */
+const CONCEPT_ALIASES: Array<[string, string[]]> = [
+  ["מידתיות", ["proportionality", "verhältnismäßigkeit"]],
+  ["חוקתי", ["constitutional", "constitutionalism"]],
+  ["חוקתית", ["constitutional", "constitutional review"]],
+  ["ביקורת", ["critique", "judicial review"]],
+  ["שיפוטית", ["judicial", "judicial review"]],
+  ["פסקת", ["limitation clause"]],
+  ["הגבלה", ["limitation", "limitation clause"]],
+  ["זכויות", ["rights", "human rights"]],
+  ["כבוד", ["dignity", "human dignity"]],
+  ["חירות", ["liberty", "freedom"]],
+  ["סבירות", ["reasonableness"]],
+  ["הסתמכות", ["reliance", "detrimental reliance"]],
+  ["ציפייה", ["expectation", "legitimate expectation"]],
+  ["לגיטימית", ["legitimate", "legitimate expectation"]],
+  ["הבטחה", ["promise", "administrative promise"]],
+  ["מנהלי", ["administrative"]],
+  ["מנהלית", ["administrative"]],
+  ["חוזים", ["contract", "contracts", "contract law"]],
+  ["פרשנות", ["interpretation", "purposive interpretation"]],
+  ["תכליתית", ["purposive"]],
+  ["הפרדת", ["separation"]],
+  ["רשויות", ["powers", "separation of powers", "authorities"]],
+  ["איזון", ["balancing"]],
+  ["דוקטרינה", ["doctrine"]],
+  ["דוקטרינת", ["doctrine"]],
+  ["שוויון", ["equality"]],
+  ["מדיניות", ["policy"]],
+  ["חוקה", ["constitution"]],
+  ["חקיקה", ["legislation"]],
+  ["פסיקה", ["case law", "jurisprudence"]],
+  ["תקדים", ["precedent"]],
+  ["סעד", ["remedy", "remedies"]],
+  ["בטלות", ["invalidity", "nullity"]],
+  ["ראיות", ["evidence"]],
+  ["הליך", ["procedure", "due process"]],
+];
+
+const ALIAS_INDEX = new Map<string, string[]>();
+for (const [he, en] of CONCEPT_ALIASES) {
+  const key = normalizeTopicToken(he);
+  ALIAS_INDEX.set(key, en.map((e) => e.toLowerCase()));
+  for (const e of en) {
+    const ek = normalizeTopicToken(e);
+    const prev = ALIAS_INDEX.get(ek) ?? [];
+    if (!prev.includes(key)) ALIAS_INDEX.set(ek, [...prev, key]);
+  }
+}
+
+/** Cross-language equivalents of a normalized topic token, if any. */
+export function conceptAliases(token: string): string[] {
+  return ALIAS_INDEX.get(token) ?? [];
+}
+
 /** Extract significant tokens from the question / role hints. */
-export function extractTopicTerms(text: string, limit = 24): string[] {
+export function extractTopicTerms(text: string, limit = 40): string[] {
   const out: string[] = [];
   const seen = new Set<string>();
+  const push = (t: string) => {
+    if (!t || seen.has(t)) return;
+    seen.add(t);
+    out.push(t);
+  };
   for (const raw of String(text ?? "").split(/[\s,.;:!?()"'\[\]־–—\/]+/)) {
     const t = normalizeTopicToken(raw);
     if (!t) continue;
     const hebrew = /[\u0590-\u05FF]/.test(t);
     if (hebrew ? t.length < 4 : t.length < 5) continue;
     if (HE_STOP.has(t)) continue;
-    if (seen.has(t)) continue;
-    seen.add(t);
-    out.push(t);
+    push(t);
+    // A Hebrew term also carries its English equivalents (and vice versa) so a
+    // comparative source in the other language is not scored off-topic.
+    for (const v of tokenVariants(t)) for (const a of conceptAliases(v)) push(a);
     if (out.length >= limit) break;
   }
-  return out;
+  return out.slice(0, limit);
 }
+
 
 /** True when the candidate text shares at least one significant topic token. */
 export function hasTopicalFit(
@@ -235,7 +312,7 @@ export function evaluateScholarshipAdmission(
 
   // provenance
   const publisher = ACADEMIC_PUBLISHER_HOST_RE.test(domain);
-  const university = UNIVERSITY_HOST_RE.test(domain);
+  const university = UNIVERSITY_HOST_RE.test(domain) || SCHOLARLY_REPOSITORY_HOST_RE.test(domain);
   const institute = RESEARCH_INSTITUTE_HOST_RE.test(domain);
   const repositoryPath = REPOSITORY_PATH_RE.test(path);
   const doi = DOI_RE.test(input.url);
@@ -249,6 +326,7 @@ export function evaluateScholarshipAdmission(
     signals.push("document_body_path");
   }
   const provenance = publisher || university || institute || repositoryPath || doi;
+
 
   // content shape
   const scholarlyTitle = SCHOLARLY_TITLE_RE.test(title);
