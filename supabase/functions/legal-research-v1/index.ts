@@ -2675,6 +2675,12 @@ async function handle(req: Request): Promise<Response> {
       doctrinal_ineligible_reasons: drafter.sufficiency?.doctrinal_ineligible_reasons ?? {},
       typing_ran: drafter.doctrinal_typing ? true : false,
       typing_remapped_count: drafter.doctrinal_typing?.remapped?.length ?? 0,
+      // academic_source_type_whitelist_consistency_v1 — per-reason ineligibility
+      // counts (not_doctrinal_type / no_acquired_body_text /
+      // integrity_failed_or_metadata_only / verifier_not_direct_or_partial) so
+      // a type-whitelist gap is visible without a manual join.
+      typing_ineligible_reason_counts:
+        drafter.doctrinal_typing?.ineligible_reason_counts ?? {},
       // doctrinal_secondary_body_acquisition_v1 — why doctrinal sources did or
       // did not arrive at the drafter with substantive text.
       secondary_body_stage_ran: secondaryBodyAcquisition.ran,
