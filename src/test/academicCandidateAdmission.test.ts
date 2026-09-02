@@ -241,3 +241,42 @@ describe("recognized research institute provenance", () => {
     expect(d.rejection_reasons).toContain("no_credible_academic_provenance");
   });
 });
+
+describe("cross-language topical fit", () => {
+  const terms = extractTopicTerms("כתוב פרק רקע תיאורטי על עקרון המידתיות בביקורת חוקתית");
+  it("admits an English OUP article on the Hebrew topic", () => {
+    const d = evaluateScholarshipAdmission({
+      title: "Proportionality: Challenging the critics",
+      url: "https://academic.oup.com/icon/article/12/3/1",
+      snippet: "This article argues that proportionality analysis...",
+      original_class: "unknown",
+      topic_terms: terms,
+    });
+    expect(d.topical_fit).toBe(true);
+    expect(d.admission_decision).toBe("admitted_as_scholarship");
+  });
+  it("keeps an unrelated English article off-topic", () => {
+    const d = evaluateScholarshipAdmission({
+      title: "Maritime Salvage Law in the North Sea",
+      url: "https://academic.oup.com/journals/article/9",
+      snippet: "This article argues about salvage claims.",
+      original_class: "unknown",
+      topic_terms: terms,
+    });
+    expect(d.topical_fit).toBe(false);
+    expect(d.admission_decision).toBe("rejected");
+  });
+});
+
+describe("scholarly repository hosts", () => {
+  it("admits an on-topic Digital Commons law-repository article", () => {
+    const d = evaluateScholarshipAdmission({
+      title: "The Death of Oakes: Time for a Rights-Specific Approach",
+      url: "https://digitalcommons.osgoode.yorku.ca/ohlj/vol54/iss2/3/",
+      snippet: "This article revisits proportionality review under section 1.",
+      original_class: "unknown",
+      topic_terms: extractTopicTerms("עקרון המידתיות בביקורת חוקתית"),
+    });
+    expect(d.admission_decision).toBe("admitted_as_scholarship");
+  });
+});

@@ -1,90 +1,263 @@
 [
   {
     "id": "AW4",
-    "run_id": "7f67250a-49cb-48c4-814c-f43f395e4983",
-    "qa_log_id": "b34c64e7-44ea-4e60-ad12-53596f216dc1",
-    "genre": null,
-    "footnotes_count": 0,
-    "footnotes": [],
-    "pack_admission_summary": null,
+    "run_id": "92a701da-f7a5-4ab6-a1a6-f0a49c4918a6",
+    "qa_log_id": "4c01ad49-fcb7-492a-87c1-200cce8c6a6f",
+    "genre": "theoretical_background",
+    "footnotes_count": 2,
+    "footnotes": [
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+            "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      },
+      {
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_93301dbd20b64543b3ea796d359434d5.pdf",
+        "title": "החלה ישירה של זכויות האדם על הכלל",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_93301dbd20b64543b3ea796d359434d5.pdf",
+            "title": "החלה ישירה של זכויות האדם על הכלל",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ],
+    "pack_admission_summary": {
+      "admitted_count": 0,
+      "rejected_count": 0,
+      "admitted_by_role": {},
+      "final_pack_roles": [],
+      "rejected_by_reason": {},
+      "reviewed_candidates": 0,
+      "role_diversity_score": 0
+    },
     "admission_gate": [],
     "role_slotting": [],
-    "primary_anchor": null,
-    "answer": "המחקר הופסק בגלל תקלה תשתיתית ולא הושלמה תשובה משפטית מבוססת. לא מוצגת תשובת ביניים. הקרדיטים על ההרצה הזו הוחזרו. אפשר להריץ שוב, לצמצם את השאלה, או לצרף את המסמך הרלוונטי."
+    "primary_anchor": {
+      "rows": [
+        {
+          "url": null,
+          "found": false,
+          "status": "unsupported_statute_source",
+          "final_status": "not_found",
+          "bytes_received": 0,
+          "failure_reason": "unsupported_statute_source:no_official_statute_url",
+          "chars_extracted": 0,
+          "identity_passed": null,
+          "nominated_target": "חוק-יסוד: כבוד האדם וחירותו",
+          "extraction_started": false,
+          "extraction_succeeded": false,
+          "usable_primary_anchor": false
+        },
+        {
+          "url": null,
+          "found": false,
+          "status": "not_attempted",
+          "final_status": "not_found",
+          "bytes_received": 0,
+          "failure_reason": "no_official_url_available",
+          "chars_extracted": 0,
+          "identity_passed": null,
+          "nominated_target": "בג\"ץ 5088/94 בדר נ' שר הביטחון",
+          "extraction_started": false,
+          "extraction_succeeded": false,
+          "usable_primary_anchor": false
+        }
+      ],
+      "status_counts": {
+        "not_found": 2
+      },
+      "all_primary_anchors_failed": true,
+      "usable_primary_anchor_count": 0
+    },
+    "answer": "עקרון המידתיות הוא כלי יסודי בביקורת חוקתית שמטרתו לאזן בין זכויות יסוד לבין ענייני צורכי הציבור וסמכויות השלטון; בבסיסו עומדת ההנחה כי פגיעה בזכויות תיאסר אלא אם היא עומדת במבחנים שישקפו התאמה רציונלית ותכליתית בין האמצעי שהמדינה נוקטת ובין המטרה החוקתית שנרצה להשיג.¹\n\nמבחינה היסטורית ותיאורטית, המידתיות שאובה מהרציונל הפילוסופי־אירופאי וממערכות המשפט היבשתיות שבהן נבנו דגמים מובנים של שיפוט איזון; במובן זה ניכרת השפעה של פרקטיקות פירוש בחקיקה ובפסיקה שהוסיפו משקל לכלי זה ככלי של בקרה שיפוטית מסודרת, וגיבשו אותו ככלי שיטתי שהתפתח גם במשפט הישראלי בעשורים האחרונים.¹\n\nבישראל, עיבודו של עקרון המידתיות התרחש על רקע מה שמכונה ה'מהפכה החוקתית' ובחיזוק הוראות כלליות והגדרות של זכויות בּחוקי היסוד; הספרות החוקרת תהליך זה מציינת כי בית המשפט העליון אימץ כלים של מידתיות בתוך מסגרת של פיקוח שיפוטי מתוכנן, ובמקביל הדיון על מקורותיו הפרשניים והחקיקתיים ממשיך להיות נושא מרכזי בעירום הדיאלקטי בין משפט לחברה.\n\nבפרקטיקה התיאורטית מקובל לפרק את מבחן המידתיות לשלושה שלבים מובחנים: ראשית, שלב ההתאמה -- בדיקה האם האמצעי הננקט אכן מתאים להשגת המטרה המוצהרת; שנית, שלב ההכרחיות/הקטנת הפגיעה -- חיפוש אחר אמצעי פחות מגביל אשר משיגים את אותה מטרה או בחינת האמצעי כ'המעט הפוגע ביותר' האפשרי; ולבסוף, שלב האיזון הצר (פרופורציונליות בחומרה) שבו נמדלת התועלת הציבורית שבאמצעי מול חומרת הפגיעה בזכות. ספרות משפטית המתמקדת במשפט הישראלי וברגולציה מציעה את החלוקה הזו ומנתחת את הקשר הלוגי בין שלביה.\n\nהקשר הלוגי בין השלבים הוא גם עניין נורמטיבי: שלב ההתאמה משרת סינון ראשוני שמונע בחינה מאזנת מיותרת של צעדים שאינם אפילו מסוגלים לקדם את המטרה, שלב ההכרחיות מבטא חובת מינימליות ומגן על אופציות פחות פולשניות, ואילו שלב האיזון ממקם את השיקול הסופי בהיקף שיקיפת הפסיקה של בית המשפט, כאשר שאלות של משקל ושל סבירות נוטות להיות פחות פורמליות ודורשות שיפוט שיפוטי מעמיק יותר. דיון זה מבליט את המתח בין דיוק פורמליסטי לבין שיקול דעת נורמטיבי שנדרש להפעיל אותו.²\n\nהשיח האקדמי והפסיקתי מזהה וריאציות בפרקטיקה של יישום המידתיות: קיימות גישות שמדגישות רציונליות פשוטה או סטנדרט של 'הגיוניות', אחרות מטיבות להבליט מרחב הערכה שיפוטי נרחב למוסדות פוליטיים, ואף מוצעות פרדיגמות פרוצדורליות שעשויות להקטין את הסכנה של חדירה מופרזת לשיקול דעתם של המחוקק והמבצע. הביקורת העיקרית מציעה כי מידתיות עלולה להוות כלי להרחבת כוח שיפוטי בלא מסגרת פרוצדורלית מחייבת, ולכן חלק מהכותבים קוראים להגדרת קריטריונים ברורים יותר או לשילוב מנגנונים של הגבלת שיקול דעת.¹\n\nלסיכום מעשי, חשוב לציין כי הטקסטים והמאמרים שסופקו מספקים מסגרת תיאורטית־ספרותית חזקה להבנת עקרון המידתיות ולבירור שלבי המבחן, אך מאגר המקורות הנתון אינו מחליף נוסח חקיקה יסודית יחיד שמנסח מבחן אחד ומחייב בכל נסיבות; לפיכך כל יישום אמפירי של המבחנים יידרש להסתמך על פסיקה ספציפית והקשרים עובדתיים, ועל ניתוח פרשני של חוקי היסוד שנדונים בכל מקרה לגופו.¹\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n"
   },
   {
     "id": "AW1",
-    "run_id": "b81c4984-fc7e-404e-8bf2-b8afc96732c3",
-    "qa_log_id": "6a5340a3-3660-455a-a428-50fe8d3ff15c",
+    "run_id": "9b4927e9-a03e-481d-b8a2-55ea6b3c1d01",
+    "qa_log_id": "651cbdc7-492f-48e9-9fe2-2a4a2d185b24",
     "genre": "introduction",
     "footnotes_count": 3,
     "footnotes": [
       {
-        "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
-        "title": "חוק יסוד: כבוד האדם וחירותו",
-        "number": 1,
-        "sources": [
-          {
-            "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
-            "title": "חוק יסוד: כבוד האדם וחירותו",
-            "source_type": "israeli_law"
-          }
-        ],
-        "source_type": "israeli_law"
-      },
-      {
         "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
-        "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות; חוק יסודות התקציב, התשמ\"ה",
-        "number": 2,
+        "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+        "number": 1,
         "sources": [
           {
             "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
             "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
             "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      },
+      {
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_de4b01f3397b42efbccf10f0c3de1167.pdf",
+        "title": "עשרים שנה לבנק הזמרחי: סיפורה הפיקנטי של חוקת הכלאיים הישראלית; המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_de4b01f3397b42efbccf10f0c3de1167.pdf",
+            "title": "עשרים שנה לבנק הזמרחי: סיפורה הפיקנטי של חוקת הכלאיים הישראלית",
+            "source_type": "journal_article"
           },
           {
-            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_8d32ae41981d4925bfb8c264bfa06f91.pdf",
-            "title": "חוק יסודות התקציב, התשמ\"ה",
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
+            "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
             "source_type": "journal_article"
           }
         ],
         "source_type": "compound"
       },
       {
-        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%A2%D7%AA%D7%99%D7%A8%D7%94%20%D7%9C%D7%91%D7%92%D7%A6%20%D7%9B%D7%94%D7%9C%D7%99%D7%9A%20%D7%AA%D7%A7%D7%99%D7%A4%D7%94%20%D7%A2%D7%A8%D7%A2%D7%95%D7%A8%D7%99.pdf",
-        "title": "עתירה לבג״צ כהליך תקיפה ערעורי",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_de4b01f3397b42efbccf10f0c3de1167.pdf",
+        "title": "עשרים שנה לבנק הזמרחי: סיפורה הפיקנטי של חוקת הכלאיים הישראלית",
         "number": 3,
         "sources": [
           {
-            "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%A2%D7%AA%D7%99%D7%A8%D7%94%20%D7%9C%D7%91%D7%92%D7%A6%20%D7%9B%D7%94%D7%9C%D7%99%D7%9A%20%D7%AA%D7%A7%D7%99%D7%A4%D7%94%20%D7%A2%D7%A8%D7%A2%D7%95%D7%A8%D7%99.pdf",
-            "title": "עתירה לבג״צ כהליך תקיפה ערעורי",
-            "source_type": "book_or_chapter"
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_de4b01f3397b42efbccf10f0c3de1167.pdf",
+            "title": "עשרים שנה לבנק הזמרחי: סיפורה הפיקנטי של חוקת הכלאיים הישראלית",
+            "source_type": "journal_article"
           }
         ],
-        "source_type": "book_or_chapter"
+        "source_type": "journal_article"
       }
     ],
     "pack_admission_summary": {
-      "admitted_count": 0,
+      "admitted_count": 1,
       "rejected_count": 8,
-      "admitted_by_role": {},
-      "final_pack_roles": [],
+      "admitted_by_role": {
+        "government_report": 1
+      },
+      "final_pack_roles": [
+        "critique_or_counterposition_source"
+      ],
       "rejected_by_reason": {
         "off_topic_no_role_assignment": 2,
         "insufficient_academic_signals": 8,
-        "no_scholarly_title_or_abstract": 7,
-        "no_credible_academic_provenance": 7,
-        "off_topic_for_question_and_roles": 1,
-        "class_unknown_has_no_secondary_academic_slot": 7
+        "no_scholarly_title_or_abstract": 5,
+        "no_credible_academic_provenance": 8,
+        "off_topic_for_question_and_roles": 2,
+        "class_unknown_has_no_secondary_academic_slot": 6
       },
       "reviewed_candidates": 8,
-      "role_diversity_score": 0
+      "role_diversity_score": 0.2
     },
     "admission_gate": [
       {
-        "url": "https://www.idi.org.il/media/4035/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA-%D7%91%D7%9E%D7%91%D7%98-%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%D7%99-%D7%95%D7%9E%D7%A9%D7%95%D7%95%D7%94.pdf",
-        "title": "מידתיות במבט ביקורתי ומשווה",
-        "domain": "idi.org.il",
+        "url": "https://www.dyoma.co.il/psikta/1576",
+        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "domain": "dyoma.co.il",
+        "topical_fit": true,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://www.hilan.co.il/%D7%9E%D7%A8%D7%9B%D7%96-%D7%99%D7%93%D7%A2/%D7%91%D7%A1%D7%99%D7%A1-%D7%99%D7%93%D7%A2/%D7%9E%D7%99%D7%9C%D7%95%D7%9F-%D7%9C%D7%AA%D7%A0%D7%90%D7%99-%D7%A2%D7%91%D7%95%D7%93%D7%94/%D7%97/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93-%D7%9B%D7%91%D7%95%D7%93-%D7%94%D7%90%D7%93%D7%9D-%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95/",
+        "title": "חוק יסוד: כבוד האדם וחירותו - חילן",
+        "domain": "hilan.co.il",
+        "topical_fit": false,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "off_topic_for_question_and_roles",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://www.dyoma.co.il/psikta/1576",
+        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "domain": "dyoma.co.il",
+        "topical_fit": true,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://israeliconstitutionalism.wordpress.com/2021/08/05/%D7%A9%D7%99%D7%9E%D7%95%D7%A9-%D7%9C%D7%A8%D7%A2%D7%94-%D7%91%D7%A1%D7%9E%D7%95%D7%9B%D7%95%D7%AA-%D7%9E%D7%9B%D7%95%D7%A0%D7%A0%D7%AA-%D7%94%D7%A6%D7%A2%D7%94-%D7%9C%D7%A1%D7%A2%D7%93-%D7%97%D7%95%D7%A7%D7%AA%D7%99-%D7%90%D7%97%D7%A8-%D7%A9%D7%97%D7%A8-%D7%91%D7%9F-%D7%9E%D7%90%D7%99%D7%A8/",
+        "title": "שימוש לרעה בסמכות מכוננת – הצעה לסעד חוקתי אחר",
+        "domain": "israeliconstitutionalism.wordpress.com",
+        "topical_fit": true,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://israeliconstitutionalism.wordpress.com/2021/08/05/%D7%A9%D7%99%D7%9E%D7%95%D7%A9-%D7%9C%D7%A8%D7%A2%D7%94-%D7%91%D7%A1%D7%9E%D7%95%D7%AA-%D7%9E%D7%9B%D7%95%D7%A0%D7%A0%D7%AA-%D7%94%D7%A6%D7%A2%D7%94-%D7%9C%D7%A1%D7%A2%D7%93-%D7%97%D7%95%D7%9A%D7%AA%D7%99-%D7%90%D7%97%D7%A8-%D7%A9%D7%97%D7%A8-%D7%91%D7%9F-%D7%9E%D7%90%D7%99%D7%A8/",
+        "title": "שימוש לרעה בסמכות מכוננת – הצעה לסעד חוקתי אחר / שחר בן מאיר",
+        "domain": "israeliconstitutionalism.wordpress.com",
+        "topical_fit": true,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://israeliconstitutionalism.wordpress.com/2024/01/01/010124/",
+        "title": "ICON-S Essays: חיבורים במשפט הציבורי – חיבור מס' 1 לשנת 2024",
+        "domain": "israeliconstitutionalism.wordpress.com",
+        "topical_fit": true,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [
+          "scholarly_title_shape"
+        ],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://israeliconstitutionalism.wordpress.com/2024/01/01/010124/",
+        "title": "ICON-S Essays: חיבורים במשפט הציבורי – חיבור מס' 1 לשנת 2024",
+        "domain": "israeliconstitutionalism.wordpress.com",
         "topical_fit": false,
         "candidate_id": null,
         "original_class": "unknown",
@@ -100,48 +273,222 @@
         "assigned_source_type": null
       },
       {
-        "url": "https://www.idi.org.il/articles/9658",
-        "title": "האפקט המצטבר של המידתיות: נדבך חדש בבחינה החוקתית הישראלית",
-        "domain": "idi.org.il",
+        "url": "https://www.wikidemia.co.il/%D7%A2%D7%91%D7%95%D7%93%D7%95%D7%AA-%D7%A1%D7%9E%D7%99%D7%A0%D7%A8%D7%99%D7%95%D7%9F-%D7%91%D7%9E%D7%A9%D7%A4%D7%98%D7%99%D7%9D/",
+        "title": "עבודות סמינריון במשפטים: מדריך סטודנטים לעבודה מצטיינת | ויקידמיה",
+        "domain": "wikidemia.co.il",
         "topical_fit": true,
         "candidate_id": null,
         "original_class": "unknown",
         "admission_signals": [
-          "repository_or_publications_path"
+          "scholarly_title_shape"
         ],
         "rejection_reasons": [
-          "no_scholarly_title_or_abstract",
+          "no_credible_academic_provenance",
           "insufficient_academic_signals"
         ],
         "admission_decision": "rejected",
         "assigned_source_type": null
+      }
+    ],
+    "role_slotting": [
+      {
+        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "primary_statute",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
       },
       {
-        "url": "https://www.dyoma.co.il/psikta/1576",
+        "title": "חוק יסוד: כבוד האדם וחירותו - חילן",
+        "reason": "no_reslot_attempted",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "primary_statute",
+        "rejected_reason": "off_topic_no_role_assignment",
+        "assigned_academic_roles": []
+      },
+      {
         "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
-        "domain": "dyoma.co.il",
-        "topical_fit": true,
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "שימוש לרעה בסמכות מכוננת – הצעה לסעד חוקתי אחר",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "שימוש לרעה בסמכות מכוננת – הצעה לסעד חוקתי אחר / שחר בן מאיר",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "primary_statute",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "ICON-S Essays: חיבורים במשפט הציבורי – חיבור מס' 1 לשנת 2024",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "ICON-S Essays: חיבורים במשפט הציבורי – חיבור מס' 1 לשנת 2024",
+        "reason": "no_reslot_attempted",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "off_topic_no_role_assignment",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "טיוטה סעדים זמניים - Gov.il",
+        "reason": "institutional_source_fits_policy_slot",
+        "changed": true,
+        "final_slot": "government_report",
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": null,
+        "assigned_academic_roles": [
+          "critique_or_counterposition_source"
+        ]
+      },
+      {
+        "title": "עבודות סמינריון במשפטים: מדריך סטודנטים לעבודה מצטיינת | ויקידמיה",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      }
+    ],
+    "primary_anchor": {
+      "rows": [
+        {
+          "url": null,
+          "found": false,
+          "status": "unsupported_statute_source",
+          "final_status": "not_found",
+          "bytes_received": 0,
+          "failure_reason": "unsupported_statute_source:no_official_statute_url",
+          "chars_extracted": 0,
+          "identity_passed": null,
+          "nominated_target": "חוק יסוד: כבוד האדם וחירותו",
+          "extraction_started": false,
+          "extraction_succeeded": false,
+          "usable_primary_anchor": false
+        },
+        {
+          "url": null,
+          "found": false,
+          "status": "not_attempted",
+          "final_status": "not_found",
+          "bytes_received": 0,
+          "failure_reason": "no_docket_no_live_lane",
+          "chars_extracted": 0,
+          "identity_passed": null,
+          "nominated_target": "בג\"צ 1715/97 לשכת מנהלי ההשקעות",
+          "extraction_started": false,
+          "extraction_succeeded": false,
+          "usable_primary_anchor": false
+        }
+      ],
+      "status_counts": {
+        "not_found": 2
+      },
+      "all_primary_anchors_failed": true,
+      "usable_primary_anchor_count": 0
+    },
+    "answer": "מבוא. שאלת המחקר בעבודה זו ממוקדת ובירורית: האם הסעד החוקתי המוכר בשפה העיונית כ'קריאה לתוך החוק' חורג מסמכותן של הרשויות המוסמכות ומהווה פגיעה בעקרון הפרדת הרשויות; ואם כך, באילו נסיבות ובאילו גבולות. שאלת המחקר בוחנת לא רק את אפשרות השימוש בסעד זה אלא בעיקר את מידת ההסמכה המשפטית והחוקתית שלו, את המניעים שניתנים להטמעתו על ידי שיקול שיפוטי ואת ההשלכות המוסדיות של הענקתו. מטרת הפרק הזה היא למסגר את הבעיה הדוקטרינרית, להבהיר את שפת הדיון ולנסח את המתח המרכזי שמנחה את העבודה כולה.¹\n\nהמונח 'קריאה לתוך החוק' נבחן בספרות כביטוי לטכניקות פרשניות שבהן בית המשפט מוסיף הוראה או משלים ריק בסגנון שנותן לחקיקה משמעות פרשנית מסוימת מבלי לבטלה במישרין. המושג מופיע בתוך הדיון הרחב יותר על 'חקיקה שיפוטית' וההבחנה הבסיסית בינה לבין פרשנות מצמצמת או לקביעה של בטלות, שכן לכל אחת מהטכניקות יש משמעויות מוסדיות שונות מבחינת חלוקת הכוחות. על כך מצביעים המחקרים שמאפיינים את טכניקת ההשלמה הפרשנית ומדגישים את הצורך לבדל אותה מהוספה חקיקתית נטו.\n\nבמישור הנורמטיבי והעקרוני, ההצדקות לשימוש בסעד כזה נעות בין הצורך לשמר זכויות יסוד והמשכיות משפטית לבין הנימוק ששיפוט המעגן פרשנות מתקנת מונע ריק חוקתי או תוצאה בלתי־מוסכמת עם עקרונות יסוד. במקורות התיאורטיים קיימת תמיכה ברעיון כי מהפכת הזכויות ושינוי מעמד הנורמות החוקתיות הציבה משוואת איזון חדשה בין כבוד האדם וחירותו לבין עקרונות הסמכה ותחולת החקיקה, והדבר מציע מסגרת לגיטימית לשימוש זה—אבל כזו שאינה המייתרת את שאלת הגבולות הפרוצדורליים והדמוקרטיים. בעקבות זאת הוויכוח התיאורטי מקשר בין אבחנה פרשנית לבין שימור עקרון הפרדת הרשויות כמסגרת מוסדית.²\n\nבפסיקה הישראלית בנושאים של פרשנות חוקתית מופיעות הכרעות שבהן נמתחת הבחנה בין פרשנות מתקנת או מצמצמת לבין צעדי בטלות, ובתיקי מפתח הוצגה מסגרת תיאורטית המאפשרת לשופטים לבחור בין דרכים אלו לפי עקרונות חוקתיים ומבחני צמצום. לקשר זה יש חשיבות ישירה לדיון על 'קריאה לתוך החוק', שכן פסיקה מרכזית הציעה כלים להבחנה בין פרשנות שמעמידה גבולות לבין פרשנות שמוסיפה הוראה מעצם המנגנון השיפוטי. עם זאת, על ההסתמכות בפסיקה כזו יש להטיל זהירות: הטקסטים המסופקים מטרתיים ומראים תמיכה חלקית בגישה זו מבלי להציג נוסח חקיקה מפורש שמסמיך אותה במפורש.\n\nהמתח המרכזי שבידו תעסוק העבודה הוא המתחים המוסדיים: מצד אחד חובת ההגנה על זכויות יסוד ומצד שני הצורך בשמירה על דמוקרטיה פרלמנטרית שבה הכנסת היא הגוף המחוקק. בעיה זו עולה אף בהגדרת מעגל המקרים שבהם 'קריאה לתוך החוק' נחשבת לכלי מתקבל על הדעת ולא כ'חקיקה בידי שופטים'—שאלות של מידת הסמכות, של הסתמכות על פרשנות של טקסט חקיקה והשלכותיה על הלגיטימציה הדמוקרטית ניצבות בלב הוויכוח. הדיון המחקרי יבחן את המניעים לסעד זה, את האופנים שבהם הוא מופעל בפסיקה ואת הקריטריונים התיאורטיים שמציעה הספרות להגבלת השימוש בו.³\n\nלשאלת ההגבלות והעמדות המבצעיות נקדיש פרק שבו ייבחנו מבחנים פרשניים שנוסחו בפסיקה ובספרות—כולל הבדלים בין פרשנות מצמצמת, השלמה פרשנית ונטילת סמכויות חקיקה — וכן שיקולים פרוצדורליים שמגנים על ההיקף הדמוקרטי של הפעולה השיפוטית. מקורות מסוימים מציעים כי יש להכתיב כללים ברורים לשימוש בסעד זה, כגון שקיפות הנמקה, מידת ההסתמכות על תכליות חוקתיים, ותחולה צמצומית בלבד במקרים של פער משמעותי בין החוק לבין עקרונות היסוד; דיון זה ייבחן הן מבחינה תאורטית והן בהשוואה למקרים שניתן למצוא בפסיקה. האבחנה בין הוראה פרשנית לבין הוספה חקיקתית תהיה קריטית להערכת היחס בין השופטים לכנסת.\n\nהעבודה תסתיים בסיכום דיאלקטי: הערכת הטעמים התומכים בסעד לעומת הסכנות המוסדיות שבהענקתו ללא גבולות, והצעה לפרמטרים נורמטיביים שיאפשרו איזון בין שמירת זכויות יסוד לבין שמירת עקרון הפרדת הרשויות. מסגרת המחקר תשלב ניתוח של פסיקה מרכזית, סקירת ספרות נבחרת ומבחן קריטי של ההשלכות הפרקטיות של אימוץ נוהג שיפוטי רחב או מצומצם. משמעות המחקר נובעת מהעובדה שמדובר בכלי שעלול לשנות את מאזן הכוחות המוסדי — ולכן הבירור החוקתי והדוקטרינרי של תוקפו, של תנאי השימוש בו ושל מגבלותיו הוא בעל חשיבות ציבורית ומשפטית.²\n\nהבהרה לשונית־מקורית: חלק מהחומרים שביסוד עבודת הרקע עוסקים בנושאים סמוכים — כגון מהפכת הזכויות, מעמדם של חוקי היסוד ותופעת 'חקיקה שיפוטית' — והם נועדו להעמיק את המסגרת הדוקטרינרית של הוויכוח ולא לשמש כהפניה לנוסח חקיקה ספציפי המכיר או מגדיר במפורש את הסעד. בסופו של דבר השאלה החוקתית־מוסדית שנבחן כאן נותרת מוסדרת באמצעות סינתזה בין הדיון התיאורטי לבין המגבלות והדוגמאות שניתן לחלץ מתוך הפסיקה.¹\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n\n**להמשך בדיקה:** בג\"ץ 1715/97, לשכת מנהלי ההשקעות בישראל ואח' נ' שר האוצר ואח' · בג\"ץ 97 / 1715\n"
+  },
+  {
+    "id": "AW7",
+    "run_id": "6dd28695-79ba-48ee-b9c1-17e2e67c9d74",
+    "qa_log_id": "20f5f1fc-ec70-402f-96ee-e3f6abfdbd3c",
+    "genre": "argument_paragraph",
+    "footnotes_count": 1,
+    "footnotes": [
+      {
+        "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+        "title": "חוק יסוד: כבוד האדם וחירותו",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+            "title": "חוק יסוד: כבוד האדם וחירותו",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "israeli_law"
+      }
+    ],
+    "pack_admission_summary": {
+      "admitted_count": 0,
+      "rejected_count": 4,
+      "admitted_by_role": {},
+      "final_pack_roles": [],
+      "rejected_by_reason": {
+        "off_topic_no_role_assignment": 1,
+        "insufficient_academic_signals": 4,
+        "no_scholarly_title_or_abstract": 3,
+        "no_credible_academic_provenance": 3,
+        "off_topic_for_question_and_roles": 1,
+        "class_unknown_has_no_secondary_academic_slot": 3
+      },
+      "reviewed_candidates": 4,
+      "role_diversity_score": 0
+    },
+    "admission_gate": [
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%A4%D7%A7%D7%95%D7%93%D7%AA_%D7%94%D7%90%D7%92%D7%95%D7%93%D7%95%D7%AA_%D7%94%D7%A9%D7%99%D7%AA%D7%95%D7%A4%D7%99%D7%95%D7%AA",
+        "title": "פקודת האגודות השיתופיות - ויקיטקסט",
+        "domain": "he.wikisource.org",
+        "topical_fit": false,
         "candidate_id": null,
         "original_class": "unknown",
         "admission_signals": [],
         "rejection_reasons": [
           "no_credible_academic_provenance",
           "no_scholarly_title_or_abstract",
+          "off_topic_for_question_and_roles",
           "insufficient_academic_signals"
         ],
         "admission_decision": "rejected",
         "assigned_source_type": null
       },
       {
-        "url": "https://www.dyoma.co.il/psikta/1576",
-        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
-        "domain": "dyoma.co.il",
+        "url": "https://www.inss.org.il/he/the-extent-of-judicial-review-of-the-political-authorities/",
+        "title": "היקף הפיקוח השיפוטי על הרשויות הפוליטיות",
+        "domain": "inss.org.il",
         "topical_fit": true,
         "candidate_id": null,
         "original_class": "unknown",
-        "admission_signals": [],
+        "admission_signals": [
+          "recognized_research_institute_host"
+        ],
         "rejection_reasons": [
-          "no_credible_academic_provenance",
           "no_scholarly_title_or_abstract",
           "insufficient_academic_signals"
         ],
@@ -149,57 +496,26 @@
         "assigned_source_type": null
       },
       {
-        "url": "https://www.dyoma.co.il/psikta/1576",
-        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
-        "domain": "dyoma.co.il",
+        "url": "https://israeliconstitutionalism.wordpress.com/2018/11/04/__trashed-4/",
+        "title": "על הסמכות לביקורת שיפוטית על חוקי-יסוד",
+        "domain": "israeliconstitutionalism.wordpress.com",
         "topical_fit": true,
         "candidate_id": null,
         "original_class": "unknown",
-        "admission_signals": [],
+        "admission_signals": [
+          "scholarly_title_shape"
+        ],
         "rejection_reasons": [
           "no_credible_academic_provenance",
-          "no_scholarly_title_or_abstract",
           "insufficient_academic_signals"
         ],
         "admission_decision": "rejected",
         "assigned_source_type": null
       },
       {
-        "url": "https://dyoma.co.il/psikta/1576",
-        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
-        "domain": "dyoma.co.il",
-        "topical_fit": true,
-        "candidate_id": null,
-        "original_class": "unknown",
-        "admission_signals": [],
-        "rejection_reasons": [
-          "no_credible_academic_provenance",
-          "no_scholarly_title_or_abstract",
-          "insufficient_academic_signals"
-        ],
-        "admission_decision": "rejected",
-        "assigned_source_type": null
-      },
-      {
-        "url": "https://www.dyoma.co.il/psikta/1576",
-        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
-        "domain": "dyoma.co.il",
-        "topical_fit": true,
-        "candidate_id": null,
-        "original_class": "unknown",
-        "admission_signals": [],
-        "rejection_reasons": [
-          "no_credible_academic_provenance",
-          "no_scholarly_title_or_abstract",
-          "insufficient_academic_signals"
-        ],
-        "admission_decision": "rejected",
-        "assigned_source_type": null
-      },
-      {
-        "url": "https://www.dyoma.co.il/psikta/1576",
-        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
-        "domain": "dyoma.co.il",
+        "url": "https://www.hilan.co.il/%D7%9E%D7%A8%D7%9B%D7%96-%D7%99%D7%93%D7%A2/%D7%91%D7%A1%D7%99%D7%A1-%D7%99%D7%93%D7%A2/%D7%9E%D7%99%D7%9C%D7%95%D7%9F-%D7%9C%D7%AA%D7%A0%D7%90%D7%99-%D7%A2%D7%91%D7%95%D7%93%D7%94/%D7%97/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93-%D7%9B%D7%91%D7%95%D7%93-%D7%94%D7%90%D7%93%D7%9D-%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95/",
+        "title": "חוק יסוד: כבוד האדם וחירותו - חילן",
+        "domain": "hilan.co.il",
         "topical_fit": true,
         "candidate_id": null,
         "original_class": "unknown",
@@ -215,77 +531,7 @@
     ],
     "role_slotting": [
       {
-        "title": "מידתיות במבט ביקורתי ומשווה",
-        "reason": "no_reslot_attempted",
-        "changed": false,
-        "final_slot": null,
-        "candidate_id": null,
-        "original_slot": "scholarship",
-        "rejected_reason": "off_topic_no_role_assignment",
-        "assigned_academic_roles": []
-      },
-      {
-        "title": "האפקט המצטבר של המידתיות: נדבך חדש בבחינה החוקתית הישראלית",
-        "reason": "no_safe_academic_slot",
-        "changed": false,
-        "final_slot": null,
-        "candidate_id": null,
-        "original_slot": "scholarship",
-        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
-        "assigned_academic_roles": []
-      },
-      {
-        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
-        "reason": "no_safe_academic_slot",
-        "changed": false,
-        "final_slot": null,
-        "candidate_id": null,
-        "original_slot": "scholarship",
-        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
-        "assigned_academic_roles": []
-      },
-      {
-        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
-        "reason": "no_safe_academic_slot",
-        "changed": false,
-        "final_slot": null,
-        "candidate_id": null,
-        "original_slot": "primary_statute",
-        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
-        "assigned_academic_roles": []
-      },
-      {
-        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
-        "reason": "no_safe_academic_slot",
-        "changed": false,
-        "final_slot": null,
-        "candidate_id": null,
-        "original_slot": "binding_case_law",
-        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
-        "assigned_academic_roles": []
-      },
-      {
-        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
-        "reason": "no_safe_academic_slot",
-        "changed": false,
-        "final_slot": null,
-        "candidate_id": null,
-        "original_slot": "binding_case_law",
-        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
-        "assigned_academic_roles": []
-      },
-      {
-        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
-        "reason": "no_safe_academic_slot",
-        "changed": false,
-        "final_slot": null,
-        "candidate_id": null,
-        "original_slot": "primary_statute",
-        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
-        "assigned_academic_roles": []
-      },
-      {
-        "title": "אתר השירותים והמידע הממשלתי - דוברות בית המשפט",
+        "title": "פקודת האגודות השיתופיות - ויקיטקסט",
         "reason": "no_reslot_attempted",
         "changed": false,
         "final_slot": null,
@@ -295,12 +541,32 @@
         "assigned_academic_roles": []
       },
       {
-        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "title": "היקף הפיקוח השיפוטי על הרשויות הפוליטיות",
         "reason": "no_safe_academic_slot",
         "changed": false,
         "final_slot": null,
         "candidate_id": null,
-        "original_slot": "binding_case_law",
+        "original_slot": "scholarship",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "על הסמכות לביקורת שיפוטית על חוקי-יסוד",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "scholarship",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "חוק יסוד: כבוד האדם וחירותו - חילן",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "primary_statute",
         "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
         "assigned_academic_roles": []
       }
@@ -308,7 +574,7 @@
     "primary_anchor": {
       "rows": [
         {
-          "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/1&fileName=SB1_8_8487-03.pdf&type=2",
           "found": true,
           "status": "body_acquired",
           "final_status": "acquired_identity_verified",
@@ -322,174 +588,95 @@
           "usable_primary_anchor": true
         },
         {
-          "url": null,
-          "found": false,
-          "status": "not_attempted",
-          "final_status": "not_found",
+          "url": "https://www.psakdin.co.il/Law/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA-%D7%A1%D7%93%D7%A8-%D7%94%D7%93%D7%99%D7%9F-%D7%94%D7%90%D7%96%D7%A8%D7%97%D7%99,-%D7%94%D7%AA%D7%A9%D7%9E%22%D7%93-1984",
+          "found": true,
+          "status": "fetch_failed",
+          "final_status": "network_or_origin_failure",
           "bytes_received": 0,
-          "failure_reason": "cooldown_until:2026-09-15T20:35:08.579Z",
+          "failure_reason": "plain_text_host_not_trusted",
           "chars_extracted": 0,
           "identity_passed": null,
-          "nominated_target": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+          "nominated_target": "אגודה שומרי משפט",
           "extraction_started": false,
           "extraction_succeeded": false,
           "usable_primary_anchor": false
         }
       ],
       "status_counts": {
-        "not_found": 1,
+        "network_or_origin_failure": 1,
         "acquired_identity_verified": 1
       },
       "all_primary_anchors_failed": false,
       "usable_primary_anchor_count": 1
     },
-    "answer": "הנושא המרכזי של סמינריון זה הוא יחסה של מערכת המשפט אל הסעד החוקתי המכונה \"קריאה לתוך החוק\" ואת השאלה המובילה האם סעד זה חורג מסמכות הרשות השופטת ופוגע בעקרון הפרדת הרשויות. עבודה זו מבקשת למקם את הדיון בתוך המסגרת החוקתית־מוסדית של מדינת ישראל, שבה חוקי היסוד ומהלכי בית המשפט מהווים את הרקע להבנת גבולות הפרשנות והשימוש בסעדים מקטבים של התאמה פרשנית.¹\n\nבתחילת העבודה מוגדרת הקריאה לתוך החוק כתיקון פרשני שבו בית המשפט משנה את לשון החוק או מוסיף לו יסוד פרשני שנועד להניחו במסגרת החוקה ולמנוע את ביטולו; ההגדרה שיטתית זו מדגישה כי מדובר בסעד התאמה פרשני שנועד לשמור על חוק קיים ככל שניתן במסגרת הדרישה לחוקה או לחוק ההולם. סקירת התיאוריה התומכת בסעד מצביעה על כך שמטרת הקריאה היא לצמצם את פגיעה בחקיקה באמצעות התאמה פרשנית במקום ביטול מלא, וכך להוות פתרון מידתי בין הגנה על זכויות לבין קביעת תחום־הגבלה לחקיקה.\n\nהבסיס החוקתי והנורמטיבי לשימוש בסעדים התאמתיים נעוץ בהוראות חוקותיות ובדוקטרינות פרשניות של בתי המשפט; במיוחד סעיפי חוק היסוד המספקים מסגרת להבחנה בין פגיעה מותרת בזכויות לבין פגיעה שאינה עומדת בדרישות של חוק הולם ותכלית ראויה, וכן בעקרונות שמגדירים את מעמד המערכת השיפוטית וכוחה לפרש וליישם את החוק במסגרת סמכותה. הבהרת המסגרת החוקתית חשובה כדי להבחין בין פירוש יצירי־כוח שהוא חלק מהתפקיד השיפוטי ובין מעשה שניתן לפרשו כהשתלטות על תחומי פעולת רשות מחוקקת.¹\n\nהדיון הפסיקתי מסמן כי בתי המשפט עצמם מהווים את מקור ההגדרה המעשית של גבולות הסעד: פסקי דין של בית המשפט העליון קובעים את האיזון בין פרשנות מחמירה שעשויה לשנות את הוראת המחוקק לבין גישה שמעדיפה ביטול של הוראה חוקתית. עם זאת, יש להימנע מציון מסקנות מחייבות מתוך מקרים ספציפיים כאשר לא כל הפסיקה או הכרעה מוסמכת לנוסח מוחלט; משמעות הדבר עבורך כפונטציאל למחקר היא לבחון בקפידה את תכלית הסעד והנימוקים שאומצו בפסיקה הרלוונטית במקום להכליל על סמך כותרות.\n\nכדי לבחון האם קריאה לתוך החוק חורגת מסמכות יש להסתמך על כלים דוקטרינריים מקובלים, ובראשם מבחני מידתיות שנועדו לשקול את התאמת האמצעי למטרה ולמזער פגיעה בזכויות. מבחני המידתיות והניתוח התרכובי שלהם מספקים מסגרת לבחינת האם התאמת הוראה לפרשנות חוקתית מהווה תיקון פרשני סביר או שינוי מהותי של תוכן החקיקה — הבחנה שבלבה של שאלת הפרדת הרשויות.\n\nהמתח התיאורטי המרכזי שהעבודה בוחנת הוא המתח בין שמירה על החוק והאופן שבו הפרשנות יכולה להגן על זכויות לבין חשש ההשתלטות השיפוטית על הכרעות מדיניות של הרשות המחוקקת. בספרות נתפס העיגון החוקתי והפרשנות כגורמים המעצבים את תחום הסמכות, ויש הנוטים להגן על הסעד כהתאמה נדרשת בשיטת זכויות, בעוד אחרים מזהירים מפני שיפוטיות יתר. שאלת המחקר שלי מערבת אפוא הן הערכה דוקטרינרית טכנית של איפיון הסעד והן שיפוט ערכי ביחס לעקרון הפרדת הרשויות.²\n\nמתודולוגית העבודה תבצע קריאה דוקטרינרית של מקורות ראשוניים (חוקי יסוד והליכי בתי המשפט) לצד ניתוח ספרותי של מאמרים העוסקים בסעדי התאמה ומבחני מידתיות; תוך כדי כך ייבחנו דוגמאות פסיקות מייצגות והנימוקים שניתנו בהן כדי לבדוק האם נוצר שינוי מהותי של הוראות מחוקקות או שמא נשמר איפוק פרשני הממלא תפקיד מנעתי. בדיקה זו תאפשר להציע מסגרת הבררה של ערכי מבחן שיסייעו לקביעה מתי, אם בכלל, ניתן לומר כי קריאה לתוך החוק חורגת מסמכות.³\n\nמבחינה פרקטית ומשפטית, חשיבות המחקר נובעת מהשלכותיו על הלגיטימיות המוסדית והאיזון המוסדי: פסקי דין שימרדו בקו המותר של פרשנות עלולים לשנות את יחסי הכוחות בין רשויות השלטון, בעוד שמנעד פחות יצירתי של התאמות פרשניות יכול להבטיח הגנה יעילה על זכויות ללא פגיעה מיותרת בסמכות המחוקק. מסקנות העבודה אמורות לתרום הן לאבחנה דוקטרינרית מדויקת של הסעד והן להצעות פרשניות ושיפוטיות שמאזנות בין הגנה על זכויות לשמירה על הפרדת הרשויות.¹\n\n*הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.*\n"
-  },
-  {
-    "id": "AW7",
-    "run_id": "6e2a8886-2127-4727-b52d-f024f50c1986",
-    "qa_log_id": "c6cc5a15-b4a9-499f-88a2-c83ddb266fd1",
-    "genre": null,
-    "footnotes_count": 0,
-    "footnotes": [],
-    "pack_admission_summary": null,
-    "admission_gate": [],
-    "role_slotting": [],
-    "primary_anchor": null,
-    "answer": ""
+    "answer": "בית המשפט רשאי—in הנוסח המוצדק—להתערב במדיניות מקצועית של רשות מנהלית רק במקרים חריגים שבהם מעורבותו נחוצה להבטחת עקרונות יסוד של המשטר החוקתי; טענתי מתחילה מכך שבסיס מוסרי־משפטי ובסיס נורמטיבי להתערבות זו קיים שם שהחלטה מנהלית פוגעת בזכויות יסוד או נובעת מפגם מהותי בסמכות או בהליך שקיומם מחלישים את הלגיטימציה הציבורית של ההחלטה, כך שבחינת הפרופורציונליות וההולם של הפגיעה הופכת לצורך מעשי ולתכלית שיפוטית. הטיעון החזק ביותר כנגד גישה זו הוא הטיעון העקרוני של הפרדת הרשויות ומשקל הידע המקצועי של רשויות ביצוע שעשוי להצדיק הימנעות שיפוטית, שכן ייפגעה יעילות ומומחיות מדיניות ציבורית אם בתי משפט יחליפו שיקול מקצועי בערכאות שיפוטיות. ההבחנה המשפטית הנדרשת בין טענות אלה היא פרגמטית: ההסתמכות על שיקול מקצועי מצד הרשות מחייבת כבוד וסף דיפרנציאלי לסקירה, אך אינה חוסמת את הסקירה המהותית כאשר עומדים מחדלים של סמכות או הליך, פגיעות בזכויות יסוד או אי־סבירות קיצונית; במילים אחרות, דפקטים הלכתיים מהווים סף התערבות המותאם למדידת הפגיעה. הכרעה זו אמנם תומכת בסמכות שיפוטית מצומצמת אך אפקטיבית, אך נותר קושי מעשי בהגדרת סף ברור שיאזן בין שמירת שיקול מקצועי לבין מניעת פגיעה לא מוצדקת בזכויות ובשלטון החוק.¹\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n"
   },
   {
     "id": "AW8",
-    "run_id": "55c5d753-0954-4799-ac16-4744e989661d",
-    "qa_log_id": "cd2360c5-8ef1-4749-8a54-b63ede3a399f",
+    "run_id": "4bac69ff-a881-4a62-9c51-802644a30519",
+    "qa_log_id": "3c828818-3a5a-4a07-9bfe-5d6be3ec95a5",
     "genre": "generic_academic",
-    "footnotes_count": 4,
+    "footnotes_count": 3,
     "footnotes": [
       {
-        "url": "http://lawjournal.huji.ac.il/article/12/707",
-        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "url": "https://www.nevo.co.il/law_html/law00/73015.htm",
+        "title": "פקודת הנזיקין (נוסח חדש), סעיפים רלוונטיים בדיני נזיקין/הסתמכות",
         "number": 1,
         "sources": [
           {
-            "url": "http://lawjournal.huji.ac.il/article/12/707",
-            "title": "הגנת ההסתמכות במשפט המנהלי",
-            "source_type": "academic"
+            "url": "https://www.nevo.co.il/law_html/law00/73015.htm",
+            "title": "פקודת הנזיקין (נוסח חדש), סעיפים רלוונטיים בדיני נזיקין/הסתמכות",
+            "source_type": "israeli_law"
           }
         ],
-        "source_type": "academic"
+        "source_type": "israeli_law"
       },
       {
-        "url": "https://www.runi.ac.il/media/0ocekxxk/braverman.pdf",
-        "title": "בג\"ץ2964/18 (אתר אקדמי (runi.ac.il)); הבטחה מינהלית",
+        "url": "https://www.daat.ac.il/mishpat-ivri/skirot/153-2.htm",
+        "title": "על ההבטחה המנהלית",
         "number": 2,
         "sources": [
           {
-            "url": "https://www.runi.ac.il/media/0ocekxxk/braverman.pdf",
-            "title": "בג\"ץ2964/18 (אתר אקדמי (runi.ac.il))",
-            "source_type": "academic"
-          },
-          {
-            "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
-            "title": "הבטחה מינהלית",
-            "source_type": "academic"
+            "url": "https://www.daat.ac.il/mishpat-ivri/skirot/153-2.htm",
+            "title": "על ההבטחה המנהלית",
+            "source_type": "book_or_chapter"
           }
         ],
-        "source_type": "compound"
+        "source_type": "book_or_chapter"
       },
       {
-        "url": "http://lawjournal.huji.ac.il/article/12/707",
-        "title": "הגנת ההסתמכות במשפט המנהלי; בג\"ץ2964/18 (אתר אקדמי (runi.ac.il))",
+        "url": "https://www.runi.ac.il/media/0ocekxxk/braverman.pdf",
+        "title": "בג\"ץ2964/18 (אתר אקדמי (runi.ac.il))",
         "number": 3,
         "sources": [
           {
-            "url": "http://lawjournal.huji.ac.il/article/12/707",
-            "title": "הגנת ההסתמכות במשפט המנהלי",
-            "source_type": "academic"
-          },
-          {
             "url": "https://www.runi.ac.il/media/0ocekxxk/braverman.pdf",
             "title": "בג\"ץ2964/18 (אתר אקדמי (runi.ac.il))",
-            "source_type": "academic"
+            "source_type": "scholarship"
           }
         ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
-        "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות; שעתן היפה של הוראות־השעה? עלייתה של החקיקה הזמנית בישראל ועקרונות לטיובה",
-        "number": 4,
-        "sources": [
-          {
-            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
-            "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
-            "source_type": "journal_article"
-          },
-          {
-            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_5d51c14923c64629bed2a53878fe6cb2.pdf",
-            "title": "שעתן היפה של הוראות־השעה? עלייתה של החקיקה הזמנית בישראל ועקרונות לטיובה",
-            "source_type": "journal_article"
-          }
-        ],
-        "source_type": "compound"
+        "source_type": "scholarship"
       }
     ],
     "pack_admission_summary": {
       "admitted_count": 0,
-      "rejected_count": 3,
+      "rejected_count": 1,
       "admitted_by_role": {},
       "final_pack_roles": [],
       "rejected_by_reason": {
-        "listing_or_search_page": 1,
-        "off_topic_no_role_assignment": 2,
-        "insufficient_academic_signals": 3,
-        "no_scholarly_title_or_abstract": 3,
-        "no_credible_academic_provenance": 3,
-        "off_topic_for_question_and_roles": 2,
+        "insufficient_academic_signals": 1,
+        "no_scholarly_title_or_abstract": 1,
+        "no_credible_academic_provenance": 1,
         "class_unknown_has_no_secondary_academic_slot": 1
       },
-      "reviewed_candidates": 3,
+      "reviewed_candidates": 1,
       "role_diversity_score": 0
     },
     "admission_gate": [
       {
-        "url": "https://judgments.org.il/judgments/%D7%91%D7%92%D7%A6-1000-92-%D7%97%D7%95%D7%94-%D7%91%D7%91%D7%9C%D7%99-%D7%A0-%D7%91%D7%99%D7%AA-%D7%94%D7%93%D7%99%D7%9F-%D7%94%D7%A8%D7%91%D7%A0%D7%99-%D7%94%D7%92%D7%93%D7%95%D7%9C/",
-        "title": "בג\"צ 1000/92 - חוה בבלי נ' בית הדין הרבני הגדול",
-        "domain": "judgments.org.il",
-        "topical_fit": false,
-        "candidate_id": null,
-        "original_class": "unknown",
-        "admission_signals": [],
-        "rejection_reasons": [
-          "no_credible_academic_provenance",
-          "no_scholarly_title_or_abstract",
-          "off_topic_for_question_and_roles",
-          "insufficient_academic_signals"
-        ],
-        "admission_decision": "rejected",
-        "assigned_source_type": null
-      },
-      {
-        "url": "https://www.roi-raanan.co.il/tag/%D7%94%D7%9C%D7%9B%D7%AA-%D7%91%D7%91%D7%9C%D7%99/",
-        "title": "ארכיון הלכת בבלי",
-        "domain": "roi-raanan.co.il",
-        "topical_fit": false,
-        "candidate_id": null,
-        "original_class": "unknown",
-        "admission_signals": [],
-        "rejection_reasons": [
-          "listing_or_search_page",
-          "no_credible_academic_provenance",
-          "no_scholarly_title_or_abstract",
-          "off_topic_for_question_and_roles",
-          "insufficient_academic_signals"
-        ],
-        "admission_decision": "rejected",
-        "assigned_source_type": null
-      },
-      {
-        "url": "https://fliphtml5.com/brvnd/mhoq/basic",
-        "title": "צ'קליסט מנהלי",
-        "domain": "fliphtml5.com",
+        "url": "https://israeliconstitutionalism.wordpress.com/2019/12/24/%D7%94%D7%96%D7%95%D7%92-%D7%94%D7%9E%D7%95%D7%96%D7%A8-%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA-%D7%95%D7%97%D7%95%D7%96%D7%94-%D7%A8%D7%92%D7%95%D7%9C%D7%98%D7%95%D7%A8/",
+        "title": "הזוג המוזר: הבטחה מנהלית וחוזה רגולטורי בפסיקתו של בג\"ץ / שרון ידין",
+        "domain": "israeliconstitutionalism.wordpress.com",
         "topical_fit": true,
         "candidate_id": null,
         "original_class": "unknown",
@@ -505,27 +692,7 @@
     ],
     "role_slotting": [
       {
-        "title": "בג\"צ 1000/92 - חוה בבלי נ' בית הדין הרבני הגדול",
-        "reason": "no_reslot_attempted",
-        "changed": false,
-        "final_slot": null,
-        "candidate_id": null,
-        "original_slot": "binding_case_law",
-        "rejected_reason": "off_topic_no_role_assignment",
-        "assigned_academic_roles": []
-      },
-      {
-        "title": "ארכיון הלכת בבלי",
-        "reason": "no_reslot_attempted",
-        "changed": false,
-        "final_slot": null,
-        "candidate_id": null,
-        "original_slot": "binding_case_law",
-        "rejected_reason": "off_topic_no_role_assignment",
-        "assigned_academic_roles": []
-      },
-      {
-        "title": "צ'קליסט מנהלי",
+        "title": "הזוג המוזר: הבטחה מנהלית וחוזה רגולטורי בפסיקתו של בג\"ץ / שרון ידין",
         "reason": "no_safe_academic_slot",
         "changed": false,
         "final_slot": null,
@@ -543,144 +710,145 @@
           "status": "not_attempted",
           "final_status": "not_found",
           "bytes_received": 0,
-          "failure_reason": "cooldown_until:2026-09-15T20:35:08.579Z",
+          "failure_reason": "no_docket_no_live_lane",
           "chars_extracted": 0,
           "identity_passed": null,
-          "nominated_target": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+          "nominated_target": "בג\"צ 1000/92 בבלי",
           "extraction_started": false,
           "extraction_succeeded": false,
           "usable_primary_anchor": false
         },
         {
-          "url": null,
-          "found": false,
-          "status": "not_attempted",
-          "final_status": "not_found",
+          "url": "https://www.nevo.co.il/law_html/law00/73015.htm",
+          "found": true,
+          "status": "body_acquired",
+          "final_status": "acquired_identity_verified",
           "bytes_received": 0,
-          "failure_reason": "cooldown_until:2026-09-15T20:42:30.588Z",
-          "chars_extracted": 0,
+          "failure_reason": null,
+          "chars_extracted": 33876,
           "identity_passed": null,
-          "nominated_target": "בג\"ץ 1000/92 בבלי",
-          "extraction_started": false,
-          "extraction_succeeded": false,
-          "usable_primary_anchor": false
+          "nominated_target": "פקודת הנזיקין (נוסח חדש), סעיפים רלוונטיים בדיני נזיקין/הסתמכות",
+          "extraction_started": true,
+          "extraction_succeeded": true,
+          "usable_primary_anchor": true
         }
       ],
       "status_counts": {
-        "not_found": 2
+        "not_found": 1,
+        "acquired_identity_verified": 1
       },
-      "all_primary_anchors_failed": true,
-      "usable_primary_anchor_count": 0
+      "all_primary_anchors_failed": false,
+      "usable_primary_anchor_count": 1
     },
-    "answer": "מטרת הצגת הנושא היא לסמן את גבולותיה התיאורטיים והמעשיים של דוקטרינת ההבטחה המנהלית וההגנה על הסתמכות הציבור כבסיס לעבודת גמר משפטית: הנושא חוקר את אופן שבו פעולות ותקשורת של רשויות ציבוריות יוצרות ציפיות אצל יחידים והאם ומתי שיפוט מנהלי מחויב להגן על ציפיות אלה; העבודה תבחן הן את הבסיס ההגיוני־נורמטיבי של ההגנה והן את התמרון המעשי בין תחולתה של ההבטחה לבין שיקולים של ציבוריות וסמכות.¹\n\nמבחינה מושגית מתמקדת הספרות בהבחנה בין שלושה מושגים קרובים: הבטחה מנהלית המובעת כפעולה או הצהרה על סמכות, מדיניות מנהלית שהינה אופייה של ההנחיה הציבורית ביחס לשינוי, ו'legitimate expectation' במובנים תאורטיים רחבים; הדיון המרכזי מצוי בשאלה מתי הצהרה של הרשות נגזרת מסמכות והופכת להבטחה שניתן להסתמך עליה, ונכשלים בו מבחני הבהירות, הנגישות והציפייה הסבירה.²\n\nבצד הפרקטי עולות לשיקול מספר קריטריונים שהספרות מזהה כנקודות בוחן ליישום הדוקטרינה: סף הבהירות של ההצהרה, מאפייני הנמען והיקף ההסתמכות שנבנתה בפועל, וכן שאלת הסמכות של הרשות להעניק את ההבטחה; ההערכה השיפוטית משלבת בדיקת סבירות והגינות ביחס לפגיעה בציפיות שהיו סבירות לנוכח ההצהרה.³\n\nההשלכות האפשריות של הפרת הבטחה מנהלית משקפות מתח בין סעד מיישם, סעד פיצויי וסעדי ביטול: הספרות רואה באפשרויות אלה מנגנונים לפיצוי ההסתמכות אך מדגישה כי יישומן מושפע מאיזון אינטרסים ציבוריים ותקציבי־מנהליים; לכן שאלת הסעד המתאים נבחנת באופן פרגמטי וביחס לציפיות שנוצרו ולשיקולי טובת הציבור.³\n\nעבודה על הנושא תציב את הדוקטרינה בהקשר רחב של עקרונות שלטון החוק, בהירות רגולטורית ויציבות צפויה — נושאים הנידונים במסגרת הספרות החוקתית והחקיקתית לגבי תחולה פרוספקטיבית והסכנות שבשימוש נרחב בהוראות שעה ובשינויים תכופים של מדיניות; בחינת מתחים אלה מסייעת להבהיר מתי הגנה על הסתמכות מחזקת את אמון הציבור ומתי היא עלולה לעכב תיקון מדיניות נחוץ.⁴\n\nלקראת עבודת הגמר מוצעים קווים מחקריים ושיטתיים ברורים: הגדרת מסגרת מושגית המבוססת על הגדרות בספרות, מיפוי פסיקה ישראלית רלוונטית ושילובה בניתוח תיאורי־אנליטי של מקרי מבחן אופרטיביים, והשוואה תיאורתית למודלים בחוקות אחרות; שיטות משלימות עשויות לכלול ניתוח מדיניות פנימית של רשויות או ראיונות עם מקבלי החלטות במטרה לבחון כיצד נוצרות ומתווררות ציפיות ציבוריות.³\n\n*הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.*\n"
+    "answer": "נושא עבודת הגמר הוא דוקטרינת ההבטחה המנהלית וההגנה על הסתמכות הציבור: המטרה היא להגדיר את הדוקטרינה, למפות את הנימוקים המשפטיים והמדיניים שמצדיקים הגנה על מסתמכי הציבור, לבחון את תנאי היישום והשיעורים האפשריים של הסעד, ולהנסח שאלות מחקר מדידות שתנחה ניתוח תיאורטי ואמפירי של הנוהג המנהלי. העבודה תתמקד בהבחנה המטריאלית בין הבטחה מנהלית לבין מדיניות שלטונית או מצג חד־פעמי, ובניסיון לקשור בין מסגרת הסעד האזרחית לבין עקרונות של דין מנהלי וצדק חלוקתי.\n\nחיוני להדגיש מראש כי טקסט זה בנוי בעיקר על מקורות חקיקתיים וסקירות אקדמיות שנמצאו במאגרים שסופקו; לא מוצגת כאן סקירת פסיקה מפורטת משום שלא אותרו פסקי דין ברי־שימוש בתוך מערך המקורות הרלוונטי. מסקנה זו משפיעה על אופי ההנחות והטענות: רוב הקביעות התיאורטיות יתבססו על ספרות משפטית ועל ניתוח עקרוני של מסגרות הסעד, ואילו מסקנות לגבי הלכה מחייבת יישמרו כלשונן או ינוסחו בזהירות רק כאשר נתוני חקיקה רלוונטיים תומכים בכך.\n\nליבת המושג בכיוון האקדמי היא דוקטרינה המגינה על ציפיות סבירות שנוצרו בציבור בשל הבטחות, הוראות מפורשות או מצגי סמכות מצד רשות מנהלית; מטרתה לצמצם את אי־הוודאות ולמנוע עוול לניזוק שפעל בהתאם לאמון שיצרה הרשות. בספרות המושג נבחן כדרך להבחין בין החלטות מדיניות שניתן לשנותן לבין התחייבויות מנהליות שנטען כי נגדעו לאחר שהציבור הסתמך עליהן, והדיון שם מדגיש הן את מרכיב ההבטחה עצמה והן את אופי ההסתמכות שניתן להחשיב כסבירה.²\n\nהבסיסים התיאורטיים והמשפטיים לדוקטרינה נעים בין נימוקים של צדק חלוקתי והגנה על ציפיות לגישת החוקיות ולשיקולי תכליתיות ביישום סמכויות ציבוריות. חקיקה אזרחית נושאת משמעות בהגדרת היקף הסעדים שמערכת המשפט יכולה להעניק בשאלות של הסתמכות, וכך מסגרת פקודת הנזיקין מספקת עוגן לפרספקטיבה של פיצוי והיקף הנזקים; במקביל, ניתוחים תיאורטיים־חוקתיים מצביעים על מתחים בין הצורך בעיגון יציבות לצורך בגמישות מדיניות ציבורית.¹\n\nלגבי תנאי היישום והסייגים, הספרות מציעה מרכיבים שאותם ראוי לבחון בעבודה: קיום הבטחה או מצג המיוחס לרשות, הסתמכות סבירה על ההבטחה, נזק שנגרם בעקבות ההסתמכות וקשר סיבתי בין ההבטחה לנזק; לצד אלה יש לבדוק מגבלות מעשיות כגון אינטרס ציבורי על שינוי מדיניות, פיקוח פומבי על משאבים ומניעת פגיעה בזכויות של צדדים שלישיים. דיון בספרות על סעדים מדגיש כי האפשרויות נעות בין פיצוי בגין נזקי הסתמכות לבין התאמות מניעתיות מוגבלות, כאשר שאלות על היקף הפיצוי ושאלות איזון בין אינטרסים ציבוריים לבין זכויות המסתמכים עולות כצירים מחקריים מרכזיים.\n\nלצורך עבודה מדעית ניתן להמליץ על מתודולוגיה המשלבת ניתוח מקורות חקיקתיים וניתוח השוואתי של סקירות ספרותיות, יחד עם בדיקה אמפירית מצומצמת של מקרים מנהליים שבהם נוצרו ציפיות בציבור; בעבודה יש להקדיש פרק לשאלות אתיות ומדיניות על אופן איזון הסמכות המנהלית מול ההגנה על מסתמכי הציבור, ולהסיק ממודל התאמה בין סוג הסעד לבין עוצמת ההסתמכות והנזק. דיון שיטתי כזה יתרום להגדרה בהירה של הדוקטרינה ויבחן את האפשרויות הפרקטיות של אכיפתה במסגרת התקציבית והחוקתית הקיימת.³\n\n*הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.*\n"
   },
   {
     "id": "AW9",
-    "run_id": "8d85c58e-94c3-4c8d-8082-a6ec0ae96c6b",
-    "qa_log_id": "65383608-b520-497e-9185-ea8855809174",
+    "run_id": "b766fa2b-183f-4dcb-a98b-a25a10fde200",
+    "qa_log_id": "336ddd17-d00a-458f-93d3-d56d12720e24",
     "genre": "theoretical_background",
-    "footnotes_count": 0,
-    "footnotes": [],
-    "pack_admission_summary": {
-      "admitted_count": 1,
-      "rejected_count": 6,
-      "admitted_by_role": {
-        "government_report": 1
+    "footnotes_count": 4,
+    "footnotes": [
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1848",
+        "title": "פירוש חוזים: תאוריה, דין, עובדות וערכים (בשולי ע\"א 7649/18 ביבי כבישים עפר ופיתוח בע\"מ נ' רכבת ישראל בע\"מ); קרן אור על אינטרס ההסתמכות",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1848",
+            "title": "פירוש חוזים: תאוריה, דין, עובדות וערכים (בשולי ע\"א 7649/18 ביבי כבישים עפר ופיתוח בע\"מ נ' רכבת ישראל בע\"מ)",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://law.haifa.ac.il/images/Publications/%D7%92%D7%A8%D7%A1%D7%94_%D7%A1%D7%95%D7%A4%D7%99%D7%AA_%D7%95%D7%95%D7%A8%D7%93_19.2.12.pdf",
+            "title": "קרן אור על אינטרס ההסתמכות",
+            "source_type": "book_or_chapter"
+          }
+        ],
+        "source_type": "compound"
       },
-      "final_pack_roles": [
-        "critique_or_counterposition_source"
-      ],
+      {
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_ebbf6fda97d74731a9cea34d71d369e4.pdf",
+        "title": "הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_ebbf6fda97d74731a9cea34d71d369e4.pdf",
+            "title": "הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1848",
+        "title": "פירוש חוזים: תאוריה, דין, עובדות וערכים (בשולי ע\"א 7649/18 ביבי כבישים עפר ופיתוח בע\"מ נ' רכבת ישראל בע\"מ); פרשנות חוזים: תאוריה ופרקטיקה (בשולי ע\"א 7649/18 ‏ ביבי כבישים עפר ופיתוח בע\"מ נ' רכבת ישראל בע\"מ); קרן אור על אינטרס ההסתמכות",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1848",
+            "title": "פירוש חוזים: תאוריה, דין, עובדות וערכים (בשולי ע\"א 7649/18 ביבי כבישים עפר ופיתוח בע\"מ נ' רכבת ישראל בע\"מ)",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1850",
+            "title": "פרשנות חוזים: תאוריה ופרקטיקה (בשולי ע\"א 7649/18 ‏ ביבי כבישים עפר ופיתוח בע\"מ נ' רכבת ישראל בע\"מ)",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://law.haifa.ac.il/images/Publications/%D7%92%D7%A8%D7%A1%D7%94_%D7%A1%D7%95%D7%A4%D7%99%D7%AA_%D7%95%D7%95%D7%A8%D7%93_19.2.12.pdf",
+            "title": "קרן אור על אינטרס ההסתמכות",
+            "source_type": "book_or_chapter"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://law.haifa.ac.il/images/Publications/%D7%92%D7%A8%D7%A1%D7%94_%D7%A1%D7%95%D7%A4%D7%99%D7%AA_%D7%95%D7%95%D7%A8%D7%93_19.2.12.pdf",
+        "title": "קרן אור על אינטרס ההסתמכות",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://law.haifa.ac.il/images/Publications/%D7%92%D7%A8%D7%A1%D7%94_%D7%A1%D7%95%D7%A4%D7%99%D7%AA_%D7%95%D7%95%D7%A8%D7%93_19.2.12.pdf",
+            "title": "קרן אור על אינטרס ההסתמכות",
+            "source_type": "book_or_chapter"
+          }
+        ],
+        "source_type": "book_or_chapter"
+      }
+    ],
+    "pack_admission_summary": {
+      "admitted_count": 0,
+      "rejected_count": 2,
+      "admitted_by_role": {},
+      "final_pack_roles": [],
       "rejected_by_reason": {
-        "off_topic_no_role_assignment": 5,
-        "insufficient_academic_signals": 6,
-        "no_scholarly_title_or_abstract": 6,
-        "no_credible_academic_provenance": 6,
-        "off_topic_for_question_and_roles": 5,
+        "listing_or_search_page": 1,
+        "off_topic_no_role_assignment": 1,
+        "insufficient_academic_signals": 2,
+        "no_scholarly_title_or_abstract": 2,
+        "no_credible_academic_provenance": 2,
+        "off_topic_for_question_and_roles": 1,
         "class_unknown_has_no_secondary_academic_slot": 1
       },
-      "reviewed_candidates": 6,
-      "role_diversity_score": 0.2
+      "reviewed_candidates": 2,
+      "role_diversity_score": 0
     },
     "admission_gate": [
       {
-        "url": "https://storage.nadlancenter.co.il/media/Storage/49094.pdf",
-        "title": "מסמך פסק דין (ללא כותרת מלאה במקטע שנשלף)",
-        "domain": "storage.nadlancenter.co.il",
-        "topical_fit": false,
-        "candidate_id": null,
-        "original_class": "unknown",
-        "admission_signals": [],
-        "rejection_reasons": [
-          "no_credible_academic_provenance",
-          "no_scholarly_title_or_abstract",
-          "off_topic_for_question_and_roles",
-          "insufficient_academic_signals"
-        ],
-        "admission_decision": "rejected",
-        "assigned_source_type": null
-      },
-      {
-        "url": "https://www.myjudgments.com/districts/%D7%91%D7%99%D7%AA-%D7%94%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%A2%D7%9C%D7%99%D7%95%D7%9F/",
-        "title": "בית המשפט העליון - מאגר פסקי דין באינטרנט בחינם",
-        "domain": "myjudgments.com",
-        "topical_fit": false,
-        "candidate_id": null,
-        "original_class": "unknown",
-        "admission_signals": [],
-        "rejection_reasons": [
-          "no_credible_academic_provenance",
-          "no_scholarly_title_or_abstract",
-          "off_topic_for_question_and_roles",
-          "insufficient_academic_signals"
-        ],
-        "admission_decision": "rejected",
-        "assigned_source_type": null
-      },
-      {
-        "url": "https://www.todivorce.co.il/%D7%94%D7%97%D7%9C%D7%98%D7%95%D7%AA-%D7%91%D7%92%D7%A5-%D7%91%D7%91%D7%AA%D7%99-%D7%94%D7%93%D7%99%D7%9F-%D7%94%D7%A8%D7%91%D7%A0%D7%99%D7%99%D7%9D/",
-        "title": "מתי יתערב בג\"ץ בהחלטות בתי הדין הרבניים?",
-        "domain": "todivorce.co.il",
-        "topical_fit": false,
-        "candidate_id": null,
-        "original_class": "unknown",
-        "admission_signals": [],
-        "rejection_reasons": [
-          "no_credible_academic_provenance",
-          "no_scholarly_title_or_abstract",
-          "off_topic_for_question_and_roles",
-          "insufficient_academic_signals"
-        ],
-        "admission_decision": "rejected",
-        "assigned_source_type": null
-      },
-      {
-        "url": "https://www.idi.org.il/media/22483/full-verdict-of-supreme-court-regarding-reasonableness-bill-january-1-2024.pdf",
-        "title": "פסק הדין המלא של בג\"ץ בעניין ביטול עילת הסבירות",
-        "domain": "idi.org.il",
+        "url": "https://www.news1.co.il/Archive/0018-D-39735-00.html",
+        "title": "בג\"צ לשכת מנהלי ההשקעות נ' שר האוצר - News1",
+        "domain": "news1.co.il",
         "topical_fit": true,
         "candidate_id": null,
         "original_class": "unknown",
-        "admission_signals": [],
-        "rejection_reasons": [
-          "no_credible_academic_provenance",
-          "no_scholarly_title_or_abstract",
-          "insufficient_academic_signals"
+        "admission_signals": [
+          "author_or_publication_metadata"
         ],
-        "admission_decision": "rejected",
-        "assigned_source_type": null
-      },
-      {
-        "url": "https://www.get.what2do.co.il/%D7%91%D7%92%D7%A6-%D7%91%D7%99%D7%98%D7%9C-%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%99%D7%AA-%D7%93%D7%99%D7%9F-%D7%A8%D7%91%D7%A0%D7%99/",
-        "title": "התערבות בג\"צ וביטול פסק דין של בית הדין הרבני",
-        "domain": "get.what2do.co.il",
-        "topical_fit": false,
-        "candidate_id": null,
-        "original_class": "unknown",
-        "admission_signals": [],
         "rejection_reasons": [
+          "listing_or_search_page",
           "no_credible_academic_provenance",
           "no_scholarly_title_or_abstract",
-          "off_topic_for_question_and_roles",
           "insufficient_academic_signals"
         ],
         "admission_decision": "rejected",
@@ -688,7 +856,7 @@
       },
       {
         "url": "https://abg-group.co.il/supreme-court-decisions-2/",
-        "title": "פסקי דין של בית המשפט העליון – מסגרת משפטית והשפעה ציבורית | אדלר, ברגמן, גור ושות'",
+        "title": "פסקי דין של בית המשפט העליון – מסגרת משפטית והשפעה ציבורית",
         "domain": "abg-group.co.il",
         "topical_fit": false,
         "candidate_id": null,
@@ -706,49 +874,7 @@
     ],
     "role_slotting": [
       {
-        "title": "מסמך פסק דין (ללא כותרת מלאה במקטע שנשלף)",
-        "reason": "no_reslot_attempted",
-        "changed": false,
-        "final_slot": null,
-        "candidate_id": null,
-        "original_slot": "binding_case_law",
-        "rejected_reason": "off_topic_no_role_assignment",
-        "assigned_academic_roles": []
-      },
-      {
-        "title": "בית המשפט העליון - מאגר פסקי דין באינטרנט בחינם",
-        "reason": "no_reslot_attempted",
-        "changed": false,
-        "final_slot": null,
-        "candidate_id": null,
-        "original_slot": "binding_case_law",
-        "rejected_reason": "off_topic_no_role_assignment",
-        "assigned_academic_roles": []
-      },
-      {
-        "title": "35883-04-16.doc",
-        "reason": "institutional_source_fits_policy_slot",
-        "changed": true,
-        "final_slot": "government_report",
-        "candidate_id": null,
-        "original_slot": "persuasive_case_law",
-        "rejected_reason": null,
-        "assigned_academic_roles": [
-          "critique_or_counterposition_source"
-        ]
-      },
-      {
-        "title": "מתי יתערב בג\"ץ בהחלטות בתי הדין הרבניים?",
-        "reason": "no_reslot_attempted",
-        "changed": false,
-        "final_slot": null,
-        "candidate_id": null,
-        "original_slot": "binding_case_law",
-        "rejected_reason": "off_topic_no_role_assignment",
-        "assigned_academic_roles": []
-      },
-      {
-        "title": "פסק הדין המלא של בג\"ץ בעניין ביטול עילת הסבירות",
+        "title": "בג\"צ לשכת מנהלי ההשקעות נ' שר האוצר - News1",
         "reason": "no_safe_academic_slot",
         "changed": false,
         "final_slot": null,
@@ -758,17 +884,7 @@
         "assigned_academic_roles": []
       },
       {
-        "title": "התערבות בג\"צ וביטול פסק דין של בית הדין הרבני",
-        "reason": "no_reslot_attempted",
-        "changed": false,
-        "final_slot": null,
-        "candidate_id": null,
-        "original_slot": "binding_case_law",
-        "rejected_reason": "off_topic_no_role_assignment",
-        "assigned_academic_roles": []
-      },
-      {
-        "title": "פסקי דין של בית המשפט העליון – מסגרת משפטית והשפעה ציבורית | אדלר, ברגמן, גור ושות'",
+        "title": "פסקי דין של בית המשפט העליון – מסגרת משפטית והשפעה ציבורית",
         "reason": "no_reslot_attempted",
         "changed": false,
         "final_slot": null,
@@ -789,33 +905,32 @@
           "failure_reason": "unsupported_statute_source:no_official_statute_url",
           "chars_extracted": 0,
           "identity_passed": null,
-          "nominated_target": "חוק החוזים (חלק כללי), תשט\"ח-1958",
+          "nominated_target": "חוק החוזים (חלק כללי), התשל\"א-1970",
           "extraction_started": false,
           "extraction_succeeded": false,
           "usable_primary_anchor": false
         },
         {
-          "url": "https://fs.knesset.gov.il/20/law/20_lsr_340801.pdf",
-          "found": true,
-          "status": "fetch_failed",
-          "final_status": "body_received_extraction_failed",
-          "bytes_received": 377543,
-          "failure_reason": "extraction_budget_spent",
+          "url": null,
+          "found": false,
+          "status": "not_attempted",
+          "final_status": "not_found",
+          "bytes_received": 0,
+          "failure_reason": "cooldown_until:2026-09-15T20:35:08.579Z",
           "chars_extracted": 0,
           "identity_passed": null,
-          "nominated_target": "ע\"א 240/59 לחם נ' ברק",
-          "extraction_started": true,
+          "nominated_target": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+          "extraction_started": false,
           "extraction_succeeded": false,
           "usable_primary_anchor": false
         }
       ],
       "status_counts": {
-        "not_found": 1,
-        "body_received_extraction_failed": 1
+        "not_found": 2
       },
       "all_primary_anchors_failed": true,
       "usable_primary_anchor_count": 0
     },
-    "answer": "מטרת פרק זה היא לנסח מסגרת תיאורטית שמבהירה את הקשרים והמתחים בין תורת ההסתמכות בדיני החוזים לבין דוקטרינת ה'ציפייה הלגיטימית' במשפט המנהלי, ולהציע קטגוריות אבחנתיות שיכוונו ניתוחים אמפיריים ודוקטריניים בהמשך העבודה. פסקה זו פותחת בדיון על היסודות ההגנתיים של ההסתמכות והציפייה, תוך הבחנה בין טיעונים פרסונליים של צד נכפה והנימוקים הציבוריים שמצדיקים הגנה כנגד חוסר־יציבות מנהלית.\n\nבתחום החוזים תורת ההסתמכות מתמקדת בהגנה על הצד שיזם פעולה או שהגלה הוצאה והסתמך על הבטחה או ייצוג של הצד הנגדי, והמסגרת התיאורטית המבטיחה את מצוותה נעה בין עקרונות של הגינות חוזית לבין שיקולי יעילות כלכלית; במסגרת זו בולטת החלוקה בין פיצוי בגין הוצאות הסתמכות לבין פיצוי בגין אובדן ציפייה, כאשר הבחירה בין הסוגים משקפת שיקול ערכי על משקלו של ההבטחה ושל המניע לשמירת יציבות היחסים החוזיים. טענות אלה מוצגות כאן כמסגרת אנליטית כללית על בסיס יסודות תיאורטיים מקובלים בדוקטרינה החוזית, ולא כנטען פסיקתי ספציפי.\n\nבהעברה למשפט המנהלי, 'ציפייה לגיטימית' נבנית לעתים מתוך ייצוגים רשמיים, מדיניות מנהלית מוכרזת או התנהלות מינהלית שאינה בהכרח חוזית אך מעודדת הסתמכות אצל הציבור או יחידים; מה שייחודי להקשר המנהלי הוא שאינן עומדות כאן רק אינטרסים פרטיים אלא גם שיקולי סבירות, שקיפות ואחריות ציבורית, ומכאן נוצרת דרישה לאיזון בין הגנה על ההסתמכות לבין חופש המינהל לבצע התאמות מדיניות. המאמר הזמין שנבדק מדגיש את מיקומה של 'הגנת ההסתמכות' ככלי ביקורתי-איזוני במשפט המנהלי ומציע נקודות חיבור בין ההגנה המנהלית לבין דוקטרינות חוזיות, אך יש לנסח מסקנות אלה בזהירות נוכח אופייה של המקורות.\n\nההשוואה בין שתי התיאוריות מצביעה על חפיפה בקונספטואליזציה של ההסתמכות — מבחינה פונקציונלית שניהם מגנים על החלטות שהניעו אחרים לפעול — אך גם על הבדלים מבניים: בדיני החוזים זיקה ישירה מתחברת להיקף החובה החוזית ולמנגנוני הפרת חוזה, ואילו במשפט המנהלי הציפייה נשענת לעתים על סמכות ציבורית ובאה במסגרת מבני הסמכות והגבלותיה, כך שמקור ההבטחה וסמכותו משפיעים על מבחן קיומה ובחירת הסעד. להדגשה זו יש תימוכין תיאורטיים ומניעות פראקטיות המתוארות בספרות על הגנת ההסתמכות המנהלית, אם כי היקף ההשוואה ותוצאותיה דורשים בחינה אמפירית והבחנה בין תתי-מקרים.\n\nבהיבט התיקוני והשיקומי חשוב להבחין בין סלים של סעד: פיצוי בגין הוצאות הסתמכות או אובדן ציפייה, צווים לאכיפה ספציפית, וצווי בטל שיבואו לתקן פעולות מנהליות בלתי־סבירות; הבחירה בסעד מושפעת לא רק מאופי ההבטחה אלא גם משיקולי מדיניות כמו היעילות של הסעד, ההשפעה על תהליכי קבלת החלטות ציבוריים והצורך בשימור אוטונומיה מנהלית. הדיון במקורות המחקריים על הגנת ההסתמכות במשפט המנהלי מדגיש הצורך באיזון בין מתן מענה מספק לאלו שהסתמכו לבין שמירה על יכולת המינהל להתאים מדיניות, ולכן מציע גבולות לתביעת הסתמכות ואמצעים תיקוניים מותאמים שנעים בין פיצוי לצווים תיקוניים.\n\nלבסוף, נקודות ביקורתיות מגלות כי ההגנה על הסתמכות וציפייה נושאת נימוקים מוסריים מובהקים—הגינות והגנת נאמנות־ציפייה—ובו בזמן טומנת בחובה סיכונים של הגנה-יתר הפוגעת בגמישות המנהלית ובחופש החוזה: הגנה נרחבת על כל הסתמכות עשויה לעודד היעדר זהירות מצדם של פונים, לבטל שיקולי תמריץ ולהצר את מרחב החלטת המינהל בנסיבות דינאמיות. על רקע זה, הספרות שמנתחת הגנת ההסתמכות המנהלית קוראת לאמץ פתרונות מתונים המקדמים שקיפות, קריטריונים ברורים לקיומה של ציפייה והבחנה בין סוגי ייצוגים, כדי לצמצם סיכונים ומנעד סעד בלתי-מוגבל; מסקנות אלה מוצגות כאן כל עוד הן נשענות על ניתוח תיאורטי ולא כהלכה מחייבת.\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n"
+    "answer": "תורת ההסתמכות בדיני החוזים מרכזת תשומת לב בשאלה מיהו המוגן מפני שינויים בהתנהגות הציפייה ובאיזה אופן יש לתקן נזקים שנגרמו בשל הסתמכות על התחייבות או על מציאות מסוימת; בממד הזה עולה ההבחנה בין אינטרס ההסתמכות, שנועד לפצות על הוצאות והנזקים שנגרמו כתוצאה מהסתמכות סבירה, לבין האינטרס בקיום החוזה עצמו. הספרות המקומית מתארת את אינטרס ההסתמכות ככלי אנליטי המאפשר להבחין בין סוגי פיצוי שונים — פיצוי שנועד להשיב את המצב לקדמותו בשל הסתמכות לבין פיצוי שמטרתו להבטיח קיום או השבה — ומדגישה את המשקל המתודי של בחינת סבירות ההסתמכות והקשר הסיבתי בין ההבטחה לבין מעשי הנפגע. תפיסות אלה משולבות בדיונים על פירוש חוזים: כיצד כוונת הצדדים, התכלית והקונטקסט משפיעים על זיהוי בסיס ההסתמכות והיקף הפיצוי האפשרי. הניתוח התיאורטי כפי שמופיע בספרות מאפשר מסגרת מובנית לבחינת יסודות תנאיים של עילת הסתמכות ושל המגבלות הנדרשות כדי לאזן בין הגנה על מסתמכי ההבטחה לבין ערכים אחרים במשפט החוזי.¹\n\nהמונח 'ציפייה לגיטימית' במשפט המנהלי מבוסס על רעיונות של יציבות מנהלית, חוקיות והגנה על תלות שהציבור רוחש בהתנהלות הרשות; חוקים יסודיים וכתיבה אקדמית תומכים ברעיונות אלה כבסיס נורמטיבי להגנת ציפייה, אך אין במקורות שסופקו נוסח אחד אחיד שקובע את כל תנאיה המפורשים. הדיון המרוכך בספרות ובחקיקה מצביע על מרכיבים חוזרים: התנהלות או הבטחה של הרשות שהניבה הסתמכות סבירה, תלות ממשית של הפרט שניתן להוכחה, ובחינת אינטרסים ציבוריים מנוגדים המעשית עלולים להגביל את היקף ההגנה. מסגרת זו נדרשת כדי להבחין בין מקרים שבהם יש לשמר את הציפייה באמצעות סעד תיקוני או כלכלי ובין מצבים שבהם טעמים של מדיניות ציבורית, סמכות מפורשת או שיקולי תקציב ייחתכו על פני מתן סעד. במלים אחרות, חוקי היסוד מספקים עוגן עקרוני אך לא תחליף לקביעת מבחנים פרוצדורליים ותנאי סעד מדויקים: אלה נבחנים בדרך כלל בשילוב של פרשנות משפטית וביקורת שיפוטית ספציפית.²\n\nההשוואה הדוקטרינרית בין ההסתמכות בחוזים לציפייה הגיטימית במישור המנהלי מדגישה זהויות ופערים פונקציונליים: בחוזים עומד ברוב המקרים ערך החופש החוזי וכוונת הצדדים כנקודת ייחוס, ואילו במשפט המנהלי מוקד ההגנה נע סביב יחסי כוח בין הרשות לפרט ושמירה על יציבות סביבות שלטוניות. מבחינת הסעדים, ההסתמכות בחוזים מובילה לעתים קרובות לפיצוי כספי שמכסה הוצאות והסתמכות, בעוד שבמשפט מנהלי הסדרי הסעד נעים בין סעד תיקון וצווי בטלות לבין, במקרים מתגבשים ונבדקים, פיצוי כספי — כאשר ספרות החוקרת את הסעד הכספי במישור המנהלי מדגישה את הצורך להבדילו מאחריות נזיקית רגילה. גם דרישות ההוכחה והבדיקה הסבירותיות שונות: בדיני החוזים הפרשנות לכוונת הצדדים ולתכלית החוזה היא ציר מרכזי; במשפט המנהלי עומדת במרכז בדיקת סבירות הרשות, החוקיות והאיזון בין אינטרסים ציבוריים ופרטיים.\n\nמבחינה נורמטיבית, הוויכוח על מדיניות ראויה ביחס להגנת הסתמכות וציפייה גיטימית מחייב איזון עדין בין שני קווים: מגננות לפרט הסמוך שמהווה כדיבור של צדק תיקוני, מול הצורך בשמירת גמישות מנהלית ובמניעת העמסת הוצאות ציבוריות בלתי סבירות. הספרות והניתוח התיאורטי מציעים כמה כללים מנחים: תחולה מוגבלת של סעד כספי רק במקרים של הסתמכות עקבית וסבירה, שקילת העלויות הציבוריות כתנאי להגדרת סעד, והעדפת סעד תיקוני פרוצדורלי כאשר ניתן כדי לשמר את עקרון החוקיות. לצד זאת יש להתריע מפני יישום אוטומטי של כללים מחייבים שיפריעו לחופש ההסכמה בחוזים או לפעולת הרשות כאשר מטרת השינוי היא רווחת הציבור; ההצעה כוללת מיקוד במדדים של סבירות, תלות מובהקת ותכלית ציבורית מנומקת כהפחתה של סיכון ליצירת חוסר איזון נורמטיבי.⁴\n\nרגולציה של מחקרי מקרה ושימוש מסודר בכלי הפרשנות הם מהכלים המרכזיים לפרק רקע תיאורטי ממוקד: בראשית העבודה יש להבהיר הגדרות בסיסיות של הסתמכות וציפייה, לעבור על התפיסות התיאורטיות של פירוש חוזים והיחס בין אינטרסי קיום והסתמכות, ולהביא ניתוח השוואתי קצר של הסעדים המעשיים בשני השדות; בהמשך מומלץ לשלב תיקי בוחן שבהם נבחנת תקפות ההסתמכות ותוצאותיה, ולסיים בסעיף המתווה קריטריונים נורמטיביים להערכת סעד. מבחינת שיטות, יש לשלב ניתוח דוקטרינרי של הפסיקה והחקיקה עם ניתוח פרשני־מושגי של הספרות, ולתת משקל ראייתי לפסיקה או לחקיקה רלוונטית ככל שתימצא; הספרות על פירוש חוזים ואינטרס ההסתמכות מספקת מסד עיוני שימושי להבהרת הנחות המחקר ולניסוח שאלות מחקריות ממוקדות.³\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n"
   }
 ]
