@@ -49,6 +49,16 @@ import {
 } from "./statuteTextAcquisition.ts";
 import { normalizeStatuteTitleText } from "./coreAuthorityRegistry.ts";
 import {
+  LOCAL_ANCHOR_LIMITS,
+  type LocalJudgmentAnchorResolution,
+  type LocalStatuteAnchorResolution,
+  type LocalStatuteSectionLocation,
+  type PrimaryAnchorResolutionPath,
+  isLocalJudgmentTierAcceptable,
+  resolveLocalJudgmentAnchor,
+  resolveLocalStatuteAnchor,
+} from "./localPrimaryAnchor.ts";
+import {
   buildSectionVariants,
   detectStatuteSections,
   getStatuteSectionCanonicalEntry,
@@ -444,6 +454,8 @@ export interface DiscoveryAttempt {
     | "search_first_mirror"
     | "derived_court_url"
     | "statute_official_url"
+    | "local_statute_corpus"
+    | "local_judgment_corpus"
     | "none";
   result:
     | "cache_hit"
@@ -495,8 +507,14 @@ export interface DiscoveryAttempt {
     identity_tokens_matched: number;
     lane: "statute";
   };
+  /** local_primary_anchor_resolution_v1 — local-first traces. */
+  local_statute_anchor_resolution?: LocalStatuteAnchorResolution;
+  local_statute_section_location?: LocalStatuteSectionLocation;
+  local_judgment_anchor_resolution?: LocalJudgmentAnchorResolution;
+  primary_anchor_resolution_path?: PrimaryAnchorResolutionPath;
   ms: number;
 }
+
 
 
 
@@ -867,10 +885,17 @@ async function handleTarget(
   }
   attempt.cache_lookup = lookup.cooldown_active ? "cooldown" : "miss";
   if (lookup.cooldown_active) {
+    // A cooldown suppresses *external* retries only. The local corpus costs no
+    // fetch slot, so it is still consulted before giving up on the anchor.
+    if (docket && await tryLocalJudgmentAnchor(n, input, attempt, docket, nameTokens(n.label_he))) {
+      attempt.ms = Date.now() - tA;
+      return attempt;
+    }
     attempt.reason = `cooldown_until:${lookup.cooldown_until}`;
     attempt.ms = Date.now() - tA;
     return attempt;
   }
+
 
 
   // Judgments with a docket get the full ladder (identity provable inside the
@@ -902,9 +927,14 @@ async function handleTarget(
     return attempt;
   }
 
-  // ── 2. Retrieved official URLs → searched official URLs → mirrors →
+  // ── 2. Local corpus first (local_primary_anchor_resolution_v1), then
+  //      retrieved official URLs → searched official URLs → mirrors →
   //      deterministic derivation (last resort; the derived object code is a
   //      guess and is exactly what fails on older judgments).
+  if (await tryLocalJudgmentAnchor(n, input, attempt, docket, nameTokens(n.label_he))) {
+    attempt.ms = Date.now() - tA;
+    return attempt;
+  }
   const retrieved = retrievedOfficialUrls(input.candidates, docket);
   let searched: JudgmentSearchFirstResult | null = null;
   if (remainingMs() > DISCOVERY_LIMITS.MIN_BUDGET_MS && !input.budget?.exceeded()) {
@@ -1158,6 +1188,12 @@ function injectBody(
     statute_title?: string | null;
     statute_section?: string | null;
     statute_section_found?: boolean;
+    /** local_primary_anchor_resolution_v1 */
+    from_local_corpus?: boolean;
+    authority_tier?: string;
+    local_doc_id?: string | null;
+    allowed_claim_scope?: string | null;
+    limitation_note?: string | null;
   },
 ): string {
   const isStatute = src.kind === "statute";
@@ -1195,12 +1231,13 @@ function injectBody(
     : (integ.has_holding_text || HOLDING_TEXT_RE.test(stored));
   integ.citable_as = isStatute ? "statute" : "judgment";
   integ.is_judgment_document = !isStatute;
-  integ.authority_tier = "official_primary";
+  integ.authority_tier = (src.authority_tier ?? "official_primary") as SourceIntegrity["authority_tier"];
   integ.reject = false;
   delete integ.reject_reason;
   integ.integrity_flags = [
     ...(integ.integrity_flags ?? []),
     src.from_cache ? "verified_source_cache_hit" : "official_discovery_body_acquired",
+    ...(src.from_local_corpus ? ["local_corpus_primary_anchor"] : []),
     ...(isStatute ? ["statute_text_acquired", "body_acquired"] : []),
   ];
 
@@ -1221,9 +1258,18 @@ function injectBody(
         statute_section_text_located: !!src.statute_section_found,
       }
       : {}),
+    ...(src.from_local_corpus
+      ? {
+        from_local_corpus: true,
+        local_document_id: src.local_doc_id ?? null,
+        allowed_claim_scope: src.allowed_claim_scope ?? null,
+        section_limitation_note: src.limitation_note ?? null,
+        local_primary_anchor: "local_primary_anchor_resolution_v1",
+      }
+      : {}),
     actionability: n.actionability,
     acquisition_path: src.acquisition_path ?? (src.from_cache ? "cache" : "official_discovery"),
-    source_kind: "official",
+    source_kind: src.from_local_corpus ? "local_corpus" : "official",
     body_chars: stored.length,
     nominated_by: n.nominated_by,
     nomination_id: n.nomination_id,
@@ -1257,6 +1303,88 @@ function injectBody(
 }
 
 /**
+ * local_primary_anchor_resolution_v1 — resolve a nominated judgment from the
+ * local caselaw corpus before any court-egress / official fetch.
+ *
+ * Identity is proven with the *same* strict validator used for externally
+ * fetched bodies: a local row is never trusted because it is local.
+ */
+async function tryLocalJudgmentAnchor(
+  n: NominatedSource,
+  input: OfficialDiscoveryInput,
+  attempt: DiscoveryAttempt,
+  docket: DocketRef | null,
+  toks: string[],
+): Promise<boolean> {
+  const local = await resolveLocalJudgmentAnchor(input.admin, {
+    label: n.label_he,
+    docket_display: n.docket ?? n.label_he,
+  });
+  attempt.local_judgment_anchor_resolution = local.telemetry;
+  for (const doc of local.docs.slice(0, 3)) {
+    if (!isLocalJudgmentTierAcceptable(doc.authority_tier)) {
+      local.telemetry.failure_reason = `authority_tier_not_primary:${doc.authority_tier}`;
+      continue;
+    }
+    local.telemetry.identity_check_started = true;
+    const identity = validateJudgmentIdentity({
+      text: doc.content,
+      docket_present: !!docket,
+      docket_in_text: docket
+        ? textContainsExactDocket(doc.content.slice(0, 40_000), docket)
+        : false,
+      docket,
+      label: n.label_he,
+      url: doc.source_url,
+      url_from_official_search: false,
+      name_tokens: toks,
+      year: n.year ?? null,
+      court: null,
+    });
+    if (!identity.validated) {
+      local.telemetry.identity_passed = false;
+      local.telemetry.failure_reason = `identity_unproven:${identity.reason}`;
+      continue;
+    }
+    local.telemetry.identity_passed = true;
+    local.telemetry.selected_doc_id = doc.id;
+    local.telemetry.selected_title = doc.title;
+    local.telemetry.body_chars = doc.content.length;
+    local.telemetry.usable_primary_anchor = true;
+    local.telemetry.fallback_to_court_egress = false;
+    local.telemetry.failure_reason = null;
+    attempt.identity = identity;
+    attempt.result = "body_acquired";
+    attempt.body_chars = doc.content.length;
+    attempt.acquisition_path = "local_judgment_corpus";
+    attempt.injected_candidate_id = injectBody(input, n, docket, {
+      url: doc.source_url ?? "",
+      text: doc.content,
+      from_cache: false,
+      kind: "judgment",
+      acquisition_path: "local_judgment_corpus",
+      from_local_corpus: true,
+      authority_tier: doc.authority_tier,
+      local_doc_id: doc.id,
+    });
+    attempt.primary_anchor_resolution_path = {
+      target: n.label_he,
+      local_attempted: true,
+      local_status: "resolved_identity_verified",
+      external_attempted: false,
+      external_status: "not_needed",
+      final_status: "acquired_local_primary",
+      selected_source: doc.source_url ?? `legal_documents:${doc.id}`,
+      usable_primary_anchor: true,
+    };
+    return true;
+  }
+  return false;
+}
+
+
+
+/**
  * Search-first-only acquisition for a `known_name_no_docket` judgment.
  *
  * No docket exists, so deterministic court-file derivation is out of reach by
@@ -1281,6 +1409,11 @@ async function handleNamedJudgment(
     attempt.reason = "retrieval_already_has_body";
     return attempt;
   }
+
+  // local corpus before any search-first / court-egress attempt.
+  if (await tryLocalJudgmentAnchor(n, input, attempt, null, toks)) return attempt;
+
+
 
   // Retrieval-surfaced official URLs first, then an explicit name-based search
   // for the official document (judgment_search_first_discovery_v1).
@@ -1580,12 +1713,64 @@ async function handleStatuteNomination(
     return attempt;
   }
 
+  // ── local_primary_anchor_resolution_v1: local corpus BEFORE any fetch ────
+  const local = await resolveLocalStatuteAnchor(input.admin, {
+    label: n.label_he,
+    statute_title: title,
+    section,
+  });
+  attempt.local_statute_anchor_resolution = local.telemetry;
+  if (local.section) attempt.local_statute_section_location = local.section;
+  if (local.usable && local.doc && local.section) {
+    attempt.result = "body_acquired";
+    attempt.body_chars = local.section.text.length;
+    attempt.acquisition_path = "local_statute_corpus";
+    attempt.statute.section_found = local.section.section_located;
+    attempt.injected_candidate_id = injectBody(input, n, null, {
+      url: local.doc.source_url ?? "",
+      text: local.section.text,
+      from_cache: false,
+      kind: "statute",
+      acquisition_path: "local_statute_corpus",
+      statute_title: local.doc.title || title,
+      statute_section: section,
+      statute_section_found: local.section.section_located,
+      from_local_corpus: true,
+      authority_tier: local.doc.authority_tier,
+      local_doc_id: local.doc.id,
+      allowed_claim_scope: local.section.allowed_claim_scope,
+      limitation_note: local.section.limitation_note,
+    });
+    attempt.primary_anchor_resolution_path = {
+      target: n.label_he,
+      local_attempted: true,
+      local_status: local.section.section_located ? "resolved_section" : "resolved_whole_statute",
+      external_attempted: false,
+      external_status: "not_needed",
+      final_status: "acquired_local_primary",
+      selected_source: local.doc.source_url ?? `legal_documents:${local.doc.id}`,
+      usable_primary_anchor: true,
+    };
+    return attempt;
+  }
+
+
   const urls = retrievedStatuteUrls(input.candidates, toks)
     .slice(0, DISCOVERY_LIMITS.MAX_URLS_PER_TARGET);
   attempt.urls_attempted = urls;
   if (urls.length === 0) {
     attempt.result = "unsupported_statute_source";
     attempt.reason = "unsupported_statute_source:no_official_statute_url";
+    attempt.primary_anchor_resolution_path = {
+      target: n.label_he,
+      local_attempted: !!attempt.local_statute_anchor_resolution?.local_lookup_attempted,
+      local_status: attempt.local_statute_anchor_resolution?.failure_reason ?? "not_attempted",
+      external_attempted: false,
+      external_status: "no_official_statute_url",
+      final_status: "no_usable_primary_anchor",
+      selected_source: null,
+      usable_primary_anchor: false,
+    };
     return attempt;
   }
 
@@ -1675,6 +1860,16 @@ async function handleStatuteNomination(
       });
       attempt.cache_written = write.ok;
       attempt.cache_write_error = write.error;
+      attempt.primary_anchor_resolution_path = {
+        target: n.label_he,
+        local_attempted: !!attempt.local_statute_anchor_resolution?.local_lookup_attempted,
+        local_status: attempt.local_statute_anchor_resolution?.failure_reason ?? "not_attempted",
+        external_attempted: true,
+        external_status: "body_acquired",
+        final_status: "acquired_external_primary",
+        selected_source: url,
+        usable_primary_anchor: true,
+      };
       return attempt;
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -1704,5 +1899,15 @@ async function handleStatuteNomination(
     discovery_version: OFFICIAL_DISCOVERY_VERSION,
 
   });
+  attempt.primary_anchor_resolution_path = {
+    target: n.label_he,
+    local_attempted: !!attempt.local_statute_anchor_resolution?.local_lookup_attempted,
+    local_status: attempt.local_statute_anchor_resolution?.failure_reason ?? "not_attempted",
+    external_attempted: attempt.urls_attempted.length > 0,
+    external_status: lastFailure,
+    final_status: "no_usable_primary_anchor",
+    selected_source: null,
+    usable_primary_anchor: false,
+  };
   return attempt;
 }

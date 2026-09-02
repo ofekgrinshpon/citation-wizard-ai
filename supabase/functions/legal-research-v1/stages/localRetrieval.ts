@@ -143,9 +143,63 @@ interface ExactClue {
 }
 
 const STATUTE_SECTION_RE = /סעיף\s+([\dא-ת]+(?:[א-ת])?)\s+ל?(\s*חוק[^,?.\n]{2,80})/g;
-const LAW_BARE_RE = /(חוק\s+[^,?.\n]{2,80}?(?:,\s*תש[\u0590-\u05FF""״'']+[-–]\d{4})?)/g;
+// local_primary_anchor_resolution_v1 — the previous pattern was lazy
+// (`{2,80}?`), so every bare law mention collapsed to two characters
+// ("חוק יס") and was then rejected as `too_short`. The head alternation makes
+// `חוק-יסוד` / `חוק יסוד` first-class, and the body is greedy up to a clause
+// break, so full statute names survive.
+const LAW_BARE_RE =
+  /((?:חוק\s*[-־–]\s*יסוד\s*:?|חוק\s+יסוד|חוק)\s+[^,?.\n]{2,80})/g;
 const DOCKET_RE = /\b(בג"?ץ|בג״ץ|ע"?א|ע״א|רע"?א|רע״א|ע"?פ|ע״פ|דנ"?א|דנ״א|בש"?פ|בש״פ|תפ"?ח|תפ״ח)\s*\d{1,5}\/\d{2,4}\b/g;
 const REGULATION_RE = /תקנות\s+[^,?.\n]{2,80}/g;
+
+/** Trailing prepositions / dangling connectives left by a clause cut. */
+export function cleanLawClue(raw: string): string {
+  return String(raw ?? "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/[,;:.]+$/, "")
+    .replace(/\s+(?:ל|ב|מ|כ|ו|של|לפי|על|את|לעניין|בעניין)$/u, "")
+    .trim();
+}
+
+export interface LawClueExtraction {
+  raw_text: string;
+  extracted_clues: string[];
+  normalized_clues: string[];
+  rejected_low_signal: string[];
+  rejection_reason: Record<string, string>;
+}
+
+/**
+ * Extract statute-name clues from free text and report what survived
+ * normalization. Rejection happens only *after* full normalization.
+ */
+export function extractLawClues(text: string): LawClueExtraction {
+  const out: LawClueExtraction = {
+    raw_text: String(text ?? "").slice(0, 400),
+    extracted_clues: [],
+    normalized_clues: [],
+    rejected_low_signal: [],
+    rejection_reason: {},
+  };
+  const seen = new Set<string>();
+  for (const m of String(text ?? "").matchAll(LAW_BARE_RE)) {
+    const raw = m[1].trim();
+    if (seen.has(raw)) continue;
+    seen.add(raw);
+    out.extracted_clues.push(raw);
+    const normalized = cleanLawClue(raw);
+    const guard = applyExactAuthorityGuard(normalized);
+    if (guard.exact_lookup_skipped) {
+      out.rejected_low_signal.push(normalized);
+      out.rejection_reason[normalized] = guard.skipped_reason ?? "low_signal";
+      continue;
+    }
+    out.normalized_clues.push(normalized);
+  }
+  return out;
+}
 
 function detectExactClues(
   text: string,
@@ -156,7 +210,7 @@ function detectExactClues(
     clues.push({ kind: "docket", source, docket: m[0], search_terms: [m[0]] });
   }
   for (const m of text.matchAll(STATUTE_SECTION_RE)) {
-    const law = m[2].trim();
+    const law = cleanLawClue(m[2]);
     clues.push({
       kind: "statute_section", source,
       law_name: law, section: m[1],
@@ -166,16 +220,18 @@ function detectExactClues(
   // Bare law mentions only if no statute_section already covers it
   const seenLaws = new Set(clues.filter((c) => c.law_name).map((c) => c.law_name));
   for (const m of text.matchAll(LAW_BARE_RE)) {
-    const law = m[1].trim();
+    const law = cleanLawClue(m[1]);
+    if (!law || seenLaws.has(law)) continue;
     if (seenLaws.has(law)) continue;
     clues.push({ kind: "statute", source, law_name: law, search_terms: [law] });
     seenLaws.add(law);
   }
   for (const m of text.matchAll(REGULATION_RE)) {
-    clues.push({ kind: "regulation", source, law_name: m[0], search_terms: [m[0]] });
+    clues.push({ kind: "regulation", source, law_name: cleanLawClue(m[0]), search_terms: [cleanLawClue(m[0])] });
   }
   return clues;
 }
+
 
 function dedupeClues(clues: ExactClue[]): ExactClue[] {
   const seen = new Map<string, ExactClue>();
@@ -578,6 +634,7 @@ export interface LocalRetrievalResult {
       exact_ms: number;
       parallel_batch_ms: number;
       exact_clue_lookups: ClueLookupDiag[];
+      law_clue_extraction?: LawClueExtraction;
       role_to_source_type_filter: string[] | null;
       text_status: "ok" | "empty" | "error" | "timeout";
       text_error?: string;
@@ -815,6 +872,7 @@ export async function runLocalRetrieval(
           exact_ms: exactMs,
           parallel_batch_ms: parallelBatchMs,
           exact_clue_lookups: exactRes.diags,
+          law_clue_extraction: extractLawClues(q.query_he ?? ""),
           role_to_source_type_filter: ROLE_SOURCE_TYPES[q.role] ?? null,
           text_status: textDiag.status,
           text_error: textDiag.error,
