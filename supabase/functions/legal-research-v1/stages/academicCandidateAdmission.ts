@@ -236,22 +236,31 @@ export function evaluateScholarshipAdmission(
   // provenance
   const publisher = ACADEMIC_PUBLISHER_HOST_RE.test(domain);
   const university = UNIVERSITY_HOST_RE.test(domain);
+  const institute = RESEARCH_INSTITUTE_HOST_RE.test(domain);
   const repositoryPath = REPOSITORY_PATH_RE.test(path);
   const doi = DOI_RE.test(input.url);
   const pdfDoc = /\.(pdf|docx?)(\?|#|$)/i.test(input.url);
   if (publisher) signals.push("academic_publisher_host");
   if (university) signals.push("university_or_faculty_host");
+  if (institute) signals.push("recognized_research_institute_host");
   if (repositoryPath) signals.push("repository_or_publications_path");
   if (doi) signals.push("doi_or_stable_identifier");
-  if (pdfDoc && (university || repositoryPath || publisher)) signals.push("document_body_path");
+  if (pdfDoc && (university || repositoryPath || publisher || institute)) {
+    signals.push("document_body_path");
+  }
+  const provenance = publisher || university || institute || repositoryPath || doi;
 
   // content shape
   const scholarlyTitle = SCHOLARLY_TITLE_RE.test(title);
   const abstractLike = ABSTRACT_LIKE_RE.test(hay);
   const authorYear = AUTHOR_YEAR_RE.test(hay);
+  // An analytic Hebrew/English title ("X: subtitle", 6+ words) is a weak signal
+  // on its own — it counts only together with credible academic provenance.
+  const analyticTitle = /[:–—]/.test(title) && title.trim().split(/\s+/).length >= 6;
   if (scholarlyTitle) signals.push("scholarly_title_shape");
   if (abstractLike) signals.push("abstract_like_snippet");
   if (authorYear) signals.push("author_or_publication_metadata");
+  if (analyticTitle && provenance) signals.push("analytic_title_with_provenance");
 
   // exclusions
   if (!domain) rejections.push("no_resolvable_domain");
@@ -260,10 +269,11 @@ export function evaluateScholarshipAdmission(
   if (COMMERCIAL_SEO_RE.test(domain) || COMMERCIAL_TITLE_RE.test(hay)) {
     rejections.push("commercial_seo_page");
   }
-  if (!publisher && !university && !repositoryPath && !doi) {
-    rejections.push("no_credible_academic_provenance");
+  if (!provenance) rejections.push("no_credible_academic_provenance");
+  if (!scholarlyTitle && !abstractLike && !(analyticTitle && provenance)) {
+    rejections.push("no_scholarly_title_or_abstract");
   }
-  if (!scholarlyTitle && !abstractLike) rejections.push("no_scholarly_title_or_abstract");
+
 
   const topical_fit = hasTopicalFit(hay, input.topic_terms);
   if (!topical_fit) rejections.push("off_topic_for_question_and_roles");
