@@ -140,6 +140,13 @@ export interface OfficialFetchAttempt {
   error: string | null;
   ms: number;
   skipped_reason: string | null;
+  // academic_candidate_admission_and_slotting_v1 — a 200 whose BODY read or
+  // extraction failed must not be reported as a connection failure.
+  body_read_started?: boolean;
+  body_read_failed?: boolean;
+  body_read_error?: string | null;
+  body_chars?: number;
+  [k: string]: unknown;
 }
 
 interface Ledger {
@@ -305,6 +312,17 @@ export async function officialFetch(
       rec.error = msg.slice(0, 200);
       rec.ms = Date.now() - t0;
       rec.connection_reset = isResetError(msg);
+      // A failure that follows a 200 on the same URL is a BODY-read failure,
+      // not a connection failure — flag it so the primary-anchor status table
+      // can tell "server refused us" from "we could not read what we got".
+      const prior200 = ledger.attempts.some(
+        (a) => a.url === url && typeof a.status === "number" && a.status >= 200 && a.status < 300,
+      );
+      if (prior200) {
+        rec.body_read_started = true;
+        rec.body_read_failed = true;
+        rec.body_read_error = rec.error;
+      }
       ledger.attempts.push(rec);
       if (rec.connection_reset) {
         ledger.consecutive_hard_failures++;

@@ -25,6 +25,13 @@ import {
   detectPrimaryAuthorityShape,
   type PrimaryShapeRescue,
 } from "./primaryShapeRescue.ts";
+import {
+  evaluateScholarshipAdmission,
+  hasTopicalFit,
+  resolveAcademicRoleSlot,
+  type RoleSlottingDecision,
+  type ScholarshipAdmissionDecision,
+} from "./academicCandidateAdmission.ts";
 
 const PPLX_TIMEOUT_MS = 25_000;
 
@@ -355,6 +362,11 @@ interface PplxResultRow {
   original_query_role?: SourceRole;
   rescue_matched_docket?: string;
   rescue_matched_in?: string;
+  // academic_candidate_admission_and_slotting_v1 telemetry
+  academic_admission_decision?: string;
+  academic_admission_signals?: string[];
+  academic_rejection_reasons?: string[];
+  academic_role_slot_final?: string;
 }
 
 function processRaw(
@@ -362,6 +374,11 @@ function processRaw(
   raw: PplxSource[],
   hygieneCounts: PplxHygieneCounts,
   academicMode = false,
+  topicTerms: string[] = [],
+  admissionTrace?: {
+    admissions: ScholarshipAdmissionDecision[];
+    slotting: RoleSlottingDecision[];
+  },
 ): {
   admitted: Candidate[];
   rows: PplxResultRow[];
@@ -398,13 +415,55 @@ function processRaw(
     }
     const originalQueryRole = query.role;
 
+    // academic_candidate_admission_and_slotting_v1 — an `unknown` candidate in
+    // an academic run is REVIEWED by scholarship signals at this original gate
+    // (never auto-admitted). Substantive-body, verifier and integrity gates
+    // downstream are untouched.
+    let admission: ScholarshipAdmissionDecision | null = null;
+    if (academicMode && cls === "unknown") {
+      admission = evaluateScholarshipAdmission({
+        title,
+        url,
+        snippet: s.snippet,
+        original_class: cls,
+        topic_terms: topicTerms,
+      });
+      admissionTrace?.admissions.push(admission);
+      if (admission.admission_decision === "admitted_as_scholarship") cls = "academic";
+    }
+
     // P3.2 #4: role correction before admission
-    const { role: effectiveRole, corrected_from } = correctRoleForClass(
+    const { role: correctedRole, corrected_from } = correctRoleForClass(
       query.role,
       cls,
       academicMode,
     );
-    const admit = admitFor(effectiveRole, cls);
+    let effectiveRole = correctedRole;
+    let admit = admitFor(effectiveRole, cls);
+
+    // academic_candidate_admission_and_slotting_v1 — role-slot correction
+    // BEFORE rejection: a topical secondary source that landed in a slot it
+    // cannot satisfy is moved to a safe secondary academic slot. Never into a
+    // primary slot, never for off-topic material.
+    let slotting: RoleSlottingDecision | null = null;
+    if (!admit && academicMode && cls !== "discovery_only") {
+      slotting = resolveAcademicRoleSlot({
+        title,
+        url,
+        snippet: s.snippet,
+        original_slot: effectiveRole,
+        source_class: cls,
+        topical_fit: admission
+          ? admission.topical_fit
+          : hasTopicalFit(`${title} ${s.snippet ?? ""}`, topicTerms),
+        admission_signals: admission?.admission_signals,
+      });
+      admissionTrace?.slotting.push(slotting);
+      if (slotting.final_slot && admitFor(slotting.final_slot, cls)) {
+        effectiveRole = slotting.final_slot;
+        admit = true;
+      }
+    }
 
     if (!admit) {
       const followup = cls === "discovery_only" ? extractFollowupTerms(title, s.snippet) : [];
@@ -417,6 +476,11 @@ function processRaw(
         extracted_followup_terms: followup.length ? followup : undefined,
         role_corrected_from: corrected_from,
         role_corrected_to: corrected_from ? effectiveRole : undefined,
+        academic_admission_decision: admission?.admission_decision,
+        academic_admission_signals: admission?.admission_signals,
+        academic_rejection_reasons: admission?.rejection_reasons ??
+          (slotting?.rejected_reason ? [slotting.rejected_reason] : undefined),
+        academic_role_slot_final: slotting?.final_slot ?? undefined,
       });
       continue;
     }
@@ -491,6 +555,11 @@ function processRaw(
         rescue_matched_docket: rescue.matched_docket,
         rescue_matched_in: rescue.matched_in,
       } : {}),
+      ...(admission ? {
+        academic_admission_decision: admission.admission_decision,
+        academic_admission_signals: admission.admission_signals,
+      } : {}),
+      ...(slotting?.final_slot ? { academic_role_slot_final: slotting.final_slot } : {}),
     });
     admitted.push({
       candidate_id: crypto.randomUUID(),
@@ -529,6 +598,20 @@ function processRaw(
         ...(query.metadata?.required_anchor_id
           ? { required_anchor_id: query.metadata.required_anchor_id }
           : {}),
+        ...(admission?.admission_decision === "admitted_as_scholarship"
+          ? {
+            academic_scholarship_admitted: true,
+            academic_admission_signals: admission.admission_signals,
+            academic_assigned_source_type: admission.assigned_source_type,
+          }
+          : {}),
+        ...(slotting?.final_slot
+          ? {
+            academic_role_slot_original: slotting.original_slot,
+            academic_role_slot_final: slotting.final_slot,
+            academic_assigned_roles: slotting.assigned_academic_roles,
+          }
+          : {}),
       },
     });
   }
@@ -564,6 +647,9 @@ export interface PerplexityRetrievalResult {
   fallback_to_sequential: boolean;
   merge_order_preserved: boolean;
   hygiene_counts: PplxHygieneCounts;
+  /** academic_candidate_admission_and_slotting_v1 — original-gate decisions. */
+  academic_scholarship_admission_gate: ScholarshipAdmissionDecision[];
+  academic_role_slotting_decision: RoleSlottingDecision[];
 }
 
 interface PerQueryWorkResult {
@@ -580,9 +666,21 @@ async function runOneQuery(
   hygieneCounts: PplxHygieneCounts,
   budget?: RetrievalGovernor | null,
   academicMode = false,
+  topicTerms: string[] = [],
+  admissionTrace?: {
+    admissions: ScholarshipAdmissionDecision[];
+    slotting: RoleSlottingDecision[];
+  },
 ): Promise<PerQueryWorkResult> {
   const first = await callPerplexity(q, undefined, budget);
-  const { admitted, rows, followupTerms } = processRaw(q, first.raw, hygieneCounts, academicMode);
+  const { admitted, rows, followupTerms } = processRaw(
+    q,
+    first.raw,
+    hygieneCounts,
+    academicMode,
+    topicTerms,
+    admissionTrace,
+  );
   const allCandidates: Candidate[] = [...admitted];
   let totalMs = first.ms;
   let followupAdmitted = 0;
@@ -594,7 +692,14 @@ async function runOneQuery(
     const second = await callPerplexity(q, `${term} ${q.query_he}`.slice(0, 200), budget);
     totalMs += second.ms;
     if (second.http === 429) rate_limited = true;
-    const second_p = processRaw(q, second.raw, hygieneCounts, academicMode);
+    const second_p = processRaw(
+      q,
+      second.raw,
+      hygieneCounts,
+      academicMode,
+      topicTerms,
+      admissionTrace,
+    );
     allCandidates.push(...second_p.admitted);
     followupAdmitted = second_p.admitted.length;
     for (const r of second_p.rows) {
@@ -636,13 +741,22 @@ async function runOneQuery(
 
 export async function runPerplexityRetrieval(
   queries: Query[],
-  opts: { budget?: RetrievalGovernor | null; academicMode?: boolean } = {},
+  opts: {
+    budget?: RetrievalGovernor | null;
+    academicMode?: boolean;
+    /** Question/topic terms used for topical-fit checks at the academic gate. */
+    topicTerms?: string[];
+  } = {},
 ): Promise<PerplexityRetrievalResult> {
   const budget = opts.budget ?? null;
   const t0 = Date.now();
   const key = Deno.env.get("PERPLEXITY_API_KEY");
   const concEnv = Number(Deno.env.get("PERPLEXITY_CONCURRENCY") ?? "4");
   const concurrency_limit = Number.isFinite(concEnv) && concEnv > 0 ? Math.min(8, Math.floor(concEnv)) : 4;
+  const admissionTrace = {
+    admissions: [] as ScholarshipAdmissionDecision[],
+    slotting: [] as RoleSlottingDecision[],
+  };
 
   if (!key) {
     return {
@@ -654,6 +768,8 @@ export async function runPerplexityRetrieval(
       rate_limit_count: 0, retry_count: 0,
       fallback_to_sequential: false, merge_order_preserved: true,
       hygiene_counts: emptyHygieneCounts(isReportOnlyMode()),
+      academic_scholarship_admission_gate: [],
+      academic_role_slotting_decision: [],
     };
   }
   const targets = queries.filter((q) => q.targets.includes("perplexity"));
@@ -679,6 +795,8 @@ export async function runPerplexityRetrieval(
         hygieneCounts,
         budget,
         opts.academicMode === true,
+        opts.topicTerms ?? [],
+        admissionTrace,
       );
     }
   }
@@ -725,5 +843,7 @@ export async function runPerplexityRetrieval(
     fallback_to_sequential: false,
     merge_order_preserved,
     hygiene_counts: hygieneCounts,
+    academic_scholarship_admission_gate: admissionTrace.admissions,
+    academic_role_slotting_decision: admissionTrace.slotting,
   };
 }
