@@ -39,6 +39,11 @@ import {
 
 import { runLocalRetrieval } from "./stages/localRetrieval.ts";
 import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
+import {
+  extractTopicTerms,
+  summarizeAcademicPackAdmission,
+} from "./stages/academicCandidateAdmission.ts";
+import { buildPrimaryAnchorAcquisitionReport } from "./stages/primaryAnchorAcquisitionStatus.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRole.ts";
 import { runJudgmentTextAcquisition } from "./stages/judgmentTextAcquisition.ts";
@@ -1155,6 +1160,8 @@ async function handle(req: Request): Promise<Response> {
           budget,
           // academic_citation_authority_alignment_v1
           academicMode: sourceUseIntent.plan?.user_task_intent === "academic_writing",
+          // academic_candidate_admission_and_slotting_v1 — topical-fit terms.
+          topicTerms: extractTopicTerms(question),
         });
         budget.mark("perplexity_done", { candidates: r.candidates.length });
         return r;
@@ -2607,6 +2614,17 @@ async function handle(req: Request): Promise<Response> {
       cache_writes: officialDiscovery.cache_writes,
     },
     official_source_discovery: officialDiscovery,
+    // academic_candidate_admission_and_slotting_v1 telemetry.
+    academic_scholarship_admission_gate: pplx.academic_scholarship_admission_gate ?? [],
+    academic_role_slotting_decision: pplx.academic_role_slotting_decision ?? [],
+    academic_pack_admission_summary: summarizeAcademicPackAdmission(
+      pplx.academic_scholarship_admission_gate ?? [],
+      pplx.academic_role_slotting_decision ?? [],
+    ),
+    academic_primary_anchor_acquisition_status: buildPrimaryAnchorAcquisitionReport(
+      (officialDiscovery.attempts ?? []) as never,
+      officialFetchTelemetry().attempts ?? [],
+    ),
     // official_fetch_profile_v1 telemetry.
     official_fetch: officialFetchTelemetry(),
     court_egress: courtEgressTelemetry(),
