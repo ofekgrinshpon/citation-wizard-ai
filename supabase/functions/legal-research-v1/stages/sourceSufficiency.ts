@@ -182,7 +182,16 @@ const PHRASE_MAX_TOKENS = 4;
 
 const CASE_TYPES = new Set(["caselaw", "supreme_court_il", "case", "court_case"]);
 const STATUTE_TYPES = new Set(["israeli_law", "statute", "regulation", "legislation"]);
-const DOCTRINAL_TYPES = new Set(["journal_article", "article", "scholarship", "book", "commentary"]);
+const DOCTRINAL_TYPES = new Set([
+  "journal_article",
+  "article",
+  "scholarship",
+  "academic",
+  "working_paper",
+  "faculty_pdf",
+  "book",
+  "commentary",
+]);
 
 const PRIMARY_TIERS = new Set(["official_primary", "statute_mirror", "primary_mirror"]);
 const USABLE_TEXT = new Set(["full_text", "substantive_excerpt"]);
