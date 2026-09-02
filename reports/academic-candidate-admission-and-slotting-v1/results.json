@@ -1,643 +1,40 @@
 [
   {
     "id": "AW4",
-    "question": "כתוב פרק רקע תיאורטי לעבודה אקדמית על עקרון המידתיות בביקורת חוקתית, הכולל את מקורותיו ואת שלבי המבחן",
-    "run_id": "6bd8dde2-4341-42eb-b38a-d10efd3c6b9f",
-    "qa_log_id": "8620731c-e450-442c-ac22-f821f83d8da4",
-    "ms": 212331,
-    "genre": "theoretical_background",
-    "task_intent": "academic_writing",
-    "footnotes_count": 5,
-    "footnotes": [
-      {
-        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
-        "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות; חוק כגון(",
-        "number": 1,
-        "sources": [
-          {
-            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
-            "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
-            "source_type": "journal_article"
-          },
-          {
-            "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
-            "title": "חוק כגון(",
-            "source_type": "scholarship"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_469150003ab945cab43278c021cb754f.pdf",
-        "title": "תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?; המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות; הפרדת רשויות ומידתיות",
-        "number": 2,
-        "sources": [
-          {
-            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_469150003ab945cab43278c021cb754f.pdf",
-            "title": "תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?",
-            "source_type": "journal_article"
-          },
-          {
-            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
-            "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
-            "source_type": "journal_article"
-          },
-          {
-            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-cohen-elia.pdf",
-            "title": "הפרדת רשויות ומידתיות",
-            "source_type": "book_or_chapter"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_469150003ab945cab43278c021cb754f.pdf",
-        "title": "תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?; הפרדת רשויות ומידתיות; חוק כגון(",
-        "number": 3,
-        "sources": [
-          {
-            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_469150003ab945cab43278c021cb754f.pdf",
-            "title": "תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?",
-            "source_type": "journal_article"
-          },
-          {
-            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-cohen-elia.pdf",
-            "title": "הפרדת רשויות ומידתיות",
-            "source_type": "book_or_chapter"
-          },
-          {
-            "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
-            "title": "חוק כגון(",
-            "source_type": "scholarship"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
-        "title": "חוק כגון(; הפרדת רשויות ומידתיות",
-        "number": 4,
-        "sources": [
-          {
-            "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
-            "title": "חוק כגון(",
-            "source_type": "scholarship"
-          },
-          {
-            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-cohen-elia.pdf",
-            "title": "הפרדת רשויות ומידתיות",
-            "source_type": "book_or_chapter"
-          }
-        ],
-        "source_type": "compound"
-      },
-      {
-        "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
-        "title": "חוק כגון(",
-        "number": 5,
-        "sources": [
-          {
-            "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
-            "title": "חוק כגון(",
-            "source_type": "scholarship"
-          }
-        ],
-        "source_type": "scholarship"
-      }
-    ],
+    "run_id": "7f67250a-49cb-48c4-814c-f43f395e4983",
+    "qa_log_id": "b34c64e7-44ea-4e60-ad12-53596f216dc1",
+    "genre": null,
+    "footnotes_count": 0,
+    "footnotes": [],
+    "pack_admission_summary": null,
     "admission_gate": [],
     "role_slotting": [],
-    "pack_admission_summary": null,
-    "primary_anchor_status": null,
-    "csm_drops": {
-      "applied": true,
-      "rebinding": {
-        "applied": true,
-        "unbound": 1,
-        "decisions": [
-          {
-            "ref": "s1",
-            "reason": "claim_id_match",
-            "binding": "exact",
-            "block_index": 1
-          },
-          {
-            "ref": "s2",
-            "reason": "claim_id_match",
-            "binding": "exact",
-            "block_index": 1
-          },
-          {
-            "ref": "s11",
-            "reason": "claim_id_match",
-            "binding": "exact",
-            "block_index": 2
-          },
-          {
-            "ref": "s7",
-            "reason": "claim_id_match",
-            "binding": "exact",
-            "block_index": 2
-          },
-          {
-            "ref": "s6",
-            "score": 2,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 3,
-            "matched_terms": [
-              "מידת",
-              "פרשנית"
-            ]
-          },
-          {
-            "ref": "s10",
-            "score": 2,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 3,
-            "matched_terms": [
-              "מידת",
-              "לבינ"
-            ]
-          },
-          {
-            "ref": "s7",
-            "score": 5,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 3,
-            "matched_terms": [
-              "עיגונ",
-              "נורמ",
-              "וסד",
-              "חוקה",
-              "תאורטיימ"
-            ]
-          },
-          {
-            "ref": "s11",
-            "score": 4,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 4,
-            "matched_terms": [
-              "דוקטרינה",
-              "מידת",
-              "ידת",
-              "איזונ"
-            ]
-          },
-          {
-            "ref": "s10",
-            "score": 3,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 4,
-            "matched_terms": [
-              "מידת",
-              "ידת",
-              "לבינ"
-            ]
-          },
-          {
-            "ref": "s11",
-            "score": 4,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 5,
-            "matched_terms": [
-              "איזונ",
-              "פגיעה",
-              "יסוד",
-              "הווה"
-            ]
-          },
-          {
-            "ref": "s1",
-            "score": 6,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 5,
-            "matched_terms": [
-              "נדרש",
-              "פגיעה",
-              "נוסח",
-              "הגבלה",
-              "יסוד",
-              "הווה"
-            ]
-          },
-          {
-            "ref": "s9",
-            "reason": "no_substantive_binding",
-            "binding": "unbound",
-            "block_index": 6
-          },
-          {
-            "ref": "s10",
-            "score": 3,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 7,
-            "matched_terms": [
-              "מידת",
-              "תיאורט",
-              "מחוקק"
-            ]
-          },
-          {
-            "ref": "s11",
-            "score": 2,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 7,
-            "matched_terms": [
-              "מידת",
-              "תיאורט"
-            ]
-          },
-          {
-            "ref": "s6",
-            "score": 2,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 7,
-            "matched_terms": [
-              "מידת",
-              "חשוב"
-            ]
-          },
-          {
-            "ref": "s1",
-            "score": 3,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 8,
-            "matched_terms": [
-              "מידת",
-              "נוסח",
-              "בסיס"
-            ]
-          },
-          {
-            "ref": "s11",
-            "score": 4,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 8,
-            "matched_terms": [
-              "מידת",
-              "ספרותית",
-              "שלבי",
-              "תיאורטי"
-            ]
-          },
-          {
-            "ref": "s10",
-            "score": 4,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 8,
-            "matched_terms": [
-              "מידת",
-              "לבינ",
-              "ספרותית",
-              "תיאורטי"
-            ]
-          }
-        ],
-        "bound_exact": 4,
-        "bound_facet": 0,
-        "bound_topical": 13,
-        "capped_ref_count": 0,
-        "bound_area_direct": 0,
-        "rebound_ref_count": 13,
-        "claim_mismatch_drops_after": 1,
-        "claim_mismatch_drops_before": 14
-      },
-      "mismatch_reason": [
-        "insufficient_authority_for_claim_category",
-        "claim_mismatch"
-      ],
-      "claim_categories": [
-        {
-          "basis": "academic_declared_remap(statutory)+academic_wording_critique",
-          "category": "critique_or_counterposition",
-          "kept_refs": [],
-          "block_index": 1,
-          "support_levels": []
-        },
-        {
-          "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
-          "category": "literature_synthesis",
-          "kept_refs": [
-            "s11",
-            "s7"
-          ],
-          "block_index": 2,
-          "support_levels": [
-            "doctrinal_secondary",
-            "doctrinal_secondary"
-          ]
-        },
-        {
-          "basis": "academic_declared_remap(contextual_background)+academic_proposition_background",
-          "category": "doctrinal_background",
-          "kept_refs": [
-            "s10",
-            "s6",
-            "s7"
-          ],
-          "block_index": 3,
-          "support_levels": [
-            "doctrinal_secondary",
-            "doctrinal_secondary",
-            "doctrinal_secondary"
-          ]
-        },
-        {
-          "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_theoretical",
-          "category": "theoretical_explanation",
-          "kept_refs": [
-            "s11",
-            "s10"
-          ],
-          "block_index": 4,
-          "support_levels": [
-            "doctrinal_secondary",
-            "doctrinal_secondary"
-          ]
-        },
-        {
-          "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_theoretical",
-          "category": "theoretical_explanation",
-          "kept_refs": [
-            "s11"
-          ],
-          "block_index": 5,
-          "support_levels": [
-            "doctrinal_secondary"
-          ]
-        },
-        {
-          "basis": "academic_declared_remap(court_holding)+academic_proposition_theoretical",
-          "category": "theoretical_explanation",
-          "kept_refs": [],
-          "block_index": 6,
-          "support_levels": []
-        },
-        {
-          "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
-          "category": "literature_synthesis",
-          "kept_refs": [
-            "s10",
-            "s11",
-            "s6"
-          ],
-          "block_index": 7,
-          "support_levels": [
-            "doctrinal_secondary",
-            "doctrinal_secondary",
-            "doctrinal_secondary"
-          ]
-        },
-        {
-          "basis": "academic_declared_remap(contextual_background)+academic_wording_critique",
-          "category": "critique_or_counterposition",
-          "kept_refs": [
-            "s11",
-            "s10"
-          ],
-          "block_index": 8,
-          "support_levels": [
-            "doctrinal_secondary",
-            "doctrinal_secondary"
-          ]
-        }
-      ],
-      "limitation_added": true,
-      "tagged_block_count": 8,
-      "dropped_source_refs": [
-        {
-          "ref": "s1",
-          "reason": "insufficient_authority_for_claim_category",
-          "block_index": 1,
-          "block_claim_id": "C1",
-          "claim_category": "critique_or_counterposition",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": "constitutional"
-        },
-        {
-          "ref": "s2",
-          "reason": "insufficient_authority_for_claim_category",
-          "block_index": 1,
-          "block_claim_id": "C1",
-          "claim_category": "critique_or_counterposition",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": "constitutional"
-        },
-        {
-          "ref": "s1",
-          "reason": "insufficient_authority_for_claim_category",
-          "block_index": 5,
-          "block_claim_id": "C3",
-          "claim_category": "theoretical_explanation",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": "constitutional"
-        },
-        {
-          "ref": "s9",
-          "reason": "claim_mismatch",
-          "block_index": 6,
-          "block_claim_id": "C3",
-          "claim_category": "theoretical_explanation",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C2"
-          ],
-          "source_legal_area": "public_law_hcj"
-        },
-        {
-          "ref": "s1",
-          "reason": "insufficient_authority_for_claim_category",
-          "block_index": 8,
-          "block_claim_id": "C5",
-          "claim_category": "critique_or_counterposition",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": "constitutional"
-        }
-      ],
-      "reference_only_refs": [],
-      "commentary_only_claims": [
-        "C1",
-        "C2",
-        "C3",
-        "C4",
-        "C5"
-      ],
-      "unsupported_block_count": 2,
-      "authority_overstatements": [],
-      "source_ref_mismatch_count": 5,
-      "academic_authority_alignment": {
-        "applied": true,
-        "source_coverage": {
-          "reason": [
-            "insufficient_authority_for_claim_category",
-            "claim_mismatch"
-          ],
-          "substantive_blocks": 8,
-          "blocks_with_source_ref": 6,
-          "blocks_with_available_source": 8,
-          "blocks_missing_ref_despite_available_source": 2
-        },
-        "hebrew_rebinding": [],
-        "pack_fit_dropped": [],
-        "bib_reference_uses": [],
-        "rendered_footnotes": 5,
-        "source_refs_emitted": 18,
-        "source_roles_filled": [
-          "primary_legal_anchor",
-          "doctrinal_background_source",
-          "theoretical_normative_source"
-        ],
-        "source_roles_missing": [
-          "critique_or_counterposition_source",
-          "implementation_or_example_source"
-        ],
-        "rule_d_area_overrides": [],
-        "source_roles_expected": [
-          "primary_legal_anchor",
-          "doctrinal_background_source",
-          "theoretical_normative_source",
-          "critique_or_counterposition_source",
-          "implementation_or_example_source"
-        ],
-        "off_topic_refs_dropped": 0,
-        "primary_language_blocks": 0,
-        "declared_category_remaps": [
-          {
-            "to": "critique_or_counterposition",
-            "from": "statutory",
-            "basis": "academic_declared_remap(statutory)+academic_wording_critique",
-            "block_index": 1
-          },
-          {
-            "to": "literature_synthesis",
-            "from": "scholarly_commentary",
-            "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
-            "block_index": 2
-          },
-          {
-            "to": "doctrinal_background",
-            "from": "contextual_background",
-            "basis": "academic_declared_remap(contextual_background)+academic_proposition_background",
-            "block_index": 3
-          },
-          {
-            "to": "theoretical_explanation",
-            "from": "doctrinal_synthesis",
-            "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_theoretical",
-            "block_index": 4
-          },
-          {
-            "to": "theoretical_explanation",
-            "from": "doctrinal_synthesis",
-            "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_theoretical",
-            "block_index": 5
-          },
-          {
-            "to": "theoretical_explanation",
-            "from": "court_holding",
-            "basis": "academic_declared_remap(court_holding)+academic_proposition_theoretical",
-            "block_index": 6
-          },
-          {
-            "to": "literature_synthesis",
-            "from": "scholarly_commentary",
-            "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
-            "block_index": 7
-          },
-          {
-            "to": "critique_or_counterposition",
-            "from": "contextual_background",
-            "basis": "academic_declared_remap(contextual_background)+academic_wording_critique",
-            "block_index": 8
-          }
-        ],
-        "primary_language_details": [],
-        "commentary_only_claims_kept": [
-          "C1",
-          "C2",
-          "C3",
-          "C4",
-          "C5"
-        ],
-        "declared_categories_remapped": 8,
-        "partial_support_refs_dropped": 0,
-        "academic_claim_categories_used": {
-          "doctrinal_background": 1,
-          "literature_synthesis": 2,
-          "theoretical_explanation": 3,
-          "critique_or_counterposition": 2
-        },
-        "refs_kept_by_claim_source_match": 13,
-        "declared_categories_kept_primary": 0,
-        "doctrinal_secondary_refs_allowed": 13,
-        "refs_dropped_by_authority_category": 4,
-        "unsupported_primary_language_suppressed": 0,
-        "doctrinal_secondary_refs_rejected_for_primary_claims": 0
-      },
-      "primary_support_by_main_claim": false,
-      "primary_supported_block_count": 0,
-      "secondary_supported_block_count": 6
-    },
-    "answer_len": 3144,
-    "answer": "רקע תיאורטי: עקרון המידתיות בביקורת חוקתית. עקרון המידתיות הוא הכלי המרכזי בביקורת חקיקה שמאזן בין שמירת זכויות יסוד לבין הצורך במעורבות חוקתית של הרשות המחוקקת; בשפה החוקתית הישראלית נוסח עיקרון זה נגזר במישרין מסעיפי ההגבלה שבחוקי היסוד, אשר מאפשרים פגיעה בזכויות רק לצורך ראוי, בחוק ההולם ובמידה שאינה עולה על הנדרש.\n\nמבחינה נורמטיבית המידתיות אינה רק מבחן טכני אלא מבטאת עמדה פרשנית ופוליטית: היא מניחה כי זכויות אינן מוחלטות אך גם דורשת כי פעולות המדינה יעמדו בצדק תכליתי ובהלימה לערכי היסוד של המשטר; בספרות ניתן למצוא הנמקות תאורטיות המדגישות את תכליתה של המידתיות כאמצעי לביסוס יחסי הכוחות בין שופטים למחוקקים ולהבטחת שקיפות והצדקה ציבורית לחריגים בזכויות.¹\n\nהמוצא ההיסטורי של מבחן המידתיות נע במקביל בין המסורת הקונטיננטלית, שבה התגבשה שיטת בדיקה בעלת שלבים מובחנים, לבין השפעות משפטי זכויות האדם הבינלאומיים; עבודות השדה והמחקר בארץ מדגישות את תרומתו של המסורת הפרשנית היבשתית ואת הקשר למחלוקות על עיגון נורמות מוסדיות בחוקה, כאשר יש להבחין בין מקורות תאורטיים לבין אלה המחייבים מבחינה משפטית.²\n\nבדוקטרינה הישראלית ובספרות המשפטית מקובל לפרק את מבחן המידתיות לשלושה שלבים מובחנים: בדיקת התאמה (suitability) של הפעולה להשגת המטרה, בדיקת נחיצות או מידתיות באמצעי פחות מגבילים (necessity / less restrictive means), ובחינת הפרופורציונליות הצרה או האיזון בין נזק לזכויות לבין חשיבות התועלת; פירוק זה מאפשר גם להבחין בנקודות החלטה שיפוטיות שונות ובטכניקות הוכחה שנדרשות בכל שלב.⁴\n\nכל אחד מהשלבים מציב דרישות נורמטיביות שונות: שלב ההתאמה בוחן קוהרנטיות סיבתית בין המעשה לחתירה למטרה; שלב הנחיצות מבקש לשלול אמצעים חלופיים יעילים פחות הפוגעים פחות בזכויות; ובשלב האיזון השופט נדרש לשקול במשקל את חומרת הפגיעה מול המשקל של המטרה הציבורית ולהכריע אם התועלת מצדיקה את הפגיעה, כאשר נוסח סעיפי ההגבלה בחוקי היסוד מהווה מסגרת שפתית שמכוונת בעיקר אל שלב הנחיצות והאיזון.⁵\n\nבבתי המשפט בישראל המבחן מיושם באופן מעשי אך במגבלות: יש פסיקות המדגירות כי משפטיותו של צעד היא שלב יסוד שיכול לקבוע את גורלו של שאלה חוקתית, וכן קיימות הכרעות שם נעשה בו שימוש מעשי לאמות־מידה ספציפיות (למשל קביעת אמות מידה לניתוק חשמל) או בפסיקות שבהן בולטת נטיית בית המשפט לשקול את התאמת החקיקה לערכי חוקי היסוד; עם זאת יש לנסח טענות על היקף ותוצאות היישום באופן זהיר בהתאם לתוכן הפרטני של ההחלטות.\n\nלמבחן המידתיות קיימות ביקורות תיאורטיות ומעשיות חשובות: נטען שהוא מושך שופטים אל תוך הערכת מדיניות שבתחום המחוקק, כי מדידת נזק ותועלת היא לעתים בלתי מדויקת וכי שקילת זכויות סותרת עקרונות של קביעת כללים ברורים; מאידך הספרות מציעה חלופות או דגשים אחרים — מנסחים כגון בדיקות קפדניות יותר או מודלים השואבים מהשיטה הקנדית — והוויכוח משמש גם כמסגרת לדיון בסמכות השיפוטית ובגבולותיה.³\n\nלכותב אקדמי המבקש לפרק את המידתיות בפרק רקע כדאי להקפיד על שלושה קווים מנחים: להציג תחילה את המסגרת החוקתית והנוסח הסטטוטורי כהוויית הבסיס (כדי להבדיל בין קביעה משפטית לבין פרשנות ספרותית), לאחר מכן לפרט את שלבי המבחן כפי שנדונו בספרות ובהלכה ולספק דוגמאות פסיקתיות ממוקדות בלבד, ולבסוף להקצות מקטע ביקורתי שבו יוצגו טיעונים מתחרים ומגבלות מתודולוגיות; גישה זו מאפשרת לשמור על הפרדה ברורה בין חוק, פסיקה וספרות ולשקף את הדיון התיאורטי בעדויות המתאימות.⁴\n\n*הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.*\n\n**להמשך בדיקה:** בג\"ץ 9134/12 · בג\"ץ 4988/19\n"
+    "primary_anchor": null,
+    "answer": "המחקר הופסק בגלל תקלה תשתיתית ולא הושלמה תשובה משפטית מבוססת. לא מוצגת תשובת ביניים. הקרדיטים על ההרצה הזו הוחזרו. אפשר להריץ שוב, לצמצם את השאלה, או לצרף את המסמך הרלוונטי."
   },
   {
     "id": "AW1",
-    "question": "כתוב פרק מבוא לסמינריון שלי ששאלת המחקר שלו היא: האם הסעד החוקתי של קריאה לתוך החוק חורג מסמכות הרשות השופטת ומפר את עקרון הפרדת הרשויות? (נוסח טיוטה)",
-    "run_id": "4c9c87bf-7146-4f74-a33e-a17967746e7c",
-    "qa_log_id": "ec6cbd3e-817a-41dd-951e-812bad78e8e4",
-    "ms": 222245,
+    "run_id": "b81c4984-fc7e-404e-8bf2-b8afc96732c3",
+    "qa_log_id": "6a5340a3-3660-455a-a428-50fe8d3ff15c",
     "genre": "introduction",
-    "task_intent": "academic_writing",
-    "footnotes_count": 2,
+    "footnotes_count": 3,
     "footnotes": [
       {
-        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
-        "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות; תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?",
+        "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+        "title": "חוק יסוד: כבוד האדם וחירותו",
         "number": 1,
         "sources": [
           {
-            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
-            "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
-            "source_type": "journal_article"
-          },
-          {
-            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/6a76e2_469150003ab945cab43278c021cb754f.pdf",
-            "title": "תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?",
-            "source_type": "journal_article"
+            "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+            "title": "חוק יסוד: כבוד האדם וחירותו",
+            "source_type": "israeli_law"
           }
         ],
-        "source_type": "compound"
+        "source_type": "israeli_law"
       },
       {
         "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_d04daac9ebd04cbeb37f809dc805c208.pdf",
-        "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות; חוק בישראל",
+        "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות; חוק יסודות התקציב, התשמ\"ה",
         "number": 2,
         "sources": [
           {
@@ -646,588 +43,326 @@
             "source_type": "journal_article"
           },
           {
-            "url": "https://lawjournal.huji.ac.il/sites/default/files/2024-05/%D7%A9%D7%9C%D7%98%D7%95%D7%9F%20%D7%94%D7%97%D7%95%D7%A7%20%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C.pdf",
-            "title": "חוק בישראל",
-            "source_type": "other"
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_8d32ae41981d4925bfb8c264bfa06f91.pdf",
+            "title": "חוק יסודות התקציב, התשמ\"ה",
+            "source_type": "journal_article"
           }
         ],
         "source_type": "compound"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%A2%D7%AA%D7%99%D7%A8%D7%94%20%D7%9C%D7%91%D7%92%D7%A6%20%D7%9B%D7%94%D7%9C%D7%99%D7%9A%20%D7%AA%D7%A7%D7%99%D7%A4%D7%94%20%D7%A2%D7%A8%D7%A2%D7%95%D7%A8%D7%99.pdf",
+        "title": "עתירה לבג״צ כהליך תקיפה ערעורי",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-01/%D7%A2%D7%AA%D7%99%D7%A8%D7%94%20%D7%9C%D7%91%D7%92%D7%A6%20%D7%9B%D7%94%D7%9C%D7%99%D7%9A%20%D7%AA%D7%A7%D7%99%D7%A4%D7%94%20%D7%A2%D7%A8%D7%A2%D7%95%D7%A8%D7%99.pdf",
+            "title": "עתירה לבג״צ כהליך תקיפה ערעורי",
+            "source_type": "book_or_chapter"
+          }
+        ],
+        "source_type": "book_or_chapter"
       }
     ],
-    "admission_gate": [],
-    "role_slotting": [],
-    "pack_admission_summary": null,
-    "primary_anchor_status": null,
-    "csm_drops": {
-      "applied": true,
-      "rebinding": {
-        "applied": true,
-        "unbound": 1,
-        "decisions": [
-          {
-            "ref": "s3",
-            "reason": "claim_id_match",
-            "binding": "exact",
-            "block_index": 0
-          },
-          {
-            "ref": "s4",
-            "reason": "claim_id_match",
-            "binding": "exact",
-            "block_index": 0
-          },
-          {
-            "ref": "s1",
-            "reason": "claim_id_match",
-            "binding": "exact",
-            "block_index": 1
-          },
-          {
-            "ref": "s2",
-            "reason": "claim_id_match",
-            "binding": "exact",
-            "block_index": 1
-          },
-          {
-            "ref": "s5",
-            "score": 9,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 2,
-            "matched_terms": [
-              "תיאורטינורמטיבי",
-              "חורג",
-              "סמכ",
-              "יפוטית",
-              "מושג",
-              "טונ",
-              "החוק",
-              "פורמליזמ"
-            ]
-          },
-          {
-            "ref": "s3",
-            "score": 5,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 2,
-            "matched_terms": [
-              "סמכ",
-              "חוקתיימ",
-              "סבירה",
-              "שופטת",
-              "מחוקקת"
-            ]
-          },
-          {
-            "ref": "s4",
-            "score": 8,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 3,
-            "matched_terms": [
-              "פרשני",
-              "התאמה",
-              "חזקת",
-              "פרשנית",
-              "התאימ",
-              "חוקימ",
-              "נורמ",
-              "חיצונ"
-            ]
-          },
-          {
-            "ref": "s3",
-            "score": 3,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 3,
-            "matched_terms": [
-              "נורמ",
-              "חוקתיימ",
-              "מחוקק"
-            ]
-          },
-          {
-            "ref": "s3",
-            "score": 2,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 4,
-            "matched_terms": [
-              "מחוקק",
-              "חוקתית"
-            ]
-          },
-          {
-            "ref": "s5",
-            "score": 3,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 4,
-            "matched_terms": [
-              "יפוטית",
-              "החוק",
-              "יפוטיימ"
-            ]
-          },
-          {
-            "ref": "s1",
-            "score": 5,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 5,
-            "matched_terms": [
-              "נוסח",
-              "קריאה",
-              "לתוכ",
-              "החוק",
-              "חקיקה"
-            ]
-          },
-          {
-            "ref": "s3",
-            "reason": "no_substantive_binding",
-            "binding": "unbound",
-            "block_index": 5
-          }
-        ],
-        "bound_exact": 4,
-        "bound_facet": 0,
-        "bound_topical": 7,
-        "capped_ref_count": 0,
-        "bound_area_direct": 0,
-        "rebound_ref_count": 7,
-        "claim_mismatch_drops_after": 1,
-        "claim_mismatch_drops_before": 8
+    "pack_admission_summary": {
+      "admitted_count": 0,
+      "rejected_count": 8,
+      "admitted_by_role": {},
+      "final_pack_roles": [],
+      "rejected_by_reason": {
+        "off_topic_no_role_assignment": 2,
+        "insufficient_academic_signals": 8,
+        "no_scholarly_title_or_abstract": 7,
+        "no_credible_academic_provenance": 7,
+        "off_topic_for_question_and_roles": 1,
+        "class_unknown_has_no_secondary_academic_slot": 7
       },
-      "mismatch_reason": [
-        "insufficient_authority_for_claim_category",
-        "claim_mismatch"
-      ],
-      "claim_categories": [
-        {
-          "basis": "academic_declared_remap(doctrinal_synthesis)+academic_wording_methodological",
-          "category": "methodological_framing",
-          "kept_refs": [
-            "s3",
-            "s4"
-          ],
-          "block_index": 0,
-          "support_levels": [
-            "doctrinal_secondary",
-            "doctrinal_secondary"
-          ]
-        },
-        {
-          "basis": "academic_declared_remap(statutory)+academic_proposition_background",
-          "category": "doctrinal_background",
-          "kept_refs": [],
-          "block_index": 1,
-          "support_levels": []
-        },
-        {
-          "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
-          "category": "literature_synthesis",
-          "kept_refs": [
-            "s3",
-            "s5"
-          ],
-          "block_index": 2,
-          "support_levels": [
-            "doctrinal_secondary",
-            "background"
-          ]
-        },
-        {
-          "basis": "academic_declared_remap(doctrinal_synthesis)+academic_wording_methodological",
-          "category": "methodological_framing",
-          "kept_refs": [
-            "s4",
-            "s3"
-          ],
-          "block_index": 3,
-          "support_levels": [
-            "doctrinal_secondary",
-            "doctrinal_secondary"
-          ]
-        },
-        {
-          "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
-          "category": "literature_synthesis",
-          "kept_refs": [
-            "s3",
-            "s5"
-          ],
-          "block_index": 4,
-          "support_levels": [
-            "doctrinal_secondary",
-            "background"
-          ]
-        },
-        {
-          "basis": "academic_declared_remap(contextual_background)+academic_wording_critique",
-          "category": "critique_or_counterposition",
-          "kept_refs": [],
-          "block_index": 5,
-          "support_levels": []
-        }
-      ],
-      "limitation_added": false,
-      "tagged_block_count": 6,
-      "dropped_source_refs": [
-        {
-          "ref": "s1",
-          "reason": "insufficient_authority_for_claim_category",
-          "block_index": 1,
-          "block_claim_id": "C2",
-          "claim_category": "doctrinal_background",
-          "block_legal_area": "public_law_hcj",
-          "source_claim_ids": [
-            "C2"
-          ],
-          "source_legal_area": "constitutional"
-        },
-        {
-          "ref": "s2",
-          "reason": "insufficient_authority_for_claim_category",
-          "block_index": 1,
-          "block_claim_id": "C2",
-          "claim_category": "doctrinal_background",
-          "block_legal_area": "public_law_hcj",
-          "source_claim_ids": [
-            "C2"
-          ],
-          "source_legal_area": "public_law_hcj"
-        },
-        {
-          "ref": "s1",
-          "reason": "insufficient_authority_for_claim_category",
-          "block_index": 5,
-          "block_claim_id": "C5",
-          "claim_category": "critique_or_counterposition",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C2"
-          ],
-          "source_legal_area": "constitutional"
-        },
-        {
-          "ref": "s3",
-          "reason": "claim_mismatch",
-          "block_index": 5,
-          "block_claim_id": "C5",
-          "claim_category": "critique_or_counterposition",
-          "block_legal_area": "constitutional",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        }
-      ],
-      "reference_only_refs": [
-        "s5"
-      ],
-      "commentary_only_claims": [
-        "C1",
-        "C3",
-        "C4",
-        "C5"
-      ],
-      "unsupported_block_count": 0,
-      "authority_overstatements": [],
-      "source_ref_mismatch_count": 4,
-      "academic_authority_alignment": {
-        "applied": true,
-        "source_coverage": {
-          "reason": [
-            "insufficient_authority_for_claim_category",
-            "claim_mismatch"
-          ],
-          "substantive_blocks": 6,
-          "blocks_with_source_ref": 4,
-          "blocks_with_available_source": 6,
-          "blocks_missing_ref_despite_available_source": 2
-        },
-        "hebrew_rebinding": [],
-        "pack_fit_dropped": [],
-        "bib_reference_uses": [
-          {
-            "reason": "bibliography_only_reading_pointer",
-            "source_title": "חוק בישראל",
-            "block_category": "literature_synthesis",
-            "reference_only": true
-          },
-          {
-            "reason": "bibliography_only_reading_pointer",
-            "source_title": "חוק בישראל",
-            "block_category": "literature_synthesis",
-            "reference_only": true
-          }
-        ],
-        "rendered_footnotes": 2,
-        "source_refs_emitted": 12,
-        "source_roles_filled": [
-          "doctrinal_background_source"
-        ],
-        "source_roles_missing": [
-          "primary_legal_anchor",
-          "theoretical_normative_source",
-          "critique_or_counterposition_source",
-          "implementation_or_example_source"
-        ],
-        "rule_d_area_overrides": [],
-        "source_roles_expected": [
-          "primary_legal_anchor",
-          "doctrinal_background_source",
-          "theoretical_normative_source",
-          "critique_or_counterposition_source",
-          "implementation_or_example_source"
-        ],
-        "off_topic_refs_dropped": 0,
-        "primary_language_blocks": 0,
-        "declared_category_remaps": [
-          {
-            "to": "methodological_framing",
-            "from": "doctrinal_synthesis",
-            "basis": "academic_declared_remap(doctrinal_synthesis)+academic_wording_methodological",
-            "block_index": 0
-          },
-          {
-            "to": "doctrinal_background",
-            "from": "statutory",
-            "basis": "academic_declared_remap(statutory)+academic_proposition_background",
-            "block_index": 1
-          },
-          {
-            "to": "literature_synthesis",
-            "from": "scholarly_commentary",
-            "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
-            "block_index": 2
-          },
-          {
-            "to": "methodological_framing",
-            "from": "doctrinal_synthesis",
-            "basis": "academic_declared_remap(doctrinal_synthesis)+academic_wording_methodological",
-            "block_index": 3
-          },
-          {
-            "to": "literature_synthesis",
-            "from": "scholarly_commentary",
-            "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
-            "block_index": 4
-          },
-          {
-            "to": "critique_or_counterposition",
-            "from": "contextual_background",
-            "basis": "academic_declared_remap(contextual_background)+academic_wording_critique",
-            "block_index": 5
-          }
-        ],
-        "primary_language_details": [],
-        "commentary_only_claims_kept": [
-          "C1",
-          "C3",
-          "C4",
-          "C5"
-        ],
-        "declared_categories_remapped": 6,
-        "partial_support_refs_dropped": 0,
-        "academic_claim_categories_used": {
-          "doctrinal_background": 1,
-          "literature_synthesis": 2,
-          "methodological_framing": 2,
-          "critique_or_counterposition": 1
-        },
-        "refs_kept_by_claim_source_match": 8,
-        "declared_categories_kept_primary": 0,
-        "doctrinal_secondary_refs_allowed": 6,
-        "refs_dropped_by_authority_category": 3,
-        "unsupported_primary_language_suppressed": 0,
-        "doctrinal_secondary_refs_rejected_for_primary_claims": 0
-      },
-      "primary_support_by_main_claim": false,
-      "primary_supported_block_count": 0,
-      "secondary_supported_block_count": 2
+      "reviewed_candidates": 8,
+      "role_diversity_score": 0
     },
-    "answer_len": 3596,
-    "answer": "הנושא המרכזי בעבודה זו הוא הבחנה בין סמכותה של הרשות השופטת למתן סעד פרשני מתקנן — המכונה בספרות ובפסיקה \"קריאה לתוך החוק\" — לבין חציית קו סמכותי שעשוי להוות פגיעה בעקרון הפרדת הרשויות. שאלת המחקר המרכזית היא אפוא לא רק האם וכיצד בתי המשפט יכולים לפתח נוסח חקיקה על דרך הפרשנות לתקן פגיעה בחוקי יסוד או בזכויות יסוד, אלא גם מהן הגבולות התיאורטיים והפרוצדורליים שמפרידים בין פרשנות לגילוי סמכות מחוקקת. כדי למקם את השאלה מטעמים דוקטריניים ובמונחים ברי־ניתוח אנדוסקופי, העבודה תפתח בהגדרה מושגית של מה שנתפס כסעד של \"קריאה לתוך החוק\" ותבחן את מרכיביו האופרטיביים, ההבחנות בינו לבין ביטול חוק או פרשנות מצמצמת/מרחיבה, והמשמעויות המוסדיות של כל אחת מהחלופות.¹\n\nכדי להבין את ההקשר המוסדי של השאלה יש להתייחס למסגרת החוקתית והפרוצדורלית שבה פועלים הערכאות בישראל: חוק־יסוד: השפיטה מספק בסיס חוקתי לסמכותו של בית המשפט העליון לשבת כבית משפט גבוה לצדק ולהורות על סעד למען הצדק, בעוד תקנות סדר הדין בבית המשפט הגבוה לצדק משרטטות את מסגרות ההגשה והפרוצדורות לעתירות וצווי על תנאי. יחד אלה מהווים את הבסיס החוקתי והפרוצדורלי שבו מתפתח המתח בין הערכאה השיפוטית לבין המחוקק כאשר עולה צורך בריפוי פגיעה בחקיקה; עם זאת, בשני המקורות הנמצאים ברשותנו אין הוראה מפורשת שמכוננת מבחנים או רמות כניסה ספציפיות לסעד הנקרא \"קריאה לתוך החוק\". על כן חשוב לבחון הן את היסודות החוקתיים של הסמכות והשפיטה והן את גבולות הפרוצדורה של מתן סעד חוקתי במסגרת עתירות צדק.\n\nהמתח התיאורטי־נורמטיבי שבמרכז המחקר נוגע לשאלה האם מתן סעד המגלם הכנסת תוכן לחקיקה חורג מטבעה של סמכות שיפוטית ומפר את האיזון בין הרשויות. מצד אחד מוכרים בטיעון התומך בסעדים אלה נימוקים של ריפוי פגיעה בזכויות יסוד ויישום ערכים חוקתיים באמצעות פרשנות סבירה; מצד שני עולה חשש שהרשות השופטת, כשהיא מצווה על שינויי נוסח שמתקנים או משלימים חקיקה, נכנסת לתחום הסמכות המחוקקת ומערערת את מושג המחויבות הדמוקרטית של החלטות החקיקה. דיון זה מצריך משכן בין ניתוחי שלטון החוק, פורמליזם ומהות — מסגרת תאורטית שמאפשרת לזהות מתי פרשנות נתפסת ככלי תיקון מוסדי ומתי ככלי לגיטימי של פרשנות משפטית בלבד.²\n\nהעבודה תבחן גם את אמצעי ההגנה והסייגים שהספרות והדיון הפרשני מציעים כדי למנוע תפיסת־סמכות שיפוטית בלתי־נסבלת: בין היתר נדון בעקרונות של מינימליות התערבותית, בהעדפת פרשנות המכוונת להתאמה על פני יצירת מנגנון חקיקתי חדש, ובהצורך להשאיר מקום להכרעות פוליטיות ולערכאות המוסמכות לכך. המושג של \"חזקת ההתאמה הפרשנית\" מספק נקודת כניסה אנליטית חשובה — הוא מנתח הטייה לפרשנות שנועדה להתאים חוקים לנורמות חיצוניות או לערכים חוקתיים ובו בזמן שואל מהו גבול ההיתכנות של הכנסת תוכן מחוץ לטקסט החקיקתי. במסגרת זו אצלול וארכיב דוגמאות פרשניות שהספרות מזהה כגבולות ראויים, ואבחן עד כמהן יכול הפרשן להשאיר במקום המחוקק את המטלות החקיקתיות.¹\n\nמבחינת המתודולוגיה, העבודה תנצל שילוב של ניתוח דוקטרינרי־מושגי, בחינה היסטורית של התפתחות תפקידי בית המשפט בצורת ביקורת שיפוטית, והשוואה בין גישות פרשניות כדי להעריך את מידת הלגיטימיות של סעד הקריאה לתוך החוק. המחקר יתמקד בבחינת המתח שבין ראוייּות הריפוי של פגיעה בזכויות מול הצורך בשמירה על תחום החלטתי נבחר למחוקק; לשם כך תנתח העבודה את מסגרות ההרשאה החוקתית הקיימות, את ההנמקות הפרשניות שמצביעות על הכנסת תוכן, ואת הסייגים המעשיים הנדרשים לשמירה על איזון מוסדי. פרק הסיכום ינסה לגבש קריטריונים שיפוטיים פרופורציונליים — מבחנים בקורתיים שישמשו להבחנה בין פרשנות מתקנת ראויה לבין חריגה סמכותית.²\n\nהערת הסתייגות קצרה: המקורות שעמדו לרשות טיוטת מבוא זו מספקים מסגרת תיאורטית ופרשנית רחבה אך אינם מכילים נוסח מפורש או פסיקה מדויקת שמכתיבה מבחן שלם ומקורי ל\"קריאה לתוך החוק\"; מסיבה זו הניסוח במחקר יהיה זהיר ביחס ליישום מעשי של מבחנים פסיקתיים, והעבודה תדרוש בעתיד גישה מקיפה לטקסטים פסיקתיים מלאים ולנוסחי חקיקה רלוונטיים לצורך הבניית מסקנות מחייבות יותר.\n\n*הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.*\n"
+    "admission_gate": [
+      {
+        "url": "https://www.idi.org.il/media/4035/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA-%D7%91%D7%9E%D7%91%D7%98-%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%D7%99-%D7%95%D7%9E%D7%A9%D7%95%D7%95%D7%94.pdf",
+        "title": "מידתיות במבט ביקורתי ומשווה",
+        "domain": "idi.org.il",
+        "topical_fit": false,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [
+          "scholarly_title_shape"
+        ],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "off_topic_for_question_and_roles",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://www.idi.org.il/articles/9658",
+        "title": "האפקט המצטבר של המידתיות: נדבך חדש בבחינה החוקתית הישראלית",
+        "domain": "idi.org.il",
+        "topical_fit": true,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [
+          "repository_or_publications_path"
+        ],
+        "rejection_reasons": [
+          "no_scholarly_title_or_abstract",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://www.dyoma.co.il/psikta/1576",
+        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "domain": "dyoma.co.il",
+        "topical_fit": true,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://www.dyoma.co.il/psikta/1576",
+        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "domain": "dyoma.co.il",
+        "topical_fit": true,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://www.dyoma.co.il/psikta/1576",
+        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "domain": "dyoma.co.il",
+        "topical_fit": true,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://dyoma.co.il/psikta/1576",
+        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "domain": "dyoma.co.il",
+        "topical_fit": true,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://www.dyoma.co.il/psikta/1576",
+        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "domain": "dyoma.co.il",
+        "topical_fit": true,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://www.dyoma.co.il/psikta/1576",
+        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "domain": "dyoma.co.il",
+        "topical_fit": true,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      }
+    ],
+    "role_slotting": [
+      {
+        "title": "מידתיות במבט ביקורתי ומשווה",
+        "reason": "no_reslot_attempted",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "scholarship",
+        "rejected_reason": "off_topic_no_role_assignment",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "האפקט המצטבר של המידתיות: נדבך חדש בבחינה החוקתית הישראלית",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "scholarship",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "scholarship",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "primary_statute",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "primary_statute",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "אתר השירותים והמידע הממשלתי - דוברות בית המשפט",
+        "reason": "no_reslot_attempted",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "off_topic_no_role_assignment",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר חיות בפסק הדין החלקי בעניין ארד-פנקס",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      }
+    ],
+    "primary_anchor": {
+      "rows": [
+        {
+          "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+          "found": true,
+          "status": "body_acquired",
+          "final_status": "acquired_identity_verified",
+          "bytes_received": 0,
+          "failure_reason": null,
+          "chars_extracted": 1353,
+          "identity_passed": null,
+          "nominated_target": "חוק יסוד: כבוד האדם וחירותו",
+          "extraction_started": true,
+          "extraction_succeeded": true,
+          "usable_primary_anchor": true
+        },
+        {
+          "url": null,
+          "found": false,
+          "status": "not_attempted",
+          "final_status": "not_found",
+          "bytes_received": 0,
+          "failure_reason": "cooldown_until:2026-09-15T20:35:08.579Z",
+          "chars_extracted": 0,
+          "identity_passed": null,
+          "nominated_target": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+          "extraction_started": false,
+          "extraction_succeeded": false,
+          "usable_primary_anchor": false
+        }
+      ],
+      "status_counts": {
+        "not_found": 1,
+        "acquired_identity_verified": 1
+      },
+      "all_primary_anchors_failed": false,
+      "usable_primary_anchor_count": 1
+    },
+    "answer": "הנושא המרכזי של סמינריון זה הוא יחסה של מערכת המשפט אל הסעד החוקתי המכונה \"קריאה לתוך החוק\" ואת השאלה המובילה האם סעד זה חורג מסמכות הרשות השופטת ופוגע בעקרון הפרדת הרשויות. עבודה זו מבקשת למקם את הדיון בתוך המסגרת החוקתית־מוסדית של מדינת ישראל, שבה חוקי היסוד ומהלכי בית המשפט מהווים את הרקע להבנת גבולות הפרשנות והשימוש בסעדים מקטבים של התאמה פרשנית.¹\n\nבתחילת העבודה מוגדרת הקריאה לתוך החוק כתיקון פרשני שבו בית המשפט משנה את לשון החוק או מוסיף לו יסוד פרשני שנועד להניחו במסגרת החוקה ולמנוע את ביטולו; ההגדרה שיטתית זו מדגישה כי מדובר בסעד התאמה פרשני שנועד לשמור על חוק קיים ככל שניתן במסגרת הדרישה לחוקה או לחוק ההולם. סקירת התיאוריה התומכת בסעד מצביעה על כך שמטרת הקריאה היא לצמצם את פגיעה בחקיקה באמצעות התאמה פרשנית במקום ביטול מלא, וכך להוות פתרון מידתי בין הגנה על זכויות לבין קביעת תחום־הגבלה לחקיקה.\n\nהבסיס החוקתי והנורמטיבי לשימוש בסעדים התאמתיים נעוץ בהוראות חוקותיות ובדוקטרינות פרשניות של בתי המשפט; במיוחד סעיפי חוק היסוד המספקים מסגרת להבחנה בין פגיעה מותרת בזכויות לבין פגיעה שאינה עומדת בדרישות של חוק הולם ותכלית ראויה, וכן בעקרונות שמגדירים את מעמד המערכת השיפוטית וכוחה לפרש וליישם את החוק במסגרת סמכותה. הבהרת המסגרת החוקתית חשובה כדי להבחין בין פירוש יצירי־כוח שהוא חלק מהתפקיד השיפוטי ובין מעשה שניתן לפרשו כהשתלטות על תחומי פעולת רשות מחוקקת.¹\n\nהדיון הפסיקתי מסמן כי בתי המשפט עצמם מהווים את מקור ההגדרה המעשית של גבולות הסעד: פסקי דין של בית המשפט העליון קובעים את האיזון בין פרשנות מחמירה שעשויה לשנות את הוראת המחוקק לבין גישה שמעדיפה ביטול של הוראה חוקתית. עם זאת, יש להימנע מציון מסקנות מחייבות מתוך מקרים ספציפיים כאשר לא כל הפסיקה או הכרעה מוסמכת לנוסח מוחלט; משמעות הדבר עבורך כפונטציאל למחקר היא לבחון בקפידה את תכלית הסעד והנימוקים שאומצו בפסיקה הרלוונטית במקום להכליל על סמך כותרות.\n\nכדי לבחון האם קריאה לתוך החוק חורגת מסמכות יש להסתמך על כלים דוקטרינריים מקובלים, ובראשם מבחני מידתיות שנועדו לשקול את התאמת האמצעי למטרה ולמזער פגיעה בזכויות. מבחני המידתיות והניתוח התרכובי שלהם מספקים מסגרת לבחינת האם התאמת הוראה לפרשנות חוקתית מהווה תיקון פרשני סביר או שינוי מהותי של תוכן החקיקה — הבחנה שבלבה של שאלת הפרדת הרשויות.\n\nהמתח התיאורטי המרכזי שהעבודה בוחנת הוא המתח בין שמירה על החוק והאופן שבו הפרשנות יכולה להגן על זכויות לבין חשש ההשתלטות השיפוטית על הכרעות מדיניות של הרשות המחוקקת. בספרות נתפס העיגון החוקתי והפרשנות כגורמים המעצבים את תחום הסמכות, ויש הנוטים להגן על הסעד כהתאמה נדרשת בשיטת זכויות, בעוד אחרים מזהירים מפני שיפוטיות יתר. שאלת המחקר שלי מערבת אפוא הן הערכה דוקטרינרית טכנית של איפיון הסעד והן שיפוט ערכי ביחס לעקרון הפרדת הרשויות.²\n\nמתודולוגית העבודה תבצע קריאה דוקטרינרית של מקורות ראשוניים (חוקי יסוד והליכי בתי המשפט) לצד ניתוח ספרותי של מאמרים העוסקים בסעדי התאמה ומבחני מידתיות; תוך כדי כך ייבחנו דוגמאות פסיקות מייצגות והנימוקים שניתנו בהן כדי לבדוק האם נוצר שינוי מהותי של הוראות מחוקקות או שמא נשמר איפוק פרשני הממלא תפקיד מנעתי. בדיקה זו תאפשר להציע מסגרת הבררה של ערכי מבחן שיסייעו לקביעה מתי, אם בכלל, ניתן לומר כי קריאה לתוך החוק חורגת מסמכות.³\n\nמבחינה פרקטית ומשפטית, חשיבות המחקר נובעת מהשלכותיו על הלגיטימיות המוסדית והאיזון המוסדי: פסקי דין שימרדו בקו המותר של פרשנות עלולים לשנות את יחסי הכוחות בין רשויות השלטון, בעוד שמנעד פחות יצירתי של התאמות פרשניות יכול להבטיח הגנה יעילה על זכויות ללא פגיעה מיותרת בסמכות המחוקק. מסקנות העבודה אמורות לתרום הן לאבחנה דוקטרינרית מדויקת של הסעד והן להצעות פרשניות ושיפוטיות שמאזנות בין הגנה על זכויות לשמירה על הפרדת הרשויות.¹\n\n*הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.*\n"
   },
   {
     "id": "AW7",
-    "question": "כתוב פסקת טיעון אקדמית התומכת בגישה לפיה בית המשפט רשאי להתערב במדיניות מקצועית של רשויות מנהליות במקרים חריגים",
-    "run_id": "6450e31b-2ad4-4f12-9ace-571c0290b0cc",
-    "qa_log_id": "5f43e815-c2c8-4d4a-b29a-5be22eaa9336",
-    "ms": 156734,
-    "genre": "argument_paragraph",
-    "task_intent": "academic_writing",
-    "footnotes_count": 1,
-    "footnotes": [
-      {
-        "url": "https://law.biu.ac.il/sites/law/files/shared/segel/%D7%A9%D7%97%D7%A8-%D7%9C%D7%99%D7%A4%D7%A9%D7%99%D7%A5-%D7%9C%D7%90%D7%95%D7%9D-%D7%9E%D7%95%D7%9C-%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA.pdf",
-        "title": "שחר ליפשיץ-לאום מול סבירות (מאמר אקדמי / קובץ PDF באתר בר-אילן); על חוסר הסבירות הקיצוני של בג\"ץ הסבירות",
-        "number": 1,
-        "sources": [
-          {
-            "url": "https://law.biu.ac.il/sites/law/files/shared/segel/%D7%A9%D7%97%D7%A8-%D7%9C%D7%99%D7%A4%D7%A9%D7%99%D7%A5-%D7%9C%D7%90%D7%95%D7%9D-%D7%9E%D7%95%D7%9C-%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA.pdf",
-            "title": "שחר ליפשיץ-לאום מול סבירות (מאמר אקדמי / קובץ PDF באתר בר-אילן)",
-            "source_type": "legal_article"
-          },
-          {
-            "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/18/5Yaacov%20Ben-Shemesh.pdf",
-            "title": "על חוסר הסבירות הקיצוני של בג\"ץ הסבירות",
-            "source_type": "legal_article"
-          }
-        ],
-        "source_type": "compound"
-      }
-    ],
+    "run_id": "6e2a8886-2127-4727-b52d-f024f50c1986",
+    "qa_log_id": "c6cc5a15-b4a9-499f-88a2-c83ddb266fd1",
+    "genre": null,
+    "footnotes_count": 0,
+    "footnotes": [],
+    "pack_admission_summary": null,
     "admission_gate": [],
     "role_slotting": [],
-    "pack_admission_summary": null,
-    "primary_anchor_status": null,
-    "csm_drops": {
-      "applied": true,
-      "rebinding": {
-        "applied": true,
-        "unbound": 0,
-        "decisions": [
-          {
-            "ref": "s2",
-            "reason": "claim_id_match",
-            "binding": "exact",
-            "block_index": 0
-          },
-          {
-            "ref": "s5",
-            "reason": "claim_id_match",
-            "binding": "exact",
-            "block_index": 0
-          }
-        ],
-        "bound_exact": 2,
-        "bound_facet": 0,
-        "bound_topical": 0,
-        "capped_ref_count": 0,
-        "bound_area_direct": 0,
-        "rebound_ref_count": 0,
-        "claim_mismatch_drops_after": 0,
-        "claim_mismatch_drops_before": 0
-      },
-      "mismatch_reason": [],
-      "claim_categories": [
-        {
-          "basis": "academic_declared_remap(doctrinal_synthesis)+academic_wording_critique",
-          "category": "critique_or_counterposition",
-          "kept_refs": [
-            "s2",
-            "s5"
-          ],
-          "block_index": 0,
-          "support_levels": [
-            "doctrinal_secondary",
-            "doctrinal_secondary"
-          ]
-        }
-      ],
-      "limitation_added": false,
-      "tagged_block_count": 1,
-      "dropped_source_refs": [],
-      "reference_only_refs": [],
-      "commentary_only_claims": [
-        "C1"
-      ],
-      "unsupported_block_count": 0,
-      "authority_overstatements": [],
-      "source_ref_mismatch_count": 0,
-      "academic_authority_alignment": {
-        "applied": true,
-        "source_coverage": {
-          "reason": [],
-          "substantive_blocks": 1,
-          "blocks_with_source_ref": 1,
-          "blocks_with_available_source": 1,
-          "blocks_missing_ref_despite_available_source": 0
-        },
-        "hebrew_rebinding": [],
-        "pack_fit_dropped": [
-          {
-            "ref": "s1",
-            "score": 0,
-            "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות"
-          },
-          {
-            "ref": "s6",
-            "score": 0,
-            "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין"
-          },
-          {
-            "ref": "s9",
-            "score": 0,
-            "title": "עע\"מ 1754/20 בינת תקשורת מחשבים בע\"מ נ׳ רשות שדות התעופה פסק דין (21.02.2020)"
-          }
-        ],
-        "bib_reference_uses": [],
-        "rendered_footnotes": 1,
-        "source_refs_emitted": 2,
-        "source_roles_filled": [
-          "primary_legal_anchor",
-          "doctrinal_background_source",
-          "critique_or_counterposition_source"
-        ],
-        "source_roles_missing": [
-          "theoretical_normative_source",
-          "implementation_or_example_source"
-        ],
-        "rule_d_area_overrides": [],
-        "source_roles_expected": [
-          "primary_legal_anchor",
-          "doctrinal_background_source",
-          "theoretical_normative_source",
-          "critique_or_counterposition_source",
-          "implementation_or_example_source"
-        ],
-        "off_topic_refs_dropped": 0,
-        "primary_language_blocks": 0,
-        "declared_category_remaps": [
-          {
-            "to": "critique_or_counterposition",
-            "from": "doctrinal_synthesis",
-            "basis": "academic_declared_remap(doctrinal_synthesis)+academic_wording_critique",
-            "block_index": 0
-          }
-        ],
-        "primary_language_details": [],
-        "commentary_only_claims_kept": [
-          "C1"
-        ],
-        "declared_categories_remapped": 1,
-        "partial_support_refs_dropped": 0,
-        "academic_claim_categories_used": {
-          "critique_or_counterposition": 1
-        },
-        "refs_kept_by_claim_source_match": 2,
-        "declared_categories_kept_primary": 0,
-        "doctrinal_secondary_refs_allowed": 2,
-        "refs_dropped_by_authority_category": 0,
-        "unsupported_primary_language_suppressed": 0,
-        "doctrinal_secondary_refs_rejected_for_primary_claims": 0
-      },
-      "primary_support_by_main_claim": false,
-      "primary_supported_block_count": 0,
-      "secondary_supported_block_count": 1
-    },
-    "answer_len": 1236,
-    "answer": "בתי המשפט אכן רשאים להתערב במדיניות מקצועית של רשויות מנהליות במקרים חריגים; ההצדקה לכך נשענת על הצורך לשמר את שלטון החוק והגנת זכויות יסוד כאשר החלטה מקצועית חורגת באופן קיצוני מסמכותה או פוגעת באופן בלתי מתקבל על הדעת בזכויות יסוד. הטיעון החזק ביותר נגד גישה זו מדגיש את עקרון ההפרדה בין רשויות ואת היעדר מומחיות שיפוטית בעניינים מקצועיים: התערבות שיפוטית שוטפת עלולה לערער את סמכות הרשות, לפגוע ביעילות הרגולציה ולגרום ל\"שיפוטיזציה\" של החלטות שאינן מתאימות להכרעה משפטית. ההבחנה הדוקטרינרית המכריעה היא אפוא ברמת החריג: לא מדובר בהרשאה כללית לביקורת מדיניות אלא בהתערבות מצוצמקת שמוגבלת לעילות כמו חריגה מסמכות, פגם מהותי בהליך, פגיעה בזכויות יסוד או חוסר סבירות קיצוני; בשפה הדוקטרינית הנוכחית רף זה מתואר בספרות כמשמעותי־גבולתי ויש לראות בו סף שמצדיק צמצום דרגתי של דה־פראנס לעומת דה־פקטו ביטול כללי של מדיניות מקצועית. המסקנה היא כי בית המשפט יכול למלא תפקיד בבלימת החלטות מנהליות קיצוניות, אך רק באופן זהיר ומותאם: יש לאמץ כלים יחסיים של תיקון או מגבלות מותנות ולא מדיניות של התערבות-נרחבת, והקושי שנותר הוא לקבוע נוסחה פרקטית ברורה לרף החריג שמבדיל בין שיפוט הולם לבין חדירה בלתי הוגנת לתחום המקצועי.¹\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n\n**להמשך בדיקה:** בג\"ץ 97 / 1715\n"
+    "primary_anchor": null,
+    "answer": ""
   },
   {
     "id": "AW8",
-    "question": "כתוב הצגת נושא קצרה לעבודת גמר על דוקטרינת ההבטחה המנהלית והסתמכות הציבור",
     "run_id": "55c5d753-0954-4799-ac16-4744e989661d",
     "qa_log_id": "cd2360c5-8ef1-4749-8a54-b63ede3a399f",
-    "ms": 191941,
     "genre": "generic_academic",
-    "task_intent": "academic_writing",
     "footnotes_count": 4,
     "footnotes": [
       {
@@ -1298,652 +433,389 @@
         "source_type": "compound"
       }
     ],
-    "admission_gate": [],
-    "role_slotting": [],
-    "pack_admission_summary": null,
-    "primary_anchor_status": null,
-    "csm_drops": {
-      "applied": true,
-      "rebinding": {
-        "applied": true,
-        "unbound": 0,
-        "decisions": [
-          {
-            "ref": "s5",
-            "reason": "claim_id_match",
-            "binding": "exact",
-            "block_index": 0
-          },
-          {
-            "ref": "s10",
-            "reason": "claim_id_match",
-            "binding": "exact",
-            "block_index": 0
-          },
-          {
-            "ref": "s6",
-            "reason": "claim_id_match",
-            "binding": "exact",
-            "block_index": 1
-          },
-          {
-            "ref": "s7",
-            "reason": "claim_id_match",
-            "binding": "exact",
-            "block_index": 1
-          },
-          {
-            "ref": "s10",
-            "score": 3,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 2,
-            "matched_terms": [
-              "יישומ",
-              "הסתמכ",
-              "ציפ"
-            ]
-          },
-          {
-            "ref": "s6",
-            "score": 2,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 2,
-            "matched_terms": [
-              "דוקטרינה",
-              "הבטחה"
-            ]
-          },
-          {
-            "ref": "s10",
-            "score": 5,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 3,
-            "matched_terms": [
-              "הסתמכ",
-              "יישומנ",
-              "ציבוריימ",
-              "ציפ",
-              "ציבור"
-            ]
-          },
-          {
-            "ref": "s6",
-            "score": 3,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 3,
-            "matched_terms": [
-              "השלכ",
-              "בטחה",
-              "נהלית"
-            ]
-          },
-          {
-            "ref": "s3",
-            "score": 5,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 4,
-            "matched_terms": [
-              "דוקטרינה",
-              "טונ",
-              "החוק",
-              "חוקתית",
-              "פרוספקטיבית"
-            ]
-          },
-          {
-            "ref": "s11",
-            "score": 4,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 4,
-            "matched_terms": [
-              "דוקטרינה",
-              "הקשר",
-              "היר",
-              "הורא"
-            ]
-          },
-          {
-            "ref": "s6",
-            "score": 2,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 5,
-            "matched_terms": [
-              "תיאוריאנליטי",
-              "תיאורתית"
-            ]
-          },
-          {
-            "ref": "s10",
-            "score": 2,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 5,
-            "matched_terms": [
-              "ציפ",
-              "ציבור"
-            ]
-          }
-        ],
-        "bound_exact": 4,
-        "bound_facet": 0,
-        "bound_topical": 8,
-        "capped_ref_count": 0,
-        "bound_area_direct": 0,
-        "rebound_ref_count": 8,
-        "claim_mismatch_drops_after": 0,
-        "claim_mismatch_drops_before": 8
+    "pack_admission_summary": {
+      "admitted_count": 0,
+      "rejected_count": 3,
+      "admitted_by_role": {},
+      "final_pack_roles": [],
+      "rejected_by_reason": {
+        "listing_or_search_page": 1,
+        "off_topic_no_role_assignment": 2,
+        "insufficient_academic_signals": 3,
+        "no_scholarly_title_or_abstract": 3,
+        "no_credible_academic_provenance": 3,
+        "off_topic_for_question_and_roles": 2,
+        "class_unknown_has_no_secondary_academic_slot": 1
       },
-      "mismatch_reason": [
-        "insufficient_authority_for_claim_category"
-      ],
-      "claim_categories": [
-        {
-          "basis": "academic_declared_remap(doctrinal_synthesis)+academic_wording_methodological",
-          "category": "methodological_framing",
-          "kept_refs": [
-            "s10"
-          ],
-          "block_index": 0,
-          "support_levels": [
-            "doctrinal_secondary"
-          ]
-        },
-        {
-          "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_theoretical",
-          "category": "theoretical_explanation",
-          "kept_refs": [
-            "s6",
-            "s7"
-          ],
-          "block_index": 1,
-          "support_levels": [
-            "doctrinal_secondary",
-            "doctrinal_secondary"
-          ]
-        },
-        {
-          "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_theoretical",
-          "category": "theoretical_explanation",
-          "kept_refs": [
-            "s10",
-            "s6"
-          ],
-          "block_index": 2,
-          "support_levels": [
-            "doctrinal_secondary",
-            "doctrinal_secondary"
-          ]
-        },
-        {
-          "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_theoretical",
-          "category": "theoretical_explanation",
-          "kept_refs": [
-            "s10",
-            "s6"
-          ],
-          "block_index": 3,
-          "support_levels": [
-            "doctrinal_secondary",
-            "doctrinal_secondary"
-          ]
-        },
-        {
-          "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
-          "category": "literature_synthesis",
-          "kept_refs": [
-            "s3",
-            "s11"
-          ],
-          "block_index": 4,
-          "support_levels": [
-            "doctrinal_secondary",
-            "doctrinal_secondary"
-          ]
-        },
-        {
-          "basis": "academic_declared_remap(contextual_background)+academic_proposition_methodological",
-          "category": "methodological_framing",
-          "kept_refs": [
-            "s6",
-            "s10"
-          ],
-          "block_index": 5,
-          "support_levels": [
-            "doctrinal_secondary",
-            "doctrinal_secondary"
-          ]
-        }
-      ],
-      "limitation_added": false,
-      "tagged_block_count": 6,
-      "dropped_source_refs": [
-        {
-          "ref": "s5",
-          "reason": "insufficient_authority_for_claim_category",
-          "block_index": 0,
-          "block_claim_id": "C1",
-          "claim_category": "methodological_framing",
-          "block_legal_area": "public_law_hcj",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        }
-      ],
-      "reference_only_refs": [],
-      "commentary_only_claims": [
-        "C1",
-        "C2",
-        "C3",
-        "C4"
-      ],
-      "unsupported_block_count": 0,
-      "authority_overstatements": [],
-      "source_ref_mismatch_count": 1,
-      "academic_authority_alignment": {
-        "applied": true,
-        "source_coverage": {
-          "reason": [],
-          "substantive_blocks": 6,
-          "blocks_with_source_ref": 6,
-          "blocks_with_available_source": 6,
-          "blocks_missing_ref_despite_available_source": 0
-        },
-        "hebrew_rebinding": [],
-        "pack_fit_dropped": [
-          {
-            "ref": "s8",
-            "score": 0,
-            "title": "בג\"ץ 1715/97 - לשכת מנהלי ההשקעות בישראל ואח' נ' שר האוצר"
-          },
-          {
-            "ref": "s13",
-            "score": 0,
-            "title": "אחריות נזיקית של רשויות רגולטוריות בישראל"
-          }
-        ],
-        "bib_reference_uses": [],
-        "rendered_footnotes": 4,
-        "source_refs_emitted": 12,
-        "source_roles_filled": [
-          "doctrinal_background_source",
-          "theoretical_normative_source",
-          "critique_or_counterposition_source"
-        ],
-        "source_roles_missing": [
-          "primary_legal_anchor",
-          "implementation_or_example_source"
-        ],
-        "rule_d_area_overrides": [],
-        "source_roles_expected": [
-          "primary_legal_anchor",
-          "doctrinal_background_source",
-          "theoretical_normative_source",
-          "critique_or_counterposition_source",
-          "implementation_or_example_source"
-        ],
-        "off_topic_refs_dropped": 0,
-        "primary_language_blocks": 0,
-        "declared_category_remaps": [
-          {
-            "to": "methodological_framing",
-            "from": "doctrinal_synthesis",
-            "basis": "academic_declared_remap(doctrinal_synthesis)+academic_wording_methodological",
-            "block_index": 0
-          },
-          {
-            "to": "theoretical_explanation",
-            "from": "doctrinal_synthesis",
-            "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_theoretical",
-            "block_index": 1
-          },
-          {
-            "to": "theoretical_explanation",
-            "from": "doctrinal_synthesis",
-            "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_theoretical",
-            "block_index": 2
-          },
-          {
-            "to": "theoretical_explanation",
-            "from": "doctrinal_synthesis",
-            "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_theoretical",
-            "block_index": 3
-          },
-          {
-            "to": "literature_synthesis",
-            "from": "scholarly_commentary",
-            "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
-            "block_index": 4
-          },
-          {
-            "to": "methodological_framing",
-            "from": "contextual_background",
-            "basis": "academic_declared_remap(contextual_background)+academic_proposition_methodological",
-            "block_index": 5
-          }
-        ],
-        "primary_language_details": [],
-        "commentary_only_claims_kept": [
-          "C1",
-          "C2",
-          "C3",
-          "C4"
-        ],
-        "declared_categories_remapped": 6,
-        "partial_support_refs_dropped": 0,
-        "academic_claim_categories_used": {
-          "literature_synthesis": 1,
-          "methodological_framing": 2,
-          "theoretical_explanation": 3
-        },
-        "refs_kept_by_claim_source_match": 11,
-        "declared_categories_kept_primary": 0,
-        "doctrinal_secondary_refs_allowed": 11,
-        "refs_dropped_by_authority_category": 1,
-        "unsupported_primary_language_suppressed": 0,
-        "doctrinal_secondary_refs_rejected_for_primary_claims": 0
-      },
-      "primary_support_by_main_claim": false,
-      "primary_supported_block_count": 0,
-      "secondary_supported_block_count": 6
+      "reviewed_candidates": 3,
+      "role_diversity_score": 0
     },
-    "answer_len": 2123,
+    "admission_gate": [
+      {
+        "url": "https://judgments.org.il/judgments/%D7%91%D7%92%D7%A6-1000-92-%D7%97%D7%95%D7%94-%D7%91%D7%91%D7%9C%D7%99-%D7%A0-%D7%91%D7%99%D7%AA-%D7%94%D7%93%D7%99%D7%9F-%D7%94%D7%A8%D7%91%D7%A0%D7%99-%D7%94%D7%92%D7%93%D7%95%D7%9C/",
+        "title": "בג\"צ 1000/92 - חוה בבלי נ' בית הדין הרבני הגדול",
+        "domain": "judgments.org.il",
+        "topical_fit": false,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "off_topic_for_question_and_roles",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://www.roi-raanan.co.il/tag/%D7%94%D7%9C%D7%9B%D7%AA-%D7%91%D7%91%D7%9C%D7%99/",
+        "title": "ארכיון הלכת בבלי",
+        "domain": "roi-raanan.co.il",
+        "topical_fit": false,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "listing_or_search_page",
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "off_topic_for_question_and_roles",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://fliphtml5.com/brvnd/mhoq/basic",
+        "title": "צ'קליסט מנהלי",
+        "domain": "fliphtml5.com",
+        "topical_fit": true,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      }
+    ],
+    "role_slotting": [
+      {
+        "title": "בג\"צ 1000/92 - חוה בבלי נ' בית הדין הרבני הגדול",
+        "reason": "no_reslot_attempted",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "off_topic_no_role_assignment",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "ארכיון הלכת בבלי",
+        "reason": "no_reslot_attempted",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "off_topic_no_role_assignment",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "צ'קליסט מנהלי",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "scholarship",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      }
+    ],
+    "primary_anchor": {
+      "rows": [
+        {
+          "url": null,
+          "found": false,
+          "status": "not_attempted",
+          "final_status": "not_found",
+          "bytes_received": 0,
+          "failure_reason": "cooldown_until:2026-09-15T20:35:08.579Z",
+          "chars_extracted": 0,
+          "identity_passed": null,
+          "nominated_target": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",
+          "extraction_started": false,
+          "extraction_succeeded": false,
+          "usable_primary_anchor": false
+        },
+        {
+          "url": null,
+          "found": false,
+          "status": "not_attempted",
+          "final_status": "not_found",
+          "bytes_received": 0,
+          "failure_reason": "cooldown_until:2026-09-15T20:42:30.588Z",
+          "chars_extracted": 0,
+          "identity_passed": null,
+          "nominated_target": "בג\"ץ 1000/92 בבלי",
+          "extraction_started": false,
+          "extraction_succeeded": false,
+          "usable_primary_anchor": false
+        }
+      ],
+      "status_counts": {
+        "not_found": 2
+      },
+      "all_primary_anchors_failed": true,
+      "usable_primary_anchor_count": 0
+    },
     "answer": "מטרת הצגת הנושא היא לסמן את גבולותיה התיאורטיים והמעשיים של דוקטרינת ההבטחה המנהלית וההגנה על הסתמכות הציבור כבסיס לעבודת גמר משפטית: הנושא חוקר את אופן שבו פעולות ותקשורת של רשויות ציבוריות יוצרות ציפיות אצל יחידים והאם ומתי שיפוט מנהלי מחויב להגן על ציפיות אלה; העבודה תבחן הן את הבסיס ההגיוני־נורמטיבי של ההגנה והן את התמרון המעשי בין תחולתה של ההבטחה לבין שיקולים של ציבוריות וסמכות.¹\n\nמבחינה מושגית מתמקדת הספרות בהבחנה בין שלושה מושגים קרובים: הבטחה מנהלית המובעת כפעולה או הצהרה על סמכות, מדיניות מנהלית שהינה אופייה של ההנחיה הציבורית ביחס לשינוי, ו'legitimate expectation' במובנים תאורטיים רחבים; הדיון המרכזי מצוי בשאלה מתי הצהרה של הרשות נגזרת מסמכות והופכת להבטחה שניתן להסתמך עליה, ונכשלים בו מבחני הבהירות, הנגישות והציפייה הסבירה.²\n\nבצד הפרקטי עולות לשיקול מספר קריטריונים שהספרות מזהה כנקודות בוחן ליישום הדוקטרינה: סף הבהירות של ההצהרה, מאפייני הנמען והיקף ההסתמכות שנבנתה בפועל, וכן שאלת הסמכות של הרשות להעניק את ההבטחה; ההערכה השיפוטית משלבת בדיקת סבירות והגינות ביחס לפגיעה בציפיות שהיו סבירות לנוכח ההצהרה.³\n\nההשלכות האפשריות של הפרת הבטחה מנהלית משקפות מתח בין סעד מיישם, סעד פיצויי וסעדי ביטול: הספרות רואה באפשרויות אלה מנגנונים לפיצוי ההסתמכות אך מדגישה כי יישומן מושפע מאיזון אינטרסים ציבוריים ותקציבי־מנהליים; לכן שאלת הסעד המתאים נבחנת באופן פרגמטי וביחס לציפיות שנוצרו ולשיקולי טובת הציבור.³\n\nעבודה על הנושא תציב את הדוקטרינה בהקשר רחב של עקרונות שלטון החוק, בהירות רגולטורית ויציבות צפויה — נושאים הנידונים במסגרת הספרות החוקתית והחקיקתית לגבי תחולה פרוספקטיבית והסכנות שבשימוש נרחב בהוראות שעה ובשינויים תכופים של מדיניות; בחינת מתחים אלה מסייעת להבהיר מתי הגנה על הסתמכות מחזקת את אמון הציבור ומתי היא עלולה לעכב תיקון מדיניות נחוץ.⁴\n\nלקראת עבודת הגמר מוצעים קווים מחקריים ושיטתיים ברורים: הגדרת מסגרת מושגית המבוססת על הגדרות בספרות, מיפוי פסיקה ישראלית רלוונטית ושילובה בניתוח תיאורי־אנליטי של מקרי מבחן אופרטיביים, והשוואה תיאורתית למודלים בחוקות אחרות; שיטות משלימות עשויות לכלול ניתוח מדיניות פנימית של רשויות או ראיונות עם מקבלי החלטות במטרה לבחון כיצד נוצרות ומתווררות ציפיות ציבוריות.³\n\n*הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.*\n"
   },
   {
     "id": "AW9",
-    "question": "כתוב פרק רקע תיאורטי לעבודה אקדמית על תורת ההסתמכות והציפייה הלגיטימית בדיני חוזים ובמשפט המנהלי",
     "run_id": "8d85c58e-94c3-4c8d-8082-a6ec0ae96c6b",
     "qa_log_id": "65383608-b520-497e-9185-ea8855809174",
-    "ms": 267492,
     "genre": "theoretical_background",
-    "task_intent": "academic_writing",
     "footnotes_count": 0,
     "footnotes": [],
-    "admission_gate": [],
-    "role_slotting": [],
-    "pack_admission_summary": null,
-    "primary_anchor_status": null,
-    "csm_drops": {
-      "applied": true,
-      "rebinding": {
-        "applied": true,
-        "unbound": 0,
-        "decisions": [
-          {
-            "ref": "s1",
-            "score": 11,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 2,
-            "matched_terms": [
-              "מנהלי",
-              "חוזית",
-              "סתמכ",
-              "אינטרסימ",
-              "איזונ",
-              "הגנה",
-              "הסתמכ",
-              "הגנת"
-            ]
-          },
-          {
-            "ref": "s1",
-            "score": 7,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 3,
-            "matched_terms": [
-              "תיאור",
-              "הסתמכ",
-              "חוזית",
-              "מנהלי",
-              "תיאורטיימ",
-              "הגנת",
-              "מנהלית"
-            ]
-          },
-          {
-            "ref": "s1",
-            "score": 5,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 4,
-            "matched_terms": [
-              "סתמכ",
-              "הגנת",
-              "הסתמכ",
-              "מנהלי",
-              "איזונ"
-            ]
-          },
-          {
-            "ref": "s1",
-            "score": 6,
-            "reason": "shared_meaningful_terms",
-            "binding": "topical",
-            "block_index": 5,
-            "matched_terms": [
-              "הגנה",
-              "סתמכ",
-              "מנהלית",
-              "הגנת",
-              "הסתמכ",
-              "תיאורטי"
-            ]
-          }
-        ],
-        "bound_exact": 0,
-        "bound_facet": 0,
-        "bound_topical": 4,
-        "capped_ref_count": 0,
-        "bound_area_direct": 0,
-        "rebound_ref_count": 4,
-        "claim_mismatch_drops_after": 0,
-        "claim_mismatch_drops_before": 4
+    "pack_admission_summary": {
+      "admitted_count": 1,
+      "rejected_count": 6,
+      "admitted_by_role": {
+        "government_report": 1
       },
-      "mismatch_reason": [
-        "insufficient_authority_for_claim_category"
+      "final_pack_roles": [
+        "critique_or_counterposition_source"
       ],
-      "claim_categories": [
-        {
-          "basis": "academic_declared_remap(contextual_background)+academic_proposition_background",
-          "category": "doctrinal_background",
-          "kept_refs": [],
-          "block_index": 0,
-          "support_levels": []
-        },
-        {
-          "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_background",
-          "category": "doctrinal_background",
-          "kept_refs": [],
-          "block_index": 1,
-          "support_levels": []
-        },
-        {
-          "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
-          "category": "literature_synthesis",
-          "kept_refs": [],
-          "block_index": 2,
-          "support_levels": []
-        },
-        {
-          "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_background",
-          "category": "doctrinal_background",
-          "kept_refs": [],
-          "block_index": 3,
-          "support_levels": []
-        },
-        {
-          "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_theoretical",
-          "category": "theoretical_explanation",
-          "kept_refs": [],
-          "block_index": 4,
-          "support_levels": []
-        },
-        {
-          "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
-          "category": "literature_synthesis",
-          "kept_refs": [],
-          "block_index": 5,
-          "support_levels": []
-        }
-      ],
-      "limitation_added": true,
-      "tagged_block_count": 6,
-      "dropped_source_refs": [
-        {
-          "ref": "s1",
-          "reason": "insufficient_authority_for_claim_category",
-          "block_index": 2,
-          "block_claim_id": "C2",
-          "claim_category": "literature_synthesis",
-          "block_legal_area": null,
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        },
-        {
-          "ref": "s1",
-          "reason": "insufficient_authority_for_claim_category",
-          "block_index": 3,
-          "block_claim_id": "C3",
-          "claim_category": "doctrinal_background",
-          "block_legal_area": "contracts",
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        },
-        {
-          "ref": "s1",
-          "reason": "insufficient_authority_for_claim_category",
-          "block_index": 4,
-          "block_claim_id": "C4",
-          "claim_category": "theoretical_explanation",
-          "block_legal_area": null,
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        },
-        {
-          "ref": "s1",
-          "reason": "insufficient_authority_for_claim_category",
-          "block_index": 5,
-          "block_claim_id": "C5",
-          "claim_category": "literature_synthesis",
-          "block_legal_area": null,
-          "source_claim_ids": [
-            "C1"
-          ],
-          "source_legal_area": null
-        }
-      ],
-      "reference_only_refs": [],
-      "commentary_only_claims": [],
-      "unsupported_block_count": 1,
-      "authority_overstatements": [],
-      "source_ref_mismatch_count": 4,
-      "academic_authority_alignment": {
-        "applied": true,
-        "source_coverage": {
-          "reason": [],
-          "substantive_blocks": 6,
-          "blocks_with_source_ref": 0,
-          "blocks_with_available_source": 0,
-          "blocks_missing_ref_despite_available_source": 0
-        },
-        "hebrew_rebinding": [],
-        "pack_fit_dropped": [],
-        "bib_reference_uses": [],
-        "rendered_footnotes": 0,
-        "source_refs_emitted": 4,
-        "source_roles_filled": [],
-        "source_roles_missing": [
-          "primary_legal_anchor",
-          "doctrinal_background_source",
-          "theoretical_normative_source",
-          "critique_or_counterposition_source",
-          "implementation_or_example_source"
-        ],
-        "rule_d_area_overrides": [],
-        "source_roles_expected": [
-          "primary_legal_anchor",
-          "doctrinal_background_source",
-          "theoretical_normative_source",
-          "critique_or_counterposition_source",
-          "implementation_or_example_source"
-        ],
-        "off_topic_refs_dropped": 0,
-        "primary_language_blocks": 0,
-        "declared_category_remaps": [
-          {
-            "to": "doctrinal_background",
-            "from": "contextual_background",
-            "basis": "academic_declared_remap(contextual_background)+academic_proposition_background",
-            "block_index": 0
-          },
-          {
-            "to": "doctrinal_background",
-            "from": "doctrinal_synthesis",
-            "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_background",
-            "block_index": 1
-          },
-          {
-            "to": "literature_synthesis",
-            "from": "scholarly_commentary",
-            "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
-            "block_index": 2
-          },
-          {
-            "to": "doctrinal_background",
-            "from": "doctrinal_synthesis",
-            "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_background",
-            "block_index": 3
-          },
-          {
-            "to": "theoretical_explanation",
-            "from": "doctrinal_synthesis",
-            "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_theoretical",
-            "block_index": 4
-          },
-          {
-            "to": "literature_synthesis",
-            "from": "scholarly_commentary",
-            "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
-            "block_index": 5
-          }
-        ],
-        "primary_language_details": [],
-        "commentary_only_claims_kept": [],
-        "declared_categories_remapped": 6,
-        "partial_support_refs_dropped": 0,
-        "academic_claim_categories_used": {
-          "doctrinal_background": 3,
-          "literature_synthesis": 2,
-          "theoretical_explanation": 1
-        },
-        "refs_kept_by_claim_source_match": 0,
-        "declared_categories_kept_primary": 0,
-        "doctrinal_secondary_refs_allowed": 0,
-        "refs_dropped_by_authority_category": 4,
-        "unsupported_primary_language_suppressed": 0,
-        "doctrinal_secondary_refs_rejected_for_primary_claims": 0
+      "rejected_by_reason": {
+        "off_topic_no_role_assignment": 5,
+        "insufficient_academic_signals": 6,
+        "no_scholarly_title_or_abstract": 6,
+        "no_credible_academic_provenance": 6,
+        "off_topic_for_question_and_roles": 5,
+        "class_unknown_has_no_secondary_academic_slot": 1
       },
-      "primary_support_by_main_claim": false,
-      "primary_supported_block_count": 0,
-      "secondary_supported_block_count": 0
+      "reviewed_candidates": 6,
+      "role_diversity_score": 0.2
     },
-    "answer_len": 3231,
+    "admission_gate": [
+      {
+        "url": "https://storage.nadlancenter.co.il/media/Storage/49094.pdf",
+        "title": "מסמך פסק דין (ללא כותרת מלאה במקטע שנשלף)",
+        "domain": "storage.nadlancenter.co.il",
+        "topical_fit": false,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "off_topic_for_question_and_roles",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://www.myjudgments.com/districts/%D7%91%D7%99%D7%AA-%D7%94%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%A2%D7%9C%D7%99%D7%95%D7%9F/",
+        "title": "בית המשפט העליון - מאגר פסקי דין באינטרנט בחינם",
+        "domain": "myjudgments.com",
+        "topical_fit": false,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "off_topic_for_question_and_roles",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://www.todivorce.co.il/%D7%94%D7%97%D7%9C%D7%98%D7%95%D7%AA-%D7%91%D7%92%D7%A5-%D7%91%D7%91%D7%AA%D7%99-%D7%94%D7%93%D7%99%D7%9F-%D7%94%D7%A8%D7%91%D7%A0%D7%99%D7%99%D7%9D/",
+        "title": "מתי יתערב בג\"ץ בהחלטות בתי הדין הרבניים?",
+        "domain": "todivorce.co.il",
+        "topical_fit": false,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "off_topic_for_question_and_roles",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://www.idi.org.il/media/22483/full-verdict-of-supreme-court-regarding-reasonableness-bill-january-1-2024.pdf",
+        "title": "פסק הדין המלא של בג\"ץ בעניין ביטול עילת הסבירות",
+        "domain": "idi.org.il",
+        "topical_fit": true,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://www.get.what2do.co.il/%D7%91%D7%92%D7%A6-%D7%91%D7%99%D7%98%D7%9C-%D7%A4%D7%A1%D7%A7-%D7%93%D7%99%D7%9F-%D7%91%D7%99%D7%AA-%D7%93%D7%99%D7%9F-%D7%A8%D7%91%D7%A0%D7%99/",
+        "title": "התערבות בג\"צ וביטול פסק דין של בית הדין הרבני",
+        "domain": "get.what2do.co.il",
+        "topical_fit": false,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "off_topic_for_question_and_roles",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      },
+      {
+        "url": "https://abg-group.co.il/supreme-court-decisions-2/",
+        "title": "פסקי דין של בית המשפט העליון – מסגרת משפטית והשפעה ציבורית | אדלר, ברגמן, גור ושות'",
+        "domain": "abg-group.co.il",
+        "topical_fit": false,
+        "candidate_id": null,
+        "original_class": "unknown",
+        "admission_signals": [],
+        "rejection_reasons": [
+          "no_credible_academic_provenance",
+          "no_scholarly_title_or_abstract",
+          "off_topic_for_question_and_roles",
+          "insufficient_academic_signals"
+        ],
+        "admission_decision": "rejected",
+        "assigned_source_type": null
+      }
+    ],
+    "role_slotting": [
+      {
+        "title": "מסמך פסק דין (ללא כותרת מלאה במקטע שנשלף)",
+        "reason": "no_reslot_attempted",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "off_topic_no_role_assignment",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "בית המשפט העליון - מאגר פסקי דין באינטרנט בחינם",
+        "reason": "no_reslot_attempted",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "off_topic_no_role_assignment",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "35883-04-16.doc",
+        "reason": "institutional_source_fits_policy_slot",
+        "changed": true,
+        "final_slot": "government_report",
+        "candidate_id": null,
+        "original_slot": "persuasive_case_law",
+        "rejected_reason": null,
+        "assigned_academic_roles": [
+          "critique_or_counterposition_source"
+        ]
+      },
+      {
+        "title": "מתי יתערב בג\"ץ בהחלטות בתי הדין הרבניים?",
+        "reason": "no_reslot_attempted",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "off_topic_no_role_assignment",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "פסק הדין המלא של בג\"ץ בעניין ביטול עילת הסבירות",
+        "reason": "no_safe_academic_slot",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "class_unknown_has_no_secondary_academic_slot",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "התערבות בג\"צ וביטול פסק דין של בית הדין הרבני",
+        "reason": "no_reslot_attempted",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "off_topic_no_role_assignment",
+        "assigned_academic_roles": []
+      },
+      {
+        "title": "פסקי דין של בית המשפט העליון – מסגרת משפטית והשפעה ציבורית | אדלר, ברגמן, גור ושות'",
+        "reason": "no_reslot_attempted",
+        "changed": false,
+        "final_slot": null,
+        "candidate_id": null,
+        "original_slot": "binding_case_law",
+        "rejected_reason": "off_topic_no_role_assignment",
+        "assigned_academic_roles": []
+      }
+    ],
+    "primary_anchor": {
+      "rows": [
+        {
+          "url": null,
+          "found": false,
+          "status": "unsupported_statute_source",
+          "final_status": "not_found",
+          "bytes_received": 0,
+          "failure_reason": "unsupported_statute_source:no_official_statute_url",
+          "chars_extracted": 0,
+          "identity_passed": null,
+          "nominated_target": "חוק החוזים (חלק כללי), תשט\"ח-1958",
+          "extraction_started": false,
+          "extraction_succeeded": false,
+          "usable_primary_anchor": false
+        },
+        {
+          "url": "https://fs.knesset.gov.il/20/law/20_lsr_340801.pdf",
+          "found": true,
+          "status": "fetch_failed",
+          "final_status": "body_received_extraction_failed",
+          "bytes_received": 377543,
+          "failure_reason": "extraction_budget_spent",
+          "chars_extracted": 0,
+          "identity_passed": null,
+          "nominated_target": "ע\"א 240/59 לחם נ' ברק",
+          "extraction_started": true,
+          "extraction_succeeded": false,
+          "usable_primary_anchor": false
+        }
+      ],
+      "status_counts": {
+        "not_found": 1,
+        "body_received_extraction_failed": 1
+      },
+      "all_primary_anchors_failed": true,
+      "usable_primary_anchor_count": 0
+    },
     "answer": "מטרת פרק זה היא לנסח מסגרת תיאורטית שמבהירה את הקשרים והמתחים בין תורת ההסתמכות בדיני החוזים לבין דוקטרינת ה'ציפייה הלגיטימית' במשפט המנהלי, ולהציע קטגוריות אבחנתיות שיכוונו ניתוחים אמפיריים ודוקטריניים בהמשך העבודה. פסקה זו פותחת בדיון על היסודות ההגנתיים של ההסתמכות והציפייה, תוך הבחנה בין טיעונים פרסונליים של צד נכפה והנימוקים הציבוריים שמצדיקים הגנה כנגד חוסר־יציבות מנהלית.\n\nבתחום החוזים תורת ההסתמכות מתמקדת בהגנה על הצד שיזם פעולה או שהגלה הוצאה והסתמך על הבטחה או ייצוג של הצד הנגדי, והמסגרת התיאורטית המבטיחה את מצוותה נעה בין עקרונות של הגינות חוזית לבין שיקולי יעילות כלכלית; במסגרת זו בולטת החלוקה בין פיצוי בגין הוצאות הסתמכות לבין פיצוי בגין אובדן ציפייה, כאשר הבחירה בין הסוגים משקפת שיקול ערכי על משקלו של ההבטחה ושל המניע לשמירת יציבות היחסים החוזיים. טענות אלה מוצגות כאן כמסגרת אנליטית כללית על בסיס יסודות תיאורטיים מקובלים בדוקטרינה החוזית, ולא כנטען פסיקתי ספציפי.\n\nבהעברה למשפט המנהלי, 'ציפייה לגיטימית' נבנית לעתים מתוך ייצוגים רשמיים, מדיניות מנהלית מוכרזת או התנהלות מינהלית שאינה בהכרח חוזית אך מעודדת הסתמכות אצל הציבור או יחידים; מה שייחודי להקשר המנהלי הוא שאינן עומדות כאן רק אינטרסים פרטיים אלא גם שיקולי סבירות, שקיפות ואחריות ציבורית, ומכאן נוצרת דרישה לאיזון בין הגנה על ההסתמכות לבין חופש המינהל לבצע התאמות מדיניות. המאמר הזמין שנבדק מדגיש את מיקומה של 'הגנת ההסתמכות' ככלי ביקורתי-איזוני במשפט המנהלי ומציע נקודות חיבור בין ההגנה המנהלית לבין דוקטרינות חוזיות, אך יש לנסח מסקנות אלה בזהירות נוכח אופייה של המקורות.\n\nההשוואה בין שתי התיאוריות מצביעה על חפיפה בקונספטואליזציה של ההסתמכות — מבחינה פונקציונלית שניהם מגנים על החלטות שהניעו אחרים לפעול — אך גם על הבדלים מבניים: בדיני החוזים זיקה ישירה מתחברת להיקף החובה החוזית ולמנגנוני הפרת חוזה, ואילו במשפט המנהלי הציפייה נשענת לעתים על סמכות ציבורית ובאה במסגרת מבני הסמכות והגבלותיה, כך שמקור ההבטחה וסמכותו משפיעים על מבחן קיומה ובחירת הסעד. להדגשה זו יש תימוכין תיאורטיים ומניעות פראקטיות המתוארות בספרות על הגנת ההסתמכות המנהלית, אם כי היקף ההשוואה ותוצאותיה דורשים בחינה אמפירית והבחנה בין תתי-מקרים.\n\nבהיבט התיקוני והשיקומי חשוב להבחין בין סלים של סעד: פיצוי בגין הוצאות הסתמכות או אובדן ציפייה, צווים לאכיפה ספציפית, וצווי בטל שיבואו לתקן פעולות מנהליות בלתי־סבירות; הבחירה בסעד מושפעת לא רק מאופי ההבטחה אלא גם משיקולי מדיניות כמו היעילות של הסעד, ההשפעה על תהליכי קבלת החלטות ציבוריים והצורך בשימור אוטונומיה מנהלית. הדיון במקורות המחקריים על הגנת ההסתמכות במשפט המנהלי מדגיש הצורך באיזון בין מתן מענה מספק לאלו שהסתמכו לבין שמירה על יכולת המינהל להתאים מדיניות, ולכן מציע גבולות לתביעת הסתמכות ואמצעים תיקוניים מותאמים שנעים בין פיצוי לצווים תיקוניים.\n\nלבסוף, נקודות ביקורתיות מגלות כי ההגנה על הסתמכות וציפייה נושאת נימוקים מוסריים מובהקים—הגינות והגנת נאמנות־ציפייה—ובו בזמן טומנת בחובה סיכונים של הגנה-יתר הפוגעת בגמישות המנהלית ובחופש החוזה: הגנה נרחבת על כל הסתמכות עשויה לעודד היעדר זהירות מצדם של פונים, לבטל שיקולי תמריץ ולהצר את מרחב החלטת המינהל בנסיבות דינאמיות. על רקע זה, הספרות שמנתחת הגנת ההסתמכות המנהלית קוראת לאמץ פתרונות מתונים המקדמים שקיפות, קריטריונים ברורים לקיומה של ציפייה והבחנה בין סוגי ייצוגים, כדי לצמצם סיכונים ומנעד סעד בלתי-מוגבל; מסקנות אלה מוצגות כאן כל עוד הן נשענות על ניתוח תיאורטי ולא כהלכה מחייבת.\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n"
   }
 ]
