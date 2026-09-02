@@ -80,10 +80,19 @@ const ACADEMIC_PUBLISHER_HOST_RE =
 
 const UNIVERSITY_HOST_RE = /(\.ac\.il|\.edu|\.ac\.uk|\.uni-[a-z]+\.de|\.edu\.au)$/i;
 
+/**
+ * Recognized research institutes that publish peer-reviewed-adjacent legal
+ * scholarship and policy studies. Narrow allow-list on purpose: a think tank
+ * with an editorial research program, never a blog, portal or firm site.
+ */
+const RESEARCH_INSTITUTE_HOST_RE =
+  /(^|\.)(idi\.org\.il|taubcenter\.org\.il|inss\.org\.il|molad\.org|fes\.org\.il|iataskforce\.org|vanleer\.org\.il|macro\.org\.il|kohelet\.org\.il|adalah\.org|acri\.org\.il|bankisrael\.org\.il)$/i;
+
 const REPOSITORY_PATH_RE =
   /\/(repository|repositories|eprints|dspace|handle|bitstream|research|publications?|papers?|working[-_]?papers?|wp-content\/uploads|pubs?|lawreview|law[-_]review|journals?|articles?|faculty|staff|sites\/default\/files)(\/|$)/i;
 
 const DOI_RE = /(doi\.org\/10\.|\/10\.\d{4,9}\/|[?&]doi=)/i;
+
 
 const AGGREGATOR_HOST_RE =
   /(^|\.)(scholar\.google\.[a-z.]+|semanticscholar\.org|researchgate\.net|academia\.edu|core\.ac\.uk|base-search\.net|citeseerx\.ist\.psu\.edu)$/i;
