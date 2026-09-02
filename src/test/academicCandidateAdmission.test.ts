@@ -205,3 +205,39 @@ describe("primary anchor acquisition status", () => {
     expect(rep.all_primary_anchors_failed).toBe(false);
   });
 });
+
+describe("recognized research institute provenance", () => {
+  const terms = extractTopicTerms("עקרון המידתיות בביקורת חוקתית");
+  it("admits an on-topic analytic IDI study", () => {
+    const d = evaluateScholarshipAdmission({
+      title: "האפקט המצטבר של המידתיות: נדבך חדש בבחינה החוקתית הישראלית",
+      url: "https://www.idi.org.il/articles/12345",
+      snippet: "",
+      original_class: "unknown",
+      topic_terms: terms,
+    });
+    expect(d.admission_decision).toBe("admitted_as_scholarship");
+    expect(d.admission_signals).toContain("recognized_research_institute_host");
+  });
+  it("rejects an off-topic institute page", () => {
+    const d = evaluateScholarshipAdmission({
+      title: "פסק הדין המלא של בג\"ץ בעניין ביטול עילת הסבירות",
+      url: "https://www.idi.org.il/articles/999",
+      snippet: "",
+      original_class: "unknown",
+      topic_terms: extractTopicTerms("תורת ההסתמכות בדיני חוזים"),
+    });
+    expect(d.admission_decision).toBe("rejected");
+  });
+  it("still rejects a blog with an analytic title", () => {
+    const d = evaluateScholarshipAdmission({
+      title: "פסיקתא – סעד קריאה אל תוך החוק וסעד בטלות חלקית בעמדתה של אסתר",
+      url: "https://dyoma.co.il/post/123",
+      snippet: "",
+      original_class: "unknown",
+      topic_terms: extractTopicTerms("סעד קריאה לתוך החוק"),
+    });
+    expect(d.admission_decision).toBe("rejected");
+    expect(d.rejection_reasons).toContain("no_credible_academic_provenance");
+  });
+});
