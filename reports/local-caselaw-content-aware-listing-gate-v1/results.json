@@ -1,42 +1,26 @@
 [
   {
-    "id": "AW9",
-    "run_id": "834c71fe-feed-4921-a612-0f304761db04",
-    "ms": 227851,
+    "id": "AW7",
+    "run_id": "2d26d269-b073-4634-89ca-d2c16d49cae6",
+    "ms": 117085,
     "gate": {
       "status": "completed",
-      "candidates_checked": 93,
-      "bypassed": 93,
+      "candidates_checked": 43,
+      "bypassed": 43,
       "still_suppressible": 0,
       "classification_counts": {
-        "substantive_judgment_body": 93
+        "substantive_judgment_body": 43
       },
       "p50_ms": 0,
-      "p95_ms": 0,
-      "elapsed_ms": 150,
+      "p95_ms": 1,
+      "elapsed_ms": 62,
       "rpc_error": null,
       "sample_rows": [
         {
-          "doc_id": "6ca4d2f4-82fa-4935-b588-8b0314a26eb9",
-          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2840",
+          "doc_id": "61ac3fb3-aef0-4b6f-84d9-e9bf0f1cf475",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3960",
           "case_number_present": true,
-          "available_text_chars": 16396,
-          "positive": [
-            "case_number_column",
-            "formal_judgment_opener",
-            "party_role_terms",
-            "party_block_vs"
-          ],
-          "negative": [],
-          "classification": "substantive_judgment_body",
-          "decision": "bypass_suppression",
-          "reason": "substantive_body_with_judgment_identity"
-        },
-        {
-          "doc_id": "9b4fea37-3041-44c7-ab67-f801d2bd720c",
-          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1010",
-          "case_number_present": true,
-          "available_text_chars": 10117,
+          "available_text_chars": 83359,
           "positive": [
             "case_number_column",
             "formal_judgment_opener",
@@ -50,10 +34,10 @@
           "reason": "substantive_body_with_judgment_identity"
         },
         {
-          "doc_id": "29b9aa7a-6cbe-40ac-a37c-b8cd666fae28",
-          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=1780",
+          "doc_id": "622d205d-844b-4b72-9eeb-b6640b2a31fe",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4710",
           "case_number_present": true,
-          "available_text_chars": 7263,
+          "available_text_chars": 14215,
           "positive": [
             "case_number_column",
             "formal_judgment_opener",
@@ -67,10 +51,10 @@
           "reason": "substantive_body_with_judgment_identity"
         },
         {
-          "doc_id": "12649850-344d-4dc9-9c96-467bdbc7093f",
-          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=650",
+          "doc_id": "c46fc333-6ca0-406d-ad9b-f48c1ec62e5c",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5660",
           "case_number_present": true,
-          "available_text_chars": 29026,
+          "available_text_chars": 27248,
           "positive": [
             "case_number_column",
             "formal_judgment_opener",
@@ -84,10 +68,10 @@
           "reason": "substantive_body_with_judgment_identity"
         },
         {
-          "doc_id": "9a2acb53-bf5b-43a4-a11d-4316f9efb38e",
-          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+          "doc_id": "61ac3fb3-aef0-4b6f-84d9-e9bf0f1cf475",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3960",
           "case_number_present": true,
-          "available_text_chars": 16868,
+          "available_text_chars": 83359,
           "positive": [
             "case_number_column",
             "formal_judgment_opener",
@@ -101,10 +85,10 @@
           "reason": "substantive_body_with_judgment_identity"
         },
         {
-          "doc_id": "3aa4e0ab-d31f-4687-9aea-4c64a2b03da5",
-          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=260",
+          "doc_id": "622d205d-844b-4b72-9eeb-b6640b2a31fe",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4710",
           "case_number_present": true,
-          "available_text_chars": 15455,
+          "available_text_chars": 14215,
           "positive": [
             "case_number_column",
             "formal_judgment_opener",
@@ -118,10 +102,27 @@
           "reason": "substantive_body_with_judgment_identity"
         },
         {
-          "doc_id": "a78b8da3-a3aa-438f-952c-621fe12d8c85",
-          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5060",
+          "doc_id": "c46fc333-6ca0-406d-ad9b-f48c1ec62e5c",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5660",
           "case_number_present": true,
-          "available_text_chars": 47509,
+          "available_text_chars": 27248,
+          "positive": [
+            "case_number_column",
+            "formal_judgment_opener",
+            "decision_header",
+            "party_role_terms",
+            "party_block_vs"
+          ],
+          "negative": [],
+          "classification": "substantive_judgment_body",
+          "decision": "bypass_suppression",
+          "reason": "substantive_body_with_judgment_identity"
+        },
+        {
+          "doc_id": "2cccfe1b-dbe5-414f-be07-9bc6d12eb6e5",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5630",
+          "case_number_present": true,
+          "available_text_chars": 251141,
           "positive": [
             "case_number_column",
             "docket_pattern",
@@ -136,10 +137,10 @@
           "reason": "substantive_body_with_judgment_identity"
         },
         {
-          "doc_id": "c62f7c0a-b03f-469a-81e6-98e7312b9db5",
-          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=790",
+          "doc_id": "61ac3fb3-aef0-4b6f-84d9-e9bf0f1cf475",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3960",
           "case_number_present": true,
-          "available_text_chars": 20589,
+          "available_text_chars": 83359,
           "positive": [
             "case_number_column",
             "formal_judgment_opener",
@@ -159,64 +160,32 @@
       "index_or_listing:listing_url_path": 2
     },
     "protected_counts": {
-      "judgment_document": 1,
-      "exact_docket_identity": 6,
-      "official_primary_page": 22,
-      "local_corpus_substantive": 77,
-      "local_caselaw_substantive_body": 93,
-      "article_or_report_with_body_path": 2
+      "judgment_document": 4,
+      "exact_docket_identity": 11,
+      "official_primary_page": 12,
+      "local_corpus_substantive": 53,
+      "local_caselaw_substantive_body": 43
     },
     "class_counts": {
-      "metadata_only": 4,
-      "index_or_listing": 3,
-      "citable_candidate": 156,
-      "possible_body_page": 40
+      "index_or_listing": 2,
+      "citable_candidate": 109,
+      "possible_body_page": 14
     },
-    "pool_before": 203,
-    "pool_after": 21,
+    "pool_before": 125,
+    "pool_after": 8,
     "pool_by_origin": {
-      "local_db": 21
+      "local_db": 8
     },
-    "footnotes_count": 6,
+    "footnotes_count": 1,
     "footnotes": [
       {
         "n": null,
-        "title": "בג\"ץ 4634-04 - רופאים לזכויות אדם נ. השר לבטחון פנים",
-        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/1&fileName=SB1_17_4634-04.pdf&type=2",
-        "role": null
-      },
-      {
-        "n": null,
-        "title": "בג\"ץ 4634-04 - רופאים לזכויות אדם נ. השר לבטחון פנים; חוק-יסוד: כבוד האדם וחירותו",
-        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/62/1&fileName=SB1_17_4634-04.pdf&type=2",
-        "role": null
-      },
-      {
-        "n": null,
-        "title": "חוק-יסוד: כבוד האדם וחירותו",
-        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
-        "role": null
-      },
-      {
-        "n": null,
-        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
-        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
-        "role": null
-      },
-      {
-        "n": null,
-        "title": "פיצוי נאות: על סעדים וצדק בדיני הנטילה השלטונית בישראל",
-        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_5af46bb80ac243b4a2ab7d4622677b97.pdf",
-        "role": null
-      },
-      {
-        "n": null,
-        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו); הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי",
-        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "title": "בכמה קולות מדברת המדינה? על מתן מעמד לרשות חולקת בהליכים משפטיים; להיות כמו דלוור; הסכמה מהדת? על חובת גילוי, כשירות תרבותית וקואורדינציה (בעקבות ע\"א 8710/17 פלונית נ' שירותי בריאות כללית)",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_5b4f7c0a72ba4dc08ea099a8a4cd339d.pdf",
         "role": null
       }
     ],
-    "answer_len": 3334,
-    "answer": "עקרון ההסתמכות והציפייה הלגיטימית במשפט המנהלי מציין את הרעיון שכלפי פעולות, הצהרות או מדיניות שפורסמו על־ידי רשות ציבורית עשויה להיווצר אצל הפרט ציפייה כי הרשויות יתנהגו בדרך מסוימת, וכי הסתמכות סבירה על ציפייה זו עשויה להצדיק הגנה שיפוטית או סעד משפטי כאשר הרשות משנה עמדה באופן מפתיע ופוגע בזכויות או בבטחון העסקי של אותו פרט. במסגרת התפיסה התיאורטית, ההגנה על ציפיות מסוג זה משמשת הן כאמצעי להגנה על אמון הציבור והן ככלי לשמירה על תכליתיות ויעילות מנהלית: היא מחייבת הרשויות להתנהלות שקולה, מודעת להשלכות ההחלטות ולעלות הסבירה שהיחידים יתכננו את מעשיהם על בסיס ההודעות או התנהלותן הקודמת של הרשויות.⁴\n\nמבחינה דוקטרינרית עקרון ההסתמכות משולב בתוך מערך הביקורת השיפוטית על פעולות מנהליות ומתחבר לכלים כמו מבחן הסבירות ומבחנים מבוססי מידתיות; בכך הוא מהווה נדבך בבחינה הרחבה של ההלימה בין מטרה, אמצעים ותוצאות. הדיון הספרותי מציג את ההסתמכות כאחד הנתיבים שבהם בוחן השופט את תקינות השיקול המנהלי — לא רק מבחינת הליכי קבלת החלטות אלא גם במובן של ציפיות שנוצרו וניתנות להגנה במסגרת איזון בין עניין ציבורי לבין זכויות הפרט.¹\n\nהדוקטרינה והספרות מנסחות קריטריונים מעשיים המקובלים בבחינת זכות הסתמכות: קיומה של הודעה או מדיניות רשמית ברורה או התנהלות מעשית מתמשכת, היותה של הציפייה סבירה בהינתן ההצהרות או המעשה המנהלי, והוכחה של הסתמכות מעשית אשר יצרה הפסד או מחויבות אצל המבקש. יש לציין כי במקורות שסופקו הדיון בקריטריונים אלה מתואם בעיקר בספרות ובניתוחי סעד ולא הולבש בתוך נוסח חקיקה אחד או במבחן פסיקתי מקובל יחיד שניתן לשאוב ממנו נוסח מחייב באופן ישיר מן החומרים שבידינו.\n\nהסעד הקלאסי לגילויי הסתמכות נע בין סעדים פרוצדוריים—כגון חיוב בריענון ההחלטה או בהענקת הליך תוחרתי חדש—לבין סעדים מהותיים שיכולים לכלול קיום ההתחייבות או פיצוי כספי. ספרות על סעדי הזכות המנהלית וניתוח של סעד כספי מצביעים על מתחים שבין התאמת הסעד לחומרת הפגיעה לבין הפחתת העומס על המנהל, וכן על בעייתיות בשיבוש מנגנוני קבלת החלטות על ידי יצירת מסלולים מעשיים של פיצוי כתוצאת ברירת מחדל. לפיכך, המרחב הפרקטי שבו יינתן סעד מהותי תלוי בשקלול נסיבות הפגיעה, באופיו של הסעד ובהיקף הפגיעה שנגרמה בעקבות ההסתמכות.⁵\n\nההכרה בציפייה לגיטימית איננה בלתי מוגבלת: בית המשפט מאזכר כל העת את הצורך לאזן בין הגנה על ציפיות הפרט לבין שיקולי עניין ציבורי, שינוי מדיניות סביר או סמכות מפורשת בחוק שמאלצת שינוי. במיוחד בעידן שבו עילות הביקורת והגבולות שלהן נתונות לדיון ציבורי־חקיקתי, עולה כי שינויי מדיניות או תיקונים חקיקתיים עשויים להפחית את כוח ההסתמכות, אך לא לבטל בהכרח את השיקולים המוסריים והפרוצדורליים המחייבים התייחסות מיוחדת למי שסמך בצדק על התנהלות הרשות.²\n\nמבחינה שיטתית ראוי להסתכל על ההסתמכות כעל מנגנון שמתחבר גם לכללי מידתיות, גם להיגיון הסעדי של מערכת הסעד המשרדי והמשפטי וגם לאתיקה המנהלית של הודעה ושקיפות. לכן נוהל מנהלי שמעניק הודעה מוקדמת, מנגנוני ייעוץ פנים־משרדי בעת שינוי מדיניות, ותחזוקה של קווים מנחים מפורסמים יכולים לצמצם סכסוכים משפטיים ולשמור על אמון ציבורי; המסקנה הזו מגובה באופן תיאורטי בניתוחים על מידתיות ובניתוחי סעדים כספיים במשפט המנהלי.⁶\n\nלסיכום, עקרון ההסתמכות והציפייה הלגיטימית במשפט המנהלי ממלא תפקיד כפול של הגנה על אמון וציפיות הפרטים ושל כלי בקרת יחסי מידה ביחס לשיקול הדעת המשרדי; דיונו משלב תקדימים משפטיים רחבים, ניתוחי מידתיות וספרות על סעדים, ואולם במקורות שסופקו התשתית המעוגנת בהלכה חיצונית ונוסח חקיקתי שאינם אוניברסליים — לכן נדרש עיון מושכל נוסף בפסיקה משווה ובמקרים החולשים על תחומי שיפוט שונים כדי לגבש נוסח מבחן אחיד ומפורט.³\n\n*הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.*\n"
+    "answer_len": 1253,
+    "answer": "טענתי המרכזית היא כי העיקרון הכללי של מתן מרחב מקצועי לרשויות מנהליות אינו חוסם התערבות שיפוטית מוחלטת; בית המשפט רשאי להתערב במדיניות מקצועית רק במקרים חריגים המוצדקים על ידי ליקוי משפטי מהותי — למשל חריגה מסמכות, טעות דין בולטת, החלטה בלתי סבירה במידה קיצונית או פגיעה בזכויות יסוד שלא ניתנת לתיקון על ידי אמצעים פנימיים. טיעון הנגד החזק ביותר טוען כי כל התערבות שכזו פוגעת בעקרון הפרדת הרשויות וביעילות הטיפול האנושי והמקצועי שהרשויות מספקות, ולפיכך יש לנקוט במדיניות של דהפרנצ׳ (deference) ברוב המכריע של המקרים; הסתמכות זו מדגישה גם את המחסור בידע מקצועי שיפוטי ובמוסריות דמוקרטית של גופים נבחרים או מומחים מקצועיים. האבחנה המשפטית המכריעה בין העמדה המתנגדת לעמדתי היא אפוא סטנדרטית: ההימנעות מהתערבות לא שוללת אפשרות לבחינה שיפוטית מצמצמת אלא כאשר מתקיימים קריטריונים נוקשים המצביעים על חריגות ממשית — והכלים המתאימים לכך הם בדיקת סמכות, סבירות קיצונית והגברת נטל ההוכחה בשל מקרים של מחלוקת בין רשויות, לצד שמירה על קווי מתאר מצומצמים להתערבות כדי לכבד את המומחיות המנהלית. מסקנתי היא שתיקון האיזון ידרש להיות מדוד ומוסדר: בית המשפט יכול ולא פעם חייב לנקוט בצעדים מוגבלים ומשוערים, אך הקביעה של סף ההתערבות הנכון נותרת בעייתית ודורשת השגה פרקטית זהירה.¹\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n"
   }
 ]
