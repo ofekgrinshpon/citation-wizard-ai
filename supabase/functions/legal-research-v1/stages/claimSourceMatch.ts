@@ -39,6 +39,12 @@ import {
   type SourceSupportProfile,
 } from "./claimSupportCategory.ts";
 import {
+  calibrateNonAcademicCategory,
+  type CsmLegalAreaEquivalenceRow,
+  evaluateAreaEquivalence,
+  type NonAcademicClaimCategoryRow,
+} from "./nonAcademicBinding.ts";
+import {
   type BindingKind,
   emptyRebindingSummary,
   evaluateBinding,
@@ -113,6 +119,10 @@ export interface ClaimSourceMatchReport {
   rebinding: RebindingSummary;
   /** academic_citation_authority_alignment_v1 telemetry. */
   academic_authority_alignment?: AcademicAuthorityAlignmentReport;
+
+  /** non_academic_source_binding_and_csm_v1 telemetry. */
+  csm_legal_area_equivalence?: CsmLegalAreaEquivalenceRow[];
+  non_academic_claim_category_calibration?: NonAcademicClaimCategoryRow[];
 
   /** academic_utilization_stabilization_v1 — refs kept as reading pointers
    *  only (bibliography-only academic items in literature/framing blocks). */
@@ -240,6 +250,12 @@ export function applyClaimSourceMatch(
     rebinding: emptyRebindingSummary(),
   };
   const academicMode = opts?.academicMode === true;
+  const areaEquivalenceRows: CsmLegalAreaEquivalenceRow[] = [];
+  const categoryCalibrationRows: NonAcademicClaimCategoryRow[] = [];
+  if (!academicMode) {
+    report.csm_legal_area_equivalence = areaEquivalenceRows;
+    report.non_academic_claim_category_calibration = categoryCalibrationRows;
+  }
   const align = emptyAcademicAuthorityAlignment();
   align.applied = academicMode;
   if (academicMode) report.academic_authority_alignment = align;
@@ -295,7 +311,7 @@ export function applyClaimSourceMatch(
     // substance_based_doctrinal_sufficiency_v1 — substance category for this
     // block (declared tag → proposition substance → docket-identity escalation).
     const declared = (b as unknown as Record<string, unknown>).claim_category;
-    const { category, basis, remapped_from } = deriveClaimCategory({
+    const derived = deriveClaimCategory({
       declared: typeof declared === "string" ? declared : null,
       propositionType: ptype,
       text: typeof (b as unknown as Record<string, unknown>).text === "string"
@@ -303,6 +319,25 @@ export function applyClaimSourceMatch(
         : "",
       academicMode,
     });
+    const { basis, remapped_from } = derived;
+    let category = derived.category;
+    // non_academic_source_binding_and_csm_v1 — a generic doctrine paragraph is
+    // not a court holding. Blocks that name a judgment or assert a holding keep
+    // the strict primary requirement.
+    if (!academicMode) {
+      const calibrated = calibrateNonAcademicCategory({
+        block_id: `b${idx}`,
+        category,
+        basis,
+        text: typeof (b as unknown as Record<string, unknown>).text === "string"
+          ? String((b as unknown as Record<string, unknown>).text)
+          : "",
+      });
+      if (calibrated.row) {
+        categoryCalibrationRows.push(calibrated.row);
+        category = calibrated.category as ClaimSupportCategory;
+      }
+    }
     const academicCategory = isAcademicClaimCategory(category);
     const doctrinalCategory = category === "doctrinal_synthesis" ||
       category === "scholarly_commentary" || category === "contextual_background" ||
@@ -520,7 +555,22 @@ export function applyClaimSourceMatch(
           });
         }
 
-        if (!override) reason = "unrelated_legal_area";
+        // non_academic_source_binding_and_csm_v1 — controlled public-law
+        // adjacency. Requires doctrine-term overlap; never crosses families.
+        let equivalence = false;
+        if (!academicMode) {
+          const row = evaluateAreaEquivalence({
+            claim_id: String(tags.claim_id ?? tags.facet_id ?? `b${idx}`),
+            block_area: tags.legal_area,
+            source_area: m.legal_area,
+            block_text: blockText,
+            source_text: `${src0?.title ?? ""} ${src0?.snippet ?? ""}`,
+          });
+          areaEquivalenceRows.push(row);
+          equivalence = row.equivalence_applied;
+        }
+
+        if (!override && !equivalence) reason = "unrelated_legal_area";
       }
 
       // Rule E (substance_based_doctrinal_sufficiency_v1) — the claim's

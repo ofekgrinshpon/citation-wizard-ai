@@ -64,6 +64,10 @@ import {
   type MetadataOnlyHoldingGateReport,
 } from "./metadataOnlyHoldingGate.ts";
 import {
+  consolidateLimitationNotes,
+  type NonAcademicLimitationNote,
+} from "./nonAcademicBinding.ts";
+import {
   applyClaimSourceMatch,
   type ClaimSourceMatchReport,
 } from "./claimSourceMatch.ts";
@@ -1191,6 +1195,8 @@ function computeQualityWarning(
 }
 
 export interface DrafterV2Result {
+  /** non_academic_source_binding_and_csm_v1 */
+  non_academic_limitation_note?: NonAcademicLimitationNote;
   ok: boolean;
   ms: number;
   model_initial: string;
@@ -2330,6 +2336,7 @@ export async function runDrafterV2(
   let academic_style_model: (AcademicStyleModelReport & { answer_words?: number }) | undefined;
   let academic_prompt_cleanup: DrafterV2Report["academic_prompt_cleanup"];
   let answer_markdown: string;
+  let non_academic_limitation_note: NonAcademicLimitationNote | undefined;
 
   if (academicPrimary) {
     const suppressed = [
@@ -2378,11 +2385,20 @@ export async function runDrafterV2(
 
 
   } else {
-    answer_markdown = baseAnswer + referenceOnlyText + limitedDoctrinalText +
-      (limitation_note_alignment.revised
-        ? limitation_note_alignment.limitation_note
-        : matched.limitation_text);
-
+    // non_academic_source_binding_and_csm_v1 — ordinary Q&A gets exactly one
+    // accurate limitation notice instead of stacked generic boilerplate.
+    const primaryCited = built.used_sources.some((u) =>
+      u.citable_as === "judgment" || u.citable_as === "statute" ||
+      u.citable_as === "regulation"
+    );
+    const merged = consolidateLimitationNotes({
+      question_id: "answer",
+      parts: [limitedDoctrinalText, matched.limitation_text ?? ""],
+      primary_cited: primaryCited,
+      no_direct_caselaw: limitation_note_alignment.revised,
+    });
+    non_academic_limitation_note = merged.report;
+    answer_markdown = baseAnswer + referenceOnlyText + merged.text;
   }
 
 
@@ -2410,6 +2426,7 @@ export async function runDrafterV2(
   }));
 
   return {
+    non_academic_limitation_note,
     snippet_budget_report,
     ok: true,
     ms: Date.now() - t_total,
