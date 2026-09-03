@@ -103,6 +103,15 @@ import {
   type PreCsmSourceRefFiltering,
   renderSourceRoleMapBlock,
 } from "./academicSourceRoleMap.ts";
+import {
+  applySourceRoleSanity,
+  applyTopicAwareBlockAlignment,
+  assessLimitationNoteAlignment,
+  type LimitationNoteAlignment,
+  type SourceRoleSanityReport,
+  type TopicAwareAlignmentReport,
+} from "./topicAwareAlignment.ts";
+
 
 
 /** academic_style_model_v1 — thin-pack / footnote availability inputs. */
@@ -1260,6 +1269,10 @@ export interface DrafterV2Result {
   metadata_only_holding_gate?: MetadataOnlyHoldingGateReport;
   /** router_profiles_v1 — block-ceiling trim telemetry. */
   router_block_trim?: BlockTrimReport;
+  /** topic_aware_source_role_and_claim_alignment_v1 telemetry. */
+  topic_aware_alignment?: TopicAwareAlignmentReport;
+  limitation_note_alignment?: LimitationNoteAlignment;
+
 
 
 
@@ -1433,7 +1446,11 @@ export async function runDrafterV2(
       }
     }
   }
+  // topic_aware_source_role_and_claim_alignment_v1 — role labels must be
+  // compatible with the source type before the pack is rendered.
+  const source_role_sanity: SourceRoleSanityReport = applySourceRoleSanity(inputSources);
   const sources_passed = inputSources.length;
+
   const allowedRefs = new Set(inputSources.map((s) => s.ref));
 
 
@@ -2244,11 +2261,33 @@ export async function runDrafterV2(
   }
 
 
+  // topic_aware_source_role_and_claim_alignment_v1 — block-level claim→source
+  // precision: prune class/legal-area mismatches, rank by block relevance and
+  // de-compound weak multi-source footnotes. Removal/reordering only.
+  const aligned = applyTopicAwareBlockAlignment(
+    matched.draft ?? gated.draft ?? parsed.draft,
+    inputSources,
+    question,
+    { academicMode: academicModeForMatch },
+  );
+  const topic_aware_alignment: TopicAwareAlignmentReport = {
+    ...aligned.report,
+    source_role_sanity_check: source_role_sanity.rows,
+  };
+
   const built = buildFootnotedAnswer(
-    matched.draft ?? gated.draft ?? parsed.draft as StructuredDraft,
+    aligned.draft ?? matched.draft ?? gated.draft ?? parsed.draft as StructuredDraft,
     inputSources,
     { referenceOnlyRefs: claim_source_match.reference_only_refs ?? [] },
   );
+
+  const limitation_note_alignment: LimitationNoteAlignment = assessLimitationNoteAlignment(
+    "answer",
+    inputSources,
+    topic_aware_alignment,
+    matched.limitation_text ?? "",
+  );
+
 
 
 
@@ -2308,6 +2347,16 @@ export async function runDrafterV2(
       noticesSuppressed: suppressed,
     });
     answer_markdown = hygiene.answer;
+    // topic_aware_source_role_and_claim_alignment_v1 — the single academic
+    // work note must also state when no directly on-point judgment was found.
+    if (limitation_note_alignment.revised) {
+      answer_markdown = answer_markdown.replace(
+        /\*הערת עבודה: ([^*]+)\*\s*$/,
+        (_m, body: string) =>
+          `*הערת עבודה: ${body.trim()} לא אותר פסק דין העוסק ישירות בדוקטרינה הנדונה; הביסוס כאן נשען על חקיקה וספרות משפטית.*`,
+      );
+    }
+
     academic_presentation_hygiene = hygiene.report;
     academic_style_model = {
       ...buildAcademicStyleGuideBlock(
@@ -2330,7 +2379,10 @@ export async function runDrafterV2(
 
   } else {
     answer_markdown = baseAnswer + referenceOnlyText + limitedDoctrinalText +
-      matched.limitation_text;
+      (limitation_note_alignment.revised
+        ? limitation_note_alignment.limitation_note
+        : matched.limitation_text);
+
   }
 
 
@@ -2405,6 +2457,9 @@ export async function runDrafterV2(
 
     claim_source_match,
     doctrinal_typing,
+    topic_aware_alignment,
+    limitation_note_alignment,
+
 
 
 
