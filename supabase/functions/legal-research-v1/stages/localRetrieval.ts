@@ -658,7 +658,7 @@ export interface LocalRetrievalResult {
       text_lane?: "tsquery" | "legacy";
       hebrew_fts_normalization?: unknown;
       hebrew_fts_term_selection?: unknown;
-      hebrew_fts_primary_tsquery?: string;
+      tsq_primary?: string;
       vector_status: "ok" | "empty" | "error" | "timeout" | "no_embedding";
       vector_error?: string;
       vector_ms: number;
