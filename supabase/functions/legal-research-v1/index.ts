@@ -1514,6 +1514,11 @@ async function handle(req: Request): Promise<Response> {
         rows: pool.url_dedupe.filter((r) => r.dedupe_identity_source !== "normal_url"),
       },
     },
+    // local_retrieval_precision_tuning_v1
+    local_vector_quota_tuning: pool.vector_tuning
+      ? { run_id, ...pool.vector_tuning }
+      : null,
+    local_candidate_reranking: pool.reranking.map((r) => ({ run_id, ...r })),
     // discovery_precision_and_listing_suppression_v1
     discovery_precision: {
       version: "discovery_precision_and_listing_suppression_v1",

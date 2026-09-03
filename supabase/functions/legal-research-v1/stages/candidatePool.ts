@@ -124,11 +124,63 @@ export interface PoolResult {
     by_role: Record<string, number>;
     by_claim: Record<string, number>;
   };
+  /** local_retrieval_precision_tuning_v1 */
+  vector_tuning: LocalVectorQuotaTuning | null;
+  /** local_retrieval_precision_tuning_v1 — one row per promoted candidate. */
+  reranking: LocalRerankRow[];
+}
+
+/** local_retrieval_precision_tuning_v1 */
+export interface LocalVectorQuotaTuning {
+  mode: string | null;
+  enabled: boolean;
+  old_quota: number;
+  new_quota: number;
+  vector_candidates_seen: number;
+  vector_candidates_admitted_before: number;
+  vector_candidates_admitted_after: number;
+  text_candidates_displaced: number;
+  final_pool_size_before: number;
+  final_pool_size_after: number;
+  average_vector_score: number;
+  elapsed_ms: number;
+}
+
+export interface LocalRerankRow {
+  candidate_id: string;
+  title: string;
+  source_type: string;
+  method: string;
+  old_rank: number;
+  new_rank: number;
+  rerank_reason: string;
+  displaced_candidate_method: string | null;
+  displaced_candidate_reason: string | null;
 }
 
 
 
 const MAX_VECTOR_PER_CLAIM = 2;
+// local_retrieval_precision_tuning_v1 — bounded, local-only, mode-gated.
+const LOCAL_VECTOR_QUOTA_TUNED = 4;
+/** Minimum cosine similarity for a local vector candidate to compete in the
+ *  text tier. Local vector scores are stored as similarity * 0.6. */
+const VECTOR_PROMOTE_MIN_SIM = 0.30;
+const VECTOR_SCORE_WEIGHT = 0.6;
+/** Source types credible enough to be reranked upward. */
+const CREDIBLE_LOCAL_TYPES = new Set([
+  "journal_article", "israeli_law", "knesset_research", "supreme_court_il",
+  "caselaw", "academic",
+]);
+/** Broad/academic modes where lexical noise outweighs vector recall risk. */
+const BROAD_INTENTS = new Set([
+  "academic_writing", "doctrinal_explanation", "case_law_synthesis",
+  "argument_development", "literature_review", "source_recommendation",
+  "research_guidance",
+]);
+function isBroadIntent(intent: string | null | undefined): boolean {
+  return !!intent && BROAD_INTENTS.has(intent);
+}
 const MIN_TRUSTED_PERPLEXITY = 10;
 
 // Trusted-Perplexity predicate.
@@ -188,10 +240,15 @@ export interface BuildPoolOptions {
   discovery_precision?: boolean;
 }
 
-export function buildCandidatePool(
+function buildCandidatePoolInner(
   allRaw: Candidate[],
-  options: BuildPoolOptions = {},
+  options: BuildPoolOptions,
+  tuningEnabled: boolean,
+  /** Replacement-only guard: never admit more than the untuned pool did. */
+  poolCap: number = CAPS.MAX_CANDIDATES,
 ): PoolResult {
+  const tuningOn = tuningEnabled && isBroadIntent(options.task_intent);
+  const POOL_CAP = Math.min(CAPS.MAX_CANDIDATES, Math.max(1, poolCap));
   const dpEnabled = options.discovery_precision !== false;
   const dpT0 = Date.now();
   const dp = emptyDiscoveryDiagnostics();
@@ -310,15 +367,45 @@ export function buildCandidatePool(
 
   // P3.2 #3: priority — exact_authority > text > perplexity > vector.
   // Score still tie-breaks within a tier.
+  // local_retrieval_precision_tuning_v1 — strong local vector candidates may
+  // compete in the text tier (never above exact authority). Promotion is
+  // capped per claim and never bypasses integrity/listing/dedupe gates: the
+  // promoted candidate is already a survivor of every earlier filter.
+  const rawSim = (c: Candidate): number =>
+    c.retrieval_method === "vector" ? c.score / VECTOR_SCORE_WEIGHT : c.score;
+  const promoted = new Map<string, string>(); // candidate_id → reason
+  if (tuningOn) {
+    const byClaim = new Map<string, Candidate[]>();
+    for (const c of survivors) {
+      if (c.origin !== "local_db" || c.retrieval_method !== "vector") continue;
+      if (!CREDIBLE_LOCAL_TYPES.has(c.source_type)) continue;
+      if (rawSim(c) < VECTOR_PROMOTE_MIN_SIM) continue;
+      const arr = byClaim.get(c.claim_id) ?? [];
+      arr.push(c);
+      byClaim.set(c.claim_id, arr);
+    }
+    for (const [, arr] of byClaim) {
+      arr.sort((a, b) => b.score - a.score);
+      for (const c of arr.slice(0, LOCAL_VECTOR_QUOTA_TUNED)) {
+        promoted.set(
+          c.candidate_id,
+          `local_vector_topical_fit sim=${rawSim(c).toFixed(3)} type=${c.source_type}`,
+        );
+      }
+    }
+  }
+
   const tierOf = (c: Candidate): number => {
     if (c.retrieval_method === "exact_authority") return 0;
     if (c.retrieval_method === "text") return 1;
+    if (promoted.has(c.candidate_id)) return 1; // competes with text on score
     if (c.retrieval_method === "perplexity") return 2;
     return 3; // vector
   };
   // Bounded discovery-precision delta reorders inside a tier only.
   const effScore = (c: Candidate): number =>
-    c.score + (precisionById.get(c.candidate_id)?.rank_delta ?? 0);
+    (promoted.has(c.candidate_id) ? rawSim(c) : c.score) +
+    (precisionById.get(c.candidate_id)?.rank_delta ?? 0);
   const orderBy = (list: Candidate[]) =>
     [...list].sort((a, b) => {
       const t = tierOf(a) - tierOf(b);
@@ -340,6 +427,10 @@ export function buildCandidatePool(
   const backfillsByOrigin = new Map<string, number>();
   const isBackfill = (c: Candidate) =>
     freedSlots > 0 && (baselineRank.get(c.candidate_id) ?? 0) >= CAPS.MAX_CANDIDATES;
+  // local_retrieval_precision_tuning_v1 — global share of the pool the
+  // promoted local-vector lane may occupy.
+  const promotionBudget = Math.max(4, Math.floor(POOL_CAP * 0.4));
+  let promotedAdmitted = 0;
   const dropLog: PoolDrop[] = [];
   const logDrop = (c: Candidate, reason: PoolDrop["drop_reason"], key: string) => {
     dropLog.push({
@@ -361,8 +452,8 @@ export function buildCandidatePool(
   // Shared admission routine — runs the existing dedup/vector-cap checks and pushes into `out`.
   // Returns true if admitted.
   const tryAdmit = (c: Candidate): boolean => {
-    if (out.length >= CAPS.MAX_CANDIDATES) {
-      logDrop(c, "max_candidates_cap", `cap:${CAPS.MAX_CANDIDATES}`);
+    if (out.length >= POOL_CAP) {
+      logDrop(c, "max_candidates_cap", `cap:${POOL_CAP}`);
       return false;
     }
     // Backfill diversity guard — one origin may not take every freed slot.
@@ -374,10 +465,17 @@ export function buildCandidatePool(
       }
     }
     if (c.retrieval_method === "vector") {
+      // The wider quota is reserved for local candidates that cleared the
+      // topical-fit/credibility bar, and only up to a global share of the
+      // pool, so the semantic lane can never crowd out official/primary
+      // material.
+      const promotedSlot = tuningOn && c.origin === "local_db" &&
+        promoted.has(c.candidate_id) && promotedAdmitted < promotionBudget;
+      const quota = promotedSlot ? LOCAL_VECTOR_QUOTA_TUNED : MAX_VECTOR_PER_CLAIM;
       const n = vectorPerClaim.get(c.claim_id) ?? 0;
-      if (n >= MAX_VECTOR_PER_CLAIM) {
+      if (n >= quota) {
         dedup_drops++;
-        logDrop(c, "vector_quota_per_claim", `vector:${c.claim_id}:${MAX_VECTOR_PER_CLAIM}`);
+        logDrop(c, "vector_quota_per_claim", `vector:${c.claim_id}:${quota}`);
         return false;
       }
     }
@@ -406,6 +504,9 @@ export function buildCandidatePool(
     seenTitle.set(ttKey, c);
     if (c.retrieval_method === "vector") {
       vectorPerClaim.set(c.claim_id, (vectorPerClaim.get(c.claim_id) ?? 0) + 1);
+      if (tuningOn && c.origin === "local_db" && promoted.has(c.candidate_id)) {
+        promotedAdmitted++;
+      }
     }
     if (isBackfill(c)) {
       // Backfill only re-ranks candidates already in `all` — it never triggers
@@ -438,7 +539,7 @@ export function buildCandidatePool(
   for (const c of sorted) {
     if (reservedIds.has(c.candidate_id)) continue;
     tryAdmit(c);
-    if (out.length >= CAPS.MAX_CANDIDATES) break;
+    if (out.length >= POOL_CAP) break;
   }
 
 
@@ -569,6 +670,43 @@ export function buildCandidatePool(
   dp.ms = Date.now() - dpT0;
 
 
+  // local_retrieval_precision_tuning_v1 — per-candidate rerank rows. The
+  // "old rank" is the untuned ordering of the same survivor set.
+  const untunedRank = new Map<string, number>();
+  [...survivors]
+    .sort((a, b) => {
+      const t0 = (c: Candidate) =>
+        c.retrieval_method === "exact_authority" ? 0
+          : c.retrieval_method === "text" ? 1
+          : c.retrieval_method === "perplexity" ? 2
+          : 3;
+      const t = t0(a) - t0(b);
+      if (t !== 0) return t;
+      return (b.score + (precisionById.get(b.candidate_id)?.rank_delta ?? 0)) -
+        (a.score + (precisionById.get(a.candidate_id)?.rank_delta ?? 0));
+    })
+    .forEach((c, i) => untunedRank.set(c.candidate_id, i));
+
+  const reranking: LocalRerankRow[] = [];
+  for (const c of survivors) {
+    const reason = promoted.get(c.candidate_id);
+    if (!reason) continue;
+    const oldRank = untunedRank.get(c.candidate_id) ?? -1;
+    const newRank = rankOf.get(c.candidate_id) ?? -1;
+    if (newRank < 0 || newRank >= oldRank) continue;
+    reranking.push({
+      candidate_id: c.candidate_id,
+      title: c.title,
+      source_type: c.source_type,
+      method: c.retrieval_method,
+      old_rank: oldRank,
+      new_rank: newRank,
+      rerank_reason: reason,
+      displaced_candidate_method: null,
+      displaced_candidate_reason: null,
+    });
+  }
+
   return {
     candidates: out,
     found: allRaw.length,
@@ -582,7 +720,84 @@ export function buildCandidatePool(
     url_dedupe_rescued_from_legacy_collapse: rescued,
     discovery_precision: dp,
     counts,
+    vector_tuning: tuningOn
+      ? {
+        mode: options.task_intent ?? null,
+        enabled: true,
+        old_quota: MAX_VECTOR_PER_CLAIM,
+        new_quota: LOCAL_VECTOR_QUOTA_TUNED,
+        vector_candidates_seen: all.filter((c) =>
+          c.origin === "local_db" && c.retrieval_method === "vector"
+        ).length,
+        vector_candidates_admitted_before: 0, // filled by the wrapper
+        vector_candidates_admitted_after: out.filter((c) =>
+          c.origin === "local_db" && c.retrieval_method === "vector"
+        ).length,
+        text_candidates_displaced: 0, // filled by the wrapper
+        final_pool_size_before: 0, // filled by the wrapper
+        final_pool_size_after: out.length,
+        average_vector_score: avg(
+          out.filter((c) => c.retrieval_method === "vector").map((c) => rawSim(c)),
+        ),
+        elapsed_ms: Date.now() - dpT0,
+      }
+      : null,
+    reranking,
   };
 }
+
+function avg(xs: number[]): number {
+  if (!xs.length) return 0;
+  return Number((xs.reduce((a, b) => a + b, 0) / xs.length).toFixed(4));
+}
+
+/**
+ * local_retrieval_precision_tuning_v1 — public entry point.
+ *
+ * Runs the tuned pool. In broad/academic modes it also runs the untuned pool
+ * (pure CPU, same inputs) purely to produce before/after telemetry; the tuned
+ * result is always the one returned. Listing suppression, source integrity,
+ * dedupe and `CAPS.MAX_CANDIDATES` are identical in both passes.
+ */
+export function buildCandidatePool(
+  allRaw: Candidate[],
+  options: BuildPoolOptions = {},
+): PoolResult {
+  const t0 = Date.now();
+  if (!isBroadIntent(options.task_intent)) {
+    return buildCandidatePoolInner(allRaw, options, false);
+  }
+  // Baseline first: its size becomes the hard cap for the tuned pass, so the
+  // tuning can only *replace* candidates, never expand the pool.
+  const baseline = buildCandidatePoolInner(allRaw, options, false);
+  const tuned = buildCandidatePoolInner(
+    allRaw,
+    options,
+    true,
+    baseline.candidates.length,
+  );
+  if (!tuned.vector_tuning) return tuned;
+  const tunedIds = new Set(tuned.candidates.map((c) => c.candidate_id));
+  const displaced = baseline.candidates.filter(
+    (c) => !tunedIds.has(c.candidate_id) && c.retrieval_method === "text",
+  );
+  tuned.vector_tuning.vector_candidates_admitted_before = baseline.candidates.filter(
+    (c) => c.origin === "local_db" && c.retrieval_method === "vector",
+  ).length;
+  tuned.vector_tuning.text_candidates_displaced = displaced.length;
+  tuned.vector_tuning.final_pool_size_before = baseline.candidates.length;
+  tuned.vector_tuning.elapsed_ms = Date.now() - t0;
+  // Attach the displaced counterpart to each rerank row, positionally.
+  tuned.reranking.forEach((row, i) => {
+    const d = displaced[i];
+    if (!d) return;
+    row.displaced_candidate_method = d.retrieval_method;
+    row.displaced_candidate_reason = `displaced_by_local_vector rank=${
+      baseline.candidates.indexOf(d)
+    } score=${d.score.toFixed(3)}`;
+  });
+  return tuned;
+}
+
 
 

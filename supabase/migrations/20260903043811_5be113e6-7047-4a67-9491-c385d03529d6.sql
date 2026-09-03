@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.search_legal_chunks_tsquery(text, text, text, integer) FROM authenticated, anon;

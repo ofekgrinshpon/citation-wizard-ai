@@ -4,8 +4,12 @@
 // - Vector recall capped: max 2 per claim (applied in candidatePool too); ordering ensured by score weights.
 
 import type { RetrievalGovernor } from "./retrievalGovernor.ts";
+// @ts-ignore — remote Deno module, resolved at deploy time.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+
+declare const Deno: { env: { get(key: string): string | undefined } };
 import { Candidate, CAPS, Claim, Query, StageRun } from "../lib/types.ts";
+import { buildHebrewFtsQuery } from "./hebrewFts.ts";
 
 type Admin = ReturnType<typeof createClient>;
 
@@ -83,6 +87,15 @@ function detectHebrewNounPhrases(text: string): string[] {
   }
   flush();
   return phrases;
+}
+
+// local_retrieval_precision_tuning_v1 — phrases detected for a query, exposed
+// so the lexical lane can keep them phrase-sensitive in the tsquery.
+function compactQueryPhrases(plannerQuery: string, ctxCorpus: string): string[] {
+  const bank = detectPhrases(plannerQuery + " " + ctxCorpus);
+  const nouns = detectHebrewNounPhrases(plannerQuery)
+    .filter((p) => !bank.some((b) => b.includes(p) || p.includes(b)));
+  return [...bank, ...nouns].filter((p) => p.split(" ").length >= 2);
 }
 
 // Build compact FTS query from planner-query plus optional original-question/claim context.
@@ -493,24 +506,25 @@ async function exactAuthorityLookup(
 
 // ─── RPC helpers ────────────────────────────────────────────────────────────
 
-async function runRpcDiag<T = unknown>(
-  promise: PromiseLike<{ data: T | null; error: { message?: string } | null }>,
+async function runRpcDiag<T extends unknown[] = unknown[]>(
+  promise: PromiseLike<{ data: unknown; error: { message?: string } | null }>,
   ms: number,
-): Promise<{ status: "ok" | "empty" | "error" | "timeout"; rows: T extends unknown[] ? T : never[]; error?: string; ms: number }> {
+): Promise<{ status: "ok" | "empty" | "error" | "timeout"; rows: T; error?: string; ms: number }> {
   const t0 = Date.now();
   let timedOut = false;
+  const empty = [] as unknown as T;
   const timer = new Promise<null>((res) => setTimeout(() => { timedOut = true; res(null); }, ms));
   try {
     const res = (await Promise.race([promise, timer])) as
       | { data: unknown; error: { message?: string } | null }
       | null;
     const elapsed = Date.now() - t0;
-    if (timedOut || !res) return { status: "timeout", rows: [] as never[], ms: elapsed };
-    if (res.error) return { status: "error", rows: [] as never[], error: res.error.message || String(res.error), ms: elapsed };
-    const rows = (Array.isArray(res.data) ? res.data : []) as never[];
+    if (timedOut || !res) return { status: "timeout", rows: empty, ms: elapsed };
+    if (res.error) return { status: "error", rows: empty, error: res.error.message || String(res.error), ms: elapsed };
+    const rows = (Array.isArray(res.data) ? res.data : []) as T;
     return { status: rows.length ? "ok" : "empty", rows, ms: elapsed };
   } catch (e) {
-    return { status: "error", rows: [] as never[], error: e instanceof Error ? e.message : String(e), ms: Date.now() - t0 };
+    return { status: "error", rows: empty, error: e instanceof Error ? e.message : String(e), ms: Date.now() - t0 };
   }
 }
 
@@ -639,6 +653,12 @@ export interface LocalRetrievalResult {
       text_status: "ok" | "empty" | "error" | "timeout";
       text_error?: string;
       text_ms: number;
+      /** local_retrieval_precision_tuning_v1 — which lexical RPC served this
+       *  query: the Hebrew-aware tsquery helper or the legacy fallback. */
+      text_lane?: "tsquery" | "legacy";
+      hebrew_fts_normalization?: unknown;
+      hebrew_fts_term_selection?: unknown;
+      tsq_primary?: string;
       vector_status: "ok" | "empty" | "error" | "timeout" | "no_embedding";
       vector_error?: string;
       vector_ms: number;
@@ -697,6 +717,12 @@ export async function runLocalRetrieval(
   const runOneLocalQuery = async (q: Query) => {
       const qStart = Date.now();
       const compact = buildCompactQuery(q.query_he, ctxCorpus);
+      // local_retrieval_precision_tuning_v1 — deterministic Hebrew lexical
+      // query: prefix variants + salience-selected required terms.
+      const fts = buildHebrewFtsQuery(
+        compact || q.query_he,
+        compactQueryPhrases(q.query_he, ctxCorpus),
+      );
       const plannerClues = detectExactClues(q.query_he, "planner_query");
       // Merge global + planner clues — but only inject question/claim clues
       // when the role is statute/regulation/case (otherwise they're noise).
@@ -726,14 +752,34 @@ export async function runLocalRetrieval(
 
       const exactP = exactAuthorityLookup(admin, clues, q.role, CAPS.LOCAL_PER_QUERY);
       const embedP = embed(compact || q.query_he);
-      const textP = runRpcDiag<RpcRow[]>(
-        // deno-lint-ignore no-explicit-any
-        (admin.rpc("search_legal_chunks_text", {
-          search_query: compact || q.query_he,
-          match_count: CAPS.LOCAL_PER_QUERY,
-        }) as any),
-        RPC_TIMEOUT_MS,
-      );
+      // Precise lane first; the legacy RPC stays as a fail-open fallback so a
+      // tsquery syntax problem can never remove the lexical lane entirely.
+      const textP = (async () => {
+        if (fts.tsq_primary) {
+          const d = await runRpcDiag<RpcRow[]>(
+            // deno-lint-ignore no-explicit-any
+            (admin.rpc("search_legal_chunks_tsquery", {
+              tsq_primary: fts.tsq_primary,
+              tsq_fallback: fts.tsq_fallback,
+              raw_query: compact || q.query_he,
+              match_count: CAPS.LOCAL_PER_QUERY,
+            }) as any),
+            RPC_TIMEOUT_MS,
+          );
+          if (d.status === "ok" || d.status === "empty") {
+            return { ...d, lane: "tsquery" as const };
+          }
+        }
+        const legacy = await runRpcDiag<RpcRow[]>(
+          // deno-lint-ignore no-explicit-any
+          (admin.rpc("search_legal_chunks_text", {
+            search_query: compact || q.query_he,
+            match_count: CAPS.LOCAL_PER_QUERY,
+          }) as any),
+          RPC_TIMEOUT_MS,
+        );
+        return { ...legacy, lane: "legacy" as const };
+      })();
 
       const parallelT0 = Date.now();
       const [exactRes, embedRes, textDiag] = await Promise.all([exactP, embedP, textP]);
@@ -874,6 +920,10 @@ export async function runLocalRetrieval(
           exact_clue_lookups: exactRes.diags,
           law_clue_extraction: extractLawClues(q.query_he ?? ""),
           role_to_source_type_filter: ROLE_SOURCE_TYPES[q.role] ?? null,
+          text_lane: textDiag.lane,
+          hebrew_fts_normalization: fts.normalization,
+          hebrew_fts_term_selection: fts.term_selection,
+          tsq_primary: fts.tsq_primary.slice(0, 600),
           text_status: textDiag.status,
           text_error: textDiag.error,
           text_ms: textDiag.ms,

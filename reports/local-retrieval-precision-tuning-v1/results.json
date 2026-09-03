@@ -1,0 +1,1459 @@
+[
+  {
+    "id": "AW4",
+    "question": "כתוב פרק רקע תיאורטי לעבודה אקדמית על עקרון המידתיות בביקורת חוקתית, הכולל את מקורותיו ואת שלבי המבחן",
+    "run_id": "acbff766-cc95-45b6-8be2-a1f0f93f2f42",
+    "qa_log_id": "7dcb1edc-afed-4fa7-9e02-59204c1505fd",
+    "ms": 249242,
+    "latency": {
+      "total_ms": 249242,
+      "retrieval_ms": 39791,
+      "local_ms": 31782,
+      "local_text_ms_sum": 43785,
+      "local_vector_ms_sum": 3104
+    },
+    "local_lane": {
+      "queries": 20,
+      "text_hits": 120,
+      "vector_hits": 114,
+      "exact_hits": 0,
+      "lanes_used": {
+        "tsquery": 19,
+        "legacy": 1
+      },
+      "local_candidates": 209
+    },
+    "hebrew_fts_samples": [
+      {
+        "compact_query_he": "מידתיות חוק-יסוד כבוד האדם וחירותו סעיף סעיף",
+        "term_selection": {
+          "raw_query": "מידתיות חוק-יסוד כבוד האדם וחירותו סעיף סעיף",
+          "booster_terms": [
+            "סעיף סעיף",
+            "חוק",
+            "יסוד"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "מידתיות",
+            "חוק-יסוד כבוד האדם וחירותו"
+          ],
+          "required_terms_old": [
+            "חוק-יסוד",
+            "וחירותו"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [
+          "חוק-יסוד כבוד האדם וחירותו",
+          "סעיף סעיף"
+        ],
+        "added_variants_n": 39,
+        "text_hits": 6,
+        "top_text_titles": [
+          "חופש הביטוי בתקשורת המקוונת: בחינה מחדש של תורת המניעה המוקדמת | אריאל בנדור ומיכל טמיר (כרך כו)",
+          "\"אֵם כל הזכויות\": הזכות החוקתית לחיים | יניב רוזנאי והלל סומר (כרך יט)",
+          "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
+          "כיבוד האדם והמשפט החוקתי בישראל",
+          "ביהמ\"ש השלום לתעבורה בחדרה, השופטת סיגל דבורי: החלטה בבקשה לביטול פסילה מנהלית על פי סעיף 48 לפקודת התעבורה (בפ\"מ 5010-11-22)"
+        ]
+      },
+      {
+        "compact_query_he": "מידתיות proportionality test comparative law Germany Canada Oakes Alexy",
+        "term_selection": {
+          "raw_query": "מידתיות proportionality test comparative law Germany Canada Oakes Alexy",
+          "booster_terms": [
+            "comparative",
+            "Germany",
+            "Canada",
+            "test",
+            "Oakes",
+            "Alexy"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "מידתיות",
+            "proportionality"
+          ],
+          "required_terms_old": [
+            "proportionality",
+            "comparative"
+          ],
+          "dropped_generic_terms": [
+            "law"
+          ]
+        },
+        "preserved_phrases": [],
+        "added_variants_n": 13,
+        "text_hits": 6,
+        "top_text_titles": [
+          "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+          "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+          "הביקורת השיפוטית על החלטות מנהליות: מפרקטיקה לתיאוריה | יצחק זמיר (כרך טו)",
+          "ע\"א 769-02 - הועד הציבורי נגד העינויים בישראל נ. ממשלת ישראל",
+          "מידתיות ותרבות ההצדקה אצל אהרן ברק | משה כהן-אליה (כרך טו)"
+        ]
+      },
+      {
+        "compact_query_he": "מידתיות לשכת מנהלי ההשקעות בג 1715/97",
+        "term_selection": {
+          "raw_query": "מידתיות לשכת מנהלי ההשקעות בג 1715/97",
+          "booster_terms": [
+            "בג",
+            "1715",
+            "97"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "מידתיות",
+            "לשכת מנהלי ההשקעות"
+          ],
+          "required_terms_old": [
+            "1715/97",
+            "ההשקעות"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [
+          "לשכת מנהלי ההשקעות"
+        ],
+        "added_variants_n": 13,
+        "text_hits": 6,
+        "top_text_titles": [
+          "פגם בערבות להצעה במכרז ושאלת המידתיות בדיני המכרזים",
+          "חוקיות ההפרטה של אספקת שירותים ציבוריים",
+          "ביהמ\"ש העליון, אב\"ד המשנה לנשיאה (בדימוס) ניל הנדל, השפט נעם סולברג והשופט עופר גרוסקופף: פס\"ד בשאלת חוקתיותו של ההסדר הפוטר את המדינה מאחריות נזיקית על נזקים הנגרמים על-ידה לתושבי רצועת עזה (ע\"א 993/19)",
+          "בימ\"ש העליון, אב\"ד השופט ג'ורג' קרא, השופט דוד מינץ והשופט שאול שוחט: פס\"ד בעניין פקיד שומה נגד רועי חיון (ע\"א 6077/20)",
+          "בימ\"ש עליון, אב\"ד הנשיאה חיות, המשנה לנשיאה (בדימ') ניל הנדל, המשנה לנשיאה עוזי פוגלמן, השופטים: יצחק עמית, נעם סולברג, דפנה ברק-ארז, ענת ברון: פס\"ד בשני ערעורים שעניינם שלילת אזרחות בגין ביצוע מעשים שיש בהם משום הפרת אמונים למדינת ישראל (עע\"מ 8277/17)"
+        ]
+      },
+      {
+        "compact_query_he": "מידתיות null Oakes",
+        "term_selection": {
+          "raw_query": "מידתיות null Oakes",
+          "booster_terms": [
+            "null",
+            "Oakes"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "מידתיות"
+          ],
+          "required_terms_old": [
+            "מידתיות",
+            "Oakes"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [],
+        "added_variants_n": 13,
+        "text_hits": 6,
+        "top_text_titles": [
+          "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+          "שמירה על מידתיות בענישה: סוגיה חוקתית או פלילית",
+          "הזכות הטבועה להגנה עצמית ומידתיות במסגרת Jus ad Bellum | דוד קרצמר (כרך יז)",
+          "פגם בערבות להצעה במכרז ושאלת המידתיות בדיני המכרזים",
+          "\"האם המחוקק ירה בתותח כדי לפגוע בזבוב?\" על מידתיות במשפט | רבקה ווייל (כרך טו)"
+        ]
+      },
+      {
+        "compact_query_he": "מידתיות מאמר סקירה משפטית במשפט החוקתי הישראלי",
+        "term_selection": {
+          "raw_query": "מידתיות מאמר סקירה משפטית במשפט החוקתי הישראלי",
+          "booster_terms": [
+            "הישראלי",
+            "במשפט",
+            "חוקתי"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "מידתיות",
+            "מאמר סקירה משפטית"
+          ],
+          "required_terms_old": [
+            "הישראלי",
+            "מידתיות"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [
+          "מאמר סקירה משפטית"
+        ],
+        "added_variants_n": 40,
+        "text_hits": 6,
+        "top_text_titles": [
+          "תחולת &quot;חזקת ההתאמה הפרשנית&quot; במישור החוקתי: האם יש לפרש את חוקי היסוד לאור המשפט הבינלאומי?",
+          "הזכות לקיום בכבוד בראי המשפט העברי: מעמדה החוקתי",
+          "הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי",
+          "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+          "נשים בספורט הישראלי – מדיניות ונתונים"
+        ]
+      },
+      {
+        "compact_query_he": "מידתיות חוק יסוד כבוד האדם וחירותו טקסט מלא הגבלות זכויות אתר הכנסת נוסח הגבלה רשמי",
+        "term_selection": {
+          "raw_query": "מידתיות חוק יסוד כבוד האדם וחירותו טקסט מלא הגבלות זכויות אתר הכנסת נוסח הגבלה רשמי",
+          "booster_terms": [
+            "וחירותו טקסט מלא הגבלות",
+            "זכויות אתר הכנסת נוסח",
+            "הגבלה",
+            "רשמי"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "מידתיות",
+            "חוק יסוד כבוד האדם"
+          ],
+          "required_terms_old": [
+            "וחירותו",
+            "מידתיות"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [
+          "חוק יסוד כבוד האדם",
+          "וחירותו טקסט מלא הגבלות",
+          "זכויות אתר הכנסת נוסח"
+        ],
+        "added_variants_n": 39,
+        "text_hits": 6,
+        "top_text_titles": [
+          "בימ\"ש לענייני משפחה ירושלים, השופטת אורית בן דור ליבל: פס\"ד בבקשה לפסיקת שכר טרחת מנהלת עיזבון (ע\"ר 33839-02-22)",
+          "חופש הביטוי בתקשורת המקוונת: בחינה מחדש של תורת המניעה המוקדמת | אריאל בנדור ומיכל טמיר (כרך כו)",
+          "\"אֵם כל הזכויות\": הזכות החוקתית לחיים | יניב רוזנאי והלל סומר (כרך יט)",
+          "ביהמ\"ש השלום לתעבורה בחדרה, השופטת סיגל דבורי: החלטה בבקשה לביטול פסילה מנהלית על פי סעיף 48 לפקודת התעבורה (בפ\"מ 5010-11-22)",
+          "ארגוני עובדים ומשא ומתן קיבוצי בישראל - מבט אל המאה ה-21"
+        ]
+      }
+    ],
+    "vector_tuning": {
+      "mode": "academic_writing",
+      "run_id": "acbff766-cc95-45b6-8be2-a1f0f93f2f42",
+      "enabled": true,
+      "new_quota": 4,
+      "old_quota": 2,
+      "elapsed_ms": 74,
+      "average_vector_score": 0.6541,
+      "final_pool_size_after": 30,
+      "final_pool_size_before": 30,
+      "vector_candidates_seen": 90,
+      "text_candidates_displaced": 7,
+      "vector_candidates_admitted_after": 8,
+      "vector_candidates_admitted_before": 1
+    },
+    "reranking": [
+      {
+        "title": "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
+        "method": "vector",
+        "run_id": "acbff766-cc95-45b6-8be2-a1f0f93f2f42",
+        "new_rank": 13,
+        "old_rank": 99,
+        "source_type": "journal_article",
+        "candidate_id": "e9632112-d8c9-486d-88fc-511921c9c9e1",
+        "rerank_reason": "local_vector_topical_fit sim=0.691 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=9 score=0.257"
+      },
+      {
+        "title": "האם התמקצעות שיפוטית חשובה? התמקצעות ועומס בבתי המשפט המחוזיים | נטע נדיב (כרך כז)",
+        "method": "vector",
+        "run_id": "acbff766-cc95-45b6-8be2-a1f0f93f2f42",
+        "new_rank": 20,
+        "old_rank": 136,
+        "source_type": "journal_article",
+        "candidate_id": "55653ace-24a9-4107-93b5-ca7067ce972c",
+        "rerank_reason": "local_vector_topical_fit sim=0.608 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=11 score=0.239"
+      },
+      {
+        "title": "החלה ישירה של זכויות האדם על הכלל",
+        "method": "vector",
+        "run_id": "acbff766-cc95-45b6-8be2-a1f0f93f2f42",
+        "new_rank": 14,
+        "old_rank": 94,
+        "source_type": "journal_article",
+        "candidate_id": "2198b29a-0e67-4c04-8dcf-72723aa5f29c",
+        "rerank_reason": "local_vector_topical_fit sim=0.605 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=24 score=0.121"
+      },
+      {
+        "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+        "method": "vector",
+        "run_id": "acbff766-cc95-45b6-8be2-a1f0f93f2f42",
+        "new_rank": 17,
+        "old_rank": 122,
+        "source_type": "journal_article",
+        "candidate_id": "cd750db2-427c-4fc9-a9c0-18a7a8b1c427",
+        "rerank_reason": "local_vector_topical_fit sim=0.603 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=25 score=0.106"
+      },
+      {
+        "title": "על חוקתיות ועל סבירות: בעקבות בג&quot;ץ 5636/01 בקמן נ' שר העבודה והרווחה",
+        "method": "vector",
+        "run_id": "acbff766-cc95-45b6-8be2-a1f0f93f2f42",
+        "new_rank": 18,
+        "old_rank": 128,
+        "source_type": "journal_article",
+        "candidate_id": "73f969de-f789-4319-a81c-f12c860d56d5",
+        "rerank_reason": "local_vector_topical_fit sim=0.598 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=26 score=0.101"
+      },
+      {
+        "title": "הערות על זכויות קבוצתיות בישראל על רקע ספרו של נתן לרנר על זכויות קבוצתיות והפליה במשפט הבין-לאומי | הילי מודריק-אבן חן (כרך כה)",
+        "method": "vector",
+        "run_id": "acbff766-cc95-45b6-8be2-a1f0f93f2f42",
+        "new_rank": 16,
+        "old_rank": 129,
+        "source_type": "journal_article",
+        "candidate_id": "f3309e56-c909-4a66-b7de-1002d4384b29",
+        "rerank_reason": "local_vector_topical_fit sim=0.699 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=27 score=0.004"
+      },
+      {
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "method": "vector",
+        "run_id": "acbff766-cc95-45b6-8be2-a1f0f93f2f42",
+        "new_rank": 10,
+        "old_rank": 78,
+        "source_type": "journal_article",
+        "candidate_id": "ab752490-1961-45da-ad0f-19283ca54b0e",
+        "rerank_reason": "local_vector_topical_fit sim=0.696 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=28 score=0.003"
+      },
+      {
+        "title": "בשלות יחסית: ביקורת שיפוטית חוקתית יישומית או מופשטת",
+        "method": "vector",
+        "run_id": "acbff766-cc95-45b6-8be2-a1f0f93f2f42",
+        "new_rank": 11,
+        "old_rank": 81,
+        "source_type": "journal_article",
+        "candidate_id": "7da3d434-e689-4917-9628-12d43987bac1",
+        "rerank_reason": "local_vector_topical_fit sim=0.672 type=journal_article",
+        "displaced_candidate_method": null,
+        "displaced_candidate_reason": null
+      },
+      {
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "method": "vector",
+        "run_id": "acbff766-cc95-45b6-8be2-a1f0f93f2f42",
+        "new_rank": 6,
+        "old_rank": 74,
+        "source_type": "journal_article",
+        "candidate_id": "e745b7d2-d33d-4e55-a0d7-b82049a07cae",
+        "rerank_reason": "local_vector_topical_fit sim=0.758 type=journal_article",
+        "displaced_candidate_method": null,
+        "displaced_candidate_reason": null
+      },
+      {
+        "title": "לא חייבים לפסול הצעה פגומה - הצעה להסדר חלופי באשר לדינן של הצעות פגומות במכרז",
+        "method": "vector",
+        "run_id": "acbff766-cc95-45b6-8be2-a1f0f93f2f42",
+        "new_rank": 15,
+        "old_rank": 105,
+        "source_type": "journal_article",
+        "candidate_id": "6448b692-7edf-4154-874d-066f59f37115",
+        "rerank_reason": "local_vector_topical_fit sim=0.691 type=journal_article",
+        "displaced_candidate_method": null,
+        "displaced_candidate_reason": null
+      },
+      {
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "method": "vector",
+        "run_id": "acbff766-cc95-45b6-8be2-a1f0f93f2f42",
+        "new_rank": 9,
+        "old_rank": 76,
+        "source_type": "journal_article",
+        "candidate_id": "2a311362-bd2f-4782-9d05-b4b616e8bf89",
+        "rerank_reason": "local_vector_topical_fit sim=0.735 type=journal_article",
+        "displaced_candidate_method": null,
+        "displaced_candidate_reason": null
+      },
+      {
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "method": "vector",
+        "run_id": "acbff766-cc95-45b6-8be2-a1f0f93f2f42",
+        "new_rank": 7,
+        "old_rank": 75,
+        "source_type": "journal_article",
+        "candidate_id": "b181bede-0bcc-41d6-9fab-8c4916ef78d3",
+        "rerank_reason": "local_vector_topical_fit sim=0.752 type=journal_article",
+        "displaced_candidate_method": null,
+        "displaced_candidate_reason": null
+      }
+    ],
+    "pool": {
+      "found": 209,
+      "after_dedup": 30,
+      "drop_reason_counts": {
+        "dup_url": 19,
+        "dup_document_id": 20,
+        "discovery_listing_suppressed": 46
+      },
+      "by_method": {
+        "perplexity": 1,
+        "text": 22,
+        "vector": 8
+      },
+      "by_source_type": {
+        "israeli_law": 1,
+        "caselaw": 5,
+        "journal_article": 23,
+        "supreme_court_il": 1,
+        "knesset_research": 1
+      }
+    },
+    "listing_suppression": {
+      "suppressed": 46,
+      "discovery_listing_suppressed_drops": 46
+    },
+    "footnotes_count": 5,
+    "footnotes": [
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+        "title": "חוק-יסוד: כבוד האדם וחירותו",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+            "title": "חוק-יסוד: כבוד האדם וחירותו",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "israeli_law"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1550",
+        "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה; פגם בערבות להצעה במכרז ושאלת המידתיות בדיני המכרזים",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1550",
+            "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1423",
+            "title": "פגם בערבות להצעה במכרז ושאלת המידתיות בדיני המכרזים",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+            "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו); על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+            "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1550",
+            "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1550",
+        "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+        "number": 5,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1550",
+            "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ],
+    "answer": "עקרון המידתיות בתוך ביקורת חוקתית מוגדר כהשתלבות בין הגנה על זכויות יסוד לבין הכרה בצרכי הריבונות הציבורית: הוא משמש מסגרת נורמטיבית וכללית המכוונת את הערכת הפגיעות בזכויות על רקע מטרות לגיטימיות של המדינה, ומטרתו להבטיח כי הפגיעה תהיה מוסברת, מתואמת וכי לא קיימים אמצעים פחות פוגעניים להשגת אותה מטרה.¹\n\nמקורותיו של עקרון המידתיות במשפט הישראלי משולבים בין מובלעות חקיקתיות לערכי חוק־יסוד ובין השפעות השוואתיות וספרותיות; חוק־יסוד: כבוד האדם וחירותו מספק בסיס ערכי־חקיקתי לשקוּל המגבלות, ואילו הספרות והמחקר המקומי מציירים את מסלול ההטמעה שבו דוּקטורינות מנהליות והשוואתיות השפיעו על נוסחי המבחנים שיושמו בפסיקה.¹\n\nמבחן המידתיות עצמו נהוג לפרק לשלבים מובחנים: קביעת תכלית לגיטימית; שלב התאמת האמצעי לתכלית (suitability) או כשרות; שלב הנחיצות, שבו נבחן האם קיים אמצעי חלופי שפוגע פחות אך משיג את אותה תכלית; ולבסוף שלב האיזון המבחן הצר שבו נשקלת התועלת הציבורית מול הפגיעה בזכות. נוסחאות אלה ואופן החלוקתם ליסודות תמציתן בכתיבה החוקרת את הדוקטרינה ובניתוחי הפסיקה המקומית וההשוואתית.²\n\nיישום המבחן מחייב הבחנות פרוצדורליות ותכליתיות: פערי עומק הראייתיים בין שלבי המבחן, דרגת הביקורת שננקטת על הטענה המדינית, והבחנה בין מקרה־מקרה כתלות באופי הזכות ובאופי הפגיעה — כולם משפיעים על האינטנסיביות של הביקורת. זו הסיבה שספרות המשווה והישראלית מדגישה את ההבחנה בין מידתיות חוקתית לבין מבחנים מנהליים דומים, ומציינת כי דרישות הראיה והנימוק עשויות להשתנות בין תחומי השיפוט השונים.³\n\nקיימות נוסחאות שונות של מבחן המידתיות בין מערכות משפט: בגישות הקונטיננטליות ההגדרה נוטה לכלול שלבים מובנים וברורים, בעוד שבפרספקטיבות אחרות הדגש מועבר לאיזון סתמי ולפרשנות ערכית פתוחה; הדיונים ההשוואתיים שמוקדשים להבדלים אלה מדגישים לא רק את נוסח השלב אלא גם את משקלו היחסי של השופט כשעוסק באיזון בין זכויות למדיניות ציבורית.⁴\n\nהביקורת העיקרית המופנית כנגד מבחן המידתיות מדגישה שלוש נקודות מרכזיות: חשש להרחבת סמכויות שיפוטיות דרך איזון ערכי שאינו מוגדר דיו; בעייתיות קונספטואלית בגיבוש כללים ברורים ל'נחיצות' ולאיזון; וסכנת יישום בלתי עקבי בין תחומי משפט. תגובות תאורטיות להצדקת השימוש במידתיות מציעות הגבלות פרוצדורליות, דרישות נימוק ודיוק בנטל הראיה, וכן הפרדה בין שלבי המבחן כדי להפחית את חירות השיפוט בעריכת שיקולים מדיניים.⁵\n\nלסיכום וכדאי להדגיש מגבלה מעשית של סקירה זו: אמנם חוק־יסוד: כבוד האדם וחירותו מספק את המסגרת העיונית שבאמצעותה מופעלת מידתיות בישראל, אבל אוסף המקורות שברשותנו במאמר זה מכיל בעיקר ניתוחים תיאורטיים והשוואתיים וספרות על יישומים ספציפיים (למשל בתחום המינהלי, דיני מכרזים או ענישה), ולכן פירוש, המשקל והנסיקה המעשית של המבחנים בפסיקה מחייבים השלמה באמצעות עיון בפסיקה מחייבת שאינה מצוטטת כאן.¹\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n"
+  },
+  {
+    "id": "AW9",
+    "question": "כתוב פרק רקע תיאורטי על עקרון ההסתמכות והציפייה הלגיטימית במשפט המנהלי הישראלי",
+    "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+    "qa_log_id": "5ad0a9fd-dadc-4284-8d4d-b094af541f33",
+    "ms": 247791,
+    "latency": {
+      "total_ms": 247791,
+      "retrieval_ms": 43942,
+      "local_ms": 34839,
+      "local_text_ms_sum": 73950,
+      "local_vector_ms_sum": 4251
+    },
+    "local_lane": {
+      "queries": 18,
+      "text_hits": 97,
+      "vector_hits": 102,
+      "exact_hits": 0,
+      "lanes_used": {
+        "tsquery": 16,
+        "legacy": 2
+      },
+      "local_candidates": 186
+    },
+    "hebrew_fts_samples": [
+      {
+        "compact_query_he": "לשכת מנהלי ההשקעות בג 1715/97",
+        "term_selection": {
+          "raw_query": "לשכת מנהלי ההשקעות בג 1715/97",
+          "booster_terms": [
+            "בג",
+            "1715",
+            "97"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "לשכת מנהלי ההשקעות"
+          ],
+          "required_terms_old": [
+            "1715/97",
+            "ההשקעות"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [
+          "לשכת מנהלי ההשקעות"
+        ],
+        "added_variants_n": 0,
+        "text_hits": 6,
+        "top_text_titles": [
+          "מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
+          "פגם בערבות להצעה במכרז ושאלת המידתיות בדיני המכרזים",
+          "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+          "הדיאלוג החוקתי בישראל: שתי נקודות מבט | בל יוסף (כרך כב)",
+          "מוניטין ואסטרטגיה בבית המשפט העליון על סף המאה העשרים ואחת | שי דותן (כרך כג)"
+        ]
+      },
+      {
+        "compact_query_he": "ציפייה לגיטימית במשפט המנהלי הישראלי סקירה ספרותית",
+        "term_selection": {
+          "raw_query": "ציפייה לגיטימית במשפט המנהלי הישראלי סקירה ספרותית",
+          "booster_terms": [],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "ציפייה לגיטימית במשפט המנהלי",
+            "הישראלי סקירה ספרותית"
+          ],
+          "required_terms_old": [
+            "לגיטימית",
+            "הישראלי"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [
+          "ציפייה לגיטימית במשפט המנהלי",
+          "הישראלי סקירה ספרותית"
+        ],
+        "added_variants_n": 0,
+        "text_hits": 0,
+        "top_text_titles": []
+      },
+      {
+        "compact_query_he": "בג 1000/92 בבלי",
+        "term_selection": {
+          "raw_query": "בג 1000/92 בבלי",
+          "booster_terms": [
+            "בג",
+            "1000",
+            "92",
+            "בבלי"
+          ],
+          "selection_reason": "no_required_terms_all_boosters",
+          "required_terms_new": [],
+          "required_terms_old": [
+            "1000/92",
+            "בבלי"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [],
+        "added_variants_n": 13,
+        "text_hits": 6,
+        "top_text_titles": [
+          "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+          "ביהמ\"ש העליון, אב\"ד השופטת יעל וילנר, השופטת גילה כנפי שטייניץ, השופטת רות רונן: פס\"ד בעתירה נגד צו החרמה והריסה לדירה של מבצע פיגוע הירי קטלני שגרם למותו של אור אשכר ז\"ל (בג\"ץ 3231/23)",
+          "ביהמ\"ש העליון, אב\"ד השופט נעם סולברג, השופטת דפנה ברק ארז, השופט חאלד כבוב: פס\"ד עתירה נגד החלטת היועצת המשפטית לממשלה שלא להורות על פתיחה בחקירה פלילית בחשד למסירת מידע שלא ברשות (בג\"ץ 3823/22)",
+          "בימ\"ש עליון, אב\"ד השופט נעם סולברג, השופט דוד מינץ, השופטת יעל וילנר: החלטה בהמשך לדיון שהתקיים היום בעתירה למניעת בדיקת מבקר המדינה את מלחמת \"חרבות ברזל\" (בג\"ץ 1015-24)",
+          "ביהמ\"ש העליון, אב\"ד, הנשיא יצחק עמית, המשנה לנשיא נעם סולברג, השופטת דפנה ברק ארז: פס\"ד בעתירות בעניין פיטורי ראש השב\"כ (בג\"ץ 54321-03-25)"
+        ]
+      },
+      {
+        "compact_query_he": "חוק-יסוד כבוד האדם וחירותו סעיף סעיף",
+        "term_selection": {
+          "raw_query": "חוק-יסוד כבוד האדם וחירותו סעיף סעיף",
+          "booster_terms": [
+            "חוק",
+            "יסוד"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "חוק-יסוד כבוד האדם וחירותו",
+            "סעיף סעיף"
+          ],
+          "required_terms_old": [
+            "חוק-יסוד",
+            "וחירותו"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [
+          "חוק-יסוד כבוד האדם וחירותו",
+          "סעיף סעיף"
+        ],
+        "added_variants_n": 26,
+        "text_hits": 1,
+        "top_text_titles": [
+          "זכות הפרסום: הארות והערות לפרשת מקדונלד נ' מקדונלד'ס (אלוניאל) בע\"מ"
+        ]
+      },
+      {
+        "compact_query_he": "הסתמכות ועקרון ציפייה לגיטימית בפסיקה הישראלית מאמר",
+        "term_selection": {
+          "raw_query": "הסתמכות ועקרון ציפייה לגיטימית בפסיקה הישראלית מאמר",
+          "booster_terms": [
+            "מאמר"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "הסתמכות ועקרון",
+            "ציפייה לגיטימית בפסיקה הישראלית"
+          ],
+          "required_terms_old": [
+            "הישראלית",
+            "לגיטימית"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [
+          "הסתמכות ועקרון",
+          "ציפייה לגיטימית בפסיקה הישראלית"
+        ],
+        "added_variants_n": 13,
+        "text_hits": 6,
+        "top_text_titles": [
+          "מהו מאמר משפטי טוב? מחשבות בעקבות מאמרו של יאיר שגיא ״תמורה גדולה: עלייתו של משפט מינהלי דור 3.0״ (כרך נו)",
+          "בית המשפט המחוזי ב\"ש, אב\"ד סג\"נ השופט אריאל ואגו, השופט אלון אינפלד, השופט אריאל חזק: הכרעת דין לנאשם ברצח ישראל מלכה ז\"ל באשדוד (תפ\"ח 17506-10-17)",
+          "על הממשל התאגידי של התאגיד הממשלתי – בין שלוש שכבות של בעיית נציג (כרך נו)",
+          "בית המשפט המחוזי חיפה, אב\"ד ש' יחיאל ליפשיץ, ש' גלית ציגלר, ש' שמואל מנדלבום: הכרעת דין לאדוארד קצורה (תפ\"ח 11792-12-21)",
+          "תקנת השוק במכר על ידי רשות שנפל בהליכיו פגם חוקי"
+        ]
+      },
+      {
+        "compact_query_he": "העליון ציפייה לגיטימית הסתמכות דין עקרונות הבחנה בין להסתמכות במשפט המנהלי",
+        "term_selection": {
+          "raw_query": "העליון ציפייה לגיטימית הסתמכות דין עקרונות הבחנה בין להסתמכות במשפט המנהלי",
+          "booster_terms": [
+            "להסתמכות",
+            "במשפט",
+            "מנהלי"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "העליון ציפייה לגיטימית הסתמכות",
+            "דין עקרונות הבחנה בין"
+          ],
+          "required_terms_old": [
+            "לגיטימית",
+            "להסתמכות"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [
+          "העליון ציפייה לגיטימית הסתמכות",
+          "דין עקרונות הבחנה בין"
+        ],
+        "added_variants_n": 39,
+        "text_hits": 6,
+        "top_text_titles": [
+          "הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי",
+          "בית המשפט המחוזי בירושלים, סגן הנשיא השופט ארנון דראל: ערעור מנהלי על פסק דין של בית הדין לעררים לפי חוק הכניסה לישראל (עמ\"נ 12363-10-23)",
+          "מהפכת השחרור המנהלי – ממדיניות כליאה מבוססת ביקוש למדיניות מבוססת היצע",
+          "בית המשפט לענייני משפחה באשדוד, השופטת הילה אוחיון גליקסמן: החלטה בבקשה לקביעת שכר טרחת המבקשים בתפקידם כמנהלי עיזבון (ת\"ע 47177-09-14)",
+          "ביהמ\"ש לענייני משפחה בחיפה, השופטת לירון זרבל קדשאי: החלטה בעניין שכר טרחת מנהלי עזבון (ת\"ע 25076-08-22)"
+        ]
+      }
+    ],
+    "vector_tuning": {
+      "mode": "academic_writing",
+      "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+      "enabled": true,
+      "new_quota": 4,
+      "old_quota": 2,
+      "elapsed_ms": 46,
+      "average_vector_score": 0.6233,
+      "final_pool_size_after": 30,
+      "final_pool_size_before": 30,
+      "vector_candidates_seen": 90,
+      "text_candidates_displaced": 12,
+      "vector_candidates_admitted_after": 12,
+      "vector_candidates_admitted_before": 0
+    },
+    "reranking": [
+      {
+        "title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 0,
+        "old_rank": 65,
+        "source_type": "journal_article",
+        "candidate_id": "09e93af2-813c-4a3d-834c-f1cc9d8bfa58",
+        "rerank_reason": "local_vector_topical_fit sim=0.678 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=18 score=0.102"
+      },
+      {
+        "title": "התעמרות בעבודה: בין פסיכולוגיה למשפט, בין חקיקה לפסיקה | אורית קמיר (כרך כא)",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 9,
+        "old_rank": 113,
+        "source_type": "journal_article",
+        "candidate_id": "18e5ec78-d377-4ead-a72f-7efa1999c0a1",
+        "rerank_reason": "local_vector_topical_fit sim=0.675 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=19 score=0.006"
+      },
+      {
+        "title": "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 1,
+        "old_rank": 82,
+        "source_type": "journal_article",
+        "candidate_id": "cffcbe06-0511-4b2e-a4cb-f12e1ef76a5a",
+        "rerank_reason": "local_vector_topical_fit sim=0.667 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=20 score=0.005"
+      },
+      {
+        "title": "רצון חופשי, יעילות כלכלית ושקילות התמורות (בשולי ע\"א 5493/95 דיור לעולה (ע.א.ק) נ' קרן, פ\"ד נ(4) 509)",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 16,
+        "old_rank": 124,
+        "source_type": "journal_article",
+        "candidate_id": "0f707268-372d-4ca6-8c8f-cd89385e2df0",
+        "rerank_reason": "local_vector_topical_fit sim=0.664 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=21 score=0.004"
+      },
+      {
+        "title": "בג\"ץ 2123-08 - פלוני נ. פלוני",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 6,
+        "old_rank": 98,
+        "source_type": "supreme_court_il",
+        "candidate_id": "7e83e794-fca4-4a49-9653-3f3a6b0fce42",
+        "rerank_reason": "local_vector_topical_fit sim=0.637 type=supreme_court_il",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=22 score=0.004"
+      },
+      {
+        "title": "חוק שיפוט בתי דין רבניים (נישואין וגירושין)",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 15,
+        "old_rank": 121,
+        "source_type": "israeli_law",
+        "candidate_id": "d759a677-b007-4a24-8440-b8d1dbe567c2",
+        "rerank_reason": "local_vector_topical_fit sim=0.636 type=israeli_law",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=23 score=0.003"
+      },
+      {
+        "title": "דנ\"מ 8857/18 LESLI POL SILVA EDIRISINHGE -13 אח' נ׳ מדינת ישראל- רשו האוכ פסק דין",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 12,
+        "old_rank": 114,
+        "source_type": "caselaw",
+        "candidate_id": "72d7201a-2984-4c5e-9190-37a69d7a129a",
+        "rerank_reason": "local_vector_topical_fit sim=0.621 type=caselaw",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=24 score=0.102"
+      },
+      {
+        "title": "רע\"א 4554-24 מדינת ישראל נ׳ פלוני פסק דין",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 13,
+        "old_rank": 115,
+        "source_type": "caselaw",
+        "candidate_id": "3be9744c-4853-44e1-9e1f-d16136da3b31",
+        "rerank_reason": "local_vector_topical_fit sim=0.621 type=caselaw",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=25 score=0.103"
+      },
+      {
+        "title": "דת או DATA: מדיניות הרבנות בהליכי בירור יהדות | אלעד קפלן (כרך י\"ח)",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 2,
+        "old_rank": 78,
+        "source_type": "journal_article",
+        "candidate_id": "7c2b6114-db82-4288-92e7-7787b1eb4c8b",
+        "rerank_reason": "local_vector_topical_fit sim=0.579 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=26 score=0.023"
+      },
+      {
+        "title": "בג\"ץ 466-07 - ח\"כ זהבה גלאון-יו\"ר סיעת מר\"צ-יחד נ. היועץ המשפטי לממשלה",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 10,
+        "old_rank": 109,
+        "source_type": "supreme_court_il",
+        "candidate_id": "1063d03d-959a-4fc5-a69b-68a3515cd7b5",
+        "rerank_reason": "local_vector_topical_fit sim=0.575 type=supreme_court_il",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=27 score=0.016"
+      },
+      {
+        "title": "\"וגשֵר הסדק שנפער\": תרבות הסדרית בבג\"ץ וקריאה למיסוד מנגנון גישור בג\"צי ייעודי (כרך נה)",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 11,
+        "old_rank": 110,
+        "source_type": "journal_article",
+        "candidate_id": "29406bd3-e89e-43a5-bdcd-a17587062d4e",
+        "rerank_reason": "local_vector_topical_fit sim=0.564 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=28 score=0.005"
+      },
+      {
+        "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 8,
+        "old_rank": 99,
+        "source_type": "caselaw",
+        "candidate_id": "6c061a25-4c25-4ce8-9ed6-8b7898783dd9",
+        "rerank_reason": "local_vector_topical_fit sim=0.561 type=caselaw",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=29 score=0.005"
+      },
+      {
+        "title": "רע\"א 4696/19 פלוני נ׳ קצין התגמולים פסק דין",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 4,
+        "old_rank": 85,
+        "source_type": "caselaw",
+        "candidate_id": "3b766a90-0f2b-4f6d-a7ab-2ecba77d328a",
+        "rerank_reason": "local_vector_topical_fit sim=0.655 type=caselaw",
+        "displaced_candidate_method": null,
+        "displaced_candidate_reason": null
+      },
+      {
+        "title": "הסמכות המכוננת הראשונית וההגבלות המוטלות עליה | אהרן ברק (כרך כח)",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 14,
+        "old_rank": 118,
+        "source_type": "journal_article",
+        "candidate_id": "fab7651c-8194-4b76-92da-cc0f3ecdd4d5",
+        "rerank_reason": "local_vector_topical_fit sim=0.648 type=journal_article",
+        "displaced_candidate_method": null,
+        "displaced_candidate_reason": null
+      },
+      {
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 5,
+        "old_rank": 86,
+        "source_type": "caselaw",
+        "candidate_id": "23be08b8-73b4-4106-aca7-7902913a54d4",
+        "rerank_reason": "local_vector_topical_fit sim=0.648 type=caselaw",
+        "displaced_candidate_method": null,
+        "displaced_candidate_reason": null
+      },
+      {
+        "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+        "method": "vector",
+        "run_id": "9f6b7795-3302-4e48-9a72-f664fc5115b9",
+        "new_rank": 18,
+        "old_rank": 138,
+        "source_type": "journal_article",
+        "candidate_id": "dbd3d3f1-4284-49a6-a537-4d899365a7fe",
+        "rerank_reason": "local_vector_topical_fit sim=0.646 type=journal_article",
+        "displaced_candidate_method": null,
+        "displaced_candidate_reason": null
+      }
+    ],
+    "pool": {
+      "found": 186,
+      "after_dedup": 30,
+      "drop_reason_counts": {
+        "dup_url": 1,
+        "dup_document_id": 2,
+        "vector_quota_per_claim": 4,
+        "discovery_listing_suppressed": 43
+      },
+      "by_method": {
+        "vector": 12,
+        "text": 18
+      },
+      "by_source_type": {
+        "journal_article": 13,
+        "caselaw": 14,
+        "supreme_court_il": 2,
+        "knesset_research": 1
+      }
+    },
+    "listing_suppression": {
+      "suppressed": 43,
+      "discovery_listing_suppressed_drops": 43
+    },
+    "footnotes_count": 4,
+    "footnotes": [
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11//DI02.pdf",
+        "title": "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד); הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11//DI02.pdf",
+            "title": "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_ebbf6fda97d74731a9cea34d71d369e4.pdf",
+            "title": "הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_8d19e3e968964a74a3a0eb22109b1c67.pdf",
+        "title": "מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני; הדיאלוג החוקתי בישראל: שתי נקודות מבט | בל יוסף (כרך כב); הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_8d19e3e968964a74a3a0eb22109b1c67.pdf",
+            "title": "מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://runilawreview.org/2020/01/08/vol22_yosef/",
+            "title": "הדיאלוג החוקתי בישראל: שתי נקודות מבט | בל יוסף (כרך כב)",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11//DI02.pdf",
+            "title": "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_ebbf6fda97d74731a9cea34d71d369e4.pdf",
+        "title": "הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי; הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד); על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_ebbf6fda97d74731a9cea34d71d369e4.pdf",
+            "title": "הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11//DI02.pdf",
+            "title": "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://runilawreview.org/2017/11/22/vol20_barak/",
+            "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      },
+      {
+        "url": "https://runilawreview.org/2020/01/08/vol22_yosef/",
+        "title": "הדיאלוג החוקתי בישראל: שתי נקודות מבט | בל יוסף (כרך כב); מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://runilawreview.org/2020/01/08/vol22_yosef/",
+            "title": "הדיאלוג החוקתי בישראל: שתי נקודות מבט | בל יוסף (כרך כב)",
+            "source_type": "journal_article"
+          },
+          {
+            "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_8d19e3e968964a74a3a0eb22109b1c67.pdf",
+            "title": "מדוע לא ביטלה הכנסת את חוק-יסוד: כבוד האדם וחירותו? על הסטטוס-קוו כקושי אנטי-רובני",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "compound"
+      }
+    ],
+    "answer": "הפסקה הראשונה מתמקדת בהבחנה המושגית בין 'הסתמכות' לבין 'ציפייה לגיטימית' בהקשר של המשפט המנהלי: 'הסתמכות' מתוארת כתופעה שבה יחיד או קבוצה מעמידים את החלטותיהם על בסיס מעשה, מדיניות או התנהלות ממשלית וכתוצאה מכך נגרם להם נזק כאשר ההליך או המדיניות משתנים; 'ציפייה לגיטימית' מזוהה יותר עם מצב שבו הרשאה, הבטחה או הוראה מפורשת של רשות ציבורית יצרו אצל הפרט ציפייה שהמדיניות או ההחלטה יימשכו, והציפייה מבקשת הגנה משפטית הן במישור הפרוצדורלי והן במישור התוצאתי. בגישה התיאורטית שהספרות הקרובה אל הנושא מציעה, שני המושגים חולקים שורש ערכי במשמעות כבוד האדם וגמולו של השלטון כלפי היחיד, אך הם נבדלים בתכלית ובמניע־התיקון: ההגנה על הסתמכות מכוונת בעיקר לתיקון נזק שנגרם בעקבות פעולה ממשלתית, בעוד שציפייה לגיטימית מתמקדת בהגנה על אמון שנוצר מן ההצהרות של הרשות ולרוב נושאת עימה דרישות איזון בין אינטרסים פרטיים וציבוריים.¹\n\nבהקשר של הבסיס החוקי והסמכויות המעגנות ההגנות הללו במשפט הישראלי, התיאורטיה שמקורותיה בספרות החוקתית והמנהלית מצביעה על כך שעוגני ההגנה נובעים בעיקר מערכים חוקתיים ובפרט מההמשגה של כבוד האדם וחירותו כעקרונות מייסדים של הסדר המשפטי; מאידך, במאגר המסמכים שסופק כאן אין נוסח של חוק פרטני שתוקצב כתחום חקיקה מפורש לציפייה הלגיטימית או להסעד בגין הסתמכות, אלא דיון שממקם את ההגנה בתוך דיאלוג רחב בין שיקולי שלטון למחויבויות החוקתיות. מסקנה זו מחייבת זהירות דוקטרינרית: עיגון ההגנה מופיע במימד הערכי והפרשני של המכנה החוקתי, והיישום המעשי שלה משתנה לפי פרשנות שיפוטית ומנגנוני הסעד אשר הספרות חוקרת ומנתחת.²\n\nלגבי תנאי היווצרות הציפייה וההסתמכות והיקפן, הספרות המתמקדת בזכויות מנהליות מסכמת כמה יסודות פרקטיים שחוזרים בדיונים הדוקטרינריים: הצגת מדיניות או התחייבות מצד הרשות, אופן הגיבוי המעשי של ההצהרה (מפורש או משתמע), הסתמכות סבירה מצד הנפגע שניתן להוכיחה, ופגיעה ממשית או נזק שנגרם בעקבות השינוי. נוסף על כך, דנים המחברים בהבחנה בין ציפייה פרוצדורלית—הזכות לתהליך הוגן ובהודעה טרם שינוי לבין ציפייה תוצאתית—ציפייה לתוצאה ספציפית של מדיניות; משקלם של יסודות אלה נבחן בדרך כלל באמצעות איזון בין עניין הפרט לעניין הציבור, ובמובן זה הספרות מדגישה את הצורך בגישת איזון שעשויה להוליד סעדים שונים, מפיצוי כספי ועד סעד מבני או צווי מנהליים מתונים יותר.³\n\nנושא העדכון והשינוי המדיניותי עתיר סתירות נורמטיביות: מחד יש חשיבות לגמישות מנהלית ויכולת השלטון להגיב לצורכי הציבור המשתנים, ומאידך קיימת חובה להגן על יחידים שנפגעו מהסתמכות סבירה על משטר שנקבע על ידי הרשות. בספרות מובהרת התביעה לצורך בתהליכי הודעה והסדרי מעבר סבירים, ולעתים אף לשקול פיצוי כאשר השינוי יוצר עוול לא פרופורציונלי; כמו כן נדון תפקידו של בית המשפט בהענקת סעד—האם להורות על ביטול שינוי, לצוות על שיקום המצב או להטיל פיצוי כספי—והטיעונים משקללים גם את כושר היישום המנהלי ואת השיקולים המדיניים והציבוריים שעשויים להצדיק שינוי.\n\nלבסוף, הביקורת הנורמטיבית והשוואתית שסוגרת את הרקע התיאורטי מציעה שהשאלה האם להעניק הגנה רחבה לציפיות הפרט נשענת על מתחים בין שלושה ערכים עיקריים: צדק תיקוני ויציבות שיפוטית שמצביעים בעד הגנה רחבה, לעומת יעילות, גמישות ומנדט ציבורי שמתבקשים לטובת מתן מרחב פעולה לממשלות; בדיון הספרותי שמקורותיו הניתנים כאן מדגישים את חשיבות הדיאלוג בין שיפוט למחוקק ואת הצורך במאזן מעשי שמתקן עוולות אך לא חונק מדיניות ציבורית. המחקר הסקני מציע אפוא מסגרת שדוגלת בגישה מאוזנת—הגנה מותנית, מדורגת וסמוכה להשקפה על סמכות השיפוט במתן סעד—כאופציה פרקטית שמתאימה למשפט שבו ערכים חוקתיים משמשים כנורמות מפרשות את הדין המנהלי.⁴\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n"
+  },
+  {
+    "id": "AW7",
+    "question": "כתוב פסקת טיעון אקדמית התומכת בגישה לפיה בית המשפט רשאי להתערב במדיניות מקצועית של רשויות מנהליות במקרים חריגים",
+    "run_id": "dde0d33a-4797-48b7-823d-075e37f208c4",
+    "qa_log_id": "8e651e91-e429-4578-a991-ed0950752faf",
+    "ms": 182214,
+    "latency": {
+      "total_ms": 182214,
+      "retrieval_ms": 16567,
+      "local_ms": 7677,
+      "local_text_ms_sum": 23972,
+      "local_vector_ms_sum": 3199
+    },
+    "local_lane": {
+      "queries": 11,
+      "text_hits": 62,
+      "vector_hits": 61,
+      "exact_hits": 0,
+      "lanes_used": {
+        "tsquery": 11
+      },
+      "local_candidates": 110
+    },
+    "hebrew_fts_samples": [
+      {
+        "compact_query_he": "סבירות חוק-יסוד כבוד האדם וחירותו סעיף סעיף",
+        "term_selection": {
+          "raw_query": "סבירות חוק-יסוד כבוד האדם וחירותו סעיף סעיף",
+          "booster_terms": [
+            "סעיף סעיף",
+            "חוק",
+            "יסוד"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "סבירות",
+            "חוק-יסוד כבוד האדם וחירותו"
+          ],
+          "required_terms_old": [
+            "חוק-יסוד",
+            "וחירותו"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [
+          "חוק-יסוד כבוד האדם וחירותו",
+          "סעיף סעיף"
+        ],
+        "added_variants_n": 39,
+        "text_hits": 6,
+        "top_text_titles": [
+          "פרטי מסמך",
+          "מי קובע את עקרונות היסוד של השיטה המשפטית? פסקי-הדין בעניין ביטול עילת הסבירות ובעניין נבצרות ראש הממשלה (כרך נה)",
+          "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+          "הביקורת השיפוטית על־פי השופט מנחם אלון",
+          "ביה\"ד האזורי לעבודה ת\"א, השופט הבכיר כאמל אבו קאעוד: פס\"ד בנושא שלילת פיצויים מסייעת בגן ילדים בשל אלימות (סע\"ש 5815-05-20)"
+        ]
+      },
+      {
+        "compact_query_he": "סבירות לשכת מנהלי ההשקעות בג 1715/97",
+        "term_selection": {
+          "raw_query": "סבירות לשכת מנהלי ההשקעות בג 1715/97",
+          "booster_terms": [
+            "בג",
+            "1715",
+            "97"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "סבירות",
+            "לשכת מנהלי ההשקעות"
+          ],
+          "required_terms_old": [
+            "1715/97",
+            "ההשקעות"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [
+          "לשכת מנהלי ההשקעות"
+        ],
+        "added_variants_n": 13,
+        "text_hits": 2,
+        "top_text_titles": [
+          "הדיאלוג החוקתי בישראל: שתי נקודות מבט | בל יוסף (כרך כב)",
+          "חרדים לביטחון המדינה: מתווה מותאם לגיוס חרדים ומבט מחודש בזכות לשוויון (כרך נה)"
+        ]
+      },
+      {
+        "compact_query_he": "סבירות בנק המזרחי 6821/93",
+        "term_selection": {
+          "raw_query": "סבירות בנק המזרחי 6821/93",
+          "booster_terms": [
+            "6821",
+            "93"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "סבירות",
+            "בנק המזרחי"
+          ],
+          "required_terms_old": [
+            "6821/93",
+            "המזרחי"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [
+          "בנק המזרחי"
+        ],
+        "added_variants_n": 13,
+        "text_hits": 6,
+        "top_text_titles": [
+          "ע\"א 3794/18 ע\"א 3800/18 חיים טולדנו טויגה און ליין בע\"מ נ׳ בנק הבינלאומי הראשון פסק דין",
+          "מי קובע את עקרונות היסוד של השיטה המשפטית? פסקי-הדין בעניין ביטול עילת הסבירות ובעניין נבצרות ראש הממשלה (כרך נה)",
+          "חוסר התחרותיות במערכת הבנקאות בישראל – בחינה מחודשת",
+          "רשימה: האם סעד למען הצדק הוא באמת צודק? פסילת חוקי־יסוד כמקרה בוחן | אופיר לוי",
+          "מה קרה כאן למן שנות השבעים?"
+        ]
+      },
+      {
+        "compact_query_he": "סבירות שיקול דעת מנהלית התערבות שיפוטית קריטריונים דין ישראלים מקצועי רשות",
+        "term_selection": {
+          "raw_query": "סבירות שיקול דעת מנהלית התערבות שיפוטית קריטריונים דין ישראלים מקצועי רשות",
+          "booster_terms": [
+            "מנהלית התערבות שיפוטית קריטריונים",
+            "דין ישראלים",
+            "מקצועי",
+            "רשות"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "סבירות",
+            "שיקול דעת"
+          ],
+          "required_terms_old": [
+            "קריטריונים",
+            "התערבות"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [
+          "שיקול דעת",
+          "מנהלית התערבות שיפוטית קריטריונים",
+          "דין ישראלים"
+        ],
+        "added_variants_n": 39,
+        "text_hits": 6,
+        "top_text_titles": [
+          "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+          "שיקול דעת שיפוטי לאהרן ברק",
+          "שני מושגים של ריסון - וסבירות",
+          "שיקול דעת שיפוטי: העידן השלישי",
+          "שיקול דעת שיפוטי : העידן השלישי"
+        ]
+      },
+      {
+        "compact_query_he": "סבירות שיקול דעת חוק יסודות המינהל התקין עקרונות התערבות שיפוטית בסמכות רשויות מנהליות מדרג התשמ",
+        "term_selection": {
+          "raw_query": "סבירות שיקול דעת חוק יסודות המינהל התקין עקרונות התערבות שיפוטית בסמכות רשויות מנהליות מדרג התשמ",
+          "booster_terms": [
+            "חוק יסודות המינהל התקין",
+            "עקרונות התערבות שיפוטית בסמכות",
+            "רשויות",
+            "מנהליות",
+            "מדרג",
+            "תשמ"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "סבירות",
+            "שיקול דעת"
+          ],
+          "required_terms_old": [
+            "התערבות",
+            "מנהליות"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [
+          "שיקול דעת",
+          "חוק יסודות המינהל התקין",
+          "עקרונות התערבות שיפוטית בסמכות"
+        ],
+        "added_variants_n": 40,
+        "text_hits": 6,
+        "top_text_titles": [
+          "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+          "שיקול דעת שיפוטי לאהרן ברק",
+          "שני מושגים של ריסון - וסבירות",
+          "שיקול דעת שיפוטי: העידן השלישי",
+          "שיקול דעת שיפוטי : העידן השלישי"
+        ]
+      },
+      {
+        "compact_query_he": "סבירות שיקול דעת העליון פסיקה התערבות במדיניות מקצועי מקרים חריגים מקצועית רשות מנהלית מנחה",
+        "term_selection": {
+          "raw_query": "סבירות שיקול דעת העליון פסיקה התערבות במדיניות מקצועי מקרים חריגים מקצועית רשות מנהלית מנחה",
+          "booster_terms": [
+            "העליון פסיקה התערבות במדיניות",
+            "מקצועי",
+            "חריגים",
+            "מקצועית",
+            "מנהלית",
+            "מקרים",
+            "רשות",
+            "מנחה"
+          ],
+          "selection_reason": "salient_required_terms",
+          "required_terms_new": [
+            "סבירות",
+            "שיקול דעת"
+          ],
+          "required_terms_old": [
+            "במדיניות",
+            "התערבות"
+          ],
+          "dropped_generic_terms": []
+        },
+        "preserved_phrases": [
+          "שיקול דעת",
+          "העליון פסיקה התערבות במדיניות"
+        ],
+        "added_variants_n": 40,
+        "text_hits": 6,
+        "top_text_titles": [
+          "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+          "שיקול דעת שיפוטי לאהרן ברק",
+          "שני מושגים של ריסון - וסבירות",
+          "שיקול דעת שיפוטי: העידן השלישי",
+          "שיקול דעת שיפוטי : העידן השלישי"
+        ]
+      }
+    ],
+    "vector_tuning": {
+      "mode": "academic_writing",
+      "run_id": "dde0d33a-4797-48b7-823d-075e37f208c4",
+      "enabled": true,
+      "new_quota": 4,
+      "old_quota": 2,
+      "elapsed_ms": 26,
+      "average_vector_score": 0.5925,
+      "final_pool_size_after": 23,
+      "final_pool_size_before": 23,
+      "vector_candidates_seen": 49,
+      "text_candidates_displaced": 9,
+      "vector_candidates_admitted_after": 9,
+      "vector_candidates_admitted_before": 0
+    },
+    "reranking": [
+      {
+        "title": "התעמרות בעבודה: בין פסיכולוגיה למשפט, בין חקיקה לפסיקה | אורית קמיר (כרך כא)",
+        "method": "vector",
+        "run_id": "dde0d33a-4797-48b7-823d-075e37f208c4",
+        "new_rank": 30,
+        "old_rank": 81,
+        "source_type": "journal_article",
+        "candidate_id": "fb90f83e-d16b-4ac5-a5b9-6cf094f88ddb",
+        "rerank_reason": "local_vector_topical_fit sim=0.675 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=14 score=0.319"
+      },
+      {
+        "title": "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
+        "method": "vector",
+        "run_id": "dde0d33a-4797-48b7-823d-075e37f208c4",
+        "new_rank": 23,
+        "old_rank": 58,
+        "source_type": "journal_article",
+        "candidate_id": "3df8a3ce-1eef-4add-a441-30fd6282a8a7",
+        "rerank_reason": "local_vector_topical_fit sim=0.672 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=15 score=0.402"
+      },
+      {
+        "title": "הסדרת מצבי חדלות פירעון בלשכת ההוצאה לפועל | שחר קטוביץ (כרך י)",
+        "method": "vector",
+        "run_id": "dde0d33a-4797-48b7-823d-075e37f208c4",
+        "new_rank": 20,
+        "old_rank": 48,
+        "source_type": "journal_article",
+        "candidate_id": "ae704b52-ed20-48e0-95f0-3d5b000c78b8",
+        "rerank_reason": "local_vector_topical_fit sim=0.668 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=16 score=0.268"
+      },
+      {
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "method": "vector",
+        "run_id": "dde0d33a-4797-48b7-823d-075e37f208c4",
+        "new_rank": 21,
+        "old_rank": 49,
+        "source_type": "journal_article",
+        "candidate_id": "8e4c461a-40b9-4f43-9f80-279ae84c2a25",
+        "rerank_reason": "local_vector_topical_fit sim=0.662 type=journal_article",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=17 score=0.421"
+      },
+      {
+        "title": "בג\"ץ 953/11 עבד אלפתאח סאלחה נ׳ שר הביטחון פסק דין (27.08.2020)",
+        "method": "vector",
+        "run_id": "dde0d33a-4797-48b7-823d-075e37f208c4",
+        "new_rank": 31,
+        "old_rank": 69,
+        "source_type": "caselaw",
+        "candidate_id": "9b45e98b-e1f4-40cd-ba84-6df27f2ab756",
+        "rerank_reason": "local_vector_topical_fit sim=0.544 type=caselaw",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=18 score=0.286"
+      },
+      {
+        "title": "רע\"א 65-06 - עזבון המנוח דוד בר לבב נ. מנחם עצמון,עו\"ד",
+        "method": "vector",
+        "run_id": "dde0d33a-4797-48b7-823d-075e37f208c4",
+        "new_rank": 35,
+        "old_rank": 79,
+        "source_type": "supreme_court_il",
+        "candidate_id": "755e72e5-555a-461b-beac-698932163e1b",
+        "rerank_reason": "local_vector_topical_fit sim=0.544 type=supreme_court_il",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=19 score=0.321"
+      },
+      {
+        "title": "בג\"ץ 5666-03 - עמותת קו לעובד נ. בית הדין הארצי לעבודה בירושלים",
+        "method": "vector",
+        "run_id": "dde0d33a-4797-48b7-823d-075e37f208c4",
+        "new_rank": 32,
+        "old_rank": 76,
+        "source_type": "supreme_court_il",
+        "candidate_id": "599fccd3-e3aa-4b27-a223-ce3c112ba7c2",
+        "rerank_reason": "local_vector_topical_fit sim=0.575 type=supreme_court_il",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=20 score=0.003"
+      },
+      {
+        "title": "צעירים חסרי עורף משפחתי",
+        "method": "vector",
+        "run_id": "dde0d33a-4797-48b7-823d-075e37f208c4",
+        "new_rank": 33,
+        "old_rank": 77,
+        "source_type": "knesset_research",
+        "candidate_id": "261b21ea-6461-4dc4-b31c-974db2fcc46f",
+        "rerank_reason": "local_vector_topical_fit sim=0.571 type=knesset_research",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=21 score=0.103"
+      },
+      {
+        "title": "שימוש בתוכנות בקרה בבחינות מרחוק במערכת",
+        "method": "vector",
+        "run_id": "dde0d33a-4797-48b7-823d-075e37f208c4",
+        "new_rank": 27,
+        "old_rank": 59,
+        "source_type": "knesset_research",
+        "candidate_id": "90d9def6-ff67-426c-b098-5fa4adf484f6",
+        "rerank_reason": "local_vector_topical_fit sim=0.566 type=knesset_research",
+        "displaced_candidate_method": "text",
+        "displaced_candidate_reason": "displaced_by_local_vector rank=22 score=0.101"
+      },
+      {
+        "title": "&#39;ענוחה&#39; — בין עבודה למנוחה בעידן הדיגיטלי",
+        "method": "vector",
+        "run_id": "dde0d33a-4797-48b7-823d-075e37f208c4",
+        "new_rank": 28,
+        "old_rank": 57,
+        "source_type": "journal_article",
+        "candidate_id": "3771a0a5-df3d-4d06-a8e1-02df706a7597",
+        "rerank_reason": "local_vector_topical_fit sim=0.546 type=journal_article",
+        "displaced_candidate_method": null,
+        "displaced_candidate_reason": null
+      },
+      {
+        "title": "תקנות השקעות משותפות בנאמנות (השתתפות מנהל קרן באסיפת מחזיקים)",
+        "method": "vector",
+        "run_id": "dde0d33a-4797-48b7-823d-075e37f208c4",
+        "new_rank": 38,
+        "old_rank": 88,
+        "source_type": "israeli_law",
+        "candidate_id": "c34f9e00-d166-4907-8439-3669199a4431",
+        "rerank_reason": "local_vector_topical_fit sim=0.544 type=israeli_law",
+        "displaced_candidate_method": null,
+        "displaced_candidate_reason": null
+      },
+      {
+        "title": "תקנות התכנון והבנייה (הקמת מכון בקרה ודרכי עבודתו)",
+        "method": "vector",
+        "run_id": "dde0d33a-4797-48b7-823d-075e37f208c4",
+        "new_rank": 39,
+        "old_rank": 89,
+        "source_type": "israeli_law",
+        "candidate_id": "fc4fe1e8-7a9b-4738-8c18-692ee90864dc",
+        "rerank_reason": "local_vector_topical_fit sim=0.543 type=israeli_law",
+        "displaced_candidate_method": null,
+        "displaced_candidate_reason": null
+      }
+    ],
+    "pool": {
+      "found": 110,
+      "after_dedup": 23,
+      "drop_reason_counts": {
+        "dup_url": 1,
+        "dup_document_id": 15,
+        "discovery_listing_suppressed": 14
+      },
+      "by_method": {
+        "perplexity": 1,
+        "text": 14,
+        "vector": 9
+      },
+      "by_source_type": {
+        "israeli_law": 2,
+        "journal_article": 15,
+        "caselaw": 3,
+        "knesset_research": 1,
+        "supreme_court_il": 3
+      }
+    },
+    "listing_suppression": {
+      "suppressed": 14,
+      "discovery_listing_suppressed_drops": 14
+    },
+    "footnotes_count": 1,
+    "footnotes": [
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+        "title": "חוק יסוד: כבוד האדם וחירותו",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+            "title": "חוק יסוד: כבוד האדם וחירותו",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "israeli_law"
+      }
+    ],
+    "answer": "בית המשפט רשאי להתערב במדיניות מקצועית של רשות מנהלית במקרים חריגים שבהם עומדים קריטריונים משפטיים ברורים, ויש לנקוט בגישה שמאזנת בין כבוד תחום המומחיות המנהלי לבין ההגנה על שלטון החוק וזכויות יסוד. הטיעון הנגדי החזק טוען כי עקרון הפרדת הרשויות וההתמחות המקצועית של הרשות מגלמים מניע סביר להימנעות מבחינה שיפוטית מעמיקה של בחירות מדיניות, משיקולים פרקטיים של יעילות ומהירות ביצוע וכתוצאה מכך יש להותיר את ההכרעה למנהל. ההבחנה המשפטית המדויקת היא כי אין מדובר בהחלפת שיקול הדעת המקצועי אלא בביקורת משפטית ממוקדת: בדיקת החוקיות והסמכות, חיפוש אחר חוסר סבירות קיצוני או תוצאה בלתי מתקבלת על הדעת, בדיקת פגיעה בזכויות היסוד החלות לפי חוק־יסוד ומבחני מידתיות וסבירות שיבחנו האם פגיעת הרשות מוצדקת ביחס למטרה. הכרעה נובעת מאבחנה זו: בתי המשפט יכולים להתערב באמת במקרים שבהם מתקיימים אחד או יותר מהקריטריונים הנ״ל, ויש לעשות כן באופן מצומצם ומנושל—באמצעות סעד מצומצם, הנחיה לתיקון הליך או ביטול החלטה בלתי חוקית—אולם גבולות ההתערבות נשארים נקודת מתח דוקטרינית שדורשת פתרון עיוני ופרגמטי במשפט המינהלי.¹\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n"
+  }
+]
