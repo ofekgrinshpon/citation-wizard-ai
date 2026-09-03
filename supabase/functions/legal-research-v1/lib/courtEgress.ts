@@ -34,6 +34,9 @@
  *                              headers are forwarded under this prefix).
  */
 
+declare const Deno: { env: { get(key: string): string | undefined } };
+
+
 export const COURT_EGRESS_VERSION = "official_court_egress_path_v1";
 
 export const COURT_EGRESS_LIMITS = {

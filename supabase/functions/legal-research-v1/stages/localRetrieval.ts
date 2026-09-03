@@ -4,7 +4,10 @@
 // - Vector recall capped: max 2 per claim (applied in candidatePool too); ordering ensured by score weights.
 
 import type { RetrievalGovernor } from "./retrievalGovernor.ts";
+// @ts-ignore — remote Deno module, resolved at deploy time.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+
+declare const Deno: { env: { get(key: string): string | undefined } };
 import { Candidate, CAPS, Claim, Query, StageRun } from "../lib/types.ts";
 import { buildHebrewFtsQuery } from "./hebrewFts.ts";
 
@@ -503,24 +506,25 @@ async function exactAuthorityLookup(
 
 // ─── RPC helpers ────────────────────────────────────────────────────────────
 
-async function runRpcDiag<T = unknown>(
-  promise: PromiseLike<{ data: T | null; error: { message?: string } | null }>,
+async function runRpcDiag<T extends unknown[] = unknown[]>(
+  promise: PromiseLike<{ data: unknown; error: { message?: string } | null }>,
   ms: number,
-): Promise<{ status: "ok" | "empty" | "error" | "timeout"; rows: T extends unknown[] ? T : never[]; error?: string; ms: number }> {
+): Promise<{ status: "ok" | "empty" | "error" | "timeout"; rows: T; error?: string; ms: number }> {
   const t0 = Date.now();
   let timedOut = false;
+  const empty = [] as unknown as T;
   const timer = new Promise<null>((res) => setTimeout(() => { timedOut = true; res(null); }, ms));
   try {
     const res = (await Promise.race([promise, timer])) as
       | { data: unknown; error: { message?: string } | null }
       | null;
     const elapsed = Date.now() - t0;
-    if (timedOut || !res) return { status: "timeout", rows: [] as never[], ms: elapsed };
-    if (res.error) return { status: "error", rows: [] as never[], error: res.error.message || String(res.error), ms: elapsed };
-    const rows = (Array.isArray(res.data) ? res.data : []) as never[];
+    if (timedOut || !res) return { status: "timeout", rows: empty, ms: elapsed };
+    if (res.error) return { status: "error", rows: empty, error: res.error.message || String(res.error), ms: elapsed };
+    const rows = (Array.isArray(res.data) ? res.data : []) as T;
     return { status: rows.length ? "ok" : "empty", rows, ms: elapsed };
   } catch (e) {
-    return { status: "error", rows: [] as never[], error: e instanceof Error ? e.message : String(e), ms: Date.now() - t0 };
+    return { status: "error", rows: empty, error: e instanceof Error ? e.message : String(e), ms: Date.now() - t0 };
   }
 }
 

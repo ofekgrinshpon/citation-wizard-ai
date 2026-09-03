@@ -203,7 +203,7 @@ export const CAPS = {
 } as const;
 
 export type Origin = "local_db" | "perplexity";
-export type RetrievalMethod = "text" | "vector" | "perplexity";
+export type RetrievalMethod = "text" | "vector" | "perplexity" | "exact_authority";
 
 export interface Candidate {
   candidate_id: string;
