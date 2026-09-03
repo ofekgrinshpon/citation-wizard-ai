@@ -45,6 +45,7 @@ import {
 } from "./stages/academicCandidateAdmission.ts";
 import { buildPrimaryAnchorAcquisitionReport } from "./stages/primaryAnchorAcquisitionStatus.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
+import { enrichLocalCaselawListingGate } from "./stages/localCaselawListingGate.ts";
 import { summarizeSynthesisPack, type SynthesisRole } from "./stages/synthesisRole.ts";
 import { runJudgmentTextAcquisition } from "./stages/judgmentTextAcquisition.ts";
 import { runStatuteTextAcquisition } from "./stages/statuteTextAcquisition.ts";
@@ -1180,6 +1181,24 @@ async function handle(req: Request): Promise<Response> {
     candidates_at_start: local.candidates.length + pplx.candidates.length,
     task_intent: sourceUseIntent.plan?.user_task_intent ?? null,
   });
+  // local_caselaw_content_aware_listing_gate_v1 — content-aware verdict for
+  // local_db caselaw whose stored URL is a gov.il collector/listing artefact.
+  // One batched bounded RPC; no LLM, no network fetch, no extraction.
+  const localCaselawGate = await enrichLocalCaselawListingGate(
+    admin as unknown as { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: { message?: string } | null }> },
+    local.candidates,
+  );
+  await budget.markDurable("local_caselaw_content_listing_gate", {
+    status: localCaselawGate.status,
+    candidates_checked: localCaselawGate.candidates_checked,
+    bypassed: localCaselawGate.bypassed,
+    still_suppressed: localCaselawGate.still_suppressible,
+    classification_counts: localCaselawGate.classification_counts,
+    p50_ms: localCaselawGate.p50_ms,
+    p95_ms: localCaselawGate.p95_ms,
+    elapsed_ms: localCaselawGate.elapsed_ms,
+    rpc_error: localCaselawGate.rpc_error ?? null,
+  });
   const pool = buildCandidatePool([...local.candidates, ...pplx.candidates], {
     task_intent: sourceUseIntent.plan?.user_task_intent ?? null,
   });
@@ -1525,6 +1544,13 @@ async function handle(req: Request): Promise<Response> {
       task_intent: sourceUseIntent.plan?.user_task_intent ?? null,
       ...pool.discovery_precision,
     },
+    // local_caselaw_content_aware_listing_gate_v1
+    local_caselaw_content_listing_gate: {
+      version: "local_caselaw_content_aware_listing_gate_v1",
+      run_id,
+      ...localCaselawGate,
+    },
+
     source_integrity: {
       rejects: pool.integrity_rejects,
       admitted: pool.integrity,

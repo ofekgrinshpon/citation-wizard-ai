@@ -15,6 +15,7 @@
 
 import type { Candidate } from "../lib/types.ts";
 import type { SourceIntegrity } from "./sourceIntegrity.ts";
+import { GATE_META_KEY } from "./localCaselawListingGate.ts";
 
 export const DISCOVERY_CLASSES = [
   "citable_candidate",
@@ -108,6 +109,18 @@ function protectionFor(
   const url = c.source_url ?? "";
   const hay = `${c.title} ${url}`;
 
+  // local_caselaw_content_aware_listing_gate_v1 — a local_db caselaw row whose
+  // stored body passed the deterministic content gate is protected by its
+  // CONTENT, never by its collector URL. Web/perplexity candidates never carry
+  // this metadata, so their listing suppression is unchanged.
+  {
+    const gate = meta[GATE_META_KEY] as { bypass?: boolean; classification?: string } | undefined;
+    if (gate?.bypass === true) {
+      return gate.classification === "partial_judgment_summary"
+        ? "local_caselaw_partial_summary_body"
+        : "local_caselaw_substantive_body";
+    }
+  }
   if ((c.retrieval_method as string) === "exact_authority") return "exact_authority_candidate";
   if (meta.exact_source === true || meta.is_exact_source === true) return "exact_source_candidate";
   if (meta.fast_lane === true || meta.exact_docket_resolved === true) return "exact_docket_candidate";

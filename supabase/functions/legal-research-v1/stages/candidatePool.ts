@@ -15,6 +15,7 @@ import {
   type DiscoveryPrecision,
   emptyDiscoveryDiagnostics,
 } from "./discoveryPrecision.ts";
+import { GATE_META_KEY } from "./localCaselawListingGate.ts";
 
 
 function normTitle(t: string): string {
@@ -265,6 +266,30 @@ function buildCandidatePoolInner(
       source_type: c.source_type,
       role: c.role,
     });
+    // local_caselaw_content_aware_listing_gate_v1 — a local caselaw row whose
+    // stored body was deterministically classified as a substantive judgment
+    // is usable as judgment text; its collector URL must not force it into
+    // the listing/metadata-only lane. Partial summaries are NOT upgraded, so
+    // the metadata-only holding gate keeps them out of holding support.
+    const gate = ((c.metadata ?? {}) as Record<string, unknown>)[GATE_META_KEY] as
+      | { bypass?: boolean; classification?: string }
+      | undefined;
+    if (
+      gate?.bypass === true && gate.classification === "substantive_judgment_body" &&
+      !integ.reject
+    ) {
+      integ.text_usability = "substantive_excerpt";
+      integ.citable_as = "judgment";
+      integ.is_judgment_document = true;
+      if (integ.authority_tier === "index_or_listing" && /gov\.il/i.test(c.source_url ?? "")) {
+        integ.authority_tier = "official_primary";
+      }
+      integ.integrity_flags = [
+        ...(integ.integrity_flags ?? []),
+        "local_caselaw_content_verified",
+      ];
+      integ.downgrade_reason = undefined;
+    }
     integrityById.set(c.candidate_id, integ);
     c.metadata = { ...(c.metadata ?? {}), source_integrity: integ };
     if (integ.reject) rejected.push(c);
