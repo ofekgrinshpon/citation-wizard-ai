@@ -1,1210 +1,9 @@
 [
   {
-    "id": "AW4",
-    "run_id": "b5398253-eebc-499a-b603-a0d0ca8b03a1",
-    "ms": 178617,
-    "pool_after": 18,
-    "topic_aware_alignment": {
-      "version": "v1.0",
-      "applied": true,
-      "academic_mode": true,
-      "refs_removed": 1,
-      "refs_reordered": 0,
-      "refs_promoted": 1,
-      "blocks_left_uncited": 0,
-      "source_role_sanity_check": [
-        {
-          "title": "חוק-יסוד: כבוד האדם וחירותו",
-          "reason": "compatible",
-          "changed": false,
-          "source_id": "s1",
-          "citable_as": "statute",
-          "final_role": "primary_statute",
-          "source_type": "israeli_law",
-          "original_role": "primary_statute"
-        },
-        {
-          "title": "חוק-יסוד: כבוד האדם וחירותו",
-          "reason": "compatible",
-          "changed": false,
-          "source_id": "s2",
-          "citable_as": "statute",
-          "final_role": "primary_statute",
-          "source_type": "israeli_law",
-          "original_role": "primary_statute"
-        },
-        {
-          "title": "ביהמ\"ש השלום לתעבורה בחדרה, השופטת סיגל דבורי: החלטה בבקשה לביטול פסילה מנהלית על פי סעיף 48 לפקודת התעבורה (בפ\"מ 5010-11-22)",
-          "reason": "role_incompatible_with_judgment",
-          "changed": true,
-          "source_id": "s3",
-          "citable_as": "judgment",
-          "final_role": "binding_case_law",
-          "source_type": "caselaw",
-          "original_role": "primary_statute"
-        },
-        {
-          "title": "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
-          "reason": "role_incompatible_with_academic",
-          "changed": true,
-          "source_id": "s4",
-          "citable_as": "scholarship",
-          "final_role": "scholarship",
-          "source_type": "journal_article",
-          "original_role": "primary_statute"
-        },
-        {
-          "title": "כיבוד האדם והמשפט החוקתי בישראל",
-          "reason": "role_incompatible_with_academic",
-          "changed": true,
-          "source_id": "s5",
-          "citable_as": "scholarship",
-          "final_role": "scholarship",
-          "source_type": "journal_article",
-          "original_role": "primary_statute"
-        },
-        {
-          "title": "חופש הביטוי בתקשורת המקוונת: בחינה מחדש של תורת המניעה המוקדמת | אריאל בנדור ומיכל טמיר (כרך כו)",
-          "reason": "role_incompatible_with_academic",
-          "changed": true,
-          "source_id": "s7",
-          "citable_as": "scholarship",
-          "final_role": "scholarship",
-          "source_type": "journal_article",
-          "original_role": "primary_statute"
-        },
-        {
-          "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
-          "reason": "role_incompatible_with_academic",
-          "changed": true,
-          "source_id": "s8",
-          "citable_as": "scholarship",
-          "final_role": "scholarship",
-          "source_type": "journal_article",
-          "original_role": "binding_case_law"
-        },
-        {
-          "title": "על הזכות לייצוג משפטי בהליכי משמעת – המקרה המיוחד של הדין המשמעתי בצבא | אסף פורת (כרך יז)",
-          "reason": "role_incompatible_with_academic",
-          "changed": true,
-          "source_id": "s9",
-          "citable_as": "scholarship",
-          "final_role": "scholarship",
-          "source_type": "journal_article",
-          "original_role": "primary_statute"
-        },
-        {
-          "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
-          "reason": "role_incompatible_with_judgment",
-          "changed": true,
-          "source_id": "s11",
-          "citable_as": "commentary",
-          "final_role": "binding_case_law",
-          "source_type": "supreme_court_il",
-          "original_role": "primary_statute"
-        },
-        {
-          "title": "יחסי דת ומדינה והשפעתם על הזהות הלאומית בישראל | גילה שטופלר (כרך כה)",
-          "reason": "role_incompatible_with_academic",
-          "changed": true,
-          "source_id": "s14",
-          "citable_as": "scholarship",
-          "final_role": "scholarship",
-          "source_type": "journal_article",
-          "original_role": "binding_case_law"
-        },
-        {
-          "title": "פרשנות חוקתית וביקורת שיפוטית על חקיקה פיסקלית | יוסף מ’ אדרעי (כרך מיוחד לכבוד פרופ’ יוסי אדרעי)",
-          "reason": "role_incompatible_with_academic",
-          "changed": true,
-          "source_id": "s15",
-          "citable_as": "scholarship",
-          "final_role": "scholarship",
-          "source_type": "journal_article",
-          "original_role": "binding_case_law"
-        },
-        {
-          "title": "חוק כי סבור אני אף השני המידתיות ,הנשיא חברי דברי על אוסיף ולא",
-          "reason": "compatible",
-          "changed": false,
-          "source_id": "s16",
-          "citable_as": "judgment",
-          "final_role": "binding_case_law",
-          "source_type": "supreme_court_il",
-          "original_role": "binding_case_law"
-        }
-      ],
-      "judgment_legal_area_fit": [
-        {
-          "title": "חוק כי סבור אני אף השני המידתיות ,הנשיא חברי דברי על אוסיף ולא",
-          "reason": "direct_doctrine_match",
-          "blocked": false,
-          "claim_id": "C2",
-          "source_id": "s16",
-          "allowed_use": "support",
-          "claim_topic_terms": [
-            "proportionality"
-          ],
-          "adjacent_area_only": false,
-          "judgment_topic_terms": [
-            "proportionality"
-          ],
-          "direct_doctrine_match": true
-        },
-        {
-          "title": "חוק כי סבור אני אף השני המידתיות ,הנשיא חברי דברי על אוסיף ולא",
-          "reason": "direct_doctrine_match",
-          "blocked": false,
-          "claim_id": "C3",
-          "source_id": "s16",
-          "allowed_use": "support",
-          "claim_topic_terms": [
-            "proportionality"
-          ],
-          "adjacent_area_only": false,
-          "judgment_topic_terms": [
-            "proportionality"
-          ],
-          "direct_doctrine_match": true
-        },
-        {
-          "title": "חוק כי סבור אני אף השני המידתיות ,הנשיא חברי דברי על אוסיף ולא",
-          "reason": "direct_doctrine_match",
-          "blocked": false,
-          "claim_id": "C5",
-          "source_id": "s16",
-          "allowed_use": "support",
-          "claim_topic_terms": [
-            "proportionality"
-          ],
-          "adjacent_area_only": false,
-          "judgment_topic_terms": [
-            "proportionality"
-          ],
-          "direct_doctrine_match": true
-        }
-      ],
-      "block_source_plan": [
-        {
-          "block_id": "b1",
-          "claim_type": "case_holding",
-          "block_topic": "proportionality+human_dignity",
-          "acceptable_roles": [
-            "binding_case_law",
-            "persuasive_case_law",
-            "judgment_anchor",
-            "implementation_or_example_source",
-            "doctrinal_application_source",
-            "primary_legal_anchor",
-            "primary_mirror"
-          ],
-          "rejected_sources": [
-            "s5",
-            "s1"
-          ],
-          "selected_sources": [
-            "s16"
-          ],
-          "rejection_reasons": [
-            "s5:class_academic_not_acceptable_for_case_holding",
-            "s1:class_statute_not_acceptable_for_case_holding"
-          ],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b2",
-          "claim_type": "theoretical_background",
-          "block_topic": "proportionality",
-          "acceptable_roles": [
-            "scholarship",
-            "doctrinal_background_source",
-            "theoretical_normative_source",
-            "critique_or_counterposition_source",
-            "comparative_source",
-            "policy_or_institutional_source",
-            "factual_report",
-            "implementation_context_source",
-            "statutory_anchor",
-            "primary_statute",
-            "primary_legal_anchor",
-            "regulation"
-          ],
-          "rejected_sources": [],
-          "selected_sources": [
-            "s8",
-            "s5"
-          ],
-          "rejection_reasons": [],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b3",
-          "claim_type": "critique",
-          "block_topic": "proportionality",
-          "acceptable_roles": [
-            "scholarship",
-            "doctrinal_background_source",
-            "theoretical_normative_source",
-            "critique_or_counterposition_source",
-            "comparative_source",
-            "binding_case_law",
-            "persuasive_case_law",
-            "judgment_anchor",
-            "implementation_or_example_source",
-            "doctrinal_application_source",
-            "primary_legal_anchor",
-            "primary_mirror"
-          ],
-          "rejected_sources": [],
-          "selected_sources": [
-            "s16"
-          ],
-          "rejection_reasons": [],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b4",
-          "claim_type": "theoretical_background",
-          "block_topic": "proportionality",
-          "acceptable_roles": [
-            "scholarship",
-            "doctrinal_background_source",
-            "theoretical_normative_source",
-            "critique_or_counterposition_source",
-            "comparative_source",
-            "policy_or_institutional_source",
-            "factual_report",
-            "implementation_context_source",
-            "statutory_anchor",
-            "primary_statute",
-            "primary_legal_anchor",
-            "regulation"
-          ],
-          "rejected_sources": [],
-          "selected_sources": [
-            "s16",
-            "s8"
-          ],
-          "rejection_reasons": [],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b5",
-          "claim_type": "critique",
-          "block_topic": "proportionality+reasonableness+judicial_review",
-          "acceptable_roles": [
-            "scholarship",
-            "doctrinal_background_source",
-            "theoretical_normative_source",
-            "critique_or_counterposition_source",
-            "comparative_source",
-            "binding_case_law",
-            "persuasive_case_law",
-            "judgment_anchor",
-            "implementation_or_example_source",
-            "doctrinal_application_source",
-            "primary_legal_anchor",
-            "primary_mirror"
-          ],
-          "rejected_sources": [],
-          "selected_sources": [
-            "s8"
-          ],
-          "rejection_reasons": [],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b6",
-          "claim_type": "theoretical_background",
-          "block_topic": "מנקודת מבט מעשית על שאלות הטיפול השיפוטי, המספרים והמחקרים ה",
-          "acceptable_roles": [
-            "scholarship",
-            "doctrinal_background_source",
-            "theoretical_normative_source",
-            "critique_or_counterposition_source",
-            "comparative_source",
-            "policy_or_institutional_source",
-            "factual_report",
-            "implementation_context_source",
-            "statutory_anchor",
-            "primary_statute",
-            "primary_legal_anchor",
-            "regulation"
-          ],
-          "rejected_sources": [],
-          "selected_sources": [
-            "s16"
-          ],
-          "rejection_reasons": [],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b7",
-          "claim_type": "implementation_example",
-          "block_topic": "proportionality+human_dignity",
-          "acceptable_roles": [
-            "binding_case_law",
-            "persuasive_case_law",
-            "judgment_anchor",
-            "implementation_or_example_source",
-            "doctrinal_application_source",
-            "primary_legal_anchor",
-            "primary_mirror",
-            "policy_or_institutional_source",
-            "factual_report",
-            "implementation_context_source",
-            "scholarship",
-            "doctrinal_background_source"
-          ],
-          "rejected_sources": [
-            "s1"
-          ],
-          "selected_sources": [
-            "s5"
-          ],
-          "rejection_reasons": [
-            "s1:class_statute_not_acceptable_for_implementation_example"
-          ],
-          "unsupported_or_cautious": false
-        }
-      ],
-      "block_source_ranking": [
-        {
-          "block_id": "b2",
-          "new_rank": 0,
-          "old_rank": 0,
-          "source_id": "s8",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b2",
-          "new_rank": 1,
-          "old_rank": 1,
-          "source_id": "s5",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b3",
-          "new_rank": 0,
-          "old_rank": 0,
-          "source_id": "s16",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b4",
-          "new_rank": 0,
-          "old_rank": 0,
-          "source_id": "s16",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b4",
-          "new_rank": 1,
-          "old_rank": 1,
-          "source_id": "s8",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b5",
-          "new_rank": 0,
-          "old_rank": 0,
-          "source_id": "s8",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b6",
-          "new_rank": 0,
-          "old_rank": 0,
-          "source_id": "s16",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b7",
-          "new_rank": 0,
-          "old_rank": 0,
-          "source_id": "s5",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        }
-      ],
-      "compound_footnote_guard": [],
-      "unused_stronger_sources": [
-        {
-          "score": 10,
-          "title": "חוק כי סבור אני אף השני המידתיות ,הנשיא חברי דברי על אוסיף ולא",
-          "block_id": "b1",
-          "promoted": true,
-          "source_id": "s16",
-          "used_score": 0
-        }
-      ]
-    },
-    "limitation_note_alignment": {
-      "revised": false,
-      "accurate": true,
-      "answer_id": "answer",
-      "limitation_note": "",
-      "primary_sources_present": true,
-      "judgment_sources_present": true,
-      "direct_doctrine_judgment_present": true
-    },
-    "footnotes_count": 4,
-    "footnotes": [
-      {
-        "n": null,
-        "title": "חוק כי סבור אני אף השני המידתיות ,הנשיא חברי דברי על אוסיף ולא",
-        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/2&fileName=SA2_3_7052-03.pdf&type=2",
-        "role": null
-      },
-      {
-        "n": null,
-        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו); כיבוד האדם והמשפט החוקתי בישראל",
-        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
-        "role": null
-      },
-      {
-        "n": null,
-        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
-        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
-        "role": null
-      },
-      {
-        "n": null,
-        "title": "כיבוד האדם והמשפט החוקתי בישראל",
-        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_e2da55232b5b4276bf6fa40956c1e141.pdf",
-        "role": null
-      }
-    ],
-    "answer_len": 3130,
-    "answer": "עקרון המידתיות בביקורת חוקתית הוא עקרון הלכתי בסיסי המכוון לכך שהגבלה על זכות חוקתית תתהווה רק כאשר היא מוצדקת בהתאם לקריטריונים משפטיים ברורים: שהמטרה לגיטימית, שהאמצעים נבחרו בקשר מתאים להשגתה, שהם נחוצים או שהם האמצע הפחות מגביל, וכי תתקיים פרופורציה מהותית בין הפגיעה לזכות לבין הישג המטרה. במסגרת המשפט הישראלי הדרישה לעקרון זה מעוגנת במסגרת חוקתית רחבה, כשחוק‑יסוד: כבוד האדם וחירותו משמש כנקודת הפתיחה להבנת ההצדקה והגבולות של הגבלות על זכויות יסוד, ולעיתים מהווה בסיס לטענות בדבר חובת בחינה מידתית של חקיקה והחלטות מנהליות.¹\n\nמקורותיו ההיסטוריים והתאורטיים של מבחן המידתיות רב־שמשיים: בתחום התיאורטי המאמרות החוקתיות הציגו מידתיות ככלי נורמטיבי להצדקת פגיעה בזכויות תוך איזון ערכי, והניתוח המחקרי בשיח הישראלי משלב גם השוואה למודלים זרים. ספרות מקצועית משווה מדגישה את הקווים המשותפים בין הגישות באירופה ובמשפט המקובל, וממפה את השפעות ההיסטוריה המשפטית על אימוץ מבחנים מובנים לבחינת חקיקה להגבלת זכויות.²\n\nבהלכה הישראלית בתי‑המשפט העליונים אימצו את עקרון המידתיות כאבן בוחן מרכזית בביקורת חקיקה המגבילה זכויות, וכמה פסקי‑דין מובהקים של בית‑המשפט העליון מגדירים את חובת המבחן ואת היקפו בבדיקת חוקיותה של חקיקה. פסיקות אלה מתייחסות לשאלת הלגיטימיות של מטרת החקיקה, לקשר בין המטרה לבין האמצעים ולדרישות של התאמה ונחיצות, ובהן אפשר למצוא את הניסוח השיפוטי שממקם את המידתיות ככלי מרכזי בבדיקת חוקות חוקים.¹\n\nמבחן המידתיות עצמו מתחלק במסורת המשפטית לשלביו המקובלים: אבחנה ראשונית של לגיטימיות או תכלית חוקתית שניתן להצדיקה; שלב התאמה או היות האמצעי קשור למטרה (fit); שלב הנחיצות או בחינת האמצעי הפחות מגביל; ולבסוף שלב האיזון או הפרופורציונליות המהותית שבו מתקיים שקלול בין חומרת הפגיעה בזכות לבין התרומה של האמצעים להגשמת המטרה. בבואכן לפתח הגדרות פרקטיות לכל שלב, הפסיקה הישראלית והספרות המשפטית מדגישות גם את הצורך בהבהרת הנטל הראייתי ובשיקולים של אינטנסיביות בדיקה שמשתנים לפי סוג הזכות והנסיבות.¹\n\nיישום מבחן המידתיות נושא עמו סייגים ותיאומי סמכויות: במרחב מנהלי בתי‑המשפט נוטים להעניק לרשויות המנהליות מרחב הערכה רחב יותר, אך גם שם ראו פסקי‑דין מקומיים המחייבים להטיל משקל על השלכות מעשיות; מאמרים על המשפט המנהלי מדגישים את הצורך להבחין בין מידתיות בסוגיות חוקתיות לבין סבירות או ביקורת שיפוטית נמוכה יותר של שיקול הדעת המנהלי. בנוסף, יש ספרות שהופכת את הוויכוח על עוצמת הבדיקה לשאלה נורמטיבית לגבי היחס בין משפטיות יתר לבין שימור לגיטימיות דמוקרטית.³\n\nמנקודת מבט מעשית על שאלות הטיפול השיפוטי, המספרים והמחקרים המכוונים לביצוע הבדיקה ממליצים על בהירות בהצגת התכלית, על פירוק השאלות לשאלות הוכחה מבודדות, ועל ניסוח פסקי‑דין שמבהירים את סולם הנזק ותוצאותיו (הקלה מותנית, שינוי הוראה או ביטול). בהקשר זה יש קולות בספרות ובפסיקה המחייבים גם דיווח על החלופות שנבדקו ועל הנטל הראייתי שהוצב בפני הרשות, וכן חשיבות להבחנה בין סעד שמטרתו תיקון עוול ולמשמעויות מערכתיות של ביטול חקיקה.¹\n\nלסיכום, המידתיות במשפט הישראלי מתפקדת הן ככלל פרוצדורלי לבחינת הלגיטימיות של פגיעה בזכויות והן ככלי נורמטיבי ליישוב אינטרסים מתחרים; חוק‑יסוד: כבוד האדם וחירותו יחד עם פסיקת בית‑המשפט העליון מעניקים לה מעמד מרכזי, בעוד שהספרות מספקת מסגרות השוואתיות ונימוקיות שמעשירות את השיח ומצביעות על סייגים פרוצדורליים ופרקטיים שיש להכיר בעת יישום הבדיקה.⁴\n\n*הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.*\n"
-  },
-  {
-    "id": "AW9",
-    "run_id": "d9282b0e-affb-4d3f-ab3d-1c114478b637",
-    "ms": 162281,
-    "pool_after": 17,
-    "topic_aware_alignment": {
-      "version": "v1.0",
-      "applied": true,
-      "academic_mode": true,
-      "refs_removed": 0,
-      "refs_reordered": 1,
-      "refs_promoted": 2,
-      "blocks_left_uncited": 0,
-      "source_role_sanity_check": [
-        {
-          "title": "חוק-יסוד: כבוד האדם וחירותו",
-          "reason": "compatible",
-          "changed": false,
-          "source_id": "s1",
-          "citable_as": "statute",
-          "final_role": "primary_statute",
-          "source_type": "israeli_law",
-          "original_role": "primary_statute"
-        },
-        {
-          "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
-          "reason": "compatible",
-          "changed": false,
-          "source_id": "s2",
-          "citable_as": "scholarship",
-          "final_role": "scholarship",
-          "source_type": "journal_article",
-          "original_role": "scholarship"
-        },
-        {
-          "title": "ההליך המנהלי בצילו של שיקול-דעת",
-          "reason": "role_incompatible_with_academic",
-          "changed": true,
-          "source_id": "s4",
-          "citable_as": "scholarship",
-          "final_role": "scholarship",
-          "source_type": "journal_article",
-          "original_role": "binding_case_law"
-        },
-        {
-          "title": "עלותו השקועה של התקדים | מיכל טמיר (כרך א)",
-          "reason": "role_incompatible_with_academic",
-          "changed": true,
-          "source_id": "s5",
-          "citable_as": "scholarship",
-          "final_role": "scholarship",
-          "source_type": "journal_article",
-          "original_role": "binding_case_law"
-        },
-        {
-          "title": "בכמה קולות מדברת המדינה? על מתן מעמד לרשות חולקת בהליכים משפטיים",
-          "reason": "compatible",
-          "changed": false,
-          "source_id": "s6",
-          "citable_as": "scholarship",
-          "final_role": "scholarship",
-          "source_type": "journal_article",
-          "original_role": "scholarship"
-        },
-        {
-          "title": "ביהמ\"ש המחוזי מרכז-לוד, סג\"נ השופטת בלהה טולקובסקי: פס\"ד בתביעת הורי המנוחה בגין רשלנות רפואית ורשלנות בהליכי מתן הרישיון לעסוק ברפואה  (ת\"א 10918-10-19)",
-          "reason": "compatible",
-          "changed": false,
-          "source_id": "s7",
-          "citable_as": "judgment",
-          "final_role": "binding_case_law",
-          "source_type": "caselaw",
-          "original_role": "binding_case_law"
-        },
-        {
-          "title": "רע\"פ 2161/21 אמיר משאיך נ׳ מדינת ישראל החלטה (18.07.2021)",
-          "reason": "compatible",
-          "changed": false,
-          "source_id": "s8",
-          "citable_as": "judgment",
-          "final_role": "binding_case_law",
-          "source_type": "caselaw",
-          "original_role": "binding_case_law"
-        },
-        {
-          "title": "סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
-          "reason": "role_incompatible_with_academic",
-          "changed": true,
-          "source_id": "s9",
-          "citable_as": "scholarship",
-          "final_role": "scholarship",
-          "source_type": "journal_article",
-          "original_role": "binding_case_law"
-        },
-        {
-          "title": "בג\"ץ 11437-05 - קו לעובד נ. משרד הפנים",
-          "reason": "role_incompatible_with_judgment",
-          "changed": true,
-          "source_id": "s11",
-          "citable_as": "judgment",
-          "final_role": "binding_case_law",
-          "source_type": "supreme_court_il",
-          "original_role": "scholarship"
-        }
-      ],
-      "judgment_legal_area_fit": [
-        {
-          "title": "בג\"ץ 11437-05 - קו לעובד נ. משרד הפנים",
-          "reason": "direct_doctrine_match",
-          "blocked": false,
-          "claim_id": "C2",
-          "source_id": "s11",
-          "allowed_use": "support",
-          "claim_topic_terms": [
-            "proportionality",
-            "reasonableness",
-            "reliance_expectation",
-            "judicial_review"
-          ],
-          "adjacent_area_only": false,
-          "judgment_topic_terms": [
-            "proportionality",
-            "reasonableness",
-            "reliance_expectation",
-            "equality"
-          ],
-          "direct_doctrine_match": true
-        },
-        {
-          "title": "בג\"ץ 11437-05 - קו לעובד נ. משרד הפנים",
-          "reason": "direct_doctrine_match",
-          "blocked": false,
-          "claim_id": "C3",
-          "source_id": "s11",
-          "allowed_use": "support",
-          "claim_topic_terms": [
-            "proportionality",
-            "reasonableness",
-            "reliance_expectation",
-            "judicial_review",
-            "human_dignity"
-          ],
-          "adjacent_area_only": false,
-          "judgment_topic_terms": [
-            "proportionality",
-            "reasonableness",
-            "reliance_expectation",
-            "equality"
-          ],
-          "direct_doctrine_match": true
-        },
-        {
-          "title": "בג\"ץ 11437-05 - קו לעובד נ. משרד הפנים",
-          "reason": "direct_doctrine_match",
-          "blocked": false,
-          "claim_id": "C3",
-          "source_id": "s11",
-          "allowed_use": "support",
-          "claim_topic_terms": [
-            "proportionality",
-            "reasonableness",
-            "reliance_expectation",
-            "judicial_review"
-          ],
-          "adjacent_area_only": false,
-          "judgment_topic_terms": [
-            "proportionality",
-            "reasonableness",
-            "reliance_expectation",
-            "equality"
-          ],
-          "direct_doctrine_match": true
-        }
-      ],
-      "block_source_plan": [
-        {
-          "block_id": "b1",
-          "claim_type": "theoretical_background",
-          "block_topic": "proportionality+reasonableness+reliance_expectation",
-          "acceptable_roles": [
-            "scholarship",
-            "doctrinal_background_source",
-            "theoretical_normative_source",
-            "critique_or_counterposition_source",
-            "comparative_source",
-            "policy_or_institutional_source",
-            "factual_report",
-            "implementation_context_source",
-            "statutory_anchor",
-            "primary_statute",
-            "primary_legal_anchor",
-            "regulation"
-          ],
-          "rejected_sources": [],
-          "selected_sources": [
-            "s2",
-            "s4"
-          ],
-          "rejection_reasons": [],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b2",
-          "claim_type": "theoretical_background",
-          "block_topic": "proportionality+reasonableness+human_dignity",
-          "acceptable_roles": [
-            "scholarship",
-            "doctrinal_background_source",
-            "theoretical_normative_source",
-            "critique_or_counterposition_source",
-            "comparative_source",
-            "policy_or_institutional_source",
-            "factual_report",
-            "implementation_context_source",
-            "statutory_anchor",
-            "primary_statute",
-            "primary_legal_anchor",
-            "regulation"
-          ],
-          "rejected_sources": [],
-          "selected_sources": [
-            "s1"
-          ],
-          "rejection_reasons": [],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b3",
-          "claim_type": "implementation_example",
-          "block_topic": "reliance_expectation",
-          "acceptable_roles": [
-            "binding_case_law",
-            "persuasive_case_law",
-            "judgment_anchor",
-            "implementation_or_example_source",
-            "doctrinal_application_source",
-            "primary_legal_anchor",
-            "primary_mirror",
-            "policy_or_institutional_source",
-            "factual_report",
-            "implementation_context_source",
-            "scholarship",
-            "doctrinal_background_source"
-          ],
-          "rejected_sources": [],
-          "selected_sources": [
-            "s6",
-            "s4"
-          ],
-          "rejection_reasons": [],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b4",
-          "claim_type": "critique",
-          "block_topic": "proportionality+reasonableness+reliance_expectation+judicial_review",
-          "acceptable_roles": [
-            "scholarship",
-            "doctrinal_background_source",
-            "theoretical_normative_source",
-            "critique_or_counterposition_source",
-            "comparative_source",
-            "binding_case_law",
-            "persuasive_case_law",
-            "judgment_anchor",
-            "implementation_or_example_source",
-            "doctrinal_application_source",
-            "primary_legal_anchor",
-            "primary_mirror"
-          ],
-          "rejected_sources": [],
-          "selected_sources": [
-            "s11"
-          ],
-          "rejection_reasons": [],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b5",
-          "claim_type": "case_holding",
-          "block_topic": "reliance_expectation+contract",
-          "acceptable_roles": [
-            "binding_case_law",
-            "persuasive_case_law",
-            "judgment_anchor",
-            "implementation_or_example_source",
-            "doctrinal_application_source",
-            "primary_legal_anchor",
-            "primary_mirror"
-          ],
-          "rejected_sources": [
-            "s4",
-            "s5"
-          ],
-          "selected_sources": [
-            "s11"
-          ],
-          "rejection_reasons": [
-            "s4:class_academic_not_acceptable_for_case_holding",
-            "s5:class_academic_not_acceptable_for_case_holding"
-          ],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b6",
-          "claim_type": "critique",
-          "block_topic": "proportionality+reasonableness+judicial_review+human_dignity",
-          "acceptable_roles": [
-            "scholarship",
-            "doctrinal_background_source",
-            "theoretical_normative_source",
-            "critique_or_counterposition_source",
-            "comparative_source",
-            "binding_case_law",
-            "persuasive_case_law",
-            "judgment_anchor",
-            "implementation_or_example_source",
-            "doctrinal_application_source",
-            "primary_legal_anchor",
-            "primary_mirror"
-          ],
-          "rejected_sources": [],
-          "selected_sources": [
-            "s11"
-          ],
-          "rejection_reasons": [],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b7",
-          "claim_type": "theoretical_background",
-          "block_topic": "reasonableness+reliance_expectation",
-          "acceptable_roles": [
-            "scholarship",
-            "doctrinal_background_source",
-            "theoretical_normative_source",
-            "critique_or_counterposition_source",
-            "comparative_source",
-            "policy_or_institutional_source",
-            "factual_report",
-            "implementation_context_source",
-            "statutory_anchor",
-            "primary_statute",
-            "primary_legal_anchor",
-            "regulation"
-          ],
-          "rejected_sources": [],
-          "selected_sources": [
-            "s5",
-            "s4"
-          ],
-          "rejection_reasons": [],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b8",
-          "claim_type": "theoretical_background",
-          "block_topic": "reliance_expectation+judicial_review",
-          "acceptable_roles": [
-            "scholarship",
-            "doctrinal_background_source",
-            "theoretical_normative_source",
-            "critique_or_counterposition_source",
-            "comparative_source",
-            "policy_or_institutional_source",
-            "factual_report",
-            "implementation_context_source",
-            "statutory_anchor",
-            "primary_statute",
-            "primary_legal_anchor",
-            "regulation"
-          ],
-          "rejected_sources": [],
-          "selected_sources": [
-            "s9"
-          ],
-          "rejection_reasons": [],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b9",
-          "claim_type": "critique",
-          "block_topic": "reliance_expectation+judicial_review",
-          "acceptable_roles": [
-            "scholarship",
-            "doctrinal_background_source",
-            "theoretical_normative_source",
-            "critique_or_counterposition_source",
-            "comparative_source",
-            "binding_case_law",
-            "persuasive_case_law",
-            "judgment_anchor",
-            "implementation_or_example_source",
-            "doctrinal_application_source",
-            "primary_legal_anchor",
-            "primary_mirror"
-          ],
-          "rejected_sources": [],
-          "selected_sources": [
-            "s9"
-          ],
-          "rejection_reasons": [],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b10",
-          "claim_type": "critique",
-          "block_topic": "proportionality+reasonableness+judicial_review",
-          "acceptable_roles": [
-            "scholarship",
-            "doctrinal_background_source",
-            "theoretical_normative_source",
-            "critique_or_counterposition_source",
-            "comparative_source",
-            "binding_case_law",
-            "persuasive_case_law",
-            "judgment_anchor",
-            "implementation_or_example_source",
-            "doctrinal_application_source",
-            "primary_legal_anchor",
-            "primary_mirror"
-          ],
-          "rejected_sources": [],
-          "selected_sources": [
-            "s11"
-          ],
-          "rejection_reasons": [],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b11",
-          "claim_type": "statutory_framework",
-          "block_topic": "reliance_expectation+human_dignity+family_property",
-          "acceptable_roles": [
-            "statutory_anchor",
-            "primary_statute",
-            "primary_legal_anchor",
-            "regulation"
-          ],
-          "rejected_sources": [
-            "s5"
-          ],
-          "selected_sources": [
-            "s1"
-          ],
-          "rejection_reasons": [
-            "s5:class_academic_not_acceptable_for_statutory_framework"
-          ],
-          "unsupported_or_cautious": false
-        },
-        {
-          "block_id": "b12",
-          "claim_type": "theoretical_background",
-          "block_topic": "proportionality+reasonableness+reliance_expectation",
-          "acceptable_roles": [
-            "scholarship",
-            "doctrinal_background_source",
-            "theoretical_normative_source",
-            "critique_or_counterposition_source",
-            "comparative_source",
-            "policy_or_institutional_source",
-            "factual_report",
-            "implementation_context_source",
-            "statutory_anchor",
-            "primary_statute",
-            "primary_legal_anchor",
-            "regulation"
-          ],
-          "rejected_sources": [],
-          "selected_sources": [],
-          "rejection_reasons": [],
-          "unsupported_or_cautious": false
-        }
-      ],
-      "block_source_ranking": [
-        {
-          "block_id": "b1",
-          "new_rank": 0,
-          "old_rank": 0,
-          "source_id": "s2",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b1",
-          "new_rank": 1,
-          "old_rank": 1,
-          "source_id": "s4",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b2",
-          "new_rank": 0,
-          "old_rank": 0,
-          "source_id": "s1",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b3",
-          "new_rank": 0,
-          "old_rank": 0,
-          "source_id": "s6",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b3",
-          "new_rank": 1,
-          "old_rank": 1,
-          "source_id": "s4",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b4",
-          "new_rank": 0,
-          "old_rank": 0,
-          "source_id": "s11",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b6",
-          "new_rank": 0,
-          "old_rank": 0,
-          "source_id": "s11",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b7",
-          "new_rank": 0,
-          "old_rank": 0,
-          "source_id": "s5",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b7",
-          "new_rank": 1,
-          "old_rank": 1,
-          "source_id": "s4",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b8",
-          "new_rank": 0,
-          "old_rank": 0,
-          "source_id": "s9",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b9",
-          "new_rank": 0,
-          "old_rank": 0,
-          "source_id": "s9",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        },
-        {
-          "block_id": "b10",
-          "new_rank": 0,
-          "old_rank": 0,
-          "source_id": "s11",
-          "role_match": true,
-          "topic_match": true,
-          "final_selected": true,
-          "legal_area_match": true
-        }
-      ],
-      "compound_footnote_guard": [],
-      "unused_stronger_sources": [
-        {
-          "score": 11,
-          "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
-          "block_id": "b4",
-          "promoted": false,
-          "source_id": "s2",
-          "used_score": 10
-        },
-        {
-          "score": 11,
-          "title": "ההליך המנהלי בצילו של שיקול-דעת",
-          "block_id": "b4",
-          "promoted": false,
-          "source_id": "s4",
-          "used_score": 10
-        },
-        {
-          "score": 11,
-          "title": "עלותו השקועה של התקדים | מיכל טמיר (כרך א)",
-          "block_id": "b4",
-          "promoted": false,
-          "source_id": "s5",
-          "used_score": 10
-        },
-        {
-          "score": 11,
-          "title": "סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
-          "block_id": "b4",
-          "promoted": false,
-          "source_id": "s9",
-          "used_score": 10
-        },
-        {
-          "score": 8,
-          "title": "בג\"ץ 11437-05 - קו לעובד נ. משרד הפנים",
-          "block_id": "b5",
-          "promoted": true,
-          "source_id": "s11",
-          "used_score": 0
-        },
-        {
-          "score": 10,
-          "title": "חוק-יסוד: כבוד האדם וחירותו",
-          "block_id": "b11",
-          "promoted": true,
-          "source_id": "s1",
-          "used_score": 0
-        }
-      ]
-    },
-    "limitation_note_alignment": {
-      "revised": false,
-      "accurate": true,
-      "answer_id": "answer",
-      "limitation_note": "",
-      "primary_sources_present": true,
-      "judgment_sources_present": true,
-      "direct_doctrine_judgment_present": true
-    },
-    "footnotes_count": 6,
-    "footnotes": [
-      {
-        "n": null,
-        "title": "בג\"ץ 11437-05 - קו לעובד נ. משרד הפנים",
-        "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/64/3&fileName=SD3_4_11437-05.pdf&type=2",
-        "role": null
-      },
-      {
-        "n": null,
-        "title": "חוק-יסוד: כבוד האדם וחירותו",
-        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
-        "role": null
-      },
-      {
-        "n": null,
-        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו); ההליך המנהלי בצילו של שיקול-דעת",
-        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
-        "role": null
-      },
-      {
-        "n": null,
-        "title": "בכמה קולות מדברת המדינה? על מתן מעמד לרשות חולקת בהליכים משפטיים; ההליך המנהלי בצילו של שיקול-דעת",
-        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_5b4f7c0a72ba4dc08ea099a8a4cd339d.pdf",
-        "role": null
-      },
-      {
-        "n": null,
-        "title": "עלותו השקועה של התקדים | מיכל טמיר (כרך א); ההליך המנהלי בצילו של שיקול-דעת",
-        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/a1_15.pdf",
-        "role": null
-      },
-      {
-        "n": null,
-        "title": "סמכות בתי-המשפט שאינם בג\"ץ להחיל ביקורת שיפוטית על חוק שפוגע בזכויות האדם",
-        "url": "https://lawjournal.huji.ac.il/article/12/1916",
-        "role": null
-      }
-    ],
-    "answer_len": 3970,
-    "answer": "עקרון ההסתמכות והציפייה הלגיטימית במשפט המנהלי מתנסח כדוקטרינה שבמרכזה עומדת הטענה כי פעולת ציבור של הרשות, בהצגה של מדיניות או בהחלטה פרטנית, יכולה לעורר אצל הציבור ציפייה שכל שינוי חד־צדדי ייחשב בלתי הוגן אם לווה בהסתמכות סבירה ובנזק. בגישה זו ההגנה אינה מתמקדת רק בצורת ההליך אלא גם במשמעותה הכלכלית והחברתית של היציבות הרגולטורית: יש מקום להגנה כאשר שינוי פוגע בציפיות שנוצרו כתוצאה מהתנהלות רשותית מובחנת, ובעיקר כאשר הסתמכות הציבור נושאת בחובה מחיר ממשי. עקרון זה נחקר ומנותח בספרות המינהלית כמי שמצטלב עם מבחני סבירות ומידתיות, וכאמצעי שיפוטי להשגת איזון בין יציבות למדיניות ציבורית משתנה.³\n\nבמסגרת המשפט היסודית של מדינת ישראל חוק־יסוד: כבוד האדם והחירות מספק רקע ערכי רחב שמאפשר לבית המשפט למקם את ההגנה על ציפיות כחלק מהגנה על זכויות יסוד; החוק משמש מקומם כאבן דרך נורמטיבית לבחינת פגיעות שעשויות לנבוע משינויים מנהליים, אך הוא אינו מגדיר מבחני ציפייה ספציפיים או נספח פרוצדורלי יחיד לכך. משום כך הדיון בדוקטרינת הציפייה הלגיטימית מתפתח בשוליים שבין ערכי חוק־היסוד לבין כלים שיפוטיים כגון מידתיות וסבירות.²\n\nמבחינה רעיונית יש להבחין בין ציפייה פרוצדורלית לבין ציפייה מהותית: הראשונה עוסקת בהגנה על תהליכים של קבלת החלטות — לדוגמה זכות לדעת, הזרמת מידע וניהול הליך הוגן כאשר מובטחת מדיניות או הליך קבוע — והשנייה נוגעת להבטחות או ההבטחות שניתנו בפועל והולידו הסתמכות הכוללת שינוי מצב עובדתי או הוצאות. הבחנה זו נראית מרכזית במחקרים שמדגישים את משקל הדרישה לפתיחות ולקשר בין הרשות לבין האזרח כאשר מדובר ביצירת ציפיות משמעותיות.⁴\n\nהספרות המשפטית והמקרים שמנתחים ביקורת שיפוטית מצביעים על כמה רכיבים אופרטיביים שחוזרים כפרמטרים לבחינת ההגנה: הצגה או הודעה של הרשות שהסתמכו עליה, הסתמכות סבירה מצד האזרח, גרימת נזק או הוצאה ממשית בעקבות ההסתמכות, וכן משך וזמינות המדיניות. באנלוגיה למבחני הסבירות והמידתיות מקובל לבחון האם שינוי המדיניות מוצדק ביחס לתועלת הציבורית ולאינטרסים פרטיים שניזוקו, אך נקיטת סעד או היקפו נשאר תלוּי בנסיבות המקרה ובמשקלם של שיקולי מדיניות.¹\n\nבהיבט של סעדים, הדיון בספרות המנהלית מדגיש כי בתי המשפט נוטים להתאים את התגובה ההלכתית למידת הפגיעה ולמאפייני ההסתמכות: איפוס שינוי אחורי, צווי מניעה או צווי יסוד המגבילים את היישום המידי של שינוי הן דרכים פרוצדורליות לשמירת יציבות, בעוד שבמקרים שבהם נזק ממשי התרחש נדונות גם אפשרויות פיצוי או תרופות חלופיות. בחינת העלות השקועה והאיזון בין יציבות לגמישות מהווה כלי ניתוחי חשוב בקביעת מידת ההגנה ותוחלתה.¹\n\nהציפייה הלגיטימית איננה פועלת בבועה: היא מתמזגת עם עקרונות ביקורת שיפוטית אחרים. מבחני סבירות ומידתיות משמשים לעתים כפריזמות שאיתם נבחנת מידת ההגנה; חוק־יסוד: כבוד האדם והחירות מספק את המסגרת הערכית שבה יש לשקלל פגיעות בזכויות; ולעתים נדרש איזון בין עקרון היציבות לבין קווי מדיניות ציבוריים רחבים יותר. מכלול זה מדגיש שבמעשה הריאלי ההגנה על ציפייה היא תוצר של התאמה בין עקרונות, ולא נוסחה אחת אחידה.¹\n\nיש לזכור גם את גבולות ההגנה: אינטרסים ציבוריים משמעותיים, שינויים מדיניים או כלכליים המחייבים התאמות רגולטוריות, מצג מטעה מצדו של האזרח או הסתמכות בלתי סבירה, וסמכויות שיקול דעת רחבות המוקנות לרשות — כל אלה יכולים להפחית או לבטל את זכותה של ציפייה להניע אכיפה שיפוטית. הדיון על עלות התקדים מחדד את הרעיון שיציבות איננה ערך מוחלט ויש לשקול אותה מול הצורך בגמישות תקציבית ומדינית.⁵\n\nהשאלה של שיקול זר וחריגה מסמכות ניתנת לניתוח באמצעות פסיקה וניתוחים משפטיים על ביקורת שיפוטית כלפי החלטות מנהליות: מבחנים של סבירות, מידתיות וגבולות הסמכות המרכזיים בפסיקה הרגולטורית משמשים לנטרול פעולות שנעשו מחוץ לתחום הסמכה. מתוך מאגר המקורות יש פסקי דין ומקרי יישום שבוחנים את אותם עקרונות ומשמשים כנקודת ייחוס לדיון על חריגה מסמכות ולהבחנה בין טעות בשיקול הדעת לבין חריגה אקסטרינזית.¹\n\nלבסוף, נושא איזון המשאבים וחלוקת הרכוש כגורם שמצמצם או מרחיב את ההגנה על ציפייה נידון בעיקר בספרות הכלכלית־משפטית ובניתוח של עלות ההסתמכות; בתוך המאגר שסופק כתובה עבודה שמדגישה את משמעותה של עלות ההשקעה כהצדקה לשיקולי יציבות אך אין כאן חוק יסוד או פסק־דין יחיד שקובע כלל סטטוטורי בנוגע לחלוקת משאבים כגורם מפחית ציפייה. לכן הדיון בנושא זה במסגרת הישראלית מחייב חיבור בין ניתוחים כלכליים לבין אבחנות דוקטרינריות בפסיקה.²\n\n*הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.*\n"
-  },
-  {
     "id": "AW7",
-    "run_id": "93b580d0-bbbc-4edf-8f90-b9af801985e8",
-    "ms": 137293,
-    "pool_after": 15,
+    "run_id": "8b3f5ada-6631-478f-b057-f5b4207e9ae5",
+    "ms": 134136,
+    "pool_after": 27,
     "topic_aware_alignment": {
       "version": "v1.0",
       "applied": true,
@@ -1215,120 +14,242 @@
       "blocks_left_uncited": 1,
       "source_role_sanity_check": [
         {
-          "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
-          "reason": "role_incompatible_with_academic",
-          "changed": true,
+          "title": "חוק-יסוד: כבוד האדם וחירותו",
+          "reason": "compatible",
+          "changed": false,
           "source_id": "s1",
+          "citable_as": "statute",
+          "final_role": "primary_statute",
+          "source_type": "israeli_law",
+          "original_role": "primary_statute"
+        },
+        {
+          "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+          "reason": "compatible",
+          "changed": false,
+          "source_id": "s2",
           "citable_as": "scholarship",
           "final_role": "scholarship",
           "source_type": "journal_article",
-          "original_role": "binding_case_law"
+          "original_role": "scholarship"
         },
         {
-          "title": "חובתם של נושאי משרה ציבורית לומר אמת לציבור",
-          "reason": "role_incompatible_with_academic",
-          "changed": true,
-          "source_id": "s3",
-          "citable_as": "scholarship",
-          "final_role": "scholarship",
-          "source_type": "journal_article",
-          "original_role": "binding_case_law"
-        },
-        {
-          "title": "שיקול דעת שיפוטי : העידן השלישי",
+          "title": "ההליך המנהלי בצילו של שיקול-דעת",
           "reason": "role_incompatible_with_academic",
           "changed": true,
           "source_id": "s4",
           "citable_as": "scholarship",
           "final_role": "scholarship",
           "source_type": "journal_article",
-          "original_role": "binding_case_law"
+          "original_role": "primary_statute"
         },
         {
-          "title": "פתח-דבר: מה צריך ל משפט ומדוע?",
-          "reason": "role_incompatible_with_academic",
-          "changed": true,
+          "title": "שיקול דעת שיפוטי : העידן השלישי",
+          "reason": "compatible",
+          "changed": false,
+          "source_id": "s5",
+          "citable_as": "scholarship",
+          "final_role": "scholarship",
+          "source_type": "journal_article",
+          "original_role": "scholarship"
+        },
+        {
+          "title": "שיקול דעת שיפוטי : העידן השלישי",
+          "reason": "compatible",
+          "changed": false,
           "source_id": "s6",
           "citable_as": "scholarship",
           "final_role": "scholarship",
           "source_type": "journal_article",
-          "original_role": "binding_case_law"
+          "original_role": "scholarship"
         },
         {
-          "title": "בג\"ץ 2075/23 סילביה חדד נ׳ פרקליט המדינה פסק דין",
+          "title": "ביהמ\"ש השלום לתעבורה בחדרה, השופטת סיגל דבורי: החלטה בבקשה לביטול פסילה מנהלית על פי סעיף 48 לפקודת התעבורה (בפ\"מ 5010-11-22)",
           "reason": "role_incompatible_with_judgment",
           "changed": true,
           "source_id": "s7",
           "citable_as": "judgment",
           "final_role": "binding_case_law",
           "source_type": "caselaw",
-          "original_role": "scholarship"
+          "original_role": "primary_statute"
         },
         {
-          "title": "מי מפקח על המפקחת? ואת מי היא משתפת? רשות ניירות-ערך הישראלית במבט השוואתי | אסף אקשטיין (כרך יט)",
+          "title": "חופש הביטוי בתקשורת המקוונת: בחינה מחדש של תורת המניעה המוקדמת | אריאל בנדור ומיכל טמיר (כרך כו)",
           "reason": "role_incompatible_with_academic",
           "changed": true,
           "source_id": "s8",
           "citable_as": "scholarship",
           "final_role": "scholarship",
           "source_type": "journal_article",
-          "original_role": "binding_case_law"
+          "original_role": "primary_statute"
         },
         {
-          "title": "רע\"פ 7052/18 מדינת ישראל נ׳ רפי רותם פסק דין (05.05.2020)",
-          "reason": "compatible",
-          "changed": false,
+          "title": "המהפכה החוקתית - תיאור המציאות או נבואה המגשימה את עצמה?",
+          "reason": "role_incompatible_with_academic",
+          "changed": true,
           "source_id": "s9",
-          "citable_as": "judgment",
-          "final_role": "persuasive_case_law",
-          "source_type": "caselaw",
-          "original_role": "persuasive_case_law"
+          "citable_as": "scholarship",
+          "final_role": "scholarship",
+          "source_type": "journal_article",
+          "original_role": "primary_statute"
         },
         {
-          "title": "ביהמ\"ש המחוזי מרכז-לוד, סג\"נ השופטת בלהה טולקובסקי: פס\"ד בתביעת הורי המנוחה בגין רשלנות רפואית ורשלנות בהליכי מתן הרישיון לעסוק ברפואה  (ת\"א 10918-10-19)",
-          "reason": "role_incompatible_with_judgment",
+          "title": "בוד האדם בבית המשפט למשפחה: ביקורות נוספות על חוות הדעת המקצועיות | ליאור ברשק (כרך י\"ב)",
+          "reason": "role_incompatible_with_academic",
           "changed": true,
           "source_id": "s10",
+          "citable_as": "scholarship",
+          "final_role": "scholarship",
+          "source_type": "journal_article",
+          "original_role": "primary_statute"
+        },
+        {
+          "title": "עשרים שנה לבנק הזמרחי: סיפורה הפיקנטי של חוקת הכלאיים הישראלית",
+          "reason": "role_incompatible_with_academic",
+          "changed": true,
+          "source_id": "s11",
+          "citable_as": "scholarship",
+          "final_role": "scholarship",
+          "source_type": "journal_article",
+          "original_role": "primary_statute"
+        },
+        {
+          "title": "בימ\"ש עליון, אב\"ד הנשיאה אסתר חיות, המשנה לנשיאה ניל הנדל והשופטים עוזי פוגלמן, יצחק עמית, נעם סולברג, יוסף אלרון ואלכס שטיין: פסה\"ד בדיון נוסף לבקשת רפי רותם שעניינו ביקורת של ביהמ\"ש על שיקול דעת רשויות התביעה (דנ\"פ 5387/20)",
+          "reason": "role_incompatible_with_judgment",
+          "changed": true,
+          "source_id": "s13",
           "citable_as": "judgment",
           "final_role": "binding_case_law",
           "source_type": "caselaw",
           "original_role": "scholarship"
         },
         {
-          "title": "ע\"פ 2883/23 מדינת ישראל נ׳ פלוני פסק דין (21.02.2024)",
+          "title": "בג\"ץ 466-07 - ח\"כ זהבה גלאון-יו\"ר סיעת מר\"צ-יחד נ. היועץ המשפטי לממשלה",
           "reason": "role_incompatible_with_judgment",
           "changed": true,
-          "source_id": "s11",
+          "source_id": "s14",
+          "citable_as": "judgment",
+          "final_role": "binding_case_law",
+          "source_type": "supreme_court_il",
+          "original_role": "primary_statute"
+        },
+        {
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+          "reason": "compatible",
+          "changed": false,
+          "source_id": "s15",
           "citable_as": "judgment",
           "final_role": "binding_case_law",
           "source_type": "caselaw",
-          "original_role": "primary_statute"
-        }
-      ],
-      "judgment_legal_area_fit": [
+          "original_role": "binding_case_law"
+        },
         {
-          "title": "בג\"ץ 2075/23 סילביה חדד נ׳ פרקליט המדינה פסק דין",
-          "reason": "adjacent_legal_area_only",
-          "blocked": true,
-          "claim_id": "C1",
-          "source_id": "s7",
-          "allowed_use": "example_only",
-          "claim_topic_terms": [
-            "reasonableness",
-            "judicial_review",
-            "human_dignity",
-            "administrative_authority"
-          ],
-          "adjacent_area_only": true,
-          "judgment_topic_terms": [],
-          "direct_doctrine_match": false
+          "title": "ביהמ\"ש העליון, אב\"ד המשנה לנשיאה (בדימוס) ניל הנדל, השפט נעם סולברג והשופט עופר גרוסקופף: פס\"ד בשאלת חוקתיותו של ההסדר הפוטר את המדינה מאחריות נזיקית על נזקים הנגרמים על-ידה לתושבי רצועת עזה (ע\"א 993/19)",
+          "reason": "compatible",
+          "changed": false,
+          "source_id": "s16",
+          "citable_as": "judgment",
+          "final_role": "binding_case_law",
+          "source_type": "caselaw",
+          "original_role": "binding_case_law"
+        },
+        {
+          "title": "בג\"ץ 6949/21 חנין טנטורי נ׳ מדינת ישראל- ממשלת ישראל פסק דין (19.12.2021)",
+          "reason": "compatible",
+          "changed": false,
+          "source_id": "s17",
+          "citable_as": "judgment",
+          "final_role": "binding_case_law",
+          "source_type": "caselaw",
+          "original_role": "binding_case_law"
+        },
+        {
+          "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+          "reason": "role_incompatible_with_academic",
+          "changed": true,
+          "source_id": "s18",
+          "citable_as": "scholarship",
+          "final_role": "scholarship",
+          "source_type": "journal_article",
+          "original_role": "binding_case_law"
+        },
+        {
+          "title": "מוניטין ואסטרטגיה בבית המשפט העליון על סף המאה העשרים ואחת | שי דותן (כרך כג)",
+          "reason": "role_incompatible_with_academic",
+          "changed": true,
+          "source_id": "s19",
+          "citable_as": "scholarship",
+          "final_role": "scholarship",
+          "source_type": "journal_article",
+          "original_role": "binding_case_law"
+        },
+        {
+          "title": "רע\"א 7731-04 - מדינת ישראל - משרד הבריאות נ. עזבון המנוחה אביטל הלפרין ז\"ל",
+          "reason": "compatible",
+          "changed": false,
+          "source_id": "s20",
+          "citable_as": "commentary",
+          "final_role": "binding_case_law",
+          "source_type": "supreme_court_il",
+          "original_role": "binding_case_law"
+        },
+        {
+          "title": "אחריות נזיקית של רשויות רגולטוריות בישראל",
+          "reason": "role_incompatible_with_academic",
+          "changed": true,
+          "source_id": "s21",
+          "citable_as": "scholarship",
+          "final_role": "scholarship",
+          "source_type": "journal_article",
+          "original_role": "binding_case_law"
+        },
+        {
+          "title": "שני מושגים של ריסון - וסבירות",
+          "reason": "compatible",
+          "changed": false,
+          "source_id": "s22",
+          "citable_as": "scholarship",
+          "final_role": "scholarship",
+          "source_type": "journal_article",
+          "original_role": "scholarship"
+        },
+        {
+          "title": "פגם בערבות להצעה במכרז ושאלת המידתיות בדיני המכרזים",
+          "reason": "role_incompatible_with_academic",
+          "changed": true,
+          "source_id": "s23",
+          "citable_as": "scholarship",
+          "final_role": "scholarship",
+          "source_type": "journal_article",
+          "original_role": "binding_case_law"
+        },
+        {
+          "title": "בין רשלנות בנק (באנגליה) לרשלנות המדינה (בישראל) - נזק כלכלי טהור בעוולת הרשלנות בראי הפסיקה החדשה, ניתוח והערכה במבט השוואתי",
+          "reason": "role_incompatible_with_academic",
+          "changed": true,
+          "source_id": "s24",
+          "citable_as": "scholarship",
+          "final_role": "scholarship",
+          "source_type": "journal_article",
+          "original_role": "binding_case_law"
+        },
+        {
+          "title": "המהפכה החוקתית או מהפכת זכויות האדם? על העיגון החוקתי של הנורמות המוסדיות",
+          "reason": "role_incompatible_with_academic",
+          "changed": true,
+          "source_id": "s25",
+          "citable_as": "scholarship",
+          "final_role": "scholarship",
+          "source_type": "journal_article",
+          "original_role": "binding_case_law"
         }
       ],
+      "judgment_legal_area_fit": [],
       "block_source_plan": [
         {
           "block_id": "b1",
           "claim_type": "critique",
-          "block_topic": "reasonableness+judicial_review+human_dignity+administrative_authority",
+          "block_topic": "proportionality+reasonableness+human_dignity",
           "acceptable_roles": [
             "scholarship",
             "doctrinal_background_source",
@@ -1344,11 +265,11 @@
             "primary_mirror"
           ],
           "rejected_sources": [
-            "s7"
+            "s1"
           ],
           "selected_sources": [],
           "rejection_reasons": [
-            "s7:adjacent_legal_area_only"
+            "s1:class_statute_not_acceptable_for_critique"
           ],
           "unsupported_or_cautious": true
         }
@@ -1368,7 +289,7 @@
     },
     "footnotes_count": 0,
     "footnotes": [],
-    "answer_len": 1328,
-    "answer": "בית המשפט אכן רשאי — תחת שורה של תנאים מצומצמים — להתערב במדיניות מקצועית של רשות מנהלית כאשר מעשיה חורגים ממסגרת הסמכות, פוגעים בזכויות יסוד או נופלים תחת קטגוריית חוסר סבירות קיצוני שמצדיקה תיקון שיפוטי; טענה זו נשענת על ההכרה כי ביקורת שיפוטית אינה נועדה להחליף מומחיות מקצועית אלא להבטיח כי ההליך וההחלטה עומדים במסגרת החוק, סבירים ומנומקים. הטיעון הנגדי החזק ביותר מייצג את עקרון הפרדת הרשויות ומעמד המומחיות: החלטות מקצועיות תלויות בהבחנות אפיסטמיות, בהערכת סיכונים ובהקצאת משאבים שבהן לבית המשפט אין כלים המתאימים, ולכן התערבות שיפוטית יכולה בקלות להוליד חטא־מינייה של שיפוט במקום ביקורת ראויה ולפגוע ביעילות המינהלית. ההבחנה המשפטית הנדרשת היא אטומית: יש להותיר לרשות מרחב שיקול דעת מקצועי ככל שיוכח כי ההחלטה תואמת את הסמכות הנתונה לה ומגובה בשיקולים רלוונטיים, ואפשר להתערב רק כאשר התקיימו עילות מובהקות — חריגה מסמכות או שימוש בשיקולים זרים, חוסר סבירות מובהק, פגיעה לא פרופורציונלית בזכויות או היעדר מנומקות מהותית המונעת ביקורת אפקטיבית; בפסיקה ניכרת גישה שמאשרת צווים מצומצמים כלפי גופים מקצועיים במצבים אלה, תוך דגש על מנומקות ובחינת משקל השיקולים. עם זאת נותר קושי פרקטי בקביעת גבולות ה'חריג' ובהקפדה על התערבות צרה שלא תגדע את צוותי המומחים — קושי שמצריך המשך עדכון קריטריונים שיפוטיים ויישומם זהיר בהכרעות מקרה־מקרה.\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n"
+    "answer_len": 1329,
+    "answer": "בית המשפט יכול, בעקרון, להתערב במדיניות מקצועית של רשות מנהלית במקרים חריגים; ההצדקה לכך נעוצה באחריות השיפוטית להגן על זכויות יסוד ובבחינת מידתיות ההגבלות שמטילה הרשאה מנהלית, ובכך לאפשר בקרה כשפסי ההליך או תוצאות המדיניות חורגים מסגרת הלגיטימציה הציבורית. הטיעון הנגדי החזק ביותר הוא עקרון הפרדת הרשויות והטענה לפיה החלטות מקצועיות נשענות על ידע, שיקול כלכלי ומומחיות מוסדית שאין בידי השופטים, כך שהתערבות שיפוטית עלולה להפר את חלוקת התפקידים, לפגוע בריבונות תכליתית של הרשות ולהוביל ל״שיפוטיזציה״ של קבלת המדיניות. ההבחנה המשפטית המחייבת בין הטענות ניתנת לניסוח מתודי: התערבות תיתכן רק כאשר מתקיימים סממנים משפטיים ברורים — חוסר חוקיות או חריגה מסמכות, פגם מהותי בשיקול הדעת (לרבות שיקול דעת אבסורדי או בלתי־סביר), הפרת חובת נימוק או פגיעה בלתי־מידתית בזכויות יסוד — וביחד עם זאת כאשר ההליך השיפוטי מסוגל לנחות על הלגיטימיות של ההחלטה באמצעות מבחני מידתיות וסבירות. הכרעה זו משמרת ריסון מוסדי ודפרנציאליות כלפי מומחיות הרשות, אך מאפשרת כלפי חוץ כלי פיקוח תקף במצבים שבהם המדיניות המקצועית חורגת ממסגרת הסבירות החוקתית או הכללית; יש להודות כי קביעת סף החריגיות והאבחנה בין ביקורת תהליכית לביקורת תוכן נותרות בעייתיות ודרושות עיבוד מתודולוגי מתמשך.\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות. לא אותר פסק דין העוסק ישירות בדוקטרינה הנדונה; הביסוס כאן נשען על חקיקה וספרות משפטית.*"
   }
 ]
