@@ -2347,6 +2347,16 @@ export async function runDrafterV2(
       noticesSuppressed: suppressed,
     });
     answer_markdown = hygiene.answer;
+    // topic_aware_source_role_and_claim_alignment_v1 — the single academic
+    // work note must also state when no directly on-point judgment was found.
+    if (limitation_note_alignment.revised) {
+      answer_markdown = answer_markdown.replace(
+        /\*הערת עבודה: ([^*]+)\*\s*$/,
+        (_m, body: string) =>
+          `*הערת עבודה: ${body.trim()} לא אותר פסק דין העוסק ישירות בדוקטרינה הנדונה; הביסוס כאן נשען על חקיקה וספרות משפטית.*`,
+      );
+    }
+
     academic_presentation_hygiene = hygiene.report;
     academic_style_model = {
       ...buildAcademicStyleGuideBlock(
