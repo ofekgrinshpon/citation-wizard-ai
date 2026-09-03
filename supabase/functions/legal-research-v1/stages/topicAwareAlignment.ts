@@ -257,11 +257,14 @@ const ACCEPTABLE_CLASSES: Record<ClaimType, SourceClass[]> = {
   case_holding: ["judgment"],
   doctrinal_rule: ["judgment", "statute", "academic"],
   // A statute may anchor theoretical background (e.g. פסקת ההגבלה) — primary
-  // authority is never a downgrade; it is only barred from critique claims.
-  theoretical_background: ["academic", "institutional", "statute"],
+  // authority is never a downgrade. Judgments are allowed here and on critique
+  // claims too, but only survive the doctrinal legal-area fit test below, so
+  // an off-topic judgment is still removed while an on-point one is kept.
+  theoretical_background: ["academic", "institutional", "statute", "judgment"],
 
   comparative_context: ["academic", "judgment"],
-  critique: ["academic"],
+  critique: ["academic", "judgment"],
+
   implementation_example: ["judgment", "institutional", "academic"],
   other: ["judgment", "statute", "academic", "institutional", "other"],
 };
