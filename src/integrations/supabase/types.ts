@@ -1147,6 +1147,15 @@ export type Database = {
       }
       increment_citation_count: { Args: never; Returns: undefined }
       increment_usage_count: { Args: { source_id: string }; Returns: undefined }
+      local_caselaw_body_signals: {
+        Args: { _doc_ids: string[] }
+        Returns: {
+          body_chars: number
+          case_number: string
+          document_id: string
+          head_text: string
+        }[]
+      }
       match_legal_chunks: {
         Args: {
           match_count?: number

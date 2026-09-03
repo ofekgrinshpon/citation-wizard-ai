@@ -1,0 +1,191 @@
+[
+  {
+    "id": "AW7",
+    "run_id": "2d26d269-b073-4634-89ca-d2c16d49cae6",
+    "ms": 117085,
+    "gate": {
+      "status": "completed",
+      "candidates_checked": 43,
+      "bypassed": 43,
+      "still_suppressible": 0,
+      "classification_counts": {
+        "substantive_judgment_body": 43
+      },
+      "p50_ms": 0,
+      "p95_ms": 1,
+      "elapsed_ms": 62,
+      "rpc_error": null,
+      "sample_rows": [
+        {
+          "doc_id": "61ac3fb3-aef0-4b6f-84d9-e9bf0f1cf475",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3960",
+          "case_number_present": true,
+          "available_text_chars": 83359,
+          "positive": [
+            "case_number_column",
+            "formal_judgment_opener",
+            "decision_header",
+            "party_role_terms",
+            "party_block_vs"
+          ],
+          "negative": [],
+          "classification": "substantive_judgment_body",
+          "decision": "bypass_suppression",
+          "reason": "substantive_body_with_judgment_identity"
+        },
+        {
+          "doc_id": "622d205d-844b-4b72-9eeb-b6640b2a31fe",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4710",
+          "case_number_present": true,
+          "available_text_chars": 14215,
+          "positive": [
+            "case_number_column",
+            "formal_judgment_opener",
+            "decision_header",
+            "party_role_terms",
+            "party_block_vs"
+          ],
+          "negative": [],
+          "classification": "substantive_judgment_body",
+          "decision": "bypass_suppression",
+          "reason": "substantive_body_with_judgment_identity"
+        },
+        {
+          "doc_id": "c46fc333-6ca0-406d-ad9b-f48c1ec62e5c",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5660",
+          "case_number_present": true,
+          "available_text_chars": 27248,
+          "positive": [
+            "case_number_column",
+            "formal_judgment_opener",
+            "decision_header",
+            "party_role_terms",
+            "party_block_vs"
+          ],
+          "negative": [],
+          "classification": "substantive_judgment_body",
+          "decision": "bypass_suppression",
+          "reason": "substantive_body_with_judgment_identity"
+        },
+        {
+          "doc_id": "61ac3fb3-aef0-4b6f-84d9-e9bf0f1cf475",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3960",
+          "case_number_present": true,
+          "available_text_chars": 83359,
+          "positive": [
+            "case_number_column",
+            "formal_judgment_opener",
+            "decision_header",
+            "party_role_terms",
+            "party_block_vs"
+          ],
+          "negative": [],
+          "classification": "substantive_judgment_body",
+          "decision": "bypass_suppression",
+          "reason": "substantive_body_with_judgment_identity"
+        },
+        {
+          "doc_id": "622d205d-844b-4b72-9eeb-b6640b2a31fe",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4710",
+          "case_number_present": true,
+          "available_text_chars": 14215,
+          "positive": [
+            "case_number_column",
+            "formal_judgment_opener",
+            "decision_header",
+            "party_role_terms",
+            "party_block_vs"
+          ],
+          "negative": [],
+          "classification": "substantive_judgment_body",
+          "decision": "bypass_suppression",
+          "reason": "substantive_body_with_judgment_identity"
+        },
+        {
+          "doc_id": "c46fc333-6ca0-406d-ad9b-f48c1ec62e5c",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5660",
+          "case_number_present": true,
+          "available_text_chars": 27248,
+          "positive": [
+            "case_number_column",
+            "formal_judgment_opener",
+            "decision_header",
+            "party_role_terms",
+            "party_block_vs"
+          ],
+          "negative": [],
+          "classification": "substantive_judgment_body",
+          "decision": "bypass_suppression",
+          "reason": "substantive_body_with_judgment_identity"
+        },
+        {
+          "doc_id": "2cccfe1b-dbe5-414f-be07-9bc6d12eb6e5",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5630",
+          "case_number_present": true,
+          "available_text_chars": 251141,
+          "positive": [
+            "case_number_column",
+            "docket_pattern",
+            "formal_judgment_opener",
+            "decision_header",
+            "party_role_terms",
+            "party_block_vs"
+          ],
+          "negative": [],
+          "classification": "substantive_judgment_body",
+          "decision": "bypass_suppression",
+          "reason": "substantive_body_with_judgment_identity"
+        },
+        {
+          "doc_id": "61ac3fb3-aef0-4b6f-84d9-e9bf0f1cf475",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3960",
+          "case_number_present": true,
+          "available_text_chars": 83359,
+          "positive": [
+            "case_number_column",
+            "formal_judgment_opener",
+            "decision_header",
+            "party_role_terms",
+            "party_block_vs"
+          ],
+          "negative": [],
+          "classification": "substantive_judgment_body",
+          "decision": "bypass_suppression",
+          "reason": "substantive_body_with_judgment_identity"
+        }
+      ]
+    },
+    "listing_suppressed": 2,
+    "suppressed_reason_counts": {
+      "index_or_listing:listing_url_path": 2
+    },
+    "protected_counts": {
+      "judgment_document": 4,
+      "exact_docket_identity": 11,
+      "official_primary_page": 12,
+      "local_corpus_substantive": 53,
+      "local_caselaw_substantive_body": 43
+    },
+    "class_counts": {
+      "index_or_listing": 2,
+      "citable_candidate": 109,
+      "possible_body_page": 14
+    },
+    "pool_before": 125,
+    "pool_after": 8,
+    "pool_by_origin": {
+      "local_db": 8
+    },
+    "footnotes_count": 1,
+    "footnotes": [
+      {
+        "n": null,
+        "title": "בכמה קולות מדברת המדינה? על מתן מעמד לרשות חולקת בהליכים משפטיים; להיות כמו דלוור; הסכמה מהדת? על חובת גילוי, כשירות תרבותית וקואורדינציה (בעקבות ע\"א 8710/17 פלונית נ' שירותי בריאות כללית)",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_5b4f7c0a72ba4dc08ea099a8a4cd339d.pdf",
+        "role": null
+      }
+    ],
+    "answer_len": 1253,
+    "answer": "טענתי המרכזית היא כי העיקרון הכללי של מתן מרחב מקצועי לרשויות מנהליות אינו חוסם התערבות שיפוטית מוחלטת; בית המשפט רשאי להתערב במדיניות מקצועית רק במקרים חריגים המוצדקים על ידי ליקוי משפטי מהותי — למשל חריגה מסמכות, טעות דין בולטת, החלטה בלתי סבירה במידה קיצונית או פגיעה בזכויות יסוד שלא ניתנת לתיקון על ידי אמצעים פנימיים. טיעון הנגד החזק ביותר טוען כי כל התערבות שכזו פוגעת בעקרון הפרדת הרשויות וביעילות הטיפול האנושי והמקצועי שהרשויות מספקות, ולפיכך יש לנקוט במדיניות של דהפרנצ׳ (deference) ברוב המכריע של המקרים; הסתמכות זו מדגישה גם את המחסור בידע מקצועי שיפוטי ובמוסריות דמוקרטית של גופים נבחרים או מומחים מקצועיים. האבחנה המשפטית המכריעה בין העמדה המתנגדת לעמדתי היא אפוא סטנדרטית: ההימנעות מהתערבות לא שוללת אפשרות לבחינה שיפוטית מצמצמת אלא כאשר מתקיימים קריטריונים נוקשים המצביעים על חריגות ממשית — והכלים המתאימים לכך הם בדיקת סמכות, סבירות קיצונית והגברת נטל ההוכחה בשל מקרים של מחלוקת בין רשויות, לצד שמירה על קווי מתאר מצומצמים להתערבות כדי לכבד את המומחיות המנהלית. מסקנתי היא שתיקון האיזון ידרש להיות מדוד ומוסדר: בית המשפט יכול ולא פעם חייב לנקוט בצעדים מוגבלים ומשוערים, אך הקביעה של סף ההתערבות הנכון נותרת בעייתית ודורשת השגה פרקטית זהירה.¹\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n"
+  }
+]
