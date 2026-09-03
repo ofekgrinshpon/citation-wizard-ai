@@ -15,6 +15,7 @@
 //     verifier.usable).
 //   * Numbering is chronological by first appearance.
 
+import { unrelatedCompoundCompanions } from "./nonAcademicBinding.ts";
 import type { Footnote, UsedSource } from "../lib/types.ts";
 import type { DrafterInputSource } from "./drafter.ts";
 import type { StructuredBlock, StructuredDraft } from "./structuredValidation.ts";
@@ -75,6 +76,7 @@ export interface BuildResult {
     heading_count: number;
     cited_segment_count: number;
     compound_segment_count: number;
+    unrelated_compound_companions_pruned?: number;
     marker_count: number;
     distinct_source_count: number;
     compound_footnote_count: number;
@@ -144,6 +146,7 @@ export function buildFootnotedAnswer(
 
   const inputByRef = new Map(inputSources.map((s) => [s.ref, s]));
 
+  let unrelated_compound_companions_pruned = 0;
   let mixed_hierarchy_footnotes_count = 0;
   let mixed_hierarchy_footnotes_split = 0;
   // Counters are gathered on the first (entry-collection) pass only; the
@@ -182,6 +185,14 @@ export function buildFootnotedAnswer(
         distinct = distinct.filter(
           (s) => hierarchyClassOf(hierarchyTierOf(s)) !== "secondary",
         );
+      }
+      // non_academic_source_binding_and_csm_v1 — a marker may not merge
+      // unrelated sources into one concatenated label. Companions that share
+      // no subject vocabulary with the leader are dropped.
+      const unrelated = unrelatedCompoundCompanions(distinct);
+      if (unrelated.length > 0) {
+        if (counting) unrelated_compound_companions_pruned += unrelated.length;
+        distinct = distinct.filter((s) => !unrelated.includes(s));
       }
       // Within a footnote, order sub-sources by hierarchy too.
       distinct = distinct
@@ -579,6 +590,7 @@ export function buildFootnotedAnswer(
       heading_count,
       cited_segment_count,
       compound_segment_count,
+      unrelated_compound_companions_pruned,
       marker_count,
       distinct_source_count: finalUsedSources.length,
       compound_footnote_count,

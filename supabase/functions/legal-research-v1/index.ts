@@ -66,6 +66,12 @@ import {
 } from "./stages/explicitDocketGuard.ts";
 import { mergeAndBudgetQueries } from "./stages/queryMergeAndBudget.ts";
 import { runOfficialSourceDiscovery } from "./stages/officialSourceDiscovery.ts";
+import {
+  detectStatutoryTarget,
+  type NonAcademicLocalJudgmentPackFlow,
+  type NonAcademicPrimaryAnchorBinding,
+  type NonAcademicRuntimeBreakdown,
+} from "./stages/nonAcademicBinding.ts";
 import { courtEgressTelemetry, resetCourtEgressLedger } from "./lib/courtEgress.ts";
 import { judgmentUrlTelemetry, resetJudgmentUrlLedger } from "./lib/judgmentUrlEligibility.ts";
 import {
@@ -1331,15 +1337,63 @@ async function handle(req: Request): Promise<Response> {
   // and no extraction slot), then official URLs retrieval already surfaced,
   // then deterministic court-file derivation. Identity is proven inside the
   // body before anything is injected or cached.
+  // non_academic_source_binding_and_csm_v1 — ordinary statutory questions
+  // ("מה אומר חוק-יסוד…") must anchor on the local statutory text. When the
+  // nominator produced no statute target, inject exactly one synthetic
+  // statute nomination so the existing local-first resolver runs. Bounded: one
+  // target, no extra retrieval, no new fetch lane.
+  const nonAcademicRun = sourceUseIntent.plan?.user_task_intent !== "academic_writing";
+  const statutoryTarget = nonAcademicRun
+    ? detectStatutoryTarget(question)
+    : { detected: false, statute_title: null, statute_section: null, matched_pattern: null };
+  const hasStatuteNomination = sourceNomination.candidates.some((c) => c.category === "statute");
+  let syntheticStatuteInjected = false;
+  let nominationForDiscovery = sourceNomination;
+  if (statutoryTarget.detected && !hasStatuteNomination) {
+    const synthetic = {
+      nomination_id: "syn_statute_1",
+      bucket: "actionable" as const,
+      actionability: "known_name_no_docket" as const,
+      category: "statute" as const,
+      label_he: statutoryTarget.statute_title!,
+      docket: null,
+      statute_title: statutoryTarget.statute_title,
+      statute_section: statutoryTarget.statute_section,
+      authors: [],
+      journal_or_publisher: null,
+      institution: null,
+      year: null,
+      topic_query: null,
+      role_in_answer: "primary_statute",
+      relevance_confidence: 0.9,
+      identifier_confidence: 0.9,
+      confidence: 0.9,
+      must_verify: true as const,
+      nominated_by: "non_academic_statutory_target_detector",
+      stripped_fields: [],
+      demoted: false,
+      demoted_reason: null,
+    };
+    nominationForDiscovery = {
+      ...sourceNomination,
+      candidates: [synthetic, ...sourceNomination.candidates],
+      actionable: [synthetic, ...sourceNomination.actionable],
+    };
+    syntheticStatuteInjected = true;
+  }
+
   const officialDiscovery = await runOfficialSourceDiscovery({
     admin,
-    nomination: sourceNomination,
+    nomination: nominationForDiscovery,
     candidates: pool.candidates,
     integrity: pool.integrity,
     budget,
     max_targets: fastLaneHit
       ? 0
-      : Math.min(2, Math.max(0, router.max_speculative_acquisitions ?? 2)),
+      : Math.min(
+        syntheticStatuteInjected ? 3 : 2,
+        Math.max(syntheticStatuteInjected ? 1 : 0, router.max_speculative_acquisitions ?? 2),
+      ),
     markDurable: (name, detail) => budget.markDurable(name, detail),
   });
 
@@ -2423,6 +2477,68 @@ async function handle(req: Request): Promise<Response> {
     marker_validation,
     omitted_candidate_ids,
     used_sources: drafter.used_sources,
+    // non_academic_source_binding_and_csm_v1 telemetry.
+    non_academic_primary_anchor_binding: nonAcademicRun
+      ? ((): NonAcademicPrimaryAnchorBinding => {
+        const att = officialDiscovery.attempts.find((a) => a.local_statute_anchor_resolution);
+        const res = att?.local_statute_anchor_resolution as
+          | { resolved?: boolean; reason?: string }
+          | undefined;
+        const statuteRefs = drafter.used_sources.filter((u) =>
+          String(u.citable_as ?? "") === "statute" || String(u.citable_as ?? "") === "regulation"
+        );
+        return {
+          question_id: "answer",
+          detected_statutory_target: statutoryTarget.statute_title,
+          local_primary_anchor_attempted: !!att,
+          local_primary_anchor_found: res?.resolved === true,
+          bound_to_blocks: statuteRefs.length,
+          block_ids: statuteRefs.map((u) => String(u.candidate_id)),
+          failure_reason: res?.resolved === true ? null : (res?.reason ?? "no_statute_lane_attempt"),
+          synthetic_nomination_injected: syntheticStatuteInjected,
+        };
+      })()
+      : undefined,
+    non_academic_local_judgment_pack_flow: nonAcademicRun
+      ? ((): NonAcademicLocalJudgmentPackFlow => {
+        const finalJudgments = drafter.used_sources.filter((u) =>
+          String(u.citable_as ?? "") === "judgment"
+        ).length;
+        const eligible = verifier.usable.filter((u) =>
+          String((u as { citable_as?: string }).citable_as ?? "") === "judgment"
+        ).length;
+        return {
+          question_id: "answer",
+          protected_local_judgments: localCaselawGate.bypassed ?? 0,
+          eligible_local_judgments: eligible,
+          admitted_to_synthesis_pack: finalJudgments,
+          rejected_count: Math.max(0, eligible - finalJudgments),
+          rejection_reasons: (drafter.claim_source_match?.dropped_source_refs ?? [])
+            .reduce((acc: Record<string, number>, d: { reason: string }) => {
+              acc[d.reason] = (acc[d.reason] ?? 0) + 1;
+              return acc;
+            }, {}),
+          final_judgment_count: finalJudgments,
+        };
+      })()
+      : undefined,
+    non_academic_runtime_breakdown: nonAcademicRun
+      ? ({
+        question_id: "answer",
+        total_ms: Date.now() - t_start,
+        stage_ms: {
+          retrieval_ms: (pool as unknown as { ms?: number }).ms ?? 0,
+          discovery_ms: officialDiscovery.ms ?? 0,
+          verifier_ms: verifier.ms ?? 0,
+          drafter_ms: drafter.ms ?? 0,
+        },
+        failure_stage: null,
+        reaped: false,
+        refund_triggered: false,
+        recommended_fix: null,
+      } as NonAcademicRuntimeBreakdown)
+      : undefined,
+    non_academic_limitation_note: drafter.non_academic_limitation_note ?? null,
     // Authority-role / judgment-typing view of the final pack (labelling only).
     synthesis_pack: summarizeSynthesisPack(
       drafter.used_sources.map((u) => ({
