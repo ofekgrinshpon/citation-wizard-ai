@@ -2810,6 +2810,10 @@ async function handle(req: Request): Promise<Response> {
     // topic_aware_source_role_and_claim_alignment_v1 telemetry.
     topic_aware_alignment: drafter.topic_aware_alignment ?? null,
     limitation_note_alignment: drafter.limitation_note_alignment ?? null,
+    // topic_aware_claim_source_alignment_v1 telemetry.
+    claim_source_plan: drafter.claim_source_plan ?? null,
+    drafter_block_source_compliance: drafter.drafter_block_source_compliance ?? null,
+    post_draft_alignment_filter: drafter.post_draft_alignment_filter ?? null,
 
     // academic_drafter_source_ref_coverage_v2 telemetry.
     academic_drafter_source_ref_emission: drafter.academic_drafter_source_ref_emission ?? null,

@@ -115,6 +115,15 @@ import {
   type SourceRoleSanityReport,
   type TopicAwareAlignmentReport,
 } from "./topicAwareAlignment.ts";
+import {
+  assessDrafterBlockCompliance,
+  buildClaimSourcePlan,
+  buildPostDraftAlignmentFilter,
+  type ClaimSourcePlan,
+  type DrafterBlockComplianceReport,
+  type PostDraftAlignmentFilterReport,
+  renderClaimSourcePlanBlock,
+} from "./claimSourcePlanning.ts";
 
 
 
@@ -369,6 +378,7 @@ function buildUserMessage(
   facetDirective?: string[],
   blockCeiling?: number | null,
   sourceUsePlan?: SourceUsePlan | null,
+  claimSourcePlan?: ClaimSourcePlan | null,
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
@@ -603,6 +613,14 @@ function buildUserMessage(
   lines.push("טענות (לשימוש פנימי בלבד — אל תזכיר מזהי טענות בשום text):");
   for (const cl of claims) {
     lines.push(`- (${cl.claim_id}) ${cl.text_he}`);
+  }
+  // topic_aware_claim_source_alignment_v1 — per-claim allowed/disallowed refs.
+  if (claimSourcePlan) {
+    const planBlock = renderClaimSourcePlanBlock(claimSourcePlan);
+    if (planBlock) {
+      lines.push("");
+      lines.push(planBlock);
+    }
   }
   if (answerIntent) {
     lines.push("");
@@ -1280,6 +1298,10 @@ export interface DrafterV2Result {
   /** topic_aware_source_role_and_claim_alignment_v1 telemetry. */
   topic_aware_alignment?: TopicAwareAlignmentReport;
   limitation_note_alignment?: LimitationNoteAlignment;
+  /** topic_aware_claim_source_alignment_v1 — pre/post draft plan telemetry. */
+  claim_source_plan?: ClaimSourcePlan;
+  drafter_block_source_compliance?: DrafterBlockComplianceReport;
+  post_draft_alignment_filter?: PostDraftAlignmentFilterReport;
 
 
 
@@ -2010,6 +2032,16 @@ export async function runDrafterV2(
 
 
 
+  // topic_aware_claim_source_alignment_v1 — pre-draft claim→source plan. It
+  // only constrains which of the already-admitted sources may be cited per
+  // claim; it never adds, retrieves or re-admits a source.
+  const claim_source_plan: ClaimSourcePlan = buildClaimSourcePlan(
+    question,
+    claims,
+    inputSources,
+    { academicMode: opts?.sourceUsePlan?.user_task_intent === "academic_writing" },
+  );
+
   const userMsg = buildUserMessage(
     question,
     claims,
@@ -2025,6 +2057,7 @@ export async function runDrafterV2(
     opts?.facetDirective,
     opts?.blockCeiling ?? null,
     opts?.sourceUsePlan ?? null,
+    claim_source_plan,
   );
 
   // academic_drafter_prompt_conflict_cleanup_v1 — academic drafts get the
@@ -2288,6 +2321,16 @@ export async function runDrafterV2(
     ...aligned.report,
     source_role_sanity_check: source_role_sanity.rows,
   };
+  // topic_aware_claim_source_alignment_v1 — compliance of the raw draft with
+  // the pre-draft plan (report-only), and the citation-level kept/dropped view
+  // after role + legal-area filtering.
+  const drafter_block_source_compliance: DrafterBlockComplianceReport =
+    assessDrafterBlockCompliance(
+      matched.draft ?? gated.draft ?? parsed.draft,
+      claim_source_plan,
+    );
+  const post_draft_alignment_filter: PostDraftAlignmentFilterReport =
+    buildPostDraftAlignmentFilter(topic_aware_alignment);
 
   const built = buildFootnotedAnswer(
     aligned.draft ?? matched.draft ?? gated.draft ?? parsed.draft as StructuredDraft,
@@ -2485,6 +2528,9 @@ export async function runDrafterV2(
     doctrinal_typing,
     topic_aware_alignment,
     limitation_note_alignment,
+    claim_source_plan,
+    drafter_block_source_compliance,
+    post_draft_alignment_filter,
 
 
 
