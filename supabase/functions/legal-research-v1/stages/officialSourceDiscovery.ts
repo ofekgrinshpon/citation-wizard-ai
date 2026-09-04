@@ -17,6 +17,13 @@
 import type { Candidate } from "../lib/types.ts";
 import type { IntegrityLogRow } from "./candidatePool.ts";
 import {
+  classifyWebFailure,
+  currentEndpointType,
+  recordWebCall,
+  safeErrorMessage,
+  type WebEndpointType,
+} from "../lib/webTierHealth.ts";
+import {
   detectDockets,
   normalizedDocketId,
   textContainsExactDocket,
