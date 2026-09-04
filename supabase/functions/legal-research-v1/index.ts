@@ -1318,19 +1318,29 @@ async function handle(req: Request): Promise<Response> {
     }
   }
 
-  // ─── canonical_judgment_text_acquisition_v1 (Option B) — retired ─────────
-  // The hand-maintained landmark-case list no longer seeds queries
-  // (CASE_SEEDING_MODE = "telemetry_only"), so this lane is off the run path.
-  // The stage is kept for its per-probe / block-page telemetry shape; the
-  // acquisition work moved to official_source_discovery below.
+  // ─── canonical_judgment_text_acquisition_v1 (Option B) ───────────────────
+  // research_richness_execution_unblock_v1: re-enabled as a *bounded* lane
+  // (max 2 seeded dockets) for the depth modes where a canonical authority is
+  // actually expected. All existing identity / URL / body / integrity gates
+  // inside the stage are unchanged; nothing is cited without passing them.
+  const canonicalDepthEligible = sourceDepth.depth_mode === "narrow_doctrine" ||
+    sourceDepth.depth_mode === "broad_research" ||
+    sourceDepth.depth_mode === "academic_research";
+  const canonicalMaxDockets = canonicalDepthEligible ? 2 : 0;
   const canonicalAcquisition = await runCanonicalAuthorityAcquisition({
     registry: coreAuthorityRegistry,
     candidates: pool.candidates,
     integrity: pool.integrity,
     budget,
-    max_dockets: 0,
+    max_dockets: canonicalMaxDockets,
     markDurable: (name, detail) => budget.markDurable(name, detail),
   });
+  const canonicalAcquisitionTrigger = {
+    depth_mode: sourceDepth.depth_mode,
+    depth_eligible: canonicalDepthEligible,
+    max_dockets: canonicalMaxDockets,
+    reason: canonicalDepthEligible ? "depth_mode_eligible" : "depth_mode_not_eligible",
+  };
 
   // ─── official_source_discovery + verified_legal_sources cache ────────────
   // Identifier-bearing nominations: cache lookup first (a hit costs no fetch
