@@ -79,6 +79,10 @@ export interface ClaimSourcePlanRow {
   allowed_roles: string[];
   preferred_source_ids: string[];
   disallowed_source_ids: string[];
+  /** research_richness_execution_unblock_v1 — plan-ceiling telemetry. */
+  preferred_ceiling?: number;
+  preferred_per_role?: Record<string, number>;
+  eligible_count?: number;
   unsupported_or_cautious: boolean;
   reason: string;
 }
@@ -143,7 +147,7 @@ export function buildClaimSourcePlan(
     const text = String(c.text_he ?? "");
     const claimType = deriveClaimTypeFromText(text, opts.academicMode);
     const acceptable = ACCEPTABLE_CLASSES[claimType];
-    const preferred: Array<{ ref: string; score: number }> = [];
+    const preferred: Array<{ ref: string; score: number; cls: string }> = [];
     const disallowed: string[] = [];
 
     for (const s of sources) {
