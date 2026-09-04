@@ -258,6 +258,8 @@ async function callPerplexity(
   ms: number;
   ok: boolean;
   http?: number;
+  failure_class?: WebFailureClass;
+  failure_reason?: string | null;
 }> {
   const key = Deno.env.get("PERPLEXITY_API_KEY");
   if (!key) return { raw: [], ms: 0, ok: false };
