@@ -2574,6 +2574,7 @@ async function handle(req: Request): Promise<Response> {
     builder_report: drafter.builder_report,
     // footnote_rendering_invariant_v1 telemetry.
     footnote_render_report: drafter.footnote_render_report ?? null,
+    footnote_density_emission: drafter.footnote_density_emission ?? [],
     inline_marker_count: drafter.footnote_render_report?.inline_marker_count ?? 0,
     footnotes_length: drafter.footnote_render_report?.footnotes_length ?? 0,
     used_sources_length: drafter.footnote_render_report?.used_sources_length ?? 0,
