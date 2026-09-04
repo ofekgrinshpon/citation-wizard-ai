@@ -338,9 +338,16 @@ async function callPerplexity(
           snippet_full: s.snippet ? String(s.snippet).slice(0, 1600) : undefined,
         }))
       : [];
-    return { raw, ms, ok: true, http: r.status };
-  } catch {
-    return { raw: [], ms: Date.now() - t0, ok: false, http: 0 };
+    recordWebCall({ status: r.status, ms, failure_class: "ok" });
+    return { raw, ms, ok: true, http: r.status, failure_class: "ok", failure_reason: null };
+  } catch (e) {
+    const ms = Date.now() - t0;
+    const cls = classifyWebFailure(null, e instanceof Error ? e.message : String(e));
+    recordWebCall({ status: null, ms, failure_class: cls });
+    return {
+      raw: [], ms, ok: false, http: 0,
+      failure_class: cls, failure_reason: safeErrorMessage(cls),
+    };
   }
 }
 
