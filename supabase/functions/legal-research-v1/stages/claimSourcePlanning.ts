@@ -79,6 +79,10 @@ export interface ClaimSourcePlanRow {
   allowed_roles: string[];
   preferred_source_ids: string[];
   disallowed_source_ids: string[];
+  /** research_richness_execution_unblock_v1 — plan-ceiling telemetry. */
+  preferred_ceiling?: number;
+  preferred_per_role?: Record<string, number>;
+  eligible_count?: number;
   unsupported_or_cautious: boolean;
   reason: string;
 }
@@ -90,6 +94,47 @@ export interface ClaimSourcePlan {
 }
 
 const MAX_PREFERRED = 4;
+/** research_richness_execution_unblock_v1 — academic deep answers may cite a
+ *  wider, role-diverse set of already-admitted sources. No new sources are
+ *  admitted here: this only raises the ceiling on what the drafter may cite. */
+const MAX_PREFERRED_ACADEMIC = 8;
+const MIN_PREFERRED_ACADEMIC = 6;
+/** Per-class ceiling inside one academic claim, so one class cannot fill it. */
+const ACADEMIC_PER_CLASS_CAP = 3;
+
+/** Diversity-aware top-N selection: round-robin across source classes by score. */
+function selectRoleDiverse(
+  ranked: Array<{ ref: string; score: number; cls: string }>,
+  limit: number,
+  perClassCap: number,
+): { ids: string[]; per_role: Record<string, number> } {
+  const byClass = new Map<string, Array<{ ref: string; score: number }>>();
+  for (const r of ranked) {
+    const arr = byClass.get(r.cls) ?? [];
+    arr.push({ ref: r.ref, score: r.score });
+    byClass.set(r.cls, arr);
+  }
+  const order = [...byClass.keys()].sort((a, b) =>
+    (byClass.get(b)![0]?.score ?? 0) - (byClass.get(a)![0]?.score ?? 0)
+  );
+  const ids: string[] = [];
+  const per_role: Record<string, number> = {};
+  let round = 0;
+  while (ids.length < limit && round < perClassCap) {
+    let progressed = false;
+    for (const cls of order) {
+      if (ids.length >= limit) break;
+      const item = byClass.get(cls)![round];
+      if (!item) continue;
+      ids.push(item.ref);
+      per_role[cls] = (per_role[cls] ?? 0) + 1;
+      progressed = true;
+    }
+    if (!progressed) break;
+    round++;
+  }
+  return { ids, per_role };
+}
 
 export function buildClaimSourcePlan(
   question: string,
@@ -102,7 +147,7 @@ export function buildClaimSourcePlan(
     const text = String(c.text_he ?? "");
     const claimType = deriveClaimTypeFromText(text, opts.academicMode);
     const acceptable = ACCEPTABLE_CLASSES[claimType];
-    const preferred: Array<{ ref: string; score: number }> = [];
+    const preferred: Array<{ ref: string; score: number; cls: string }> = [];
     const disallowed: string[] = [];
 
     for (const s of sources) {
@@ -127,10 +172,26 @@ export function buildClaimSourcePlan(
         (s.body_acquired === true ? 2 : 0) +
         (s.best_support === "direct" ? 1 : 0) +
         (cls === "judgment" || cls === "statute" ? 1 : 0);
-      preferred.push({ ref: s.ref, score });
+      preferred.push({ ref: s.ref, score, cls });
     }
     preferred.sort((a, b) => b.score - a.score);
-    const preferredIds = preferred.slice(0, MAX_PREFERRED).map((p) => p.ref);
+    let preferredIds: string[];
+    let perRole: Record<string, number> = {};
+    let ceiling = MAX_PREFERRED;
+    if (opts.academicMode) {
+      ceiling = Math.max(
+        MIN_PREFERRED_ACADEMIC,
+        Math.min(MAX_PREFERRED_ACADEMIC, preferred.length),
+      );
+      const sel = selectRoleDiverse(preferred, ceiling, ACADEMIC_PER_CLASS_CAP);
+      preferredIds = sel.ids;
+      perRole = sel.per_role;
+    } else {
+      preferredIds = preferred.slice(0, MAX_PREFERRED).map((p) => p.ref);
+      for (const p of preferred.slice(0, MAX_PREFERRED)) {
+        perRole[p.cls] = (perRole[p.cls] ?? 0) + 1;
+      }
+    }
     rows.push({
       claim_id: c.claim_id,
       block_topic: text.slice(0, 80),
@@ -138,6 +199,9 @@ export function buildClaimSourcePlan(
       allowed_roles: acceptable.map((cl) => ROLE_LABEL[cl]),
       preferred_source_ids: preferredIds,
       disallowed_source_ids: disallowed,
+      preferred_ceiling: ceiling,
+      preferred_per_role: perRole,
+      eligible_count: preferred.length,
       unsupported_or_cautious: preferredIds.length === 0,
       reason: preferredIds.length === 0
         ? `no_source_matches_${claimType}`

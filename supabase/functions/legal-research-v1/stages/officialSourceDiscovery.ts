@@ -17,6 +17,13 @@
 import type { Candidate } from "../lib/types.ts";
 import type { IntegrityLogRow } from "./candidatePool.ts";
 import {
+  classifyWebFailure,
+  currentEndpointType,
+  recordWebCall,
+  safeErrorMessage,
+  type WebEndpointType,
+} from "../lib/webTierHealth.ts";
+import {
   detectDockets,
   normalizedDocketId,
   textContainsExactDocket,
@@ -140,6 +147,19 @@ export interface JudgmentSearchFirstResult {
   mirror_urls: SearchFirstUrl[];
   http: number | null;
   ms: number;
+  /** research_richness_execution_unblock_v1 — per-call web health row. */
+  web_health?: OfficialDiscoveryWebHealth;
+}
+
+/** Telemetry row: `official_discovery_web_health`. */
+export interface OfficialDiscoveryWebHealth {
+  query: string;
+  intended_authority: string;
+  endpoint_type: WebEndpointType;
+  http_status: number | null;
+  discovered_urls: number;
+  admitted_urls: number;
+  failure_reason: string | null;
 }
 
 export interface JudgmentSearchFirstInput {
@@ -222,7 +242,16 @@ export async function searchOfficialJudgmentUrls(
   };
   const key = Deno.env.get("PERPLEXITY_API_KEY");
   if (!key) {
-    out.skip_reason = "no_search_provider_key";
+    out.skip_reason = "web_tier_disabled_or_misconfigured:missing_credentials";
+    out.web_health = {
+      query: "",
+      intended_authority: String(input.label ?? ""),
+      endpoint_type: "disabled_or_misconfigured",
+      http_status: null,
+      discovered_urls: 0,
+      admitted_urls: 0,
+      failure_reason: safeErrorMessage("missing_credentials"),
+    };
     out.ms = Date.now() - t0;
     return out;
   }
@@ -281,10 +310,23 @@ export async function searchOfficialJudgmentUrls(
     });
     out.http = r.status;
     if (!r.ok) {
-      out.skip_reason = `search_http_${r.status}`;
+      const errBody = await r.text().catch(() => "");
+      const cls = classifyWebFailure(r.status, errBody);
+      recordWebCall({ status: r.status, ms: Date.now() - t0, failure_class: cls });
+      out.skip_reason = `search_http_${r.status}:${cls}`;
+      out.web_health = {
+        query,
+        intended_authority: String(input.label ?? ""),
+        endpoint_type: currentEndpointType(),
+        http_status: r.status,
+        discovered_urls: 0,
+        admitted_urls: 0,
+        failure_reason: safeErrorMessage(cls),
+      };
       out.ms = Date.now() - t0;
       return out;
     }
+    recordWebCall({ status: r.status, ms: Date.now() - t0, failure_class: "ok" });
     const j = await r.json();
     const content = j?.choices?.[0]?.message?.content ?? "";
     const citations: string[] = Array.isArray(j?.citations) ? j.citations : [];
@@ -312,8 +354,29 @@ export async function searchOfficialJudgmentUrls(
 
     out.official_urls = out.official_urls.slice(0, SEARCH_FIRST_LIMITS.MAX_URLS);
     out.mirror_urls = out.mirror_urls.slice(0, SEARCH_FIRST_LIMITS.MAX_URLS);
+    out.web_health = {
+      query,
+      intended_authority: String(input.label ?? ""),
+      endpoint_type: currentEndpointType(),
+      http_status: out.http,
+      discovered_urls: out.results_seen,
+      admitted_urls: out.official_urls.length + out.mirror_urls.length,
+      failure_reason: null,
+    };
   } catch (e) {
-    out.skip_reason = `search_failed:${e instanceof Error ? e.message : String(e)}`.slice(0, 160);
+    const msg = e instanceof Error ? e.message : String(e);
+    const cls = classifyWebFailure(null, msg);
+    recordWebCall({ status: null, ms: Date.now() - t0, failure_class: cls });
+    out.skip_reason = `search_failed:${cls}`;
+    out.web_health = {
+      query,
+      intended_authority: String(input.label ?? ""),
+      endpoint_type: currentEndpointType(),
+      http_status: null,
+      discovered_urls: 0,
+      admitted_urls: 0,
+      failure_reason: safeErrorMessage(cls),
+    };
   }
   out.ms = Date.now() - t0;
   return out;

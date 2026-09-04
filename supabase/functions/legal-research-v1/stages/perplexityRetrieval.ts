@@ -5,6 +5,14 @@
 
 import type { RetrievalGovernor } from "./retrievalGovernor.ts";
 import {
+  classifyWebFailure,
+  getWebTierHealth,
+  recordWebCall,
+  safeErrorMessage,
+  type WebFailureClass,
+  type WebTierHealth,
+} from "../lib/webTierHealth.ts";
+import {
   Candidate,
   CAPS,
   DroppedSource,
@@ -258,9 +266,19 @@ async function callPerplexity(
   ms: number;
   ok: boolean;
   http?: number;
+  failure_class?: WebFailureClass;
+  failure_reason?: string | null;
 }> {
   const key = Deno.env.get("PERPLEXITY_API_KEY");
-  if (!key) return { raw: [], ms: 0, ok: false };
+  if (!key) {
+    return {
+      raw: [],
+      ms: 0,
+      ok: false,
+      failure_class: "missing_credentials",
+      failure_reason: safeErrorMessage("missing_credentials"),
+    };
+  }
   const role = ROLE_PROMPT[query.role];
   const sys =
     `אתה מאתר מקורות משפטיים ישראליים. עבור התפקיד: ${role.focus}. ${role.hint}. ` +
@@ -305,7 +323,15 @@ async function callPerplexity(
       signal: budget ? budget.callSignal(PPLX_TIMEOUT_MS) : AbortSignal.timeout(PPLX_TIMEOUT_MS),
     });
     const ms = Date.now() - t0;
-    if (!r.ok) return { raw: [], ms, ok: false, http: r.status };
+    if (!r.ok) {
+      const errBody = await r.text().catch(() => "");
+      const cls = classifyWebFailure(r.status, errBody);
+      recordWebCall({ status: r.status, ms, failure_class: cls });
+      return {
+        raw: [], ms, ok: false, http: r.status,
+        failure_class: cls, failure_reason: safeErrorMessage(cls),
+      };
+    }
     const j = await r.json();
     const content = j?.choices?.[0]?.message?.content ?? "";
     const citations: string[] = Array.isArray(j?.citations) ? j.citations : [];
@@ -320,9 +346,16 @@ async function callPerplexity(
           snippet_full: s.snippet ? String(s.snippet).slice(0, 1600) : undefined,
         }))
       : [];
-    return { raw, ms, ok: true, http: r.status };
-  } catch {
-    return { raw: [], ms: Date.now() - t0, ok: false, http: 0 };
+    recordWebCall({ status: r.status, ms, failure_class: "ok" });
+    return { raw, ms, ok: true, http: r.status, failure_class: "ok", failure_reason: null };
+  } catch (e) {
+    const ms = Date.now() - t0;
+    const cls = classifyWebFailure(null, e instanceof Error ? e.message : String(e));
+    recordWebCall({ status: null, ms, failure_class: cls });
+    return {
+      raw: [], ms, ok: false, http: 0,
+      failure_class: cls, failure_reason: safeErrorMessage(cls),
+    };
   }
 }
 
@@ -633,6 +666,8 @@ export interface PerplexityRetrievalResult {
     followup_admitted: number;
     ms: number;
     results: PplxResultRow[];
+    failure_class?: WebFailureClass;
+    failure_reason?: string | null;
   }>;
   stage_runs: StageRun[];
   ms: number;
@@ -650,6 +685,8 @@ export interface PerplexityRetrievalResult {
   /** academic_candidate_admission_and_slotting_v1 — original-gate decisions. */
   academic_scholarship_admission_gate: ScholarshipAdmissionDecision[];
   academic_role_slotting_decision: RoleSlottingDecision[];
+  /** research_richness_execution_unblock_v1 — loud web-tier health. */
+  web_tier_health: WebTierHealth;
 }
 
 interface PerQueryWorkResult {
@@ -734,6 +771,8 @@ async function runOneQuery(
       followup_admitted: followupAdmitted,
       ms: totalMs,
       results: rows,
+      failure_class: first.failure_class,
+      failure_reason: first.failure_reason ?? null,
     },
     rate_limited,
   };
@@ -761,7 +800,11 @@ export async function runPerplexityRetrieval(
   if (!key) {
     return {
       candidates: [], dropped: [], per_query: [],
-      stage_runs: [{ stage: "perplexity_retrieval.skipped", ms: 0, ok: false }],
+      stage_runs: [{
+        stage: "perplexity_retrieval.web_tier_disabled_or_misconfigured",
+        ms: 0,
+        ok: false,
+      }],
       ms: 0,
       parallel: false, concurrency_limit, query_count: 0,
       query_ms: [], total_wall_ms: 0, total_sum_ms: 0,
@@ -770,6 +813,7 @@ export async function runPerplexityRetrieval(
       hygiene_counts: emptyHygieneCounts(isReportOnlyMode()),
       academic_scholarship_admission_gate: [],
       academic_role_slotting_decision: [],
+      web_tier_health: getWebTierHealth(),
     };
   }
   const targets = queries.filter((q) => q.targets.includes("perplexity"));
@@ -845,5 +889,6 @@ export async function runPerplexityRetrieval(
     hygiene_counts: hygieneCounts,
     academic_scholarship_admission_gate: admissionTrace.admissions,
     academic_role_slotting_decision: admissionTrace.slotting,
+    web_tier_health: getWebTierHealth(),
   };
 }
