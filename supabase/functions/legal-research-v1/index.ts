@@ -101,6 +101,7 @@ import {
 import { detectStatuteSections } from "./stages/statuteSectionDetection.ts";
 import { planSourceUseIntent } from "./stages/sourceUseIntent.ts";
 import { makeAdminClient, writeTelemetry, beginTraceRow } from "./lib/telemetry.ts";
+import { getWebTierHealth, resetWebTierHealth } from "./lib/webTierHealth.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
 import { StageRun, type Candidate } from "./lib/types.ts";
 import { buildSourcesOnlyPayload } from "./lib/sourcesOnly.ts";
@@ -648,6 +649,8 @@ async function handle(req: Request): Promise<Response> {
   // Smoke-only control switch used by the A/B validation runner.
   const depthControlRun = req.headers.get("x-smoke-mode") === "1" &&
     req.headers.get("x-disable-source-depth") === "1";
+  // research_richness_execution_unblock_v1 — per-run web-tier health ledger.
+  resetWebTierHealth();
   const sourceDepth: SourceDepthDecision = depthControlRun
     ? disabledSourceDepth()
     : classifySourceDepth({ question, analyzer });
