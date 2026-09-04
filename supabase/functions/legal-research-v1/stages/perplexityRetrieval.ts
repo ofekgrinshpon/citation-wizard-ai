@@ -315,7 +315,15 @@ async function callPerplexity(
       signal: budget ? budget.callSignal(PPLX_TIMEOUT_MS) : AbortSignal.timeout(PPLX_TIMEOUT_MS),
     });
     const ms = Date.now() - t0;
-    if (!r.ok) return { raw: [], ms, ok: false, http: r.status };
+    if (!r.ok) {
+      const errBody = await r.text().catch(() => "");
+      const cls = classifyWebFailure(r.status, errBody);
+      recordWebCall({ status: r.status, ms, failure_class: cls });
+      return {
+        raw: [], ms, ok: false, http: r.status,
+        failure_class: cls, failure_reason: safeErrorMessage(cls),
+      };
+    }
     const j = await r.json();
     const content = j?.choices?.[0]?.message?.content ?? "";
     const citations: string[] = Array.isArray(j?.citations) ? j.citations : [];
