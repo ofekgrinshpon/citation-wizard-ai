@@ -29,6 +29,7 @@ import {
 } from "./docketDetection.ts";
 import { classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
 import { isGuessedCourtUrl } from "../lib/judgmentUrlEligibility.ts";
+import { collectDiscoveryUrlsFor } from "../lib/canonicalDiscoveryUrls.ts";
 import {
   deriveSupremeCourtBinaryUrls,
   deriveSupremeCourtFileUrls,
@@ -118,6 +119,10 @@ export interface CanonicalAcquisitionAttempt {
   query_id: string | null;
   attempted_urls_count: number;
   attempted_urls: string[];
+  /** fix 2 telemetry */
+  discovery_candidate_urls: string[];
+  discovery_candidate_count: number;
+  url_source: "discovery" | "derived" | "none";
   endpoint_type: "text" | "html" | "doc" | "pdf" | null;
   acquisition_result: CanonicalAcquisitionResult;
   body_identity_validated: boolean;
@@ -153,6 +158,15 @@ export interface CanonicalAuthorityAcquisitionReport {
   type4_body_acquired_count: number;
   blocked_by_origin_count: number;
   injected_candidate_ids: string[];
+  /** fix 2 — authorities that stayed unacquired, and why. */
+  canonical_authority_gaps: Array<{
+    authority_id: string;
+    authority_name: string;
+    docket: string | null;
+    discovery_candidate_count: number;
+    reason: string;
+  }>;
+  discovery_fed_attempts: number;
   ms: number;
 }
 
@@ -177,6 +191,8 @@ function emptyReport(
     type4_body_acquired_count: 0,
     blocked_by_origin_count: 0,
     injected_candidate_ids: [],
+    canonical_authority_gaps: [],
+    discovery_fed_attempts: 0,
     ms: 0,
   };
 }
@@ -219,9 +235,23 @@ function poolHasBody(candidates: Candidate[], d: DocketRef): boolean {
   return false;
 }
 
+export interface DiscoveredJudgmentUrl {
+  url: string;
+  title?: string | null;
+  /** Where the URL came from (official discovery, perplexity, pool). */
+  discovery_source: string;
+}
+
 export interface CanonicalAcquisitionInput {
   registry: CoreAuthorityRegistryResult;
   candidates: Candidate[];
+  /**
+   * web_source_usability_and_authority_selection_v1 (fix 2) — official URLs
+   * that DISCOVERY actually returned. They are preferred over derived guesses;
+   * every downstream gate (eligibility, identity, body, listing, integrity)
+   * is unchanged.
+   */
+  discovered_urls?: DiscoveredJudgmentUrl[];
   integrity: IntegrityLogRow[];
   budget?: ProbeBudget;
   /** Router-scoped ceiling; clamped to MAX_DOCKETS. */
@@ -318,6 +348,16 @@ export async function runCanonicalAuthorityAcquisition(
   report.type4_body_acquired_count = report.attempts.filter((a) => a.type4_body_acquired).length;
   report.blocked_by_origin_count = report.attempts
     .reduce((n, a) => n + a.blocked_by_origin_count, 0);
+  report.discovery_fed_attempts = report.attempts.filter((a) => a.url_source === "discovery").length;
+  report.canonical_authority_gaps = report.attempts
+    .filter((a) => a.acquisition_result !== "body_acquired")
+    .map((a) => ({
+      authority_id: a.authority_id,
+      authority_name: a.authority_name,
+      docket: a.docket,
+      discovery_candidate_count: a.discovery_candidate_count,
+      reason: a.rejection_reason ?? a.acquisition_result,
+    }));
   report.ms = Date.now() - t0;
   await input.markDurable?.("canonical_authority_acquisition_done", {
     attempted: report.attempted_count,
@@ -357,6 +397,12 @@ async function probeAuthority(
 ): Promise<CanonicalAcquisitionAttempt> {
   const tA = Date.now();
   const { auth, docket } = target;
+  // fix 2 — discovered official URLs for this exact docket come FIRST.
+  const discoveryUrls = collectDiscoveryUrlsFor(
+    input.discovered_urls ?? [],
+    input.candidates.map((c) => ({ url: String(c.source_url ?? ""), title: c.title ?? "" })),
+    docket,
+  );
   const textUrls = deriveSupremeCourtFileUrls(docket, {
     maxUrls: CANONICAL_ACQUISITION_LIMITS.MAX_URLS_PER_DOCKET,
   }).filter((u) => isTextEndpointUrl(u) || /\.html?($|[?#])/i.test(u));
@@ -366,7 +412,10 @@ async function probeAuthority(
     maxUrls: CANONICAL_ACQUISITION_LIMITS.MAX_BINARY_URLS_PER_DOCKET,
   });
   // judgment_url_guess_suppression_v1 — derived guesses are not fetched.
-  const urls = [...textUrls, ...binaryUrls].filter((u) => !isGuessedCourtUrl(u));
+  const urls = [
+    ...discoveryUrls,
+    ...[...textUrls, ...binaryUrls].filter((u) => !isGuessedCourtUrl(u)),
+  ].filter((u, i, arr) => arr.indexOf(u) === i);
   const attempt: CanonicalAcquisitionAttempt = {
     canonical_acquisition_attempted: true,
     authority_id: auth.authority_id,
@@ -378,6 +427,9 @@ async function probeAuthority(
     query_id: `core_authority_registry:${doctrineId ?? "?"}:${auth.authority_id}`,
     attempted_urls_count: urls.length,
     attempted_urls: urls,
+    discovery_candidate_urls: discoveryUrls,
+    discovery_candidate_count: discoveryUrls.length,
+    url_source: urls.length === 0 ? "none" : (discoveryUrls.includes(urls[0]) ? "discovery" : "derived"),
     endpoint_type: urls.length ? endpointType(urls[0]) : null,
     acquisition_result: "not_found",
     body_identity_validated: false,

@@ -1,0 +1,48 @@
+[
+  {
+    "id": "Q2",
+    "query": "מה אומר חוק-יסוד: כבוד האדם וחירותו לגבי פגיעה בזכויות?",
+    "run_id": "9c59f51c-0808-45a9-b6e1-e8ba99c097ae",
+    "ms": 849875,
+    "web_tier_health": null,
+    "perplexity": null,
+    "source_depth": null,
+    "depth_flags": {
+      "perplexity_policy": null,
+      "perplexity_called": null,
+      "perplexity_reason": null
+    },
+    "official_source_discovery": null,
+    "canonical_authority_acquisition": null,
+    "canonical_authority_acquisition_trigger": null,
+    "judgment_text_acquisition": null,
+    "source_integrity_tiers": null,
+    "source_integrity_admitted": null,
+    "discovery_precision": null,
+    "claim_source_plan": null,
+    "drafter_block_source_compliance": null,
+    "post_draft_alignment_filter": null,
+    "claim_source_match": null,
+    "footnotes_count": 0,
+    "footnotes": [],
+    "answer": "המחקר הופסק בגלל תקלה תשתיתית ולא הושלמה תשובה משפטית מבוססת. לא מוצגת תשובת ביניים. הקרדיטים על ההרצה הזו הוחזרו. אפשר להריץ שוב, לצמצם את השאלה, או לצרף את המסמך הרלוונטי.",
+    "metadata_keys": [
+      "branch",
+      "run_id",
+      "isolate",
+      "pipeline",
+      "reaped_at",
+      "prior_stage",
+      "trace_stage",
+      "trace_status",
+      "research_mode",
+      "concurrency_hint",
+      "trace_started_at",
+      "fast_lane_eligible",
+      "in_flight_at_retrieval",
+      "infrastructure_failure",
+      "terminal_result_written",
+      "reaper_terminal_limitation_written"
+    ]
+  }
+]

@@ -27,6 +27,15 @@ import {
   type TopicAwareAlignmentReport,
 } from "./topicAwareAlignment.ts";
 import { academicTopicalFit } from "./academicAuthorityAlignment.ts";
+import {
+  applyStatuteDominance,
+  isStatutoryQuestion,
+  type StatuteDominanceReport,
+} from "./statuteDominance.ts";
+import {
+  applyAuthorityPriority,
+  type AuthorityPriorityReport,
+} from "./authoritySourcePriority.ts";
 
 export const CLAIM_SOURCE_PLANNING_VERSION = "v1.0";
 
@@ -91,6 +100,9 @@ export interface ClaimSourcePlan {
   version: string;
   academic_mode: boolean;
   rows: ClaimSourcePlanRow[];
+  /** web_source_usability_and_authority_selection_v1 telemetry. */
+  statute_dominance?: StatuteDominanceReport;
+  authority_priority?: AuthorityPriorityReport;
 }
 
 const MAX_PREFERRED = 4;
@@ -143,6 +155,7 @@ export function buildClaimSourcePlan(
   opts: { academicMode: boolean },
 ): ClaimSourcePlan {
   const rows: ClaimSourcePlanRow[] = [];
+  const statutoryQuestion = isStatutoryQuestion(question).hit;
   for (const c of claims) {
     const text = String(c.text_he ?? "");
     const claimType = deriveClaimTypeFromText(text, opts.academicMode);
@@ -163,7 +176,12 @@ export function buildClaimSourcePlan(
           disallowed.push(s.ref);
           continue;
         }
-      } else if (!lexical.fit && claimType !== "other") {
+      } else if (
+        !lexical.fit && claimType !== "other" &&
+        // statute dominance: a statute source is never lexically demoted on a
+        // statutory claim / statutory question — it IS the primary authority.
+        !(cls === "statute" && (claimType === "statutory_framework" || statutoryQuestion))
+      ) {
         // Generic scholarship with no shared vocabulary is demoted, not banned:
         // the post-draft gates own removal. Keep it out of the preferred list.
         continue;
@@ -208,7 +226,29 @@ export function buildClaimSourcePlan(
         : `matched_${preferredIds.length}_sources_for_${claimType}`,
     });
   }
-  return { version: CLAIM_SOURCE_PLANNING_VERSION, academic_mode: opts.academicMode, rows };
+  // fix 3 + fix 4 — statute dominance, then deterministic authority priority.
+  const preferredByClaim = new Map(rows.map((r) => [r.claim_id, [...r.preferred_source_ids]]));
+  const statute_dominance = applyStatuteDominance({
+    question,
+    claims,
+    sources,
+    preferredByClaim,
+  });
+  const authority_priority = applyAuthorityPriority({ claims, sources, preferredByClaim });
+  for (const r of rows) {
+    const next = preferredByClaim.get(r.claim_id);
+    if (next) {
+      r.preferred_source_ids = next;
+      r.unsupported_or_cautious = next.length === 0;
+    }
+  }
+  return {
+    version: CLAIM_SOURCE_PLANNING_VERSION,
+    academic_mode: opts.academicMode,
+    rows,
+    statute_dominance,
+    authority_priority,
+  };
 }
 
 /** Hebrew prompt block constraining source use per claim. Empty when no rows. */

@@ -40,6 +40,13 @@ import {
   type RoleSlottingDecision,
   type ScholarshipAdmissionDecision,
 } from "./academicCandidateAdmission.ts";
+import {
+  classifyWebLegalSource,
+  isUsableWebClass,
+  type WebSourceClassification,
+  type WebSourceClassificationRow,
+  WEB_SOURCE_CLASSIFIER_VERSION,
+} from "./webLegalSourceClassifier.ts";
 
 const PPLX_TIMEOUT_MS = 25_000;
 
@@ -412,6 +419,7 @@ function processRaw(
     admissions: ScholarshipAdmissionDecision[];
     slotting: RoleSlottingDecision[];
   },
+  webClassRows?: WebSourceClassificationRow[],
 ): {
   admitted: Candidate[];
   rows: PplxResultRow[];
@@ -465,6 +473,26 @@ function processRaw(
       if (admission.admission_decision === "admitted_as_scholarship") cls = "academic";
     }
 
+    // web_source_usability_and_authority_selection_v1 — general, jurisdiction
+    // aware classifier for results the Israeli-domain table cannot place.
+    // Foreign/international authorities are admitted as PERSUASIVE ONLY.
+    let webClass: WebSourceClassification | null = null;
+    if (cls === "unknown") {
+      webClass = classifyWebLegalSource({
+        url,
+        title,
+        snippet: s.snippet,
+        previous_class: cls,
+      });
+      webClassRows?.push({
+        ...webClass,
+        source_id: null,
+        previous_class: "unknown",
+        new_class: isUsableWebClass(webClass) ? webClass.pipeline_class : "unknown",
+      });
+      if (isUsableWebClass(webClass)) cls = webClass.pipeline_class as SourceClass;
+    }
+
     // P3.2 #4: role correction before admission
     const { role: correctedRole, corrected_from } = correctRoleForClass(
       query.role,
@@ -472,6 +500,14 @@ function processRaw(
       academicMode,
     );
     let effectiveRole = correctedRole;
+    // Foreign / international authority can never satisfy a binding Israeli
+    // case-law slot: it is downgraded to persuasive before admission.
+    if (
+      webClass && webClass.jurisdiction !== "israeli" &&
+      effectiveRole === "binding_case_law" && cls === "court_case"
+    ) {
+      effectiveRole = "persuasive_case_law" as SourceRole;
+    }
     let admit = admitFor(effectiveRole, cls);
 
     // academic_candidate_admission_and_slotting_v1 — role-slot correction
@@ -628,6 +664,15 @@ function processRaw(
           rescue_matched_docket: rescue.matched_docket,
           rescue_matched_in: rescue.matched_in,
         } : {}),
+        ...(webClass && isUsableWebClass(webClass)
+          ? {
+            web_semantic_class: webClass.semantic_class,
+            web_jurisdiction: webClass.jurisdiction,
+            web_class_confidence: webClass.confidence,
+            web_citable_as: webClass.citable_as,
+            comparative_only: webClass.jurisdiction !== "israeli",
+          }
+          : {}),
         ...(query.metadata?.required_anchor_id
           ? { required_anchor_id: query.metadata.required_anchor_id }
           : {}),
@@ -687,6 +732,16 @@ export interface PerplexityRetrievalResult {
   academic_role_slotting_decision: RoleSlottingDecision[];
   /** research_richness_execution_unblock_v1 — loud web-tier health. */
   web_tier_health: WebTierHealth;
+  /** web_source_usability_and_authority_selection_v1 telemetry. */
+  web_source_classification: WebSourceClassificationRow[];
+  web_rate_limit_control: {
+    version: string;
+    configured_concurrency: number;
+    effective_concurrency: number;
+    rate_limited_queries: number;
+    retries_after_429: number;
+    backoff_waits_ms: number[];
+  };
 }
 
 interface PerQueryWorkResult {
@@ -708,6 +763,7 @@ async function runOneQuery(
     admissions: ScholarshipAdmissionDecision[];
     slotting: RoleSlottingDecision[];
   },
+  webClassRows?: WebSourceClassificationRow[],
 ): Promise<PerQueryWorkResult> {
   const first = await callPerplexity(q, undefined, budget);
   const { admitted, rows, followupTerms } = processRaw(
@@ -717,6 +773,7 @@ async function runOneQuery(
     academicMode,
     topicTerms,
     admissionTrace,
+    webClassRows,
   );
   const allCandidates: Candidate[] = [...admitted];
   let totalMs = first.ms;
@@ -736,6 +793,7 @@ async function runOneQuery(
       academicMode,
       topicTerms,
       admissionTrace,
+      webClassRows,
     );
     allCandidates.push(...second_p.admitted);
     followupAdmitted = second_p.admitted.length;
@@ -792,9 +850,21 @@ export async function runPerplexityRetrieval(
   const key = Deno.env.get("PERPLEXITY_API_KEY");
   const concEnv = Number(Deno.env.get("PERPLEXITY_CONCURRENCY") ?? "4");
   const concurrency_limit = Number.isFinite(concEnv) && concEnv > 0 ? Math.min(8, Math.floor(concEnv)) : 4;
+  // web_source_usability_and_authority_selection_v1 (fix 5) — start at the fast
+  // setting and step down by one worker only once a 429 is actually observed.
+  const throttled_floor = Math.max(1, concurrency_limit - 1);
   const admissionTrace = {
     admissions: [] as ScholarshipAdmissionDecision[],
     slotting: [] as RoleSlottingDecision[],
+  };
+  const webClassRows: WebSourceClassificationRow[] = [];
+  const rateControl = {
+    version: WEB_SOURCE_CLASSIFIER_VERSION,
+    configured_concurrency: concurrency_limit,
+    effective_concurrency: concurrency_limit,
+    rate_limited_queries: 0,
+    retries_after_429: 0,
+    backoff_waits_ms: [] as number[],
   };
 
   if (!key) {
@@ -814,6 +884,8 @@ export async function runPerplexityRetrieval(
       academic_scholarship_admission_gate: [],
       academic_role_slotting_decision: [],
       web_tier_health: getWebTierHealth(),
+      web_source_classification: [],
+      web_rate_limit_control: rateControl,
     };
   }
   const targets = queries.filter((q) => q.targets.includes("perplexity"));
@@ -823,8 +895,13 @@ export async function runPerplexityRetrieval(
   // by indexing the input array; merge below walks indices in order.
   const results: (PerQueryWorkResult | undefined)[] = new Array(targets.length);
   let next = 0;
-  async function worker() {
+  let throttled = false;
+  async function worker(workerId: number) {
     while (true) {
+      if (throttled && workerId >= throttled_floor) {
+        rateControl.effective_concurrency = throttled_floor;
+        return;
+      }
       const i = next++;
       if (i >= targets.length) return;
       // retrieval_budget_enforcement_v1: never START a new web query once the
@@ -841,11 +918,31 @@ export async function runPerplexityRetrieval(
         opts.academicMode === true,
         opts.topicTerms ?? [],
         admissionTrace,
+        webClassRows,
       );
+      if (results[i]?.rate_limited) {
+        // web_source_usability_and_authority_selection_v1 (fix 5) — a 429 puts
+        // the whole pool into a short jittered cooldown before the next launch.
+        rateControl.rate_limited_queries++;
+        throttled = true;
+        const wait = 350 + Math.floor(Math.random() * 550);
+        rateControl.backoff_waits_ms.push(wait);
+        await new Promise((r) => setTimeout(r, wait));
+        // Single bounded retry — never a loop.
+        if ((!budget || budget.canLaunch())) {
+          rateControl.retries_after_429++;
+          const retry = await runOneQuery(
+            targets[i], i, hygieneCounts, budget,
+            opts.academicMode === true, opts.topicTerms ?? [],
+            admissionTrace, webClassRows,
+          );
+          if (!retry.rate_limited) results[i] = retry;
+        }
+      }
     }
   }
   const workerCount = Math.max(1, Math.min(concurrency_limit, targets.length));
-  await Promise.all(Array.from({ length: workerCount }, () => worker()));
+  await Promise.all(Array.from({ length: workerCount }, (_v, wi) => worker(wi)));
 
   // Deterministic merge in original input order.
   const candidates: Candidate[] = [];
@@ -890,5 +987,7 @@ export async function runPerplexityRetrieval(
     academic_scholarship_admission_gate: admissionTrace.admissions,
     academic_role_slotting_decision: admissionTrace.slotting,
     web_tier_health: getWebTierHealth(),
+    web_source_classification: webClassRows,
+    web_rate_limit_control: rateControl,
   };
 }
