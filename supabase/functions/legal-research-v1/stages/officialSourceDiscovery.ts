@@ -242,7 +242,16 @@ export async function searchOfficialJudgmentUrls(
   };
   const key = Deno.env.get("PERPLEXITY_API_KEY");
   if (!key) {
-    out.skip_reason = "no_search_provider_key";
+    out.skip_reason = "web_tier_disabled_or_misconfigured:missing_credentials";
+    out.web_health = {
+      query: "",
+      intended_authority: String(input.label ?? ""),
+      endpoint_type: "disabled_or_misconfigured",
+      http_status: null,
+      discovered_urls: 0,
+      admitted_urls: 0,
+      failure_reason: safeErrorMessage("missing_credentials"),
+    };
     out.ms = Date.now() - t0;
     return out;
   }
