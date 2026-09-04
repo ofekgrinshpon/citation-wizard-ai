@@ -666,6 +666,8 @@ export interface PerplexityRetrievalResult {
     followup_admitted: number;
     ms: number;
     results: PplxResultRow[];
+    failure_class?: WebFailureClass;
+    failure_reason?: string | null;
   }>;
   stage_runs: StageRun[];
   ms: number;
@@ -683,6 +685,8 @@ export interface PerplexityRetrievalResult {
   /** academic_candidate_admission_and_slotting_v1 — original-gate decisions. */
   academic_scholarship_admission_gate: ScholarshipAdmissionDecision[];
   academic_role_slotting_decision: RoleSlottingDecision[];
+  /** research_richness_execution_unblock_v1 — loud web-tier health. */
+  web_tier_health: WebTierHealth;
 }
 
 interface PerQueryWorkResult {
@@ -767,6 +771,8 @@ async function runOneQuery(
       followup_admitted: followupAdmitted,
       ms: totalMs,
       results: rows,
+      failure_class: first.failure_class,
+      failure_reason: first.failure_reason ?? null,
     },
     rate_limited,
   };
@@ -794,7 +800,11 @@ export async function runPerplexityRetrieval(
   if (!key) {
     return {
       candidates: [], dropped: [], per_query: [],
-      stage_runs: [{ stage: "perplexity_retrieval.skipped", ms: 0, ok: false }],
+      stage_runs: [{
+        stage: "perplexity_retrieval.web_tier_disabled_or_misconfigured",
+        ms: 0,
+        ok: false,
+      }],
       ms: 0,
       parallel: false, concurrency_limit, query_count: 0,
       query_ms: [], total_wall_ms: 0, total_sum_ms: 0,
@@ -803,6 +813,7 @@ export async function runPerplexityRetrieval(
       hygiene_counts: emptyHygieneCounts(isReportOnlyMode()),
       academic_scholarship_admission_gate: [],
       academic_role_slotting_decision: [],
+      web_tier_health: getWebTierHealth(),
     };
   }
   const targets = queries.filter((q) => q.targets.includes("perplexity"));
@@ -878,5 +889,6 @@ export async function runPerplexityRetrieval(
     hygiene_counts: hygieneCounts,
     academic_scholarship_admission_gate: admissionTrace.admissions,
     academic_role_slotting_decision: admissionTrace.slotting,
+    web_tier_health: getWebTierHealth(),
   };
 }
