@@ -1321,30 +1321,6 @@ async function handle(req: Request): Promise<Response> {
     }
   }
 
-  // ─── canonical_judgment_text_acquisition_v1 (Option B) ───────────────────
-  // research_richness_execution_unblock_v1: re-enabled as a *bounded* lane
-  // (max 2 seeded dockets) for the depth modes where a canonical authority is
-  // actually expected. All existing identity / URL / body / integrity gates
-  // inside the stage are unchanged; nothing is cited without passing them.
-  const canonicalDepthEligible = sourceDepth.depth_mode === "narrow_doctrine" ||
-    sourceDepth.depth_mode === "broad_research" ||
-    sourceDepth.depth_mode === "academic_research";
-  const canonicalMaxDockets = canonicalDepthEligible ? 2 : 0;
-  const canonicalAcquisition = await runCanonicalAuthorityAcquisition({
-    registry: coreAuthorityRegistry,
-    candidates: pool.candidates,
-    integrity: pool.integrity,
-    budget,
-    max_dockets: canonicalMaxDockets,
-    markDurable: (name, detail) => budget.markDurable(name, detail),
-  });
-  const canonicalAcquisitionTrigger = {
-    depth_mode: sourceDepth.depth_mode,
-    depth_eligible: canonicalDepthEligible,
-    max_dockets: canonicalMaxDockets,
-    reason: canonicalDepthEligible ? "depth_mode_eligible" : "depth_mode_not_eligible",
-  };
-
   // ─── official_source_discovery + verified_legal_sources cache ────────────
   // Identifier-bearing nominations: cache lookup first (a hit costs no fetch
   // and no extraction slot), then official URLs retrieval already surfaced,
@@ -1410,6 +1386,42 @@ async function handle(req: Request): Promise<Response> {
     markDurable: (name, detail) => budget.markDurable(name, detail),
   });
 
+  // ─── canonical_judgment_text_acquisition_v1 (Option B) ───────────────────
+  // research_richness_execution_unblock_v1: re-enabled as a *bounded* lane
+  // (max 2 seeded dockets) for the depth modes where a canonical authority is
+  // actually expected. All existing identity / URL / body / integrity gates
+  // inside the stage are unchanged; nothing is cited without passing them.
+  const canonicalDepthEligible = sourceDepth.depth_mode === "narrow_doctrine" ||
+    sourceDepth.depth_mode === "broad_research" ||
+    sourceDepth.depth_mode === "academic_research";
+  const canonicalMaxDockets = canonicalDepthEligible ? 2 : 0;
+  // web_source_usability_and_authority_selection_v1 (fix 2) — official URLs
+  // that discovery actually produced feed the canonical lane; derived guesses
+  // remain a fallback and stay suppressed by isGuessedCourtUrl.
+  const discoveredJudgmentUrls = officialDiscovery.attempts.flatMap((a) =>
+    (a.url_candidates ?? [])
+      .filter((u) => !u.suppressed)
+      .map((u) => ({
+        url: u.url,
+        title: a.label,
+        discovery_source: u.url_source ?? "official_discovery",
+      }))
+  );
+  const canonicalAcquisition = await runCanonicalAuthorityAcquisition({
+    registry: coreAuthorityRegistry,
+    candidates: pool.candidates,
+    discovered_urls: discoveredJudgmentUrls,
+    integrity: pool.integrity,
+    budget,
+    max_dockets: canonicalMaxDockets,
+    markDurable: (name, detail) => budget.markDurable(name, detail),
+  });
+  const canonicalAcquisitionTrigger = {
+    depth_mode: sourceDepth.depth_mode,
+    depth_eligible: canonicalDepthEligible,
+    max_dockets: canonicalMaxDockets,
+    reason: canonicalDepthEligible ? "depth_mode_eligible" : "depth_mode_not_eligible",
+  };
 
 
 
@@ -1580,6 +1592,9 @@ async function handle(req: Request): Promise<Response> {
       total_sum_ms: pplx.total_sum_ms,
       rate_limit_count: pplx.rate_limit_count,
       retry_count: pplx.retry_count,
+      // web_source_usability_and_authority_selection_v1
+      web_source_classification: pplx.web_source_classification,
+      web_rate_limit_control: pplx.web_rate_limit_control,
       fallback_to_sequential: pplx.fallback_to_sequential,
       merge_order_preserved: pplx.merge_order_preserved,
       hygiene_counts: pplx.hygiene_counts,
