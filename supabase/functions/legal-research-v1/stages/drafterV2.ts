@@ -192,7 +192,7 @@ const SYSTEM_PROMPT_V2 = `אתה משפטן/ית ישראלי/ת הכותב/ת �
 - בשדה text **אסור בהחלט** לכלול ספרות עליונות (¹²³…), אסור [N] בסוגריים מרובעים, אסור [[fn:N]], ואסור כל סימן הערת שוליים שהוא. הקוד מוסיף את הסימנים אחר־כך — אם תוסיף סימנים בעצמך, התשובה תיפסל לחלוטין.
 - source_refs מכיל מזהי מקור כפי שניתנו לך (s1, s2, s3, … או u1p1 וכד'). מותרים אך ורק מזהים שהופיעו ברשימת המקורות. אם תפנה למזהה שלא קיים — התשובה תיפסל.
 - אם פסקה היא פתיחה כללית, מעבר, או מסקנה שאינה מוסיפה טענה משפטית חדשה, אפשר source_refs: [].
-- אם כמה מקורות תומכים יחד באותה טענה בפסקה — הוסף את כולם ל-source_refs של אותו בלוק. הקוד ייצור הערת שוליים מורכבת אחת.
+- אם כמה מקורות תומכים בטענות שונות באותה פסקה — הוסף את כולם ל-source_refs של אותו בלוק, לפי סדר המשפטים שהם תומכים בהם. הקוד ימקם הערת שוליים נפרדת ליד המשפט המתאים. רק כאשר שני מקורות תומכים בדיוק באותה טענה בודדת תיווצר הערה מורכבת אחת.
 - אל תוסיף את אותו מקור פעמיים באותו בלוק.
 - מקסימום 3 מקורות לבלוק (אם נדרשים יותר — פצל לשני בלוקים נפרדים).
 
@@ -1219,6 +1219,8 @@ export interface DrafterV2Result {
   builder_report?: ReturnType<typeof buildFootnotedAnswer>["builder_report"];
   hierarchy_report?: ReturnType<typeof buildFootnotedAnswer>["hierarchy_report"];
   footnote_render_report?: ReturnType<typeof buildFootnotedAnswer>["footnote_render_report"];
+  /** footnote_density_v1 — per-block per-occurrence emission telemetry. */
+  footnote_density_emission?: ReturnType<typeof buildFootnotedAnswer>["footnote_density_emission"];
   quality_warning?: QualityWarning;
   usage?: { input_tokens?: number; output_tokens?: number };
   // Debug: whether the missing-required-anchor caveat instruction was injected.
@@ -1611,7 +1613,7 @@ export async function runDrafterV2(
       : validationRaw;
     const built = validation.draft
       ? buildFootnotedAnswer(validation.draft, inputSources)
-      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined };
+      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined, footnote_density_emission: undefined };
     const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
     return {
       snippet_budget_report,
@@ -1638,6 +1640,7 @@ export async function runDrafterV2(
       builder_report: built.builder_report,
       hierarchy_report: built.hierarchy_report,
       footnote_render_report: built.footnote_render_report,
+      footnote_density_emission: built.footnote_density_emission,
       quality_warning: computeQualityWarning(answer, { question }),
       missing_anchor_caveat_injected: true,
       lead_ref: leadSelection,
@@ -1667,7 +1670,7 @@ export async function runDrafterV2(
       const validation = validateStructuredDraft(draft, allowedRefs);
       const built = validation.draft
         ? buildFootnotedAnswer(validation.draft, inputSources)
-        : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined };
+        : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined, footnote_density_emission: undefined };
       const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
       return {
         ok: validation.report.ok,
@@ -1693,6 +1696,7 @@ export async function runDrafterV2(
         builder_report: built.builder_report,
       hierarchy_report: built.hierarchy_report,
       footnote_render_report: built.footnote_render_report,
+      footnote_density_emission: built.footnote_density_emission,
         quality_warning: computeQualityWarning(answer, { question }),
         missing_anchor_caveat_injected: false,
         lead_ref: { ref: registrySource.ref, reason: "canonical_registry_statute_section", shape },
@@ -1718,7 +1722,7 @@ export async function runDrafterV2(
     const validation = validateStructuredDraft(draft, allowedRefs);
     const built = validation.draft
       ? buildFootnotedAnswer(validation.draft, inputSources)
-      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined };
+      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined, footnote_density_emission: undefined };
     const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
     return {
       snippet_budget_report,
@@ -1745,6 +1749,7 @@ export async function runDrafterV2(
       builder_report: built.builder_report,
       hierarchy_report: built.hierarchy_report,
       footnote_render_report: built.footnote_render_report,
+      footnote_density_emission: built.footnote_density_emission,
       quality_warning: computeQualityWarning(answer, { question }),
       missing_anchor_caveat_injected: true,
       lead_ref: leadSelection,
@@ -1784,7 +1789,7 @@ export async function runDrafterV2(
       const validation = validateStructuredDraft(draft, allowedRefs);
       const built = validation.draft
         ? buildFootnotedAnswer(validation.draft, inputSources)
-        : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined };
+        : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined, footnote_density_emission: undefined };
       const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
       return {
         ok: validation.report.ok,
@@ -1812,6 +1817,7 @@ export async function runDrafterV2(
         builder_report: built.builder_report,
       hierarchy_report: built.hierarchy_report,
       footnote_render_report: built.footnote_render_report,
+      footnote_density_emission: built.footnote_density_emission,
         quality_warning: computeQualityWarning(answer, { question }),
         missing_anchor_caveat_injected: !canonical,
         lead_ref: leadSelection,
@@ -1847,7 +1853,7 @@ export async function runDrafterV2(
       : validationRaw;
     const built = validation.draft
       ? buildFootnotedAnswer(validation.draft, inputSources)
-      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined };
+      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined, footnote_density_emission: undefined };
     const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
     return {
       snippet_budget_report,
@@ -1874,6 +1880,7 @@ export async function runDrafterV2(
       builder_report: built.builder_report,
       hierarchy_report: built.hierarchy_report,
       footnote_render_report: built.footnote_render_report,
+      footnote_density_emission: built.footnote_density_emission,
       quality_warning: computeQualityWarning(answer, { question }),
       missing_anchor_caveat_injected: true,
       lead_ref: leadSelection,
@@ -1961,7 +1968,7 @@ export async function runDrafterV2(
       : validationRaw;
     const built = validation.draft
       ? buildFootnotedAnswer(validation.draft, inputSources)
-      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined };
+      : { answer_markdown: "", footnotes: [], used_sources: [], builder_report: undefined, hierarchy_report: undefined, footnote_render_report: undefined, footnote_density_emission: undefined };
     const answer = scrubNegativeExistenceClaims(built.answer_markdown).text;
     return {
       snippet_budget_report,
@@ -1988,6 +1995,7 @@ export async function runDrafterV2(
       builder_report: built.builder_report,
       hierarchy_report: built.hierarchy_report,
       footnote_render_report: built.footnote_render_report,
+      footnote_density_emission: built.footnote_density_emission,
       quality_warning: computeQualityWarning(answer, { question }),
       missing_anchor_caveat_injected: true,
       lead_ref: leadSelection,
@@ -2446,6 +2454,7 @@ export async function runDrafterV2(
     builder_report: built.builder_report,
       hierarchy_report: built.hierarchy_report,
       footnote_render_report: built.footnote_render_report,
+      footnote_density_emission: built.footnote_density_emission,
     quality_warning: computeQualityWarning(answer_markdown, {
       question,
       source_context: inputSources

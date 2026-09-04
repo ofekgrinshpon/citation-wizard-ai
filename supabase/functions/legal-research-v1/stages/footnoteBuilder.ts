@@ -16,6 +16,13 @@
 //   * Numbering is chronological by first appearance.
 
 import { unrelatedCompoundCompanions } from "./nonAcademicBinding.ts";
+import {
+  compoundLabel,
+  MAX_SOURCES_PER_BLOCK,
+  planBlockOccurrences,
+  splitSentences,
+  type BlockEmissionTelemetry,
+} from "./perOccurrenceFootnotes.ts";
 import type { Footnote, UsedSource } from "../lib/types.ts";
 import type { DrafterInputSource } from "./drafter.ts";
 import type { StructuredBlock, StructuredDraft } from "./structuredValidation.ts";
@@ -69,6 +76,8 @@ export interface BuildResult {
   used_sources: UsedSource[];
   hierarchy_report: HierarchyReport;
   footnote_render_report: FootnoteRenderReport;
+  /** footnote_density_v1 — per-block per-occurrence emission telemetry. */
+  footnote_density_emission: BlockEmissionTelemetry[];
 
   builder_report: {
     paragraph_count: number;
@@ -203,46 +212,101 @@ export function buildFootnotedAnswer(
     return distinct;
   };
 
+  // ── footnote_density_v1 — per-occurrence emission plan ───────────────────
+  // For each citable block, the approved sources are split into occurrence
+  // groups anchored at the sentence they support. A compound group survives
+  // only when the block is a single sentence (sources support the same claim).
+  interface BlockPlan {
+    blockIndex: number;
+    sentences: string[];
+    groups: Array<{ sentence_index: number; sources: DrafterInputSource[] }>;
+    telemetry: BlockEmissionTelemetry;
+  }
+
+  const blockPlans = new Map<number, BlockPlan>();
+  const emission_telemetry: BlockEmissionTelemetry[] = [];
+
+  const planBlock = (
+    b: Extract<StructuredBlock, { source_refs: string[] }>,
+    blockIndex: number,
+  ): BlockPlan | null => {
+    const cached = blockPlans.get(blockIndex);
+    if (cached) return cached;
+    if (b.source_refs.length === 0) return null;
+    const resolved = resolveBlockSources(b.source_refs);
+    if (resolved.length === 0) return null;
+    // Guardrail: at most MAX_SOURCES_PER_BLOCK distinct sources per block.
+    // Hierarchy order already put the strongest first, so the tail is dropped.
+    const distinct = resolved.slice(0, MAX_SOURCES_PER_BLOCK);
+    const dropped_weak_companions = resolved.length - distinct.length;
+    const sentences = splitSentences(b.text.trim());
+    const groups = planBlockOccurrences(sentences, distinct.length).map((g) => ({
+      sentence_index: g.sentence_index,
+      sources: g.source_indices.map((i) => distinct[i]),
+    }));
+    const plan: BlockPlan = {
+      blockIndex,
+      sentences,
+      groups,
+      telemetry: {
+        block_id: blockIndex,
+        refs_available_after_csm: resolved.length,
+        refs_rendered_before: distinct.length, // block-level compound rendered them all under 1 marker
+        refs_rendered_after: distinct.length,
+        compound_before: distinct.length > 1 ? 1 : 0,
+        compound_after: groups.filter((g) => g.sources.length > 1).length,
+        split_count: Math.max(0, groups.length - 1),
+        dropped_weak_companions,
+        per_occurrence_markers: groups.length,
+      },
+    };
+    blockPlans.set(blockIndex, plan);
+    emission_telemetry.push(plan.telemetry);
+    return plan;
+  };
+
   // Allocate entries by first appearance; numbering happens afterwards in
   // hierarchy order.
   const keyToEntry = new Map<string, MarkerEntry>();
   const entriesInOrder: MarkerEntry[] = [];
 
-  // First pass: collect distinct footnote entries.
+  const entryKeyFor = (sources: DrafterInputSource[]) =>
+    [...sources.map((s) => s.candidate_id)].sort().join("|");
+
+  // First pass: collect distinct footnote entries (one per occurrence group).
   draft.blocks.forEach((b, blockIndex) => {
     if (b.kind === "heading") return;
-    if (b.source_refs.length === 0) return;
-    const distinct = resolveBlockSources(b.source_refs);
-    if (distinct.length === 0) return;
-    const sortedIds = [...distinct.map((s) => s.candidate_id)].sort();
-    const key = sortedIds.join("|");
-    if (keyToEntry.has(key)) return;
-    // Reading-pointer footnotes are labelled as such, so a bibliography-only
-    // item is never read as an authority for the sentence it follows.
-    const pointerOnly = distinct.length > 0 &&
-      distinct.every((s) => referenceOnlyIds.has(s.candidate_id));
-    const rawTitle = distinct.length === 1
-      ? distinct[0].title
-      : distinct.map((s) => s.title).join("; ");
-    const entry: MarkerEntry = {
-      key,
-      number: 0,
-      title: pointerOnly ? `לדיון נוסף ראו: ${rawTitle}` : rawTitle,
+    const plan = planBlock(b, blockIndex);
+    if (!plan) return;
+    for (const g of plan.groups) {
+      const distinct = g.sources;
+      if (distinct.length === 0) continue;
+      const key = entryKeyFor(distinct);
+      if (keyToEntry.has(key)) continue;
+      // Reading-pointer footnotes are labelled as such, so a bibliography-only
+      // item is never read as an authority for the sentence it follows.
+      const pointerOnly = distinct.every((s) => referenceOnlyIds.has(s.candidate_id));
+      const rawTitle = compoundLabel(distinct.map((s) => s.title));
+      const entry: MarkerEntry = {
+        key,
+        number: 0,
+        title: pointerOnly ? `לדיון נוסף ראו: ${rawTitle}` : rawTitle,
 
-      // Footnote hygiene: even for compound footnotes, expose the first
-      // sub-source URL as the top-level URL so downstream consumers/reports
-      // never render `None`/`null`. Full per-source URL list remains in
-      // `source_inputs`/`sources`.
-      url: distinct.length === 1
-        ? distinct[0].url
-        : (distinct.find((s) => s.url)?.url ?? null),
-      source_type: distinct.length === 1 ? distinct[0].source_type : "compound",
-      source_candidate_ids: distinct.map((s) => s.candidate_id),
-      source_inputs: distinct,
-      first_seen: blockIndex,
-    };
-    keyToEntry.set(key, entry);
-    entriesInOrder.push(entry);
+        // Footnote hygiene: even for compound footnotes, expose the first
+        // sub-source URL as the top-level URL so downstream consumers/reports
+        // never render `None`/`null`. Full per-source URL list remains in
+        // `source_inputs`/`sources`.
+        url: distinct.length === 1
+          ? distinct[0].url
+          : (distinct.find((s) => s.url)?.url ?? null),
+        source_type: distinct.length === 1 ? distinct[0].source_type : "compound",
+        source_candidate_ids: distinct.map((s) => s.candidate_id),
+        source_inputs: distinct,
+        first_seen: blockIndex,
+      };
+      keyToEntry.set(key, entry);
+      entriesInOrder.push(entry);
+    }
   });
 
   // ── Hierarchy ordering: primary authority first, then secondary, then the
@@ -283,34 +347,43 @@ export function buildFootnotedAnswer(
   let compound_segment_count = 0;
   let marker_count = 0;
 
-  const renderSegment = (block: Extract<StructuredBlock, { source_refs: string[] }>): string => {
+  const renderSegment = (
+    block: Extract<StructuredBlock, { source_refs: string[] }>,
+    blockIndex: number,
+  ): string => {
     const text = block.text.trim();
-    if (block.source_refs.length === 0) return text;
-    const distinct = resolveBlockSources(block.source_refs);
-    if (distinct.length === 0) return text;
-    const sortedIds = [...distinct.map((s) => s.candidate_id)].sort();
-    const key = sortedIds.join("|");
-    const entry = keyToEntry.get(key);
-    if (!entry) return text;
-    cited_segment_count++;
-    if (distinct.length > 1) compound_segment_count++;
-    marker_count++;
-    return placeMarker(text, toSuperscript(entry.number));
+    const plan = planBlock(block, blockIndex);
+    if (!plan) return text;
+    const sentences = [...plan.sentences];
+    let cited = false;
+    for (const g of plan.groups) {
+      const entry = keyToEntry.get(entryKeyFor(g.sources));
+      if (!entry) continue;
+      const idx = Math.min(Math.max(g.sentence_index, 0), sentences.length - 1);
+      sentences[idx] = placeMarker(sentences[idx], toSuperscript(entry.number));
+      marker_count++;
+      cited = true;
+      if (g.sources.length > 1) compound_segment_count++;
+    }
+    if (cited) cited_segment_count++;
+    return sentences.join(" ");
   };
 
 
-  for (const b of draft.blocks) {
+
+  draft.blocks.forEach((b, blockIndex) => {
     if (b.kind === "heading") {
       heading_count++;
       out.push(`**${b.text.trim()}**`);
     } else if (b.kind === "paragraph") {
       paragraph_count++;
-      out.push(renderSegment(b));
+      out.push(renderSegment(b, blockIndex));
     } else if (b.kind === "list_item") {
       list_item_count++;
-      out.push(`- ${renderSegment(b)}`);
+      out.push(`- ${renderSegment(b, blockIndex)}`);
     }
-  }
+  });
+
 
   // Group consecutive list_items together (no blank line between), but
   // separate paragraphs/headings with a blank line.
@@ -583,6 +656,7 @@ export function buildFootnotedAnswer(
     used_sources: finalUsedSources,
     hierarchy_report,
     footnote_render_report,
+    footnote_density_emission: emission_telemetry,
 
     builder_report: {
       paragraph_count,
