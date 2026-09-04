@@ -1,0 +1,1040 @@
+[
+  {
+    "id": "AW9",
+    "query": "כתוב פרק רקע תיאורטי על עקרון ההסתמכות והציפייה הלגיטימית במשפט המנהלי הישראלי",
+    "run_id": "0d3a8b79-2ac2-443c-8bb6-568cf693de99",
+    "ms": 147141,
+    "pool_after": 22,
+    "claim_source_plan": {
+      "rows": [
+        {
+          "reason": "matched_4_sources_for_theoretical_background",
+          "claim_id": "C1",
+          "claim_type": "theoretical_background",
+          "block_topic": "להגדיר ולהבדיל בין עקרון ההסתמכות (reliance) לבין עיקרון הציפייה הלגיטימית (legi",
+          "allowed_roles": [
+            "ספרות אקדמית (רקע דוקטרינרי / תיאוריה / ביקורת / השוואה)",
+            "חומר מוסדי (הקשר מדיניות / דיווח עובדתי)",
+            "חקיקה (עוגן נורמטיבי ראשוני)",
+            "פסיקה (עוגן הלכתי / יישום / דוגמה)"
+          ],
+          "preferred_source_ids": [
+            "s3",
+            "s4",
+            "s5",
+            "s6"
+          ],
+          "disallowed_source_ids": [
+            "s1",
+            "s2"
+          ],
+          "unsupported_or_cautious": false
+        },
+        {
+          "reason": "matched_4_sources_for_theoretical_background",
+          "claim_id": "C2",
+          "claim_type": "theoretical_background",
+          "block_topic": "לפרט את מבחני הקבילות שבהם בתי המשפט קיבלו טענות הסתמכות/ציפייה לגיטימית בישראל ",
+          "allowed_roles": [
+            "ספרות אקדמית (רקע דוקטרינרי / תיאוריה / ביקורת / השוואה)",
+            "חומר מוסדי (הקשר מדיניות / דיווח עובדתי)",
+            "חקיקה (עוגן נורמטיבי ראשוני)",
+            "פסיקה (עוגן הלכתי / יישום / דוגמה)"
+          ],
+          "preferred_source_ids": [
+            "s3",
+            "s4",
+            "s2",
+            "s6"
+          ],
+          "disallowed_source_ids": [
+            "s1"
+          ],
+          "unsupported_or_cautious": false
+        },
+        {
+          "reason": "matched_3_sources_for_implementation_example",
+          "claim_id": "C3",
+          "claim_type": "implementation_example",
+          "block_topic": "לנתח את סוגי הסעד שמעניק בית המשפט בטענות הסתמכות/ציפייה לגיטימית (שימור המצב, פ",
+          "allowed_roles": [
+            "פסיקה (עוגן הלכתי / יישום / דוגמה)",
+            "חומר מוסדי (הקשר מדיניות / דיווח עובדתי)",
+            "ספרות אקדמית (רקע דוקטרינרי / תיאוריה / ביקורת / השוואה)"
+          ],
+          "preferred_source_ids": [
+            "s3",
+            "s4",
+            "s6"
+          ],
+          "disallowed_source_ids": [
+            "s1",
+            "s2"
+          ],
+          "unsupported_or_cautious": false
+        },
+        {
+          "reason": "matched_4_sources_for_theoretical_background",
+          "claim_id": "C4",
+          "claim_type": "theoretical_background",
+          "block_topic": "להציב את הגישה הישראלית בהקשר השוואתי (למשל בריטניה ו־EU) ולהציע המלצות מדיניות/",
+          "allowed_roles": [
+            "ספרות אקדמית (רקע דוקטרינרי / תיאוריה / ביקורת / השוואה)",
+            "חומר מוסדי (הקשר מדיניות / דיווח עובדתי)",
+            "חקיקה (עוגן נורמטיבי ראשוני)",
+            "פסיקה (עוגן הלכתי / יישום / דוגמה)"
+          ],
+          "preferred_source_ids": [
+            "s3",
+            "s4",
+            "s6",
+            "s5"
+          ],
+          "disallowed_source_ids": [
+            "s1",
+            "s2"
+          ],
+          "unsupported_or_cautious": false
+        }
+      ],
+      "version": "v1.0",
+      "academic_mode": true
+    },
+    "drafter_block_source_compliance": {
+      "rows": [
+        {
+          "reason": "within_plan",
+          "block_id": "b1",
+          "claim_id": "C1",
+          "compliant": true,
+          "allowed_source_refs": [
+            "s3",
+            "s4",
+            "s5",
+            "s6"
+          ],
+          "emitted_source_refs": [
+            "s3",
+            "s4"
+          ],
+          "disallowed_emitted_refs": []
+        },
+        {
+          "reason": "within_plan",
+          "block_id": "b2",
+          "claim_id": "C1",
+          "compliant": true,
+          "allowed_source_refs": [
+            "s3",
+            "s4",
+            "s5",
+            "s6"
+          ],
+          "emitted_source_refs": [],
+          "disallowed_emitted_refs": []
+        },
+        {
+          "reason": "within_plan",
+          "block_id": "b3",
+          "claim_id": "C2",
+          "compliant": true,
+          "allowed_source_refs": [
+            "s3",
+            "s4",
+            "s2",
+            "s6"
+          ],
+          "emitted_source_refs": [
+            "s3"
+          ],
+          "disallowed_emitted_refs": []
+        },
+        {
+          "reason": "within_plan",
+          "block_id": "b4",
+          "claim_id": "C3",
+          "compliant": true,
+          "allowed_source_refs": [
+            "s3",
+            "s4",
+            "s6"
+          ],
+          "emitted_source_refs": [
+            "s3"
+          ],
+          "disallowed_emitted_refs": []
+        },
+        {
+          "reason": "within_plan",
+          "block_id": "b5",
+          "claim_id": "C4",
+          "compliant": true,
+          "allowed_source_refs": [
+            "s3",
+            "s4",
+            "s6",
+            "s5"
+          ],
+          "emitted_source_refs": [
+            "s3",
+            "s5",
+            "s6"
+          ],
+          "disallowed_emitted_refs": []
+        }
+      ],
+      "version": "v1.0",
+      "violations": 0,
+      "blocks_checked": 5,
+      "blocks_compliant": 5
+    },
+    "post_draft_alignment_filter": {
+      "kept": 7,
+      "rows": [
+        {
+          "kept": true,
+          "reason": "role_and_area_compatible",
+          "dropped": false,
+          "claim_id": "b1",
+          "role_fit": true,
+          "source_id": "s3",
+          "csm_result": "kept",
+          "citation_id": "b1:s3",
+          "legal_area_fit": true
+        },
+        {
+          "kept": true,
+          "reason": "role_and_area_compatible",
+          "dropped": false,
+          "claim_id": "b1",
+          "role_fit": true,
+          "source_id": "s4",
+          "csm_result": "kept",
+          "citation_id": "b1:s4",
+          "legal_area_fit": true
+        },
+        {
+          "kept": true,
+          "reason": "role_and_area_compatible",
+          "dropped": false,
+          "claim_id": "b3",
+          "role_fit": true,
+          "source_id": "s3",
+          "csm_result": "kept",
+          "citation_id": "b3:s3",
+          "legal_area_fit": true
+        },
+        {
+          "kept": true,
+          "reason": "role_and_area_compatible",
+          "dropped": false,
+          "claim_id": "b4",
+          "role_fit": true,
+          "source_id": "s3",
+          "csm_result": "kept",
+          "citation_id": "b4:s3",
+          "legal_area_fit": true
+        },
+        {
+          "kept": true,
+          "reason": "role_and_area_compatible",
+          "dropped": false,
+          "claim_id": "b5",
+          "role_fit": true,
+          "source_id": "s3",
+          "csm_result": "kept",
+          "citation_id": "b5:s3",
+          "legal_area_fit": true
+        },
+        {
+          "kept": true,
+          "reason": "role_and_area_compatible",
+          "dropped": false,
+          "claim_id": "b5",
+          "role_fit": true,
+          "source_id": "s5",
+          "csm_result": "kept",
+          "citation_id": "b5:s5",
+          "legal_area_fit": true
+        },
+        {
+          "kept": true,
+          "reason": "role_and_area_compatible",
+          "dropped": false,
+          "claim_id": "b5",
+          "role_fit": true,
+          "source_id": "s6",
+          "csm_result": "kept",
+          "citation_id": "b5:s6",
+          "legal_area_fit": true
+        }
+      ],
+      "checked": 7,
+      "dropped": 0,
+      "version": "v1.0"
+    },
+    "topic_aware_alignment": {
+      "applied": true,
+      "version": "v1.0",
+      "refs_removed": 0,
+      "academic_mode": true,
+      "refs_promoted": 0,
+      "refs_reordered": 0,
+      "block_source_plan": [
+        {
+          "block_id": "b1",
+          "claim_type": "theoretical_background",
+          "block_topic": "reasonableness+reliance_expectation",
+          "acceptable_roles": [
+            "scholarship",
+            "doctrinal_background_source",
+            "theoretical_normative_source",
+            "critique_or_counterposition_source",
+            "comparative_source",
+            "policy_or_institutional_source",
+            "factual_report",
+            "implementation_context_source",
+            "statutory_anchor",
+            "primary_statute",
+            "primary_legal_anchor",
+            "regulation"
+          ],
+          "rejected_sources": [],
+          "selected_sources": [
+            "s3",
+            "s4"
+          ],
+          "rejection_reasons": [],
+          "unsupported_or_cautious": false
+        },
+        {
+          "block_id": "b2",
+          "claim_type": "theoretical_background",
+          "block_topic": "reasonableness+reliance_expectation",
+          "acceptable_roles": [
+            "scholarship",
+            "doctrinal_background_source",
+            "theoretical_normative_source",
+            "critique_or_counterposition_source",
+            "comparative_source",
+            "policy_or_institutional_source",
+            "factual_report",
+            "implementation_context_source",
+            "statutory_anchor",
+            "primary_statute",
+            "primary_legal_anchor",
+            "regulation"
+          ],
+          "rejected_sources": [],
+          "selected_sources": [],
+          "rejection_reasons": [],
+          "unsupported_or_cautious": false
+        },
+        {
+          "block_id": "b3",
+          "claim_type": "implementation_example",
+          "block_topic": "reasonableness+reliance_expectation",
+          "acceptable_roles": [
+            "binding_case_law",
+            "persuasive_case_law",
+            "judgment_anchor",
+            "implementation_or_example_source",
+            "doctrinal_application_source",
+            "primary_legal_anchor",
+            "primary_mirror",
+            "policy_or_institutional_source",
+            "factual_report",
+            "implementation_context_source",
+            "scholarship",
+            "doctrinal_background_source"
+          ],
+          "rejected_sources": [],
+          "selected_sources": [
+            "s3"
+          ],
+          "rejection_reasons": [],
+          "unsupported_or_cautious": false
+        },
+        {
+          "block_id": "b4",
+          "claim_type": "theoretical_background",
+          "block_topic": "proportionality+reliance_expectation",
+          "acceptable_roles": [
+            "scholarship",
+            "doctrinal_background_source",
+            "theoretical_normative_source",
+            "critique_or_counterposition_source",
+            "comparative_source",
+            "policy_or_institutional_source",
+            "factual_report",
+            "implementation_context_source",
+            "statutory_anchor",
+            "primary_statute",
+            "primary_legal_anchor",
+            "regulation"
+          ],
+          "rejected_sources": [],
+          "selected_sources": [
+            "s3"
+          ],
+          "rejection_reasons": [],
+          "unsupported_or_cautious": false
+        },
+        {
+          "block_id": "b5",
+          "claim_type": "theoretical_background",
+          "block_topic": "reliance_expectation+prison_conditions",
+          "acceptable_roles": [
+            "scholarship",
+            "doctrinal_background_source",
+            "theoretical_normative_source",
+            "critique_or_counterposition_source",
+            "comparative_source",
+            "policy_or_institutional_source",
+            "factual_report",
+            "implementation_context_source",
+            "statutory_anchor",
+            "primary_statute",
+            "primary_legal_anchor",
+            "regulation"
+          ],
+          "rejected_sources": [],
+          "selected_sources": [
+            "s3",
+            "s5",
+            "s6"
+          ],
+          "rejection_reasons": [],
+          "unsupported_or_cautious": false
+        }
+      ],
+      "blocks_left_uncited": 0,
+      "block_source_ranking": [
+        {
+          "block_id": "b1",
+          "new_rank": 0,
+          "old_rank": 0,
+          "source_id": "s3",
+          "role_match": true,
+          "topic_match": true,
+          "final_selected": true,
+          "legal_area_match": true
+        },
+        {
+          "block_id": "b1",
+          "new_rank": 1,
+          "old_rank": 1,
+          "source_id": "s4",
+          "role_match": true,
+          "topic_match": true,
+          "final_selected": true,
+          "legal_area_match": true
+        },
+        {
+          "block_id": "b3",
+          "new_rank": 0,
+          "old_rank": 0,
+          "source_id": "s3",
+          "role_match": true,
+          "topic_match": true,
+          "final_selected": true,
+          "legal_area_match": true
+        },
+        {
+          "block_id": "b4",
+          "new_rank": 0,
+          "old_rank": 0,
+          "source_id": "s3",
+          "role_match": true,
+          "topic_match": true,
+          "final_selected": true,
+          "legal_area_match": true
+        },
+        {
+          "block_id": "b5",
+          "new_rank": 0,
+          "old_rank": 0,
+          "source_id": "s3",
+          "role_match": true,
+          "topic_match": true,
+          "final_selected": true,
+          "legal_area_match": true
+        },
+        {
+          "block_id": "b5",
+          "new_rank": 1,
+          "old_rank": 1,
+          "source_id": "s5",
+          "role_match": true,
+          "topic_match": true,
+          "final_selected": true,
+          "legal_area_match": true
+        },
+        {
+          "block_id": "b5",
+          "new_rank": 2,
+          "old_rank": 2,
+          "source_id": "s6",
+          "role_match": true,
+          "topic_match": true,
+          "final_selected": true,
+          "legal_area_match": true
+        }
+      ],
+      "compound_footnote_guard": [],
+      "judgment_legal_area_fit": [],
+      "unused_stronger_sources": [
+        {
+          "score": 11,
+          "title": "חוק ,תובע כי , רווח לקבלת ציפייה מתוך ייצוגית תובענה המגיש מיומכך חד ,תום",
+          "block_id": "b5",
+          "promoted": false,
+          "source_id": "s2",
+          "used_score": 10
+        },
+        {
+          "score": 11,
+          "title": "רשלנות הטועה: אשם, צדק ותום לב",
+          "block_id": "b5",
+          "promoted": false,
+          "source_id": "s4",
+          "used_score": 10
+        }
+      ],
+      "source_role_sanity_check": [
+        {
+          "title": "בג\"ץ 11437-05 - קו לעובד נ. משרד הפנים",
+          "reason": "compatible",
+          "changed": false,
+          "source_id": "s1",
+          "citable_as": "judgment",
+          "final_role": "persuasive_case_law",
+          "source_type": "supreme_court_il",
+          "original_role": "persuasive_case_law"
+        },
+        {
+          "title": "חוק ,תובע כי , רווח לקבלת ציפייה מתוך ייצוגית תובענה המגיש מיומכך חד ,תום",
+          "reason": "compatible",
+          "changed": false,
+          "source_id": "s2",
+          "citable_as": "judgment",
+          "final_role": "persuasive_case_law",
+          "source_type": "supreme_court_il",
+          "original_role": "persuasive_case_law"
+        },
+        {
+          "title": "עיון פילוסופי במשפט ואודותיו | דוד אנוך ואלון הראל (כרך ד)",
+          "reason": "role_incompatible_with_academic",
+          "changed": true,
+          "source_id": "s3",
+          "citable_as": "scholarship",
+          "final_role": "scholarship",
+          "source_type": "journal_article",
+          "original_role": "primary_statute"
+        },
+        {
+          "title": "רשלנות הטועה: אשם, צדק ותום לב",
+          "reason": "role_incompatible_with_academic",
+          "changed": true,
+          "source_id": "s4",
+          "citable_as": "scholarship",
+          "final_role": "scholarship",
+          "source_type": "journal_article",
+          "original_role": "primary_statute"
+        },
+        {
+          "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+          "reason": "role_incompatible_with_academic",
+          "changed": true,
+          "source_id": "s5",
+          "citable_as": "scholarship",
+          "final_role": "scholarship",
+          "source_type": "journal_article",
+          "original_role": "binding_case_law"
+        },
+        {
+          "title": "הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי",
+          "reason": "role_incompatible_with_academic",
+          "changed": true,
+          "source_id": "s6",
+          "citable_as": "scholarship",
+          "final_role": "scholarship",
+          "source_type": "journal_article",
+          "original_role": "binding_case_law"
+        }
+      ]
+    },
+    "limitation_note_alignment": {
+      "revised": true,
+      "accurate": true,
+      "answer_id": "answer",
+      "limitation_note": "הערה על היקף המקורות: לא אותר פסק דין העוסק ישירות בדוקטרינה הנדונה; פסקי הדין שאותרו נוגעים לתחום סמוך בלבד, והביסוס הדוקטרינרי כאן נשען על חקיקה וספרות משפטית.",
+      "primary_sources_present": true,
+      "judgment_sources_present": true,
+      "direct_doctrine_judgment_present": false
+    },
+    "claim_source_match": {
+      "applied": true,
+      "rebinding": {
+        "applied": true,
+        "unbound": 1,
+        "decisions": [
+          {
+            "ref": "s3",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 0
+          },
+          {
+            "ref": "s4",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 0
+          },
+          {
+            "ref": "s3",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 1
+          },
+          {
+            "ref": "s4",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 1
+          },
+          {
+            "ref": "s6",
+            "score": 4,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 1,
+            "matched_terms": [
+              "מנהלי",
+              "מידת",
+              "פגיעה",
+              "מנהלית"
+            ]
+          },
+          {
+            "ref": "s2",
+            "reason": "no_substantive_binding",
+            "binding": "unbound",
+            "block_index": 2
+          },
+          {
+            "ref": "s3",
+            "score": 4,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 2,
+            "matched_terms": [
+              "סתמכ",
+              "הסתמכ",
+              "הבטחה",
+              "תיאורטית"
+            ]
+          },
+          {
+            "ref": "s4",
+            "score": 4,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 2,
+            "matched_terms": [
+              "סתמכ",
+              "ניתנ",
+              "הסתמכ",
+              "תיאורטית"
+            ]
+          },
+          {
+            "ref": "s6",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 3
+          },
+          {
+            "ref": "s3",
+            "score": 4,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 3,
+            "matched_terms": [
+              "הסתמכ",
+              "נגרמ",
+              "תיאורטי",
+              "תחייב"
+            ]
+          },
+          {
+            "ref": "s5",
+            "score": 2,
+            "reason": "shared_title_subject_terms",
+            "binding": "topical",
+            "block_index": 4,
+            "matched_terms": [
+              "יסוד",
+              "עיצוב"
+            ]
+          },
+          {
+            "ref": "s6",
+            "score": 3,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 4,
+            "matched_terms": [
+              "למתנ",
+              "הסעד",
+              "כספי"
+            ]
+          },
+          {
+            "ref": "s3",
+            "score": 3,
+            "reason": "shared_meaningful_terms",
+            "binding": "topical",
+            "block_index": 4,
+            "matched_terms": [
+              "תיאורטית",
+              "הסתמכ",
+              "תיאורט"
+            ]
+          }
+        ],
+        "bound_exact": 5,
+        "bound_facet": 0,
+        "bound_topical": 7,
+        "capped_ref_count": 0,
+        "bound_area_direct": 0,
+        "rebound_ref_count": 7,
+        "claim_mismatch_drops_after": 1,
+        "claim_mismatch_drops_before": 8
+      },
+      "mismatch_reason": [
+        "partial_support_for_categorical_claim",
+        "insufficient_authority_for_claim_category",
+        "claim_mismatch",
+        "analogical_for_black_letter",
+        "commentary_in_substantive_block"
+      ],
+      "claim_categories": [
+        {
+          "basis": "academic_declared_remap(contextual_background)+academic_proposition_background",
+          "category": "doctrinal_background",
+          "kept_refs": [
+            "s3",
+            "s4"
+          ],
+          "block_index": 0,
+          "support_levels": [
+            "doctrinal_secondary",
+            "doctrinal_secondary"
+          ]
+        },
+        {
+          "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_background",
+          "category": "doctrinal_background",
+          "kept_refs": [],
+          "block_index": 1,
+          "support_levels": []
+        },
+        {
+          "basis": "academic_declared_remap(court_holding)+academic_proposition_theoretical",
+          "category": "theoretical_explanation",
+          "kept_refs": [
+            "s3"
+          ],
+          "block_index": 2,
+          "support_levels": [
+            "doctrinal_secondary"
+          ]
+        },
+        {
+          "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_theoretical",
+          "category": "theoretical_explanation",
+          "kept_refs": [
+            "s3"
+          ],
+          "block_index": 3,
+          "support_levels": [
+            "doctrinal_secondary"
+          ]
+        },
+        {
+          "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
+          "category": "literature_synthesis",
+          "kept_refs": [
+            "s3",
+            "s5",
+            "s6"
+          ],
+          "block_index": 4,
+          "support_levels": [
+            "doctrinal_secondary",
+            "background",
+            "background"
+          ]
+        }
+      ],
+      "limitation_added": false,
+      "tagged_block_count": 5,
+      "dropped_source_refs": [
+        {
+          "ref": "s3",
+          "reason": "partial_support_for_categorical_claim",
+          "block_index": 1,
+          "block_claim_id": "C1",
+          "claim_category": "doctrinal_background",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "contracts"
+        },
+        {
+          "ref": "s4",
+          "reason": "partial_support_for_categorical_claim",
+          "block_index": 1,
+          "block_claim_id": "C1",
+          "claim_category": "doctrinal_background",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "contracts"
+        },
+        {
+          "ref": "s6",
+          "reason": "insufficient_authority_for_claim_category",
+          "block_index": 1,
+          "block_claim_id": "C1",
+          "claim_category": "doctrinal_background",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C3"
+          ],
+          "source_legal_area": null
+        },
+        {
+          "ref": "s2",
+          "reason": "claim_mismatch",
+          "block_index": 2,
+          "block_claim_id": "C2",
+          "claim_category": "theoretical_explanation",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C3"
+          ],
+          "source_legal_area": null
+        },
+        {
+          "ref": "s4",
+          "reason": "analogical_for_black_letter",
+          "block_index": 2,
+          "block_claim_id": "C2",
+          "claim_category": "theoretical_explanation",
+          "block_legal_area": "public_law_hcj",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": "contracts"
+        },
+        {
+          "ref": "s6",
+          "reason": "commentary_in_substantive_block",
+          "block_index": 3,
+          "block_claim_id": "C3",
+          "claim_category": "theoretical_explanation",
+          "block_legal_area": "constitutional",
+          "source_claim_ids": [
+            "C3"
+          ],
+          "source_legal_area": null
+        }
+      ],
+      "reference_only_refs": [
+        "s5",
+        "s6"
+      ],
+      "commentary_only_claims": [
+        "C1",
+        "C2",
+        "C3",
+        "C4"
+      ],
+      "unsupported_block_count": 0,
+      "authority_overstatements": [],
+      "source_ref_mismatch_count": 6,
+      "academic_authority_alignment": {
+        "applied": true,
+        "source_coverage": {
+          "reason": [
+            "partial_support_for_categorical_claim",
+            "insufficient_authority_for_claim_category"
+          ],
+          "substantive_blocks": 5,
+          "blocks_with_source_ref": 4,
+          "blocks_with_available_source": 5,
+          "blocks_missing_ref_despite_available_source": 1
+        },
+        "hebrew_rebinding": [
+          {
+            "title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+            "reason": "shared_title_subject_terms",
+            "attempted": true,
+            "source_id": "s5",
+            "topical_fit": true,
+            "verifier_verdict": "partial",
+            "title_topic_match": true,
+            "new_binding_result": "topical",
+            "old_binding_result": "unbound"
+          }
+        ],
+        "pack_fit_dropped": [],
+        "bib_reference_uses": [
+          {
+            "reason": "block_does_not_allow_reference_only",
+            "source_title": "הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי",
+            "block_category": "theoretical_explanation",
+            "reference_only": false
+          },
+          {
+            "reason": "bibliography_only_reading_pointer",
+            "source_title": "על תורת הסעדים החוקתיים | אהרן ברק (כרך כ)",
+            "block_category": "literature_synthesis",
+            "reference_only": true
+          },
+          {
+            "reason": "bibliography_only_reading_pointer",
+            "source_title": "הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי",
+            "block_category": "literature_synthesis",
+            "reference_only": true
+          }
+        ],
+        "rendered_footnotes": 2,
+        "source_refs_emitted": 13,
+        "source_roles_filled": [
+          "primary_legal_anchor",
+          "doctrinal_background_source",
+          "theoretical_normative_source"
+        ],
+        "source_roles_missing": [
+          "critique_or_counterposition_source",
+          "implementation_or_example_source"
+        ],
+        "rule_d_area_overrides": [
+          {
+            "title": "עיון פילוסופי במשפט ואודותיו | דוד אנוך ואלון הראל (כרך ד)",
+            "source_id": "s3",
+            "overridden": true,
+            "block_category": "theoretical_explanation",
+            "final_decision": "kept_with_warning",
+            "block_legal_area": "public_law_hcj",
+            "source_legal_area": "contracts",
+            "topical_fit_passed": true
+          },
+          {
+            "title": "עיון פילוסופי במשפט ואודותיו | דוד אנוך ואלון הראל (כרך ד)",
+            "source_id": "s3",
+            "overridden": true,
+            "block_category": "theoretical_explanation",
+            "final_decision": "kept_with_warning",
+            "block_legal_area": "constitutional",
+            "source_legal_area": "contracts",
+            "topical_fit_passed": true
+          },
+          {
+            "title": "עיון פילוסופי במשפט ואודותיו | דוד אנוך ואלון הראל (כרך ד)",
+            "source_id": "s3",
+            "overridden": true,
+            "block_category": "literature_synthesis",
+            "final_decision": "kept_with_warning",
+            "block_legal_area": "public_law_hcj",
+            "source_legal_area": "contracts",
+            "topical_fit_passed": true
+          }
+        ],
+        "source_roles_expected": [
+          "primary_legal_anchor",
+          "doctrinal_background_source",
+          "theoretical_normative_source",
+          "critique_or_counterposition_source",
+          "implementation_or_example_source"
+        ],
+        "off_topic_refs_dropped": 0,
+        "primary_language_blocks": 0,
+        "declared_category_remaps": [
+          {
+            "to": "doctrinal_background",
+            "from": "contextual_background",
+            "basis": "academic_declared_remap(contextual_background)+academic_proposition_background",
+            "block_index": 0
+          },
+          {
+            "to": "doctrinal_background",
+            "from": "doctrinal_synthesis",
+            "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_background",
+            "block_index": 1
+          },
+          {
+            "to": "theoretical_explanation",
+            "from": "court_holding",
+            "basis": "academic_declared_remap(court_holding)+academic_proposition_theoretical",
+            "block_index": 2
+          },
+          {
+            "to": "theoretical_explanation",
+            "from": "doctrinal_synthesis",
+            "basis": "academic_declared_remap(doctrinal_synthesis)+academic_proposition_theoretical",
+            "block_index": 3
+          },
+          {
+            "to": "literature_synthesis",
+            "from": "scholarly_commentary",
+            "basis": "academic_declared_remap(scholarly_commentary)+academic_remap_commentary",
+            "block_index": 4
+          }
+        ],
+        "primary_language_details": [],
+        "commentary_only_claims_kept": [
+          "C1",
+          "C2",
+          "C3",
+          "C4"
+        ],
+        "declared_categories_remapped": 5,
+        "partial_support_refs_dropped": 2,
+        "academic_claim_categories_used": {
+          "doctrinal_background": 2,
+          "literature_synthesis": 1,
+          "theoretical_explanation": 2
+        },
+        "refs_kept_by_claim_source_match": 7,
+        "declared_categories_kept_primary": 0,
+        "doctrinal_secondary_refs_allowed": 5,
+        "refs_dropped_by_authority_category": 1,
+        "unsupported_primary_language_suppressed": 0,
+        "doctrinal_secondary_refs_rejected_for_primary_claims": 0
+      },
+      "primary_support_by_main_claim": false,
+      "primary_supported_block_count": 0,
+      "secondary_supported_block_count": 4
+    },
+    "footnotes_count": 2,
+    "footnotes": [
+      {
+        "n": null,
+        "title": "עיון פילוסופי במשפט ואודותיו | דוד אנוך ואלון הראל (כרך ד)",
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/d_5.pdf"
+      },
+      {
+        "n": null,
+        "title": "לדיון נוסף ראו: הזכות המנהלית והסעד הכספי במשפט המקובל המנהלי",
+        "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_ebbf6fda97d74731a9cea34d71d369e4.pdf"
+      }
+    ],
+    "answer": "פתיחת הפרק: במשפט המנהלי שני מושגים קרובים אך נבדלים זוכים לשימוש ממרכיבים תיאורטיים ומעשיים שונים — עקרון ההסתמכות ועקרון הציפייה הלגיטימית. הגדרת ההסתמכות מדגישה את ההגנה על פעולת סמך של הפרט על התנהגות או הודעה מנהלית שהובילה לנזק כאשר ההסתמכות הייתה סבירה וניתנת למדידה; המושג מתבסס על התאוריה של פיצוי הנזק הנובע מהיענות להבטחה או הציפייה. לעומת זאת, ציפייה לגיטימית מכוונת יותר אל ההגנה על ציפייתו של האדם ביחס להמשכיות מדיניות, הבטחה מפורשת או יחס מנהלתי עקבי, ובמסגרת זו נבחנת לרוב גם ההגינות הצעדי וטוהר המידות של הרשות. מבחינה תיאטרלית, שני המונחים חופפים בשל היותם מעוגנים ברעיון של מניעת חוסר צדק שנגרם עקב הסתמכות, אך הם מפלחים נקודות שונות של המבחן המעשי — ההסתמכות כאלמנט עובדי והציפייה כעוגן נורמטיבי הקושר את ההגנה לשיקולי הוגנות וביטחון משפטי. נקודת פתיחה זו מתבססת על דיונים תאורטיים בפילוסופיה של המשפט ובפרשנות תורת ההבטחה וההסתמכות, שמדגישים את הקשר שבין פיצוי על נזק שנגרם לבין ההגנה על אמון משפטי ותום לב בהתנהלות הציבורית.¹\n\nבמסגרת הדיון המנהלי יש להבחין בין ההשלכות הפרוצדורליות והמטריאליות של שני המושגים: ההסתמכות נבדקת בדרך כלל כמבחן עובדתי של קיומה של הודעה או התנהגות שעליה סמך אדם, עוצמת ההסתמכות והנזק שנגרם, ואילו הציפייה הלגיטימית נבנית לעתים כתביעה נורמטיבית המצריכה בחינה של טיב ההצהרה (האם היא נעשתה בייצוג רשמי או בעקביות של מדיניות), מידת ההגינות שבה יש להגן על הציפייה והמשקל שיש לייחס לאינטרסים הציבוריים הכרוכים בשינוי המדיניות. על אף שלא תמיד ניתן לנסח חוקה חד־משמעית של המבחנים הללו, הספרות מדגישה שלושת המרכיבים החוזרים בבחינות בתי המשפט: הייצוג או ההודעה; הסתמכות סבירה וניתנת להוכחה; והפגיעה הדטרימנטלית הקושרת בין ההסתמכות להחלטה המנהלית. גישה זו שואבת גם מהדיונים על טוהר המידות ותום הלב המשפטי, שמאפשרים להגדיר מקרים שבהם אין מקום להגנה על ציפייה אף אם הייתה הסתמכות, בין היתר כאשר האינטרסים הציבוריים מצדיקים שינוי מדיניות.\n\nבנוגע לקבילות הטענות בפני הערכאה המִנהלית והשיפוטית, הפסיקה שהושתו כמשקל רלוונטי מצביעה על רכיבי ראיות וכללים פרקטיים שחוזרים על עצמם: הצגת הודעה או הבטחה מנהלית ברורה או דפוס התנהגות עקבי; הוכחת הסתמכות ריאלית שניתן לשייך לנזק ממשי; ושאלת נסיבות ההסתמכות מבחינת סבירות וצפייתיות. פסקי דין בנושאים קרובים מדגימים כי בית המשפט נוטה לקשור את הקבילות גם למשקל האינטרס הציבורי — כלומר למידה שבה הגנת הציפייה עלולה לפגוע ביעדי מדיניות ציבורית רחבים — ולבקש מניין ברור של הקשר הסיבתי בין ההבטחה לנזק. יש להציג את המבחנים הללו בזהירות כשמנסים להסיק מסקנות מחומר פסיקתי שאינו אחיד, אך המסגרת התיאורטית והדוגמאות המקרהיות במקורות מספקות כלי פרקטי להבנת אופן יישום טענות ההסתמכות והציפייה בעשייה המנהלית.¹\n\nבמישור הסעדי ההבחנה בין סוגי התגובות השיפוטיות חשובה: בתי משפט מנהליים יכולים לבחור בין צעדים שמטרתם לשמר את המצב הקיים או להשיב את האמון ההגנתי — צווי מניעה והשעיה של החלטה מנהלית, צו לחזור ולשקול תוך התחשבות בהסתמכות או צו תוקפנות המתמקד בשינוי ההליך — לבין סעד כספי שמטרתו לתקן נזק שנגרם בעקבות ההסתמכות. השיח התיאורטי והפרקטי מדגיש כי עניין הפיצוי הכספי בתחום המנהלתי כפוף לדרישות של מידתיות וזיקה סיבתית מנהלית, וכי הענקת סעד כספי תחייב שיקלול בין הפגיעה בזכותו של היחיד לבין המשקל של אינטרסים ציבוריים שהצדיקו את ההחלטה. במרבית המקרים ההסדר התקני ינוע בין צווי סעד מותנים המבטיחים שקילה מחודשת לבין פיצוי מוגבל במקרים שבהם השימור בלבד אינו מספק, כאשר ההחלטה על סוג הסעד תלויה בשיקול מאזן של החוק, עקרון תום הלב וצורך בהגנה על ביטחון משפטי.¹\n\nלבסוף, בהשוואה תיאורטית ובמבט מדיניותי יש מקום להמליץ על שני כיוונים משלימים לפיתוח הדוקטרינה הישראלית: ראשית, גיבוש קריטריונים ברור יותר להבחנה בין ההסתמכות לבין הציפייה — קריטריונים שיציינו מתי די בהתנהגות עובדתית למתן הגנה ומתי נדרש יסוד נורמטיבי של הבטחה רשמית; שנית, קביעת היררכיית סעד ברורה שמציבה את השימור והשקילה המחודשת כצעד ראשון, ואת הסעד הכספי כאמצעי משלים ומותנה, תוך פרסום הנמקות מפורשות שבהן תשקול הרשות את בעלי העניין.¹ המלצות אלו שואבות השראה מהדיונים על עיצוב הסעד ומההבחנות התיאורטיות שבספרות המשפטית, והן נועדו לאזן בין הצורך בהגנה על האמון הציבורי ובין שמירת גמישותה של רשות מנהלית בניהול ענייני הציבור.²\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות. לא אותר פסק דין העוסק ישירות בדוקטרינה הנדונה; הביסוס כאן נשען על חקיקה וספרות משפטית.*"
+  }
+]
