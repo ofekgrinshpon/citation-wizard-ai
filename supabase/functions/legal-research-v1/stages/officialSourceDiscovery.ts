@@ -354,8 +354,29 @@ export async function searchOfficialJudgmentUrls(
 
     out.official_urls = out.official_urls.slice(0, SEARCH_FIRST_LIMITS.MAX_URLS);
     out.mirror_urls = out.mirror_urls.slice(0, SEARCH_FIRST_LIMITS.MAX_URLS);
+    out.web_health = {
+      query,
+      intended_authority: String(input.label ?? ""),
+      endpoint_type: currentEndpointType(),
+      http_status: out.http,
+      discovered_urls: out.results_seen,
+      admitted_urls: out.official_urls.length + out.mirror_urls.length,
+      failure_reason: null,
+    };
   } catch (e) {
-    out.skip_reason = `search_failed:${e instanceof Error ? e.message : String(e)}`.slice(0, 160);
+    const msg = e instanceof Error ? e.message : String(e);
+    const cls = classifyWebFailure(null, msg);
+    recordWebCall({ status: null, ms: Date.now() - t0, failure_class: cls });
+    out.skip_reason = `search_failed:${cls}`;
+    out.web_health = {
+      query,
+      intended_authority: String(input.label ?? ""),
+      endpoint_type: currentEndpointType(),
+      http_status: null,
+      discovered_urls: 0,
+      admitted_urls: 0,
+      failure_reason: safeErrorMessage(cls),
+    };
   }
   out.ms = Date.now() - t0;
   return out;
