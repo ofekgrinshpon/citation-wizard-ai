@@ -5,6 +5,14 @@
 
 import type { RetrievalGovernor } from "./retrievalGovernor.ts";
 import {
+  classifyWebFailure,
+  getWebTierHealth,
+  recordWebCall,
+  safeErrorMessage,
+  type WebFailureClass,
+  type WebTierHealth,
+} from "../lib/webTierHealth.ts";
+import {
   Candidate,
   CAPS,
   DroppedSource,
