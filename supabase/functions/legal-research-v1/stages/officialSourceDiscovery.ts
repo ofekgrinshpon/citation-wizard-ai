@@ -140,6 +140,19 @@ export interface JudgmentSearchFirstResult {
   mirror_urls: SearchFirstUrl[];
   http: number | null;
   ms: number;
+  /** research_richness_execution_unblock_v1 — per-call web health row. */
+  web_health?: OfficialDiscoveryWebHealth;
+}
+
+/** Telemetry row: `official_discovery_web_health`. */
+export interface OfficialDiscoveryWebHealth {
+  query: string;
+  intended_authority: string;
+  endpoint_type: WebEndpointType;
+  http_status: number | null;
+  discovered_urls: number;
+  admitted_urls: number;
+  failure_reason: string | null;
 }
 
 export interface JudgmentSearchFirstInput {
