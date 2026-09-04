@@ -262,7 +262,15 @@ async function callPerplexity(
   failure_reason?: string | null;
 }> {
   const key = Deno.env.get("PERPLEXITY_API_KEY");
-  if (!key) return { raw: [], ms: 0, ok: false };
+  if (!key) {
+    return {
+      raw: [],
+      ms: 0,
+      ok: false,
+      failure_class: "missing_credentials",
+      failure_reason: safeErrorMessage("missing_credentials"),
+    };
+  }
   const role = ROLE_PROMPT[query.role];
   const sys =
     `אתה מאתר מקורות משפטיים ישראליים. עבור התפקיד: ${role.focus}. ${role.hint}. ` +
