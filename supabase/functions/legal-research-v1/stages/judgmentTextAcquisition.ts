@@ -30,6 +30,8 @@ import {
 import { processExtractedBody } from "./postExtract.ts";
 import { assessPdfExtraction } from "./pdfExtractionPreflight.ts";
 import { officialFetch } from "../lib/officialFetch.ts";
+import { classifyLocalCaselawBody } from "./localCaselawListingGate.ts";
+
 import { looksBinary } from "./statuteTextAcquisition.ts";
 
 
@@ -305,6 +307,10 @@ export interface AcquisitionResult {
   retrieval_budget_exceeded: boolean;
   /** f07_extraction_stability_v1 — speculative acquisition stopped early. */
   speculative_extraction_stopped: boolean;
+  /** local_judgment_body_upgrade_v1 — per-candidate local upgrade ledger. */
+  local_judgment_body_upgrade: LocalUpgradeRow[];
+  local_judgment_body_upgrade_budget: LocalUpgradeBudget;
+  local_judgment_stub_detection: LocalStubDetectionRow[];
 
 }
 
@@ -788,6 +794,33 @@ export async function tryLocalDbByDockets(
 }
 
 /**
+ * local_judgment_body_upgrade_v1 — direct read of the *same* local row the
+ * candidate was retrieved from. No fuzzy docket search, no network: the
+ * candidate already carries `document_id`, so the body it was snippet-cut from
+ * is fetched by primary key. Identity verification is unchanged and happens in
+ * the caller before the body is used.
+ */
+export async function tryLocalDbByDocumentId(
+  admin: SupabaseClient,
+  documentId: string,
+): Promise<string> {
+  const { data: chunks, error } = await admin
+    .from("legal_document_chunks")
+    .select("content")
+    .eq("document_id", documentId)
+    .order("chunk_index", { ascending: true })
+    .limit(8);
+  if (error) throw new Error(`db_error:${error.message}`);
+  const text = normText((chunks ?? []).map((c) => String(c.content ?? "")).join("\n"));
+  if (text.length < ACQUISITION_LIMITS.MIN_USABLE_TEXT) {
+    throw new Error("local_document_text_below_threshold");
+  }
+  return text;
+}
+
+
+
+/**
  * Method 3 — an HTML wrapper page on a court host that links the real file.
  *
  * Conservative by design: only a direct document/download link is followed.
@@ -887,6 +920,15 @@ function disabledResult(mode: string | null): AcquisitionResult {
     stage_stop_reason: null,
     retrieval_budget_exceeded: false,
     speculative_extraction_stopped: false,
+    local_judgment_body_upgrade: [],
+    local_judgment_body_upgrade_budget: {
+      attempted: 0,
+      succeeded: 0,
+      skipped_due_cap: 0,
+      skipped_due_time_budget: 0,
+      elapsed_ms: 0,
+    },
+    local_judgment_stub_detection: [],
   };
 }
 
@@ -935,6 +977,8 @@ export async function runJudgmentTextAcquisition(
   const excluded: AcquisitionSkipLog[] = [];
   const diagnostics: EligibilityDiagnostic[] = [];
   const eligible: Eligible[] = [];
+  const stub_detection: LocalStubDetectionRow[] = [];
+
   const rankInputs: RankInput[] = [];
   let judgmentCandidates = 0;
 
@@ -1042,19 +1086,35 @@ export async function runJudgmentTextAcquisition(
 
     const usability = String(integ.text_usability ?? "unknown");
     const len = availableTextLength(c);
+    const bodyAcquired = (c.metadata as Record<string, unknown> | undefined)
+      ?.judgment_text_acquired === true;
     let trigger: AcquisitionAttemptLog["trigger_reason"] | null = null;
     if (usability === "metadata_only") trigger = "metadata_only";
     else if (THIN_USABILITY.has(usability)) trigger = "unusable_or_unknown";
-    else if (len < ACQUISITION_LIMITS.MIN_USABLE_TEXT) trigger = "text_below_threshold";
+    // local_judgment_body_upgrade_v1 — a snippet capped at exactly the local
+    // retrieval limit (400) is a stub, not a judgment body. `<=` so an
+    // exactly-400 chunk is never mistaken for substantive text.
+    else if (len <= ACQUISITION_LIMITS.MIN_USABLE_TEXT && !bodyAcquired) {
+      trigger = "text_below_threshold";
+    }
     // A long commentary/summary snippet about a judgment is not a judgment body:
     // if the candidate carries case identity but no judgment text, still try.
     else if (integ.is_judgment_document !== true || integ.has_holding_text !== true) {
       trigger = "no_judgment_body_text";
     }
+    stub_detection.push({
+      source_id: c.candidate_id,
+      body_chars: len,
+      was_exact_400: len === ACQUISITION_LIMITS.MIN_USABLE_TEXT,
+      classified_as_stub: len <= ACQUISITION_LIMITS.MIN_USABLE_TEXT && !bodyAcquired,
+      upgrade_attempted: false,
+    });
     if (!trigger) {
       diag.ineligible_reason = "already_has_usable_text";
       continue;
     }
+
+
 
     diag.eligible = true;
     eligible.push({ c, integ, role, dockets, isRequested, trigger, diag });
@@ -1433,57 +1493,13 @@ export async function runJudgmentTextAcquisition(
     );
 
     if (succeeded && text) {
-      const stored = text.slice(0, ACQUISITION_LIMITS.MAX_TEXT);
-      after = stored.length >= 1200 ? "full_text" : "substantive_excerpt";
-      e.integ.text_usability = after as SourceIntegrity["text_usability"];
-      e.integ.has_holding_text = e.integ.has_holding_text || holding;
-      e.integ.is_judgment_document = true;
-      // Part 3 — handoff consistency: an acquired body that carries its own
-      // case identity is a judgment for every downstream consumer, including
-      // sufficiency. Text always comes from a court file or the local corpus —
-      // aggregator page text is never used as a body — so this is not a
-      // loosening of sufficiency, only a correct hand-off.
-      if (bodySignal && stored.length >= ACQUISITION_LIMITS.MIN_USABLE_TEXT) {
-        e.integ.citable_as = "judgment";
-        if (
-          e.integ.authority_tier === "index_or_listing" ||
-          e.integ.authority_tier === "non_authority" ||
-          e.integ.authority_tier === "unknown"
-        ) {
-          e.integ.authority_tier = (succeeded === "direct_file_fetch" && isTrustedCourtTextHost(url ?? "")) ||
-              succeeded === "local_db_docket_lookup" || succeeded === "summary_page_docket_resolve"
-            ? "official_primary"
-            : "primary_mirror";
-        }
-        e.integ.reject = false;
-        delete e.integ.reject_reason;
-      }
-      e.integ.integrity_flags = [
-        ...(e.integ.integrity_flags ?? []),
-        "judgment_text_acquired",
-        ...(bodySignal ? ["judgment_identity_confirmed_in_body"] : []),
-        ...(holding ? ["holding_text_present"] : []),
-      ];
-
-      e.c.metadata = {
-        ...(e.c.metadata ?? {}),
-        source_integrity: e.integ,
-        extended_text: stored,
-        judgment_candidate: true,
-        docket_normalized: e.dockets[0] ? normalizedDocketId(e.dockets[0]) : null,
-        judgment_text_acquired: true,
-        judgment_text_acquisition_method: succeeded,
-        body_contains_docket_or_title: bodySignal,
-        usable_for_holding: holding && stored.length >= ACQUISITION_LIMITS.MIN_USABLE_TEXT,
-        final_text_usability: after,
-      };
-      if ((e.c.snippet || "").length < 200) {
-        e.c.snippet = stored.slice(0, 600);
-      }
+      after = applyAcquiredJudgmentBody(e, text, succeeded, { url, docketGate }).after;
       successes++;
       // f07_extraction_stability_v1 — one usable body is enough for speculative
       // (non-requested-docket) acquisition; block further binary extraction.
-      if (requestedDockets.length === 0) {
+      // Local-corpus reads are exempt: they run no binary extraction at all and
+      // are governed by their own bounded lane (local_judgment_body_upgrade_v1).
+      if (requestedDockets.length === 0 && succeeded !== "local_db_docket_lookup") {
         retrievalBudget?.noteSpeculativeBodyAcquired?.();
       }
     } else {
@@ -1495,6 +1511,7 @@ export async function runJudgmentTextAcquisition(
         judgment_text_acquisition_failure_reasons: failures,
       };
     }
+
 
     budget_spent_on.push({
       candidate_id: e.c.candidate_id,
@@ -1561,8 +1578,50 @@ export async function runJudgmentTextAcquisition(
     }
   }
 
+  // ── local_judgment_body_upgrade_v1 ────────────────────────────────────────
+  // Eligible judgment candidates that never got an attempt (typically stopped
+  // by the speculative-extraction guard) are upgraded from our own corpus in a
+  // bounded, network-free lane. Router paths that disable acquisition (0) and
+  // an exhausted pipeline budget both skip it.
+  const attemptedIds = new Set(attempts.map((a) => a.candidate_id));
+  const localUpgradePending = eligible.filter((e) => !attemptedIds.has(e.c.candidate_id));
+  let local_judgment_body_upgrade: LocalUpgradeRow[] = [];
+  let local_judgment_body_upgrade_budget: LocalUpgradeBudget = {
+    attempted: 0,
+    succeeded: 0,
+    skipped_due_cap: 0,
+    skipped_due_time_budget: 0,
+    elapsed_ms: 0,
+  };
+  if (
+    localUpgradePending.length > 0 && input.max_acquisitions !== 0 &&
+    !(retrievalBudget?.exceeded() ?? false)
+  ) {
+    const up = await runLocalJudgmentBodyUpgrade(input.admin, localUpgradePending);
+    local_judgment_body_upgrade = up.rows;
+    local_judgment_body_upgrade_budget = up.budget;
+    successes += up.budget.succeeded;
+    const upgradedIds = new Set(up.rows.filter((r) => r.upgraded).map((r) => r.source_id));
+    for (const s of stub_detection) {
+      if (upgradedIds.has(s.source_id)) s.upgrade_attempted = true;
+    }
+    for (const r of up.rows) {
+      if (r.skipped_reason === null || r.upgraded) continue;
+      const s = stub_detection.find((x) => x.source_id === r.source_id);
+      if (s) s.upgrade_attempted = r.skipped_reason !== "no_local_document_signal";
+    }
+    await mark("local_judgment_body_upgrade_done", {
+      attempted: up.budget.attempted,
+      succeeded: up.budget.succeeded,
+      elapsed_ms: up.budget.elapsed_ms,
+    });
+  }
 
   return {
+    local_judgment_body_upgrade,
+    local_judgment_body_upgrade_budget,
+    local_judgment_stub_detection: stub_detection,
+
     enabled: true,
     mode,
     budget,
@@ -1594,4 +1653,249 @@ export async function runJudgmentTextAcquisition(
     retrieval_budget_exceeded,
     speculative_extraction_stopped,
   };
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// local_judgment_body_upgrade_v1
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Bounded lane for local-corpus judgment body upgrades (no network, no PDF). */
+export const LOCAL_UPGRADE_LIMITS = {
+  /** Max local judgment upgrades per run. */
+  MAX_UPGRADES: 4,
+  /** Whole-lane wall-clock budget. */
+  TOTAL_MS: 3_000,
+  /** Per-read timeout. */
+  PER_READ_MS: 1_500,
+} as const;
+
+export interface LocalUpgradeRow {
+  source_id: string;
+  candidate_document_id: string | null;
+  match_method: "candidate_document_id" | "docket_variants" | "none";
+  local_body_chars: number;
+  snippet_chars_before: number;
+  body_chars_after: number;
+  verification_passed: boolean;
+  upgraded: boolean;
+  skipped_reason: string | null;
+}
+
+export interface LocalUpgradeBudget {
+  attempted: number;
+  succeeded: number;
+  skipped_due_cap: number;
+  skipped_due_time_budget: number;
+  elapsed_ms: number;
+}
+
+export interface LocalStubDetectionRow {
+  source_id: string;
+  body_chars: number;
+  was_exact_400: boolean;
+  classified_as_stub: boolean;
+  upgrade_attempted: boolean;
+}
+
+/**
+ * Apply an acquired judgment body to a candidate + its integrity record.
+ * Shared by the main acquisition loop and the local upgrade lane so both paths
+ * set exactly the same flags and can never diverge.
+ */
+export function applyAcquiredJudgmentBody(
+  e: { c: Candidate; integ: SourceIntegrity; dockets: DocketRef[] },
+  text: string,
+  method: AcquisitionMethod,
+  opts: { url?: string | null; docketGate?: (t: string) => boolean } = {},
+): { stored: string; after: string; holding: boolean; bodySignal: boolean } {
+  const stored = text.slice(0, ACQUISITION_LIMITS.MAX_TEXT);
+  const holding = HOLDING_TEXT_RE.test(text);
+  const bodySignal = (opts.docketGate ? opts.docketGate(text) : false) ||
+    JUDGMENT_BODY_RE.test(text);
+  const after = stored.length >= 1200 ? "full_text" : "substantive_excerpt";
+
+  e.integ.text_usability = after as SourceIntegrity["text_usability"];
+  e.integ.has_holding_text = e.integ.has_holding_text || holding;
+  e.integ.is_judgment_document = true;
+  // Handoff consistency: an acquired body that carries its own case identity is
+  // a judgment for every downstream consumer. Text always comes from a court
+  // file or the local corpus — aggregator page text is never used as a body.
+  if (bodySignal && stored.length >= ACQUISITION_LIMITS.MIN_USABLE_TEXT) {
+    e.integ.citable_as = "judgment";
+    if (
+      e.integ.authority_tier === "index_or_listing" ||
+      e.integ.authority_tier === "non_authority" ||
+      e.integ.authority_tier === "unknown"
+    ) {
+      e.integ.authority_tier =
+        (method === "direct_file_fetch" && isTrustedCourtTextHost(opts.url ?? "")) ||
+          method === "local_db_docket_lookup" || method === "summary_page_docket_resolve"
+          ? "official_primary"
+          : "primary_mirror";
+    }
+    e.integ.reject = false;
+    delete e.integ.reject_reason;
+  }
+  e.integ.integrity_flags = [
+    ...(e.integ.integrity_flags ?? []),
+    "judgment_text_acquired",
+    ...(bodySignal ? ["judgment_identity_confirmed_in_body"] : []),
+    ...(holding ? ["holding_text_present"] : []),
+  ];
+
+  e.c.metadata = {
+    ...(e.c.metadata ?? {}),
+    source_integrity: e.integ,
+    extended_text: stored,
+    judgment_candidate: true,
+    docket_normalized: e.dockets[0] ? normalizedDocketId(e.dockets[0]) : null,
+    judgment_text_acquired: true,
+    judgment_text_acquisition_method: method,
+    body_contains_docket_or_title: bodySignal,
+    usable_for_holding: holding && stored.length >= ACQUISITION_LIMITS.MIN_USABLE_TEXT,
+    final_text_usability: after,
+  };
+  if ((e.c.snippet || "").length < 200) e.c.snippet = stored.slice(0, 600);
+
+  return { stored, after, holding, bodySignal };
+}
+
+/**
+ * Bounded, local-only judgment body upgrade.
+ *
+ * Runs after the main acquisition loop for eligible judgment candidates that
+ * never got an attempt (typically because the speculative-extraction guard
+ * stopped the loop after the first success). It performs a single indexed
+ * Postgres read per candidate on the row the candidate already came from, and
+ * never touches the network, PDF extraction, or the speculative ledger.
+ *
+ * Fail-closed: unless the body verifies (length + case-identity signal +
+ * not a listing/index page) the candidate is left exactly as it was and stays
+ * uncitable as a judgment.
+ */
+async function runLocalJudgmentBodyUpgrade(
+  admin: SupabaseClient,
+  pending: Eligible[],
+): Promise<{ rows: LocalUpgradeRow[]; budget: LocalUpgradeBudget }> {
+  const t0 = Date.now();
+  const rows: LocalUpgradeRow[] = [];
+  const budget: LocalUpgradeBudget = {
+    attempted: 0,
+    succeeded: 0,
+    skipped_due_cap: 0,
+    skipped_due_time_budget: 0,
+    elapsed_ms: 0,
+  };
+
+  for (const e of pending) {
+    const snippetBefore = (e.c.snippet ?? "").length;
+    const docId = typeof e.c.document_id === "string" && e.c.document_id ? e.c.document_id : null;
+    const base: LocalUpgradeRow = {
+      source_id: e.c.candidate_id,
+      candidate_document_id: docId,
+      match_method: docId ? "candidate_document_id" : (e.dockets.length > 0 ? "docket_variants" : "none"),
+      local_body_chars: 0,
+      snippet_chars_before: snippetBefore,
+      body_chars_after: snippetBefore,
+      verification_passed: false,
+      upgraded: false,
+      skipped_reason: null,
+    };
+
+    if (budget.succeeded >= LOCAL_UPGRADE_LIMITS.MAX_UPGRADES) {
+      budget.skipped_due_cap++;
+      rows.push({ ...base, skipped_reason: "local_upgrade_cap_reached" });
+      continue;
+    }
+    if (Date.now() - t0 > LOCAL_UPGRADE_LIMITS.TOTAL_MS) {
+      budget.skipped_due_time_budget++;
+      rows.push({ ...base, skipped_reason: "local_upgrade_time_budget" });
+      continue;
+    }
+    if (base.match_method === "none") {
+      rows.push({ ...base, skipped_reason: "no_local_document_signal" });
+      continue;
+    }
+    if ((e.c.metadata as Record<string, unknown> | undefined)?.judgment_text_acquired === true) {
+      rows.push({ ...base, skipped_reason: "already_acquired" });
+      continue;
+    }
+
+    budget.attempted++;
+    let text = "";
+    try {
+      const read = docId
+        ? tryLocalDbByDocumentId(admin, docId)
+        : tryLocalDbByDockets(admin, e.dockets);
+      text = normText(
+        await withTimeout(read, LOCAL_UPGRADE_LIMITS.PER_READ_MS, "local_body_read"),
+      );
+    } catch (err) {
+      rows.push({
+        ...base,
+        skipped_reason: err instanceof Error ? err.message : String(err),
+      });
+      continue;
+    }
+
+    base.local_body_chars = text.length;
+
+    // ── Verification (unchanged strictness) ────────────────────────────────
+    const docketGate = e.dockets.length > 0
+      ? (t: string) => e.dockets.some((d) => textContainsExactDocket(t.slice(0, 30000), d))
+      : undefined;
+    const identityOk = (docketGate ? docketGate(text) : false) || JUDGMENT_BODY_RE.test(text);
+    const longEnough = text.length >= ACQUISITION_LIMITS.MIN_USABLE_TEXT;
+    // Listing check: for rows that came from our own corpus the URL says
+    // nothing useful (collector URLs look institutional), so classify the body
+    // itself with the same content gate that admitted the candidate. External
+    // rows keep the URL-based check unchanged.
+    const contentClass = classifyLocalCaselawBody({
+      title: String(e.c.title ?? ""),
+      text,
+      case_number: e.dockets[0] ? normalizedDocketId(e.dockets[0]) : null,
+      body_chars: text.length,
+    }).classification;
+    const notListing = e.c.origin === "local_db"
+      ? contentClass === "substantive_judgment_body"
+      : (!isListingPage(e.c.source_url ?? "") && !isInstitutionalPage(e.c.source_url ?? ""));
+    const verified = identityOk && longEnough && notListing && text.length > snippetBefore;
+    base.verification_passed = verified;
+
+    if (!verified) {
+      rows.push({
+        ...base,
+        skipped_reason: !longEnough
+          ? "local_body_below_threshold"
+          : !identityOk
+          ? "identity_signal_absent_in_body"
+          : !notListing
+          ? "listing_or_institutional_page"
+          : "no_improvement_over_snippet",
+      });
+      continue;
+    }
+
+    const applied = applyAcquiredJudgmentBody(e, text, "local_db_docket_lookup", {
+      url: e.c.source_url ?? null,
+      docketGate,
+    });
+    (e.c.metadata as Record<string, unknown>).local_judgment_body_upgraded = true;
+    (e.c.metadata as Record<string, unknown>).local_judgment_body_match_method = base.match_method;
+    e.diag.acquisition_attempted = true;
+    e.diag.excluded_reason = null;
+    e.diag.ineligible_reason = null;
+
+    budget.succeeded++;
+    rows.push({
+      ...base,
+      body_chars_after: applied.stored.length,
+      upgraded: true,
+      skipped_reason: null,
+    });
+  }
+
+  budget.elapsed_ms = Date.now() - t0;
+  return { rows, budget };
 }
