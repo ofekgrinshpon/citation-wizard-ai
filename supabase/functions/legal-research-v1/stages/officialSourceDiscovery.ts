@@ -310,10 +310,23 @@ export async function searchOfficialJudgmentUrls(
     });
     out.http = r.status;
     if (!r.ok) {
-      out.skip_reason = `search_http_${r.status}`;
+      const errBody = await r.text().catch(() => "");
+      const cls = classifyWebFailure(r.status, errBody);
+      recordWebCall({ status: r.status, ms: Date.now() - t0, failure_class: cls });
+      out.skip_reason = `search_http_${r.status}:${cls}`;
+      out.web_health = {
+        query,
+        intended_authority: String(input.label ?? ""),
+        endpoint_type: currentEndpointType(),
+        http_status: r.status,
+        discovered_urls: 0,
+        admitted_urls: 0,
+        failure_reason: safeErrorMessage(cls),
+      };
       out.ms = Date.now() - t0;
       return out;
     }
+    recordWebCall({ status: r.status, ms: Date.now() - t0, failure_class: "ok" });
     const j = await r.json();
     const content = j?.choices?.[0]?.message?.content ?? "";
     const citations: string[] = Array.isArray(j?.citations) ? j.citations : [];
