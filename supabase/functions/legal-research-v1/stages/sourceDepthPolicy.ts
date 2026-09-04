@@ -108,9 +108,12 @@ const SPECIFIC_RULING_CUE =
 const BROAD_CUE =
   /(סקור|סקירה|התפתחות|מבחני|מבחן\s+ה|מהם\s+ה|אילו\s+ה|חוו?ת\s+דעת|תזכיר|memo|ניתוח\s+מקיף|מחקר\s+מקיף|מקיפ|באופן\s+כללי|מה\s+הדין\s+לגבי|אמות?\s+ה?מידה|היקף\s+ה|כיצד\s+התפתח|מגמות)/i;
 
-/** Academic / seminar / literature-review request. */
+/** Academic / seminar / literature-review / academic-drafting request.
+ *  research_richness_execution_unblock_v1 — the detector previously missed the
+ *  most common academic drafting phrasings (רקע תיאורטי, פרק מבוא, פסקת טיעון
+ *  אקדמית, הצעת מחקר …), which pushed those runs into narrow-doctrine budgets. */
 const ACADEMIC_CUE =
-  /(סמינריון|סמינר|עבודה\s+אקדמית|סקירת\s+ספרות|ביבליוגרפי|רשימת\s+מקורות|מצא\s+לי\s+מקורות|תעזור\s+לי\s+למצוא\s+מקורות|מאמרים\s+אקדמיים|ספרות\s+מחקרית|תזה|דוקטורט|literature\s+review)/i;
+  /(סמינריון|פרק\s+סמינריוני|סמינר|עבודה\s+אקדמית|כתיבה\s+אקדמית|טיוטה\s+אקדמית|סקירת\s+ספרות|ביבליוגרפי|רשימת\s+מקורות|מצא\s+לי\s+מקורות|תעזור\s+לי\s+למצוא\s+מקורות|מאמרים\s+אקדמיים|ספרות\s+מחקרית|תזה|דוקטורט|רקע\s+תיאורטי|תשתית\s+תיאורטית|פרק\s+רקע|פרק\s+מבוא|פרק\s+תיאורטי|מתווה\s+פרקים|הצעת\s+מחקר|שאלת\s+מחקר|פסקת\s+טיעון|דיון\s+ביקורתי|ניתוח\s+דוקטרינרי|literature\s+review)/i;
 
 /** Multi-facet phrasing: several distinct questions in one prompt. */
 function multiFacet(question: string, analyzer: AnalyzerOutput): boolean {
