@@ -1642,6 +1642,8 @@ async function handle(req: Request): Promise<Response> {
     },
     judgment_text_acquisition: judgmentAcquisition,
     canonical_authority_acquisition: canonicalAcquisition,
+    canonical_authority_acquisition_trigger: canonicalAcquisitionTrigger,
+    web_tier_health: getWebTierHealth(),
     secondary_body_acquisition: secondaryBodyAcquisition,
     statute_text_acquisition: {
       attempted: statuteAcquisition.attempted,
