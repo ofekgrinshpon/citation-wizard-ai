@@ -128,7 +128,8 @@ export function currentEndpointType(): WebEndpointType {
   if (endpointOverride) return endpointOverride;
   // The workspace Perplexity connection is a direct (non-gateway) API key:
   // the provider endpoint is called directly with PERPLEXITY_API_KEY.
-  return Deno.env.get("PERPLEXITY_API_KEY") ? "direct_provider" : "disabled_or_misconfigured";
+  const env = (globalThis as { Deno?: { env: { get(k: string): string | undefined } } }).Deno?.env;
+  return env?.get("PERPLEXITY_API_KEY") ? "direct_provider" : "disabled_or_misconfigured";
 }
 
 export function getWebTierHealth(): WebTierHealth {
