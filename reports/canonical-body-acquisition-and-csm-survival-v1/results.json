@@ -460,5 +460,220 @@
         "source_type": "journal_article"
       }
     ]
+  },
+  {
+    "id": "Q2S",
+    "query": "מהו נוסח סעיף 15(ד)(2) לחוק יסוד: השפיטה ומה תחולתו על ביקורת שיפוטית של בג\"ץ?",
+    "run_id": "73e33704-d700-4a3d-8105-3fd156875ede",
+    "ms": 904079,
+    "error": "poll_timeout"
+  },
+  {
+    "id": "Q3",
+    "run_id": "37391871-9861-4f94-889d-93c0858f9103",
+    "ms": 239527,
+    "doctrine_mapping": null,
+    "canonical_registry_selection": null,
+    "pool_collapse": null,
+    "footnote_richness": {
+      "collapsed_by_cap": 0,
+      "rendered_role_count": 3,
+      "collapsed_by_duplicate": 0,
+      "final_distinct_sources": 4,
+      "approved_but_not_rendered": [],
+      "approved_distinct_sources": 4,
+      "collapsed_by_paragraph_rule": 0,
+      "collapsed_without_valid_reason": 0,
+      "representative_approved_sources": 2
+    },
+    "footnote_materialization": [
+      {
+        "role": "leading_candidate",
+        "title": "בג\"ץ 1308/17",
+        "block_id": 0,
+        "source_id": "032a6517-9cf5-4f41-95b9-07a146820251",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": false
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "המשפחה בעידן הגנטי – הגדרת הורות בנסיבות של הולדה מלאכותית כמקרה מבחן | רות זפרן (כרך ב)",
+        "block_id": 1,
+        "source_id": "093daaaa-3e7a-4c6e-9ea9-a56c73acd72b",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": false
+      },
+      {
+        "role": "applying_candidate",
+        "title": "רע\"פ 3199/20 דניס זייצב נ׳ מדינת ישראל פסק דין (12.08.2021)",
+        "block_id": 2,
+        "source_id": "211764d3-4c4d-41eb-a6c5-bc50408ba757",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "applying_candidate",
+        "title": "רע\"פ 3199/20 דניס זייצב נ׳ מדינת ישראל פסק דין (12.08.2021)",
+        "block_id": 3,
+        "source_id": "211764d3-4c4d-41eb-a6c5-bc50408ba757",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 2,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
+        "block_id": 4,
+        "source_id": "d59a1cd7-8131-4f53-83aa-ba7e3df2e1a5",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      }
+    ],
+    "representative": null,
+    "pack_size": null,
+    "footnotes_count": 4,
+    "distinct_cited": 1,
+    "canonical_acquisition": {
+      "attempts": [
+        {
+          "authority": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+          "urls": [],
+          "url_source": "none",
+          "result": "not_found",
+          "body_chars": 0,
+          "identity": false,
+          "rejection": "no_derivable_url"
+        },
+        {
+          "authority": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות נ' שר האוצר",
+          "urls": [
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts\\97\\150\\017\\m01&fileName=97017150.m01&type=2"
+          ],
+          "url_source": "discovery",
+          "result": "fetch_failed",
+          "body_chars": 0,
+          "identity": false,
+          "rejection": "error sending request from 10.32.86.136:37686 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts\\97\\150\\017\\m01&fileName=97017150.m01&type=2 (84.110.173.93:443): client error "
+        }
+      ],
+      "gaps": [
+        {
+          "docket": "6821/93",
+          "reason": "no_derivable_url",
+          "authority_id": "hcj_6821_93_mizrahi",
+          "authority_name": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+          "discovery_candidate_count": 0
+        },
+        {
+          "docket": "1715/97",
+          "reason": "error sending request from 10.32.86.136:37686 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts\\97\\150\\017\\m01&fileName=97017150.m01&type=2 (84.110.173.93:443): client error ",
+          "authority_id": "hcj_1715_97_investment_managers",
+          "authority_name": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות נ' שר האוצר",
+          "discovery_candidate_count": 1
+        }
+      ]
+    },
+    "relay_diagnostics": null,
+    "official_fetch": null,
+    "csm": null,
+    "answer": "מבחני המידתיות בפסקת ההגבלה כוללים שלושה שלבים מצטברים הנבחנים לאחר שנקבע כי הפגיעה נעשית לתכלית ראויה ובהתאם לערכי היסוד: קשר רציונלי בין האמצעי לתכלית, בחירה באמצעי שפגיעתו פחותה, ומידתיות במובן הצר הבוחנת את היחס בין התועלת לציבור לבין הנזק לזכות; הבדיקה היא קונקרטית ונשענת על תשתית עובדתית ולא במופשט.²\n\nהבדל התפקיד בין שלבי המבחן הוא זה: בשלב הקשר הרציונלי נבדק אם האמצעי מקדם באופן לא־שרירותי את התכלית; בשלב האמצעי שפגיעתו פחותה נבדק אם מבין האמצעים היעילים להשגת התכלית ניתן לבחור אמצעי חלופי הפוגע פחות בזכות, מבלי לפגוע באופן מהותי בהשגת התכלית; ובשלב המידתיות במובן הצר נשקלת התועלת הצפויה מן האמצעי כנגד עוצמת הפגיעה בזכות, כדי לוודא שהפגיעה אינה עודפת ביחס לרווח הציבורי.³\n\nמבחן האמצעי שפגיעתו פחותה יושם כך שבית המשפט בודק אם הרשות הציגה תשתית עובדתית מספקת לכך שאין בנמצא חלופה אפקטיבית באותה מידה הפוגעת פחות בזכות, ואם נשקלו ברצינות חלופות רגולטוריות או אופרטיביות לצמצום הפגיעה; הדגש הוא על בחינה קונקרטית, הכוללת בין היתר קביעת אמות־מידה, תחימה נורמטיבית, מנגנוני פיקוח וריסון שיקול הדעת, להבדיל מהסתפקות בהנחות כלליות.¹\n\nבדוגמאות יישומיות מרכזיות, בעניין גלאון נקבע כי בחינת המידתיות תיעשה על בסיס עובדות קונקרטיות, ובמסגרת הדיון הושוו הסדרים גורפים לחלופות פרטניות ובוקרה השאלה אם אלו משיגות את התכלית באותה מידה; על רקע זה הכריע בית המשפט כי חרף קיומן של חלופות נקודתיות אין בהן, לשיטת הרוב, כדי להוות אמצעי שקול באפקטיביותו להסדר שנבחן. בפסיקה פלילית עדכנית הודגש כי ניתן לצמצם פגיעה באמצעות עיצוב אמות־מידה נורמטיביות שממזערות שרירותיות וממקדות את האכיפה בתכליתה, במקום נקיטה בהסדרים רחבים ובלתי־מובחנים. וכן, בהקשר הצבאי הוחלו שלושת מבחני המידתיות, לרבות בחינת אפשרות לאמצעים פוגעניים פחות, בהתחשב בייחודו של השירות ובמסגרות הפיקוח והמשמעת המאפיינות אותו.¹\n\nמן הפסיקה והספרות עולות שתי התלבטויות מתודולוגיות בולטות: ראשית, גבולות ההתערבות השיפוטית בבחינת חלופות פוגעניות פחות, ובפרט עד כמה נדרש שהחלופה תשיג את התכלית באותה מידה או שמא די בכך שתשיג חלק ניכר ממנה; שנית, היקף הראיות והנתונים האמפיריים הנדרשים מהרשות להצדקת אי־אימוץ חלופות. המחלוקת בפסקי דין חוקתיים, שבהם יש דעות שונות בשאלת ההכרחיות מול שיקולי ביטחון או מנהל, ממחישה את המתח בין דרישה נוקשה לחלופות לבין מתן משקל להערכות מקצועיות של הרשות.⁴\n\n**מגבלת ביסוס:** חלק מהקביעות שלעיל נותרו ללא מקור בר-ציטוט שאומת ישירות לאותה טענה. מקורות שאותרו בנושא סמוך, מקורות רקע או ספרות פרשנית אינם מצוטטים כאן כאסמכתה ישירה. יש לאמת קביעות אלה מול המקור הראשוני (חקיקה או פסק דין) לפני הסתמכות.\n\n> החיפוש הופסק עקב מגבלת זמן, ולכן ייתכן שלא אותרו כל המקורות הרלוונטיים.",
+    "footnotes": [
+      {
+        "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-3199-20-%d7%93%d7%a0%d7%99%d7%a1-%d7%96%d7%99%d7%99%d7%a6%d7%91-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "רע\"פ 3199/20 דניס זייצב נ׳ מדינת ישראל פסק דין (12.08.2021)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%a4-3199-20-%d7%93%d7%a0%d7%99%d7%a1-%d7%96%d7%99%d7%99%d7%a6%d7%91-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "רע\"פ 3199/20 דניס זייצב נ׳ מדינת ישראל פסק דין (12.08.2021)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision1308-17/he/1308-17.pdf",
+        "title": "בג\"ץ 1308/17",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision1308-17/he/1308-17.pdf",
+            "title": "בג\"ץ 1308/17",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/b1_14.pdf",
+        "title": "המשפחה בעידן הגנטי – הגדרת הורות בנסיבות של הולדה מלאכותית כמקרה מבחן | רות זפרן (כרך ב)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/b1_14.pdf",
+            "title": "המשפחה בעידן הגנטי – הגדרת הורות בנסיבות של הולדה מלאכותית כמקרה מבחן | רות זפרן (כרך ב)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11//DI02.pdf",
+        "title": "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11//DI02.pdf",
+            "title": "הזכות החוקתית לגוף | אהרן ברק (כרך י\"ד)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ]
   }
 ]
