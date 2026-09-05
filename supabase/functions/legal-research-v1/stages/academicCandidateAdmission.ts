@@ -102,6 +102,21 @@ const REPOSITORY_PATH_RE =
 
 const DOI_RE = /(doi\.org\/10\.|\/10\.\d{4,9}\/|[?&]doi=)/i;
 
+/**
+ * academic_richness_last_mile_and_doctrine_mapping_v1 — recognized Israeli and
+ * international legal periodicals. A named peer-reviewed law journal IS a
+ * credible academic provenance signal even when the article sits on a
+ * publisher/portal host rather than a `.ac.il` faculty host. The journal name
+ * must appear as a periodical reference (title or citation line), and it never
+ * bypasses the topical-fit, listing, SEO or body-acquisition gates.
+ */
+const LAW_JOURNAL_NAME_RE =
+  /(עיוני\s+משפט|משפטים\s+(?:על\s+אתר|כרך|[א-ת]["״])|(?:^|[^א-ת])משפטים(?=\s*[,־–—]|\s+כרך)|מחקרי\s+משפט|הפרקליט|משפט\s+וממשל|מאזני\s+משפט|דין\s+ודברים|(?:^|[^א-ת])חוקים(?=\s|[,–—])|מעשי\s+משפט|משפט\s+ועסקים|עלי\s+משפט|המשפט(?=\s+כרך)|law\s+review|law\s+journal|journal\s+of\s+law|yale\s+l\.?j|harv\.?\s?l\.?\s?rev)/i;
+
+/** Journal/faculty publication host families used by Israeli law reviews. */
+const LAW_JOURNAL_HOST_RE =
+  /(^|\.)(iuli\.co\.il|nevo\.co\.il|hamishpat\.com|colman\.ac\.il|idc\.ac\.il|runi\.ac\.il|law\.tau\.ac\.il|huji\.ac\.il|biu\.ac\.il|haifa\.ac\.il|ono\.ac\.il|sacher\.huji\.ac\.il)$/i;
+
 
 const AGGREGATOR_HOST_RE =
   /(^|\.)(scholar\.google\.[a-z.]+|semanticscholar\.org|researchgate\.net|academia\.edu|core\.ac\.uk|base-search\.net|citeseerx\.ist\.psu\.edu)$/i;
@@ -317,15 +332,20 @@ export function evaluateScholarshipAdmission(
   const repositoryPath = REPOSITORY_PATH_RE.test(path);
   const doi = DOI_RE.test(input.url);
   const pdfDoc = /\.(pdf|docx?)(\?|#|$)/i.test(input.url);
+  const journalName = LAW_JOURNAL_NAME_RE.test(`${title} ${snippet}`);
+  const journalHost = LAW_JOURNAL_HOST_RE.test(domain);
   if (publisher) signals.push("academic_publisher_host");
   if (university) signals.push("university_or_faculty_host");
   if (institute) signals.push("recognized_research_institute_host");
   if (repositoryPath) signals.push("repository_or_publications_path");
   if (doi) signals.push("doi_or_stable_identifier");
-  if (pdfDoc && (university || repositoryPath || publisher || institute)) {
+  if (pdfDoc && (university || repositoryPath || publisher || institute || journalName)) {
     signals.push("document_body_path");
   }
-  const provenance = publisher || university || institute || repositoryPath || doi;
+  if (journalName) signals.push("recognized_law_journal_name");
+  if (journalHost) signals.push("law_journal_or_faculty_host");
+  const provenance = publisher || university || institute || repositoryPath || doi ||
+    journalName || journalHost;
 
 
   // content shape
@@ -347,8 +367,17 @@ export function evaluateScholarshipAdmission(
   if (COMMERCIAL_SEO_RE.test(domain) || COMMERCIAL_TITLE_RE.test(hay)) {
     rejections.push("commercial_seo_page");
   }
-  if (!provenance) rejections.push("no_credible_academic_provenance");
-  if (!scholarlyTitle && !abstractLike && !(analyticTitle && provenance)) {
+  if (!provenance) {
+    // Distinguish *why* provenance is missing so a false negative is visible.
+    rejections.push("no_credible_academic_provenance");
+    // Granular companion reason so a false negative is diagnosable.
+    if (AGGREGATOR_HOST_RE.test(domain)) rejections.push("mirror_or_unknown_repository");
+    else if (COMMERCIAL_SEO_RE.test(domain)) rejections.push("marketing_or_blog_page");
+    else if (!scholarlyTitle && !abstractLike && !authorYear) {
+      rejections.push("source_too_generic");
+    }
+  }
+  if (!scholarlyTitle && !abstractLike && !(analyticTitle && provenance) && !journalName) {
     rejections.push("no_scholarly_title_or_abstract");
   }
 
@@ -370,7 +399,9 @@ export function evaluateScholarshipAdmission(
     topical_fit,
     // Bibliographic-only material stays `reference_only` downstream; the
     // substantive-body requirement is enforced by the existing doctrinal gates.
-    assigned_source_type: admitted ? (publisher ? "journal_article" : "academic") : null,
+    assigned_source_type: admitted
+      ? (publisher || journalName ? "journal_article" : "academic")
+      : null,
   };
 }
 

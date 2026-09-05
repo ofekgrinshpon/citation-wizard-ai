@@ -48,7 +48,16 @@ export interface DoctrineEntry {
   area: string;
   /** Fires on the question text + claims + facet labels. */
   trigger: RegExp;
-  /** Lower number = matched first when several doctrines fire. */
+  /**
+   * academic_richness_last_mile_and_doctrine_mapping_v1 — distinct doctrinal
+   * signals. Selection scores the number of *distinct* signals matched in the
+   * question/claims, so a passing mention of a neighbouring doctrine can no
+   * longer capture the registry from the doctrine actually being researched.
+   */
+  signals?: RegExp[];
+  /** Signals that disqualify this doctrine when they dominate the question. */
+  negative_signals?: RegExp[];
+  /** Lower number = matched first when several doctrines score equally. */
   priority: number;
   canonical_authorities: CanonicalAuthority[];
 }
@@ -63,6 +72,14 @@ export const DOCTRINE_REGISTRY: DoctrineEntry[] = [
     area: "constitutional",
     priority: 1,
     trigger: /(מידתיות|פסקת\s+ההגבלה|מבחן\s+האמצעי\s+שפגיעתו\s+פחותה|מידתיות\s+במובן\s+הצר)/,
+    signals: [
+      /מידתיות/,
+      /פסקת\s+ההגבלה/,
+      /מבחן\s+האמצעי\s+שפגיעתו\s+פחותה/,
+      /מידתיות\s+במובן\s+הצר/,
+      /תכלית\s+ראויה/,
+      /חוק[-\s]?יסוד:\s*כבוד\s+האדם/,
+    ],
     canonical_authorities: [
       A({
         authority_id: "basic_law_dignity_s8",
@@ -100,7 +117,19 @@ export const DOCTRINE_REGISTRY: DoctrineEntry[] = [
     label: "עילת הסבירות",
     area: "public_law_hcj",
     priority: 2,
-    trigger: /(עילת\s+הסבירות|סביר(ות|ה)\s+מינהלית|חוסר\s+סבירות\s+קיצוני|מתחם\s+הסבירות)/,
+    trigger:
+      /(עילת\s+הסבירות|סביר(ות|ה)\s+מ[ינ]?נהלית|חוסר\s+סבירות\s+קיצוני|סבירות\s+קיצונית|מתחם\s+הסבירות|ביקורת\s+שיפוטית[\s\S]{0,40}שיקול\s+דעת|שיקול\s+דעת\s+מ[ינ]?נהלי|ביטול\s+עילת\s+הסבירות|תיקון\s+עילת\s+הסבירות)/,
+    signals: [
+      /עילת\s+הסבירות/,
+      /סביר(ות|ה)\s+מ[ינ]?נהלית/,
+      /מתחם\s+הסבירות/,
+      /חוסר\s+סבירות\s+קיצוני|סבירות\s+קיצונית/,
+      /שיקול\s+דעת\s+מ[ינ]?נהלי/,
+      /ביקורת\s+שיפוטית[\s\S]{0,60}(שיקול\s+דעת|רשות|מ[ינ]?נהלי)/,
+      /התערבות[\s\S]{0,30}(בהחלטות|בהחלטת)\s+(ה?רשות|ה?מ[ינ]?נהל)/,
+      /(ביטול|תיקון)\s+עילת\s+הסבירות/,
+      /חוק[-\s]?יסוד:?\s*השפיטה/,
+    ],
     canonical_authorities: [
       A({
         authority_id: "hcj_389_80_dapei_zahav",
@@ -135,10 +164,67 @@ export const DOCTRINE_REGISTRY: DoctrineEntry[] = [
     ],
   },
   {
+    doctrine_id: "administrative_promise",
+    label: "הבטחה מנהלית, ציפייה לגיטימית והסתמכות",
+    area: "public_law_hcj",
+    priority: 2,
+    trigger:
+      /(הבטחה\s+מ[ינ]?נהלית|הבטחה\s+שלטונית|ציפייה\s+לגיטימית|ציפייה\s+סבירה|אינטרס\s+ההסתמכות|הגנת\s+ההסתמכות|מניעות\s+מ[ינ]?נהלית|חזרה\s+מהבטחה|הגינות\s+מ[ינ]?נהלית)/,
+    signals: [
+      /הבטחה\s+מ[ינ]?נהלית/,
+      /הבטחה\s+שלטונית/,
+      /ציפייה\s+לגיטימית/,
+      /ציפייה\s+סבירה/,
+      /(אינטרס|הגנת)\s+ההסתמכות/,
+      /הסתמכות[\s\S]{0,40}(רשות|מ[ינ]?נהל|שלטון)/,
+      /מניעות\s+מ[ינ]?נהלית/,
+      /חזרה\s+מהבטחה/,
+      /שינוי\s+מדיניות[\s\S]{0,40}(רשות|הסתמכות|ציפייה)/,
+      /הגינות\s+מ[ינ]?נהלית/,
+    ],
+    canonical_authorities: [
+      A({
+        authority_id: "hcj_135_75_sai_tex",
+        kind: "case",
+        label: "בג\"ץ 135/75 סאי-טקס נ' שר המסחר והתעשייה",
+        docket: "135/75",
+        match_terms: ["135/75", "סאי-טקס", "סאי טקס"],
+        role: "binding_case_law",
+        expected_source_type: "case",
+        query_he: "בג\"ץ 135/75 סאי-טקס בע\"מ נ' שר המסחר והתעשייה הבטחה מנהלית",
+      }),
+      A({
+        authority_id: "hcj_5018_91_gadot",
+        kind: "case",
+        label: "בג\"ץ 5018/91 גדות תעשיות פטרוכימיה נ' ממשלת ישראל",
+        docket: "5018/91",
+        match_terms: ["5018/91", "גדות תעשיות"],
+        role: "binding_case_law",
+        expected_source_type: "case",
+        query_he: "בג\"ץ 5018/91 גדות תעשיות פטרוכימיה בע\"מ נ' ממשלת ישראל תנאי ההבטחה המנהלית",
+      }),
+      A({
+        authority_id: "hcj_585_01_kalachman",
+        kind: "case",
+        label: "בג\"ץ 585/01 קלכמן נ' ראש המטה הכללי",
+        docket: "585/01",
+        match_terms: ["585/01", "קלכמן"],
+        role: "binding_case_law",
+        expected_source_type: "case",
+        query_he: "בג\"ץ 585/01 קלכמן נ' ראש המטה הכללי ציפייה לגיטימית הסתמכות",
+      }),
+    ],
+  },
+  {
     doctrine_id: "rabbinical_civil_property",
     label: "בית הדין הרבני וחלוקת רכוש לפי הדין האזרחי",
     area: "family_property",
-    priority: 3,
+    priority: 4,
+    negative_signals: [
+      /הבטחה\s+מ[ינ]?נהלית/,
+      /ציפייה\s+לגיטימית/,
+      /עילת\s+הסבירות/,
+    ],
     // Court phrase tolerates the missing definite article ("בית דין רבני")
     // and plural forms. Over-trigger control: a civil-property signal
     // (רכוש/ממון/שיתוף/איזון משאבים/חלוקת רכוש) must appear within 80 chars —
@@ -409,6 +495,15 @@ export interface CoreAuthorityRegistryResult {
   queries_added: number;
   skipped_because_already_present: string[];
   authorities: SeededAuthorityTelemetry[];
+  /** academic_richness_last_mile_and_doctrine_mapping_v1 */
+  doctrine_mapping?: DoctrineMappingDecision;
+  canonical_registry_selection?: {
+    primary_doctrine: string | null;
+    registry_family: string | null;
+    nominated_authorities: string[];
+    omitted_expected_authorities: string[];
+    omission_reason: string | null;
+  };
 }
 
 function haystack(question: string, analyzer: AnalyzerOutput, facets: ClaimFacet[]): string {
@@ -418,6 +513,119 @@ function haystack(question: string, analyzer: AnalyzerOutput, facets: ClaimFacet
     ...(analyzer.claims ?? []).map((c) => c.text_he),
     ...facets.map((f) => `${f.doctrinal_label} ${f.query_terms.join(" ")}`),
   ].join(" \n ");
+}
+
+/** The user's own words + the analyzer's claims — never the facet expansion. */
+function questionHaystack(question: string, analyzer: AnalyzerOutput): string {
+  return [question, ...(analyzer.claims ?? []).map((c) => c.text_he)].join(" \n ");
+}
+
+// ─── academic_richness_last_mile_and_doctrine_mapping_v1: doctrine mapping ──
+export interface DoctrineMappingDecision {
+  query: string;
+  detected_terms: string[];
+  primary_doctrine: string | null;
+  secondary_doctrines: string[];
+  rejected_doctrines: string[];
+  rejection_reasons: Record<string, string>;
+  registry_family: string | null;
+  confidence: number;
+  reason: string;
+}
+
+interface DoctrineScore {
+  entry: DoctrineEntry;
+  question_signals: string[];
+  facet_signals: string[];
+  score: number;
+  negative_hit: boolean;
+}
+
+function scoreDoctrine(
+  entry: DoctrineEntry,
+  qHay: string,
+  fullHay: string,
+): DoctrineScore {
+  const patterns = entry.signals ?? [entry.trigger];
+  const question_signals: string[] = [];
+  const facet_signals: string[] = [];
+  for (const re of patterns) {
+    const m = qHay.match(re);
+    if (m) {
+      question_signals.push(m[0].replace(/\s+/g, " ").trim());
+      continue;
+    }
+    const mf = fullHay.match(re);
+    if (mf) facet_signals.push(mf[0].replace(/\s+/g, " ").trim());
+  }
+  const negative_hit = (entry.negative_signals ?? []).some((re) => re.test(qHay));
+  // A doctrine only competes on the strength of the *question's own* signals;
+  // facet-expansion hits contribute a fraction so they can break ties but can
+  // never route the registry to a doctrine the user did not raise.
+  const score = question_signals.length + facet_signals.length * 0.25;
+  return { entry, question_signals, facet_signals, score, negative_hit };
+}
+
+/**
+ * Map the question to one primary doctrine (plus related secondaries).
+ * Selection is by count of *distinct* doctrinal signals in the question, not
+ * by a static priority order — so "מה היחס בין סבירות למידתיות" inside a
+ * reasonableness chapter no longer routes the registry to proportionality.
+ */
+export function mapDoctrine(
+  question: string,
+  analyzer: AnalyzerOutput,
+  facets: ClaimFacet[],
+): { primary: DoctrineEntry | null; secondaries: DoctrineEntry[]; decision: DoctrineMappingDecision } {
+  const qHay = questionHaystack(question, analyzer);
+  const fullHay = haystack(question, analyzer, facets);
+  const scored = DOCTRINE_REGISTRY.map((d) => scoreDoctrine(d, qHay, fullHay))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => (b.score - a.score) || (a.entry.priority - b.entry.priority));
+
+  const rejection_reasons: Record<string, string> = {};
+  const eligible: DoctrineScore[] = [];
+  for (const x of scored) {
+    if (x.negative_hit) {
+      rejection_reasons[x.entry.doctrine_id] = "negative_signal_of_other_doctrine_present";
+      continue;
+    }
+    if (x.question_signals.length === 0) {
+      rejection_reasons[x.entry.doctrine_id] = "facet_only_match_not_raised_by_question";
+      continue;
+    }
+    eligible.push(x);
+  }
+
+  const winner = eligible[0] ?? null;
+  for (const x of eligible.slice(1)) {
+    rejection_reasons[x.entry.doctrine_id] = `weaker_signal_match_${x.score}_vs_${winner?.score}`;
+  }
+  const detected_terms = [
+    ...new Set(eligible.flatMap((x) => x.question_signals)),
+  ];
+  const runnerUp = eligible[1]?.score ?? 0;
+  const confidence = winner
+    ? Math.max(0, Math.min(1, (winner.score - runnerUp) / Math.max(1, winner.score)))
+    : 0;
+
+  return {
+    primary: winner?.entry ?? null,
+    secondaries: eligible.slice(1).map((x) => x.entry),
+    decision: {
+      query: question.slice(0, 400),
+      detected_terms,
+      primary_doctrine: winner?.entry.doctrine_id ?? null,
+      secondary_doctrines: eligible.slice(1).map((x) => x.entry.doctrine_id),
+      rejected_doctrines: Object.keys(rejection_reasons),
+      rejection_reasons,
+      registry_family: winner?.entry.area ?? null,
+      confidence: Number(confidence.toFixed(2)),
+      reason: winner
+        ? `signal_score_match:${winner.entry.doctrine_id}:${winner.score}`
+        : "no_doctrine_signal_in_question",
+    },
+  };
 }
 
 function alreadyPresent(auth: CanonicalAuthority, existing: string[]): boolean {
@@ -450,11 +658,9 @@ export function seedCoreAuthorityQueries(
     authorities: [],
   };
 
-  const hay = haystack(question, analyzer, facets);
-  const matches = DOCTRINE_REGISTRY.filter((d) => d.trigger.test(hay))
-    .sort((a, b) => a.priority - b.priority);
-  const doctrine = matches[0];
-  if (!doctrine) return base;
+  const mapping = mapDoctrine(question, analyzer, facets);
+  const doctrine = mapping.primary;
+  if (!doctrine) return { ...base, doctrine_mapping: mapping.decision };
 
   const matchedFacet = facets.find((f) => doctrine.trigger.test(f.doctrinal_label))?.facet_id ??
     null;
@@ -515,6 +721,14 @@ export function seedCoreAuthorityQueries(
     queries_added: queries.length,
     skipped_because_already_present: skipped,
     authorities,
+    doctrine_mapping: mapping.decision,
+    canonical_registry_selection: {
+      primary_doctrine: doctrine.doctrine_id,
+      registry_family: doctrine.area,
+      nominated_authorities: doctrine.canonical_authorities.map((a) => a.authority_id),
+      omitted_expected_authorities: skipped,
+      omission_reason: skipped.length ? "already_present_in_planner_queries" : null,
+    },
   };
 }
 

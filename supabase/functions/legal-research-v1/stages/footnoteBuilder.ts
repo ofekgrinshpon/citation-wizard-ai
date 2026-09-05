@@ -18,11 +18,13 @@
 import { unrelatedCompoundCompanions } from "./nonAcademicBinding.ts";
 import {
   compoundLabel,
+  MAX_MARKERS_PER_SENTENCE,
   MAX_SOURCES_PER_BLOCK,
   planBlockOccurrences,
   splitSentences,
   type BlockEmissionTelemetry,
 } from "./perOccurrenceFootnotes.ts";
+
 import type { Footnote, UsedSource } from "../lib/types.ts";
 import type { DrafterInputSource } from "./drafter.ts";
 import type { StructuredBlock, StructuredDraft } from "./structuredValidation.ts";
@@ -70,6 +72,37 @@ export interface FootnoteRenderReport {
   renumbered: boolean;
 }
 
+/** academic_richness_last_mile_and_doctrine_mapping_v1 — per-source decision. */
+export interface FootnoteMaterializationDecision {
+  block_id: number;
+  sentence_id: number | null;
+  source_id: string;
+  title: string;
+  role: string;
+  representative_selected: boolean;
+  emitted_by_model: boolean;
+  survived_csm: boolean;
+  survived_alignment: boolean;
+  final_cited: boolean;
+  drop_reason: string | null;
+  drop_reason_valid: boolean;
+  citation_cap_state: string;
+  duplicate_of_source_id: string | null;
+  reference_only_reason: string | null;
+}
+
+export interface FootnoteBuilderRichnessSummary {
+  approved_distinct_sources: number;
+  representative_approved_sources: number;
+  final_distinct_sources: number;
+  approved_but_not_rendered: string[];
+  rendered_role_count: number;
+  collapsed_by_paragraph_rule: number;
+  collapsed_by_cap: number;
+  collapsed_by_duplicate: number;
+  collapsed_without_valid_reason: number;
+}
+
 export interface BuildResult {
   answer_markdown: string;
   footnotes: Footnote[];
@@ -78,6 +111,9 @@ export interface BuildResult {
   footnote_render_report: FootnoteRenderReport;
   /** footnote_density_v1 — per-block per-occurrence emission telemetry. */
   footnote_density_emission: BlockEmissionTelemetry[];
+  /** academic_richness_last_mile_and_doctrine_mapping_v1 telemetry. */
+  footnote_materialization: FootnoteMaterializationDecision[];
+  footnote_builder_richness_summary: FootnoteBuilderRichnessSummary;
 
   builder_report: {
     paragraph_count: number;
@@ -93,6 +129,7 @@ export interface BuildResult {
     avg_sources_per_cited_segment: number;
   };
 }
+
 
 interface MarkerEntry {
   // key for de-dup: single source uses candidate_id; compound uses sorted joined ids
@@ -120,8 +157,17 @@ function placeMarker(text: string, marker: string): string {
 export function buildFootnotedAnswer(
   draft: StructuredDraft,
   inputSources: DrafterInputSource[],
-  opts?: { referenceOnlyRefs?: string[] },
+  opts?: {
+    referenceOnlyRefs?: string[];
+    /** academic_richness_last_mile_and_doctrine_mapping_v1 */
+    academicMode?: boolean;
+    representativeCandidateIds?: string[];
+  },
 ): BuildResult {
+  const academicMode = opts?.academicMode === true;
+  const representativeIds = new Set(opts?.representativeCandidateIds ?? []);
+  const materialization: FootnoteMaterializationDecision[] = [];
+
   // academic_utilization_stabilization_v1 — refs kept as reading pointers only.
   const referenceOnlyRefs = new Set(opts?.referenceOnlyRefs ?? []);
   const referenceOnlyIds = new Set(
@@ -164,37 +210,29 @@ export function buildFootnotedAnswer(
 
   // Resolve one block's refs into the final, hierarchy-clean source list:
   //   * refs → sources, statute mirrors collapsed, de-duped
-  //   * no mixed compound footnotes: when a segment cites both primary
-  //     authority and secondary scholarship/commentary, the secondary sources
-  //     are dropped from that citation (explanatory only).
-  const resolveBlockSources = (refs: string[]): DrafterInputSource[] => {
+  //   * mixed primary+secondary citations are NOT collapsed at block level;
+  //     the split happens per *sentence group* below, so approved scholarship
+  //     that survived CSM/alignment can still carry its own marker elsewhere
+  //     in the same paragraph (academic_richness_last_mile_...v1).
+  const resolveBlockSources = (
+    refs: string[],
+  ): { distinct: DrafterInputSource[]; duplicates: Array<[DrafterInputSource, string]> } => {
     const resolved = refs
       .map((r) => inputByRef.get(r))
       .filter((s): s is DrafterInputSource => !!s)
       .map(canonicalOf);
     const seen = new Set<string>();
+    const duplicates: Array<[DrafterInputSource, string]> = [];
     let distinct: DrafterInputSource[] = [];
     for (const s of resolved) {
-      if (seen.has(s.candidate_id)) continue;
+      if (seen.has(s.candidate_id)) {
+        duplicates.push([s, s.candidate_id]);
+        continue;
+      }
       seen.add(s.candidate_id);
       distinct.push(s);
     }
     if (distinct.length > 1) {
-      const primary = distinct.filter(
-        (s) => hierarchyClassOf(hierarchyTierOf(s)) === "primary",
-      );
-      const secondary = distinct.filter(
-        (s) => hierarchyClassOf(hierarchyTierOf(s)) === "secondary",
-      );
-      if (primary.length > 0 && secondary.length > 0) {
-        if (counting) {
-          mixed_hierarchy_footnotes_count++;
-          mixed_hierarchy_footnotes_split++;
-        }
-        distinct = distinct.filter(
-          (s) => hierarchyClassOf(hierarchyTierOf(s)) !== "secondary",
-        );
-      }
       // non_academic_source_binding_and_csm_v1 — a marker may not merge
       // unrelated sources into one concatenated label. Companions that share
       // no subject vocabulary with the leader are dropped.
@@ -209,7 +247,7 @@ export function buildFootnotedAnswer(
         .sort((a, b) => compareHierarchy(a.s, a.i, b.s, b.i))
         .map((x) => x.s);
     }
-    return distinct;
+    return { distinct, duplicates };
   };
 
   // ── footnote_density_v1 — per-occurrence emission plan ───────────────────
@@ -226,6 +264,40 @@ export function buildFootnotedAnswer(
   const blockPlans = new Map<number, BlockPlan>();
   const emission_telemetry: BlockEmissionTelemetry[] = [];
 
+  const isPrimarySource = (s: DrafterInputSource) =>
+    hierarchyClassOf(hierarchyTierOf(s)) === "primary";
+
+  const decide = (
+    s: DrafterInputSource,
+    blockIndex: number,
+    sentence: number | null,
+    cited: boolean,
+    dropReason: string | null,
+    valid: boolean,
+    capState: string,
+    dupOf: string | null,
+  ) => {
+    materialization.push({
+      block_id: blockIndex,
+      sentence_id: sentence,
+      source_id: s.candidate_id,
+      title: s.title,
+      role: String(s.synthesis_role ?? s.source_type ?? "unknown"),
+      representative_selected: representativeIds.has(s.candidate_id),
+      emitted_by_model: true,
+      survived_csm: true,
+      survived_alignment: true,
+      final_cited: cited,
+      drop_reason: dropReason,
+      drop_reason_valid: dropReason ? valid : true,
+      citation_cap_state: capState,
+      duplicate_of_source_id: dupOf,
+      reference_only_reason: referenceOnlyIds.has(s.candidate_id)
+        ? "marked_reference_only_by_claim_source_match"
+        : null,
+    });
+  };
+
   const planBlock = (
     b: Extract<StructuredBlock, { source_refs: string[] }>,
     blockIndex: number,
@@ -233,36 +305,97 @@ export function buildFootnotedAnswer(
     const cached = blockPlans.get(blockIndex);
     if (cached) return cached;
     if (b.source_refs.length === 0) return null;
-    const resolved = resolveBlockSources(b.source_refs);
+    const { distinct: resolved, duplicates } = resolveBlockSources(b.source_refs);
+    for (const [dup, id] of duplicates) {
+      decide(dup, blockIndex, null, false, "duplicate_of_rendered_source", true, "n/a", id);
+    }
     if (resolved.length === 0) return null;
-    // Guardrail: at most MAX_SOURCES_PER_BLOCK distinct sources per block.
-    // Hierarchy order already put the strongest first, so the tail is dropped.
-    const distinct = resolved.slice(0, MAX_SOURCES_PER_BLOCK);
+    // Guardrail: bounded distinct sources per block. Academic sections make
+    // several sourced claims per paragraph, so they may carry one more.
+    const maxPerBlock = academicMode ? MAX_SOURCES_PER_BLOCK + 1 : MAX_SOURCES_PER_BLOCK;
+    const distinct = resolved.slice(0, maxPerBlock);
     const dropped_weak_companions = resolved.length - distinct.length;
+    for (const s of resolved.slice(maxPerBlock)) {
+      decide(s, blockIndex, null, false, "citation_cap_reached", true, `block_cap:${maxPerBlock}`, null);
+    }
     const sentences = splitSentences(b.text.trim());
     const groups = planBlockOccurrences(sentences, distinct.length).map((g) => ({
       sentence_index: g.sentence_index,
       sources: g.source_indices.map((i) => distinct[i]),
     }));
+
+    // ── per-sentence mixed-hierarchy split (not block-level collapse) ──────
+    // A single marker may not mix primary authority with secondary
+    // scholarship. The secondary source is relocated to another sentence of
+    // the same block that carries no primary marker; only when no such slot
+    // exists is it dropped.
+    for (const g of [...groups]) {
+      if (g.sources.length < 2) continue;
+      const secs = g.sources.filter((s) => !isPrimarySource(s));
+      if (secs.length === 0 || secs.length === g.sources.length) continue;
+      if (counting) {
+        mixed_hierarchy_footnotes_count++;
+        mixed_hierarchy_footnotes_split++;
+      }
+      g.sources = g.sources.filter(isPrimarySource);
+      for (const s of secs) {
+        let target = -1;
+        for (let i = sentences.length - 1; i >= 0; i--) {
+          if (i === g.sentence_index) continue;
+          const at = groups.filter((x) => x.sentence_index === i);
+          if (at.some((x) => x.sources.some(isPrimarySource))) continue;
+          if (at.length >= MAX_MARKERS_PER_SENTENCE) continue;
+          target = i;
+          break;
+        }
+        if (target >= 0) {
+          const existing = groups.find(
+            (x) => x.sentence_index === target && !x.sources.some(isPrimarySource),
+          );
+          if (existing) existing.sources.push(s);
+          else groups.push({ sentence_index: target, sources: [s] });
+        } else {
+          decide(
+            s,
+            blockIndex,
+            g.sentence_index,
+            false,
+            "mixed_hierarchy_no_free_sentence_in_block",
+            true,
+            "sentence_marker_cap",
+            null,
+          );
+        }
+      }
+    }
+    groups.sort((a, b2) => a.sentence_index - b2.sentence_index);
+    const renderedGroups = groups.filter((g) => g.sources.length > 0);
+    for (const g of renderedGroups) {
+      for (const s of g.sources) {
+        decide(s, blockIndex, g.sentence_index, true, null, true, "rendered", null);
+      }
+    }
+
     const plan: BlockPlan = {
       blockIndex,
       sentences,
-      groups,
+      groups: renderedGroups,
       telemetry: {
         block_id: blockIndex,
         refs_available_after_csm: resolved.length,
         refs_rendered_before: distinct.length, // block-level compound rendered them all under 1 marker
-        refs_rendered_after: distinct.length,
+        refs_rendered_after: renderedGroups.reduce((n, g) => n + g.sources.length, 0),
         compound_before: distinct.length > 1 ? 1 : 0,
-        compound_after: groups.filter((g) => g.sources.length > 1).length,
-        split_count: Math.max(0, groups.length - 1),
+        compound_after: renderedGroups.filter((g) => g.sources.length > 1).length,
+        split_count: Math.max(0, renderedGroups.length - 1),
         dropped_weak_companions,
-        per_occurrence_markers: groups.length,
+        per_occurrence_markers: renderedGroups.length,
       },
     };
     blockPlans.set(blockIndex, plan);
     emission_telemetry.push(plan.telemetry);
     return plan;
+
   };
 
   // Allocate entries by first appearance; numbering happens afterwards in
@@ -650,6 +783,44 @@ export function buildFootnotedAnswer(
     usable_primary_count,
   };
 
+  // ── richness summary (academic_richness_last_mile_...v1) ────────────────
+  const finalIds = new Set(finalUsedSources.map((u) => u.candidate_id));
+  for (const row of materialization) {
+    row.final_cited = finalIds.has(row.source_id);
+    if (row.final_cited) {
+      row.drop_reason = null;
+      row.drop_reason_valid = true;
+    } else if (!row.drop_reason) {
+      row.drop_reason = "renumbering_dropped_orphan_marker";
+      row.drop_reason_valid = true;
+    }
+  }
+  const approvedIds = new Set(materialization.map((r) => r.source_id));
+  const notRendered = [...approvedIds].filter((id) => !finalIds.has(id));
+  const roleSet = new Set(
+    finalUsedSources.map((u) => String(u.synthesis_role ?? u.source_type ?? "unknown")),
+  );
+  const footnote_builder_richness_summary: FootnoteBuilderRichnessSummary = {
+    approved_distinct_sources: approvedIds.size,
+    representative_approved_sources: [...approvedIds].filter((id) => representativeIds.has(id))
+      .length,
+    final_distinct_sources: finalIds.size,
+    approved_but_not_rendered: notRendered,
+    rendered_role_count: roleSet.size,
+    collapsed_by_paragraph_rule: materialization.filter(
+      (r) => !r.final_cited && r.drop_reason === "mixed_hierarchy_no_free_sentence_in_block",
+    ).length,
+    collapsed_by_cap: materialization.filter(
+      (r) => !r.final_cited && r.drop_reason === "citation_cap_reached",
+    ).length,
+    collapsed_by_duplicate: materialization.filter(
+      (r) => !r.final_cited && r.drop_reason === "duplicate_of_rendered_source",
+    ).length,
+    collapsed_without_valid_reason: materialization.filter(
+      (r) => !r.final_cited && !r.drop_reason_valid,
+    ).length,
+  };
+
   return {
     answer_markdown: finalAnswer,
     footnotes: finalFootnotes,
@@ -657,6 +828,10 @@ export function buildFootnotedAnswer(
     hierarchy_report,
     footnote_render_report,
     footnote_density_emission: emission_telemetry,
+    footnote_materialization: materialization,
+    footnote_builder_richness_summary,
+
+
 
     builder_report: {
       paragraph_count,
