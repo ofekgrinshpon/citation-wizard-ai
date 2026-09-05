@@ -45,7 +45,10 @@ export function collectDiscoveryUrlsFor(
     push(
       d.url,
       `${d.title ?? ""}\n${d.url}`,
-      TARGETED_DISCOVERY_SOURCES.has(String(d.discovery_source ?? "")),
+      // canonical_body_acquisition_and_csm_survival_v1 — the targeted bypass is
+      // removed: the discovered-URL list is shared across authorities, so an
+      // untagged URL leaked one authority's judgment into another's probe.
+      false && TARGETED_DISCOVERY_SOURCES.has(String(d.discovery_source ?? "")),
     );
     if (out.length >= max) return out;
   }
