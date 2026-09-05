@@ -24,6 +24,7 @@ import {
   courtEgressFetch,
   isEgressAllowedHost,
 } from "./courtEgress.ts";
+import { recordCourtRelayDiagnostic } from "./courtEgress.ts";
 import {
   markExceptionPageUrl,
   noteRelaySlotSpent,
@@ -34,7 +35,7 @@ export const OFFICIAL_FETCH_VERSION = "official_fetch_profile_v1";
 
 export const OFFICIAL_FETCH_LIMITS = {
   /** Hard cap on official-host fetches per run. */
-  MAX_PER_RUN: 5,
+  MAX_PER_RUN: 8,
   /** Minimum spacing between two official-host fetches. */
   MIN_SPACING_MS: 700,
   /** Backoff after a reset / block, doubled per consecutive failure. */
@@ -43,6 +44,7 @@ export const OFFICIAL_FETCH_LIMITS = {
   /** Stop issuing official fetches after this many consecutive resets/blocks. */
   MAX_CONSECUTIVE_HARD_FAILURES: 3,
 } as const;
+
 
 const OFFICIAL_HOSTS = [
   "supremedecisions.court.gov.il",
@@ -284,7 +286,26 @@ export async function officialFetch(
 
     ledger.official_calls++;
     ledger.last_official_at = Date.now();
+    // canonical_body_acquisition_and_csm_survival_v1 — relay FIRST for
+    // allowlisted court hosts. The Supabase Edge egress is reset by the origin
+    // on every single request (measured), so the direct attempt is a
+    // guaranteed failure that also poisons the origin-failure streak. When the
+    // dedicated relay is configured and this URL passes the guess-suppression
+    // gate, go through it first and fall back to the direct edge fetch only if
+    // the relay does not deliver.
+    if (courtEgressConfigured() && isEgressAllowedHost(url)) {
+      const pre = skipped(url, opts, null) as OfficialFetchAttempt & Record<string, unknown>;
+      pre.profile = "official_browser_like";
+      const alt = await tryAltEgress(url, opts, pre, "relay_first_court_host");
+      pre.ms = Date.now() - t0;
+      ledger.attempts.push(pre);
+      if (alt) {
+        ledger.consecutive_hard_failures = 0;
+        return alt;
+      }
+    }
     try {
+
       const res = await fetch(url, {
         redirect: "follow",
         headers: officialHeaders(url, opts.headers),
@@ -377,7 +398,53 @@ async function tryAltEgress(
   });
   rec.alt_egress_status = res?.status ?? null;
   rec.alt_egress_content_type = res?.headers.get("content-type") ?? null;
+  // canonical_body_acquisition_and_csm_survival_v1 — one diagnostic row per
+  // relay fetch, naming the exact stage reached.
+  recordCourtRelayDiagnostic({
+    request_id: crypto.randomUUID(),
+    run_id: null,
+    source_id: null,
+    authority_id: null,
+    input_url: url,
+    normalized_url: url,
+    url_source: opts.url_origin === "search_first"
+      ? "discovered_url"
+      : opts.url_origin === "derivation"
+      ? "derived_url"
+      : "official_candidate",
+    transport: "relay",
+    method: opts.method ?? "GET",
+    non_secret_headers_sent: Object.keys(officialHeaders(url, opts.headers)),
+    dns_ms: null,
+    tls_ms: null,
+    ttfb_ms: null,
+    total_ms: 0,
+    upstream_http_status: res ? Number(res.headers.get("x-upstream-status")) || res.status : null,
+    relay_http_status: res?.status ?? null,
+    redirect_chain: [],
+    final_url: res?.headers.get("x-final-url") ?? null,
+    content_type: res?.headers.get("content-type") ?? null,
+    content_length_header: res ? Number(res.headers.get("content-length") || "0") || null : null,
+    bytes_received: 0,
+    first_20_bytes_or_magic_header: null,
+    is_pdf: /pdf/i.test(res?.headers.get("content-type") ?? ""),
+    is_doc_or_docx: /msword|officedocument/i.test(res?.headers.get("content-type") ?? ""),
+    is_html: /html/i.test(res?.headers.get("content-type") ?? ""),
+    extraction_attempted: false,
+    extracted_text_chars: 0,
+    error_code: res ? null : "relay_no_response",
+    error_message: null,
+    timeout_stage: null,
+    final_classification: !res
+      ? "relay_network_dns_tls_failure"
+      : res.status === 403 || res.status === 401 || res.status === 429
+      ? "relay_upstream_403_or_blocked"
+      : res.status >= 500
+      ? "relay_network_dns_tls_failure"
+      : "success_body_acquired",
+  });
   if (res && (res.status === 502 || res.status === 404)) markExceptionPageUrl(url);
+
   if (res) {
     // A successful alternative-egress fetch clears the origin-failure streak
     // for this run: the origin itself is reachable, only the edge IP is not.

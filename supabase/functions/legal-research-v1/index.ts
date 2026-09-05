@@ -74,6 +74,12 @@ import {
   type NonAcademicRuntimeBreakdown,
 } from "./stages/nonAcademicBinding.ts";
 import { courtEgressTelemetry, resetCourtEgressLedger } from "./lib/courtEgress.ts";
+import {
+  courtRelayDiagnostics,
+  directFetchDiagnostic,
+  relayFetchDiagnostic,
+  resetCourtRelayDiagnostics,
+} from "./lib/courtEgress.ts";
 import { judgmentUrlTelemetry, resetJudgmentUrlLedger } from "./lib/judgmentUrlEligibility.ts";
 import {
   officialFetchTelemetry,
@@ -252,6 +258,50 @@ async function handle(req: Request): Promise<Response> {
   } catch {
     return jsonResponse(400, { error: "invalid_json" });
   }
+
+  // ─── canonical_body_acquisition_and_csm_survival_v1 — relay parity probe ──
+  // Service-role + smoke-mode only. Runs the exact relay fetch/extraction path
+  // for a manually supplied public court/gov document URL and returns the full
+  // `court_relay_fetch_diagnostic`. No credits, no drafting, no persistence.
+  if (body.relay_probe && smokeMode && isServiceRole) {
+    const probe = body.relay_probe as Record<string, unknown>;
+    const urls = (Array.isArray(probe.urls) ? probe.urls : [probe.url])
+      .filter((u): u is string => typeof u === "string" && u.length > 0)
+      .slice(0, 8);
+    if (urls.length === 0) return jsonResponse(400, { error: "relay_probe_missing_url" });
+    const transports = Array.isArray(probe.transports)
+      ? (probe.transports as string[])
+      : ["direct_edge", "relay"];
+    const out: unknown[] = [];
+    for (const u of urls) {
+      if (transports.includes("direct_edge")) {
+        out.push(
+          await directFetchDiagnostic(u, {
+            run_id,
+            url_source: "manual_test_url",
+            identity_must_contain: typeof probe.identity_must_contain === "string"
+              ? probe.identity_must_contain
+              : null,
+            extract: probe.extract !== false,
+          }),
+        );
+      }
+      if (transports.includes("relay")) {
+        out.push(
+          await relayFetchDiagnostic(u, {
+            run_id,
+            url_source: "manual_test_url",
+            identity_must_contain: typeof probe.identity_must_contain === "string"
+              ? probe.identity_must_contain
+              : null,
+            extract: probe.extract !== false,
+          }),
+        );
+      }
+    }
+    return jsonResponse(200, { run_id, relay_probe: out });
+  }
+
   const question = typeof body.question === "string" ? body.question.trim() : "";
   if (!question) return jsonResponse(400, { error: "invalid_input", field: "question" });
   if (question.length > 4000) return jsonResponse(400, { error: "question_too_long" });
@@ -405,6 +455,7 @@ async function handle(req: Request): Promise<Response> {
   // official_fetch_profile_v1 — per-run serialisation/cap ledger.
   resetOfficialFetchLedger();
   resetCourtEgressLedger();
+  resetCourtRelayDiagnostics();
   // judgment_url_guess_suppression_v1 — per-run URL provenance ledger.
   resetJudgmentUrlLedger();
   const telemetryBase = {
@@ -2852,6 +2903,8 @@ async function handle(req: Request): Promise<Response> {
     // official_fetch_profile_v1 telemetry.
     official_fetch: officialFetchTelemetry(),
     court_egress: courtEgressTelemetry(),
+    // canonical_body_acquisition_and_csm_survival_v1 — per-fetch relay stage diagnostics.
+    court_relay_fetch_diagnostics: courtRelayDiagnostics(),
     // judgment_url_guess_suppression_v1 telemetry.
     judgment_url_eligibility: judgmentUrlTelemetry(),
     // router_profiles_v1 telemetry.

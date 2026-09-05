@@ -28,7 +28,7 @@ import {
   type DocketRef,
 } from "./docketDetection.ts";
 import { classifySourceIntegrity, type SourceIntegrity } from "./sourceIntegrity.ts";
-import { isGuessedCourtUrl } from "../lib/judgmentUrlEligibility.ts";
+import { isGuessedCourtUrl, registerJudgmentUrl } from "../lib/judgmentUrlEligibility.ts";
 import { collectDiscoveryUrlsFor } from "../lib/canonicalDiscoveryUrls.ts";
 import {
   deriveSupremeCourtBinaryUrls,
@@ -412,6 +412,10 @@ async function probeAuthority(
     maxUrls: CANONICAL_ACQUISITION_LIMITS.MAX_BINARY_URLS_PER_DOCKET,
   });
   // judgment_url_guess_suppression_v1 — derived guesses are not fetched.
+  // canonical_body_acquisition_and_csm_survival_v1 — URLs that targeted
+  // discovery actually returned carry search-first provenance, so the relay
+  // gate treats them as trusted (guessed derivations stay suppressed).
+  for (const u of discoveryUrls) registerJudgmentUrl(u, "search_first");
   const urls = [
     ...discoveryUrls,
     ...[...textUrls, ...binaryUrls].filter((u) => !isGuessedCourtUrl(u)),
@@ -535,7 +539,20 @@ async function probeAuthority(
           // Identity must be proven *inside* the body before it is treated as
           // this authority — a derived path alone is never enough.
           validateText: (text: string) => {
-            const ok = textContainsExactDocket(text.slice(0, 20_000), docket);
+            // canonical_body_acquisition_and_csm_survival_v1 — a judgment that
+            // merely CITES this docket is not this judgment. The docket must
+            // appear in the document header, and a distinctive party name from
+            // the canonical label must appear too.
+            const head = text.slice(0, 3_000);
+            const inHeader = textContainsExactDocket(head, docket);
+            const parties = String(auth.label ?? "")
+              .replace(/[\u05d0-\u05ea]{2,4}["'\u05f3\u05f4]?\s*\d{1,6}\s*\/\s*\d{2,4}/g, " ")
+              .split(/\s+\u05e0['\u05f3"\u05f4]?\s+|\s+\u05e0\u05d2\u05d3\s+/)
+              .flatMap((p) => p.split(/[\s,\.\(\)"'\u05f3\u05f4]+/))
+              .filter((w) => w.length >= 4 && /[\u0590-\u05ff]/.test(w));
+            const partyHit = parties.length === 0 ||
+              parties.some((w) => text.slice(0, 20_000).includes(w));
+            const ok = inHeader && partyHit;
             if (ok) identitySeen = true;
             return ok;
           },

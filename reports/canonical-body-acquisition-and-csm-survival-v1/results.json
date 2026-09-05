@@ -1,0 +1,464 @@
+[
+  {
+    "id": "Q1",
+    "run_id": "92066114-94ce-43fa-aeab-9ec4c998e6ae",
+    "ms": 219170,
+    "doctrine_mapping": null,
+    "canonical_registry_selection": null,
+    "pool_collapse": null,
+    "footnote_richness": {
+      "collapsed_by_cap": 0,
+      "rendered_role_count": 3,
+      "collapsed_by_duplicate": 0,
+      "final_distinct_sources": 4,
+      "approved_but_not_rendered": [],
+      "approved_distinct_sources": 4,
+      "collapsed_by_paragraph_rule": 0,
+      "collapsed_without_valid_reason": 0,
+      "representative_approved_sources": 3
+    },
+    "footnote_materialization": [
+      {
+        "role": "secondary_commentary",
+        "title": "סמכות, עוצמה והפרדת רשויות - ביקורת שיפוטית בישראל בפרספקטיבה השוואתית",
+        "block_id": 0,
+        "source_id": "e68ce48d-8c9f-4d6d-9a5f-b2b1168ac548",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "limiting_or_distinguishing_candidate",
+        "title": "בימ\"ש עליון, אב\"ד הנשיאה אסתר חיות, המשנה לנשיאה ניל הנדל והשופטים עוזי פוגלמן, יצחק עמית, נעם סולברג, יוסף אלרון ואלכס שטיין: פסה\"ד בדיון נוסף לבקשת רפי רותם שעניינו ביקורת של ביהמ\"ש על שיקול דעת רשויות התביעה (דנ\"פ 5387/20)",
+        "block_id": 1,
+        "source_id": "84292892-7a64-4ac3-8ae2-f638d0e8b3dc",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "block_id": 1,
+        "source_id": "37cef27c-72a8-4583-a48c-db50ff67aeea",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "limiting_or_distinguishing_candidate",
+        "title": "בימ\"ש עליון, אב\"ד הנשיאה אסתר חיות, המשנה לנשיאה ניל הנדל והשופטים עוזי פוגלמן, יצחק עמית, נעם סולברג, יוסף אלרון ואלכס שטיין: פסה\"ד בדיון נוסף לבקשת רפי רותם שעניינו ביקורת של ביהמ\"ש על שיקול דעת רשויות התביעה (דנ\"פ 5387/20)",
+        "block_id": 2,
+        "source_id": "84292892-7a64-4ac3-8ae2-f638d0e8b3dc",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "block_id": 2,
+        "source_id": "37cef27c-72a8-4583-a48c-db50ff67aeea",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "block_id": 3,
+        "source_id": "37cef27c-72a8-4583-a48c-db50ff67aeea",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "applying_candidate",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "block_id": 4,
+        "source_id": "e37fd634-b922-4164-bb33-ca544ea42e84",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": false
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "block_id": 5,
+        "source_id": "37cef27c-72a8-4583-a48c-db50ff67aeea",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      }
+    ],
+    "representative": null,
+    "pack_size": null,
+    "footnotes_count": 4,
+    "distinct_cited": 1,
+    "canonical_acquisition": {
+      "attempts": [
+        {
+          "authority": "בג\"ץ 389/80 דפי זהב נ' רשות השידור",
+          "urls": [],
+          "url_source": "none",
+          "result": "not_found",
+          "body_chars": 0,
+          "identity": false,
+          "rejection": "no_derivable_url"
+        },
+        {
+          "authority": "בג\"ץ 935/89 גנור נ' היועץ המשפטי לממשלה",
+          "urls": [],
+          "url_source": "none",
+          "result": "not_found",
+          "body_chars": 0,
+          "identity": false,
+          "rejection": "no_derivable_url"
+        }
+      ],
+      "gaps": [
+        {
+          "docket": "389/80",
+          "reason": "no_derivable_url",
+          "authority_id": "hcj_389_80_dapei_zahav",
+          "authority_name": "בג\"ץ 389/80 דפי זהב נ' רשות השידור",
+          "discovery_candidate_count": 0
+        },
+        {
+          "docket": "935/89",
+          "reason": "no_derivable_url",
+          "authority_id": "hcj_935_89_ganor",
+          "authority_name": "בג\"ץ 935/89 גנור נ' היועץ המשפטי לממשלה",
+          "discovery_candidate_count": 0
+        }
+      ]
+    },
+    "relay_diagnostics": null,
+    "official_fetch": null,
+    "csm": null,
+    "answer": "עילת הסבירות במישור המינהלי נתפסת ככלי ביקורת שיפוטית שבאה לאפשר לבית המשפט לבחון האם החלטה מנהלית עומדת בתוך סדרת ההגיונות המקובלים שניתן לצפות מרשות שפועלת בסמכותה; מטרתה היא לא להחליף שיקול דעת מנהלי בשיפוט שיפוטי, אלא לקבוע קיום חריגה קיצונית ממתחם ההגיון והסמכות שהוענק לרשות. מבחינה נורמטיבית הסבירות מוצעת כמנגנון שמאזן בין עקרון הפרדת הרשויות לבין הצורך בשלטון חוק במינהל, בכך שהיא מאפשרת התערבות כאשר הפסיקה מזהה חוסר בהלימה בין ההחלטה לבין ההצדקות הסבירות להן נטען, מבלי לעבור לבחינה עמוקה של ערכי מדיניות שמותרות לרשות.⁴\n\nהתפתחותה של עילת הסבירות במשפט הישראלי נעה בין השפעות מן המשפט המנהלי האנגלי לבין התאמות מקומיות בבג״ץ שהעשירו את המבחן ודייקו את מתחמי ההתערבות.² בעשור האחרון הספרות והפסיקה עסקו בהבהרת הקשר שבין סבירות לבין מבחנים אחרים של ביקורת שיפוטית, כאשר פסקי דין עכשוויים מדגישים את עליית חשיבותה של הסבירות ככלי מבין כלים במארג הביקורת, וכיודע לכך יש מקום לתיאור ההיסטוריה כמעורבת של קבלת עיקרון אנגלי, תיווך דוקטרינרי בספרות ויישום עכשווי על ידו של בית המשפט העליון.³\n\nהיחס בין מבחן הסבירות, דרישת המידתיות והערכת שיקול דעת מקצועי חופף אך משאיר גם מרחבים מובחנים: המידתיות ממוקדת באיזון בין פגיעה בזכויות לבין יעדי הציבור ומאזנת אמצעים ותכליות, ואילו סבירות בוחנת בעיקר האם הטיעונים והמסקנות של הרשות נופלים בתוך טווח ההגיונות המקובל; שיקול דעת מקצועי מצידו מזמין ריסון שיפוטי נרחב יותר, אך בפועל בתי המשפט לעיתים מקרבים בין היישומים כאשר תחום העניין דורש בדיקה עובדתית ויכולת מקצועית מיוחדת של הרשות.² הדיון בספרות מציע כי האבחנה בין הסבירות למידתיות אינה תמיד חד־משמעית וכי בתי המשפט נוטים להתאים את עוצמת הביקורת לפי טבע הענין והעניין הציבורי המעורב.³\n\nהביקורות נגד עילת הסבירות הן כפולות: מצד אחד נטען שהיא מטילה חוסר ודאות ודלות קריטריון שמעניקה שופטים מרווח רב לפרשנות, ומכאן סכנה של שיטור־יתר שיפוטי וציפוף סמכויות בין רשויות; מצד אחר טוענים תומכיה כי ללא כלי גמיש כזה לא יוכל בית המשפט להגן על שלטון החוק, על מנגנוני בקרה פנימיים ועל הזכויות הבסיסיות כאשר הסמכות הרובצת על הרשות מנוצלת באופן שרירותי. הספרות המודרנית ממקדת ביקורת גם בעמימות התוכן של.³\n\nהשינויים החוקתיים והדיונים האחרונים סביב מעמדה של הסבירות — ובכללם עתירות שנגעו לטרנספורמציה של הכלי בחקיקה או בנורמות עליונות — מראים כי המרחב שבו הסבירות פועלת אינו קבוע: הכרעת בג״ץ בתיקים הנוגעים לשינויים בחקיקה ולעיקרון הביקורת עוסקת בהגבלות שעל המחוקק לצאת בהן אם בכוונתו להחליש את ההיקף השיפוטי של הסבירות, ובהתאמת מבחני ביקורת למעמד החוקתי של הנורמה. ההשפעה המעשית של תיקונים חוקתיים או פסקי דין עכשוויים היא כפולה — מצד אחד חקיקת יסוד מחזקת עקרונות הגנה על זכויות, ובצד השני מחיקה או שינוי נורמטיבי שמטרתו להגביל הסבירות עשויים לצמצם את מרחב התערבותו של בית המשפט; הדיון האחרון בבג״ץ על ביטול מעמד הסבירות ממחיש את המתח הזה בין עוצמה פרלמנטרית לבין חשיבות ביקורת שיפוטית.¹\n\nבסיכומו של עניין, ניתן לטעון שסבירות מהווה כלי מרכזי אך לא יחיד בהגנה על שלטון החוק: היא מספקת מסגרת לשיפוט על כשל לוגי, על חריגה מסמכות ועל החלטה שנראית כבלתי ראויה בהינתן הנימוקים, אך היותה דינמית ותלויה בהקשר מחייבת להשלים אותה במבחנים אחרים — מידתיות, עקרונות משפטיים מובחנים ועמדות של שיקול דעת מקצועי — כדי להבטיח שאינה הופכת לכלי של חוסר ודאות שיפוטית. אם נשאל האם היא הכרחית, תשובה פרגמטית היא כי הסבירות נחוצה בהקשרים רבים כדי לאפשר דיון שיפוטי אפקטיבי בשאלות של מנהל תקין, אך יש להקפיד על עקרון ההבחנה ולגבש מדדים ברורים יותר המאזנים בין הבקרה השיפוטית לבין כבוד הסמכות המינהלית.³\n\n*הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.*\n",
+    "footnotes": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5630",
+        "title": "בימ\"ש עליון, אב\"ד הנשיאה אסתר חיות, המשנה לנשיאה ניל הנדל והשופטים עוזי פוגלמן, יצחק עמית, נעם סולברג, יוסף אלרון ואלכס שטיין: פסה\"ד בדיון נוסף לבקשת רפי רותם שעניינו ביקורת של ביהמ\"ש על שיקול דעת רשויות התביעה (דנ\"פ 5387/20)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5630",
+            "title": "בימ\"ש עליון, אב\"ד הנשיאה אסתר חיות, המשנה לנשיאה ניל הנדל והשופטים עוזי פוגלמן, יצחק עמית, נעם סולברג, יוסף אלרון ואלכס שטיין: פסה\"ד בדיון נוסף לבקשת רפי רותם שעניינו ביקורת של ביהמ\"ש על שיקול דעת רשויות התביעה (דנ\"פ 5387/20)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+            "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/734",
+        "title": "סמכות, עוצמה והפרדת רשויות - ביקורת שיפוטית בישראל בפרספקטיבה השוואתית",
+        "number": 4,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/734",
+            "title": "סמכות, עוצמה והפרדת רשויות - ביקורת שיפוטית בישראל בפרספקטיבה השוואתית",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ]
+  },
+  {
+    "id": "Q2",
+    "run_id": "c139e27f-a14a-4d94-b2be-676cb0488f09",
+    "ms": 218256,
+    "doctrine_mapping": null,
+    "canonical_registry_selection": null,
+    "pool_collapse": null,
+    "footnote_richness": {
+      "collapsed_by_cap": 0,
+      "rendered_role_count": 1,
+      "collapsed_by_duplicate": 0,
+      "final_distinct_sources": 1,
+      "approved_but_not_rendered": [],
+      "approved_distinct_sources": 1,
+      "collapsed_by_paragraph_rule": 0,
+      "collapsed_without_valid_reason": 0,
+      "representative_approved_sources": 1
+    },
+    "footnote_materialization": [
+      {
+        "role": "secondary_commentary",
+        "title": "עלותו השקועה של התקדים | מיכל טמיר (כרך א)",
+        "block_id": 0,
+        "source_id": "f40f70f2-5bab-46b2-940e-9f45d5cbbd02",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "עלותו השקועה של התקדים | מיכל טמיר (כרך א)",
+        "block_id": 1,
+        "source_id": "f40f70f2-5bab-46b2-940e-9f45d5cbbd02",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "עלותו השקועה של התקדים | מיכל טמיר (כרך א)",
+        "block_id": 2,
+        "source_id": "f40f70f2-5bab-46b2-940e-9f45d5cbbd02",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "עלותו השקועה של התקדים | מיכל טמיר (כרך א)",
+        "block_id": 3,
+        "source_id": "f40f70f2-5bab-46b2-940e-9f45d5cbbd02",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "עלותו השקועה של התקדים | מיכל טמיר (כרך א)",
+        "block_id": 4,
+        "source_id": "f40f70f2-5bab-46b2-940e-9f45d5cbbd02",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "עלותו השקועה של התקדים | מיכל טמיר (כרך א)",
+        "block_id": 5,
+        "source_id": "f40f70f2-5bab-46b2-940e-9f45d5cbbd02",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "עלותו השקועה של התקדים | מיכל טמיר (כרך א)",
+        "block_id": 6,
+        "source_id": "f40f70f2-5bab-46b2-940e-9f45d5cbbd02",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      }
+    ],
+    "representative": null,
+    "pack_size": null,
+    "footnotes_count": 1,
+    "distinct_cited": 1,
+    "canonical_acquisition": {
+      "attempts": [
+        {
+          "authority": "בג\"ץ 135/75 סאי-טקס נ' שר המסחר והתעשייה",
+          "urls": [
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C75%5C135%5C000%5Cb08&fileName=75013500.B08&type=2"
+          ],
+          "url_source": "discovery",
+          "result": "fetch_failed",
+          "body_chars": 0,
+          "identity": false,
+          "rejection": "error sending request from 10.32.81.43:46124 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C75%5C135%5C000%5Cb08&fileName=75013500.B08&type=2 (84.110.173.93:443): client"
+        },
+        {
+          "authority": "בג\"ץ 5018/91 גדות תעשיות פטרוכימיה נ' ממשלת ישראל",
+          "urls": [
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C75%5C135%5C000%5Cb08&fileName=75013500.B08&type=2"
+          ],
+          "url_source": "discovery",
+          "result": "fetch_failed",
+          "body_chars": 0,
+          "identity": false,
+          "rejection": "error sending request from 10.32.81.43:46126 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C75%5C135%5C000%5Cb08&fileName=75013500.B08&type=2 (84.110.173.93:443): client"
+        }
+      ],
+      "gaps": [
+        {
+          "docket": "135/75",
+          "reason": "error sending request from 10.32.81.43:46124 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C75%5C135%5C000%5Cb08&fileName=75013500.B08&type=2 (84.110.173.93:443): client",
+          "authority_id": "hcj_135_75_sai_tex",
+          "authority_name": "בג\"ץ 135/75 סאי-טקס נ' שר המסחר והתעשייה",
+          "discovery_candidate_count": 1
+        },
+        {
+          "docket": "5018/91",
+          "reason": "error sending request from 10.32.81.43:46126 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C75%5C135%5C000%5Cb08&fileName=75013500.B08&type=2 (84.110.173.93:443): client",
+          "authority_id": "hcj_5018_91_gadot",
+          "authority_name": "בג\"ץ 5018/91 גדות תעשיות פטרוכימיה נ' ממשלת ישראל",
+          "discovery_candidate_count": 1
+        }
+      ]
+    },
+    "relay_diagnostics": null,
+    "official_fetch": null,
+    "csm": null,
+    "answer": "בבסיס הדיון המושגי במשפט המנהלי עומדת ההבחנה בין הבטחה מנהלית כצוהר של הרשות כלפי פרט, לבין מכלול המושגים הקרובים לה כגון הסתמכות וציפייה לגיטימית; בהגדרה תפקודית ניתן לראות בהבטחה מנהלית הכרזה מפורשת או מעורפלת של הרשות שמובילה לכך שהציבור או יחיד מסוּגרים להפנות את ציפיותיהם להתנהלות עתידית של הרשות, והדיון המשפטי מסובב סביב השאלה מתי הכרזה שכזו מטילה מחויבות על מוקרן הציבורי. טיעונים בספרות מצביעים על כך שמידת המחייבות תלויה במכלול נסיבות ובמשקל ההסתמכות שנוצר, ולא במילוליות ההצהרה לבד, ולכן הגדרת המושג נותרת דינמית ותלויה בקריטריונים מעשיים של בהירות, כוונה והסתמכות (הצדקת ההגנה בשל ‘‘עלות שקועה’’ של המסתמך).¹\n\nציפייה לגיטימית היא קטגוריה קרובה אך מובחנת; היא מבקשת להגן על הציפייה שסורקה אצל היחיד מפני פעולת רשות בלתי הוגנת, ובספרות מובהר ההבחנה בין ציפייה פרוצדורלית — הקשורה לציפייה להליך הוגן ולשימוע — לציפייה מהותית, שהיא ציפייה שקיימת לגבי תוכן ההחלטה העתידית של הרשות. ההגנה על ציפייה לגיטימית אינה ניתנת באופן אוטומטי לכל ציפייה סובייקטיבית, אלא נבחנת לפי מידת ההבטחה, טיב היחס בין הצדדים, ותנאי ההסתמכות שהביאו למצב של ‘‘עלות שקועה’’ אצל המסתמך.¹\n\nההבחנה המעשית בין הבטחה מנהלית, הסתמכות וציפייה לגיטימית ניכרת בשלושת ממדי־המבחן: ממד מקורה של ההצהרה (האם היא באה מרשות מוסמכת ומהאופן שבו הובעה), ממד ההסתמכות (האם עשה המסתמך מעשה או נשא הוצאות כהסתמכות על הציפייה) וממד ההגינות התנהלותית (תום לב, כוונה להתחייב וסגירות ההבטחה). כלומר, הבטחה מנהלית היא סוג של מקור לעמידת ציפייה, ההסתמכות היא המציאות העובדתית שעשויה להצדיק הגנה, והציפייה הלגיטימית היא המעמד התוצאתי המשפטי שאליו שואף ההגנה — אך שלושתם נדונים ביחד במסגרת איזון בין ההגנה לפרט לבין האינטרס הציבורי.¹\n\nלגבי התנאים להכרה בהבטחה מנהלית רשימה טיפוסית בספרות כוללת יסודות כגון סמכות הגוף המבטיח, בהירות וסופיות ההצהרה, כוונה או יכולת להיקשר מבחינת הרשות, ונטל הסתמכות ממשי מצד הנפגע; בנוסף נבחנת חוקיות ההבטחה ובמידת הצורך התאמה לאינטרס הציבורי. מאמרים שניתחו את המושג מדגישים כי אף אם מתקיימים אלמנטים אלו, יש צורך בבחינה איזונית — כלומר האם המשך קיום ההבטחה מותאם להשקפת הציבור הרחבה ולשיקולי מדיניות, ורק כאשר עלות הפגיעה בפרט נותרת בלתי מידתית לעומת אינטרס ציבורי מהותי תיבחן חובת הרשות להשיב ולעגן את ההבטחה.¹\n\nהתפתחות הדוקטרינה בישראל נידונה בעיקר בספרות ולא נמצא במקורות שסופקו נוסח פסיקה מחייבת מלאה שנוסחה מהווה עוגן יחיד; עם זאת, המחקר המקומי ממקם את התפתחות המושגים כחלק מתהליך הרחבה של אמות מידה של הגינות מנהלית ותום לב, שבו בתי המשפט והפרשנים נרתעים מלנתק לחלוטין בין הבטחות שניתנו לציבור ובין השיקולים המדיניים והמנהלתיים של הרשות. הספרות מדגישה את תרומת רעיון ה״עלות השקועה״ להבנת ההיתכנות של פיצוי או מנגנוני השבה כאשר הרשות משנה מדיניות, ובכך בונה מסגרת אנליטית לאיזון בין הוראות הגינות לבין גמישות ממשלתית.¹\n\nהיחס בין הגינות מנהלית, אינטרס ציבורי ושינוי מדיניות מהווה את נקודת המפתח שבה נבחנת מחויבות הרשות: מנקודת המבט התיאורטית יש לראות ההגינות כמנגנון למניעת ניצול סמכות ותאונות משפטיות כלפי היחיד, אך יש לה גם משקל מכורח המציאות המנהלית — הרשויות נזקקות לגמישות לשינוי מדיניות כאשר אינטרס ציבורי חשוב מחייב זאת. לפיכך הספרות מציעה מודל איזון שמשקלל את חומרת ההסתמכות, את עלות הביטול על הפרט ואת מידת הלגיטימציה הציבורית של השינוי; רק במצבים שבהם עלות הפגיעה במסתמך חריגה ביחס לתועלת הציבורית תוטל חובה משפטית משמעותית על הרשות לשקול פתרונות כגון פיצוי או תקופת מעבר.¹\n\nבאשר לסעדים, הספרות מציעה ספקטרום הכולל סעד ביטולי כנגד שינוי בלתי הוגן של החלטה או הבטחה, סעד השבה והחזרת המצב לקדמותו במקרים מתאימים, ומתן פיצוי במקום השבה כאשר השבה אינה מעשית; בנוסף מתוארים צעדים הוראתיים והצהרתיים כדרכים לאכוף ציפיות לגיטימיות מבלי לחייב את הרשות במלואן. ההדגשה התאורטית היא שהבחירה בסעד תלויה באיזון שבין זכויות המסתמך לבין האינטרס הציבורי ובשאלה האם הסעד המלא נדרש כדי לתקן עוול או שניתן לנקוט סעד מצמצם יותר שתואם את צרכי הממשל הציבורי.¹\n\nלסיכום קצר: הטקסט הנוכחי מבסס את מסגרת הדיון בעיקר על ספרות משפטית תיאורטית שנותנת דגשים על עקרונות ההגינות, כוונה להתחייב והעלות השקועה כקריטריונים מרכזיים, אך הוא אינו מציג נוסח פסיקה מחייב או קוד חקיקה ספציפי שניתן להסתמך עליו כהלכה סופית; לכן בפרק הבא של הסמינריון ראוי להשוות קביעות אלה עם פסיקה ונוסחי חקיקה רלוונטיים שיאותרו וינותחו במלואם.\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n",
+    "footnotes": [
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/a1_15.pdf",
+        "title": "עלותו השקועה של התקדים | מיכל טמיר (כרך א)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/a1_15.pdf",
+            "title": "עלותו השקועה של התקדים | מיכל טמיר (כרך א)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ]
+  }
+]

@@ -270,15 +270,18 @@ export function screenCanonicalCandidate(
   }
   if (textContainsExactDocket(title, docket)) row.docket_evidence = "title";
   else if (textContainsExactDocket(url, docket)) row.docket_evidence = "url";
-  else if (
-    OFFICIAL_HOST_RE.test(host) &&
-    unverifiedOfficialUsed < CANONICAL_REGISTRY_DISCOVERY_LIMITS.MAX_UNVERIFIED_OFFICIAL_PER_AUTHORITY
-  ) {
-    row.docket_evidence = "official_host_targeted";
-  } else {
+  else {
+    // canonical_body_acquisition_and_csm_survival_v1 — an official host alone
+    // is NOT evidence. Targeted search returned another docket's judgment PDF
+    // for this authority, and that PDF *cites* the wanted docket, so the
+    // downstream body check could not tell them apart. Exact docket evidence
+    // in the result title or in the URL is now mandatory.
+    void unverifiedOfficialUsed;
+    void OFFICIAL_HOST_RE;
     row.rejection_reason = "no_exact_docket_evidence";
     return row;
   }
+
   row.selected_for_fetch = true;
   row.rejected_before_fetch = false;
   return row;
