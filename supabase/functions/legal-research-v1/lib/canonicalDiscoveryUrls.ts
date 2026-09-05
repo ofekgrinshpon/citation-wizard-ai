@@ -42,16 +42,14 @@ export function collectDiscoveryUrlsFor(
     out.push(u);
   };
   for (const d of discovered) {
-    push(
-      d.url,
-      `${d.title ?? ""}\n${d.url}`,
-      // canonical_body_acquisition_and_csm_survival_v1 — the targeted bypass is
-      // removed: the discovered-URL list is shared across authorities, so an
-      // untagged URL leaked one authority's judgment into another's probe.
-      false && TARGETED_DISCOVERY_SOURCES.has(String(d.discovery_source ?? "")),
-    );
+    // canonical_body_acquisition_and_csm_survival_v1 — the targeted bypass is
+    // removed: the discovered-URL list is shared across all authorities of the
+    // run, so an untagged URL leaked one judgment into another's probe.
+    void TARGETED_DISCOVERY_SOURCES;
+    push(d.url, `${d.title ?? ""}\n${d.url}`);
     if (out.length >= max) return out;
   }
+
   for (const c of poolUrls) {
     push(c.url, `${c.title}\n${c.url}`);
     if (out.length >= max) return out;
