@@ -245,5 +245,256 @@
         "source_type": "journal_article"
       }
     ]
+  },
+  {
+    "id": "Q2",
+    "run_id": "d822a1d6-e34a-45a6-97b1-b11ecb664dc0",
+    "ms": 269031,
+    "doctrine_mapping": null,
+    "canonical_registry_selection": null,
+    "pool_collapse": null,
+    "footnote_richness": {
+      "collapsed_by_cap": 0,
+      "rendered_role_count": 1,
+      "collapsed_by_duplicate": 0,
+      "final_distinct_sources": 2,
+      "approved_but_not_rendered": [],
+      "approved_distinct_sources": 2,
+      "collapsed_by_paragraph_rule": 0,
+      "collapsed_without_valid_reason": 0,
+      "representative_approved_sources": 2
+    },
+    "footnote_materialization": [
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 0,
+        "source_id": "653b8219-cbce-4439-9faa-1ff196a7031a",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+        "block_id": 1,
+        "source_id": "6c1cc4b3-22ca-430f-a5ab-0594c969ca3f",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+        "block_id": 2,
+        "source_id": "6c1cc4b3-22ca-430f-a5ab-0594c969ca3f",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 3,
+        "source_id": "653b8219-cbce-4439-9faa-1ff196a7031a",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 4,
+        "source_id": "653b8219-cbce-4439-9faa-1ff196a7031a",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 5,
+        "source_id": "653b8219-cbce-4439-9faa-1ff196a7031a",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 6,
+        "source_id": "653b8219-cbce-4439-9faa-1ff196a7031a",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 7,
+        "source_id": "653b8219-cbce-4439-9faa-1ff196a7031a",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+        "block_id": 8,
+        "source_id": "6c1cc4b3-22ca-430f-a5ab-0594c969ca3f",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      }
+    ],
+    "representative": null,
+    "pack_size": null,
+    "footnotes_count": 2,
+    "distinct_cited": 1,
+    "canonical_acquisition": {
+      "attempts": [
+        {
+          "authority": "בג\"ץ 135/75 סאי-טקס נ' שר המסחר והתעשייה",
+          "urls": [
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C17%5C135%5C075%5Cz17&fileName=17075135.Z17&type=4",
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F17%2F135%2F075%2Fz17&fileName=17075135.Z17&type=4"
+          ],
+          "url_source": "discovery",
+          "result": "fetch_failed",
+          "body_chars": 0,
+          "identity": false,
+          "rejection": "official_fetch_stopped:repeated_connection_reset"
+        },
+        {
+          "authority": "בג\"ץ 5018/91 גדות תעשיות פטרוכימיה נ' ממשלת ישראל",
+          "urls": [],
+          "url_source": "none",
+          "result": "not_found",
+          "body_chars": 0,
+          "identity": false,
+          "rejection": "no_derivable_url"
+        }
+      ],
+      "gaps": [
+        {
+          "docket": "135/75",
+          "reason": "official_fetch_stopped:repeated_connection_reset",
+          "authority_id": "hcj_135_75_sai_tex",
+          "authority_name": "בג\"ץ 135/75 סאי-טקס נ' שר המסחר והתעשייה",
+          "discovery_candidate_count": 2
+        },
+        {
+          "docket": "5018/91",
+          "reason": "no_derivable_url",
+          "authority_id": "hcj_5018_91_gadot",
+          "authority_name": "בג\"ץ 5018/91 גדות תעשיות פטרוכימיה נ' ממשלת ישראל",
+          "discovery_candidate_count": 0
+        }
+      ]
+    },
+    "relay_diagnostics": null,
+    "official_fetch": null,
+    "csm": null,
+    "answer": "מטרת פרק רקע זה היא למקם את מוסדי ההבטחה המנהלית והציפייה הלגיטימית בתוך מסגרת התיאורטית והדוקטרינרית של המשפט המנהלי הישראלי: להגדירן, להבדיל ביניהם לבין ההגנה על הסתמכות, לפרט את התנאים המעשיים להכרה בהבטחה ולהציג את תולדות הדוקטרינה וההשלכות על ההגינות המנהלית ושאלת הסעדים. הדיון ינסח באופן שמאזן בין תמיכה בספרות המחקרית לבין עיגון בהתייחסויות בתי המשפט לערכי היסוד שעליהם נשענת ההגנה על ציפיות האזרח מול הרשות.¹\n\nהבטחה מנהלית מתארת מתחם יחסי שבו הרשות, באמצעות הצהרה או תנהגות רשמית, יוצרת עבור הציבור או לפרט ציפייה כי תנהג בצורה מסוימת בעתיד או תעניק הטבה כלשהי; ההגנה המנהלית על ההבטחה נשענת על חובת ההגינות והנאמנות של השלטון בפרט בדיון מול האינטרסים של ניהול תקין. מבחינה תכליתית, ההבטחה אינה שייכת במובהק לחוק הפרטי של חוזים אלא מהווה מנגנון מנהלי שנועד להבטיח יציבות וציפיות סבירות ביחסי האמון שבין האזרח לרשות.²\n\nציפייה לגיטימית נחקרת כמוסד מקבץ־הרעיונות שבמרכזו עקרון ההסתמכות: מדובר בסיטואציה שבה פעולות הרשות, נהלים קבועים או הודעות גורמות לפרט להסתמך באופן סביר על המשך מעשה או על זכויות שיינתנו לו; ההגנה על ציפייה שמה דגש על היקף ההסתמכות — האם היא הייתה סבירה, כלכלית או אישית — ולעתים נבדלת מבחינה פרוצדורלית וציפייה מהותית, כך שדרכי ההגנה והתוצאה משתנות בהתאם לאופיין.²\n\nההבחנה הפרקטית בין הבטחה מנהלית, הסתמכות וציפייה לגיטימית מושתתת על שלושה צירי אבחנה: ראשית, מקור ההתחייבות — הבטחה נובעת מדבריה או מדיניות הרשות עצמה, בעוד שהסתמכות נעה סביב מעשיו של המסתמך; שנית, מידת הבהירות והרצון של הרשות להתחייב — הבטחה מחייבת רמז כוונה של הרשות להיקשר, ואילו ציפייה לגיטימית יכולה לנבוע גם ממנגנוני נורמה או מהמשכיות מדיניות; ושלישית, תוצאת ההגנה וסוג הסעד — הבטחה חזקה נוטה להוליך לאכיפה או להגבלות חזקות יותר על שינוי מדיניות מאשר הסתמכות טהורה. הבדלים אלה מקבלים חיזוק הן בספרות הדוקטרינית ובהשוואה לתאוריות החוזיות וההסתמכות והן בניתוח הפסיקה המנהלתית.¹\n\nההתייחסות המעשית להתרה של הבטחה מנהלית מחייבת זיהוי מספר תנאים מצטברים: סמכות או יכולת משפטית של הגורם המבטיח, כוונה ברורה של הרשות או ייצוג רשמי המעיד על התחייבות, בהירות והצגה סבירה של התוכן, הסתמכות ממשית וסבירה של הנבטח, והיעדר מניעה משפטית או אינטרס ציבורי מוחלט המונע את קיום ההבטחה. מכלול תנאים אלה נועד לאזן בין צורך ביציבות וציפיות לגיטימיות של האזרח לבין החופש המנהלי לשינוי מדיניות בזמן ראוי.¹\n\nהתפתחות הדוקטרינה בפסיקה הישראלית משקפת תנועה בין הכרה הולכת—וולנטראלית—בהגיינת הציפיות לבין זהירות בעמידה על גבולות השינוי המדיני: הספרות המנהלתית מזהה את תרומתה של הפסיקה בביסוס חובת ההגינות וההגנה על ציפיות כסלע תיאורטי, בעוד שפסקי בית המשפט העליון מדגישים את הצורך באיזון בין זכויות יסוד ותכליות ציבוריות ובמניעת פגיעה קיצונית בציפיות שנוסחו בצורה ברורה. בפסיקה עדכנית ניתן למצוא גיוון בדגשים — חלקם נתונים להתאמה לאילוצים ציבוריים רחבים, אחרים מניחים תוקף מחייב יותר להבטחות מפורשות של הרשויות.¹\n\nהיחס בין הגינות מנהלית, אינטרס ציבורי וזכות הרשות לשנות מדיניות הוא יחסי ואופרטיבי: ההגינות מייצרת מחסום מוצהר לשינויים פתאומיים ופוגעניים בתנאי־המשחק שנוצרו על ידי הרשות, אך אינטרס ציבורי כבד יכול להצדיק חזרה מהבטחה אם קיימת זיקה גורפת ליעד ציבורי עליון או מניעה חוקית; במובן זה בתי המשפט מאמצים מבחן איזון שבו נבחן משקל הפגיעה בציפיות, מידת ההכרה בכוונת הרשות מלכתחילה, והאפשרות למתן פיצויים או אמצעים מתונים שיאזנו בין האינטרסים.¹\n\nלגבי הסעדים, הדוקטרינה המוכרת מציעה ספקטרום של תרופות ראוי: ביטול החלטת הרשות או צו למניעת שינוי על רקע הפרת הבטחה, סעד הצהרתי המבהיר את המעמד והזכויות שהורכבו, ולעתים — בכפוף לעקרונות והאיזונים העירוניים — האפשרות לכלול סייגים שיחייבו מתן פיצוי או אמצעים חלופיים שיעמקו את השיקום של המסתמך. המגבלות על סעדים כספיים מנהליים נידונות בספרות, והפסיקה נוטה לגוון את אופי הסעד בהתאם לחומרת ההשפעה על האינטרס הציבורי ועל תכלית ההגינות.¹\n\nלסיכום־ביניים, המתח הדוקטרינרי סביב הבטחה וציפייה נגזר מהרצון להגן על יציבות וציפיות סבירות של האזרח מול צורך ממשי של השלטון בגמישות ובמענה לאינטרסים ציבוריים; המשקלים האופרטיביים — סמכות, כוונה, בהירות, הסתמכות ואינטרס ציבורי — הם אלה שמכוונים את אופן ההכרה ובהם ממוקד המחלוקת התיאורטית והמעשית במשפט הישראלי העכשווי.²\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות. לא אותר פסק דין העוסק ישירות בדוקטרינה הנדונה; הביסוס כאן נשען על חקיקה וספרות משפטית.*",
+    "footnotes": [
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/707",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/707",
+            "title": "הגנת ההסתמכות במשפט המנהלי",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      },
+      {
+        "url": "https://runilawreview.org/2019/03/28/vol22_braverman/",
+        "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://runilawreview.org/2019/03/28/vol22_braverman/",
+            "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ]
   }
 ]
