@@ -1,11 +1,1187 @@
 [
   {
-    "id": "Q2",
-    "query": "מה אומר חוק-יסוד: כבוד האדם וחירותו לגבי פגיעה בזכויות?",
-    "run_id": "9c59f51c-0808-45a9-b6e1-e8ba99c097ae",
-    "ms": 849875,
-    "web_tier_health": null,
-    "perplexity": null,
+    "id": "Q3",
+    "query": "מה ההלכה המרכזית בפסיקה לגבי מבחן המידתיות?",
+    "run_id": "fd0cd506-7986-4cd1-ab55-06b8023ed262",
+    "ms": 178304,
+    "web_tier_health": {
+      "avg_ms": 4274,
+      "version": "research_richness_execution_unblock_v1",
+      "provider": "perplexity",
+      "calls_failed": 3,
+      "endpoint_type": "direct_provider",
+      "http_statuses": {
+        "200": 17,
+        "429": 3
+      },
+      "calls_attempted": 20,
+      "calls_succeeded": 17,
+      "failure_classes": {
+        "ok": 17,
+        "rate_limited": 3
+      },
+      "safe_error_class": "rate_limited",
+      "safe_error_message": "web_tier_rate_limited: provider returned 429",
+      "disabled_or_misconfigured": false
+    },
+    "perplexity": {
+      "ms": 24572,
+      "dropped": 33,
+      "parallel": true,
+      "query_ms": [
+        3960,
+        3775,
+        150,
+        4284,
+        5920,
+        4689,
+        7844,
+        5513,
+        5890,
+        9989,
+        5720,
+        10204,
+        5349
+      ],
+      "per_query": [
+        {
+          "ms": 3960,
+          "http": 200,
+          "role": "primary_statute",
+          "results": [
+            {
+              "url": "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+              "title": "חוק-יסוד: כבוד האדם וחירותו",
+              "domain": "fs.knesset.gov.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+                "hygiene_action": "keep",
+                "url_normalized": "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 145,
+                "title_meaningful_chars": 24
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "official_knesset_pdf",
+              "normalized_source_type": "legislation",
+              "classified_source_class": "legislation",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://www.kolzchut.org.il/he/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93:_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+              "title": "חוק יסוד: כבוד האדם וחירותו",
+              "domain": "kolzchut.org.il",
+              "drop_reason": "discovery_only",
+              "classified_source_class": "discovery_only",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://www.mishpati.co.il/article/law-human-dignity",
+              "title": "חוק יסוד כבוד האדם וחירותו – מהו?",
+              "domain": "mishpati.co.il",
+              "drop_reason": "discovery_only",
+              "classified_source_class": "discovery_only",
+              "admitted_to_candidate_pool": false
+            }
+          ],
+          "admitted": 1,
+          "claim_id": "C1",
+          "query_he": "חוק-יסוד: כבוד האדם וחירותו סעיף סעיף 8",
+          "raw_count": 3,
+          "failure_class": "ok",
+          "discovery_only": 2,
+          "failure_reason": null,
+          "followup_terms": [],
+          "followup_admitted": 0
+        },
+        {
+          "ms": 3775,
+          "http": 200,
+          "role": "binding_case_law",
+          "results": [
+            {
+              "url": "https://he.afiklaw.com/caselaw/4390",
+              "title": "ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+              "domain": "he.afiklaw.com",
+              "drop_reason": "discovery_only",
+              "classified_source_class": "discovery_only",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://dyoma.co.il/law/958",
+              "title": "26 שנים לפסק דין בנק המזרחי – מבנק המזרחי לחוק הלאום - דְּיוֹמָא",
+              "domain": "dyoma.co.il",
+              "drop_reason": "class_unknown_not_admitted_for_binding_case_law",
+              "classified_source_class": "unknown",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://www.netanya.ac.il/gur/data/AGUDA/law/yeara/const/judgesummary/%D7%A1%D7%99%D7%9B%D7%95%D7%9E%D7%99%20%D7%A4%D7%A1%D7%99%D7%A7%D7%94%205.doc",
+              "title": "סיכומי פסיקה 5.doc - Netanya Academic College",
+              "domain": "netanya.ac.il",
+              "drop_reason": "class_academic_not_admitted_for_binding_case_law",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": false
+            }
+          ],
+          "admitted": 0,
+          "claim_id": "C1",
+          "query_he": "ע\"א 6821/93 בנק המזרחי (נפסק על-ידי הנשיא אהרון ברק)",
+          "raw_count": 3,
+          "failure_class": "ok",
+          "discovery_only": 1,
+          "failure_reason": null,
+          "followup_terms": [],
+          "followup_admitted": 0
+        },
+        {
+          "ms": 150,
+          "http": 429,
+          "role": "scholarship",
+          "results": [],
+          "admitted": 0,
+          "claim_id": "C1",
+          "query_he": "מבחן המידתיות במחשבה המשפטית הישראלית מאמר ביקורת",
+          "raw_count": 0,
+          "failure_class": "rate_limited",
+          "discovery_only": 0,
+          "failure_reason": "web_tier_rate_limited: provider returned 429",
+          "followup_terms": [],
+          "followup_admitted": 0
+        },
+        {
+          "ms": 4284,
+          "http": 200,
+          "role": "binding_case_law",
+          "results": [
+            {
+              "url": "https://he.wikipedia.org/wiki/%D7%91%D7%92%22%D7%A5_%D7%9C%D7%A9%D7%9B%D7%AA_%D7%9E%D7%A0%D7%94%D7%9C%D7%99_%D7%94%D7%94%D7%A9%D7%A7%D7%A2%D7%95%D7%AA_%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C_%D7%A0%D7%92%D7%93_%D7%A9%D7%A8_%D7%94%D7%90%D7%95%D7%A6%D7%A8",
+              "title": "בג\"ץ לשכת מנהלי ההשקעות בישראל נגד שר האוצר",
+              "domain": "he.wikipedia.org",
+              "drop_reason": "bad_source",
+              "classified_source_class": "bad",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "http://www.glima.info/verdicts/97017150.a15.htm",
+              "title": "בג\"ץ 1715/97, לשכת מנהלי ההשקעות בישראל ואח' נ' שר האוצר ואח'",
+              "domain": "glima.info",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "http://www.glima.info/verdicts/97017150.a15.htm",
+                "hygiene_action": "keep",
+                "url_normalized": "http://www.glima.info/verdicts/97017150.a15.htm",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 51,
+                "title_meaningful_chars": 51
+              },
+              "rescued_as": "judgment",
+              "rescue_reason": "primary_authority_shape",
+              "hygiene_enforced": false,
+              "rescue_matched_in": "title",
+              "original_query_role": "binding_case_law",
+              "raw_pplx_source_type": "glima.info",
+              "rescue_matched_docket": "1715/97",
+              "normalized_source_type": "caselaw",
+              "classified_source_class": "court_case",
+              "original_classification": "unknown",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://hamoked.org.il/document.php?dID=2910",
+              "title": "בג\"ץ 1715/97 - לשכת מנהלי ההשקעות בישראל ואח' נ' שר האוצר ...",
+              "domain": "hamoked.org.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://hamoked.org.il/document.php?dID=2910",
+                "hygiene_action": "keep",
+                "url_normalized": "https://hamoked.org.il/document.php?dID=2910",
+                "hygiene_reasons": [
+                  "url_generic_index"
+                ],
+                "landing_page_status": "generic_index",
+                "body_meaningful_chars": 57,
+                "title_meaningful_chars": 50
+              },
+              "rescued_as": "judgment",
+              "rescue_reason": "primary_authority_shape",
+              "hygiene_enforced": false,
+              "rescue_matched_in": "title",
+              "original_query_role": "binding_case_law",
+              "raw_pplx_source_type": "hamoked.org.il",
+              "rescue_matched_docket": "1715/97",
+              "normalized_source_type": "caselaw",
+              "classified_source_class": "court_case",
+              "original_classification": "unknown",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://hamishpatworldarchive.github.io/Courses/99204/210-V1715-96-2.doc",
+              "title": "בג\"ץ 1715/97 - לשכת מנהלי ההשקעות בישראל נ' שר האוצר",
+              "domain": "hamishpatworldarchive.github.io",
+              "drop_reason": "discovery_only",
+              "classified_source_class": "discovery_only",
+              "admitted_to_candidate_pool": false
+            }
+          ],
+          "admitted": 2,
+          "claim_id": "C1",
+          "query_he": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות נ' שר האוצר",
+          "raw_count": 4,
+          "failure_class": "ok",
+          "discovery_only": 1,
+          "failure_reason": null,
+          "followup_terms": [],
+          "followup_admitted": 0
+        },
+        {
+          "ms": 5920,
+          "http": 200,
+          "role": "scholarship",
+          "results": [
+            {
+              "url": "https://www.idi.org.il/books/3867",
+              "title": "מידתיות במבט ביקורתי ומשווה",
+              "domain": "idi.org.il",
+              "drop_reason": "class_unknown_not_admitted_for_scholarship",
+              "classified_source_class": "unknown",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://www.idi.org.il/media/4035/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA-%D7%91%D7%9E%D7%91%D7%98-%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%D7%D7%99-%D7%95%D7%9E%D7%A9%D7%95%D7%95%D7%94.pdf",
+              "title": "מידתיות במבט ביקורתי ומשווה",
+              "domain": "idi.org.il",
+              "drop_reason": "class_unknown_not_admitted_for_scholarship",
+              "classified_source_class": "unknown",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://en.idi.org.il/media/13315/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA-%D7%95%D7%A0%D7%99%D7%AA%D7%95%D7%97-%D7%9E%D7%93%D7%99%D7%A0%D7%99%D7%95%D7%AA-%D7%93%D7%99%D7%95%D7%9F-%D7%90%D7%99%D7%A0%D7%98%D7%92%D7%A8%D7%98%D7%99%D7%91%D7%99.pdf",
+              "title": "מידתיות וניתוח מדיניות: דיון אינטגרטיבי והשלכותיו",
+              "domain": "en.idi.org.il",
+              "drop_reason": "class_unknown_not_admitted_for_scholarship",
+              "classified_source_class": "unknown",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3245792",
+              "title": "עליית המידתיות, ירידת ההסתברות והשלכותיה הבלתי-צפויות של המהפכה החוקתית על המשפט החוקתי הישראלי",
+              "domain": "papers.ssrn.com",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3245792",
+                "hygiene_action": "keep",
+                "url_normalized": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3245792",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 161,
+                "title_meaningful_chars": 83
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "מאמר אקדמי",
+              "normalized_source_type": "other",
+              "classified_source_class": "publisher",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/P_MChoen.pdf",
+              "title": "המובן הפורמלי והמובן המהוהי של מבחני המידתיות בפסיקת בג\"ץ",
+              "domain": "hamishpat.colman.ac.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/P_MChoen.pdf",
+                "hygiene_action": "keep",
+                "url_normalized": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/P_MChoen.pdf",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 122,
+                "title_meaningful_chars": 49
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "מאמר אקדמי",
+              "normalized_source_type": "other",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": true
+            }
+          ],
+          "admitted": 2,
+          "claim_id": "C1",
+          "query_he": "עוצמת הביקורת בבתי המשפט הישראליים מבחן מידתיות מאמר",
+          "raw_count": 5,
+          "failure_class": "ok",
+          "discovery_only": 0,
+          "failure_reason": null,
+          "followup_terms": [],
+          "followup_admitted": 0
+        },
+        {
+          "ms": 4689,
+          "http": 200,
+          "role": "binding_case_law",
+          "results": [
+            {
+              "url": "https://he.wikipedia.org/wiki/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA",
+              "title": "מידתיות – ויקיפדיה",
+              "domain": "he.wikipedia.org",
+              "drop_reason": "bad_source",
+              "classified_source_class": "bad",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/P_MChoen.pdf",
+              "title": "המובן הפורמלי והמובן המהוהי של מבחני המידתיות בפסיקת בג\"ץ",
+              "domain": "hamishpat.colman.ac.il",
+              "drop_reason": "class_academic_not_admitted_for_binding_case_law",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=102448887&nTocEntryID=102450546",
+              "title": "א. בין מטרות לאמצעים: מהי מידתיות? - מט\"ח",
+              "domain": "kotar.cet.ac.il",
+              "drop_reason": "class_academic_not_admitted_for_binding_case_law",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://he.afiklaw.com/caselaw/12548/6",
+              "title": "בג\"ץ 8010/16 מלכה נעמה ברזון נ' מדינת ישראל - חלק 6",
+              "domain": "he.afiklaw.com",
+              "drop_reason": "discovery_only",
+              "classified_source_class": "discovery_only",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-cohen-elia.pdf",
+              "title": "הפרדת רשויות ומידתיות",
+              "domain": "law.haifa.ac.il",
+              "drop_reason": "class_academic_not_admitted_for_binding_case_law",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": false
+            }
+          ],
+          "admitted": 0,
+          "claim_id": "C1",
+          "query_he": "פסק דין בית המשפט העליון מבחן המידתיות שלבי המבחן: 'תכלית לגיטימית', 'התאמה' (suitability), 'הכרח' (necessity), 'מידתיות במובן המצומצם/איזון' נוסח אהרן ברק פסק דין עקרונות המידתיות",
+          "raw_count": 5,
+          "failure_class": "ok",
+          "discovery_only": 1,
+          "failure_reason": null,
+          "followup_terms": [],
+          "followup_admitted": 0
+        },
+        {
+          "ms": 7844,
+          "http": 200,
+          "role": "scholarship",
+          "results": [
+            {
+              "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
+              "title": "איזון חוקתי עקרוני ומידתיות: ההיבט התורתי - הפקולטה למשפטים",
+              "domain": "law.huji.ac.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "thin_body",
+                "title_status": "valid",
+                "url_original": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
+                "hygiene_action": "keep",
+                "url_normalized": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
+                "hygiene_reasons": [
+                  "body_thin"
+                ],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 34,
+                "title_meaningful_chars": 51
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "PDF",
+              "normalized_source_type": "other",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://law.huji.ac.il/sites/default/files/law/files/136barak.pdf",
+              "title": "Microsoft Word - Barak_Aharon.doc",
+              "domain": "law.huji.ac.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://law.huji.ac.il/sites/default/files/law/files/136barak.pdf",
+                "hygiene_action": "keep",
+                "url_normalized": "https://law.huji.ac.il/sites/default/files/law/files/136barak.pdf",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 109,
+                "title_meaningful_chars": 30
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "PDF",
+              "normalized_source_type": "other",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://law.huji.ac.il/sites/default/files/law/files/134barak-645-658.pdf",
+              "title": "Microsoft Word - Sikum.doc",
+              "domain": "law.huji.ac.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://law.huji.ac.il/sites/default/files/law/files/134barak-645-658.pdf",
+                "hygiene_action": "keep",
+                "url_normalized": "https://law.huji.ac.il/sites/default/files/law/files/134barak-645-658.pdf",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 93,
+                "title_meaningful_chars": 23
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "PDF",
+              "normalized_source_type": "other",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://cris.iucc.ac.il/en/publications/%D7%A2%D7%9C-%D7%A4%D7%92%D7%99%D7%A2%D7%94-%D7%91%D7%96%D7%9B%D7%95%D7%AA-%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%AA-%D7%95%D7%A2%D7%9C-%D7%AA%D7%9B%D7%9C%D7%99%D7%AA-%D7%A8%D7%90%D7%95%D7%99%D7%94-%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA-%D7%A1%D7%A4%D7%A8%D7%95-%D7%A9%D7%9C-%D7%90%D7%94%D7%A8%D7%9F-%D7%91%D7%A8%D7%A7-%D7%9E%D7%99%D7%93",
+              "title": "על \"פגיעה\" בזכות חוקתית ועל \"תכלית ראויה\": בעקבות ספרו של אהרן ברק מידתיות במשפט",
+              "domain": "cris.iucc.ac.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://cris.iucc.ac.il/en/publications/%D7%A2%D7%9C-%D7%A4%D7%92%D7%99%D7%A2%D7%94-%D7%91%D7%96%D7%9B%D7%95%D7%AA-%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%AA-%D7%95%D7%A2%D7%9C-%D7%AA%D7%9B%D7%9C%D7%99%D7%AA-%D7%A8%D7%90%D7%95%D7%99%D7%94-%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA-%D7%A1%D7%A4%D7%A8%D7%95-%D7%A9%D7%9C-%D7%90%D7%94%D7%A8%D7%9F-%D7%91%D7%A8%D7%A7-%D7%9E%D7%99%D7%93",
+                "hygiene_action": "keep",
+                "url_normalized": "https://cris.iucc.ac.il/en/publications/%D7%A2%D7%9C-%D7%A4%D7%92%D7%99%D7%A2%D7%94-%D7%91%D7%96%D7%9B%D7%95%D7%AA-%D7%97%D7%95%D7%A7%D7%AA%D7%99%D7%AA-%D7%95%D7%A2%D7%9C-%D7%AA%D7%9B%D7%9C%D7%99%D7%AA-%D7%A8%D7%90%D7%95%D7%99%D7%94-%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA-%D7%A1%D7%A4%D7%A8%D7%95-%D7%A9%D7%9C-%D7%90%D7%94%D7%A8%D7%9F-%D7%91%D7%A8%D7%A7-%D7%9E%D7%99%D7%93",
+                "hygiene_reasons": [],
+                "landing_page_status": "unknown",
+                "body_meaningful_chars": 139,
+                "title_meaningful_chars": 67
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "Academic database entry",
+              "normalized_source_type": "other",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": true
+            }
+          ],
+          "admitted": 4,
+          "claim_id": "C1",
+          "query_he": "מאמר אקדמי על מבנה מבחן המידתיות ושלבי המבחן ('תכלית', 'התאמה', 'הכרח', 'איזון') מאת אהרן ברק או במגזין 'המשפט' או 'Israel Law Review'",
+          "raw_count": 4,
+          "failure_class": "ok",
+          "discovery_only": 0,
+          "failure_reason": null,
+          "followup_terms": [],
+          "followup_admitted": 0
+        },
+        {
+          "ms": 5513,
+          "http": 200,
+          "role": "binding_case_law",
+          "results": [
+            {
+              "url": "https://www.idi.org.il/media/4035/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA-%D7%91%D7%9E%D7%91%D7%98-%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%D7%99-%D7%95%D7%9E%D7%A9%D7%95%D7%95%D7%94.pdf",
+              "title": "מידתיות במבט ביקורתי ומשווה",
+              "domain": "idi.org.il",
+              "drop_reason": "class_unknown_not_admitted_for_binding_case_law",
+              "classified_source_class": "unknown",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/K6.pdf",
+              "title": "דיון אינטגרטיבי - מידתיות וניתוח מדיניות",
+              "domain": "law.haifa.ac.il",
+              "drop_reason": "class_academic_not_admitted_for_binding_case_law",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/21d.pdf",
+              "title": "דיון אינטגרטיבי - מידתיות וניתוח מדיניות",
+              "domain": "law.haifa.ac.il",
+              "drop_reason": "class_academic_not_admitted_for_binding_case_law",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
+              "title": "איזון חוקתי עקרוני ומידתיות: ההיבט התורתי",
+              "domain": "law.huji.ac.il",
+              "drop_reason": "class_academic_not_admitted_for_binding_case_law",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://he.afiklaw.com/caselaw/8263/11",
+              "title": "בג\"ץ 7052/03 עדאלה נ' שר הפנים",
+              "domain": "he.afiklaw.com",
+              "drop_reason": "discovery_only",
+              "classified_source_class": "discovery_only",
+              "admitted_to_candidate_pool": false
+            }
+          ],
+          "admitted": 0,
+          "claim_id": "C2",
+          "query_he": "בית המשפט העליון 'עוצמת הביקורת' 'דרגת הפיקוח' במבחן המידתיות פירוש פרקטי משמעות הוגנות איזון פסק דין",
+          "raw_count": 5,
+          "failure_class": "ok",
+          "discovery_only": 1,
+          "failure_reason": null,
+          "followup_terms": [],
+          "followup_admitted": 0
+        },
+        {
+          "ms": 5890,
+          "http": 200,
+          "role": "persuasive_case_law",
+          "results": [
+            {
+              "url": "https://www.kolzchut.org.il/he/%D7%9C%D7%A6%D7%A8%D7%9B%D7%9F_%D7%99%D7%A9_%D7%96%D7%9B%D7%95%D7%AA_%D7%9C%D7%94%D7%A2%D7%91%D7%99%D7%A8_%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA_%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%AA,_%D7%A1%D7%91%D7%99%D7%A8%D7%94_%D7%95%D7%94%D7%95%D7%92%D7%A0%D7%AA_%D7%91%D7%A8%D7%A9%D7%AA_%D7%94%D7%90%D7%99%D7%A0%D7%98%D7%A8%D7%A0%D7%98_%D7%A2%D7%9C_%D7%9E%D7%95%D7%A6%D7%A8_%D7%90%D7%95_%D7%A9%D7%99%D7%A8%D7%95%D7%AA_%D7%A9%D7%A8%D7%9B%D7%A9",
+              "title": "לצרכן יש זכות להעביר ביקורת מידתית, סבירה והוגנת ברשת האינטרנט על מוצר או שירות שרכש",
+              "domain": "kolzchut.org.il",
+              "drop_reason": "discovery_only",
+              "classified_source_class": "discovery_only",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-mermor.pdf",
+              "title": "ביקורת שיפוטית בישראל",
+              "domain": "law.haifa.ac.il",
+              "drop_reason": "class_academic_not_admitted_for_persuasive_case_law",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://law.huji.ac.il/sites/default/files/law/files/dotan.pdf",
+              "title": "חלק ראשון – ביקורת שיפוטית יואב דותן יתרונות וחסרונות",
+              "domain": "law.huji.ac.il",
+              "drop_reason": "class_academic_not_admitted_for_persuasive_case_law",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://law.haifa.ac.il/wp-content/uploads/2025/10/lawgov-20251012-reshef.pdf",
+              "title": "נהלית מ שיפוטית ביקורת של דגמים - בוחן כמקרה רחבה",
+              "domain": "law.haifa.ac.il",
+              "drop_reason": "class_academic_not_admitted_for_persuasive_case_law",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/Volume_G/tamir_atricle.pdf",
+              "title": "203 כלומר 129.\"ביותר והתערבות נעשית רק במקרים קיצוניים של \"חוסר סבירות קיצוני או עיוות מהותי\"",
+              "domain": "law.tau.ac.il",
+              "drop_reason": "class_academic_not_admitted_for_persuasive_case_law",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": false
+            }
+          ],
+          "admitted": 0,
+          "claim_id": "C2",
+          "query_he": "פסק דין בית משפט מחוזי 'עוצמת הביקורת' 'מבחן המידתיות' 'דרגת הפיקוח' דיון בהיקף ההתערבות השיפוטית",
+          "raw_count": 5,
+          "failure_class": "ok",
+          "discovery_only": 1,
+          "failure_reason": null,
+          "followup_terms": [],
+          "followup_admitted": 0
+        },
+        {
+          "ms": 9989,
+          "http": 200,
+          "role": "scholarship",
+          "results": [
+            {
+              "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4066564",
+              "title": "Varying Intensity of Judicial Review: A Conceptual Analysis",
+              "domain": "papers.ssrn.com",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4066564",
+                "hygiene_action": "keep",
+                "url_normalized": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4066564",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 335,
+                "title_meaningful_chars": 52
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "SSRN",
+              "normalized_source_type": "other",
+              "classified_source_class": "publisher",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://kotar.cet.ac.il/kotarapp/index/Book.aspx?nBookID=103799703",
+              "title": "מידתיות במבט ביקורתי ומשווה",
+              "domain": "kotar.cet.ac.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://kotar.cet.ac.il/kotarapp/index/Book.aspx?nBookID=103799703",
+                "hygiene_action": "keep",
+                "url_normalized": "https://kotar.cet.ac.il/kotarapp/index/Book.aspx?nBookID=103799703",
+                "hygiene_reasons": [
+                  "url_generic_index"
+                ],
+                "landing_page_status": "generic_index",
+                "body_meaningful_chars": 174,
+                "title_meaningful_chars": 24
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "Kotar",
+              "normalized_source_type": "other",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://law.haifa.ac.il/images/lawGov/Vol20/21d.pdf",
+              "title": "דיון אינטגרטיבי - מידתיות וניתוח מדיניות",
+              "domain": "law.haifa.ac.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://law.haifa.ac.il/images/lawGov/Vol20/21d.pdf",
+                "hygiene_action": "keep",
+                "url_normalized": "https://law.haifa.ac.il/images/lawGov/Vol20/21d.pdf",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 51,
+                "title_meaningful_chars": 35
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "PDF article (Haifa Law Review site)",
+              "normalized_source_type": "other",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://en.wikipedia.org/wiki/Standard_of_review",
+              "title": "Standard of review",
+              "domain": "en.wikipedia.org",
+              "drop_reason": "bad_source",
+              "classified_source_class": "bad",
+              "admitted_to_candidate_pool": false
+            }
+          ],
+          "admitted": 3,
+          "claim_id": "C2",
+          "query_he": "מאמר אקדמי על 'intensity of review' / 'עוצמת הביקורת' בבדיקת מידתיות, ניתוח מעשי של הדרגים והשפעתם על איזון בין זכויות וסמכויות (מאמר ב'המשפט' או 'Israel Law Review')",
+          "raw_count": 4,
+          "failure_class": "ok",
+          "discovery_only": 0,
+          "failure_reason": null,
+          "followup_terms": [],
+          "followup_admitted": 0
+        },
+        {
+          "ms": 5720,
+          "http": 200,
+          "role": "binding_case_law",
+          "results": [
+            {
+              "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+              "title": "מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת ...",
+              "domain": "law.haifa.ac.il",
+              "drop_reason": "class_academic_not_admitted_for_binding_case_law",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://www.idi.org.il/media/4035/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA-%D7%91%D7%9E%D7%91%D7%98-%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%D7%99-%D7%95%D7%9E%D7%A9%D7%95%D7%95%D7%94.pdf",
+              "title": "מידתיות במבט ביקורתי ומשווה",
+              "domain": "idi.org.il",
+              "drop_reason": "class_unknown_not_admitted_for_binding_case_law",
+              "classified_source_class": "unknown",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://lawx.co.il/%D7%9E%D7%A9%D7%A4%D7%98-%D7%9E%D7%A0%D7%94%D7%9C%D7%99-%D7%A1%D7%A7%D7%99%D7%A8%D7%94/",
+              "title": "משפט מנהלי סקירה כללית – משרד עורכי דין מוטי גולן ושות'",
+              "domain": "lawx.co.il",
+              "drop_reason": "discovery_only",
+              "classified_source_class": "discovery_only",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://kotar.cet.ac.il/kotarapp/index/Chapter.aspx?nBookID=103799703&nTocEntryID=103801107",
+              "title": "7. בחינת המידתיות בהחלטות מינהליות - מטח",
+              "domain": "kotar.cet.ac.il",
+              "drop_reason": "class_academic_not_admitted_for_binding_case_law",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://kotar.cet.ac.il/kotarapp/index/Book.aspx?nBookID=103799703",
+              "title": "מידתיות במבט ביקורתי ומשווה - מטח",
+              "domain": "kotar.cet.ac.il",
+              "drop_reason": "class_academic_not_admitted_for_binding_case_law",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": false
+            }
+          ],
+          "admitted": 0,
+          "claim_id": "C3",
+          "query_he": "בית המשפט העליון הבדל בבדיקת מידתיות בחקיקה מול החלטה מנהלית 'בדיקת חקיקה' 'בדיקת מנהלי' פסק דין בנושא שימוש בסעיפי ההגבלה של חוקי היסוד",
+          "raw_count": 5,
+          "failure_class": "ok",
+          "discovery_only": 1,
+          "failure_reason": null,
+          "followup_terms": [],
+          "followup_admitted": 0
+        },
+        {
+          "ms": 10204,
+          "http": 200,
+          "role": "scholarship",
+          "results": [
+            {
+              "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+              "title": "מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת",
+              "domain": "law.haifa.ac.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+                "hygiene_action": "keep",
+                "url_normalized": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 158,
+                "title_meaningful_chars": 48
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "PDF",
+              "normalized_source_type": "other",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://journal.lawforum.org.il/waldron-judicial-review/",
+              "title": "ליבת הטיעון נגד ביקורת שיפוטית - כתב העת רשות הרבים",
+              "domain": "journal.lawforum.org.il",
+              "drop_reason": "discovery_only",
+              "classified_source_class": "discovery_only",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://fs.knesset.gov.il/globaldocs/MMM/a197e3a7-9132-e811-80de-00155d0a0235/2_a197e3a7-9132-e811-80de-00155d0a0235_11_8976.pdf",
+              "title": "ביקורת שיפוטית על הליך החקיקה",
+              "domain": "fs.knesset.gov.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://fs.knesset.gov.il/globaldocs/MMM/a197e3a7-9132-e811-80de-00155d0a0235/2_a197e3a7-9132-e811-80de-00155d0a0235_11_8976.pdf",
+                "hygiene_action": "keep",
+                "url_normalized": "https://fs.knesset.gov.il/globaldocs/MMM/a197e3a7-9132-e811-80de-00155d0a0235/2_a197e3a7-9132-e811-80de-00155d0a0235_11_8976.pdf",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 68,
+                "title_meaningful_chars": 25
+              },
+              "hygiene_enforced": false,
+              "role_corrected_to": "primary_statute",
+              "role_corrected_from": "scholarship",
+              "raw_pplx_source_type": "PDF",
+              "normalized_source_type": "legislation",
+              "classified_source_class": "legislation",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
+              "title": "Microsoft Word - Barak.doc",
+              "domain": "law.huji.ac.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
+                "hygiene_action": "keep",
+                "url_normalized": "https://law.huji.ac.il/sites/default/files/law/files/133barak-039-099.pdf",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 84,
+                "title_meaningful_chars": 23
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "PDF",
+              "normalized_source_type": "other",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://www.idi.org.il/media/4035/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA-%D7%91%D7%מבט-%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%D7%99-%D7%95%D7%9E%D7%A9%D7%95%D7%95%D7%94.pdf",
+              "title": "מידתיות במבט ביקורתי ומשווה",
+              "domain": "idi.org.il",
+              "drop_reason": "class_unknown_not_admitted_for_scholarship",
+              "classified_source_class": "unknown",
+              "admitted_to_candidate_pool": false
+            }
+          ],
+          "admitted": 3,
+          "claim_id": "C3",
+          "query_he": "מאמר משפטי על הבחנה בין בדיקת מידתיות בחקיקה לעומת בביקורת מנהלית, שימוש בסעיפי ההגבלה של חוקי היסוד (ניתוח דוקטרינרי והמלצות פרקטיות)",
+          "raw_count": 5,
+          "failure_class": "ok",
+          "discovery_only": 1,
+          "failure_reason": null,
+          "followup_terms": [],
+          "followup_admitted": 0
+        },
+        {
+          "ms": 5349,
+          "http": 200,
+          "role": "binding_case_law",
+          "results": [
+            {
+              "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/v31&fileName=23056580.V31&type=2",
+              "title": "בג\"ץ 5658/23",
+              "domain": "supremedecisions.court.gov.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "thin_body",
+                "title_status": "valid",
+                "url_original": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/v31&fileName=23056580.V31&type=2",
+                "hygiene_action": "keep",
+                "url_normalized": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/23/580/056/v31&fileName=23056580.V31&type=2",
+                "hygiene_reasons": [
+                  "body_thin"
+                ],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 22,
+                "title_meaningful_chars": 11
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "court decision",
+              "normalized_source_type": "caselaw",
+              "classified_source_class": "official_primary",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision1308-17/he/1308-17.pdf",
+              "title": "בג\"ץ 1308/17",
+              "domain": "gov.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "thin_body",
+                "title_status": "valid",
+                "url_original": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision1308-17/he/1308-17.pdf",
+                "hygiene_action": "keep",
+                "url_normalized": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision1308-17/he/1308-17.pdf",
+                "hygiene_reasons": [
+                  "body_thin"
+                ],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 22,
+                "title_meaningful_chars": 11
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "court decision",
+              "normalized_source_type": "caselaw",
+              "classified_source_class": "court_case",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://img.haarets.co.il/bs/0000018d-9dee-df62-a3fd-9fef09530000/5f/55/4e7510104745b61e7c10acf2d022/%D7%A4%D7%A1%D7%93-8420-21-1.pdf",
+              "title": "בג\"ץ 8420/21",
+              "domain": "img.haarets.co.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "thin_body",
+                "title_status": "valid",
+                "url_original": "https://img.haarets.co.il/bs/0000018d-9dee-df62-a3fd-9fef09530000/5f/55/4e7510104745b61e7c10acf2d022/%D7%A4%D7%A1%D7%93-8420-21-1.pdf",
+                "hygiene_action": "keep",
+                "url_normalized": "https://img.haarets.co.il/bs/0000018d-9dee-df62-a3fd-9fef09530000/5f/55/4e7510104745b61e7c10acf2d022/%D7%A4%D7%A1%D7%93-8420-21-1.pdf",
+                "hygiene_reasons": [
+                  "body_thin"
+                ],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 22,
+                "title_meaningful_chars": 11
+              },
+              "rescued_as": "judgment",
+              "rescue_reason": "primary_authority_shape",
+              "hygiene_enforced": false,
+              "rescue_matched_in": "title",
+              "original_query_role": "binding_case_law",
+              "raw_pplx_source_type": "court decision",
+              "rescue_matched_docket": "8420/21",
+              "normalized_source_type": "caselaw",
+              "classified_source_class": "court_case",
+              "original_classification": "unknown",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5387-20/he/5387-20%20%D7%AAקציר.docx",
+              "title": "בג\"ץ 5387/20",
+              "domain": "gov.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5387-20/he/5387-20%20%D7%AAקציר.docx",
+                "hygiene_action": "keep",
+                "url_normalized": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision5387-20/he/5387-20%20%D7%AA%D7%A7%D7%A6%D7%99%D7%A8.docx",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 155,
+                "title_meaningful_chars": 11
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "court summary",
+              "normalized_source_type": "caselaw",
+              "classified_source_class": "court_case",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://img.haarets.co.il/bs/0000018d-9dee-df62-a3fd-9fef09530000/5f/55/4e7510104745b61e7c10acf2d022/%D7%A4%D7%A1%D7%93-8420-21-1.pdf",
+              "title": "בג\"ץ 8420/21",
+              "domain": "img.haarets.co.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://img.haarets.co.il/bs/0000018d-9dee-df62-a3fd-9fef09530000/5f/55/4e7510104745b61e7c10acf2d022/%D7%A4%D7%A1%D7%93-8420-21-1.pdf",
+                "hygiene_action": "keep",
+                "url_normalized": "https://img.haarets.co.il/bs/0000018d-9dee-df62-a3fd-9fef09530000/5f/55/4e7510104745b61e7c10acf2d022/%D7%A4%D7%A1%D7%93-8420-21-1.pdf",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 116,
+                "title_meaningful_chars": 11
+              },
+              "rescued_as": "judgment",
+              "rescue_reason": "primary_authority_shape",
+              "hygiene_enforced": false,
+              "rescue_matched_in": "title",
+              "original_query_role": "binding_case_law",
+              "raw_pplx_source_type": "court decision",
+              "rescue_matched_docket": "8420/21",
+              "normalized_source_type": "caselaw",
+              "classified_source_class": "court_case",
+              "original_classification": "unknown",
+              "admitted_to_candidate_pool": true
+            }
+          ],
+          "admitted": 5,
+          "claim_id": "C4",
+          "query_he": "בית המשפט העליון פסק דין תוצאות אי-מידתיות 'ביטול הוראה', 'צמצום פרשני', 'הוראות מעבר', 'פסילת הוראה חלקית' ניסוח צו לאחר מציאת אי-מידתיות",
+          "raw_count": 5,
+          "failure_class": "ok",
+          "discovery_only": 0,
+          "failure_reason": null,
+          "followup_terms": [],
+          "followup_admitted": 0
+        }
+      ],
+      "candidates": 20,
+      "query_count": 13,
+      "retry_count": 0,
+      "total_sum_ms": 73287,
+      "total_wall_ms": 24572,
+      "hygiene_counts": {
+        "keep": 20,
+        "total": 20,
+        "exclude": 0,
+        "reasons": {
+          "body_thin": 4,
+          "url_generic_index": 2
+        },
+        "downgrade": 0,
+        "report_only_mode": false,
+        "would_exclude_in_report_only": 0
+      },
+      "rate_limit_count": 1,
+      "role_corrections": [
+        {
+          "to": "primary_statute",
+          "url": "https://fs.knesset.gov.il/globaldocs/MMM/a197e3a7-9132-e811-80de-00155d0a0235/2_a197e3a7-9132-e811-80de-00155d0a0235_11_8976.pdf",
+          "from": "scholarship",
+          "title": "ביקורת שיפוטית על הליך החקיקה",
+          "admitted": true,
+          "claim_id": "C3"
+        }
+      ],
+      "concurrency_limit": 4,
+      "merge_order_preserved": true,
+      "fallback_to_sequential": false,
+      "web_rate_limit_control": {
+        "version": "web_source_usability_and_authority_selection_v1",
+        "backoff_waits_ms": [
+          443,
+          527
+        ],
+        "retries_after_429": 2,
+        "rate_limited_queries": 2,
+        "effective_concurrency": 3,
+        "configured_concurrency": 4
+      },
+      "web_source_classification": [
+        {
+          "url": "https://dyoma.co.il/law/958",
+          "host": "dyoma.co.il",
+          "title": "26 שנים לפסק דין בנק המזרחי – מבנק המזרחי לחוק הלאום - דְּיוֹמָא",
+          "reason": "insufficient_signals",
+          "new_class": "unknown",
+          "source_id": null,
+          "citable_as": "none",
+          "confidence": 0,
+          "source_role": null,
+          "jurisdiction": "israeli",
+          "pipeline_class": "unknown",
+          "previous_class": "unknown",
+          "semantic_class": "unknown",
+          "negative_signals": [
+            "no_recognized_legal_source_signals"
+          ],
+          "positive_signals": []
+        },
+        {
+          "url": "https://www.idi.org.il/books/3867",
+          "host": "idi.org.il",
+          "title": "מידתיות במבט ביקורתי ומשווה",
+          "reason": "insufficient_signals",
+          "new_class": "unknown",
+          "source_id": null,
+          "citable_as": "none",
+          "confidence": 0,
+          "source_role": null,
+          "jurisdiction": "israeli",
+          "pipeline_class": "unknown",
+          "previous_class": "unknown",
+          "semantic_class": "unknown",
+          "negative_signals": [
+            "no_recognized_legal_source_signals"
+          ],
+          "positive_signals": []
+        },
+        {
+          "url": "https://www.idi.org.il/media/4035/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA-%D7%91%D7%9E%D7%91%D7%98-%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%D7%D7%99-%D7%95%D7%9E%D7%A9%D7%95%D7%95%D7%94.pdf",
+          "host": "idi.org.il",
+          "title": "מידתיות במבט ביקורתי ומשווה",
+          "reason": "insufficient_signals",
+          "new_class": "unknown",
+          "source_id": null,
+          "citable_as": "none",
+          "confidence": 0,
+          "source_role": null,
+          "jurisdiction": "israeli",
+          "pipeline_class": "unknown",
+          "previous_class": "unknown",
+          "semantic_class": "unknown",
+          "negative_signals": [
+            "no_recognized_legal_source_signals"
+          ],
+          "positive_signals": [
+            "pdf_document"
+          ]
+        },
+        {
+          "url": "https://en.idi.org.il/media/13315/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA-%D7%95%D7%A0%D7%99%D7%AA%D7%95%D7%97-%D7%9E%D7%93%D7%99%D7%A0%D7%99%D7%95%D7%AA-%D7%93%D7%99%D7%95%D7%9F-%D7%90%D7%99%D7%A0%D7%98%D7%92%D7%A8%D7%98%D7%99%D7%91%D7%99.pdf",
+          "host": "en.idi.org.il",
+          "title": "מידתיות וניתוח מדיניות: דיון אינטגרטיבי והשלכותיו",
+          "reason": "insufficient_signals",
+          "new_class": "unknown",
+          "source_id": null,
+          "citable_as": "none",
+          "confidence": 0,
+          "source_role": null,
+          "jurisdiction": "israeli",
+          "pipeline_class": "unknown",
+          "previous_class": "unknown",
+          "semantic_class": "unknown",
+          "negative_signals": [
+            "no_recognized_legal_source_signals"
+          ],
+          "positive_signals": [
+            "pdf_document"
+          ]
+        },
+        {
+          "url": "https://www.idi.org.il/media/4035/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA-%D7%91%D7%9E%D7%91%D7%98-%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%D7%99-%D7%95%D7%9E%D7%A9%D7%95%D7%95%D7%94.pdf",
+          "host": "idi.org.il",
+          "title": "מידתיות במבט ביקורתי ומשווה",
+          "reason": "insufficient_signals",
+          "new_class": "unknown",
+          "source_id": null,
+          "citable_as": "none",
+          "confidence": 0,
+          "source_role": null,
+          "jurisdiction": "israeli",
+          "pipeline_class": "unknown",
+          "previous_class": "unknown",
+          "semantic_class": "unknown",
+          "negative_signals": [
+            "no_recognized_legal_source_signals"
+          ],
+          "positive_signals": [
+            "pdf_document"
+          ]
+        },
+        {
+          "url": "https://www.idi.org.il/media/4035/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA-%D7%91%D7%9E%D7%91%D7%98-%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%D7%99-%D7%95%D7%9E%D7%A9%D7%95%D7%95%D7%94.pdf",
+          "host": "idi.org.il",
+          "title": "מידתיות במבט ביקורתי ומשווה",
+          "reason": "insufficient_signals",
+          "new_class": "unknown",
+          "source_id": null,
+          "citable_as": "none",
+          "confidence": 0,
+          "source_role": null,
+          "jurisdiction": "israeli",
+          "pipeline_class": "unknown",
+          "previous_class": "unknown",
+          "semantic_class": "unknown",
+          "negative_signals": [
+            "no_recognized_legal_source_signals"
+          ],
+          "positive_signals": [
+            "pdf_document"
+          ]
+        },
+        {
+          "url": "https://www.idi.org.il/media/4035/%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA-%D7%91%D7%מבט-%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%D7%99-%D7%95%D7%9E%D7%A9%D7%95%D7%95%D7%94.pdf",
+          "host": "idi.org.il",
+          "title": "מידתיות במבט ביקורתי ומשווה",
+          "reason": "insufficient_signals",
+          "new_class": "unknown",
+          "source_id": null,
+          "citable_as": "none",
+          "confidence": 0,
+          "source_role": null,
+          "jurisdiction": "israeli",
+          "pipeline_class": "unknown",
+          "previous_class": "unknown",
+          "semantic_class": "unknown",
+          "negative_signals": [
+            "no_recognized_legal_source_signals"
+          ],
+          "positive_signals": [
+            "pdf_document"
+          ]
+        }
+      ]
+    },
     "source_depth": null,
     "depth_flags": {
       "perplexity_policy": null,
@@ -13,36 +1189,1456 @@
       "perplexity_reason": null
     },
     "official_source_discovery": null,
-    "canonical_authority_acquisition": null,
-    "canonical_authority_acquisition_trigger": null,
-    "judgment_text_acquisition": null,
-    "source_integrity_tiers": null,
-    "source_integrity_admitted": null,
-    "discovery_precision": null,
-    "claim_source_plan": null,
-    "drafter_block_source_compliance": null,
-    "post_draft_alignment_filter": null,
-    "claim_source_match": null,
-    "footnotes_count": 0,
-    "footnotes": [],
-    "answer": "המחקר הופסק בגלל תקלה תשתיתית ולא הושלמה תשובה משפטית מבוססת. לא מוצגת תשובת ביניים. הקרדיטים על ההרצה הזו הוחזרו. אפשר להריץ שוב, לצמצם את השאלה, או לצרף את המסמך הרלוונטי.",
+    "canonical_authority_acquisition": {
+      "ms": 3808,
+      "enabled": true,
+      "version": "canonical_judgment_text_acquisition_v1",
+      "attempts": [
+        {
+          "ms": 1707,
+          "cited": false,
+          "docket": "6821/93",
+          "probes": [
+            {
+              "ms": 514,
+              "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C93%5C821%5C6821%5C0%2Fv16&fileName=93068210.V16&type=2",
+              "detail": "error sending request from 10.32.134.228:49954 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C93%5C821%5C6821%5C0%2Fv16&fileName=93068210.V16&type=2 (84.110.173.93:443):",
+              "result": "fetch_failed",
+              "url_kind": "text",
+              "url_type": "2",
+              "body_chars": null,
+              "byte_length": null,
+              "http_status": null,
+              "last_resort": false,
+              "probe_index": 0,
+              "content_type": null,
+              "skipped_due_to_cap": false,
+              "body_title_or_signature": null
+            },
+            {
+              "ms": 1193,
+              "url": "https://elyon1.court.gov.il/heb/psika/word/taam/taam12960.htm",
+              "detail": "error sending request from 10.32.134.228:34848 for https://elyon1.court.gov.il/heb/psika/word/taam/taam12960.htm (84.110.173.108:443): client error (SendRequest): connection error: Connection reset by",
+              "result": "fetch_failed",
+              "url_kind": "html",
+              "url_type": null,
+              "body_chars": null,
+              "byte_length": null,
+              "http_status": null,
+              "last_resort": false,
+              "probe_index": 1,
+              "content_type": null,
+              "skipped_due_to_cap": false,
+              "body_title_or_signature": null
+            }
+          ],
+          "source": "registry_seed",
+          "query_id": "core_authority_registry:proportionality:hcj_6821_93_mizrahi",
+          "body_chars": 0,
+          "url_source": "discovery",
+          "doctrine_id": "proportionality",
+          "authority_id": "hcj_6821_93_mizrahi",
+          "endpoint_type": "html",
+          "type4_derived": true,
+          "attempted_urls": [
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C93%5C821%5C6821%5C0%2Fv16&fileName=93068210.V16&type=2",
+            "https://elyon1.court.gov.il/heb/psika/word/taam/taam12960.htm"
+          ],
+          "authority_name": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+          "used_in_answer": false,
+          "rejection_reason": "error sending request from 10.32.134.228:34848 for https://elyon1.court.gov.il/heb/psika/word/taam/taam12960.htm (84.110.173.108:443): client error (SendRequest): connection error: Connection reset by",
+          "docket_normalized": "bagatz:6821/93",
+          "acquisition_result": "fetch_failed",
+          "type4_body_acquired": false,
+          "type4_probe_reached": false,
+          "attempted_urls_count": 2,
+          "injected_candidate_id": null,
+          "blocked_by_origin_count": 0,
+          "body_identity_validated": false,
+          "discovery_candidate_urls": [
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C93%5C821%5C6821%5C0%2Fv16&fileName=93068210.V16&type=2",
+            "https://elyon1.court.gov.il/heb/psika/word/taam/taam12960.htm"
+          ],
+          "discovery_candidate_count": 2,
+          "canonical_acquisition_attempted": true
+        },
+        {
+          "ms": 2071,
+          "cited": false,
+          "docket": "1715/97",
+          "probes": [
+            {
+              "ms": 2070,
+              "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C93%5C821%5C6821%5C0%2Fv16&fileName=93068210.V16&type=2",
+              "detail": "error sending request from 10.32.134.228:49968 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C93%5C821%5C6821%5C0%2Fv16&fileName=93068210.V16&type=2 (84.110.173.93:443):",
+              "result": "fetch_failed",
+              "url_kind": "text",
+              "url_type": "2",
+              "body_chars": null,
+              "byte_length": null,
+              "http_status": null,
+              "last_resort": false,
+              "probe_index": 0,
+              "content_type": null,
+              "skipped_due_to_cap": false,
+              "body_title_or_signature": null
+            },
+            {
+              "ms": 1,
+              "url": "https://elyon1.court.gov.il/heb/psika/word/taam/taam12960.htm",
+              "detail": "official_fetch_stopped:repeated_connection_reset",
+              "result": "fetch_failed",
+              "url_kind": "html",
+              "url_type": null,
+              "body_chars": null,
+              "byte_length": null,
+              "http_status": null,
+              "last_resort": false,
+              "probe_index": 1,
+              "content_type": null,
+              "skipped_due_to_cap": false,
+              "body_title_or_signature": null
+            }
+          ],
+          "source": "registry_seed",
+          "query_id": "core_authority_registry:proportionality:hcj_1715_97_investment_managers",
+          "body_chars": 0,
+          "url_source": "discovery",
+          "doctrine_id": "proportionality",
+          "authority_id": "hcj_1715_97_investment_managers",
+          "endpoint_type": "html",
+          "type4_derived": true,
+          "attempted_urls": [
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C93%5C821%5C6821%5C0%2Fv16&fileName=93068210.V16&type=2",
+            "https://elyon1.court.gov.il/heb/psika/word/taam/taam12960.htm"
+          ],
+          "authority_name": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות נ' שר האוצר",
+          "used_in_answer": false,
+          "rejection_reason": "official_fetch_stopped:repeated_connection_reset",
+          "docket_normalized": "bagatz:1715/97",
+          "acquisition_result": "fetch_failed",
+          "type4_body_acquired": false,
+          "type4_probe_reached": false,
+          "attempted_urls_count": 2,
+          "injected_candidate_id": null,
+          "blocked_by_origin_count": 0,
+          "body_identity_validated": false,
+          "discovery_candidate_urls": [
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C93%5C821%5C6821%5C0%2Fv16&fileName=93068210.V16&type=2",
+            "https://elyon1.court.gov.il/heb/psika/word/taam/taam12960.htm"
+          ],
+          "discovery_candidate_count": 2,
+          "canonical_acquisition_attempted": true
+        }
+      ],
+      "doctrine_id": "proportionality",
+      "skip_reason": null,
+      "attempted_count": 2,
+      "body_acquired_count": 0,
+      "type4_derived_count": 2,
+      "eligible_authorities": [
+        "hcj_6821_93_mizrahi",
+        "hcj_1715_97_investment_managers"
+      ],
+      "skipped_not_derivable": [],
+      "discovery_fed_attempts": 2,
+      "injected_candidate_ids": [],
+      "metadata_only_holdings": 0,
+      "blocked_by_origin_count": 0,
+      "canonical_authority_gaps": [
+        {
+          "docket": "6821/93",
+          "reason": "error sending request from 10.32.134.228:34848 for https://elyon1.court.gov.il/heb/psika/word/taam/taam12960.htm (84.110.173.108:443): client error (SendRequest): connection error: Connection reset by",
+          "authority_id": "hcj_6821_93_mizrahi",
+          "authority_name": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+          "discovery_candidate_count": 2
+        },
+        {
+          "docket": "1715/97",
+          "reason": "official_fetch_stopped:repeated_connection_reset",
+          "authority_id": "hcj_1715_97_investment_managers",
+          "authority_name": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות נ' שר האוצר",
+          "discovery_candidate_count": 2
+        }
+      ],
+      "type4_body_acquired_count": 0,
+      "type4_probe_reached_count": 0,
+      "bodyless_judgment_citations": 0,
+      "skipped_already_body_acquired": [],
+      "citations_without_body_acquired": 1
+    },
+    "canonical_authority_acquisition_trigger": {
+      "reason": "depth_mode_eligible",
+      "depth_mode": "broad_research",
+      "max_dockets": 2,
+      "depth_eligible": true
+    },
+    "judgment_text_acquisition": {
+      "ms": 6055,
+      "mode": "doctrine_explanation",
+      "budget": {
+        "other": 2,
+        "total": 2,
+        "leading": 2
+      },
+      "enabled": true,
+      "attempts": [
+        {
+          "ms": 3253,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2",
+          "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+          "success": true,
+          "candidate_id": "4c83c39d-2969-4643-b855-5e1cf23d6f0a",
+          "title_signal": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+          "docket_signal": "בג\"ץ 6427/02",
+          "failure_reason": null,
+          "synthesis_role": "secondary_commentary",
+          "trigger_reason": "no_judgment_body_text",
+          "has_holding_text": false,
+          "method_succeeded": "local_db_docket_lookup",
+          "docket_normalized": "bagatz:6427/2",
+          "methods_attempted": [
+            "direct_file_fetch",
+            "local_db_docket_lookup"
+          ],
+          "judgment_candidate": true,
+          "usable_for_holding": false,
+          "acquisition_success": true,
+          "acquired_text_length": 6000,
+          "final_text_usability": "full_text",
+          "text_usability_after": "full_text",
+          "acquisition_attempted": true,
+          "extracted_text_length": 11391,
+          "text_usability_before": "substantive_excerpt",
+          "acquisition_failure_reasons": [],
+          "acquisition_methods_attempted": [
+            "direct_file_fetch",
+            "local_db_docket_lookup"
+          ],
+          "body_contains_docket_or_title": true,
+          "can_support_synthesis_holding": false
+        },
+        {
+          "ms": 2577,
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_5_4614-05.pdf&type=2",
+          "title": "עע\"מ 4614-05 - מדינת ישראל נ. אבנר אורן",
+          "success": true,
+          "candidate_id": "0fa84527-6798-4175-b889-4864686f49a9",
+          "title_signal": "עע\"מ 4614-05 - מדינת ישראל נ. אבנר אורן",
+          "docket_signal": "עע\"מ 4614/05",
+          "failure_reason": null,
+          "synthesis_role": "secondary_commentary",
+          "trigger_reason": "no_judgment_body_text",
+          "has_holding_text": true,
+          "method_succeeded": "local_db_docket_lookup",
+          "docket_normalized": "aam:4614/5",
+          "methods_attempted": [
+            "direct_file_fetch",
+            "local_db_docket_lookup"
+          ],
+          "judgment_candidate": true,
+          "usable_for_holding": true,
+          "acquisition_success": true,
+          "acquired_text_length": 6000,
+          "final_text_usability": "full_text",
+          "text_usability_after": "full_text",
+          "acquisition_attempted": true,
+          "extracted_text_length": 11325,
+          "text_usability_before": "substantive_excerpt",
+          "acquisition_failure_reasons": [],
+          "acquisition_methods_attempted": [
+            "direct_file_fetch",
+            "local_db_docket_lookup"
+          ],
+          "body_contains_docket_or_title": true,
+          "can_support_synthesis_holding": true
+        }
+      ],
+      "excluded": [
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-6732-20-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%94%d7%9b/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 6732/20 האגודה לזכויות האזרח בישראל נ׳ הכנסת פסק דין (01.03.2021)",
+          "reason": "budget_exhausted",
+          "candidate_id": "e514f2e2-0d52-437c-aebd-4b251e7d6055"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5500",
+          "title": "ביהמ\"ש העליון, אב\"ד המשנה לנשיאה (בדימוס) ניל הנדל, השפט נעם סולברג והשופט עופר גרוסקופף: פס\"ד בשאלת חוקתיותו של ההסדר הפוטר את המדינה מאחריות נזיקית על נזקים הנגרמים על-ידה לתושבי רצועת עזה (ע\"א 993/19)",
+          "reason": "budget_exhausted",
+          "candidate_id": "fbfc9603-ffaf-44f4-8b1e-e028e5c75430"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3980",
+          "title": "ביהמ\"ש השלום לנוער, השופט ניר זנו: הכרעת דין בכתב אישום המייחס עבירות של גניבת רכב (ת\"פ 28951-12-22)",
+          "reason": "budget_exhausted",
+          "candidate_id": "ac95b287-81db-434b-a4fa-4e7b9fa240dc"
+        }
+      ],
+      "successes": 5,
+      "attempts_made": 2,
+      "eligible_count": 5,
+      "stage_stop_reason": null,
+      "judgment_candidates": 5,
+      "eligibility_diagnostics": [
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3980",
+          "title": "ביהמ\"ש השלום לנוער, השופט ניר זנו: הכרעת דין בכתב אישום המייחס עבירות של גניבת רכב (ת\"פ 28951-12-22)",
+          "eligible": true,
+          "citable_as": "judgment",
+          "rank_score": -55,
+          "rank_reason": "+docket_signal,planner_judgment_role,integrity_judgment_document | -institutional_or_root_page,listing_or_index_page",
+          "source_type": "caselaw",
+          "candidate_id": "ac95b287-81db-434b-a4fa-4e7b9fa240dc",
+          "planner_role": "primary_statute",
+          "has_court_url": false,
+          "authority_tier": "official_primary",
+          "synthesis_role": "applying_candidate",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": null,
+          "has_party_names": false,
+          "has_download_url": false,
+          "docket_normalized": "tap:28951/12/22",
+          "eligibility_basis": [
+            "docket_signal",
+            "planner_role_with_case_identity"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": false,
+          "rank_before_acquisition": 5,
+          "would_have_been_attempted_under_relaxed_rule": true
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5500",
+          "title": "ביהמ\"ש העליון, אב\"ד המשנה לנשיאה (בדימוס) ניל הנדל, השפט נעם סולברג והשופט עופר גרוסקופף: פס\"ד בשאלת חוקתיותו של ההסדר הפוטר את המדינה מאחריות נזיקית על נזקים הנגרמים על-ידה לתושבי רצועת עזה (ע\"א 993/19)",
+          "eligible": true,
+          "citable_as": "judgment",
+          "rank_score": -45,
+          "rank_reason": "+docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document | -institutional_or_root_page,listing_or_index_page",
+          "source_type": "caselaw",
+          "candidate_id": "fbfc9603-ffaf-44f4-8b1e-e028e5c75430",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "official_primary",
+          "synthesis_role": "leading_candidate",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": null,
+          "has_party_names": false,
+          "has_download_url": false,
+          "docket_normalized": "aa:993/19",
+          "eligibility_basis": [
+            "docket_signal",
+            "planner_role_with_case_identity"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": false,
+          "rank_before_acquisition": 4,
+          "would_have_been_attempted_under_relaxed_rule": true
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2",
+          "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+          "eligible": true,
+          "citable_as": "commentary",
+          "rank_score": 95,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal",
+          "source_type": "supreme_court_il",
+          "candidate_id": "4c83c39d-2969-4643-b855-5e1cf23d6f0a",
+          "planner_role": "primary_statute",
+          "has_court_url": true,
+          "authority_tier": "official_primary",
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": null,
+          "has_party_names": false,
+          "has_download_url": true,
+          "docket_normalized": "bagatz:6427/2",
+          "eligibility_basis": [
+            "docket_signal",
+            "official_court_url"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": false,
+          "rank_before_acquisition": 1,
+          "would_have_been_attempted_under_relaxed_rule": false
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-6732-20-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%94%d7%9b/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "title": "בג\"ץ 6732/20 האגודה לזכויות האזרח בישראל נ׳ הכנסת פסק דין (01.03.2021)",
+          "eligible": true,
+          "citable_as": "commentary",
+          "rank_score": 15,
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "source_type": "caselaw",
+          "candidate_id": "e514f2e2-0d52-437c-aebd-4b251e7d6055",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "secondary_commentary",
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": null,
+          "has_party_names": true,
+          "has_download_url": false,
+          "docket_normalized": "bagatz:6732/20",
+          "eligibility_basis": [
+            "docket_signal",
+            "case_title_party_names"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 3,
+          "would_have_been_attempted_under_relaxed_rule": true
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_5_4614-05.pdf&type=2",
+          "title": "עע\"מ 4614-05 - מדינת ישראל נ. אבנר אורן",
+          "eligible": true,
+          "citable_as": "commentary",
+          "rank_score": 95,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal",
+          "source_type": "supreme_court_il",
+          "candidate_id": "0fa84527-6798-4175-b889-4864686f49a9",
+          "planner_role": "binding_case_law",
+          "has_court_url": true,
+          "authority_tier": "official_primary",
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "substantive_excerpt",
+          "excluded_reason": null,
+          "has_party_names": false,
+          "has_download_url": true,
+          "docket_normalized": "aam:4614/5",
+          "eligibility_basis": [
+            "docket_signal",
+            "official_court_url"
+          ],
+          "has_docket_signal": true,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": false,
+          "rank_before_acquisition": 2,
+          "would_have_been_attempted_under_relaxed_rule": false
+        }
+      ],
+      "retrieval_budget_exceeded": false,
+      "acquisition_budget_spent_on": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2",
+          "rank": 1,
+          "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+          "success": true,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal",
+          "candidate_id": "4c83c39d-2969-4643-b855-5e1cf23d6f0a",
+          "official_judgment_document": true
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_5_4614-05.pdf&type=2",
+          "rank": 2,
+          "title": "עע\"מ 4614-05 - מדינת ישראל נ. אבנר אורן",
+          "success": true,
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal",
+          "candidate_id": "0fa84527-6798-4175-b889-4864686f49a9",
+          "official_judgment_document": true
+        }
+      ],
+      "local_judgment_body_upgrade": [
+        {
+          "upgraded": true,
+          "source_id": "e514f2e2-0d52-437c-aebd-4b251e7d6055",
+          "match_method": "candidate_document_id",
+          "skipped_reason": null,
+          "body_chars_after": 6000,
+          "local_body_chars": 11832,
+          "verification_passed": true,
+          "snippet_chars_before": 400,
+          "candidate_document_id": "5972dec5-0473-49dc-8e29-50a3d91f6b7e"
+        },
+        {
+          "upgraded": true,
+          "source_id": "fbfc9603-ffaf-44f4-8b1e-e028e5c75430",
+          "match_method": "candidate_document_id",
+          "skipped_reason": null,
+          "body_chars_after": 6000,
+          "local_body_chars": 12003,
+          "verification_passed": true,
+          "snippet_chars_before": 400,
+          "candidate_document_id": "25d9b177-c2da-4ad8-aaf9-35b3b57abdd6"
+        },
+        {
+          "upgraded": true,
+          "source_id": "ac95b287-81db-434b-a4fa-4e7b9fa240dc",
+          "match_method": "candidate_document_id",
+          "skipped_reason": null,
+          "body_chars_after": 6000,
+          "local_body_chars": 12004,
+          "verification_passed": true,
+          "snippet_chars_before": 400,
+          "candidate_document_id": "2273187b-158c-4542-b3cd-1f79702e1252"
+        }
+      ],
+      "local_judgment_stub_detection": [
+        {
+          "source_id": "ac95b287-81db-434b-a4fa-4e7b9fa240dc",
+          "body_chars": 1500,
+          "was_exact_400": false,
+          "upgrade_attempted": true,
+          "classified_as_stub": false
+        },
+        {
+          "source_id": "fbfc9603-ffaf-44f4-8b1e-e028e5c75430",
+          "body_chars": 1500,
+          "was_exact_400": false,
+          "upgrade_attempted": true,
+          "classified_as_stub": false
+        },
+        {
+          "source_id": "4c83c39d-2969-4643-b855-5e1cf23d6f0a",
+          "body_chars": 1500,
+          "was_exact_400": false,
+          "upgrade_attempted": false,
+          "classified_as_stub": false
+        },
+        {
+          "source_id": "e514f2e2-0d52-437c-aebd-4b251e7d6055",
+          "body_chars": 1500,
+          "was_exact_400": false,
+          "upgrade_attempted": true,
+          "classified_as_stub": false
+        },
+        {
+          "source_id": "0fa84527-6798-4175-b889-4864686f49a9",
+          "body_chars": 1500,
+          "was_exact_400": false,
+          "upgrade_attempted": false,
+          "classified_as_stub": false
+        }
+      ],
+      "speculative_extraction_stopped": false,
+      "official_judgment_documents_found": 2,
+      "skipped_higher_quality_candidates": 0,
+      "local_judgment_body_upgrade_budget": {
+        "attempted": 3,
+        "succeeded": 3,
+        "elapsed_ms": 83,
+        "skipped_due_cap": 0,
+        "skipped_due_time_budget": 0
+      },
+      "official_judgment_documents_acquired": 2,
+      "institutional_pages_excluded_before_budget": 2,
+      "judgment_candidate_rank_before_acquisition": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_14_6427-02.pdf&type=2",
+          "rank": 1,
+          "score": 95,
+          "title": "בג\"ץ 6427-02 - התנועה לאיכות השלטון בישראל נ. הכנסת",
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal",
+          "candidate_id": "4c83c39d-2969-4643-b855-5e1cf23d6f0a",
+          "negative_signals": [],
+          "positive_signals": [
+            "official_court_download_url",
+            "direct_judgment_document",
+            "docket_signal"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": true
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/1&fileName=SA1_5_4614-05.pdf&type=2",
+          "rank": 2,
+          "score": 95,
+          "title": "עע\"מ 4614-05 - מדינת ישראל נ. אבנר אורן",
+          "rank_reason": "+official_court_download_url,direct_judgment_document,docket_signal",
+          "candidate_id": "0fa84527-6798-4175-b889-4864686f49a9",
+          "negative_signals": [],
+          "positive_signals": [
+            "official_court_download_url",
+            "direct_judgment_document",
+            "docket_signal"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": true
+        },
+        {
+          "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-6732-20-%d7%94%d7%90%d7%92%d7%95%d7%93%d7%94-%d7%9c%d7%96%d7%9b%d7%95%d7%99%d7%95%d7%aa-%d7%94%d7%90%d7%96%d7%a8%d7%97-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%94%d7%9b/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "rank": 3,
+          "score": 15,
+          "title": "בג\"ץ 6732/20 האגודה לזכויות האזרח בישראל נ׳ הכנסת פסק דין (01.03.2021)",
+          "rank_reason": "+docket_signal,case_title_pattern | -commentary_with_case_mention_only",
+          "candidate_id": "e514f2e2-0d52-437c-aebd-4b251e7d6055",
+          "negative_signals": [
+            "commentary_with_case_mention_only"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5500",
+          "rank": 4,
+          "score": -45,
+          "title": "ביהמ\"ש העליון, אב\"ד המשנה לנשיאה (בדימוס) ניל הנדל, השפט נעם סולברג והשופט עופר גרוסקופף: פס\"ד בשאלת חוקתיותו של ההסדר הפוטר את המדינה מאחריות נזיקית על נזקים הנגרמים על-ידה לתושבי רצועת עזה (ע\"א 993/19)",
+          "rank_reason": "+docket_signal,planner_judgment_role,planner_leading_role,integrity_judgment_document | -institutional_or_root_page,listing_or_index_page",
+          "candidate_id": "fbfc9603-ffaf-44f4-8b1e-e028e5c75430",
+          "negative_signals": [
+            "institutional_or_root_page",
+            "listing_or_index_page"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "planner_judgment_role",
+            "planner_leading_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": true,
+          "is_official_judgment_document": false
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3980",
+          "rank": 5,
+          "score": -55,
+          "title": "ביהמ\"ש השלום לנוער, השופט ניר זנו: הכרעת דין בכתב אישום המייחס עבירות של גניבת רכב (ת\"פ 28951-12-22)",
+          "rank_reason": "+docket_signal,planner_judgment_role,integrity_judgment_document | -institutional_or_root_page,listing_or_index_page",
+          "candidate_id": "ac95b287-81db-434b-a4fa-4e7b9fa240dc",
+          "negative_signals": [
+            "institutional_or_root_page",
+            "listing_or_index_page"
+          ],
+          "positive_signals": [
+            "docket_signal",
+            "planner_judgment_role",
+            "integrity_judgment_document"
+          ],
+          "is_institutional_or_listing": true,
+          "is_official_judgment_document": false
+        }
+      ]
+    },
+    "source_integrity_tiers": {
+      "statute_mirror": 1,
+      "official_primary": 7,
+      "secondary_commentary": 15
+    },
+    "source_integrity_admitted": 23,
+    "discovery_precision": {
+      "ms": 15,
+      "status": "completed",
+      "version": "discovery_precision_and_listing_suppression_v1",
+      "processed": 129,
+      "backfilled": 2,
+      "classified": 129,
+      "pool_after": 22,
+      "suppressed": [
+        {
+          "url": "https://runilawreview.org/2016/06/09/volume19_roznaisommer/",
+          "title": "\"אֵם כל הזכויות\": הזכות החוקתית לחיים | יניב רוזנאי והלל סומר (כרך יט)",
+          "reason": "index_or_listing:listing_title_pattern",
+          "candidate_id": "227d2644-062b-4cf9-9e71-931d048eff5b",
+          "discovery_class": "index_or_listing"
+        },
+        {
+          "url": "https://runilawreview.org/2016/06/09/volume19_roznaisommer/",
+          "title": "\"אֵם כל הזכויות\": הזכות החוקתית לחיים | יניב רוזנאי והלל סומר (כרך יט)",
+          "reason": "index_or_listing:listing_title_pattern",
+          "candidate_id": "903dd3f1-35a0-400e-8ef7-bad84c5a463e",
+          "discovery_class": "index_or_listing"
+        },
+        {
+          "url": "https://kotar.cet.ac.il/kotarapp/index/Book.aspx?nBookID=103799703",
+          "title": "מידתיות במבט ביקורתי ומשווה",
+          "reason": "index_or_listing:listing_url_path+integrity_index_or_listing",
+          "candidate_id": "c02b40ab-835b-4c8f-aee2-8213ca4bcfcb",
+          "discovery_class": "index_or_listing"
+        }
+      ],
+      "pool_before": 129,
+      "task_intent": "doctrinal_explanation",
+      "backfill_ran": true,
+      "class_counts": {
+        "metadata_only": 6,
+        "index_or_listing": 3,
+        "citable_candidate": 91,
+        "possible_body_page": 29
+      },
+      "o_n_guard_ok": true,
+      "suppression_ran": true,
+      "protected_counts": {
+        "exact_docket_identity": 12,
+        "official_primary_page": 11,
+        "local_corpus_substantive": 60,
+        "local_caselaw_substantive_body": 33,
+        "article_or_report_with_body_path": 1
+      },
+      "candidates_at_start": 129,
+      "backfilled_by_origin": {
+        "perplexity": 2
+      },
+      "protected_listing_counts": {},
+      "suppressed_reason_counts": {
+        "index_or_listing:listing_title_pattern": 2,
+        "index_or_listing:listing_url_path+integrity_index_or_listing": 1
+      },
+      "raw_index_or_listing_ratio": 0.023,
+      "not_suppressible_reason_counts": {
+        "protected:exact_docket_identity": 12,
+        "protected:official_primary_page": 11,
+        "protected:local_corpus_substantive": 60,
+        "class_not_suppressible:metadata_only": 2,
+        "class_not_suppressible:citable_candidate": 1,
+        "protected:local_caselaw_substantive_body": 33,
+        "class_not_suppressible:possible_body_page": 6,
+        "protected:article_or_report_with_body_path": 1
+      },
+      "final_raw_index_or_listing_ratio": 0,
+      "final_suppressible_listing_ratio": 0,
+      "suppressible_index_or_listing_ratio": 0.023
+    },
+    "claim_source_plan": {
+      "rows": [
+        {
+          "reason": "matched_4_sources_for_doctrinal_rule",
+          "claim_id": "C1",
+          "claim_type": "doctrinal_rule",
+          "block_topic": "מהו מבנה מבחן המידתיות כפי שנקבע בפסיקה (שלבי המבחן: תכלית לגיטימית, התאמה/הכרח,",
+          "allowed_roles": [
+            "פסיקה (עוגן הלכתי / יישום / דוגמה)",
+            "חקיקה (עוגן נורמטיבי ראשוני)",
+            "ספרות אקדמית (רקע דוקטרינרי / תיאוריה / ביקורת / השוואה)"
+          ],
+          "eligible_count": 16,
+          "preferred_ceiling": 4,
+          "preferred_per_role": {
+            "statute": 2,
+            "judgment": 2
+          },
+          "preferred_source_ids": [
+            "s1",
+            "s9",
+            "s2",
+            "s13"
+          ],
+          "disallowed_source_ids": [],
+          "unsupported_or_cautious": false
+        },
+        {
+          "reason": "matched_4_sources_for_critique",
+          "claim_id": "C2",
+          "claim_type": "critique",
+          "block_topic": "כיצד מגדירים בתי המשפט את עוצמת הביקורת (intensity of review) במבחן המידתיות ומה",
+          "allowed_roles": [
+            "ספרות אקדמית (רקע דוקטרינרי / תיאוריה / ביקורת / השוואה)",
+            "פסיקה (עוגן הלכתי / יישום / דוגמה)"
+          ],
+          "eligible_count": 13,
+          "preferred_ceiling": 4,
+          "preferred_per_role": {
+            "academic": 2,
+            "judgment": 2
+          },
+          "preferred_source_ids": [
+            "s9",
+            "s6",
+            "s13",
+            "s15"
+          ],
+          "disallowed_source_ids": [
+            "s1",
+            "s2"
+          ],
+          "unsupported_or_cautious": false
+        },
+        {
+          "reason": "matched_4_sources_for_implementation_example",
+          "claim_id": "C3",
+          "claim_type": "implementation_example",
+          "block_topic": "האם ויש הבדל בשימוש במבחן המידתיות בעת בחינת חוקי יסוד/חקיקה מול החלטות מנהליות,",
+          "allowed_roles": [
+            "פסיקה (עוגן הלכתי / יישום / דוגמה)",
+            "חומר מוסדי (הקשר מדיניות / דיווח עובדתי)",
+            "ספרות אקדמית (רקע דוקטרינרי / תיאוריה / ביקורת / השוואה)"
+          ],
+          "eligible_count": 15,
+          "preferred_ceiling": 4,
+          "preferred_per_role": {
+            "academic": 1,
+            "judgment": 3
+          },
+          "preferred_source_ids": [
+            "s7",
+            "s3",
+            "s9",
+            "s13"
+          ],
+          "disallowed_source_ids": [
+            "s1",
+            "s2"
+          ],
+          "unsupported_or_cautious": false
+        },
+        {
+          "reason": "matched_4_sources_for_case_holding",
+          "claim_id": "C4",
+          "claim_type": "case_holding",
+          "block_topic": "תוצאות פרקטיות של יישום מבחן המידתיות: תוצאות אפשריות (הפיכת הוראה/מבחן, צמצום פ",
+          "allowed_roles": [
+            "פסיקה (עוגן הלכתי / יישום / דוגמה)"
+          ],
+          "eligible_count": 4,
+          "preferred_ceiling": 4,
+          "preferred_per_role": {
+            "judgment": 4
+          },
+          "preferred_source_ids": [
+            "s9",
+            "s13",
+            "s7",
+            "s5"
+          ],
+          "disallowed_source_ids": [
+            "s1",
+            "s2",
+            "s3",
+            "s4",
+            "s6",
+            "s8",
+            "s10",
+            "s11",
+            "s12",
+            "s14",
+            "s15",
+            "s16",
+            "s17"
+          ],
+          "unsupported_or_cautious": false
+        }
+      ],
+      "version": "v1.0",
+      "academic_mode": false,
+      "statute_dominance": {
+        "version": "web_source_usability_and_authority_selection_v1",
+        "notice_he": null,
+        "promoted_refs": [],
+        "question_signals": [],
+        "statutory_claims": [],
+        "statutory_question": false,
+        "statute_absent_declared": false,
+        "statute_sources_available": [
+          "s1",
+          "s2"
+        ]
+      },
+      "authority_priority": {
+        "rows": [
+          {
+            "ranked": [
+              {
+                "ref": "s1",
+                "tier": "direct_primary",
+                "score": 100,
+                "reason": "primary_authority_direct_support",
+                "source_class": "statute",
+                "comparative_only": false
+              },
+              {
+                "ref": "s2",
+                "tier": "direct_primary",
+                "score": 97,
+                "reason": "primary_authority_direct_support",
+                "source_class": "statute",
+                "comparative_only": false
+              },
+              {
+                "ref": "s9",
+                "tier": "canonical_primary",
+                "score": 74,
+                "reason": "official_or_body_acquired_primary",
+                "source_class": "judgment",
+                "comparative_only": false
+              },
+              {
+                "ref": "s13",
+                "tier": "canonical_primary",
+                "score": 73,
+                "reason": "official_or_body_acquired_primary",
+                "source_class": "judgment",
+                "comparative_only": false
+              }
+            ],
+            "omitted": [],
+            "claim_id": "C1",
+            "reordered": true,
+            "representative_by_class": {
+              "statute": "s1",
+              "judgment": "s9"
+            }
+          },
+          {
+            "ranked": [
+              {
+                "ref": "s9",
+                "tier": "canonical_primary",
+                "score": 75,
+                "reason": "official_or_body_acquired_primary",
+                "source_class": "judgment",
+                "comparative_only": false
+              },
+              {
+                "ref": "s13",
+                "tier": "canonical_primary",
+                "score": 74,
+                "reason": "official_or_body_acquired_primary",
+                "source_class": "judgment",
+                "comparative_only": false
+              },
+              {
+                "ref": "s6",
+                "tier": "role_compatible_secondary",
+                "score": 48,
+                "reason": "on_topic_secondary_material",
+                "source_class": "academic",
+                "comparative_only": false
+              },
+              {
+                "ref": "s15",
+                "tier": "role_compatible_secondary",
+                "score": 47,
+                "reason": "on_topic_secondary_material",
+                "source_class": "academic",
+                "comparative_only": false
+              }
+            ],
+            "omitted": [],
+            "claim_id": "C2",
+            "reordered": true,
+            "representative_by_class": {
+              "academic": "s6",
+              "judgment": "s9"
+            }
+          },
+          {
+            "ranked": [
+              {
+                "ref": "s7",
+                "tier": "canonical_primary",
+                "score": 75,
+                "reason": "official_or_body_acquired_primary",
+                "source_class": "judgment",
+                "comparative_only": false
+              },
+              {
+                "ref": "s9",
+                "tier": "canonical_primary",
+                "score": 74,
+                "reason": "official_or_body_acquired_primary",
+                "source_class": "judgment",
+                "comparative_only": false
+              },
+              {
+                "ref": "s13",
+                "tier": "canonical_primary",
+                "score": 73,
+                "reason": "official_or_body_acquired_primary",
+                "source_class": "judgment",
+                "comparative_only": false
+              },
+              {
+                "ref": "s3",
+                "tier": "role_compatible_secondary",
+                "score": 47,
+                "reason": "on_topic_secondary_material",
+                "source_class": "academic",
+                "comparative_only": false
+              }
+            ],
+            "omitted": [],
+            "claim_id": "C3",
+            "reordered": true,
+            "representative_by_class": {
+              "academic": "s3",
+              "judgment": "s7"
+            }
+          },
+          {
+            "ranked": [
+              {
+                "ref": "s9",
+                "tier": "canonical_primary",
+                "score": 75,
+                "reason": "official_or_body_acquired_primary",
+                "source_class": "judgment",
+                "comparative_only": false
+              },
+              {
+                "ref": "s13",
+                "tier": "canonical_primary",
+                "score": 74,
+                "reason": "official_or_body_acquired_primary",
+                "source_class": "judgment",
+                "comparative_only": false
+              },
+              {
+                "ref": "s7",
+                "tier": "canonical_primary",
+                "score": 73,
+                "reason": "official_or_body_acquired_primary",
+                "source_class": "judgment",
+                "comparative_only": false
+              },
+              {
+                "ref": "s5",
+                "tier": "general_background",
+                "score": 22,
+                "reason": "general_background",
+                "source_class": "judgment",
+                "comparative_only": false
+              }
+            ],
+            "omitted": [],
+            "claim_id": "C4",
+            "reordered": false,
+            "representative_by_class": {
+              "judgment": "s9"
+            }
+          }
+        ],
+        "version": "web_source_usability_and_authority_selection_v1",
+        "tier_counts": {
+          "direct_primary": 2,
+          "canonical_primary": 10,
+          "general_background": 1,
+          "role_compatible_secondary": 3
+        }
+      }
+    },
+    "drafter_block_source_compliance": {
+      "rows": [
+        {
+          "reason": "within_plan",
+          "block_id": "b1",
+          "claim_id": "C1",
+          "compliant": true,
+          "allowed_source_refs": [
+            "s1",
+            "s9",
+            "s2",
+            "s13"
+          ],
+          "emitted_source_refs": [
+            "s1"
+          ],
+          "disallowed_emitted_refs": []
+        },
+        {
+          "reason": "within_plan",
+          "block_id": "b2",
+          "claim_id": "C1",
+          "compliant": true,
+          "allowed_source_refs": [
+            "s1",
+            "s9",
+            "s2",
+            "s13"
+          ],
+          "emitted_source_refs": [
+            "s1"
+          ],
+          "disallowed_emitted_refs": []
+        },
+        {
+          "reason": "within_plan",
+          "block_id": "b3",
+          "claim_id": "C2",
+          "compliant": true,
+          "allowed_source_refs": [
+            "s9",
+            "s6",
+            "s13",
+            "s15"
+          ],
+          "emitted_source_refs": [
+            "s15",
+            "s6"
+          ],
+          "disallowed_emitted_refs": []
+        },
+        {
+          "reason": "within_plan",
+          "block_id": "b4",
+          "claim_id": "C3",
+          "compliant": true,
+          "allowed_source_refs": [
+            "s7",
+            "s3",
+            "s9",
+            "s13"
+          ],
+          "emitted_source_refs": [
+            "s7"
+          ],
+          "disallowed_emitted_refs": []
+        },
+        {
+          "reason": "within_plan",
+          "block_id": "b5",
+          "claim_id": "C4",
+          "compliant": true,
+          "allowed_source_refs": [
+            "s9",
+            "s13",
+            "s7",
+            "s5"
+          ],
+          "emitted_source_refs": [
+            "s9",
+            "s13"
+          ],
+          "disallowed_emitted_refs": []
+        }
+      ],
+      "version": "v1.0",
+      "violations": 0,
+      "blocks_checked": 5,
+      "blocks_compliant": 5
+    },
+    "post_draft_alignment_filter": {
+      "kept": 7,
+      "rows": [
+        {
+          "kept": true,
+          "reason": "role_and_area_compatible",
+          "dropped": false,
+          "claim_id": "b1",
+          "role_fit": true,
+          "source_id": "s15",
+          "csm_result": "kept",
+          "citation_id": "b1:s15",
+          "legal_area_fit": true
+        },
+        {
+          "kept": false,
+          "reason": "class_statute_not_acceptable_for_critique",
+          "dropped": true,
+          "claim_id": "b1",
+          "role_fit": false,
+          "source_id": "s1",
+          "csm_result": "kept",
+          "citation_id": "b1:s1",
+          "legal_area_fit": true
+        },
+        {
+          "kept": true,
+          "reason": "role_and_area_compatible",
+          "dropped": false,
+          "claim_id": "b2",
+          "role_fit": true,
+          "source_id": "s1",
+          "csm_result": "kept",
+          "citation_id": "b2:s1",
+          "legal_area_fit": true
+        },
+        {
+          "kept": true,
+          "reason": "role_and_area_compatible",
+          "dropped": false,
+          "claim_id": "b3",
+          "role_fit": true,
+          "source_id": "s15",
+          "csm_result": "kept",
+          "citation_id": "b3:s15",
+          "legal_area_fit": true
+        },
+        {
+          "kept": true,
+          "reason": "role_and_area_compatible",
+          "dropped": false,
+          "claim_id": "b3",
+          "role_fit": true,
+          "source_id": "s6",
+          "csm_result": "kept",
+          "citation_id": "b3:s6",
+          "legal_area_fit": true
+        },
+        {
+          "kept": true,
+          "reason": "role_and_area_compatible",
+          "dropped": false,
+          "claim_id": "b4",
+          "role_fit": true,
+          "source_id": "s7",
+          "csm_result": "kept",
+          "citation_id": "b4:s7",
+          "legal_area_fit": true
+        },
+        {
+          "kept": true,
+          "reason": "role_and_area_compatible",
+          "dropped": false,
+          "claim_id": "b5",
+          "role_fit": true,
+          "source_id": "s9",
+          "csm_result": "kept",
+          "citation_id": "b5:s9",
+          "legal_area_fit": true
+        },
+        {
+          "kept": true,
+          "reason": "role_and_area_compatible",
+          "dropped": false,
+          "claim_id": "b5",
+          "role_fit": true,
+          "source_id": "s13",
+          "csm_result": "kept",
+          "citation_id": "b5:s13",
+          "legal_area_fit": true
+        }
+      ],
+      "checked": 8,
+      "dropped": 1,
+      "version": "v1.0"
+    },
+    "claim_source_match": {
+      "applied": true,
+      "rebinding": {
+        "applied": true,
+        "unbound": 2,
+        "decisions": [
+          {
+            "ref": "s1",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 0
+          },
+          {
+            "ref": "s9",
+            "reason": "no_substantive_binding",
+            "binding": "unbound",
+            "block_index": 0
+          },
+          {
+            "ref": "s1",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 1
+          },
+          {
+            "ref": "s6",
+            "reason": "same_area_direct_acquired_body",
+            "binding": "area_direct",
+            "block_index": 2
+          },
+          {
+            "ref": "s15",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 2
+          },
+          {
+            "ref": "s7",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 3
+          },
+          {
+            "ref": "s3",
+            "reason": "no_substantive_binding",
+            "binding": "unbound",
+            "block_index": 3
+          },
+          {
+            "ref": "s9",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 4
+          },
+          {
+            "ref": "s13",
+            "reason": "claim_id_match",
+            "binding": "exact",
+            "block_index": 4
+          }
+        ],
+        "bound_exact": 6,
+        "bound_facet": 0,
+        "bound_topical": 0,
+        "capped_ref_count": 0,
+        "bound_area_direct": 1,
+        "rebound_ref_count": 1,
+        "claim_mismatch_drops_after": 2,
+        "claim_mismatch_drops_before": 3
+      },
+      "mismatch_reason": [
+        "claim_mismatch"
+      ],
+      "claim_categories": [
+        {
+          "basis": "declared_claim_category",
+          "category": "doctrinal_synthesis",
+          "kept_refs": [
+            "s1"
+          ],
+          "block_index": 0,
+          "support_levels": [
+            "statute"
+          ]
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "doctrinal_synthesis",
+          "kept_refs": [
+            "s1"
+          ],
+          "block_index": 1,
+          "support_levels": [
+            "statute"
+          ]
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "scholarly_commentary",
+          "kept_refs": [
+            "s15",
+            "s6"
+          ],
+          "block_index": 2,
+          "support_levels": [
+            "doctrinal_secondary",
+            "doctrinal_secondary"
+          ]
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "contextual_background",
+          "kept_refs": [
+            "s7"
+          ],
+          "block_index": 3,
+          "support_levels": [
+            "judgment"
+          ]
+        },
+        {
+          "basis": "declared_claim_category",
+          "category": "doctrinal_synthesis",
+          "kept_refs": [
+            "s9",
+            "s13"
+          ],
+          "block_index": 4,
+          "support_levels": [
+            "judgment",
+            "judgment"
+          ]
+        }
+      ],
+      "limitation_added": false,
+      "tagged_block_count": 5,
+      "dropped_source_refs": [
+        {
+          "ref": "s9",
+          "reason": "claim_mismatch",
+          "block_index": 0,
+          "block_claim_id": "C1",
+          "claim_category": "doctrinal_synthesis",
+          "block_legal_area": "constitutional",
+          "source_claim_ids": [
+            "C4"
+          ],
+          "source_legal_area": null
+        },
+        {
+          "ref": "s3",
+          "reason": "claim_mismatch",
+          "block_index": 3,
+          "block_claim_id": "C3",
+          "claim_category": "contextual_background",
+          "block_legal_area": "constitutional",
+          "source_claim_ids": [
+            "C1"
+          ],
+          "source_legal_area": null
+        }
+      ],
+      "commentary_only_claims": [
+        "C2"
+      ],
+      "unsupported_block_count": 0,
+      "authority_overstatements": [],
+      "source_ref_mismatch_count": 2,
+      "csm_legal_area_equivalence": [],
+      "primary_support_by_main_claim": true,
+      "primary_supported_block_count": 4,
+      "secondary_supported_block_count": 1,
+      "non_academic_claim_category_calibration": [
+        {
+          "reason": "generic_doctrine_paragraph_without_holding_assertion",
+          "block_id": "b4",
+          "new_category": "doctrinal_synthesis",
+          "old_category": "court_holding",
+          "acceptable_source_classes": [
+            "judgment",
+            "statute",
+            "acquired_doctrinal_secondary"
+          ]
+        }
+      ]
+    },
+    "footnotes_count": 4,
+    "footnotes": [
+      {
+        "n": null,
+        "title": "ביהמ\"ש העליון, אב\"ד המשנה לנשיאה (בדימוס) ניל הנדל, השפט נעם סולברג והשופט עופר גרוסקופף: פס\"ד בשאלת חוקתיותו של ההסדר הפוטר את המדינה מאחריות נזיקית על נזקים הנגרמים על-ידה לתושבי רצועת עזה (ע\"א 993/19)",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=5500",
+        "kind": "caselaw"
+      },
+      {
+        "n": null,
+        "title": "ביהמ\"ש השלום לנוער, השופט ניר זנו: הכרעת דין בכתב אישום המייחס עבירות של גניבת רכב (ת\"פ 28951-12-22)",
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=3980",
+        "kind": "caselaw"
+      },
+      {
+        "n": null,
+        "title": "חוק יסוד: כבוד האדם וחירותו",
+        "url": "https://fs.knesset.gov.il/12/law/12_ls1_830785.pdf",
+        "kind": "legislation"
+      },
+      {
+        "n": null,
+        "title": "על המידתיות של המידתיות: בעקבות ספרו של אהרן ברק, מידתיות במשפט – הפגיעה בזכות החוקתית והגבלותיה",
+        "url": "https://lawjournal.huji.ac.il/article/12/1550",
+        "kind": "journal_article"
+      }
+    ],
+    "answer": "מבחן המידתיות במשפט הישראלי בנוי כשלבי בדיקה מסודרים: קביעת תכלית ראויה של ההגבלה; בדיקת התאמת האמצעי להשגת תכלית זו (קשר רציונלי); בחינת האפשרות של אמצעי פוגע-פחות; ובחינת המידתיות ה.⁴\n\nתכלית ראויה ומידתיות ככלל נובעות במישרין מנוסח סעיף 8 לחוק יסוד: כבוד האדם וחירותו, שמנוסחתו קובעת כי פגיעה בזכויות מותנית בכך שהחוק נועד לתכלית ראויה ובהיות הפגיעה \"במידה שאינה עולה על הנדרש\"; פסיקה עלתה והשתמשה בנוסח זה כבסיס ליישום שלבי המבחן.³\n\nבכתיבה התיאורטית והפסיקהית נידונה עוצמת הביקורת השיפוטית: במקורות שאותרו מודגשת הבחנה בין ביקורת אינטנסיבית, שבה בית המשפט מבצע איזון מעמיק של תועלת מול פגיעה, לבין גישת דהפרנציאליזציה/צניעות שבה השיפוט מוותר יותר על שיקול‑לב המחוקק או הרשות; הספרות קוראת להבחנה שתלויה בטיב הזכות, במורכבות העובדתית ובמרחב השיקול הנתון לגורם המקצועי.⁴\n\nבהבחנה בין בחינת חקיקה לבין בחינת פעולות מנהליות עולה במקורות שאותרו כי המבחן מוחל בהתאמות פרקטיות: בבחינת חקיקה ניתנת לעתים הסתייגות מסוימת בשל ריבונות המחוקק ודרישות הלגיטימציה הדמוקרטית, ואילו בבחינה של החלטה מנהלית המוקד הוא בהוכחת התאמה, חלופות מצויות ועומק הבדיקה העובדתית; דוגמאות ליישום במבחן המנהלי מופיעות בפסקי-דין מקומיים ובהדרכת הספרות.²\n\nנעשה שימוש פרקטי בתוצאות שונות כאשר נמצאת אי‑מידתיות: בתי‑משפט בדקו אפשרויות של צמצום פרשני של ההוראה, שלילת ההוראה או הגבלת יישומה בפסיקה הרלוונטית; במקורות המאותרו יש דגשים שמצביעים על גמישות בסוגי הסעדים והניסוח לעיתים משתנה לפי חומרת הפגיעה והנסיבות של המקרה הא concreto.¹\n\n**מגבלת ביסוס:** התשובה שלהלן נסמכת על חקיקה ו/או על ספרות ופרשנות משפטית שאותרו במלואן, ולא על פסיקה שנוסחה המלא אותר. היא מסבירה את המסגרת הדוקטרינרית בלבד ואינה קובעת הלכה.",
     "metadata_keys": [
-      "branch",
+      "phase",
+      "claims",
       "run_id",
-      "isolate",
+      "drafter",
+      "queries",
       "pipeline",
-      "reaped_at",
-      "prior_stage",
-      "trace_stage",
+      "planning",
+      "total_ms",
+      "verifier",
+      "retrieval",
+      "candidates",
+      "stage_runs",
+      "attachments",
       "trace_status",
-      "research_mode",
-      "concurrency_hint",
-      "trace_started_at",
-      "fast_lane_eligible",
-      "in_flight_at_retrieval",
-      "infrastructure_failure",
-      "terminal_result_written",
-      "reaper_terminal_limitation_written"
+      "dropped_sources",
+      "required_anchors",
+      "drafter_v2_full_compare",
+      "drafter_v2_opus_compare",
+      "drafter_v2_sonnet_compare",
+      "retrieval_budget_enforcement"
     ]
   }
 ]

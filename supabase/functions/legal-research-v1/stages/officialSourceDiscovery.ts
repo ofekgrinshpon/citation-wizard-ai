@@ -85,6 +85,8 @@ import {
   type StrictIdentityResult,
   validateJudgmentIdentityStrict,
 } from "./judgmentIdentity.ts";
+
+declare const Deno: { env: { get(key: string): string | undefined } };
 // judgment_search_first_discovery_v1
 //
 // Deterministic URL derivation from a *model-supplied* docket is fragile: the

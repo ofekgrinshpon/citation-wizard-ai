@@ -117,3 +117,143 @@ export function applyStatuteDominance(input: StatuteDominanceInput): StatuteDomi
   return report;
 }
 
+
+// ── canonical_registry_discovery_and_representative_source_use_v1 (fix 4) ──
+//
+// Live validation showed a square statutory-text question (Q2) finalizing with
+// a judgment as its only footnote. Reordering the plan is not enough when the
+// drafter simply never emits the statute ref, so the invariant is also checked
+// and repaired ON THE DRAFT, before every downstream gate runs.
+//
+// The correction only promotes a statute source that is ALREADY admitted,
+// verified and allowed for the claim. It adds no source, forces no footnote
+// count, and never removes case law — case law stays supplemental.
+
+import type { StructuredDraft } from "./structuredValidation.ts";
+
+/** Telemetry row: `statute_dominance_check`. */
+export interface StatuteDominanceCheck {
+  run_id: string | null;
+  query_type: "statutory_text" | "other";
+  statute_claims_detected: string[];
+  answer_level_statutory_question: boolean;
+  relevant_statute_available: boolean;
+  statute_source_id: string | null;
+  statute_cited: boolean;
+  statute_first_or_primary: boolean;
+  case_law_used_as_substitute: boolean;
+  correction_applied: boolean;
+  blocked_reason: string | null;
+}
+
+function isVerifiedStatute(s: DrafterInputSource): boolean {
+  if (classifySource(s) !== "statute") return false;
+  if (s.body_acquired === true) return true;
+  return /full_text|substantive_excerpt|has_statutory_text/.test(
+    `${s.text_usability ?? ""} ${s.has_statutory_text ? "has_statutory_text" : ""}`,
+  );
+}
+
+/**
+ * Applies (and reports) statute dominance on the structured draft.
+ * Mutates `draft.blocks[].source_refs` only.
+ */
+export function enforceStatuteDominanceOnDraft(
+  draft: StructuredDraft | null,
+  input: {
+    question: string;
+    sources: DrafterInputSource[];
+    /** claim_id → refs the plan allows for that claim. */
+    allowedByClaim?: Map<string, string[]>;
+    statutoryClaimIds?: string[];
+    run_id?: string | null;
+  },
+): { draft: StructuredDraft | null; check: StatuteDominanceCheck } {
+  const statutory = isStatutoryQuestion(input.question);
+  const statutes = input.sources.filter(isVerifiedStatute);
+  const check: StatuteDominanceCheck = {
+    run_id: input.run_id ?? null,
+    query_type: statutory.hit ? "statutory_text" : "other",
+    statute_claims_detected: input.statutoryClaimIds ?? [],
+    answer_level_statutory_question: statutory.hit,
+    relevant_statute_available: statutes.length > 0,
+    statute_source_id: statutes[0]?.ref ?? null,
+    statute_cited: false,
+    statute_first_or_primary: false,
+    case_law_used_as_substitute: false,
+    correction_applied: false,
+    blocked_reason: null,
+  };
+  const blocks = (draft?.blocks ?? []).filter((b) => b.kind !== "heading") as Array<
+    { claim_id?: string | null; source_refs: string[] }
+  >;
+  const cited = new Set(blocks.flatMap((b) => b.source_refs ?? []));
+  const statuteRefs = new Set(statutes.map((s) => s.ref));
+  check.statute_cited = [...cited].some((r) => statuteRefs.has(r));
+  const firstBlockWithRefs = blocks.find((b) => (b.source_refs ?? []).length > 0);
+  check.statute_first_or_primary = !!firstBlockWithRefs &&
+    statuteRefs.has(firstBlockWithRefs.source_refs[0]);
+  check.case_law_used_as_substitute = statutory.hit && statutes.length > 0 &&
+    !check.statute_cited && cited.size > 0;
+
+  if (!statutory.hit || statutes.length === 0 || !draft) {
+    if (statutory.hit && statutes.length === 0) {
+      check.blocked_reason = "no_verified_statute_source_available";
+    }
+    return { draft, check };
+  }
+
+  const lead = statutes[0];
+  const allowedFor = (claimId: string | null | undefined): boolean => {
+    if (!input.allowedByClaim) return true;
+    const allowed = input.allowedByClaim.get(String(claimId ?? ""));
+    return !allowed || allowed.length === 0 || allowed.includes(lead.ref);
+  };
+
+  if (!check.statute_cited) {
+    // Prefer a statutory claim block; otherwise the first block that already
+    // carries citations (the statute is what that proposition rests on).
+    const target = blocks.find((b) =>
+        (input.statutoryClaimIds ?? []).includes(String(b.claim_id ?? "")) && allowedFor(b.claim_id)
+      ) ??
+      blocks.find((b) => (b.source_refs ?? []).length > 0 && allowedFor(b.claim_id)) ??
+      blocks.find((b) => allowedFor(b.claim_id));
+    if (target) {
+      target.source_refs = [lead.ref, ...(target.source_refs ?? []).filter((r) => r !== lead.ref)];
+      check.correction_applied = true;
+      check.statute_cited = true;
+      check.statute_first_or_primary = true;
+    } else {
+      check.blocked_reason = "no_block_allows_statute_ref";
+    }
+  } else if (!check.statute_first_or_primary && firstBlockWithRefs) {
+    const b = blocks.find((x) => (x.source_refs ?? []).some((r) => statuteRefs.has(r)));
+    if (b) {
+      const statuteRef = b.source_refs.find((r) => statuteRefs.has(r))!;
+      b.source_refs = [statuteRef, ...b.source_refs.filter((r) => r !== statuteRef)];
+      check.correction_applied = true;
+      check.statute_first_or_primary = true;
+    }
+  }
+  return { draft, check };
+}
+
+/** Post-footnote verification: did the statute survive to the final answer? */
+export function verifyStatuteDominanceInFootnotes(
+  check: StatuteDominanceCheck,
+  citedRefs: string[],
+): StatuteDominanceCheck {
+  if (!check.answer_level_statutory_question || !check.relevant_statute_available) return check;
+  const cited = check.statute_source_id ? citedRefs.includes(check.statute_source_id) : false;
+  return {
+    ...check,
+    statute_cited: cited,
+    statute_first_or_primary: cited && citedRefs[0] === check.statute_source_id,
+    case_law_used_as_substitute: !cited && citedRefs.length > 0,
+    blocked_reason: cited
+      ? check.blocked_reason
+      : citedRefs.length > 0
+      ? "statute_available_but_only_case_law_cited"
+      : check.blocked_reason,
+  };
+}

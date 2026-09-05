@@ -8,7 +8,7 @@
 
 import { extractText, getDocumentProxy } from "npm:unpdf@0.12.1";
 import mammoth from "npm:mammoth@1.8.0";
-import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import type { SupabaseClient } from "./supabaseClientType.ts";
 import { detectDockets } from "../stages/docketDetection.ts";
 
 export const ATTACHMENT_LIMITS = {

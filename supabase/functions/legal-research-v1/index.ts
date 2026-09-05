@@ -66,6 +66,7 @@ import {
 } from "./stages/explicitDocketGuard.ts";
 import { mergeAndBudgetQueries } from "./stages/queryMergeAndBudget.ts";
 import { runOfficialSourceDiscovery } from "./stages/officialSourceDiscovery.ts";
+import { runCanonicalRegistryDiscovery } from "./stages/canonicalRegistryDiscovery.ts";
 import {
   detectStatutoryTarget,
   type NonAcademicLocalJudgmentPackFlow,
@@ -1407,10 +1408,29 @@ async function handle(req: Request): Promise<Response> {
         discovery_source: u.url_source ?? "official_discovery",
       }))
   );
+  // canonical_registry_discovery_and_representative_source_use_v1 (fix 1) —
+  // official discovery only queries *nominated* sources, so registry-seeded
+  // canonical authorities were never searched for and acquisition starved with
+  // `discovery_candidate_count: 0`. This bounded lane resolves them locally
+  // first, then issues targeted official discovery queries per authority.
+  const canonicalRegistryDiscovery = await runCanonicalRegistryDiscovery({
+    admin,
+    registry: coreAuthorityRegistry,
+    candidates: pool.candidates,
+    integrity: pool.integrity,
+    run_id,
+    max_authorities: canonicalMaxDockets === 0 ? 0 : 3,
+    budget,
+    markDurable: (name, detail) => budget.markDurable(name, detail),
+  });
+
   const canonicalAcquisition = await runCanonicalAuthorityAcquisition({
     registry: coreAuthorityRegistry,
     candidates: pool.candidates,
-    discovered_urls: discoveredJudgmentUrls,
+    discovered_urls: [
+      ...canonicalRegistryDiscovery.discovered_urls,
+      ...discoveredJudgmentUrls,
+    ],
     integrity: pool.integrity,
     budget,
     max_dockets: canonicalMaxDockets,
@@ -1661,6 +1681,20 @@ async function handle(req: Request): Promise<Response> {
     judgment_text_acquisition: judgmentAcquisition,
     canonical_authority_acquisition: canonicalAcquisition,
     canonical_authority_acquisition_trigger: canonicalAcquisitionTrigger,
+    // canonical_registry_discovery_and_representative_source_use_v1 (fix 1).
+    canonical_registry_discovery: {
+      version: canonicalRegistryDiscovery.version,
+      enabled: canonicalRegistryDiscovery.enabled,
+      skip_reason: canonicalRegistryDiscovery.skip_reason,
+      doctrine_id: canonicalRegistryDiscovery.doctrine_id,
+      authorities_considered: canonicalRegistryDiscovery.authorities_considered,
+      authorities_queried: canonicalRegistryDiscovery.authorities_queried,
+      canonical_registry_discovery_query: canonicalRegistryDiscovery.queries,
+      canonical_discovery_candidate_selection: canonicalRegistryDiscovery.selections,
+      candidate_count: canonicalRegistryDiscovery.candidate_count,
+      local_bodies_injected: canonicalRegistryDiscovery.local_bodies_injected,
+      ms: canonicalRegistryDiscovery.ms,
+    },
     web_tier_health: getWebTierHealth(),
     secondary_body_acquisition: secondaryBodyAcquisition,
     statute_text_acquisition: {
@@ -2844,6 +2878,13 @@ async function handle(req: Request): Promise<Response> {
     claim_source_plan: drafter.claim_source_plan ?? null,
     drafter_block_source_compliance: drafter.drafter_block_source_compliance ?? null,
     post_draft_alignment_filter: drafter.post_draft_alignment_filter ?? null,
+    // canonical_registry_discovery_and_representative_source_use_v1 telemetry.
+    representative_source_selection: drafter.representative_source_selection ?? null,
+    representative_source_use: drafter.representative_source_use ?? null,
+    drafter_representative_source_compliance:
+      drafter.drafter_representative_source_compliance ?? null,
+    statute_dominance_check: drafter.statute_dominance_check ?? null,
+    source_last_mile_funnel: drafter.source_last_mile_funnel ?? null,
 
     // academic_drafter_source_ref_coverage_v2 telemetry.
     academic_drafter_source_ref_emission: drafter.academic_drafter_source_ref_emission ?? null,
