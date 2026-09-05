@@ -2074,7 +2074,7 @@ export async function runDrafterV2(
   // the sources the plan already permits. No source is added or revived.
   const representative_sources: RepresentativeSourceReport =
     buildRepresentativeSourceSelection(question, claims, inputSources, claim_source_plan, {
-      run_id: opts?.runId ?? null,
+      run_id: null,
     });
 
 
