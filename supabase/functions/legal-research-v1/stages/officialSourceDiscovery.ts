@@ -80,6 +80,8 @@ import {
   VERIFIED_SOURCE_CACHE_VERSION,
 } from "./verifiedSourceCache.ts";
 import {
+
+declare const Deno: { env: { get(key: string): string | undefined } };
   IDENTITY_VALIDATION_VERSION,
   identityTermsFor,
   type StrictIdentityResult,

@@ -10,7 +10,7 @@
 // Fail closed: if no usable body is found the source is left exactly as it was
 // and the attempt is logged with its failure reasons.
 
-import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import type { SupabaseClient } from "../lib/supabaseClientType.ts";
 import type { Candidate } from "../lib/types.ts";
 import { extractDocumentText } from "../lib/attachments.ts";
 import type { SourceIntegrity } from "./sourceIntegrity.ts";

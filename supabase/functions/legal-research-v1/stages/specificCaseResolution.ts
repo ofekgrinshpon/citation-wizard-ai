@@ -16,7 +16,7 @@
 // `docket_limitation`. This module never edits the drafter prompt, verifier,
 // sufficiency thresholds, or general retrieval.
 
-import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import type { SupabaseClient } from "../lib/supabaseClientType.ts";
 import type { Candidate } from "../lib/types.ts";
 import {
   detectDockets,
@@ -587,7 +587,7 @@ export async function runSpecificCaseResolution(
       candidate_id: `specific-case:${res.requested_docket_normalized}`,
       claim_id: base?.claim_id ?? "C1",
       role: "binding_case_law",
-      origin: method === "local_db_docket_lookup" ? "local_db" : "web",
+      origin: method === "local_db_docket_lookup" ? "local_db" : "perplexity",
       retrieval_method: "text",
       title: title || (res.requested_docket_display ?? "פסק דין"),
       source_type: "caselaw",
