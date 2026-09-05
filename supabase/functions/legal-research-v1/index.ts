@@ -1418,7 +1418,7 @@ async function handle(req: Request): Promise<Response> {
     registry: coreAuthorityRegistry,
     candidates: pool.candidates,
     integrity: pool.integrity,
-    run_id: runId,
+    run_id,
     max_authorities: canonicalMaxDockets === 0 ? 0 : 3,
     budget,
     markDurable: (name, detail) => budget.markDurable(name, detail),
