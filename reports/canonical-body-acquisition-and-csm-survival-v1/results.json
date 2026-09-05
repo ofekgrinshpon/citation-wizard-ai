@@ -1,0 +1,500 @@
+[
+  {
+    "id": "Q1",
+    "run_id": "227adcd9-47c4-4e60-925d-4b631d6a71aa",
+    "ms": 269537,
+    "doctrine_mapping": null,
+    "canonical_registry_selection": null,
+    "pool_collapse": null,
+    "footnote_richness": {
+      "collapsed_by_cap": 0,
+      "rendered_role_count": 2,
+      "collapsed_by_duplicate": 0,
+      "final_distinct_sources": 3,
+      "approved_but_not_rendered": [],
+      "approved_distinct_sources": 3,
+      "collapsed_by_paragraph_rule": 0,
+      "collapsed_without_valid_reason": 0,
+      "representative_approved_sources": 2
+    },
+    "footnote_materialization": [
+      {
+        "role": "secondary_commentary",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "block_id": 0,
+        "source_id": "7d26defc-15ac-49fe-a26a-701610bb379f",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 2,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "block_id": 1,
+        "source_id": "7d26defc-15ac-49fe-a26a-701610bb379f",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 2,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "leading_candidate",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "block_id": 2,
+        "source_id": "2536f5c9-5635-463d-bbad-bb9b6a879f7d",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": false
+      },
+      {
+        "role": "leading_candidate",
+        "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+        "block_id": 2,
+        "source_id": "0d5295e6-3d1f-4889-9029-94b624988f9f",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 3,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "leading_candidate",
+        "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+        "block_id": 3,
+        "source_id": "0d5295e6-3d1f-4889-9029-94b624988f9f",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "block_id": 4,
+        "source_id": "7d26defc-15ac-49fe-a26a-701610bb379f",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 2,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "block_id": 5,
+        "source_id": "7d26defc-15ac-49fe-a26a-701610bb379f",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "leading_candidate",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "block_id": 6,
+        "source_id": "2536f5c9-5635-463d-bbad-bb9b6a879f7d",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": false
+      }
+    ],
+    "representative": null,
+    "pack_size": null,
+    "footnotes_count": 3,
+    "distinct_cited": 1,
+    "canonical_acquisition": {
+      "attempts": [
+        {
+          "authority": "בג\"ץ 389/80 דפי זהב נ' רשות השידור",
+          "urls": [],
+          "url_source": "none",
+          "result": "not_found",
+          "body_chars": 0,
+          "identity": false,
+          "rejection": "no_derivable_url"
+        },
+        {
+          "authority": "בג\"ץ 935/89 גנור נ' היועץ המשפטי לממשלה",
+          "urls": [
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C89%5C935%5C000%5Cx01&fileName=89000935.X01&type=4",
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C89%5C935%5C000%5Cx02&fileName=89000935.X02&type=4"
+          ],
+          "url_source": "discovery",
+          "result": "fetch_failed",
+          "body_chars": 0,
+          "identity": false,
+          "rejection": "error sending request from 10.32.80.19:50732 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C89%5C935%5C000%5Cx02&fileName=89000935.X02&type=4 (84.110.173.93:443): client"
+        }
+      ],
+      "gaps": [
+        {
+          "docket": "389/80",
+          "reason": "no_derivable_url",
+          "authority_id": "hcj_389_80_dapei_zahav",
+          "authority_name": "בג\"ץ 389/80 דפי זהב נ' רשות השידור",
+          "discovery_candidate_count": 0
+        },
+        {
+          "docket": "935/89",
+          "reason": "error sending request from 10.32.80.19:50732 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C89%5C935%5C000%5Cx02&fileName=89000935.X02&type=4 (84.110.173.93:443): client",
+          "authority_id": "hcj_935_89_ganor",
+          "authority_name": "בג\"ץ 935/89 גנור נ' היועץ המשפטי לממשלה",
+          "discovery_candidate_count": 2
+        }
+      ]
+    },
+    "relay_diagnostics": null,
+    "official_fetch": null,
+    "csm": null,
+    "answer": "עילת הסבירות במשפט המנהלי היא כלי ביקורתי שבא לנסח מידה של בקרה שיפוטית שאינה מחליפה את שיקול הדעת המנהלתי אך בוחנת את עומק ההצדקה של ההחלטה, את עקביותה ההגיונית ואת התאמתה לטווח האפשרויות ההגיוניות העומדות בפני הרשות. במונחים דוקטרינריים עילה זו ממקמת את עצמה בין בקרה פורמלית־פרוצדורלית לבין בקרה מהותית, והיא מאפשרת לבית המשפט לפעול נגד החלטות שהן חריגות קיצוניות מהספקטרום הסביר של ההחלטה הרגילה ללא שימוש במבחן החלפה של שיקול הדעת. מערכת זו נשענת הן על הניתוחים התיאורטיים בספרות והן על הניסוחים הפסיקתיים האחרונים שמדגישים כי השאלה אינה מה היה בית המשפט עצמו עשה, אלא מה רשות סבירה היתה עושה בנסיבות הנתונות.³\n\nתפקידה המעמדי של הסבירות בביקורת השיפוטית הוא להכיל מתווה של דה־פריטציה — כלומר לצמצם את הנטייה להחלפת שיקול הדעת תוך שמירה על פיקוח נגד שימוש לרעה בסמכות. מבחינה פרקטית הבדיקה כוללת הערכה של ההגיון הפנימי של ההחלטה, של הקשריה העובדתיים ותוצאותיה הצפויות, ולעתים של מידת ההתאמה בינה לבין מטרות הנסיבות הציבוריות שהובאו בחשבון. הפסיקה מדגישה כי תחום שיקול הדעת הנתון לרשות נותר רחב ולעתים רב־אפשרי, אך באמצעות הסבירות ניתן לאתר החלטות החורגות מכל טווח סביר ולפסול אותן מבלי להחליף את שיקול הדעת המקצועי של הרשות.³\n\nהתפתחותה של העילה בישראל נחזה בהתכתבות בין מקורות תיאורטיים חיצוניים, דיונים בספרות והטמעה פסיקתית מקומית. בספרות הישראלית נרשמה מגמה של עיבוד תיאורטי ששאבה מן המשפט המקובל ובחן את יחס הסבירות למבחני מידתיות אירופיים, ובמקביל ניכרת בפסקי הדין התגבשות של גישה שמדגישה גם דחיית החלפת שיקול הדעת וגם את האפשרות לפסול החלטות בלתי סבירות קיצוניות.¹ בשנים האחרונות נדונו שאלות אלה גם בהקשר של שינויי חקיקה ונקודות מחלוקת סביב הכוונות המחוקק ביחס למעמדה של הסבירות כעילת ביקורת. הדיון העכשווי משלב אפוא מקור דוקטרינרי יצירתי עם הכרעות בתי המשפט על היקפן של סמכויות הרשות.²\n\nהיחס בין סבירות, מידתיות ושיקול דעת מקצועי מחייב הבחנה פונקציונלית: מבחן המידתיות (תכליתיות, נחיצות, שכיחות המידה) עוסק בהגבלת זכויות ובאיזון ערכים במסגרת חוקתית; לעומתו סבירות נועדה לבחון את טווח ההגיוניות וההצדקה של החלטה מנהלית בתוך תחום שיקול הדעת, בעוד ששיקול דעת מקצועי נוגע להערכה טכנית או עניינית שמקורה במומחיות הרשות. עם זאת קיים חפיפה מעשית והגברת קרבה בין הסבירות למידתיות בספרות ובפסיקה, במיוחד כאשר החלטה מנהלית נוגעת בזכויות יסוד — במקרים אלה המבחנים עשויים להצטלב והניתוח דורש זהירות בהבחנה בין דה־פורטציה של בית המשפט לבין בדיקת התאמה תכליתית.²\n\nהביקורות המרכזיות על עילת הסבירות נחלקות לשתי משפחות: ביקורת מובנית על חוסר־הוודאות והמושגיות של המבחן וביקורת מוסרית־מוסדית על סיכויו של שופט להחליף שיקול דעת של רשות נבחרת. טענות אקדמיות מודגשות מדגישות כי ניסוח רחב של סבירות יוצר חוסר־צפייה ובלבול כללי, ואילו ניתוחים פרוצדורליים מצביעים על הצורך לכלול הגדרות של קריטריונים ומנגנונים פרוצדורליים (למשל החמרת נטל השכנוע במצבים של מחלוקת בין רשויות) כדי למתן את החירות השיפוטית. לצד זאת קיימים נימוקים תומכים בעילה: היא מספקת כלי ביניים המאפשר הגנה מפני שימוש זדוני בסמכות מבלי לערער על הפרדה ראויה בין תפקידים פוליטיים ושיפוטיים, וניתן ללמוד מן אנלוגיות לתחומי שיפוט אחרים על אופן עצמת ההגנה שניתן למתן לשיקול הדעת הרשותי.³\n\nהשינויים החוקתיים והדיונים הפרלמנטריים האחרונים השפיעו על מעמדה המנגנוני של הסבירות באמצעות שני אפיקים: בפסיקה העכשווית נבחנת שאלת הקשר בין ביטויו החוקתי של מבחן המידתיות לבין המקומה של הסבירות בתוך המשק הפיקוחי, ובמהלך הממשי של חקיקה וניסוחיה נטענו טענות לגבי כוונת המחוקק להגביל או להגן על טווח הביקורת השיפוטית. התיקים העדכניים מציגים מתח בין עמדות המייחסות לבית המשפט סמכות בקרה תקיפה ובין עמדות המזהירות מפני פגיעה בסמכות המחוקק והרשות המבצעת; המחקר התיאורטי מציע כי ההשפעה תתווך על ידי אופן עיצוב מבחני ההבחנה והכללים הפרוצדורליים שנקבעים.³\n\nכדון האם עילת הסבירות מהותית לשליטתו של שלטון החוק, יש להבחין בין תפקידה הממשי לבין הטענה הערכית: מצד אחד הסבירות מספקת מכשיר פרקטי לאיתור שימוש לרעה בסמכות ולשמירה על עקביות והוגנות החלטתית, ובכך מחזקת מנגנוני בקרה שמשרתים שלטון החוק; מצד שני הביקורת על חוסר־בהירותה ועל הסכנה להחלפת שיקול הדעת מצביעות על כך שהכלי אינו מספק כשלעצמו ותלוי בכללים פרוצדורליים ובגבולות ברורים כדי לשמש כהבטחה אמינה של שלטון החוק. מסקנה זהירה היא כי הסבירות היא כלי צורך אפשרי — חיוני בתנאים של עיצוב מדויק ופרוצדורות מחזקות — אך אינה תחליף למערכת חקיקתית־מוסדית ולכלי ביקורת נוספים.¹\n\nלסיכום, הדיון התיאורטי והפסיקתי בישראל מדגים כי עילת הסבירות ממלאת מקום מרכזי אך מרושת ונתון לוויכוח: היא מציעה איזון בין דה־פריטציה לבין פיקוח מהותי מוגבל, התפתחותה משקפת אינטגרציה של תובנות תיאורטיות ויישום מקומי, וקיומה כאמצעי להגנה על שלטון החוק מותנה בעיצוב כללי המשחק הפרוצדורליים והמשפטיים שעל פיהם היא מופעלת.\n\n*הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.*\n",
+    "footnotes": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4520",
+        "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4520",
+            "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+        "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+            "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ]
+  },
+  {
+    "id": "Q2",
+    "run_id": "d822a1d6-e34a-45a6-97b1-b11ecb664dc0",
+    "ms": 269031,
+    "doctrine_mapping": null,
+    "canonical_registry_selection": null,
+    "pool_collapse": null,
+    "footnote_richness": {
+      "collapsed_by_cap": 0,
+      "rendered_role_count": 1,
+      "collapsed_by_duplicate": 0,
+      "final_distinct_sources": 2,
+      "approved_but_not_rendered": [],
+      "approved_distinct_sources": 2,
+      "collapsed_by_paragraph_rule": 0,
+      "collapsed_without_valid_reason": 0,
+      "representative_approved_sources": 2
+    },
+    "footnote_materialization": [
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 0,
+        "source_id": "653b8219-cbce-4439-9faa-1ff196a7031a",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+        "block_id": 1,
+        "source_id": "6c1cc4b3-22ca-430f-a5ab-0594c969ca3f",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+        "block_id": 2,
+        "source_id": "6c1cc4b3-22ca-430f-a5ab-0594c969ca3f",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 3,
+        "source_id": "653b8219-cbce-4439-9faa-1ff196a7031a",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 4,
+        "source_id": "653b8219-cbce-4439-9faa-1ff196a7031a",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 5,
+        "source_id": "653b8219-cbce-4439-9faa-1ff196a7031a",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 6,
+        "source_id": "653b8219-cbce-4439-9faa-1ff196a7031a",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 7,
+        "source_id": "653b8219-cbce-4439-9faa-1ff196a7031a",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+        "block_id": 8,
+        "source_id": "6c1cc4b3-22ca-430f-a5ab-0594c969ca3f",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      }
+    ],
+    "representative": null,
+    "pack_size": null,
+    "footnotes_count": 2,
+    "distinct_cited": 1,
+    "canonical_acquisition": {
+      "attempts": [
+        {
+          "authority": "בג\"ץ 135/75 סאי-טקס נ' שר המסחר והתעשייה",
+          "urls": [
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C17%5C135%5C075%5Cz17&fileName=17075135.Z17&type=4",
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F17%2F135%2F075%2Fz17&fileName=17075135.Z17&type=4"
+          ],
+          "url_source": "discovery",
+          "result": "fetch_failed",
+          "body_chars": 0,
+          "identity": false,
+          "rejection": "official_fetch_stopped:repeated_connection_reset"
+        },
+        {
+          "authority": "בג\"ץ 5018/91 גדות תעשיות פטרוכימיה נ' ממשלת ישראל",
+          "urls": [],
+          "url_source": "none",
+          "result": "not_found",
+          "body_chars": 0,
+          "identity": false,
+          "rejection": "no_derivable_url"
+        }
+      ],
+      "gaps": [
+        {
+          "docket": "135/75",
+          "reason": "official_fetch_stopped:repeated_connection_reset",
+          "authority_id": "hcj_135_75_sai_tex",
+          "authority_name": "בג\"ץ 135/75 סאי-טקס נ' שר המסחר והתעשייה",
+          "discovery_candidate_count": 2
+        },
+        {
+          "docket": "5018/91",
+          "reason": "no_derivable_url",
+          "authority_id": "hcj_5018_91_gadot",
+          "authority_name": "בג\"ץ 5018/91 גדות תעשיות פטרוכימיה נ' ממשלת ישראל",
+          "discovery_candidate_count": 0
+        }
+      ]
+    },
+    "relay_diagnostics": null,
+    "official_fetch": null,
+    "csm": null,
+    "answer": "מטרת פרק רקע זה היא למקם את מוסדי ההבטחה המנהלית והציפייה הלגיטימית בתוך מסגרת התיאורטית והדוקטרינרית של המשפט המנהלי הישראלי: להגדירן, להבדיל ביניהם לבין ההגנה על הסתמכות, לפרט את התנאים המעשיים להכרה בהבטחה ולהציג את תולדות הדוקטרינה וההשלכות על ההגינות המנהלית ושאלת הסעדים. הדיון ינסח באופן שמאזן בין תמיכה בספרות המחקרית לבין עיגון בהתייחסויות בתי המשפט לערכי היסוד שעליהם נשענת ההגנה על ציפיות האזרח מול הרשות.¹\n\nהבטחה מנהלית מתארת מתחם יחסי שבו הרשות, באמצעות הצהרה או תנהגות רשמית, יוצרת עבור הציבור או לפרט ציפייה כי תנהג בצורה מסוימת בעתיד או תעניק הטבה כלשהי; ההגנה המנהלית על ההבטחה נשענת על חובת ההגינות והנאמנות של השלטון בפרט בדיון מול האינטרסים של ניהול תקין. מבחינה תכליתית, ההבטחה אינה שייכת במובהק לחוק הפרטי של חוזים אלא מהווה מנגנון מנהלי שנועד להבטיח יציבות וציפיות סבירות ביחסי האמון שבין האזרח לרשות.²\n\nציפייה לגיטימית נחקרת כמוסד מקבץ־הרעיונות שבמרכזו עקרון ההסתמכות: מדובר בסיטואציה שבה פעולות הרשות, נהלים קבועים או הודעות גורמות לפרט להסתמך באופן סביר על המשך מעשה או על זכויות שיינתנו לו; ההגנה על ציפייה שמה דגש על היקף ההסתמכות — האם היא הייתה סבירה, כלכלית או אישית — ולעתים נבדלת מבחינה פרוצדורלית וציפייה מהותית, כך שדרכי ההגנה והתוצאה משתנות בהתאם לאופיין.²\n\nההבחנה הפרקטית בין הבטחה מנהלית, הסתמכות וציפייה לגיטימית מושתתת על שלושה צירי אבחנה: ראשית, מקור ההתחייבות — הבטחה נובעת מדבריה או מדיניות הרשות עצמה, בעוד שהסתמכות נעה סביב מעשיו של המסתמך; שנית, מידת הבהירות והרצון של הרשות להתחייב — הבטחה מחייבת רמז כוונה של הרשות להיקשר, ואילו ציפייה לגיטימית יכולה לנבוע גם ממנגנוני נורמה או מהמשכיות מדיניות; ושלישית, תוצאת ההגנה וסוג הסעד — הבטחה חזקה נוטה להוליך לאכיפה או להגבלות חזקות יותר על שינוי מדיניות מאשר הסתמכות טהורה. הבדלים אלה מקבלים חיזוק הן בספרות הדוקטרינית ובהשוואה לתאוריות החוזיות וההסתמכות והן בניתוח הפסיקה המנהלתית.¹\n\nההתייחסות המעשית להתרה של הבטחה מנהלית מחייבת זיהוי מספר תנאים מצטברים: סמכות או יכולת משפטית של הגורם המבטיח, כוונה ברורה של הרשות או ייצוג רשמי המעיד על התחייבות, בהירות והצגה סבירה של התוכן, הסתמכות ממשית וסבירה של הנבטח, והיעדר מניעה משפטית או אינטרס ציבורי מוחלט המונע את קיום ההבטחה. מכלול תנאים אלה נועד לאזן בין צורך ביציבות וציפיות לגיטימיות של האזרח לבין החופש המנהלי לשינוי מדיניות בזמן ראוי.¹\n\nהתפתחות הדוקטרינה בפסיקה הישראלית משקפת תנועה בין הכרה הולכת—וולנטראלית—בהגיינת הציפיות לבין זהירות בעמידה על גבולות השינוי המדיני: הספרות המנהלתית מזהה את תרומתה של הפסיקה בביסוס חובת ההגינות וההגנה על ציפיות כסלע תיאורטי, בעוד שפסקי בית המשפט העליון מדגישים את הצורך באיזון בין זכויות יסוד ותכליות ציבוריות ובמניעת פגיעה קיצונית בציפיות שנוסחו בצורה ברורה. בפסיקה עדכנית ניתן למצוא גיוון בדגשים — חלקם נתונים להתאמה לאילוצים ציבוריים רחבים, אחרים מניחים תוקף מחייב יותר להבטחות מפורשות של הרשויות.¹\n\nהיחס בין הגינות מנהלית, אינטרס ציבורי וזכות הרשות לשנות מדיניות הוא יחסי ואופרטיבי: ההגינות מייצרת מחסום מוצהר לשינויים פתאומיים ופוגעניים בתנאי־המשחק שנוצרו על ידי הרשות, אך אינטרס ציבורי כבד יכול להצדיק חזרה מהבטחה אם קיימת זיקה גורפת ליעד ציבורי עליון או מניעה חוקית; במובן זה בתי המשפט מאמצים מבחן איזון שבו נבחן משקל הפגיעה בציפיות, מידת ההכרה בכוונת הרשות מלכתחילה, והאפשרות למתן פיצויים או אמצעים מתונים שיאזנו בין האינטרסים.¹\n\nלגבי הסעדים, הדוקטרינה המוכרת מציעה ספקטרום של תרופות ראוי: ביטול החלטת הרשות או צו למניעת שינוי על רקע הפרת הבטחה, סעד הצהרתי המבהיר את המעמד והזכויות שהורכבו, ולעתים — בכפוף לעקרונות והאיזונים העירוניים — האפשרות לכלול סייגים שיחייבו מתן פיצוי או אמצעים חלופיים שיעמקו את השיקום של המסתמך. המגבלות על סעדים כספיים מנהליים נידונות בספרות, והפסיקה נוטה לגוון את אופי הסעד בהתאם לחומרת ההשפעה על האינטרס הציבורי ועל תכלית ההגינות.¹\n\nלסיכום־ביניים, המתח הדוקטרינרי סביב הבטחה וציפייה נגזר מהרצון להגן על יציבות וציפיות סבירות של האזרח מול צורך ממשי של השלטון בגמישות ובמענה לאינטרסים ציבוריים; המשקלים האופרטיביים — סמכות, כוונה, בהירות, הסתמכות ואינטרס ציבורי — הם אלה שמכוונים את אופן ההכרה ובהם ממוקד המחלוקת התיאורטית והמעשית במשפט הישראלי העכשווי.²\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות. לא אותר פסק דין העוסק ישירות בדוקטרינה הנדונה; הביסוס כאן נשען על חקיקה וספרות משפטית.*",
+    "footnotes": [
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/707",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/707",
+            "title": "הגנת ההסתמכות במשפט המנהלי",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      },
+      {
+        "url": "https://runilawreview.org/2019/03/28/vol22_braverman/",
+        "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://runilawreview.org/2019/03/28/vol22_braverman/",
+            "title": "\"כגודל הציפייה\": היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המִנהל | יונתן ברוורמן (כרך כב)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ]
+  }
+]

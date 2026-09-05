@@ -89,7 +89,7 @@ describe("canonical registry discovery", () => {
     expect(adjacent.rejection_reason).toBe("no_exact_docket_evidence");
   });
 
-  it("no_derivable_url is not terminal: targeted discovery URLs are collected", () => {
+  it("discovered URLs without exact docket evidence are never collected", () => {
     const urls = collectDiscoveryUrlsFor(
       [{
         url: "https://supremedecisions.court.gov.il/Home/Download?path=a.pdf",
@@ -99,8 +99,9 @@ describe("canonical registry discovery", () => {
       [],
       DOCKET,
     );
-    expect(urls).toHaveLength(1);
+    expect(urls).toHaveLength(0);
   });
+
 
   it("untargeted discovery URLs without docket evidence stay excluded", () => {
     const urls = collectDiscoveryUrlsFor(

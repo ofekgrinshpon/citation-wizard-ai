@@ -127,6 +127,43 @@ export interface ClaimSourceMatchReport {
   /** academic_utilization_stabilization_v1 — refs kept as reading pointers
    *  only (bibliography-only academic items in literature/framing blocks). */
   reference_only_refs?: string[];
+
+  /** canonical_body_acquisition_and_csm_survival_v1 telemetry. */
+  canonical_survival?: CanonicalSurvivalRow[];
+  canonical_survival_summary?: {
+    considered: number;
+    survived: number;
+    reanchored: number;
+    dropped_without_anchor: number;
+  };
+}
+
+/** canonical_body_acquisition_and_csm_survival_v1 — one row per body-acquired
+ *  canonical authority / directly relevant doctrinal work. */
+export interface CanonicalSurvivalRow {
+  ref: string;
+  title: string;
+  kind: "canonical_authority" | "direct_scholarship";
+  survived_csm: boolean;
+  reanchored: boolean;
+  reanchor_block_index: number | null;
+  reanchor_evidence: "block_text_names_source" | "verified_claim_tag_match" | null;
+  drop_reason: string | null;
+}
+
+/**
+ * Distinctive strings that prove a sentence is talking about this source:
+ * its docket (all Hebrew quote variants) and a long party/author token.
+ */
+export function identityTokens(s: { title?: string; display_title?: string }): string[] {
+  const title = String(s.display_title ?? s.title ?? "");
+  const out: string[] = [];
+  const docket = title.match(/\d{1,6}\s*\/\s*\d{2,4}/);
+  if (docket) out.push(docket[0].replace(/\s+/g, ""), docket[0]);
+  for (const w of title.split(/[\s,\.\(\)"\u05f4\u05f3']+/)) {
+    if (w.length >= 5 && /[\u0590-\u05ff]/.test(w)) out.push(w);
+  }
+  return [...new Set(out)].slice(0, 6);
 }
 
 
@@ -725,6 +762,95 @@ export function applyClaimSourceMatch(
     }
     blocks.push(outBlock);
   });
+
+  // ── canonical_body_acquisition_and_csm_survival_v1 ────────────────────────
+  // A canonical authority whose real body was acquired, or a directly relevant
+  // doctrinal work, must not disappear silently. If such a source ended up in
+  // no block, look for an EXISTING sentence that genuinely evidences it — the
+  // block text names its docket/case, or the block's claim/facet tags overlap
+  // the claims the verifier already bound to this source. Only then is the ref
+  // re-attached. No new text, no new claim, no relaxation for anything else.
+  const survival: CanonicalSurvivalRow[] = [];
+  const finalRefSet = new Set(
+    blocks.flatMap((blk) => ("source_refs" in blk ? (blk.source_refs ?? []) : [])),
+  );
+  for (const s of inputSources) {
+    const prof = profiles.get(s.ref);
+    const bodyAcquired = s.body_acquired === true ||
+      /full_text|substantive_excerpt/.test(String(s.text_usability ?? ""));
+    const canonical = bodyAcquired &&
+      (Boolean((s as unknown as Record<string, unknown>).canonical_authority_id) ||
+        prof?.judgment_authority === true || prof?.statutory_authority === true);
+    const directScholarship = bodyAcquired && prof?.doctrinal_authority === true;
+    if (!canonical && !directScholarship) continue;
+    const row: CanonicalSurvivalRow = {
+      ref: s.ref,
+      title: s.title,
+      kind: canonical ? "canonical_authority" : "direct_scholarship",
+      survived_csm: finalRefSet.has(s.ref),
+      reanchored: false,
+      reanchor_block_index: null,
+      reanchor_evidence: null,
+      drop_reason: null,
+    };
+    if (row.survived_csm) {
+      survival.push(row);
+      continue;
+    }
+    const drops = report.dropped_source_refs.filter((d) => d.ref === s.ref);
+    row.drop_reason = drops[0]?.reason ?? "not_emitted_by_drafter";
+    // Hard safety reasons are never reanchored.
+    if (drops.some((d) => d.reason === "unrelated_legal_area")) {
+      row.drop_reason = "unrelated_legal_area";
+      survival.push(row);
+      continue;
+    }
+    const identity = identityTokens(s);
+    const sourceClaims = new Set([
+      ...(s.verified_claim_ids ?? []),
+      ...(s.facet_ids ?? []),
+    ]);
+    let anchored = false;
+    for (let i = 0; i < blocks.length && !anchored; i++) {
+      const blk = blocks[i] as unknown as Record<string, unknown>;
+      if (blk.kind === "heading" || !("source_refs" in blk)) continue;
+      const text = typeof blk.text === "string" ? blk.text : "";
+      if (!text) continue;
+      const tags = readBlockTags(blocks[i], metas);
+      const tagHit = Boolean(
+        (tags.claim_id && sourceClaims.has(tags.claim_id)) ||
+          (tags.facet_id && sourceClaims.has(tags.facet_id)),
+      );
+      const textHit = identity.some((tok) => text.includes(tok));
+      if (!textHit && !tagHit) continue;
+      const refs = Array.isArray(blk.source_refs) ? (blk.source_refs as string[]) : [];
+      if (refs.includes(s.ref)) {
+        anchored = true;
+        break;
+      }
+      blk.source_refs = [...refs, s.ref];
+      anchored = true;
+      row.reanchored = true;
+      row.survived_csm = true;
+      row.reanchor_block_index = i;
+      row.reanchor_evidence = textHit ? "block_text_names_source" : "verified_claim_tag_match";
+    }
+    if (!anchored) {
+      row.drop_reason = row.kind === "canonical_authority"
+        ? "canonical_authority_no_valid_anchor"
+        : "direct_scholarship_no_valid_anchor";
+    }
+    survival.push(row);
+  }
+  report.canonical_survival = survival;
+  report.canonical_survival_summary = {
+    considered: survival.length,
+    survived: survival.filter((r) => r.survived_csm).length,
+    reanchored: survival.filter((r) => r.reanchored).length,
+    dropped_without_anchor: survival.filter((r) => !r.survived_csm).length,
+  };
+
+
 
   for (const [claim, s] of claimSupport) {
     if (s.any && !s.primary) report.commentary_only_claims.push(claim);
