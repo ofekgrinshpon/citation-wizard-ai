@@ -78,7 +78,10 @@ const CLAIM_TYPE_ROLES: Record<string, RepresentativeRole[]> = {
 /** Max representative roles surfaced per claim — guidance, not a quota. */
 const MAX_ROLES_PER_CLAIM = 4;
 
-const CRITIQUE_RE = /(ביקורת|critique|critical|בעייתי|כשל|הסתייגות|נגד|counter)/i;
+// "ביקורת חוקתית/שיפוטית/מנהלית" is the Hebrew term for judicial review, not a
+// critical stance — it must not be read as a counter-position.
+const REVIEW_TERM_RE = /ביקורת\s+(חוקתית|שיפוטית|מנהלית)/g;
+const CRITIQUE_RE = /(ביקורת|critique|critical|בעייתי|כשל|הסתייגות|counter[- ]?argument|התנגדות)/i;
 const THEORY_RE = /(תיאור|theor|philosoph|jurisprud|רציונל|normative|נורמטיב|מושגי)/i;
 const COMPARATIVE_RE = /(comparative|משווה|oakes|canad|german|european court|echr|foreign)/i;
 const APPLICATION_RE = /(יישום|סעד|remedy|application|צו|פיצוי)/i;
@@ -103,7 +106,7 @@ function isCanonicalJudgment(s: DrafterInputSource): boolean {
 /** Strongest representative role this source can genuinely serve, if any. */
 export function representativeRoleOf(s: DrafterInputSource): RepresentativeRole | null {
   const cls: SourceClass = classifySource(s);
-  const hay = `${s.title} ${s.snippet ?? ""}`;
+  const hay = `${s.title} ${s.snippet ?? ""}`.replace(REVIEW_TERM_RE, " ");
   if (cls === "statute") return "primary_statute_or_text";
   if (cls === "judgment") {
     if (isForeignOrComparative(s)) return "comparative_source";
