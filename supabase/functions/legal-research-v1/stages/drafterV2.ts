@@ -1266,6 +1266,10 @@ export interface DrafterV2Result {
   footnote_render_report?: ReturnType<typeof buildFootnotedAnswer>["footnote_render_report"];
   /** footnote_density_v1 — per-block per-occurrence emission telemetry. */
   footnote_density_emission?: ReturnType<typeof buildFootnotedAnswer>["footnote_density_emission"];
+  footnote_materialization?: ReturnType<typeof buildFootnotedAnswer>["footnote_materialization"];
+  footnote_builder_richness_summary?: ReturnType<
+    typeof buildFootnotedAnswer
+  >["footnote_builder_richness_summary"];
   quality_warning?: QualityWarning;
   usage?: { input_tokens?: number; output_tokens?: number };
   // Debug: whether the missing-required-anchor caveat instruction was injected.
@@ -2408,10 +2412,23 @@ export async function runDrafterV2(
     representative_sources,
   );
 
+  // academic_richness_last_mile_and_doctrine_mapping_v1 — the builder needs to
+  // know which surviving sources were representative-selected so their loss is
+  // logged with an explicit reason instead of silently collapsing.
+  const representativeRefSet = new Set(
+    Object.values(representative_sources.by_claim ?? {}).flat(),
+  );
+  const representativeCandidateIds = inputSources
+    .filter((s) => representativeRefSet.has(s.ref))
+    .map((s) => s.candidate_id);
   const built = buildFootnotedAnswer(
     aligned.draft ?? matched.draft ?? gated.draft ?? parsed.draft as StructuredDraft,
     inputSources,
-    { referenceOnlyRefs: claim_source_match.reference_only_refs ?? [] },
+    {
+      referenceOnlyRefs: claim_source_match.reference_only_refs ?? [],
+      academicMode: academicModeForMatch,
+      representativeCandidateIds,
+    },
   );
 
   const limitation_note_alignment: LimitationNoteAlignment = assessLimitationNoteAlignment(
@@ -2591,6 +2608,9 @@ export async function runDrafterV2(
       hierarchy_report: built.hierarchy_report,
       footnote_render_report: built.footnote_render_report,
       footnote_density_emission: built.footnote_density_emission,
+      footnote_materialization: built.footnote_materialization,
+      footnote_builder_richness_summary: built.footnote_builder_richness_summary,
+
     quality_warning: computeQualityWarning(answer_markdown, {
       question,
       source_context: inputSources

@@ -129,6 +129,18 @@ export interface PoolResult {
   vector_tuning: LocalVectorQuotaTuning | null;
   /** local_retrieval_precision_tuning_v1 — one row per promoted candidate. */
   reranking: LocalRerankRow[];
+  /** academic_richness_last_mile_and_doctrine_mapping_v1 */
+  pool_collapse?: {
+    academic_mode: boolean;
+    raw_found: number;
+    after_integrity: number;
+    after_listing_and_precision: number;
+    final_pool: number;
+    origin_cap_used: number;
+    origin_cap_base: number;
+    backfill_origin_cap_drops: number;
+    drops_by_reason: Record<string, number>;
+  };
 }
 
 /** local_retrieval_precision_tuning_v1 */
@@ -239,6 +251,13 @@ export interface BuildPoolOptions {
   task_intent?: string | null;
   /** discovery_precision_and_listing_suppression_v1 — default on. */
   discovery_precision?: boolean;
+  /**
+   * academic_richness_last_mile_and_doctrine_mapping_v1 — academic writing
+   * runs need many *distinct* scholarly works, which legitimately share a few
+   * publisher origins. Only the origin-diversity backfill cap is relaxed; all
+   * safety, dedup, listing and integrity gates stay exactly as-is.
+   */
+  academic_mode?: boolean;
 }
 
 function buildCandidatePoolInner(
@@ -448,7 +467,14 @@ function buildCandidatePoolInner(
   const rankOf = new Map<string, number>();
   sorted.forEach((c, i) => rankOf.set(c.candidate_id, i));
   const freedSlots = Math.min(suppressed.length, CAPS.MAX_CANDIDATES);
-  const originCap = backfillOriginCap(freedSlots);
+  const academicMode = options?.academic_mode === true;
+  const baseOriginCap = backfillOriginCap(freedSlots);
+  // Role-aware relaxation: in academic mode one origin may fill more freed
+  // slots, because scholarship arrives in bulk from a handful of publishers.
+  const originCap = academicMode
+    ? Math.max(baseOriginCap, Math.min(freedSlots, Math.max(8, Math.ceil(freedSlots * 0.9))))
+    : baseOriginCap;
+  let backfill_origin_cap_drops = 0;
   const backfillsByOrigin = new Map<string, number>();
   const isBackfill = (c: Candidate) =>
     freedSlots > 0 && (baselineRank.get(c.candidate_id) ?? 0) >= CAPS.MAX_CANDIDATES;
@@ -485,6 +511,7 @@ function buildCandidatePoolInner(
     if (isBackfill(c)) {
       const n = backfillsByOrigin.get(c.origin) ?? 0;
       if (n >= originCap) {
+        backfill_origin_cap_drops++;
         logDrop(c, "backfill_origin_diversity_cap", `${c.origin}:${originCap}`);
         return false;
       }
@@ -768,6 +795,20 @@ function buildCandidatePoolInner(
       }
       : null,
     reranking,
+    pool_collapse: {
+      academic_mode: academicMode,
+      raw_found: allRaw.length,
+      after_integrity: all.length,
+      after_listing_and_precision: survivors.length,
+      final_pool: out.length,
+      origin_cap_used: originCap,
+      origin_cap_base: baseOriginCap,
+      backfill_origin_cap_drops,
+      drops_by_reason: dropLog.reduce((acc: Record<string, number>, d) => {
+        acc[d.drop_reason] = (acc[d.drop_reason] ?? 0) + 1;
+        return acc;
+      }, {}),
+    },
   };
 }
 

@@ -1209,9 +1209,17 @@ async function handle(req: Request): Promise<Response> {
     elapsed_ms: localCaselawGate.elapsed_ms,
     rpc_error: localCaselawGate.rpc_error ?? null,
   });
+  await budget.markDurable("doctrine_mapping_v1", {
+    doctrine_mapping: coreAuthorityRegistry.doctrine_mapping ?? null,
+    canonical_registry_selection: coreAuthorityRegistry.canonical_registry_selection ?? null,
+  });
   const pool = buildCandidatePool([...local.candidates, ...pplx.candidates], {
     task_intent: sourceUseIntent.plan?.user_task_intent ?? null,
+    academic_mode: sourceUseIntent.plan?.user_task_intent === "academic_writing",
   });
+  if (pool.pool_collapse) {
+    await budget.markDurable("pool_collapse_v1", pool.pool_collapse);
+  }
   await budget.markDurable("discovery_precision_done", {
     status: pool.discovery_precision.status,
     candidates_at_start: pool.discovery_precision.candidates_at_start,
@@ -2639,6 +2647,10 @@ async function handle(req: Request): Promise<Response> {
     // footnote_rendering_invariant_v1 telemetry.
     footnote_render_report: drafter.footnote_render_report ?? null,
     footnote_density_emission: drafter.footnote_density_emission ?? [],
+    // academic_richness_last_mile_and_doctrine_mapping_v1 telemetry.
+    footnote_builder_richness_summary: drafter.footnote_builder_richness_summary ?? null,
+    footnote_materialization: drafter.footnote_materialization ?? [],
+
     inline_marker_count: drafter.footnote_render_report?.inline_marker_count ?? 0,
     footnotes_length: drafter.footnote_render_report?.footnotes_length ?? 0,
     used_sources_length: drafter.footnote_render_report?.used_sources_length ?? 0,

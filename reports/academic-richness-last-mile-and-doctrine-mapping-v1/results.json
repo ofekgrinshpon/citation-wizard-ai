@@ -1,0 +1,374 @@
+[
+  {
+    "id": "Q1",
+    "run_id": "298abd35-860d-4ab3-bff2-13cf9797aad6",
+    "ms": 244329,
+    "doctrine_mapping": null,
+    "canonical_registry_selection": null,
+    "pool_collapse": null,
+    "footnote_richness": {
+      "collapsed_by_cap": 0,
+      "rendered_role_count": 2,
+      "collapsed_by_duplicate": 0,
+      "final_distinct_sources": 3,
+      "approved_but_not_rendered": [],
+      "approved_distinct_sources": 3,
+      "collapsed_by_paragraph_rule": 0,
+      "collapsed_without_valid_reason": 0,
+      "representative_approved_sources": 2
+    },
+    "footnote_materialization": [
+      {
+        "role": "applying_candidate",
+        "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+        "block_id": 0,
+        "source_id": "48f2c447-ae09-433d-af62-baa98429e30b",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "applying_candidate",
+        "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+        "block_id": 1,
+        "source_id": "48f2c447-ae09-433d-af62-baa98429e30b",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "statutory_background",
+        "title": "חוק יסוד: כבוד האדם וחירותו",
+        "block_id": 2,
+        "source_id": "nominated-source:N3",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "applying_candidate",
+        "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+        "block_id": 3,
+        "source_id": "48f2c447-ae09-433d-af62-baa98429e30b",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "statutory_background",
+        "title": "חוק יסוד: כבוד האדם וחירותו",
+        "block_id": 4,
+        "source_id": "nominated-source:N3",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "applying_candidate",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "block_id": 5,
+        "source_id": "fe1e79dc-d09c-413a-be63-47dcb3191ee0",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 0,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": false
+      }
+    ],
+    "representative": null,
+    "pack_size": null,
+    "footnotes_count": 3,
+    "distinct_cited": 1,
+    "answer": "עילת הסבירות במשפט המינהלי הישראלי מתגבשת כעמדה ביקורתית המיועדת לבחון האם החלטה מנהלית נופלת בתוך 'מתחם' של החלופות שהרשות המוסמכת כהיתרה יכלה לקבל; תפקידה אינו להחליף את שיקול הדעת המוסדי אלא לבדוק את קיומן של סיבות סבירות, העקביות וההגינות שבתהליך קבלת ההחלטה, ולמנוע החלטות שרירותיות או פוגעות בזכויות על יסוד תמיהות בלתי מוצדקות.¹\n\nההתפתחות דוקטרינרית של הסבירות בישראל נשענת הן על מסורות אנגלו־סכסיות כבסיס רעיוני והן על עיבוד מקומי שנעשה בפסיקה מאז שנות השמונים; בבסיס זה מצויים נוסחים מוקדמים שמנסחים את גבולות שיקול הדעת ובתי המשפט המאוחרים יותר — ובמיוחד בפסקי דין עכשוויים — שהדגישו את רעיון 'מה רשות סבירה היתה מחליטה' והבהירו את מתחם השיקול שבו מתערב השופט במידה מצומצמת יותר מאשר בחינה מהותית מלאה.¹\n\nהיחס בין סבירות, מידתיות ושיקול דעת מקצועי מחייב הבחנות תכליתיות ותהליךיות: מבחן המידתיות מתמקד באיזון בין פגיעה בזכויות לבין מטרות חוקיות ובוחן התאמה, הכרחיות ומידת הפגיעה, בעוד שסבירות בודקת האם ההחלטה מתיישבת עם אמות־מידה סבירות של שיקול הדעת הציבורי; שיקול דעת מקצועי דורש כבוד לדפרנטיות התחומית ולידע המקצועי של הרשות, כך שהעיקרון הדפרנציאלי מצמצם את עוצמת בחינת בית המשפט ועשוי להותיר מרחב רחב יותר לסבירות — אך באותו זמן חוקי היסוד והדיון על מידתיות משפיעים על תפיסת הסבירות ומגבילים אותה כאשר מעורבות זכויות יסוד.³\n\nהביקורות המרכזיות על עילת הסבירות עוסקות בשלושה צירים עיקריים: האחד — חשש להתרחבות שיפוטית כתירוץ לביקורת מדיניות שעליה אין לבית המשפט מומחיות; השני — עמימות נורמטיבית של הקריטריון שמובילה לחוסר ודאות ולקושי ביישום עקבי; השלישי — הטענה של כפילות או חפיפה מיותרת מול מבחני מידתיות, כך שנוצר פיצול פונקציונלי בין מבחנים שמערער על בהירות הכלים; לצד זאת מציגת הספרות גם טיעונים בעד נחיצותה של הסבירות ככלי למניעת שרירות ולשמירה על עקרונות שלטון החוק וההגינות הפרוצדורלית.¹\n\nהשינויים החוקתיים והדיון הפרלמנטרי סביב מעמדה של הסבירות — המשולבים בהלכה עכשווית — יצרו מתח בין נכונות המחוקק להגביל או למגדיר את היקף הביקורת לבין תפקידו של בית המשפט כבוחן החלטות שלטוניות; פסקי דין עדכניים והמחלוקות על ניסוחי חוק יסוד והצעות לבטל או לצמצם את עילת הסבירות הציבו סימני שאלה פרוצדורליים ומהותיים לגבי כיצד ייקבע גבול התערבות השיפוט, וכיצד ישקללו זכויות היסוד בעיצוב מבחני הביקורת.³\n\nבהיבט הנורמטיבי־מוסדי ניתן לטעון כי עילת הסבירות מהווה כלי מרכזי — אם לא הכרחי — בשמירה על שלטון החוק בכך שהיא מספקת מנגנון לביקורת על שרירות, אי־הצדקה או סטייה קיצונית משיקולים סבירים; יחד עם זאת, מעמד כלי זה תלוי בהכרה בפרמטרים ברורים, במידת כיבוד הדפרנטיות המקצועית ובמנגנונים פרוצדורליים שיגדירו מקרי גבול, כך שהסבירות תרומתה היא חיונית אך לא מספיקה לבדה להבטחת שלטון החוק.²\n\n*הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.*\n",
+    "footnotes": [
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4520",
+        "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=4520",
+            "title": "ביהמ\"ש עליון: פס\"ד בעתירות שעניינן תיקון חוק יסוד: הממשלה ומינויו של הח\"כ אריה דרעי לשר בממשלה ה-37 (בג\"ץ 8948-23)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+        "title": "חוק יסוד: כבוד האדם וחירותו",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+            "title": "חוק יסוד: כבוד האדם וחירותו",
+            "source_type": "israeli_law"
+          }
+        ],
+        "source_type": "israeli_law"
+      }
+    ]
+  },
+  {
+    "id": "Q2",
+    "run_id": "3e6e8577-8b61-4060-9bc4-19bfcb574cc0",
+    "ms": 248249,
+    "doctrine_mapping": null,
+    "canonical_registry_selection": null,
+    "pool_collapse": null,
+    "footnote_richness": {
+      "collapsed_by_cap": 0,
+      "rendered_role_count": 2,
+      "collapsed_by_duplicate": 0,
+      "final_distinct_sources": 3,
+      "approved_but_not_rendered": [],
+      "approved_distinct_sources": 3,
+      "collapsed_by_paragraph_rule": 0,
+      "collapsed_without_valid_reason": 0,
+      "representative_approved_sources": 3
+    },
+    "footnote_materialization": [
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 0,
+        "source_id": "4deae508-dd5a-45a3-82b9-9d914d7c8747",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 2,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "leading_candidate",
+        "title": "ביהמ\"ש לעניינים מנהליים בביהמ\"ש המחוזי תל אביב-יפו, ש' יעל בלכר: פסק דין שעניינו בטענה להבטחה מנהלית להקצות קרקע ולבנות בית כנסת לקהילה על ידי ראש העיר לשעבר (עת\"מ 70703-09-24)",
+        "block_id": 1,
+        "source_id": "17ebbca7-f7df-4c1e-a5eb-2b362eba8a78",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 2,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 2,
+        "source_id": "4deae508-dd5a-45a3-82b9-9d914d7c8747",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 3,
+        "source_id": "4deae508-dd5a-45a3-82b9-9d914d7c8747",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "יובל פרוקצ’יה על התאוריה של חוזה המתנה 661 (כרך ט\"ו)",
+        "block_id": 4,
+        "source_id": "64f5fa4c-179a-479d-9996-781cdcdb383e",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "leading_candidate",
+        "title": "ביהמ\"ש לעניינים מנהליים בביהמ\"ש המחוזי תל אביב-יפו, ש' יעל בלכר: פסק דין שעניינו בטענה להבטחה מנהלית להקצות קרקע ולבנות בית כנסת לקהילה על ידי ראש העיר לשעבר (עת\"מ 70703-09-24)",
+        "block_id": 5,
+        "source_id": "17ebbca7-f7df-4c1e-a5eb-2b362eba8a78",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "block_id": 6,
+        "source_id": "4deae508-dd5a-45a3-82b9-9d914d7c8747",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "leading_candidate",
+        "title": "ביהמ\"ש לעניינים מנהליים בביהמ\"ש המחוזי תל אביב-יפו, ש' יעל בלכר: פסק דין שעניינו בטענה להבטחה מנהלית להקצות קרקע ולבנות בית כנסת לקהילה על ידי ראש העיר לשעבר (עת\"מ 70703-09-24)",
+        "block_id": 7,
+        "source_id": "17ebbca7-f7df-4c1e-a5eb-2b362eba8a78",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      }
+    ],
+    "representative": null,
+    "pack_size": null,
+    "footnotes_count": 3,
+    "distinct_cited": 1,
+    "answer": "ההבטחה המנהלית נעה בליבת היחס בין פעולת הרשות לבין ציפייתו של פרט להתנהגות קבועה; במובן דוקטרינרי היא מתוארת בספרות כייצוג מצד הרשות — מילולי, מעשי או נורמטיבי — שמיועד לעורר בתובע ציפייה שניתן לאכפה, וכאשר מתקיימים תנאים מסוימים יכולה ההבטחה לזכות בהכרה משפטית כעומדת בפני סטייה מצד הרשות. ההגדרה המעשית המקובלת בספרות שם את משקל ההסתמכות וגורמי ההגינות במרכז הניתוח, ומבדילה בין הבטחה שאינה אלא הוראה מנהלית חלקית לבין הבטחה מחייבת שיש לה אפקט אכיפי. בהקשר הישראלי הדיון על טבע ההבטחה המנהלית מוצא ביטוי בפירושים של חוק ומעשה הרשות, תוך התייחסות לעקרונות ההסתמכות וההגינות כבסיס להכרה בפעולה כמחייבת.²\n\nתנאי היסוד להכרה בהבטחה מנהלית שנדונים בפסיקה ובספרות כוללים ארבעה מרכיבים מרכזיים: סמכות נותן ההבטחה, מסוימות ההבטחה (דיוקה והבהרת היקפה), כוונה שפורשה או שהתחייבו בה להעיר ציפייה מחייבת, והיקף ההסתמכות מצד הנפגע. בפסיקה המקומית נבחנת גם האם ההבטחה ניתנה בתהליך מוסמך ותקין ואם היא עומדת בהתנאים נוהליים ומערכתיים הרלוונטיים; כאשר אחד המרכיבים חסר יורדת סבירותה של ההכרה כאכיפה מלאה ואף יכול להתעורר שיקול ציבורי המעודד סטייה. יש להדגיש כי נוכחות הסתמכות ממשית מצד הפרט אינה תמיד גורם עצמאי דיו אלא יכולה לשמש כאחד היסודות במשקלול הכולל של ההגינות והנזק הצפוי במקרה של שינוי המדיניות.¹\n\nהמושג 'ציפייה לגיטימית' במשפט המנהלי מהווה מסגרת אנליטית נבדלת אך קרובה להבטחה המנהלית, והוא נוגע בציפייה שפעלה בשל דפוסי התנהגות או מדיניות ציבורית כך שהדבר יוצר זכות־מוסרית או סבירות של קיום זכות־מה. בספרות מושם דגש על כך שהציפייה עשויה להיות פרוצדורלית — זכות לקבל הליך קביעה הוגן או הידברות — או מהותית — ציפייה לזכאות או טיפול קונקרטי; ההבחנה הזו חשובה כי היא קובעת את היקף הביקורת והשיפוט הנדרש על שינוי מצד הרשות.²\n\nלגבי תנאים להכרה בציפייה לגיטימית הדוקטרינה מזהה שלושה רכיבים מרכזיים שמופיעים בספרות ובדיוני הפסיקה: ייצוג מצד הרשות (הבטחה מפורשת או מדיניות עקבית), הסתמכות כלכלית או תכנונית על החזקה זו, והגינות ביחס לשינוי העתידי; ברמה הפרקטית הציפייה הפרוצדורלית דורשת לרוב פחות כדי לזכות בהגנה מאשר ציפייה מהותית שמבקשת לזכות בזכויות ממשיות. הבדל זה בא לידי ביטוי גם בשאלת הסעד — בעוד שהגנה על ציפייה פרוצדורלית יכולה להסתכם בצורך בהליך חוזר ובהתחייבות לשקילה מחודשת, ציפייה מהותית עשויה להצדיק הפעלת סעד מוחלט יותר אם הוכח שנגרם נזק ממשי מהסתמכות.²\n\nההבחנה בין הבטחה מנהלית, הסתמכות וציפייה לגיטימית צריכה לעמוד על יסודות שונים: הבטחה מנהלית היא ייצוג קרוב של הרשות שנושא אופי מוסדי וכנגזר ממנו נבחנת סמכותיותה ואפשרות האכיפה; ההסתמכות היא עובדה־מעשית שבה פרט פעל כתוצאה מהייצוג וחשוף לנזק; וציפייה לגיטימית היא קטגוריה נורמטיבית רחבה יותר המתייחסת לעתים גם למדיניות עקבית שאינה בהכרח הבטחה מפורשת. בפועל בית המשפט משתמש במושגים אלה באופן משלים — הוא בוחן קודם האם הייצוג עומד בקריטריונים של הבטחה מחייבת, אחר־כך את מידת ההסתמכות, ולבסוף את שאלת ההגינות והאיזון מול האינטרס הציבורי.³\n\nהתפתחות הדוקטרינה הישראלית משקפת תנועה בין הכרה בזהויות תיאורטיות ובין הקשחת מעשים פרגמטיים: הספרות הדקידקטית הדגישה את מקומה של ההסתמכות וההגינות כיסודות שניתנים לגיבוש, בעוד שפסקי דין נאהלים פיתחו מבחנים פרקטיים לבחינת סמכות, תהליך ומסוימות של ההבטחה. בפסיקה האחרונה ניתן לראות שאותם מבחנים הופכים מדידים יותר, לצד נטייה לשקלול אינטרסים כאשר קיים חשש לפגיעה בשירות הציבורי או בשיקולים תקציביים; אמנם שורה של החלטות דחתה אכיפה מכיוון שלא עמדו בתנאים נוהליים או סמכותיים, אך גם מקרים שבהם הוכרזה הבטחה מחייבת מעידים על פתיחות לשמירת יציבות ההסתמכות.¹\n\nהיחס בין הגינות מנהלית, אינטרס ציבורי ושינוי מדיניות הוא בעיקרו משקלולי: בית המשפט מזהה חובת הגינות כלפי מי שהסתמך על פעולה רשותית, אך בה בעת מקיים איזון בין ההגנה על הציפייה לבין הצרכים הציבוריים הרחבים — כגון חלוקת משאבים, תקציב או מדיניות תכליתית חדשה. הספרות מדגישה כי ככל שההסתמכות עמוקה ומניבה נזק מהותי, כך יגדל משקל ההגינות; במקביל, שינוי מדיניות שקדם לו תהליך שקוף, begrundet ושקילה של נזקים עשוי להקטין את החריג האכיפי ולהצדיק סטייה מההבטחה.²\n\nלגבי הסעדים, הפרקטיקה השיפוטית והשיח התיאורטי מזהים ספקטרום תחומי: צווי אכיפה או הוראות לממש את ההבטחה יינתנו במקרים בהם ההבטחה ניתנה בידי בעל סמכות, היא מסוימת ונגרם נזק ממשי מהסתמכות; במקרים אחרים יורצו סעדים מתונים יותר — צו לחזור ולשקול מחדש, צו הצהרתי או פיצויים במידה והאיזון המוסרי והמעשי דורש זאת. פסיקה עכשווית מדגישה כי גם כאשר תנאי האכיפה המלאים אינם מתקיימים, ניתן להורות על צעדי תיקון שיבטיחו הגנה חלקית על ההסתמכות או שיחזירו את הצדדים למצב בו תוכל הרשות לשנות את מדיניותה בתום הליך תקין.¹\n\n*הערת עבודה: הטיוטה מבוססת על המקורות שאותרו, אך לפני הגשה יש לוודא התאמה מלאה להנחיות הקורס.*\n",
+    "footnotes": [
+      {
+        "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=360",
+        "title": "ביהמ\"ש לעניינים מנהליים בביהמ\"ש המחוזי תל אביב-יפו, ש' יעל בלכר: פסק דין שעניינו בטענה להבטחה מנהלית להקצות קרקע ולבנות בית כנסת לקהילה על ידי ראש העיר לשעבר (עת\"מ 70703-09-24)",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=360",
+            "title": "ביהמ\"ש לעניינים מנהליים בביהמ\"ש המחוזי תל אביב-יפו, ש' יעל בלכר: פסק דין שעניינו בטענה להבטחה מנהלית להקצות קרקע ולבנות בית כנסת לקהילה על ידי ראש העיר לשעבר (עת\"מ 70703-09-24)",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/707",
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/707",
+            "title": "הגנת ההסתמכות במשפט המנהלי",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      },
+      {
+        "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%99%D7%95%D7%91%D7%9C-%D7%A4%D7%A8%D7%95%D7%A7%D7%A6%D7%99%D7%94-661.pdf",
+        "title": "יובל פרוקצ’יה על התאוריה של חוזה המתנה 661 (כרך ט\"ו)",
+        "number": 3,
+        "sources": [
+          {
+            "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%99%D7%95%D7%91%D7%9C-%D7%A4%D7%A8%D7%95%D7%A7%D7%A6%D7%99%D7%94-661.pdf",
+            "title": "יובל פרוקצ’יה על התאוריה של חוזה המתנה 661 (כרך ט\"ו)",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ]
+  }
+]
