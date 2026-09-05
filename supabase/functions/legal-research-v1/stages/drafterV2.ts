@@ -72,6 +72,15 @@ import {
   type ClaimSourceMatchReport,
 } from "./claimSourceMatch.ts";
 import { academicPackFit } from "./academicAuthorityAlignment.ts";
+import {
+  assessResearchRichness,
+  isLiteratureOnlyRequest,
+  literatureSynthesisDirectives,
+  type PackSelectionDecision,
+  type RichnessAssessment,
+  scoreLiteratureTopicality,
+  selectLiteraturePack,
+} from "./academicLiteratureRichness.ts";
 
 import { applyBlockCeiling, type BlockTrimReport } from "./routerProfiles.ts";
 import {
@@ -1508,7 +1517,38 @@ export async function runDrafterV2(
   // subject vocabulary before they reach the prompt (conservative — never
   // primary authority, never below a 3-source floor).
   let academic_pack_fit_dropped: Array<{ ref: string; title: string; score: number }> = [];
-  if (opts?.sourceUsePlan?.user_task_intent === "academic_writing") {
+  const academicWritingRun = opts?.sourceUsePlan?.user_task_intent === "academic_writing";
+  const literatureOnlyRun = academicWritingRun && isLiteratureOnlyRequest(question);
+  // academic_literature_richness_without_fixed_source_count_v1 — dynamic pack
+  // selection: relevance and role coverage decide membership, never a count.
+  let academic_pack_selection: PackSelectionDecision[] = [];
+  if (literatureOnlyRun) {
+    const sel = selectLiteraturePack(
+      question,
+      inputSources.map((s) => ({
+        ref: s.ref,
+        candidate_id: s.candidate_id,
+        title: String(s.title ?? ""),
+        url: s.url,
+        snippet: s.snippet,
+        role: s.role ? String(s.role) : null,
+        source_type: s.source_type ? String(s.source_type) : null,
+        citable_as: s.citable_as ? String(s.citable_as) : null,
+        body_available: s.body_acquired === true,
+        primary: String(s.citable_as ?? "") === "judgment" ||
+          String(s.citable_as ?? "") === "statute",
+      })),
+      { literature_mode: true },
+    );
+    academic_pack_selection = sel.decisions;
+    const keep = new Set(sel.kept.map((k) => k.ref));
+    // Never empty the pack: if selection would remove everything, keep it as-is.
+    if (keep.size > 0) {
+      for (let i = inputSources.length - 1; i >= 0; i--) {
+        if (!keep.has(inputSources[i].ref)) inputSources.splice(i, 1);
+      }
+    }
+  } else if (academicWritingRun) {
     const fit = academicPackFit(question, inputSources);
     if (fit.dropped.length > 0) {
       academic_pack_fit_dropped = fit.dropped;
@@ -1517,6 +1557,35 @@ export async function runDrafterV2(
         if (!keep.has(inputSources[i].ref)) inputSources.splice(i, 1);
       }
     }
+  }
+  // Research-richness sufficiency, evaluated BEFORE drafting.
+  let academic_richness_sufficiency: RichnessAssessment | null = null;
+  if (academicWritingRun) {
+    const scored = inputSources.map((s) => ({
+      s,
+      t: scoreLiteratureTopicality(question, {
+        title: s.title,
+        snippet: s.snippet,
+        url: s.url,
+      }),
+    }));
+    const roles = new Set(
+      scored.filter((x) => x.t.shared_count > 0).map((x) => String(x.s.synthesis_role ?? x.s.role ?? "unknown")),
+    );
+    academic_richness_sufficiency = assessResearchRichness({
+      run_id: "",
+      task_type: literatureOnlyRun ? "literature_review" : "academic_writing",
+      literature_mode: literatureOnlyRun,
+      direct_literature_found: scored.filter((x) => x.t.direct).length,
+      direct_literature_body_acquired:
+        scored.filter((x) => x.t.direct && x.s.body_acquired === true).length,
+      strong_unused_literature_count: academic_pack_selection.filter((d) =>
+        d.rejected_from_pack && d.source_quality === "direct_scholarship"
+      ).length,
+      role_coverage: [...roles],
+      pack_sources_count: inputSources.length,
+      off_topic_in_pack: scored.filter((x) => x.t.shared_count === 0).length,
+    });
   }
   // topic_aware_source_role_and_claim_alignment_v1 — role labels must be
   // compatible with the source type before the pack is rendered.
@@ -2105,7 +2174,17 @@ export async function runDrafterV2(
     sufficiency,
     framing,
     synthesisPlan,
-    opts?.facetDirective,
+    [
+      ...(opts?.facetDirective ?? []),
+      ...(literatureOnlyRun
+        ? literatureSynthesisDirectives(
+          inputSources.slice(0, 8).map((s) => `${s.ref}: ${String(s.title ?? "")}`),
+        )
+        : []),
+      ...(academic_richness_sufficiency?.limitation_directive
+        ? [academic_richness_sufficiency.limitation_directive]
+        : []),
+    ],
     opts?.blockCeiling ?? null,
     opts?.sourceUsePlan ?? null,
     claim_source_plan,
@@ -2561,6 +2640,13 @@ export async function runDrafterV2(
     claim_source_match.academic_authority_alignment.rendered_footnotes = built.footnotes.length;
     (claim_source_match.academic_authority_alignment as unknown as Record<string, unknown>)
       .pack_fit_dropped = academic_pack_fit_dropped;
+  }
+  // academic_literature_richness_without_fixed_source_count_v1 telemetry
+  if (claim_source_match.academic_authority_alignment) {
+    const a = claim_source_match.academic_authority_alignment as unknown as Record<string, unknown>;
+    a.literature_pack_selection = academic_pack_selection;
+    a.research_richness_sufficiency = academic_richness_sufficiency;
+    a.literature_only_request = literatureOnlyRun;
   }
 
 

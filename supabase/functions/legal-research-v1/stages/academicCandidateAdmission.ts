@@ -48,6 +48,9 @@ export interface ScholarshipAdmissionDecision {
   admission_signals: string[];
   rejection_reasons: string[];
   topical_fit: boolean;
+  /** 0..1 share of question vocabulary present in the candidate. */
+  topicality_score: number;
+  detected_journal_or_institution: string | null;
   assigned_source_type: string | null;
 }
 
@@ -111,7 +114,7 @@ const DOI_RE = /(doi\.org\/10\.|\/10\.\d{4,9}\/|[?&]doi=)/i;
  * bypasses the topical-fit, listing, SEO or body-acquisition gates.
  */
 const LAW_JOURNAL_NAME_RE =
-  /(עיוני\s+משפט|משפטים\s+(?:על\s+אתר|כרך|[א-ת]["״])|(?:^|[^א-ת])משפטים(?=\s*[,־–—]|\s+כרך)|מחקרי\s+משפט|הפרקליט|משפט\s+וממשל|מאזני\s+משפט|דין\s+ודברים|(?:^|[^א-ת])חוקים(?=\s|[,–—])|מעשי\s+משפט|משפט\s+ועסקים|עלי\s+משפט|המשפט(?=\s+כרך)|law\s+review|law\s+journal|journal\s+of\s+law|yale\s+l\.?j|harv\.?\s?l\.?\s?rev)/i;
+  /(עיוני\s+משפט|משפטים\s+(?:על\s+אתר|כרך|[א-ת]["״])|(?:^|[^א-ת])משפטים(?=\s*[,־–—]|\s+כרך)|מחקרי\s+משפט|הפרקליט|משפט\s+וממשל|מאזני\s+משפט|דין\s+ודברים|(?:^|[^א-ת])חוקים(?=\s|[,–—])|מעשי\s+משפט|משפט\s+ועסקים|עלי\s+משפט|השילוח|המכון\s+הישראלי\s+לדמוקרטיה|מחקר\s+מדיניות|נייר\s+מדיניות|המשפט(?=\s+כרך)|law\s+review|law\s+journal|journal\s+of\s+law|yale\s+l\.?j|harv\.?\s?l\.?\s?rev)/i;
 
 /** Journal/faculty publication host families used by Israeli law reviews. */
 const LAW_JOURNAL_HOST_RE =
@@ -308,6 +311,22 @@ export function hasTopicalFit(
   return false;
 }
 
+/** Share of question topic terms present in the candidate text (0..1). */
+export function topicalityScore(text: string, topicTerms: string[]): number {
+  if (!topicTerms.length) return 0;
+  const hay = String(text ?? "").toLowerCase();
+  const tokens = new Set<string>();
+  for (const raw of hay.split(/[\s,.;:!?()"'\[\]־–—\/]+/)) {
+    for (const v of tokenVariants(raw)) tokens.add(v);
+  }
+  let hits = 0;
+  for (const term of topicTerms) {
+    const vs = tokenVariants(term);
+    if (vs.some((v) => tokens.has(v) || (v.length >= 6 && hay.includes(v)))) hits++;
+  }
+  return Number(Math.min(1, hits / Math.max(4, Math.min(topicTerms.length, 20))).toFixed(2));
+}
+
 /**
  * Original-gate scholarship admission review for a candidate the domain
  * classifier left as `unknown`. Unknown does not mean admitted — it means
@@ -344,10 +363,6 @@ export function evaluateScholarshipAdmission(
   }
   if (journalName) signals.push("recognized_law_journal_name");
   if (journalHost) signals.push("law_journal_or_faculty_host");
-  const provenance = publisher || university || institute || repositoryPath || doi ||
-    journalName || journalHost;
-
-
   // content shape
   const scholarlyTitle = SCHOLARLY_TITLE_RE.test(title);
   const abstractLike = ABSTRACT_LIKE_RE.test(hay);
@@ -355,6 +370,15 @@ export function evaluateScholarshipAdmission(
   // An analytic Hebrew/English title ("X: subtitle", 6+ words) is a weak signal
   // on its own — it counts only together with credible academic provenance.
   const analyticTitle = /[:–—]/.test(title) && title.trim().split(/\s+/).length >= 6;
+  // academic_literature_richness_without_fixed_source_count_v1 — article
+  // IDENTITY is itself a provenance signal: a named law-journal reference, or
+  // an author + scholarly article title, identifies real scholarship even when
+  // it is served from a mirror or an unrecognised host. Marketing, SEO,
+  // listing and off-topic material are still rejected below.
+  const articleIdentity = journalName || (authorYear && scholarlyTitle);
+  if (articleIdentity) signals.push("validated_article_identity");
+  const provenance = publisher || university || institute || repositoryPath || doi ||
+    journalName || journalHost || articleIdentity;
   if (scholarlyTitle) signals.push("scholarly_title_shape");
   if (abstractLike) signals.push("abstract_like_snippet");
   if (authorYear) signals.push("author_or_publication_metadata");
@@ -362,7 +386,9 @@ export function evaluateScholarshipAdmission(
 
   // exclusions
   if (!domain) rejections.push("no_resolvable_domain");
-  if (AGGREGATOR_HOST_RE.test(domain)) rejections.push("citation_aggregator_or_search_index");
+  if (AGGREGATOR_HOST_RE.test(domain) && !articleIdentity) {
+    rejections.push("citation_aggregator_or_search_index");
+  }
   if (SEARCH_OR_LISTING_RE.test(path)) rejections.push("listing_or_search_page");
   if (COMMERCIAL_SEO_RE.test(domain) || COMMERCIAL_TITLE_RE.test(hay)) {
     rejections.push("commercial_seo_page");
@@ -397,6 +423,9 @@ export function evaluateScholarshipAdmission(
     admission_signals: signals,
     rejection_reasons: rejections,
     topical_fit,
+    topicality_score: topicalityScore(hay, input.topic_terms),
+    detected_journal_or_institution: (title + " " + snippet).match(LAW_JOURNAL_NAME_RE)?.[0] ??
+      (institute ? domain : null),
     // Bibliographic-only material stays `reference_only` downstream; the
     // substantive-body requirement is enforced by the existing doctrinal gates.
     assigned_source_type: admitted

@@ -407,6 +407,9 @@ interface PplxResultRow {
   academic_admission_signals?: string[];
   academic_rejection_reasons?: string[];
   academic_role_slot_final?: string;
+  /** academic_literature_richness_without_fixed_source_count_v1 */
+  academic_topicality_score?: number;
+  academic_detected_journal?: string | null;
 }
 
 function processRaw(
@@ -550,6 +553,8 @@ function processRaw(
         academic_rejection_reasons: admission?.rejection_reasons ??
           (slotting?.rejected_reason ? [slotting.rejected_reason] : undefined),
         academic_role_slot_final: slotting?.final_slot ?? undefined,
+        academic_topicality_score: admission?.topicality_score,
+        academic_detected_journal: admission?.detected_journal_or_institution ?? undefined,
       });
       continue;
     }
