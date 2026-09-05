@@ -124,6 +124,23 @@ import {
   type PostDraftAlignmentFilterReport,
   renderClaimSourcePlanBlock,
 } from "./claimSourcePlanning.ts";
+import {
+  assessDrafterRepresentativeCompliance,
+  assessRepresentativeSourceUse,
+  buildRepresentativeSourceSelection,
+  renderRepresentativeSourceBlock,
+  type RepresentativeSourceReport,
+} from "./representativeSourceSelection.ts";
+import {
+  buildSourceLastMileFunnel,
+  type SourceLastMileFunnelReport,
+} from "./sourceLastMileFunnel.ts";
+import {
+  enforceStatuteDominanceOnDraft,
+  type StatuteDominanceCheck,
+  verifyStatuteDominanceInFootnotes,
+} from "./statuteDominance.ts";
+
 
 
 
@@ -379,6 +396,7 @@ function buildUserMessage(
   blockCeiling?: number | null,
   sourceUsePlan?: SourceUsePlan | null,
   claimSourcePlan?: ClaimSourcePlan | null,
+  representativeSources?: RepresentativeSourceReport | null,
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
@@ -620,6 +638,15 @@ function buildUserMessage(
     if (planBlock) {
       lines.push("");
       lines.push(planBlock);
+    }
+    // canonical_registry_discovery_and_representative_source_use_v1 (fix 3) —
+    // the representative-source obligation goes immediately after the plan.
+    if (representativeSources) {
+      const repBlock = renderRepresentativeSourceBlock(representativeSources, claimSourcePlan);
+      if (repBlock) {
+        lines.push("");
+        lines.push(repBlock);
+      }
     }
   }
   if (answerIntent) {
@@ -2042,6 +2069,15 @@ export async function runDrafterV2(
     { academicMode: opts?.sourceUsePlan?.user_task_intent === "academic_writing" },
   );
 
+  // canonical_registry_discovery_and_representative_source_use_v1 (fix 2) —
+  // pick at most one strongest representative source per role per claim from
+  // the sources the plan already permits. No source is added or revived.
+  const representative_sources: RepresentativeSourceReport =
+    buildRepresentativeSourceSelection(question, claims, inputSources, claim_source_plan, {
+      run_id: opts?.runId ?? null,
+    });
+
+
   const userMsg = buildUserMessage(
     question,
     claims,
@@ -2058,6 +2094,7 @@ export async function runDrafterV2(
     opts?.blockCeiling ?? null,
     opts?.sourceUsePlan ?? null,
     claim_source_plan,
+    representative_sources,
   );
 
   // academic_drafter_prompt_conflict_cleanup_v1 — academic drafts get the
