@@ -675,5 +675,137 @@
         "source_type": "journal_article"
       }
     ]
+  },
+  {
+    "id": "AW7",
+    "run_id": "f9455556-9d8c-4ee8-be59-5e8c2942fbed",
+    "ms": 178043,
+    "doctrine_mapping": null,
+    "canonical_registry_selection": null,
+    "pool_collapse": null,
+    "footnote_richness": {
+      "collapsed_by_cap": 0,
+      "rendered_role_count": 2,
+      "collapsed_by_duplicate": 0,
+      "final_distinct_sources": 2,
+      "approved_but_not_rendered": [],
+      "approved_distinct_sources": 2,
+      "collapsed_by_paragraph_rule": 0,
+      "collapsed_without_valid_reason": 0,
+      "representative_approved_sources": 2
+    },
+    "footnote_materialization": [
+      {
+        "role": "applying_candidate",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "block_id": 0,
+        "source_id": "81f8da39-82f9-43e7-9b79-83214a743cef",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 1,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      },
+      {
+        "role": "secondary_commentary",
+        "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+        "block_id": 0,
+        "source_id": "a089409a-079d-4a09-95b5-39206460c5a4",
+        "drop_reason": null,
+        "final_cited": true,
+        "sentence_id": 3,
+        "survived_csm": true,
+        "emitted_by_model": true,
+        "drop_reason_valid": true,
+        "citation_cap_state": "rendered",
+        "survived_alignment": true,
+        "reference_only_reason": null,
+        "duplicate_of_source_id": null,
+        "representative_selected": true
+      }
+    ],
+    "representative": null,
+    "pack_size": null,
+    "footnotes_count": 2,
+    "distinct_cited": 1,
+    "canonical_acquisition": {
+      "attempts": [
+        {
+          "authority": "בג\"ץ 389/80 דפי זהב נ' רשות השידור",
+          "urls": [
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts/80/389/001/l12&fileName=80038910.L12&type=12",
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C08%5C090%5C038%5Cn15&fileName=08038090_n15.txt&type=2"
+          ],
+          "url_source": "discovery",
+          "result": "fetch_failed",
+          "body_chars": 0,
+          "identity": false,
+          "rejection": "error sending request from 10.32.82.187:35956 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C08%5C090%5C038%5Cn15&fileName=08038090_n15.txt&type=2 (84.110.173.93:443): c"
+        },
+        {
+          "authority": "בג\"ץ 935/89 גנור נ' היועץ המשפטי לממשלה",
+          "urls": [],
+          "url_source": "none",
+          "result": "not_found",
+          "body_chars": 0,
+          "identity": false,
+          "rejection": "no_derivable_url"
+        }
+      ],
+      "gaps": [
+        {
+          "docket": "389/80",
+          "reason": "error sending request from 10.32.82.187:35956 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C08%5C090%5C038%5Cn15&fileName=08038090_n15.txt&type=2 (84.110.173.93:443): c",
+          "authority_id": "hcj_389_80_dapei_zahav",
+          "authority_name": "בג\"ץ 389/80 דפי זהב נ' רשות השידור",
+          "discovery_candidate_count": 2
+        },
+        {
+          "docket": "935/89",
+          "reason": "no_derivable_url",
+          "authority_id": "hcj_935_89_ganor",
+          "authority_name": "בג\"ץ 935/89 גנור נ' היועץ המשפטי לממשלה",
+          "discovery_candidate_count": 0
+        }
+      ]
+    },
+    "relay_diagnostics": null,
+    "official_fetch": null,
+    "csm": null,
+    "answer": "בית המשפט יכול ולהרשה לעצמו להתערב במדיניות מקצועית של רשות מנהלית במקרים חריגים; זאת טענה הניתן להצדיק על יסודות שלטון החוק והגנה על זכויות יסוד, לצד התפתחות דוקטרינת הסבירות כתו תקן בקרה שמאפשר הפעלת ביקורת פרקטית על שיקול דעת מנהלי. הטיעון הנגדי החזק ביותר מסתכם בעקרון ההימנעות: בית המשפט צריך לתת דה־פראנס למומחיות ולמדיניות מקצועית כדי לאפשר פעולה ציבורית יעילה, וכדי שלא יתהפך תפקיד השיפוט לתחליף לממשל המקצועי — טיעון שמעלה חששות מוסדיים של חוסר כשירות של השופט להחליט בשאלות מקצועיות ולנזק תפקודי שעלול להיגרם לערוצי קבלת ההחלטות הממשלתיים.¹ ההבחנה המשפטית המכרעת שבין שתי עמדות אלה היא כי התערבות שיפוטית תתקיים רק כאשר יש סימני חריגות משפטיים ברורים: חוסר סבירות קיצוני או חוסר טעמים רלוונטיים, סטייה מסמכות שניתנה על ידי המחוקק, ניגוד עניינים מהותי או פגיעה מוחשית בזכויות יסוד — מצבים שבהם הכישורים המוקנים לרשות אינם מצדיקים דה־פראנס מלא ודרושה תיקון שיפוטי כדי להבטיח כי שלטון החוק נשמר. על בסיס אבחנה זו ניתן לנסח גישה צנועה אך מוּנחת־נורמטיבית: אישור התערבות שיפוטית מוגבלת בחריגים יגן על זכויות יסוד וימנע התעלמות טעות משפטית חמורה, אך קביעת קו הגבול נשארת אתגר דוקטרינרי מרכזי.²\n\n*הערת עבודה: זוהי טיוטה אקדמית ראשונית. לפני הגשה יש להשלים הפניות מדויקות לפסיקה ולספרות.*\n",
+    "footnotes": [
+      {
+        "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+        "number": 1,
+        "sources": [
+          {
+            "url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5658-23-%d7%94%d7%aa%d7%a0%d7%95%d7%a2%d7%94-%d7%9c%d7%9e%d7%a2%d7%9f-%d7%90%d7%99%d7%9b%d7%95%d7%aa-%d7%94%d7%a9%d7%9c%d7%98%d7%95%d7%9f-%d7%91%d7%99%d7%a9%d7%a8%d7%90%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+            "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ׳ הכנסת ו7- עתירות אח' ביטול חוק יסוד לביטול עילת הסבירות פסק דין",
+            "source_type": "caselaw"
+          }
+        ],
+        "source_type": "caselaw"
+      },
+      {
+        "url": "https://lawjournal.huji.ac.il/article/12/1937",
+        "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+        "number": 2,
+        "sources": [
+          {
+            "url": "https://lawjournal.huji.ac.il/article/12/1937",
+            "title": "גלגולי מושג \"שלטון החוק\" בישראל: בין פורמליזם למהות, בין ריסון לפְּעִילָנוּת",
+            "source_type": "journal_article"
+          }
+        ],
+        "source_type": "journal_article"
+      }
+    ]
   }
 ]
