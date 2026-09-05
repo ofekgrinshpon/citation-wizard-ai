@@ -80,13 +80,13 @@ import {
   VERIFIED_SOURCE_CACHE_VERSION,
 } from "./verifiedSourceCache.ts";
 import {
-
-declare const Deno: { env: { get(key: string): string | undefined } };
   IDENTITY_VALIDATION_VERSION,
   identityTermsFor,
   type StrictIdentityResult,
   validateJudgmentIdentityStrict,
 } from "./judgmentIdentity.ts";
+
+declare const Deno: { env: { get(key: string): string | undefined } };
 // judgment_search_first_discovery_v1
 //
 // Deterministic URL derivation from a *model-supplied* docket is fragile: the
