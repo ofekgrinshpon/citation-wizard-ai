@@ -66,6 +66,7 @@ import {
 } from "./stages/explicitDocketGuard.ts";
 import { mergeAndBudgetQueries } from "./stages/queryMergeAndBudget.ts";
 import { runOfficialSourceDiscovery } from "./stages/officialSourceDiscovery.ts";
+import { runCanonicalRegistryDiscovery } from "./stages/canonicalRegistryDiscovery.ts";
 import {
   detectStatutoryTarget,
   type NonAcademicLocalJudgmentPackFlow,
@@ -1407,10 +1408,29 @@ async function handle(req: Request): Promise<Response> {
         discovery_source: u.url_source ?? "official_discovery",
       }))
   );
+  // canonical_registry_discovery_and_representative_source_use_v1 (fix 1) —
+  // official discovery only queries *nominated* sources, so registry-seeded
+  // canonical authorities were never searched for and acquisition starved with
+  // `discovery_candidate_count: 0`. This bounded lane resolves them locally
+  // first, then issues targeted official discovery queries per authority.
+  const canonicalRegistryDiscovery = await runCanonicalRegistryDiscovery({
+    admin,
+    registry: coreAuthorityRegistry,
+    candidates: pool.candidates,
+    integrity: pool.integrity,
+    run_id: runId,
+    max_authorities: canonicalMaxDockets === 0 ? 0 : 3,
+    budget,
+    markDurable: (name, detail) => budget.markDurable(name, detail),
+  });
+
   const canonicalAcquisition = await runCanonicalAuthorityAcquisition({
     registry: coreAuthorityRegistry,
     candidates: pool.candidates,
-    discovered_urls: discoveredJudgmentUrls,
+    discovered_urls: [
+      ...canonicalRegistryDiscovery.discovered_urls,
+      ...discoveredJudgmentUrls,
+    ],
     integrity: pool.integrity,
     budget,
     max_dockets: canonicalMaxDockets,
