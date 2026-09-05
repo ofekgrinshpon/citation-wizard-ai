@@ -2,10 +2,481 @@
   {
     "id": "Q2",
     "query": "מה אומר חוק-יסוד: כבוד האדם וחירותו לגבי פגיעה בזכויות?",
-    "run_id": "9c59f51c-0808-45a9-b6e1-e8ba99c097ae",
-    "ms": 849875,
-    "web_tier_health": null,
-    "perplexity": null,
+    "run_id": "9b27d646-0246-41da-b6ee-ea12904e4710",
+    "ms": 113128,
+    "web_tier_health": {
+      "avg_ms": 3511,
+      "version": "research_richness_execution_unblock_v1",
+      "provider": "perplexity",
+      "calls_failed": 2,
+      "endpoint_type": "direct_provider",
+      "http_statuses": {
+        "200": 8,
+        "429": 2
+      },
+      "calls_attempted": 10,
+      "calls_succeeded": 8,
+      "failure_classes": {
+        "ok": 8,
+        "rate_limited": 2
+      },
+      "safe_error_class": "rate_limited",
+      "safe_error_message": "web_tier_rate_limited: provider returned 429",
+      "disabled_or_misconfigured": false
+    },
+    "perplexity": {
+      "ms": 8731,
+      "dropped": 7,
+      "parallel": true,
+      "query_ms": [
+        8727,
+        115,
+        5645,
+        6253
+      ],
+      "per_query": [
+        {
+          "ms": 8727,
+          "http": 200,
+          "role": "binding_case_law",
+          "results": [
+            {
+              "url": "https://judgments.org.il/judgments/%D7%A2%D7%90-6821-93-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%94%D7%9E%D7%90%D7%95%D7%97%D7%93-%D7%91%D7%A2%D7%9E-%D7%A0-%D7%9E%D7%92%D7%93%D7%9C-%D7%9B%D7%A4%D7%A8-%D7%A9/",
+              "title": "ע\"א 6821/93 - בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי",
+              "domain": "judgments.org.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://judgments.org.il/judgments/%D7%A2%D7%90-6821-93-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%94%D7%9E%D7%90%D7%95%D7%97%D7%93-%D7%91%D7%A2%D7%9E-%D7%A0-%D7%9E%D7%92%D7%93%D7%9C-%D7%9B%D7%A4%D7%A8-%D7%A9/",
+                "hygiene_action": "keep",
+                "url_normalized": "https://judgments.org.il/judgments/%D7%A2%D7%90-6821-93-%D7%91%D7%A0%D7%A7-%D7%94%D7%9E%D7%96%D7%A8%D7%97%D7%99-%D7%94%D7%9E%D7%90%D7%95%D7%97%D7%93-%D7%91%D7%A2%D7%9E-%D7%A0-%D7%9E%D7%92%D7%93%D7%9C-%D7%9B%D7%A4%D7%A8-%D7%A9/",
+                "hygiene_reasons": [],
+                "landing_page_status": "unknown",
+                "body_meaningful_chars": 105,
+                "title_meaningful_chars": 45
+              },
+              "rescued_as": "judgment",
+              "rescue_reason": "primary_authority_shape",
+              "hygiene_enforced": false,
+              "rescue_matched_in": "title",
+              "original_query_role": "binding_case_law",
+              "raw_pplx_source_type": "Search result",
+              "rescue_matched_docket": "6821/93",
+              "normalized_source_type": "caselaw",
+              "classified_source_class": "court_case",
+              "original_classification": "unknown",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://www.davidov-benyamini.com/constitutional-law-c1of2",
+              "title": "פרשת מגדל - משרד עורכי-דין",
+              "domain": "davidov-benyamini.com",
+              "drop_reason": "class_unknown_not_admitted_for_binding_case_law",
+              "classified_source_class": "unknown",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://he.wikipedia.org/wiki/%D7%A4%D7%A1%D7%A7_%D7%93%D7%99%D7%9F",
+              "title": "פסק דין – ויקיפדיה",
+              "domain": "he.wikipedia.org",
+              "drop_reason": "bad_source",
+              "classified_source_class": "bad",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://dyoma.co.il/law/958",
+              "title": "26 שנים לפסק דין בנק המזרחי – מבנק המזרחי לחוק הלאום - דְּיוֹמָא",
+              "domain": "dyoma.co.il",
+              "drop_reason": "class_unknown_not_admitted_for_binding_case_law",
+              "classified_source_class": "unknown",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://he.afiklaw.com/caselaw/4390",
+              "title": "עא 6821/93 בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי, פ\"ד מט(4 ...",
+              "domain": "he.afiklaw.com",
+              "drop_reason": "discovery_only",
+              "classified_source_class": "discovery_only",
+              "admitted_to_candidate_pool": false
+            }
+          ],
+          "admitted": 1,
+          "claim_id": "C1",
+          "query_he": "בג\"ץ 6821/93 בנק המזרחי (ניצב?)",
+          "raw_count": 5,
+          "failure_class": "ok",
+          "discovery_only": 1,
+          "failure_reason": null,
+          "followup_terms": [],
+          "followup_admitted": 0
+        },
+        {
+          "ms": 115,
+          "http": 429,
+          "role": "primary_statute",
+          "results": [],
+          "admitted": 0,
+          "claim_id": "C1",
+          "query_he": "חוק-יסוד: כבוד האדם וחירותו",
+          "raw_count": 0,
+          "failure_class": "rate_limited",
+          "discovery_only": 0,
+          "failure_reason": "web_tier_rate_limited: provider returned 429",
+          "followup_terms": [],
+          "followup_admitted": 0
+        },
+        {
+          "ms": 5645,
+          "http": 200,
+          "role": "scholarship",
+          "results": [
+            {
+              "url": "https://www.nevo.co.il/Content/Safrut/TableOfContents/parshanut-c/",
+              "title": "פרשנות במשפט",
+              "domain": "nevo.co.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://www.nevo.co.il/Content/Safrut/TableOfContents/parshanut-c/",
+                "hygiene_action": "keep",
+                "url_normalized": "https://www.nevo.co.il/Content/Safrut/TableOfContents/parshanut-c/",
+                "hygiene_reasons": [
+                  "url_generic_index"
+                ],
+                "landing_page_status": "generic_index",
+                "body_meaningful_chars": 77,
+                "title_meaningful_chars": 11
+              },
+              "hygiene_enforced": false,
+              "role_corrected_to": "persuasive_case_law",
+              "role_corrected_from": "scholarship",
+              "raw_pplx_source_type": "ספר",
+              "normalized_source_type": "caselaw",
+              "classified_source_class": "court_case",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%9E%D7%A7%D7%A6%D7%AA%20%D7%A9%D7%90%D7%9C%D7%95%D7%AA%20%D7%A2%D7%9C%20%D7%9B%D7%91%D7%95%D7%93%20%D7%94%D7%90%D7%93%D7%9D%20%D7%9C%D7%A4%D7%99%20%D7%97%D7%95%D7%A7%20%D7%99%D7%A1%D7%וד%20%D7%9B%D7%91%D7%95%D7%93%20%D7%94%D7%90%D7%93%D7%9D%20%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95.pdf",
+              "title": "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+              "domain": "lawjournal.huji.ac.il",
+              "hygiene": {
+                "url_status": "suspicious",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%9E%D7%A7%D7%A6%D7%AA%20%D7%A9%D7%90%D7%9C%D7%95%D7%AA%20%D7%A2%D7%9C%20%D7%9B%D7%91%D7%95%D7%93%20%D7%94%D7%90%D7%93%D7%9D%20%D7%9C%D7%A4%D7%99%20%D7%97%D7%95%D7%A7%20%D7%99%D7%A1%D7%וד%20%D7%9B%D7%91%D7%95%D7%93%20%D7%94%D7%90%D7%93%D7%9D%20%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95.pdf",
+                "hygiene_action": "keep",
+                "url_normalized": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%9E%D7%A7%D7%A6%D7%AA%20%D7%A9%D7%90%D7%9C%D7%95%D7%AA%20%D7%A2%D7%9C%20%D7%9B%D7%91%D7%95%D7%93%20%D7%94%D7%90%D7%93%D7%9D%20%D7%9C%D7%A4%D7%99%20%D7%97%D7%95%D7%A7%20%D7%99%D7%A1%D7%%D7%95%D7%93%20%D7%9B%D7%91%D7%95%D7%93%20%D7%94%D7%90%D7%93%D7%9D%20%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95.pdf",
+                "hygiene_reasons": [
+                  "url_suspicious_encoding"
+                ],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 98,
+                "title_meaningful_chars": 45
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "מאמר",
+              "normalized_source_type": "other",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/12-mizrahi.pdf",
+              "title": "תקציר פסק־הדין בעניין בנק המזרחי נ׳ מגדל (התיקון ל״חוק גל״)",
+              "domain": "law.haifa.ac.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://law.haifa.ac.il/wp-content/uploads/2021/11/12-mizrahi.pdf",
+                "hygiene_action": "keep",
+                "url_normalized": "https://law.haifa.ac.il/wp-content/uploads/2021/11/12-mizrahi.pdf",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 69,
+                "title_meaningful_chars": 50
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "תקציר פסק דין",
+              "normalized_source_type": "other",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+              "title": "חוק יסוד: כבוד האדם וחירותו",
+              "domain": "btl.gov.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "thin_body",
+                "title_status": "valid",
+                "url_original": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+                "hygiene_action": "keep",
+                "url_normalized": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+                "hygiene_reasons": [
+                  "body_thin"
+                ],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 46,
+                "title_meaningful_chars": 23
+              },
+              "hygiene_enforced": false,
+              "role_corrected_to": "primary_statute",
+              "role_corrected_from": "scholarship",
+              "raw_pplx_source_type": "חוק יסוד",
+              "normalized_source_type": "legislation",
+              "classified_source_class": "legislation",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
+              "title": "פסקאות הגבלה ופסקאות התגברות בחוקות",
+              "domain": "m.knesset.gov.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
+                "hygiene_action": "keep",
+                "url_normalized": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 77,
+                "title_meaningful_chars": 31
+              },
+              "hygiene_enforced": false,
+              "role_corrected_to": "primary_statute",
+              "role_corrected_from": "scholarship",
+              "raw_pplx_source_type": "מסמך כנסת",
+              "normalized_source_type": "legislation",
+              "classified_source_class": "legislation",
+              "admitted_to_candidate_pool": true
+            }
+          ],
+          "admitted": 5,
+          "claim_id": "C1",
+          "query_he": "סעיף ההגבלה בחוק-יסוד כבוד האדם וחירותו מבחן המידתיות פסקי דין מפתח",
+          "raw_count": 5,
+          "failure_class": "ok",
+          "discovery_only": 0,
+          "failure_reason": null,
+          "followup_terms": [],
+          "followup_admitted": 0
+        },
+        {
+          "ms": 6253,
+          "http": 200,
+          "role": "scholarship",
+          "results": [
+            {
+              "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+              "title": "חוק-יסוד: כבוד האדם וחירותו",
+              "domain": "nevo.co.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "https://www.nevo.co.il/law_html/law00/70320.htm",
+                "hygiene_action": "keep",
+                "url_normalized": "https://www.nevo.co.il/law_html/law00/70320.htm",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 219,
+                "title_meaningful_chars": 24
+              },
+              "hygiene_enforced": false,
+              "role_corrected_to": "primary_statute",
+              "role_corrected_from": "scholarship",
+              "raw_pplx_source_type": "חקיקה",
+              "normalized_source_type": "legislation",
+              "classified_source_class": "legislation",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://www.kolzchut.org.il/he/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93:%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%D7%95",
+              "title": "חוק-יסוד: כבוד האדם וחירותו",
+              "domain": "kolzchut.org.il",
+              "drop_reason": "discovery_only",
+              "classified_source_class": "discovery_only",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "https://library.mevaker.gov.il/sites/DigitalLibrary/Pages/Reports/1261-3.aspx",
+              "title": "מבקר המדינה וזכויות האדם בישראל - אהרן ברק",
+              "domain": "library.mevaker.gov.il",
+              "drop_reason": "class_government_report_not_admitted_for_scholarship",
+              "classified_source_class": "government_report",
+              "admitted_to_candidate_pool": false
+            },
+            {
+              "url": "http://lawjournal.huji.ac.il/article/12/1309",
+              "title": "מקצת שאלות על כבוד האדם לפי חוק יסוד: כבוד האדם וחירותו",
+              "domain": "lawjournal.huji.ac.il",
+              "hygiene": {
+                "url_status": "valid",
+                "body_status": "has_body",
+                "title_status": "valid",
+                "url_original": "http://lawjournal.huji.ac.il/article/12/1309",
+                "hygiene_action": "keep",
+                "url_normalized": "http://lawjournal.huji.ac.il/article/12/1309",
+                "hygiene_reasons": [],
+                "landing_page_status": "specific_document",
+                "body_meaningful_chars": 97,
+                "title_meaningful_chars": 45
+              },
+              "hygiene_enforced": false,
+              "raw_pplx_source_type": "מאמר אקדמי",
+              "normalized_source_type": "other",
+              "classified_source_class": "academic",
+              "admitted_to_candidate_pool": true
+            },
+            {
+              "url": "https://campus.ort.org.il/mod/book/view.php?id=796&chapterid=393",
+              "title": "היסודות החוקתיים במדינת ישראל | חוקי יסוד",
+              "domain": "campus.ort.org.il",
+              "drop_reason": "class_unknown_not_admitted_for_scholarship",
+              "classified_source_class": "unknown",
+              "admitted_to_candidate_pool": false
+            }
+          ],
+          "admitted": 2,
+          "claim_id": "C1",
+          "query_he": "חובות וזכויות בכבוד האדם וחירותו אילו זכויות מפורשות ומה היקף הזכויות בסעיף",
+          "raw_count": 5,
+          "failure_class": "ok",
+          "discovery_only": 1,
+          "failure_reason": null,
+          "followup_terms": [],
+          "followup_admitted": 0
+        }
+      ],
+      "candidates": 8,
+      "query_count": 4,
+      "retry_count": 0,
+      "total_sum_ms": 20740,
+      "total_wall_ms": 8731,
+      "hygiene_counts": {
+        "keep": 8,
+        "total": 8,
+        "exclude": 0,
+        "reasons": {
+          "body_thin": 1,
+          "url_generic_index": 1,
+          "url_suspicious_encoding": 1
+        },
+        "downgrade": 0,
+        "report_only_mode": false,
+        "would_exclude_in_report_only": 0
+      },
+      "rate_limit_count": 1,
+      "role_corrections": [
+        {
+          "to": "persuasive_case_law",
+          "url": "https://www.nevo.co.il/Content/Safrut/TableOfContents/parshanut-c/",
+          "from": "scholarship",
+          "title": "פרשנות במשפט",
+          "admitted": true,
+          "claim_id": "C1"
+        },
+        {
+          "to": "primary_statute",
+          "url": "https://www.btl.gov.il/Laws1/00_0097_000000.pdf",
+          "from": "scholarship",
+          "title": "חוק יסוד: כבוד האדם וחירותו",
+          "admitted": true,
+          "claim_id": "C1"
+        },
+        {
+          "to": "primary_statute",
+          "url": "https://m.knesset.gov.il/Activity/Constitution/Documents/H19-12-2005_12-43-13_piskat.doc",
+          "from": "scholarship",
+          "title": "פסקאות הגבלה ופסקאות התגברות בחוקות",
+          "admitted": true,
+          "claim_id": "C1"
+        },
+        {
+          "to": "primary_statute",
+          "url": "https://www.nevo.co.il/law_html/law00/70320.htm",
+          "from": "scholarship",
+          "title": "חוק-יסוד: כבוד האדם וחירותו",
+          "admitted": true,
+          "claim_id": "C1"
+        }
+      ],
+      "concurrency_limit": 4,
+      "merge_order_preserved": true,
+      "fallback_to_sequential": false,
+      "web_rate_limit_control": {
+        "version": "web_source_usability_and_authority_selection_v1",
+        "backoff_waits_ms": [
+          504
+        ],
+        "retries_after_429": 1,
+        "rate_limited_queries": 1,
+        "effective_concurrency": 3,
+        "configured_concurrency": 4
+      },
+      "web_source_classification": [
+        {
+          "url": "https://campus.ort.org.il/mod/book/view.php?id=796&chapterid=393",
+          "host": "campus.ort.org.il",
+          "title": "היסודות החוקתיים במדינת ישראל | חוקי יסוד",
+          "reason": "insufficient_signals",
+          "new_class": "unknown",
+          "source_id": null,
+          "citable_as": "none",
+          "confidence": 0,
+          "source_role": null,
+          "jurisdiction": "israeli",
+          "pipeline_class": "unknown",
+          "previous_class": "unknown",
+          "semantic_class": "unknown",
+          "negative_signals": [
+            "no_recognized_legal_source_signals"
+          ],
+          "positive_signals": []
+        },
+        {
+          "url": "https://www.davidov-benyamini.com/constitutional-law-c1of2",
+          "host": "davidov-benyamini.com",
+          "title": "פרשת מגדל - משרד עורכי-דין",
+          "reason": "rejected_marketing_page",
+          "new_class": "unknown",
+          "source_id": null,
+          "citable_as": "none",
+          "confidence": 0,
+          "source_role": null,
+          "jurisdiction": "unknown",
+          "pipeline_class": "unknown",
+          "previous_class": "unknown",
+          "semantic_class": "unknown",
+          "negative_signals": [
+            "marketing_or_law_firm_page"
+          ],
+          "positive_signals": []
+        },
+        {
+          "url": "https://dyoma.co.il/law/958",
+          "host": "dyoma.co.il",
+          "title": "26 שנים לפסק דין בנק המזרחי – מבנק המזרחי לחוק הלאום - דְּיוֹמָא",
+          "reason": "insufficient_signals",
+          "new_class": "unknown",
+          "source_id": null,
+          "citable_as": "none",
+          "confidence": 0,
+          "source_role": null,
+          "jurisdiction": "israeli",
+          "pipeline_class": "unknown",
+          "previous_class": "unknown",
+          "semantic_class": "unknown",
+          "negative_signals": [
+            "no_recognized_legal_source_signals"
+          ],
+          "positive_signals": []
+        }
+      ]
+    },
     "source_depth": null,
     "depth_flags": {
       "perplexity_policy": null,
@@ -13,36 +484,434 @@
       "perplexity_reason": null
     },
     "official_source_discovery": null,
-    "canonical_authority_acquisition": null,
-    "canonical_authority_acquisition_trigger": null,
-    "judgment_text_acquisition": null,
-    "source_integrity_tiers": null,
-    "source_integrity_admitted": null,
-    "discovery_precision": null,
+    "canonical_authority_acquisition": {
+      "ms": 4715,
+      "enabled": true,
+      "version": "canonical_judgment_text_acquisition_v1",
+      "attempts": [
+        {
+          "ms": 1516,
+          "cited": false,
+          "docket": "6821/93",
+          "probes": [
+            {
+              "ms": 1216,
+              "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C20%5C690%5C059%5Cv16&fileName=20059690.V16&type=2",
+              "detail": "plain_text_docket_mismatch",
+              "result": "blocked_by_origin",
+              "url_kind": "text",
+              "url_type": "2",
+              "body_chars": 46429,
+              "byte_length": 972783,
+              "http_status": 200,
+              "last_resort": false,
+              "probe_index": 0,
+              "content_type": "html",
+              "skipped_due_to_cap": false,
+              "body_title_or_signature": "short_page_without_docket"
+            },
+            {
+              "ms": 298,
+              "url": "https://court.gov.il",
+              "detail": "error sending request from 10.32.133.225:37742 for https://court.gov.il/ (84.110.173.72:443): client error (SendRequest): connection error: Connection reset by peer (os error 104)",
+              "result": "fetch_failed",
+              "url_kind": "pdf",
+              "url_type": null,
+              "body_chars": null,
+              "byte_length": null,
+              "http_status": null,
+              "last_resort": false,
+              "probe_index": 1,
+              "content_type": null,
+              "skipped_due_to_cap": false,
+              "body_title_or_signature": null
+            }
+          ],
+          "source": "registry_seed",
+          "query_id": "core_authority_registry:proportionality:hcj_6821_93_mizrahi",
+          "body_chars": 0,
+          "url_source": "discovery",
+          "doctrine_id": "proportionality",
+          "authority_id": "hcj_6821_93_mizrahi",
+          "endpoint_type": "pdf",
+          "type4_derived": true,
+          "attempted_urls": [
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C20%5C690%5C059%5Cv16&fileName=20059690.V16&type=2",
+            "https://court.gov.il"
+          ],
+          "authority_name": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+          "used_in_answer": false,
+          "rejection_reason": "error sending request from 10.32.133.225:37742 for https://court.gov.il/ (84.110.173.72:443): client error (SendRequest): connection error: Connection reset by peer (os error 104)",
+          "docket_normalized": "bagatz:6821/93",
+          "acquisition_result": "fetch_failed",
+          "type4_body_acquired": false,
+          "type4_probe_reached": false,
+          "attempted_urls_count": 2,
+          "injected_candidate_id": null,
+          "blocked_by_origin_count": 1,
+          "body_identity_validated": false,
+          "discovery_candidate_urls": [
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C20%5C690%5C059%5Cv16&fileName=20059690.V16&type=2",
+            "https://court.gov.il"
+          ],
+          "discovery_candidate_count": 2,
+          "canonical_acquisition_attempted": true
+        },
+        {
+          "ms": 3172,
+          "cited": false,
+          "docket": "1715/97",
+          "probes": [
+            {
+              "ms": 1133,
+              "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C20%5C690%5C059%5Cv16&fileName=20059690.V16&type=2",
+              "detail": "error sending request from 10.32.133.225:40604 for https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C20%5C690%5C059%5Cv16&fileName=20059690.V16&type=2 (84.110.173.93:443): clie",
+              "result": "fetch_failed",
+              "url_kind": "text",
+              "url_type": "2",
+              "body_chars": null,
+              "byte_length": null,
+              "http_status": null,
+              "last_resort": false,
+              "probe_index": 0,
+              "content_type": null,
+              "skipped_due_to_cap": false,
+              "body_title_or_signature": null
+            },
+            {
+              "ms": 2039,
+              "url": "https://court.gov.il",
+              "detail": "error sending request from 10.32.133.225:37750 for https://court.gov.il/ (84.110.173.72:443): client error (SendRequest): connection error: Connection reset by peer (os error 104)",
+              "result": "fetch_failed",
+              "url_kind": "pdf",
+              "url_type": null,
+              "body_chars": null,
+              "byte_length": null,
+              "http_status": null,
+              "last_resort": false,
+              "probe_index": 1,
+              "content_type": null,
+              "skipped_due_to_cap": false,
+              "body_title_or_signature": null
+            }
+          ],
+          "source": "registry_seed",
+          "query_id": "core_authority_registry:proportionality:hcj_1715_97_investment_managers",
+          "body_chars": 0,
+          "url_source": "discovery",
+          "doctrine_id": "proportionality",
+          "authority_id": "hcj_1715_97_investment_managers",
+          "endpoint_type": "pdf",
+          "type4_derived": true,
+          "attempted_urls": [
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C20%5C690%5C059%5Cv16&fileName=20059690.V16&type=2",
+            "https://court.gov.il"
+          ],
+          "authority_name": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות נ' שר האוצר",
+          "used_in_answer": false,
+          "rejection_reason": "error sending request from 10.32.133.225:37750 for https://court.gov.il/ (84.110.173.72:443): client error (SendRequest): connection error: Connection reset by peer (os error 104)",
+          "docket_normalized": "bagatz:1715/97",
+          "acquisition_result": "fetch_failed",
+          "type4_body_acquired": false,
+          "type4_probe_reached": false,
+          "attempted_urls_count": 2,
+          "injected_candidate_id": null,
+          "blocked_by_origin_count": 0,
+          "body_identity_validated": false,
+          "discovery_candidate_urls": [
+            "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C20%5C690%5C059%5Cv16&fileName=20059690.V16&type=2",
+            "https://court.gov.il"
+          ],
+          "discovery_candidate_count": 2,
+          "canonical_acquisition_attempted": true
+        }
+      ],
+      "doctrine_id": "proportionality",
+      "skip_reason": null,
+      "attempted_count": 2,
+      "body_acquired_count": 0,
+      "type4_derived_count": 2,
+      "eligible_authorities": [
+        "hcj_6821_93_mizrahi",
+        "hcj_1715_97_investment_managers"
+      ],
+      "skipped_not_derivable": [],
+      "discovery_fed_attempts": 2,
+      "injected_candidate_ids": [],
+      "metadata_only_holdings": 0,
+      "blocked_by_origin_count": 1,
+      "canonical_authority_gaps": [
+        {
+          "docket": "6821/93",
+          "reason": "error sending request from 10.32.133.225:37742 for https://court.gov.il/ (84.110.173.72:443): client error (SendRequest): connection error: Connection reset by peer (os error 104)",
+          "authority_id": "hcj_6821_93_mizrahi",
+          "authority_name": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל כפר שיתופי",
+          "discovery_candidate_count": 2
+        },
+        {
+          "docket": "1715/97",
+          "reason": "error sending request from 10.32.133.225:37750 for https://court.gov.il/ (84.110.173.72:443): client error (SendRequest): connection error: Connection reset by peer (os error 104)",
+          "authority_id": "hcj_1715_97_investment_managers",
+          "authority_name": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות נ' שר האוצר",
+          "discovery_candidate_count": 2
+        }
+      ],
+      "type4_body_acquired_count": 0,
+      "type4_probe_reached_count": 0,
+      "bodyless_judgment_citations": 0,
+      "skipped_already_body_acquired": [],
+      "citations_without_body_acquired": 0
+    },
+    "canonical_authority_acquisition_trigger": {
+      "reason": "depth_mode_eligible",
+      "depth_mode": "narrow_doctrine",
+      "max_dockets": 2,
+      "depth_eligible": true
+    },
+    "judgment_text_acquisition": {
+      "ms": 582,
+      "mode": "doctrine_explanation",
+      "budget": {
+        "other": 2,
+        "total": 2,
+        "leading": 2
+      },
+      "enabled": true,
+      "attempts": [
+        {
+          "ms": 549,
+          "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/nun1_6.pdf",
+          "title": "על חוקתיות ועל סבירות: בעקבות בג&quot;ץ 5636/01 בקמן נ' שר העבודה והרווחה",
+          "success": false,
+          "candidate_id": "6cb10a03-0747-497a-83b2-079cfd9e7558",
+          "title_signal": "על חוקתיות ועל סבירות: בעקבות בג&quot;ץ 5636/01 בקמן נ' שר העבודה והרווחה",
+          "docket_signal": null,
+          "failure_reason": "pdf_extraction_preempted",
+          "synthesis_role": "secondary_commentary",
+          "trigger_reason": "no_judgment_body_text",
+          "has_holding_text": false,
+          "method_succeeded": null,
+          "docket_normalized": null,
+          "methods_attempted": [
+            "direct_file_fetch"
+          ],
+          "judgment_candidate": true,
+          "usable_for_holding": false,
+          "acquisition_success": false,
+          "acquired_text_length": 0,
+          "final_text_usability": "full_text",
+          "text_usability_after": "full_text",
+          "acquisition_attempted": true,
+          "extracted_text_length": 0,
+          "text_usability_before": "full_text",
+          "acquisition_failure_reasons": [
+            "pdf_extraction_skipped_low_budget",
+            "pdf_extraction_preempted"
+          ],
+          "acquisition_methods_attempted": [
+            "direct_file_fetch"
+          ],
+          "body_contains_docket_or_title": false,
+          "can_support_synthesis_holding": false
+        }
+      ],
+      "excluded": [],
+      "successes": 0,
+      "attempts_made": 1,
+      "eligible_count": 1,
+      "stage_stop_reason": null,
+      "judgment_candidates": 1,
+      "eligibility_diagnostics": [
+        {
+          "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/nun1_6.pdf",
+          "title": "על חוקתיות ועל סבירות: בעקבות בג&quot;ץ 5636/01 בקמן נ' שר העבודה והרווחה",
+          "eligible": true,
+          "citable_as": "scholarship",
+          "rank_score": 45,
+          "rank_reason": "+direct_judgment_document,case_title_pattern",
+          "source_type": "journal_article",
+          "candidate_id": "6cb10a03-0747-497a-83b2-079cfd9e7558",
+          "planner_role": "binding_case_law",
+          "has_court_url": false,
+          "authority_tier": "secondary_commentary",
+          "synthesis_role": "secondary_commentary",
+          "text_usability": "full_text",
+          "excluded_reason": null,
+          "has_party_names": true,
+          "has_download_url": true,
+          "docket_normalized": null,
+          "eligibility_basis": [
+            "case_title_party_names"
+          ],
+          "has_docket_signal": false,
+          "ineligible_reason": null,
+          "acquisition_attempted": true,
+          "has_case_title_signal": true,
+          "rank_before_acquisition": 1,
+          "would_have_been_attempted_under_relaxed_rule": false
+        }
+      ],
+      "retrieval_budget_exceeded": false,
+      "acquisition_budget_spent_on": [
+        {
+          "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/nun1_6.pdf",
+          "rank": 1,
+          "title": "על חוקתיות ועל סבירות: בעקבות בג&quot;ץ 5636/01 בקמן נ' שר העבודה והרווחה",
+          "success": false,
+          "rank_reason": "+direct_judgment_document,case_title_pattern",
+          "candidate_id": "6cb10a03-0747-497a-83b2-079cfd9e7558",
+          "official_judgment_document": false
+        }
+      ],
+      "local_judgment_body_upgrade": [],
+      "local_judgment_stub_detection": [
+        {
+          "source_id": "6cb10a03-0747-497a-83b2-079cfd9e7558",
+          "body_chars": 1500,
+          "was_exact_400": false,
+          "upgrade_attempted": false,
+          "classified_as_stub": false
+        }
+      ],
+      "speculative_extraction_stopped": false,
+      "official_judgment_documents_found": 0,
+      "skipped_higher_quality_candidates": 0,
+      "local_judgment_body_upgrade_budget": {
+        "attempted": 0,
+        "succeeded": 0,
+        "elapsed_ms": 0,
+        "skipped_due_cap": 0,
+        "skipped_due_time_budget": 0
+      },
+      "official_judgment_documents_acquired": 0,
+      "institutional_pages_excluded_before_budget": 0,
+      "judgment_candidate_rank_before_acquisition": [
+        {
+          "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/nun1_6.pdf",
+          "rank": 1,
+          "score": 45,
+          "title": "על חוקתיות ועל סבירות: בעקבות בג&quot;ץ 5636/01 בקמן נ' שר העבודה והרווחה",
+          "rank_reason": "+direct_judgment_document,case_title_pattern",
+          "candidate_id": "6cb10a03-0747-497a-83b2-079cfd9e7558",
+          "negative_signals": [],
+          "positive_signals": [
+            "direct_judgment_document",
+            "case_title_pattern"
+          ],
+          "is_institutional_or_listing": false,
+          "is_official_judgment_document": false
+        }
+      ]
+    },
+    "source_integrity_tiers": {
+      "statute_mirror": 1,
+      "official_primary": 2,
+      "secondary_commentary": 5
+    },
+    "source_integrity_admitted": 8,
+    "discovery_precision": {
+      "ms": 7,
+      "status": "completed",
+      "version": "discovery_precision_and_listing_suppression_v1",
+      "processed": 109,
+      "backfilled": 1,
+      "classified": 109,
+      "pool_after": 7,
+      "suppressed": [
+        {
+          "url": "https://runilawreview.org/2016/06/09/volume19_roznaisommer/",
+          "title": "\"אֵם כל הזכויות\": הזכות החוקתית לחיים | יניב רוזנאי והלל סומר (כרך יט)",
+          "reason": "index_or_listing:listing_title_pattern",
+          "candidate_id": "9c7186b7-f4b9-4ad1-8c65-e49c8577474d",
+          "discovery_class": "index_or_listing"
+        }
+      ],
+      "pool_before": 109,
+      "task_intent": "doctrinal_explanation",
+      "backfill_ran": true,
+      "class_counts": {
+        "metadata_only": 4,
+        "index_or_listing": 2,
+        "citable_candidate": 67,
+        "possible_body_page": 36
+      },
+      "o_n_guard_ok": true,
+      "suppression_ran": true,
+      "protected_counts": {
+        "exact_docket_identity": 2,
+        "official_primary_page": 10,
+        "local_corpus_substantive": 79,
+        "exact_authority_candidate": 1,
+        "local_caselaw_substantive_body": 12
+      },
+      "candidates_at_start": 109,
+      "backfilled_by_origin": {
+        "perplexity": 1
+      },
+      "protected_listing_counts": {
+        "local_caselaw_substantive_body": 1
+      },
+      "suppressed_reason_counts": {
+        "index_or_listing:listing_title_pattern": 1
+      },
+      "raw_index_or_listing_ratio": 0.018,
+      "not_suppressible_reason_counts": {
+        "protected:exact_docket_identity": 2,
+        "protected:official_primary_page": 10,
+        "protected:local_corpus_substantive": 79,
+        "protected:exact_authority_candidate": 1,
+        "class_not_suppressible:metadata_only": 2,
+        "protected:local_caselaw_substantive_body": 12,
+        "class_not_suppressible:possible_body_page": 2
+      },
+      "final_raw_index_or_listing_ratio": 0,
+      "final_suppressible_listing_ratio": 0,
+      "suppressible_index_or_listing_ratio": 0.009
+    },
     "claim_source_plan": null,
     "drafter_block_source_compliance": null,
     "post_draft_alignment_filter": null,
-    "claim_source_match": null,
+    "claim_source_match": {
+      "applied": false,
+      "stage_not_run": true,
+      "mismatch_reason": [],
+      "claim_categories": [],
+      "limitation_added": false,
+      "tagged_block_count": 0,
+      "dropped_source_refs": [],
+      "stage_not_run_reason": "deterministic_branch:insufficient_sources_limitation",
+      "commentary_only_claims": [],
+      "unsupported_block_count": 0,
+      "authority_overstatements": [],
+      "source_ref_mismatch_count": 0,
+      "primary_support_by_main_claim": false,
+      "primary_supported_block_count": 0,
+      "secondary_supported_block_count": 0
+    },
     "footnotes_count": 0,
     "footnotes": [],
-    "answer": "המחקר הופסק בגלל תקלה תשתיתית ולא הושלמה תשובה משפטית מבוססת. לא מוצגת תשובת ביניים. הקרדיטים על ההרצה הזו הוחזרו. אפשר להריץ שוב, לצמצם את השאלה, או לצרף את המסמך הרלוונטי.",
+    "answer": "לא נמצאה במקורות פסיקה ישירה על הנושא. ניתן להעלות מקור/לחדד שאלה/לבקש חיפוש נוסף.\n\nאין לגזור את הדוקטרינה שנשאלה ממקורות מתחום משפטי אחר בדרך של היקש; לכן לא מוצגת כאן קביעה משפטית לגבי השאלה שנשאלה.",
     "metadata_keys": [
-      "branch",
+      "phase",
+      "claims",
       "run_id",
-      "isolate",
+      "drafter",
+      "queries",
       "pipeline",
-      "reaped_at",
-      "prior_stage",
-      "trace_stage",
+      "planning",
+      "total_ms",
+      "verifier",
+      "retrieval",
+      "candidates",
+      "stage_runs",
+      "attachments",
       "trace_status",
-      "research_mode",
-      "concurrency_hint",
-      "trace_started_at",
-      "fast_lane_eligible",
-      "in_flight_at_retrieval",
-      "infrastructure_failure",
-      "terminal_result_written",
-      "reaper_terminal_limitation_written"
+      "dropped_sources",
+      "required_anchors",
+      "drafter_v2_full_compare",
+      "drafter_v2_opus_compare",
+      "drafter_v2_sonnet_compare",
+      "retrieval_budget_enforcement"
     ]
   }
 ]
