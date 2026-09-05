@@ -1327,6 +1327,17 @@ export interface DrafterV2Result {
   limitation_note_alignment?: LimitationNoteAlignment;
   /** topic_aware_claim_source_alignment_v1 — pre/post draft plan telemetry. */
   claim_source_plan?: ClaimSourcePlan;
+  /** canonical_registry_discovery_and_representative_source_use_v1 telemetry. */
+  representative_source_selection?: RepresentativeSourceReport;
+  representative_source_use?: { rows: unknown[]; used: number; omitted: number };
+  drafter_representative_source_compliance?: {
+    version: string;
+    rows: unknown[];
+    claims_checked: number;
+    claims_compliant: number;
+  };
+  statute_dominance_check?: StatuteDominanceCheck;
+  source_last_mile_funnel?: SourceLastMileFunnelReport;
   drafter_block_source_compliance?: DrafterBlockComplianceReport;
   post_draft_alignment_filter?: PostDraftAlignmentFilterReport;
 
@@ -2309,6 +2320,24 @@ export async function runDrafterV2(
   }
 
 
+  // canonical_registry_discovery_and_representative_source_use_v1 (fix 4) —
+  // statute dominance on the draft itself: for a square statutory-text
+  // question, an admitted + verified statute leads the statutory proposition.
+  // Reordering / promoting an already-permitted source only; every gate below
+  // still runs on the corrected draft.
+  const statuteDominanceApplied = enforceStatuteDominanceOnDraft(parsed.draft, {
+    question,
+    sources: inputSources,
+    allowedByClaim: new Map(
+      claim_source_plan.rows.map((r) => [r.claim_id, r.preferred_source_ids]),
+    ),
+    statutoryClaimIds: claim_source_plan.statute_dominance?.statutory_claims ?? [],
+  });
+  let statute_dominance_check: StatuteDominanceCheck = statuteDominanceApplied.check;
+  const raw_draft_for_funnel = parsed.draft
+    ? { ...parsed.draft, blocks: (parsed.draft.blocks ?? []).map((b) => ({ ...b })) }
+    : null;
+
   // metadata_only_holding_gate_v1 — strip metadata-only judgment refs from
   // every cited segment before footnotes are built, so no proposition can rest
   // on a judgment whose body was never read.
@@ -2368,6 +2397,16 @@ export async function runDrafterV2(
     );
   const post_draft_alignment_filter: PostDraftAlignmentFilterReport =
     buildPostDraftAlignmentFilter(topic_aware_alignment);
+
+  // fixes 2 + 3 telemetry — did the representative sources actually survive?
+  const representative_source_use = assessRepresentativeSourceUse(
+    aligned.draft ?? matched.draft ?? gated.draft ?? parsed.draft,
+    representative_sources,
+  );
+  const drafter_representative_source_compliance = assessDrafterRepresentativeCompliance(
+    matched.draft ?? gated.draft ?? parsed.draft,
+    representative_sources,
+  );
 
   const built = buildFootnotedAnswer(
     aligned.draft ?? matched.draft ?? gated.draft ?? parsed.draft as StructuredDraft,
@@ -2513,6 +2552,23 @@ export async function runDrafterV2(
     text: normalizeHebrewNumberRanges(fn.text),
   }));
 
+  // fix 5 — per-source last-mile funnel, and fix 4's final verification.
+  const citedRefsFinal = built.used_sources
+    .map((u) => inputSources.find((s) => s.candidate_id === u.candidate_id)?.ref)
+    .filter((r): r is string => !!r);
+  statute_dominance_check = verifyStatuteDominanceInFootnotes(
+    statute_dominance_check,
+    citedRefsFinal,
+  );
+  const source_last_mile_funnel: SourceLastMileFunnelReport = buildSourceLastMileFunnel({
+    sources: inputSources,
+    representative: representative_sources,
+    rawDraft: raw_draft_for_funnel,
+    postCsmDraft: matched.draft ?? gated.draft ?? parsed.draft,
+    postAlignmentDraft: aligned.draft ?? matched.draft ?? gated.draft ?? parsed.draft,
+    citedRefs: citedRefsFinal,
+  });
+
   return {
     non_academic_limitation_note,
     snippet_budget_report,
@@ -2566,6 +2622,11 @@ export async function runDrafterV2(
     topic_aware_alignment,
     limitation_note_alignment,
     claim_source_plan,
+    representative_source_selection: representative_sources,
+    representative_source_use,
+    drafter_representative_source_compliance,
+    statute_dominance_check,
+    source_last_mile_funnel,
     drafter_block_source_compliance,
     post_draft_alignment_filter,
 
