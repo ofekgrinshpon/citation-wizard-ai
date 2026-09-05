@@ -38,6 +38,7 @@ import { decodeHebrew } from "./judgmentTextAcquisition.ts";
 import { officialFetch, looksLikeBlockPage } from "../lib/officialFetch.ts";
 import { looksBinary } from "./statuteTextAcquisition.ts";
 import type { SourceIntegrity } from "./sourceIntegrity.ts";
+import { type BodyBudgetDecision, decideBodyBudget } from "./academicLiteratureRichness.ts";
 import {
   assessSubstantiveBody,
   contentHash,
@@ -205,6 +206,8 @@ export interface SecondaryBodyAcquisitionReport {
   reconsidered_candidate_ids?: string[];
   /** True for the bounded post-verifier recovery pass. */
   recovery_pass?: boolean;
+  /** academic_literature_richness_without_fixed_source_count_v1 telemetry. */
+  body_budget_decisions?: BodyBudgetDecision[];
   per_candidate: SecondaryCandidateReport[];
   stage_stop_reason:
     | "completed"
@@ -599,6 +602,17 @@ export interface SecondaryBodyAcquisitionInput {
    * characters (stub acquisitions that are not substantive).
    */
   reacquire_short_bodies_under?: number;
+  /**
+   * academic_literature_richness_without_fixed_source_count_v1 — the user's
+   * question, used to score topical fit before body budget is spent.
+   */
+  question?: string;
+  /**
+   * Literature-review request: body budget goes to direct topical scholarship
+   * first, and candidates with no shared subject vocabulary are refused
+   * outright (a trusted host is not a reason to fetch an unrelated paper).
+   */
+  literature_mode?: boolean;
 }
 
 
@@ -714,8 +728,52 @@ export async function runSecondaryBodyAcquisition(
     };
   }
 
-  // Richer / more clearly doctrinal candidates first.
-  selected.sort((a, b) => b.evidence.length - a.evidence.length);
+  // academic_literature_richness_without_fixed_source_count_v1 — topical gate
+  // before any body budget is spent. A direct topical source that has not been
+  // fetched yet outranks an off-topic source that is easy to fetch.
+  const budgetDecisions: BodyBudgetDecision[] = [];
+  if (input.question) {
+    for (let i = selected.length - 1; i >= 0; i--) {
+      const c = selected[i].c;
+      const d = decideBodyBudget(input.question, {
+        candidate_id: c.candidate_id,
+        title: String(c.title ?? ""),
+        url: c.source_url ?? null,
+        host: c.source_url ? hostOf(c.source_url) : null,
+        role: c.role ? String(c.role) : null,
+        source_type: c.source_type ? String(c.source_type) : null,
+        snippet: c.snippet ?? null,
+        has_body: false,
+      }, { literature_mode: input.literature_mode === true });
+      budgetDecisions.push(d);
+      if (d.body_budget_rejected) selected.splice(i, 1);
+      else selected[i].evidence = [...selected[i].evidence, `topicality:${d.topicality_score}`];
+    }
+    const priority = new Map(budgetDecisions.map((d) => [d.candidate_id, d.priority]));
+    selected.sort((a, b) =>
+      (priority.get(b.c.candidate_id) ?? 0) - (priority.get(a.c.candidate_id) ?? 0) ||
+      b.evidence.length - a.evidence.length
+    );
+    await onStage("academic_body_budget_decision", {
+      literature_mode: input.literature_mode === true,
+      selected: budgetDecisions.filter((d) => d.body_budget_selected).length,
+      rejected: budgetDecisions.filter((d) => d.body_budget_rejected).length,
+      decisions: budgetDecisions.slice(0, 40),
+    });
+    if (selected.length === 0) {
+      return {
+        ...base("no_topical_secondary_candidates", "no_eligible_candidates", true),
+        ran: true,
+        listing_suppressed: listingSuppressedIds.length,
+        listing_suppressed_ids: listingSuppressedIds,
+        reconsidered_candidate_ids: reconsideredIds,
+        body_budget_decisions: budgetDecisions,
+      };
+    }
+  } else {
+    // Richer / more clearly doctrinal candidates first.
+    selected.sort((a, b) => b.evidence.length - a.evidence.length);
+  }
 
   const rows: SecondaryCandidateReport[] = [];
   const acquired: string[] = [];
@@ -999,6 +1057,7 @@ export async function runSecondaryBodyAcquisition(
     reconsidered_candidate_ids: reconsideredIds,
     recovery_pass: input.recovery_pass === true,
     per_candidate: rows,
+    body_budget_decisions: budgetDecisions,
     stage_stop_reason: stop,
     ms: Date.now() - t0,
   };

@@ -107,6 +107,7 @@ import {
 } from "./stages/requiredAnchors.ts";
 import { detectStatuteSections } from "./stages/statuteSectionDetection.ts";
 import { planSourceUseIntent } from "./stages/sourceUseIntent.ts";
+import { isLiteratureOnlyRequest } from "./stages/academicLiteratureRichness.ts";
 import { makeAdminClient, writeTelemetry, beginTraceRow } from "./lib/telemetry.ts";
 import { getWebTierHealth, resetWebTierHealth } from "./lib/webTierHealth.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
@@ -1520,6 +1521,11 @@ async function handle(req: Request): Promise<Response> {
     candidates: pool.candidates,
     depth_mode: sourceDepth.depth_mode ?? null,
     enabled: !fastLaneHit && !budget.exceeded(),
+    // academic_literature_richness_without_fixed_source_count_v1 — spend body
+    // budget on topically direct scholarship, not on whatever fetches easily.
+    question,
+    literature_mode: sourceUseIntent.plan?.user_task_intent === "academic_writing" &&
+      isLiteratureOnlyRequest(question),
     // doctrinal_candidate_pool_stabilization_v1 — drop clear index/listing
     // pages before they consume acquisition budget.
     suppress_listings: true,
