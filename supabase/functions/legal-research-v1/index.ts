@@ -107,7 +107,17 @@ import {
 } from "./stages/requiredAnchors.ts";
 import { detectStatuteSections } from "./stages/statuteSectionDetection.ts";
 import { planSourceUseIntent } from "./stages/sourceUseIntent.ts";
-import { isLiteratureOnlyRequest } from "./stages/academicLiteratureRichness.ts";
+import {
+  isLiteratureOnlyRequest,
+  scoreLiteratureTopicality,
+} from "./stages/academicLiteratureRichness.ts";
+import {
+  assessCenterOfGravity,
+  buildUnusedLiteraturePackTelemetry,
+  type CenterOfGravityView,
+  detectNaturalLiteratureMode,
+  NATURAL_LITERATURE_MODE_VERSION,
+} from "./stages/naturalLiteratureMode.ts";
 import {
   buildLiteratureGateTrace,
   checkNamedSynthesis,
